@@ -1,10 +1,20 @@
-import React from "react";
+import React, { type ChangeEvent, type ReactNode } from "react";
 import { cn } from "@ledgerhq/lumen-design-core/cn";
-import { isContactsSearchNoResultsViewModel, type ContactsListViewProps } from "./types";
+import type { ContactId } from "@domain/entity-contact";
+import { isContactsSearchNoResultsViewModel, type ContactsPageSharedProps } from "./types";
 import { useContactsListCopy } from "./copy/useContactsListCopy";
-import { ContactsLedgerSyncLoadingPane } from "./components/LedgerSyncLoadingPane/ContactsLedgerSyncLoadingPane.web";
-import { ContactsList } from "./components/ContactsList/ContactsList.web";
-import { ContactsPageLayout } from "./components/PageLayout/ContactsPageLayout.web";
+import { ContactsLedgerSyncLoadingPane } from "./components/LedgerSyncLoadingPane/ContactsLedgerSyncLoadingPane";
+import { ContactsList } from "./components/ContactsList/ContactsList";
+import { ContactsPageLayout } from "./components/PageLayout/ContactsPageLayout";
+
+export type ContactsListViewProps = ContactsPageSharedProps &
+  Readonly<{
+    onSearchInputChange: (event: ChangeEvent<HTMLInputElement>) => void;
+    onOpenMe: (contactId: ContactId) => void;
+    detail?: ReactNode;
+    featureIntroduction?: ReactNode;
+    ledgerSyncIntroduction?: ReactNode;
+  }>;
 
 function renderContactsDetailPane(
   isLedgerSyncChecking: boolean,

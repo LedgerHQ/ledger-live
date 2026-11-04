@@ -2,8 +2,12 @@ import { useMemo } from "react";
 import { useRoute, type RouteProp } from "@react-navigation/native";
 import type { Account } from "@ledgerhq/types-live";
 import { getTagDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
-import type { AdvancedLogsInput } from "@features/flow-account-detail-settings";
+import type {
+  AccountSettingsEventHandler,
+  AdvancedLogsInput,
+} from "@features/flow-account-detail-settings";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
+import { useAccountSettingsTracking } from "../../hooks/useAccountSettingsTracking";
 import { useSelector } from "~/context/hooks";
 import { localeSelector } from "~/reducers/settings";
 import type { ScreenName } from "~/const";
@@ -18,6 +22,7 @@ export type AdvancedLogsViewModel = Readonly<{
   input: AdvancedLogsInput | undefined;
   locale: string;
   derivationTag: string | undefined;
+  onEvent: AccountSettingsEventHandler;
 }>;
 
 function getDerivationTag(account: Account): string | undefined {
@@ -30,6 +35,7 @@ export function useAdvancedLogsViewModel(): AdvancedLogsViewModel {
   const { account } = useAccountScreen(route);
   const mainAccount = account?.type === "Account" ? account : undefined;
   const locale = useSelector(localeSelector);
+  const { onSettingsEvent } = useAccountSettingsTracking(mainAccount);
 
   const input = useMemo<AdvancedLogsInput | undefined>(
     () =>
@@ -49,5 +55,5 @@ export function useAdvancedLogsViewModel(): AdvancedLogsViewModel {
     [mainAccount],
   );
 
-  return { input, locale, derivationTag };
+  return { input, locale, derivationTag, onEvent: onSettingsEvent };
 }

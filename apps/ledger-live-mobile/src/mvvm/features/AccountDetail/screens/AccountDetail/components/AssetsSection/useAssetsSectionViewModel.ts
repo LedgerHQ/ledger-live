@@ -3,6 +3,13 @@ import { useNavigation } from "@react-navigation/native";
 import type { ParamListBase } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { Account } from "@ledgerhq/types-live";
+import { track } from "@shared/analytics";
+import {
+  ACCOUNT_DETAIL_EVENTS,
+  ACCOUNT_DETAIL_PAGES,
+  accountAssetClickedProps,
+} from "@features/flow-account-detail";
+import { useAssetDetailNavigation } from "LLM/features/AssetDetail/hooks/useAssetDetailNavigation";
 import { usePrecomputedAssetListData } from "LLM/components/AssetListItem/usePrecomputedAssetListData";
 import type { AssetListItemViewModelResult } from "LLM/components/AssetListItem/usePrecomputedAssetListData";
 import { useCalculateCountervalueCallback } from "~/actions/general";
@@ -13,6 +20,7 @@ import {
   hideEmptyTokenAccountsEnabledSelector,
 } from "~/reducers/settings";
 import type { Asset } from "~/types/asset";
+import { getAccountTrackingFacts } from "../../../../utils/accountTracking";
 import { buildAccountAssets } from "../../../../utils/buildAccountAssets";
 
 type AddAssetAction = (
@@ -25,10 +33,12 @@ export type AssetsSectionViewModel = Readonly<{
   precomputed: Map<string, AssetListItemViewModelResult>;
   /** Set only for a family where an asset must be added to the account before it can be received. */
   onAddAsset: (() => void) | undefined;
+  onAssetPress: (asset: Asset) => void;
 }>;
 
 export function useAssetsSectionViewModel(account: Account): AssetsSectionViewModel {
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
+  const { openFromAsset } = useAssetDetailNavigation();
   const hideEmptyTokenAccounts = useSelector(hideEmptyTokenAccountsEnabledSelector);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const calculateCountervalue = useCalculateCountervalueCallback();
@@ -50,9 +60,21 @@ export function useAssetsSectionViewModel(account: Account): AssetsSectionViewMo
     addAssetAction?.(navigation, account.id);
   }, [account.id, addAssetAction, navigation]);
 
+  const onAssetPress = useCallback(
+    (asset: Asset) => {
+      track(
+        ACCOUNT_DETAIL_EVENTS.assetClicked,
+        accountAssetClickedProps(getAccountTrackingFacts(account), asset.currency.ticker),
+      );
+      openFromAsset({ currency: asset.currency, source: ACCOUNT_DETAIL_PAGES.account });
+    },
+    [account, openFromAsset],
+  );
+
   return {
     assets,
     precomputed: usePrecomputedAssetListData(assets),
     onAddAsset: addAssetAction ? onAddAsset : undefined,
+    onAssetPress,
   };
 }

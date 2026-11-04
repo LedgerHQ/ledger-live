@@ -11,8 +11,10 @@
   },
   "sideEffects": false,
   "scripts": {
-    "typecheck": "tsc --noEmit",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/env"
+    "lint": "oxlint src",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@shared/env": "workspace:*"
@@ -22,6 +24,9 @@
   },
   "devDependencies": {
     "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "react": "catalog:",
     "typescript": "catalog:"
   }

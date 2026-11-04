@@ -140,10 +140,10 @@ describe("AccountDetail entry", () => {
 
   it("follows the new account when the mounted entry screen receives another account", async () => {
     const { user } = renderAccountScreen({ accountId: btcAccount.id }, { enabled: true });
-    expect(screen.getByTestId("account-detail-tracked-currency")).toHaveTextContent("Bitcoin");
+    expect(screen.getByTestId("account-detail-tracked-currency")).toHaveTextContent("bitcoin");
 
     await user.press(screen.getByTestId("switch-to-eth-account"));
 
-    expect(screen.getByTestId("account-detail-tracked-currency")).toHaveTextContent("Ethereum");
+    expect(screen.getByTestId("account-detail-tracked-currency")).toHaveTextContent("ethereum");
   });
 });

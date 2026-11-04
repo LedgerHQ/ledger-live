@@ -47,6 +47,7 @@ import portfolioBalanceDisplay from "./portfolioBalanceDisplay";
 import recoverState from "./recoverState";
 import liveAppModal from "./liveAppModal";
 import { identitiesSlice } from "@domain/entity-client-identity";
+import { predictionsSlice } from "@domain/entity-predictions";
 import { supportedFiatsSlice } from "@domain/entity-currency-fiat";
 import { payCardBalanceSlice } from "@features/flow-pay-balance/state";
 import { payCardFeatureTourSlice } from "@features/flow-pay-feature-tour/state";
@@ -57,6 +58,7 @@ import { contactsSlice } from "@domain/entity-contact";
 import { accountDataSlice } from "@domain/entity-account-data";
 import { accountBalancesSlice } from "@domain/entity-account-balance";
 import { accountOperationsSlice } from "@domain/entity-account-operation";
+import { accountBalanceHistoriesSlice } from "@domain/entity-account-balance-history";
 import { accountsSlice } from "@domain/entity-account";
 import { appLockSlice } from "@features/platform-app-lock";
 import type { UnknownAction } from "@reduxjs/toolkit";
@@ -98,6 +100,7 @@ const appReducer = combineReducers({
   largeScreenUpsellModal: largeScreenUpsellModalReducer,
   postOnboarding,
   postOnboardingHubDrawer,
+  predictions: predictionsSlice.reducer,
   protect,
   ratings,
   settings,
@@ -122,6 +125,7 @@ const appReducer = combineReducers({
   accountData: accountDataSlice.reducer,
   accountBalances: accountBalancesSlice.reducer,
   accountOperations: accountOperationsSlice.reducer,
+  accountBalanceHistories: accountBalanceHistoriesSlice.reducer,
   accountEntries: accountsSlice.reducer,
   appLock: appLockSlice.reducer,
   ...llmRTKApiReducers,

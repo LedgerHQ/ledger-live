@@ -31,11 +31,13 @@ const receive = (data: (typeof eth)[], uuid = accountUUID) =>
   accountDataReceived({
     kind: "balance",
     accountUUID: uuid,
+    queryKey: "",
     requestId: "r",
     data,
     sourceId,
     append: false,
     readAt: 0,
+    revision: 0,
   });
 
 describe("accountBalancesSlice", () => {
@@ -62,11 +64,13 @@ describe("accountBalancesSlice", () => {
       accountDataReceived({
         kind: "staking",
         accountUUID,
+        queryKey: "",
         requestId: "r",
         data: { staked: "1" },
         sourceId,
         append: false,
         readAt: 0,
+        revision: 0,
       }),
     );
     expect(state[accountUUID]).toEqual([eth]);

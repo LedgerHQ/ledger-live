@@ -19,6 +19,7 @@ export const ASSET_DETAIL_TEST_IDS = {
   addressesHeader: "asset-detail-addresses-header",
   addAccount: "asset-detail-add-account",
   addressItemName: "asset-detail-address-item-name",
+  addressItemTag: "asset-detail-address-item-tag",
   addressItemAddress: "asset-detail-address-item-address",
   addressItemCounterValue: "asset-detail-address-item-countervalue",
   addressItemBalance: "asset-detail-address-item-balance",

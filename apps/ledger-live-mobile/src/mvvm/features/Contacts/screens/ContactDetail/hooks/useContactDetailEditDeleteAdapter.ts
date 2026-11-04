@@ -5,12 +5,12 @@ import {
   useContactsEditDeletePorts,
 } from "@features/flow-contacts";
 import {
-  type ContactsEditSignerMismatchDrawerProps,
+  type ContactsEditSignerMismatchDialogProps,
   createContactDetailEditDeleteUiState,
   useContactDetailEditDeleteFlowBindings,
 } from "@features/flow-contacts-detail";
-import type { ContactsDeleteContactDrawerProps } from "@features/flow-contacts-delete-contact";
-import type { ContactsRenameContactDrawerProps } from "@features/flow-contacts-edit-contact";
+import type { ContactsDeleteContactDialogProps } from "@features/flow-contacts-delete-contact";
+import type { ContactsRenameContactDialogProps } from "@features/flow-contacts-edit-contact";
 import type { ContactDeviceIntentsPort } from "@features/platform-contacts";
 import { useMemo } from "react";
 import { useContactsAnalytics } from "../../../analytics/useContactsAnalytics";
@@ -23,9 +23,9 @@ export type ContactDetailEditDeleteFlowProps = Readonly<{
     onDelete: () => void;
     onClose: () => void;
   }>;
-  renameDrawer: ContactsRenameContactDrawerProps;
-  deleteDrawer: ContactsDeleteContactDrawerProps;
-  signerMismatchSheet: ContactsEditSignerMismatchDrawerProps;
+  renameSheet: ContactsRenameContactDialogProps;
+  deleteSheet: ContactsDeleteContactDialogProps;
+  signerMismatchSheet: ContactsEditSignerMismatchDialogProps;
   onOpenActionsMenu: () => void;
 }>;
 
@@ -67,14 +67,14 @@ export function useContactDetailEditDeleteAdapter(
       onDelete,
       onClose: flow.onCloseActionsMenu,
     },
-    renameDrawer: {
+    renameSheet: {
       ...uiState.rename,
       onConfirm: async () => {
         onValidateEdit();
         await uiState.rename.onConfirm();
       },
     },
-    deleteDrawer: { ...uiState.delete, onConfirm: onConfirmDelete },
+    deleteSheet: { ...uiState.delete, onConfirm: onConfirmDelete },
     signerMismatchSheet: uiState.signerMismatch,
   };
 }

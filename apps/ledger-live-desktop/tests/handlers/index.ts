@@ -1,5 +1,4 @@
 import MarketHandlers from "./market";
-import CoingeckoHandlers from "./coingecko";
 import CryptoIconsHandlers from "./cryptoIcons";
 import CounterValuesHandlers from "./countervalues";
 import CurrencyFiatHandlers from "./currencyFiat";
@@ -14,7 +13,6 @@ import LedgerSyncHandlers from "./ledgerSync";
 export default [
   ...MarketHandlers,
   ...ConcordiumHandlers,
-  ...CoingeckoHandlers,
   ...CryptoIconsHandlers,
   ...CounterValuesHandlers,
   ...CurrencyFiatHandlers,

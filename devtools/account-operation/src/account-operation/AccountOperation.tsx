@@ -1,17 +1,85 @@
+import { useState } from "react";
 import type {
   AccountOperationToolAccount,
+  AccountOperationToolQuery,
   AccountOperationToolProps,
   AccountOperationToolRow,
+  AccountOperationToolWindow,
 } from "../types";
 
-function AccountOperation({ accounts, onRead, onReadMore, onReadAll }: AccountOperationToolProps) {
+type OnWindow = (accountUUID: string, queryKey: string) => void;
+
+/** The form's options, the empty ones left out. */
+function queryOf(
+  limit: string,
+  filterAsset: string,
+  countervalue: boolean,
+): AccountOperationToolQuery {
+  const count = Number.parseInt(limit, 10);
+  return {
+    ...(count > 0 ? { limit: count } : {}),
+    ...(filterAsset.trim() ? { filterAsset: filterAsset.trim() } : {}),
+    ...(countervalue ? { countervalue } : {}),
+  };
+}
+
+function AccountOperation({
+  accounts,
+  assetIds,
+  fiat,
+  onRead,
+  onReadMore,
+  onReadAll,
+}: AccountOperationToolProps) {
+  const [limit, setLimit] = useState("");
+  const [filterAsset, setFilterAsset] = useState("");
+  const [countervalue, setCountervalue] = useState(false);
   return (
     <div className="flex flex-col h-full overflow-hidden select-text">
-      <div className="px-16 py-8 border-b border-base flex items-center justify-between flex-shrink-0">
-        <span className="body-3 text-muted">
+      <div className="px-16 py-8 border-b border-base flex items-center gap-8 flex-shrink-0">
+        <span className="flex-1 body-3 text-muted">
           {accounts.length} {accounts.length === 1 ? "account" : "accounts"}
         </span>
-        <button type="button" onClick={onReadAll} className="body-3-semi-bold text-base">
+        <input
+          aria-label="Limit"
+          type="number"
+          min={1}
+          placeholder="limit"
+          value={limit}
+          onChange={event => setLimit(event.target.value)}
+          className="w-64 font-mono"
+        />
+        <input
+          aria-label="Filter asset"
+          list="account-operation-assets"
+          placeholder="filter asset"
+          value={filterAsset}
+          onChange={event => setFilterAsset(event.target.value)}
+          className="w-176 font-mono"
+        />
+        <datalist id="account-operation-assets">
+          {assetIds.map(assetId => (
+            <option key={assetId} value={assetId}>
+              {assetId}
+            </option>
+          ))}
+        </datalist>
+        <label
+          className="flex items-center gap-4 body-3 text-muted"
+          title="The app's countervalue: change it in Settings"
+        >
+          <input
+            type="checkbox"
+            checked={countervalue}
+            onChange={event => setCountervalue(event.target.checked)}
+          />
+          {fiat}
+        </label>
+        <button
+          type="button"
+          onClick={() => onReadAll(queryOf(limit, filterAsset, countervalue))}
+          className="body-3-semi-bold text-base"
+        >
           Read all
         </button>
       </div>
@@ -32,7 +100,7 @@ function AccountOperation({ accounts, onRead, onReadMore, onReadAll }: AccountOp
   );
 }
 
-function readLabel({ reading, sourceId, readAt, rows }: AccountOperationToolAccount): string {
+function readLabel({ reading, sourceId, readAt, rows }: AccountOperationToolWindow): string {
   if (reading) return "reading…";
   if (readAt === undefined) return "never read";
   const count = rows?.length ?? 0;
@@ -43,28 +111,52 @@ function AccountRow({
   account,
   onRead,
   onReadMore,
-}: Readonly<{
-  account: AccountOperationToolAccount;
-  onRead: (accountUUID: string) => void;
-  onReadMore: (accountUUID: string) => void;
-}>) {
-  const { accountUUID, descriptor, reading, error, rows, hasMore } = account;
+}: Readonly<{ account: AccountOperationToolAccount; onRead: OnWindow; onReadMore: OnWindow }>) {
+  const { accountUUID, descriptor, windows } = account;
   return (
     <div className="px-16 py-10 border-b border-base flex flex-col gap-4">
+      <details className="min-w-0 body-3-semi-bold text-base font-mono break-all">
+        <summary className="cursor-pointer">{accountUUID}</summary>
+        {descriptor ? (
+          <pre className="body-3 font-mono text-muted whitespace-pre-wrap break-all">
+            {descriptor}
+          </pre>
+        ) : null}
+      </details>
+      {windows.map(window => (
+        <WindowRow
+          key={window.queryKey}
+          accountUUID={accountUUID}
+          window={window}
+          onRead={onRead}
+          onReadMore={onReadMore}
+        />
+      ))}
+    </div>
+  );
+}
+
+function WindowRow({
+  accountUUID,
+  window,
+  onRead,
+  onReadMore,
+}: Readonly<{
+  accountUUID: string;
+  window: AccountOperationToolWindow;
+  onRead: OnWindow;
+  onReadMore: OnWindow;
+}>) {
+  const { queryKey, reading, error, rows, hasMore } = window;
+  return (
+    <div className="pl-8 flex flex-col gap-4">
       <div className="flex items-center gap-12">
-        <details className="flex-1 min-w-0 body-3-semi-bold text-base font-mono break-all">
-          <summary className="cursor-pointer">{accountUUID}</summary>
-          {descriptor ? (
-            <pre className="body-3 font-mono text-muted whitespace-pre-wrap break-all">
-              {descriptor}
-            </pre>
-          ) : null}
-        </details>
-        <span className="body-3 text-muted">{readLabel(account)}</span>
+        <span className="flex-1 min-w-0 body-3 font-mono text-muted break-all">{window.label}</span>
+        <span className="body-3 text-muted">{readLabel(window)}</span>
         <button
           type="button"
           disabled={reading}
-          onClick={() => onRead(accountUUID)}
+          onClick={() => onRead(accountUUID, queryKey)}
           className="body-3-semi-bold text-base"
         >
           Read
@@ -78,7 +170,7 @@ function AccountRow({
         <button
           type="button"
           disabled={reading}
-          onClick={() => onReadMore(accountUUID)}
+          onClick={() => onReadMore(accountUUID, queryKey)}
           className="self-start body-3-semi-bold text-base"
         >
           Read more
@@ -108,6 +200,9 @@ function OperationRow({ row }: Readonly<{ row: AccountOperationToolRow }>) {
         <span className={row.failed ? "text-muted" : "body-3-semi-bold text-base"}>
           {row.value}
         </span>
+        {row.countervalues?.length ? (
+          <span className="body-3-semi-bold text-success">{row.countervalues.join(" · ")}</span>
+        ) : null}
       </summary>
       <div className="pl-16 text-muted break-all">
         <div>id {row.id}</div>

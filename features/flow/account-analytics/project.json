@@ -1,0 +1,4 @@
+{
+  "name": "@features/flow-account-analytics",
+  "targets": { "build": { "executor": "nx:noop" } }
+}

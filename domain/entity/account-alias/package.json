@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-account-alias",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "description": "AccountAlias entity: non-reversible aliases for account ids, reverse-lookup state and selectors",
   "main": "src/index.ts",
@@ -11,11 +11,13 @@
   },
   "sideEffects": false,
   "scripts": {
+    "lint": "oxlint ./src",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W domain/entity/account-alias"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@domain/entity-account": "workspace:^",
@@ -28,7 +30,10 @@
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "typescript": "catalog:"
   }
 }

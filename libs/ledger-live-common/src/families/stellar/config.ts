@@ -1,6 +1,5 @@
 import type { StellarCoinConfig } from "@ledgerhq/coin-stellar/config";
 import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
-import { getEnv } from "@shared/env";
 
 export const stellarConfig: Record<string, ConfigInfo> = {
   config_currency_stellar: {
@@ -13,11 +12,11 @@ export const stellarConfig: Record<string, ConfigInfo> = {
       name: "Stellar",
       unit: { name: "Lumen", code: "XLM", magnitude: 7 },
       explorer: {
-        url: getEnv("API_STELLAR_HORIZON"),
-        fetchLimit: getEnv("API_STELLAR_HORIZON_FETCH_LIMIT"),
+        url: "https://stellar.coin.ledger.com",
+        fetchLimit: 100,
       },
-      useStaticFees: getEnv("API_STELLAR_HORIZON_STATIC_FEE"),
-      enableNetworkLogs: getEnv("ENABLE_NETWORK_LOGS"),
+      useStaticFees: false,
+      enableNetworkLogs: false,
     } satisfies StellarCoinConfig,
   },
 };

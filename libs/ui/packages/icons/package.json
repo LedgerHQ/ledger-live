@@ -45,8 +45,7 @@
   "scripts": {
     "build": "pnpm run clean && node scripts/build && node scripts/buildLegacy && tsc --project tsconfig.build.json --noEmit false && node scripts/transpile",
     "prepublishOnly": "pnpm run build",
-    "clean": "rimraf react native reactLegacy nativeLegacy src/react src/native src/reactLegacy src/nativeLegacy",
-    "unimported": "pnpm knip --directory ../../../.. -W libs/ui/packages/icons"
+    "clean": "rimraf react native reactLegacy nativeLegacy src/react src/native src/reactLegacy src/nativeLegacy"
   },
   "peerDependencies": {
     "@types/react": "*",
@@ -66,22 +65,23 @@
   },
   "devDependencies": {
     "@rspack/core": "catalog:",
-    "@svgr/core": "^8.1.0",
-    "@svgr/plugin-jsx": "^8.1.0",
-    "@svgr/plugin-svgo": "^8.1.0",
+    "@svgr/core": "8.1.0",
+    "@svgr/plugin-jsx": "8.1.0",
+    "@svgr/plugin-svgo": "8.1.0",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@types/styled-system": "^5.1.13",
-    "camelcase": "^6.2.1",
+    "@types/styled-system": "5.1.22",
+    "@typescript/native": "catalog:",
+    "camelcase": "6.3.0",
     "glob": "^7.2.0",
     "react": "catalog:",
     "react-native": "catalog:",
     "react-native-svg": "catalog:",
-    "rimraf": "^4.4.1",
+    "rimraf": "4.4.1",
     "styled-components": "catalog:",
     "styled-system": "catalog:",
     "stylis": "catalog:",
-    "tiny-glob": "^0.2.9",
+    "tiny-glob": "0.2.9",
     "typescript": "catalog:"
   }
 }

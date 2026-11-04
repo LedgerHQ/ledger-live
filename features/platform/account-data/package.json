@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-account-data",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "description": "useAccountData: the React hook that keeps one kind of account data read while a screen shows it",
   "main": "src/index.ts",
@@ -17,8 +17,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/account-data"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@domain/api-account-data": "workspace:*",
@@ -38,6 +37,7 @@
     "@testing-library/react": "catalog:",
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",

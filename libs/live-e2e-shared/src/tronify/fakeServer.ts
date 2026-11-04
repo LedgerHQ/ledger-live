@@ -11,8 +11,9 @@ import {
   trc20TransferCallHex,
   tronTxId,
 } from "./txA";
+import { FAKE_TRONIFY_PORT } from "./constants";
 
-export const FAKE_TRONIFY_PORT = Number(process.env.FAKE_TRONIFY_PORT ?? 4790);
+export { FAKE_TRONIFY_PORT };
 
 /** The fake's urls before it starts, so a spec can put them in its coin-config at declaration time.
  * `host` is how the app under test reaches this machine. */

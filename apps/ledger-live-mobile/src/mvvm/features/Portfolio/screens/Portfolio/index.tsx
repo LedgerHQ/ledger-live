@@ -36,7 +36,6 @@ import {
   PortfolioCarouselSection,
   PortfolioEmptySection,
   PortfolioHeaderSection,
-  PortfolioOperationsSection,
   PortfolioBannersSection,
   PortfolioPerpsEntryPoint,
 } from "../../components";
@@ -67,7 +66,6 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     closeAddModal,
     handleHeightChange,
     onBackFromUpdate,
-    shouldDisplayOperationsList,
     shouldDisplayPerpsEntryPoint,
     shouldAddBottomPaddingForLegacyAssets,
   } = usePortfolioViewModel(navigation);
@@ -160,10 +158,6 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       sections.push(<PortfolioCarouselSection key="carousel" backgroundColor={backgroundColor} />);
     }
 
-    if (!shouldDisplayOperationsList) {
-      sections.push(<PortfolioOperationsSection key="operations" />);
-    }
-
     return sections;
   }, [
     showAssets,
@@ -176,7 +170,6 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     handleHeightChange,
     isAWalletCardDisplayed,
     backgroundColor,
-    shouldDisplayOperationsList,
     shouldDisplayPerpsEntryPoint,
     shouldAddBottomPaddingForLegacyAssets,
   ]);

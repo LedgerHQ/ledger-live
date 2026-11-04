@@ -1,12 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
-import { useDeviceOnboardingActor } from "@devtools/bindings";
 import {
   createSessionEventsActor,
   stateValueToString,
+  useDeviceOnboardingActor,
+  type DeviceOnboardingActorSession,
   type OnboardingEvent,
+  type OnboardingInspectionEvent,
   type SessionEvent,
 } from "@features/platform-device-onboarding";
+import { useFeature } from "@features/platform-feature-flags";
+import { flagRegistry } from "@shared/feature-flags";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
   connectDevice,
@@ -22,9 +26,7 @@ import type { Subscription } from "rxjs";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 import { isRebootedDevice, useFirmwareUpdateHandover } from "./useFirmwareUpdateHandover";
 import { useLeaveOnboarding } from "./useLeaveOnboarding";
-import { useDeviceOnboardingFeatureFlag } from "./useDeviceOnboardingFeatureFlag";
 import { createDeviceOnboardingPorts } from "../utils/ports";
-import { type DeviceOnboardingToolProps } from "../utils/toolState";
 
 type UseDeviceOnboardingInput = {
   dmk: DeviceManagementKit | null;
@@ -34,11 +36,34 @@ type UseDeviceOnboardingInput = {
   wasReadOnlyAtEntry?: boolean;
   /** Runs right before the exit navigates, so the host can stop blocking back. */
   onLeave?: () => void;
+  /** Watches every machine update from the actor's creation. The funnel passes none. */
+  inspect?: (event: OnboardingInspectionEvent) => void;
 };
 
 type StoppableActor = { stop(): void };
 
-export type DeviceOnboardingSession = DeviceOnboardingToolProps & {
+const defaultFlagParams = flagRegistry.deviceOnboarding.parse(undefined).params;
+
+export type DeviceOnboardingStatus = "idle" | "connecting" | "running" | "exited";
+
+export type DeviceOnboardingDevice = {
+  readonly name: string;
+  readonly modelId: string;
+  readonly sessionId: string;
+  readonly wired: boolean;
+};
+
+export type DeviceOnboardingSession = Pick<
+  DeviceOnboardingActorSession,
+  "state" | "context" | "snapshot" | "exit" | "sendableEvents" | "send" | "actorRef" | "portsRef"
+> & {
+  status: DeviceOnboardingStatus;
+  /** Null while `running` means the transport went away, which re-enables Connect. */
+  device: DeviceOnboardingDevice | null;
+  /** Set when the host failed to connect a device or to start the flow. */
+  error: string | null;
+  connect: () => void;
+  reset: () => void;
   liveDevice: Device | null;
   /** Drops a firmware lookup that has not opened its screen yet. */
   closeFirmwareHandover: () => void;
@@ -55,9 +80,7 @@ async function releaseDeviceSession(
   await dmk.disconnect({ sessionId }).catch(() => undefined);
 }
 
-function statusWithActor(
-  actor: { getSnapshot(): unknown } | null,
-): DeviceOnboardingToolProps["status"] {
+function statusWithActor(actor: { getSnapshot(): unknown } | null): DeviceOnboardingStatus {
   return actor ? "running" : "idle";
 }
 
@@ -68,14 +91,17 @@ export function useDeviceOnboarding({
   navigateOnExit = true,
   wasReadOnlyAtEntry = false,
   onLeave,
+  inspect,
 }: UseDeviceOnboardingInput): DeviceOnboardingSession {
-  const [status, setStatus] = useState<DeviceOnboardingToolProps["status"]>("idle");
-  const [device, setDevice] = useState<DeviceOnboardingToolProps["device"]>(null);
+  const [status, setStatus] = useState<DeviceOnboardingStatus>("idle");
+  const [device, setDevice] = useState<DeviceOnboardingSession["device"]>(null);
   const [error, setError] = useState<string | null>(null);
   const [liveDevice, setLiveDevice] = useState<Device | null>(null);
-  const { featureFlag, setFeatureFlag, isFeatureFlagOverridden, resetFeatureFlag } =
-    useDeviceOnboardingFeatureFlag();
-  const hostsSeedSetup = Boolean(featureFlag?.enabled && featureFlag.params.connectUnseededDevice);
+  const feature = useFeature("deviceOnboarding");
+  // A saved value can predate a new param, so the param falls back to its default.
+  const hostsSeedSetup = Boolean(
+    feature?.enabled && { ...defaultFlagParams, ...feature.params }.connectUnseededDevice,
+  );
   const leaveOnboarding = useLeaveOnboarding({
     device: liveDevice,
     navigateOnExit,
@@ -106,11 +132,9 @@ export function useDeviceOnboarding({
   const {
     state,
     context,
-    machineContext,
-    log,
+    snapshot,
     exit,
     sendableEvents,
-    nextStates,
     setSessionReady,
     actorRef,
     portsRef,
@@ -121,6 +145,7 @@ export function useDeviceOnboarding({
     resetActor,
   } = useDeviceOnboardingActor({
     missingSessionMessage: "No mobile onboarding session",
+    inspect,
     onEvent: event => onEventRef.current(event),
     onDone: handleDone,
     leaveOnboarding: (reason, context) => {
@@ -439,20 +464,16 @@ export function useDeviceOnboarding({
     liveDevice,
     state,
     context,
-    machineContext,
-    log,
+    snapshot,
     exit,
     sendableEvents,
-    nextStates,
     error,
     connect,
     send,
     reset,
     closeFirmwareHandover,
     abortFirmwareReconnect,
-    featureFlag,
-    setFeatureFlag,
-    isFeatureFlagOverridden,
-    resetFeatureFlag,
+    actorRef,
+    portsRef,
   };
 }

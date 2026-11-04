@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-xrp",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "private": true,
   "description": "Ledger XRP Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -75,11 +75,12 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "axios": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "rimraf": "^5.0.5",
+    "rimraf": "5.0.10",
     "typescript": "catalog:"
   }
 }

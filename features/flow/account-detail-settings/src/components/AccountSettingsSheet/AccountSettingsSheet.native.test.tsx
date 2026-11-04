@@ -1,8 +1,8 @@
 import React from "react";
 import { render, screen, userEvent } from "@testing-library/react-native";
 import { I18nWrapper, onLinkOpened, openExternal } from "../../__tests__/i18nWrapper";
-import { AccountSettingsSheet } from "./AccountSettingsSheet.native";
-import type { AccountSettingsSheetProps } from "./types.native";
+import { AccountSettingsSheet } from "./AccountSettingsSheet";
+import type { AccountSettingsSheetProps } from "./types";
 
 function renderSheet(overrides: Partial<AccountSettingsSheetProps> = {}) {
   const props: AccountSettingsSheetProps = {
@@ -82,5 +82,46 @@ describe("AccountSettingsSheet (Native)", () => {
     renderSheet();
 
     expect(screen.queryByTestId("account-settings-view-explorer")).toBeNull();
+  });
+
+  describe("events", () => {
+    const eventsOf = (onEvent: jest.Mock) => onEvent.mock.calls.map(([event]) => event);
+
+    it("tells which menu entry the user picked", async () => {
+      const onEvent = jest.fn();
+      const { user } = renderSheet({ onEvent });
+
+      await user.press(screen.getByTestId("account-settings-change-name"));
+      await user.press(screen.getByTestId("account-settings-advanced-logs"));
+      await user.press(screen.getByTestId("account-settings-remove-account"));
+
+      expect(eventsOf(onEvent)).toEqual(["changeName", "viewLogs", "removeFromPortfolio"]);
+    });
+
+    it("tells whether the removal is validated or cancelled", async () => {
+      const onEvent = jest.fn();
+      const { user } = renderSheet({ onEvent });
+
+      await user.press(screen.getByTestId("account-settings-remove-account"));
+      await user.press(screen.getByTestId("account-settings-remove-cancel"));
+      await user.press(screen.getByTestId("account-settings-remove-confirm"));
+
+      expect(eventsOf(onEvent)).toEqual(["removeFromPortfolio", "cancelRemove", "validateRemove"]);
+    });
+
+    it("tells when the explorer is opened", async () => {
+      const onEvent = jest.fn();
+      const { user } = renderSheet({
+        onEvent,
+        account: {
+          currency: { explorerViews: [{ address: "https://explorer.test/address/$address" }] },
+          freshAddress: "bc1qaddress",
+        },
+      });
+
+      await user.press(screen.getByTestId("account-settings-view-explorer"));
+
+      expect(eventsOf(onEvent)).toEqual(["viewExplorer"]);
+    });
   });
 });

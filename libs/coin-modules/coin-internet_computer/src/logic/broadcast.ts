@@ -118,7 +118,10 @@ const isVerdict = (error: unknown): boolean =>
  * an increase or a split could apply twice. That outcome is reported as ICPCallUnconfirmed, which
  * carries the request id, never as an ordinary failure.
  */
-async function broadcastNeuronCommand({ call, read_state }: SignedNeuronCommand): Promise<string> {
+async function broadcastNeuronCommand(
+  host: string,
+  { call, read_state }: SignedNeuronCommand,
+): Promise<string> {
   requireCall(call.content, "neuron command");
   refuseExpired(call.content);
   const requestId = Buffer.from(requestIdOf(call.content));
@@ -135,6 +138,7 @@ async function broadcastNeuronCommand({ call, read_state }: SignedNeuronCommand)
   let answered: string | undefined;
   try {
     const reply = await readReplyFromCanister(
+      host,
       Buffer.from(Cbor.encode(call)),
       Buffer.from(Cbor.encode(read_state)),
       MAINNET_GOVERNANCE_CANISTER_ID,
@@ -187,10 +191,10 @@ const isDuplicate = ({ Err }: LedgerTransferOutcome): boolean =>
  * transfer or of the claim is unknown. Never a plain failure, because sending the stake again would
  * stake twice; {@link refreshNeuronStake} retries the claim alone.
  */
-async function broadcastStakeTransfer({
-  transfer,
-  stake_nonce,
-}: SignedStakeTransfer): Promise<string> {
+async function broadcastStakeTransfer(
+  host: string,
+  { transfer, stake_nonce }: SignedStakeTransfer,
+): Promise<string> {
   const { content } = transfer;
   requireCall(content, "ledger transfer");
   const nonce = parseStakeNonce(stake_nonce);
@@ -212,13 +216,14 @@ async function broadcastStakeTransfer({
   let outcome: LedgerTransferOutcome;
   try {
     const callResponse = await broadcastTxn(
+      host,
       Buffer.from(Cbor.encode(transfer)),
       MAINNET_LEDGER_CANISTER_ID,
       "call",
     );
     if (!callResponse) throw new ICPCallUnconfirmed("ICPCallUnconfirmed", settled);
     const requestIdHex = Buffer.from(requestIdOf(content)).toString("hex");
-    outcome = await readTransferOutcome(callResponse, requestIdHex);
+    outcome = await readTransferOutcome(host, callResponse, requestIdHex);
   } catch (error) {
     if (isTransferVerdict(error) || error instanceof ICPCallUnconfirmed) throw error;
     throw new ICPCallUnconfirmed("ICPCallUnconfirmed", { ...settled, cause: error });
@@ -227,7 +232,7 @@ async function broadcastStakeTransfer({
   if (!isDuplicate(outcome)) throwIfLedgerTransferRefused(outcome);
 
   try {
-    await refreshNeuronStake(controller.toText(), settled.stakeNonce);
+    await refreshNeuronStake(host, controller.toText(), settled.stakeNonce);
   } catch (error) {
     if (error instanceof ICPStakeNotRefreshed || error instanceof ICPCallUnconfirmed) {
       throw Object.assign(error, settled);
@@ -246,26 +251,26 @@ async function broadcastStakeTransfer({
  * execute, but no signed read-state request exists to poll its status, so the broadcast fails as the
  * account bridge does.
  */
-export async function broadcast(tx: string): Promise<string> {
+export async function broadcast(host: string, tx: string): Promise<string> {
   const envelope = Buffer.from(tx, "hex");
   const decoded = Cbor.decode<
     { content: DecodedCallContent } | SignedNeuronCommand | SignedStakeTransfer
   >(envelope);
-  if (isSignedNeuronCommand(decoded)) return broadcastNeuronCommand(decoded);
+  if (isSignedNeuronCommand(decoded)) return broadcastNeuronCommand(host, decoded);
 
-  if (isSignedStakeTransfer(decoded)) return broadcastStakeTransfer(decoded);
+  if (isSignedStakeTransfer(decoded)) return broadcastStakeTransfer(host, decoded);
 
   const { content } = decoded;
   requireCall(content, "ledger transfer");
   refuseExpired(content);
   const hash = transferHash(content, decodeTransfer(content));
 
-  const callResponse = await broadcastTxn(envelope, MAINNET_LEDGER_CANISTER_ID, "call");
+  const callResponse = await broadcastTxn(host, envelope, MAINNET_LEDGER_CANISTER_ID, "call");
   if (!callResponse) {
     throw new Error("[ICP](broadcast) The node returned no certificate");
   }
   const requestIdHex = Buffer.from(requestIdOf(content)).toString("hex");
-  throwIfLedgerTransferRefused(await readTransferOutcome(callResponse, requestIdHex));
+  throwIfLedgerTransferRefused(await readTransferOutcome(host, callResponse, requestIdHex));
 
   return hash;
 }

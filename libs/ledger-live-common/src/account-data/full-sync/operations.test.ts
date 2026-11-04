@@ -3,6 +3,7 @@ import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { genAccount } from "../../mock/account";
 import { createFixtureTokenAccount } from "../../mock/fixtures/cryptoCurrencies";
+import { BalanceAssetIdSchema } from "@domain/entity-account-balance";
 import { toAccountOperations } from "./operations";
 
 const base = genAccount("operations", { currency: getCryptoCurrencyById("ethereum") });
@@ -243,5 +244,15 @@ describe("toAccountOperations", () => {
     });
     const [row] = toAccountOperations(account([sent])).operations;
     expect(row).toEqual(expect.objectContaining({ fee: "0", senders: [] }));
+  });
+
+  it("keeps only the rows of the asset a query filters on, sub operations included", () => {
+    const received = op(tokenAccount.id, "0xb", "IN", "2026-01-02T00:00:00.000Z");
+    const sent = op(base.id, "0xa", "OUT", "2026-01-01T00:00:00.000Z");
+    const legacy = account([sent], { operations: [received] });
+    const filterAsset = BalanceAssetIdSchema.parse(tokenId);
+    expect(toAccountOperations(legacy, { filterAsset }).operations.map(row => row.id)).toEqual([
+      `${tokenId}-0xb-IN`,
+    ]);
   });
 });

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-wallet",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "private": true,
   "description": "Ledger Live wallet",
   "keywords": [
@@ -41,13 +41,16 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
-    "@types/pako": "^2.0.0",
-    "@types/ws": "^8.5.3",
+    "@types/pako": "2.0.3",
+    "@types/ws": "8.5.10",
     "jest": "catalog:",
     "msw": "catalog:",
-    "timemachine": "^0.3.2",
+    "timemachine": "0.3.2",
     "typescript": "catalog:",
-    "ws": "^8.16.0"
+    "ws": "8.22.0",
+    "@typescript/native": "catalog:",
+    "rimraf": "catalog:",
+    "oxlint": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -58,7 +61,6 @@
     "lint": "oxlint ./src -D import/no-cycle",
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "pnpm knip --directory ../.. -W libs/live-wallet",
     "test": "jest",
     "coverage": "jest --coverage"
   },

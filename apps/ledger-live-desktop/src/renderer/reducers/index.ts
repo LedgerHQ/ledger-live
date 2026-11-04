@@ -29,6 +29,7 @@ import onboarding, { OnboardingState } from "./onboarding";
 import { lldRTKApiReducers, LLDRTKApiState } from "./rtkQueryApi";
 import { accountAliasSlice, type AccountAliasState } from "@domain/entity-account-alias";
 import { identitiesSlice, type IdentitiesState } from "@domain/entity-client-identity";
+import { predictionsSlice, type PredictionsState } from "@domain/entity-predictions";
 import { supportedFiatsSlice, type SupportedFiatsState } from "@domain/entity-currency-fiat";
 import { contactsSlice, type ContactsState } from "@domain/entity-contact";
 import { accountDataSlice, type AccountDataState } from "@domain/entity-account-data";
@@ -37,12 +38,20 @@ import {
   accountOperationsSlice,
   type AccountOperationsState,
 } from "@domain/entity-account-operation";
+import {
+  accountBalanceHistoriesSlice,
+  type AccountBalanceHistoriesState,
+} from "@domain/entity-account-balance-history";
 import { accountsSlice, type AccountsState as AccountEntriesState } from "@domain/entity-account";
 import {
   largeScreenUpsellModalSlice,
   type LargeScreenUpsellModalState,
 } from "@features/flow-large-screen-upsell";
 import { payCardBalanceSlice, type PayCardBalanceState } from "@features/flow-pay-balance/state";
+import {
+  accountAnalyticsIntroductionSlice,
+  type AccountAnalyticsIntroductionState,
+} from "@features/flow-account-detail-analytics-notice/state";
 import {
   payCardFeatureTourSlice,
   type PayCardFeatureTourState,
@@ -100,6 +109,7 @@ export type State = LLDRTKApiState & {
   sendFlow: SendFlowState;
   onboarding: OnboardingState;
   postOnboarding: PostOnboardingState;
+  predictions: PredictionsState;
   settings: SettingsState;
   trustchain: TrustchainStore;
   UI: UIState;
@@ -123,9 +133,11 @@ export type State = LLDRTKApiState & {
   accountData: AccountDataState;
   accountBalances: AccountBalancesState;
   accountOperations: AccountOperationsState;
+  accountBalanceHistories: AccountBalanceHistoriesState;
   accountEntries: AccountEntriesState;
   largeScreenUpsellModal: LargeScreenUpsellModalState;
   payCardBalance: PayCardBalanceState;
+  accountAnalyticsIntroduction: AccountAnalyticsIntroductionState;
   payCardFeatureTour: PayCardFeatureTourState;
   payRequestVerifyHint: PayRequestVerifyHintState;
   payCardOnboardingWidget: PayCardOnboardingWidgetState;
@@ -151,6 +163,7 @@ const appReducer = combineReducers({
   UI,
   onboarding,
   postOnboarding,
+  predictions: predictionsSlice.reducer,
   market,
   marketBanner,
   wallet,
@@ -174,9 +187,11 @@ const appReducer = combineReducers({
   accountData: accountDataSlice.reducer,
   accountBalances: accountBalancesSlice.reducer,
   accountOperations: accountOperationsSlice.reducer,
+  accountBalanceHistories: accountBalanceHistoriesSlice.reducer,
   accountEntries: accountsSlice.reducer,
   largeScreenUpsellModal: largeScreenUpsellModalSlice.reducer,
   payCardBalance: payCardBalanceSlice.reducer,
+  accountAnalyticsIntroduction: accountAnalyticsIntroductionSlice.reducer,
   payCardFeatureTour: payCardFeatureTourSlice.reducer,
   payRequestVerifyHint: payRequestVerifyHintSlice.reducer,
   payCardOnboardingWidget: payCardOnboardingWidgetSlice.reducer,

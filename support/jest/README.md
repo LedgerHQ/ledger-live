@@ -17,10 +17,9 @@ The dual web/native presets, `createSharedUiJestConfig` and `createFlowJestConfi
 native-only variants), are built on one private core, `core/`, which is not exported. It holds
 the transform, the platform extensions, the jsdom web and node native projects, the Lumen,
 crypto-icons, react-native and image mocks, the web setup, coverage and reporters (sonar, test
-quarantine, `github-actions` on CI), and one override rule: in `webOverrides` / `nativeOverrides`,
-`moduleNameMapper` and `setupFilesAfterEnv` add to the project's own, every other key replaces
-it. A preset adds only its own mocks, test matching, resolver and transform allowlist. The core's
-mocks stay reachable as `@support/jest/shared/mocks/*`.
+quarantine, `github-actions` on CI), and the [override rule](#overrides). A preset adds only its
+own mocks, test matching, resolver and transform allowlist. The core's mocks stay reachable as
+`@support/jest/shared/mocks/*`.
 
 The dual presets set `coverageReporters` at the top level, since jest ignores it inside a project.
 The lcov root is the repository root seen from `rootDir` when set, else the layer's depth
@@ -43,6 +42,16 @@ module.exports = createSharedJestConfig({ rootDir: __dirname }, { esm: true });
 
 Tests live in `src/` and match `*.test.ts`; a package whose tests live elsewhere overrides `roots`
 and `testMatch`. The preset reports to `github-actions` on CI.
+
+## Overrides
+
+Every key a package passes to a preset factory, top level or in `webOverrides` /
+`nativeOverrides`, replaces the preset's value, as in jest. The dual, native-only and devtools
+presets export their projects' `webModuleNameMapper`, `nativeModuleNameMapper`,
+`webSetupFilesAfterEnv` and `nativeSetupFilesAfterEnv`, frozen: a package that keeps them while
+adding its own spreads them into its override. jest takes the first `moduleNameMapper` pattern
+that matches, so entries placed before the spread win over it, and an entry after it with the same
+pattern replaces that mock in place.
 
 ## libs-coin
 

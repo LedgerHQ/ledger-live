@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-signer-zcash",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "private": true,
   "description": "Ledger Hardware Wallet ZCash Application API",
   "keywords": [
@@ -40,9 +40,12 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
-    "rimraf": "^4.4.1",
-    "ts-node": "^10.4.0",
-    "ws": "catalog:"
+    "rimraf": "4.4.1",
+    "ts-node": "10.9.2",
+    "ws": "catalog:",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
+    "oxlint": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

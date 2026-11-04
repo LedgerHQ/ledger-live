@@ -2,7 +2,7 @@ import { requiredApiKeys } from "@ledgerhq/coin-module-framework/api/index";
 import type { IcpContext } from "../config";
 import { createApi, fetchBalance } from "./index";
 
-const context = {} as IcpContext;
+const context = { config: async () => ({}) } as unknown as IcpContext;
 
 describe("createApi", () => {
   const api = createApi();

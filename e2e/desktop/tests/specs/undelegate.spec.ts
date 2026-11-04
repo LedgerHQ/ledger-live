@@ -3,7 +3,9 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
-import { delegateTeamOwner } from "@ledgerhq/live-e2e-shared/data/delegateTeamOwner";
+import { coinTeamOwner } from "@ledgerhq/live-e2e-shared/data/coinTeamOwner";
+import { TestFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
+import { ownedBy } from "tests/utils/allureUtils";
 import {
   liveDataCommand,
   liveDataWithAddressCommand,
@@ -62,14 +64,17 @@ test.describe("Undelegate", { lock: suiLock.names }, () => {
 const minaPairLock = exclusiveLockFor({ broadcastAccounts: MINA_DELEGATION_PAIR });
 
 // Tests are skipped while waiting for LIVE-37757 to be done
-test.describe.skip("Undelegate - MINA", { lock: minaPairLock.names }, () => {
+const minaDetails = {
+  lock: minaPairLock.names,
+  ...ownedBy(coinTeamOwner(Currency.MINA.id), { folder: TestFolder.DELEGATE }),
+};
+test.describe.skip("Undelegate - MINA", minaDetails, () => {
   test.slow();
   skipSharedAccountOnSecondaryLeg("Mina undelegate");
 
   // Broadcasting is left to the nightly policy: this flow frees the delegated account of the pair,
   // which the delegate flow stakes back.
   test.use({
-    teamOwner: delegateTeamOwner(Currency.MINA.id),
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: Currency.MINA.speculosApp,
     ...minaPairLock.fixtures,

@@ -1,6 +1,6 @@
 import React, { useLayoutEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { AccountSettingsSheet } from "@features/flow-account-detail-settings";
+import { AccountSettingsSheet } from "@features/flow-account-detail-settings/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { LumenNativeStackNavigationOptions } from "LLM/components/Navigation";
 import type { ScreenName } from "~/const";
@@ -29,6 +29,7 @@ export default function AccountDetail() {
     onChangeName,
     onViewAdvancedLogs,
     onConfirmRemove,
+    onSettingsEvent,
   } = useAccountDetailViewModel();
   const navigation = useNavigation<NavigationProps>();
 
@@ -66,6 +67,7 @@ export default function AccountDetail() {
         account={account}
         onConfirmRemove={onConfirmRemove}
         onHidden={onSettingsHidden}
+        onEvent={onSettingsEvent}
         testID={ACCOUNT_DETAIL_TEST_IDS.settingsSheet}
       />
     </>

@@ -26,18 +26,19 @@ const LOADING_FORMATTER: NonNullable<CardAssetsViewModel["formatBalance"]> = () 
   currencyPosition: "start",
 });
 
-type CardAssetDetailsDrawerProps = Readonly<{
-  asset: CardAssetRow;
-  transactions?: readonly CardTransactionItem[];
-  copy: CardAssetDialogCopy;
-  formatBalance?: CardAssetsViewModel["formatBalance"];
-  formatters?: CardAssetsViewModel["formatters"];
-  discreet?: boolean;
-  onTopUp: () => void;
-  onWithdraw: () => void;
-  onShowHistory: () => void;
-  onTransactionPress: (transaction: CardTransactionItem) => void;
-}>;
+export type CardAssetDetailsDrawerProps = Pick<
+  CardAssetsViewModel,
+  "formatBalance" | "formatters" | "discreet"
+> &
+  Readonly<{
+    asset: CardAssetRow;
+    transactions?: readonly CardTransactionItem[];
+    copy: CardAssetDialogCopy;
+    onTopUp: () => void;
+    onWithdraw: () => void;
+    onShowHistory: () => void;
+    onOpenTransaction: (transaction: CardTransactionItem) => void;
+  }>;
 
 export function CardAssetDetailsDrawer({
   asset,
@@ -49,7 +50,7 @@ export function CardAssetDetailsDrawer({
   onTopUp,
   onWithdraw,
   onShowHistory,
-  onTransactionPress,
+  onOpenTransaction,
 }: CardAssetDetailsDrawerProps) {
   const { t } = useTranslation();
   const isAmountLoading = asset.countervalueAmount === null || !formatBalance;
@@ -99,7 +100,7 @@ export function CardAssetDetailsDrawer({
                 key={item.transaction.id}
                 item={item}
                 formatters={formatters}
-                onOpenTransaction={() => onTransactionPress(item)}
+                onOpenTransaction={() => onOpenTransaction(item)}
               />
             ))}
           </Box>

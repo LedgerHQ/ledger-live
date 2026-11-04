@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-market-countervalues",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "description": "Countervalues Redux glue: the slice, the middleware polling rates into it and the hooks reading it",
   "main": "src/index.ts",
@@ -17,8 +17,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/market-countervalues"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@domain/api-market-countervalues": "workspace:*",
@@ -43,6 +42,7 @@
     "@testing-library/react": "catalog:",
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",

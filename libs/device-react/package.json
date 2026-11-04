@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/device-react",
-  "version": "0.6.23",
+  "version": "0.6.24",
   "private": true,
   "description": "Ledger Live device react module",
   "keywords": [
@@ -38,7 +38,10 @@
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "react": "catalog:",
-    "react-dom": "catalog:"
+    "react-dom": "catalog:",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
+    "rimraf": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

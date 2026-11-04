@@ -111,9 +111,16 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
       });
       setTrackingSource(page);
 
-      navigateToSwap(ledgerCurrency);
+      await navigateToSwap(ledgerCurrency, { ledgerIds: currency?.ledgerIds });
     },
-    [getLedgerCurrency, currency?.ticker, page, swapDefaultTrack, navigateToSwap],
+    [
+      getLedgerCurrency,
+      currency?.ticker,
+      currency?.ledgerIds,
+      page,
+      swapDefaultTrack,
+      navigateToSwap,
+    ],
   );
 
   const onStake = useCallback(

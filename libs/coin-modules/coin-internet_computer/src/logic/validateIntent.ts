@@ -122,9 +122,11 @@ function validateStakeTransfer(
  * {@link validateIntent}, then, for a stake transfer that passes it, the checks that read its stake
  * account from governance and the ledger. They are the only ones: broadcast does not repeat them.
  * Deriving the account needs the sender's public key, so a stake transfer without a usable one does
- * not pass.
+ * not pass. `resolveHost` is called only when the stake account is read, so every other intent
+ * validates without the node or the config.
  */
 export async function validateIntentWithStakeAccount(
+  resolveHost: () => Promise<string>,
   intent: IcpIntent,
   balances: Balance[],
   customFees?: FeeEstimation,
@@ -142,7 +144,7 @@ export async function validateIntentWithStakeAccount(
   }
   const transfer = stakeTransferOf(intent, validation.amount);
   if (transfer instanceof Error) return validation;
-  const refusal = await checkStakeAccount(controller, transfer);
+  const refusal = await checkStakeAccount(await resolveHost(), controller, transfer);
   if (refusal) validation.errors[errorFieldOf(refusal)] = refusal;
   return validation;
 }

@@ -1,6 +1,7 @@
 import { AccountBridge } from "@ledgerhq/types-live";
 import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
-import { AccountAwaitingSendPendingOperations } from "../../errors";
+import { AccountAwaitingSendPendingOperations, TokenNonTransferable } from "../../errors";
+import { isNonTransferableToken } from "../../account/nonTransferableTokens";
 import BigNumber from "bignumber.js";
 import { getCoinModuleApi } from "./api";
 import { buildContext } from "./api/context";
@@ -102,6 +103,18 @@ export function genericGetTransactionStatus(
         { customFees },
       );
 
+    const tokenAccount = transaction.subAccountId
+      ? account.subAccounts?.find(sub => sub.id === transaction.subAccountId)
+      : undefined;
+    const sendsNonTransferableToken = !!tokenAccount && isNonTransferableToken(tokenAccount.token);
+    const statusErrors = sendsNonTransferableToken
+      ? {
+          ...(errors.recipient && { recipient: errors.recipient }),
+          ...(errors.sender && { sender: errors.sender }),
+          amount: new TokenNonTransferable(),
+        }
+      : errors;
+
     // `prepareTransaction` swallowed a failed estimation so `validateIntent` could name its cause.
     // When it names none, the failure was not a refusal of this input (a network error, or one that
     // has since cleared): reject, so `useBridgeTransaction` retries `prepareTransaction` instead of
@@ -109,13 +122,13 @@ export function genericGetTransactionStatus(
     // "could not estimate" (Tezos), a convention rather than a typed framework contract.
     if (
       transaction.feesEstimationFailed &&
-      Object.keys(errors).every(key => key === "estimation")
+      Object.keys(statusErrors).every(key => key === "estimation")
     ) {
-      throw errors.estimation ?? new FeeNotLoaded();
+      throw statusErrors.estimation ?? new FeeNotLoaded();
     }
 
     return {
-      errors: addAccountToBuyLinks(errors, account.id),
+      errors: addAccountToBuyLinks(statusErrors, account.id),
       warnings,
       totalFees: typeof totalFees === "bigint" ? new BigNumber(totalFees.toString()) : undefined,
       estimatedFees:

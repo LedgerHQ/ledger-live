@@ -12,8 +12,8 @@ import {
 import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
 import { CONTACT_ADDRESS_LABEL_MAX_LENGTH } from "@domain/entity-contact";
 import { useEditAddressLabels } from "./copy/useEditAddressLabels";
-import type { ContactsRenameAddressDialogProps } from "./types";
-import { useEditAddressDialogPresentation } from "./useEditAddressDialogPresentation.web";
+import type { ContactsRenameAddressDialogProps } from "./ContactsRenameAddressDialog.types";
+import { useEditAddressDialogPresentation } from "./useEditAddressDialogPresentation";
 
 export function ContactsRenameAddressDialog({
   isOpen,

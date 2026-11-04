@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-pay-deposit",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "private": true,
   "description": "Pay deposit options flow for Ledger Wallet",
   "main": "src/index.ts",
@@ -23,8 +23,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/flow/pay-deposit"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@features/platform-pay-analytics": "workspace:^",
@@ -48,6 +47,7 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",

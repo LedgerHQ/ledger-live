@@ -83,8 +83,8 @@ export function toBlockInfo(height: number, encoded: Uint8Array): BlockInfo {
 }
 
 /** Metadata of the block at `height`, read from the ledger or from the archive that holds it. */
-export async function getBlockInfo(height: number): Promise<BlockInfo> {
-  const encoded = await fetchEncodedBlock(BigInt(height));
+export async function getBlockInfo(host: string, height: number): Promise<BlockInfo> {
+  const encoded = await fetchEncodedBlock(host, BigInt(height));
   if (!encoded) throw new Error(`[ICP](getBlockInfo) No block at height ${height}`);
   return toBlockInfo(height, encoded);
 }

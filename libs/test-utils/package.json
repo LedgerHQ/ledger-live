@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/test-utils",
-  "version": "0.5.15",
+  "version": "0.5.16",
   "private": true,
   "description": "Dummy apps and utils for tests",
   "keywords": [
@@ -11,14 +11,19 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es"
+    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "lint": "oxlint src"
   },
   "dependencies": {
     "@ledgerhq/live-common": "workspace:^",
     "serve-handler": "^6.1.3"
   },
   "devDependencies": {
-    "@types/serve-handler": "^6.1.1"
+    "@types/serve-handler": "6.1.4",
+    "@typescript/native": "catalog:",
+    "oxlint": "catalog:",
+    "rimraf": "catalog:",
+    "typescript": "catalog:"
   },
   "exports": {
     ".": {

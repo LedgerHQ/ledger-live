@@ -1,16 +1,8 @@
-import { getEnv } from "@ledgerhq/live-env";
 import * as network from "@ledgerhq/live-network";
 import { getValidators } from "../getValidators";
 
-jest.spyOn({ getEnv }, "getEnv").mockImplementation((key: string) => {
-  const urls: Record<string, string> = {
-    SOLANA_VALIDATORS_SUMMARY_BASE_URL:
-      "https://earn-dashboard.aws.stg.ldg-tech.com/figment/solana/validators_summary",
-  };
-  return urls[key] ?? "";
-});
-
-const VALIDATORS_URL = "https://validators-solana.coin.ledger.com/api/v1/validators/mainnet.json";
+const VALIDATORS_URL = "https://validators.test.invalid/mainnet";
+const SUMMARY_URL = "https://validators-summary.test.invalid";
 
 describe("getValidators", () => {
   beforeEach(() => {
@@ -55,7 +47,7 @@ describe("getValidators", () => {
         ],
       });
 
-    const page = await getValidators(VALIDATORS_URL);
+    const page = await getValidators(VALIDATORS_URL, SUMMARY_URL);
 
     expect(page).toStrictEqual({
       next: undefined,
@@ -101,7 +93,7 @@ describe("getValidators", () => {
       })
       .mockResolvedValueOnce({ status: 200, data: [] });
 
-    const page = await getValidators(VALIDATORS_URL);
+    const page = await getValidators(VALIDATORS_URL, SUMMARY_URL);
 
     expect(page).toMatchObject({
       items: [{ name: "Unnamed1111111111111111111111111111111111111" }],
@@ -132,9 +124,29 @@ describe("getValidators", () => {
       })
       .mockResolvedValueOnce({ status: 200, data: [] });
 
-    const page = await getValidators(VALIDATORS_URL);
+    const page = await getValidators(VALIDATORS_URL, SUMMARY_URL);
 
     expect(page).toStrictEqual({ items: [], next: undefined });
+  });
+
+  it("lists the validators without APY when no summary URL is provided", async () => {
+    const networkSpy = jest.spyOn(network, "default").mockResolvedValueOnce({
+      status: 200,
+      data: [
+        {
+          vote_account: "VoteAccountA1111111111111111111111111111111",
+          active_stake: 1,
+          commission: 5,
+          total_score: 9,
+          delinquent: false,
+        },
+      ],
+    });
+
+    const page = await getValidators(VALIDATORS_URL);
+
+    expect(networkSpy).toHaveBeenCalledTimes(1);
+    expect(page.items).toMatchObject([{ apy: undefined }]);
   });
 
   it("returns an empty page when no validatorsUrl is provided", async () => {

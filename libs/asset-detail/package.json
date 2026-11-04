@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/asset-detail",
-  "version": "0.12.1",
+  "version": "0.12.2",
   "private": true,
   "description": "Ledger Live asset-detail shared module – market data hook, types and utils",
   "keywords": [
@@ -41,7 +41,10 @@
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "react": "catalog:"
+    "react": "catalog:",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
+    "rimraf": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

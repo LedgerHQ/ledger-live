@@ -50,7 +50,21 @@ static readonly NEWCOIN = new AppInfos("NewCoin");
 static readonly NEWCOIN = new Currency("NewCoin", "TICKER", "currency_id", AppInfos.NEWCOIN, [Network.NEWCOIN]);
 ```
 
-### Step 4: Add Accounts
+### Step 4: Set the owning team
+
+[File](/libs/live-e2e-shared/src/data/coinTeamOwner.ts)
+
+Look up the coin module's owner in the CODEOWNERS of the repo that hosts it: this repo's [CODEOWNERS](/CODEOWNERS) for a module under `libs/coin-modules/`, otherwise [`LedgerHQ/coin-modules`](https://github.com/LedgerHQ/coin-modules/blob/main/.github/CODEOWNERS):
+
+```bash
+gh api repos/LedgerHQ/coin-modules/contents/.github/CODEOWNERS --jq .content | base64 -d
+```
+
+If a BST team owns it (the handles are listed in `coinTeamOwner.ts`), add the currency id to `BST_CURRENCY_IDS`. Otherwise nothing changes, because `coinTeamOwner` returns Coin-integration.
+
+**Ask user** only when no CODEOWNERS line covers the module.
+
+### Step 5: Add Accounts
 
 [File](/libs/live-e2e-shared/src/enum/Account.ts)
 
@@ -71,7 +85,7 @@ static readonly NEWCOIN_2 = new Account({
 });
 ```
 
-### Step 5: Add family file (if new family)
+### Step 6: Add family file (if new family)
 
 [File](/libs/live-e2e-shared/src/families/newcoin.ts)
 
@@ -86,7 +100,7 @@ import { getSendEvents, expectSpeculosEventsContain } from "../speculos";
 // implement sendNewCoin function
 ```
 
-### Step 6: Add to speculos.ts
+### Step 7: Add to speculos.ts
 
 [File](/libs/live-e2e-shared/src/speculos.ts)
 
@@ -111,7 +125,7 @@ case Currency.NEWCOIN.id:
   break;
 ```
 
-### Step 7: Add test case to the New Send Flow spec
+### Step 8: Add test case to the New Send Flow spec
 
 [File](../tests/specs/newSendFlow.tx.spec.ts)
 
@@ -141,14 +155,14 @@ families: [
 That list mirrors the production rollout. A currency whose family is missing, or whose id is in
 `excludedCurrencyIds`, must stay in the legacy spec until it is enabled in production.
 
-### Step 8: Rebuild dependencies and the app
+### Step 9: Rebuild dependencies and the app
 
 ```bash
 pnpm build:lld:deps
 pnpm desktop build:testing
 ```
 
-### Step 9: Test on all devices
+### Step 10: Test on all devices
 
 **REQUIRED:** Run the test on all supported device models before considering it complete:
 

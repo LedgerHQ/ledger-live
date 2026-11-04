@@ -7,7 +7,6 @@ import {
   OperationRaw,
   StakingDelegation,
   StakingRedelegation,
-  StakingResources,
   StakingResourcesRaw,
   StakingUnbonding,
   TransactionCommon,
@@ -67,16 +66,6 @@ export type LegacyCosmosResourcesFields = {
   sequence?: number;
   publicKey?: string;
 };
-
-/** @deprecated Kept temporarily while consumers migrate to `stakingResources`. */
-export type CosmosResources = {
-  delegations: CosmosDelegation[];
-  redelegations: CosmosRedelegation[];
-  unbondings: CosmosUnbonding[];
-  delegatedBalance: BigNumber;
-  pendingRewardsBalance: BigNumber;
-  unbondingBalance: BigNumber;
-} & LegacyCosmosResourcesFields;
 
 export type CosmosDelegationRaw = {
   validatorAddress: string;
@@ -206,23 +195,29 @@ type CosmosLikeTransactionBase = TransactionCommon & {
   memo: string | null | undefined;
   memoType?: string | null;
   memoValue?: string | null;
-  /** @deprecated Read-only compatibility with persisted transactions. */
-  validators?: CosmosDelegationInfo[];
-  /** @deprecated Read-only compatibility with persisted transactions. */
-  sourceValidator?: string | null | undefined;
 };
 
 export type CosmosStakingOperationMode = Exclude<CosmosOperationMode, "send" | "redelegate">;
 
-/**
- * Transitional shape kept broad until all persisted datasets have migrated to the
- * mode-specific validator fields.
- */
-export type CosmosLikeTransaction = CosmosLikeTransactionBase & {
-  mode: CosmosOperationMode;
-  valAddress?: string;
-  dstValAddress?: string;
+type CosmosSendTransaction = CosmosLikeTransactionBase & {
+  mode: "send";
 };
+
+type CosmosStakingTransaction = CosmosLikeTransactionBase & {
+  mode: CosmosStakingOperationMode;
+  valAddress: string;
+};
+
+type CosmosRedelegateTransaction = CosmosLikeTransactionBase & {
+  mode: "redelegate";
+  valAddress: string;
+  dstValAddress: string;
+};
+
+export type CosmosLikeTransaction =
+  | CosmosSendTransaction
+  | CosmosStakingTransaction
+  | CosmosRedelegateTransaction;
 
 export type Transaction = CosmosLikeTransaction & {
   family: "cosmos";
@@ -294,9 +289,6 @@ export function isCosmosAccount(account: Account): account is CosmosAccount {
 }
 export type CosmosAccount = Account & {
   sequence: number;
-  /** @deprecated Use `stakingResources`. */
-  cosmosResources?: CosmosResources;
-  stakingResources: StakingResources & LegacyCosmosResourcesFields;
 };
 
 /**

@@ -101,6 +101,7 @@ function getSheet({
   state,
   deviceModelId,
   deviceName,
+  productName,
   trackClick,
 }: Props): OsUpdateSheetSpec | undefined {
   const continueOnDevice = {
@@ -135,16 +136,28 @@ function getSheet({
         state.cancel();
       };
       return {
+        hideHeader: true,
         content: <SecureConnectionRefusedContent onRetry={onRetry} onCancel={onCancel} />,
       };
     }
     case ApplyUpdatesStateType.ALLOW_INSTALL_FIRMWARE_REFUSED: {
+      const onRetry = () => {
+        trackClick(OsUpdateButton.RETRY);
+        state.retry();
+      };
       const onCancel = () => {
         trackClick(OsUpdateButton.CANCEL);
         state.cancel();
       };
       return {
-        content: <InstallFirmwareRefusedContent onCancel={onCancel} />,
+        hideHeader: true,
+        content: (
+          <InstallFirmwareRefusedContent
+            productName={productName}
+            onRetry={onRetry}
+            onCancel={onCancel}
+          />
+        ),
       };
     }
     case ApplyUpdatesStateType.DEVICE_DISCONNECTED:

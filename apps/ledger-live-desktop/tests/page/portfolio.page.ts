@@ -1,7 +1,7 @@
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
 import { expect } from "@playwright/test";
-import { sanitizeAssetNameForTestId } from "LLD/components/AssetsTable/utils/sanitizeAssetNameForTestId";
+import { sanitizeAssetNameForTestId } from "@features/platform-assets-table/test-id";
 
 export class PortfolioPage extends AppPage {
   private addAccountButton = this.page.getByTestId("crypto-addresses-banner-add-account-cta");

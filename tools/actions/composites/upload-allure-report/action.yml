@@ -19,6 +19,10 @@ inputs:
   summary_message:
     required: false
     description: "Formatted Allure test summary written to GitHub Step Summary before the report link"
+  step_summary:
+    required: false
+    description: "Write the summary message and report link to the job summary ('false' when the caller writes them)"
+    default: "true"
 outputs:
   report-url:
     description: "Allure report URL"
@@ -44,29 +48,6 @@ runs:
         BRANCH: ${{ github.head_ref || github.ref_name }}
         INPUTS_REPORT_PATH_SUFFIX: ${{ inputs.report_path_suffix }}
         INPUTS_PLATFORM: ${{ inputs.platform }}
-    - name: Count PNG files
-      id: pngs
-      shell: bash
-      run: |
-        if [ -d "$INPUTS_PATH" ]; then
-          COUNT=$(find "$INPUTS_PATH" -type f -name '*.png' 2>/dev/null | wc -l | tr -d ' ')
-        else
-          COUNT=0
-        fi
-        echo "count=${COUNT}" >> "$GITHUB_OUTPUT"
-      env:
-        INPUTS_PATH: ${{ inputs.path }}
-    - name: Install pngquant
-      if: runner.os == 'Linux' && steps.pngs.outputs.count != '0'
-      uses: LedgerHQ/ledger-live/tools/actions/composites/apt-install@develop
-      with:
-        packages: pngquant
-    - name: Compress PNG files
-      if: steps.pngs.outputs.count != '0'
-      shell: bash
-      run: ${{ github.action_path }}/compress-pngs.sh "${INPUTS_PATH}"
-      env:
-        INPUTS_PATH: ${{ inputs.path }}
     - name: Build Allure upload dir
       id: prepare
       shell: bash
@@ -93,6 +74,7 @@ runs:
         build-name: ${{ github.workflow }}-${{ inputs.platform }}
         build-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
     - name: Write Allure report in summary
+      if: ${{ inputs.step_summary != 'false' }}
       shell: bash
       env:
         REPORT_URL: ${{ steps.generate-report.outputs.url }}

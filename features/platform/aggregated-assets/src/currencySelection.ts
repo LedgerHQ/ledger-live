@@ -1,5 +1,5 @@
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import { AssetsDataWithPagination } from "@domain/api-aggregated-assets";
+import type { AssetsData, AssetsDataWithPagination } from "@domain/api-aggregated-assets";
 
 export function selectCurrencyForMetaId(
   metaCurrencyId: string,
@@ -41,4 +41,21 @@ export function selectCurrency(
   const metaCurrencyId = result.currenciesOrder.metaCurrencyIds?.[0];
   if (!metaCurrencyId) return undefined;
   return selectCurrencyForMetaId(metaCurrencyId, result);
+}
+
+export function selectAssetCurrencyIds(data: AssetsData, currencyId: string): string[] {
+  const assetGroups = Object.values(data.cryptoAssets);
+  const groupWithCurrency = assetGroups.find(group =>
+    Object.values(group.assetsIds).includes(currencyId),
+  );
+  const assetGroup = groupWithCurrency ?? (assetGroups.length === 1 ? assetGroups[0] : undefined);
+  if (!assetGroup) return [];
+
+  const groupTicker = assetGroup.ticker?.toUpperCase();
+  return Object.values(assetGroup.assetsIds).filter(id => {
+    const currency = data.cryptoOrTokenCurrencies[id];
+    const isUnrelatedNativeCoin =
+      currency?.type === "CryptoCurrency" && currency.ticker?.toUpperCase() !== groupTicker;
+    return !isUnrelatedNativeCoin;
+  });
 }

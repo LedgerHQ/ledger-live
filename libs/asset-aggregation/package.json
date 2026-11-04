@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/asset-aggregation",
-  "version": "0.18.1",
+  "version": "0.18.2",
   "private": true,
   "description": "Ledger Live asset-aggregation module – asset aggregation & categorization",
   "keywords": [
@@ -46,7 +46,10 @@
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "react": "catalog:"
+    "react": "catalog:",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
+    "rimraf": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

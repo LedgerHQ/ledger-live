@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-style",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "description": "Single source of truth for StyleProvider across Ledger Live apps — SC ThemeProvider + Lumen integration, layer-boundary-clean",
   "main": "src/index.ts",
@@ -15,6 +15,8 @@
   "sideEffects": false,
   "scripts": {
     "lint": "oxlint src",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "lint:ci": "oxlint src --quiet",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
@@ -40,8 +42,10 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
+    "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",

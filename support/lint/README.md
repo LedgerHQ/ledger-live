@@ -45,6 +45,10 @@ an override in a root one. `ignorePatterns`, `globals` and `settings` do not sur
 either, so a preset that needs them declares them itself. Globs in `overrides` and `ignorePatterns`
 anchor to the directory of the layer config that re-exports the preset.
 
+The `no-restricted-imports` entries that several configs share live in `restricted-imports.mts`,
+which the presets and the `.mts` configs import and which writes the JSON fragments in
+`restricted-imports/` that the JSON configs extend.
+
 ## Conformance
 
 `lint:tool-config` rejects an oxlint config anywhere but the layer roots (the workspace root

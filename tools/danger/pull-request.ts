@@ -12,6 +12,8 @@ export function isMergeConflictsPr(title: string): boolean {
   );
 }
 
+const AUTOMATED_PLATFORM_PREFIX = /^\[(?:LWDM|LWD|LWM)\] /;
+
 export function stripPlatformPrefix(title: string): string {
-  return title.replace(/^\[(LWDM|LWD|LWM)\]\s*/, "");
+  return title.replace(AUTOMATED_PLATFORM_PREFIX, "");
 }

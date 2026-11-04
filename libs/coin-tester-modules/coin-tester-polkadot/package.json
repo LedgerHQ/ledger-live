@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-polkadot",
-  "version": "1.21.1",
+  "version": "1.21.2",
   "private": true,
   "description": "Ledger Polkadot Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -72,9 +72,11 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
+    "rimraf": "catalog:",
     "typescript": "catalog:"
   }
 }

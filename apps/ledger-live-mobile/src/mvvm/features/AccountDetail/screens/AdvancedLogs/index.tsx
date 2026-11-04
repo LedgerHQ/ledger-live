@@ -3,9 +3,16 @@ import { AdvancedLogsView } from "./AdvancedLogsView";
 import { useAdvancedLogsViewModel } from "./useAdvancedLogsViewModel";
 
 export default function AdvancedLogs() {
-  const { input, locale, derivationTag } = useAdvancedLogsViewModel();
+  const { input, locale, derivationTag, onEvent } = useAdvancedLogsViewModel();
 
   if (!input) return null;
 
-  return <AdvancedLogsView input={input} locale={locale} derivationTag={derivationTag} />;
+  return (
+    <AdvancedLogsView
+      input={input}
+      locale={locale}
+      derivationTag={derivationTag}
+      onEvent={onEvent}
+    />
+  );
 }

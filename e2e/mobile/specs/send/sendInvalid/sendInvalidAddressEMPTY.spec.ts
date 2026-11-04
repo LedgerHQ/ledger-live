@@ -5,6 +5,7 @@ const transaction = new Transaction(Account.ETH_1, Account.EMPTY, "0.00001", Fee
 runSendInvalidAddressTest({
   transaction,
   expectedErrorMessage: "",
+  scenario: "empty",
   address: "",
   tmsLinks: ["B2CQA-2710"],
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],

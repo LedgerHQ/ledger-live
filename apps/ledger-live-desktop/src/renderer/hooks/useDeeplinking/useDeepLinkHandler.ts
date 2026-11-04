@@ -16,6 +16,9 @@ import { useRedirectToPostOnboardingCallback } from "../useAutoRedirectToPostOnb
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
+import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { useLiveAppManifest } from "@ledgerhq/live-common/wallet-api/useLiveAppManifest";
+import { PREDICTIONS_LIVE_APP_ID } from "@features/platform-predictions";
 
 import { trackDeeplinkingEvent } from "./utils";
 import { parseDeepLink, createRoute } from "./parseDeepLink";
@@ -53,6 +56,10 @@ export function useDeepLinkHandler() {
   const isPayTabEnabled = !!lwdPayTab?.enabled;
   const lwdContacts = useFeature("lwdContacts");
   const isContactsEnabled = !!lwdContacts?.enabled;
+  const { state: liveAppCatalog } = useRemoteLiveAppContext();
+  const isLiveAppCatalogLoaded = !!liveAppCatalog.value || !!liveAppCatalog.error;
+  const predictionsManifest = useLiveAppManifest(PREDICTIONS_LIVE_APP_ID);
+  const isPredictionsAvailable = !!predictionsManifest || !isLiveAppCatalogLoaded;
   const accountsPath = ACCOUNTS_SIDEBAR_PATH;
 
   const navigate: NavigateFn = useCallback(
@@ -93,6 +100,7 @@ export function useDeepLinkHandler() {
       isGenericAwarenessModalEnabled,
       isPayTabEnabled,
       isContactsEnabled,
+      isPredictionsAvailable,
     }),
     [
       dispatch,
@@ -113,6 +121,7 @@ export function useDeepLinkHandler() {
       isGenericAwarenessModalEnabled,
       isPayTabEnabled,
       isContactsEnabled,
+      isPredictionsAvailable,
     ],
   );
 

@@ -369,7 +369,6 @@ describe("listOperationsV2", () => {
       receiver_account_id: 67890,
       sender_evm_address: mockMirrorAccount.evm_address,
       receiver_evm_address: "0xrecipient",
-      payer_account_id: 12345,
       amount: 5000000,
     });
     const mockContractCallResult = getMockedMirrorContractCallResult({
@@ -467,7 +466,6 @@ describe("listOperationsV2", () => {
       receiver_account_id: null,
       sender_evm_address: mockMirrorAccount.evm_address,
       receiver_evm_address: "0xrecipient123",
-      payer_account_id: 12345,
       amount: 5000000,
     });
     const mockContractCallResult = getMockedMirrorContractCallResult();
@@ -533,7 +531,6 @@ describe("listOperationsV2", () => {
       receiver_account_id: 67890,
       sender_evm_address: null,
       receiver_evm_address: "0xrecipient",
-      payer_account_id: 12345,
       amount: 5000000,
     });
     const mockContractCallResult = getMockedMirrorContractCallResult();
@@ -962,7 +959,6 @@ describe("listOperationsV2", () => {
       receiver_account_id: 67890,
       sender_evm_address: mockMirrorAccount.evm_address,
       receiver_evm_address: "0xrecipient",
-      payer_account_id: 12345,
       amount: 5000000,
     });
 
@@ -1252,7 +1248,6 @@ describe("listOperationsV2", () => {
       receiver_account_id: 12345,
       sender_evm_address: "0xsender",
       receiver_evm_address: mockMirrorAccount.evm_address,
-      payer_account_id: 67890,
       amount: 5000000,
     });
     const mockContractCallResult = getMockedMirrorContractCallResult();
@@ -1525,7 +1520,6 @@ describe("listOperationsV2", () => {
       receiver_account_id: 67890,
       sender_evm_address: mockMirrorAccount.evm_address,
       receiver_evm_address: "0xrecipient",
-      payer_account_id: 12345,
       amount: 5000000,
     });
     const mockContractCallResult = getMockedMirrorContractCallResult({
@@ -1598,7 +1592,6 @@ describe("listOperationsV2", () => {
       consensus_timestamp: Number(sharedTimestamp) * 10 ** 9,
       sender_account_id: 1234,
       sender_evm_address: mockMirrorAccount.evm_address,
-      payer_account_id: 1234,
       amount: 1000000,
     });
     const mockContractCallResult = getMockedMirrorContractCallResult();
@@ -1732,7 +1725,6 @@ describe("listOperationsV2", () => {
       receiver_account_id: 67890,
       sender_evm_address: mockMirrorAccount.evm_address,
       receiver_evm_address: "0xrecipient",
-      payer_account_id: 12345,
       amount: 5000000,
     });
 

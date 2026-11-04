@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-signer-cosmos",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "private": true,
   "description": "Ledger Hardware Wallet Cosmos Application API",
   "keywords": [
@@ -59,7 +59,10 @@
     "@types/semver": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
-    "rimraf": "^4.4.1",
-    "ts-node": "^10.4.0"
+    "rimraf": "4.4.1",
+    "ts-node": "10.9.2",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
+    "oxlint": "catalog:"
   }
 }

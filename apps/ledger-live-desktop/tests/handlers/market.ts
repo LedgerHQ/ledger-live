@@ -13,6 +13,9 @@ const handlers = [
       return HttpResponse.json(MarketMockedResponse.marketList);
     }
   }),
+  http.get("https://countervalues.live.ledger.com/v3/supported/markets/chart/to", () => {
+    return HttpResponse.json(["USD", "EUR", "GBP", "bitcoin"]);
+  }),
   http.get("https://countervalues.live.ledger.com/v3/markets/chart/:range/:id", () => {
     return HttpResponse.json({
       values: [

@@ -86,10 +86,12 @@ describe("createApi", () => {
   const mockConfig: SolanaCoinConfig = {
     token2022Enabled: false,
     legacyOCMSMaxVersion: "1.0.0",
+    rpcUrls: { solana: "https://solana.test.invalid" },
     status: { type: "active" },
     name: "Solana",
     unit: { name: "SOL", code: "SOL", magnitude: 9 },
     validatorsUrl: "https://solana-validators.com",
+    staking: { validatorsSummaryUrl: "https://solana-validators-summary.com" },
   };
 
   const context: SolanaContext = {
@@ -140,7 +142,7 @@ describe("createApi", () => {
     const api = createApi("solana");
     const result = await api.getBalance(context, "address");
 
-    expect(getBalance).toHaveBeenCalledWith(mockChainAPI, "address", {
+    expect(getBalance).toHaveBeenCalledWith(mockChainAPI, mockConfig, "address", {
       token2022Enabled: false,
     });
     expect(result).toEqual(mockBalances);
@@ -188,7 +190,7 @@ describe("createApi", () => {
     const customFees = { value: 10000n };
     const result = await api.craftTransaction(context, intent, { customFees });
 
-    expect(craftTransaction).toHaveBeenCalledWith(mockChainAPI, intent, customFees);
+    expect(craftTransaction).toHaveBeenCalledWith(mockChainAPI, mockConfig, intent, customFees);
     expect(result).toEqual(mockResult);
   });
 
@@ -221,7 +223,7 @@ describe("createApi", () => {
     };
     const result = await api.estimateFees(context, intent);
 
-    expect(estimateFees).toHaveBeenCalledWith(mockChainAPI, intent, undefined);
+    expect(estimateFees).toHaveBeenCalledWith(mockChainAPI, mockConfig, intent, undefined);
     expect(result).toEqual(mockResult);
   });
 
@@ -232,7 +234,7 @@ describe("createApi", () => {
     const api = createApi("solana");
     const result = await api.listOperations(context, "address", { minHeight: 14, order: "asc" });
 
-    expect(listOperations).toHaveBeenCalledWith(mockChainAPI, "address", {
+    expect(listOperations).toHaveBeenCalledWith(mockChainAPI, mockConfig, "address", {
       minHeight: 14,
       order: "asc",
     });
@@ -307,7 +309,10 @@ describe("createApi", () => {
     const api = createApi("solana");
     const result = await api.getValidators(context);
 
-    expect(getValidators).toHaveBeenCalledWith("https://solana-validators.com");
+    expect(getValidators).toHaveBeenCalledWith(
+      "https://solana-validators.com",
+      "https://solana-validators-summary.com",
+    );
     expect(result).toEqual({
       items: [
         {

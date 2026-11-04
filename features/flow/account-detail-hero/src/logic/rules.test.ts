@@ -88,6 +88,23 @@ describe("hasAccountActivity", () => {
       true,
     );
   });
+
+  it("counts a balance or an operation total that arrives before the operation list", () => {
+    const funded = { ...empty, balance: { isZero: () => false } };
+    expect(hasAccountActivity(funded)).toBe(true);
+    expect(hasAccountActivity({ ...empty, operationsCount: 2 })).toBe(true);
+    expect(hasAccountActivity({ ...empty, subAccounts: [funded] })).toBe(true);
+  });
+
+  it("ignores a zero balance and a zero operation total", () => {
+    expect(
+      hasAccountActivity({
+        ...empty,
+        operationsCount: 0,
+        balance: { isZero: () => true },
+      }),
+    ).toBe(false);
+  });
 });
 
 const valuedAsset = (currency: string, balance: number) => ({

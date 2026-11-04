@@ -15,7 +15,6 @@
     "format:check": "oxfmt --check src",
     "lint": "oxlint ./src",
     "typecheck": "tsc --noEmit",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/app-update",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage"
@@ -32,6 +31,7 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/trust__keyto": "1.0.4",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",

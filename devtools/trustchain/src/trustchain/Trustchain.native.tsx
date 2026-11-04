@@ -1,5 +1,5 @@
-import { Modal, ScrollView, TextInput, View } from "react-native";
-import { Box, Button, Text, useTheme } from "@ledgerhq/lumen-ui-rnative";
+import { Modal, ScrollView } from "react-native";
+import { Box, Button, Spinner, Text, TextInput, useTheme } from "@ledgerhq/lumen-ui-rnative";
 import { InitCredentials } from "../components/sdk/InitCredentials";
 import { GetOrCreateTrustchain } from "../components/sdk/GetOrCreateTrustchain";
 import { RestoreTrustchain } from "../components/sdk/RestoreTrustchain";
@@ -16,14 +16,16 @@ const BANNER_LX = {
   flexDirection: "row",
   alignItems: "center",
   gap: "s16",
-  padding: "s16",
+  paddingHorizontal: "s12",
+  paddingVertical: "s16",
 } as const;
-const SECTION_LX = { padding: "s16", gap: "s4" } as const;
+const SECTION_LX = { paddingHorizontal: "s12", paddingVertical: "s16", gap: "s4" } as const;
 const ENV_ROW_LX = {
   flexDirection: "row",
   alignItems: "center",
   gap: "s12",
-  padding: "s16",
+  paddingHorizontal: "s12",
+  paddingVertical: "s16",
 } as const;
 const ENV_BTN_LX = { flexDirection: "row", gap: "s4" } as const;
 
@@ -35,18 +37,13 @@ function Trustchain(props: TrustchainDevToolProps) {
     <>
       {/* Device interaction overlay */}
       <Modal transparent visible={vm.deviceInteractionVisible} animationType="fade">
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: "rgba(0,0,0,0.6)",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
+        <Box
+          lx={{ flex: 1, alignItems: "center", justifyContent: "center", gap: "s12" }}
+          style={{ backgroundColor: theme.colors.bg.canvasOverlay }}
         >
-          <Text typography="body1" style={{ color: "#fff" }}>
-            Approve on device…
-          </Text>
-        </View>
+          <Spinner size={24} />
+          <Text typography="body1">Approve on device…</Text>
+        </Box>
       </Modal>
 
       <ScrollView>
@@ -204,20 +201,12 @@ function DeviceControls({
       lx={ENV_ROW_LX}
       style={{ borderBottomWidth: 1, borderColor: theme.colors.border.mutedSubtle }}
     >
-      <Text typography="body2">Device ID</Text>
       <TextInput
+        lx={{ flex: 1 }}
+        label="Device ID"
         value={deviceId}
         onChangeText={setDeviceId}
-        style={{
-          flex: 1,
-          borderWidth: 1,
-          borderColor: theme.colors.border.mutedSubtle,
-          borderRadius: 4,
-          paddingHorizontal: 8,
-          paddingVertical: 4,
-          fontSize: 13,
-          color: theme.colors.text.base,
-        }}
+        hideClearButton
       />
     </Box>
   );

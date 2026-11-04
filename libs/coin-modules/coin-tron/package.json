@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tron",
-  "version": "10.1.0",
+  "version": "10.2.0",
   "description": "Ledger Tron Coin integration",
   "keywords": [
     "Ledger",
@@ -72,10 +72,12 @@
     "@types/jest": "catalog:",
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
-    "dotenv": "^16.4.5",
+    "@typescript/native": "catalog:",
+    "dotenv": "16.4.7",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
+    "rimraf": "catalog:",
     "typescript": "catalog:"
   },
   "files": [

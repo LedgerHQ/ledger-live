@@ -29,7 +29,7 @@ jest.mock("../network/agent", () => ({
 const mockCertificate = jest.mocked(Certificate.create);
 const mockFetch = jest.fn();
 
-const context = {} as IcpContext;
+const context = { config: async () => ({}) } as unknown as IcpContext;
 const manageNeuron = getCanisterIdlFunc(governanceIdlFactory, "manage_neuron");
 const identity = Secp256k1KeyIdentity.generate(new Uint8Array(32).fill(7));
 const PUBKEY = Buffer.from(identity.getPublicKey().toRaw()).toString("hex");

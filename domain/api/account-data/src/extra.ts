@@ -11,7 +11,14 @@ import type { AccountDataSource } from "./source";
 export type AccountDataRuntime = {
   router: AccountDataRouter;
   inflight: Map<string, Promise<void>>;
+  /** Strictly increasing per store: of two reads, the one started last has the higher revision, whatever the clock does. */
+  nextRevision: () => number;
 };
+
+function revisionCounter(): () => number {
+  let last = 0;
+  return () => ++last;
+}
 
 /** This package's slice of the thunk `extraArgument`. */
 export type AccountDataExtra = { accountData: AccountDataRuntime };
@@ -22,7 +29,11 @@ export function accountDataExtra(
   options?: AccountDataRouterOptions,
 ): AccountDataExtra {
   return {
-    accountData: { router: createAccountDataRouter(sources, options), inflight: new Map() },
+    accountData: {
+      router: createAccountDataRouter(sources, options),
+      inflight: new Map(),
+      nextRevision: revisionCounter(),
+    },
   };
 }
 

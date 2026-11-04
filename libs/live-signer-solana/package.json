@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-signer-solana",
-  "version": "0.22.2",
+  "version": "0.22.3",
   "private": true,
   "description": "Ledger Hardware Wallet Solana Application API",
   "keywords": [
@@ -66,8 +66,11 @@
     "@types/node": "catalog:",
     "@types/semver": "catalog:",
     "jest": "catalog:",
-    "rimraf": "^4.4.1",
-    "ts-node": "^10.4.0"
+    "rimraf": "4.4.1",
+    "ts-node": "10.9.2",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
+    "oxlint": "catalog:"
   },
   "exports": {
     ".": {

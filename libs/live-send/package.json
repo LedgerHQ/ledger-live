@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-send",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "private": true,
   "description": "Shared Ledger Wallet send-flow helpers extracted from live-common",
   "keywords": [
@@ -31,9 +31,11 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
+    "rimraf": "catalog:",
     "typescript": "catalog:"
   },
   "scripts": {
@@ -47,7 +49,6 @@
     "format": "pnpm exec oxfmt ./src",
     "format:check": "pnpm exec oxfmt ./src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "pnpm knip --directory ../.. -W libs/live-send",
     "test": "jest",
     "coverage": "jest --coverage"
   },

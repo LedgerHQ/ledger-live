@@ -45,6 +45,19 @@ function renderHero(overrides: Partial<AccountHeroPort> = {}) {
 }
 
 describe("AccountHero (Native)", () => {
+  it("shows the address type of the account above the balance", () => {
+    renderHero({ tag: "Native segwit" });
+
+    expect(screen.getByTestId(`${TEST_ID}-tag`)).toBeVisible();
+    expect(screen.getByText("Native segwit")).toBeVisible();
+  });
+
+  it("shows no tag when the account has none", () => {
+    renderHero();
+
+    expect(screen.queryByTestId(`${TEST_ID}-tag`)).toBeNull();
+  });
+
   it("renders the balance and the Transfer · Swap · More tiles", () => {
     renderHero();
 
@@ -89,7 +102,7 @@ describe("AccountHero (Native)", () => {
 
     await user.press(screen.getByTestId(`${TEST_ID}-actions-transfer`));
 
-    expect(port.onAction).toHaveBeenCalledWith("transfer");
+    expect(port.onAction).toHaveBeenCalledWith("transfer", "quick_action");
   });
 
   it("opens the More sheet, then closes it and forwards the picked action", async () => {
@@ -105,6 +118,6 @@ describe("AccountHero (Native)", () => {
     await user.press(screen.getByTestId(`${TEST_ID}-more-sheet-earn`));
 
     expect(moreSheet()).toBeCollapsed();
-    expect(port.onAction).toHaveBeenCalledWith("earn");
+    expect(port.onAction).toHaveBeenCalledWith("earn", "more");
   });
 });

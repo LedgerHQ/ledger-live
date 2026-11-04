@@ -84,18 +84,6 @@ export type EditAddressAddressEntryPresentation = Readonly<{
   onChangeText: (value: string) => void;
 }>;
 
-export type ContactsRenameAddressDialogProps = RenameAddressDialogViewModel &
-  Readonly<{
-    isDeviceRequired: boolean;
-    supportsDomain: boolean;
-  }>;
-
-export type ContactsRenameAddressDrawerProps = ContactsRenameAddressDialogProps &
-  Readonly<{
-    autoFocus?: boolean;
-    bottomInset?: number;
-  }>;
-
 export type RenameAddressController = Readonly<{
   getViewModel: (
     draftLabel: string,

@@ -9,11 +9,11 @@ import {
   useContactsAddressDetailActionsPorts,
   trackContactAddressDetailQuickAction,
 } from "@features/flow-contacts";
-import type { ContactsDeleteAddressDrawerProps } from "@features/flow-contacts-delete-address";
+import type { ContactsDeleteAddressDialogProps } from "@features/flow-contacts-delete-address";
 import {
   type ContactAddressDetailSendIntent,
-  type ContactsEditSignerMismatchDrawerProps,
-  type ContactAddressDetailDialogNativeProps,
+  type ContactsEditSignerMismatchDialogProps,
+  type ContactAddressDetailDialogProps,
   createActiveContactAddressDetailActionsUiState,
   createInactiveContactAddressDetailActionsUiState,
   useContactAddressDetailActionsFlowBindings,
@@ -21,7 +21,7 @@ import {
 } from "@features/flow-contacts-detail";
 import type {
   ContactAddressEditSavePayload,
-  ContactsRenameAddressDrawerProps,
+  ContactsRenameAddressDialogProps,
 } from "@features/flow-contacts-edit-address";
 import type { ContactDeviceIntentsPort } from "@features/platform-contacts";
 import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
@@ -40,12 +40,12 @@ const MANUAL_ADDRESS_VALIDATION_DEBOUNCE_MS = 200;
 
 export type ContactAddressDetailActionsFlowProps = Readonly<{
   addressDetailDialog: Pick<
-    ContactAddressDetailDialogNativeProps,
+    ContactAddressDetailDialogProps,
     "onSend" | "onEdit" | "onDelete" | "canSend" | "canEdit" | "canDelete"
   >;
-  deleteSheet: ContactsDeleteAddressDrawerProps;
-  renameSheet: ContactsRenameAddressDrawerProps;
-  signerMismatchSheet: ContactsEditSignerMismatchDrawerProps;
+  deleteSheet: ContactsDeleteAddressDialogProps;
+  renameSheet: ContactsRenameAddressDialogProps;
+  signerMismatchSheet: ContactsEditSignerMismatchDialogProps;
 }>;
 
 function mapUiStateToFlowProps(

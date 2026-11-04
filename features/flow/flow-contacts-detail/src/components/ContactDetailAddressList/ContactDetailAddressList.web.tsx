@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import type { ContactDetailAddressNetworkGroup, ContactDetailAddressRowIntent } from "../../types";
-import { ContactDetailAddressNetworkSection } from "../ContactDetailAddressNetworkSection/ContactDetailAddressNetworkSection.web";
+import { ContactDetailAddressNetworkSection } from "../ContactDetailAddressNetworkSection/ContactDetailAddressNetworkSection";
 
 const COMPACT_BAR_HEIGHT_PX = 80;
 

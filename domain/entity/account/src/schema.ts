@@ -16,6 +16,9 @@ export const LegacyAccountEntrySchema = AccountEntrySchema.required({ legacyId: 
 
 export type LegacyAccountEntry = z.infer<typeof LegacyAccountEntrySchema>;
 
+/** An account only known remotely, or generated: no legacy account backs it. */
+export type RemoteAccountEntry = Omit<AccountEntry, "legacyId">;
+
 export const AccountsStateSchema = z.object({
   /** The accounts, in the user's order. */
   ids: z.array(AccountUUIDSchema),

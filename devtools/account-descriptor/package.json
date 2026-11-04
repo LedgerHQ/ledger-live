@@ -1,6 +1,6 @@
 {
   "name": "@devtools/account-descriptor",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "DevTools page listing the accounts slice: each account descriptor and its legacy id",
   "main": "src/index.ts",
@@ -32,8 +32,11 @@
     "@testing-library/user-event": "catalog:",
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "typescript": "catalog:"

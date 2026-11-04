@@ -15,7 +15,11 @@
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
-    "jest": "catalog:"
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
+    "jest": "catalog:",
+    "rimraf": "catalog:",
+    "oxlint": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -27,8 +31,7 @@
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit --customConditions node",
     "test": "jest",
-    "coverage": "jest --coverage",
-    "knip-check": "pnpm knip --directory ../.. -W libs/live-engagement"
+    "coverage": "jest --coverage"
   },
   "exports": {
     ".": {

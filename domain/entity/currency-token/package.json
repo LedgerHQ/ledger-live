@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-currency-token",
-  "version": "0.5.6",
+  "version": "0.5.7",
   "private": true,
   "description": "Domain entity for token currencies: Zod schema with FK-based parent currency reference",
   "main": "src/index.ts",
@@ -12,11 +12,13 @@
   },
   "sideEffects": false,
   "scripts": {
+    "lint": "oxlint ./src",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W domain/entity/currency-token"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@domain/entity-currency-crypto": "workspace:*",
@@ -29,7 +31,10 @@
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "typescript": "catalog:"
   }
 }

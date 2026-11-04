@@ -1,7 +1,7 @@
 import React from "react";
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { CardAssetsView } from "../CardAssetsView.web";
+import { CardAssetsView } from "../CardAssetsView";
 import { CARD_ASSETS_COPY, I18nWrapper } from "./i18nWrapper";
 import type { CardAssetsViewModel } from "../types";
 
@@ -40,16 +40,16 @@ const ready: CardAssetsViewModel = {
     withdrawDescription: "Withdraw funds from your Monavate account to your Ledger wallet address.",
     continue: "Continue",
   },
-  onAssetPress: jest.fn(),
+  onOpenAsset: jest.fn(),
   onDialogClose: jest.fn(),
-  onTopUpPress: jest.fn(),
-  onWithdrawPress: jest.fn(),
+  onTopUpAsset: jest.fn(),
+  onOpenWithdraw: jest.fn(),
   onWithdrawClose: jest.fn(),
-  onShowHistoryPress: jest.fn(),
+  onShowHistory: jest.fn(),
   onWithdrawContinue: jest.fn(),
-  onManagePress: jest.fn(),
-  onRetryPress: jest.fn(),
-  onAddAssetPress: jest.fn(),
+  onManageAssets: jest.fn(),
+  onRetry: jest.fn(),
+  onAddAsset: jest.fn(),
   onMoveAsset: jest.fn(),
   reorderingAssetIds: new Set(),
 };
@@ -192,12 +192,12 @@ describe("CardAssetsView (web)", () => {
 
   it("should ask the host to manage assets when Manage is pressed", async () => {
     const user = userEvent.setup();
-    const onManagePress = jest.fn();
-    render(<CardAssetsView {...ready} onManagePress={onManagePress} />, { wrapper: I18nWrapper });
+    const onManageAssets = jest.fn();
+    render(<CardAssetsView {...ready} onManageAssets={onManageAssets} />, { wrapper: I18nWrapper });
 
     await user.click(screen.getByRole("button", { name: CARD_ASSETS_COPY.manage }));
 
-    expect(onManagePress).toHaveBeenCalledTimes(1);
+    expect(onManageAssets).toHaveBeenCalledTimes(1);
   });
 
   it("should hide Manage until the asset list is ready", () => {

@@ -1,5 +1,6 @@
 import { getChainAPI } from "../../network";
 import { estimateFees } from "../estimateFees";
+import { TEST_CONFIG } from "../../test/coinConfig";
 
 const api = getChainAPI({ endpoint: "https://solana.coin.ledger.com" });
 
@@ -8,7 +9,7 @@ const TEST_RECIPIENT = "HYe4vSaEGqQKnDrxWDrk3o5H2gznv7qtij5G6NNG8WHd";
 
 describe("estimateFees (integration)", () => {
   it("returns a positive fee estimation for a transfer intent", async () => {
-    const result = await estimateFees(api, {
+    const result = await estimateFees(api, TEST_CONFIG, {
       intentType: "transaction",
       type: "send",
       sender: TEST_ADDRESS,

@@ -12,6 +12,7 @@ import {
   restoreLargeScreenUpsellModalState,
 } from "@features/flow-large-screen-upsell";
 import { restorePayCardBalanceFilter } from "@features/flow-pay-balance/state";
+import { restoreAccountAnalyticsIntroductionFromStorage } from "./restoreAccountAnalyticsIntroduction";
 import { restorePayCardFeatureTour } from "@features/flow-pay-feature-tour/state";
 import { restoreReceiveVerifyHint } from "@features/flow-pay-request/state";
 import { restorePayCardLoginIntro } from "@features/flow-pay-card-auth/state";
@@ -70,6 +71,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { listCachedCurrencyIds } from "./bridge/cache";
 import { importMarketState } from "./actions/market";
 import { importMarketBannerState } from "./reducers/marketBanner";
+import { restorePredictionsState } from "@domain/entity-predictions";
 import { importKnownDevices, mapPersistedKnownDeviceToKnownDevice } from "./reducers/knownDevices";
 import { fetchWallet } from "./actions/wallet";
 import { fetchTrustchain } from "./actions/trustchain";
@@ -404,6 +406,7 @@ async function init() {
     store.dispatch(restoreLargeScreenUpsellModalState(largeScreenUpsellModalState));
   }
 
+  await restoreAccountAnalyticsIntroductionFromStorage(store.dispatch);
   const payCardState = await getKey("app", "payCard");
   if (payCardState !== undefined) {
     store.dispatch(restorePayCardFeatureTour(payCardState));
@@ -435,6 +438,11 @@ async function init() {
   const marketBannerState = await getKey("app", "marketBanner");
   if (marketBannerState) {
     store.dispatch(importMarketBannerState(marketBannerState));
+  }
+
+  const predictionsState = await getKey("app", "predictions");
+  if (predictionsState) {
+    store.dispatch(restorePredictionsState(predictionsState));
   }
 
   setVisualZoomLevelLimits(1, 1);

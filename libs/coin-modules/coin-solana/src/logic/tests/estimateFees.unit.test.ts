@@ -4,6 +4,7 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import type { ChainAPI } from "../../network";
 import { estimateFees, estimateTxFee } from "../estimateFees";
+import { TEST_CONFIG } from "../../test/coinConfig";
 
 jest.mock("../craftTransaction", () => {
   const actual = jest.requireActual("../craftTransaction");
@@ -89,7 +90,7 @@ describe("estimateFees", () => {
     const api = createMockApi([5000]);
     setupBuildMock();
 
-    const result = await estimateFees(api, {
+    const result = await estimateFees(api, TEST_CONFIG, {
       intentType: "transaction",
       type: "send",
       sender: TEST_ADDRESS,
@@ -101,11 +102,51 @@ describe("estimateFees", () => {
     expect(result).toEqual({ value: 5000n });
   });
 
+  it.each([
+    ["prices the memo, whose compute units the priority fee charges", "invoice-42", "invoice-42"],
+    ["leaves out an oversized memo, which validateIntent reports", "x".repeat(501), undefined],
+  ])("%s", async (_name, value, priced) => {
+    const api = createMockApi([5000]);
+    setupBuildMock();
+
+    await estimateFees(api, TEST_CONFIG, {
+      intentType: "transaction",
+      type: "send",
+      sender: TEST_ADDRESS,
+      recipient: TEST_RECIPIENT,
+      amount: 1000000n,
+      asset: { type: "native" },
+      memo: { type: "string", kind: "text", value },
+    });
+
+    const tx = buildVersionedTransaction.mock.calls[0][1];
+    expect(tx.model.commandDescriptor.command.memo).toBe(priced);
+  });
+
+  it("prices the memo of a token transfer too", async () => {
+    const api = createMockApi([5000]);
+    setupBuildMock();
+
+    await estimateFees(api, TEST_CONFIG, {
+      intentType: "transaction",
+      type: "send",
+      sender: TEST_ADDRESS,
+      recipient: TEST_RECIPIENT,
+      amount: 1000000n,
+      asset: { type: "spl-token", assetReference: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v" },
+      memo: { type: "string", kind: "text", value: "invoice-42" },
+    } as TransactionIntent);
+
+    const tx = buildVersionedTransaction.mock.calls[0][1];
+    expect(tx.model.kind).toBe("token.transfer");
+    expect(tx.model.commandDescriptor.command.memo).toBe("invoice-42");
+  });
+
   it("should map token intent to token.transfer kind", async () => {
     const api = createMockApi([5000]);
     setupBuildMock();
 
-    await estimateFees(api, {
+    await estimateFees(api, TEST_CONFIG, {
       intentType: "transaction",
       type: "send",
       sender: TEST_ADDRESS,
@@ -123,7 +164,7 @@ describe("estimateFees", () => {
     (api.getAccountInfo as jest.Mock).mockResolvedValue(mintAccountInfo("spl-token"));
     setupBuildMock();
 
-    await estimateFees(api, {
+    await estimateFees(api, TEST_CONFIG, {
       intentType: "transaction",
       type: "send",
       sender: TEST_ADDRESS,
@@ -143,7 +184,7 @@ describe("estimateFees", () => {
     (api.getAccountInfo as jest.Mock).mockResolvedValue(mintAccountInfo("spl-token-2022"));
     setupBuildMock();
 
-    await estimateFees(api, {
+    await estimateFees(api, TEST_CONFIG, {
       intentType: "transaction",
       type: "send",
       sender: TEST_ADDRESS,
@@ -164,7 +205,7 @@ describe("estimateFees", () => {
       (api.getAccountInfo as jest.Mock).mockResolvedValue(mintAccountInfo("spl-token-2022"));
       setupBuildMock();
 
-      await estimateFees(api, {
+      await estimateFees(api, TEST_CONFIG, {
         intentType: "transaction",
         type,
         sender: TEST_ADDRESS,
@@ -197,7 +238,7 @@ describe("estimateFees", () => {
     (api.getEpochInfo as jest.Mock).mockResolvedValue({ epoch: 10 });
     setupBuildMock();
 
-    const result = await estimateFees(api, {
+    const result = await estimateFees(api, TEST_CONFIG, {
       intentType: "transaction",
       type: "send",
       sender: TEST_ADDRESS,
@@ -216,7 +257,7 @@ describe("estimateFees", () => {
     const api = createMockApi([7000]);
     setupBuildMock();
 
-    const result = await estimateFees(api, {
+    const result = await estimateFees(api, TEST_CONFIG, {
       intentType: "transaction",
       type: "send",
       sender: TEST_ADDRESS,
@@ -234,7 +275,7 @@ describe("estimateFees", () => {
     const api = createMockApi([7000]);
     setupBuildMock();
 
-    await estimateFees(api, {
+    await estimateFees(api, TEST_CONFIG, {
       intentType: "transaction",
       type: "send",
       sender: TEST_ADDRESS,
@@ -254,7 +295,7 @@ describe("estimateFees", () => {
     (api.getMinimumBalanceForRentExemption as jest.Mock).mockResolvedValue(2_039_280);
     setupBuildMock();
 
-    const result = await estimateFees(api, {
+    const result = await estimateFees(api, TEST_CONFIG, {
       intentType: "transaction",
       type: "send",
       sender: TEST_ADDRESS,
@@ -272,7 +313,7 @@ describe("estimateFees", () => {
     (api.getMinimumBalanceForRentExemption as jest.Mock).mockResolvedValue(2_039_280);
     setupBuildMock();
 
-    const result = await estimateFees(api, {
+    const result = await estimateFees(api, TEST_CONFIG, {
       intentType: "transaction",
       type: "token.createATA",
       sender: TEST_ADDRESS,
@@ -294,7 +335,7 @@ describe("estimateFees", () => {
     (api.getAccountInfo as jest.Mock).mockResolvedValue(mintAccountInfo("spl-token"));
     setupBuildMock();
 
-    const result = await estimateFees(api, {
+    const result = await estimateFees(api, TEST_CONFIG, {
       intentType: "transaction",
       type: "send",
       sender: TEST_ADDRESS,
@@ -341,7 +382,7 @@ describe("estimateFees", () => {
         userInputType: "sol",
       });
 
-      expect(await estimateFees(mockedApi(), splSend)).toEqual({
+      expect(await estimateFees(mockedApi(), TEST_CONFIG, splSend)).toEqual({
         value: 5000n,
         parameters: { recipientTokenAccount: "recipient-ata", userInputType: "sol" },
       });
@@ -351,13 +392,13 @@ describe("estimateFees", () => {
       const { SolanaTokenAccountHoldsAnotherToken } = jest.requireActual("../../errors");
       resolveRecipientDescriptor.mockRejectedValueOnce(new SolanaTokenAccountHoldsAnotherToken());
 
-      expect(await estimateFees(mockedApi(), splSend)).toEqual({ value: 5000n });
+      expect(await estimateFees(mockedApi(), TEST_CONFIG, splSend)).toEqual({ value: 5000n });
     });
 
     it("lets any other failure surface", async () => {
       resolveRecipientDescriptor.mockRejectedValueOnce(new Error("network down"));
 
-      await expect(estimateFees(mockedApi(), splSend)).rejects.toThrow("network down");
+      await expect(estimateFees(mockedApi(), TEST_CONFIG, splSend)).rejects.toThrow("network down");
     });
   });
 
@@ -367,7 +408,7 @@ describe("estimateFees", () => {
     (api.getMinimumBalanceForRentExemption as jest.Mock).mockResolvedValue(2_039_280);
     setupBuildMock();
 
-    const result = await estimateFees(api, {
+    const result = await estimateFees(api, TEST_CONFIG, {
       intentType: "transaction",
       type: "token.approve",
       sender: TEST_ADDRESS,
@@ -398,7 +439,7 @@ describe("estimateFees", () => {
     );
     setupBuildMock();
 
-    await estimateFees(api, {
+    await estimateFees(api, TEST_CONFIG, {
       intentType: "transaction",
       type: "send",
       sender: TEST_ADDRESS,
@@ -416,7 +457,7 @@ describe("estimateFees", () => {
 
     const api = createMockApi([5000]);
     await expect(
-      estimateFees(api, {
+      estimateFees(api, TEST_CONFIG, {
         intentType: "transaction",
         type: "send",
         sender: TEST_ADDRESS,
@@ -429,7 +470,7 @@ describe("estimateFees", () => {
 
   it("should estimate fees for staking intent types", async () => {
     const api = createMockApi([5000]);
-    const result = await estimateFees(api, {
+    const result = await estimateFees(api, TEST_CONFIG, {
       intentType: "staking",
       type: "stake.createAccount",
       mode: "delegate",
@@ -447,7 +488,7 @@ describe("estimateFees", () => {
     (api.getMinimumBalanceForRentExemption as jest.Mock).mockResolvedValue(2_282_880);
     setupBuildMock();
 
-    const result = await estimateFees(api, {
+    const result = await estimateFees(api, TEST_CONFIG, {
       intentType: "staking",
       type: "stake.createAccount",
       mode: "delegate",
@@ -467,7 +508,7 @@ describe("estimateFees", () => {
     const api = createMockApi([5000]);
     setupBuildMock();
 
-    const result = await estimateFees(api, {
+    const result = await estimateFees(api, TEST_CONFIG, {
       intentType: "staking",
       type: "stake.split",
       sender: TEST_ADDRESS,
@@ -482,7 +523,7 @@ describe("estimateFees", () => {
   it("resolves the stake account a split opens", async () => {
     const api = createMockApi([5000]);
 
-    const result = await estimateFees(api, {
+    const result = await estimateFees(api, TEST_CONFIG, {
       intentType: "staking",
       type: "stake.split",
       sender: TEST_ADDRESS,
@@ -502,7 +543,7 @@ describe("estimateFees", () => {
       const api = createMockApi([5000]);
       setupBuildMock();
 
-      await estimateFees(api, {
+      await estimateFees(api, TEST_CONFIG, {
         intentType: "transaction",
         type,
         sender: TEST_ADDRESS,
@@ -525,7 +566,7 @@ describe("estimateTxFee", () => {
     const api = createMockApi([5000]);
     setupBuildMock();
 
-    const fee = await estimateTxFee(api, TEST_ADDRESS, "transfer");
+    const fee = await estimateTxFee(api, TEST_CONFIG, TEST_ADDRESS, "transfer");
 
     expect(fee).toBe(5000);
     expect(api.getFeeForMessage).toHaveBeenCalledTimes(1);
@@ -536,7 +577,7 @@ describe("estimateTxFee", () => {
     const api = createMockApi([null, 7000]);
     const onChainTx = setupBuildMock();
 
-    const feePromise = estimateTxFee(api, TEST_ADDRESS, "transfer");
+    const feePromise = estimateTxFee(api, TEST_CONFIG, TEST_ADDRESS, "transfer");
     await jest.advanceTimersByTimeAsync(6000);
     const fee = await feePromise;
 
@@ -551,7 +592,7 @@ describe("estimateTxFee", () => {
     const api = createMockApi([null, null]);
     setupBuildMock();
 
-    const feePromise = estimateTxFee(api, TEST_ADDRESS, "transfer");
+    const feePromise = estimateTxFee(api, TEST_CONFIG, TEST_ADDRESS, "transfer");
     await jest.advanceTimersByTimeAsync(6000);
     const fee = await feePromise;
 
@@ -574,7 +615,7 @@ describe("estimateTxFee", () => {
     const api = createMockApi([5000]);
     setupBuildMock();
 
-    const fee = await estimateTxFee(api, TEST_ADDRESS, kind);
+    const fee = await estimateTxFee(api, TEST_CONFIG, TEST_ADDRESS, kind);
 
     expect(fee).toBe(5000);
     const tx = buildVersionedTransaction.mock.calls[0][1];
@@ -585,7 +626,9 @@ describe("estimateTxFee", () => {
     setupBuildMock();
     const api = createMockApi([5000]);
 
-    await expect(estimateTxFee(api, TEST_ADDRESS, "raw")).rejects.toThrow("not implemented");
+    await expect(estimateTxFee(api, TEST_CONFIG, TEST_ADDRESS, "raw")).rejects.toThrow(
+      "not implemented",
+    );
   });
 
   it("should timeout after 5 retries when blockhash never changes", async () => {
@@ -599,7 +642,9 @@ describe("estimateTxFee", () => {
     } as unknown as ChainAPI;
     setupBuildMock("oldBlockhash");
 
-    const feePromise = estimateTxFee(api, TEST_ADDRESS, "transfer").catch((e: Error) => e);
+    const feePromise = estimateTxFee(api, TEST_CONFIG, TEST_ADDRESS, "transfer").catch(
+      (e: Error) => e,
+    );
     await jest.advanceTimersByTimeAsync(30_000);
     const result = await feePromise;
 
@@ -623,7 +668,7 @@ describe("estimateTxFee", () => {
     } as unknown as ChainAPI;
     setupBuildMock("oldBlockhash");
 
-    const feePromise = estimateTxFee(api, TEST_ADDRESS, "transfer");
+    const feePromise = estimateTxFee(api, TEST_CONFIG, TEST_ADDRESS, "transfer");
     for (let i = 0; i < 3; i++) {
       await jest.advanceTimersByTimeAsync(6000);
     }
@@ -640,7 +685,7 @@ describe("estimateTxFee", () => {
     const mockOnChainTx = { message: mockMessage };
     buildVersionedTransaction.mockResolvedValue([mockOnChainTx, {}, jest.fn()]);
 
-    await expect(estimateTxFee(api, TEST_ADDRESS, "transfer")).rejects.toThrow(
+    await expect(estimateTxFee(api, TEST_CONFIG, TEST_ADDRESS, "transfer")).rejects.toThrow(
       "expected recentBlockhash",
     );
     jest.useRealTimers();

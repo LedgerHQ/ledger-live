@@ -90,8 +90,8 @@ const AgentIntentProfileSchema = z.object({
     .catch(undefined),
   // Last Cloud Sync version `agent-intent sync` merged; a cache, so a bad value is just dropped.
   ledgerSyncVersion: z.number().int().nonnegative().optional().catch(undefined),
-  // The wallet-cli version that cached it: a newer one may import accounts this one skipped.
-  ledgerSyncCliVersion: z.string().optional().catch(undefined),
+  // The import support it was cached with: other support may import accounts this one skipped.
+  ledgerSyncSupport: z.string().optional().catch(undefined),
   // Signed into the enrollment request and enforced by the frontend — persisted so `list`/`show`
   // can report "expired" instead of leaving a dead link marked `pending` forever.
   enrollmentExpiresAt: z.iso.datetime(),
@@ -161,6 +161,11 @@ export type SessionEntry = z.infer<typeof SessionEntrySchema>;
 export type TrustchainMeta = z.infer<typeof TrustchainMetaSchema>;
 export type DomainEntry = z.infer<typeof DomainEntrySchema>;
 export type AgentIntentProfileMeta = z.infer<typeof AgentIntentProfileSchema>;
+
+const withoutLedgerSyncCache = <Profile>(profile: Profile): Profile =>
+  typeof profile === "object" && profile !== null && !Array.isArray(profile)
+    ? { ...profile, ledgerSyncVersion: undefined, ledgerSyncSupport: undefined }
+    : profile;
 
 export function getSessionPath(): string {
   return join(stateDir(APP_NAME), SESSION_FILE);
@@ -278,7 +283,7 @@ export class Session {
     private _domains: DomainEntry[],
     private _passwordSalt: string | undefined,
     private _agentIntentProfiles: AgentIntentProfileMeta[],
-    private readonly _invalidAgentIntentProfileRaws: unknown[] = [],
+    private _invalidAgentIntentProfileRaws: unknown[] = [],
   ) {}
 
   static async read(): Promise<Session> {
@@ -414,6 +419,9 @@ export class Session {
   clear(): number {
     const count = this.entries.length;
     this.entries = [];
+    this._agentIntentProfiles = this._agentIntentProfiles.map(withoutLedgerSyncCache);
+    this._invalidAgentIntentProfileRaws =
+      this._invalidAgentIntentProfileRaws.map(withoutLedgerSyncCache);
     return count;
   }
 
@@ -446,11 +454,10 @@ export class Session {
     if (this._trustchain) data.trustchain = this._trustchain;
     if (this._domains.length > 0) data.domains = this._domains;
     if (this._passwordSalt) data.passwordSalt = this._passwordSalt;
-    // Invalid raws ride along unchanged (never re-validated, never mutated by anything in this
-    // class) so a write from ANY command — not just `agent-intent` ones — can't silently erase an
-    // entry the last read couldn't parse and orphan its OS-keychain secret or key file. They keep
-    // failing validation on the next read, which is the intended outcome: recoverable-by-name, not
-    // adopted.
+    // Invalid raws ride along so a write from ANY command — not just `agent-intent` ones — can't
+    // silently erase an entry the last read couldn't parse and orphan its OS-keychain secret or key
+    // file. They keep failing validation on the next read, which is the intended outcome:
+    // recoverable-by-name, not adopted.
     const agentIntentProfiles = [
       ...this._agentIntentProfiles,
       ...this._invalidAgentIntentProfileRaws,

@@ -2,22 +2,15 @@ import React from "react";
 import { Text } from "react-native";
 import { renderWithReactQuery } from "@tests/test-renderer";
 import { TopBarView } from "../TopBarView/index";
-import { BELL_NOTIFICATION_DOT_TEST_ID } from "../components/BellNotificationIcon";
 
 jest.mock("@ledgerhq/lumen-ui-rnative/symbols", () => {
   const makeIcon = (testID: string) => () => <Text testID={testID}>{testID}</Text>;
 
   return {
     Compass: makeIcon("icon-compass"),
-    Bell: makeIcon("icon-bell"),
-    Settings: makeIcon("icon-settings"),
     Warning: makeIcon("icon-warning"),
     Clock: makeIcon("icon-clock"),
     Search: makeIcon("icon-search"),
-    Nano: makeIcon("device-icon-nano"),
-    Flex: makeIcon("device-icon-flex"),
-    NanoGen5: makeIcon("device-icon-apex"),
-    Stax: makeIcon("device-icon-stax"),
     User: makeIcon("my-wallet-avatar"),
   };
 });
@@ -27,12 +20,9 @@ jest.mock("../components/SyncErrorBottomSheet", () => ({
 }));
 
 describe("TopBarView", () => {
-  const onMyLedgerPress = jest.fn();
   const onMyWalletPress = jest.fn();
   const onDiscoverPress = jest.fn();
   const onSearchPress = jest.fn();
-  const onNotificationsPress = jest.fn();
-  const onSettingsPress = jest.fn();
   const onTransactionHistoryPress = jest.fn();
 
   const openSyncDrawer = jest.fn();
@@ -40,15 +30,10 @@ describe("TopBarView", () => {
   const onTryRefresh = jest.fn();
 
   const defaultProps = {
-    onMyLedgerPress,
     onMyWalletPress,
-    shouldDisplayMyWallet: false,
-    shouldDisplayOperationsList: false,
     shouldDisplayAssetDiscoverability: false,
     onSearchPress,
     onDiscoverPress,
-    onNotificationsPress,
-    onSettingsPress,
     onTransactionHistoryPress,
     hasUnreadNotifications: false,
     hasUnreadOperations: false,
@@ -68,20 +53,14 @@ describe("TopBarView", () => {
   });
 
   it("should call expected callbacks when top bar buttons are pressed", async () => {
-    const { user, getByTestId } = renderWithReactQuery(
-      <TopBarView {...defaultProps} shouldDisplayOperationsList />,
-    );
+    const { user, getByTestId } = renderWithReactQuery(<TopBarView {...defaultProps} />);
 
-    await user.press(getByTestId("topbar-myledger"));
+    await user.press(getByTestId("topbar-mywallet"));
     await user.press(getByTestId("topbar-discover"));
-    await user.press(getByTestId("topbar-notifications"));
-    await user.press(getByTestId("topbar-settings"));
     await user.press(getByTestId("topbar-transaction-history"));
 
-    expect(onMyLedgerPress).toHaveBeenCalledTimes(1);
+    expect(onMyWalletPress).toHaveBeenCalledTimes(1);
     expect(onDiscoverPress).toHaveBeenCalledTimes(1);
-    expect(onNotificationsPress).toHaveBeenCalledTimes(1);
-    expect(onSettingsPress).toHaveBeenCalledTimes(1);
     expect(onTransactionHistoryPress).toHaveBeenCalledTimes(1);
   });
 
@@ -104,53 +83,13 @@ describe("TopBarView", () => {
     expect(onSearchPress).toHaveBeenCalledTimes(1);
   });
 
-  it("should not render transaction history icon when operations list is disabled", () => {
-    const { queryByTestId, getByTestId } = renderWithReactQuery(
-      <TopBarView {...defaultProps} shouldDisplayOperationsList={false} />,
-    );
-    expect(queryByTestId("topbar-transaction-history")).toBeNull();
-    expect(getByTestId("topbar-myledger")).toBeVisible();
-    expect(getByTestId("topbar-discover")).toBeVisible();
-    expect(getByTestId("topbar-notifications")).toBeVisible();
-    expect(getByTestId("topbar-settings")).toBeVisible();
-  });
-
-  it("when My Wallet is enabled with operations list, trailing shows only transaction history", () => {
-    const { queryByTestId, getByTestId } = renderWithReactQuery(
-      <TopBarView {...defaultProps} shouldDisplayMyWallet shouldDisplayOperationsList />,
-    );
+  it("should show transaction history in the trailing icons and discover in the leading icons", () => {
+    const { queryByTestId, getByTestId } = renderWithReactQuery(<TopBarView {...defaultProps} />);
     expect(getByTestId("topbar-mywallet")).toBeVisible();
     expect(getByTestId("topbar-discover")).toBeVisible();
     expect(getByTestId("topbar-transaction-history")).toBeVisible();
     expect(queryByTestId("topbar-notifications")).toBeNull();
     expect(queryByTestId("topbar-settings")).toBeNull();
-  });
-
-  it("when My Wallet is enabled without operations list, trailing shows only discover", () => {
-    const { queryByTestId, getByTestId } = renderWithReactQuery(
-      <TopBarView {...defaultProps} shouldDisplayMyWallet shouldDisplayOperationsList={false} />,
-    );
-    expect(getByTestId("topbar-mywallet")).toBeVisible();
-    expect(getByTestId("topbar-discover")).toBeVisible();
-    expect(queryByTestId("topbar-transaction-history")).toBeNull();
-    expect(queryByTestId("topbar-notifications")).toBeNull();
-    expect(queryByTestId("topbar-settings")).toBeNull();
-  });
-
-  it("should render bell icon when there are no unread notifications", () => {
-    const { getByTestId, queryByTestId } = renderWithReactQuery(<TopBarView {...defaultProps} />);
-
-    expect(getByTestId("icon-bell")).toBeVisible();
-    expect(queryByTestId(BELL_NOTIFICATION_DOT_TEST_ID)).toBeNull();
-  });
-
-  it("should render bell icon with a notification dot when there are unread notifications", () => {
-    const { getByTestId } = renderWithReactQuery(
-      <TopBarView {...defaultProps} hasUnreadNotifications />,
-    );
-
-    expect(getByTestId(BELL_NOTIFICATION_DOT_TEST_ID)).toBeVisible();
-    expect(getByTestId("icon-bell")).toBeVisible();
   });
 
   it("should render sync icon button when there are accounts and sync errors", () => {

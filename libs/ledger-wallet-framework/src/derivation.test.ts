@@ -6,6 +6,7 @@ import {
   asDerivationMode,
   getDefaultPreferredNewAccountScheme,
   getDerivationModesForCurrency,
+  getMandatoryEmptyAccountSkip,
   getPreferredNewAccountScheme,
   getSeedIdentifierDerivation,
   isInvalidDerivationMode,
@@ -266,5 +267,22 @@ describe("getSeedIdentifierDerivation", () => {
     );
 
     expect(fun).toEqual(expectedSeedPath);
+  });
+});
+
+describe("getMandatoryEmptyAccountSkip", () => {
+  const currency = (id: string) => getCryptoCurrencyById(id) as unknown as CryptoCurrency;
+
+  it("uses the hypercore gap limit on the default derivation mode", () => {
+    expect(getMandatoryEmptyAccountSkip("", currency("hypercore"))).toBe(10);
+  });
+
+  it("keeps a gap limit of 0 on the default mode for other currencies", () => {
+    expect(getMandatoryEmptyAccountSkip("", currency("arbitrum"))).toBe(0);
+    expect(getMandatoryEmptyAccountSkip("", currency("ethereum"))).toBe(0);
+  });
+
+  it("keeps the derivation mode gap limit", () => {
+    expect(getMandatoryEmptyAccountSkip("ethM", currency("ethereum"))).toBe(10);
   });
 });

@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { useTranslation } from "@shared/i18n";
-import type { ChangeNameContentProps, ChangeNameContentViewProps } from "./types.web";
+import type { ChangeNameContentProps, ChangeNameContentViewProps } from "./types";
 
 const normalize = (name: string) => name.replace(/\s+/g, " ").trim();
 
@@ -9,6 +9,7 @@ export function useChangeNameContentViewModel({
   maxLength,
   isDisabled = false,
   onConfirm,
+  onEvent,
 }: ChangeNameContentProps): ChangeNameContentViewProps {
   const { t } = useTranslation();
   const [value, setValue] = useState(initialName);
@@ -19,8 +20,9 @@ export function useChangeNameContentViewModel({
   const onClear = useCallback(() => setValue(""), []);
   const onSubmit = useCallback(() => {
     if (isSubmitDisabled) return;
+    onEvent?.("validateChangeName");
     onConfirm(normalizedValue);
-  }, [isSubmitDisabled, normalizedValue, onConfirm]);
+  }, [isSubmitDisabled, normalizedValue, onConfirm, onEvent]);
 
   return {
     value,

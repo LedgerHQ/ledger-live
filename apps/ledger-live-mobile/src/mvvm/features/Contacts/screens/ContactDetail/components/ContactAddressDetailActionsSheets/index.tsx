@@ -2,7 +2,6 @@ import React, { useCallback } from "react";
 import { ContactsDeleteAddressDialog } from "@features/flow-contacts-delete-address";
 import { ContactsEditSignerMismatchDialog } from "@features/flow-contacts-detail";
 import { ContactsRenameAddressDialog } from "@features/flow-contacts-edit-address";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import type { ContactAddressDetailActionsFlowProps } from "LLM/features/Contacts";
 
@@ -16,7 +15,6 @@ export function ContactAddressDetailActionsSheets({
   renameSheet,
   signerMismatchSheet,
 }: ContactAddressDetailActionsSheetsProps): React.JSX.Element {
-  const { bottom: bottomInset } = useSafeAreaInsets();
   const onCloseDelete = useCallback(() => {
     deleteSheet.onCancel();
   }, [deleteSheet]);
@@ -33,7 +31,7 @@ export function ContactAddressDetailActionsSheets({
         testID="contacts-delete-address-sheet"
         enableDynamicSizing
       >
-        <ContactsDeleteAddressDialog {...deleteSheet} bottomInset={bottomInset} />
+        <ContactsDeleteAddressDialog {...deleteSheet} />
       </QueuedBottomSheet>
       <QueuedBottomSheet
         isRequestingToBeOpened={signerMismatchSheet.isOpen}
@@ -42,7 +40,7 @@ export function ContactAddressDetailActionsSheets({
         testID="contacts-edit-signer-mismatch-sheet"
         enableDynamicSizing
       >
-        <ContactsEditSignerMismatchDialog {...signerMismatchSheet} bottomInset={bottomInset} />
+        <ContactsEditSignerMismatchDialog {...signerMismatchSheet} />
       </QueuedBottomSheet>
       <QueuedBottomSheet
         isRequestingToBeOpened={renameSheet.isOpen}
@@ -53,7 +51,7 @@ export function ContactAddressDetailActionsSheets({
         // mid-animation. The two then animate up together.
         snapPoints="fullWithOffset"
       >
-        <ContactsRenameAddressDialog {...renameSheet} autoFocus bottomInset={bottomInset} />
+        <ContactsRenameAddressDialog {...renameSheet} autoFocus />
       </QueuedBottomSheet>
     </>
   );

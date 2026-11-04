@@ -1,8 +1,10 @@
 import { listSolanaStakingPositions, stakeActions } from "@ledgerhq/coin-solana/logic";
-import { LEDGER_VALIDATORS_VOTE_ACCOUNTS } from "@ledgerhq/coin-solana/utils";
+import type { SolanaCoinConfig } from "@ledgerhq/coin-solana/config";
+import { ledgerValidatorsOf } from "@ledgerhq/coin-solana/utils";
 import type { SolanaAccount } from "@ledgerhq/coin-solana/types";
 import type { ValidatorsAppValidator } from "@ledgerhq/coin-solana/network/validator-app/index";
 import type { ResolvedAccountBridge } from "@ledgerhq/types-live";
+import { getCurrencyConfiguration } from "../../config";
 
 export interface AccountBannerState {
   display: boolean;
@@ -20,8 +22,13 @@ export function getAccountBannerState(
   // Group current validator
   const delegations = listSolanaStakingPositions(account.stakingResources);
 
+  const ledgerVoteAccounts = new Set(
+    ledgerValidatorsOf(getCurrencyConfiguration<SolanaCoinConfig>(account.currency.id)).map(
+      v => v.voteAccount,
+    ),
+  );
   const ledgerValidator = validators.find(validator =>
-    LEDGER_VALIDATORS_VOTE_ACCOUNTS.includes(validator.voteAccount),
+    ledgerVoteAccounts.has(validator.voteAccount),
   );
 
   // If Ledger doesn't provide validator, we don't display banner
@@ -49,7 +56,7 @@ export function getAccountBannerState(
       positionId &&
       validator &&
       validatorAdress &&
-      !LEDGER_VALIDATORS_VOTE_ACCOUNTS.includes(validatorAdress) &&
+      !ledgerVoteAccounts.has(validatorAdress) &&
       worstValidator.commission <= validator.commission &&
       actions.includes("deactivate");
     if (isValidRedelegation) {
@@ -58,7 +65,7 @@ export function getAccountBannerState(
     }
   }
   if (worstValidator) {
-    if (LEDGER_VALIDATORS_VOTE_ACCOUNTS.includes(worstValidator?.voteAccount)) {
+    if (ledgerVoteAccounts.has(worstValidator.voteAccount)) {
       if (!bridge.isAccountEmpty(account)) {
         display = true;
       }

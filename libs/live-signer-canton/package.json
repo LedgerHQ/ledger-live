@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-signer-canton",
-  "version": "0.9.24",
+  "version": "0.9.25",
   "private": true,
   "description": "Ledger Hardware Wallet Canton Application API",
   "keywords": [
@@ -53,9 +53,12 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/semver": "catalog:",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
     "jest": "catalog:",
-    "rimraf": "^4.4.1",
-    "ts-node": "^10.4.0"
+    "rimraf": "4.4.1",
+    "ts-node": "10.9.2",
+    "oxlint": "catalog:"
   },
   "exports": {
     ".": {

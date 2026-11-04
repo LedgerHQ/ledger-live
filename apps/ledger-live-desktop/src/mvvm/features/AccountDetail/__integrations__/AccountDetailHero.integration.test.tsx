@@ -64,6 +64,14 @@ const usdcAccount = {
 };
 const ethAccountWithToken: Account = { ...ethAccount, subAccounts: [usdcAccount] };
 
+const aleoAccount = funded(
+  genAccount("account-detail-hero-aleo", {
+    currency: getCryptoCurrencyById("aleo"),
+    operationsSize: 1,
+  }),
+  100000,
+);
+
 const CurrentLocation = () => {
   const { pathname, state } = useLocation();
   return <div data-testid="current-location">{JSON.stringify({ pathname, state })}</div>;
@@ -77,7 +85,7 @@ function mockRamp(onRamp: string[], offRamp: string[]) {
   } as unknown as ReturnType<typeof useRampCatalog>);
 }
 
-function renderHero(account: Account) {
+function renderHero(account: Account, flags: Parameters<typeof withFlagOverrides>[0] = {}) {
   return render(
     <>
       <Routes>
@@ -89,7 +97,7 @@ function renderHero(account: Account) {
     {
       initialRoute: getAccountUrl(account.id),
       initialState: {
-        ...withFlagOverrides({ accountDetail: { enabled: true } }),
+        ...withFlagOverrides({ accountDetail: { enabled: true }, ...flags }),
         accounts: [account],
       },
     },
@@ -116,6 +124,19 @@ describe("AccountDetail hero", () => {
     expect(screen.getByTestId(`${ACTIONS}-send`)).toBeEnabled();
   });
 
+  it("shows the address type of the account above the balance", async () => {
+    renderHero({ ...btcAccount, derivationMode: "native_segwit" });
+
+    expect(await screen.findByTestId(`${HERO}-tag`)).toHaveTextContent("Native segwit");
+  });
+
+  it("shows no tag for an account without a notable address type", async () => {
+    renderHero(ethAccount);
+
+    expect(await screen.findByTestId(ACTIONS)).toBeVisible();
+    expect(screen.queryByTestId(`${HERO}-tag`)).toBeNull();
+  });
+
   it("shows Buy, Sell and Earn when the asset supports them", async () => {
     mockRamp(["bitcoin"], ["bitcoin"]);
     mockGetCanStakeCurrency.mockReturnValue(true);
@@ -124,6 +145,41 @@ describe("AccountDetail hero", () => {
     expect(await screen.findByTestId(ACTIONS)).toBeVisible();
     expect(actionIds()).toEqual(["receive", "send", "buy", "sell", "earn"]);
     expect(screen.getByTestId(`${ACTIONS}-sell`)).toBeEnabled();
+  });
+
+  it("hides Buy when the currency is not on the ramp", async () => {
+    mockRamp([], ["bitcoin"]);
+    mockGetCanStakeCurrency.mockReturnValue(true);
+    renderHero(btcAccount);
+
+    expect(await screen.findByTestId(ACTIONS)).toBeVisible();
+    expect(actionIds()).toEqual(["receive", "send", "sell", "earn"]);
+  });
+
+  it("hides Earn when staking does not support the currency", async () => {
+    mockRamp(["bitcoin"], ["bitcoin"]);
+    renderHero(btcAccount);
+
+    expect(await screen.findByTestId(ACTIONS)).toBeVisible();
+    expect(actionIds()).toEqual(["receive", "send", "buy", "sell"]);
+  });
+
+  it("shows no quick actions when the currency flag is off", async () => {
+    mockRamp(["aleo"], ["aleo"]);
+    mockGetCanStakeCurrency.mockReturnValue(true);
+    renderHero(aleoAccount);
+
+    expect(await screen.findByTestId(HERO)).toBeVisible();
+    expect(screen.queryByTestId(ACTIONS)).toBeNull();
+  });
+
+  it("shows quick actions when the currency flag is on", async () => {
+    mockRamp(["aleo"], ["aleo"]);
+    mockGetCanStakeCurrency.mockReturnValue(true);
+    renderHero(aleoAccount, { currencyAleo: { enabled: true } });
+
+    expect(await screen.findByTestId(ACTIONS)).toBeVisible();
+    expect(actionIds()).toEqual(expect.arrayContaining(["receive", "send"]));
   });
 
   it("disables Send, Sell and Earn without funds", async () => {

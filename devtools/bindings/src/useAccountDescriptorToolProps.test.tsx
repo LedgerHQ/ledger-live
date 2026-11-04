@@ -37,6 +37,7 @@ describe("useAccountDescriptorToolProps", () => {
       {
         accountUUID: computeAccountUUID(ethereum),
         legacyId: "eth",
+        purpose: "account",
         type: "address",
         network: "ethereum",
         path: ethereum.path,
@@ -45,6 +46,7 @@ describe("useAccountDescriptorToolProps", () => {
       {
         accountUUID: computeAccountUUID(bitcoin),
         legacyId: "btc",
+        purpose: "account",
         type: "utxo",
         network: "bitcoin",
         path: bitcoin.path,

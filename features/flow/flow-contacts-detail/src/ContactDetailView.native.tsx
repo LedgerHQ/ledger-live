@@ -2,22 +2,22 @@ import React from "react";
 import { ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
-import type { ContactDetailViewProps } from "./types";
-import { ContactDetailAddressList } from "./components/ContactDetailAddressList/ContactDetailAddressList.native";
-import { ContactDetailEmptyState } from "./components/ContactDetailEmptyState.native";
-import { ContactDetailHeader } from "./components/ContactDetailHeader.native";
-import { LedgerWalletAddressesCard } from "./components/LedgerWalletAddressesCard.native";
+import type { ContactDetailViewProps } from "./ContactDetailView.types";
+import { ContactDetailAddressList } from "./components/ContactDetailAddressList/ContactDetailAddressList";
+import { ContactDetailEmptyState } from "./components/ContactDetailEmptyState";
+import { ContactDetailHeader } from "./components/ContactDetailHeader/ContactDetailHeader";
+import { LedgerWalletAddressesCard } from "./components/LedgerWalletAddressesCard";
 
 export function ContactDetailView({
   contact,
   onAddAddress,
   ledgerWalletAccountsIntent,
-  onLedgerWalletAccountsPress,
+  onOpenLedgerWalletAccounts,
   addressGroups,
-  onAddressRowPress,
+  onOpenAddressDetail,
 }: ContactDetailViewProps): React.JSX.Element {
   const { bottom } = useSafeAreaInsets();
-  const hasPopulatedAddresses = addressGroups !== undefined && onAddressRowPress !== undefined;
+  const hasPopulatedAddresses = addressGroups !== undefined && onOpenAddressDetail !== undefined;
 
   return (
     <Box testID="contacts-detail-screen" lx={{ flex: 1, backgroundColor: "base" }}>
@@ -28,16 +28,16 @@ export function ContactDetailView({
         showsVerticalScrollIndicator={false}
       >
         <ContactDetailHeader contact={contact} onAddAddress={onAddAddress} />
-        {ledgerWalletAccountsIntent && onLedgerWalletAccountsPress ? (
+        {ledgerWalletAccountsIntent && onOpenLedgerWalletAccounts ? (
           <LedgerWalletAddressesCard
             intent={ledgerWalletAccountsIntent}
-            onPress={onLedgerWalletAccountsPress}
+            onPress={onOpenLedgerWalletAccounts}
           />
         ) : null}
         {hasPopulatedAddresses ? (
           <ContactDetailAddressList
             addressGroups={addressGroups}
-            onAddressRowPress={onAddressRowPress}
+            onAddressRowPress={onOpenAddressDetail}
           />
         ) : (
           <ContactDetailEmptyState contact={contact} />

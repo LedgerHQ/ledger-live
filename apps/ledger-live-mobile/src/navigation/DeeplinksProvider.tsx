@@ -11,8 +11,8 @@ import {
 } from "@react-navigation/native";
 import Config from "react-native-config";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
-import { BUY_SELL_UI_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import Braze from "@braze/react-native-sdk";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
@@ -53,6 +53,9 @@ import { handleAssetDetailDeeplink } from "./deeplinks/handleAssetDetailDeeplink
 import { handleGenericAwarenessModalDeeplink } from "./deeplinks/handleGenericAwarenessModalDeeplink";
 import { handleProductTourDeeplink } from "./deeplinks/handleProductTourDeeplink";
 import { handleBackupHubDeeplink } from "./deeplinks/handleBackupHubDeeplink";
+import { getProxyURL, isWalletConnectUrl } from "./deeplinks/getProxyURL";
+import { handleLiveAppDeeplink } from "./deeplinks/handleLiveAppDeeplink";
+import { parseDeeplinkPath } from "./deeplinks/parseDeeplinkPath";
 import { SplashScreenHandle } from "LLM/features/LaunchScreen/SplashScreenHandle";
 import { useDeeplinkDrawerCleanup } from "./deeplinks/useDeeplinkDrawerCleanup";
 import { getActionFromAssetDetailDeeplinkState } from "LLM/features/AssetDetail/utils/getActionFromAssetDetailDeeplinkState";
@@ -76,10 +79,6 @@ function handleStartComplete() {
   logLastStartupEvents(STARTUP_EVENTS.NAV_READY);
 }
 
-function isWalletConnectUrl(url: string) {
-  return url.startsWith("wc:");
-}
-
 function isWalletConnectLink(url: string) {
   return (
     isWalletConnectUrl(url) ||
@@ -87,33 +86,6 @@ function isWalletConnectLink(url: string) {
     url.startsWith("ledgerlive://wc") ||
     url.startsWith("https://ledger.com/wc")
   );
-}
-
-function getProxyURL(url: string, customBuySellUiAppId?: string) {
-  const uri = new URL(url);
-  const { hostname, pathname } = uri;
-  const platform = pathname.split("/")[1];
-
-  if (hostname === "discover" && platform && platform.startsWith("protect")) {
-    return url.replace("://discover", "://recover");
-  }
-
-  if (isWalletConnectUrl(url)) {
-    return `ledgerlive://wc?uri=${encodeURIComponent(url)}`;
-  }
-
-  const buySellAppIds = customBuySellUiAppId
-    ? [customBuySellUiAppId, BUY_SELL_UI_APP_ID]
-    : [BUY_SELL_UI_APP_ID];
-
-  // This is to handle links set in the useFromAmountStatusMessage in LLC.
-  // Also handles a difference in paths between LLD on LLD /platform/:app_id
-  // but on LLM /discover/:app_id
-  if (hostname === "platform" && buySellAppIds.includes(platform)) {
-    return url.replace("://platform", "://discover");
-  }
-
-  return url;
 }
 
 // DeepLinking
@@ -349,6 +321,7 @@ export const DeeplinksProvider = ({
   const { state } = useRemoteLiveAppContext();
   const liveAppProviderInitialized = !!state.value || !!state.error;
   const manifests = state?.value?.liveAppByIndex || emptyObject;
+  const { state: localManifests } = useLocalLiveAppContext();
   // Can be either true, false or null, meaning we don't know yet
   const userAcceptedTerms = useGeneralTermsAccepted();
   const buySellUiFlag = useFeature("buySellUi");
@@ -635,7 +608,7 @@ export const DeeplinksProvider = ({
         },
         getActionFromState: getActionFromAssetDetailDeeplinkState,
         getStateFromPath: (path, config) => {
-          const url = new URL(`ledgerwallet://${path}`);
+          const url = parseDeeplinkPath(path);
           const { hostname, searchParams, pathname } = url;
           const query = Object.fromEntries(searchParams);
           const {
@@ -904,29 +877,18 @@ export const DeeplinksProvider = ({
             return getStateFromPath("portfolio", config);
           }
 
-          if ((hostname === "discover" || hostname === "recover") && platform) {
-            if (!hasCompletedOnboarding && !platform.startsWith("protect")) return undefined;
-            /**
-             * Upstream validation of "ledgerlive://discover/:platform":
-             *  - checking that a manifest exists
-             *  - adding "name" search param
-             * */
-            if (!liveAppProviderInitialized) {
-              /**
-               * The provider isn't initialized yet so the manifest will possibly
-               * not be found.
-               * We redirect because this scenario happens when deep linking
-               * triggers a cold app start. The platform app screen will show an
-               * error in case the app isn't found.
-               */
-              return getStateFromPath(path, config);
-            }
-
-            const manifest = manifests.find(m => m.id.toLowerCase() === platform.toLowerCase());
-            if (!manifest) return undefined;
-            url.pathname = `/${manifest.id}`;
-            url.searchParams.set("name", manifest.name);
-            return getStateFromPath(url.href?.split("://")[1], config);
+          if (
+            hostname === "predictions" ||
+            ((hostname === "discover" || hostname === "recover") && platform)
+          ) {
+            return handleLiveAppDeeplink({
+              url,
+              hasCompletedOnboarding,
+              isLiveAppProviderInitialized: liveAppProviderInitialized,
+              localManifests,
+              remoteManifests: manifests,
+              config,
+            });
           }
 
           const w40State = handleWallet40Deeplink(hostname, platform, query);
@@ -949,6 +911,7 @@ export const DeeplinksProvider = ({
     shouldDisplayAssetDiscoverability,
     liveAppProviderInitialized,
     manifests,
+    localManifests,
     web3hubFlag?.enabled,
     genericAwarenessModalFlag?.enabled,
     lwmProductTourFlag?.enabled,

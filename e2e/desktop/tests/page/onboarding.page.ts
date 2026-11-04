@@ -16,10 +16,15 @@ const SELECTABLE_DEVICES = [
 type TutorialScreen =
   | "how-to-get-started"
   | "device-how-to"
+  | "import-your-recovery-phrase"
+  | "device-how-to-2"
   | "pin-code"
   | "pin-code-how-to"
   | "new-recovery-phrase"
   | "use-recovery-sheet"
+  | "existing-recovery-phrase"
+  | "recovery-how-to"
+  | "recovery-how-to-2"
   | "recovery-how-to-3"
   | "hide-recovery-phrase"
   | "quiz-success"
@@ -28,6 +33,11 @@ type TutorialScreen =
   | "enable-sync"
   | "secure-your-crypto"
   | "welcome-to-wallet-without-funds";
+
+type GoBackAndContinueOptions = {
+  screen: TutorialScreen;
+  previousScreen: TutorialScreen;
+};
 
 export class OnboardingPage extends AppPage {
   private readonly getStartedButton = this.page.getByRole("button", { name: "Get Started" });
@@ -38,6 +48,7 @@ export class OnboardingPage extends AppPage {
   private readonly deviceTile = (device: DeviceModelId) =>
     this.page.getByTestId(`v3-device-${device}`);
   private readonly setupNewDeviceOption = this.page.getByTestId("v3-onboarding-new-device");
+  private readonly restoreDeviceOption = this.page.getByTestId("v3-onboarding-restore-device");
   private readonly counterfeitWarningContinueButton = this.page.getByTestId(
     "counterfeit-warning-continue-button",
   );
@@ -51,9 +62,14 @@ export class OnboardingPage extends AppPage {
     this.page.getByTestId(`v3-tutorial-continue-${screen}`);
   private readonly tutorialContinueSecondaryOn = (screen: TutorialScreen) =>
     this.page.getByTestId(`v3-tutorial-continue-secondary-${screen}`);
+  private readonly tutorialBackOn = (screen: TutorialScreen) =>
+    this.page.getByTestId(`v3-tutorial-back-${screen}`);
   private readonly pinCodeCheckbox = this.page.getByTestId("v3-private-pin-code-checkbox");
   private readonly pinCodeDrawerNext = this.page.getByTestId("v3-pin-code-drawer");
   private readonly recoveryPhraseCheckbox = this.page.getByTestId("v3-recovery-phrase-checkbox");
+  private readonly recoveryPhraseLossCheckbox = this.page.getByTestId(
+    "v3-recovery-phrase-loss-checkbox",
+  );
   private readonly recoverySeedDrawerNext = this.page.getByTestId("v3-seed-drawer");
   private readonly hideSeedDrawerNext = this.page.getByTestId("v3-hide-seed-drawer");
   private readonly quizStartButton = this.page.getByTestId("v3-quiz-start-button");
@@ -111,6 +127,11 @@ export class OnboardingPage extends AppPage {
     await this.setupNewDeviceOption.click();
   }
 
+  @step("Choose to restore a device from a recovery phrase")
+  async restoreWithRecoveryPhrase() {
+    await this.restoreDeviceOption.click();
+  }
+
   /** Nano S, Nano S Plus and Nano X get a "Before you start" warning before any use case runs. */
   @step("Continue past the counterfeit warning")
   async continuePastCounterfeitWarning() {
@@ -139,6 +160,25 @@ export class OnboardingPage extends AppPage {
     await this.tutorialContinueOn(screen).click();
   }
 
+  @step("Expect the tutorial screen $0")
+  async expectTutorialScreen(screen: TutorialScreen) {
+    await expect(this.page).toHaveURL(new RegExp(`/${screen}$`));
+  }
+
+  @step("Expect Continue to be disabled on $0")
+  async expectTutorialContinueDisabled(screen: TutorialScreen) {
+    await expect(this.tutorialContinueOn(screen)).toBeDisabled();
+  }
+
+  @step("Go back to the previous tutorial screen, then continue again")
+  async goBackAndContinue(options: GoBackAndContinueOptions) {
+    const { screen, previousScreen } = options;
+    await this.tutorialBackOn(screen).click();
+    await this.expectTutorialScreen(previousScreen);
+    await this.continueTutorial(previousScreen);
+    await this.expectTutorialScreen(screen);
+  }
+
   @step("Acknowledge keeping the PIN private")
   async acceptPrivatePinCode() {
     await this.pinCodeCheckbox.click();
@@ -152,6 +192,11 @@ export class OnboardingPage extends AppPage {
   @step("Acknowledge the recovery phrase warning")
   async acceptRecoveryPhrase() {
     await this.recoveryPhraseCheckbox.click();
+  }
+
+  @step("Acknowledge that a lost recovery phrase cannot be recovered")
+  async acceptRecoveryPhraseLoss() {
+    await this.recoveryPhraseLossCheckbox.click();
   }
 
   @step("Continue past the recovery phrase drawer")

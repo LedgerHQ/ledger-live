@@ -121,7 +121,7 @@
     "addressCopied": "Address copied",
     "addressCopiedSuspicious": "Mismatch between the copied address and the one in the clipboard.",
     "experimentalFeature": "Experimental",
-    "featureFlags": "Feature flag",
+    "devTools": "Dev tools",
     "ldmkEnabled": "LDMK transport",
     "information": "Information",
     "search": "Search...",
@@ -3019,18 +3019,19 @@
       "insufficientFunds": "You don't have enough {{feeCurrency}} to cover the amount and the {{provider}} energy rental fee."
     },
     "sponsoredRentSignature": {
-      "title": "Step 1 of 2",
+      "title": "Approve network fees sponsoring",
       "strategy": "Energy rental - {{provider}}",
       "crafting": "Preparing energy rental…",
       "submitting": "Submitting energy rental payment…",
-      "feeLabel": "Rental fee"
+      "feeLabel": "Rental fee",
+      "terms": "By signing this transaction, you agree to <0>{{provider}}'s Terms and Conditions</0>."
     },
     "sponsoredTransferSignature": {
-      "title": "Step 2 of 2"
+      "title": "Confirm transfer"
     },
     "sponsoredPolling": {
-      "title": "Waiting for energy delivery",
-      "waiting": "{{provider}} is delivering the rented energy. This can take a moment.",
+      "title": "Your energy is being delivered",
+      "waiting": "This usually takes up to 30 seconds.",
       "elapsed": "Elapsed: {{time}}"
     },
     "sponsoredFailure": {
@@ -7251,6 +7252,9 @@
       "title": "There is a pending operation for this account.",
       "description": "Wait for the operation to go through."
     },
+    "TokenNonTransferable": {
+      "title": "This token can't be sent. Its smart contract doesn't allow transfers."
+    },
     "AccountNameRequired": {
       "title": "An account name is required",
       "description": "Please enter an account name"
@@ -7752,6 +7756,14 @@
     "WebsocketConnectionFailed": {
       "title": "Network Error",
       "description": "Make sure you are connected to the internet and try again."
+    },
+    "WithdrawApiError": {
+      "title": "Your withdrawal wasn’t sent",
+      "description": "Nothing left your Perps balance. Close and try again with a new quote."
+    },
+    "WithdrawSubmitUnknownOutcomeError": {
+      "title": "We couldn’t confirm your withdrawal",
+      "description": "It may still go through. Check Swap History before you try again."
     },
     "WrongDeviceForAccount": {
       "title": "Something went wrong",
@@ -9656,6 +9668,48 @@
     "description": "This account is related to Perpetual trading. Transactional actions are not supported for this account",
     "cta": "Open Perps"
   },
+  "predictions": {
+    "onboarding": {
+      "intro": {
+        "title": "Trade on future events",
+        "subtitle": "Now you can access the world's largest prediction market, where you can trade on event outcomes. Provided by MoonPay.",
+        "items": {
+          "polymarket": {
+            "title": "Access Polymarket in Ledger Wallet",
+            "subtitle": "Now available in Ledger Wallet"
+          },
+          "markets": {
+            "title": "Sports, Tech, Crypto, Weather, Politics",
+            "subtitle": "And more, discover all markets"
+          },
+          "clearSign": {
+            "title": "Clear sign all",
+            "subtitle": "You define and clear sign the amount to trade"
+          }
+        },
+        "discover": "Discover predictions",
+        "learnMore": "Learn more"
+      },
+      "terms": {
+        "title": "Terms & Conditions",
+        "body": "Prediction markets are speculative, carry substantial risk, and may not be appropriate for all users. Trading in these markets involves significant risks, including: total loss of funds (a position can lose its entire value); market and resolution risk (outcomes are settled under each market's rules, which may differ from your expectations); liquidity risk (you may not be able to sell a position at the price you want, or at all); and smart contract risk (code vulnerabilities). Carefully assess these risks and understand how each market works before proceeding. Refer to the <termsLink>Terms of Use</termsLink> for more information.",
+        "checkbox": "You acknowledge that you have read and understand the above disclaimer and accept the risks of trading on prediction markets.",
+        "cta": "Agree and Continue"
+      },
+      "consent": {
+        "title": "Clear signed trade on Polymarket via MoonPay",
+        "description": "Select a Ledger Wallet address to sign your trades and to withdraw your Predictions balance.",
+        "bullets": {
+          "dedicatedWallet": "Dedicated trading wallet: MoonPay Trade creates a wallet specifically for your Polymarket activity. Deposit only what you plan to trade. Direct logins on Polymarket are not supported.",
+          "secureSigning": "Secure signing: Every trade instruction is clear signed using your selected Ledger Wallet address.",
+          "withdraw": "Withdraw anytime: Transfer your trading balance back to your Ledger Wallet whenever you choose."
+        },
+        "checkbox": "By continuing, you agree to create a MoonPay Trade wallet address and authorize the selected Ledger Wallet address to sign trade instructions and to receive your funds when you withdraw.",
+        "cta": "Continue",
+        "footer": "Crypto transaction services are provided by third-party provider MoonPay. Ledger provides no advice or recommendations."
+      }
+    }
+  },
   "portfolio": {
     "title": "Home",
     "today": "Today",
@@ -10148,8 +10202,8 @@
       },
       "amount": {
         "signingTime": {
-          "label": "Signing time",
-          "description": "Your Ledger signer approves each record this transaction uses. Sending more from your private balance can use more records and take longer."
+          "label": "Est. time",
+          "description": "Sending more from your private balance can use more records, and each one adds processing time. Larger amounts take longer to confirm."
         }
       },
       "mandatoryPrivateSync": {
@@ -10580,6 +10634,7 @@
       "copied": "Copied",
       "edit": "Edit",
       "delete": "Delete",
+      "share": "Share",
       "networkTag": "{{name}} Network"
     },
     "detailActions": {
@@ -10689,6 +10744,12 @@
     }
   },
   "accountDetail": {
+    "analyticsIntroduction": {
+      "title": "Looking for your account performance?",
+      "description": "All your performance data now lives on the Analytics page.",
+      "cta": "Go to Analytics",
+      "dismiss": "Dismiss Analytics introduction"
+    },
     "header": {
       "settings": "Account settings"
     },
@@ -11221,7 +11282,14 @@
     "depositDetailTitle": "Deposit details",
     "depositAmountLabel": "Deposit amount",
     "depositReceiveLabel": "Receiver account",
-    "depositCTA": "Deposit"
+    "depositCTA": "Deposit",
+    "withdrawTitle": "Withdraw via SwapKit",
+    "withdrawSubtitle": "Our partner SwapKit manages your swap and withdrawal in one transaction - all secured by your Ledger device.",
+    "withdrawDetailTitle": "Withdraw details",
+    "withdrawReceiveLabel": "Receiver account",
+    "networkFeesLabel": "Network fees",
+    "totalDebitedLabel": "Total debited",
+    "withdrawCTA": "Withdraw"
   },
   "perpsDeposit": {
     "title": "Deposit",
@@ -11256,6 +11324,9 @@
       "quoteUnavailable": "We can’t get a quote from {{provider}}, try with a different asset or come back later.",
       "currenciesUnavailable": "We can’t load the assets you can withdraw to. Try again later."
     }
+  },
+  "perpsWithdrawSign": {
+    "a11yTitle": "Withdraw signing"
   },
   "perpsDepositSign": {
     "a11yTitle": "Deposit signing",

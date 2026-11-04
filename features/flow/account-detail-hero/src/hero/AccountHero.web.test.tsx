@@ -59,6 +59,18 @@ describe("AccountHero (Web)", () => {
     expect(screen.getByRole("button", { name: "Receive" })).toBeEnabled();
   });
 
+  it("shows the address type of the account above the balance", () => {
+    renderHero({ tag: "Native segwit" });
+
+    expect(screen.getByTestId(`${TEST_ID}-tag`)).toHaveTextContent("Native segwit");
+  });
+
+  it("shows no tag when the account has none", () => {
+    renderHero();
+
+    expect(screen.queryByTestId(`${TEST_ID}-tag`)).toBeNull();
+  });
+
   it("disables Send, Sell and Earn without funds", () => {
     renderHero({ hasFunds: false });
 
@@ -91,6 +103,6 @@ describe("AccountHero (Web)", () => {
 
     await user.click(screen.getByRole("button", { name: "Earn" }));
 
-    expect(port.onAction).toHaveBeenCalledWith("earn");
+    expect(port.onAction).toHaveBeenCalledWith("earn", "quick_action");
   });
 });

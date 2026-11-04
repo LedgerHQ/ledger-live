@@ -1,7 +1,7 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
-import { CardAssetDetailsDrawer } from "../CardAssetDetailsDrawer.native";
-import { CardAssetDetailsWithdrawDrawer } from "../CardAssetDetailsWithdrawDrawer.native";
+import { CardAssetDetailsDrawer } from "../CardAssetDetailsDrawer";
+import { CardAssetDetailsWithdrawDrawer } from "../CardAssetDetailsWithdrawDrawer";
 import { I18nWrapper } from "./i18nWrapper";
 import type { CardAssetDialogCopy, CardAssetRow } from "../types";
 
@@ -37,7 +37,7 @@ describe("Card asset drawers (native)", () => {
         onTopUp={onTopUp}
         onWithdraw={onWithdraw}
         onShowHistory={jest.fn()}
-        onTransactionPress={jest.fn()}
+        onOpenTransaction={jest.fn()}
       />,
       { wrapper: I18nWrapper },
     );

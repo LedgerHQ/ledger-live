@@ -3,7 +3,7 @@ import { renderHook, act } from "@tests/test-renderer";
 import BigNumber from "bignumber.js";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import type { Account, DistributionItem } from "@ledgerhq/types-live";
+import type { Account, DerivationMode, DistributionItem } from "@ledgerhq/types-live";
 import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
 import {
   mockBtcCryptoCurrency,
@@ -437,6 +437,7 @@ describe("useAddressesViewModel", () => {
           account: btcAccount,
           balanceAccount: btcAccount,
           name: "name",
+          tag: undefined,
           truncatedAddress: "addr",
         }),
       );
@@ -523,5 +524,48 @@ describe("useAddressesViewModel", () => {
       expect(mockOpenDrawer).not.toHaveBeenCalled();
       expect(track).not.toHaveBeenCalled();
     });
+  });
+});
+
+describe("useAddressesViewModel tag", () => {
+  const btcAccount = (derivationMode: DerivationMode): Account => ({
+    ...genAccount(`tag-account-${derivationMode}`, {
+      currency: mockBtcCryptoCurrency,
+      operationsSize: 0,
+    }),
+    derivationMode,
+  });
+
+  const tagsOf = (accounts: Account[]) =>
+    renderHook(
+      () =>
+        useAddressesViewModel(
+          mockBtcCryptoCurrency,
+          buildDistributionItem(mockBtcCryptoCurrency, accounts),
+        ),
+      withRawAccounts(accounts),
+    ).result.current.displayedAccounts.map(({ tag }) => tag);
+
+  it("tags each account with its address type", () => {
+    expect(tagsOf([btcAccount("native_segwit")])).toEqual(["Native segwit"]);
+    expect(tagsOf([btcAccount("taproot")])).toEqual(["Taproot"]);
+  });
+
+  it("has no tag for an account without a notable address type", () => {
+    const ethAccount = genAccount("tag-account-eth", {
+      currency: mockEthCryptoCurrency,
+      operationsSize: 0,
+    });
+
+    const { result } = renderHook(
+      () =>
+        useAddressesViewModel(
+          mockEthCryptoCurrency,
+          buildDistributionItem(mockEthCryptoCurrency, [ethAccount]),
+        ),
+      withRawAccounts([ethAccount]),
+    );
+
+    expect(result.current.displayedAccounts.map(({ tag }) => tag)).toEqual([undefined]);
   });
 });

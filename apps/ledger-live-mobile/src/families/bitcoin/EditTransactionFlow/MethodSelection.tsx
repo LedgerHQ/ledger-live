@@ -92,7 +92,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
 
   const [selectedMethod, setSelectedMethod] = useState<EditType | null>(null);
 
-  const isOldestEditableOperation = isOldestBitcoinPendingOperation(mainAccount, operation.date);
+  const isOldestEditableOperation = isOldestBitcoinPendingOperation(mainAccount, operation);
 
   const onSelect = useCallback(
     async (option: EditType) => {

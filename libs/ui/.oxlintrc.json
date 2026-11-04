@@ -1,5 +1,6 @@
 {
   "$schema": "../../node_modules/oxlint/configuration_schema.json",
+  "extends": ["../../support/lint/restricted-imports/lodash.json"],
   "env": {
     "browser": true,
     "es6": true,
@@ -30,12 +31,6 @@
     "pedantic": "off"
   },
   "rules": {
-    "eslint/no-restricted-imports": [
-      "error",
-      {
-        "paths": ["lodash"]
-      }
-    ],
     "eslint/no-unused-vars": "off",
 
     "typescript/consistent-type-assertions": ["warn", { "assertionStyle": "never" }],

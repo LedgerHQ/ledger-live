@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/transaction-observability",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "private": true,
   "description": "Sign/broadcast transaction observability: normalized log events, a global observer registry, and error/staking-action classification, shared across all Ledger Live transaction routes",
   "keywords": [
@@ -34,7 +34,10 @@
     "@swc/jest": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
-    "oxlint": "catalog:"
+    "oxlint": "catalog:",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
+    "rimraf": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

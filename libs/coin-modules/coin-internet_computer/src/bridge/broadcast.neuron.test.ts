@@ -6,7 +6,7 @@ import {
   ICPNodeRefused,
   ICPStakeNotRefreshed,
 } from "../errors";
-import { broadcast } from "./broadcast";
+import { buildBroadcast } from "./broadcast";
 
 jest.mock("../network/api");
 jest.mock("../logic/crypto");
@@ -16,6 +16,9 @@ import * as api from "../network/api";
 import { derivePrincipalFromPubkey } from "../logic/crypto";
 import { toNeuronsData } from "../common-logic/neuron";
 
+const LOCAL_NODE = "http://127.0.0.1:4943";
+
+const broadcast = buildBroadcast(() => LOCAL_NODE);
 const account = { xpub: "04abcd" } as any;
 const signed = (rawData: any) => ({
   account,
@@ -44,11 +47,16 @@ describe("broadcast routing", () => {
     );
 
     expect(api.broadcastTxn).toHaveBeenCalledWith(
+      LOCAL_NODE,
       expect.anything(),
       MAINNET_LEDGER_CANISTER_ID,
       "call",
     );
-    expect(api.claimOrRefreshNeuronFromAccount).toHaveBeenCalledWith({ __principal: true }, 42n);
+    expect(api.claimOrRefreshNeuronFromAccount).toHaveBeenCalledWith(
+      LOCAL_NODE,
+      { __principal: true },
+      42n,
+    );
     expect((op.extra as any).createdNeuronId).toBe("123");
   });
 
@@ -254,6 +262,7 @@ describe("broadcast routing", () => {
     );
 
     expect(api.readReplyFromCanister).toHaveBeenCalledWith(
+      LOCAL_NODE,
       expect.anything(),
       expect.anything(),
       MAINNET_GOVERNANCE_CANISTER_ID,

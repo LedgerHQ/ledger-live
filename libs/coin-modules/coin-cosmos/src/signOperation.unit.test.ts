@@ -82,8 +82,6 @@ function makeTransaction(recipient: string): Transaction {
     fees: new BigNumber(500),
     gas: new BigNumber(200000),
     memo: "",
-    validators: [],
-    sourceValidator: undefined,
     networkInfo: null,
     useAllAmount: false,
   } as unknown as Transaction;

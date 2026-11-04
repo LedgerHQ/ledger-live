@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-solana",
-  "version": "1.28.0",
+  "version": "1.28.1",
   "private": true,
   "description": "Ledger Solana Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -62,7 +62,6 @@
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
-    "@shared/env": "workspace:*",
     "@solana/web3.js": "catalog:",
     "bignumber.js": "^9",
     "bip39": "catalog:",
@@ -75,10 +74,11 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "rimraf": "^5",
+    "rimraf": "5.0.10",
     "typescript": "catalog:"
   }
 }

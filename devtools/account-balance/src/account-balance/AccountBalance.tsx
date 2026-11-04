@@ -1,6 +1,11 @@
 import type { AccountBalanceToolAccount, AccountBalanceToolProps } from "../types";
 
-function AccountBalance({ accounts, onRead, onReadAll }: AccountBalanceToolProps) {
+function AccountBalance({
+  accounts,
+  onRead,
+  onReadAll,
+  onReadOperations,
+}: AccountBalanceToolProps) {
   return (
     <div className="flex flex-col h-full overflow-hidden select-text">
       <div className="px-16 py-8 border-b border-base flex items-center justify-between flex-shrink-0">
@@ -16,7 +21,12 @@ function AccountBalance({ accounts, onRead, onReadAll }: AccountBalanceToolProps
           <div className="px-16 py-10 body-3 text-muted">No account in the accounts slice.</div>
         ) : null}
         {accounts.map(account => (
-          <AccountRow key={account.accountUUID} account={account} onRead={onRead} />
+          <AccountRow
+            key={account.accountUUID}
+            account={account}
+            onRead={onRead}
+            onReadOperations={onReadOperations}
+          />
         ))}
       </div>
     </div>
@@ -32,7 +42,12 @@ function readLabel({ reading, sourceId, readAt }: AccountBalanceToolAccount): st
 function AccountRow({
   account,
   onRead,
-}: Readonly<{ account: AccountBalanceToolAccount; onRead: (accountUUID: string) => void }>) {
+  onReadOperations,
+}: Readonly<{
+  account: AccountBalanceToolAccount;
+  onRead: AccountBalanceToolProps["onRead"];
+  onReadOperations: AccountBalanceToolProps["onReadOperations"];
+}>) {
   const { accountUUID, descriptor, reading, error, rows } = account;
   return (
     <div className="px-16 py-10 border-b border-base flex flex-col gap-4">
@@ -67,6 +82,14 @@ function AccountRow({
           <span className={row.empty ? "text-muted" : "body-3-semi-bold text-success"}>
             {row.balance}
           </span>
+          <button
+            type="button"
+            title="Read this asset's operations, in the operations tool"
+            onClick={() => onReadOperations(accountUUID, row.assetId)}
+            className="body-3-semi-bold text-base"
+          >
+            Operations
+          </button>
         </div>
       ))}
     </div>

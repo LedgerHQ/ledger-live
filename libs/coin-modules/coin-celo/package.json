@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-celo",
-  "version": "3.6.0",
+  "version": "3.7.0",
   "description": "celo coin integration",
   "keywords": [
     "Ledger",
@@ -136,16 +136,18 @@
     "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
-    "@types/imurmurhash": "^0.1.4",
-    "@types/invariant": "^2.2.37",
+    "@types/imurmurhash": "0.1.4",
+    "@types/invariant": "2.2.37",
     "@types/jest": "catalog:",
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
-    "dotenv": "^16.4.5",
+    "@typescript/native": "catalog:",
+    "dotenv": "16.4.7",
     "expect": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
+    "rimraf": "catalog:",
     "typescript": "catalog:"
   },
   "files": [

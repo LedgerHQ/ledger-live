@@ -1,10 +1,14 @@
 import { Transaction, TransactionType } from "@ledgerhq/live-e2e-shared/models/Transaction";
-import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { coinTeamOwner } from "@ledgerhq/live-e2e-shared/data/coinTeamOwner";
+import { SendScenario, sendFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { declareBroadcastAccounts } from "@e2e/helpers/exclusiveLock";
-import { BST_SEND_CURRENCIES, beforeAllFunction, SendTestOptions } from "@e2e/specs/send/send";
+import { beforeAllFunction, SendTestOptions } from "@e2e/specs/send/send";
 
-const beforeAllTokenFunction = async (transaction: TransactionType, options?: SendTestOptions) => {
+export const beforeAllTokenFunction = async (
+  transaction: TransactionType,
+  options?: SendTestOptions,
+) => {
   await app.init({
     speculosApp: transaction.accountToDebit.currency.speculosApp,
     ...(options?.userdata !== undefined ? { userdata: options.userdata } : {}),
@@ -33,11 +37,10 @@ export function runNewSendFlowTokenTest(
   options?: SendTestOptions,
 ) {
   declareBroadcastAccounts(transaction.accountToDebit);
-  setTeamOwner(
-    BST_SEND_CURRENCIES.has(transaction.accountToDebit.currency.id)
-      ? Team.BST
-      : Team.COIN_INTEGRATION,
-  );
+  setTeamOwner(coinTeamOwner(transaction.accountToDebit.currency.id), {
+    folder: sendFolder(transaction.accountToDebit),
+    scenario: SendScenario.TRANSACTION,
+  });
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   describe("New Send Flow - Token Send", () => {
@@ -45,7 +48,7 @@ export function runNewSendFlowTokenTest(
       await beforeAllTokenFunction(transaction, options);
     });
 
-    it(`Send ${transaction.amount} ${transaction.accountToDebit.currency.ticker} from ${transaction.accountToDebit.accountName} to ${transaction.accountToCredit.accountName}`, async () => {
+    it(`[${transaction.accountToDebit.currency.testLabel}] - Send`, async () => {
       await app.newSend.navigateToTokenSendScreen(
         transaction.accountToDebit.parentAccount!.accountName,
         transaction.accountToDebit,
@@ -73,11 +76,10 @@ export function runNewSendFlowTest(
   options?: SendTestOptions,
 ) {
   declareBroadcastAccounts(transaction.accountToDebit);
-  setTeamOwner(
-    BST_SEND_CURRENCIES.has(transaction.accountToDebit.currency.id)
-      ? Team.BST
-      : Team.COIN_INTEGRATION,
-  );
+  setTeamOwner(coinTeamOwner(transaction.accountToDebit.currency.id), {
+    folder: sendFolder(transaction.accountToDebit),
+    scenario: SendScenario.TRANSACTION,
+  });
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   describe("Send - new flow", () => {
@@ -85,7 +87,7 @@ export function runNewSendFlowTest(
       await beforeAllFunction(transaction, options);
     });
 
-    it(`[${transaction.accountToDebit.currency.testLabel}] - Send (new send flow)`, async () => {
+    it(`[${transaction.accountToDebit.currency.testLabel}] - Send`, async () => {
       await app.send.navigateToSendScreen(transaction.accountToDebit.accountName);
       await app.newSend.setRecipientAndContinueNewFlow(
         transaction.accountToCredit.address,
@@ -142,11 +144,10 @@ export function runNewSendMemoTest(
 ) {
   const { invalidMemoInput, broadcastWithoutMemo = true, memoTypeOptions } = memoOptions;
   declareBroadcastAccounts(transaction.accountToDebit);
-  setTeamOwner(
-    BST_SEND_CURRENCIES.has(transaction.accountToDebit.currency.id)
-      ? Team.BST
-      : Team.COIN_INTEGRATION,
-  );
+  setTeamOwner(coinTeamOwner(transaction.accountToDebit.currency.id), {
+    folder: sendFolder(transaction.accountToDebit),
+    scenario: SendScenario.MEMO,
+  });
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
 
@@ -166,7 +167,7 @@ export function runNewSendMemoTest(
     });
 
     if (invalidMemoInput !== undefined) {
-      it(`[${label}] - Memo enforces numeric-only input (new send flow): rejects ${invalidMemoInput}`, async () => {
+      it(`[${label}] - Send - numeric memo only (${invalidMemoInput})`, async () => {
         await app.send.navigateToSendScreen(transaction.accountToDebit.accountName);
         await app.newSend.typeRecipientNewFlow(transaction.accountToCredit.address);
         await app.newSend.expectMemoRejectsNonNumericInput(invalidMemoInput);
@@ -177,14 +178,14 @@ export function runNewSendMemoTest(
     }
 
     if (memoTypeOptions !== undefined) {
-      it(`[${label}] - Memo type dropdown shows all options (new send flow)`, async () => {
+      it(`[${label}] - Send - memo type options`, async () => {
         await app.send.navigateToSendScreen(transaction.accountToDebit.accountName);
         await app.newSend.typeRecipientNewFlow(transaction.accountToCredit.address);
         await app.newSend.expectMemoTypeOptions(memoTypeOptions);
       });
     }
 
-    it(`[${label}] - Send with Memo (new send flow)`, async () => {
+    it(`[${label}] - Send - with memo`, async () => {
       await app.send.navigateToSendScreen(transaction.accountToDebit.accountName);
       await app.newSend.setRecipientAndContinueNewFlow(
         transaction.accountToCredit.address,
@@ -202,7 +203,7 @@ export function runNewSendMemoTest(
     });
 
     if (broadcastWithoutMemo) {
-      it(`[${label}] - Send without Memo using skip (new send flow)`, async () => {
+      it(`[${label}] - Send - without memo`, async () => {
         await app.send.navigateToSendScreen(noMemoTransaction.accountToDebit.accountName);
         await app.newSend.setRecipientAndContinueNewFlow(
           noMemoTransaction.accountToCredit.address,

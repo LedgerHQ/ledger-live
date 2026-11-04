@@ -1,5 +1,6 @@
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { TestFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { describeIfNanoSSupports } from "@e2e/helpers/commonHelpers";
 
@@ -18,7 +19,7 @@ describeIfNanoSSupports(Currency.ALEO.id)("Add account", () => {
     await app.mainNavigation.waitForWallet40Ready();
   });
 
-  setTeamOwner(Team.BST);
+  setTeamOwner(Team.BST, { folder: TestFolder.ACCOUNTS });
   tmsLinks.forEach(link => $TmsLink(link));
   tags.forEach(tag => $Tag(tag));
 

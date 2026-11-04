@@ -1,3 +1,4 @@
+import { ICP_NETWORK_URL } from "../consts";
 import { ICPCallRejected } from "../errors";
 import { readTransferOutcome } from "./api";
 
@@ -28,7 +29,7 @@ describe("readTransferOutcome against a real certificate", () => {
   it("returns the ledger's verdict from a certificate that verifies", async () => {
     jest.useFakeTimers({ now: CERTIFIED_AT_MS, advanceTimers: true });
 
-    const outcome = await readTransferOutcome(response(), REQUEST_ID_HEX);
+    const outcome = await readTransferOutcome(ICP_NETWORK_URL, response(), REQUEST_ID_HEX);
 
     expect(outcome.Err).toHaveProperty("InsufficientFunds");
     expect(global.fetch).not.toHaveBeenCalled();
@@ -40,7 +41,7 @@ describe("readTransferOutcome against a real certificate", () => {
     const tampered = response();
     tampered[tampered.length - 1] ^= 0x01;
 
-    const attempt = readTransferOutcome(tampered, REQUEST_ID_HEX);
+    const attempt = readTransferOutcome(ICP_NETWORK_URL, tampered, REQUEST_ID_HEX);
 
     await expect(attempt).rejects.toThrow(/signature/i);
     await expect(attempt).rejects.not.toBeInstanceOf(ICPCallRejected);
@@ -49,7 +50,7 @@ describe("readTransferOutcome against a real certificate", () => {
   it("fails plainly when the certificate is older than the accepted age", async () => {
     jest.useFakeTimers({ now: CERTIFIED_AT_MS + 101 * 60_000, advanceTimers: true });
 
-    const attempt = readTransferOutcome(response(), REQUEST_ID_HEX);
+    const attempt = readTransferOutcome(ICP_NETWORK_URL, response(), REQUEST_ID_HEX);
 
     await expect(attempt).rejects.toThrow(/more than 100 minutes in the past/);
     await expect(attempt).rejects.not.toBeInstanceOf(ICPCallRejected);

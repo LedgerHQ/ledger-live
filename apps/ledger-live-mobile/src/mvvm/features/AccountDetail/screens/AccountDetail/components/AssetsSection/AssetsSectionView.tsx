@@ -16,7 +16,7 @@ import type { AssetsSectionViewModel } from "./useAssetsSectionViewModel";
 
 type Props = AssetsSectionViewModel;
 
-export function AssetsSectionView({ assets, precomputed, onAddAsset }: Props) {
+export function AssetsSectionView({ assets, precomputed, onAddAsset, onAssetPress }: Props) {
   const { t } = useTranslation();
 
   return (
@@ -49,6 +49,7 @@ export function AssetsSectionView({ assets, precomputed, onAddAsset }: Props) {
             key={asset.currency.id}
             asset={asset}
             precomputed={data}
+            onPress={onAssetPress}
             lx={rowStyle}
             hideNetwork
           />

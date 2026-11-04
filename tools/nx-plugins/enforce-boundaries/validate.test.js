@@ -11,8 +11,24 @@ const {
   collectLegacyPackageNames,
   findBannedDependencyViolations,
   findBannedExternalViolations,
+  findDevtoolsImportViolations,
+  sourceFiles,
+  DEVTOOLS_ROOT,
 } = require("./validate");
-const { BOUNDARY_EXCEPTIONS, LEGACY_PACKAGES, BANNED_EXTERNALS_BY_TAG } = require("./constraints");
+const {
+  BOUNDARY_EXCEPTIONS,
+  LEGACY_SOURCE_ROOTS,
+  LEGACY_PACKAGES,
+  BANNED_EXTERNALS_BY_TAG,
+  BANNED_DEPENDENCIES,
+  DEVTOOLS_ALLOWED_IMPORTS,
+  DEVTOOLS_TYPE_ONLY_IMPORTS,
+} = require("./constraints");
+const {
+  isLintBoundariesInput,
+  assertSourceFilesHashed,
+  assertSkipDirsExcluded,
+} = require("./test-helpers");
 
 /**
  * @param {Array<{name: string, tags: string[]}>} projects
@@ -310,6 +326,93 @@ test("feature-platform -> legacy libs is forbidden", () => {
   // findViolations dedupes per edge and accumulates both source tags.
   assert.ok(v[0].sourceTags.includes("scope:features"));
   assert.ok(v[0].sourceTags.includes("type:feature-platform"));
+});
+
+const ACCOUNT_DATA_SOURCE_TAGS = [
+  "scope:features",
+  "type:feature-platform",
+  "type:account-data-source",
+];
+
+test("feature-flow -> account-data source is forbidden", () => {
+  const graph = buildGraph(
+    [
+      { name: "a", tags: ["scope:features", "type:feature-flow"] },
+      { name: "b", tags: ACCOUNT_DATA_SOURCE_TAGS },
+    ],
+    [{ source: "a", target: "b" }],
+  );
+  const v = findViolations(graph);
+  assert.equal(v.length, 1);
+  assert.deepEqual(v[0].sourceTags, ["scope:features"]);
+  assert.equal(v[0].target, "b");
+});
+
+test("feature-platform -> account-data source is forbidden", () => {
+  const graph = buildGraph(
+    [
+      { name: "a", tags: ["scope:features", "type:feature-platform"] },
+      { name: "b", tags: ACCOUNT_DATA_SOURCE_TAGS },
+    ],
+    [{ source: "a", target: "b" }],
+  );
+  const v = findViolations(graph);
+  assert.equal(v.length, 1);
+  assert.deepEqual(v[0].sourceTags, ["scope:features"]);
+});
+
+test("domain-api -> account-data source is forbidden", () => {
+  const graph = buildGraph(
+    [
+      { name: "a", tags: ["scope:domain", "type:domain-api"] },
+      { name: "b", tags: ACCOUNT_DATA_SOURCE_TAGS },
+    ],
+    [{ source: "a", target: "b" }],
+  );
+  const v = findViolations(graph);
+  assert.equal(v.length, 1);
+  assert.ok(v[0].sourceTags.includes("scope:domain"));
+});
+
+test("devtools -> account-data source is allowed", () => {
+  const graph = buildGraph(
+    [
+      { name: "a", tags: ["scope:devtools"] },
+      { name: "b", tags: ACCOUNT_DATA_SOURCE_TAGS },
+    ],
+    [{ source: "a", target: "b" }],
+  );
+  assert.deepEqual(findViolations(graph), []);
+});
+
+test("account-data source -> feature-platform is allowed", () => {
+  const graph = buildGraph(
+    [
+      { name: "a", tags: ACCOUNT_DATA_SOURCE_TAGS },
+      { name: "b", tags: ["scope:features", "type:feature-platform"] },
+    ],
+    [{ source: "a", target: "b" }],
+  );
+  assert.deepEqual(findViolations(graph), []);
+});
+
+test("findViolations: BOUNDARY_EXCEPTIONS skips a notDependOnLibsWithTags edge", () => {
+  const graph = {
+    nodes: {
+      a: { data: { root: "features/flow/a", tags: ["scope:features", "type:feature-flow"] } },
+      b: { data: { root: "features/platform/account-source-b", tags: ACCOUNT_DATA_SOURCE_TAGS } },
+    },
+    dependencies: { a: [{ target: "b" }], b: [] },
+  };
+  const exceptions = [
+    {
+      sourceRoot: "features/flow/a",
+      targetRoot: "features/platform/account-source-b",
+      allowedImport: "@features/platform-account-source-b",
+    },
+  ];
+  assert.deepEqual(findViolations(graph, exceptions), []);
+  assert.equal(findViolations(graph, []).length, 1);
 });
 
 test("missing tags default to empty array (no crash)", () => {
@@ -634,6 +737,82 @@ test("findBannedDependencyViolations ignores unrelated dependencies and missing 
   assert.deepEqual(findBannedDependencyViolations(bannedDepGraph(manifests), root, BANNED), []);
 });
 
+test("BANNED_DEPENDENCIES bans @ledgerhq/generators from every manifest but its own", t => {
+  const manifests = {
+    "devtools/registry": {
+      name: "@devtools/registry",
+      devDependencies: { "@ledgerhq/generators": "workspace:*" },
+    },
+    "apps/app": { name: "app", dependencies: { "@ledgerhq/generators": "workspace:*" } },
+    "tools/nx-plugins/generators": { name: "@ledgerhq/generators" },
+  };
+  const root = makeTmpWorkspace(
+    Object.fromEntries(
+      Object.entries(manifests).map(([r, pkg]) => [`${r}/package.json`, JSON.stringify(pkg)]),
+    ),
+  );
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const violations = findBannedDependencyViolations(
+    bannedDepGraph(manifests),
+    root,
+    BANNED_DEPENDENCIES,
+  );
+  assert.deepEqual(violations.map(v => `${v.manifest} ${v.dependency} ${v.field}`).sort(), [
+    `${path.join("apps/app", "package.json")} @ledgerhq/generators dependencies`,
+    `${path.join("devtools/registry", "package.json")} @ledgerhq/generators devDependencies`,
+  ]);
+});
+
+test("every manifest check fails on a malformed or unreadable manifest in its scope", t => {
+  const root = makeTmpWorkspace({
+    "libs/broken/package.json": '{ "name": "@ledgerhq/broken",',
+    "devtools/broken/package.json": '{ "name": "@devtools/broken",',
+    // a directory where the manifest should be: present, but not readable as a file
+    "libs/unreadable/package.json/.keep": "",
+    "devtools/unreadable/package.json/.keep": "",
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const tags = ["scope:libs", "type:domain-entity"];
+  const checks = [
+    { scope: "libs", check: graph => collectLegacyPackageNames(graph, root) },
+    { scope: "libs", check: graph => findBannedDependencyViolations(graph, root, BANNED) },
+    {
+      scope: "libs",
+      check: graph =>
+        findBannedExternalViolations(graph, root, [{ sourceTag: tags[1], packages: ["react"] }]),
+    },
+    { scope: "devtools", check: graph => findDevtoolsImportViolations(graph, root, {}) },
+  ];
+  for (const { scope, check } of checks) {
+    for (const [name, error] of [
+      ["broken", new RegExp(`${scope}/broken/package\\.json`)],
+      ["unreadable", { code: "EISDIR" }],
+    ]) {
+      const graph = {
+        nodes: { p: { data: { root: `${scope}/${name}`, tags } } },
+        dependencies: {},
+      };
+      assert.throws(() => check(graph), error);
+    }
+  }
+});
+
+test("devtools: manifests outside devtools/ are not read", t => {
+  const root = makeTmpWorkspace({
+    "libs/broken/package.json": '{ "name": "@ledgerhq/broken",',
+    "apps/unreadable/package.json/.keep": "",
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const graph = {
+    nodes: {
+      broken: { data: { root: "libs/broken" } },
+      unreadable: { data: { root: "apps/unreadable" } },
+    },
+    dependencies: { broken: [{ target: "unreadable" }] },
+  };
+  assert.deepEqual(findDevtoolsImportViolations(graph, root, {}), []);
+});
+
 // --- LEGACY_PACKAGES / BANNED_EXTERNALS_BY_TAG (real constraints) ---
 
 test("domain source importing an npm legacy package fails", t => {
@@ -738,5 +917,250 @@ test("domain/entity: react after a string reading import is flagged, a commented
   assert.deepEqual(
     violations.map(v => `${path.basename(v.file)} ${v.specifier}`),
     ["a.ts react"],
+  );
+});
+
+/**
+ * A graph whose node names are project roots, with a manifest written for each.
+ *
+ * @param {import("node:test").TestContext} t
+ * @param {Record<string, object>} manifests keyed by project root
+ * @param {Array<[string, string]>} edges [sourceRoot, targetRoot]
+ * @param {Record<string, string>} [sources] extra files keyed by workspace-relative path
+ */
+function manifestWorkspace(t, manifests, edges, sources = {}) {
+  const root = makeTmpWorkspace({
+    ...Object.fromEntries(
+      Object.entries(manifests).map(([r, pkg]) => [`${r}/package.json`, JSON.stringify(pkg)]),
+    ),
+    ...sources,
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const graph = {
+    nodes: Object.fromEntries(Object.keys(manifests).map(r => [r, { data: { root: r } }])),
+    dependencies: Object.fromEntries(
+      Object.keys(manifests).map(r => [
+        r,
+        edges.filter(([s]) => s === r).map(([, target]) => ({ target })),
+      ]),
+    ),
+  };
+  return { root, graph };
+}
+
+/**
+ * @param {object} graph
+ * @param {string} root
+ */
+function devtoolsViolations(graph, root) {
+  return findDevtoolsImportViolations(
+    graph,
+    root,
+    DEVTOOLS_ALLOWED_IMPORTS,
+    DEVTOOLS_TYPE_ONLY_IMPORTS,
+  );
+}
+
+const DEVTOOLS_MANIFESTS = {
+  "devtools/shell": { name: "@devtools/shell", private: true },
+  "devtools/registry": { name: "@devtools/registry", private: true },
+  "devtools/bindings": { name: "@devtools/bindings", private: true },
+  "devtools/relay": { name: "@devtools/relay", private: true },
+  "devtools/protocols": { name: "@devtools/protocols", private: true },
+  "devtools/env": { name: "@devtools/env", private: true },
+  "devtools/feature-flags": { name: "@devtools/feature-flags", private: true },
+};
+
+test("devtools: a tool importing @devtools/shell is forbidden", t => {
+  const { root, graph } = manifestWorkspace(t, DEVTOOLS_MANIFESTS, [
+    ["devtools/env", "devtools/shell"],
+  ]);
+  assert.deepEqual(devtoolsViolations(graph, root), [
+    { source: "@devtools/env", target: "@devtools/shell" },
+  ]);
+});
+
+test("devtools: a tool importing another tool is forbidden", t => {
+  const { root, graph } = manifestWorkspace(t, DEVTOOLS_MANIFESTS, [
+    ["devtools/env", "devtools/feature-flags"],
+  ]);
+  assert.equal(devtoolsViolations(graph, root).length, 1);
+});
+
+test("devtools: @devtools/shell importing @devtools/registry is allowed", t => {
+  const { root, graph } = manifestWorkspace(t, DEVTOOLS_MANIFESTS, [
+    ["devtools/shell", "devtools/registry"],
+  ]);
+  assert.deepEqual(devtoolsViolations(graph, root), []);
+});
+
+test('devtools: "*" lets @devtools/registry import any tool', t => {
+  const { root, graph } = manifestWorkspace(t, DEVTOOLS_MANIFESTS, [
+    ["devtools/registry", "devtools/env"],
+    ["devtools/registry", "devtools/feature-flags"],
+  ]);
+  assert.deepEqual(devtoolsViolations(graph, root), []);
+});
+
+test("devtools: @devtools/shell importing a tool directly is forbidden", t => {
+  const { root, graph } = manifestWorkspace(t, DEVTOOLS_MANIFESTS, [
+    ["devtools/shell", "devtools/env"],
+  ]);
+  assert.deepEqual(devtoolsViolations(graph, root), [
+    { source: "@devtools/shell", target: "@devtools/env" },
+  ]);
+});
+
+test("devtools: @devtools/relay importing @devtools/protocols is allowed", t => {
+  const { root, graph } = manifestWorkspace(t, DEVTOOLS_MANIFESTS, [
+    ["devtools/relay", "devtools/protocols"],
+  ]);
+  assert.deepEqual(devtoolsViolations(graph, root), []);
+});
+
+test("devtools: @devtools/bindings may import a tool's types with import type", t => {
+  const { root, graph } = manifestWorkspace(
+    t,
+    DEVTOOLS_MANIFESTS,
+    [["devtools/bindings", "devtools/env"]],
+    {
+      "devtools/bindings/src/useEnv.ts": [
+        'import type { EnvDevToolProps } from "@devtools/env";',
+        'export type { EnvVarEntry } from "@devtools/env";',
+        'type Loader = typeof import("@devtools/env");',
+      ].join("\n"),
+    },
+  );
+  assert.deepEqual(devtoolsViolations(graph, root), []);
+});
+
+test("devtools: @devtools/bindings importing a tool's values is forbidden", t => {
+  const { root, graph } = manifestWorkspace(
+    t,
+    DEVTOOLS_MANIFESTS,
+    [["devtools/bindings", "devtools/env"]],
+    {
+      "devtools/bindings/src/types.ts": 'import type { EnvDevToolProps } from "@devtools/env";',
+      "devtools/bindings/src/useEnv.ts":
+        'import { type EnvVarEntry, EnvDevTool } from "@devtools/env";',
+      "devtools/bindings/src/lazy.ts": 'export const load = () => import("@devtools/env");',
+    },
+  );
+  assert.deepEqual(
+    devtoolsViolations(graph, root)
+      .map(v => v.file)
+      .sort(),
+    [path.join("devtools/bindings/src/lazy.ts"), path.join("devtools/bindings/src/useEnv.ts")],
+  );
+});
+
+test("devtools: @devtools/bindings importing a tool's values by relative path is forbidden", t => {
+  const { root, graph } = manifestWorkspace(
+    t,
+    DEVTOOLS_MANIFESTS,
+    [["devtools/bindings", "devtools/env"]],
+    {
+      "devtools/bindings/src/types.ts": 'import type { EnvDevToolProps } from "../../env/src";',
+      "devtools/bindings/src/useEnv.ts": 'import EnvDevTool from "../../env/src/index";',
+      "devtools/bindings/src/local.ts": 'import { useEnv } from "./useEnv";',
+      "devtools/bindings/src/sibling.ts": 'import { x } from "../../environment/src";',
+    },
+  );
+  assert.deepEqual(
+    devtoolsViolations(graph, root).map(v => v.file),
+    [path.join("devtools/bindings/src/useEnv.ts")],
+  );
+});
+
+test("devtools: @devtools/shell importing a tool's types is forbidden", t => {
+  const { root, graph } = manifestWorkspace(
+    t,
+    DEVTOOLS_MANIFESTS,
+    [["devtools/shell", "devtools/env"]],
+    { "devtools/shell/src/a.ts": 'import type { EnvDevToolProps } from "@devtools/env";' },
+  );
+  assert.deepEqual(devtoolsViolations(graph, root), [
+    { source: "@devtools/shell", target: "@devtools/env" },
+  ]);
+});
+
+test("devtools: a static and a dynamic edge to the same package report once", t => {
+  const { root, graph } = manifestWorkspace(t, DEVTOOLS_MANIFESTS, [
+    ["devtools/env", "devtools/shell"],
+    ["devtools/env", "devtools/shell"],
+  ]);
+  assert.equal(devtoolsViolations(graph, root).length, 1);
+});
+
+test("devtools: edges to or from packages outside the scope are ignored", t => {
+  const { root, graph } = manifestWorkspace(
+    t,
+    { ...DEVTOOLS_MANIFESTS, "shared/foo": { name: "@shared/foo", private: true } },
+    [
+      ["devtools/env", "shared/foo"],
+      ["shared/foo", "devtools/shell"],
+    ],
+  );
+  assert.deepEqual(devtoolsViolations(graph, root), []);
+});
+
+test("devtools: each source file is read and parsed once across type-only edges", t => {
+  const { root, graph } = manifestWorkspace(
+    t,
+    DEVTOOLS_MANIFESTS,
+    [
+      ["devtools/bindings", "devtools/env"],
+      ["devtools/bindings", "devtools/feature-flags"],
+      ["devtools/bindings", "devtools/relay"],
+    ],
+    {
+      "devtools/bindings/src/env.ts": 'import { EnvDevTool } from "@devtools/env";',
+      "devtools/bindings/src/flags.ts": 'import type { Flags } from "@devtools/feature-flags";',
+      "devtools/bindings/src/relay.ts": 'export const load = () => import("@devtools/relay");',
+    },
+  );
+  const parse = t.mock.method(sourceFiles, "parse");
+
+  const violations = findDevtoolsImportViolations(
+    graph,
+    root,
+    DEVTOOLS_ALLOWED_IMPORTS,
+    DEVTOOLS_TYPE_ONLY_IMPORTS,
+  );
+
+  assert.deepEqual(
+    parse.mock.calls.map(call => call.arguments[0]).sort(),
+    ["env.ts", "flags.ts", "relay.ts"].map(f => path.join(root, "devtools/bindings/src", f)),
+  );
+  assert.deepEqual(violations.map(v => `${v.target} ${v.file}`).sort(), [
+    `@devtools/env ${path.join("devtools/bindings/src/env.ts")}`,
+    `@devtools/relay ${path.join("devtools/bindings/src/relay.ts")}`,
+  ]);
+});
+
+// --- lint:boundaries cache inputs ---
+
+const fixedSourceRoots = [...LEGACY_SOURCE_ROOTS, DEVTOOLS_ROOT];
+
+test("lint:boundaries inputs cover every source file under the legacy and devtools roots", () => {
+  assertSourceFilesHashed(fixedSourceRoots);
+});
+
+test("lint:boundaries inputs exclude each skipped directory under the legacy and devtools roots", () => {
+  assertSkipDirsExcluded(fixedSourceRoots);
+});
+
+test("lint:boundaries inputs cover the graph configuration and the tags plugin", () => {
+  const files = [
+    "pnpm-workspace.yaml",
+    "nx.json",
+    "nx.cache-config.json",
+    "tools/nx-plugins/project-tags/plugin.js",
+    "tools/nx-plugins/enforce-boundaries/constraints.js",
+    "tools/nx-plugins/enforce-boundaries/validate.js",
+  ];
+  assert.deepEqual(
+    files.filter(file => !isLintBoundariesInput(file)),
+    [],
   );
 });

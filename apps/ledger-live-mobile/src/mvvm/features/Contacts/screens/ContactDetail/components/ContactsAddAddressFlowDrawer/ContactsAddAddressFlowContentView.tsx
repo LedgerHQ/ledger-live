@@ -21,8 +21,7 @@ const FORM_STEP_OPTIONS = {
 } as const satisfies QueuedDrawerFlowOptions;
 
 export function ContactsAddAddressFlowContentView({
-  addressEntryProps,
-  addressNameProps,
+  flowContentProps,
   currencyShell,
   currentStep,
   isOpen,
@@ -30,7 +29,9 @@ export function ContactsAddAddressFlowContentView({
   onClose,
   onHeaderClosePressed,
 }: ContactsAddAddressFlowContentViewModel): React.JSX.Element {
-  const flowContentProps = { addressEntryProps, addressNameProps };
+  const flowContent = flowContentProps ? (
+    <ContactsAddAddressFlowContent {...flowContentProps} />
+  ) : null;
   const screens: QueuedDrawerFlowScreenRegistry<ContactsAddAddressDrawerStep> = {
     currency: {
       content: currencyShell.content,
@@ -40,11 +41,11 @@ export function ContactsAddAddressFlowContentView({
       },
     },
     address: {
-      content: <ContactsAddAddressFlowContent {...flowContentProps} step="address" />,
+      content: flowContent,
       options: { ...FORM_STEP_OPTIONS, onHeaderClosePressed },
     },
     name: {
-      content: <ContactsAddAddressFlowContent {...flowContentProps} step="name" />,
+      content: flowContent,
       options: { ...FORM_STEP_OPTIONS, onHeaderClosePressed },
     },
   };

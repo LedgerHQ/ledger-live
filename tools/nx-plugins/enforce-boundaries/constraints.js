@@ -15,6 +15,8 @@
  * As a source, it may only reach `scope:support` and `scope:shared`: tooling carries no domain or
  * feature knowledge, so a test harness that needs a domain's mocks lives in that domain package.
  * Third-party test tooling (lumen, react-native) is not a graph node and stays unconstrained.
+ *
+ * `type:account-data-source` packages are wired by apps only: features and domain go through the router.
  */
 const DEP_CONSTRAINTS = [
   { sourceTag: "scope:support", onlyDependOnLibsWithTags: ["scope:support", "scope:shared"] },
@@ -59,6 +61,8 @@ const DEP_CONSTRAINTS = [
       "scope:support",
     ],
   },
+  { sourceTag: "scope:features", notDependOnLibsWithTags: ["type:account-data-source"] },
+  { sourceTag: "scope:domain", notDependOnLibsWithTags: ["type:account-data-source"] },
 ];
 
 /**
@@ -99,7 +103,38 @@ const BANNED_EXTERNALS_BY_TAG = [
  * A workspace package does not resolve from the pnpm virtual store, so banning
  * the declaration bans the import too — an undeclared import fails to resolve.
  */
-const BANNED_DEPENDENCIES = [];
+const BANNED_DEPENDENCIES = [
+  {
+    name: "@ledgerhq/generators",
+    reason:
+      "Nx resolves it as a local workspace plugin; a declared edge makes the project nx-affected by every skill or lint-tool edit.",
+  },
+];
+
+/**
+ * The `@devtools/*` packages each `@devtools/*` package may depend on; "*" allows them all.
+ * A package missing from the table, such as a tool, may depend on none.
+ */
+const DEVTOOLS_ALLOWED_IMPORTS = {
+  "@devtools/registry": "*",
+  "@devtools/shell": ["@devtools/transport", "@devtools/registry"],
+  "@devtools/bindings": ["@devtools/registry"],
+  "@devtools/wire": ["@devtools/transport", "@devtools/protocols"],
+  "@devtools/protocols": ["@devtools/transport"],
+  "@devtools/relay": ["@devtools/transport", "@devtools/protocols"],
+  "@devtools/transport-panel": ["@devtools/transport"],
+};
+
+/**
+ * The `@devtools/*` packages each `@devtools/*` package may reach under `DEVTOOLS_TYPE_ONLY_RULE`;
+ * "*" allows them all.
+ */
+const DEVTOOLS_TYPE_ONLY_IMPORTS = {
+  "@devtools/bindings": "*",
+};
+
+const DEVTOOLS_TYPE_ONLY_RULE =
+  'A DEVTOOLS_TYPE_ONLY_IMPORTS target may only be reached through `import type`, `export type … from` or `typeof import("…")`: the build erases them, so the target stays lazily loaded. A value import, `import { type X }`, `import()` or `require()` loads it at runtime.';
 
 module.exports = {
   DEP_CONSTRAINTS,
@@ -109,4 +144,7 @@ module.exports = {
   LEGACY_PACKAGES,
   BANNED_EXTERNALS_BY_TAG,
   BANNED_DEPENDENCIES,
+  DEVTOOLS_ALLOWED_IMPORTS,
+  DEVTOOLS_TYPE_ONLY_IMPORTS,
+  DEVTOOLS_TYPE_ONLY_RULE,
 };

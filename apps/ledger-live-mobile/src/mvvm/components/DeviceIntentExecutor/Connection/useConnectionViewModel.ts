@@ -7,7 +7,7 @@ import type {
   DeviceConnectionResult,
 } from "@features/platform-device-intent";
 import { log } from "@ledgerhq/logs";
-import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useFeature } from "@features/platform-feature-flags";
 import {
   connectDevice,
   type ConnectDeviceUIState,
@@ -54,7 +54,6 @@ export function useConnectionViewModel({
   const saveConnectedDevice = useSaveConnectedDevice();
   const dmk = useDeviceManagementKit();
   const buyDeviceFromLive = useFeature("buyDeviceFromLive");
-  const { shouldDisplayMyWallet } = useWalletFeaturesConfig("mobile");
   const knownDevices = useSelector(knownDevicesSelector);
   const { sourceFlow, analyticsProperties, reportFailure } = useDeviceIntentTracking();
   const [state, setState] = useState<ConnectDeviceUIState>({
@@ -99,23 +98,12 @@ export function useConnectionViewModel({
   }, [analyticsProperties, state, sourceFlow]);
 
   const onConnectLedgerDevice = useCallback(() => {
-    const params = undefined;
-
-    if (shouldDisplayMyWallet) {
-      navigation.navigate(NavigatorName.MyWallet, {
-        state: {
-          routes: [{ name: ScreenName.MyWallet, params }],
-        },
-      });
-      return;
-    }
-
-    navigation.navigate(NavigatorName.MyLedger, {
+    navigation.navigate(NavigatorName.MyWallet, {
       state: {
-        routes: [{ name: ScreenName.MyLedgerChooseDevice, params }],
+        routes: [{ name: ScreenName.MyWallet, params: undefined }],
       },
     });
-  }, [navigation, shouldDisplayMyWallet]);
+  }, [navigation]);
 
   const onBuyLedgerDevice = useCallback(() => {
     if (buyDeviceFromLive?.enabled) {

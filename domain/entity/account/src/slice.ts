@@ -6,6 +6,7 @@ import {
   type AccountEntry,
   type AccountsState,
   type LegacyAccountEntry,
+  type RemoteAccountEntry,
 } from "./schema";
 
 const accountsAdapter = createEntityAdapter({
@@ -29,6 +30,17 @@ export const accountsSlice = createSlice({
       for (const { legacyId, accountUUID } of payload) byLegacyId[legacyId] = accountUUID;
       state.byLegacyId = byLegacyId;
     },
+    /** Accounts no legacy account backs, after the others; an account already listed is left as is. */
+    remoteAccountsAdded: (state, { payload }: PayloadAction<RemoteAccountEntry[]>) => {
+      accountsAdapter.addMany(state, payload);
+    },
+    /** Removes remote-only accounts; one a legacy account backs stays. */
+    remoteAccountsRemoved: (state, { payload }: PayloadAction<AccountUUID[]>) => {
+      accountsAdapter.removeMany(
+        state,
+        payload.filter(accountUUID => !state.entities[accountUUID]?.legacyId),
+      );
+    },
   },
   selectors: {
     /** Every account, in the user's order. */
@@ -42,4 +54,5 @@ export const accountsSlice = createSlice({
   },
 });
 
-export const { legacyAccountsSynced } = accountsSlice.actions;
+export const { legacyAccountsSynced, remoteAccountsAdded, remoteAccountsRemoved } =
+  accountsSlice.actions;

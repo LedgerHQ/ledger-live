@@ -45,9 +45,11 @@ import { redactUrlCredentials, agentIntentProfileStatus } from "./agent-intent/p
 import { NETWORK_LABELS, type SendIntentSummary } from "./agent-intent/send-intent";
 import { isTerminalIntentStatus, type IntentListEntry } from "./agent-intent/intent-list";
 import type { SwapIntentSummary } from "./agent-intent/swap-intent";
+import type { SubmittedIntent } from "./agent-intent/propose-intent";
 import { formatAgentPublicKeyFingerprint } from "@ledgerhq/agent-intent-sdk";
 import type { LedgerSyncImportReport } from "./ledger-sync/cloud-sync-accounts";
 import type { SwapPayloadResponse } from "@ledgerhq/live-common/exchange/swap/types";
+import type { SwapBalanceCheck } from "./commands/swap/check-swap-affordability";
 import type {
   EarnDepositResult,
   EarnPositionRow,
@@ -203,6 +205,7 @@ export interface CommandOutput {
     amountExpectedToAtomic?: string;
     /** Atomic-to over atomic-from. */
     magnitudeAwareRate?: string;
+    balanceCheck: SwapBalanceCheck;
   }): void;
 
   swapExecuteDieResult(args: {
@@ -214,6 +217,7 @@ export interface CommandOutput {
     quoteId: string | null;
     approvalTxHash?: string;
     swapTxHash?: string;
+    balanceCheck: SwapBalanceCheck;
   }): void;
 
   // ---- Earn ----
@@ -270,7 +274,8 @@ export interface CommandOutput {
   /** `agent-intent sync` report (human: grouped lines; json: envelope with the four
    * imported/unchanged/skipped/invalid arrays). */
   agentIntentSync(report: LedgerSyncImportReport): void;
-  /** Output a submitted `agent-intent send` proposal (human: review link first; json: envelope). */
+  /** Output a submitted `agent-intent send` proposal (human: review link first; json: envelope),
+   * then warn on stderr when its review link is unusable. */
   agentIntentSend(
     result: SendIntentSummary & { intentId: string | null; deeplink: string | null },
   ): void;
@@ -279,11 +284,13 @@ export interface CommandOutput {
   /** One page of `agent-intent intents` (human: table + next-page hint; json: envelope with
    * `intents`, `count` and `nextCursor`, `null` on the last page). */
   agentIntentIntents(result: AgentIntentIntentsPage): void;
-  /** Output a submitted `agent-intent swap` proposal (human: review link first; json: envelope). */
+  /** Output a submitted `agent-intent swap` proposal (human: review link first; json: envelope),
+   * then warn on stderr about a token approval and an unusable review link. */
   agentIntentSwap(
     result: SwapIntentSummary & { intentId: string | null; deeplink: string | null },
   ): void;
-  /** Output a quoted and validated `agent-intent swap --dry-run` proposal that was not submitted. */
+  /** Output a quoted and validated `agent-intent swap --dry-run` proposal that was not submitted,
+   * then warn on stderr about a token approval. */
   agentIntentSwapDryRun(summary: SwapIntentSummary): void;
   /** One intent from `agent-intent status` (human: labeled lines; json: envelope with the intent's
    * fields, `profileId` and `terminal`, `null` for a state this version doesn't know). */
@@ -692,6 +699,7 @@ class HumanCommandOutput implements CommandOutput {
     amountExpectedTo?: string;
     amountExpectedToAtomic?: string;
     magnitudeAwareRate?: string;
+    balanceCheck: SwapBalanceCheck;
   }): void {
     writeStdout(`${colors.bold("From:")} ${args.from}\n`);
     writeStdout(`${colors.bold("To:")} ${args.to}\n`);
@@ -713,6 +721,7 @@ class HumanCommandOutput implements CommandOutput {
     quoteId: string | null;
     approvalTxHash?: string;
     swapTxHash?: string;
+    balanceCheck: SwapBalanceCheck;
   }): void {
     writeStdout(`${colors.bold("Pipeline:")} (${args.plan})\n`);
     writeStdout(`${colors.bold("From:")} ${args.from}\n`);
@@ -1010,6 +1019,7 @@ class HumanCommandOutput implements CommandOutput {
     writeStdout(
       colors.dim("Open the link to review it; it only executes once approved on a Ledger device."),
     );
+    warnIfReviewLinkUnusable(result);
   }
 
   agentIntentSendDryRun(summary: SendIntentSummary): void {
@@ -1026,7 +1036,10 @@ class HumanCommandOutput implements CommandOutput {
         [
           utcMinute(i.createdAt),
           i.status,
-          i.displayAmount ?? (i.amount === null ? i.type : `${i.amount} (base units)`),
+          amountWithProvider(
+            i,
+            i.displayAmount ?? (i.amount === null ? i.type : `${i.amount} (base units)`),
+          ),
           i.recipient ?? "—",
           i.id,
         ].map(stripControlChars),
@@ -1069,11 +1082,14 @@ class HumanCommandOutput implements CommandOutput {
           "executes once approved on a Ledger device.",
       ),
     );
+    warnIfTokenApprovalNeeded(result);
+    warnIfReviewLinkUnusable(result);
   }
 
   agentIntentSwapDryRun(summary: SwapIntentSummary): void {
     writeStdout(`Dry run — intent validated, nothing was submitted.`);
     writeStdout(swapIntentSummaryLines(summary).join("\n"));
+    warnIfTokenApprovalNeeded(summary);
   }
 
   agentIntentStatus({ profileId, intent, terminal }: AgentIntentStatusResult): void {
@@ -1108,6 +1124,10 @@ function utcMinute(timestamp: string): string {
   return new Date(timestamp).toISOString().replace("T", " ").slice(0, 16);
 }
 
+function amountWithProvider(i: IntentListEntry, amount: string): string {
+  return i.swap ? `${amount} via ${i.swap.provider}` : amount;
+}
+
 /** Without control characters: an agent's note could otherwise rewrite what the user confirms. */
 function intentDetailLines(
   profileId: string,
@@ -1116,15 +1136,19 @@ function intentDetailLines(
 ): string[] {
   const state = terminal === null ? `${i.status} (unknown to this wallet-cli version)` : i.status;
   const baseUnits = i.amount ? `${i.amount} (base units)` : undefined;
-  const amount = i.displayAmount ?? baseUnits;
+  const tokenAddress = i.asset?.assetReference;
+  const tokenAmount =
+    i.displayAmount && tokenAddress ? `${i.displayAmount} (${tokenAddress})` : null;
+  const amount = tokenAmount ?? i.displayAmount ?? baseUnits;
   return [
     `Intent:  ${i.id}`,
     `Status:  ${state}${terminal ? " (final)" : ""}`,
     `Profile: ${profileId}`,
-    ...(amount ? [`Amount:  ${amount}`] : []),
+    ...(amount ? [`Amount:  ${amountWithProvider(i, amount)}`] : []),
     ...(i.sender ? [`From:    ${i.sender}`] : []),
     ...(i.recipient ? [`To:      ${i.recipient}`] : []),
     ...(i.network ? [`Network: ${i.network}`] : []),
+    ...(i.memo ? [`Memo:    ${i.memo}`] : []),
     ...(i.description ? [`Note:    ${i.description}`] : []),
     ...(i.failureReason ? [`Failure: ${i.failureReason}`] : []),
     `Created: ${i.createdAt}`,
@@ -1166,6 +1190,17 @@ function sendIntentSummaryLines(summary: SendIntentSummary): string[] {
 // JsonCommandOutput
 // ---------------------------------------------------------------------------
 
+const BUILT_IN_ERROR_NAMES = new Set([
+  "Error",
+  "TypeError",
+  "RangeError",
+  "ReferenceError",
+  "SyntaxError",
+  "EvalError",
+  "URIError",
+  "AggregateError",
+]);
+
 class JsonCommandOutput implements CommandOutput {
   private readonly _jsonFmt: JsonFormatter;
   private readonly _discoveredAccounts: DiscoveredAccount[] = [];
@@ -1200,12 +1235,16 @@ class JsonCommandOutput implements CommandOutput {
         error: { command: this._ctx.command, code: "keychain_unavailable", message: e.message },
       };
     }
+    const hasCustomName = e instanceof Error && !BUILT_IN_ERROR_NAMES.has(e.name);
+    const httpStatus = hasCustomName && "httpStatus" in e ? e.httpStatus : undefined;
     return {
       ok: false,
       error: {
         command: this._ctx.command,
+        ...(hasCustomName ? { code: e.name } : {}),
         ...(e instanceof CodedCommandError ? { code: e.code } : {}),
         message: HumanFormatter.formatError(e),
+        ...(typeof httpStatus === "number" ? { http_status: httpStatus } : {}),
       },
     };
   }
@@ -1412,6 +1451,7 @@ class JsonCommandOutput implements CommandOutput {
     amountExpectedTo?: string;
     amountExpectedToAtomic?: string;
     magnitudeAwareRate?: string;
+    balanceCheck: SwapBalanceCheck;
   }): void {
     this._writeNdjson(
       this._envelope({
@@ -1426,6 +1466,7 @@ class JsonCommandOutput implements CommandOutput {
         amountExpectedTo: args.amountExpectedTo,
         amountExpectedToAtomic: args.amountExpectedToAtomic,
         magnitudeAwareRate: args.magnitudeAwareRate,
+        balanceCheck: args.balanceCheck,
       }),
     );
   }
@@ -1439,6 +1480,7 @@ class JsonCommandOutput implements CommandOutput {
     quoteId: string | null;
     approvalTxHash?: string;
     swapTxHash?: string;
+    balanceCheck: SwapBalanceCheck;
   }): void {
     this._writeNdjson(
       this._envelope({
@@ -1450,6 +1492,7 @@ class JsonCommandOutput implements CommandOutput {
         quoteId: args.quoteId,
         approvalTxHash: args.approvalTxHash,
         swapTxHash: args.swapTxHash,
+        balanceCheck: args.balanceCheck,
       }),
     );
   }
@@ -1588,6 +1631,7 @@ class JsonCommandOutput implements CommandOutput {
         submitted: true,
       }),
     );
+    warnIfReviewLinkUnusable(result);
   }
 
   agentIntentSendDryRun(summary: SendIntentSummary): void {
@@ -1610,12 +1654,15 @@ class JsonCommandOutput implements CommandOutput {
         submitted: true,
       }),
     );
+    warnIfTokenApprovalNeeded(result);
+    warnIfReviewLinkUnusable(result);
   }
 
   agentIntentSwapDryRun(summary: SwapIntentSummary): void {
     this._writeNdjson(
       this._envelope({ ...swapIntentSummaryJson(summary), submitted: false, dryRun: true }),
     );
+    warnIfTokenApprovalNeeded(summary);
   }
 
   agentIntentStatus({ profileId, intent, terminal }: AgentIntentStatusResult): void {
@@ -1675,6 +1722,34 @@ function sendIntentSummaryJson(summary: SendIntentSummary): Record<string, unkno
     ...(summary.network === "solana" && summary.memo ? { memo: summary.memo } : {}),
     ...(summary.description ? { description: summary.description } : {}),
   };
+}
+
+// ---------------------------------------------------------------------------
+// Proposal warnings (stderr, in both formats, after the result)
+// ---------------------------------------------------------------------------
+
+function warnIfTokenApprovalNeeded(summary: SwapIntentSummary): void {
+  if (!summary.needsTokenApproval) return;
+  writeStderr(
+    `⚠ Swapping ${summary.from.ticker} through ${summary.provider} needs an approval first. The ` +
+      "reviewer approves it in Agent Intent, in a separate transaction with its own network fee, " +
+      "then reviews the swap.\n",
+  );
+}
+
+/** Warns, after the result is printed, when the created intent can't be found from it. */
+function warnIfReviewLinkUnusable({ deeplink, intentId }: SubmittedIntent): void {
+  if (!deeplink) {
+    writeStderr(
+      "⚠ The Agent Intent service accepted the intent but returned no readable review link. " +
+        "Find it in the Agent Intent frontend — don't re-run, or you'll propose a duplicate.\n",
+    );
+  } else if (!intentId) {
+    writeStderr(
+      "⚠ The review link has an unexpected shape, so no intent id could be extracted. " +
+        "The intent was created — use the review link to find it.\n",
+    );
+  }
 }
 
 // ---------------------------------------------------------------------------

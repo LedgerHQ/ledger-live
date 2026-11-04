@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "cli": "nx",
+  "id": "package-generator",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Package folder name, in kebab-case (e.g. contacts). The layer prefixes it to give the package name",
+      "$default": { "$source": "argv", "index": 0 },
+      "x-prompt": "Package folder name (kebab-case, e.g. contacts)?"
+    },
+    "layer": {
+      "type": "string",
+      "description": "Layer the package belongs to: shared/, domain/entity/, domain/api/, features/platform/ or features/flow/",
+      "enum": ["shared", "domain-entity", "domain-api", "feature-platform", "feature-flow"],
+      "x-prompt": {
+        "message": "Layer?",
+        "type": "list",
+        "items": ["shared", "domain-entity", "domain-api", "feature-platform", "feature-flow"]
+      }
+    },
+    "platform": {
+      "type": "string",
+      "description": "What the package runs on: logic (no platform split), web, native, or dual (web and native)",
+      "enum": ["logic", "web", "native", "dual"],
+      "x-prompt": {
+        "message": "Platform?",
+        "type": "list",
+        "items": ["logic", "web", "native", "dual"]
+      }
+    },
+    "description": {
+      "type": "string",
+      "description": "One line on what the package owns, for package.json and the README"
+    },
+    "skipFormat": {
+      "type": "boolean",
+      "description": "Skip formatting the generated files",
+      "default": false,
+      "x-priority": "internal"
+    }
+  },
+  "required": ["name", "layer", "platform"]
+}

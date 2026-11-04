@@ -54,6 +54,7 @@ export type ApplyUpdatesState =
   | {
       type: ApplyUpdatesStateType.ALLOW_INSTALL_FIRMWARE_REFUSED;
       error: unknown;
+      retry: () => void;
       cancel: () => void;
     }
   | {

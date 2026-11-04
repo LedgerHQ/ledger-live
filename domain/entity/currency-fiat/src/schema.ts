@@ -1,8 +1,11 @@
 import { z } from "zod";
 import { UnitSchema } from "@domain/entity-currency-unit";
 
-/** Opaque identifier for a fiat currency (e.g. `"usd"`, `"eur"`). Non-empty string. */
-export const FiatCurrencyIdSchema = z.string().min(1).brand<"FiatCurrencyId">();
+/** ISO 4217 ticker of a fiat currency (e.g. `"USD"`, `"EUR"`): three uppercase letters. */
+export const FiatCurrencyTickerSchema = z
+  .string()
+  .regex(/^[A-Z]{3}$/)
+  .brand<"FiatCurrencyTicker">();
 
 /**
  * Canonical Zod-first schema for a fiat currency entity.
@@ -18,7 +21,7 @@ export const FiatCurrencySchema = z.object({
   /** Human-readable display name (e.g. `"US Dollar"`). */
   name: z.string(),
   /** ISO 4217 ticker (e.g. `"USD"`, `"EUR"`). */
-  ticker: z.string(),
+  ticker: FiatCurrencyTickerSchema,
   /**
    * Ordered list of display units. By convention `units[0]` is the default
    * (highest magnitude) unit. Must contain at least one entry.
@@ -32,7 +35,7 @@ export const FiatCurrencySchema = z.object({
   keywords: z.array(z.string()).optional(),
 });
 
-/** A fiat currency id, inferred from {@link FiatCurrencyIdSchema}. */
-export type FiatCurrencyId = z.infer<typeof FiatCurrencyIdSchema>;
+/** A fiat currency ISO 4217 ticker, inferred from {@link FiatCurrencyTickerSchema}. */
+export type FiatCurrencyTicker = z.infer<typeof FiatCurrencyTickerSchema>;
 /** A fiat currency entity, inferred from {@link FiatCurrencySchema}. */
 export type FiatCurrency = z.infer<typeof FiatCurrencySchema>;

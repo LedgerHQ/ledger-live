@@ -27,7 +27,6 @@ jest.mock("@features/flow-contacts", () => {
         {newBadgeLabel ? <Text testID="contacts-button-new-badge">{newBadgeLabel}</Text> : null}
       </Pressable>
     ),
-    ContactsAddContactHeaderButton: () => null,
     ContactsView: () => (
       <View testID="contacts-screen">
         <Text>Contacts</Text>

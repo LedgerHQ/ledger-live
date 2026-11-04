@@ -9,11 +9,11 @@ export function ToolsScreen(props: ToolsScreenProps) {
 
   return (
     <Box lx={{ flex: 1 }}>
-      <Box lx={{ paddingHorizontal: "s16", paddingVertical: "s8" }}>
+      <Box lx={{ paddingHorizontal: "s12", paddingVertical: "s8" }}>
         <SearchInput value={query} onChangeText={onQueryChange} placeholder="Search tools" />
       </Box>
       <Catalog items={items} />
-      {footer && <Box lx={{ padding: "s16" }}>{footer}</Box>}
+      {footer && <Box lx={{ paddingHorizontal: "s12", paddingVertical: "s16" }}>{footer}</Box>}
     </Box>
   );
 }

@@ -3,7 +3,7 @@ import { TopBarSlot } from "../types";
 import { useActivityIndicator } from "./useActivityIndicator";
 import { useDiscreetMode } from "./useDiscreetMode";
 import { useExperimentalFeatures } from "./useExperimentalFeatures";
-import { useFeatureFlags } from "./useFeatureFlags";
+import { useDevTools } from "./useDevTools";
 import { useMockServerTransport } from "./useMockServerTransport";
 import { useInformationCenter } from "./useInformationCenter";
 
@@ -26,11 +26,11 @@ const useTopBarViewModel = () => {
     tooltip: experimentalTooltip,
   } = useExperimentalFeatures();
   const {
-    isVisible: isFeatureFlagsVisible,
-    handleFeatureFlags,
-    icon: featureFlagsIcon,
-    tooltip: featureFlagsTooltip,
-  } = useFeatureFlags();
+    isVisible: isDevToolsVisible,
+    handleDevTools,
+    icon: devToolsIcon,
+    tooltip: devToolsTooltip,
+  } = useDevTools();
   const {
     isVisible: isMockServerVisible,
     handleMockServer,
@@ -59,16 +59,16 @@ const useTopBarViewModel = () => {
           },
         ]
       : []),
-    ...(isFeatureFlagsVisible
+    ...(isDevToolsVisible
       ? [
           {
             type: "action" as const,
             action: {
-              label: "feature flags",
-              tooltip: featureFlagsTooltip,
-              icon: featureFlagsIcon,
+              label: "devtools",
+              tooltip: devToolsTooltip,
+              icon: devToolsIcon,
               isInteractive: true,
-              onClick: handleFeatureFlags,
+              onClick: handleDevTools,
               appearance: "accent" as const,
             },
           },

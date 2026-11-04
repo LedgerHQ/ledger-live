@@ -50,6 +50,7 @@ function context(overrides: Partial<DeviceOnboardingContext> = {}): DeviceOnboar
     successAcknowledgedOnSession: null,
     firmware: null,
     currentSetupStep: null,
+    seedPath: null,
     ...overrides,
     recoveryKeyBackupOpen: overrides.recoveryKeyBackupOpen ?? false,
   };

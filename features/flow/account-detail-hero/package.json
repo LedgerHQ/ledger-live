@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-account-detail-hero",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Account Detail hero (balance, quick actions, empty state) for Ledger Wallet",
   "main": "src/index.ts",
@@ -25,8 +25,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -c features/flow/account-detail-hero/knip.web.config.mjs -W features/flow/account-detail-hero --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/account-detail-hero/knip.native.config.mjs -W features/flow/account-detail-hero --tsConfig tsconfig.native.json"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@features/platform-quick-actions": "workspace:*",
@@ -50,6 +49,7 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",

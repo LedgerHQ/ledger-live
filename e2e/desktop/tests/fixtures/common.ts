@@ -13,6 +13,7 @@ import { launchApp } from "tests/utils/electronUtils";
 import {
   captureArtifacts,
   addTeamOwner,
+  TEAM_OWNER_ANNOTATION_TYPE,
   addAnnotationLinks,
   attachMergedFeatureFlags,
   attachSpeculinhoLogs,
@@ -55,6 +56,8 @@ type SpeculosFixtureHandle = {
   get device(): SpeculosDevice | undefined;
   relaunch: (appName: string) => Promise<SpeculosDevice>;
   onRelaunch?: (device: SpeculosDevice) => Promise<void>;
+  /** Stops the device mid-test, e.g. to simulate a lost connection. */
+  stop: () => Promise<void>;
 };
 
 type TestFixtures = {
@@ -136,8 +139,11 @@ export const test = base.extend<TestFixtures>({
   ],
 
   teamOwnerLabel: [
-    async ({ teamOwner }, use) => {
-      if (teamOwner !== undefined) {
+    async ({ teamOwner }, use, testInfo) => {
+      const hasStaticTeam = testInfo.annotations.some(
+        annotation => annotation.type === TEAM_OWNER_ANNOTATION_TYPE,
+      );
+      if (teamOwner !== undefined && !hasStaticTeam) {
         await addTeamOwner(teamOwner);
       }
       await use();
@@ -220,6 +226,13 @@ export const test = base.extend<TestFixtures>({
         await showSpeculosScreen(currentDevice.id);
         await handle.onRelaunch?.(currentDevice);
         return currentDevice;
+      },
+      stop: async () => {
+        if (!currentDevice) return;
+        if (!(await cleanSpeculos(currentDevice))) {
+          throw new Error(`[E2E] Speculos ${currentDevice.id} was not released`);
+        }
+        currentDevice = undefined;
       },
     };
 

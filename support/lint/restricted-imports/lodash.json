@@ -1,0 +1,12 @@
+{
+  "rules": {
+    "eslint/no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          "lodash"
+        ]
+      }
+    ]
+  }
+}

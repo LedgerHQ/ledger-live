@@ -1,3 +1,11 @@
+import {
+  ListItem,
+  ListItemContent,
+  ListItemDescription,
+  ListItemLeading,
+  ListItemTitle,
+  ListItemTrailing,
+} from "@ledgerhq/lumen-ui-react";
 import { useCallback, useState } from "react";
 import type {
   MemberCredentials,
@@ -40,20 +48,26 @@ export function MemberRow({
   );
 
   return (
-    <div className="flex items-center gap-12 px-16 py-10 border-b border-base body-3">
-      <div className="flex flex-col gap-2 flex-1 min-w-0">
-        <span className="body-3-semi-bold truncate">{member.name || "(no name)"}</span>
-        <code className="body-3 text-muted truncate">{member.id}</code>
-        <span className="body-3 text-muted">permissions: {member.permissions}</span>
-      </div>
-      <Actionable
-        buttonTitle="Remove"
-        inputs={trustchain && memberCredentials ? [trustchain, memberCredentials] : null}
-        action={action}
-        value={removed}
-        setValue={setRemoved}
-        valueDisplay={v => `removed: ${v.name || v.id.slice(0, 8)}`}
-      />
-    </div>
+    <ListItem>
+      <ListItemLeading>
+        <ListItemContent>
+          <ListItemTitle>{member.name || "(no name)"}</ListItemTitle>
+          <ListItemDescription>
+            {member.id} · permissions: {member.permissions}
+          </ListItemDescription>
+        </ListItemContent>
+      </ListItemLeading>
+      <ListItemTrailing>
+        <Actionable
+          className="p-0"
+          buttonTitle="Remove"
+          inputs={trustchain && memberCredentials ? [trustchain, memberCredentials] : null}
+          action={action}
+          value={removed}
+          setValue={setRemoved}
+          valueDisplay={v => `removed: ${v.name || v.id.slice(0, 8)}`}
+        />
+      </ListItemTrailing>
+    </ListItem>
   );
 }

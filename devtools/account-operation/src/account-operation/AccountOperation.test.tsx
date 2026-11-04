@@ -2,12 +2,20 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import AccountOperation from "./AccountOperation";
-import type { AccountOperationToolAccount } from "../types";
+import type { AccountOperationToolAccount, AccountOperationToolWindow } from "../types";
 
 function makeAccount(
-  overrides: Partial<AccountOperationToolAccount> = {},
+  overrides: Partial<AccountOperationToolWindow> & { accountUUID?: string } = {},
+  others: AccountOperationToolWindow[] = [],
 ): AccountOperationToolAccount {
-  return { accountUUID: "uuid-1", reading: false, hasMore: false, ...overrides };
+  const { accountUUID = "uuid-1", ...window } = overrides;
+  return {
+    accountUUID,
+    windows: [
+      { queryKey: "", label: "default", reading: false, hasMore: false, ...window },
+      ...others,
+    ],
+  };
 }
 
 const row = {
@@ -30,6 +38,8 @@ function renderTool(accounts: AccountOperationToolAccount[]) {
   render(
     <AccountOperation
       accounts={accounts}
+      assetIds={["ethereum", "ethereum/erc20/usd__coin"]}
+      fiat="USD"
       onRead={onRead}
       onReadMore={onReadMore}
       onReadAll={onReadAll}
@@ -77,13 +87,57 @@ describe("AccountOperation", () => {
   it("reads the account of the clicked row", async () => {
     const { onRead } = renderTool([makeAccount(), makeAccount({ accountUUID: "uuid-2" })]);
     await userEvent.click(screen.getAllByRole("button", { name: "Read" })[1]);
-    expect(onRead).toHaveBeenCalledWith("uuid-2");
+    expect(onRead).toHaveBeenCalledWith("uuid-2", "");
   });
 
   it("reads the next page when the source has one", async () => {
     const { onReadMore } = renderTool([makeAccount({ hasMore: true, rows: [row], readAt: 0 })]);
     await userEvent.click(screen.getByRole("button", { name: "Read more" }));
-    expect(onReadMore).toHaveBeenCalledWith("uuid-1");
+    expect(onReadMore).toHaveBeenCalledWith("uuid-1", "");
+  });
+
+  it("shows each query's window, and reads it by its key", async () => {
+    const queryKey = '{"limit":50}';
+    const { onRead } = renderTool([
+      makeAccount({}, [
+        {
+          queryKey,
+          label: "limit 50",
+          reading: false,
+          hasMore: false,
+          readAt: 0,
+          rows: [row],
+        },
+      ]),
+    ]);
+    expect(screen.getByText("default")).toBeVisible();
+    expect(screen.getByText("limit 50")).toBeVisible();
+    await userEvent.click(screen.getAllByRole("button", { name: "Read" })[1]);
+    expect(onRead).toHaveBeenCalledWith("uuid-1", queryKey);
+  });
+
+  it("shows the countervalues of each row of a valued window", () => {
+    renderTool([
+      makeAccount({}, [
+        {
+          queryKey: '{"countervalue":"USD"}',
+          label: "in USD",
+          reading: false,
+          hasMore: false,
+          readAt: 0,
+          rows: [{ ...row, countervalues: ["$12.34"] }],
+        },
+      ]),
+    ]);
+    expect(screen.getByText("in USD")).toBeVisible();
+    expect(screen.getByText("$12.34")).toBeVisible();
+  });
+
+  it("reads every account valued in the app's fiat when countervalue is checked", async () => {
+    const { onReadAll } = renderTool([makeAccount()]);
+    await userEvent.click(screen.getByRole("checkbox", { name: "USD" }));
+    await userEvent.click(screen.getByRole("button", { name: "Read all" }));
+    expect(onReadAll).toHaveBeenCalledWith({ countervalue: true });
   });
 
   it("disables Read and Read more while the account is being read", () => {
@@ -93,9 +147,23 @@ describe("AccountOperation", () => {
     expect(screen.getByRole("button", { name: "Read more" })).toBeDisabled();
   });
 
-  it("reads every account on Read all", async () => {
+  it("reads every account on Read all, with no options by default", async () => {
     const { onReadAll } = renderTool([makeAccount()]);
     await userEvent.click(screen.getByRole("button", { name: "Read all" }));
-    expect(onReadAll).toHaveBeenCalledTimes(1);
+    expect(onReadAll).toHaveBeenCalledWith({});
+  });
+
+  it("reads every account with the limit filled in the header", async () => {
+    const { onReadAll } = renderTool([makeAccount()]);
+    await userEvent.type(screen.getByLabelText("Limit"), "50");
+    await userEvent.click(screen.getByRole("button", { name: "Read all" }));
+    expect(onReadAll).toHaveBeenCalledWith({ limit: 50 });
+  });
+
+  it("reads every account with the asset filter filled in the header", async () => {
+    const { onReadAll } = renderTool([makeAccount()]);
+    await userEvent.type(screen.getByLabelText("Filter asset"), "ethereum/erc20/usd__coin");
+    await userEvent.click(screen.getByRole("button", { name: "Read all" }));
+    expect(onReadAll).toHaveBeenCalledWith({ filterAsset: "ethereum/erc20/usd__coin" });
   });
 });

@@ -349,26 +349,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
     },
   },
-  config_currency_moonbeam: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 1284,
-      name: "Moonbeam",
-      unit: { name: "GLMR", code: "GLMR", magnitude: 18 },
-      node: {
-        type: "external",
-        uri: "https://moonbeam.coin.ledger.com",
-      },
-      explorer: {
-        type: "etherscan",
-        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1284",
-      },
-    },
-  },
   config_currency_rsk: {
     type: "object",
     default: {
@@ -559,26 +539,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       explorer: {
         type: "etherscan",
         uri: "https://api.routescan.io/v2/network/mainnet/evm/288/etherscan",
-      },
-    },
-  },
-  config_currency_moonriver: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 1285,
-      name: "Moonriver",
-      unit: { name: "MOVR", code: "MOVR", magnitude: 18 },
-      node: {
-        type: "external",
-        uri: "https://moonriver.coin.ledger.com",
-      },
-      explorer: {
-        type: "etherscan",
-        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1285",
       },
     },
   },
@@ -930,40 +890,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
     },
   },
-  config_currency_blast: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 81457,
-      name: "Blast",
-      unit: { name: "ETH", code: "ETH", magnitude: 18 },
-      node: { type: "external", uri: "https://blast.coin.ledger.com" },
-      explorer: {
-        type: "etherscan",
-        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/81457",
-      },
-    },
-  },
-  config_currency_blast_sepolia: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 168587773,
-      name: "Blast Sepolia",
-      unit: { name: "ETH", code: "ETH", magnitude: 18 },
-      node: { type: "external", uri: "https://blast-sepolia.coin.ledger.com" },
-      explorer: {
-        type: "etherscan",
-        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/168587773",
-      },
-    },
-  },
   config_currency_scroll: {
     type: "object",
     default: {
@@ -1131,6 +1057,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       explorer: {
         type: "blockscout",
         uri: "https://chainscan.0g.ai/open/api",
+        maxLimit: 99,
       },
       minGasPrice: "2000000000",
     },
@@ -1244,7 +1171,8 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       unit: { name: "ether", code: "ETH", magnitude: 18 },
       node: { type: "external", uri: "https://robinhood.coin.ledger.com" },
       explorer: {
-        type: "none",
+        type: "blockscout",
+        uri: "https://proxyblockscout.api.live.ledger.com/4663/api",
       },
     },
   },

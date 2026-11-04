@@ -1,6 +1,8 @@
 import { test } from "tests/fixtures/fakeTronify";
 import { TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { SendScenario, TestFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
+import { ownedBy } from "tests/utils/allureUtils";
 import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { liveDataWithRecipientAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { FAKE_TRONIFY_RENT, TRONIFY_OPTION_ID } from "@ledgerhq/live-e2e-shared/tronify/index";
@@ -25,14 +27,18 @@ const testOptions = (tmsTicket: string) => ({
 });
 const label = tx.accountToDebit.currency.testLabel;
 
-test.describe("Send - new flow - fee paid in USDT with Tronify", () => {
+const owner = ownedBy(Team.COIN_INTEGRATION, {
+  folder: TestFolder.SEND_TOKEN_ACCOUNT,
+  scenario: SendScenario.FEE_PAID_WITH_TRONIFY,
+});
+
+test.describe("Send - new flow - fee paid in USDT with Tronify", owner, () => {
   test.skip(
     !deviceShowsTronifyService(),
     "This device's Tron app predates the Tronify service page",
   );
 
   test.use({
-    teamOwner: Team.COIN_INTEGRATION,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: tx.accountToDebit.currency.speculosApp,
     cliCommands: [liveDataWithRecipientAddressCommand(tx)],
@@ -45,7 +51,7 @@ test.describe("Send - new flow - fee paid in USDT with Tronify", () => {
     test.use({ tronifyScenario: { scenario: "happy" } });
 
     test(
-      `[${label}] - Send paying the network fee in USDT, rent payment then transfer on device`,
+      `[${label}] - Send - fee paid in USDT - rent then transfer`,
       testOptions("B2CQA-6705"),
       async ({ app, tronify }) => {
         await reachAmountStep(app, tx);
@@ -89,7 +95,7 @@ test.describe("Send - new flow - fee paid in USDT with Tronify", () => {
     });
 
     test(
-      `[${label}] - Send paying the network fee in USDT is blocked when USDT can't cover amount and rent`,
+      `[${label}] - Send - fee paid in USDT - blocked when USDT can't cover amount and rent`,
       testOptions("B2CQA-6706"),
       async ({ app }) => {
         await reachAmountStep(app, tx);
@@ -111,7 +117,7 @@ test.describe("Send - new flow - fee paid in USDT with Tronify", () => {
     test.use({ tronifyScenario: { scenario: "deliveryTimeout" } });
 
     test(
-      `[${label}] - Send paying the network fee in USDT fails with Retry locked when energy never arrives, and a reopened Send waits for it`,
+      `[${label}] - Send - fee paid in USDT - retry locked until energy arrives`,
       testOptions("B2CQA-6707"),
       async ({ app, tronify }) => {
         await reachAmountStep(app, tx);
@@ -151,7 +157,7 @@ test.describe("Send - new flow - fee paid in USDT with Tronify", () => {
     test.use({ tronifyScenario: { scenario: "priceRose" } });
 
     test(
-      `[${label}] - Send paying the network fee in USDT shows the new price when the order costs more than the quote`,
+      `[${label}] - Send - fee paid in USDT - new price when the order costs more`,
       testOptions("B2CQA-6708"),
       async ({ app }) => {
         await reachAmountStep(app, tx);

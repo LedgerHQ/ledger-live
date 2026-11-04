@@ -12,6 +12,7 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { PenEdit, Trash } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "@shared/i18n";
+import { useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
 
 // Spot paints custom icons with the neutral color of its "icon" appearance and injects it
 // through `style`, so the destructive color has to override that style on the symbol itself.
@@ -25,7 +26,6 @@ function TrashDestructive({ style, ...props }: IconProps) {
 export type ContactDetailActionsMenuProps = Readonly<{
   isOpen: boolean;
   canDelete: boolean;
-  bottomInset?: number;
   onEdit: () => void;
   onDelete: () => void;
 }>;
@@ -33,11 +33,11 @@ export type ContactDetailActionsMenuProps = Readonly<{
 export function ContactDetailActionsMenu({
   isOpen,
   canDelete,
-  bottomInset = 0,
   onEdit,
   onDelete,
 }: ContactDetailActionsMenuProps): React.JSX.Element {
   const { t } = useTranslation();
+  const bottomInset = useBottomSheetBottomInset();
 
   return (
     <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>

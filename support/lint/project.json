@@ -7,10 +7,14 @@
     "test": {
       "executor": "nx:run-commands",
       "cache": true,
-      "inputs": ["{projectRoot}/src/**/*"],
+      "inputs": [
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/restricted-imports.mts",
+        "{projectRoot}/restricted-imports/**/*"
+      ],
       "options": {
         "cwd": "{workspaceRoot}",
-        "command": "node --test support/lint/src/suffix-imports.test.js"
+        "command": "node --test support/lint/src/suffix-imports.test.js support/lint/src/restricted-imports-fragments.test.js"
       }
     }
   }

@@ -97,6 +97,7 @@ export type MessageData<P extends BridgePayloads = BridgePayloads> =
   | { type: "importPayCard"; id: string; payload: P["payCard"] }
   | { type: "overrideFeatureFlags"; id: string; payload: PartialFeatures }
   | { type: "overrideFeatureFlag"; id: string; payload: OverrideFeatureFlagPayload }
+  | { type: "overrideLiveConfig"; id: string; payload: Record<string, unknown> }
   | { type: "setGlobals"; id: string; payload: { [key: string]: unknown } }
   | { type: "swapSetup"; id: string; swapApiBase?: string }
   | { type: "waitSwapReady"; id: string }

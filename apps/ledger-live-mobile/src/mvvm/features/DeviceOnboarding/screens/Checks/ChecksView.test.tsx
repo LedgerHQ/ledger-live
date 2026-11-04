@@ -233,6 +233,22 @@ describe("ChecksView", () => {
     expect(screen.queryByRole("button", { name: "Close" })).toBeNull();
   });
 
+  it("should still decline the offer after it was hidden while the device was locked", async () => {
+    const { user, onDeclineUpdate, rerender } = renderChecks("updating", {
+      update: { current: "1.0.0", available: "1.1.0" },
+    });
+
+    rerender({ state: "synchronizing", update: null });
+
+    expect(onDeclineUpdate).not.toHaveBeenCalled();
+    expect(screen.queryByText(/Version 1\.1\.0/)).toBeNull();
+
+    rerender({ state: "updating", update: { current: "1.0.0", available: "1.1.0" } });
+    await user.press(screen.getByTestId("modal-close-button"));
+
+    expect(onDeclineUpdate).toHaveBeenCalledTimes(1);
+  });
+
   it("should decline the update once when the offer is closed", async () => {
     const { user, onDeclineUpdate, onCloseSheet, onQuit, onAcceptUpdate } = renderChecks(
       "updating",

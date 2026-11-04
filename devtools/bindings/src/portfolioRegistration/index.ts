@@ -15,11 +15,12 @@ export const PORTFOLIO_REGISTRATION_STRATEGIES: readonly PortfolioRegistrationSt
   evmRegistration,
 ];
 
-/** The registration of the first strategy that covers the account; undefined if none does. */
+/** The registration of the first strategy that covers the account; undefined if none does, or for a mock that must never reach the service. */
 export function registrationOf(
   descriptor: AccountDescriptor,
   strategies: readonly PortfolioRegistrationStrategy[] = PORTFOLIO_REGISTRATION_STRATEGIES,
 ): PortfolioRegistration | undefined {
+  if (descriptor.purpose !== "account") return undefined;
   for (const strategy of strategies) {
     const registration = strategy.register(descriptor);
     if (registration) return registration;

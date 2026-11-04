@@ -6,6 +6,7 @@ import { getStakeAccounts } from "../../network/chain/stake-activation/rpc";
 import type { StakeAccount } from "../../network/chain/stake-activation/rpc";
 import { estimateTxFee } from "../estimateFees";
 import { computeUnstakeReserve, getStakes, mapStakeAccountsToSolanaStakes } from "../getStakes";
+import { TEST_CONFIG } from "../../test/coinConfig";
 
 jest.mock("../../network/chain/stake-activation/rpc", () => ({
   getStakeAccounts: jest.fn(),
@@ -192,18 +193,24 @@ describe("computeUnstakeReserve", () => {
   afterEach(() => jest.clearAllMocks());
 
   it("should return 0 when there are no stake accounts", async () => {
-    const result = await computeUnstakeReserve(api, TEST_ADDRESS, []);
+    const result = await computeUnstakeReserve(api, TEST_CONFIG, TEST_ADDRESS, []);
     expect(result).toBe(0);
     expect(mockEstimateTxFee).not.toHaveBeenCalled();
   });
 
   it("should compute reserve for a single active stake", async () => {
-    mockEstimateTxFee.mockImplementation(async (_api: ChainAPI, _addr: string, kind: string) =>
-      kind === "stake.undelegate" ? 5000 : 6000,
+    mockEstimateTxFee.mockImplementation(
+      async (_api: ChainAPI, _config: unknown, _addr: string, kind: string) =>
+        kind === "stake.undelegate" ? 5000 : 6000,
     );
 
     const stakeAccounts = [makeStakeAccount({ state: "active" })];
-    const result = await computeUnstakeReserve(api, TEST_ADDRESS, stakeAccounts as StakeAccount[]);
+    const result = await computeUnstakeReserve(
+      api,
+      TEST_CONFIG,
+      TEST_ADDRESS,
+      stakeAccounts as StakeAccount[],
+    );
 
     // 1 * withdrawFee + 1 * undelegateFee = 6000 + 5000
     expect(result).toBe(11000);
@@ -218,7 +225,12 @@ describe("computeUnstakeReserve", () => {
       makeStakeAccount({ state: "deactivating" }),
       makeStakeAccount({ state: "inactive" }),
     ];
-    const result = await computeUnstakeReserve(api, TEST_ADDRESS, stakeAccounts as StakeAccount[]);
+    const result = await computeUnstakeReserve(
+      api,
+      TEST_CONFIG,
+      TEST_ADDRESS,
+      stakeAccounts as StakeAccount[],
+    );
 
     // 4 * withdrawFee + 2 * undelegateFee (active + activating)
     // = 4 * 5000 + 2 * 5000 = 30000
@@ -232,7 +244,12 @@ describe("computeUnstakeReserve", () => {
       makeStakeAccount({ state: "inactive" }),
       makeStakeAccount({ state: "deactivating" }),
     ];
-    const result = await computeUnstakeReserve(api, TEST_ADDRESS, stakeAccounts as StakeAccount[]);
+    const result = await computeUnstakeReserve(
+      api,
+      TEST_CONFIG,
+      TEST_ADDRESS,
+      stakeAccounts as StakeAccount[],
+    );
 
     // 2 * withdrawFee + 0 * undelegateFee = 10000
     expect(result).toBe(10000);

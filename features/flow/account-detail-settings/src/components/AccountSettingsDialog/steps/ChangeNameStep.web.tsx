@@ -1,6 +1,7 @@
 import React from "react";
 import { DialogBody, DialogHeader } from "@ledgerhq/lumen-ui-react";
-import { ChangeNameContent } from "../../ChangeNameContent/ChangeNameContent.web";
+import type { AccountSettingsEventHandler } from "../../../logic/accountSettingsEvent";
+import { ChangeNameContent } from "../../ChangeNameContent/ChangeNameContent";
 
 type Props = Readonly<{
   title: string;
@@ -11,6 +12,7 @@ type Props = Readonly<{
   onBack: () => void;
   onClose: () => void;
   onConfirmName: (name: string) => void;
+  onEvent?: AccountSettingsEventHandler;
 }>;
 
 export function ChangeNameStep({
@@ -22,6 +24,7 @@ export function ChangeNameStep({
   onBack,
   onClose,
   onConfirmName,
+  onEvent,
 }: Props) {
   return (
     <>
@@ -38,6 +41,7 @@ export function ChangeNameStep({
           maxLength={nameMaxLength}
           isDisabled={isNameEditDisabled}
           onConfirm={onConfirmName}
+          onEvent={onEvent}
         />
       </DialogBody>
     </>

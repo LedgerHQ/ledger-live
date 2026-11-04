@@ -31,19 +31,56 @@ export function shouldRetainPendingOperation(account: Account, op: Operation): b
  * This ensures optimistic operations (e.g., from RBF or retry logic) don't stack up multiple times
  * when they refer to the same transaction.
  *
- * Note: If `transactionSequenceNumber` is `undefined`, all existing ops with `undefined` are preserved,
- * which may lead to duplicates — this is acceptable for receive-only txs or ops with incomplete metadata.
+ * UTXO operations (both carrying `extra.inputs` outpoints) have no sequence number: an existing one
+ * is removed only when the new one spends one of its inputs (an RBF replacement), so the account
+ * keeps every pending send and its inputs are not spent twice. The unconfirmed descendants of a
+ * replaced operation (spending its outputs, transitively) are removed too.
+ *
+ * Otherwise, when either `transactionSequenceNumber` is `undefined`, an existing op is removed when
+ * both are `undefined`.
  *
  * @param ops - Existing list of pending operations
  * @param op - The new pending operation to insert
  * @returns A new array with `op` prepended and any conflicting op removed
  */
+const spentOutpoints = (op: Operation): unknown[] | undefined => {
+  const inputs = (op.extra as { inputs?: unknown } | undefined)?.inputs;
+  return Array.isArray(inputs) ? inputs : undefined;
+};
+
+const spendsOutputOf = (op: Operation, txHashes: Set<string>): boolean =>
+  (spentOutpoints(op) ?? []).some(
+    input => typeof input === "string" && txHashes.has(input.slice(0, input.lastIndexOf("-"))),
+  );
+
 const appendPendingOp = (ops: Operation[], op: Operation) => {
-  const filtered: Operation[] = ops.filter(o => {
+  const newInputs = spentOutpoints(op);
+  const replacedHashes = new Set<string>();
+  let filtered: Operation[] = ops.filter(o => {
     const a = o.transactionSequenceNumber;
     const b = op.transactionSequenceNumber;
-    return a && b ? !a.eq(b) : a !== b;
+    if (a && b) return !a.eq(b);
+    const existingInputs = spentOutpoints(o);
+    if (newInputs && existingInputs) {
+      const isReplaced = existingInputs.some(input => newInputs.includes(input));
+      if (isReplaced) replacedHashes.add(o.hash);
+      return !isReplaced;
+    }
+    return a !== b;
   });
+
+  // A replaced UTXO transaction takes its unconfirmed descendants with it: they can never confirm.
+  let removedDescendant = replacedHashes.size > 0;
+  while (removedDescendant) {
+    removedDescendant = false;
+    filtered = filtered.filter(o => {
+      if (!spendsOutputOf(o, replacedHashes)) return true;
+      replacedHashes.add(o.hash);
+      removedDescendant = true;
+      return false;
+    });
+  }
+
   filtered.unshift(op);
   return filtered;
 };

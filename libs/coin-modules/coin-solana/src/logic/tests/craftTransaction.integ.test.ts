@@ -2,6 +2,7 @@ import { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { VersionedTransaction } from "@solana/web3.js";
 import { getChainAPI } from "../../network";
 import { craftTransaction } from "../craftTransaction";
+import { TEST_CONFIG } from "../../test/coinConfig";
 
 const api = getChainAPI({ endpoint: "https://solana.coin.ledger.com" });
 
@@ -10,7 +11,7 @@ const RECIPIENT = "HYe4vSaEGqQKnDrxWDrk3o5H2gznv7qtij5G6NNG8WHd";
 
 describe("craftTransaction (integration)", () => {
   it("crafts a valid native transfer transaction", async () => {
-    const result = await craftTransaction(api, {
+    const result = await craftTransaction(api, TEST_CONFIG, {
       intentType: "transaction",
       type: "send",
       sender: SENDER,
@@ -34,6 +35,7 @@ describe("craftTransaction (integration)", () => {
     const customFee = 10_000n;
     const result = await craftTransaction(
       api,
+      TEST_CONFIG,
       {
         intentType: "transaction",
         type: "send",
@@ -49,7 +51,7 @@ describe("craftTransaction (integration)", () => {
   });
 
   it("crafts a transaction with a memo", async () => {
-    const result = await craftTransaction(api, {
+    const result = await craftTransaction(api, TEST_CONFIG, {
       intentType: "transaction",
       type: "send",
       sender: SENDER,

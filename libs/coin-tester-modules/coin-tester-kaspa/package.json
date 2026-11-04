@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-kaspa",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "private": true,
   "description": "Ledger Kaspa Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -33,8 +33,7 @@
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand",
-    "unimported": "pnpm knip --directory ../../.. -W libs/coin-tester-modules/coin-tester-kaspa"
+    "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand"
   },
   "dependencies": {
     "@shared/env": "workspace:*",
@@ -59,10 +58,11 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "rimraf": "^5",
+    "rimraf": "5.0.10",
     "typescript": "catalog:"
   }
 }

@@ -30,7 +30,9 @@ export function useAccountHeroViewModel({
   balance,
   availability,
   hasFunds,
+  tag,
   onAction,
+  onOpenMore,
 }: AccountHeroPort): AccountHeroViewModel {
   const [isMoreSheetOpen, setIsMoreSheetOpen] = useState(false);
 
@@ -62,7 +64,7 @@ export function useAccountHeroViewModel({
 
   const onActionPress = useCallback(
     (id: QuickActionId) => {
-      if (isHeroAction(id)) onAction(id);
+      if (isHeroAction(id)) onAction(id, "quick_action");
     },
     [onAction],
   );
@@ -70,26 +72,28 @@ export function useAccountHeroViewModel({
   const onTilePress = useCallback(
     (id: QuickActionTile["id"]) => {
       if (id === "more") {
+        onOpenMore?.();
         setIsMoreSheetOpen(true);
         return;
       }
-      onAction(id);
+      onAction(id, "quick_action");
     },
-    [onAction],
+    [onAction, onOpenMore],
   );
 
   const onMoreActionPress = useCallback(
     (id: QuickActionId) => {
       setIsMoreSheetOpen(false);
-      onActionPress(id);
+      if (isHeroAction(id)) onAction(id, "more");
     },
-    [onActionPress],
+    [onAction],
   );
 
   const onCloseMoreSheet = useCallback(() => setIsMoreSheetOpen(false), []);
 
   return {
     balance,
+    tag,
     actions,
     tiles,
     moreActions,

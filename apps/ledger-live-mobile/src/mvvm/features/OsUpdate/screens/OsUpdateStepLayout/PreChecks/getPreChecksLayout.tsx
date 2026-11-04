@@ -39,6 +39,7 @@ function getSheet({
         state.cancel();
       };
       return {
+        hideHeader: true,
         content: (
           <BatteryTooLowContent
             productName={productName}

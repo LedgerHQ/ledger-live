@@ -1,4 +1,4 @@
-import { ReadRequestType, requestIdOf, SubmitRequestType } from "@icp-sdk/core/agent";
+import { makeNonce, ReadRequestType, requestIdOf, SubmitRequestType } from "@icp-sdk/core/agent";
 import { IDL } from "@icp-sdk/core/candid";
 import { Principal } from "@icp-sdk/core/principal";
 import { sha256 } from "@noble/hashes/sha256";
@@ -46,6 +46,7 @@ const SPLIT_ARG_TYPE = IDL.Record({
   ),
 });
 
+// Without a nonce, a same-minute repeat shares the earlier call's request id and gets its reply.
 const buildGovernanceCall = (
   methodName: string,
   arg: Uint8Array,
@@ -55,6 +56,7 @@ const buildGovernanceCall = (
   canister_id: governanceCanisterId(),
   ingress_expiry: createIngressExpiry(),
   method_name: methodName,
+  nonce: makeNonce(),
   request_type: SubmitRequestType.Call,
   sender: derivePrincipalFromPubkey(pubKey),
 });

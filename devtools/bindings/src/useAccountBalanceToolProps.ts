@@ -4,8 +4,12 @@ import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import type { DevToolsConfig } from "@devtools/registry";
 import { fetchAccountData } from "@domain/api-account-data";
 import { accountsSlice, type AccountsState } from "@domain/entity-account";
-import type { AccountAssetBalance, WithAccountBalances } from "@domain/entity-account-balance";
-import type { AccountDataRootState } from "@domain/entity-account-data";
+import {
+  BalanceAssetIdSchema,
+  type AccountAssetBalance,
+  type WithAccountBalances,
+} from "@domain/entity-account-balance";
+import { accountDataQueryKey, type AccountDataRootState } from "@domain/entity-account-data";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import { formatAmount, useAssetUnits } from "./useAssetUnits";
 
@@ -53,6 +57,16 @@ export function useAccountBalanceToolProps(): AccountBalanceToolProps {
 
   const onReadAll = useCallback(() => descriptors.forEach(read), [descriptors, read]);
 
+  const onReadOperations = useCallback(
+    (accountUUID: string, assetId: string) => {
+      const descriptor = descriptors.get(accountUUID);
+      const filterAsset = BalanceAssetIdSchema.parse(assetId);
+      const query = { filterAsset };
+      if (descriptor) dispatch(fetchAccountData("operations", descriptor, { query, maxAge: 0 }));
+    },
+    [descriptors, dispatch],
+  );
+
   const accounts = useMemo(() => {
     const toRow = ({ assetId, balance, spendableBalance }: AccountAssetBalance) => {
       const unit = unitOf(assetId);
@@ -65,7 +79,7 @@ export function useAccountBalanceToolProps(): AccountBalanceToolProps {
       };
     };
     return entries.map(({ accountUUID, descriptor }) => {
-      const status = statuses?.[accountUUID];
+      const status = statuses?.[accountUUID]?.[accountDataQueryKey(undefined)];
       return {
         accountUUID,
         descriptor: JSON.stringify(descriptor, null, 2),
@@ -78,5 +92,5 @@ export function useAccountBalanceToolProps(): AccountBalanceToolProps {
     });
   }, [entries, statuses, balances, unitOf]);
 
-  return { accounts, onRead, onReadAll };
+  return { accounts, onRead, onReadAll, onReadOperations };
 }

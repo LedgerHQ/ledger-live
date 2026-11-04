@@ -10,6 +10,19 @@ The host owns currency formatting and the balance label, and hands both over as 
 (status, freeze/unfreeze) is the package's own business: it reads it from the card API itself.
 Session teardown uses `useCardLogout` from [`@features/flow-pay-card-auth`](../pay-card-auth/README.md).
 
+## Exports
+
+| Entry | Platform | Exports |
+| --- | --- | --- |
+| `.` | both | `CardDetails`, `CardArtwork` (`CardArtworkProps`), `CardLoadingVisual`, `useFreezeCardViewModel`, the types of `src/types.ts` |
+| `./web` | web | `CardPrimaryActionButton` (`CardPrimaryActionButtonProps`) |
+
+`CardArtwork` takes `size` on web only: `md` fills its container at the list height, `lg` keeps
+the card ratio up to 387px wide. Native ignores it.
+
+`CardPrimaryActionButton` has no native counterpart: on mobile the same actions (choose card type,
+top up) are buttons over the card face, built by the Details view model.
+
 ## Usage
 
 Every host mounts a single `CardDetails`. On web the holder can reveal the card numbers from View
@@ -32,21 +45,14 @@ bottom-sheet queue. Selecting a transaction also emits the injected tracking-pla
 Each scene is a self-contained screen. The view model owns a single current `route` and drives it
 through a small navigation contract (`goTo` / `goBack`, in `Scenes/navigation.ts`); the
 sheet is a dumb shell that only renders the route it is given, sizing itself and showing its header
-back button from `Scenes/registry.ts`.
+back button from `Scenes/registry.native.ts`.
 Navigation is classic (one scene at a time, back to overview) but the same contract is deliberately
 thin: adding a scene (transactions, assets) is a new route plus a tile that calls `goTo`, and the
 scenes can later be mounted in a stack or as full pages without being rewritten.
 
-```tsx
-import { CardDetails } from "@features/flow-pay-card-details";
-
-<CardDetails cardVisual={cardVisual} />;
-```
-
-Native hosts can also pass `assets`: whatever it holds is rendered in the sheet's overview, between
-the card actions and the transactions, which is where the design lists the card's funding wallets.
-The node comes from the host because the list itself lives in
-[`@features/flow-pay-card`](../pay-card/README.md), above this package.
+Native hosts can also pass `assets`, the host's `CardAssetsProps`: the sheet's overview lists the
+card's funding wallets with it, between the card actions and the transactions. The list and its
+drawers come from [`@features/flow-pay-card-assets/native`](../pay-card-assets/README.md).
 
 `CardVisual` composes the `CardArtwork` (card face) with the balance overlay. `CardArtwork` is also
 exported on its own for consumers that only need the card face. Hosts mount `CardDetails` and pass
@@ -70,13 +76,14 @@ takes a centered snow `Spot`.
 
 Only the view carries a platform suffix (`.web` / `.native`). Barrels and platform-agnostic modules
 import without a suffix; TypeScript `moduleSuffixes`, the bundlers (Rspack / Metro) and the jest
-preset resolve the right side. Each view has a test importing it through its full platform filename.
+preset resolve the right side. A module that is the same on both platforms, such as `Freeze`, `More`
+and `Reward`, is one unsuffixed file.
 
 The card artwork renders the halftone assets exported from Figma. Desktop imports the SVGs as URLs
 through the bundler `asset/resource` rule. Native cannot do the same — the Repack assets loader
 turns a `.svg` import into an image URI and `Image` cannot decode SVG — so `Halftone.native.tsx`
 draws them with `react-native-svg` from the path data extracted verbatim into
-`assets/halftone*Path.ts`. Each halftone is a single path, so this costs one node per pattern and
+`assets/halftone*Path.native.ts`. Each halftone is a single path, so this costs one node per pattern and
 stays vector-crisp at any card size.
 
 ## Structure
@@ -90,8 +97,10 @@ pay-card-details/
     ├── assets.d.ts                            # `*.svg` / `*.webp` module declarations
     ├── components/
     │   ├── CardArtwork/
+    │   │   ├── CardArtwork.types.ts           # Props contract of both platforms
     │   │   ├── CardArtwork.web.tsx            # Card face + halftone artwork
     │   │   ├── CardArtwork.native.tsx         # Native gradient + halftones
+    │   │   ├── CardFade.native.tsx            # Gradient that fades the face into the page
     │   │   ├── Halftone.native.tsx            # Halftone patterns drawn with react-native-svg
     │   │   ├── assets/                        # Figma SVGs (web) and shared / native path data
     │   │   ├── CardArtwork.web.test.tsx
@@ -110,7 +119,7 @@ pay-card-details/
     │   ├── CardDetails/                       # Card block: web inline, native Details sheet
     │   │   ├── CardDetails.web.tsx            # Reveal VM passed to CardFlip and CardActions
     │   │   ├── CardDetails.native.tsx         # View-model + view
-    │   │   ├── useCardDetailsViewModel.ts     # Details, Freeze and More state
+    │   │   ├── useCardDetailsViewModel.native.ts # Details, Freeze and More state
     │   │   ├── CardDetailsView.native.tsx     # Overlay actions on the card face + fade
     │   │   ├── CardDetailsSheet.native.tsx    # Adaptive sheet navigation and lifecycle
     │   │   ├── Scenes/                        # Self-contained sheet scenes (screens)
@@ -125,13 +134,22 @@ pay-card-details/
     │   │   ├── CardDetails.native.test.tsx
     │   │   └── CardDetailsSheet.native.test.tsx
     │   ├── CardFlip/
-    │   │   └── CardFlip.web.tsx               # Flip the card face to the PAN/CVV image
+    │   │   ├── CardFlip.web.tsx               # Flip the card face to the PAN/CVV image
+    │   │   └── CardFlip.native.tsx
+    │   ├── CardPrimaryAction/
+    │   │   └── CardPrimaryActionButton.web.tsx # Choose card type / top up button, `./web` entry
+    │   ├── CardTopUp/
+    │   │   └── CardTopUpButton.native.tsx     # Top up button in the Details sheet footer
     │   ├── Reveal/
     │   │   ├── Reveal.web.tsx                 # View / Hide tile
     │   │   └── useRevealViewModel.ts          # Unlock, mint the token, hold the image URL
+    │   ├── Reward/
+    │   │   ├── Reward.tsx                     # Cashback reward tile, wired to the view model
+    │   │   ├── RewardView.web.tsx
+    │   │   ├── RewardView.native.tsx
+    │   │   └── useRewardViewModel.ts
     │   ├── Freeze/
-    │   │   ├── Freeze.web.tsx                 # Tile + confirmation, wired to the view model
-    │   │   ├── Freeze.native.tsx              # Tile only; confirmation is a CardDetails scene
+    │   │   ├── Freeze.tsx                     # Tile wired to the view model (web: + confirmation)
     │   │   ├── useFreezeCardViewModel.ts      # Card status, freeze/unfreeze, confirmation state
     │   │   ├── freezeCopy.ts                  # Freeze vs unfreeze i18n keys, keyed by card status
     │   │   ├── Tile/                          # Freeze / unfreeze control (native: action only)
@@ -144,14 +162,12 @@ pay-card-details/
     │   │       ├── ConfirmBody.web.tsx        # Spot + title + description + the two buttons
     │   │       └── ConfirmBody.native.tsx     # Same body, and it tints the sheet
     │   └── More/
-    │       ├── More.web.tsx                   # Tile + sheet, wired to the view model
-    │       ├── More.native.tsx                # Tile only; menu is a CardDetails scene
+    │       ├── More.tsx                       # Tile wired to the view model (web: + sheet)
     │       ├── useMoreViewModel.ts            # Signed-in user, sheet, logout
     │       ├── Tile/
     │       └── Sheet/
     ├── types.ts                               # Public props / view-model types
-    ├── exports.web.ts                         # Public surface
-    ├── exports.native.ts                      # Public surface
-    ├── index.ts                              # Public API barrel → ./exports
-    └── index.native.ts                       # Public API barrel → ./exports
+    ├── index.ts                               # `.` barrel, both platforms
+    └── web/
+        └── index.web.ts                       # `./web` barrel
 ```

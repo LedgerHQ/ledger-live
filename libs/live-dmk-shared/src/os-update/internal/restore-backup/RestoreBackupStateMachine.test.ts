@@ -9,11 +9,12 @@ import {
   type ConnectedDevice,
   type DeviceManagementKit,
 } from "@ledgerhq/device-management-kit";
-import type {
-  Backup,
-  RestoreBackupDAInput,
-  RestoreBackupDeviceAction,
-  RestoreBackupDAOutput,
+import {
+  RestoreBackupStatus,
+  type Backup,
+  type RestoreBackupDAInput,
+  type RestoreBackupDeviceAction,
+  type RestoreBackupDAOutput,
 } from "@ledgerhq/dmk-ledger-wallet";
 import { Subject } from "rxjs";
 import { createActor, fromCallback, type Actor, type AnyEventObject } from "xstate";
@@ -53,7 +54,15 @@ const BACKUP: Backup = {
   installedApps: [{ appName: "Bitcoin", data: undefined }],
 };
 
-const RESTORE_RESULT = { restoredApps: [] } as unknown as RestoreBackupDAOutput;
+const RESTORE_RESULT = {
+  restoreStatus: RestoreBackupStatus.FULL,
+  restoredApps: [],
+} as unknown as RestoreBackupDAOutput;
+
+const OUT_OF_MEMORY_RESULT = {
+  restoreStatus: RestoreBackupStatus.OUT_OF_MEMORY,
+  restoredApps: [],
+} as unknown as RestoreBackupDAOutput;
 
 const OUT_OF_MEMORY_ERROR = {
   _tag: "OutOfMemoryDAError",
@@ -253,7 +262,7 @@ describe("RestoreBackupStateMachine", () => {
       });
     });
 
-    it("should keep the bar from moving backwards when a recovered failure restarts the restore", async () => {
+    it("should take the bar back when a recovered failure restarts the restore", async () => {
       await start();
       await emitPending({
         requiredUserInteraction: UserInteractionRequired.None,
@@ -272,11 +281,10 @@ describe("RestoreBackupStateMachine", () => {
       const progresses = sentStatesOfType(RestoreBackupStateType.RESTORING).map(
         state => state.progress,
       );
-      const heldAt = progresses.findIndex(progress => progress > 0);
-      expect(progresses.slice(heldAt)).toEqual([expect.closeTo(0.275), expect.closeTo(0.275)]);
+      expect(progresses.slice(-2)).toEqual([expect.closeTo(0.275), 0]);
     });
 
-    it("should advance the bar once the restarted restore passes where it was", async () => {
+    it("should follow the restarted restore from its start", async () => {
       await start();
       await emitPending({
         requiredUserInteraction: UserInteractionRequired.None,
@@ -419,6 +427,23 @@ describe("RestoreBackupStateMachine", () => {
       expect(removeBackup).not.toHaveBeenCalled();
     });
 
+    it("should emit OUT_OF_MEMORY when the restore completes with an out-of-memory status", async () => {
+      await start();
+
+      await completeDeviceAction(OUT_OF_MEMORY_RESULT);
+
+      expect(actor.getSnapshot().value).toBe("OutOfMemory");
+      expect(lastSentStateType()).toBe(RestoreBackupStateType.OUT_OF_MEMORY);
+    });
+
+    it("should keep the backup when the restore completes with an out-of-memory status", async () => {
+      await start();
+
+      await completeDeviceAction(OUT_OF_MEMORY_RESULT);
+
+      expect(removeBackup).not.toHaveBeenCalled();
+    });
+
     it("should ask the host to stop when cancel is called on the OUT_OF_MEMORY state", async () => {
       await start();
       await failDeviceAction(OUT_OF_MEMORY_ERROR);
@@ -453,6 +478,33 @@ describe("RestoreBackupStateMachine", () => {
       await settle();
 
       expect(actor.getSnapshot().value).toBe("RestoreBackup");
+    });
+
+    it("should take the bar back when the restore is retried after a refused secure connection", async () => {
+      await start();
+      await emitPending({
+        requiredUserInteraction: UserInteractionRequired.None,
+        step: RestoreBackupStepValue.InstallOrUpdateApps,
+        progress: 0.5,
+      });
+      await emitPending({
+        requiredUserInteraction: UserInteractionRequired.AllowSecureConnection,
+        step: RestoreBackupStepValue.InstallOrUpdateApps,
+      });
+      await failDeviceAction(new RefusedByUserDAError());
+
+      sentStatesOfType(RestoreBackupStateType.ALLOW_SECURE_CONNECTION_REFUSED)[0].retry();
+      await settle();
+      await emitPending({
+        requiredUserInteraction: UserInteractionRequired.None,
+        step: RestoreBackupStepValue.InstallLanguagePackage,
+        progress: 0,
+      });
+
+      const progresses = sentStatesOfType(RestoreBackupStateType.RESTORING).map(
+        state => state.progress,
+      );
+      expect(progresses.slice(-2)).toEqual([expect.closeTo(0.275), 0]);
     });
 
     it("should ask the host to stop when cancel is called after a refused secure connection", async () => {

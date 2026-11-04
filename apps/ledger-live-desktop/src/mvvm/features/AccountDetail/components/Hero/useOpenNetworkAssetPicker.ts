@@ -7,7 +7,7 @@ import {
   setFlowValue,
   setSourceValue,
 } from "~/renderer/reducers/modularDialog";
-import { ACCOUNT_DETAIL_TRACKING_PAGE_NAME } from "../../constants";
+import { ACCOUNT_DETAIL_PAGES } from "@features/flow-account-detail";
 
 export type OpenNetworkAssetPicker = (
   networkId: string,
@@ -20,7 +20,7 @@ export function useOpenNetworkAssetPicker(): OpenNetworkAssetPicker {
   return useCallback(
     (networkId, useCase, onPicked) => {
       dispatch(setFlowValue(useCase));
-      dispatch(setSourceValue(ACCOUNT_DETAIL_TRACKING_PAGE_NAME));
+      dispatch(setSourceValue(ACCOUNT_DETAIL_PAGES.account));
       dispatch(
         openDialog({
           networkIds: [networkId],

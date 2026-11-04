@@ -25,7 +25,7 @@ Package names **must match exactly** what's in each `package.json`:
 | Desktop app | `ledger-live-desktop` |
 | Common lib | `@ledgerhq/live-common` |
 | Coin modules | `@ledgerhq/coin-<name>` (e.g. `@ledgerhq/coin-sui`) |
-| Layer packages | `@shared/<name>`, `@domain/entity-<name>`, `@domain/api-<name>`, `@features/flow-<name>`, `@features/platform-<name>`, `@devtools/<name>` (e.g. `@domain/entity-contact`, `@features/flow-contacts`) |
+| Layer packages | The folder gives the name ([structure-flow naming](../structure-flow/references/layers.md#naming)), e.g. `@domain/entity-contact`, `@features/flow-contacts` |
 | Other libs | Check the lib's `package.json` `name` field |
 
 ## Private and published packages

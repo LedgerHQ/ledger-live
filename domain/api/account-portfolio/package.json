@@ -1,6 +1,6 @@
 {
   "name": "@domain/api-account-portfolio",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "Domain API client for the Portfolio service: RTK Query endpoints (portfolio, registrations, balance, updates) with zod wire schemas",
   "main": "src/index.ts",
@@ -17,8 +17,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W domain/api/account-portfolio"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@shared/api-services": "workspace:*",
@@ -32,6 +31,7 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",

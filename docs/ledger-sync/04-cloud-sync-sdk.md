@@ -68,8 +68,10 @@ flowchart TD
     auth --> fetch["api.fetchData(jwt, slug, version, trustchain)"]
     fetch --> status{status?}
     status -->|up-to-date| done1([nothing to do · DONE])
-    status -->|no-data| nodata["throw TrustchainOutdated if data existed<br/>else saveNewUpdate { deleted-data }"]
-    nodata --> done2([DONE])
+    status -->|no-data| nodata{version?}
+    nodata -->|yes| deleted["saveNewUpdate { deleted-data }"]
+    deleted --> outdated([throw TrustchainOutdated])
+    nodata -->|no| done2([nothing to do · DONE])
     status -->|out-of-sync| dec["cipher.decrypt(payload) → validate against schema"]
     dec --> save["saveNewUpdate { new-data, version, data }"]
     save --> done3([DONE])

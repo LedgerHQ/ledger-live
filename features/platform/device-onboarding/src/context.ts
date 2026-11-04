@@ -2,7 +2,9 @@ import { assign } from "xstate";
 import { isSetupStep } from "./types.internals";
 import {
   isRecoveryKeyBackupInProgress,
+  OnboardingStep,
   RecoveryKeyStatus,
+  SeedPath,
   type DeviceOnboardingContext,
   type DeviceOnboardingExitReason,
   type DeviceOnboardingInput,
@@ -29,9 +31,17 @@ export function initialContext(input: DeviceOnboardingInput): DeviceOnboardingCo
     successAcknowledgedOnSession: null,
     firmware: null,
     currentSetupStep: null,
+    seedPath: null,
     recoveryKeyBackupOpen: false,
   };
 }
+
+const seedPathByStep = new Map<OnboardingStep, SeedPath>([
+  [OnboardingStep.NewDevice, SeedPath.NewSeed],
+  [OnboardingStep.RestoreSeed, SeedPath.RestorePhrase],
+  [OnboardingStep.RecoverRestore, SeedPath.Recover],
+  [OnboardingStep.RestoreCharon, SeedPath.RecoveryKey],
+]);
 
 function recoveryKeyBackupStillOpen(open: boolean, status: RecoveryKeyStatus | null): boolean {
   if (status === null || status === RecoveryKeyStatus.Unknown) {
@@ -171,16 +181,23 @@ export const contextActions = {
       return {};
     }
 
+    const seedPath = seedPathByStep.get(event.state.currentOnboardingStep);
+
     return {
       lastDeviceState: event.state,
       currentSetupStep: isSetupStep(event.state.currentOnboardingStep)
         ? event.state.currentOnboardingStep
         : context.currentSetupStep,
+      seedPath: seedPath ?? context.seedPath,
       recoveryKeyBackupOpen: recoveryKeyBackupStillOpen(
         context.recoveryKeyBackupOpen,
         event.state.recoveryKeyStatus,
       ),
     };
   }),
-  forgetSetupProgress: update({ currentSetupStep: null, recoveryKeyBackupOpen: false }),
+  forgetSetupProgress: update({
+    currentSetupStep: null,
+    seedPath: null,
+    recoveryKeyBackupOpen: false,
+  }),
 };

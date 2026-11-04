@@ -15,6 +15,11 @@
       "factory": "./universal-component/generator.ts",
       "schema": "./universal-component/schema.json",
       "description": "Scaffold a universal component (contract, web and native implementations, tests, barrel lines) in a dual-platform package, or a platform component behind ./web or ./native"
+    },
+    "package": {
+      "factory": "./package/generator.ts",
+      "schema": "./package/schema.json",
+      "description": "Scaffold a new package under shared/, domain/entity/, domain/api/, features/platform/ or features/flow/ with the manifest, configs, README and barrel every check requires"
     }
   }
 }

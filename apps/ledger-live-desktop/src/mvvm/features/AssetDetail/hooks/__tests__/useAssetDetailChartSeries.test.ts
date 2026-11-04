@@ -42,7 +42,6 @@ describe("useAssetDetailChartSeries", () => {
         }),
       );
 
-      // The chart now goes through the USD-fallback wrapper instead of useAssetChartData.
       expect(mockedUseAssetChartData).toHaveBeenCalledWith(
         { id: "bitcoin", counterCurrency: "btc", range: "1d", isCryptoCountervalue: true },
         { skip: false },

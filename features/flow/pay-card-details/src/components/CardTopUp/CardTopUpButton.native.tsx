@@ -1,7 +1,10 @@
 import React from "react";
 import { Button } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "@shared/i18n";
-import type { CardTopUpButtonProps } from "./types";
+
+type CardTopUpButtonProps = Readonly<{
+  onTopUp?: () => void;
+}>;
 
 export function CardTopUpButton({ onTopUp }: CardTopUpButtonProps) {
   const { t } = useTranslation();

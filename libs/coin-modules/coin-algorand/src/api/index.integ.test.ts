@@ -62,6 +62,93 @@ describe("Algorand Api (mainnet)", () => {
     });
   });
 
+  describe("getBlock", () => {
+    const HEIGHT = 66607655;
+
+    it("returns a block with its hash and parent", async () => {
+      const block = await api.getBlock(context, HEIGHT);
+
+      expect(block.info).toEqual({
+        height: HEIGHT,
+        hash: "HY4BUR6N33YYKSYDIGIEVNHAZIWWPP5BCRM43BJNVZ6J56LW3DPA",
+        time: new Date(1793724956000),
+        parent: {
+          height: HEIGHT - 1,
+          hash: "2HMKHXWWPKZVB3MT4EU533YFCBWRYS6A56FXYHF43HAVO2EPP3JQ",
+        },
+      });
+    });
+
+    it("returns the proposer payout as a native transfer", async () => {
+      const { transactions } = await api.getBlock(context, HEIGHT);
+
+      expect(transactions).toContainEqual({
+        hash: "XP32QCHC6EJJTMD2CWG6TP2HWGETGRI6XG7GBNOBE27TJVWGTSBA",
+        failed: false,
+        operations: [
+          {
+            type: "transfer",
+            address: "Y76M3MSY6DKBRHBL7C3NNDXGS5IIMQVQVUAB6MP4XEMMGVF2QWNPL226CA",
+            peer: "QNGQXHUFFMY6KOXBBJFYQHV6BN52YUANDRHPV4EMNANJJRPGMSR6M3GXQE",
+            asset: { type: "native" },
+            amount: -8181062n,
+          },
+          {
+            type: "transfer",
+            address: "QNGQXHUFFMY6KOXBBJFYQHV6BN52YUANDRHPV4EMNANJJRPGMSR6M3GXQE",
+            peer: "Y76M3MSY6DKBRHBL7C3NNDXGS5IIMQVQVUAB6MP4XEMMGVF2QWNPL226CA",
+            asset: { type: "native" },
+            amount: 8181062n,
+          },
+        ],
+        fees: 0n,
+        feesPayer: "Y76M3MSY6DKBRHBL7C3NNDXGS5IIMQVQVUAB6MP4XEMMGVF2QWNPL226CA",
+        details: { txType: "pay" },
+      });
+    });
+
+    it("returns the asset transfers of inner transactions", async () => {
+      const { transactions } = await api.getBlock(context, HEIGHT);
+
+      const application = transactions.find(
+        tx => tx.hash === "AWMUF4YGFNXUN6AUBMEDFJYUJ3ROK6OBQL27EGZVMTF7KAGCDW7A",
+      );
+      expect(application).toMatchObject({ fees: 1000n, details: { txType: "appl" } });
+      expect(application?.operations).toContainEqual({
+        type: "transfer",
+        address: "TIGER63IT7F5HDLXJYLXRPXGWAT6JCLWCN7OJBR4VGYTFQTPDNCKZHCDAU",
+        peer: "JP3ENKDQC2BOYRMLFGKBS7RB2IVNF7VNHCFHVTRNHOENRQ6R4UN7MCNXPI",
+        asset: { type: "asa", assetReference: "1284444444" },
+        amount: 13107200n,
+      });
+    });
+
+    it("returns the same block info as lastBlock for the latest round", async () => {
+      const latest = await api.lastBlock(context);
+
+      const { info } = await getIndexedBlock(latest.height);
+
+      expect(info).toEqual(latest);
+    });
+
+    it("rejects a round that does not exist yet", async () => {
+      await expect(api.getBlock(context, 999999999)).rejects.toThrow(
+        "failed to retrieve information from the ledger",
+      );
+    });
+  });
+
+  // The indexer can lag a few rounds behind the node that gave the latest round
+  async function getIndexedBlock(height: number, attempts = 10): ReturnType<typeof api.getBlock> {
+    try {
+      return await api.getBlock(context, height);
+    } catch (error) {
+      if (attempts <= 1 || !String(error).includes("is not indexed yet")) throw error;
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      return getIndexedBlock(height, attempts - 1);
+    }
+  }
+
   describe("estimateFees", () => {
     it("returns estimated fees", async () => {
       // When
@@ -380,10 +467,6 @@ describe("Algorand Api (mainnet)", () => {
     // The module omits these capabilities; the resolver's `withDefaults` is what answers for them,
     // which is why the message is the framework's generic one.
     const resolved = withDefaults(createApi());
-
-    it("getBlock throws not supported error", () => {
-      expect(() => resolved.getBlock(context, 100)).toThrow("getBlock is not supported");
-    });
 
     it("getNextSequence throws not supported error", () => {
       expect(() => resolved.getNextSequence(context, SENDER)).toThrow(

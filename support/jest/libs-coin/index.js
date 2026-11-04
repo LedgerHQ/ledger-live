@@ -105,8 +105,8 @@ function projectJestConfig(overrides, { esm = true, extraEsmDeps = [] } = {}) {
 
 /**
  * Integration config of a coin module: the `*.integ.test.ts` suites, which hit live networks,
- * with a 60 s timeout, the wallet framework setup only and the default reporter (no quarantine,
- * no sonar). Every key of `overrides` replaces the preset's.
+ * with a 60 s timeout, the wallet framework setup, one retry on CI and the default reporter (no
+ * quarantine reporter, no sonar). Every key of `overrides` replaces the preset's.
  *
  *   module.exports = createLibsCoinIntegJestConfig({ rootDir: __dirname });
  *
@@ -122,7 +122,10 @@ function integJestConfig(overrides, options) {
       testTimeout: 60_000,
       forceExit: true,
       passWithNoTests: true,
-      setupFilesAfterEnv: ["@ledgerhq/wallet-framework-test-setup"],
+      setupFilesAfterEnv: [
+        "@ledgerhq/wallet-framework-test-setup",
+        "@ledgerhq/test-quarantine/jest-retries",
+      ],
       reporters: ["default"],
       ...overrides,
     },

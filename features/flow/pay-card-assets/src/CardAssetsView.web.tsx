@@ -17,10 +17,10 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { useTranslation } from "@shared/i18n";
-import { CardAssetDetailsDialog } from "./CardAssetDetailsDialog.web";
-import { CardAssetDetailsWithdrawDialog } from "./CardAssetDetailsWithdrawDialog.web";
-import { CardAssetsEmptyState } from "./CardAssetsEmptyState.web";
-import { CardAssetsManageDialog } from "./CardAssetsManageDialog.web";
+import { CardAssetDetailsDialog } from "./CardAssetDetailsDialog";
+import { CardAssetDetailsWithdrawDialog } from "./CardAssetDetailsWithdrawDialog";
+import { CardAssetsEmptyState } from "./CardAssetsEmptyState";
+import { CardAssetsManageDialog } from "./CardAssetsManageDialog";
 import type { CardAssetRow, CardAssetsViewModel } from "./types";
 
 const ICON_SIZE = 48;
@@ -57,23 +57,15 @@ function AssetRow({
 }
 
 type AssetsBodyProps = Readonly<
-  Pick<CardAssetsViewModel, "status" | "rows" | "onAssetPress" | "onRetryPress" | "onAddAssetPress">
+  Pick<CardAssetsViewModel, "status" | "rows" | "onOpenAsset" | "onRetry" | "onAddAsset">
 >;
 
-function AssetsBody({
-  status,
-  rows,
-  onAssetPress,
-  onRetryPress,
-  onAddAssetPress,
-}: AssetsBodyProps) {
+function AssetsBody({ status, rows, onOpenAsset, onRetry, onAddAsset }: AssetsBodyProps) {
   if (status === "error") {
-    return <CardAssetsEmptyState variant="error" onRetry={onRetryPress} />;
+    return <CardAssetsEmptyState variant="error" onRetry={onRetry} />;
   }
   if (status === "empty") {
-    return (
-      <CardAssetsEmptyState variant="empty" onRetry={onRetryPress} onAddAsset={onAddAssetPress} />
-    );
+    return <CardAssetsEmptyState variant="empty" onRetry={onRetry} onAddAsset={onAddAsset} />;
   }
   if (status === "loading") {
     return (
@@ -88,7 +80,7 @@ function AssetsBody({
   return (
     <div className="flex flex-col gap-8">
       {rows.map(row => (
-        <AssetRow key={row.id} row={row} onPress={onAssetPress} />
+        <AssetRow key={row.id} row={row} onPress={onOpenAsset} />
       ))}
     </div>
   );
@@ -105,16 +97,16 @@ export function CardAssetsView({
   formatters,
   dialogCopy,
   discreet,
-  onAssetPress,
+  onOpenAsset,
   onDialogClose,
-  onTopUpPress,
-  onWithdrawPress,
+  onTopUpAsset,
+  onOpenWithdraw,
   onWithdrawClose,
-  onShowHistoryPress,
+  onShowHistory,
   onWithdrawContinue,
-  onManagePress,
-  onRetryPress,
-  onAddAssetPress,
+  onManageAssets,
+  onRetry,
+  onAddAsset,
   onMoveAsset,
   reorderingAssetIds,
 }: CardAssetsViewModel) {
@@ -141,7 +133,7 @@ export function CardAssetsView({
             </div>
             {status === "ready" ? (
               <Link appearance="accent" underline={false} size="sm" asChild>
-                <button type="button" onClick={onManagePress}>
+                <button type="button" onClick={onManageAssets}>
                   {manageLabel}
                 </button>
               </Link>
@@ -152,9 +144,9 @@ export function CardAssetsView({
         <AssetsBody
           status={status}
           rows={rows}
-          onAssetPress={onAssetPress}
-          onRetryPress={onRetryPress}
-          onAddAssetPress={onAddAssetPress}
+          onOpenAsset={onOpenAsset}
+          onRetry={onRetry}
+          onAddAsset={onAddAsset}
         />
       </section>
       <CardAssetDetailsDialog
@@ -166,9 +158,9 @@ export function CardAssetsView({
         formatters={formatters}
         discreet={discreet}
         onClose={onDialogClose}
-        onTopUp={onTopUpPress}
-        onWithdraw={onWithdrawPress}
-        onShowHistory={onShowHistoryPress}
+        onTopUp={onTopUpAsset}
+        onWithdraw={onOpenWithdraw}
+        onShowHistory={onShowHistory}
       />
       <CardAssetDetailsWithdrawDialog
         isOpen={dialogState === "withdraw"}
@@ -180,7 +172,7 @@ export function CardAssetsView({
         isOpen={dialogState === "manage"}
         rows={rows}
         onClose={onDialogClose}
-        onAddAsset={onAddAssetPress}
+        onAddAsset={onAddAsset}
         onMoveAsset={onMoveAsset}
         reorderingAssetIds={reorderingAssetIds}
       />

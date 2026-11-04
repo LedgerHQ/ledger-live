@@ -7,6 +7,7 @@ import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { Currency } from "@domain/entity-currency";
+import { FiatCurrencyTickerSchema } from "@domain/entity-currency-fiat";
 import type { Transaction, TransactionStatus } from "../../../../../coin-modules/transaction-types";
 import type { SendFlowTransactionActions } from "../../../types";
 import { useCustomFeesViewModelCore } from "../useCustomFeesViewModelCore";
@@ -97,7 +98,7 @@ const usdCurrency = {
   id: "USD",
   type: "FiatCurrency",
   name: "US Dollar",
-  ticker: "USD",
+  ticker: FiatCurrencyTickerSchema.parse("USD"),
   units: [{ name: "US Dollar", code: "USD", magnitude: 2 }],
 } as Currency;
 

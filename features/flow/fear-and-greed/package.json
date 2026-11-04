@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-fear-and-greed",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "description": "Fear and Greed mood index shared across Ledger Wallet desktop and mobile",
   "main": "src/index.ts",
@@ -23,8 +23,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -c features/flow/fear-and-greed/knip.web.config.mjs -W features/flow/fear-and-greed --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/fear-and-greed/knip.native.config.mjs -W features/flow/fear-and-greed --tsConfig tsconfig.native.json"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@domain/api-market-index-fear-and-greed": "workspace:*",
@@ -73,6 +72,7 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",

@@ -1,5 +1,4 @@
 import { NetworkError } from "../../errors";
-import { getEnv } from "@ledgerhq/live-env";
 import {
   TOKEN_2022_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
@@ -36,12 +35,21 @@ import { getTokenAccountProgramId } from "../../helpers/token";
 import { paginatedProgramAccounts } from "./rpc/program-accounts";
 import { Awaited } from "../../logic";
 import { SolanaTokenProgram } from "../../types";
+import {
+  DEFAULT_BROADCAST_TIMEOUT_MS,
+  DEFAULT_NODE_RETRIES,
+  DEFAULT_NODE_RETRY_DELAY_MS,
+} from "../../constants";
 
 export const LATEST_BLOCKHASH_MOCK = "EEbZs6DmDyDjucyYbo3LwVJU7pQYuVopYcYTSEZXskW3";
 export const LAST_VALID_BLOCK_HEIGHT_MOCK = 280064048;
 
 export type Config = {
   readonly endpoint: string;
+  readonly confirmationTimeoutMs?: number | undefined;
+  readonly retries?: number | undefined;
+  readonly retryDelayMs?: number | undefined;
+  readonly minPriorityFee?: number;
 };
 
 export type ChainAPI = Readonly<{
@@ -162,8 +170,8 @@ const hasLandedSuccessfully = async (connection: Connection, signature: string) 
   }
 };
 
-const RETRY_ATTEMPTS = 3;
-const RETRY_BASE_DELAY_MS = 500;
+type RetryPolicy = { retries: number; retryDelayMs: number };
+
 // The proxy answers a rate limit with a JSON-RPC error over HTTP 200, so ky's status-based retry
 // never sees it.
 const RETRYABLE_MESSAGES = [
@@ -173,13 +181,18 @@ const RETRYABLE_MESSAGES = [
 
 const remapErrorsWithRetry = <P extends Promise<T>, T>(
   callback: () => P,
-  times = RETRY_ATTEMPTS,
+  policy: RetryPolicy,
+  attempt = 0,
 ) => {
   return (e: unknown): T | Promise<T> => {
-    if (times > 0 && e instanceof Error && RETRYABLE_MESSAGES.some(m => e.message.includes(m))) {
-      const wait = RETRY_BASE_DELAY_MS * 2 ** (RETRY_ATTEMPTS - times);
+    if (
+      attempt < policy.retries &&
+      e instanceof Error &&
+      RETRYABLE_MESSAGES.some(m => e.message.includes(m))
+    ) {
+      const wait = policy.retryDelayMs * 2 ** attempt;
       return new Promise<void>(resolve => setTimeout(resolve, wait)).then(() =>
-        callback().catch(remapErrorsWithRetry(callback, times - 1)),
+        callback().catch(remapErrorsWithRetry(callback, policy, attempt + 1)),
       );
     }
     return remapErrors(e);
@@ -218,8 +231,13 @@ export function getChainAPI(
     ...(fetchMiddleware ? { fetchMiddleware } : {}),
     fetch: kyNoTimeout as typeof fetch, // Type cast for jest test having an issue with the type
     commitment: "confirmed",
-    confirmTransactionInitialTimeout: getEnv("SOLANA_TX_CONFIRMATION_TIMEOUT") || 0,
+    confirmTransactionInitialTimeout: config.confirmationTimeoutMs ?? DEFAULT_BROADCAST_TIMEOUT_MS,
   });
+
+  const retryPolicy: RetryPolicy = {
+    retries: config.retries ?? DEFAULT_NODE_RETRIES,
+    retryDelayMs: config.retryDelayMs ?? DEFAULT_NODE_RETRY_DELAY_MS,
+  };
 
   const programAccounts = paginatedProgramAccounts(
     connection,
@@ -246,7 +264,7 @@ export function getChainAPI(
         connection.getParsedTokenAccountsByOwner(new PublicKey(address), {
           programId: TOKEN_PROGRAM_ID,
         });
-      return callback().catch(remapErrorsWithRetry(callback));
+      return callback().catch(remapErrorsWithRetry(callback, retryPolicy));
     },
 
     getParsedToken2022AccountsByOwner: (address: string) => {
@@ -254,7 +272,7 @@ export function getChainAPI(
         connection.getParsedTokenAccountsByOwner(new PublicKey(address), {
           programId: TOKEN_2022_PROGRAM_ID,
         });
-      return callback().catch(remapErrorsWithRetry(callback));
+      return callback().catch(remapErrorsWithRetry(callback, retryPolicy));
     },
 
     getStakeAccountsByWithdrawAuth: (authAddr: string) => {
@@ -269,7 +287,7 @@ export function getChainAPI(
             },
           ],
         });
-      return callback().catch(remapErrorsWithRetry(callback));
+      return callback().catch(remapErrorsWithRetry(callback, retryPolicy));
     },
 
     getInflationReward: (addresses: string[]) =>
@@ -289,7 +307,7 @@ export function getChainAPI(
           throw err;
         });
       };
-      return callback().catch(remapErrorsWithRetry(callback));
+      return callback().catch(remapErrorsWithRetry(callback, retryPolicy));
     },
 
     getSignaturesForAddressBatch: (
@@ -335,7 +353,7 @@ export function getChainAPI(
         }
         return byIndex;
       };
-      return callback().catch(remapErrorsWithRetry(callback));
+      return callback().catch(remapErrorsWithRetry(callback, retryPolicy));
     },
 
     getParsedTransactions: (signatures: string[]) =>
@@ -461,6 +479,9 @@ export function getChainAPI(
         // so we can be sure the transaction will succeed
         // and get the real compute units used
         ComputeBudgetProgram.setComputeUnitLimit({ units: 1_400_000 }),
+        // The signed transaction always carries a price instruction, which consumes compute units
+        // too. A zero price measures it without charging a priority fee on the 1.4M limit above.
+        ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 0 }),
         ...instructions,
       ];
       const testTransaction = new VersionedTransaction(

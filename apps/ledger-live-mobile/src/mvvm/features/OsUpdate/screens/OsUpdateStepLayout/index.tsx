@@ -5,6 +5,7 @@ import { OsUpdateStateSheet } from "../../sheets/OsUpdateStateSheet";
 
 export type OsUpdateSheetSpec = Readonly<{
   content: React.ReactNode;
+  hideHeader?: boolean;
 }>;
 
 export type OsUpdateStepLayoutSpec = Readonly<{
@@ -38,6 +39,7 @@ export function OsUpdateStepLayout({
       <OsUpdateStateSheet
         isOpen={sheet !== undefined && !isCloseConfirmationOpen}
         onClose={onUserClose}
+        hideHeader={sheet?.hideHeader}
       >
         {sheet?.content}
       </OsUpdateStateSheet>

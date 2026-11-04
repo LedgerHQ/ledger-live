@@ -24,7 +24,7 @@ import { useSelector } from "~/context/hooks";
 import { knownDevicesSelector } from "~/reducers/knownDevices";
 import { navigateToPayTab } from "LLM/features/PayTab/utils/navigateToPayTab";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
-import { useDeviceOnboarding } from "../../../DeviceOnboarding/hooks/useDeviceOnboarding";
+import { useDeviceOnboardingTool } from "../../DeviceOnboarding/useDeviceOnboardingTool";
 import { useOfferSync } from "../../../DeviceOnboarding/hooks/useOfferSync";
 import { useDevToolsRelay } from "./useDevToolsRelay";
 
@@ -103,7 +103,7 @@ export function useDevToolsScreenViewModel() {
   const dmk = useDeviceManagementKit();
   const knownDevices = useSelector(knownDevicesSelector);
   const offerSync = useOfferSync();
-  const deviceOnboardingProps = useDeviceOnboarding({
+  const deviceOnboardingProps = useDeviceOnboardingTool({
     dmk,
     knownDevices,
     offerSync,

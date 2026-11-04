@@ -33,7 +33,20 @@ Set `catchSchemaFailure` on every validated endpoint. It turns a failure into a 
 logger to reach from it. Precedent: `describeSchemaFailure` in
 `domain/api/market-countervalues/src/internals/`.
 
-## Errors in `queryFn`
+## Errors
+
+`transformErrorResponse` reshapes a transport error before it reaches the query's `error`, as
+`transformResponse` does for data. The shared bases built on `fetchBaseQuery` hand it a
+`FetchBaseQueryError`:
+
+```ts
+getItem: build.query<Item, ItemId>({
+  query: id => ({ url: `/items/${id}` }),
+  transformErrorResponse: error => error.status,
+}),
+```
+
+A schema failure skips it: `catchSchemaFailure` shapes that one.
 
 A `queryFn` never throws: return `{ data }` on success and `{ error }` on failure.
 
@@ -46,6 +59,13 @@ queryFn: async arg => {
   }
 },
 ```
+
+## One base per backend, no exceptions
+
+A base query that needs use-case knowledge (mock handlers keyed by endpoint URL, endpoint-name
+lookups, the use case's wire schemas) is fixed in the base query, never worked around with a second
+`createApi` on the same backend. A base query stays pure transport
+([`shared/api-services`](../../../../shared/api-services/README.md#adding-a-service)).
 
 ## Registration traps
 

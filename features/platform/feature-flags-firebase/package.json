@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-feature-flags-firebase",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "description": "Firebase Remote Config mapping for feature flags: key naming, defaults formatting and payload parsing",
   "main": "src/index.ts",
@@ -13,11 +13,11 @@
   "scripts": {
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
+    "lint": "oxlint src",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/feature-flags-firebase"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@shared/feature-flags": "workspace:^",
@@ -29,8 +29,10 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/lodash": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "typescript": "catalog:"
   }
 }

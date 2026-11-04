@@ -1,3 +1,15 @@
+import {
+  Banner,
+  Divider,
+  SegmentedControl,
+  SegmentedControlButton,
+  Spinner,
+  Subheader,
+  SubheaderDescription,
+  SubheaderRow,
+  SubheaderTitle,
+  TextInput,
+} from "@ledgerhq/lumen-ui-react";
 import { InitCredentials } from "../components/sdk/InitCredentials";
 import { GetOrCreateTrustchain } from "../components/sdk/GetOrCreateTrustchain";
 import { RestoreTrustchain } from "../components/sdk/RestoreTrustchain";
@@ -17,35 +29,38 @@ function Trustchain(props: TrustchainDevToolProps) {
     <div className="flex flex-col overflow-y-auto">
       {/* Device interaction overlay */}
       {vm.deviceInteractionVisible ? (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/60 z-50 body-2 text-white">
+        <div className="fixed inset-0 z-50 flex items-center justify-center gap-12 bg-canvas-overlay body-2 text-base">
+          <Spinner size={24} />
           Approve on device…
         </div>
       ) : null}
 
       <BackendRow url={vm.trustchainApiBaseUrl} useProd={vm.useProd} setUseProd={vm.setUseProd} />
+      <Divider />
 
       {/* App live state — read-only banner */}
       {vm.liveState ? (
-        <div className="px-16 py-10 bg-success-subtle border-b border-base body-3 text-muted flex items-center gap-16">
-          <span className="body-3-semi-bold text-success flex-shrink-0">Live state</span>
-          {vm.liveState.trustchain ? (
-            <code className="truncate">
-              {vm.liveState.trustchain.rootId.slice(0, 8)}… @{" "}
-              {vm.liveState.trustchain.applicationPath}
-            </code>
-          ) : (
-            <span>no trustchain</span>
-          )}
-          {vm.liveState.memberCredentials ? (
-            <code className="truncate ml-auto">
-              pub:{vm.liveState.memberCredentials.pubkey.slice(0, 12)}…
-            </code>
-          ) : null}
+        <div className="px-16 py-8">
+          <Banner
+            appearance="success"
+            title="Live state"
+            description={
+              <code className="break-all">
+                {vm.liveState.trustchain
+                  ? `${vm.liveState.trustchain.rootId.slice(0, 8)}… @ ${vm.liveState.trustchain.applicationPath}`
+                  : "no trustchain"}
+                {vm.liveState.memberCredentials
+                  ? ` · pub:${vm.liveState.memberCredentials.pubkey.slice(0, 12)}…`
+                  : ""}
+              </code>
+            }
+          />
         </div>
       ) : null}
 
       {/* Tool-local device controls */}
       <DeviceControls deviceId={vm.deviceId} setDeviceId={vm.setDeviceId} />
+      <Divider />
 
       {/* SDK operations */}
       <InitCredentials
@@ -115,40 +130,25 @@ function BackendRow({
   setUseProd?: (v: boolean) => void;
 }>) {
   return (
-    <div className="px-16 py-10 border-b border-base flex items-center gap-12 body-3">
-      <span className="text-muted flex-shrink-0">Backend</span>
-      <code className="text-base truncate flex-1 min-w-0">{url}</code>
+    <div className="px-16 py-10 flex items-center gap-12">
+      <Subheader className="flex-1 min-w-0">
+        <SubheaderRow>
+          <SubheaderTitle>Backend</SubheaderTitle>
+        </SubheaderRow>
+        <SubheaderDescription>{url}</SubheaderDescription>
+      </Subheader>
       {setUseProd ? (
-        <div className="flex items-center gap-4 flex-shrink-0">
-          <EnvButton label="STG" active={!useProd} onClick={() => setUseProd(false)} />
-          <EnvButton label="PROD" active={!!useProd} onClick={() => setUseProd(true)} />
-        </div>
+        <SegmentedControl
+          selectedValue={useProd ? "prod" : "stg"}
+          onSelectedChange={value => setUseProd(value === "prod")}
+          tabLayout="fit"
+          aria-label="Backend environment"
+        >
+          <SegmentedControlButton value="stg">STG</SegmentedControlButton>
+          <SegmentedControlButton value="prod">PROD</SegmentedControlButton>
+        </SegmentedControl>
       ) : null}
     </div>
-  );
-}
-
-function EnvButton({
-  label,
-  active,
-  onClick,
-}: Readonly<{
-  label: string;
-  active: boolean;
-  onClick: () => void;
-}>) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`px-10 py-4 rounded body-3-semi-bold border transition-colors ${
-        active
-          ? "bg-primary text-on-primary border-primary"
-          : "border-base text-muted hover:text-base"
-      }`}
-    >
-      {label}
-    </button>
   );
 }
 
@@ -160,13 +160,12 @@ function DeviceControls({
   setDeviceId: (id: string) => void;
 }>) {
   return (
-    <div className="px-16 py-10 border-b border-base flex items-center gap-12">
-      <span className="text-muted flex-shrink-0 body-3">Device ID</span>
-      <input
-        type="text"
+    <div className="px-16 py-10">
+      <TextInput
+        label="Device ID"
         value={deviceId}
         onChange={e => setDeviceId(e.target.value)}
-        className="flex-1 min-w-0 bg-base border border-base rounded px-6 py-2 body-3 text-base"
+        hideClearButton
       />
     </div>
   );

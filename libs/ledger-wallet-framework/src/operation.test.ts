@@ -229,16 +229,64 @@ describe("Operation.ts", () => {
     const pendingCoinOperation2: Operation = {
       ...pendingCoinOperation1,
     };
+    const withoutInputsAt = (date: Date): Operation => ({
+      ...pendingCoinOperation0,
+      extra: {},
+      date,
+    });
+    const spending = (hash: string, inputs: string[], date: Date): Operation => ({
+      ...pendingCoinOperation0,
+      hash,
+      date,
+      extra: { inputs },
+    });
+
+    it("allows editing a pending operation when an unrelated older one is pending", () => {
+      const older = spending("older", ["utxoA-0"], new Date(1986, 0, 1));
+      const newer = spending("newer", ["utxoB-1"], new Date(1986, 0, 2));
+      const testAccount = { ...account, pendingOperations: [newer, older] };
+
+      expect(isOldestBitcoinPendingOperation(testAccount, newer)).toBe(true);
+    });
+
+    it("blocks editing a pending operation that spends an output of a pending parent", () => {
+      const parent = spending("parent", ["utxoA-0"], new Date(1986, 0, 1));
+      const child = spending("child", ["parent-1"], new Date(1986, 0, 2));
+      const testAccount = { ...account, pendingOperations: [child, parent] };
+
+      expect(isOldestBitcoinPendingOperation(testAccount, child)).toBe(false);
+      expect(isOldestBitcoinPendingOperation(testAccount, parent)).toBe(true);
+    });
+
+    it("blocks editing when the parent is only known as an unconfirmed operation of the history", () => {
+      const parent = spending("parent", ["utxoA-0"], new Date(1986, 0, 1));
+      const child = spending("child", ["parent-1"], new Date(1986, 0, 2));
+      const testAccount = { ...account, operations: [parent], pendingOperations: [child] };
+
+      expect(isOldestBitcoinPendingOperation(testAccount, child)).toBe(false);
+    });
+
+    it("allows editing once the parent is confirmed", () => {
+      const parent = { ...spending("parent", ["utxoA-0"], new Date(1986, 0, 1)), blockHeight: 100 };
+      const child = spending("child", ["parent-1"], new Date(1986, 0, 2));
+      const testAccount = { ...account, operations: [parent], pendingOperations: [child] };
+
+      expect(isOldestBitcoinPendingOperation(testAccount, child)).toBe(true);
+    });
     it("should return true if there are no pending operations", () => {
       const testAccount = { ...account, pendingOperations: [] };
 
-      expect(isOldestBitcoinPendingOperation(testAccount, new Date(1986, 0, 1))).toBe(true);
+      expect(
+        isOldestBitcoinPendingOperation(testAccount, withoutInputsAt(new Date(1986, 0, 1))),
+      ).toBe(true);
     });
 
     it("should return true if the given date is the same as the only pending operation", () => {
       const testAccount = { ...account, pendingOperations: [pendingCoinOperation0] };
 
-      expect(isOldestBitcoinPendingOperation(testAccount, new Date(1986, 0, 1))).toBe(true);
+      expect(
+        isOldestBitcoinPendingOperation(testAccount, withoutInputsAt(new Date(1986, 0, 1))),
+      ).toBe(true);
     });
 
     it("should return true if the given date is less than all pending operation", () => {
@@ -247,7 +295,9 @@ describe("Operation.ts", () => {
         pendingOperations: [pendingCoinOperation1, pendingCoinOperation2],
       };
 
-      expect(isOldestBitcoinPendingOperation(testAccount, new Date(1986, 0, 0))).toBe(true);
+      expect(
+        isOldestBitcoinPendingOperation(testAccount, withoutInputsAt(new Date(1986, 0, 0))),
+      ).toBe(true);
     });
 
     it("should return false if the given date is greater than all pending operation", () => {
@@ -256,7 +306,9 @@ describe("Operation.ts", () => {
         pendingOperations: [pendingCoinOperation0, pendingCoinOperation1],
       };
 
-      expect(isOldestBitcoinPendingOperation(testAccount, new Date(1986, 0, 3))).toBe(false);
+      expect(
+        isOldestBitcoinPendingOperation(testAccount, withoutInputsAt(new Date(1986, 0, 3))),
+      ).toBe(false);
     });
 
     it("should return false if there is a pending operation with a lower date than the given date", () => {
@@ -265,7 +317,9 @@ describe("Operation.ts", () => {
         pendingOperations: [pendingCoinOperation0, pendingCoinOperation1],
       };
 
-      expect(isOldestBitcoinPendingOperation(testAccount, new Date(1986, 0, 2))).toBe(false);
+      expect(
+        isOldestBitcoinPendingOperation(testAccount, withoutInputsAt(new Date(1986, 0, 2))),
+      ).toBe(false);
     });
 
     it("should still return true when pending operations are out of order", () => {
@@ -274,7 +328,9 @@ describe("Operation.ts", () => {
         pendingOperations: [pendingCoinOperation2, pendingCoinOperation0],
       };
 
-      expect(isOldestBitcoinPendingOperation(testAccount, new Date(1986, 0, 1))).toBe(true);
+      expect(
+        isOldestBitcoinPendingOperation(testAccount, withoutInputsAt(new Date(1986, 0, 1))),
+      ).toBe(true);
     });
   });
 });

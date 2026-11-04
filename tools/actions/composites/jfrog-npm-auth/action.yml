@@ -11,10 +11,10 @@ runs:
     # action ref is stable and runner caching can be enabled.
     - id: jfrog-login
       if: ${{ inputs.registry != '' }}
-      uses: LedgerHQ/actions-security/actions/jfrog-login@c927e3b6f81f35f3f11f54ff8df47b410186e7a3
+      uses: LedgerHQ/actions-security/actions/jfrog-login@b9e0f8af18a3db56e133a46ccf83499c8279508e
     - id: jfrog-npm
       if: ${{ inputs.registry != '' }}
-      uses: LedgerHQ/actions-security/actions/jfrog-npm@c927e3b6f81f35f3f11f54ff8df47b410186e7a3
+      uses: LedgerHQ/actions-security/actions/jfrog-npm@b9e0f8af18a3db56e133a46ccf83499c8279508e
       with:
         token: ${{ steps.jfrog-login.outputs.oidc-token }}
         registry: ${{ inputs.registry }}

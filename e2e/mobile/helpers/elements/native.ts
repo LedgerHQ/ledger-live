@@ -5,17 +5,20 @@ import type {
   NativeElement,
   NativeMatcher,
 } from "detox/detox";
+import { PageScroller } from "@e2e/helpers/pageScroller";
 import { retryUntilTimeout } from "@e2e/utils/retry";
 import { TIMEOUT } from "@e2e/utils/timeouts";
 import type { ElementHandle } from "./elementHandle";
-import { waitHardTimeout, withHardTimeout } from "./hardTimeout";
+import { isHardTimeout, waitHardTimeout, withHardTimeout } from "./hardTimeout";
 
 type ElementAttributes = IosElementAttributes | AndroidElementAttributes;
+
+const scroller = new PageScroller();
 
 /**
  * A native (React Native) element, declared once with its match strategy.
  * Every action waits up to `timeout` (default 60s) for the element to be visible, then acts.
- * Build one with {@link byId}.
+ * Build one with {@link byId}, {@link byIdAndText} or {@link byIdWithDescendantText}.
  */
 export class NativeHandle implements ElementHandle {
   private readonly createMatcher: () => NativeMatcher;
@@ -106,6 +109,28 @@ export class NativeHandle implements ElementHandle {
     return text ?? "";
   }
 
+  /**
+   * Returns whether the element becomes visible within `timeout`, for an element that may or may not
+   * appear. A hung app still throws.
+   */
+  async isVisible(timeout = TIMEOUT.xxsmall): Promise<boolean> {
+    try {
+      await withHardTimeout(
+        waitFor(this.raw).toBeVisible().withTimeout(timeout),
+        waitHardTimeout(timeout),
+      );
+      return true;
+    } catch (error) {
+      if (isHardTimeout(error)) throw error;
+      return false;
+    }
+  }
+
+  /** Scrolls `container` (default: the first scroll view on screen) until the element is visible. */
+  async scrollTo(container?: NativeHandle): Promise<void> {
+    await scroller.performScroll(this.createMatcher(), container?.createMatcher());
+  }
+
   /** Asserts the element is visible now. A Detox expect: synchronised with the app, it does not wait. */
   async expectVisible(): Promise<void> {
     await withHardTimeout(detoxExpect(this.raw).toBeVisible());
@@ -135,3 +160,14 @@ export class NativeHandle implements ElementHandle {
 /** Matches by React Native `testID` (Detox `by.id`). */
 export const byId = (id: string | RegExp): NativeHandle =>
   new NativeHandle(() => by.id(id), `#${id}`);
+
+/** Matches by `testID` and the element's own text. */
+export const byIdAndText = (id: string, text: string | RegExp): NativeHandle =>
+  new NativeHandle(() => by.id(id).and(by.text(text)), `#${id} with text "${text}"`);
+
+/** Matches by `testID` and the text of a descendant, e.g. a label inside a button or card. */
+export const byIdWithDescendantText = (id: string, text: string | RegExp): NativeHandle =>
+  new NativeHandle(
+    () => by.id(id).withDescendant(by.text(text)),
+    `#${id} containing text "${text}"`,
+  );
