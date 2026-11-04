@@ -1,4 +1,5 @@
 import React from "react";
+import { AccountBalanceHistoryQueries } from "../AccountBalanceHistoryQueries";
 import { useBalanceViewModel } from "../../hooks/useBalanceViewModel";
 import { BalanceView } from "./BalanceView";
 import { NoBalanceView } from "./NoBalanceView";
@@ -15,5 +16,10 @@ export const Balance = () => {
     return <NoBalanceView />;
   }
 
-  return <BalanceView {...viewModel} />;
+  return (
+    <>
+      <AccountBalanceHistoryQueries />
+      <BalanceView {...viewModel} />
+    </>
+  );
 };

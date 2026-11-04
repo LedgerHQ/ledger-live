@@ -12,8 +12,8 @@ import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import type { ColumnDef, Row, SortingState, Updater } from "@tanstack/react-table";
 import { track } from "@shared/analytics";
 import { CRYPTO_TRACKING_PAGE_NAME } from "../../../constants";
-import { computeAggregatedAccountsData } from "@ledgerhq/asset-aggregation/index";
 import { getCryptoAccountAddress } from "LLD/features/CryptoAddresses/utils/getCryptoAccountAddress";
+import { useCryptoBalances } from "LLD/features/CryptoAddresses/hooks/useCryptoBalances";
 import { useSyncPhase } from "LLD/hooks/useSyncPhase";
 import { useAccountSettingsDialog } from "./useAccountSettingsDialog";
 import { useEditNameDialog } from "./useEditNameDialog";
@@ -53,9 +53,9 @@ export function useCryptoDataTable({
     [accountDetailFeature],
   );
 
-  const aggregatedDataByAccountId = useMemo(
-    () => computeAggregatedAccountsData(rows, calculateCountervalue),
-    [rows, calculateCountervalue],
+  const { targets, aggregatedDataByAccountId, isNativeBalanceZero } = useCryptoBalances(
+    rows,
+    calculateCountervalue,
   );
 
   const getSortCountervalue = useMemo(
@@ -123,6 +123,7 @@ export function useCryptoDataTable({
       lookupParentAccount,
       blacklistedTokenIds,
       aggregatedDataByAccountId,
+      isNativeBalanceZero,
       isSyncing,
       onEditName: openEditName,
       hasAccountSettings,
@@ -133,6 +134,7 @@ export function useCryptoDataTable({
       lookupParentAccount,
       blacklistedTokenIds,
       aggregatedDataByAccountId,
+      isNativeBalanceZero,
       isSyncing,
       openEditName,
       hasAccountSettings,
@@ -187,6 +189,7 @@ export function useCryptoDataTable({
   );
 
   return {
+    balanceTargets: targets,
     table,
     handleRowClick,
     getRowTestId,

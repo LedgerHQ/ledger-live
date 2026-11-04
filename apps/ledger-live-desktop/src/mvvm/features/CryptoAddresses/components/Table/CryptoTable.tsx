@@ -5,6 +5,7 @@ import { PlainCryptoTable } from "../PlainCryptoTable";
 import { AccountSettings } from "@features/flow-account-detail-settings/web";
 import { useAccountSettingsAdapter } from "LLD/hooks/useAccountSettingsAdapter";
 import { EditName } from "../EditName";
+import { AccountBalanceQueries } from "../AccountBalanceQueries";
 import { CryptoTableCellDataProvider } from "./CryptoTableCells";
 
 type CryptoTableProps = {
@@ -15,6 +16,7 @@ type CryptoTableProps = {
 
 export function CryptoTable({ rows, lookupParentAccount, onRowClick }: CryptoTableProps) {
   const {
+    balanceTargets,
     table,
     handleRowClick,
     getRowTestId,
@@ -27,6 +29,7 @@ export function CryptoTable({ rows, lookupParentAccount, onRowClick }: CryptoTab
 
   return (
     <CryptoTableCellDataProvider value={cellData}>
+      <AccountBalanceQueries targets={balanceTargets} />
       <PlainCryptoTable table={table} onRowClick={handleRowClick} getRowTestId={getRowTestId} />
       {editNameDialog && (
         <EditName

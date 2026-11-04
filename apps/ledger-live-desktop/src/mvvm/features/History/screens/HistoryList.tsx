@@ -4,6 +4,7 @@ import { Virtualizer } from "@tanstack/react-virtual";
 import { HistoryTableHeader } from "../components/HistoryTableHeader";
 import { HistoryTableBody } from "../components/HistoryTableBody";
 import { EmptyState } from "../components/EmptyState";
+import { OperationsSkeleton } from "../components/OperationsSkeleton";
 import type { VirtualItem, HistoryTable, OperationRow } from "../types";
 
 type HistoryListProps = {
@@ -12,6 +13,7 @@ type HistoryListProps = {
   readonly rowVirtualizer: Virtualizer<HTMLDivElement, Element>;
   readonly flatItems: VirtualItem[];
   readonly onRowClick: (row: OperationRow) => void;
+  readonly pending: boolean;
 };
 
 function HistoryList({
@@ -20,7 +22,12 @@ function HistoryList({
   rowVirtualizer,
   flatItems,
   onRowClick,
+  pending,
 }: HistoryListProps) {
+  if (flatItems.length === 0 && pending) {
+    return <OperationsSkeleton />;
+  }
+
   if (flatItems.length === 0) {
     return <EmptyState />;
   }

@@ -1,0 +1,1 @@
+export const USE_ACCOUNT_DATA_BALANCE_HISTORY = true;

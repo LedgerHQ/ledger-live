@@ -87,4 +87,31 @@ describe("useAnalyticsViewModel", () => {
 
     expect(result.current.balanceInfo.valueChange).toEqual({ percentage: 0.08, value: 80 });
   });
+
+  it("should keep the balance-history change for every range, including all", () => {
+    mockedUseNavigate.mockReturnValue(jest.fn());
+    mockUsePortfolioBalanceDisplayState.mockReturnValue({
+      balanceInfo: mockPortfolioBalanceInfo,
+      portfolio: {
+        ...defaultPortfolio,
+        range: "all",
+        countervalueChange: { percentage: 0.4, value: 400 },
+      },
+      isLoading: false,
+      accountDataHistory: true,
+    } as ReturnType<typeof usePortfolioBalanceDisplayStateModule.usePortfolioBalanceDisplayState>);
+
+    const { result } = renderHook(() => useAnalyticsViewModel(), {
+      initialState: {
+        ...withFlagOverrides({ lwdWallet40: { enabled: true } }),
+        settings: {
+          ...INITIAL_STATE,
+          counterValue: "USD",
+          selectedTimeRange: "all",
+        },
+      },
+    });
+
+    expect(result.current.balanceInfo.valueChange).toEqual({ percentage: 0.4, value: 400 });
+  });
 });
