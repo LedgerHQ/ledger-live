@@ -45,7 +45,8 @@
     "ts-node": "10.9.2",
     "@types/semver": "7.7.1",
     "@typescript/native": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "oxlint": "catalog:"
   },
   "files": [
     "lib",

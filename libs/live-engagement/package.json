@@ -18,7 +18,8 @@
     "@typescript/native": "catalog:",
     "typescript": "catalog:",
     "jest": "catalog:",
-    "rimraf": "catalog:"
+    "rimraf": "catalog:",
+    "oxlint": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

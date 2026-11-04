@@ -23,6 +23,7 @@
     "@types/node": "catalog:",
     "@typescript/native": "catalog:",
     "jest": "catalog:",
+    "oxlint": "catalog:",
     "typescript": "catalog:"
   }
 }

@@ -41,6 +41,7 @@
     "@typescript/native": "catalog:",
     "typescript": "catalog:",
     "tiny-glob": "0.2.9",
-    "rimraf": "catalog:"
+    "rimraf": "catalog:",
+    "oxlint": "catalog:"
   }
 }

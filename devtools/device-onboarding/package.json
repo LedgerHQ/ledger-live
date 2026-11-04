@@ -68,7 +68,9 @@
     "@tanstack/react-table": "catalog:",
     "class-variance-authority": "catalog:",
     "react-test-renderer": "catalog:",
-    "@typescript/native": "catalog:"
+    "@typescript/native": "catalog:",
+    "oxlint": "catalog:",
+    "oxfmt": "catalog:"
   },
   "peerDependencies": {
     "react": ">=19",

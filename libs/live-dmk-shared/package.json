@@ -67,7 +67,8 @@
     "ws": "catalog:",
     "@typescript/native": "catalog:",
     "typescript": "catalog:",
-    "rimraf": "catalog:"
+    "rimraf": "catalog:",
+    "oxlint": "catalog:"
   },
   "peerDependencies": {
     "@ledgerhq/device-management-kit": "catalog:",

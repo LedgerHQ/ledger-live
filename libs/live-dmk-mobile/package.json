@@ -64,7 +64,8 @@
     "typescript": "catalog:",
     "ws": "catalog:",
     "@typescript/native": "catalog:",
-    "rimraf": "catalog:"
+    "rimraf": "catalog:",
+    "oxlint": "catalog:"
   },
   "peerDependencies": {
     "react": "catalog:",
