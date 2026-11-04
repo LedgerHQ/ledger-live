@@ -292,7 +292,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       if (persistedFeatureFlags) {
         store.dispatch(setAllOverrides(persistedFeatureFlags.overrides));
         store.dispatch(setBannerVisible(persistedFeatureFlags.bannerVisible));
-      } else if (settingsData) {
+      } else if (settingsData && !unreadableKeys.includes("featureFlags")) {
         // One-time migration from legacy settings fields. Write the new featureFlags key directly
         // so DBSave does not need saveAtStart and avoids a spurious write on every subsequent boot.
         // The legacy fields have been removed from SettingsState but may still exist in old persisted payloads.
