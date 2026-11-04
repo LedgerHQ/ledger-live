@@ -507,6 +507,12 @@ export class SwapPage extends WebViewAppPage {
     await this.checkAssetSelectorContains(this.fromAccountCoinSelector, expected, TIMEOUT.xxlarge);
   }
 
+  @step("Wait for the currency to swap from to be $0")
+  async waitForAssetFromSelected(ticker: string) {
+    this._webviewPage = undefined;
+    await this.waitForAssetSelected(this.fromAccountCoinSelector, ticker, TIMEOUT.xxlarge);
+  }
+
   @step("Check currency to swap from account name contains $0")
   async checkAssetFromAccountNameContains(expected: string) {
     await this.checkAccountNameTagContains(
@@ -633,14 +639,23 @@ export class SwapPage extends WebViewAppPage {
     }
   }
 
-  private async checkAssetSelectorContains(testId: string, expected: string, timeout: number) {
+  private async getReadyAssetSelector(testId: string, expected: string, timeout: number) {
     if (expected.toLowerCase() === "choose asset") {
       await expect((await this.getWebView()).getByTestId(testId)).toBeVisible({ timeout });
     } else {
       await this.waitForAssetSelectorPopulated(testId, timeout);
     }
     // Read after the gate: the populated wait can swap in a remounted webview.
-    const selector = (await this.getWebView()).getByTestId(testId);
+    return (await this.getWebView()).getByTestId(testId);
+  }
+
+  private async waitForAssetSelected(testId: string, ticker: string, timeout: number) {
+    const selector = await this.getReadyAssetSelector(testId, ticker, timeout);
+    await expect(selector).toContainText(ticker, { timeout: TIMEOUT.large });
+  }
+
+  private async checkAssetSelectorContains(testId: string, expected: string, timeout: number) {
+    const selector = await this.getReadyAssetSelector(testId, expected, timeout);
     await this.softExpect(
       async soft => {
         await soft(selector).toContainText(expected);
@@ -667,6 +682,11 @@ export class SwapPage extends WebViewAppPage {
   @step("Check currency to swap to contains $0")
   async checkAssetToContains(expected: string) {
     await this.checkAssetSelectorContains(this.toAccountCoinSelector, expected, TIMEOUT.xlarge);
+  }
+
+  @step("Wait for the currency to swap to to be $0")
+  async waitForAssetToSelected(ticker: string) {
+    await this.waitForAssetSelected(this.toAccountCoinSelector, ticker, TIMEOUT.xlarge);
   }
 
   @step("Check currency to swap to account name contains $0")

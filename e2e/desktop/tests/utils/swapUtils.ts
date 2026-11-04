@@ -77,7 +77,7 @@ async function selectAccountFrom(app: Application, swap: Swap) {
   const selector = await getModularSelector(app, "ASSET");
   if (selector) {
     await selectAccountMAD(selector, swap.accountToDebit);
-    await app.swap.checkAssetFromContains(swap.accountToDebit.currency.ticker);
+    await app.swap.waitForAssetFromSelected(swap.accountToDebit.currency.ticker);
   }
 }
 
@@ -86,7 +86,7 @@ async function selectAccountTo(app: Application, swap: Swap) {
   const selector = await getModularSelector(app, "ASSET");
   if (selector) {
     await selectAccountMAD(selector, swap.accountToCredit);
-    await app.swap.checkAssetToContains(swap.accountToCredit.currency.ticker);
+    await app.swap.waitForAssetToSelected(swap.accountToCredit.currency.ticker);
   }
 }
 
