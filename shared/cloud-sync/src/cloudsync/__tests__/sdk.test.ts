@@ -159,7 +159,12 @@ describe("CloudSyncSDK", () => {
   it("prevents concurrent push/pull/destroy calls", async () => {
     await expect(
       Promise.all([sdk.pull(trustchain, creds), sdk.pull(trustchain, creds)]),
-    ).rejects.toThrow("CloudSyncSDK locked");
+    ).rejects.toThrow(
+      expect.objectContaining({
+        name: "CloudSyncSDKLocked",
+        message: "CloudSyncSDK locked (pull)",
+      }),
+    );
   });
 
   it("ignores push conflicts without updating local state", async () => {

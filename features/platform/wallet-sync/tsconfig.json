@@ -1,8 +1,18 @@
 {
-  "extends": "@support/tsconfig/logic",
+  "extends": "@support/tsconfig/client",
   "compilerOptions": {
     "paths": {
-      "*": ["./*"]
+      "*": ["./*"],
+      // Through the @ledgerhq/source condition, tsc compiles ts-libs sources with this package's
+      // strict, no-DOM settings, and four lines fail:
+      // - implicit any in ledger-key-ring-protocol and hw-ledger-key-ring-protocol
+      // - window in live-network and logs
+      // This alias reads LKRP's built declarations; the client preset adds the DOM for logs.
+      // Once https://github.com/LedgerHQ/ts-libs/pull/171 is released and installed, drop this
+      // alias and extend @support/tsconfig/logic again.
+      "@ledgerhq/ledger-key-ring-protocol/*": [
+        "./node_modules/@ledgerhq/ledger-key-ring-protocol/lib-es/*"
+      ]
     },
     "types": ["jest", "node"]
   }
