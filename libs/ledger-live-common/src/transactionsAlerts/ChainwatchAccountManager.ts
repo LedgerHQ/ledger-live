@@ -18,6 +18,12 @@ const addressRequestBatches = (addresses: readonly string[]) => {
   return batches;
 };
 
+const sendInSequence = (batches: string[][], send: (batch: string[]) => Promise<void>) =>
+  batches.reduce<Promise<void>>(
+    (previous, batch) => previous.then(() => send(batch)),
+    Promise.resolve(),
+  );
+
 const isNotFoundError = (error: unknown) =>
   typeof error === "object" && error !== null && "status" in error && error.status === 404;
 
@@ -99,19 +105,19 @@ class ChainwatchAccountManager {
   async registerNewAddresses(addressesToRegister: string[]) {
     const isSubscribed = makeSubscriptionMatcher(this.suffixes);
     const addresses = addressesToRegister.filter(address => address && !isSubscribed(address));
-    for (const batch of addressRequestBatches(addresses)) {
+    await sendInSequence(addressRequestBatches(addresses), async batch => {
       await network({
         method: "PUT",
         url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/addresses/`,
         data: batch,
       });
-    }
+    });
   }
 
   async removeAddresses(addressesToRemove: string[]) {
     const isSubscribed = makeSubscriptionMatcher(this.suffixes);
     const addresses = addressesToRemove.filter(address => isSubscribed(address));
-    for (const batch of addressRequestBatches(addresses)) {
+    await sendInSequence(addressRequestBatches(addresses), async batch => {
       await network({
         method: "DELETE",
         url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/addresses/`,
@@ -121,7 +127,7 @@ class ChainwatchAccountManager {
       this.suffixes = this.suffixes.filter(
         suffix => !suffixKeys(suffix).some(key => removedKeys.has(key)),
       );
-    }
+    });
   }
 
   async registerNewMonitor(monitor: ChainwatchMonitorType) {
