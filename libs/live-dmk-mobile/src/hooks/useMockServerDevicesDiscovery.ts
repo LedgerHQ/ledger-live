@@ -53,6 +53,9 @@ const haveSameDevices = (a: MockServerDiscoveredDevice[], b: MockServerDiscovere
       device.modelId === b[i].modelId,
   );
 
+// TODO: subscribe to dmk.listenToAvailableDevices({ transport: mockserverIdentifier }) instead of
+// polling the mock server again, once the DMK mock server transport reports each device's
+// connectivity type: its discovered devices lack it, and `wired` needs it.
 export const useMockServerDevicesDiscovery = (
   config: MockServerConfig | null,
 ): MockServerDiscoveredDevice[] => {
