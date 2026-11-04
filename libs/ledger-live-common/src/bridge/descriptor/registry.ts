@@ -1,8 +1,7 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { isZcashShieldedEnabled, resolveFamily } from "../zcashRouting";
-import { getCurrencyBridge } from "../impl";
+import { isZcashShieldedEnabled } from "../zcashRouting";
 import { descriptor as aleoDescriptor } from "../../families/aleo/descriptor";
 import { descriptor as algorandDescriptor } from "../../families/algorand/descriptor";
 import { descriptor as aptosDescriptor } from "../../families/aptos/descriptor";
@@ -84,8 +83,7 @@ export function getDescriptor(currency: CryptoOrTokenCurrency | undefined): Coin
 
   // Same family resolution as the bridge layer. Zcash without its shielded engine sends
   // transparent only.
-  const family = resolveFamily(cryptoCurrency);
-
+  const family = cryptoCurrency.family;
   if (family === "zcash" && !isZcashShieldedEnabled()) return zcashTransparentOnlyDescriptor;
   const fullDescriptor = descriptorRegistry[family];
   if (fullDescriptor) {
