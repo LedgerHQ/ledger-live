@@ -21,6 +21,11 @@ jest.mock("@features/platform-market-countervalues", () => ({
   useCalculateCountervalueCallback: () => (_currency: unknown, value: BigNumber) => value,
 }));
 
+jest.mock("@domain/entity-market-countervalues", () => ({
+  ...jest.requireActual("@domain/entity-market-countervalues"),
+  calculate: () => 1e16,
+}));
+
 const mockUsePerpsDepositQuote = jest.fn();
 jest.mock("../usePerpsDepositQuote", () => ({
   usePerpsDepositQuote: () => mockUsePerpsDepositQuote(),
@@ -47,9 +52,8 @@ describe("PerpsDeposit integration", () => {
     jest.clearAllMocks();
     mockOpenAssetAndAccount.mockResolvedValue({ account: fundingAccount });
     mockUsePerpsDepositQuote.mockReturnValue({
-      quote: { amountTo: new BigNumber(42) },
+      result: { quote: { amountTo: new BigNumber(42), errors: [] }, errors: [] },
       isLoading: false,
-      isUnavailable: false,
     });
   });
 
@@ -122,9 +126,8 @@ describe("PerpsDeposit integration", () => {
 
   it("should tell the user when the provider has no quote for the pair", async () => {
     mockUsePerpsDepositQuote.mockReturnValue({
-      quote: undefined,
+      result: { errors: [{ code: "noQuotes" }] },
       isLoading: false,
-      isUnavailable: true,
     });
     const { user } = renderDeposit();
 
@@ -143,12 +146,35 @@ describe("PerpsDeposit integration", () => {
     expect(screen.getByTestId("perps-deposit-review-cta")).toBeDisabled();
   });
 
-  it("should shimmer the quoted amount and keep the CTA disabled while quoting", async () => {
+  it("should explain a minimum amount in the same dialog, and come back to the form", async () => {
     mockUsePerpsDepositQuote.mockReturnValue({
-      quote: undefined,
-      isLoading: true,
-      isUnavailable: false,
+      result: { errors: [{ code: "amountTooLow", minAmount: "0.004" }] },
+      isLoading: false,
     });
+    const { user } = renderDeposit();
+
+    act(() => openPerpsDeposit({ receiverAccount }));
+    await user.click(screen.getByTestId("perps-deposit-select-currency"));
+    await user.click(screen.getByTestId("perps-deposit-ratio-MAX"));
+
+    expect(screen.getByTestId("perps-deposit-form-error")).toHaveTextContent(
+      "Enter at least 0.004 ETH and try again.",
+    );
+
+    await user.click(screen.getByTestId("perps-deposit-learn-more"));
+
+    expect(screen.getByText("Minimum required for ETH")).toBeVisible();
+    expect(screen.getByText("A minimum value of 0.004 ETH is required for quotes")).toBeVisible();
+    expect(screen.getByTestId("perps-deposit-details-buy")).toHaveTextContent("Buy ETH");
+    expect(screen.queryByTestId("perps-deposit-amount-input")).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: /back/i }));
+
+    expect(screen.getByTestId("perps-deposit-amount-input")).toBeVisible();
+  });
+
+  it("should shimmer the quoted amount and keep the CTA disabled while quoting", async () => {
+    mockUsePerpsDepositQuote.mockReturnValue({ result: undefined, isLoading: true });
     const { user } = renderDeposit();
 
     act(() => openPerpsDeposit({ receiverAccount }));

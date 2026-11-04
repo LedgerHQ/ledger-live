@@ -11299,9 +11299,26 @@
     "selectCurrencyAccount": "{{accountName}} · <balance>{{counterValue}}</balance>",
     "selectCurrencyNoAccount": "No account",
     "review": "Review",
+    "learnMore": "Learn More",
     "formErrors": {
+      "offline": "Internet connection problem.",
       "amountExceedsBalance": "Insufficient balance",
+      "feeAccountEmpty": "You need more {{ticker}} for the network fees.",
+      "notEnoughFees": "You need {{fees}} {{ticker}} for the network fees.",
+      "amountTooLow": "Enter at least {{amount}} {{ticker}} and try again.",
+      "amountTooHigh": "Enter {{amount}} {{ticker}} or less and try again.",
       "quoteUnavailable": "We can’t get a quote from {{provider}}, try with a different asset or come back later."
+    },
+    "details": {
+      "notEnoughFees": {
+        "title": "Not enough {{ticker}}",
+        "description": "Your account {{account}} doesn't have enough balance to cover the network fees."
+      },
+      "amountTooLow": {
+        "title": "Minimum required for {{ticker}}",
+        "description": "A minimum value of {{amount}} {{ticker}} is required for quotes"
+      },
+      "buy": "Buy {{ticker}}"
     }
   },
   "actionMenuDialog": {

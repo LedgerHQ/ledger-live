@@ -206,6 +206,14 @@ export const handlers = ({
       }
 
       const receiverAccount = findAccountOrThrow(params.receiverAccountId);
+      if (
+        receiverAccount.type !== "Account" ||
+        receiverAccount.currency.id !== HYPERCORE_CURRENCY_ID
+      ) {
+        throw new ServerError(
+          createUnknownError({ message: "deposit receiver must be a HyperCore account" }),
+        );
+      }
 
       try {
         return (await uiDepositExecute({ receiverAccount })) ?? {};

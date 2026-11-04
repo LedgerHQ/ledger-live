@@ -35,6 +35,16 @@ jest.mock("@domain/entity-market-countervalues", () => ({
   calculate: (...args: unknown[]) => mockCalculate(...args),
 }));
 
+let mockNetworkState: { isConnected?: boolean; isInternetReachable?: boolean } = {};
+jest.mock("@shared/network-status", () => ({
+  useNetworkState: () => mockNetworkState,
+}));
+
+const mockOpenBuySellForAccount = jest.fn();
+jest.mock("LLM/features/Buy", () => ({
+  useOpenBuySell: () => ({ openBuySellForAccount: mockOpenBuySellForAccount }),
+}));
+
 const mockUsePerpsDepositQuote = jest.fn();
 jest.mock("../usePerpsDepositQuote", () => ({
   usePerpsDepositQuote: (params: unknown) => mockUsePerpsDepositQuote(params),
@@ -136,9 +146,11 @@ describe("usePerpsDepositViewModel", () => {
     mockCalculateCountervalue.mockImplementation((_currency, value) => value);
     mockCalculate.mockReturnValue(0);
     mockUsePerpsDepositQuote.mockReturnValue({
-      quote: { amountTo: new BigNumber(42), quoteId: "quote-1" },
+      result: {
+        quote: { amountTo: new BigNumber(42), quoteId: "quote-1", errors: [] },
+        errors: [],
+      },
       isLoading: false,
-      isUnavailable: false,
     });
   });
 
@@ -227,12 +239,13 @@ describe("usePerpsDepositViewModel", () => {
 
     expect(result.current.exceedsBalance).toBe(true);
     expect(result.current.statusError).toEqual({
+      code: "insufficientBalance",
       labelKey: "perpsDeposit.formErrors.amountExceedsBalance",
     });
     expect(result.current.canReview).toBe(false);
   });
 
-  it("holds back rather than blaming the balance while the funding rate is missing", () => {
+  it("shows no quote rather than blaming the balance while the funding rate is missing", () => {
     mockCalculateCountervalue.mockReturnValue(null as unknown as BigNumber);
     const { props } = createProps();
     const { result } = renderViewModel(props);
@@ -242,7 +255,7 @@ describe("usePerpsDepositViewModel", () => {
     typeAmount(result.current.pressAmountKey, "20");
 
     expect(result.current.exceedsBalance).toBe(false);
-    expect(result.current.statusError).toBeNull();
+    expect(result.current.statusError?.code).toBe("noQuotes");
     expect(result.current.maxAmount).toBe(0);
 
     expect(result.current.canReview).toBe(false);
@@ -318,9 +331,8 @@ describe("usePerpsDepositViewModel", () => {
 
   it("holds the review CTA back until the quote lands", () => {
     mockUsePerpsDepositQuote.mockReturnValue({
-      quote: undefined,
+      result: undefined,
       isLoading: true,
-      isUnavailable: false,
     });
     const { props } = createProps();
     const { result } = renderViewModel(props);
@@ -338,9 +350,8 @@ describe("usePerpsDepositViewModel", () => {
 
   it("stops shimmering and explains itself when the provider has no quote", () => {
     mockUsePerpsDepositQuote.mockReturnValue({
-      quote: undefined,
+      result: { errors: [{ code: "noQuotes" }] },
       isLoading: false,
-      isUnavailable: true,
     });
     const { props } = createProps();
     const { result } = renderViewModel(props);
@@ -353,15 +364,15 @@ describe("usePerpsDepositViewModel", () => {
     expect(result.current.isQuoteLoading).toBe(false);
     expect(result.current.canReview).toBe(false);
     expect(result.current.statusError).toEqual({
+      code: "noQuotes",
       labelKey: "perpsDeposit.formErrors.quoteUnavailable",
     });
   });
 
   it("blames the balance rather than the provider when both are wrong", () => {
     mockUsePerpsDepositQuote.mockReturnValue({
-      quote: undefined,
+      result: { errors: [{ code: "noQuotes" }] },
       isLoading: false,
-      isUnavailable: true,
     });
     const { props } = createProps();
     const { result } = renderViewModel(props);
@@ -371,6 +382,7 @@ describe("usePerpsDepositViewModel", () => {
     typeAmount(result.current.pressAmountKey, "150");
 
     expect(result.current.statusError).toEqual({
+      code: "insufficientBalance",
       labelKey: "perpsDeposit.formErrors.amountExceedsBalance",
     });
   });
@@ -410,9 +422,8 @@ describe("usePerpsDepositViewModel", () => {
     const reviewed = result.current.reviewParams;
 
     mockUsePerpsDepositQuote.mockReturnValue({
-      quote: undefined,
+      result: undefined,
       isLoading: true,
-      isUnavailable: false,
     });
     act(() => rerender(undefined));
 
@@ -620,5 +631,43 @@ describe("usePerpsDepositViewModel", () => {
     selectFundingAccount();
 
     expect(result.current.maxBuffer).toBe(0);
+  });
+
+  it("waits for the network instead of asking for a quote while offline", () => {
+    mockNetworkState = { isInternetReachable: false };
+    const { props } = createProps();
+    const { result } = renderViewModel(props);
+
+    act(() => result.current.pickDepositAccount());
+    selectFundingAccount(fundedAccount);
+    typeAmount(result.current.pressAmountKey, "20");
+
+    expect(result.current.statusError?.code).toBe("offline");
+    expect(mockUsePerpsDepositQuote.mock.lastCall?.[0].isOffline).toBe(true);
+    mockNetworkState = {};
+  });
+
+  it("cancels the deposit request and opens Buy for the account from the details", async () => {
+    mockCalculate.mockReturnValue(2.5e16);
+    mockUsePerpsDepositQuote.mockReturnValue({
+      result: { errors: [{ code: "amountTooLow", minAmount: "0.004" }] },
+      isLoading: false,
+    });
+    const request = beginDepositRequest();
+    const { props } = createProps();
+    const { result } = renderViewModel(props);
+
+    act(() => result.current.pickDepositAccount());
+    selectFundingAccount(fundedAccount);
+    typeAmount(result.current.pressAmountKey, "20");
+    act(() => result.current.openDetails());
+
+    expect(result.current.details?.titleKey).toBe("perpsDeposit.details.amountTooLow.title");
+
+    act(() => result.current.buyFromDetails());
+
+    expect(mockOpenBuySellForAccount).toHaveBeenCalledWith("buy", fundedAccount, undefined);
+    expect(result.current.details).toBeNull();
+    await expect(request).rejects.toBeInstanceOf(UserRefusedOnDevice);
   });
 });

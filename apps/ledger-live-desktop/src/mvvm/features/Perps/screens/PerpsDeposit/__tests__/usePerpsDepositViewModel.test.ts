@@ -4,6 +4,7 @@ import { type TokenCurrency, TokenCurrencyIdSchema } from "@domain/entity-curren
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { FEATURE_FLAGS_DEFAULTS, FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
+import { track } from "@shared/analytics";
 import { act, renderHook } from "tests/testSetup";
 import { PERPS_DEPOSIT_DEFAULT_FUNDING_CURRENCY_ID } from "../../../constants/depositFunding";
 import { usePerpsDepositViewModel, type PerpsDepositData } from "../usePerpsDepositViewModel";
@@ -13,6 +14,27 @@ jest.mock("LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer", () 
   useOpenAssetAndAccount: () => ({
     openAssetAndAccountPromise: (params: unknown) => mockOpenAssetAndAccount(params),
   }),
+}));
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+}));
+
+let mockNetworkState: { isConnected?: boolean; isInternetReachable?: boolean } = {};
+jest.mock("@shared/network-status", () => ({
+  useNetworkState: () => mockNetworkState,
+}));
+
+const mockNavigate = jest.fn();
+jest.mock("react-router", () => ({
+  ...jest.requireActual("react-router"),
+  useNavigate: () => mockNavigate,
+}));
+
+const mockCancelDepositRequest = jest.fn();
+jest.mock("@ledgerhq/live-common/wallet-api/Perps/deposit/request", () => ({
+  cancelDepositRequest: () => mockCancelDepositRequest(),
 }));
 
 const mockOpenPerpsReview = jest.fn();
@@ -127,10 +149,13 @@ describe("usePerpsDepositViewModel", () => {
     mockCalculateCountervalue.mockImplementation((_currency, value) => value);
     mockOpenAssetAndAccount.mockResolvedValue({ account: fundingAccount });
     mockCalculate.mockReturnValue(0);
+    mockNetworkState = {};
     mockUsePerpsDepositQuote.mockReturnValue({
-      quote: { amountTo: new BigNumber(42), quoteId: "quote-1" },
+      result: {
+        quote: { amountTo: new BigNumber(42), quoteId: "quote-1", errors: [] },
+        errors: [],
+      },
       isLoading: false,
-      isUnavailable: false,
     });
   });
 
@@ -190,12 +215,13 @@ describe("usePerpsDepositViewModel", () => {
 
     expect(result.current.exceedsBalance).toBe(true);
     expect(result.current.statusError).toEqual({
+      code: "insufficientBalance",
       labelKey: "perpsDeposit.formErrors.amountExceedsBalance",
     });
     expect(result.current.canReview).toBe(false);
   });
 
-  it("holds back rather than blaming the balance while the funding rate is missing", async () => {
+  it("shows no quote rather than blaming the balance while the funding rate is missing", async () => {
     mockCalculateCountervalue.mockReturnValue(null as unknown as BigNumber);
     const { result } = renderViewModel();
 
@@ -203,7 +229,7 @@ describe("usePerpsDepositViewModel", () => {
     act(() => result.current.changeDepositAmount("20"));
 
     expect(result.current.exceedsBalance).toBe(false);
-    expect(result.current.statusError).toBeNull();
+    expect(result.current.statusError?.code).toBe("noQuotes");
     expect(result.current.maxAmount).toBe(0);
 
     expect(result.current.canReview).toBe(false);
@@ -293,11 +319,7 @@ describe("usePerpsDepositViewModel", () => {
   });
 
   it("holds the review CTA back until the quote lands", async () => {
-    mockUsePerpsDepositQuote.mockReturnValue({
-      quote: undefined,
-      isLoading: true,
-      isUnavailable: false,
-    });
+    mockUsePerpsDepositQuote.mockReturnValue({ result: undefined, isLoading: true });
     const { result } = renderViewModel();
 
     await pickFundingAccount(result);
@@ -312,9 +334,8 @@ describe("usePerpsDepositViewModel", () => {
 
   it("stops shimmering and explains itself when the provider has no quote", async () => {
     mockUsePerpsDepositQuote.mockReturnValue({
-      quote: undefined,
+      result: { errors: [{ code: "noQuotes" }] },
       isLoading: false,
-      isUnavailable: true,
     });
     const { result } = renderViewModel();
 
@@ -325,15 +346,15 @@ describe("usePerpsDepositViewModel", () => {
     expect(result.current.isQuoteLoading).toBe(false);
     expect(result.current.canReview).toBe(false);
     expect(result.current.statusError).toEqual({
+      code: "noQuotes",
       labelKey: "perpsDeposit.formErrors.quoteUnavailable",
     });
   });
 
   it("blames the balance rather than the provider when both are wrong", async () => {
     mockUsePerpsDepositQuote.mockReturnValue({
-      quote: undefined,
+      result: { errors: [{ code: "noQuotes" }] },
       isLoading: false,
-      isUnavailable: true,
     });
     const { result } = renderViewModel();
 
@@ -341,6 +362,7 @@ describe("usePerpsDepositViewModel", () => {
     act(() => result.current.changeDepositAmount("150"));
 
     expect(result.current.statusError).toEqual({
+      code: "insufficientBalance",
       labelKey: "perpsDeposit.formErrors.amountExceedsBalance",
     });
   });
@@ -403,5 +425,119 @@ describe("usePerpsDepositViewModel", () => {
     // A null account name means nothing was defaulted; maxAmount only falls back to 0.
     expect(result.current.depositAccountName).toBeNull();
     expect(result.current.maxAmount).toBe(0);
+  });
+
+  describe("errors from the shared resolver", () => {
+    const amountTooLowResult = {
+      result: { errors: [{ code: "amountTooLow", minAmount: "0.004" }] },
+      isLoading: false,
+    };
+
+    it("shows the offline error and asks the quote hook to wait", async () => {
+      mockNetworkState = { isConnected: false };
+      const { result } = renderViewModel();
+
+      await pickFundingAccount(result);
+      act(() => result.current.changeDepositAmount("20"));
+
+      expect(result.current.statusError?.code).toBe("offline");
+      expect(result.current.canReview).toBe(false);
+      expect(mockUsePerpsDepositQuote.mock.lastCall?.[0].isOffline).toBe(true);
+    });
+
+    it("tracks each new error once", async () => {
+      mockUsePerpsDepositQuote.mockReturnValue(amountTooLowResult);
+      const { result } = renderViewModel();
+
+      await pickFundingAccount(result);
+      act(() => result.current.changeDepositAmount("20"));
+      act(() => result.current.changeDepositAmount("21"));
+
+      const errorEvents = jest
+        .mocked(track)
+        .mock.calls.filter(([event]) => event === "swap error message");
+      expect(errorEvents).toEqual([
+        [
+          "swap error message",
+          {
+            message: "minAmount",
+            page: "perps_deposit",
+            flow: "perps",
+            sourceCurrency: "ETH",
+            targetCurrency: "ETH",
+          },
+        ],
+      ]);
+    });
+
+    it("opens the minimum amount details and buys the funding asset from them", async () => {
+      mockUsePerpsDepositQuote.mockReturnValue(amountTooLowResult);
+      const { result, onClose } = renderViewModel();
+
+      await pickFundingAccount(result);
+      act(() => result.current.changeDepositAmount("20"));
+      expect(result.current.canLearnMore).toBe(true);
+
+      act(() => result.current.openDetails());
+
+      expect(result.current.details).toEqual({
+        titleKey: "perpsDeposit.details.amountTooLow.title",
+        descriptionKey: "perpsDeposit.details.amountTooLow.description",
+        values: { ticker: "ETH", amount: "0.004" },
+        buyTicker: "ETH",
+      });
+      expect(track).toHaveBeenCalledWith(
+        "button_clicked",
+        expect.objectContaining({ button: "learn more" }),
+      );
+
+      act(() => result.current.buyFromDetails());
+
+      expect(mockCancelDepositRequest).toHaveBeenCalled();
+      expect(mockNavigate).toHaveBeenCalledWith("/exchange", {
+        state: {
+          currency: "ethereum",
+          mode: "buy",
+          account: fundingAccount.id,
+          returnTo: undefined,
+        },
+      });
+      expect(onClose).toHaveBeenCalled();
+      expect(track).toHaveBeenCalledWith(
+        "button_clicked",
+        expect.objectContaining({ button: "buy more crypto", currency: "ETH" }),
+      );
+    });
+
+    it("goes back to the same form from the details", async () => {
+      mockUsePerpsDepositQuote.mockReturnValue(amountTooLowResult);
+      const { result } = renderViewModel();
+
+      await pickFundingAccount(result);
+      act(() => result.current.changeDepositAmount("20"));
+      act(() => result.current.openDetails());
+      act(() => result.current.closeDetails());
+
+      expect(result.current.details).toBeNull();
+      expect(result.current.amountText).toBe("20");
+    });
+
+    it("buys the parent currency when a token deposit cannot pay the fees", () => {
+      const usdcAccount = createUsdcTokenAccount("usdc-1", 50_000_000);
+      const { result } = renderViewModel(
+        { draft: { depositAccount: usdcAccount, depositAmount: 20 } },
+        jest.fn(),
+        false,
+        withUsdcAccounts(usdcAccount),
+      );
+
+      expect(result.current.statusError?.code).toBe("notEnoughFees");
+      act(() => result.current.openDetails());
+      act(() => result.current.buyFromDetails());
+
+      expect(mockNavigate).toHaveBeenCalledWith("/exchange", {
+        state: { currency: "arbitrum", mode: "buy", account: usdcParent.id, returnTo: undefined },
+      });
+    });
   });
 });

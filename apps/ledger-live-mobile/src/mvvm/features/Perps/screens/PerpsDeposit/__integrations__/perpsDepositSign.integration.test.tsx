@@ -109,9 +109,8 @@ describe("PerpsDepositSign integration", () => {
     capturedCallbacks = undefined;
     mockDeviceStep = { kind: "processing" };
     mockUsePerpsDepositQuote.mockReturnValue({
-      quote: { amountTo: new BigNumber(42) },
+      result: { quote: { amountTo: new BigNumber(42), errors: [] }, errors: [] },
       isLoading: false,
-      isUnavailable: false,
     });
   });
 

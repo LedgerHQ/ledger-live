@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import BigNumber from "bignumber.js";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit, valueFromUnit } from "@ledgerhq/live-common/currencies/index";
@@ -6,13 +6,22 @@ import { PERPS_UI_USE_CASE } from "@ledgerhq/live-common/wallet-api/ModularDrawe
 import { PERPS_SWAPKIT_PROVIDER } from "@ledgerhq/live-common/wallet-api/Perps/constants";
 import { getDepositMaxBuffer } from "@ledgerhq/live-common/wallet-api/Perps/deposit/maxBuffer";
 import { useFeature } from "@features/platform-feature-flags";
+import { track } from "@shared/analytics";
+import { useNetworkState } from "@shared/network-status";
+import {
+  DEPOSIT_FORM_ERROR_ANALYTICS_MESSAGES,
+  getDepositBaseError,
+  getDepositFeeAccount,
+  resolveDepositFormError,
+  type DepositFormError,
+} from "@ledgerhq/live-common/wallet-api/Perps/deposit/formError";
 import {
   useCalculateCountervalueCallback,
   useCountervaluesCache,
 } from "@features/platform-market-countervalues";
 import { calculate } from "@domain/entity-market-countervalues";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import type { TokenAccount } from "@ledgerhq/types-live";
+import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useSelector } from "~/context/hooks";
 import { flattenAccountsSelector } from "~/reducers/accounts";
@@ -23,6 +32,7 @@ import {
 } from "~/reducers/settings";
 import { accountNameWithDefaultSelector, walletSelector } from "~/reducers/wallet";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
+import { useOpenBuySell } from "LLM/features/Buy";
 import type { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "~/const";
@@ -36,15 +46,26 @@ import type { PerpsReviewParams } from "./components/PerpsReview";
 import { usePerpsDepositQuote } from "./usePerpsDepositQuote";
 import { applyAmountKey, toAmountText } from "../../utils/amountKeys";
 import { toAmountValue } from "./utils/toAmountValue";
-import { validateDepositFlow, type DepositFormError } from "./utils/validateDepositFlow";
 
 type NavigationProps = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.PerpsDeposit>
 >;
 
-const QUOTE_UNAVAILABLE_ERROR: DepositFormError = {
-  labelKey: "perpsDeposit.formErrors.quoteUnavailable",
-};
+const DEPOSIT_PAGE = "perps_deposit";
+const PERPS_FLOW = "perps";
+
+export type PerpsDepositDetails = Readonly<{
+  titleKey: string;
+  descriptionKey: string;
+  values: Record<string, string>;
+  buyTicker: string;
+}>;
+
+type BuyTarget = Readonly<{
+  account: AccountLike;
+  parentAccount: Account | undefined;
+  details: PerpsDepositDetails;
+}>;
 
 export type PerpsDepositViewModel = Readonly<{
   headerDescription: string;
@@ -63,6 +84,11 @@ export type PerpsDepositViewModel = Readonly<{
   maxAmount: number;
   maxBuffer: number;
   statusError: DepositFormError | null;
+  canLearnMore: boolean;
+  details: PerpsDepositDetails | null;
+  openDetails: () => void;
+  closeDetails: () => void;
+  buyFromDetails: () => void;
   canReview: boolean;
   exceedsBalance: boolean;
   missingAccount: boolean;
@@ -95,6 +121,9 @@ export function usePerpsDepositViewModel({
   const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);
   const { openDrawer } = useModularDrawerController();
+  const { openBuySellForAccount } = useOpenBuySell({ sourceScreenName: ScreenName.PerpsDeposit });
+  const { isConnected, isInternetReachable } = useNetworkState();
+  const isOffline = isConnected === false || isInternetReachable === false;
 
   const [depositAccountId, setDepositAccountId] = useState<string | undefined>(undefined);
   const [amountText, setAmountText] = useState("");
@@ -127,6 +156,14 @@ export function usePerpsDepositViewModel({
   const depositAccount = useMemo(
     () => accounts.find(account => account.id === depositAccountId) ?? defaultDepositAccount,
     [accounts, depositAccountId, defaultDepositAccount],
+  );
+
+  const parentAccount = useMemo(
+    () =>
+      depositAccount?.type === "TokenAccount"
+        ? accounts.find((account): account is Account => account.id === depositAccount.parentId)
+        : undefined,
+    [accounts, depositAccount],
   );
 
   const depositAmount = useMemo(() => {
@@ -164,16 +201,16 @@ export function usePerpsDepositViewModel({
 
   /** Prices the typed amount back into `currency`, in its smallest unit. */
   const toCurrencyAmount = useCallback(
-    (currency: CryptoOrTokenCurrency) =>
-      new BigNumber(
-        calculate(countervaluesState, {
-          from: currency,
-          to: counterValueCurrency,
-          value: new BigNumber(depositAmount).shiftedBy(counterValueUnit.magnitude).toNumber(),
-          reverse: true,
-          disableRounding: true,
-        }) ?? 0,
-      ),
+    (currency: CryptoOrTokenCurrency): BigNumber | null => {
+      const converted = calculate(countervaluesState, {
+        from: currency,
+        to: counterValueCurrency,
+        value: new BigNumber(depositAmount).shiftedBy(counterValueUnit.magnitude).toNumber(),
+        reverse: true,
+        disableRounding: true,
+      });
+      return converted === null || converted === undefined ? null : new BigNumber(converted);
+    },
     [counterValueCurrency, counterValueUnit.magnitude, countervaluesState, depositAmount],
   );
 
@@ -237,46 +274,155 @@ export function usePerpsDepositViewModel({
     tradeMaxConstant,
   ]);
 
-  const submitError = useMemo(
-    () =>
-      validateDepositFlow({
-        amount: depositAmount,
-        maxAmount,
-        hasFundingAccount: Boolean(depositAccount),
-      }),
-    [depositAccount, depositAmount, maxAmount],
+  const convertedAmount = useMemo(
+    () => (depositCurrency ? toCurrencyAmount(depositCurrency) : null),
+    [depositCurrency, toCurrencyAmount],
   );
 
-  const exceedsBalance = submitError !== null;
+  const baseError = useMemo(
+    () =>
+      getDepositBaseError({
+        depositAccount,
+        depositAmount,
+        maxAmount,
+        hasConversion: convertedAmount !== null,
+      }),
+    [convertedAmount, depositAccount, depositAmount, maxAmount],
+  );
+
   const missingAccount = !depositAccount && depositAmount > 0;
 
-  const isFormComplete =
-    depositAmount > 0 && Boolean(depositAccount) && submitError === null && maxAmount !== null;
+  const isFormComplete = depositAmount > 0 && Boolean(depositAccount) && baseError === null;
 
-  const sentAmount = useMemo(() => {
-    if (!isFormComplete || !depositAccount || !depositCurrency) return "";
-    const atomicAmount = BigNumber.min(
-      toCurrencyAmount(depositCurrency),
-      depositAccount.spendableBalance,
-    ).integerValue(BigNumber.ROUND_FLOOR);
-    return toAmountValue(atomicAmount, depositCurrency.units[0].magnitude);
-  }, [isFormComplete, depositAccount, depositCurrency, toCurrencyAmount]);
+  const sentAmountAtomic = useMemo(() => {
+    if (!isFormComplete || !depositAccount || !convertedAmount) return undefined;
+    return BigNumber.min(convertedAmount, depositAccount.spendableBalance).integerValue(
+      BigNumber.ROUND_FLOOR,
+    );
+  }, [convertedAmount, depositAccount, isFormComplete]);
 
-  const {
-    quote,
-    isLoading: isQuoteLoading,
-    isUnavailable: isQuoteUnavailable,
-  } = usePerpsDepositQuote({
+  const sentAmount =
+    sentAmountAtomic && depositCurrency
+      ? toAmountValue(sentAmountAtomic, depositCurrency.units[0].magnitude)
+      : "";
+
+  const { result: quoteResult, isLoading: isQuoteLoading } = usePerpsDepositQuote({
     depositAccount,
     receiverAccount,
     amount: sentAmount,
+    isOffline,
     refreshGeneration: quoteRefreshGeneration,
   });
+  const quote = quoteResult?.quote;
 
-  const canReview = isFormComplete && quote !== undefined;
+  const statusError = useMemo(
+    () =>
+      resolveDepositFormError({
+        isOffline,
+        baseError,
+        depositAccount,
+        parentAccount,
+        depositAmount,
+        sentAmountAtomic,
+        quoteResult,
+      }),
+    [
+      baseError,
+      depositAccount,
+      depositAmount,
+      isOffline,
+      parentAccount,
+      quoteResult,
+      sentAmountAtomic,
+    ],
+  );
 
-  /** What the user typed comes first; a missing quote only matters once it is valid. */
-  const statusError = submitError ?? (isQuoteUnavailable ? QUOTE_UNAVAILABLE_ERROR : null);
+  const canReview = isFormComplete && quote !== undefined && statusError === null;
+  const exceedsBalance = statusError?.code === "insufficientBalance";
+
+  const analyticsCurrencies = useMemo(
+    () => ({
+      sourceCurrency: depositCurrency?.ticker ?? PERPS_DEPOSIT_DEFAULT_FUNDING_TICKER,
+      targetCurrency: receiverCurrency.ticker,
+    }),
+    [depositCurrency, receiverCurrency.ticker],
+  );
+
+  const trackedErrorCodeRef = useRef<string | null>(null);
+  useEffect(() => {
+    const code = statusError?.code ?? null;
+    if (code === trackedErrorCodeRef.current) return;
+    trackedErrorCodeRef.current = code;
+    if (!code) return;
+    track("swap error message", {
+      message: DEPOSIT_FORM_ERROR_ANALYTICS_MESSAGES[code],
+      page: DEPOSIT_PAGE,
+      flow: PERPS_FLOW,
+      ...analyticsCurrencies,
+    });
+  }, [analyticsCurrencies, statusError?.code]);
+
+  const buyTarget = useMemo((): BuyTarget | null => {
+    if (!depositAccount || !depositCurrency) return null;
+    if (statusError?.code === "notEnoughFees") {
+      const feeAccount = getDepositFeeAccount(depositAccount, parentAccount);
+      if (!feeAccount) return null;
+      const ticker = getAccountCurrency(feeAccount).ticker;
+      return {
+        account: feeAccount,
+        parentAccount: undefined,
+        details: {
+          titleKey: "perpsDeposit.details.notEnoughFees.title",
+          descriptionKey: "perpsDeposit.details.notEnoughFees.description",
+          values: { ticker, account: accountNameWithDefaultSelector(walletState, feeAccount) },
+          buyTicker: ticker,
+        },
+      };
+    }
+    if (statusError?.code === "amountTooLow") {
+      return {
+        account: depositAccount,
+        parentAccount,
+        details: {
+          titleKey: "perpsDeposit.details.amountTooLow.title",
+          descriptionKey: "perpsDeposit.details.amountTooLow.description",
+          values: { ticker: depositCurrency.ticker, amount: statusError.values?.amount ?? "" },
+          buyTicker: depositCurrency.ticker,
+        },
+      };
+    }
+    return null;
+  }, [depositAccount, depositCurrency, parentAccount, statusError, walletState]);
+
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  if (isDetailsOpen && !buyTarget) setIsDetailsOpen(false);
+
+  const openDetails = useCallback(() => {
+    track("button_clicked", {
+      button: "learn more",
+      page: DEPOSIT_PAGE,
+      flow: PERPS_FLOW,
+      ...analyticsCurrencies,
+    });
+    setIsDetailsOpen(true);
+  }, [analyticsCurrencies]);
+
+  const closeDetails = useCallback(() => setIsDetailsOpen(false), []);
+
+  const buyFromDetails = useCallback(() => {
+    if (!buyTarget) return;
+    const { account, parentAccount: buyParentAccount, details } = buyTarget;
+    track("button_clicked", {
+      button: "buy more crypto",
+      page: DEPOSIT_PAGE,
+      flow: PERPS_FLOW,
+      currency: details.buyTicker,
+      ...analyticsCurrencies,
+    });
+    setIsDetailsOpen(false);
+    cancelDepositRequest();
+    openBuySellForAccount("buy", account, buyParentAccount);
+  }, [analyticsCurrencies, buyTarget, openBuySellForAccount]);
 
   const receiverUnit = receiverCurrency.units[0];
 
@@ -364,6 +510,11 @@ export function usePerpsDepositViewModel({
     maxAmount: maxAmount ?? 0,
     maxBuffer,
     statusError,
+    canLearnMore: buyTarget !== null,
+    details: isDetailsOpen && buyTarget ? buyTarget.details : null,
+    openDetails,
+    closeDetails,
+    buyFromDetails,
     canReview,
     exceedsBalance,
     missingAccount,

@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
+import { SwapQuotesRequestFailed } from "@ledgerhq/live-common/errors";
 import { act, renderHook, waitFor } from "tests/testSetup";
 import { usePerpsDepositQuote, type PerpsDepositQuoteState } from "../usePerpsDepositQuote";
 
@@ -11,13 +12,13 @@ jest.mock("@ledgerhq/live-common/wallet-api/Perps/deposit/quote", () => ({
 const receiverAccount = { id: "receiver-1" } as AccountLike;
 const depositAccount = { id: "funding-1" } as AccountLike;
 
-type QuoteProps = { amount: string; depositAccount: AccountLike | undefined };
+type QuoteProps = { amount: string; depositAccount: AccountLike | undefined; isOffline?: boolean };
 
 function renderQuote(initialProps: QuoteProps) {
   const seen: PerpsDepositQuoteState[] = [];
   const view = renderHook(
     (props: QuoteProps) => {
-      const state = usePerpsDepositQuote({ ...props, receiverAccount });
+      const state = usePerpsDepositQuote({ isOffline: false, ...props, receiverAccount });
       seen.push(state);
       return state;
     },
@@ -36,40 +37,53 @@ describe("usePerpsDepositQuote", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockFetchPerpsDepositQuote.mockResolvedValue({
-      amountTo: new BigNumber("19.75"),
-      quoteId: "quote-1",
+      quote: { amountTo: new BigNumber("19.75"), quoteId: "quote-1", errors: [] },
+      errors: [],
     });
   });
 
   it("returns the amount the provider quotes for the funding pair", async () => {
     const { result } = renderQuote({ amount: "2000", depositAccount });
 
-    await waitFor(() => expect(result.current.quote?.amountTo.toString()).toBe("19.75"), {
+    await waitFor(() => expect(result.current.result?.quote?.amountTo.toString()).toBe("19.75"), {
       timeout: 2000,
     });
-    expect(result.current.quote?.quoteId).toBe("quote-1");
+    expect(result.current.result?.quote?.quoteId).toBe("quote-1");
     expect(result.current.isLoading).toBe(false);
     expect(mockFetchPerpsDepositQuote).toHaveBeenCalledWith(
       expect.objectContaining({ depositAccount, receiverAccount, amount: "2000" }),
     );
   });
 
-  it("reports no route for the pair as unavailable", async () => {
-    mockFetchPerpsDepositQuote.mockResolvedValue(undefined);
+  it("keeps the global errors the provider returns", async () => {
+    const errors = [{ code: "amountTooLow", minAmount: "12" }];
+    mockFetchPerpsDepositQuote.mockResolvedValue({ errors });
     const { result } = renderQuote({ amount: "2000", depositAccount });
 
     await waitFor(() => expect(result.current.isLoading).toBe(false), { timeout: 2000 });
-    expect(result.current.quote).toBeUndefined();
-    expect(result.current.isUnavailable).toBe(true);
+    expect(result.current.result).toEqual({ errors });
   });
 
-  it("reports a failed provider request as unavailable", async () => {
-    mockFetchPerpsDepositQuote.mockRejectedValue(new Error("network down"));
+  it("reports a failed quote request as no quotes", async () => {
+    mockFetchPerpsDepositQuote.mockRejectedValue(new SwapQuotesRequestFailed());
     const { result } = renderQuote({ amount: "2000", depositAccount });
 
     await waitFor(() => expect(result.current.isLoading).toBe(false), { timeout: 2000 });
-    expect(result.current.quote).toBeUndefined();
-    expect(result.current.isUnavailable).toBe(true);
+    expect(result.current.result).toEqual({ errors: [{ code: "noQuotes" }] });
+  });
+
+  it("asks nothing while offline, and asks again for the same draft when the network returns", async () => {
+    const { result, rerender } = renderQuote({ amount: "2000", depositAccount, isOffline: true });
+    await passDebounce();
+
+    expect(mockFetchPerpsDepositQuote).not.toHaveBeenCalled();
+    expect(result.current).toEqual({ result: undefined, isLoading: false });
+
+    rerender({ amount: "2000", depositAccount, isOffline: false });
+
+    await waitFor(() => expect(mockFetchPerpsDepositQuote).toHaveBeenCalledTimes(1), {
+      timeout: 2000,
+    });
   });
 
   it("only quotes the amount the form settled on", async () => {
@@ -92,31 +106,31 @@ describe("usePerpsDepositQuote", () => {
 
     expect(mockFetchPerpsDepositQuote).not.toHaveBeenCalled();
     // Nothing to quote is idle: neither pending nor a provider outage.
-    expect(result.current).toEqual({ quote: undefined, isLoading: false, isUnavailable: false });
+    expect(result.current).toEqual({ result: undefined, isLoading: false });
   });
 
   it("drops the quoted amount in the very render the amount changes", async () => {
     const { result, rerender, seen } = renderQuote({ amount: "2000", depositAccount });
 
-    await waitFor(() => expect(result.current.quote).toBeDefined(), { timeout: 2000 });
+    await waitFor(() => expect(result.current.result?.quote).toBeDefined(), { timeout: 2000 });
     seen.length = 0;
     rerender({ amount: "3000", depositAccount });
 
     // The review reads the quote during render, so $2000 must not still be
     // quotable in the render that asks for $3000.
-    expect(seen[0]).toEqual({ quote: undefined, isLoading: true, isUnavailable: false });
-    expect(result.current.quote).toBeUndefined();
+    expect(seen[0]).toEqual({ result: undefined, isLoading: true });
+    expect(result.current.result?.quote).toBeUndefined();
   });
 
   it("keeps the quote when the funding account is only refreshed", async () => {
     const { result, rerender } = renderQuote({ amount: "2000", depositAccount });
 
-    await waitFor(() => expect(result.current.quote).toBeDefined(), { timeout: 2000 });
+    await waitFor(() => expect(result.current.result?.quote).toBeDefined(), { timeout: 2000 });
     // A background sync hands back the same account as a new object.
     rerender({ amount: "2000", depositAccount: { ...depositAccount } });
     await passDebounce();
 
-    expect(result.current.quote?.quoteId).toBe("quote-1");
+    expect(result.current.result?.quote?.quoteId).toBe("quote-1");
     expect(result.current.isLoading).toBe(false);
     expect(mockFetchPerpsDepositQuote).toHaveBeenCalledTimes(1);
   });
@@ -124,10 +138,10 @@ describe("usePerpsDepositQuote", () => {
   it("drops the quoted amount when the funding account changes", async () => {
     const { result, rerender, seen } = renderQuote({ amount: "2000", depositAccount });
 
-    await waitFor(() => expect(result.current.quote).toBeDefined(), { timeout: 2000 });
+    await waitFor(() => expect(result.current.result?.quote).toBeDefined(), { timeout: 2000 });
     seen.length = 0;
     rerender({ amount: "2000", depositAccount: { id: "funding-2" } as AccountLike });
 
-    expect(seen[0]?.quote).toBeUndefined();
+    expect(seen[0]?.result).toBeUndefined();
   });
 });
