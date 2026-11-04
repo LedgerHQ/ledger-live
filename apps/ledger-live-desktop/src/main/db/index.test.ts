@@ -374,4 +374,27 @@ describe("db saves", () => {
 
     expect(writtenFile("windowParams")).toEqual({ MainWindow: { positions: { x: 1, y: 2 } } });
   });
+
+  it("does not serve the memory of the previous session while a reload saves it", async () => {
+    readFileMock.mockResolvedValue(Buffer.from(JSON.stringify({ data: { settings: "disk" } })));
+    await db.setKey("app", "settings", "memory");
+    let finishWrite: (() => void) | undefined;
+    writeFileMock.mockImplementationOnce(
+      () => new Promise<void>(resolve => (finishWrite = resolve)),
+    );
+    void db.setKey("app", "settings", "pending");
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    const reloaded = db.reload();
+    let read: unknown;
+    const reading = db.getKey("app", "settings").then(value => (read = value));
+    await new Promise(resolve => setTimeout(resolve, 50));
+    expect(finishWrite).toBeDefined();
+    expect(read).toBeUndefined();
+
+    finishWrite?.();
+    await reloaded;
+    await reading;
+    expect(read).toBe("disk");
+  });
 });
