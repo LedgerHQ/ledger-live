@@ -13,28 +13,29 @@ describe("lastBlock", () => {
     jest.clearAllMocks();
   });
 
-  it("uses the virtual chain blue score (confirmed height), not the DAG tip's daaScore", async () => {
+  it("returns the chain tip (sink) with the virtual chain blue score, not the pruning point or daaScore", async () => {
     mockGetVirtualChainBlueScore.mockResolvedValue(191726843);
     mockGetBlockDagInfo.mockResolvedValue({
-      pruningPointHash: "abc123",
+      sink: "tip123",
+      pruningPointHash: "pruning456",
       virtualDaaScore: "999999999",
     });
 
     const result = await lastBlock();
 
     expect(result.height).toBe(191726843);
-    expect(result.hash).toBe("abc123");
+    expect(result.hash).toBe("tip123");
     expect(result.time).toBeInstanceOf(Date);
   });
 
   it("throws when the blue score is not a positive integer", async () => {
     mockGetVirtualChainBlueScore.mockResolvedValue(0);
-    mockGetBlockDagInfo.mockResolvedValue({ pruningPointHash: "abc123" });
+    mockGetBlockDagInfo.mockResolvedValue({ sink: "tip123" });
 
     await expect(lastBlock()).rejects.toThrow("invalid blue score");
   });
 
-  it("falls back to an empty hash when the pruning point hash is absent", async () => {
+  it("falls back to an empty hash when the sink is absent", async () => {
     mockGetVirtualChainBlueScore.mockResolvedValue(42);
     mockGetBlockDagInfo.mockResolvedValue({});
 
