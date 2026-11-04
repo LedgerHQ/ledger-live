@@ -2,7 +2,7 @@ import { act, renderHook } from "@testing-library/react";
 import type { ClipboardEvent } from "react";
 import { ContactAddressValueSchema } from "@domain/entity-contact";
 import { createInitialEditAddressEntryState } from "./model/addressEntryValidation";
-import { useEditAddressDialogPresentation } from "./useEditAddressDialogPresentation.web";
+import { useEditAddressDialogPresentation } from "./useEditAddressDialogPresentation";
 
 const labels = {
   addressPlaceholder: "Address",

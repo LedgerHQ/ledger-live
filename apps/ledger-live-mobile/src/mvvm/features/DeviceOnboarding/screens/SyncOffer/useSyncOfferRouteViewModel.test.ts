@@ -37,6 +37,7 @@ jest.mock("@react-navigation/native", () => ({
     getParent: () => ({
       navigate: parentNavigate,
       reset,
+      getState: () => ({ routes: [{ name: "BaseOnboarding" }] }),
       getParent: () => undefined,
     }),
   }),

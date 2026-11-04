@@ -5,7 +5,6 @@ import { ETH_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 import CryptoAddresses from "../index";
 import useCryptoAddressesViewModel from "../hooks/useCryptoAddressesViewModel";
 import type { CryptoAddressesViewModel } from "../types";
-import { aggregatedAssetsFlags } from "../testUtils/aggregatedAssetsFlags";
 import { createWalletState } from "../testUtils/createWalletState";
 
 jest.mock("../hooks/useCryptoAddressesViewModel");
@@ -43,7 +42,6 @@ describe("CryptoAddresses (Crypto page)", () => {
 
     const { user } = render(<CryptoAddresses />, {
       initialState: {
-        ...aggregatedAssetsFlags,
         ...createWalletState(new Map([[ETH_ACCOUNT.id, "My ETH account"]])),
       },
     });

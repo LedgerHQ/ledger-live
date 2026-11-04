@@ -1,6 +1,7 @@
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 import { PublicKey } from "@solana/web3.js";
 import type { Balance } from "@ledgerhq/coin-module-framework/api/index";
+import type { SolanaCoinConfig } from "../config";
 import type { ChainAPI } from "../network";
 import { PARSED_PROGRAMS } from "../network/chain/program/constants";
 import type { ParsedOnChainTokenAccount } from "../network/chain/web3";
@@ -15,6 +16,7 @@ import {
 
 export async function getBalance(
   api: ChainAPI,
+  config: SolanaCoinConfig,
   address: string,
   options?: { token2022Enabled?: boolean },
 ): Promise<Balance[]> {
@@ -38,7 +40,7 @@ export async function getBalance(
     api.getEpochInfo(),
   ]);
 
-  const unstakeReserve = await computeUnstakeReserve(api, address, stakeAccounts);
+  const unstakeReserve = await computeUnstakeReserve(api, config, address, stakeAccounts);
 
   const balanceLamportBigInt = BigInt(balanceLamports);
   const rawLocked = BigInt(rentExemptMin) + BigInt(unstakeReserve);

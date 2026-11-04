@@ -1,4 +1,5 @@
 import React from "react";
+import { Text } from "react-native";
 import { BigNumber } from "bignumber.js";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
@@ -7,7 +8,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { render, screen, within, withFlagOverrides } from "@tests/test-renderer";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import { BASE_NAVIGATOR_ID, ScreenName } from "~/const";
+import { BASE_NAVIGATOR_ID, NavigatorName, ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
 import AccountScreen from "../AccountScreen";
 import { ACCOUNT_DETAIL_TEST_IDS } from "../testIds";
@@ -32,8 +33,31 @@ const emptyBtcAccount = genAccount("account-detail-assets-empty", {
   currency: getCryptoCurrencyById("bitcoin"),
   operationsSize: 0,
 });
+const algorandAccount = withBalance(
+  genAccount("account-detail-assets-algorand", {
+    currency: getCryptoCurrencyById("algorand"),
+    operationsSize: 2,
+  }),
+  "5000000",
+);
+const stellarAccount = withBalance(
+  genAccount("account-detail-assets-stellar", {
+    currency: getCryptoCurrencyById("stellar"),
+    operationsSize: 2,
+  }),
+  "5000000",
+);
 
 const Stack = createNativeStackNavigator<BaseNavigatorStackParamList, typeof BASE_NAVIGATOR_ID>();
+
+type AssetDetailTarget = { screen?: string; params?: { currencyId?: string; source?: string } };
+
+function AssetDetailProbe({ route }: Readonly<{ route: { params?: AssetDetailTarget } }>) {
+  const { screen, params } = route.params ?? {};
+  return (
+    <Text testID="asset-detail-target">{`${screen}|${params?.currencyId}|${params?.source}`}</Text>
+  );
+}
 
 type Settings = Readonly<{ blacklistedTokenIds?: string[]; hideEmptyTokenAccounts?: boolean }>;
 
@@ -48,13 +72,20 @@ function renderAccount(
         component={AccountScreen}
         initialParams={{ accountId: account.id }}
       />
+      <Stack.Screen name={NavigatorName.AssetDetail} component={AssetDetailProbe as never} />
     </Stack.Navigator>,
     {
       overrideInitialState: (state: State): State => {
-        const withFlag = withFlagOverrides({ accountDetail: { enabled: true } })(state);
+        const withFlag = withFlagOverrides({
+          accountDetail: { enabled: true },
+          lwmWallet40: { enabled: true, params: { aggregatedAssets: true } },
+        })(state);
         return {
           ...withFlag,
-          accounts: { ...withFlag.accounts, active: [ethAccount, emptyBtcAccount] },
+          accounts: {
+            ...withFlag.accounts,
+            active: [ethAccount, emptyBtcAccount, algorandAccount, stellarAccount],
+          },
           settings: { ...withFlag.settings, blacklistedTokenIds, hideEmptyTokenAccounts },
         };
       },
@@ -97,11 +128,42 @@ describe("AccountDetail assets", () => {
     expect(within(section).queryByTestId("assetItem-Matic")).toBeNull();
   });
 
-  it("renders rows that cannot be pressed", () => {
+  it("opens the asset detail of the coin when its row is pressed", async () => {
+    const { user } = renderAccount(ethAccount);
+
+    await user.press(await screen.findByTestId("assetItem-Ethereum"));
+
+    expect(await screen.findByTestId("asset-detail-target")).toHaveTextContent(
+      `${ScreenName.AssetDetail}|ethereum|account_detail`,
+    );
+  });
+
+  it("opens the asset detail of the token when its row is pressed", async () => {
+    const { user } = renderAccount(ethAccount);
+
+    await user.press(await screen.findByTestId("assetItem-USD Coin"));
+
+    expect(await screen.findByTestId("asset-detail-target")).toHaveTextContent(
+      `${ScreenName.AssetDetail}|${usdcToken.id}|account_detail`,
+    );
+  });
+
+  it.each([
+    ["Algorand", algorandAccount],
+    ["Stellar", stellarAccount],
+  ])("offers to add an asset on a %s account", (_family, account) => {
+    renderAccount(account);
+
+    const section = screen.getByTestId(ACCOUNT_DETAIL_TEST_IDS.assets);
+    expect(within(section).getByTestId(ACCOUNT_DETAIL_TEST_IDS.addAsset)).toBeVisible();
+    expect(within(section).getByText("Add")).toBeVisible();
+  });
+
+  it("does not offer to add an asset where nothing needs to be added, even with tokens", () => {
     renderAccount(ethAccount);
 
     const section = screen.getByTestId(ACCOUNT_DETAIL_TEST_IDS.assets);
-    expect(within(section).queryAllByRole("button")).toHaveLength(0);
+    expect(within(section).queryByTestId(ACCOUNT_DETAIL_TEST_IDS.addAsset)).toBeNull();
   });
 
   it("hides the section when the account has no activity", () => {

@@ -1,13 +1,10 @@
 import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "@e2e/helpers/commonHelpers";
+import { byId } from "@e2e/helpers/elements/native";
 
 export default class ManagerPage {
-  baseLink = "myledger";
-  // TODO - remove `or` statement when wallet40 is fully activated
-  managerTitleId = /manager-title|header-title/;
-  deviceNameId = "manager-device-name";
-
-  deviceName = () => getElementById(this.deviceNameId);
+  private readonly baseLink = "myledger";
+  private readonly managerTitle = byId("header-title");
 
   @Step("Open manager via deeplink")
   async openViaDeeplink() {
@@ -16,6 +13,6 @@ export default class ManagerPage {
 
   @Step("Expect manager page")
   async expectManagerPage() {
-    await detoxExpect(getElementById(this.managerTitleId)).toBeVisible();
+    await this.managerTitle.expectVisible();
   }
 }

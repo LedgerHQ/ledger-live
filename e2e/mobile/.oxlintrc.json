@@ -38,6 +38,10 @@
           {
             "group": ["**/../**"],
             "message": "Relative imports are restricted. Please use bare imports or path aliases instead."
+          },
+          {
+            "group": ["~", "~/*", "~/**", "LLM", "LLM/*", "LLM/**"],
+            "message": "E2E tests must stay independent and not import Ledger Wallet Mobile app source through the '~' or 'LLM' aliases."
           }
         ]
       }

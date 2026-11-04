@@ -59,7 +59,6 @@ export const TRON_USDT_CONTRACT = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
 export const TRON_USDT_FEE_ASSET: SponsoredFeeAsset = {
   type: "trc20",
   assetReference: TRON_USDT_CONTRACT,
-  name: "Tether USD",
   unit: { name: "USDT", code: "USDT", magnitude: 6 },
 };
 

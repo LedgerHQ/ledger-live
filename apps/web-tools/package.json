@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/web-tools",
-  "version": "0.61.0",
+  "version": "0.62.0",
   "private": true,
   "engines": {
     "node": "24.x"
@@ -31,7 +31,6 @@
     "@devtools/shell": "workspace:*",
     "@devtools/transport-panel": "workspace:*",
     "@devtools/wire": "workspace:*",
-    "@domain/api-currency-token": "workspace:*",
     "@domain/api-market-countervalues": "workspace:*",
     "@domain/entity-account": "workspace:^",
     "@domain/entity-account-name": "workspace:^",

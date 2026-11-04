@@ -1,4 +1,4 @@
-import { renderHook, act, withFlagOverrides } from "tests/testSetup";
+import { renderHook, act } from "tests/testSetup";
 import { useLocation } from "react-router";
 import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
@@ -134,26 +134,10 @@ describe("useCryptoAddressesViewModel", () => {
     expect(mockNavigate).toHaveBeenCalledWith(getAccountUrl(tokenAccount.id, ETH_ACCOUNT.id));
   });
 
-  it("should navigate to /accounts when token has no parent and asset section is off", () => {
+  it("should navigate to /cryptos when token has no parent", () => {
     const tokenAccount = genTokenAccount(0, ETH_ACCOUNT, usdcToken);
 
     const { result } = renderHook(() => useCryptoAddressesViewModel());
-
-    act(() => {
-      result.current.onAccountClick(tokenAccount, undefined);
-    });
-
-    expect(mockNavigate).toHaveBeenCalledWith("/accounts");
-  });
-
-  it("should navigate to /cryptos when token has no parent and asset section is on", () => {
-    const tokenAccount = genTokenAccount(0, ETH_ACCOUNT, usdcToken);
-
-    const { result } = renderHook(() => useCryptoAddressesViewModel(), {
-      initialState: withFlagOverrides({
-        lwdWallet40: { enabled: true, params: { assetSection: true } },
-      }),
-    });
 
     act(() => {
       result.current.onAccountClick(tokenAccount, undefined);

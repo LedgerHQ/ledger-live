@@ -1,4 +1,4 @@
-import { renderHook, withFlagOverrides } from "tests/testSetup";
+import { renderHook } from "tests/testSetup";
 import {
   usePerformersBannerItems,
   useFavoritesBannerItems,
@@ -25,14 +25,6 @@ jest.mock("@ledgerhq/live-common/market/hooks/useTrendingPerformers");
 jest.mock("@ledgerhq/live-common/market/hooks/useMarketDataProvider");
 jest.mock("@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog");
 jest.mock("@ledgerhq/live-common/exchange/swap/hooks/index");
-
-const assetDiscoverabilityOn = withFlagOverrides({
-  lwdWallet40: { enabled: true, params: { assetDiscoverability: true } },
-});
-
-const assetDiscoverabilityOff = withFlagOverrides({
-  lwdWallet40: { enabled: false },
-});
 
 const mockedUseMarketPerformers = jest.mocked(useMarketPerformers);
 const mockedUseTrendingPerformers = jest.mocked(useTrendingPerformers);
@@ -296,7 +288,6 @@ describe("MarketBanner view models", () => {
 
       const { result } = renderHook(() => useMarketBannerViewModel(), {
         initialState: {
-          ...assetDiscoverabilityOn,
           marketBanner: { ranking: "favorites" },
           settings: { starredMarketCoins: ["bitcoin"] },
         },
@@ -313,7 +304,6 @@ describe("MarketBanner view models", () => {
 
       const { result, store } = renderHook(() => useMarketBannerViewModel(), {
         initialState: {
-          ...assetDiscoverabilityOn,
           marketBanner: { ranking: "favorites" },
           settings: { starredMarketCoins: [] },
         },
@@ -336,7 +326,6 @@ describe("MarketBanner view models", () => {
 
       const { result } = renderHook(() => useMarketBannerViewModel(), {
         initialState: {
-          ...assetDiscoverabilityOn,
           marketBanner: { ranking: "trending" },
         },
       });
@@ -357,7 +346,6 @@ describe("MarketBanner view models", () => {
 
       const { result } = renderHook(() => useMarketBannerViewModel(), {
         initialState: {
-          ...assetDiscoverabilityOn,
           marketBanner: { ranking: "trending" },
         },
       });
@@ -376,7 +364,6 @@ describe("MarketBanner view models", () => {
 
       const { store } = renderHook(() => useMarketBannerViewModel(), {
         initialState: {
-          ...assetDiscoverabilityOn,
           marketBanner: { ranking: "favorites" },
           settings: { starredMarketCoins: ["bitcoin"] },
         },
@@ -391,7 +378,6 @@ describe("MarketBanner view models", () => {
 
       const { result } = renderHook(() => useMarketBannerViewModel(), {
         initialState: {
-          ...assetDiscoverabilityOn,
           marketBanner: { ranking: "losers" },
         },
       });
@@ -405,51 +391,6 @@ describe("MarketBanner view models", () => {
         { skip: false },
       );
       expect(result.current.items.length).toBeGreaterThan(0);
-    });
-
-    describe("asset discoverability feature flag", () => {
-      it("uses the persisted ranking when the flag is enabled", () => {
-        mockPerformersQuery({ data: MOCK_MARKET_PERFORMERS });
-        mockMarketDataQuery({ data: [createMockMarketCurrencyData({ id: "bitcoin" })] });
-
-        renderHook(() => useMarketBannerViewModel(), {
-          initialState: {
-            ...assetDiscoverabilityOn,
-            marketBanner: { ranking: "favorites" },
-            settings: { starredMarketCoins: ["bitcoin"] },
-          },
-        });
-
-        // favorites ranking is honored: performers query is skipped, favorites query runs
-        expect(mockedUseMarketPerformers).toHaveBeenCalledWith(expect.anything(), { skip: true });
-        expect(mockedUseMarketData).toHaveBeenCalledWith(
-          expect.anything(),
-          expect.objectContaining({ enabled: true }),
-        );
-      });
-
-      it("falls back to the default ranking and ignores the persisted ranking when the flag is disabled", () => {
-        mockPerformersQuery({ data: MOCK_MARKET_PERFORMERS });
-        mockMarketDataQuery({ data: [createMockMarketCurrencyData({ id: "bitcoin" })] });
-
-        const { result } = renderHook(() => useMarketBannerViewModel(), {
-          initialState: {
-            ...assetDiscoverabilityOff,
-            marketBanner: { ranking: "favorites" },
-            settings: { starredMarketCoins: ["bitcoin"] },
-          },
-        });
-
-        expect(mockedUseMarketPerformers).toHaveBeenCalledWith(
-          expect.objectContaining({ sort: "asc" }),
-          { skip: false },
-        );
-        expect(mockedUseMarketData).toHaveBeenCalledWith(
-          expect.anything(),
-          expect.objectContaining({ enabled: false }),
-        );
-        expect(result.current.items.length).toBeGreaterThan(0);
-      });
     });
   });
 });

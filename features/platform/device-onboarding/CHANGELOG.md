@@ -1,5 +1,17 @@
 # @features/platform-device-onboarding
 
+## 0.4.0
+
+### Minor Changes
+
+- [#24069](https://github.com/LedgerHQ/ledger-live/pull/24069) [`33fc619`](https://github.com/LedgerHQ/ledger-live/commit/33fc61994dcf0265a4f98e77a2f6947f455ae6de) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Show "Device genuine" when onboarding cannot say the firmware is current
+
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#24069](https://github.com/LedgerHQ/ledger-live/pull/24069) [`33fc619`](https://github.com/LedgerHQ/ledger-live/commit/33fc61994dcf0265a4f98e77a2f6947f455ae6de) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Show "Device genuine" when onboarding cannot say the firmware is current
+
 ## 0.3.0
 
 ### Minor Changes

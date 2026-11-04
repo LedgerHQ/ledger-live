@@ -2,27 +2,28 @@
 
 > Part of the [monorepo architecture](../../docs/monorepo-architecture.md).
 
-Non-functional requirement (NFR) packages at the features layer. Each subdirectory is an independent pnpm workspace package providing hooks, selectors, and cross-feature helpers that are invisible to users but required for the system to deliver user-facing features reliably.
+Feature-level packages that know the business, serve several flows or use cases and own no journey of their own. Each subdirectory is an independent pnpm workspace package providing hooks, selectors, cross-feature helpers and UI that several flows share.
 
 ## Scope
 
-`@features/platform-<name>` (e.g. `@features/platform-feature-flags`, `@features/platform-coin-loader`)
+`@features/platform-<name>` (e.g. `@features/platform-feature-flags`, `@features/platform-contacts`)
 
 ## Responsibility
 
 - Provide **hooks** and **selectors** that resolve domain state for use in flow packages
-- Implement **cross-feature domain-aware helpers** and React glue (e.g. context providers, non-rendering components)
-- Enforce **NFR business rules** that apply across multiple features (feature flags, coin loading, etc.)
+- Implement **cross-feature domain-aware helpers** and React glue (e.g. context providers, `<FeatureToggle>`)
+- Enforce **NFR business rules** that apply across multiple features (feature flags, device intents, etc.)
+- Render **UI shared by several flows**: business-aware components such as the contact avatar and confirmation dialog of `@features/platform-contacts`, or the device animations of `@features/platform-device-action-content`
 
 ## Conventions
 
 - One platform package per concern
-- Package name: `@features/platform-<name>`
-- Directory name: `features/platform/<name>/`
+- Package name from the folder path: `features/platform/<name>/` is `@features/platform-<name>` ([naming rules](../../.agents/skills/structure-flow/references/layers.md#naming))
 - `package.json` must have `"private": true`
-- May depend on `scope:domain` and `scope:shared`; must NOT depend on `type:feature-flow`
+- Dependencies follow the [dependency table](../../.agents/skills/structure-flow/references/layers.md#dependency-table); never `features/flow`
 - Nx tag inferred automatically: `type:feature-platform`
-- Does not contain component/screen-specific rendering — only non-visual components (e.g. `<FeatureToggle>`), generic or small reusable building blocks for flow packages, and no app-specific logic
+- No screens, no global routing, no app-specific logic and no single-flow internals: code one flow uses stays in that flow until a second one needs it
+- A component with no business meaning goes to `shared/ui-*`, not here
 - Barrel export via `src/index.ts`
 
 ## File Structure
@@ -30,7 +31,7 @@ Non-functional requirement (NFR) packages at the features layer. Each subdirecto
 Each package follows this layout inside `src/`:
 
 ```
-components/          # Non-visual components (e.g. <FeatureToggle>) and generic reusable building blocks for flow packages
+components/          # Components shared by several flows, visual (contact avatar) or not (<FeatureToggle>)
 hooks/               # Hooks and selectors exposing domain state or NFR logic to flow packages
 helpers/             # Cross-feature domain-aware helpers (optional)
 index.ts             # Barrel exports (required)

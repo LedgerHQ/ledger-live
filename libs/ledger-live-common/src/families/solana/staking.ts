@@ -1,13 +1,12 @@
 export {
   defaultVoteAccAddrByCurrencyId,
   SOLANA_DELEGATION_RESERVE,
-  LEDGER_VALIDATOR_DEFAULT,
-  LEDGER_VALIDATORS_VOTE_ACCOUNTS,
-  LEDGER_VALIDATOR_BY_FIGMENT,
-  LEDGER_VALIDATOR_BY_BITWISE,
-  LEDGER_VALIDATOR_LIST,
   assertUnreachable,
   sweetch,
   tupleOfUnion,
 } from "@ledgerhq/coin-solana/utils";
+export {
+  LEDGER_VALIDATOR_BY_FIGMENT,
+  LEDGER_VALIDATOR_BY_BITWISE,
+} from "@ledgerhq/coin-solana/constants";
 export type { ValidatorsAppValidator } from "@ledgerhq/coin-solana/network/validator-app/index";

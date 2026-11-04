@@ -2,7 +2,7 @@ import React from "react";
 import { View } from "react-native";
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
-import { useKeyboardOverlap } from "./useKeyboardOverlap.native";
+import { useKeyboardOverlap } from "./useKeyboardOverlap";
 
 type ContactsSearchNoResultsProps = Readonly<{
   title: string;

@@ -27,20 +27,10 @@ module.exports = createSharedJestConfig({ passWithNoTests: true });
 
 #### `jestSonarReporter` / `sharedReporters`
 
-`jestSonarReporter` is the sonar reporter tuple. `sharedReporters` is the full tail
-(`[jestSonarReporter, "@ledgerhq/test-quarantine/jest"]`) — use it when you need to insert
-an extra reporter without duplicating the rest:
-
-```js
-const { createSharedJestConfig, sharedReporters } = require("@support/jest/shared");
-module.exports = createSharedJestConfig({
-  reporters: [
-    "default",
-    ...(process.env.CI ? ["github-actions"] : []),
-    ...sharedReporters,
-  ],
-});
-```
+`jestSonarReporter` is the sonar reporter tuple. `sharedReporters` is the tail the node
+presets put after `default` and, on CI, `github-actions`:
+`[jestSonarReporter, "@ledgerhq/test-quarantine/jest"]`. The preset sets `reporters`; a
+package cannot override them.
 
 ### `shared/ui-*` UI packages
 
@@ -64,14 +54,16 @@ const { createSharedUiJestConfig } = require("@support/jest/shared");
 module.exports = createSharedUiJestConfig();
 ```
 
-Per-project customisation via `webOverrides` / `nativeOverrides`. `moduleNameMapper` and
-`setupFilesAfterEnv` **add** to the project's defaults (an entry with the same pattern replaces
-that mock); any other key replaces the project's value:
+Per-project customisation via `webOverrides` / `nativeOverrides`, by the
+[override rule](../README.md#overrides):
 
 ```js
+const { createSharedUiJestConfig, nativeModuleNameMapper } = require("@support/jest/shared");
+
 module.exports = createSharedUiJestConfig({
   nativeOverrides: {
     moduleNameMapper: {
+      ...nativeModuleNameMapper,
       "^react-native$": path.join(__dirname, "jest/mocks/react-native.js"),
     },
   },
@@ -95,13 +87,14 @@ const { createSharedUiNativeJestConfig } = require("@support/jest/shared");
 module.exports = createSharedUiNativeJestConfig();
 ```
 
-`moduleNameMapper` and `setupFilesAfterEnv` add to the preset's, as in the dual preset; any other
-key replaces it. Pass extra `moduleNameMapper` entries to add package-specific mocks alongside the
-base ones:
+Overrides follow the [override rule](../README.md#overrides):
 
 ```js
+const { createSharedUiNativeJestConfig, nativeModuleNameMapper } = require("@support/jest/shared");
+
 module.exports = createSharedUiNativeJestConfig({
   moduleNameMapper: {
+    ...nativeModuleNameMapper,
     "^my-custom-dep$": path.join(__dirname, "jest/mocks/my-custom-dep.js"),
   },
 });

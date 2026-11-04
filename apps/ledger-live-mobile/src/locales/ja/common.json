@@ -1309,6 +1309,9 @@
     "TezosStakeAmountTooSmall" : {
       "title" : "ステーキングするには少なすぎる数量です"
     },
+    "TezosDelegateRefusesStaking" : {
+      "title" : "ご利用のバリデーターはステーキングを受け付けていません。ステーキングするには、バリデーターを変更してください。"
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "まず、すべてのサブアカウントを空にしてください。"
     },
@@ -2583,6 +2586,7 @@
       },
       "succeeded" : {
         "title" : "デバイスは正規品で最新の状態です",
+        "genuineTitle" : "デバイスは正規品です",
         "cta" : "続行"
       }
     },
@@ -5246,6 +5250,25 @@
   },
   "send" : {
     "newSendFlow" : {
+      "balanceType" : {
+        "title" : "残高を選択",
+        "transparent" : {
+          "title" : "公開残高",
+          "subtitle" : "透明性"
+        },
+        "shielded" : {
+          "title" : "プライベート残高",
+          "subtitle" : "シールド",
+          "pendingNoticeTitle" : "満期を迎える資金",
+          "pendingNotice" : "一部のシールドノートはまだ成熟中のため、使用できない可能性があります。"
+        },
+        "zeroBalance" : {
+          "warning" : "利用可能な残高がありません"
+        },
+        "requiresSync" : {
+          "notice" : "同期が必要です"
+        }
+      },
       "title" : "{{currency}}を送付",
       "selectAddress" : "アドレスを選択",
       "available" : "利用可能: {{amount}}",
@@ -5888,10 +5911,10 @@
   },
   "osUpdates" : {
     "backupBanner" : {
-      "title" : "バックアップが見つかりました",
+      "title" : "保存された設定が見つかりました",
       "description" : "アプリと設定はデバイスに完全には復元されませんでした。",
-      "restore" : "復元",
-      "delete" : "バックアップを削除する"
+      "restore" : "再インストール",
+      "delete" : "破棄"
     },
     "bootloaderDiscovered" : {
       "title" : "デバイスはBootloaderモードです。",
@@ -5909,15 +5932,15 @@
       }
     },
     "restoreConfirmation" : {
-      "title" : "前回の設定を復元しますか？",
-      "description" : "以前の構成からアプリと設定を復元すること、およびそれ以降に作成されたアプリとデータが失われることを確認します。",
-      "confirm" : "復元",
+      "title" : "保存された設定を再インストールしますか？",
+      "description" : "OSの更新時に保存されたアプリと設定が、デバイスに再インストールされます。それ以降に追加されたアプリやデータは削除されます。",
+      "confirm" : "再インストール",
       "cancel" : "キャンセル"
     },
     "deleteConfirmation" : {
-      "title" : "バックアップを削除しますか？",
-      "description" : "前回の設定、およびセキュリティーキーの認証情報を含む前回のバックアップのアプリ&データが失われることを理解しています。",
-      "confirm" : "バックアップを削除する",
+      "title" : "保存された設定を破棄しますか？",
+      "description" : "セキュリティーキーの認証情報を含む、OSの更新時に保存された設定は利用できなくなります。アプリは引き続き、デフォルト設定でMy Ledgerから再インストールできます。",
+      "confirm" : "破棄",
       "cancel" : "キャンセル"
     },
     "actions" : {
@@ -5936,16 +5959,17 @@
       "version" : "バージョン{{version}}",
       "banner" : "念のため、24単語のシークレットリカバリーフレーズがリカバリーシートに書き留められており、利用可能であることをご確認ください。",
       "title" : "OSアップデートの内容は？",
+      "releaseNotes" : "リリースノートの全文を表示",
       "start" : "アップデートを開始"
     },
     "preparing" : {
-      "title" : "インストールの準備をしています"
+      "title" : "アップデート準備中..."
     },
     "progress" : {
-      "updatingTitle" : "{{productName}}を更新中",
-      "restoringTitle" : "アプリと設定を復元しています",
-      "updateCount" : "更新 {{index}}/{{count}}",
-      "description" : "更新が完了するまで、デバイスを接続したまま近くに置いてください。"
+      "updatingTitle" : "アップデート {{index}}/{{count}}",
+      "restoringTitle" : "設定を再インストールしています...",
+      "updatingDescription" : "インストール中、お使いの{{productName}}は自動的に複数回再起動します。その際、PINコードでのロック解除が求められます。",
+      "restoringDescription" : "まもなく完了します。お使いの{{productName}}に設定を再インストールしています。"
     },
     "applied" : {
       "title" : "更新完了",
@@ -8502,6 +8526,10 @@
       "stakeActivePercent" : "アクティブ",
       "inactiveStake" : "出金可能な報酬",
       "stakeAvailableBalance" : "利用可能残高",
+      "delegatedInfoTooltip" : "バリデーターにデリゲートされる合計額。",
+      "inactiveStakeTooltip" : "デリゲートを無効化せずに引き出すことができる非アクティブステーキング。",
+      "withdrawableTitle" : "引き出し可能",
+      "withdrawableInfoTooltip" : "デリゲートから引き出し可能な合計金額。",
       "actions" : {
         "activate" : "有効化",
         "deactivate" : "無効化",
@@ -10512,7 +10540,8 @@
   },
   "accountDetail" : {
     "assets" : {
-      "title" : "資産"
+      "title" : "資産",
+      "add" : "追加"
     },
     "refreshStatus" : {
       "upToDate" : "アカウントは最新の状態です",
@@ -11897,6 +11926,15 @@
         "proofGenerationWarning" : "Aleoのトランザクションにはプルーフの生成が必要です。少し時間がかかる場合があります。",
         "recordsUsed" : "使用された記録",
         "signingTime" : "署名する時間"
+      },
+      "amount" : {
+        "estimatedTime" : {
+          "label" : "推定時間",
+          "info" : {
+            "title" : "推定所要時間の仕組み",
+            "description" : "プライベート残高からより多くの額を送金すると、より多くのレコードが使用され、それぞれに処理時間が追加されます。数量が多いほど、確認に時間がかかります。"
+          }
+        }
       }
     },
     "balancesSection" : "残高",

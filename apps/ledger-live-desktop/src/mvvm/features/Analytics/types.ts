@@ -22,6 +22,5 @@ export type AnalyticsViewModel = {
   balanceInfo: PortfolioBalanceInfo;
   portfolio: Portfolio;
   isLoading: boolean;
-  shouldDisplayAssetSection?: boolean;
   shouldDisplayPnl: boolean;
 };

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { Linking } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { Device } from "@ledgerhq/live-dmk-shared";
 import { OsUpdateFlowMode } from "@ledgerhq/live-common/os-update/types";
@@ -11,6 +12,7 @@ import {
 import { useDispatch, useSelector } from "~/context/hooks";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 import { lastSeenDeviceSelector } from "~/reducers/settings";
+import { urls } from "~/utils/urls";
 import type { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { deviceBackupStorage } from "../../storage/deviceBackupStorage";
 import { clearOsUpdates, osUpdatesSelector, setHasBackup } from "../../state/osUpdateSlice";
@@ -68,6 +70,10 @@ export function useOsUpdateFlowViewModel(device: Device, mode?: OsUpdateFlowMode
 
   const onConfirmStart = useCallback(() => setIsStarted(true), []);
 
+  const onOpenReleaseNotes = useCallback(() => {
+    Linking.openURL(urls.fwUpdateReleaseNotes[modelId]);
+  }, [modelId]);
+
   const onClose = useCallback(() => navigation.goBack(), [navigation]);
 
   const whatsNew = useMemo(
@@ -122,5 +128,5 @@ export function useOsUpdateFlowViewModel(device: Device, mode?: OsUpdateFlowMode
     ],
   );
 
-  return { whatsNew, orchestratorRun, onConfirmStart, onClose, analytics };
+  return { whatsNew, orchestratorRun, onConfirmStart, onOpenReleaseNotes, onClose, analytics };
 }

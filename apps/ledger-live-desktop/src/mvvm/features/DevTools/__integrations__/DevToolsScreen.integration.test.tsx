@@ -12,6 +12,7 @@ jest.mock("@devtools/transport-panel", () => ({
 }));
 
 const devToolsSpy = jest.fn();
+const mockRecordedAction = jest.fn();
 jest.mock("@devtools/shell", () => ({
   DevTools: (props: { config: unknown; onClose: () => void }) => {
     devToolsSpy(props);
@@ -37,11 +38,18 @@ jest.mock("@devtools/bindings", () => ({
   useCloudSyncDevToolProps: () => ({ marker: "cloud-sync-props" }),
   useAccountDescriptorToolProps: () => ({ marker: "account-descriptor-props" }),
   useAccountBalanceToolProps: () => ({ marker: "account-balance-props" }),
+  useAccountOperationToolProps: () => ({ marker: "account-operation-props" }),
+  useAccountBalanceHistoryToolProps: () => ({ marker: "account-balance-history-props" }),
+  useAccountPortfolioToolProps: () => ({ marker: "account-portfolio-props" }),
   useAccountDataToolProps: () => ({ marker: "account-data-props" }),
   useAccountNameToolProps: () => ({ marker: "account-name-props" }),
+  useMockAccountsToolProps: () => ({ marker: "mock-accounts-props" }),
   createAccountDataRecorder: () => ({
     instrument: (sources: unknown) => sources,
-    middleware: () => (next: (action: unknown) => unknown) => next,
+    middleware: () => (next: (action: unknown) => unknown) => (action: unknown) => {
+      mockRecordedAction(action);
+      return next(action);
+    },
   }),
   useAppConfigToolProps: () => ({ marker: "app-config-props" }),
 }));
@@ -86,10 +94,22 @@ describe("DevToolsScreen", () => {
           { id: "account-data", config: { marker: "account-data-props" } },
           { id: "account-descriptor", config: { marker: "account-descriptor-props" } },
           { id: "account-balance", config: { marker: "account-balance-props" } },
+          { id: "account-operation", config: { marker: "account-operation-props" } },
+          { id: "account-balance-history", config: { marker: "account-balance-history-props" } },
           { id: "account-name", config: { marker: "account-name-props" } },
+          { id: "account-portfolio", config: { marker: "account-portfolio-props" } },
+          { id: "mock-accounts", config: { marker: "mock-accounts-props" } },
         ],
       }),
     );
+  });
+
+  it("plugs the account data recorder into the store when it opens", () => {
+    const { store } = render(<DevToolsScreen />);
+
+    store.dispatch({ type: "DEVTOOLS_TEST_ACTION" });
+
+    expect(mockRecordedAction).toHaveBeenCalledWith({ type: "DEVTOOLS_TEST_ACTION" });
   });
 
   it("navigates back when DevTools requests close", async () => {
@@ -98,5 +118,15 @@ describe("DevToolsScreen", () => {
     await user.click(screen.getByText("close-devtools"));
 
     expect(mockNavigate).toHaveBeenCalledWith(-1);
+  });
+
+  it("uses the provided onClose instead of navigating back", async () => {
+    const onClose = jest.fn();
+    const { user } = render(<DevToolsScreen onClose={onClose} />);
+
+    await user.click(screen.getByText("close-devtools"));
+
+    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 });

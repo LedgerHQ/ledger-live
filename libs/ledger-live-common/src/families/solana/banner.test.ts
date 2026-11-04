@@ -8,6 +8,10 @@ const mockIsAccountEmpty = jest.fn();
 const mockBridge = { isAccountEmpty: mockIsAccountEmpty } as any;
 
 import { BigNumber } from "bignumber.js";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { solanaConfig } from "./config";
+
+LiveConfig.setConfig(solanaConfig);
 
 const ledgerValidator: ValidatorsAppValidator = {
   activeStake: 2030500428402855,

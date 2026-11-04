@@ -6,6 +6,7 @@ import {
   ListItemLeading,
   ListItemTitle,
   ListItemTrailing,
+  Tag,
 } from "@ledgerhq/lumen-ui-react";
 import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
 import type { AddressListItemViewModel } from "../hooks/useAddressListItemViewModel";
@@ -19,7 +20,12 @@ export function AddressListItemView({ vm }: AddressListItemViewProps) {
     <ListItem onClick={vm.onClick} className="bg-surface" data-testid={vm.rowTestId}>
       <ListItemLeading>
         <ListItemContent>
-          <ListItemTitle>{vm.displayName}</ListItemTitle>
+          <div className="flex min-w-0 items-center gap-8">
+            <ListItemTitle>{vm.displayName}</ListItemTitle>
+            {vm.tag ? (
+              <Tag label={vm.tag} size="sm" appearance="gray" data-testid={vm.tagTestId} />
+            ) : null}
+          </div>
           <ListItemDescription className="flex min-w-0 items-center gap-6">
             <span className="min-w-0 truncate">{vm.formattedAddress}</span>
             <SquaredCryptoIcon size={16} ledgerId={vm.networkLedgerId} ticker={vm.networkTicker} />

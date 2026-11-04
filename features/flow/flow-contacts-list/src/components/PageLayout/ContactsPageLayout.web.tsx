@@ -1,7 +1,7 @@
 import React, { type ReactNode } from "react";
-import { ContactsDetailPane } from "./ContactsDetailPane.web";
-import { ContactsHeader } from "./ContactsHeader.web";
-import { ContactsListPane } from "./ContactsListPane.web";
+import { ContactsDetailPane } from "./ContactsDetailPane";
+import { ContactsHeader } from "./ContactsHeader";
+import { ContactsListPane } from "./ContactsListPane";
 
 type ContactsPageLayoutProps = Readonly<{
   title: string;

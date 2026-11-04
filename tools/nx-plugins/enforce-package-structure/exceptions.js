@@ -73,34 +73,9 @@ function entryWaiver() {
 
 /** @type {Record<string, Record<string, { rules: string[], reason: string }>>} */
 const COMPONENT_EXCEPTIONS = {
-  "features/flow/account-detail-settings": {
-    AccountSettings: componentWaiver("R1"),
-    AccountSettingsDialog: componentWaiver("R1"),
-    AccountSettingsSheet: componentWaiver("R1"),
-  },
   "features/flow/contacts": {
     ContactsButton: componentWaiver("R2", "R4"),
     ContactsView: componentWaiver("R2", "R3"),
-  },
-  "features/flow/flow-contacts-add-address": {
-    "./native": entryWaiver(),
-    ContactsAddAddressEntry: componentWaiver("R2", "R3", "R4", "R5"),
-    ContactsAddAddressFlowContent: componentWaiver("R2", "R4", "R5"),
-    ContactsAddAddressName: componentWaiver("R2", "R3", "R4", "R5"),
-    ContactsAddAddressNameInput: componentWaiver("R1", "R3", "R4"),
-    ContactsAddAddressReview: componentWaiver("R2", "R4", "R5"),
-  },
-  "features/flow/flow-contacts-add-contact": {
-    "./native": entryWaiver(),
-    ContactsAddContactContent: componentWaiver("R2", "R5"),
-    ContactsAddContactDialog: componentWaiver("R1"),
-    ContactsAddContactFooter: componentWaiver("R1", "R5"),
-  },
-  "features/flow/flow-contacts-delete-address": {
-    ContactsDeleteAddressDialog: componentWaiver("R2"),
-  },
-  "features/flow/flow-contacts-delete-contact": {
-    ContactsDeleteContactDialog: componentWaiver("R2"),
   },
   "features/flow/flow-contacts-detail": {
     "./native": entryWaiver(),
@@ -109,31 +84,6 @@ const COMPONENT_EXCEPTIONS = {
     ContactDetailActionsMenu: componentWaiver("R1", "R4", "R5"),
     ContactDetailView: componentWaiver("R3", "R5"),
     ContactsEditSignerMismatchDialog: componentWaiver("R2", "R4", "R5"),
-  },
-  "features/flow/flow-contacts-edit-address": {
-    ContactsRenameAddressDialog: componentWaiver("R2"),
-  },
-  "features/flow/flow-contacts-edit-contact": {
-    "./native": entryWaiver(),
-    ContactsRenameContactDialog: componentWaiver("R1"),
-    ContactsRenameContactDrawer: componentWaiver("R1", "R5"),
-    ContactsRenameContactFooter: componentWaiver("R1", "R5"),
-  },
-  "features/flow/flow-contacts-list": {
-    "./native": entryWaiver(),
-    ContactsAddContactHeaderButton: componentWaiver("R1", "R4", "R5"),
-    ContactsCompactList: componentWaiver("R3", "R5"),
-    ContactsCompactRow: componentWaiver("R1", "R3", "R5"),
-    ContactsListView: componentWaiver("R2", "R3", "R5"),
-    ContactsSearchNoResults: componentWaiver("R1", "R5"),
-  },
-  "features/flow/pay-card-assets": {
-    CardAssetDetailsDrawer: componentWaiver("R1"),
-    CardAssetDetailsWithdrawDrawer: componentWaiver("R1"),
-    CardAssetsManageDrawer: componentWaiver("R1"),
-    CardAssetsManageFooter: componentWaiver("R1"),
-    CardAssetsView: componentWaiver("R1", "R3"),
-    CardAssetTransactionDetailDrawer: componentWaiver("R1"),
   },
   "features/flow/pay-card-details": {
     CardArtwork: componentWaiver("R2"),
@@ -179,14 +129,6 @@ const FILE_EXCEPTIONS = {
   "features/flow/contacts/src/contactsViewFacade.native.ts": NAMED_REEXPORT,
   "features/flow/contacts/src/contactsViewFacade.web.ts": NAMED_REEXPORT,
   "features/flow/contacts/src/hooks/contactsHooks.ts": WORKSPACE_PROXY,
-  "features/flow/flow-contacts-add-address/src/screens/AddressEntry/components/ContactsAddAddressEntry/ContactsAddAddressEntry.types.ts":
-    NAMED_REEXPORT,
-  "features/flow/flow-contacts-add-address/src/screens/AddressEntry/components/ContactsAddAddressEntry/ContactsAddAddressEntry.types.web.ts":
-    NAMED_REEXPORT,
-  "features/flow/flow-contacts-add-address/src/screens/AddressEntry/components/ContactsAddAddressEntry/ContactsAddAddressEntry.web.tsx":
-    NAMED_REEXPORT,
-  "features/flow/flow-contacts-add-address/src/screens/AddressName/components/Input/ContactsAddAddressNameInput.web.tsx":
-    NAMED_REEXPORT,
   "features/flow/flow-contacts-detail/src/native.ts": NAMED_REEXPORT,
   "features/flow/flow-contacts-detail/src/web.ts": NAMED_REEXPORT,
   "features/platform/contacts/src/contactDeviceIntentsPort.ts": NAMED_REEXPORT,

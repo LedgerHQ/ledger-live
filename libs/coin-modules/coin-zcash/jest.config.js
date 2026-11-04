@@ -1,8 +1,9 @@
-const { createLibsCoinJestConfig } = require("@support/jest/libs-coin");
+const { createLibsCoinJestConfig, libsCoinDefaults } = require("@support/jest/libs-coin");
 
 module.exports = createLibsCoinJestConfig({
   rootDir: __dirname,
   collectCoverageFrom: [
+    ...libsCoinDefaults.collectCoverageFrom,
     // Type declarations and re-export barrels compile to nothing executable, so
     // istanbul cannot build a coverage object for them and drops them from the
     // report with an error. Left in, they only add noise.

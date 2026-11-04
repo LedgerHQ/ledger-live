@@ -1,11 +1,13 @@
 import React from "react";
 import { HashRouter, Link, Route, Routes, useLocation, useNavigate } from "react-router";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { Account } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { parseAnyAccountId } from "@domain/entity-account";
 import { copyToClipboard } from "@shared/clipboard";
 import { render, screen, within, withFlagOverrides } from "tests/testSetup";
+import { importLLDCoinFamily } from "~/renderer/families";
 import { getAccountUrl } from "~/renderer/utils";
 import AccountDetailRoute from "../AccountDetailRoute";
 
@@ -115,6 +117,13 @@ function renderFromHashHistory(accounts: Account[] = [ethAccount]) {
 }
 
 describe("AccountDetail header", () => {
+  beforeAll(async () => {
+    await Promise.all([
+      importLLDCoinFamily(ethAccount.currency.family),
+      getAccountBridge(ethAccount),
+    ]);
+  });
+
   it("shows the account name, the shortened address and the settings button", async () => {
     const { user } = renderFromPreviousPage();
     await user.click(screen.getByText("Open account"));

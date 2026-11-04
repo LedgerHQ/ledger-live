@@ -83,16 +83,21 @@ export function useSendFlowSignatureCore({
   // Async broadcast handlers capture it to ignore results from a superseded run.
   const runIdRef = useRef(0);
 
-  const depsRef = useRef({ account, parentAccount, transaction, status });
+  // Accounts are compared by id: a background sync hands down a new account object with the same
+  // id. Treating that refresh as new inputs drops the in-flight broadcast's outcome, and the flow
+  // never leaves its broadcasting state.
+  const accountId = account?.id;
+  const parentAccountId = parentAccount?.id;
+  const depsRef = useRef({ accountId, parentAccountId, transaction, status });
   if (
-    depsRef.current.account !== account ||
-    depsRef.current.parentAccount !== parentAccount ||
+    depsRef.current.accountId !== accountId ||
+    depsRef.current.parentAccountId !== parentAccountId ||
     depsRef.current.transaction !== transaction ||
     depsRef.current.status !== status
   ) {
     hasFinishedRef.current = false;
     runIdRef.current += 1;
-    depsRef.current = { account, parentAccount, transaction, status };
+    depsRef.current = { accountId, parentAccountId, transaction, status };
   }
 
   const request = useMemo<SignatureRequest | null>(() => {

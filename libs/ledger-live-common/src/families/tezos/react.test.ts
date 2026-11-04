@@ -2,18 +2,21 @@
  * @jest-environment jsdom
  */
 import BigNumber from "bignumber.js";
-import { renderHook } from "@testing-library/react";
+import { renderHook, waitFor } from "@testing-library/react";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { Baker, StakingPosition, TezosAccount } from "./types";
 
 jest.mock("@ledgerhq/coin-tezos/network", () => ({
   bakers: {
-    listBakersWithDefault: () => [],
+    ledgerValidatorAddress: "tz1ledger",
+    listBakersWithDefault: jest.fn().mockReturnValue([]),
     listBakers: jest.fn().mockResolvedValue([]),
     getBakerSync: jest.fn().mockReturnValue(undefined),
     loadBaker: jest.fn().mockResolvedValue(undefined),
   },
 }));
+
+jest.mock("@ledgerhq/logs", () => ({ log: jest.fn() }));
 
 jest.mock("./bakers", () => ({
   getAccountDelegationSync: jest.fn().mockReturnValue(null),
@@ -32,10 +35,19 @@ jest.mock("../../config", () => ({
 }));
 
 import { bakers } from "@ledgerhq/coin-tezos/network";
+import { log } from "@ledgerhq/logs";
 import { getAccountDelegationSync } from "./bakers";
-import { isAwaitingDelegation, useBaker, useTezosStakingInfo } from "./react";
+import {
+  isAwaitingDelegation,
+  useBaker,
+  useBakers,
+  useLedgerBaker,
+  useTezosStakingInfo,
+} from "./react";
 
 const mockBakers = bakers as unknown as {
+  listBakersWithDefault: jest.Mock;
+  listBakers: jest.Mock;
   getBakerSync: jest.Mock;
   loadBaker: jest.Mock;
 };
@@ -295,6 +307,90 @@ describe("useTezosStakingInfo", () => {
       "unstaking-pen2",
       "finalizable-fin1",
     ]);
+  });
+});
+
+const stakingBaker: Baker = {
+  address: "tz1staking",
+  name: "Staking baker",
+  logoURL: "",
+  nominalYield: "5 %",
+  capacityStatus: "normal",
+  stakingEnabled: true,
+};
+const delegationOnlyBaker: Baker = {
+  ...stakingBaker,
+  address: "tz1delegation",
+  stakingEnabled: false,
+};
+const ledgerBaker: Baker = { ...stakingBaker, address: "tz1ledger", name: "Ledger by Kiln" };
+
+describe("useBakers", () => {
+  beforeEach(() => {
+    mockBakers.listBakersWithDefault.mockReset().mockReturnValue([]);
+    mockBakers.listBakers.mockReset().mockResolvedValue([stakingBaker, delegationOnlyBaker]);
+  });
+
+  it("starts from the last listed bakers, then returns every listed baker", async () => {
+    mockBakers.listBakersWithDefault.mockReturnValue([stakingBaker]);
+    const { result } = renderHook(() => useBakers());
+    expect(result.current).toEqual([stakingBaker]);
+    await waitFor(() => expect(result.current).toEqual([stakingBaker, delegationOnlyBaker]));
+  });
+
+  it("keeps only the bakers that accept staking for the stake path", async () => {
+    const { result } = renderHook(() => useBakers({ forStaking: true }));
+    await waitFor(() => expect(result.current).toEqual([stakingBaker]));
+  });
+
+  it("keeps the last listed bakers and logs when listing fails", async () => {
+    jest.mocked(log).mockClear();
+    mockBakers.listBakersWithDefault.mockReturnValue([stakingBaker]);
+    mockBakers.listBakers.mockRejectedValue(new Error("network down"));
+    const { result } = renderHook(() => useBakers());
+    await waitFor(() =>
+      expect(log).toHaveBeenCalledWith("coin:tezos", "useBakers: listBakers failed", {
+        error: expect.any(Error),
+      }),
+    );
+    expect(result.current).toEqual([stakingBaker]);
+  });
+
+  it("ignores a listing failure that lands after unmount", async () => {
+    jest.mocked(log).mockClear();
+    mockBakers.listBakers.mockRejectedValue(new Error("network down"));
+    const { unmount } = renderHook(() => useBakers());
+    unmount();
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(log).not.toHaveBeenCalled();
+  });
+});
+
+describe("useLedgerBaker", () => {
+  beforeEach(() => {
+    mockBakers.listBakersWithDefault.mockReset().mockReturnValue([]);
+    mockBakers.listBakers.mockReset().mockResolvedValue([]);
+  });
+
+  it("returns Ledger's baker wherever the list holds it", async () => {
+    mockBakers.listBakers.mockResolvedValue([stakingBaker, ledgerBaker]);
+    const { result } = renderHook(() => useLedgerBaker());
+    await waitFor(() => expect(result.current).toEqual(ledgerBaker));
+  });
+
+  it("returns no baker once Ledger's baker is no longer listed", async () => {
+    mockBakers.listBakersWithDefault.mockReturnValue([ledgerBaker]);
+    mockBakers.listBakers.mockResolvedValue([stakingBaker]);
+    const { result } = renderHook(() => useLedgerBaker());
+    expect(result.current).toEqual(ledgerBaker);
+    await waitFor(() => expect(result.current).toBeUndefined());
+  });
+
+  it("returns no baker for the stake path when Ledger's baker refuses staking", () => {
+    const refusingLedgerBaker: Baker = { ...ledgerBaker, stakingEnabled: false };
+    mockBakers.listBakersWithDefault.mockReturnValue([refusingLedgerBaker, stakingBaker]);
+    const { result } = renderHook(() => useLedgerBaker({ forStaking: true }));
+    expect(result.current).toBeUndefined();
   });
 });
 

@@ -13,6 +13,8 @@ export enum Addresses {
   SWAP_HISTORY_ERC20_ETH_USDT_TO = "0x70AAEEe70118a065ddF84dF6669b496A447C8CcC",
   /** Never sent to: only used to make an address-book "Add contact"/"Select address" action appear. */
   EVM_SPARE = "0x000000000000000000000000000000000000dEaD",
+  /** ENS name the QA accounts never send to, so it always triggers the first-interaction warning. */
+  VITALIK_ENS = "vitalik.eth",
   /** Tron black-hole address, same purpose as `EVM_SPARE`. */
   TRON_SPARE = "T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb",
   // The address the device derives for the shared QA seed at 44'/133'/0'/0/6

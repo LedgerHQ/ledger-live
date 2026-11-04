@@ -6,23 +6,22 @@ import { useTranslation } from "react-i18next";
 import { PenEdit, Settings } from "@ledgerhq/lumen-ui-react/symbols";
 import type { computeAggregatedAccountsData } from "@ledgerhq/asset-aggregation/index";
 import { accountNameWithDefaultSelector, type WalletState } from "~/renderer/reducers/wallet";
+import { getAccountTag } from "LLD/utils/getAccountTag";
 import { getAccountAssetsCurrencies } from "LLD/features/CryptoAddresses/utils/getAccountAssetsCurrencies";
 import {
   AccountAddressCell,
   AccountAssetsCell,
   AccountNameCell,
   AccountRowActionCell,
-  AccountValueCell,
   AggregatedAccountNameCell,
   AggregatedAccountValueCell,
 } from "./Cell";
 
 export type CryptoTableCellData = {
   readonly walletState: WalletState;
-  readonly shouldDisplayAggregatedAssets: boolean;
   readonly lookupParentAccount: (id: string) => Account | undefined | null;
   readonly blacklistedTokenIds: string[];
-  readonly aggregatedDataByAccountId: ReturnType<typeof computeAggregatedAccountsData> | null;
+  readonly aggregatedDataByAccountId: ReturnType<typeof computeAggregatedAccountsData>;
   readonly isSyncing: boolean;
   readonly onEditName: (account: AccountLike) => void;
   readonly hasAccountSettings: (account: AccountLike) => boolean;
@@ -44,11 +43,15 @@ function useCryptoTableCellData(): CryptoTableCellData {
 type CryptoCellProps = CellContext<AccountLike, unknown>;
 
 export function NameCell({ row }: CryptoCellProps) {
-  const { walletState, shouldDisplayAggregatedAssets } = useCryptoTableCellData();
+  const { walletState } = useCryptoTableCellData();
   const displayName = accountNameWithDefaultSelector(walletState, row.original);
 
-  return shouldDisplayAggregatedAssets && row.original.type === "Account" ? (
-    <AggregatedAccountNameCell account={row.original} displayName={displayName} />
+  return row.original.type === "Account" ? (
+    <AggregatedAccountNameCell
+      account={row.original}
+      displayName={displayName}
+      tag={getAccountTag(row.original)}
+    />
   ) : (
     <AccountNameCell account={row.original} displayName={displayName} />
   );
@@ -67,17 +70,11 @@ export function AssetsCell({ row }: CryptoCellProps) {
 }
 
 export function BalanceCell({ row }: CryptoCellProps) {
-  const { shouldDisplayAggregatedAssets, aggregatedDataByAccountId } = useCryptoTableCellData();
-
-  if (shouldDisplayAggregatedAssets && aggregatedDataByAccountId) {
-    const entry = aggregatedDataByAccountId.get(row.original.id);
-    return (
-      <AggregatedAccountValueCell
-        aggregatedCountervalue={entry?.countervalue ?? new BigNumber(0)}
-      />
-    );
-  }
-  return <AccountValueCell account={row.original} />;
+  const { aggregatedDataByAccountId } = useCryptoTableCellData();
+  const entry = aggregatedDataByAccountId.get(row.original.id);
+  return (
+    <AggregatedAccountValueCell aggregatedCountervalue={entry?.countervalue ?? new BigNumber(0)} />
+  );
 }
 
 export function ActionCell({ row }: CryptoCellProps) {

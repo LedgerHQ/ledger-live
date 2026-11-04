@@ -6,6 +6,8 @@
 // — its node_modules, its jest/ folder — deliberately keep `<rootDir>`.
 
 const path = require("path");
+const { presetFactory } = require("../core");
+const { deepFreeze } = require("../internals/freeze");
 
 const here = relative => path.join(__dirname, relative);
 
@@ -42,14 +44,38 @@ const WEB_TRANSFORM_ALLOWLIST = [
 // taking ~3s locally, so the timeout has to absorb runner contention rather than test cost.
 const TEST_TIMEOUT = 30_000;
 
+// The projects' mappers and setup files, which a package spreads to keep them (the override rule
+// of the `@support/jest` README).
+const webModuleNameMapper = deepFreeze({
+  "^jest/(.*)$": "<rootDir>/jest/$1",
+  // Pin lumen to the consumer's copy. Two reasons: this package does not carry lumen's peer
+  // graph (clsx, radix, …), and a second lumen instance would give the ThemeProvider rendered
+  // here a different React context than the components under test.
+  "^@ledgerhq/lumen-ui-react$": "<rootDir>/node_modules/@ledgerhq/lumen-ui-react",
+});
+
+const nativeModuleNameMapper = deepFreeze({
+  "^jest/(.*)$": "<rootDir>/jest/$1",
+  // resolved in the consumer: each devtools package declares lumen itself
+  "^@ledgerhq/lumen-ui-rnative$": "<rootDir>/node_modules/@ledgerhq/lumen-ui-rnative/src/index.ts",
+  "^@ledgerhq/lumen-design-core$": "<rootDir>/node_modules/@ledgerhq/lumen-design-core",
+  "^@sbaiahmed1/react-native-blur$": here("mocks/react-native-blur.tsx"),
+  "^react-native-worklets$": here("mocks/react-native-worklets.js"),
+  "^react-native-gesture-handler$": here("mocks/react-native-gesture-handler.tsx"),
+  "^expo-haptics$": here("mocks/expo-haptics.ts"),
+});
+
+const webSetupFilesAfterEnv = deepFreeze(["@testing-library/jest-dom", here("setup/web.js")]);
+
+const nativeSetupFilesAfterEnv = deepFreeze([here("setup/native.ts")]);
+
 /**
  * jsdom project for a devtools package's `*.web.test.*` files.
  *
- * @param {import('@jest/types').Config.InitialOptions} [overrides] `moduleNameMapper` is merged
- * into the preset's; every other key replaces it.
+ * @param {import('@jest/types').Config.InitialOptions} [overrides] by the override rule of the `@support/jest` README
  * @returns {import('@jest/types').Config.InitialOptions}
  */
-function createWebJestConfig({ moduleNameMapper, ...overrides } = {}) {
+function webJestConfig(overrides = {}) {
   return {
     testEnvironment: "jsdom",
     roots: ["<rootDir>/src"],
@@ -61,16 +87,8 @@ function createWebJestConfig({ moduleNameMapper, ...overrides } = {}) {
     // jest package once private hoist makes that package visible, so map the prefix.
     modulePaths: ["<rootDir>"],
     transformIgnorePatterns: [`node_modules/.pnpm/(?!(${WEB_TRANSFORM_ALLOWLIST.join("|")}))`],
-    setupFilesAfterEnv: ["@testing-library/jest-dom", here("setup/web.js")],
-    moduleNameMapper: {
-      // First matching pattern wins, so a consumer mapper comes before this prefix.
-      ...moduleNameMapper,
-      "^jest/(.*)$": "<rootDir>/jest/$1",
-      // Pin lumen to the consumer's copy. Two reasons: this package does not carry lumen's peer
-      // graph (clsx, radix, …), and a second lumen instance would give the ThemeProvider rendered
-      // here a different React context than the components under test.
-      "^@ledgerhq/lumen-ui-react$": "<rootDir>/node_modules/@ledgerhq/lumen-ui-react",
-    },
+    setupFilesAfterEnv: [...webSetupFilesAfterEnv],
+    moduleNameMapper: { ...webModuleNameMapper },
     coverageReporters: coverageReporters("lcov.info"),
     reporters: ["default", sonarReporter("sonar-executionTests-report.xml")],
     ...overrides,
@@ -84,11 +102,10 @@ function createWebJestConfig({ moduleNameMapper, ...overrides } = {}) {
  * rootDir, and babel-jest needs the React Native preset to parse the Flow-typed `.js` files that
  * ship inside react-native itself.
  *
- * @param {import('@jest/types').Config.InitialOptions} [overrides] `moduleNameMapper` is merged
- * into the preset's; every other key replaces it.
+ * @param {import('@jest/types').Config.InitialOptions} [overrides] by the override rule of the `@support/jest` README
  * @returns {import('@jest/types').Config.InitialOptions}
  */
-function createNativeJestConfig({ moduleNameMapper, ...overrides } = {}) {
+function nativeJestConfig(overrides = {}) {
   return {
     preset: "react-native",
     roots: ["<rootDir>/src"],
@@ -102,24 +119,19 @@ function createNativeJestConfig({ moduleNameMapper, ...overrides } = {}) {
     },
     transformIgnorePatterns: [`node_modules/(?!(${NATIVE_TRANSFORM_ALLOWLIST.join("|")})/.)`],
     modulePaths: ["<rootDir>"],
-    moduleNameMapper: {
-      // First matching pattern wins, so a consumer mapper comes before this prefix.
-      ...moduleNameMapper,
-      "^jest/(.*)$": "<rootDir>/jest/$1",
-      // resolved in the consumer: each devtools package declares lumen itself
-      "^@ledgerhq/lumen-ui-rnative$":
-        "<rootDir>/node_modules/@ledgerhq/lumen-ui-rnative/src/index.ts",
-      "^@ledgerhq/lumen-design-core$": "<rootDir>/node_modules/@ledgerhq/lumen-design-core",
-      "^@sbaiahmed1/react-native-blur$": here("mocks/react-native-blur.tsx"),
-      "^react-native-worklets$": here("mocks/react-native-worklets.js"),
-      "^react-native-gesture-handler$": here("mocks/react-native-gesture-handler.tsx"),
-      "^expo-haptics$": here("mocks/expo-haptics.ts"),
-    },
-    setupFilesAfterEnv: [here("setup/native.ts")],
+    moduleNameMapper: { ...nativeModuleNameMapper },
+    setupFilesAfterEnv: [...nativeSetupFilesAfterEnv],
     coverageReporters: coverageReporters("lcov.native.info"),
     reporters: ["default", sonarReporter("sonar-executionTests-native-report.xml")],
     ...overrides,
   };
 }
 
-module.exports = { createWebJestConfig, createNativeJestConfig };
+module.exports = {
+  createWebJestConfig: presetFactory("createWebJestConfig", [], webJestConfig),
+  createNativeJestConfig: presetFactory("createNativeJestConfig", [], nativeJestConfig),
+  nativeModuleNameMapper,
+  nativeSetupFilesAfterEnv,
+  webModuleNameMapper,
+  webSetupFilesAfterEnv,
+};

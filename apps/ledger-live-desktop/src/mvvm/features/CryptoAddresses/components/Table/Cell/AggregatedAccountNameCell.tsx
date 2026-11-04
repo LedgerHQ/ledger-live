@@ -1,16 +1,23 @@
 import React from "react";
-import { TableCellItem, TableCellContent, TableCellContentTitle } from "@ledgerhq/lumen-ui-react";
+import {
+  TableCellItem,
+  TableCellContent,
+  TableCellContentTitle,
+  Tag,
+} from "@ledgerhq/lumen-ui-react";
 import type { Account } from "@ledgerhq/types-live";
 import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
 
 type AggregatedAccountNameCellProps = {
   readonly account: Account;
   readonly displayName: string;
+  readonly tag?: string;
 };
 
 export function AggregatedAccountNameCell({
   account,
   displayName,
+  tag,
 }: AggregatedAccountNameCellProps) {
   return (
     <TableCellItem>
@@ -20,7 +27,10 @@ export function AggregatedAccountNameCell({
         size={32}
       />
       <TableCellContent>
-        <TableCellContentTitle>{displayName}</TableCellContentTitle>
+        <div className="flex min-w-0 items-center gap-8">
+          <TableCellContentTitle>{displayName}</TableCellContentTitle>
+          {tag ? <Tag label={tag} size="sm" appearance="gray" /> : null}
+        </div>
       </TableCellContent>
     </TableCellItem>
   );

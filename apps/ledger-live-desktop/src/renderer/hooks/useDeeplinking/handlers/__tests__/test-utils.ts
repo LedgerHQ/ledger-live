@@ -16,10 +16,10 @@ export const createMockContext = (
   currentSearch: "",
   currentLocationState: undefined,
   accountsPath: "/accounts",
-  assetsPath: "/market",
   isProductTourEnabled: true,
   isGenericAwarenessModalEnabled: true,
   isPayTabEnabled: false,
   isContactsEnabled: false,
+  isPredictionsAvailable: true,
   ...overrides,
 });

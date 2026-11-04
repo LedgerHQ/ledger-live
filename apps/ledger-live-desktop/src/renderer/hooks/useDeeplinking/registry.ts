@@ -15,6 +15,7 @@ import { assetHandler } from "./handlers/asset.handler";
 import { marketHandler } from "./handlers/market.handler";
 import { recoverHandler, recoverRestoreFlowHandler } from "./handlers/recover.handler";
 import { perpsHandler } from "./handlers/perps.handler";
+import { predictionsHandler } from "./handlers/predictions.handler";
 import { payTabHandler } from "./handlers/payTab.handler";
 import { contactsHandler } from "./handlers/contacts.handler";
 import { postOnboardingHandler } from "./handlers/postOnboarding.handler";
@@ -43,6 +44,7 @@ export const deeplinkRegistry: DeeplinkHandlerRegistry = {
   market: marketHandler,
   asset: assetHandler,
   perps: perpsHandler,
+  predictions: predictionsHandler,
   paytab: payTabHandler,
   contacts: contactsHandler,
   recover: recoverHandler,

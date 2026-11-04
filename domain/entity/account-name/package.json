@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-account-name",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
   "description": "AccountName entity: naming utilities, account-names store, and wallet-sync module",
   "main": "src/index.ts",
@@ -13,6 +13,7 @@
     "./src/slice.ts"
   ],
   "scripts": {
+    "lint": "oxlint ./src",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",

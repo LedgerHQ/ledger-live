@@ -29,7 +29,7 @@ describe("ContactsCompactList", () => {
   it("should render supplied contacts in order with the appropriate address descriptions", () => {
     const contacts = createContacts();
 
-    render(<ContactsCompactList contacts={contacts} onContactSelect={jest.fn()} />);
+    render(<ContactsCompactList contacts={contacts} onSelectContact={jest.fn()} />);
 
     const [zeroRow, oneRow, manyRow] = screen.getAllByTestId(/^contacts-compact-row-/);
 
@@ -47,7 +47,7 @@ describe("ContactsCompactList", () => {
   it("should render only the first supplied contacts when maxContacts is set", () => {
     const contacts = createContacts();
 
-    render(<ContactsCompactList contacts={contacts} maxContacts={2} onContactSelect={jest.fn()} />);
+    render(<ContactsCompactList contacts={contacts} maxContacts={2} onSelectContact={jest.fn()} />);
 
     expect(screen.getAllByTestId(/^contacts-compact-row-/)).toHaveLength(2);
     expect(screen.getByTestId("contacts-compact-row-contact-zero")).toBeVisible();
@@ -56,7 +56,7 @@ describe("ContactsCompactList", () => {
   });
 
   it("should render no rows when contacts are empty or maxContacts is zero", () => {
-    const { rerender } = render(<ContactsCompactList contacts={[]} onContactSelect={jest.fn()} />);
+    const { rerender } = render(<ContactsCompactList contacts={[]} onSelectContact={jest.fn()} />);
 
     expect(screen.getByTestId("contacts-compact-list")).toBeEmptyDOMElement();
 
@@ -64,7 +64,7 @@ describe("ContactsCompactList", () => {
       <ContactsCompactList
         contacts={createContacts()}
         maxContacts={0}
-        onContactSelect={jest.fn()}
+        onSelectContact={jest.fn()}
       />,
     );
 
@@ -73,12 +73,12 @@ describe("ContactsCompactList", () => {
 
   it("should provide the selected contact to the consumer callback", async () => {
     const contacts = createContacts();
-    const onContactSelect = jest.fn();
+    const onSelectContact = jest.fn();
 
-    render(<ContactsCompactList contacts={contacts} onContactSelect={onContactSelect} />);
+    render(<ContactsCompactList contacts={contacts} onSelectContact={onSelectContact} />);
 
     fireEvent.click(screen.getByTestId("contacts-compact-row-contact-one"));
 
-    expect(onContactSelect).toHaveBeenCalledWith(contacts[1]);
+    expect(onSelectContact).toHaveBeenCalledWith(contacts[1]);
   });
 });

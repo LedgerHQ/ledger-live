@@ -1,5 +1,19 @@
 # @devtools/feature-flags
 
+## 0.11.1
+
+### Patch Changes
+
+- Updated dependencies [[`9907890`](https://github.com/LedgerHQ/ledger-live/commit/9907890790bf8b804d7cc454a067508df0969137), [`7aeab58`](https://github.com/LedgerHQ/ledger-live/commit/7aeab582f0f6c8d38cf88af0c559dd37d77b9a1c), [`68196b4`](https://github.com/LedgerHQ/ledger-live/commit/68196b4642ad26ccce9b3263e45ee718572acb11), [`f95b426`](https://github.com/LedgerHQ/ledger-live/commit/f95b4268782b5cfd8cb4c14c9b0e5c6384cafa4d), [`e275739`](https://github.com/LedgerHQ/ledger-live/commit/e27573929d3e688afbb6544c58274e025867e6e4), [`77a85a3`](https://github.com/LedgerHQ/ledger-live/commit/77a85a30abe7b42e5f5b4e0478bec14fa39033cf)]:
+  - @shared/feature-flags@0.29.0
+
+## 0.11.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`9907890`](https://github.com/LedgerHQ/ledger-live/commit/9907890790bf8b804d7cc454a067508df0969137), [`7aeab58`](https://github.com/LedgerHQ/ledger-live/commit/7aeab582f0f6c8d38cf88af0c559dd37d77b9a1c), [`68196b4`](https://github.com/LedgerHQ/ledger-live/commit/68196b4642ad26ccce9b3263e45ee718572acb11), [`f95b426`](https://github.com/LedgerHQ/ledger-live/commit/f95b4268782b5cfd8cb4c14c9b0e5c6384cafa4d), [`e275739`](https://github.com/LedgerHQ/ledger-live/commit/e27573929d3e688afbb6544c58274e025867e6e4), [`77a85a3`](https://github.com/LedgerHQ/ledger-live/commit/77a85a30abe7b42e5f5b4e0478bec14fa39033cf)]:
+  - @shared/feature-flags@0.29.0-next.0
+
 ## 0.11.0
 
 ### Minor Changes
@@ -191,19 +205,5 @@
 
 - Updated dependencies [[`aa39333`](https://github.com/LedgerHQ/ledger-live/commit/aa393339789242783b168398cb5122a7f1e3f620), [`01c088d`](https://github.com/LedgerHQ/ledger-live/commit/01c088db6a0597a479f6371c3a3db81157ead41e), [`91dbf02`](https://github.com/LedgerHQ/ledger-live/commit/91dbf023257961c3f15725f57abf273d2190e3c5), [`d6c7592`](https://github.com/LedgerHQ/ledger-live/commit/d6c7592278f2eed430c0451dd1b0a99fdf5b377d), [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e)]:
   - @shared/feature-flags@0.20.0-next.0
-
-## 0.7.1
-
-### Patch Changes
-
-- Updated dependencies [[`e4e8d08`](https://github.com/LedgerHQ/ledger-live/commit/e4e8d086fc5672e4ce96c30c9a9af3f2022f863a), [`da0a5ce`](https://github.com/LedgerHQ/ledger-live/commit/da0a5ceb8f889f1bace45ed2d3d4c640cdf24ca8), [`5b39a67`](https://github.com/LedgerHQ/ledger-live/commit/5b39a67dd93d4c541a77b0b146881073ca00ed15), [`0807eca`](https://github.com/LedgerHQ/ledger-live/commit/0807ecacfd06057811a3d6f8845b9f4bfc6f693c)]:
-  - @shared/feature-flags@0.19.0
-
-## 0.7.1-next.1
-
-### Patch Changes
-
-- Updated dependencies [[`da0a5ce`](https://github.com/LedgerHQ/ledger-live/commit/da0a5ceb8f889f1bace45ed2d3d4c640cdf24ca8)]:
-  - @shared/feature-flags@0.19.0-next.1
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

@@ -14,10 +14,12 @@ import { endpointByCurrencyId } from "../../utils";
 import { estimateFees } from "../estimateFees";
 import { validateIntent as validateIntentRaw } from "../validateIntent";
 import type { SolanaCoinConfig } from "../../config";
+import { TEST_CONFIG } from "../../test/coinConfig";
 
 const config: SolanaCoinConfig = {
   token2022Enabled: false,
   legacyOCMSMaxVersion: "1.0.0",
+  rpcUrls: { solana: "https://solana.coin.ledger.com" },
   status: { type: "active" },
   name: "Solana",
   unit: { name: "SOL", code: "SOL", magnitude: 9 },
@@ -82,7 +84,7 @@ describe("validateIntent (integration)", () => {
   describe("SPL Token-2022 transfer to recipient without ATA", () => {
     it("packs NotEnoughGas when spendable balance equals classic ATA rent + fee (the regression scenario)", async () => {
       const intent = makeTokenIntent(VIBECODOOR_MINT);
-      const estimation = await estimateFees(api, intent);
+      const estimation = await estimateFees(api, TEST_CONFIG, intent);
       const classicAtaRent = BigInt(await api.getMinimumBalanceForRentExemption(CLASSIC_ATA_SIZE));
 
       const result = await validateIntent(
@@ -99,7 +101,7 @@ describe("validateIntent (integration)", () => {
 
     it("does not pack NotEnoughGas when spendable balance comfortably covers mint-aware ATA rent + fee", async () => {
       const intent = makeTokenIntent(VIBECODOOR_MINT);
-      const estimation = await estimateFees(api, intent);
+      const estimation = await estimateFees(api, TEST_CONFIG, intent);
 
       const result = await validateIntent(
         intent,
@@ -145,7 +147,7 @@ describe("validateIntent (integration)", () => {
           sender: SENDER,
           recipient: "not-a-base58-address!!!",
           amount: 1n,
-          asset: { type: "native", name: "Solana" } as TransactionIntent["asset"],
+          asset: { type: "native" } as TransactionIntent["asset"],
         },
         [makeNativeBalance(1_000_000_000n)],
         { value: NETWORK_FEE },
@@ -163,7 +165,7 @@ describe("validateIntent (integration)", () => {
           sender: SENDER,
           recipient: Keypair.generate().publicKey.toBase58(),
           amount: 10_000_000_000n,
-          asset: { type: "native", name: "Solana" } as TransactionIntent["asset"],
+          asset: { type: "native" } as TransactionIntent["asset"],
         },
         [makeNativeBalance(1_000_000_000n + MAIN_ACCOUNT_RENT_EXEMPT)],
         { value: NETWORK_FEE },

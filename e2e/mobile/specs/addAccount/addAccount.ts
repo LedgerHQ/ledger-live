@@ -1,17 +1,8 @@
 import { Currency, CurrencyType } from "@ledgerhq/live-e2e-shared/enum/Currency";
-import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { coinTeamOwner } from "@ledgerhq/live-e2e-shared/data/coinTeamOwner";
+import { TestFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import type { PartialFeatures } from "@shared/feature-flags";
-
-const BST_ADD_ACCOUNT_CURRENCIES = new Set([
-  "ton",
-  "aptos",
-  "cardano",
-  "tezos",
-  "zcash",
-  "algorand",
-  "ripple",
-]);
 
 const CURRENCY_FEATURE_FLAGS = new Map<string, PartialFeatures>([
   [Currency.BABY.id, { currencyBabylon: { enabled: true } }],
@@ -30,7 +21,7 @@ export function runAddAccountTest(currency: CurrencyType, tmsLinks: string[], ta
       await app.mainNavigation.waitForWallet40Ready();
     });
 
-    setTeamOwner(BST_ADD_ACCOUNT_CURRENCIES.has(currency.id) ? Team.BST : Team.COIN_INTEGRATION);
+    setTeamOwner(coinTeamOwner(currency.id), { folder: TestFolder.ACCOUNTS });
     tmsLinks.forEach(link => $TmsLink(link));
     tags.forEach(tag => $Tag(tag));
     it(`[${currency.testLabel}] - Add account`, async () => {

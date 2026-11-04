@@ -8,10 +8,12 @@ import { useSelector } from "LLD/hooks/redux";
 import { discreetModeSelector, localeSelector } from "~/renderer/reducers/settings";
 import { useAccountName } from "~/renderer/reducers/wallet";
 import { getCryptoAccountAddress } from "LLD/features/CryptoAddresses/utils/getCryptoAccountAddress";
+import { getAccountTag } from "LLD/utils/getAccountTag";
 import { useCounterValueCellViewModel } from "LLD/components/Cells/CounterValueCell/useCounterValueCellViewModel";
 
 export type AddressListItemViewModel = Readonly<{
   displayName: string;
+  tag: string | undefined;
   formattedAddress: string;
   formattedCounterValue: string;
   cryptoFormatted: string;
@@ -20,6 +22,7 @@ export type AddressListItemViewModel = Readonly<{
   onClick: () => void;
   rowTestId: string;
   balanceTestId: string;
+  tagTestId: string;
 }>;
 
 export function useAddressListItemViewModel(
@@ -57,6 +60,7 @@ export function useAddressListItemViewModel(
 
   return {
     displayName,
+    tag: getAccountTag(accountForDisplayName ?? account),
     formattedAddress,
     formattedCounterValue,
     cryptoFormatted,
@@ -65,5 +69,6 @@ export function useAddressListItemViewModel(
     onClick,
     rowTestId: `asset-detail-address-row-${account.id}`,
     balanceTestId: `asset-detail-address-balance-${account.id}`,
+    tagTestId: `asset-detail-address-tag-${account.id}`,
   };
 }

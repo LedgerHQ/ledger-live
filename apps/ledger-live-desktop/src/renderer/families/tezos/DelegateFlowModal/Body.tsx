@@ -5,8 +5,7 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { Trans, useTranslation } from "react-i18next";
 import invariant from "invariant";
 import { Account, AccountLike, Operation, TokenAccount } from "@ledgerhq/types-live";
-import { useBakers } from "@ledgerhq/live-common/families/tezos/react";
-import { whitelist } from "@ledgerhq/live-common/families/tezos/staking";
+import { useLedgerBaker } from "@ledgerhq/live-common/families/tezos/react";
 import { getMainAccount, addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { useAccountBridgeOrNull } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -99,7 +98,7 @@ const Body = ({ stepId, params, onChangeStepId, onClose }: Props) => {
   const dispatch = useDispatch();
   const device = useSelector(getCurrentDevice);
   const openedFromAccount = !!params.account;
-  const [defaultBaker] = useBakers(whitelist);
+  const defaultBaker = useLedgerBaker();
   const steps = createSteps(params);
   const bridge = useAccountBridgeOrNull<Transaction>(
     params.account ?? null,
@@ -135,14 +134,12 @@ const Body = ({ stepId, params, onChangeStepId, onClose }: Props) => {
       mode: params.mode || "delegate",
     };
 
-    // make sure that in delegate mode, a transaction recipient is set (random pick)
     if (
       patch.mode === "delegate" &&
       !transaction.recipient &&
       stepId !== "custom" &&
       defaultBaker?.address
     ) {
-      // guard against an empty bakers list while the hook loads
       patch.recipient = defaultBaker.address;
     }
 

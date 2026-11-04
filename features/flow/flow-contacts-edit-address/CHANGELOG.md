@@ -1,5 +1,29 @@
 # @features/flow-contacts-edit-address
 
+## 0.7.0
+
+### Minor Changes
+
+- [#24144](https://github.com/LedgerHQ/ledger-live/pull/24144) [`d7778b9`](https://github.com/LedgerHQ/ledger-live/commit/d7778b9a6fcaae428e8a4e30e0bcdab13e6b2c1d) Thanks [@ysitbon](https://github.com/ysitbon)! - `ContactsRenameAddressDialog` takes one props contract, `ContactsRenameAddressDialogProps`, on both platforms, with `autoFocus` as its only native prop. `ContactsRenameAddressDrawerProps` and its `bottomInset` are gone: the native content reads the inset from its sheet. The `.` entry is one `src/index.ts`, with no `react-native` condition.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/entity-contact@0.12.3
+  - @features/platform-contacts@0.12.1
+
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#24144](https://github.com/LedgerHQ/ledger-live/pull/24144) [`d7778b9`](https://github.com/LedgerHQ/ledger-live/commit/d7778b9a6fcaae428e8a4e30e0bcdab13e6b2c1d) Thanks [@ysitbon](https://github.com/ysitbon)! - `ContactsRenameAddressDialog` takes one props contract, `ContactsRenameAddressDialogProps`, on both platforms, with `autoFocus` as its only native prop. `ContactsRenameAddressDrawerProps` and its `bottomInset` are gone: the native content reads the inset from its sheet. The `.` entry is one `src/index.ts`, with no `react-native` condition.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/entity-contact@0.12.3-next.0
+  - @features/platform-contacts@0.12.1-next.0
+
 ## 0.6.0
 
 ### Minor Changes

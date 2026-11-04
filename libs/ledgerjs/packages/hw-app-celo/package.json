@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-celo",
-  "version": "7.3.0",
+  "version": "7.3.1",
   "description": "Ledger Hardware Wallet Celo Application API",
   "keywords": [
     "Ledger",
@@ -36,6 +36,7 @@
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "catalog:",
+    "@ledgerhq/ledger-libs": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",

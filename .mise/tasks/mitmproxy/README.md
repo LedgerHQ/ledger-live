@@ -1,9 +1,10 @@
 # mitmproxy mise tasks
 
-Four tasks for running [mitmproxy](https://mitmproxy.org/) as a transparent
+Tasks for running [mitmproxy](https://mitmproxy.org/) as a transparent
 intercepting proxy during tests. They handle the full lifecycle: starting the
 proxy (with optional response mocking), stopping it, and encrypting/decrypting
-the captured traffic for later analysis.
+the captured traffic for later analysis. The desktop E2E run uses a separate,
+narrower pair: see [Remote Config capture](#remote-config-capture-desktop-e2e).
 
 ## Tasks
 
@@ -249,3 +250,40 @@ mise run mitmproxy:decrypt \
 # Open the flow file in mitmweb for interactive inspection
 mitmweb -r ./logs/mitmproxy.flows
 ```
+
+---
+
+## Remote Config capture (desktop E2E)
+
+Every desktop E2E test launches a fresh app, and every launch fetches Firebase
+Remote Config before it renders. The quota is 60 fetches a minute per IP, so two
+overlapping full runs get HTTP 429 and their tests start on default flags.
+`mitmproxy:capture-start` and `mitmproxy:capture-stop` fix that in the `e2e-tests`
+job of `.github/workflows/test-ui-e2e-only-desktop.yml`:
+
+- The `firebase_capture.py` addon sends the first fetch per Firebase project,
+  language and Origin upstream, makes concurrent fetches wait for it, and replays
+  the stored answer, Firebase's CORS headers included, to every later launch. Only
+  a 200 with `state: UPDATE` is stored. A fetch that carries a real ETag goes to
+  Firebase untouched, so NO_CHANGE answers stay live.
+- Only Electron uses the proxy, and only for `firebaseremoteconfig.googleapis.com`:
+  `e2e/desktop/tests/utils/electronUtils.ts` adds a PAC file and trusts the
+  mitmproxy CA by its key hash when `E2E_FIREBASE_PROXY` and
+  `E2E_FIREBASE_PROXY_SPKI` are set. Nothing changes system-wide.
+- It fails open. `capture-start` exports those variables only after a health
+  check passes; otherwise it logs a warning and the run calls Firebase directly.
+  The PAC also falls back to a direct connection if the proxy dies mid-run.
+- `capture-stop` prints upstream and replay counts per key to the job summary.
+  Logs contain no request or response bodies.
+
+Run it locally around a desktop E2E run:
+
+```bash
+mise run mitmproxy:capture-start  # outside CI it prints an export line: run it in your shell
+pnpm e2e:desktop test:playwright
+mise run mitmproxy:capture-stop
+```
+
+Addon tests: `python -m pytest .mise/tasks/mitmproxy/firebase_capture_test.py`
+with mitmproxy 12.2.1 installed. CI runs them on every PR that touches this folder
+(`.github/workflows/test-mitmproxy-addons-pr.yml`).

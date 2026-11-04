@@ -58,8 +58,8 @@ describe("ApplyUpdates step", () => {
     });
 
     expect(screen.getByTestId("os-update-progress-screen")).toBeVisible();
-    expect(screen.getByText("Updating your Ledger Stax")).toBeVisible();
-    expect(screen.getByText("Update 2 of 3")).toBeVisible();
+    expect(screen.getByText(/Your Ledger Stax will restart automatically/)).toBeVisible();
+    expect(screen.getByText("Update 2/3")).toBeVisible();
     expect(screen.getByTestId("os-update-progress-bar").props.accessibilityValue).toMatchObject({
       now: 50,
     });
@@ -80,7 +80,7 @@ describe("ApplyUpdates step", () => {
   it("shows the restore progress without an update count", () => {
     renderView({ type: ApplyUpdatesStateType.RESTORING, progress: 0.25 });
 
-    expect(screen.getByText("Restoring your apps and settings")).toBeVisible();
+    expect(screen.getByText("Reinstalling your settings...")).toBeVisible();
     expect(screen.queryByText(/Update \d+ of \d+/)).toBeNull();
   });
 

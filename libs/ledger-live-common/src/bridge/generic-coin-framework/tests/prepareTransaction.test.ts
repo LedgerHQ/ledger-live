@@ -1,3 +1,5 @@
+import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
+import { genericGetTransactionStatus } from "../getTransactionStatus";
 import { genericPrepareTransaction } from "../prepareTransaction";
 import { getCoinModuleApi } from "../api";
 import { getBridgeApi } from "../bridge";
@@ -836,6 +838,143 @@ describe("genericPrepareTransaction", () => {
       expect.any(Function), // craftTransactionData closure (framework v6)
       undefined,
     );
+  });
+
+  describe("failed estimation", () => {
+    const refusal = new Error(
+      "Fees estimation failed: proto.025-PsUshuai.contract.balance_too_low",
+    );
+
+    function mockRefusedEstimation(validatesRefusedEstimation: boolean) {
+      (getBridgeApi as jest.Mock).mockResolvedValue({ validatesRefusedEstimation });
+      (getCoinModuleApi as jest.Mock).mockReturnValue({
+        estimateFees: jest.fn().mockRejectedValue(refusal),
+      });
+    }
+
+    it("rejects when the family does not opt in", async () => {
+      mockRefusedEstimation(false);
+
+      const prepareTransaction = genericPrepareTransaction("testnet", "local");
+
+      await expect(prepareTransaction(account, baseTransaction)).rejects.toBe(refusal);
+    });
+
+    it("resolves with the fees cleared and the failure marked when the family opts in", async () => {
+      mockRefusedEstimation(true);
+      const transaction = { ...baseTransaction, feeParameters: { burn: "1" } };
+
+      const prepareTransaction = genericPrepareTransaction("testnet", "local");
+      const result = await prepareTransaction(account, transaction);
+
+      expect(result).toEqual({
+        ...baseTransaction,
+        fees: undefined,
+        feeParameters: undefined,
+        assetReference: "",
+        assetOwner: "",
+        feesEstimationFailed: true,
+      });
+    });
+
+    it("keeps the reference when the failure is already marked", async () => {
+      mockRefusedEstimation(true);
+
+      const prepareTransaction = genericPrepareTransaction("testnet", "local");
+      const failed = await prepareTransaction(account, baseTransaction);
+      const result = await prepareTransaction(account, failed);
+
+      expect(result).toBe(failed);
+    });
+
+    it("clears the marker on the next successful estimation", async () => {
+      const fee = new BigNumber(500);
+      (getCoinModuleApi as jest.Mock).mockReturnValue({
+        estimateFees: jest.fn().mockResolvedValue({ value: fee }),
+      });
+      const failed = {
+        ...baseTransaction,
+        fees: undefined,
+        assetReference: "",
+        assetOwner: "",
+        feesEstimationFailed: true,
+      };
+
+      const prepareTransaction = genericPrepareTransaction("testnet", "local");
+      const result = await prepareTransaction(account, failed);
+
+      expect(result).not.toBe(failed);
+      expect(result.feesEstimationFailed).toBeUndefined();
+      expect(result.fees).toEqual(fee);
+    });
+
+    it("clears the marker even when the estimated fee equals the one on the transaction", async () => {
+      (getCoinModuleApi as jest.Mock).mockReturnValue({
+        estimateFees: jest.fn().mockResolvedValue({ value: baseTransaction.fees }),
+      });
+      const failed = { ...baseTransaction, feesEstimationFailed: true };
+
+      const prepareTransaction = genericPrepareTransaction("testnet", "local");
+      const result = await prepareTransaction(account, failed);
+
+      expect(result).not.toBe(failed);
+      expect(result.feesEstimationFailed).toBeUndefined();
+    });
+
+    it("keeps the token send-max amount the estimation refused", async () => {
+      mockRefusedEstimation(true);
+
+      const prepareTransaction = genericPrepareTransaction("testnet", "local");
+      const result = await prepareTransaction(
+        {
+          ...account,
+          subAccounts: [
+            {
+              id: "test-sub-account",
+              token: { id: "test-token" },
+              spendableBalance: new BigNumber(100),
+            },
+          ],
+        },
+        {
+          subAccountId: "test-sub-account",
+          useAllAmount: true,
+          amount: new BigNumber(0),
+        } as GenericTransaction,
+      );
+
+      expect(result.amount).toEqual(new BigNumber(100));
+      expect(result.feesEstimationFailed).toBe(true);
+    });
+
+    it("recovers once a transient failure clears: the status rejects, the retry estimates", async () => {
+      const fee = new BigNumber(500);
+      (getBridgeApi as jest.Mock).mockResolvedValue({ validatesRefusedEstimation: true });
+      (getCoinModuleApi as jest.Mock).mockReturnValue({
+        estimateFees: jest.fn().mockRejectedValueOnce(new Error("timeout")).mockResolvedValue({
+          value: fee,
+        }),
+        validateIntent: jest.fn().mockResolvedValue({
+          errors: {},
+          warnings: {},
+          estimatedFees: 500n,
+          amount: 100_000n,
+          totalSpent: 100_500n,
+        }),
+      });
+      const prepareTransaction = genericPrepareTransaction("testnet", "local");
+      const getTransactionStatus = genericGetTransactionStatus("testnet", "local");
+
+      const failed = await prepareTransaction(account, baseTransaction);
+      await expect(getTransactionStatus(account, failed)).rejects.toThrow(FeeNotLoaded);
+
+      const recovered = await prepareTransaction(account, failed);
+      const status = await getTransactionStatus(account, recovered);
+
+      expect(recovered.fees).toEqual(fee);
+      expect(recovered.feesEstimationFailed).toBeUndefined();
+      expect(status.errors).toEqual({});
+    });
   });
 
   describe("NEAR: computeIntentType forwarding", () => {

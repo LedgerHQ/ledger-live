@@ -92,7 +92,7 @@ describe("listOperations", () => {
     ]);
   });
 
-  it("reports a native send without its fee, under the hash of the signed message", async () => {
+  it("reports a native send under the hash of the signed message, its fee counting the forward fee", async () => {
     serve({ transactions: [jettonSendTx] });
 
     const { items } = await listOperations(context, OWNER, { minHeight: 0 });
@@ -115,7 +115,8 @@ describe("listOperations", () => {
         tx: {
           hash: jettonSendTx.in_msg.hash,
           block: { height: 40170315, hash: "", time: new Date(1725542832000) },
-          fees: 2600565n,
+          // total_fees plus the forward fee of the message sent
+          fees: 2600565n + 535471n,
           date: new Date(1725542832000),
           failed: false,
         },

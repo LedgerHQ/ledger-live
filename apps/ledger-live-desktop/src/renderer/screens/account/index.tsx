@@ -34,8 +34,7 @@ import { State } from "~/renderer/reducers";
 import { useLLDCoinFamily } from "~/renderer/families";
 import NftEntryPoint from "LLD/features/NftEntryPoint";
 import { useAddressPoisoningOperationsFamilies } from "@ledgerhq/live-common/hooks/useAddressPoisoningOperationsFamilies";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
-import { getAccountsSidebarPath } from "LLD/components/SideBar/utils";
+import { ACCOUNTS_SIDEBAR_PATH } from "LLD/components/SideBar/utils";
 import { useAccountBackNavigation } from "./hooks/useAccountBackNavigation";
 import { useAccountIdFromRoute } from "~/renderer/hooks/useAccountIdFromRoute";
 import { getAccountRouteSegments } from "LLD/features/AccountDetail/utils/getAccountRouteSegments";
@@ -95,9 +94,8 @@ const AccountPage = ({
   countervalueFirst,
   setCountervalueFirst,
 }: Props) => {
-  const { shouldDisplayAssetSection } = useWalletFeaturesConfig("desktop");
   const { showBackButton, navigateBack } = useAccountBackNavigation();
-  const fallbackPath = getAccountsSidebarPath(shouldDisplayAssetSection);
+  const fallbackPath = ACCOUNTS_SIDEBAR_PATH;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const bridge = useAccountBridgeOrNull(account ?? null, parentAccount);
   const specific = useLLDCoinFamily(mainAccount?.currency.family);

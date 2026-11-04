@@ -32,17 +32,6 @@ test.describe("Wallet assets", () => {
       teamOwner: Team.WALLET_XP,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: Currency.BTC.speculosApp,
-      featureFlags: {
-        // `aggregatedAssets` redirects the legacy market coin route (`/market/:id`) to the asset detail route
-        // TODO: remove the override and update test flow linking to up to date test plan.
-        lwdWallet40: {
-          enabled: true,
-          params: {
-            ...FF_LWD_WALLET_40_Q2.lwdWallet40.params,
-            aggregatedAssets: false,
-          },
-        },
-      },
     });
 
     test(
@@ -66,11 +55,11 @@ test.describe("Wallet assets", () => {
         );
         await app.portfolio.cryptoAddressesBanner.expectAddAccountCTAVisible();
 
-        // Step 2: Select a placeholder asset — redirects to the asset market page
-        await test.step("Click placeholder asset - redirected to market page", async () => {
+        // Step 2: Select a placeholder asset — redirects to the asset detail page
+        await test.step("Click placeholder asset - redirected to asset page", async () => {
           await app.portfolio.assetsView.clickAssetInSection("cryptos", Currency.BTC);
           const page = app.layout.getPage();
-          await expect(page).toHaveURL(await coinDetailUrlPattern(page, "bitcoin"));
+          await expect(page).toHaveURL(coinDetailUrlPattern("bitcoin"));
         });
 
         // Step 3: Go back to portfolio

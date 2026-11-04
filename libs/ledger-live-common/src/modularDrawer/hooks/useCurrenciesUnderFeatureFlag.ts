@@ -32,7 +32,6 @@ export function useCurrenciesUnderFeatureFlag() {
   const mantle = useFeature("currencyMantle");
   const mantleSepolia = useFeature("currencyMantleSepolia");
   const boba = useFeature("currencyBoba");
-  const moonriver = useFeature("currencyMoonriver");
   const syscoin = useFeature("currencySyscoin");
   const internetComputer = useFeature("currencyInternetComputer");
   const telosEvm = useFeature("currencyTelosEvm");
@@ -52,8 +51,6 @@ export function useCurrenciesUnderFeatureFlag() {
   const lukso = useFeature("currencyLukso");
   const linea = useFeature("currencyLinea");
   const lineaSepolia = useFeature("currencyLineaSepolia");
-  const blast = useFeature("currencyBlast");
-  const blastSepolia = useFeature("currencyBlastSepolia");
   const scroll = useFeature("currencyScroll");
   const shape = useFeature("currencyShape");
   const story = useFeature("currencyStory");
@@ -127,7 +124,6 @@ export function useCurrenciesUnderFeatureFlag() {
       mantle,
       mantle_sepolia: mantleSepolia,
       boba,
-      moonriver,
       syscoin,
       internet_computer: internetComputer,
       telos_evm: telosEvm,
@@ -152,8 +148,6 @@ export function useCurrenciesUnderFeatureFlag() {
       linea,
       ton,
       linea_sepolia: lineaSepolia,
-      blast,
-      blast_sepolia: blastSepolia,
       scroll,
       shape,
       story,
@@ -220,7 +214,6 @@ export function useCurrenciesUnderFeatureFlag() {
       mantle,
       mantleSepolia,
       boba,
-      moonriver,
       syscoin,
       internetComputer,
       telosEvm,
@@ -245,8 +238,6 @@ export function useCurrenciesUnderFeatureFlag() {
       linea,
       ton,
       lineaSepolia,
-      blast,
-      blastSepolia,
       scroll,
       shape,
       story,

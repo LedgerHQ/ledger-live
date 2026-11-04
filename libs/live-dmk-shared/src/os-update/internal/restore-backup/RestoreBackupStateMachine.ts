@@ -1,6 +1,7 @@
 import { UserInteractionRequired, type DeviceModelId } from "@ledgerhq/device-management-kit";
 import {
   RestoreBackupDeviceAction,
+  RestoreBackupStatus,
   type Backup,
   type RestoreBackupDAInput,
 } from "@ledgerhq/dmk-ledger-wallet";
@@ -195,6 +196,13 @@ export const restoreBackupStateMachine: RestoreBackupStateMachine = setup({
             guard: ({ event }) =>
               event.output.isLeft() && isOutOfMemoryError(event.output.extract()),
             actions: assign({ error: ({ event }) => event.output.extract() }),
+            target: "OutOfMemory",
+          },
+          {
+            guard: ({ event }) =>
+              event.output
+                .map(({ restoreStatus }) => restoreStatus === RestoreBackupStatus.OUT_OF_MEMORY)
+                .orDefault(false),
             target: "OutOfMemory",
           },
           {

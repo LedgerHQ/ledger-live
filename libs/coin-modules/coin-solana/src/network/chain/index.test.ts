@@ -1,10 +1,15 @@
 import { NetworkError } from "../../errors";
 import { Config, getChainAPI } from ".";
 import {
+  ComputeBudgetInstruction,
+  ComputeBudgetProgram,
   Connection,
   PublicKey,
   SendTransactionError,
   StakeProgram,
+  SystemProgram,
+  TransactionMessage,
+  VersionedTransaction,
   TransactionExpiredBlockheightExceededError,
   TransactionExpiredTimeoutError,
 } from "@solana/web3.js";
@@ -219,6 +224,29 @@ describe("index", () => {
       });
     });
 
+    it("simulates with a zero price instruction, whose compute units the signed transaction spends too", async () => {
+      const simulateTransaction = jest
+        .fn()
+        .mockResolvedValue({ value: { err: null, unitsConsumed: 450 } });
+      jest
+        .mocked(Connection)
+        .mockImplementation(() => ({ simulateTransaction }) as unknown as Connection);
+      const payer = new PublicKey("7VHUFJHWu2CuExkJcJrzhQPJ2oygupTWkL2A2For4BmE");
+      const transfer = SystemProgram.transfer({ fromPubkey: payer, toPubkey: payer, lamports: 0 });
+
+      await getChainAPI(FAKE_CONFIG).getSimulationComputeUnits([transfer], payer);
+
+      const simulated: VersionedTransaction = simulateTransaction.mock.calls[0][0];
+      const prices = TransactionMessage.decompile(simulated.message)
+        .instructions.filter(
+          ix =>
+            ix.programId.equals(ComputeBudgetProgram.programId) &&
+            ComputeBudgetInstruction.decodeInstructionType(ix) === "SetComputeUnitPrice",
+        )
+        .map(ix => ComputeBudgetInstruction.decodeSetComputeUnitPrice(ix).microLamports);
+      expect(prices).toEqual([0n]);
+    });
+
     describe("getSignaturesForAddressBatch", () => {
       const mockServer = setupServer();
 
@@ -263,6 +291,21 @@ describe("index", () => {
 
         expect(calls).toBe(2);
         expect(result.map(({ pubkey }) => pubkey.toBase58())).toEqual([FIRST_STAKE_ACCOUNT]);
+      });
+
+      it("surfaces a rate-limited call when the config allows no retry", async () => {
+        let calls = 0;
+        mockServer.use(
+          http.post(FAKE_CONFIG.endpoint, () => {
+            calls++;
+            return rpcJson({ error: { code: -32603, message: "Upstream returned 429" } });
+          }),
+        );
+
+        await expect(
+          getChainAPI({ ...FAKE_CONFIG, retries: 0 }).getStakeAccountsByWithdrawAuth(authAddr),
+        ).rejects.toThrow("Upstream returned 429");
+        expect(calls).toBe(1);
       });
 
       it("follows getProgramAccountsV2 pagination", async () => {

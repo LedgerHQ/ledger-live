@@ -1,4 +1,4 @@
-import { act, renderHook, withFlagOverrides } from "tests/testSetup";
+import { act, renderHook } from "tests/testSetup";
 import { Order } from "@ledgerhq/live-common/market/utils/types";
 import { useGetTrendingCategoriesQuery } from "@ledgerhq/live-common/market/state-manager/api";
 import type { MarketListCategory, MarketState } from "~/renderer/reducers/market";
@@ -12,14 +12,6 @@ jest.mock("@ledgerhq/live-common/market/state-manager/api", () => ({
 
 const mockedUseTrending = useGetTrendingCategoriesQuery as jest.Mock;
 
-const assetDiscoverabilityOn = withFlagOverrides({
-  lwdWallet40: { enabled: true, params: { assetDiscoverability: true } },
-});
-
-const assetDiscoverabilityOff = withFlagOverrides({
-  lwdWallet40: { enabled: false },
-});
-
 const createMarketState = (
   category: MarketListCategory = "all",
   overrides: Partial<MarketState> = {},
@@ -30,11 +22,8 @@ const createMarketState = (
     marketParams: {
       range: "24h",
       limit: 50,
-      starred: [],
       order: Order.MarketCapDesc,
       search: "",
-      liveCompatible: false,
-      counterCurrency: "USD",
       ...marketParamsOverrides,
     },
     currentPage: 1,
@@ -46,12 +35,10 @@ const createMarketState = (
 
 const renderCategories = (
   category: MarketListCategory = "all",
-  flags = assetDiscoverabilityOn,
   marketOverrides: Partial<MarketState> = {},
 ) =>
   renderHook(() => useMarketCategories(), {
     initialState: {
-      ...flags,
       market: createMarketState(category, marketOverrides),
     },
   });
@@ -83,7 +70,7 @@ describe("useMarketCategories", () => {
   });
 
   it("resets pagination when switching categories", () => {
-    const { result, store } = renderCategories("all", assetDiscoverabilityOn, {
+    const { result, store } = renderCategories("all", {
       currentPage: 3,
     });
 
@@ -93,7 +80,7 @@ describe("useMarketCategories", () => {
   });
 
   it("resets sort to default when switching categories", () => {
-    const { result, store } = renderCategories("all", assetDiscoverabilityOn, {
+    const { result, store } = renderCategories("all", {
       marketParams: { order: Order.VolumeDesc },
     });
 
@@ -176,11 +163,5 @@ describe("useMarketCategories", () => {
     const { result } = renderCategories("gaming");
 
     expect(result.current.selectedCategory).toBe("all");
-  });
-
-  it("skips the trending request when asset discoverability is off", () => {
-    renderCategories("all", assetDiscoverabilityOff);
-
-    expect(mockedUseTrending).toHaveBeenCalledWith(undefined, { skip: true });
   });
 });

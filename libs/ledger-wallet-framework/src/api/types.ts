@@ -160,6 +160,17 @@ export type BridgeApi = {
    */
   forwardsFeeParametersToCraft?: boolean;
   /**
+   * When true, a rejected `estimateFees` does not reject `prepareTransaction`: the transaction comes
+   * back with its fees cleared and `getTransactionStatus` runs, so `validateIntent` reports the cause
+   * as a field error (an amount above the balance shows `NotEnoughBalance`, not a raw banner).
+   * `estimateMaxSpendable` returns 0 instead of rejecting.
+   *
+   * Opt-in per family: it is only safe where `validateIntent` re-diagnoses every input its
+   * `estimateFees` refuses. A family whose `validateIntent` trusts the fee it receives would pass a
+   * 0 or stale fee as valid.
+   */
+  validatesRefusedEstimation?: boolean;
+  /**
    * Whether the chain surfaces staking data through `getBalance`
    */
   stakingSupported?: boolean;

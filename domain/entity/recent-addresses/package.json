@@ -17,7 +17,8 @@
     "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../../.. -W domain/entity/recent-addresses",
     "format": "oxfmt src",
-    "format:check": "oxfmt --check src"
+    "format:check": "oxfmt --check src",
+    "lint": "oxlint ./src"
   },
   "dependencies": {
     "@reduxjs/toolkit": "catalog:",

@@ -238,6 +238,7 @@ export const StepSummaryFooter = ({
   t,
   account,
   parentAccount,
+  transaction,
   error,
   status,
   bridgePending,
@@ -246,7 +247,8 @@ export const StepSummaryFooter = ({
   if (!account) return null;
 
   const anyError: Error | undefined | null = error || Object.values(status.errors)[0];
-  const canNext = !bridgePending && !anyError;
+  const validatorMissing = transaction?.mode === "delegate" && !transaction.recipient;
+  const canNext = !bridgePending && !anyError && !validatorMissing;
   return (
     <Box horizontal alignItems="center" flow={2} grow>
       {!anyError || anyError === status.errors.sender ? (

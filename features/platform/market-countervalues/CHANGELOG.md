@@ -1,5 +1,23 @@
 # @features/platform-market-countervalues
 
+## 0.4.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/api-market-countervalues@0.2.3
+  - @domain/entity-currency@0.4.9
+  - @domain/entity-market-countervalues@0.4.2
+
+## 0.4.1-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/api-market-countervalues@0.2.3-next.0
+  - @domain/entity-currency@0.4.9-next.0
+  - @domain/entity-market-countervalues@0.4.2-next.0
+
 ## 0.4.0
 
 ### Minor Changes

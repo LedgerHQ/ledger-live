@@ -2,7 +2,7 @@ import React, { useId } from "react";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { ContactNameDisclaimer, ContactNameInput } from "@features/platform-contacts";
 import { useAddContactLabels } from "./copy/useAddContactLabels";
-import type { ContactsAddContactContentProps } from "./types";
+import type { ContactsAddContactContentProps } from "./ContactsAddContactContent.types";
 
 export function ContactsAddContactContent({
   isConfirmEnabled,

@@ -1,29 +1,6 @@
-import {
-  getAssetDetailPath,
-  getMarketOrAssetDetailPath,
-  isAssetOrMarketDetailPath,
-} from "../marketAssetNavigation";
+import { getAssetDetailPath, isAssetDetailPath } from "../marketAssetNavigation";
 
 describe("marketAssetNavigation", () => {
-  describe("getMarketOrAssetDetailPath", () => {
-    it("returns asset path when aggregated assets are on", () => {
-      expect(getMarketOrAssetDetailPath("bitcoin", true)).toBe("/asset/bitcoin");
-    });
-
-    it("returns market path when aggregated assets are off", () => {
-      expect(getMarketOrAssetDetailPath("bitcoin", false)).toBe("/market/bitcoin");
-    });
-
-    it("encodes special characters in the path segment", () => {
-      expect(getMarketOrAssetDetailPath("a/b", true)).toBe("/asset/a%2Fb");
-    });
-
-    it("does not double-encode segments already percent-encoded from deeplink pathname", () => {
-      expect(getMarketOrAssetDetailPath("a%2Fb", true)).toBe("/asset/a%2Fb");
-      expect(getMarketOrAssetDetailPath("a%2Fb", false)).toBe("/market/a%2Fb");
-    });
-  });
-
   describe("getAssetDetailPath", () => {
     it("encodes the currency id segment", () => {
       expect(getAssetDetailPath("bitcoin")).toBe("/asset/bitcoin");
@@ -34,37 +11,33 @@ describe("marketAssetNavigation", () => {
     });
   });
 
-  describe("isAssetOrMarketDetailPath", () => {
+  describe("isAssetDetailPath", () => {
     it("returns true for an asset detail path", () => {
-      expect(isAssetOrMarketDetailPath("/asset/bitcoin")).toBe(true);
+      expect(isAssetDetailPath("/asset/bitcoin")).toBe(true);
     });
 
-    it("returns true for a legacy market detail path", () => {
-      expect(isAssetOrMarketDetailPath("/market/bitcoin")).toBe(true);
+    it("returns false for a market detail path", () => {
+      expect(isAssetDetailPath("/market/bitcoin")).toBe(false);
     });
 
     it("returns false for the home path", () => {
-      expect(isAssetOrMarketDetailPath("/")).toBe(false);
+      expect(isAssetDetailPath("/")).toBe(false);
     });
 
     it("returns false for the market list path", () => {
-      expect(isAssetOrMarketDetailPath("/market")).toBe(false);
-    });
-
-    it("returns false for the market list path with a trailing slash", () => {
-      expect(isAssetOrMarketDetailPath("/market/")).toBe(false);
+      expect(isAssetDetailPath("/market")).toBe(false);
     });
 
     it("returns false for the bare asset path", () => {
-      expect(isAssetOrMarketDetailPath("/asset")).toBe(false);
+      expect(isAssetDetailPath("/asset")).toBe(false);
     });
 
     it("returns false for the bare asset path with a trailing slash", () => {
-      expect(isAssetOrMarketDetailPath("/asset/")).toBe(false);
+      expect(isAssetDetailPath("/asset/")).toBe(false);
     });
 
     it("returns false for an unrelated path", () => {
-      expect(isAssetOrMarketDetailPath("/accounts")).toBe(false);
+      expect(isAssetDetailPath("/accounts")).toBe(false);
     });
   });
 });

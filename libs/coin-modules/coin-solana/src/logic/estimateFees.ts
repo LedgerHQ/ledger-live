@@ -14,6 +14,7 @@ import {
   resolveRecipientDescriptor,
   stakeAccountSeedOfIntent,
 } from "./craftTransaction";
+import type { SolanaCoinConfig } from "../config";
 import { ChainAPI } from "../network";
 import { PARSED_PROGRAMS } from "../network/chain/program/constants";
 import {
@@ -30,6 +31,7 @@ import {
   tokenProgramOfMint,
 } from "../helpers/token";
 import { UserInputType } from "../signer";
+import { validateMemo } from "./validateMemo";
 import type {
   SolanaTokenProgram,
   SolanaTransactionIntentData,
@@ -40,12 +42,11 @@ import type {
 } from "../types";
 import {
   DUMMY_SIGNATURE,
-  LEDGER_VALIDATOR_DEFAULT,
+  defaultLedgerValidatorOf,
+  feesOf,
   ZERO_FILLED_DUMMY_SIGNATURE,
   assertUnreachable,
 } from "../utils";
-
-const DEFAULT_TX_FEE = 5000;
 
 const BASE_TRANSACTION: Transaction = {
   family: "solana",
@@ -64,6 +65,7 @@ const BASE_TRANSACTION: Transaction = {
  */
 export async function estimateFees(
   api: ChainAPI,
+  config: SolanaCoinConfig,
   intent: TransactionIntent<StringMemo | MemoNotSupported, SolanaTransactionIntentData>,
   _customFeesParameters?: FeeEstimation["parameters"],
 ): Promise<FeeEstimation> {
@@ -85,7 +87,7 @@ export async function estimateFees(
       message.recentBlockhash = (await api.getLatestBlockhash()).blockhash;
     }
 
-    return { value: BigInt((await api.getFeeForMessage(message)) ?? DEFAULT_TX_FEE) };
+    return { value: BigInt((await api.getFeeForMessage(message)) ?? feesOf(config).defaultTxFee) };
   }
 
   const kind = mapIntentToTxKind(intent);
@@ -93,11 +95,13 @@ export async function estimateFees(
   const mint = await getMaybeMintOfIntent(api, intent);
   const fee = await estimateTxFee(
     api,
+    config,
     intent.sender,
     kind,
     mint ? tokenProgramOfMint(mint) : resolveTokenProgramFromAsset(intent.asset),
     // A Token-2022 transfer instruction reads the mint on chain, so the dummy needs the real one.
     "assetReference" in intent.asset ? intent.asset.assetReference : undefined,
+    pricedMemo(intent),
   );
 
   if (TOKEN_AUTHORITY_TYPES.has(intent.type)) {
@@ -116,7 +120,7 @@ export async function estimateFees(
     const [stakeAccountAddress, stakeAccountRent, reserve] = await Promise.all([
       seed ? getStakeAccountAddressWithSeed({ fromAddress: intent.sender, seed }) : undefined,
       isCreation ? getStakeAccountMinimumBalanceForRentExemption(api) : undefined,
-      isCreation ? unstakeReserve(api, intent.sender) : 0n,
+      isCreation ? unstakeReserve(api, config, intent.sender) : 0n,
     ]);
     return {
       value: BigInt(fee),
@@ -153,11 +157,15 @@ export async function estimateFees(
 }
 
 /** Best-effort: a failure only makes send-max marginally less generous. */
-export async function unstakeReserve(api: ChainAPI, sender: string): Promise<bigint> {
+export async function unstakeReserve(
+  api: ChainAPI,
+  config: SolanaCoinConfig,
+  sender: string,
+): Promise<bigint> {
   try {
     const [undelegateFee, withdrawFee] = await Promise.all([
-      estimateTxFee(api, sender, "stake.undelegate"),
-      estimateTxFee(api, sender, "stake.withdraw"),
+      estimateTxFee(api, config, sender, "stake.undelegate"),
+      estimateTxFee(api, config, sender, "stake.withdraw"),
     ]);
     return BigInt(undelegateFee + withdrawFee);
   } catch {
@@ -255,19 +263,21 @@ async function getMaybeTransferFee(
 
 export async function estimateTxFee(
   api: ChainAPI,
+  config: SolanaCoinConfig,
   address: string,
   kind: TransactionModel["kind"],
   tokenProgram?: SolanaTokenProgram,
   mintAddress?: string,
+  memo?: string,
 ) {
-  const tx = await createDummyTx(address, kind, tokenProgram, mintAddress);
-  const [onChainTx] = await buildVersionedTransaction(address, tx, api);
+  const tx = await createDummyTx(config, address, kind, tokenProgram, mintAddress, memo);
+  const [onChainTx] = await buildVersionedTransaction(address, tx, api, config);
 
   let fee = await api.getFeeForMessage(onChainTx.message);
 
   if (typeof fee !== "number") {
     log("debug", `Solana api.getFeeForMessage returned invalid fee: <${fee}>`);
-    fee = await retryWithNewBlockhash(api, onChainTx);
+    fee = await retryWithNewBlockhash(api, config, onChainTx);
   }
 
   if (typeof fee !== "number") {
@@ -275,22 +285,24 @@ export async function estimateTxFee(
       "error",
       `Solana unexpected fee: <${fee}>, after retry with a new blockhash. Fallback to the default.`,
     );
-    fee = DEFAULT_TX_FEE;
+    fee = feesOf(config).defaultTxFee;
   }
   return fee;
 }
 
 const createDummyTx = (
+  config: SolanaCoinConfig,
   address: string,
   kind: TransactionModel["kind"],
   tokenProgram?: SolanaTokenProgram,
   mintAddress?: string,
+  memo?: string,
 ) => {
   switch (kind) {
     case "transfer":
-      return createDummyTransferTx(address);
+      return createDummyTransferTx(address, memo);
     case "stake.createAccount":
-      return createDummyStakeCreateAccountTx(address);
+      return createDummyStakeCreateAccountTx(config, address);
     case "stake.delegate":
       return createDummyStakeDelegateTx(address);
     case "stake.undelegate":
@@ -298,7 +310,7 @@ const createDummyTx = (
     case "stake.withdraw":
       return createDummyStakeWithdrawTx(address);
     case "token.transfer":
-      return createDummyTokenTransferTx(address, tokenProgram, mintAddress);
+      return createDummyTokenTransferTx(address, tokenProgram, mintAddress, memo);
     case "token.approve":
       return createDummyTokenApproveTx(address, tokenProgram);
     case "token.revoke":
@@ -314,7 +326,17 @@ const createDummyTx = (
   }
 };
 
-const createDummyTransferTx = (address: string): Transaction => {
+/**
+ * A memo costs compute units, which the compute-unit price charges: a transfer estimated without it
+ * can fall short of its fee, a send-all of rent. An oversized one is for `validateIntent` to report, and would
+ * overflow the dummy.
+ */
+function pricedMemo(intent: TransactionIntent<StringMemo | MemoNotSupported>): string | undefined {
+  const memo = "memo" in intent && intent.memo.type === "string" ? intent.memo.value : undefined;
+  return memo !== undefined && validateMemo(memo) ? memo : undefined;
+}
+
+const createDummyTransferTx = (address: string, memo?: string): Transaction => {
   return {
     ...BASE_TRANSACTION,
     model: {
@@ -326,6 +348,7 @@ const createDummyTransferTx = (address: string): Transaction => {
           amount: 0,
           recipient: address,
           sender: address,
+          memo,
         },
         ...commandDescriptorCommons,
       },
@@ -333,7 +356,10 @@ const createDummyTransferTx = (address: string): Transaction => {
   };
 };
 
-const createDummyStakeCreateAccountTx = async (address: string): Promise<Transaction> => {
+const createDummyStakeCreateAccountTx = async (
+  config: SolanaCoinConfig,
+  address: string,
+): Promise<Transaction> => {
   return {
     ...BASE_TRANSACTION,
     model: {
@@ -344,7 +370,7 @@ const createDummyStakeCreateAccountTx = async (address: string): Promise<Transac
           kind: "stake.createAccount",
           amount: 0,
           delegate: {
-            voteAccAddress: LEDGER_VALIDATOR_DEFAULT.voteAccount,
+            voteAccAddress: defaultLedgerValidatorOf(config).voteAccount,
           },
           fromAccAddress: address,
           seed: "",
@@ -418,6 +444,7 @@ const createDummyTokenTransferTx = (
   address: string,
   tokenProgram: SolanaTokenProgram = PARSED_PROGRAMS.SPL_TOKEN,
   mintAddress: string = randomAddresses[0],
+  memo?: string,
 ): Transaction => {
   const command: TokenTransferCommand = {
     kind: "token.transfer",
@@ -434,6 +461,7 @@ const createDummyTokenTransferTx = (
       userInputType: UserInputType.SOL,
     },
     tokenProgram,
+    memo,
   };
 
   // Token-2022 tokens with a transfer-fee extension use a different
@@ -577,13 +605,18 @@ const randomAddresses = [
   "AEtRo9MKfLqGtjvxdz8H93R7SQxXLEkibVSJbs9XKnD1",
 ];
 
-async function retryWithNewBlockhash(api: ChainAPI, onChainTx: OnChainTransaction) {
+async function retryWithNewBlockhash(
+  api: ChainAPI,
+  config: SolanaCoinConfig,
+  onChainTx: OnChainTransaction,
+) {
   if (onChainTx.message.recentBlockhash === undefined) {
     throw new Error("expected recentBlockhash");
   }
 
   onChainTx.message.recentBlockhash = await waitNextBlockhash(
     api,
+    config,
     onChainTx.message.recentBlockhash,
   );
 
@@ -594,9 +627,13 @@ function sleep(durationMS: number): Promise<void> {
   return new Promise(res => setTimeout(res, durationMS));
 }
 
-async function waitNextBlockhash(api: ChainAPI, currentBlockhash: string) {
-  const sleepTimeMS = 5000;
-  for (let i = 0; i < 5; i++) {
+async function waitNextBlockhash(
+  api: ChainAPI,
+  config: SolanaCoinConfig,
+  currentBlockhash: string,
+) {
+  const { blockhashRetries, blockhashRetryDelayMs: sleepTimeMS } = feesOf(config);
+  for (let i = 0; i < blockhashRetries; i++) {
     log("info", `sleeping for ${sleepTimeMS} ms, waiting for a new blockhash`);
     await sleep(sleepTimeMS);
     const blockhash = await api.getLatestBlockhash();

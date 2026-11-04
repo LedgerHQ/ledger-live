@@ -9,7 +9,9 @@ Business domain packages — the foundation of the monorepo layers.
 | Path | Purpose | README |
 | --- | --- | --- |
 | `entity/` | Canonical data models (Zod schemas), entity Redux slices, selectors | [entity/README.md](entity/README.md) |
-| `api/` | RTK Query `createApi` endpoints / `createAsyncThunk` actions for a domain | [api/README.md](api/README.md) |
+| `api/` | RTK Query endpoints injected into an `@shared/api-services` base, `createAsyncThunk` actions for a domain | [api/README.md](api/README.md) |
+
+Rules and examples for both: the [`domain-data`](../.agents/skills/domain-data/SKILL.md) skill.
 
 ## Dependency direction
 

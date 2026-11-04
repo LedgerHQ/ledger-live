@@ -37,7 +37,7 @@ export const StrategySelect = ({
         }}
         items={items}
       >
-        <SelectTrigger label={strategyLabel} />
+        <SelectTrigger label={strategyLabel} data-testid="send-coin-control-strategy-select" />
         <SelectContent>
           <SelectList
             renderItem={item => (

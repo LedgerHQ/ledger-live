@@ -7,6 +7,6 @@ describe("PreparingScreen", () => {
     render(<PreparingScreen />);
 
     expect(screen.getByTestId("os-update-preparing-screen")).toBeVisible();
-    expect(screen.getByText("Preparing for install")).toBeVisible();
+    expect(screen.getByText("Preparing update...")).toBeVisible();
   });
 });

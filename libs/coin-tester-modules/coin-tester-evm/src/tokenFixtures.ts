@@ -10,6 +10,8 @@ const optimism = getCryptoCurrencyById("optimism");
 const bnb = getCryptoCurrencyById("bsc");
 const sonic = getCryptoCurrencyById("sonic");
 const core = getCryptoCurrencyById("core");
+const base = getCryptoCurrencyById("base");
+const robinhood = getCryptoCurrencyById("robinhood");
 
 export const USDC_ON_ETHEREUM: TokenCurrency = {
   type: "TokenCurrency",
@@ -31,6 +33,19 @@ export const USDC_ON_POLYGON: TokenCurrency = {
   parentCurrencyId: polygon.id,
   tokenType: "erc20",
   name: "USD Coin (PoS)",
+  ticker: "USDC",
+  delisted: false,
+  disableCountervalue: false,
+  units: [{ name: "USDC", code: "USDC", magnitude: 6 }],
+} as TokenCurrency;
+
+export const USDC_ON_BASE: TokenCurrency = {
+  type: "TokenCurrency",
+  id: "base/erc20/usd_coin",
+  contractAddress: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+  parentCurrencyId: base.id,
+  tokenType: "erc20",
+  name: "USD Coin",
   ticker: "USDC",
   delisted: false,
   disableCountervalue: false,
@@ -74,6 +89,19 @@ export const USDC_ON_OPTIMISM: TokenCurrency = {
   delisted: false,
   disableCountervalue: false,
   units: [{ name: "USDC", code: "USDC", magnitude: 6 }],
+} as TokenCurrency;
+
+export const USDG_ON_ROBINHOOD: TokenCurrency = {
+  type: "TokenCurrency",
+  id: "robinhood/erc20/global_dollar_0x5fc5360d0400a0fd4f2af552add042d716f1d168",
+  contractAddress: "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+  parentCurrencyId: robinhood.id,
+  tokenType: "erc20",
+  name: "Global Dollar",
+  ticker: "USDG",
+  delisted: false,
+  disableCountervalue: false,
+  units: [{ name: "Global Dollar", code: "USDG", magnitude: 6 }],
 } as TokenCurrency;
 
 export const BRIDGED_USDC_ON_SONIC: TokenCurrency = {

@@ -4,7 +4,7 @@ import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import type { SolanaCoinConfig } from "@ledgerhq/coin-solana/config";
 import { getChainAPI } from "@ledgerhq/coin-solana/network/index";
 import { getMaybeTokenMint } from "@ledgerhq/coin-solana/network/chain/web3";
-import { endpointByCurrencyId } from "@ledgerhq/coin-solana/utils";
+import { chainConfigFrom } from "@ledgerhq/coin-solana/utils";
 import { HEADER_X_LEDGER_CLIENT_VERSION } from "@shared/api-services";
 import { BigNumber } from "bignumber.js";
 import { z } from "zod";
@@ -60,7 +60,7 @@ export async function findSolanaToken(mint: string): Promise<SolanaToken | null>
 /** The mint's token program (`spl-token` or `spl-token-2022`) read on chain: CAL types both "spl". */
 export async function findSolanaMintProgram(mint: string): Promise<string | undefined> {
   const config = getCurrencyConfiguration<SolanaCoinConfig>("solana");
-  const api = getChainAPI({ endpoint: endpointByCurrencyId(config, "solana") });
+  const api = getChainAPI(chainConfigFrom(config, "solana"));
   const mintAccount = await getMaybeTokenMint(mint, api);
   if (mintAccount instanceof Error) throw mintAccount;
   return mintAccount?.onChainAcc.data.program;

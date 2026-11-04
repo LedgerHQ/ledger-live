@@ -1,5 +1,13 @@
 const path = require("path");
-const { createDualJestConfig } = require("../core");
+const {
+  createDualJestConfig,
+  nativeMocks,
+  nativeSetupFiles,
+  presetFactory,
+  webMocks,
+  webSetupFiles,
+} = require("../core");
+const { deepFreeze } = require("../internals/freeze");
 
 // Lumen's shared utils (`cn`, the amount formatters) and its design tokens ship as ESM and are
 // real values the views pass around, so SWC has to compile them instead of a stub standing in —
@@ -8,8 +16,9 @@ const { createDualJestConfig } = require("../core");
 const transformAllowlist = ["@ledgerhq\\+lumen-utils-shared", "@ledgerhq\\+lumen-design-core"];
 const transformIgnorePatterns = [`node_modules/.pnpm/(?!(${transformAllowlist.join("|")}))`];
 
-// Native modules a flow reaches, on top of the core's react-native, Lumen and image stubs.
-const nativeMocks = {
+// The core's react-native, Lumen and image stubs, then the native modules a flow reaches.
+const flowNativeMocks = deepFreeze({
+  ...nativeMocks,
   "^react-native-reanimated$": path.join(__dirname, "mocks/reanimated.js"),
   "^react-native-draggable-flatlist$": path.join(__dirname, "mocks/draggable-flatlist.js"),
   "^react-native-svg(/.*)?$": path.join(__dirname, "mocks/react-native-svg.js"),
@@ -18,18 +27,21 @@ const nativeMocks = {
   "^@react-navigation/native$": path.join(__dirname, "mocks/react-navigation-native.js"),
   "^@shared/ui-queued-bottom-sheet$": "@shared/ui-queued-bottom-sheet/testing/module-mock",
   "^@shared/ui-queued-bottom-sheet/keyboard$": "@shared/ui-queued-bottom-sheet/testing/module-mock",
-};
+});
+
+// The core's web setup, then the flow polyfills.
+const flowWebSetupFiles = deepFreeze([...webSetupFiles, path.join(__dirname, "setup/web.js")]);
 
 const flowLayer = {
   depth: "../../../",
   web: {
     transformIgnorePatterns,
-    setupFilesAfterEnv: [path.join(__dirname, "setup/web.js")],
+    setupFilesAfterEnv: flowWebSetupFiles,
   },
   native: {
     transformIgnorePatterns,
     resolver: path.join(__dirname, "resolver.native.js"),
-    moduleNameMapper: nativeMocks,
+    moduleNameMapper: flowNativeMocks,
   },
 };
 
@@ -39,14 +51,14 @@ const flowLayer = {
  * - web project: jsdom, matches *.web.test.ts(x) and unsuffixed tests, for Desktop.
  * - native project: node, matches *.native.test.ts(x), for Mobile.
  *
- * Per-project overrides via `webOverrides` / `nativeOverrides`: `setupFilesAfterEnv` and
- * `moduleNameMapper` add to the project's defaults, any other key replaces them.
+ * Per-project overrides via `webOverrides` / `nativeOverrides`, by the override rule of the
+ * `@support/jest` README.
  *
- * @param {{ webOverrides?: object, nativeOverrides?: object } & import('@jest/types').Config.InitialOptions} [options]
+ * @param {{ webOverrides?: object, nativeOverrides?: object } & import('@jest/types').Config.InitialOptions} [overrides]
  * @returns {import('@jest/types').Config.InitialOptions}
  */
-function createFlowJestConfig(options) {
-  return createDualJestConfig(flowLayer, options);
+function flowJestConfig(overrides) {
+  return createDualJestConfig(flowLayer, overrides);
 }
 
 /**
@@ -54,11 +66,18 @@ function createFlowJestConfig(options) {
  * createFlowJestConfig(), without the web one. Requires no web-only dependencies
  * (jest-environment-jsdom, @testing-library/jest-dom).
  *
- * @param {{ nativeOverrides?: object } & import('@jest/types').Config.InitialOptions} [options]
+ * @param {{ nativeOverrides?: object } & import('@jest/types').Config.InitialOptions} [overrides]
  * @returns {import('@jest/types').Config.InitialOptions}
  */
-function createFlowNativeJestConfig(options) {
-  return createDualJestConfig({ ...flowLayer, web: undefined }, options);
+function flowNativeJestConfig(overrides) {
+  return createDualJestConfig({ ...flowLayer, web: undefined }, overrides);
 }
 
-module.exports = { createFlowJestConfig, createFlowNativeJestConfig };
+module.exports = {
+  createFlowJestConfig: presetFactory("createFlowJestConfig", [], flowJestConfig),
+  createFlowNativeJestConfig: presetFactory("createFlowNativeJestConfig", [], flowNativeJestConfig),
+  nativeModuleNameMapper: flowNativeMocks,
+  nativeSetupFilesAfterEnv: nativeSetupFiles,
+  webModuleNameMapper: webMocks,
+  webSetupFilesAfterEnv: flowWebSetupFiles,
+};

@@ -5,6 +5,7 @@ import type { SolanaCoinConfig, SolanaContext } from "../../config";
 const config: SolanaCoinConfig = {
   token2022Enabled: false,
   legacyOCMSMaxVersion: "1.0.0",
+  rpcUrls: { solana: "https://solana.coin.ledger.com" },
   status: { type: "active" },
   name: "Solana",
   unit: { name: "SOL", code: "SOL", magnitude: 9 },

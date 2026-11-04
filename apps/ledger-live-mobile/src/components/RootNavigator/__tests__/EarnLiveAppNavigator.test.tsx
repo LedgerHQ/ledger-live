@@ -1,6 +1,6 @@
 import React from "react";
 import { render } from "@tests/test-renderer";
-import { NavigatorName, ScreenName } from "~/const";
+import { BASE_NAVIGATOR_ID, NavigatorName, ScreenName } from "~/const";
 import { Earn } from "../EarnLiveAppNavigator";
 
 // `Earn` reads `props.route` for the deeplink action and `useRoute()` for the staking-drawer parent
@@ -29,11 +29,12 @@ jest.mock("LLM/features/Stake", () => ({
 }));
 
 function renderEarnWithAction(action?: string, params: Record<string, string | undefined> = {}) {
+  const baseNavigation = { navigate: jest.fn() };
   const navigation = {
     navigate: jest.fn(),
     setParams: jest.fn(),
     canGoBack: () => false,
-    getParent: () => undefined,
+    getParent: jest.fn((id?: string) => (id === BASE_NAVIGATOR_ID ? baseNavigation : undefined)),
   };
 
   render(
@@ -44,48 +45,45 @@ function renderEarnWithAction(action?: string, params: Record<string, string | u
     />,
   );
 
-  return navigation;
+  return { navigation, baseNavigation };
 }
 
 describe("EarnLiveAppNavigator › Earn deeplink routing", () => {
-  it("routes the `simulate` action full-screen through the Base navigator", () => {
-    const navigation = renderEarnWithAction("simulate");
+  it("pushes the `simulate` action full-screen on the Base navigator", () => {
+    const { navigation, baseNavigation } = renderEarnWithAction("simulate");
 
-    expect(navigation.navigate).toHaveBeenCalledWith(NavigatorName.Base, {
-      screen: NavigatorName.Earn,
+    expect(baseNavigation.navigate).toHaveBeenCalledWith(NavigatorName.Earn, {
+      screen: ScreenName.Earn,
       params: {
-        screen: ScreenName.Earn,
-        params: {
-          intent: "simulate",
-        },
+        intent: "simulate",
       },
     });
+    expect(navigation.navigate).not.toHaveBeenCalled();
   });
 
-  it("forwards the deposit protocol to the Earn webview route", () => {
-    const navigation = renderEarnWithAction("deposit", {
+  it("forwards the deposit protocol to the Earn webview route on the Base navigator", () => {
+    const { navigation, baseNavigation } = renderEarnWithAction("deposit", {
       cryptoAssetId: "ethereum/erc20/usd__coin",
       accountId: "usdc-account",
       protocolId: "mtbill",
     });
 
-    expect(navigation.navigate).toHaveBeenCalledWith(NavigatorName.Base, {
-      screen: NavigatorName.Earn,
+    expect(baseNavigation.navigate).toHaveBeenCalledWith(NavigatorName.Earn, {
+      screen: ScreenName.Earn,
       params: {
-        screen: ScreenName.Earn,
-        params: {
-          intent: "deposit",
-          cryptoAssetId: "ethereum/erc20/usd__coin",
-          accountId: "usdc-account",
-          protocolId: "mtbill",
-        },
+        intent: "deposit",
+        cryptoAssetId: "ethereum/erc20/usd__coin",
+        accountId: "usdc-account",
+        protocolId: "mtbill",
       },
     });
+    expect(navigation.navigate).not.toHaveBeenCalled();
   });
 
   it("does not route anywhere when no action is provided", () => {
-    const navigation = renderEarnWithAction(undefined);
+    const { navigation, baseNavigation } = renderEarnWithAction(undefined);
 
     expect(navigation.navigate).not.toHaveBeenCalled();
+    expect(baseNavigation.navigate).not.toHaveBeenCalled();
   });
 });

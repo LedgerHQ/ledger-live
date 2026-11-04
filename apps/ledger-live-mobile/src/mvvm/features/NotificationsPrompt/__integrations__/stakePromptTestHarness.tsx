@@ -137,6 +137,7 @@ export function setupStakePromptTestSuite() {
       logoURL: "",
       nominalYield: "0 %",
       capacityStatus: "normal",
+      stakingEnabled: true,
     });
   });
 

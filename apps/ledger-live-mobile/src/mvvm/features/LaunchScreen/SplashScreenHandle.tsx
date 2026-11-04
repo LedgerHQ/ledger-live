@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { StyleSheet, View } from "react-native";
-import * as SplashScreen from "expo-splash-screen";
+import { hideSplashScreen } from "./splashScreenVisibility";
 
 /**
  * Native splash screen handle that just fades screen directly
@@ -17,7 +17,7 @@ export function SplashScreenHandle({
   useEffect(() => {
     if (!isNavigationReady || hasTransitionedRef.current) return;
     hasTransitionedRef.current = true;
-    SplashScreen.hide();
+    hideSplashScreen();
     onAppReady?.();
   }, [isNavigationReady, onAppReady]);
 

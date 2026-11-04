@@ -223,7 +223,7 @@ export default function OnboardingNavigator() {
       <Stack.Screen
         name={ScreenName.DeviceOnboardingSyncOffer}
         component={SyncOfferRoute}
-        options={{ headerShown: false, gestureEnabled: false }}
+        options={{ headerShown: false, gestureEnabled: false, animation: "fade" }}
       />
       <Stack.Screen
         name={ScreenName.FirmwareUpdate}

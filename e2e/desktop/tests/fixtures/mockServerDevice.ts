@@ -9,12 +9,16 @@ import {
 import { MockServerDevicePage } from "tests/page/mockServerDevice.page";
 import base from "tests/fixtures/common";
 import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
+import { getPreviousFirmwareVersion } from "@ledgerhq/live-e2e-shared/speculosAppVersion";
+import { getUserdataUserId } from "tests/utils/userdata";
 
 const SESSION_TOKEN_TIMEOUT_MS = TIMEOUT.xlarge;
 
 type MockServerFixtures = {
   mockDevice: MockDevice;
   mockDeviceParams: Partial<MockDevice>;
+  /** Boots the device on the newest OS the Manager API still offers an update from. */
+  osUpdateAvailable: boolean;
   /** Manager catalog provider used to resolve install hashes and `FORCE_PROVIDER`. */
   catalogProvider: number;
   mockServer: MockServerDevicePage;
@@ -27,10 +31,16 @@ type MockServerFixtures = {
  */
 export const test = base.extend<MockServerFixtures>({
   mockDeviceParams: [{}, { option: true }],
+  osUpdateAvailable: [false, { option: true }],
   catalogProvider: [1, { option: true }],
 
-  mockDevice: async ({ mockDeviceParams }, use) => {
-    await use({ ...deviceUnderTest(), ...mockDeviceParams });
+  mockDevice: async ({ mockDeviceParams, osUpdateAvailable, userdataOriginalFile }, use) => {
+    const device = { ...deviceUnderTest(), ...mockDeviceParams };
+    if (osUpdateAvailable) {
+      const userId = await getUserdataUserId(userdataOriginalFile);
+      device.firmware_version = await getPreviousFirmwareVersion(device.modelId, userId);
+    }
+    await use(device);
   },
 
   // Attaches to the session the app created. Retrying as the token is published after launch.

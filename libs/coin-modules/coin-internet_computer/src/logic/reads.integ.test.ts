@@ -1,4 +1,5 @@
 import { mapTxToOps } from "../bridge/bridgeHelpers/account";
+import { ICP_NETWORK_URL } from "../consts";
 import { fetchTxns } from "../network/api";
 import { getBalance } from "./getBalance";
 import { getBlockInfo } from "./getBlockInfo";
@@ -14,7 +15,7 @@ const ABOVE_HISTORY = String(HISTORY[0] + 1);
 
 describe("lastBlock", () => {
   it("returns the tip with a hash, a recent time and its parent", async () => {
-    const tip = await lastBlock();
+    const tip = await lastBlock(ICP_NETWORK_URL);
 
     expect(tip.height).toBeGreaterThan(0);
     expect(tip.hash).toMatch(/^[0-9a-f]{64}$/);
@@ -23,8 +24,8 @@ describe("lastBlock", () => {
   });
 
   it("chains to the block below it", async () => {
-    const tip = await lastBlock();
-    const parent = await getBlockInfo(tip.height - 1);
+    const tip = await lastBlock(ICP_NETWORK_URL);
+    const parent = await getBlockInfo(ICP_NETWORK_URL, tip.height - 1);
 
     expect(tip.parent?.hash).toBe(parent.hash);
   });
@@ -32,7 +33,7 @@ describe("lastBlock", () => {
 
 describe("getBlockInfo", () => {
   it("reads an archived block", async () => {
-    expect(await getBlockInfo(25132352)).toEqual({
+    expect(await getBlockInfo(ICP_NETWORK_URL, 25132352)).toEqual({
       height: 25132352,
       hash: "140ba81ec6f5b51f7833b0af174cb580b5faa2e5a5efaa90c5527c6f3e30c802",
       time: new Date(1750760223449),
@@ -44,22 +45,24 @@ describe("getBlockInfo", () => {
   });
 
   it("reads the genesis block", async () => {
-    const genesis = await getBlockInfo(0);
+    const genesis = await getBlockInfo(ICP_NETWORK_URL, 0);
 
     expect(genesis.hash).toBe("ffca0ecf5e837541c7ee5be431e433ad8e972a7f371e86fbe4f8ad646c7cbcea");
     expect(genesis.parent).toBeUndefined();
   });
 
   it("throws above the tip", async () => {
-    const tip = await lastBlock();
+    const tip = await lastBlock(ICP_NETWORK_URL);
 
-    await expect(getBlockInfo(tip.height + 1_000_000)).rejects.toThrow(/No block at height/);
+    await expect(getBlockInfo(ICP_NETWORK_URL, tip.height + 1_000_000)).rejects.toThrow(
+      /No block at height/,
+    );
   });
 });
 
 describe("getBalance", () => {
   it("returns one native balance", async () => {
-    const balances = await getBalance(ADDRESS);
+    const balances = await getBalance(ICP_NETWORK_URL, ADDRESS);
 
     expect(balances).toHaveLength(1);
     expect(balances[0].asset).toEqual({ type: "native" });
@@ -69,25 +72,39 @@ describe("getBalance", () => {
 
 describe("listOperations", () => {
   it("walks the whole history in pages, newest first", async () => {
-    const first = await listOperations(ADDRESS, { minHeight: 0, limit: 2, cursor: ABOVE_HISTORY });
+    const first = await listOperations(ICP_NETWORK_URL, ADDRESS, {
+      minHeight: 0,
+      limit: 2,
+      cursor: ABOVE_HISTORY,
+    });
     expect(first.items.map(op => op.tx.block.height)).toEqual(HISTORY.slice(0, 2));
     expect(first.next).toBe(String(HISTORY[1]));
 
-    const second = await listOperations(ADDRESS, { minHeight: 0, limit: 2, cursor: first.next });
+    const second = await listOperations(ICP_NETWORK_URL, ADDRESS, {
+      minHeight: 0,
+      limit: 2,
+      cursor: first.next,
+    });
     expect(second.items.map(op => op.tx.block.height)).toEqual(HISTORY.slice(2));
     expect(second.next).toBeUndefined();
   });
 
   it("stops at minHeight", async () => {
-    const page = await listOperations(ADDRESS, { minHeight: HISTORY[2], cursor: ABOVE_HISTORY });
+    const page = await listOperations(ICP_NETWORK_URL, ADDRESS, {
+      minHeight: HISTORY[2],
+      cursor: ABOVE_HISTORY,
+    });
 
     expect(page.items.map(op => op.tx.block.height)).toEqual(HISTORY.slice(0, 3));
     expect(page.next).toBeUndefined();
   });
 
   it("reports the hashes and dates the account bridge reports", async () => {
-    const { items } = await listOperations(ADDRESS, { minHeight: 0, cursor: ABOVE_HISTORY });
-    const legacy = (await fetchTxns(ADDRESS, BigInt(ABOVE_HISTORY))).flatMap(
+    const { items } = await listOperations(ICP_NETWORK_URL, ADDRESS, {
+      minHeight: 0,
+      cursor: ABOVE_HISTORY,
+    });
+    const legacy = (await fetchTxns(ICP_NETWORK_URL, ADDRESS, BigInt(ABOVE_HISTORY))).flatMap(
       mapTxToOps("accountId", ADDRESS),
     );
 

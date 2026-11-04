@@ -1,7 +1,7 @@
-const { createLibsCoinJestConfig } = require("@support/jest/libs-coin");
+const { createLibsCoinJestConfig, libsCoinDefaults } = require("@support/jest/libs-coin");
 
 module.exports = createLibsCoinJestConfig({
   rootDir: __dirname,
-  testPathIgnorePatterns: ["__tests__/"],
+  testPathIgnorePatterns: [...libsCoinDefaults.testPathIgnorePatterns, "__tests__/"],
   modulePathIgnorePatterns: ["__tests__/fixtures"],
 });

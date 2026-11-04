@@ -10,20 +10,6 @@ export const getFeatureFlags = async (page: Page): Promise<PartialFeatures> => {
   return featureFlags as PartialFeatures;
 };
 
-const getLwdWallet40Params = async (page: Page) => {
-  const featureFlags = await getFeatureFlags(page);
-  return featureFlags.lwdWallet40?.params;
-};
-
-export const isAssetSectionEnabled = async (page: Page): Promise<boolean> =>
-  Boolean((await getLwdWallet40Params(page))?.assetSection);
-
-export const isAggregatedAssetsEnabled = async (page: Page): Promise<boolean> =>
-  Boolean((await getLwdWallet40Params(page))?.aggregatedAssets);
-
-export const isAssetDiscoverabilityEnabled = async (page: Page): Promise<boolean> =>
-  Boolean((await getLwdWallet40Params(page))?.assetDiscoverability);
-
 export const useLocalEarnManifest = process.env.USE_LOCAL_EARN_MANIFEST === "1";
 
 const FF_LWD_WALLET_40_Q1 = {
@@ -31,12 +17,9 @@ const FF_LWD_WALLET_40_Q1 = {
     enabled: true,
     params: {
       lazyOnboarding: true,
-      assetSection: false,
       brazePlacement: true,
-      aggregatedAssets: false,
       earnUpselling: false,
       earnSimulator: false,
-      assetDiscoverability: false,
     },
   },
 } satisfies PartialFeatures;
@@ -46,12 +29,9 @@ export const FF_LWD_WALLET_40_Q2 = {
     enabled: true,
     params: {
       lazyOnboarding: true,
-      assetSection: true,
       brazePlacement: true,
-      aggregatedAssets: true,
       earnUpselling: true,
       earnSimulator: true,
-      assetDiscoverability: true,
     },
   },
 } satisfies PartialFeatures;

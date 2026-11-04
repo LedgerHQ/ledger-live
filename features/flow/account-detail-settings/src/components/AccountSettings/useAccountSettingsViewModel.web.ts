@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 import { MAX_ACCOUNT_NAME_LENGTH, validateNameEdition } from "@domain/entity-account-name";
 import type { AdvancedLogsContentProps } from "../AdvancedLogsContent/types";
 import { getAccountExplorerUrl } from "../../logic/getAccountExplorerUrl";
-import type { AccountSettingsAccount, AccountSettingsAdapter } from "./types.web";
+import type { AccountSettingsAccount, AccountSettingsAdapter } from "./types";
 
 export type AccountSettingsViewModel = Readonly<{
   accountName: string;

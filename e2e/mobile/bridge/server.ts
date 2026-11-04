@@ -6,16 +6,22 @@ import type { IncomingMessage } from "node:http";
 import { randomBytes, timingSafeEqual } from "node:crypto";
 import merge from "lodash/merge";
 
-import { NavigatorName } from "~/const";
 import type { Contact } from "@domain/entity-contact";
-import type { MessageData, OverrideFeatureFlagPayload, ServerData } from "~/e2e/bridge/types";
-import type { PartialFeatures, FeatureId } from "@shared/feature-flags";
+import type {
+  MessageData,
+  OverrideFeatureFlagPayload,
+  ServerData,
+} from "@ledgerhq/live-e2e-shared/bridge/types";
+import type { FeatureId, PartialFeatures } from "@shared/feature-flags";
 import { FeatureIdSchema } from "@shared/feature-flags";
 import { log as detoxLog } from "detox";
 import { getSpeculosModel } from "@ledgerhq/live-e2e-shared/speculosAppVersion";
 import { v4 as uuid } from "uuid";
 import { TIMEOUT } from "@e2e/utils/timeouts";
 import { withTimeout } from "@e2e/utils/withTimeout";
+
+/** The base navigator name used in the app's navigation structure. Declared here to avoid dependency on app src. */
+const NAVIGATOR_NAME_BASE = "Base";
 
 /** Round-trip to the app over the bridge. Exported so a caller can bound a bridge call from outside. */
 export const BRIDGE_RESPONSE_TIMEOUT = TIMEOUT.medium;
@@ -145,7 +151,7 @@ export async function loadConfig(fileName: string, agreed: true = true): Promise
   const settings = merge(defaultSettings, data.settings || {});
   postMessage({ type: "importSettings", id: uniqueId(), payload: settings });
 
-  await navigate(NavigatorName.Base);
+  await navigate(NAVIGATOR_NAME_BASE);
 
   if (data.accounts?.length) {
     postMessage({ type: "importAccounts", id: uniqueId(), payload: data.accounts });

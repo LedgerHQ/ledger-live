@@ -24,6 +24,8 @@ export type AmountInputViewModel = Readonly<{
   isTyping: boolean;
   onChangeText: (text: string) => void;
   onToggleMode: () => void;
+  /** Hides the fiat toggle and the fiat secondary value. */
+  isFiatModeAvailable: boolean;
 }>;
 
 export type QuickActionsViewModel = Readonly<{

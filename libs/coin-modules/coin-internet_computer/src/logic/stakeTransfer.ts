@@ -85,6 +85,7 @@ export interface StakeTransfer {
  * ledger, which reports it as a duplicate, and is claimed.
  */
 export async function checkStakeAccount(
+  host: string,
   controller: Principal,
   { nonce, neuronId, amount }: { nonce: bigint; neuronId?: string | undefined; amount: bigint },
 ): Promise<Error | undefined> {
@@ -92,8 +93,8 @@ export async function checkStakeAccount(
   let balance: bigint;
   try {
     [held, balance] = await Promise.all([
-      findNeuronIdBySubaccount(getNeuronStakeSubAccount(controller, nonce)),
-      queryLedgerBalance(getNeuronStakeSubAccountIdentifier(controller, nonce)),
+      findNeuronIdBySubaccount(host, getNeuronStakeSubAccount(controller, nonce)),
+      queryLedgerBalance(host, getNeuronStakeSubAccountIdentifier(controller, nonce)),
     ]);
   } catch (error) {
     return Object.assign(new InvalidTransactionError("The stake account could not be read"), {
@@ -261,10 +262,15 @@ export function craftStakeTransfer(
  * ICPCallUnconfirmed when no answer settles it; `cause` then carries the failure that stopped the
  * attempt. A controller or nonce it cannot read throws before anything is sent.
  *
+ * @param host the node to reach, e.g. https://ic0.app
  * @param controller the principal text of the account that made the transfer
  * @param nonce the decimal stake nonce
  */
-export async function refreshNeuronStake(controller: string, nonce: string): Promise<string> {
+export async function refreshNeuronStake(
+  host: string,
+  controller: string,
+  nonce: string,
+): Promise<string> {
   const parsed = parseStakeNonce(nonce);
   if (parsed === undefined) {
     throw new Error(`[ICP](refreshNeuronStake) Not a stake nonce: ${nonce}`);
@@ -272,7 +278,7 @@ export async function refreshNeuronStake(controller: string, nonce: string): Pro
   const principal = Principal.fromText(controller);
   let neuronId: bigint | undefined;
   try {
-    neuronId = await claimOrRefreshNeuronFromAccount(principal, parsed);
+    neuronId = await claimOrRefreshNeuronFromAccount(host, principal, parsed);
   } catch (error) {
     if (error instanceof ICPStakeNotRefreshed || error instanceof ICPCallUnconfirmed) throw error;
     // The node turned the claim away: it never ran, so the stake stays unclaimed.

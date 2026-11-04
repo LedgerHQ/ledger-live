@@ -740,18 +740,16 @@ describe("coin-framework utils", () => {
 
     // coin-xrp and coin-stellar read the intent asset unit and name to format their validation errors
     describe("asset", () => {
-      it("carries the currency name and unit on the native asset", () => {
+      it("identifies the native asset without display metadata", () => {
         const unit = { name: "XRP", code: "XRP", magnitude: 6 };
         const account = { currency: { name: "XRP", units: [unit] } } as unknown as Account;
 
         expect(transactionToIntent(account, { mode: "send" } as GenericTransaction).asset).toEqual({
           type: "native",
-          name: "XRP",
-          unit,
         });
       });
 
-      it("carries the token name and the currency unit on a token asset", () => {
+      it("identifies a token asset by its type, reference and owner", () => {
         const unit = { name: "Lumen", code: "XLM", magnitude: 7 };
         const account = {
           currency: { name: "Stellar", units: [unit] },
@@ -768,8 +766,6 @@ describe("coin-framework utils", () => {
         ).toEqual({
           type: "stellar",
           assetReference: "USDC",
-          name: "USDC",
-          unit,
           assetOwner: "issuer",
         });
       });

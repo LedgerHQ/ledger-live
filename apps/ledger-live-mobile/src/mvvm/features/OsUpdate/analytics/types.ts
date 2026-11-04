@@ -35,6 +35,7 @@ export enum OsUpdateButton {
   CONTINUE = "Continue",
   CREATE_NEW_BACKUP = "Create new backup",
   DELETE_BACKUP = "Delete backup",
+  RELEASE_NOTES = "Release notes",
   RESTORE = "Restore",
   RETRY = "Retry",
   START = "Start",

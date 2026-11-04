@@ -44,8 +44,6 @@ its own keyed slice of `extraArgument`, and each app spreads it into `configureS
   sync with the legacy accounts selector and bridge cache.
 - `pushDevicesApiExtra({ pushDevicesServiceUrl, ledgerClientVersion })` validates its config with
   Zod at store setup, so a missing value fails at boot, not on the first request.
-- `authApiExtra({ authProvider, isFeatureEnabled })` in `@shared/auth` takes an `AuthProvider`
-  contract; desktop builds it from `AuthSDK` and `LkrpIdentityProvider`.
 
 The package reads its slice back from `extraArgument` and throws a named error when it is missing
 (`AccountDataRouterMissingError`). Cost: every app and every test store must spread the builder;

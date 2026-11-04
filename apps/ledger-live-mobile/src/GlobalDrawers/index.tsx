@@ -2,6 +2,7 @@ import React from "react";
 import { DRAWER_ENTRIES } from "./registry";
 import { AppProtectionPromptProvider } from "LLM/features/AppLock/AppProtectionPrompt";
 import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
+import { ConnectDeviceRequestProvider } from "LLM/features/Reborn/drawers/ConnectDeviceRequestProvider";
 
 type GlobalDrawersProps = Readonly<{
   children: React.JSX.Element;
@@ -41,10 +42,12 @@ function GlobalDrawers({ children }: GlobalDrawersProps) {
   return (
     <NotificationsPromptProvider>
       <AppProtectionPromptProvider>
-        {children}
-        {DRAWER_ENTRIES.map(({ key, component: DrawerWrapper }) => (
-          <DrawerWrapper key={key} />
-        ))}
+        <ConnectDeviceRequestProvider>
+          {children}
+          {DRAWER_ENTRIES.map(({ key, component: DrawerWrapper }) => (
+            <DrawerWrapper key={key} />
+          ))}
+        </ConnectDeviceRequestProvider>
       </AppProtectionPromptProvider>
     </NotificationsPromptProvider>
   );

@@ -37,6 +37,24 @@ Assertions MUST be named methods on the relevant page object.
 
 `userdata`, `teamOwner`, `speculosApp`, `featureFlags`, and `cliCommands` MUST be declared with `test.use()` at the describe level. They MUST NOT be inlined inside the test body.
 
+### Every describe MUST declare its team
+
+A describe whose team is on the Allure tree MUST pass `ownedBy(team, { folder, scenario? })` from `tests/utils/allureUtils.ts` as its details and MUST NOT also set `teamOwner`. Static annotations reach tests skipped before any fixture runs. A describe of any other team MUST set `teamOwner` with `test.use()` until its team moves to the tree. Either one MUST be passed once, on the outermost describe that shares the owner: nested describes inherit it. Placement rules: [Allure tree](../../docs/e2e-conventions.md#tests-must-declare-their-place-in-the-allure-tree).
+
+```typescript
+const owner = ownedBy(coinTeamOwner(account.currency.id), { folder: TestFolder.RECEIVE });
+test.describe("Receive", owner, () => {
+  // ...
+});
+
+const sendOwner = ownedBy(coinTeamOwner(tx.accountToDebit.currency.id), {
+  folder: sendFolder(tx.accountToDebit),
+  scenario: SendScenario.INVALID_ADDRESS,
+});
+```
+
+New Send Flow entries get their owner from the registrar (`tests/utils/newSendFlowUtils.ts`): `SendScenario.MEMO` when the transaction has a memo, `SendScenario.TRANSACTION` otherwise. An entry declares no owner.
+
 ## Page objects
 
 ### Every public page-object method MUST use the @step decorator
@@ -91,9 +109,9 @@ test(
 
 Supplementary checks (copy, extra UI state) MAY use [soft assertions](soft-expect.md). Journey gates MUST stay hard `expect(...)` so they fail fast and stop the test when a critical condition is not met.
 
-## Exclusive lock implementation
+## Tests that broadcast or change shared state MUST lock with `exclusiveLockFor`
 
-What a test declares: [Exclusive lock](../../docs/e2e-conventions.md#tests-must-declare-what-they-broadcast-from-or-change). Use `exclusiveLockFor` ([`tests/utils/exclusiveLock.ts`](../tests/utils/exclusiveLock.ts)), with its `names` on the `lock` detail and its `fixtures` in `test.use`:
+Use `exclusiveLockFor` ([`tests/utils/exclusiveLock.ts`](../tests/utils/exclusiveLock.ts)), with its `names` on the `lock` detail and its `fixtures` in `test.use`:
 
 ```ts
 const delegateLock = exclusiveLockFor({ broadcastAccounts: [delegate.account] });
@@ -102,4 +120,4 @@ test.describe("Delegate", { lock: delegateLock.names }, () => {
   test.use(delegateLock.fixtures);
 ```
 
-Use both: `names` keeps this run's workers apart, and `fixtures` keeps other CI machines away. A test that no longer needs its lock part way through hands it back with the `exclusiveLock` fixture's `release()`, as `send.swap` does once its provider needs no token approval. The `lock` detail still holds until the test ends.
+Use both: `names` keeps this run's workers apart, and `fixtures` keeps other CI machines away. A test that no longer needs its lock part way through hands it back with the `exclusiveLock` fixture's `release()`. The `lock` detail still holds until the test ends.

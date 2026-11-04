@@ -80,6 +80,7 @@ export function toOperations(txInfo: TransactionWithId, address: string, date: D
  * serves newest-first only, so ascending order is not supported.
  */
 export async function listOperations(
+  host: string,
   address: string,
   options: ListOperationsOptions,
 ): Promise<Page<Operation>> {
@@ -95,7 +96,12 @@ export async function listOperations(
     FETCH_TXNS_LIMIT,
   );
   const start = options.cursor === undefined ? undefined : BigInt(options.cursor);
-  const { transactions, oldestTxId } = await fetchTxnsPage(address.toLowerCase(), start, limit);
+  const { transactions, oldestTxId } = await fetchTxnsPage(
+    host,
+    address.toLowerCase(),
+    start,
+    limit,
+  );
 
   const minHeight = BigInt(options.minHeight || 0);
   // Pages run newest-first, so a transaction below the floor means every later one is too.
@@ -104,7 +110,8 @@ export async function listOperations(
   // A transaction without an indexed time takes its block's time from the ledger.
   const dates = await Promise.all(
     kept.map(
-      async txInfo => indexedBlockTime(txInfo) ?? (await getBlockInfo(Number(txInfo.id))).time,
+      async txInfo =>
+        indexedBlockTime(txInfo) ?? (await getBlockInfo(host, Number(txInfo.id))).time,
     ),
   );
   const items = kept.flatMap((txInfo, i) => toOperations(txInfo, address, dates[i]));

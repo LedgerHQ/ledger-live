@@ -11,8 +11,15 @@ const {
   collectLegacyPackageNames,
   findBannedDependencyViolations,
   findBannedExternalViolations,
+  findDevtoolsImportViolations,
 } = require("./validate");
-const { BOUNDARY_EXCEPTIONS, LEGACY_PACKAGES, BANNED_EXTERNALS_BY_TAG } = require("./constraints");
+const {
+  BOUNDARY_EXCEPTIONS,
+  LEGACY_PACKAGES,
+  BANNED_EXTERNALS_BY_TAG,
+  DEVTOOLS_ALLOWED_IMPORTS,
+  DEVTOOLS_TYPE_ONLY_IMPORTS,
+} = require("./constraints");
 
 /**
  * @param {Array<{name: string, tags: string[]}>} projects
@@ -634,6 +641,56 @@ test("findBannedDependencyViolations ignores unrelated dependencies and missing 
   assert.deepEqual(findBannedDependencyViolations(bannedDepGraph(manifests), root, BANNED), []);
 });
 
+test("every manifest check fails on a malformed or unreadable manifest in its scope", t => {
+  const root = makeTmpWorkspace({
+    "libs/broken/package.json": '{ "name": "@ledgerhq/broken",',
+    "devtools/broken/package.json": '{ "name": "@devtools/broken",',
+    // a directory where the manifest should be: present, but not readable as a file
+    "libs/unreadable/package.json/.keep": "",
+    "devtools/unreadable/package.json/.keep": "",
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const tags = ["scope:libs", "type:domain-entity"];
+  const checks = [
+    { scope: "libs", check: graph => collectLegacyPackageNames(graph, root) },
+    { scope: "libs", check: graph => findBannedDependencyViolations(graph, root, BANNED) },
+    {
+      scope: "libs",
+      check: graph =>
+        findBannedExternalViolations(graph, root, [{ sourceTag: tags[1], packages: ["react"] }]),
+    },
+    { scope: "devtools", check: graph => findDevtoolsImportViolations(graph, root, {}) },
+  ];
+  for (const { scope, check } of checks) {
+    for (const [name, error] of [
+      ["broken", new RegExp(`${scope}/broken/package\\.json`)],
+      ["unreadable", { code: "EISDIR" }],
+    ]) {
+      const graph = {
+        nodes: { p: { data: { root: `${scope}/${name}`, tags } } },
+        dependencies: {},
+      };
+      assert.throws(() => check(graph), error);
+    }
+  }
+});
+
+test("devtools: manifests outside devtools/ are not read", t => {
+  const root = makeTmpWorkspace({
+    "libs/broken/package.json": '{ "name": "@ledgerhq/broken",',
+    "apps/unreadable/package.json/.keep": "",
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const graph = {
+    nodes: {
+      broken: { data: { root: "libs/broken" } },
+      unreadable: { data: { root: "apps/unreadable" } },
+    },
+    dependencies: { broken: [{ target: "unreadable" }] },
+  };
+  assert.deepEqual(findDevtoolsImportViolations(graph, root, {}), []);
+});
+
 // --- LEGACY_PACKAGES / BANNED_EXTERNALS_BY_TAG (real constraints) ---
 
 test("domain source importing an npm legacy package fails", t => {
@@ -739,4 +796,188 @@ test("domain/entity: react after a string reading import is flagged, a commented
     violations.map(v => `${path.basename(v.file)} ${v.specifier}`),
     ["a.ts react"],
   );
+});
+
+/**
+ * A graph whose node names are project roots, with a manifest written for each.
+ *
+ * @param {import("node:test").TestContext} t
+ * @param {Record<string, object>} manifests keyed by project root
+ * @param {Array<[string, string]>} edges [sourceRoot, targetRoot]
+ * @param {Record<string, string>} [sources] extra files keyed by workspace-relative path
+ */
+function manifestWorkspace(t, manifests, edges, sources = {}) {
+  const root = makeTmpWorkspace({
+    ...Object.fromEntries(
+      Object.entries(manifests).map(([r, pkg]) => [`${r}/package.json`, JSON.stringify(pkg)]),
+    ),
+    ...sources,
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const graph = {
+    nodes: Object.fromEntries(Object.keys(manifests).map(r => [r, { data: { root: r } }])),
+    dependencies: Object.fromEntries(
+      Object.keys(manifests).map(r => [
+        r,
+        edges.filter(([s]) => s === r).map(([, target]) => ({ target })),
+      ]),
+    ),
+  };
+  return { root, graph };
+}
+
+/**
+ * @param {object} graph
+ * @param {string} root
+ */
+function devtoolsViolations(graph, root) {
+  return findDevtoolsImportViolations(
+    graph,
+    root,
+    DEVTOOLS_ALLOWED_IMPORTS,
+    DEVTOOLS_TYPE_ONLY_IMPORTS,
+  );
+}
+
+const DEVTOOLS_MANIFESTS = {
+  "devtools/shell": { name: "@devtools/shell", private: true },
+  "devtools/registry": { name: "@devtools/registry", private: true },
+  "devtools/bindings": { name: "@devtools/bindings", private: true },
+  "devtools/relay": { name: "@devtools/relay", private: true },
+  "devtools/protocols": { name: "@devtools/protocols", private: true },
+  "devtools/env": { name: "@devtools/env", private: true },
+  "devtools/feature-flags": { name: "@devtools/feature-flags", private: true },
+};
+
+test("devtools: a tool importing @devtools/shell is forbidden", t => {
+  const { root, graph } = manifestWorkspace(t, DEVTOOLS_MANIFESTS, [
+    ["devtools/env", "devtools/shell"],
+  ]);
+  assert.deepEqual(devtoolsViolations(graph, root), [
+    { source: "@devtools/env", target: "@devtools/shell" },
+  ]);
+});
+
+test("devtools: a tool importing another tool is forbidden", t => {
+  const { root, graph } = manifestWorkspace(t, DEVTOOLS_MANIFESTS, [
+    ["devtools/env", "devtools/feature-flags"],
+  ]);
+  assert.equal(devtoolsViolations(graph, root).length, 1);
+});
+
+test("devtools: @devtools/shell importing @devtools/registry is allowed", t => {
+  const { root, graph } = manifestWorkspace(t, DEVTOOLS_MANIFESTS, [
+    ["devtools/shell", "devtools/registry"],
+  ]);
+  assert.deepEqual(devtoolsViolations(graph, root), []);
+});
+
+test('devtools: "*" lets @devtools/registry import any tool', t => {
+  const { root, graph } = manifestWorkspace(t, DEVTOOLS_MANIFESTS, [
+    ["devtools/registry", "devtools/env"],
+    ["devtools/registry", "devtools/feature-flags"],
+  ]);
+  assert.deepEqual(devtoolsViolations(graph, root), []);
+});
+
+test("devtools: @devtools/shell importing a tool directly is forbidden", t => {
+  const { root, graph } = manifestWorkspace(t, DEVTOOLS_MANIFESTS, [
+    ["devtools/shell", "devtools/env"],
+  ]);
+  assert.deepEqual(devtoolsViolations(graph, root), [
+    { source: "@devtools/shell", target: "@devtools/env" },
+  ]);
+});
+
+test("devtools: @devtools/relay importing @devtools/protocols is allowed", t => {
+  const { root, graph } = manifestWorkspace(t, DEVTOOLS_MANIFESTS, [
+    ["devtools/relay", "devtools/protocols"],
+  ]);
+  assert.deepEqual(devtoolsViolations(graph, root), []);
+});
+
+test("devtools: @devtools/bindings may import a tool's types with import type", t => {
+  const { root, graph } = manifestWorkspace(
+    t,
+    DEVTOOLS_MANIFESTS,
+    [["devtools/bindings", "devtools/env"]],
+    {
+      "devtools/bindings/src/useEnv.ts": [
+        'import type { EnvDevToolProps } from "@devtools/env";',
+        'export type { EnvVarEntry } from "@devtools/env";',
+        'type Loader = typeof import("@devtools/env");',
+      ].join("\n"),
+    },
+  );
+  assert.deepEqual(devtoolsViolations(graph, root), []);
+});
+
+test("devtools: @devtools/bindings importing a tool's values is forbidden", t => {
+  const { root, graph } = manifestWorkspace(
+    t,
+    DEVTOOLS_MANIFESTS,
+    [["devtools/bindings", "devtools/env"]],
+    {
+      "devtools/bindings/src/types.ts": 'import type { EnvDevToolProps } from "@devtools/env";',
+      "devtools/bindings/src/useEnv.ts":
+        'import { type EnvVarEntry, EnvDevTool } from "@devtools/env";',
+      "devtools/bindings/src/lazy.ts": 'export const load = () => import("@devtools/env");',
+    },
+  );
+  assert.deepEqual(
+    devtoolsViolations(graph, root)
+      .map(v => v.file)
+      .sort(),
+    [path.join("devtools/bindings/src/lazy.ts"), path.join("devtools/bindings/src/useEnv.ts")],
+  );
+});
+
+test("devtools: @devtools/bindings importing a tool's values by relative path is forbidden", t => {
+  const { root, graph } = manifestWorkspace(
+    t,
+    DEVTOOLS_MANIFESTS,
+    [["devtools/bindings", "devtools/env"]],
+    {
+      "devtools/bindings/src/types.ts": 'import type { EnvDevToolProps } from "../../env/src";',
+      "devtools/bindings/src/useEnv.ts": 'import EnvDevTool from "../../env/src/index";',
+      "devtools/bindings/src/local.ts": 'import { useEnv } from "./useEnv";',
+      "devtools/bindings/src/sibling.ts": 'import { x } from "../../environment/src";',
+    },
+  );
+  assert.deepEqual(
+    devtoolsViolations(graph, root).map(v => v.file),
+    [path.join("devtools/bindings/src/useEnv.ts")],
+  );
+});
+
+test("devtools: @devtools/shell importing a tool's types is forbidden", t => {
+  const { root, graph } = manifestWorkspace(
+    t,
+    DEVTOOLS_MANIFESTS,
+    [["devtools/shell", "devtools/env"]],
+    { "devtools/shell/src/a.ts": 'import type { EnvDevToolProps } from "@devtools/env";' },
+  );
+  assert.deepEqual(devtoolsViolations(graph, root), [
+    { source: "@devtools/shell", target: "@devtools/env" },
+  ]);
+});
+
+test("devtools: a static and a dynamic edge to the same package report once", t => {
+  const { root, graph } = manifestWorkspace(t, DEVTOOLS_MANIFESTS, [
+    ["devtools/env", "devtools/shell"],
+    ["devtools/env", "devtools/shell"],
+  ]);
+  assert.equal(devtoolsViolations(graph, root).length, 1);
+});
+
+test("devtools: edges to or from packages outside the scope are ignored", t => {
+  const { root, graph } = manifestWorkspace(
+    t,
+    { ...DEVTOOLS_MANIFESTS, "shared/foo": { name: "@shared/foo", private: true } },
+    [
+      ["devtools/env", "shared/foo"],
+      ["shared/foo", "devtools/shell"],
+    ],
+  );
+  assert.deepEqual(devtoolsViolations(graph, root), []);
 });

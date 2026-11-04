@@ -1,11 +1,17 @@
-import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
+import { afterEach, describe, expect, it, mock, spyOn } from "bun:test";
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import type { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 import type { Unit } from "@domain/entity-currency-unit";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { getAccountBridge as getLiveAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import * as swapAnalytics from "../../analytics/swap-analytics";
 import type { CommandOutput } from "../../output";
+import {
+  runFullSwapPipeline,
+  type FullSwapPipelineInput,
+  type SwapPipelineDeps,
+} from "./cli-swap-pipeline";
 
 /**
  * The full swap pipeline must keep the Exchange app session open across the entire
@@ -26,8 +32,18 @@ const mockEthUnit: Unit = {
 
 const events: string[] = [];
 let updatedTransactionAmount = new BigNumber("1000000000000000000");
+let amountToWallet = "1000000000000000000";
+const retrieveSwapPayloadMock = mock(async () => ({
+  binaryPayload: "00",
+  signature: "sig",
+  payinAddress: "0x000000000000000000000000000000000000dead",
+  swapId: "swap-id",
+}));
+const setBroadcastTransactionMock = mock(() => {});
+const postSwapCancelledMock = mock(async () => null);
 
-mock.module("../../session/exchange-device-session", () => ({
+/** Stands in for the device session, the device APDUs and the swap backend. */
+const fakes = {
   withLedgerManagerAppSession: async <T>(_app: string, fn: () => Promise<T>): Promise<T> => {
     events.push("session:open");
     try {
@@ -36,10 +52,7 @@ mock.module("../../session/exchange-device-session", () => ({
       events.push("session:close");
     }
   },
-}));
-
-mock.module("@ledgerhq/live-common/exchange/platform/startExchange", () => ({
-  default: () =>
+  startExchange: () =>
     new Observable(observer => {
       events.push("startExchange");
       observer.next({
@@ -51,78 +64,25 @@ mock.module("@ledgerhq/live-common/exchange/platform/startExchange", () => ({
       });
       observer.complete();
     }),
-}));
-
-mock.module("@ledgerhq/live-common/exchange/platform/completeExchange", () => ({
-  default: ({ transaction }: { transaction: unknown }) =>
+  completeExchange: ({ transaction }: { transaction: unknown }) =>
     new Observable(observer => {
       events.push("completeExchange");
       observer.next({ type: "complete-exchange-requested" });
       observer.next({ type: "complete-exchange-result", completeExchangeResult: transaction });
       observer.complete();
     }),
-}));
-
-const retrieveSwapPayloadMock = mock(async () => ({
-  binaryPayload: "00",
-  signature: "sig",
-  payinAddress: "0x000000000000000000000000000000000000dead",
-  swapId: "swap-id",
-}));
-mock.module("@ledgerhq/live-common/exchange/swap/api/v5/actions", () => ({
   retrieveSwapPayload: retrieveSwapPayloadMock,
-}));
-
-mock.module("@ledgerhq/live-common/exchange/swap/transactionStrategies", () => ({
-  transactionStrategy: {
-    ethereum: ({ amount, recipient }: { amount: BigNumber; recipient: string }) => ({
-      family: "ethereum",
-      amount,
-      recipient,
-    }),
-  },
-}));
-
-function mockHwAppExchange(amountToWallet = "1000000000000000000") {
-  mock.module("@ledgerhq/hw-app-exchange", () => ({
-    decodeSwapPayload: async () => ({ amountToWallet }),
-    getExchangeErrorMessage: () => ({ errorName: undefined, errorMessage: undefined }),
-  }));
-}
-
-const setBroadcastTransactionMock = mock(async () => {});
-const postSwapAcceptedMock = mock(async () => null);
-const postSwapCancelledMock = mock(async () => null);
-
-mock.module("@ledgerhq/live-common/exchange/swap/setBroadcastTransaction", () => ({
+  decodeSwapPayload: async () => ({ amountToWallet }),
   setBroadcastTransaction: setBroadcastTransactionMock,
-}));
-
-mock.module("@ledgerhq/live-common/exchange/swap/postSwapState", () => ({
-  postSwapAccepted: postSwapAcceptedMock,
   postSwapCancelled: postSwapCancelledMock,
-}));
-
-// mock.module is global and persists across test files, so this keeps every real export and
-// makes the spy a pass-through: any suite that ends up with this module still gets real
-// behaviour, whatever order Bun happens to load the files in.
-const swapAnalytics = await import("../../analytics/swap-analytics");
-const trackSwapCompletedMock = mock(swapAnalytics.trackSwapCompleted);
-mock.module("../../analytics/swap-analytics", () => ({
-  ...swapAnalytics,
-  trackSwapCompleted: trackSwapCompletedMock,
-}));
-
-mockHwAppExchange();
-
-const { runFullSwapPipeline } = await import("./cli-swap-pipeline");
+} as unknown as Partial<SwapPipelineDeps>;
 
 function makeAccount(id: string, units: Unit[] = [mockEthUnit]): Account {
   return {
     type: "Account",
     id,
     freshAddress: `0x${id}`,
-    currency: { id: "ethereum", family: "ethereum", units },
+    currency: { id: "ethereum", family: "evm", units },
     seedIdentifier: "",
     derivationMode: "",
     index: 0,
@@ -155,7 +115,7 @@ const mockSignedOperation = {
 function getAccountBridge(): ReturnType<typeof getLiveAccountBridge> {
   return {
     createTransaction: () => ({
-      family: "ethereum",
+      family: "evm",
       amount: new BigNumber(0),
       recipient: "",
     }),
@@ -176,32 +136,36 @@ async function getDeviceModelId() {
   return DeviceModelId.nanoX;
 }
 
-describe("runFullSwapPipeline session lifecycle", () => {
-  beforeEach(() => {
-    mockHwAppExchange();
+/**
+ * Runs a 1 ETH changelly swap through every fake, the device model included, so no
+ * test falls back to the process-global DMK; tests override only what they exercise.
+ */
+function runPipeline(overrides: Partial<FullSwapPipelineInput> = {}) {
+  return runFullSwapPipeline({
+    out: makeOutput(),
+    provider: "changelly",
+    amount: "1",
+    amountInAtomicUnit: new BigNumber("1000000000000000000"),
+    feeStrategy: "medium",
+    fromAccount: makeAccount("from"),
+    toAccount: makeAccount("to"),
+    ...overrides,
+    deps: { ...fakes, getAccountBridge, getDeviceModelId, ...overrides.deps },
   });
+}
 
+describe("runFullSwapPipeline session lifecycle", () => {
   afterEach(() => {
     events.length = 0;
     updatedTransactionAmount = new BigNumber("1000000000000000000");
+    amountToWallet = "1000000000000000000";
     retrieveSwapPayloadMock.mockClear();
     setBroadcastTransactionMock.mockClear();
     postSwapCancelledMock.mockClear();
-    trackSwapCompletedMock.mockClear();
   });
 
   it("opens a single Exchange app session for the entire start→complete flow", async () => {
-    const result = await runFullSwapPipeline({
-      out: makeOutput(),
-      provider: "changelly",
-      amount: "1",
-      amountInAtomicUnit: new BigNumber("1000000000000000000"),
-      feeStrategy: "medium",
-      fromAccount: makeAccount("from"),
-      toAccount: makeAccount("to"),
-      getAccountBridge,
-      getDeviceModelId,
-    });
+    const result = await runPipeline();
 
     expect(events).toEqual(["session:open", "startExchange", "completeExchange", "session:close"]);
     expect(result.transactionId).toBe("tx-id-123");
@@ -230,16 +194,7 @@ describe("runFullSwapPipeline session lifecycle", () => {
   it("omits magnitudeAwareRate when the prepared transaction amount is zero", async () => {
     updatedTransactionAmount = new BigNumber(0);
 
-    const result = await runFullSwapPipeline({
-      out: makeOutput(),
-      provider: "changelly",
-      amount: "1",
-      amountInAtomicUnit: new BigNumber("1000000000000000000"),
-      feeStrategy: "medium",
-      fromAccount: makeAccount("from"),
-      toAccount: makeAccount("to"),
-      getAccountBridge,
-    });
+    const result = await runPipeline();
 
     expect(result.magnitudeAwareRate).toBeUndefined();
     expect(result).not.toHaveProperty("magnitudeAwareRate");
@@ -251,19 +206,7 @@ describe("runFullSwapPipeline session lifecycle", () => {
       throw apiError;
     });
 
-    await expect(
-      runFullSwapPipeline({
-        out: makeOutput(),
-        provider: "changelly",
-        amount: "1",
-        amountInAtomicUnit: new BigNumber("1000000000000000000"),
-        feeStrategy: "medium",
-        fromAccount: makeAccount("from"),
-        toAccount: makeAccount("to"),
-        getAccountBridge,
-        getDeviceModelId,
-      }),
-    ).rejects.toBe(apiError);
+    await expect(runPipeline()).rejects.toBe(apiError);
 
     expect(events).toEqual(["session:open", "startExchange", "session:close"]);
     expect(setBroadcastTransactionMock).not.toHaveBeenCalled();
@@ -284,17 +227,7 @@ describe("runFullSwapPipeline session lifecycle", () => {
     };
 
     await expect(
-      runFullSwapPipeline({
-        out: makeOutput(),
-        provider: "changelly",
-        amount: "1",
-        amountInAtomicUnit: new BigNumber("1000000000000000000"),
-        feeStrategy: "medium",
-        fromAccount: makeAccount("from"),
-        toAccount: makeAccount("to"),
-        getAccountBridge: getAccountBridgeWithSignFailure,
-        getDeviceModelId,
-      }),
+      runPipeline({ deps: { getAccountBridge: getAccountBridgeWithSignFailure } }),
     ).rejects.toBe(signError);
 
     expect(setBroadcastTransactionMock).not.toHaveBeenCalled();
@@ -318,39 +251,23 @@ describe("runFullSwapPipeline session lifecycle", () => {
   });
 
   it("converts amountExpectedTo to display units (magnitude=18)", async () => {
-    mockHwAppExchange("1234500000000000000");
+    amountToWallet = "1234500000000000000";
 
-    const result = await runFullSwapPipeline({
-      out: makeOutput(),
-      provider: "changelly",
-      amount: "1",
-      amountInAtomicUnit: new BigNumber("1000000000000000000"),
-      feeStrategy: "medium",
-      fromAccount: makeAccount("from"),
-      toAccount: makeAccount("to"),
-      getAccountBridge,
-      getDeviceModelId,
-    });
+    const result = await runPipeline();
 
     expect(result.amountExpectedTo).toBe("1.2345");
     expect(result.amountExpectedToAtomic).toBe("1234500000000000000");
   });
 
   it("converts amountExpectedTo to display units (magnitude=6)", async () => {
-    mockHwAppExchange("1234500");
+    amountToWallet = "1234500";
 
     const usdtUnit: Unit = { name: "USDT", code: "USDT", magnitude: 6 };
 
-    const result = await runFullSwapPipeline({
-      out: makeOutput(),
-      provider: "changelly",
-      amount: "1",
+    const result = await runPipeline({
       amountInAtomicUnit: new BigNumber("1000000"),
-      feeStrategy: "medium",
       fromAccount: makeAccount("from", [usdtUnit]),
       toAccount: makeAccount("to", [usdtUnit]),
-      getAccountBridge,
-      getDeviceModelId,
     });
 
     expect(result.amountExpectedTo).toBe("1.2345");
@@ -358,68 +275,46 @@ describe("runFullSwapPipeline session lifecycle", () => {
   });
 
   it("renders sub-unit amounts in full decimal notation rather than exponential", async () => {
-    mockHwAppExchange("1");
+    amountToWallet = "1";
 
-    const result = await runFullSwapPipeline({
-      out: makeOutput(),
-      provider: "changelly",
-      amount: "1",
-      amountInAtomicUnit: new BigNumber("1000000000000000000"),
-      feeStrategy: "medium",
-      fromAccount: makeAccount("from"),
-      toAccount: makeAccount("to"),
-      getAccountBridge,
-      getDeviceModelId,
-    });
+    const result = await runPipeline();
 
     expect(result.amountExpectedTo).toBe("0.000000000000000001");
     expect(result.amountExpectedToAtomic).toBe("1");
   });
 
   it("keeps full precision for magnitudes above BigNumber's DECIMAL_PLACES", async () => {
-    mockHwAppExchange("1234500000000000000000123");
+    amountToWallet = "1234500000000000000000123";
 
     const nearUnit: Unit = { name: "NEAR", code: "NEAR", magnitude: 24 };
 
-    const result = await runFullSwapPipeline({
-      out: makeOutput(),
-      provider: "changelly",
-      amount: "1",
+    const result = await runPipeline({
       amountInAtomicUnit: new BigNumber("1000000000000000000000000"),
-      feeStrategy: "medium",
       fromAccount: makeAccount("from", [nearUnit]),
       toAccount: makeAccount("to", [nearUnit]),
-      getAccountBridge,
-      getDeviceModelId,
     });
 
     expect(result.amountExpectedTo).toBe("1.234500000000000000000123");
   });
 
   it("reports the analytics toAmount in display units", async () => {
-    mockHwAppExchange("1234500000000000000");
+    amountToWallet = "1234500000000000000";
+    const trackSwapCompleted = spyOn(swapAnalytics, "trackSwapCompleted");
 
-    await runFullSwapPipeline({
-      out: makeOutput(),
-      provider: "changelly",
-      amount: "1",
-      amountInAtomicUnit: new BigNumber("1000000000000000000"),
-      feeStrategy: "medium",
-      fromAccount: makeAccount("from"),
-      toAccount: makeAccount("to"),
-      getAccountBridge,
-      getDeviceModelId,
-      flowId: "flow-id-123",
-    });
+    try {
+      await runPipeline({ flowId: "flow-id-123" });
 
-    expect(trackSwapCompletedMock).toHaveBeenCalledTimes(1);
-    expect(trackSwapCompletedMock).toHaveBeenCalledWith({
-      flowId: "flow-id-123",
-      fromCurrency: "ethereum",
-      toCurrency: "ethereum",
-      provider: "changelly",
-      fromAmount: "1",
-      toAmount: "1.2345",
-    });
+      expect(trackSwapCompleted).toHaveBeenCalledTimes(1);
+      expect(trackSwapCompleted).toHaveBeenCalledWith({
+        flowId: "flow-id-123",
+        fromCurrency: "ethereum",
+        toCurrency: "ethereum",
+        provider: "changelly",
+        fromAmount: "1",
+        toAmount: "1.2345",
+      });
+    } finally {
+      trackSwapCompleted.mockRestore();
+    }
   });
 });

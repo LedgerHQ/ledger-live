@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-contact",
-  "version": "0.12.2",
+  "version": "0.12.3",
   "private": true,
   "description": "Domain entity for Contacts: schemas, state, selectors, and mock factories",
   "main": "src/index.ts",
@@ -14,6 +14,7 @@
   "scripts": {
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
+    "lint": "oxlint ./src",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",

@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import {
-  LEDGER_VALIDATORS_VOTE_ACCOUNTS,
   LEDGER_VALIDATOR_BY_FIGMENT,
   LEDGER_VALIDATOR_BY_BITWISE,
 } from "@ledgerhq/live-common/families/solana/staking";
@@ -16,8 +15,6 @@ type Props = {
 };
 export default function LedgerValidatorTCLink({ transaction }: Props) {
   const { t } = useTranslation();
-  if (!shouldShowTC(transaction)) return null;
-
   const data = getTCInfo(transaction);
   if (!data) return null;
 
@@ -30,11 +27,6 @@ export default function LedgerValidatorTCLink({ transaction }: Props) {
     />
   );
 }
-const shouldShowTC = (transaction: Transaction) => {
-  const voteAccAddr = getTransactionValidator(transaction);
-  return voteAccAddr !== undefined && LEDGER_VALIDATORS_VOTE_ACCOUNTS.includes(voteAccAddr);
-};
-
 const getTCInfo = (transaction: Transaction) => {
   const TC_INFO: Record<string, { label: string; url: string }> = {
     [LEDGER_VALIDATOR_BY_BITWISE.voteAccount]: {
@@ -48,7 +40,7 @@ const getTCInfo = (transaction: Transaction) => {
   };
 
   const voteAccAddr = getTransactionValidator(transaction);
-  if (voteAccAddr) {
+  if (voteAccAddr && Object.hasOwn(TC_INFO, voteAccAddr)) {
     return TC_INFO[voteAccAddr];
   }
   return null;

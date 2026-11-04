@@ -15,6 +15,11 @@
   },
   "packageRules": [
     {
+      "description": "Pin PRs: rebase only on conflict, not on every develop merge (Renovate's pin default is behind-base-branch)",
+      "matchUpdateTypes": ["pin", "pinDigest"],
+      "rebaseWhen": "conflicted"
+    },
+    {
       "description": "Coin modules: update PRs are opened by the LedgerHQ/coin-modules release workflow",
       "matchManagers": ["npm"],
       "matchPackageNames": ["@ledgerhq/coin-*"],
@@ -66,8 +71,7 @@
       "minimumReleaseAge": "2 days"
     },
     {
-      "description": "Electron linked updates",
-      "groupName": "electron",
+      "description": "Electron ecosystem ownership, one PR per package",
       "reviewers": ["team:live-hub"],
       "assignees": ["team:live-hub"],
       "matchPackageNames": [
@@ -94,6 +98,11 @@
       "reviewers": ["team:live-hub"],
       "assignees": ["team:live-hub"],
       "minimumReleaseAge": "2 days"
+    },
+    {
+      "description": "Polkadot linked updates",
+      "matchPackageNames": ["@polkadot/*"],
+      "groupName": "polkadot"
     },
     {
       "description": "Expo monorepo grouping",

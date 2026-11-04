@@ -124,9 +124,8 @@ The flow owns moving between its own screens; the app owns navigation to and fro
 | `components/`     | UI pieces of the package's views; in a `screens/` package, UI one screen uses goes in `screens/<Screen>/components/` | `@features/flow-pay-balance` `components/`; `@features/flow-contacts-add-address` `screens/AddressEntry/components/` |
 | `hooks/`          | React hooks shared by several screens or exported                                       | `@features/flow-pay-balance` `hooks/useBalanceData.ts`                   |
 | `types.ts`        | Types shared across the package or exported; screen-only types stay in the screen      | `@features/flow-contacts-delete-address` `types.ts`                       |
-| `exports.ts`      | The platform-agnostic public API, re-exported by both `index.ts` and `index.native.ts`  | `@features/flow-contacts-delete-address` `exports.ts`                     |
-| `index.ts`        | Web entry: `export * from "./exports"` plus the `.web` components                       | `@features/flow-contacts-delete-address` `index.ts`                       |
-| `index.native.ts` | Native entry: `export * from "./exports"` plus the `.native` components                 | `@features/flow-contacts-delete-address` `index.native.ts`                |
+| `exports.ts`      | The platform-agnostic public API, re-exported by `index.ts`                             | `@features/flow-contacts-delete-address` `exports.ts`                     |
+| `index.ts`        | Universal entry: `export * from "./exports"` plus each universal component and its `.types` contract | `@features/flow-contacts-delete-address` `index.ts`                       |
 
 - `logic/` and `model/` import no React, so their tests run without rendering.
 - The lifecycle model is not a ViewModel. The ViewModel is the `useXViewModel` hook every screen

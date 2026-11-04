@@ -23,80 +23,85 @@ import {
 } from "../../types";
 import { NeuronsData } from "../../types/neuron";
 
-export const getAccountShape: GetAccountShape<ICPAccount> = async info => {
-  const { currency, derivationMode, rest = {}, initialAccount } = info;
-  const publicKey = reconciliatePublicKey(rest.publicKey, initialAccount);
-  invariant(publicKey, "publicKey is required");
+/** The account shape reader, reaching the node `resolveHost` names; it is resolved once per call. */
+export const buildGetAccountShape =
+  (resolveHost: () => string): GetAccountShape<ICPAccount> =>
+  async info => {
+    const { currency, derivationMode, rest = {}, initialAccount } = info;
+    const host = resolveHost();
+    const publicKey = reconciliatePublicKey(rest.publicKey, initialAccount);
+    invariant(publicKey, "publicKey is required");
 
-  // deriving address from public key
-  const address = await deriveAddressFromPubkey(publicKey);
-  invariant(address, "address is required");
+    // deriving address from public key
+    const address = await deriveAddressFromPubkey(publicKey);
+    invariant(address, "address is required");
 
-  const accountId = encodeAccountId({
-    type: "js",
-    version: "2",
-    currencyId: currency.id,
-    xpubOrAddress: publicKey,
-    derivationMode,
-  });
+    const accountId = encodeAccountId({
+      type: "js",
+      version: "2",
+      currencyId: currency.id,
+      xpubOrAddress: publicKey,
+      derivationMode,
+    });
 
-  // log("debug", `Generation account shape for ${address}`);
+    // log("debug", `Generation account shape for ${address}`);
 
-  const blockHeight = await fetchBlockHeight();
-  const balance = await fetchBalance(address);
-  const txns = await fetchTxns(
-    address,
-    BigInt(blockHeight.toString()),
-    initialAccount ? BigInt(initialAccount.blockHeight.toString()) : undefined,
-  );
+    const blockHeight = await fetchBlockHeight(host);
+    const balance = await fetchBalance(host, address);
+    const txns = await fetchTxns(
+      host,
+      address,
+      BigInt(blockHeight.toString()),
+      initialAccount ? BigInt(initialAccount.blockHeight.toString()) : undefined,
+    );
 
-  // Neurons aren't fetched during background sync (that needs device signing). They're refreshed by
-  // the device-signed list_neurons operation, whose result rides in operation.extra.neurons.
-  //
-  // Seeded with the account's own snapshot so the fold can only move forward: an account persisted
-  // before governance ops stopped entering history may still hold one, older than what it carries.
-  const previous = initialAccount?.neurons;
-  const latestSnapshot = [
-    ...(initialAccount?.pendingOperations ?? []),
-    ...(initialAccount?.operations ?? []),
-  ].reduce<{ neurons: ICPNeuron[]; date: number }>(
-    (latest, op) => {
-      const snapshot = (op.extra as InternetComputerOperationExtra | undefined)?.neurons;
-      return snapshot && op.date.getTime() > latest.date
-        ? { neurons: snapshot, date: op.date.getTime() }
-        : latest;
-    },
-    {
-      neurons: previous?.fullNeurons ?? [],
-      date: previous?.lastUpdatedMSecs ?? 0,
-    },
-  );
-  const neurons = new NeuronsData(latestSnapshot.neurons, latestSnapshot.date);
+    // Neurons aren't fetched during background sync (that needs device signing). They're refreshed by
+    // the device-signed list_neurons operation, whose result rides in operation.extra.neurons.
+    //
+    // Seeded with the account's own snapshot so the fold can only move forward: an account persisted
+    // before governance ops stopped entering history may still hold one, older than what it carries.
+    const previous = initialAccount?.neurons;
+    const latestSnapshot = [
+      ...(initialAccount?.pendingOperations ?? []),
+      ...(initialAccount?.operations ?? []),
+    ].reduce<{ neurons: ICPNeuron[]; date: number }>(
+      (latest, op) => {
+        const snapshot = (op.extra as InternetComputerOperationExtra | undefined)?.neurons;
+        return snapshot && op.date.getTime() > latest.date
+          ? { neurons: snapshot, date: op.date.getTime() }
+          : latest;
+      },
+      {
+        neurons: previous?.fullNeurons ?? [],
+        date: previous?.lastUpdatedMSecs ?? 0,
+      },
+    );
+    const neurons = new NeuronsData(latestSnapshot.neurons, latestSnapshot.date);
 
-  const neuronAddresses = neurons.fullNeurons.map(n => n.accountIdentifier);
+    const neuronAddresses = neurons.fullNeurons.map(n => n.accountIdentifier);
 
-  const result: Partial<ICPAccount> = {
-    id: accountId,
-    balance,
-    spendableBalance: balance,
-    operations: reassignOperationType(
-      flatMap<TransactionWithId, InternetComputerOperation>(txns, mapTxToOps(accountId, address)),
-      neuronAddresses,
-      // Lets a stake be recognized from its own memo, so a settled staking transfer is not relabelled
-      // a plain send for as long as the snapshot is empty.
-      derivePrincipalFromPubkey(publicKey),
-    ),
-    blockHeight: blockHeight.toNumber(),
-    // `operationsCount` is deliberately absent: the framework derives it from the merged list when
-    // the shape omits it. Adding the fetched page to the stored count double-counted, because the
-    // index canister is queried from the current ledger tip every time and so returns the newest
-    // page again on every sync — the figure climbed without bound instead of tracking the account.
-    xpub: publicKey,
-    neurons,
+    const result: Partial<ICPAccount> = {
+      id: accountId,
+      balance,
+      spendableBalance: balance,
+      operations: reassignOperationType(
+        flatMap<TransactionWithId, InternetComputerOperation>(txns, mapTxToOps(accountId, address)),
+        neuronAddresses,
+        // Lets a stake be recognized from its own memo, so a settled staking transfer is not relabelled
+        // a plain send for as long as the snapshot is empty.
+        derivePrincipalFromPubkey(publicKey),
+      ),
+      blockHeight: blockHeight.toNumber(),
+      // `operationsCount` is deliberately absent: the framework derives it from the merged list when
+      // the shape omits it. Adding the fetched page to the stored count double-counted, because the
+      // index canister is queried from the current ledger tip every time and so returns the newest
+      // page again on every sync — the figure climbed without bound instead of tracking the account.
+      xpub: publicKey,
+      neurons,
+    };
+
+    return result;
   };
-
-  return result;
-};
 
 /**
  * `getAccountShape` only ever retypes the page it just fetched; the stale `OUT` copy of a transfer

@@ -101,8 +101,8 @@ export const scenarioScroll: Scenario<GenericTransaction, Account> = {
     sandbox = await startSandbox(
       { family: "evm", network: "scroll" },
       {
-        node: { provider: "geth", version: "5.10.2" },
-        indexer: { provider: "blockscout", version: "12.0.3" },
+        node: { implementation: "geth", version: "5.10.2" },
+        indexer: { implementation: "blockscout", version: "12.0.3" },
       },
     );
     const { node: rpc, indexer: explorer } = sandbox.endpoints;

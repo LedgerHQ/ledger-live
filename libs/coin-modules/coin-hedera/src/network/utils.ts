@@ -14,7 +14,6 @@ import {
   mapMirrorNodesToValidators,
   nanosToSeconds,
   resolveConfig,
-  toEntityId,
   toTimestamp,
 } from "../logic/utils";
 import type {
@@ -143,7 +142,7 @@ export async function getERC20BalancesForAccountV2({
 /**
  * Enriches raw ERC20 transfers from Hgraph with additional data needed for operations:
  * - fetches contract call result containing gas metrics and block hash
- * - finds the corresponding Mirror Node transaction by consensus timestamp
+ * - finds the corresponding Mirror Node transaction by consensus timestamp and transaction hash
  *
  * @param erc20Transfers - Raw ERC20 transfers from Hgraph API
  * @returns Array of enriched transfers with complete operation data, filtered to supported tokens only
@@ -172,7 +171,6 @@ export const enrichERC20Transfers = async ({
     4,
     [...groupedByTxHash.entries()],
     async ([txHash, transfers]): Promise<EnrichedERC20Transfer | null> => {
-      const payerAddress = toEntityId({ num: transfers[0].payer_account_id });
       const inaccurateConsensusTimestampNs = new BigNumber(transfers[0].consensus_timestamp);
       const inaccurateConsensusTimestamp = nanosToSeconds(inaccurateConsensusTimestampNs).toFixed(
         9,
@@ -182,8 +180,8 @@ export const enrichERC20Transfers = async ({
         apiClient.getContractCallResult({ configOrCurrencyId, transactionHash: txHash }),
         apiClient.findTransactionByContractCallV2({
           configOrCurrencyId,
-          payerAddress,
           timestamp: inaccurateConsensusTimestamp,
+          transactionHash: txHash,
         }),
       ]);
 

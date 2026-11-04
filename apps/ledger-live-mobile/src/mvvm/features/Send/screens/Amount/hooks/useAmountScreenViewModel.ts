@@ -253,6 +253,7 @@ export function useAmountScreenViewModel({
         isTyping: amountInput.isTyping,
         onChangeText: amountInput.onChangeText,
         onToggleMode: amountInput.onToggleMode,
+        isFiatModeAvailable: amountInput.isFiatModeAvailable,
       },
       networkFees,
       sponsoredFee,

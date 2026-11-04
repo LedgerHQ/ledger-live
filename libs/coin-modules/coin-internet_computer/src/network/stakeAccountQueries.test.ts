@@ -15,6 +15,8 @@ jest.mock("./agent", () => ({
   getAgent: (host: string) => HttpAgent.create({ host, verifyQuerySignatures: false }),
 }));
 
+const LOCAL_NODE = "http://127.0.0.1:4943";
+
 const listNeurons = getCanisterIdlFunc(governanceIdlFactory, "list_neurons");
 const SUBACCOUNT = new Uint8Array(32).fill(5);
 
@@ -43,12 +45,15 @@ type QueryEnvelope = {
 let received: QueryEnvelope[];
 
 const answering = (body: unknown) =>
-  http.post(/^https:\/\/ic0\.app\/api\/v\d\/canister\/[^/]+\/query$/, async ({ request }) => {
-    received.push(Cbor.decode<QueryEnvelope>(new Uint8Array(await request.arrayBuffer())));
-    return new HttpResponse(Buffer.from(Cbor.encode(body)), {
-      headers: { "Content-Type": "application/cbor" },
-    });
-  });
+  http.post(
+    /^http:\/\/127\.0\.0\.1:4943\/api\/v\d\/canister\/[^/]+\/query$/,
+    async ({ request }) => {
+      received.push(Cbor.decode<QueryEnvelope>(new Uint8Array(await request.arrayBuffer())));
+      return new HttpResponse(Buffer.from(Cbor.encode(body)), {
+        headers: { "Content-Type": "application/cbor" },
+      });
+    },
+  );
 
 const listing = (neuronInfos: unknown[]) => ({
   status: "replied",
@@ -74,7 +79,7 @@ describe("findNeuronIdBySubaccount", () => {
   it("asks governance for the neuron of that subaccount alone", async () => {
     server.use(answering(listing([])));
 
-    await findNeuronIdBySubaccount(SUBACCOUNT);
+    await findNeuronIdBySubaccount(LOCAL_NODE, SUBACCOUNT);
 
     expect(received).toHaveLength(1);
     expect(received[0].content.method_name).toBe("list_neurons");
@@ -95,13 +100,13 @@ describe("findNeuronIdBySubaccount", () => {
   it("returns the id of the neuron listed for it", async () => {
     server.use(answering(listing([[123n, NEURON_INFO]])));
 
-    await expect(findNeuronIdBySubaccount(SUBACCOUNT)).resolves.toBe("123");
+    await expect(findNeuronIdBySubaccount(LOCAL_NODE, SUBACCOUNT)).resolves.toBe("123");
   });
 
   it("returns undefined when no neuron is listed", async () => {
     server.use(answering(listing([])));
 
-    await expect(findNeuronIdBySubaccount(SUBACCOUNT)).resolves.toBeUndefined();
+    await expect(findNeuronIdBySubaccount(LOCAL_NODE, SUBACCOUNT)).resolves.toBeUndefined();
   });
 
   it("throws when governance rejects the query", async () => {
@@ -109,7 +114,9 @@ describe("findNeuronIdBySubaccount", () => {
       answering({ status: "rejected", reject_code: 5, reject_message: "busy", error_code: "IC0" }),
     );
 
-    await expect(findNeuronIdBySubaccount(SUBACCOUNT)).rejects.toThrow(/Query failed|busy/);
+    await expect(findNeuronIdBySubaccount(LOCAL_NODE, SUBACCOUNT)).rejects.toThrow(
+      /Query failed|busy/,
+    );
   });
 });
 
@@ -125,7 +132,7 @@ describe("queryLedgerBalance", () => {
       }),
     );
 
-    await expect(queryLedgerBalance(ACCOUNT)).resolves.toBe(42n);
+    await expect(queryLedgerBalance(LOCAL_NODE, ACCOUNT)).resolves.toBe(42n);
     expect(received[0].content.method_name).toBe("account_balance");
     const [{ account }] = decodeCanisterIdlArgs<[{ account: Uint8Array }]>(
       accountBalance,
@@ -139,6 +146,6 @@ describe("queryLedgerBalance", () => {
       answering({ status: "rejected", reject_code: 5, reject_message: "busy", error_code: "IC0" }),
     );
 
-    await expect(queryLedgerBalance(ACCOUNT)).rejects.toThrow(/Query failed|busy/);
+    await expect(queryLedgerBalance(LOCAL_NODE, ACCOUNT)).rejects.toThrow(/Query failed|busy/);
   });
 });

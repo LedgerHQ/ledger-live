@@ -1,6 +1,7 @@
 import { ChevronRight } from "@ledgerhq/lumen-ui-react/symbols";
 import type { Tool, ToolId } from "@devtools/registry";
 import { IconSquare } from "../IconSquare/IconSquare";
+import { KindTag } from "../KindTag/KindTag";
 
 interface ToolCardProps {
   tool: Tool;
@@ -15,7 +16,9 @@ export function ToolCard({ tool, onSelect }: ToolCardProps) {
     >
       <IconSquare category={tool.category} />
       <div className="flex-1 min-w-0">
-        <div className="body-2 truncate">{tool.label}</div>
+        <div className="body-2 truncate">
+          {tool.label} {tool.kind && <KindTag kind={tool.kind} />}
+        </div>
         <div className="body-3 text-muted truncate">{tool.category}</div>
       </div>
       <ChevronRight size={16} className="text-muted shrink-0" />

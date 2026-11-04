@@ -47,6 +47,7 @@ export function useMemoViewModel({ address, hasMemo }: UseMemoViewModelProps) {
         ensName,
         memo,
         displayLabel: isSameAddress ? prev?.displayLabel : undefined,
+        isSelfTransfer: isSameAddress ? prev?.isSelfTransfer : undefined,
       });
     },
     [transaction, address],

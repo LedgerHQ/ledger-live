@@ -3,10 +3,9 @@ import { useTranslation } from "react-i18next";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
-import { getAccountsSidebarPath } from "LLD/components/SideBar/utils";
+import { ACCOUNTS_SIDEBAR_PATH } from "LLD/components/SideBar/utils";
 import { useSelector } from "LLD/hooks/redux";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import { track } from "@shared/analytics";
@@ -29,7 +28,6 @@ export interface CryptoAddressesBannerViewModelResult {
 export const useCryptoAddressesBannerViewModel = (): CryptoAddressesBannerViewModelResult => {
   const { t } = useTranslation();
   const accounts = useSelector(shallowAccountsSelector);
-  const { shouldDisplayAssetSection } = useWalletFeaturesConfig("desktop");
   const navigate = useNavigate();
   const { openAssetFlow } = useOpenAssetFlow(
     { location: ModularDrawerLocation.ADD_ACCOUNT },
@@ -53,8 +51,8 @@ export const useCryptoAddressesBannerViewModel = (): CryptoAddressesBannerViewMo
       type: "view",
       page: PORTFOLIO_TRACKING_PAGE_NAME,
     });
-    navigate(getAccountsSidebarPath(shouldDisplayAssetSection));
-  }, [navigate, shouldDisplayAssetSection]);
+    navigate(ACCOUNTS_SIDEBAR_PATH);
+  }, [navigate]);
 
   const onAddAccount = useCallback(() => {
     track("button_clicked", {

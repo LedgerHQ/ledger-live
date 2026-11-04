@@ -67,7 +67,6 @@ describe("rentPayment", () => {
       asset: {
         type: "trc20",
         assetReference: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
-        name: "Tether USD",
         unit: { name: "USDT", code: "USDT", magnitude: 6 },
       },
       amount: 3_124_527n,

@@ -4,14 +4,12 @@ import { useTranslation } from "react-i18next";
 import { useCategorizedAssetsFromPortfolio } from "LLD/hooks/useCategorizedAssets";
 import { useSelector } from "LLD/hooks/redux";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
-import { useAllCurrencyTrends } from "LLD/components/AssetsTable/useAllCurrencyTrends";
+import { useAllCurrencyTrends, type AssetTableItem } from "@features/platform-assets-table";
 import { useOnDemandCurrenciesCountervalues } from "~/renderer/hooks/useOnDemandCountervalues";
 import { setTrackingSource, track } from "@shared/analytics";
 import { buildAssetsPagePath } from "LLD/features/Assets/utils/buildAssetsPagePath";
 import { ASSETS_PAGE_CATEGORY_STOCKS, MAX_STOCKS_TO_DISPLAY } from "LLD/features/Assets/constants";
 import type { AssetSectionData } from "LLD/features/Assets/types";
-import type { AssetTableItem } from "LLD/components/AssetsTable/types";
-
 const TRACKING_SOURCE = "Portfolio";
 
 type PortfolioStocksViewModelResult = {

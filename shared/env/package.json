@@ -1,6 +1,6 @@
 {
   "name": "@shared/env",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "private": true,
   "description": "Shared live-env definitions organized by team",
   "main": "src/index.ts",
@@ -19,7 +19,8 @@
     "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../.. -W shared/env",
     "format": "oxfmt src",
-    "format:check": "oxfmt --check src"
+    "format:check": "oxfmt --check src",
+    "lint": "oxlint ./src"
   },
   "dependencies": {
     "@ledgerhq/live-env": "catalog:"
