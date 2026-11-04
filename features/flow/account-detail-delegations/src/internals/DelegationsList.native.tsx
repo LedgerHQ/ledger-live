@@ -35,7 +35,12 @@ export const DelegationsList = ({ columns, rows, discreet, onSelectRow }: Props)
         const main = mainColumn ? cells[mainColumn.id] : undefined;
 
         return (
-          <ListItem key={id} onPress={() => onSelectRow(id)} testID={`delegation-row-${id}`}>
+          <ListItem
+            key={id}
+            priority="start"
+            onPress={() => onSelectRow(id)}
+            testID={`delegation-row-${id}`}
+          >
             <ListItemLeading>
               <Avatar size="md" src={validator.imageUrl} fallbackText={initialOf(validator.name)} />
               <ListItemContent>
