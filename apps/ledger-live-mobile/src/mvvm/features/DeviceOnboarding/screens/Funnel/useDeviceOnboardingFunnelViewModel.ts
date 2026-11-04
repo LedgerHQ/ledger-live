@@ -6,21 +6,22 @@ import {
   type ParamListBase,
   type RouteProp,
 } from "@react-navigation/native";
-import {
-  USB_COMPAT_DEVICE_ID_PREFIX,
-  isUsbCompatDeviceId,
-  useDeviceManagementKit,
-} from "@ledgerhq/live-dmk-mobile";
+import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
 import { useTranslation } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
 import { knownDevicesSelector } from "~/reducers/knownDevices";
 import type { ScreenName } from "~/const";
 import type { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
-import { useDeviceOnboarding } from "LLM/features/DeviceOnboarding/hooks/useDeviceOnboarding";
+import {
+  useDeviceOnboardingHost,
+  useDeviceOnboardingSession,
+} from "LLM/features/DeviceOnboarding/hooks/DeviceOnboardingProvider";
 import { useOfferSync } from "LLM/features/DeviceOnboarding/hooks/useOfferSync";
 import type { ChecksScreenProps } from "LLM/features/DeviceOnboarding/types";
 import { toChecksError, toFirmwareUpdate } from "LLM/features/DeviceOnboarding/utils/checksPhase";
 import { checksScreenForPhase, phaseOf } from "LLM/features/DeviceOnboarding/utils/funnelPhase";
+import { selectPairedKnownDevices } from "LLM/features/DeviceOnboarding/utils/pairedDevice";
+import { useFirmwareUpdateHandover } from "LLM/features/DeviceOnboarding/hooks/useFirmwareUpdateHandover";
 
 type FunnelRoute = RouteProp<OnboardingNavigatorParamList, ScreenName.DeviceOnboardingFunnel>;
 
@@ -46,29 +47,36 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   const dmk = useDeviceManagementKit();
   const allKnownDevices = useSelector(knownDevicesSelector);
   const { pairedDeviceId, wasReadOnlyAtEntry } = useRoute<FunnelRoute>().params;
-  const knownDevices = useMemo(() => {
-    const paired = allKnownDevices.filter(known => matchesPairedDevice(known.id, pairedDeviceId));
-    return paired.length > 0 ? paired : allKnownDevices;
-  }, [allKnownDevices, pairedDeviceId]);
+  const knownDevices = useMemo(
+    () => selectPairedKnownDevices(allKnownDevices, pairedDeviceId),
+    [allKnownDevices, pairedDeviceId],
+  );
   const offerSync = useOfferSync();
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const { t } = useTranslation();
   const allowLeave = useRef(false);
-  const onboarding = useDeviceOnboarding({
-    dmk,
-    knownDevices,
-    offerSync,
-    navigateOnExit: true,
-    wasReadOnlyAtEntry,
-    onLeave: () => {
-      allowLeave.current = true;
-    },
-  });
+  const onLeave = useCallback(() => {
+    allowLeave.current = true;
+  }, []);
+  const onboarding = useDeviceOnboardingSession();
+  const host = useMemo(
+    () => ({
+      navigation,
+      onLeave,
+      dmk,
+      knownDevices,
+      offerSync,
+      wasReadOnlyAtEntry,
+    }),
+    [dmk, knownDevices, navigation, offerSync, onLeave, wasReadOnlyAtEntry],
+  );
+  useDeviceOnboardingHost(host);
   const started = useRef(false);
 
   useEffect(() => {
     if (started.current) return;
     started.current = true;
+    if (onboarding.status !== "idle" || onboarding.state !== null || onboarding.error) return;
     onboarding.connect();
   }, [onboarding]);
 
@@ -97,7 +105,14 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     send({ type: "QUIT" });
   }, [send]);
 
-  const closeFirmwareHandover = onboarding.closeFirmwareHandover;
+  const { close: closeFirmwareHandover } = useFirmwareUpdateHandover({
+    device: onboarding.liveDevice,
+    isDeviceOnboarded: onboarding.context?.isOnboarded ?? false,
+    machineState: onboarding.state,
+    currentSessionId: onboarding.device?.sessionId ?? null,
+    send: onboarding.send,
+    onReconnectRequired: onboarding.reconnectAfterUpdate,
+  });
 
   const quitOrLeave = useCallback(() => {
     if (onboarding.status === "running" && onboarding.state) {
@@ -233,15 +248,6 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
         onboarding.state === firmwareUpdateDelegatedState ? closeFirmwareHandover : quitMachine,
     },
   };
-}
-
-function matchesPairedDevice(knownId: string, pairedDeviceId: string | undefined) {
-  if (!pairedDeviceId) return false;
-  if (knownId === pairedDeviceId) return true;
-  const discoveryId = isUsbCompatDeviceId(pairedDeviceId)
-    ? pairedDeviceId.slice(USB_COMPAT_DEVICE_ID_PREFIX.length)
-    : pairedDeviceId;
-  return knownId === discoveryId;
 }
 
 function readString(value: unknown): string | null {
