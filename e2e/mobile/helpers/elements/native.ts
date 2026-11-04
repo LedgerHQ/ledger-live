@@ -5,12 +5,15 @@ import type {
   NativeElement,
   NativeMatcher,
 } from "detox/detox";
+import { PageScroller } from "@e2e/helpers/pageScroller";
 import { retryUntilTimeout } from "@e2e/utils/retry";
 import { TIMEOUT } from "@e2e/utils/timeouts";
 import type { ElementHandle } from "./elementHandle";
-import { waitHardTimeout, withHardTimeout } from "./hardTimeout";
+import { isHardTimeout, waitHardTimeout, withHardTimeout } from "./hardTimeout";
 
 type ElementAttributes = IosElementAttributes | AndroidElementAttributes;
+
+const scroller = new PageScroller();
 
 /**
  * A native (React Native) element, declared once with its match strategy.
@@ -104,6 +107,28 @@ export class NativeHandle implements ElementHandle {
   async getText(timeout = TIMEOUT.xxlarge): Promise<string> {
     const { text } = await this.getAttributes(timeout);
     return text ?? "";
+  }
+
+  /**
+   * Returns whether the element becomes visible within `timeout`, for an element that may or may not
+   * appear. A hung app still throws.
+   */
+  async isVisible(timeout = TIMEOUT.xxsmall): Promise<boolean> {
+    try {
+      await withHardTimeout(
+        waitFor(this.raw).toBeVisible().withTimeout(timeout),
+        waitHardTimeout(timeout),
+      );
+      return true;
+    } catch (error) {
+      if (isHardTimeout(error)) throw error;
+      return false;
+    }
+  }
+
+  /** Scrolls `container` (default: the first scroll view on screen) until the element is visible. */
+  async scrollTo(container?: NativeHandle): Promise<void> {
+    await scroller.performScroll(this.createMatcher(), container?.createMatcher());
   }
 
   /** Asserts the element is visible now. A Detox expect: synchronised with the app, it does not wait. */
