@@ -9076,6 +9076,9 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      knip:
+        specifier: 6.32.2
+        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.75.0
