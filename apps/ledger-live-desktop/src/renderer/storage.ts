@@ -159,10 +159,12 @@ export const getKey = async <
 // E2E: write on the next tick, so the tests read the data at once.
 const SET_KEY_DEBOUNCE_MS = getEnv("PLAYWRIGHT_RUN") ? 0 : 1000;
 
-const debouncedSetKeys = new Map<
-  string,
-  ReturnType<typeof debounce<(value: unknown) => Promise<void>>>
->();
+type DebouncedSetKey = ReturnType<typeof debounce<(value: unknown) => Promise<void>>>;
+
+const debouncedSetKeys = new Map<string, DebouncedSetKey>();
+
+/** The debounces called since the last flush. */
+const queuedSetKeys = new Set<DebouncedSetKey>();
 
 function getDebouncedSetKey(ns: string, keyPath: keyof DatabaseValues) {
   const id = `${ns}:${keyPath}`;
@@ -191,16 +193,24 @@ export const setKey = <K extends keyof DatabaseValues, V = DatabaseValue<K>, Val
   keyPath: K,
   value: Val,
 ) => {
-  getDebouncedSetKey(ns, keyPath)(value);
+  const debouncedSetKey = getDebouncedSetKey(ns, keyPath);
+  queuedSetKeys.add(debouncedSetKey);
+  debouncedSetKey(value);
 };
+
+/** A store that keeps writing must not hold the quit. */
+const MAX_FLUSH_ROUNDS = 5;
 
 /**
  * Send the debounced `setKey` calls to main now, and wait until main has them.
  */
 export const flushPendingWrites = async () => {
-  await Promise.all(
-    Array.from(debouncedSetKeys.values(), debouncedSetKey => debouncedSetKey.flush()),
-  );
+  // The store can queue more writes while main saves the first ones: flush those too.
+  for (let round = 0; round < MAX_FLUSH_ROUNDS && queuedSetKeys.size > 0; round++) {
+    const toFlush = Array.from(queuedSetKeys);
+    queuedSetKeys.clear();
+    await Promise.all(toFlush.map(debouncedSetKey => debouncedSetKey.flush()));
+  }
 };
 
 export const hasEncryptionKey = (ns: string, keyPath: keyof DatabaseValues) =>
@@ -220,6 +230,7 @@ export const hasBeenDecrypted = () => db.hasBeenDecrypted();
 // A pending write after the reset would bring back the data that the reset removed.
 export const resetAll = () => {
   debouncedSetKeys.forEach(debouncedSetKey => debouncedSetKey.cancel());
+  queuedSetKeys.clear();
   return db.resetAll();
 };
 

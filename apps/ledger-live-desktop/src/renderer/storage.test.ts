@@ -37,6 +37,21 @@ describe("renderer storage", () => {
     expect(flushed).toBe(true);
   });
 
+  it("flushes the writes queued while main saves the first ones", async () => {
+    let answer: (() => void) | undefined;
+    jest.mocked(db.setKey).mockReturnValueOnce(new Promise<void>(resolve => (answer = resolve)));
+    setKey("app", "ptx", { lastScreen: "earn" });
+
+    const flushing = flushPendingWrites();
+    await Promise.resolve();
+    setKey("app", "ptx", { lastScreen: "swap" });
+    answer?.();
+    await flushing;
+
+    expect(db.setKey).toHaveBeenCalledTimes(2);
+    expect(db.setKey).toHaveBeenLastCalledWith("app", "ptx", { lastScreen: "swap" });
+  });
+
   it("drops the pending writes on reset", async () => {
     setKey("app", "ptx", { lastScreen: "market" });
 
