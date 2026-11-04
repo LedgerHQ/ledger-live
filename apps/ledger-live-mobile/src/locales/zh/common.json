@@ -1309,6 +1309,9 @@
     "TezosStakeAmountTooSmall" : {
       "title" : "此数额过小，无法质押"
     },
+    "TezosDelegateRefusesStaking" : {
+      "title" : "您的验证者不接受质押。更换验证者以进行质押。"
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "请先清空所有子账户"
     },
@@ -2583,6 +2586,7 @@
       },
       "succeeded" : {
         "title" : "设备为正品，且已更新至最新版本",
+        "genuineTitle" : "设备为正品",
         "cta" : "继续"
       }
     },
@@ -5246,6 +5250,25 @@
   },
   "send" : {
     "newSendFlow" : {
+      "balanceType" : {
+        "title" : "选择余额",
+        "transparent" : {
+          "title" : "公开余额",
+          "subtitle" : "透明"
+        },
+        "shielded" : {
+          "title" : "私密余额",
+          "subtitle" : "隐蔽",
+          "pendingNoticeTitle" : "资金成熟中",
+          "pendingNotice" : "部分隐蔽资金仍在成熟中，暂时可能无法支出"
+        },
+        "zeroBalance" : {
+          "warning" : "无可用余额"
+        },
+        "requiresSync" : {
+          "notice" : "需要同步"
+        }
+      },
       "title" : "发送 {{currency}}",
       "selectAddress" : "选择地址",
       "available" : "可用 {{amount}}",
@@ -5888,10 +5911,10 @@
   },
   "osUpdates" : {
     "backupBanner" : {
-      "title" : "已找到备份",
+      "title" : "已找到保存的设置",
       "description" : "您设备上的应用程序和设置未完全恢复。",
-      "restore" : "恢复",
-      "delete" : "删除备份"
+      "restore" : "重新安装",
+      "delete" : "放弃"
     },
     "bootloaderDiscovered" : {
       "title" : "设备处于 Bootloader（引导加载程序）模式。",
@@ -5909,15 +5932,15 @@
       }
     },
     "restoreConfirmation" : {
-      "title" : "恢复您之前的配置？",
-      "description" : "我确认要从我先前的配置中恢复应用程序与设置，并且在此之后创建的任何应用程序和数据都将丢失。",
-      "confirm" : "恢复",
+      "title" : "重新安装您已保存的设置？",
+      "description" : "在您进行 OS 操作系统更新期间保存的应用程序和设置将重新安装到您的设备上。此后添加的任何应用程序或数据都将被删除。",
+      "confirm" : "重新安装",
       "cancel" : "取消"
     },
     "deleteConfirmation" : {
-      "title" : "删除您的备份",
-      "description" : "我知晓我上一次备份中的先前配置以及应用程序和数据，包括 Security Key 安全密钥凭据，都将丢失。",
-      "confirm" : "删除备份",
+      "title" : "是否放弃您保存的设置？",
+      "description" : "在您进行 OS 操作系统更新期间保存的设置，包括 Security Key 安全密钥凭据，将不再可用。您仍可从“我的 Ledger” 重新安装您的应用程序，并使用其默认设置。",
+      "confirm" : "放弃",
       "cancel" : "取消"
     },
     "actions" : {
@@ -5936,16 +5959,17 @@
       "version" : "版本 {{version}}",
       "banner" : "确保将您的 24 词秘密恢复短语写在恢复表中并妥善保管，以备不时之需。",
       "title" : "此操作系统更新包含哪些内容？",
+      "releaseNotes" : "查看完整版本说明",
       "start" : "开始更新"
     },
     "preparing" : {
-      "title" : "正在准备安装"
+      "title" : "正在准备更新…"
     },
     "progress" : {
-      "updatingTitle" : "正在更新您的 {{productName}}",
-      "restoringTitle" : "正在恢复您的应用程序和设置",
-      "updateCount" : "更新 {{index}}/{{count}}",
-      "description" : "在更新完成之前，请保持您的设备处于连接状态并置于附近。"
+      "updatingTitle" : "更新 {{index}}/{{count}}",
+      "restoringTitle" : "正在重新安装您的设置…",
+      "updatingDescription" : "您的 {{productName}} 将自动重启多次，在安装过程中，系统会要求您使用 PIN 识别码解锁该设备。",
+      "restoringDescription" : "即将完成。正在您的 {{productName}} 上重新安装设置。"
     },
     "applied" : {
       "title" : "更新完成",
@@ -8502,6 +8526,10 @@
       "stakeActivePercent" : "活跃",
       "inactiveStake" : "可提取奖励",
       "stakeAvailableBalance" : "可用余额",
+      "delegatedInfoTooltip" : "委托至验证者的总数额。",
+      "inactiveStakeTooltip" : "无需解除委托即可提取的非活跃质押。",
+      "withdrawableTitle" : "可提取",
+      "withdrawableInfoTooltip" : "可从委托提取的总数额。",
       "actions" : {
         "activate" : "激活",
         "deactivate" : "停用",
@@ -10512,7 +10540,8 @@
   },
   "accountDetail" : {
     "assets" : {
-      "title" : "资产"
+      "title" : "资产",
+      "add" : "添加"
     },
     "refreshStatus" : {
       "upToDate" : "账户已是最新",
@@ -11897,6 +11926,15 @@
         "proofGenerationWarning" : "Aleo 交易需要生成证明。这可能需要一些时间。",
         "recordsUsed" : "已使用的记录",
         "signingTime" : "签署时间"
+      },
+      "amount" : {
+        "estimatedTime" : {
+          "label" : "预估时间",
+          "info" : {
+            "title" : "预估时间运作方式",
+            "description" : "从您的私密余额中发送更多资金可能会使用更多记录，并且每条记录都会增加处理时间。较大的数额需要更长的确认时间。"
+          }
+        }
       }
     },
     "balancesSection" : "余额类型",

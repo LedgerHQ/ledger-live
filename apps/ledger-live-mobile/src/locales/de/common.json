@@ -1309,6 +1309,9 @@
     "TezosStakeAmountTooSmall" : {
       "title" : "Dieser Betrag ist zu gering für Staking"
     },
+    "TezosDelegateRefusesStaking" : {
+      "title" : "Dein Validator akzeptiert kein Staking. Wechsle den Validator, um zu staken."
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "Bitte leere zuerst alle Unterkonten"
     },
@@ -2583,6 +2586,7 @@
       },
       "succeeded" : {
         "title" : "Gerät ist echt und auf dem neuesten Stand",
+        "genuineTitle" : "Gerät ist echt",
         "cta" : "Weiter"
       }
     },
@@ -5246,6 +5250,25 @@
   },
   "send" : {
     "newSendFlow" : {
+      "balanceType" : {
+        "title" : "Kontostand auswählen",
+        "transparent" : {
+          "title" : "Öffentlicher Kontostand",
+          "subtitle" : "Transparent"
+        },
+        "shielded" : {
+          "title" : "Privater Kontostand",
+          "subtitle" : "Abgeschirmt",
+          "pendingNoticeTitle" : "Fällig werdendes Guthaben",
+          "pendingNotice" : "Einige geschützte Notes reifen noch und können eventuell noch nicht ausgegeben werden"
+        },
+        "zeroBalance" : {
+          "warning" : "Kein verfügbares Guthaben"
+        },
+        "requiresSync" : {
+          "notice" : "Sync nötig"
+        }
+      },
       "title" : "{{currency}} senden",
       "selectAddress" : "Adresse auswählen",
       "available" : "{{amount}} verfügbar",
@@ -5888,10 +5911,10 @@
   },
   "osUpdates" : {
     "backupBanner" : {
-      "title" : "Backup gefunden",
+      "title" : "Gespeicherte Einstellungen gefunden",
       "description" : "Apps und Einstellungen wurden auf deinem Gerät nicht vollständig wiederhergestellt.",
-      "restore" : "Wiederherstellen",
-      "delete" : "Backup löschen"
+      "restore" : "Neu installieren",
+      "delete" : "Verwerfen"
     },
     "bootloaderDiscovered" : {
       "title" : "Gerät im Bootloader-Modus.",
@@ -5909,15 +5932,15 @@
       }
     },
     "restoreConfirmation" : {
-      "title" : "Deine vorherige Konfiguration wiederherstellen?",
-      "description" : "Ich bestätige, dass ich Apps & Einstellungen aus meiner vorherigen Konfiguration wiederherstellen möchte und alle seitdem erstellten Apps & Daten verloren gehen.",
-      "confirm" : "Wiederherstellen",
+      "title" : "Deine gespeicherten Einstellungen neu installieren?",
+      "description" : "Die während deines Betriebssystem-Updates gespeicherten Apps und Einstellungen werden auf deinem Gerät neu installiert. Alle seitdem hinzugefügten Apps oder Daten werden entfernt.",
+      "confirm" : "Neu installieren",
       "cancel" : "Abbrechen"
     },
     "deleteConfirmation" : {
-      "title" : "Backup löschen",
-      "description" : "Mir ist bewusst, dass die vorherige Konfiguration sowie App & Daten aus meinem letzten Backup, einschließlich der Zugangsdaten für den Security Key, verloren gehen.",
-      "confirm" : "Backup löschen",
+      "title" : "Deine gespeicherten Einstellungen verwerfen?",
+      "description" : "Die während deines Betriebssystem-Updates gespeicherten Einstellungen, einschließlich der Security Key-Zugangsdaten, sind nicht mehr verfügbar. Du kannst deine Apps weiterhin über My Ledger mit ihren Standardeinstellungen neu installieren.",
+      "confirm" : "Verwerfen",
       "cancel" : "Abbrechen"
     },
     "actions" : {
@@ -5936,16 +5959,17 @@
       "version" : "Version {{version}}",
       "banner" : "Vergewissere dich vorsichtshalber, dass deine geheime 24-Wort-Wiederherstellungsphrase auf dem Wiederherstellungszettel notiert ist und dir vorliegt.",
       "title" : "Was ist in diesem Betriebssystem-Update enthalten?",
+      "releaseNotes" : "Vollständige Versionshinweise ansehen",
       "start" : "Update starten"
     },
     "preparing" : {
-      "title" : "Installation wird vorbereitet"
+      "title" : "Update wird vorbereitet..."
     },
     "progress" : {
-      "updatingTitle" : "Aktualisieren deines {{productName}}",
-      "restoringTitle" : "Wiederherstellen deiner Apps und Einstellungen",
-      "updateCount" : "Aktualisiere {{index}} von {{count}}",
-      "description" : "Lass Gerät angeschlossen und in der Nähe, bis das Aktualisieren abgeschlossen ist."
+      "updatingTitle" : "Aktualisiere {{index}}/{{count}}",
+      "restoringTitle" : "Deine Einstellungen werden neu installiert ...",
+      "updatingDescription" : "Dein {{productName}} wird automatisch mehrmals Neustarten und du wirst während der Installation aufgefordert, es mit deiner PIN zu entsperren.",
+      "restoringDescription" : "Fast fertig. Deine Einstellungen werden auf deinem {{productName}} neu installiert."
     },
     "applied" : {
       "title" : "Update abgeschlossen",
@@ -8502,6 +8526,10 @@
       "stakeActivePercent" : "Aktiv",
       "inactiveStake" : "Abhebbare Rewards",
       "stakeAvailableBalance" : "Verfügbares Guthaben",
+      "delegatedInfoTooltip" : "Gesamtbetrag, der an Validatoren delegiert ist.",
+      "inactiveStakeTooltip" : "Inaktive Stakes können ohne Deaktivierung deiner Delegierung abgehoben werden.",
+      "withdrawableTitle" : "Auszahlbar",
+      "withdrawableInfoTooltip" : "Gesamtbetrag, der von Delegationen entnommen werden kann.",
       "actions" : {
         "activate" : "Aktivieren",
         "deactivate" : "Deaktivieren",
@@ -10512,7 +10540,8 @@
   },
   "accountDetail" : {
     "assets" : {
-      "title" : "Assets"
+      "title" : "Assets",
+      "add" : "Hinzufügen"
     },
     "refreshStatus" : {
       "upToDate" : "Konto aktuell",
@@ -11897,6 +11926,15 @@
         "proofGenerationWarning" : "Eine Aleo-Transaktion erfordert die Generierung von Beweisen. Dieser Vorgang kann einige Zeit dauern.",
         "recordsUsed" : "Genutzte Einträge",
         "signingTime" : "Signierzeit"
+      },
+      "amount" : {
+        "estimatedTime" : {
+          "label" : "Gesch. Zeit",
+          "info" : {
+            "title" : "Wie die geschätzte Zeit funktioniert",
+            "description" : "Das Senden von mehr Guthaben von deinem privaten Kontostand kann mehr Datensätze beanspruchen, und jeder einzelne verlängert die Bearbeitungszeit. Größere Beträge brauchen länger zur Bestätigung."
+          }
+        }
       }
     },
     "balancesSection" : "Kontostand",
