@@ -8,7 +8,6 @@ const FF_LWM_WALLET_40_Q1 = {
     enabled: true,
     params: {
       lazyOnboarding: true,
-      assetSection: false,
       brazePlacement: true,
       aggregatedAssets: false,
       earnUpselling: false,
@@ -23,7 +22,6 @@ export const FF_LWM_WALLET_40_Q2 = {
     enabled: true,
     params: {
       lazyOnboarding: true,
-      assetSection: true,
       brazePlacement: true,
       aggregatedAssets: true,
       earnUpselling: true,
@@ -207,13 +205,6 @@ const getLwmFlag = async (): Promise<Features["lwmWallet40"] | undefined> => {
 export const isAssetDiscoverabilityEnabled = async (): Promise<boolean> => {
   const lwmFlag = await getLwmFlag();
   return Boolean(lwmFlag?.enabled && lwmFlag?.params?.assetDiscoverability);
-};
-
-// Distinct from `assetDiscoverability`: gates the new MVVM AssetDetail (with
-// coin-options) vs the legacy MarketDetail screen (see useAssetDetailNavigation).
-export const isAssetSectionEnabled = async (): Promise<boolean> => {
-  const lwmFlag = await getLwmFlag();
-  return Boolean(lwmFlag?.enabled && lwmFlag?.params?.assetSection);
 };
 
 export const isAggregatedAssetsEnabled = async (): Promise<boolean> => {
