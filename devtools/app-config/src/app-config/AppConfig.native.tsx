@@ -34,18 +34,24 @@ const { SegmentedControl: OptionControl, SegmentedControlButton: OptionButton } 
 const { SegmentedControl: FixedControl, SegmentedControlButton: FixedButton } =
   createSegmentedControl<FixedChoice>();
 
-const ROW_LX = { padding: "s16", gap: "s12" } as const;
+const ROW_LX = { paddingHorizontal: "s12", paddingVertical: "s16", gap: "s12" } as const;
 const HEADER_LX = { flexDirection: "row", alignItems: "center", gap: "s8" } as const;
 const TAGS_LX = { flexDirection: "row", gap: "s4" } as const;
 const VALUE_LX = { gap: "s2" } as const;
 const FIELD_LX = { flexDirection: "row", alignItems: "flex-start", gap: "s8" } as const;
-const FOOTER_LX = { padding: "s16", gap: "s12", backgroundColor: "canvas" } as const;
-const TOOLBAR_LX = { padding: "s16", gap: "s16" } as const;
+const FOOTER_LX = {
+  paddingHorizontal: "s12",
+  paddingVertical: "s16",
+  gap: "s12",
+  backgroundColor: "canvas",
+} as const;
+const TOOLBAR_LX = { paddingHorizontal: "s12", paddingVertical: "s16", gap: "s16" } as const;
 const DEFAULT_LX = {
   flexDirection: "row",
   alignItems: "center",
   gap: "s8",
-  padding: "s16",
+  paddingHorizontal: "s12",
+  paddingVertical: "s16",
 } as const;
 
 export function AppConfig(props: AppConfigToolProps) {
@@ -85,7 +91,7 @@ export function AppConfig(props: AppConfigToolProps) {
           </FilterControl>
         </Box>
         {switchRows.length + fixedRows.length === 0 && rowCount > 0 ? (
-          <Box lx={{ padding: "s16" }}>
+          <Box lx={{ paddingHorizontal: "s12", paddingVertical: "s16" }}>
             <Text typography="body3" lx={{ color: "muted" }}>
               Nothing matches.
             </Text>
@@ -95,7 +101,7 @@ export function AppConfig(props: AppConfigToolProps) {
           <SwitchRow key={row.id} row={row} actions={viewModel} />
         ))}
         {fixedRows.length > 0 ? (
-          <Box lx={{ padding: "s16" }} style={borderBottom}>
+          <Box lx={{ paddingHorizontal: "s12", paddingVertical: "s16" }} style={borderBottom}>
             <Text typography="body2SemiBold" lx={{ color: "muted" }}>
               Fixed values
             </Text>

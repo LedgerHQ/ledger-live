@@ -1,5 +1,5 @@
 import { renderScreen, screen, userEvent } from "jest/screens";
-import { Category } from "@devtools/registry";
+import { Category, ToolKind } from "@devtools/registry";
 import { makeTool } from "jest/fixtures";
 import { ToolsScreen } from "./ToolsScreen";
 
@@ -7,7 +7,13 @@ const categories = [
   {
     category: Category.CONFIGURATION,
     tools: [
-      makeTool({ id: "feature-flags", label: "Feature Flags", category: Category.CONFIGURATION }),
+      makeTool({
+        id: "feature-flags",
+        label: "Feature Flags",
+        category: Category.CONFIGURATION,
+        kind: ToolKind.SHARED,
+        owner: "Platform",
+      }),
       makeTool({ id: "env-editor", label: "Env Editor", category: Category.CONFIGURATION }),
     ],
   },
@@ -20,6 +26,12 @@ describe("ToolsScreen (native)", () => {
     renderScreen(ToolsScreen, { categories, params });
     expect(screen.getByRole("button", { name: "Feature Flags" })).toBeOnTheScreen();
     expect(screen.getByRole("button", { name: "Env Editor" })).toBeOnTheScreen();
+  });
+
+  it("tags a tool with its kind and its owner, as the desktop navigation does", () => {
+    renderScreen(ToolsScreen, { categories, params });
+    expect(screen.getByText("shared")).toBeOnTheScreen();
+    expect(screen.getByText("Platform")).toBeOnTheScreen();
   });
 
   it("sets the navigation title to the category", () => {

@@ -1,5 +1,6 @@
 import { useLayoutEffect, useMemo } from "react";
 import { type CatalogItem } from "../../components";
+import { toolIcon } from "../../toolConfig";
 import { useDevToolsShell } from "../../context";
 import { filterTools, toolsForCategory } from "../../utils";
 import type { ToolsScreenProps } from "../navigation";
@@ -32,10 +33,12 @@ export function useToolsScreenViewModel({
       tools.map(tool => ({
         key: tool.id,
         title: tool.label,
-        description: [tool.kind, tool.owner].filter(Boolean).join(" · ") || undefined,
+        logo: toolIcon(tool.id, category),
+        kind: tool.kind,
+        owner: tool.owner,
         onPress: () => navigation.push("tool", { toolId: tool.id }),
       })),
-    [tools, navigation],
+    [tools, navigation, category],
   );
 
   return { items, query, onQueryChange: setQuery, footer };

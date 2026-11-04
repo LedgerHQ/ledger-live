@@ -30,7 +30,7 @@ export function ToolBar({
   setSort,
 }: ToolBarProps) {
   return (
-    <Box lx={{ padding: "s16", gap: "s16" }}>
+    <Box lx={{ paddingHorizontal: "s12", paddingVertical: "s16", gap: "s16" }}>
       <SearchFlag search={search} setSearch={setSearch} />
       <FilterFlagControl filter={filter} setFilter={setFilter} />
       <Box
