@@ -9,6 +9,7 @@ const {
   checkComponents,
   classifyEntries,
   collectEntryComponents,
+  exportNamesFromEntry,
   resolveRelative,
 } = require("./components");
 
@@ -1408,6 +1409,43 @@ test("R2 to R4 skip the components of platform entries and test entries", () => 
     }),
     [],
   );
+});
+
+test("resolveRelative and collectEntryComponents use the default fs reader", () => {
+  const root = workspace({
+    "package.json": { exports: UNIVERSAL },
+    "src/index.ts": 'export * from "./Button";\n',
+    "src/index.native.ts": 'export * from "./Button";\n',
+    "src/Button.web.tsx": button("Button"),
+    "src/Button.native.tsx": button("Button"),
+  });
+  const pkg = path.join(root, "shared/thing");
+  const manifest = JSON.parse(fs.readFileSync(path.join(pkg, "package.json"), "utf8"));
+  const fromFs = collectEntryComponents(pkg, manifest.exports).universal[0].components.web;
+  assert.ok(fromFs.has("Button"));
+});
+
+test("an injected reader is used instead of fs", () => {
+  const calls = { isFile: 0, readFile: 0 };
+  const reader = {
+    isFile() {
+      calls.isFile++;
+      return false;
+    },
+    readFile(file) {
+      calls.readFile++;
+      return "export function Injected() { return null; }\n";
+    },
+  };
+  assert.equal(resolveRelative("/pkg/src/index.ts", "./Missing", "web", undefined, reader), null);
+  assert.ok(calls.isFile > 0);
+  collectEntryComponents(
+    "/pkg",
+    { ".": { "react-native": "./src/index.native.ts", default: "./src/index.ts" } },
+    reader,
+  );
+  assert.ok(calls.readFile > 0);
+  assert.deepEqual(exportNamesFromEntry("/pkg/src/index.ts", "web", reader), new Set(["Injected"]));
 });
 
 test("the config sets every setting its schema requires, and nothing else", () => {
