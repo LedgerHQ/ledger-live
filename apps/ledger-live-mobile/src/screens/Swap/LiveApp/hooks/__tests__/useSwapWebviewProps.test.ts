@@ -273,6 +273,28 @@ describe("useSwapWebviewProps", () => {
     expect(result.current.inputs.llmWalletApiDeviceIntentExchangeEnabled).toBe("false");
   });
 
+  it("should report the exchange flow as off when the flag is on but the swap live app is not allowed", () => {
+    const { result } = renderHook(
+      () =>
+        useSwapWebviewProps({
+          manifest: STUB_MANIFEST,
+          params: null,
+          resetWebview: mockResetWebview,
+        }),
+      {
+        overrideInitialState: withFlagOverrides({
+          llmWalletApiDeviceIntentExchange: {
+            enabled: true,
+            params: { variantId: "variant_a", enabledManifestIds: ["another-live-app"] },
+          },
+        }),
+      },
+    );
+
+    expect(result.current.inputs.llmWalletApiDeviceIntentExchangeVariant).toBe("variant_a");
+    expect(result.current.inputs.llmWalletApiDeviceIntentExchangeEnabled).toBe("false");
+  });
+
   describe("swapApiEnv", () => {
     afterEach(() => {
       mockSwapApiBase = "https://swap.ledger.com/v5";

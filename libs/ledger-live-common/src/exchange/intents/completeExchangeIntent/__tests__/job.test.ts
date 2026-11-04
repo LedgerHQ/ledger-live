@@ -425,6 +425,18 @@ describe("completeExchangeIntentJob", () => {
       expect(onResult).toHaveBeenCalledWith({ status: "failed", error: failure });
     });
 
+    it("reports a DMK error of the signature as an Error named after its tag", async () => {
+      mockConfirmedSwap();
+      mockBridge(throwError(() => new DeviceDisconnectedWhileSendingError()));
+
+      const { states, onResult } = startJob(swapInput);
+      await flushPromises();
+
+      const named = expect.objectContaining({ name: "DeviceDisconnectedWhileSendingError" });
+      expect(states.at(-1)).toEqual({ type: "error", error: named });
+      expect(onResult).toHaveBeenCalledWith({ status: "failed", error: named });
+    });
+
     it("stops signing and reports nothing once unsubscribed", async () => {
       const stopSigning = jest.fn();
       mockConfirmedSwap();

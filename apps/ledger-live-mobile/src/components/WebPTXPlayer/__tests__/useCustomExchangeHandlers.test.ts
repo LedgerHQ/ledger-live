@@ -249,6 +249,23 @@ describe("useCustomExchangeHandlers with the device intent exchange flow", () =>
       expect(onSuccess).toHaveBeenCalledWith({ operationHash: "0xhash", swapId: "swap-1" });
     });
 
+    it("answers a swap without a swapId at once, without asking the device", () => {
+      const uiHooks = setup();
+      const onSuccess = jest.fn();
+      const onCancel = jest.fn();
+
+      uiHooks["custom.exchange.swap"]({
+        exchangeParams: { ...exchangeParams, swapId: undefined },
+        onSuccess,
+        onCancel,
+      });
+
+      expect(mockedSession.requestComplete).not.toHaveBeenCalled();
+      expect(onCancel).toHaveBeenCalledTimes(1);
+      expect(onCancel).toHaveBeenCalledWith(expect.any(Error));
+      expect(onSuccess).not.toHaveBeenCalled();
+    });
+
     it.each([
       ["fails", new Error("payout address rejected")],
       ["is retried", signatureError],

@@ -143,6 +143,22 @@ describe("confirmTransferExchange", () => {
     });
   });
 
+  it("keeps the name and message of a rejection that is a plain object", async () => {
+    const exchangeApp = createExchangeApp({
+      processTransaction: jest
+        .fn()
+        .mockRejectedValue({ name: "ProviderUnavailable", message: "Provider is down" }),
+    });
+    jest.mocked(createExchange).mockReturnValue(exchangeApp as never);
+
+    await expect(run()).rejects.toMatchObject({
+      name: "CompleteExchangeError",
+      step: "PROCESS_TRANSACTION",
+      title: "ProviderUnavailable",
+      message: "Provider is down",
+    });
+  });
+
   it("keeps the step a failure happened on", async () => {
     const exchangeApp = createExchangeApp({
       checkPartner: jest.fn().mockRejectedValue(new Error("boom")),

@@ -39,6 +39,31 @@ describe("exchange/error", () => {
       expect(toExchangeError({ _tag: "UnknownDeviceError" }).message).toBe("UnknownDeviceError");
     });
 
+    it("uses the own message of a DMK error that has no original error", () => {
+      const error = toExchangeError({ _tag: "EthAppCommandError", message: "Invalid data" });
+
+      expect(error.name).toBe("EthAppCommandError");
+      expect(error.message).toBe("Invalid data");
+    });
+
+    it("keeps the name and message of a plain object", () => {
+      const rejection = { name: "ProviderUnavailable", message: "Provider is down" };
+
+      const error = toExchangeError(rejection);
+
+      expect(error).toBeInstanceOf(Error);
+      expect(error.name).toBe("ProviderUnavailable");
+      expect(error.message).toBe("Provider is down");
+      expect(error.cause).toBe(rejection);
+    });
+
+    it("keeps the status code of a plain transport error, which the steps map from", () => {
+      const error = toExchangeError({ name: "TransportStatusError", statusCode: 0x6a84 });
+
+      expect(error.name).toBe("TransportStatusError");
+      expect(error).toHaveProperty("statusCode", 0x6a84);
+    });
+
     it("wraps any other thrown value", () => {
       expect(toExchangeError("boom")).toEqual(new Error("boom"));
     });

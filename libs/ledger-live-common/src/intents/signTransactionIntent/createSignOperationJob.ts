@@ -4,6 +4,7 @@ import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { getMainAccount } from "../../account/index";
 import { getAccountBridge } from "../../bridge/index";
 import { sendFeatures } from "../../bridge/descriptor/send/features";
+import { toExchangeError } from "../../exchange/error";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type {
   Account,
@@ -78,10 +79,6 @@ function isUserRefusalError(error: unknown, currency: CryptoOrTokenCurrency | un
   );
 }
 
-function normalizeSignError(error: unknown): Error {
-  return error instanceof Error ? error : new Error(String(error));
-}
-
 function mapSignOperationEvent(
   event: SignOperationEvent,
   deviceModelId: DeviceModelId,
@@ -126,7 +123,7 @@ function runSignOperationJob<
     let runRequestId = 0;
 
     const fail = (error: unknown) => {
-      const normalized = normalizeSignError(error);
+      const normalized = toExchangeError(error);
       if (outcome.results) onResult(outcome.results.failed(normalized));
       if (outcome.failed) {
         subscriber.next(outcome.failed(normalized));

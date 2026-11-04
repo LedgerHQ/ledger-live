@@ -504,13 +504,17 @@ export function useCustomExchangeHandlers({
             };
 
             if (deviceIntentExchangeEnabled) {
+              // Refused before the device: a swap without its id could not be reported once broadcast.
+              const { swapId } = exchangeParams;
+              if (!swapId) {
+                safeOnCancel(new Error("The swap has no swapId"));
+                return;
+              }
+
               void exchangeDeviceSession.requestComplete({
                 manifest: { id: manifest.id, name: manifest.name },
                 exchangeParams,
                 onSuccess: operation => {
-                  const { swapId } = exchangeParams;
-                  if (!swapId) return;
-
                   syncAccountById(exchangeParams.exchange.fromAccount.id);
                   onCompleteResult?.(exchangeParams, operation.hash);
 
