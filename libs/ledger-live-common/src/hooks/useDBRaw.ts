@@ -71,6 +71,8 @@ export type DBRecord<State> = {
  * One in-memory copy of a persisted record, shared by every hook that reads it.
  * Each update applies to the latest state, so hooks that change different fields
  * do not erase each other. Create it once per record, at module level.
+ * A failed read blocks writes: updates stay queued and the next subscribe or update
+ * retries the read.
  */
 export function createDBRecord<State>({
   initialState,
@@ -82,8 +84,8 @@ export function createDBRecord<State>({
   setter: (val: State) => Promise<void> | void;
 }): DBRecord<State> {
   let snapshot: DBRecordSnapshot<State> = { state: initialState, isLoaded: false };
-  let loadStarted = false;
-  // Updates made before the read finishes, replayed on the stored state
+  let isReading = false;
+  // Updates made before a read succeeds, replayed on the stored state
   let pendingUpdates: SetStateAction<State>[] = [];
   const listeners = new Set<() => void>();
 
@@ -99,10 +101,12 @@ export function createDBRecord<State>({
     listeners.forEach(listener => listener());
   };
 
-  const load = () => {
-    loadStarted = true;
-    getter()
-      .then(stored => {
+  const read = () => {
+    if (snapshot.isLoaded || isReading) return;
+    isReading = true;
+    getter().then(
+      stored => {
+        isReading = false;
         const updates = pendingUpdates;
         pendingUpdates = [];
         const state = updates.reduce(
@@ -111,26 +115,30 @@ export function createDBRecord<State>({
         );
         if (updates.length > 0) write(state);
         emit({ state, isLoaded: true });
-      })
-      .catch(() => {
-        pendingUpdates = [];
-        emit({ ...snapshot, isLoaded: true });
-      });
+      },
+      () => {
+        isReading = false;
+      },
+    );
   };
 
   return {
     getSnapshot: () => snapshot,
     subscribe: listener => {
       listeners.add(listener);
-      if (!loadStarted) load();
+      read();
       return () => {
         listeners.delete(listener);
       };
     },
     setState: action => {
       const state = apply(snapshot.state, action);
-      if (snapshot.isLoaded) write(state);
-      else pendingUpdates.push(action);
+      if (snapshot.isLoaded) {
+        write(state);
+      } else {
+        pendingUpdates.push(action);
+        read();
+      }
       emit({ ...snapshot, state });
     },
   };

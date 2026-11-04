@@ -71,4 +71,29 @@ describe("createDBRecord", () => {
     expect(setter).toHaveBeenCalledTimes(1);
     expect(setter).toHaveBeenCalledWith({ a: ["stored-a", "early"], b: ["stored-b"] });
   });
+
+  it("keeps updates and blocks writes when the read fails, then retries", async () => {
+    const getter = jest
+      .fn<Promise<Record | undefined>, []>()
+      .mockRejectedValueOnce(new Error("read failed"))
+      .mockResolvedValue({ a: ["stored-a"], b: ["stored-b"] });
+    const setter = jest.fn();
+    const record = createDBRecord<Record>({ initialState, getter, setter });
+    const { result } = renderHook(() => useDBRecord(record, selectA));
+
+    act(() => result.current[1](state => ({ ...state, a: [...state.a, "early"] })));
+    await waitFor(() => expect(getter).toHaveBeenCalledTimes(1));
+    await act(async () => {});
+
+    expect(result.current[2]).toBe(false);
+    expect(setter).not.toHaveBeenCalled();
+
+    act(() => result.current[1](state => ({ ...state, a: [...state.a, "later"] })));
+    await waitFor(() => expect(result.current[2]).toBe(true));
+
+    expect(getter).toHaveBeenCalledTimes(2);
+    expect(result.current[0]).toEqual(["stored-a", "early", "later"]);
+    expect(setter).toHaveBeenCalledTimes(1);
+    expect(setter).toHaveBeenCalledWith({ a: ["stored-a", "early", "later"], b: ["stored-b"] });
+  });
 });
