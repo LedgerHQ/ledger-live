@@ -35,7 +35,7 @@ catalog:
   "@dnd-kit/utilities": 3.2.2
   "@jest/globals": 30.5.0
   "@ledgerhq/context-module": 2.8.0
-  "@ledgerhq/crypto-icons": "2.0.6"
+  "@ledgerhq/crypto-icons": "2.0.7"
   "@ledgerhq/device-contacts-kit": 0.5.0
   "@ledgerhq/device-management-kit": 1.11.0
   "@ledgerhq/dmk-ledger-wallet": 0.8.0
