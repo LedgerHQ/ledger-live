@@ -187,14 +187,14 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
     if (areSettingsLoaded(newState) && oldState.settings !== newState.settings) {
       setKey("app", "settings", settingsStoreSelector(newState));
     }
-  }
 
-  if (oldState.wallet && walletStateExportShouldDiffer(oldState, newState)) {
-    setKey("app", "wallet", exportWalletState(newState));
-  }
+    if (oldState.wallet && walletStateExportShouldDiffer(oldState, newState)) {
+      setKey("app", "wallet", exportWalletState(newState));
+    }
 
-  if (accountsPersistedStateChanged(oldState.accounts, newState.accounts)) {
-    setKey("app", "accounts", accountsExportSelector(newState));
+    if (accountsPersistedStateChanged(oldState.accounts, newState.accounts)) {
+      setKey("app", "accounts", accountsExportSelector(newState));
+    }
   }
 
   if (oldState.identities !== newState.identities) {

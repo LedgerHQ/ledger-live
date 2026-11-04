@@ -10,6 +10,8 @@ import { usdcToken } from "LLD/features/__mocks__/useSelectAssetFlow.mock";
 import { setKey } from "~/renderer/storage";
 import type { State } from "../../reducers";
 import DBMiddleware from "../db";
+import { walletStateExportShouldDiffer } from "~/renderer/reducers/wallet";
+import { accountsPersistedStateChanged } from "@ledgerhq/live-common/account/index";
 import {
   accountAnalyticsIntroductionSlice,
   dismissAccountAnalyticsIntroduction,
@@ -529,5 +531,54 @@ describe("DBMiddleware - Analytics introduction", () => {
     runMiddleware([before, after], action);
 
     expect(mockedSetKey).not.toHaveBeenCalled();
+  });
+});
+
+const lockedState = (): FakeState => ({ ...baseState(), application: { isLocked: true } });
+
+describe("DBMiddleware - lock gate on encrypted records", () => {
+  beforeEach(() => {
+    mockedSetKey.mockReset();
+    jest.mocked(walletStateExportShouldDiffer).mockReturnValue(true);
+    jest.mocked(accountsPersistedStateChanged).mockReturnValue(true);
+  });
+
+  afterEach(() => {
+    jest.mocked(walletStateExportShouldDiffer).mockReturnValue(false);
+    jest.mocked(accountsPersistedStateChanged).mockReturnValue(false);
+  });
+
+  it("does not write wallet or accounts while the app is locked", () => {
+    const before = lockedState();
+    const after: FakeState = { ...before, wallet: { changed: true }, accounts: [] };
+
+    runMiddleware([before, after], { type: "ACCOUNTS_UPDATE" });
+
+    expect(mockedSetKey).not.toHaveBeenCalledWith("app", "wallet", expect.anything());
+    expect(mockedSetKey).not.toHaveBeenCalledWith("app", "accounts", expect.anything());
+  });
+
+  it("writes wallet and accounts when the app is unlocked", () => {
+    const before = baseState();
+    const after: FakeState = { ...before, wallet: { changed: true } };
+
+    runMiddleware([before, after], { type: "ACCOUNTS_UPDATE" });
+
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "wallet", after);
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "accounts", []);
+  });
+
+  it("writes wallet and accounts on the APPLICATION_SET_DATA action that unlocks the app", () => {
+    const before = lockedState();
+    const after: FakeState = {
+      ...before,
+      application: { isLocked: false },
+      wallet: { changed: true },
+    };
+
+    runMiddleware([before, after], { type: "APPLICATION_SET_DATA", payload: { isLocked: false } });
+
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "wallet", after);
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "accounts", []);
   });
 });
