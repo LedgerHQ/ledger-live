@@ -37,8 +37,9 @@ Use it to review an existing package. `pnpm lint:tool-config` checks the items o
 - [ ] `devDependencies` via `catalog:` entries (never pin versions directly): `typescript`, `jest`, `@swc/core`, `@swc/jest`, `@types/jest`, `@typescript/native` (for `tsc`), and `rimraf`, `zx` or `nx` when a script runs them; `@support/jest` with `workspace:*` when the package has tests (see [ADR-0003](https://github.com/LedgerHQ/architecture-as-code/pull/553) and [`rules/hygiene.mjs`](../tools/nx-plugins/enforce-tool-config/rules/hygiene.mjs))
 - [ ] `scripts.typecheck: "tsc --noEmit"` — required for the Nx `typecheck` target
 - [ ] `scripts.test` and `scripts.coverage` — `jest` / `jest --coverage`
-- [ ] `scripts.format` and `scripts.format:check`: plain `oxfmt` on the paths the package owns (see [support-config](../.agents/skills/support-config/SKILL.md))
-- [ ] `scripts.lint`: plain `oxlint` on the paths the package owns, no config file in the package (see [support-config](../.agents/skills/support-config/SKILL.md))
+- [ ] `scripts.format: "oxfmt src"` (required for the Nx `format` target; add `tests` if the package keeps tests outside `src/` (e.g. `"oxfmt src tests"`); path lists and presets in [support-config](../.agents/skills/support-config/SKILL.md))
+- [ ] `scripts.format:check: "oxfmt --check src"` — CI dry-run counterpart; mirror the same paths as `scripts.format`
+- [ ] `scripts.lint: "oxlint src"`: required for the Nx `lint` target; oxlint finds the layer config (`<layer>/oxlint.config.mts`) by walking up, so no `-c` and no config file in the package (see [support-config](../.agents/skills/support-config/SKILL.md))
 
 **Additional files**
 - [ ] `README.md` — scope, problem solved, main exports (a few paragraphs); **must include a status marker** (see [README status marker](#readme-status-marker) below)

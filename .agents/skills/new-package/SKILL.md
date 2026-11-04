@@ -63,24 +63,10 @@ New layer packages start knip-clean: explicit `exports` only, no entry in
 `knip.web.config.mjs` and `knip.native.config.mjs` per
 [knip-migration](../knip-migration/SKILL.md).
 
-Before the PR merges, run knip on the package alone (from the repository root), then copy the
-command into a `scripts.unimported` line in `package.json` like neighbouring packages. Use
-`--directory` with the relative hop from the package to the root (`../..` under `shared/` or
-`devtools/`, `../../..` under `domain/`, `features/` or `libs/coin-modules/`):
-
-```bash
-pnpm knip --directory ../../.. -W domain/api/my-package
-```
-
-Dual-platform packages run web and native in one line (copy from a neighbour, e.g.
-`features/platform/contacts`):
-
-```bash
-pnpm knip --directory ../../.. -c features/platform/my-package/knip.web.config.mjs -W features/platform/my-package --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/platform/my-package/knip.native.config.mjs -W features/platform/my-package --tsConfig tsconfig.native.json
-```
-
-Until a shared dual-platform knip script exists, that pasted line is allowed; the PR must name the
-follow-up to replace it (house rule Q8).
+Before the PR merges, run knip on the package alone from that package's directory (or through its
+`scripts.unimported` entry when you add one). Command shape, `--directory` hops and dual-platform
+passes are in [knip-migration](../knip-migration/SKILL.md); an `unimported` script holding the
+command is optional and CI does not run it.
 
 ## After the scaffold
 
