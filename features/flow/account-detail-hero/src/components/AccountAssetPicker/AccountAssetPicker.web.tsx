@@ -16,7 +16,7 @@ export function AccountAssetPicker({
   const { rows: shownRows } = useAccountAssetPickerViewModel({ open, rows });
 
   return (
-    <Dialog open={open} onOpenChange={isOpen => !isOpen && onClose()} height="fixed">
+    <Dialog open={open} onOpenChange={isOpen => !isOpen && onClose()} height="fit">
       <DialogContent data-testid={testID}>
         <DialogHeader
           density="expanded"
