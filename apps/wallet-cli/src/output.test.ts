@@ -7,7 +7,7 @@ import {
   type FrameworkCryptoAssetsStore,
 } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { BigNumberStrSchema } from "@shared/schema-primitives";
-import { DEVICE_EXIT_CODES } from "./device/device-state";
+import { DEVICE_EXIT_CODES, type DeviceState } from "./device/device-state";
 import { WalletCliDeviceError } from "./device/wallet-cli-device-error";
 import { createCommandOutput } from "./output";
 import { _setTestSpinner, installOutputCapture } from "./shared/ui";
@@ -930,6 +930,58 @@ describe.each(["human", "json"] as const)("%s proposal warnings", format => {
   });
 });
 
+describe("human device error pointer to the JSON view (LIVE-31394)", () => {
+  let stderrWrites: string[] = [];
+  let restore: () => void;
+
+  beforeEach(() => {
+    stderrWrites = [];
+    restore = installOutputCapture({ stderr: chunk => stderrWrites.push(chunk) });
+  });
+
+  afterEach(() => restore());
+
+  const stderrAfterFailing = (state: DeviceState): string => {
+    const out = createCommandOutput("human", { command: "genuine-check", network: "all" });
+    expect(() => out.fail(new WalletCliDeviceError(state))).toThrow();
+    return stderrWrites.join("");
+  };
+
+  it("points a USB timeout at the JSON diagnosis", () => {
+    expect(stderrAfterFailing({ code: "timeout" })).toContain("--output json");
+  });
+
+  it("names the sandbox on one line, then points a refused discovery at the JSON diagnosis", () => {
+    const stderr = stderrAfterFailing({
+      code: "unknown",
+      cause: new Error("No Ledger device found. Unlock the device and try again."),
+      likelyCause: "sandbox_blocking_usb",
+    });
+    expect(stderr).toContain("USB access to the Ledger was refused, likely by the agent sandbox.");
+    expect(stderr).toContain("--output json");
+  });
+
+  it("leaves it out when the Ledger is simply not plugged in", () => {
+    expect(stderrAfterFailing({ code: "disconnected" })).not.toContain("--output json");
+  });
+
+  it("leaves it out of a Speculos timeout, whose JSON carries no USB diagnosis", () => {
+    expect(
+      stderrAfterFailing({ code: "timeout", speculosUrl: "http://127.0.0.1:40000" }),
+    ).not.toContain("--output json");
+  });
+});
+
+/**
+ * `NO_COLOR` keeps the assertions free of escape codes, but Bun ignores it when `FORCE_COLOR` is
+ * also set and warns with a full stack trace on stderr — which agent shells and some CI runners
+ * would then turn into a test failure unrelated to the CLI's own output.
+ */
+function childEnv(): Record<string, string | undefined> {
+  const { FORCE_COLOR: _ignored, ...rest } = process.env;
+  return { ...rest, CLAUDECODE: "1", NO_COLOR: "1" };
+}
+
 describe("output command handling", () => {
   const ROOT = path.resolve(import.meta.dir, "..");
   const HUMAN_DEVICE_ERROR_EXIT = path.resolve(
@@ -954,20 +1006,38 @@ describe("output command handling", () => {
 
   it("human output exits with the WalletCliDeviceError exit code", async () => {
     const proc = Bun.spawn(["bun", "--cwd", ROOT, HUMAN_DEVICE_ERROR_EXIT], {
-      env: {
-        ...process.env,
-        CLAUDECODE: "1",
-        NO_COLOR: "1",
-      },
+      env: childEnv(),
       stdin: "ignore",
       stdout: "pipe",
       stderr: "pipe",
     });
 
     const exitCode = await proc.exited;
+    const stderr = await new Response(proc.stderr).text();
+
     expect(exitCode).toBe(DEVICE_EXIT_CODES.timeout);
-    expect(await new Response(proc.stderr).text()).toContain(
-      new WalletCliDeviceError({ code: "timeout" }).message,
+    expect(stderr).toContain(
+      new WalletCliDeviceError({ code: "timeout", likelyCause: "sandbox_blocking_usb" }).message,
     );
+  });
+
+  it("human output points at the JSON view and stays within 3 lines (LIVE-31394)", async () => {
+    const proc = Bun.spawn(["bun", "--cwd", ROOT, HUMAN_DEVICE_ERROR_EXIT], {
+      env: childEnv(),
+      stdin: "ignore",
+      stdout: "pipe",
+      stderr: "pipe",
+    });
+
+    await proc.exited;
+    const stderr = await new Response(proc.stderr).text();
+    const lines = stderr
+      .trimEnd()
+      .split("\n")
+      .filter(line => line.trim().length > 0);
+
+    expect(lines.length).toBeLessThanOrEqual(3);
+    expect(stderr).toContain("--output json");
+    expect(stderr).not.toContain("dangerouslyDisableSandbox");
   });
 });

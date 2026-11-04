@@ -7,6 +7,7 @@ import {
   DeviceModel,
   ApduResponse,
   noopLoggerFactory,
+  SendApduTimeoutError,
 } from "@ledgerhq/device-management-kit";
 import type {
   DiscoveredDevice,
@@ -56,16 +57,22 @@ const FAKE_DEVICE: DiscoveredDevice = {
 export class MockDeviceManagementKit {
   private readonly _state: MockDeviceState;
   private readonly _appResults: MockAppResults;
+  private readonly _appTasksBeforeTimeout: number;
+  private _appTasksRun = 0;
 
   constructor({
     initialState = "connected",
     appResults = {},
+    appTasksBeforeTimeout = Infinity,
   }: {
     initialState?: MockDeviceState;
     appResults?: MockAppResults;
+    /** In-app tasks that complete before every later one fails with `SendApduTimeoutError`. */
+    appTasksBeforeTimeout?: number;
   } = {}) {
     this._state = initialState;
     this._appResults = appResults;
+    this._appTasksBeforeTimeout = appTasksBeforeTimeout;
   }
 
   // ── DMK interface (used by register-dmk-transport.ts) ─────────────────────
@@ -132,6 +139,9 @@ export class MockDeviceManagementKit {
 
     // CallTaskInAppDeviceAction: input.task is a function → return configured result
     if (typeof input.task === "function") {
+      if (this._appTasksRun++ >= this._appTasksBeforeTimeout) {
+        return this._timedOutAction<Output, Error, IntermediateValue>();
+      }
       const appName = typeof input.appName === "string" ? input.appName : "";
       const result = this._appResults[appName] ?? {};
       return this._completedAction<Output, Error, IntermediateValue>(result as Output);
@@ -169,6 +179,17 @@ export class MockDeviceManagementKit {
         subscriber.next({ status: DeviceActionStatus.Completed, output });
         subscriber.complete();
       },
+    );
+    return { observable, cancel: () => {} };
+  }
+
+  private _timedOutAction<Output, Error, IntermediateValue>(): ExecuteDeviceActionReturnType<
+    Output,
+    Error,
+    IntermediateValue
+  > {
+    const observable = new Observable<DeviceActionState<Output, Error, IntermediateValue>>(
+      subscriber => subscriber.error(new SendApduTimeoutError("mock APDU timeout")),
     );
     return { observable, cancel: () => {} };
   }

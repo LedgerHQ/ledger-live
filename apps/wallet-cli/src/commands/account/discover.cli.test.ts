@@ -5,6 +5,11 @@ import { runCli } from "../../testing/cli-runner";
 import { makeSessionDir } from "../../testing/session-fixture";
 import { ETH_SYNC_ROUTES } from "../../testing/eth-sync-routes";
 import { MOCK_ETH_ADDRESS, MOCK_ETH_PUBKEY } from "../../testing/constants";
+import {
+  recordLedgerVendorSeen,
+  recordScanCompleted,
+  resetUsbAccessDiagnostics,
+} from "../../device/usb-access-diagnostics";
 
 const MOCK_ENV = (port: number) => ({
   WALLET_CLI_MOCK_PORT: String(port),
@@ -115,5 +120,40 @@ describe("account discover — session persistence", () => {
       accounts: unknown[];
     };
     expect(session.accounts.length).toBe(1); // no duplicate
+  });
+});
+
+describe("account discover — device timeout mid-scan (LIVE-31394)", () => {
+  const server = new MockServer(ETH_SYNC_ROUTES);
+
+  beforeAll(() => server.start());
+  afterAll(() => server.stop());
+  afterEach(() => resetUsbAccessDiagnostics());
+
+  it("does not ask to open the app it already opened when the scan times out", async () => {
+    const fixture = makeSessionDir([]);
+    resetUsbAccessDiagnostics();
+    recordScanCompleted();
+    recordLedgerVendorSeen();
+
+    const { stdout, exitCode } = await runCli(
+      ["account", "discover", "--network", "ethereum", "--output", "json"],
+      {
+        ...MOCK_ENV(server.port),
+        ...fixture.env,
+        WALLET_CLI_MOCK_DMK_APP_TASKS_BEFORE_TIMEOUT: "1",
+      },
+    ).finally(fixture.cleanup);
+
+    expect(exitCode).toBe(6);
+    expect(JSON.parse(stdout.trim().split("\n").at(-1) ?? "")).toMatchObject({
+      ok: false,
+      error: {
+        code: "timeout",
+        message:
+          "Timed out talking to the Ledger over USB. The device may be busy or locked. Retry the command.",
+        likely_cause: "unknown",
+      },
+    });
   });
 });
