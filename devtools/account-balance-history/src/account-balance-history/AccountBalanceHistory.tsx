@@ -8,6 +8,9 @@ function AccountBalanceHistory({
   ranges,
   range,
   onRangeChange,
+  fiat,
+  countervalue,
+  onCountervalueChange,
   accounts,
   onRead,
   onReadAll,
@@ -31,6 +34,17 @@ function AccountBalanceHistory({
               </option>
             ))}
           </select>
+        </label>
+        <label
+          className="flex items-center gap-4 body-3 text-muted"
+          title="The app's countervalue: change it in Settings"
+        >
+          <input
+            type="checkbox"
+            checked={countervalue}
+            onChange={event => onCountervalueChange(event.target.checked)}
+          />
+          {fiat}
         </label>
         <button type="button" onClick={onReadAll} className="body-3-semi-bold text-base">
           Read all
@@ -101,7 +115,17 @@ function sparklinePoints(values: readonly number[]): string {
 }
 
 function SeriesRow({ series }: Readonly<{ series: AccountBalanceHistoryToolSeries }>) {
-  const { assetId, pointCount, firstDate, lastDate, firstBalance, lastBalance, values } = series;
+  const {
+    assetId,
+    pointCount,
+    firstDate,
+    lastDate,
+    firstBalance,
+    lastBalance,
+    firstCountervalue,
+    lastCountervalue,
+    values,
+  } = series;
   return (
     <details className="body-3 font-mono">
       <summary className="cursor-pointer flex items-center gap-12">
@@ -118,6 +142,9 @@ function SeriesRow({ series }: Readonly<{ series: AccountBalanceHistoryToolSerie
           </svg>
         ) : null}
         <span className="body-3-semi-bold text-base">{lastBalance ?? "no point"}</span>
+        {lastCountervalue ? (
+          <span className="body-3-semi-bold text-success">{lastCountervalue}</span>
+        ) : null}
       </summary>
       <div className="pl-16 text-muted break-all">
         <div>
@@ -125,12 +152,12 @@ function SeriesRow({ series }: Readonly<{ series: AccountBalanceHistoryToolSerie
         </div>
         {firstDate ? (
           <div>
-            from {firstDate} {firstBalance}
+            from {firstDate} {firstBalance} {firstCountervalue}
           </div>
         ) : null}
         {lastDate ? (
           <div>
-            to {lastDate} {lastBalance}
+            to {lastDate} {lastBalance} {lastCountervalue}
           </div>
         ) : null}
       </div>

@@ -1,34 +1,21 @@
-import { BigNumber } from "bignumber.js";
 import type { AccountDataSource } from "@domain/api-account-data";
-import { AmountStrSchema, type BalanceAssetId } from "@domain/entity-account-balance";
-import type { AccountOperationsPage, CountervalueTicker } from "@domain/entity-account-operation";
+import type { BalanceAssetId, CountervalueTicker } from "@domain/entity-account-balance";
+import type { AccountOperationsPage } from "@domain/entity-account-operation";
 import type { Currency } from "@domain/entity-currency";
-import { findFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
+import type { CounterValuesCacheView } from "@domain/entity-market-countervalues";
 import {
-  formatCounterValueHashes,
-  lenseRateMap,
-  type CounterValuesCacheView,
-} from "@domain/entity-market-countervalues";
+  countervalueAt,
+  countervalueCurrencyOf,
+  currenciesOf,
+  historicalRate,
+} from "./internals/valuation";
 
-export type OperationCountervaluesHost = {
+export type CountervaluesHost = {
   /** The rates the app holds. */
   rates(): CounterValuesCacheView | undefined;
-  /** The currency of an asset, a coin or a token; a lookup that fails leaves its rows unvalued. */
+  /** The currency of an asset, a coin or a token; a lookup that fails leaves its values out. */
   findCurrency(assetId: BalanceAssetId): Currency | undefined | Promise<Currency | undefined>;
 };
-
-/** The rate of the hour or day of `date`, never the latest one standing in for a missing history. */
-function historicalRate(
-  rates: CounterValuesCacheView,
-  from: Currency,
-  to: Currency,
-  date: Date,
-): number | undefined {
-  const pair = lenseRateMap(rates, { from, to });
-  if (!pair) return;
-  const { hour, day } = formatCounterValueHashes(date);
-  return pair.map.get(hour) || pair.map.get(day) || undefined;
-}
 
 /** Each row valued in `ticker` at its date, unless it already is; a row without a rate has none. */
 export function valueOperations(
@@ -37,18 +24,14 @@ export function valueOperations(
   rates: CounterValuesCacheView | undefined,
   currencyOf: (assetId: BalanceAssetId) => Currency | undefined,
 ): AccountOperationsPage {
-  const to = ticker && findFiatCurrencyByTicker(ticker);
+  const to = ticker && countervalueCurrencyOf(ticker);
   if (!ticker || !to || !rates) return page;
   const operations = page.operations.map(row => {
     if (row.countervalues?.[ticker] !== undefined) return row;
     const from = currencyOf(row.assetId);
     const rate = from && historicalRate(rates, from, to, new Date(row.date));
     if (!from || !rate) return row;
-    const value = new BigNumber(row.value)
-      .times(rate)
-      .shiftedBy(to.units[0].magnitude - from.units[0].magnitude)
-      .integerValue(BigNumber.ROUND_HALF_UP);
-    const countervalue = AmountStrSchema.parse(BigNumber.max(0, value).toFixed(0));
+    const countervalue = countervalueAt(row.value, rate, from, to);
     return { ...row, countervalues: { ...row.countervalues, [ticker]: countervalue } };
   });
   return { ...page, operations };
@@ -57,22 +40,18 @@ export function valueOperations(
 /** The source, its operations valued in the fiat a query asks for when it does not value them itself. */
 export function withOperationCountervalues(
   source: AccountDataSource,
-  host: OperationCountervaluesHost,
+  host: CountervaluesHost,
 ): AccountDataSource {
   const read = source.read?.operations;
   const readBatch = source.readBatch?.operations;
   if (!read && !readBatch) return source;
-  const findCurrency = (assetId: BalanceAssetId) =>
-    Promise.resolve()
-      .then(() => host.findCurrency(assetId))
-      .catch(() => undefined);
   const valued = async (page: AccountOperationsPage, ticker?: CountervalueTicker) => {
     if (!ticker) return page;
-    const assetIds = [...new Set(page.operations.map(row => row.assetId))];
-    const currencies = new Map(
-      await Promise.all(assetIds.map(async id => [id, await findCurrency(id)] as const)),
+    const currencyOf = await currenciesOf(
+      host.findCurrency,
+      page.operations.map(row => row.assetId),
     );
-    return valueOperations(page, ticker, host.rates(), assetId => currencies.get(assetId));
+    return valueOperations(page, ticker, host.rates(), currencyOf);
   };
   return {
     ...source,

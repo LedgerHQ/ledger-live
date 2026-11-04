@@ -5,3 +5,5 @@ export * from "./rateSource";
 export * from "./schema";
 export * from "./types";
 export * from "./withOperationCountervalues";
+export * from "./withBalanceHistoryCountervalues";
+export * from "./withCountervalues";

@@ -5,10 +5,13 @@ import type { DevToolsConfig } from "@devtools/registry";
 import { fetchAccountData, fetchMoreAccountData } from "@domain/api-account-data";
 import { accountsSlice, type AccountsState } from "@domain/entity-account";
 import type { AccountDataRootState } from "@domain/entity-account-data";
-import { BalanceAssetIdSchema, type WithAccountBalances } from "@domain/entity-account-balance";
+import {
+  BalanceAssetIdSchema,
+  CountervalueTickerSchema,
+  type WithAccountBalances,
+} from "@domain/entity-account-balance";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import {
-  CountervalueTickerSchema,
   selectAccountOperations,
   type AccountOperation,
   type AccountOperationsQuery,

@@ -12,6 +12,12 @@ export const AmountStrSchema = BigNumberStrSchema.refine(value => /^\d+$/.test(v
   message: "Expected a non-negative integer amount in the asset's smallest unit",
 });
 
+/** The ticker of the currency a countervalue is in: an ISO 4217 code such as `USD`, or a crypto one such as `BTC`. */
+export const CountervalueTickerSchema = z.string().min(1).brand<"CountervalueTicker">();
+
+/** What an amount is worth, by countervalue, in that currency's smallest unit. */
+export const CountervaluesSchema = z.partialRecord(CountervalueTickerSchema, AmountStrSchema);
+
 /** What one asset of an account amounts to, in crypto only. */
 export const AccountAssetBalanceSchema = z.object({
   assetId: BalanceAssetIdSchema,
@@ -20,6 +26,8 @@ export const AccountAssetBalanceSchema = z.object({
 });
 
 export type BalanceAssetId = z.infer<typeof BalanceAssetIdSchema>;
+export type CountervalueTicker = z.infer<typeof CountervalueTickerSchema>;
+export type Countervalues = z.infer<typeof CountervaluesSchema>;
 export type AccountAssetBalance = z.infer<typeof AccountAssetBalanceSchema>;
 
 export const AccountBalancesStateSchema = z.partialRecord(

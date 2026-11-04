@@ -1,9 +1,6 @@
 import type { AccountTarget } from "@domain/api-account-data";
-import { BalanceAssetIdSchema } from "@domain/entity-account-balance";
-import {
-  CountervalueTickerSchema,
-  type AccountOperationsQuery,
-} from "@domain/entity-account-operation";
+import { BalanceAssetIdSchema, CountervalueTickerSchema } from "@domain/entity-account-balance";
+import type { AccountOperationsQuery } from "@domain/entity-account-operation";
 import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";
 import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import {

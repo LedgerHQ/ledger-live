@@ -4,16 +4,20 @@ import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import type { DevToolsConfig } from "@devtools/registry";
 import { fetchAccountData } from "@domain/api-account-data";
 import { accountsSlice, type AccountsState } from "@domain/entity-account";
+import { CountervalueTickerSchema, type CountervalueTicker } from "@domain/entity-account-balance";
 import {
   BALANCE_HISTORY_RANGES,
   BalanceHistoryRangeSchema,
   DEFAULT_BALANCE_HISTORY_RANGE,
+  type AccountBalanceHistoryQuery,
   type AssetBalanceHistory,
+  type BalancePoint,
   type BalanceHistoryRange,
   type WithAccountBalanceHistories,
 } from "@domain/entity-account-balance-history";
 import { accountDataQueryKey, type AccountDataRootState } from "@domain/entity-account-data";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import { findFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { formatAmount, useAssetUnits } from "./useAssetUnits";
 
 type AccountBalanceHistoryToolProps = Extract<
@@ -28,9 +32,22 @@ type Dispatch = ThunkDispatch<State, unknown, UnknownAction>;
 
 const { selectAccountEntries } = accountsSlice.getSelectors((state: State) => state.accountEntries);
 
-export function useAccountBalanceHistoryToolProps(): AccountBalanceHistoryToolProps {
+/** The point's value in `ticker`, formatted in that fiat, when the read gave one. */
+function countervalueOf(point: BalancePoint | undefined, ticker: CountervalueTicker | undefined) {
+  const amount = ticker && point?.countervalues?.[ticker];
+  const unit = ticker && findFiatCurrencyByTicker(ticker)?.units[0];
+  return amount && unit ? formatAmount(unit, amount) : undefined;
+}
+
+/** `fiat` is the app's countervalue setting, the one fiat its rates are loaded for. */
+export function useAccountBalanceHistoryToolProps(fiat: string): AccountBalanceHistoryToolProps {
   const dispatch = useDispatch<Dispatch>();
   const [range, setRange] = useState<BalanceHistoryRange>(DEFAULT_BALANCE_HISTORY_RANGE);
+  const [countervalue, setCountervalue] = useState(false);
+  const query = useMemo((): AccountBalanceHistoryQuery => {
+    const ticker = countervalue ? CountervalueTickerSchema.safeParse(fiat).data : undefined;
+    return ticker ? { range, countervalue: ticker } : { range };
+  }, [range, countervalue, fiat]);
   const entries = useSelector(selectAccountEntries);
   const histories = useSelector((state: State) => state.accountBalanceHistories);
   const statuses = useSelector((state: State) => state.accountData.balanceHistory);
@@ -54,8 +71,8 @@ export function useAccountBalanceHistoryToolProps(): AccountBalanceHistoryToolPr
 
   const read = useCallback(
     (descriptor: AccountDescriptor) =>
-      dispatch(fetchAccountData("balanceHistory", descriptor, { maxAge: 0, query: { range } })),
-    [dispatch, range],
+      dispatch(fetchAccountData("balanceHistory", descriptor, { maxAge: 0, query })),
+    [dispatch, query],
   );
 
   const onRead = useCallback(
@@ -85,11 +102,13 @@ export function useAccountBalanceHistoryToolProps(): AccountBalanceHistoryToolPr
         lastDate: last?.date,
         firstBalance: first && formatAmount(unit, first.balance),
         lastBalance: last && formatAmount(unit, last.balance),
+        firstCountervalue: countervalueOf(first, query.countervalue),
+        lastCountervalue: countervalueOf(last, query.countervalue),
         values: points.map(point => Number(point.balance)),
       };
     };
     return entries.map(({ accountUUID, descriptor }) => {
-      const status = statuses?.[accountUUID]?.[accountDataQueryKey({ range })];
+      const status = statuses?.[accountUUID]?.[accountDataQueryKey(query)];
       return {
         accountUUID,
         descriptor: JSON.stringify(descriptor, null, 2),
@@ -100,7 +119,17 @@ export function useAccountBalanceHistoryToolProps(): AccountBalanceHistoryToolPr
         series: histories[accountUUID]?.[range]?.series.map(toSeries),
       };
     });
-  }, [entries, statuses, histories, range, unitOf]);
+  }, [entries, statuses, histories, range, query, unitOf]);
 
-  return { ranges: BALANCE_HISTORY_RANGES, range, onRangeChange, accounts, onRead, onReadAll };
+  return {
+    ranges: BALANCE_HISTORY_RANGES,
+    range,
+    onRangeChange,
+    fiat,
+    countervalue,
+    onCountervalueChange: setCountervalue,
+    accounts,
+    onRead,
+    onReadAll,
+  };
 }

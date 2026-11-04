@@ -1,5 +1,4 @@
-import { BalanceAssetIdSchema } from "@domain/entity-account-balance";
-import { CountervalueTickerSchema } from "@domain/entity-account-operation";
+import { BalanceAssetIdSchema, CountervalueTickerSchema } from "@domain/entity-account-balance";
 import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";
 import {
   ETH,
@@ -10,7 +9,7 @@ import {
   serverAccountId,
   update,
 } from "../fakeService.mock";
-import { fiatOf, limitOf, readUpdates, serviceAssetOf } from "./read";
+import { limitOf, readUpdates, serviceAssetOf } from "./read";
 
 const USD = CountervalueTickerSchema.parse("USD");
 const USDT = mockTokenCurrency();
@@ -25,37 +24,6 @@ describe("limitOf", () => {
     [{ limit: 2.5 }, 20],
   ])("reads %j as %i", (query, limit) => {
     expect(limitOf(query)).toBe(limit);
-  });
-});
-
-describe("fiatOf", () => {
-  it("reads a known fiat with its smallest unit's magnitude", () => {
-    expect(fiatOf({ countervalue: USD })).toEqual({ ticker: "USD", currency: "USD", magnitude: 2 });
-    expect(fiatOf({ countervalue: CountervalueTickerSchema.parse("JPY") })).toEqual({
-      ticker: "JPY",
-      currency: "JPY",
-      magnitude: 0,
-    });
-  });
-
-  it("keeps a fiat ticker a crypto shares, as Mantle does the tögrög's MNT", () => {
-    expect(fiatOf({ countervalue: CountervalueTickerSchema.parse("MNT") })).toMatchObject({
-      ticker: "MNT",
-      currency: "MNT",
-    });
-  });
-
-  it("names a crypto countervalue by its CAL id, as the service takes it", () => {
-    expect(fiatOf({ countervalue: CountervalueTickerSchema.parse("BTC") })).toEqual({
-      ticker: "BTC",
-      currency: "bitcoin",
-      magnitude: 8,
-    });
-  });
-
-  it("reads no fiat when none or an unknown one is asked", () => {
-    expect(fiatOf(undefined)).toBeUndefined();
-    expect(fiatOf({ countervalue: CountervalueTickerSchema.parse("XYZ") })).toBeUndefined();
   });
 });
 

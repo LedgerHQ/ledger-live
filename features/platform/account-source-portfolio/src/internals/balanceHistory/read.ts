@@ -2,6 +2,7 @@ import type { BalanceHistoryGroup } from "@domain/api-account-portfolio";
 import type { BalanceHistoryRange } from "@domain/entity-account-balance-history";
 import type { PortfolioId } from "@domain/entity-client-identity";
 import type { PortfolioClient } from "../../client";
+import type { Fiat } from "../fiat";
 
 const PAGE_SIZE = 100;
 const MAX_PAGES = 20;
@@ -19,6 +20,7 @@ export async function readHistory(
   portfolioId: () => PortfolioId,
   account: string,
   range: BalanceHistoryRange,
+  fiat?: Fiat,
 ): Promise<HistoryRead> {
   const readFrom = async (token: string | undefined, read: HistoryRead): Promise<HistoryRead> => {
     const page = await client.getBalanceHistory(portfolioId(), {
@@ -26,6 +28,7 @@ export async function readHistory(
       range,
       size: PAGE_SIZE,
       token,
+      ...(fiat === undefined ? {} : { currency: fiat.currency }),
     });
     const next = page.nextToken ?? undefined;
     const done: HistoryRead = {

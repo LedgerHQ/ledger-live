@@ -4,15 +4,15 @@ import { AccountUUIDSchema } from "@domain/entity-account-descriptor";
 import {
   AmountStrSchema,
   BalanceAssetIdSchema,
+  CountervaluesSchema,
   type BalanceAssetId,
+  type CountervalueTicker,
 } from "@domain/entity-account-balance";
 
 export const OperationIdSchema = z.string().min(1).brand<"OperationId">();
 export const TransactionHashSchema = z.string().min(1).brand<"TransactionHash">();
 /** A sender or recipient: branded so analytics can refuse it. */
 export const AddressSchema = z.string().min(1).brand<"Address">();
-/** The ISO 4217 ticker of the fiat a countervalue is in, e.g. `USD`. */
-export const CountervalueTickerSchema = z.string().min(1).brand<"CountervalueTicker">();
 
 /** Mirrors the operation types of `@ledgerhq/types-live`, for backward compatibility. */
 export const OPERATION_TYPES = [
@@ -77,10 +77,7 @@ export const OPERATION_TYPES = [
 
 export const OperationTypeSchema = z.enum(OPERATION_TYPES);
 
-export const OperationCountervaluesSchema = z.partialRecord(
-  CountervalueTickerSchema,
-  AmountStrSchema,
-);
+export const OperationCountervaluesSchema = CountervaluesSchema;
 
 /** One operation of an account. A token, sub or internal operation is its own row, pointing at its parent. */
 export const AccountOperationSchema = z.object({
@@ -108,7 +105,6 @@ export const StoredAccountOperationSchema = AccountOperationSchema.omit({ counte
 export type OperationId = z.infer<typeof OperationIdSchema>;
 export type TransactionHash = z.infer<typeof TransactionHashSchema>;
 export type Address = z.infer<typeof AddressSchema>;
-export type CountervalueTicker = z.infer<typeof CountervalueTickerSchema>;
 export type OperationType = z.infer<typeof OperationTypeSchema>;
 export type AccountOperation = z.infer<typeof AccountOperationSchema>;
 export type StoredAccountOperation = z.infer<typeof StoredAccountOperationSchema>;

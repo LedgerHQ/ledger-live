@@ -56,29 +56,30 @@ state, no dispatch and no store reference.
 
 Apps build one at composition time and hand it over; nothing here reaches for a store.
 
-## `withOperationCountervalues`
+## `withCountervalues`
 
-An account data source reads operations, but few can value them in a fiat. The apps wrap each
-source that cannot with this decorator: when a query asks for a `countervalue`, it values every row
-the source left unvalued, at the row's date, from the rates the app holds. A source that values its
-own rows is ranked as is, without the decorator.
+An account data source reads operations and balance histories, but few can value them in a fiat.
+The apps wrap each source with this decorator: when a query asks for a `countervalue`, it values
+every operation row and every balance point the source left unvalued, at its date, from the rates
+the app holds. It applies `withOperationCountervalues` and `withBalanceHistoryCountervalues`, each
+usable alone; `valueOperations` and `valueBalanceHistory` are their pure valuations.
 
 ```ts
-const countervalues: OperationCountervaluesHost = {
+const countervalues: CountervaluesHost = {
   rates: () => countervaluesStateSelector(getState()),
   findCurrency: assetId =>
     findCryptoCurrencyById(assetId) ?? getCryptoAssetsStore().findTokenById(assetId),
 };
 
 return [
-  withOperationCountervalues(createCoinModuleSource(coinModuleHost), countervalues),
-  withOperationCountervalues(createFullSyncSource(fullSyncHost), countervalues),
+  withCountervalues(createCoinModuleSource(coinModuleHost), countervalues),
+  withCountervalues(createFullSyncSource(fullSyncHost), countervalues),
 ];
 ```
 
-A failed currency lookup leaves its rows unvalued without failing the read.
-A row is valued at its hour's or day's rate only; with no such rate it stays unvalued, rather than
-taking the latest one.
+A value the source gave is kept. A failed currency lookup leaves its values out without failing
+the read. A row or point is valued at its hour's or day's rate only; with no such rate it stays
+unvalued, rather than taking the latest one.
 
 ## Error handling
 

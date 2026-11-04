@@ -101,7 +101,9 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
   const accountBalanceToolProps = useAccountBalanceToolProps();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const accountOperationToolProps = useAccountOperationToolProps(counterValueCurrency.ticker);
-  const accountBalanceHistoryToolProps = useAccountBalanceHistoryToolProps();
+  const accountBalanceHistoryToolProps = useAccountBalanceHistoryToolProps(
+    counterValueCurrency.ticker,
+  );
   const accountPortfolioToolProps = useAccountPortfolioToolProps({
     serviceUrl: getPortfolioServiceUrl(),
   });

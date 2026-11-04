@@ -1,7 +1,12 @@
 import { z } from "zod";
 import { DateTimeIsoSchema } from "@shared/schema-primitives";
 import { AccountUUIDSchema } from "@domain/entity-account-descriptor";
-import { AmountStrSchema, BalanceAssetIdSchema } from "@domain/entity-account-balance";
+import {
+  AmountStrSchema,
+  BalanceAssetIdSchema,
+  CountervaluesSchema,
+  type CountervalueTicker,
+} from "@domain/entity-account-balance";
 
 /** The periods of the balance graph, as the portfolio offers them. */
 export const BALANCE_HISTORY_RANGES = ["day", "week", "month", "year", "all"] as const;
@@ -15,6 +20,8 @@ export const DEFAULT_BALANCE_HISTORY_RANGE = BalanceHistoryRangeSchema.enum.mont
 export const BalancePointSchema = z.object({
   date: DateTimeIsoSchema,
   balance: AmountStrSchema,
+  /** What `balance` was worth at `date`, for the countervalue a read asked for. */
+  countervalues: CountervaluesSchema.optional(),
 });
 
 /** The balance of one asset over the range, oldest point first; the last point is the current balance. */
@@ -36,6 +43,8 @@ export type AccountBalanceHistory = z.infer<typeof AccountBalanceHistorySchema>;
 
 export type AccountBalanceHistoryQuery = {
   range: BalanceHistoryRange;
+  /** Each point valued at its date in this currency, into `countervalues`. */
+  countervalue?: CountervalueTicker;
 };
 
 /** The series of one range, and the `revision` of the answer they come from. */

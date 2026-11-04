@@ -1,13 +1,18 @@
 import type { AccountTarget } from "@domain/api-account-data";
+import { CountervalueTickerSchema } from "@domain/entity-account-balance";
 import type { AccountBalanceHistoryQuery } from "@domain/entity-account-balance-history";
 import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import {
+  BTC,
   ETH,
+  TRX,
   depsOf,
   evm,
   fakeService,
   historyGroup,
+  point,
   reasonOf,
+  serverAccountId,
   serviceAccount,
   synced,
   targetOf,
@@ -43,6 +48,49 @@ describe("balanceHistoryReader", () => {
       ok: true,
       summary: "Balance history (year) of 1 accounts in 1 calls: 1 served",
     });
+  });
+
+  it.each([
+    ["an EVM", ETH],
+    ["a Bitcoin", BTC],
+    ["an address", TRX],
+  ])(
+    "values each point of %s account in the countervalue asked of the service",
+    async (_, account) => {
+      const { read, client } = setup(
+        fakeService({
+          portfolio: synced([account]),
+          histories: [
+            historyGroup(account, [point(account, { value: "10", currency_value: 2.5 })]),
+          ],
+        }),
+      );
+
+      const [settled] = await read([targetOf(account)], {
+        range: "week",
+        countervalue: CountervalueTickerSchema.parse("BTC"),
+      });
+
+      expect(client.getBalanceHistory).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({ account: serverAccountId(account), currency: "bitcoin" }),
+      );
+      expect(settled).toMatchObject({
+        status: "fulfilled",
+        value: { series: [{ points: [{ balance: "10", countervalues: { BTC: "250000000" } }] }] },
+      });
+    },
+  );
+
+  it("asks for no currency without a countervalue", async () => {
+    const { read, client } = setup(
+      fakeService({ portfolio: synced([ETH]), histories: [historyGroup(ETH)] }),
+    );
+    await read([targetOf(ETH)], { range: "week" });
+    expect(client.getBalanceHistory).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.not.objectContaining({ currency: expect.anything() }),
+    );
   });
 
   it("reads the default range when the query names none", async () => {
