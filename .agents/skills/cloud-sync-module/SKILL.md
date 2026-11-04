@@ -4,7 +4,7 @@ description: |
   Write, review or debug a `cloudSyncModule.ts` — a `CloudSyncDataManager` that syncs one slice of
   user data through Ledger Sync (Cloud Sync). Covers the contract, its invariants, the mandatory
   contract test, the wiring checklist and the data-loss traps.
-  Use when working on `**/cloudSyncModule.ts`, `createAggregator`, or `@shared/cloud-sync-module`.
+  Use when doing any work on `**/cloudSyncModule.ts`, `createAggregator`, or `@shared/cloud-sync-module`.
 ---
 
 # Authoring a `cloudSyncModule.ts`

@@ -1,6 +1,6 @@
 ---
 name: rebuild-to-fix-lib-import-errors
-description: Rebuild a monorepo lib when typecheck fails on an import from that lib. Read when typecheck reports an import error from a lib package.
+description: Rebuild a monorepo lib when typecheck fails on an import from that lib. Read when typecheck finds an error importing from a lib in the monorepo.
 ---
 
 When typecheck finds an error importing from a lib in the monorepo rebuild the lib using the command below:

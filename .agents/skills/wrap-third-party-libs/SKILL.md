@@ -2,7 +2,7 @@
 name: wrap-third-party-libs
 description: |
   Apps do not depend on third-party libraries directly: the lowest valid package owns each one.
-  Read when adding a dependency to apps/*/package.json, importing a new npm package from an app,
+  Read before adding a dependency to apps/*/package.json, importing a new npm package from an app,
   or bumping a library the apps use.
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: e2e-swap
-description: Write or update Swap E2E tests for Ledger Live Desktop (Playwright) and Mobile (Detox). Use when updating swap specs, provider flows, multi-step approvals, page-object refactors, swap-history checks, KYC/validation banners, or review-driven cleanup.
+description: Write or update Swap E2E tests for Ledger Live Desktop (Playwright) and Mobile (Detox). Use when updating swap spec updates, provider flows, multi-step approvals, page-object refactors, swap-history checks, KYC/validation banners, and review-driven cleanup.
 ---
 
 # Swap E2E Skill
