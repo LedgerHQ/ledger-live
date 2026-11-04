@@ -45,6 +45,34 @@ describe("ConfigureDBSaveEffects", () => {
 
     expect(saveSettings).toHaveBeenCalledWith(expect.objectContaining({ theme: "dark" }), true);
   });
+
+  it("saves a change made during a save in flight when the app goes to the background", async () => {
+    let finishFirstSave: (() => void) | undefined;
+    jest
+      .mocked(saveSettings)
+      .mockImplementationOnce(() => new Promise<void>(resolve => (finishFirstSave = resolve)));
+    const { store } = renderHook(() => ConfigureDBSaveEffects());
+    act(() => {
+      store.dispatch(setTheme("dark"));
+    });
+    await act(async () => {
+      appStateListener("background");
+    });
+    act(() => {
+      store.dispatch(setTheme("light"));
+    });
+
+    await act(async () => {
+      appStateListener("background");
+      finishFirstSave?.();
+    });
+
+    expect(saveSettings).toHaveBeenCalledTimes(2);
+    expect(saveSettings).toHaveBeenLastCalledWith(
+      expect.objectContaining({ theme: "light" }),
+      true,
+    );
+  });
 });
 
 describe("featureFlagsLense", () => {
