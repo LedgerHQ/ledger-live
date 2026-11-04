@@ -11,7 +11,8 @@ export type PerpsRequest<T> = {
   begin: () => Promise<T>;
   getId: () => string | null;
   settle: (id: string | null, result: T) => void;
-  markCommitted: (id: string | null) => void;
+  /** Returns false when that request is no longer pending (cancelled or replaced): do not submit. */
+  markCommitted: (id: string | null) => boolean;
   /** Rejects that request with `error`, even once committed, e.g. when submitting it failed. */
   reject: (id: string | null, error: Error) => void;
   /** With an `id`, only cancels that request, so a stale caller cannot cancel a newer one. */
@@ -54,9 +55,10 @@ export function createPerpsRequest<T>(): PerpsRequest<T> {
     settle: (id, result) => finish(id, request => request.resolve(result)),
     reject: (id, error) => finish(id, request => request.reject(error)),
     markCommitted: id => {
-      if (id === null) return;
-      const request = requests.get(id);
-      if (request) request.committed = true;
+      const request = id === null ? undefined : requests.get(id);
+      if (!request) return false;
+      request.committed = true;
+      return true;
     },
     cancel,
   };

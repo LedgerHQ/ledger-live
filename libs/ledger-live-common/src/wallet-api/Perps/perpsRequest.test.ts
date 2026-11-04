@@ -114,7 +114,7 @@ describe("createPerpsRequest", () => {
     const pending = request.begin();
 
     expect(() => request.settle(null, { swapId: "swap-1" })).not.toThrow();
-    expect(() => request.markCommitted("unknown")).not.toThrow();
+    expect(request.markCommitted("unknown")).toBe(false);
     request.cancel();
 
     await expect(pending).rejects.toBeInstanceOf(UserRefusedOnDevice);
