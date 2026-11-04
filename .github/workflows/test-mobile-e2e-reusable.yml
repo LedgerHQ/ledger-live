@@ -47,7 +47,7 @@ on:
         options: ["no-accounts,accounts", "no-accounts", "accounts"]
         default: "no-accounts,accounts"
       pairs:
-        description: "A/B pairs per scenario (even; half before and half after the device swap)"
+        description: "A/B pairs per scenario: even, at least 6 (half before and half after the device swap)"
         required: true
         type: string
         default: "20"
@@ -103,8 +103,9 @@ jobs:
           REPO_URL: ${{ github.server_url }}/${{ github.repository }}.git
         run: |
           set -euo pipefail
-          if ! [[ "$PAIRS" =~ ^[0-9]+$ ]] || (( PAIRS < 2 || PAIRS % 2 )); then
-            echo "::error::pairs must be an even number ≥ 2, got '$PAIRS'"; exit 1
+          # Fewer than 6 pairs give no 95% interval, so the analysis could only fail.
+          if ! [[ "$PAIRS" =~ ^[0-9]+$ ]] || (( PAIRS < 6 || PAIRS % 2 )); then
+            echo "::error::pairs must be an even number ≥ 6, got '$PAIRS'"; exit 1
           fi
           [[ "$THRESHOLD" =~ ^[0-9]+$ ]] || { echo "::error::threshold_ms must be a number"; exit 1; }
           # A branch, a tag or a full commit SHA of this repository, as a commit SHA. Pull request
@@ -634,9 +635,11 @@ jobs:
     needs: [plan, build-ios]
     if: ${{ inputs.platforms != 'Android Only' }}
     # One iOS measurement at a time on the shared Mac pool; Android jobs each get their own VM.
+    # queue: max keeps every waiting run in line (by default a new one replaces the waiting one).
     concurrency:
       group: mobile-startup-perf-ios
       cancel-in-progress: false
+      queue: max
     # Same pool as the iOS E2E tests.
     runs-on: ["qaa", macOS, ARM64, "performance-pool"]
     timeout-minutes: 300
@@ -693,8 +696,13 @@ jobs:
 
       # Fresh simulators, so no state is left over from other jobs on this machine.
       - name: Create and boot two simulators
+        timeout-minutes: 20
         run: |
           set -euo pipefail
+          # Called directly rather than through xcrun, so the alarm kills simctl itself (macOS has no
+          # `timeout`), as boot-ios-simulators-background does.
+          SIMCTL="$(xcrun -f simctl)"
+          with_timeout() { perl -e 'alarm shift; exec @ARGV or die "exec failed: $!\n"' "$@"; }
           # Simulators left booted by earlier E2E jobs on this pool would compete for the CPU.
           xcrun simctl list devices booted
           xcrun simctl shutdown all || true
@@ -703,14 +711,16 @@ jobs:
           TYPE=$(xcrun simctl list runtimes iOS -j | jq -r --arg rt "$RUNTIME" '.runtimes[] | select(.identifier==$rt) | [.supportedDeviceTypes[] | select(.name|test("^iPhone [0-9]+ Pro$"))] | max_by(.name|capture("(?<n>[0-9]+)").n|tonumber) | .identifier')
           [[ -n "$TYPE" && "$TYPE" != null ]] || { echo "::error::no iPhone Pro device type for $RUNTIME"; exit 1; }
           echo "Runtime $RUNTIME, device type $TYPE"
+          # Each id is saved as soon as the simulator exists, so "Delete simulators" removes it even
+          # when booting fails.
           SIM_1=$(xcrun simctl create "Startup Perf 1" "$TYPE" "$RUNTIME")
-          SIM_2=$(xcrun simctl create "Startup Perf 2" "$TYPE" "$RUNTIME")
-          for udid in "$SIM_1" "$SIM_2"; do
-            xcrun simctl boot "$udid"
-            xcrun simctl bootstatus "$udid" -b
-          done
           echo "SIM_1=$SIM_1" >> "$GITHUB_ENV"
+          SIM_2=$(xcrun simctl create "Startup Perf 2" "$TYPE" "$RUNTIME")
           echo "SIM_2=$SIM_2" >> "$GITHUB_ENV"
+          for udid in "$SIM_1" "$SIM_2"; do
+            with_timeout 300 "$SIMCTL" boot "$udid"
+            with_timeout 300 "$SIMCTL" bootstatus "$udid" -b
+          done
           sleep 60
 
       - name: Measure
