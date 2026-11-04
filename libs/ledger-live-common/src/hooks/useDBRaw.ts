@@ -1,4 +1,12 @@
-import { useMemo, useState, useEffect, useCallback, Dispatch, SetStateAction } from "react";
+import {
+  useMemo,
+  useState,
+  useEffect,
+  useCallback,
+  useSyncExternalStore,
+  Dispatch,
+  SetStateAction,
+} from "react";
 
 export type StateDB<State, Selected> = [Selected, Dispatch<SetStateAction<State>>, boolean];
 
@@ -49,4 +57,83 @@ export function useDBRaw<State, Selected>({
 
   const result = useMemo(() => selector(state), [state, selector]);
   return useMemo(() => [result, setter, isLoaded], [result, setter, isLoaded]);
+}
+
+type DBRecordSnapshot<State> = { state: State; isLoaded: boolean };
+
+export type DBRecord<State> = {
+  getSnapshot: () => DBRecordSnapshot<State>;
+  subscribe: (listener: () => void) => () => void;
+  setState: Dispatch<SetStateAction<State>>;
+};
+
+/**
+ * One in-memory copy of a persisted record, shared by every hook that reads it.
+ * Each update applies to the latest state, so hooks that change different fields
+ * do not erase each other. Create it once per record, at module level.
+ */
+export function createDBRecord<State>({
+  initialState,
+  getter,
+  setter,
+}: {
+  initialState: State;
+  getter: () => Promise<State | undefined>;
+  setter: (val: State) => Promise<void> | void;
+}): DBRecord<State> {
+  let snapshot: DBRecordSnapshot<State> = { state: initialState, isLoaded: false };
+  let loadStarted = false;
+  // Updates made before the read finishes, replayed on the stored state
+  let pendingUpdates: SetStateAction<State>[] = [];
+  const listeners = new Set<() => void>();
+
+  const apply = (state: State, action: SetStateAction<State>) =>
+    isUpdater(action) ? action(state) : action;
+
+  const emit = (next: DBRecordSnapshot<State>) => {
+    snapshot = next;
+    listeners.forEach(listener => listener());
+  };
+
+  const load = () => {
+    loadStarted = true;
+    getter()
+      .then(stored => {
+        const updates = pendingUpdates;
+        pendingUpdates = [];
+        const state = updates.reduce(apply, stored ?? initialState);
+        if (updates.length > 0) setter(state);
+        emit({ state, isLoaded: true });
+      })
+      .catch(() => {
+        pendingUpdates = [];
+        emit({ ...snapshot, isLoaded: true });
+      });
+  };
+
+  return {
+    getSnapshot: () => snapshot,
+    subscribe: listener => {
+      listeners.add(listener);
+      if (!loadStarted) load();
+      return () => {
+        listeners.delete(listener);
+      };
+    },
+    setState: action => {
+      const state = apply(snapshot.state, action);
+      if (snapshot.isLoaded) setter(state);
+      else pendingUpdates.push(action);
+      emit({ ...snapshot, state });
+    },
+  };
+}
+
+export function useDBRecord<State, Selected>(
+  record: DBRecord<State>,
+  selector: (state: State) => Selected,
+): StateDB<State, Selected> {
+  const { state, isLoaded } = useSyncExternalStore(record.subscribe, record.getSnapshot);
+  const result = useMemo(() => selector(state), [state, selector]);
+  return useMemo(() => [result, record.setState, isLoaded], [result, record, isLoaded]);
 }

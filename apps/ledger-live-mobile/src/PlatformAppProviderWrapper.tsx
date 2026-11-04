@@ -6,12 +6,8 @@ import { RampCatalogProvider } from "@ledgerhq/live-common/platform/providers/Ra
 import useEnv from "@features/platform-env";
 import { Platform } from "react-native";
 import { useLocale } from "~/context/Locale";
-import {
-  DISCOVER_STORE_KEY,
-  INITIAL_PLATFORM_STATE,
-} from "@ledgerhq/live-common/wallet-api/constants";
 import { DiscoverDB } from "@ledgerhq/live-common/wallet-api/types";
-import { useDB } from "./db";
+import { useDiscoverDB } from "./discoverDB";
 
 type PlatformAppProviderWrapperProps = {
   children: ReactNode;
@@ -53,9 +49,5 @@ function selectLocalLiveAppDB(state: DiscoverDB) {
 }
 
 function useLocalLiveAppDB() {
-  return useDB<DiscoverDB, DiscoverDB["localLiveApp"]>(
-    DISCOVER_STORE_KEY,
-    INITIAL_PLATFORM_STATE,
-    selectLocalLiveAppDB,
-  );
+  return useDiscoverDB(selectLocalLiveAppDB);
 }
