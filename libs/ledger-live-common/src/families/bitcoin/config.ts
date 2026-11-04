@@ -13,6 +13,11 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
       name: "Bitcoin",
       unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
       explorer: { url: "https://explorers.api.live.ledger.com" },
+      // Web3checks chain id (provisional in the spec); the check runs once `url` is set remotely
+      transactionChecks: {
+        chainId: 1000,
+        url: "https://global.api.prd.ledger.com/transaction-checks/v3",
+      },
     },
   },
   config_currency_bitcoin_cash: {
@@ -70,6 +75,11 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
       name: "Bitcoin Testnet",
       unit: { name: "bitcoin", code: "𝚝BTC", magnitude: 8 },
       explorer: { url: "https://explorers.api.live.ledger.com" },
+      // Web3checks chain id (provisional in the spec); the check runs once `url` is set remotely
+      transactionChecks: {
+        chainId: 1001,
+        url: "https://global.api.prd.ledger.com/transaction-checks/v3",
+      },
     },
   },
   config_currency_dash: {
