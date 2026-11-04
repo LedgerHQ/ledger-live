@@ -486,6 +486,7 @@ describe("HumanCommandOutput", () => {
           swapId: "swap-abc",
           payinAddress: "0x000000000000000000000000000000000000dead",
         } as unknown as Parameters<typeof out.swapExecuteFullResult>[0]["payload"],
+        balanceCheck: { checked: true },
         operationHash: "0xopHash",
         swapId: "swap-abc",
         // Human output only surfaces the display-unit amount; the atomic value and rate stay in JSON.
@@ -524,6 +525,7 @@ describe("HumanCommandOutput", () => {
           swapId: "swap-abc",
           payinAddress: "0x000000000000000000000000000000000000dead",
         } as unknown as Parameters<typeof out.swapExecuteFullResult>[0]["payload"],
+        balanceCheck: { checked: true },
       });
     } finally {
       restore();
