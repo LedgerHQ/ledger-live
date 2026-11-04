@@ -60,7 +60,7 @@
     "@types/lodash": "catalog:",
     "@types/ws": "8.5.10",
     "bignumber.js": "9.1.2",
-    "body-parser": "2.2.2",
+    "body-parser": "2.4.0",
     "cors": "2.8.5",
     "detox": "catalog:",
     "detox-allure2-adapter": "1.0.0-alpha.42",
