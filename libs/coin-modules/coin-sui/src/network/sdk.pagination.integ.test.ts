@@ -5,7 +5,6 @@
  * real node returns a full page whose newest entry is the cursor itself — which is what the inclusive
  * checkpoint bound guarantees on every cursor-fed request. These walk real mainnet history instead.
  */
-import { getEnv } from "@ledgerhq/live-env";
 import type { SuiCoinConfig, SuiTransport } from "../config";
 import { STEADY_ACCOUNT as ACCOUNT } from "../test/fixtures";
 import { getListOperations, getOperations, TRANSACTIONS_LIMIT_PER_QUERY } from "./sdk";
@@ -13,8 +12,8 @@ import { getListOperations, getOperations, TRANSACTIONS_LIMIT_PER_QUERY } from "
 const configFor = (transport: SuiTransport): SuiCoinConfig => ({
   status: { type: "active" },
   node: {
-    graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
-    grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
+    graphqlUrl: "https://sui.coin.ledger.com/graphql",
+    grpcUrl: "https://sui.coin.ledger.com",
   },
   features: { transport },
   name: "Sui",

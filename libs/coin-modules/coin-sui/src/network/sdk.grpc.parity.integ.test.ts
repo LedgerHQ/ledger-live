@@ -1,4 +1,3 @@
-import { getEnv } from "@ledgerhq/live-env";
 import type { SuiCoinConfig, SuiTransport } from "../config";
 import { STAKE_DELEGATOR } from "../test/fixtures";
 import {
@@ -32,8 +31,8 @@ const ACCOUNT = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0
 const configFor = (transport: SuiTransport): SuiCoinConfig => ({
   status: { type: "active" },
   node: {
-    graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
-    grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
+    graphqlUrl: "https://sui.coin.ledger.com/graphql",
+    grpcUrl: "https://sui.coin.ledger.com",
   },
   features: { transport },
   name: "Sui",

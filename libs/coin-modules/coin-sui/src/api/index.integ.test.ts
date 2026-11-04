@@ -4,7 +4,6 @@ import type {
   Operation,
 } from "@ledgerhq/coin-module-framework/api/types";
 import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
-import { getEnv } from "@ledgerhq/live-env";
 import type { SuiCoinConfig, SuiContext } from "../config";
 import { FIGMENT_SUI_VALIDATOR_ADDRESS } from "../constants";
 import { STAKE_DELEGATOR } from "../test/fixtures";
@@ -17,8 +16,8 @@ describe("Sui Api", () => {
 
   const config: SuiCoinConfig = {
     node: {
-      graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
-      grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
+      graphqlUrl: "https://sui.coin.ledger.com/graphql",
+      grpcUrl: "https://sui.coin.ledger.com",
     },
     features: { transport: "grpc" },
     status: { type: "active" },
