@@ -124,6 +124,8 @@ export function useChecksScreenViewModel({
   onStart,
   onRetry,
   onCloseSheet,
+  onCloseNotGenuine,
+  onCloseFirmwareOffer,
   onContinue,
   onQuit,
   onAcceptUpdate,
@@ -138,12 +140,15 @@ export function useChecksScreenViewModel({
   }
   const errorDrawerKind = recoverableKind ?? retainedRecoverableKind ?? "unknown";
   const [allowClosed, setAllowClosed] = useState(false);
+  const [closedFirmwareOfferKey, setClosedFirmwareOfferKey] = useState<string | null>(null);
+  const closedFirmwareOfferKeyRef = useRef<string | null>(null);
   if (state !== "awaitingAllow" && allowClosed) setAllowClosed(false);
   const updateKey = update ? `${update.current}|${update.available}` : "";
   const [unsupportedFor, setUnsupportedFor] = useState<string | null>(null);
   const declinedFor = useRef<string | null>(null);
   const suppressOfferCloseFor = useRef<string | null>(null);
   const firmwareOfferOpen = state === "updating" && update !== null;
+  const firmwareOfferClosed = closedFirmwareOfferKey === updateKey && updateKey !== "";
   const productName = getDeviceModel(device.modelId).productName || device.modelId;
   const eligibility = update ? firmwareEligibility(device, update.current) : null;
   const isUnsupportedUpdateOpen = unsupportedFor === updateKey && updateKey !== "";
@@ -189,7 +194,7 @@ export function useChecksScreenViewModel({
   return {
     ...layouts[layout],
     closeLabel: t("deviceOnboarding.checks.close"),
-    onQuit: state === "updating" ? undefined : onQuit,
+    onQuit: state === "updating" && !firmwareOfferClosed ? undefined : onQuit,
     allowSheet:
       state === "awaitingAllow" && !allowClosed
         ? {
@@ -203,7 +208,7 @@ export function useChecksScreenViewModel({
           }
         : undefined,
     firmwareUpdate: {
-      isOpen: update !== null && !isUnsupportedUpdateOpen,
+      isOpen: update !== null && !isUnsupportedUpdateOpen && !firmwareOfferClosed,
       firmwareVersion: update?.available ?? "",
       productName,
       onUpdate: () => {
@@ -219,6 +224,13 @@ export function useChecksScreenViewModel({
       onClose: () => {
         if (!firmwareOfferOpen) return;
         if (suppressOfferCloseFor.current === updateKey) return;
+        if (onCloseFirmwareOffer) {
+          if (closedFirmwareOfferKeyRef.current === updateKey) return;
+          closedFirmwareOfferKeyRef.current = updateKey;
+          setClosedFirmwareOfferKey(updateKey);
+          onCloseFirmwareOffer();
+          return;
+        }
         if (declinedFor.current === updateKey) return;
         declinedFor.current = updateKey;
         onDeclineUpdate();
@@ -249,6 +261,10 @@ export function useChecksScreenViewModel({
       productName,
       onClose: () => {
         if (error?.kind !== "notGenuine") return;
+        if (onCloseNotGenuine) {
+          onCloseNotGenuine();
+          return;
+        }
         onQuit?.();
       },
     },

@@ -494,8 +494,8 @@ describe("scripted device onboarding", () => {
         isOnboarded: true,
       }),
     );
-    await waitFor(() => expect(result.current.status).toBe("exited"));
-    expect(result.current.exit?.reason).toBe("completed");
+    await waitFor(() => expect(result.current.exit?.reason).toBe("completed"));
+    expect(result.current.status).toBe("running");
   });
 });
 
@@ -565,7 +565,8 @@ async function finishSetup(
       isOnboarded: true,
     }),
   );
-  await waitFor(() => expect(result.current.status).toBe("exited"));
+  await waitFor(() => expect(result.current.exit?.reason).toBe("completed"));
+  expect(result.current.status).toBe("running");
 }
 
 /** The product session with the devtool's view of it, which owns the log and the next states. */

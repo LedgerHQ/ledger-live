@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   useNavigation,
   useRoute,
@@ -22,6 +22,7 @@ import { toChecksError, toFirmwareUpdate } from "LLM/features/DeviceOnboarding/u
 import { checksScreenForPhase, phaseOf } from "LLM/features/DeviceOnboarding/utils/funnelPhase";
 import { selectPairedKnownDevices } from "LLM/features/DeviceOnboarding/utils/pairedDevice";
 import { useFirmwareUpdateHandover } from "LLM/features/DeviceOnboarding/hooks/useFirmwareUpdateHandover";
+import { lastSavedStepName } from "../../components/QuitConfirmation/lastSavedStep";
 
 type FunnelRoute = RouteProp<OnboardingNavigatorParamList, ScreenName.DeviceOnboardingFunnel>;
 
@@ -31,7 +32,15 @@ const awaitingSessionAfterFirmwareUpdateState = "awaitingSessionAfterFirmwareUpd
 /** Back must not quit here: a quit would skip the update and complete onboarding. */
 const firmwareUpdateOfferState = "checks.firmwareUpdateOffered";
 
-export type DeviceOnboardingFunnelModel =
+export type QuitConfirmationModel = {
+  isOpen: boolean;
+  stepName: string;
+  onContinue: () => void;
+  onLeave: () => void;
+};
+
+export type DeviceOnboardingFunnelModel = (
+  | { status: "karaoke"; onClose: () => void }
   | { status: "checks"; checks: ChecksScreenProps }
   | { status: "connecting"; title: string; closeLabel: string; onQuit: () => void }
   | {
@@ -41,7 +50,8 @@ export type DeviceOnboardingFunnelModel =
       closeLabel: string;
       onRetry: () => void;
       onQuit: () => void;
-    };
+    }
+) & { quitConfirmation: QuitConfirmationModel | null };
 
 export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelModel {
   const dmk = useDeviceManagementKit();
@@ -55,6 +65,8 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const { t } = useTranslation();
   const allowLeave = useRef(false);
+  const quitSent = useRef(false);
+  const [quitConfirmationOpen, setQuitConfirmationOpen] = useState(false);
   const onLeave = useCallback(() => {
     allowLeave.current = true;
   }, []);
@@ -114,13 +126,41 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     onReconnectRequired: onboarding.reconnectAfterUpdate,
   });
 
+  const requestQuit = useCallback(() => {
+    setQuitConfirmationOpen(true);
+  }, []);
+
+  const continueSetup = useCallback(() => {
+    setQuitConfirmationOpen(false);
+  }, []);
+
+  const leaveWithoutSaving = useCallback(() => {
+    if (quitSent.current) return;
+    quitSent.current = true;
+    setQuitConfirmationOpen(false);
+    send({ type: "QUIT" });
+  }, [send]);
+
+  const unseeded = onboarding.context?.onboardedOnEntry === false;
+
   const quitOrLeave = useCallback(() => {
     if (onboarding.status === "running" && onboarding.state) {
+      if (onboarding.context?.onboardedOnEntry === false) {
+        requestQuit();
+        return;
+      }
       quitMachine();
       return;
     }
     leave();
-  }, [leave, onboarding.state, onboarding.status, quitMachine]);
+  }, [
+    leave,
+    onboarding.context?.onboardedOnEntry,
+    onboarding.state,
+    onboarding.status,
+    quitMachine,
+    requestQuit,
+  ]);
 
   const retry = useCallback(() => {
     onboarding.reset();
@@ -144,6 +184,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
         }
         if (onboarding.status === "running" && onboarding.state) {
           if (onboarding.state === firmwareUpdateDelegatedState) closeFirmwareHandover();
+          else if (onboarding.context?.onboardedOnEntry === false) requestQuit();
           else if (onboarding.state !== firmwareUpdateOfferState) quitMachine();
           return;
         }
@@ -154,22 +195,33 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       leave,
       leaveFirmwareReconnect,
       navigation,
+      onboarding.context?.onboardedOnEntry,
       onboarding.state,
       onboarding.status,
       quitMachine,
+      requestQuit,
     ],
   );
 
-  const onboardedOnEntry = onboarding.context?.onboardedOnEntry === true;
+  const onboardedOnEntry = onboarding.context?.onboardedOnEntry ?? null;
   const phase = phaseOf(onboarding.state, onboardedOnEntry);
   const screenState = checksScreenForPhase(
     phase,
     onboarding.state,
     onboarding.context?.checksPaused === true,
-    onboardedOnEntry,
+    onboardedOnEntry === true,
   );
   const device = onboarding.liveDevice;
   const closeLabel = t("deviceOnboarding.checks.close");
+  const quitConfirmation = unseeded
+    ? {
+        isOpen: quitConfirmationOpen,
+        stepName: lastSavedStepName(onboarding.state, onboarding.context?.currentSetupStep, t),
+        onContinue: continueSetup,
+        onLeave: leaveWithoutSaving,
+      }
+    : null;
+  const leaveFromHeader = unseeded ? requestQuit : quitMachine;
 
   if (onboarding.state === awaitingSessionAfterFirmwareUpdateState) {
     if (onboarding.error) {
@@ -180,6 +232,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
         closeLabel,
         onRetry: reconnect,
         onQuit: leaveFirmwareReconnect,
+        quitConfirmation,
       };
     }
     return {
@@ -187,6 +240,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       title: t("deviceOnboarding.connection.connecting"),
       closeLabel,
       onQuit: leaveFirmwareReconnect,
+      quitConfirmation,
     };
   }
 
@@ -197,7 +251,8 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       retryLabel: t("common.retry"),
       closeLabel,
       onRetry: reconnect,
-      onQuit: quitMachine,
+      onQuit: leaveFromHeader,
+      quitConfirmation,
     };
   }
 
@@ -210,6 +265,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
         closeLabel,
         onRetry: retry,
         onQuit: quitOrLeave,
+        quitConfirmation,
       };
     }
     return {
@@ -217,11 +273,21 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       title: t("deviceOnboarding.connection.connecting"),
       closeLabel,
       onQuit: quitOrLeave,
+      quitConfirmation,
+    };
+  }
+
+  if (unseeded && onboarding.state === "awaitingStart") {
+    return {
+      status: "karaoke",
+      onClose: requestQuit,
+      quitConfirmation,
     };
   }
 
   return {
     status: "checks",
+    quitConfirmation,
     checks: {
       device,
       state: screenState,
@@ -238,6 +304,8 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
         send({ type: onboarding.state === "checks.checksIdle" ? "RETRY" : "CONTINUE" }),
       onRetry: () => send({ type: "RETRY" }),
       onCloseSheet: () => send({ type: "CLOSE" }),
+      onCloseNotGenuine: unseeded ? () => send({ type: "CLOSE" }) : undefined,
+      onCloseFirmwareOffer: unseeded ? () => send({ type: "CLOSE" }) : undefined,
       onAcceptUpdate: () => send({ type: "USER_ACCEPT" }),
       onDeclineUpdate: () => send({ type: "USER_DECLINE" }),
       onContinue:
@@ -245,7 +313,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
           ? () => send({ type: "CONTINUE" })
           : undefined,
       onQuit:
-        onboarding.state === firmwareUpdateDelegatedState ? closeFirmwareHandover : quitMachine,
+        onboarding.state === firmwareUpdateDelegatedState ? closeFirmwareHandover : leaveFromHeader,
     },
   };
 }

@@ -2601,6 +2601,22 @@
         "cta": "Continue"
       }
     },
+    "quitConfirmation": {
+      "title": "Pause setup for now?",
+      "description": "Any unsaved progress on this step will be lost.",
+      "restart": "You'll need to restart from {{step}} next time.",
+      "leave": "Leave without saving",
+      "continue": "Continue setup",
+      "steps": {
+        "intro": "Introduction",
+        "checks": "Genuine & OS check",
+        "name": "Device name",
+        "pin": "PIN",
+        "setupChoice": "Setup choice",
+        "security": "Security setup",
+        "restore": "Restore access"
+      }
+    },
     "syncOffer": {
       "title": "Sync your wallet",
       "description": "Keep your balance and portfolio in sync when switching phones or using a computer.",
