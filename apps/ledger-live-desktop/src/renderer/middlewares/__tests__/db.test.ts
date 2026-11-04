@@ -13,6 +13,7 @@ import DBMiddleware from "../db";
 import {
   accountAnalyticsIntroductionSlice,
   dismissAccountAnalyticsIntroduction,
+  resetAccountAnalyticsIntroduction,
   restoreAccountAnalyticsIntroduction,
 } from "@features/flow-account-detail-analytics-notice/state";
 
@@ -481,6 +482,35 @@ describe("DBMiddleware - Analytics introduction", () => {
     };
 
     runMiddleware([state, state], dismissAccountAnalyticsIntroduction());
+
+    expect(mockedSetKey).not.toHaveBeenCalled();
+  });
+
+  it("should persist the reset so the introduction shows again after a restart", () => {
+    const before: FakeState = {
+      ...baseState(),
+      accountAnalyticsIntroduction: { hasDismissed: true },
+    };
+    const action = resetAccountAnalyticsIntroduction();
+    const after: FakeState = {
+      ...before,
+      accountAnalyticsIntroduction: accountAnalyticsIntroductionSlice.reducer(
+        before.accountAnalyticsIntroduction,
+        action,
+      ),
+    };
+
+    runMiddleware([before, after], action);
+
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "accountAnalyticsIntroduction", {
+      hasDismissed: false,
+    });
+  });
+
+  it("should avoid rewriting storage when resetting an introduction never dismissed", () => {
+    const state = baseState();
+
+    runMiddleware([state, state], resetAccountAnalyticsIntroduction());
 
     expect(mockedSetKey).not.toHaveBeenCalled();
   });

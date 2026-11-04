@@ -38,6 +38,7 @@
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-fiat": "workspace:*",
     "@domain/entity-currency-unit": "workspace:*",
+    "@features/flow-account-detail-analytics-notice": "workspace:*",
     "@features/flow-pay-card-auth": "workspace:*",
     "@features/flow-pay-card-wallets": "workspace:*",
     "@features/flow-pay-card-widget": "workspace:*",
