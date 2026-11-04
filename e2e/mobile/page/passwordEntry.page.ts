@@ -25,5 +25,6 @@ export default class PasswordEntryPage {
   @Step("Expect no lock")
   async expectNoLock() {
     await this.passwordTextInput.waitNotVisible(TIMEOUT.medium);
+    await this.passwordTextInput.expectNotVisible();
   }
 }
