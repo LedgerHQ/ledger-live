@@ -1,5 +1,47 @@
-import { featureFlagsLense, payCardDbSaveSliceSelector, payCardPersistedSelector } from "./DBSave";
+import { AppState, type AppStateStatus } from "react-native";
+import { act, renderHook } from "@tests/test-renderer";
+import { saveSettings } from "~/db";
+import { setTheme } from "~/actions/settings";
+import {
+  ConfigureDBSaveEffects,
+  featureFlagsLense,
+  payCardDbSaveSliceSelector,
+  payCardPersistedSelector,
+} from "./DBSave";
 import type { State } from "~/reducers/types";
+
+jest.mock("~/db");
+
+describe("ConfigureDBSaveEffects", () => {
+  let appStateListener: (nextAppState: AppStateStatus) => void;
+
+  beforeEach(() => {
+    jest.useFakeTimers();
+    jest.spyOn(AppState, "addEventListener").mockImplementation((_event, listener) => {
+      appStateListener = listener;
+      return { remove: jest.fn() };
+    });
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+    jest.restoreAllMocks();
+  });
+
+  it("saves a change made just before the app goes to the background", async () => {
+    const { store } = renderHook(() => ConfigureDBSaveEffects());
+    act(() => {
+      store.dispatch(setTheme("dark"));
+    });
+    expect(saveSettings).not.toHaveBeenCalled();
+
+    await act(async () => {
+      appStateListener("background");
+    });
+
+    expect(saveSettings).toHaveBeenCalledWith(expect.objectContaining({ theme: "dark" }), true);
+  });
+});
 
 describe("featureFlagsLense", () => {
   it("projects only { overrides, bannerVisible } — never the transient readiness flags", () => {

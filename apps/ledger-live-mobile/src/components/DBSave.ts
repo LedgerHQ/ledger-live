@@ -5,6 +5,7 @@ import { exportWalletState, walletStateExportShouldDiffer } from "~/reducers/wal
 import isEqual from "lodash/isEqual";
 import throttleFn from "lodash/throttle";
 import { useCallback, useEffect, useMemo, useRef } from "react";
+import { AppState } from "react-native";
 import { createSelector } from "~/context/selectors";
 import { useStore, useSelector } from "~/context/hooks";
 import { useTrackingPairs } from "~/actions/general";
@@ -142,6 +143,16 @@ function useFlushMechanism({ flush, cancel }: { flush: () => void; cancel: () =>
   }, [flush]);
 }
 
+// the OS can kill a backgrounded app before the throttled saves run
+function useFlushOnBackground() {
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", nextAppState => {
+      if (nextAppState === "background") flushAll();
+    });
+    return () => subscription.remove();
+  }, []);
+}
+
 const getSettingsChanged = (a: State, b: State) => a.settings !== b.settings;
 const getAccountsChanged = (
   oldState: State,
@@ -248,6 +259,7 @@ const countervaluesChangesStats = (oldState: State, newState: State) =>
 export const ConfigureDBSaveEffects = () => {
   // TODO: instead of using these hooks, we should select from the redux state and make a static lense function.
   const trackingPairs = useTrackingPairs();
+  useFlushOnBackground();
 
   useDBSaveEffect({
     stateSelector: countervaluesStateSelector,
