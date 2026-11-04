@@ -57,7 +57,7 @@ export class NewSendModal extends Modal {
     [AmountQuickAction.HALF]: 0.5,
     [AmountQuickAction.THREE_QUARTERS]: 0.75,
   };
-  readonly feesMenuTrigger = this.dialog.getByTestId("send-network-fees-menu-trigger");
+  private readonly feesMenuTrigger = this.dialog.getByTestId("send-network-fees-menu-trigger");
   // Menu items render in a portal, outside the dialog subtree.
   private readonly customFeesMenuItem = this.page.getByTestId("send-custom-fees-menu-item");
   private readonly coinControlMenuItem = this.page.getByTestId("send-coin-control-fees-menu-item");
@@ -500,6 +500,11 @@ export class NewSendModal extends Modal {
   async expectCustomFeesApplied() {
     await this.expectAmountStepVisible();
     await expect(this.feesMenuTrigger).toContainText(/custom/i);
+  }
+
+  @step("Verify the network fee is $0")
+  async expectNetworkFee(fee: string) {
+    await expect(this.feesMenuTrigger).toContainText(fee);
   }
 
   @step("Open coin control from the fees menu")

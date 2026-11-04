@@ -1,7 +1,7 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 import { AmountQuickAction } from "@ledgerhq/live-e2e-shared/enum/AmountQuickAction";
-import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
+import { EIP1559_CUSTOM_FEES, Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import { coinTeamOwner } from "@ledgerhq/live-e2e-shared/data/coinTeamOwner";
 import { SendScenario, sendFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
 import { ownedBy } from "tests/utils/allureUtils";
@@ -20,6 +20,7 @@ import {
 import {
   openNewSendFromAccount,
   reachAmountStep,
+  requireAccountAddress,
   requireRecipientAddress,
 } from "tests/utils/newSendFlowUtils";
 import { buildTags } from "tests/utils/tagsUtils";
@@ -192,6 +193,61 @@ test.describe("Send - new flow - fee strategy", btcFeeStrategy, () => {
     },
   );
 });
+
+test.describe(
+  "Send - new flow - self-transfer and custom fees",
+  ethSendFlow(SendScenario.FEE_STRATEGY),
+  () => {
+    const tx = new Transaction(Account.ETH_1, Account.ETH_2, "0.0001");
+
+    test.use({
+      userdata: "skip-onboarding-with-last-seen-device",
+      speculosApp: tx.accountToDebit.currency.speculosApp,
+      cliCommands: [
+        liveDataWithRecipientAddressCommand(tx),
+        accountAddressCommand(tx.accountToDebit),
+      ],
+      env: { DISABLE_TRANSACTION_BROADCAST: "1" },
+      featureFlags: newSendFlowFeatureFlags,
+    });
+
+    test(
+      `[${tx.accountToDebit.currency.testLabel}] - Send - self-transfer and custom fees`,
+      {
+        tag: buildTags({ currencyId: tx.accountToDebit.currency.id }),
+        annotation: { type: "TMS", description: "B2CQA-6034" },
+      },
+      async ({ app }) => {
+        const senderAddress = requireAccountAddress(tx.accountToDebit);
+        const recipientAddress = requireRecipientAddress(tx);
+
+        await openNewSendFromAccount(app, tx);
+        await app.newSendFlow.typeAddress(senderAddress);
+        await app.newSendFlow.expectAddressMatched(senderAddress);
+        await app.newSendFlow.clickOnSendToButton(tx.accountToDebit);
+        await app.newSendFlow.expectAmountStepVisible();
+        await app.newSendFlow.goBack();
+
+        await app.newSendFlow.typeAddress(recipientAddress);
+        await app.newSendFlow.expectAddressMatched(recipientAddress);
+        await app.newSendFlow.clickOnSendToButton(tx.accountToCredit);
+        await app.newSendFlow.fillCryptoAmount(tx.amount);
+        await app.newSendFlow.openFeesMenu();
+        await app.newSendFlow.selectCustomFeesFromMenu();
+        await app.newSendFlow.fillEip1559CustomFees(EIP1559_CUSTOM_FEES);
+        await app.newSendFlow.confirmCustomFees();
+        await app.newSendFlow.expectCustomFeesApplied();
+        await app.newSendFlow.expectNetworkFee(EIP1559_CUSTOM_FEES.expectedNetworkFee);
+        await app.newSendFlow.clickReview();
+        await app.newSendFlow.waitForSignature();
+        await app.speculos.signSendTransaction(tx);
+        await app.newSendFlow.waitForSuccessConfirmation();
+        await app.newSendFlow.clickViewDetails();
+        await app.sendDrawer.addressValueIsVisible(tx.accountToCredit.address);
+      },
+    );
+  },
+);
 
 const validAddresses: Array<{
   transaction: Transaction;
@@ -420,10 +476,7 @@ test.describe("Send - new flow - ENS address", ethSendFlow(SendScenario.ENS_ADDR
   test.use({
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: tx.accountToDebit.currency.speculosApp,
-    cliCommands: [
-      liveDataWithRecipientAddressCommand(tx),
-      accountAddressCommand(tx.accountToDebit),
-    ],
+    cliCommands: [liveDataWithRecipientAddressCommand(tx)],
     env: { DISABLE_TRANSACTION_BROADCAST: "1" },
     featureFlags: newSendFlowFeatureFlags,
   });
@@ -432,27 +485,16 @@ test.describe("Send - new flow - ENS address", ethSendFlow(SendScenario.ENS_ADDR
     `[${tx.accountToDebit.currency.testLabel}] - Send - ENS address`,
     {
       tag: buildTags({ currencyId: tx.accountToDebit.currency.id }),
-      annotation: { type: "TMS", description: "B2CQA-2202, B2CQA-6027, B2CQA-6034" },
+      annotation: { type: "TMS", description: "B2CQA-2202, B2CQA-6027" },
     },
     async ({ app }) => {
       await openNewSendFromAccount(app, tx);
-      await app.newSendFlow.typeAddress(tx.accountToDebit.address ?? "");
-      await app.newSendFlow.expectAddressMatched(tx.accountToDebit.address ?? "");
-      await app.newSendFlow.clickOnSendToButton(tx.accountToDebit);
-      await app.newSendFlow.expectAmountStepVisible();
-      await app.newSendFlow.goBack();
-
       await app.newSendFlow.typeAddress(Addresses.VITALIK_ENS);
       await app.newSendFlow.expectRecentHistoryWarning();
       await app.newSendFlow.typeAddress(tx.accountToCredit.ensName ?? "");
       await app.newSendFlow.clickOnSendToButton(tx.accountToCredit);
-      await app.newSendFlow.openFeesMenu();
-      await app.newSendFlow.selectCustomFeesFromMenu();
-      await app.newSendFlow.fillEip1559CustomFees({ maxPriorityFee: "1", maxFee: "2" });
-      await app.newSendFlow.confirmCustomFees();
-      await app.newSendFlow.expectCustomFeesApplied();
-      await app.newSendFlow.selectFeePreset(Fee.MEDIUM);
       await app.newSendFlow.fillCryptoAmount(tx.amount);
+      await app.newSendFlow.selectFeePreset(Fee.MEDIUM);
       await app.newSendFlow.clickReview();
       await app.newSendFlow.waitForSignature();
       await app.speculos.signSendTransaction(tx);
