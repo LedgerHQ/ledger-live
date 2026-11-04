@@ -30,3 +30,17 @@ export function getCoinConfig(): StacksCurrencyConfig {
 
   return coinConfig();
 }
+
+export const stacksDefaults = {
+  stacks: {
+    status: {
+      type: "active",
+      features: [
+        { id: "blockchain_txs", status: "active" },
+        { id: "staking_txs", status: "active" },
+      ],
+    },
+    name: "Stacks",
+    unit: { name: "STX", code: "STX", magnitude: 6 },
+  },
+} satisfies Record<string, CurrencyConfig>;

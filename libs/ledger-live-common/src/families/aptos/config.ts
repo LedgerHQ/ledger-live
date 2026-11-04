@@ -1,20 +1,4 @@
-import { CurrencyLiveConfigDefinition } from "../../config";
+import { aptosDefaults } from "@ledgerhq/coin-aptos/config";
+import { currencyDefaultsToLiveConfig } from "../../config";
 
-const aptosConfig: CurrencyLiveConfigDefinition = {
-  config_currency_aptos: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [
-          { id: "blockchain_txs", status: "active" },
-          { id: "staking_txs", status: "active" },
-        ],
-      },
-      name: "Aptos",
-      unit: { name: "APT", code: "APT", magnitude: 8 },
-    },
-  },
-};
-
-export { aptosConfig };
+export const aptosConfig = currencyDefaultsToLiveConfig(aptosDefaults);

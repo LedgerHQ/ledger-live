@@ -7,3 +7,49 @@ const coinConfig: {
 } = buildCoinConfig<HederaCoinConfig>();
 
 export default coinConfig;
+
+// dead address that receives 1 tinybar from tx that is made to trigger rewards claiming
+const HEDERA_CLAIM_REWARDS_RECIPIENT_ACCOUNT_ID = "0.0.163372";
+
+// hedera staking ledger node id, used to determine the default validator
+const HEDERA_STAKING_LEDGER_NODE_ID = -1;
+
+// Minimum USD value an account must hold to perform a token association
+const HEDERA_TOKEN_ASSOCIATION_MIN_USD = 0.05;
+
+export const hederaDefaults = {
+  hedera: {
+    status: {
+      type: "active",
+      features: [{ id: "blockchain_txs", status: "active" }],
+    },
+    name: "Hedera",
+    unit: { name: "HBAR", code: "HBAR", magnitude: 8 },
+    useNetworkTimestamp: true,
+    networkType: "mainnet",
+    claimRewardsRecipient: HEDERA_CLAIM_REWARDS_RECIPIENT_ACCOUNT_ID,
+    ledgerNodeId: HEDERA_STAKING_LEDGER_NODE_ID,
+    tokenAssociationMinUsd: HEDERA_TOKEN_ASSOCIATION_MIN_USD,
+    apiUrls: {
+      mirrorNode: "https://hedera.coin.ledger.com",
+      hgraph: "https://hedera-indexer-mainnet.coin.ledger.com/v1/graphql",
+    },
+  },
+  hedera_testnet: {
+    status: {
+      type: "active",
+      features: [{ id: "blockchain_txs", status: "active" }],
+    },
+    name: "Hedera (Testnet)",
+    unit: { name: "HBAR", code: "HBAR", magnitude: 8 },
+    useNetworkTimestamp: true,
+    networkType: "testnet",
+    claimRewardsRecipient: HEDERA_CLAIM_REWARDS_RECIPIENT_ACCOUNT_ID,
+    ledgerNodeId: HEDERA_STAKING_LEDGER_NODE_ID,
+    tokenAssociationMinUsd: HEDERA_TOKEN_ASSOCIATION_MIN_USD,
+    apiUrls: {
+      mirrorNode: "https://hedera-testnet.coin.ledger.com",
+      hgraph: "https://hedera-indexer-testnet.coin.ledger.com/v1/graphql",
+    },
+  },
+} satisfies Record<string, HederaCoinConfig>;

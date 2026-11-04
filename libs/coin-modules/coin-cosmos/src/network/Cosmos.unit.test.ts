@@ -1,9 +1,9 @@
-import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import network from "@ledgerhq/live-network/network";
 import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import cryptoFactory from "../chain/chain";
-import cosmosCoinConfig, { cosmosConfig } from "../config";
+import cosmosCoinConfig from "../config";
+import { cosmosDefaultsFor } from "../test/cosmosDefaults";
 import { CosmosAPI } from "./Cosmos";
 
 jest.mock("@ledgerhq/live-network/network");
@@ -24,10 +24,7 @@ describe("CosmosApi", () => {
   let cosmosApi: CosmosAPI;
 
   beforeEach(() => {
-    LiveConfig.setConfig(cosmosConfig);
-    cosmosCoinConfig.setCoinConfig(
-      currencyId => LiveConfig.getValueByKey(`config_currency_${currencyId}`) ?? {},
-    );
+    cosmosCoinConfig.setCoinConfig(cosmosDefaultsFor);
     cosmosApi = new CosmosAPI("cosmos");
   });
 

@@ -1,15 +1,4 @@
-import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
+import { kaspaDefaults } from "@ledgerhq/coin-kaspa/config";
+import { currencyDefaultsToLiveConfig } from "../../config";
 
-export const kaspaConfig: Record<string, ConfigInfo> = {
-  config_currency_kaspa: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      name: "KASPA",
-      unit: { name: "KAS", code: "KAS", magnitude: 8 },
-    },
-  },
-};
+export const kaspaConfig = currencyDefaultsToLiveConfig(kaspaDefaults);

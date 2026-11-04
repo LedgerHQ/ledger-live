@@ -33,3 +33,23 @@ export const getCoinConfig = (): ReturnType<NearCoinConfig> => {
 
   return coinConfig();
 };
+
+export const nearDefaults = {
+  near: {
+    status: {
+      type: "active",
+      features: [
+        { id: "blockchain_txs", status: "active" },
+        { id: "staking_txs", status: "active" },
+      ],
+    },
+    name: "NEAR",
+    unit: { name: "NEAR", code: "NEAR", magnitude: 24 },
+    infra: {
+      API_NEAR_PRIVATE_NODE: "https://near.coin.ledger.com/node",
+      API_NEAR_PUBLIC_NODE: "https://rpc.mainnet.near.org",
+      API_NEAR_INDEXER: "https://near.coin.ledger.com/indexer",
+      API_NEARBLOCKS_INDEXER: "https://near-indexer.coin.ledger.com",
+    },
+  },
+} satisfies Record<string, NearConfig>;

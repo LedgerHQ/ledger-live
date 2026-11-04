@@ -14389,9 +14389,6 @@ importers:
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
-      '@ledgerhq/live-config':
-        specifier: 'catalog:'
-        version: 3.9.1
       '@ledgerhq/live-env':
         specifier: 'catalog:'
         version: 4.1.0
@@ -14601,9 +14598,6 @@ importers:
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
-      '@ledgerhq/live-config':
-        specifier: 'catalog:'
-        version: 3.9.1
       '@ledgerhq/live-env':
         specifier: 'catalog:'
         version: 4.1.0
@@ -16010,6 +16004,9 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
+      '@ton-community/ton-ledger':
+        specifier: ^7.3.0
+        version: 7.3.0(@ton/core@0.62.0(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0))
       '@ton/core':
         specifier: ^0.62.0
         version: 0.62.0(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0)
