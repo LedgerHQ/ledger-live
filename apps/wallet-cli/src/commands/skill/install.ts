@@ -6,7 +6,6 @@ import {
   DEFAULT_AGENT,
   SUPPORTED_AGENTS,
   diagnoseSkill,
-  findChangedFiles,
   getAllSkills,
   getSkill,
   getSoleSkill,
@@ -19,12 +18,10 @@ import { outputOption, resolveOutputFormat } from "../inputs";
 import { emitJson, failSkill, skillEnvelope } from "./shared";
 
 async function installSkill(skill: SkillManifest, root: string, force: boolean): Promise<string[]> {
-  const { status } = await diagnoseSkill(skill, root);
-  const changed =
-    status === "modified-locally" && !force ? await findChangedFiles(skill, root) : [];
-  if (changed.length > 0) {
+  const { status, changedFiles = [] } = await diagnoseSkill(skill, root);
+  if (changedFiles.length > 0 && !force) {
     throw new Error(
-      `Refusing to overwrite skill "${skill.name}", whose files changed since wallet-cli installed it:\n  ${changed.join("\n  ")}\nRe-run with --force to overwrite.`,
+      `Refusing to overwrite skill "${skill.name}", whose files changed since wallet-cli installed it:\n  ${changedFiles.join("\n  ")}\nRe-run with --force to overwrite.`,
     );
   }
   const unedited = status === "up-to-date" || status === "outdated";

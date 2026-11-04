@@ -84,7 +84,7 @@ function renderHumanReport(
     writeStdout(
       colors.dim(
         `Locally modified skill(s) left untouched: ${stillModified
-          .map(d => `${d.name} (${d.root})`)
+          .map(d => `${d.name} (${(d.changedFiles ?? [d.root]).join(", ")})`)
           .join(", ")}. Re-run with --fix --force to overwrite.`,
       ),
     );
