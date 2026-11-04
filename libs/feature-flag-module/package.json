@@ -43,7 +43,10 @@
     "@types/react": "catalog:",
     "@types/node": "catalog:",
     "oxfmt": "catalog:",
-    "oxlint": "catalog:"
+    "oxlint": "catalog:",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
+    "rimraf": "catalog:"
   },
   "exports": {
     ".": {

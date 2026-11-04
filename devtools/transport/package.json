@@ -12,8 +12,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest --config jest.config.js",
     "coverage": "jest --config jest.config.js --coverage",
-    "lint": "oxlint src",
-    "unimported": "pnpm knip --directory ../.. -W devtools/transport"
+    "lint": "oxlint src"
   },
   "devDependencies": {
     "@types/react": "catalog:",
@@ -22,6 +21,7 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "jest": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@typescript/native": "catalog:"
   }
 }

@@ -24,8 +24,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -c features/platform/app-lock/knip.web.config.mjs -W features/platform/app-lock --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/platform/app-lock/knip.native.config.mjs -W features/platform/app-lock --tsConfig tsconfig.native.json"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@reduxjs/toolkit": "catalog:",

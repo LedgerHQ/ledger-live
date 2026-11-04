@@ -25,8 +25,7 @@
     "coverage": "pnpm run coverage:web && pnpm run coverage:native && bash -c 'cat coverage/lcov.native.info >> coverage/lcov.info' --",
     "coverage:web": "jest --config jest.config.js --coverage",
     "coverage:native": "jest --config jest.native.config.js --coverage",
-    "lint": "oxlint src jest",
-    "unimported": "pnpm knip --directory ../.. -c devtools/device-onboarding/knip.web.config.mjs -W devtools/device-onboarding --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c devtools/device-onboarding/knip.native.config.mjs -W devtools/device-onboarding --tsConfig tsconfig.native.json"
+    "lint": "oxlint src jest"
   },
   "dependencies": {
     "@features/platform-device-onboarding": "workspace:*"
@@ -68,7 +67,8 @@
     "@radix-ui/react-tooltip": "catalog:",
     "@tanstack/react-table": "catalog:",
     "class-variance-authority": "catalog:",
-    "react-test-renderer": "catalog:"
+    "react-test-renderer": "catalog:",
+    "@typescript/native": "catalog:"
   },
   "peerDependencies": {
     "react": ">=19",

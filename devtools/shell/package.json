@@ -25,8 +25,7 @@
     "coverage": "pnpm run coverage:web && pnpm run coverage:native && bash -c 'cat coverage/lcov.native.info >> coverage/lcov.info' --",
     "coverage:web": "jest --config jest.config.js --coverage",
     "coverage:native": "jest --config jest.native.config.js --coverage",
-    "lint": "oxlint src",
-    "unimported": "pnpm knip --directory ../.. -c devtools/shell/knip.web.config.mjs -W devtools/shell --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c devtools/shell/knip.native.config.mjs -W devtools/shell --tsConfig tsconfig.native.json"
+    "lint": "oxlint src"
   },
   "dependencies": {
     "@devtools/registry": "workspace:*"
@@ -127,6 +126,7 @@
     "react-native-worklets": "catalog:",
     "react-test-renderer": "catalog:",
     "typescript": "catalog:",
-    "jest-sonar": "0.2.16"
+    "jest-sonar": "0.2.16",
+    "@typescript/native": "catalog:"
   }
 }

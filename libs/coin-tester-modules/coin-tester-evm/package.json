@@ -78,6 +78,7 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "axios": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",

@@ -20,8 +20,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W domain/api/aggregated-assets"
+    "coverage": "jest --coverage"
   },
   "devDependencies": {
     "@types/react": "catalog:",

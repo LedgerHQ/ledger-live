@@ -17,8 +17,7 @@
     "lint": "oxlint ./src",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -c features/flow/flow-contacts-detail/knip.web.config.mjs -W features/flow/flow-contacts-detail --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/flow-contacts-detail/knip.native.config.mjs -W features/flow/flow-contacts-detail --tsConfig tsconfig.native.json"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@domain/entity-contact": "workspace:*",

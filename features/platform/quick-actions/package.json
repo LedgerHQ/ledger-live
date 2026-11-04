@@ -18,8 +18,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/quick-actions"
+    "coverage": "jest --coverage"
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",

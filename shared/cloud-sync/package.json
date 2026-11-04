@@ -17,8 +17,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../.. -W shared/cloud-sync"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "base64-js": "1",

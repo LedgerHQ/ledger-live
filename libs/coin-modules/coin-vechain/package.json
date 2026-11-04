@@ -132,11 +132,13 @@
     "@types/jest": "catalog:",
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "dotenv": "16.4.7",
     "jest": "catalog:",
     "msw": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
+    "rimraf": "catalog:",
     "typescript": "catalog:"
   }
 }

@@ -38,6 +38,9 @@
   },
   "devDependencies": {
     "@rspack/core": "catalog:",
-    "tiny-glob": "0.2.9"
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
+    "tiny-glob": "0.2.9",
+    "rimraf": "catalog:"
   }
 }

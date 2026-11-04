@@ -95,12 +95,11 @@ resolves `.native` files first so imports carry no platform suffix.
 
 ## Validation
 
-`typecheck` runs `tsconfig.web.json` and `tsconfig.native.json`, and `unimported` runs knip once per
-platform.
+`typecheck` runs `tsconfig.web.json` and `tsconfig.native.json`. Knip runs from the repo root, once
+per platform, with `pnpm knip:all`.
 
 ```sh
 pnpm lint
 pnpm test
 pnpm typecheck
-pnpm unimported
 ```

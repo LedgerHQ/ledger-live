@@ -44,6 +44,8 @@
   "devDependencies": {
     "@types/invariant": "2.2.37",
     "@types/lodash": "catalog:",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
     "electron": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",

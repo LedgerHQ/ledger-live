@@ -65,8 +65,7 @@
     "format:check": "oxfmt --check ./src",
     "release": "yarn publish ./lib --access public",
     "typecheck": "tsc --noEmit -p tsconfig.json  --customConditions node",
-    "test": "exit 0",
-    "unimported": "pnpm knip --directory ../../../.. -W libs/ui/packages/native"
+    "test": "exit 0"
   },
   "dependencies": {
     "@ledgerhq/icons-ui": "workspace:^",
@@ -141,6 +140,8 @@
     "stylelint-config-styled-components": "0.1.1",
     "stylelint-processor-styled-components": "1.10.0",
     "util": "0.12.5",
-    "react-refresh": "catalog:"
+    "react-refresh": "catalog:",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:"
   }
 }

@@ -132,6 +132,7 @@
     "@types/react-inspector": "4.0.6",
     "@types/react-table": "7.7.20",
     "@types/semver": "catalog:",
+    "@typescript/native": "catalog:",
     "autoprefixer": "10.4.22",
     "concurrently": "8.2.2",
     "jest": "catalog:",

@@ -15,7 +15,6 @@
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/wallet-sync",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage"

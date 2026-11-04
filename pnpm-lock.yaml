@@ -743,6 +743,9 @@ catalogs:
     reselect:
       specifier: 5.1.1
       version: 5.1.1
+    rimraf:
+      specifier: 4.4.1
+      version: 4.4.1
     rxjs:
       specifier: 7.8.2
       version: 7.8.2
@@ -915,9 +918,6 @@ importers:
       '@typescript-eslint/parser':
         specifier: 'catalog:'
         version: 8.48.1(@typescript/typescript6@6.0.2)(eslint@8.57.0)
-      '@typescript/native':
-        specifier: 'catalog:'
-        version: typescript@7.0.2
       chalk:
         specifier: 4.1.2
         version: 4.1.2
@@ -942,9 +942,6 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
-      rimraf:
-        specifier: 4.4.1
-        version: 4.4.1
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -1033,6 +1030,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       axios:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
@@ -1045,6 +1045,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
       yaml:
         specifier: 2.8.1
         version: 2.8.1
@@ -3025,6 +3028,9 @@ importers:
       react-test-renderer:
         specifier: 'catalog:'
         version: 19.1.4(react@19.1.4)
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       strip-ansi:
         specifier: 6.0.1
         version: 6.0.1
@@ -3181,6 +3187,9 @@ importers:
       '@types/w3c-web-usb':
         specifier: 1.0.10
         version: 1.0.10
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       axios:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
@@ -3572,6 +3581,9 @@ importers:
       '@types/semver':
         specifier: 'catalog:'
         version: 7.7.1
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       autoprefixer:
         specifier: 10.4.22
         version: 10.4.22(postcss@8.5.6)
@@ -3620,6 +3632,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -3665,6 +3680,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -3710,6 +3728,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -3755,6 +3776,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -3800,6 +3824,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -3845,6 +3872,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -3911,6 +3941,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       class-variance-authority:
         specifier: 'catalog:'
         version: 0.7.1
@@ -4002,6 +4035,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       babel-jest:
         specifier: 'catalog:'
         version: 30.5.0(@babel/core@7.28.5)
@@ -4177,6 +4213,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -4268,6 +4307,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       babel-jest:
         specifier: 'catalog:'
         version: 30.5.0(@babel/core@7.28.5)
@@ -4386,6 +4428,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       babel-jest:
         specifier: 'catalog:'
         version: 30.5.0(@babel/core@7.28.5)
@@ -4485,6 +4530,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       class-variance-authority:
         specifier: 'catalog:'
         version: 0.7.1
@@ -4579,6 +4627,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       babel-jest:
         specifier: 'catalog:'
         version: 30.5.0(@babel/core@7.28.5)
@@ -4691,6 +4742,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -4775,6 +4829,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       babel-jest:
         specifier: 'catalog:'
         version: 30.5.0(@babel/core@7.28.5)
@@ -4842,6 +4899,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -4903,6 +4963,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -4946,6 +5009,9 @@ importers:
       '@types/ws':
         specifier: 'catalog:'
         version: 8.5.10
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -5040,6 +5106,9 @@ importers:
       '@types/react-dom':
         specifier: 19.0.0
         version: 19.0.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       babel-jest:
         specifier: 'catalog:'
         version: 30.5.0(@babel/core@7.28.5)
@@ -5109,6 +5178,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -5182,6 +5254,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       babel-jest:
         specifier: 'catalog:'
         version: 30.5.0(@babel/core@7.28.5)
@@ -5299,6 +5374,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       babel-jest:
         specifier: 'catalog:'
         version: 30.5.0(@babel/core@7.28.5)
@@ -5366,6 +5444,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -7252,6 +7333,9 @@ importers:
       '@types/lodash':
         specifier: 'catalog:'
         version: 4.17.21
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       electron:
         specifier: 'catalog:'
         version: 45.2.1
@@ -7267,6 +7351,9 @@ importers:
       tsx:
         specifier: 4.20.6
         version: 4.20.6
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   e2e/mobile:
     dependencies:
@@ -7379,6 +7466,9 @@ importers:
       '@types/ws':
         specifier: 8.5.10
         version: 8.5.10
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -7433,6 +7523,9 @@ importers:
       tsconfig-paths:
         specifier: 4.2.0
         version: 4.2.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
       ws:
         specifier: 'catalog:'
         version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
@@ -7458,6 +7551,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -12985,6 +13081,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -12997,6 +13096,12 @@ importers:
       react:
         specifier: 19.1.4
         version: 19.1.4
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/asset-detail:
     dependencies:
@@ -13043,6 +13148,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -13055,6 +13163,12 @@ importers:
       react:
         specifier: 19.1.4
         version: 19.1.4
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/coin-modules-monitoring:
     dependencies:
@@ -13116,6 +13230,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       axios:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
@@ -13128,6 +13245,9 @@ importers:
       nock:
         specifier: 14.0.3
         version: 14.0.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       tsx:
         specifier: 4.20.6
         version: 4.20.6
@@ -13204,6 +13324,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -13213,6 +13336,12 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/coin-modules/coin-algorand:
     dependencies:
@@ -13283,6 +13412,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -13292,6 +13424,12 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/coin-modules/coin-aptos:
     dependencies:
@@ -13383,6 +13521,9 @@ importers:
       '@types/semver':
         specifier: 'catalog:'
         version: 7.7.1
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -13395,6 +13536,12 @@ importers:
       react:
         specifier: 19.1.4
         version: 19.1.4
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/coin-modules/coin-bitcoin:
     dependencies:
@@ -13513,6 +13660,9 @@ importers:
       '@types/sha.js':
         specifier: 2.4.4
         version: 2.4.4
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       bip32:
         specifier: 4.0.0
         version: 4.0.0
@@ -13540,6 +13690,9 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -13610,6 +13763,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       dotenv:
         specifier: 16.4.7
         version: 16.4.7
@@ -13628,6 +13784,9 @@ importers:
       protobufjs-cli:
         specifier: 2.4.1
         version: 2.4.1(protobufjs@8.6.6)
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -13713,6 +13872,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -13722,6 +13884,12 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/coin-modules/coin-casper:
     dependencies:
@@ -13792,6 +13960,9 @@ importers:
       '@types/semver':
         specifier: 'catalog:'
         version: 7.7.1
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -13801,6 +13972,12 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/coin-modules/coin-celo:
     dependencies:
@@ -13895,6 +14072,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       dotenv:
         specifier: 16.4.7
         version: 16.4.7
@@ -13910,6 +14090,9 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -13986,6 +14169,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       dotenv:
         specifier: 16.4.7
         version: 16.4.7
@@ -14001,6 +14187,9 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -14095,6 +14284,9 @@ importers:
       '@types/semver':
         specifier: 'catalog:'
         version: 7.7.1
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -14107,6 +14299,9 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -14192,6 +14387,9 @@ importers:
       '@types/semver':
         specifier: 'catalog:'
         version: 7.7.1
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -14201,6 +14399,9 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -14286,6 +14487,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -14295,6 +14499,9 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -14362,6 +14569,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -14371,6 +14581,12 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/coin-modules/coin-internet_computer:
     dependencies:
@@ -14438,6 +14654,9 @@ importers:
       '@types/semver':
         specifier: 'catalog:'
         version: 7.7.1
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       axios:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
@@ -14446,13 +14665,19 @@ importers:
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
       msw:
         specifier: 'catalog:'
-        version: 2.7.3(@types/node@24.12.0)(typescript@6.0.3)
+        version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       oxfmt:
         specifier: 'catalog:'
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/coin-modules/coin-kaspa:
     dependencies:
@@ -14544,6 +14769,9 @@ importers:
       '@types/numeral':
         specifier: 2.0.5
         version: 2.0.5
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       cross-env:
         specifier: 7.0.3
         version: 7.0.3
@@ -14562,6 +14790,9 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       timemachine:
         specifier: 0.3.2
         version: 0.3.2
@@ -14638,6 +14869,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -14653,6 +14887,9 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -14711,6 +14948,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       axios:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
@@ -14729,6 +14969,9 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -14814,6 +15057,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -14826,6 +15072,9 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -14890,6 +15139,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -14902,6 +15154,9 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -14990,6 +15245,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       dotenv:
         specifier: 16.4.7
         version: 16.4.7
@@ -15008,6 +15266,9 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
@@ -15108,6 +15369,9 @@ importers:
       '@types/semver':
         specifier: 'catalog:'
         version: 7.7.1
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -15120,6 +15384,12 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/coin-modules/coin-stacks:
     dependencies:
@@ -15199,6 +15469,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       dotenv:
         specifier: 16.4.7
         version: 16.4.7
@@ -15214,6 +15487,9 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       ripple-keypairs:
         specifier: 2.0.0
         version: 2.0.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
@@ -15302,6 +15578,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       graphql:
         specifier: 16.14.2
         version: 16.14.2
@@ -15314,6 +15593,12 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/coin-modules/coin-ton:
     dependencies:
@@ -15390,6 +15675,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -15399,6 +15687,9 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -15457,6 +15748,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       dotenv:
         specifier: 16.4.7
         version: 16.4.7
@@ -15469,6 +15763,9 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -15545,6 +15842,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       dotenv:
         specifier: 16.4.7
         version: 16.4.7
@@ -15560,6 +15860,9 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -15645,6 +15948,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -15694,6 +16000,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -15703,6 +16012,9 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -15758,6 +16070,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -15843,6 +16158,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       axios:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
@@ -15855,6 +16173,9 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       tsx:
         specifier: 4.20.6
         version: 4.20.6
@@ -15925,6 +16246,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -15995,6 +16319,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -16071,6 +16398,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -16147,6 +16477,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       axios:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
@@ -16229,6 +16562,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -16299,6 +16635,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -16363,6 +16702,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -16430,6 +16772,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -16439,6 +16784,9 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -16494,6 +16842,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -16558,6 +16909,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -16628,6 +16982,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       axios:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
@@ -16710,6 +17067,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -16783,6 +17143,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -16856,6 +17219,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -16923,6 +17289,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -16990,6 +17359,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       axios:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
@@ -17081,6 +17453,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       axios:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
@@ -17096,6 +17471,9 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -17121,6 +17499,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -17133,6 +17514,9 @@ importers:
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/deeplink-module:
     dependencies:
@@ -17149,12 +17533,21 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/device-core:
     dependencies:
@@ -17207,6 +17600,9 @@ importers:
       '@types/sha.js':
         specifier: 2.4.4
         version: 2.4.4
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       axios:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
@@ -17222,6 +17618,12 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/device-react:
     dependencies:
@@ -17253,6 +17655,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -17271,6 +17676,12 @@ importers:
       react-dom:
         specifier: 19.1.4
         version: 19.1.4(react@19.1.4)
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/disable-network-setup:
     devDependencies:
@@ -17289,6 +17700,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       axios:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
@@ -17298,6 +17712,9 @@ importers:
       nock:
         specifier: 14.0.3
         version: 14.0.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
@@ -17338,6 +17755,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -17350,6 +17770,12 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/exchange-module:
     dependencies:
@@ -17369,12 +17795,21 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/feature-flag-module:
     dependencies:
@@ -17391,12 +17826,21 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/hw-transport-http:
     dependencies:
@@ -17428,6 +17872,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -17440,6 +17887,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/ledger-live-common:
     dependencies:
@@ -18032,6 +18482,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       benchmark:
         specifier: 2.1.4
         version: 2.1.4
@@ -18095,6 +18548,9 @@ importers:
       redux-actions:
         specifier: 2.6.5
         version: 2.6.5
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       timemachine:
         specifier: 0.3.2
         version: 0.3.2
@@ -18138,6 +18594,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       axios:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
@@ -18159,9 +18618,15 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/ledger-services/trust:
     dependencies:
@@ -18187,6 +18652,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       axios:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
@@ -18208,9 +18676,15 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/ledger-wallet-framework:
     dependencies:
@@ -18311,6 +18785,9 @@ importers:
       '@types/numeral':
         specifier: 2.0.5
         version: 2.0.5
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       cross-env:
         specifier: 7.0.3
         version: 7.0.3
@@ -18326,6 +18803,9 @@ importers:
       timemachine:
         specifier: 0.3.2
         version: 0.3.2
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/ledgerjs:
     dependencies:
@@ -18397,6 +18877,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -18412,6 +18895,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/ledgerjs/packages/hw-app-aptos:
     dependencies:
@@ -18446,6 +18932,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -18458,6 +18947,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/ledgerjs/packages/hw-app-btc:
     dependencies:
@@ -18519,6 +19011,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       axios:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
@@ -18537,6 +19032,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/ledgerjs/packages/hw-app-canton:
     dependencies:
@@ -18574,6 +19072,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -18589,6 +19090,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/ledgerjs/packages/hw-app-celo:
     dependencies:
@@ -18629,6 +19133,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -18644,6 +19151,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/ledgerjs/packages/hw-app-cosmos:
     dependencies:
@@ -18675,6 +19185,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -18690,6 +19203,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/ledgerjs/packages/hw-app-eth:
     dependencies:
@@ -18760,6 +19276,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -18781,6 +19300,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/ledgerjs/packages/hw-app-exchange:
     dependencies:
@@ -18830,15 +19352,24 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       bip32-path:
         specifier: 0.4.2
         version: 0.4.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/ledgerjs/packages/hw-app-hedera:
     dependencies:
@@ -18870,6 +19401,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -18882,6 +19416,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/ledgerjs/packages/hw-app-icon:
     dependencies:
@@ -18913,6 +19450,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -18928,6 +19468,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/ledgerjs/packages/hw-app-kaspa:
     dependencies:
@@ -18962,6 +19505,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -18971,6 +19517,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/ledgerjs/packages/hw-app-multiversx:
     dependencies:
@@ -19014,6 +19563,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -19026,6 +19578,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/ledgerjs/packages/hw-app-near:
     dependencies:
@@ -19057,6 +19612,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -19072,6 +19630,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/ledgerjs/packages/hw-app-polkadot:
     dependencies:
@@ -19106,6 +19667,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -19121,6 +19685,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/ledgerjs/packages/hw-app-solana:
     dependencies:
@@ -19155,6 +19722,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -19170,6 +19740,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/ledgerjs/packages/hw-app-str:
     dependencies:
@@ -19201,6 +19774,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -19213,6 +19789,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/ledgerjs/packages/hw-app-sui:
     dependencies:
@@ -19253,6 +19832,9 @@ importers:
       '@types/semver':
         specifier: 7.7.1
         version: 7.7.1
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -19265,6 +19847,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/ledgerjs/packages/hw-app-tezos:
     dependencies:
@@ -19302,6 +19887,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -19317,6 +19905,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/ledgerjs/packages/hw-app-trx:
     dependencies:
@@ -19345,6 +19936,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -19360,6 +19954,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/ledgerjs/packages/hw-app-vet:
     dependencies:
@@ -19394,15 +19991,24 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       source-map-support:
         specifier: 0.5.21
         version: 0.5.21
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/ledgerjs/packages/hw-app-xrp:
     dependencies:
@@ -19434,6 +20040,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -19449,6 +20058,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/ledgerjs/packages/hw-bolos:
     dependencies:
@@ -19474,6 +20086,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -19483,6 +20098,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/live-dmk-desktop:
     dependencies:
@@ -19547,6 +20165,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -19559,9 +20180,15 @@ importers:
       react-dom:
         specifier: 19.1.4
         version: 19.1.4(react@19.1.4)
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
       ws:
         specifier: 'catalog:'
         version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
@@ -19632,6 +20259,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -19650,6 +20280,9 @@ importers:
       react-native-ble-plx:
         specifier: 3.5.1
         version: 3.5.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -19729,6 +20362,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -19744,9 +20380,15 @@ importers:
       react-dom:
         specifier: 19.1.4
         version: 19.1.4(react@19.1.4)
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
       ws:
         specifier: 'catalog:'
         version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
@@ -19796,6 +20438,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -19808,9 +20453,15 @@ importers:
       react-dom:
         specifier: 19.1.4
         version: 19.1.4(react@19.1.4)
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
       ws:
         specifier: 'catalog:'
         version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
@@ -19920,15 +20571,24 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       tsx:
         specifier: 4.20.6
         version: 4.20.6
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/live-engagement:
     dependencies:
@@ -19948,9 +20608,18 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/live-send:
     dependencies:
@@ -19982,6 +20651,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -19991,6 +20663,9 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -20037,6 +20712,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -20046,6 +20724,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
       ws:
         specifier: 'catalog:'
         version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
@@ -20092,6 +20773,9 @@ importers:
       '@types/semver':
         specifier: 'catalog:'
         version: 7.7.1
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -20101,6 +20785,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/live-signer-celo:
     dependencies:
@@ -20141,6 +20828,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -20150,6 +20840,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/live-signer-concordium:
     dependencies:
@@ -20190,6 +20883,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -20199,6 +20895,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/live-signer-cosmos:
     dependencies:
@@ -20251,6 +20950,9 @@ importers:
       '@types/semver':
         specifier: 'catalog:'
         version: 7.7.1
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -20263,6 +20965,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/live-signer-evm:
     dependencies:
@@ -20318,6 +21023,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -20327,6 +21035,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
       ws:
         specifier: 'catalog:'
         version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
@@ -20370,6 +21081,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -20379,6 +21093,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/live-signer-icp:
     dependencies:
@@ -20422,6 +21139,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -20431,6 +21151,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/live-signer-polkadot:
     dependencies:
@@ -20477,6 +21200,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -20489,6 +21215,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/live-signer-solana:
     dependencies:
@@ -20571,6 +21300,9 @@ importers:
       '@types/semver':
         specifier: 'catalog:'
         version: 7.7.1
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -20580,6 +21312,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/live-signer-tron:
     dependencies:
@@ -20623,6 +21358,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -20632,6 +21370,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/live-signer-xrp:
     dependencies:
@@ -20669,6 +21410,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -20678,6 +21422,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/live-signer-zcash:
     dependencies:
@@ -20712,6 +21459,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -20721,6 +21471,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
       ws:
         specifier: 'catalog:'
         version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
@@ -20794,12 +21547,18 @@ importers:
       '@types/ws':
         specifier: 8.5.10
         version: 8.5.10
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
       msw:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       timemachine:
         specifier: 0.3.2
         version: 0.3.2
@@ -20828,12 +21587,21 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.75.0
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/test-utils:
     dependencies:
@@ -20847,6 +21615,15 @@ importers:
       '@types/serve-handler':
         specifier: 6.1.4
         version: 6.1.4
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/transaction-observability:
     dependencies:
@@ -20881,6 +21658,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -20890,6 +21670,12 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/types-devices:
     devDependencies:
@@ -20908,6 +21694,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -20920,6 +21709,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/types-live:
     dependencies:
@@ -20951,6 +21743,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -20963,6 +21758,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/ui:
     devDependencies:
@@ -21011,6 +21809,9 @@ importers:
       '@types/styled-system':
         specifier: 5.1.22
         version: 5.1.22
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       camelcase:
         specifier: 6.3.0
         version: 6.3.0
@@ -21144,6 +21945,9 @@ importers:
       '@types/styled-system':
         specifier: 5.1.22
         version: 5.1.22
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       babel-loader:
         specifier: 10.0.0
         version: 10.0.0(@babel/core@7.28.5)
@@ -21231,6 +22035,9 @@ importers:
       stylelint-processor-styled-components:
         specifier: 1.10.0
         version: 1.10.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
       util:
         specifier: 0.12.5
         version: 0.12.5
@@ -21301,6 +22108,9 @@ importers:
       '@types/styled-system':
         specifier: 5.1.22
         version: 5.1.22
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       csstype:
         specifier: 3.2.3
         version: 3.2.3
@@ -21352,9 +22162,18 @@ importers:
       '@rspack/core':
         specifier: 'catalog:'
         version: 2.3.0(@swc/helpers@0.5.23)
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       tiny-glob:
         specifier: 0.2.9
         version: 0.2.9
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/wallet-analytics:
     dependencies:
@@ -21392,6 +22211,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -21404,6 +22226,12 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/wallet-btc:
     dependencies:
@@ -21504,6 +22332,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       bip32:
         specifier: 4.0.0
         version: 4.0.0
@@ -21525,6 +22356,9 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -21595,6 +22429,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -21613,6 +22450,12 @@ importers:
       react-dom:
         specifier: 19.1.4
         version: 19.1.4(react@19.1.4)
+      rimraf:
+        specifier: 'catalog:'
+        version: 4.4.1
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   shared/analytics:
     dependencies:
@@ -22937,6 +23780,9 @@ importers:
       '@types/react-dom':
         specifier: 19.0.0
         version: 19.0.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -22972,6 +23818,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
@@ -22993,6 +23842,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -23253,6 +24105,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       prettier:
         specifier: 2.8.8
         version: 2.8.8
@@ -57363,31 +58218,6 @@ snapshots:
       yargs: 17.7.2
     optionalDependencies:
       typescript: '@typescript/typescript6@6.0.2'
-    transitivePeerDependencies:
-      - '@types/node'
-
-  msw@2.7.3(@types/node@24.12.0)(typescript@6.0.3):
-    dependencies:
-      '@bundled-es-modules/cookie': 2.0.1
-      '@bundled-es-modules/statuses': 1.0.1
-      '@bundled-es-modules/tough-cookie': 0.1.6
-      '@inquirer/confirm': 5.1.7(@types/node@24.12.0)
-      '@mswjs/interceptors': 0.37.6
-      '@open-draft/deferred-promise': 2.2.0
-      '@open-draft/until': 2.1.0
-      '@types/cookie': 0.6.0
-      '@types/statuses': 2.0.5
-      graphql: 16.14.2
-      headers-polyfill: 4.0.3
-      is-node-process: 1.2.0
-      outvariant: 1.4.3
-      path-to-regexp: 6.3.0
-      picocolors: 1.1.1
-      strict-event-emitter: 0.5.1
-      type-fest: 4.40.0
-      yargs: 17.7.2
-    optionalDependencies:
-      typescript: 6.0.3
     transitivePeerDependencies:
       - '@types/node'
 

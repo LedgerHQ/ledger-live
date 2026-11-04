@@ -19,8 +19,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/flow/app-longer-password"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@features/flow-app-password-setup": "workspace:*",
