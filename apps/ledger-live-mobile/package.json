@@ -436,6 +436,7 @@
     "tslib": "2.6.2",
     "web-streams-polyfill": "4.2.0",
     "ws": "catalog:",
-    "rimraf": "catalog:"
+    "rimraf": "catalog:",
+    "zx": "catalog:"
   }
 }

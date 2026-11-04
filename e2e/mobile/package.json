@@ -73,6 +73,7 @@
     "jest-environment-node": "catalog:",
     "jest-metadata": "1.6.0",
     "lodash": "catalog:",
+    "nx": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "@swc/jest": "catalog:",
