@@ -1,7 +1,7 @@
 import React from "react";
 import {
   BottomSheetHeader,
-  BottomSheetScrollView,
+  BottomSheetView,
   Box,
   Button,
   Tag,
@@ -32,12 +32,9 @@ const SheetContent = ({ children }: Readonly<{ children: React.ReactNode }>) => 
   const bottomInset = useBottomSheetBottomInset();
 
   return (
-    <BottomSheetScrollView
-      contentContainerStyle={{ paddingBottom: bottomInset + CONTENT_BOTTOM_SPACING }}
-      showsVerticalScrollIndicator={false}
-    >
+    <BottomSheetView style={{ paddingBottom: bottomInset + CONTENT_BOTTOM_SPACING }}>
       {children}
-    </BottomSheetScrollView>
+    </BottomSheetView>
   );
 };
 
