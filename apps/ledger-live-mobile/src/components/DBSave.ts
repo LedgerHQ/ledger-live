@@ -147,7 +147,7 @@ function useFlushMechanism({ flush, cancel }: { flush: () => void; cancel: () =>
 function useFlushOnBackground() {
   useEffect(() => {
     const subscription = AppState.addEventListener("change", nextAppState => {
-      if (nextAppState === "background") flushAll();
+      if (nextAppState === "background") void flushAll();
     });
     return () => subscription.remove();
   }, []);
