@@ -2,7 +2,10 @@ import { renderHook } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 import type { State } from "~/reducers/types";
-import { useDeviceOnboarding, type DeviceOnboardingSession } from "../../hooks/useDeviceOnboarding";
+import {
+  useDeviceOnboarding,
+  type DeviceOnboardingSession,
+} from "LLM/features/DeviceOnboarding/hooks/useDeviceOnboarding";
 import { useDeviceOnboardingFunnelViewModel } from "./useDeviceOnboardingFunnelViewModel";
 
 const goBack = jest.fn();
@@ -117,16 +120,20 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(checksOf(result.current).error).toEqual(error);
   });
 
-  it.each(["readingState", "legacyFallback", "done", "syncOffer"])(
-    "should keep Checks unmounted while the machine is in %s",
-    state => {
-      useSession.mockReturnValue(session({ state }));
+  it.each([
+    "readingState",
+    "legacyFallback",
+    "done",
+    "syncOffer",
+    "deviceLocked",
+    "deviceSetup.pin",
+  ])("should show synchronizing instead of connecting while the machine is in %s", state => {
+    useSession.mockReturnValue(session({ state }));
 
-      const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
 
-      expect(result.current.status).toBe("connecting");
-    },
-  );
+    expect(checksOf(result.current).state).toBe("synchronizing");
+  });
 
   it("should keep Checks unmounted until a device is connected", () => {
     useSession.mockReturnValue(session({ liveDevice: null, state: "checks.checksIdle" }));
@@ -326,14 +333,32 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(send).not.toHaveBeenCalled();
   });
 
+  it("should hide the firmware offer while the device is locked", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "deviceLocked",
+        context: {
+          firmwareVersion: "1.0.0",
+          availableFirmwareVersion: "1.1.0",
+          checksPaused: false,
+        } as DeviceOnboardingSession["context"],
+      }),
+    );
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const checks = checksOf(result.current);
+
+    expect(checks.state).toBe("synchronizing");
+    expect(checks.update).toBeNull();
+  });
+
   it("should quit the machine when closing while the device is locked", () => {
     const reset = jest.fn();
     useSession.mockReturnValue(session({ state: "deviceLocked", reset }));
 
     const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
-    if (result.current.status !== "connecting") throw new Error(result.current.status);
 
-    result.current.onQuit();
+    checksOf(result.current).onQuit?.();
 
     expect(send).toHaveBeenCalledWith({ type: "QUIT" });
     expect(reset).not.toHaveBeenCalled();
@@ -525,7 +550,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(checks.onContinue).toBeUndefined();
   });
 
-  it("should show connecting when an unseeded device leaves for Ledger Sync", () => {
+  it("should show synchronizing when an unseeded device leaves for Ledger Sync", () => {
     useSession.mockReturnValue(
       session({
         state: "syncOffer",
@@ -539,7 +564,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
     const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
 
-    expect(result.current.status).toBe("connecting");
+    expect(checksOf(result.current).state).toBe("synchronizing");
   });
 
   it.each([

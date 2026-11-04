@@ -129,7 +129,7 @@ export function ChecksView({
           </BottomSheetView>
         </QueuedBottomSheet>
       ) : null}
-      {firmwareUpdate.isOpen ? <FirmwareUpdateAvailableDrawer {...firmwareUpdate} /> : null}
+      <FirmwareUpdateAvailableDrawer {...firmwareUpdate} />
       {unsupportedUpdate.isOpen ? <UnsupportedUpdateDrawer {...unsupportedUpdate} /> : null}
       <GenuineCheckErrorDrawer
         isOpen={errorDrawer.isOpen}
