@@ -216,8 +216,8 @@ catalogs:
       specifier: 16.2.0
       version: 16.2.0
     '@ledgerhq/coin-hypercore':
-      specifier: 4.0.2
-      version: 4.0.2
+      specifier: 4.0.3
+      version: 4.0.3
     '@ledgerhq/coin-module-framework':
       specifier: 11.0.1
       version: 11.0.1
@@ -18181,7 +18181,7 @@ importers:
         version: link:../coin-modules/coin-hedera
       '@ledgerhq/coin-hypercore':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/live-network@3.2.0(axios@1.20.0(debug@4.4.3)))
+        version: 4.0.3(@ledgerhq/live-network@3.2.0(axios@1.20.0(debug@4.4.3)))
       '@ledgerhq/coin-icon':
         specifier: workspace:^
         version: link:../coin-modules/coin-icon
@@ -27220,8 +27220,8 @@ packages:
     peerDependencies:
       '@ledgerhq/live-network': ^3.1.0
 
-  '@ledgerhq/coin-hypercore@4.0.2':
-    resolution: {integrity: sha512-mXlHBFwR1w8yyhMy+6n1r+iRG0KZPSQJT4T/TTMUDE+s7c7MlC9DdBYgs6I0DL8FGBtpcnlEWV+LeRApXDunhw==}
+  '@ledgerhq/coin-hypercore@4.0.3':
+    resolution: {integrity: sha512-4CxnmMQ2EPZiAE/l53CCU8E2i/Orol322Uy9FA7DFDTv82i3zKbAZShh1cdaju0EVDztytvD7Yq69216EBMmJw==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.1.0
 
@@ -46077,7 +46077,7 @@ snapshots:
       - react-native
       - utf-8-validate
 
-  '@ledgerhq/coin-hypercore@4.0.2(@ledgerhq/live-network@3.2.0(axios@1.20.0(debug@4.4.3)))':
+  '@ledgerhq/coin-hypercore@4.0.3(@ledgerhq/live-network@3.2.0(axios@1.20.0(debug@4.4.3)))':
     dependencies:
       '@ledgerhq/coin-module-framework': 11.0.1
       '@ledgerhq/live-network': 3.2.0(axios@1.20.0(debug@4.4.3))
