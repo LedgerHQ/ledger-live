@@ -137,8 +137,8 @@ const DEVTOOLS_TYPE_ONLY_RULE =
   'A DEVTOOLS_TYPE_ONLY_IMPORTS target may only be reached through `import type`, `export type … from` or `typeof import("…")`: the build erases them, so the target stays lazily loaded. A value import, `import { type X }`, `import()` or `require()` loads it at runtime.';
 
 /**
- * The `@devtools/*` packages each `@devtools/*` package may reach only lazily: `import type`,
- * `export type … from`, `typeof import("…")` or a dynamic `import()`. "*" allows them all.
+ * The `@devtools/*` packages each `@devtools/*` package may reach under `DEVTOOLS_LAZY_RULE`;
+ * "*" allows them all.
  */
 const DEVTOOLS_LAZY_IMPORTS = {
   "@devtools/registry": "*",
@@ -148,10 +148,8 @@ const DEVTOOLS_LAZY_RULE =
   'A DEVTOOLS_LAZY_IMPORTS target may only be reached through `import type`, `export type … from`, `typeof import("…")` or `import()`: the shell loads the registry eagerly, so a value import or `require()` would bundle the tool with it.';
 
 /**
- * App roots whose product code may not import `@devtools/*` (type imports included), the one folder
- * that may, and the files of that folder product code may import statically. Any other file under
- * `allowedUnder` is reachable from outside it only through `import()` / `lazy(() => import(...))`.
- * Test files (`*.test.*`, `__tests__/`, `__integrations__/`) are not checked by the folder rule.
+ * App roots, their DevTools folder and its static entries; see `DEVTOOLS_HOST_APP_RULE` and
+ * `DEVTOOLS_HOST_FOLDER_RULE`.
  */
 const DEVTOOLS_HOST_APPS = [
   {
@@ -173,7 +171,7 @@ const DEVTOOLS_HOST_APP_RULE =
   "A DEVTOOLS_HOST_APPS app may import `@devtools/*` (type imports included) only from files under its `allowedUnder` folder: product code must not depend on debug tooling.";
 
 const DEVTOOLS_HOST_FOLDER_RULE =
-  "A file outside a DEVTOOLS_HOST_APPS `allowedUnder` folder may import a file under it only through `import()` / `lazy(() => import(...))`, unless that file is one of the app's `entries`: a static import would reach `@devtools/*` in one hop.";
+  "A file outside a DEVTOOLS_HOST_APPS `allowedUnder` folder may import a file under it only through `import()` / `lazy(() => import(...))`, unless that file is one of the app's `entries`: a static import would reach `@devtools/*` in one hop. Test files (`*.test.*`, `__tests__/`, `__integrations__/`) are exempt.";
 
 module.exports = {
   DEP_CONSTRAINTS,

@@ -1231,6 +1231,7 @@ const LLM_DEVTOOLS = `${LLM}/src/mvvm/features/DevTools`;
  * @param {Record<string, string>} files keyed by workspace-relative path
  */
 function hostWorkspace(t, files) {
+  /** @param {string} alias */
   const tsconfig = alias =>
     JSON.stringify({
       compilerOptions: { paths: { "*": ["./*"], "~/*": ["./src/*"], [alias]: ["./src/mvvm/*"] } },
@@ -1282,7 +1283,11 @@ test("devtools host apps: the DevTools folder may import @devtools/shell, value 
   assert.deepEqual(hostViolations(root), []);
 });
 
-/** The coupling the device-onboarding split removed from product code, under `dir`. */
+/**
+ * The coupling the device-onboarding split removed from product code, under `dir`.
+ *
+ * @param {string} dir
+ */
 const deviceOnboardingCoupling = dir => ({
   [`${dir}/hooks/useDeviceOnboarding.ts`]:
     'import { useDeviceOnboardingActor } from "@devtools/bindings";',
