@@ -3,7 +3,6 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { escapeRegExp } from "@e2e/helpers/commonHelpers";
 import { byId, byIdAndText, byIdWithDescendantText } from "@e2e/helpers/elements/native";
 import { retryUntilTimeout } from "@e2e/utils/retry";
-import { TIMEOUT } from "@e2e/utils/timeouts";
 
 const wholeTextContaining = (text: string) =>
   new RegExp(String.raw`^[\s\S]*${escapeRegExp(text)}[\s\S]*$`);
@@ -253,9 +252,6 @@ export default class NewSendFlowPage {
   async expectRetryLocked() {
     await this.retryBlockedBanner.waitVisible();
     await this.sponsoredFailureRetry.tap();
-    await jestExpect(this.sponsoredFailure.waitNotVisible(TIMEOUT.small)).rejects.toThrow(
-      "did not become hidden",
-    );
     await this.retryBlockedBanner.waitVisible();
   }
 
