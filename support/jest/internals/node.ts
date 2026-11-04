@@ -10,8 +10,8 @@ import {
   quarantineReporter,
   quarantineRetries,
   swcTransform,
-} from "../core/index.mts";
-import { deepFreeze } from "./freeze.mts";
+} from "../core/index.ts";
+import { deepFreeze } from "./freeze.ts";
 
 type Options = Config.InitialOptions;
 

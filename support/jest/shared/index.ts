@@ -10,13 +10,8 @@ import {
   webSetupFiles,
   withProjectOverrides,
   type DualOverrides,
-} from "../core/index.mts";
-import {
-  NODE_OPTIONS,
-  sharedNodeConfig,
-  sharedReporters,
-  withEsmDeps,
-} from "../internals/node.mts";
+} from "../core/index.ts";
+import { NODE_OPTIONS, sharedNodeConfig, sharedReporters, withEsmDeps } from "../internals/node.ts";
 
 // ─── shared/* and libs/* (node packages) ────────────────────────────────────
 

@@ -6,9 +6,9 @@
 // — its node_modules, its jest/ folder — deliberately keep `<rootDir>`.
 
 import type { Config } from "@jest/types";
-import { presetFactory } from "../core/index.mts";
-import { deepFreeze } from "../internals/freeze.mts";
-import { joinPresetPath } from "../internals/join-preset-path.mts";
+import { presetFactory } from "../core/index.ts";
+import { deepFreeze } from "../internals/freeze.ts";
+import { joinPresetPath } from "../internals/join-preset-path.ts";
 
 const here = (relative: string) => joinPresetPath(import.meta.dirname, relative);
 

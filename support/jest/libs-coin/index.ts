@@ -1,7 +1,7 @@
 import type { Config } from "@jest/types";
-import { presetFactory } from "../core/index.mts";
-import { deepFreeze } from "../internals/freeze.mts";
-import { NODE_OPTIONS, sharedNodeConfig, withEsmDeps } from "../internals/node.mts";
+import { presetFactory } from "../core/index.ts";
+import { deepFreeze } from "../internals/freeze.ts";
+import { NODE_OPTIONS, sharedNodeConfig, withEsmDeps } from "../internals/node.ts";
 
 // Integration suites hit live networks; the unit config leaves them to the integration config.
 const integrationTests = ".*\\.(integ|integration)\\.test\\.[tj]s";

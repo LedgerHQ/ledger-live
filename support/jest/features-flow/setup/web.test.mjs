@@ -8,7 +8,7 @@ import test from "node:test";
 test("the web setup lets the process exit after React's scheduler ran", () => {
   const child = spawnSync(
     process.execPath,
-    [path.join(import.meta.dirname, "web.exit.fixture.mts")],
+    [path.join(import.meta.dirname, "web.exit.fixture.ts")],
     { encoding: "utf8", timeout: 10_000 },
   );
 

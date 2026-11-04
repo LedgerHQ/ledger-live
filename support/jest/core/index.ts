@@ -3,9 +3,9 @@
 // matching, resolver and transform allowlist.
 import type { Config } from "@jest/types";
 import path from "node:path";
-import { deepFreeze } from "../internals/freeze.mts";
-import { joinPresetPath } from "../internals/join-preset-path.mts";
-import PRESET_OVERRIDES from "./preset-overrides.js";
+import { deepFreeze } from "../internals/freeze.ts";
+import { joinPresetPath } from "../internals/join-preset-path.ts";
+import PRESET_OVERRIDES from "./preset-overrides.cjs";
 
 type Options = Config.InitialOptions;
 type ProjectOptions = Config.InitialProjectOptions;
@@ -177,7 +177,7 @@ export const PRESET_KEYS: Readonly<Record<string, string>> = deepFreeze({
 export const ALLOWLIST_FIX =
   "add the dependency to the preset's transform allowlist in support/jest";
 const TRANSFORM_KEYS = new Set(["transform", "transformIgnorePatterns"]);
-const OVERRIDES_FILE = "support/jest/core/preset-overrides.js";
+const OVERRIDES_FILE = "support/jest/core/preset-overrides.cjs";
 
 /**
  * Throws when a package overrides a key its preset owns and `preset-overrides.js` does not list

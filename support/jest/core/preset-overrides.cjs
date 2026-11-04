@@ -3,7 +3,7 @@
 // repository root, then by the factory their config calls. A factory finds the entry from the
 // `rootDir` it gets. This list only shrinks: a listed key the config no longer overrides throws.
 
-const { deepFreeze } = require("../internals/freeze.mts");
+const { deepFreeze } = require("../internals/freeze.ts");
 
 /** @type {Record<string, { reason: string, overrides: Record<string, string[]> }>} */
 const PRESET_OVERRIDES = {

@@ -6,7 +6,7 @@ module.exports = {
   testEnvironment: "node",
   testMatch: ["**/*.spec.ts"],
   transform: {
-    "^.+\\.mts$": [
+    "^.+\\.ts$": [
       "@swc/jest",
       {
         jsc: {
@@ -20,9 +20,9 @@ module.exports = {
   },
   moduleFileExtensions: ["ts", "mts", "mjs", "js", "json"],
   moduleNameMapper: {
-    "^@support/jest/devtools$": `${workspaceRoot}/support/jest/devtools/index.mts`,
-    "^@support/jest/features-flow$": `${workspaceRoot}/support/jest/features-flow/index.mts`,
-    "^@support/jest/libs-coin$": `${workspaceRoot}/support/jest/libs-coin/index.mts`,
-    "^@support/jest/shared$": `${workspaceRoot}/support/jest/shared/index.mts`,
+    "^@support/jest/devtools$": `${workspaceRoot}/support/jest/devtools/index.ts`,
+    "^@support/jest/features-flow$": `${workspaceRoot}/support/jest/features-flow/index.ts`,
+    "^@support/jest/libs-coin$": `${workspaceRoot}/support/jest/libs-coin/index.ts`,
+    "^@support/jest/shared$": `${workspaceRoot}/support/jest/shared/index.ts`,
   },
 };

@@ -3,5 +3,5 @@
   "compilerOptions": {
     "types": ["node"]
   },
-  "include": ["index.mts", "mocks/**/*.js", "setup/**/*.js", "setup/**/*.mts"]
+  "include": ["index.ts", "mocks/**/*.js", "setup/**/*.js", "setup/**/*.js", "setup/**/*.ts"]
 }

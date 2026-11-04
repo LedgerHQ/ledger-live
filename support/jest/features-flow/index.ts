@@ -8,9 +8,9 @@ import {
   webSetupFiles,
   type DualLayer,
   type DualOverrides,
-} from "../core/index.mts";
-import { deepFreeze } from "../internals/freeze.mts";
-import { joinPresetPath } from "../internals/join-preset-path.mts";
+} from "../core/index.ts";
+import { deepFreeze } from "../internals/freeze.ts";
+import { joinPresetPath } from "../internals/join-preset-path.ts";
 
 const flowPath = (file: string) => joinPresetPath(import.meta.dirname, file);
 

@@ -5,12 +5,12 @@
   "description": "Shared jest presets per layer, with their setup files, mocks and render fixtures",
   "sideEffects": false,
   "exports": {
-    "./devtools": "./devtools/index.mts",
+    "./devtools": "./devtools/index.ts",
     "./devtools/native": "./devtools/src/index.native.ts",
     "./devtools/web": "./devtools/src/index.web.ts",
-    "./features-flow": "./features-flow/index.mts",
-    "./libs-coin": "./libs-coin/index.mts",
-    "./shared": "./shared/index.mts",
+    "./features-flow": "./features-flow/index.ts",
+    "./libs-coin": "./libs-coin/index.ts",
+    "./shared": "./shared/index.ts",
     "./shared/mocks/*": "./core/mocks/*.js",
     "./package.json": "./package.json"
   },
@@ -104,5 +104,6 @@
     "react-native-worklets": "catalog:",
     "react-test-renderer": "catalog:",
     "typescript": "catalog:"
-  }
+  },
+  "type": "module"
 }

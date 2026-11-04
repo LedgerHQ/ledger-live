@@ -11,14 +11,14 @@ import test from "node:test";
 import { fileURLToPath } from "node:url";
 
 const require = createRequire(import.meta.url);
-const PRESET_OVERRIDES = require("./preset-overrides");
+const PRESET_OVERRIDES = require("./preset-overrides.cjs");
 const {
   ALLOWLIST_FIX,
   ESM_FIX,
   PRESET_KEYS,
   PROJECT_FACTORIES,
   presetFactories,
-} = require("./index.mts");
+} = require("./index.ts");
 // Loading the presets registers their factories.
 const PRESETS = ["shared", "features-flow", "libs-coin", "devtools"].map(name => [
   name,
@@ -132,7 +132,7 @@ test("a key preset-overrides.js lists for the package and the factory passes thr
 test("a key preset-overrides.js lists that the overrides no longer set throws", () => {
   assert.throws(
     () => createSharedJestConfig({ rootDir: at("shared/i18n"), testEnvironment: "jsdom" }),
-    /createSharedJestConfig\(\): support\/jest\/core\/preset-overrides\.js lists transform for shared\/i18n, which no override sets; remove it/,
+    /createSharedJestConfig\(\): support\/jest\/core\/preset-overrides\.cjs lists transform for shared\/i18n, which no override sets; remove it/,
   );
 });
 
