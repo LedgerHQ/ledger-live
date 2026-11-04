@@ -139,7 +139,7 @@ export class MyLedgerPage extends AppPage {
     await this.softExpect(async soft => {
       await soft(this.storageCard).toContainText(deviceName);
       await soft(this.osVersion).toContainText("OS version");
-      await soft(this.osVersion).toContainText(/\d+\.\d+/);
+      await soft(this.osVersion).toContainText(/\d\.\d/);
       await soft(this.genuineBadge).toContainText("Ledger Genuine check");
     });
   }
@@ -205,7 +205,7 @@ export class MyLedgerPage extends AppPage {
   }
 
   /** Row ids are the only DOM-ordered handle the list exposes. */
-  private async listedAppNames(): Promise<string[]> {
+  private listedAppNames(): Promise<string[]> {
     return this.appRows.evaluateAll(rows =>
       rows.map(row => row.id.replace("managerAppsList-", "")),
     );
