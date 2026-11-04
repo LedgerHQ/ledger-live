@@ -1,0 +1,23 @@
+# read-performance.yaml without its optional taps, for measured reads: when the prompts they look
+# for are absent, they wait up to ~7 s in all. run.mjs falls back to the full flow when this one fails.
+appId: com.ledger.live
+---
+- openLink: ledgerlive://settings
+- scrollUntilVisible:
+    element:
+      text: "Debug.*"
+    direction: DOWN
+    timeout: 20000
+- tapOn:
+    text: "Debug.*"
+- scrollUntilVisible:
+    element:
+      text: "Performance.*"
+    direction: DOWN
+    timeout: 20000
+- tapOn:
+    text: "Performance.*"
+- extendedWaitUntil:
+    visible:
+      text: "App startup time.*"
+    timeout: 15000
