@@ -43,8 +43,7 @@
     "lint": "oxlint ./src",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
-    "coverage": "jest --coverage",
-    "knip-check": "pnpm knip --directory ../.. -W libs/live-signer-icp"
+    "coverage": "jest --coverage"
   },
   "devDependencies": {
     "@types/react": "catalog:",

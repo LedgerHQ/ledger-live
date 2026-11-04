@@ -65,8 +65,7 @@
     "format:check": "oxfmt --check ./src",
     "release": "yarn publish ./lib --access public",
     "typecheck": "tsc --noEmit -p tsconfig.json  --customConditions node",
-    "test": "exit 0",
-    "unimported": "pnpm knip --directory ../../../.. -W libs/ui/packages/native"
+    "test": "exit 0"
   },
   "dependencies": {
     "@ledgerhq/icons-ui": "workspace:^",

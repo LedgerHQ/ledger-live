@@ -23,8 +23,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -c features/flow/predictions/knip.web.config.mjs -W features/flow/predictions --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/predictions/knip.native.config.mjs -W features/flow/predictions --tsConfig tsconfig.native.json"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@features/platform-predictions": "workspace:*",

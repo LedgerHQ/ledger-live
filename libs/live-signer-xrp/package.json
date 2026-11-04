@@ -43,8 +43,7 @@
     "lint": "oxlint ./src",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../.. -W libs/live-signer-xrp"
+    "coverage": "jest --coverage"
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",

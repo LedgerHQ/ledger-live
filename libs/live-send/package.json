@@ -49,7 +49,6 @@
     "format": "pnpm exec oxfmt ./src",
     "format:check": "pnpm exec oxfmt ./src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "pnpm knip --directory ../.. -W libs/live-send",
     "test": "jest",
     "coverage": "jest --coverage"
   },

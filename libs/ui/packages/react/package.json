@@ -74,8 +74,7 @@
     "lint:css": "stylelint './src/**/*.{js,jsx,ts,tsx}' --fix",
     "format": "oxfmt ./src",
     "format:check": "oxfmt --check ./src",
-    "typecheck": "tsc --p . --noEmit --customConditions node",
-    "unimported": "pnpm knip --directory ../../../.. -W libs/ui/packages/react"
+    "typecheck": "tsc --p . --noEmit --customConditions node"
   },
   "dependencies": {
     "@ledgerhq/icons-ui": "workspace:^",

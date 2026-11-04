@@ -33,8 +33,7 @@
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand",
-    "unimported": "pnpm knip --directory ../../.. -W libs/coin-tester-modules/coin-tester-kaspa"
+    "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand"
   },
   "dependencies": {
     "@shared/env": "workspace:*",

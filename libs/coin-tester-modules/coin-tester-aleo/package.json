@@ -34,7 +34,6 @@
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "knip-check": "pnpm knip --directory ../../.. -W libs/coin-tester-modules/coin-tester-aleo",
     "start": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --runInBand"
   },
   "dependencies": {

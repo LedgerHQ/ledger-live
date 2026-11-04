@@ -73,7 +73,6 @@
     "test-deep-links": "ws --spa ./ledger-live-mobile-deeplinks.html",
     "download-hermes-profile": "zx ./scripts/download-hermes-profile.mjs",
     "check": "pnpm lint; pnpm typecheck",
-    "knip-check": "pnpm knip --directory ../.. -W apps/ledger-live-mobile",
     "assets:replace": "zx ./scripts/replace-assets.mjs"
   },
   "dependencies": {

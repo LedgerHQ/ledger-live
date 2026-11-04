@@ -56,7 +56,6 @@
     "typecheck": "NODE_OPTIONS=--max-old-space-size=8192 node scripts/typecheck.js",
     "check": "pnpm lint; pnpm typecheck",
     "assets:replace": "zx ./scripts/replace-assets.mjs",
-    "knip-check": "pnpm knip --directory ../.. -W apps/ledger-live-desktop",
     "test-deep-links": "ws --spa ledger-live-desktop-deeplinks.html"
   },
   "dependencies": {

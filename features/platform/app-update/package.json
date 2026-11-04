@@ -15,7 +15,6 @@
     "format:check": "oxfmt --check src",
     "lint": "oxlint ./src",
     "typecheck": "tsc --noEmit",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/app-update",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage"
