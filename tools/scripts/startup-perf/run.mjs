@@ -59,13 +59,17 @@ const BRIDGE_PORT = Number(opts["bridge-port"]);
 const OUT_DIR = opts["out-dir"];
 const SAMPLES_FILE = path.join(OUT_DIR, "samples.jsonl");
 const DEBUG_DIR = path.join(OUT_DIR, "debug");
-const FULL_FLOW = path.join(import.meta.dirname, "read-performance.yaml");
+const FULL_FLOW = path.join(import.meta.dirname, "flows", "read-performance.yaml");
 // The flow without the optional taps, for measured reads: when their prompts are absent, they wait
 // up to ~7 s in all. Warm-ups keep the full flow (iOS asks to confirm a simulator's first openLink),
 // and it is the retry when this one fails.
-const QUICK_FLOW = path.join(import.meta.dirname, "read-performance-quick.yaml");
-const SCROLL_FLOW = path.join(import.meta.dirname, "scroll-performance.yaml");
-const SCROLL_TO_END_FLOW = path.join(import.meta.dirname, "scroll-performance-to-end.yaml");
+const QUICK_FLOW = path.join(import.meta.dirname, "flows", "read-performance-quick.yaml");
+const SCROLL_FLOW = path.join(import.meta.dirname, "flows", "scroll-performance.yaml");
+const SCROLL_TO_END_FLOW = path.join(
+  import.meta.dirname,
+  "flows",
+  "scroll-performance-to-end.yaml",
+);
 // "App startup time" is the later of these two; a read before both exist would under-report it.
 const FINAL_EVENTS = ["App started", "Splash screen faded"];
 // Per device: with strict alternation, a device that never reads would otherwise go unnoticed.
