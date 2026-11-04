@@ -342,8 +342,8 @@ export const test = base.extend<TestFixtures>({
     try {
       if (process.platform === "win32") {
         const powershell = path.win32.join(
-          process.env.SystemRoot ?? "C:\\Windows",
-          "System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+          process.env.SystemRoot ?? "C:/Windows",
+          "System32/WindowsPowerShell/v1.0/powershell.exe",
         );
         execFileSync(powershell, [
           "-NoProfile",
