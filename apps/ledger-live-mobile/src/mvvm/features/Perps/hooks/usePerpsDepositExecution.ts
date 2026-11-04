@@ -45,7 +45,7 @@ type SignResult = { signedOperation: SignedOperation } | { transactionSignError:
 
 export type PerpsDepositDeviceStep =
   | { kind: "processing" }
-  | { kind: "error"; error: Error }
+  | { kind: "error"; error: Error; isGeneric: boolean }
   | {
       kind: "device";
       stepId: "start" | "confirm" | "sign";
@@ -307,7 +307,7 @@ export function usePerpsDepositExecution(
               }, cancel);
             },
 
-            "custom.exchange.error": ({ onCancel }) => onCancel(),
+            "custom.exchange.error": () => undefined,
           },
         },
         {
@@ -333,7 +333,8 @@ export function usePerpsDepositExecution(
         onRefused();
         return;
       }
-      if (isDepositGenericSignError(e)) {
+      const isGeneric = isDepositGenericSignError(e);
+      if (isGeneric) {
         track("swap error message", {
           message: "deposit_sign_failed",
           page: "perps_deposit_sign",
@@ -342,7 +343,11 @@ export function usePerpsDepositExecution(
           targetCurrency: getAccountCurrency(receiverAccount).ticker,
         });
       }
-      setDeviceStep({ kind: "error", error: e instanceof Error ? e : new Error(String(e)) });
+      setDeviceStep({
+        kind: "error",
+        error: e instanceof Error ? e : new Error(String(e)),
+        isGeneric,
+      });
     }
   }, [
     accounts,

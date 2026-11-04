@@ -74,15 +74,14 @@ describe("usePerpsDepositSignViewModel", () => {
     mockDeviceStep = { kind: "processing" };
   });
 
-  it.each([
-    ["a payload failure", new PayloadStepError(), true],
-    ["any other failure", new Error("signature failed"), false],
-  ])("shows the generic copy only for %s", (_case, error, isGenericError) => {
-    mockDeviceStep = { kind: "error", error };
+  it("returns to the form, not the review, when the sheet of a generic error is dismissed", () => {
+    mockDeviceStep = { kind: "error", error: new PayloadStepError(), isGeneric: true };
+    const { result, onReturnToForm, onRefused } = renderSignViewModel(device);
 
-    const { result } = renderSignViewModel();
+    act(() => result.current.handleDrawerClose());
 
-    expect(result.current.isGenericError).toBe(isGenericError);
+    expect(onReturnToForm).toHaveBeenCalledTimes(1);
+    expect(onRefused).not.toHaveBeenCalled();
   });
 
   beforeEach(() => {

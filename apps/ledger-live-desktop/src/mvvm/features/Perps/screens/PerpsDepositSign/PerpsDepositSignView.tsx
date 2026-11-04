@@ -14,7 +14,6 @@ type PerpsDepositSignViewProps = Readonly<PerpsDepositSignViewModel>;
 
 export function PerpsDepositSignView({
   deviceStep,
-  isGenericError,
   retry,
   onDismiss,
   onDeviceError,
@@ -32,14 +31,14 @@ export function PerpsDepositSignView({
             preset="error"
             size="hug"
             title={
-              isGenericError ? (
+              deviceStep.isGeneric ? (
                 t("perpsDepositSign.genericError.title")
               ) : (
                 <TranslatedError error={deviceStep.error} field="title" />
               )
             }
             description={
-              isGenericError ? (
+              deviceStep.isGeneric ? (
                 t("perpsDepositSign.genericError.description")
               ) : (
                 <TranslatedError error={deviceStep.error} field="description" />

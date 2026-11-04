@@ -1,11 +1,6 @@
-import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 import { isNotEnoughBalance } from "../../../exchange/isNotEnoughBalance";
-import { PayloadStepError } from "../../Exchange/SwapError";
 
-const GENERIC_SIGN_ERROR_NAMES = new Set([
-  new PayloadStepError().name,
-  new AddressesSanctionedError().name,
-]);
+const GENERIC_SIGN_ERROR_NAMES = new Set(["PayloadStepError", "AddressesSanctionedError"]);
 
 export function isDepositGenericSignError(error: unknown): boolean {
   if (typeof error !== "object" || error === null) return false;

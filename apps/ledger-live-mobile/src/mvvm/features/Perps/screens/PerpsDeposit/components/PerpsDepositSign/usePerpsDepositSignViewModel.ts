@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { PerpsDepositReviewParams } from "@ledgerhq/live-common/wallet-api/Perps/server";
-import { isDepositGenericSignError } from "@ledgerhq/live-common/wallet-api/Perps/deposit/signError";
+import { shouldReturnToDepositForm } from "@ledgerhq/live-common/wallet-api/Perps/deposit/signError";
 import type { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import {
   usePerpsDepositExecution,
@@ -24,7 +24,6 @@ export type PerpsDepositSignProps = Readonly<PerpsDepositReviewParams> &
 export type PerpsDepositSignViewModel = Readonly<{
   selectedDevice: Device | null | undefined;
   deviceStep: PerpsDepositDeviceStep;
-  isGenericError: boolean;
   setSelectedDevice: (device: Device | null | undefined) => void;
   retry: () => void;
   onDeviceError: (error: Error) => void;
@@ -55,16 +54,20 @@ export function usePerpsDepositSignViewModel({
     [onDone],
   );
 
-  const handleDrawerClose = useCallback(() => {
-    if (isLeavingRef.current) return;
-    onRefused();
-  }, [onRefused]);
-
   const { deviceStep, executeDeposit, retry } = usePerpsDepositExecution(depositParams, {
     onDone: handleDone,
     onRefused,
     onReturnToForm: handleReturnToForm,
   });
+
+  const handleDrawerClose = useCallback(() => {
+    if (isLeavingRef.current) return;
+    if (deviceStep.kind === "error" && shouldReturnToDepositForm(deviceStep.error)) {
+      handleReturnToForm();
+      return;
+    }
+    onRefused();
+  }, [deviceStep, handleReturnToForm, onRefused]);
 
   const onDeviceError = useCallback(
     (error: Error) => {
@@ -83,7 +86,6 @@ export function usePerpsDepositSignViewModel({
   return {
     selectedDevice,
     deviceStep,
-    isGenericError: deviceStep.kind === "error" && isDepositGenericSignError(deviceStep.error),
     setSelectedDevice: onSelectDevice,
     retry,
     onDeviceError,

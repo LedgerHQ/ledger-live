@@ -45,7 +45,7 @@ type SignResult = { signedOperation: SignedOperation } | { transactionSignError:
 
 export type PerpsDepositDeviceStep =
   | { kind: "processing" }
-  | { kind: "error"; error: Error }
+  | { kind: "error"; error: Error; isGeneric: boolean }
   | {
       kind: "device";
       stepId: "start" | "confirm" | "sign";
@@ -300,8 +300,8 @@ export function usePerpsDepositExecution(
               }, cancel);
             },
             // The signing dialog renders errors itself, so there is no separate
-            // error screen to open — reject and let the catch below take over.
-            "custom.exchange.error": ({ onCancel }) => onCancel(),
+            // error screen to open; executeSwap throws, and the catch below takes over.
+            "custom.exchange.error": () => undefined,
           },
         },
         {
@@ -332,7 +332,8 @@ export function usePerpsDepositExecution(
         onRefused();
         return;
       }
-      if (isDepositGenericSignError(e)) {
+      const isGeneric = isDepositGenericSignError(e);
+      if (isGeneric) {
         track("swap error message", {
           message: "deposit_sign_failed",
           page: "perps_deposit_sign",
@@ -341,7 +342,11 @@ export function usePerpsDepositExecution(
           targetCurrency: getAccountCurrency(receiverAccount).ticker,
         });
       }
-      setDeviceStep({ kind: "error", error: e instanceof Error ? e : new Error(String(e)) });
+      setDeviceStep({
+        kind: "error",
+        error: e instanceof Error ? e : new Error(String(e)),
+        isGeneric,
+      });
     }
   }, [
     accounts,

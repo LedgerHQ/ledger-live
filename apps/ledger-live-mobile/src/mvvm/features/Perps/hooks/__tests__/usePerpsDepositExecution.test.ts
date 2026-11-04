@@ -414,6 +414,7 @@ describe("usePerpsDepositExecution", () => {
     expect(result.current.deviceStep).toEqual({
       kind: "error",
       error: new Error("signature failed"),
+      isGeneric: false,
     });
     expect(onDone).not.toHaveBeenCalled();
     expect(onRefused).not.toHaveBeenCalled();
@@ -459,13 +460,18 @@ describe("usePerpsDepositExecution", () => {
     "sends the holder back to the form on retry after a shortfall %s",
     async (_case, shortfall) => {
       const { result, onReturnToForm } = await signWith({ transactionSignError: shortfall });
-      expect(result.current.deviceStep).toEqual({ kind: "error", error: shortfall });
+      expect(result.current.deviceStep).toEqual({
+        kind: "error",
+        error: shortfall,
+        isGeneric: false,
+      });
       mockExecuteSwap.mockClear();
 
       act(() => result.current.retry());
 
       expect(onReturnToForm).toHaveBeenCalledTimes(1);
       expect(mockExecuteSwap).not.toHaveBeenCalled();
+      expect(track).not.toHaveBeenCalledWith("swap error message", expect.anything());
     },
   );
 
@@ -482,11 +488,17 @@ describe("usePerpsDepositExecution", () => {
   });
 
   it("hides a payload failure behind the generic error, reports it, and returns to the form", async () => {
-    mockExecuteSwap.mockRejectedValue(new PayloadStepError(new Error("500")));
+    const payloadFailure = new PayloadStepError(new Error("500"));
+    mockExecuteSwap.mockRejectedValueOnce(payloadFailure);
     const { result, onReturnToForm } = renderExecution();
 
     await act(async () => result.current.executeDeposit());
 
+    expect(result.current.deviceStep).toEqual({
+      kind: "error",
+      error: payloadFailure,
+      isGeneric: true,
+    });
     expect(track).toHaveBeenCalledWith("swap error message", {
       message: "deposit_sign_failed",
       page: "perps_deposit_sign",
