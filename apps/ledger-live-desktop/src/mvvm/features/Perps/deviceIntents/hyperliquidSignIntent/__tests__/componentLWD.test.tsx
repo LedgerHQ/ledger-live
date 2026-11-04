@@ -5,11 +5,6 @@ import type { HyperliquidSignIntentJobState } from "@features/platform-hyperliqu
 import { useDeviceBlocked } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import { HyperliquidSignIntentComponentLWD } from "../componentLWD";
 
-const mockHandleExportLogs = jest.fn();
-jest.mock("LLD/hooks/useExportLogs", () => ({
-  useExportLogs: () => ({ handleExportLogs: mockHandleExportLogs }),
-}));
-
 const SIGNING: HyperliquidSignIntentJobState = {
   type: "signing",
   deviceModelId: DeviceModelId.STAX,
@@ -17,21 +12,16 @@ const SIGNING: HyperliquidSignIntentJobState = {
 };
 
 function renderComponent(jobState: HyperliquidSignIntentJobState | undefined) {
-  const onClose = jest.fn();
-  const view = render(
+  return render(
     <HyperliquidSignIntentComponentLWD
       jobState={jobState}
       extraProps={undefined}
-      onClose={onClose}
+      onClose={jest.fn()}
     />,
   );
-
-  return { ...view, onClose };
 }
 
 describe("HyperliquidSignIntentComponentLWD", () => {
-  beforeEach(() => jest.clearAllMocks());
-
   it("renders nothing before the job emits a state", () => {
     const { container } = renderComponent(undefined);
 
@@ -62,36 +52,14 @@ describe("HyperliquidSignIntentComponentLWD", () => {
     expect(blocked.result.current).toBe(false);
   });
 
-  it("tells the user the action was rejected and lets them close", async () => {
-    const { user, onClose } = renderComponent({ type: "refused" });
+  it.each<HyperliquidSignIntentJobState>([
+    { type: "signed" },
+    { type: "refused" },
+    { type: "error", error: new Error("certificate not found") },
+  ])("leaves the $type outcome to the live app while the dialog closes", jobState => {
+    renderComponent(jobState);
 
-    expect(screen.getByText("Action rejected")).toBeVisible();
-    await user.click(screen.getByTestId("perps-sign-intent-refused-close"));
-
-    expect(onClose).toHaveBeenCalledTimes(1);
-  });
-
-  describe("when signing failed", () => {
-    const errorState: HyperliquidSignIntentJobState = {
-      type: "error",
-      error: new Error("certificate not found"),
-    };
-
-    it("lets the user save their logs", async () => {
-      const { user } = renderComponent(errorState);
-
-      expect(screen.getByTestId("perps-sign-intent-error")).toBeVisible();
-      await user.click(screen.getByTestId("perps-sign-intent-error-save-logs"));
-
-      expect(mockHandleExportLogs).toHaveBeenCalledTimes(1);
-    });
-
-    it("lets the user close", async () => {
-      const { user, onClose } = renderComponent(errorState);
-
-      await user.click(screen.getByTestId("perps-sign-intent-error-close"));
-
-      expect(onClose).toHaveBeenCalledTimes(1);
-    });
+    expect(screen.getByTestId("perps-sign-intent-done")).toBeVisible();
+    expect(screen.queryByRole("button")).not.toBeInTheDocument();
   });
 });

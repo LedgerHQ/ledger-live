@@ -95,29 +95,18 @@ describe("usePerpsSignExecutorViewModel", () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it("answers with the refusal and keeps the refused screen open", async () => {
-    const { result, request, onClose, finishJob } = await renderViewModel();
-    const refusal = new UserRefusedOnDevice();
+  it.each([
+    ["refusal", { type: "refused", error: new UserRefusedOnDevice() }],
+    ["failure", { type: "failed", error: new Error("certificate not found") }],
+  ] as const)("answers with the %s and closes", async (_, outcome) => {
+    const { request, onClose, finishJob } = await renderViewModel();
 
-    finishJob({ type: "refused", error: refusal });
-
-    expect(request.onError).toHaveBeenCalledWith(refusal);
-    expect(onClose).not.toHaveBeenCalled();
-
-    act(() => result.current.onUserCancel());
+    finishJob(outcome);
 
     expect(request.onError).toHaveBeenCalledTimes(1);
+    expect(request.onError).toHaveBeenCalledWith(outcome.error);
+    expect(request.onSuccess).not.toHaveBeenCalled();
     expect(onClose).toHaveBeenCalledTimes(1);
-  });
-
-  it("answers with the failure and keeps the error screen open", async () => {
-    const { request, onClose, finishJob } = await renderViewModel();
-    const failure = new Error("certificate not found");
-
-    finishJob({ type: "failed", error: failure });
-
-    expect(request.onError).toHaveBeenCalledWith(failure);
-    expect(onClose).not.toHaveBeenCalled();
   });
 
   it("answers with a refusal when closed before a result", async () => {

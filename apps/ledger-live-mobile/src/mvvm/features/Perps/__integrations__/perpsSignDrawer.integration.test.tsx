@@ -140,6 +140,21 @@ describe("Perps sign drawer integration", () => {
     await waitFor(() => expect(screen.queryByTestId("device-intent-executor")).toBeNull());
   });
 
+  it("answers the live app with the device refusal and closes, leaving the outcome screen to it", async () => {
+    renderPerps();
+    const request = requestSignature();
+    await screen.findByTestId("device-intent-executor");
+    const refusal = new UserRefusedOnDevice();
+
+    act(() => {
+      mockExecutorProps!.intent.onResult?.({ type: "refused", error: refusal });
+      mockExecutorProps!.onIntentJobComplete();
+    });
+
+    await expect(request).rejects.toMatchObject({ name: refusal.name });
+    await waitFor(() => expect(screen.queryByTestId("device-intent-executor")).toBeNull());
+  });
+
   it("answers the live app with a refusal when the user closes the drawer", async () => {
     renderPerps();
     const request = requestSignature();
