@@ -204,14 +204,16 @@ const MAX_FLUSH_ROUNDS = 5;
 /**
  * Send the debounced `setKey` calls to main now, and wait until main has them.
  */
-export const flushPendingWrites = async () => {
+export const flushPendingWrites = () => flushQueuedSetKeys(0);
+
+async function flushQueuedSetKeys(round: number): Promise<void> {
+  if (round >= MAX_FLUSH_ROUNDS || queuedSetKeys.size === 0) return;
+  const toFlush = Array.from(queuedSetKeys);
+  queuedSetKeys.clear();
+  await Promise.all(toFlush.map(debouncedSetKey => debouncedSetKey.flush()));
   // The store can queue more writes while main saves the first ones: flush those too.
-  for (let round = 0; round < MAX_FLUSH_ROUNDS && queuedSetKeys.size > 0; round++) {
-    const toFlush = Array.from(queuedSetKeys);
-    queuedSetKeys.clear();
-    await Promise.all(toFlush.map(debouncedSetKey => debouncedSetKey.flush()));
-  }
-};
+  return flushQueuedSetKeys(round + 1);
+}
 
 export const hasEncryptionKey = (ns: string, keyPath: keyof DatabaseValues) =>
   db.hasEncryptionKey(ns, keyPath);
