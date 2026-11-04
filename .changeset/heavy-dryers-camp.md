@@ -1,4 +1,5 @@
 ---
+"@domain/api-currency-token": minor
 "@ledgerhq/live-common": minor
 "ledger-live-desktop": minor
 "live-mobile": minor
