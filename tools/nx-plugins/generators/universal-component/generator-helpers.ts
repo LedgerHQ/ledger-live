@@ -27,10 +27,11 @@ function absoluteModulePath(entryFile: string): string {
   return posix.join(workspaceRoot, normalized);
 }
 
-function treePathFromAbsolute(absolutePath: string): string {
+function absoluteToTreePath(absolutePath: string): string {
   const normalized = absolutePath.replace(/\\/g, "/");
   const root = workspaceRoot.replace(/\\/g, "/");
   if (normalized.startsWith(`${root}/`)) return normalized.slice(root.length + 1);
+  if (normalized === root) return "";
   return normalized;
 }
 
@@ -80,20 +81,12 @@ export function componentTargetDirectory(
 }
 
 export function createTreeReader(tree: Tree, projectRoot: string): FileReader {
-  const root = projectRoot.replace(/\\/g, "/").replace(/^\.\/|\/+$/g, "");
-  const cwd = process.cwd().replace(/\\/g, "/");
+  void projectRoot;
 
   function toTreePath(file: string): string {
     const normalized = file.replace(/\\/g, "/");
-    if (tree.exists(normalized)) return normalized;
-    const fromCwd = posix.relative(cwd, normalized);
-    if (!fromCwd.startsWith("..") && tree.exists(fromCwd)) return fromCwd;
-    const fromCwdSlash = `${cwd}/${root}/`;
-    if (normalized.startsWith(fromCwdSlash)) return normalized.slice(cwd.length + 1);
-    const marker = `/${root}/`;
-    const index = normalized.indexOf(marker);
-    if (index !== -1) return normalized.slice(index + 1);
-    return normalized;
+    if (!posix.isAbsolute(normalized)) return normalized;
+    return absoluteToTreePath(normalized);
   }
 
   return {
@@ -188,7 +181,7 @@ export function firstClashingExportName(
 ): string | undefined {
   for (const file of entryFiles) {
     for (const platform of PLATFORMS) {
-      const exported = exportNamesFromEntry(file, platform, reader);
+      const exported = exportNamesFromEntry(absoluteModulePath(file), platform, reader);
       const found = names.find(name => exported.has(name));
       if (found) return found;
     }
@@ -214,7 +207,7 @@ export function platformReachableFiles(entryFiles: string[], reader: FileReader)
     for (const specifier of [...module.stars, ...(module.typeStars ?? [])]) {
       for (const platform of PLATFORMS) {
         const target = resolveFromEntry(file, specifier, platform, reader);
-        if (target !== null) queue.push(treePathFromAbsolute(target));
+        if (target !== null) queue.push(absoluteToTreePath(target));
       }
     }
   }
@@ -231,9 +224,10 @@ export function entryReExportsDirectory(
   return module.stars.some(specifier => {
     for (const platform of PLATFORMS) {
       const resolved = resolveFromEntry(entryFile, specifier, platform, reader);
-      if (resolved !== null && posix.dirname(treePathFromAbsolute(resolved)) === dir) {
-        return true;
-      }
+      if (resolved === null) continue;
+      const resolvedTree = absoluteToTreePath(resolved);
+      if (posix.dirname(resolvedTree) !== dir) continue;
+      if (BARREL.test(posix.basename(resolvedTree))) return true;
     }
     return false;
   });
@@ -309,7 +303,8 @@ export function universalComponentTargetDirectory(
   projectRoot: string,
   directory: string | undefined,
 ): string {
-  return posix.join(projectRoot, "src", directory ?? "");
+  const normalized = normalizeDirectory(directory);
+  return posix.join(projectRoot, "src", normalized ?? "");
 }
 
 export function universalComponentNewFilePaths(className: string, dir: string): string[] {
@@ -382,7 +377,6 @@ export function generateUniversalComponent(
   context: GeneratorContext,
 ): void {
   const { projectRoot, exportsField, reader, templatesDir, className, breaksR5 } = context;
-  const directory = normalizeDirectory(options.directory);
   const substitutions = { className, testId: context.fileName, tmpl: "" };
   const generatedNames = [className, `${className}Props`];
   const universalEntries = universalEntryPaths(projectRoot, exportsField, reader);
@@ -406,7 +400,7 @@ export function generateUniversalComponent(
     throw new Error(`${universalClash} is already exported from "." of ${projectRoot}.`);
   }
 
-  const dir = universalComponentTargetDirectory(projectRoot, directory);
+  const dir = universalComponentTargetDirectory(projectRoot, options.directory);
   assertNewFiles(tree, universalComponentNewFilePaths(className, dir));
   const platformReach = platformReachableFiles(platformEntries, reader);
   const barrels = barrelsForComponent(tree, dir, universalEntries, platformReach, reader);

@@ -13,6 +13,7 @@ import {
   platformReachableFiles,
   relativeSpecifier,
   type GeneratorContext,
+  universalComponentTargetDirectory,
   universalEntryPaths,
 } from "./generator-helpers";
 
@@ -59,10 +60,28 @@ describe("componentTargetDirectory", () => {
   });
 });
 
+describe("universalComponentTargetDirectory", () => {
+  it("defaults to src when no directory is given", () => {
+    expect(universalComponentTargetDirectory(PACKAGE, undefined)).toBe(`${PACKAGE}/src`);
+  });
+
+  it("joins an explicit directory under src", () => {
+    expect(universalComponentTargetDirectory(PACKAGE, "Folder")).toBe(`${PACKAGE}/src/Folder`);
+  });
+
+  it("rejects paths that escape src", () => {
+    expect(() => universalComponentTargetDirectory(PACKAGE, "../lib")).toThrow(
+      /inside the package's src/,
+    );
+  });
+});
+
 describe("barrelsForComponent", () => {
   it("appends to a folder barrel the entries re-export directly", () => {
     const tree = createTreeWithEmptyWorkspace();
     seedDualPackage(tree, { ".": UNIVERSAL });
+    tree.write(`${PACKAGE}/src/index.ts`, 'export * from "./Folder";\n');
+    tree.write(`${PACKAGE}/src/index.native.ts`, 'export * from "./Folder";\n');
     tree.write(`${PACKAGE}/src/Folder/index.ts`, 'export * from "./Widget";\n');
     const reader = createTreeReader(tree, PACKAGE);
     const universalEntries = universalEntryPaths(PACKAGE, { ".": UNIVERSAL }, reader);
@@ -73,6 +92,24 @@ describe("barrelsForComponent", () => {
       `${PACKAGE}/src/Folder/index.ts`,
     ]);
     expect(entryReExportsDirectory(`${PACKAGE}/src/index.ts`, dir, reader)).toBe(true);
+  });
+
+  it("uses universal entry barrels when entries only re-export a file inside the folder", () => {
+    const tree = createTreeWithEmptyWorkspace();
+    seedDualPackage(tree, { ".": UNIVERSAL });
+    tree.write(`${PACKAGE}/src/index.ts`, 'export * from "./Folder/Widget";\n');
+    tree.write(`${PACKAGE}/src/index.native.ts`, 'export * from "./Folder/Widget";\n');
+    tree.write(`${PACKAGE}/src/Folder/Widget.ts`, "export const Widget = 1;\n");
+    tree.write(`${PACKAGE}/src/Folder/index.ts`, 'export * from "./Widget";\n');
+    const reader = createTreeReader(tree, PACKAGE);
+    const universalEntries = universalEntryPaths(PACKAGE, { ".": UNIVERSAL }, reader);
+    const dir = `${PACKAGE}/src/Folder`;
+    const platformReach = platformReachableFiles([`${PACKAGE}/src/native/index.native.ts`], reader);
+
+    expect(barrelsForComponent(tree, dir, universalEntries, platformReach, reader)).toEqual(
+      universalEntries,
+    );
+    expect(entryReExportsDirectory(`${PACKAGE}/src/index.ts`, dir, reader)).toBe(false);
   });
 
   it("keeps universal entry barrels when a platform entry reaches the folder", () => {
