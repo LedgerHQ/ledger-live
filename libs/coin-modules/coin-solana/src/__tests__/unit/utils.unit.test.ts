@@ -1,4 +1,10 @@
 import {
+  PublicKey,
+  SystemProgram,
+  TransactionMessage,
+  VersionedTransaction,
+} from "@solana/web3.js";
+import {
   DEFAULT_LEDGER_VALIDATORS,
   DEFAULT_TX_FEE,
   LEDGER_VALIDATOR_BY_BITWISE,
@@ -9,9 +15,11 @@ import { TEST_CONFIG } from "../../test/coinConfig";
 import {
   chainConfigFrom,
   defaultLedgerValidatorOf,
+  DUMMY_SIGNATURE,
   feesOf,
   ledgerFirstValidators,
   ledgerValidatorsOf,
+  refreshesBlockhash,
 } from "../../utils";
 
 describe("utils - chainConfigFrom", () => {
@@ -19,6 +27,43 @@ describe("utils - chainConfigFrom", () => {
     const config = { ...TEST_CONFIG, rpcUrl: "https://custom-devnet.example.com" };
 
     expect(chainConfigFrom(config).endpoint).toBe("https://custom-devnet.example.com");
+  });
+});
+
+describe("utils - refreshesBlockhash", () => {
+  const SENDER = new PublicKey("HxCvgjSbF8HMt3fj8P3j49jmajNCMwKAqBu79HUDPtkM");
+  const OTHER = new PublicKey("AjmMiagw33Ad4WdPR3y2QWsDXaLxmsiSZEpMfpT1Q9uZ");
+  const BLOCKHASH = "EEbZs6DmDyDjucyYbo3LwVJU7pQYuVopYcYTSEZXskW3";
+
+  const transfer = (payer: PublicKey, from: PublicKey) =>
+    new VersionedTransaction(
+      new TransactionMessage({
+        payerKey: payer,
+        recentBlockhash: BLOCKHASH,
+        instructions: [SystemProgram.transfer({ fromPubkey: from, toPubkey: OTHER, lamports: 1 })],
+      }).compileToV0Message(),
+    );
+
+  it("refreshes a transaction the sender alone signs, while it is unsigned", () => {
+    expect(refreshesBlockhash(transfer(SENDER, SENDER))).toBe(true);
+  });
+
+  it("keeps the blockhash of a transaction already signed", () => {
+    const signed = transfer(SENDER, SENDER);
+    signed.signatures[0] = Buffer.alloc(64, 7);
+    expect(refreshesBlockhash(signed)).toBe(false);
+  });
+
+  it("keeps the blockhash while a co-signer still has to sign", () => {
+    // The sender pays and a second account signs, or a partner pays and the sender signs second.
+    expect(refreshesBlockhash(transfer(SENDER, OTHER))).toBe(false);
+    expect(refreshesBlockhash(transfer(OTHER, SENDER))).toBe(false);
+  });
+
+  it("treats the 0x01-filled placeholder as unsigned", () => {
+    const placeholder = transfer(SENDER, SENDER);
+    placeholder.signatures[0] = DUMMY_SIGNATURE;
+    expect(refreshesBlockhash(placeholder)).toBe(true);
   });
 });
 

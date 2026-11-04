@@ -161,9 +161,9 @@ describe("createApi", () => {
   it("should pass parameters correctly to combine", async () => {
     jest.mocked(combine).mockReturnValueOnce("txHash");
     const api = createApi();
-    const result = await api.combine(context, "transaction", ["signature"]);
+    const result = await api.combine(context, "transaction", ["signature"], { pubkey: "signer" });
 
-    expect(combine).toHaveBeenCalledWith("transaction", ["signature"]);
+    expect(combine).toHaveBeenCalledWith("transaction", ["signature"], "signer");
     expect(result).toBe("txHash");
   });
 
