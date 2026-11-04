@@ -198,7 +198,7 @@ test.describe(
   "Send - new flow - self-transfer and custom fees",
   ethSendFlow(SendScenario.FEE_STRATEGY),
   () => {
-    const tx = new Transaction(Account.ETH_1, Account.ETH_2, "0.0001");
+    const tx = new Transaction(Account.ETH_1, Account.ETH_3, "0.0001");
 
     test.use({
       userdata: "skip-onboarding-with-last-seen-device",
