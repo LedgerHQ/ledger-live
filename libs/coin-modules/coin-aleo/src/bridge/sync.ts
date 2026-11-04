@@ -21,6 +21,7 @@ import {
   extractViewKey,
   isProvableApiConfigured,
   isRecordScannerReady,
+  isStakingOperation,
   splitPrivateAndPublicOperations,
   resolveConfig,
   sumStakedBalance,
@@ -122,13 +123,12 @@ export async function performPublicSync(
     AleoOperation[],
   ];
 
-  const isStakingMigrationRequired = config.enableStaking && hasMigratedStaking !== true;
-  const oldPublicOps = oldPublicOpsRaw;
+  const isStakingMigrationRequired = hasMigratedStaking !== true;
 
   const lastBlockHeight =
     shouldSyncFromScratch || isTokenMigrationRequired || isStakingMigrationRequired
       ? 0
-      : (oldPublicOps[0]?.blockHeight ?? 0);
+      : (oldPublicOpsRaw[0]?.blockHeight ?? 0);
 
   const latestAccountPublicOperations = await listOperations({
     config,
@@ -149,11 +149,17 @@ export async function performPublicSync(
   // Already-patched ops have modified senders/recipients that differ from raw API data.
   // Filter them from the incoming ops — mergeOps then simply keeps the patched version
   // from oldPublicOps untouched, and no patch-restoration pass is needed.
-  const patchedOpIds = new Set(oldPublicOps.filter(op => op.extra?.patched).map(op => op.id));
+  const patchedOpIds = new Set(oldPublicOpsRaw.filter(op => op.extra?.patched).map(op => op.id));
 
   const filteredLatestPublicOperations = latestAccountPublicOperations.operations.filter(
     op => !patchedOpIds.has(op.id),
   );
+  const stakingTransactionHashes = new Set(
+    filteredLatestPublicOperations.filter(isStakingOperation).map(op => op.hash),
+  );
+  const oldPublicOps = isStakingMigrationRequired
+    ? oldPublicOpsRaw.filter(op => !stakingTransactionHashes.has(op.hash))
+    : oldPublicOpsRaw;
 
   const publicOperations = shouldSyncFromScratch
     ? latestAccountPublicOperations.operations
@@ -223,7 +229,9 @@ export async function performPublicSync(
       lastPrivateSyncDate: initialAccount?.aleoResources?.lastPrivateSyncDate ?? null,
       ...stakingResources,
       ...(config.enableTokens && { hasMigratedPublicTokens: true }),
-      ...(config.enableStaking && { hasMigratedStaking: true }),
+      ...(hasMigratedStaking === true || isStakingMigrationRequired
+        ? { hasMigratedStaking: true }
+        : {}),
     },
   };
 }
@@ -357,11 +365,9 @@ export async function performPrivateSync({
   // the stored hash — undefined on an account that never had one.
   const publicSyncRanThisCycle = freshTransparentBalance !== undefined;
 
-  // The migration itself runs in the public sync, so only a chained run may report it happened.
-  // Staking being off clears the marker so a later re-enable runs its position migration.
+  // The history migration runs in public sync, so only a chained run may report its completion.
   const hasMigratedStaking =
-    config.enableStaking &&
-    (publicSyncRanThisCycle || initialAccount.aleoResources?.hasMigratedStaking === true);
+    publicSyncRanThisCycle || initialAccount.aleoResources?.hasMigratedStaking === true;
   const allOldOperations = publicSyncWasFromScratch ? [] : (initialAccount.operations ?? []);
   const [oldPrivateOps] = splitPrivateAndPublicOperations(allOldOperations);
   const lastPrivateBlockHeight = publicSyncWasFromScratch
