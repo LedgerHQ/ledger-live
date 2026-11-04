@@ -10,6 +10,7 @@ import type {
   ExplorerTransactionParams,
   ExplorerBroadcastReturn,
   ExplorerBlock,
+  ExplorerBlockHash,
 } from "./types";
 
 const fullUrl = (config: AlgorandCoinConfig, route: string): string => `${config.node}${route}`;
@@ -79,8 +80,16 @@ export const getBlock = async (
   round: number,
 ): Promise<ExplorerBlock> => {
   const { data } = await network<ExplorerBlock>({
-    url: fullUrl(config, `/blocks/${round}`),
+    url: fullUrl(config, `/blocks/${round}?header-only=true`),
   });
 
   return data;
+};
+
+export const getBlockHash = async (config: AlgorandCoinConfig, round: number): Promise<string> => {
+  const { data } = await network<ExplorerBlockHash>({
+    url: fullUrl(config, `/blocks/${round}/hash`),
+  });
+
+  return data.blockHash;
 };

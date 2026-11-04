@@ -12,6 +12,7 @@ jest.mock("../logic", () => ({
   craftApiTransaction: jest.fn(),
   estimateFees: jest.fn(),
   getBalance: jest.fn(),
+  getBlock: jest.fn(),
   getBlockInfo: jest.fn(),
   lastBlock: jest.fn(),
   listOperations: jest.fn(),
@@ -45,7 +46,6 @@ describe("Algorand API", () => {
       unsupported: [
         "call",
         "craftRawTransaction",
-        "getBlock",
         "getNextSequence",
         "getRewards",
         "getStakes",
@@ -63,6 +63,7 @@ describe("Algorand API", () => {
         craftTransaction: expect.any(Function),
         estimateFees: expect.any(Function),
         getBalance: expect.any(Function),
+        getBlock: expect.any(Function),
         getBlockInfo: expect.any(Function),
         lastBlock: expect.any(Function),
         listOperations: expect.any(Function),
@@ -139,6 +140,21 @@ describe("Algorand API", () => {
 
       expect(logic.getBlockInfo).toHaveBeenCalledWith(mockCtx, 100);
       expect(result).toEqual(mockBlockInfo);
+    });
+  });
+
+  describe("getBlock", () => {
+    it("should delegate to logic.getBlock", async () => {
+      const mockBlock = {
+        info: { height: 100, hash: "blockhash123", time: new Date() },
+        transactions: [],
+      };
+      (logic.getBlock as jest.Mock).mockResolvedValue(mockBlock);
+
+      const result = await api.getBlock(mockCtx, 100);
+
+      expect(logic.getBlock).toHaveBeenCalledWith(mockCtx, 100);
+      expect(result).toEqual(mockBlock);
     });
   });
 
@@ -219,6 +235,7 @@ describe("Algorand API", () => {
     const resolved = withDefaults(createApi());
 
     it("keeps the real implementations the module does carry", () => {
+      expect(resolved.supports("getBlock")).toBe(true);
       expect(resolved.supports("getBlockInfo")).toBe(true);
       expect(resolved.supports("validateIntent")).toBe(true);
       expect(resolved.supports("validateAddress")).toBe(true);
