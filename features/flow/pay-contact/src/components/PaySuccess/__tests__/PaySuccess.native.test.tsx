@@ -1,8 +1,9 @@
 import React from "react";
 import { fireEvent, screen } from "@testing-library/react-native";
 import { ContactIdSchema } from "@domain/entity-contact";
-import { PaySuccess, type PaySuccessProps } from "../PaySuccess.native";
-import { renderPaySuccess } from "./shared.native";
+import { PaySuccess } from "../PaySuccess";
+import type { PaySuccessProps } from "../PaySuccess.types";
+import { renderPaySuccess } from "./shared";
 
 const baseProps: PaySuccessProps = {
   recipient: { id: ContactIdSchema.parse("contact-ada"), name: "Ada", isMe: false },
