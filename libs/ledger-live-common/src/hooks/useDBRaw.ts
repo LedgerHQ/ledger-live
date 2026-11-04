@@ -90,6 +90,10 @@ export function createDBRecord<State>({
   const apply = (state: State, action: SetStateAction<State>) =>
     isUpdater(action) ? action(state) : action;
 
+  const write = (state: State) => {
+    void setter(state);
+  };
+
   const emit = (next: DBRecordSnapshot<State>) => {
     snapshot = next;
     listeners.forEach(listener => listener());
@@ -101,8 +105,11 @@ export function createDBRecord<State>({
       .then(stored => {
         const updates = pendingUpdates;
         pendingUpdates = [];
-        const state = updates.reduce(apply, stored ?? initialState);
-        if (updates.length > 0) setter(state);
+        const state = updates.reduce(
+          (current, action) => apply(current, action),
+          stored ?? initialState,
+        );
+        if (updates.length > 0) write(state);
         emit({ state, isLoaded: true });
       })
       .catch(() => {
@@ -122,7 +129,7 @@ export function createDBRecord<State>({
     },
     setState: action => {
       const state = apply(snapshot.state, action);
-      if (snapshot.isLoaded) setter(state);
+      if (snapshot.isLoaded) write(state);
       else pendingUpdates.push(action);
       emit({ ...snapshot, state });
     },
