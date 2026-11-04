@@ -364,4 +364,14 @@ describe("db saves", () => {
     await saved;
     expect(flushed).toBe(true);
   });
+
+  it("writes a pending save before reload clears the memory", async () => {
+    jest.useFakeTimers();
+    void db.setKey("windowParams", "MainWindow.positions", { x: 1, y: 2 });
+    await jest.advanceTimersByTimeAsync(0);
+
+    await db.reload();
+
+    expect(writtenFile("windowParams")).toEqual({ MainWindow: { positions: { x: 1, y: 2 } } });
+  });
 });

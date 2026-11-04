@@ -45,19 +45,20 @@ export async function flushPendingWrites(
  * Hold the window close and the app quit until the pending writes are on disk.
  */
 export function setupFlushOnQuit(window: BrowserWindow, flushMain: () => Promise<void>): void {
-  let rendererFlush: Promise<void> | null = null;
-  let rendererFlushed = false;
+  let flush: Promise<void> | null = null;
+  let flushed = false;
   let quitReady = false;
-  const flushRenderer = () =>
-    (rendererFlush ??= requestRendererFlush(window).then(() => {
-      rendererFlushed = true;
+  const flushAll = () =>
+    (flush ??= flushPendingWrites(() => requestRendererFlush(window), flushMain).then(() => {
+      flushed = true;
     }));
 
-  // The close button destroys the renderer before "window-all-closed" quits the app.
+  // The close button destroys the renderer before "window-all-closed" quits the app, and its
+  // "beforeunload" reloads the main db: main must write its pending saves before that too.
   window.on("close", event => {
-    if (rendererFlushed) return;
+    if (flushed) return;
     event.preventDefault();
-    void flushRenderer().then(() => {
+    void flushAll().then(() => {
       if (!window.isDestroyed()) window.close();
     });
   });
@@ -65,7 +66,11 @@ export function setupFlushOnQuit(window: BrowserWindow, flushMain: () => Promise
   app.on("before-quit", event => {
     if (quitReady) return;
     event.preventDefault();
-    void flushPendingWrites(flushRenderer, flushMain).then(() => {
+    // After the window close, only main can still have pending saves.
+    const done = flushed
+      ? flushMain().catch(error => console.error("db flush failed", error))
+      : flushAll();
+    void done.then(() => {
       quitReady = true;
       app.quit();
     });

@@ -185,6 +185,8 @@ async function ensureNSLoaded(ns: string) {
  * to ensure the lock/unlock detection is still valid.
  */
 async function reload() {
+  // A pending save would otherwise load the file again and write its old values back.
+  await flush();
   if (DBPath) init(DBPath);
 }
 
