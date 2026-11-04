@@ -12,8 +12,8 @@ import {
   ExternalAddressDeviceContextSchema,
 } from "./device/types";
 
-export const ContactIdSchema = NonEmptyStringSchema;
-export const ContactAddressIdSchema = NonEmptyStringSchema;
+export const ContactIdSchema = NonEmptyStringSchema.brand<"ContactId">();
+export const ContactAddressIdSchema = NonEmptyStringSchema.brand<"ContactAddressId">();
 export const ContactCurrencyIdSchema = z.union([CryptoCurrencyIdSchema, TokenCurrencyIdSchema]);
 
 const ContactNamePattern = /^(?=.*[^ ])[\x20-\x7E]+$/;
@@ -56,7 +56,7 @@ export const ContactAddressLabelInputSchema = z
   .transform(label => label.normalize("NFC"))
   .pipe(z.union([z.literal(""), ContactAddressLabelSchema]));
 
-export const ContactAddressValueSchema = NonEmptyStringSchema;
+export const ContactAddressValueSchema = NonEmptyStringSchema.brand<"ContactAddressValue">();
 
 export const ContactAddressSchema = z.object({
   id: ContactAddressIdSchema,

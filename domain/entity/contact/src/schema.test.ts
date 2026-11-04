@@ -2,8 +2,10 @@ import {
   ContactAddressLabelInputSchema,
   ContactAddressLabelSchema,
   ContactAddressSchema,
+  ContactAddressIdSchema,
   ContactAddressValueSchema,
   ContactCurrencyIdSchema,
+  ContactIdSchema,
   CONTACT_NAME_MAX_LENGTH,
   ContactNameInputSchema,
   ContactNameSchema,
@@ -18,6 +20,7 @@ import {
   mockMeContact,
   mockPopulatedContacts,
 } from "./schema.mock";
+import type { ContactAddressId, ContactAddressValue, ContactId } from "./types";
 
 describe("ContactSchema", () => {
   it("parses the self contact used by Me screens", () => {
@@ -174,5 +177,44 @@ describe("contact mock factories", () => {
     ]);
     expect(contacts[0]?.addresses).toHaveLength(3);
     expect(contacts[2]?.addresses).toHaveLength(2);
+  });
+});
+
+describe("contact id brands", () => {
+  it("keeps contact id, address id and address value apart", () => {
+    const contactId = ContactIdSchema.parse("contact-1");
+    const addressId = ContactAddressIdSchema.parse("address-1");
+    const addressValue = ContactAddressValueSchema.parse(
+      "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034",
+    );
+
+    // @ts-expect-error a contact address id is not a contact id
+    const contactIdFromAddressId: ContactId = addressId;
+    // @ts-expect-error a contact address value is not a contact id
+    const contactIdFromAddressValue: ContactId = addressValue;
+    // @ts-expect-error a contact id is not a contact address id
+    const addressIdFromContactId: ContactAddressId = contactId;
+    // @ts-expect-error a contact address value is not a contact address id
+    const addressIdFromAddressValue: ContactAddressId = addressValue;
+    // @ts-expect-error a contact id is not a contact address value
+    const addressValueFromContactId: ContactAddressValue = contactId;
+    // @ts-expect-error a contact address id is not a contact address value
+    const addressValueFromAddressId: ContactAddressValue = addressId;
+
+    expect([
+      contactIdFromAddressId,
+      contactIdFromAddressValue,
+      addressIdFromContactId,
+      addressIdFromAddressValue,
+      addressValueFromContactId,
+      addressValueFromAddressId,
+    ]).toEqual([
+      "address-1",
+      "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034",
+      "contact-1",
+      "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034",
+      "contact-1",
+      "address-1",
+    ]);
   });
 });
