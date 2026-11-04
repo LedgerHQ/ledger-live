@@ -12,6 +12,11 @@ const {
   DEVTOOLS_ALLOWED_IMPORTS,
   DEVTOOLS_TYPE_ONLY_IMPORTS,
   DEVTOOLS_TYPE_ONLY_RULE,
+  DEVTOOLS_LAZY_IMPORTS,
+  DEVTOOLS_LAZY_RULE,
+  DEVTOOLS_HOST_APPS,
+  DEVTOOLS_HOST_APP_RULE,
+  DEVTOOLS_HOST_FOLDER_RULE,
 } = require("./constraints");
 const fs = require("node:fs");
 const path = require("node:path");
@@ -25,7 +30,10 @@ const ts = require("typescript");
  * @typedef {{ file: string, specifier: string }} SourceViolation
  * @typedef {{ manifest: string, dependency: string, field: string, reason: string }} BannedDepViolation
  * @typedef {{ file: string, specifier: string, field?: string, sourceTag: string }} BannedExternalViolation
- * @typedef {{ source: string, target: string, file?: string }} DevtoolsImportViolation
+ * @typedef {"DEVTOOLS_TYPE_ONLY_RULE" | "DEVTOOLS_LAZY_RULE"} DevtoolsRule
+ * @typedef {{ source: string, target: string, file?: string, line?: number, specifier?: string, rule?: DevtoolsRule }} DevtoolsImportViolation
+ * @typedef {"DEVTOOLS_HOST_APP_RULE" | "DEVTOOLS_HOST_FOLDER_RULE"} DevtoolsHostRule
+ * @typedef {{ file: string, line: number, specifier: string, rule: DevtoolsHostRule }} DevtoolsHostViolation
  */
 
 const DEPENDENCY_FIELDS = [
@@ -100,48 +108,69 @@ function importSpecifiers(content) {
 
 const sourceFiles = {
   /**
-   * Read and parse a source file, without type information.
+   * Parse a source file, without type information.
    *
    * @param {string} file
+   * @param {string} [content] the file's content, read from disk when omitted
    * @returns {import("typescript").SourceFile}
    */
-  parse(file) {
-    return ts.createSourceFile(file, fs.readFileSync(file, "utf8"), ts.ScriptTarget.Latest, false);
+  parse(file, content = fs.readFileSync(file, "utf8")) {
+    return ts.createSourceFile(file, content, ts.ScriptTarget.Latest, false);
   },
 };
 
 /**
- * Specifiers a source file loads at runtime: every import but the type-only forms
- * `DEVTOOLS_TYPE_ONLY_RULE` allows, which the build erases.
+ * How a source file loads a module: `"type"` for the forms the build erases (`import type`,
+ * `export type … from`, `typeof import("…")`), `"dynamic"` for `import()`, `"static"` for the rest.
+ *
+ * @typedef {"type" | "dynamic" | "static"} ReferenceKind
+ * @typedef {{ specifier: string, kind: ReferenceKind, line: number }} ModuleReference
+ */
+
+/**
+ * Every module a source file references, with how it loads it and the 1-based line.
  *
  * @param {import("typescript").SourceFile} source
- * @returns {string[]}
+ * @returns {ModuleReference[]}
  */
-function runtimeSpecifiers(source) {
-  const specifiers = [];
+function moduleReferences(source) {
+  /** @type {ModuleReference[]} */
+  const references = [];
   /** @param {import("typescript").Node} node */
   const visit = node => {
     let spec;
-    if (ts.isImportDeclaration(node) && !node.importClause?.isTypeOnly) {
+    /** @type {ReferenceKind} */
+    let kind = "static";
+    if (ts.isImportDeclaration(node)) {
       spec = node.moduleSpecifier;
-    } else if (ts.isExportDeclaration(node) && !node.isTypeOnly) {
+      if (node.importClause?.isTypeOnly) kind = "type";
+    } else if (ts.isExportDeclaration(node)) {
       spec = node.moduleSpecifier;
-    } else if (ts.isImportEqualsDeclaration(node) && !node.isTypeOnly) {
-      spec = ts.isExternalModuleReference(node.moduleReference)
-        ? node.moduleReference.expression
-        : undefined;
-    } else if (
-      ts.isCallExpression(node) &&
-      (node.expression.kind === ts.SyntaxKind.ImportKeyword ||
-        (ts.isIdentifier(node.expression) && node.expression.text === "require"))
-    ) {
-      spec = node.arguments[0];
+      if (node.isTypeOnly) kind = "type";
+    } else if (ts.isImportEqualsDeclaration(node)) {
+      if (ts.isExternalModuleReference(node.moduleReference)) {
+        spec = node.moduleReference.expression;
+      }
+      if (node.isTypeOnly) kind = "type";
+    } else if (ts.isImportTypeNode(node)) {
+      if (ts.isLiteralTypeNode(node.argument)) spec = node.argument.literal;
+      kind = "type";
+    } else if (ts.isCallExpression(node)) {
+      if (node.expression.kind === ts.SyntaxKind.ImportKeyword) {
+        spec = node.arguments[0];
+        kind = "dynamic";
+      } else if (ts.isIdentifier(node.expression) && node.expression.text === "require") {
+        spec = node.arguments[0];
+      }
     }
-    if (spec && ts.isStringLiteralLike(spec)) specifiers.push(spec.text);
+    if (spec && ts.isStringLiteralLike(spec)) {
+      const { line } = source.getLineAndCharacterOfPosition(spec.getStart(source));
+      references.push({ specifier: spec.text, kind, line: line + 1 });
+    }
     ts.forEachChild(node, visit);
   };
   visit(source);
-  return specifiers;
+  return references;
 }
 
 /**
@@ -357,30 +386,63 @@ function allows(allowed, target) {
 /**
  * Collect every `@devtools/*` → `@devtools/*` graph edge the allowed-imports table does not list.
  * An edge the type-only table lists passes when no source file under the package root loads the
- * target at runtime; each file that does is reported.
+ * target at runtime. An allowed edge the lazy table lists passes when no source file loads the
+ * target statically. Each import that breaks either rule is reported with its file and line.
  *
  * @param {ProjectGraphLike} graph
  * @param {string} workspaceRoot
  * @param {Record<string, string[] | "*">} allowedImports
- * @param {Record<string, string[] | "*">} typeOnlyImports
+ * @param {Record<string, string[] | "*">} [typeOnlyImports]
+ * @param {Record<string, string[] | "*">} [lazyImports]
  * @returns {DevtoolsImportViolation[]}
  */
-function findDevtoolsImportViolations(graph, workspaceRoot, allowedImports, typeOnlyImports = {}) {
+function findDevtoolsImportViolations(
+  graph,
+  workspaceRoot,
+  allowedImports,
+  typeOnlyImports = {},
+  lazyImports = {},
+) {
   const names = devtoolsPackageNames(graph, workspaceRoot);
   const byEdge = new Map();
-  /** @type {Map<string, Array<{ file: string, specifiers: string[] }>>} */
+  /** @type {Map<string, Array<{ file: string, references: ModuleReference[] }>>} */
   const filesByNode = new Map();
   /** @param {string} nodeName */
-  const runtimeImportsOf = nodeName => {
+  const referencesOf = nodeName => {
     let files = filesByNode.get(nodeName);
     if (!files) {
       files = [];
       walkSourceFiles(path.join(workspaceRoot, graph.nodes[nodeName].data.root), file => {
-        files.push({ file, specifiers: runtimeSpecifiers(sourceFiles.parse(file)) });
+        files.push({ file, references: moduleReferences(sourceFiles.parse(file)) });
       });
       filesByNode.set(nodeName, files);
     }
     return files;
+  };
+  /**
+   * @param {string} sourceNode
+   * @param {string} source
+   * @param {string} target
+   * @param {string} targetNode
+   * @param {(kind: ReferenceKind) => boolean} breaks
+   * @param {DevtoolsRule} rule
+   */
+  const reportReferences = (sourceNode, source, target, targetNode, breaks, rule) => {
+    const targetRoot = path.join(workspaceRoot, graph.nodes[targetNode].data.root);
+    for (const { file, references } of referencesOf(sourceNode)) {
+      for (const { specifier, kind, line } of references) {
+        if (!breaks(kind) || !specifierLoads(file, specifier, target, targetRoot)) continue;
+        const rel = path.relative(workspaceRoot, file);
+        byEdge.set(`${source}\n${target}\n${rel}:${line}\n${specifier}`, {
+          source,
+          target,
+          file: rel,
+          line,
+          specifier,
+          rule,
+        });
+      }
+    }
   };
 
   for (const [sourceNode, edges] of Object.entries(graph.dependencies)) {
@@ -390,22 +452,140 @@ function findDevtoolsImportViolations(graph, workspaceRoot, allowedImports, type
     for (const edge of edges) {
       const target = names.get(edge.target);
       if (!target) continue;
-      if (allows(allowedImports[source], target)) continue;
 
+      if (allows(allowedImports[source], target)) {
+        if (allows(lazyImports[source], target)) {
+          reportReferences(
+            sourceNode,
+            source,
+            target,
+            edge.target,
+            kind => kind === "static",
+            "DEVTOOLS_LAZY_RULE",
+          );
+        }
+        continue;
+      }
       if (!allows(typeOnlyImports[source], target)) {
         byEdge.set(`${source}\n${target}`, { source, target });
         continue;
       }
-      const targetRoot = path.join(workspaceRoot, graph.nodes[edge.target].data.root);
-      for (const { file, specifiers } of runtimeImportsOf(sourceNode)) {
-        if (!specifiers.some(spec => specifierLoads(file, spec, target, targetRoot))) continue;
-        const rel = path.relative(workspaceRoot, file);
-        byEdge.set(`${source}\n${target}\n${rel}`, { source, target, file: rel });
-      }
+      reportReferences(
+        sourceNode,
+        source,
+        target,
+        edge.target,
+        kind => kind !== "type",
+        "DEVTOOLS_TYPE_ONLY_RULE",
+      );
     }
   }
 
   return [...byEdge.values()];
+}
+
+const TEST_FILE = /(^|\/)(__tests__|__integrations__)\/|\.test\.[^/]+$/;
+
+/**
+ * Path prefix aliases of an app's own `tsconfig.json` `compilerOptions.paths`, longest first.
+ * Only `prefix*` patterns are kept, mapped to their first target.
+ *
+ * @param {string} appRoot absolute
+ * @returns {Array<{ prefix: string, target: string }>}
+ */
+function readPathAliases(appRoot) {
+  const tsconfig = path.join(appRoot, "tsconfig.json");
+  const { config, error } = ts.readConfigFile(tsconfig, ts.sys.readFile);
+  if (error) {
+    throw new Error(`${tsconfig}: ${ts.flattenDiagnosticMessageText(error.messageText, "\n")}`);
+  }
+  const options = config.compilerOptions ?? {};
+  const base = path.resolve(appRoot, options.baseUrl ?? ".");
+  return Object.entries(options.paths ?? {})
+    .filter(([pattern, targets]) => pattern.endsWith("*") && targets[0]?.endsWith("*"))
+    .map(([pattern, targets]) => ({
+      prefix: pattern.slice(0, -1),
+      target: path.resolve(base, targets[0].slice(0, -1)),
+    }))
+    .sort((a, b) => b.prefix.length - a.prefix.length);
+}
+
+/**
+ * Absolute path a specifier names, before extension resolution: a relative path, or a bare
+ * specifier through the longest matching alias. `undefined` for a package import.
+ *
+ * @param {string} file absolute importer
+ * @param {string} spec
+ * @param {Array<{ prefix: string, target: string }>} aliases
+ * @returns {string | undefined}
+ */
+function resolveSpecifier(file, spec, aliases) {
+  if (spec.startsWith(".")) return path.resolve(path.dirname(file), spec);
+  const alias = aliases.find(a => spec.startsWith(a.prefix));
+  return alias && path.join(alias.target, spec.slice(alias.prefix.length));
+}
+
+/**
+ * A path without its source extension, so `x/index.tsx`, `x/index` and `x` compare alike.
+ *
+ * @param {string} p
+ */
+function moduleKey(p) {
+  const stripped = SOURCE_EXTS.has(path.extname(p)) ? p.slice(0, -path.extname(p).length) : p;
+  return path.basename(stripped) === "index" ? path.dirname(stripped) : stripped;
+}
+
+/**
+ * Check the source files of each host app under `DEVTOOLS_HOST_APP_RULE` and
+ * `DEVTOOLS_HOST_FOLDER_RULE`. Files under the app's `allowedUnder` folder are not checked.
+ *
+ * @param {string} workspaceRoot
+ * @param {Array<{ root: string, allowedUnder: string, entries: string[] }>} hostApps
+ * @returns {DevtoolsHostViolation[]}
+ */
+function findDevtoolsHostViolations(workspaceRoot, hostApps) {
+  const devtoolsRoot = path.join(workspaceRoot, DEVTOOLS_ROOT);
+  /** @type {DevtoolsHostViolation[]} */
+  const violations = [];
+
+  for (const app of hostApps) {
+    const appRoot = path.join(workspaceRoot, app.root);
+    const aliases = readPathAliases(appRoot);
+    const folder = path.resolve(appRoot, app.allowedUnder);
+    const entries = new Set(app.entries.map(e => moduleKey(path.resolve(appRoot, e))));
+    /**
+     * @param {string | undefined} p
+     * @param {string} dir
+     */
+    const isUnder = (p, dir) => p !== undefined && (p === dir || p.startsWith(dir + path.sep));
+
+    walkSourceFiles(appRoot, file => {
+      if (isUnder(file, folder)) return;
+      const content = fs.readFileSync(file, "utf8");
+      if (!content.includes("devtools/") && !content.includes(path.basename(folder))) return;
+      const rel = path.relative(workspaceRoot, file);
+      const isTest = TEST_FILE.test(path.relative(appRoot, file).split(path.sep).join("/"));
+
+      for (const { specifier, kind, line } of moduleReferences(sourceFiles.parse(file, content))) {
+        const resolved = resolveSpecifier(file, specifier, aliases);
+        if (
+          specifier.startsWith("@devtools/") ||
+          (specifier.startsWith(".") && isUnder(resolved, devtoolsRoot))
+        ) {
+          violations.push({ file: rel, line, specifier, rule: "DEVTOOLS_HOST_APP_RULE" });
+        } else if (
+          !isTest &&
+          kind !== "dynamic" &&
+          isUnder(resolved, folder) &&
+          !entries.has(moduleKey(resolved))
+        ) {
+          violations.push({ file: rel, line, specifier, rule: "DEVTOOLS_HOST_FOLDER_RULE" });
+        }
+      }
+    });
+  }
+
+  return violations;
 }
 
 /**
@@ -467,6 +647,17 @@ ${edge.target}`;
   }
 
   return [...byEdge.values()];
+}
+
+/** @param {DevtoolsImportViolation} v */
+function formatDevtoolsImportViolation(v) {
+  const where = v.file ? `  (${v.file}:${v.line} imports "${v.specifier}", breaks ${v.rule})` : "";
+  return `${v.source}  →  ${v.target}${where}`;
+}
+
+/** @param {DevtoolsHostViolation} v */
+function formatDevtoolsHostViolation(v) {
+  return `${v.file}:${v.line}  →  ${v.specifier}  (breaks ${v.rule})`;
 }
 
 const CONSTRAINTS_FILE = "tools/nx-plugins/enforce-boundaries/constraints.js";
@@ -543,10 +734,24 @@ async function main() {
         workspaceRoot,
         DEVTOOLS_ALLOWED_IMPORTS,
         DEVTOOLS_TYPE_ONLY_IMPORTS,
+        DEVTOOLS_LAZY_IMPORTS,
       ),
-      v => `${v.source}  →  ${v.target}${v.file ? `  (value import in ${v.file})` : ""}`,
-      "Allowed @devtools/* imports (DEVTOOLS_ALLOWED_IMPORTS, DEVTOOLS_TYPE_ONLY_IMPORTS)",
-      [DEVTOOLS_TYPE_ONLY_RULE],
+      formatDevtoolsImportViolation,
+      "Allowed @devtools/* imports (DEVTOOLS_ALLOWED_IMPORTS, DEVTOOLS_TYPE_ONLY_IMPORTS, DEVTOOLS_LAZY_IMPORTS)",
+      [
+        `DEVTOOLS_TYPE_ONLY_RULE: ${DEVTOOLS_TYPE_ONLY_RULE}`,
+        `DEVTOOLS_LAZY_RULE: ${DEVTOOLS_LAZY_RULE}`,
+      ],
+    ),
+    reportViolations(
+      "devtools host-app",
+      findDevtoolsHostViolations(workspaceRoot, DEVTOOLS_HOST_APPS),
+      formatDevtoolsHostViolation,
+      "Host apps, their DevTools folder and its entries (DEVTOOLS_HOST_APPS)",
+      [
+        `DEVTOOLS_HOST_APP_RULE: ${DEVTOOLS_HOST_APP_RULE}`,
+        `DEVTOOLS_HOST_FOLDER_RULE: ${DEVTOOLS_HOST_FOLDER_RULE}`,
+      ],
     ),
   ].includes(true);
 
@@ -561,6 +766,9 @@ module.exports = {
   findBannedDependencyViolations,
   findBannedExternalViolations,
   findDevtoolsImportViolations,
+  findDevtoolsHostViolations,
+  formatDevtoolsImportViolation,
+  formatDevtoolsHostViolation,
   sourceFiles,
   SKIP_DIRS,
   SOURCE_EXTS,

@@ -12,6 +12,9 @@ const {
   findBannedDependencyViolations,
   findBannedExternalViolations,
   findDevtoolsImportViolations,
+  findDevtoolsHostViolations,
+  formatDevtoolsImportViolation,
+  formatDevtoolsHostViolation,
   sourceFiles,
   DEVTOOLS_ROOT,
 } = require("./validate");
@@ -23,6 +26,8 @@ const {
   BANNED_DEPENDENCIES,
   DEVTOOLS_ALLOWED_IMPORTS,
   DEVTOOLS_TYPE_ONLY_IMPORTS,
+  DEVTOOLS_LAZY_IMPORTS,
+  DEVTOOLS_HOST_APPS,
 } = require("./constraints");
 const {
   isLintBoundariesInput,
@@ -958,6 +963,7 @@ function devtoolsViolations(graph, root) {
     root,
     DEVTOOLS_ALLOWED_IMPORTS,
     DEVTOOLS_TYPE_ONLY_IMPORTS,
+    DEVTOOLS_LAZY_IMPORTS,
   );
 }
 
@@ -1138,6 +1144,260 @@ test("devtools: each source file is read and parsed once across type-only edges"
   ]);
 });
 
+test("devtools: @devtools/registry importing a tool's values is forbidden", t => {
+  const { root, graph } = manifestWorkspace(
+    t,
+    DEVTOOLS_MANIFESTS,
+    [["devtools/registry", "devtools/env"]],
+    {
+      "devtools/registry/src/registry.ts": [
+        'import type { EnvDevToolProps } from "@devtools/env";',
+        'import EnvDevTool from "@devtools/env";',
+        'const env = require("@devtools/env");',
+      ].join("\n"),
+    },
+  );
+  assert.deepEqual(devtoolsViolations(graph, root), [
+    {
+      source: "@devtools/registry",
+      target: "@devtools/env",
+      file: path.join("devtools/registry/src/registry.ts"),
+      line: 2,
+      specifier: "@devtools/env",
+      rule: "DEVTOOLS_LAZY_RULE",
+    },
+    {
+      source: "@devtools/registry",
+      target: "@devtools/env",
+      file: path.join("devtools/registry/src/registry.ts"),
+      line: 3,
+      specifier: "@devtools/env",
+      rule: "DEVTOOLS_LAZY_RULE",
+    },
+  ]);
+});
+
+test("devtools: @devtools/registry may reach a tool through import() and type imports", t => {
+  const { root, graph } = manifestWorkspace(
+    t,
+    DEVTOOLS_MANIFESTS,
+    [["devtools/registry", "devtools/env"]],
+    {
+      "devtools/registry/src/metadata/env.ts": [
+        'import type { EnvDevToolProps } from "@devtools/env";',
+        'export type { EnvVarEntry } from "@devtools/env";',
+        'type Loader = typeof import("@devtools/env");',
+        'export const loader = () => import("@devtools/env");',
+      ].join("\n"),
+    },
+  );
+  assert.deepEqual(devtoolsViolations(graph, root), []);
+});
+
+test("devtools: a violation names the file, the line, the specifier and the rule", () => {
+  assert.equal(
+    formatDevtoolsImportViolation({
+      source: "@devtools/registry",
+      target: "@devtools/env",
+      file: "devtools/registry/src/registry.ts",
+      line: 2,
+      specifier: "@devtools/env",
+      rule: "DEVTOOLS_LAZY_RULE",
+    }),
+    '@devtools/registry  →  @devtools/env  (devtools/registry/src/registry.ts:2 imports "@devtools/env", breaks DEVTOOLS_LAZY_RULE)',
+  );
+  assert.equal(
+    formatDevtoolsHostViolation({
+      file: "apps/ledger-live-desktop/src/config/a.ts",
+      line: 1,
+      specifier: "@devtools/shell",
+      rule: "DEVTOOLS_HOST_APP_RULE",
+    }),
+    "apps/ledger-live-desktop/src/config/a.ts:1  →  @devtools/shell  (breaks DEVTOOLS_HOST_APP_RULE)",
+  );
+});
+
+// --- devtools host apps ---
+
+const LLD = "apps/ledger-live-desktop";
+const LLM = "apps/ledger-live-mobile";
+const LLD_DEVTOOLS = `${LLD}/src/mvvm/features/DevTools`;
+const LLM_DEVTOOLS = `${LLM}/src/mvvm/features/DevTools`;
+
+/**
+ * A workspace holding both host apps, with their tsconfig path aliases, plus `files`.
+ *
+ * @param {import("node:test").TestContext} t
+ * @param {Record<string, string>} files keyed by workspace-relative path
+ */
+function hostWorkspace(t, files) {
+  const tsconfig = alias =>
+    JSON.stringify({
+      compilerOptions: { paths: { "*": ["./*"], "~/*": ["./src/*"], [alias]: ["./src/mvvm/*"] } },
+    });
+  const root = makeTmpWorkspace({
+    [`${LLD}/tsconfig.json`]: tsconfig("LLD/*"),
+    [`${LLM}/tsconfig.json`]: tsconfig("LLM/*"),
+    ...files,
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  return root;
+}
+
+/**
+ * Violations of the host-app rules, as `file:line specifier rule`, sorted.
+ *
+ * @param {string} root
+ */
+function hostViolations(root) {
+  return findDevtoolsHostViolations(root, DEVTOOLS_HOST_APPS)
+    .map(v => `${v.file.split(path.sep).join("/")}:${v.line} ${v.specifier} ${v.rule}`)
+    .sort();
+}
+
+test("devtools host apps: product code importing @devtools/shell is forbidden, value or type", t => {
+  const root = hostWorkspace(t, {
+    [`${LLD}/src/config/devtools.ts`]: [
+      'import { DevTools } from "@devtools/shell";',
+      'import type { DevToolsConfig } from "@devtools/shell";',
+    ].join("\n"),
+    [`${LLM}/src/screens/Debug.tsx`]: 'import type { DevToolsConfig } from "@devtools/shell";',
+  });
+  assert.deepEqual(hostViolations(root), [
+    `${LLD}/src/config/devtools.ts:1 @devtools/shell DEVTOOLS_HOST_APP_RULE`,
+    `${LLD}/src/config/devtools.ts:2 @devtools/shell DEVTOOLS_HOST_APP_RULE`,
+    `${LLM}/src/screens/Debug.tsx:1 @devtools/shell DEVTOOLS_HOST_APP_RULE`,
+  ]);
+});
+
+test("devtools host apps: the DevTools folder may import @devtools/shell, value or type", t => {
+  const root = hostWorkspace(t, {
+    [`${LLD_DEVTOOLS}/screens/DevToolsScreen/index.tsx`]: [
+      'import { DevTools } from "@devtools/shell";',
+      'import type { DevToolsConfig } from "@devtools/shell";',
+    ].join("\n"),
+    [`${LLM_DEVTOOLS}/screens/DevToolsScreen/index.tsx`]:
+      'import type { DevToolsConfig } from "@devtools/shell";',
+  });
+  assert.deepEqual(hostViolations(root), []);
+});
+
+/** The coupling the device-onboarding split removed from product code, under `dir`. */
+const deviceOnboardingCoupling = dir => ({
+  [`${dir}/hooks/useDeviceOnboarding.ts`]:
+    'import { useDeviceOnboardingActor } from "@devtools/bindings";',
+  [`${dir}/utils/toolState.ts`]: [
+    'import type { DevToolsConfig } from "@devtools/shell";',
+    'export type ToolState = Extract<DevToolsConfig[number], { id: "device-onboarding" }>["config"];',
+  ].join("\n"),
+  [`${dir}/utils/ports.ts`]: 'import type { DeviceOnboardingPorts } from "@devtools/bindings";',
+});
+
+test("devtools host apps: a product feature coupled to @devtools/* is forbidden", t => {
+  const root = hostWorkspace(t, {
+    ...deviceOnboardingCoupling(`${LLD}/src/mvvm/features/DeviceOnboarding`),
+    ...deviceOnboardingCoupling(`${LLM}/src/mvvm/features/DeviceOnboarding`),
+  });
+  assert.deepEqual(
+    hostViolations(root),
+    [LLD, LLM]
+      .flatMap(app => [
+        `${app}/src/mvvm/features/DeviceOnboarding/hooks/useDeviceOnboarding.ts:1 @devtools/bindings DEVTOOLS_HOST_APP_RULE`,
+        `${app}/src/mvvm/features/DeviceOnboarding/utils/ports.ts:1 @devtools/bindings DEVTOOLS_HOST_APP_RULE`,
+        `${app}/src/mvvm/features/DeviceOnboarding/utils/toolState.ts:1 @devtools/shell DEVTOOLS_HOST_APP_RULE`,
+      ])
+      .sort(),
+  );
+});
+
+test("devtools host apps: the same coupling inside the DevTools folder is allowed", t => {
+  const root = hostWorkspace(t, {
+    ...deviceOnboardingCoupling(`${LLD_DEVTOOLS}/DeviceOnboarding`),
+    ...deviceOnboardingCoupling(`${LLM_DEVTOOLS}/DeviceOnboarding`),
+  });
+  assert.deepEqual(hostViolations(root), []);
+});
+
+test("devtools host apps: a relative path into devtools/ is forbidden", t => {
+  const root = hostWorkspace(t, {
+    [`${LLD}/src/config/devtools.ts`]: 'import { DevTools } from "../../../../devtools/shell/src";',
+  });
+  assert.deepEqual(hostViolations(root), [
+    `${LLD}/src/config/devtools.ts:1 ../../../../devtools/shell/src DEVTOOLS_HOST_APP_RULE`,
+  ]);
+});
+
+const NON_ENTRY = "screens/DevToolsScreen/useDevToolsScreenViewModel";
+
+test("devtools host apps: a static import of a non-entry DevTools file is forbidden", t => {
+  const root = hostWorkspace(t, {
+    [`${LLD_DEVTOOLS}/${NON_ENTRY}.ts`]: "export const x = 1;",
+    [`${LLM_DEVTOOLS}/${NON_ENTRY}.ts`]: "export const x = 1;",
+    [`${LLD}/src/mvvm/features/Settings/relative.ts`]: `import { x } from "../DevTools/${NON_ENTRY}";`,
+    [`${LLD}/src/renderer/aliased.ts`]: [
+      `import { x } from "LLD/features/DevTools/${NON_ENTRY}";`,
+      `import type { X } from "~/mvvm/features/DevTools/${NON_ENTRY}";`,
+      `export { x } from "LLD/features/DevTools";`,
+    ].join("\n"),
+    [`${LLM}/src/components/aliased.ts`]: [
+      `import { x } from "LLM/features/DevTools/${NON_ENTRY}";`,
+      `const y = require("~/mvvm/features/DevTools/${NON_ENTRY}");`,
+    ].join("\n"),
+  });
+  assert.deepEqual(hostViolations(root), [
+    `${LLD}/src/mvvm/features/Settings/relative.ts:1 ../DevTools/${NON_ENTRY} DEVTOOLS_HOST_FOLDER_RULE`,
+    `${LLD}/src/renderer/aliased.ts:1 LLD/features/DevTools/${NON_ENTRY} DEVTOOLS_HOST_FOLDER_RULE`,
+    `${LLD}/src/renderer/aliased.ts:2 ~/mvvm/features/DevTools/${NON_ENTRY} DEVTOOLS_HOST_FOLDER_RULE`,
+    `${LLD}/src/renderer/aliased.ts:3 LLD/features/DevTools DEVTOOLS_HOST_FOLDER_RULE`,
+    `${LLM}/src/components/aliased.ts:1 LLM/features/DevTools/${NON_ENTRY} DEVTOOLS_HOST_FOLDER_RULE`,
+    `${LLM}/src/components/aliased.ts:2 ~/mvvm/features/DevTools/${NON_ENTRY} DEVTOOLS_HOST_FOLDER_RULE`,
+  ]);
+});
+
+test("devtools host apps: import() and lazy(() => import()) of a DevTools file are allowed", t => {
+  const root = hostWorkspace(t, {
+    [`${LLD}/src/renderer/Default.tsx`]: [
+      'import { lazy } from "react";',
+      `const Screen = lazy(() => import("LLD/features/DevTools/screens/DevToolsScreen"));`,
+      `const load = () => import("../mvvm/features/DevTools/${NON_ENTRY}");`,
+    ].join("\n"),
+    [`${LLM}/src/components/Nav.tsx`]: `const load = () => import("~/mvvm/features/DevTools/${NON_ENTRY}");`,
+  });
+  assert.deepEqual(hostViolations(root), []);
+});
+
+test("devtools host apps: a static import of a declared entry is allowed", t => {
+  const root = hostWorkspace(t, {
+    [`${LLD}/src/renderer/App.tsx`]:
+      'import { DevToolsWindow } from "LLD/features/DevTools/components/DevToolsWindow";',
+    [`${LLD}/src/mvvm/components/TopBar/hooks/useDevTools.ts`]: [
+      'import { openDevToolsWindow } from "LLD/features/DevTools/components/DevToolsWindow/devToolsWindow";',
+      'import { DevToolsWindow } from "~/mvvm/features/DevTools/components/DevToolsWindow/index.tsx";',
+    ].join("\n"),
+    [`${LLM}/src/components/RootNavigator/SettingsNavigator.tsx`]:
+      'import DebugDevTools from "LLM/features/DevTools/screens/DevToolsScreen";',
+  });
+  assert.deepEqual(hostViolations(root), []);
+});
+
+test("devtools host apps: test files outside the DevTools folder may import any DevTools file", t => {
+  const statement = `import { x } from "LLD/features/DevTools/${NON_ENTRY}";`;
+  const root = hostWorkspace(t, {
+    [`${LLD}/src/renderer/App.test.tsx`]: statement,
+    [`${LLD}/src/renderer/__tests__/App.tsx`]: statement,
+    [`${LLD}/src/renderer/__integrations__/App.tsx`]: statement,
+  });
+  assert.deepEqual(hostViolations(root), []);
+});
+
+test("devtools host apps: files under skipped directories are not read", t => {
+  const root = hostWorkspace(t, {
+    [`${LLD}/node_modules/x/index.js`]: 'require("@devtools/shell");',
+    [`${LLM}/build/index.js`]: 'require("@devtools/shell");',
+  });
+  assert.deepEqual(hostViolations(root), []);
+});
+
 // --- lint:boundaries cache inputs ---
 
 const fixedSourceRoots = [...LEGACY_SOURCE_ROOTS, DEVTOOLS_ROOT];
@@ -1148,6 +1408,16 @@ test("lint:boundaries inputs cover every source file under the legacy and devtoo
 
 test("lint:boundaries inputs exclude each skipped directory under the legacy and devtools roots", () => {
   assertSkipDirsExcluded(fixedSourceRoots);
+});
+
+test("lint:boundaries inputs cover every source file and the tsconfig of each devtools host app", () => {
+  const appRoots = DEVTOOLS_HOST_APPS.map(app => app.root);
+  assertSourceFilesHashed(appRoots);
+  assertSkipDirsExcluded(appRoots);
+  assert.deepEqual(
+    appRoots.map(r => `${r}/tsconfig.json`).filter(file => !isLintBoundariesInput(file)),
+    [],
+  );
 });
 
 test("lint:boundaries inputs cover the graph configuration and the tags plugin", () => {
