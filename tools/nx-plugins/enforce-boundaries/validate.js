@@ -34,6 +34,8 @@ const ts = require("typescript");
  * @typedef {{ source: string, target: string, file?: string, line?: number, specifier?: string, rule?: DevtoolsRule }} DevtoolsImportViolation
  * @typedef {"DEVTOOLS_HOST_APP_RULE" | "DEVTOOLS_HOST_FOLDER_RULE"} DevtoolsHostRule
  * @typedef {{ file: string, line: number, specifier: string, rule: DevtoolsHostRule }} DevtoolsHostViolation
+ * @typedef {{ root: string, allowedUnder: string, entries: string[] }} DevtoolsHostApp
+ * @typedef {{ prefix: string, target: string }} PathAlias
  */
 
 const DEPENDENCY_FIELDS = [
@@ -487,61 +489,53 @@ function findDevtoolsImportViolations(
 const TEST_FILE = /(^|\/)(__tests__|__integrations__)\/|\.test\.[^/]+$/;
 
 /**
- * Module resolution settings of an app's own `tsconfig.json`: its `compilerOptions.paths` prefix
- * aliases, longest first (only `prefix*` patterns, mapped to their first target), and its
- * `moduleSuffixes`.
+ * The compiler options TypeScript computes for an app from its `tsconfig.json`, `extends` included.
+ * The file list is not expanded: only module resolution reads these options.
  *
  * @param {string} appRoot absolute
- * @returns {{ aliases: Array<{ prefix: string, target: string }>, suffixes: string[] }}
+ * @returns {import("typescript").CompilerOptions}
  */
-function readModuleResolution(appRoot) {
+function readCompilerOptions(appRoot) {
   const tsconfig = path.join(appRoot, "tsconfig.json");
   const { config, error } = ts.readConfigFile(tsconfig, ts.sys.readFile);
-  if (error) {
-    throw new Error(`${tsconfig}: ${ts.flattenDiagnosticMessageText(error.messageText, "\n")}`);
+  const { options, errors } = ts.parseJsonConfigFileContent(
+    config,
+    { ...ts.sys, readDirectory: () => [] },
+    appRoot,
+    undefined,
+    tsconfig,
+  );
+  const NO_INPUTS = 18003;
+  const fatal = [error, ...errors].filter(
+    /** @returns {d is import("typescript").Diagnostic} */
+    d => d !== undefined && d.code !== NO_INPUTS,
+  );
+  if (fatal.length > 0) {
+    throw new Error(
+      `${tsconfig}: ${fatal.map(d => ts.flattenDiagnosticMessageText(d.messageText, "\n")).join("\n")}`,
+    );
   }
-  const options = config.compilerOptions ?? {};
-  const base = path.resolve(appRoot, options.baseUrl ?? ".");
-  const aliases = Object.entries(options.paths ?? {})
+  return options;
+}
+
+/**
+ * The `paths` prefix aliases of resolved compiler options, longest first (only `prefix*` patterns,
+ * mapped to their first target).
+ *
+ * @param {import("typescript").CompilerOptions} options
+ * @param {string} appRoot absolute, the base of `paths` when the config sets no `baseUrl`
+ * @returns {PathAlias[]}
+ */
+function pathAliases(options, appRoot) {
+  const base =
+    options.baseUrl ?? /** @type {string | undefined} */ (options.pathsBasePath) ?? appRoot;
+  return Object.entries(options.paths ?? {})
     .filter(([pattern, targets]) => pattern.endsWith("*") && targets[0]?.endsWith("*"))
     .map(([pattern, targets]) => ({
       prefix: pattern.slice(0, -1),
       target: path.resolve(base, targets[0].slice(0, -1)),
     }))
     .sort((a, b) => b.prefix.length - a.prefix.length);
-  return { aliases, suffixes: options.moduleSuffixes ?? [""] };
-}
-
-/**
- * @param {string} p
- */
-function isFile(p) {
-  try {
-    return fs.statSync(p).isFile();
-  } catch {
-    return false;
-  }
-}
-
-/**
- * The source file a resolved specifier loads, in TypeScript's order: the path itself when it has a
- * source extension, then `<p><suffix><ext>`, then `<p>/index<suffix><ext>`. `undefined` when none
- * exists.
- *
- * @param {string} p absolute, as `resolveSpecifier` returns it
- * @param {string[]} suffixes the app's `moduleSuffixes`
- * @returns {string | undefined}
- */
-function resolveSourceFile(p, suffixes) {
-  if (SOURCE_EXTS.has(path.extname(p)) && isFile(p)) return p;
-  for (const base of [p, path.join(p, "index")]) {
-    for (const suffix of suffixes) {
-      for (const ext of SOURCE_EXTS) {
-        if (isFile(base + suffix + ext)) return base + suffix + ext;
-      }
-    }
-  }
-  return undefined;
 }
 
 /**
@@ -550,7 +544,7 @@ function resolveSourceFile(p, suffixes) {
  *
  * @param {string} file absolute importer
  * @param {string} spec
- * @param {Array<{ prefix: string, target: string }>} aliases
+ * @param {PathAlias[]} aliases
  * @returns {string | undefined}
  */
 function resolveSpecifier(file, spec, aliases) {
@@ -560,65 +554,101 @@ function resolveSpecifier(file, spec, aliases) {
 }
 
 /**
- * A path without its source extension, so `x/index.tsx`, `x/index` and `x` compare alike.
+ * `ts.sys` with its file-system lookups memoized: module resolution probes the same files,
+ * directories and symlinks for every importer, and the check does not write.
  *
- * @param {string} p
+ * @returns {import("typescript").ModuleResolutionHost}
  */
-function moduleKey(p) {
-  const stripped = SOURCE_EXTS.has(path.extname(p)) ? p.slice(0, -path.extname(p).length) : p;
-  return path.basename(stripped) === "index" ? path.dirname(stripped) : stripped;
+function cachedResolutionHost() {
+  /**
+   * @template T
+   * @param {(p: string) => T} lookup
+   * @returns {(p: string) => T}
+   */
+  const memoize = lookup => {
+    /** @type {Map<string, T>} */
+    const results = new Map();
+    return p => {
+      if (!results.has(p)) results.set(p, lookup(p));
+      return /** @type {T} */ (results.get(p));
+    };
+  };
+  return {
+    fileExists: memoize(ts.sys.fileExists),
+    directoryExists: memoize(p => ts.sys.directoryExists(p)),
+    readFile: memoize(p => ts.sys.readFile(p)),
+    realpath: memoize(p => (ts.sys.realpath ? ts.sys.realpath(p) : p)),
+    getDirectories: memoize(p => ts.sys.getDirectories(p)),
+    getCurrentDirectory: ts.sys.getCurrentDirectory,
+    useCaseSensitiveFileNames: ts.sys.useCaseSensitiveFileNames,
+  };
 }
 
 /**
  * Check the source files of each host app under `DEVTOOLS_HOST_APP_RULE` and
- * `DEVTOOLS_HOST_FOLDER_RULE`. Files under the app's `allowedUnder` folder are not checked.
+ * `DEVTOOLS_HOST_FOLDER_RULE`. Files under the app's `allowedUnder` folder are not checked. Each
+ * specifier is resolved with `ts.resolveModuleName` and the app's compiler options, so the file
+ * compared against the entries is the one TypeScript loads.
  *
  * @param {string} workspaceRoot
- * @param {Array<{ root: string, allowedUnder: string, entries: string[] }>} hostApps
+ * @param {DevtoolsHostApp[]} hostApps
  * @returns {DevtoolsHostViolation[]}
  */
 function findDevtoolsHostViolations(workspaceRoot, hostApps) {
-  const devtoolsRoot = path.join(workspaceRoot, DEVTOOLS_ROOT);
+  const realRoot = fs.realpathSync(workspaceRoot);
+  const devtoolsRoot = path.join(realRoot, DEVTOOLS_ROOT);
   /** @type {DevtoolsHostViolation[]} */
   const violations = [];
+  const host = cachedResolutionHost();
+  /**
+   * @param {string | undefined} p
+   * @param {string} dir
+   * @returns {p is string}
+   */
+  const isUnder = (p, dir) => p !== undefined && (p === dir || p.startsWith(dir + path.sep));
 
   for (const app of hostApps) {
-    const appRoot = path.join(workspaceRoot, app.root);
-    const { aliases, suffixes } = readModuleResolution(appRoot);
+    const appRoot = path.join(realRoot, app.root);
+    const options = readCompilerOptions(appRoot);
+    const aliases = pathAliases(options, appRoot);
+    const cache = ts.createModuleResolutionCache(appRoot, f => f, options);
     const folder = path.resolve(appRoot, app.allowedUnder);
     const entryFiles = new Set(app.entries.map(e => path.resolve(appRoot, e)));
-    const entryKeys = new Set([...entryFiles].map(moduleKey));
+
     /**
-     * An entry is matched on the file the specifier loads, so `DevToolsWindow.tsx` never passes
-     * for `DevToolsWindow/index.tsx`. Only a path with no file on disk falls back to its key.
+     * The file TypeScript loads for `specifier`. When it resolves none, the path the specifier
+     * names, so a missing file under `devtools/` or the DevTools folder never passes.
      *
-     * @param {string} resolved
+     * @param {string} file
+     * @param {string} specifier
+     * @returns {{ target: string | undefined, resolved: boolean }}
      */
-    const isEntry = resolved => {
-      const loaded = resolveSourceFile(resolved, suffixes);
-      return loaded ? entryFiles.has(loaded) : entryKeys.has(moduleKey(resolved));
+    const load = (file, specifier) => {
+      const { resolvedModule } = ts.resolveModuleName(specifier, file, options, host, cache);
+      if (resolvedModule) {
+        return { target: path.normalize(resolvedModule.resolvedFileName), resolved: true };
+      }
+      return { target: resolveSpecifier(file, specifier, aliases), resolved: false };
     };
-    /**
-     * @param {string | undefined} p
-     * @param {string} dir
-     * @returns {p is string}
-     */
-    const isUnder = (p, dir) => p !== undefined && (p === dir || p.startsWith(dir + path.sep));
 
     walkSourceFiles(appRoot, file => {
       if (isUnder(file, folder)) return;
-      const rel = path.relative(workspaceRoot, file);
+      const rel = path.relative(realRoot, file);
       const isTest = TEST_FILE.test(path.relative(appRoot, file).split(path.sep).join("/"));
 
       for (const { specifier, kind, line } of moduleReferences(sourceFiles.parse(file))) {
-        const resolved = resolveSpecifier(file, specifier, aliases);
-        if (specifier.startsWith("@devtools/") || isUnder(resolved, devtoolsRoot)) {
+        if (specifier.startsWith("@devtools/")) {
+          violations.push({ file: rel, line, specifier, rule: "DEVTOOLS_HOST_APP_RULE" });
+          continue;
+        }
+        const { target, resolved } = load(file, specifier);
+        if (isUnder(target, devtoolsRoot)) {
           violations.push({ file: rel, line, specifier, rule: "DEVTOOLS_HOST_APP_RULE" });
         } else if (
           !isTest &&
           kind !== "dynamic" &&
-          isUnder(resolved, folder) &&
-          !isEntry(resolved)
+          isUnder(target, folder) &&
+          !(resolved && entryFiles.has(target))
         ) {
           violations.push({ file: rel, line, specifier, rule: "DEVTOOLS_HOST_FOLDER_RULE" });
         }

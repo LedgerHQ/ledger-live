@@ -5,6 +5,7 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
+const ts = require("typescript");
 const {
   findViolations,
   findSourceImportViolations,
@@ -1225,20 +1226,28 @@ const LLD_DEVTOOLS = `${LLD}/src/mvvm/features/DevTools`;
 const LLM_DEVTOOLS = `${LLM}/src/mvvm/features/DevTools`;
 
 /**
- * A workspace holding both host apps, with their tsconfig path aliases, plus `files`.
+ * A workspace holding both host apps, with their tsconfig module resolution, plus `files`.
  *
  * @param {import("node:test").TestContext} t
  * @param {Record<string, string>} files keyed by workspace-relative path
  */
 function hostWorkspace(t, files) {
-  /** @param {string} alias */
-  const tsconfig = alias =>
+  /**
+   * @param {string} alias
+   * @param {string} suffix
+   */
+  const tsconfig = (alias, suffix) =>
     JSON.stringify({
-      compilerOptions: { paths: { "*": ["./*"], "~/*": ["./src/*"], [alias]: ["./src/mvvm/*"] } },
+      compilerOptions: {
+        module: "preserve",
+        moduleResolution: "bundler",
+        moduleSuffixes: [suffix, ""],
+        paths: { "*": ["./*"], "~/*": ["./src/*"], [alias]: ["./src/mvvm/*"] },
+      },
     });
   const root = makeTmpWorkspace({
-    [`${LLD}/tsconfig.json`]: tsconfig("LLD/*"),
-    [`${LLM}/tsconfig.json`]: tsconfig("LLM/*"),
+    [`${LLD}/tsconfig.json`]: tsconfig("LLD/*", ".web"),
+    [`${LLM}/tsconfig.json`]: tsconfig("LLM/*", ".native"),
     ...files,
   });
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
@@ -1383,6 +1392,43 @@ test("devtools host apps: a file that shadows an entry directory is not an entry
   ]);
 });
 
+test("devtools host apps: an entry spelled with its extension still goes through moduleSuffixes", t => {
+  const screen = `${LLM_DEVTOOLS}/screens/DevToolsScreen`;
+  const root = hostWorkspace(t, {
+    [`${screen}/index.tsx`]: "export default 1;",
+    [`${screen}/index.native.tsx`]: 'export * from "@devtools/shell";',
+    [`${LLM}/src/components/Nav.tsx`]:
+      'import Screen from "LLM/features/DevTools/screens/DevToolsScreen/index.tsx";',
+  });
+  assert.deepEqual(hostViolations(root), [
+    `${LLM}/src/components/Nav.tsx:1 LLM/features/DevTools/screens/DevToolsScreen/index.tsx DEVTOOLS_HOST_FOLDER_RULE`,
+  ]);
+});
+
+test("devtools host apps: an entry with a .ts extension wins over a suffixed .tsx sibling", t => {
+  const window = `${LLD_DEVTOOLS}/components/DevToolsWindow`;
+  const root = hostWorkspace(t, {
+    [`${window}/devToolsWindow.ts`]: "export const openDevToolsWindow = 1;",
+    [`${window}/devToolsWindow.web.tsx`]: 'export * from "@devtools/shell";',
+    [`${LLD}/src/renderer/App.tsx`]:
+      'import { openDevToolsWindow } from "LLD/features/DevTools/components/DevToolsWindow/devToolsWindow";',
+  });
+  assert.deepEqual(hostViolations(root), []);
+});
+
+test("devtools host apps: a .js spelling loads its TypeScript source, not the entry it shadows", t => {
+  const screen = `${LLM_DEVTOOLS}/screens/DevToolsScreen`;
+  const root = hostWorkspace(t, {
+    [`${screen}/index.tsx`]: "export default 1;",
+    [`${screen}.tsx`]: 'export * from "@devtools/shell";',
+    [`${LLM}/src/components/Nav.tsx`]:
+      'import Screen from "LLM/features/DevTools/screens/DevToolsScreen.js";',
+  });
+  assert.deepEqual(hostViolations(root), [
+    `${LLM}/src/components/Nav.tsx:1 LLM/features/DevTools/screens/DevToolsScreen.js DEVTOOLS_HOST_FOLDER_RULE`,
+  ]);
+});
+
 test("devtools host apps: a declared entry that exists on disk is allowed", t => {
   const window = `${LLD_DEVTOOLS}/components/DevToolsWindow`;
   const root = hostWorkspace(t, {
@@ -1435,6 +1481,10 @@ test("devtools host apps: import() and lazy(() => import()) of a DevTools file a
 
 test("devtools host apps: a static import of a declared entry is allowed", t => {
   const root = hostWorkspace(t, {
+    [`${LLD_DEVTOOLS}/components/DevToolsWindow/index.tsx`]: "export const DevToolsWindow = 1;",
+    [`${LLD_DEVTOOLS}/components/DevToolsWindow/devToolsWindow.ts`]:
+      "export const openDevToolsWindow = 1;",
+    [`${LLM_DEVTOOLS}/screens/DevToolsScreen/index.tsx`]: "export default 1;",
     [`${LLD}/src/renderer/App.tsx`]:
       'import { DevToolsWindow } from "LLD/features/DevTools/components/DevToolsWindow";',
     [`${LLD}/src/mvvm/components/TopBar/hooks/useDevTools.ts`]: [
@@ -1468,6 +1518,7 @@ test("devtools host apps: files under skipped directories are not read", t => {
 // --- lint:boundaries cache inputs ---
 
 const fixedSourceRoots = [...LEGACY_SOURCE_ROOTS, DEVTOOLS_ROOT];
+const WORKSPACE_ROOT = path.resolve(__dirname, "../../..");
 
 test("lint:boundaries inputs cover every source file under the legacy and devtools roots", () => {
   assertSourceFilesHashed(fixedSourceRoots);
@@ -1477,12 +1528,32 @@ test("lint:boundaries inputs exclude each skipped directory under the legacy and
   assertSkipDirsExcluded(fixedSourceRoots);
 });
 
-test("lint:boundaries inputs cover every source file and the tsconfig of each devtools host app", () => {
+/**
+ * A host app's `tsconfig.json` and every config it extends, workspace-relative.
+ *
+ * @param {string} appRoot workspace-relative
+ * @returns {string[]}
+ */
+function tsconfigChain(appRoot) {
+  const tsconfig = path.join(WORKSPACE_ROOT, appRoot, "tsconfig.json");
+  const source = ts.readJsonConfigFile(tsconfig, ts.sys.readFile);
+  ts.parseJsonSourceFileConfigFileContent(
+    source,
+    { ...ts.sys, readDirectory: () => [] },
+    path.dirname(tsconfig),
+  );
+  const extended = /** @type {{ extendedSourceFiles?: string[] }} */ (source).extendedSourceFiles;
+  return [tsconfig, ...(extended ?? [])].map(f =>
+    path.relative(WORKSPACE_ROOT, f).split(path.sep).join("/"),
+  );
+}
+
+test("lint:boundaries inputs cover every source file and the tsconfig chain of each devtools host app", () => {
   const appRoots = DEVTOOLS_HOST_APPS.map(app => app.root);
   assertSourceFilesHashed(appRoots);
   assertSkipDirsExcluded(appRoots);
   assert.deepEqual(
-    appRoots.map(r => `${r}/tsconfig.json`).filter(file => !isLintBoundariesInput(file)),
+    appRoots.flatMap(tsconfigChain).filter(file => !isLintBoundariesInput(file)),
     [],
   );
 });

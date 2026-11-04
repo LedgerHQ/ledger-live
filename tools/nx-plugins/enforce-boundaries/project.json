@@ -42,6 +42,8 @@
         "{workspaceRoot}/apps/{ledger-live-desktop,ledger-live-mobile}/**/*.@(ts|tsx|js|jsx|mjs|cjs)",
         "!{workspaceRoot}/apps/{ledger-live-desktop,ledger-live-mobile}/**/@(node_modules|dist|lib|build|.turbo|.cache)/**",
         "{workspaceRoot}/apps/{ledger-live-desktop,ledger-live-mobile}/tsconfig.json",
+        "{workspaceRoot}/tsconfig.base.json",
+        "{workspaceRoot}/support/tsconfig/base.json",
         "{workspaceRoot}/nx.cache-config.json"
       ],
       "options": {
