@@ -69,6 +69,14 @@ export class NativeHandle implements ElementHandle {
     );
   }
 
+  /**
+   * Waits until the element is removed from the view hierarchy. Use it for a closing sheet: it can
+   * still block taps once it is no longer visible.
+   */
+  async waitNotExist(timeout = TIMEOUT.xxlarge): Promise<void> {
+    await this.waitUntil(waitFor(this.raw).not.toExist().withTimeout(timeout), timeout, "removed");
+  }
+
   /** Waits for visibility, then taps. */
   async tap(timeout = TIMEOUT.xxlarge): Promise<void> {
     await this.waitVisible(timeout);

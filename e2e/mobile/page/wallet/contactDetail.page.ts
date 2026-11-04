@@ -76,8 +76,8 @@ export default class ContactDetailPage {
 
   @Step("Expect the rename device sheet to be gone")
   async expectRenameDeviceSheetClosed() {
-    await this.renameDevicePending.waitNotVisible();
-    await this.renameDeviceContinue.waitNotVisible();
+    await this.renameDevicePending.waitNotExist();
+    await this.renameDeviceContinue.waitNotExist();
   }
 
   @Step("Expect contact detail name to be {{0}}")
