@@ -54,8 +54,15 @@ describe("currencyIdFromNetwork", () => {
     expect(() => currencyIdFromNetwork("base_sepolia")).toThrow(UnsupportedNetworkError);
   });
 
-  it("accepts testnets of supported networks", () => {
-    expect(currencyIdFromNetwork("ethereum_sepolia")).toBe("ethereum_sepolia");
+  it.each([
+    "bitcoin_testnet",
+    "bitcoin_regtest",
+    "ethereum_sepolia",
+    "ethereum_hoodi",
+    "solana_devnet",
+    "solana_testnet",
+  ])("accepts the %s testnet of a supported network", network => {
+    expect(currencyIdFromNetwork(network)).toBe(network);
   });
 });
 

@@ -11,6 +11,8 @@ import type { CoinModuleLoader } from "@ledgerhq/live-common/coin-modules/types"
  * `supportedCoins` is also the list of networks wallet-cli accepts (testnets follow their
  * mainnet): add a currency id there to support it, e.g. "base" under evm. Keep this module free
  * of side effects: shared/supported-currencies.ts reads it without running live-common-setup.
+ * Still kept by hand: SUPPORTED_EARN_NETWORKS in wallet/earn/yields.ts (if earn supports the new
+ * network) and the "Supported networks" line of the README.
  */
 export const walletCliLoaders: CoinModuleLoader[] = [
   {

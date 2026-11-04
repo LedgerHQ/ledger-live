@@ -26,6 +26,7 @@ import {
   type AccountDescriptorV1,
 } from "../shared/accountDescriptor";
 import { SUPPORTED_TRANSACTION_FAMILIES } from "../wallet/intents";
+import { isWalletCliSupportedCurrency } from "../shared/supported-currencies";
 import { Session } from "../session/session-store";
 
 /** Ledger Sync's Cloud Sync "slug" for the account-list document — matches Desktop/Mobile's
@@ -171,6 +172,7 @@ export function importSupport(): ImportSupport {
     families: SUPPORTED_FAMILIES,
     currencies: listCryptoCurrencies(true)
       .filter(currency => SUPPORTED_FAMILIES.has(currency.family))
+      .filter(isWalletCliSupportedCurrency)
       .map(currency => currency.id),
     derivationModes: KNOWN_DERIVATION_MODES,
   };

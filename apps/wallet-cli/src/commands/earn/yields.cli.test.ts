@@ -199,6 +199,34 @@ describe("earn yields (no --network): --account override", () => {
   });
 });
 
+describe("earn yields --network <unsupported>", () => {
+  const server = new MockServer([
+    { method: "GET", match: "/v0/grow", status: 503, response: { error: "unavailable" } },
+  ]);
+  let cleanup: (() => void) | undefined;
+  beforeAll(() => server.start());
+  afterAll(() => server.stop());
+  afterEach(() => {
+    cleanup?.();
+    cleanup = undefined;
+  });
+
+  it("reports the unsupported network instead of a Grow failure", async () => {
+    const fixture = makeSessionDir([]);
+    cleanup = fixture.cleanup;
+
+    const { stdout, exitCode } = await runCli(
+      ["earn", "yields", "--network", "base", "--output", "json"],
+      { WALLET_CLI_MOCK_PORT: String(server.port), ...fixture.env },
+    );
+
+    expect(exitCode).toBe(1);
+    const data = JSON.parse(stdout);
+    expect(data.ok).toBe(false);
+    expect(data.error.message).toContain('Network "base" is not supported by wallet-cli');
+  });
+});
+
 // ---------------------------------------------------------------------------
 // --network ethereum: grow + providers + vault --product targets
 // ---------------------------------------------------------------------------
