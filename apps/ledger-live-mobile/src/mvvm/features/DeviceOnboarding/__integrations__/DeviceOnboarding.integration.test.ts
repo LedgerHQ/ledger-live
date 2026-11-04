@@ -349,9 +349,25 @@ describe("scripted device onboarding", () => {
       modelId: DeviceModelId.STAX,
     });
     expect(device.isWatching(device.sessionId)).toBe(true);
-    // 4 scripted commands, and the app check before the first read.
-    expect(device.dmk.sendCommand).toHaveBeenCalledTimes(5);
+    expect(device.commands()).toEqual([
+      "getAppAndVersion",
+      "getOsVersion",
+      "toggleOnboardingEarlyCheck",
+      "toggleOnboardingEarlyCheck",
+      "getOsVersion",
+    ]);
     expect(device.dmk.executeDeviceAction).toHaveBeenCalledTimes(2);
+  });
+
+  it("closes an app open on the device, then runs the checks", async () => {
+    const device = createScriptedTestDevice();
+    const { result } = renderScripted(device);
+    device.openApp("Bitcoin");
+
+    await connectToGenuineCheck(result, device);
+
+    expect(device.commands().slice(0, 3)).toEqual(["getAppAndVersion", "closeApp", "getOsVersion"]);
+    expect(result.current.state).toBe("checks.genuineCheck.running");
   });
 
   it("takes the device off the genuine check screen before closing the session on reset", async () => {

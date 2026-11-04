@@ -2,7 +2,6 @@ import {
   CommandResultFactory,
   DeviceActionStatus,
   GenuineCheckDeviceAction,
-  GetAppAndVersionCommand,
   UserInteractionRequired,
   type CommandResult,
   type DeviceActionIntermediateValue,
@@ -17,6 +16,7 @@ import {
   ToggleEarlyCheckCommand,
   type ToggleEarlyCheckErrorCode,
 } from "../device/toggleEarlyCheckCommand";
+import { createDashboardDevice, type DashboardDevice } from "./dashboardDevice";
 import { createDeviceManagementKit } from "./createDeviceManagementKit";
 import { createTestStream } from "./testStream";
 import { createOsVersionResponse } from "./osVersionResponse";
@@ -25,30 +25,26 @@ export type ScriptedCommand<Data, ErrorCodes = void> =
   | CommandResult<Data, ErrorCodes>
   | { throws: unknown };
 
-const onDashboard = CommandResultFactory({ data: { name: "BOLOS", version: "1.0.0" } });
-
 export type FakeCommandDmk = {
   dmk: DeviceManagementKit;
   sendCommand: jest.Mock;
+  device: DashboardDevice;
 };
 
 /**
  * Serves the scripted results in order, then repeats the last one, so that a script of one entry
- * answers every retry the same way. The device is on the dashboard: the app check takes no entry.
+ * answers every retry the same way. The dashboard device answers first, and takes no entry.
  */
 export function createFakeCommandDmk<Data, ErrorCodes = void>(
   script: ScriptedCommand<Data, ErrorCodes>[],
 ): FakeCommandDmk {
   const commands = scriptQueue(script, "command");
+  const device = createDashboardDevice();
 
-  const sendCommand = jest.fn(({ command }) =>
-    command instanceof GetAppAndVersionCommand
-      ? Promise.resolve(onDashboard)
-      : played(commands.next()),
-  );
+  const sendCommand = jest.fn(({ command }) => device.answer(command) ?? played(commands.next()));
   const dmk = createDeviceManagementKit({ sendCommand });
 
-  return { dmk, sendCommand };
+  return { dmk, sendCommand, device };
 }
 
 function scriptQueue<Entry>(script: Entry[], what: string) {
@@ -179,10 +175,13 @@ export function createFakeOnboardingDmk(script: OnboardingDmkScript = {}): FakeO
   const firmwareCheck = scriptQueue(script.firmwareCheck ?? [], "firmware check");
 
   const toggles: number[] = [];
+  const device = createDashboardDevice();
 
   const sendCommand = jest.fn(({ command }) => {
-    if (command instanceof GetAppAndVersionCommand) {
-      return Promise.resolve(onDashboard);
+    const answer = device.answer(command);
+
+    if (answer) {
+      return answer;
     }
 
     if (command instanceof ToggleEarlyCheckCommand) {
