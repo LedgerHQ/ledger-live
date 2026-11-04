@@ -93,12 +93,13 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
     },
 
     async save(key, value) {
+      const keyNames = Array.isArray(key) ? key.map(([k]) => k) : key;
       try {
         return state.storageType === STORAGE_TYPE.MMKV
-          ? await trackStorageOperation("save", STORAGE_TYPE.MMKV, key as string, () =>
+          ? await trackStorageOperation("save", STORAGE_TYPE.MMKV, keyNames, () =>
               Promise.resolve(mmkvStorageWrapper.save(key, value)),
             )
-          : await trackStorageOperation("save", STORAGE_TYPE.ASYNC_STORAGE, key as string, () =>
+          : await trackStorageOperation("save", STORAGE_TYPE.ASYNC_STORAGE, keyNames, () =>
               asyncStorageWrapper.save(key, value),
             );
       } catch (e) {
@@ -106,7 +107,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
           error: e,
           state: state,
         });
-        return rejectWithError({ e, extraData: { op: "save", key } });
+        return rejectWithError({ e, extraData: { op: "save", key: keyNames } });
       }
     },
 

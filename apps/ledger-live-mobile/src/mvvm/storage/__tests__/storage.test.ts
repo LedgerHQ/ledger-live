@@ -329,6 +329,35 @@ describe("storage", () => {
         });
       });
     });
+
+    describe("handles bulk save error", () => {
+      beforeEach(async () => {
+        // Arrange
+        mockInitStorageState = jest.fn().mockImplementation(state => {
+          state.storageType = STORAGE_TYPE.ASYNC_STORAGE;
+        });
+        saveMethod = jest.spyOn(asyncStorageWrapper, "save").mockImplementation(() => {
+          throw error;
+        });
+        const storage = createTestStorage();
+
+        // Act
+        await storage
+          .save([
+            ["account1", { privatekey: "secret-bulk-value-1" }],
+            ["account2", { privatekey: "secret-bulk-value-2" }],
+          ])
+          .catch(noop);
+      });
+
+      it("should log the key names and operation but not the values", () => {
+        expect(console.error).toHaveBeenCalledWith("Error with extra data:", error, {
+          op: "save",
+          key: ["account1", "account2"],
+        });
+        expect(loggedErrors()).not.toContain("secret-bulk-value");
+      });
+    });
   });
 
   describe("update", () => {
