@@ -14,7 +14,6 @@ test.describe(`Onboarding an initialised Nano (mock server)`, () => {
       lwdOnboardingCounterfeitWarning: { enabled: true },
     },
     settings: FRESH_INSTALL_SETTINGS,
-    mockDeviceParams: { onboarded: true },
   });
 
   test(
@@ -33,6 +32,7 @@ test.describe(`Onboarding an initialised Nano (mock server)`, () => {
 
       await app.onboarding.connectInitializedDevice();
       await app.onboarding.continuePastCounterfeitWarning();
+      await app.onboarding.expectTutorialScreen("pair-my-nano");
       await app.onboarding.runGenuineCheck();
       await app.onboarding.continueTutorial("genuine-check");
 
