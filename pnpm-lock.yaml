@@ -222,8 +222,8 @@ catalogs:
       specifier: 11.0.1
       version: 11.0.1
     '@ledgerhq/coin-stellar':
-      specifier: 12.1.1
-      version: 12.1.1
+      specifier: 12.1.2
+      version: 12.1.2
     '@ledgerhq/coin-tezos':
       specifier: 14.1.1
       version: 14.1.1
@@ -18304,7 +18304,7 @@ importers:
         version: link:../coin-modules/coin-stacks
       '@ledgerhq/coin-stellar':
         specifier: 'catalog:'
-        version: 12.1.1(@ledgerhq/live-network@3.2.0(axios@1.20.0(debug@4.4.3)))(debug@4.4.3)
+        version: 12.1.2(@ledgerhq/live-network@3.2.0(axios@1.20.0(debug@4.4.3)))(debug@4.4.3)
       '@ledgerhq/coin-sui':
         specifier: workspace:^
         version: link:../coin-modules/coin-sui
@@ -27318,8 +27318,8 @@ packages:
   '@ledgerhq/coin-module-framework@11.0.1':
     resolution: {integrity: sha512-4yGzZioLhkCiEBqUDYj8DgYxqNZx8qw79Q9rUOP+pLwEY4yJmMZr8+xQJQ7GF8UVc5nUlpxszeOUrs7UvhnphQ==}
 
-  '@ledgerhq/coin-stellar@12.1.1':
-    resolution: {integrity: sha512-qqjoJF/JQGdL7VTQw4lAIg78P5BV1RLwn9l4dJCg7UNrujy0nsrbfkuif2VfAypBwCn2gfwiMn+oTgjYmgPRyA==}
+  '@ledgerhq/coin-stellar@12.1.2':
+    resolution: {integrity: sha512-akOiP7s4fB8juQLcazx0xW7iDYRrK+MzFKzd2cU7GWs0GWJwH3auYBBSkgVLIujTynuFTzx/SjuNPX3xOyDrXQ==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.1.0
 
@@ -46176,7 +46176,7 @@ snapshots:
     dependencies:
       bignumber.js: 9.1.2
 
-  '@ledgerhq/coin-stellar@12.1.1(@ledgerhq/live-network@3.2.0(axios@1.20.0(debug@4.4.3)))(debug@4.4.3)':
+  '@ledgerhq/coin-stellar@12.1.2(@ledgerhq/live-network@3.2.0(axios@1.20.0(debug@4.4.3)))(debug@4.4.3)':
     dependencies:
       '@exodus/patch-broken-hermes-typed-arrays': 1.0.0-alpha.1(patch_hash=7deb6c5bd39ee007fca03da7609b2e0dee99dbb9962c3c8715edfd026da0a732)
       '@ledgerhq/coin-module-framework': 11.0.1
