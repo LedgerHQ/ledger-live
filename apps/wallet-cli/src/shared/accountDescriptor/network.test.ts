@@ -5,6 +5,7 @@ import {
   networkFromCurrencyId,
   currencyIdFromNetwork,
   UnknownNetworkError,
+  UnsupportedNetworkError,
 } from "./network";
 
 describe("parseNetworkArg", () => {
@@ -42,6 +43,26 @@ describe("currencyIdFromNetwork", () => {
 
   it("throws UnknownNetworkError for unknown network", () => {
     expect(() => currencyIdFromNetwork("notachain")).toThrow(UnknownNetworkError);
+  });
+
+  it("throws UnsupportedNetworkError for a known network wallet-cli does not support", () => {
+    expect(() => currencyIdFromNetwork("base")).toThrow(UnsupportedNetworkError);
+    expect(() => currencyIdFromNetwork("base")).toThrow(/"base" is not supported/);
+  });
+
+  it("throws UnsupportedNetworkError for a testnet of an unsupported network", () => {
+    expect(() => currencyIdFromNetwork("base_sepolia")).toThrow(UnsupportedNetworkError);
+  });
+
+  it.each([
+    "bitcoin_testnet",
+    "bitcoin_regtest",
+    "ethereum_sepolia",
+    "ethereum_hoodi",
+    "solana_devnet",
+    "solana_testnet",
+  ])("accepts the %s testnet of a supported network", network => {
+    expect(currencyIdFromNetwork(network)).toBe(network);
   });
 });
 

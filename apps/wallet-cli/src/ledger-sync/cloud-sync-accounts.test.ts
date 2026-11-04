@@ -4,11 +4,13 @@ import { Session } from "../session/session-store";
 import type { JWT, MemberCredentials, Trustchain, TrustchainSDK } from "@shared/cloud-sync";
 import {
   importSupport,
+  ledgerSyncSupport,
   mergeSyncedAccounts,
   pullSyncedAccounts,
   supportFingerprint,
   type CreateCloudSyncSdk,
 } from "./cloud-sync-accounts";
+import { walletCliLoaders } from "../coin-module-loaders";
 import { parseV1 } from "../shared/accountDescriptor";
 import { XPUB, ETH_ADDR, SOL_ADDR } from "../shared/accountDescriptor/test-fixtures";
 
@@ -51,6 +53,17 @@ const UNSUPPORTED_FAMILY_RAW = {
   freshAddress: "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty",
   seedIdentifier: "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty",
   derivationMode: "polkadotbip44",
+  index: 0,
+};
+
+// A known currency of a supported family (evm) on a network wallet-cli does not support: it
+// converts to V1, but toV0() rejects the network, which must be classified as "skipped".
+const UNSUPPORTED_NETWORK_RAW = {
+  id: `js:2:base:${ETH_ADDR}:`,
+  currencyId: "base",
+  freshAddress: ETH_ADDR,
+  seedIdentifier: ETH_ADDR,
+  derivationMode: "",
   index: 0,
 };
 
@@ -126,6 +139,19 @@ describe("mergeSyncedAccounts", () => {
       expect.objectContaining({ status: "skipped", id: UNSUPPORTED_FAMILY_RAW.id }),
     ]);
     expect(report.skipped[0]?.reason).toContain("polkadot");
+    expect(report.invalid).toEqual([]);
+    expect(report.imported).toEqual([expect.objectContaining({ status: "imported" })]);
+    expect(session.accounts).toHaveLength(1);
+  });
+
+  it("reports a supported family on an unsupported network as skipped, not invalid", () => {
+    const session = Session.from([]);
+    const report = mergeSyncedAccounts(session, [UNSUPPORTED_NETWORK_RAW, ETH_RAW]);
+
+    expect(report.skipped).toEqual([
+      expect.objectContaining({ status: "skipped", id: UNSUPPORTED_NETWORK_RAW.id }),
+    ]);
+    expect(report.skipped[0]?.reason).toContain('Network "base" is not supported by wallet-cli');
     expect(report.invalid).toEqual([]);
     expect(report.imported).toEqual([expect.objectContaining({ status: "imported" })]);
     expect(session.accounts).toHaveLength(1);
@@ -368,6 +394,26 @@ describe("importSupport", () => {
     expect([...currencies]).toContain("ethereum_sepolia");
     expect([...currencies]).not.toContain("cardano");
     expect([...derivationModes]).toContain("taproot");
+  });
+
+  it("leaves out a supported family's currency on a network wallet-cli does not support", () => {
+    expect([...importSupport().currencies]).not.toContain("base");
+  });
+});
+
+describe("ledgerSyncSupport", () => {
+  it("changes when a coin-module loader starts supporting a network", () => {
+    const evmLoader = walletCliLoaders.find(loader => loader.family === "evm");
+    if (!evmLoader) throw new Error("wallet-cli has no evm loader");
+    const evmCoins = evmLoader.supportedCoins;
+    const before = ledgerSyncSupport();
+
+    evmLoader.supportedCoins = [...evmCoins, "base"];
+    try {
+      expect(ledgerSyncSupport()).not.toBe(before);
+    } finally {
+      evmLoader.supportedCoins = evmCoins;
+    }
   });
 });
 
