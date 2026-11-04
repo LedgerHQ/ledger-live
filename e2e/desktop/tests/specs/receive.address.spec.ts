@@ -193,6 +193,10 @@ test.describe("Receive", tokenOwner, () => {
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(getParentAccountName(tokenAccount.account));
       await app.account.expectAccountVisibility(getParentAccountName(tokenAccount.account));
+      test.skip(
+        !(await app.account.hasTokenPages()),
+        "The account detail page has no receive flow for a token, Receive opens the parent account",
+      );
       await app.account.navigateToTokenInAccount(tokenAccount.account);
       await app.account.expectTokenAccount(tokenAccount.account);
       await app.account.clickReceive();

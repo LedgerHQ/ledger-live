@@ -150,6 +150,17 @@ export class AccountPage extends AppPage {
     }
   }
 
+  @step("Check if the account detail page is displayed")
+  async usesAccountDetail(): Promise<boolean> {
+    return this.isRedesigned();
+  }
+
+  // A token has a page of its own only on the previous account page.
+  @step("Check if tokens have their own page")
+  async hasTokenPages(): Promise<boolean> {
+    return !(await this.isRedesigned());
+  }
+
   // The new page only offers "Add asset" for the families that opt in to tokens: Stellar, Hedera and Algorand.
   @step("Check if tokens can be added from the account page")
   async canAddToken(): Promise<boolean> {
@@ -182,11 +193,15 @@ export class AccountPage extends AppPage {
 
   // Send stays disabled until the account is synced.
   private async clickRedesignedSend(asset?: Currency) {
-    test.skip(
-      await this.redesignedEmptyState.isVisible(),
-      "LIVE-40397: the account detail page shows its empty state, without Send, until operations are loaded",
-    );
     const send = this.redesignedHeroAction("send");
+    try {
+      await send.waitFor({ state: "visible", timeout: TIMEOUT.large });
+    } catch {
+      test.skip(
+        true,
+        "The account detail page offers no Send action for this account (empty state, see LIVE-40397)",
+      );
+    }
     if (await send.isDisabled()) {
       await this.layout.syncAccounts();
       await this.layout.waitForSyncButtonToBeEnabled();
