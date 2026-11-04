@@ -603,7 +603,7 @@ describe("sync.ts", () => {
         coinConfig.setCoinConfig(() => mockConfig);
       });
 
-      it("should reset the cursor, drop the stale staking op and mark the account migrated", async () => {
+      it("should reset the cursor, retain the stale staking op and mark the account migrated", async () => {
         coinConfig.setCoinConfig(() => mockConfigWithStaking);
 
         const result = await syncWith(accountWith({ hasMigratedStaking: false }));
@@ -613,7 +613,7 @@ describe("sync.ts", () => {
             options: expect.not.objectContaining({ cursor: expect.anything() }),
           }),
         );
-        expect(result.operations?.map(op => op.id)).not.toContain("stale-bond-op");
+        expect(result.operations?.map(op => op.id)).toContain("stale-bond-op");
         expect(result.aleoResources?.hasMigratedStaking).toBe(true);
       });
 
@@ -630,10 +630,10 @@ describe("sync.ts", () => {
         expect(result.operations?.map(op => op.id)).toContain("stale-bond-op");
       });
 
-      it("should hide cached staking ops and clear the marker while staking is disabled", async () => {
+      it("should keep cached staking ops and clear the marker while staking is disabled", async () => {
         const result = await syncWith(accountWith({ hasMigratedStaking: true }));
 
-        expect(result.operations?.map(op => op.id)).not.toContain("stale-bond-op");
+        expect(result.operations?.map(op => op.id)).toContain("stale-bond-op");
         expect(result.operations?.map(op => op.id)).toContain("transfer-op");
         expect(result.aleoResources?.hasMigratedStaking).toBeUndefined();
       });
@@ -2586,7 +2586,7 @@ describe("sync.ts", () => {
       );
       const [disabledEmission] = await collectAll(syncs[0]);
 
-      expect(disabledEmission.operations?.map(op => op.id)).not.toContain("cached-bond");
+      expect(disabledEmission.operations?.map(op => op.id)).toContain("cached-bond");
       expect(disabledEmission.aleoResources).not.toHaveProperty("hasMigratedStaking");
 
       // Staking back on, against the account that private sync produced.
@@ -2616,7 +2616,7 @@ describe("sync.ts", () => {
       );
     });
 
-    it("private-only sync keeps staking ops out of the list while staking is disabled", async () => {
+    it("private-only sync retains staking ops while staking is disabled", async () => {
       const configuredProvableApi = {
         ...mockAleoResources.provableApi!,
         scannerStatus: { percentage: 100, synced: true },
@@ -2660,7 +2660,7 @@ describe("sync.ts", () => {
       const [emission] = await collectAll(syncs[0]);
       const ids = emission.operations?.map(op => op.id);
 
-      expect(ids).not.toContain("cached-bond");
+      expect(ids).toContain("cached-bond");
       expect(ids).toContain("cached-transfer");
     });
 

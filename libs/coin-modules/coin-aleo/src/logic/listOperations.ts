@@ -30,7 +30,6 @@ import {
   classifyAleoTokenType,
   hasPublicAddress,
   isParsableTransferFunction,
-  resolveStakingOperationType,
   stripBatcherSuffix,
   toPrivateFeeOperation,
   toPrivateOperation,
@@ -348,9 +347,7 @@ export async function listOperations({
     lastFullBlockRow && order === "desc" ? lastFullBlockRow.block_number : windowFrom;
   const recordsTo = lastFullBlockRow && order === "asc" ? lastFullBlockRow.block_number : windowTo;
 
-  const publicTransactions = dedupeByTransaction(inWindow).filter(
-    rawTx => config.enableStaking || resolveStakingOperationType(rawTx) === undefined,
-  );
+  const publicTransactions = dedupeByTransaction(inWindow);
   const publicTxIds = new Set(publicTransactions.map(tx => tx.transaction_id));
   const inWindowTxIds = new Set(inWindow.map(tx => tx.transaction_id));
 

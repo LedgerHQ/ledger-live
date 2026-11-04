@@ -726,16 +726,7 @@ describe("listOperations", () => {
     });
   });
 
-  describe("enableStaking gating", () => {
-    const runWithStaking = () =>
-      listOperations({
-        config: { ...config, enableStaking: true },
-        address,
-        options: { minHeight: 0, order: "desc" },
-        provableId,
-        viewKey,
-      });
-
+  describe("staking operations", () => {
     beforeEach(() => {
       mockedFetchTransitionPage.mockResolvedValue({
         transitions: [
@@ -747,19 +738,49 @@ describe("listOperations", () => {
             recipient_address: "",
             amount: 0,
           }),
+          getMockedPublicTransaction({
+            transaction_id: "at1unbond",
+            block_number: 590,
+            function_id: TRANSACTION_TYPE.UNBOND_PUBLIC,
+            sender_address: "",
+            recipient_address: "",
+            amount: 0,
+          }),
+          getMockedPublicTransaction({
+            transaction_id: "at1claim",
+            block_number: 580,
+            function_id: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC,
+            sender_address: "",
+            recipient_address: "",
+            amount: 0,
+          }),
           getMockedPublicTransaction({ transaction_id: "at1transfer", block_number: 500 }),
         ],
         next: null,
       });
     });
 
-    it("should omit staking operations while staking is disabled", async () => {
+    it("should emit staking operations with their fees while staking is disabled", async () => {
       const { items } = await run({ minHeight: 0 });
 
-      expect(items.map(op => op.id)).toEqual(["at1transfer"]);
+      expect(items).toEqual([
+        expect.objectContaining({ id: "at1bond", type: "BOND", value: mockedFeePublicBase }),
+        expect.objectContaining({ id: "at1unbond", type: "UNBOND", value: mockedFeePublicBase }),
+        expect.objectContaining({
+          id: "at1claim",
+          type: "WITHDRAW_UNBONDED",
+          value: mockedFeePublicBase,
+        }),
+        expect.objectContaining({ id: "at1transfer" }),
+      ]);
     });
 
-    it("should not turn a hidden staking call paid with fee_private into a FEES operation", async () => {
+    it("should retain a hidden staking call paid with fee_private as its staking operation", async () => {
+      mockedGetTransactionById.mockImplementation(async (_, id) =>
+        getMockedTransactionDetails(id, {
+          fee: id === "at1bond" ? { transition: getMockedFeePrivateTransition() } : readableFee,
+        }),
+      );
       mockedFetchAllOwnedRecords.mockResolvedValue([
         getMockedRecord({
           transaction_id: "at1bond",
@@ -770,17 +791,16 @@ describe("listOperations", () => {
 
       const { items } = await run({ minHeight: 0 });
 
-      expect(mockedGetTransactionById).not.toHaveBeenCalledWith(config, "at1bond");
-      expect(items.map(op => op.id)).toEqual(["at1transfer"]);
-    });
-
-    it("should emit staking operations once staking is enabled", async () => {
-      const { items } = await runWithStaking();
-
-      expect(items).toEqual([
-        expect.objectContaining({ id: "at1bond", type: "BOND" }),
-        expect.objectContaining({ id: "at1transfer" }),
-      ]);
+      expect(items).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            id: "at1bond",
+            type: "BOND",
+            value: mockedFeePrivateBase,
+            tx: expect.objectContaining({ feesPayer: address, fees: mockedFeePrivateBase }),
+          }),
+        ]),
+      );
     });
 
     it("should set a bond's value to its fee and put the bond in details.stake", async () => {
@@ -791,19 +811,20 @@ describe("listOperations", () => {
         }),
       );
 
-      const { items } = await runWithStaking();
+      const { items } = await run({ minHeight: 0 });
 
-      expect(items).toEqual([
-        expect.objectContaining({
-          id: "at1bond",
-          value: mockedFeePublicBase,
-          details: expect.objectContaining({
-            stake: { address: testnetBondedValidator, amount: testnetBondedMicrocredits },
+      expect(items).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            id: "at1bond",
+            value: mockedFeePublicBase,
+            details: expect.objectContaining({
+              stake: { address: testnetBondedValidator, amount: testnetBondedMicrocredits },
+            }),
+            tx: expect.objectContaining({ feesPayer: address, fees: mockedFeePublicBase }),
           }),
-          tx: expect.objectContaining({ feesPayer: address, fees: mockedFeePublicBase }),
-        }),
-        expect.objectContaining({ id: "at1transfer" }),
-      ]);
+        ]),
+      );
     });
   });
 });

@@ -21,7 +21,6 @@ import {
   extractViewKey,
   isProvableApiConfigured,
   isRecordScannerReady,
-  isStakingOperation,
   splitPrivateAndPublicOperations,
   resolveConfig,
   sumStakedBalance,
@@ -123,15 +122,8 @@ export async function performPublicSync(
     AleoOperation[],
   ];
 
-  // While staking is off the cached staking rows are dropped and the marker cleared, yet the
-  // cursor stays past the history that drop removed. Turning staking back on has to rewind it
-  // to 0, or that history is never fetched again.
   const isStakingMigrationRequired = config.enableStaking && hasMigratedStaking !== true;
-  const shouldKeepCachedStakingOps = config.enableStaking && hasMigratedStaking === true;
-
-  const oldPublicOps = shouldKeepCachedStakingOps
-    ? oldPublicOpsRaw
-    : oldPublicOpsRaw.filter(op => !isStakingOperation(op));
+  const oldPublicOps = oldPublicOpsRaw;
 
   const lastBlockHeight =
     shouldSyncFromScratch || isTokenMigrationRequired || isStakingMigrationRequired
@@ -577,9 +569,7 @@ export async function performPrivateSync({
 
   const finalOperations = operations.filter(op => {
     const isTokenOp = (op.subOperations ?? []).length > 0;
-    if (isTokenOp && !config.enableTokens) return false;
-    if (isStakingOperation(op) && !config.enableStaking) return false;
-    return true;
+    return !isTokenOp || config.enableTokens;
   });
 
   onProgress?.(PROGRESS_DONE);
