@@ -30,7 +30,7 @@ export const db: DbBridge = {
 
   onFlushRequest: (callback: () => Promise<void>) => {
     const listener = () => {
-      Promise.resolve()
+      void Promise.resolve()
         .then(callback)
         .catch(() => undefined)
         .then(() => ipcRenderer.send(CHANNELS.flushWritesDone));
