@@ -53,7 +53,8 @@ describe("SWAP_API_BASE at startup", () => {
     expect(started).toEqual({
       exitCode: 1,
       swapApiBase: "",
-      stderr: "Error: SWAP_API_BASE must be an http(s) URL without user:pass@.\n",
+      stderr:
+        "Error: SWAP_API_BASE must be an http(s) URL without user:pass@, query or fragment.\n",
     });
   });
 });
@@ -68,6 +69,8 @@ describe("parseSwapApiBase", () => {
     ["not http(s)", "ftp://swap.example.test/v5"],
     ["user:pass@", "https://user:secret@swap.example.test/v5"],
     ["user@", "https://user@swap.example.test/v5"],
+    ["a query", "https://swap.example.test/v5?env=stg"],
+    ["a fragment", "https://swap.example.test/v5#staging"],
   ])("rejects a URL with %s", (_case, value) => {
     expect(parseSwapApiBase(value)).toBeNull();
   });
