@@ -72,12 +72,7 @@ function entryWaiver() {
 }
 
 /** @type {Record<string, Record<string, { rules: string[], reason: string }>>} */
-const COMPONENT_EXCEPTIONS = {
-  "features/flow/pay-contact": {
-    Contacts: componentWaiver("R2", "R3"),
-    PaySuccess: componentWaiver("R2", "R4"),
-  },
-};
+const COMPONENT_EXCEPTIONS = {};
 
 // Files allowed to keep their violations, keyed by posix path from the repo root. These are the
 // modules a barrel reaches through `export *`, or that `package.json#exports` names, which held
