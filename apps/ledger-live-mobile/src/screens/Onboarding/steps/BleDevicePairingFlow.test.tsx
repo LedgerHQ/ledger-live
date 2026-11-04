@@ -1,20 +1,12 @@
 import React from "react";
 import { Text } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { DevicesWithTouchScreen } from "@ledgerhq/device-core";
+import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { render, screen } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
 import type { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import OnboardingBleDevicePairingFlow from "./BleDevicePairingFlow";
-
-jest.mock("~/components/BleDevicePairingFlow", () => ({
-  __esModule: true,
-  default: ({ filterByDeviceModelId }: { filterByDeviceModelId: unknown }) => {
-    const { Text } = jest.requireActual("react-native");
-    return <Text>{`pairing ${JSON.stringify(filterByDeviceModelId)}`}</Text>;
-  },
-}));
 
 const Stack = createNativeStackNavigator<OnboardingNavigatorParamList>();
 
@@ -34,15 +26,16 @@ function renderPairingFlow(
 }
 
 describe("OnboardingBleDevicePairingFlow", () => {
-  it("should scan for touchscreen devices when opened from the sync-onboarding deep link", () => {
+  it("should scan for touchscreen devices when opened from the sync-onboarding deep link", async () => {
     renderPairingFlow();
 
-    expect(screen.getByText(`pairing ${JSON.stringify(DevicesWithTouchScreen)}`)).toBeVisible();
+    expect(await screen.findByText("Looking for devices")).toBeVisible();
   });
 
-  it("should scan for the device model it was opened with", () => {
+  it("should scan for the device model it was opened with", async () => {
     renderPairingFlow({ filterByDeviceModelId: DeviceModelId.europa });
 
-    expect(screen.getByText(`pairing "${DeviceModelId.europa}"`)).toBeVisible();
+    const { productName } = getDeviceModel(DeviceModelId.europa);
+    expect(await screen.findByText(`Looking for ${productName}...`)).toBeVisible();
   });
 });
