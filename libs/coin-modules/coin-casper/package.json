@@ -118,9 +118,12 @@
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
     "@types/semver": "catalog:",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
-    "oxlint": "catalog:"
+    "oxlint": "catalog:",
+    "rimraf": "catalog:"
   },
   "files": [
     "lib",

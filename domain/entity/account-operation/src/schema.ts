@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { DateTimeIsoSchema } from "@shared/schema-primitives";
 import { AccountUUIDSchema } from "@domain/entity-account-descriptor";
+import { FiatCurrencyTickerSchema, type FiatCurrencyTicker } from "@domain/entity-currency-fiat";
 import {
   AmountStrSchema,
   BalanceAssetIdSchema,
@@ -11,8 +12,6 @@ export const OperationIdSchema = z.string().min(1).brand<"OperationId">();
 export const TransactionHashSchema = z.string().min(1).brand<"TransactionHash">();
 /** A sender or recipient: branded so analytics can refuse it. */
 export const AddressSchema = z.string().min(1).brand<"Address">();
-/** The ISO 4217 ticker of the fiat a countervalue is in, e.g. `USD`. */
-export const CountervalueTickerSchema = z.string().min(1).brand<"CountervalueTicker">();
 
 /** Mirrors the operation types of `@ledgerhq/types-live`, for backward compatibility. */
 export const OPERATION_TYPES = [
@@ -78,7 +77,7 @@ export const OPERATION_TYPES = [
 export const OperationTypeSchema = z.enum(OPERATION_TYPES);
 
 export const OperationCountervaluesSchema = z.partialRecord(
-  CountervalueTickerSchema,
+  FiatCurrencyTickerSchema,
   AmountStrSchema,
 );
 
@@ -108,7 +107,6 @@ export const StoredAccountOperationSchema = AccountOperationSchema.omit({ counte
 export type OperationId = z.infer<typeof OperationIdSchema>;
 export type TransactionHash = z.infer<typeof TransactionHashSchema>;
 export type Address = z.infer<typeof AddressSchema>;
-export type CountervalueTicker = z.infer<typeof CountervalueTickerSchema>;
 export type OperationType = z.infer<typeof OperationTypeSchema>;
 export type AccountOperation = z.infer<typeof AccountOperationSchema>;
 export type StoredAccountOperation = z.infer<typeof StoredAccountOperationSchema>;
@@ -117,7 +115,7 @@ export type OperationCountervalues = z.infer<typeof OperationCountervaluesSchema
 /** What a read asks for; the cursor is not part of it, the framework carries it. Each query has its own window. */
 export type AccountOperationsQuery = {
   /** The fiat each operation is valued in, at its date, into `countervalues`. */
-  countervalue?: CountervalueTicker;
+  countervalue?: FiatCurrencyTicker;
   /** Rows wished per page; a source may return more or fewer, only `nextCursor` says more exist. */
   limit?: number;
   /** Only the operations of this asset of the account, e.g. one of its tokens. */

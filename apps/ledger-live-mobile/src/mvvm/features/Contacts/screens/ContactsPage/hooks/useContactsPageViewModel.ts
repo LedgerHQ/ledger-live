@@ -1,13 +1,11 @@
 import {
-  type ContactsViewNativeProps,
-  useContactsSearchViewModel,
-  useContactsMeContact,
-  useContactsListPageAnalytics,
   trackContactsLedgerSyncActivate,
   trackContactsLedgerSyncDismiss,
   trackContactsListContactOpen,
+  useContactsListPageAnalytics,
   useContactsLedgerSyncMutationGuard,
 } from "@features/flow-contacts";
+import { useContactsSearchViewModel } from "@features/flow-contacts-list";
 import {
   isContactsLedgerSyncActivationRequired,
   resolveContactsLedgerSyncIntroductionOpen,
@@ -17,7 +15,8 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { Contact } from "@domain/entity-contact";
-import { useContacts } from "@features/platform-contacts";
+import type { ContactsViewProps } from "@features/flow-contacts";
+import { useContacts, useContactsMeContact } from "@features/platform-contacts";
 import type { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
 import { ScreenName } from "~/const";
@@ -52,7 +51,7 @@ export function useContactsPageViewModel(
   const [searchQuery, setSearchQuery] = useState("");
   const viewModel = useContactsSearchViewModel(searchQuery);
   const onSearchQueryChange = useCallback((query: string) => setSearchQuery(query), []);
-  const onOpenContact = useCallback<ContactsViewNativeProps["onOpenContact"]>(
+  const onOpenContact = useCallback<ContactsViewProps["onOpenContact"]>(
     contactId => {
       trackContactsListContactOpen(analytics, contactId, meContact.id);
       if (onSelectContact) {

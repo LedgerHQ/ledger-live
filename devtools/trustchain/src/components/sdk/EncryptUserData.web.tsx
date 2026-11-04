@@ -1,3 +1,4 @@
+import { TextInput } from "@ledgerhq/lumen-ui-react";
 import type { Trustchain, TrustchainSDK } from "../../types";
 import { Actionable } from "../Actionable";
 import { useEncryptUserData } from "./useEncryptUserData";
@@ -23,12 +24,13 @@ export function EncryptUserData({
       setValue={setOutput}
       valueDisplay={valueDisplay}
     >
-      <input
-        type="text"
+      <TextInput
+        label="Message"
         placeholder="message to encrypt"
         value={input}
         onChange={e => setInput(e.target.value)}
-        className="flex-1 bg-base border border-base rounded px-8 py-4 body-3 text-base"
+        className="flex-1"
+        hideClearButton
       />
     </Actionable>
   );

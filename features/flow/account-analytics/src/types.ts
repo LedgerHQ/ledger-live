@@ -1,3 +1,5 @@
+import type { FiatCurrencyTicker } from "@domain/entity-currency-fiat";
+
 export type AnalyticsMetric = "balance" | "realised-return" | "unrealised-return" | "total-return";
 
 export type AnalyticsPeriod = "1d" | "1w" | "1m" | "1y" | "all";
@@ -47,7 +49,7 @@ export type AnalyticsInitialSelection = Readonly<{
 export type AnalyticsQueryContext = AnalyticsSelection &
   Readonly<{
     positionIds: readonly string[];
-    fiatCurrencyId: string;
+    fiatCurrencyId: FiatCurrencyTicker;
     period: AnalyticsPeriod;
   }>;
 
@@ -74,7 +76,7 @@ export type AccountAnalyticsDataPort = Readonly<{
 
 export type UseAccountAnalyticsViewModelProps = Readonly<{
   catalog: AnalyticsCatalogState;
-  fiatCurrencyId: string;
+  fiatCurrencyId: FiatCurrencyTicker;
   period: AnalyticsPeriod;
   initialSelection?: AnalyticsInitialSelection;
   dataPort: AccountAnalyticsDataPort;

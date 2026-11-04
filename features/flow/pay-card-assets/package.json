@@ -21,8 +21,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -c features/flow/pay-card-assets/knip.web.config.mjs -W features/flow/pay-card-assets --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/pay-card-assets/knip.native.config.mjs -W features/flow/pay-card-assets --tsConfig tsconfig.native.json"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@domain/api-card-management": "workspace:^",

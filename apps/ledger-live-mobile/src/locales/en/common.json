@@ -1275,6 +1275,14 @@
       "title": "Sorry, connection failed",
       "description": "Please try again with a better network connection (websocket failed)."
     },
+    "WithdrawApiError": {
+      "title": "Your withdrawal wasn’t sent",
+      "description": "Nothing left your Perps balance. Close and try again with a new quote."
+    },
+    "WithdrawSubmitUnknownOutcomeError": {
+      "title": "We couldn’t confirm your withdrawal",
+      "description": "It may still go through. Check Swap History before you try again."
+    },
     "WrongDeviceForAccount": {
       "title": "Something went wrong",
       "description": "Please check that your Ledger device is set up with the recovery phrase or passphrase associated to the selected account."
@@ -5456,6 +5464,8 @@
         "insufficientFunds": "You don't have enough {{feeCurrency}} to cover the amount and the {{provider}} energy rental fee."
       },
       "sponsoredRentSignature": {
+        "title": "Approve network fees sponsoring",
+        "terms": "By signing this transaction, you agree to <0>{{provider}}'s Terms and Conditions</0>.",
         "crafting": "Preparing energy rental…",
         "strategy": "Energy rental - {{provider}}",
         "fee": "Rental fee: {{amount}}",
@@ -5464,9 +5474,12 @@
           "description": "You rejected the rental fee payment. Your funds won't be affected."
         }
       },
+      "sponsoredTransferSignature": {
+        "title": "Confirm transfer"
+      },
       "sponsoredPolling": {
-        "title": "Waiting for energy delivery",
-        "waiting": "{{provider}} is delivering the rented energy. This can take a moment.",
+        "title": "Your energy is being delivered",
+        "waiting": "This usually takes up to 30 seconds.",
         "elapsed": "Elapsed: {{time}}"
       },
       "sponsoredFailure": {
@@ -5992,6 +6005,12 @@
       "title": "Device disconnected",
       "description": "Reconnect your Ledger device to continue. The update will resume automatically."
     },
+    "connectionTimedOut": {
+      "title": "Connection timed out",
+      "description": "Restart the update.",
+      "restart": "Restart OS update",
+      "sendReport": "Send report to Ledger"
+    },
     "unexpectedError": {
       "title": "Something went wrong",
       "description": "The OS update could not continue. Contact Ledger support if the problem persists."
@@ -6001,10 +6020,12 @@
       "description": "Your device battery is at {{percentage}}%. Plug it in or charge it above 20% to continue."
     },
     "backupSelection": {
-      "title": "Use your existing backup?",
-      "description": "Your latest backup is more than 24 hours old. You can use it, or create a new one that will replace it. Security Key credentials are part of the backup.",
-      "useExisting": "Use existing backup",
-      "createNew": "Create a new backup"
+      "title": "Settings previously saved",
+      "description": "We found apps & settings saved during a previous update. Choose which one you want back on your {{productName}} after the update.",
+      "useExisting": "Use previous settings",
+      "createNew": "Keep current settings",
+      "lastSave": "Last save",
+      "lastSaveDate": "{{date}}, {{time}}"
     },
     "secureConnectionRefused": {
       "title": "Secure connection refused",

@@ -26,11 +26,8 @@ export function useWalletAssetsViewModel(): WalletAssetsViewModelResult {
   const { onPressShowAll } = usePortfolioSectionActions(false, "all");
   const { categorizedAssets } = useCategorizedAssetsFromPortfolio();
   const { walletCardsDisplayed } = useDynamicContent();
-  const {
-    shouldDisplayOperationsList,
-    shouldDisplayAssetSection,
-    shouldDisplayAssetDiscoverability,
-  } = useWalletFeaturesConfig("mobile");
+  const { shouldDisplayAssetSection, shouldDisplayAssetDiscoverability } =
+    useWalletFeaturesConfig("mobile");
   const borrowConfig = useBorrowLiveConfig();
   const { isEnabled: shouldDisplayServicesEntryPoints } = useServicesEntryPointsFeature();
   const { onPress: onBorrowPress } = usePortfolioBorrowSectionViewModel();
@@ -47,7 +44,7 @@ export function useWalletAssetsViewModel(): WalletAssetsViewModelResult {
   return {
     hasMore,
     onPressShowAll,
-    shouldAddBottomPadding: shouldDisplayOperationsList && walletCardsDisplayed.length === 0,
+    shouldAddBottomPadding: walletCardsDisplayed.length === 0,
     shouldDisplayAssetSection,
     shouldDisplayAssetDiscoverability,
     shouldDisplayBorrowSection:

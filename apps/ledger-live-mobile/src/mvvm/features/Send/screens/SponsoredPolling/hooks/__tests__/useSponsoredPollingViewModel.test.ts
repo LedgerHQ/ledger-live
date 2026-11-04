@@ -24,11 +24,11 @@ afterEach(() => {
 });
 
 describe("useSponsoredPollingViewModel", () => {
-  it("names the provider and counts the elapsed time while polling", () => {
+  it("says the energy is on its way and counts the elapsed time while polling", () => {
     const { result } = renderHook(() => useSponsoredPollingViewModel());
 
     expect(result.current.title).toBe("send.newSendFlow.sponsoredPolling.title");
-    expect(result.current.message).toContain('"provider":"Provider"');
+    expect(result.current.message).toBe("send.newSendFlow.sponsoredPolling.waiting");
     expect(result.current.elapsedLabel).toContain('"time":"00:00"');
 
     act(() => {

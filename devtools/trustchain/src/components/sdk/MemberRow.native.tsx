@@ -9,7 +9,13 @@ import type {
 } from "../../types";
 import { Actionable } from "../Actionable";
 
-const ROW_LX = { flexDirection: "row", alignItems: "center", gap: "s12", padding: "s16" } as const;
+const ROW_LX = {
+  flexDirection: "row",
+  alignItems: "center",
+  gap: "s12",
+  paddingHorizontal: "s12",
+  paddingVertical: "s16",
+} as const;
 const INFO_LX = { gap: "s4" } as const;
 
 export function MemberRow({

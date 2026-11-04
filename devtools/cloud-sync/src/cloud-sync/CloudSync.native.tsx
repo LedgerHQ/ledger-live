@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
-import { ScrollView, TextInput } from "react-native";
-import { Box, Button, Text, useTheme } from "@ledgerhq/lumen-ui-rnative";
+import { ScrollView } from "react-native";
+import { Box, Button, Text, TextInput, useTheme } from "@ledgerhq/lumen-ui-rnative";
 import { useCloudSyncViewModel } from "./useCloudSyncViewModel";
 import type { CloudSyncDevToolProps } from "../types";
 
@@ -8,22 +8,25 @@ const ENV_ROW_LX = {
   flexDirection: "row",
   alignItems: "center",
   gap: "s12",
-  padding: "s16",
+  paddingHorizontal: "s12",
+  paddingVertical: "s16",
 } as const;
 const STATUS_LX = {
   flexDirection: "row",
   alignItems: "center",
   gap: "s8",
-  padding: "s16",
+  paddingHorizontal: "s12",
+  paddingVertical: "s16",
 } as const;
 const ACTIONS_LX = {
   flexDirection: "row",
   flexWrap: "wrap",
   alignItems: "center",
   gap: "s8",
-  padding: "s16",
+  paddingHorizontal: "s12",
+  paddingVertical: "s16",
 } as const;
-const DOC_LX = { padding: "s16", gap: "s8" } as const;
+const DOC_LX = { paddingHorizontal: "s12", paddingVertical: "s16", gap: "s8" } as const;
 const ENV_BTN_LX = { flexDirection: "row", gap: "s4" } as const;
 
 function CloudSync(props: CloudSyncDevToolProps) {
@@ -138,23 +141,16 @@ function CloudSync(props: CloudSyncDevToolProps) {
 
       {/* JSON — editable; Push sends the current content */}
       <Box lx={DOC_LX}>
-        <Text typography="body2">Document</Text>
         <TextInput
           multiline
+          minLines={10}
+          maxLines={20}
+          label="Document"
           value={vm.json}
           onChangeText={vm.setJson}
           placeholder="Pull to load the cloud document…"
-          style={{
-            fontFamily: "monospace",
-            fontSize: 12,
-            borderWidth: 1,
-            borderColor: theme.colors.border.mutedSubtle,
-            borderRadius: 4,
-            padding: 8,
-            minHeight: 200,
-            textAlignVertical: "top",
-            color: theme.colors.text.base,
-          }}
+          inputStyle={{ fontFamily: "monospace" }}
+          hideClearButton
         />
       </Box>
     </ScrollView>

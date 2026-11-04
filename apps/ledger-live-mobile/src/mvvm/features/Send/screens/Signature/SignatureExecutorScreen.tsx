@@ -9,6 +9,7 @@ export function SignatureExecutorScreen() {
     request,
     deviceInitializationInput,
     signatureIntent,
+    intentExtraProps,
     onIntentJobStateChanged,
     onIntentJobError,
     onUserCancel,
@@ -22,6 +23,7 @@ export function SignatureExecutorScreen() {
     <SignatureScreenView
       deviceInitializationInput={deviceInitializationInput}
       signatureIntent={signatureIntent}
+      intentExtraProps={intentExtraProps}
       onIntentJobStateChanged={onIntentJobStateChanged}
       onIntentJobError={onIntentJobError}
       onUserCancel={onUserCancel}

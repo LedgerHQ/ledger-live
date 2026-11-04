@@ -8,13 +8,12 @@ import type { AccountDataRootState } from "@domain/entity-account-data";
 import { BalanceAssetIdSchema, type WithAccountBalances } from "@domain/entity-account-balance";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import {
-  CountervalueTickerSchema,
   selectAccountOperations,
   type AccountOperation,
   type AccountOperationsQuery,
   type WithAccountOperations,
 } from "@domain/entity-account-operation";
-import { findFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
+import { FiatCurrencyTickerSchema, findFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { formatAmount, useAssetUnits } from "./useAssetUnits";
 
 type AccountOperationToolProps = Extract<
@@ -38,7 +37,7 @@ function toQuery(options: AccountOperationToolQuery, fiat: string): AccountOpera
   return {
     limit: options.limit,
     filterAsset: BalanceAssetIdSchema.optional().safeParse(options.filterAsset).data,
-    countervalue: options.countervalue ? CountervalueTickerSchema.safeParse(fiat).data : undefined,
+    countervalue: options.countervalue ? FiatCurrencyTickerSchema.safeParse(fiat).data : undefined,
   };
 }
 
@@ -59,7 +58,7 @@ function queryOf(queryKey: string): AccountOperationsQuery | undefined {
   const field = (name: string) => (name in parsed ? Reflect.get(parsed, name) : undefined);
   const limit = field("limit");
   const filterAsset = BalanceAssetIdSchema.optional().safeParse(field("filterAsset"));
-  const countervalue = CountervalueTickerSchema.optional().safeParse(field("countervalue"));
+  const countervalue = FiatCurrencyTickerSchema.optional().safeParse(field("countervalue"));
   return {
     limit: typeof limit === "number" ? limit : undefined,
     filterAsset: filterAsset.data,

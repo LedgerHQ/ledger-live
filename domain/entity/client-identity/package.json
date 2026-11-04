@@ -18,8 +18,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "check-export-rules": "node scripts/check-export-rules.mjs",
-    "unimported": "pnpm knip --directory ../../.. -W domain/entity/client-identity"
+    "check-export-rules": "node scripts/check-export-rules.mjs"
   },
   "dependencies": {
     "@reduxjs/toolkit": "catalog:",

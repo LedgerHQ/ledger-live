@@ -81,9 +81,6 @@
     "format:check": "nx run-many -t format:check",
     "typecheck": "nx run-many -t typecheck",
     "validate:renovate": "npx --yes --package renovate -- renovate-config-validator",
-    "knip-check": "nx run-many -t knip-check",
-    "unimported": "nx run-many -t unimported",
-    "deadcode": "nx run-many -t unimported -t knip-check",
     "knip:all": "knip -c support/knip/root.config.mjs && knip -c support/knip/web.config.mjs --tsConfig tsconfig.web.json && knip -c support/knip/native.config.mjs --tsConfig tsconfig.native.json",
     "desktop": "pnpm --filter ledger-live-desktop",
     "e2e:desktop": "pnpm --filter ledger-live-desktop-e2e-tests",
@@ -232,10 +229,8 @@
     "nyc": "15.1.0",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "rimraf": "4.4.1",
-    "@typescript/native": "catalog:",
     "typescript": "catalog:",
-    "zx": "8.8.5"
+    "zx": "catalog:"
   },
   "packageManager": "pnpm@12.15.0"
 }

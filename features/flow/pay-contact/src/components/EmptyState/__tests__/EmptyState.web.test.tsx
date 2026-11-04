@@ -1,7 +1,7 @@
 import React from "react";
 import { fireEvent, screen } from "@testing-library/react";
-import { renderWithStyle } from "../../../__tests__/renderWithStyle.web";
-import { EmptyState } from "../EmptyState.web";
+import { renderWithStyle } from "../../../__tests__/renderWithStyle";
+import { EmptyState } from "../EmptyState";
 import type { EmptyStateProps } from "../../../types";
 
 const defaultProps: EmptyStateProps = {

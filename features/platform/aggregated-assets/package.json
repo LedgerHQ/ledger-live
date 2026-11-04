@@ -17,8 +17,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage --passWithNoTests",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/aggregated-assets"
+    "coverage": "jest --coverage --passWithNoTests"
   },
   "dependencies": {
     "@domain/api-aggregated-assets": "workspace:*",

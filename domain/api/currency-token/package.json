@@ -17,8 +17,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W domain/api/currency-token"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@shared/api-services": "workspace:*",

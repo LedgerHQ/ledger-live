@@ -19,7 +19,6 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../.. -W shared/ui-qr-code",
     "format": "oxfmt src",
     "format:check": "oxfmt --check src",
     "lint": "oxlint ./src"

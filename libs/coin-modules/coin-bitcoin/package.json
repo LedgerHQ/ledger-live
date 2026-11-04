@@ -90,6 +90,7 @@
     "@types/object-hash": "2.2.1",
     "@types/ripemd160": "2.0.3",
     "@types/sha.js": "2.4.4",
+    "@typescript/native": "catalog:",
     "bip32": "4.0.0",
     "bip39": "catalog:",
     "ecpair": "3.0.2",
@@ -99,6 +100,7 @@
     "object-hash": "2.2.0",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
+    "rimraf": "catalog:",
     "typescript": "catalog:"
   },
   "files": [

@@ -45,8 +45,7 @@
     "lint": "oxlint ./src",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../.. -W libs/live-signer-tron"
+    "coverage": "jest --coverage"
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
@@ -55,9 +54,12 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
     "jest": "catalog:",
     "rimraf": "4.4.1",
-    "ts-node": "10.9.2"
+    "ts-node": "10.9.2",
+    "oxlint": "catalog:"
   },
   "exports": {
     ".": {

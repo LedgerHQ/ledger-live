@@ -18,8 +18,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/account-analytics"
+    "coverage": "jest --coverage"
   },
   "devDependencies": {
     "@domain/entity-currency-crypto": "workspace:^",

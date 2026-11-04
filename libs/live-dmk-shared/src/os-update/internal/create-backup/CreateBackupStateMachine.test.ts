@@ -197,6 +197,9 @@ describe("CreateBackupStateMachine", () => {
       await start();
 
       expect(lastSentStateType()).toBe(CreateBackupStateType.AWAITING_BACKUP_SELECTION);
+      expect(sentStatesOfType(CreateBackupStateType.AWAITING_BACKUP_SELECTION)[0]).toMatchObject({
+        backupCreatedAt: STALE_BACKUP.createdAt,
+      });
       expect(actor.getSnapshot().value).toBe("AwaitingBackupSelection");
       expect(deviceActionRuns).toHaveLength(0);
     });

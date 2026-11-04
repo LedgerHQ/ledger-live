@@ -5,9 +5,9 @@ import {
 } from "@domain/entity-account-data";
 import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
+import { FiatCurrencyTickerSchema } from "@domain/entity-currency-fiat";
 import { mockAccountOperation } from "./schema.mock";
 import {
-  CountervalueTickerSchema,
   initialAccountOperationsState,
   type AccountOperation,
   type AccountOperationsQuery,
@@ -127,8 +127,8 @@ describe("accountOperationsSlice", () => {
   });
 
   it("should keep the countervalues of a query in its own window only", () => {
-    const usd = { countervalue: CountervalueTickerSchema.parse("USD") };
-    const eur = { countervalue: CountervalueTickerSchema.parse("EUR") };
+    const usd = { countervalue: FiatCurrencyTickerSchema.parse("USD") };
+    const eur = { countervalue: FiatCurrencyTickerSchema.parse("EUR") };
     const inUsd = mockAccountOperation({ id: "op-1", countervalues: { USD: "100" } });
     const inEur = mockAccountOperation({ id: "op-1", countervalues: { EUR: "90" } });
     const state = reduce(
@@ -143,7 +143,7 @@ describe("accountOperationsSlice", () => {
   });
 
   it("should extend the countervalues of a window with its next page, and replace them on a head read", () => {
-    const usd = { countervalue: CountervalueTickerSchema.parse("USD") };
+    const usd = { countervalue: FiatCurrencyTickerSchema.parse("USD") };
     const op1InUsd = mockAccountOperation({ id: "op-1", countervalues: { USD: "100" } });
     const op2InUsd = mockAccountOperation({ id: "op-2", countervalues: { USD: "200" } });
     const paged = reduce(
@@ -156,7 +156,7 @@ describe("accountOperationsSlice", () => {
   });
 
   it("should drop the countervalue of a row a next page repeats without one", () => {
-    const usd = { countervalue: CountervalueTickerSchema.parse("USD") };
+    const usd = { countervalue: FiatCurrencyTickerSchema.parse("USD") };
     const op1InUsd = mockAccountOperation({ id: "op-1", countervalues: { USD: "100" } });
     const state = reduce(
       receive([op1InUsd], { query: usd }),
@@ -166,7 +166,7 @@ describe("accountOperationsSlice", () => {
   });
 
   describe("a row valued while pending, then confirmed at another date", () => {
-    const usd = { countervalue: CountervalueTickerSchema.parse("USD") };
+    const usd = { countervalue: FiatCurrencyTickerSchema.parse("USD") };
     const pending = mockAccountOperation({ id: "op-1", date: "2026-01-01T00:00:00.000Z" });
     const pendingInUsd = { ...pending, countervalues: { USD: "100" } };
     const confirmed = mockAccountOperation({ id: "op-1", date: "2026-01-02T00:00:00.000Z" });
@@ -189,8 +189,8 @@ describe("accountOperationsSlice", () => {
   });
 
   it("should keep the countervalue of an older answer whose row did not change", () => {
-    const usd = { countervalue: CountervalueTickerSchema.parse("USD") };
-    const eur = { countervalue: CountervalueTickerSchema.parse("EUR") };
+    const usd = { countervalue: FiatCurrencyTickerSchema.parse("USD") };
+    const eur = { countervalue: FiatCurrencyTickerSchema.parse("EUR") };
     const inUsd = mockAccountOperation({ id: "op-1", countervalues: { USD: "100" } });
     const inEur = mockAccountOperation({ id: "op-1", countervalues: { EUR: "90" } });
     const state = reduce(

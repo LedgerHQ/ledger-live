@@ -2,7 +2,7 @@ import { DeviceModelId, type DeviceManagementKit } from "@ledgerhq/device-manage
 import { OnboardingStep } from "@features/platform-device-onboarding";
 import { rnBleTransportIdentifier } from "@ledgerhq/live-dmk-mobile";
 import { act, renderHook, waitFor, withFlagOverrides } from "@tests/test-renderer";
-import { useDeviceOnboarding } from "./useDeviceOnboarding";
+import { useDeviceOnboardingToolSession } from "../../DevTools/DeviceOnboarding/useDeviceOnboardingTool";
 import { createScriptedTestDevice } from "../testing/scriptedTestDevice";
 import { knownStax } from "../testing/testDevice";
 
@@ -36,7 +36,7 @@ describe("useDeviceOnboarding reconnect after an OS update", () => {
     const device = createScriptedTestDevice();
     const calls: string[] = [];
     const { result, rerender } = renderHook(
-      () => useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+      () => useOnboardingWithTool({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
       {
         overrideInitialState: withFlagOverrides({
           deviceOnboarding: { enabled: true, params: { connectUnseededDevice: true } },
@@ -77,7 +77,7 @@ describe("useDeviceOnboarding reconnect after an OS update", () => {
   it("shows an error when the original session is still the only connected device", async () => {
     const device = createScriptedTestDevice();
     const { result, rerender } = renderHook(
-      () => useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+      () => useOnboardingWithTool({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
       {
         overrideInitialState: withFlagOverrides({
           deviceOnboarding: { enabled: true, params: { connectUnseededDevice: true } },
@@ -114,7 +114,7 @@ describe("useDeviceOnboarding reconnect after an OS update", () => {
   it("shows an error when another device is the only connected device", async () => {
     const device = createScriptedTestDevice();
     const { result, rerender } = renderHook(
-      () => useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+      () => useOnboardingWithTool({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
       {
         overrideInitialState: withFlagOverrides({
           deviceOnboarding: { enabled: true, params: { connectUnseededDevice: true } },
@@ -152,7 +152,7 @@ describe("useDeviceOnboarding reconnect after an OS update", () => {
     const device = createScriptedTestDevice();
     let releaseDisconnect: (() => void) | undefined;
     const { result, rerender } = renderHook(
-      () => useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+      () => useOnboardingWithTool({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
       {
         overrideInitialState: withFlagOverrides({
           deviceOnboarding: { enabled: true, params: { connectUnseededDevice: true } },
@@ -188,12 +188,12 @@ describe("useDeviceOnboarding reconnect after an OS update", () => {
   });
 });
 
-function lostTransport(log: ReturnType<typeof useDeviceOnboarding>["log"]): boolean {
+function lostTransport(log: ReturnType<typeof useOnboardingWithTool>["log"]): boolean {
   return log.some(row => row.event?.type === "TRANSPORT_LOST");
 }
 
 async function connectStax(
-  result: { current: ReturnType<typeof useDeviceOnboarding> },
+  result: { current: ReturnType<typeof useOnboardingWithTool> },
   device: ReturnType<typeof createScriptedTestDevice>,
 ) {
   device.answerState({
@@ -217,4 +217,10 @@ async function connectStax(
 
   act(() => result.current.send({ type: "USER_ACCEPT" }));
   await waitFor(() => expect(result.current.state).toBe("checks.firmwareUpdateDelegated"));
+}
+
+/** The product session with the devtool's view of it, which owns the log and the next states. */
+function useOnboardingWithTool(input: Parameters<typeof useDeviceOnboardingToolSession>[0]) {
+  const { session, toolState } = useDeviceOnboardingToolSession(input);
+  return { ...session, ...toolState };
 }

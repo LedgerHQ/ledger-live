@@ -37,6 +37,16 @@ export class WithdrawAddressScreeningError extends WithdrawApiError {
   override name = "WithdrawAddressScreeningError";
 }
 
+/** A withdraw that can never be signed, e.g. the Mayan route, which the Ethereum app cannot clear-sign. */
+export class WithdrawUnsupportedRouteError extends Error {
+  override name = "WithdrawUnsupportedRouteError";
+}
+
+/** The device signature does not recover to the withdrawing account. */
+export class WithdrawSignerMismatchError extends Error {
+  override name = "WithdrawSignerMismatchError";
+}
+
 /** Submit outcome unknown: check the status, never resubmit. */
 export class WithdrawSubmitUnknownOutcomeError extends WithdrawApiError {
   override name = "WithdrawSubmitUnknownOutcomeError";

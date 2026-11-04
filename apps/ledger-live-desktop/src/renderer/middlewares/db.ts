@@ -39,6 +39,7 @@ import { isPayAction, persistPayCard } from "./payPersistence";
 import {
   accountAnalyticsIntroductionPersistedSelector,
   dismissAccountAnalyticsIntroduction,
+  resetAccountAnalyticsIntroduction,
 } from "@features/flow-account-detail-analytics-notice/state";
 
 let DB_MIDDLEWARE_ENABLED = true;
@@ -170,7 +171,8 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
   const newState = store.getState();
 
   if (
-    dismissAccountAnalyticsIntroduction.match(action) &&
+    (dismissAccountAnalyticsIntroduction.match(action) ||
+      resetAccountAnalyticsIntroduction.match(action)) &&
     oldState.accountAnalyticsIntroduction !== newState.accountAnalyticsIntroduction
   ) {
     setKey(

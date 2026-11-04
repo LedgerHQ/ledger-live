@@ -9,13 +9,15 @@ import type { ContactsPageContentProps } from "../../types";
 export function ContactsPageContent({
   addContactDrawer,
   ledgerSyncActivationDrawer,
+  featureIntroduction,
+  ledgerSyncIntroduction,
   ...pageProps
 }: ContactsPageContentProps): React.JSX.Element {
   return (
     <>
       <ContactsView {...pageProps} />
-      <ContactsFeatureIntroductionSheet {...pageProps.featureIntroduction} />
-      <ContactsLedgerSyncIntroductionSheet {...pageProps.ledgerSyncIntroduction} />
+      <ContactsFeatureIntroductionSheet {...featureIntroduction} />
+      <ContactsLedgerSyncIntroductionSheet {...ledgerSyncIntroduction} />
       <ContactsLedgerSyncActivationDrawer {...ledgerSyncActivationDrawer} />
       <ContactsAddContactDrawerSheet {...addContactDrawer} />
     </>

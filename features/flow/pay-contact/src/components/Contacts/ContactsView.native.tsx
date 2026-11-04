@@ -7,9 +7,18 @@ import {
   SubheaderTitle,
   SubheaderShowMore,
 } from "@ledgerhq/lumen-ui-rnative";
-import { PayTile } from "../PayTile/PayTile.native";
-import { ContactTile } from "../ContactTile/ContactTile.native";
-import type { ContactsViewNativeProps } from "../../types";
+import type { Contact } from "@domain/entity-contact";
+import { PayTile } from "../PayTile/PayTile";
+import { ContactTile } from "../ContactTile/ContactTile";
+import type { ContactsNativeProps } from "./Contacts";
+
+export type ContactsViewNativeProps = ContactsNativeProps &
+  Readonly<{
+    title: string;
+    payLabel: string;
+    contacts: readonly Contact[];
+    hasMore: boolean;
+  }>;
 
 const HEIGHT = 108;
 const PADDING_HORIZONTAL = 0;

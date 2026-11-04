@@ -37,3 +37,7 @@ export class NotEnoughEGLDForFees extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+export class MultiversXRoundNotFinal extends Error {
+  override name = "MultiversXRoundNotFinal";
+}

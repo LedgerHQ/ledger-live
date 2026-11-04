@@ -4,7 +4,7 @@ import { render } from "@testing-library/react-native";
 import { Provider } from "react-redux";
 import { contactsSlice, type Contact } from "@domain/entity-contact";
 import { I18nTestProvider } from "@shared/i18n/testing";
-import type { ContactsNativeProps } from "../../../types";
+import type { ContactsNativeProps } from "../Contacts";
 import { CONTACTS_RESOURCES, type I18nResources } from "./i18n";
 
 export { CONTACTS_RESOURCES };

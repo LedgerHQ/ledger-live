@@ -24,5 +24,6 @@ Mobile implementation is exposed by the `./native` subpath.
 ```sh
 pnpm test
 pnpm typecheck
-pnpm unimported
 ```
+
+Knip runs from the repo root: `pnpm knip:all`.

@@ -73,7 +73,6 @@
     "test-deep-links": "ws --spa ./ledger-live-mobile-deeplinks.html",
     "download-hermes-profile": "zx ./scripts/download-hermes-profile.mjs",
     "check": "pnpm lint; pnpm typecheck",
-    "knip-check": "pnpm knip --directory ../.. -W apps/ledger-live-mobile",
     "assets:replace": "zx ./scripts/replace-assets.mjs"
   },
   "dependencies": {
@@ -327,7 +326,7 @@
     "react-native-svg": "catalog:",
     "react-native-tcp-socket": "6.4.2",
     "react-native-url-polyfill": "4.0.0",
-    "react-native-video": "6.16.1",
+    "react-native-video": "6.19.3",
     "react-native-view-shot": "6.2.1",
     "react-native-vision-camera": "4.7.3",
     "react-native-webview": "13.16.1",
@@ -436,6 +435,8 @@
     "ts-node": "10.9.2",
     "tslib": "2.6.2",
     "web-streams-polyfill": "4.2.0",
-    "ws": "catalog:"
+    "ws": "catalog:",
+    "rimraf": "catalog:",
+    "zx": "catalog:"
   }
 }

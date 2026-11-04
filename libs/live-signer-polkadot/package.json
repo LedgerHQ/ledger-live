@@ -47,7 +47,6 @@
     "test": "jest",
     "coverage": "jest --coverage",
     "typecheck": "tsc --noEmit",
-    "knip-check": "pnpm knip --directory ../.. -W libs/live-signer-polkadot",
     "format": "oxfmt src tests",
     "format:check": "oxfmt --check src tests"
   },
@@ -63,7 +62,10 @@
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "rimraf": "4.4.1",
-    "ts-node": "10.9.2"
+    "ts-node": "10.9.2",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
+    "oxlint": "catalog:"
   },
   "exports": {
     ".": {

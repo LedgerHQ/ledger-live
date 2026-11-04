@@ -234,6 +234,7 @@ export function TrackingProvider({
             }
           : {}),
         ...(currentPage?.page === OsUpdatePage.SECURE_CONNECTION_REFUSED ||
+        currentPage?.page === OsUpdatePage.CONNECTION_TIMED_OUT ||
         currentPage?.page === OsUpdatePage.CLOSE_CONFIRMATION ||
         (button === OsUpdateButton.CLOSE && currentPage && "step" in currentPage)
           ? { step: currentPage.step }

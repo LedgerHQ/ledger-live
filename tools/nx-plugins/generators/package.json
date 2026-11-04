@@ -15,6 +15,7 @@
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "jest": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "oxlint": "catalog:"
   }
 }

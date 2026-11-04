@@ -64,7 +64,11 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "rxjs": "catalog:",
-    "ws": "catalog:"
+    "ws": "catalog:",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
+    "rimraf": "catalog:",
+    "oxlint": "catalog:"
   },
   "peerDependencies": {
     "@ledgerhq/device-management-kit": "catalog:",

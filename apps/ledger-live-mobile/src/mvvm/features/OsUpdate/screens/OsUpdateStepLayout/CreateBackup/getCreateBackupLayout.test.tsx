@@ -8,6 +8,12 @@ import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { render, screen } from "@tests/test-renderer";
 import { OsUpdateStep } from "../../../components/OsUpdateStep";
 import { stax } from "../../../testUtils/connectedDevice.mock";
+import useExportLogs from "~/components/useExportLogs";
+
+jest.mock("~/components/useExportLogs", () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
 
 function renderView(
   state: CreateBackupState,
@@ -48,11 +54,15 @@ describe("CreateBackup step", () => {
     const createNewBackup = jest.fn();
     const { user } = renderView({
       type: CreateBackupStateType.AWAITING_BACKUP_SELECTION,
+      backupCreatedAt: new Date(2026, 8, 12, 0, 30),
       useExistingBackup,
       createNewBackup,
     });
 
     expect(hasCloseButton()).toBe(false);
+    expect(screen.getByTestId("os-update-backup-selection-last-save")).toHaveTextContent(
+      "Last saveSeptember 12, 12:30AM",
+    );
 
     await user.press(screen.getByTestId("os-update-use-existing-backup"));
     await user.press(screen.getByTestId("os-update-create-new-backup"));
@@ -92,6 +102,25 @@ describe("CreateBackup step", () => {
     renderView({ type });
 
     expect(screen.getByTestId(testID)).toBeVisible();
+  });
+
+  it("sends a report and restarts the update from the connection timeout", async () => {
+    const exportLogs = jest.fn();
+    jest.mocked(useExportLogs).mockReturnValue(exportLogs);
+    const retry = jest.fn();
+    const { user } = renderView({ type: CreateBackupStateType.CONNECTION_TIMED_OUT, retry });
+
+    expect(screen.getByTestId("os-update-connection-timed-out")).toBeVisible();
+    expect(hasCloseButton()).toBe(false);
+
+    await user.press(screen.getByText("Send report to Ledger"));
+
+    expect(exportLogs).toHaveBeenCalledTimes(1);
+    expect(retry).not.toHaveBeenCalled();
+
+    await user.press(screen.getByText("Restart OS update"));
+
+    expect(retry).toHaveBeenCalledTimes(1);
   });
 
   it("cancels from the unexpected error state", async () => {

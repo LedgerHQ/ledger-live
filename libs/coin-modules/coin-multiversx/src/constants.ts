@@ -1,3 +1,5 @@
+import { Address } from "@multiversx/sdk-core/out";
+import { ESDT_CONTRACT_ADDRESS_HEX } from "@multiversx/sdk-core/out/constants";
 import BigNumber from "bignumber.js";
 
 export const TRANSACTION_OPTIONS_TX_HASH_SIGN = 0b0001;
@@ -19,6 +21,7 @@ export const MIN_DELEGATION_AMOUNT: BigNumber = new BigNumber("10000000000000000
 export const DECIMALS_LIMIT = 18;
 
 export const MULTIVERSX_EXPLORER_URL = "https://explorer.multiversx.com";
+export const ESDT_SYSTEM_SC_BECH32 = Address.fromHex(ESDT_CONTRACT_ADDRESS_HEX).toBech32();
 export const MULTIVERSX_STAKING_POOL =
   "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllst77y4l";
 export const MULTIVERSX_LEDGER_VALIDATOR_ADDRESS = "";

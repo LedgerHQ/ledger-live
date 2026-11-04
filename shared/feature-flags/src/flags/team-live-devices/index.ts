@@ -10,4 +10,3 @@ export * from "./ldmkXrpSigner";
 export * from "./llmNanoSDeprecation";
 export * from "./myLedgerDisplayAppDeveloperName";
 export * from "./onboardingIgnoredOsUpdates";
-export * from "./supportDeviceApex";

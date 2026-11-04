@@ -76,10 +76,12 @@
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
     "@types/semver": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "msw": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
+    "rimraf": "catalog:",
     "typescript": "catalog:"
   },
   "files": [

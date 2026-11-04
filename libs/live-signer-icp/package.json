@@ -43,8 +43,7 @@
     "lint": "oxlint ./src",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
-    "coverage": "jest --coverage",
-    "knip-check": "pnpm knip --directory ../.. -W libs/live-signer-icp"
+    "coverage": "jest --coverage"
   },
   "devDependencies": {
     "@types/react": "catalog:",
@@ -57,7 +56,10 @@
     "rimraf": "4.4.1",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
-    "ts-node": "10.9.2"
+    "ts-node": "10.9.2",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
+    "oxlint": "catalog:"
   },
   "exports": {
     ".": {

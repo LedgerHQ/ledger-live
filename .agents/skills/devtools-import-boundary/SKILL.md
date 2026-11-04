@@ -11,8 +11,21 @@ Every `@devtools/*` package is **self-contained**. A `@devtools/*` package may i
 
 - `DEVTOOLS_ALLOWED_IMPORTS` lists the imports each package may make.
 - `DEVTOOLS_TYPE_ONLY_IMPORTS` lists the packages each one may reach under `DEVTOOLS_TYPE_ONLY_RULE`.
+- `DEVTOOLS_LAZY_IMPORTS` lists the packages each one may reach only lazily, under `DEVTOOLS_LAZY_RULE`.
+- `DEVTOOLS_HOST_APPS` lists the apps that host DevTools, the one folder of each that may import `@devtools/*`, and the files of that folder product code may import statically.
 
 To change what a package may import, edit those tables.
+
+## Rules for the registry and the host apps
+
+1. **The registry reaches tools lazily** (`DEVTOOLS_LAZY_RULE`). The shell loads `@devtools/registry` eagerly, so the registry may reach a tool only through `import type`, `export type … from`, `typeof import("…")` or `loader: () => import("@devtools/<tool>")`. A value import or `require()` bundles the tool with the shell.
+2. **App product code does not import `@devtools/*`** (`DEVTOOLS_HOST_APP_RULE`). In each app of `DEVTOOLS_HOST_APPS`, only files under `allowedUnder` (`src/mvvm/features/DevTools/`) may import `@devtools/*`, type imports included. A product hook calling a bindings hook, or a product type derived from `DevToolsConfig` or a bindings port type, belongs in that folder.
+3. **Product code enters the DevTools folder through its entries** (`DEVTOOLS_HOST_FOLDER_RULE`). A file outside `allowedUnder` may statically import only the files listed in `entries`; any other file of the folder is reachable only through `import()` or `lazy(() => import(...))`. Otherwise one hop through the folder would bypass rule 2. The rule resolves relative paths and the aliases of the app's `tsconfig.json` (`LLD/*`, `LLM/*`, `~/*`). Test files (`*.test.*`, `__tests__/`, `__integrations__/`) are exempt.
+
+### What lint cannot catch
+
+- **Debug work on a product path.** A debug screen, a mock or a dev-only branch written in a product file without importing `@devtools/*` passes. Keep it under the DevTools folder by review.
+- **Debug controls.** `setOverride` and similar controls are used by many legitimate debug screens, so lint does not flag them. Whether product code drives them for debugging is a review question.
 
 ## Why
 
@@ -34,6 +47,8 @@ If `bindings` or `shell` import a tool package's values directly (instead of thr
 - **Tool imports shell or registry:** The tool becomes coupled to shell internals; standalone rendering and unit-testing break.
 - **Tool imports another tool:** Cross-tool coupling; removing or renaming one tool requires editing the other.
 - **Shell or bindings import a tool directly:** Eager bundle; code-split lost; registry union integrity broken.
+- **Registry imports a tool's values:** The tool is bundled with the shell, which loads the registry eagerly.
+- **App product code imports `@devtools/*`, directly or through a non-entry file of the DevTools folder:** Product code depends on debug tooling and ships it eagerly.
 
 ## Correct pattern
 

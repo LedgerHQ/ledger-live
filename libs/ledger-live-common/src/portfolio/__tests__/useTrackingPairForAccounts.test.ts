@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import type { FiatCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import { FiatCurrencyTickerSchema, type FiatCurrency } from "@domain/entity-currency-fiat";
 import type { TrackingPair } from "@domain/entity-market-countervalues";
 import { renderHook, act } from "@testing-library/react";
 import { inferTrackingPairForAccounts } from "../trackingPairs";
@@ -11,14 +11,14 @@ import { useTrackingPairForAccounts } from "../useTrackingPairForAccounts";
 const usd: FiatCurrency = {
   type: "FiatCurrency",
   name: "US Dollar",
-  ticker: "USD",
+  ticker: FiatCurrencyTickerSchema.parse("USD"),
   symbol: "$",
   units: [{ name: "dollar", code: "USD", magnitude: 2, showAllDigits: true, prefixCode: true }],
 };
 const eur: FiatCurrency = {
   type: "FiatCurrency",
   name: "Euro",
-  ticker: "EUR",
+  ticker: FiatCurrencyTickerSchema.parse("EUR"),
   symbol: "€",
   units: [{ name: "euro", code: "EUR", magnitude: 2, showAllDigits: true, prefixCode: true }],
 };

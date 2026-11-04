@@ -15,7 +15,6 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W domain/api/ofac",
     "format": "oxfmt src",
     "format:check": "oxfmt --check src",
     "lint": "oxlint ./src"
