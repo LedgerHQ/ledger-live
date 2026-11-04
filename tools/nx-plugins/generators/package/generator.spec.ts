@@ -106,7 +106,7 @@ describe("the layer table", () => {
       expect(
         fs.existsSync(path.join(WORKSPACE_ROOT, "support/tsconfig", `${shape.tsconfig}.json`)),
       ).toBe(true);
-      const preset = require(path.join(WORKSPACE_ROOT, "support/jest", shape.jest.preset));
+      const preset = require(`@support/jest/${shape.jest.preset}`);
       expect(typeof preset[shape.jest.factory]).toBe("function");
     },
   );
