@@ -13,6 +13,13 @@ import { isHardTimeout, waitHardTimeout, withHardTimeout } from "./hardTimeout";
 
 type ElementAttributes = IosElementAttributes | AndroidElementAttributes;
 
+type NativeHandleOptions = {
+  createMatcher: () => NativeMatcher;
+  description: string;
+  /** Which match to act on when several elements match, the first by default. */
+  index?: number;
+};
+
 const scroller = new PageScroller();
 
 /**
@@ -26,7 +33,8 @@ export class NativeHandle implements ElementHandle {
   private readonly description: string;
   private readonly index: number;
 
-  constructor(createMatcher: () => NativeMatcher, description: string, index = 0) {
+  constructor(options: NativeHandleOptions) {
+    const { createMatcher, description, index = 0 } = options;
     this.createMatcher = createMatcher;
     this.description = description;
     this.index = index;
@@ -189,19 +197,29 @@ export class NativeHandle implements ElementHandle {
  * `index` picks the n-th match, the first by default.
  */
 export const byId = (id: string | RegExp, index = 0): NativeHandle =>
-  new NativeHandle(() => by.id(id), index ? `#${id}[${index}]` : `#${id}`, index);
+  new NativeHandle({
+    createMatcher: () => by.id(id),
+    description: index ? `#${id}[${index}]` : `#${id}`,
+    index,
+  });
 
 /** Matches by `testID` and the element's own text. */
 export const byIdAndText = (id: string | RegExp, text: string | RegExp): NativeHandle =>
-  new NativeHandle(() => by.id(id).and(by.text(text)), `#${id} with text "${text}"`);
+  new NativeHandle({
+    createMatcher: () => by.id(id).and(by.text(text)),
+    description: `#${id} with text "${text}"`,
+  });
 
 /** Matches by `testID` and the text of a descendant, e.g. a label inside a button or card. */
 export const byIdWithDescendantText = (id: string, text: string | RegExp): NativeHandle =>
-  new NativeHandle(
-    () => by.id(id).withDescendant(by.text(text)),
-    `#${id} containing text "${text}"`,
-  );
+  new NativeHandle({
+    createMatcher: () => by.id(id).withDescendant(by.text(text)),
+    description: `#${id} containing text "${text}"`,
+  });
 
 /** Matches a text inside the `testID` element, for a text that has no `testID` of its own. */
 export const byTextWithAncestorId = (id: string, text: string | RegExp): NativeHandle =>
-  new NativeHandle(() => by.text(text).withAncestor(by.id(id)), `"${text}" inside #${id}`);
+  new NativeHandle({
+    createMatcher: () => by.text(text).withAncestor(by.id(id)),
+    description: `"${text}" inside #${id}`,
+  });
