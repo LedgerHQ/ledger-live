@@ -3,6 +3,7 @@ import { Layout, type SyncWaitOptions } from "tests/component/layout.component";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
 import { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
+import type { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 const escapeRegExp = (value: string) => value.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
@@ -19,7 +20,7 @@ export class AccountPage extends AppPage {
   private redesignedOperationRows = this.page.locator("[data-testid^='history-operation-row-']");
   private redesignedOperationType = this.page.getByTestId("history-operation-type");
   private redesignedAssets = this.page.getByTestId("account-detail-assets");
-  private tokenInFocus?: string;
+  private tokenInFocus?: Currency;
   // A row reads "Tether USD USDT 65.54 USDT $65.44 ...", the ticker followed by a balance tells it apart from tokens named after it.
   private redesignedTokenRow = (tokenAccount: AccountType) =>
     this.redesignedAssets.getByRole("button", {
@@ -81,10 +82,10 @@ export class AccountPage extends AppPage {
     return this.redesignedLayout.isVisible();
   }
 
-  private async clickAction(action: string, legacyButton: Locator, assetCurrencyId?: string) {
+  private async clickAction(action: string, legacyButton: Locator, asset?: Currency) {
     if (await this.isRedesigned()) {
       await this.redesignedHeroAction(action).click();
-      await this.pickAssetIfAsked(assetCurrencyId);
+      await this.pickAssetIfAsked(asset);
       return;
     }
     await legacyButton.click();
@@ -116,15 +117,23 @@ export class AccountPage extends AppPage {
   }
 
   // The new page asks which asset to use when the account holds several.
-  private async pickAssetIfAsked(assetCurrencyId?: string) {
-    const currencyId = assetCurrencyId ?? this.tokenInFocus;
-    if (!currencyId) return;
+  private async pickAssetIfAsked(asset?: Currency) {
+    const currency = asset ?? this.tokenInFocus;
+    if (!currency) return;
     try {
       await this.assetPicker.waitFor({ state: "visible", timeout: TIMEOUT.small });
     } catch {
       return; // a single asset opens the flow straight away
     }
-    await this.page.getByTestId(`account-detail-asset-picker-${currencyId}`).click();
+    await this.pickerRow(currency).click();
+  }
+
+  // Solana tokens share the id "solana" in the test data: the row id of one ends with its lowercased contract address.
+  private pickerRow(currency: Currency) {
+    const rows = this.page.locator("[data-testid^='account-detail-asset-picker-']");
+    return currency.contractAddress && currency.id === "solana"
+      ? rows.and(this.page.locator(`[data-testid$='${currency.contractAddress.toLowerCase()}']`))
+      : this.page.getByTestId(`account-detail-asset-picker-${currency.id}`);
   }
 
   @step("Click `Receive` button")
@@ -157,9 +166,9 @@ export class AccountPage extends AppPage {
   }
 
   @step("Click `Send` button")
-  async clickSend(assetCurrencyId?: string) {
+  async clickSend(asset?: Currency) {
     if (await this.isRedesigned()) {
-      await this.clickRedesignedSend(assetCurrencyId);
+      await this.clickRedesignedSend(asset);
       return;
     }
     if (await this.noAssetsTitle.isVisible()) {
@@ -170,14 +179,14 @@ export class AccountPage extends AppPage {
   }
 
   // Send stays disabled until the account is synced.
-  private async clickRedesignedSend(assetCurrencyId?: string) {
+  private async clickRedesignedSend(asset?: Currency) {
     const send = this.redesignedHeroAction("send");
     if (await send.isDisabled()) {
       await this.layout.syncAccounts();
       await this.layout.waitForSyncButtonToBeEnabled();
     }
     await send.click();
-    await this.pickAssetIfAsked(assetCurrencyId);
+    await this.pickAssetIfAsked(asset);
   }
 
   @step("Verify `Send` button is visible")
@@ -391,7 +400,7 @@ export class AccountPage extends AppPage {
     if (await this.isRedesigned()) {
       // A row opens the asset page, so the token is kept to pick it when sending or buying.
       await this.expectTokenToBePresent(tokenAccount);
-      this.tokenInFocus = tokenAccount.currency.id;
+      this.tokenInFocus = tokenAccount.currency;
       return;
     }
     const row = this.tokenRow(tokenAccount.currency.ticker);
