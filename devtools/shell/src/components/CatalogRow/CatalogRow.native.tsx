@@ -37,7 +37,10 @@ export function CatalogRow({
 }: CatalogRowProps) {
   return (
     <Box lx={{ paddingHorizontal: "s4" }}>
-      <ListItem onPress={onPress} accessibilityLabel={title}>
+      <ListItem
+        onPress={onPress}
+        accessibilityLabel={[title, kind, owner].filter(Boolean).join(", ")}
+      >
         <ListItemLeading>
           {logo && <Spot icon={logo} />}
           <ListItemContent>
