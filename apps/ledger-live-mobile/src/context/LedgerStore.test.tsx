@@ -8,17 +8,16 @@ import { getCardSessionToken } from "@features/platform-card";
 import { featureFlagsReducer, setCachedFlagsSettled } from "@shared/feature-flags";
 import { liveConfigOverridesReducer } from "@shared/live-config-overrides";
 import settingsReducer from "~/reducers/settings";
-import type { SettingsState } from "~/reducers/types";
 import LedgerStoreProvider from "./LedgerStore";
 
-const mockGetSettings = jest.fn<Promise<Partial<SettingsState> | null | undefined>, []>(() =>
-  Promise.resolve(undefined),
-);
+const mockGetSettings = jest.fn<Promise<unknown>, []>(() => Promise.resolve(undefined));
 const mockGetLiveConfigOverridesState = jest.fn<Promise<unknown>, []>(() => Promise.resolve(null));
 const mockGetAccounts = jest.fn<Promise<unknown>, []>(() => Promise.resolve(undefined));
 const mockGetMarketState = jest.fn<Promise<unknown>, []>(() => Promise.resolve(undefined));
 const mockGetKnownDevices = jest.fn<Promise<unknown>, []>(() => Promise.resolve(undefined));
 const mockSaveAccounts = jest.fn(() => Promise.resolve());
+const mockGetFeatureFlagsState = jest.fn<Promise<unknown>, []>(() => Promise.resolve(undefined));
+const mockSaveFeatureFlagsState = jest.fn(() => Promise.resolve());
 
 jest.mock("../db", () => {
   const empty = () => Promise.resolve(undefined);
@@ -27,8 +26,8 @@ jest.mock("../db", () => {
     saveAccounts: () => mockSaveAccounts(),
     getCountervalues: empty,
     getCryptoAssetsCacheState: empty,
-    getFeatureFlagsState: empty,
-    saveFeatureFlagsState: empty,
+    getFeatureFlagsState: () => mockGetFeatureFlagsState(),
+    saveFeatureFlagsState: () => mockSaveFeatureFlagsState(),
     getLiveConfigOverridesState: () => mockGetLiveConfigOverridesState(),
     getSettings: () => mockGetSettings(),
     getBle: empty,
@@ -94,6 +93,8 @@ describe("LedgerStoreProvider", () => {
     mockGetMarketState.mockReset().mockResolvedValue(undefined);
     mockGetKnownDevices.mockReset().mockResolvedValue(undefined);
     mockSaveAccounts.mockClear();
+    mockGetFeatureFlagsState.mockReset().mockResolvedValue(undefined);
+    mockSaveFeatureFlagsState.mockClear();
     jest.spyOn(console, "error").mockImplementation(() => {});
     mockBootstrapCardSession.mockClear();
     jest.mocked(getCardSessionToken).mockReset();
@@ -281,5 +282,20 @@ describe("LedgerStoreProvider", () => {
     // Default settings have no password lock, so the app would open without it.
     expect(screen.getByText("loading")).toBeOnTheScreen();
     expect(mockBootstrapCardSession).not.toHaveBeenCalled();
+  });
+
+  it("should not migrate the legacy feature flags over an unreadable value", async () => {
+    mockGetFeatureFlagsState.mockRejectedValue(corruptValueError());
+    mockGetSettings.mockResolvedValueOnce({
+      overriddenFeatureFlags: { someFlag: { enabled: true } },
+    });
+    const store = createStore();
+    store.dispatch(setCachedFlagsSettled());
+
+    renderProvider(store);
+    await act(() => jest.runAllTimersAsync());
+
+    expect(screen.getByText("ready")).toBeOnTheScreen();
+    expect(mockSaveFeatureFlagsState).not.toHaveBeenCalled();
   });
 });
