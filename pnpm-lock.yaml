@@ -3662,6 +3662,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       babel-jest:
         specifier: 'catalog:'
         version: 30.5.0(@babel/core@7.28.5)
@@ -3680,6 +3683,12 @@ importers:
       jest-sonar:
         specifier: 0.2.16
         version: 0.2.16
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       react:
         specifier: 19.1.4
         version: 19.1.4
