@@ -6,13 +6,11 @@
 // — its node_modules, its jest/ folder — deliberately keep `<rootDir>`.
 
 import type { Config } from "@jest/types";
-import path from "node:path";
 import { presetFactory } from "../core/index.mts";
 import { deepFreeze } from "../internals/freeze.mts";
+import { joinPresetPath } from "../internals/join-preset-path.mts";
 
-function here(relative: string): string {
-  return path.join(import.meta.dirname, relative);
-}
+const here = (relative: string) => joinPresetPath(import.meta.dirname, relative);
 
 const swcJsc = { target: "esnext", transform: { react: { runtime: "automatic" } } };
 

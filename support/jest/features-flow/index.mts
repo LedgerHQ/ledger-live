@@ -1,5 +1,4 @@
 import type { Config } from "@jest/types";
-import path from "node:path";
 import {
   createDualJestConfig,
   nativeMocks,
@@ -11,11 +10,9 @@ import {
   type DualOverrides,
 } from "../core/index.mts";
 import { deepFreeze } from "../internals/freeze.mts";
+import { joinPresetPath } from "../internals/join-preset-path.mts";
 
-/** The absolute path of a file of the flow preset, for jest. */
-function flowPath(file: string): string {
-  return path.join(import.meta.dirname, file);
-}
+const flowPath = (file: string) => joinPresetPath(import.meta.dirname, file);
 
 // Lumen's shared utils (`cn`, the amount formatters) and its design tokens ship as ESM and are
 // real values the views pass around, so SWC has to compile them instead of a stub standing in —

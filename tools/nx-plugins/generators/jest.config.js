@@ -20,6 +20,9 @@ module.exports = {
   },
   moduleFileExtensions: ["ts", "mts", "mjs", "js", "json"],
   moduleNameMapper: {
-    "^@support/jest/(.*)$": `${workspaceRoot}/support/jest/$1/index.mts`,
+    "^@support/jest/devtools$": `${workspaceRoot}/support/jest/devtools/index.mts`,
+    "^@support/jest/features-flow$": `${workspaceRoot}/support/jest/features-flow/index.mts`,
+    "^@support/jest/libs-coin$": `${workspaceRoot}/support/jest/libs-coin/index.mts`,
+    "^@support/jest/shared$": `${workspaceRoot}/support/jest/shared/index.mts`,
   },
 };

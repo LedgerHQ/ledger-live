@@ -4,6 +4,7 @@
 import type { Config } from "@jest/types";
 import path from "node:path";
 import { deepFreeze } from "../internals/freeze.mts";
+import { joinPresetPath } from "../internals/join-preset-path.mts";
 import PRESET_OVERRIDES from "./preset-overrides.js";
 
 type Options = Config.InitialOptions;
@@ -54,10 +55,7 @@ export function lcovRoot(rootDir: string | undefined, depth: string): string {
   return rootDir === undefined ? depth : `${path.relative(rootDir, repositoryRoot)}/`;
 }
 
-/** The absolute path of a file of the core, for jest. */
-function corePath(file: string): string {
-  return path.join(import.meta.dirname, file);
-}
+const corePath = (file: string) => joinPresetPath(import.meta.dirname, file);
 
 // The core projects' mocks and setup files, which a layer or a package spreads to keep them (the
 // override rule of the `@support/jest` README).
