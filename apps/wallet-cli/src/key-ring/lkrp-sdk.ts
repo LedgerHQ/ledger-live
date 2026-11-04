@@ -2,13 +2,8 @@ import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
 import type { TrustchainSDK, WithDevice } from "@ledgerhq/ledger-key-ring-protocol/types";
 import type { AgentIntentEnvironment } from "@ledgerhq/agent-intent-sdk";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import { getEnv } from "@shared/env";
 import { createTestSeam } from "../shared/test-seam";
-import {
-  AGENT_INTENT_TRUSTCHAIN_URLS,
-  LEDGER_SYNC_APPLICATION_ID,
-  LKRP_APPLICATION_ID,
-} from "./constants";
+import { LEDGER_SYNC_APPLICATION_ID, LKRP_APPLICATION_ID, TRUSTCHAIN_URLS } from "./constants";
 
 type CreateLkrpSdk = (memberName: string) => TrustchainSDK;
 
@@ -18,7 +13,7 @@ const createRealLkrpSdk: CreateLkrpSdk = memberName =>
     {
       applicationId: LKRP_APPLICATION_ID,
       name: memberName,
-      apiBaseUrl: getEnv("TRUSTCHAIN_API_PROD"),
+      apiBaseUrl: TRUSTCHAIN_URLS.production,
     },
     withDevice,
   );
@@ -43,7 +38,7 @@ export function createAgentLedgerSyncSdk(environment: AgentIntentEnvironment) {
     {
       applicationId: LEDGER_SYNC_APPLICATION_ID,
       name: "wallet-cli agent-intent",
-      apiBaseUrl: AGENT_INTENT_TRUSTCHAIN_URLS[environment],
+      apiBaseUrl: TRUSTCHAIN_URLS[environment],
     },
     refuseAgentDevice,
   );

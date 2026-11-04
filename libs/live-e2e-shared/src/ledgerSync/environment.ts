@@ -1,5 +1,3 @@
-import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
-
 export type LedgerSyncEnvironment = "STAGING" | "PROD";
 
 export const ledgerSyncEnvironment: LedgerSyncEnvironment =
@@ -19,8 +17,16 @@ export const ledgerSyncAppConfig = {
  * trustchain and a cloud-sync from different environments produce a token the other rejects —
  * surfacing only as `400 Invalid value for: header Authorization`.
  */
-export const { trustchainApiBaseUrl, cloudSyncApiBaseUrl } =
-  getWalletSyncEnvironmentParams(ledgerSyncEnvironment);
+export const { trustchainApiBaseUrl, cloudSyncApiBaseUrl } = {
+  PROD: {
+    trustchainApiBaseUrl: "https://trustchain.api.live.ledger.com",
+    cloudSyncApiBaseUrl: "https://cloud-sync.api.live.ledger.com",
+  },
+  STAGING: {
+    trustchainApiBaseUrl: "https://trustchain-backend.api.aws.stg.ldg-tech.com",
+    cloudSyncApiBaseUrl: "https://cloud-sync-backend.api.aws.stg.ldg-tech.com",
+  },
+}[ledgerSyncEnvironment];
 
 // Which backend the run targets is the first thing to check when a Ledger Sync test misbehaves.
 console.log(
