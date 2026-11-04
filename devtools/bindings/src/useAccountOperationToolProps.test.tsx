@@ -16,11 +16,11 @@ import {
 } from "@domain/entity-account-descriptor/schema.mock";
 import {
   accountOperationsSlice,
-  CountervalueTickerSchema,
   type AccountOperationsPage,
   type AccountOperationsQuery,
 } from "@domain/entity-account-operation";
 import { BalanceAssetIdSchema } from "@domain/entity-account-balance";
+import { FiatCurrencyTickerSchema } from "@domain/entity-currency-fiat";
 import { mockAccountOperation } from "@domain/entity-account-operation/schema.mock";
 import { useAccountOperationToolProps } from "./useAccountOperationToolProps";
 
@@ -177,7 +177,7 @@ describe("useAccountOperationToolProps", () => {
 
   it("reads a window valued in the app's fiat, labelled by it, with each row's countervalue", async () => {
     const { result, reads } = setup();
-    const query = { countervalue: CountervalueTickerSchema.parse("USD") };
+    const query = { countervalue: FiatCurrencyTickerSchema.parse("USD") };
     act(() => result.current.onReadAll({ countervalue: true }));
     await waitFor(() => expect(reads).toHaveLength(2));
     expect(reads.map(r => r.query)).toEqual([query, query]);

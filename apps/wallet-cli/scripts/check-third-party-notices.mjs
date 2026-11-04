@@ -14,6 +14,7 @@ const NON_REDISTRIBUTED = new Set([
   "@types/node",
   "@types/react",
   "@types/w3c-web-usb",
+  "@typescript/native",
   "bun-types",
   "oxfmt",
   "oxlint",

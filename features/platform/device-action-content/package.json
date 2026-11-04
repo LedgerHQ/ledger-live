@@ -21,8 +21,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -c features/platform/device-action-content/knip.web.config.mjs -W features/platform/device-action-content --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/platform/device-action-content/knip.native.config.mjs -W features/platform/device-action-content --tsConfig tsconfig.native.json"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@features/platform-style": "workspace:^",

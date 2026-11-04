@@ -152,11 +152,23 @@ function isWithinSkillDir(skillRoot: string, filePath: string): boolean {
   return resolved === root || resolved.startsWith(root + path.sep);
 }
 
+async function closestExistingParent(skillRoot: string, target: string): Promise<string> {
+  const root = path.resolve(skillRoot);
+  const parent = path.resolve(path.dirname(target));
+  const parents = [parent];
+  for (let dir = parent; dir.startsWith(root + path.sep);) {
+    dir = path.dirname(dir);
+    parents.push(dir);
+  }
+  const present = await Promise.all(parents.map(holdsAnything));
+  return parents.find((_, i) => present[i]) ?? parent;
+}
+
 async function resolvesInsideSkillDir(skillRoot: string, target: string): Promise<boolean> {
   try {
     const [realRoot, realParent] = await Promise.all([
       realpath(skillRoot),
-      realpath(path.dirname(target)),
+      realpath(await closestExistingParent(skillRoot, target)),
     ]);
     return isWithinSkillDir(realRoot, realParent);
   } catch {
@@ -324,6 +336,7 @@ export type SkillDiagnosis = {
   installedHash?: string;
   /** Canonical hash recomputed over the tracked files on disk (if present). */
   diskHash?: string;
+  changedFiles?: string[];
   shippedVersion: string;
   shippedHash: string;
   /**
@@ -386,12 +399,7 @@ async function readTrackedFile(
 
 async function differsOnDisk(skillRoot: string, file: SkillFile): Promise<boolean> {
   const target = path.join(skillRoot, file.path);
-  if (!(await holdsAnything(target))) {
-    return (
-      (await holdsAnything(path.dirname(target))) &&
-      !(await resolvesInsideSkillDir(skillRoot, target))
-    );
-  }
+  if (!(await holdsAnything(target))) return !(await resolvesInsideSkillDir(skillRoot, target));
   return (await readTrackedFile(skillRoot, file.path))?.content !== file.content;
 }
 
@@ -417,12 +425,6 @@ async function changedSinceInstall(
     .map(filePath => path.join(skillRoot, filePath));
 }
 
-export async function findChangedFiles(skill: SkillManifest, root: string): Promise<string[]> {
-  const skillRoot = path.join(root, skill.name);
-  const sidecar = await readSidecar(skillRoot);
-  return sidecar ? changedSinceInstall(skillRoot, skill, sidecar.files) : [];
-}
-
 /**
  * Diagnose one shipped `skill` at `root` (which must contain `<root>/<name>`).
  * Recomputes the disk hash over the files the sidecar recorded (so a file a newer
@@ -433,8 +435,8 @@ export async function findChangedFiles(skill: SkillManifest, root: string): Prom
  *   can't tell an old version from local edits, so we don't let `--fix` overwrite
  *   it unless the caller also passes `--force`.
  * - Sidecar present: disk hash disagrees with the sidecar, or a path the sidecar
- *   didn't record already holds anything but the shipped file →
- *   `modified-locally`; else sidecar matches the shipped hash → `up-to-date`;
+ *   didn't record already holds anything but the shipped file or would be
+ *   written outside the skill dir → `modified-locally`; else sidecar matches the shipped hash → `up-to-date`;
  *   else → `outdated`.
  */
 export async function diagnoseSkill(skill: SkillManifest, root: string): Promise<SkillDiagnosis> {
@@ -469,6 +471,7 @@ export async function diagnoseSkill(skill: SkillManifest, root: string): Promise
     installedVersion: sidecar?.cliVersion,
     installedHash: sidecar?.contentHash,
     diskHash,
+    ...(changedFiles.length > 0 ? { changedFiles } : {}),
     shippedVersion: CLI_VERSION,
     shippedHash: skill.contentHash,
   };

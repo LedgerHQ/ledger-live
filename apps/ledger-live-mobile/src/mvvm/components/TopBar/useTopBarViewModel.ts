@@ -17,8 +17,7 @@ export function useTopBarViewModel(
 ) {
   const { notificationCards } = useDynamicContent();
   const web3hub = useFeature("web3hub");
-  const { shouldDisplayOperationsList, shouldDisplayAssetDiscoverability } =
-    useWalletFeaturesConfig("mobile");
+  const { shouldDisplayAssetDiscoverability } = useWalletFeaturesConfig("mobile");
   const page = screenName ?? ScreenName.Portfolio;
   const {
     hasAccounts,
@@ -95,7 +94,6 @@ export function useTopBarViewModel(
     shouldDisplayAssetDiscoverability,
     onSearchPress,
     onMyWalletPress,
-    shouldDisplayOperationsList,
     onDiscoverPress,
     onTransactionHistoryPress,
     hasUnreadNotifications,

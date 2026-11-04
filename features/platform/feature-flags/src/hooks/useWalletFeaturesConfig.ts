@@ -29,7 +29,6 @@ export function useWalletFeaturesConfig(platform: WalletPlatform): WalletFeature
       shouldDisplayAssetSection:
         platform === "desktop" ? true : isEnabled && Boolean(params?.assetSection),
       shouldDisplayBrazePlacement: isEnabled && Boolean(params?.brazePlacement),
-      shouldDisplayOperationsList: isEnabled && Boolean(params?.operationsList),
       shouldDisplayAggregatedAssets:
         platform === "desktop" ? true : isEnabled && Boolean(params?.aggregatedAssets),
       shouldDisplayAssetDiscoverability: isEnabled && Boolean(params?.assetDiscoverability),
@@ -67,8 +66,6 @@ export interface WalletFeaturesConfig {
   readonly shouldDisplayAssetSection: boolean;
   /** Whether to show Braze content cards as ContentBanner (e.g. action cards on portfolio, mobile only) */
   readonly shouldDisplayBrazePlacement: boolean;
-  /** Whether to show the TX History section */
-  readonly shouldDisplayOperationsList: boolean;
   /** Whether to show the aggregated assets */
   readonly shouldDisplayAggregatedAssets: boolean;
   /** Whether to show the Asset Discoverability feature */

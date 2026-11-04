@@ -15,8 +15,7 @@
     "typecheck": "tsc --noEmit",
     "coverage": "jest --config jest.config.js --coverage",
     "test": "jest --config jest.config.js",
-    "lint": "oxlint src",
-    "unimported": "pnpm knip --directory ../.. -W devtools/protocols"
+    "lint": "oxlint src"
   },
   "dependencies": {
     "@devtools/transport": "workspace:*",
@@ -28,6 +27,9 @@
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
-    "jest": "catalog:"
+    "jest": "catalog:",
+    "@typescript/native": "catalog:",
+    "oxlint": "catalog:",
+    "oxfmt": "catalog:"
   }
 }

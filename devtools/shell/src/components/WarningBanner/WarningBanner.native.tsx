@@ -8,7 +8,7 @@ export function WarningBanner() {
         flexDirection: "row",
         alignItems: "center",
         gap: "s8",
-        paddingHorizontal: "s16",
+        paddingHorizontal: "s12",
         paddingVertical: "s6",
         backgroundColor: "warningTransparent",
       }}

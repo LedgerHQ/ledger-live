@@ -17,8 +17,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/feature-flags-firebase"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@shared/feature-flags": "workspace:^",

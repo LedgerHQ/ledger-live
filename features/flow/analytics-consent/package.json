@@ -18,8 +18,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/flow/analytics-consent"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@domain/entity-analytics-consent": "workspace:*",

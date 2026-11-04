@@ -23,8 +23,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -c features/flow/pay-contact/knip.web.config.mjs -W features/flow/pay-contact --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/pay-contact/knip.native.config.mjs -W features/flow/pay-contact --tsConfig tsconfig.native.json"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@domain/entity-contact": "workspace:*",

@@ -1,5 +1,6 @@
 {
   "$schema": "../../../node_modules/oxlint/configuration_schema.json",
+  "extends": ["../../../support/lint/restricted-imports/lodash.json"],
   "env": {
     "browser": true,
     "es6": true,
@@ -27,12 +28,6 @@
     "eslint/no-constant-binary-expression": "warn",
     "eslint/no-unused-expressions": "warn",
     "eslint/no-console": "off",
-    "eslint/no-restricted-imports": [
-      "error",
-      {
-        "paths": ["lodash"]
-      }
-    ],
     "import/no-duplicates": "error",
     "import/no-named-as-default": "off",
     "unicorn/no-useless-fallback-in-spread": "off",

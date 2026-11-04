@@ -1,7 +1,7 @@
 import network from "@ledgerhq/live-network";
 import { BigNumber } from "bignumber.js";
 import type { AlgorandCoinConfig } from "../config";
-import { getAccountTransactions, getAllAccountTransactions } from "./indexer";
+import { getAccountTransactions, getAllAccountTransactions, getBlockTransactions } from "./indexer";
 
 jest.mock("@ledgerhq/live-network");
 
@@ -266,6 +266,78 @@ describe("indexer", () => {
       const result = await getAllAccountTransactions(config, "ALGO_ADDRESS");
 
       expect(result).toEqual([]);
+    });
+  });
+
+  describe("getBlockTransactions", () => {
+    it("should page through the transactions of the round", async () => {
+      mockNetwork
+        .mockResolvedValueOnce({
+          data: { "current-round": 110, "next-token": "page2", transactions: [{ id: "TX_1" }] },
+        } as never)
+        .mockResolvedValueOnce({
+          data: { "current-round": 110, "next-token": "page3", transactions: [{ id: "TX_2" }] },
+        } as never)
+        .mockResolvedValueOnce({
+          data: { "current-round": 110, "next-token": "page4", transactions: [] },
+        } as never);
+
+      const result = await getBlockTransactions(config, 100);
+
+      expect(result.map(tx => tx.id)).toEqual(["TX_1", "TX_2"]);
+      expect(mockNetwork.mock.calls.map(([request]) => request.url)).toEqual([
+        "https://algorand-indexer.example.com/transactions?round=100&limit=1000",
+        "https://algorand-indexer.example.com/transactions?round=100&limit=1000&next=page2",
+        "https://algorand-indexer.example.com/transactions?round=100&limit=1000&next=page3",
+      ]);
+    });
+
+    it("should stop when there is no next page", async () => {
+      mockNetwork.mockResolvedValueOnce({
+        data: { "current-round": 100, transactions: [{ id: "TX_1" }] },
+      } as never);
+
+      const result = await getBlockTransactions(config, 100);
+
+      expect(result).toHaveLength(1);
+      expect(mockNetwork).toHaveBeenCalledTimes(1);
+    });
+
+    it("should reject a round the indexer has not reached yet", async () => {
+      mockNetwork.mockResolvedValueOnce({
+        data: { "current-round": 99, transactions: [] },
+      } as never);
+
+      await expect(getBlockTransactions(config, 100)).rejects.toThrow(
+        "Algorand round 100 is not indexed yet",
+      );
+    });
+
+    describe("response parsing", () => {
+      const parseResponse = async (raw: unknown) => {
+        mockNetwork.mockResolvedValueOnce({
+          data: { "current-round": 100, transactions: [] },
+        } as never);
+        await getBlockTransactions(config, 100);
+        const { transformResponse } = mockNetwork.mock.calls[0][0];
+        return (transformResponse as (data: unknown) => unknown)(raw);
+      };
+
+      it("should keep the exact value of amounts above the safe integer range", async () => {
+        const parsed = await parseResponse(
+          '{"transactions":[{"fee":1000,"asset-transfer-transaction":{"amount":18446744073709551615}}]}',
+        );
+
+        expect(parsed).toEqual({
+          transactions: [
+            { fee: 1000, "asset-transfer-transaction": { amount: 18446744073709551615n } },
+          ],
+        });
+      });
+
+      it("should leave a body that is not JSON as it came", async () => {
+        expect(await parseResponse("<html>Bad Gateway</html>")).toBe("<html>Bad Gateway</html>");
+      });
     });
   });
 });

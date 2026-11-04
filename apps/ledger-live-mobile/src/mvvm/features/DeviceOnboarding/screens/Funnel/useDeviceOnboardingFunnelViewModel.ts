@@ -16,10 +16,11 @@ import { useSelector } from "~/context/hooks";
 import { knownDevicesSelector } from "~/reducers/knownDevices";
 import type { ScreenName } from "~/const";
 import type { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
+import { useDeviceOnboarding } from "LLM/features/DeviceOnboarding/hooks/useDeviceOnboarding";
+import { useOfferSync } from "LLM/features/DeviceOnboarding/hooks/useOfferSync";
 import type { ChecksScreenProps } from "LLM/features/DeviceOnboarding/types";
-import { useDeviceOnboarding } from "../../hooks/useDeviceOnboarding";
-import { useOfferSync } from "../../hooks/useOfferSync";
-import { toChecksError, toChecksScreenState, toFirmwareUpdate } from "../../utils/checksPhase";
+import { toChecksError, toFirmwareUpdate } from "LLM/features/DeviceOnboarding/utils/checksPhase";
+import { checksScreenForPhase, phaseOf } from "LLM/features/DeviceOnboarding/utils/funnelPhase";
 
 type FunnelRoute = RouteProp<OnboardingNavigatorParamList, ScreenName.DeviceOnboardingFunnel>;
 
@@ -144,10 +145,13 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     ],
   );
 
-  const screenState = toChecksScreenState(
+  const onboardedOnEntry = onboarding.context?.onboardedOnEntry === true;
+  const phase = phaseOf(onboarding.state, onboardedOnEntry);
+  const screenState = checksScreenForPhase(
+    phase,
     onboarding.state,
     onboarding.context?.checksPaused === true,
-    onboarding.context?.onboardedOnEntry === true,
+    onboardedOnEntry,
   );
   const device = onboarding.liveDevice;
   const closeLabel = t("deviceOnboarding.checks.close");
@@ -207,10 +211,13 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       device,
       state: screenState,
       error: toChecksError(onboarding.state, readString(onboarding.context?.genuineFailureKind)),
-      update: toFirmwareUpdate(
-        readString(onboarding.context?.firmwareVersion),
-        readString(onboarding.context?.availableFirmwareVersion),
-      ),
+      update:
+        phase === "checks"
+          ? toFirmwareUpdate(
+              readString(onboarding.context?.firmwareVersion),
+              readString(onboarding.context?.availableFirmwareVersion),
+            )
+          : null,
       firmwareUpToDate: onboarding.context?.firmwareUpToDate === true,
       onStart: () =>
         send({ type: onboarding.state === "checks.checksIdle" ? "RETRY" : "CONTINUE" }),

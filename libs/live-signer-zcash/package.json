@@ -42,7 +42,10 @@
     "jest": "catalog:",
     "rimraf": "4.4.1",
     "ts-node": "10.9.2",
-    "ws": "catalog:"
+    "ws": "catalog:",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
+    "oxlint": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

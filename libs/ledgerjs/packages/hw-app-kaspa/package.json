@@ -47,9 +47,12 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
-    "ts-node": "10.9.2"
+    "ts-node": "10.9.2",
+    "oxlint": "catalog:"
   },
   "exports": {
     ".": {

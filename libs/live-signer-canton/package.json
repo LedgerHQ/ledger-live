@@ -53,9 +53,12 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/semver": "catalog:",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
     "jest": "catalog:",
     "rimraf": "4.4.1",
-    "ts-node": "10.9.2"
+    "ts-node": "10.9.2",
+    "oxlint": "catalog:"
   },
   "exports": {
     ".": {

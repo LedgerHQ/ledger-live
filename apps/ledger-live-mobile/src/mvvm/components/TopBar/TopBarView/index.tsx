@@ -19,7 +19,6 @@ type TopBarViewProps = ReturnType<typeof useTopBarViewModel>;
 
 export function TopBarView({
   onMyWalletPress,
-  shouldDisplayOperationsList,
   shouldDisplayAssetDiscoverability,
   onSearchPress,
   onDiscoverPress,
@@ -87,19 +86,12 @@ export function TopBarView({
   };
 
   const getLeadingIcons = (): TopBarActionIcon[] =>
-    filterIcons([
-      shouldDisplayOperationsList && discoverIcon,
-      shouldDisplayAssetDiscoverability && searchIcon,
-    ]);
+    filterIcons([discoverIcon, shouldDisplayAssetDiscoverability && searchIcon]);
 
   const displaySyncStatusIcon = hasAccounts && isSyncError;
 
   const getTrailingIcons = (): TopBarActionIcon[] =>
-    filterIcons([
-      displaySyncStatusIcon && syncStatusIcon,
-      !shouldDisplayOperationsList && discoverIcon,
-      shouldDisplayOperationsList && transactionHistoryIcon,
-    ]);
+    filterIcons([displaySyncStatusIcon && syncStatusIcon, transactionHistoryIcon]);
 
   return (
     <>

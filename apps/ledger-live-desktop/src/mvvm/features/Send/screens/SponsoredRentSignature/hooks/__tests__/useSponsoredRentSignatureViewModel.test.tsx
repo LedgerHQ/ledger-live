@@ -1,5 +1,6 @@
 import { renderHook, act } from "tests/testSetup";
 import logger from "~/renderer/logger";
+import { openURL } from "~/renderer/linking";
 import {
   useSponsoredRentSignatureViewModel,
   type SponsoredRentSignatureResult,
@@ -8,6 +9,10 @@ import type { RentPayment } from "@ledgerhq/live-common/bridge/generic-coin-fram
 import { TRON_USDT_FEE_ASSET } from "../../../Recipient/__integrations__/__fixtures__/accounts";
 
 const mockAccount = { id: "acc_tron", type: "Account", currency: { id: "tron" } };
+
+jest.mock("~/renderer/linking", () => ({ openURL: jest.fn() }));
+const TERMS_URL = "https://provider.example/terms";
+let mockTermsUrl: string | null;
 
 const mockClose = jest.fn();
 jest.mock("../../../../context/SendFlowContext", () => ({
@@ -45,6 +50,7 @@ jest.mock("../../../../context/SponsoredSendContext", () => ({
     state: mockSponsoredState,
     actions: mockActions,
     providerName: "Provider",
+    providerTermsUrl: mockTermsUrl,
     quote: mockQuote,
   }),
 }));
@@ -84,6 +90,25 @@ describe("useSponsoredRentSignatureViewModel", () => {
       failureError: null,
     };
     mockQuote = { value: 3_200_000n };
+    mockTermsUrl = TERMS_URL;
+  });
+
+  it("opens the provider's terms, which signing the rent payment accepts", () => {
+    const { result } = renderHook(() => useSponsoredRentSignatureViewModel());
+
+    expect(result.current.termsUrl).toBe(TERMS_URL);
+    expect(result.current.providerName).toBe("Provider");
+    result.current.onOpenTerms();
+    expect(openURL).toHaveBeenCalledWith(TERMS_URL);
+  });
+
+  it("has no terms to open without a provider", () => {
+    mockTermsUrl = null;
+    const { result } = renderHook(() => useSponsoredRentSignatureViewModel());
+
+    expect(result.current.termsUrl).toBeNull();
+    result.current.onOpenTerms();
+    expect(openURL).not.toHaveBeenCalled();
   });
 
   it("crafts the order on entry exactly once when phase is RENT_SIGNING and there is no order yet", () => {

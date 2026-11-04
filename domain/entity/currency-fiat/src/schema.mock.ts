@@ -1,4 +1,4 @@
-import type { FiatCurrency } from "./schema";
+import { FiatCurrencyTickerSchema, type FiatCurrency } from "./schema";
 
 /**
  * Returns a valid {@link FiatCurrency} fixture (US Dollar).
@@ -8,7 +8,7 @@ export function mockFiatCurrency(overrides?: Partial<FiatCurrency>): FiatCurrenc
   return {
     type: "FiatCurrency",
     name: "US Dollar",
-    ticker: "USD",
+    ticker: FiatCurrencyTickerSchema.parse("USD"),
     symbol: "$",
     units: [{ name: "US Dollar", code: "USD", magnitude: 2 }],
     ...overrides,

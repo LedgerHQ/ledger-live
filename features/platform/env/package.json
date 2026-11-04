@@ -14,8 +14,7 @@
     "lint": "oxlint src",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
-    "typecheck": "tsc --noEmit",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/env"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@shared/env": "workspace:*"

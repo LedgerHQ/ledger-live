@@ -1,3 +1,4 @@
+import { FiatCurrencyTickerSchema } from "@domain/entity-currency-fiat";
 import { analyticsCatalog } from "../analytics.mock";
 import {
   DEFAULT_ANALYTICS_SELECTION,
@@ -11,6 +12,9 @@ import {
   INITIAL_ANALYTICS_SELECTION_STATE,
 } from "../state/analyticsSelectionReducer";
 import type { AnalyticsQueryContext } from "../types";
+
+const usd = FiatCurrencyTickerSchema.parse("USD");
+const eur = FiatCurrencyTickerSchema.parse("EUR");
 
 describe("Analytics selection", () => {
   it("should select only native ETH when its parent also contains USDC", () => {
@@ -121,7 +125,7 @@ describe("Analytics selection", () => {
   it("should keep the same PnL context across chart metric and range changes", () => {
     const context: AnalyticsQueryContext = {
       ...DEFAULT_ANALYTICS_SELECTION,
-      fiatCurrencyId: "usd",
+      fiatCurrencyId: usd,
       period: "1m",
       positionIds: ["eth-native"],
     };
@@ -134,7 +138,7 @@ describe("Analytics selection", () => {
     for (const change of [
       { assetId: "btc" },
       { accountId: "btc-account" },
-      { fiatCurrencyId: "eur" },
+      { fiatCurrencyId: eur },
       { positionIds: ["btc-native"] },
     ]) {
       expect(createAnalyticsPnlQueryKey(context)).not.toBe(
@@ -147,7 +151,7 @@ describe("Analytics selection", () => {
     const positionIds = Object.freeze(["tron-usdc", "btc-native", "eth-native"]);
     const context: AnalyticsQueryContext = {
       ...DEFAULT_ANALYTICS_SELECTION,
-      fiatCurrencyId: "usd",
+      fiatCurrencyId: usd,
       period: "1m",
       positionIds,
     };

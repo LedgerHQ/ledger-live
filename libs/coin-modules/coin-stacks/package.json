@@ -127,11 +127,13 @@
     "@types/invariant": "2.2.37",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "dotenv": "16.4.7",
     "jest": "catalog:",
     "msw": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
+    "rimraf": "catalog:",
     "ripple-keypairs": "2.0.0",
     "typescript": "catalog:"
   },

@@ -17,8 +17,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/account-data"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@domain/api-account-data": "workspace:*",

@@ -62,7 +62,6 @@
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "knip-check": "pnpm knip --directory ../../.. -W libs/coin-tester-modules/coin-tester-cosmos",
     "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand"
   },
   "dependencies": {
@@ -87,6 +86,7 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",

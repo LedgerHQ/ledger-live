@@ -54,8 +54,8 @@ A new package has no consumers, so it should start in the target state:
    ```
 2. **Nothing to register** — CI checks it from the first PR. To run knip on the package alone,
    use `pnpm knip --directory <relative-hop-to-root> -W <workspace-path>` (`../..` for
-   `libs/<x>`, `../../..` for `libs/coin-modules/<x>`); an `unimported` script holding it is
-   optional and CI does not run it.
+   `libs/<x>`, `../../..` for `libs/coin-modules/<x>`). Do not add a package script for it:
+   `pnpm knip:all` at the root runs what CI runs.
 
 ## Dual-platform packages run knip once per platform
 

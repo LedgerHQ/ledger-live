@@ -24,8 +24,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W domain/api/card-management"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@domain/entity-card-asset-mapping": "workspace:*",

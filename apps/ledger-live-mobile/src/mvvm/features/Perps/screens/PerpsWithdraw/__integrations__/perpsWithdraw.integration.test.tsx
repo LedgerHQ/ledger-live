@@ -11,7 +11,8 @@ import {
   WithdrawLowLiquidityError,
   WithdrawMinimumAmountError,
 } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/errors";
-import { render, screen } from "@tests/test-renderer";
+import type { PerpsWithdrawSignProps } from "../components/PerpsWithdrawSign";
+import { act, render, screen } from "@tests/test-renderer";
 import PerpsWithdrawScreen from "../PerpsWithdrawScreen";
 
 const mockOpenDrawer = jest.fn();
@@ -55,6 +56,15 @@ jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/useWithdrawSummaryQuo
     mockUseSummaryQuote(initialQuote, params),
 }));
 
+// The device steps are covered by the sign view model test.
+let signProps: PerpsWithdrawSignProps | undefined;
+jest.mock("../components/PerpsWithdrawSign", () => ({
+  PerpsWithdrawSign: (props: PerpsWithdrawSignProps) => {
+    signProps = props;
+    return null;
+  },
+}));
+
 function createAccount(id: string, currencyId: string, balance: BigNumber.Value): Account {
   return {
     ...genAccount(id, { currency: getCryptoCurrencyById(currencyId), operationsSize: 0 }),
@@ -76,7 +86,12 @@ const quote = {
   expiry: Date.now() + 60_000,
 };
 
-const mockNavigation = { navigate: jest.fn(), goBack: jest.fn(), setOptions: jest.fn() };
+const mockNavigation = {
+  navigate: jest.fn(),
+  replace: jest.fn(),
+  goBack: jest.fn(),
+  setOptions: jest.fn(),
+};
 
 function renderWithdraw(source: AccountLike = sourceAccount) {
   return render(
@@ -109,6 +124,7 @@ async function typeAmount(user: ReturnType<typeof renderWithdraw>["user"], digit
 describe("PerpsWithdraw integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    signProps = undefined;
     mockUseWithdrawCurrencies.mockReturnValue({
       currencyIds: ["ethereum", "bitcoin"],
       isError: false,
@@ -336,5 +352,55 @@ describe("PerpsWithdraw integration", () => {
     await user.press(reviewCta());
 
     expect(await screen.findByTestId("perps-withdraw-cta")).toBeDisabled();
+  });
+
+  it("should sign the summary's latest quote and show the transaction signed screen", async () => {
+    const refreshedQuote = { ...quote, amountTo: new BigNumber("0.31") };
+    mockUseSummaryQuote.mockReturnValue({
+      quote: refreshedQuote,
+      isRefreshing: false,
+      error: null,
+    });
+    const { user } = renderWithdraw();
+
+    await typeAmount(user, "500");
+    await user.press(reviewCta());
+    await user.press(await screen.findByTestId("perps-withdraw-cta"));
+
+    expect(signProps).toMatchObject({
+      quote: refreshedQuote,
+      destinationAccount: expect.objectContaining({ id: ethAccount.id }),
+      quoteParams: expect.objectContaining({ amount: "250" }),
+    });
+
+    act(() => signProps?.onDone({ swapId: "swap-1" }));
+
+    expect(mockNavigation.replace).toHaveBeenCalledWith("PerpsTransactionSigned", {
+      receiveCurrencyTicker: "ETH",
+      swapId: "swap-1",
+      provider: "swapkit_hyperliquid",
+    });
+  });
+
+  it("should bring the summary back when the withdrawal is declined on the device", async () => {
+    const { user } = renderWithdraw();
+
+    await typeAmount(user, "500");
+    await user.press(reviewCta());
+    await user.press(await screen.findByTestId("perps-withdraw-cta"));
+    act(() => signProps?.onRefused());
+
+    expect(await screen.findByTestId("perps-withdraw-cta")).toBeEnabled();
+  });
+
+  it("should leave the withdrawal once it failed for good", async () => {
+    const { user } = renderWithdraw();
+
+    await typeAmount(user, "500");
+    await user.press(reviewCta());
+    await user.press(await screen.findByTestId("perps-withdraw-cta"));
+    act(() => signProps?.onLeave());
+
+    expect(mockNavigation.goBack).toHaveBeenCalled();
   });
 });

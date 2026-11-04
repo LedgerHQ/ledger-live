@@ -15,7 +15,6 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../.. -W shared/feature-flags",
     "format": "oxfmt src",
     "format:check": "oxfmt --check src",
     "lint": "oxlint ./src"

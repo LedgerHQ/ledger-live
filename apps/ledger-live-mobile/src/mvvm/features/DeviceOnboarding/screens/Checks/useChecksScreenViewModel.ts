@@ -143,6 +143,7 @@ export function useChecksScreenViewModel({
   const [unsupportedFor, setUnsupportedFor] = useState<string | null>(null);
   const declinedFor = useRef<string | null>(null);
   const suppressOfferCloseFor = useRef<string | null>(null);
+  const firmwareOfferOpen = state === "updating" && update !== null;
   const productName = getDeviceModel(device.modelId).productName || device.modelId;
   const eligibility = update ? firmwareEligibility(device, update.current) : null;
   const isUnsupportedUpdateOpen = unsupportedFor === updateKey && updateKey !== "";
@@ -216,6 +217,7 @@ export function useChecksScreenViewModel({
         setUnsupportedFor(updateKey);
       },
       onClose: () => {
+        if (!firmwareOfferOpen) return;
         if (suppressOfferCloseFor.current === updateKey) return;
         if (declinedFor.current === updateKey) return;
         declinedFor.current = updateKey;

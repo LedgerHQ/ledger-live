@@ -24,8 +24,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage --passWithNoTests",
-    "unimported": "pnpm knip --directory ../../.. -c features/platform/pay-analytics/knip.web.config.mjs -W features/platform/pay-analytics --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/platform/pay-analytics/knip.native.config.mjs -W features/platform/pay-analytics --tsConfig tsconfig.native.json"
+    "coverage": "jest --coverage --passWithNoTests"
   },
   "dependencies": {
     "@shared/analytics": "workspace:*",

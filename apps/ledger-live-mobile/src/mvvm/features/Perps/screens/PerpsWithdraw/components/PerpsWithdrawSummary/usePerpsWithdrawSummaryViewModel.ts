@@ -23,6 +23,8 @@ export type PerpsWithdrawSummaryProps = PerpsWithdrawSummaryParams &
   Readonly<{
     isOpen: boolean;
     onClose: () => void;
+    /** Hands the latest quote, the one on screen, over to signing. */
+    onConfirm: (quote: WithdrawQuote) => void;
   }>;
 
 export type PerpsWithdrawSummaryViewModel = Readonly<{
@@ -37,6 +39,7 @@ export type PerpsWithdrawSummaryViewModel = Readonly<{
 export function usePerpsWithdrawSummaryViewModel({
   isOpen,
   onClose,
+  onConfirm,
   destinationAccount,
   quote,
   quoteParams,
@@ -49,7 +52,12 @@ export function usePerpsWithdrawSummaryViewModel({
     (value: string) => t("perpsReview.approximateValue", { value }),
     [t],
   );
-  const { swapDetails, withdrawDetails, canWithdraw } = usePerpsWithdrawSummary({
+  const {
+    quote: latestQuote,
+    swapDetails,
+    withdrawDetails,
+    canWithdraw,
+  } = usePerpsWithdrawSummary({
     initialQuote: quote,
     quoteParams,
     receiverName: accountNameWithDefaultSelector(walletState, destinationAccount),
@@ -59,8 +67,7 @@ export function usePerpsWithdrawSummaryViewModel({
     enabled: isOpen,
   });
 
-  // TODO(LIVE-39369): sign the withdrawal on the device.
-  const handleWithdraw = useCallback(() => undefined, []);
+  const handleWithdraw = useCallback(() => onConfirm(latestQuote), [latestQuote, onConfirm]);
 
   return {
     drawerOpen: isOpen,

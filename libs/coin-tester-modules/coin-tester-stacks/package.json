@@ -53,8 +53,7 @@
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand",
-    "unimported": "pnpm knip --directory ../../.. -W libs/coin-tester-modules/coin-tester-stacks"
+    "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand"
   },
   "dependencies": {
     "@ledgerhq/coin-stacks": "workspace:^",
@@ -74,6 +73,7 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",

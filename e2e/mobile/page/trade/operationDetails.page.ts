@@ -1,14 +1,15 @@
 import { Step } from "jest-allure2-reporter/api";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { TransactionType } from "@ledgerhq/live-e2e-shared/models/Transaction";
+import { byId } from "@e2e/helpers/elements/native";
 
 export default class OperationDetailsPage {
-  titleId = "operationDetails-title";
-  recipientId = "operationDetails-recipient0";
-  delegatedAmountId = "operationDetails-delegatedAmount";
-  providerId = "operationDetails-delegatedTo";
-  senderId = "operationDetails-sender0";
-  feesId = "operationDetails-fees";
+  private readonly title = byId("operationDetails-title");
+  private readonly recipient = byId("operationDetails-recipient0");
+  private readonly delegatedAmount = byId("operationDetails-delegatedAmount");
+  private readonly provider = byId("operationDetails-delegatedTo");
+  private readonly sender = byId("operationDetails-sender0");
+  private readonly fees = byId("operationDetails-fees");
   "operationsType" = {
     OUT: "Sent",
     DELEGATE: "Delegated",
@@ -19,39 +20,31 @@ export default class OperationDetailsPage {
     LOCK: "Locked",
     VOTE: "Voted",
   };
-  operationDetailsConfirmed = "operation-details-text-confirmed";
-  operationDetailsAccount = "operationDetails-account";
-  operationDetailsAmount = "operationDetails-amount";
-  operationDetailsIdentifier = "operationDetails-identifier";
-  operationDetailsDate = "operationDetails-date";
-  operationDetailsScrollViewId = "operation-details-scroll-view";
-  celoValidatorGroupId = "celo-operationDetails-validatorGroup";
-  viewInExplorerButtonId = "operation-detail-view-in-explorer-button";
-
-  title = () => getElementById(this.titleId);
-  account = () => getElementById(this.operationDetailsAccount);
-  amount = () => getElementById(this.operationDetailsAmount);
-  operation = () => getElementById(this.operationDetailsIdentifier);
-  date = () => getElementById(this.operationDetailsDate);
+  private readonly account = byId("operationDetails-account");
+  private readonly amount = byId("operationDetails-amount");
+  private readonly identifier = byId("operationDetails-identifier");
+  private readonly date = byId("operationDetails-date");
+  private readonly scrollView = byId("operation-details-scroll-view");
+  private readonly celoValidatorGroup = byId("celo-operationDetails-validatorGroup");
+  private readonly viewInExplorerButton = byId("operation-detail-view-in-explorer-button");
 
   @Step("Wait for operation details")
   async waitForOperationDetails() {
-    await waitForElementById(this.titleId);
+    await this.title.waitVisible();
   }
 
   @Step("Check account details {{{0}}}")
   async checkAccount(account: string) {
-    await detoxExpect(this.account()).toHaveText(account);
+    await this.account.expectText(account);
   }
 
   @Step("Check recipient details {{{0.accountName}}}")
   async checkRecipientAddress(recipient: Account) {
-    await scrollToId(this.recipientId, this.operationDetailsScrollViewId);
-    const recipientElement = getElementById(this.recipientId);
+    await this.recipient.scrollTo(this.scrollView);
 
     const expected = recipient.address;
     if (expected) {
-      await detoxExpect(recipientElement).toHaveText(expected);
+      await this.recipient.expectText(expected);
     } else {
       throw new Error("Recipient address is undefined");
     }
@@ -59,49 +52,48 @@ export default class OperationDetailsPage {
 
   @Step("Check recipient as provider {{{0}}}")
   async checkRecipientAsProvider(recipientAddress: string) {
-    await scrollToId(this.recipientId, this.operationDetailsScrollViewId);
-    const recipientElement = getElementById(this.recipientId);
-    await detoxExpect(recipientElement).toHaveText(recipientAddress);
+    await this.recipient.scrollTo(this.scrollView);
+    await this.recipient.expectText(recipientAddress);
   }
 
   @Step("Check delegated provider {{{0}}}")
   async checkProvider(provider: string) {
-    await scrollToId(this.providerId, this.operationDetailsScrollViewId);
-    await detoxExpect(getElementById(this.providerId)).toHaveText(provider);
+    await this.provider.scrollTo(this.scrollView);
+    await this.provider.expectText(provider);
   }
 
   @Step("Check delegated amount {{{0}}}")
   async checkDelegatedAmount(amount: string) {
-    await scrollToId(this.delegatedAmountId, this.operationDetailsScrollViewId);
-    await detoxExpect(getElementById(this.delegatedAmountId)).toHaveText(amount);
+    await this.delegatedAmount.scrollTo(this.scrollView);
+    await this.delegatedAmount.expectText(amount);
   }
 
   @Step("Check sender {{{0}}}")
   async checkSender(sender: string) {
-    await scrollToId(this.senderId, this.operationDetailsScrollViewId);
-    await detoxExpect(getElementById(this.senderId)).toHaveText(sender);
+    await this.sender.scrollTo(this.scrollView);
+    await this.sender.expectText(sender);
   }
 
   @Step("Check Fees {{{0}}}")
   async checkFees(fees: string) {
-    await scrollToId(this.feesId, this.operationDetailsScrollViewId);
-    await detoxExpect(getElementById(this.feesId)).toHaveText(fees);
+    await this.fees.scrollTo(this.scrollView);
+    await this.fees.expectText(fees);
   }
 
   @Step("Check transaction type {{{0}}}")
   async checkTransactionType(type: keyof typeof this.operationsType) {
-    await detoxExpect(getElementById(this.titleId)).toHaveText(this.operationsType[type]);
+    await this.title.expectText(this.operationsType[type]);
   }
 
   @Step("Check transaction title {{{0}}}")
   async checkTransactionTitle(title: string) {
-    await detoxExpect(getElementById(this.titleId)).toHaveText(title);
+    await this.title.expectText(title);
   }
 
   @Step("Check CELO validator group in operation details {{{0}}}")
   async checkCeloValidatorGroup(validatorGroup: string) {
-    await scrollToId(this.celoValidatorGroupId, this.operationDetailsScrollViewId);
-    await detoxExpect(getElementById(this.celoValidatorGroupId)).toHaveText(validatorGroup);
+    await this.celoValidatorGroup.scrollTo(this.scrollView);
+    await this.celoValidatorGroup.expectText(validatorGroup);
   }
 
   @Step("Check operation infos")
@@ -121,26 +113,27 @@ export default class OperationDetailsPage {
   @Step("Check that transaction details are displayed {{{0}}}")
   async checkTransactionDetailsVisibility(accountName?: string) {
     await this.waitForOperationDetails();
-    await detoxExpect(this.account()).toBeVisible();
+    await this.account.expectVisible();
     if (accountName) {
-      await detoxExpect(this.account()).toHaveText(accountName);
+      await this.account.expectText(accountName);
     }
-    await detoxExpect(this.amount()).toBeVisible();
-    await scrollToId(this.operationDetailsIdentifier, this.operationDetailsScrollViewId);
-    await detoxExpect(this.operation()).toBeVisible();
-    await detoxExpect(this.date()).toBeVisible();
+    await this.amount.expectVisible();
+    await this.identifier.scrollTo(this.scrollView);
+    await this.identifier.expectVisible();
+    await this.date.expectVisible();
   }
 
   @Step("Expect operation amount ticker {{{0}}}")
   async expectOperationAmountTicker(ticker: string) {
     await this.waitForOperationDetails();
-    const amountText = await getTextOfElement(this.operationDetailsAmount);
+    await this.amount.scrollTo(this.scrollView);
+    const amountText = await this.amount.getText();
     jestExpect(amountText).toContain(ticker);
   }
 
   @Step("Check view in explorer button")
   async checkViewInExplorerButtonVisible() {
-    await scrollToId(this.viewInExplorerButtonId, this.operationDetailsScrollViewId);
-    await detoxExpect(getElementById(this.viewInExplorerButtonId)).toBeVisible();
+    await this.viewInExplorerButton.scrollTo(this.scrollView);
+    await this.viewInExplorerButton.expectVisible();
   }
 }

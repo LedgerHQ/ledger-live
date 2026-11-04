@@ -13,6 +13,11 @@ jest.mock("../../PerpsWithdraw/PerpsWithdrawDialog", () => ({
   openPerpsWithdraw: (data: unknown) => mockOpenPerpsWithdraw(data),
 }));
 
+const mockOpenPerpsWithdrawSign = jest.fn();
+jest.mock("../../PerpsWithdrawSign/PerpsWithdrawSignDialog", () => ({
+  openPerpsWithdrawSign: (data: unknown) => mockOpenPerpsWithdrawSign(data),
+}));
+
 const mockCancelWithdrawRequest = jest.fn();
 jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/request", () => ({
   cancelWithdrawRequest: () => mockCancelWithdrawRequest(),
@@ -118,6 +123,26 @@ describe("PerpsWithdrawSummary integration", () => {
     });
     renderSummary();
     expect(withdrawCta()).toBeDisabled();
+  });
+
+  it("should sign the latest quote when Withdraw is pressed", async () => {
+    const refreshedQuote = { ...quote, amountTo: new BigNumber("0.31") };
+    mockUseSummaryQuote.mockReturnValue({
+      quote: refreshedQuote,
+      isRefreshing: false,
+      error: null,
+    });
+    const { user } = renderSummary();
+
+    await user.click(withdrawCta());
+
+    expect(mockOpenPerpsWithdrawSign).toHaveBeenCalledWith({
+      ...summaryData,
+      quote: refreshedQuote,
+    });
+    // Signing takes over the request, so it is not cancelled.
+    expect(mockCancelWithdrawRequest).not.toHaveBeenCalled();
+    expect(screen.queryByTestId("perps-withdraw-cta")).not.toBeInTheDocument();
   });
 
   it("should hand the draft back to the input when going back", async () => {

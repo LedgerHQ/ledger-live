@@ -5,18 +5,23 @@ import type { SignTransactionIntentJobState } from "@ledgerhq/live-common/intent
 import { useTranslation } from "~/context/Locale";
 import InfiniteLoader from "~/components/InfiniteLoader";
 import { SimplifiedTransactionConfirm } from "../../components/SimplifiedTransactionConfirm";
+import type { SignatureExtraProps } from "./types";
 
 type SignTransactionIntentComponentLWMProps = Readonly<{
   jobState: SignTransactionIntentJobState | undefined;
-  extraProps: undefined;
+  extraProps: SignatureExtraProps;
   onClose: () => void;
 }>;
 
 export function SignTransactionIntentComponentLWM({
   jobState,
+  extraProps,
   onClose,
 }: SignTransactionIntentComponentLWMProps) {
   const { t } = useTranslation();
+  const sponsoredTransferTitle = extraProps.sponsoredTransfer
+    ? t("send.newSendFlow.sponsoredTransferSignature.title")
+    : undefined;
 
   if (!jobState) {
     return null;
@@ -25,7 +30,12 @@ export function SignTransactionIntentComponentLWM({
   switch (jobState.type) {
     case "pending":
     case "device-signature-requested":
-      return <SimplifiedTransactionConfirm deviceModelId={jobState.deviceModelId} />;
+      return (
+        <SimplifiedTransactionConfirm
+          deviceModelId={jobState.deviceModelId}
+          title={sponsoredTransferTitle}
+        />
+      );
     case "device-streaming":
     case "device-signature-granted":
     case "signed":

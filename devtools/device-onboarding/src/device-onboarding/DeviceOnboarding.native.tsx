@@ -70,14 +70,15 @@ const stepPresentation: Record<StateKind, StepPresentation> = {
 const HEADER_LX = {
   flexDirection: "column",
   gap: "s8",
-  padding: "s16",
+  paddingHorizontal: "s12",
+  paddingVertical: "s16",
 } as const;
 const HEADER_ROW_LX = {
   flexDirection: "row",
   alignItems: "center",
   gap: "s8",
 } as const;
-const SECTION_LX = { padding: "s16", gap: "s4" } as const;
+const SECTION_LX = { paddingHorizontal: "s12", paddingVertical: "s16", gap: "s4" } as const;
 const BUTTONS_LX = {
   flexDirection: "row",
   flexWrap: "wrap",

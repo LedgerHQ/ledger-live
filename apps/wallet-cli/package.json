@@ -110,7 +110,8 @@
     "usb": "2.17.0",
     "xstate": "catalog:",
     "yocto-spinner": "0.2.0",
-    "zod": "catalog:"
+    "zod": "catalog:",
+    "@typescript/native": "catalog:"
   },
   "engines": {
     "bun": ">=1.1.0"

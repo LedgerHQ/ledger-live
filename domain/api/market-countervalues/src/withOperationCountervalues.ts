@@ -1,9 +1,9 @@
 import { BigNumber } from "bignumber.js";
 import type { AccountDataSource } from "@domain/api-account-data";
 import { AmountStrSchema, type BalanceAssetId } from "@domain/entity-account-balance";
-import type { AccountOperationsPage, CountervalueTicker } from "@domain/entity-account-operation";
+import type { AccountOperationsPage } from "@domain/entity-account-operation";
 import type { Currency } from "@domain/entity-currency";
-import { findFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
+import { findFiatCurrencyByTicker, type FiatCurrencyTicker } from "@domain/entity-currency-fiat";
 import {
   formatCounterValueHashes,
   lenseRateMap,
@@ -33,7 +33,7 @@ function historicalRate(
 /** Each row valued in `ticker` at its date, unless it already is; a row without a rate has none. */
 export function valueOperations(
   page: AccountOperationsPage,
-  ticker: CountervalueTicker | undefined,
+  ticker: FiatCurrencyTicker | undefined,
   rates: CounterValuesCacheView | undefined,
   currencyOf: (assetId: BalanceAssetId) => Currency | undefined,
 ): AccountOperationsPage {
@@ -66,7 +66,7 @@ export function withOperationCountervalues(
     Promise.resolve()
       .then(() => host.findCurrency(assetId))
       .catch(() => undefined);
-  const valued = async (page: AccountOperationsPage, ticker?: CountervalueTicker) => {
+  const valued = async (page: AccountOperationsPage, ticker?: FiatCurrencyTicker) => {
     if (!ticker) return page;
     const assetIds = [...new Set(page.operations.map(row => row.assetId))];
     const currencies = new Map(

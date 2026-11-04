@@ -1,13 +1,13 @@
 import { AmountStrSchema } from "@domain/entity-account-balance";
-import type { CountervalueTicker, OperationCountervalues } from "@domain/entity-account-operation";
-import { findFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
+import type { OperationCountervalues } from "@domain/entity-account-operation";
+import { findFiatCurrencyByTicker, type FiatCurrencyTicker } from "@domain/entity-currency-fiat";
 import { seededRandom } from "../random";
 
 const DAY = 86_400_000;
 const CYCLE_DAYS = 90;
 
 /** A seeded price of one whole coin of the asset in the fiat's smallest unit, swinging ±30% over a 90-day cycle. */
-function priceAt(assetId: string, ticker: CountervalueTicker, fiatMagnitude: number, date: string) {
+function priceAt(assetId: string, ticker: FiatCurrencyTicker, fiatMagnitude: number, date: string) {
   const random = seededRandom(`${assetId}:${ticker}:price`);
   const base = Math.exp(Math.log(0.5) + random() * (Math.log(50_000) - Math.log(0.5)));
   const phase = random() * 2 * Math.PI;
@@ -18,7 +18,7 @@ function priceAt(assetId: string, ticker: CountervalueTicker, fiatMagnitude: num
 
 /** Values an operation in `ticker` at its date, as FullSync does; none for an unknown fiat, or an asset without a known magnitude. */
 export function mockCountervalueOf(
-  ticker: CountervalueTicker,
+  ticker: FiatCurrencyTicker,
   magnitudeOf: (assetId: string) => number | undefined,
 ): (assetId: string, value: bigint, date: string) => OperationCountervalues | undefined {
   const fiat = findFiatCurrencyByTicker(ticker);

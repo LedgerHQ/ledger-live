@@ -12,6 +12,7 @@ import type { PerpsReviewDetailItem } from "LLD/features/Perps/components/PerpsR
 import { localeSelector } from "~/renderer/reducers/settings";
 import { accountNameWithDefaultSelector, walletSelector } from "~/renderer/reducers/wallet";
 import { openPerpsWithdraw } from "../PerpsWithdraw/PerpsWithdrawDialog";
+import { openPerpsWithdrawSign } from "../PerpsWithdrawSign/PerpsWithdrawSignDialog";
 import type { PerpsWithdrawDraft } from "../PerpsWithdraw/usePerpsWithdrawViewModel";
 
 export type PerpsWithdrawSummaryData = PerpsWithdrawUiParams & {
@@ -43,7 +44,7 @@ export function usePerpsWithdrawSummaryViewModel(
     (value: string) => t("perpsReview.approximateValue", { value }),
     [t],
   );
-  const { swapDetails, withdrawDetails, canWithdraw } = usePerpsWithdrawSummary({
+  const { quote, swapDetails, withdrawDetails, canWithdraw } = usePerpsWithdrawSummary({
     initialQuote: data.quote,
     quoteParams: data.quoteParams,
     receiverName: accountNameWithDefaultSelector(walletState, destinationAccount),
@@ -56,8 +57,11 @@ export function usePerpsWithdrawSummaryViewModel(
     onClose();
   }, [draft, onClose, sourceAccount]);
 
-  // TODO(LIVE-39369): sign the withdrawal on the device.
-  const handleWithdraw = useCallback(() => undefined, []);
+  // Signs the latest quote, the one on screen.
+  const handleWithdraw = useCallback(() => {
+    openPerpsWithdrawSign({ ...data, quote });
+    onClose();
+  }, [data, onClose, quote]);
 
   return { swapDetails, withdrawDetails, canWithdraw, handleBack, handleWithdraw };
 }

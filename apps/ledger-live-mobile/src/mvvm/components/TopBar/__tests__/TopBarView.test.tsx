@@ -31,7 +31,6 @@ describe("TopBarView", () => {
 
   const defaultProps = {
     onMyWalletPress,
-    shouldDisplayOperationsList: false,
     shouldDisplayAssetDiscoverability: false,
     onSearchPress,
     onDiscoverPress,
@@ -54,9 +53,7 @@ describe("TopBarView", () => {
   });
 
   it("should call expected callbacks when top bar buttons are pressed", async () => {
-    const { user, getByTestId } = renderWithReactQuery(
-      <TopBarView {...defaultProps} shouldDisplayOperationsList />,
-    );
+    const { user, getByTestId } = renderWithReactQuery(<TopBarView {...defaultProps} />);
 
     await user.press(getByTestId("topbar-mywallet"));
     await user.press(getByTestId("topbar-discover"));
@@ -86,19 +83,8 @@ describe("TopBarView", () => {
     expect(onSearchPress).toHaveBeenCalledTimes(1);
   });
 
-  it("should not render transaction history icon when operations list is disabled", () => {
-    const { queryByTestId, getByTestId } = renderWithReactQuery(
-      <TopBarView {...defaultProps} shouldDisplayOperationsList={false} />,
-    );
-    expect(queryByTestId("topbar-transaction-history")).toBeNull();
-    expect(getByTestId("topbar-mywallet")).toBeVisible();
-    expect(getByTestId("topbar-discover")).toBeVisible();
-  });
-
-  it("when operations list is enabled, trailing shows transaction history and discover moves leading", () => {
-    const { queryByTestId, getByTestId } = renderWithReactQuery(
-      <TopBarView {...defaultProps} shouldDisplayOperationsList />,
-    );
+  it("should show transaction history in the trailing icons and discover in the leading icons", () => {
+    const { queryByTestId, getByTestId } = renderWithReactQuery(<TopBarView {...defaultProps} />);
     expect(getByTestId("topbar-mywallet")).toBeVisible();
     expect(getByTestId("topbar-discover")).toBeVisible();
     expect(getByTestId("topbar-transaction-history")).toBeVisible();

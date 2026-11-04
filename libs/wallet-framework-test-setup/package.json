@@ -12,6 +12,9 @@
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@shared/env": "workspace:*"
   },
+  "devDependencies": {
+    "oxlint": "catalog:"
+  },
   "exports": {
     ".": "./src/index.js",
     "./package.json": "./package.json"

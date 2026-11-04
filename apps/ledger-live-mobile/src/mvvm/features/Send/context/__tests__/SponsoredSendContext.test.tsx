@@ -110,6 +110,7 @@ const { useSponsoredSendSession } = jest.requireMock(
 const SEAM = {
   feeOptionId: "sponsored",
   providerName: "Provider",
+  providerTermsUrl: "https://provider.example/terms",
   waivesErrorKeys: ["gasPrice"],
   waivesWarningKeys: ["amount"],
 };
@@ -200,6 +201,7 @@ describe("SponsoredSendProvider", () => {
       mainAccount: { id: "tron" },
       sponsoredFeeOptionId: "sponsored",
       providerName: "Provider",
+      providerTermsUrl: "https://provider.example/terms",
       waivesErrorKeys: ["gasPrice"],
       waivesWarningKeys: ["amount"],
       waivesNativeFee: false,

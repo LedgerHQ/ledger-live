@@ -35,6 +35,7 @@ import {
   getSwapStepFromError,
 } from "@ledgerhq/live-common/exchange/error";
 import { WalletCliDeviceError } from "../../device/wallet-cli-device-error";
+import { toSwapBackendError } from "./swap-backend-error";
 import {
   trackSwapCompleted,
   trackSwapRejected,
@@ -351,17 +352,21 @@ export async function runFullSwapPipeline(
       hardwareWalletType = deviceInfo.modelId;
 
       out.swapExecuteProgress("[2/5] Requesting swap payload from Ledger swap API…");
-      const payload = await deps.retrieveSwapPayload({
-        provider,
-        deviceTransactionId: transactionId,
-        fromAccountAddress,
-        toAccountAddress,
-        fromAccountCurrency: fromCurrency.id,
-        toAccountCurrency: toCurrency.id,
-        amount,
-        amountInAtomicUnit,
-        ...(quoteId != null && quoteId !== "" ? { quoteId } : {}),
-      });
+      const payload = await deps
+        .retrieveSwapPayload({
+          provider,
+          deviceTransactionId: transactionId,
+          fromAccountAddress,
+          toAccountAddress,
+          fromAccountCurrency: fromCurrency.id,
+          toAccountCurrency: toCurrency.id,
+          amount,
+          amountInAtomicUnit,
+          ...(quoteId != null && quoteId !== "" ? { quoteId } : {}),
+        })
+        .catch(error => {
+          throw toSwapBackendError(error) ?? error;
+        });
       out.swapExecuteProgress(
         `[2/5] Swap API returned swapId=${payload.swapId ?? "(none)"}, payin address received.`,
       );
