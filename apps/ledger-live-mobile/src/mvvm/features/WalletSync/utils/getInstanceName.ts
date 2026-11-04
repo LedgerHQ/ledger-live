@@ -9,7 +9,7 @@ const platformMap: Record<string, string | undefined> = {
 
 let deviceName: string;
 
-export function useInstanceName(): string {
+export function getInstanceName(): string {
   const hash = getEnv("USER_ID").slice(0, 5);
   const os = platformMap[Platform.OS] ?? Platform.OS;
   if (!deviceName) deviceName = nativeDeviceName ?? `${os} ${Platform.Version}`;

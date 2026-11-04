@@ -7,7 +7,6 @@ import {
   LEDGER_SYNC_FEATURE_FLAGS,
   cleanupLedgerSyncAfterAll,
   setupLedgerSyncSeed,
-  verifyLedgerSyncEnvironment,
 } from "@e2e/helpers/ledgerSyncHelpers";
 import type { LedgerSyncCliCommand } from "@ledgerhq/live-e2e-shared/ledgerSync/setup";
 import {
@@ -47,7 +46,6 @@ function ledgerSyncSuite(
     }
 
     beforeAll(async () => {
-      await verifyLedgerSyncEnvironment();
       await init();
     });
 

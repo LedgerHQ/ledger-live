@@ -5,6 +5,7 @@ import { combineReducers, type Store } from "redux";
 import { llmRTKApiReducers } from "~/context/rtkQueryApi";
 import featureFlags from "@shared/feature-flags";
 import { appConfigReducer } from "@shared/app-config";
+import { ledgerSyncReducer } from "@features/platform-wallet-sync";
 import { liveConfigOverridesReducer } from "@shared/live-config-overrides";
 import accounts from "./accounts";
 import appstate from "./appstate";
@@ -89,6 +90,7 @@ const appReducer = combineReducers({
   inView,
   knownDevices,
   largeMover,
+  ledgerSync: ledgerSyncReducer,
   liveConfigOverrides: liveConfigOverridesReducer,
   market,
   marketListConfig: marketListConfigReducer,

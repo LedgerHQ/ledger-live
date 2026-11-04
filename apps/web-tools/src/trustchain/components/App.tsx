@@ -21,6 +21,7 @@ import { AppSetDeviceId } from "./AppSetDeviceId";
 import { AppSetApplicationId } from "./AppSetApplicationId";
 import { AppQRCodeCandidate } from "./AppQRCodeCandidate";
 import { TrustchainSDKContext, defaultContext } from "../context";
+import { LEDGER_SYNC_BACKENDS } from "../backends";
 import { DeviceInteractionVisibleContext } from "../deviceInteractionContext";
 import { AppQRCodeHost } from "./AppQRCodeHost";
 import { AppMemberRow } from "./AppMemberRow";
@@ -32,10 +33,9 @@ import { AppGetMembers } from "./AppGetMembers";
 import { AppGetOrCreateTrustchain } from "./AppGetOrCreateTrustchain";
 import { AppInitLiveCredentials } from "./AppInitLiveCredentials";
 import { AppMockEnv } from "./AppMockEnv";
-import { AppSetTrustchainAPIEnv } from "./AppSetTrustchainAPIEnv";
+import { AppSetApiUrl } from "./AppSetApiUrl";
 import { AppRestoreTrustchain } from "./AppRestoreTrustchain";
 import { AppWalletSync } from "./AppCloudSync";
-import { AppSetCloudSyncAPIEnv } from "./AppSetCloudSyncAPIEnv";
 import { DeviceInteractionLayer } from "./DeviceInteractionLayer";
 import { trustchainLifecycle } from "./walletSync";
 import type { DistantDocument } from "@shared/cloud-sync-module";
@@ -72,8 +72,12 @@ const App = () => {
       setTrustchainState(_state => ({ jwt: null, trustchain: null, memberCredentials })),
     [],
   );
-  const lkrpApiBaseUrl = useEnv("TRUSTCHAIN_API_STAGING");
-  const cloudSyncApiBaseUrl = useEnv("CLOUD_SYNC_API_STAGING");
+  const [lkrpApiBaseUrl, setLkrpApiBaseUrl] = useState(
+    LEDGER_SYNC_BACKENDS.staging.trustchainApiBaseUrl,
+  );
+  const [cloudSyncApiBaseUrl, setCloudSyncApiBaseUrl] = useState(
+    LEDGER_SYNC_BACKENDS.staging.cloudSyncApiBaseUrl,
+  );
   const setTrustchain = useCallback(
     (trustchain: Trustchain | null) => setTrustchainState(s => ({ ...s, trustchain })),
     [],
@@ -203,8 +207,18 @@ const App = () => {
                 </>
               }
             >
-              <AppSetTrustchainAPIEnv />
-              <AppSetCloudSyncAPIEnv />
+              <AppSetApiUrl
+                buttonTitle="Set Trustchain API"
+                api="trustchainApiBaseUrl"
+                value={lkrpApiBaseUrl}
+                setValue={setLkrpApiBaseUrl}
+              />
+              <AppSetApiUrl
+                buttonTitle="Set Cloud Sync API"
+                api="cloudSyncApiBaseUrl"
+                value={cloudSyncApiBaseUrl}
+                setValue={setCloudSyncApiBaseUrl}
+              />
               <AppMockEnv />
               <AppSetApplicationId
                 applicationId={applicationId}
@@ -283,7 +297,11 @@ const App = () => {
               />
 
               <Expand title="QR Code Host">
-                <AppQRCodeHost trustchain={trustchain} memberCredentials={memberCredentials} />
+                <AppQRCodeHost
+                  trustchainApiBaseUrl={lkrpApiBaseUrl}
+                  trustchain={trustchain}
+                  memberCredentials={memberCredentials}
+                />
               </Expand>
 
               <Expand title="QR Code Candidate">
@@ -309,6 +327,7 @@ const App = () => {
                 >
                   {trustchain && memberCredentials ? (
                     <AppWalletSync
+                      cloudSyncApiBaseUrl={cloudSyncApiBaseUrl}
                       trustchain={trustchain}
                       setTrustchain={setTrustchain}
                       memberCredentials={memberCredentials}
@@ -329,6 +348,7 @@ const App = () => {
                   {trustchain && memberCredentials ? (
                     <Suspense fallback={<Loading />}>
                       <AppAccountsSync
+                        cloudSyncApiBaseUrl={cloudSyncApiBaseUrl}
                         deviceId={deviceId}
                         trustchain={trustchain}
                         memberCredentials={memberCredentials}

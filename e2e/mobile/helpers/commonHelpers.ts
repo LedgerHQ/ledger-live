@@ -9,7 +9,7 @@ import { readFile } from "fs/promises";
 import { NANO_APP_CATALOG_PATH } from "@e2e/utils/constants";
 import { isPaytabSpec, paytabCardSession } from "@e2e/utils/paytab";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
-import { ledgerSyncEnvironment } from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
+import { ledgerSyncAppConfig } from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
 import { FAKE_TRONIFY_PORT } from "@ledgerhq/live-e2e-shared/tronify/constants";
 import { CARD_SESSION_BOOTSTRAP_ENV } from "@ledgerhq/baanx-test-client";
 
@@ -132,7 +132,7 @@ export async function launchApp(customConfig: Detox.DeviceLaunchAppConfig = {}) 
       detoxURLBlacklistRegex: createDetoxURLBlacklistRegex(),
       mock: "0",
       disable_broadcast: isAppBroadcastDisabled() && !broadcastsReachOnlyFakeNodes ? 1 : 0,
-      ledger_sync_environment: ledgerSyncEnvironment,
+      appConfig: JSON.stringify(ledgerSyncAppConfig),
       IS_TEST: true,
       ...cardSession,
       ...extraLaunchArgs,

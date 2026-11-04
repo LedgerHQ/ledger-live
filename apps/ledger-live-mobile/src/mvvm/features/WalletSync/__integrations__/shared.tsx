@@ -9,7 +9,7 @@ import WalletSyncNavigator from "../WalletSyncNavigator";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { withFlagOverrides } from "@tests/test-renderer";
-import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
+import { appConfig } from "~/setup";
 import { EMPTY } from "rxjs";
 import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 
@@ -83,7 +83,7 @@ export const mockedSdk = getSdk(
   {
     applicationId: 12,
     name: "LLD Integration",
-    apiBaseUrl: getWalletSyncEnvironmentParams("STAGING").trustchainApiBaseUrl,
+    apiBaseUrl: appConfig.trustchainApiBaseUrl,
   },
   () => () => EMPTY,
 );

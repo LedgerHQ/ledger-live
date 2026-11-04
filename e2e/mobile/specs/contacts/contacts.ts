@@ -23,7 +23,6 @@ import {
   LEDGER_SYNC_FEATURE_FLAGS,
   cleanupLedgerSyncAfterAll,
   setupLedgerSyncSeed,
-  verifyLedgerSyncEnvironment,
 } from "@e2e/helpers/ledgerSyncHelpers";
 import { FF_LWM_WALLET_40_Q2 } from "@e2e/utils/featureFlagUtils";
 import { TIMEOUT } from "@e2e/utils/timeouts";
@@ -82,7 +81,6 @@ async function initApp(
 ) {
   const { seedCommands, ...appOptions } = options;
 
-  await verifyLedgerSyncEnvironment();
   await app.init({
     ...appOptions,
     userdata: appOptions.userdata ?? CONTACTS_USERDATA,
@@ -266,7 +264,6 @@ export function runRenameContactOnDeviceTest(tmsLinks: string[], tags: string[])
         },
       });
       await device.reverseTcpPort(port);
-      await verifyLedgerSyncEnvironment();
 
       const trustchainCommands = [
         ...app.ledgerSync.initializeEmptyTrustchain(),

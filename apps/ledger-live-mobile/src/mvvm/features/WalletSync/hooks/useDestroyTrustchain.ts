@@ -6,17 +6,16 @@ import {
   resetTrustchainStore,
   memberCredentialsSelector,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { getCloudSyncSdk } from "@features/platform-wallet-sync";
 import { useMutation } from "@tanstack/react-query";
 import { AnalyticsEvents } from "LLM/features/WalletSync/Analytics/enums";
 import { QueryKey } from "./type.hooks";
-import { useCloudSyncSDK } from "./useWatchWalletSync";
 import { walletSyncUpdate } from "@domain/entity-wallet-sync";
 import { useCurrentStep } from "./useCurrentStep";
 import { Steps } from "../types/Activation";
 
 export function useDestroyTrustchain() {
   const dispatch = useDispatch();
-  const cloudSyncSDK = useCloudSyncSDK();
   const sdk = useTrustchainSdk();
   const trustchain = useSelector(trustchainSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);
@@ -27,10 +26,12 @@ export function useDestroyTrustchain() {
       if (!trustchain || !memberCredentials) {
         return;
       }
-      await cloudSyncSDK.destroy(trustchain, memberCredentials);
+      await getCloudSyncSdk(dispatch).destroy(trustchain, memberCredentials);
       await sdk.destroyApplication(trustchain, memberCredentials);
     },
     mutationKey: [QueryKey.destroyTrustchain, trustchain],
+    // The watch loop shares the Cloud Sync SDK, whose lock refuses a destroy while it pushes or pulls.
+    retry: (failureCount, error) => failureCount < 3 && error.name === "CloudSyncSDKLocked",
     onSuccess: () => {
       dispatch(resetTrustchainStore());
       track(AnalyticsEvents.LedgerSyncDeactivated);

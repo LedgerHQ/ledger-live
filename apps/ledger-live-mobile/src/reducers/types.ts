@@ -30,6 +30,7 @@ import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
 import type { BorrowState } from "./borrow";
 import type { CountervaluesStoreState } from "@features/platform-market-countervalues";
+import type { LedgerSyncState } from "@features/platform-wallet-sync";
 import type { TrackingPair } from "@domain/entity-market-countervalues";
 import type { ToastState } from "./toast";
 import type { ModularDrawerState } from "./modularDrawer";
@@ -485,6 +486,7 @@ export type State = LLMRTKApiState & {
   knownDevices: KnownDevicesState;
   largeScreenUpsellModal: LargeScreenUpsellModalState;
   largeMover: LargeMoverState;
+  ledgerSync: LedgerSyncState;
   liveConfigOverrides: LiveConfigOverridesState;
   market: MarketState;
   marketListConfig: MarketListConfigState;

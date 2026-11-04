@@ -10,9 +10,9 @@ import { getDefaultAccountName } from "@domain/entity-account-name";
 import { v4 as uuid } from "uuid";
 import { Actionable } from "./Actionable";
 import { JsonEditor } from "./JsonEditor";
-import useEnv from "../useEnv";
 
 export function AppWalletSync({
+  cloudSyncApiBaseUrl,
   trustchain,
   memberCredentials,
   version,
@@ -23,6 +23,7 @@ export function AppWalletSync({
   readOnly,
   takeControl,
 }: {
+  cloudSyncApiBaseUrl: string;
   trustchain: Trustchain;
   setTrustchain: (t: Trustchain | null) => void;
   memberCredentials: MemberCredentials;
@@ -35,7 +36,6 @@ export function AppWalletSync({
   takeControl?: () => void;
 }) {
   const trustchainSdk = useTrustchainSDK();
-  const cloudSyncApiBaseUrl = useEnv("CLOUD_SYNC_API_STAGING");
 
   const [json, setJson] = useState<string>("");
   const [error, setError] = useState<string | null>(null);

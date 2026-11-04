@@ -6,7 +6,7 @@ const platformMap: Record<string, string | undefined> = {
   linux: "Linux",
 };
 
-export function useInstanceName(): string {
+export function getInstanceName(): string {
   const platform = osPlatform();
   const hostname = osHostname();
   const name = `${platformMap[platform] || platform}${hostname ? " " + hostname : ""}`;

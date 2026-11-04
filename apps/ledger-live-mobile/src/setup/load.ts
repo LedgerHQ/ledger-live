@@ -21,8 +21,6 @@ export const loadAppConfig = (storage: AppConfigStorage, profile: "prod" | "stag
     storage,
     default: profile,
     switches: {
-      // WARNING: only Keycloak reads this switch so far. Ledger Sync still picks its backend from its
-      // feature-flag parameter, so the two can disagree until LIVE-39065.
       ledgerKeyRing: {
         label: "Ledger Key Ring backends",
         options: {

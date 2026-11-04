@@ -31,6 +31,7 @@ import { sleepingListener } from "./sleepingListener";
 import { createMobileFeatureFlagsMiddleware } from "./middleware/feature-flags";
 import { createMobileCountervaluesMiddleware } from "./middleware/countervalues";
 import { createMobileAuthMiddleware } from "./middleware/auth";
+import { createMobileLedgerSyncMiddleware } from "./middleware/ledgerSync";
 
 export const store = configureStore({
   reducer: reducers,
@@ -56,6 +57,7 @@ export const store = configureStore({
       }),
     )
       .concat(createMobileAuthMiddleware(appConfig))
+      .concat(createMobileLedgerSyncMiddleware(appConfig))
       .concat(rebootMiddleware)
       .concat(
         createIdentitiesSyncMiddleware({

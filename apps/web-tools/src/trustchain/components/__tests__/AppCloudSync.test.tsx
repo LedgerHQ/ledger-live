@@ -55,14 +55,10 @@ jest.mock("../../context", () => ({
   useTrustchainSDK: jest.fn(() => ({})),
 }));
 
-jest.mock("../../useEnv", () => ({
-  __esModule: true,
-  default: jest.fn(() => "https://staging"),
-}));
-
 const mockSetData = jest.fn();
 
 const defaultProps = {
+  cloudSyncApiBaseUrl: "https://cloud-sync.test",
   trustchain: {} as never,
   setTrustchain: jest.fn(),
   memberCredentials: {} as never,

@@ -39,8 +39,8 @@ returns this path. The three segments (all *hardened*, hence the `'`):
 - **`treeIndex`** — the top-level branch of the trustchain tree. Currently always `0`.
 - **`applicationId`** — identifies the **consuming application**, so each app derives its own
   branch (and therefore its own encryption key) under the same trustchain:
-  - **`16` = Ledger Sync** — used by Ledger Wallet Desktop & Mobile (`useTrustchainSdk` sets
-    `applicationId = 16`).
+  - **`16` = Ledger Sync** — used by Ledger Wallet Desktop & Mobile (the Ledger Sync middleware
+    of `@features/platform-wallet-sync` sets `applicationId = 16`).
   - **`17` = wallet-cli** — the wallet-cli integration; see the
     `ringInitPreservesLedgerSyncMember` scenario which drives `applicationId: 17`.
 - **`rotationIndex`** — starts at `0` and is incremented by `1` every time the key is rotated

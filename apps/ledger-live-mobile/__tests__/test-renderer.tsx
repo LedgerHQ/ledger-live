@@ -10,6 +10,9 @@ import { countervaluesInitialState as COUNTERVALUES_INITIAL_STATE } from "@featu
 import type { CountervaluesSettings } from "@domain/entity-market-countervalues";
 import { INITIAL_STATE as WALLET_INITIAL_STATE } from "~/reducers/wallet";
 import { createMobileCountervaluesMiddleware } from "~/state-manager/middleware/countervalues";
+import { createMobileLedgerSyncMiddleware } from "~/state-manager/middleware/ledgerSync";
+import { ledgerSyncInitialState } from "@features/platform-wallet-sync";
+import { appConfig } from "~/setup";
 import { NavigationContainer, type InitialState } from "@react-navigation/native";
 import { configureStore } from "@reduxjs/toolkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -86,6 +89,7 @@ const INITIAL_STATE: State = {
   identities: initialIdentitiesState,
   inView: IN_VIEW_INITIAL_STATE,
   largeMover: LARGE_MOVER_INITIAL_STATE,
+  ledgerSync: ledgerSyncInitialState,
   market: MARKET_INITIAL_STATE,
   modularDrawer: MODULAR_DRAWER_INITIAL_STATE,
   receiveOptionsDrawer: RECEIVE_OPTIONS_DRAWER_INITIAL_STATE,
@@ -170,7 +174,9 @@ function createStore({ overrideInitialState }: { overrideInitialState: (state: S
           },
         }),
         // Installed as in the app, and inert: no test starts it unless it dispatches the start.
-      ).concat(createMobileCountervaluesMiddleware()),
+      )
+        .concat(createMobileCountervaluesMiddleware())
+        .concat(createMobileLedgerSyncMiddleware(appConfig)),
     preloadedState: state,
     devTools: false,
   });
