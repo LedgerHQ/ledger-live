@@ -202,4 +202,17 @@ describe("LedgerStoreProvider", () => {
     expect(screen.getByText("loading")).toBeOnTheScreen();
     expect(mockBootstrapCardSession).not.toHaveBeenCalled();
   });
+
+  it("should stop the boot when the settings cannot be read", async () => {
+    mockGetSettings.mockRejectedValueOnce(corruptValueError());
+    const store = createStore();
+    store.dispatch(setCachedFlagsSettled());
+
+    renderProvider(store);
+    await act(() => jest.runAllTimersAsync());
+
+    // Default settings have no password lock, so the app would open without it.
+    expect(screen.getByText("loading")).toBeOnTheScreen();
+    expect(mockBootstrapCardSession).not.toHaveBeenCalled();
+  });
 });

@@ -91,9 +91,11 @@ async function retry<T>(fn: () => Promise<T>, retries: number, delay: number): P
 /**
  * Without these keys, the savers and Ledger Sync would persist an empty state over the stored one
  * (the accounts saver deletes every stored account that is not in the state, and the known devices
- * and identities savers write at start), so the boot stops instead.
+ * and identities savers write at start), so the boot stops instead. Default settings would also
+ * open the app without the password lock that the stored settings configure.
  */
 const BOOT_BLOCKING_KEYS = new Set([
+  "settings",
   "accounts",
   "wallet",
   "trustchain",
