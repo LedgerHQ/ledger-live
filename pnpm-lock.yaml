@@ -2535,6 +2535,9 @@ importers:
       '@shared/lottie':
         specifier: workspace:*
         version: link:../../shared/lottie
+      '@shared/native-performance':
+        specifier: workspace:*
+        version: link:../../shared/native-performance
       '@shared/network-status':
         specifier: workspace:*
         version: link:../../shared/network-status
