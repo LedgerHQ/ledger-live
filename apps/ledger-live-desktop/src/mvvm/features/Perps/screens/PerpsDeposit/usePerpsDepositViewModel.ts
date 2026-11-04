@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import BigNumber from "bignumber.js";
 import type { AccountLike, TokenAccount } from "@ledgerhq/types-live";
@@ -15,21 +15,19 @@ import { getDepositMaxBuffer } from "@ledgerhq/live-common/wallet-api/Perps/depo
 import { useFeature } from "@features/platform-feature-flags";
 import { track } from "@shared/analytics";
 import { useNetworkState } from "@shared/network-status";
-import { cancelDepositRequest } from "@ledgerhq/live-common/wallet-api/Perps/deposit/request";
-import { getDepositSpendableBalance } from "@ledgerhq/live-common/wallet-api/Perps/deposit/coinErrors";
-import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
-import { openURL } from "~/renderer/linking";
 import {
-  DEPOSIT_FORM_ERROR_ANALYTICS_MESSAGES,
-  PERPS_DEPOSIT_ANALYTICS_CONTEXT,
   findDepositParentAccount,
-  getDepositBaseError,
-  getDepositBuyTarget,
-  resolveDepositFormError,
   type DepositBuyTarget,
   type DepositErrorDetails,
   type DepositFormError,
 } from "@ledgerhq/live-common/wallet-api/Perps/deposit/formError";
+import {
+  getDepositAmountState,
+  useDepositFormErrors,
+} from "@ledgerhq/live-common/wallet-api/Perps/deposit/useDepositFormErrors";
+import { getDepositSpendableBalance } from "@ledgerhq/live-common/wallet-api/Perps/deposit/coinErrors";
+import { useUrlLocalizer } from "~/renderer/hooks/useLocalizedUrls";
+import { openURL } from "~/renderer/linking";
 import { PERPS_UI_USE_CASE } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
@@ -261,28 +259,20 @@ export function usePerpsDepositViewModel(
     [depositCurrency, toCurrencyAmount],
   );
 
-  const baseError = useMemo(
+  const amountState = useMemo(
     () =>
-      getDepositBaseError({
+      getDepositAmountState({
         depositAccount,
+        parentAccount,
         depositAmount,
         maxAmount,
-        hasConversion: convertedAmount !== null,
-        parentAccount,
+        convertedAmount,
       }),
     [convertedAmount, depositAccount, depositAmount, maxAmount, parentAccount],
   );
+  const { sentAmountAtomic } = amountState;
 
   const missingAccount = !depositAccount && depositAmount > 0;
-
-  const isFormComplete = depositAmount > 0 && Boolean(depositAccount) && baseError === null;
-
-  const sentAmountAtomic = useMemo(() => {
-    if (!isFormComplete || !depositAccount || !convertedAmount) return undefined;
-    return BigNumber.min(convertedAmount, getDepositSpendableBalance(depositAccount)).integerValue(
-      BigNumber.ROUND_FLOOR,
-    );
-  }, [convertedAmount, depositAccount, isFormComplete]);
 
   const sentAmount =
     sentAmountAtomic && depositCurrency
@@ -297,109 +287,45 @@ export function usePerpsDepositViewModel(
   });
   const quote = quoteResult?.quote;
 
-  /** What the user typed comes first; a missing quote only matters once it is valid. */
-  const statusError = useMemo(
-    () =>
-      resolveDepositFormError({
-        isOffline,
-        baseError,
-        depositAccount,
-        parentAccount,
-        depositAmount,
-        sentAmountAtomic,
-        quoteResult,
-        locale,
-      }),
-    [
-      baseError,
-      depositAccount,
-      depositAmount,
-      isOffline,
-      parentAccount,
-      quoteResult,
-      sentAmountAtomic,
-      locale,
-    ],
+  const getAccountName = useCallback(
+    (account: AccountLike) => accountNameWithDefaultSelector(walletState, account),
+    [walletState],
   );
 
-  const canReview = isFormComplete && quote !== undefined && statusError === null;
-  const exceedsBalance = statusError?.code === "insufficientBalance";
-
-  const analyticsCurrencies = useMemo(
-    () => ({
-      sourceCurrency: depositCurrency?.ticker ?? PERPS_DEPOSIT_DEFAULT_FUNDING_TICKER,
-      targetCurrency: receiverCurrency.ticker,
-    }),
-    [depositCurrency, receiverCurrency.ticker],
+  const openBuy = useCallback(
+    ({ account, parentAccount: buyParentAccount }: DepositBuyTarget) => {
+      navigate("/exchange", {
+        state: buildBuyNavigationState({
+          ledgerCurrency: getAccountCurrency(account),
+          account,
+          parentAccount: buyParentAccount,
+        }),
+      });
+      onClose();
+    },
+    [navigate, onClose],
   );
 
-  const trackedErrorCodeRef = useRef<string | null>(null);
-  useEffect(() => {
-    if (isQuoteLoading) return;
-    const code = statusError?.code ?? null;
-    if (code === trackedErrorCodeRef.current) return;
-    trackedErrorCodeRef.current = code;
-    if (!code) return;
-    track("swap error message", {
-      message: DEPOSIT_FORM_ERROR_ANALYTICS_MESSAGES[code],
-      ...PERPS_DEPOSIT_ANALYTICS_CONTEXT,
-      ...analyticsCurrencies,
-    });
-  }, [analyticsCurrencies, isQuoteLoading, statusError?.code]);
+  const localizeUrl = useUrlLocalizer();
+  const openSupportUrl = useCallback((url: string) => openURL(localizeUrl(url)), [localizeUrl]);
 
-  const buyTarget = useMemo(
-    () =>
-      getDepositBuyTarget({
-        statusError,
-        depositAccount,
-        parentAccount,
-        getAccountName: account => accountNameWithDefaultSelector(walletState, account),
-      }),
-    [depositAccount, parentAccount, statusError, walletState],
-  );
-
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-  const [openedBuyTarget, setOpenedBuyTarget] = useState<DepositBuyTarget | null>(null);
-
-  const localizedSupportUrl = useLocalizedUrl(statusError?.supportUrl ?? "");
-  const supportUrl = statusError?.supportUrl ? localizedSupportUrl : undefined;
-
-  const openDetails = useCallback(() => {
-    if (!buyTarget && !supportUrl) return;
-    track("button_clicked", {
-      button: "learn more",
-      ...PERPS_DEPOSIT_ANALYTICS_CONTEXT,
-      ...analyticsCurrencies,
-    });
-    if (supportUrl) {
-      openURL(supportUrl);
-      return;
-    }
-    setOpenedBuyTarget(buyTarget);
-    setIsDetailsOpen(true);
-  }, [analyticsCurrencies, buyTarget, supportUrl]);
-
-  const closeDetails = useCallback(() => setIsDetailsOpen(false), []);
-
-  const buyFromDetails = useCallback(() => {
-    if (!openedBuyTarget) return;
-    const { account, parentAccount: buyParentAccount, details } = openedBuyTarget;
-    track("button_clicked", {
-      button: "buy more crypto",
-      ...PERPS_DEPOSIT_ANALYTICS_CONTEXT,
-      currency: details.buyTicker,
-      ...analyticsCurrencies,
-    });
-    cancelDepositRequest();
-    navigate("/exchange", {
-      state: buildBuyNavigationState({
-        ledgerCurrency: getAccountCurrency(account),
-        account,
-        parentAccount: buyParentAccount,
-      }),
-    });
-    onClose();
-  }, [analyticsCurrencies, navigate, onClose, openedBuyTarget]);
+  const formErrors = useDepositFormErrors({
+    amountState,
+    isOffline,
+    depositAccount,
+    parentAccount,
+    depositAmount,
+    quoteResult,
+    isQuoteLoading,
+    locale,
+    sourceCurrency: depositCurrency?.ticker ?? PERPS_DEPOSIT_DEFAULT_FUNDING_TICKER,
+    targetCurrency: receiverCurrency.ticker,
+    getAccountName,
+    track,
+    openBuy,
+    openSupportUrl,
+  });
+  const { canReview } = formErrors;
 
   const receiverUnit = receiverCurrency.units[0];
 
@@ -474,15 +400,7 @@ export function usePerpsDepositViewModel(
     maxAmount: maxAmount ?? 0,
     maxBuffer,
     selectMax,
-    statusError,
-    canLearnMore: buyTarget !== null || supportUrl !== undefined,
-    isDetailsOpen,
-    details: openedBuyTarget?.details ?? null,
-    openDetails,
-    closeDetails,
-    buyFromDetails,
-    canReview,
-    exceedsBalance,
+    ...formErrors,
     missingAccount,
     pickDepositAccount,
     handleReview,
