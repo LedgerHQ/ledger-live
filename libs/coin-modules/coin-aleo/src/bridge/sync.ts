@@ -358,8 +358,7 @@ export async function performPrivateSync({
   const publicSyncRanThisCycle = freshTransparentBalance !== undefined;
 
   // The migration itself runs in the public sync, so only a chained run may report it happened.
-  // Staking being off has to clear the marker, since this run strips the cached staking rows:
-  // keeping it would let a later re-enable skip the migration and never re-fetch them.
+  // Staking being off clears the marker so a later re-enable runs its position migration.
   const hasMigratedStaking =
     config.enableStaking &&
     (publicSyncRanThisCycle || initialAccount.aleoResources?.hasMigratedStaking === true);
