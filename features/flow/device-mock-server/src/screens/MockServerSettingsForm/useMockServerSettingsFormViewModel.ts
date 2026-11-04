@@ -90,12 +90,12 @@ export function useMockServerSettingsFormViewModel({
 
   const draftUrl = normalizeUrl(urlDraft);
   const draftToken = tokenDraft.trim();
-  const isTokenChanged = draftToken !== (config?.token ?? "");
+  const isTokenChanged = draftToken !== "" && draftToken !== (config?.token ?? "");
   const isUrlChanged = draftUrl !== url;
-  const joinsDraftSession = isTokenChanged && draftToken !== "";
+  // Joins the session of the token in the field, or starts a new one when the field is empty
   const draftActivation = useMemo<MockServerActivation>(
-    () => ({ url: draftUrl, token: joinsDraftSession ? draftToken : undefined }),
-    [draftToken, draftUrl, joinsDraftSession],
+    () => ({ url: draftUrl, token: draftToken || undefined }),
+    [draftToken, draftUrl],
   );
 
   const run = useCallback(async (action: PendingAction, task: () => Promise<void>) => {
@@ -192,7 +192,7 @@ export function useMockServerSettingsFormViewModel({
     sessionId,
     urlDraft,
     tokenDraft,
-    hasDraftChanges: joinsDraftSession || isUrlChanged,
+    hasDraftChanges: isTokenChanged || isUrlChanged,
     pendingAction,
     error,
     isFloatingButtonHidden,
