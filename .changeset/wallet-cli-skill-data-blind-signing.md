@@ -2,4 +2,4 @@
 "@ledgerhq/wallet-cli": patch
 ---
 
-The embedded wallet-cli skill says what the device shows for a `send --data` call: decoded fields for a clear-signed contract, and only the To address to check when it is blind-signed
+The embedded wallet-cli skill no longer says every `send --data` call is decoded on the device: a contract without a clear-signing descriptor cannot be clear-signed, and the agent stops instead of suggesting blind signing
