@@ -25,11 +25,13 @@ describe("isSameState", () => {
         isSameState(
           {
             type: CreateBackupStateType.AWAITING_BACKUP_SELECTION,
+            backupCreatedAt: new Date(),
             useExistingBackup: noop,
             createNewBackup: noop,
           },
           {
             type: CreateBackupStateType.AWAITING_BACKUP_SELECTION,
+            backupCreatedAt: new Date(),
             useExistingBackup: () => undefined,
             createNewBackup: () => undefined,
           },

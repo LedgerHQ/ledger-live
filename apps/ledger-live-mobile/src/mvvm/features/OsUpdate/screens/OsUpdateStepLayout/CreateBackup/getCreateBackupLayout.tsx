@@ -41,7 +41,14 @@ function getSheet({
       };
       return {
         hideHeader: true,
-        content: <BackupSelectionContent onUseExisting={onUseExisting} onCreateNew={onCreateNew} />,
+        content: (
+          <BackupSelectionContent
+            deviceModelId={deviceModelId}
+            backupCreatedAt={state.backupCreatedAt}
+            onUseExisting={onUseExisting}
+            onCreateNew={onCreateNew}
+          />
+        ),
       };
     }
     case CreateBackupStateType.DEVICE_LOCKED:
