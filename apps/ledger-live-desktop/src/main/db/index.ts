@@ -424,13 +424,18 @@ function buildAppNamespacePayload(memory: Record<string, unknown>): Record<strin
  */
 async function saveToDisk(ns: string) {
   if (!DBPath) throw new NoDBPathGiven();
-  await ensureNSLoaded(ns);
+  // A reset cleared the namespace: nothing to write. Loading it here would queue a save behind
+  // this one, which waits for it.
+  const memory = memoryNamespaces[ns];
+  if (!memory) {
+    saveTriggers.delete(ns);
+    return;
+  }
 
   const startTime = Date.now();
   const triggersSet = saveTriggers.get(ns);
   const triggers = triggersSet ? Array.from(triggersSet) : [];
 
-  const memory = memoryNamespaces[ns]!;
   const raw = ns === "app" ? buildAppNamespacePayload(memory) : memory;
   const clone = cloneDeep(raw);
 

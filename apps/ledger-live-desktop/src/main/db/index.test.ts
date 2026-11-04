@@ -460,4 +460,17 @@ describe("db saves", () => {
     await flushing;
     expect(writtenFile("app")).toEqual({ settings: { theme: "light" } });
   });
+
+  it("does not block the flush with a save pending at reset", async () => {
+    void db.setKey("app", "settings", { theme: "dark" });
+    await new Promise(resolve => setTimeout(resolve, 0));
+    readFileMock.mockRejectedValue(Object.assign(new Error("missing"), { code: "ENOENT" }));
+    await db.resetAll();
+    writeFileMock.mockClear();
+
+    await db.flush();
+
+    expect(writtenFile("app")).toBeUndefined();
+    await expect(db.getKey("app", "settings")).resolves.toBeUndefined();
+  });
 });
