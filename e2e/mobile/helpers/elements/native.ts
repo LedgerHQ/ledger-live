@@ -15,21 +15,24 @@ type ElementAttributes = IosElementAttributes | AndroidElementAttributes;
 /**
  * A native (React Native) element, declared once with its match strategy.
  * Every action waits up to `timeout` (default 60s) for the element to be visible, then acts.
- * Build one with {@link byId}, {@link byIdAndText} or {@link byIdWithDescendantText}.
+ * Build one with {@link byId}, {@link byIdAndText}, {@link byIdWithDescendantText} or
+ * {@link byTextWithAncestorId}.
  */
 export class NativeHandle implements ElementHandle {
   private readonly createMatcher: () => NativeMatcher;
   private readonly description: string;
+  private readonly index: number;
 
-  constructor(createMatcher: () => NativeMatcher, description: string) {
+  constructor(createMatcher: () => NativeMatcher, description: string, index = 0) {
     this.createMatcher = createMatcher;
     this.description = description;
+    this.index = index;
   }
 
-  /** The first matching Detox element, with no wait and no hard timeout. */
+  /** The matching Detox element at `index`, with no wait and no hard timeout. */
   private get raw(): NativeElement {
     // Android's atIndex mutates the matcher it wraps, so every element needs a fresh one.
-    return element(this.createMatcher()).atIndex(0);
+    return element(this.createMatcher()).atIndex(this.index);
   }
 
   /** Waits until at least 75% of the element is visible. */
@@ -132,12 +135,15 @@ export class NativeHandle implements ElementHandle {
   }
 }
 
-/** Matches by React Native `testID` (Detox `by.id`). */
-export const byId = (id: string | RegExp): NativeHandle =>
-  new NativeHandle(() => by.id(id), `#${id}`);
+/**
+ * Matches by React Native `testID` (Detox `by.id`).
+ * `index` picks the n-th match, the first by default.
+ */
+export const byId = (id: string | RegExp, index = 0): NativeHandle =>
+  new NativeHandle(() => by.id(id), index ? `#${id}[${index}]` : `#${id}`, index);
 
 /** Matches by `testID` and the element's own text. */
-export const byIdAndText = (id: string, text: string | RegExp): NativeHandle =>
+export const byIdAndText = (id: string | RegExp, text: string | RegExp): NativeHandle =>
   new NativeHandle(() => by.id(id).and(by.text(text)), `#${id} with text "${text}"`);
 
 /** Matches by `testID` and the text of a descendant, e.g. a label inside a button or card. */
@@ -146,3 +152,7 @@ export const byIdWithDescendantText = (id: string, text: string | RegExp): Nativ
     () => by.id(id).withDescendant(by.text(text)),
     `#${id} containing text "${text}"`,
   );
+
+/** Matches a text inside the `testID` element, for a text that has no `testID` of its own. */
+export const byTextWithAncestorId = (id: string, text: string | RegExp): NativeHandle =>
+  new NativeHandle(() => by.text(text).withAncestor(by.id(id)), `"${text}" inside #${id}`);
