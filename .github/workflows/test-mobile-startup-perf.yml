@@ -3,8 +3,9 @@ run-name: >
   @Mobile startup perf • ${{ inputs.preset }} • ${{ inputs.platforms }} • ${{ github.ref_name }} • ${{ github.actor }}
 
 # Compares the startup time of two Ledger Wallet Mobile builds, A and B, as read in
-# Settings > Debug > Performance > App startup time: the automated version of the manual checks
-# B2CQA-6555 (iOS) and B2CQA-6593 (Android). See tools/scripts/startup-perf/run.mjs.
+# Settings > Debug > Performance > App startup time and with the native start (process start to
+# first JS import) added back: the automated version of the manual checks B2CQA-6555 (iOS) and
+# B2CQA-6593 (Android). See tools/scripts/startup-perf/run.mjs and analyze.mjs.
 #
 # Presets:
 #   prod-vs-release   the latest live-mobile@X.Y.Z tag (A) against the release branch (B); B fails
@@ -57,7 +58,7 @@ on:
         type: string
         default: "speculos-x-other-account,swap-history"
       threshold_ms:
-        description: "prod-vs-release and custom: B fails when it is slower than A by more than this"
+        description: "prod-vs-release and custom: B fails when it is slower than A by more than this, on the Debug screen value (from the first JS import when A and B count from different points) or with the native start"
         required: true
         type: string
         default: "100"
