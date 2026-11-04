@@ -260,8 +260,8 @@ function convertSyncedAccount(
 
   let v1: AccountDescriptorV1;
   try {
-    // A supported family on an unsupported network ("base" under evm) must be skipped here:
-    // toV0() below would otherwise report it as invalid.
+    // A supported family on an unsupported network ("base" under evm) must be skipped here: the
+    // toV0() round-trip check at the end would otherwise report it as invalid.
     currencyIdFromNetwork(networkFromCurrencyId(descriptor.currencyId));
     v1 = toV1(withSeedIdentifierFromId(descriptor));
   } catch (e) {

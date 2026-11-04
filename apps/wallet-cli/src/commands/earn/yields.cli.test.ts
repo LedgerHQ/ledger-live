@@ -11,6 +11,9 @@ import { MOCK_ETH_DESCRIPTOR, ETH_DESCRIPTOR } from "../../testing/constants";
 const SOL_DESCRIPTOR =
   "account:2:address:solana:7xCU4XQfL8589X6vVt8q5F7J3Z9T1z6W6X6X6X6X6X:m/44h/501h/0h/0h";
 
+const BASE_DESCRIPTOR =
+  "account:2:address:base:0x64466ae5d0565d3A2D9479A755E18d18aDaC8f46:m/44h/60h/0h/0/0";
+
 // A /v0/grow payload spanning both supported networks (ethereum native + token, solana) plus an
 // unsupported one (cosmos) used to assert the no-network filter drops what the CLI cannot act on.
 const GROW = [
@@ -217,6 +220,21 @@ describe("earn yields --network <unsupported>", () => {
 
     const { stdout, exitCode } = await runCli(
       ["earn", "yields", "--network", "base", "--output", "json"],
+      { WALLET_CLI_MOCK_PORT: String(server.port), ...fixture.env },
+    );
+
+    expect(exitCode).toBe(1);
+    const data = JSON.parse(stdout);
+    expect(data.ok).toBe(false);
+    expect(data.error.message).toContain('Network "base" is not supported by wallet-cli');
+  });
+
+  it("reports the unsupported network instead of an unresolvable --account", async () => {
+    const fixture = makeSessionDir([{ label: "base-1", descriptor: BASE_DESCRIPTOR }]);
+    cleanup = fixture.cleanup;
+
+    const { stdout, exitCode } = await runCli(
+      ["earn", "yields", "--network", "base", "--account", "base-1", "--output", "json"],
       { WALLET_CLI_MOCK_PORT: String(server.port), ...fixture.env },
     );
 

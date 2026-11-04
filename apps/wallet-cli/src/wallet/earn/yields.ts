@@ -299,10 +299,9 @@ export async function listEarnYieldRows({
   all = false,
   accountLabel,
 }: ListEarnYieldRowsArgs): Promise<EarnYieldRow[]> {
-  const parentAccountIds = parentAccountIdsByNetwork(session, accountLabel);
-
   if (network) {
     const currencyId = currencyIdFromNetwork(network);
+    const parentAccountIds = parentAccountIdsByNetwork(session, accountLabel);
     const grow = await getGrow({ dashboardSupported: true });
     const growRows = grow
       .filter(item => item.network === network)
@@ -315,6 +314,7 @@ export async function listEarnYieldRows({
     return [...growRows, ...providerRows, ...productRows];
   }
 
+  const parentAccountIds = parentAccountIdsByNetwork(session, accountLabel);
   const grow = await getGrow({ dashboardSupported: true });
   let items = grow.filter(item => SUPPORTED_EARN_NETWORKS.has(item.network));
 
