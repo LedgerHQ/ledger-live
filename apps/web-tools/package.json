@@ -137,6 +137,7 @@
     "concurrently": "8.2.2",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
+    "oxfmt": "catalog:",
     "postcss": "^8.5.6",
     "tailwindcss": "catalog:"
   }

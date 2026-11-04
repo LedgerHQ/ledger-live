@@ -39,6 +39,8 @@
   "devDependencies": {
     "@types/react": "catalog:",
     "@typescript/native": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "react": "catalog:",
     "typescript": "catalog:"
   }

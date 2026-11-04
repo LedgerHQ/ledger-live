@@ -64,7 +64,8 @@
     "rimraf": "4.4.1",
     "ts-node": "10.9.2",
     "@typescript/native": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "oxlint": "catalog:"
   },
   "exports": {
     ".": {

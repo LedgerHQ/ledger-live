@@ -87,7 +87,8 @@
     "source-map-support": "0.5.21",
     "ts-node": "10.9.2",
     "@typescript/native": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "oxlint": "catalog:"
   },
   "overrides": {
     "@ethersproject/providers": {

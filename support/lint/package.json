@@ -27,6 +27,7 @@
     "@ledgerhq/lumen-lint-plugin": "catalog:",
     "@types/node": "catalog:",
     "@typescript/native": "catalog:",
+    "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "typescript": "catalog:"
   }

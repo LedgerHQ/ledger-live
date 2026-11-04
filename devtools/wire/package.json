@@ -25,6 +25,8 @@
     "@types/jest": "catalog:",
     "@typescript/native": "catalog:",
     "jest": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "typescript": "catalog:"
   }
 }

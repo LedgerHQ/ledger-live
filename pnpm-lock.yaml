@@ -3596,6 +3596,9 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
       postcss:
         specifier: ^8.5.6
         version: 8.5.6
@@ -3641,6 +3644,12 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -3689,6 +3698,12 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -3737,6 +3752,12 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -3785,6 +3806,12 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -3833,6 +3860,12 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -3881,6 +3914,12 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -3953,6 +3992,12 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -4056,6 +4101,12 @@ importers:
       jest-sonar:
         specifier: 0.2.16
         version: 0.2.16
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -4225,6 +4276,12 @@ importers:
       jest-sonar:
         specifier: 0.2.16
         version: 0.2.16
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -4328,6 +4385,12 @@ importers:
       jest-sonar:
         specifier: 0.2.16
         version: 0.2.16
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -4449,6 +4512,12 @@ importers:
       jest-sonar:
         specifier: 0.2.16
         version: 0.2.16
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -4542,6 +4611,12 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -4657,6 +4732,12 @@ importers:
       jest-sonar:
         specifier: 0.2.16
         version: 0.2.16
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -4751,6 +4832,12 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -4850,6 +4937,12 @@ importers:
       jest-sonar:
         specifier: 0.2.16
         version: 0.2.16
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -4905,6 +4998,12 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -4966,6 +5065,12 @@ importers:
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -5018,6 +5123,9 @@ importers:
       oxfmt:
         specifier: 'catalog:'
         version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       tsx:
         specifier: 'catalog:'
         version: 4.20.6
@@ -5130,6 +5238,12 @@ importers:
       jest-sonar:
         specifier: 0.2.16
         version: 0.2.16
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -5184,6 +5298,12 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -5275,6 +5395,12 @@ importers:
       jest-sonar:
         specifier: 0.2.16
         version: 0.2.16
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -5395,6 +5521,12 @@ importers:
       jest-sonar:
         specifier: 0.2.16
         version: 0.2.16
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -5450,6 +5582,12 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -13245,6 +13383,9 @@ importers:
       nock:
         specifier: 14.0.3
         version: 14.0.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -17712,6 +17853,9 @@ importers:
       nock:
         specifier: 14.0.3
         version: 14.0.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -17878,6 +18022,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -18886,6 +19033,9 @@ importers:
       oxfmt:
         specifier: 'catalog:'
         version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -18938,6 +19088,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -19023,6 +19176,9 @@ importers:
       oxfmt:
         specifier: 'catalog:'
         version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -19078,6 +19234,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       protobufjs-cli:
         specifier: 2.4.1
         version: 2.4.1(protobufjs@8.4.1)
@@ -19142,6 +19301,9 @@ importers:
       oxfmt:
         specifier: 'catalog:'
         version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -19194,6 +19356,9 @@ importers:
       oxfmt:
         specifier: 'catalog:'
         version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -19288,6 +19453,9 @@ importers:
       oxfmt:
         specifier: 'catalog:'
         version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -19361,6 +19529,12 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -19407,6 +19581,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -19459,6 +19636,9 @@ importers:
       oxfmt:
         specifier: 'catalog:'
         version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -19514,6 +19694,9 @@ importers:
       oxfmt:
         specifier: 'catalog:'
         version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
@@ -19569,6 +19752,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -19621,6 +19807,9 @@ importers:
       oxfmt:
         specifier: 'catalog:'
         version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -19676,6 +19865,9 @@ importers:
       oxfmt:
         specifier: 'catalog:'
         version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -19731,6 +19923,9 @@ importers:
       oxfmt:
         specifier: 'catalog:'
         version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -19780,6 +19975,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -19838,6 +20036,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -19896,6 +20097,9 @@ importers:
       oxfmt:
         specifier: 'catalog:'
         version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -19945,6 +20149,9 @@ importers:
       oxfmt:
         specifier: 'catalog:'
         version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -19997,6 +20204,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -20049,6 +20259,9 @@ importers:
       oxfmt:
         specifier: 'catalog:'
         version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -20092,6 +20305,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -20174,6 +20390,9 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -20268,6 +20487,9 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -20374,6 +20596,9 @@ importers:
       oxfmt:
         specifier: 'catalog:'
         version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -20447,6 +20672,9 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -20614,6 +20842,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -20718,6 +20949,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -20779,6 +21013,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -20834,6 +21071,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -20889,6 +21129,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -20959,6 +21202,9 @@ importers:
       oxfmt:
         specifier: 'catalog:'
         version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -21029,6 +21275,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -21087,6 +21336,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -21145,6 +21397,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -21209,6 +21464,9 @@ importers:
       oxfmt:
         specifier: 'catalog:'
         version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -21306,6 +21564,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -21364,6 +21625,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -21416,6 +21680,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -21465,6 +21732,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -21556,6 +21826,9 @@ importers:
       msw:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -21618,6 +21891,9 @@ importers:
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -21700,6 +21976,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -21749,6 +22028,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -22165,6 +22447,9 @@ importers:
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
@@ -22374,6 +22659,10 @@ importers:
       '@shared/env':
         specifier: workspace:*
         version: link:../../shared/env
+    devDependencies:
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
 
   libs/wallet-pnl:
     dependencies:
@@ -23740,6 +24029,9 @@ importers:
       oxfmt:
         specifier: 'catalog:'
         version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
 
   support/jest:
     dependencies:
@@ -23783,6 +24075,12 @@ importers:
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -23821,6 +24119,9 @@ importers:
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
@@ -23848,6 +24149,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -23969,6 +24273,12 @@ importers:
       '@rslib/core':
         specifier: 'catalog:'
         version: 1.0.5(@typescript/typescript6@6.0.2)(core-js@3.47.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -23981,6 +24291,12 @@ importers:
       '@rslib/core':
         specifier: 'catalog:'
         version: 1.0.5(@typescript/typescript6@6.0.2)(core-js@3.47.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       semver:
         specifier: 'catalog:'
         version: 7.8.5
@@ -23996,6 +24312,12 @@ importers:
       '@rslib/core':
         specifier: 'catalog:'
         version: 1.0.5(@typescript/typescript6@6.0.2)(core-js@3.47.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       semver:
         specifier: 'catalog:'
         version: 7.8.5
@@ -24011,6 +24333,12 @@ importers:
       '@rslib/core':
         specifier: 'catalog:'
         version: 1.0.5(@typescript/typescript6@6.0.2)(core-js@3.47.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -24026,6 +24354,12 @@ importers:
       node-fetch:
         specifier: 3.3.2
         version: 3.3.2
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -24041,6 +24375,12 @@ importers:
       '@rslib/core':
         specifier: 'catalog:'
         version: 1.0.5(@typescript/typescript6@6.0.2)(core-js@3.47.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -24093,6 +24433,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -24108,6 +24451,9 @@ importers:
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
       prettier:
         specifier: 2.8.8
         version: 2.8.8
