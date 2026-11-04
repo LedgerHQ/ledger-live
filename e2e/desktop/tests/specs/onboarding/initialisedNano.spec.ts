@@ -14,6 +14,7 @@ test.describe(`Onboarding an initialised Nano (mock server)`, () => {
       lwdOnboardingCounterfeitWarning: { enabled: true },
     },
     settings: FRESH_INSTALL_SETTINGS,
+    mockDeviceParams: { onboarded: true },
   });
 
   test(
