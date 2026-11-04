@@ -1,5 +1,6 @@
 // Packages whose scripts run a root tool they do not declare yet, keyed by project root. An entry
-// silences the tools it names for that package only, and says when it goes away.
+// silences the root tools it names, by executable, for that package only, and says when it goes
+// away.
 //
 // This list only shrinks. The tool-dependency rule reports an entry the package no longer needs, so
 // declaring the tool means deleting its entry here.
@@ -10,7 +11,7 @@ const NX = "TEMPORARY. Exit condition: LIVE-40432 declares nx in each package th
 
 /**
  * @type {Record<string, {
- *   tools: (keyof typeof import("./tool-dependency.mjs").TOOLS)[],
+ *   tools: string[],
  *   reason: string,
  * }>}
  */

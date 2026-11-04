@@ -1,26 +1,73 @@
-// Every root tool a package's scripts run is declared in the package's own manifest, so Nx puts the
-// tool in the package's project graph and hashes its version (ADR-0003).
+// A package declares every root tool its scripts run, so Nx puts the tool in the package's project
+// graph and hashes its version (ADR-0003). The root tools are the executables the workspace root's
+// dependencies install in the root node_modules/.bin, the one place a package script can reach a
+// binary it does not declare. A tool the root drops is enforced by the install instead: the script
+// fails with "command not found".
 //
 // Every script is checked, not only the entry points: pnpm runs pre and post hooks
 // (enablePrePostScripts) and scripts run other scripts, and each of those is a script too.
 //
-// The layers (shared/, domain/, features/) also take the version from the catalog. Elsewhere any
-// declaration puts the tool in the graph, and some packages still pin a version of their own.
+// Where the root takes a tool from the catalog, the layers (shared/, domain/, features/) do too.
+// Elsewhere any declaration puts the tool in the graph, and some packages pin a version of their own.
 
 import fs from "node:fs";
 import path from "node:path";
 import { TOOL_DEPENDENCY_DEBT } from "./tool-dependency-debt.mjs";
 
-/** Each root tool, by the executable a script runs, and the package that supplies it. */
-export const TOOLS = {
-  tsc: "@typescript/native",
-  knip: "knip",
-  oxlint: "oxlint",
-  oxfmt: "oxfmt",
-  rimraf: "rimraf",
-  zx: "zx",
-  nx: "nx",
-};
+/**
+ * @typedef {{ supplier: string, spec: string }} RootTool the root dependency that installs an
+ *   executable, and the version the root declares it at
+ */
+
+/** @type {Map<string, Map<string, RootTool[]>>} by workspace root */
+const rootToolsCache = new Map();
+
+/**
+ * @param {string} file
+ * @returns {any}
+ */
+const readJson = file => JSON.parse(fs.readFileSync(file, "utf8"));
+
+/**
+ * Every executable the workspace root's dependencies install, read from their `bin` fields.
+ *
+ * @param {string} workspaceRoot
+ * @returns {Map<string, RootTool[]>} by executable
+ */
+export function rootTools(workspaceRoot) {
+  const cached = rootToolsCache.get(workspaceRoot);
+  if (cached) return cached;
+
+  const root = readJson(path.join(workspaceRoot, "package.json"));
+  /** @type {Map<string, RootTool[]>} */
+  const tools = new Map();
+  for (const [supplier, spec] of Object.entries({
+    ...root.dependencies,
+    ...root.devDependencies,
+  })) {
+    const manifestFile = path.join(workspaceRoot, "node_modules", supplier, "package.json");
+    let manifest;
+    try {
+      manifest = readJson(manifestFile);
+    } catch (error) {
+      throw new Error(
+        `tool-dependency reads the executables of ${supplier} from ${manifestFile}, which ` +
+          "cannot be read: run pnpm install",
+        { cause: error },
+      );
+    }
+    const bin =
+      typeof manifest.bin === "string"
+        ? { [supplier.split("/").pop()]: manifest.bin }
+        : (manifest.bin ?? {});
+    for (const executable of Object.keys(bin)) {
+      tools.set(executable, [...(tools.get(executable) ?? []), { supplier, spec }]);
+    }
+  }
+
+  rootToolsCache.set(workspaceRoot, tools);
+  return tools;
+}
 
 const CATALOG_LAYERS = ["shared/", "domain/", "features/"];
 
@@ -132,12 +179,14 @@ function findings(workspaceRoot, projectRoot) {
     return [];
   }
 
+  const tools = rootTools(workspaceRoot);
   const scripts = manifest.scripts ?? {};
   const scriptNames = new Set(Object.keys(scripts));
+  /** @type {Map<string, string>} the first script that runs each root tool */
   const run = new Map();
   for (const [name, script] of Object.entries(scripts)) {
     for (const executable of executables(script, scriptNames)) {
-      if (executable in TOOLS && !run.has(executable)) run.set(executable, name);
+      if (tools.has(executable) && !run.has(executable)) run.set(executable, name);
     }
   }
 
@@ -146,29 +195,35 @@ function findings(workspaceRoot, projectRoot) {
   const dependencies = manifest.dependencies ?? {};
 
   return [...run].flatMap(([tool, scriptName]) => {
-    const supplier = TOOLS[tool];
-    const add = `add "${supplier}": "catalog:" to devDependencies`;
+    const suppliers = tools.get(tool) ?? [];
     const runs = `script "${scriptName}" runs ${tool}`;
-    const declared = devDependencies[supplier] ?? dependencies[supplier];
+    const declared = suppliers.find(
+      ({ supplier }) => supplier in devDependencies || supplier in dependencies,
+    );
 
     if (declared === undefined) {
+      const { supplier, spec } = suppliers[0];
       return [
         {
           tool,
           message:
-            `${runs}, which this package does not declare: ${add}, after adding ${supplier} to ` +
-            "the catalog of pnpm-workspace.yaml if it is not there yet",
+            `${runs}, which only the workspace root declares: add "${supplier}": ` +
+            `${JSON.stringify(spec)} to devDependencies`,
         },
       ];
     }
-    if (strict && devDependencies[supplier] !== "catalog:") {
+
+    const { supplier, spec } = declared;
+    if (strict && spec === "catalog:" && devDependencies[supplier] !== "catalog:") {
       const where = supplier in devDependencies ? "devDependencies" : "dependencies";
+      const actual = devDependencies[supplier] ?? dependencies[supplier];
       return [
         {
           tool,
           message:
             `${runs}, and the layers take its version from the catalog; ${where} has ` +
-            `${supplier} as ${JSON.stringify(declared)}: ${add}`,
+            `${supplier} as ${JSON.stringify(actual)}: add "${supplier}": "catalog:" to ` +
+            "devDependencies",
         },
       ];
     }
@@ -200,6 +255,6 @@ export function check({ workspaceRoot, projectRoot }, { debt = TOOL_DEPENDENCY_D
 /** @type {import("./index.mjs").Rule} */
 export default {
   name: "tool-dependency",
-  inputs: ["{projectRoot}/package.json"],
+  inputs: ["{projectRoot}/package.json", "{workspaceRoot}/package.json"],
   check: context => check(context),
 };

@@ -41,10 +41,14 @@ Edit what it wrote with the rules below rather than writing a config by hand.
 Each tool a script runs is in `devDependencies` as `"catalog:"`, so Nx hashes its version
 ([ADR-0003](https://github.com/LedgerHQ/architecture-as-code/pull/553)): `tsc` is
 `"@typescript/native": "catalog:"`, and `knip`, `oxlint`, `oxfmt`, `rimraf`, `zx` and `nx` are
-declared under their own names. The `tool-dependency` rule checks every workspace package, through
-every script, hooks included. Outside `shared/`, `domain/` and `features/` it accepts a pinned
-version. `zx` has no entry in the `catalog:` of `pnpm-workspace.yaml` yet: a script that runs it
-needs that entry first.
+declared under their own names.
+
+The `tool-dependency` rule guards the tools a package could otherwise reach through the workspace
+root: every executable the root's dependencies install in `node_modules/.bin`. It reads that list
+from the root `package.json` and each dependency's `bin`, so a tool added to the root is guarded at
+once, and a tool the root drops is enforced by the install (`command not found`). It checks every
+script of every workspace package, hooks included. Its message gives the version the root declares;
+outside `shared/`, `domain/` and `features/` any version passes.
 
 The tsconfig, lint and fmt presets resolve from the workspace root, so the package does not declare
 them. `@support/jest` is the one preset a consumer declares, because its presets carry code and peer

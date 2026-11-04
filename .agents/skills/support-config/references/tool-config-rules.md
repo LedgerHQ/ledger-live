@@ -102,13 +102,14 @@ only shrinks.
 ## `[tool-dependency]`
 
 Messages from [`rules/tool-dependency.mjs`](../../../../tools/nx-plugins/enforce-tool-config/rules/tool-dependency.mjs),
-on every workspace package. A script runs a root tool (`tsc`, `knip`, `oxlint`, `oxfmt`, `rimraf`,
-`zx`, `nx`) that the package does not declare, so the tool is not in the package's Nx project graph.
+on every workspace package. A script runs a root tool, an executable that one of the workspace
+root's dependencies installs, and the package does not declare that dependency: the script works
+only through the root's `node_modules/.bin`, and the tool is not in the package's Nx project graph.
 Every script counts, so a tool a hook or a `pnpm run` target runs is reported under that script.
 
 | Message | Fix |
 | --- | --- |
-| `script "<name>" runs <tool>, which this package does not declare` | Add the package the message names (`@typescript/native` for `tsc`) to `devDependencies` as `"catalog:"`. Add it to the `catalog:` of `pnpm-workspace.yaml` first if it is not there. |
+| `script "<name>" runs <tool>, which only the workspace root declares` | Add the dependency the message names to `devDependencies`, at the version it prints, which is the root's. |
 | `script "<name>" runs <tool>, and the layers take its version from the catalog` | In `shared/`, `domain/` and `features/`, move it to `devDependencies` and make it `"catalog:"`. |
 | `lists <tool> for <package>, which the package now passes` | Delete the tool from its entry in [`rules/tool-dependency-debt.mjs`](../../../../tools/nx-plugins/enforce-tool-config/rules/tool-dependency-debt.mjs), and the entry once it is empty. |
 
