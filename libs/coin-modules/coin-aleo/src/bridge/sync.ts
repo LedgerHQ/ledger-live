@@ -163,7 +163,9 @@ export async function performPublicSync(
 
   const publicOperations = shouldSyncFromScratch
     ? latestAccountPublicOperations.operations
-    : (mergeOps(oldPublicOps, filteredLatestPublicOperations) as AleoOperation[]);
+    : isStakingMigrationRequired
+      ? (mergeOps([], [...oldPublicOps, ...filteredLatestPublicOperations]) as AleoOperation[])
+      : (mergeOps(oldPublicOps, filteredLatestPublicOperations) as AleoOperation[]);
 
   // Empty when shouldSyncFromScratch = true because allOldOperations is reset above.
   // Private ops for removed CAL tokens are cleared this way; private sync rebuilds
@@ -442,6 +444,9 @@ export async function performPrivateSync({
     record => record.block_height >= tokenSyncStartHeight,
   );
 
+  const knownStakingTransactionIds = new Set(
+    currentPublicOps.filter(isStakingOperation).map(op => op.hash),
+  );
   const knownTransactionIds = new Set([
     ...[...currentPublicOps, ...oldPrivateOps.filter(op => op.type !== "FEES")].map(op => op.hash),
     ...filterHistoryRecords(calTokenRecords)
@@ -459,7 +464,8 @@ export async function performPrivateSync({
       ledgerAccountId,
       privateRecords: rawNewNativePrivateRecords,
       knownTransactionIds,
-      ...(calTokenRecords.length > 0 && { tokenRecords: newCalTokenRecords }),
+      knownStakingTransactionIds,
+      ...(newCalTokenRecords.length > 0 && { tokenRecords: newCalTokenRecords }),
       ...(onProgress
         ? {
             onProgress: (completed: number, total: number) =>

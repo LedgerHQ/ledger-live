@@ -364,6 +364,36 @@ describe("listPrivateOperations fee-only transactions", () => {
     expect(operations).toEqual([]);
   });
 
+  it("should collect fee inputs for an already-listed staking call", async () => {
+    mockGetTransactionById.mockResolvedValueOnce(
+      getMockedTransactionDetails("at1bond", {
+        execution: {
+          transitions: [
+            {
+              ...getMockedTransition([]),
+              function: "bond_public",
+            },
+          ],
+        },
+        fee: {
+          transition: {
+            ...getMockedTransition([{ id: "in0", type: "record", tag: "fee-tag" }]),
+            function: EXPLORER_TRANSFER_TYPES.FEE_PRIVATE,
+          },
+        },
+      }),
+    );
+
+    const { operations, consumedRecordTags } = await run({
+      privateRecords: [getFeeRecord("at1bond")],
+      knownStakingTransactionIds: new Set(["at1bond"]),
+    });
+
+    expect(mockToPrivateFeeBridgeOperation).not.toHaveBeenCalled();
+    expect(operations).toEqual([]);
+    expect(consumedRecordTags).toEqual(new Set(["fee-tag"]));
+  });
+
   it("should mark only the fee transition's record inputs of a rejected call as consumed", async () => {
     mockGetTransactionById.mockResolvedValueOnce(
       getMockedTransactionDetails("at1call", {

@@ -561,7 +561,7 @@ describe("sync.ts", () => {
     describe("staking migration and gating", () => {
       const staleStakingOp = getMockedOperation({
         id: "stale-bond-op",
-        hash: "tx-bond",
+        hash: "tx-stale-bond",
         type: "OUT",
         blockHeight: 900,
         senders: [""],
@@ -1319,6 +1319,7 @@ describe("sync.ts", () => {
         ledgerAccountId: expect.any(String),
         privateRecords: mockPrivateRecords,
         knownTransactionIds: new Set(),
+        knownStakingTransactionIds: new Set(),
       });
       expect(mockGetPrivateBalance).toHaveBeenCalledTimes(1);
       expect(mockGetPrivateBalance).toHaveBeenCalledWith({

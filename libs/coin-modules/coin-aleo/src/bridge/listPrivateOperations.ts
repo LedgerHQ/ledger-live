@@ -84,6 +84,7 @@ async function listNonTransferTransactions({
   ledgerAccountId,
   privateRecords,
   knownTransactionIds,
+  knownStakingTransactionIds,
   signal,
 }: {
   config: AleoCoinConfig;
@@ -91,6 +92,7 @@ async function listNonTransferTransactions({
   ledgerAccountId: string;
   privateRecords: AleoPrivateRecord[];
   knownTransactionIds: ReadonlySet<string>;
+  knownStakingTransactionIds: ReadonlySet<string>;
   signal?: AbortSignal;
 }): Promise<{
   operations: AleoOperation[];
@@ -106,7 +108,13 @@ async function listNonTransferTransactions({
   const feeRecordByTransactionId = new Map<string, AleoPrivateRecord | undefined>();
   for (const record of privateRecords) {
     const transactionId = record.transaction_id.trim();
-    if (listedTransactionIds.has(transactionId) && !isJoinOrSplit(record)) continue;
+    if (
+      listedTransactionIds.has(transactionId) &&
+      !knownStakingTransactionIds.has(transactionId) &&
+      !isJoinOrSplit(record)
+    ) {
+      continue;
+    }
 
     if (record.function_name === EXPLORER_TRANSFER_TYPES.FEE_PRIVATE) {
       feeRecordByTransactionId.set(transactionId, record);
@@ -143,6 +151,7 @@ export async function listPrivateOperations({
   ledgerAccountId,
   privateRecords,
   knownTransactionIds,
+  knownStakingTransactionIds = new Set<string>(),
   onProgress,
   signal,
   tokenRecords,
@@ -153,6 +162,7 @@ export async function listPrivateOperations({
   ledgerAccountId: string;
   privateRecords: AleoPrivateRecord[];
   knownTransactionIds: ReadonlySet<string>;
+  knownStakingTransactionIds?: ReadonlySet<string>;
   onProgress?: (completed: number, total: number) => void;
   signal?: AbortSignal;
   tokenRecords?: AleoPrivateRecord[];
@@ -178,6 +188,7 @@ export async function listPrivateOperations({
       ledgerAccountId,
       privateRecords,
       knownTransactionIds,
+      knownStakingTransactionIds,
       ...(signal && { signal }),
     }),
   ]);
