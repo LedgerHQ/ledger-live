@@ -1427,6 +1427,7 @@ test("resolveRelative and collectEntryComponents use the default fs reader", () 
 
 test("an injected reader is used instead of fs", () => {
   const calls = { isFile: 0, readFile: 0 };
+  /** @type {import("./components").FileReader} */
   const reader = {
     isFile() {
       calls.isFile++;
