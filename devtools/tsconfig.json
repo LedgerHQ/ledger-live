@@ -9,6 +9,7 @@
     { "path": "./cloud-sync" },
     { "path": "./device-onboarding" },
     { "path": "./app-config" },
+    { "path": "./account-analytics-introduction" },
     { "path": "./registry" },
     { "path": "./transport" },
     { "path": "./transport-panel" },

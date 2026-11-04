@@ -22,3 +22,4 @@ export type { AccountDataRecorder } from "./accountDataRecorder";
 export * from "./useAppConfigToolProps";
 export { useAccountPortfolioToolProps } from "./useAccountPortfolioToolProps";
 export { useMockAccountsToolProps } from "./useMockAccountsToolProps";
+export { useAccountAnalyticsIntroductionToolProps } from "./useAccountAnalyticsIntroductionToolProps";

@@ -32,7 +32,8 @@
     "@devtools/account-data": "workspace:*",
     "@devtools/app-config": "workspace:*",
     "@devtools/account-name": "workspace:*",
-    "@devtools/mock-accounts": "workspace:*"
+    "@devtools/mock-accounts": "workspace:*",
+    "@devtools/account-analytics-introduction": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=19"
