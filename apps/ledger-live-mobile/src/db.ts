@@ -80,12 +80,25 @@ export async function unsafeGetCountervalues(): Promise<CounterValuesStateRaw> {
     };
   }
 
-  return ((await storage.get(keys)) as CounterValuesStateRaw[]).reduce(
-    (prev: CounterValuesStateRaw, val: RateMapRaw | CounterValuesStatus, i: number) =>
-      ({
-        ...prev,
-        [keys[i].split(COUNTERVALUES_DB_PREFIX)[1]]: val,
-      }) as CounterValuesStateRaw,
+  // A multi-get drops missing values, so read each key on its own to keep values with their keys
+  const entries = await Promise.all(
+    keys.map(
+      async key =>
+        [
+          key.slice(COUNTERVALUES_DB_PREFIX.length),
+          (await storage.get(key)) as RateMapRaw | CounterValuesStatus | undefined,
+        ] as const,
+    ),
+  );
+
+  return entries.reduce(
+    (prev: CounterValuesStateRaw, [pair, val]) =>
+      val === undefined || val === null
+        ? prev
+        : ({
+            ...prev,
+            [pair]: val,
+          } as CounterValuesStateRaw),
     {} as CounterValuesStateRaw,
   );
 }
