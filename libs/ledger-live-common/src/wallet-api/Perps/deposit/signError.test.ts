@@ -2,7 +2,12 @@ import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanc
 import { NotEnoughGas } from "@ledgerhq/ledger-wallet-framework/errors";
 import { CompleteExchangeError } from "../../../exchange/error";
 import { PayloadStepError, SignatureStepError } from "../../Exchange/SwapError";
-import { isDepositGenericSignError, shouldReturnToDepositForm } from "./signError";
+import type { AccountLike } from "@ledgerhq/types-live";
+import {
+  isDepositGenericSignError,
+  shouldReturnToDepositForm,
+  toDepositSignErrorStep,
+} from "./signError";
 
 describe("isDepositGenericSignError", () => {
   it.each([
@@ -37,5 +42,41 @@ describe("shouldReturnToDepositForm", () => {
 
   it("keeps any other failure on the sign step", () => {
     expect(shouldReturnToDepositForm(new Error("boom"))).toBe(false);
+  });
+});
+
+describe("toDepositSignErrorStep", () => {
+  const accounts = {
+    depositAccount: { type: "Account", currency: { ticker: "ETH" } } as unknown as AccountLike,
+    receiverAccount: { type: "Account", currency: { ticker: "USDC" } } as unknown as AccountLike,
+  };
+
+  it("tracks a generic failure and marks the step as generic", () => {
+    const track = jest.fn();
+    const error = new PayloadStepError();
+
+    expect(toDepositSignErrorStep(error, { ...accounts, track })).toEqual({
+      kind: "error",
+      error,
+      isGeneric: true,
+    });
+    expect(track).toHaveBeenCalledWith("swap error message", {
+      message: "deposit_sign_failed",
+      page: "perps_deposit_sign",
+      flow: "perps",
+      sourceCurrency: "ETH",
+      targetCurrency: "USDC",
+    });
+  });
+
+  it("keeps any other failure as it is, without an event", () => {
+    const track = jest.fn();
+
+    expect(toDepositSignErrorStep("boom", { ...accounts, track })).toEqual({
+      kind: "error",
+      error: new Error("boom"),
+      isGeneric: false,
+    });
+    expect(track).not.toHaveBeenCalled();
   });
 });
