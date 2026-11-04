@@ -55,8 +55,8 @@ jest.mock("@devtools/bindings", () => ({
   useAppConfigToolProps: () => ({ marker: "app-config-props" }),
 }));
 
-jest.mock("../../DeviceOnboarding/hooks/useDeviceOnboarding", () => ({
-  useDeviceOnboarding: () => ({ marker: "device-onboarding-props" }),
+jest.mock("../DeviceOnboarding/useDeviceOnboardingTool", () => ({
+  useDeviceOnboardingTool: () => ({ marker: "device-onboarding-props" }),
 }));
 
 jest.mock("@devtools/wire", () => {

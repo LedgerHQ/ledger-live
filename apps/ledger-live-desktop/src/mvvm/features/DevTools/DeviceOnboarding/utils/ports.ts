@@ -1,4 +1,4 @@
-import type { DeviceOnboardingPorts } from "@devtools/bindings";
+import type { DeviceOnboardingPorts } from "@features/platform-device-onboarding";
 import { DeviceManagementKitTransport, getDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
 import { activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
 

@@ -10,7 +10,7 @@ import type { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { act, renderHook, waitFor } from "tests/testSetup";
 import { BehaviorSubject, Observable, of } from "rxjs";
-import { useDeviceOnboarding } from "../hooks/useDeviceOnboarding";
+import { useDeviceOnboardingToolSession } from "../useDeviceOnboardingTool";
 import { useFirmwareUpdateHandover } from "../hooks/useFirmwareUpdateHandover";
 import { createDeviceOnboardingPorts } from "../utils/ports";
 
@@ -109,7 +109,9 @@ const seededDevice: DeviceOnboardingState = {
   recoveryKeyStatus: null,
 };
 
-async function reachFirmwareHandover(result: { current: ReturnType<typeof useDeviceOnboarding> }) {
+async function reachFirmwareHandover(result: {
+  current: ReturnType<typeof useOnboardingWithTool>;
+}) {
   act(() => result.current.connect());
   await waitFor(() => expect(result.current.state).toBe("readingState"));
 
@@ -199,7 +201,7 @@ describe("DeviceOnboarding desktop integration", () => {
   });
 
   it("should resume the machine from the live session after the transport is lost", async () => {
-    const { result } = renderHook(() => useDeviceOnboarding());
+    const { result } = renderHook(() => useOnboardingWithTool());
 
     act(() => result.current.connect());
     await waitFor(() => expect(result.current.status).toBe("running"));
@@ -221,7 +223,7 @@ describe("DeviceOnboarding desktop integration", () => {
   });
 
   it("should keep showing the machine when reconnect fails and a later session resumes", async () => {
-    const { result } = renderHook(() => useDeviceOnboarding());
+    const { result } = renderHook(() => useOnboardingWithTool());
 
     act(() => result.current.connect());
     await waitFor(() => expect(result.current.status).toBe("running"));
@@ -245,7 +247,7 @@ describe("DeviceOnboarding desktop integration", () => {
   });
 
   it("should restart onboarding when the recovered session belongs to another Ledger", async () => {
-    const { result } = renderHook(() => useDeviceOnboarding());
+    const { result } = renderHook(() => useOnboardingWithTool());
 
     act(() => result.current.connect());
     await waitFor(() => expect(result.current.state).toBe("readingState"));
@@ -272,7 +274,7 @@ describe("DeviceOnboarding desktop integration", () => {
   });
 
   it("should restart onboarding when another Ledger replaces the published session directly", async () => {
-    const { result } = renderHook(() => useDeviceOnboarding());
+    const { result } = renderHook(() => useOnboardingWithTool());
 
     act(() => result.current.connect());
     await waitFor(() => expect(result.current.state).toBe("readingState"));
@@ -293,7 +295,7 @@ describe("DeviceOnboarding desktop integration", () => {
   });
 
   it("should restart onboarding when another Ledger is connected as firmware handover ends", async () => {
-    const { result } = renderHook(() => useDeviceOnboarding());
+    const { result } = renderHook(() => useOnboardingWithTool());
     await reachFirmwareHandover(result);
 
     getConnectedDevice.mockReturnValue({
@@ -319,7 +321,7 @@ describe("DeviceOnboarding desktop integration", () => {
   });
 
   it("should keep the same Ledger when its session is replaced during firmware handover", async () => {
-    const { result } = renderHook(() => useDeviceOnboarding());
+    const { result } = renderHook(() => useOnboardingWithTool());
     await reachFirmwareHandover(result);
 
     act(() => {
@@ -336,7 +338,7 @@ describe("DeviceOnboarding desktop integration", () => {
   });
 
   it("should clear the previous exit when a new run starts", async () => {
-    const { result } = renderHook(() => useDeviceOnboarding());
+    const { result } = renderHook(() => useOnboardingWithTool());
 
     act(() => result.current.connect());
     await waitFor(() => expect(result.current.state).toBe("readingState"));
@@ -354,7 +356,7 @@ describe("DeviceOnboarding desktop integration", () => {
   });
 
   it("should pause the machine when the device locks and resume when it unlocks", async () => {
-    const { result } = renderHook(() => useDeviceOnboarding());
+    const { result } = renderHook(() => useOnboardingWithTool());
 
     act(() => result.current.connect());
     await waitFor(() => expect(result.current.state).toBe("readingState"));
@@ -375,7 +377,7 @@ describe("DeviceOnboarding desktop integration", () => {
 
   it("should start in the locked state when the reused session is already locked", async () => {
     sessionState = new BehaviorSubject<SessionState>({ deviceStatus: DeviceStatus.LOCKED });
-    const { result } = renderHook(() => useDeviceOnboarding());
+    const { result } = renderHook(() => useOnboardingWithTool());
 
     act(() => result.current.connect());
 
@@ -390,7 +392,7 @@ describe("DeviceOnboarding desktop integration", () => {
   });
 
   it("should subscribe once when the recovered session is already locked", async () => {
-    const { result } = renderHook(() => useDeviceOnboarding());
+    const { result } = renderHook(() => useOnboardingWithTool());
 
     act(() => result.current.connect());
     await waitFor(() => expect(result.current.state).toBe("readingState"));
@@ -416,7 +418,7 @@ describe("DeviceOnboarding desktop integration", () => {
   });
 
   it("should wait for a new session when the session state disconnects", async () => {
-    const { result } = renderHook(() => useDeviceOnboarding());
+    const { result } = renderHook(() => useOnboardingWithTool());
 
     act(() => result.current.connect());
     await waitFor(() => expect(result.current.state).toBe("readingState"));
@@ -431,7 +433,7 @@ describe("DeviceOnboarding desktop integration", () => {
   });
 
   it("should listen again when the session stream ends during firmware handover", async () => {
-    const { result } = renderHook(() => useDeviceOnboarding());
+    const { result } = renderHook(() => useOnboardingWithTool());
     await reachFirmwareHandover(result);
     expect(sessionSubscribers).toBe(1);
 
@@ -459,7 +461,7 @@ describe("DeviceOnboarding desktop integration", () => {
   });
 
   it("should wait for a new session when the session listener fails", async () => {
-    const { result } = renderHook(() => useDeviceOnboarding());
+    const { result } = renderHook(() => useOnboardingWithTool());
 
     act(() => result.current.connect());
     await waitFor(() => expect(result.current.state).toBe("readingState"));
@@ -473,7 +475,7 @@ describe("DeviceOnboarding desktop integration", () => {
   });
 
   it("should discard a recovery that finishes after reset", async () => {
-    const { result } = renderHook(() => useDeviceOnboarding());
+    const { result } = renderHook(() => useOnboardingWithTool());
 
     act(() => result.current.connect());
     await waitFor(() => expect(result.current.status).toBe("running"));
@@ -508,7 +510,7 @@ describe("DeviceOnboarding desktop integration", () => {
   });
 
   it("should stop listening when the machine exits", async () => {
-    const { result } = renderHook(() => useDeviceOnboarding());
+    const { result } = renderHook(() => useOnboardingWithTool());
 
     act(() => result.current.connect());
     await waitFor(() => expect(result.current.state).toBe("readingState"));
@@ -523,7 +525,7 @@ describe("DeviceOnboarding desktop integration", () => {
   });
 
   it("should close the desktop session when the tool unmounts", async () => {
-    const { result, unmount } = renderHook(() => useDeviceOnboarding());
+    const { result, unmount } = renderHook(() => useOnboardingWithTool());
 
     act(() => result.current.connect());
     await waitFor(() => expect(result.current.status).toBe("running"));
@@ -538,7 +540,7 @@ describe("DeviceOnboarding desktop integration", () => {
 
   it("should unsubscribe when the session is already gone as the listener starts", async () => {
     sessionState = new BehaviorSubject<SessionState>({ deviceStatus: DeviceStatus.NOT_CONNECTED });
-    const { result } = renderHook(() => useDeviceOnboarding());
+    const { result } = renderHook(() => useOnboardingWithTool());
 
     act(() => result.current.connect());
 
@@ -807,4 +809,10 @@ function publishAvailableFirmware() {
     final: { name: "2.3.0" },
     shouldFlashMCU: false,
   } as FirmwareUpdateContext;
+}
+
+/** The device session with the devtool's view of it, which owns the log. */
+function useOnboardingWithTool() {
+  const { session, toolState } = useDeviceOnboardingToolSession();
+  return { ...session, ...toolState };
 }

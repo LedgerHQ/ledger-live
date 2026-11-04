@@ -10,3 +10,5 @@ export * from "./actors/toggleEarlyCheck";
 export * from "./device/toggleEarlyCheckCommand";
 export * from "./actors/seedPolling";
 export * from "./host";
+export * from "./ports";
+export * from "./useDeviceOnboardingActor";

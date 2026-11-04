@@ -3,16 +3,15 @@ import type {
   DeviceManagementKit,
   DeviceModelId as DmkDeviceModelId,
 } from "@ledgerhq/device-management-kit";
-import type { DevToolsConfig } from "@devtools/shell";
-import {
-  useDeviceOnboardingActor,
-  type DeviceOnboardingSession,
-  type OnboardingActorSnapshot,
-} from "@devtools/bindings";
 import {
   createSessionEventsActor,
   stateValueToString,
+  useDeviceOnboardingActor,
+  type DeviceOnboardingActorSession,
   type DeviceOnboardingOutput,
+  type DeviceOnboardingSession,
+  type OnboardingActorSnapshot,
+  type OnboardingInspectionEvent,
 } from "@features/platform-device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { dmkToLedgerDeviceIdMap, activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
@@ -22,10 +21,32 @@ import {
   useFirmwareUpdateHandover,
 } from "./useFirmwareUpdateHandover";
 
-type DeviceOnboardingToolProps = Extract<
-  DevToolsConfig[number],
-  { id: "device-onboarding" }
->["config"];
+type DeviceOnboardingStatus = "idle" | "connecting" | "running" | "exited";
+
+type DeviceOnboardingDevice = {
+  readonly name: string;
+  readonly modelId: string;
+  readonly sessionId: string;
+  readonly wired: boolean;
+};
+
+export type DesktopDeviceOnboardingSession = Pick<
+  DeviceOnboardingActorSession,
+  "state" | "context" | "snapshot" | "exit" | "sendableEvents" | "send" | "actorRef" | "portsRef"
+> & {
+  status: DeviceOnboardingStatus;
+  /** Null while `running` means the transport went away, which re-enables Connect. */
+  device: DeviceOnboardingDevice | null;
+  /** Set when the host failed to connect a device or to start the flow. */
+  error: string | null;
+  connect: () => void;
+  reset: () => void;
+};
+
+type UseDeviceOnboardingInput = {
+  /** Watches every machine update from the actor's creation. */
+  inspect?: (event: OnboardingInspectionEvent) => void;
+};
 
 function ledgerDevice(
   deviceId: string,
@@ -44,9 +65,11 @@ function inFirmwareHandover(actor: { getSnapshot(): { value: unknown } }) {
   return stateValueToString(actor.getSnapshot().value) === firmwareUpdateDelegatedState;
 }
 
-export function useDeviceOnboarding(): DeviceOnboardingToolProps {
-  const [status, setStatus] = useState<DeviceOnboardingToolProps["status"]>("idle");
-  const [device, setDevice] = useState<DeviceOnboardingToolProps["device"]>(null);
+export function useDeviceOnboarding({
+  inspect,
+}: UseDeviceOnboardingInput = {}): DesktopDeviceOnboardingSession {
+  const [status, setStatus] = useState<DeviceOnboardingStatus>("idle");
+  const [device, setDevice] = useState<DeviceOnboardingDevice | null>(null);
   const [ledgerDeviceState, setLedgerDeviceState] = useState<Device | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -62,11 +85,9 @@ export function useDeviceOnboarding(): DeviceOnboardingToolProps {
   const {
     state,
     context,
-    machineContext,
-    log,
+    snapshot,
     exit,
     sendableEvents,
-    nextStates,
     setSessionReady,
     actorRef,
     portsRef,
@@ -77,6 +98,7 @@ export function useDeviceOnboarding(): DeviceOnboardingToolProps {
     resetActor,
   } = useDeviceOnboardingActor({
     missingSessionMessage: "No desktop onboarding session",
+    inspect,
     onSnapshot: (next, previous) => onSnapshotRef.current(next, previous),
     onDone: output => onDoneRef.current(output),
   });
@@ -391,14 +413,14 @@ export function useDeviceOnboarding(): DeviceOnboardingToolProps {
     device,
     state,
     context,
-    machineContext,
-    log,
+    snapshot,
     exit,
     sendableEvents,
-    nextStates,
     error,
     connect,
     send,
     reset,
+    actorRef,
+    portsRef,
   };
 }

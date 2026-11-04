@@ -1,4 +1,4 @@
-import type { DeviceOnboardingInput } from "@features/platform-device-onboarding";
+import type { DeviceOnboardingInput } from "./types";
 
 export type DeviceOnboardingSession = Pick<
   DeviceOnboardingInput,
