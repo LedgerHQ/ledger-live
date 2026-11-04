@@ -1,5 +1,19 @@
 # @features/flow-pay-contact
 
+## 0.8.0
+
+### Minor Changes
+
+- [#24031](https://github.com/LedgerHQ/ledger-live/pull/24031) [`ce12e26`](https://github.com/LedgerHQ/ledger-live/commit/ce12e264adcefe0248c3f806e628e967ad1ca9ca) Thanks [@ysitbon](https://github.com/ysitbon)! - `ContactsAddContactContent` of `@features/flow-contacts-add-contact` has one props contract on both platforms: `ContactsAddContactContentProps` gains the native-only `autoFocus`, and `ContactsAddContactContentNativeProps` is gone. The mobile content renders `ContactNameDisclaimer`. `ContactsAddContactDialog` moves to the `./web` entry, and `ContactsAddContactFooter` with `ContactsAddContactFooterProps` to the `./native` entry. The `.` entry has no `react-native` condition.
+
+### Patch Changes
+
+- Updated dependencies [[`ce12e26`](https://github.com/LedgerHQ/ledger-live/commit/ce12e264adcefe0248c3f806e628e967ad1ca9ca)]:
+  - @features/flow-contacts-add-contact@0.10.0
+  - @domain/entity-contact@0.12.3
+  - @features/flow-contacts-detail@0.3.1
+  - @features/platform-contacts@0.12.1
+
 ## 0.8.0-next.0
 
 ### Minor Changes

@@ -1,5 +1,21 @@
 # @features/flow-contacts
 
+## 0.17.0
+
+### Minor Changes
+
+- [#24029](https://github.com/LedgerHQ/ledger-live/pull/24029) [`4bb6da0`](https://github.com/LedgerHQ/ledger-live/commit/4bb6da0fa786d014149c544d414398786aae9fc6) Thanks [@ysitbon](https://github.com/ysitbon)! - `@features/flow-contacts-list` exports `ContactsListView` from `./web` and `./native`, each with its own props, and `ContactsAddContactHeaderButton` from `./native`. The `.` entry has no `react-native` condition and exports the list logic plus the universal `ContactsCompactList`, which now calls `onSelectContact` and takes an optional `testID`. `ContactsCompactRow` and `ContactsSearchNoResults` are no longer exported, and `@features/flow-contacts` stops re-exporting `ContactsAddContactHeaderButton`.
+
+### Patch Changes
+
+- Updated dependencies [[`ce12e26`](https://github.com/LedgerHQ/ledger-live/commit/ce12e264adcefe0248c3f806e628e967ad1ca9ca), [`55dc039`](https://github.com/LedgerHQ/ledger-live/commit/55dc0396b8bea844c6b745dc54f8b5b7a01c0ecd), [`4bb6da0`](https://github.com/LedgerHQ/ledger-live/commit/4bb6da0fa786d014149c544d414398786aae9fc6)]:
+  - @features/flow-contacts-add-contact@0.10.0
+  - @features/flow-contacts-delete-contact@0.5.0
+  - @features/flow-contacts-list@0.12.0
+  - @domain/entity-contact@0.12.3
+  - @features/flow-contacts-detail@0.3.1
+  - @features/platform-contacts@0.12.1
+
 ## 0.17.0-next.0
 
 ### Minor Changes

@@ -1,5 +1,18 @@
 # @features/flow-contacts-detail
 
+## 0.3.1
+
+### Patch Changes
+
+- Updated dependencies [[`9907890`](https://github.com/LedgerHQ/ledger-live/commit/9907890790bf8b804d7cc454a067508df0969137), [`0c9ce30`](https://github.com/LedgerHQ/ledger-live/commit/0c9ce30960837b6cf52f5df9be2999a5c7377abf), [`55dc039`](https://github.com/LedgerHQ/ledger-live/commit/55dc0396b8bea844c6b745dc54f8b5b7a01c0ecd), [`d7778b9`](https://github.com/LedgerHQ/ledger-live/commit/d7778b9a6fcaae428e8a4e30e0bcdab13e6b2c1d), [`1dee328`](https://github.com/LedgerHQ/ledger-live/commit/1dee328bd842dce945aff197ecf14d665b453bfd), [`77a85a3`](https://github.com/LedgerHQ/ledger-live/commit/77a85a30abe7b42e5f5b4e0478bec14fa39033cf)]:
+  - @domain/entity-currency-crypto@0.18.0
+  - @features/flow-contacts-delete-address@0.4.0
+  - @features/flow-contacts-delete-contact@0.5.0
+  - @features/flow-contacts-edit-address@0.7.0
+  - @features/flow-contacts-edit-contact@0.9.0
+  - @domain/entity-contact@0.12.3
+  - @features/platform-contacts@0.12.1
+
 ## 0.3.1-next.0
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @ledgerhq/coin-evm
 
+## 4.4.1
+
+### Patch Changes
+
+- Updated dependencies [[`8854aff`](https://github.com/LedgerHQ/ledger-live/commit/8854aff9cace72ad17c6d9fd7ee98a4dcd65ecb1), [`c50f3fa`](https://github.com/LedgerHQ/ledger-live/commit/c50f3fac1c822d61332dbb512b21cdda6bb57210)]:
+  - @ledgerhq/ledger-wallet-framework@3.10.0
+
 ## 4.4.1-next.0
 
 ### Patch Changes

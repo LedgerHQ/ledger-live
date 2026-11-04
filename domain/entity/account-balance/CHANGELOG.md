@@ -1,5 +1,15 @@
 # @domain/entity-account-balance
 
+## 0.2.2
+
+### Patch Changes
+
+- Updated dependencies [[`304b8b2`](https://github.com/LedgerHQ/ledger-live/commit/304b8b2575f6adfa895b50b6697febd1ccab7e7e), [`9907890`](https://github.com/LedgerHQ/ledger-live/commit/9907890790bf8b804d7cc454a067508df0969137), [`b79c360`](https://github.com/LedgerHQ/ledger-live/commit/b79c360ab24df820c11299c080538fd40ddef820), [`77a85a3`](https://github.com/LedgerHQ/ledger-live/commit/77a85a30abe7b42e5f5b4e0478bec14fa39033cf)]:
+  - @domain/entity-account-data@0.4.0
+  - @domain/entity-currency-crypto@0.18.0
+  - @domain/entity-account-descriptor@0.4.0
+  - @domain/entity-currency-token@0.5.8
+
 ## 0.2.2-next.0
 
 ### Patch Changes

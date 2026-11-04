@@ -1,5 +1,12 @@
 # @features/platform-env
 
+## 0.4.4
+
+### Patch Changes
+
+- Updated dependencies [[`797b1ab`](https://github.com/LedgerHQ/ledger-live/commit/797b1ab63e4099c962a74170b43275f149c6fbea)]:
+  - @shared/env@0.12.0
+
 ## 0.4.4-next.0
 
 ### Patch Changes

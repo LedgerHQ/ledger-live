@@ -1,5 +1,11 @@
 # @ledgerhq/coin-tron
 
+## 10.3.0
+
+### Minor Changes
+
+- [#23806](https://github.com/LedgerHQ/ledger-live/pull/23806) [`b947ef4`](https://github.com/LedgerHQ/ledger-live/commit/b947ef485dc1351050f14610ba9bf7054717252a) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Update coin modules dependencies (coin-module-framework 11, coin-evm, coin-hypercore, coin-stellar, coin-tezos, coin-xrp)
+
 ## 10.3.0-next.0
 
 ### Minor Changes

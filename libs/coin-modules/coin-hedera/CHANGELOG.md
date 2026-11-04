@@ -1,5 +1,23 @@
 # @ledgerhq/coin-hedera
 
+## 3.2.0
+
+### Minor Changes
+
+- [#24085](https://github.com/LedgerHQ/ledger-live/pull/24085) [`2b8aa58`](https://github.com/LedgerHQ/ledger-live/commit/2b8aa5862ed01665cefc11b62ce80d314c5771ba) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - fix(coin-hedera): split a native operation's HBAR change like getBlock does
+
+  `listOperations` now derives each native value from the account's transfer plus the fees it paid, as `getBlock` does, so an indexer summing either one gets the account's on-chain HBAR change. A contract call that paid HBAR back to its fee payer stays outgoing, with a negative value. An IN the account paid for counts the fee, which the Live Hedera adapter takes back out. Someone else's contract call that only credited the account becomes an IN. Live's A4 reader gives a negative value to a native credit of an outgoing-like operation, so such a contract call shows as a credit there too.
+
+- [#24088](https://github.com/LedgerHQ/ledger-live/pull/24088) [`0c91d5f`](https://github.com/LedgerHQ/ledger-live/commit/0c91d5f0dadaad2bc4b94766e47a6479e0175916) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - fix(coin-hedera): match an ERC20 transfer to its contract call by hash
+
+  `enrichERC20Transfers` found the mirror node transaction of an Hgraph ERC20 transfer by taking the first contract call of the payer within ±10 µs of the transfer. When the payer made two contract calls less than 10 µs apart, both transfers went to the later call: `getBlock` returned that transaction twice and the earlier one without its ERC20 transfer. The contract call is now the one whose hash starts with the transfer's EVM transaction hash.
+
+### Patch Changes
+
+- Updated dependencies [[`9907890`](https://github.com/LedgerHQ/ledger-live/commit/9907890790bf8b804d7cc454a067508df0969137), [`8854aff`](https://github.com/LedgerHQ/ledger-live/commit/8854aff9cace72ad17c6d9fd7ee98a4dcd65ecb1), [`77a85a3`](https://github.com/LedgerHQ/ledger-live/commit/77a85a30abe7b42e5f5b4e0478bec14fa39033cf), [`c50f3fa`](https://github.com/LedgerHQ/ledger-live/commit/c50f3fac1c822d61332dbb512b21cdda6bb57210)]:
+  - @ledgerhq/types-live@6.130.0
+  - @ledgerhq/ledger-wallet-framework@3.10.0
+
 ## 3.2.0-next.0
 
 ### Minor Changes

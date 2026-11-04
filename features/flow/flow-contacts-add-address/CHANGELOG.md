@@ -1,5 +1,19 @@
 # @features/flow-contacts-add-address
 
+## 0.9.0
+
+### Minor Changes
+
+- [#24032](https://github.com/LedgerHQ/ledger-live/pull/24032) [`9c2d544`](https://github.com/LedgerHQ/ledger-live/commit/9c2d544e7dbf8bd06d6abff29361f2ccdb7c61e1) Thanks [@ysitbon](https://github.com/ysitbon)! - `ContactsAddAddressFlowContent` has one props contract on both platforms: it takes the flow `state` and its callbacks, and each platform picks the step to render. On mobile it replaces the per-step `step`, `addressEntryProps`, `addressNameProps` and `addressReviewProps`, takes `onScanQrCode` and `bottomOffset`, and derives the name step action from the entry mode. The step components and their props types are no longer exported, the `.` entry has no `react-native` condition, and `./native` is gone.
+
+### Patch Changes
+
+- Updated dependencies [[`9907890`](https://github.com/LedgerHQ/ledger-live/commit/9907890790bf8b804d7cc454a067508df0969137), [`77a85a3`](https://github.com/LedgerHQ/ledger-live/commit/77a85a30abe7b42e5f5b4e0478bec14fa39033cf)]:
+  - @domain/entity-currency-crypto@0.18.0
+  - @domain/entity-contact@0.12.3
+  - @domain/entity-currency-token@0.5.8
+  - @features/platform-contacts@0.12.1
+
 ## 0.9.0-next.0
 
 ### Minor Changes

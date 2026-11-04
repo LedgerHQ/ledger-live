@@ -1,5 +1,23 @@
 # @ledgerhq/coin-internet_computer
 
+## 3.0.0
+
+### Major Changes
+
+- [#24148](https://github.com/LedgerHQ/ledger-live/pull/24148) [`ed6106c`](https://github.com/LedgerHQ/ledger-live/commit/ed6106ca13f2046958aeccd1057480fabdef69b6) Thanks [@lysyi3m](https://github.com/lysyi3m)! - The node URL comes from the coin config (`node.url`, mainnet by default) for both the API and the account bridge. Breaking: the network client functions re-exported from `./api` and `refreshNeuronStake` take the host as their first argument.
+
+### Minor Changes
+
+- [#24193](https://github.com/LedgerHQ/ledger-live/pull/24193) [`76e652c`](https://github.com/LedgerHQ/ledger-live/commit/76e652c068cc412da94abfc8420760de0030ce6e) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Send each neuron claim as a distinct request, so a stake refresh soon after an earlier claim of the same neuron runs instead of being answered with the earlier reply.
+
+- [#24204](https://github.com/LedgerHQ/ledger-live/pull/24204) [`9810f8b`](https://github.com/LedgerHQ/ledger-live/commit/9810f8bc7555056d7130c01e59b04d7f0124faf8) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Send each signed governance call as a distinct request, so a repeat of the same call within a minute runs instead of being answered with the earlier reply.
+
+### Patch Changes
+
+- Updated dependencies [[`9907890`](https://github.com/LedgerHQ/ledger-live/commit/9907890790bf8b804d7cc454a067508df0969137), [`8854aff`](https://github.com/LedgerHQ/ledger-live/commit/8854aff9cace72ad17c6d9fd7ee98a4dcd65ecb1), [`77a85a3`](https://github.com/LedgerHQ/ledger-live/commit/77a85a30abe7b42e5f5b4e0478bec14fa39033cf), [`c50f3fa`](https://github.com/LedgerHQ/ledger-live/commit/c50f3fac1c822d61332dbb512b21cdda6bb57210)]:
+  - @ledgerhq/types-live@6.130.0
+  - @ledgerhq/ledger-wallet-framework@3.10.0
+
 ## 3.0.0-next.0
 
 ### Major Changes

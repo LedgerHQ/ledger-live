@@ -1,5 +1,12 @@
 # @domain/entity-account-name
 
+## 0.3.1
+
+### Patch Changes
+
+- Updated dependencies [[`b79c360`](https://github.com/LedgerHQ/ledger-live/commit/b79c360ab24df820c11299c080538fd40ddef820)]:
+  - @domain/entity-account@0.2.0
+
 ## 0.3.1-next.0
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @features/flow-app-availability
 
+## 0.3.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/api-ofac@0.1.3
+
 ## 0.3.1-next.0
 
 ### Patch Changes

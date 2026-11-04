@@ -1,5 +1,12 @@
 # @features/flow-pay-feature-tour
 
+## 0.8.3
+
+### Patch Changes
+
+- Updated dependencies [[`7aeab58`](https://github.com/LedgerHQ/ledger-live/commit/7aeab582f0f6c8d38cf88af0c559dd37d77b9a1c), [`f95b426`](https://github.com/LedgerHQ/ledger-live/commit/f95b4268782b5cfd8cb4c14c9b0e5c6384cafa4d)]:
+  - @features/platform-feature-flags@0.11.0
+
 ## 0.8.3-next.0
 
 ### Patch Changes

@@ -1,5 +1,18 @@
 # @devtools/shell
 
+## 0.13.0
+
+### Minor Changes
+
+- [#23985](https://github.com/LedgerHQ/ledger-live/pull/23985) [`97be95e`](https://github.com/LedgerHQ/ledger-live/commit/97be95ecba1a1989b8d5ccfc5c4bdf96cc60e767) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Name every devtool by its technical id, tag each with the kind of package it inspects (entity, api, feature, shared or lib), and give account-balance to Wallet XP
+
+- [#23787](https://github.com/LedgerHQ/ledger-live/pull/23787) [`b79c360`](https://github.com/LedgerHQ/ledger-live/commit/b79c360ab24df820c11299c080538fd40ddef820) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add a `mock-accounts` devtool: `mock:2:…` descriptors served by a lazy-loaded MockSource, with their balances and paginated operations
+
+### Patch Changes
+
+- Updated dependencies [[`a9d19d0`](https://github.com/LedgerHQ/ledger-live/commit/a9d19d080fbf0310c6fb7454784e8ac0682dfb51), [`566902e`](https://github.com/LedgerHQ/ledger-live/commit/566902e2101f69e0216ced4fe000daba775ff6bb), [`97be95e`](https://github.com/LedgerHQ/ledger-live/commit/97be95ecba1a1989b8d5ccfc5c4bdf96cc60e767), [`b79c360`](https://github.com/LedgerHQ/ledger-live/commit/b79c360ab24df820c11299c080538fd40ddef820), [`5a6a32d`](https://github.com/LedgerHQ/ledger-live/commit/5a6a32df1c7d16cd6f3e4797002224f352cb2ba9)]:
+  - @devtools/registry@0.7.0
+
 ## 0.13.0-next.0
 
 ### Minor Changes

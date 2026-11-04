@@ -1,5 +1,13 @@
 # @domain/entity-contact
 
+## 0.12.3
+
+### Patch Changes
+
+- Updated dependencies [[`9907890`](https://github.com/LedgerHQ/ledger-live/commit/9907890790bf8b804d7cc454a067508df0969137), [`77a85a3`](https://github.com/LedgerHQ/ledger-live/commit/77a85a30abe7b42e5f5b4e0478bec14fa39033cf)]:
+  - @domain/entity-currency-crypto@0.18.0
+  - @domain/entity-currency-token@0.5.8
+
 ## 0.12.3-next.0
 
 ### Patch Changes

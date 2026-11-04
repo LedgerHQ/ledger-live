@@ -1,5 +1,12 @@
 # @ledgerhq/live-signer-tron
 
+## 0.2.4
+
+### Patch Changes
+
+- Updated dependencies [[`a49773f`](https://github.com/LedgerHQ/ledger-live/commit/a49773f51027c607adac26d1133a36a37ada456c)]:
+  - @ledgerhq/live-dmk-shared@0.38.0
+
 ## 0.2.4-next.0
 
 ### Patch Changes

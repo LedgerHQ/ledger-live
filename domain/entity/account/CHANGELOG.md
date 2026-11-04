@@ -1,5 +1,16 @@
 # @domain/entity-account
 
+## 0.2.0
+
+### Minor Changes
+
+- [#23787](https://github.com/LedgerHQ/ledger-live/pull/23787) [`b79c360`](https://github.com/LedgerHQ/ledger-live/commit/b79c360ab24df820c11299c080538fd40ddef820) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add a `mock-accounts` devtool: `mock:2:…` descriptors served by a lazy-loaded MockSource, with their balances and paginated operations
+
+### Patch Changes
+
+- Updated dependencies [[`b79c360`](https://github.com/LedgerHQ/ledger-live/commit/b79c360ab24df820c11299c080538fd40ddef820)]:
+  - @domain/entity-account-descriptor@0.4.0
+
 ## 0.2.0-next.0
 
 ### Minor Changes

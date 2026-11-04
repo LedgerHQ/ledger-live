@@ -1,5 +1,13 @@
 # @features/flow-pay-card-auth
 
+## 0.11.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/api-card-management@0.8.4
+  - @features/platform-card@0.8.3
+
 ## 0.11.1-next.0
 
 ### Patch Changes

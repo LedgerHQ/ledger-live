@@ -1,5 +1,20 @@
 # @features/flow-pay-card-assets
 
+## 0.6.0
+
+### Minor Changes
+
+- [#24041](https://github.com/LedgerHQ/ledger-live/pull/24041) [`c8c49b0`](https://github.com/LedgerHQ/ledger-live/commit/c8c49b07639f2f855e8acb5af7d3def3c1a69e13) Thanks [@ysitbon](https://github.com/ysitbon)! - Split the card assets exports by platform: `CardAssets` moves to the `./web` entry, and the native `CardAssetsView` and the asset drawers (`CardAssetDetailsDrawer`, `CardAssetDetailsWithdrawDrawer`, `CardAssetTransactionDetailDrawer`, `CardAssetsManageDrawer`) move to the `./native` entry, each with its props type. The `.` entry keeps the hooks, the selector and the types on both platforms. `CardAssetsManageFooter` is no longer exported.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/api-card-management@0.8.4
+  - @domain/entity-currency@0.4.9
+  - @features/flow-pay-card-auth@0.11.1
+  - @features/flow-pay-card-transactions@0.7.1
+  - @features/flow-pay-card-wallets@0.6.3
+
 ## 0.6.0-next.0
 
 ### Minor Changes
