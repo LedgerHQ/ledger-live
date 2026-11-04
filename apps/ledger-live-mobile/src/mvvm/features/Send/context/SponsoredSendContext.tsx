@@ -48,6 +48,7 @@ type SponsoredSendContextValue = Readonly<{
   sponsoredSelected: boolean;
   sponsoredFeeOptionId: string;
   providerName: string;
+  providerTermsUrl: string | null;
   waivesErrorKeys: readonly string[];
   waivesWarningKeys: readonly string[];
   /** The sponsored pick pays the native fee, so the status entries it waives don't apply. */
@@ -217,6 +218,7 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
   const feeCurrencyTicker = rentPayment?.asset.unit?.code ?? quoteFeeCurrencyTicker;
 
   const providerName = seam?.providerName ?? "";
+  const providerTermsUrl = seam?.providerTermsUrl ?? null;
   const waivesErrorKeys = seam?.waivesErrorKeys ?? NO_WAIVED_KEYS;
   const waivesWarningKeys = seam?.waivesWarningKeys ?? NO_WAIVED_KEYS;
   const approvedFee = quote?.value ?? null;
@@ -230,6 +232,7 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
       ...feeAmounts,
       sponsoredFeeOptionId,
       providerName,
+      providerTermsUrl,
       waivesErrorKeys,
       waivesWarningKeys,
       waivesNativeFee,
@@ -251,6 +254,7 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
       feeAmounts,
       sponsoredFeeOptionId,
       providerName,
+      providerTermsUrl,
       waivesErrorKeys,
       waivesWarningKeys,
       waivesNativeFee,
