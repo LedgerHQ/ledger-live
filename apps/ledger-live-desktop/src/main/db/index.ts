@@ -17,11 +17,29 @@ import { LARGE_SCREEN_UPSELL_MODAL } from "@features/flow-large-screen-upsell";
 import { encryptData, decryptData } from "~/main/db/crypto";
 import { readFile, writeFile } from "~/main/db/fsHelper";
 
-const debounce = <T, R>(fn: (...args: T[]) => R, ms: number) => {
+const debounce = <T, R>(fn: (...args: T[]) => Promise<R>, ms: number) => {
   let timeout: NodeJS.Timeout | undefined;
+  let pendingArgs: T[] = [];
   let resolveRefs: Array<(value: R | PromiseLike<R>) => void> = [];
   let rejectRefs: Array<(error: unknown) => void> = [];
-  return (...args: T[]) => {
+  let inFlight: Promise<void> = Promise.resolve();
+  const run = () => {
+    timeout = undefined;
+    const args = pendingArgs;
+    const resolves = resolveRefs;
+    const rejects = rejectRefs;
+    resolveRefs = [];
+    rejectRefs = [];
+    inFlight = (async () => {
+      try {
+        const res = await fn(...args);
+        resolves.forEach(r => r(res));
+      } catch (err) {
+        rejects.forEach(r => r(err));
+      }
+    })();
+  };
+  const debounced = (...args: T[]) => {
     const promise: Promise<R> = new Promise((resolve, reject) => {
       resolveRefs.push(resolve);
       rejectRefs.push(reject);
@@ -29,18 +47,19 @@ const debounce = <T, R>(fn: (...args: T[]) => R, ms: number) => {
     if (timeout) {
       clearTimeout(timeout);
     }
-    timeout = setTimeout(async () => {
-      try {
-        const res = await fn(...args);
-        resolveRefs.forEach(r => r(res));
-      } catch (err) {
-        rejectRefs.forEach(r => r(err));
-      }
-      resolveRefs = [];
-      rejectRefs = [];
-    }, ms);
+    pendingArgs = args;
+    timeout = setTimeout(run, ms);
     return promise;
   };
+  /** Runs the pending call now, and waits for the call in progress. */
+  debounced.flush = () => {
+    if (timeout) {
+      clearTimeout(timeout);
+      run();
+    }
+    return inFlight;
+  };
+  return debounced;
 };
 
 let DBPath: string | null = null;
@@ -48,7 +67,24 @@ let memoryNamespaces: Record<string, Record<string, unknown> | null | undefined>
 let encryptionKeys: Record<string, Record<string, string> | null | undefined> = {};
 const DEBOUNCE_MS =
   process.env.NODE_ENV === "test" || getEnv("PLAYWRIGHT_RUN") || getEnv("MOCK") ? 16 : 500;
-const save = debounce(saveToDisk, DEBOUNCE_MS);
+
+// One debounce for each namespace: a save of one namespace must not cancel a save of another.
+const saves: Map<string, ReturnType<typeof debounce<string, void>>> = new Map();
+function save(ns: string): Promise<void> {
+  let debouncedSave = saves.get(ns);
+  if (!debouncedSave) {
+    debouncedSave = debounce(saveToDisk, DEBOUNCE_MS);
+    saves.set(ns, debouncedSave);
+  }
+  return debouncedSave(ns);
+}
+
+/**
+ * Write the pending saves of all namespaces now, before the app quits.
+ */
+async function flush(): Promise<void> {
+  await Promise.all(Array.from(saves.values(), debouncedSave => debouncedSave.flush()));
+}
 
 // Track which keyPaths triggered saves for each namespace
 const saveTriggers: Map<string, Set<string>> = new Map();
@@ -437,4 +473,5 @@ export default {
   hasBeenDecrypted,
   cleanCache,
   resetAll,
+  flush,
 };

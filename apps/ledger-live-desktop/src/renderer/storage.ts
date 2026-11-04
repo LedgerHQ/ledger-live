@@ -6,7 +6,6 @@ import type { ConfigSelectionId } from "@shared/app-config";
 import { useDBRaw } from "@ledgerhq/live-common/hooks/useDBRaw";
 import { DiscoverDB } from "@ledgerhq/live-common/wallet-api/types";
 import accountModel from "~/helpers/accountModel";
-import memoize from "lodash/memoize";
 import debounce from "lodash/debounce";
 
 import { Account, AccountRaw, AccountUserData } from "@ledgerhq/types-live";
@@ -157,18 +156,19 @@ export const getKey = async <
   return data as V;
 };
 
-let debounceToUse = debounce;
-if (getEnv("PLAYWRIGHT_RUN")) {
-  debounceToUse =
-    fn =>
-    (...args) =>
-      // @ts-expect-error This is specific to playwright, silence the error
-      setTimeout(() => fn(...args));
-}
+// E2E: write on the next tick, so the tests read the data at once.
+const SET_KEY_DEBOUNCE_MS = getEnv("PLAYWRIGHT_RUN") ? 0 : 1000;
 
-const debouncedSetKey = memoize(
-  <K extends keyof DatabaseValues, V = DatabaseValue<K>>(ns: string, keyPath: K) =>
-    debounceToUse(async (value: V) => {
+const debouncedSetKeys = new Map<
+  string,
+  ReturnType<typeof debounce<(value: unknown) => Promise<void>>>
+>();
+
+function getDebouncedSetKey(ns: string, keyPath: keyof DatabaseValues) {
+  const id = `${ns}:${keyPath}`;
+  let debouncedSetKey = debouncedSetKeys.get(id);
+  if (!debouncedSetKey) {
+    debouncedSetKey = debounce(async (value: unknown) => {
       try {
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         const transform = transforms[keyPath as keyof Transforms];
@@ -180,16 +180,27 @@ const debouncedSetKey = memoize(
       } catch (e) {
         logger.error("debouncedSetKey failed", { ns, keyPath }, e);
       }
-    }, 1000),
-  (ns: string, keyPath: string) => `${ns}:${keyPath}`,
-);
+    }, SET_KEY_DEBOUNCE_MS);
+    debouncedSetKeys.set(id, debouncedSetKey);
+  }
+  return debouncedSetKey;
+}
 
 export const setKey = <K extends keyof DatabaseValues, V = DatabaseValue<K>, Val extends V = V>(
   ns: string,
   keyPath: K,
   value: Val,
 ) => {
-  debouncedSetKey<K, V>(ns, keyPath)(value);
+  getDebouncedSetKey(ns, keyPath)(value);
+};
+
+/**
+ * Send the debounced `setKey` calls to main now, and wait until main has them.
+ */
+export const flushPendingWrites = async () => {
+  await Promise.all(
+    Array.from(debouncedSetKeys.values(), debouncedSetKey => debouncedSetKey.flush()),
+  );
 };
 
 export const hasEncryptionKey = (ns: string, keyPath: keyof DatabaseValues) =>
@@ -206,7 +217,11 @@ export const isEncryptionKeyCorrect = (encryptionKey: string) =>
 
 export const hasBeenDecrypted = () => db.hasBeenDecrypted();
 
-export const resetAll = () => db.resetAll();
+// A pending write after the reset would bring back the data that the reset removed.
+export const resetAll = () => {
+  debouncedSetKeys.forEach(debouncedSetKey => debouncedSetKey.cancel());
+  return db.resetAll();
+};
 
 export const reload = () => db.reload();
 

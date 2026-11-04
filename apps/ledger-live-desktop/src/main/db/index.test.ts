@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, jest } from "@jest/globals";
+import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
 
 const readFileMock = jest.fn<(path: string) => Promise<Buffer>>();
 const writeFileMock = jest.fn<(path: string, data: string) => Promise<void>>();
@@ -293,5 +293,75 @@ describe("db (app namespace allow list + keepLegacy)", () => {
     expect(db.isEncryptionKeyCorrect("new-password")).toBe(true);
     await expect(db.removeEncryptionKey("new-password")).resolves.toBe(true);
     expect(db.hasEncryptionKey()).toBe(false);
+  });
+});
+
+function writtenFile(ns: string): Record<string, unknown> | undefined {
+  const call = [...writeFileMock.mock.calls]
+    .reverse()
+    .find(([filePath]) => filePath.endsWith(`${ns}.json`));
+  return call && (JSON.parse(call[1]).data as Record<string, unknown>);
+}
+
+describe("db saves", () => {
+  let db: typeof import("./index").default;
+  const testDir = "/tmp/db-test";
+
+  beforeEach(async () => {
+    jest.resetModules();
+    readFileMock.mockReset();
+    writeFileMock.mockReset();
+    readFileMock.mockResolvedValue(Buffer.from(JSON.stringify({ data: {} }), "utf-8"));
+    writeFileMock.mockResolvedValue(undefined);
+    db = (await import("./index")).default;
+    db.init(testDir);
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it("writes both files when a windowParams save follows an app save within the delay", async () => {
+    await Promise.all([
+      db.setKey("app", "settings", { theme: "dark" }),
+      db.setKey("windowParams", "MainWindow.dimensions", { width: 800, height: 600 }),
+    ]);
+
+    expect(writtenFile("app")).toEqual({ settings: { theme: "dark" } });
+    expect(writtenFile("windowParams")).toEqual({
+      MainWindow: { dimensions: { width: 800, height: 600 } },
+    });
+  });
+
+  it("writes a pending save at once on flush", async () => {
+    jest.useFakeTimers();
+    const saved = db.setKey("app", "settings", { theme: "dark" });
+    await jest.advanceTimersByTimeAsync(0);
+    expect(writtenFile("app")).toBeUndefined();
+
+    await db.flush();
+
+    expect(writtenFile("app")).toEqual({ settings: { theme: "dark" } });
+    await expect(saved).resolves.toBeUndefined();
+  });
+
+  it("waits on flush for a save that is already in progress", async () => {
+    let finishWrite: (() => void) | undefined;
+    writeFileMock.mockImplementationOnce(
+      () => new Promise<void>(resolve => (finishWrite = resolve)),
+    );
+    const saved = db.setKey("app", "settings", { theme: "dark" });
+    await new Promise(resolve => setTimeout(resolve, 50));
+    expect(finishWrite).toBeDefined();
+
+    let flushed = false;
+    const flushing = db.flush().then(() => (flushed = true));
+    await Promise.resolve();
+    expect(flushed).toBe(false);
+
+    finishWrite?.();
+    await flushing;
+    await saved;
+    expect(flushed).toBe(true);
   });
 });

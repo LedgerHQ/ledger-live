@@ -27,4 +27,17 @@ export const db: DbBridge = {
   reload: () => ipcRenderer.invoke(CHANNELS.reload),
 
   cleanCache: () => ipcRenderer.invoke(CHANNELS.cleanCache),
+
+  onFlushRequest: (callback: () => Promise<void>) => {
+    const listener = () => {
+      Promise.resolve()
+        .then(callback)
+        .catch(() => undefined)
+        .then(() => ipcRenderer.send(CHANNELS.flushWritesDone));
+    };
+    ipcRenderer.on(CHANNELS.flushWrites, listener);
+    return () => {
+      ipcRenderer.removeListener(CHANNELS.flushWrites, listener);
+    };
+  },
 };
