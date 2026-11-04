@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // Summarises samples.jsonl written by run.mjs. Launches are paired by (scenario, phase, round);
-// the difference is B − A on "App startup time", estimated with Hodges–Lehmann and a Wilcoxon
-// signed-rank 95% interval. Writes a markdown table to stdout and, with --summary, appends it there.
+// the difference is B − A on "App startup time", as read on the Debug screen and with the native
+// start added back, estimated with Hodges–Lehmann and a Wilcoxon signed-rank 95% interval. Writes
+// a markdown table to stdout and, with --summary, appends it there.
 // Exits non-zero when a comparison fails or cannot conclude (see failedRows).
 import { appendFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
@@ -175,13 +176,13 @@ export function summarise(samples, { preset, thresholdMs }) {
     if (!groups.has(key)) groups.set(key, []);
     groups.get(key).push(s);
   }
-  return [...groups.entries()].map(([key, group]) => {
+  return [...groups.entries()].flatMap(([key, group]) => {
     const [platform, scenario] = key.split("|");
     const debugValue = difference(group, s => s.appStartupTime);
     const jsStart = difference(group, fromJsStart);
-    const processStart = difference(group, fromProcessStart);
+    const withNative = difference(group, fromProcessStart);
     // Builds on both sides of b3700d9164b: their Debug values start at different points, so the
-    // verdict uses the time from the first JS import, which means the same in both.
+    // Debug screen row uses the time from the first JS import, which means the same in both.
     const offset = side =>
       median(
         group
@@ -191,23 +192,43 @@ export function summarise(samples, { preset, thresholdMs }) {
       );
     const offsetA = offset("A");
     const offsetB = offset("B");
+    // The offset is ~0 ms since b3700d9164b and 0.5–1.3 s with the package; its size alone varies
+    // with the native start (107 ms between the two LIVE-36190 refs in run 41835997579).
+    const countsFromJsStart = offset => offset < 50;
     const startsDiffer =
-      Number.isFinite(offsetA) && Number.isFinite(offsetB) && Math.abs(offsetA - offsetB) > 100;
-    const gated = startsDiffer && jsStart.pairs ? jsStart : debugValue;
+      Number.isFinite(offsetA) &&
+      Number.isFinite(offsetB) &&
+      countsFromJsStart(offsetA) !== countsFromJsStart(offsetB);
+    const screen = startsDiffer && jsStart.pairs ? jsStart : debugValue;
     const measured = group.filter(s => !s.warmup);
-    return {
+    const row = (measure, d, verdict) => ({
       platform,
       scenario,
-      measure: gated === jsStart ? "from JS start" : "Debug value",
+      measure,
       startsDiffer,
-      ...gated,
+      ...d,
       failed: measured.filter(s => !s.ok).length,
       launches: measured.length,
-      jsStart,
-      processStart,
-      detectable: detectableAt80(gated.hl, thresholdMs),
-      verdict: verdictFor(preset, gated.hl, thresholdMs),
-    };
+      detectable: detectableAt80(d.hl, thresholdMs),
+      verdict: verdict ?? verdictFor(preset, d.hl, thresholdMs),
+    });
+    // Only a build too old for the "JS start epoch" event goes without the native verdict; launches
+    // that lack a process start count as missing pairs, so a harness fault still shows.
+    const withoutEpoch = ["A", "B"].filter(
+      side =>
+        !group.some(s => s.ok && !s.warmup && s.side === side && Number.isFinite(jsStartEpoch(s))),
+    );
+    const nativeMissing = withoutEpoch.length > 0 && screen.pairs > 0;
+    return [
+      row(screen === jsStart ? "Debug screen, from JS start" : "Debug screen", screen),
+      row(
+        "With native start",
+        withNative,
+        nativeMissing
+          ? `Not measured: ${withoutEpoch.length > 1 ? "builds A and B have" : `build ${withoutEpoch[0]} has`} no "JS start epoch" event`
+          : undefined,
+      ),
+    ];
   });
 }
 
@@ -219,11 +240,13 @@ export function toMarkdown(rows, { preset, labelA, labelB, thresholdMs }) {
   const lines = [
     `### Startup time, ${preset}: B − A`,
     "",
-    `A = ${labelA} · B = ${labelB}. Value read from Settings > Debug > Performance > App startup time.`,
-    isGate(preset) ? `B fails when it is slower than A by more than ${thresholdMs} ms.` : "",
+    `A = ${labelA} · B = ${labelB}.`,
+    isGate(preset)
+      ? `B fails when it is slower than A by more than ${thresholdMs} ms on either measure.`
+      : "",
     "",
-    "| Platform | Scenario | Pairs | Median A (ms) | Median B (ms) | B − A (ms) | 95% interval (ms) | Mean B − A (ms) | Flags a slowdown of (ms) | Spread of B − A (ms) | Device bias (ms) | Failed launches | Verdict |",
-    "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+    "| Platform | Scenario | Measure | Pairs | Median A (ms) | Median B (ms) | B − A (ms) | 95% interval (ms) | Mean B − A (ms) | Flags a slowdown of (ms) | Spread of B − A (ms) | Device bias (ms) | Failed launches | Verdict |",
+    "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
   ];
   for (const r of rows) {
     const interval =
@@ -232,33 +255,22 @@ export function toMarkdown(rows, { preset, labelA, labelB, thresholdMs }) {
       ? `${signed(r.mean.estimate)} (${signed(r.mean.low)} to ${signed(r.mean.high)})`
       : "–";
     lines.push(
-      `| ${r.platform} | ${r.scenario} | ${r.pairs} | ${fmt(r.medianA)} | ${fmt(r.medianB)} | ${signed(r.hl?.estimate)} | ${interval} | ${mean} | ${fmt(r.detectable)} | ${fmt(r.spread)} | ${signed(r.instanceBias)} | ${r.failed}/${r.launches} | ${r.verdict} |`,
+      `| ${r.platform} | ${r.scenario} | ${r.measure} | ${r.pairs} | ${fmt(r.medianA)} | ${fmt(r.medianB)} | ${signed(r.hl?.estimate)} | ${interval} | ${mean} | ${fmt(r.detectable)} | ${fmt(r.spread)} | ${signed(r.instanceBias)} | ${r.failed}/${r.launches} | ${r.verdict} |`,
     );
   }
   lines.push(
     "",
+    "- **Debug screen**: Settings > Debug > Performance > App startup time, which counts from the first JS import since 4.26 (b3700d9164b).",
+    "- **With native start**: the same end, counted from the start of the app process (the emulator's or the host's kernel), so the native start up to the first JS import (\"JS start epoch\" event) is in again. On iOS this row equals the Debug value of the builds that had react-native-startup-time (within 3 ms). On Android it is about 350–400 ms higher than theirs, because that package started its clock later, when the React host was created.",
+    "",
     "B − A is the Hodges–Lehmann median of the paired differences, after removing the device bias: how much slower the second emulator or simulator is than the first, measured thanks to the halfway swap.",
     `The mean (with a bootstrap 95% interval) is what the manual test compares. "Flags a slowdown of" is the true B − A the ${thresholdMs} ms gate catches 80% of the time at this noise; a true ${thresholdMs} ms is caught half the time.`,
     ...rows
-      .filter(r => r.startsDiffer)
+      .filter(r => r.startsDiffer && r.measure.startsWith("Debug screen"))
       .map(
         r =>
-          `**${r.platform} ${r.scenario}: A's and B's Debug values start at different points (develop changed it on 2026-10-26, b3700d9164b), so this row compares the time from the first JS import.**`,
+          `**${r.platform} ${r.scenario}: A's and B's Debug values start at different points (develop changed it on 2026-10-26, b3700d9164b), so the Debug screen row compares the time from the first JS import.**`,
       ),
-    "",
-    "#### Same start for every build",
-    "",
-    'From the first JS import: the Debug value minus its "Before js imports" time. From the process start: that plus the native start, from the "JS start epoch" event and the process start time (iOS: exact, same clock; Android: the runner\'s estimate against the emulator\'s clock).',
-    "",
-    "| Platform | Scenario | From JS start: median A / B (ms) | B − A (ms) | 95% interval (ms) | From process start: median A / B (ms) | B − A (ms) | 95% interval (ms) |",
-    "| --- | --- | --- | --- | --- | --- | --- | --- |",
-    ...rows.map(r => {
-      const cells = d =>
-        d.pairs
-          ? `${fmt(d.medianA)} / ${fmt(d.medianB)} | ${signed(d.hl?.estimate)} | ${d.hl?.low == null ? "–" : `${signed(d.hl.low)} to ${signed(d.hl.high)}`}`
-          : "– | – | –";
-      return `| ${r.platform} | ${r.scenario} | ${cells(r.jsStart)} | ${cells(r.processStart)} |`;
-    }),
     "",
   );
   return lines.filter((l, i) => l !== "" || lines[i - 1] !== "").join("\n");
