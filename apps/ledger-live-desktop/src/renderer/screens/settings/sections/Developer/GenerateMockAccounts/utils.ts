@@ -1,10 +1,12 @@
-import { genAccount } from "@ledgerhq/live-common/mock/account";
-import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { genAccount, genAddingOperationsInAccount } from "@ledgerhq/live-common/mock/account";
+import { genTokenAccount, ensureNoNegative } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { generateHistoryFromOperations } from "@ledgerhq/ledger-wallet-framework/account/balanceHistoryCache";
 import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import { getCryptoCurrencyById, CryptoCurrency } from "@domain/entity-currency-crypto";
 import { TokenCurrency } from "@domain/entity-currency-token";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { initAccounts } from "~/renderer/actions/accounts";
+import { DEMO_HISTORY_SEED } from "~/renderer/bridge/demoHistory";
 import {
   initialState as liveWalletInitialState,
   accountUserDataExportSelector,
@@ -165,6 +167,43 @@ export async function generateStablecoinAccounts(): Promise<[Account, AccountUse
 
   return results;
 }
+
+/**
+ * Adds mock operations to every existing account, keeping each account's identity (id, xpub and
+ * addresses) and recomputing its balance from the operations. Trivial for mock accounts, and the
+ * only way to give a device-derived account a populated history — its real address stays the one
+ * the device derives, so Receive/verify keeps working on it.
+ */
+export const addMockOperationsToAllAccounts = async (count = 10): Promise<number> => {
+  // Gives an existing account demo history without changing who owns it, so a
+  // device-derived account keeps a working Receive/verify while showing activity.
+  // Mock accounts are left alone: the generator already gave them a history.
+  const accountData = (await getKey("app", "accounts", [])) ?? [];
+  const updated = await Promise.all(
+    accountData.map(async ([account, userData]: [Account, AccountUserData]) => {
+      if (account.id.startsWith("mock:")) return [account, userData] as [Account, AccountUserData];
+      // Seed on the current op count so a second click generates new operations
+      // instead of duplicating the previous batch (same seed => same hashes).
+      const withOperations = await genAddingOperationsInAccount(
+        account,
+        count,
+        `${account.id}|${account.operations.length}`,
+      );
+      // Recompute from the account's own operations: for some families the account comes back
+      // with a stale balance (an earlier sync zeroed it) even though the operations are there.
+      withOperations.balance = withOperations.spendableBalance = ensureNoNegative(
+        withOperations.operations,
+      );
+      withOperations.balanceHistoryCache = generateHistoryFromOperations(withOperations);
+      // Tagged so the sync loop skips this account: a sync would replace the
+      // invented operations with the chain's real (usually empty) history.
+      withOperations.seedIdentifier = DEMO_HISTORY_SEED;
+      return [withOperations, userData] as [Account, AccountUserData];
+    }),
+  );
+  await injectMockAccounts(updated, true);
+  return updated.length;
+};
 
 export function generateStockAccounts(
   tokensByParent: { parentId: string; tokens: TokenCurrency[] }[],
