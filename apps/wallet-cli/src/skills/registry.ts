@@ -152,11 +152,23 @@ function isWithinSkillDir(skillRoot: string, filePath: string): boolean {
   return resolved === root || resolved.startsWith(root + path.sep);
 }
 
+async function closestExistingParent(skillRoot: string, target: string): Promise<string> {
+  const root = path.resolve(skillRoot);
+  const parent = path.resolve(path.dirname(target));
+  const parents = [parent];
+  for (let dir = parent; dir.startsWith(root + path.sep);) {
+    dir = path.dirname(dir);
+    parents.push(dir);
+  }
+  const present = await Promise.all(parents.map(holdsAnything));
+  return parents.find((_, i) => present[i]) ?? parent;
+}
+
 async function resolvesInsideSkillDir(skillRoot: string, target: string): Promise<boolean> {
   try {
     const [realRoot, realParent] = await Promise.all([
       realpath(skillRoot),
-      realpath(path.dirname(target)),
+      realpath(await closestExistingParent(skillRoot, target)),
     ]);
     return isWithinSkillDir(realRoot, realParent);
   } catch {
@@ -387,12 +399,7 @@ async function readTrackedFile(
 
 async function differsOnDisk(skillRoot: string, file: SkillFile): Promise<boolean> {
   const target = path.join(skillRoot, file.path);
-  if (!(await holdsAnything(target))) {
-    return (
-      (await holdsAnything(path.dirname(target))) &&
-      !(await resolvesInsideSkillDir(skillRoot, target))
-    );
-  }
+  if (!(await holdsAnything(target))) return !(await resolvesInsideSkillDir(skillRoot, target));
   return (await readTrackedFile(skillRoot, file.path))?.content !== file.content;
 }
 
