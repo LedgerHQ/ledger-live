@@ -45,7 +45,7 @@ const flowLayer: DualLayer = {
   },
   native: {
     transformIgnorePatterns,
-    resolver: flowPath("resolver.native.cjs"),
+    resolver: flowPath("resolver.native.js"),
     moduleNameMapper: flowNativeMocks,
   },
 };

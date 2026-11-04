@@ -21,7 +21,7 @@ function UnrefMessageChannel() {
   const channel = new MessageChannel();
   const onmessage = Object.getOwnPropertyDescriptor(MessagePort.prototype, "onmessage");
   if (!onmessage?.get || !onmessage?.set) {
-    throw new Error("MessagePort.prototype.onmessage is not a data property");
+    throw new Error("MessagePort.prototype.onmessage must be an accessor with get and set");
   }
   const { get, set } = onmessage;
 

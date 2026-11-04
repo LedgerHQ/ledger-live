@@ -65,6 +65,8 @@ function nativeConfig(config) {
 
 const webFiles = ["src/View.web.test.tsx", "src/view-model.test.ts", "src/View.web.spec.ts"];
 const nativeFiles = ["src/View.native.test.tsx", "src/View.native.spec.ts"];
+const pinWebExtensions = ["web.tsx", "web.ts", "tsx", "ts", "js", "jsx", "json"];
+const pinNativeExtensions = ["native.tsx", "native.ts", "tsx", "ts", "js", "jsx", "json"];
 
 for (const [name, create, defaults] of dualPresets) {
   test(`${name}: the projects use the exported mappers and setup files, as unfrozen copies`, () => {
@@ -150,6 +152,18 @@ for (const [name, create, defaults] of dualPresets) {
     assert.ok(config.reporters.includes(quarantineReporter));
     for (const side of ["web", "native"])
       assert.ok(project(config, side).setupFilesAfterEnv.includes(quarantineRetries), side);
+  });
+
+  test(`${name}: moduleFileExtensions and the shared swc transform`, () => {
+    const config = create();
+    const transformKey = Object.keys(project(config, "web").transform)[0];
+    const transformRe = new RegExp(transformKey);
+    for (const ext of [".ts", ".tsx", ".cts", ".js", ".jsx"])
+      assert.ok(transformRe.test(`file${ext}`), `transform should match ${ext}`);
+    for (const ext of [".mjs", ".cjs", ".ctsx"])
+      assert.ok(!transformRe.test(`file${ext}`), `transform must not match ${ext}`);
+    assert.deepEqual(project(config, "web").moduleFileExtensions, pinWebExtensions);
+    assert.deepEqual(project(config, "native").moduleFileExtensions, pinNativeExtensions);
   });
 }
 
@@ -259,7 +273,7 @@ for (const [name, create] of [
 ]) {
   test(`${name}: the native project keeps the flow resolver and transform allowlist`, () => {
     const native = project(create(), "native");
-    assert.equal(native.resolver, path.join(root, "features-flow/resolver.native.cjs"));
+    assert.equal(native.resolver, path.join(root, "features-flow/resolver.native.js"));
     assert.equal(native.transformIgnorePatterns.length, 1);
     assert.match(native.transformIgnorePatterns[0], /lumen-utils-shared\|.*lumen-design-core/);
   });

@@ -6,19 +6,18 @@ module.exports = {
   testEnvironment: "node",
   testMatch: ["**/*.spec.ts"],
   transform: {
-    "^.+\\.ts$": [
+    "^.+\\.tsx?$": [
       "@swc/jest",
       {
         jsc: {
-          parser: { syntax: "typescript", tsx: false },
+          parser: { syntax: "typescript", tsx: true },
           target: "es2022",
         },
         module: { type: "commonjs" },
       },
     ],
-    "^.+\\.tsx?$": ["@swc/jest"],
   },
-  moduleFileExtensions: ["ts", "mts", "mjs", "js", "json"],
+  moduleFileExtensions: ["ts", "js", "json"],
   moduleNameMapper: {
     "^@support/jest/devtools$": `${workspaceRoot}/support/jest/devtools/index.ts`,
     "^@support/jest/features-flow$": `${workspaceRoot}/support/jest/features-flow/index.ts`,

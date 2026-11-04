@@ -18,7 +18,7 @@ export type DualOverrides = Options & {
 };
 
 export const swcTransform: Record<string, Config.TransformerConfig> = {
-  "^.+\\.(c?tsx?|jsx?)$": [
+  "^.+\\.(cts|tsx?|jsx?)$": [
     "@swc/jest",
     { jsc: { target: "esnext", parser: { syntax: "typescript", tsx: true } } },
   ],
@@ -90,7 +90,7 @@ export const nativeSetupFiles: string[] = deepFreeze([quarantineRetries]);
 // Platform variants resolve like they do in the bundlers (Rspack `resolve.extensions`, Metro
 // platform extensions), so a `.web`/`.native` suffix stays confined to the file that needs one.
 export function platformExtensions(platform: "web" | "native"): string[] {
-  return [`${platform}.tsx`, `${platform}.ts`, "tsx", "ts", "cts", "js", "jsx", "json"];
+  return [`${platform}.tsx`, `${platform}.ts`, "tsx", "ts", "js", "jsx", "json"];
 }
 
 /**
