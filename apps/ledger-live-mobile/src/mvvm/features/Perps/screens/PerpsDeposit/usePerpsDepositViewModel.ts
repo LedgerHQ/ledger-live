@@ -77,7 +77,7 @@ export type PerpsDepositViewModel = Readonly<{
   handOverToDevice: () => void;
   /** The device declined, which is not a failure: the summary takes over again. */
   returnToReview: () => void;
-  /** The funding account fell short, so the form takes over again to change the amount. */
+  /** The sign step failed in a way the same deposit cannot fix, so the form takes over again. */
   returnToForm: () => void;
   /** Signed and broadcast, so the form gives way to the receipt. */
   endSigning: (outcome: PerpsDepositOutcome) => void;
@@ -102,6 +102,7 @@ export function usePerpsDepositViewModel({
   const [isSignOpen, setIsSignOpen] = useState(false);
   const [signingDevice, setSigningDevice] = useState<Device | null | undefined>();
   const [reviewParams, setReviewParams] = useState<PerpsReviewParams | null>(null);
+  const [quoteRefreshGeneration, setQuoteRefreshGeneration] = useState(0);
 
   // Leaving the screen before the deposit settles abandons it; after it settles this is a no-op.
   useEffect(() => cancelDepositRequest, []);
@@ -269,6 +270,7 @@ export function usePerpsDepositViewModel({
     depositAccount,
     receiverAccount,
     amount: sentAmount,
+    refreshGeneration: quoteRefreshGeneration,
   });
 
   const canReview = isFormComplete && quote !== undefined;
@@ -325,7 +327,10 @@ export function usePerpsDepositViewModel({
     setIsReviewOpen(true);
   }, []);
 
-  const returnToForm = useCallback(() => setIsSignOpen(false), []);
+  const returnToForm = useCallback(() => {
+    setQuoteRefreshGeneration(generation => generation + 1);
+    setIsSignOpen(false);
+  }, []);
 
   const endSigning = useCallback(
     ({ swapId }: PerpsDepositOutcome) => {

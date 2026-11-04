@@ -14,6 +14,7 @@ type PerpsDepositQuoteParams = {
   depositAccount: AccountLike | undefined;
   receiverAccount: AccountLike;
   amount: string;
+  refreshGeneration: number;
 };
 
 export type PerpsDepositQuoteState = {
@@ -32,11 +33,17 @@ const UNAVAILABLE: PerpsDepositQuoteState = {
 
 /** What a quote was asked for, so it is never read back for anything else. */
 function requestKeyOf(
-  { depositAccount, receiverAccount, amount }: PerpsDepositQuoteParams,
+  { depositAccount, receiverAccount, amount, refreshGeneration }: PerpsDepositQuoteParams,
   counterValueTicker: string,
 ) {
   if (!depositAccount || !amount) return null;
-  return [depositAccount.id, receiverAccount.id, amount, counterValueTicker].join("|");
+  return [
+    depositAccount.id,
+    receiverAccount.id,
+    amount,
+    counterValueTicker,
+    refreshGeneration,
+  ].join("|");
 }
 
 /**
@@ -46,6 +53,7 @@ export function usePerpsDepositQuote({
   depositAccount,
   receiverAccount,
   amount,
+  refreshGeneration,
 }: PerpsDepositQuoteParams): PerpsDepositQuoteState {
   const accounts = useSelector(flattenAccountsSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
@@ -55,7 +63,7 @@ export function usePerpsDepositQuote({
   });
 
   const requestKey = requestKeyOf(
-    { depositAccount, receiverAccount, amount },
+    { depositAccount, receiverAccount, amount, refreshGeneration },
     counterValueCurrency.ticker,
   );
 

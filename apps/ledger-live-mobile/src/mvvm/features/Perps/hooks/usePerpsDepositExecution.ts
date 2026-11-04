@@ -4,7 +4,6 @@ import BigNumber from "bignumber.js";
 import type { SignedOperation } from "@ledgerhq/types-live";
 import { getAccountCurrency, getParentAccount } from "@ledgerhq/live-common/account/index";
 import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { isNotEnoughBalance } from "@ledgerhq/live-common/exchange/isNotEnoughBalance";
 import { getUpdateAccountWithUpdaterParams } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams";
 import type { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { executeSwap } from "@ledgerhq/live-common/wallet-api/Exchange/executeSwap";
@@ -35,6 +34,10 @@ import {
   getDepositRequestId,
   settleDepositRequest,
 } from "@ledgerhq/live-common/wallet-api/Perps/deposit/request";
+import {
+  isDepositGenericSignError,
+  shouldReturnToDepositForm,
+} from "@ledgerhq/live-common/wallet-api/Perps/deposit/signError";
 
 type StartResult = StartExchangeResult;
 type CompleteResult = CompleteExchangeResult;
@@ -74,7 +77,7 @@ export type PerpsDepositOutcome = Readonly<{
 export type PerpsDepositExecutionCallbacks = Readonly<{
   onDone: (outcome: PerpsDepositOutcome) => void;
   onRefused: () => void;
-  onNotEnoughBalance: () => void;
+  onReturnToForm: () => void;
 }>;
 
 const EXCHANGE_APP_NAME = "Exchange";
@@ -97,7 +100,7 @@ const tracking = trackingWrapper((eventName, properties, mandatory) =>
  */
 export function usePerpsDepositExecution(
   params: PerpsDepositReviewParams,
-  { onDone, onRefused, onNotEnoughBalance }: PerpsDepositExecutionCallbacks,
+  { onDone, onRefused, onReturnToForm }: PerpsDepositExecutionCallbacks,
 ): PerpsDepositExecution {
   const [deviceStep, setDeviceStep] = useState<PerpsDepositDeviceStep>(PROCESSING_STEP);
 
@@ -330,6 +333,15 @@ export function usePerpsDepositExecution(
         onRefused();
         return;
       }
+      if (isDepositGenericSignError(e)) {
+        track("swap error message", {
+          message: "deposit_sign_failed",
+          page: "perps_deposit_sign",
+          flow: "perps",
+          sourceCurrency: getAccountCurrency(depositAccount).ticker,
+          targetCurrency: getAccountCurrency(receiverAccount).ticker,
+        });
+      }
       setDeviceStep({ kind: "error", error: e instanceof Error ? e : new Error(String(e)) });
     }
   }, [
@@ -348,12 +360,12 @@ export function usePerpsDepositExecution(
   ]);
 
   const retry = useCallback(() => {
-    if (deviceStep.kind === "error" && isNotEnoughBalance(deviceStep.error)) {
-      onNotEnoughBalance();
+    if (deviceStep.kind === "error" && shouldReturnToDepositForm(deviceStep.error)) {
+      onReturnToForm();
       return;
     }
     void executeDeposit();
-  }, [deviceStep, executeDeposit, onNotEnoughBalance]);
+  }, [deviceStep, executeDeposit, onReturnToForm]);
 
   return {
     deviceStep,

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef } from "react";
 import { cancelDepositRequest } from "@ledgerhq/live-common/wallet-api/Perps/deposit/request";
+import { isDepositGenericSignError } from "@ledgerhq/live-common/wallet-api/Perps/deposit/signError";
 import {
   usePerpsDepositExecution,
   type PerpsDepositDeviceStep,
@@ -13,6 +14,7 @@ export type PerpsDepositSignData = PerpsReviewData;
 
 export type PerpsDepositSignViewModel = {
   deviceStep: PerpsDepositDeviceStep;
+  isGenericError: boolean;
   retry: () => void;
   onClose: () => void;
   onDismiss: () => void;
@@ -38,7 +40,7 @@ export function usePerpsDepositSignViewModel(
   const { deviceStep, executeDeposit, retry } = usePerpsDepositExecution(data, {
     onDone: onClose,
     onRefused: handleRefused,
-    onNotEnoughBalance: returnToDeposit,
+    onReturnToForm: returnToDeposit,
   });
 
   const onDeviceError = useCallback(
@@ -62,6 +64,7 @@ export function usePerpsDepositSignViewModel(
 
   return {
     deviceStep,
+    isGenericError: deviceStep.kind === "error" && isDepositGenericSignError(deviceStep.error),
     retry,
     onClose,
     onDismiss,

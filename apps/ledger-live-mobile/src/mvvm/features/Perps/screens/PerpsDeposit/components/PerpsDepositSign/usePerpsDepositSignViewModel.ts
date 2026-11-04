@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { PerpsDepositReviewParams } from "@ledgerhq/live-common/wallet-api/Perps/server";
+import { isDepositGenericSignError } from "@ledgerhq/live-common/wallet-api/Perps/deposit/signError";
 import type { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import {
   usePerpsDepositExecution,
@@ -17,12 +18,13 @@ export type PerpsDepositSignProps = Readonly<PerpsDepositReviewParams> &
     onSelectDevice: (device: Device | null | undefined) => void;
     onDone: (outcome: PerpsDepositOutcome) => void;
     onRefused: () => void;
-    onNotEnoughBalance: () => void;
+    onReturnToForm: () => void;
   }>;
 
 export type PerpsDepositSignViewModel = Readonly<{
   selectedDevice: Device | null | undefined;
   deviceStep: PerpsDepositDeviceStep;
+  isGenericError: boolean;
   setSelectedDevice: (device: Device | null | undefined) => void;
   retry: () => void;
   onDeviceError: (error: Error) => void;
@@ -35,15 +37,15 @@ export function usePerpsDepositSignViewModel({
   onSelectDevice,
   onDone,
   onRefused,
-  onNotEnoughBalance,
+  onReturnToForm,
   ...depositParams
 }: PerpsDepositSignProps): PerpsDepositSignViewModel {
   const isLeavingRef = useRef(false);
 
-  const handleNotEnoughBalance = useCallback(() => {
+  const handleReturnToForm = useCallback(() => {
     isLeavingRef.current = true;
-    onNotEnoughBalance();
-  }, [onNotEnoughBalance]);
+    onReturnToForm();
+  }, [onReturnToForm]);
 
   const handleDone = useCallback(
     (outcome: PerpsDepositOutcome) => {
@@ -61,7 +63,7 @@ export function usePerpsDepositSignViewModel({
   const { deviceStep, executeDeposit, retry } = usePerpsDepositExecution(depositParams, {
     onDone: handleDone,
     onRefused,
-    onNotEnoughBalance: handleNotEnoughBalance,
+    onReturnToForm: handleReturnToForm,
   });
 
   const onDeviceError = useCallback(
@@ -81,6 +83,7 @@ export function usePerpsDepositSignViewModel({
   return {
     selectedDevice,
     deviceStep,
+    isGenericError: deviceStep.kind === "error" && isDepositGenericSignError(deviceStep.error),
     setSelectedDevice: onSelectDevice,
     retry,
     onDeviceError,

@@ -1,11 +1,20 @@
 import {
   NotEnoughBalance,
+  NotEnoughBalanceFees,
+  NotEnoughBalanceInParentAccount,
+  NotEnoughGas,
   NotEnoughSpendableBalance,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 
 /** `name` is an instance field on these classes, so it is read off an instance. */
 const NOT_ENOUGH_BALANCE_NAMES = new Set(
-  [NotEnoughBalance, NotEnoughSpendableBalance].map(ErrorClass => new ErrorClass().name),
+  [
+    NotEnoughBalance,
+    NotEnoughSpendableBalance,
+    NotEnoughGas,
+    NotEnoughBalanceInParentAccount,
+    NotEnoughBalanceFees,
+  ].map(ErrorClass => new ErrorClass().name),
 );
 
 /**

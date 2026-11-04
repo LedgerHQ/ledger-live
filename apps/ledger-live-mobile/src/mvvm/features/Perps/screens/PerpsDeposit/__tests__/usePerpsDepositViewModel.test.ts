@@ -504,7 +504,7 @@ describe("usePerpsDepositViewModel", () => {
       expect(result.current.reviewParams).toEqual(reviewed);
     });
 
-    it("returns to the form after a shortfall, keeping the review closed and the draft", () => {
+    it("returns to the form after a sign failure, keeping the review closed and the draft", () => {
       const { result } = renderReviewedDeposit();
       const reviewed = result.current.reviewParams;
 
@@ -514,6 +514,18 @@ describe("usePerpsDepositViewModel", () => {
       expect(result.current.isSignOpen).toBe(false);
       expect(result.current.isReviewOpen).toBe(false);
       expect(result.current.reviewParams).toEqual(reviewed);
+    });
+
+    it("asks for a new quote for the unchanged draft after a sign failure", () => {
+      const { result } = renderReviewedDeposit();
+      const quotedBefore = mockUsePerpsDepositQuote.mock.lastCall?.[0];
+
+      act(() => result.current.handOverToDevice());
+      act(() => result.current.returnToForm());
+
+      const quotedAfter = mockUsePerpsDepositQuote.mock.lastCall?.[0];
+      expect(quotedAfter.amount).toBe(quotedBefore.amount);
+      expect(quotedAfter.refreshGeneration).toBe(quotedBefore.refreshGeneration + 1);
     });
 
     it("keeps the device after a decline, so handing over again skips the device list", () => {

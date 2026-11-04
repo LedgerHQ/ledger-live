@@ -11,14 +11,18 @@ jest.mock("@ledgerhq/live-common/wallet-api/Perps/deposit/quote", () => ({
 const receiverAccount = { id: "receiver-1" } as AccountLike;
 const depositAccount = { id: "funding-1" } as AccountLike;
 
-type QuoteProps = { amount: string; depositAccount: AccountLike | undefined };
+type QuoteProps = {
+  amount: string;
+  depositAccount: AccountLike | undefined;
+  refreshGeneration?: number;
+};
 
 function renderQuote(initialProps: QuoteProps) {
   let props = initialProps;
 
   const seen: PerpsDepositQuoteState[] = [];
   const view = renderHook(() => {
-    const state = usePerpsDepositQuote({ ...props, receiverAccount });
+    const state = usePerpsDepositQuote({ refreshGeneration: 0, ...props, receiverAccount });
     seen.push(state);
     return state;
   });
@@ -60,6 +64,19 @@ describe("usePerpsDepositQuote", () => {
     expect(mockFetchPerpsDepositQuote).toHaveBeenCalledWith(
       expect.objectContaining({ depositAccount, receiverAccount, amount: "2000" }),
     );
+  });
+
+  it("asks again for the unchanged draft when the refresh generation moves", async () => {
+    const { rerenderWith } = renderQuote({ amount: "2000", depositAccount });
+    await waitFor(() => expect(mockFetchPerpsDepositQuote).toHaveBeenCalledTimes(1), {
+      timeout: 2000,
+    });
+
+    rerenderWith({ amount: "2000", depositAccount, refreshGeneration: 1 });
+
+    await waitFor(() => expect(mockFetchPerpsDepositQuote).toHaveBeenCalledTimes(2), {
+      timeout: 2000,
+    });
   });
 
   it("reports no route for the pair as unavailable", async () => {

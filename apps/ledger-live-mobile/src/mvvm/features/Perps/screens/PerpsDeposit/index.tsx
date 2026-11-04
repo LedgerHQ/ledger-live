@@ -196,7 +196,7 @@ export function PerpsDepositView(viewModel: Readonly<PerpsDepositViewModel>) {
           onSelectDevice={selectSigningDevice}
           onDone={endSigning}
           onRefused={returnToReview}
-          onNotEnoughBalance={returnToForm}
+          onReturnToForm={returnToForm}
         />
       ) : null}
 

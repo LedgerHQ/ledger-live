@@ -1,5 +1,6 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { PayloadStepError } from "@ledgerhq/live-common/wallet-api/Exchange/SwapError";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { act, renderHook } from "@tests/test-renderer";
 import type { PerpsDepositExecutionCallbacks } from "LLM/features/Perps/hooks/usePerpsDepositExecution";
@@ -9,12 +10,13 @@ import {
 } from "../usePerpsDepositSignViewModel";
 
 let capturedCallbacks: PerpsDepositExecutionCallbacks | undefined;
+let mockDeviceStep: unknown = { kind: "processing" };
 const mockExecuteDeposit = jest.fn();
 jest.mock("LLM/features/Perps/hooks/usePerpsDepositExecution", () => ({
   usePerpsDepositExecution: (_params: unknown, callbacks: PerpsDepositExecutionCallbacks) => {
     capturedCallbacks = callbacks;
     return {
-      deviceStep: { kind: "processing" },
+      deviceStep: mockDeviceStep,
       executeDeposit: mockExecuteDeposit,
       retry: jest.fn(),
     };
@@ -36,7 +38,7 @@ const device = {
 function renderSignViewModel(initialDevice?: Device) {
   const onDone = jest.fn();
   const onRefused = jest.fn();
-  const onNotEnoughBalance = jest.fn();
+  const onReturnToForm = jest.fn();
   let selectedDevice = initialDevice;
 
   const buildProps = () =>
@@ -52,7 +54,7 @@ function renderSignViewModel(initialDevice?: Device) {
       },
       onDone,
       onRefused,
-      onNotEnoughBalance,
+      onReturnToForm,
     }) as unknown as PerpsDepositSignProps;
 
   const { result, rerender } = renderHook(() => usePerpsDepositSignViewModel(buildProps()));
@@ -64,10 +66,25 @@ function renderSignViewModel(initialDevice?: Device) {
     });
   };
 
-  return { result, pickDevice, onDone, onRefused, onNotEnoughBalance };
+  return { result, pickDevice, onDone, onRefused, onReturnToForm };
 }
 
 describe("usePerpsDepositSignViewModel", () => {
+  afterEach(() => {
+    mockDeviceStep = { kind: "processing" };
+  });
+
+  it.each([
+    ["a payload failure", new PayloadStepError(), true],
+    ["any other failure", new Error("signature failed"), false],
+  ])("shows the generic copy only for %s", (_case, error, isGenericError) => {
+    mockDeviceStep = { kind: "error", error };
+
+    const { result } = renderSignViewModel();
+
+    expect(result.current.isGenericError).toBe(isGenericError);
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
     capturedCallbacks = undefined;
@@ -134,18 +151,18 @@ describe("usePerpsDepositSignViewModel", () => {
     expect(onRefused).not.toHaveBeenCalled();
   });
   it("hands a shortfall back to the deposit screen, which reopens the form", () => {
-    const { onNotEnoughBalance, onRefused } = renderSignViewModel(device);
+    const { onReturnToForm, onRefused } = renderSignViewModel(device);
 
-    act(() => capturedCallbacks?.onNotEnoughBalance());
+    act(() => capturedCallbacks?.onReturnToForm());
 
-    expect(onNotEnoughBalance).toHaveBeenCalled();
+    expect(onReturnToForm).toHaveBeenCalled();
     expect(onRefused).not.toHaveBeenCalled();
   });
 
   it("does not reopen the summary when the sheet closes after a shortfall", () => {
     const { result, onRefused } = renderSignViewModel(device);
 
-    act(() => capturedCallbacks?.onNotEnoughBalance());
+    act(() => capturedCallbacks?.onReturnToForm());
     act(() => result.current.handleDrawerClose());
 
     expect(onRefused).not.toHaveBeenCalled();

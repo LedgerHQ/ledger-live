@@ -11330,6 +11330,10 @@
   },
   "perpsDepositSign": {
     "a11yTitle": "Deposit signing",
+    "genericError": {
+      "title": "Something went wrong",
+      "description": "Please try again later or select a different asset."
+    },
     "terms": "By signing this transaction, I accept <termsLink>SwapKit by NEAR Intents T&C</termsLink>"
   },
   "perpsTransactionSigned": {

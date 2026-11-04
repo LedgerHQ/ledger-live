@@ -1,5 +1,6 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { PayloadStepError } from "@ledgerhq/live-common/wallet-api/Exchange/SwapError";
 import { renderHook } from "tests/testSetup";
 import type { PerpsDepositExecutionCallbacks } from "LLD/features/Perps/hooks/usePerpsDepositExecution";
 import {
@@ -23,12 +24,13 @@ jest.mock("../../PerpsReview/PerpsReviewDialog", () => ({
 }));
 
 let capturedCallbacks: PerpsDepositExecutionCallbacks | undefined;
+let mockDeviceStep: unknown = { kind: "processing" };
 const mockExecuteDeposit = jest.fn();
 jest.mock("LLD/features/Perps/hooks/usePerpsDepositExecution", () => ({
   usePerpsDepositExecution: (_params: unknown, callbacks: PerpsDepositExecutionCallbacks) => {
     capturedCallbacks = callbacks;
     return {
-      deviceStep: { kind: "processing" },
+      deviceStep: mockDeviceStep,
       executeDeposit: mockExecuteDeposit,
       retry: jest.fn(),
     };
@@ -49,6 +51,21 @@ const data: PerpsDepositSignData = {
 };
 
 describe("usePerpsDepositSignViewModel", () => {
+  afterEach(() => {
+    mockDeviceStep = { kind: "processing" };
+  });
+
+  it.each([
+    ["a payload failure", new PayloadStepError(), true],
+    ["any other failure", new Error("signature failed"), false],
+  ])("shows the generic copy only for %s", (_case, error, isGenericError) => {
+    mockDeviceStep = { kind: "error", error };
+
+    const { result } = renderHook(() => usePerpsDepositSignViewModel(data, jest.fn()));
+
+    expect(result.current.isGenericError).toBe(isGenericError);
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
     capturedCallbacks = undefined;
@@ -75,7 +92,7 @@ describe("usePerpsDepositSignViewModel", () => {
     const onClose = jest.fn();
     renderHook(() => usePerpsDepositSignViewModel(data, onClose));
 
-    capturedCallbacks?.onNotEnoughBalance();
+    capturedCallbacks?.onReturnToForm();
 
     // The form comes back with the amount the holder typed, ready to be lowered.
     expect(mockOpenPerpsDeposit).toHaveBeenCalledWith({ receiverAccount, draft: data.draft });
