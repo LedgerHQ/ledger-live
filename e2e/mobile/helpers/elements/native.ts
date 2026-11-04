@@ -112,6 +112,12 @@ export class NativeHandle implements ElementHandle {
     return text ?? "";
   }
 
+  /** Waits for visibility, then returns the element's accessibility label ("" when it has none). */
+  async getLabel(timeout = TIMEOUT.xxlarge): Promise<string> {
+    const { label } = await this.getAttributes(timeout);
+    return label ?? "";
+  }
+
   /**
    * Returns whether the element becomes visible within `timeout`, for an element that may or may not
    * appear. A hung app still throws.
@@ -147,6 +153,24 @@ export class NativeHandle implements ElementHandle {
   /** Asserts the element's text now. A Detox expect: synchronised with the app, it does not wait. */
   async expectText(text: string): Promise<void> {
     await withHardTimeout(detoxExpect(this.raw).toHaveText(text));
+  }
+
+  /** Waits for visibility, then asserts the element's text contains `text`. */
+  async expectTextContaining(text: string, timeout = TIMEOUT.xxlarge): Promise<void> {
+    jestExpect(await this.getText(timeout)).toContain(text);
+  }
+
+  /** Waits for visibility, then asserts the element's text matches `pattern`. */
+  async expectTextMatching(pattern: RegExp, timeout = TIMEOUT.xxlarge): Promise<void> {
+    jestExpect(await this.getText(timeout)).toMatch(pattern);
+  }
+
+  /**
+   * Waits for visibility, then asserts the element's accessibility label matches `pattern`.
+   * For a control with no text of its own, e.g. a Lumen `Tag`.
+   */
+  async expectLabelMatching(pattern: RegExp, timeout = TIMEOUT.xxlarge): Promise<void> {
+    jestExpect(await this.getLabel(timeout)).toMatch(pattern);
   }
 
   /** Names the element in the failure and keeps the Detox message, hard timeout marker included. */
