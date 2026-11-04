@@ -84,8 +84,9 @@ export function toFirmwareUpdateAvailability(
   firmwareCheck: string | null,
   firmwareUpdateDone: boolean,
 ): FirmwareUpdateAvailability {
-  if (firmwareUpdateDone || firmwareCheck === "offered") return "yes";
-  if (firmwareCheck === "checked") return "no";
+  if (firmwareUpdateDone) return "yes";
+  if (firmwareCheck === "offered" || firmwareCheck === "declined") return "yes";
+  if (firmwareCheck === "checked" || firmwareCheck === "upToDate") return "no";
   return "unknown";
 }
 

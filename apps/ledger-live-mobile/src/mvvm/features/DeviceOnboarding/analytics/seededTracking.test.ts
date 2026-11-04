@@ -69,7 +69,10 @@ describe("toFirmwareUpdateAvailability", () => {
   it.each([
     [null, false, "unknown"],
     ["checked", false, "no"],
+    ["upToDate", false, "no"],
     ["offered", false, "yes"],
+    ["declined", false, "yes"],
+    ["skipped", false, "unknown"],
     [null, true, "yes"],
   ] as const)("reads %s with update done %s as %s", (check, done, expected) => {
     expect(toFirmwareUpdateAvailability(check, done)).toBe(expected);
