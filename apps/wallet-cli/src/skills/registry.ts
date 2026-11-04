@@ -435,8 +435,8 @@ async function changedSinceInstall(
  *   can't tell an old version from local edits, so we don't let `--fix` overwrite
  *   it unless the caller also passes `--force`.
  * - Sidecar present: disk hash disagrees with the sidecar, or a path the sidecar
- *   didn't record already holds anything but the shipped file →
- *   `modified-locally`; else sidecar matches the shipped hash → `up-to-date`;
+ *   didn't record already holds anything but the shipped file or would be
+ *   written outside the skill dir → `modified-locally`; else sidecar matches the shipped hash → `up-to-date`;
  *   else → `outdated`.
  */
 export async function diagnoseSkill(skill: SkillManifest, root: string): Promise<SkillDiagnosis> {
