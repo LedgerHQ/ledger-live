@@ -14,18 +14,22 @@ jest.mock("~/db");
 
 describe("ConfigureDBSaveEffects", () => {
   let appStateListener: (nextAppState: AppStateStatus) => void;
+  let addEventListenerSpy: jest.SpyInstance;
 
   beforeEach(() => {
     jest.useFakeTimers();
-    jest.spyOn(AppState, "addEventListener").mockImplementation((_event, listener) => {
-      appStateListener = listener;
-      return { remove: jest.fn() };
-    });
+    jest.mocked(saveSettings).mockClear();
+    addEventListenerSpy = jest
+      .spyOn(AppState, "addEventListener")
+      .mockImplementation((_event, listener) => {
+        appStateListener = listener;
+        return { remove: jest.fn() };
+      });
   });
 
   afterEach(() => {
     jest.useRealTimers();
-    jest.restoreAllMocks();
+    addEventListenerSpy.mockRestore();
   });
 
   it("saves a change made just before the app goes to the background", async () => {
