@@ -77,6 +77,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
     },
 
     async save(key, value) {
+      const keyNames = Array.isArray(key) ? key.map(([k]) => k) : key;
       try {
         await ready;
         return state.storageType === STORAGE_TYPE.MMKV
@@ -87,7 +88,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
           error: e,
           state: state,
         });
-        return rejectWithError({ e, extraData: { op: "save", key } });
+        return rejectWithError({ e, extraData: { op: "save", key: keyNames } });
       }
     },
 
