@@ -19,7 +19,7 @@ import {
   type AccountOperationsPage,
   type AccountOperationsQuery,
 } from "@domain/entity-account-operation";
-import { BalanceAssetIdSchema } from "@domain/entity-account-balance";
+import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import { FiatCurrencyTickerSchema } from "@domain/entity-currency-fiat";
 import { mockAccountOperation } from "@domain/entity-account-operation/schema.mock";
 import { useAccountOperationToolProps } from "./useAccountOperationToolProps";
@@ -225,7 +225,7 @@ describe("useAccountOperationToolProps", () => {
 
   it("reads a window filtered on an asset, labelled by it, and pages it with its filter", async () => {
     const { result, reads } = setup();
-    const query = { filterAsset: BalanceAssetIdSchema.parse("ethereum") };
+    const query = { filterAsset: CryptoOrTokenCurrencyIdSchema.parse("ethereum") };
     const queryKey = accountDataQueryKey(query);
     act(() => result.current.onReadAll({ filterAsset: "ethereum" }));
     await waitFor(() => expect(reads).toHaveLength(2));

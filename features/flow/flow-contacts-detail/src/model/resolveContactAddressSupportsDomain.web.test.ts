@@ -1,4 +1,4 @@
-import { ContactCurrencyIdSchema } from "@domain/entity-contact";
+import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { resolveContactAddressSupportsDomain } from "./resolveContactAddressSupportsDomain";
 
@@ -14,7 +14,7 @@ describe("resolveContactAddressSupportsDomain", () => {
   ])("should resolve domain support for %s", (_, currencyId, expected) => {
     expect(
       resolveContactAddressSupportsDomain(
-        ContactCurrencyIdSchema.parse(currencyId),
+        CryptoOrTokenCurrencyIdSchema.parse(currencyId),
         supportsDomain,
       ),
     ).toBe(expected);
@@ -26,7 +26,7 @@ describe("resolveContactAddressSupportsDomain", () => {
 
   it("should check domain support against the parent network of a token", () => {
     resolveContactAddressSupportsDomain(
-      ContactCurrencyIdSchema.parse("ethereum/erc20/usd__coin"),
+      CryptoOrTokenCurrencyIdSchema.parse("ethereum/erc20/usd__coin"),
       supportsDomain,
     );
 

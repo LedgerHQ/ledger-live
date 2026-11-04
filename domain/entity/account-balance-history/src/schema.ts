@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { DateTimeIsoSchema } from "@shared/schema-primitives";
 import { AccountUUIDSchema } from "@domain/entity-account-descriptor";
-import { AmountStrSchema, BalanceAssetIdSchema } from "@domain/entity-account-balance";
+import { AmountStrSchema } from "@domain/entity-account-balance";
+import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 
 /** The periods of the balance graph, as the portfolio offers them. */
 export const BALANCE_HISTORY_RANGES = ["day", "week", "month", "year", "all"] as const;
@@ -19,7 +20,7 @@ export const BalancePointSchema = z.object({
 
 /** The balance of one asset over the range, oldest point first; the last point is the current balance. */
 export const AssetBalanceHistorySchema = z.object({
-  assetId: BalanceAssetIdSchema,
+  assetId: CryptoOrTokenCurrencyIdSchema,
   points: z.array(BalancePointSchema),
 });
 
