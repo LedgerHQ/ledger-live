@@ -82,12 +82,12 @@ export function usePerpsSignExecutorViewModel({ request, onClose }: Props) {
     const result = resultRef.current;
     if (!result) return;
 
-    if (result.type === "signed") {
-      settle(() => onSuccess({ signatures: result.signatures }));
-      onClose();
-      return;
-    }
-    settle(() => onError(result.error));
+    settle(() =>
+      result.type === "signed"
+        ? onSuccess({ signatures: result.signatures })
+        : onError(result.error),
+    );
+    onClose();
   }, [settle, onSuccess, onError, onClose]);
 
   const onUserCancel = useCallback(() => {

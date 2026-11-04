@@ -4,28 +4,17 @@ import { DeviceModelId } from "@ledgerhq/device-management-kit";
 import type { HyperliquidSignIntentJobState } from "@features/platform-hyperliquid-sign-intent";
 import { HyperliquidSignIntentComponentLWM } from "../componentLWM";
 
-const mockExportLogs = jest.fn();
-jest.mock("~/components/useExportLogs", () => ({
-  __esModule: true,
-  default: () => mockExportLogs,
-}));
-
 function renderComponent(jobState: HyperliquidSignIntentJobState | undefined) {
-  const onClose = jest.fn();
-  const { user } = render(
+  render(
     <HyperliquidSignIntentComponentLWM
       jobState={jobState}
       extraProps={undefined}
-      onClose={onClose}
+      onClose={jest.fn()}
     />,
   );
-
-  return { user, onClose };
 }
 
 describe("HyperliquidSignIntentComponentLWM", () => {
-  beforeEach(() => jest.clearAllMocks());
-
   it("renders nothing before the job emits a state", () => {
     renderComponent(undefined);
 
@@ -41,36 +30,14 @@ describe("HyperliquidSignIntentComponentLWM", () => {
     ).toBeVisible();
   });
 
-  it("tells the user the operation was rejected and lets them close", async () => {
-    const { user, onClose } = renderComponent({ type: "refused" });
+  it.each<HyperliquidSignIntentJobState>([
+    { type: "signed" },
+    { type: "refused" },
+    { type: "error", error: new Error("certificate not found") },
+  ])("leaves the $type outcome to the live app while the drawer closes", jobState => {
+    renderComponent(jobState);
 
-    expect(screen.getByText("Operation rejected on device")).toBeVisible();
-    await user.press(screen.getByRole("button", { name: "Close" }));
-
-    expect(onClose).toHaveBeenCalledTimes(1);
-  });
-
-  describe("when signing failed", () => {
-    const errorState: HyperliquidSignIntentJobState = {
-      type: "error",
-      error: new Error("certificate not found"),
-    };
-
-    it("lets the user save their logs", async () => {
-      const { user } = renderComponent(errorState);
-
-      expect(screen.getByTestId("perps-sign-intent-error")).toBeVisible();
-      await user.press(screen.getByRole("button", { name: "Save logs" }));
-
-      expect(mockExportLogs).toHaveBeenCalledTimes(1);
-    });
-
-    it("lets the user close", async () => {
-      const { user, onClose } = renderComponent(errorState);
-
-      await user.press(screen.getByRole("button", { name: "Close" }));
-
-      expect(onClose).toHaveBeenCalledTimes(1);
-    });
+    expect(screen.getByTestId("perps-sign-intent-done")).toBeVisible();
+    expect(screen.queryByRole("button")).toBeNull();
   });
 });
