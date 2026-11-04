@@ -30,14 +30,15 @@ const debounce = <T, R>(fn: (...args: T[]) => Promise<R>, ms: number) => {
     const rejects = rejectRefs;
     resolveRefs = [];
     rejectRefs = [];
-    inFlight = (async () => {
+    // One write at a time: flush() then waits for all of them.
+    inFlight = inFlight.then(async () => {
       try {
         const res = await fn(...args);
         resolves.forEach(r => r(res));
       } catch (err) {
         rejects.forEach(r => r(err));
       }
-    })();
+    });
   };
   const debounced = (...args: T[]) => {
     const promise: Promise<R> = new Promise((resolve, reject) => {

@@ -416,4 +416,24 @@ describe("db saves", () => {
 
     expect(writtenFile("windowParams")).toEqual({ MainWindow: { positions: { x: 1, y: 2 } } });
   });
+
+  it("waits on flush for each write of a namespace, not only the last one", async () => {
+    let finishFirstWrite: (() => void) | undefined;
+    writeFileMock.mockImplementationOnce(
+      () => new Promise<void>(resolve => (finishFirstWrite = resolve)),
+    );
+    void db.setKey("app", "settings", { theme: "dark" });
+    await new Promise(resolve => setTimeout(resolve, 50));
+    void db.setKey("app", "settings", { theme: "light" });
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    let flushed = false;
+    const flushing = db.flush().then(() => (flushed = true));
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(flushed).toBe(false);
+
+    finishFirstWrite?.();
+    await flushing;
+    expect(writtenFile("app")).toEqual({ settings: { theme: "light" } });
+  });
 });
