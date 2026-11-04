@@ -8,6 +8,8 @@ export type ChartSectionHeaderInput = Readonly<{
   scrubSelection?: ScrubSelection;
   chartPrices: readonly number[];
   isLoading: boolean;
+  variationAvailable?: boolean;
+  isVariationLoading?: boolean;
 }>;
 
 export type ChartSectionViewModelResult = Readonly<{

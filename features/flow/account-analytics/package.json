@@ -21,7 +21,8 @@
   },
   "dependencies": {
     "@domain/entity-currency-fiat": "workspace:*",
-    "@shared/i18n": "workspace:*"
+    "@shared/i18n": "workspace:*",
+    "zod": "catalog:"
   },
   "peerDependencies": {
     "react": "catalog:",

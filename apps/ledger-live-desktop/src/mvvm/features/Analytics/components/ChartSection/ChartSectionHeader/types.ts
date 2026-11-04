@@ -5,6 +5,8 @@ export type ChartSectionHeaderViewModel = Readonly<{
   balance: number;
   balanceAvailable: boolean;
   isLoading: boolean;
+  variationAvailable?: boolean;
+  isVariationLoading?: boolean;
   balanceFormatter: (value: number) => FormattedValue;
   discreet: boolean;
   percentageValue: number;
