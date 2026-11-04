@@ -487,13 +487,14 @@ function findDevtoolsImportViolations(
 const TEST_FILE = /(^|\/)(__tests__|__integrations__)\/|\.test\.[^/]+$/;
 
 /**
- * Path prefix aliases of an app's own `tsconfig.json` `compilerOptions.paths`, longest first.
- * Only `prefix*` patterns are kept, mapped to their first target.
+ * Module resolution settings of an app's own `tsconfig.json`: its `compilerOptions.paths` prefix
+ * aliases, longest first (only `prefix*` patterns, mapped to their first target), and its
+ * `moduleSuffixes`.
  *
  * @param {string} appRoot absolute
- * @returns {Array<{ prefix: string, target: string }>}
+ * @returns {{ aliases: Array<{ prefix: string, target: string }>, suffixes: string[] }}
  */
-function readPathAliases(appRoot) {
+function readModuleResolution(appRoot) {
   const tsconfig = path.join(appRoot, "tsconfig.json");
   const { config, error } = ts.readConfigFile(tsconfig, ts.sys.readFile);
   if (error) {
@@ -501,13 +502,46 @@ function readPathAliases(appRoot) {
   }
   const options = config.compilerOptions ?? {};
   const base = path.resolve(appRoot, options.baseUrl ?? ".");
-  return Object.entries(options.paths ?? {})
+  const aliases = Object.entries(options.paths ?? {})
     .filter(([pattern, targets]) => pattern.endsWith("*") && targets[0]?.endsWith("*"))
     .map(([pattern, targets]) => ({
       prefix: pattern.slice(0, -1),
       target: path.resolve(base, targets[0].slice(0, -1)),
     }))
     .sort((a, b) => b.prefix.length - a.prefix.length);
+  return { aliases, suffixes: options.moduleSuffixes ?? [""] };
+}
+
+/**
+ * @param {string} p
+ */
+function isFile(p) {
+  try {
+    return fs.statSync(p).isFile();
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * The source file a resolved specifier loads, in TypeScript's order: the path itself when it has a
+ * source extension, then `<p><suffix><ext>`, then `<p>/index<suffix><ext>`. `undefined` when none
+ * exists.
+ *
+ * @param {string} p absolute, as `resolveSpecifier` returns it
+ * @param {string[]} suffixes the app's `moduleSuffixes`
+ * @returns {string | undefined}
+ */
+function resolveSourceFile(p, suffixes) {
+  if (SOURCE_EXTS.has(path.extname(p)) && isFile(p)) return p;
+  for (const base of [p, path.join(p, "index")]) {
+    for (const suffix of suffixes) {
+      for (const ext of SOURCE_EXTS) {
+        if (isFile(base + suffix + ext)) return base + suffix + ext;
+      }
+    }
+  }
+  return undefined;
 }
 
 /**
@@ -550,34 +584,41 @@ function findDevtoolsHostViolations(workspaceRoot, hostApps) {
 
   for (const app of hostApps) {
     const appRoot = path.join(workspaceRoot, app.root);
-    const aliases = readPathAliases(appRoot);
+    const { aliases, suffixes } = readModuleResolution(appRoot);
     const folder = path.resolve(appRoot, app.allowedUnder);
-    const entries = new Set(app.entries.map(e => moduleKey(path.resolve(appRoot, e))));
+    const entryFiles = new Set(app.entries.map(e => path.resolve(appRoot, e)));
+    const entryKeys = new Set([...entryFiles].map(moduleKey));
+    /**
+     * An entry is matched on the file the specifier loads, so `DevToolsWindow.tsx` never passes
+     * for `DevToolsWindow/index.tsx`. Only a path with no file on disk falls back to its key.
+     *
+     * @param {string} resolved
+     */
+    const isEntry = resolved => {
+      const loaded = resolveSourceFile(resolved, suffixes);
+      return loaded ? entryFiles.has(loaded) : entryKeys.has(moduleKey(resolved));
+    };
     /**
      * @param {string | undefined} p
      * @param {string} dir
+     * @returns {p is string}
      */
     const isUnder = (p, dir) => p !== undefined && (p === dir || p.startsWith(dir + path.sep));
 
     walkSourceFiles(appRoot, file => {
       if (isUnder(file, folder)) return;
-      const content = fs.readFileSync(file, "utf8");
-      if (!content.includes("devtools/") && !content.includes(path.basename(folder))) return;
       const rel = path.relative(workspaceRoot, file);
       const isTest = TEST_FILE.test(path.relative(appRoot, file).split(path.sep).join("/"));
 
-      for (const { specifier, kind, line } of moduleReferences(sourceFiles.parse(file, content))) {
+      for (const { specifier, kind, line } of moduleReferences(sourceFiles.parse(file))) {
         const resolved = resolveSpecifier(file, specifier, aliases);
-        if (
-          specifier.startsWith("@devtools/") ||
-          (specifier.startsWith(".") && isUnder(resolved, devtoolsRoot))
-        ) {
+        if (specifier.startsWith("@devtools/") || isUnder(resolved, devtoolsRoot)) {
           violations.push({ file: rel, line, specifier, rule: "DEVTOOLS_HOST_APP_RULE" });
         } else if (
           !isTest &&
           kind !== "dynamic" &&
           isUnder(resolved, folder) &&
-          !entries.has(moduleKey(resolved))
+          !isEntry(resolved)
         ) {
           violations.push({ file: rel, line, specifier, rule: "DEVTOOLS_HOST_FOLDER_RULE" });
         }

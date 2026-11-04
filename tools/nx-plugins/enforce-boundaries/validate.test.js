@@ -1332,7 +1332,69 @@ test("devtools host apps: a relative path into devtools/ is forbidden", t => {
   ]);
 });
 
+test("devtools host apps: an alias path into devtools/ is forbidden", t => {
+  const root = hostWorkspace(t, {
+    [`${LLD}/src/config/devtools.ts`]: 'import { DevTools } from "~/../../../devtools/shell/src";',
+  });
+  assert.deepEqual(hostViolations(root), [
+    `${LLD}/src/config/devtools.ts:1 ~/../../../devtools/shell/src DEVTOOLS_HOST_APP_RULE`,
+  ]);
+});
+
 const NON_ENTRY = "screens/DevToolsScreen/useDevToolsScreenViewModel";
+
+test("devtools host apps: an alias that hides the DevTools folder name is still resolved", t => {
+  const root = makeTmpWorkspace({
+    [`${LLD}/tsconfig.json`]: JSON.stringify({
+      compilerOptions: { paths: { "Debug/*": ["./src/mvvm/features/DevTools/*"] } },
+    }),
+    [`${LLM}/tsconfig.json`]: JSON.stringify({ compilerOptions: {} }),
+    [`${LLD}/src/renderer/debug.ts`]:
+      'import { useTool } from "Debug/DeviceOnboarding/useDeviceOnboardingTool";',
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  assert.deepEqual(hostViolations(root), [
+    `${LLD}/src/renderer/debug.ts:1 Debug/DeviceOnboarding/useDeviceOnboardingTool DEVTOOLS_HOST_FOLDER_RULE`,
+  ]);
+});
+
+test("devtools host apps: a file that shadows an entry directory is not an entry", t => {
+  const window = `${LLD_DEVTOOLS}/components/DevToolsWindow`;
+  const screen = `${LLM_DEVTOOLS}/screens/DevToolsScreen`;
+  const root = hostWorkspace(t, {
+    [`${window}/index.tsx`]: "export const DevToolsWindow = 1;",
+    [`${window}.tsx`]: 'export * from "@devtools/shell";',
+    [`${screen}/index.tsx`]: "export default 1;",
+    [`${screen}.native.tsx`]: 'export * from "@devtools/shell";',
+    [`${LLD}/src/renderer/App.tsx`]:
+      'import { DevToolsWindow } from "LLD/features/DevTools/components/DevToolsWindow";',
+    [`${LLM}/src/components/Nav.tsx`]:
+      'import Screen from "LLM/features/DevTools/screens/DevToolsScreen";',
+  });
+  fs.writeFileSync(
+    path.join(root, LLM, "tsconfig.json"),
+    JSON.stringify({
+      compilerOptions: { moduleSuffixes: [".native", ""], paths: { "LLM/*": ["./src/mvvm/*"] } },
+    }),
+  );
+  assert.deepEqual(hostViolations(root), [
+    `${LLD}/src/renderer/App.tsx:1 LLD/features/DevTools/components/DevToolsWindow DEVTOOLS_HOST_FOLDER_RULE`,
+    `${LLM}/src/components/Nav.tsx:1 LLM/features/DevTools/screens/DevToolsScreen DEVTOOLS_HOST_FOLDER_RULE`,
+  ]);
+});
+
+test("devtools host apps: a declared entry that exists on disk is allowed", t => {
+  const window = `${LLD_DEVTOOLS}/components/DevToolsWindow`;
+  const root = hostWorkspace(t, {
+    [`${window}/index.tsx`]: "export const DevToolsWindow = 1;",
+    [`${window}/devToolsWindow.ts`]: "export const openDevToolsWindow = 1;",
+    [`${LLD}/src/renderer/App.tsx`]: [
+      'import { DevToolsWindow } from "LLD/features/DevTools/components/DevToolsWindow";',
+      'import { openDevToolsWindow } from "../mvvm/features/DevTools/components/DevToolsWindow/devToolsWindow";',
+    ].join("\n"),
+  });
+  assert.deepEqual(hostViolations(root), []);
+});
 
 test("devtools host apps: a static import of a non-entry DevTools file is forbidden", t => {
   const root = hostWorkspace(t, {
