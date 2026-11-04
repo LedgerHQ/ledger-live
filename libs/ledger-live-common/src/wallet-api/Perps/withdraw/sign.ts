@@ -1,11 +1,18 @@
 import { ethers } from "ethers";
-import { firstValueFrom, from } from "rxjs";
+import { filter, firstValueFrom, map } from "rxjs";
+import type Transport from "@ledgerhq/hw-transport";
+import {
+  DmkSignerEth,
+  LegacySignerEth,
+  type EvmSignature,
+  type EvmSigner,
+  type EvmSignerEvent,
+} from "@ledgerhq/live-signer-evm";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { Account, EIP712Message } from "@ledgerhq/types-live";
-import { messageSigner } from "../../../families/evm/setup";
-import { prepareMessageToSign } from "../../../families/evm/signerMessage";
 import type { Device } from "../../../hw/actions/types";
 import { withDevice } from "../../../hw/deviceAccess";
+import { isDmkTransport } from "../../../hw/dmkUtils";
 import { WithdrawSignerMismatchError, WithdrawUnsupportedRouteError } from "./errors";
 import type { WithdrawPayload } from "./schemas";
 
@@ -45,17 +52,30 @@ export async function signWithdrawTypedData(
   account: Account,
   typedData: EIP712Message,
 ): Promise<string> {
-  const messageOptions = prepareMessageToSign({ message: JSON.stringify(typedData) });
-  const { signature } = await firstValueFrom(
+  // Full EIP-712 only: the generic EVM message signer falls back to signing the hashes, which
+  // the device cannot clear-sign.
+  const { r, s, v } = await firstValueFrom(
     withDevice(
       device.deviceId,
       device.deviceName ? { matchDeviceByName: device.deviceName } : undefined,
-    )(transport => from(messageSigner.signMessage(transport, account, messageOptions))),
+    )(transport =>
+      createSigner(transport)
+        .signEIP712Message(account.freshAddressPath, typedData)
+        .pipe(
+          filter(isSignedEvent),
+          map(event => event.value),
+        ),
+    ),
   ).catch((error: unknown) => {
     // The legacy Ethereum signer reports a rejection as a raw status; the DMK one maps it.
     if (isRefusalStatus(error)) throw new UserRefusedOnDevice();
     throw error;
   });
+  const signature = ethers.Signature.from({
+    r: `0x${r}`,
+    s: `0x${s}`,
+    v: typeof v === "string" ? parseInt(v, 16) : v,
+  }).serialized;
 
   const { EIP712Domain: _domainType, ...types } = typedData.types;
   const signer = ethers.verifyTypedData(typedData.domain, types, typedData.message, signature);
@@ -63,6 +83,18 @@ export async function signWithdrawTypedData(
     throw new WithdrawSignerMismatchError(`Signed by ${signer}, expected ${account.freshAddress}`);
   }
   return signature;
+}
+
+function createSigner(transport: Transport): EvmSigner {
+  return isDmkTransport(transport)
+    ? new DmkSignerEth(transport.dmk, transport.sessionId)
+    : new LegacySignerEth(transport);
+}
+
+function isSignedEvent(
+  event: EvmSignerEvent,
+): event is { type: "signer.evm.signed"; value: EvmSignature } {
+  return event.type === "signer.evm.signed";
 }
 
 function isRefusalStatus(error: unknown): boolean {

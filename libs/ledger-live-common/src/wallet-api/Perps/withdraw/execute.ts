@@ -1,3 +1,4 @@
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { AccountLike } from "@ledgerhq/types-live";
 import type { Device } from "../../../hw/actions/types";
 import type { PerpsWithdrawResult } from "../server";
@@ -54,7 +55,8 @@ export async function executePerpsWithdraw({
   );
 
   onSigned?.();
-  markWithdrawRequestCommitted(requestId);
+  // The user may have left while the device was signing: then nothing is submitted.
+  if (!markWithdrawRequestCommitted(requestId)) throw new UserRefusedOnDevice();
   let swapId: string;
   try {
     ({ swapId } = await submitWithdraw({ payload, signature }));

@@ -81,6 +81,16 @@ describe("executePerpsWithdraw", () => {
     expect(getWithdrawRequestId()).not.toBeNull();
   });
 
+  it("submits nothing once the request was cancelled while the device signed", async () => {
+    mockedSign.mockImplementationOnce(async () => {
+      cancelWithdrawRequest();
+      return "0xsignature";
+    });
+
+    await expect(execute()).rejects.toThrow(UserRefusedOnDevice);
+    expect(mockedSubmit).not.toHaveBeenCalled();
+  });
+
   it("rejects the request when the submit outcome is unknown", async () => {
     const error = new WithdrawSubmitUnknownOutcomeError("Bad gateway", { status: 502 });
     mockedSign.mockResolvedValueOnce("0xsignature");

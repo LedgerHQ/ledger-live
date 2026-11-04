@@ -2,8 +2,9 @@ import { ethers } from "ethers";
 import type Transport from "@ledgerhq/hw-transport";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
-import type { Account, AnyMessage, EIP712Message } from "@ledgerhq/types-live";
-import { messageSigner } from "../../../families/evm/setup";
+import { LegacySignerEth } from "@ledgerhq/live-signer-evm";
+import type { Account, EIP712Message } from "@ledgerhq/types-live";
+import { of, throwError } from "rxjs";
 import type { Device } from "../../../hw/actions/types";
 import { withDevice } from "../../../hw/deviceAccess";
 import { WithdrawSignerMismatchError, WithdrawUnsupportedRouteError } from "./errors";
@@ -12,9 +13,9 @@ import { getWithdrawTypedData, signWithdrawTypedData } from "./sign";
 import { mayanWithdrawPayload, nearWithdrawPayload } from "./__fixtures__/responses";
 
 jest.mock("../../../hw/deviceAccess");
-jest.mock("../../../families/evm/setup", () => ({ messageSigner: { signMessage: jest.fn() } }));
+jest.mock("@ledgerhq/live-signer-evm");
 
-const mockedSignMessage = jest.mocked(messageSigner.signMessage);
+const mockSignEIP712Message = jest.fn();
 const wallet = new ethers.Wallet(`0x${"11".repeat(32)}`);
 const account = { freshAddress: wallet.address, freshAddressPath: "44'/60'/0'/0/0" } as Account;
 const device: Device = { deviceId: "device-1", modelId: DeviceModelId.nanoX, wired: false };
@@ -35,6 +36,11 @@ describe("withdraw signing", () => {
   beforeEach(() => {
     jest.resetAllMocks();
     jest.mocked(withDevice).mockImplementation(() => job => job({} as Transport));
+    jest
+      .mocked(LegacySignerEth)
+      .mockImplementation(
+        () => ({ signEIP712Message: mockSignEIP712Message }) as unknown as LegacySignerEth,
+      );
   });
 
   describe("getWithdrawTypedData", () => {
@@ -65,25 +71,43 @@ describe("withdraw signing", () => {
   });
 
   describe("signWithdrawTypedData", () => {
-    it("signs the typed data as EIP-712 with the withdrawing account", async () => {
-      const signature = await signTypedData(wallet, typedData);
-      mockedSignMessage.mockResolvedValueOnce({ signature });
+    const signedBy = async (signer: ethers.Wallet) => {
+      const signature = await signTypedData(signer, typedData);
+      const { r, s, v } = ethers.Signature.from(signature);
+      mockSignEIP712Message.mockReturnValueOnce(
+        of(
+          { type: "signer.evm.signing" },
+          { type: "signer.evm.signed", value: { r: r.slice(2), s: s.slice(2), v } },
+        ),
+      );
+      return signature;
+    };
+
+    it("signs the full typed data on the Ethereum app with the withdrawing account", async () => {
+      const signature = await signedBy(wallet);
 
       await expect(signWithdrawTypedData(device, account, typedData)).resolves.toBe(signature);
       expect(withDevice).toHaveBeenCalledWith("device-1", undefined);
-      expect(mockedSignMessage).toHaveBeenCalledWith(
-        expect.anything(),
-        account,
-        expect.objectContaining<Partial<AnyMessage>>({ standard: "EIP712", message: typedData }),
-      );
+      expect(mockSignEIP712Message).toHaveBeenCalledWith(account.freshAddressPath, typedData);
+    });
+
+    it("never falls back to blind-signing the hashes when full EIP-712 is unsupported", async () => {
+      const unsupported = Object.assign(new Error("INS_NOT_SUPPORTED"), {
+        statusText: "INS_NOT_SUPPORTED",
+      });
+      mockSignEIP712Message.mockReturnValueOnce(throwError(() => unsupported));
+
+      await expect(signWithdrawTypedData(device, account, typedData)).rejects.toBe(unsupported);
     });
 
     it("reports a rejection on the legacy transport as a refusal", async () => {
-      mockedSignMessage.mockRejectedValueOnce(
-        Object.assign(new Error("Condition of use not satisfied"), {
-          name: "TransportStatusError",
-          statusCode: 0x6985,
-        }),
+      mockSignEIP712Message.mockReturnValueOnce(
+        throwError(() =>
+          Object.assign(new Error("Condition of use not satisfied"), {
+            name: "TransportStatusError",
+            statusCode: 0x6985,
+          }),
+        ),
       );
 
       await expect(signWithdrawTypedData(device, account, typedData)).rejects.toThrow(
@@ -92,10 +116,7 @@ describe("withdraw signing", () => {
     });
 
     it("rejects a signature that does not recover to the withdrawing account", async () => {
-      const otherWallet = new ethers.Wallet(`0x${"22".repeat(32)}`);
-      mockedSignMessage.mockResolvedValueOnce({
-        signature: await signTypedData(otherWallet, typedData),
-      });
+      await signedBy(new ethers.Wallet(`0x${"22".repeat(32)}`));
 
       await expect(signWithdrawTypedData(device, account, typedData)).rejects.toThrow(
         WithdrawSignerMismatchError,
