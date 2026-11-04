@@ -22928,6 +22928,9 @@ importers:
       '@types/react-dom':
         specifier: 19.0.0
         version: 19.0.0
+      jest-resolve:
+        specifier: 30.5.0
+        version: 30.5.0
       react:
         specifier: 19.1.4
         version: 19.1.4

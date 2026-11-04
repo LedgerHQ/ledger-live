@@ -3,5 +3,11 @@
   "compilerOptions": {
     "types": ["node"]
   },
-  "include": ["index.ts", "mocks/**/*.js", "setup/**/*.cts", "setup/**/*.ts"]
+  "include": [
+    "index.ts",
+    "resolver.native.js",
+    "mocks/**/*.js",
+    "setup/**/*.cts",
+    "setup/**/*.ts"
+  ]
 }
