@@ -5,9 +5,8 @@ import BleDevicePairingFlowComponent, {
 } from "~/components/BleDevicePairingFlow";
 import React, { useCallback } from "react";
 import { DevicesWithTouchScreen } from "@ledgerhq/device-core";
-import { Device, DeviceModelId } from "@ledgerhq/types-devices";
+import { Device } from "@ledgerhq/types-devices";
 import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
-import { useFeature } from "@features/platform-feature-flags";
 import { NavigatorName, ScreenName } from "~/const";
 import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
@@ -20,13 +19,8 @@ export type Props = RootComposite<
 >;
 
 const OnboardingBleDevicePairingFlow: React.FC<Props> = ({ navigation, route }) => {
-  const isApexSupported = useFeature("supportDeviceApex")?.enabled ?? false;
   // The sync-onboarding deep link carries no params: only touchscreen devices can open it
-  const filterByDeviceModelId =
-    route.params?.filterByDeviceModelId ??
-    DevicesWithTouchScreen.filter(
-      deviceModelId => isApexSupported || deviceModelId !== DeviceModelId.apex,
-    );
+  const filterByDeviceModelId = route.params?.filterByDeviceModelId ?? [...DevicesWithTouchScreen];
 
   const onPairingSuccess = useCallback(
     // _discoveredDevice will be used for DMK-based device connections. Do not remove.

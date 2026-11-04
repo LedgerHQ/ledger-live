@@ -1,6 +1,7 @@
 import React from "react";
 import { Text } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { DevicesWithTouchScreen } from "@ledgerhq/device-core";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { render, screen } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
@@ -36,9 +37,7 @@ describe("OnboardingBleDevicePairingFlow", () => {
   it("should scan for touchscreen devices when opened from the sync-onboarding deep link", () => {
     renderPairingFlow();
 
-    expect(
-      screen.getByText(`pairing ${JSON.stringify([DeviceModelId.stax, DeviceModelId.europa])}`),
-    ).toBeVisible();
+    expect(screen.getByText(`pairing ${JSON.stringify(DevicesWithTouchScreen)}`)).toBeVisible();
   });
 
   it("should scan for the device model it was opened with", () => {
