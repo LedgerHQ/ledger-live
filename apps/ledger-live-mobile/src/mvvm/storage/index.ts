@@ -28,7 +28,8 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
 
   const incrementNumberOfErrorsDebug = incrementNumberOfErrors.bind(null, state);
 
-  init(state);
+  const ready = Promise.resolve(init(state));
+
   return {
     getState() {
       return { ...state };
@@ -38,6 +39,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
 
     async keys() {
       try {
+        await ready;
         return state.storageType === STORAGE_TYPE.MMKV
           ? await trackStorageOperation("keys", STORAGE_TYPE.MMKV, "all", () =>
               Promise.resolve(mmkvStorageWrapper.keys()),
@@ -56,6 +58,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
 
     async get(key) {
       try {
+        await ready;
         return state.storageType === STORAGE_TYPE.MMKV
           ? await trackStorageOperation("get", STORAGE_TYPE.MMKV, key, () =>
               Promise.resolve(mmkvStorageWrapper.get(key)),
@@ -75,6 +78,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
 
     async getString(key) {
       try {
+        await ready;
         return state.storageType === STORAGE_TYPE.MMKV
           ? await trackStorageOperation("getString", STORAGE_TYPE.MMKV, key, () =>
               Promise.resolve(mmkvStorageWrapper.getString(key)),
@@ -94,6 +98,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
 
     async save(key, value) {
       try {
+        await ready;
         return state.storageType === STORAGE_TYPE.MMKV
           ? await trackStorageOperation("save", STORAGE_TYPE.MMKV, key as string, () =>
               Promise.resolve(mmkvStorageWrapper.save(key, value)),
@@ -112,6 +117,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
 
     async saveString(key, value) {
       try {
+        await ready;
         return state.storageType === STORAGE_TYPE.MMKV
           ? await trackStorageOperation("saveString", STORAGE_TYPE.MMKV, key, () =>
               Promise.resolve(mmkvStorageWrapper.saveString(key, value)),
@@ -130,6 +136,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
 
     async update(key, value) {
       try {
+        await ready;
         return state.storageType === STORAGE_TYPE.MMKV
           ? await trackStorageOperation("update", STORAGE_TYPE.MMKV, key, () =>
               Promise.resolve(mmkvStorageWrapper.update(key, value)),
@@ -148,6 +155,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
 
     async delete(key) {
       try {
+        await ready;
         return state.storageType === STORAGE_TYPE.MMKV
           ? await trackStorageOperation("delete", STORAGE_TYPE.MMKV, key, () =>
               mmkvStorageWrapper.delete(key),
@@ -166,6 +174,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
 
     async deleteAll() {
       try {
+        await ready;
         return state.storageType === STORAGE_TYPE.MMKV
           ? await trackStorageOperation("deleteAll", STORAGE_TYPE.MMKV, "all", () =>
               mmkvStorageWrapper.deleteAll(),
@@ -184,6 +193,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
 
     async push(key, value) {
       try {
+        await ready;
         return state.storageType === STORAGE_TYPE.MMKV
           ? await trackStorageOperation("push", STORAGE_TYPE.MMKV, key, () =>
               Promise.resolve(mmkvStorageWrapper.push(key, value)),
@@ -202,6 +212,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
 
     async stringify() {
       try {
+        await ready;
         return state.storageType === STORAGE_TYPE.MMKV
           ? await trackStorageOperation("stringify", STORAGE_TYPE.MMKV, "all", () =>
               Promise.resolve(mmkvStorageWrapper.stringify()),
@@ -220,6 +231,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
 
     async migrate() {
       try {
+        await ready;
         await migrator.migrate(state);
       } catch (e) {
         console.error("Error while migrating storage", {
@@ -232,6 +244,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
 
     async resetMigration() {
       try {
+        await ready;
         await migrator.resetMigration(state);
       } catch (e) {
         console.error("Error while resetting migration", {
@@ -244,6 +257,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
 
     async rollbackMigration() {
       try {
+        await ready;
         await migrator.rollbackToAsyncStorage(state);
       } catch (e) {
         console.error("Error while rolling back migration", {
@@ -256,6 +270,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
 
     async handleMigration(featureFlag: Features["llmMmkvMigration"]) {
       try {
+        await ready;
         await migrator.handleMigration(state, featureFlag);
       } catch (e) {
         console.error("Error handling migration", {
@@ -269,30 +284,45 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
 }
 
 /**
- * Initializes the sorage state reference.
+ * Initializes the storage state reference.
+ *
+ * A new install has no data in AsyncStorage and no status in MMKV. It starts on MMKV,
+ * so it has nothing to migrate.
  *
  * @param state
  * The storage state to initialize.
  */
-export function initStorageState(state: StorageState): void {
-  const isMMKVReady =
-    mmkvStorageWrapper.getString(MIGRATION_STATUS_KEY) === MIGRATION_STATUS.COMPLETED;
+export async function initStorageState(state: StorageState): Promise<void> {
+  const migrationStatus = mmkvStorageWrapper.getString(MIGRATION_STATUS_KEY);
+  const rollbackStatus = mmkvStorageWrapper.getString(ROLLBACK_STATUS_KEY);
 
-  const hasRolledBack =
-    mmkvStorageWrapper.getString(ROLLBACK_STATUS_KEY) === ROLLBACK_STATUS.COMPLETED;
-
-  if (hasRolledBack) {
+  if (rollbackStatus === ROLLBACK_STATUS.COMPLETED) {
     state.storageType = STORAGE_TYPE.ASYNC_STORAGE;
     state.migrationStatus = MIGRATION_STATUS.ROLLED_BACK;
     state.rollbackStatus = ROLLBACK_STATUS.COMPLETED;
     return;
   }
 
-  if (isMMKVReady) {
+  if (migrationStatus === MIGRATION_STATUS.COMPLETED) {
     state.storageType = STORAGE_TYPE.MMKV;
     state.migrationStatus = MIGRATION_STATUS.COMPLETED;
     state.rollbackStatus = ROLLBACK_STATUS.NOT_STARTED;
     return;
+  }
+
+  if (migrationStatus !== null || rollbackStatus !== null) return;
+
+  try {
+    const asyncStorageKeys = await asyncStorageWrapper.keys();
+    if (asyncStorageKeys.length > 0) return;
+
+    migrator.setMigrationStatus(state, MIGRATION_STATUS.COMPLETED);
+    migrator.selectMMKVStorage(state);
+  } catch (e) {
+    console.error("Error checking AsyncStorage for a new install", {
+      error: e,
+      state: state,
+    });
   }
 }
 
