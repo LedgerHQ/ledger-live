@@ -23,12 +23,8 @@ export default class PortfolioPage {
     `^(${this.accountsListView}|${this.emptyPortfolioListId})$`,
   );
   addAccountCta = "add-account-cta";
-  transactionHistorySectionTitleId = "portfolio-transaction-history-section";
   showAllAssetsButton = "assets-button";
   showAllAccountsButton = "show-all-accounts-button";
-  seeAllTransactionsButton = "portfolio-seeAll-transaction";
-  operationRowBody = "operationRowBody";
-  operationRowDate = "operationRowDate";
   operationRowCounterValue = "operationRow-counterValue-label";
   assetItemRegExp = new RegExp(`${this.baseAssetItem}[^-]+$`);
   tabSelectorBase = "tab-selector-";
@@ -81,10 +77,6 @@ export default class PortfolioPage {
   assetItemExactRegExp = (currencyName: string) =>
     new RegExp(`^${this.baseAssetItem}${escapeRegExp(currencyName)}$`);
   tabSelector = (id: "Accounts" | "Assets") => getElementById(`${this.tabSelectorBase}${id}`);
-  operationByType = (operationType: string | RegExp, accountName?: string) =>
-    accountName
-      ? getElementByIdWithDescendantTexts(this.operationRowBody, accountName, operationType)
-      : getElementByIdWithDescendantTexts(this.operationRowBody, operationType);
 
   private flags: Features["noah"] | null = null;
 
@@ -275,22 +267,6 @@ export default class PortfolioPage {
     }
     await scrollToId(this.assetItemId(currencyName), this.accountsListView);
     await tapById(this.assetItemId(currencyName));
-  }
-
-  @Step("Check asset transaction history")
-  async checkTransactionHistorySection() {
-    await scrollToId(this.transactionHistorySectionTitleId, this.accountsListView);
-    await detoxExpect(getElementById(this.transactionHistorySectionTitleId)).toBeVisible();
-    jestExpect(await countElementsById(this.operationRowDate)).toBeLessThanOrEqual(3);
-    await scrollToId(this.seeAllTransactionsButton, this.accountsListView, 2000, "down");
-    await detoxExpect(getElementById(this.seeAllTransactionsButton)).toBeVisible();
-    await tapById(this.seeAllTransactionsButton);
-    jestExpect(await countElements(getElementsById(this.operationRowDate))).toBeGreaterThan(3);
-  }
-
-  @Step("Click on selected last operation {{{0}}} for {{{1}}}")
-  async selectAndClickOnLastOperation(operationType: string | RegExp, accountName?: string) {
-    await tapByElement(this.operationByType(operationType, accountName).atIndex(0));
   }
 
   @Step("Tap on Connect button")

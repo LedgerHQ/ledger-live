@@ -7,6 +7,5 @@ export { SeeAllAssetsButton } from "LLM/features/WalletAssets/components/SeeAllA
 export { PortfolioStablecoinsSection } from "LLM/features/WalletAssets/views/StablecoinsSection";
 export { PortfolioEmptySection } from "./PortfolioEmptySection";
 export { PortfolioHeaderSection } from "./PortfolioHeaderSection";
-export { PortfolioOperationsSection } from "./PortfolioOperationsSection";
 export { PortfolioBannersSection } from "./PortfolioBannersSection";
 export { PortfolioPerpsEntryPoint } from "./PortfolioPerpsEntryPoint";
