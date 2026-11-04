@@ -104,6 +104,23 @@ function deviceModelInfo(device: Device, version: string): DeviceModelInfo {
   } as unknown as DeviceModelInfo;
 }
 
+function headerQuit(
+  state: ChecksScreenState,
+  firmwareOfferClosed: boolean,
+  onQuit: ChecksScreenProps["onQuit"],
+) {
+  if (state === "updating" && !firmwareOfferClosed) return undefined;
+  return onQuit;
+}
+
+function firmwareOfferVisible(
+  hasUpdate: boolean,
+  unsupportedOpen: boolean,
+  firmwareOfferClosed: boolean,
+) {
+  return hasUpdate && !unsupportedOpen && !firmwareOfferClosed;
+}
+
 function firmwareEligibility(device: Device, current: string) {
   const info = deviceModelInfo(device, current);
   const newUxSupported = isNewFirmwareUpdateUxSupported(device, info);
@@ -194,7 +211,7 @@ export function useChecksScreenViewModel({
   return {
     ...layouts[layout],
     closeLabel: t("deviceOnboarding.checks.close"),
-    onQuit: state === "updating" && !firmwareOfferClosed ? undefined : onQuit,
+    onQuit: headerQuit(state, firmwareOfferClosed, onQuit),
     allowSheet:
       state === "awaitingAllow" && !allowClosed
         ? {
@@ -208,7 +225,7 @@ export function useChecksScreenViewModel({
           }
         : undefined,
     firmwareUpdate: {
-      isOpen: update !== null && !isUnsupportedUpdateOpen && !firmwareOfferClosed,
+      isOpen: firmwareOfferVisible(update !== null, isUnsupportedUpdateOpen, firmwareOfferClosed),
       firmwareVersion: update?.available ?? "",
       productName,
       onUpdate: () => {
