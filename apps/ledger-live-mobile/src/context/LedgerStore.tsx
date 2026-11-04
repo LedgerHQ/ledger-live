@@ -90,9 +90,17 @@ async function retry<T>(fn: () => Promise<T>, retries: number, delay: number): P
 
 /**
  * Without these keys, the savers and Ledger Sync would persist an empty state over the stored one
- * (the accounts saver deletes every stored account that is not in the state), so the boot stops instead.
+ * (the accounts saver deletes every stored account that is not in the state, and the known devices
+ * and identities savers write at start), so the boot stops instead.
  */
-const BOOT_BLOCKING_KEYS = new Set(["accounts", "wallet", "trustchain"]);
+const BOOT_BLOCKING_KEYS = new Set([
+  "accounts",
+  "wallet",
+  "trustchain",
+  "knownDevices",
+  "identities",
+  "user",
+]);
 
 /**
  * Reads 1 key and never rejects, so 1 unreadable value does not block the other reads.

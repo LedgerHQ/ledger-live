@@ -11,6 +11,7 @@ import LedgerStoreProvider from "./LedgerStore";
 const mockGetSettings = jest.fn(() => Promise.resolve(undefined));
 const mockGetAccounts = jest.fn<Promise<unknown>, []>(() => Promise.resolve(undefined));
 const mockGetMarketState = jest.fn<Promise<unknown>, []>(() => Promise.resolve(undefined));
+const mockGetKnownDevices = jest.fn<Promise<unknown>, []>(() => Promise.resolve(undefined));
 const mockSaveAccounts = jest.fn(() => Promise.resolve());
 
 jest.mock("../db", () => {
@@ -25,7 +26,7 @@ jest.mock("../db", () => {
     getSettings: () => mockGetSettings(),
     getBle: empty,
     getHistory: empty,
-    getKnownDevices: empty,
+    getKnownDevices: () => mockGetKnownDevices(),
     getLargeScreenUpsellModalState: empty,
     getPredictionsState: empty,
     getPostOnboardingState: empty,
@@ -79,6 +80,7 @@ describe("LedgerStoreProvider", () => {
   beforeEach(() => {
     mockGetAccounts.mockReset().mockResolvedValue(undefined);
     mockGetMarketState.mockReset().mockResolvedValue(undefined);
+    mockGetKnownDevices.mockReset().mockResolvedValue(undefined);
     mockSaveAccounts.mockClear();
     jest.spyOn(console, "error").mockImplementation(() => {});
     mockBootstrapCardSession.mockClear();
@@ -186,5 +188,18 @@ describe("LedgerStoreProvider", () => {
     expect(onInitFinished).not.toHaveBeenCalled();
     expect(mockBootstrapCardSession).not.toHaveBeenCalled();
     expect(mockSaveAccounts).not.toHaveBeenCalled();
+  });
+
+  it("should stop the boot when the known devices cannot be read", async () => {
+    mockGetKnownDevices.mockRejectedValue(corruptValueError());
+    const store = createStore();
+    store.dispatch(setCachedFlagsSettled());
+
+    renderProvider(store);
+    await act(() => jest.runAllTimersAsync());
+
+    // The known devices saver writes at start, so it would replace the stored devices.
+    expect(screen.getByText("loading")).toBeOnTheScreen();
+    expect(mockBootstrapCardSession).not.toHaveBeenCalled();
   });
 });
