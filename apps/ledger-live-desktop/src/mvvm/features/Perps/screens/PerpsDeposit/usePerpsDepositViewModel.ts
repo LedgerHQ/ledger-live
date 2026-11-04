@@ -16,6 +16,8 @@ import { useFeature } from "@features/platform-feature-flags";
 import { track } from "@shared/analytics";
 import { useNetworkState } from "@shared/network-status";
 import { cancelDepositRequest } from "@ledgerhq/live-common/wallet-api/Perps/deposit/request";
+import { getDepositSpendableBalance } from "@ledgerhq/live-common/wallet-api/Perps/deposit/coinErrors";
+import { openURL } from "~/renderer/linking";
 import {
   DEPOSIT_FORM_ERROR_ANALYTICS_MESSAGES,
   PERPS_DEPOSIT_ANALYTICS_CONTEXT,
@@ -222,11 +224,14 @@ export function usePerpsDepositViewModel(
     });
   }, [counterValueUnit, depositAccountBalanceCounterValue, discreet, locale]);
 
-  const maxAmount = useMemo(
-    () =>
-      depositAccountBalanceCounterValue?.shiftedBy(-counterValueUnit.magnitude).toNumber() ?? null,
-    [counterValueUnit.magnitude, depositAccountBalanceCounterValue],
-  );
+  const maxAmount = useMemo(() => {
+    if (!depositAccount || !depositCurrency) return null;
+    return (
+      calculateCountervalue(depositCurrency, getDepositSpendableBalance(depositAccount))
+        ?.shiftedBy(-counterValueUnit.magnitude)
+        .toNumber() ?? null
+    );
+  }, [calculateCountervalue, counterValueUnit.magnitude, depositAccount, depositCurrency]);
 
   const tradeMaxConstant = useFeature("ptxTradeMaxConstant");
   const maxBuffer = useMemo(() => {
@@ -273,7 +278,7 @@ export function usePerpsDepositViewModel(
 
   const sentAmountAtomic = useMemo(() => {
     if (!isFormComplete || !depositAccount || !convertedAmount) return undefined;
-    return BigNumber.min(convertedAmount, depositAccount.spendableBalance).integerValue(
+    return BigNumber.min(convertedAmount, getDepositSpendableBalance(depositAccount)).integerValue(
       BigNumber.ROUND_FLOOR,
     );
   }, [convertedAmount, depositAccount, isFormComplete]);
@@ -355,16 +360,22 @@ export function usePerpsDepositViewModel(
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [openedBuyTarget, setOpenedBuyTarget] = useState<DepositBuyTarget | null>(null);
 
+  const supportUrl = statusError?.supportUrl;
+
   const openDetails = useCallback(() => {
-    if (!buyTarget) return;
+    if (!buyTarget && !supportUrl) return;
     track("button_clicked", {
       button: "learn more",
       ...PERPS_DEPOSIT_ANALYTICS_CONTEXT,
       ...analyticsCurrencies,
     });
+    if (supportUrl) {
+      openURL(supportUrl);
+      return;
+    }
     setOpenedBuyTarget(buyTarget);
     setIsDetailsOpen(true);
-  }, [analyticsCurrencies, buyTarget]);
+  }, [analyticsCurrencies, buyTarget, supportUrl]);
 
   const closeDetails = useCallback(() => setIsDetailsOpen(false), []);
 
@@ -462,7 +473,7 @@ export function usePerpsDepositViewModel(
     maxBuffer,
     selectMax,
     statusError,
-    canLearnMore: buyTarget !== null,
+    canLearnMore: buyTarget !== null || supportUrl !== undefined,
     isDetailsOpen,
     details: openedBuyTarget?.details ?? null,
     openDetails,

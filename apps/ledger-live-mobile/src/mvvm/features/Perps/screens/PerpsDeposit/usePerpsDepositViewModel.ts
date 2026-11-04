@@ -47,6 +47,8 @@ import {
 } from "../../constants/depositFunding";
 import type { PerpsDepositOutcome } from "../../hooks/usePerpsDepositExecution";
 import { cancelDepositRequest } from "@ledgerhq/live-common/wallet-api/Perps/deposit/request";
+import { getDepositSpendableBalance } from "@ledgerhq/live-common/wallet-api/Perps/deposit/coinErrors";
+import { Linking } from "react-native";
 import type { PerpsReviewParams } from "./components/PerpsReview";
 import { usePerpsDepositQuote } from "./usePerpsDepositQuote";
 import { applyAmountKey, toAmountText } from "../../utils/amountKeys";
@@ -237,11 +239,14 @@ export function usePerpsDepositViewModel({
     });
   }, [counterValueUnit, depositAccountBalanceCounterValue, discreet, locale]);
 
-  const maxAmount = useMemo(
-    () =>
-      depositAccountBalanceCounterValue?.shiftedBy(-counterValueUnit.magnitude).toNumber() ?? null,
-    [counterValueUnit.magnitude, depositAccountBalanceCounterValue],
-  );
+  const maxAmount = useMemo(() => {
+    if (!depositAccount || !depositCurrency) return null;
+    return (
+      calculateCountervalue(depositCurrency, getDepositSpendableBalance(depositAccount))
+        ?.shiftedBy(-counterValueUnit.magnitude)
+        .toNumber() ?? null
+    );
+  }, [calculateCountervalue, counterValueUnit.magnitude, depositAccount, depositCurrency]);
 
   const tradeMaxConstant = useFeature("ptxTradeMaxConstant");
   const maxBuffer = useMemo(() => {
@@ -283,7 +288,7 @@ export function usePerpsDepositViewModel({
 
   const sentAmountAtomic = useMemo(() => {
     if (!isFormComplete || !depositAccount || !convertedAmount) return undefined;
-    return BigNumber.min(convertedAmount, depositAccount.spendableBalance).integerValue(
+    return BigNumber.min(convertedAmount, getDepositSpendableBalance(depositAccount)).integerValue(
       BigNumber.ROUND_FLOOR,
     );
   }, [convertedAmount, depositAccount, isFormComplete]);
@@ -366,16 +371,22 @@ export function usePerpsDepositViewModel({
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [openedBuyTarget, setOpenedBuyTarget] = useState<DepositBuyTarget | null>(null);
 
+  const supportUrl = statusError?.supportUrl;
+
   const openDetails = useCallback(() => {
-    if (!buyTarget) return;
+    if (!buyTarget && !supportUrl) return;
     track("button_clicked", {
       button: "learn more",
       ...PERPS_DEPOSIT_ANALYTICS_CONTEXT,
       ...analyticsCurrencies,
     });
+    if (supportUrl) {
+      void Linking.openURL(supportUrl);
+      return;
+    }
     setOpenedBuyTarget(buyTarget);
     setIsDetailsOpen(true);
-  }, [analyticsCurrencies, buyTarget]);
+  }, [analyticsCurrencies, buyTarget, supportUrl]);
 
   const closeDetails = useCallback(() => setIsDetailsOpen(false), []);
 
@@ -483,7 +494,7 @@ export function usePerpsDepositViewModel({
     maxAmount: maxAmount ?? 0,
     maxBuffer,
     statusError,
-    canLearnMore: buyTarget !== null,
+    canLearnMore: buyTarget !== null || supportUrl !== undefined,
     isDetailsOpen,
     details: openedBuyTarget?.details ?? null,
     openDetails,

@@ -31,6 +31,7 @@ function mainAccount(spendableBalance: string, overrides: Partial<Account> = {})
 const usdc = {
   type: "TokenCurrency",
   id: "arbitrum/erc20/usd_coin",
+  parentCurrencyId: "arbitrum",
   ticker: "USDC",
   units: [{ name: "USD Coin", code: "USDC", magnitude: 6 }],
 };

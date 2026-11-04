@@ -9,12 +9,23 @@ import {
   type QuoteEstimatedNetworkFee,
 } from "@ledgerhq/wallet-api-exchange-module";
 import { toLocaleString } from "@ledgerhq/live-currency-format";
+import {
+  getAccountStateError,
+  getDepositSpendableBalance,
+  getMinimumBalanceError,
+  needsFeeForMinimumBalance,
+} from "./coinErrors";
 import type { PerpsDepositQuote, PerpsDepositQuoteResult } from "./quote";
 
 export type DepositFormErrorCode =
   | "offline"
+  | "seiEvmUnlinked"
+  | "aleoPrivateBalance"
+  | "tezosUnrevealed"
   | "insufficientBalance"
   | "notEnoughFees"
+  | "dotMinimumBalance"
+  | "xlmMinimumBalance"
   | "amountTooLow"
   | "amountTooHigh"
   | "noQuotes";
@@ -28,8 +39,13 @@ export type DepositFormError = Readonly<{
 
 export const DEPOSIT_FORM_ERROR_ANALYTICS_MESSAGES: Record<DepositFormErrorCode, string> = {
   offline: "network_down",
+  seiEvmUnlinked: "sei_evm_unlinked_account",
+  aleoPrivateBalance: "aleo_private_balance_unswappable",
+  tezosUnrevealed: "tezos_unrevealed_account",
   insufficientBalance: "no_funds",
   notEnoughFees: "not_enough_network_fees",
+  dotMinimumBalance: "dot_prevent_deactivating",
+  xlmMinimumBalance: "xlm_prevent_deactivating",
   amountTooLow: "minAmount",
   amountTooHigh: "maxAmount",
   noQuotes: "no_result",
@@ -176,7 +192,7 @@ function getFeeError({
   const exceedsBalance =
     quote.estimatedNetworkFee !== undefined &&
     sentAmountAtomic !== undefined &&
-    sentAmountAtomic.plus(estimatedFee).gt(feeAccount.spendableBalance);
+    sentAmountAtomic.plus(estimatedFee).gt(getDepositSpendableBalance(feeAccount));
   return exceedsBalance ? notEnoughFeesError(feeAccount, estimatedFee, locale) : null;
 }
 
@@ -244,8 +260,11 @@ export function resolveDepositFormError({
   locale,
 }: ResolveDepositFormErrorParams): DepositFormError | null {
   if (isOffline) return OFFLINE_ERROR;
-  if (baseError?.code === "insufficientBalance") return baseError;
   if (!depositAccount || depositAmount <= 0) return baseError;
+
+  const accountStateError = getAccountStateError(depositAccount, parentAccount);
+  if (accountStateError) return accountStateError;
+  if (baseError?.code === "insufficientBalance") return baseError;
 
   const feeAccount = getDepositFeeAccount(depositAccount, parentAccount);
   if (!feeAccount) return NO_QUOTES_ERROR;
@@ -261,10 +280,14 @@ export function resolveDepositFormError({
   if (baseError) return baseError;
   if (!quoteResult) return null;
 
+  const { quote } = quoteResult;
+  const minimumBalanceError = getMinimumBalanceError(depositAccount, quote, sentAmountAtomic);
+  if (minimumBalanceError) return minimumBalanceError;
+
   const amountLimitError = getAmountLimitError(quoteResult, depositAccount, locale);
   if (amountLimitError) return amountLimitError;
 
-  return quoteResult.quote ? null : NO_QUOTES_ERROR;
+  return quote && !needsFeeForMinimumBalance(depositAccount, quote) ? null : NO_QUOTES_ERROR;
 }
 
 export type DepositErrorDetails = Readonly<{

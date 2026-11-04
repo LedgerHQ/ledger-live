@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { Linking } from "react-native";
 import { CryptoCurrencyIdSchema, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { type TokenCurrency, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
@@ -679,5 +680,26 @@ describe("usePerpsDepositViewModel", () => {
       }).payload.routes,
     ).toEqual([{ key: "live-app" }, { key: "exchange" }]);
     await expect(request).rejects.toBeInstanceOf(UserRefusedOnDevice);
+  });
+
+  it("opens the support article of a coin error from Learn More", () => {
+    const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(true);
+    const tezosAccount = {
+      ...createAccount("tezos-1", "tezos", 10000),
+      readiness: { ready: false },
+    };
+    const { props } = createProps();
+    const { result } = renderViewModel(props, false, [tezosAccount]);
+
+    act(() => result.current.pickDepositAccount());
+    selectFundingAccount(tezosAccount);
+    typeAmount(result.current.pressAmountKey, "20");
+
+    expect(result.current.statusError?.code).toBe("tezosUnrevealed");
+
+    act(() => result.current.openDetails());
+
+    expect(openURL).toHaveBeenCalledWith(result.current.statusError?.supportUrl);
+    openURL.mockRestore();
   });
 });

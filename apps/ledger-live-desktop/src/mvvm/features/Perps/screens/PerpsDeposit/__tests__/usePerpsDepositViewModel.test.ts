@@ -32,6 +32,11 @@ jest.mock("react-router", () => ({
   useNavigate: () => mockNavigate,
 }));
 
+const mockOpenURL = jest.fn();
+jest.mock("~/renderer/linking", () => ({
+  openURL: (url: string) => mockOpenURL(url),
+}));
+
 const mockCancelDepositRequest = jest.fn();
 jest.mock("@ledgerhq/live-common/wallet-api/Perps/deposit/request", () => ({
   cancelDepositRequest: () => mockCancelDepositRequest(),
@@ -555,6 +560,27 @@ describe("usePerpsDepositViewModel", () => {
       expect(mockNavigate).toHaveBeenCalledWith("/exchange", {
         state: { currency: "arbitrum", mode: "buy", account: usdcParent.id, returnTo: undefined },
       });
+    });
+
+    it("opens the support article of a coin error from Learn More", () => {
+      const tezosAccount = {
+        ...createAccount("tezos-1", "tezos", 10000),
+        readiness: { ready: false },
+      };
+      const { result } = renderViewModel(
+        { draft: { depositAccount: tezosAccount, depositAmount: 20 } },
+        jest.fn(),
+        false,
+        [tezosAccount],
+      );
+
+      expect(result.current.statusError?.code).toBe("tezosUnrevealed");
+      expect(result.current.canLearnMore).toBe(true);
+
+      act(() => result.current.openDetails());
+
+      expect(mockOpenURL).toHaveBeenCalledWith(result.current.statusError?.supportUrl);
+      expect(result.current.isDetailsOpen).toBe(false);
     });
   });
 });
