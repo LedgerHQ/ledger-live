@@ -341,7 +341,11 @@ export const test = base.extend<TestFixtures>({
 
     try {
       if (process.platform === "win32") {
-        execFileSync("powershell", [
+        const powershell = path.win32.join(
+          process.env.SystemRoot ?? "C:\\Windows",
+          "System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        );
+        execFileSync(powershell, [
           "-NoProfile",
           "-Command",
           `Get-CimInstance Win32_Process | Where-Object { $_.ProcessId -ne $PID -and $_.CommandLine -like '*${path.basename(userdataDestinationPath)}*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }`,
