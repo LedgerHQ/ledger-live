@@ -7,5 +7,5 @@ export enum Fee {
 export const EIP1559_CUSTOM_FEES = {
   maxPriorityFee: "1",
   maxFee: "2",
-  expectedNetworkFee: "0.000042 ETH",
+  expectedNetworkFee: "0.000042",
 } as const;

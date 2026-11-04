@@ -199,6 +199,7 @@ test.describe(
   ethSendFlow(SendScenario.FEE_STRATEGY),
   () => {
     const tx = new Transaction(Account.ETH_1, Account.ETH_3, "0.0001");
+    tx.expectedFee = EIP1559_CUSTOM_FEES.expectedNetworkFee;
 
     test.use({
       userdata: "skip-onboarding-with-last-seen-device",
