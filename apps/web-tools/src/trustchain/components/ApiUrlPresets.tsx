@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@ledgerhq/lumen-ui-react";
 
-/** Quick STG / PRD presets using defaults from `@ledgerhq/live-env` (see `libs/env/src/env.ts`). */
+/** Quick STG / PRD presets, from `LEDGER_SYNC_BACKENDS`. */
 export function ApiUrlPresets({
   onStaging,
   onProd,

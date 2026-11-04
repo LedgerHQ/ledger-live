@@ -5,13 +5,15 @@ import { getSdk } from "@ledgerhq/ledger-key-ring-protocol";
 import type { MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { accountsSyncModule } from "@ledgerhq/live-wallet/accounts";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { HttpResponse, http, server } from "tests/server";
-import { renderHook, waitFor, withFlagOverrides } from "tests/testSetup";
-import { useWatchWalletSync } from "../hooks/useWatchWalletSync";
 import type { Account } from "@ledgerhq/types-live";
+import { HttpResponse, http, server } from "@tests/server";
+import { renderHook, waitFor, withFlagOverrides } from "@tests/test-renderer";
+import { appConfig } from "~/setup";
+import { WalletSyncProvider, useWalletSyncUserState } from "../components/WalletSyncContext";
 
 const originalMockEnv = getEnv("MOCK");
-const cloudSyncApiBaseUrl = getEnv("CLOUD_SYNC_API_PROD");
+// The backend of the store `renderHook` creates.
+const { cloudSyncApiBaseUrl } = appConfig;
 
 const trustchain: Trustchain = {
   rootId: "mock-root-id-cursor-regression",
@@ -35,7 +37,11 @@ const endpoints = {
   push: jest.fn<EndpointResult, EndpointParams>(),
 };
 
-describe("useWatchWalletSync PROD cursor synchronization", () => {
+describe("Wallet Sync watch loop PROD cursor synchronization", () => {
+  beforeAll(() => {
+    jest.useRealTimers();
+  });
+
   beforeEach(() => {
     setEnv("MOCK", "cursor-regression");
     endpoints.pull.mockReset();
@@ -48,6 +54,10 @@ describe("useWatchWalletSync PROD cursor synchronization", () => {
 
   afterEach(() => {
     setEnv("MOCK", originalMockEnv);
+  });
+
+  afterAll(() => {
+    jest.useFakeTimers();
   });
 
   it("should apply PROD data when its cursor is newer than the local cursor", async () => {
@@ -82,12 +92,11 @@ describe("useWatchWalletSync PROD cursor synchronization", () => {
     await waitFor(() => {
       expect(store.getState().wallet.walletSync.walletSyncState.version).toBe(10);
     });
-    expect(result.current.visualPending).toBe(false);
     expect(endpoints.pull).toHaveBeenCalledTimes(1);
     expectPullVersion("7");
     expect(endpoints.push).not.toHaveBeenCalled();
     expect(result.current.walletSyncError).toBeNull();
-    expect(store.getState().accounts.map(account => account.id)).toEqual([accountA.id]);
+    expect(store.getState().accounts.active.map(account => account.id)).toEqual([accountA.id]);
     expect(store.getState().wallet.walletSync.walletSyncState.data).toEqual({
       accounts: descriptorsFor([accountA]),
     });
@@ -114,14 +123,13 @@ describe("useWatchWalletSync PROD cursor synchronization", () => {
     });
 
     await waitFor(() => {
-      expect(result.current.visualPending).toBe(false);
       expect(endpoints.pull).toHaveBeenCalledTimes(1);
     });
 
     expect(endpoints.push).not.toHaveBeenCalled();
     expectPullVersion("10");
     expect(result.current.walletSyncError).toBeNull();
-    expect(store.getState().accounts.map(account => account.id)).toEqual([
+    expect(store.getState().accounts.active.map(account => account.id)).toEqual([
       accountA.id,
       accountB.id,
     ]);
@@ -156,7 +164,6 @@ describe("useWatchWalletSync PROD cursor synchronization", () => {
       expect(store.getState().wallet.walletSync.walletSyncState.version).toBe(8);
     });
 
-    expect(result.current.visualPending).toBe(false);
     expect(endpoints.pull).toHaveBeenCalledTimes(1);
     expectPullVersion("7");
     expect(result.current.walletSyncError).toBeNull();
@@ -192,7 +199,6 @@ describe("useWatchWalletSync PROD cursor synchronization", () => {
     });
 
     await waitFor(() => {
-      expect(result.current.visualPending).toBe(false);
       expect(store.getState().wallet.walletSync.walletSyncState).toEqual({
         data: null,
         version: 0,
@@ -203,7 +209,7 @@ describe("useWatchWalletSync PROD cursor synchronization", () => {
     expectPullVersion("7");
     expect(endpoints.push).not.toHaveBeenCalled();
     expect(result.current.walletSyncError).toBeNull();
-    expect(store.getState().accounts.map(account => account.id)).toEqual([
+    expect(store.getState().accounts.active.map(account => account.id)).toEqual([
       accountA.id,
       accountB.id,
     ]);
@@ -230,7 +236,6 @@ describe("useWatchWalletSync PROD cursor synchronization", () => {
     });
 
     await waitFor(() => {
-      expect(result.current.visualPending).toBe(false);
       expect(endpoints.push).toHaveBeenCalledTimes(1);
       expect(store.getState().wallet.walletSync.walletSyncState.version).toBe(1);
     });
@@ -259,10 +264,11 @@ function renderWalletSync({
   cachedDistantAccounts: Account[] | null;
   cursorVersion: number;
 }) {
-  return renderHook(() => useWatchWalletSync(), {
-    initialState: {
-      ...withFlagOverrides({
-        lldWalletSync: {
+  return renderHook(() => useWalletSyncUserState(), {
+    innerWrapper: WalletSyncProvider,
+    overrideInitialState: withFlagOverrides(
+      {
+        llmWalletSync: {
           enabled: true,
           params: {
             environment: "PROD",
@@ -273,21 +279,33 @@ function renderWalletSync({
             },
           },
         },
-      }),
-      accounts: localAccounts,
-      trustchain: { trustchain, memberCredentials },
-      wallet: {
-        walletSync: {
-          walletSyncState: {
-            data:
-              cachedDistantAccounts === null
-                ? null
-                : { accounts: descriptorsFor(cachedDistantAccounts) },
-            version: cursorVersion,
+      },
+      state => ({
+        ...state,
+        accounts: {
+          ...state.accounts,
+          active: localAccounts,
+        },
+        trustchain: { trustchain, memberCredentials },
+        wallet: {
+          ...state.wallet,
+          walletSync: {
+            ...state.wallet.walletSync,
+            walletSyncState: {
+              data:
+                cachedDistantAccounts === null
+                  ? null
+                  : { accounts: descriptorsFor(cachedDistantAccounts) },
+              version: cursorVersion,
+            },
           },
         },
-      },
-    },
+        settings: {
+          ...state.settings,
+          readOnlyModeEnabled: false,
+        },
+      }),
+    ),
   });
 }
 

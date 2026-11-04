@@ -4,7 +4,7 @@ import WalletSyncRow from "~/renderer/screens/settings/sections/General/WalletSy
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
 import { EMPTY } from "rxjs";
 import { Flow, initialStateWalletSync, Step } from "~/renderer/reducers/walletSync";
-import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
+import { loadAppConfig } from "~/setup";
 import { AnalyticsPage } from "../hooks/useLedgerSyncAnalytics";
 import { useActivationDrawer } from "../../LedgerSyncEntryPoints/hooks/useActivationDrawer";
 import WalletSyncDrawer from "../components/Drawer";
@@ -42,7 +42,7 @@ export const mockedSdk = getSdk(
   {
     applicationId: 12,
     name: "LLD Integration",
-    apiBaseUrl: getWalletSyncEnvironmentParams("STAGING").trustchainApiBaseUrl,
+    apiBaseUrl: loadAppConfig().config.trustchainApiBaseUrl,
   },
   () => () => EMPTY,
 );

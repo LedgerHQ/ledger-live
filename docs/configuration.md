@@ -268,7 +268,9 @@ layers down:
 ```
 
 `_STAGING`/`_PROD` pairs are not two endpoints: they are one endpoint and an app-level choice of
-which URL to pass — and that chosen value lives in the app's [`.env` file](#app-env-files).
+which URL to pass — and that chosen value lives in the app's [`.env` file](#app-env-files). When
+developers and QA must switch it without a new build, declare a switch instead:
+[Adding a switch](../shared/app-config/README.md#adding-a-switch).
 
 **Coin modules do not go through RTK Query.** A per-coin node URL reaches the module through the
 `Context` threaded as the first argument, resolved from config the app supplies — not through a

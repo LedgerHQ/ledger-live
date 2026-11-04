@@ -75,6 +75,8 @@ type TestFixtures = {
   /** Webview (e.g. swap live app) console and network logs, attached to Allure on failure. */
   webviewCollector: PageLogCollector;
   featureFlags: PartialFeatures;
+  /** The app config selections, by switch or fixed value, the renderer boots on. */
+  appConfig?: Record<string, string>;
   simulateCamera: string;
   app: Application;
   cliCommands?: CliCommand[];
@@ -109,6 +111,7 @@ export const test = base.extend<TestFixtures>({
   userdata: undefined,
   settings: { shareAnalytics: false, hasSeenAnalyticsOptInPrompt: true },
   featureFlags: undefined,
+  appConfig: undefined,
   simulateCamera: undefined,
   speculosApp: undefined,
   cliCommands: [],
@@ -165,7 +168,7 @@ export const test = base.extend<TestFixtures>({
   },
 
   userdataDestinationPath: async (
-    { userdataOriginalFile, settings, localManifestOverride, coinConfigOverrides },
+    { userdataOriginalFile, settings, localManifestOverride, coinConfigOverrides, appConfig },
     use,
   ) => {
     const userdataDestinationPath = path.join(__dirname, "../artifacts/userdata", randomUUID());
@@ -192,6 +195,9 @@ export const test = base.extend<TestFixtures>({
     if (coinConfigOverrides) {
       // Over any overrides the userdata file already carries, not in place of them.
       merge(userData, { data: { coinConfigOverrides: { overrides: coinConfigOverrides } } });
+    }
+    if (appConfig) {
+      merge(userData, { data: { PLAYWRIGHT_RUN: { appConfig } } });
     }
     await writeFile(`${userdataDestinationPath}/app.json`, JSON.stringify(userData));
     await use(userdataDestinationPath);

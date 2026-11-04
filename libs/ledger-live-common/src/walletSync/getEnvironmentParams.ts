@@ -6,6 +6,7 @@ type EnvironmentParams = {
   trustchainApiBaseUrl: string;
 };
 
+/** @deprecated The apps take the Ledger Sync URLs from the `ledgerKeyRing` app config switch. */
 export default function getEnvironmentParams(
   environment: WalletSyncEnvironment | undefined,
 ): EnvironmentParams {

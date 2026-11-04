@@ -3,7 +3,7 @@ export { usePayCardToolProps } from "./usePayCardToolProps";
 export type { UsePayCardToolPropsOptions } from "./usePayCardToolProps";
 export { useEnvDevToolProps } from "./useEnvDevToolProps";
 export { useProdToggle } from "./useProdToggle";
-export type { ProdToggle } from "./useProdToggle";
+export type { LedgerSyncBackend, ProdToggle } from "./useProdToggle";
 export { useTrustchainDevToolProps } from "./useTrustchainDevToolProps";
 export { useCloudSyncDevToolProps } from "./useCloudSyncDevToolProps";
 export { usePayCardAuthProps } from "./usePayCardAuthProps";

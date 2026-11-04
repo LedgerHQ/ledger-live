@@ -11,7 +11,6 @@ import { createSelector } from "reselect";
 import { useSelector } from "LLD/hooks/redux";
 import { shallowEqual } from "react-redux";
 import type { RecentAddressesState } from "@domain/entity-recent-addresses";
-import type { WSState } from "@domain/entity-wallet-sync";
 import type { Account, AccountLike, AccountUserData } from "@ledgerhq/types-live";
 import type { State } from ".";
 import type { WalletState } from "./wallet.core";
@@ -67,14 +66,6 @@ export const accountStarredSelector = createSelector(
   (_: State, { accountId }: { accountId: string }) => accountId,
   (wallet, accountId) => entityIsStarredAccount(wallet.starredAccountIds, { accountId }),
 );
-
-export function latestDistantStateSelector(state: State): WSState["data"] {
-  return walletSelector(state).walletSync.walletSyncState.data;
-}
-
-export function latestDistantVersionSelector(state: State): number {
-  return walletSelector(state).walletSync.walletSyncState.version;
-}
 
 export function recentAddressesSelector(state: State): RecentAddressesState {
   return walletSelector(state).recentAddresses;

@@ -1,6 +1,7 @@
 import { combineReducers } from "redux";
 import featureFlags, { type FeatureFlagsState } from "@shared/feature-flags";
 import { appConfigReducer, type AppConfigState } from "@shared/app-config";
+import { ledgerSyncReducer, type LedgerSyncState } from "@features/platform-wallet-sync";
 import accounts, { AccountsState } from "./accounts";
 import application, { ApplicationState } from "./application";
 import devices, { DevicesState } from "./devices";
@@ -139,6 +140,7 @@ export type State = LLDRTKApiState & {
   accountBalanceHistories: AccountBalanceHistoriesState;
   accountEntries: AccountEntriesState;
   largeScreenUpsellModal: LargeScreenUpsellModalState;
+  ledgerSync: LedgerSyncState;
   payCardBalance: PayCardBalanceState;
   accountAnalyticsIntroduction: AccountAnalyticsIntroductionState;
   payCardFeatureTour: PayCardFeatureTourState;
@@ -193,6 +195,7 @@ const appReducer = combineReducers({
   accountBalanceHistories: accountBalanceHistoriesSlice.reducer,
   accountEntries: accountsSlice.reducer,
   largeScreenUpsellModal: largeScreenUpsellModalSlice.reducer,
+  ledgerSync: ledgerSyncReducer,
   payCardBalance: payCardBalanceSlice.reducer,
   accountAnalyticsIntroduction: accountAnalyticsIntroductionSlice.reducer,
   payCardFeatureTour: payCardFeatureTourSlice.reducer,

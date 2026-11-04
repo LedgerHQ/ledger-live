@@ -1,6 +1,4 @@
 import { useCallback, useState } from "react";
-import { createQRCodeHostInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
-import { NoTrustchainInitialized } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useDispatch, useSelector, useStore } from "LLD/hooks/redux";
 import { setDrawerVisibility, setFlow, setQrCodePinCode } from "~/renderer/actions/walletSync";
@@ -10,13 +8,10 @@ import {
   memberCredentialsSelector,
   setTrustchain,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { useTrustchainSdk } from "./useTrustchainSdk";
-import { useFeature } from "@features/platform-feature-flags";
-import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
+import { getLkrpQrCode } from "@features/platform-wallet-sync";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { track } from "@shared/analytics";
 import { QueryKey } from "./type.hooks";
-import { useInstanceName } from "./useInstanceName";
 import {
   AnalyticsFlow,
   AnalyticsPage,
@@ -34,13 +29,7 @@ export function useQRCode({ sourcePage }: { sourcePage?: AnalyticsPage }) {
   const trustchain = useSelector(trustchainSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);
   const store = useStore();
-  const sdk = useTrustchainSdk();
-  const featureWalletSync = useFeature("lldWalletSync");
-  const { trustchainApiBaseUrl } = getWalletSyncEnvironmentParams(
-    featureWalletSync?.params?.environment,
-  );
   const [url, setUrl] = useState<string | null>(null);
-  const memberName = useInstanceName();
 
   const goToActivation = useCallback(() => {
     dispatch(setFlow({ flow: Flow.Activation, step: Step.DeviceAction }));
@@ -48,8 +37,9 @@ export function useQRCode({ sourcePage }: { sourcePage?: AnalyticsPage }) {
 
   const { mutate, isPending, error } = useMutation({
     mutationFn: (memberCredentials: MemberCredentials) =>
-      createQRCodeHostInstance({
-        trustchainApiBaseUrl,
+      getLkrpQrCode(dispatch).host({
+        trustchain,
+        memberCredentials,
         onDisplayQRCode: url => {
           setUrl(url);
         },
@@ -57,16 +47,6 @@ export function useQRCode({ sourcePage }: { sourcePage?: AnalyticsPage }) {
           dispatch(setQrCodePinCode(digits));
           dispatch(setFlow({ flow: Flow.Synchronize, step: Step.PinCode }));
         },
-        addMember: async member => {
-          if (trustchain) {
-            await sdk.addMember(trustchain, memberCredentials, member);
-            return trustchain;
-          }
-          throw new NoTrustchainInitialized();
-        },
-        memberCredentials,
-        memberName,
-        initialTrustchainId: trustchain?.rootId,
       }),
 
     // Don't use retry here because it always uses a delay despite setting it to 0

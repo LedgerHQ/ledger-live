@@ -87,22 +87,6 @@ function removeKnownSpeculosDevices() {
   }
 }
 
-function overrideLedgerSyncEnvironment() {
-  const environment = LaunchArguments.value()["ledger_sync_environment"];
-  if (environment !== "PROD" && environment !== "STAGING") return;
-
-  log(`[E2E Bridge Client]: Ledger Sync environment=${environment}`);
-  store.dispatch(
-    setOverride({
-      key: "llmWalletSync",
-      value: {
-        enabled: false,
-        params: { environment, watchConfig: {}, learnMoreLink: "" },
-      },
-    }),
-  );
-}
-
 const isNonEmptyString = (value: unknown): value is string =>
   typeof value === "string" && value !== "";
 
@@ -161,7 +145,6 @@ export function init() {
     Config.MOCK = "";
   }
   setEnv("DISABLE_TRANSACTION_BROADCAST", disable_broadcast != "0");
-  overrideLedgerSyncEnvironment();
 
   initAppNetworkLogging();
 
