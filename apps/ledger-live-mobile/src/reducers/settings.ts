@@ -71,7 +71,6 @@ import type {
   SettingsSetFromLedgerSyncOnboardingPayload,
   SettingsSetHasBeenRedirectedToPostOnboardingPayload,
   SettingsSetMevProtectionPayload,
-  SettingsSetSelectedTabPortfolioAssetsPayload,
   SettingsSetIsRebornPayload,
   SettingsIsOnboardingFlowPayload,
   SettingsIsOnboardingFlowReceiveSuccessPayload,
@@ -173,7 +172,6 @@ export const INITIAL_STATE: SettingsState = {
   starredMarketCoins: [],
   fromLedgerSyncOnboarding: false,
   mevProtection: true,
-  selectedTabPortfolioAssets: "Assets",
   isOnboardingFlow: false,
   isOnboardingFlowReceiveSuccess: false,
   isPostOnboardingFlow: false,
@@ -656,12 +654,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     };
   },
 
-  [SettingsActionTypes.SET_SELECTED_TAB_PORTFOLIO_ASSETS]: (state, action) => ({
-    ...state,
-    selectedTabPortfolioAssets: (action as Action<SettingsSetSelectedTabPortfolioAssetsPayload>)
-      .payload,
-  }),
-
   [SettingsActionTypes.SET_HAS_DISMISSED_CONTACTS_FEATURE_INTRODUCTION]: (state, action) => ({
     ...state,
     hasDismissedContactsFeatureIntroduction: (
@@ -963,8 +955,6 @@ export const isFromLedgerSyncOnboardingSelector = (state: State) =>
 export const starredMarketCoinsSelector = (state: State) => state.settings.starredMarketCoins;
 
 export const mevProtectionSelector = (state: State) => state.settings.mevProtection;
-export const selectedTabPortfolioAssetsSelector = (state: State) =>
-  state.settings.selectedTabPortfolioAssets;
 export const hasDismissedContactsFeatureIntroductionSelector = (state: State) =>
   state.settings.hasDismissedContactsFeatureIntroduction;
 

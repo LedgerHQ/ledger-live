@@ -10,6 +10,5 @@ export function usePlatformServicesConfig(): PlatformServicesConfig {
       perps: perps?.enabled ?? false,
       borrow: borrow?.enabled ?? false,
     },
-    isAssetSectionDisplayed: true,
   };
 }

@@ -56,7 +56,6 @@ import {
   SettingsSetFromLedgerSyncOnboardingPayload,
   SettingsSetHasBeenRedirectedToPostOnboardingPayload,
   SettingsSetMevProtectionPayload,
-  SettingsSetSelectedTabPortfolioAssetsPayload,
   SettingsSetIsRebornPayload,
   SettingsIsOnboardingFlowPayload,
   SettingsIsOnboardingFlowReceiveSuccessPayload,
@@ -274,11 +273,6 @@ export const removeStarredMarketCoins = createAction<SettingsRemoveStarredMarket
 export const setMevProtection = createAction<SettingsSetMevProtectionPayload>(
   SettingsActionTypes.SET_MEV_PROTECTION,
 );
-
-export const setSelectedTabPortfolioAssets =
-  createAction<SettingsSetSelectedTabPortfolioAssetsPayload>(
-    SettingsActionTypes.SET_SELECTED_TAB_PORTFOLIO_ASSETS,
-  );
 
 export const setHasDismissedContactsFeatureIntroduction =
   createAction<SettingsSetHasDismissedContactsFeatureIntroductionPayload>(

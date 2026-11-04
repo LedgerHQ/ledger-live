@@ -1,6 +1,5 @@
 import { track } from "@shared/analytics";
 import { useCallback } from "react";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
@@ -26,7 +25,6 @@ export function usePortfolioSectionActions(
   isReadOnly: boolean,
   variant: PortfolioSectionVariant,
 ): PortfolioSectionActions {
-  const { shouldDisplayAssetSection } = useWalletFeaturesConfig("mobile");
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
   const { openFromAsset } = useAssetDetailNavigation();
 
@@ -36,7 +34,7 @@ export function usePortfolioSectionActions(
       type: TRACKING_TYPE_BY_VARIANT[variant],
       page: "Wallet",
     });
-    if (!isReadOnly && shouldDisplayAssetSection) {
+    if (!isReadOnly) {
       navigation.navigate(NavigatorName.Accounts, {
         screen: ScreenName.Crypto,
         params: {
@@ -49,7 +47,7 @@ export function usePortfolioSectionActions(
         screen: ScreenName.Assets,
       });
     }
-  }, [navigation, shouldDisplayAssetSection, isReadOnly, variant]);
+  }, [navigation, isReadOnly, variant]);
 
   const onItemPress = useCallback(
     (asset: Asset) => {

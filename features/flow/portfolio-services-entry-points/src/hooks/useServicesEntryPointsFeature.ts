@@ -12,8 +12,8 @@ export type ServicesEntryPointsFeature = Readonly<{
 
 export function useServicesEntryPointsFeature(): ServicesEntryPointsFeature {
   const feature = useFeature("entryPointsServices");
-  const { availability, isAssetSectionDisplayed } = usePlatformServicesConfig();
-  const isEnabled = (feature?.enabled ?? false) && isAssetSectionDisplayed;
+  const { availability } = usePlatformServicesConfig();
+  const isEnabled = feature?.enabled ?? false;
   const order = getServicesOrder(feature);
   const { perps, borrow } = availability;
 

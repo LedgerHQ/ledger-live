@@ -37,7 +37,6 @@ function withDesktopGraduatedFlags(
   return platform === "desktop"
     ? {
         ...config,
-        shouldDisplayAssetSection: true,
         shouldDisplayAggregatedAssets: true,
       }
     : config;
@@ -49,7 +48,6 @@ const makeConfig = (
 ): WalletFeaturesConfig => ({
   isEnabled: value,
   shouldUseLazyOnboarding: value,
-  shouldDisplayAssetSection: value,
   shouldDisplayBrazePlacement: value,
   shouldDisplayAggregatedAssets: value,
   shouldDisplayAssetDiscoverability: value,
@@ -60,7 +58,6 @@ const makeConfig = (
 
 const makeParams = (value: boolean): Wallet40Params => ({
   lazyOnboarding: value,
-  assetSection: value,
   brazePlacement: value,
   aggregatedAssets: value,
   assetDiscoverability: value,
@@ -107,7 +104,6 @@ describe("useWalletFeaturesConfig hook", () => {
     describe.each(PLATFORMS)("on %s platform", platform => {
       it.each<[string, Wallet40Params, Partial<WalletFeaturesConfig>]>([
         ["lazyOnboarding", { lazyOnboarding: true }, { shouldUseLazyOnboarding: true }],
-        ["assetSection", { assetSection: true }, { shouldDisplayAssetSection: true }],
         ["brazePlacement", { brazePlacement: true }, { shouldDisplayBrazePlacement: true }],
         ["aggregatedAssets", { aggregatedAssets: true }, { shouldDisplayAggregatedAssets: true }],
         ["earnUpselling", { earnUpselling: true }, { shouldDisplayEarnUpselling: true }],

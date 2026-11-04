@@ -20,9 +20,8 @@ the Crypto and Stablecoins sections. They replace the Perps and Borrow banners b
 
 `entryPointsServices` (`@shared/feature-flags`, team Wallet XP):
 
-- `enabled` shows the section and hides the legacy Perps and Borrow entry points. On desktop the
-  asset section is always on. On mobile it only applies with `lwmWallet40` `assetSection`: without
-  it there is no Crypto and Stablecoins section, so the legacy entry points stay.
+- `enabled` shows the section and hides the legacy Perps and Borrow entry points. The portfolio
+  asset section is always on, so the cards sit between Crypto and Stablecoins.
 - `params.services` sets which services are shown and their order, e.g. `["borrow", "perps"]`.
   Without `params`, the default order applies.
 
