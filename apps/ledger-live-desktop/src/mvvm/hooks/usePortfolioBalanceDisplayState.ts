@@ -4,6 +4,11 @@ import type { SyncPhase } from "@ledgerhq/live-common/bridge/react/useSyncLifecy
 import type { Currency } from "@domain/entity-currency";
 import type { Portfolio, ValueChange } from "@ledgerhq/types-live";
 import { usePortfolioBalance } from "LLD/hooks/usePortfolioBalance";
+import {
+  useAccountDataPortfolioHistory,
+  useCurrentPortfolioWorth,
+} from "LLD/features/Portfolio/hooks/useAccountDataPortfolioHistory";
+import { endBalanceHistoryAt } from "LLD/features/Portfolio/utils/balanceHistoryValueChange";
 
 export interface UsePortfolioBalanceDisplayStateOptions {
   readonly legacyRange?: boolean;
@@ -26,22 +31,36 @@ export interface PortfolioBalanceDisplayState {
   readonly syncPhase: SyncPhase;
   readonly valueChange: ValueChange;
   readonly balanceInfo: PortfolioBalanceInfo;
+  readonly accountDataHistory: boolean;
 }
 
 export function usePortfolioBalanceDisplayState(
   options: UsePortfolioBalanceDisplayStateOptions = {},
 ): PortfolioBalanceDisplayState {
+  const legacyRange = options.legacyRange ?? false;
   const {
-    portfolio,
+    portfolio: legacyPortfolio,
     counterValue,
     isColdStart,
     balanceAvailable: rawBalanceAvailable,
     syncPhase,
     isCvPending,
-  } = usePortfolioBalance({ legacyRange: options.legacyRange ?? false });
-
+  } = usePortfolioBalance({ legacyRange });
+  const accountData = useAccountDataPortfolioHistory(legacyRange);
+  const currentWorth = useCurrentPortfolioWorth();
   const latestBalanceValue =
-    portfolio.balanceHistory[portfolio.balanceHistory.length - 1]?.value ?? 0;
+    currentWorth ??
+    legacyPortfolio.balanceHistory[legacyPortfolio.balanceHistory.length - 1]?.value ??
+    0;
+  const portfolio = useMemo(() => {
+    if (!accountData) return legacyPortfolio;
+    const ended = endBalanceHistoryAt(accountData, latestBalanceValue);
+    return {
+      ...legacyPortfolio,
+      balanceHistory: ended.balanceHistory,
+      countervalueChange: ended.valueChange,
+    };
+  }, [accountData, latestBalanceValue, legacyPortfolio]);
 
   const { balanceAvailable, displayedBalance, isLoading } = useBalanceSyncState({
     rawBalanceAvailable,
@@ -73,6 +92,7 @@ export function usePortfolioBalanceDisplayState(
       syncPhase,
       valueChange,
       balanceInfo,
+      accountDataHistory: accountData !== undefined,
     }),
     [
       portfolio,
@@ -85,6 +105,7 @@ export function usePortfolioBalanceDisplayState(
       syncPhase,
       valueChange,
       balanceInfo,
+      accountData,
     ],
   );
 }

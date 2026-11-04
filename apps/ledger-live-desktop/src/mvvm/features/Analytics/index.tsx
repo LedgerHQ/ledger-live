@@ -7,6 +7,7 @@ import useAnalyticsViewModel from "./useAnalyticsViewModel";
 import type { AnalyticsViewModel } from "./types";
 import { AllocationSection } from "./components/Allocation/AllocationSection";
 import { PnLSection } from "./components/PnL";
+import { AccountBalanceHistoryQueries } from "LLD/features/Portfolio/components/AccountBalanceHistoryQueries";
 import { ChartSection } from "./components/ChartSection";
 import { cn } from "LLD/utils/cn";
 import { useTranslation } from "react-i18next";
@@ -31,6 +32,7 @@ function AnalyticsView({ viewModel }: { readonly viewModel: AnalyticsViewModel }
 
   return (
     <div className="flex flex-col gap-32 pb-32">
+      <AccountBalanceHistoryQueries legacyRange />
       <TrackScreen category="Analytics" range={selectedTimeRange} countervalue={counterValue} />
       <PageHeader title={t("analytics.title")} onBack={navigateToDashboard} />
 

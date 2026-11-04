@@ -21,21 +21,32 @@ export default function useAnalyticsViewModel(): AnalyticsViewModel {
     balanceInfo: syncBalanceInfo,
     portfolio,
     isLoading,
+    accountDataHistory,
   } = usePortfolioBalanceDisplayState({ legacyRange: true });
 
   const shouldDisplayPnl = accounts.length > 0;
 
   const valueChange = useMemo(
     () =>
-      resolveAnalyticsValueChange({
-        selectedTimeRange,
-        accounts,
-        currentBalance: syncBalanceInfo.totalBalance,
-        portfolio,
-        cvState,
-        counterValue,
-      }),
-    [selectedTimeRange, accounts, syncBalanceInfo.totalBalance, portfolio, cvState, counterValue],
+      accountDataHistory
+        ? portfolio.countervalueChange
+        : resolveAnalyticsValueChange({
+            selectedTimeRange,
+            accounts,
+            currentBalance: syncBalanceInfo.totalBalance,
+            portfolio,
+            cvState,
+            counterValue,
+          }),
+    [
+      accountDataHistory,
+      selectedTimeRange,
+      accounts,
+      syncBalanceInfo.totalBalance,
+      portfolio,
+      cvState,
+      counterValue,
+    ],
   );
 
   const balanceInfo = useMemo(

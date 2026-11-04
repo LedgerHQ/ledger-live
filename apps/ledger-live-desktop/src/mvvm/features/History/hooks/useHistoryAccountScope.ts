@@ -17,17 +17,13 @@ export function useHistoryAccountScope(): {
   const accountIdsQuery = searchParams.get("accountIds");
   const allAccounts = useSelector(accountsSelector);
 
-  const rootAccounts = useMemo(() => {
+  return useMemo(() => {
     const ids = parseAccountIdsSearchParam(accountIdsQuery);
-    if (!ids) return allAccounts;
-    return filterTopLevelAccountsByAllowedAccountIds(allAccounts, new Set(ids));
+    if (!ids) return { rootAccounts: allAccounts, operationAccountIds: null };
+    const requested = new Set(ids);
+    return {
+      rootAccounts: filterTopLevelAccountsByAllowedAccountIds(allAccounts, requested),
+      operationAccountIds: expandRequestedAccountIdsForHistoryScope(allAccounts, requested),
+    };
   }, [accountIdsQuery, allAccounts]);
-
-  const operationAccountIds = useMemo(() => {
-    const ids = parseAccountIdsSearchParam(accountIdsQuery);
-    if (!ids) return null;
-    return expandRequestedAccountIdsForHistoryScope(allAccounts, new Set(ids));
-  }, [accountIdsQuery, allAccounts]);
-
-  return { rootAccounts, operationAccountIds };
 }

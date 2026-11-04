@@ -1,15 +1,13 @@
 import { useMemo } from "react";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { selectAccountBalances, type AccountAssetBalance } from "@domain/entity-account-balance";
 import {
   computeAggregatedAccountsData,
   type AggregatedAccountEntry,
   type CalculateCountervalue,
 } from "@ledgerhq/asset-aggregation/index";
-import { useSelector } from "LLD/hooks/redux";
 import { useAccountDataTargets, type AccountDataTarget } from "LLD/hooks/useAccountDataTargets";
-import type { State } from "~/renderer/reducers";
 import { USE_ACCOUNT_DATA_BALANCES } from "../constants";
+import { useAccountBalanceRowsById } from "./useAccountBalanceRowsById";
 import {
   computeAccountDataAggregatedAccounts,
   getAccountDataNativeBalance,
@@ -32,14 +30,7 @@ function useAccountDataBalances(
     [rows],
   );
   const targets = useAccountDataTargets(mainAccounts);
-  const accountBalances = useSelector((state: State) => state.accountBalances);
-
-  const rowsByAccountId = useMemo(() => {
-    const byId = new Map<string, readonly AccountAssetBalance[] | undefined>();
-    for (const target of targets)
-      byId.set(target.account.id, selectAccountBalances({ accountBalances }, target.accountUUID));
-    return byId;
-  }, [accountBalances, targets]);
+  const rowsByAccountId = useAccountBalanceRowsById(targets);
 
   const aggregatedDataByAccountId = useMemo(
     () =>

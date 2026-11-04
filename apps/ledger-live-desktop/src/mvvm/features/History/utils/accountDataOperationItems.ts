@@ -29,6 +29,7 @@ function operationKey(hash: string, type: string, assetId: string): string {
 function indexLegacyOperations(root: Account): Map<string, LocatedOperation> {
   const byKey = new Map<string, LocatedOperation>();
   const assetIdByAccountId = new Map<string, string>([[root.id, root.currency.id]]);
+  const subAccountById = new Map((root.subAccounts ?? []).map(sub => [sub.id, sub]));
   for (const sub of root.subAccounts ?? []) {
     if (isTokenAccount(sub)) assetIdByAccountId.set(sub.id, sub.token.id);
   }
@@ -52,7 +53,7 @@ function indexLegacyOperations(root: Account): Map<string, LocatedOperation> {
     put(assetId, operation, account, parentAccount);
     for (const sub of operation.subOperations ?? []) {
       const subAssetId = assetIdByAccountId.get(sub.accountId);
-      const subAccount = root.subAccounts?.find(item => item.id === sub.accountId);
+      const subAccount = subAccountById.get(sub.accountId);
       if (subAssetId && subAccount) put(subAssetId, sub, subAccount, root);
     }
     for (const internal of operation.internalOperations ?? []) {
