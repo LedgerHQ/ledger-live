@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState, type ReactNode } from "react";
-import { ActivityIndicator } from "react-native";
-import { Box, Button, Text, useTheme } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Button, Spinner, Text, useTheme } from "@ledgerhq/lumen-ui-rnative";
 
 const ROW_LX = {
   flexDirection: "row",
@@ -65,7 +64,7 @@ export function Actionable<I extends Array<unknown>, A>({
       <Button size="sm" appearance="transparent" disabled={!inputs || loading} onPress={onPress}>
         {buttonTitle}
       </Button>
-      {loading ? <ActivityIndicator size="small" /> : null}
+      {loading ? <Spinner size={16} /> : null}
       {display ? (
         <Text typography="body2" numberOfLines={1} style={{ flex: 1 }}>
           {String(display)}

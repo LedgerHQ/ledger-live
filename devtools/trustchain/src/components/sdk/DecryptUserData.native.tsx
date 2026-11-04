@@ -1,5 +1,4 @@
-import { TextInput } from "react-native";
-import { useTheme } from "@ledgerhq/lumen-ui-rnative";
+import { TextInput } from "@ledgerhq/lumen-ui-rnative";
 import type { Trustchain, TrustchainSDK } from "../../types";
 import { Actionable } from "../Actionable";
 import { useDecryptUserData } from "./useDecryptUserData";
@@ -11,7 +10,6 @@ export function DecryptUserData({
   sdk: TrustchainSDK;
   trustchain: Trustchain | null;
 }>) {
-  const { theme } = useTheme();
   const { input, inputs, setInput, output, setOutput, action, valueDisplay } = useDecryptUserData(
     sdk,
     trustchain,
@@ -27,18 +25,12 @@ export function DecryptUserData({
       valueDisplay={valueDisplay}
     >
       <TextInput
+        lx={{ flex: 1 }}
+        label="Hex"
         placeholder="hex to decrypt"
         value={input}
         onChangeText={setInput}
-        style={{
-          flex: 1,
-          borderWidth: 1,
-          borderColor: theme.colors.border.mutedSubtle,
-          borderRadius: 4,
-          paddingHorizontal: 8,
-          paddingVertical: 4,
-          fontSize: 13,
-        }}
+        hideClearButton
       />
     </Actionable>
   );
