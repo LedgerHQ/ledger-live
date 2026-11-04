@@ -15,6 +15,10 @@ afterEach(() => jest.restoreAllMocks());
 
 const error = new Error("Test error");
 
+function loggedErrors(): string {
+  return JSON.stringify(jest.mocked(console.error).mock.calls);
+}
+
 describe("storage", () => {
   let mockInitStorageState: jest.SpyInstance;
 
@@ -361,7 +365,7 @@ describe("storage", () => {
 
         // Act
         try {
-          result = await storage.save("test", { value: 1 });
+          result = await storage.save("test", { privatekey: "secret-save-value" });
         } catch (e) {
           result = e;
         }
@@ -373,6 +377,14 @@ describe("storage", () => {
 
       it("should return the value returned by #save", () => {
         expect(result).toEqual(error);
+      });
+
+      it("should log the key and operation but not the value", () => {
+        expect(console.error).toHaveBeenCalledWith("Error with extra data:", error, {
+          op: "save",
+          key: "test",
+        });
+        expect(loggedErrors()).not.toContain("secret-save-value");
       });
 
       it("should log the #save error", () => {
@@ -630,7 +642,7 @@ describe("storage", () => {
 
         // Act
         try {
-          result = await storage.push("test", 1);
+          result = await storage.push("test", "secret-push-value");
         } catch (e) {
           result = e;
         }
@@ -642,6 +654,14 @@ describe("storage", () => {
 
       it("should return the value returned by #push", () => {
         expect(result).toEqual(error);
+      });
+
+      it("should log the key and operation but not the value", () => {
+        expect(console.error).toHaveBeenCalledWith("Error with extra data:", error, {
+          op: "push",
+          key: "test",
+        });
+        expect(loggedErrors()).not.toContain("secret-push-value");
       });
 
       it("should log the #push error", () => {

@@ -87,7 +87,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
           error: e,
           state: state,
         });
-        return rejectWithError({ e, extraData: { op: "save", key, value } });
+        return rejectWithError({ e, extraData: { op: "save", key } });
       }
     },
 
@@ -162,7 +162,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
           error: e,
           state: state,
         });
-        return rejectWithError({ e, extraData: { op: "push", key, value } });
+        return rejectWithError({ e, extraData: { op: "push", key } });
       }
     },
 
