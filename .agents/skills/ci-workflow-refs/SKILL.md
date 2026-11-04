@@ -55,7 +55,8 @@ release, hotfix and main have the change. When you add one:
 PR checks run develop's copy of every `@develop` child, so they do not run your change.
 That does not make the change untestable. Run the child yourself from a scratch branch.
 
-1. Branch off your PR branch: `git switch -c ci-test/<topic>`. Do not push the next edit to the PR branch.
+1. Rebase your PR branch on `origin/develop`, then branch off it: `git switch -c ci-test/<topic>`.
+   Do not push the next edit to the PR branch.
 2. On the scratch branch, change `@develop` to `@ci-test/<topic>` on each `uses:` line between the
    workflow you will dispatch and the file you changed:
    - composite action: `uses: LedgerHQ/ledger-live/tools/actions/composites/<action>@ci-test/<topic>`
@@ -74,12 +75,19 @@ add one on the scratch branch only. Declare any inputs it reads.
 
 ### Test older callers (release, hotfix)
 
-Your dispatch from the PR branch tests the child against develop. After merge, release, hotfix and
-main also run it, against older code. Use the checklist below first. Run a second dispatch only if
+Your first dispatch checks out your scratch branch: develop as of your last rebase, plus your change.
+Rebase first so it matches what the child will meet on develop. After merge, release, hotfix and main
+also run the child, against older code. Use the checklist above first. Run a second dispatch only if
 the change depends on something those branches may not have (a script, Nx target, file, input,
-dependency version or lockfile entry), or if you cannot tell. Then branch from `origin/release`
-(or the hotfix branch), change only the child refs to `@ci-test/<topic>`, push, and dispatch with
-`-f ref=<that branch>`.
+dependency version or lockfile entry), or if you cannot tell. Dispatch the same scratch branch and
+point `ref` at the older branch:
+
+```sh
+gh workflow run <x>-reusable.yml --ref ci-test/<topic> -f ref=release
+```
+
+`--ref` picks the YAML (develop plus your change, as release will run it after merge). `ref` picks the
+code that is checked out.
 
 ### Gotcha: a cache replay is not a test
 
@@ -125,7 +133,7 @@ as the runner. This catches mistakes faster than CI, but it does not replace the
 ### What to write in the PR
 
 - ✅ `CI | Dispatched build-desktop-reusable on ci-test/<topic> with the action repointed and the Nx cache skipped. Job "macOS Build", step "Build desktop" ran: <run URL>`
-- ✅ `Release callers | Same dispatch from a branch of origin/release: <run URL>` (only when you ran it)
+- ✅ `Release callers | Same dispatch with -f ref=release: <run URL>` (only when you ran it)
 - ❌ `Not testable before merge: PR builds run this action @develop.` Use the steps above instead.
   Write "not testable" only for something a dispatch cannot run (a `schedule`, `merge_group` or
   push-to-develop trigger, or a secret only develop can read). Name that part and say what you checked instead.
