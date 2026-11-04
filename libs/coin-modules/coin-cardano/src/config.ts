@@ -7,6 +7,11 @@ export type CardanoConfig = {
   maxFeesWarning: number;
   maxFeesError: number;
   testnet: boolean;
+  infra: CardanoInfra;
+};
+
+export type CardanoInfra = {
+  CARDANO_API_ENDPOINT: string;
 };
 
 export type CardanoCoinConfig = CurrencyConfig & CardanoConfig;

@@ -17,6 +17,9 @@ export const cardanoConfig: CurrencyLiveConfigDefinition = {
       maxFeesWarning: 5e6,
       maxFeesError: 10e6,
       testnet: false,
+      infra: {
+        CARDANO_API_ENDPOINT: "https://cardano.coin.ledger.com/api",
+      },
     } as CardanoCoinConfig,
   },
   config_currency_cardano_testnet: {
@@ -34,6 +37,9 @@ export const cardanoConfig: CurrencyLiveConfigDefinition = {
       maxFeesWarning: 5e6,
       maxFeesError: 10e6,
       testnet: true,
+      infra: {
+        CARDANO_API_ENDPOINT: "https://ledger-preprod.cardanoscan.io/api",
+      },
     } as CardanoCoinConfig,
   },
 };

@@ -3,7 +3,7 @@ import type { Scenario } from "@ledgerhq/coin-tester/main";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { CARDANO_TESTNET, FRESH_ADDRESS_PATH, makeAccount } from "../fixtures";
+import { CARDANO_TESTNET, FRESH_ADDRESS_PATH, makeAccount, MOCK_TESTNET_INFRA } from "../fixtures";
 import { getBridges, TESTNET } from "../helpers";
 import { buildSigner } from "../signer";
 import { resetDevnet, topup } from "../yaci";
@@ -48,6 +48,7 @@ export const scenarioCardanoYaci: Scenario<GenericTransaction, Account> = {
           maxFeesWarning: 0,
           maxFeesError: 0,
           testnet: true,
+          infra: MOCK_TESTNET_INFRA,
         },
       },
     });

@@ -1,8 +1,6 @@
 import network from "@ledgerhq/live-network/network";
 import type { CardanoCoinConfig } from "../config";
 import BigNumber from "bignumber.js";
-import { CARDANO_API_ENDPOINT, CARDANO_TESTNET_API_ENDPOINT } from "../constants";
-import { isTestnet } from "../logic";
 import { APIGetPoolList, APIGetPoolsDetail } from "./api-types";
 
 export async function fetchPoolList(
@@ -13,9 +11,7 @@ export async function fetchPoolList(
 ): Promise<APIGetPoolList> {
   const res = await network({
     method: "GET",
-    url: isTestnet(config)
-      ? `${CARDANO_TESTNET_API_ENDPOINT}/v1/pool/list`
-      : `${CARDANO_API_ENDPOINT}/v1/pool/list`,
+    url: `${config.infra.CARDANO_API_ENDPOINT}/v1/pool/list`,
     params: { search, pageNo, limit },
   });
   return res && (res.data as APIGetPoolList);
@@ -27,9 +23,7 @@ export async function fetchPoolDetails(
 ): Promise<APIGetPoolsDetail> {
   const { data } = await network<APIGetPoolsDetail>({
     method: "GET",
-    url: isTestnet(config)
-      ? `${CARDANO_TESTNET_API_ENDPOINT}/v1/pool/detail`
-      : `${CARDANO_API_ENDPOINT}/v1/pool/detail`,
+    url: `${config.infra.CARDANO_API_ENDPOINT}/v1/pool/detail`,
     params: { poolIds },
   });
 

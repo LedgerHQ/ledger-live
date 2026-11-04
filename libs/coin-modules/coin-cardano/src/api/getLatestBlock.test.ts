@@ -1,41 +1,36 @@
 import network from "@ledgerhq/live-network/network";
-import { cardanoCoinConfig as config } from "../fixtures/config";
-import { isTestnet } from "../logic";
+import { cardanoCoinConfig, cardanoTestnetCoinConfig } from "../fixtures/config";
 import { fetchLatestBlock } from "./getLatestBlock";
 
 jest.mock("@ledgerhq/live-network/network");
-jest.mock("../logic", () => ({ isTestnet: jest.fn() }));
 
 const mockNetwork = jest.mocked(network);
-const mockIsTestnet = jest.mocked(isTestnet);
-
-// isTestnet is mocked, so the concrete config value is irrelevant to routing.
 
 describe("fetchLatestBlock", () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it("GETs the mainnet block/latest endpoint and returns the payload", async () => {
-    mockIsTestnet.mockReturnValue(false);
+  it("should use the mainnet API endpoint from the coin config", async () => {
     mockNetwork.mockResolvedValue({ data: { blockHeight: 13494170 } } as never);
 
-    const result = await fetchLatestBlock(config);
+    const result = await fetchLatestBlock(cardanoCoinConfig);
 
     expect(result).toEqual({ blockHeight: 13494170 });
-    const call = mockNetwork.mock.calls[0][0];
-    expect(call.method).toBe("GET");
-    expect(call.url).toContain("cardano.coin.ledger.com");
-    expect(call.url).toMatch(/\/v1\/block\/latest$/);
+    expect(mockNetwork).toHaveBeenCalledWith({
+      method: "GET",
+      url: "https://cardano.coin.ledger.com/api/v1/block/latest",
+    });
   });
 
-  it("routes to the testnet endpoint for a testnet currency", async () => {
-    mockIsTestnet.mockReturnValue(true);
+  it("should use the testnet API endpoint from the coin config", async () => {
     mockNetwork.mockResolvedValue({ data: { blockHeight: 1 } } as never);
 
-    await fetchLatestBlock(config);
+    await fetchLatestBlock(cardanoTestnetCoinConfig);
 
-    expect(mockIsTestnet).toHaveBeenCalledWith(config);
-    expect(mockNetwork.mock.calls[0][0].url).toContain("cardanoscan");
+    expect(mockNetwork).toHaveBeenCalledWith({
+      method: "GET",
+      url: "https://ledger-preprod.cardanoscan.io/api/v1/block/latest",
+    });
   });
 });

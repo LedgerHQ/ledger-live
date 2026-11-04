@@ -6,12 +6,8 @@ import { MOCK_API } from "./fixtures";
 
 global.console = require("console");
 
-// Must run before coin-cardano's constants.ts loads — it captures CARDANO_API_ENDPOINT /
-// CARDANO_TESTNET_API_ENDPOINT at module-eval time, so setting them inside setup() is too late.
-// Both point at MOCK_API: the mainnet (mock) scenarios hit CARDANO_API_ENDPOINT, the testnet (Yaci)
-// scenario hits CARDANO_TESTNET_API_ENDPOINT; each scenario starts only its own MSW handler set.
-setEnv("CARDANO_API_ENDPOINT", MOCK_API);
-setEnv("CARDANO_TESTNET_API_ENDPOINT", MOCK_API);
-// getValidators' epoch-params endpoint is a separate Ledger host; point it at the adapter too so the
-// suite stays hermetic (served from a captured fixture).
+// Only the epoch-params endpoint remains environment-backed. API endpoints come from each
+// scenario's Cardano coin config, so they are not captured at module evaluation time.
+// getValidators' epoch-params endpoint is a separate Ledger host; point its testnet endpoint at
+// the adapter so the suite stays hermetic (served from a captured fixture).
 setEnv("CARDANO_TESTNET_EPOCH_PARAMS_ENDPOINT", `${MOCK_API}/epoch-params`);
