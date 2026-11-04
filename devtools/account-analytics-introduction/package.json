@@ -29,20 +29,13 @@
   },
   "devDependencies": {
     "@babel/plugin-transform-export-namespace-from": "7.27.1",
-    "@gorhom/bottom-sheet": "catalog:",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
-    "@ledgerhq/lumen-utils-shared": "catalog:",
-    "@radix-ui/react-dialog": "catalog:",
-    "@radix-ui/react-dropdown-menu": "catalog:",
-    "@radix-ui/react-slot": "catalog:",
-    "@radix-ui/react-tooltip": "catalog:",
     "@react-native/babel-preset": "catalog:",
     "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
-    "@tanstack/react-table": "catalog:",
     "@testing-library/dom": "catalog:",
     "@testing-library/jest-dom": "catalog:",
     "@testing-library/react": "catalog:",
@@ -53,8 +46,6 @@
     "@types/react": "catalog:",
     "@typescript/native": "catalog:",
     "babel-jest": "catalog:",
-    "class-variance-authority": "catalog:",
-    "expo-haptics": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "jest-sonar": "0.2.16",
@@ -63,20 +54,11 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",
-    "react-native-reanimated": "catalog:",
-    "react-native-safe-area-context": "catalog:",
-    "react-native-svg": "catalog:",
-    "react-native-worklets": "catalog:",
-    "react-test-renderer": "catalog:",
     "typescript": "catalog:"
   },
   "peerDependencies": {
     "react": ">=19",
-    "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
-    "@ledgerhq/lumen-ui-rnative": "catalog:",
-    "@radix-ui/react-slot": "catalog:",
-    "class-variance-authority": "catalog:",
-    "@tanstack/react-table": "catalog:"
+    "@ledgerhq/lumen-ui-rnative": "catalog:"
   }
 }
