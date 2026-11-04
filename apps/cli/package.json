@@ -63,7 +63,8 @@
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "@typescript/native": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "zx": "catalog:"
   },
   "publishConfig": {
     "directory": "dist"

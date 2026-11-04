@@ -785,6 +785,9 @@ catalogs:
     zod:
       specifier: 4.6.7
       version: 4.6.7
+    zx:
+      specifier: 8.8.5
+      version: 8.8.5
 
 overrides:
   debug>supports-color: '-'
@@ -946,7 +949,7 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
       zx:
-        specifier: 8.8.5
+        specifier: 'catalog:'
         version: 8.8.5
 
   apps/cli:
@@ -1051,6 +1054,9 @@ importers:
       yaml:
         specifier: 2.8.1
         version: 2.8.1
+      zx:
+        specifier: 'catalog:'
+        version: 8.8.5
     publishDirectory: dist
 
   apps/ledger-live-desktop:
@@ -1965,6 +1971,9 @@ importers:
       yargs:
         specifier: 17.7.2
         version: 17.7.2
+      zx:
+        specifier: 'catalog:'
+        version: 8.8.5
 
   apps/ledger-live-mobile:
     dependencies:
@@ -3046,6 +3055,9 @@ importers:
       ws:
         specifier: 'catalog:'
         version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      zx:
+        specifier: 'catalog:'
+        version: 8.8.5
 
   apps/wallet-cli:
     devDependencies:
@@ -5155,6 +5167,9 @@ importers:
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
+      nx:
+        specifier: 'catalog:'
+        version: 24.0.2(@swc-node/register@1.12.1(@swc/core@1.15.11(@swc/helpers@0.5.23))(@swc/types@0.1.25)(@typescript/typescript6@6.0.2))(@swc/core@1.15.11(@swc/helpers@0.5.23))
       oxfmt:
         specifier: 'catalog:'
         version: 0.75.0
@@ -7742,6 +7757,9 @@ importers:
       lodash:
         specifier: 4.18.1
         version: 4.18.1
+      nx:
+        specifier: 'catalog:'
+        version: 24.0.2(@swc-node/register@1.12.1(@swc/core@1.15.11(@swc/helpers@0.5.23))(@swc/types@0.1.25)(@typescript/typescript6@6.0.2))(@swc/core@1.15.11(@swc/helpers@0.5.23))
       oxfmt:
         specifier: 'catalog:'
         version: 0.75.0
