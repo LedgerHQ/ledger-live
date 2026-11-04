@@ -109,7 +109,7 @@ export function createDBRecord<State>({
         isReading = false;
         const updates = pendingUpdates;
         pendingUpdates = [];
-        const state = updates.reduce(
+        const state = updates.reduce<State>(
           (current, action) => apply(current, action),
           stored ?? initialState,
         );
