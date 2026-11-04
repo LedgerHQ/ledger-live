@@ -3,5 +3,5 @@
   "compilerOptions": {
     "types": ["node"]
   },
-  "include": ["index.ts", "preset-overrides.js", "mocks/**/*.js", "setup/**/*.js"]
+  "include": ["index.ts", "preset-overrides.cjs", "mocks/**/*.js", "setup/**/*.js"]
 }

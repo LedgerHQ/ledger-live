@@ -1,5 +1,5 @@
 // Pins the check every preset factory runs on its overrides: a key the preset owns throws, unless
-// preset-overrides.js lists it for the package (found from rootDir) and the factory, and a listed
+// preset-overrides.cjs lists it for the package (found from rootDir) and the factory, and a listed
 // key the overrides no longer set throws too.
 
 import assert from "node:assert/strict";
@@ -102,7 +102,7 @@ function escape(text) {
   return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-test("a key preset-overrides.js lists for the package and the factory passes through", () => {
+test("a key preset-overrides.cjs lists for the package and the factory passes through", () => {
   const transform = { "^.+\\.tsx?$": "babel-jest" };
   const i18n = createSharedJestConfig({
     rootDir: at("shared/i18n"),
@@ -129,14 +129,14 @@ test("a key preset-overrides.js lists for the package and the factory passes thr
   );
 });
 
-test("a key preset-overrides.js lists that the overrides no longer set throws", () => {
+test("a key preset-overrides.cjs lists that the overrides no longer set throws", () => {
   assert.throws(
     () => createSharedJestConfig({ rootDir: at("shared/i18n"), testEnvironment: "jsdom" }),
     /createSharedJestConfig\(\): support\/jest\/core\/preset-overrides\.cjs lists transform for shared\/i18n, which no override sets; remove it/,
   );
 });
 
-test("every entry of preset-overrides.js names a package, a factory, a reason and preset keys", () => {
+test("every entry of preset-overrides.cjs names a package, a factory, a reason and preset keys", () => {
   const factories = new Set(FACTORIES.map(({ name }) => name));
   for (const [pkg, { reason, overrides }] of Object.entries(PRESET_OVERRIDES)) {
     assert.ok(fs.existsSync(path.join(at(pkg), "package.json")), `${pkg} is not a package`);

@@ -23,7 +23,7 @@ import { NODE_OPTIONS, sharedNodeConfig, sharedReporters, withEsmDeps } from "..
  * `../../` (a package two levels below the repository root).
  *
  * A key the preset owns (`transform`, `testEnvironment`, `reporters`, ...) throws unless
- * `support/jest/core/preset-overrides.js` lists it for the package of `overrides.rootDir`.
+ * `support/jest/core/preset-overrides.cjs` lists it for the package of `overrides.rootDir`.
  *
  *   module.exports = createSharedJestConfig();
  *   module.exports = createSharedJestConfig({ rootDir: __dirname }, { esm: true });

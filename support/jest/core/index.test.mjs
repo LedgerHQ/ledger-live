@@ -160,7 +160,7 @@ const flowReanimated = [
   "^react-native-reanimated$",
   path.join(root, "features-flow/mocks/reanimated.js"),
 ];
-const flowWebSetup = path.join(root, "features-flow/setup/web.js");
+const flowWebSetup = path.join(root, "features-flow/setup/web.cts");
 
 for (const [name, config] of [
   ["createSharedUiJestConfig", project(createSharedUiJestConfig(), "native")],
@@ -259,7 +259,7 @@ for (const [name, create] of [
 ]) {
   test(`${name}: the native project keeps the flow resolver and transform allowlist`, () => {
     const native = project(create(), "native");
-    assert.equal(native.resolver, path.join(root, "features-flow/resolver.native.js"));
+    assert.equal(native.resolver, path.join(root, "features-flow/resolver.native.cjs"));
     assert.equal(native.transformIgnorePatterns.length, 1);
     assert.match(native.transformIgnorePatterns[0], /lumen-utils-shared\|.*lumen-design-core/);
   });

@@ -3,10 +3,7 @@
 // jsdom doesn't implement the Encoding API, unlike every runtime this code ships to
 // (browsers, React Native, Node). Packages reading TextEncoder at module-eval time
 // (e.g. @ledgerhq/device-contacts-kit) throw on import without it.
-import { TextDecoder, TextEncoder } from "node:util";
-import { ReadableStream, TransformStream } from "node:stream/web";
-import { BroadcastChannel, MessageChannel, MessagePort } from "node:worker_threads";
-import { fetch, FormData, Headers, Request, Response } from "undici";
+const { TextEncoder, TextDecoder } = require("node:util");
 
 global.TextEncoder ??= TextEncoder;
 global.TextDecoder ??= TextDecoder;
@@ -15,20 +12,26 @@ global.TextDecoder ??= TextDecoder;
 // Same primitives the apps polyfill (see apps/ledger-live-desktop/jest.polyfills.js).
 // The streams have to land on the global before undici loads: it reads them at module eval.
 // These have to land before undici loads: it reads them at module eval.
+const { ReadableStream, TransformStream } = require("node:stream/web");
+const { BroadcastChannel, MessageChannel, MessagePort } = require("node:worker_threads");
 
 // React's scheduler assigns `onmessage` on a MessageChannel port, which refs a Node port and keeps
 // the jest worker alive after the last test, so the ports are unref'd once their handler is set.
 function UnrefMessageChannel() {
   const channel = new MessageChannel();
   const onmessage = Object.getOwnPropertyDescriptor(MessagePort.prototype, "onmessage");
+  if (!onmessage?.get || !onmessage?.set) {
+    throw new Error("MessagePort.prototype.onmessage is not a data property");
+  }
+  const { get, set } = onmessage;
 
   for (const port of [channel.port1, channel.port2]) {
     Object.defineProperty(port, "onmessage", {
       configurable: true,
       enumerable: true,
-      get: () => onmessage.get.call(port),
+      get: () => get.call(port),
       set(handler) {
-        onmessage.set.call(port, handler);
+        set.call(port, handler);
         port.unref();
       },
     });
@@ -40,11 +43,13 @@ function UnrefMessageChannel() {
 global.ReadableStream ??= ReadableStream;
 global.TransformStream ??= TransformStream;
 global.BroadcastChannel ??= BroadcastChannel;
-global.MessageChannel ??= UnrefMessageChannel;
+global.MessageChannel ??= UnrefMessageChannel as unknown as typeof MessageChannel;
 global.MessagePort ??= MessagePort;
 
 // The fetch primitives come as one set: MSW reads a `Request` and answers a `Response`, so two
 // implementations meeting would fail the `instanceof` checks on either side.
 if (!global.Response) {
+  const { fetch, Headers, FormData, Request, Response } = require("undici");
+
   Object.assign(global, { fetch, Headers, FormData, Request, Response });
 }

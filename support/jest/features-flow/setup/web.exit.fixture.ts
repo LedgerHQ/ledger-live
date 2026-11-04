@@ -12,7 +12,7 @@ const require = createRequire(import.meta.url);
 
 Reflect.deleteProperty(globalThis, "MessageChannel");
 Reflect.deleteProperty(globalThis, "setImmediate");
-require("./web.js");
+require("./web.cts");
 
 const scheduler: Scheduler = createRequire(require.resolve("react-dom"))("scheduler");
 const keepAlive = setInterval(() => {}, 1000);

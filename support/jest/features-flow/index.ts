@@ -35,7 +35,7 @@ const flowNativeMocks: Record<string, string> = deepFreeze({
 });
 
 // The core's web setup, then the flow polyfills.
-const flowWebSetupFiles: string[] = deepFreeze([...webSetupFiles, flowPath("setup/web.js")]);
+const flowWebSetupFiles: string[] = deepFreeze([...webSetupFiles, flowPath("setup/web.cts")]);
 
 const flowLayer: DualLayer = {
   depth: "../../../",
@@ -45,7 +45,7 @@ const flowLayer: DualLayer = {
   },
   native: {
     transformIgnorePatterns,
-    resolver: flowPath("resolver.native.js"),
+    resolver: flowPath("resolver.native.cjs"),
     moduleNameMapper: flowNativeMocks,
   },
 };

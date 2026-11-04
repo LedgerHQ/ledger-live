@@ -18,7 +18,7 @@ export type DualOverrides = Options & {
 };
 
 export const swcTransform: Record<string, Config.TransformerConfig> = {
-  "^.+\\.(t|j)sx?$": [
+  "^.+\\.(c?tsx?|jsx?)$": [
     "@swc/jest",
     { jsc: { target: "esnext", parser: { syntax: "typescript", tsx: true } } },
   ],
@@ -90,7 +90,7 @@ export const nativeSetupFiles: string[] = deepFreeze([quarantineRetries]);
 // Platform variants resolve like they do in the bundlers (Rspack `resolve.extensions`, Metro
 // platform extensions), so a `.web`/`.native` suffix stays confined to the file that needs one.
 export function platformExtensions(platform: "web" | "native"): string[] {
-  return [`${platform}.tsx`, `${platform}.ts`, "tsx", "ts", "js", "jsx", "json"];
+  return [`${platform}.tsx`, `${platform}.ts`, "tsx", "ts", "cts", "js", "jsx", "json"];
 }
 
 /**
@@ -180,7 +180,7 @@ const TRANSFORM_KEYS = new Set(["transform", "transformIgnorePatterns"]);
 const OVERRIDES_FILE = "support/jest/core/preset-overrides.cjs";
 
 /**
- * Throws when a package overrides a key its preset owns and `preset-overrides.js` does not list
+ * Throws when a package overrides a key its preset owns and `preset-overrides.cjs` does not list
  * that key for the package and the factory, and when it lists a key no override sets, so the
  * list only shrinks. The package is found from `rootDir`.
  *
@@ -281,7 +281,7 @@ function checkProjects(factory: string, projects: unknown): void {
  * An exported preset factory: it checks the options and the overrides it gets, then returns what
  * `build` makes of them. Every preset factory is built here, so none can skip the checks.
  *
- * @param name the factory name, for the messages and preset-overrides.js
+ * @param name the factory name, for the messages and preset-overrides.cjs
  * @param options the options the factory reads
  * @returns a factory with the signature of `build`; a factory of `projects` entries when
  *   `PROJECT_FACTORIES` lists the name
