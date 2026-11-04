@@ -211,10 +211,10 @@ The linter checks the convention; the two typecheck passes (`tsconfig.web.json`,
 ## Consequences
 
 - The linter lands with waivers for every current violation, keyed by package and component, plus the contracts that pass every other rule but use a gesture name, such as `onPress` in [ActionTiles/types.ts](https://github.com/LedgerHQ/ledger-live/blob/d5fe20dc9d7d01ff185ec2ee84a4a60709096329/features/flow/pay-balance/src/components/ActionTiles/types.ts#L6).
-- One ticket per package removes the waivers. [exceptions.js](../../tools/nx-plugins/enforce-package-structure/exceptions.js) lists the ones left, so its component waivers are the remaining debt. The contacts packages go first: `features/flow/contacts`, the `flow-contacts-*` packages and `features/platform/contacts` hold most of them.
+- One ticket per package removed the waivers. By 2026-11-04 every component waiver was gone (epic LIVE-36917); [exceptions.js](../../tools/nx-plugins/enforce-package-structure/exceptions.js) keeps `COMPONENT_EXCEPTIONS` empty, and R1 to R5 take no new waiver.
 - [docs/tsconfig.md](../tsconfig.md) changes: platform-specific prop types stay inside an implementation and never reach a contract.
 - Each migration ticket checks its platform-only props before tagging them. A `bottomInset` that the app fills from the safe area moves into the native implementation, as the pay packages already do, and leaves the contract.
-- The eight packages whose `./native` subpath repeats their universal entry, the seven contacts packages and `shared/ui-info-state`, start with an R5 waiver. Their importers are native code, `.native` files or the native-only `app-*` packages, so each package either drops the subpath and its importers use the universal entry, or narrows the subpath to native-only components.
+- The eight packages whose `./native` subpath repeated their universal entry, the seven contacts packages and `shared/ui-info-state`, had R5 waivers during rollout. Their importers were native code, `.native` files or the native-only `app-*` packages; each package either dropped the subpath so importers use the universal entry, or narrowed the subpath to native-only components.
 - `@shared/lottie` replaces its universal entry with `./web` and `./native`, and its importers, in the desktop app, the mobile app and `device-action-content`, name their platform. `pay-card-widget` already has the target shape.
 
 ```mermaid
