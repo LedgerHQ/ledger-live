@@ -27,7 +27,7 @@ import {
   useAppConfigToolProps,
   useAccountNameToolProps,
   useMockAccountsToolProps,
-  useAccountAnalyticsIntroductionToolProps,
+  useAccountDetailToolProps,
 } from "@devtools/bindings";
 import type { DevToolsConfig } from "@devtools/shell";
 import { useDevToolsRelay } from "./useDevToolsRelay";
@@ -110,7 +110,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
   const legacyAccounts = useSelector(accountsSelector);
   const accountNameToolProps = useAccountNameToolProps(legacyAccounts);
   const mockAccountsToolProps = useMockAccountsToolProps(accountDataRecorder);
-  const accountAnalyticsIntroductionToolProps = useAccountAnalyticsIntroductionToolProps();
+  const accountDetailToolProps = useAccountDetailToolProps();
 
   const config: DevToolsConfig = useMemo(
     () => [
@@ -129,7 +129,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       { id: "account-name", config: accountNameToolProps },
       { id: "account-portfolio", config: accountPortfolioToolProps },
       { id: "mock-accounts", config: mockAccountsToolProps },
-      { id: "account-analytics-introduction", config: accountAnalyticsIntroductionToolProps },
+      { id: "account-detail", config: accountDetailToolProps },
     ],
     [
       featureFlagsToolProps,
@@ -147,7 +147,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       accountDataToolProps,
       accountNameToolProps,
       mockAccountsToolProps,
-      accountAnalyticsIntroductionToolProps,
+      accountDetailToolProps,
     ],
   );
 

@@ -6,7 +6,7 @@ import {
   accountAnalyticsIntroductionSlice,
   dismissAccountAnalyticsIntroduction,
 } from "@features/flow-account-detail-analytics-notice/state";
-import { useAccountAnalyticsIntroductionToolProps } from "./useAccountAnalyticsIntroductionToolProps";
+import { useAccountDetailToolProps } from "./useAccountDetailToolProps";
 
 function setup() {
   const store = configureStore({
@@ -15,14 +15,14 @@ function setup() {
   const wrapper = ({ children }: PropsWithChildren) => (
     <Provider store={store}>{children}</Provider>
   );
-  const { result } = renderHook(() => useAccountAnalyticsIntroductionToolProps(), { wrapper });
+  const { result } = renderHook(() => useAccountDetailToolProps(), { wrapper });
   return { store, result };
 }
 
-describe("useAccountAnalyticsIntroductionToolProps", () => {
+describe("useAccountDetailToolProps", () => {
   it("reports a card that was never dismissed", () => {
     const { result } = setup();
-    expect(result.current.hasDismissed).toBe(false);
+    expect(result.current.analyticsIntroduction.hasDismissed).toBe(false);
   });
 
   it("resets a dismissed card so it shows again", () => {
@@ -30,11 +30,11 @@ describe("useAccountAnalyticsIntroductionToolProps", () => {
     act(() => {
       store.dispatch(dismissAccountAnalyticsIntroduction());
     });
-    expect(result.current.hasDismissed).toBe(true);
+    expect(result.current.analyticsIntroduction.hasDismissed).toBe(true);
 
-    act(() => result.current.onReset());
+    act(() => result.current.analyticsIntroduction.onReset());
 
-    expect(result.current.hasDismissed).toBe(false);
+    expect(result.current.analyticsIntroduction.hasDismissed).toBe(false);
     expect(store.getState().accountAnalyticsIntroduction.hasDismissed).toBe(false);
   });
 });

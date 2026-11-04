@@ -18,7 +18,7 @@ export const tools = {
   "app-config": platform.appConfig,
   "account-name": platform.accountName,
   "mock-accounts": platform.mockAccounts,
-  "account-analytics-introduction": walletXp.accountAnalyticsIntroduction,
+  "account-detail": walletXp.accountDetail,
 } as const;
 
 /**
@@ -52,7 +52,4 @@ export type DevToolConfig =
   | { id: "app-config"; config: platform.AppConfigToolProps }
   | { id: "account-name"; config: platform.AccountNameToolProps }
   | { id: "mock-accounts"; config: platform.MockAccountsToolProps }
-  | {
-      id: "account-analytics-introduction";
-      config: walletXp.AccountAnalyticsIntroductionToolProps;
-    };
+  | { id: "account-detail"; config: walletXp.AccountDetailToolProps };

@@ -1,8 +1,7 @@
 import { createDualPlatformKnipConfig } from "../../knip.config.base.mjs";
 
 export default createDualPlatformKnipConfig({
-  packagePath: "devtools/account-analytics-introduction",
-  platform: "native",
+  packagePath: "devtools/account-detail",
+  platform: "web",
   entry: [],
-  additionalProjectExcludes: ["src/index.ts"],
 });

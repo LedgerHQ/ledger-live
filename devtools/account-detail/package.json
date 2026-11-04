@@ -1,8 +1,8 @@
 {
-  "name": "@devtools/account-analytics-introduction",
+  "name": "@devtools/account-detail",
   "version": "0.1.0",
   "private": true,
-  "description": "DevTools panel to reset the Account Detail card that redirects to Analytics",
+  "description": "DevTools panel to debug the Account Detail page, such as resetting its Analytics card",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
@@ -25,7 +25,7 @@
     "coverage:web": "jest --config jest.config.js --coverage",
     "coverage:native": "jest --config jest.native.config.js --coverage",
     "lint": "oxlint src",
-    "unimported": "pnpm knip --directory ../.. -c devtools/account-analytics-introduction/knip.web.config.mjs -W devtools/account-analytics-introduction --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c devtools/account-analytics-introduction/knip.native.config.mjs -W devtools/account-analytics-introduction --tsConfig tsconfig.native.json"
+    "unimported": "pnpm knip --directory ../.. -c devtools/account-detail/knip.web.config.mjs -W devtools/account-detail --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c devtools/account-detail/knip.native.config.mjs -W devtools/account-detail --tsConfig tsconfig.native.json"
   },
   "devDependencies": {
     "@babel/plugin-transform-export-namespace-from": "7.27.1",
