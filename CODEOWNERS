@@ -429,6 +429,8 @@ libs/device-core/                                                  @ledgerhq/liv
 features/platform/device-onboarding/                               @ledgerhq/engagement
 features/platform/device-intent/                                   @ledgerhq/live-devices
 features/platform/device-action-content/                           @ledgerhq/live-devices
+features/platform/device-mock-server/                              @ledgerhq/live-devices
+features/flow/device-mock-server/                                  @ledgerhq/live-devices
 features/platform/contacts/src/device/                             @ledgerhq/live-devices
 libs/device-react/                                                 @ledgerhq/live-devices
 libs/speculos-transport/                                           @ledgerhq/live-devices @ledgerhq/qaa
@@ -451,6 +453,7 @@ libs/live-signer-tron/                                             @ledgerhq/liv
 libs/live-dmk-speculos/                                            @ledgerhq/live-devices
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/manager.handler.ts  @ledgerhq/live-devices
 apps/ledger-live-desktop/src/mvvm/components/MockServerDeviceWindow/ @ledgerhq/live-devices
+apps/ledger-live-mobile/src/mvvm/features/MockServer/          @ledgerhq/live-devices
 **/useMockServer*                                                  @ledgerhq/live-devices
 **/mockServerTransport*                                            @ledgerhq/live-devices
 **/EnableMockServerTransportToggle*                                @ledgerhq/live-devices

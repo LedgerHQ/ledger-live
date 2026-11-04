@@ -1,20 +1,21 @@
-import network from "@ledgerhq/live-network";
 import { getEnv, getEnvDefault, isEnvDefault } from "@shared/env";
 import {
   mockserverIdentifier,
   setMockServerSessionToken,
   getMockServerSessionToken,
-  getMockScriptRunnerBaseUrl,
   getMockServerTransportUrl,
 } from "@ledgerhq/live-dmk-desktop";
+import {
+  createMockServerSession,
+  getMockServerSecureChannelUrl,
+  parseMockServerSessionImport,
+} from "@features/platform-device-mock-server";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { setEnvOnAllThreads } from "~/helpers/env";
 
-const REQUEST_TIMEOUT_MS = 4000;
-
 /** Path segment that marks a `BASE_SOCKET_URL` as the mock server's secure channel. */
-const MOCK_SCRIPT_RUNNER_PATH = "/secure-channel/";
+const MOCK_SERVER_SECURE_CHANNEL_PATH = "/secure-channel/";
 
 /**
  * localStorage key backing the developer "Mock server transport" toggle. The
@@ -87,7 +88,7 @@ export async function bootstrapMockServerTransport(): Promise<KnownDevice | null
     // pushed in a previous session would keep the scriptrunner flows pointed at
     // the mock server. Only a mock url is reset, so a deliberate
     // `BASE_SOCKET_URL` override survives.
-    if (getEnv("BASE_SOCKET_URL").includes(MOCK_SCRIPT_RUNNER_PATH)) {
+    if (getEnv("BASE_SOCKET_URL").includes(MOCK_SERVER_SECURE_CHANNEL_PATH)) {
       setEnvOnAllThreads("BASE_SOCKET_URL", getEnvDefault("BASE_SOCKET_URL"));
     }
     return null;
@@ -98,36 +99,10 @@ export async function bootstrapMockServerTransport(): Promise<KnownDevice | null
 
   const baseUrl = getMockServerTransportUrl();
   try {
-    const { data } = await network<{ token?: string }>({
-      method: "POST",
-      url: `${baseUrl}/auth`,
-      data: {},
-      timeout: REQUEST_TIMEOUT_MS,
-    });
-    const token = data?.token;
-    if (!token) throw new Error("no token returned by /auth");
-
-    const auth = { Authorization: `Bearer ${token}` };
-
-    // Pushed before the devices land: the endpoint rejects an empty seed, so a
-    // bad mnemonic fails before the session is half-provisioned.
-    const seedOverride = getEnv("MOCK_SERVER_SEED").trim();
-    if (seedOverride) {
-      await network({
-        method: "PUT",
-        url: `${baseUrl}/sessions/current/seed`,
-        data: { seed: seedOverride },
-        headers: auth,
-        timeout: REQUEST_TIMEOUT_MS,
-      });
-    }
-
-    await network({
-      method: "POST",
-      url: `${baseUrl}/import`,
-      data: getEnv("MOCK_SERVER_SESSION"),
-      headers: auth,
-      timeout: REQUEST_TIMEOUT_MS,
+    const token = await createMockServerSession({
+      url: baseUrl,
+      sessionImport: parseMockServerSessionImport(getEnv("MOCK_SERVER_SESSION")),
+      seed: getEnv("MOCK_SERVER_SEED").trim() || undefined,
     });
 
     setMockServerSessionToken(token);
@@ -137,9 +112,9 @@ export async function bootstrapMockServerTransport(): Promise<KnownDevice | null
     // `getEnv` at call time and run on the internal thread, so we push the mock
     // secure-channel URL (with token) to all threads instead of importing the
     // token into platform-agnostic ledger-live-common.
-    const scriptRunnerUrl = getMockScriptRunnerBaseUrl(baseUrl, token);
-    if (scriptRunnerUrl) {
-      setEnvOnAllThreads("BASE_SOCKET_URL", scriptRunnerUrl);
+    const secureChannelUrl = getMockServerSecureChannelUrl(baseUrl, token);
+    if (secureChannelUrl) {
+      setEnvOnAllThreads("BASE_SOCKET_URL", secureChannelUrl);
     }
   } catch (error) {
     console.warn("Failed to bootstrap mock server transport", error);

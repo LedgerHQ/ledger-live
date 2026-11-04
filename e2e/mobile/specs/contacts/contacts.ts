@@ -259,12 +259,10 @@ export function runRenameContactOnDeviceTest(tmsLinks: string[], tags: string[])
       const port = await launchApp({
         newInstance: true,
         launchArgs: {
+          mockServerUrl: session.baseUrl,
           mockServerToken: session.token,
           mockServerModel: modelId,
           forceProvider: String(CONTACTS_APP_CATALOG_PROVIDER),
-          ...(process.env.MOCK_SERVER_TRANSPORT_URL
-            ? { mockServerUrl: process.env.MOCK_SERVER_TRANSPORT_URL }
-            : {}),
         },
       });
       await device.reverseTcpPort(port);

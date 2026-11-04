@@ -23,7 +23,9 @@ import {
   type KnownDevice,
 } from "@ledgerhq/live-dmk-shared";
 import type { Subscription } from "rxjs";
+import { useSelector } from "~/context/hooks";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
+import { isMockServerEnabledSelector } from "~/reducers/settings";
 import { isRebootedDevice, useFirmwareUpdateHandover } from "./useFirmwareUpdateHandover";
 import { useLeaveOnboarding } from "./useLeaveOnboarding";
 import { createDeviceOnboardingPorts } from "../utils/ports";
@@ -93,6 +95,7 @@ export function useDeviceOnboarding({
   onLeave,
   inspect,
 }: UseDeviceOnboardingInput): DeviceOnboardingSession {
+  const isMockServerEnabled = useSelector(isMockServerEnabledSelector);
   const [status, setStatus] = useState<DeviceOnboardingStatus>("idle");
   const [device, setDevice] = useState<DeviceOnboardingSession["device"]>(null);
   const [error, setError] = useState<string | null>(null);
@@ -363,6 +366,7 @@ export function useDeviceOnboarding({
     connectionRef.current = connectDevice({
       dmk,
       knownDevices,
+      isMockServerEnabled,
       onConnected: result => {
         void adoptConnection(result);
       },
@@ -373,7 +377,7 @@ export function useDeviceOnboarding({
         setStatus(statusWithActor(actorRef.current));
       },
     });
-  }, [actorRef, adoptConnection, dmk, handleConnectionState, knownDevices]);
+  }, [actorRef, adoptConnection, dmk, handleConnectionState, knownDevices, isMockServerEnabled]);
 
   const reset = useCallback(() => {
     adoptGeneration.current += 1;
