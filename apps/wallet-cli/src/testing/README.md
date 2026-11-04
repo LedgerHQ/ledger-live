@@ -17,6 +17,7 @@ binary.
 | `human-device-error-exit` | Standalone script spawned to assert human-output exit codes |
 | `output-loads-solana-sdk` | Standalone script spawned to assert that loading `output.ts` leaves the Solana SDK unloaded |
 | `print-swap-api-base` | Standalone script spawned to assert which Swap API URL startup leaves for live-common |
+| `run-swap-quote` | Standalone script spawned to run `swap quote` against the mock Swap API with the environment it starts with |
 | `os-keychain` | A failing Linux Secret Service probe, and a `process.platform` override |
 | `in-memory-keychain` | OS keychain fake for `_setTestKeychain` |
 | `fake-spinner` | Spinner fake for `_setTestSpinner` that records what it shows |

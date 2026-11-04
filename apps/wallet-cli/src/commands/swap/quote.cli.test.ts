@@ -11,10 +11,11 @@ import { KEYCLOAK_TOKEN, makeAuthRoutes } from "../../testing/auth-routes";
 import { SWAP_QUOTE_ARGS, makeSwapQuoteRoutes } from "../../testing/swap-quote-routes";
 import { makeAuthenticatedQuoteServer } from "../../testing/authenticated-quote-server";
 import { resetTestSeams } from "../../shared/test-seam";
-import { getEnv, setEnv } from "@shared/env";
+import path from "node:path";
 
 const ACCOUNTS = [{ label: "ethereum-1", descriptor: ETH_DESCRIPTOR }];
 const JSON_QUOTE_ARGS = [...SWAP_QUOTE_ARGS, "--output", "json"];
+const RUN_SWAP_QUOTE = path.resolve(import.meta.dir, "../../testing/run-swap-quote.ts");
 
 describe("quote command", () => {
   let challengeCookie: string | null = null;
@@ -36,7 +37,6 @@ describe("quote command", () => {
     challengeCookie = null;
     quote.quoteAuthorizations.length = 0;
     quote.quoteUserAgents.length = 0;
-    quote.quotePaths.length = 0;
     fixture = makeSessionDir(ACCOUNTS);
   });
   afterEach(() => {
@@ -110,20 +110,21 @@ describe("quote command", () => {
     expect(quote.quoteUserAgents).toEqual([ledgerClientVersion]);
   });
 
-  it("sends the quote to the Swap API that startup set from SWAP_API_BASE", async () => {
-    const swapApiBase = getEnv("SWAP_API_BASE");
-    setEnv("SWAP_API_BASE", "https://swap.staging.test/swap/v5");
-    try {
-      const { exitCode, stdout, stderr } = await runCli(JSON_QUOTE_ARGS, {
-        WALLET_CLI_MOCK_PORT: String(server.port),
-        ...fixture.env,
-      });
+  it("sends the quote to the Swap API that SWAP_API_BASE names at startup", async () => {
+    const proc = Bun.spawn([process.execPath, "--no-env-file", RUN_SWAP_QUOTE], {
+      env: { ...process.env, SWAP_API_BASE: "https://swap.staging.test/swap/v5" },
+      stdin: "ignore",
+      stdout: "pipe",
+      stderr: "pipe",
+    });
+    const [exitCode, stdout, stderr] = await Promise.all([
+      proc.exited,
+      new Response(proc.stdout).text(),
+      new Response(proc.stderr).text(),
+    ]);
 
-      expect(exitCode, `stdout: ${stdout}\nstderr: ${stderr}`).toBe(0);
-      expect(quote.quotePaths).toEqual(["/swap/v5/quote"]);
-    } finally {
-      setEnv("SWAP_API_BASE", swapApiBase);
-    }
+    expect(exitCode, stderr).toBe(0);
+    expect(JSON.parse(stdout)).toEqual({ exitCode: 0, quotePaths: ["/swap/v5/quote"] });
   });
 
   it("rejects swap currencies outside wallet-cli supported list", async () => {
