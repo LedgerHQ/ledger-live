@@ -22,7 +22,7 @@ export function PricePerformanceListRow({
   trailingDescription,
 }: PricePerformanceListRowProps) {
   return (
-    <ListItem density="compact" className="pointer-events-none px-0">
+    <ListItem density="compact" className="pointer-events-none overflow-visible px-0">
       <ListItemLeading>
         <ListItemContent>
           <ListItemTitle className="text-muted">{leadingTitle}</ListItemTitle>
