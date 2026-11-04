@@ -44,7 +44,7 @@ function describeNetworkFees(mainAccount: Account, fees: BigNumber | undefined) 
 }
 
 function withMessage(error: Error, message: string): Error {
-  const reworded = Object.assign(new Error(message, { cause: error }), error);
+  const reworded = Object.assign(new Error(message), error, { cause: error });
   return Object.setPrototypeOf(reworded, Object.getPrototypeOf(error));
 }
 

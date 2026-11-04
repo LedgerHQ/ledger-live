@@ -559,6 +559,22 @@ describe("swap execute command", () => {
       });
     });
 
+    it("keeps the bridge error as cause when the error declares its own cause field", async () => {
+      const bridgeNotEnoughBalance = new NotEnoughBalance(undefined, { cause: undefined });
+      transactionStatusErrors = { amount: bridgeNotEnoughBalance };
+
+      const rejection = checkSwapAffordability({
+        account: makeAccount(fromDescriptor),
+        parentAccount: undefined,
+        amount: new BigNumber("1000000000000000000"),
+        feeStrategy: "MEDIUM",
+        getAccountBridge: getAccountBridgeMock,
+      });
+
+      const error = await rejection.catch((e: unknown) => e);
+      expect(error).toHaveProperty("cause", bridgeNotEnoughBalance);
+    });
+
     it("checks the amount the user asked to swap, in atomic units", async () => {
       await runExecuteSwapCommand();
 
