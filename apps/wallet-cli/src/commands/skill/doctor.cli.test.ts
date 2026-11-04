@@ -166,9 +166,9 @@ describe("skill doctor", () => {
     const forceNoFix = await runCli(["skill", "doctor", "--dir", dir, "--force"]);
     expect(forceNoFix.exitCode).toBe(1);
     expect(forceNoFix.stdout).toContain("Re-run with --fix --force");
-    // The hint carries each entry's root so the same skill modified in multiple
-    // scan roots (e.g. under --global) stays distinguishable, not `name, name`.
-    expect(forceNoFix.stdout).toContain(`${SKILL_NAME} (${dir})`);
+    expect(forceNoFix.stdout).toContain(
+      `left untouched: ${SKILL_NAME} (${path.join(skillRoot, "SKILL.md")}). Re-run`,
+    );
 
     const fixForce = await runCli(["skill", "doctor", "--dir", dir, "--fix", "--force"]);
     expect(fixForce.exitCode, `stderr: ${fixForce.stderr}`).toBe(0);
@@ -206,6 +206,7 @@ describe("skill doctor", () => {
     const modified = await runCli(["skill", "doctor", "--dir", dir]);
     expect(modified.exitCode).toBe(1);
     expect(modified.stdout).toContain("modified-locally");
+    expect(modified.stdout).toContain(`left untouched: ${SKILL_NAME} (${dir}). Re-run`);
 
     // Without provenance we don't overwrite without --force.
     const fixNoForce = await runCli(["skill", "doctor", "--dir", dir, "--fix"]);

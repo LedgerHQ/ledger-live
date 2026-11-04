@@ -324,6 +324,7 @@ export type SkillDiagnosis = {
   installedHash?: string;
   /** Canonical hash recomputed over the tracked files on disk (if present). */
   diskHash?: string;
+  changedFiles?: string[];
   shippedVersion: string;
   shippedHash: string;
   /**
@@ -417,12 +418,6 @@ async function changedSinceInstall(
     .map(filePath => path.join(skillRoot, filePath));
 }
 
-export async function findChangedFiles(skill: SkillManifest, root: string): Promise<string[]> {
-  const skillRoot = path.join(root, skill.name);
-  const sidecar = await readSidecar(skillRoot);
-  return sidecar ? changedSinceInstall(skillRoot, skill, sidecar.files) : [];
-}
-
 /**
  * Diagnose one shipped `skill` at `root` (which must contain `<root>/<name>`).
  * Recomputes the disk hash over the files the sidecar recorded (so a file a newer
@@ -469,6 +464,7 @@ export async function diagnoseSkill(skill: SkillManifest, root: string): Promise
     installedVersion: sidecar?.cliVersion,
     installedHash: sidecar?.contentHash,
     diskHash,
+    ...(changedFiles.length > 0 ? { changedFiles } : {}),
     shippedVersion: CLI_VERSION,
     shippedHash: skill.contentHash,
   };
