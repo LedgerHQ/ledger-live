@@ -24,6 +24,16 @@ export type DeviceStateCode =
   | "unknown";
 
 export type AwaitingApprovalReason = "sign" | "verify_address" | "open_app" | "unlock";
+
+/**
+ * Best-effort attribution for a USB failure, reported as `likely_cause` in JSON error envelopes.
+ * "Likely", not "certain": wallet-cli only ever sees an errno from libusb.
+ */
+export type UsbLikelyCause =
+  | "sandbox_blocking_usb"
+  | "device_not_present"
+  | "app_not_open"
+  | "unknown";
 export type RejectedContext = "sign" | "verify_address" | "open_app";
 
 /**
@@ -31,15 +41,20 @@ export type RejectedContext = "sign" | "verify_address" | "open_app";
  * carries why connecting to it failed.
  */
 export type DeviceState =
-  | { code: "disconnected"; speculosUrl?: string; detail?: string }
+  | {
+      code: "disconnected";
+      speculosUrl?: string;
+      detail?: string;
+      likelyCause?: UsbLikelyCause;
+    }
   | { code: "wrong_app"; expected: string; found?: string }
   | { code: "awaiting_approval"; reason: AwaitingApprovalReason }
   | { code: "rejected"; context: RejectedContext; deviceModelId?: string }
   | { code: "exchange_app_needed" }
   | { code: "locked" }
   | { code: "app_not_installed"; appName: string }
-  | { code: "timeout"; speculosUrl?: string }
-  | { code: "unknown"; cause: unknown };
+  | { code: "timeout"; speculosUrl?: string; likelyCause?: UsbLikelyCause }
+  | { code: "unknown"; cause: unknown; likelyCause?: UsbLikelyCause };
 
 export type DeviceStateGlyph = "[✖]" | "[⧖]" | "[ℹ]";
 
@@ -54,6 +69,9 @@ export const DEVICE_EXIT_CODES = {
 } as const;
 
 export type DeviceExitCode = (typeof DEVICE_EXIT_CODES)[keyof typeof DEVICE_EXIT_CODES];
+
+const USB_REFUSED_BY_SANDBOX_MESSAGE =
+  "USB access to the Ledger was refused, likely by the agent sandbox.";
 
 /**
  * A terminal state causes the process to exit non-zero once rendered.
@@ -132,15 +150,46 @@ export function renderDeviceState(state: DeviceState): {
         glyph: "[✖]",
         message: state.speculosUrl
           ? `Timed out talking to Speculos at ${state.speculosUrl}. The emulated app may be waiting for a button press. Retry the command.`
-          : "Timed out talking to the Ledger over USB. The device may be busy or locked. Retry the command.",
+          : renderUsbTimeoutMessage(state.likelyCause),
         exitCode: DEVICE_EXIT_CODES.timeout,
       };
     case "unknown":
       return {
         glyph: "[✖]",
-        message: unknownCauseMessage(state.cause),
+        message:
+          state.likelyCause === "sandbox_blocking_usb"
+            ? USB_REFUSED_BY_SANDBOX_MESSAGE
+            : unknownCauseMessage(state.cause),
         exitCode: DEVICE_EXIT_CODES.generic,
       };
+  }
+}
+
+/**
+ * The USB attribution a state carries, or `undefined` for states that carry none — which is what
+ * `output.ts` gates the diagnostic fields on. A `timeout` defaults to `unknown`, and a
+ * `disconnected` the classifier did not attribute defaults to `device_not_present`, which is what
+ * "Ledger not detected" already tells the human. An `unknown` carries one only when the classifier
+ * recognised a USB failure. A Speculos failure is not a USB one, so it carries none.
+ */
+export function usbLikelyCauseOf(state: DeviceState): UsbLikelyCause | undefined {
+  if ("speculosUrl" in state && state.speculosUrl) return undefined;
+  if (state.code === "timeout") return state.likelyCause ?? "unknown";
+  if (state.code === "disconnected") return state.likelyCause ?? "device_not_present";
+  if (state.code === "unknown") return state.likelyCause;
+  return undefined;
+}
+
+function renderUsbTimeoutMessage(cause: UsbLikelyCause | undefined): string {
+  switch (cause) {
+    case "sandbox_blocking_usb":
+      return USB_REFUSED_BY_SANDBOX_MESSAGE;
+    case "device_not_present":
+      return "No Ledger detected over USB. Plug in, unlock, retry.";
+    case "app_not_open":
+      return "Timed out waiting for the Ledger app to open.";
+    default:
+      return "Timed out talking to the Ledger over USB. The device may be busy or locked. Retry the command.";
   }
 }
 

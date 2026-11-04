@@ -38,6 +38,13 @@ import {
   RECONNECT_DEVICE_TIMEOUT_MS,
   WINDOWS_WEBUSB_DISCOVERY_POLL_INTERVAL_MS,
 } from "./node-webusb-constants";
+import {
+  recordLedgerVendorSeen,
+  recordScanCompleted,
+  recordScanStarted,
+  recordUsbAccessFailure,
+  recordUsbAccessSuccess,
+} from "../usb-access-diagnostics";
 
 export const nodeWebUsbIdentifier: TransportIdentifier = "NODE-WEBUSB";
 
@@ -286,10 +293,12 @@ export class NodeWebUsbTransport implements Transport {
   }): TransportConnectedDevice {
     const deviceId = row.id;
 
-    const sendApduToMachine: TransportConnectedDevice["sendApdu"] = async (...args) => {
+    const sendApduToMachine: TransportConnectedDevice["sendApdu"] = (...args) => {
       if (!this.isConnectionMachineRoutable(machine)) {
-        return Left(
-          new DeviceDisconnectedBeforeSendingApdu(`${deviceId} is no longer active or pending`),
+        return Promise.resolve(
+          Left(
+            new DeviceDisconnectedBeforeSendingApdu(`${deviceId} is no longer active or pending`),
+          ),
         );
       }
       return machine.sendApdu(...args);
@@ -378,11 +387,28 @@ export class NodeWebUsbTransport implements Transport {
 
   private async scanLedgerWebUsbDevices(): Promise<ScannedWebUsbDevice[]> {
     const collected: ScannedWebUsbDevice[] = [];
-    for (const native of this._platformBindings.getDeviceList()) {
+    recordScanStarted();
+    let natives: ReturnType<NodeWebUsbTransportPlatform["getDeviceList"]>;
+    try {
+      natives = this._platformBindings.getDeviceList();
+    } catch (e) {
+      recordUsbAccessFailure(e);
+      throw e;
+    }
+    recordScanCompleted();
+    for (const native of natives) {
       if (native.deviceDescriptor.idVendor !== LEDGER_VENDOR_ID) {
         continue;
       }
-      const device = await this._platformBindings.createWebUsbDevice(native);
+      recordLedgerVendorSeen();
+      let device: WebUSBDevice;
+      try {
+        device = await this._platformBindings.createWebUsbDevice(native);
+      } catch (e) {
+        recordUsbAccessFailure(e);
+        throw e;
+      }
+      recordUsbAccessSuccess();
       const interfaceNumber = getVendorInterfaceNumber(device);
       if (interfaceNumber === null) {
         continue;
@@ -642,8 +668,10 @@ export class NodeWebUsbTransport implements Transport {
 
     try {
       await setupConnection;
+      recordUsbAccessSuccess();
     } catch (e) {
       this._deviceApduSendersByConnectionMachine.delete(machine);
+      recordUsbAccessFailure(e);
       this._logger.error("Error while setting up device connection", { data: { error: e } });
       return Left(new OpeningConnectionError(e));
     } finally {
@@ -721,7 +749,11 @@ export class NodeWebUsbTransport implements Transport {
     try {
       this._deviceConnectionsPendingReconnection.delete(machine);
       machine.setDependencies({ device: web, interfaceNumber });
-      await machine.setupConnection();
+      await machine.setupConnection().catch((e: unknown) => {
+        recordUsbAccessFailure(e);
+        throw e;
+      });
+      recordUsbAccessSuccess();
       this.setActiveConnection(web, machine);
       machine.eventDeviceConnected();
     } catch (e) {
@@ -751,15 +783,24 @@ export class NodeWebUsbTransport implements Transport {
       data: { vendorId: idVendor, productId: idProduct },
     });
 
+    recordLedgerVendorSeen();
+    let web: WebUSBDevice;
     try {
-      const web = await this._platformBindings.createWebUsbDevice(native);
-      if (getVendorInterfaceNumber(web) === null) {
-        this._logger.debug("[handleDeviceConnection] No Ledger WebUSB interface", {
-          data: { vendorId: idVendor, productId: idProduct },
-        });
-        return;
-      }
+      web = await this._platformBindings.createWebUsbDevice(native);
+    } catch (e) {
+      recordUsbAccessFailure(e);
+      this._logger.error("Error while handling WebUSB connection event", { data: { error: e } });
+      return;
+    }
 
+    if (getVendorInterfaceNumber(web) === null) {
+      this._logger.debug("[handleDeviceConnection] No Ledger WebUSB interface", {
+        data: { vendorId: idVendor, productId: idProduct },
+      });
+      return;
+    }
+
+    try {
       // Reconnection of any pending machines happens inside the rescan via
       // reconnectPendingMachines(), so the rescan is the single source of truth.
       await this.updateTransportDiscoveredDevices();
