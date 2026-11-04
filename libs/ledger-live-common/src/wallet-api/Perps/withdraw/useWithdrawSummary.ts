@@ -22,6 +22,8 @@ export type UsePerpsWithdrawSummaryParams = Readonly<{
 }>;
 
 export type PerpsWithdrawSummaryDetails = Readonly<{
+  /** The latest quote, the one the withdraw signs. */
+  quote: WithdrawQuote;
   swapDetails: readonly PerpsWithdrawSummaryDetail[];
   withdrawDetails: readonly PerpsWithdrawSummaryDetail[];
   canWithdraw: boolean;
@@ -51,6 +53,7 @@ export function usePerpsWithdrawSummary({
     });
 
     return {
+      quote,
       swapDetails: [
         {
           labelKey: "perpsReview.amountSendLabel",

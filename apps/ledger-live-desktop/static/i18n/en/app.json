@@ -7756,6 +7756,14 @@
       "title": "Network Error",
       "description": "Make sure you are connected to the internet and try again."
     },
+    "WithdrawApiError": {
+      "title": "Your withdrawal wasn’t sent",
+      "description": "Nothing left your Perps balance. Close and try again with a new quote."
+    },
+    "WithdrawSubmitUnknownOutcomeError": {
+      "title": "We couldn’t confirm your withdrawal",
+      "description": "It may still go through. Check Swap History before you try again."
+    },
     "WrongDeviceForAccount": {
       "title": "Something went wrong",
       "description": "Please check that your Ledger device is set up with the recovery phrase or passphrase associated to the selected account."
@@ -11315,6 +11323,9 @@
       "quoteUnavailable": "We can’t get a quote from {{provider}}, try with a different asset or come back later.",
       "currenciesUnavailable": "We can’t load the assets you can withdraw to. Try again later."
     }
+  },
+  "perpsWithdrawSign": {
+    "a11yTitle": "Withdraw signing"
   },
   "perpsDepositSign": {
     "a11yTitle": "Deposit signing",

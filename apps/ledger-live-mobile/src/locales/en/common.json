@@ -1275,6 +1275,14 @@
       "title": "Sorry, connection failed",
       "description": "Please try again with a better network connection (websocket failed)."
     },
+    "WithdrawApiError": {
+      "title": "Your withdrawal wasn’t sent",
+      "description": "Nothing left your Perps balance. Close and try again with a new quote."
+    },
+    "WithdrawSubmitUnknownOutcomeError": {
+      "title": "We couldn’t confirm your withdrawal",
+      "description": "It may still go through. Check Swap History before you try again."
+    },
     "WrongDeviceForAccount": {
       "title": "Something went wrong",
       "description": "Please check that your Ledger device is set up with the recovery phrase or passphrase associated to the selected account."

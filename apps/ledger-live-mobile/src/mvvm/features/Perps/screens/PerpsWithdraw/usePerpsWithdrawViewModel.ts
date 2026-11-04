@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { PERPS_UI_USE_CASE } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
+import { PERPS_SWAPKIT_PROVIDER } from "@ledgerhq/live-common/wallet-api/Perps/constants";
+import type { PerpsWithdrawResult } from "@ledgerhq/live-common/wallet-api/Perps/server";
+import type { WithdrawQuote } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/quote";
 import { cancelWithdrawRequest } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/request";
 import {
   usePerpsWithdrawForm,
@@ -52,9 +56,20 @@ export type PerpsWithdrawViewModel = Readonly<{
   summaryKey: number;
   summaryParams: PerpsWithdrawSummaryParams | null;
   closeSummary: () => void;
+  /** The summary with the quote being signed, while the device signs it. */
+  signParams: PerpsWithdrawSummaryParams | null;
+  signingDevice: Device | null | undefined;
+  selectSigningDevice: (device: Device | null | undefined) => void;
+  handOverToDevice: (quote: WithdrawQuote) => void;
+  returnToSummary: () => void;
+  endSigning: (result: PerpsWithdrawResult) => void;
+  leaveWithdraw: () => void;
 }>;
 
-export function usePerpsWithdrawViewModel({ route }: NavigationProps): PerpsWithdrawViewModel {
+export function usePerpsWithdrawViewModel({
+  navigation,
+  route,
+}: NavigationProps): PerpsWithdrawViewModel {
   const walletState = useSelector(walletSelector);
   const accounts = useSelector(flattenAccountsSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
@@ -72,6 +87,8 @@ export function usePerpsWithdrawViewModel({ route }: NavigationProps): PerpsWith
   const [isSummaryOpen, setIsSummaryOpen] = useState(false);
   const [summaryKey, setSummaryKey] = useState(0);
   const [summaryParams, setSummaryParams] = useState<PerpsWithdrawSummaryParams | null>(null);
+  const [signQuote, setSignQuote] = useState<WithdrawQuote | null>(null);
+  const [signingDevice, setSigningDevice] = useState<Device | null | undefined>();
 
   // Leaving before the withdrawal is submitted abandons it; after that this is a no-op.
   useEffect(() => cancelWithdrawRequest, []);
@@ -150,6 +167,37 @@ export function usePerpsWithdrawViewModel({ route }: NavigationProps): PerpsWith
   // The form stays mounted under the summary, so closing it keeps the amount and destination.
   const closeSummary = useCallback(() => setIsSummaryOpen(false), []);
 
+  const signParams = useMemo(
+    () => (summaryParams && signQuote ? { ...summaryParams, quote: signQuote } : null),
+    [signQuote, summaryParams],
+  );
+
+  const handOverToDevice = useCallback((quote: WithdrawQuote) => {
+    setIsSummaryOpen(false);
+    setSignQuote(quote);
+  }, []);
+
+  const returnToSummary = useCallback(() => {
+    setSignQuote(null);
+    setIsSummaryOpen(true);
+  }, []);
+
+  const endSigning = useCallback(
+    ({ swapId }: PerpsWithdrawResult) => {
+      if (!signParams) return;
+      setSignQuote(null);
+      setSigningDevice(undefined);
+      navigation.replace(ScreenName.PerpsTransactionSigned, {
+        receiveCurrencyTicker: getAccountCurrency(signParams.destinationAccount).ticker,
+        swapId,
+        provider: PERPS_SWAPKIT_PROVIDER,
+      });
+    },
+    [navigation, signParams],
+  );
+
+  const leaveWithdraw = useCallback(() => navigation.goBack(), [navigation]);
+
   const sourceName = accountNameWithDefaultSelector(walletState, sourceAccount);
 
   return {
@@ -179,5 +227,12 @@ export function usePerpsWithdrawViewModel({ route }: NavigationProps): PerpsWith
     summaryKey,
     summaryParams,
     closeSummary,
+    signParams,
+    signingDevice,
+    selectSigningDevice: setSigningDevice,
+    handOverToDevice,
+    returnToSummary,
+    endSigning,
+    leaveWithdraw,
   };
 }
