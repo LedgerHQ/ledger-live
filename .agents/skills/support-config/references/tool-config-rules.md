@@ -88,7 +88,6 @@ then names what the package does instead and the fix; the fix it prints is the o
 | `side-effects` | Set it to `false`, and turn code that runs on import into a function its consumers call. |
 | `lint-script` | Make it `"lint": "oxlint src"`. |
 | `format-check-script` | Make it `"format:check": "oxfmt src --check"`, next to `"format": "oxfmt src"`. |
-| `tool-dependency` | Add the package the message names (`@typescript/native` for `tsc`) as `"catalog:"`, or change its version to `"catalog:"`. |
 
 ### The `hygiene-debt` list
 
@@ -99,6 +98,19 @@ only shrinks.
 | Message starts with | Fix |
 | --- | --- |
 | `lists "<check>" for <package>, which the package now passes` | Delete the check from the entry, and the entry once it is empty. |
+
+## `[tool-dependency]`
+
+Messages from [`rules/tool-dependency.mjs`](../../../../tools/nx-plugins/enforce-tool-config/rules/tool-dependency.mjs),
+on every workspace package. A script runs a root tool (`tsc`, `knip`, `oxlint`, `oxfmt`, `rimraf`,
+`zx`, `nx`) that the package does not declare, so the tool is not in the package's Nx project graph.
+Every script counts, so a tool a hook or a `pnpm run` target runs is reported under that script.
+
+| Message | Fix |
+| --- | --- |
+| `script "<name>" runs <tool>, which this package does not declare` | Add the package the message names (`@typescript/native` for `tsc`) to `devDependencies` as `"catalog:"`. Add it to the `catalog:` of `pnpm-workspace.yaml` first if it is not there. |
+| `script "<name>" runs <tool>, and the layers take its version from the catalog` | In `shared/`, `domain/` and `features/`, move it to `devDependencies` and make it `"catalog:"`. |
+| `lists <tool> for <package>, which the package now passes` | Delete the tool from its entry in [`rules/tool-dependency-debt.mjs`](../../../../tools/nx-plugins/enforce-tool-config/rules/tool-dependency-debt.mjs), and the entry once it is empty. |
 
 ## Exclusions
 
