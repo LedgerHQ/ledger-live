@@ -17,8 +17,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/flow/device-mock-server"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@features/platform-device-mock-server": "workspace:*",
