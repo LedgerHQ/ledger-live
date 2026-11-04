@@ -3,10 +3,7 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { buildTags } from "tests/utils/tagsUtils";
-import {
-  ACCOUNT_DETAIL_FLAG_STATES,
-  FF_ACCOUNT_DETAIL_DISABLED,
-} from "tests/utils/featureFlagUtils";
+import { accountDetailFlagStates } from "tests/utils/featureFlagUtils";
 
 const accounts = [
   { account: Account.BTC_NATIVE_SEGWIT_1, xrayTicket: "B2CQA-2548" },
@@ -26,13 +23,10 @@ const accounts = [
   { account: Account.ZEC_1, xrayTicket: "B2CQA-5668" },
 ];
 
-// Both pages share the removal flow, so only two currencies pay for the flag-on run.
-const withAccountDetailVariants = [Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1];
+const accountsRunOnBothPages = [Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1];
 
 for (const account of accounts) {
-  const flagStates = withAccountDetailVariants.includes(account.account)
-    ? ACCOUNT_DETAIL_FLAG_STATES
-    : [{ label: "account detail off", featureFlags: FF_ACCOUNT_DETAIL_DISABLED }];
+  const flagStates = accountDetailFlagStates(accountsRunOnBothPages.includes(account.account));
   for (const { label, featureFlags } of flagStates) {
     test.describe("Delete account", () => {
       test.use({

@@ -1,146 +1,76 @@
-import { expect, test, type Locator } from "@playwright/test";
+import { expect, type Locator } from "@playwright/test";
 import { Layout, type SyncWaitOptions } from "tests/component/layout.component";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
+import { AccountDetailPage } from "tests/page/accountDetail.page";
 import { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 import type { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
-import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
+import { escapeRegExp } from "tests/utils/regExpUtils";
 
-const escapeRegExp = (value: string) => value.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
-
+/** Follows the account page of the previous design or the account detail page, whichever the flag displays. */
 export class AccountPage extends AppPage {
   private readonly layout = new Layout(this.page);
-  readonly settingsButton = this.page
-    .getByTestId("account-settings-button")
-    .or(this.page.getByTestId("account-detail-header-settings"));
-  private redesignedLayout = this.page.getByTestId("account-detail-layout");
-  private redesignedTitle = this.page.getByTestId("page-header-title");
-  private redesignedHeroAction = (action: string) =>
-    this.page.getByTestId(`account-detail-hero-actions-${action}`);
-  private redesignedOperationRows = this.page.locator("[data-testid^='history-operation-row-']");
-  private redesignedOperationType = this.page.getByTestId("history-operation-type");
-  private redesignedAssets = this.page.getByTestId("account-detail-assets");
-  private tokenInFocus?: Currency;
-  // A row reads "Tether USD USDT 65.54 USDT $65.44 ...", the ticker followed by a balance tells it apart from tokens named after it.
-  private redesignedTokenRow = (tokenAccount: AccountType) =>
-    this.redesignedAssets.getByRole("button", {
-      name: new RegExp(String.raw`\b${escapeRegExp(tokenAccount.currency.ticker)} \d`),
-    });
-  private assetPicker = this.page.getByTestId("account-detail-asset-picker");
-  private redesignedEmptyState = this.page.getByTestId("account-detail-empty-state");
-  private redesignedAddAsset = this.page.getByTestId("account-detail-add-asset");
-  private redesignedBalance = this.page.getByTestId("account-detail-hero-balance");
-  private redesignedTransactions = this.page.getByTestId("account-detail-transactions-section");
-  private redesignedMenuEntry = (entry: string) =>
-    this.page.getByTestId(`account-settings-${entry}`);
-  private redesignedNameInput = this.page.getByTestId("account-settings-change-name-input");
-  private redesignedChangeNameButton = this.page.getByRole("button", { name: "Change name" });
-  private redesignedAdvancedLogsJson = this.page.getByTestId("account-settings-advanced-logs-json");
-  private redesignedRemoveConfirm = this.page.getByTestId("account-settings-remove-confirm");
-  private settingsDeleteButton = this.page.getByTestId("account-settings-delete-button");
-  private settingsConfirmButton = this.page.getByTestId("modal-confirm-button");
-  private swapButton = this.page.getByTestId("swap-account-action-button");
-  private stakeButton = this.page.getByTestId("stake-button");
-  private receiveButton = this.page.getByRole("button", { name: "Receive", exact: true });
-  private activatePrivateBalanceButton = this.page.getByTestId("show-private-balance-button");
-  private sendButton = this.page.getByRole("button", { name: "Send" });
-  private buyButton = this.page.getByRole("button", { name: "Buy" });
-  private accountName = this.page.locator("#account-header-name");
-  private lastOperation = this.page.locator("text=Latest operations");
-  private tokenValue = (tokenName: string) =>
+  private readonly accountDetail = new AccountDetailPage(this.page);
+  private readonly settingsButton = this.page.getByTestId("account-settings-button");
+  private readonly settingsDeleteButton = this.page.getByTestId("account-settings-delete-button");
+  private readonly settingsConfirmButton = this.page.getByTestId("modal-confirm-button");
+  private readonly swapButton = this.page.getByTestId("swap-account-action-button");
+  private readonly stakeButton = this.page.getByTestId("stake-button");
+  private readonly receiveButton = this.page.getByRole("button", { name: "Receive", exact: true });
+  private readonly activatePrivateBalanceButton = this.page.getByTestId(
+    "show-private-balance-button",
+  );
+  private readonly sendButton = this.page.getByRole("button", { name: "Send" });
+  private readonly buyButton = this.page.getByRole("button", { name: "Buy" });
+  private readonly accountName = this.page.locator("#account-header-name");
+  private readonly lastOperation = this.page.locator("text=Latest operations");
+  private readonly tokenValue = (tokenName: string) =>
     this.page.getByTestId(`account-row-${tokenName.toLowerCase()}`);
-  private tokenRowByTicker = (tokenTicker: string) =>
+  private readonly tokenRowByTicker = (tokenTicker: string) =>
     this.page.getByTestId(`account-row-${tokenTicker.toLowerCase()}`);
-  private accountBalance = this.page.getByTestId("total-balance");
-  private operationList = this.page.locator("id=operation-list");
-  private showMoreButton = this.page.getByText("Show more");
-  private advancedButton = this.page.getByText("Advanced");
-  private accountAdvancedLogs = this.page.getByTestId("Advanced_Logs");
-  private operationRows = this.page.locator("[data-testid^='operation-row-']");
-  private operationStatus = this.page.locator("[data-testid^='operation-status-']");
-  private closeModal = this.page.getByTestId("modal-close-button");
-  private tokenRow = (tokenTicker: string) => this.page.getByTestId(`token-row-${tokenTicker}`);
-  private showAllTokensButton = this.page.getByTestId("account-tokens-show-all-button");
-  private addTokenButton = this.page.getByRole("button", { name: "Add token" });
-  private viewDetailsButton = this.page.getByText("View details");
-  private editName = this.page.locator("#input-edit-name");
-  private applyButton = this.page.getByTestId("account-settings-apply-button");
-  private accountChart = this.page.getByTestId("chart-container");
-  private selectSpecificOperation = (operationType: string) =>
+  private readonly accountBalance = this.page.getByTestId("total-balance");
+  private readonly operationList = this.page.locator("id=operation-list");
+  private readonly showMoreButton = this.page.getByText("Show more");
+  private readonly advancedButton = this.page.getByText("Advanced");
+  private readonly accountAdvancedLogs = this.page.getByTestId("Advanced_Logs");
+  private readonly operationRows = this.page.locator("[data-testid^='operation-row-']");
+  private readonly operationStatus = this.page.locator("[data-testid^='operation-status-']");
+  private readonly closeModal = this.page.getByTestId("modal-close-button");
+  private readonly tokenRow = (tokenTicker: string) =>
+    this.page.getByTestId(`token-row-${tokenTicker}`);
+  private readonly showAllTokensButton = this.page.getByTestId("account-tokens-show-all-button");
+  private readonly addTokenButton = this.page.getByRole("button", { name: "Add token" });
+  private readonly viewDetailsButton = this.page.getByText("View details");
+  private readonly editName = this.page.locator("#input-edit-name");
+  private readonly applyButton = this.page.getByTestId("account-settings-apply-button");
+  private readonly accountChart = this.page.getByTestId("chart-container");
+  private readonly selectSpecificOperation = (operationType: string) =>
     this.page.locator("[data-testid^='operation-row-']").filter({ hasText: operationType });
   private readonly noAssetsTitle = this.page.getByTestId("no-assets-title");
 
   // Case-insensitive: asset names come from the cryptoasset list and don't always match the
   // casing declared in the Currency enum (e.g. "dogwifhat" vs "DOGWIFHAT").
   private accountHeaderNamePattern(...names: string[]) {
-    const escaped = names.map(n => n.trim().replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`));
+    const escaped = names.map(name => escapeRegExp(name.trim()));
     return new RegExp(`^(${escaped.join("|")})$`, "i");
   }
 
-  // The same specs run with the `accountDetail` flag on and off, so each method follows the page it lands on.
-  private async isRedesigned() {
-    await expect(this.redesignedLayout.or(this.accountName)).toBeVisible();
-    return this.redesignedLayout.isVisible();
+  private isAccountDetail() {
+    return this.accountDetail.isDisplayedRatherThan(this.accountName);
   }
 
-  private async clickAction(action: string, legacyButton: Locator, asset?: Currency) {
-    if (await this.isRedesigned()) {
-      await this.redesignedHeroAction(action).click();
-      await this.pickAssetIfAsked(asset);
-      return;
-    }
-    await legacyButton.click();
-  }
-
-  // Earn lists the stakable assets of the account, the first one is the account currency.
-  private async pickFirstAssetIfAsked() {
-    const firstRow = this.page.locator("[data-testid^='account-detail-asset-picker-']").first();
-    try {
-      await firstRow.waitFor({ state: "visible", timeout: TIMEOUT.small });
-    } catch {
-      return; // a single asset opens the flow straight away
-    }
-    await firstRow.click();
-  }
-
-  // Buy opens the modular asset selector, which lists "Ethereum ETH $2,286.45 +0.15%".
-  private async pickAssetInSelector(asset: AccountType) {
-    const option = this.page
-      .getByRole("dialog")
-      .getByRole("button")
-      .filter({ has: this.page.getByText(asset.currency.ticker, { exact: true }) })
-      .first();
-    try {
-      await option.waitFor({ state: "visible", timeout: TIMEOUT.small });
-    } catch {
-      return; // a single asset opens the flow straight away
-    }
-    await option.click();
-  }
-
-  // The new page asks which asset to use when the account holds several.
-  private async pickAssetIfAsked(asset?: Currency) {
-    const currency = asset ?? this.tokenInFocus;
-    if (!currency) return;
-    try {
-      await this.assetPicker.waitFor({ state: "visible", timeout: TIMEOUT.small });
-    } catch {
-      return; // a single asset opens the flow straight away
-    }
-    await this.pickerRow(currency).click();
-  }
-
-  // Several tokens carry the id of their chain in the test data, so a row is found by its exact ticker.
-  private pickerRow(currency: Currency) {
-    return this.page
-      .locator("[data-testid^='account-detail-asset-picker-']")
-      .filter({ has: this.page.getByText(currency.ticker, { exact: true }) })
-      .first();
+  @step("Check if the account detail page is displayed")
+  async usesAccountDetail(): Promise<boolean> {
+    return this.isAccountDetail();
   }
 
   @step("Click `Receive` button")
   async clickReceive() {
-    await this.clickAction("receive", this.receiveButton);
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.clickReceive();
+      return;
+    }
+    await this.receiveButton.click();
   }
 
   @step("Click `Show balance` button")
@@ -150,35 +80,24 @@ export class AccountPage extends AppPage {
     }
   }
 
-  @step("Check if the account detail page is displayed")
-  async usesAccountDetail(): Promise<boolean> {
-    return this.isRedesigned();
-  }
-
-  // A token has a page of its own only on the previous account page.
-  @step("Check if tokens have their own page")
-  async hasTokenPages(): Promise<boolean> {
-    return !(await this.isRedesigned());
-  }
-
   @step("Click on add token button")
   async clickAddToken() {
-    if (await this.isRedesigned()) {
-      // Stellar, Hedera and Algorand have an "Add asset" action, the other families add a token through Receive.
-      await expect(this.redesignedAssets).toBeVisible();
-      const addAsset = (await this.redesignedAddAsset.isVisible())
-        ? this.redesignedAddAsset
-        : this.redesignedHeroAction("receive");
-      await addAsset.click();
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.clickAddToken();
       return;
     }
     await this.addTokenButton.click();
   }
 
+  @step("Check if the account has a `Send` button")
+  async hasSendAction(): Promise<boolean> {
+    return (await this.isAccountDetail()) ? this.accountDetail.hasSendAction() : true;
+  }
+
   @step("Click `Send` button")
   async clickSend(asset?: Currency) {
-    if (await this.isRedesigned()) {
-      await this.clickRedesignedSend(asset);
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.clickSend(asset);
       return;
     }
     if (await this.noAssetsTitle.isVisible()) {
@@ -188,50 +107,38 @@ export class AccountPage extends AppPage {
     await this.sendButton.click();
   }
 
-  // Send stays disabled until the account is synced.
-  private async clickRedesignedSend(asset?: Currency) {
-    const send = this.redesignedHeroAction("send");
-    try {
-      await send.waitFor({ state: "visible", timeout: TIMEOUT.large });
-    } catch {
-      test.skip(
-        true,
-        "The account detail page offers no Send action for this account (empty state, see LIVE-40397)",
-      );
-    }
-    if (await send.isDisabled()) {
-      await this.layout.syncAccounts();
-      await this.layout.waitForSyncButtonToBeEnabled();
-    }
-    await send.click();
-    await this.pickAssetIfAsked(asset);
-  }
-
   @step("Verify `Send` button is visible")
   async verifySendButtonVisibility() {
-    await expect(
-      (await this.isRedesigned()) ? this.redesignedHeroAction("send") : this.sendButton,
-    ).toBeVisible();
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.expectSendVisible();
+      return;
+    }
+    await expect(this.sendButton).toBeVisible();
   }
 
   @step("Verify `Receive` button is visible")
   async verifyReceiveButtonVisibility() {
-    await expect(
-      (await this.isRedesigned()) ? this.redesignedHeroAction("receive") : this.receiveButton,
-    ).toBeVisible();
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.expectReceiveVisible();
+      return;
+    }
+    await expect(this.receiveButton).toBeVisible();
   }
 
   @step("Expect account header (name + settings) to be visible")
   async expectAccountHeaderVisible() {
-    await expect(this.redesignedTitle.or(this.accountName)).toBeVisible();
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.expectHeaderVisible();
+      return;
+    }
+    await expect(this.accountName).toBeVisible();
     await expect(this.settingsButton).toBeVisible();
   }
 
   @step("Click `Buy` button")
   async clickBuy(asset?: AccountType) {
-    if (await this.isRedesigned()) {
-      await this.redesignedHeroAction("buy").click();
-      if (asset) await this.pickAssetInSelector(asset);
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.clickBuy(asset);
       return;
     }
     await this.buyButton.click();
@@ -239,26 +146,23 @@ export class AccountPage extends AppPage {
 
   @step("Get the swap surface of the account page")
   async swapSurface(): Promise<"full" | "embedded"> {
-    return (await this.isRedesigned()) ? "embedded" : "full";
+    return (await this.isAccountDetail()) ? "embedded" : "full";
   }
 
   @step("Open Swap")
   async navigateToSwap() {
-    // The new page embeds the swap console, there is nothing to open.
-    if (await this.isRedesigned()) return;
+    if (await this.isAccountDetail()) return;
     await this.swapButton.click();
   }
 
   @step("Click Stake button")
   async startStakingFlowFromMainStakeButton(options?: SyncWaitOptions) {
-    // Wait if a sync is in progress to avoid empty stake modal
-    await this.layout.waitForSyncButtonToBeEnabled(options);
-    if (await this.isRedesigned()) {
-      // Earn replaces the Stake button on the new page, and goes to the same stake flow.
-      await this.redesignedHeroAction("earn").click();
-      await this.pickFirstAssetIfAsked();
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.clickEarn(options);
       return;
     }
+    // Wait if a sync is in progress to avoid empty stake modal
+    await this.layout.waitForSyncButtonToBeEnabled(options);
     await this.stakeButton.click();
   }
 
@@ -269,11 +173,8 @@ export class AccountPage extends AppPage {
 
   @step("Click on last operation and return status")
   async clickOnLastOperationAndReturnStatus(): Promise<string> {
-    if (await this.isRedesigned()) {
-      // The recent transactions rows only tell a failed operation apart, as the drawer expects.
-      const type = await this.redesignedOperationType.first().textContent();
-      await this.redesignedOperationRows.first().click();
-      return type?.includes("Failed") ? "Failed" : "Confirmed";
+    if (await this.isAccountDetail()) {
+      return this.accountDetail.clickLastOperationAndReturnStatus();
     }
 
     const status = await this.operationStatus.first().textContent();
@@ -295,48 +196,51 @@ export class AccountPage extends AppPage {
 
   @step("Delete account")
   async deleteAccount() {
-    await this.settingsButton.click();
-    if (await this.isRedesigned()) {
-      await this.redesignedMenuEntry("remove-account").click();
-      await this.redesignedRemoveConfirm.click();
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.remove();
       return;
     }
+    await this.settingsButton.click();
     await this.settingsDeleteButton.click();
     await this.settingsConfirmButton.click();
   }
 
   @step("Rename account")
   async renameAccount(newAccountName: string) {
-    await this.settingsButton.click();
-    if (await this.isRedesigned()) {
-      await this.redesignedMenuEntry("change-name").click();
-      await this.redesignedNameInput.fill(newAccountName);
-      await this.redesignedChangeNameButton.click();
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.rename(newAccountName);
       return;
     }
+    await this.settingsButton.click();
     await this.editName.fill(newAccountName);
     await this.applyButton.click();
   }
 
   @step("Wait for account $0 to be visible")
   async expectAccountVisibility(firstAccountName: string) {
-    await this.expectHeaderName(this.accountHeaderNamePattern(firstAccountName));
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.forgetToken();
+      await this.accountDetail.expectName(this.accountHeaderNamePattern(firstAccountName));
+      await this.accountDetail.expectSettingsVisible();
+      return;
+    }
+    await expect(this.accountName).toHaveValue(this.accountHeaderNamePattern(firstAccountName));
     await expect(this.settingsButton).toBeVisible();
   }
 
   @step("Expect account to be not null")
   async expectAccountBalance() {
-    await expect(
-      (await this.isRedesigned()) ? this.redesignedBalance : this.accountBalance,
-    ).toBeVisible();
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.expectBalance();
+      return;
+    }
+    await expect(this.accountBalance).toBeVisible();
   }
 
   @step("Expect `Last operations` to be visible")
   async expectLastOperationsVisibility() {
-    if (await this.isRedesigned()) {
-      await this.redesignedTransactions.scrollIntoViewIfNeeded();
-      await expect(this.redesignedTransactions).toBeVisible();
-      await expect(this.redesignedOperationRows.first()).toBeVisible();
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.expectTransactions();
       return;
     }
     await this.scrollToOperations();
@@ -354,9 +258,8 @@ export class AccountPage extends AppPage {
 
   @step("Expect token Account to be visible")
   async expectTokenAccount(account: AccountType) {
-    if (await this.isRedesigned()) {
-      // A token has no page of its own, it stays in the assets of its parent account.
-      await this.expectTokenToBePresent(account);
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.expectToken(account);
       return;
     }
     await this.waitForAccountHeaderName(account.currency.name, account.currency.ticker);
@@ -364,8 +267,10 @@ export class AccountPage extends AppPage {
 
   @step("Expect `show more` button to show more operations")
   async expectShowMoreButton() {
-    // The recent transactions section has no "Show more", it links to the full history instead.
-    if (await this.isRedesigned()) return;
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.expectFullHistoryLink();
+      return;
+    }
     const operationCount = await this.operationRows.count();
     if (await this.showMoreButton.isVisible()) {
       await this.showMoreButton.click();
@@ -376,23 +281,16 @@ export class AccountPage extends AppPage {
 
   @step("Expect `derivate address index to be $0` to be visible")
   async expectAddressIndex(indexNumber: number) {
-    await this.settingsButton.click();
-    const redesigned = await this.isRedesigned();
-    if (redesigned) {
-      await this.redesignedMenuEntry("advanced-logs").click();
-    } else {
-      await this.advancedButton.click();
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.expectAddressIndex(indexNumber);
+      return;
     }
-    const advancedLogsText = await (
-      redesigned ? this.redesignedAdvancedLogsJson : this.accountAdvancedLogs
-    ).innerText();
+    await this.settingsButton.click();
+    await this.advancedButton.click();
+    const advancedLogsText = await this.accountAdvancedLogs.innerText();
     const advancedLogsJson = advancedLogsText ? JSON.parse(advancedLogsText) : null;
     expect(advancedLogsJson).toHaveProperty("index", indexNumber);
-    if (redesigned) {
-      await this.page.keyboard.press("Escape");
-    } else {
-      await this.closeModal.click();
-    }
+    await this.closeModal.click();
   }
 
   private async revealTokenRow(row: Locator) {
@@ -404,8 +302,8 @@ export class AccountPage extends AppPage {
 
   @step("Expect token to be present")
   async expectTokenToBePresent(tokenAccount: AccountType) {
-    if (await this.isRedesigned()) {
-      await expect(this.redesignedTokenRow(tokenAccount)).toBeVisible();
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.expectToken(tokenAccount);
       return;
     }
     const row = this.tokenRow(tokenAccount.currency.ticker);
@@ -415,10 +313,8 @@ export class AccountPage extends AppPage {
 
   @step("Navigate to token in account")
   async navigateToTokenInAccount(tokenAccount: AccountType) {
-    if (await this.isRedesigned()) {
-      // A row opens the asset page, so the token is kept to pick it when sending or buying.
-      await this.expectTokenToBePresent(tokenAccount);
-      this.tokenInFocus = tokenAccount.currency;
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.selectToken(tokenAccount);
       return;
     }
     const row = this.tokenRow(tokenAccount.currency.ticker);
@@ -441,15 +337,14 @@ export class AccountPage extends AppPage {
   }
 
   private async expectHeaderName(pattern: RegExp) {
-    if (await this.isRedesigned()) {
-      // A token has no page of its own, the header stays the one of its parent account.
-      if (this.tokenInFocus) {
-        await expect(this.redesignedLayout).toBeVisible();
-        return;
-      }
-      await expect(this.redesignedTitle).toHaveText(pattern);
-    } else {
+    if (!(await this.isAccountDetail())) {
       await expect(this.accountName).toHaveValue(pattern);
+      return;
     }
+    if (await this.accountDetail.hasSelectedToken()) {
+      await this.accountDetail.expectParentOfToken();
+      return;
+    }
+    await this.accountDetail.expectName(pattern);
   }
 }

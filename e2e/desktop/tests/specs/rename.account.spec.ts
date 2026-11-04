@@ -4,12 +4,12 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { waitForAccountRenamed } from "tests/utils/userdata";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { buildTags } from "tests/utils/tagsUtils";
-import { ACCOUNT_DETAIL_FLAG_STATES } from "tests/utils/featureFlagUtils";
+import { accountDetailFlagStates } from "tests/utils/featureFlagUtils";
 
 const accounts = [{ account: Account.ATOM_1, xrayTicket: "B2CQA-2996" }];
 
 for (const account of accounts) {
-  for (const { label, featureFlags } of ACCOUNT_DETAIL_FLAG_STATES) {
+  for (const { label, featureFlags } of accountDetailFlagStates(true)) {
     test.describe("Rename account", () => {
       test.use({
         teamOwner: Team.WALLET_XP,

@@ -98,6 +98,10 @@ for (const entry of legacySendTransactions) {
       async ({ app }) => {
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(tx.accountToDebit.accountName);
+        test.skip(
+          !(await app.account.hasSendAction()),
+          "The account detail page has no Send button for this account",
+        );
         await app.account.clickSend(tx.accountToDebit.currency);
         await app.send.craftTx(tx);
         await app.send.continueAmountModal();

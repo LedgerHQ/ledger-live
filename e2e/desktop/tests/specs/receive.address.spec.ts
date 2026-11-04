@@ -16,10 +16,7 @@ import { isReceiveBlockedOnLNS } from "@ledgerhq/live-e2e-shared/nanoSSupport";
 import { getSpeculosModel } from "@ledgerhq/live-e2e-shared/speculosAppVersion";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { buildTags } from "tests/utils/tagsUtils";
-import {
-  ACCOUNT_DETAIL_FLAG_STATES,
-  FF_ACCOUNT_DETAIL_DISABLED,
-} from "tests/utils/featureFlagUtils";
+import { accountDetailFlagStates } from "tests/utils/featureFlagUtils";
 
 type ReceiveTestCase = {
   account: Account;
@@ -58,13 +55,10 @@ async function verifySendCurrencyTokensWarning(app: Application, account: Accoun
   }
 }
 
-// Both pages open the same receive modal, so only two currencies pay for the flag-on run.
-const withAccountDetailVariants = [Account.BTC_NATIVE_SEGWIT_1, Account.ETH_1];
+const accountsRunOnBothPages = [Account.BTC_NATIVE_SEGWIT_1, Account.ETH_1];
 
 for (const receive of nativeAccounts) {
-  const flagStates = withAccountDetailVariants.includes(receive.account)
-    ? ACCOUNT_DETAIL_FLAG_STATES
-    : [{ label: "account detail off", featureFlags: FF_ACCOUNT_DETAIL_DISABLED }];
+  const flagStates = accountDetailFlagStates(accountsRunOnBothPages.includes(receive.account));
   for (const { label, featureFlags } of flagStates) {
     const receiveBlockedOnLNS = isReceiveBlockedOnLNS(receive.account.currency.id);
     const owner = ownedBy(coinTeamOwner(receive.account.currency.id), {
@@ -193,13 +187,13 @@ test.describe("Receive", tokenOwner, () => {
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(getParentAccountName(tokenAccount.account));
       await app.account.expectAccountVisibility(getParentAccountName(tokenAccount.account));
-      test.skip(
-        !(await app.account.hasTokenPages()),
-        "The account detail page has no receive flow for a token, Receive opens the parent account",
-      );
       await app.account.navigateToTokenInAccount(tokenAccount.account);
       await app.account.expectTokenAccount(tokenAccount.account);
       await app.account.clickReceive();
+      if (await app.account.usesAccountDetail()) {
+        await app.receive.expectRecieveMenu();
+        await app.receive.clickReceive();
+      }
       await app.receive.continue();
 
       const displayedAddress = await app.receive.getAddressDisplayed();

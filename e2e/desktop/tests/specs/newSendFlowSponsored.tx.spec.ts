@@ -81,8 +81,7 @@ test.describe("Send - new flow - fee paid in USDT with Tronify", owner, () => {
         // Back on the USDT account, its latest operation is the transfer just sent.
         await app.newSendFlow.closeConfirmation();
         await app.account.clickOnLastOperationAndReturnStatus();
-        // The account detail page opens the history drawer, which shows the amount in fiat only.
-        if (await app.account.hasTokenPages()) {
+        if (!(await app.account.usesAccountDetail())) {
           await app.sendDrawer.expectOperationType("Sent");
           await app.sendDrawer.expectAmountVisible(tx.amount);
           await app.sendDrawer.addressValueIsVisible(tx.accountToCredit.address);

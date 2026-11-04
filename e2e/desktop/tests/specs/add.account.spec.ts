@@ -8,10 +8,7 @@ import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { buildTags } from "tests/utils/tagsUtils";
 import type { PartialFeatures } from "@shared/feature-flags";
 import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
-import {
-  ACCOUNT_DETAIL_FLAG_STATES,
-  FF_ACCOUNT_DETAIL_DISABLED,
-} from "tests/utils/featureFlagUtils";
+import { accountDetailFlagStates } from "tests/utils/featureFlagUtils";
 
 type AddAccountTestCase = {
   readonly currency: Currency;
@@ -56,14 +53,11 @@ const currencies: AddAccountTestCase[] = [
   },
 ];
 
-// Both pages show the new account the same way, so only two currencies pay for the flag-on run.
-const withAccountDetailVariants = [Currency.BTC, Currency.ETH];
+const currenciesRunOnBothPages = [Currency.BTC, Currency.ETH];
 
 for (const currency of currencies) {
   const owner = ownedBy(coinTeamOwner(currency.currency.id), { folder: TestFolder.ACCOUNTS });
-  const flagStates = withAccountDetailVariants.includes(currency.currency)
-    ? ACCOUNT_DETAIL_FLAG_STATES
-    : [{ label: "account detail off", featureFlags: FF_ACCOUNT_DETAIL_DISABLED }];
+  const flagStates = accountDetailFlagStates(currenciesRunOnBothPages.includes(currency.currency));
   for (const { label, featureFlags } of flagStates) {
     test.describe("Add account", owner, () => {
       test.use({
