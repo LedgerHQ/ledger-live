@@ -11,7 +11,7 @@ import { MarketListRequestParams, Order } from "@ledgerhq/live-common/market/uti
 import useBottomSectionViewModel from "./useBottomSectionViewModel";
 import { RANGES } from "LLM/features/Market/utils";
 import { LIMIT } from "~/reducers/market";
-import { rangeDataTable } from "@ledgerhq/live-common/cg-client/utils/rangeDataTable";
+import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 
 const SORT_OPTIONS = {
   top100G: {

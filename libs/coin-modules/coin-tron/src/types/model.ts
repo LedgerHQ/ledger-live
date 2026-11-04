@@ -25,6 +25,8 @@ export type NetworkInfo = {
 export type EnergyProviderInfo = {
   id: string;
   name: string;
+  /** The provider's terms, which the user accepts by signing the rent payment. */
+  termsUrl: string;
 };
 export type TrongridTxType =
   | "TransferContract"

@@ -14,7 +14,6 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../.. -W shared/lottie",
     "lint": "oxlint ./src",
     "format": "oxfmt src",
     "format:check": "oxfmt --check src"
@@ -47,6 +46,7 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "lottie-react-native": "7.3.8",

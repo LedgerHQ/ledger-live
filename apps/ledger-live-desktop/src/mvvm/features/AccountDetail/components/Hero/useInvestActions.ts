@@ -3,11 +3,11 @@ import { useLocation, useNavigate } from "react-router";
 import type { Account } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { AssetActionId } from "@features/platform-quick-actions";
+import { ACCOUNT_DETAIL_PAGES } from "@features/flow-account-detail";
 import { setTrackingSource } from "@shared/analytics";
 import { buildBuyNavigationState } from "LLD/features/Market/utils/buyNavigation";
 import { buildSellNavigationState } from "LLD/features/Market/utils/sellNavigation";
 import { useNavigateToStakeForAccount } from "LLD/hooks/useNavigateToStakeForAccount";
-import { ACCOUNT_DETAIL_TRACKING_PAGE_NAME } from "../../constants";
 import type { AccountAsset, AccountAssetsByAction } from "./types";
 import { useOpenNetworkAssetPicker } from "./useOpenNetworkAssetPicker";
 import type { PickAccountAsset } from "./usePickAccountAsset";
@@ -56,7 +56,7 @@ export function useInvestActions({
   const openEarn = useCallback(
     ({ account: assetAccount, parentAccount }: AccountAsset) => {
       navigateToStakeForAccount(assetAccount, parentAccount, {
-        source: ACCOUNT_DETAIL_TRACKING_PAGE_NAME,
+        source: ACCOUNT_DETAIL_PAGES.account,
         returnTo: pathname,
       });
     },
@@ -65,13 +65,13 @@ export function useInvestActions({
 
   return useCallback(
     (id: HeroInvestActionId) => {
-      setTrackingSource(ACCOUNT_DETAIL_TRACKING_PAGE_NAME);
+      setTrackingSource(ACCOUNT_DETAIL_PAGES.account);
       if (id === "sell") {
-        pickAsset(byAction.sell, openSell);
+        pickAsset(byAction.sell, openSell, id);
         return;
       }
       if (id === "earn") {
-        pickAsset(byAction.earn, openEarn);
+        pickAsset(byAction.earn, openEarn, id);
         return;
       }
       openNetworkAssetPicker(account.currency.id, id, openBuy);

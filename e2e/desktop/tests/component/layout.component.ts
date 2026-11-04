@@ -41,6 +41,13 @@ export class Layout extends Component {
     await this.topbarSynchronizeButton.click();
   }
 
+  @step("Synchronize accounts and wait for the sync to finish")
+  async syncAccountsAndWaitForSync() {
+    await this.syncAccounts();
+    await expect(this.topbarSynchronizeButton).toHaveAttribute("disabled");
+    await this.waitForSyncButtonToBeEnabled();
+  }
+
   @step("Synchronize accounts if available")
   async syncAccountsIfAvailable() {
     if (await this.topbarSynchronizeButton.isEnabled()) {

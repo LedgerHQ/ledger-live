@@ -22,8 +22,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -c features/platform/contacts/knip.web.config.mjs -W features/platform/contacts --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/platform/contacts/knip.native.config.mjs -W features/platform/contacts --tsConfig tsconfig.native.json"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@domain/entity-contact": "workspace:*",
@@ -79,6 +78,7 @@
     "@testing-library/jest-dom": "catalog:",
     "@testing-library/react": "catalog:",
     "@testing-library/react-native": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",

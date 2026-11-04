@@ -12,6 +12,7 @@ jest.mock("@devtools/transport-panel", () => ({
 }));
 
 const devToolsSpy = jest.fn();
+const mockRecordedAction = jest.fn();
 jest.mock("@devtools/shell", () => ({
   DevTools: (props: { config: unknown; onClose: () => void }) => {
     devToolsSpy(props);
@@ -43,15 +44,19 @@ jest.mock("@devtools/bindings", () => ({
   useAccountDataToolProps: () => ({ marker: "account-data-props" }),
   useAccountNameToolProps: () => ({ marker: "account-name-props" }),
   useMockAccountsToolProps: () => ({ marker: "mock-accounts-props" }),
+  useAccountDetailToolProps: () => ({ marker: "account-detail-props" }),
   createAccountDataRecorder: () => ({
     instrument: (sources: unknown) => sources,
-    middleware: () => (next: (action: unknown) => unknown) => next,
+    middleware: () => (next: (action: unknown) => unknown) => (action: unknown) => {
+      mockRecordedAction(action);
+      return next(action);
+    },
   }),
   useAppConfigToolProps: () => ({ marker: "app-config-props" }),
 }));
 
-jest.mock("../../DeviceOnboarding/hooks/useDeviceOnboarding", () => ({
-  useDeviceOnboarding: () => ({ marker: "device-onboarding-props" }),
+jest.mock("../DeviceOnboarding/useDeviceOnboardingTool", () => ({
+  useDeviceOnboardingTool: () => ({ marker: "device-onboarding-props" }),
 }));
 
 jest.mock("@devtools/wire", () => {
@@ -95,9 +100,18 @@ describe("DevToolsScreen", () => {
           { id: "account-name", config: { marker: "account-name-props" } },
           { id: "account-portfolio", config: { marker: "account-portfolio-props" } },
           { id: "mock-accounts", config: { marker: "mock-accounts-props" } },
+          { id: "account-detail", config: { marker: "account-detail-props" } },
         ],
       }),
     );
+  });
+
+  it("plugs the account data recorder into the store when it opens", () => {
+    const { store } = render(<DevToolsScreen />);
+
+    store.dispatch({ type: "DEVTOOLS_TEST_ACTION" });
+
+    expect(mockRecordedAction).toHaveBeenCalledWith({ type: "DEVTOOLS_TEST_ACTION" });
   });
 
   it("navigates back when DevTools requests close", async () => {

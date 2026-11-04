@@ -43,8 +43,8 @@ wallet-cli skill install --agent claude   # also cursor, codex, agents; --global
 wallet-cli skill doctor --fix             # reinstall outdated or missing skills
 ```
 
-- `skill install` keeps existing files unless you pass `--force`. It writes a `.wallet-cli-skill.json` sidecar with the version and content hash.
-- `skill doctor` reports each install as `up-to-date`, `outdated`, `modified-locally` or `missing`, and exits non-zero on drift. `--fix` leaves local edits alone unless you add `--force`.
+- `skill install` replaces a skill that wallet-cli installed earlier, and keeps one edited since then unless you pass `--force`. It deletes the files the earlier skill had and the new one dropped, unless you edited them. It writes a `.wallet-cli-skill.json` sidecar with the version and content hash.
+- `skill doctor` reports each install as `up-to-date`, `outdated`, `modified-locally` or `missing`, and exits non-zero on drift. For a `modified-locally` skill it names the files that changed since install, or its skills folder when it has no sidecar. `--fix` leaves local edits alone unless you add `--force`.
 - On the first command, wallet-cli prints a one-time hint to stderr that suggests `skill install`. The hint is silent with `--output json`. Set `WALLET_CLI_NO_NUDGE=1` to turn it off.
 
 ## Prerequisites
@@ -91,6 +91,7 @@ pnpm build                                  # scripts/build.mjs: dist/<target>/c
 - `pnpm build` compiles your own platform only. With `CI=true`, it compiles every release target, which needs every platform's native optional packages, such as `@napi-rs/keyring`. `prepare:npm`, `pack:check` and `smoke:npm` need that full build.
 - The embedded skill is generated from [`.agents/skills/`](../../.agents/skills) into `src/skills/manifest.gen.ts`. The file is gitignored and regenerated before `typecheck`, `test` and `build`. `pnpm check:skills` validates it.
 - The binary's copy and the copy published to [LedgerHQ/agent-skills](https://github.com/LedgerHQ/agent-skills) go through one transform, [`scripts/standalone-skill-transform.mjs`](./scripts/standalone-skill-transform.mjs). Don't add a second copy of its rules.
+- The agent plugin (manifests for Hermes, OpenClaw, Claude Code, Cursor and Codex, its README and a smoke test) lives in [`agent-plugin/`](./agent-plugin). `pnpm export:agent-plugin <dir>` writes it to `<dir>` with the skill and the wallet-cli version; the manual `[Wallet CLI] - Sync Plugin` workflow publishes it to [LedgerHQ/agent-skills](https://github.com/LedgerHQ/agent-skills) after a release.
 
 `@ledgerhq/live-cli` ([`apps/cli`](../cli)) is a separate tool. It is internal and Speculos-only, and is used by e2e suites and CI.
 

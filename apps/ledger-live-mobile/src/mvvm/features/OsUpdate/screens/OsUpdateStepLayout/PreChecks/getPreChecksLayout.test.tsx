@@ -29,6 +29,8 @@ jest.mock("@shared/ui-queued-bottom-sheet", () => {
 const isSheetRequested = () =>
   jest.mocked(QueuedBottomSheet).mock.lastCall?.[0].isRequestingToBeOpened;
 
+const hasCloseButton = () => !jest.mocked(QueuedBottomSheet).mock.lastCall?.[0].noCloseButton;
+
 describe("PreChecks step", () => {
   it("shows the preparing screen without a sheet while pre-checks run", () => {
     renderView({ type: PreChecksStateType.LOADING });
@@ -39,6 +41,8 @@ describe("PreChecks step", () => {
 
   it("asks to unlock the device when it is locked", () => {
     renderView({ type: PreChecksStateType.DEVICE_LOCKED });
+
+    expect(hasCloseButton()).toBe(true);
 
     expect(screen.getByTestId("os-update-device-locked")).toBeVisible();
   });
@@ -57,6 +61,8 @@ describe("PreChecks step", () => {
       currentPercentage: 12,
       cancel,
     });
+
+    expect(hasCloseButton()).toBe(false);
 
     expect(screen.getByText(/12%/)).toBeVisible();
     await user.press(screen.getByText("Cancel"));

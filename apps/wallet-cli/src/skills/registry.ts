@@ -2,7 +2,7 @@
 // Content is inlined into the binary at build time, so these helpers work
 // identically in dev, tests, and the compiled standalone binary.
 
-import { mkdir, readFile, writeFile, access, stat } from "node:fs/promises";
+import { mkdir, readFile, writeFile, lstat, realpath, stat, unlink } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { CLI_VERSION, SKILLS, type SkillFile, type SkillManifest } from "./manifest.gen";
@@ -116,13 +116,26 @@ export function renderSkillMarkdown(skill: SkillManifest, file = "SKILL.md"): st
   return match.content;
 }
 
-async function pathExists(p: string): Promise<boolean> {
+async function holdsAnything(p: string): Promise<boolean> {
   try {
-    await access(p);
+    await lstat(p);
     return true;
+  } catch (e) {
+    return (e as { code?: string } | null)?.code !== "ENOENT";
+  }
+}
+
+async function isSymlink(p: string): Promise<boolean> {
+  try {
+    return (await lstat(p)).isSymbolicLink();
   } catch {
     return false;
   }
+}
+
+async function writeFileReplacingLink(target: string, content: string): Promise<void> {
+  if (await isSymlink(target)) await unlink(target);
+  await writeFile(target, content, "utf8");
 }
 
 async function isDirectory(p: string): Promise<boolean> {
@@ -133,10 +146,67 @@ async function isDirectory(p: string): Promise<boolean> {
   }
 }
 
+function isWithinSkillDir(skillRoot: string, filePath: string): boolean {
+  const root = path.resolve(skillRoot);
+  const resolved = path.resolve(root, filePath);
+  return resolved === root || resolved.startsWith(root + path.sep);
+}
+
+async function closestExistingParent(skillRoot: string, target: string): Promise<string> {
+  const root = path.resolve(skillRoot);
+  const parent = path.resolve(path.dirname(target));
+  const parents = [parent];
+  for (let dir = parent; dir.startsWith(root + path.sep);) {
+    dir = path.dirname(dir);
+    parents.push(dir);
+  }
+  const present = await Promise.all(parents.map(holdsAnything));
+  return parents.find((_, i) => present[i]) ?? parent;
+}
+
+async function resolvesInsideSkillDir(skillRoot: string, target: string): Promise<boolean> {
+  try {
+    const [realRoot, realParent] = await Promise.all([
+      realpath(skillRoot),
+      realpath(await closestExistingParent(skillRoot, target)),
+    ]);
+    return isWithinSkillDir(realRoot, realParent);
+  } catch {
+    return false;
+  }
+}
+
+async function isUneditedFile(p: string, recordedHash: string): Promise<boolean> {
+  try {
+    if (!(await lstat(p)).isFile()) return false;
+    return hashOne(await readFile(p, "utf8")) === recordedHash;
+  } catch {
+    return false;
+  }
+}
+
+async function removeDroppedFiles(skillRoot: string, skill: SkillManifest): Promise<void> {
+  const previous = await readSidecar(skillRoot);
+  const shipped = new Set(skill.files.map(f => f.path));
+  const dropped = Object.entries(previous?.files ?? {}).filter(
+    ([filePath]) => !shipped.has(filePath) && isWithinSkillDir(skillRoot, filePath),
+  );
+  await Promise.all(
+    dropped.map(async ([filePath, recordedHash]) => {
+      const target = path.resolve(skillRoot, filePath);
+      const deletable =
+        (await resolvesInsideSkillDir(skillRoot, target)) &&
+        (await isUneditedFile(target, recordedHash));
+      if (deletable) await unlink(target).catch(() => undefined);
+    }),
+  );
+}
+
 /**
  * Write every file of `skill` under `destRoot/<name>/<relativePath>`.
  * Creates parent directories as needed. Returns the absolute written paths.
- * Refuses to overwrite existing files unless `force` is set.
+ * Refuses to overwrite existing files unless `force` is set. Deletes the unedited
+ * files the previous install recorded that `skill` no longer ships.
  */
 export async function writeSkill(
   skill: SkillManifest,
@@ -148,10 +218,8 @@ export async function writeSkill(
   // Defense in depth: file paths come from our own generated manifest, but since
   // this writes to disk from data embedded in a published binary, refuse any
   // path that would escape the skill directory (absolute or `..` segments).
-  const rootPrefix = path.resolve(skillRoot) + path.sep;
   for (const file of skill.files) {
-    const resolved = path.resolve(skillRoot, file.path);
-    if (resolved !== path.resolve(skillRoot) && !resolved.startsWith(rootPrefix)) {
+    if (!isWithinSkillDir(skillRoot, file.path)) {
       throw new Error(
         `Refusing to write "${file.path}" outside the skill directory "${skillRoot}".`,
       );
@@ -159,11 +227,9 @@ export async function writeSkill(
   }
 
   if (!force) {
-    const clashes: string[] = [];
-    for (const file of skill.files) {
-      const target = path.join(skillRoot, file.path);
-      if (await pathExists(target)) clashes.push(target);
-    }
+    const targets = skill.files.map(file => path.join(skillRoot, file.path));
+    const taken = await Promise.all(targets.map(holdsAnything));
+    const clashes = targets.filter((_, i) => taken[i]);
     if (clashes.length > 0) {
       throw new Error(
         `Refusing to overwrite existing file(s):\n  ${clashes.join("\n  ")}\nRe-run with --force to overwrite.`,
@@ -171,13 +237,17 @@ export async function writeSkill(
     }
   }
 
-  const written: string[] = [];
-  for (const file of skill.files) {
-    const target = path.join(skillRoot, file.path);
-    await mkdir(path.dirname(target), { recursive: true });
-    await writeFile(target, file.content, "utf8");
-    written.push(target);
-  }
+  // Before the writes: on a case-insensitive disk a dropped path can name a shipped file.
+  await removeDroppedFiles(skillRoot, skill);
+
+  const written = await Promise.all(
+    skill.files.map(async file => {
+      const target = path.join(skillRoot, file.path);
+      await mkdir(path.dirname(target), { recursive: true });
+      await writeFileReplacingLink(target, file.content);
+      return target;
+    }),
+  );
 
   // Always (re)write the sidecar — even under --force — so provenance stays
   // fresh. It is excluded from the clash check above, so it never blocks a
@@ -202,7 +272,7 @@ async function writeSidecar(skillRoot: string, skill: SkillManifest): Promise<vo
     installedAt: new Date().toISOString(),
   };
   await mkdir(skillRoot, { recursive: true });
-  await writeFile(sidecarPath(skillRoot), `${JSON.stringify(sidecar, null, 2)}\n`, "utf8");
+  await writeFileReplacingLink(sidecarPath(skillRoot), `${JSON.stringify(sidecar, null, 2)}\n`);
 }
 
 /** Read and parse a skill's sidecar, or undefined if absent/unparseable. */
@@ -248,7 +318,7 @@ export function resolveInstallRoot({ agent, global, dir }: ResolveInstallRootOpt
 }
 
 // ---------------------------------------------------------------------------
-// Drift diagnosis (used by `skill doctor`)
+// Drift diagnosis (used by `skill doctor` and `skill install`)
 // ---------------------------------------------------------------------------
 
 export type DiagnosisStatus = "up-to-date" | "outdated" | "modified-locally" | "missing";
@@ -266,6 +336,7 @@ export type SkillDiagnosis = {
   installedHash?: string;
   /** Canonical hash recomputed over the tracked files on disk (if present). */
   diskHash?: string;
+  changedFiles?: string[];
   shippedVersion: string;
   shippedHash: string;
   /**
@@ -310,36 +381,81 @@ export function resolveScanRoots({ global, dir }: ScanOptions): string[] {
   return roots;
 }
 
+async function readTrackedFile(
+  skillRoot: string,
+  filePath: string,
+): Promise<{ path: string; content: string } | undefined> {
+  const target = path.join(skillRoot, filePath);
+  try {
+    if (!(await lstat(target)).isFile() || !(await resolvesInsideSkillDir(skillRoot, target))) {
+      return undefined;
+    }
+    return { path: filePath, content: await readFile(target, "utf8") };
+  } catch {
+    // Tracked file missing on disk — counts as local modification (hash drifts).
+    return undefined;
+  }
+}
+
+async function differsOnDisk(skillRoot: string, file: SkillFile): Promise<boolean> {
+  const target = path.join(skillRoot, file.path);
+  if (!(await holdsAnything(target))) return !(await resolvesInsideSkillDir(skillRoot, target));
+  return (await readTrackedFile(skillRoot, file.path))?.content !== file.content;
+}
+
+async function changedSinceInstall(
+  skillRoot: string,
+  skill: SkillManifest,
+  recordedFiles: Record<string, string>,
+): Promise<string[]> {
+  const recorded = await Promise.all(
+    Object.entries(recordedFiles).map(async ([filePath, recordedHash]) => {
+      const onDisk = await readTrackedFile(skillRoot, filePath);
+      return onDisk && hashOne(onDisk.content) === recordedHash ? undefined : filePath;
+    }),
+  );
+  const newlyShipped = skill.files.filter(f => !Object.hasOwn(recordedFiles, f.path));
+  const taken = await Promise.all(
+    newlyShipped.map(async file =>
+      (await differsOnDisk(skillRoot, file)) ? file.path : undefined,
+    ),
+  );
+  return [...recorded, ...taken]
+    .filter(filePath => filePath !== undefined)
+    .map(filePath => path.join(skillRoot, filePath));
+}
+
 /**
  * Diagnose one shipped `skill` at `root` (which must contain `<root>/<name>`).
- * Recomputes the disk hash over the manifest-tracked files and classifies the
- * install:
+ * Recomputes the disk hash over the files the sidecar recorded (so a file a newer
+ * skill dropped still counts), or over the manifest's files without a sidecar,
+ * and classifies the install:
  * - No sidecar (legacy/manual install): `up-to-date` if the disk hash matches
  *   what this binary ships, otherwise `modified-locally` — without provenance we
  *   can't tell an old version from local edits, so we don't let `--fix` overwrite
  *   it unless the caller also passes `--force`.
- * - Sidecar present: disk hash disagrees with the sidecar → `modified-locally`;
- *   else sidecar matches the shipped hash → `up-to-date`; else → `outdated`.
+ * - Sidecar present: disk hash disagrees with the sidecar, or a path the sidecar
+ *   didn't record already holds anything but the shipped file or would be
+ *   written outside the skill dir → `modified-locally`; else sidecar matches the shipped hash → `up-to-date`;
+ *   else → `outdated`.
  */
 export async function diagnoseSkill(skill: SkillManifest, root: string): Promise<SkillDiagnosis> {
   const skillRoot = path.join(root, skill.name);
   const sidecar = await readSidecar(skillRoot);
+  const recordedFiles = sidecar?.files ?? {};
 
-  const onDisk: { path: string; content: string }[] = [];
-  for (const file of skill.files) {
-    try {
-      const content = await readFile(path.join(skillRoot, file.path), "utf8");
-      onDisk.push({ path: file.path, content });
-    } catch {
-      // Tracked file missing on disk — counts as local modification (hash drifts).
-    }
-  }
+  const trackedPaths = sidecar ? Object.keys(recordedFiles) : skill.files.map(f => f.path);
+  const onDisk = (
+    await Promise.all(trackedPaths.map(filePath => readTrackedFile(skillRoot, filePath)))
+  ).filter(file => file !== undefined);
   const diskHash = hashSkillFiles(onDisk);
+
+  const changedFiles = sidecar ? await changedSinceInstall(skillRoot, skill, recordedFiles) : [];
 
   let status: DiagnosisStatus;
   if (!sidecar) {
     status = diskHash === skill.contentHash ? "up-to-date" : "modified-locally";
-  } else if (diskHash !== sidecar.contentHash) {
+  } else if (diskHash !== sidecar.contentHash || changedFiles.length > 0) {
     status = "modified-locally";
   } else if (sidecar.contentHash === skill.contentHash) {
     status = "up-to-date";
@@ -355,6 +471,7 @@ export async function diagnoseSkill(skill: SkillManifest, root: string): Promise
     installedVersion: sidecar?.cliVersion,
     installedHash: sidecar?.contentHash,
     diskHash,
+    ...(changedFiles.length > 0 ? { changedFiles } : {}),
     shippedVersion: CLI_VERSION,
     shippedHash: skill.contentHash,
   };
@@ -397,8 +514,6 @@ export async function scanInstalledSkills(options: ScanOptions): Promise<SkillDi
     for (const root of roots) {
       const supersededRoots = await findSupersededRoots(skill, root);
       const skillRoot = path.join(root, skill.name);
-      // A regular file at this path is not an installed skill; `pathExists`
-      // (access-based) would treat it as one, so require an actual directory.
       if (await isDirectory(skillRoot)) {
         foundAnywhere = true;
         const diagnosis = await diagnoseSkill(skill, root);

@@ -77,19 +77,6 @@ const COMPONENT_EXCEPTIONS = {
     ContactsButton: componentWaiver("R2", "R4"),
     ContactsView: componentWaiver("R2", "R3"),
   },
-  "features/flow/flow-contacts-detail": {
-    "./native": entryWaiver(),
-    ContactAddressDetailDialog: componentWaiver("R2", "R4", "R5"),
-    ContactDetailActions: componentWaiver("R1", "R4"),
-    ContactDetailActionsMenu: componentWaiver("R1", "R4", "R5"),
-    ContactDetailView: componentWaiver("R3", "R5"),
-    ContactsEditSignerMismatchDialog: componentWaiver("R2", "R4", "R5"),
-  },
-  "features/flow/pay-card-details": {
-    CardArtwork: componentWaiver("R2"),
-    CardPrimaryActionButton: componentWaiver("R1"),
-    CardTopUpButton: componentWaiver("R1"),
-  },
   "features/flow/pay-contact": {
     Contacts: componentWaiver("R2", "R3"),
     PaySuccess: componentWaiver("R2", "R4"),
@@ -129,8 +116,6 @@ const FILE_EXCEPTIONS = {
   "features/flow/contacts/src/contactsViewFacade.native.ts": NAMED_REEXPORT,
   "features/flow/contacts/src/contactsViewFacade.web.ts": NAMED_REEXPORT,
   "features/flow/contacts/src/hooks/contactsHooks.ts": WORKSPACE_PROXY,
-  "features/flow/flow-contacts-detail/src/native.ts": NAMED_REEXPORT,
-  "features/flow/flow-contacts-detail/src/web.ts": NAMED_REEXPORT,
   "features/platform/contacts/src/contactDeviceIntentsPort.ts": NAMED_REEXPORT,
   "features/platform/content-ab-tests/src/store.ts": INTERNALS_REEXPORT,
   "features/platform/style/src/hooks/useTheme.native.ts": THIRD_PARTY_PROXY,

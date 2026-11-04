@@ -1,5 +1,8 @@
 # @features/flow-pay-card-transactions
 
+> [!CAUTION]
+> **Status: UNSTABLE.** In active development; API may change.
+
 Pay Card Transactions flow: displays card transaction history for Ledger Wallet.
 
 ```ts

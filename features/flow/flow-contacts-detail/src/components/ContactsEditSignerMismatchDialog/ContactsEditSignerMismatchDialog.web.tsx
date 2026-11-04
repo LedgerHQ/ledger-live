@@ -9,7 +9,7 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import { LedgerDevices } from "@ledgerhq/lumen-ui-react/symbols";
 import { useEditSignerMismatchCopy } from "../../copy/useEditSignerMismatchCopy";
-import type { ContactsEditSignerMismatchDialogProps } from "./types";
+import type { ContactsEditSignerMismatchDialogProps } from "./ContactsEditSignerMismatchDialog.types";
 
 export function ContactsEditSignerMismatchDialog({
   isOpen,

@@ -33,6 +33,8 @@ jest.mock("@shared/ui-queued-bottom-sheet", () => {
 const isSheetRequested = () =>
   jest.mocked(QueuedBottomSheet).mock.lastCall?.[0].isRequestingToBeOpened;
 
+const hasCloseButton = () => !jest.mocked(QueuedBottomSheet).mock.lastCall?.[0].noCloseButton;
+
 describe("CreateBackup step", () => {
   it("shows the preparing screen without a sheet while loading", () => {
     renderView({ type: CreateBackupStateType.LOADING });
@@ -49,6 +51,8 @@ describe("CreateBackup step", () => {
       useExistingBackup,
       createNewBackup,
     });
+
+    expect(hasCloseButton()).toBe(false);
 
     await user.press(screen.getByTestId("os-update-use-existing-backup"));
     await user.press(screen.getByTestId("os-update-create-new-backup"));
@@ -71,6 +75,8 @@ describe("CreateBackup step", () => {
       retry,
       cancel,
     });
+
+    expect(hasCloseButton()).toBe(false);
 
     await user.press(screen.getByText("Retry"));
     await user.press(screen.getByText("Cancel"));
@@ -113,6 +119,8 @@ describe("CreateBackup step", () => {
 
     it("requests its sheet while the close confirmation is closed", () => {
       renderView({ type: CreateBackupStateType.DEVICE_LOCKED });
+
+      expect(hasCloseButton()).toBe(true);
 
       expect(isSheetRequested()).toBe(true);
     });

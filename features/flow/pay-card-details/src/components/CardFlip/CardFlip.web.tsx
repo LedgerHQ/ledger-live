@@ -1,7 +1,7 @@
 import React from "react";
 import { cn } from "@ledgerhq/lumen-design-core/cn";
 import { useTranslation } from "@shared/i18n";
-import { CARD_GRADIENT } from "../CardArtwork/cardGradient.web";
+import { CARD_GRADIENT } from "../CardArtwork/cardGradient";
 import type { CardFlipProps } from "../../types";
 
 export function CardFlip({ reveal, cardFace }: CardFlipProps) {

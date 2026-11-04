@@ -17,8 +17,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/account-data"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@domain/api-account-data": "workspace:*",
@@ -38,6 +37,7 @@
     "@testing-library/react": "catalog:",
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",

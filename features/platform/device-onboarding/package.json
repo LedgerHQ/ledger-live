@@ -18,8 +18,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/device-onboarding"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "semver": "catalog:",
@@ -27,6 +26,7 @@
   },
   "peerDependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
+    "react": ">=19.0.0",
     "rxjs": "catalog:"
   },
   "devDependencies": {
@@ -34,12 +34,19 @@
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/react": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@types/react": "catalog:",
     "@types/semver": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
+    "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
     "rxjs": "catalog:",
     "typescript": "catalog:"
   }

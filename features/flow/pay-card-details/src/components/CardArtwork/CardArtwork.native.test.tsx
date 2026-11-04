@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react-native";
-import { CardArtwork } from "./CardArtwork.native";
+import { CardArtwork } from "./CardArtwork";
 
 describe("CardArtwork (native)", () => {
   it("should render the card face", () => {

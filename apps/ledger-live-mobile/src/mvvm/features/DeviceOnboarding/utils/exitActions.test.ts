@@ -29,7 +29,7 @@ describe("exitActions", () => {
   it.each([
     [
       "resumeFirmwareUpdate",
-      [NavigatorName.Base, NavigatorName.MyLedger, ScreenName.MyLedgerChooseDevice],
+      [NavigatorName.Base, NavigatorName.MyWallet, ScreenName.MyWallet],
       { device: stax, firmwareUpdate: false },
     ],
     [
@@ -105,12 +105,6 @@ describe("exitActions", () => {
       device: wired,
       firmwareUpdate: true,
     });
-  });
-
-  it("opens My Wallet when it replaces My Ledger", () => {
-    const { opened } = leave("resumeFirmwareUpdate", { shouldDisplayMyWallet: true });
-
-    expect(opened?.path).toEqual([NavigatorName.Base, NavigatorName.MyWallet, ScreenName.MyWallet]);
   });
 
   it("should leave without completing when the device is not genuine", () => {
@@ -228,7 +222,6 @@ function leave(
     dispatch: dispatch as unknown as ExitDeps["dispatch"],
     navigation: inner as unknown as ExitDeps["navigation"],
     device: stax,
-    shouldDisplayMyWallet: false,
     wasReadOnlyAtEntry: false,
     isGenuine: false,
     deviceWasSeeded: false,

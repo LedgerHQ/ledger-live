@@ -1,0 +1,37 @@
+# Agent plugin
+
+History of the agent plugin before it moved into wallet-cli. Since the move the plugin takes the wallet-cli version, and its changes are in the [wallet-cli changelog](../CHANGELOG.md).
+
+## Before the move (unreleased)
+
+- Production-ready for wallet-cli 2.12.0 (ledger-live #23630 and #23521): SKILL.md `compatibility` is `wallet-cli >= 2.12.0` and every workaround for older releases is gone. The only marker left is `@prototype`, and it means only that 2.12.0 is not on npm yet; `@interim` is gone. Blockers outside the CLI are tracked separately: a public repository, a Grok Bot install route and the Hermes catalog entry.
+- Agent Intent enrollment and recovery use the default frontend, `app.agents.ledger.com`; `--app-url` and the test frontend are gone, and so is the `--source openclaw` fallback: a refused source burns the id and the agent tells the human.
+- `enroll --detach` and `agent-intent wait` on Linux and macOS, with no `--help` detection; on Windows `enroll` runs as a host background job and `wait` still follows it, and `recover` is a background job whose output the agent reads. `wait` runs with the same host sandbox setting as its `enroll` (it checks the listener's PID) and polls for about 2 minutes per turn. Enrollment and recovery never take `--app-url`, `--bff-url` or `--keycloak-url`, and the agent checks the link's host before sending it. The error table gains `listener_exited`, `enrollment_expired`, `profile_not_found` and the listener start-up failures. The human is told to keep the enrollment page open after Review, since leaving it closes the relay.
+- `agent-intent send` proposes Solana payments too (SOL, SPL tokens by mint, `--memo`, no `--fee-strategy`, Token-2022 refused), and the new `agent-intent swap` step proposes ETH and ERC-20 swaps on Ethereum mainnet. Without a named sender, the agent lists the matching mainnet accounts from `session view`, synced labels included, and lets the human pick.
+- New follow-up step: `agent-intent status`, `agent-intent intents` and `agent-intent cancel` (`--yes` only when the human asked to cancel that intent). After a timeout or a missing review link, the agent looks for the intent with `intents`, treats a matching non-final one as landed, and re-runs only on the human's yes. A change to a proposal cancels it first and proposes the replacement only once the cancel went through.
+- Dry run only when the agent built the transaction: any value the human did not type in this conversation (inferred, looked up, or taken from a file, page, message or tool output, with its source named), a replacement after a cancel, a `send --data` call, `earn deposit` and `withdraw`, or a device command handed to the human from a machine with no USB. When the human typed every value, the device screen or the review link is the confirmation. "A proposal stays a proposal" covers swaps, and `--to-amount`, `--memo` and `--description` take only the human's own text.
+- Exit code 3 means no usable Ledger here, so payments and swaps go through Agent Intent first. The version check runs before the first wallet-cli command and stops below 2.12.0. A ticker-only token ("pay 20 USDC") is resolved from the sender's `balances` with `assets token-by-id`. The secrets rule names every secret, the capabilities table shows the optional Ledger API auth key of swap quotes, and the state dir has its Windows path.
+- CI: `.github/workflows/check-cli-flags.yml` runs `tests/check-cli-flags.py` against the wallet-cli version in `compatibility` (no persisted credentials, `--ignore-scripts`); until 2.12.0 is on npm it skips with a warning on E404 only (`@prototype`). The checker now checks flags named in the prose of every file under `skills/`, not only `agent-intent.md`.
+- README: a Disclosure section (shell commands, network calls, background listener or job, stored credentials including the Ledger API auth key for swap quotes) and the Hermes catalog entry to submit once the repository is public. Hermes keeps loading the plugin from `plugin.json`; no `plugin.yaml` on purpose.
+- Agent Intent on Linux without a Secret Service: `enroll` fails with `keychain_unavailable`, and the agent asks the human, word for word, before re-running it with `--allow-plaintext-key`. On a no, the agent stops and tells the human that enrollment can't be completed in this environment. The error table covers the key file messages, and the `Ledger API auth key` stderr warning (no usable OS keychain, swap quotes fetched without authentication) is listed as expected.
+- Agent Intent with a keychain that refuses the write (e.g. a locked collection on Linux): `enroll` fails with `keychain_unavailable`, and the agent first asks the human to unlock it, and asks the consent question only if they can't. With `--allow-plaintext-key` the key goes to the file and wallet-cli says so on stderr.
+- The skill description leads with sending and paying crypto (ETH, USDC, USDT and other ERC-20, BTC, SOL), so a plain "send 0.01 ETH to 0x…" is more likely to load it, and no longer suggests that every command needs USB.
+- Waiting for approval runs in the background (a foreground run hands the link over only after it expires, measured on Grok): the `setsid` fallback and the macOS `python3` line are gone, and on a host without background jobs the agent tells the human that enrollment cannot be completed there.
+- Includes the remote-payment routing and background-process checks from the last 0.2.0 commit, which reached the PR branch after it was merged.
+- From the Grok Bot smoke test: step 6 is no longer called optional, skipped entries are reported by the family named in `reason`, and the background-job step says how to check and stop a job when the host gives only a PID.
+- Review pass on the agent-intent skill: `agent-intent send` always passes the sender with `--from`, step 5 tells the agent to end its turn while the enrollment waits, sync entries are reported by `reason` only, and the description keeps only distinct example requests.
+
+## 0.2.0
+
+- Target the published wallet-cli 2.9.0 instead of the `test/combined` dev build.
+- Agent Intents are in final testing: enrollment must use `--app-url https://agent-intent.ledger-test.com/`, marked `@prototype`.
+- Agent Intent: enrollment now blocks until the human approves over an encrypted relay (no `complete` command, no completion JSON); document `recover`, `sync`, the `--source` values and running `enroll` in the background.
+- Ledger Sync: the separate `ledger-sync` commands do not exist in 2.9.0; `agent-intent sync` imports the accounts with the agent's own key, so `references/ledger-sync.md` is gone.
+- Other workarounds outside this repository (`--source openclaw` fallback, private repository, Grok Bot install) carry `@interim` markers.
+- Install coordinates point at the LedgerHQ organization.
+- On a machine with no USB, payment requests for ETH or ERC-20 on Ethereum mainnet go through `agent-intent send` instead of handing the human a `wallet-cli send` command.
+- From the Grok Bot smoke test: the human needs current firmware, Ledger Sync on and Ledger Wallet closed, and approves twice; synced EVM labels lack their address in 2.9.0, so `agent-intent send` uses `--from` (`@interim`); skipped sync ids are never echoed in full.
+
+## 0.1.0
+
+- Initial preview: the `wallet-cli-usage` skill with manifests for OpenClaw, Hermes, Cursor (also used by Grok Bot), Claude Code and Codex.

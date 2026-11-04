@@ -5,7 +5,6 @@ import {
   type DeviceOnboardingExitReason,
 } from "@features/platform-device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
@@ -31,7 +30,6 @@ export function useLeaveOnboarding({
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const { notifyFlowCompleted } = useNotificationsPrompt();
-  const { shouldDisplayMyWallet } = useWalletFeaturesConfig("mobile");
 
   return (reason: DeviceOnboardingExitReason, context: DeviceOnboardingContext) => {
     if (!navigateOnExit || !device) return;
@@ -47,7 +45,6 @@ export function useLeaveOnboarding({
     exitActions[reason]({
       navigation,
       dispatch,
-      shouldDisplayMyWallet,
       device,
       wasReadOnlyAtEntry,
       isGenuine: genuine,

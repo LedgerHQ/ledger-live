@@ -12,14 +12,23 @@ const {
   findBannedDependencyViolations,
   findBannedExternalViolations,
   findDevtoolsImportViolations,
+  sourceFiles,
+  DEVTOOLS_ROOT,
 } = require("./validate");
 const {
   BOUNDARY_EXCEPTIONS,
+  LEGACY_SOURCE_ROOTS,
   LEGACY_PACKAGES,
   BANNED_EXTERNALS_BY_TAG,
+  BANNED_DEPENDENCIES,
   DEVTOOLS_ALLOWED_IMPORTS,
   DEVTOOLS_TYPE_ONLY_IMPORTS,
 } = require("./constraints");
+const {
+  isLintBoundariesInput,
+  assertSourceFilesHashed,
+  assertSkipDirsExcluded,
+} = require("./test-helpers");
 
 /**
  * @param {Array<{name: string, tags: string[]}>} projects
@@ -317,6 +326,93 @@ test("feature-platform -> legacy libs is forbidden", () => {
   // findViolations dedupes per edge and accumulates both source tags.
   assert.ok(v[0].sourceTags.includes("scope:features"));
   assert.ok(v[0].sourceTags.includes("type:feature-platform"));
+});
+
+const ACCOUNT_DATA_SOURCE_TAGS = [
+  "scope:features",
+  "type:feature-platform",
+  "type:account-data-source",
+];
+
+test("feature-flow -> account-data source is forbidden", () => {
+  const graph = buildGraph(
+    [
+      { name: "a", tags: ["scope:features", "type:feature-flow"] },
+      { name: "b", tags: ACCOUNT_DATA_SOURCE_TAGS },
+    ],
+    [{ source: "a", target: "b" }],
+  );
+  const v = findViolations(graph);
+  assert.equal(v.length, 1);
+  assert.deepEqual(v[0].sourceTags, ["scope:features"]);
+  assert.equal(v[0].target, "b");
+});
+
+test("feature-platform -> account-data source is forbidden", () => {
+  const graph = buildGraph(
+    [
+      { name: "a", tags: ["scope:features", "type:feature-platform"] },
+      { name: "b", tags: ACCOUNT_DATA_SOURCE_TAGS },
+    ],
+    [{ source: "a", target: "b" }],
+  );
+  const v = findViolations(graph);
+  assert.equal(v.length, 1);
+  assert.deepEqual(v[0].sourceTags, ["scope:features"]);
+});
+
+test("domain-api -> account-data source is forbidden", () => {
+  const graph = buildGraph(
+    [
+      { name: "a", tags: ["scope:domain", "type:domain-api"] },
+      { name: "b", tags: ACCOUNT_DATA_SOURCE_TAGS },
+    ],
+    [{ source: "a", target: "b" }],
+  );
+  const v = findViolations(graph);
+  assert.equal(v.length, 1);
+  assert.ok(v[0].sourceTags.includes("scope:domain"));
+});
+
+test("devtools -> account-data source is allowed", () => {
+  const graph = buildGraph(
+    [
+      { name: "a", tags: ["scope:devtools"] },
+      { name: "b", tags: ACCOUNT_DATA_SOURCE_TAGS },
+    ],
+    [{ source: "a", target: "b" }],
+  );
+  assert.deepEqual(findViolations(graph), []);
+});
+
+test("account-data source -> feature-platform is allowed", () => {
+  const graph = buildGraph(
+    [
+      { name: "a", tags: ACCOUNT_DATA_SOURCE_TAGS },
+      { name: "b", tags: ["scope:features", "type:feature-platform"] },
+    ],
+    [{ source: "a", target: "b" }],
+  );
+  assert.deepEqual(findViolations(graph), []);
+});
+
+test("findViolations: BOUNDARY_EXCEPTIONS skips a notDependOnLibsWithTags edge", () => {
+  const graph = {
+    nodes: {
+      a: { data: { root: "features/flow/a", tags: ["scope:features", "type:feature-flow"] } },
+      b: { data: { root: "features/platform/account-source-b", tags: ACCOUNT_DATA_SOURCE_TAGS } },
+    },
+    dependencies: { a: [{ target: "b" }], b: [] },
+  };
+  const exceptions = [
+    {
+      sourceRoot: "features/flow/a",
+      targetRoot: "features/platform/account-source-b",
+      allowedImport: "@features/platform-account-source-b",
+    },
+  ];
+  assert.deepEqual(findViolations(graph, exceptions), []);
+  assert.equal(findViolations(graph, []).length, 1);
 });
 
 test("missing tags default to empty array (no crash)", () => {
@@ -639,6 +735,32 @@ test("findBannedDependencyViolations ignores unrelated dependencies and missing 
   });
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   assert.deepEqual(findBannedDependencyViolations(bannedDepGraph(manifests), root, BANNED), []);
+});
+
+test("BANNED_DEPENDENCIES bans @ledgerhq/generators from every manifest but its own", t => {
+  const manifests = {
+    "devtools/registry": {
+      name: "@devtools/registry",
+      devDependencies: { "@ledgerhq/generators": "workspace:*" },
+    },
+    "apps/app": { name: "app", dependencies: { "@ledgerhq/generators": "workspace:*" } },
+    "tools/nx-plugins/generators": { name: "@ledgerhq/generators" },
+  };
+  const root = makeTmpWorkspace(
+    Object.fromEntries(
+      Object.entries(manifests).map(([r, pkg]) => [`${r}/package.json`, JSON.stringify(pkg)]),
+    ),
+  );
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const violations = findBannedDependencyViolations(
+    bannedDepGraph(manifests),
+    root,
+    BANNED_DEPENDENCIES,
+  );
+  assert.deepEqual(violations.map(v => `${v.manifest} ${v.dependency} ${v.field}`).sort(), [
+    `${path.join("apps/app", "package.json")} @ledgerhq/generators dependencies`,
+    `${path.join("devtools/registry", "package.json")} @ledgerhq/generators devDependencies`,
+  ]);
 });
 
 test("every manifest check fails on a malformed or unreadable manifest in its scope", t => {
@@ -980,4 +1102,65 @@ test("devtools: edges to or from packages outside the scope are ignored", t => {
     ],
   );
   assert.deepEqual(devtoolsViolations(graph, root), []);
+});
+
+test("devtools: each source file is read and parsed once across type-only edges", t => {
+  const { root, graph } = manifestWorkspace(
+    t,
+    DEVTOOLS_MANIFESTS,
+    [
+      ["devtools/bindings", "devtools/env"],
+      ["devtools/bindings", "devtools/feature-flags"],
+      ["devtools/bindings", "devtools/relay"],
+    ],
+    {
+      "devtools/bindings/src/env.ts": 'import { EnvDevTool } from "@devtools/env";',
+      "devtools/bindings/src/flags.ts": 'import type { Flags } from "@devtools/feature-flags";',
+      "devtools/bindings/src/relay.ts": 'export const load = () => import("@devtools/relay");',
+    },
+  );
+  const parse = t.mock.method(sourceFiles, "parse");
+
+  const violations = findDevtoolsImportViolations(
+    graph,
+    root,
+    DEVTOOLS_ALLOWED_IMPORTS,
+    DEVTOOLS_TYPE_ONLY_IMPORTS,
+  );
+
+  assert.deepEqual(
+    parse.mock.calls.map(call => call.arguments[0]).sort(),
+    ["env.ts", "flags.ts", "relay.ts"].map(f => path.join(root, "devtools/bindings/src", f)),
+  );
+  assert.deepEqual(violations.map(v => `${v.target} ${v.file}`).sort(), [
+    `@devtools/env ${path.join("devtools/bindings/src/env.ts")}`,
+    `@devtools/relay ${path.join("devtools/bindings/src/relay.ts")}`,
+  ]);
+});
+
+// --- lint:boundaries cache inputs ---
+
+const fixedSourceRoots = [...LEGACY_SOURCE_ROOTS, DEVTOOLS_ROOT];
+
+test("lint:boundaries inputs cover every source file under the legacy and devtools roots", () => {
+  assertSourceFilesHashed(fixedSourceRoots);
+});
+
+test("lint:boundaries inputs exclude each skipped directory under the legacy and devtools roots", () => {
+  assertSkipDirsExcluded(fixedSourceRoots);
+});
+
+test("lint:boundaries inputs cover the graph configuration and the tags plugin", () => {
+  const files = [
+    "pnpm-workspace.yaml",
+    "nx.json",
+    "nx.cache-config.json",
+    "tools/nx-plugins/project-tags/plugin.js",
+    "tools/nx-plugins/enforce-boundaries/constraints.js",
+    "tools/nx-plugins/enforce-boundaries/validate.js",
+  ];
+  assert.deepEqual(
+    files.filter(file => !isLintBoundariesInput(file)),
+    [],
+  );
 });

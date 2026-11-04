@@ -1,5 +1,6 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
+import { AmountQuickAction } from "@ledgerhq/live-e2e-shared/enum/AmountQuickAction";
 import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import { coinTeamOwner } from "@ledgerhq/live-e2e-shared/data/coinTeamOwner";
 import { SendScenario, sendFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
@@ -21,6 +22,7 @@ import {
   requireRecipientAddress,
 } from "tests/utils/newSendFlowUtils";
 import { buildTags } from "tests/utils/tagsUtils";
+import { getSavedSpendableBalance } from "tests/utils/userdata";
 
 const newSendFlowFeatureFlags = {
   ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
@@ -110,19 +112,36 @@ test.describe("Send - new flow - max amount", ethSendFlow(SendScenario.MAX_AMOUN
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: tx.accountToDebit.currency.speculosApp,
     cliCommands: [liveDataWithRecipientAddressCommand(tx)],
+    env: { DISABLE_TRANSACTION_BROADCAST: "1" },
     featureFlags: newSendFlowFeatureFlags,
   });
 
   test(
-    `[${tx.accountToDebit.currency.testLabel}] - Send - max amount`,
+    `[${tx.accountToDebit.currency.testLabel}] - Send - quick actions, max amount and device lost during signature`,
     {
       tag: buildTags({ currencyId: tx.accountToDebit.currency.id }),
-      annotation: { type: "TMS", description: "B2CQA-6124" },
+      annotation: { type: "TMS", description: "B2CQA-6124, B2CQA-6028, B2CQA-115" },
     },
-    async ({ app }) => {
+    async ({ app, speculos, userdataFile }) => {
+      await app.layout.syncAccountsAndWaitForSync();
       await reachAmountStep(app, tx);
+      const spendableBalance = await getSavedSpendableBalance(userdataFile, tx.accountToDebit);
+      for (const action of Object.values(AmountQuickAction)) {
+        await app.newSendFlow.clickQuickAction(action);
+        await app.newSendFlow.expectQuickActionAmount(action, spendableBalance);
+      }
+      await app.newSendFlow.expectInputModeToggleKeepsAmount();
+
+      const threeQuartersAmount = await app.newSendFlow.getCryptoAmount();
       await app.newSendFlow.selectMaxAmount();
+      await app.newSendFlow.expectCryptoAmountGreaterThan(threeQuartersAmount);
       await app.newSendFlow.expectReviewEnabled();
+
+      await app.newSendFlow.clickReview();
+      await app.newSendFlow.waitForSignature();
+      await app.speculos.waitForSendReview(tx);
+      await speculos.stop();
+      await app.newSendFlow.expectDeviceDisconnectedError();
     },
   );
 });

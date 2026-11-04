@@ -2,9 +2,13 @@ import { fileURLToPath } from "node:url";
 import lumen from "@ledgerhq/lumen-lint-plugin/oxlint";
 import { defineConfig } from "oxlint";
 import base from "./base.mts";
+import {
+  EXPO_CLIPBOARD,
+  LIVE_COMMON_LIB,
+  LODASH,
+  NAVIGATOR_CLIPBOARD,
+} from "./restricted-imports.mts";
 import { platformSuffixWaivers } from "./src/suffix-imports.js";
-
-const CLIPBOARD_MESSAGE = "Use copyToClipboard / readClipboard from @shared/clipboard instead of";
 
 // Packages whose own config kept the React Compiler rules and `import/namespace` fatal. The rest
 // of the layer has them as warnings and violates them today, so they stay fatal here only. Globs
@@ -30,12 +34,10 @@ const PLATFORM_SUFFIX_WAIVERS = [
   "account-detail-hero",
   "contacts",
   "fear-and-greed",
-  "flow-contacts-detail",
   "large-screen-upsell",
   "market-banner",
   "pay-bank-transfer",
   "pay-card-auth",
-  "pay-card-details",
   "pay-card-widget",
   "pay-contact",
   "pay-deposit",
@@ -63,26 +65,11 @@ export default defineConfig({
     "eslint/no-restricted-imports": [
       "error",
       {
-        paths: [
-          "lodash",
-          { name: "expo-clipboard", message: `${CLIPBOARD_MESSAGE} expo-clipboard.` },
-        ],
-        patterns: [
-          {
-            group: ["@ledgerhq/live-common/lib/**", "@ledgerhq/live-common/lib-es/**"],
-            message: "Please remove the /lib import from live-common import.",
-          },
-        ],
+        paths: [LODASH, EXPO_CLIPBOARD],
+        patterns: [LIVE_COMMON_LIB],
       },
     ],
-    "eslint/no-restricted-properties": [
-      "error",
-      {
-        object: "navigator",
-        property: "clipboard",
-        message: `${CLIPBOARD_MESSAGE} navigator.clipboard.`,
-      },
-    ],
+    "eslint/no-restricted-properties": ["error", NAVIGATOR_CLIPBOARD],
     "react-hooks/exhaustive-deps": [
       "error",
       {

@@ -11,6 +11,7 @@ import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/type
 import type { MarketListCategory } from "@ledgerhq/live-common/market/utils/category";
 import { PostOnboardingState } from "@ledgerhq/types-live";
 import type { LargeScreenUpsellModalState } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
+import type { PredictionsState } from "@domain/entity-predictions";
 import type { DataOfUser, NotificationPromptTarget } from "LLM/features/NotificationsPrompt/types";
 import type { RatingsHappyMoment, RatingsDataOfUser } from "../logic/ratings";
 import {
@@ -54,7 +55,7 @@ import type { PayRequestVerifyHintState } from "@features/flow-pay-request/state
 import type { PayCardAuthState, PayCardLoginIntroState } from "@features/flow-pay-card-auth/state";
 import type { PayCardOnboardingWidgetState } from "@features/flow-pay-card-widget/state";
 import type { IdentitiesState } from "@domain/entity-client-identity";
-import type { FirebaseMessagingTypes } from "@react-native-firebase/messaging";
+import type { NotificationPermissionStatus } from "~/logic/getNotificationPermissionStatus";
 import { RebornBuyDeviceDrawerState } from "./rebornBuyDeviceDrawer";
 import type { PortfolioRefreshState } from "./portfolioRefresh";
 import type { PortfolioBalanceDisplayState } from "./portfolioBalanceDisplay";
@@ -144,7 +145,7 @@ export type BleState = {
 
 export type NotificationsState = {
   /** The authorization status of the system notifications */
-  permissionStatus?: FirebaseMessagingTypes.AuthorizationStatus;
+  permissionStatus?: NotificationPermissionStatus;
   /** Boolean indicating whether the push notifications modal is opened or closed */
   isPushNotificationsModalOpen: boolean;
   /** This helps us know what action caused the push notifications modal to open */
@@ -489,6 +490,7 @@ export type State = LLMRTKApiState & {
   notifications: NotificationsState;
   postOnboarding: PostOnboardingState;
   postOnboardingHubDrawer: PostOnboardingHubDrawerState;
+  predictions: PredictionsState;
   protect: ProtectState;
   ratings: RatingsState;
   sendFlow: SendFlowState;

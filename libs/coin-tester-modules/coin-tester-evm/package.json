@@ -78,11 +78,12 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "axios": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "rimraf": "^5.0.5",
+    "rimraf": "5.0.10",
     "typescript": "catalog:"
   }
 }

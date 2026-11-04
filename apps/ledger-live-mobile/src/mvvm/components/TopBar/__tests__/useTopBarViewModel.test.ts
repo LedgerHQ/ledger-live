@@ -1,5 +1,5 @@
 import { track } from "@shared/analytics";
-import { renderHook, withReadOnlyDisabled, act } from "@tests/test-renderer";
+import { renderHook, act } from "@tests/test-renderer";
 import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import { NavigatorName, ScreenName } from "~/const";
 import { State } from "~/reducers/types";
@@ -46,20 +46,21 @@ describe("useTopBarViewModel", () => {
     mockedUseSyncIndicator.mockReturnValue(defaultSyncState);
   });
 
-  it("should call navigate with expected params when onMyLedgerPress is invoked", () => {
-    const { result } = renderHook(() => useTopBarViewModel(mockNavigation as never), {
-      overrideInitialState: withReadOnlyDisabled,
-    });
+  it("should navigate to My Wallet when onMyWalletPress is invoked", () => {
+    const { result } = renderHook(() => useTopBarViewModel(mockNavigation as never));
 
     act(() => {
-      result.current.onMyLedgerPress();
+      result.current.onMyWalletPress();
     });
 
     expect(mockNavigate).toHaveBeenCalledTimes(1);
-    expect(mockNavigate).toHaveBeenCalledWith(
-      expectedNavigationParams.myLedger.name,
-      expectedNavigationParams.myLedger.params,
-    );
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.MyWallet, {
+      screen: ScreenName.MyWallet,
+    });
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "My Wallet",
+      page: ScreenName.Portfolio,
+    });
   });
 
   describe("onDiscoverPress", () => {
@@ -93,20 +94,6 @@ describe("useTopBarViewModel", () => {
     });
   });
 
-  it("should call navigate with expected params when onNotificationsPress is invoked", () => {
-    const { result } = renderHook(() => useTopBarViewModel(mockNavigation as never));
-
-    act(() => {
-      result.current.onNotificationsPress();
-    });
-
-    expect(mockNavigate).toHaveBeenCalledTimes(1);
-    expect(mockNavigate).toHaveBeenCalledWith(
-      expectedNavigationParams.notifications.name,
-      expectedNavigationParams.notifications.params,
-    );
-  });
-
   it("should navigate to GlobalSearch and track button_clicked when onSearchPress is invoked", () => {
     const { result } = renderHook(() => useTopBarViewModel(mockNavigation as never));
 
@@ -123,17 +110,6 @@ describe("useTopBarViewModel", () => {
       button: "Search",
       page: ScreenName.Portfolio,
     });
-  });
-
-  it("should call navigate with expected params when onSettingsPress is invoked", () => {
-    const { result } = renderHook(() => useTopBarViewModel(mockNavigation as never));
-
-    act(() => {
-      result.current.onSettingsPress();
-    });
-
-    expect(mockNavigate).toHaveBeenCalledTimes(1);
-    expect(mockNavigate).toHaveBeenCalledWith(expectedNavigationParams.settings.name);
   });
 
   it("should call navigate with expected params when onTransactionHistoryPress is invoked", () => {

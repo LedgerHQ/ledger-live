@@ -106,9 +106,6 @@ jobs:
       - name: typecheck
         run: pnpm desktop typecheck
 
-      - name: check for dead code
-        run: pnpm desktop knip-check
-
   unit-tests:
     name: "Desktop Unit Tests"
     if: ${{ !inputs.skip-unit-tests }}

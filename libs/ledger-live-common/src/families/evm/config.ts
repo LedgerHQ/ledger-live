@@ -1057,6 +1057,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       explorer: {
         type: "blockscout",
         uri: "https://chainscan.0g.ai/open/api",
+        maxLimit: 99,
       },
       minGasPrice: "2000000000",
     },

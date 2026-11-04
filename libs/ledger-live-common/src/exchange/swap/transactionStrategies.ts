@@ -5,6 +5,7 @@ import { TransactionCommon } from "@ledgerhq/types-live";
 import { createStepError, StepError, CustomErrorType } from "../../wallet-api/Exchange";
 import type { GetFeatureFn } from "../../wallet-api/FeatureFlags/resolver";
 import { hasParametersForSolana } from "./hasParametersForSolana";
+import { cosmosMemoPatch } from "../../bridge/descriptor/send/memo";
 
 export type { SwapLiveError } from "@ledgerhq/wallet-api-exchange-module";
 
@@ -252,7 +253,7 @@ export function cosmosTransaction({
     mode: "send",
     networkInfo: null,
     ...customFeeConfig,
-    memo: payinExtraId ?? undefined,
+    ...cosmosMemoPatch(payinExtraId),
   };
 }
 

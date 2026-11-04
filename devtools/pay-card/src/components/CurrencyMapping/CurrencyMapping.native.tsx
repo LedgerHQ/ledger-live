@@ -13,7 +13,7 @@ export interface CurrencyMappingScreenProps {
 const KEY_WIDTH = "s176";
 const LEDGER_ID_WIDTH = "s320";
 
-const HEADER_LX = { padding: "s16" } as const;
+const HEADER_LX = { paddingHorizontal: "s12", paddingVertical: "s16" } as const;
 const ROW_LX = { flexDirection: "row", gap: "s12", paddingVertical: "s4" } as const;
 
 function Cell({

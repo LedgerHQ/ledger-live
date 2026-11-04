@@ -28,8 +28,7 @@
     "lint": "oxlint ./src",
     "lint:fix": "pnpm lint --fix",
     "format": "oxfmt ./src",
-    "format:check": "oxfmt ./src --check",
-    "unimported": "pnpm knip --directory ../../.. -W e2e/tooling/baanx-test-client"
+    "format:check": "oxfmt ./src --check"
   },
   "dependencies": {
     "otpauth": "catalog:"
@@ -40,6 +39,7 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-sonar": "0.2.16",
     "oxfmt": "catalog:",

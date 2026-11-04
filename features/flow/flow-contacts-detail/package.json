@@ -4,14 +4,10 @@
   "private": true,
   "description": "Shared Contact Detail flow for Desktop and Mobile",
   "main": "src/index.ts",
-  "react-native": "src/index.native.ts",
   "types": "src/index.ts",
   "exports": {
-    ".": {
-      "react-native": "./src/index.native.ts",
-      "default": "./src/index.ts"
-    },
-    "./native": "./src/index.native.ts",
+    ".": "./src/index.ts",
+    "./native": "./src/native/index.native.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -21,8 +17,7 @@
     "lint": "oxlint ./src",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -c features/flow/flow-contacts-detail/knip.web.config.mjs -W features/flow/flow-contacts-detail --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/flow-contacts-detail/knip.native.config.mjs -W features/flow/flow-contacts-detail --tsConfig tsconfig.native.json"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@domain/entity-contact": "workspace:*",
@@ -35,7 +30,8 @@
     "@ledgerhq/crypto-icons": "catalog:",
     "@shared/clipboard": "workspace:*",
     "@shared/i18n": "workspace:*",
-    "@shared/ui-qr-code": "workspace:*"
+    "@shared/ui-qr-code": "workspace:*",
+    "@shared/ui-queued-bottom-sheet": "workspace:^"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
@@ -74,6 +70,7 @@
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",

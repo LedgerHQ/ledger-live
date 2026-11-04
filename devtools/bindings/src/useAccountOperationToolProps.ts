@@ -5,6 +5,7 @@ import type { DevToolsConfig } from "@devtools/registry";
 import { fetchAccountData, fetchMoreAccountData } from "@domain/api-account-data";
 import { accountsSlice, type AccountsState } from "@domain/entity-account";
 import type { AccountDataRootState } from "@domain/entity-account-data";
+import { BalanceAssetIdSchema, type WithAccountBalances } from "@domain/entity-account-balance";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import {
   selectAccountOperations,
@@ -12,6 +13,7 @@ import {
   type AccountOperationsQuery,
   type WithAccountOperations,
 } from "@domain/entity-account-operation";
+import { FiatCurrencyTickerSchema, findFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { formatAmount, useAssetUnits } from "./useAssetUnits";
 
 type AccountOperationToolProps = Extract<
@@ -22,39 +24,72 @@ type AccountOperationToolProps = Extract<
 type AccountOperationToolQuery = Parameters<AccountOperationToolProps["onReadAll"]>[0];
 
 /** Both apps mount the accounts slice at `accountEntries`. */
-type State = AccountDataRootState & WithAccountOperations & { accountEntries: AccountsState };
+type State = AccountDataRootState &
+  WithAccountOperations &
+  Partial<WithAccountBalances> & { accountEntries: AccountsState };
 
 type Dispatch = ThunkDispatch<State, unknown, UnknownAction>;
 
 const { selectAccountEntries } = accountsSlice.getSelectors((state: State) => state.accountEntries);
 
-const labelOf = (query: AccountOperationsQuery | undefined): string =>
-  query?.limit === undefined ? "default" : `limit ${query.limit}`;
+/** The tool's options as a query, the invalid ones left out. */
+function toQuery(options: AccountOperationToolQuery, fiat: string): AccountOperationsQuery {
+  return {
+    limit: options.limit,
+    filterAsset: BalanceAssetIdSchema.optional().safeParse(options.filterAsset).data,
+    countervalue: options.countervalue ? FiatCurrencyTickerSchema.safeParse(fiat).data : undefined,
+  };
+}
+
+function labelOf(query: AccountOperationsQuery | undefined): string {
+  const parts = [
+    query?.filterAsset && `filter ${query.filterAsset}`,
+    query?.countervalue && `in ${query.countervalue}`,
+    query?.limit !== undefined && `limit ${query.limit}`,
+  ].filter(part => typeof part === "string");
+  return parts.length ? parts.join(" · ") : "default";
+}
 
 /** The query a window key stands for: the key is the query's JSON, `""` for no query. */
 function queryOf(queryKey: string): AccountOperationsQuery | undefined {
   if (!queryKey) return undefined;
   const parsed: unknown = JSON.parse(queryKey);
   if (typeof parsed !== "object" || parsed === null) return undefined;
-  const limit = "limit" in parsed ? parsed.limit : undefined;
-  return { limit: typeof limit === "number" ? limit : undefined };
+  const field = (name: string) => (name in parsed ? Reflect.get(parsed, name) : undefined);
+  const limit = field("limit");
+  const filterAsset = BalanceAssetIdSchema.optional().safeParse(field("filterAsset"));
+  const countervalue = FiatCurrencyTickerSchema.optional().safeParse(field("countervalue"));
+  return {
+    limit: typeof limit === "number" ? limit : undefined,
+    filterAsset: filterAsset.data,
+    countervalue: countervalue.data,
+  };
 }
 
-export function useAccountOperationToolProps(): AccountOperationToolProps {
+const formatCountervalues = (countervalues: AccountOperation["countervalues"]) =>
+  Object.entries(countervalues ?? {}).flatMap(([ticker, amount]) => {
+    const unit = findFiatCurrencyByTicker(ticker)?.units[0];
+    return unit && amount ? [formatAmount(unit, amount)] : [];
+  });
+
+/** `fiat` is the app's countervalue setting, the one fiat its rates are loaded for. */
+export function useAccountOperationToolProps(fiat: string): AccountOperationToolProps {
   const dispatch = useDispatch<Dispatch>();
   const entries = useSelector(selectAccountEntries);
   const operations = useSelector((state: State) => state.accountOperations);
   const statuses = useSelector((state: State) => state.accountData.operations);
+  const balances = useSelector((state: State) => state.accountBalances);
 
   const assetIds = useMemo(
     () => [
-      ...new Set(
-        Object.values(operations).flatMap(entry =>
+      ...new Set([
+        ...Object.values(balances ?? {}).flatMap(rows => rows?.map(row => row.assetId) ?? []),
+        ...Object.values(operations).flatMap(entry =>
           Object.values(entry?.byId ?? {}).flatMap(row => (row ? [row.assetId] : [])),
         ),
-      ),
+      ]),
     ],
-    [operations],
+    [balances, operations],
   );
   const unitOf = useAssetUnits(assetIds, dispatch);
 
@@ -87,10 +122,11 @@ export function useAccountOperationToolProps(): AccountOperationToolProps {
   );
 
   const onReadAll = useCallback(
-    (query: AccountOperationToolQuery) => {
+    (options: AccountOperationToolQuery) => {
+      const query = toQuery(options, fiat);
       descriptors.forEach(descriptor => read(descriptor, query));
     },
-    [descriptors, read],
+    [descriptors, read, fiat],
   );
 
   const accounts = useMemo(() => {
@@ -107,6 +143,7 @@ export function useAccountOperationToolProps(): AccountOperationToolProps {
         pending: operation.blockHeight === null,
         failed: operation.hasFailed === true,
         child: operation.parentId !== undefined,
+        countervalues: formatCountervalues(operation.countervalues),
       };
     };
     return entries.map(({ accountUUID, descriptor }) => {
@@ -138,5 +175,5 @@ export function useAccountOperationToolProps(): AccountOperationToolProps {
     });
   }, [entries, statuses, operations, unitOf]);
 
-  return { accounts, onRead, onReadMore, onReadAll };
+  return { accounts, assetIds, fiat, onRead, onReadMore, onReadAll };
 }

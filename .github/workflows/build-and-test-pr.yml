@@ -253,7 +253,7 @@ jobs:
       NX_KEY: ${{ secrets.NX_KEY }}
 
   enforce-boundaries:
-    name: "Enforce Module Boundaries"
+    name: "Monorepo Checks"
     permissions:
       id-token: write
       contents: read

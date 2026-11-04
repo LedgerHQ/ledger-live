@@ -49,7 +49,7 @@ describe("useContactDetailEditDeleteAdapter", () => {
     });
 
     expect(result.current.actionsMenu.isOpen).toBe(false);
-    expect(result.current.deleteDrawer.isOpen).toBe(true);
+    expect(result.current.deleteSheet.isOpen).toBe(true);
   });
 
   it("should reopen the delete confirmation after cancelling it", () => {
@@ -68,12 +68,12 @@ describe("useContactDetailEditDeleteAdapter", () => {
     act(() => {
       result.current.actionsMenu.onDelete();
     });
-    expect(result.current.deleteDrawer.isOpen).toBe(true);
+    expect(result.current.deleteSheet.isOpen).toBe(true);
 
     act(() => {
-      result.current.deleteDrawer.onCancel();
+      result.current.deleteSheet.onCancel();
     });
-    expect(result.current.deleteDrawer.isOpen).toBe(false);
+    expect(result.current.deleteSheet.isOpen).toBe(false);
 
     act(() => {
       result.current.onOpenActionsMenu();
@@ -82,6 +82,6 @@ describe("useContactDetailEditDeleteAdapter", () => {
       result.current.actionsMenu.onDelete();
     });
 
-    expect(result.current.deleteDrawer.isOpen).toBe(true);
+    expect(result.current.deleteSheet.isOpen).toBe(true);
   });
 });

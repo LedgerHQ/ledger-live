@@ -23,8 +23,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -c features/flow/account-detail-notices/knip.web.config.mjs -W features/flow/account-detail-notices --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/account-detail-notices/knip.native.config.mjs -W features/flow/account-detail-notices --tsConfig tsconfig.native.json"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@shared/i18n": "workspace:*"
@@ -47,6 +46,7 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",

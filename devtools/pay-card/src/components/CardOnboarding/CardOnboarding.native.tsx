@@ -20,7 +20,8 @@ const HEADER_LX = {
   flexDirection: "row",
   alignItems: "center",
   justifyContent: "space-between",
-  padding: "s16",
+  paddingHorizontal: "s12",
+  paddingVertical: "s16",
 } as const;
 const STEPPER_LX = { alignItems: "center", gap: "s8" } as const;
 const ROW_LX = {

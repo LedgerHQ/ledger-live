@@ -16,8 +16,7 @@
     "lint": "oxlint ./src",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -c features/flow/flow-contacts-edit-address/knip.web.config.mjs -W features/flow/flow-contacts-edit-address --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/flow-contacts-edit-address/knip.native.config.mjs -W features/flow/flow-contacts-edit-address --tsConfig tsconfig.native.json"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@domain/entity-contact": "workspace:*",
@@ -60,6 +59,7 @@
     "@testing-library/react-native": "catalog:",
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",

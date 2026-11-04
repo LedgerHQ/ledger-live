@@ -1,7 +1,6 @@
 import Config from "react-native-config";
 import type { Middleware, Reducer, Tuple } from "@reduxjs/toolkit";
 import { marketApi } from "@ledgerhq/live-common/market/state-manager/api";
-import { cgApi } from "@ledgerhq/live-common/cg-client/state-manager/api";
 import { aleoApi } from "@ledgerhq/live-common/families/aleo/state-manager/api";
 import { hederaApi } from "@ledgerhq/live-common/families/hedera/state-manager/api";
 import {
@@ -53,7 +52,6 @@ export const apiServices = defineApiServices([
 
 const APIs = {
   [aleoApi.reducerPath]: aleoApi,
-  [cgApi.reducerPath]: cgApi,
   [hederaApi.reducerPath]: hederaApi,
   [marketApi.reducerPath]: marketApi,
 };

@@ -27,6 +27,7 @@
     "@domain/entity-account-descriptor": "workspace:*",
     "@domain/entity-account-operation": "workspace:*",
     "@domain/entity-currency-crypto": "workspace:*",
+    "@domain/entity-currency-fiat": "workspace:*",
     "@noble/hashes": "catalog:"
   },
   "peerDependencies": {
@@ -42,8 +43,11 @@
     "@testing-library/user-event": "catalog:",
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "typescript": "catalog:"

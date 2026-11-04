@@ -1,19 +1,16 @@
 import React from "react";
 import { BottomSheetHeader, BottomSheetView, Box } from "@ledgerhq/lumen-ui-rnative";
-import { ContactAddressDetailActions } from "./ContactAddressDetailActions.native";
-import { ContactAddressDetailSummary } from "./ContactAddressDetailSummary.native";
-import { useContactAddressDetailDialogViewModel } from "./useContactAddressDetailDialogViewModel.native";
-import type { ContactAddressDetailDialogNativeProps } from "./types";
-
-export type { ContactAddressDetailDialogNativeProps };
+import { useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
+import { ContactAddressDetailActions } from "./ContactAddressDetailActions";
+import { ContactAddressDetailSummary } from "./ContactAddressDetailSummary";
+import { useContactAddressDetailDialogViewModel } from "./useContactAddressDetailDialogViewModel";
+import type { ContactAddressDetailDialogProps } from "./ContactAddressDetailDialog.types";
 
 export function ContactAddressDetailDialog({
   isOpen,
   contactName,
   row,
   network,
-  bottomInset = 0,
-  onCopyAddress,
   onShareAddress,
   onSend,
   onEdit,
@@ -21,12 +18,12 @@ export function ContactAddressDetailDialog({
   canSend = false,
   canEdit = false,
   canDelete = false,
-}: ContactAddressDetailDialogNativeProps): React.JSX.Element {
+}: ContactAddressDetailDialogProps): React.JSX.Element {
+  const bottomInset = useBottomSheetBottomInset();
   const { hasSelection, hasCopied, onCopy, onShare } = useContactAddressDetailDialogViewModel({
     isOpen,
     row,
     network,
-    onCopyAddress,
     onShareAddress,
   });
 

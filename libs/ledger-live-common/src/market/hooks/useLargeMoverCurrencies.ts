@@ -1,12 +1,11 @@
 import { useMemo } from "react";
-import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import {
   pairMarketsWithRequestedLedgerIds,
   useGetMarketsByLedgerIdsQuery,
 } from "../state-manager/api";
 import { applyUsdRateToMarketItem } from "../utils/applyUsdRateToMarket";
 import { BASIC_REFETCH, REFETCH_TIME_ONE_MINUTE } from "../utils/timers";
-import { useResolveMarketCounterCurrency } from "./useResolveMarketCounterCurrency";
+import { useMarketCounterValueRate } from "./useMarketCounterValueRate";
 
 type UseLargeMoverCurrenciesParams = {
   ledgerIds: string[];
@@ -21,13 +20,15 @@ export const useLargeMoverCurrencies = ({
 }: UseLargeMoverCurrenciesParams) => {
   const {
     requestCounterCurrency,
-    displayCounterCurrency = counterCurrency,
-    needsUsdFallback,
+    rate,
     isResolutionLoading,
-  } = useResolveMarketCounterCurrency({
+    isLoading: isCounterValueLoading,
+    isError: isCounterValueError,
+  } = useMarketCounterValueRate({
     counterCurrency,
     fallbackForCryptoCountervalues: true,
     isCryptoCountervalue,
+    skip: ledgerIds.length === 0,
   });
   const skip = ledgerIds.length === 0 || isResolutionLoading || !requestCounterCurrency;
 
@@ -38,12 +39,6 @@ export const useLargeMoverCurrencies = ({
       pollingInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
     },
   );
-  const { rate: usdToCounterValueRate, status: rateStatus } = useUsdToFiatRate(
-    needsUsdFallback ? displayCounterCurrency : "usd",
-    { skip },
-  );
-
-  const rate = needsUsdFallback ? usdToCounterValueRate : 1;
   const markets = useMemo(() => {
     if (rate == null || !currentData) return [];
     return pairMarketsWithRequestedLedgerIds(
@@ -54,7 +49,7 @@ export const useLargeMoverCurrencies = ({
 
   return {
     markets,
-    isLoading: isLoading || isResolutionLoading || (needsUsdFallback && rateStatus === "loading"),
-    isError: isError || (needsUsdFallback && rateStatus === "error"),
+    isLoading: isLoading || isCounterValueLoading,
+    isError: isError || isCounterValueError,
   };
 };

@@ -60,7 +60,7 @@ export function useSponsoredRentSignatureViewModel(): SponsoredRentSignatureView
   const { t } = useTranslation();
   const { state: sendFlowState } = useSendFlowData();
   const { stopSigning } = useSendSignature();
-  const { state, actions, providerName, approvedFee } = useSponsoredSend();
+  const { state, actions, providerName, providerTermsUrl, approvedFee } = useSponsoredSend();
   const locale = useSelector(localeSelector);
   const { isCrafting, feeAmountLabel, submitSignature } = useSponsoredRentPayment({
     state,
@@ -150,8 +150,10 @@ export function useSponsoredRentSignatureViewModel(): SponsoredRentSignatureView
       feeLabel: feeAmountLabel
         ? t("send.newSendFlow.sponsoredRentSignature.fee", { amount: feeAmountLabel })
         : null,
+      providerName,
+      termsUrl: providerTermsUrl,
     }),
-    [t, providerName, feeAmountLabel],
+    [t, providerName, providerTermsUrl, feeAmountLabel],
   );
 
   const currentInitialization = deviceInitialization?.order === order ? deviceInitialization : null;

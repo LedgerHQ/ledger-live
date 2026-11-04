@@ -21,8 +21,11 @@ export type AccountSettingsAdapter<TAccount extends AccountSettingsAccount> = Re
   removeAccount: (account: TAccount) => void;
 }>;
 
+import type { AccountSettingsEventHandler } from "../../logic/accountSettingsEvent";
+
 export type AccountSettingsProps<TAccount extends AccountSettingsAccount> = Readonly<{
   account: TAccount;
+  onEvent?: AccountSettingsEventHandler;
   adapter: AccountSettingsAdapter<TAccount>;
   isOpen: boolean;
   onClose: () => void;

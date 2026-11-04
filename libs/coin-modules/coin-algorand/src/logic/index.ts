@@ -5,6 +5,7 @@ export { craftTransaction, craftOptInTransaction, craftApiTransaction } from "./
 export type { CraftedAlgorandTransaction } from "./craftTransaction";
 export { estimateFees } from "./estimateFees";
 export { getBalance } from "./getBalance";
+export { getBlock } from "./getBlock";
 export { getBlockInfo } from "./getBlockInfo";
 export { lastBlock } from "./lastBlock";
 export { listOperations } from "./listOperations";

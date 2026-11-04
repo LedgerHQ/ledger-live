@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
+import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { useNavigate } from "react-router";
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
 import {
@@ -26,11 +27,12 @@ import {
   useAppConfigToolProps,
   useAccountNameToolProps,
   useMockAccountsToolProps,
+  useAccountDetailToolProps,
 } from "@devtools/bindings";
 import type { DevToolsConfig } from "@devtools/shell";
 import { useDevToolsRelay } from "./useDevToolsRelay";
-import { useDeviceOnboarding } from "../../../DeviceOnboarding/hooks/useDeviceOnboarding";
-import { accountDataRecorder } from "~/config/account-data-setup";
+import { useDeviceOnboardingTool } from "../../DeviceOnboarding/useDeviceOnboardingTool";
+import { useAccountDataRecorder } from "../../accountDataRecorder";
 import { getPortfolioServiceUrl } from "~/config/portfolioService";
 
 const APPLICATION_ID = 16;
@@ -94,18 +96,21 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
     prodToggle.cloudSyncApiBaseUrl,
     prodToggle.trustchainApiBaseUrl,
   );
-  const deviceOnboardingProps = useDeviceOnboarding();
+  const deviceOnboardingProps = useDeviceOnboardingTool();
   const accountDescriptorToolProps = useAccountDescriptorToolProps();
   const accountBalanceToolProps = useAccountBalanceToolProps();
-  const accountOperationToolProps = useAccountOperationToolProps();
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const accountOperationToolProps = useAccountOperationToolProps(counterValueCurrency.ticker);
   const accountBalanceHistoryToolProps = useAccountBalanceHistoryToolProps();
   const accountPortfolioToolProps = useAccountPortfolioToolProps({
     serviceUrl: getPortfolioServiceUrl(),
   });
+  const accountDataRecorder = useAccountDataRecorder();
   const accountDataToolProps = useAccountDataToolProps(accountDataRecorder);
   const legacyAccounts = useSelector(accountsSelector);
   const accountNameToolProps = useAccountNameToolProps(legacyAccounts);
   const mockAccountsToolProps = useMockAccountsToolProps(accountDataRecorder);
+  const accountDetailToolProps = useAccountDetailToolProps();
 
   const config: DevToolsConfig = useMemo(
     () => [
@@ -124,6 +129,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       { id: "account-name", config: accountNameToolProps },
       { id: "account-portfolio", config: accountPortfolioToolProps },
       { id: "mock-accounts", config: mockAccountsToolProps },
+      { id: "account-detail", config: accountDetailToolProps },
     ],
     [
       featureFlagsToolProps,
@@ -141,6 +147,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       accountDataToolProps,
       accountNameToolProps,
       mockAccountsToolProps,
+      accountDetailToolProps,
     ],
   );
 

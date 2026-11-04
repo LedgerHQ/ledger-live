@@ -33,9 +33,10 @@ Build the replacement in the lowest valid layer, with its tests, while the legac
 working. Keep the public names when the new package is a drop-in replacement: callers then switch
 by changing an import path.
 
-Example: `@features/platform-feature-flags` was added as a Redux-backed drop-in replacement for the
-Context-based hooks of `@ledgerhq/live-common/featureFlags` (`useFeature`, `useFeatureFlags`,
-`FeatureToggle`), reading the slice that `@shared/feature-flags` owns. No caller moved in that PR.
+Example: [#17239](https://github.com/LedgerHQ/ledger-live/pull/17239) added
+`@features/platform-feature-flags` as a Redux-backed drop-in replacement for the Context-based
+hooks of `@ledgerhq/live-common/featureFlags` (`useFeature`, `useFeatureFlags`, `FeatureToggle`),
+reading the slice that `@shared/feature-flags` owns. No caller moved in that PR.
 
 ## 2. Deprecation
 
@@ -44,16 +45,20 @@ Point every caller at the replacement and stop new ones from appearing:
 - Mark each legacy export `@deprecated`, naming the replacement package and export.
 - Migrate the callers. Legacy code that stays may import the new package.
 - Ban the old import in the apps with an `eslint/no-restricted-imports` pattern in their
-  `.oxlintrc.json`, with `importNamePattern` and a `message` naming the new package. Both apps set
-  `typescript/no-deprecated` to `error`, but it is a type-aware rule and neither app runs oxlint
-  type-aware, so it catches nothing: `@deprecated` alone blocks nothing there, and this ban is the
-  only real guard.
+  `.oxlintrc.json`, with `importNamePattern` and a `message` naming the new package. This ban is
+  the only real guard: `@deprecated` alone blocks nothing. Both
+  [desktop](../../../apps/ledger-live-desktop/.oxlintrc.json) and
+  [mobile](../../../apps/ledger-live-mobile/.oxlintrc.json) set `typescript/no-deprecated` to
+  `error`, but it is a type-aware rule and their `lint` scripts (`oxlint src ...` in each
+  `package.json`) never pass `--type-aware`, so it reports nothing.
 - Notify open PRs still using the old path: [impacting-prs](../impacting-prs/SKILL.md).
 
-Example: the currency accessors moved to `@domain/entity-currency-crypto` and
-`@domain/entity-currency-fiat`. Both apps' `.oxlintrc.json` reject `findCryptoCurrencyById` and its
-siblings from `@ledgerhq/live-common/currencies` with a message naming the domain packages. For the
-JSDoc form, see `libs/types-live/src/feature.ts`: "`@deprecated` Moved to `@shared/feature-flags`".
+Example: [#20261](https://github.com/LedgerHQ/ledger-live/pull/20261) moved the currency accessors
+to `@domain/entity-currency-crypto` and `@domain/entity-currency-fiat`. Both apps' `.oxlintrc.json`
+reject `findCryptoCurrencyById` and its siblings from `@ledgerhq/live-common/currencies` with a
+message naming the domain packages. For the JSDoc form, see
+[`libs/types-live/src/feature.ts`](../../../libs/types-live/src/feature.ts): "`@deprecated` Moved
+to `@shared/feature-flags`".
 
 ## 3. Deletion
 
@@ -71,9 +76,11 @@ runs `knip`, let it confirm the exports are unused.
   packages that dropped it, and pending changesets that list it lose that entry
   ([details](references/injection.md#deleting-a-whole-package)).
 
-Example: once both apps used `@features/platform-feature-flags`, one PR deleted the live-common
-`featureFlags` module and the app feature-flag bridges, about 1,800 lines. `@ledgerhq/errors`
-followed the package route: banned in `BANNED_DEPENDENCIES`, then dropped from `libs/`.
+Example: once both apps used `@features/platform-feature-flags`,
+[#18237](https://github.com/LedgerHQ/ledger-live/pull/18237) deleted the live-common `featureFlags`
+module and the app feature-flag bridges. `@ledgerhq/errors` followed the package route: banned in
+`BANNED_DEPENDENCIES` by [#20280](https://github.com/LedgerHQ/ledger-live/pull/20280), then
+dropped from `libs/` by [#20278](https://github.com/LedgerHQ/ledger-live/pull/20278).
 
 ## Crossing the frontier with injection
 
@@ -91,7 +98,7 @@ export type ContactsCurrencySelectionPort = Readonly<{
 ```
 
 Desktop implements it in
-`apps/ledger-live-desktop/src/mvvm/features/Contacts/hooks/useContactsCurrencySelectionAdapter.ts`
+[`useContactsCurrencySelectionAdapter.ts`](../../../apps/ledger-live-desktop/src/mvvm/features/Contacts/hooks/useContactsCurrencySelectionAdapter.ts)
 on top of the live-common modular drawer, and the Contacts screen view model hands it to the flow.
 The flow package never sees `@ledgerhq/live-common`.
 
@@ -108,7 +115,9 @@ thunk: {
 ```
 
 `@domain/api-account-data` declares `AccountDataSource`; live-common implements it with
-`createFullSyncSource`, and `apps/*/src/config/account-data-setup.ts` feeds it the legacy accounts
+`createFullSyncSource`, and each app's `account-data-setup.ts`
+([desktop](../../../apps/ledger-live-desktop/src/config/account-data-setup.ts),
+[mobile](../../../apps/ledger-live-mobile/src/config/account-data-setup.ts)) feeds it the legacy accounts
 and bridge cache. The domain package reads its router from `extraArgument` and stays legacy-free.
 
 More patterns and their trade-offs: [references/injection.md](references/injection.md).

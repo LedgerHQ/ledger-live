@@ -1,6 +1,6 @@
 {
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "implicitDependencies": ["enforce-package-structure", "@shared/ui-qr-code", "@support/tsconfig"],
+  "implicitDependencies": ["enforce-package-structure", "@shared/ui-qr-code", "@support/tsconfig", "@support/jest"],
   "targets": {
     "test": {
       "executor": "nx:run-script",

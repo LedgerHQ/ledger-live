@@ -25,7 +25,6 @@
     "lint": "oxlint ./src",
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "pnpm knip --directory ../.. -W libs/live-dmk-mobile",
     "coverage": "jest --coverage",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -63,7 +62,10 @@
     "react-native-ble-plx": "3.5.1",
     "rxjs": "catalog:",
     "typescript": "catalog:",
-    "ws": "catalog:"
+    "ws": "catalog:",
+    "@typescript/native": "catalog:",
+    "rimraf": "catalog:",
+    "oxlint": "catalog:"
   },
   "peerDependencies": {
     "react": "catalog:",

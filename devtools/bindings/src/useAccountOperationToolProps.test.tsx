@@ -19,6 +19,8 @@ import {
   type AccountOperationsPage,
   type AccountOperationsQuery,
 } from "@domain/entity-account-operation";
+import { BalanceAssetIdSchema } from "@domain/entity-account-balance";
+import { FiatCurrencyTickerSchema } from "@domain/entity-currency-fiat";
 import { mockAccountOperation } from "@domain/entity-account-operation/schema.mock";
 import { useAccountOperationToolProps } from "./useAccountOperationToolProps";
 
@@ -84,7 +86,7 @@ function setup() {
   const wrapper = ({ children }: PropsWithChildren) => (
     <Provider store={store}>{children}</Provider>
   );
-  const { result } = renderHook(() => useAccountOperationToolProps(), { wrapper });
+  const { result } = renderHook(() => useAccountOperationToolProps("USD"), { wrapper });
   /** The no-query window of the `index`th account. */
   const head = (index: number) => result.current.accounts[index].windows[0];
   return { result, reads, head };
@@ -173,6 +175,25 @@ describe("useAccountOperationToolProps", () => {
     expect(reads.map(r => r.accountUUID).sort()).toEqual([ethereumUUID, bitcoinUUID].sort());
   });
 
+  it("reads a window valued in the app's fiat, labelled by it, with each row's countervalue", async () => {
+    const { result, reads } = setup();
+    const query = { countervalue: FiatCurrencyTickerSchema.parse("USD") };
+    act(() => result.current.onReadAll({ countervalue: true }));
+    await waitFor(() => expect(reads).toHaveLength(2));
+    expect(reads.map(r => r.query)).toEqual([query, query]);
+    const ethereumRead = reads.find(r => r.accountUUID === ethereumUUID);
+    await act(async () =>
+      ethereumRead?.call.resolve({
+        operations: [mockAccountOperation({ countervalues: { USD: "1234" } })],
+      }),
+    );
+    const valued = () => result.current.accounts[0].windows[1];
+    await waitFor(() =>
+      expect(valued()?.rows).toEqual([expect.objectContaining({ countervalues: ["$12.34"] })]),
+    );
+    expect(valued().label).toBe("in USD");
+  });
+
   it("lists the window of each query read, reading it again and paging it with its query", async () => {
     const { result, reads } = setup();
     const query = { limit: 50 };
@@ -196,6 +217,25 @@ describe("useAccountOperationToolProps", () => {
       [queryKey, "limit 50"],
     ]);
     expect(filtered().rows).toEqual([expect.objectContaining({ id: "op-1" })]);
+
+    act(() => result.current.onReadMore(ethereumUUID, queryKey));
+    await waitFor(() => expect(reads).toHaveLength(3));
+    expect(reads[2]).toEqual(expect.objectContaining({ cursor: "page-2", query }));
+  });
+
+  it("reads a window filtered on an asset, labelled by it, and pages it with its filter", async () => {
+    const { result, reads } = setup();
+    const query = { filterAsset: BalanceAssetIdSchema.parse("ethereum") };
+    const queryKey = accountDataQueryKey(query);
+    act(() => result.current.onReadAll({ filterAsset: "ethereum" }));
+    await waitFor(() => expect(reads).toHaveLength(2));
+    expect(reads.map(r => r.query)).toEqual([query, query]);
+    const ethereumRead = reads.find(r => r.accountUUID === ethereumUUID);
+    await act(async () =>
+      ethereumRead?.call.resolve({ operations: [mockAccountOperation()], nextCursor: "page-2" }),
+    );
+    await waitFor(() => expect(result.current.accounts[0].windows[1]?.hasMore).toBe(true));
+    expect(result.current.accounts[0].windows[1].label).toBe("filter ethereum");
 
     act(() => result.current.onReadMore(ethereumUUID, queryKey));
     await waitFor(() => expect(reads).toHaveLength(3));

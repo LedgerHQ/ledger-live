@@ -74,3 +74,74 @@ describe("buildOptimisticOperation — memo extra field", () => {
     expect(op.subOperations?.[0].value).toEqual(new BigNumber(110));
   });
 });
+
+describe("buildOptimisticOperation — cosmos", () => {
+  const cosmosAccount = {
+    ...account,
+    id: "js:2:cosmos:cosmos1sender:",
+    freshAddress: "cosmos1sender",
+    currency: {
+      id: "cosmos",
+      family: "cosmos",
+      units: [{ name: "ATOM", code: "ATOM", magnitude: 6 }],
+    },
+  } as unknown as Account;
+
+  const cosmosTransaction = {
+    family: "cosmos",
+    amount: new BigNumber(1_000_000),
+    fees: new BigNumber(5_000),
+    recipient: "cosmos1recipient",
+  } as any;
+
+  it("builds a DELEGATE operation carrying the validator on its raw transaction", () => {
+    const op = buildOptimisticOperation(
+      cosmosAccount,
+      {
+        ...cosmosTransaction,
+        mode: "delegate",
+        recipient: "",
+        valAddress: "cosmosvaloper1validator",
+      },
+      7n,
+    );
+
+    expect(op.type).toBe("DELEGATE");
+    expect(op.value).toEqual(new BigNumber(1_000_000));
+    expect(op.fee).toEqual(new BigNumber(5_000));
+    expect(op.transactionSequenceNumber).toEqual(new BigNumber(7));
+    expect(op.extra).toMatchObject({ ledgerOpType: "DELEGATE" });
+    expect(op.transactionRaw).toMatchObject({
+      mode: "delegate",
+      valAddress: "cosmosvaloper1validator",
+    });
+    expect(op.extra).not.toHaveProperty("memo");
+  });
+
+  it("writes the memo of a send to extra.memo", () => {
+    const op = buildOptimisticOperation(
+      cosmosAccount,
+      { ...cosmosTransaction, memoType: "text", memoValue: "invoice 42" },
+      3n,
+    );
+
+    expect(op.type).toBe("OUT");
+    expect(op.recipients).toEqual(["cosmos1recipient"]);
+    expect(op.senders).toEqual(["cosmos1sender"]);
+    expect(op.extra).toMatchObject({ ledgerOpType: "OUT", memo: "invoice 42" });
+    expect(op.extra).not.toHaveProperty("memoType");
+  });
+
+  it("does not attach the memo to a staking operation", () => {
+    const op = buildOptimisticOperation(cosmosAccount, {
+      ...cosmosTransaction,
+      mode: "claimReward",
+      valAddress: "cosmosvaloper1validator",
+      memoType: "text",
+      memoValue: "ignored",
+    });
+
+    expect(op.type).toBe("REWARD");
+    expect(op.extra).not.toHaveProperty("memo");
+  });
+});

@@ -157,7 +157,7 @@ describe("useCardAssetsViewModel", () => {
     const { result } = renderViewModel();
 
     act(() => {
-      result.current.onRetryPress();
+      result.current.onRetry();
     });
 
     expect(refetch).toHaveBeenCalledTimes(1);
@@ -260,7 +260,7 @@ describe("useCardAssetsViewModel", () => {
     });
     const { result, rerender } = renderViewModel();
 
-    act(() => result.current.onAssetPress(result.current.rows[0]));
+    act(() => result.current.onOpenAsset(result.current.rows[0]));
     stubWallets({
       wallets: [
         {
@@ -281,7 +281,7 @@ describe("useCardAssetsViewModel", () => {
   it("should open the manage dialog when manage is pressed", () => {
     const { result } = renderViewModel();
 
-    act(() => result.current.onManagePress());
+    act(() => result.current.onManageAssets());
 
     expect(result.current.dialogState).toBe("manage");
   });
@@ -349,7 +349,7 @@ describe("useCardAssetsViewModel", () => {
     });
     const { result } = renderViewModel();
 
-    act(() => result.current.onManagePress());
+    act(() => result.current.onManageAssets());
     await act(() => result.current.onMoveAsset("w-usdt", 0));
     act(() => result.current.onDialogClose());
 
@@ -375,7 +375,7 @@ describe("useCardAssetsViewModel", () => {
       { wrapper: I18nWrapper },
     );
 
-    act(() => result.current.onAddAssetPress?.());
+    act(() => result.current.onAddAsset?.());
 
     expect(onAddAsset).toHaveBeenCalledTimes(1);
   });
@@ -397,10 +397,10 @@ describe("useCardAssetsViewModel", () => {
 
     const { result } = renderViewModel({ onTopUp });
 
-    act(() => result.current.onAssetPress(result.current.rows[0]));
+    act(() => result.current.onOpenAsset(result.current.rows[0]));
     expect(result.current.dialogState).toBe("details");
 
-    act(() => result.current.onTopUpPress());
+    act(() => result.current.onTopUpAsset());
 
     expect(onTopUp).toHaveBeenCalledWith(expect.objectContaining({ currency: "usdc" }));
     expect(result.current.dialogState).toBe("closed");
@@ -409,6 +409,6 @@ describe("useCardAssetsViewModel", () => {
   it("should omit the add asset action without assets props", () => {
     const { result } = renderHook(() => useCardAssetsViewModel(), { wrapper: I18nWrapper });
 
-    expect(result.current.onAddAssetPress).toBeUndefined();
+    expect(result.current.onAddAsset).toBeUndefined();
   });
 });

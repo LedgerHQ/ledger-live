@@ -1,4 +1,5 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { createHash } from "node:crypto";
+import { getCryptoCurrencyById, listCryptoCurrencies } from "@domain/entity-currency-crypto";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getAllDerivationModes } from "@ledgerhq/ledger-wallet-framework/derivation";
 import {
@@ -136,6 +137,47 @@ const SUPPORTED_FAMILIES = new Set<string>(SUPPORTED_TRANSACTION_FAMILIES);
 // Not `isDerivationMode`: it checks `mode in modes`, so inherited keys such as "toString" pass it.
 const KNOWN_DERIVATION_MODES = new Set<string>(getAllDerivationModes());
 
+export type ImportSupport = {
+  families: Iterable<string>;
+  currencies: Iterable<string>;
+  derivationModes: Iterable<string>;
+};
+
+function sorted(values: Iterable<string>): string[] {
+  return [...values].sort((a, b) => {
+    if (a < b) return -1;
+    if (a > b) return 1;
+    return 0;
+  });
+}
+
+export function supportFingerprint({
+  families,
+  currencies,
+  derivationModes,
+}: ImportSupport): string {
+  return createHash("sha256")
+    .update(JSON.stringify([sorted(families), sorted(currencies), sorted(derivationModes)]))
+    .digest("hex")
+    .slice(0, 16);
+}
+
+/** Every input of a `skipped` result in `convertSyncedAccount`. */
+export function importSupport(): ImportSupport {
+  return {
+    families: SUPPORTED_FAMILIES,
+    currencies: listCryptoCurrencies(true)
+      .filter(currency => SUPPORTED_FAMILIES.has(currency.family))
+      .map(currency => currency.id),
+    derivationModes: KNOWN_DERIVATION_MODES,
+  };
+}
+
+/** What this build can import from Ledger Sync: `agent-intent sync` re-pulls when it changes. */
+export function ledgerSyncSupport(): string {
+  return supportFingerprint(importSupport());
+}
+
 function issues(error: { issues: ReadonlyArray<{ message: string }> }): string {
   return error.issues.map(i => i.message).join("; ");
 }
@@ -211,7 +253,7 @@ function convertSyncedAccount(
     };
   }
 
-  let v1: unknown;
+  let v1: AccountDescriptorV1;
   try {
     v1 = toV1(withSeedIdentifierFromId(descriptor));
   } catch (e) {
@@ -233,11 +275,11 @@ function convertSyncedAccount(
   // toV1() builds the path from any known mode, so a mode from another family (segwit on
   // Ethereum) converts but can't round-trip through toV0(), which every label-based command uses.
   try {
-    toV0(validated.data);
+    toV0(v1);
   } catch (e) {
     return { status: "invalid", id: descriptor.id, reason: errMessage(e) };
   }
-  return { status: "converted", descriptor: validated.data };
+  return { status: "converted", descriptor: v1 };
 }
 
 /**

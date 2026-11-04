@@ -17,6 +17,7 @@
   "scripts": {
     "format": "oxfmt core devtools features-flow internals libs-coin shared",
     "format:check": "oxfmt core devtools features-flow internals libs-coin shared --check",
+    "lint": "oxlint core devtools features-flow internals libs-coin shared",
     "typecheck": "tsc --noEmit -p core && tsc --noEmit -p devtools/tsconfig.web.json && tsc --noEmit -p devtools/tsconfig.native.json && tsc --noEmit -p features-flow && tsc --noEmit -p internals && tsc --noEmit -p libs-coin && tsc --noEmit -p shared"
   },
   "peerDependencies": {
@@ -94,6 +95,9 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "@typescript/native": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",

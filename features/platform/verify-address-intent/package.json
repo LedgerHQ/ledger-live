@@ -17,8 +17,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/verify-address-intent"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@features/platform-device-intent": "workspace:^"
@@ -32,8 +31,10 @@
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "rxjs": "catalog:",
     "typescript": "catalog:"
   }

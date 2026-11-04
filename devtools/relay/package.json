@@ -13,8 +13,7 @@
     "coverage": "jest --config jest.config.js --coverage",
     "lint": "oxlint src",
     "format": "oxfmt src",
-    "format:check": "oxfmt --check src",
-    "unimported": "pnpm knip --directory ../.. -W devtools/relay"
+    "format:check": "oxfmt --check src"
   },
   "dependencies": {
     "@devtools/transport": "workspace:*",
@@ -28,10 +27,12 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
-    "@types/qrcode-terminal": "^0.12.0",
+    "@types/qrcode-terminal": "0.12.2",
     "@types/ws": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:"
   }

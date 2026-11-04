@@ -15,7 +15,6 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../.. -W shared/feature-flags",
     "format": "oxfmt src",
     "format:check": "oxfmt --check src",
     "lint": "oxlint ./src"
@@ -33,8 +32,10 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/semver": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "typescript": "catalog:"
   }
 }

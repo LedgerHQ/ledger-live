@@ -3,28 +3,30 @@
  */
 import { renderHook } from "@testing-library/react";
 import { useResolveMarketCounterCurrency } from "../useResolveMarketCounterCurrency";
-import { useSupportedCounterCurrencies } from "../../../cg-client/hooks/useCoingeckoDataProvider";
+import { useGetSupportedChartCounterCurrenciesQuery } from "../../state-manager/api";
 
-jest.mock("../../../cg-client/hooks/useCoingeckoDataProvider", () => ({
-  useSupportedCounterCurrencies: jest.fn(),
+jest.mock("../../state-manager/api", () => ({
+  useGetSupportedChartCounterCurrenciesQuery: jest.fn(),
 }));
 
-const mockUseSupportedCounterCurrencies = jest.mocked(useSupportedCounterCurrencies);
+const mockUseGetSupportedChartCounterCurrenciesQuery = jest.mocked(
+  useGetSupportedChartCounterCurrenciesQuery,
+);
 
-// CoinGecko supported_vs_currencies includes common fiats and crypto tickers
-const SUPPORTED = ["usd", "eur", "gbp", "vnd", "btc", "eth", "sats"];
+// CVS /v3/supported/markets/chart/to: fiat tickers and coin ids, not crypto tickers.
+const SUPPORTED = ["usd", "eur", "gbp", "vnd", "bitcoin", "ethereum", "solana"];
 
 const mockSupported = (...args: [] | [string[] | undefined]) =>
-  mockUseSupportedCounterCurrencies.mockReturnValue({
+  mockUseGetSupportedChartCounterCurrenciesQuery.mockReturnValue({
     data: args.length === 0 ? SUPPORTED : args[0],
     isError: false,
-  } as unknown as ReturnType<typeof useSupportedCounterCurrencies>);
+  } as unknown as ReturnType<typeof useGetSupportedChartCounterCurrenciesQuery>);
 
 const mockSupportedError = () =>
-  mockUseSupportedCounterCurrencies.mockReturnValue({
+  mockUseGetSupportedChartCounterCurrenciesQuery.mockReturnValue({
     data: undefined,
     isError: true,
-  } as unknown as ReturnType<typeof useSupportedCounterCurrencies>);
+  } as unknown as ReturnType<typeof useGetSupportedChartCounterCurrenciesQuery>);
 
 describe("useResolveMarketCounterCurrency", () => {
   beforeEach(() => {
@@ -66,10 +68,22 @@ describe("useResolveMarketCounterCurrency", () => {
       expect(result.current.needsUsdFallback).toBe(false);
       expect(result.current.isResolutionLoading).toBe(false);
     });
+
+    it("passes through a coin id present in the chart allowlist", () => {
+      const { result } = renderHook(() =>
+        useResolveMarketCounterCurrency({
+          counterCurrency: "bitcoin",
+          isCryptoCountervalue: false,
+        }),
+      );
+
+      expect(result.current.requestCounterCurrency).toBe("bitcoin");
+      expect(result.current.needsUsdFallback).toBe(false);
+    });
   });
 
   describe("unsupported fiat counter currency", () => {
-    it("falls back to USD when the fiat is not in the supported list", () => {
+    it("falls back to USD when the fiat is not in the chart allowlist", () => {
       const { result } = renderHook(() =>
         useResolveMarketCounterCurrency({ counterCurrency: "cop", isCryptoCountervalue: false }),
       );
@@ -79,7 +93,7 @@ describe("useResolveMarketCounterCurrency", () => {
       expect(result.current.displayCounterCurrency).toBe("cop");
     });
 
-    it("is loading while the supported list has not yet resolved", () => {
+    it("is loading while the chart allowlist has not yet resolved", () => {
       mockSupported(undefined);
 
       const { result } = renderHook(() =>
@@ -91,7 +105,7 @@ describe("useResolveMarketCounterCurrency", () => {
       expect(result.current.requestCounterCurrency).toBe("cop");
     });
 
-    it("stops blocking when the supported list errors out", () => {
+    it("stops blocking when the chart allowlist errors out", () => {
       mockSupportedError();
 
       const { result } = renderHook(() =>
@@ -99,11 +113,15 @@ describe("useResolveMarketCounterCurrency", () => {
       );
 
       expect(result.current.isResolutionLoading).toBe(false);
+      expect(result.current.needsUsdFallback).toBe(false);
+      expect(result.current.requestCounterCurrency).toBe("cop");
     });
   });
 
-  describe("crypto counter currency with fallbackForCryptoCountervalues=true", () => {
-    it("falls back to USD for a crypto counter (BTC)", () => {
+  describe("crypto counter currency with fallbackForCryptoCountervalues", () => {
+    it("falls back to USD even when the ticker is in the chart allowlist", () => {
+      mockSupported(["usd", "eur", "btc"]);
+
       const { result } = renderHook(() =>
         useResolveMarketCounterCurrency({
           counterCurrency: "btc",
@@ -115,22 +133,10 @@ describe("useResolveMarketCounterCurrency", () => {
       expect(result.current.needsUsdFallback).toBe(true);
       expect(result.current.requestCounterCurrency).toBe("usd");
       expect(result.current.displayCounterCurrency).toBe("btc");
+      expect(result.current.isResolutionLoading).toBe(false);
     });
 
-    it("falls back to USD for ETH regardless of case", () => {
-      const { result } = renderHook(() =>
-        useResolveMarketCounterCurrency({
-          counterCurrency: "ETH",
-          fallbackForCryptoCountervalues: true,
-          isCryptoCountervalue: true,
-        }),
-      );
-
-      expect(result.current.needsUsdFallback).toBe(true);
-      expect(result.current.requestCounterCurrency).toBe("usd");
-    });
-
-    it("does not wait for the supported list when it is already a crypto fallback", () => {
+    it("does not wait for the allowlist before falling back a crypto counter value", () => {
       mockSupported(undefined);
 
       const { result } = renderHook(() =>
@@ -143,15 +149,52 @@ describe("useResolveMarketCounterCurrency", () => {
 
       expect(result.current.isResolutionLoading).toBe(false);
       expect(result.current.needsUsdFallback).toBe(true);
+      expect(result.current.requestCounterCurrency).toBe("usd");
+    });
+
+    it("passes a crypto ticker through when the fallback flag is off and the ticker is listed", () => {
+      mockSupported(["usd", "btc"]);
+
+      const { result } = renderHook(() =>
+        useResolveMarketCounterCurrency({
+          counterCurrency: "btc",
+          isCryptoCountervalue: true,
+        }),
+      );
+
+      expect(result.current.needsUsdFallback).toBe(false);
+      expect(result.current.requestCounterCurrency).toBe("btc");
     });
   });
 
-  describe("crypto counter currency with fallbackForCryptoCountervalues=false (default)", () => {
-    it("does not fall back to USD for a crypto counter when flag is false", () => {
+  describe("crypto ticker counter currency", () => {
+    it("falls back to USD when the ticker is absent from the chart allowlist", () => {
       const { result } = renderHook(() =>
-        useResolveMarketCounterCurrency({ counterCurrency: "btc", isCryptoCountervalue: true }),
+        useResolveMarketCounterCurrency({ counterCurrency: "btc", isCryptoCountervalue: false }),
       );
 
+      expect(result.current.needsUsdFallback).toBe(true);
+      expect(result.current.requestCounterCurrency).toBe("usd");
+      expect(result.current.displayCounterCurrency).toBe("btc");
+    });
+
+    it("falls back to USD for ETH regardless of case", () => {
+      const { result } = renderHook(() =>
+        useResolveMarketCounterCurrency({ counterCurrency: "ETH", isCryptoCountervalue: false }),
+      );
+
+      expect(result.current.needsUsdFallback).toBe(true);
+      expect(result.current.requestCounterCurrency).toBe("usd");
+    });
+
+    it("waits for the chart allowlist before falling back a crypto ticker", () => {
+      mockSupported(undefined);
+
+      const { result } = renderHook(() =>
+        useResolveMarketCounterCurrency({ counterCurrency: "btc", isCryptoCountervalue: false }),
+      );
+
+      expect(result.current.isResolutionLoading).toBe(true);
       expect(result.current.needsUsdFallback).toBe(false);
       expect(result.current.requestCounterCurrency).toBe("btc");
     });

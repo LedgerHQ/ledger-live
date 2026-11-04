@@ -2,7 +2,7 @@ import React from "react";
 import { Text } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { track, trackPage } from "@shared/analytics";
-import { render, screen } from "@tests/test-renderer";
+import { render, screen, withFlagOverrides } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
 import type {
   OnboardingEntrySource,
@@ -12,7 +12,7 @@ import PostWelcomeSelection from "./postWelcomeSelection";
 
 const Stack = createNativeStackNavigator<OnboardingNavigatorParamList>();
 
-function renderGetStarted(source?: OnboardingEntrySource) {
+function renderGetStarted(source?: OnboardingEntrySource, connectUnseededDevice?: boolean) {
   return render(
     <Stack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
       <Stack.Screen
@@ -23,10 +23,29 @@ function renderGetStarted(source?: OnboardingEntrySource) {
       <Stack.Screen name={ScreenName.OnboardingDeviceSelection}>
         {() => <Text>device selection</Text>}
       </Stack.Screen>
+      <Stack.Screen name={ScreenName.OnboardingPairNew}>
+        {({ route }) => (
+          <Text>
+            {route.params.deviceModelId === undefined && route.params.connectUnseededDevice
+              ? "connect new device"
+              : "pair new"}
+          </Text>
+        )}
+      </Stack.Screen>
       <Stack.Screen name={ScreenName.OnboardingWelcomeBack}>
         {() => <Text>welcome back</Text>}
       </Stack.Screen>
     </Stack.Navigator>,
+    connectUnseededDevice === undefined
+      ? undefined
+      : {
+          overrideInitialState: withFlagOverrides({
+            deviceOnboarding: {
+              enabled: true,
+              params: { connectUnseededDevice },
+            },
+          }),
+        },
   );
 }
 
@@ -61,6 +80,23 @@ describe("PostWelcomeSelection", () => {
       button: "Access an existing wallet",
       source: "portfolio",
     });
+  });
+
+  it("should open device selection when connectUnseededDevice is off", async () => {
+    const { user } = renderGetStarted(undefined, false);
+
+    await user.press(screen.getByTestId("onboarding-setupLedger"));
+
+    expect(await screen.findByText("device selection")).toBeVisible();
+  });
+
+  it("should open connect new device without a model when connectUnseededDevice is on", async () => {
+    const { user } = renderGetStarted(undefined, true);
+
+    await user.press(screen.getByTestId("onboarding-setupLedger"));
+
+    expect(await screen.findByText("connect new device")).toBeVisible();
+    expect(screen.queryByText("device selection")).toBeNull();
   });
 
   it("should keep today's events when no source is given", async () => {

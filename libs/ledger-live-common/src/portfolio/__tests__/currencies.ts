@@ -1,6 +1,6 @@
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
-import type { FiatCurrency } from "@domain/entity-currency-fiat";
+import { FiatCurrencyTickerSchema, type FiatCurrency } from "@domain/entity-currency-fiat";
 
 // Minimal currency fixtures so tests don't pull the full currency registry.
 // Only the fields consumed by the countervalues logic and the account mocks are populated.
@@ -47,7 +47,7 @@ export function getCryptoCurrencyById(id: string): CryptoCurrency {
 const usd: FiatCurrency = {
   type: "FiatCurrency",
   name: "US Dollar",
-  ticker: "USD",
+  ticker: FiatCurrencyTickerSchema.parse("USD"),
   symbol: "$",
   units: [{ name: "dollar", code: "USD", magnitude: 2, showAllDigits: true, prefixCode: true }],
 };
@@ -55,7 +55,7 @@ const usd: FiatCurrency = {
 const eur: FiatCurrency = {
   type: "FiatCurrency",
   name: "Euro",
-  ticker: "EUR",
+  ticker: FiatCurrencyTickerSchema.parse("EUR"),
   symbol: "€",
   units: [{ name: "euro", code: "EUR", magnitude: 2, showAllDigits: true, prefixCode: true }],
 };

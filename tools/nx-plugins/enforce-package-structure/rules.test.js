@@ -196,7 +196,6 @@ test("a reached module may declare anything and `export *` relative files", () =
 });
 
 test("a named re-export in a reached module is a hidden barrel", () => {
-  // features/flow/flow-contacts-detail/src/web.ts
   assert.deepEqual(reachedCodes('export { ContactDetailView } from "./ContactDetailView.web";'), [
     "hidden-barrel",
   ]);

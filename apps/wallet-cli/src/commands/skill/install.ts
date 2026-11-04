@@ -5,6 +5,7 @@ import {
   CLI_VERSION,
   DEFAULT_AGENT,
   SUPPORTED_AGENTS,
+  diagnoseSkill,
   getAllSkills,
   getSkill,
   getSoleSkill,
@@ -15,6 +16,17 @@ import {
 } from "../../skills/registry";
 import { outputOption, resolveOutputFormat } from "../inputs";
 import { emitJson, failSkill, skillEnvelope } from "./shared";
+
+async function installSkill(skill: SkillManifest, root: string, force: boolean): Promise<string[]> {
+  const { status, changedFiles = [] } = await diagnoseSkill(skill, root);
+  if (changedFiles.length > 0 && !force) {
+    throw new Error(
+      `Refusing to overwrite skill "${skill.name}", whose files changed since wallet-cli installed it:\n  ${changedFiles.join("\n  ")}\nRe-run with --force to overwrite.`,
+    );
+  }
+  const unedited = status === "up-to-date" || status === "outdated";
+  return writeSkill(skill, root, { force: force || unedited });
+}
 
 export default defineCommand({
   name: "install",
@@ -37,7 +49,7 @@ export default defineCommand({
       argumentKind: "flag",
     }),
     force: option(z.boolean().default(false), {
-      description: "Overwrite existing skill files if they already exist.",
+      description: "Also overwrite skill files edited since wallet-cli installed them.",
       argumentKind: "flag",
     }),
     output: outputOption,
@@ -69,9 +81,10 @@ export default defineCommand({
         skillsToInstall.push(skill);
       }
 
+      // Sequential: a skill that fails must stop the ones after it.
       const installed: string[] = [];
       for (const skill of skillsToInstall) {
-        installed.push(...(await writeSkill(skill, root, { force: flags.force })));
+        installed.push(...(await installSkill(skill, root, flags.force)));
       }
 
       if (format === "json") {

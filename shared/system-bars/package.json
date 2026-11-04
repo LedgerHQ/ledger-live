@@ -19,7 +19,6 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../.. -W shared/system-bars",
     "lint": "oxlint src",
     "format": "oxfmt src",
     "format:check": "oxfmt --check src"
@@ -43,6 +42,7 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "expo-navigation-bar": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",

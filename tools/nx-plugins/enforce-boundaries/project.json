@@ -2,27 +2,43 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "name": "enforce-boundaries",
   "projectType": "library",
+  "namedInputs": {
+    "boundariesTool": ["{workspaceRoot}/tools/nx-plugins/enforce-boundaries/**/*"],
+    "workspaceGraph": [
+      "{workspaceRoot}/tools/nx-plugins/project-tags/plugin.js",
+      "{workspaceRoot}/**/package.json",
+      "{workspaceRoot}/**/project.json",
+      "{workspaceRoot}/pnpm-workspace.yaml",
+      "{workspaceRoot}/nx.json"
+    ]
+  },
   "targets": {
     "test": {
       "executor": "nx:run-commands",
       "cache": true,
-      "inputs": ["{workspaceRoot}/tools/nx-plugins/enforce-boundaries/**/*"],
+      "inputs": ["boundariesTool"],
       "options": {
         "cwd": "{workspaceRoot}",
         "command": "node --test tools/nx-plugins/enforce-boundaries/validate.test.js"
+      }
+    },
+    "test:workspace": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["boundariesTool", "workspaceGraph"],
+      "options": {
+        "cwd": "{workspaceRoot}",
+        "command": "node --test tools/nx-plugins/enforce-boundaries/validate.workspace.test.js"
       }
     },
     "lint:boundaries": {
       "executor": "nx:run-commands",
       "cache": true,
       "inputs": [
-        "{workspaceRoot}/tools/nx-plugins/enforce-boundaries/**/*",
-        "{workspaceRoot}/tools/nx-plugins/project-tags/plugin.js",
-        "{workspaceRoot}/{domain,shared,features,support,devtools}/**/package.json",
+        "boundariesTool",
+        "workspaceGraph",
         "{workspaceRoot}/{domain,shared,features,support,devtools}/**/*.@(ts|tsx|js|jsx|mjs|cjs)",
         "!{workspaceRoot}/{domain,shared,features,support,devtools}/**/@(node_modules|dist|lib|build|.turbo|.cache)/**",
-        "{workspaceRoot}/{apps,libs}/**/package.json",
-        "{workspaceRoot}/pnpm-workspace.yaml",
         "{workspaceRoot}/nx.cache-config.json"
       ],
       "options": {

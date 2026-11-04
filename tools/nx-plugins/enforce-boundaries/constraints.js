@@ -15,6 +15,8 @@
  * As a source, it may only reach `scope:support` and `scope:shared`: tooling carries no domain or
  * feature knowledge, so a test harness that needs a domain's mocks lives in that domain package.
  * Third-party test tooling (lumen, react-native) is not a graph node and stays unconstrained.
+ *
+ * `type:account-data-source` packages are wired by apps only: features and domain go through the router.
  */
 const DEP_CONSTRAINTS = [
   { sourceTag: "scope:support", onlyDependOnLibsWithTags: ["scope:support", "scope:shared"] },
@@ -59,6 +61,8 @@ const DEP_CONSTRAINTS = [
       "scope:support",
     ],
   },
+  { sourceTag: "scope:features", notDependOnLibsWithTags: ["type:account-data-source"] },
+  { sourceTag: "scope:domain", notDependOnLibsWithTags: ["type:account-data-source"] },
 ];
 
 /**
@@ -99,7 +103,13 @@ const BANNED_EXTERNALS_BY_TAG = [
  * A workspace package does not resolve from the pnpm virtual store, so banning
  * the declaration bans the import too — an undeclared import fails to resolve.
  */
-const BANNED_DEPENDENCIES = [];
+const BANNED_DEPENDENCIES = [
+  {
+    name: "@ledgerhq/generators",
+    reason:
+      "Nx resolves it as a local workspace plugin; a declared edge makes the project nx-affected by every skill or lint-tool edit.",
+  },
+];
 
 /**
  * The `@devtools/*` packages each `@devtools/*` package may depend on; "*" allows them all.

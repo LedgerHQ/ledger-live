@@ -297,6 +297,27 @@ describe("AccountDetail header", () => {
     expect(store.getState().accounts.map(account => account.id)).toEqual([otherEthAccount.id]);
   });
 
+  it("shows View in explorer in the settings dialog", async () => {
+    const { user } = renderFromPreviousPage();
+    await user.click(screen.getByText("Open account"));
+    await user.click(await screen.findByRole("button", { name: "Account settings" }));
+
+    expect(await screen.findByText("View in explorer")).toBeVisible();
+  });
+
+  it("hides View in explorer when the currency has no explorer", async () => {
+    const account: Account = {
+      ...ethAccount,
+      currency: { ...ethAccount.currency, explorerViews: [] },
+    };
+    const { user } = renderFromPreviousPage([account]);
+    await user.click(screen.getByText("Open account"));
+    await user.click(await screen.findByRole("button", { name: "Account settings" }));
+
+    expect(await screen.findByText("View advanced logs")).toBeVisible();
+    expect(screen.queryByText("View in explorer")).toBeNull();
+  });
+
   it("goes back to the settings menu from the change name step", async () => {
     const { user } = renderFromPreviousPage();
     await user.click(screen.getByText("Open account"));

@@ -145,7 +145,7 @@ describe("useAccountHeroViewModel", () => {
 
       act(() => result.current.onTilePress("swap"));
 
-      expect(onAction).toHaveBeenCalledWith("swap");
+      expect(onAction).toHaveBeenCalledWith("swap", "quick_action");
     });
 
     it("opens the More sheet instead of calling the port", () => {
@@ -157,6 +157,23 @@ describe("useAccountHeroViewModel", () => {
       expect(onAction).not.toHaveBeenCalled();
     });
 
+    it("tells when the More tile is pressed", () => {
+      const onOpenMore = jest.fn();
+      const { result } = renderViewModel({ onOpenMore });
+
+      act(() => result.current.onTilePress("more"));
+
+      expect(onOpenMore).toHaveBeenCalledTimes(1);
+    });
+
+    it("tells where the action was picked from the hero actions", () => {
+      const { result, onAction } = renderViewModel();
+
+      act(() => result.current.onActionPress("receive"));
+
+      expect(onAction).toHaveBeenCalledWith("receive", "quick_action");
+    });
+
     it("closes the More sheet and forwards the picked action", () => {
       const { result, onAction } = renderViewModel();
 
@@ -164,7 +181,7 @@ describe("useAccountHeroViewModel", () => {
       act(() => result.current.onMoreActionPress("earn"));
 
       expect(result.current.isMoreSheetOpen).toBe(false);
-      expect(onAction).toHaveBeenCalledWith("earn");
+      expect(onAction).toHaveBeenCalledWith("earn", "more");
     });
 
     it("closes the More sheet without an action", () => {

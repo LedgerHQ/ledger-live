@@ -43,6 +43,12 @@ describe("InfoState", () => {
     expect(screen.getByTestId("info-banner")).toHaveTextContent("Banner title");
   });
 
+  it("should give the description a testID derived from the InfoState's testID", () => {
+    render(<InfoState preset="error" description="State description" testID="info-state" />);
+
+    expect(screen.getByTestId("info-state-description")).toHaveTextContent("State description");
+  });
+
   it("GIVEN a rendered InfoState with primary and secondary CTAs WHEN the user presses each CTA THEN the matching onPress handler is invoked", () => {
     // GIVEN
     const onPrimaryPress = jest.fn();

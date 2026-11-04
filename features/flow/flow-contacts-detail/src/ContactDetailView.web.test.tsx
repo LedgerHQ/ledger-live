@@ -12,7 +12,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { ContactsI18nTestProvider } from "@features/platform-contacts/testing";
 import { createContactDetailLedgerWalletAccountsIntent } from "./model/contactDetailSharedState";
 import { createContactDetailAddressRowIntent } from "./model/viewModel";
-import { ContactDetailView } from "./ContactDetailView.web";
+import { ContactDetailView } from "./ContactDetailView";
 
 const render = (ui: React.ReactElement) =>
   renderWithoutI18n(ui, { wrapper: ContactsI18nTestProvider });
@@ -96,7 +96,7 @@ describe("ContactDetailView", () => {
       addresses: [mockContactAddress()],
     });
     const address = contact.addresses[0]!;
-    const handleAddressRowPress = jest.fn();
+    const handleOpenAddressDetail = jest.fn();
 
     render(
       <ContactDetailView
@@ -118,7 +118,7 @@ describe("ContactDetailView", () => {
             ],
           },
         ]}
-        onAddressRowPress={handleAddressRowPress}
+        onOpenAddressDetail={handleOpenAddressDetail}
       />,
     );
 
@@ -133,7 +133,7 @@ describe("ContactDetailView", () => {
 
     fireEvent.click(addressRow);
 
-    expect(handleAddressRowPress).toHaveBeenCalledWith({
+    expect(handleOpenAddressDetail).toHaveBeenCalledWith({
       type: "open-address-detail",
       contactId: contact.id,
       addressId: address.id,
@@ -187,7 +187,7 @@ describe("ContactDetailView", () => {
             ],
           },
         ]}
-        onAddressRowPress={jest.fn()}
+        onOpenAddressDetail={jest.fn()}
       />,
     );
 
@@ -267,7 +267,7 @@ describe("ContactDetailView", () => {
         {...defaultProps}
         contact={firstContact}
         addressGroups={createAddressGroups(firstContact)}
-        onAddressRowPress={jest.fn()}
+        onOpenAddressDetail={jest.fn()}
       />,
     );
 
@@ -282,7 +282,7 @@ describe("ContactDetailView", () => {
         {...defaultProps}
         contact={secondContact}
         addressGroups={createAddressGroups(secondContact)}
-        onAddressRowPress={jest.fn()}
+        onOpenAddressDetail={jest.fn()}
       />,
     );
 
@@ -324,7 +324,7 @@ describe("ContactDetailView", () => {
             ],
           },
         ]}
-        onAddressRowPress={jest.fn()}
+        onOpenAddressDetail={jest.fn()}
         detailActions={{
           canDelete: true,
           onEdit,
@@ -350,14 +350,14 @@ describe("ContactDetailView", () => {
   });
 
   it("should render the Ledger Wallet addresses entry for Me", () => {
-    const handleLedgerWalletAccountsPress = jest.fn();
+    const handleOpenLedgerWalletAccounts = jest.fn();
 
     render(
       <ContactDetailView
         {...defaultProps}
         contact={mockMeContact()}
         ledgerWalletAccountsIntent={createContactDetailLedgerWalletAccountsIntent(mockMeContact())}
-        onLedgerWalletAccountsPress={handleLedgerWalletAccountsPress}
+        onOpenLedgerWalletAccounts={handleOpenLedgerWalletAccounts}
       />,
     );
 
@@ -367,7 +367,7 @@ describe("ContactDetailView", () => {
 
     fireEvent.click(screen.getByTestId("contacts-detail-ledger-wallet-addresses"));
 
-    expect(handleLedgerWalletAccountsPress).toHaveBeenCalledWith({
+    expect(handleOpenLedgerWalletAccounts).toHaveBeenCalledWith({
       type: "open-ledger-wallet-accounts",
     });
   });
@@ -378,7 +378,7 @@ describe("ContactDetailView", () => {
         {...defaultProps}
         contact={mockMeContact()}
         ledgerWalletAccountsIntent={createContactDetailLedgerWalletAccountsIntent(mockMeContact())}
-        onLedgerWalletAccountsPress={() => undefined}
+        onOpenLedgerWalletAccounts={() => undefined}
       />,
     );
 
@@ -395,7 +395,7 @@ describe("ContactDetailView", () => {
         {...defaultProps}
         contact={mockContact({ id: "contact-benoit", name: "Benoit" })}
         ledgerWalletAccountsIntent={undefined}
-        onLedgerWalletAccountsPress={() => undefined}
+        onOpenLedgerWalletAccounts={() => undefined}
       />,
     );
 

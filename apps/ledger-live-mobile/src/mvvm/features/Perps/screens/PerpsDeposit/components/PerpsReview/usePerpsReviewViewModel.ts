@@ -6,12 +6,7 @@ import { useTranslation } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
 import { localeSelector } from "~/reducers/settings";
 import { accountNameWithDefaultSelector, walletSelector } from "~/reducers/wallet";
-
-export type PerpsReviewDetailItem = Readonly<{
-  labelKey: string;
-  value: string;
-  testID?: string;
-}>;
+import type { PerpsReviewDetailItem } from "LLM/features/Perps/components/PerpsReviewSection";
 
 export type PerpsReviewParams = Readonly<PerpsDepositReviewParams>;
 

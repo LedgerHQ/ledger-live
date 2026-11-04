@@ -20,11 +20,8 @@ export interface FlagRowProps {
   readonly id: FeatureId;
 }
 
-const ITEM_LEADING_LX = { paddingHorizontal: "s8" } as const;
-const ITEM_TRAILING_LX = { paddingHorizontal: "s8" } as const;
-const ITEM_LX = { marginHorizontal: "-s8" } as const;
-const BOX_LX_OVERRIDDEN = { backgroundColor: "activeSubtle" } as const;
-const BOX_LX_NOT_OVERRIDDEN = { backgroundColor: "canvas" } as const;
+const BOX_LX_OVERRIDDEN = { backgroundColor: "activeSubtle", paddingHorizontal: "s4" } as const;
+const BOX_LX_NOT_OVERRIDDEN = { backgroundColor: "canvas", paddingHorizontal: "s4" } as const;
 
 function FlagRowComponent({ id }: FlagRowProps) {
   const { getFlagDisplayState } = useFeatureFlagsToolState();
@@ -43,14 +40,14 @@ function FlagRowComponent({ id }: FlagRowProps) {
 
   return (
     <Box lx={isOverridden ? BOX_LX_OVERRIDDEN : BOX_LX_NOT_OVERRIDDEN}>
-      <ListItem onPress={handleRowPress} lx={ITEM_LX}>
-        <ListItemLeading lx={ITEM_LEADING_LX}>
+      <ListItem onPress={handleRowPress}>
+        <ListItemLeading>
           <FlagEnableIndicator enabled={resolved.enabled} />
           <ListItemContent>
             <ListItemTitle>{id}</ListItemTitle>
           </ListItemContent>
         </ListItemLeading>
-        <ListItemTrailing lx={ITEM_TRAILING_LX}>
+        <ListItemTrailing>
           <Switch checked={resolved.enabled} onCheckedChange={handleSwitchChange} />
         </ListItemTrailing>
       </ListItem>

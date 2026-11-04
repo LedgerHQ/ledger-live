@@ -12,8 +12,8 @@ import {
 import type { ContactsDeleteAddressDialogProps } from "@features/flow-contacts-delete-address";
 import {
   type ContactAddressDetailSendIntent,
-  type ContactsEditSignerMismatchDrawerProps,
-  type ContactAddressDetailDialogNativeProps,
+  type ContactsEditSignerMismatchDialogProps,
+  type ContactAddressDetailDialogProps,
   createActiveContactAddressDetailActionsUiState,
   createInactiveContactAddressDetailActionsUiState,
   useContactAddressDetailActionsFlowBindings,
@@ -40,12 +40,12 @@ const MANUAL_ADDRESS_VALIDATION_DEBOUNCE_MS = 200;
 
 export type ContactAddressDetailActionsFlowProps = Readonly<{
   addressDetailDialog: Pick<
-    ContactAddressDetailDialogNativeProps,
+    ContactAddressDetailDialogProps,
     "onSend" | "onEdit" | "onDelete" | "canSend" | "canEdit" | "canDelete"
   >;
   deleteSheet: ContactsDeleteAddressDialogProps;
   renameSheet: ContactsRenameAddressDialogProps;
-  signerMismatchSheet: ContactsEditSignerMismatchDrawerProps;
+  signerMismatchSheet: ContactsEditSignerMismatchDialogProps;
 }>;
 
 function mapUiStateToFlowProps(

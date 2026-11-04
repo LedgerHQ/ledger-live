@@ -75,6 +75,19 @@ describe("QueuedBottomSheetMock", () => {
     expect(screen.queryByTestId("sheet-dismiss")).toBeNull();
   });
 
+  it("presses hidden to call onModalHide while the sheet is closed", () => {
+    const onModalHide = jest.fn();
+    render(
+      <QueuedBottomSheetMock testID="sheet" onModalHide={onModalHide}>
+        <Text>content</Text>
+      </QueuedBottomSheetMock>,
+    );
+
+    fireEvent.press(screen.getByTestId("sheet-hidden"));
+
+    expect(onModalHide).toHaveBeenCalledTimes(1);
+  });
+
   it("does not expose dismiss while the sheet is closed", () => {
     render(
       <QueuedBottomSheetMock testID="sheet" onClose={jest.fn()}>

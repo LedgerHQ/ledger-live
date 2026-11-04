@@ -8,6 +8,7 @@ export * from "./hooks/useDefaultStablecoins";
 export * from "./hooks/useInterestRatesByCurrencies";
 export * from "./hooks/useMarketByCurrencies";
 export * from "./hooks/useLazyLedgerCurrency";
+export * from "./hooks/useLazySwapNetworkCurrencyIds";
 
 export * from "./discovery";
 export * from "./currencySelection";

@@ -24,6 +24,7 @@ export function RecentOperationsView({
   lastSeenTs,
   findAccount,
   onHeaderPress,
+  operationTracking,
   hasData,
   title,
   testID,
@@ -57,6 +58,7 @@ export function RecentOperationsView({
             accountByAddress={accountByAddress}
             isPending={pendingOperationIds.has(op.id)}
             lastSeenTs={lastSeenTs}
+            trackingProps={operationTracking}
           />
         );
       })}

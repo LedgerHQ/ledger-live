@@ -17,11 +17,12 @@
   "sideEffects": false,
   "scripts": {
     "lint": "oxlint src",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit -p tsconfig.web.json",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/flow/large-screen-upsell"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@features/platform-feature-flags": "workspace:*",
@@ -54,7 +55,10 @@
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-redux": "catalog:",

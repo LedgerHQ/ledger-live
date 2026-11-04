@@ -22,7 +22,7 @@ export function TransactionsScreen({
 }: TransactionsScreenProps) {
   return (
     <ScrollView>
-      <Box lx={{ padding: "s16", alignItems: "flex-start" }}>
+      <Box lx={{ paddingHorizontal: "s12", paddingVertical: "s16", alignItems: "flex-start" }}>
         <Button appearance="gray" size="sm" onPress={onBack}>
           Back
         </Button>

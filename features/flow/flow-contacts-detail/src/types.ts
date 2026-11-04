@@ -51,20 +51,6 @@ export type PopulatedContactDetailViewModel = Readonly<{
   addressGroups: readonly ContactDetailAddressNetworkGroup[];
 }>;
 
-export type ContactDetailViewProps = Readonly<{
-  contact: Contact;
-  onAddAddress: () => void;
-  ledgerWalletAccountsIntent?: ContactDetailLedgerWalletAccountsIntent;
-  onLedgerWalletAccountsPress?: (intent: ContactDetailLedgerWalletAccountsIntent) => void;
-  addressGroups?: readonly ContactDetailAddressNetworkGroup[];
-  onAddressRowPress?: (intent: ContactDetailAddressRowIntent) => void;
-  detailActions?: Readonly<{
-    canDelete: boolean;
-    onEdit: () => void;
-    onDelete: () => void;
-  }>;
-}>;
-
 export type ContactAddressDetailAsset = Readonly<{
   currencyId: ContactAddress["currencyId"];
   name: string;
