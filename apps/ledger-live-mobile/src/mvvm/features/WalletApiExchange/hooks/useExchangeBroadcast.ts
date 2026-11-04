@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
-import { normalizeError } from "@ledgerhq/live-common/exchange/intents/index";
+import { toExchangeError } from "@ledgerhq/live-common/exchange/intents/index";
 import type { BroadcastConfig } from "@ledgerhq/types-live";
 import { broadcastLogger } from "~/datadog";
 import { useSelector } from "~/context/hooks";
@@ -47,7 +47,7 @@ export function useExchangeBroadcast(
 
     broadcast(broadcastPhase.signedOperation).then(
       operation => store.broadcastSucceeded(broadcastPhase, operation),
-      error => store.broadcastFailed(broadcastPhase, normalizeError(error)),
+      error => store.broadcastFailed(broadcastPhase, toExchangeError(error)),
     );
   }, [broadcast, broadcastPhase, store]);
 }

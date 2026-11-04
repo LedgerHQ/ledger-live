@@ -5,7 +5,7 @@ import { getIsSwapRetryPending } from "@ledgerhq/live-common/exchange/error";
 import {
   buildExchangeAppRequest,
   getExchangeMainAccounts,
-  normalizeError,
+  toExchangeError,
   type ShowExchangeErrorIntentInput,
   type CompleteExchangeIntentResult,
   type StartExchangeIntentResult,
@@ -332,7 +332,7 @@ export class ExchangeDeviceSession {
     } catch (error) {
       if (this.opening === attempt) {
         this.opening = null;
-        onFailure(normalizeError(error));
+        onFailure(toExchangeError(error));
       }
       return;
     }

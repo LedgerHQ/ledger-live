@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 import { createIntent, type ExecutorState } from "@features/platform-device-intent";
 import {
   getShowExchangeErrorState,
-  normalizeError,
+  toExchangeError,
 } from "@ledgerhq/live-common/exchange/intents/index";
 import { ExchangeType } from "@ledgerhq/live-common/wallet-api/Exchange/server";
 import type { SourceFlow } from "LLM/components/DeviceIntentExecutor";
@@ -123,7 +123,7 @@ export function useExchangeDeviceExecutorViewModel({
   // The jobs report their failures as states, so an error here is a bug rather than a device
   // outcome: end the flow instead of showing the executor's retry, which would reuse a spent nonce.
   const onIntentJobError = useCallback(
-    (error: unknown) => store.failPhase(phase, normalizeError(error)),
+    (error: unknown) => store.failPhase(phase, toExchangeError(error)),
     [store, phase],
   );
 

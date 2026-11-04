@@ -1,18 +1,9 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Text } from "@ledgerhq/lumen-ui-rnative";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { InlineTextLink } from "LLM/components/InlineTextLink";
+import { getSwapTermsCopy } from "LLM/utils/getSwapTermsCopy";
 import { Trans } from "~/context/Locale";
-import { urls } from "~/utils/urls";
-
-type TermsProviders = keyof typeof urls.swap.providers;
-
-const CHANGELLY_PROVIDER = "changelly";
-const NEAR_INTENTS_PROVIDER = "nearintents";
-
-function isTermsProvider(name: string): name is TermsProviders {
-  return name in urls.swap.providers;
-}
 
 type SwapTermsFooterProps = Readonly<{
   provider: string;
@@ -25,36 +16,7 @@ type SwapTermsFooterProps = Readonly<{
  * approving on the device. Same notices as the legacy confirmation, in the signing drawer's style.
  */
 export function SwapTermsFooter({ provider, sponsored }: SwapTermsFooterProps) {
-  // changelly_v2 and the like share the Changelly links.
-  const providerName = provider.includes(CHANGELLY_PROVIDER) ? CHANGELLY_PROVIDER : provider;
-  const providerUrls = isTermsProvider(providerName)
-    ? urls.swap.providers[providerName]
-    : undefined;
-
-  const { acceptTerms, linkUrls } = useMemo(() => {
-    if (providerName === NEAR_INTENTS_PROVIDER) {
-      return {
-        acceptTerms: "DeviceAction.confirmSwap.nearIntentsAcceptTerms",
-        linkUrls: [providerUrls?.tos],
-      };
-    }
-    if (providerName === CHANGELLY_PROVIDER) {
-      return {
-        acceptTerms: "DeviceAction.confirmSwap.changellySimplifiedAcceptTerms",
-        linkUrls: [
-          providerUrls?.tos,
-          providerUrls && "amlKyc" in providerUrls ? providerUrls.amlKyc : undefined,
-          providerUrls && "support" in providerUrls ? providerUrls.support : undefined,
-        ],
-      };
-    }
-    return {
-      acceptTerms: "DeviceAction.confirmSwap.acceptTerms",
-      linkUrls: [providerUrls?.tos],
-    };
-  }, [providerName, providerUrls]);
-
-  const links = linkUrls.filter((url): url is string => Boolean(url));
+  const { providerName, acceptTerms, links } = getSwapTermsCopy(provider);
   if (!links.length) {
     return null;
   }

@@ -2,7 +2,8 @@ import type { DeviceConnectionResult, Job } from "@features/platform-device-inte
 import { Observable, take } from "rxjs";
 import { startNewExchangeTransaction } from "../../platform/startExchange";
 import { getExchangeMainAccounts } from "../exchangeAppRequest";
-import { createSessionTransport, normalizeError, toLegacyDevice } from "../shared";
+import { toExchangeError } from "../../error";
+import { createSessionTransport, toLegacyDevice } from "../shared";
 import type {
   StartExchangeIntentInput,
   StartExchangeIntentJobState,
@@ -90,7 +91,7 @@ export const startExchangeIntentJob: Job<
 
     run().catch(error => {
       if (cancelled) return;
-      const normalized = normalizeError(error);
+      const normalized = toExchangeError(error);
       onResult({ status: "failed", error: normalized, device });
       subscriber.next({ type: "error", error: normalized });
       subscriber.complete();

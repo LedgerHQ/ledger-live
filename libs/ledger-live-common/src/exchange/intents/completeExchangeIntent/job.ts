@@ -8,7 +8,8 @@ import { confirmTransferExchange } from "../../platform/transfer/completeExchang
 import { confirmSwapExchange } from "../../swap/completeExchange";
 import { isExchangeSwap } from "../../types";
 import { EXCHANGE_TYPE } from "../exchangeTypes";
-import { createSessionTransport, normalizeError, toLegacyDevice } from "../shared";
+import { toExchangeError } from "../../error";
+import { createSessionTransport, toLegacyDevice } from "../shared";
 import type {
   CompleteExchangeIntentInput,
   CompleteExchangeIntentJobState,
@@ -135,7 +136,7 @@ export const completeExchangeIntentJob: Job<
 
     run().catch((error: unknown) => {
       if (cancelled) return;
-      const normalized = normalizeError(error);
+      const normalized = toExchangeError(error);
       if (isUserRefusal(normalized)) {
         onResult({ status: "refused", error: normalized });
         subscriber.next({ type: "refused" });
