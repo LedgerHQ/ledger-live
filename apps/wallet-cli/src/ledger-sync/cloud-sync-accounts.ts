@@ -30,7 +30,8 @@ import { isWalletCliSupportedCurrency } from "../shared/supported-currencies";
 import { Session } from "../session/session-store";
 
 /** Ledger Sync's Cloud Sync "slug" for the account-list document — matches Desktop/Mobile's
- * `liveSlug` (see docs/ledger-sync/04-cloud-sync-sdk.md and useWatchWalletSync.ts). */
+ * `liveSlug` (see docs/ledger-sync/04-cloud-sync-sdk.md and
+ * features/platform/wallet-sync/src/trustchainLifecycle.ts). */
 const LIVE_SLUG = "live";
 
 // ---------------------------------------------------------------------------
