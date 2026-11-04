@@ -319,7 +319,7 @@ export async function initStorageState(state: StorageState): Promise<void> {
     migrator.setMigrationStatus(state, MIGRATION_STATUS.COMPLETED);
     migrator.selectMMKVStorage(state);
   } catch (e) {
-    console.error("Error checking AsyncStorage for a new install", {
+    console.warn("Error checking AsyncStorage for a new install", {
       error: e,
       state: state,
     });

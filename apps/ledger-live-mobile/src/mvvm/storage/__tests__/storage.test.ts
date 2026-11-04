@@ -886,6 +886,7 @@ describe("storage", () => {
         state = createState();
         mockMMKVStatuses({});
         asyncStorageKeys.mockRejectedValue(error);
+        jest.spyOn(console, "warn").mockImplementation(noop);
 
         // Act
         await initStorageState(state);
