@@ -6,6 +6,7 @@ import { useFeature } from "@features/platform-feature-flags";
 import {
   reconcileTransactionsAlertsAddresses,
   deleteUserChainwatchAccounts,
+  deduplicateTransactionsAlertsAddresses,
   flattenTransactionsAlertsAddresses,
   mergeTransactionsAlertsAddresses,
   resolveTransactionsAlertsAddressesByAccount,
@@ -120,13 +121,22 @@ const TransactionsAlerts = () => {
       .catch(() => undefined)
       .then(async () => {
         if (isActive) {
-          await reconcileTransactionsAlertsAddresses(
-            userId.exportUserIdForChainwatch(),
-            chainwatchBaseUrl,
-            supportedChains,
-            transactionsAlertsAddresses,
-            refAddresses.current,
-          );
+          try {
+            await reconcileTransactionsAlertsAddresses(
+              userId.exportUserIdForChainwatch(),
+              chainwatchBaseUrl,
+              supportedChains,
+              transactionsAlertsAddresses,
+              refAddresses.current,
+            );
+          } catch (error) {
+            // Some batches may have been registered: track them so a later removal unwatches them.
+            refAddresses.current = deduplicateTransactionsAlertsAddresses([
+              ...refAddresses.current,
+              ...transactionsAlertsAddresses,
+            ]);
+            throw error;
+          }
           refAddresses.current = transactionsAlertsAddresses;
         } else {
           await deleteUserChainwatchAccounts(

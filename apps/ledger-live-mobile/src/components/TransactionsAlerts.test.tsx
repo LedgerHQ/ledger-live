@@ -84,6 +84,7 @@ const installChainwatchHandlers = (
   initialRemote: { exists: boolean; suffixes: string[] } = { exists: false, suffixes: [] },
   failAddressPuts = 0,
   addressPutGate?: Promise<void>,
+  failingAddressPutIndex?: number,
 ) => {
   const accountUrl = `https://chainwatch/${network.chainwatchId}/account/${chainwatchUserId}/`;
   const addressesUrl = `${accountUrl}addresses/`;
@@ -120,6 +121,9 @@ const installChainwatchHandlers = (
       const body = await request.json();
       addressPuts.push(body);
       await addressPutGate;
+      if (addressPuts.length - 1 === failingAddressPutIndex) {
+        return new HttpResponse(null, { status: 500 });
+      }
       if (remainingAddressPutFailures > 0) {
         remainingAddressPutFailures -= 1;
         return new HttpResponse(null, { status: 500 });
@@ -265,6 +269,26 @@ describe("TransactionsAlerts", () => {
 
     await waitFor(() => expect(chainwatch.addressPuts).toEqual([["0x01"], ["0x01"]]));
     expect(chainwatch.getRemote().suffixes).toEqual(["0x01"]);
+  });
+
+  it("should unwatch the addresses of a partially failed registration once their accounts are removed", async () => {
+    const chainwatch = installChainwatchHandlers(undefined, 0, undefined, 1);
+    const accounts = Array.from({ length: 101 }, (_, index) =>
+      makeAccount(`account-${index}`, `0x${(index + 1).toString(16)}`),
+    );
+    const { store } = render(<TransactionsAlerts />, {
+      overrideInitialState: withTransactionsAlertsState(accounts),
+    });
+    await waitFor(() => expect(chainwatch.addressPuts).toHaveLength(2));
+    const [registeredBatch] = chainwatch.addressPuts;
+
+    await act(async () => {});
+    act(() => {
+      store.dispatch(replaceAccounts([]));
+    });
+
+    await waitFor(() => expect(chainwatch.addressDeletes).toEqual([registeredBatch]));
+    expect(chainwatch.getRemote().suffixes).toEqual([]);
   });
 
   it("should delete Chainwatch accounts when active alerts are turned off", async () => {
