@@ -59,6 +59,7 @@ const debounce = <T, R>(fn: (...args: T[]) => Promise<R>, ms: number) => {
     }
     return inFlight;
   };
+  debounced.pending = () => timeout !== undefined;
   return debounced;
 };
 
@@ -82,8 +83,18 @@ function save(ns: string): Promise<void> {
 /**
  * Write the pending saves of all namespaces now, before the app quits.
  */
-async function flush(): Promise<void> {
+function flush(): Promise<void> {
+  return flushSaves(0);
+}
+
+/** Saves that keep coming must not hold the quit. */
+const MAX_FLUSH_ROUNDS = 5;
+
+async function flushSaves(round: number): Promise<void> {
   await Promise.all(Array.from(saves.values(), debouncedSave => debouncedSave.flush()));
+  // A save queued while a write was in progress is pending again: flush it too.
+  const pending = Array.from(saves.values()).some(debouncedSave => debouncedSave.pending());
+  if (pending && round + 1 < MAX_FLUSH_ROUNDS) return flushSaves(round + 1);
 }
 
 // Track which keyPaths triggered saves for each namespace

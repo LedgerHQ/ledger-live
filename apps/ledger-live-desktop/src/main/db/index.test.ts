@@ -397,4 +397,23 @@ describe("db saves", () => {
     await reading;
     expect(read).toBe("disk");
   });
+
+  it("flushes a save queued while a flush waits for a write", async () => {
+    let finishWrite: (() => void) | undefined;
+    writeFileMock.mockImplementationOnce(
+      () => new Promise<void>(resolve => (finishWrite = resolve)),
+    );
+    void db.setKey("app", "settings", { theme: "dark" });
+    await new Promise(resolve => setTimeout(resolve, 50));
+    expect(finishWrite).toBeDefined();
+
+    const flushing = db.flush();
+    await db.getKey("windowParams", "MainWindow", {});
+    void db.setKey("windowParams", "MainWindow.positions", { x: 1, y: 2 });
+    await new Promise(resolve => setTimeout(resolve, 0));
+    finishWrite?.();
+    await flushing;
+
+    expect(writtenFile("windowParams")).toEqual({ MainWindow: { positions: { x: 1, y: 2 } } });
+  });
 });
