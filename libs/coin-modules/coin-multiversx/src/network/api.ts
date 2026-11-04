@@ -5,6 +5,7 @@ import type {
   MultiversXApiTransaction,
   MultiversXDelegation,
   MultiversXProvider,
+  MultiversXRound,
   MultiversXTransactionAction,
   MultiversXTransactionMode,
   MultiversXTransferOptions,
@@ -234,6 +235,46 @@ export class MultiversXNetworkApi {
       url: `${this.API_URL}/blocks?shard=${METACHAIN_SHARD}&fields=round`,
     });
     return blockHeight;
+  }
+
+  async getLatestRound(): Promise<MultiversXRound> {
+    const {
+      data: [latestRound],
+    } = await network<MultiversXRound[]>({
+      method: "GET",
+      url: `${this.API_URL}/blocks?shard=${METACHAIN_SHARD}&size=1&fields=round,timestamp,timestampMs`,
+    });
+    if (!latestRound) {
+      throw new Error("MultiversX API returned no metachain block");
+    }
+    return latestRound;
+  }
+
+  async getRound(round: number): Promise<MultiversXRound> {
+    const { data } = await network<MultiversXRound>({
+      method: "GET",
+      url: `${this.API_URL}/rounds/${METACHAIN_SHARD}/${round}`,
+    });
+    return data;
+  }
+
+  async getRoundTransactions(round: number): Promise<MultiversXApiTransaction[]> {
+    const transactions: MultiversXApiTransaction[] = [];
+    let searchAfter: string | undefined;
+
+    do {
+      const cursor = searchAfter ? `&searchAfter=${encodeURIComponent(searchAfter)}` : "";
+      const { data } = await network<MultiversXApiTransaction[]>({
+        method: "GET",
+        url: `${this.API_URL}/transactions?round=${round}&withOperations=true&size=${MAX_PAGINATION_SIZE}${cursor}`,
+      });
+      const page = data ?? [];
+      transactions.push(...page);
+      searchAfter =
+        page.length < MAX_PAGINATION_SIZE ? undefined : page[page.length - 1].searchAfter;
+    } while (searchAfter);
+
+    return transactions;
   }
 
   async getAccountNonce(addr: string): Promise<number> {

@@ -3,8 +3,6 @@ import type {
   Operation,
   Page,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { Address } from "@multiversx/sdk-core/out";
-import { ESDT_CONTRACT_ADDRESS_HEX } from "@multiversx/sdk-core/out/constants";
 import BigNumber from "bignumber.js";
 import type { MultiversXNetworkApi } from "../../network/api";
 import type {
@@ -13,10 +11,8 @@ import type {
   MultiversXTransactionOperation,
 } from "../../types";
 import { MultiversXTransferOptions } from "../../types";
-import { MULTIVERSX_STAKING_POOL } from "../../constants";
+import { ESDT_SYSTEM_SC_BECH32, MULTIVERSX_STAKING_POOL } from "../../constants";
 import { BinaryUtils } from "../../utils/binary.utils";
-
-const ESDT_SYSTEM_SC_BECH32 = Address.fromHex(ESDT_CONTRACT_ADDRESS_HEX).toBech32();
 
 // Cap the number of concurrent per-token history fetches: an account holding
 // many ESDT tokens would otherwise fan out into a large burst of parallel

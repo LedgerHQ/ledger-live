@@ -110,6 +110,8 @@ export type MultiversXApiTransaction = {
   gasLimit: number;
   status?: string;
   fee?: BigNumber;
+  relayer?: string;
+  searchAfter?: string;
   round?: number;
   miniBlockHash?: string;
   data?: string;
@@ -127,9 +129,16 @@ export enum MultiversXTransferOptions {
 export type MultiversXTransactionOperation = {
   action: string;
   type: string;
+  identifier?: string;
   sender: string;
   receiver: string;
-  value: string;
+  value?: string;
+};
+
+export type MultiversXRound = {
+  round: number;
+  timestamp: number;
+  timestampMs?: number;
 };
 
 export type MultiversXTransactionAction = {

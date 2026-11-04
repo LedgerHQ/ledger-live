@@ -3,6 +3,8 @@ import type {
   AddressValidationCurrencyParameters,
   Balance,
   BalanceOptions,
+  Block,
+  BlockInfo,
   BroadcastConfig,
   CoinModuleImpl,
   CraftedTransaction,
@@ -28,6 +30,8 @@ import { getBalance } from "../logic/account/getBalance";
 import { getNextSequence } from "../logic/account/getNextSequence";
 import { getStakes } from "../logic/staking/getStakes";
 import { getValidators } from "../logic/staking/getValidators";
+import { getBlock } from "../logic/history/getBlock";
+import { getBlockInfo } from "../logic/history/getBlockInfo";
 import { lastBlock } from "../logic/history/lastBlock";
 import { listOperations } from "../logic/history/listOperations";
 import { validateAddress } from "../logic/validateAddress";
@@ -83,6 +87,12 @@ export function createApi() {
     },
     lastBlock: async (context: MultiversXContext) => {
       return lastBlock(await resolveApi(context));
+    },
+    getBlockInfo: async (context: MultiversXContext, height: number): Promise<BlockInfo> => {
+      return getBlockInfo(await resolveApi(context), height);
+    },
+    getBlock: async (context: MultiversXContext, height: number): Promise<Block> => {
+      return getBlock(await resolveApi(context), height);
     },
     listOperations: async (
       context: MultiversXContext,
