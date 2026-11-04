@@ -173,3 +173,35 @@ describe("session reset — corrupt file recovery", () => {
     expect(session).toEqual({ accounts: [], trustchain, passwordSalt: "0".repeat(32) });
   });
 });
+
+describe("session reset — Agent Intent profiles", () => {
+  it("keeps them without their cached Ledger Sync version, so the next sync pulls every account", async () => {
+    const fixture = makeSessionDir(SAMPLE_ENTRIES);
+    cleanup = fixture.cleanup;
+    const profile = {
+      profileId: "trading-bot",
+      displayName: "Trading Bot",
+      description: "Proposes EVM payments for review.",
+      source: "openclaw",
+      environment: "staging",
+      bffBaseUrl: "https://global.api.stg.ledger-test.com/agent-intent",
+      publicKey: `02${"0".repeat(64)}`,
+      keyStore: "os-keychain",
+      enrollmentExpiresAt: "2026-06-01T00:00:00.000Z",
+      createdAt: "2026-01-01T00:00:00.000Z",
+    };
+    writeFileSync(
+      join(fixture.env.XDG_STATE_HOME, "ledger-wallet-cli", "session.yaml"),
+      YAML.stringify({
+        accounts: SAMPLE_ENTRIES,
+        agentIntentProfiles: [
+          { ...profile, ledgerSyncVersion: 7, ledgerSyncSupport: "3f2a9c41d07be815" },
+        ],
+      }),
+    );
+    const { exitCode } = await runCli(["session", "reset"], fixture.env);
+    expect(exitCode).toBe(0);
+    const session = await readSessionFile(fixture.env.XDG_STATE_HOME);
+    expect(session).toEqual({ accounts: [], agentIntentProfiles: [profile] });
+  });
+});

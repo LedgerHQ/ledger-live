@@ -138,7 +138,7 @@ All four empty means nothing changed since the last sync.
 - **Retries:** while any entry is `invalid`, the synced version is not cached, so the next sync fetches the list again.
 - **After a wallet-cli upgrade:** when the upgrade can import more (a new family, currency or derivation mode), the next sync pulls every account again, so a `skipped` entry that the new version supports is imported then.
 - **Skipped ids can hold secrets.** An `id` is the account's raw Ledger Wallet id, and some families embed key material in it (Aleo ids carry the account's view key). Report `skipped` and `invalid` entries as a count per distinct `reason`, working only from `reason`; keep `id` and the raw output out of chat and logs.
-- **After `session reset`:** the reset deletes the imported labels but keeps the profile and its cached sync version, so `sync` reports four empty arrays until the list changes in Ledger Wallet. Tell the human; `--from <address>` still works.
+- **After `session reset`:** the reset deletes the imported labels and the cached sync version but keeps the profile, so the next `sync` pulls every account again.
 
 Done when you have reported every imported and unchanged label with its network, and the skipped and invalid entries as the rule above says.
 

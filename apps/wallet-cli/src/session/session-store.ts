@@ -162,6 +162,12 @@ export type TrustchainMeta = z.infer<typeof TrustchainMetaSchema>;
 export type DomainEntry = z.infer<typeof DomainEntrySchema>;
 export type AgentIntentProfileMeta = z.infer<typeof AgentIntentProfileSchema>;
 
+const withoutLedgerSyncCache = (profile: AgentIntentProfileMeta): AgentIntentProfileMeta => ({
+  ...profile,
+  ledgerSyncVersion: undefined,
+  ledgerSyncSupport: undefined,
+});
+
 export function getSessionPath(): string {
   return join(stateDir(APP_NAME), SESSION_FILE);
 }
@@ -414,6 +420,7 @@ export class Session {
   clear(): number {
     const count = this.entries.length;
     this.entries = [];
+    this._agentIntentProfiles = this._agentIntentProfiles.map(withoutLedgerSyncCache);
     return count;
   }
 
