@@ -2,12 +2,12 @@ snapshot: ledger-live-desktop-agent-cde
 sandbox:
   image: jfrog.ledgerlabs.net/daytona-oci-internal-green/ledger-live-desktop-agent-cde:main
   cpu: 4
-  memory: 8
+  memory: 16
   disk: 10
 setup: |
   mise install
-  pnpm i --frozen-lockfile
-lint: pnpm nx affected -t lint
+  pnpm i --frozen-lockfile --filter="ledger-live-desktop..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --filter="live-cli*..."
+lint: pnpm nx run ledger-live-desktop:lint
 github:
   draft_pull_requests: true
   assign_pr_initiator: true
