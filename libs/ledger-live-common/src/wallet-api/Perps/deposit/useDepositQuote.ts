@@ -1,22 +1,19 @@
 import { useEffect, useState } from "react";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { QuotesErrorCodes } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/types";
-import {
-  fetchPerpsDepositQuote,
-  type PerpsDepositQuoteResult,
-} from "@ledgerhq/live-common/wallet-api/Perps/deposit/quote";
-import { useSelector } from "~/context/hooks";
-import { flattenAccountsSelector } from "~/reducers/accounts";
-import { counterValueCurrencySelector, localeSelector } from "~/reducers/settings";
+import { QuotesErrorCodes } from "@ledgerhq/wallet-api-exchange-module";
+import { fetchPerpsDepositQuote, type PerpsDepositQuoteResult } from "./quote";
 
 const QUOTE_DEBOUNCE_MS = 500;
 
-type PerpsDepositQuoteParams = {
+export type PerpsDepositQuoteParams = {
+  accounts: AccountLike[];
   depositAccount: AccountLike | undefined;
   receiverAccount: AccountLike;
   amount: string;
   isOffline: boolean;
   refreshGeneration: number;
+  counterValueCurrency: string;
+  locale: string;
 };
 
 export type PerpsDepositQuoteState = {
@@ -32,22 +29,20 @@ const NO_QUOTES: PerpsDepositQuoteState = {
 };
 
 /** What a quote was asked for, so it is never read back for anything else. */
-function requestKeyOf(
-  {
-    depositAccount,
-    receiverAccount,
-    amount,
-    isOffline,
-    refreshGeneration,
-  }: PerpsDepositQuoteParams,
-  counterValueTicker: string,
-) {
+function requestKeyOf({
+  depositAccount,
+  receiverAccount,
+  amount,
+  isOffline,
+  refreshGeneration,
+  counterValueCurrency,
+}: PerpsDepositQuoteParams) {
   if (!depositAccount || !amount || isOffline) return null;
   return [
     depositAccount.id,
     receiverAccount.id,
     amount,
-    counterValueTicker,
+    counterValueCurrency,
     refreshGeneration,
   ].join("|");
 }
@@ -55,25 +50,15 @@ function requestKeyOf(
 /**
  * Debounced quote for the funding pair.
  */
-export function usePerpsDepositQuote({
-  depositAccount,
-  receiverAccount,
-  amount,
-  isOffline,
-  refreshGeneration,
-}: PerpsDepositQuoteParams): PerpsDepositQuoteState {
-  const accounts = useSelector(flattenAccountsSelector);
-  const counterValueCurrency = useSelector(counterValueCurrencySelector);
-  const locale = useSelector(localeSelector);
+export function usePerpsDepositQuote(params: PerpsDepositQuoteParams): PerpsDepositQuoteState {
+  const { accounts, depositAccount, receiverAccount, amount, counterValueCurrency, locale } =
+    params;
   const [current, setCurrent] = useState<{ key: string | null; state: PerpsDepositQuoteState }>({
     key: null,
     state: IDLE,
   });
 
-  const requestKey = requestKeyOf(
-    { depositAccount, receiverAccount, amount, isOffline, refreshGeneration },
-    counterValueCurrency.ticker,
-  );
+  const requestKey = requestKeyOf(params);
 
   useEffect(() => {
     if (!requestKey || !depositAccount) {
@@ -90,7 +75,7 @@ export function usePerpsDepositQuote({
         depositAccount,
         receiverAccount,
         amount,
-        counterValueCurrency: counterValueCurrency.ticker,
+        counterValueCurrency,
         locale,
       })
         .then(result => {

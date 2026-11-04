@@ -47,7 +47,7 @@ jest.mock("LLM/features/Buy", () => ({
 }));
 
 const mockUsePerpsDepositQuote = jest.fn();
-jest.mock("../usePerpsDepositQuote", () => ({
+jest.mock("@ledgerhq/live-common/wallet-api/Perps/deposit/useDepositQuote", () => ({
   usePerpsDepositQuote: (params: unknown) => mockUsePerpsDepositQuote(params),
 }));
 
