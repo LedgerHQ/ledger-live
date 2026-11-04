@@ -2,18 +2,16 @@ import type { AccountDataSource, AccountTarget } from "@domain/api-account-data"
 import { descriptorOf, sourceIdOf } from "@domain/api-account-data/testing";
 import type { BalanceAssetId } from "@domain/entity-account-balance";
 import { AccountUUIDSchema } from "@domain/entity-account-descriptor";
-import {
-  CountervalueTickerSchema,
-  type AccountOperationsPage,
-} from "@domain/entity-account-operation";
+import type { AccountOperationsPage } from "@domain/entity-account-operation";
 import { mockAccountOperation } from "@domain/entity-account-operation/schema.mock";
 import type { Currency } from "@domain/entity-currency";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { FiatCurrencyTickerSchema } from "@domain/entity-currency-fiat";
 import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";
 import { importCountervalues } from "@domain/entity-market-countervalues";
 import { valueOperations, withOperationCountervalues } from "./withOperationCountervalues";
 
-const usd = CountervalueTickerSchema.parse("USD");
+const usd = FiatCurrencyTickerSchema.parse("USD");
 const eth = getCryptoCurrencyById("ethereum");
 const usdt = mockTokenCurrency();
 const currencies = new Map<string, Currency>([
@@ -89,7 +87,7 @@ describe("valueOperations", () => {
     const page = pageOf(oneEth());
     expect(valueOperations(page, undefined, ratesOf({}), currencyOf)).toBe(page);
     expect(valueOperations(page, usd, undefined, currencyOf)).toBe(page);
-    const unknown = CountervalueTickerSchema.parse("XXX_UNKNOWN");
+    const unknown = FiatCurrencyTickerSchema.parse("XXX");
     expect(valueOperations(page, unknown, ratesOf({}), currencyOf)).toBe(page);
   });
 });

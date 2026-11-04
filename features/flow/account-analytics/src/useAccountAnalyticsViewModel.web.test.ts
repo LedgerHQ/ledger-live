@@ -1,3 +1,4 @@
+import { FiatCurrencyTickerSchema, type FiatCurrencyTicker } from "@domain/entity-currency-fiat";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { useLayoutEffect } from "react";
 import { analyticsCatalog, deferred, readyBalance } from "./analytics.mock";
@@ -10,6 +11,9 @@ import type {
   AnalyticsReadResult,
 } from "./types";
 
+const usd = FiatCurrencyTickerSchema.parse("USD");
+const eur = FiatCurrencyTickerSchema.parse("EUR");
+
 const catalog: AnalyticsCatalogState = { status: "ready", data: analyticsCatalog };
 
 describe("useAccountAnalyticsViewModel", () => {
@@ -19,7 +23,7 @@ describe("useAccountAnalyticsViewModel", () => {
       ({ period }: { period: AnalyticsPeriod }) =>
         useAccountAnalyticsViewModel({
           catalog,
-          fiatCurrencyId: "usd",
+          fiatCurrencyId: usd,
           period,
           dataPort: { loadBalance },
         }),
@@ -66,7 +70,7 @@ describe("useAccountAnalyticsViewModel", () => {
                 : analyticsCatalog.positions,
             },
           },
-          fiatCurrencyId: "usd",
+          fiatCurrencyId: usd,
           period: "1m",
           initialSelection: { accountId: "eth-account", currencyId: "ethereum" },
           dataPort: { loadBalance },
@@ -91,7 +95,7 @@ describe("useAccountAnalyticsViewModel", () => {
       ({ source }: { source: AnalyticsCatalogState }) =>
         useAccountAnalyticsViewModel({
           catalog: source,
-          fiatCurrencyId: "usd",
+          fiatCurrencyId: usd,
           period: "1m",
           dataPort: { loadBalance },
         }),
@@ -126,7 +130,7 @@ describe("useAccountAnalyticsViewModel", () => {
     const { result } = renderHook(() =>
       useAccountAnalyticsViewModel({
         catalog,
-        fiatCurrencyId: "usd",
+        fiatCurrencyId: usd,
         period: "1m",
         initialSelection: { accountId: "eth-account", currencyId: "ethereum" },
         dataPort: { loadBalance },
@@ -148,7 +152,7 @@ describe("useAccountAnalyticsViewModel", () => {
     const { result } = renderHook(() =>
       useAccountAnalyticsViewModel({
         catalog,
-        fiatCurrencyId: "usd",
+        fiatCurrencyId: usd,
         period: "1m",
         dataPort: { loadBalance },
       }),
@@ -177,7 +181,7 @@ describe("useAccountAnalyticsViewModel", () => {
     const { result } = renderHook(() => {
       const viewModel = useAccountAnalyticsViewModel({
         catalog,
-        fiatCurrencyId: "usd",
+        fiatCurrencyId: usd,
         period: "1m",
         dataPort: { loadBalance },
       });
@@ -203,7 +207,7 @@ describe("useAccountAnalyticsViewModel", () => {
     const { result } = renderHook(() =>
       useAccountAnalyticsViewModel({
         catalog,
-        fiatCurrencyId: "usd",
+        fiatCurrencyId: usd,
         period: "1m",
         initialSelection: { accountId: "eth-account", currencyId: "ethereum/erc20/usdc" },
         dataPort: { loadBalance },
@@ -226,7 +230,7 @@ describe("useAccountAnalyticsViewModel", () => {
       ({ source }: { source: AnalyticsCatalogState }) =>
         useAccountAnalyticsViewModel({
           catalog: source,
-          fiatCurrencyId: "usd",
+          fiatCurrencyId: usd,
           period: "1m",
           initialSelection: { accountId: "eth-account", currencyId: "ethereum" },
           dataPort: { loadBalance },
@@ -249,7 +253,7 @@ describe("useAccountAnalyticsViewModel", () => {
       ({ source }: { source: AnalyticsCatalogState }) =>
         useAccountAnalyticsViewModel({
           catalog: source,
-          fiatCurrencyId: "usd",
+          fiatCurrencyId: usd,
           period: "1m",
           initialSelection: { accountId: "eth-account", currencyId: "ethereum/erc20/usdc" },
           dataPort: { loadBalance },
@@ -287,22 +291,22 @@ describe("useAccountAnalyticsViewModel", () => {
         period,
         dataPort,
       }: {
-        fiat: string;
+        fiat: FiatCurrencyTicker;
         period: "1m" | "1y";
         dataPort: AccountAnalyticsDataPort;
       }) => useAccountAnalyticsViewModel({ catalog, fiatCurrencyId: fiat, period, dataPort }),
-      { initialProps: { fiat: "usd", period: "1m" as "1m" | "1y", dataPort: port } },
+      { initialProps: { fiat: usd, period: "1m" as "1m" | "1y", dataPort: port } },
     );
     await waitFor(() => expect(result.current.balance.status).toBe("ready"));
     loadBalance.mockImplementation(() => pending.promise);
-    rerender({ fiat: "eur", period: "1y", dataPort: port });
+    rerender({ fiat: eur, period: "1y", dataPort: port });
     expect(result.current.balance.status).toBe("loading");
     expect(loadBalance.mock.calls.at(-1)?.[0]).toMatchObject({
-      fiatCurrencyId: "eur",
+      fiatCurrencyId: eur,
       period: "1y",
     });
     const replacement = jest.fn().mockResolvedValue(readyBalance(200));
-    rerender({ fiat: "eur", period: "1y", dataPort: { loadBalance: replacement } });
+    rerender({ fiat: eur, period: "1y", dataPort: { loadBalance: replacement } });
     await waitFor(() => expect(result.current.balance).toEqual(readyBalance(200)));
     await act(async () => {
       pending.resolve(readyBalance(50));
@@ -316,7 +320,7 @@ describe("useAccountAnalyticsViewModel", () => {
     const { unmount } = renderHook(() =>
       useAccountAnalyticsViewModel({
         catalog,
-        fiatCurrencyId: "usd",
+        fiatCurrencyId: usd,
         period: "1m",
         dataPort: { loadBalance },
       }),
@@ -331,7 +335,7 @@ describe("useAccountAnalyticsViewModel", () => {
       ({ source }: { source: AnalyticsCatalogState }) =>
         useAccountAnalyticsViewModel({
           catalog: source,
-          fiatCurrencyId: "usd",
+          fiatCurrencyId: usd,
           period: "1m",
           dataPort: { loadBalance },
         }),
@@ -358,7 +362,7 @@ describe("useAccountAnalyticsViewModel", () => {
       ({ source }: { source: AnalyticsCatalogState }) =>
         useAccountAnalyticsViewModel({
           catalog: source,
-          fiatCurrencyId: "usd",
+          fiatCurrencyId: usd,
           period: "1m",
           initialSelection: { accountId: "eth-account", currencyId: "ethereum" },
           dataPort: { loadBalance },
@@ -388,7 +392,7 @@ describe("useAccountAnalyticsViewModel", () => {
     const { result } = renderHook(() =>
       useAccountAnalyticsViewModel({
         catalog,
-        fiatCurrencyId: "usd",
+        fiatCurrencyId: usd,
         period: "1m",
         dataPort: { loadBalance },
       }),

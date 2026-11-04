@@ -18,6 +18,9 @@
     "test": "jest",
     "coverage": "jest --coverage"
   },
+  "dependencies": {
+    "@domain/entity-currency-fiat": "workspace:*"
+  },
   "peerDependencies": {
     "react": "catalog:"
   },

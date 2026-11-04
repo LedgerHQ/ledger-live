@@ -1,5 +1,6 @@
 import * as currencies from "./currencies";
-import type { FiatCurrency } from "./schema";
+import { z } from "zod";
+import { FiatCurrencyTickerSchema, type FiatCurrency, type FiatCurrencyTicker } from "./schema";
 
 /**
  * Pre-built registry of all known fiat currencies, keyed by ISO 4217 ticker (e.g. `"USD"`).
@@ -11,7 +12,9 @@ export const FIAT_CURRENCIES_REGISTRY: Record<string, FiatCurrency> = Object.fro
 );
 
 /** All known fiat currency ISO 4217 tickers as a constant array. */
-export const FIAT_CURRENCIES_TICKERS = Object.values(FIAT_CURRENCIES_REGISTRY).map(c => c.ticker);
+export const FIAT_CURRENCIES_TICKERS: FiatCurrencyTicker[] = Object.values(
+  FIAT_CURRENCIES_REGISTRY,
+).map(c => c.ticker);
 
 /**
  * Registry of all known fiat currencies, keyed by ISO 4217 ticker (e.g. `"USD"`).
@@ -26,41 +29,43 @@ export const FIAT_CURRENCIES_BY_TICKER: Record<string, FiatCurrency> = Object.fr
  * is unreachable. Mirrors the default response of `/v3/supported/fiat`;
  * OFAC-restricted entries are filtered out at runtime by `buildFallbackFiats`.
  */
-export const FALLBACK_FIAT_TICKERS: readonly string[] = [
-  "AED",
-  "AUD",
-  "BHD",
-  "BRL",
-  "CAD",
-  "CHF",
-  "CLP",
-  "CNY",
-  "CZK",
-  "DKK",
-  "EUR",
-  "GBP",
-  "HKD",
-  "HUF",
-  "IDR",
-  "ILS",
-  "INR",
-  "JPY",
-  "KRW",
-  "MXN",
-  "MYR",
-  "NGN",
-  "NOK",
-  "NZD",
-  "PHP",
-  "PKR",
-  "PLN",
-  "RUB",
-  "SEK",
-  "SGD",
-  "THB",
-  "TRY",
-  "UAH",
-  "USD",
-  "VND",
-  "ZAR",
-];
+export const FALLBACK_FIAT_TICKERS: readonly FiatCurrencyTicker[] = z
+  .array(FiatCurrencyTickerSchema)
+  .parse([
+    "AED",
+    "AUD",
+    "BHD",
+    "BRL",
+    "CAD",
+    "CHF",
+    "CLP",
+    "CNY",
+    "CZK",
+    "DKK",
+    "EUR",
+    "GBP",
+    "HKD",
+    "HUF",
+    "IDR",
+    "ILS",
+    "INR",
+    "JPY",
+    "KRW",
+    "MXN",
+    "MYR",
+    "NGN",
+    "NOK",
+    "NZD",
+    "PHP",
+    "PKR",
+    "PLN",
+    "RUB",
+    "SEK",
+    "SGD",
+    "THB",
+    "TRY",
+    "UAH",
+    "USD",
+    "VND",
+    "ZAR",
+  ]);
