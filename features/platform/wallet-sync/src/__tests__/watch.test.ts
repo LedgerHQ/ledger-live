@@ -201,6 +201,19 @@ describe("Ledger Sync watch loop", () => {
     expect(store.getState().trustchain.trustchain).toBeNull();
   });
 
+  it("should drop a restore that settles after the watch stopped", async () => {
+    mockCloudSyncSdk.pull.mockRejectedValueOnce(errorNamed("TrustchainOutdated"));
+    const store = startedWatch();
+    const restore = pendingRestore(store);
+    await advance(WATCH_CONFIG.initialTimeout);
+
+    store.dispatch(stopLedgerSyncWatch());
+    restore.resolve({ ...trustchain, rootId: "restored-root-id" });
+    await advance(0);
+
+    expect(store.getState().trustchain.trustchain).toEqual(trustchain);
+  });
+
   it("should keep a new pairing when a restore of the previous one fails", async () => {
     const paired = { ...trustchain, rootId: "paired-root-id" };
     mockCloudSyncSdk.pull.mockRejectedValueOnce(errorNamed("TrustchainOutdated"));

@@ -128,10 +128,11 @@ export function createLedgerSyncWatch<S extends LedgerSyncStateRoot, LocalState,
     }
   }
 
-  /** A restore that settles after a reset or a new pairing must leave the new session alone. */
+  /** A restore that settles after a stop, a reset or a new pairing changes nothing. */
   function isCurrentSession(trustchain: Trustchain, memberCredentials: MemberCredentials) {
     const state = getState();
     return (
+      watching &&
       trustchainSelector(state) === trustchain &&
       memberCredentialsSelector(state) === memberCredentials
     );
