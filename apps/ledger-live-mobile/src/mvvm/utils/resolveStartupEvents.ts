@@ -1,6 +1,11 @@
+import { getProcessStartTime } from "@shared/native-performance";
 import { startupEvents, startupFirstImportTime, type StartupEvent } from "./logStartupTime";
 
 export type GroupedStartupEvent = StartupEvent & { count: number };
+
+export type StartupTimeBase = "process" | "js";
+
+type StartupOrigin = { base: StartupTimeBase; time: number };
 
 // WARNING: Not an exhaustive list, just the looked up ones.
 export const STARTUP_EVENTS = {
@@ -15,8 +20,52 @@ const NOT_LOGGED_EVENTS = new Set<string>([
   STARTUP_EVENTS.CURRENCY_HYDRATED,
 ]);
 
-// Times are relative to the first JS import. Datadog RUM measures the native part of the startup.
+const MAX_PROCESS_START_TO_JS_START_MS = 60_000;
+
+let startupOrigin: StartupOrigin | undefined;
+
+function readProcessStartTime(): number | null {
+  try {
+    const processStartTime = getProcessStartTime();
+    if (processStartTime === null) return null;
+
+    const processStartToJsStart = startupFirstImportTime - processStartTime;
+    const isPlausibleLaunch =
+      processStartToJsStart >= 0 && processStartToJsStart <= MAX_PROCESS_START_TO_JS_START_MS;
+    return isPlausibleLaunch ? processStartTime : null;
+  } catch (error) {
+    console.warn("Could not read the app process start time", error);
+    return null;
+  }
+}
+
+function computeStartupOrigin(): StartupOrigin {
+  const isProcessStartSkewedByDevServer = __DEV__;
+  const processStartTime = isProcessStartSkewedByDevServer ? null : readProcessStartTime();
+  return processStartTime === null
+    ? { base: "js", time: startupFirstImportTime }
+    : { base: "process", time: processStartTime };
+}
+
+function resolveStartupOrigin(): StartupOrigin {
+  startupOrigin ??= computeStartupOrigin();
+  return startupOrigin;
+}
+
+export function claimStartupOrigin(): void {
+  resolveStartupOrigin();
+}
+
+export function resetStartupOriginForTests(): void {
+  startupOrigin = undefined;
+}
+
+export function getStartupTimeBase(): StartupTimeBase {
+  return resolveStartupOrigin().base;
+}
+
 export function resolveStartupEvents(): GroupedStartupEvent[] {
+  const origin = resolveStartupOrigin().time;
   const resolved = new Map<string, GroupedStartupEvent>();
   startupEvents
     .filter(e => !NOT_LOGGED_EVENTS.has(e.event))
@@ -26,7 +75,7 @@ export function resolveStartupEvents(): GroupedStartupEvent[] {
         event,
         existing
           ? { event, time: existing.time, count: existing.count + 1 }
-          : { event, time: time - startupFirstImportTime, count: 1 },
+          : { event, time: time - origin, count: 1 },
       );
     });
 

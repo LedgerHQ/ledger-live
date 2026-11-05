@@ -258,6 +258,7 @@
     "@shared/i18n": "workspace:*",
     "@shared/linking": "workspace:*",
     "@shared/lottie": "workspace:*",
+    "@shared/native-performance": "workspace:*",
     "@shared/network-status": "workspace:*",
     "@shared/system-bars": "workspace:*",
     "@shared/ui-info-state": "workspace:*",
