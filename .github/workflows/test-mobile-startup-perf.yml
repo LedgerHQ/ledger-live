@@ -28,11 +28,11 @@ on:
         options: [prod-vs-release, custom, aa-noise, known-regression]
         default: prod-vs-release
       ref_a:
-        description: "Build A, a branch, tag or full commit SHA. Blank: the latest live-mobile@X.Y.Z tag (prod-vs-release) or this branch (aa-noise)"
+        description: "Build A, a branch or tag of this repository. Blank: the latest live-mobile@X.Y.Z tag (prod-vs-release) or this branch (aa-noise)"
         required: false
         type: string
       ref_b:
-        description: "Build B, a branch, tag or full commit SHA. Blank: the release branch (prod-vs-release)"
+        description: "Build B, a branch or tag of this repository. Blank: the release branch (prod-vs-release)"
         required: false
         type: string
       platforms:
@@ -109,16 +109,15 @@ jobs:
             echo "::error::pairs must be an even number ≥ 6, got '$PAIRS'"; exit 1
           fi
           [[ "$THRESHOLD" =~ ^[0-9]+$ ]] || { echo "::error::threshold_ms must be a number"; exit 1; }
-          # A branch, a tag or a full commit SHA of this repository, as a commit SHA. Pull request
-          # refs are not branches, so a fork's code is never built with this workflow's secrets.
+          # A branch or tag of this repository, as a commit SHA. No raw SHA: one from a fork's pull
+          # request can be fetched here too, and its scripts would run with this workflow's secrets.
           resolve() {
             local ref="$1" out sha
-            if [[ "$ref" =~ ^[0-9a-f]{40}$ ]]; then echo "$ref"; return; fi
             # An annotated tag's "^{}" line is the commit it points to.
             out=$(git ls-remote "$REPO_URL" "refs/heads/$ref" "refs/tags/$ref" "refs/tags/$ref^{}")
             sha=$(awk -v t="refs/tags/$ref^{}" '$2 == t { print $1 }' <<< "$out")
             [[ -n "$sha" ]] || sha=$(awk -v h="refs/heads/$ref" -v t="refs/tags/$ref" '$2 == h || $2 == t { print $1; exit }' <<< "$out")
-            [[ -n "$sha" ]] || { echo "::error::'$ref' is not a branch, tag or full commit SHA of this repository" >&2; return 1; }
+            [[ -n "$sha" ]] || { echo "::error::'$ref' is not a branch or tag of this repository (to measure a commit, push a branch or tag at it)" >&2; return 1; }
             echo "$sha"
           }
           case "$PRESET" in
@@ -129,7 +128,12 @@ jobs:
                   grep -E '^live-mobile@[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1) || true
                 [[ -n "$REF_A" ]] || { echo "::error::no live-mobile@X.Y.Z tag found"; exit 1; }
               fi
-              REF_B="${REF_B:-release}"
+              if [[ -z "$REF_B" ]]; then
+                # The release branch only exists while a pre-release is in progress.
+                [[ -n "$(git ls-remote --heads "$REPO_URL" refs/heads/release)" ]] ||
+                  { echo "::error::no release branch: no pre-release in progress (set ref_b, e.g. hotfix)"; exit 1; }
+                REF_B=release
+              fi
               A=$(resolve "$REF_A"); B=$(resolve "$REF_B"); SIDES='["a","b"]'
               LABEL_A="$REF_A"; LABEL_B="$REF_B"
               [[ "$A" != "$B" ]] || echo "::warning::$REF_A and $REF_B are the same commit" ;;
@@ -140,7 +144,9 @@ jobs:
               A=$(resolve "$REF_A"); B=$(resolve "$REF_B"); SIDES='["a","b"]'
               LABEL_A="$REF_A"; LABEL_B="$REF_B" ;;
             aa-noise)
-              A=$(resolve "${REF_A:-$BRANCH_SHA}"); B="$A"; SIDES='["a"]'
+              # Blank: the commit this run was dispatched on.
+              if [[ -n "$REF_A" ]]; then A=$(resolve "$REF_A"); else A="$BRANCH_SHA"; fi
+              B="$A"; SIDES='["a"]'
               LABEL_A="${REF_A:-$GITHUB_REF_NAME}"; LABEL_B="the same binary" ;;
             known-regression)
               A="$KNOWN_REGRESSION_SHA"; B="$KNOWN_FIX_SHA"; SIDES='["a","b"]'

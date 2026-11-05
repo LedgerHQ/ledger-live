@@ -188,14 +188,18 @@ function difference(group, metric) {
     const m = median(d);
     return d.map(v => v - m);
   });
+  // Without pairs on both sides of the swap, the device difference stays in B − A: no interval.
+  const oneSideOfSwap = pairs.length > 0 && instanceBias === null;
+  const hl = hodgesLehmann(adjusted);
   return {
     pairs: pairs.length,
+    oneSideOfSwap,
     medianA: median(pairs.map(p => p.A)),
     medianB: median(pairs.map(p => p.B)),
-    hl: hodgesLehmann(adjusted),
+    hl: oneSideOfSwap && hl ? { estimate: hl.estimate, low: null, high: null } : hl,
     spread: robustSd(centred),
     instanceBias,
-    mean: bootstrapMean(adjusted),
+    mean: oneSideOfSwap ? null : bootstrapMean(adjusted),
   };
 }
 
@@ -248,7 +252,11 @@ export function summarise(samples, { preset, thresholdMs }) {
       failed: measured.filter(s => !s.ok).length,
       launches: measured.length,
       detectable: detectableAt80(d.hl, thresholdMs),
-      verdict: verdict ?? verdictFor(preset, d.hl, thresholdMs),
+      verdict:
+        verdict ??
+        (d.oneSideOfSwap
+          ? "Not enough pairs: none on one side of the device swap"
+          : verdictFor(preset, d.hl, thresholdMs)),
     });
     // Only a build too old for the "JS start epoch" event goes without the native verdict; launches
     // that lack a process start count as missing pairs, so a harness fault still shows.
