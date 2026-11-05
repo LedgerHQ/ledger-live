@@ -23,8 +23,7 @@ jobs:
         with:
           persist-credentials: false
 
-      # Without the Nx cache: on Windows, packing live-common's cached outputs fails with EMFILE
-      # (see tools/nx/print-build-dep-chunks.mjs).
+      # No Nx cache: packing live-common's cache fails with EMFILE on Windows (tools/nx/print-build-dep-chunks.mjs).
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
