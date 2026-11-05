@@ -1,42 +1,15 @@
-import { useMemo } from "react";
-import { getEnv } from "@shared/env";
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import { trustchainLifecycle } from "@features/platform-wallet-sync";
-import { useStore } from "LLD/hooks/redux";
-import { walletSelector } from "~/renderer/reducers/wallet";
 import { TrustchainSDK } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { useFeature } from "@features/platform-feature-flags";
-import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
-import { useInstanceName } from "./useInstanceName";
+import { useTrustchainSdkContext } from "./useTrustchainSdkContext";
 
 let sdkInstance: TrustchainSDK | null = null;
 
 export function useTrustchainSdk() {
-  const featureWalletSync = useFeature("lldWalletSync");
-  const { trustchainApiBaseUrl, cloudSyncApiBaseUrl } = getWalletSyncEnvironmentParams(
-    featureWalletSync?.params?.environment,
-  );
-  const name = useInstanceName();
-  const isMockEnv = !!getEnv("MOCK");
-
-  const defaultContext = useMemo(() => {
-    const applicationId = 16;
-    return { applicationId, name, apiBaseUrl: trustchainApiBaseUrl };
-  }, [trustchainApiBaseUrl, name]);
-
-  const store = useStore();
-  const lifecycle = useMemo(
-    () =>
-      trustchainLifecycle({
-        cloudSyncApiBaseUrl,
-        getCurrentWSState: () => walletSelector(store.getState()).walletSync.walletSyncState,
-      }),
-    [cloudSyncApiBaseUrl, store],
-  );
+  const { isMockEnv, context, lifecycle } = useTrustchainSdkContext();
 
   if (sdkInstance === null) {
-    sdkInstance = getSdk(isMockEnv, defaultContext, withDevice, lifecycle);
+    sdkInstance = getSdk(isMockEnv, context, withDevice, lifecycle);
   }
 
   return sdkInstance;
