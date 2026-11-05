@@ -20,8 +20,8 @@ const SENT = E8S_PER_ICP;
 const STAKE = 2n * E8S_PER_ICP;
 const TOP_UP = E8S_PER_ICP;
 
-const SENDER_PATH = pathAt(ACCOUNT_INDICES.legacy.sender);
-const RECIPIENT = addressAt(pathAt(ACCOUNT_INDICES.legacy.recipient));
+const SENDER_PATH = pathAt(ACCOUNT_INDICES.sender);
+const RECIPIENT = addressAt(pathAt(ACCOUNT_INDICES.recipient));
 
 const bn = (value: bigint) => new BigNumber(value.toString());
 
@@ -142,7 +142,7 @@ export const scenarioInternetComputer: Scenario<Transaction, ICPAccount> = {
     const bridges = getLegacyBridges();
     lastBroadcast = bridges.lastBroadcast;
 
-    const account = makeAccount(ACCOUNT_INDICES.legacy.sender);
+    const account = makeAccount(ACCOUNT_INDICES.sender);
     await fund(account.freshAddress, FUNDING);
 
     return {

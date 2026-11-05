@@ -81,7 +81,7 @@ export const waitForNns = (): Promise<bigint> =>
   );
 
 /** Waits until the index canister reports `expected` e8s on `address`. */
-export const waitForIndexedBalance = (address: string, expected: bigint): Promise<bigint> =>
+const waitForIndexedBalance = (address: string, expected: bigint): Promise<bigint> =>
   poll(
     `the index to report ${expected} e8s on ${address}`,
     () => indexedBalance(address),

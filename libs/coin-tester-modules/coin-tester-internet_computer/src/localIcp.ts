@@ -6,10 +6,6 @@ const PACKAGE_ROOT = path.resolve(__dirname, "..");
 
 export const NODE_URL = "http://127.0.0.1:4943";
 
-const READY_TIMEOUT_MS = 120_000;
-const READY_INTERVAL_MS = 1_000;
-const REQUEST_TIMEOUT_MS = 5_000;
-
 const composeOpts = () => ({
   cwd: PACKAGE_ROOT,
   log: Boolean(process.env.DEBUG),
@@ -28,33 +24,14 @@ function formatComposeError(error: unknown): string {
   return `exit code ${exitCode ?? "unknown"}${streams ? `\n${streams}` : " with no output"}`;
 }
 
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
-// The gateway answers its status endpoint (CBOR) once PocketIC runs. The NNS canisters can still be
-// installing then; the tests wait for the ledger and index before they fund an account.
-async function waitForGateway(): Promise<void> {
-  const deadline = Date.now() + READY_TIMEOUT_MS;
-  while (Date.now() < deadline) {
-    try {
-      const response = await fetch(`${NODE_URL}/api/v2/status`, {
-        signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-      });
-      if (response.status === 200) return;
-    } catch {
-      // Not listening yet, or the request timed out.
-    }
-    await delay(READY_INTERVAL_MS);
-  }
-  throw new Error(`The gateway did not answer ${NODE_URL}/api/v2/status`);
-}
-
 export async function spawnLocalIcp(): Promise<void> {
   // A run killed before its teardown leaves the old network behind: start from a fresh one.
   await killLocalIcp();
   console.log("Starting the local ICP network…");
   try {
-    await compose.upAll({ ...composeOpts(), commandOptions: ["--quiet-pull"] });
-    await waitForGateway();
+    // `--wait` returns once the gateway listens. The NNS canisters can still be installing then;
+    // the tests wait for the ledger and index before they fund an account.
+    await compose.upAll({ ...composeOpts(), commandOptions: ["--wait", "--quiet-pull"] });
   } catch (error) {
     const { out: logs } = await compose
       .logs([], { ...composeOpts(), commandOptions: ["--no-color", "--tail", "50"] })

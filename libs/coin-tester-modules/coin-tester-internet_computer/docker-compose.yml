@@ -3,10 +3,16 @@ name: coin-tester-internet_computer
 services:
   # PocketIC behind an HTTP gateway, with the NNS installed at the mainnet canister ids: the ICP
   # ledger, its index and governance. The image already passes `--gateway-port 4943`; passing it
-  # again makes the container exit. No healthcheck: the image has no HTTP client, so globalSetup
-  # polls the gateway instead.
+  # again makes the container exit.
   network:
     image: ghcr.io/dfinity/icp-cli-network-launcher@sha256:1ae8af15cd9b4f98a665baf4ba57a909e9b415c2017797b3b11b76b40a1690b5
     command: ["--nns"]
+    # The image has no HTTP client. The launcher writes status.json to its `--status-dir` once the
+    # gateway listens.
+    healthcheck:
+      test: ["CMD", "test", "-f", "/app/status/status.json"]
+      interval: 2s
+      timeout: 5s
+      retries: 60
     ports:
       - "127.0.0.1:4943:4943"

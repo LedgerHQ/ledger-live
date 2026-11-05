@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import type { IcpContext, IcpCurrencyConfig } from "@ledgerhq/coin-internet_computer/config";
+import type { IcpCurrencyConfig } from "@ledgerhq/coin-internet_computer/config";
 import { type ICPAccount, NeuronsData } from "@ledgerhq/coin-internet_computer/types/index";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import {
@@ -15,11 +15,7 @@ const DERIVATION_MODE = "internet_computer";
 
 export const E8S_PER_ICP = 100_000_000n;
 
-// Each test funds its own accounts, so none shares an account with another.
-export const ACCOUNT_INDICES = {
-  legacy: { sender: 0, recipient: 1 },
-  api: { sender: 2, recipient: 3 },
-} as const;
+export const ACCOUNT_INDICES = { sender: 0, recipient: 1 } as const;
 
 export const pathAt = (index: number): string =>
   runDerivationScheme(
@@ -40,11 +36,6 @@ export const localConfig: IcpCurrencyConfig = {
   name: "Internet Computer",
   unit: { name: "ICP", code: "ICP", magnitude: 8 },
   node: { url: NODE_URL },
-};
-
-export const localContext: IcpContext = {
-  config: async () => localConfig,
-  logger: () => undefined,
 };
 
 /** The legacy bridge keys the account id on the public key, which `sync` reads back from it. */
