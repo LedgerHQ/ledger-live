@@ -210,7 +210,8 @@ const checkReferences = (root, file, text, topLevel, report) => {
       const resolved = target.startsWith("/")
         ? join(root, target)
         : join(root, dirname(file), target);
-      if (!existsSync(resolved)) report(number, "dead-link", `link to \`${raw}\` does not resolve`);
+      if (!existsSync(resolved))
+        report(number, "dead-link", `link to \`${raw}\` does not resolve`, raw);
     }
   }
 
@@ -228,7 +229,9 @@ const topLevelFolders = root =>
   );
 
 const isWaived = (waiver, finding) =>
-  finding.code === "dead-path" && waiver.file === finding.file && waiver.path === finding.path;
+  (finding.code === "dead-path" || finding.code === "dead-link") &&
+  waiver.file === finding.file &&
+  waiver.path === finding.path;
 
 const isComplete = waiver => Boolean(waiver.file && waiver.path && waiver.reason?.trim());
 

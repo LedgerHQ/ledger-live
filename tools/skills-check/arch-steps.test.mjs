@@ -10,8 +10,11 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const scripts = {
   "lint:boundaries": "nx run enforce-boundaries:lint:boundaries",
   "lint:structure": "nx run-many -t lint:structure",
+  "lint:tool-config": "nx run-many -t lint:tool-config",
+  "lint:i18n-keys": "nx run enforce-i18n-keys:lint:i18n-keys",
   "skills:check": "node tools/skills-check/check.mjs",
-  "lint:arch": "pnpm run lint:boundaries && pnpm run lint:structure && pnpm run skills:check",
+  "lint:arch":
+    "pnpm run lint:boundaries && pnpm run lint:structure && pnpm run lint:tool-config && pnpm run lint:i18n-keys && pnpm run skills:check",
 };
 
 const workflow = `
@@ -24,6 +27,10 @@ const workflow = `
         run: pnpm exec nx run-many -t test -p enforce-boundaries
       - name: Enforce package structure
         run: pnpm exec nx run-many -t lint:structure
+      - name: Check tool configs conform to the support/ presets
+        run: pnpm exec nx run-many -t lint:tool-config
+      - name: Check i18n keys exist in the Desktop and Mobile catalogs
+        run: pnpm exec nx run-many -t lint:i18n-keys -p enforce-i18n-keys
       - name: Test the skills and docs check
         run: node --test "tools/skills-check/*.test.mjs"
       - name: Check skills and docs
@@ -35,6 +42,8 @@ describe("lint:arch and the CI boundaries job", () => {
     assert.deepEqual(lintArchChecks(scripts), [
       "lint:boundaries",
       "lint:structure",
+      "lint:tool-config",
+      "lint:i18n-keys",
       "skills:check",
     ]);
   });
@@ -43,6 +52,8 @@ describe("lint:arch and the CI boundaries job", () => {
     assert.deepEqual(boundariesJobChecks(workflow, scripts), [
       "lint:boundaries",
       "lint:structure",
+      "lint:tool-config",
+      "lint:i18n-keys",
       "skills:check",
     ]);
   });

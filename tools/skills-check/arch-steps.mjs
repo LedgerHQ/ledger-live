@@ -22,4 +22,4 @@ export const lintArchChecks = scripts =>
 export const boundariesJobChecks = (workflow, scripts) =>
   [...workflow.matchAll(RUN_LINE)]
     .map(([, command]) => checkName(command, scripts))
-    .filter(name => name !== null && name !== "test");
+    .filter(name => name !== null && name !== "test" && name !== "test:workspace");

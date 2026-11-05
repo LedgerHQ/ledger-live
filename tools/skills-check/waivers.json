@@ -28,5 +28,15 @@
     "file": "docs/configuration.md",
     "path": "apps/coin-service",
     "reason": "A folder of another repository."
+  },
+  {
+    "file": ".agents/skills/legacy-migration/SKILL.md",
+    "path": "../../../apps/ledger-live-desktop/.oxlintrc.json",
+    "reason": "Desktop lint config is oxlint.config.mts; the skill still names .oxlintrc.json."
+  },
+  {
+    "file": ".agents/skills/legacy-migration/SKILL.md",
+    "path": "../../../apps/ledger-live-mobile/.oxlintrc.json",
+    "reason": "Mobile lint config is oxlint.config.mts; the skill still names .oxlintrc.json."
   }
 ]

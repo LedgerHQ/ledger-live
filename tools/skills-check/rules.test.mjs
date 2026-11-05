@@ -204,10 +204,22 @@ describe("waivers", () => {
     assert.deepEqual(waived(repo(files), waivers), ["docs/guide.md:1:dead-path"]);
   });
 
-  it("waives no other code than dead-path", () => {
+  it("waives a dead-link when the waiver names the same file and target", () => {
     const root = repo({ "AGENTS.md": "[a](apps/aggregate)\n" });
     const waivers = [{ file: "AGENTS.md", path: "apps/aggregate", reason: "Says it is absent." }];
-    assert.deepEqual(waived(root, waivers), ["AGENTS.md:1:dead-link", "AGENTS.md:1:stale-waiver"]);
+    assert.deepEqual(waived(root, waivers), []);
+  });
+
+  it("waives no other code than dead-path and dead-link", () => {
+    const root = repo({
+      ".agents/skills/demo/SKILL.md": "---\nname: wrong\n---\n",
+    });
+    const waivers = [{ file: "AGENTS.md", path: "apps/aggregate", reason: "Says it is absent." }];
+    assert.deepEqual(waived(root, waivers), [
+      ".agents/skills/demo/SKILL.md:1:frontmatter",
+      ".agents/skills/demo/SKILL.md:2:frontmatter",
+      "AGENTS.md:1:stale-waiver",
+    ]);
   });
 
   it("reports a waiver that matches nothing", () => {
