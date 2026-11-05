@@ -456,8 +456,8 @@ catalogs:
       specifier: 7.14.14
       version: 7.14.14
     '@reduxjs/toolkit':
-      specifier: 2.11.2
-      version: 2.11.2
+      specifier: 2.13.0
+      version: 2.13.0
     '@rsbuild/core':
       specifier: 2.3.0
       version: 2.3.0
@@ -992,7 +992,7 @@ importers:
         version: link:../../libs/types-live
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/api-services':
         specifier: workspace:^
         version: link:../../shared/api-services
@@ -1537,7 +1537,7 @@ importers:
         version: 1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@segment/analytics-next':
         specifier: 1.84.1
         version: 1.84.1(encoding@0.1.13)
@@ -2492,7 +2492,7 @@ importers:
         version: 7.14.14(013a5c5f7c7e1a5f696cd0aa44ae9262)
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@ronradtke/react-native-markdown-display':
         specifier: 9.0.3
         version: 9.0.3(@expo/config-plugins@54.0.4)(@react-native/assets-registry@0.81.6)(expo-font@14.0.12(ad8cab2de0afcaf36fbaac4194936152))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
@@ -3183,7 +3183,7 @@ importers:
         version: 1.8.0
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@segment/analytics-node':
         specifier: 3.1.0
         version: 3.1.0
@@ -3432,7 +3432,7 @@ importers:
         version: 1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/api-services':
         specifier: workspace:*
         version: link:../../shared/api-services
@@ -4337,7 +4337,7 @@ importers:
         version: 11.0.1
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/api-services':
         specifier: workspace:*
         version: link:../../shared/api-services
@@ -5725,7 +5725,7 @@ importers:
         version: link:../../entity/account-descriptor
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
     devDependencies:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
@@ -5759,7 +5759,7 @@ importers:
     dependencies:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/api-services':
         specifier: workspace:*
         version: link:../../../shared/api-services
@@ -5823,7 +5823,7 @@ importers:
         version: link:../../entity/interest-rate
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/api-services':
         specifier: workspace:*
         version: link:../../../shared/api-services
@@ -5881,7 +5881,7 @@ importers:
         version: link:../../entity/card-asset-mapping
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/api-services':
         specifier: workspace:*
         version: link:../../../shared/api-services
@@ -5942,7 +5942,7 @@ importers:
         version: link:../../entity/currency-fiat
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/api-services':
         specifier: workspace:*
         version: link:../../../shared/api-services
@@ -6006,7 +6006,7 @@ importers:
         version: link:../../entity/currency-unit
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/api-services':
         specifier: workspace:*
         version: link:../../../shared/api-services
@@ -6088,7 +6088,7 @@ importers:
         version: link:../../entity/market-countervalues
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/api-services':
         specifier: workspace:*
         version: link:../../../shared/api-services
@@ -6161,7 +6161,7 @@ importers:
         version: link:../../entity/market-index-altcoin-season
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/api-services':
         specifier: workspace:*
         version: link:../../../shared/api-services
@@ -6219,7 +6219,7 @@ importers:
         version: link:../../entity/market-index-fear-and-greed
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/api-services':
         specifier: workspace:*
         version: link:../../../shared/api-services
@@ -6274,7 +6274,7 @@ importers:
     dependencies:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/api-services':
         specifier: workspace:*
         version: link:../../../shared/api-services
@@ -6332,7 +6332,7 @@ importers:
         version: link:../../entity/client-identity
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/api-services':
         specifier: workspace:*
         version: link:../../../shared/api-services
@@ -6384,7 +6384,7 @@ importers:
     dependencies:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/api-services':
         specifier: workspace:^
         version: link:../../../shared/api-services
@@ -6439,7 +6439,7 @@ importers:
         version: link:../account-descriptor
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       zod:
         specifier: 'catalog:'
         version: 4.6.7
@@ -6482,7 +6482,7 @@ importers:
         version: link:../account
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       uuid:
         specifier: 'catalog:'
         version: 11.1.0
@@ -6534,7 +6534,7 @@ importers:
         version: link:../currency-token
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/schema-primitives':
         specifier: workspace:*
         version: link:../../../shared/schema-primitives
@@ -6583,7 +6583,7 @@ importers:
         version: link:../account-descriptor
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/schema-primitives':
         specifier: workspace:*
         version: link:../../../shared/schema-primitives
@@ -6626,7 +6626,7 @@ importers:
         version: link:../account-descriptor
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       zod:
         specifier: 'catalog:'
         version: 4.6.7
@@ -6706,7 +6706,7 @@ importers:
         version: link:../account
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/cloud-sync-module':
         specifier: workspace:^
         version: link:../../../shared/cloud-sync-module
@@ -6764,7 +6764,7 @@ importers:
         version: link:../currency-fiat
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/schema-primitives':
         specifier: workspace:*
         version: link:../../../shared/schema-primitives
@@ -6911,7 +6911,7 @@ importers:
     dependencies:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       uuid:
         specifier: 'catalog:'
         version: 11.1.0
@@ -6960,7 +6960,7 @@ importers:
         version: link:../currency-token
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/cloud-sync-module':
         specifier: workspace:^
         version: link:../../../shared/cloud-sync-module
@@ -7089,7 +7089,7 @@ importers:
         version: link:../currency-unit
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       zod:
         specifier: 'catalog:'
         version: 4.6.7
@@ -7249,7 +7249,7 @@ importers:
         version: link:../currency
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       zod:
         specifier: 'catalog:'
         version: 4.6.7
@@ -7369,7 +7369,7 @@ importers:
     dependencies:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       zod:
         specifier: 'catalog:'
         version: 4.6.7
@@ -7406,7 +7406,7 @@ importers:
     dependencies:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/cloud-sync-module':
         specifier: workspace:^
         version: link:../../../shared/cloud-sync-module
@@ -7452,7 +7452,7 @@ importers:
         version: link:../account
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       immer:
         specifier: ^11.0.0
         version: 11.1.3
@@ -7489,7 +7489,7 @@ importers:
     dependencies:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       zod:
         specifier: 'catalog:'
         version: 4.6.7
@@ -7999,7 +7999,7 @@ importers:
     dependencies:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
@@ -9060,7 +9060,7 @@ importers:
         version: 1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
@@ -9153,7 +9153,7 @@ importers:
         version: 0.1.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/clipboard':
         specifier: workspace:*
         version: link:../../../shared/clipboard
@@ -9363,7 +9363,7 @@ importers:
         version: link:../../../support/test-quarantine
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/feature-flags':
         specifier: workspace:^
         version: link:../../../shared/feature-flags
@@ -9621,7 +9621,7 @@ importers:
         version: link:../../../support/test-quarantine
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
@@ -9733,7 +9733,7 @@ importers:
         version: link:../../../support/test-quarantine
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
@@ -10082,7 +10082,7 @@ importers:
         version: link:../../../support/test-quarantine
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
@@ -10157,7 +10157,7 @@ importers:
         version: link:../../platform/feature-flags
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/feature-flags':
         specifier: workspace:^
         version: link:../../../shared/feature-flags
@@ -10374,7 +10374,7 @@ importers:
         version: 2.0.7(5bfec6f530da8ba0e8a834c94b75962c)
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
@@ -10587,7 +10587,7 @@ importers:
         version: link:../../../support/test-quarantine
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
@@ -10804,7 +10804,7 @@ importers:
         version: link:../../platform/pay-analytics
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
@@ -10955,7 +10955,7 @@ importers:
         version: link:../../platform/pay-analytics
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
@@ -11095,7 +11095,7 @@ importers:
         version: link:../../../support/test-quarantine
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
@@ -11255,7 +11255,7 @@ importers:
         version: link:../../platform/pay-analytics
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
@@ -11380,7 +11380,7 @@ importers:
         version: link:../../../support/test-quarantine
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
@@ -11558,7 +11558,7 @@ importers:
         version: link:../../platform/pay-analytics
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
@@ -11664,7 +11664,7 @@ importers:
         version: 2.0.7(5bfec6f530da8ba0e8a834c94b75962c)
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
@@ -11789,7 +11789,7 @@ importers:
         version: link:../../../support/test-quarantine
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
@@ -12012,7 +12012,7 @@ importers:
         version: link:../../../domain/entity/account-descriptor
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
     devDependencies:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
@@ -12137,7 +12137,7 @@ importers:
         version: link:../env
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       lodash:
         specifier: 4.18.1
         version: 4.18.1
@@ -12204,7 +12204,7 @@ importers:
     dependencies:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
@@ -12423,7 +12423,7 @@ importers:
         version: link:../../../domain/api/card-management
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/api-services':
         specifier: workspace:*
         version: link:../../../shared/api-services
@@ -12563,7 +12563,7 @@ importers:
         version: link:../../../support/test-quarantine
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
@@ -12687,7 +12687,7 @@ importers:
         version: link:../feature-flags
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/api-services':
         specifier: workspace:^
         version: link:../../../shared/api-services
@@ -13060,7 +13060,7 @@ importers:
         version: link:../../../support/test-quarantine
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -13166,7 +13166,7 @@ importers:
         version: link:../../../domain/entity/market-countervalues
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -18726,7 +18726,7 @@ importers:
         version: 1.8.0
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/env':
         specifier: workspace:*
         version: link:../../shared/env
@@ -21146,7 +21146,7 @@ importers:
     dependencies:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
     devDependencies:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
@@ -23190,7 +23190,7 @@ importers:
     dependencies:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/auth':
         specifier: workspace:^
         version: link:../auth
@@ -23251,7 +23251,7 @@ importers:
     dependencies:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       zod:
         specifier: 'catalog:'
         version: 4.6.7
@@ -23294,7 +23294,7 @@ importers:
     dependencies:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       zod:
         specifier: 'catalog:'
         version: 4.6.7
@@ -23532,7 +23532,7 @@ importers:
     dependencies:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       semver:
         specifier: 'catalog:'
         version: 7.8.5
@@ -30036,8 +30036,8 @@ packages:
       immutable: ^4.3.7
       redux: ^4.0.0 || ^5.0.0
 
-  '@reduxjs/toolkit@2.11.2':
-    resolution: {integrity: sha512-Kd6kAHTA6/nUpp8mySPqj3en3dm0tdMIgbttnQ1xFMVpufoj+ADi8pXLBsd4xzTRHQa7t/Jv8W5UnCuW4kuWMQ==}
+  '@reduxjs/toolkit@2.13.0':
+    resolution: {integrity: sha512-f6jwVRfwW30+tnllz4YcsHHpPYYOE7abcHkyUCovD+P7DyhdAI5prz2Fh/8TLhakjpN+7aIEion1s5L/tvlYlA==}
     peerDependencies:
       react: 19.1.4
       react-redux: ^7.2.1 || ^8.1.3 || ^9.0.0
@@ -49171,7 +49171,7 @@ snapshots:
       - react
       - react-redux
 
-  '@reduxjs/toolkit@2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)':
+  '@reduxjs/toolkit@2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)':
     dependencies:
       '@standard-schema/spec': 1.1.0
       '@standard-schema/utils': 0.3.0
