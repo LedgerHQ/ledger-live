@@ -20,7 +20,7 @@ export default class ContactsPage {
   private readonly addContactSaveButton = byId("contacts-add-contact-save");
   private readonly searchInput = byId("contacts-search-input");
   private readonly savedContactName = (name: string) =>
-    byIdAndText(this.savedContactNameRegExp, name);
+    byIdAndText({ id: this.savedContactNameRegExp, text: name });
   private readonly savedContactNameAtIndex = (index: number) =>
     byId(this.savedContactNameRegExp, index);
   private readonly savedContactRow = (rowId: string) => byId(rowId);

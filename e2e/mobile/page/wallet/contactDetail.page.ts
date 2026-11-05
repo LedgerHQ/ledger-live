@@ -20,10 +20,10 @@ export default class ContactDetailPage {
   private readonly emptyState = byId("contacts-detail-empty-state");
   private readonly addAddressButton = byId("contacts-detail-add-address");
   private readonly addAddressInput = byId("contacts-add-address-input");
-  private readonly validAddressHelperText = byTextWithAncestorId(
-    "contacts-add-address-entry-screen",
-    VALID_ADDRESS_HELPER_TEXT,
-  );
+  private readonly validAddressHelperText = byTextWithAncestorId({
+    id: "contacts-add-address-entry-screen",
+    text: VALID_ADDRESS_HELPER_TEXT,
+  });
   private readonly addAddressEnsDisclaimer = byId("contacts-add-address-ens-disclaimer");
   private readonly addAddressConfirmButton = byId("contacts-add-address-confirm");
   private readonly addAddressNameInput = byId("contacts-add-address-name-input");
@@ -43,14 +43,15 @@ export default class ContactDetailPage {
   private readonly deleteConfirmButton = byId("contacts-delete-contact-confirm");
   private readonly renameDevicePending = byId("contacts-rename-contact-pending");
   private readonly renameDeviceContinue = byId("contacts-rename-contact-continue-on-device");
-  private readonly nameWithText = (name: string) => byIdAndText("contacts-detail-name", name);
+  private readonly nameWithText = (name: string) =>
+    byIdAndText({ id: "contacts-detail-name", text: name });
   private readonly networkGroup = (networkId: string) =>
     byId(`contacts-detail-network-group-${networkId}`);
   private readonly addressLabel = (addressId: string) =>
     byId(`contacts-detail-address-${addressId}-label`);
   private readonly addressRow = (rowId: string) => byId(rowId);
   private readonly addressValue = (address: string) =>
-    byIdAndText(this.addressValueRegExp, this.truncatedAddress(address));
+    byIdAndText({ id: this.addressValueRegExp, text: this.truncatedAddress(address) });
 
   private truncatedAddress(address: string) {
     return address.length <= TRUNCATED_ADDRESS_VISIBLE_LENGTH

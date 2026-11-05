@@ -211,23 +211,35 @@ export const byId = (id: string | RegExp, index = 0): NativeHandle =>
     index,
   });
 
+/** A `testID` and a text, named so the two strings cannot be swapped by mistake. */
+type IdAndTextOptions = {
+  id: string | RegExp;
+  text: string | RegExp;
+};
+
 /** Matches by `testID` and the element's own text. */
-export const byIdAndText = (id: string | RegExp, text: string | RegExp): NativeHandle =>
-  new NativeHandle({
+export const byIdAndText = (options: IdAndTextOptions): NativeHandle => {
+  const { id, text } = options;
+  return new NativeHandle({
     createMatcher: () => by.id(id).and(by.text(text)),
     description: `#${id} with text "${text}"`,
   });
+};
 
 /** Matches by `testID` and the text of a descendant, e.g. a label inside a button or card. */
-export const byIdWithDescendantText = (id: string, text: string | RegExp): NativeHandle =>
-  new NativeHandle({
+export const byIdWithDescendantText = (options: IdAndTextOptions): NativeHandle => {
+  const { id, text } = options;
+  return new NativeHandle({
     createMatcher: () => by.id(id).withDescendant(by.text(text)),
     description: `#${id} containing text "${text}"`,
   });
+};
 
 /** Matches a text inside the `testID` element, for a text that has no `testID` of its own. */
-export const byTextWithAncestorId = (id: string, text: string | RegExp): NativeHandle =>
-  new NativeHandle({
+export const byTextWithAncestorId = (options: IdAndTextOptions): NativeHandle => {
+  const { id, text } = options;
+  return new NativeHandle({
     createMatcher: () => by.text(text).withAncestor(by.id(id)),
     description: `"${text}" inside #${id}`,
   });
+};
