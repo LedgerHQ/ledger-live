@@ -69,9 +69,7 @@ export function createLedgerSyncJob<Input extends { createSessionSdk: CreateSess
           },
         };
 
-        new Promise<Result>(resolve =>
-          resolve(call({ sdk, deviceId: compatDeviceId, input, callbacks })),
-        ).then(
+        (async () => call({ sdk, deviceId: compatDeviceId, input, callbacks }))().then(
           result => {
             if (!isCurrentRun()) return;
             onResult(result);
