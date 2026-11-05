@@ -6,8 +6,6 @@ export const LAYERS = ["support", "shared", "domain", "features", "devtools"];
 const LAYERS_WITH_CATEGORY_READMES = ["domain", "features"];
 const CURSOR_KEYS = new Set(["globs", "alwaysApply", "model", "is_background"]);
 const IGNORED_DIRS = new Set([".git", "node_modules"]);
-// Also a package subfolder in most packages, so `tests/setup.ts` usually means a package's own.
-const PACKAGE_RELATIVE_FOLDERS = new Set(["e2e", "scripts", "tests"]);
 
 const KEY_LINE = /^([A-Za-z_][\w-]*):(?:\s+(.*))?$/;
 const FENCE = /^\s*(`{3,}|~{3,})/;
@@ -16,9 +14,36 @@ const INLINE_LINK = /!?\[[^\]]*\]\(\s*<?([^)\s>]+)>?(?:\s+"[^"]*")?\s*\)/g;
 const REFERENCE_LINK = /^\s{0,3}\[[^\]]+\]:\s*<?([^\s>]+)>?/;
 const URL_SCHEME = /^[a-z][a-z\d+.-]*:/i;
 const PLAIN_PATH = /^[\w.@+-]+(?:\/[\w.@+-]+)*\/?$/;
-// Sentence ends at a period followed by a space or the end, so `Set.has()` stays in the clause.
-const WHEN_CLAUSE = /\b(?:use|read) (?:when|before)\b(?:[^.]|\.(?!\s|$))*(?:\.|$)/i;
 const MIN_WHAT_WORDS = 3;
+
+export const DESCRIPTION_TRIGGER_CLAUSES = ["Use when", "Read when", "Use before", "Read before"];
+
+const quotedClauses = clauses =>
+  clauses.length === 1
+    ? `"${clauses[0]}"`
+    : `${clauses
+        .slice(0, -1)
+        .map(c => `"${c}"`)
+        .join(", ")} or "${clauses.at(-1)}"`;
+
+export const missingDescriptionClauseMessage = () =>
+  `has no ${quotedClauses(DESCRIPTION_TRIGGER_CLAUSES)} clause`;
+
+const clausePattern = DESCRIPTION_TRIGGER_CLAUSES.map(phrase =>
+  phrase.split(/\s+/).join("\\s+"),
+).join("|");
+// Sentence ends at a period followed by a space or the end, so `Set.has()` stays in the clause.
+const WHEN_CLAUSE = new RegExp(`\\b(?:${clausePattern})\\b(?:[^.]|\\.(?!\\s|$))*(?:\\.|$)`, "i");
+
+export const CHECK_CODES = {
+  frontmatter: "exactly one frontmatter block; `name` matches the folder; `description` present",
+  "cursor-key": "no Cursor rule keys (`globs`, `alwaysApply`, `model`, `is_background`)",
+  description: "skill description says what it does and names when to use it",
+  "dead-link": "relative Markdown links resolve",
+  "dead-path": "backticked repo paths under a top-level folder exist",
+  waiver: "waivers.json entry is complete",
+  "stale-waiver": "waivers.json entry still matches a finding",
+};
 
 const toPosix = path => path.split(sep).join(posix.sep);
 
@@ -92,7 +117,7 @@ export const parseFrontmatter = text => {
 
 export const describeProblem = description => {
   const clause = WHEN_CLAUSE.exec(description);
-  if (!clause) return 'has no "Use when", "Read when", "Use before" or "Read before" clause';
+  if (!clause) return missingDescriptionClauseMessage();
   const what = description
     .replace(WHEN_CLAUSE, " ")
     .split(/\s+/)
@@ -224,7 +249,6 @@ const topLevelFolders = root =>
   new Set(
     readdirSync(root, { withFileTypes: true })
       .filter(entry => entry.isDirectory() && !IGNORED_DIRS.has(entry.name))
-      .filter(entry => !PACKAGE_RELATIVE_FOLDERS.has(entry.name))
       .map(entry => entry.name),
   );
 

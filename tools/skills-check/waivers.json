@@ -28,5 +28,80 @@
     "file": "docs/configuration.md",
     "path": "apps/coin-service",
     "reason": "A folder of another repository."
+  },
+  {
+    "file": ".agents/skills/client-ids/SKILL.md",
+    "path": "scripts/check-export-rules.mjs",
+    "reason": "Package-relative path, resolved from the package root."
+  },
+  {
+    "file": ".agents/skills/e2e-earn/SKILL.md",
+    "path": "tests/specs/earn.v2.spec.ts",
+    "reason": "Package-relative path, resolved from the app E2E root."
+  },
+  {
+    "file": ".agents/skills/e2e-earn/SKILL.md",
+    "path": "tests/specs/delegate.spec.ts",
+    "reason": "Package-relative path, resolved from the app E2E root."
+  },
+  {
+    "file": ".agents/skills/testing/SKILL.md",
+    "path": "tests/testSetup",
+    "reason": "Package-relative path, resolved from the app test root."
+  },
+  {
+    "file": ".agents/skills/testing/SKILL.md",
+    "path": "tests/server.ts",
+    "reason": "Package-relative path, resolved from the app test root."
+  },
+  {
+    "file": ".agents/skills/testing/references/mocks.md",
+    "path": "tests/handlers/",
+    "reason": "Package-relative path, resolved from the app test root."
+  },
+  {
+    "file": ".agents/skills/testing/references/mocks.md",
+    "path": "tests/handlers/fixtures/",
+    "reason": "Package-relative path, resolved from the app test root."
+  },
+  {
+    "file": ".agents/skills/testing/references/mocks.md",
+    "path": "tests/fixtures/",
+    "reason": "Package-relative path, resolved from the app test root."
+  },
+  {
+    "file": ".agents/skills/testing/references/mocks.md",
+    "path": "tests/mocks/",
+    "reason": "Package-relative path, resolved from the app test root."
+  },
+  {
+    "file": ".agents/skills/testing/references/msw-endpoints.md",
+    "path": "tests/handlers",
+    "reason": "Package-relative path, resolved from the app test root."
+  },
+  {
+    "file": ".agents/skills/testing/references/packages.md",
+    "path": "tests/testSetup",
+    "reason": "Package-relative path, resolved from the app test root."
+  },
+  {
+    "file": ".agents/skills/testing/references/packages.md",
+    "path": "tests/server",
+    "reason": "Package-relative path, resolved from the app test root."
+  },
+  {
+    "file": "docs/ledger-sync/test-strategy.md",
+    "path": "scripts/e2e.ts",
+    "reason": "Package-relative path, resolved from the package root."
+  },
+  {
+    "file": "docs/ledger-sync/test-strategy.md",
+    "path": "tests/scenarios/",
+    "reason": "Package-relative path, resolved from the package root."
+  },
+  {
+    "file": "docs/ledger-sync/test-strategy.md",
+    "path": "tests/test-helpers/",
+    "reason": "Package-relative path, resolved from the package root."
   }
 ]

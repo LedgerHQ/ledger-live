@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 // Usage: pnpm skills:check
-// Fails when a skill, agent or doc drifts: broken frontmatter, Cursor rule keys, a skill description
-// without what and when, a relative link or a backticked repo path that no longer resolves.
-// waivers.json lists the paths a doc names on purpose although they do not exist.
+// Fails on drift in .agents/**, docs/**, AGENTS.md and layer READMEs. Codes and rules: rules.mjs
+// (CHECK_CODES). waivers.json lists paths a doc names on purpose although they do not exist.
 import { readFileSync } from "node:fs";
 import { dirname, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";

@@ -4,7 +4,13 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "nod
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { after, describe, it } from "node:test";
-import { checkRepo, describeProblem, listFiles } from "./rules.mjs";
+import {
+  checkRepo,
+  describeProblem,
+  listFiles,
+  applyWaivers,
+  DESCRIPTION_TRIGGER_CLAUSES,
+} from "./rules.mjs";
 
 const roots = [];
 after(() => roots.forEach(root => rmSync(root, { recursive: true, force: true })));
@@ -99,7 +105,7 @@ describe("description", () => {
     );
   });
 
-  it("reports a description without a Use when, Read when, Use before or Read before clause", () => {
+  it(`reports a description without a ${DESCRIPTION_TRIGGER_CLAUSES.map(c => `"${c}"`).join(", ")} clause`, () => {
     assert.match(describeProblem("Fetch and summarize review comments"), /no "Use when"/);
     const root = repo({
       ".agents/skills/fmt/SKILL.md": skill("name: fmt\ndescription: Format the changed files."),
@@ -158,17 +164,24 @@ describe("dead-path", () => {
     assert.deepEqual(codes(root), ["AGENTS.md:1:dead-path"]);
   });
 
-  it("skips globs, placeholders, other roots and package-relative folders", () => {
+  it("skips globs, placeholders and paths outside top-level folders", () => {
     const root = repo({
       "AGENTS.md": [
         "`apps/*/package.json` `apps/<name>/src` `apps/{a,b}` `src/gone.ts`",
-        "`tests/setup.ts` `scripts/build.mjs` `@shared/env` `apps/.../gone.ts`",
+        "`@shared/env` `apps/.../gone.ts`",
       ].join("\n"),
       "apps/app/index.ts": "",
+    });
+    assert.deepEqual(codes(root), []);
+  });
+
+  it("reports package-relative paths under scripts/ and tests/ at the repo root", () => {
+    const root = repo({
+      "AGENTS.md": "`tests/setup.ts` and `scripts/build.mjs`.\n",
       "tests/.keep": "",
       "scripts/.keep": "",
     });
-    assert.deepEqual(codes(root), []);
+    assert.deepEqual(codes(root), ["AGENTS.md:1:dead-path", "AGENTS.md:1:dead-path"]);
   });
 
   it("skips paths in fenced code blocks", () => {
@@ -243,7 +256,10 @@ describe("waivers", () => {
 
   it("give every shipped waiver a file, a path and a reason", () => {
     const shipped = JSON.parse(readFileSync(new URL("./waivers.json", import.meta.url), "utf8"));
-    for (const waiver of shipped) assert.ok(waiver.file && waiver.path && waiver.reason?.trim());
+    const problems = applyWaivers([], shipped, "waivers.json").filter(
+      finding => finding.code === "waiver",
+    );
+    assert.deepEqual(problems, []);
   });
 });
 

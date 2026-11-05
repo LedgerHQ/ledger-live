@@ -18,6 +18,7 @@ const scripts = {
 };
 
 const workflow = `
+  enforce-boundaries:
     steps:
       - name: Install dev dependencies for root workspace
         run: pnpm i --frozen-lockfile -D -F "ledger-live" --ignore-scripts
@@ -49,7 +50,7 @@ describe("lint:arch and the CI boundaries job", () => {
   });
 
   it("names the CI checks and leaves out install and test steps", () => {
-    assert.deepEqual(boundariesJobChecks(workflow, scripts), [
+    assert.deepEqual(boundariesJobChecks(workflow, scripts).checks, [
       "lint:boundaries",
       "lint:structure",
       "lint:tool-config",
@@ -61,7 +62,7 @@ describe("lint:arch and the CI boundaries job", () => {
   it("tells a CI step missing from lint:arch", () => {
     const withExtraStep = `${workflow}        run: pnpm exec nx run-many -t lint:i18n-keys\n`;
     assert.notDeepEqual(
-      [...boundariesJobChecks(withExtraStep, scripts)].sort(),
+      [...boundariesJobChecks(withExtraStep, scripts).checks].sort(),
       [...lintArchChecks(scripts)].sort(),
     );
   });
@@ -69,9 +70,8 @@ describe("lint:arch and the CI boundaries job", () => {
   it("run the same checks in this repository", () => {
     const rootScripts = JSON.parse(readFileSync(join(root, "package.json"), "utf8")).scripts;
     const job = readFileSync(join(root, ".github/workflows/test-boundaries-reusable.yml"), "utf8");
-    assert.deepEqual(
-      [...boundariesJobChecks(job, rootScripts)].sort(),
-      [...lintArchChecks(rootScripts)].sort(),
-    );
+    const { checks, unclassified } = boundariesJobChecks(job, rootScripts);
+    assert.deepEqual(unclassified, []);
+    assert.deepEqual([...checks].sort(), [...lintArchChecks(rootScripts)].sort());
   });
 });
