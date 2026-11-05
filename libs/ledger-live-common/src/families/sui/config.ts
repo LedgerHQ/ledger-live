@@ -1,5 +1,4 @@
 import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
-import { getEnv } from "@shared/env";
 
 // `features.transport` is intentionally NOT defaulted here — it's an app-level
 // runtime concern owned by the `suiTransport` feature flag and injected via
@@ -15,8 +14,8 @@ export const suiConfig: Record<string, ConfigInfo> = {
       name: "Sui",
       unit: { name: "Sui", code: "SUI", magnitude: 9 },
       node: {
-        graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
-        grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
+        graphqlUrl: "https://sui.coin.ledger.com/graphql",
+        grpcUrl: "https://sui.coin.ledger.com",
       },
     },
   },
@@ -30,8 +29,8 @@ export const suiConfig: Record<string, ConfigInfo> = {
       name: "Sui (Testnet)",
       unit: { name: "Sui", code: "SUI", magnitude: 9 },
       node: {
-        graphqlUrl: getEnv("API_SUI_TESTNET_GRAPHQL_PROXY"),
-        grpcUrl: getEnv("API_SUI_TESTNET_GRPC_PROXY"),
+        graphqlUrl: "https://graphql.testnet.sui.io/graphql",
+        grpcUrl: "https://fullnode.testnet.sui.io:443",
       },
     },
   },

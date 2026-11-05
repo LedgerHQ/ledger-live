@@ -5,7 +5,6 @@ import type {
   TransactionType,
 } from "@ledgerhq/coin-aleo/types";
 import type { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
-import { getEnv } from "@shared/env";
 import { getCurrencyConfiguration } from "../../config";
 
 // API for fee estimation is not available yet, so for MVP we are using static fee configuration.
@@ -81,8 +80,8 @@ export const aleoConfig: Record<string, ConfigInfo> = {
       networkType: "mainnet",
       defaultValidator: MAINNET_DEFAULT_VALIDATOR,
       apiUrls: {
-        node: getEnv("ALEO_NODE_ENDPOINT"),
-        sdk: getEnv("ALEO_MAINNET_SDK_ENDPOINT"),
+        node: "https://aleo.coin.ledger.com",
+        sdk: "https://aleo-backend.api.live.ledger.com/network/mainnet",
       },
       feeByTransactionType: DEFAULT_FEE_BY_TRANSACTION_TYPE,
       feeSafetyMultiplier: DEFAULT_FEE_SAFETY_MULTIPLIER,
@@ -106,8 +105,8 @@ export const aleoConfig: Record<string, ConfigInfo> = {
       networkType: "testnet",
       defaultValidator: TESTNET_DEFAULT_VALIDATOR,
       apiUrls: {
-        node: getEnv("ALEO_NODE_ENDPOINT"),
-        sdk: getEnv("ALEO_TESTNET_SDK_ENDPOINT"),
+        node: "https://aleo.coin.ledger.com",
+        sdk: "https://aleo-backend.api.live.ledger.com/network/testnet",
       },
       feeByTransactionType: DEFAULT_FEE_BY_TRANSACTION_TYPE,
       feeSafetyMultiplier: DEFAULT_FEE_SAFETY_MULTIPLIER,

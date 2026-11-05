@@ -1,4 +1,3 @@
-import { getEnv } from "@ledgerhq/live-env";
 import coinConfig from "../config";
 import { SuiSigner } from "../types";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
@@ -11,8 +10,8 @@ describe("signOperation", () => {
         type: "active",
       },
       node: {
-        graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
-        grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
+        graphqlUrl: "https://sui.coin.ledger.com/graphql",
+        grpcUrl: "https://sui.coin.ledger.com",
       },
       features: { transport: "grpc" },
       name: "Sui",
