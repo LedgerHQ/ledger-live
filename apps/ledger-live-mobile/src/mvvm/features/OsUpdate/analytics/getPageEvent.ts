@@ -94,6 +94,8 @@ export function getPageEvent(
           return { page: OsUpdatePage.DEVICE_LOCKED, step };
         case PreChecksStateType.DEVICE_DISCONNECTED:
           return { page: OsUpdatePage.DEVICE_DISCONNECTED, step };
+        case PreChecksStateType.CONNECTION_TIMED_OUT:
+          return { page: OsUpdatePage.CONNECTION_TIMED_OUT, step };
         case PreChecksStateType.UNEXPECTED_ERROR:
           return error(OsUpdateFailureType.UNEXPECTED_ERROR);
         default: {
@@ -117,6 +119,8 @@ export function getPageEvent(
           return { page: OsUpdatePage.SECURE_CONNECTION_REFUSED, step };
         case CreateBackupStateType.DEVICE_DISCONNECTED:
           return { page: OsUpdatePage.DEVICE_DISCONNECTED, step };
+        case CreateBackupStateType.CONNECTION_TIMED_OUT:
+          return { page: OsUpdatePage.CONNECTION_TIMED_OUT, step };
         case CreateBackupStateType.UNEXPECTED_ERROR:
           return error(OsUpdateFailureType.UNEXPECTED_ERROR);
         default: {
@@ -150,6 +154,8 @@ export function getPageEvent(
           return { page: OsUpdatePage.DEVICE_LOCKED, step };
         case ApplyUpdatesStateType.DEVICE_DISCONNECTED:
           return { page: OsUpdatePage.DEVICE_DISCONNECTED, step };
+        case ApplyUpdatesStateType.CONNECTION_TIMED_OUT:
+          return { page: OsUpdatePage.CONNECTION_TIMED_OUT, step };
         case ApplyUpdatesStateType.AWAITING_UPDATE_COMPLETE:
           return continueOnDevice(OsUpdateDeviceAction.UPDATE_COMPLETE);
         case ApplyUpdatesStateType.AWAITING_ALLOW_SECURE_CONNECTION:
@@ -193,6 +199,8 @@ export function getPageEvent(
           return { page: OsUpdatePage.DEVICE_LOCKED, step };
         case RestoreBackupStateType.DEVICE_DISCONNECTED:
           return { page: OsUpdatePage.DEVICE_DISCONNECTED, step };
+        case RestoreBackupStateType.CONNECTION_TIMED_OUT:
+          return { page: OsUpdatePage.CONNECTION_TIMED_OUT, step };
         case RestoreBackupStateType.AWAITING_ALLOW_SECURE_CONNECTION:
           return continueOnDevice(OsUpdateDeviceAction.ALLOW_SECURE_CONNECTION);
         case RestoreBackupStateType.AWAITING_GRANT_CONSENT:

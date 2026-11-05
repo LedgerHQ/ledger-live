@@ -204,6 +204,39 @@ describe("TrackingProvider", () => {
     );
   });
 
+  it("adds the step to the clicks on the connection timeout", () => {
+    const { trackPage, trackClick } = renderProvider();
+
+    trackPage({ page: OsUpdatePage.CONNECTION_TIMED_OUT, step: OsUpdateFlowStep.APPLY_UPDATES });
+    trackClick(OsUpdateButton.SEND_REPORT);
+
+    expect(mockedTrack).toHaveBeenLastCalledWith("button_clicked", {
+      button: OsUpdateButton.SEND_REPORT,
+      page: OsUpdatePage.CONNECTION_TIMED_OUT,
+      step: OsUpdateFlowStep.APPLY_UPDATES,
+      ...shared,
+      updateCount: 2,
+    });
+  });
+
+  it("sends the connection timeout page every time it shows", () => {
+    const { trackPage } = renderProvider();
+    const connectionTimedOut: OsUpdatePageEvent = {
+      page: OsUpdatePage.CONNECTION_TIMED_OUT,
+      step: OsUpdateFlowStep.APPLY_UPDATES,
+    };
+
+    trackPage(connectionTimedOut);
+    trackPage({ page: OsUpdatePage.DEVICE_DISCONNECTED, step: OsUpdateFlowStep.APPLY_UPDATES });
+    trackPage(connectionTimedOut);
+
+    expect(
+      mockedTrackPage.mock.calls.filter(
+        ([{ category }]) => category === OsUpdatePage.CONNECTION_TIMED_OUT,
+      ),
+    ).toHaveLength(2);
+  });
+
   it("sends screens once, a Preparing page per step and an Installing page per update", () => {
     const { trackPage } = renderProvider();
     const preparingBackup: OsUpdatePageEvent = {

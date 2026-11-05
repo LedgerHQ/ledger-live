@@ -32,7 +32,6 @@ const CHILDREN_PROP_IN_TESTS = ["flow-contacts-delete-contact", "flow-contacts-d
 const PLATFORM_SUFFIX_WAIVERS = [
   "account-detail",
   "account-detail-hero",
-  "contacts",
   "fear-and-greed",
   "large-screen-upsell",
   "market-banner",

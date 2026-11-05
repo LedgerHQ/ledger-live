@@ -14,6 +14,7 @@ import { Subject } from "rxjs";
 import { createActor, fromCallback, type Actor, type AnyEventObject } from "xstate";
 import { checkErrorCauseStateMachine } from "./checkErrorCauseStateMachine";
 import {
+  CONNECTION_TIMEOUT_MS,
   DEVICE_CALL_TIMEOUT_MS,
   DISCOVERY_TIMEOUT_MS,
   POLL_INTERVAL_MS,
@@ -122,6 +123,21 @@ describe("checkErrorCauseStateMachine", () => {
   });
 
   const situations = () => hostEvents.map(event => event.situation);
+
+  /** Taps "Restart OS update" on the timeout the host was last told about. */
+  const restartFromTimeout = async () => {
+    const lastEvent = hostEvents.at(-1);
+    if (lastEvent?.situation !== DeviceSituation.CONNECTION_TIMED_OUT) {
+      throw new Error("The host was not told the connection timed out");
+    }
+    lastEvent.retry();
+    await settle();
+  };
+
+  const waitForConnectionTimeout = async () => {
+    await jest.advanceTimersByTimeAsync(CONNECTION_TIMEOUT_MS);
+    await settle();
+  };
 
   beforeEach(() => {
     jest.useFakeTimers();
@@ -526,6 +542,119 @@ describe("checkErrorCauseStateMachine", () => {
       await settle();
 
       expect(actor.getSnapshot().value).toEqual({ AwaitingDeviceReconnection: "Retrying" });
+    });
+  });
+
+  describe("connection timeout", () => {
+    it("should offer to restart once the device stays away for the connection timeout", async () => {
+      await start({ error: new DeviceDisconnectedWhileSendingError() });
+
+      await jest.advanceTimersByTimeAsync(CONNECTION_TIMEOUT_MS - 1);
+      expect(situations()).toEqual([DeviceSituation.DISCONNECTED]);
+
+      await jest.advanceTimersByTimeAsync(1);
+      await settle();
+
+      expect(situations()).toEqual([
+        DeviceSituation.DISCONNECTED,
+        DeviceSituation.CONNECTION_TIMED_OUT,
+      ]);
+      expect(hostEvents[1]).toEqual({
+        type: DeviceSituationEventType.DEVICE_SITUATION_UPDATE,
+        situation: DeviceSituation.CONNECTION_TIMED_OUT,
+        retry: expect.any(Function),
+      });
+    });
+
+    it("should never time out when the device comes back in time", async () => {
+      await start({ error: new DeviceDisconnectedWhileSendingError() });
+      await deviceComesBack();
+
+      await waitForConnectionTimeout();
+
+      expect(actor.getSnapshot().output).toEqual(recovered(RECONNECTED_DEVICE));
+      expect(situations()).toEqual([DeviceSituation.DISCONNECTED]);
+    });
+
+    it("should keep counting down across the reconnection attempts that fail", async () => {
+      getAppAndVersion = () => failure(new DeviceDisconnectedWhileSendingError());
+      await start({ error: new DeviceDisconnectedWhileSendingError() });
+      await deviceComesBack();
+      await jest.advanceTimersByTimeAsync(POLL_INTERVAL_MS);
+      await settle();
+      expect(disconnect).toHaveBeenCalledTimes(2);
+
+      await jest.advanceTimersByTimeAsync(CONNECTION_TIMEOUT_MS - POLL_INTERVAL_MS - 1);
+      expect(situations()).toEqual([DeviceSituation.DISCONNECTED]);
+
+      await jest.advanceTimersByTimeAsync(1);
+      await settle();
+
+      expect(situations()).toEqual([
+        DeviceSituation.DISCONNECTED,
+        DeviceSituation.CONNECTION_TIMED_OUT,
+      ]);
+    });
+
+    it("should wait for the restart when the device comes back after the timeout", async () => {
+      await start({ error: new DeviceDisconnectedWhileSendingError() });
+      await waitForConnectionTimeout();
+
+      await deviceComesBack();
+
+      expect(actor.getSnapshot().value).toEqual({ AwaitingDeviceReconnection: "Reconnected" });
+      expect(actor.getSnapshot().output).toBeUndefined();
+
+      await restartFromTimeout();
+
+      expect(actor.getSnapshot().output).toEqual(recovered(RECONNECTED_DEVICE));
+      expect(situations()).toEqual([
+        DeviceSituation.DISCONNECTED,
+        DeviceSituation.CONNECTION_TIMED_OUT,
+      ]);
+    });
+
+    it("should report the device disconnected again when restarted while it is still away", async () => {
+      await start({ error: new DeviceDisconnectedWhileSendingError() });
+      await waitForConnectionTimeout();
+
+      await restartFromTimeout();
+
+      expect(situations()).toEqual([
+        DeviceSituation.DISCONNECTED,
+        DeviceSituation.CONNECTION_TIMED_OUT,
+        DeviceSituation.DISCONNECTED,
+      ]);
+      expect(actor.getSnapshot().value).toEqual({ AwaitingDeviceReconnection: "Discovering" });
+    });
+
+    it("should time out again a full timeout after a restart while the device is still away", async () => {
+      await start({ error: new DeviceDisconnectedWhileSendingError() });
+      await waitForConnectionTimeout();
+      await restartFromTimeout();
+
+      await jest.advanceTimersByTimeAsync(CONNECTION_TIMEOUT_MS - 1);
+      expect(situations()).toHaveLength(3);
+
+      await jest.advanceTimersByTimeAsync(1);
+      await settle();
+
+      expect(situations()).toEqual([
+        DeviceSituation.DISCONNECTED,
+        DeviceSituation.CONNECTION_TIMED_OUT,
+        DeviceSituation.DISCONNECTED,
+        DeviceSituation.CONNECTION_TIMED_OUT,
+      ]);
+    });
+
+    it("should resume on its own when the device comes back after a restart", async () => {
+      await start({ error: new DeviceDisconnectedWhileSendingError() });
+      await waitForConnectionTimeout();
+      await restartFromTimeout();
+
+      await deviceComesBack();
+
+      expect(actor.getSnapshot().output).toEqual(recovered(RECONNECTED_DEVICE));
     });
   });
 

@@ -4,7 +4,6 @@ import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { Flex } from "@ledgerhq/react-ui";
 import { DeviceSelectorOption } from "./DeviceSelectorOption";
 import DeviceIllustration from "~/renderer/components/DeviceIllustration";
-import { useFeature } from "@features/platform-feature-flags";
 
 const DeviceSelectContainer = styled(Flex).attrs({
   flexDirection: "row",
@@ -18,11 +17,10 @@ type DeviceSelectorProps = {
 };
 
 export function DeviceSelector({ onClick }: DeviceSelectorProps) {
-  const isApexSupported = useFeature("supportDeviceApex")?.enabled ?? false;
   const allDevicesModelIds: DeviceModelId[] = [
     DeviceModelId.stax,
     DeviceModelId.europa,
-    ...(isApexSupported ? [DeviceModelId.apex] : []),
+    DeviceModelId.apex,
     DeviceModelId.nanoS,
     DeviceModelId.nanoSP,
     DeviceModelId.nanoX,

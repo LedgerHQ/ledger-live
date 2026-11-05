@@ -6005,6 +6005,12 @@
       "title": "Device disconnected",
       "description": "Reconnect your Ledger device to continue. The update will resume automatically."
     },
+    "connectionTimedOut": {
+      "title": "Connection timed out",
+      "description": "Restart the update.",
+      "restart": "Restart OS update",
+      "sendReport": "Send report to Ledger"
+    },
     "unexpectedError": {
       "title": "Something went wrong",
       "description": "The OS update could not continue. Contact Ledger support if the problem persists."
@@ -6014,10 +6020,12 @@
       "description": "Your device battery is at {{percentage}}%. Plug it in or charge it above 20% to continue."
     },
     "backupSelection": {
-      "title": "Use your existing backup?",
-      "description": "Your latest backup is more than 24 hours old. You can use it, or create a new one that will replace it. Security Key credentials are part of the backup.",
-      "useExisting": "Use existing backup",
-      "createNew": "Create a new backup"
+      "title": "Settings previously saved",
+      "description": "We found apps & settings saved during a previous update. Choose which one you want back on your {{productName}} after the update.",
+      "useExisting": "Use previous settings",
+      "createNew": "Keep current settings",
+      "lastSave": "Last save",
+      "lastSaveDate": "{{date}}, {{time}}"
     },
     "secureConnectionRefused": {
       "title": "Secure connection refused",
@@ -6511,6 +6519,7 @@
       "buyDeviceCTA": "<0>Need a new Ledger? </0><1>Buy now</1>",
       "item": {
         "usb": "Connected with USB",
+        "mocked": "Mocked",
         "available": "Available. Tap to connect",
         "unavailable": "Not connected"
       }
