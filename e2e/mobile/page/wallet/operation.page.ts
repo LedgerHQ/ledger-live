@@ -43,11 +43,13 @@ export default class OperationPage {
 
   @Step("Expect the card transaction amount")
   async expectCardTransactionAmount() {
+    await this.cardTransactionDetailAmountValue.expectVisible();
     await this.cardTransactionDetailAmountValue.expectTextMatching(/\d/);
   }
 
   @Step("Expect the card transaction status to read {{{0}}}")
   async expectCardTransactionStatus(status: RegExp) {
+    await this.cardTransactionDetailStatusValue.expectVisible();
     // The status is a Lumen Tag: its value is the accessibility label, not its own text.
     await this.cardTransactionDetailStatusValue.expectLabelMatching(status);
   }

@@ -30,6 +30,7 @@ export default class ContactsPage {
   @Step("Expect Contacts screen visible")
   async expectScreenVisible(timeout = TIMEOUT.medium) {
     await this.contactsContent.waitVisible(timeout);
+    await this.contactsContent.expectVisible();
   }
 
   @Step("Expect Me contact displayed")
@@ -39,7 +40,7 @@ export default class ContactsPage {
 
   @Step("Expect Me contact hidden")
   async expectMeContactHidden() {
-    await this.meName.expectNotVisible();
+    await this.meName.expectNotExist();
   }
 
   @Step("Expect Me contact address count to show {{0}}")
@@ -67,7 +68,7 @@ export default class ContactsPage {
   /** Rows carry a runtime uuid, so the id is resolved from the name label. Names are unique. */
   @Step("Get row ID for saved contact {{0}}")
   async getSavedContactRowId(name: string): Promise<string> {
-    const { identifier } = await this.savedContactName(name).getAttributes();
+    const identifier = await this.savedContactName(name).getIdentifier();
 
     return identifier.replace(/-name$/, "");
   }
@@ -79,7 +80,7 @@ export default class ContactsPage {
 
   @Step("Expect contact {{0}} not displayed")
   async expectSavedContactNotDisplayed(name: string) {
-    await this.savedContactName(name).expectNotVisible();
+    await this.savedContactName(name).expectNotExist();
   }
 
   @Step("Expect saved contacts in order")
@@ -126,7 +127,7 @@ export default class ContactsPage {
 
   @Step("Expect contact row {{0}} removed")
   async expectSavedContactRemoved(rowId: string) {
-    await this.savedContactRow(rowId).expectNotVisible();
+    await this.savedContactRow(rowId).expectNotExist();
   }
 
   @Step("Expect the empty contacts list")

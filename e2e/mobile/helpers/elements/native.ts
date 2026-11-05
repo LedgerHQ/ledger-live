@@ -134,6 +134,12 @@ export class NativeHandle implements ElementHandle {
     return label ?? "";
   }
 
+  /** Waits for visibility, then returns the element's `testID`, e.g. the full id behind a regex match. */
+  async getIdentifier(timeout = TIMEOUT.xxlarge): Promise<string> {
+    const { identifier } = await this.getAttributes(timeout);
+    return identifier;
+  }
+
   /**
    * Returns whether the element becomes visible within `timeout`, for an element that may or may not
    * appear. A hung app still throws.
@@ -175,6 +181,14 @@ export class NativeHandle implements ElementHandle {
   /** Asserts the element is not visible now. A Detox expect: synchronised with the app, it does not wait. */
   async expectNotVisible(): Promise<void> {
     await withHardTimeout(detoxExpect(this.raw).not.toBeVisible());
+  }
+
+  /**
+   * Asserts the element is not in the view hierarchy now, e.g. a deleted row. Stricter than
+   * {@link expectNotVisible}: an element scrolled off screen or hidden behind a sheet still fails.
+   */
+  async expectNotExist(): Promise<void> {
+    await withHardTimeout(detoxExpect(this.raw).not.toExist());
   }
 
   /** Asserts the element's text now. A Detox expect: synchronised with the app, it does not wait. */

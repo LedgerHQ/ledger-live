@@ -43,6 +43,7 @@ export default class ContactDetailPage {
   private readonly deleteConfirmButton = byId("contacts-delete-contact-confirm");
   private readonly renameDevicePending = byId("contacts-rename-contact-pending");
   private readonly renameDeviceContinue = byId("contacts-rename-contact-continue-on-device");
+  private readonly name = byId("contacts-detail-name");
   private readonly nameWithText = (name: string) =>
     byIdAndText({ id: "contacts-detail-name", text: name });
   private readonly networkGroup = (networkId: string) =>
@@ -61,7 +62,7 @@ export default class ContactDetailPage {
 
   // The id is assigned on save, so the row is found from the displayed value.
   private async getAddressId(address: string): Promise<string> {
-    const { identifier } = await this.addressValue(address).getAttributes();
+    const identifier = await this.addressValue(address).getIdentifier();
 
     return identifier.replace(/^contacts-detail-address-/, "").replace(/-value$/, "");
   }
@@ -77,13 +78,15 @@ export default class ContactDetailPage {
 
   @Step("Expect the rename device sheet to be gone")
   async expectRenameDeviceSheetClosed() {
-    await this.renameDevicePending.waitNotExist();
-    await this.renameDeviceContinue.waitNotExist();
+    await this.renameDevicePending.waitNotExist(TIMEOUT.xxlarge);
+    await this.renameDeviceContinue.waitNotExist(TIMEOUT.xxlarge);
   }
 
   @Step("Expect contact detail name to be {{0}}")
   async expectName(name: string, timeout = TIMEOUT.medium) {
+    // After a rename the old name stays on screen until the update lands, so wait for the new one.
     await this.nameWithText(name).waitVisible(timeout);
+    await this.name.expectText(name);
   }
 
   @Step("Expect the contact to have no address")
@@ -147,6 +150,8 @@ export default class ContactDetailPage {
   async expectAddressSaved(address: string, networkId: string) {
     await this.networkGroup(networkId).waitVisible();
     await this.addressValue(address).waitVisible();
+    await this.networkGroup(networkId).expectVisible();
+    await this.addressValue(address).expectVisible();
   }
 
   @Step("Expect {{{0}}} to be labelled {{1}}")
@@ -164,7 +169,7 @@ export default class ContactDetailPage {
     await this.deleteAddressAction.tap();
     await this.deleteAddressContent.waitFullyVisible();
     await this.deleteAddressConfirmButton.tap();
-    await this.addressRow(rowId).expectNotVisible();
+    await this.addressRow(rowId).expectNotExist();
   }
 
   @Step("Open the contact actions menu")
