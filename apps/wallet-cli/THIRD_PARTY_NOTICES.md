@@ -20,7 +20,7 @@ The wallet-cli source code itself is licensed under Apache License 2.0; see the 
 | purify-ts | 2.1.0 | ISC | Copyright (c) 2018, Stanislav Iliev |
 | react-redux | 9.2.0 | MIT | Copyright (c) 2015-present Dan Abramov |
 | rxjs | 7.8.2 | Apache-2.0 | Copyright (c) 2015-2018 Google, Inc., Netflix, Inc., Microsoft Corp. and contributors |
-| usb | 2.17.0 | MIT | Copyright (c) 2012 Nonolith Labs, LLC |
+| usb | 3.2.1 | MIT | Copyright (c) 2026 Rob Moran |
 | yocto-spinner | 0.2.0 | MIT | Copyright (c) Sindre Sorhus |
 | zod | 4.4.3 | MIT | Copyright (c) 2025 Colin McDonnell |
 
@@ -32,7 +32,7 @@ For `rxjs` (Apache-2.0), the same Apache-2.0 v2.0 text shipped in the `LICENSE` 
 
 The packages below are inlined into `bin/wallet-cli` by the bundler, in addition to the direct dependencies listed above. They are grouped by license; full license texts are reproduced in section 4. Copyright information was resolved by reading the upstream `LICENSE` file when available, otherwise by reading the `author`/`contributors` field of the upstream `package.json`, otherwise (rare cases) by alignment with the package's homepage or repository.
 
-### MIT License (196 packages)
+### MIT License (194 packages)
 
 | Package | Version | Copyright |
 |---|---|---|
@@ -143,7 +143,7 @@ The packages below are inlined into `bin/wallet-cli` by the bundler, in addition
 | @types/ms | 0.7.34 | Copyright (c) Microsoft Corporation. |
 | @types/node | 16.9.1 | Copyright (c) Microsoft Corporation. |
 | @types/node | 24.12.0 | Copyright (c) Microsoft Corporation. |
-| @types/w3c-web-usb | 1.0.10 | Copyright (c) Microsoft Corporation. |
+| @types/w3c-web-usb | 1.0.14 | Copyright (c) Microsoft Corporation. |
 | abort-controller | 3.0.0 | Copyright (c) 2017 Toru Nagashima |
 | any-base | 1.1.0 | Kamil Harasimowicz |
 | await-to-js | 3.0.0 | Dima Grossman |
@@ -182,8 +182,6 @@ The packages below are inlined into `bin/wallet-cli` by the bundler, in addition
 | math-intrinsics | 1.1.0 | Copyright (c) 2024 ECMAScript Shims |
 | mime | 3.0.0 | Copyright (c) 2010 Benjamin Thomas, Robert Kieffer |
 | ms | 2.1.3 | Copyright (c) 2020 Vercel, Inc. |
-| node-addon-api | 8.7.0 | Copyright (c) 2017 [Node.js API collaborators](https://github.com/nodejs/node-addon-api#collaborators) |
-| node-gyp-build | 4.8.0 | Copyright (c) 2017 Mathias Buus |
 | object-inspect | 1.13.4 | Copyright (c) 2013 James Halliday |
 | omggif | 1.0.10 | Dean McNamee |
 | oxfmt | 0.36.0 | Boshen and oxc contributors |

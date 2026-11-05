@@ -12,7 +12,6 @@ import type {
   SendApduResult,
 } from "@ledgerhq/device-management-kit";
 import { Just, Left, Maybe, Nothing, Right } from "purify-ts";
-import { WebUSBDevice } from "usb";
 import {
   FRAME_SIZE,
   LEDGER_WEBUSB_CONFIGURATION_VALUE,
@@ -21,8 +20,26 @@ import {
 
 const CLOSE_READ_LOOP_TIMEOUT_MS = 1_000;
 
+// node-usb defaults transfers to a 1s timeout and cancels them at once with 0; reads wait for the user.
+const IN_TRANSFER_TIMEOUT_MS = 2_147_483_647;
+const OUT_TRANSFER_TIMEOUT_MS = 10_000;
+
+/** A WebUSB device from node-usb, whose transfers take an extra timeout argument. */
+export type NodeUsbDevice = USBDevice & {
+  transferIn(
+    endpointNumber: number,
+    length: number,
+    timeout?: number,
+  ): Promise<USBInTransferResult>;
+  transferOut(
+    endpointNumber: number,
+    data: BufferSource,
+    timeout?: number,
+  ): Promise<USBOutTransferResult>;
+};
+
 export type NodeWebUsbApduSenderDependencies = {
-  device: WebUSBDevice;
+  device: NodeUsbDevice;
   interfaceNumber: number;
 };
 
@@ -33,17 +50,6 @@ export type NodeWebUsbApduSenderConstructorArgs = {
   loggerFactory: (tag: string) => LoggerPublisherService;
   closeReadLoopTimeoutMs?: number;
 };
-
-async function gracefullyResetDevice(device: WebUSBDevice): Promise<void> {
-  if (process.platform === "win32") {
-    return;
-  }
-  try {
-    await device.reset();
-  } catch {
-    // Same as hw-transport-webusb: reset is best-effort
-  }
-}
 
 function bufferFromInTransfer(data: DataView): Uint8Array {
   return new Uint8Array(data.buffer, data.byteOffset, data.byteLength);
@@ -83,6 +89,7 @@ export class NodeWebUsbApduSender implements DeviceApduSender<NodeWebUsbApduSend
   private readLoopPromise: Promise<void> | null = null;
   private closeConnectionPromise: Promise<void> | null = null;
   private readonly closeReadLoopTimeoutMs: number;
+  private readonly channel: Uint8Array;
 
   constructor({
     dependencies,
@@ -91,7 +98,8 @@ export class NodeWebUsbApduSender implements DeviceApduSender<NodeWebUsbApduSend
     loggerFactory,
     closeReadLoopTimeoutMs = CLOSE_READ_LOOP_TIMEOUT_MS,
   }: NodeWebUsbApduSenderConstructorArgs) {
-    const channel = Maybe.of(crypto.getRandomValues(new Uint8Array(2)));
+    this.channel = crypto.getRandomValues(new Uint8Array(2));
+    const channel = Maybe.of(this.channel);
     this.dependencies = dependencies;
     this.apduSenderFactory = apduSenderFactory;
     this.apduSender = this.apduSenderFactory({
@@ -138,7 +146,6 @@ export class NodeWebUsbApduSender implements DeviceApduSender<NodeWebUsbApduSend
         // ignore
       }
       try {
-        await gracefullyResetDevice(device);
         await device.close();
       } catch {
         // ignore
@@ -147,12 +154,11 @@ export class NodeWebUsbApduSender implements DeviceApduSender<NodeWebUsbApduSend
 
     await device.open();
 
-    if (device.configuration === null) {
+    if (!device.configuration) {
       await device.selectConfiguration(LEDGER_WEBUSB_CONFIGURATION_VALUE);
     }
 
-    await gracefullyResetDevice(device);
-
+    // No reset(): with node-usb 3 (nusb) it re-enumerates the device and invalidates this handle.
     try {
       await device.claimInterface(interfaceNumber);
     } catch (e) {
@@ -222,7 +228,11 @@ export class NodeWebUsbApduSender implements DeviceApduSender<NodeWebUsbApduSend
         const raw = frame.getRawData();
         const out = new Uint8Array(raw.byteLength);
         out.set(raw);
-        const result = await device.transferOut(LEDGER_WEBUSB_ENDPOINT_NUMBER, out.buffer);
+        const result = await device.transferOut(
+          LEDGER_WEBUSB_ENDPOINT_NUMBER,
+          out.buffer,
+          OUT_TRANSFER_TIMEOUT_MS,
+        );
         if (result.status !== "ok") {
           this.resolvePendingApdu(
             Left(new OpeningConnectionError(`WebUSB transferOut status: ${result.status}`)),
@@ -264,10 +274,14 @@ export class NodeWebUsbApduSender implements DeviceApduSender<NodeWebUsbApduSend
    * so that the abort timeout can resolve the caller's promise even when
    * `transferIn` is blocked.
    */
-  private async receiveResponseFrames(device: WebUSBDevice, generation: number): Promise<void> {
+  private async receiveResponseFrames(device: NodeUsbDevice, generation: number): Promise<void> {
     try {
       while (this.sendApduPromiseResolver.isJust() && this.readLoopGeneration === generation) {
-        const r = await device.transferIn(LEDGER_WEBUSB_ENDPOINT_NUMBER, FRAME_SIZE);
+        const r = await device.transferIn(
+          LEDGER_WEBUSB_ENDPOINT_NUMBER,
+          FRAME_SIZE,
+          IN_TRANSFER_TIMEOUT_MS,
+        );
         if (this.readLoopGeneration !== generation) {
           break;
         }
@@ -278,6 +292,11 @@ export class NodeWebUsbApduSender implements DeviceApduSender<NodeWebUsbApduSend
           break;
         }
         const chunk = bufferFromInTransfer(r.data);
+        // Without reset(), a killed session's frames can still be queued; they carry another channel.
+        if (chunk[0] !== this.channel[0] || chunk[1] !== this.channel[1]) {
+          this.logger.debug("[receiveResponseFrames] Dropping frame from another channel");
+          continue;
+        }
         this.apduReceiver
           .handleFrame(chunk)
           .map(maybeResponse => {
