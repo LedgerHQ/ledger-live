@@ -17,6 +17,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     supportedCoins: ["algorand"],
     accountDescriptorType: "address",
     loadSetup: () => import("../families/algorand/setup"),
+    loadAssetActivation: () => import("../families/algorand/assetActivation").then(m => m.default),
     loadTransaction: () => import("@ledgerhq/coin-algorand/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-algorand/deviceTransactionConfig").then(m => m.default),
@@ -51,6 +52,8 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     ],
     accountDescriptorType: "utxo",
     loadSetup: () => import("../families/bitcoin/setup"),
+    loadReceiveGetAddressParams: () =>
+      import("../families/bitcoin/receiveGetAddressParams").then(m => m.default),
     loadLocalApi: () =>
       import("../families/bitcoin/coinModuleApi").then(m => m.createLocalBitcoinApi),
     loadTransaction: () => import("@ledgerhq/coin-bitcoin/transaction").then(m => m.default),
@@ -67,6 +70,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     supportedCoins: ["canton_network", "canton_network_devnet", "canton_network_testnet"],
     accountDescriptorType: "address",
     loadSetup: () => import("../families/canton/setup"),
+    loadAccountReceive: () => import("../families/canton/accountReceive").then(m => m.default),
     loadLocalApi: () =>
       import("../families/canton/coinModuleApi").then(m => m.createLocalCantonApi),
     loadTransaction: () => import("@ledgerhq/coin-canton/transaction").then(m => m.default),
@@ -119,6 +123,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     supportedCoins: ["concordium", "concordium_testnet"],
     accountDescriptorType: "address",
     loadSetup: () => import("../families/concordium/setup"),
+    loadAccountReceive: () => import("../families/concordium/accountReceive").then(m => m.default),
     loadTransaction: () => import("@ledgerhq/coin-concordium/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-concordium/deviceTransactionConfig").then(m => m.default),
@@ -250,6 +255,8 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     supportedCoins: ["hedera", "hedera_testnet"],
     accountDescriptorType: "address",
     loadSetup: () => import("../families/hedera/setup"),
+    loadAssetActivation: () => import("../families/hedera/assetActivation").then(m => m.default),
+    loadAccountReceive: () => import("../families/hedera/accountReceive").then(m => m.default),
     loadTransaction: () =>
       isGenericCoinFrameworkFamily("hedera")
         ? import("../families/hedera/transaction").then(m => m.default)
@@ -398,6 +405,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     supportedCoins: ["stellar"],
     accountDescriptorType: "address",
     loadSetup: () => import("../families/stellar/setup"),
+    loadAssetActivation: () => import("../families/stellar/assetActivation").then(m => m.default),
     loadLocalApi: () =>
       import("../families/stellar/coinModuleApi").then(m => m.createLocalStellarApi),
     loadTransaction: () => import("../families/stellar/transaction").then(m => m.default),
@@ -479,6 +487,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     supportedCoins: ["ripple", "ripple_testnet", "ripple_devnet"],
     accountDescriptorType: "address",
     loadSetup: () => import("../families/xrp/setup"),
+    loadAssetActivation: () => import("../families/xrp/assetActivation").then(m => m.default),
     loadLocalApi: () => import("../families/xrp/coinModuleApi").then(m => m.createLocalXrpApi),
     loadTransaction: () => import("../families/xrp/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
@@ -500,6 +509,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     supportedCoins: ["zcash", "zcash_testnet"],
     accountDescriptorType: "utxo",
     loadSetup: () => import("../families/zcash/setup"),
+    loadAccountReceive: () => import("../families/zcash/accountReceive").then(m => m.default),
     loadWalletApiAdapter: () => import("../families/zcash/walletApiAdapter").then(m => m.default),
     loadTransaction: () => import("@ledgerhq/coin-zcash/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>

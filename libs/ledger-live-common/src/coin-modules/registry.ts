@@ -119,6 +119,18 @@ export const loadDeviceTxConfigForFamily = makeLoaderCache(family =>
   loaders.get(family)?.loadDeviceTxConfig?.(),
 );
 
+export const loadAccountReceiveForFamily = makeLoaderCache(family =>
+  loaders.get(family)?.loadAccountReceive?.(),
+);
+
+export const loadAssetActivationForFamily = makeLoaderCache(family =>
+  loaders.get(family)?.loadAssetActivation?.(),
+);
+
+export const loadReceiveGetAddressParamsForFamily = makeLoaderCache(family =>
+  loaders.get(family)?.loadReceiveGetAddressParams?.(),
+);
+
 export const loadWalletApiAdapterForFamily = makeLoaderCache(family =>
   loaders.get(family)?.loadWalletApiAdapter?.(),
 );
