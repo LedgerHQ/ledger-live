@@ -5,6 +5,7 @@ import cryptoFactory from "../chain/chain";
 import cosmosCoinConfig from "../config";
 import { cosmosDefaultsFor } from "../test/cosmosDefaults";
 import { CosmosAPI } from "./Cosmos";
+import { GET_BLOCK_BY_HEIGHT_SDK_EXAMPLE, GET_BLOCK_WITH_TXS_SDK_EXAMPLE } from "./fixtures";
 
 jest.mock("@ledgerhq/live-network/network");
 const mockedNetwork = jest.mocked(network);
@@ -18,6 +19,28 @@ const mockAxiosResponse = (data: any) => {
       headers: {} as any,
     },
   });
+};
+
+const mockNetwork = (implementation: (options: { url: string }) => Promise<unknown>) =>
+  mockedNetwork.mockImplementation(implementation as unknown as typeof network);
+
+const mockNodeAndTxs = (
+  sdkVersion: string,
+  pages: { txs: { txhash: string }[]; total: number }[],
+) => {
+  const requestedUrls: string[] = [];
+  let served = 0;
+  mockNetwork((networkOptions: { url: string }) => {
+    if (networkOptions.url.includes("node_info")) {
+      return Promise.resolve({
+        data: { application_version: { cosmos_sdk_version: sdkVersion } },
+      });
+    }
+    requestedUrls.push(decodeURIComponent(networkOptions.url));
+    const page = pages[served++];
+    return Promise.resolve({ data: { tx_responses: page.txs, total: page.total } });
+  });
+  return requestedUrls;
 };
 
 describe("CosmosApi", () => {
@@ -1115,6 +1138,108 @@ describe("CosmosApi", () => {
           amount: new BigNumber(30),
         }),
       ]);
+    });
+  });
+
+  describe("block queries", () => {
+    it("getLatestBlockInfo maps the latest block", async () => {
+      mockAxiosResponse(GET_BLOCK_BY_HEIGHT_SDK_EXAMPLE);
+
+      await expect(cosmosApi.getLatestBlockInfo()).resolves.toEqual({
+        height: 33721700,
+        hash: GET_BLOCK_BY_HEIGHT_SDK_EXAMPLE.block_id.hash,
+        time: new Date("2026-11-04T10:24:57.711662460Z"),
+      });
+      expect(mockedNetwork).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: "GET",
+          url: expect.stringMatching(/\/cosmos\/base\/tendermint\/v1beta1\/blocks\/latest$/),
+        }),
+      );
+    });
+
+    it("getBlockInfo queries the block at the given height and maps it", async () => {
+      mockAxiosResponse(GET_BLOCK_BY_HEIGHT_SDK_EXAMPLE);
+
+      await expect(cosmosApi.getBlockInfo(33721700)).resolves.toEqual({
+        height: 33721700,
+        hash: GET_BLOCK_BY_HEIGHT_SDK_EXAMPLE.block_id.hash,
+        time: new Date("2026-11-04T10:24:57.711662460Z"),
+      });
+      expect(mockedNetwork).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: "GET",
+          url: expect.stringMatching(/\/cosmos\/base\/tendermint\/v1beta1\/blocks\/33721700$/),
+        }),
+      );
+    });
+
+    it("getBlockWithTxs queries the block with its transactions at the given height", async () => {
+      mockAxiosResponse(GET_BLOCK_WITH_TXS_SDK_EXAMPLE);
+
+      await expect(cosmosApi.getBlockWithTxs(33721701)).resolves.toBe(
+        GET_BLOCK_WITH_TXS_SDK_EXAMPLE,
+      );
+      expect(mockedNetwork).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: "GET",
+          url: expect.stringMatching(/\/cosmos\/tx\/v1beta1\/txs\/block\/33721701$/),
+        }),
+      );
+    });
+
+    it("getTransactionsByHeight pages with the modern params from cosmos-sdk 0.50", async () => {
+      const requestedUrls = mockNodeAndTxs("0.53.0", [
+        { txs: [{ txhash: "A" }, { txhash: "B" }], total: 3 },
+        { txs: [{ txhash: "C" }], total: 3 },
+      ]);
+
+      const txs = await cosmosApi.getTransactionsByHeight(33721701);
+
+      expect(txs.map(tx => tx.txhash)).toEqual(["A", "B", "C"]);
+      expect(requestedUrls).toEqual([
+        expect.stringContaining("query=tx.height=33721701&page=1&limit=100"),
+        expect.stringContaining("query=tx.height=33721701&page=2&limit=100"),
+      ]);
+    });
+
+    it("getTransactionsByHeight pages with the legacy params before cosmos-sdk 0.50", async () => {
+      const requestedUrls = mockNodeAndTxs("0.44.0", [
+        { txs: [{ txhash: "A" }], total: 2 },
+        { txs: [{ txhash: "B" }], total: 2 },
+      ]);
+
+      const txs = await cosmosApi.getTransactionsByHeight(33721701);
+
+      expect(txs.map(tx => tx.txhash)).toEqual(["A", "B"]);
+      expect(requestedUrls).toEqual([
+        expect.stringContaining(
+          "events=tx.height=33721701&pagination.limit=100&pagination.offset=0",
+        ),
+        expect.stringContaining(
+          "events=tx.height=33721701&pagination.limit=100&pagination.offset=100",
+        ),
+      ]);
+    });
+
+    it("getTransactionsByHeight stops on an empty page even if total is larger", async () => {
+      const requestedUrls = mockNodeAndTxs("0.53.0", [{ txs: [], total: 5 }]);
+
+      await expect(cosmosApi.getTransactionsByHeight(33721701)).resolves.toEqual([]);
+      expect(requestedUrls).toHaveLength(1);
+    });
+
+    it("getTransactionsByHeight rejects when a page cannot be fetched", async () => {
+      mockNetwork((networkOptions: { url: string }) => {
+        if (networkOptions.url.includes("node_info")) {
+          return Promise.resolve({
+            data: { application_version: { cosmos_sdk_version: "0.53.0" } },
+          });
+        }
+        return Promise.reject(new Error("boom"));
+      });
+
+      await expect(cosmosApi.getTransactionsByHeight(33721701)).rejects.toThrow("boom");
     });
   });
 

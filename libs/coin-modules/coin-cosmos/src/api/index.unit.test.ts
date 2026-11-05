@@ -10,6 +10,13 @@ jest.mock("../network/Cosmos", () => ({
       .fn()
       .mockResolvedValue({ accountNumber: 0, sequence: 0, pubKeyType: "", pubKey: "" }),
     getLatestBlockInfo: jest.fn().mockResolvedValue({ height: 1, hash: "hash", time: new Date() }),
+    getBlockInfo: jest.fn().mockResolvedValue({ height: 7, hash: "hash7", time: new Date(0) }),
+    getBlockWithTxs: jest.fn().mockResolvedValue({
+      block_id: { hash: "hash7" },
+      block: { header: { height: "7", time: "1970-01-01T00:00:00Z" }, data: { txs: [] } },
+      txs: [],
+    }),
+    getTransactionsByHeight: jest.fn().mockResolvedValue([]),
     getTransactionsPage: jest.fn().mockResolvedValue({ streams: [] }),
     getValidators: jest.fn().mockResolvedValue([]),
     getDelegations: jest.fn().mockResolvedValue([]),
@@ -43,14 +50,7 @@ describe("api/createApi", () => {
   // Absent, raising "<name> is not supported" through the resolver — exhaustive by `toEqual`.
   it("omits the capabilities the chain has none of", async () => {
     await expect(capabilityReport(createApi("cosmos"), context)).resolves.toEqual({
-      unsupported: [
-        "call",
-        "craftRawTransaction",
-        "getBlock",
-        "getBlockInfo",
-        "getRewards",
-        "register",
-      ],
+      unsupported: ["call", "craftRawTransaction", "getRewards", "register"],
       inconsistent: [],
     });
   });
@@ -61,6 +61,8 @@ describe("api/createApi", () => {
       "getBalance",
       "getNextSequence",
       "lastBlock",
+      "getBlockInfo",
+      "getBlock",
       "validateAddress",
       "broadcast",
       "craftTransaction",
@@ -85,6 +87,11 @@ describe("api/createApi", () => {
     ]);
     await expect(api.getNextSequence(context, "cosmos1a")).resolves.toBe(0n);
     await expect(api.lastBlock(context)).resolves.toHaveProperty("height", 1);
+    await expect(api.getBlockInfo(context, 7)).resolves.toHaveProperty("hash", "hash7");
+    await expect(api.getBlock(context, 7)).resolves.toEqual({
+      info: { height: 7, hash: "hash7", time: new Date(0) },
+      transactions: [],
+    });
     await expect(api.listOperations(context, "cosmos1a", { minHeight: 0 })).resolves.toEqual({
       items: [],
     });

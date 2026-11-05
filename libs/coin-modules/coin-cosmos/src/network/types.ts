@@ -73,7 +73,7 @@ type Block = {
     app_hash: string;
     last_results_hash: string;
     evidence_hash: string;
-    proposer_addres: string;
+    proposer_address: string;
   };
   data: {
     txs: string[];
@@ -115,7 +115,7 @@ type Block = {
                 validator_address: string;
                 timestamp: string;
                 signature: string;
-              };
+              }[];
             };
           };
         };
@@ -349,4 +349,27 @@ export type GetValidatorItem = {
 
 export type GetValidatorsSDK = {
   validators: GetValidatorItem[];
+};
+
+export type GetBlockByHeightSDK = GetLatestBlockSDK;
+
+export type BlockTxSDK = {
+  body: {
+    messages: ({ "@type": string } & Record<string, unknown>)[];
+    memo: string;
+  } & Record<string, unknown>;
+  auth_info: {
+    fee: {
+      amount: { denom: string; amount: string }[];
+      gas_limit: string;
+      payer: string;
+      granter: string;
+    };
+  } & Record<string, unknown>;
+  signatures: string[];
+};
+
+export type GetBlockWithTxsSDK = GetBlockByHeightSDK & {
+  txs: BlockTxSDK[];
+  pagination: { next_key: string | null; total: string } | null;
 };
