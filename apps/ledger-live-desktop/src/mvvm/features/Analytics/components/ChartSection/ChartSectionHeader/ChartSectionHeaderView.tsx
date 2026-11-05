@@ -13,8 +13,7 @@ export function ChartSectionHeaderView({ viewModel }: ChartSectionHeaderViewProp
     balance,
     balanceAvailable,
     isLoading,
-    variationAvailable = true,
-    isVariationLoading = false,
+    variationStatus,
     balanceFormatter,
     discreet,
     percentageValue,
@@ -43,10 +42,10 @@ export function ChartSectionHeaderView({ viewModel }: ChartSectionHeaderViewProp
         ) : (
           <Skeleton className="h-48 w-256 rounded-md" data-testid="analytics-balance-skeleton" />
         )}
-        {balanceAvailable && isVariationLoading && (
+        {balanceAvailable && variationStatus === "loading" && (
           <Skeleton className="h-24 w-128 rounded-md" data-testid="analytics-variation-skeleton" />
         )}
-        {balanceAvailable && variationAvailable && !isVariationLoading && (
+        {balanceAvailable && variationStatus === "ready" && (
           <ChartSectionHeaderVariation
             percentageValue={percentageValue}
             discreet={discreet}

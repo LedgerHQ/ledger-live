@@ -31,7 +31,7 @@ import {
   lineChartRangeToPortfolioRange,
   portfolioRangeToLineChartRange,
 } from "../../utils/portfolioRangeMapping";
-import type { ChartSectionViewModelResult, ScrubSelection } from "./types";
+import type { ChartSectionViewModelResult, ChartVariationStatus, ScrubSelection } from "./types";
 
 type UseChartSectionViewModelProps = Readonly<{
   balanceInfo: PortfolioBalanceInfo;
@@ -39,8 +39,7 @@ type UseChartSectionViewModelProps = Readonly<{
   isLoading: boolean;
   contextKey?: string;
   isChartLoading?: boolean;
-  variationAvailable?: boolean;
-  isVariationLoading?: boolean;
+  variationStatus?: ChartVariationStatus;
 }>;
 
 export function useChartSectionViewModel({
@@ -48,8 +47,7 @@ export function useChartSectionViewModel({
   portfolio,
   isLoading,
   isChartLoading,
-  variationAvailable,
-  isVariationLoading,
+  variationStatus,
   contextKey,
 }: UseChartSectionViewModelProps): ChartSectionViewModelResult {
   const { t } = useTranslation();
@@ -174,8 +172,7 @@ export function useChartSectionViewModel({
       scrubSelection,
       chartPrices: prices,
       isLoading,
-      variationAvailable,
-      isVariationLoading,
+      variationStatus,
     },
     chart,
   };

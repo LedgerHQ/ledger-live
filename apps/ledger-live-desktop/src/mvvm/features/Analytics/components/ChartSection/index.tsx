@@ -3,6 +3,7 @@ import type { Portfolio } from "@ledgerhq/types-live";
 import type { PortfolioBalanceInfo } from "LLD/hooks/usePortfolioBalanceDisplayState";
 import { ChartSectionView } from "./ChartSectionView";
 import { useChartSectionViewModel } from "./useChartSectionViewModel";
+import type { ChartVariationStatus } from "./types";
 
 type ChartSectionProps = Readonly<{
   balanceInfo: PortfolioBalanceInfo;
@@ -10,8 +11,7 @@ type ChartSectionProps = Readonly<{
   isLoading: boolean;
   contextKey?: string;
   isChartLoading?: boolean;
-  variationAvailable?: boolean;
-  isVariationLoading?: boolean;
+  variationStatus?: ChartVariationStatus;
   filters?: ReactNode;
   statusContent?: ReactNode;
   headerStatusContent?: ReactNode;
