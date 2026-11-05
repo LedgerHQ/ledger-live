@@ -1,0 +1,48 @@
+name: "[Wallet CLI] - Test on Windows - Called"
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  test-wallet-cli-windows:
+    name: "Test (Windows)"
+    runs-on: windows-2022
+    timeout-minutes: 45
+    continue-on-error: true
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      FORCE_COLOR: 3
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      # Without the Nx cache: on Windows, packing live-common's cached outputs fails with EMFILE
+      # (see tools/nx/print-build-dep-chunks.mjs).
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          skip-nx-cache: "true"
+
+      - name: Install dependencies
+        run: pnpm i --frozen-lockfile --filter "@ledgerhq/wallet-cli..." --filter "ledger-live"
+
+      - name: Build dependencies and typecheck
+        run: pnpm exec nx run @ledgerhq/wallet-cli:typecheck
+
+      - name: Test enroll --detach and wait
+        working-directory: apps/wallet-cli
+        run: >-
+          bun test
+          src/agent-intent/detach.test.ts
+          src/commands/agent-intent/enroll.test.ts
+          src/commands/agent-intent/wait.test.ts
+          src/shared/file-lock.test.ts
