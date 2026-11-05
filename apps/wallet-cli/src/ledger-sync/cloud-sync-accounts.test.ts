@@ -447,7 +447,7 @@ describe("pullSyncedAccounts", () => {
       created.push(options);
       return {
         pull: async () => {
-          for (const event of events) await options.saveNewUpdate(event as never);
+          for (const event of events) await options.saveNewUpdate(event as never, trustchain);
           if (thenThrow) throw thenThrow;
         },
       };

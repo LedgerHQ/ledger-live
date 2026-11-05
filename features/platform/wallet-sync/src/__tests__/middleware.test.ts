@@ -3,11 +3,13 @@ import {
   createQRCodeCandidateInstance,
   createQRCodeHostInstance,
 } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
-import { configureStore } from "@reduxjs/toolkit";
+import { resetTrustchainStore, setTrustchain } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { configureStore, type UnknownAction } from "@reduxjs/toolkit";
 import { CloudSyncSDK } from "@shared/cloud-sync";
 import { getCloudSyncSdk, getLkrpQrCode, getLkrpSdk } from "../middleware";
 import { ledgerSyncReducer } from "../watch";
 import {
+  ACTIVATED,
   blacklist,
   createStore,
   createWalletsync,
@@ -59,18 +61,32 @@ describe("createLedgerSyncMiddleware", () => {
   });
 
   it("should save updates through the walletsync of the current token blacklist", async () => {
-    const store = createStore();
+    const store = createStore(ACTIVATED);
     getCloudSyncSdk(store.dispatch);
     const { saveNewUpdate } = jest.mocked(CloudSyncSDK).mock.calls[0][0];
     const event = { type: "new-data" as const, data: { value: "distant" }, version: 1 };
 
-    await saveNewUpdate(event);
-    await saveNewUpdate(event);
+    await saveNewUpdate(event, trustchain);
+    await saveNewUpdate(event, trustchain);
     store.dispatch(blacklist(["token"]));
-    await saveNewUpdate(event);
+    await saveNewUpdate(event, trustchain);
 
     expect(createWalletsync.mock.calls).toEqual([[[]], [["token"]]]);
     expect(save).toHaveBeenCalledWith({ value: "distant" }, 1, null, expect.any(Function));
+  });
+
+  it.each<[string, UnknownAction]>([
+    ["a reset", resetTrustchainStore()],
+    ["a new pairing", setTrustchain({ ...trustchain, rootId: "paired-root-id" })],
+  ])("should drop an update that settles after %s", async (_, action) => {
+    const store = createStore(ACTIVATED);
+    getCloudSyncSdk(store.dispatch);
+    const { saveNewUpdate } = jest.mocked(CloudSyncSDK).mock.calls[0][0];
+
+    store.dispatch(action);
+    await saveNewUpdate({ type: "new-data", data: { value: "distant" }, version: 1 }, trustchain);
+
+    expect(save).not.toHaveBeenCalled();
   });
 
   it("should host a pairing as this instance, adding the other member to its trustchain", async () => {
