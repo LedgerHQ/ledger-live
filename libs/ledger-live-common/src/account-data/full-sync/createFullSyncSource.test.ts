@@ -87,6 +87,17 @@ describe("createFullSyncSource", () => {
     expect(syncLegacyAccount).toHaveBeenCalledTimes(1);
   });
 
+  it("reads where the synced account receives", async () => {
+    const synced = { ...account, freshAddress: "0x0000000000000000000000000000000000000002" };
+    await expect(source(account, synced).read?.receive?.(target, undefined)).resolves.toMatchObject(
+      {
+        status: "ready",
+        address: "0x0000000000000000000000000000000000000002",
+      },
+    );
+    expect(syncLegacyAccount).toHaveBeenCalledTimes(1);
+  });
+
   it("applies the asset filter of the query to the operations", async () => {
     const synced = { ...account, pendingOperations: [], subAccounts: [] };
     const filterAsset = BalanceAssetIdSchema.parse("ethereum/erc20/usd_tether__erc20_");

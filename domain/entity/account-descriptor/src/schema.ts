@@ -9,6 +9,15 @@ const withinBip32Range = (path: string) =>
     .slice(1)
     .every(segment => Number.parseInt(segment, 10) < 2 ** 31);
 
+/** A full BIP32 path, e.g. "m/44h/60h/0h/0/0"; "'" and "H" are read as "h". */
+export const DerivationPathSchema = z
+  .string()
+  .regex(/^m(\/(0|[1-9]\d*)[hH']?)+$/, "Path must look like m/44h/60h/0h/0/0")
+  .transform(canonicalPath)
+  .refine(withinBip32Range, { message: "Path index must be below 2^31" });
+
+export type DerivationPath = z.infer<typeof DerivationPathSchema>;
+
 /** `account` names a real account; `mock` a generated one, served by the mock source only. */
 export const AccountPurposeSchema = z.enum(["account", "mock"]);
 
@@ -44,11 +53,7 @@ export const AddressAccountDescriptorSchema = z.object({
   network: NetworkSchema,
   address: z.string().min(1),
   /** Full derivation path, e.g. "m/44h/60h/0h/0/0"; "'" and "H" are read as "h". */
-  path: z
-    .string()
-    .regex(/^m(\/(0|[1-9]\d*)[hH']?)+$/, "Path must look like m/44h/60h/0h/0/0")
-    .transform(canonicalPath)
-    .refine(withinBip32Range, { message: "Path index must be below 2^31" }),
+  path: DerivationPathSchema,
 });
 
 export const AccountDescriptorSchema = z.discriminatedUnion("type", [
