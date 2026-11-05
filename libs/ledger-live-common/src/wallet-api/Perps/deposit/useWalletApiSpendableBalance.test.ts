@@ -4,7 +4,7 @@
 import "../../../__tests__/test-helpers/dom-polyfill";
 import BigNumber from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { renderHook, waitFor } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import { useWalletApiSpendableBalance } from "./useWalletApiSpendableBalance";
 
 const mockResolveWalletApiSpendableBalance = jest.fn<Promise<BigNumber>, [AccountLike]>();
@@ -27,8 +27,8 @@ describe("useWalletApiSpendableBalance", () => {
   it("is pending until the bridge answers, then gives the Wallet API balance", async () => {
     const { result } = renderHook(() => useWalletApiSpendableBalance(aleo, undefined));
 
-    expect(result.current).toBeUndefined();
-    await waitFor(() => expect(result.current?.toFixed()).toBe("10"));
+    expect(result.current.balance).toBeUndefined();
+    await waitFor(() => expect(result.current.balance?.toFixed()).toBe("10"));
   });
 
   it("is pending again, and never shows the old balance, when the account changes", async () => {
@@ -36,18 +36,38 @@ describe("useWalletApiSpendableBalance", () => {
       ({ account }) => useWalletApiSpendableBalance(account, undefined),
       { initialProps: { account: aleo } },
     );
-    await waitFor(() => expect(result.current?.toFixed()).toBe("10"));
+    await waitFor(() => expect(result.current.balance?.toFixed()).toBe("10"));
 
     rerender({ account: other });
 
-    expect(result.current).toBeUndefined();
-    await waitFor(() => expect(result.current?.toFixed()).toBe("7"));
+    expect(result.current.balance).toBeUndefined();
+    await waitFor(() => expect(result.current.balance?.toFixed()).toBe("7"));
+  });
+
+  it("keeps the balance of the same account while a store refresh resolves it again", async () => {
+    let finishRefresh: (balance: BigNumber) => void = () => {};
+    const { result, rerender } = renderHook(
+      ({ account }) => useWalletApiSpendableBalance(account, undefined),
+      { initialProps: { account: aleo } },
+    );
+    await waitFor(() => expect(result.current.balance?.toFixed()).toBe("10"));
+    mockResolveWalletApiSpendableBalance.mockImplementation(
+      () => new Promise(resolve => (finishRefresh = resolve)),
+    );
+
+    rerender({ account: { ...aleo } as AccountLike });
+
+    expect(result.current).toEqual({ balance: new BigNumber(10), isRefreshing: true });
+
+    await act(async () => finishRefresh(new BigNumber(12)));
+
+    expect(result.current).toEqual({ balance: new BigNumber(12), isRefreshing: false });
   });
 
   it("asks nothing without an account", () => {
     const { result } = renderHook(() => useWalletApiSpendableBalance(undefined, undefined));
 
-    expect(result.current).toBeUndefined();
+    expect(result.current.balance).toBeUndefined();
     expect(mockResolveWalletApiSpendableBalance).not.toHaveBeenCalled();
   });
 });

@@ -160,7 +160,7 @@ export function useDepositFormErrors({
 
   const trackedErrorKeyRef = useRef<string | null>(null);
   useEffect(() => {
-    if (isQuoteLoading) return;
+    if (isQuoteLoading || isBalancePending) return;
     const code = statusError?.code ?? null;
     const key = code && [code, sourceCurrency, targetCurrency].join("|");
     if (key === trackedErrorKeyRef.current) return;
@@ -172,6 +172,7 @@ export function useDepositFormErrors({
     });
   }, [
     analyticsProperties,
+    isBalancePending,
     isQuoteLoading,
     sourceCurrency,
     statusError?.code,
@@ -284,12 +285,15 @@ export function usePerpsDepositForm({
   const feeAccount = depositAccount
     ? getDepositFeeAccount(depositAccount, parentAccount)
     : undefined;
-  const depositWalletApiBalance = useWalletApiSpendableBalance(depositAccount, parentAccount);
+  const depositBalanceState = useWalletApiSpendableBalance(depositAccount, parentAccount);
   const needsFeeBalance = feeAccount !== undefined && feeAccount !== depositAccount;
-  const feeWalletApiBalance = useWalletApiSpendableBalance(
+  const feeBalanceState = useWalletApiSpendableBalance(
     needsFeeBalance ? feeAccount : undefined,
     undefined,
   );
+  const depositWalletApiBalance = depositBalanceState.balance;
+  const feeWalletApiBalance = feeBalanceState.balance;
+  const isBalanceRefreshing = depositBalanceState.isRefreshing || feeBalanceState.isRefreshing;
   const isBalancePending =
     (depositAccount !== undefined && depositWalletApiBalance === undefined) ||
     (needsFeeBalance && feeWalletApiBalance === undefined);
@@ -377,6 +381,7 @@ export function usePerpsDepositForm({
 
   return {
     ...formErrors,
+    canReview: formErrors.canReview && !isBalanceRefreshing,
     sentAmount,
     quote: quoteResult?.quote,
     isQuoteLoading,

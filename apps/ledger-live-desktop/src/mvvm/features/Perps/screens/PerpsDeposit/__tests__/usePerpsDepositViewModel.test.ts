@@ -11,8 +11,10 @@ import { usePerpsDepositViewModel, type PerpsDepositData } from "../usePerpsDepo
 
 const mockOpenAssetAndAccount = jest.fn();
 jest.mock("@ledgerhq/live-common/wallet-api/Perps/deposit/useWalletApiSpendableBalance", () => ({
-  useWalletApiSpendableBalance: (account?: { spendableBalance: unknown }) =>
-    account?.spendableBalance,
+  useWalletApiSpendableBalance: (account?: { spendableBalance: unknown }) => ({
+    balance: account?.spendableBalance,
+    isRefreshing: false,
+  }),
 }));
 
 jest.mock("LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer", () => ({

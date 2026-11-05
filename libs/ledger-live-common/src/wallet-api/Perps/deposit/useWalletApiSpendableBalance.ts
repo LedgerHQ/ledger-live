@@ -3,10 +3,15 @@ import type BigNumber from "bignumber.js";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { resolveWalletApiSpendableBalance } from "../../converters";
 
+export type WalletApiSpendableBalance = Readonly<{
+  balance: BigNumber | undefined;
+  isRefreshing: boolean;
+}>;
+
 export function useWalletApiSpendableBalance(
   account: AccountLike | undefined,
   parentAccount: Account | undefined,
-): BigNumber | undefined {
+): WalletApiSpendableBalance {
   const [resolved, setResolved] = useState<{ account: AccountLike; balance: BigNumber } | null>(
     null,
   );
@@ -22,5 +27,9 @@ export function useWalletApiSpendableBalance(
     };
   }, [account, parentAccount]);
 
-  return resolved && resolved.account === account ? resolved.balance : undefined;
+  const isSameAccount = account !== undefined && resolved?.account.id === account.id;
+  return {
+    balance: isSameAccount ? resolved?.balance : undefined,
+    isRefreshing: isSameAccount && resolved?.account !== account,
+  };
 }

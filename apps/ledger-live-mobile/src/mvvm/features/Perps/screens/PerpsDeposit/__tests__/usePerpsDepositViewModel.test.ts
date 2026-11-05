@@ -18,8 +18,10 @@ import {
 
 const mockOpenDrawer = jest.fn();
 jest.mock("@ledgerhq/live-common/wallet-api/Perps/deposit/useWalletApiSpendableBalance", () => ({
-  useWalletApiSpendableBalance: (account?: { spendableBalance: unknown }) =>
-    account?.spendableBalance,
+  useWalletApiSpendableBalance: (account?: { spendableBalance: unknown }) => ({
+    balance: account?.spendableBalance,
+    isRefreshing: false,
+  }),
 }));
 
 jest.mock("LLM/features/ModularDrawer", () => ({

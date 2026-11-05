@@ -19,14 +19,17 @@ jest.mock("./useDepositQuote", () => ({
 }));
 
 const mockUseWalletApiSpendableBalance = jest.fn<
-  BigNumber | undefined,
+  { balance: BigNumber | undefined; isRefreshing: boolean },
   [AccountLike | undefined]
 >();
 jest.mock("./useWalletApiSpendableBalance", () => ({
   useWalletApiSpendableBalance: (account: AccountLike | undefined) =>
     mockUseWalletApiSpendableBalance(account),
 }));
-const readStoredBalance = (account: AccountLike | undefined) => account?.spendableBalance;
+const readStoredBalance = (account: AccountLike | undefined) => ({
+  balance: account?.spendableBalance,
+  isRefreshing: false,
+});
 
 const mockCancelDepositRequest = jest.fn();
 jest.mock("./request", () => ({
@@ -121,7 +124,7 @@ describe("usePerpsDepositForm", () => {
   });
 
   it("waits for the Wallet API balance before Max, the quote and Review", () => {
-    mockUseWalletApiSpendableBalance.mockReturnValue(undefined);
+    mockUseWalletApiSpendableBalance.mockReturnValue({ balance: undefined, isRefreshing: false });
     const { result } = renderForm();
 
     expect(result.current.maxAmount).toBeNull();
@@ -132,10 +135,30 @@ describe("usePerpsDepositForm", () => {
     );
   });
 
-  it("uses the Wallet API balance of the bridge for Max and the balance check", () => {
-    mockUseWalletApiSpendableBalance.mockImplementation(account =>
-      account === depositAccount ? new BigNumber("10000000") : account?.spendableBalance,
+  it("keeps the quote, and blocks Review, while a store refresh checks the balance again", () => {
+    const { result, rerender, params, track } = renderForm();
+    expect(result.current.canReview).toBe(true);
+    const quoteCalls = mockUsePerpsDepositQuote.mock.calls.length;
+
+    mockUseWalletApiSpendableBalance.mockImplementation(account => ({
+      balance: account?.spendableBalance,
+      isRefreshing: true,
+    }));
+    rerender({ ...params, depositAccount: { ...depositAccount } as TokenAccount });
+
+    expect(result.current.sentAmount).toBe("20");
+    expect(result.current.canReview).toBe(false);
+    expect(mockUsePerpsDepositQuote.mock.calls.slice(quoteCalls)).toEqual(
+      expect.arrayContaining([[expect.objectContaining({ amount: "20" })]]),
     );
+    expect(errorEvents(track)).toEqual([]);
+  });
+
+  it("uses the Wallet API balance of the bridge for Max and the balance check", () => {
+    mockUseWalletApiSpendableBalance.mockImplementation(account => ({
+      balance: account === depositAccount ? new BigNumber("10000000") : account?.spendableBalance,
+      isRefreshing: false,
+    }));
     const { result } = renderForm();
 
     expect(result.current.maxAmount).toBe(10);
