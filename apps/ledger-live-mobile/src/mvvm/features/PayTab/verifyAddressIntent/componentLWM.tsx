@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Text, SpotNumber } from "@ledgerhq/lumen-ui-rnative";
 import { ShieldLock } from "@ledgerhq/lumen-ui-rnative/symbols";
-import type { VerifyAddressIntentJobState } from "@features/platform-verify-address-intent";
+import type { VerifyAddressIntentJobState } from "@features/platform-intent-verify-address";
 import { InfoState } from "@shared/ui-info-state";
 import { useTranslation } from "@shared/i18n";
 

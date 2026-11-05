@@ -15,3 +15,14 @@ const coinConfig: {
 } = buildCoinConfig<KaspaCoinConfig>();
 
 export default coinConfig;
+
+export const kaspaDefaults = {
+  kaspa: {
+    status: {
+      type: "active",
+      features: [{ id: "blockchain_txs", status: "active" }],
+    },
+    name: "KASPA",
+    unit: { name: "KAS", code: "KAS", magnitude: 8 },
+  },
+} satisfies Record<string, KaspaCoinConfig>;

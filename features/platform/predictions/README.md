@@ -17,4 +17,6 @@ The live app calls `custom.predictions.onboard` with the documents it needs the 
 
 A sheet that closes before the last step (dismissed, replaced or closed) answers `isCompleted: false` with the versions accepted until then, so the live app can store them and resume after them. Invalid params, including an unknown document, reject with `INVALID_PARAMS`.
 
-`PREDICTIONS_LIVE_APP_ID` is the manifest id Ledger Wallet opens for the `ledgerlive://predictions` deep link.
+`PREDICTIONS_LIVE_APP_ID` is the default manifest id of the Predictions live app, used when the `ptxPredictionsLiveAppDesktop` or `ptxPredictionsLiveAppMobile` flag sets none.
+
+`getPredictionsWebviewInputs(linkParams, hostInputs)` builds the inputs of the Predictions screen's webview: the deep link's params (e.g. `eventSlug`), then the host context (theme, platform, …), which a link param can't override. A `goToURL` gets them in its query too, since Ledger Wallet loads a whitelisted `goToURL` as is.

@@ -7,7 +7,8 @@
   "types": "src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./web": "./src/web/index.web.ts"
   },
   "sideEffects": false,
   "scripts": {
@@ -19,10 +20,14 @@
     "coverage": "jest --coverage"
   },
   "dependencies": {
-    "@domain/entity-currency-fiat": "workspace:*"
+    "@domain/entity-currency-fiat": "workspace:*",
+    "@shared/i18n": "workspace:*"
   },
   "peerDependencies": {
-    "react": "catalog:"
+    "react": "catalog:",
+    "@ledgerhq/crypto-icons": "catalog:",
+    "@ledgerhq/lumen-design-core": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
@@ -32,6 +37,7 @@
     "@testing-library/dom": "catalog:",
     "@testing-library/jest-dom": "catalog:",
     "@testing-library/react": "catalog:",
+    "@testing-library/user-event": "catalog:",
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
     "@typescript/native": "catalog:",
@@ -41,6 +47,20 @@
     "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@ledgerhq/crypto-icons": "catalog:",
+    "@ledgerhq/lumen-design-core": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "@ledgerhq/crypto-icons": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-design-core": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-ui-react": {
+      "optional": true
+    }
   }
 }

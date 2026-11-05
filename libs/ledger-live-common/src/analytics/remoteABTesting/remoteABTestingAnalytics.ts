@@ -14,6 +14,9 @@ export const getRemoteABTestingAttributes = (
   const deviceIntentSignFlag = analyticsFeatureFlagMethod("llmWalletApiDeviceIntentSign");
   const llmWalletApiDeviceIntentSignEnabled = deviceIntentSignFlag?.enabled ?? false;
 
+  const deviceIntentExchangeFlag = analyticsFeatureFlagMethod("llmWalletApiDeviceIntentExchange");
+  const llmWalletApiDeviceIntentExchangeEnabled = deviceIntentExchangeFlag?.enabled ?? false;
+
   const earnBannerFlag = analyticsFeatureFlagMethod("ptxEarnTransactionSuccessBanner");
   const ptxEarnTransactionSuccessBannerEnabled = earnBannerFlag?.enabled ?? false;
 
@@ -22,6 +25,8 @@ export const getRemoteABTestingAttributes = (
     llmTransferButtonCopyVariant: transferFlag?.params?.variantId,
     llmWalletApiDeviceIntentSignEnabled,
     llmWalletApiDeviceIntentSignVariant: deviceIntentSignFlag?.params?.variantId,
+    llmWalletApiDeviceIntentExchangeEnabled,
+    llmWalletApiDeviceIntentExchangeVariant: deviceIntentExchangeFlag?.params?.variantId,
     ptxEarnTransactionSuccessBannerEnabled,
     ptxEarnTransactionSuccessBanner: ptxEarnTransactionSuccessBannerEnabled
       ? PTX_EARN_TRANSACTION_SUCCESS_BANNER_ENABLED

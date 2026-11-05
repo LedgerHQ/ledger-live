@@ -9,7 +9,7 @@ import { createAction as createAppAction } from "./app";
 import { ExchangeType } from "@ledgerhq/live-app-sdk";
 import { getMainAccount } from "../../account";
 import { isExchangeSwap, type Exchange } from "../../exchange/types";
-import { isSwapDisableAppsInstall } from "../../exchange/swap/utils/isIntegrationTestEnv";
+import { buildExchangeAppRequest } from "../../exchange/intents/exchangeAppRequest";
 
 export type StartExchangeSuccessResult = {
   nonce: string;
@@ -113,7 +113,6 @@ export const createAction = (
     const reduxDeviceFrozen = useFrozenValue(reduxDevice, state.freezeReduxDevice);
 
     const { exchangeType, provider, exchange } = startExchangeRequest;
-    const requireLatestFirmware = true;
 
     const mainFromAccount = exchange
       ? getMainAccount(exchange.fromAccount, exchange.fromParentAccount)
@@ -123,40 +122,10 @@ export const createAction = (
         ? getMainAccount(exchange.toAccount, exchange.toParentAccount)
         : null;
 
-    const request = useMemo<AppRequest>(() => {
-      if (isSwapDisableAppsInstall()) {
-        return {
-          appName: "Exchange",
-        };
-      }
-      const dependencies: AppRequest["dependencies"] = [];
-      if (mainFromAccount) {
-        dependencies.push({ appName: mainFromAccount?.currency?.managerAppName });
-      }
-
-      if (mainToAccount) {
-        dependencies.push({ appName: mainToAccount?.currency?.managerAppName });
-      }
-
-      const shouldAddEthApp =
-        (mainFromAccount?.currency?.family === "evm" ||
-          mainToAccount?.currency?.family === "evm") &&
-        mainFromAccount?.currency?.managerAppName !== "Ethereum" &&
-        mainToAccount?.currency?.managerAppName !== "Ethereum";
-
-      // Check if we should add ETH app, for cases like when we want AVAX to use the ETH app.
-      if (shouldAddEthApp) {
-        dependencies.push({
-          appName: "Ethereum",
-        });
-      }
-
-      return {
-        appName: "Exchange",
-        dependencies,
-        requireLatestFirmware,
-      };
-    }, [mainFromAccount, mainToAccount, requireLatestFirmware]);
+    const request = useMemo<AppRequest>(
+      () => buildExchangeAppRequest({ mainFromAccount, mainToAccount }),
+      [mainFromAccount, mainToAccount],
+    );
 
     const appState = createAppAction(connectAppExec).useHook(reduxDeviceFrozen, request);
 

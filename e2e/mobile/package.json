@@ -32,7 +32,6 @@
     "uuid": "catalog:"
   },
   "devDependencies": {
-    "@types/react": "catalog:",
     "@domain/entity-contact": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:^",
     "@jest/reporters": "catalog:",

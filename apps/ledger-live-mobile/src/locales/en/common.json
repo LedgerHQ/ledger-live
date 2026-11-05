@@ -1718,10 +1718,10 @@
       "description": "To sync your apps, please make sure both are updated to the latest version."
     },
     "AppManifestUnknownError": {
-      "title": "Swap Live App not found"
+      "title": "Live App not found"
     },
     "AppManifestNotFoundError": {
-      "title": "Failed to load Swap Live App"
+      "title": "Failed to load Live App"
     },
     "InvalidMemoMina": {
       "title": "Memo text cannot be longer than 32 characters"
@@ -3659,6 +3659,10 @@
     "borrow": {
       "title": "Loans",
       "description": "Borrow stablecoins"
+    },
+    "predictions": {
+      "title": "Predictions",
+      "description": "Position on the future"
     }
   },
   "addAccountsModal": {

@@ -341,8 +341,10 @@ export const DeeplinksProvider = ({
   const lwmBackupHubFlag = useFeature("lwmBackupHub");
   const lwmPayTabFlag = useFeature("lwmPayTab");
   const lwmContactsFlag = useFeature("lwmContacts");
+  const predictionsFlag = useFeature("ptxPredictionsLiveAppMobile");
 
   const buySellUiManifestId = buySellUiFlag?.params?.manifestId;
+  const predictionsManifestId = predictionsFlag?.params?.manifest_id;
 
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const theme = themes[resolvedTheme] as ReactNavigation.Theme;
@@ -424,6 +426,14 @@ export const DeeplinksProvider = ({
                       [NavigatorName.Borrow]: {
                         screens: {
                           [ScreenName.Borrow]: "borrow",
+                        },
+                      },
+                      /**
+                       * ie: "ledgerlive://predictions?eventSlug=XXXX" will open the predictions screen on that event
+                       */
+                      [NavigatorName.Predictions]: {
+                        screens: {
+                          [ScreenName.Predictions]: "predictions",
                         },
                       },
                       /**
@@ -887,6 +897,8 @@ export const DeeplinksProvider = ({
               isLiveAppProviderInitialized: liveAppProviderInitialized,
               localManifests,
               remoteManifests: manifests,
+              isPredictionsEnabled: !!predictionsFlag?.enabled,
+              predictionsManifestId,
               config,
             });
           }
@@ -911,6 +923,8 @@ export const DeeplinksProvider = ({
     liveAppProviderInitialized,
     manifests,
     localManifests,
+    predictionsManifestId,
+    predictionsFlag?.enabled,
     web3hubFlag?.enabled,
     genericAwarenessModalFlag?.enabled,
     lwmProductTourFlag?.enabled,

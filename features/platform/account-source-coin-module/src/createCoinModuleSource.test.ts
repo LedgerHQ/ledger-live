@@ -1,5 +1,5 @@
 import { createAccountDataRouter, type AccountDataSource } from "@domain/api-account-data";
-import { BalanceAssetIdSchema } from "@domain/entity-account-balance";
+import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import { AccountDataSourceIdSchema } from "@domain/entity-account-data";
 import {
   NetworkIdSchema,
@@ -462,7 +462,9 @@ describe("createCoinModuleSource", () => {
         });
         return { host, listOperations };
       };
-      const filterUsdt = { query: { limit: 2, filterAsset: BalanceAssetIdSchema.parse(USDT) } };
+      const filterUsdt = {
+        query: { limit: 2, filterAsset: CryptoOrTokenCurrencyIdSchema.parse(USDT) },
+      };
 
       it("keeps the token's rows, pointing at their transaction's native operation", async () => {
         const { host } = tokenHostOf({
@@ -519,7 +521,7 @@ describe("createCoinModuleSource", () => {
         const router = createAccountDataRouter([createCoinModuleSource(host)]);
 
         const { data } = await router.read("operations", ethereum, {
-          query: { filterAsset: BalanceAssetIdSchema.parse("ethereum") },
+          query: { filterAsset: CryptoOrTokenCurrencyIdSchema.parse("ethereum") },
         });
 
         expect(idsOf(data)).toEqual(["ethereum-0x1-IN"]);
@@ -536,7 +538,7 @@ describe("createCoinModuleSource", () => {
         const router = createAccountDataRouter([createCoinModuleSource(host)]);
 
         const { data } = await router.read("operations", ethereum, {
-          query: { limit: 1, filterAsset: BalanceAssetIdSchema.parse("ethereum") },
+          query: { limit: 1, filterAsset: CryptoOrTokenCurrencyIdSchema.parse("ethereum") },
         });
 
         expect(listOperations).toHaveBeenCalledTimes(1);

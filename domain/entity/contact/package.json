@@ -21,8 +21,7 @@
     "coverage": "jest --coverage"
   },
   "dependencies": {
-    "@domain/entity-currency-crypto": "workspace:*",
-    "@domain/entity-currency-token": "workspace:*",
+    "@domain/entity-currency": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "@shared/cloud-sync-module": "workspace:^",
     "@shared/schema-primitives": "workspace:*",

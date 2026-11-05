@@ -127,8 +127,7 @@ export default class OperationDetailsPage {
   async expectOperationAmountTicker(ticker: string) {
     await this.waitForOperationDetails();
     await this.amount.scrollTo(this.scrollView);
-    const amountText = await this.amount.getText();
-    jestExpect(amountText).toContain(ticker);
+    await this.amount.expectTextContaining(ticker);
   }
 
   @Step("Check view in explorer button")
