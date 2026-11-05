@@ -8,12 +8,8 @@ import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
-const dexProviders = [
-  SwapProvider.ONE_INCH,
-  SwapProvider.VELORA,
-  SwapProvider.UNISWAP,
-  SwapProvider.OKX,
-];
+// Uniswap is temporarily excluded from the cross-account check.
+const dexProviders = [SwapProvider.ONE_INCH, SwapProvider.VELORA, SwapProvider.OKX];
 const fromAccount = TokenAccount.ETH_USDT_1;
 const toAccount = Account.ETH_3;
 
@@ -39,35 +35,33 @@ test.describe("Swap - cross account warning", () => {
     ],
   });
 
-  for (const provider of dexProviders) {
-    test(
-      `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap cross account warning with ${provider.uiName}`,
-      {
-        tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
-        annotation: [
-          {
-            type: "TMS",
-            description: "B2CQA-4013",
-          },
-        ],
-      },
-      async ({ app }) => {
-        test.skip(provider === SwapProvider.UNISWAP, "Temporarily skipped for Uniswap");
+  test(
+    `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap cross account warning with DEX providers`,
+    {
+      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
+      annotation: [
+        {
+          type: "TMS",
+          description: "B2CQA-4013",
+        },
+      ],
+    },
+    async ({ app }) => {
+      const healthyProviders = await keepRunningProviders(dexProviders, fromAccount, toAccount);
+      test.skip(
+        healthyProviders.length === 0,
+        "All DEX providers are currently down — skipping cross-account warning check",
+      );
 
-        const healthyProviders = await keepRunningProviders([provider], fromAccount, toAccount);
-        test.skip(
-          healthyProviders.length === 0,
-          `${provider.uiName} provider is currently down — skipping cross-account warning check`,
-        );
-
-        const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
-        const swap = new Swap(fromAccount, toAccount, minAmount, provider);
-        const errorMessage =
-          "Cross-account swaps are not currently supported. Please ensure your sending and receiving accounts are the same.";
-        await performSwapUntilQuoteSelectionStep({ app, swap, minAmount });
+      const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
+      const swap = new Swap(fromAccount, toAccount, minAmount);
+      const errorMessage =
+        "Cross-account swaps are not currently supported. Please ensure your sending and receiving accounts are the same.";
+      await performSwapUntilQuoteSelectionStep({ app, swap, minAmount });
+      for (const provider of healthyProviders) {
         await app.swap.selectSpecificProvider(provider);
         await app.swap.verifySwapCrossAccountErrorMessageIsCorrect(errorMessage);
-      },
-    );
-  }
+      }
+    },
+  );
 });

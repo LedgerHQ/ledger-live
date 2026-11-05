@@ -1,8 +1,6 @@
 import test from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
-import { setExchangeDependencies } from "@ledgerhq/live-e2e-shared/speculos";
 import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import {
@@ -15,15 +13,14 @@ import { exclusiveLockFor } from "tests/utils/exclusiveLock";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { DEVICE_TAGS, deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
 
-const app: AppInfos = AppInfos.ETHEREUM;
-
 const providerFlowTests = [
   {
     fromAccount: Account.ETH_1,
     toAccount: TokenAccount.ETH_USDC_1,
     provider: SwapProvider.ONE_INCH,
-    xrayTicket: "B2CQA-3120",
+    xrayTicket: "B2CQA-3120, B2CQA-2918, B2CQA-2327, B2CQA-4295",
     bugTickets: ["LIVE-29454", "LIVE-29858"],
+    checkLandingPage: true,
   },
   {
     fromAccount: TokenAccount.ETH_USDT_5,
@@ -31,10 +28,18 @@ const providerFlowTests = [
     provider: SwapProvider.OKX,
     xrayTicket: "B2CQA-4728",
     bugTickets: ["LIVE-29858"],
+    checkLandingPage: false,
   },
 ];
 
-for (const { fromAccount, toAccount, provider, xrayTicket, bugTickets } of providerFlowTests) {
+for (const {
+  fromAccount,
+  toAccount,
+  provider,
+  xrayTicket,
+  bugTickets,
+  checkLandingPage,
+} of providerFlowTests) {
   const approvalLock = exclusiveLockFor({
     cliBroadcastAccounts: tokenApprovalBroadcastAccounts(fromAccount, provider),
   });
@@ -85,7 +90,12 @@ for (const { fromAccount, toAccount, provider, xrayTicket, bugTickets } of provi
         await ensureTokenApproval(fromAccount, provider, minAmount);
         const swap = new Swap(fromAccount, toAccount, minAmount, provider);
 
-        await performSwapUntilQuoteSelectionStep({ app, swap, minAmount });
+        await performSwapUntilQuoteSelectionStep({ app, swap, minAmount, checkLandingPage });
+        if (checkLandingPage) {
+          const providerList = await app.swap.getProviderList();
+          await app.swap.checkQuotesContainerInfos(providerList, toAccount.currency.ticker);
+          await app.swap.checkBestOffer();
+        }
         await app.swap.selectSpecificProvider(provider);
         await app.swap.checkQuoteCardCtaPresence(provider.uiName);
 
@@ -99,59 +109,3 @@ for (const { fromAccount, toAccount, provider, xrayTicket, bugTickets } of provi
     );
   });
 }
-
-test.describe("Swap - landing page", () => {
-  const fromAccount = Account.ETH_1;
-  const toAccount = TokenAccount.ETH_USDC_1;
-
-  setupEnv(true);
-
-  test.beforeEach(async () => {
-    const accountPair: string[] = [fromAccount, toAccount].map(acc =>
-      acc.currency.speculosApp.name.replace(/ /g, "_"),
-    );
-    setExchangeDependencies(accountPair.map(name => ({ name })));
-  });
-
-  test.use({
-    teamOwner: Team.SWAP,
-    userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: app,
-
-    cliCommandsOnApp: [
-      [
-        {
-          app: fromAccount.currency.speculosApp,
-          cmd: liveDataWithAddressCommand(fromAccount),
-        },
-        {
-          app: toAccount.currency.speculosApp,
-          cmd: liveDataWithAddressCommand(toAccount),
-        },
-      ],
-      { scope: "test" },
-    ],
-  });
-
-  test(
-    `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap landing page and best offer`,
-    {
-      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
-      annotation: { type: "TMS", description: "B2CQA-2918, B2CQA-2327, B2CQA-4295" },
-    },
-    async ({ app }) => {
-      const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
-
-      if (!minAmount) {
-        throw new Error("Test failed: No quotes retrieved from swap API.");
-      }
-
-      const swap = new Swap(fromAccount, toAccount, minAmount);
-
-      await performSwapUntilQuoteSelectionStep({ app, swap, minAmount, checkLandingPage: true });
-      const providerList = await app.swap.getProviderList();
-      await app.swap.checkQuotesContainerInfos(providerList, toAccount.currency.ticker);
-      await app.swap.checkBestOffer();
-    },
-  );
-});
