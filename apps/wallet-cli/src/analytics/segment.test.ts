@@ -1,6 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { track } from "@shared/analytics";
-import { WALLET_CLI_USER_ID, disposeAnalytics, startAnalytics } from "./segment";
+import {
+  ANALYTICS_FLUSH_TIMEOUT_MS,
+  WALLET_CLI_USER_ID,
+  disposeAnalytics,
+  startAnalytics,
+} from "./segment";
 
 const STATIC_IP = "0.0.0.0";
 
@@ -69,5 +74,41 @@ describe("wallet-cli analytics privacy", () => {
     expect(trackCalls[0].userId).toBe(WALLET_CLI_USER_ID);
     expect(trackCalls[0].context?.ip).toBe(STATIC_IP);
     expect(Object.keys(trackCalls[0].context ?? {})).toEqual(["ip"]);
+  });
+});
+
+const fakeClient = (closeAndFlush: (options?: { timeout?: number }) => Promise<void>) => () => ({
+  identify: () => {},
+  track: () => {},
+  closeAndFlush,
+});
+
+describe("disposeAnalytics", () => {
+  it("bounds Segment's own flush with the exit timeout", async () => {
+    const closeAndFlushOptions: unknown[] = [];
+    startAnalytics(
+      fakeClient(async options => {
+        closeAndFlushOptions.push(options);
+      }),
+    );
+
+    await disposeAnalytics();
+
+    expect(closeAndFlushOptions).toEqual([{ timeout: ANALYTICS_FLUSH_TIMEOUT_MS }]);
+  });
+
+  it("returns within the bound when the flush never settles", async () => {
+    startAnalytics(fakeClient(() => new Promise<void>(() => {})));
+
+    const startedAt = Date.now();
+    await disposeAnalytics(50);
+
+    expect(Date.now() - startedAt).toBeLessThan(1_000);
+  });
+
+  it("swallows a failed flush", async () => {
+    startAnalytics(fakeClient(() => Promise.reject(new Error("network down"))));
+
+    await expect(disposeAnalytics()).resolves.toBeUndefined();
   });
 });
