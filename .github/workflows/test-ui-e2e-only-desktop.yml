@@ -1260,7 +1260,7 @@ jobs:
           name: allure-results-windows
           path: ${{ env.ALLURE_RESULTS }}
 
-      # The Allure steps below generate a report and recompress screenshots inside the results directory.
+      # get-allure-summary runs `allure generate` inside the results directory.
       - name: Keep the raw results for qaa-allure
         run: cp -R "$ALLURE_RESULTS" "$ALLURE_RESULTS-qaa"
         shell: bash
