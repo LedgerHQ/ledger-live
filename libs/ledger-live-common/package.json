@@ -475,7 +475,6 @@
     "@typescript/native": "catalog:",
     "benchmark": "2.1.4",
     "buffer": "catalog:",
-    "camelcase": "6.3.0",
     "cross-env": "7.0.3",
     "env-cmd": "10.1.0",
     "esbuild": "0.25.5",

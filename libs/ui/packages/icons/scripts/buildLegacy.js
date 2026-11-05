@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const glob = require("glob");
-const camelcase = require("camelcase");
+const { pascalCase } = require("./pascalCase");
 const { transform } = require("@svgr/core");
 const { loadSvgrPlugin } = require("./loadSvgrPlugin");
 
@@ -140,9 +140,7 @@ glob(`${rootDir}/svg-legacy/**/*.svg`, (err, icons) => {
     const parts = icon.split("/");
     const weight = parts[parts.length - 2];
 
-    let name = camelcase([path.basename(iconPathCleaned, ".svg"), weight], {
-      pascalCase: true,
-    });
+    let name = pascalCase([path.basename(iconPathCleaned, ".svg"), weight]);
 
     if (/^\d/.test(name)) name = `_${name}`;
 

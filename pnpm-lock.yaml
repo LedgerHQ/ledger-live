@@ -18947,9 +18947,6 @@ importers:
       buffer:
         specifier: 'catalog:'
         version: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
-      camelcase:
-        specifier: 6.3.0
-        version: 6.3.0
       cross-env:
         specifier: 7.0.3
         version: 7.0.3
@@ -22409,9 +22406,6 @@ importers:
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
-      camelcase:
-        specifier: 6.3.0
-        version: 6.3.0
       glob:
         specifier: ^7.2.0
         version: 7.2.3
@@ -22557,9 +22551,6 @@ importers:
       buffer:
         specifier: 'catalog:'
         version: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
-      camelcase:
-        specifier: 6.3.0
-        version: 6.3.0
       csstype:
         specifier: 3.2.3
         version: 3.2.3
