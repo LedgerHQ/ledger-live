@@ -183,12 +183,14 @@
     "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
-    "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
-    "graphql": "^16.10.0",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
+    "graphql": "16.14.2",
     "jest": "catalog:",
     "oxfmt": "catalog:",
-    "oxlint": "catalog:"
+    "oxlint": "catalog:",
+    "rimraf": "catalog:"
   }
 }

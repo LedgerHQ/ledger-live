@@ -1,6 +1,5 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { getEnv } from "@ledgerhq/live-env";
 import coinConfig from "../config";
 import type { SuiTransport } from "../config";
 import { STAKE_DELEGATOR } from "../test/fixtures";
@@ -13,8 +12,8 @@ function configureTransport(transport: SuiTransport) {
     status: { type: "active" },
     // Every URL always present; the feature flag selects which dispatcher branch runs.
     node: {
-      graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
-      grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
+      graphqlUrl: "https://sui.coin.ledger.com/graphql",
+      grpcUrl: "https://sui.coin.ledger.com",
     },
     features: { transport },
     name: "Sui",

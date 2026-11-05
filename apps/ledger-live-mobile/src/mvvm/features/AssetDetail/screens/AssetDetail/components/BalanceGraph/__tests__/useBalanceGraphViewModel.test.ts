@@ -4,10 +4,10 @@ import { useBalanceGraphViewModel } from "../useBalanceGraphViewModel";
 import {
   useGetCurrencyDataQuery,
   useGetAssetChartDataQuery,
+  useGetSupportedChartCounterCurrenciesQuery,
 } from "@ledgerhq/live-common/market/state-manager/marketApi";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
 import { useUsdToFiatRate } from "@features/platform-market-countervalues";
-import { useSupportedCounterCurrencies } from "@ledgerhq/live-common/cg-client/hooks/useCoingeckoDataProvider";
 import {
   mockBtcCryptoCurrency,
   mockEthCryptoCurrency,
@@ -24,20 +24,20 @@ jest.mock("@ledgerhq/live-common/market/state-manager/marketApi", () => ({
   ...jest.requireActual("@ledgerhq/live-common/market/state-manager/marketApi"),
   useGetCurrencyDataQuery: jest.fn(),
   useGetAssetChartDataQuery: jest.fn(),
+  useGetSupportedChartCounterCurrenciesQuery: jest.fn(),
 }));
 jest.mock("@features/platform-market-countervalues", () => ({
   ...jest.requireActual("@features/platform-market-countervalues"),
   useUsdToFiatRate: jest.fn(() => ({ status: "ready", rate: 1 })),
 }));
-jest.mock("@ledgerhq/live-common/cg-client/hooks/useCoingeckoDataProvider", () => ({
-  useSupportedCounterCurrencies: jest.fn(() => ({ data: ["usd", "eur", "btc"] })),
-}));
 jest.mock("LLM/features/Receive");
 
 const mockUseGetCurrencyDataQuery = jest.mocked(useGetCurrencyDataQuery);
 const mockUseGetAssetChartDataQuery = jest.mocked(useGetAssetChartDataQuery);
+const mockUseGetSupportedChartCounterCurrenciesQuery = jest.mocked(
+  useGetSupportedChartCounterCurrenciesQuery,
+);
 const mockUseUsdToFiatRate = jest.mocked(useUsdToFiatRate);
-const mockUseSupportedCounterCurrencies = jest.mocked(useSupportedCounterCurrencies);
 const mockUseOpenReceiveDrawer = jest.mocked(useOpenReceiveDrawer);
 const handleOpenReceiveDrawer = jest.fn();
 
@@ -144,9 +144,10 @@ describe("useBalanceGraphViewModel", () => {
     mockCurrency({ data: marketCurrencyData });
     mockChart({ data: CHART_DATA_BY_RANGE });
     mockUseUsdToFiatRate.mockReturnValue({ status: "ready", rate: 1 });
-    mockUseSupportedCounterCurrencies.mockReturnValue({
-      data: ["usd", "eur", "btc"],
-    } as unknown as ReturnType<typeof useSupportedCounterCurrencies>);
+    mockUseGetSupportedChartCounterCurrenciesQuery.mockReturnValue({
+      data: ["usd", "eur", "bitcoin"],
+      isError: false,
+    } as unknown as ReturnType<typeof useGetSupportedChartCounterCurrenciesQuery>);
     mockUseOpenReceiveDrawer.mockReturnValue({
       handleOpenReceiveDrawer,
       openReceiveForAccount: jest.fn(),
@@ -483,23 +484,26 @@ describe("useBalanceGraphViewModel", () => {
     const withBtcCounterValue: StateOption = {
       overrideInitialState: (state: State): State => ({
         ...state,
-        settings: { ...state.settings, counterValue: "BTC" },
+        settings: { ...state.settings, counterValue: "bitcoin" },
       }),
     };
 
-    it("fetches the chart in BTC directly (natively supported by CoinGecko)", () => {
+    it("fetches the chart in USD when the ticker is outside the chart allowlist", () => {
       renderVM({ currency: mockBtcCryptoCurrency }, withBtcCounterValue);
 
       expect(mockUseGetAssetChartDataQuery).toHaveBeenCalledWith(
-        expect.objectContaining({ counterCurrency: "btc" }),
+        expect.objectContaining({ counterCurrency: "usd" }),
         expect.anything(),
       );
+      expect(mockUseUsdToFiatRate).toHaveBeenCalledWith("btc", expect.anything());
     });
 
-    it("serves the BTC-denominated series directly without rescaling", () => {
+    it("rescales the USD chart into the BTC counter value", () => {
+      mockUseUsdToFiatRate.mockReturnValue({ status: "ready", rate: 2 });
+
       const { result } = renderVM({ currency: mockBtcCryptoCurrency }, withBtcCounterValue);
 
-      expect(result.current.series[0]?.data).toEqual([100, 110, 120, 50000]);
+      expect(result.current.series[0]?.data).toEqual([200, 220, 240, 50000]);
     });
   });
 

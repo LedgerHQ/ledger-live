@@ -2,6 +2,7 @@ import React from "react";
 import { PreChecksStateType, type PreChecksState } from "@ledgerhq/live-dmk-shared";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type { OsUpdateSheetSpec, OsUpdateStepLayoutSpec } from "..";
+import { getConnectionTimedOutSheet } from "../getConnectionTimedOutSheet";
 import { OsUpdateButton } from "../../../analytics/types";
 import { PreparingScreen } from "../../PreparingScreen";
 import { BatteryTooLowContent } from "../../../sheets/BatteryTooLowContent";
@@ -15,6 +16,7 @@ type Props = Readonly<{
   deviceName: string;
   productName: string;
   trackClick: (button: OsUpdateButton) => void;
+  exportLogs: () => void;
 }>;
 
 function getSheet({
@@ -23,6 +25,7 @@ function getSheet({
   deviceName,
   productName,
   trackClick,
+  exportLogs,
 }: Props): OsUpdateSheetSpec | undefined {
   switch (state.type) {
     case PreChecksStateType.LOADING:
@@ -33,12 +36,15 @@ function getSheet({
       };
     case PreChecksStateType.DEVICE_DISCONNECTED:
       return { content: <DeviceDisconnectedContent /> };
+    case PreChecksStateType.CONNECTION_TIMED_OUT:
+      return getConnectionTimedOutSheet({ retry: state.retry, trackClick, exportLogs });
     case PreChecksStateType.BATTERY_TOO_LOW: {
       const onCancel = () => {
         trackClick(OsUpdateButton.CANCEL);
         state.cancel();
       };
       return {
+        hideHeader: true,
         content: (
           <BatteryTooLowContent
             productName={productName}

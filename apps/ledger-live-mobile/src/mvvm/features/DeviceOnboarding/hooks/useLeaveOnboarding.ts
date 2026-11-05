@@ -5,7 +5,6 @@ import {
   type DeviceOnboardingExitReason,
 } from "@features/platform-device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
@@ -16,6 +15,7 @@ type UseLeaveOnboardingInput = {
   device: Device | null;
   navigateOnExit: boolean;
   wasReadOnlyAtEntry: boolean;
+  getNavigation?: () => NavigationProp<ParamListBase> | null;
 };
 
 /**
@@ -26,15 +26,16 @@ export function useLeaveOnboarding({
   device,
   navigateOnExit,
   wasReadOnlyAtEntry,
+  getNavigation,
 }: UseLeaveOnboardingInput) {
-  const navigation = useNavigation<NavigationProp<ParamListBase>>();
+  const screenNavigation = useNavigation<NavigationProp<ParamListBase>>();
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const { notifyFlowCompleted } = useNotificationsPrompt();
-  const { shouldDisplayMyWallet } = useWalletFeaturesConfig("mobile");
 
   return (reason: DeviceOnboardingExitReason, context: DeviceOnboardingContext) => {
-    if (!navigateOnExit || !device) return;
+    const navigation = getNavigation ? getNavigation() : screenNavigation;
+    if (!navigateOnExit || !device || !navigation) return;
     const genuine = isCurrentSessionGenuine(context);
     const seeded = context.isOnboarded === true;
     const firmwareNeedsLegacyFlow =
@@ -47,7 +48,6 @@ export function useLeaveOnboarding({
     exitActions[reason]({
       navigation,
       dispatch,
-      shouldDisplayMyWallet,
       device,
       wasReadOnlyAtEntry,
       isGenuine: genuine,

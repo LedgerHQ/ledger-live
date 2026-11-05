@@ -11,22 +11,17 @@ import {
   Tag,
 } from "@ledgerhq/lumen-ui-react";
 import { ChevronRight, Contact } from "@ledgerhq/lumen-ui-react/symbols";
-
-export type ContactsButtonProps = {
-  title: string;
-  description: string;
-  newBadgeLabel?: string;
-  onClick: () => void;
-};
+import type { ContactsButtonProps } from "./ContactsButton.types";
 
 export function ContactsButton({
   title,
   description,
   newBadgeLabel,
-  onClick,
-}: Readonly<ContactsButtonProps>) {
+  onOpenContacts,
+  testID = "my-wallet-contacts-button",
+}: ContactsButtonProps) {
   return (
-    <Card type="interactive" onClick={onClick} data-testid="my-wallet-contacts-button">
+    <Card type="interactive" onClick={onOpenContacts} data-testid={testID}>
       <CardHeader>
         <CardLeading>
           <Spot icon={Contact} />

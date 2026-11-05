@@ -1,4 +1,5 @@
-import { getInitialURL, resolveInitialURL } from "./helpers";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getInitialURL, isBitcoinSignPsbtOptionsAllowed, resolveInitialURL } from "./helpers";
 
 describe("wallet-api helpers", () => {
   describe("isWhitelistedDomain (via getInitialURL)", () => {
@@ -634,6 +635,34 @@ describe("wallet-api helpers", () => {
       });
       // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
       expect(resolveInitialURL({}, manifest).rejectedGoToURL).toBeUndefined();
+    });
+  });
+
+  describe("isBitcoinSignPsbtOptionsAllowed", () => {
+    it.each([
+      ["bitcoin", undefined, true],
+      ["bitcoin", {}, true],
+      ["bitcoin", { dependencies: [] }, true],
+      ["bitcoin", { hwAppId: "Hashi" }, true],
+      ["bitcoin_testnet", { hwAppId: "Hashi Test" }, true],
+      ["bitcoin", { hwAppId: "Hashi Test" }, false],
+      ["bitcoin_testnet", { hwAppId: "Hashi" }, false],
+      ["bitcoin", { hwAppId: "Jibberish" }, false],
+      ["bitcoin", { hwAppId: "hashi" }, false],
+      ["bitcoin", { hwAppId: "" }, false],
+      ["litecoin", { hwAppId: "Hashi" }, false],
+      ["bitcoin", { hwAppId: "Hashi", dependencies: ["Bitcoin"] }, true],
+      ["bitcoin", { dependencies: ["Bitcoin"] }, true],
+      ["bitcoin", { hwAppId: "Jibberish", dependencies: ["Bitcoin"] }, false],
+      ["bitcoin", { hwAppId: "Bitcoin" }, true],
+      ["bitcoin_testnet", { hwAppId: "Bitcoin Test" }, true],
+      ["litecoin", { hwAppId: "Litecoin" }, true],
+      ["bitcoin", { hwAppId: "Bitcoin Test" }, false],
+      ["bitcoin_testnet", { hwAppId: "Bitcoin" }, false],
+    ])("%s with %j is allowed: %s", (currencyId, options, expected) => {
+      expect(isBitcoinSignPsbtOptionsAllowed(getCryptoCurrencyById(currencyId), options)).toBe(
+        expected,
+      );
     });
   });
 });

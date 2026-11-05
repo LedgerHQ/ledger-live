@@ -139,13 +139,12 @@ describe("cardano bridge", () => {
       ["a non-empty assetName", mockToken],
       ["an empty assetName", mockEmptyNameToken],
     ])("getTokenFromAsset(getAssetFromToken(token)) resolves a token with %s", async (_, token) => {
-      mockFindTokenByAddressInCurrency.mockImplementation(
-        async (address, currencyId, identifier) =>
-          currencyId === cardano.id &&
-          address === token.contractAddress &&
-          identifier === token.tokenIdentifier
-            ? token
-            : undefined,
+      mockFindTokenByAddressInCurrency.mockImplementation(async (address, currencyId, identifier) =>
+        currencyId === cardano.id &&
+        address === token.contractAddress &&
+        identifier === token.tokenIdentifier
+          ? token
+          : undefined,
       );
 
       const result = await getTokenFromAsset(cardano, getAssetFromToken(token, "addr1qxtest"));

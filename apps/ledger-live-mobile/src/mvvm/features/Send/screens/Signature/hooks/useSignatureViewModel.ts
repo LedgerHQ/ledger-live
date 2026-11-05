@@ -25,6 +25,7 @@ import { useSendSignature } from "../../../context/SendSignatureContext";
 import { useSponsoredSend } from "../../../context/SponsoredSendContext";
 import { useSignatureTracking } from "./useSignatureTracking";
 import { signTransactionIntentLWMDefinition } from "../intents/signTransactionIntent/intentLWMDefinition";
+import type { SignatureExtraProps } from "../intents/signTransactionIntent/types";
 
 function normalizeError(error: unknown): Error {
   return error instanceof Error ? error : new Error(String(error));
@@ -159,6 +160,10 @@ export function useSignatureViewModel() {
     () => (request ? createIntent(signTransactionIntentLWMDefinition, request) : null),
     [request],
   );
+  const intentExtraProps = useMemo<SignatureExtraProps>(
+    () => ({ sponsoredTransfer: isSponsoredTransfer }),
+    [isSponsoredTransfer],
+  );
 
   const onIntentJobStateChanged = useCallback(
     (jobState: SignTransactionIntentJobState) => {
@@ -199,6 +204,7 @@ export function useSignatureViewModel() {
     request,
     deviceInitializationInput,
     signatureIntent,
+    intentExtraProps,
     isSigningCompleted,
     onIntentJobStateChanged,
     // On a signing failure the executor keeps the sheet open and renders its native

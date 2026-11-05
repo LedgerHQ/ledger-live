@@ -30,6 +30,7 @@ export function AccountSettingsSheetView({
   onShowMenu,
   onShowRemove,
   onHidden,
+  onEvent,
   testID,
 }: AccountSettingsSheetViewProps) {
   const onModalHide = () => {
@@ -58,12 +59,17 @@ export function AccountSettingsSheetView({
               onViewAdvancedLogs={onViewAdvancedLogs}
               explorerUrl={explorerUrl}
               onRemoveAccount={onShowRemove}
+              onEvent={onEvent}
             />
           </>
         ) : (
           <>
             <BottomSheetHeader density="compact" />
-            <RemoveAccountContent onConfirm={onConfirmRemove} onCancel={onClose} />
+            <RemoveAccountContent
+              onConfirm={onConfirmRemove}
+              onCancel={onClose}
+              onEvent={onEvent}
+            />
           </>
         )}
       </SheetContent>

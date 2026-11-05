@@ -55,7 +55,8 @@ const updatesTerm = (context: OverallProgressContext): number => {
 
 /**
  * Clamped monotonic: the terms are recomputed from a different mix at each phase, and the bar must
- * never go backwards on the screen. The restore runs in a step of its own and reports 0 to 1,
+ * never go backwards on the screen while an action runs. Only a restarted action takes it back, by
+ * lowering `lastProgress` itself. The restore runs in a step of its own and reports 0 to 1,
  * which is taken as is and only ever weighted here.
  */
 export const overallProgress = (context: OverallProgressContext): number => {

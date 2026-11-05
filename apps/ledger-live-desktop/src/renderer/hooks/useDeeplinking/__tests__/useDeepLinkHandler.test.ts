@@ -477,27 +477,61 @@ describe("useDeepLinkHandler", () => {
 
   describe("predictions deeplink", () => {
     const predictionsDeeplink = "ledgerwallet://predictions?eventSlug=will-btc-hit-100k";
-    const onboardedState = { settings: { hasCompletedOnboarding: true } };
+    const onboardedState = {
+      settings: { hasCompletedOnboarding: true },
+      ...withFlagOverrides({
+        ptxPredictionsLiveAppDesktop: {
+          enabled: true,
+          params: { manifest_id: "predictions-live-app" },
+        },
+      }),
+    };
 
-    it("opens the predictions live app when its manifest is found", () => {
+    it("opens the predictions screen when its manifest is found", () => {
       mockLiveAppCatalog({ isLoaded: true });
       mockUseLiveAppManifest.mockReturnValue({ id: "predictions-live-app" } as LiveAppManifest);
       const { result } = renderHook(() => useDeepLinkHandler(), { initialState: onboardedState });
 
       result.current.handler(predictionsDeeplink, false);
 
-      expect(mockNavigate).toHaveBeenCalledWith("/platform/predictions-live-app", {
-        state: { eventSlug: "will-btc-hit-100k" },
+      expect(mockNavigate).toHaveBeenCalledWith("/predictions", {
+        state: { eventSlug: "will-btc-hit-100k", returnTo: "/" },
       });
     });
 
-    it("opens the predictions live app while the live app catalog is loading", () => {
+    it("opens the predictions screen when only the manifest set by the flag is found", () => {
+      mockLiveAppCatalog({ isLoaded: true });
+      mockUseLiveAppManifest.mockImplementation(appId =>
+        appId === "predictions-live-app-stg"
+          ? ({ id: "predictions-live-app-stg" } as LiveAppManifest)
+          : undefined,
+      );
+      const { result } = renderHook(() => useDeepLinkHandler(), {
+        initialState: {
+          ...onboardedState,
+          ...withFlagOverrides({
+            ptxPredictionsLiveAppDesktop: {
+              enabled: true,
+              params: { manifest_id: "predictions-live-app-stg" },
+            },
+          }),
+        },
+      });
+
+      result.current.handler(predictionsDeeplink, false);
+
+      expect(mockNavigate).toHaveBeenCalledWith("/predictions", {
+        state: { eventSlug: "will-btc-hit-100k", returnTo: "/" },
+      });
+    });
+
+    it("opens the predictions screen while the live app catalog is loading", () => {
       const { result } = renderHook(() => useDeepLinkHandler(), { initialState: onboardedState });
 
       result.current.handler(predictionsDeeplink, true);
 
-      expect(mockNavigate).toHaveBeenCalledWith("/platform/predictions-live-app", {
-        state: { eventSlug: "will-btc-hit-100k" },
+      expect(mockNavigate).toHaveBeenCalledWith("/predictions", {
+        state: { eventSlug: "will-btc-hit-100k", returnTo: "/" },
       });
     });
 
@@ -508,6 +542,26 @@ describe("useDeepLinkHandler", () => {
 
       mockLiveAppCatalog({ isLoaded: true });
       rerender();
+      result.current.handler(predictionsDeeplink, false);
+
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
+
+    it("ignores the link when the predictions flag is off, even with its manifest found", () => {
+      mockLiveAppCatalog({ isLoaded: true });
+      mockUseLiveAppManifest.mockReturnValue({ id: "predictions-live-app" } as LiveAppManifest);
+      const { result } = renderHook(() => useDeepLinkHandler(), {
+        initialState: {
+          ...onboardedState,
+          ...withFlagOverrides({
+            ptxPredictionsLiveAppDesktop: {
+              enabled: false,
+              params: { manifest_id: "predictions-live-app" },
+            },
+          }),
+        },
+      });
+
       result.current.handler(predictionsDeeplink, false);
 
       expect(mockNavigate).not.toHaveBeenCalled();

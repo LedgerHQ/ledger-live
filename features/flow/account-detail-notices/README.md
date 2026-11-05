@@ -76,6 +76,6 @@ notice id, so a new id without copy does not compile.
      `apps/ledger-live-mobile/src/mvvm/features/AccountDetail/__integrations__/accountDetailNotices.integration.test.tsx`.
    - LWD: the family section of the Account Detail page, the same way.
 9. **Checks**, from the package folder: `tsc --noEmit -p tsconfig.web.json`, the same for
-   `tsconfig.native.json` and `tsconfig.test.json` with the repo-root `tsc`, `jest`,
-   `pnpm unimported`; from the repo root: `node tools/nx-plugins/enforce-i18n-keys/validate.js`
+   `tsconfig.native.json` and `tsconfig.test.json`, `jest`; from the repo root: `pnpm knip:all`,
+   `node tools/nx-plugins/enforce-i18n-keys/validate.js`
    and `node tools/nx-plugins/enforce-package-structure/validate.js features/flow/account-detail-notices`.

@@ -6,6 +6,7 @@ import {
   isAccountDataReceived,
 } from "@domain/entity-account-data";
 import {
+  NetworkIdSchema,
   computeAccountUUID,
   type AccountDescriptor,
   type AccountUUID,
@@ -72,7 +73,7 @@ export const descriptorOf = (index: number, network = "ethereum"): AccountDescri
   purpose: "account",
   version: "2",
   type: "address",
-  network,
+  network: NetworkIdSchema.parse(network),
   address: `0x${index}`,
   path: `m/44h/60h/${index}h/0/0`,
 });

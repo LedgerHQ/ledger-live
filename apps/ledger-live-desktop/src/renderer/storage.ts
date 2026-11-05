@@ -22,9 +22,11 @@ import { knownDevicesStoreSelector } from "./reducers/knownDevices";
 import { ExportedWalletState } from "~/renderer/reducers/wallet";
 import type { PersistedCAL } from "@domain/api-currency-token";
 import type { PersistedIdentities } from "@domain/entity-client-identity";
+import type { PredictionsState } from "@domain/entity-predictions";
 import type { FeatureFlagsState } from "@shared/feature-flags";
 import type { RestorableLargeScreenUpsellModalState } from "@features/flow-large-screen-upsell";
 import type { PayCardBalanceState } from "@features/flow-pay-balance/state";
+import type { AccountAnalyticsIntroductionState } from "@features/flow-account-detail-analytics-notice/state";
 import type { PayCardFeatureTourState } from "@features/flow-pay-feature-tour/state";
 import type { PayRequestVerifyHintState } from "@features/flow-pay-request/state";
 import type { PayCardLoginIntroState } from "@features/flow-pay-card-auth/state";
@@ -68,6 +70,7 @@ type DatabaseValues = {
   wallet: ExportedWalletState;
   market: Market;
   marketBanner: MarketBanner;
+  predictions: PredictionsState;
   knownDevices: KnownDevices;
   cryptoAssets: PersistedCAL;
   featureFlags: Pick<FeatureFlagsState, "overrides" | "bannerVisible">;
@@ -85,6 +88,7 @@ type DatabaseValues = {
   };
   largeScreenUpsellModal: RestorableLargeScreenUpsellModalState;
   payCard: PayCard;
+  accountAnalyticsIntroduction: AccountAnalyticsIntroductionState;
 };
 
 // Infers the type seen from the user side (non-raw).

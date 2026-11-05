@@ -11,13 +11,14 @@ import {
 } from "../utils/types";
 import { getChartRangeSegment, getRange } from "../utils";
 import { buildMarketListParams, getNextMarketListPage } from "../utils/marketListQueryArg";
-import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH } from "../utils/timers";
+import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH, ONE_DAY } from "../utils/timers";
 import {
   GlobalMarketData,
   GlobalMarketDataRequestParams,
   GlobalMarketDataResponseSchema,
   MarketChartApiResponseSchema,
   MarketDataTags,
+  SupportedChartCounterCurrenciesSchema,
   MarketListQueryArg,
   MarketPerformersQueryParams,
   MarketsByLedgerIdsQueryParams,
@@ -107,6 +108,7 @@ export const marketApi = createApi({
     MarketDataTags.Performers,
     MarketDataTags.CurrencyData,
     MarketDataTags.ChartData,
+    MarketDataTags.ChartCounterCurrencies,
     MarketDataTags.GlobalData,
     MarketDataTags.TrendingCategories,
     MarketDataTags.TrendingPerformers,
@@ -219,6 +221,27 @@ export const marketApi = createApi({
       },
       keepUnusedDataFor: REFETCH_TIME_ONE_MINUTE / 1000,
     }),
+    getSupportedChartCounterCurrencies: build.query<string[], void>({
+      query: () => "/v3/supported/markets/chart/to",
+      providesTags: [MarketDataTags.ChartCounterCurrencies],
+      transformResponse: (response: unknown): string[] => {
+        const result = SupportedChartCounterCurrenciesSchema.safeParse(response);
+
+        if (!result.success) {
+          log("market", "Invalid supported chart counter currencies response schema:", {
+            errors: result.error.issues,
+          });
+          throw new Error(
+            `[Market API] Chart counter currencies schema validation failed: ${result.error.issues
+              .map(e => `${e.path.join(".")}: ${e.message}`)
+              .join(", ")}`,
+          );
+        }
+
+        return result.data;
+      },
+      keepUnusedDataFor: ONE_DAY / 1000,
+    }),
     getGlobalMarketData: build.query<GlobalMarketData, GlobalMarketDataRequestParams>({
       query: ({ counterCurrency }) => ({
         url: "/v3/markets/global",
@@ -323,6 +346,7 @@ export const {
   useGetMarketsByLedgerIdsQuery,
   useGetCurrencyDataQuery,
   useGetAssetChartDataQuery,
+  useGetSupportedChartCounterCurrenciesQuery,
   useGetGlobalMarketDataQuery,
   useGetTrendingCategoriesQuery,
   useGetTrendingPerformersQuery,

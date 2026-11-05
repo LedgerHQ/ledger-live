@@ -19,8 +19,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/flow/app-password-removal"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@features/platform-app-lock": "workspace:*",
@@ -56,6 +55,7 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",

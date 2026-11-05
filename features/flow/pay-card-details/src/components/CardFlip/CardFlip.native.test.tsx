@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react-native";
 import { CARD_COPY, I18nWrapper } from "../../__tests__/i18nWrapper";
-import { CardFlip } from "./CardFlip.native";
+import { CardFlip } from "./CardFlip";
 import type { CardFlipProps } from "../../types";
 
 const IMAGE_URL = "https://card.test/details-image";

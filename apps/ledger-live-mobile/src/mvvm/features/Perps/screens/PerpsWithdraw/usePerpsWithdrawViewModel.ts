@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { PERPS_UI_USE_CASE } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
+import { PERPS_SWAPKIT_PROVIDER } from "@ledgerhq/live-common/wallet-api/Perps/constants";
+import type { PerpsWithdrawResult } from "@ledgerhq/live-common/wallet-api/Perps/server";
+import type { WithdrawQuote } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/quote";
 import { cancelWithdrawRequest } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/request";
 import {
   usePerpsWithdrawForm,
@@ -20,6 +24,7 @@ import type { RootComposite, StackNavigatorProps } from "~/components/RootNaviga
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "~/const";
 import { applyAmountKey, toAmountText } from "../../utils/amountKeys";
+import type { PerpsWithdrawSummaryParams } from "./components/PerpsWithdrawSummary";
 
 type NavigationProps = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.PerpsWithdraw>
@@ -46,9 +51,25 @@ export type PerpsWithdrawViewModel = Readonly<{
   exceedsBalance: boolean;
   canReview: boolean;
   handleReview: () => void;
+  isSummaryOpen: boolean;
+  /** Changes on every Review, so the summary starts again from the latest quote. */
+  summaryKey: number;
+  summaryParams: PerpsWithdrawSummaryParams | null;
+  closeSummary: () => void;
+  /** The summary with the quote being signed, while the device signs it. */
+  signParams: PerpsWithdrawSummaryParams | null;
+  signingDevice: Device | null | undefined;
+  selectSigningDevice: (device: Device | null | undefined) => void;
+  handOverToDevice: (quote: WithdrawQuote) => void;
+  returnToSummary: () => void;
+  endSigning: (result: PerpsWithdrawResult) => void;
+  leaveWithdraw: () => void;
 }>;
 
-export function usePerpsWithdrawViewModel({ route }: NavigationProps): PerpsWithdrawViewModel {
+export function usePerpsWithdrawViewModel({
+  navigation,
+  route,
+}: NavigationProps): PerpsWithdrawViewModel {
   const walletState = useSelector(walletSelector);
   const accounts = useSelector(flattenAccountsSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
@@ -63,6 +84,11 @@ export function usePerpsWithdrawViewModel({ route }: NavigationProps): PerpsWith
 
   const [amountText, setAmountText] = useState("");
   const [picked, setPicked] = useState<PickedWithdrawAccount | undefined>();
+  const [isSummaryOpen, setIsSummaryOpen] = useState(false);
+  const [summaryKey, setSummaryKey] = useState(0);
+  const [summaryParams, setSummaryParams] = useState<PerpsWithdrawSummaryParams | null>(null);
+  const [signQuote, setSignQuote] = useState<WithdrawQuote | null>(null);
+  const [signingDevice, setSigningDevice] = useState<Device | null | undefined>();
 
   // Leaving before the withdrawal is submitted abandons it; after that this is a no-op.
   useEffect(() => cancelWithdrawRequest, []);
@@ -81,7 +107,7 @@ export function usePerpsWithdrawViewModel({ route }: NavigationProps): PerpsWith
     locale,
     discreet,
   });
-  const { destinationAccount } = form;
+  const { destinationAccount, usdcAmount, quote, quoteAccounts } = form;
   const destinationCurrency = destinationAccount
     ? getAccountCurrency(destinationAccount)
     : undefined;
@@ -108,8 +134,69 @@ export function usePerpsWithdrawViewModel({ route }: NavigationProps): PerpsWith
     });
   }, [openDrawer]);
 
-  // TODO(LIVE-39368): open the withdraw summary.
-  const handleReview = useCallback(() => undefined, []);
+  const handleReview = useCallback(() => {
+    if (!form.canReview || !destinationAccount || !usdcAmount || !quote) return;
+
+    setSummaryParams({
+      sourceAccount,
+      destinationAccount,
+      quote,
+      quoteParams: {
+        amount: usdcAmount.toFixed(),
+        sourceAccount,
+        destinationAccount,
+        accounts: quoteAccounts,
+        counterValueCurrency: counterValueCurrency.ticker,
+      },
+    });
+    // Pinned so closing the sheet shows the reviewed receiver, not a recomputed default.
+    if (!picked) setPicked({ account: destinationAccount });
+    setSummaryKey(key => key + 1);
+    setIsSummaryOpen(true);
+  }, [
+    picked,
+    counterValueCurrency.ticker,
+    destinationAccount,
+    form.canReview,
+    quote,
+    quoteAccounts,
+    sourceAccount,
+    usdcAmount,
+  ]);
+
+  // The form stays mounted under the summary, so closing it keeps the amount and destination.
+  const closeSummary = useCallback(() => setIsSummaryOpen(false), []);
+
+  const signParams = useMemo(
+    () => (summaryParams && signQuote ? { ...summaryParams, quote: signQuote } : null),
+    [signQuote, summaryParams],
+  );
+
+  const handOverToDevice = useCallback((quote: WithdrawQuote) => {
+    setIsSummaryOpen(false);
+    setSignQuote(quote);
+  }, []);
+
+  const returnToSummary = useCallback(() => {
+    setSignQuote(null);
+    setIsSummaryOpen(true);
+  }, []);
+
+  const endSigning = useCallback(
+    ({ swapId }: PerpsWithdrawResult) => {
+      if (!signParams) return;
+      setSignQuote(null);
+      setSigningDevice(undefined);
+      navigation.replace(ScreenName.PerpsTransactionSigned, {
+        receiveCurrencyTicker: getAccountCurrency(signParams.destinationAccount).ticker,
+        swapId,
+        provider: PERPS_SWAPKIT_PROVIDER,
+      });
+    },
+    [navigation, signParams],
+  );
+
+  const leaveWithdraw = useCallback(() => navigation.goBack(), [navigation]);
 
   const sourceName = accountNameWithDefaultSelector(walletState, sourceAccount);
 
@@ -136,5 +223,16 @@ export function usePerpsWithdrawViewModel({ route }: NavigationProps): PerpsWith
     exceedsBalance: form.exceedsBalance,
     canReview: form.canReview,
     handleReview,
+    isSummaryOpen,
+    summaryKey,
+    summaryParams,
+    closeSummary,
+    signParams,
+    signingDevice,
+    selectSigningDevice: setSigningDevice,
+    handOverToDevice,
+    returnToSummary,
+    endSigning,
+    leaveWithdraw,
   };
 }

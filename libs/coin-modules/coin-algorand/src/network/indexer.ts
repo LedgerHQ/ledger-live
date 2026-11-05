@@ -1,4 +1,5 @@
 import network from "@ledgerhq/live-network";
+import { IntDecoding, parseJSON } from "algosdk";
 import { BigNumber } from "bignumber.js";
 import type { AlgorandCoinConfig } from "../config";
 import type {
@@ -6,11 +7,13 @@ import type {
   AlgoPaymentInfo,
   AlgoTransaction,
   AlgoTransactionDetails,
+  ExplorerAmount,
   ExplorerTransaction,
   ExplorerTransactions,
 } from "./types";
 
 const LIMIT = 100;
+const BLOCK_TRANSACTIONS_LIMIT = 1000;
 
 export type GetTransactionsOptions = {
   minRound?: number | undefined;
@@ -63,6 +66,48 @@ export const getAllAccountTransactions = async (
   } while (nextToken);
 
   return mergedTxs;
+};
+
+/**
+ * The top-level transactions of a round, with their inner transactions nested in them.
+ */
+export const getBlockTransactions = async (
+  config: AlgorandCoinConfig,
+  round: number,
+): Promise<ExplorerTransaction<ExplorerAmount>[]> => {
+  const transactions: ExplorerTransaction<ExplorerAmount>[] = [];
+  let nextToken: string | undefined;
+
+  do {
+    const next = nextToken ? `&next=${nextToken}` : "";
+    // live-network hands the request to axios as is, but its type does not declare transformResponse
+    const request = {
+      url: `${config.indexer}/transactions?round=${round}&limit=${BLOCK_TRANSACTIONS_LIMIT}${next}`,
+      transformResponse: parseLosslessJSON,
+    };
+    const { data } = await network<ExplorerTransactions<ExplorerAmount>>(request);
+
+    // An indexer lagging behind the node answers with no transaction instead of an error
+    if (data["current-round"] < round) {
+      throw new Error(`Algorand round ${round} is not indexed yet`);
+    }
+
+    transactions.push(...data.transactions);
+    nextToken = data.transactions.length > 0 ? data["next-token"] : undefined;
+  } while (nextToken);
+
+  return transactions;
+};
+
+// ASA amounts can exceed Number.MAX_SAFE_INTEGER, which JSON.parse would round
+const parseLosslessJSON = (raw: unknown): unknown => {
+  if (typeof raw !== "string") return raw;
+  try {
+    return parseJSON(raw, { intDecoding: IntDecoding.MIXED });
+  } catch {
+    // Like axios, leave a body that is not JSON (e.g. an HTML error page) as it came
+    return raw;
+  }
 };
 
 const parseRawTransaction = (tx: ExplorerTransaction): AlgoTransaction => {

@@ -21,6 +21,7 @@ import type {
 } from "./reducers/types";
 import type { HistoryState } from "./reducers/history";
 import type { LargeScreenUpsellModalState } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
+import type { PredictionsState } from "@domain/entity-predictions";
 import {
   mapPersistedKnownDeviceToKnownDevice,
   type KnownDevicesState,
@@ -36,6 +37,7 @@ import type { PayCardFeatureTourState } from "@features/flow-pay-feature-tour/st
 import type { PayRequestVerifyHintState } from "@features/flow-pay-request/state";
 import type { PayCardLoginIntroState } from "@features/flow-pay-card-auth/state";
 import type { PayCardOnboardingWidgetPersistedState } from "@features/flow-pay-card-widget/state";
+import type { AccountAnalyticsIntroductionState } from "@features/flow-account-detail-analytics-notice/state";
 
 export type PayCardPersistedState = PayCardFeatureTourState &
   PayRequestVerifyHintState &
@@ -296,6 +298,14 @@ export async function saveLargeScreenUpsellModalState(
   await storage.save("largeScreenUpsellModal", largeScreenUpsellModalState);
 }
 
+export function getPredictionsState(): Promise<unknown> {
+  return storage.get("predictions");
+}
+
+export async function savePredictionsState(predictionsState: PredictionsState): Promise<void> {
+  await storage.save("predictions", predictionsState);
+}
+
 export function getMarketState(): Promise<MarketState> {
   return storage.get("market") as Promise<MarketState>;
 }
@@ -326,6 +336,16 @@ export function getPayCardState(): Promise<PayCardPersistedState | null> {
 
 export async function savePayCardState(obj: PayCardPersistedState): Promise<void> {
   await storage.save("payCard", obj);
+}
+
+export function getAccountAnalyticsIntroductionState(): Promise<unknown> {
+  return storage.get("accountAnalyticsIntroduction");
+}
+
+export async function saveAccountAnalyticsIntroductionState(
+  obj: AccountAnalyticsIntroductionState,
+): Promise<void> {
+  await storage.save("accountAnalyticsIntroduction", obj);
 }
 
 export function getTrustchainState(): Promise<TrustchainStore> {

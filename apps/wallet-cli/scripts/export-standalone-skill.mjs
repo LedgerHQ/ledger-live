@@ -5,23 +5,24 @@
 // the published copy and the copy embedded in the binary go through the exact same
 // transform (scripts/standalone-skill-transform.mjs) — keeping them byte-identical
 // is the whole point, and two hand-synced implementations had already drifted.
+// With a version, SKILL.md also names the wallet-cli release it documents.
 //
 // Usage:
-//   node ./scripts/export-standalone-skill.mjs <source-skill-dir> <target-skill-dir>
+//   node ./scripts/export-standalone-skill.mjs <source-skill-dir> <target-skill-dir> [version]
 
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { collectSkillFiles } from "./collect-skill-files.mjs";
-import { rewriteSkillFile } from "./standalone-skill-transform.mjs";
+import { rewriteSkillFile, stampSkillVersion } from "./standalone-skill-transform.mjs";
 
 /** Files that must exist in the export — the workflow used to assert this in bash. */
 const REQUIRED_FILES = ["SKILL.md", "references/business-logic.md"];
 
 async function main() {
-  const [sourceDir, targetDir] = process.argv.slice(2);
+  const [sourceDir, targetDir, version] = process.argv.slice(2);
   if (!sourceDir || !targetDir) {
     throw new Error(
-      "Usage: node ./scripts/export-standalone-skill.mjs <source-skill-dir> <target-skill-dir>",
+      "Usage: node ./scripts/export-standalone-skill.mjs <source-skill-dir> <target-skill-dir> [version]",
     );
   }
 
@@ -44,7 +45,10 @@ async function main() {
     const content = await readFile(path.join(sourceDir, rel), "utf8");
     const target = path.join(targetDir, rel);
     await mkdir(path.dirname(target), { recursive: true });
-    await writeFile(target, rewriteSkillFile(rel, content), "utf8");
+    const rewritten = rewriteSkillFile(rel, content);
+    const stamped =
+      version && rel === "SKILL.md" ? stampSkillVersion(rewritten, version) : rewritten;
+    await writeFile(target, stamped, "utf8");
   }
 
   console.log(`Exported ${files.length} file(s) to ${targetDir}.`);

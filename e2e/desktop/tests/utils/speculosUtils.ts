@@ -5,6 +5,7 @@ import {
   stopSpeculos,
   type SpeculosDevice,
   getSpeculosAddress,
+  describeSpeculosApps,
 } from "@ledgerhq/live-e2e-shared/speculos";
 import invariant from "invariant";
 import * as allure from "allure-js-commons";
@@ -44,11 +45,7 @@ export async function launchSpeculos(
   process.env.SPECULOS_API_PORT = device.port.toString();
   CLI.registerSpeculosTransport(device.id, device.port.toString(), getSpeculosAddress());
 
-  let info = `App: ${device.appName || ""} (${device.appVersion || ""})`;
-  if (device.dependencies?.length) {
-    info += `\nDependencies: ${device.dependencies?.map(dep => dep.name + " (" + dep.appVersion + ")").join(", ") || ""}`;
-  }
-  await allure.description("SPECULOS\n" + info);
+  await allure.description("SPECULOS\n" + describeSpeculosApps(device));
 
   console.warn(
     `Speculos ${device.id} ${appName} started on port ${device.port}, address: ${process.env.SPECULOS_ADDRESS || "http://localhost"}`,
@@ -56,9 +53,11 @@ export async function launchSpeculos(
   return device;
 }
 
-export async function cleanSpeculos(speculos: SpeculosDevice) {
-  await stopSpeculos(speculos.id);
+/** Resolves to whether the release was confirmed. */
+export async function cleanSpeculos(speculos: SpeculosDevice): Promise<boolean> {
+  const released = await stopSpeculos(speculos.id);
   unregisterTransportModule("speculos-http-" + speculos.id);
+  return released;
 }
 
 function restoreProcessEnv(name: string, value: string | undefined) {

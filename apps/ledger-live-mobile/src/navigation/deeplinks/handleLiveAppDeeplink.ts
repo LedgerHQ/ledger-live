@@ -7,17 +7,14 @@ function toPath(url: URL) {
   return url.href.slice(`${url.protocol}//`.length);
 }
 
-function toDiscoverUrl(url: URL) {
-  if (url.hostname !== "predictions") return url;
-  return new URL(`ledgerwallet://discover/${PREDICTIONS_LIVE_APP_ID}${url.search}`);
-}
-
 export function handleLiveAppDeeplink({
   url,
   hasCompletedOnboarding,
   isLiveAppProviderInitialized,
   localManifests,
   remoteManifests,
+  isPredictionsEnabled,
+  predictionsManifestId,
   config,
 }: {
   url: URL;
@@ -25,16 +22,22 @@ export function handleLiveAppDeeplink({
   isLiveAppProviderInitialized: boolean;
   localManifests: LiveAppManifest[];
   remoteManifests: LiveAppManifest[];
+  isPredictionsEnabled: boolean;
+  predictionsManifestId?: string;
   config: Parameters<typeof getStateFromPath>[1];
 }): ReturnType<typeof getStateFromPath> | undefined {
-  const liveAppUrl = toDiscoverUrl(url);
-  const liveAppId = liveAppUrl.pathname.split("/")[1];
+  const isPredictions = url.hostname === "predictions";
+  if (isPredictions && !isPredictionsEnabled) return undefined;
+
+  const liveAppId = isPredictions
+    ? predictionsManifestId || PREDICTIONS_LIVE_APP_ID
+    : url.pathname.split("/")[1];
   if (!hasCompletedOnboarding && !liveAppId.startsWith("protect")) return undefined;
 
   // On a cold start the manifests aren't loaded yet: the live app screen shows its own error if
   // the app doesn't exist.
   if (!isLiveAppProviderInitialized) {
-    return getStateFromPath(toPath(liveAppUrl), config);
+    return getStateFromPath(toPath(url), config);
   }
 
   // Local manifests come first, like useLiveAppManifest on the screen the deeplink opens.
@@ -43,7 +46,9 @@ export function handleLiveAppDeeplink({
   );
   if (!manifest) return undefined;
 
-  liveAppUrl.pathname = `/${manifest.id}`;
-  liveAppUrl.searchParams.set("name", manifest.name);
-  return getStateFromPath(toPath(liveAppUrl), config);
+  if (isPredictions) return getStateFromPath(toPath(url), config);
+
+  url.pathname = `/${manifest.id}`;
+  url.searchParams.set("name", manifest.name);
+  return getStateFromPath(toPath(url), config);
 }

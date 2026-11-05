@@ -5,24 +5,22 @@ import { CardAssetsEmptyState } from "./CardAssetsEmptyState";
 import type { CardAssetsViewModel } from "./types";
 
 type CardAssetsBodyProps = Readonly<
-  Pick<CardAssetsViewModel, "status" | "rows" | "onAssetPress" | "onRetryPress" | "onAddAssetPress">
+  Pick<CardAssetsViewModel, "status" | "rows" | "onOpenAsset" | "onRetry" | "onAddAsset">
 >;
 
 export function CardAssetsBody({
   status,
   rows,
-  onAssetPress,
-  onRetryPress,
-  onAddAssetPress,
+  onOpenAsset,
+  onRetry,
+  onAddAsset,
 }: CardAssetsBodyProps) {
   if (status === "error") {
-    return <CardAssetsEmptyState variant="error" onRetry={onRetryPress} />;
+    return <CardAssetsEmptyState variant="error" onRetry={onRetry} />;
   }
 
   if (status === "empty") {
-    return (
-      <CardAssetsEmptyState variant="empty" onRetry={onRetryPress} onAddAsset={onAddAssetPress} />
-    );
+    return <CardAssetsEmptyState variant="empty" onRetry={onRetry} onAddAsset={onAddAsset} />;
   }
 
   if (status === "loading") {
@@ -38,7 +36,7 @@ export function CardAssetsBody({
   return (
     <Box lx={{ gap: "s8" }}>
       {rows.map(row => (
-        <CardAssetRow key={row.id} row={row} onPress={onAssetPress} />
+        <CardAssetRow key={row.id} row={row} onPress={onOpenAsset} />
       ))}
     </Box>
   );

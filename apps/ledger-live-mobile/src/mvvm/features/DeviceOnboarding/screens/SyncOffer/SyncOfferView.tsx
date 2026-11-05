@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Lottie, resolveLottieSource } from "LLM/components/Lottie";
 import SkipLedgerSyncDrawer from "LLM/components/SkipLedgerSyncDrawer";
 import { DeviceOnboardingCloseBar } from "LLM/features/DeviceOnboarding/components/CloseBar";
@@ -30,6 +31,7 @@ export function SyncOfferView({
   skipDrawer,
 }: SyncOfferViewProps) {
   const { colorScheme } = useTheme();
+  const { bottom: bottomInset } = useSafeAreaInsets();
   const theme = colorScheme === "dark" ? "dark" : "light";
 
   return (
@@ -68,7 +70,7 @@ export function SyncOfferView({
           </Text>
         </Text>
       </Box>
-      <Box lx={{ gap: "s16", paddingHorizontal: "s16", paddingBottom: "s24" }}>
+      <Box lx={{ gap: "s16", paddingHorizontal: "s16" }} style={{ paddingBottom: bottomInset }}>
         <Button
           appearance="base"
           size="lg"

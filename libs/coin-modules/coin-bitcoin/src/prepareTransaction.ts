@@ -2,6 +2,7 @@ import invariant from "invariant";
 import type { Account } from "@ledgerhq/types-live";
 import { getAccountNetworkInfo } from "./getAccountNetworkInfo";
 import type { BitcoinAccount, Transaction } from "./types";
+import { getExcludeUTXOsFromPendingOperations } from "./pendingInputs";
 import { inferFeePerByte } from "./logic";
 import { getWalletAccount } from "./getWalletAccount";
 /**
@@ -79,7 +80,10 @@ export const prepareTransaction = async (
 
   // Auto-populate excludeUTXOs from UTXOs whose transactions can't be fetched
   // This ensures stale/replaced UTXOs are not used
-  const autoExcludeUTXOs = await getExcludeUTXOsFromUnfetchable(account);
+  const autoExcludeUTXOs = [
+    ...(await getExcludeUTXOsFromUnfetchable(account)),
+    ...getExcludeUTXOsFromPendingOperations(account, transaction.replaceTxId),
+  ];
   const currentExclusions = transaction.utxoStrategy?.excludeUTXOs || [];
 
   // Merge auto-excluded with user-excluded (avoid duplicates)

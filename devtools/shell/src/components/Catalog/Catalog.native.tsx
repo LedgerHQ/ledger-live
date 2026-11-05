@@ -1,6 +1,7 @@
 import { ScrollView } from "react-native";
-import { Divider, Box } from "@ledgerhq/lumen-ui-rnative";
+import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { CatalogRow } from "../CatalogRow/CatalogRow";
+import type { ToolKind } from "@devtools/registry";
 import type { IconComponent } from "../../categoryConfig";
 
 export interface CatalogItem {
@@ -9,6 +10,8 @@ export interface CatalogItem {
   readonly description?: string;
   readonly logo?: IconComponent;
   readonly count?: number;
+  readonly kind?: ToolKind;
+  readonly owner?: string;
   readonly onPress?: () => void;
 }
 
@@ -18,11 +21,10 @@ interface CatalogProps {
 
 export function Catalog({ items }: CatalogProps) {
   return (
-    <ScrollView>
+    <ScrollView contentContainerStyle={{ paddingBottom: 16 }}>
       {items.map(({ key, ...row }) => (
         <Box key={key}>
           <CatalogRow {...row} />
-          <Divider />
         </Box>
       ))}
     </ScrollView>

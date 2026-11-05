@@ -34,7 +34,6 @@
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "knip-check": "pnpm knip --directory ../../.. -W libs/coin-tester-modules/coin-tester-aleo",
     "start": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --runInBand"
   },
   "dependencies": {
@@ -54,13 +53,13 @@
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
-    "@types/libsodium-wrappers": "^0.7.13",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
-    "libsodium-wrappers": "^0.8.4",
+    "libsodium-wrappers": "0.8.4",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "rimraf": "^5",
+    "rimraf": "5.0.10",
     "typescript": "catalog:"
   }
 }

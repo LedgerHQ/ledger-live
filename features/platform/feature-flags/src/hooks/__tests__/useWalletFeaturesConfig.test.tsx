@@ -37,8 +37,6 @@ function withDesktopGraduatedFlags(
   return platform === "desktop"
     ? {
         ...config,
-        shouldDisplayAssetSection: true,
-        shouldDisplayMyWallet: true,
         shouldDisplayAggregatedAssets: true,
       }
     : config;
@@ -50,10 +48,7 @@ const makeConfig = (
 ): WalletFeaturesConfig => ({
   isEnabled: value,
   shouldUseLazyOnboarding: value,
-  shouldDisplayAssetSection: value,
   shouldDisplayBrazePlacement: value,
-  shouldDisplayOperationsList: value,
-  shouldDisplayMyWallet: value,
   shouldDisplayAggregatedAssets: value,
   shouldDisplayAssetDiscoverability: value,
   shouldDisplayEarnUpselling: value,
@@ -63,11 +58,8 @@ const makeConfig = (
 
 const makeParams = (value: boolean): Wallet40Params => ({
   lazyOnboarding: value,
-  assetSection: value,
   brazePlacement: value,
-  operationsList: value,
   aggregatedAssets: value,
-  myWallet: value,
   assetDiscoverability: value,
   earnUpselling: value,
   earnSimulator: value,
@@ -112,11 +104,8 @@ describe("useWalletFeaturesConfig hook", () => {
     describe.each(PLATFORMS)("on %s platform", platform => {
       it.each<[string, Wallet40Params, Partial<WalletFeaturesConfig>]>([
         ["lazyOnboarding", { lazyOnboarding: true }, { shouldUseLazyOnboarding: true }],
-        ["assetSection", { assetSection: true }, { shouldDisplayAssetSection: true }],
         ["brazePlacement", { brazePlacement: true }, { shouldDisplayBrazePlacement: true }],
-        ["operationsList", { operationsList: true }, { shouldDisplayOperationsList: true }],
         ["aggregatedAssets", { aggregatedAssets: true }, { shouldDisplayAggregatedAssets: true }],
-        ["myWallet", { myWallet: true }, { shouldDisplayMyWallet: true }],
         ["earnUpselling", { earnUpselling: true }, { shouldDisplayEarnUpselling: true }],
         ["earnSimulator", { earnSimulator: true }, { shouldDisplayEarnSimulator: true }],
       ])("returns the correct config when only %s is enabled", (_, params, expectedOverrides) => {

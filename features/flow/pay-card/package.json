@@ -22,8 +22,7 @@
     "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -c features/flow/pay-card/knip.web.config.mjs -W features/flow/pay-card --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/pay-card/knip.native.config.mjs -W features/flow/pay-card --tsConfig tsconfig.native.json"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@domain/api-card-management": "workspace:^",
@@ -50,9 +49,11 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",

@@ -2,7 +2,6 @@ import { useCallback, useMemo, useRef } from "react";
 import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
 import { rnBleTransportIdentifier, rnHidTransportIdentifier } from "@ledgerhq/live-dmk-mobile";
 import { track } from "@shared/analytics";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useSelector } from "~/context/hooks";
 import {
   hasCompletedOnboardingSelector,
@@ -21,7 +20,6 @@ export function useOsUpdateBannerViewModel() {
   const navigation = useNavigation<BaseNavigation>();
   const route = useRoute();
   const isInMyLedgerDeviceScreen = route.name === ScreenName.MyLedgerDevice;
-  const { shouldDisplayMyWallet } = useWalletFeaturesConfig("mobile");
 
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
@@ -76,18 +74,9 @@ export function useOsUpdateBannerViewModel() {
 
     navigateToMyLedger(navigation, {
       device: lastConnectedDevice,
-      shouldDisplayMyWallet,
       firmwareUpdate: true,
     });
-  }, [
-    page,
-    modelId,
-    lastConnectedDevice,
-    device,
-    isInMyLedgerDeviceScreen,
-    navigation,
-    shouldDisplayMyWallet,
-  ]);
+  }, [page, modelId, lastConnectedDevice, device, isInMyLedgerDeviceScreen, navigation]);
 
   return {
     variant,

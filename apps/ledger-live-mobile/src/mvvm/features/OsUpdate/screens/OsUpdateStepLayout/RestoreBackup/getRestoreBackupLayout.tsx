@@ -7,6 +7,7 @@ import type {
   ProgressDisplay,
 } from "../../../hooks/useFinishingProgress";
 import type { OsUpdateSheetSpec, OsUpdateStepLayoutSpec } from "..";
+import { getConnectionTimedOutSheet } from "../getConnectionTimedOutSheet";
 import { OsUpdateButton } from "../../../analytics/types";
 import { FINISHING_ANIMATION_MS } from "../../UpdateProgressScreen/ProgressBar";
 import { UpdateProgressScreen } from "../../UpdateProgressScreen";
@@ -14,7 +15,6 @@ import { UpdatesAppliedScreen } from "../../UpdatesAppliedScreen";
 import { ContinueOnDeviceContent } from "../../../sheets/ContinueOnDeviceContent";
 import { DeviceDisconnectedContent } from "../../../sheets/DeviceDisconnectedContent";
 import { DeviceLockedContent } from "../../../sheets/DeviceLockedContent";
-import { OutOfMemoryContent } from "../../../sheets/OutOfMemoryContent";
 import { SecureConnectionRefusedContent } from "../../../sheets/SecureConnectionRefusedContent";
 import { UnexpectedErrorContent } from "../../../sheets/UnexpectedErrorContent";
 
@@ -29,6 +29,7 @@ type Props = Readonly<{
   lastDisplay?: ProgressDisplay;
   onClose: () => void;
   trackClick: (button: OsUpdateButton) => void;
+  exportLogs: () => void;
 }>;
 
 function getScreen({
@@ -56,7 +57,14 @@ function getScreen({
           />
         );
       }
-      return <UpdatesAppliedScreen productName={productName} isRestoreOnly onClose={onClose} />;
+      return (
+        <UpdatesAppliedScreen
+          productName={productName}
+          isRestoreOnly
+          restoreStatus={state.restoreResult?.restoreStatus}
+          onClose={onClose}
+        />
+      );
     case RestoreBackupStateType.LOADING:
     case RestoreBackupStateType.DEVICE_LOCKED:
     case RestoreBackupStateType.AWAITING_ALLOW_SECURE_CONNECTION:
@@ -66,7 +74,7 @@ function getScreen({
     case RestoreBackupStateType.AWAITING_CONFIRM_COMMIT_IMAGE:
     case RestoreBackupStateType.ALLOW_SECURE_CONNECTION_REFUSED:
     case RestoreBackupStateType.DEVICE_DISCONNECTED:
-    case RestoreBackupStateType.OUT_OF_MEMORY:
+    case RestoreBackupStateType.CONNECTION_TIMED_OUT:
     case RestoreBackupStateType.UNEXPECTED_ERROR:
       return (
         <UpdateProgressScreen
@@ -87,6 +95,7 @@ function getSheet({
   deviceModelId,
   deviceName,
   trackClick,
+  exportLogs,
 }: Props): OsUpdateSheetSpec | undefined {
   switch (state.type) {
     case RestoreBackupStateType.LOADING:
@@ -115,20 +124,14 @@ function getSheet({
         state.cancel();
       };
       return {
+        hideHeader: true,
         content: <SecureConnectionRefusedContent onRetry={onRetry} onCancel={onCancel} />,
       };
     }
     case RestoreBackupStateType.DEVICE_DISCONNECTED:
       return { content: <DeviceDisconnectedContent /> };
-    case RestoreBackupStateType.OUT_OF_MEMORY: {
-      const onCancel = () => {
-        trackClick(OsUpdateButton.CANCEL);
-        state.cancel();
-      };
-      return {
-        content: <OutOfMemoryContent onCancel={onCancel} />,
-      };
-    }
+    case RestoreBackupStateType.CONNECTION_TIMED_OUT:
+      return getConnectionTimedOutSheet({ retry: state.retry, trackClick, exportLogs });
     case RestoreBackupStateType.UNEXPECTED_ERROR: {
       const onCancel = () => {
         trackClick(OsUpdateButton.CANCEL);
@@ -166,7 +169,7 @@ export function getRestoreBackupProgress(state: RestoreBackupState): FinishingPr
     case RestoreBackupStateType.AWAITING_CONFIRM_COMMIT_IMAGE:
     case RestoreBackupStateType.ALLOW_SECURE_CONNECTION_REFUSED:
     case RestoreBackupStateType.DEVICE_DISCONNECTED:
-    case RestoreBackupStateType.OUT_OF_MEMORY:
+    case RestoreBackupStateType.CONNECTION_TIMED_OUT:
     case RestoreBackupStateType.UNEXPECTED_ERROR:
       return { display: undefined, isDone: false };
     default: {

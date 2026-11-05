@@ -89,6 +89,79 @@ describe("Polkadot Api", () => {
     });
   });
 
+  describe("getBlock", () => {
+    it("returns a block with its transfers and fees", async () => {
+      const block = await module.getBlock(context, 22653132);
+
+      expect(block.info).toEqual({
+        height: 22653132,
+        hash: "0xdfb85c23d2f195e70e87418cb8d3889b1a5a7cb22d46447b6c5d40b9b7eae1fc",
+        time: new Date(1793704368000),
+        parent: {
+          height: 22653131,
+          hash: "0xcfd1fab61599d8545e3f74f127fcd05ebfba9ec374ddf6bb227ae8b123d06ec1",
+        },
+      });
+      expect(block.transactions).toContainEqual({
+        hash: "0x36e4a2ce49d2a2aeff288dfdfd91c9c3ab8d66ec361b72a6b7eb7935569c18cb",
+        failed: false,
+        operations: [
+          {
+            type: "transfer",
+            address: "12burmzVh1dCeZ9KRUV6Pmtabg9MNBNkCh9K7pbzV8dV7xrf",
+            peer: "16QX2GpD4o5FE1bTobpPq7qJYER6rosUbo732jLQtFxfZwAQ",
+            asset: { type: "native" },
+            amount: -10000000n,
+          },
+          {
+            type: "transfer",
+            address: "16QX2GpD4o5FE1bTobpPq7qJYER6rosUbo732jLQtFxfZwAQ",
+            peer: "12burmzVh1dCeZ9KRUV6Pmtabg9MNBNkCh9K7pbzV8dV7xrf",
+            asset: { type: "native" },
+            amount: 10000000n,
+          },
+        ],
+        fees: 8808355n,
+        feesPayer: "12burmzVh1dCeZ9KRUV6Pmtabg9MNBNkCh9K7pbzV8dV7xrf",
+        details: { palletMethod: "balances.transferKeepAlive" },
+      });
+    });
+
+    it("returns the latest block", async () => {
+      const { height, hash } = await module.lastBlock(context);
+
+      const { info } = await module.getBlock(context, height);
+
+      expect(info).toMatchObject({ height, hash });
+    });
+
+    it("rejects a block that does not exist yet", async () => {
+      await expect(module.getBlock(context, Number.MAX_SAFE_INTEGER)).rejects.toThrow(/not found/);
+    });
+  });
+
+  describe("getBlockInfo", () => {
+    it("returns the block info with its timestamp and parent", async () => {
+      const info = await module.getBlockInfo(context, 22653132);
+
+      expect(info).toEqual({
+        height: 22653132,
+        hash: "0xdfb85c23d2f195e70e87418cb8d3889b1a5a7cb22d46447b6c5d40b9b7eae1fc",
+        time: new Date(1793704368000),
+        parent: {
+          height: 22653131,
+          hash: "0xcfd1fab61599d8545e3f74f127fcd05ebfba9ec374ddf6bb227ae8b123d06ec1",
+        },
+      });
+    });
+
+    it("rejects a block that does not exist yet", async () => {
+      await expect(module.getBlockInfo(context, Number.MAX_SAFE_INTEGER)).rejects.toThrow(
+        /not found/,
+      );
+    });
+  });
+
   describe("getBalance", () => {
     it("should fetch balance", async () => {
       // When

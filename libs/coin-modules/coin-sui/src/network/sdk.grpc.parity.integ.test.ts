@@ -1,4 +1,3 @@
-import { getEnv } from "@ledgerhq/live-env";
 import type { SuiCoinConfig, SuiTransport } from "../config";
 import { STAKE_DELEGATOR } from "../test/fixtures";
 import {
@@ -32,8 +31,8 @@ const ACCOUNT = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0
 const configFor = (transport: SuiTransport): SuiCoinConfig => ({
   status: { type: "active" },
   node: {
-    graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
-    grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
+    graphqlUrl: "https://sui.coin.ledger.com/graphql",
+    grpcUrl: "https://sui.coin.ledger.com",
   },
   features: { transport },
   name: "Sui",
@@ -276,13 +275,12 @@ describe("gRPC vs GraphQL parity (live mainnet)", () => {
   });
 
   describe("operations history", () => {
-    // Last on-chain activity 2026-05-07, well past QuickNode's 90-day GraphQL retention. Their
-    // gRPC archive index was capped at ~14 epochs until 2026-08-10; this address is the
+    // QuickNode's gRPC archive index was capped at ~14 epochs until 2026-08-10. This address is the
     // reproduction that got it fixed, so it doubles as the regression guard.
     const STALE_ACCOUNT = "0x19afe206a5d6b85e6d4346abc479e56a036372c93f0e994ad02e9a5e48d94a99";
     const OLDEST_CHECKPOINT = 38176423;
 
-    it("reaches history far older than the GraphQL retention window", async () => {
+    it("reaches history older than the former 14-epoch archive cap", async () => {
       const { transactions } = await withGrpcApi(grpcConfig, api =>
         listTransactionsByAddressGrpc(api, {
           address: STALE_ACCOUNT,
@@ -326,19 +324,6 @@ describe("gRPC vs GraphQL parity (live mainnet)", () => {
       expect(pages).toBeGreaterThan(1);
     });
 
-    // The user-visible symptom this migration exists to fix, reproduced on one address. `ACCOUNT`
-    // last transacted around 2026-05-08, so its whole history has aged out of the 90-day GraphQL
-    // retention window. gRPC's archive index still has it, so an account that looks empty on
-    // GraphQL shows its operations again.
-    it("recovers history that GraphQL has dropped", async () => {
-      const viaGraphql = await getOperations(graphqlConfig, "js:2:sui:x:", ACCOUNT, undefined);
-
-      const viaGrpc = await getOperations(grpcConfig, "js:2:sui:x:", ACCOUNT, undefined);
-
-      expect(viaGraphql).toHaveLength(0);
-      expect(viaGrpc.length).toBeGreaterThan(0);
-    });
-
     it("builds well-formed operations attributed to the account", async () => {
       const operations = await getOperations(grpcConfig, "js:2:sui:x:", ACCOUNT, undefined);
 
@@ -370,9 +355,6 @@ describe("gRPC vs GraphQL parity (live mainnet)", () => {
   // The `ListCheckpoints` request that resolves these digests is otherwise only asserted against a
   // stub. A wrong read-mask path or range bound degrades silently to `synthetic-<sequence>`, which a
   // shape-only assertion accepts, so each digest is checked against the checkpoint it names.
-  //
-  // GraphQL is not the comparator here: this account's history sits outside its retention window —
-  // "recovers history that GraphQL has dropped" asserts GraphQL returns nothing for it.
   describe("listOperations block hashes", () => {
     it("carries the real checkpoint digest at both ends of the page", async () => {
       const page = await getListOperations(grpcConfig, ACCOUNT, "desc", undefined);

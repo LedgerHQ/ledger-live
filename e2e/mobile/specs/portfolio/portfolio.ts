@@ -1,8 +1,6 @@
 import { ApplicationOptions } from "@e2e/page/index";
-import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
-import { isQ2WithOperationsList } from "@e2e/utils/featureFlagUtils";
 
 async function beforeAllFunction(options: ApplicationOptions) {
   await app.init({
@@ -12,31 +10,6 @@ async function beforeAllFunction(options: ApplicationOptions) {
     speculosForSetupOnly: true,
   });
   await app.mainNavigation.waitForWallet40Ready();
-}
-export function runPortfolioTransactionsHistoryTest(
-  account: Account,
-  tmsLinks: string[],
-  tags: string[],
-  operationRowAccountName?: string,
-) {
-  (isQ2WithOperationsList() ? describe.skip : describe)("Portfolio", () => {
-    beforeAll(async () => {
-      await beforeAllFunction({
-        userdata: "skip-onboarding",
-        speculosApp: account.currency.speculosApp,
-        cliCommands: [liveDataCommand(account)],
-      });
-    });
-
-    setTeamOwner(Team.WALLET_XP);
-    tmsLinks.forEach(link => $TmsLink(link));
-    tags.forEach(tag => $Tag(tag));
-    it(`[${account.currency.testLabel}] - Transaction history is displayed after adding accounts`, async () => {
-      await app.portfolio.checkTransactionHistorySection();
-      await app.portfolio.selectAndClickOnLastOperation(/(Fees|Sent).*/i, operationRowAccountName);
-      await app.operationDetails.checkTransactionDetailsVisibility(account.accountName);
-    });
-  });
 }
 
 export function runPortfolioChartsAndAssetsTest(tmsLinks: string[], tags: string[]) {

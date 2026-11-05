@@ -4,6 +4,7 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useState,
   type ReactNode,
 } from "react";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
@@ -21,6 +22,7 @@ import { useSponsoredSendFunnelTracking } from "@ledgerhq/live-common/flows/send
 import type { SponsoredSendActions } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendOrchestration";
 import { useSponsoredSendSession } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendSession";
 import { useSponsoredFeeAmounts } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredFeeAmounts";
+import { useReestimateOnRentDelivery } from "@ledgerhq/live-common/flows/send/sponsored/useReestimateOnRentDelivery";
 import { formatRentPayment } from "@ledgerhq/live-common/flows/send/sponsored/feeAsset";
 import {
   STANDARD_FEE_OPTION_ID,
@@ -46,6 +48,7 @@ type SponsoredSendContextValue = Readonly<{
   sponsoredSelected: boolean;
   sponsoredFeeOptionId: string;
   providerName: string;
+  providerTermsUrl: string | null;
   waivesErrorKeys: readonly string[];
   waivesWarningKeys: readonly string[];
   /** The sponsored pick pays the native fee, so the status entries it waives don't apply. */
@@ -68,7 +71,9 @@ type SponsoredSendContextValue = Readonly<{
   sponsoredMaxAmount: BigNumber | null;
   /** The sponsored pick can't pay the amount and the rent from the fee token. */
   sponsoredUnaffordable: boolean;
+  rentArriving: boolean;
   approvedFee: bigint | null;
+  setAmountFocused: (focused: boolean) => void;
 }>;
 
 const NO_WAIVED_KEYS: readonly string[] = [];
@@ -104,6 +109,8 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
     intentFailed,
     state: sponsoredState,
     actions,
+    rentArriving,
+    rentDeliveredAt,
   } = useSponsoredSendSession({
     enabled: flagEnabled,
     account,
@@ -113,6 +120,7 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
   });
 
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const seamForNewRent = rentArriving ? null : seam;
   const {
     available,
     quote,
@@ -123,7 +131,7 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
     feeTokenAccount,
   } = useSponsoredFeeQuote({
     mainAccount,
-    seam,
+    seam: seamForNewRent,
     intent,
     intentFailed,
     refresh: sponsoredState.phase === SPONSORED_PHASE.IDLE,
@@ -156,6 +164,13 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
     updateTransaction: transactionActions.updateTransaction,
   });
   const { selectedFeeOptionId, sponsoredSelected, selectStandard, resetSelection } = selection;
+
+  const [amountFocused, setAmountFocused] = useState(false);
+  useReestimateOnRentDelivery({
+    deliveredAt: rentDeliveredAt,
+    active: amountFocused && !isSigning,
+    updateTransaction: transactionActions.updateTransaction,
+  });
 
   const { locale } = useLocale();
   const nativeUnit = useMaybeAccountUnit(mainAccount);
@@ -203,6 +218,7 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
   const feeCurrencyTicker = rentPayment?.asset.unit?.code ?? quoteFeeCurrencyTicker;
 
   const providerName = seam?.providerName ?? "";
+  const providerTermsUrl = seam?.providerTermsUrl ?? null;
   const waivesErrorKeys = seam?.waivesErrorKeys ?? NO_WAIVED_KEYS;
   const waivesWarningKeys = seam?.waivesWarningKeys ?? NO_WAIVED_KEYS;
   const approvedFee = quote?.value ?? null;
@@ -216,6 +232,7 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
       ...feeAmounts,
       sponsoredFeeOptionId,
       providerName,
+      providerTermsUrl,
       waivesErrorKeys,
       waivesWarningKeys,
       waivesNativeFee,
@@ -225,7 +242,9 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
       feeCurrencyTicker,
       available,
       feeTokenAccount,
+      rentArriving,
       approvedFee,
+      setAmountFocused,
     }),
     [
       sponsoredState,
@@ -235,6 +254,7 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
       feeAmounts,
       sponsoredFeeOptionId,
       providerName,
+      providerTermsUrl,
       waivesErrorKeys,
       waivesWarningKeys,
       waivesNativeFee,
@@ -244,6 +264,7 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
       feeCurrencyTicker,
       available,
       feeTokenAccount,
+      rentArriving,
       approvedFee,
     ],
   );

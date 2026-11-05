@@ -2,20 +2,27 @@ import { useCallback } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import { useNavigate, useLocation } from "react-router";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import { flattenAccounts, isTokenAccount } from "@ledgerhq/live-common/account/index";
+import {
+  flattenAccounts,
+  getAccountCurrency,
+  isTokenAccount,
+} from "@ledgerhq/live-common/account/index";
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { useLazySwapNetworkCurrencyIds } from "@features/platform-aggregated-assets";
+import { useFeature } from "@features/platform-feature-flags";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 import { buildSwapNavigationState } from "../utils/swapNavigation";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 export type SwapNavigationOptions = Readonly<{
   source?: string;
+  ledgerIds?: readonly string[];
 }>;
 
 type NavigateToSwap = (
   ledgerCurrency: CryptoOrTokenCurrency,
   options?: SwapNavigationOptions,
-) => void;
+) => Promise<void>;
 
 interface UseSwapNavigationResult {
   navigateToSwap: NavigateToSwap;
@@ -27,21 +34,32 @@ export function useSwapNavigation(): UseSwapNavigationResult {
   const allAccounts = useSelector(accountsSelector);
   const flattenedAccounts = flattenAccounts(allAccounts);
   const { openAssetAndAccount } = useOpenAssetAndAccount();
+  const modularDrawerFeature = useFeature("lldModularDrawer");
+  const { getSwapNetworkCurrencyIds } = useLazySwapNetworkCurrencyIds({
+    product: "lld",
+    version: __APP_VERSION__,
+    isStaging: modularDrawerFeature?.params?.backendEnvironment === "STAGING",
+  });
 
   const navigateToSwap = useCallback<NavigateToSwap>(
-    (ledgerCurrency, options) => {
+    async (ledgerCurrency, options) => {
       const fromPath = location.pathname;
+      const networkCurrencyIds = await getSwapNetworkCurrencyIds(
+        ledgerCurrency.id,
+        options?.ledgerIds,
+      );
+      const isOnlyCurrencyNetwork =
+        networkCurrencyIds.length === 1 && networkCurrencyIds[0] === ledgerCurrency.id;
       const availableAccounts = getAvailableAccountsById(ledgerCurrency.id, flattenedAccounts);
-      const hasAccounts = availableAccounts.length > 0;
 
-      if (!hasAccounts) {
+      if (isOnlyCurrencyNetwork && availableAccounts.length === 0) {
         navigate("/swap", {
           state: buildSwapNavigationState({ defaultCurrency: ledgerCurrency, fromPath }),
         });
         return;
       }
 
-      if (availableAccounts.length === 1) {
+      if (isOnlyCurrencyNetwork && availableAccounts.length === 1) {
         const account = availableAccounts[0];
         const parentAccount = isTokenAccount(account)
           ? allAccounts.find(a => a.id === account.parentId)
@@ -59,7 +77,7 @@ export function useSwapNavigation(): UseSwapNavigationResult {
       }
 
       openAssetAndAccount({
-        currencies: [ledgerCurrency.id],
+        currencies: networkCurrencyIds,
         areCurrenciesFiltered: true,
         useCase: "swap",
         flow: "swap",
@@ -68,7 +86,7 @@ export function useSwapNavigation(): UseSwapNavigationResult {
         onSuccess: (account, parentAccount) => {
           navigate("/swap", {
             state: buildSwapNavigationState({
-              defaultCurrency: ledgerCurrency,
+              defaultCurrency: getAccountCurrency(account),
               fromPath,
               account,
               parentAccount,
@@ -77,7 +95,14 @@ export function useSwapNavigation(): UseSwapNavigationResult {
         },
       });
     },
-    [navigate, location.pathname, flattenedAccounts, allAccounts, openAssetAndAccount],
+    [
+      navigate,
+      location.pathname,
+      flattenedAccounts,
+      allAccounts,
+      openAssetAndAccount,
+      getSwapNetworkCurrencyIds,
+    ],
   );
 
   return { navigateToSwap };

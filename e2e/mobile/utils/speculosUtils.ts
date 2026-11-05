@@ -5,6 +5,7 @@ import {
   stopSpeculos,
   takeScreenshot,
   setExchangeDependencies,
+  describeSpeculosApps,
 } from "@ledgerhq/live-e2e-shared/speculos";
 import { getEnv, setEnv } from "@shared/env";
 import { device, log } from "detox";
@@ -161,10 +162,7 @@ export async function launchSpeculos(appName: string) {
     deviceId: device.id,
   });
 
-  let info = `App: ${device.appName || ""} (${device.appVersion || ""}) `;
-  if (device.dependencies?.length)
-    info += `\nDependencies: ${device.dependencies?.map(dep => dep.name + " (" + dep.appVersion + ")").join(", ") || ""}`;
-
+  const info = describeSpeculosApps(device);
   allure.descriptionHtml(`<p>SPECULOS<br>${escapeHtml(info).replaceAll("\n", "<br>")}</p>`);
 
   return device;

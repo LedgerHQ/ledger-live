@@ -4,7 +4,7 @@
 > **Status: UNSTABLE** — In active development; API may change.
 
 Pay-tab contacts. Web is a table of saved contacts; native is a horizontal strip with a leading
-Pay tile. Both exclude the `me` contact.
+Pay tile. Both include the `me` contact when it is present in the store.
 
 Mount `Contacts` under a Redux `Provider` with `contactsSlice`. Desktop adapter:
 `usePayTabContacts`.
@@ -27,10 +27,30 @@ Both apps must carry these keys at the same path until translation keys are colo
 (a follow-up of [LIVE-36540](https://ledgerhq.atlassian.net/browse/LIVE-36540)). Add-contact dialog
 copy is resolved inside `@features/flow-contacts-add-contact`.
 
-## Web
+## `.` entry
+
+Universal pay flow pieces shared by both apps:
 
 ```tsx
-import { Contacts } from "@features/flow-pay-contact";
+import {
+  ContactAddressPicker,
+  PaySuccess,
+  useContactAddressPickerViewModel,
+  type ContactAddressPickerProps,
+  type PaySuccessProps,
+} from "@features/flow-pay-contact";
+```
+
+`PaySuccess` uses one props contract on both platforms. The summary block (amount, estimated time,
+From) renders only when `fromAccountName` is set. `canViewTransaction` defaults to true; set it to
+`false` to hide the View transaction action.
+
+## `./web`
+
+Desktop Pay tab table:
+
+```tsx
+import { Contacts, type ContactsProps } from "@features/flow-pay-contact/web";
 
 <Contacts
   addContact={{ contactCreation, onRequestAddContact, onSaveSuccess, callbacks }}
@@ -55,7 +75,8 @@ a contact is pressed so the user can pick which address to pay. `useContactAddre
 builds the presentation groups (addresses segmented by network with asset-aware icons and truncated
 display), owns visibility and the selected contact, and resolves its own copy through
 `@shared/i18n`. The host injects behavior only — no labels. Grouping, icon resolution and
-truncation are shared from [`@features/flow-contacts-detail`](../flow-contacts-detail).
+truncation are shared from [`@features/flow-contacts-detail`](../flow-contacts-detail). Selecting
+an address closes the picker via the view model.
 
 ```tsx
 import { ContactAddressPicker, useContactAddressPickerViewModel } from "@features/flow-pay-contact";
@@ -71,12 +92,14 @@ const { open, close, contactAddressPicker } = useContactAddressPickerViewModel({
 
 `onSelectAddress` receives the full `ContactAddress` (currency + recipient). `onAddNewAddress` is
 optional and receives the open `contact`; wire it to the contact's add-address flow. Call `close`
-from the host when a selection should dismiss the picker (the view model does not auto-close).
+from the host when you need to dismiss the picker without a selection.
 
-## Native
+## `./native`
+
+Mobile Pay tab strip:
 
 ```tsx
-import { Contacts } from "@features/flow-pay-contact";
+import { Contacts, type ContactsNativeProps } from "@features/flow-pay-contact/native";
 
 <Contacts onPay={openSend} onSeeAll={openContactsList} onContactPress={open} />;
 <ContactAddressPicker {...contactAddressPicker} />;

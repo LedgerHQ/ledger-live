@@ -1,10 +1,23 @@
+import { useCallback } from "react";
 import { useTranslation } from "@shared/i18n";
-import type { RemoveAccountContentLabels } from "./types";
+import type { RemoveAccountContentProps, RemoveAccountContentViewProps } from "./types";
 
-export function useRemoveAccountContentViewModel(): Readonly<{
-  labels: RemoveAccountContentLabels;
-}> {
+export function useRemoveAccountContentViewModel({
+  onConfirm,
+  onCancel,
+  onEvent,
+}: RemoveAccountContentProps): RemoveAccountContentViewProps {
   const { t } = useTranslation();
+
+  const handleConfirm = useCallback(() => {
+    onEvent?.("validateRemove");
+    onConfirm();
+  }, [onConfirm, onEvent]);
+
+  const handleCancel = useCallback(() => {
+    onEvent?.("cancelRemove");
+    onCancel();
+  }, [onCancel, onEvent]);
 
   return {
     labels: {
@@ -13,5 +26,7 @@ export function useRemoveAccountContentViewModel(): Readonly<{
       confirm: t("accountDetailSettings.remove.confirm"),
       cancel: t("accountDetailSettings.remove.cancel"),
     },
+    onConfirm: handleConfirm,
+    onCancel: handleCancel,
   };
 }

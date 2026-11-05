@@ -18,14 +18,12 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W domain/entity/account-balance"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@domain/entity-account-data": "workspace:*",
     "@domain/entity-account-descriptor": "workspace:*",
-    "@domain/entity-currency-crypto": "workspace:*",
-    "@domain/entity-currency-token": "workspace:*",
+    "@domain/entity-currency": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "@shared/schema-primitives": "workspace:*",
     "zod": "catalog:"
@@ -35,6 +33,7 @@
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",

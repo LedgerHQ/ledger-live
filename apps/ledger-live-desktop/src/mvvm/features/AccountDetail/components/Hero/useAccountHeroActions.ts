@@ -1,11 +1,16 @@
 import { useCallback } from "react";
 import type { Account } from "@ledgerhq/types-live";
 import type { AccountHeroActionId } from "@features/flow-account-detail-hero";
+import {
+  ACCOUNT_DETAIL_EVENTS,
+  ACCOUNT_DETAIL_PAGES,
+  quickActionClickedProps,
+} from "@features/flow-account-detail";
 import { track } from "@shared/analytics";
 import { useDispatch } from "LLD/hooks/redux";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 import { openModal } from "~/renderer/actions/modals";
-import { ACCOUNT_DETAIL_TRACKING_PAGE_NAME } from "../../constants";
+import { getAccountTrackingFacts } from "../../utils/accountTracking";
 import type { AccountAsset, AccountAssetsByAction } from "./types";
 import { useInvestActions } from "./useInvestActions";
 import type { PickAccountAsset } from "./usePickAccountAsset";
@@ -25,26 +30,25 @@ export function useAccountHeroActions(
       openSendFlow({
         account: assetAccount,
         parentAccount,
-        source: ACCOUNT_DETAIL_TRACKING_PAGE_NAME,
+        source: ACCOUNT_DETAIL_PAGES.account,
       }),
     [openSendFlow],
   );
 
   return useCallback(
     (id: AccountHeroActionId) => {
-      track("button_clicked", {
-        button: id,
-        currency: account.currency.id,
-        page: ACCOUNT_DETAIL_TRACKING_PAGE_NAME,
-      });
+      track(
+        ACCOUNT_DETAIL_EVENTS.buttonClicked,
+        quickActionClickedProps(getAccountTrackingFacts(account), id),
+      );
       switch (id) {
         case "receive":
           dispatch(
-            openModal("MODAL_RECEIVE", { account, sourcePage: ACCOUNT_DETAIL_TRACKING_PAGE_NAME }),
+            openModal("MODAL_RECEIVE", { account, sourcePage: ACCOUNT_DETAIL_PAGES.account }),
           );
           return;
         case "send":
-          pickAsset(assets, openSend);
+          pickAsset(assets, openSend, id);
           return;
         case "buy":
         case "sell":

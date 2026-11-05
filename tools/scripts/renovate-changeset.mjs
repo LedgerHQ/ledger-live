@@ -2,7 +2,10 @@
 // Usage: node tools/scripts/renovate-changeset.mjs <base> <name> <title>
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { calculateFileChanges } from "nx/src/project-graph/file-utils.js";
+import { createRequire } from "node:module";
+import { jsonDiff } from "nx/src/utils/json-diff.js";
+
+const { loadAll } = createRequire(import.meta.resolve("nx/package.json"))("@zkochan/js-yaml");
 
 // Apps bundle their devDependencies; other packages only ship their runtime deps.
 const MINOR = new Set(["ledger-live-desktop", "live-mobile"]);
@@ -13,18 +16,16 @@ if (!base || !name || !title) {
   process.exit(1);
 }
 
-// nx's default reader hides git failures, so a bad base could pass as "no change" or "everything changed".
-const readFileAtRevision = (file, revision) =>
-  execFileSync("git", ["show", `${revision}:${file}`], { encoding: "utf8", maxBuffer: 1 << 30 });
+// pnpm 11 prepends the env lockfile as a first YAML document; the project lockfile is the last one.
+const readLockfileAt = revision =>
+  loadAll(
+    execFileSync("git", ["show", `${revision}:pnpm-lock.yaml`], {
+      encoding: "utf8",
+      maxBuffer: 1 << 30,
+    }),
+  ).at(-1);
 
-const [lockfile] = calculateFileChanges(
-  ["pnpm-lock.yaml"],
-  { base, head: "HEAD" },
-  readFileAtRevision,
-);
-const changes = lockfile.getChanges();
-if (changes.some(change => !change.path))
-  throw new Error(`Could not diff pnpm-lock.yaml against ${base}`);
+const changes = jsonDiff(readLockfileAt(base), readLockfileAt("HEAD"));
 const importers = new Map();
 for (const { path, value } of changes) {
   if (path?.[0] !== "importers" || path.length < 3) continue;

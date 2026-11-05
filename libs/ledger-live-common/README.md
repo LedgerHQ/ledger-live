@@ -29,7 +29,6 @@ published to npm — consume it through the workspace.
 Narrower local docs:
 
 - [DADA Client](src/dada-client/README.md)
-- [CG Client](src/cg-client/README.md)
 - [CMC Client](src/cmc-client/README.md)
 - [Portfolio bot helpers](src/bot/portfolio/README.md)
 - [Ensure App Ready](src/device/use-cases/ensureAppReady/README.md)
@@ -48,7 +47,7 @@ pnpm common typecheck
 pnpm common test
 ```
 
-Linting uses oxlint with `.oxlintrc.json`. Formatting uses oxfmt with the
+Linting uses oxlint with `oxlint.config.mts`. Formatting uses oxfmt with the
 repository config in `support/fmt`; run `pnpm common format` when you intentionally
 want to apply formatting.
 

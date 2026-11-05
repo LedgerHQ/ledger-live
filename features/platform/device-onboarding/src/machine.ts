@@ -332,7 +332,7 @@ export const deviceOnboardingMachine = setup({
     },
 
     setupExit: {
-      always: [{ guard: "offerSync", target: "syncOffer" }, { target: "done" }],
+      always: { target: "done" },
     },
 
     deviceSetup: {

@@ -21,8 +21,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../.. -c shared/ui-app-unavailable/knip.web.config.mjs -W shared/ui-app-unavailable --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c shared/ui-app-unavailable/knip.native.config.mjs -W shared/ui-app-unavailable --tsConfig tsconfig.native.json"
+    "coverage": "jest --coverage"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
@@ -55,6 +54,7 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",

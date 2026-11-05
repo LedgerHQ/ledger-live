@@ -18,7 +18,8 @@ const HEADER_LX = {
   flexDirection: "row",
   alignItems: "center",
   justifyContent: "space-between",
-  padding: "s16",
+  paddingHorizontal: "s12",
+  paddingVertical: "s16",
 } as const;
 const BLOCK_LX = { gap: "s4" } as const;
 const FIELD_LX = { flexDirection: "row", gap: "s8" } as const;
@@ -117,7 +118,7 @@ export function BalanceScreen({
       </Box>
 
       {errors.map(({ endpoint, detail }) => (
-        <Box key={endpoint} lx={{ gap: "s4", paddingHorizontal: "s16" }}>
+        <Box key={endpoint} lx={{ gap: "s4", paddingHorizontal: "s12" }}>
           <Text typography="body2" lx={{ color: "error" }}>
             {endpoint}
           </Text>

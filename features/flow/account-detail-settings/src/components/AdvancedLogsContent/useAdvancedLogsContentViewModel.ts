@@ -11,6 +11,7 @@ export function useAdvancedLogsContentViewModel({
   locale,
   derivationTag,
   onCopied,
+  onEvent,
 }: AdvancedLogsContentProps): AdvancedLogsContentViewProps {
   const { t } = useTranslation();
   const { json, syncDate } = useMemo(() => buildAdvancedLogs(input, locale), [input, locale]);
@@ -20,13 +21,14 @@ export function useAdvancedLogsContentViewModel({
   useEffect(() => () => clearTimeout(resetTimer.current), []);
 
   const onCopy = useCallback(async () => {
+    onEvent?.("copyLogs");
     const copied = await copyToClipboard(json);
     onCopied?.(copied);
     if (!copied) return;
     clearTimeout(resetTimer.current);
     setIsCopied(true);
     resetTimer.current = setTimeout(() => setIsCopied(false), COPIED_FEEDBACK_DURATION_MS);
-  }, [json, onCopied]);
+  }, [json, onCopied, onEvent]);
 
   return {
     derivationTip: derivationTag

@@ -3,6 +3,8 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { installOutputCapture } from "./shared/ui";
 import { CliProcessExitError } from "./cli-process-exit-error";
 import { USDT_TOKEN_INFO } from "./testing/cal-fixtures";
+import { SwapBackendError } from "./commands/swap/swap-backend-error";
+import { NetworkIdSchema } from "./shared/accountDescriptor";
 
 const { createCommandOutput } = await import("./output");
 
@@ -353,7 +355,7 @@ describe("JsonCommandOutput", () => {
     expect(line).toMatchObject({ status: "success", output: "/tmp/out.txt" });
   });
 
-  it("emits swapExecuteFullResult with both display-unit and atomic amounts plus the rate", () => {
+  it("emits swapExecuteFullResult with both display-unit and atomic amounts, the rate and the balance check", () => {
     const out = createCommandOutput("json", {
       command: "swap execute",
       network: "ethereum",
@@ -374,6 +376,7 @@ describe("JsonCommandOutput", () => {
       amountExpectedTo: "0.0025",
       amountExpectedToAtomic: "250000",
       magnitudeAwareRate: "2500000",
+      balanceCheck: { checked: false, reason: "fee estimation unavailable" },
     });
 
     const lines = parseLines();
@@ -393,6 +396,7 @@ describe("JsonCommandOutput", () => {
       amountExpectedTo: "0.0025",
       amountExpectedToAtomic: "250000",
       magnitudeAwareRate: "2500000",
+      balanceCheck: { checked: false, reason: "fee estimation unavailable" },
     });
   });
 
@@ -599,7 +603,7 @@ describe("JsonCommandOutput", () => {
       purpose: "account",
       version: "2",
       type: "utxo",
-      network: "bitcoin",
+      network: NetworkIdSchema.parse("bitcoin"),
       xpub: "xpub6BosfCnifzxcA",
       path: "m/84h/0h/0h",
     } as const;
@@ -638,6 +642,54 @@ describe("JsonCommandOutput", () => {
       unchanged: [],
       skipped: [{ status: "skipped", id: "js:2:polkadot:x:default", reason: "family unsupported" }],
       invalid: [{ status: "invalid", id: "js:2:ethereum::ethM", reason: "empty address" }],
+    });
+  });
+
+  describe("error envelope code", () => {
+    function failWith(error: unknown): unknown {
+      const out = createCommandOutput("json", { command: "swap execute", network: "ethereum" });
+      expect(() => out.fail(error)).toThrow(CliProcessExitError);
+      return parseLines()[0];
+    }
+
+    it("exposes the name of a typed error as code", () => {
+      const notEnoughBalance = Object.assign(new Error("Insufficient balance"), {
+        name: "NotEnoughBalance",
+      });
+
+      expect(failWith(notEnoughBalance)).toEqual({
+        ok: false,
+        error: {
+          command: "swap execute",
+          code: "NotEnoughBalance",
+          message: "Insufficient balance",
+        },
+      });
+    });
+
+    it("adds http_status for swap backend rejections", () => {
+      expect(
+        failWith(new SwapBackendError("The swap provider rejected the request.", 401)),
+      ).toEqual({
+        ok: false,
+        error: {
+          command: "swap execute",
+          code: "SwapBackendError",
+          message: "The swap provider rejected the request.",
+          http_status: 401,
+        },
+      });
+    });
+
+    it.each([
+      new Error("boom"),
+      new TypeError("cannot read properties of undefined"),
+      new RangeError("invalid array length"),
+    ])("omits code for a built-in $name", error => {
+      expect(failWith(error)).toEqual({
+        ok: false,
+        error: { command: "swap execute", message: error.message },
+      });
     });
   });
 });

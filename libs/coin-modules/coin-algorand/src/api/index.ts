@@ -15,6 +15,7 @@ import {
   craftApiTransaction,
   estimateFees,
   getBalance,
+  getBlock,
   getBlockInfo,
   lastBlock,
   listOperations,
@@ -26,9 +27,9 @@ import { validateAddress } from "../validateAddress";
 // Checked against CoinModuleImpl with `satisfies` rather than annotated as it, so the precise shape
 // survives and a caller sees exactly which methods exist.
 //
-// Omitted rather than stubbed: `call`, `register`, `craftRawTransaction`, `getBlock`, `getStakes`,
-// `getRewards`, `getValidators` — none are supported for Algorand — and `getNextSequence`, which the
-// module recorded as not applicable to Algorand. The consumer resolver applies `withDefaults`, which
+// Omitted rather than stubbed: `call`, `register`, `craftRawTransaction`, `getStakes`, `getRewards`,
+// `getValidators` — none are supported for Algorand — and `getNextSequence`, which the module
+// recorded as not applicable to Algorand. The consumer resolver applies `withDefaults`, which
 // answers "not supported" for each.
 //
 // `getBlockInfo`, `validateIntent` and `validateAddress` stay: they are real implementations, and
@@ -51,6 +52,7 @@ export function createApi() {
     ) => estimateFees(context),
     getBalance: (context: AlgorandContext, address: string, options?: BalanceOptions) =>
       rejectBalanceOptions(() => getBalance(context, address), options),
+    getBlock: (context: AlgorandContext, height: number) => getBlock(context, height),
     getBlockInfo: (context: AlgorandContext, height: number) => getBlockInfo(context, height),
     lastBlock: (context: AlgorandContext) => lastBlock(context),
     listOperations: (context: AlgorandContext, address: string, options) =>

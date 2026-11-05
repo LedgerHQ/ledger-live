@@ -1,6 +1,5 @@
 import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "@e2e/helpers/commonHelpers";
-import { isMyWalletEnabled } from "@e2e/utils/initUtil";
 import { TIMEOUT } from "@e2e/utils/timeouts";
 
 type Wallet40TabName = "home" | "swap" | "earn" | "card" | "paytab";
@@ -12,9 +11,6 @@ export default class MainNavigationPage {
   // --- Wallet 4.0 top bar buttons ---
   topBarDiscoverId = "topbar-discover";
   topBarMyWalletId = "topbar-mywallet";
-  topBarMyLedgerId = "topbar-myledger";
-  topBarSettingsId = "topbar-settings";
-  topBarNotificationsId = "topbar-notifications";
   topBarTransactionHistoryId = "topbar-transaction-history";
   myWalletHeaderSettingsButtonId = "my-wallet-header-settings-button";
 
@@ -76,12 +72,8 @@ export default class MainNavigationPage {
 
   @Step("Navigate to Settings")
   async navigateToSettings() {
-    if (isMyWalletEnabled) {
-      await tapById(this.topBarMyWalletId);
-      await tapById(this.myWalletHeaderSettingsButtonId);
-    } else {
-      await tapById(this.topBarSettingsId);
-    }
+    await tapById(this.topBarMyWalletId);
+    await tapById(this.myWalletHeaderSettingsButtonId);
   }
 
   // =====================
@@ -98,13 +90,7 @@ export default class MainNavigationPage {
 
   @Step("Expect Wallet 4.0 top bar to be visible")
   async expectWallet40TopBarVisible() {
-    if (isMyWalletEnabled) {
-      await detoxExpect(getElementById(this.topBarMyWalletId)).toBeVisible();
-    } else {
-      await detoxExpect(getElementById(this.topBarMyLedgerId)).toBeVisible();
-      await detoxExpect(getElementById(this.topBarNotificationsId)).toBeVisible();
-      await detoxExpect(getElementById(this.topBarSettingsId)).toBeVisible();
-    }
+    await detoxExpect(getElementById(this.topBarMyWalletId)).toBeVisible();
     await detoxExpect(getElementById(this.topBarDiscoverId)).toBeVisible();
     await detoxExpect(getElementById(this.topBarTransactionHistoryId)).toBeVisible();
   }

@@ -3,6 +3,7 @@ import { Box } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import {
   AdvancedLogsContent,
+  type AccountSettingsEventHandler,
   type AdvancedLogsInput,
 } from "@features/flow-account-detail-settings";
 import SafeAreaView from "~/components/SafeAreaView";
@@ -12,13 +13,19 @@ type Props = Readonly<{
   input: AdvancedLogsInput;
   locale: string;
   derivationTag: string | undefined;
+  onEvent: AccountSettingsEventHandler;
 }>;
 
-export function AdvancedLogsView({ input, locale, derivationTag }: Props) {
+export function AdvancedLogsView({ input, locale, derivationTag, onEvent }: Props) {
   return (
     <SafeAreaView edges={["bottom"]} isFlex testID={ACCOUNT_DETAIL_TEST_IDS.advancedLogsScreen}>
       <Box lx={contentStyle}>
-        <AdvancedLogsContent input={input} locale={locale} derivationTag={derivationTag} />
+        <AdvancedLogsContent
+          input={input}
+          locale={locale}
+          derivationTag={derivationTag}
+          onEvent={onEvent}
+        />
       </Box>
     </SafeAreaView>
   );

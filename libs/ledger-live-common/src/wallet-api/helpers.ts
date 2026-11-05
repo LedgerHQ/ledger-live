@@ -1,5 +1,5 @@
 import { log } from "@ledgerhq/logs";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { type CryptoCurrency, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { Currency } from "@domain/entity-currency";
 import { isCryptoCurrency, isTokenCurrency } from "../currencies";
 import type {
@@ -9,7 +9,7 @@ import type {
   WalletAPICryptoCurrency,
   AppManifest,
 } from "./types";
-import { WALLET_API_FAMILIES } from "./constants";
+import { BITCOIN_SIGN_PSBT_ALLOWED_APPS, WALLET_API_FAMILIES } from "./constants";
 import { includes } from "../helpers";
 import { isSameDomain, isUrlAllowedByManifestDomains } from "./manifestDomainUtils";
 
@@ -24,6 +24,21 @@ export function isWalletAPISupportedCurrency(
     return includes(WALLET_API_FAMILIES, getCryptoCurrencyById(currency.parentCurrencyId).family);
   }
   return false;
+}
+
+/**
+ * Whether `bitcoin.signPsbt` may sign with the requested options on an account of `currency`.
+ * No `hwAppId`, or the currency's own app, keeps the default app. Any other app must be allowed for
+ * that currency. Dependencies are not checked: they only get installed, the signing app is still
+ * `hwAppId`.
+ */
+export function isBitcoinSignPsbtOptionsAllowed(
+  currency: CryptoCurrency,
+  options: { hwAppId?: string; dependencies?: string[] } | undefined,
+): boolean {
+  const hwAppId = options?.hwAppId;
+  if (hwAppId === undefined || hwAppId === currency.managerAppName) return true;
+  return BITCOIN_SIGN_PSBT_ALLOWED_APPS[currency.id]?.has(hwAppId) ?? false;
 }
 
 export function isWalletAPICryptoCurrency(

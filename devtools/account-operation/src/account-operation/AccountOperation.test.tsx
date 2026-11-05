@@ -38,6 +38,8 @@ function renderTool(accounts: AccountOperationToolAccount[]) {
   render(
     <AccountOperation
       accounts={accounts}
+      assetIds={["ethereum", "ethereum/erc20/usd__coin"]}
+      fiat="USD"
       onRead={onRead}
       onReadMore={onReadMore}
       onReadAll={onReadAll}
@@ -114,6 +116,30 @@ describe("AccountOperation", () => {
     expect(onRead).toHaveBeenCalledWith("uuid-1", queryKey);
   });
 
+  it("shows the countervalues of each row of a valued window", () => {
+    renderTool([
+      makeAccount({}, [
+        {
+          queryKey: '{"countervalue":"USD"}',
+          label: "in USD",
+          reading: false,
+          hasMore: false,
+          readAt: 0,
+          rows: [{ ...row, countervalues: ["$12.34"] }],
+        },
+      ]),
+    ]);
+    expect(screen.getByText("in USD")).toBeVisible();
+    expect(screen.getByText("$12.34")).toBeVisible();
+  });
+
+  it("reads every account valued in the app's fiat when countervalue is checked", async () => {
+    const { onReadAll } = renderTool([makeAccount()]);
+    await userEvent.click(screen.getByRole("checkbox", { name: "USD" }));
+    await userEvent.click(screen.getByRole("button", { name: "Read all" }));
+    expect(onReadAll).toHaveBeenCalledWith({ countervalue: true });
+  });
+
   it("disables Read and Read more while the account is being read", () => {
     renderTool([makeAccount({ reading: true, hasMore: true })]);
     expect(screen.getByText("reading…")).toBeVisible();
@@ -132,5 +158,12 @@ describe("AccountOperation", () => {
     await userEvent.type(screen.getByLabelText("Limit"), "50");
     await userEvent.click(screen.getByRole("button", { name: "Read all" }));
     expect(onReadAll).toHaveBeenCalledWith({ limit: 50 });
+  });
+
+  it("reads every account with the asset filter filled in the header", async () => {
+    const { onReadAll } = renderTool([makeAccount()]);
+    await userEvent.type(screen.getByLabelText("Filter asset"), "ethereum/erc20/usd__coin");
+    await userEvent.click(screen.getByRole("button", { name: "Read all" }));
+    expect(onReadAll).toHaveBeenCalledWith({ filterAsset: "ethereum/erc20/usd__coin" });
   });
 });

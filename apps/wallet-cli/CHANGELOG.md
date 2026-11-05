@@ -1,32 +1,34 @@
 # @ledgerhq/wallet-cli
 
-## 3.1.0
+## 3.2.0
 
 ### Minor Changes
 
-- [#23894](https://github.com/LedgerHQ/ledger-live/pull/23894) [`4be13d5`](https://github.com/LedgerHQ/ledger-live/commit/4be13d5ee940cb84794b33bed7320287647cc82e) Thanks [@thesan](https://github.com/thesan)! - `@shared/auth` replaces `authApiExtra` with `createAuthMiddleware`: the auth provider is held by a store middleware instead of the thunk `extraArgument`, and `getAuthProvider(dispatch)` reads it.
+- [#23979](https://github.com/LedgerHQ/ledger-live/pull/23979) [`4271aa7`](https://github.com/LedgerHQ/ledger-live/commit/4271aa759904a9c3029f3cfe7c26340fab511e7f) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `agent-intent sync` pulls every Ledger Sync account again only when the families, currencies or derivation modes this wallet-cli can import change, not after every upgrade
 
-- [#23789](https://github.com/LedgerHQ/ledger-live/pull/23789) [`a572634`](https://github.com/LedgerHQ/ledger-live/commit/a572634d9304f33e31e0ce69ec4df3f4b87a990f) Thanks [@mmysl-ledger-ext](https://github.com/mmysl-ledger-ext)! - Update the vendored `@ledgerhq/agent-intent-sdk`. `agent-intent enroll` takes its name and description limits from the SDK, and now rejects a blank `--name` or `--description` before creating an identity
+- [#23935](https://github.com/LedgerHQ/ledger-live/pull/23935) [`26c277d`](https://github.com/LedgerHQ/ledger-live/commit/26c277d4a667f5e02b0f4284d01612fa3629e4c3) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `skill install` no longer needs `--force` to replace a skill that wallet-cli installed earlier; it still needs it for a skill edited since then. `skill install` and `skill doctor --fix` now delete the unedited files a newer skill dropped.
 
-- [#23084](https://github.com/LedgerHQ/ledger-live/pull/23084) [`d3788d3`](https://github.com/LedgerHQ/ledger-live/commit/d3788d3ade2bda83c63ad857bc89b5ccc7d10c89) Thanks [@michalmisiejuk-ext-collab](https://github.com/michalmisiejuk-ext-collab)! - Replace global module mocks in wallet-cli tests with injected fakes so the tests pass in any order
+- [#23291](https://github.com/LedgerHQ/ledger-live/pull/23291) [`0f7ec9c`](https://github.com/LedgerHQ/ledger-live/commit/0f7ec9c49f815b5275f2285ec0f2d1559608738b) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `agent-intent intents`, `status` and `cancel` show a swap's pair, amounts and provider (`displayAmount` was `null` for swaps) and a Solana send's amount and memo; `status` and `cancel` also name a token send's contract or mint
 
-- [#24026](https://github.com/LedgerHQ/ledger-live/pull/24026) [`c10827f`](https://github.com/LedgerHQ/ledger-live/commit/c10827f93c49158bb6e2baa7d699643f527c22fb) Thanks [@ysitbon](https://github.com/ysitbon)! - Register the swap service api through `defineApiServices`
+- [#23794](https://github.com/LedgerHQ/ledger-live/pull/23794) [`5cf4b8c`](https://github.com/LedgerHQ/ledger-live/commit/5cf4b8c918b9cd698eb0b9bc9ec71f5d5e0192ab) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - The `wallet-cli-usage` skill says how to enroll with the Agent Intent app named in its setup prompt (`--environment`, `--app-url`), to send the enrollment URL back right away and to keep credentials private.
 
-- [#23630](https://github.com/LedgerHQ/ledger-live/pull/23630) [`279128d`](https://github.com/LedgerHQ/ledger-live/commit/279128d944f8fde67c5a9190f73b70684cd11ee0) Thanks [@mateuszmarcinkowski-ext-afk](https://github.com/mateuszmarcinkowski-ext-afk)! - Add `agent-intent enroll --detach`, which prints the enrollment link and leaves a background listener waiting for the approval, and `agent-intent wait`, which reports within a bounded time whether that enrollment completed
+- [#24049](https://github.com/LedgerHQ/ledger-live/pull/24049) [`7efbe00`](https://github.com/LedgerHQ/ledger-live/commit/7efbe007233285e87c57fee88fdde680aa35b1aa) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `agent-intent swap` words its token approval hint for a `--to-amount` proposal too
 
-## 3.1.0-next.0
+### Patch Changes
 
-### Minor Changes
+- [#23755](https://github.com/LedgerHQ/ledger-live/pull/23755) [`a825d96`](https://github.com/LedgerHQ/ledger-live/commit/a825d967ec4ccf5b29be953291893c01b9a63b23) Thanks [@mateuszmarcinkowski-ext-afk](https://github.com/mateuszmarcinkowski-ext-afk)! - The embedded wallet-cli skill moves its details to references and adds the rules for agents that propose payments from a machine without a Ledger
 
-- [#23894](https://github.com/LedgerHQ/ledger-live/pull/23894) [`4be13d5`](https://github.com/LedgerHQ/ledger-live/commit/4be13d5ee940cb84794b33bed7320287647cc82e) Thanks [@thesan](https://github.com/thesan)! - `@shared/auth` replaces `authApiExtra` with `createAuthMiddleware`: the auth provider is held by a store middleware instead of the thunk `extraArgument`, and `getAuthProvider(dispatch)` reads it.
+- [#23896](https://github.com/LedgerHQ/ledger-live/pull/23896) [`a27b28a`](https://github.com/LedgerHQ/ledger-live/commit/a27b28a890df7ee744fd0df643ffe59e99c057c5) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Reject descriptors whose purpose is not `account`
 
-- [#23789](https://github.com/LedgerHQ/ledger-live/pull/23789) [`a572634`](https://github.com/LedgerHQ/ledger-live/commit/a572634d9304f33e31e0ce69ec4df3f4b87a990f) Thanks [@mmysl-ledger-ext](https://github.com/mmysl-ledger-ext)! - Update the vendored `@ledgerhq/agent-intent-sdk`. `agent-intent enroll` takes its name and description limits from the SDK, and now rejects a blank `--name` or `--description` before creating an identity
+- [#24290](https://github.com/LedgerHQ/ledger-live/pull/24290) [`94df3d0`](https://github.com/LedgerHQ/ledger-live/commit/94df3d0acc235f2aa429ffaea4f21bf327469fe3) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - [LWDM] chore(deps): update dependency oxfmt to v0.75.0
 
-- [#23084](https://github.com/LedgerHQ/ledger-live/pull/23084) [`d3788d3`](https://github.com/LedgerHQ/ledger-live/commit/d3788d3ade2bda83c63ad857bc89b5ccc7d10c89) Thanks [@michalmisiejuk-ext-collab](https://github.com/michalmisiejuk-ext-collab)! - Replace global module mocks in wallet-cli tests with injected fakes so the tests pass in any order
+  - Updated `oxfmt` to `0.75.0`
 
-- [#24026](https://github.com/LedgerHQ/ledger-live/pull/24026) [`c10827f`](https://github.com/LedgerHQ/ledger-live/commit/c10827f93c49158bb6e2baa7d699643f527c22fb) Thanks [@ysitbon](https://github.com/ysitbon)! - Register the swap service api through `defineApiServices`
+- [#24291](https://github.com/LedgerHQ/ledger-live/pull/24291) [`4fc4674`](https://github.com/LedgerHQ/ledger-live/commit/4fc4674c788390588d2d3733fc5928372d2c8382) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency oxlint to v1.90.0
 
-- [#23630](https://github.com/LedgerHQ/ledger-live/pull/23630) [`279128d`](https://github.com/LedgerHQ/ledger-live/commit/279128d944f8fde67c5a9190f73b70684cd11ee0) Thanks [@mateuszmarcinkowski-ext-afk](https://github.com/mateuszmarcinkowski-ext-afk)! - Add `agent-intent enroll --detach`, which prints the enrollment link and leaves a background listener waiting for the approval, and `agent-intent wait`, which reports within a bounded time whether that enrollment completed
+  - Updated `oxlint` to `1.90.0`
+
+- [#24132](https://github.com/LedgerHQ/ledger-live/pull/24132) [`b04b778`](https://github.com/LedgerHQ/ledger-live/commit/b04b77802057f880ef2f0e15d21500233a03fa5a) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): pin dependencies
 
 ## 3.0.0
 
@@ -357,5 +359,47 @@
 ### Minor Changes
 
 - [#20571](https://github.com/LedgerHQ/ledger-live/pull/20571) [`7c8d5df`](https://github.com/LedgerHQ/ledger-live/commit/7c8d5dfa862a2e9c3a35251b5d06a3cd4f905d2a) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Thread the coin-module `Context` (ADR-019) explicitly through the coin-evm, coin-vechain and coin-near api and logic layers instead of resolving configuration from the module-level `getCoinConfig` singleton. Exported logic functions now take the context as their first argument, resolve `config` from it (`await context.config(currencyId)`), and pass an explicit, required `config` down to the network layer — no `config?` optionals and no singleton reads on the data path. `getCoinConfig`/`setCoinConfig` remain only as the compatibility surface for the classic account bridge. Ledger Live consumers (live-common, desktop, mobile and coin-celo) are updated to resolve and pass config/context explicitly. Also fixes a coin-polkadot type-inference issue where `getTransactionMaterialWithMetadata`'s cache-key extractor narrowed the cached signature and dropped the `config` argument.
+
+## 2.4.0-next.0
+
+### Minor Changes
+
+- [#20571](https://github.com/LedgerHQ/ledger-live/pull/20571) [`7c8d5df`](https://github.com/LedgerHQ/ledger-live/commit/7c8d5dfa862a2e9c3a35251b5d06a3cd4f905d2a) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Thread the coin-module `Context` (ADR-019) explicitly through the coin-evm, coin-vechain and coin-near api and logic layers instead of resolving configuration from the module-level `getCoinConfig` singleton. Exported logic functions now take the context as their first argument, resolve `config` from it (`await context.config(currencyId)`), and pass an explicit, required `config` down to the network layer — no `config?` optionals and no singleton reads on the data path. `getCoinConfig`/`setCoinConfig` remain only as the compatibility surface for the classic account bridge. Ledger Live consumers (live-common, desktop, mobile and coin-celo) are updated to resolve and pass config/context explicitly. Also fixes a coin-polkadot type-inference issue where `getTransactionMaterialWithMetadata`'s cache-key extractor narrowed the cached signature and dropped the `config` argument.
+
+## 2.3.0
+
+### Minor Changes
+
+- [#20423](https://github.com/LedgerHQ/ledger-live/pull/20423) [`44694e5`](https://github.com/LedgerHQ/ledger-live/commit/44694e54fa5b48e47595840638aee94a98213a37) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Complete the WalletSync DDD extraction: apps now compose the DDD slices directly
+
+  `@ledgerhq/live-wallet` no longer owns sync infrastructure. `src/cloudsync/`, `src/walletsync/`,
+  `src/accountName.ts` and `src/store.ts` are removed in favour of `@shared/cloud-sync`,
+  `@shared/wallet-sync`, `@features/platform-wallet-sync`, `@domain/entity-account-name` and
+  `@domain/entity-recent-addresses`. What remains is the account list sync module (`src/accounts/`)
+  plus `src/walletSyncComposition.ts`, which assembles the sync modules into the wallet-sync schema.
+
+  Desktop and mobile replace the monolithic `wallet` reducer with a `combineReducers` of the entity
+  slices (`accountNames`, `starredAccountIds`, `walletSync`, `recentAddresses`, `nonImportedAccountInfos`)
+  and wire the watch loop and trustchain lifecycle from `@features/platform-wallet-sync` at bootstrap.
+  `@ledgerhq/live-common` drops its `@ledgerhq/live-wallet` runtime dependency: the wallet-api,
+  platform and CSV-export helpers now take an `AccountNamesState` instead of the whole `WalletState`.
+
+- [#20539](https://github.com/LedgerHQ/ledger-live/pull/20539) [`60b4626`](https://github.com/LedgerHQ/ledger-live/commit/60b462653bad19429c46ebef439ec2b5bb234140) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Scope `@ledgerhq/live-wallet` down to wallet sync only
+
+  The package now exposes `./accounts` and `./walletSyncComposition` and nothing else.
+  `ordering.ts` and `addAccounts.ts` move to `@ledgerhq/live-common/account/*`, and
+  `accountRawToAccountUserData` joins `live-common/account/serialization` next to `fromAccountRaw`.
+  The `liveqr/` folder is gone: `importAccounts.ts` and `accountToAccountData` were unreachable, and
+  `accountDataToAccount` — whose only callers rehydrated a wallet-sync descriptor — becomes
+  `accounts/descriptorToAccount`. `live-common` no longer depends on `live-wallet`.
+
+- [#18764](https://github.com/LedgerHQ/ledger-live/pull/18764) [`d266e13`](https://github.com/LedgerHQ/ledger-live/commit/d266e13aa8e8b34ca74beaa09687b6e8d426f821) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Migrate the swap `fetchQuotes` helper from axios to an RTK Query endpoint (`swapQuotesApi`). The aggregator `/quote` request now flows through the Redux data layer, and the rawQuotes/providerErrors split is unchanged. Desktop and mobile register the new API and inject their store dispatch at startup via `setSwapQuotesStore`; wallet-cli, which has no app store, sets up a standalone one.
+
+  The endpoint itself now lives in the new `@domain/api-swap-quotes` package; live-common re-exports it, so existing call sites are unchanged.
+
+  Two behaviour changes to be aware of:
+
+  - `/quote` now goes through the authenticated base query, where the legacy axios call sent no credentials. Both apps already register an auth provider on their store's `extra`, so whether a request carries an `Authorization` header is controlled entirely by the `lwdAuth`/`lwmAuth` feature flags. They are disabled by default; enabling either one makes `/quote` send the user's bearer token to the aggregator, and makes a 401/403 trigger the adapter's refresh-and-retry.
+  - An aggregator HTTP error (4xx/5xx) now resolves to an empty result, so the caller surfaces the `noQuotes` global. Previously the shared axios error interceptor turned these into `LedgerAPI4xx`/`LedgerAPI5xx`, which propagated to the live app as an error. Only transport failures (no HTTP response) still reject, now with a `SwapQuotesRequestFailed` error rather than a bare RTK Query error object.
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

@@ -1,54 +1,58 @@
 import { Step } from "jest-allure2-reporter/api";
+import { byId } from "@e2e/helpers/elements/native";
 
 export default class OperationPage {
   // MVVM OperationsList screen
-  operationsListId = "operations-list-section-list";
-  sectionHeaderId = "operations-section-header";
-  operationItemId = "operations-list-item";
-  operationCounterValueId = "operations-list-item-counter-value";
+  private readonly operationsList = byId("operations-list-section-list");
+  private readonly sectionHeader = byId("operations-section-header");
+  private readonly operationItem = byId("operations-list-item");
+  private readonly operationCounterValue = byId("operations-list-item-counter-value");
 
-  cryptoHistoryTabId = "history-tab-crypto";
-  cardHistoryTabId = "history-tab-card";
-  cardHistoryListId = "card-history-list";
-  cardHistoryRowId = /card-history-row-.+/;
-  cardTransactionDetailSheetContentId = "card-transaction-detail-sheet-content";
-  cardTransactionDetailAmountValueId = "card-transaction-detail-value-amount";
-  cardTransactionDetailStatusValueId = "card-transaction-detail-value-status";
+  private readonly cryptoHistoryTab = byId("history-tab-crypto");
+  private readonly cardHistoryTab = byId("history-tab-card");
+  private readonly cardHistoryList = byId("card-history-list");
+  private readonly cardHistoryRow = byId(/card-history-row-.+/);
+  private readonly cardTransactionDetailSheetContent = byId(
+    "card-transaction-detail-sheet-content",
+  );
+  private readonly cardTransactionDetailAmountValue = byId("card-transaction-detail-value-amount");
+  private readonly cardTransactionDetailStatusValue = byId("card-transaction-detail-value-status");
 
   @Step("Expect the Crypto history tab")
   async expectCryptoHistoryTab() {
-    await detoxExpect(getElementById(this.cryptoHistoryTabId)).toBeVisible();
+    await this.cryptoHistoryTab.expectVisible();
   }
 
   @Step("Expect the Card history tab")
   async expectCardHistoryTab() {
-    await detoxExpect(getElementById(this.cardHistoryTabId)).toBeVisible();
+    await this.cardHistoryTab.expectVisible();
   }
 
   @Step("Open the Card history tab")
   async openCardHistoryTab() {
-    await tapById(this.cardHistoryTabId);
-    await waitForElementById(this.cardHistoryListId);
+    await this.cardHistoryTab.tap();
+    await this.cardHistoryList.waitVisible();
   }
 
   @Step("Open the first card transaction")
   async openFirstCardTransaction() {
-    await detoxExpect(getElementById(this.cardHistoryRowId, 0)).toBeVisible();
-    await tapById(this.cardHistoryRowId, 0);
-    await waitForFullyVisibleById(this.cardTransactionDetailSheetContentId);
+    await this.cardHistoryRow.expectVisible();
+    await this.cardHistoryRow.tap();
+    await this.cardTransactionDetailSheetContent.waitFullyVisible();
   }
 
   @Step("Expect the card transaction amount")
   async expectCardTransactionAmount() {
-    await detoxExpect(getElementById(this.cardTransactionDetailAmountValueId)).toBeVisible();
-    const amount = await getTextOfElement(this.cardTransactionDetailAmountValueId);
+    await this.cardTransactionDetailAmountValue.expectVisible();
+    const amount = await this.cardTransactionDetailAmountValue.getText();
     jestExpect(amount).toMatch(/\d/);
   }
 
   @Step("Expect the card transaction status to read {{{0}}}")
   async expectCardTransactionStatus(status: string | RegExp) {
-    await detoxExpect(getElementById(this.cardTransactionDetailStatusValueId)).toBeVisible();
-    const actualStatus = await getLabelOfElement(this.cardTransactionDetailStatusValueId);
+    await this.cardTransactionDetailStatusValue.expectVisible();
+    const { label } = await this.cardTransactionDetailStatusValue.getAttributes();
+    const actualStatus = label != null ? String(label) : "";
     if (typeof status === "string") {
       jestExpect(actualStatus).toEqual(status);
     } else {
@@ -58,28 +62,28 @@ export default class OperationPage {
 
   @Step("Expect Operations List to be visible")
   async expectOperationsListVisible() {
-    await waitForElementById(this.operationsListId);
+    await this.operationsList.waitVisible();
   }
 
   @Step("Expect at least one section header to be visible")
   async expectSectionHeaderVisible() {
-    await detoxExpect(getElementById(this.sectionHeaderId, 0)).toBeVisible();
+    await this.sectionHeader.expectVisible();
   }
 
   @Step("Expect at least one operation item to be visible")
   async expectOperationItemVisible() {
-    await detoxExpect(getElementById(this.operationItemId, 0)).toBeVisible();
+    await this.operationItem.expectVisible();
   }
 
   @Step("Tap first operation item")
   async tapFirstOperationItem() {
-    await scrollToId(this.operationItemId, this.operationsListId);
-    await tapById(this.operationItemId, 0);
+    await this.operationItem.scrollTo(this.operationsList);
+    await this.operationItem.tap();
   }
 
   @Step("Get operation counter value text")
   async getOperationCounterValue() {
-    await waitForElementById(this.operationsListId);
-    return await getTextOfElement(this.operationCounterValueId);
+    await this.operationsList.waitVisible();
+    return await this.operationCounterValue.getText();
   }
 }

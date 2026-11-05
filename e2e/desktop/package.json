@@ -44,10 +44,12 @@
   "devDependencies": {
     "@types/invariant": "2.2.37",
     "@types/lodash": "catalog:",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
     "electron": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "playwright": "catalog:",
-    "tsx": "^4.19.3"
+    "tsx": "4.20.6"
   }
 }

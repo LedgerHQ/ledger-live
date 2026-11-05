@@ -13,6 +13,9 @@ import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/Ba
 import { useModularDrawerController } from "../ModularDrawer";
 import { navigateToSwapTab } from "~/screens/Swap/navigation/navigateToSwapTab";
 import { getAccountsForCurrencies, resolveCurrencyIds } from "../Exchange";
+import { useLazySwapNetworkCurrencyIds } from "@features/platform-aggregated-assets";
+import { useFeature } from "@features/platform-feature-flags";
+import { appVersion } from "LLM/utils/appVersion";
 
 type UseOpenSwapProps = {
   currency?: CryptoOrTokenCurrency;
@@ -37,16 +40,17 @@ export function useOpenSwap({
   const shallowAccounts = useSelector(shallowAccountsSelector);
   const flattenedAccounts = useSelector(flattenAccountsSelector);
   const { openDrawer } = useModularDrawerController();
+  const modularDrawerFeature = useFeature("llmModularDrawer");
+  const { getSwapNetworkCurrencyIds } = useLazySwapNetworkCurrencyIds({
+    product: "llm",
+    version: appVersion,
+    isStaging: modularDrawerFeature?.params?.backendEnvironment === "STAGING",
+  });
 
   const resolvedCurrencyIds = useMemo(
     () => resolveCurrencyIds(currency, currencyIds),
     [currency, currencyIds],
   );
-
-  const accountsForCurrency = useMemo(() => {
-    if (!resolvedCurrencyIds.length) return [];
-    return getAccountsForCurrencies(flattenedAccounts, shallowAccounts, resolvedCurrencyIds);
-  }, [resolvedCurrencyIds, flattenedAccounts, shallowAccounts]);
 
   const navigateToSwap = useCallback(
     (account?: AccountLike, parentAccount?: Account) => {
@@ -98,29 +102,43 @@ export function useOpenSwap({
     [currency, sourceScreenName, shallowAccounts, navigation],
   );
 
-  const openAccountSelectionDrawer = useCallback(() => {
-    openDrawer({
-      currencies: resolvedCurrencyIds,
-      flow: "swap",
-      source: sourceScreenName,
-      areCurrenciesFiltered: resolvedCurrencyIds.length > 0,
-      enableAccountSelection: true,
-      onAccountSelected: navigateToSwap,
-    });
-  }, [resolvedCurrencyIds, openDrawer, sourceScreenName, navigateToSwap]);
+  const openAccountSelectionDrawer = useCallback(
+    (swapCurrencyIds: string[]) => {
+      openDrawer({
+        currencies: swapCurrencyIds,
+        flow: "swap",
+        source: sourceScreenName,
+        areCurrenciesFiltered: swapCurrencyIds.length > 0,
+        enableAccountSelection: true,
+        onAccountSelected: navigateToSwap,
+      });
+    },
+    [openDrawer, sourceScreenName, navigateToSwap],
+  );
 
-  const handleOpenSwap = useCallback(() => {
+  const handleOpenSwap = useCallback(async () => {
     if (defaultAccount && !isAccountEmpty(defaultAccount)) {
       navigateToSwap(defaultAccount, defaultParentAccount);
       return;
     }
 
+    const swapCurrencyIds =
+      currency && resolvedCurrencyIds.length > 1
+        ? await getSwapNetworkCurrencyIds(currency.id, resolvedCurrencyIds)
+        : resolvedCurrencyIds;
+
+    const isOnlyCurrencyNetwork =
+      swapCurrencyIds.length === 1 && swapCurrencyIds[0] === currency?.id;
+
     // Multi-network assets always open the drawer so the user can pick network → account.
-    if (resolvedCurrencyIds.length > 1) {
-      openAccountSelectionDrawer();
+    if (swapCurrencyIds.length > 0 && !isOnlyCurrencyNetwork) {
+      openAccountSelectionDrawer(swapCurrencyIds);
       return;
     }
 
+    const accountsForCurrency = swapCurrencyIds.length
+      ? getAccountsForCurrencies(flattenedAccounts, shallowAccounts, swapCurrencyIds)
+      : [];
     const accountCount = accountsForCurrency.length;
 
     if (accountCount === 0) {
@@ -134,14 +152,17 @@ export function useOpenSwap({
       return;
     }
 
-    openAccountSelectionDrawer();
+    openAccountSelectionDrawer(swapCurrencyIds);
   }, [
-    accountsForCurrency,
+    currency,
     defaultAccount,
     defaultParentAccount,
-    resolvedCurrencyIds.length,
+    flattenedAccounts,
+    getSwapNetworkCurrencyIds,
+    resolvedCurrencyIds,
     navigateToSwap,
     openAccountSelectionDrawer,
+    shallowAccounts,
   ]);
 
   return { handleOpenSwap, openSwapForAccount: navigateToSwap };

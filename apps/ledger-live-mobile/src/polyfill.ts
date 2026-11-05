@@ -1,11 +1,7 @@
 /* eslint-disable no-console */
 
-// Intl polyfill for Hermes. Could be useless in future react-native versions. See https://hermesengine.dev/docs/intl/
-
-import "@formatjs/intl-locale/polyfill-force";
-
+// Hermes has no Intl.PluralRules (i18next plurals need it). See https://github.com/facebook/hermes/blob/main/doc/IntlAPIs.md
 import "@formatjs/intl-pluralrules/polyfill-force";
-import "@formatjs/intl-relativetimeformat/polyfill-force";
 
 // Dynamic language loading - only load the required language data
 import { getDefaultLanguageLocale } from "./languages";

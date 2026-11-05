@@ -50,7 +50,6 @@
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "knip-check": "pnpm knip --directory ../../.. -W libs/coin-tester-modules/coin-tester-zcash",
     "test": "jest --selectProjects unit",
     "coverage": "jest --coverage --selectProjects unit",
     "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand"
@@ -61,7 +60,6 @@
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "catalog:",
-    "@ledgerhq/live-network": "catalog:",
     "@ledgerhq/live-signer-zcash": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@ledgerhq/wallet-btc": "workspace:^",
@@ -82,11 +80,13 @@
     "@types/bs58": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "axios": "catalog:",
-    "bs58check": "^4.0.0",
+    "bs58check": "4.0.0",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
+    "rimraf": "catalog:",
     "typescript": "catalog:"
   }
 }

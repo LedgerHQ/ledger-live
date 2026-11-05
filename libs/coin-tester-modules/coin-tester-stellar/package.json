@@ -53,8 +53,7 @@
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand --forceExit",
-    "unimported": "pnpm knip --directory ../../.. -W libs/coin-tester-modules/coin-tester-stellar"
+    "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand --forceExit"
   },
   "dependencies": {
     "@ledgerhq/coin-tester": "workspace:^",
@@ -76,11 +75,12 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "axios": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "rimraf": "^5.0.5",
+    "rimraf": "5.0.10",
     "typescript": "catalog:"
   }
 }

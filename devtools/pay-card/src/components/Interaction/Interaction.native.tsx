@@ -11,7 +11,7 @@ export interface InteractionProps extends PayCardInteractionProps {
   readonly onBack: () => void;
 }
 
-const CONTAINER_LX = { gap: "s12", padding: "s16" } as const;
+const CONTAINER_LX = { gap: "s12", paddingHorizontal: "s12", paddingVertical: "s16" } as const;
 const PROBE_LX = { gap: "s8" } as const;
 const BUTTON_ROW_LX = { flexDirection: "row", flexWrap: "wrap", gap: "s8" } as const;
 

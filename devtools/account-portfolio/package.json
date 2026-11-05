@@ -52,6 +52,9 @@
     "@radix-ui/react-slot": "catalog:",
     "@radix-ui/react-tooltip": "catalog:",
     "@tanstack/react-table": "catalog:",
-    "class-variance-authority": "catalog:"
+    "class-variance-authority": "catalog:",
+    "@typescript/native": "catalog:",
+    "oxlint": "catalog:",
+    "oxfmt": "catalog:"
   }
 }

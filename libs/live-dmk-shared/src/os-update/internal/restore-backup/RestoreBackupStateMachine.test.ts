@@ -59,15 +59,15 @@ const RESTORE_RESULT = {
   restoredApps: [],
 } as unknown as RestoreBackupDAOutput;
 
+const PARTIAL_RESULT = {
+  restoreStatus: RestoreBackupStatus.PARTIAL,
+  restoredApps: [],
+} as unknown as RestoreBackupDAOutput;
+
 const OUT_OF_MEMORY_RESULT = {
   restoreStatus: RestoreBackupStatus.OUT_OF_MEMORY,
   restoredApps: [],
 } as unknown as RestoreBackupDAOutput;
-
-const OUT_OF_MEMORY_ERROR = {
-  _tag: "OutOfMemoryDAError",
-  message: "no room left",
-};
 
 const success = (data: unknown) => ({ status: DmkResultStatus.Success, data });
 
@@ -262,7 +262,7 @@ describe("RestoreBackupStateMachine", () => {
       });
     });
 
-    it("should keep the bar from moving backwards when a recovered failure restarts the restore", async () => {
+    it("should take the bar back when a recovered failure restarts the restore", async () => {
       await start();
       await emitPending({
         requiredUserInteraction: UserInteractionRequired.None,
@@ -281,11 +281,10 @@ describe("RestoreBackupStateMachine", () => {
       const progresses = sentStatesOfType(RestoreBackupStateType.RESTORING).map(
         state => state.progress,
       );
-      const heldAt = progresses.findIndex(progress => progress > 0);
-      expect(progresses.slice(heldAt)).toEqual([expect.closeTo(0.275), expect.closeTo(0.275)]);
+      expect(progresses.slice(-2)).toEqual([expect.closeTo(0.275), 0]);
     });
 
-    it("should advance the bar once the restarted restore passes where it was", async () => {
+    it("should follow the restarted restore from its start", async () => {
       await start();
       await emitPending({
         requiredUserInteraction: UserInteractionRequired.None,
@@ -396,6 +395,25 @@ describe("RestoreBackupStateMachine", () => {
       expect(actor.getSnapshot().output).toEqual({ restoreResult: RESTORE_RESULT });
     });
 
+    it.each([
+      ["full", RESTORE_RESULT],
+      ["partial", PARTIAL_RESULT],
+      ["out-of-memory", OUT_OF_MEMORY_RESULT],
+    ])(
+      "should drop the backup and report a %s restore as restored",
+      async (_status, restoreResult) => {
+        await start();
+
+        await completeDeviceAction(restoreResult);
+
+        expect(removeBackup).toHaveBeenCalledWith(DeviceModelId.STAX);
+        expect(actor.getSnapshot().status).toBe("done");
+        expect(sentStatesOfType(RestoreBackupStateType.BACKUP_RESTORED)[0].restoreResult).toBe(
+          restoreResult,
+        );
+      },
+    );
+
     it("should still complete when dropping the restored backup rejects", async () => {
       removeBackup.mockRejectedValue(new Error("storage unavailable"));
       await start();
@@ -408,56 +426,6 @@ describe("RestoreBackupStateMachine", () => {
   });
 
   describe("error", () => {
-    it("should emit OUT_OF_MEMORY when the device runs out of room reinstalling the apps", async () => {
-      await start();
-
-      await failDeviceAction(OUT_OF_MEMORY_ERROR);
-
-      expect(actor.getSnapshot().value).toBe("OutOfMemory");
-      expect(lastSentStateType()).toBe(RestoreBackupStateType.OUT_OF_MEMORY);
-      expect(sentStatesOfType(RestoreBackupStateType.OUT_OF_MEMORY)[0].error).toEqual(
-        OUT_OF_MEMORY_ERROR,
-      );
-    });
-
-    it("should keep the backup when the device ran out of room, so it can be restored later", async () => {
-      await start();
-
-      await failDeviceAction(OUT_OF_MEMORY_ERROR);
-
-      expect(removeBackup).not.toHaveBeenCalled();
-    });
-
-    it("should emit OUT_OF_MEMORY when the restore completes with an out-of-memory status", async () => {
-      await start();
-
-      await completeDeviceAction(OUT_OF_MEMORY_RESULT);
-
-      expect(actor.getSnapshot().value).toBe("OutOfMemory");
-      expect(lastSentStateType()).toBe(RestoreBackupStateType.OUT_OF_MEMORY);
-    });
-
-    it("should keep the backup when the restore completes with an out-of-memory status", async () => {
-      await start();
-
-      await completeDeviceAction(OUT_OF_MEMORY_RESULT);
-
-      expect(removeBackup).not.toHaveBeenCalled();
-    });
-
-    it("should ask the host to stop when cancel is called on the OUT_OF_MEMORY state", async () => {
-      await start();
-      await failDeviceAction(OUT_OF_MEMORY_ERROR);
-
-      sentStatesOfType(RestoreBackupStateType.OUT_OF_MEMORY)[0].cancel();
-      await settle();
-
-      expect(parentEvents).toContainEqual({
-        type: OsUpdatesOrchestratorStateMachineEventType.STOP,
-      });
-      expect(actor.getSnapshot().value).toBe("Canceled");
-    });
-
     it("should emit ALLOW_SECURE_CONNECTION_REFUSED when the user refuses the secure connection", async () => {
       await start();
       await emitPending({
@@ -479,6 +447,33 @@ describe("RestoreBackupStateMachine", () => {
       await settle();
 
       expect(actor.getSnapshot().value).toBe("RestoreBackup");
+    });
+
+    it("should take the bar back when the restore is retried after a refused secure connection", async () => {
+      await start();
+      await emitPending({
+        requiredUserInteraction: UserInteractionRequired.None,
+        step: RestoreBackupStepValue.InstallOrUpdateApps,
+        progress: 0.5,
+      });
+      await emitPending({
+        requiredUserInteraction: UserInteractionRequired.AllowSecureConnection,
+        step: RestoreBackupStepValue.InstallOrUpdateApps,
+      });
+      await failDeviceAction(new RefusedByUserDAError());
+
+      sentStatesOfType(RestoreBackupStateType.ALLOW_SECURE_CONNECTION_REFUSED)[0].retry();
+      await settle();
+      await emitPending({
+        requiredUserInteraction: UserInteractionRequired.None,
+        step: RestoreBackupStepValue.InstallLanguagePackage,
+        progress: 0,
+      });
+
+      const progresses = sentStatesOfType(RestoreBackupStateType.RESTORING).map(
+        state => state.progress,
+      );
+      expect(progresses.slice(-2)).toEqual([expect.closeTo(0.275), 0]);
     });
 
     it("should ask the host to stop when cancel is called after a refused secure connection", async () => {

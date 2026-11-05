@@ -13,6 +13,10 @@ import { createCommandOutput } from "./output";
 import { _setTestSpinner, installOutputCapture } from "./shared/ui";
 import { FakeSpinners } from "./testing/fake-spinner";
 import { resetTestSeams } from "./shared/test-seam";
+import { ETH_ADDR, SOL_ADDR } from "./shared/accountDescriptor/test-fixtures";
+import { NetworkIdSchema } from "./shared/accountDescriptor";
+import type { SendIntentSummary } from "./agent-intent/send-intent";
+import type { SwapIntentSummary } from "./agent-intent/swap-intent";
 
 const spinners = new FakeSpinners();
 beforeAll(() => _setTestSpinner(spinners.create));
@@ -445,7 +449,7 @@ describe("HumanCommandOutput", () => {
       purpose: "account",
       version: "2",
       type: "utxo",
-      network: "bitcoin",
+      network: NetworkIdSchema.parse("bitcoin"),
       xpub: "xpub6BosfCnifzxcA",
       path: "m/84h/0h/0h",
     } as const;
@@ -483,6 +487,7 @@ describe("HumanCommandOutput", () => {
           swapId: "swap-abc",
           payinAddress: "0x000000000000000000000000000000000000dead",
         } as unknown as Parameters<typeof out.swapExecuteFullResult>[0]["payload"],
+        balanceCheck: { checked: true },
         operationHash: "0xopHash",
         swapId: "swap-abc",
         // Human output only surfaces the display-unit amount; the atomic value and rate stay in JSON.
@@ -521,6 +526,7 @@ describe("HumanCommandOutput", () => {
           swapId: "swap-abc",
           payinAddress: "0x000000000000000000000000000000000000dead",
         } as unknown as Parameters<typeof out.swapExecuteFullResult>[0]["payload"],
+        balanceCheck: { checked: true },
       });
     } finally {
       restore();
@@ -837,12 +843,114 @@ describe("HumanCommandOutput", () => {
   });
 });
 
+describe.each(["human", "json"] as const)("%s proposal warnings", format => {
+  let writes: { stream: "stdout" | "stderr"; text: string }[] = [];
+  let restore: () => void;
+
+  beforeEach(() => {
+    writes = [];
+    restore = installOutputCapture({
+      stdout: text => writes.push({ stream: "stdout", text }),
+      stderr: text => writes.push({ stream: "stderr", text }),
+    });
+  });
+
+  afterEach(() => restore());
+
+  const out = () => createCommandOutput(format, { command: "agent-intent", network: "all" });
+
+  const swapSummary: SwapIntentSummary = {
+    profileId: "test-agent",
+    environment: "production",
+    sender: ETH_ADDR,
+    from: {
+      id: "ethereum/erc20/usd__coin",
+      ticker: "USDC",
+      decimals: 6,
+      contract: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+    },
+    to: { id: "ethereum", ticker: "ETH", decimals: 18 },
+    fromAmount: "100",
+    toAmount: "0.03",
+    provider: "okx",
+    quoted: true,
+    needsTokenApproval: true,
+  };
+
+  const sendSummary: SendIntentSummary = {
+    profileId: "test-agent",
+    environment: "production",
+    sender: SOL_ADDR,
+    recipient: SOL_ADDR,
+    amount: "1000000",
+    displayAmount: "0.001 SOL",
+    network: "solana",
+    asset: { type: "native", ticker: "SOL", decimals: 9 },
+  };
+
+  function warningsAfterResult(): string {
+    const firstWarning = writes.findIndex(w => w.stream === "stderr");
+    expect(firstWarning).toBeGreaterThan(0);
+    expect(writes.slice(firstWarning).every(w => w.stream === "stderr")).toBe(true);
+    return writes
+      .slice(firstWarning)
+      .map(w => w.text)
+      .join("");
+  }
+
+  it("warns about the token approval and the unreadable review link after a submitted swap", () => {
+    out().agentIntentSwap({ ...swapSummary, deeplink: null, intentId: null });
+
+    const warnings = warningsAfterResult();
+    expect(warnings).toContain("⚠ Swapping USDC through okx needs an approval first.");
+    expect(warnings).toContain("returned no readable review link");
+  });
+
+  it("warns about the token approval after a dry-run swap", () => {
+    out().agentIntentSwapDryRun(swapSummary);
+
+    expect(warningsAfterResult()).toContain("⚠ Swapping USDC through okx needs an approval first.");
+  });
+
+  it("warns about the unreadable review link after a submitted send", () => {
+    out().agentIntentSend({ ...sendSummary, deeplink: null, intentId: null });
+
+    expect(warningsAfterResult()).toContain("returned no readable review link");
+  });
+
+  it("writes nothing to stderr for a swap without an approval and with a usable review link", () => {
+    out().agentIntentSwap({
+      ...swapSummary,
+      needsTokenApproval: false,
+      deeplink: "https://app.agents.ledger.com/intents/intent-456",
+      intentId: "intent-456",
+    });
+
+    expect(writes.filter(w => w.stream === "stderr")).toEqual([]);
+  });
+});
+
 describe("output command handling", () => {
   const ROOT = path.resolve(import.meta.dir, "..");
   const HUMAN_DEVICE_ERROR_EXIT = path.resolve(
     import.meta.dir,
     "./testing/human-device-error-exit.ts",
   );
+  const OUTPUT_LOADS_SOLANA_SDK = path.resolve(
+    import.meta.dir,
+    "./testing/output-loads-solana-sdk.ts",
+  );
+
+  it("loads no Solana SDK, which every command would pay for at startup", async () => {
+    const proc = Bun.spawn(["bun", "--cwd", ROOT, OUTPUT_LOADS_SOLANA_SDK], {
+      stdin: "ignore",
+      stdout: "pipe",
+      stderr: "pipe",
+    });
+
+    expect(await proc.exited).toBe(0);
+    expect((await new Response(proc.stdout).text()).trim()).toBe("not loaded");
+  });
 
   it("human output exits with the WalletCliDeviceError exit code", async () => {
     const proc = Bun.spawn(["bun", "--cwd", ROOT, HUMAN_DEVICE_ERROR_EXIT], {

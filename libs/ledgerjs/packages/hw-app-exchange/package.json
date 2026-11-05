@@ -42,9 +42,14 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
-    "bip32-path": "^0.4.2",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
+    "bip32-path": "0.4.2",
     "jest": "catalog:",
-    "ts-node": "^10.4.0"
+    "ts-node": "10.9.2",
+    "rimraf": "catalog:",
+    "oxlint": "catalog:",
+    "oxfmt": "catalog:"
   },
   "files": [
     "lib",

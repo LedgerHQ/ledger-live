@@ -14,14 +14,14 @@ jest.mock("@features/flow-contacts", () => {
       title,
       description,
       newBadgeLabel,
-      onPress,
+      onOpenContacts,
     }: {
       title: string;
       description: string;
       newBadgeLabel?: string;
-      onPress: () => void;
+      onOpenContacts: () => void;
     }) => (
-      <Pressable testID="my-wallet-contacts-button" onPress={onPress}>
+      <Pressable testID="my-wallet-contacts-button" onPress={onOpenContacts}>
         <Text>{title}</Text>
         <Text>{description}</Text>
         {newBadgeLabel ? <Text testID="contacts-button-new-badge">{newBadgeLabel}</Text> : null}

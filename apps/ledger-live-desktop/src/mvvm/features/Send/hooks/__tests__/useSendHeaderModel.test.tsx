@@ -1080,12 +1080,12 @@ describe("useSendHeaderModel", () => {
       jest.mocked(useSponsoredSend).mockReturnValue({ state: { phase } } as never);
     };
 
-    it("titles a sponsored send's transfer signature as its second step", () => {
+    it("titles a sponsored send's transfer signature as the transfer confirmation", () => {
       mockSignatureStep("TRANSFER");
 
       renderHook("$5,969.83");
 
-      expect(latestVM?.title).toBe("Step 2 of 2");
+      expect(latestVM?.title).toBe("Confirm transfer");
       expect(latestVM?.descriptionText).toBe("");
     });
 

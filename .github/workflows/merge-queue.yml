@@ -196,7 +196,7 @@ jobs:
       skip-coverage: true
 
   enforce-boundaries:
-    name: "Enforce Module Boundaries"
+    name: "Monorepo Checks"
     permissions:
       id-token: write
       contents: read

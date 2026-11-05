@@ -1,6 +1,10 @@
 import React from "react";
 import { Button } from "@ledgerhq/lumen-ui-react";
-import type { CardPrimaryActionButtonProps } from "./types";
+
+export type CardPrimaryActionButtonProps = Readonly<{
+  label: string;
+  onPress: () => void;
+}>;
 
 export function CardPrimaryActionButton({ label, onPress }: CardPrimaryActionButtonProps) {
   return (

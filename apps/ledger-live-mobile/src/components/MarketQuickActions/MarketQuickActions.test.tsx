@@ -90,6 +90,11 @@ jest.mock("@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampC
   })),
 }));
 
+const mockUseOpenSwap = jest.fn((_props: unknown) => ({ handleOpenSwap: jest.fn() }));
+jest.mock("LLM/features/Swap", () => ({
+  useOpenSwap: (props: unknown) => mockUseOpenSwap(props),
+}));
+
 const TestNavigator = ({ children }: { children: React.ReactNode }) => (
   <Stack.Navigator initialRouteName={ScreenName.MarketDetail}>
     <Stack.Screen name={ScreenName.MarketDetail}>{() => children}</Stack.Screen>
@@ -238,6 +243,22 @@ describe("MarketQuickActions", () => {
       },
     );
     expect(getByText(/(earn|yield)/i)).toBeVisible();
+  });
+
+  it("should pass the asset ledger ids to swap", () => {
+    const ledgerIds = [ethereumCurrency.id, "base", "arbitrum"];
+    renderWithReactQuery(
+      <TestNavigator>
+        <MarketQuickActions
+          currency={ethereumCurrency}
+          accounts={[ethereumAccount]}
+          ledgerIds={ledgerIds}
+        />
+      </TestNavigator>,
+    );
+    expect(mockUseOpenSwap).toHaveBeenCalledWith(
+      expect.objectContaining({ currency: ethereumCurrency, currencyIds: ledgerIds }),
+    );
   });
 
   it("should not render earn button for token currencies without stake support", () => {

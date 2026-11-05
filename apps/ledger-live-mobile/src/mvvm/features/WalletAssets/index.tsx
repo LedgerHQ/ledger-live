@@ -17,10 +17,7 @@ export const WalletAssetsView: React.FC<WalletAssetsViewProps> = ({
   noPaddingHorizontal = false,
 }) => {
   const {
-    hasMore,
-    onPressShowAll,
     shouldAddBottomPadding,
-    shouldDisplayAssetSection,
     shouldDisplayAssetDiscoverability,
     shouldDisplayBorrowSection,
     shouldDisplayServicesEntryPoints,
@@ -39,7 +36,6 @@ export const WalletAssetsView: React.FC<WalletAssetsViewProps> = ({
     >
       <AssetsSections
         variant={variant}
-        shouldDisplayAssetSection={shouldDisplayAssetSection}
         shouldDisplayAssetDiscoverability={shouldDisplayAssetDiscoverability}
         shouldDisplayServicesEntryPoints={
           variant !== "readOnly" && shouldDisplayServicesEntryPoints
@@ -48,12 +44,7 @@ export const WalletAssetsView: React.FC<WalletAssetsViewProps> = ({
       {variant !== "readOnly" && shouldDisplayBorrowSection && (
         <PortfolioBorrowSection onPress={onBorrowPress} />
       )}
-      <AssetsButtonSection
-        variant={variant}
-        shouldDisplayAssetSection={shouldDisplayAssetSection}
-        hasMore={hasMore}
-        onPressShowAll={onPressShowAll}
-      />
+      <AssetsButtonSection variant={variant} />
     </Box>
   );
 };

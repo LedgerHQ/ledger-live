@@ -1,10 +1,15 @@
 import { useCallback } from "react";
 import { Linking, PermissionsAndroid, Platform } from "react-native";
 import { useSelector, useDispatch } from "~/context/hooks";
-import { AuthorizationStatus, getMessaging } from "@react-native-firebase/messaging";
+import {
+  AuthorizationStatus,
+  getMessaging,
+  requestPermission,
+} from "@react-native-firebase/messaging";
 import { notificationsPermissionStatusSelector } from "~/reducers/notifications";
 import { setNotificationPermissionStatus } from "~/actions/notifications";
 import { updateIdentify } from "~/analytics";
+import type { NotificationPermissionStatus } from "~/logic/getNotificationPermissionStatus";
 
 // Firebase's requestPermission is a no-op on Android, so Android 13+ must request POST_NOTIFICATIONS itself.
 const requiresAndroidRuntimePermission = () => Platform.OS === "android" && Platform.Version >= 33;
@@ -14,7 +19,7 @@ export const useNotificationsPermission = () => {
 
   const dispatch = useDispatch();
   const setPermissionStatus = useCallback(
-    (status: (typeof AuthorizationStatus)[keyof typeof AuthorizationStatus]) => {
+    (status: NotificationPermissionStatus) => {
       dispatch(setNotificationPermissionStatus(status));
     },
     [dispatch],
@@ -43,10 +48,8 @@ export const useNotificationsPermission = () => {
       return requestAndroidPermission();
     }
 
-    const { requestPermission } = getMessaging();
-
     if (permissionStatus === AuthorizationStatus.NOT_DETERMINED) {
-      const permission = await requestPermission();
+      const permission = await requestPermission(getMessaging());
       setPermissionStatus(permission);
       updateIdentify();
       return permission;

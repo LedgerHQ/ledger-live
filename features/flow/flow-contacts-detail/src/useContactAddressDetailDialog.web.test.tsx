@@ -53,7 +53,7 @@ describe("useContactAddressDetailDialog", () => {
     const { result } = renderHook(() => useContactAddressDetailDialog(populatedContactDetail));
 
     act(() => {
-      result.current.onAddressRowPress(
+      result.current.onOpenAddressDetail(
         createContactDetailAddressRowIntent(
           contact.id,
           ContactAddressIdSchema.parse("address-ethereum"),
@@ -77,7 +77,7 @@ describe("useContactAddressDetailDialog", () => {
     const { result } = renderHook(() => useContactAddressDetailDialog(populatedContactDetail));
 
     act(() => {
-      result.current.onAddressRowPress(
+      result.current.onOpenAddressDetail(
         createContactDetailAddressRowIntent(
           contact.id,
           ContactAddressIdSchema.parse("address-ethereum"),

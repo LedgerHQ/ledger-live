@@ -5,6 +5,10 @@ import { TIMEOUT } from "@e2e/utils/timeouts";
 const HARD_TIMEOUT_MARKER = "possible bridge hang";
 const CONCURRENT_INTERACTION_MARKER = "multiple interactions taking place";
 
+/** True when the error is a hard timeout: the app never answered, as opposed to a failed check. */
+export const isHardTimeout = (error: unknown): boolean =>
+  error instanceof Error && error.message.includes(HARD_TIMEOUT_MARKER);
+
 /** A wait answers by itself at its own timeout, so the hard timeout must outlast it. */
 export const waitHardTimeout = (timeout: number) =>
   Math.max(TIMEOUT.xxxlarge, timeout + TIMEOUT.xlarge);

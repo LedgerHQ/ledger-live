@@ -61,11 +61,6 @@ const teamWalletXp = {
     parser: stringParser,
     desc: "Card OAuth redirect URI, whitelisted by the provider; must match on the token exchange",
   },
-  COINGECKO_API_URL: {
-    def: "https://proxycg.api.live.ledger.com/api/v3",
-    parser: stringParser,
-    desc: "Coingecko API",
-  },
   MAX_ACCOUNT_NAME_SIZE: {
     def: 50,
     parser: intParser,

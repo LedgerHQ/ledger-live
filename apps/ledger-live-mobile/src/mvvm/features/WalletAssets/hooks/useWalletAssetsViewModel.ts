@@ -1,21 +1,11 @@
-import { useMemo } from "react";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useServicesEntryPointsFeature } from "@features/flow-portfolio-services-entry-points";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
-import { useCategorizedAssetsFromPortfolio } from "LLM/hooks/useCategorizedAssetsFromPortfolio";
-import {
-  MAX_ASSETS_TO_DISPLAY,
-  MAX_STABLECOINS_TO_DISPLAY,
-} from "LLM/features/WalletAssets/constants";
-import { usePortfolioSectionActions } from "LLM/features/WalletAssets/shared/usePortfolioSectionActions";
 import { useBorrowLiveConfig } from "LLM/features/Borrow/hooks/useBorrowLiveConfig";
 import { usePortfolioBorrowSectionViewModel } from "LLM/features/WalletAssets/views/BorrowSection/usePortfolioBorrowSectionViewModel";
 
 interface WalletAssetsViewModelResult {
-  hasMore: boolean;
-  onPressShowAll: () => void;
   shouldAddBottomPadding: boolean;
-  shouldDisplayAssetSection: boolean;
   shouldDisplayAssetDiscoverability: boolean;
   shouldDisplayBorrowSection: boolean;
   shouldDisplayServicesEntryPoints: boolean;
@@ -23,32 +13,16 @@ interface WalletAssetsViewModelResult {
 }
 
 export function useWalletAssetsViewModel(): WalletAssetsViewModelResult {
-  const { onPressShowAll } = usePortfolioSectionActions(false, "all");
-  const { categorizedAssets } = useCategorizedAssetsFromPortfolio();
   const { walletCardsDisplayed } = useDynamicContent();
-  const {
-    shouldDisplayOperationsList,
-    shouldDisplayAssetSection,
-    shouldDisplayAssetDiscoverability,
-  } = useWalletFeaturesConfig("mobile");
+  const { shouldDisplayAssetDiscoverability } = useWalletFeaturesConfig("mobile");
   const borrowConfig = useBorrowLiveConfig();
   const { isEnabled: shouldDisplayServicesEntryPoints } = useServicesEntryPointsFeature();
   const { onPress: onBorrowPress } = usePortfolioBorrowSectionViewModel();
 
-  const hasMore = useMemo(
-    () =>
-      categorizedAssets.cryptos.length > MAX_ASSETS_TO_DISPLAY ||
-      categorizedAssets.stablecoins.length > MAX_STABLECOINS_TO_DISPLAY,
-    [categorizedAssets],
-  );
-
   // Tx History in header: extra space under the last block (Accounts) when the carousel is absent,
   // since nothing is rendered below it.
   return {
-    hasMore,
-    onPressShowAll,
-    shouldAddBottomPadding: shouldDisplayOperationsList && walletCardsDisplayed.length === 0,
-    shouldDisplayAssetSection,
+    shouldAddBottomPadding: walletCardsDisplayed.length === 0,
     shouldDisplayAssetDiscoverability,
     shouldDisplayBorrowSection:
       (borrowConfig?.enabled ?? false) && !shouldDisplayServicesEntryPoints,

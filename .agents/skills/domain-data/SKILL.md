@@ -10,6 +10,8 @@ when one response hydrates several entities. Placement comes from
 [`structure-flow`](../structure-flow/SKILL.md), barrels from
 [`package-public-api`](../package-public-api/SKILL.md).
 
+Source: [Types, Initial State & Mocks](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/6102941793)
+
 | Package | Owns | Never |
 | --- | --- | --- |
 | `@domain/entity-<name>` | schemas, inferred types, branded ids, slice, mocks, selectors | React, network calls, an app store type |
@@ -54,10 +56,11 @@ export type ContactName = z.infer<typeof ContactNameSchema>;
 - **Build values through the schema.** A constructor such as `contact(data)` in `define.ts` returns
   `ContactSchema.parse(data)`, so a branded value always passed validation.
 
+Validators and query argument types: [references/schemas.md](references/schemas.md).
+
 **Slice.** The initial state is a named export typed with `satisfies`, every property set. The
 reducer is the default export of `slice.ts`, re-exported by the barrel with
-`export { default } from "./slice"`, the one form `package-public-api` tolerates. An app then
-registers `contacts: contactsReducer` from `import contactsReducer from "@domain/entity-<name>"`.
+`export { default } from "./slice"`, the one form `package-public-api` tolerates.
 
 ```ts
 export const contactsInitialState = { contacts: [defaultMeContact] } satisfies ContactsState;
@@ -73,7 +76,9 @@ export default contactsSlice.reducer;
 
 - One state transition per reducer; use Immer's mutable syntax.
 - Type payloads with `PayloadAction<T>`, using the entity's branded types.
-- Handle another slice's or a thunk's actions in `extraReducers` with the builder callback.
+- Handle another entity slice's actions in `extraReducers` with the builder callback.
+
+App registration and thunk lifecycles: [references/slice.md](references/slice.md).
 
 **Mocks.** `schema.mock.ts` builds one valid value per schema, with overrides
 (`mockContact(overrides)`), and passes it through the schema. `slice.mock.ts` builds a slice state
@@ -99,6 +104,9 @@ Every backend has one endpoint-less api in `@shared/api-services` (`calApi`, `ca
 The use case adds its tags and endpoints to it; it never calls `createApi`. A new backend gets its
 base there first ([`shared/api-services`](../../../shared/api-services/README.md#adding-a-service)).
 
+From [`@domain/api-market-index-fear-and-greed`](../../../domain/api/market-index-fear-and-greed/src/api.ts),
+where `transformFearAndGreedResponse` validates the wire response and maps it to the entity:
+
 ```ts
 export const FEAR_AND_GREED_TAGS = ["FearAndGreedLatest"] as const;
 
@@ -109,6 +117,7 @@ export const fearAndGreedApi = coinMarketCapApi
       getFearAndGreedLatest: build.query<FearAndGreedIndex, void>({
         query: () => ({ url: "/fear-and-greed/latest" }),
         providesTags: [...FEAR_AND_GREED_TAGS],
+        transformResponse: transformFearAndGreedResponse,
       }),
     }),
   });
@@ -129,7 +138,7 @@ export const { useGetFearAndGreedLatestQuery } = fearAndGreedApi;
 - **Apps register the service api**; features import hooks from the use-case package, whose value
   import is what runs the injection.
 
-Endpoint options, error handling and registration traps:
+Endpoint options, `transformErrorResponse`, the one-base-per-backend rule and registration traps:
 [references/api-endpoints.md](references/api-endpoints.md). The why of the split:
 [`domain/api/README.md`](../../../domain/api/README.md).
 

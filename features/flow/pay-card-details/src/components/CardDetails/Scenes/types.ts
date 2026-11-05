@@ -44,7 +44,7 @@ export type AddToWalletSceneProps = Readonly<{
 
 export type AssetDetailsSceneProps = Readonly<{
   viewModel: CardAssetsViewModel;
-  onTransactionPress: (transaction: CardTransactionItem) => void;
+  onOpenTransaction: (transaction: CardTransactionItem) => void;
 }>;
 
 export type AssetsManageSceneProps = Readonly<{

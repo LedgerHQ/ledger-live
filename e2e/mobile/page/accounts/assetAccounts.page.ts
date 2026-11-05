@@ -1,14 +1,24 @@
 import { Step } from "jest-allure2-reporter/api";
 import { currencyParam, openDeeplink } from "@e2e/helpers/commonHelpers";
+import { byId, NativeHandle } from "@e2e/helpers/elements/native";
 import { isAggregatedAssetsEnabled } from "@e2e/utils/featureFlagUtils";
 
+type QuickAction = "send" | "receive" | "buy" | "sell" | "swap";
+
 export default class AssetAccountsPage {
-  baseLink = "account";
-  assetBalance = () => getElementById("asset-graph-balance");
-  titleId = (assetName: string) => `accounts-title-${assetName}`;
-  accountAssetId = (assetName: string) => `account-assets-${assetName}`;
-  assetQuickActionButton = (action: "send" | "receive" | "buy" | "sell" | "swap") =>
-    getElementById(`asset-quick-action-button-${action}`);
+  private readonly baseLink = "account";
+  private readonly assetBalance = byId("asset-graph-balance");
+  private readonly title = (assetName: string) => byId(`accounts-title-${assetName}`);
+  private readonly accountAssets = (assetName: string) => byId(`account-assets-${assetName}`);
+  private readonly assetDetailScrollView = (currencyId: string) =>
+    byId(`asset-detail-scroll-view-${currencyId}`);
+  private readonly assetQuickActionButton = (action: QuickAction) =>
+    byId(`asset-quick-action-button-${action}`);
+  private readonly assetDetailActionButtons: Partial<Record<QuickAction, NativeHandle>> = {
+    buy: byId("asset-detail-buy-button"),
+    swap: byId("asset-detail-swap-button"),
+    receive: byId("asset-detail-footer-receive-button"),
+  };
 
   @Step("Wait for asset page to load {{{0}}}")
   async waitForAccountPageToLoad(
@@ -20,9 +30,9 @@ export default class AssetAccountsPage {
       if (inCryptoAddressesList) {
         return; // goToAccounts already navigated to the account page via CryptoAddressesScreen
       }
-      await waitForElementById(`asset-detail-scroll-view-${currencyId ?? assetName.toLowerCase()}`);
+      await this.assetDetailScrollView(currencyId ?? assetName.toLowerCase()).waitVisible();
     } else {
-      await waitForElementById(this.titleId(assetName.toLowerCase()));
+      await this.title(assetName.toLowerCase()).waitVisible();
     }
   }
 
@@ -31,14 +41,13 @@ export default class AssetAccountsPage {
     if (await isAggregatedAssetsEnabled()) {
       return; // screen already confirmed in waitForAccountPageToLoad; no legacy balance element in Q2
     }
-    const balanceEl = this.assetBalance();
-    await detoxExpect(balanceEl).toBeVisible();
+    await this.assetBalance.expectVisible();
   }
 
   @Step("Wait for individual asset rows to load {{{0}}}")
   async waitForAccountAssetsToLoad(assetName: string) {
-    await waitForElementById(this.titleId(assetName));
-    await waitForElementById(this.accountAssetId(assetName));
+    await this.title(assetName).waitVisible();
+    await this.accountAssets(assetName).waitVisible();
   }
 
   @Step("Open asset list via deeplink {{{0}}}")
@@ -52,20 +61,11 @@ export default class AssetAccountsPage {
   }
 
   @Step("Tap on asset quick action button {{{0}}}")
-  async tapOnAssetQuickActionButton(action: "send" | "receive" | "buy" | "sell" | "swap") {
+  async tapOnAssetQuickActionButton(action: QuickAction) {
     if (await isAggregatedAssetsEnabled()) {
-      const q2TestIds: Partial<Record<typeof action, string>> = {
-        buy: "asset-detail-buy-button",
-        swap: "asset-detail-swap-button",
-        receive: "asset-detail-footer-receive-button",
-      };
-      const testId = q2TestIds[action] ?? `asset-quick-action-button-${action}`;
-      await waitForElementById(testId);
-      await tapById(testId);
+      await (this.assetDetailActionButtons[action] ?? this.assetQuickActionButton(action)).tap();
     } else {
-      const quickActionButton = this.assetQuickActionButton(action);
-      await waitForElement(quickActionButton);
-      await tapByElement(quickActionButton);
+      await this.assetQuickActionButton(action).tap();
     }
   }
 
@@ -78,9 +78,9 @@ export default class AssetAccountsPage {
   async expectAssetPage(currencyId?: string) {
     const currency = currencyId?.toLowerCase() || "bitcoin";
     if (await isAggregatedAssetsEnabled()) {
-      await waitForElementById(`asset-detail-scroll-view-${currency}`);
+      await this.assetDetailScrollView(currency).waitVisible();
     } else {
-      await waitForElementById(this.accountAssetId(currency));
+      await this.accountAssets(currency).waitVisible();
     }
   }
 }

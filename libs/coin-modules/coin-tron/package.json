@@ -72,10 +72,12 @@
     "@types/jest": "catalog:",
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
-    "dotenv": "^16.4.5",
+    "@typescript/native": "catalog:",
+    "dotenv": "16.4.7",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
+    "rimraf": "catalog:",
     "typescript": "catalog:"
   },
   "files": [

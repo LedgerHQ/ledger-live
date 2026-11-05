@@ -41,7 +41,10 @@
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "react": "catalog:"
+    "react": "catalog:",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
+    "rimraf": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

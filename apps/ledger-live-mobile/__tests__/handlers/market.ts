@@ -92,6 +92,9 @@ const handlers = [
   http.get("https://countervalues.live.ledger.com/v3/supported/fiat", () => {
     return HttpResponse.json(["usd", "eur", "gbp"]);
   }),
+  http.get("https://countervalues.live.ledger.com/v3/supported/markets/chart/to", () => {
+    return HttpResponse.json(["USD", "EUR", "GBP"]);
+  }),
   http.get("https://countervalues.live.ledger.com/v3/markets/chart/:range/:id", () => {
     return HttpResponse.json({
       values: [

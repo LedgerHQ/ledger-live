@@ -70,6 +70,8 @@ jest.mock("@react-native-firebase/messaging", () => {
       requestPermission: mockRequestPermission,
       hasPermission: mockHasPermission,
     })),
+    requestPermission: () => mockRequestPermission(),
+    hasPermission: () => mockHasPermission(),
   };
 });
 

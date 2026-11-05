@@ -8,6 +8,12 @@ import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { render, screen } from "@tests/test-renderer";
 import { OsUpdateStep } from "../../../components/OsUpdateStep";
 import { stax } from "../../../testUtils/connectedDevice.mock";
+import useExportLogs from "~/components/useExportLogs";
+
+jest.mock("~/components/useExportLogs", () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
 
 function renderView(
   state: ApplyUpdatesState,
@@ -33,6 +39,8 @@ jest.mock("@shared/ui-queued-bottom-sheet", () => {
 const isSheetRequested = () =>
   jest.mocked(QueuedBottomSheet).mock.lastCall?.[0].isRequestingToBeOpened;
 
+const hasCloseButton = () => !jest.mocked(QueuedBottomSheet).mock.lastCall?.[0].noCloseButton;
+
 describe("ApplyUpdates step", () => {
   it("never shows the preparing screen, and does nothing while loading", () => {
     renderView({ type: ApplyUpdatesStateType.LOADING });
@@ -44,6 +52,8 @@ describe("ApplyUpdates step", () => {
 
   it("keeps the progress screen behind a sheet", () => {
     renderView({ type: ApplyUpdatesStateType.DEVICE_LOCKED });
+
+    expect(hasCloseButton()).toBe(true);
 
     expect(screen.queryByTestId("os-update-preparing-screen")).toBeNull();
     expect(screen.getByTestId("os-update-progress-screen")).toBeVisible();
@@ -87,12 +97,13 @@ describe("ApplyUpdates step", () => {
   it("shows the summary once the updates are applied and closes on press", async () => {
     const onClose = jest.fn();
     const { user } = renderView(
-      { type: ApplyUpdatesStateType.UPDATES_APPLIED, restoreResult: undefined },
+      { type: ApplyUpdatesStateType.UPDATES_APPLIED, osVersion: "2.0.0", restoreResult: undefined },
       { onClose },
     );
 
-    expect(screen.getByTestId("os-update-applied-screen")).toBeVisible();
-    await user.press(screen.getByText("Close"));
+    expect(screen.getByText("Your Ledger Stax is now up to date")).toBeVisible();
+    expect(screen.getByText("OS version: 2.0.0")).toBeVisible();
+    await user.press(screen.getByText("Finish"));
 
     expect(onClose).toHaveBeenCalledTimes(1);
   });
@@ -120,6 +131,8 @@ describe("ApplyUpdates step", () => {
       cancel,
     });
 
+    expect(hasCloseButton()).toBe(false);
+
     await user.press(screen.getByText("Retry"));
     await user.press(screen.getByText("Cancel"));
 
@@ -127,20 +140,40 @@ describe("ApplyUpdates step", () => {
     expect(cancel).toHaveBeenCalledTimes(1);
   });
 
-  it.each([
-    [ApplyUpdatesStateType.ALLOW_INSTALL_FIRMWARE_REFUSED, "os-update-install-firmware-refused"],
-    [ApplyUpdatesStateType.OUT_OF_MEMORY, "os-update-out-of-memory"],
-    [ApplyUpdatesStateType.UNEXPECTED_ERROR, "os-update-unexpected-error"],
-  ] as const)("only offers cancel for %s", async (type, testID) => {
+  it("offers to restart or cancel the update when the install is refused", async () => {
+    const retry = jest.fn();
     const cancel = jest.fn();
-    const { user } = renderView({ type, error: new Error("boom"), cancel });
+    const { user } = renderView({
+      type: ApplyUpdatesStateType.ALLOW_INSTALL_FIRMWARE_REFUSED,
+      error: new Error("refused"),
+      retry,
+      cancel,
+    });
 
-    expect(screen.getByTestId(testID)).toBeVisible();
-    expect(screen.queryByText("Retry")).toBeNull();
-    await user.press(screen.getByText("Cancel"));
+    expect(hasCloseButton()).toBe(false);
 
+    expect(screen.getByText("OS update installation cancelled on Ledger Stax")).toBeVisible();
+
+    await user.press(screen.getByText("Restart OS update"));
+    await user.press(screen.getByText("Cancel OS update"));
+
+    expect(retry).toHaveBeenCalledTimes(1);
     expect(cancel).toHaveBeenCalledTimes(1);
   });
+
+  it.each([[ApplyUpdatesStateType.UNEXPECTED_ERROR, "os-update-unexpected-error"]] as const)(
+    "only offers cancel for %s",
+    async (type, testID) => {
+      const cancel = jest.fn();
+      const { user } = renderView({ type, error: new Error("boom"), cancel });
+
+      expect(screen.getByTestId(testID)).toBeVisible();
+      expect(screen.queryByText("Retry")).toBeNull();
+      await user.press(screen.getByText("Cancel"));
+
+      expect(cancel).toHaveBeenCalledTimes(1);
+    },
+  );
 
   it.each([
     [ApplyUpdatesStateType.DEVICE_LOCKED, "os-update-device-locked"],
@@ -149,6 +182,25 @@ describe("ApplyUpdates step", () => {
     renderView({ type });
 
     expect(screen.getByTestId(testID)).toBeVisible();
+  });
+
+  it("sends a report and restarts the update from the connection timeout", async () => {
+    const exportLogs = jest.fn();
+    jest.mocked(useExportLogs).mockReturnValue(exportLogs);
+    const retry = jest.fn();
+    const { user } = renderView({ type: ApplyUpdatesStateType.CONNECTION_TIMED_OUT, retry });
+
+    expect(screen.getByTestId("os-update-connection-timed-out")).toBeVisible();
+    expect(hasCloseButton()).toBe(false);
+
+    await user.press(screen.getByText("Send report to Ledger"));
+
+    expect(exportLogs).toHaveBeenCalledTimes(1);
+    expect(retry).not.toHaveBeenCalled();
+
+    await user.press(screen.getByText("Restart OS update"));
+
+    expect(retry).toHaveBeenCalledTimes(1);
   });
 
   describe("closing", () => {

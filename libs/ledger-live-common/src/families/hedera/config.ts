@@ -1,5 +1,4 @@
 import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
-import { getEnv } from "@shared/env";
 
 // dead address that receives 1 tinybar from tx that is made to trigger rewards claiming
 const HEDERA_CLAIM_REWARDS_RECIPIENT_ACCOUNT_ID = "0.0.163372";
@@ -26,8 +25,8 @@ export const hederaConfig: Record<string, ConfigInfo> = {
       ledgerNodeId: HEDERA_STAKING_LEDGER_NODE_ID,
       tokenAssociationMinUsd: HEDERA_TOKEN_ASSOCIATION_MIN_USD,
       apiUrls: {
-        mirrorNode: getEnv("API_HEDERA_MIRROR"),
-        hgraph: getEnv("API_HEDERA_HGRAPH"),
+        mirrorNode: "https://hedera.coin.ledger.com",
+        hgraph: "https://hedera-indexer-mainnet.coin.ledger.com/v1/graphql",
       },
     },
   },
@@ -46,8 +45,8 @@ export const hederaConfig: Record<string, ConfigInfo> = {
       ledgerNodeId: HEDERA_STAKING_LEDGER_NODE_ID,
       tokenAssociationMinUsd: HEDERA_TOKEN_ASSOCIATION_MIN_USD,
       apiUrls: {
-        mirrorNode: getEnv("API_HEDERA_MIRROR_TESTNET"),
-        hgraph: getEnv("API_HEDERA_HGRAPH_TESTNET"),
+        mirrorNode: "https://hedera-testnet.coin.ledger.com",
+        hgraph: "https://hedera-indexer-testnet.coin.ledger.com/v1/graphql",
       },
     },
   },

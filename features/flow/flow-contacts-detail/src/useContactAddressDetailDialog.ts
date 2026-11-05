@@ -8,7 +8,7 @@ export function useContactAddressDetailDialog(
 ): Readonly<{
   isOpen: boolean;
   selection: ReturnType<typeof findContactAddressDetailSelection>;
-  onAddressRowPress: (intent: ContactDetailAddressRowIntent) => void;
+  onOpenAddressDetail: (intent: ContactDetailAddressRowIntent) => void;
   onClose: () => void;
   clearSelection: () => void;
 }> {
@@ -17,7 +17,7 @@ export function useContactAddressDetailDialog(
   const clearSelection = useCallback(() => {
     setSelectedAddressId(undefined);
   }, []);
-  const onAddressRowPress = useCallback((intent: ContactDetailAddressRowIntent) => {
+  const onOpenAddressDetail = useCallback((intent: ContactDetailAddressRowIntent) => {
     setSelectedAddressId(intent.addressId);
   }, []);
   const onClose = clearSelection;
@@ -41,7 +41,7 @@ export function useContactAddressDetailDialog(
   return {
     isOpen: selection !== undefined,
     selection,
-    onAddressRowPress,
+    onOpenAddressDetail,
     onClose,
     clearSelection,
   };

@@ -58,6 +58,25 @@ test("features/platform/* gets scope:features + type:feature-platform", () => {
   );
 });
 
+test("features/platform/account-source-* also gets type:account-data-source", () => {
+  assert.deepEqual(
+    inferTags(
+      "features/platform/account-source-coin-module",
+      "@features/platform-account-source-coin-module",
+    ),
+    ["scope:features", "scope:no-apps", "type:account-data-source", "type:feature-platform"],
+  );
+  assert.deepEqual(inferTags("features/platform/account-data", "@features/platform-account-data"), [
+    "scope:features",
+    "scope:no-apps",
+    "type:feature-platform",
+  ]);
+  assert.deepEqual(
+    inferTags("devtools/account-source-portfolio", "@devtools/account-source-portfolio"),
+    ["scope:devtools", "scope:no-apps"],
+  );
+});
+
 test("features/flow/* gets scope:features + type:feature-flow", () => {
   assert.deepEqual(inferTags("features/flow/wallet", "@features/flow-wallet"), [
     "scope:features",

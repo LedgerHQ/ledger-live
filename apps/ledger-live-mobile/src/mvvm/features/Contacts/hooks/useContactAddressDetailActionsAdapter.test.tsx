@@ -108,7 +108,7 @@ describe("useContactAddressDetailActionsAdapter", () => {
     );
 
     act(() => {
-      result.current.addressDetail.onAddressRowPress({
+      result.current.addressDetail.onOpenAddressDetail({
         type: "open-address-detail",
         contactId: contact.id,
         addressId: address.id,
@@ -156,7 +156,7 @@ describe("useContactAddressDetailActionsAdapter", () => {
     );
 
     act(() => {
-      result.current.addressDetail.onAddressRowPress({
+      result.current.addressDetail.onOpenAddressDetail({
         type: "open-address-detail",
         contactId: contact.id,
         addressId: address.id,

@@ -17,8 +17,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/predictions"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@ledgerhq/wallet-api-server": "catalog:",
@@ -28,6 +27,7 @@
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",

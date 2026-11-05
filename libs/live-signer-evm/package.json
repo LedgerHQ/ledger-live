@@ -50,7 +50,6 @@
   },
   "devDependencies": {
     "@support/jest": "workspace:*",
-    "@types/react": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/types-live": "workspace:^",
     "@swc/core": "catalog:",
@@ -58,9 +57,12 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
-    "rimraf": "^4.4.1",
-    "ts-node": "^10.4.0",
-    "ws": "catalog:"
+    "rimraf": "4.4.1",
+    "ts-node": "10.9.2",
+    "ws": "catalog:",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
+    "oxlint": "catalog:"
   },
   "exports": {
     ".": {

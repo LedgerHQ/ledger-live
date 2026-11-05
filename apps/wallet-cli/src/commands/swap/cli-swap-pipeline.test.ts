@@ -213,6 +213,23 @@ describe("runFullSwapPipeline session lifecycle", () => {
     expect(postSwapCancelledMock).not.toHaveBeenCalled();
   });
 
+  it("turns an HTTP rejection from the swap API into a SwapBackendError", async () => {
+    retrieveSwapPayloadMock.mockImplementationOnce(async () => {
+      throw Object.assign(new Error("Request failed with status code 401"), {
+        name: "AxiosError",
+        response: { status: 401, data: {} },
+      });
+    });
+
+    await expect(runPipeline()).rejects.toMatchObject({
+      name: "SwapBackendError",
+      httpStatus: 401,
+      message: "The swap provider rejected the request.",
+    });
+    expect(events).toEqual(["session:open", "startExchange", "session:close"]);
+    expect(postSwapCancelledMock).not.toHaveBeenCalled();
+  });
+
   it("reports swap cancelled when the pipeline fails after swapId is known", async () => {
     const signError = new Error("user rejected signing");
     const getAccountBridgeWithSignFailure = (): ReturnType<typeof getLiveAccountBridge> => {

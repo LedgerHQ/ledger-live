@@ -233,6 +233,22 @@ describe("ChecksView", () => {
     expect(screen.queryByRole("button", { name: "Close" })).toBeNull();
   });
 
+  it("should still decline the offer after it was hidden while the device was locked", async () => {
+    const { user, onDeclineUpdate, rerender } = renderChecks("updating", {
+      update: { current: "1.0.0", available: "1.1.0" },
+    });
+
+    rerender({ state: "synchronizing", update: null });
+
+    expect(onDeclineUpdate).not.toHaveBeenCalled();
+    expect(screen.queryByText(/Version 1\.1\.0/)).toBeNull();
+
+    rerender({ state: "updating", update: { current: "1.0.0", available: "1.1.0" } });
+    await user.press(screen.getByTestId("modal-close-button"));
+
+    expect(onDeclineUpdate).toHaveBeenCalledTimes(1);
+  });
+
   it("should decline the update once when the offer is closed", async () => {
     const { user, onDeclineUpdate, onCloseSheet, onQuit, onAcceptUpdate } = renderChecks(
       "updating",
@@ -349,7 +365,7 @@ describe("ChecksView", () => {
     { kind: "unknown", title: "Ledger Genuine Check error", showsSettings: false },
     { kind: "provider", title: "Initiate Ledger Genuine Check again", showsSettings: true },
   ])(
-    "should open the $kind drawer over the current check",
+    "should leave onboarding when cancelling the $kind drawer",
     async ({ kind, title, showsSettings }) => {
       const { user, onCloseSheet, onQuit, rerender } = renderChecks("checking", {
         error: { kind },
@@ -364,8 +380,8 @@ describe("ChecksView", () => {
 
       await user.press(screen.getByText("Cancel set up"));
 
-      expect(onCloseSheet).toHaveBeenCalledTimes(1);
-      expect(onQuit).not.toHaveBeenCalled();
+      expect(onQuit).toHaveBeenCalledTimes(1);
+      expect(onCloseSheet).not.toHaveBeenCalled();
     },
   );
 

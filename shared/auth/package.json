@@ -18,8 +18,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../.. -W shared/auth"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@reduxjs/toolkit": "catalog:",
@@ -31,6 +30,7 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "msw": "catalog:",
     "oxfmt": "catalog:",

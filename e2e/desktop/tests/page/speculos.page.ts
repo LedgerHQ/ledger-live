@@ -21,6 +21,7 @@ import {
   waitForAppReady,
   enableBlindSigningOnNanoS,
   resetSpeculosEvents,
+  waitForSendReviewTransaction,
 } from "@ledgerhq/live-e2e-shared/speculos";
 import { signTronRentPayment } from "@ledgerhq/live-e2e-shared/families/tronSponsored";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
@@ -70,6 +71,11 @@ export class SpeculosPage extends AppPage {
   @step("Sign Send Transaction")
   async signSendTransaction(tx: Transaction) {
     await signSendTransaction(tx);
+  }
+
+  @step("Wait for the device to show the transaction review")
+  async waitForSendReview(tx: Transaction) {
+    await waitForSendReviewTransaction(tx);
   }
 
   @step("Sign the Tronify rent payment of $0 USDT to $1")

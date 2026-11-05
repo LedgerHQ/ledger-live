@@ -11,6 +11,7 @@ import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/type
 import type { MarketListCategory } from "@ledgerhq/live-common/market/utils/category";
 import { PostOnboardingState } from "@ledgerhq/types-live";
 import type { LargeScreenUpsellModalState } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
+import type { PredictionsState } from "@domain/entity-predictions";
 import type { DataOfUser, NotificationPromptTarget } from "LLM/features/NotificationsPrompt/types";
 import type { RatingsHappyMoment, RatingsDataOfUser } from "../logic/ratings";
 import {
@@ -26,7 +27,6 @@ import { ImageType } from "../components/CustomImage/types";
 import type { WalletState } from "./wallet";
 import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
-import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/TabSection";
 import type { BorrowState } from "./borrow";
 import type { CountervaluesStoreState } from "@features/platform-market-countervalues";
 import type { TrackingPair } from "@domain/entity-market-countervalues";
@@ -53,8 +53,10 @@ import type { PayCardFeatureTourState } from "@features/flow-pay-feature-tour/st
 import type { PayRequestVerifyHintState } from "@features/flow-pay-request/state";
 import type { PayCardAuthState, PayCardLoginIntroState } from "@features/flow-pay-card-auth/state";
 import type { PayCardOnboardingWidgetState } from "@features/flow-pay-card-widget/state";
+import type { AccountAnalyticsIntroductionState } from "@features/flow-account-detail-analytics-notice/state";
+import type { MockServerOverlayState } from "@features/flow-device-mock-server/state";
 import type { IdentitiesState } from "@domain/entity-client-identity";
-import type { FirebaseMessagingTypes } from "@react-native-firebase/messaging";
+import type { NotificationPermissionStatus } from "~/logic/getNotificationPermissionStatus";
 import { RebornBuyDeviceDrawerState } from "./rebornBuyDeviceDrawer";
 import type { PortfolioRefreshState } from "./portfolioRefresh";
 import type { PortfolioBalanceDisplayState } from "./portfolioBalanceDisplay";
@@ -144,7 +146,7 @@ export type BleState = {
 
 export type NotificationsState = {
   /** The authorization status of the system notifications */
-  permissionStatus?: FirebaseMessagingTypes.AuthorizationStatus;
+  permissionStatus?: NotificationPermissionStatus;
   /** Boolean indicating whether the push notifications modal is opened or closed */
   isPushNotificationsModalOpen: boolean;
   /** This helps us know what action caused the push notifications modal to open */
@@ -250,6 +252,12 @@ export type supportedCountervaluesData = {
 /** Debug-only override for the OS update banner. */
 export type DebugOsUpdateBannerMode = "off" | "card" | "compact";
 
+export type MockServerSettings = {
+  enabled: boolean;
+  url: string;
+  token: string;
+};
+
 export type SettingsState = {
   counterValue: string;
   counterValueExchange: string | null | undefined;
@@ -318,11 +326,11 @@ export type SettingsState = {
   };
   hasSeenAnalyticsOptInPrompt: boolean;
   debugOsUpdateBannerMode: DebugOsUpdateBannerMode;
+  mockServer: MockServerSettings;
   dismissedContentCards: { [id: string]: number };
   starredMarketCoins: string[];
   fromLedgerSyncOnboarding: boolean;
   mevProtection: boolean;
-  selectedTabPortfolioAssets: TabPortfolioAssetsType;
   hasDismissedContactsFeatureIntroduction: boolean;
   productTourCompleted: boolean;
   hasSeenQ2WalletV4Tour: boolean;
@@ -489,6 +497,7 @@ export type State = LLMRTKApiState & {
   notifications: NotificationsState;
   postOnboarding: PostOnboardingState;
   postOnboardingHubDrawer: PostOnboardingHubDrawerState;
+  predictions: PredictionsState;
   protect: ProtectState;
   ratings: RatingsState;
   sendFlow: SendFlowState;
@@ -496,8 +505,10 @@ export type State = LLMRTKApiState & {
   payCardFeatureTour: PayCardFeatureTourState;
   payRequestVerifyHint: PayRequestVerifyHintState;
   payCardOnboardingWidget: PayCardOnboardingWidgetState;
+  mockServerOverlay: MockServerOverlayState;
   payCardAuth: PayCardAuthState;
   payCardLoginIntro: PayCardLoginIntroState;
+  accountAnalyticsIntroduction: AccountAnalyticsIntroductionState;
   settings: SettingsState;
   toasts: ToastState;
   trustchain: TrustchainStore;

@@ -1,7 +1,5 @@
-import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
+import { act, renderHook, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { useMarketData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
-import { useSupportedCounterCurrencies } from "@ledgerhq/live-common/cg-client/hooks/useCoingeckoDataProvider";
-import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import {
   Order,
   type MarketListRequestParams,
@@ -13,14 +11,11 @@ import { createMarketCurrencyData } from "../../../__tests__/helpers";
 import { useMarketAssets } from "../useMarketAssets";
 
 jest.mock("@ledgerhq/live-common/market/hooks/useMarketDataProvider");
-jest.mock("@ledgerhq/live-common/cg-client/hooks/useCoingeckoDataProvider");
 jest.mock("@features/platform-market-countervalues", () => ({
   ...jest.requireActual("@features/platform-market-countervalues"),
-  useUsdToFiatRate: jest.fn(),
+  useUsdToFiatRate: jest.fn(() => ({ status: "ready", rate: 2 })),
 }));
 const mockedUseMarketData = jest.mocked(useMarketData);
-const mockedUseSupportedCounterCurrencies = jest.mocked(useSupportedCounterCurrencies);
-const mockedUseUsdToFiatRate = jest.mocked(useUsdToFiatRate);
 const mockFetchNextPage = jest.fn();
 
 const bitcoin = createMarketCurrencyData({ id: "bitcoin", name: "Bitcoin" });
@@ -44,16 +39,6 @@ function mockMarketData(overrides: Partial<MarketListRequestResult> = {}) {
       ...overrides,
     }),
   );
-}
-
-function mockSupportedCounterCurrencies(supportedCounterCurrencies?: string[]) {
-  mockedUseSupportedCounterCurrencies.mockReturnValue({
-    data: supportedCounterCurrencies,
-  } as unknown as ReturnType<typeof useSupportedCounterCurrencies>);
-}
-
-function mockUsdToFiatRate(rate: ReturnType<typeof useUsdToFiatRate>) {
-  mockedUseUsdToFiatRate.mockReturnValue(rate);
 }
 
 const DEFAULT_REFRESH_RATE = 3 * 60_000;
@@ -81,9 +66,6 @@ describe("useMarketAssets", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockMarketData();
-    // Defaults: supported list not yet loaded + a no-op rate, i.e. no USD fallback.
-    mockSupportedCounterCurrencies(undefined);
-    mockUsdToFiatRate({ status: "ready", rate: 1 });
   });
 
   it("maps market data into display rows", () => {
@@ -256,104 +238,28 @@ describe("useMarketAssets", () => {
     });
   });
 
-  describe("unsupported fiat countervalue (COP)", () => {
-    const SUPPORTED_WITHOUT_COP = ["usd", "eur", "vnd"];
-
-    it("disables the market request while countervalue support is unresolved", () => {
-      mockSupportedCounterCurrencies(undefined);
-
-      const { result } = renderHook(() => useMarketAssets(), withCounterValue("COP"));
-
-      expectMarketDataLastCalledWith({ counterCurrency: "cop" }, { enabled: false });
-      expect(mockedUseUsdToFiatRate).toHaveBeenCalledWith("usd", { skip: true });
-      expect(result.current.assets).toEqual([]);
-      expect(result.current.loading).toBe(true);
-    });
-
-    it("requests in USD and rescales each row by the USD->COP rate", () => {
-      mockSupportedCounterCurrencies(["usd", "cop"]);
-      mockUsdToFiatRate({ status: "ready", rate: 1 });
-      mockMarketData({ data: [createMarketCurrencyData({ id: "bitcoin", price: 400_000 })] });
-      const control = renderHook(() => useMarketAssets(), withCounterValue("COP"));
-      expectMarketDataLastCalledWith({ counterCurrency: "cop" });
-      const expectedCopPrice = control.result.current.assets[0].formattedPrice;
-
-      mockSupportedCounterCurrencies(SUPPORTED_WITHOUT_COP);
-      mockUsdToFiatRate({ status: "ready", rate: 4000 });
-      mockMarketData({ data: [createMarketCurrencyData({ id: "bitcoin", price: 100 })] });
-      const { result } = renderHook(() => useMarketAssets(), withCounterValue("COP"));
-
-      expectMarketDataLastCalledWith({ counterCurrency: "usd" });
-      expect(mockedUseUsdToFiatRate).toHaveBeenCalledWith("cop", { skip: false });
-      expect(result.current.assets[0].formattedPrice).toBe(expectedCopPrice);
-    });
-
-    it("withholds rows and stays loading until the rate resolves", () => {
-      mockSupportedCounterCurrencies(SUPPORTED_WITHOUT_COP);
-      mockUsdToFiatRate({ status: "loading", rate: null });
-
-      const { result } = renderHook(() => useMarketAssets(), withCounterValue("COP"));
-
-      expect(result.current.assets).toEqual([]);
-      expect(result.current.loading).toBe(true);
-    });
-
-    it("surfaces an error when the rate request fails", () => {
-      mockSupportedCounterCurrencies(SUPPORTED_WITHOUT_COP);
-      mockUsdToFiatRate({ status: "error", rate: null });
-
-      const { result } = renderHook(() => useMarketAssets(), withCounterValue("COP"));
-
-      expect(result.current.assets).toEqual([]);
-      expect(result.current.isError).toBe(true);
-    });
-
-    it("does not request the next page when the rate request fails", () => {
-      mockSupportedCounterCurrencies(SUPPORTED_WITHOUT_COP);
-      mockUsdToFiatRate({ status: "error", rate: null });
-      mockMarketData({ data: fullMarketPage, hasNextPage: true });
-
-      const { result } = renderHook(() => useMarketAssets(), withCounterValue("COP"));
-
-      act(() => result.current.onEndReached());
-
-      expect(mockFetchNextPage).not.toHaveBeenCalled();
-    });
-
-    it("requests the countervalue natively once it is known to be supported", () => {
-      mockSupportedCounterCurrencies(["usd", "eur", "cop"]);
+  describe("counter value falls back to USD outside the chart allowlist", () => {
+    it("requests USD for a fiat outside the chart allowlist", async () => {
       mockMarketData({ data: [createMarketCurrencyData({ id: "bitcoin", price: 100 })] });
 
       renderHook(() => useMarketAssets(), withCounterValue("COP"));
 
-      expectMarketDataLastCalledWith({ counterCurrency: "cop" });
-      expect(mockedUseUsdToFiatRate).toHaveBeenCalledWith("usd", { skip: false });
-    });
-  });
-
-  describe("crypto countervalue (BTC)", () => {
-    it("waits for the supported counter-value list like any fiat currency", () => {
-      mockSupportedCounterCurrencies(undefined);
-
-      const { result } = renderHook(() => useMarketAssets(), withCounterValue("BTC"));
-
-      expectMarketDataLastCalledWith({ counterCurrency: "btc" }, { enabled: false });
-      expect(result.current.loading).toBe(true);
+      await waitFor(() => {
+        expectMarketDataLastCalledWith({ counterCurrency: "usd" });
+      });
     });
 
-    it("requests in BTC directly once the supported list confirms it is native", () => {
-      mockSupportedCounterCurrencies(["usd", "eur", "btc"]);
+    it("requests USD for a crypto countervalue and formats it with that unit", () => {
       mockMarketData({
         data: [createMarketCurrencyData({ id: "bitcoin", price: 100, marketcap: 200 })],
       });
 
-      const { result } = renderHook(() => useMarketAssets(), withCounterValue("BTC"));
+      const { result } = renderHook(() => useMarketAssets(), withCounterValue("bitcoin"));
 
-      expectMarketDataLastCalledWith({ counterCurrency: "btc" });
-      expect(mockedUseUsdToFiatRate).toHaveBeenCalledWith("usd", { skip: false });
+      expectMarketDataLastCalledWith({ counterCurrency: "usd" });
       expect(result.current.loading).toBe(false);
-      expect(result.current.assets[0].formattedPrice).toContain("₿");
-      expect(result.current.assets[0].formattedMarketCap).toContain("₿");
+      expect(result.current.assets[0].formattedPrice).toContain("BTC");
+      expect(result.current.assets[0].formattedMarketCap).toContain("BTC");
     });
   });
 });

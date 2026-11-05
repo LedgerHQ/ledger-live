@@ -1,4 +1,4 @@
-import { isSeededDeviceFunnelOn } from "./seededFunnel";
+import { isSeededDeviceFunnelOn, isUnseededDeviceFunnelOn } from "./seededFunnel";
 
 describe("isSeededDeviceFunnelOn", () => {
   it("should stay off when the flag is disabled", () => {
@@ -11,5 +11,19 @@ describe("isSeededDeviceFunnelOn", () => {
 
   it("should turn on only when the flag and the entry param are both true", () => {
     expect(isSeededDeviceFunnelOn(true, true)).toBe(true);
+  });
+});
+
+describe("isUnseededDeviceFunnelOn", () => {
+  it("should stay off when the flag is disabled", () => {
+    expect(isUnseededDeviceFunnelOn(false, true)).toBe(false);
+  });
+
+  it("should stay off when connectUnseededDevice is false", () => {
+    expect(isUnseededDeviceFunnelOn(true, false)).toBe(false);
+  });
+
+  it("should turn on only when the flag and the entry param are both true", () => {
+    expect(isUnseededDeviceFunnelOn(true, true)).toBe(true);
   });
 });

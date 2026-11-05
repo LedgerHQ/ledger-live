@@ -24,7 +24,7 @@ export const MONOREPO_SKILL_NAME = "ledger-wallet-cli";
 /**
  * Skill name every standalone artifact uses: the embedded manifest, `skill list`,
  * install directories, sidecars, and the agent-skills publication path
- * (skills/wallet-cli/wallet-cli-usage). `MONOREPO_SKILL_NAME` survives only as a
+ * (skills/wallet-cli-usage). `MONOREPO_SKILL_NAME` survives only as a
  * lookup alias — see LEGACY_SKILL_NAMES in src/skills/registry.ts.
  */
 export const STANDALONE_SKILL_NAME = "wallet-cli-usage";
@@ -204,6 +204,40 @@ export function rewriteReferenceFile(content, filePath) {
   const rewritten = rewriteCommands(content);
   assertNoForbiddenOutput(rewritten, filePath);
   return rewritten;
+}
+
+const SEMVER_RE = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/;
+
+/** @param {string} version */
+export function assertSkillVersion(version) {
+  if (!SEMVER_RE.test(version)) {
+    throw new Error(`${ERROR_PREFIX} ${JSON.stringify(version)} is not a wallet-cli version.`);
+  }
+}
+
+/**
+ * Pin a published SKILL.md to the wallet-cli release it documents, so an agent on an
+ * older binary updates it instead of trying flags it rejects. The embedded copy needs no
+ * stamp: it always ships with its own binary.
+ *
+ * @param {string} standaloneSkillMd Output of rewriteSkillMd.
+ * @param {string} version
+ * @returns {string}
+ */
+export function stampSkillVersion(standaloneSkillMd, version) {
+  assertSkillVersion(version);
+  if (!standaloneSkillMd.includes(STANDALONE_INSTALL_LINE)) {
+    throw new Error(`${ERROR_PREFIX} no install line to place the version after. ${ERROR_SUFFIX}`);
+  }
+  const versionLine =
+    `This copy documents wallet-cli ${version}. Before your first command, run ` +
+    "`wallet-cli --version`: if it prints an older version, tell the human to update " +
+    "wallet-cli with the install command above, and until they do, check each command " +
+    "against its `--help`.";
+  return standaloneSkillMd.replace(
+    STANDALONE_INSTALL_LINE,
+    () => `${STANDALONE_INSTALL_LINE}\n\n${versionLine}`,
+  );
 }
 
 /**

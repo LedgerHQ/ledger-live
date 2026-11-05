@@ -2,6 +2,7 @@ import React from "react";
 import {
   OsUpdatesSteps,
   RestoreBackupStateType,
+  RestoreBackupStatus,
   type RestoreBackupState,
 } from "@ledgerhq/live-dmk-shared";
 import { act, render, screen } from "@tests/test-renderer";
@@ -13,10 +14,17 @@ const restoring = (progress: number): RestoreBackupState => ({
   type: RestoreBackupStateType.RESTORING,
   progress,
 });
-const restored: RestoreBackupState = {
+const restoredWith = (restoreStatus: RestoreBackupStatus | undefined): RestoreBackupState => ({
   type: RestoreBackupStateType.BACKUP_RESTORED,
-  restoreResult: undefined,
-};
+  restoreResult: restoreStatus && {
+    restoreStatus,
+    restoredLanguage: undefined,
+    restoredCLS: undefined,
+    restoredApps: undefined,
+  },
+});
+const restored = restoredWith(undefined);
+const RESTORED_TITLE = "Apps and settings reinstalled on your Ledger Stax";
 
 const element = (state: RestoreBackupState) => (
   <OsUpdateStep
@@ -37,24 +45,32 @@ describe("RestoreBackup finishing progress", () => {
     jest.useRealTimers();
   });
 
-  it("fills the bar up to 100% before showing the restored screen", () => {
-    const { rerender } = render(element(restoring(0.8)));
+  it.each([
+    RestoreBackupStatus.FULL,
+    RestoreBackupStatus.PARTIAL,
+    RestoreBackupStatus.OUT_OF_MEMORY,
+    undefined,
+  ])(
+    "fills the bar up to 100%% before showing the restored screen (restore: %s)",
+    restoreStatus => {
+      const { rerender } = render(element(restoring(0.8)));
 
-    rerender(element(restored));
+      rerender(element(restoredWith(restoreStatus)));
 
-    expect(screen.getByTestId("os-update-progress-bar").props.accessibilityValue.now).toBe(100);
-    expect(screen.queryByText("Backup restored")).toBeNull();
+      expect(screen.getByTestId("os-update-progress-bar").props.accessibilityValue.now).toBe(100);
+      expect(screen.queryByText(RESTORED_TITLE)).toBeNull();
 
-    act(() => {
-      jest.advanceTimersByTime(FINISHING_ANIMATION_MS + 50);
-    });
+      act(() => {
+        jest.advanceTimersByTime(FINISHING_ANIMATION_MS + 50);
+      });
 
-    expect(screen.getByText("Backup restored")).toBeVisible();
-  });
+      expect(screen.getByText(RESTORED_TITLE)).toBeVisible();
+    },
+  );
 
   it("goes straight to the restored screen when no progress was ever shown", () => {
     render(element(restored));
 
-    expect(screen.getByText("Backup restored")).toBeVisible();
+    expect(screen.getByText(RESTORED_TITLE)).toBeVisible();
   });
 });

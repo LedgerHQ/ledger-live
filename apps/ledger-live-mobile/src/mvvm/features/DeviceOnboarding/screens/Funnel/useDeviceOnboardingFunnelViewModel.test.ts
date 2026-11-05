@@ -2,7 +2,9 @@ import { renderHook } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 import type { State } from "~/reducers/types";
-import { useDeviceOnboarding, type DeviceOnboardingSession } from "../../hooks/useDeviceOnboarding";
+import type { DeviceOnboardingSession } from "LLM/features/DeviceOnboarding/hooks/useDeviceOnboarding";
+import type { DeviceOnboardingHost } from "LLM/features/DeviceOnboarding/hooks/DeviceOnboardingProvider";
+import { useDeviceOnboardingSession } from "LLM/features/DeviceOnboarding/hooks/DeviceOnboardingProvider";
 import { useDeviceOnboardingFunnelViewModel } from "./useDeviceOnboardingFunnelViewModel";
 
 const goBack = jest.fn();
@@ -27,11 +29,32 @@ jest.mock("@react-navigation/native", () => ({
   useRoute: () => ({ params: mockRouteParams }),
 }));
 
-jest.mock("../../hooks/useDeviceOnboarding", () => ({
-  useDeviceOnboarding: jest.fn(),
-}));
+jest.mock("../../hooks/DeviceOnboardingProvider", () => {
+  const recorded = {
+    host: null as DeviceOnboardingHost | null,
+  };
+  return {
+    recorded,
+    useDeviceOnboardingSession: jest.fn(),
+    useDeviceOnboardingHost: (host: DeviceOnboardingHost) => {
+      recorded.host = host;
+    },
+  };
+});
 
-const useSession = jest.mocked(useDeviceOnboarding);
+const { recorded } = jest.requireMock("../../hooks/DeviceOnboardingProvider") as {
+  recorded: { host: DeviceOnboardingHost | null };
+};
+jest.mock("../../hooks/useFirmwareUpdateHandover", () => {
+  const actual = jest.requireActual("../../hooks/useFirmwareUpdateHandover");
+  return {
+    ...actual,
+    useFirmwareUpdateHandover: () => ({ close: closeFirmwareHandover }),
+  };
+});
+
+const closeFirmwareHandover = jest.fn();
+const useSession = jest.mocked(useDeviceOnboardingSession);
 const send = jest.fn();
 
 const device = {
@@ -48,17 +71,19 @@ function session(overrides: Partial<DeviceOnboardingSession> = {}): DeviceOnboar
     liveDevice: device,
     state: "checks.firmwareCheck",
     context: null,
-    machineContext: null,
-    log: [],
+    snapshot: null,
     exit: null,
     sendableEvents: [],
-    nextStates: [],
     error: null,
     connect: jest.fn(),
+    adopt: jest.fn(),
+    discard: jest.fn(),
     send,
     reset: jest.fn(),
-    closeFirmwareHandover: jest.fn(),
+    reconnectAfterUpdate: jest.fn(),
     abortFirmwareReconnect: jest.fn(),
+    actorRef: { current: null },
+    portsRef: { current: null },
     ...overrides,
   };
 }
@@ -73,6 +98,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     jest.clearAllMocks();
     listeners.clear();
     mockRouteParams = { wasReadOnlyAtEntry: true };
+    recorded.host = null;
   });
 
   it.each([
@@ -95,9 +121,9 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
       }),
     });
 
-    const input = useSession.mock.calls[0][0];
-    expect(input.knownDevices.map(known => known.id)).toEqual(expectedIds);
-    expect(input.wasReadOnlyAtEntry).toBe(false);
+    const input = recorded.host;
+    expect(input?.knownDevices.map(known => known.id)).toEqual(expectedIds);
+    expect(input?.wasReadOnlyAtEntry).toBe(false);
   });
 
   it.each([
@@ -117,16 +143,30 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(checksOf(result.current).error).toEqual(error);
   });
 
-  it.each(["readingState", "legacyFallback", "done", "syncOffer"])(
-    "should keep Checks unmounted while the machine is in %s",
-    state => {
-      useSession.mockReturnValue(session({ state }));
+  it.each([
+    "readingState",
+    "legacyFallback",
+    "done",
+    "syncOffer",
+    "deviceLocked",
+    "deviceSetup.pin",
+  ])("should show synchronizing instead of connecting while the machine is in %s", state => {
+    useSession.mockReturnValue(session({ state }));
 
-      const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
 
-      expect(result.current.status).toBe("connecting");
-    },
-  );
+    expect(checksOf(result.current).state).toBe("synchronizing");
+  });
+
+  it("should show the screen the machine already chose without connecting again", () => {
+    const connect = jest.fn();
+    useSession.mockReturnValue(session({ state: "awaitingStart", connect }));
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    expect(connect).not.toHaveBeenCalled();
+    expect(checksOf(result.current).state).toBe("idle");
+  });
 
   it("should keep Checks unmounted until a device is connected", () => {
     useSession.mockReturnValue(session({ liveDevice: null, state: "checks.checksIdle" }));
@@ -148,7 +188,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
     result.current.onRetry();
 
-    expect(connect).toHaveBeenCalledTimes(2);
+    expect(connect).toHaveBeenCalledTimes(1);
     expect(reset).not.toHaveBeenCalled();
     expect(send).not.toHaveBeenCalled();
   });
@@ -179,16 +219,13 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(send).not.toHaveBeenCalled();
     expect(goBack).not.toHaveBeenCalled();
 
-    useSession.mock.calls[0][0].onLeave?.();
+    recorded.host?.onLeave?.();
     back();
     expect(preventDefault).toHaveBeenCalledTimes(2);
   });
 
   it("should close the firmware handover when Android back happens while it opens", () => {
-    const closeFirmwareHandover = jest.fn();
-    useSession.mockReturnValue(
-      session({ state: "checks.firmwareUpdateDelegated", closeFirmwareHandover }),
-    );
+    useSession.mockReturnValue(session({ state: "checks.firmwareUpdateDelegated" }));
     renderHook(() => useDeviceOnboardingFunnelViewModel());
     const preventDefault = jest.fn();
     const back = () =>
@@ -202,7 +239,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(send).not.toHaveBeenCalled();
     expect(goBack).not.toHaveBeenCalled();
 
-    useSession.mock.calls[0][0].onLeave?.();
+    recorded.host?.onLeave?.();
     back();
     expect(preventDefault).toHaveBeenCalledTimes(2);
   });
@@ -218,19 +255,17 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     back();
     expect(preventDefault).toHaveBeenCalledTimes(2);
 
-    useSession.mock.calls[0][0].onLeave?.();
+    recorded.host?.onLeave?.();
     back();
     expect(preventDefault).toHaveBeenCalledTimes(2);
   });
 
   it("should wait for the device on the connecting screen after a completed update", () => {
     const abortFirmwareReconnect = jest.fn();
-    const closeFirmwareHandover = jest.fn();
     useSession.mockReturnValue(
       session({
         state: "awaitingSessionAfterFirmwareUpdate",
         abortFirmwareReconnect,
-        closeFirmwareHandover,
       }),
     );
 
@@ -247,13 +282,11 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
   it("should retry without closing the handover when reconnecting after the update fails", () => {
     const connect = jest.fn();
-    const closeFirmwareHandover = jest.fn();
     useSession.mockReturnValue(
       session({
         state: "awaitingSessionAfterFirmwareUpdate",
         error: "Unable to connect to the device",
         connect,
-        closeFirmwareHandover,
       }),
     );
 
@@ -291,12 +324,10 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
   it("should leave instead of closing the handover when back is pressed while reconnecting", () => {
     const abortFirmwareReconnect = jest.fn();
-    const closeFirmwareHandover = jest.fn();
     useSession.mockReturnValue(
       session({
         state: "awaitingSessionAfterFirmwareUpdate",
         abortFirmwareReconnect,
-        closeFirmwareHandover,
       }),
     );
     renderHook(() => useDeviceOnboardingFunnelViewModel());
@@ -311,10 +342,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
   });
 
   it("should close the firmware handover from the waiting screen", () => {
-    const closeFirmwareHandover = jest.fn();
-    useSession.mockReturnValue(
-      session({ state: "checks.firmwareUpdateDelegated", closeFirmwareHandover }),
-    );
+    useSession.mockReturnValue(session({ state: "checks.firmwareUpdateDelegated" }));
 
     const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
     const checks = checksOf(result.current);
@@ -326,14 +354,32 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(send).not.toHaveBeenCalled();
   });
 
+  it("should hide the firmware offer while the device is locked", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "deviceLocked",
+        context: {
+          firmwareVersion: "1.0.0",
+          availableFirmwareVersion: "1.1.0",
+          checksPaused: false,
+        } as DeviceOnboardingSession["context"],
+      }),
+    );
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const checks = checksOf(result.current);
+
+    expect(checks.state).toBe("synchronizing");
+    expect(checks.update).toBeNull();
+  });
+
   it("should quit the machine when closing while the device is locked", () => {
     const reset = jest.fn();
     useSession.mockReturnValue(session({ state: "deviceLocked", reset }));
 
     const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
-    if (result.current.status !== "connecting") throw new Error(result.current.status);
 
-    result.current.onQuit();
+    checksOf(result.current).onQuit?.();
 
     expect(send).toHaveBeenCalledWith({ type: "QUIT" });
     expect(reset).not.toHaveBeenCalled();
@@ -395,7 +441,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
     result.current.onRetry();
     expect(reset).toHaveBeenCalledTimes(1);
-    expect(connect).toHaveBeenCalledTimes(2);
+    expect(connect).toHaveBeenCalledTimes(1);
 
     result.current.onQuit();
     expect(goBack).toHaveBeenCalledTimes(1);
@@ -501,9 +547,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     ]);
     expect(checks.state).toBe("awaitingAllow");
     expect(checks.error).toBeNull();
-    expect(useSession).toHaveBeenCalledWith(
-      expect.objectContaining({ navigateOnExit: true, wasReadOnlyAtEntry: true }),
-    );
+    expect(recorded.host?.wasReadOnlyAtEntry).toBe(true);
   });
 
   it("should keep the success screen up while a seeded device leaves for Ledger Sync", () => {
@@ -525,7 +569,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(checks.onContinue).toBeUndefined();
   });
 
-  it("should show connecting when an unseeded device leaves for Ledger Sync", () => {
+  it("should show synchronizing when an unseeded device leaves for Ledger Sync", () => {
     useSession.mockReturnValue(
       session({
         state: "syncOffer",
@@ -539,7 +583,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
     const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
 
-    expect(result.current.status).toBe("connecting");
+    expect(checksOf(result.current).state).toBe("synchronizing");
   });
 
   it.each([

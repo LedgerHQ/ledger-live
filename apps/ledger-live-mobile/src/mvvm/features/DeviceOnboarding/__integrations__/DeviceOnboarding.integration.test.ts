@@ -8,7 +8,7 @@ import { activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
 import { DeviceModelId as LedgerDeviceModelId } from "@ledgerhq/types-devices";
 import { act, renderHook, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
-import { useDeviceOnboarding } from "../hooks/useDeviceOnboarding";
+import { useDeviceOnboardingToolSession } from "../../DevTools/DeviceOnboarding/useDeviceOnboardingTool";
 import { createScriptedTestDevice } from "../testing/scriptedTestDevice";
 import { createTestDevice, knownStax } from "../testing/testDevice";
 import { useLeaveOnboarding } from "../hooks/useLeaveOnboarding";
@@ -20,6 +20,7 @@ jest.mock("../hooks/useLeaveOnboarding", () => ({
 }));
 
 jest.mock("../hooks/useFirmwareUpdateHandover", () => ({
+  ...jest.requireActual("../hooks/useFirmwareUpdateHandover"),
   useFirmwareUpdateHandover: jest.fn(() => ({ close: jest.fn() })),
 }));
 
@@ -39,7 +40,7 @@ describe("useDeviceOnboarding", () => {
   it("saves each event on the state it led to", async () => {
     const device = createTestDevice();
     const { result } = renderHook(() =>
-      useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+      useOnboardingWithTool({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
     );
 
     await connectStax(result, device);
@@ -59,7 +60,7 @@ describe("useDeviceOnboarding", () => {
   it("keeps the newest 200 log rows, so a long run does not grow without end", async () => {
     const device = createTestDevice();
     const { result } = renderHook(() =>
-      useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+      useOnboardingWithTool({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
     );
 
     await connectStax(result, device);
@@ -78,7 +79,7 @@ describe("useDeviceOnboarding", () => {
   it("hides the device when Bluetooth disconnects, so Connect can be used again", async () => {
     const device = createTestDevice();
     const { result } = renderHook(() =>
-      useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+      useOnboardingWithTool({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
     );
 
     await connectStax(result, device);
@@ -94,7 +95,7 @@ describe("useDeviceOnboarding", () => {
   it("hides the device when the machine reports a lost connection", async () => {
     const device = createTestDevice();
     const { result } = renderHook(() =>
-      useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+      useOnboardingWithTool({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
     );
 
     await connectStax(result, device);
@@ -110,7 +111,7 @@ describe("useDeviceOnboarding", () => {
   it("passes the last connection's device when the id changes on reconnect", async () => {
     const device = createTestDevice();
     const { result } = renderHook(() =>
-      useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+      useOnboardingWithTool({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
     );
 
     await connectStax(result, device);
@@ -138,7 +139,7 @@ describe("useDeviceOnboarding", () => {
   it("watches the new session before SESSION_READY is offered", async () => {
     const device = createTestDevice();
     const { result } = renderHook(() =>
-      useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+      useOnboardingWithTool({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
     );
 
     await connectStax(result, device);
@@ -156,7 +157,7 @@ describe("useDeviceOnboarding", () => {
   it("polls the new session when it is already locked on reconnect", async () => {
     const device = createTestDevice();
     const { result } = renderHook(() =>
-      useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+      useOnboardingWithTool({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
     );
 
     await connectStax(result, device);
@@ -174,7 +175,7 @@ describe("useDeviceOnboarding", () => {
     const onLeave = jest.fn();
     const device = createTestDevice();
     const { result } = renderHook(() =>
-      useDeviceOnboarding({
+      useOnboardingWithTool({
         dmk: device.dmk,
         knownDevices: [knownStax],
         offerSync: false,
@@ -209,7 +210,7 @@ describe("useDeviceOnboarding", () => {
   it("tells the machine the host can set up an unseeded device when that flag is on", async () => {
     const device = createTestDevice();
     const { result } = renderHook(
-      () => useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+      () => useOnboardingWithTool({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
       {
         overrideInitialState: withFlagOverrides({
           deviceOnboarding: { enabled: true, params: { connectUnseededDevice: true } },
@@ -227,7 +228,25 @@ describe("useDeviceOnboarding", () => {
   it("leaves seed setup to legacy when the unseeded flag is off", async () => {
     const device = createTestDevice();
     const { result } = renderHook(() =>
-      useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+      useOnboardingWithTool({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+    );
+
+    await connectStax(result, device);
+
+    expect(result.current.machineContext).toEqual(
+      expect.objectContaining({ hostsSeedSetup: false }),
+    );
+  });
+
+  it("reads the unseeded param's default when a saved flag predates it", async () => {
+    const device = createTestDevice();
+    const { result } = renderHook(
+      () => useOnboardingWithTool({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+      {
+        overrideInitialState: withFlagOverrides({
+          deviceOnboarding: { enabled: true, params: {} },
+        }),
+      },
     );
 
     await connectStax(result, device);
@@ -240,7 +259,7 @@ describe("useDeviceOnboarding", () => {
   it("keeps the screen awake from connect until reset", async () => {
     const device = createTestDevice();
     const { result } = renderHook(() =>
-      useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+      useOnboardingWithTool({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
     );
     expect(activateKeepAwakeAsync).not.toHaveBeenCalled();
 
@@ -255,7 +274,7 @@ describe("useDeviceOnboarding", () => {
     const closedSessionIds = closedSessions();
     const device = createTestDevice();
     const { result, unmount } = renderHook(() =>
-      useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+      useOnboardingWithTool({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
     );
 
     await connectStax(result, device);
@@ -272,7 +291,7 @@ describe("useDeviceOnboarding", () => {
     const closedSessionIds = closedSessions();
     const device = createTestDevice();
     const { result } = renderHook(() =>
-      useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+      useOnboardingWithTool({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
     );
 
     await connectStax(result, device);
@@ -289,7 +308,7 @@ describe("useDeviceOnboarding", () => {
   it("clears the old exit when a new run starts", async () => {
     const device = createTestDevice();
     const { result } = renderHook(() =>
-      useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+      useOnboardingWithTool({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
     );
 
     await connectStax(result, device);
@@ -312,14 +331,14 @@ function closedSessions() {
 }
 
 function canSend(
-  result: { current: ReturnType<typeof useDeviceOnboarding> },
+  result: { current: ReturnType<typeof useOnboardingWithTool> },
   type: string,
 ): boolean {
   return result.current.sendableEvents.some(({ event }) => event.type === type);
 }
 
 async function connectStax(
-  result: { current: ReturnType<typeof useDeviceOnboarding> },
+  result: { current: ReturnType<typeof useOnboardingWithTool> },
   device: ReturnType<typeof createTestDevice>,
 ) {
   device.show();
@@ -330,7 +349,7 @@ async function connectStax(
   });
 }
 
-async function quit(result: { current: ReturnType<typeof useDeviceOnboarding> }) {
+async function quit(result: { current: ReturnType<typeof useOnboardingWithTool> }) {
   act(() => result.current.send({ type: "QUIT" }));
   await waitFor(() => expect(result.current.status).toBe("exited"));
 }
@@ -480,11 +499,11 @@ describe("scripted device onboarding", () => {
   });
 });
 
-type ScriptedHook = { current: ReturnType<typeof useDeviceOnboarding> };
+type ScriptedHook = { current: ReturnType<typeof useOnboardingWithTool> };
 
 function renderScripted(device: ReturnType<typeof createScriptedTestDevice>) {
   return renderHook(
-    () => useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+    () => useOnboardingWithTool({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
     {
       overrideInitialState: withFlagOverrides({
         deviceOnboarding: { enabled: true, params: { connectUnseededDevice: true } },
@@ -547,4 +566,10 @@ async function finishSetup(
     }),
   );
   await waitFor(() => expect(result.current.status).toBe("exited"));
+}
+
+/** The product session with the devtool's view of it, which owns the log and the next states. */
+function useOnboardingWithTool(input: Parameters<typeof useDeviceOnboardingToolSession>[0]) {
+  const { session, toolState } = useDeviceOnboardingToolSession(input);
+  return { ...session, ...toolState };
 }

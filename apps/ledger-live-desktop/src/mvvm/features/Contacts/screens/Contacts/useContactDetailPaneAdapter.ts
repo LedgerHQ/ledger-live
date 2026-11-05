@@ -41,7 +41,6 @@ export function useContactDetailPaneAdapter(
   addressDetailDialog: ContactAddressDetailDialogProps;
   editDeleteDialogs: ReturnType<typeof useContactDetailEditDeleteAdapter>;
   addressDetailActionsDialogs: ReturnType<typeof useContactAddressDetailActionsAdapter>;
-  onOpenMe: ContactsViewProps["onOpenMe"];
   onOpenContact: ContactsViewProps["onOpenContact"];
   onSelectContact: (contactId: ContactId) => void;
 }> {
@@ -77,7 +76,7 @@ export function useContactDetailPaneAdapter(
   const {
     isOpen,
     selection,
-    onAddressRowPress,
+    onOpenAddressDetail,
     onClose: onCloseAddressDetail,
     clearSelection,
   } = useContactAddressDetailDialog(populatedContactDetail);
@@ -92,7 +91,7 @@ export function useContactDetailPaneAdapter(
     addressDetailNetwork,
   );
   const detailSharedState = useContactDetailSharedState(detailContactId);
-  const onLedgerWalletAccountsPress = useCallback(() => {
+  const onOpenLedgerWalletAccounts = useCallback(() => {
     navigate(
       "/cryptos",
       buildNavigationBackState(CRYPTO_ADDRESSES_BACK_PATH_STATE_KEY, "/contacts"),
@@ -130,11 +129,11 @@ export function useContactDetailPaneAdapter(
       contact,
       onAddAddress: () => handleAddAddress(contact),
       ledgerWalletAccountsIntent: detailSharedState?.ledgerWalletAccountsIntent,
-      onLedgerWalletAccountsPress,
+      onOpenLedgerWalletAccounts,
       ...(populatedContactDetail
         ? {
             addressGroups: populatedContactDetail.addressGroups,
-            onAddressRowPress,
+            onOpenAddressDetail,
           }
         : {}),
       detailActions: editDeleteDialogs.detailActions,
@@ -144,8 +143,8 @@ export function useContactDetailPaneAdapter(
     emptyContact,
     editDeleteDialogs.detailActions,
     handleAddAddress,
-    onLedgerWalletAccountsPress,
-    onAddressRowPress,
+    onOpenLedgerWalletAccounts,
+    onOpenAddressDetail,
     populatedContactDetail,
   ]);
   const getDisplayName = useContactDisplayName();
@@ -229,7 +228,6 @@ export function useContactDetailPaneAdapter(
     addressDetailDialog,
     editDeleteDialogs,
     addressDetailActionsDialogs,
-    onOpenMe: openContact,
     onOpenContact: openContact,
     onSelectContact: selectContact,
   };

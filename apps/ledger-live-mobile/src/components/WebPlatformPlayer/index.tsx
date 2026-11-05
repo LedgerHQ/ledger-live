@@ -24,6 +24,7 @@ import { useCurrentAccountHistDB } from "~/screens/Platform/v2/hooks";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { useDeeplinkCustomHandlers, useLiveAppModalCustomHandlers } from "./CustomHandlers";
 import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
+import { usePredictionsHandlers } from "LLM/features/Predictions";
 
 type Props = {
   manifest: LiveAppManifest;
@@ -109,6 +110,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
   const customDeeplinkHandlers = useDeeplinkCustomHandlers();
   const customLiveAppModalHandlers = useLiveAppModalCustomHandlers(manifest);
+  const customPredictionsHandlers = usePredictionsHandlers();
 
   const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
     return {
@@ -116,8 +118,14 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       ...customPTXHandlers,
       ...customDeeplinkHandlers,
       ...customLiveAppModalHandlers,
+      ...customPredictionsHandlers,
     };
-  }, [customPTXHandlers, customDeeplinkHandlers, customLiveAppModalHandlers]);
+  }, [
+    customPTXHandlers,
+    customDeeplinkHandlers,
+    customLiveAppModalHandlers,
+    customPredictionsHandlers,
+  ]);
 
   return (
     <SafeAreaView edges={["left", "right", "bottom"]} style={[styles.root]}>

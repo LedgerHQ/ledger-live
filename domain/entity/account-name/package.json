@@ -9,16 +9,15 @@
     ".": "./src/index.ts",
     "./package.json": "./package.json"
   },
-  "sideEffects": [
-    "./src/slice.ts"
-  ],
+  "sideEffects": false,
   "scripts": {
     "lint": "oxlint ./src",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W domain/entity/account-name"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@domain/entity-account": "workspace:^",
@@ -33,7 +32,10 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "typescript": "catalog:"
   }
 }

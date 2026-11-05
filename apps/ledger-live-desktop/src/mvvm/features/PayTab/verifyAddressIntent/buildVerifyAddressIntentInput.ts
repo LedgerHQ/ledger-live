@@ -4,7 +4,7 @@ import type { Account } from "@ledgerhq/types-live";
 import {
   getAddressVerification,
   type VerifyAddressIntentInput,
-} from "@features/platform-verify-address-intent";
+} from "@features/platform-intent-verify-address";
 
 function getExpectedVerifyAddress(account: Account): string {
   return account.derivationMode === "canton" ? (account.xpub ?? "") : account.freshAddress;

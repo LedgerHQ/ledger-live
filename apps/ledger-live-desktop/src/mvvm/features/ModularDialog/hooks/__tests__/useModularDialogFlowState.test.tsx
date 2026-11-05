@@ -7,8 +7,9 @@ import {
 import { useModularDialogFlowState } from "../useModularDialogFlowState";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 
+const mockIsAcceptedCurrency = jest.fn((_currency: { id: string }) => true);
 jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () => ({
-  useAcceptedCurrency: () => () => true,
+  useAcceptedCurrency: () => mockIsAcceptedCurrency,
 }));
 
 const mockGoToStep = jest.fn();
@@ -49,6 +50,7 @@ const assetsWithNetworks: AssetData[] = [
 describe("useModularDialogFlowState", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockIsAcceptedCurrency.mockImplementation(() => true);
   });
 
   it("should initialize with default state", () => {
@@ -123,5 +125,21 @@ describe("useModularDialogFlowState", () => {
 
     act(() => result.current.handleNetworkSelected(ethereumCurrency));
     expect(mockOnAssetSelected).toHaveBeenCalledWith(ethereumCurrency);
+  });
+
+  it("should select the only accepted network when the first network is disabled", () => {
+    mockIsAcceptedCurrency.mockImplementation(currency => currency.id !== ethereumCurrency.id);
+    const { result } = renderHook(
+      () => useModularDialogFlowState({ ...defaultProps, assets: assetsWithNetworks }),
+      {
+        initialState: {
+          modularDialog: { isOpen: true, dialogParams: { onAssetSelected: mockOnAssetSelected } },
+        },
+      },
+    );
+
+    act(() => result.current.handleAssetSelected(ethereumCurrency));
+
+    expect(mockOnAssetSelected).toHaveBeenCalledWith(arbitrumCurrency);
   });
 });

@@ -11,14 +11,13 @@
   },
   "sideEffects": false,
   "scripts": {
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "lint": "oxlint src",
-    "unimported": "pnpm knip --directory ../.. -c devtools/bindings/knip.web.config.mjs -W devtools/bindings --tsConfig tsconfig.json && pnpm knip --directory ../.. -c devtools/bindings/knip.native.config.mjs -W devtools/bindings --tsConfig tsconfig.json"
+    "lint": "oxlint src"
   },
   "dependencies": {
     "@devtools/env": "workspace:*",
@@ -37,7 +36,9 @@
     "@domain/entity-card-asset-mapping": "workspace:*",
     "@domain/entity-currency": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:*",
+    "@domain/entity-currency-fiat": "workspace:*",
     "@domain/entity-currency-unit": "workspace:*",
+    "@features/flow-account-detail-analytics-notice": "workspace:*",
     "@features/flow-pay-card-auth": "workspace:*",
     "@features/flow-pay-card-wallets": "workspace:*",
     "@features/flow-pay-card-widget": "workspace:*",
@@ -52,14 +53,14 @@
     "@shared/app-config": "workspace:*",
     "@shared/env": "workspace:*",
     "@shared/feature-flags": "workspace:*",
-    "bignumber.js": "catalog:",
-    "xstate": "catalog:"
+    "bignumber.js": "catalog:"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
     "react-redux": ">=9.0.0"
   },
   "devDependencies": {
+    "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@shared/api-services": "workspace:*",
     "@swc/core": "catalog:",
@@ -69,9 +70,12 @@
     "@testing-library/react": "catalog:",
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "jest-sonar": "0.2.16",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-redux": "catalog:",

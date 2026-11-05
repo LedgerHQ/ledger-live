@@ -8,9 +8,18 @@ export function AccountSettings<TAccount extends AccountSettingsAccount>({
   adapter,
   isOpen,
   onClose,
+  onEvent,
   testID,
 }: AccountSettingsProps<TAccount>) {
   const viewModel = useAccountSettingsViewModel(account, adapter, onClose);
 
-  return <AccountSettingsDialog {...viewModel} isOpen={isOpen} onClose={onClose} testID={testID} />;
+  return (
+    <AccountSettingsDialog
+      {...viewModel}
+      isOpen={isOpen}
+      onClose={onClose}
+      onEvent={onEvent}
+      testID={testID}
+    />
+  );
 }

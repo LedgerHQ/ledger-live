@@ -22,22 +22,18 @@ jest.mock(
     usePayCardToolProps: () => ({ marker: "pay-card-props" }),
     useEnvDevToolProps: () => ({ marker: "env-props" }),
     useAppConfigToolProps: () => ({ marker: "app-config-props" }),
-    useDeviceOnboardingActor: () => ({
-      state: null,
-      context: null,
-      events: [],
-      exit: null,
-      sendableEvents: [],
-      setSessionReady: jest.fn(),
-      actorRef: { current: null },
-      portsRef: { current: null },
-      send: jest.fn(),
-      sendToActor: jest.fn(),
-      startActor: jest.fn(),
-      discardActor: jest.fn(),
-      resetActor: jest.fn(() => Promise.resolve()),
-      stopActor: jest.fn(),
+    useAccountDetailToolProps: () => ({ marker: "account-detail-props" }),
+    useDeviceOnboardingToolState: () => ({
+      log: [],
+      machineContext: null,
+      nextStates: [],
+      inspect: jest.fn(),
     }),
+    useDeviceOnboardingToolProps: ({
+      session,
+      toolState,
+      featureFlag,
+    }: Record<string, Record<string, unknown>>) => ({ ...session, ...toolState, ...featureFlag }),
   }),
   { virtual: true },
 );
@@ -114,6 +110,7 @@ describe("DevToolsScreen", () => {
           reset: expect.any(Function),
         }),
       },
+      { id: "account-detail", config: { marker: "account-detail-props" } },
     ]);
     expect(props.screenOptions.contentStyle).toEqual([expect.anything(), { paddingBottom: 34 }]);
   });

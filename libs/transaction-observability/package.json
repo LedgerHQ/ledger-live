@@ -34,7 +34,10 @@
     "@swc/jest": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
-    "oxlint": "catalog:"
+    "oxlint": "catalog:",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
+    "rimraf": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

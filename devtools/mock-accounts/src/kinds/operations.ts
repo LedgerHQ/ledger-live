@@ -1,6 +1,7 @@
 import type { AccountAssetBalance } from "@domain/entity-account-balance";
 import { AccountOperationSchema, type AccountOperation } from "@domain/entity-account-operation";
 import { MockCursorError } from "../errors";
+import { mockCountervalueOf } from "./countervalues";
 import { randomAmount, randomBytes, type Random } from "../random";
 import type { MockReader } from "../families/types";
 
@@ -119,7 +120,7 @@ function pageOf(rows: AccountOperation[], cursor: string | undefined, limit: num
  * Operations adding up to the account's balances, `limit` (20 by default) per page: native and
  * token ones, the fees paid in the native coin, the count asked in the tool split across the
  * funded assets, else one account in five busy with a long history; one in ten with its newest
- * operation pending.
+ * operation pending. `filterAsset` keeps one asset's rows before paging.
  */
 export const operations: MockReader<"operations"> = (
   { target: { descriptor, cursor }, currency, family, random, balances, operationCount },
@@ -142,6 +143,12 @@ export const operations: MockReader<"operations"> = (
     random,
   );
 
+  const countervalueOf = query?.countervalue
+    ? mockCountervalueOf(query.countervalue, assetId =>
+        assetId === currency.id ? currency.units[0].magnitude : family.tokenMagnitude?.(assetId),
+      )
+    : undefined;
+
   const pending = newestFirst.length > 0 && random() < 0.1;
   let date = NEWEST;
   let blockHeight = randomInt(random, 1_000_000, 20_000_000);
@@ -153,6 +160,8 @@ export const operations: MockReader<"operations"> = (
     }
     const counterparty = family.address(currency, random);
     const txHash = hash(random);
+    const at = new Date(isPending ? NEWEST + HOUR : date).toISOString();
+    const countervalues = countervalueOf?.(draft.assetId, draft.value, at);
     return AccountOperationSchema.parse({
       id: `${draft.assetId}-${txHash}-${draft.type}`,
       hash: txHash,
@@ -163,10 +172,14 @@ export const operations: MockReader<"operations"> = (
       senders: [draft.type === "IN" ? counterparty : own],
       recipients: [draft.type === "IN" ? own : counterparty],
       blockHeight: isPending ? null : blockHeight,
-      date: new Date(isPending ? NEWEST + HOUR : date).toISOString(),
+      date: at,
+      ...(countervalues && { countervalues }),
     });
   });
+  const filtered = query?.filterAsset
+    ? rows.filter(row => row.assetId === query.filterAsset)
+    : rows;
   const requested = query?.limit ?? DEFAULT_LIMIT;
   const limit = Number.isInteger(requested) && requested > 0 ? requested : DEFAULT_LIMIT;
-  return pageOf(rows, cursor, limit);
+  return pageOf(filtered, cursor, limit);
 };

@@ -10,6 +10,12 @@ import { usdcToken } from "LLD/features/__mocks__/useSelectAssetFlow.mock";
 import { setKey } from "~/renderer/storage";
 import type { State } from "../../reducers";
 import DBMiddleware from "../db";
+import {
+  accountAnalyticsIntroductionSlice,
+  dismissAccountAnalyticsIntroduction,
+  resetAccountAnalyticsIntroduction,
+  restoreAccountAnalyticsIntroduction,
+} from "@features/flow-account-detail-analytics-notice/state";
 
 jest.mock("~/renderer/storage", () => ({
   setKey: jest.fn(),
@@ -82,6 +88,7 @@ jest.mock("@ledgerhq/live-common/account/index", () => ({
 const mockedSetKey = jest.mocked(setKey);
 
 type FakeState = {
+  accountAnalyticsIntroduction: { hasDismissed: boolean };
   settings: { loaded: boolean; starredMarketCoins: string[] };
   market: Record<string, unknown>;
   application: { isLocked: boolean };
@@ -119,6 +126,7 @@ type FakeState = {
 };
 
 const baseState = (): FakeState => ({
+  accountAnalyticsIntroduction: { hasDismissed: false },
   settings: { loaded: true, starredMarketCoins: [] },
   market: { currentPage: 1 },
   application: { isLocked: false },
@@ -406,7 +414,7 @@ describe("DBMiddleware - crypto assets cache branch", () => {
   });
 
   it("persists the CAL token cache on actions of the registered CAL api", () => {
-    const persisted: PersistedCAL = { version: 2, tokens: [{ data: usdcToken, timestamp: 0 }] };
+    const persisted: PersistedCAL = { version: 3, tokens: [{ data: usdcToken, timestamp: 0 }] };
     jest.mocked(extractPersistedCALFromState).mockReturnValueOnce(persisted);
     jest.mocked(persistedCALContentEqual).mockReturnValueOnce(false);
     const state = baseState();
@@ -419,11 +427,11 @@ describe("DBMiddleware - crypto assets cache branch", () => {
   it("replaces stale tokens on disk when a changed hash evicts every token", () => {
     // A changed hash enters the cache before its eviction removes the tokens
     const staleTokens: PersistedCAL = {
-      version: 2,
+      version: 3,
       tokens: [{ data: usdcToken, timestamp: 0 }],
       hashes: { ethereum: "new-hash" },
     };
-    const evicted: PersistedCAL = { version: 2, tokens: [], hashes: { ethereum: "new-hash" } };
+    const evicted: PersistedCAL = { version: 3, tokens: [], hashes: { ethereum: "new-hash" } };
     jest
       .mocked(extractPersistedCALFromState)
       .mockReturnValueOnce(staleTokens)
@@ -437,10 +445,88 @@ describe("DBMiddleware - crypto assets cache branch", () => {
   });
 
   it("does not persist a CAL cache with neither tokens nor hashes", () => {
-    jest.mocked(extractPersistedCALFromState).mockReturnValueOnce({ version: 2, tokens: [] });
+    jest.mocked(extractPersistedCALFromState).mockReturnValueOnce({ version: 3, tokens: [] });
     const state = baseState();
 
     runMiddleware([state, state], cryptoAssetsApi.util.upsertQueryEntries([]));
+
+    expect(mockedSetKey).not.toHaveBeenCalled();
+  });
+});
+
+describe("DBMiddleware - Analytics introduction", () => {
+  beforeEach(() => mockedSetKey.mockReset());
+
+  it("should persist the installation-wide dismissal when the introduction is consumed", () => {
+    const before = baseState();
+    const action = dismissAccountAnalyticsIntroduction();
+    const after: FakeState = {
+      ...before,
+      accountAnalyticsIntroduction: accountAnalyticsIntroductionSlice.reducer(
+        before.accountAnalyticsIntroduction,
+        action,
+      ),
+    };
+
+    runMiddleware([before, after], action);
+
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "accountAnalyticsIntroduction", {
+      hasDismissed: true,
+    });
+  });
+
+  it("should avoid rewriting storage when dismissal is already consumed", () => {
+    const state: FakeState = {
+      ...baseState(),
+      accountAnalyticsIntroduction: { hasDismissed: true },
+    };
+
+    runMiddleware([state, state], dismissAccountAnalyticsIntroduction());
+
+    expect(mockedSetKey).not.toHaveBeenCalled();
+  });
+
+  it("should persist the reset so the introduction shows again after a restart", () => {
+    const before: FakeState = {
+      ...baseState(),
+      accountAnalyticsIntroduction: { hasDismissed: true },
+    };
+    const action = resetAccountAnalyticsIntroduction();
+    const after: FakeState = {
+      ...before,
+      accountAnalyticsIntroduction: accountAnalyticsIntroductionSlice.reducer(
+        before.accountAnalyticsIntroduction,
+        action,
+      ),
+    };
+
+    runMiddleware([before, after], action);
+
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "accountAnalyticsIntroduction", {
+      hasDismissed: false,
+    });
+  });
+
+  it("should avoid rewriting storage when resetting an introduction never dismissed", () => {
+    const state = baseState();
+
+    runMiddleware([state, state], resetAccountAnalyticsIntroduction());
+
+    expect(mockedSetKey).not.toHaveBeenCalled();
+  });
+
+  it("should not write restored state back during startup", () => {
+    const before = baseState();
+    const action = restoreAccountAnalyticsIntroduction({ hasDismissed: true });
+    const after: FakeState = {
+      ...before,
+      accountAnalyticsIntroduction: accountAnalyticsIntroductionSlice.reducer(
+        before.accountAnalyticsIntroduction,
+        action,
+      ),
+    };
+
+    runMiddleware([before, after], action);
 
     expect(mockedSetKey).not.toHaveBeenCalled();
   });

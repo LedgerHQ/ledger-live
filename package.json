@@ -81,9 +81,7 @@
     "format:check": "nx run-many -t format:check",
     "typecheck": "nx run-many -t typecheck",
     "validate:renovate": "npx --yes --package renovate -- renovate-config-validator",
-    "knip-check": "nx run-many -t knip-check",
-    "unimported": "nx run-many -t unimported",
-    "deadcode": "nx run-many -t unimported -t knip-check",
+    "knip:all": "knip -c support/knip/root.config.mjs && knip -c support/knip/web.config.mjs --tsConfig tsconfig.web.json && knip -c support/knip/native.config.mjs --tsConfig tsconfig.native.json",
     "desktop": "pnpm --filter ledger-live-desktop",
     "e2e:desktop": "pnpm --filter ledger-live-desktop-e2e-tests",
     "e2e-cli": "pnpm --filter @ledgerhq/live-e2e-shared e2e-cli",
@@ -217,10 +215,11 @@
     "@nx/s3-cache": "catalog:",
     "@react-native/babel-plugin-codegen": "catalog:",
     "@support/fmt": "workspace:*",
+    "@support/knip": "workspace:*",
     "@support/lint": "workspace:*",
     "@support/tsconfig": "workspace:*",
     "@swc-node/register": "1.12.1",
-    "@ton/crypto": "^3.3.0",
+    "@ton/crypto": "3.3.0",
     "@typescript-eslint/parser": "catalog:",
     "chalk": "4.1.2",
     "eslint": "8.57.0",
@@ -230,10 +229,8 @@
     "nyc": "15.1.0",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "rimraf": "4.4.1",
-    "@typescript/native": "catalog:",
     "typescript": "catalog:",
-    "zx": "8.8.5"
+    "zx": "catalog:"
   },
   "packageManager": "pnpm@12.15.0"
 }

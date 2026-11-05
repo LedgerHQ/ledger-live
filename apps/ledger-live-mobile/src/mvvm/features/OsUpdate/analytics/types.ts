@@ -23,6 +23,7 @@ export enum OsUpdatePage {
   CONTINUE_ON_DEVICE = "OS Update - Continue On Device",
   DEVICE_LOCKED = "OS Update - Device Locked",
   DEVICE_DISCONNECTED = "OS Update - Device Disconnected",
+  CONNECTION_TIMED_OUT = "OS Update - Connection Timed Out",
   SECURE_CONNECTION_REFUSED = "OS Update - Secure Connection Refused",
   ERROR = "OS Update - Error",
   CLOSE_CONFIRMATION = "OS Update - Close Confirmation",
@@ -35,9 +36,11 @@ export enum OsUpdateButton {
   CONTINUE = "Continue",
   CREATE_NEW_BACKUP = "Create new backup",
   DELETE_BACKUP = "Delete backup",
+  FINISH = "Finish",
   RELEASE_NOTES = "Release notes",
   RESTORE = "Restore",
   RETRY = "Retry",
+  SEND_REPORT = "Send report",
   START = "Start",
   USE_EXISTING_BACKUP = "Use existing backup",
 }
@@ -67,13 +70,13 @@ export enum OsUpdateDeviceAction {
 
 export enum OsUpdateFailureType {
   UNEXPECTED_ERROR = "UnexpectedError",
-  OUT_OF_MEMORY = "OutOfMemory",
   INSTALL_FIRMWARE_REFUSED = "InstallFirmwareRefused",
 }
 
 export enum OsUpdateRestoreStatus {
   FULL = "full",
   PARTIAL = "partial",
+  OUT_OF_MEMORY = "outOfMemory",
   NONE = "none",
 }
 
@@ -106,6 +109,7 @@ export type OsUpdatePageEvent =
     }
   | { page: OsUpdatePage.DEVICE_LOCKED; step: OsUpdateFlowStep }
   | { page: OsUpdatePage.DEVICE_DISCONNECTED; step: OsUpdateFlowStep }
+  | { page: OsUpdatePage.CONNECTION_TIMED_OUT; step: OsUpdateFlowStep }
   | { page: OsUpdatePage.SECURE_CONNECTION_REFUSED; step: OsUpdateFlowStep }
   | { page: OsUpdatePage.CLOSE_CONFIRMATION; step: OsUpdateFlowStep }
   | {

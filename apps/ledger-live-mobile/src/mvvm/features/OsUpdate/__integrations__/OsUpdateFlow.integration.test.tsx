@@ -140,10 +140,14 @@ describe("OsUpdateFlow tracking", () => {
     act(() =>
       mockSetProgress({
         step: OsUpdatesSteps.APPLY_UPDATES,
-        state: { type: ApplyUpdatesStateType.UPDATES_APPLIED, restoreResult: undefined },
+        state: {
+          type: ApplyUpdatesStateType.UPDATES_APPLIED,
+          osVersion: "2.0.0",
+          restoreResult: undefined,
+        },
       }),
     );
-    await user.press(screen.getByText("Close"));
+    await user.press(screen.getByText("Finish"));
     unmount();
 
     expect(jest.mocked(trackPage).mock.calls.map(([{ category }]) => category)).toEqual([
@@ -171,7 +175,7 @@ describe("OsUpdateFlow tracking", () => {
       ],
       [
         "button_clicked",
-        expect.objectContaining({ button: OsUpdateButton.CLOSE, page: OsUpdatePage.SUCCESS }),
+        expect.objectContaining({ button: OsUpdateButton.FINISH, page: OsUpdatePage.SUCCESS }),
       ],
     ]);
   });
@@ -218,7 +222,11 @@ describe("OsUpdateFlow tracking", () => {
     act(() =>
       mockSetProgress({
         step: OsUpdatesSteps.APPLY_UPDATES,
-        state: { type: ApplyUpdatesStateType.UPDATES_APPLIED, restoreResult: undefined },
+        state: {
+          type: ApplyUpdatesStateType.UPDATES_APPLIED,
+          osVersion: "2.0.0",
+          restoreResult: undefined,
+        },
       }),
     );
     await user.press(screen.getByTestId("os-update-close-button"));
@@ -257,6 +265,7 @@ describe("OsUpdateFlow tracking", () => {
         step: OsUpdatesSteps.CREATE_BACKUP,
         state: {
           type: CreateBackupStateType.AWAITING_BACKUP_SELECTION,
+          backupCreatedAt: new Date(),
           useExistingBackup,
           createNewBackup: jest.fn(),
         },

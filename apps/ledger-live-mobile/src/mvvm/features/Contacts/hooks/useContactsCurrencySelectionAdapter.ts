@@ -1,7 +1,6 @@
 import { track } from "@shared/analytics";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ContactCurrencyIdSchema } from "@domain/entity-contact";
-import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import { type CryptoOrTokenCurrency, CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import type { AddAddressCurrencySelection } from "@features/flow-contacts-add-address";
 import { useTranslation } from "~/context/Locale";
 import { MODULAR_DRAWER_PAGE_NAME } from "LLM/features/ModularDrawer/analytics/modularDrawer.types";
@@ -56,7 +55,7 @@ function trackDisabledItemExplanation(explanation: DisabledItemExplanation) {
 function resolveContactCurrencySelection(
   currency: CryptoOrTokenCurrency | null,
 ): AddAddressCurrencySelection | null {
-  const parsedCurrencyId = ContactCurrencyIdSchema.safeParse(currency?.id);
+  const parsedCurrencyId = CryptoOrTokenCurrencyIdSchema.safeParse(currency?.id);
   return parsedCurrencyId.success && currency
     ? {
         currencyId: parsedCurrencyId.data,

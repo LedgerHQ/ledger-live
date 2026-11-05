@@ -2,12 +2,19 @@ import React from "react";
 import {
   OsUpdatesSteps,
   RestoreBackupStateType,
+  RestoreBackupStatus,
   type RestoreBackupState,
 } from "@ledgerhq/live-dmk-shared";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { render, screen } from "@tests/test-renderer";
 import { OsUpdateStep } from "../../../components/OsUpdateStep";
 import { stax } from "../../../testUtils/connectedDevice.mock";
+import useExportLogs from "~/components/useExportLogs";
+
+jest.mock("~/components/useExportLogs", () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
 
 function renderView(
   state: RestoreBackupState,
@@ -32,6 +39,8 @@ jest.mock("@shared/ui-queued-bottom-sheet", () => {
 
 const isSheetRequested = () =>
   jest.mocked(QueuedBottomSheet).mock.lastCall?.[0].isRequestingToBeOpened;
+
+const hasCloseButton = () => !jest.mocked(QueuedBottomSheet).mock.lastCall?.[0].noCloseButton;
 
 describe("RestoreBackup step", () => {
   it("never shows the preparing screen, and does nothing while loading", () => {
@@ -58,10 +67,26 @@ describe("RestoreBackup step", () => {
       { onClose },
     );
 
-    expect(screen.getByText("Backup restored")).toBeVisible();
-    await user.press(screen.getByText("Close"));
+    expect(screen.getByText("Apps and settings reinstalled on your Ledger Stax")).toBeVisible();
+    await user.press(screen.getByText("Finish"));
 
     expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("tells on the restored summary that the restore was partial", () => {
+    renderView({
+      type: RestoreBackupStateType.BACKUP_RESTORED,
+      restoreResult: {
+        restoreStatus: RestoreBackupStatus.PARTIAL,
+        restoredLanguage: undefined,
+        restoredCLS: undefined,
+        restoredApps: undefined,
+      },
+    });
+
+    expect(screen.getByTestId("os-update-restore-banner")).toHaveTextContent(
+      /You didn't reinstall your apps and lock screen/,
+    );
   });
 
   it.each([
@@ -85,6 +110,8 @@ describe("RestoreBackup step", () => {
       cancel,
     });
 
+    expect(hasCloseButton()).toBe(false);
+
     await user.press(screen.getByText("Retry"));
     await user.press(screen.getByText("Cancel"));
 
@@ -92,18 +119,18 @@ describe("RestoreBackup step", () => {
     expect(cancel).toHaveBeenCalledTimes(1);
   });
 
-  it.each([
-    [RestoreBackupStateType.OUT_OF_MEMORY, "os-update-out-of-memory"],
-    [RestoreBackupStateType.UNEXPECTED_ERROR, "os-update-unexpected-error"],
-  ] as const)("only offers cancel for %s", async (type, testID) => {
-    const cancel = jest.fn();
-    const { user } = renderView({ type, error: new Error("boom"), cancel });
+  it.each([[RestoreBackupStateType.UNEXPECTED_ERROR, "os-update-unexpected-error"]] as const)(
+    "only offers cancel for %s",
+    async (type, testID) => {
+      const cancel = jest.fn();
+      const { user } = renderView({ type, error: new Error("boom"), cancel });
 
-    expect(screen.getByTestId(testID)).toBeVisible();
-    await user.press(screen.getByText("Cancel"));
+      expect(screen.getByTestId(testID)).toBeVisible();
+      await user.press(screen.getByText("Cancel"));
 
-    expect(cancel).toHaveBeenCalledTimes(1);
-  });
+      expect(cancel).toHaveBeenCalledTimes(1);
+    },
+  );
 
   it.each([
     [RestoreBackupStateType.DEVICE_LOCKED, "os-update-device-locked"],
@@ -112,6 +139,25 @@ describe("RestoreBackup step", () => {
     renderView({ type });
 
     expect(screen.getByTestId(testID)).toBeVisible();
+  });
+
+  it("sends a report and restarts the update from the connection timeout", async () => {
+    const exportLogs = jest.fn();
+    jest.mocked(useExportLogs).mockReturnValue(exportLogs);
+    const retry = jest.fn();
+    const { user } = renderView({ type: RestoreBackupStateType.CONNECTION_TIMED_OUT, retry });
+
+    expect(screen.getByTestId("os-update-connection-timed-out")).toBeVisible();
+    expect(hasCloseButton()).toBe(false);
+
+    await user.press(screen.getByText("Send report to Ledger"));
+
+    expect(exportLogs).toHaveBeenCalledTimes(1);
+    expect(retry).not.toHaveBeenCalled();
+
+    await user.press(screen.getByText("Restart OS update"));
+
+    expect(retry).toHaveBeenCalledTimes(1);
   });
 
   describe("closing", () => {
@@ -126,6 +172,8 @@ describe("RestoreBackup step", () => {
 
     it("requests its sheet while the close confirmation is closed", () => {
       renderView({ type: RestoreBackupStateType.DEVICE_LOCKED });
+
+      expect(hasCloseButton()).toBe(true);
 
       expect(isSheetRequested()).toBe(true);
     });

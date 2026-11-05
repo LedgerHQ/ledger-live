@@ -44,6 +44,7 @@ jest.mock("@devtools/bindings", () => ({
   useAccountDataToolProps: () => ({ marker: "account-data-props" }),
   useAccountNameToolProps: () => ({ marker: "account-name-props" }),
   useMockAccountsToolProps: () => ({ marker: "mock-accounts-props" }),
+  useAccountDetailToolProps: () => ({ marker: "account-detail-props" }),
   createAccountDataRecorder: () => ({
     instrument: (sources: unknown) => sources,
     middleware: () => (next: (action: unknown) => unknown) => (action: unknown) => {
@@ -54,8 +55,8 @@ jest.mock("@devtools/bindings", () => ({
   useAppConfigToolProps: () => ({ marker: "app-config-props" }),
 }));
 
-jest.mock("../../DeviceOnboarding/hooks/useDeviceOnboarding", () => ({
-  useDeviceOnboarding: () => ({ marker: "device-onboarding-props" }),
+jest.mock("../DeviceOnboarding/useDeviceOnboardingTool", () => ({
+  useDeviceOnboardingTool: () => ({ marker: "device-onboarding-props" }),
 }));
 
 jest.mock("@devtools/wire", () => {
@@ -99,6 +100,7 @@ describe("DevToolsScreen", () => {
           { id: "account-name", config: { marker: "account-name-props" } },
           { id: "account-portfolio", config: { marker: "account-portfolio-props" } },
           { id: "mock-accounts", config: { marker: "mock-accounts-props" } },
+          { id: "account-detail", config: { marker: "account-detail-props" } },
         ],
       }),
     );

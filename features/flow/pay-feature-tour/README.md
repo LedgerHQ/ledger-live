@@ -1,6 +1,7 @@
 # Pay Feature Tour
 
-> [!CAUTION] > **Status: UNSTABLE** — In active development; API may change.
+> [!CAUTION]
+> **Status: UNSTABLE.** In active development; API may change.
 
 First-time Pay tab feature tour for Ledger Wallet, presented as a queued bottom sheet on
 mobile and a dialog on desktop, shown once until the user dismisses it.

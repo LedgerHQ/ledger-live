@@ -36,6 +36,8 @@ export const isSendDisabledForFamily = (family: CryptoCurrency["family"]): boole
 export const isReceiveDisabledForFamily = (family: CryptoCurrency["family"]): boolean =>
   !transferCapability(family).receive;
 
+export { isNonTransferableToken } from "./nonTransferableTokens";
+
 // Send capability: the family must allow it AND the bridge must accept building a transaction.
 // Total: any throw (incl. getMainAccount on a malformed account) resolves to false.
 export async function canSend(

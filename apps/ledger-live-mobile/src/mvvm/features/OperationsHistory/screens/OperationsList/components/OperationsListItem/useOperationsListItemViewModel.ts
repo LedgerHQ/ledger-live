@@ -17,6 +17,7 @@ type Params = {
   parentAccount: Account | undefined;
   accountByAddress: Map<string, AccountLike>;
   lastSeenTs: number | null;
+  trackingProps?: Readonly<Record<string, unknown>>;
 };
 
 type AmountColorType = "base" | "success";
@@ -27,6 +28,7 @@ export function useOperationsListItemViewModel({
   parentAccount,
   accountByAddress,
   lastSeenTs,
+  trackingProps,
 }: Params) {
   const navigation = useNavigation<BaseNavigation>();
 
@@ -57,14 +59,14 @@ export function useOperationsListItemViewModel({
   const amountColor: AmountColorType = isOutgoing ? "base" : "success";
 
   const onPress = useCallback(() => {
-    track("transaction_clicked", { transaction: operation.type });
+    track("transaction_clicked", { transaction: operation.type, ...trackingProps });
     navigation.navigate(ScreenName.OperationDetails, {
       accountId: account.id,
       parentId: parentAccount?.id,
       operation,
       key: operation.id,
     });
-  }, [operation, account.id, parentAccount?.id, navigation]);
+  }, [operation, account.id, parentAccount?.id, navigation, trackingProps]);
   const accountName = useMaybeAccountName(account);
 
   return {

@@ -13,6 +13,7 @@ type AccountOperationInput = {
   date: string;
   hasFailed?: boolean;
   parentId?: string;
+  countervalues?: Record<string, string>;
 };
 
 export function mockAccountOperation(overrides?: Partial<AccountOperationInput>): AccountOperation {

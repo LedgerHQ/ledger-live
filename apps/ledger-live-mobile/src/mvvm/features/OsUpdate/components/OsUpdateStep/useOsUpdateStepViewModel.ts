@@ -24,6 +24,7 @@ import {
   getRestoreBackupProgress,
 } from "../../screens/OsUpdateStepLayout/RestoreBackup/getRestoreBackupLayout";
 import { useSelector } from "~/context/hooks";
+import useExportLogs from "~/components/useExportLogs";
 import { osUpdatesSelector } from "../../state/osUpdateSlice";
 import { useOsUpdateTracking } from "../../analytics/TrackingProvider";
 import { getOsUpdateFlowStep, getPageEvent } from "../../analytics/getPageEvent";
@@ -56,12 +57,13 @@ function getLayout(
   device: OsUpdateDevice,
   { finishing, lastDisplay }: FinishingProgressResult,
   trackClick: (button: OsUpdateButton) => void,
+  exportLogs: () => void,
 ): OsUpdateStepLayoutSpec {
   switch (props.step) {
     case OsUpdatesSteps.PRE_CHECKS:
-      return getPreChecksLayout({ state: props.state, trackClick, ...device });
+      return getPreChecksLayout({ state: props.state, trackClick, exportLogs, ...device });
     case OsUpdatesSteps.CREATE_BACKUP:
-      return getCreateBackupLayout({ state: props.state, trackClick, ...device });
+      return getCreateBackupLayout({ state: props.state, trackClick, exportLogs, ...device });
     case OsUpdatesSteps.APPLY_UPDATES:
       return getApplyUpdatesLayout({
         state: props.state,
@@ -69,6 +71,7 @@ function getLayout(
         lastDisplay,
         onClose: props.onUserClose,
         trackClick,
+        exportLogs,
         ...device,
       });
     case OsUpdatesSteps.RESTORE_BACKUP:
@@ -78,6 +81,7 @@ function getLayout(
         lastDisplay,
         onClose: props.onUserClose,
         trackClick,
+        exportLogs,
         ...device,
       });
     default: {
@@ -92,6 +96,7 @@ export function useOsUpdateStepViewModel(props: OsUpdateStepProps): OsUpdateStep
   const progress = useFinishingProgress(getProgress(props));
   const osUpdates = useSelector(osUpdatesSelector);
   const { trackPage, trackClick, trackCompleted } = useOsUpdateTracking();
+  const exportLogs = useExportLogs();
 
   useEffect(() => {
     const pageEvent = getPageEvent(props, osUpdates);
@@ -105,5 +110,5 @@ export function useOsUpdateStepViewModel(props: OsUpdateStepProps): OsUpdateStep
     if (pageEvent) trackPage(pageEvent);
   }, [props, progress.finishing, osUpdates, trackPage, trackCompleted]);
 
-  return getLayout(props, device, progress, trackClick);
+  return getLayout(props, device, progress, trackClick, exportLogs);
 }

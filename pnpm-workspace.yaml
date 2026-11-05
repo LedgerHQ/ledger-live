@@ -35,7 +35,7 @@ catalog:
   "@dnd-kit/utilities": 3.2.2
   "@jest/globals": 30.5.0
   "@ledgerhq/context-module": 2.8.0
-  "@ledgerhq/crypto-icons": "2.0.6"
+  "@ledgerhq/crypto-icons": "2.0.7"
   "@ledgerhq/device-contacts-kit": 0.5.0
   "@ledgerhq/device-management-kit": 1.11.0
   "@ledgerhq/dmk-ledger-wallet": 0.8.0
@@ -51,8 +51,9 @@ catalog:
   "@ledgerhq/device-signer-kit-xrp": 0.3.0
   "@ledgerhq/device-transport-kit-react-native-ble": 1.3.2
   "@ledgerhq/device-transport-kit-react-native-hid": 1.0.4
-  "@ledgerhq/device-mockserver-client": 1.3.0
+  "@ledgerhq/device-mockserver-client": 1.4.0
   "@ledgerhq/device-mockserver-react": 0.1.1
+  "@ledgerhq/device-mockserver-react-native": 0.1.0
   "@ledgerhq/device-transport-kit-mockserver": 1.1.2
   "@ledgerhq/device-transport-kit-speculos": 1.3.0
   "@ledgerhq/signer-utils": 1.3.0
@@ -75,9 +76,9 @@ catalog:
   "@ledgerhq/evm-tools": 2.0.0
   "@ledgerhq/lumen-design-core": 0.1.34
   "@ledgerhq/lumen-lint-plugin": 0.1.2
-  "@ledgerhq/lumen-ui-react": 0.1.68
-  "@ledgerhq/lumen-ui-rnative": 0.1.71
-  "@ledgerhq/lumen-utils-shared": 0.1.18
+  "@ledgerhq/lumen-ui-react": 0.1.69
+  "@ledgerhq/lumen-ui-rnative": 0.1.72
+  "@ledgerhq/lumen-utils-shared": 0.1.19
   # Wallet API
   "@ledgerhq/wallet-api-client": 1.17.0
   "@ledgerhq/wallet-api-client-react": 1.4.36
@@ -126,7 +127,7 @@ catalog:
   expo-modules-core: 3.0.29
   "@jest/reporters": 30.5.0
   "@jest/test-result": 30.5.0
-  "@reduxjs/toolkit": 2.11.2
+  "@reduxjs/toolkit": 2.13.0
   "@rsbuild/core": 2.3.0
   "@rsbuild/plugin-node-polyfill": 1.4.6
   "@rsbuild/plugin-react": 2.1.1
@@ -171,14 +172,14 @@ catalog:
   "@noble/hashes": 1.8.0
   "@solana/spl-token": ^0.4.14
   "@solana/web3.js": ^1.99.0
-  "@polkadot/api": 16.5.4
-  "@polkadot/api-augment": 16.5.4
-  "@polkadot/api-derive": 16.5.4
-  "@polkadot/types": 16.5.4
-  "@polkadot/types-known": 16.5.4
-  "@polkadot/rpc-provider": 16.5.4
-  "@polkadot/util": 14.0.1
-  "@polkadot/util-crypto": 14.0.1
+  "@polkadot/api": 16.5.6
+  "@polkadot/api-augment": 16.5.6
+  "@polkadot/api-derive": 16.5.6
+  "@polkadot/types": 16.5.6
+  "@polkadot/types-known": 16.5.6
+  "@polkadot/rpc-provider": 16.5.6
+  "@polkadot/util": 14.0.3
+  "@polkadot/util-crypto": 14.0.3
   expect: 30.5.0
   i18next: 25.7.3
   isomorphic-ws: 5.0.0
@@ -225,7 +226,7 @@ catalog:
   semver: 7.8.5
   "@types/semver": 7.7.1
   "@types/ws": ^8.5.10
-  undici: 7.18.2
+  undici: 7.30.1
   uuid: 11.1.0
   "styled-components": 6.1.19
   "styled-system": 5.1.5
@@ -245,15 +246,17 @@ catalog:
   "@nx/devkit": 24.0.2
   detox: 20.51.3
   "@nx/s3-cache": 5.0.7
-  oxlint: 1.82.0
-  oxfmt: 0.67.0
+  oxlint: 1.90.0
+  oxfmt: 0.75.0
+  rimraf: 4.4.1
+  zx: 8.8.5
   # Modules published by coin-modules
-  "@ledgerhq/coin-evm": 16.2.0
-  "@ledgerhq/coin-hypercore": 4.0.2
+  "@ledgerhq/coin-evm": 16.2.5
+  "@ledgerhq/coin-hypercore": 4.0.3
   "@ledgerhq/coin-module-framework": 11.0.1
-  "@ledgerhq/coin-stellar": 12.1.1
-  "@ledgerhq/coin-tezos": 14.0.0
-  "@ledgerhq/coin-xrp": 13.1.0
+  "@ledgerhq/coin-stellar": 12.1.2
+  "@ledgerhq/coin-tezos": 14.1.1
+  "@ledgerhq/coin-xrp": 13.1.1
 
 minimumReleaseAge: 3000
 minimumReleaseAgeExclude:

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/wallet-cli",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "private": true,
   "description": "Ledger Wallet CLI using Device Management Kit (USB)",
   "license": "Apache-2.0",
@@ -23,6 +23,7 @@
     "predev": "node ./scripts/generate-skills-manifest.mjs",
     "dev": "bun --hot ./src/cli.ts",
     "generate:skills": "node ./scripts/generate-skills-manifest.mjs",
+    "export:agent-plugin": "node ./scripts/export-agent-plugin.mjs",
     "prebuild": "node ./scripts/generate-skills-manifest.mjs",
     "build": "node ./scripts/build.mjs",
     "prepare:npm": "node ./scripts/prepare-npm.mjs",
@@ -93,7 +94,7 @@
     "@shared/schema-primitives": "workspace:^",
     "@types/debug": "4.1.12",
     "@types/node": "catalog:",
-    "@types/w3c-web-usb": "^1.0.10",
+    "@types/w3c-web-usb": "1.0.10",
     "axios": "catalog:",
     "bignumber.js": "catalog:",
     "bun-types": "1.4.2",
@@ -109,7 +110,8 @@
     "usb": "2.17.0",
     "xstate": "catalog:",
     "yocto-spinner": "0.2.0",
-    "zod": "catalog:"
+    "zod": "catalog:",
+    "@typescript/native": "catalog:"
   },
   "engines": {
     "bun": ">=1.1.0"

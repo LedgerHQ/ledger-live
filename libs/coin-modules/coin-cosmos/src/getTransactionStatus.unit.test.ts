@@ -2,7 +2,8 @@ import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currenc
 import * as bech32 from "bech32";
 import BigNumber from "bignumber.js";
 import getTransactionStatus from "./getTransactionStatus";
-import { CosmosAccount, Transaction } from "./types";
+import type { Account, StakingAccount } from "@ledgerhq/types-live";
+import { Transaction } from "./types";
 import { COSMOS_MAX_REDELEGATIONS, getMaxEstimatedBalance } from "./logic";
 
 // Status-level negative cases for getTransactionStatus. This is pure in-memory
@@ -26,8 +27,8 @@ const validRecipient = bech32.encode("bbn", bech32.toWords(Buffer.alloc(20, 1)))
 const makeAccount = (
   spendableBalance: BigNumber,
   currency = babylon,
-  stakingOverrides: Partial<CosmosAccount["stakingResources"]> = {},
-): CosmosAccount =>
+  stakingOverrides: Partial<StakingAccount["stakingResources"]> = {},
+): StakingAccount =>
   ({
     type: "Account",
     currency,
@@ -39,16 +40,7 @@ const makeAccount = (
     ),
     balance: spendableBalance,
     spendableBalance,
-    cosmosResources: {
-      delegations: [],
-      redelegations: [],
-      unbondings: [],
-      delegatedBalance: new BigNumber(0),
-      pendingRewardsBalance: new BigNumber(0),
-      unbondingBalance: new BigNumber(0),
-      withdrawAddress: "",
-      sequence: 0,
-    },
+    sequence: 0,
     stakingResources: {
       delegations: [],
       redelegations: [],
@@ -58,7 +50,7 @@ const makeAccount = (
       unbondingBalance: new BigNumber(0),
       ...stakingOverrides,
     },
-  }) as unknown as CosmosAccount;
+  }) as unknown as StakingAccount;
 
 // bbnvaloper1… validator addresses, built the same way as validRecipient — real prefix,
 // arbitrary payload, so isDelegable/redelegation checks reach their intended branch.
@@ -76,7 +68,6 @@ describe("getTransactionStatus negative cases", () => {
       recipient: validRecipient,
       amount: BABY(1000), // far more than the 1 BABY spendable balance
       fees: new BigNumber(5000),
-      validators: [],
       useAllAmount: false,
     } as unknown as Transaction;
     const status = await getTransactionStatus(account, transaction);
@@ -91,7 +82,6 @@ describe("getTransactionStatus negative cases", () => {
       recipient: "not-a-valid-cosmos-address",
       amount: BABY("0.1"),
       fees: new BigNumber(5000),
-      validators: [],
       useAllAmount: false,
     } as unknown as Transaction;
     const status = await getTransactionStatus(account, transaction);
@@ -118,7 +108,7 @@ describe("getTransactionStatus negative cases", () => {
     const transaction = {
       mode: "delegate",
       amount: new BigNumber(0),
-      validators: [{ address: "bbnvaloper1validator", amount: new BigNumber(0) }],
+      valAddress: "bbnvaloper1validator",
       fees: new BigNumber(5000),
       useAllAmount: false,
     } as unknown as Transaction;
@@ -131,7 +121,7 @@ describe("getTransactionStatus negative cases", () => {
     const transaction = {
       mode: "delegate",
       amount: BABY(1),
-      validators: [],
+      valAddress: "",
       fees: new BigNumber(5000),
       useAllAmount: false,
     } as unknown as Transaction;
@@ -140,17 +130,16 @@ describe("getTransactionStatus negative cases", () => {
   });
 });
 
-describe("getTransactionStatus zero-fee chain (gonka)", () => {
+describe("getTransactionStatus fees", () => {
   it("treats a zero fee as loaded and spends the full balance with useAllAmount", async () => {
     const spendableBalance = BABY(10);
-    const account = makeAccount(spendableBalance, gonka);
+    const account = makeAccount(spendableBalance);
     const transaction = {
       mode: "send",
-      recipient: validGonkaRecipient,
+      recipient: validRecipient,
       amount: new BigNumber(0),
       fees: new BigNumber(0),
       gas: new BigNumber(80000),
-      validators: [],
       useAllAmount: true,
     } as unknown as Transaction;
 
@@ -161,6 +150,27 @@ describe("getTransactionStatus zero-fee chain (gonka)", () => {
     expect(status.amount).toEqual(spendableBalance);
   });
 
+  it("keeps gonka's gas fee out of the amount sent with useAllAmount", async () => {
+    const spendableBalance = new BigNumber(10_000_000_000);
+    const gas = new BigNumber(112284);
+    const account = makeAccount(spendableBalance, gonka);
+    const transaction = {
+      mode: "send",
+      recipient: validGonkaRecipient,
+      amount: new BigNumber(0),
+      // 1 ngonka per gas
+      fees: gas,
+      gas,
+      useAllAmount: true,
+    } as unknown as Transaction;
+
+    const status = await getTransactionStatus(account, transaction);
+
+    expect(status.errors).toEqual({});
+    expect(status.estimatedFees).toEqual(gas);
+    expect(status.amount).toEqual(spendableBalance.minus(gas));
+  });
+
   it("still flags FeeNotLoaded when fees have not been computed yet", async () => {
     const account = makeAccount(BABY(10), gonka);
     const transaction = {
@@ -169,7 +179,6 @@ describe("getTransactionStatus zero-fee chain (gonka)", () => {
       amount: BABY(1),
       fees: null,
       gas: new BigNumber(80000),
-      validators: [],
       useAllAmount: false,
     } as unknown as Transaction;
 
@@ -196,7 +205,6 @@ describe("getTransactionStatus send: RecommendUndelegation warning", () => {
       recipient: validRecipient,
       amount: new BigNumber(0),
       fees: new BigNumber(5000),
-      validators: [],
       useAllAmount: true,
     } as unknown as Transaction;
 
@@ -212,7 +220,6 @@ describe("getTransactionStatus send: RecommendUndelegation warning", () => {
       recipient: validRecipient,
       amount: new BigNumber(0),
       fees: new BigNumber(5000),
-      validators: [],
       useAllAmount: true,
     } as unknown as Transaction;
 
@@ -255,7 +262,7 @@ describe("getTransactionStatus undelegate", () => {
     const transaction = {
       mode: "undelegate",
       amount: BABY(5),
-      validators: [{ address: validator1, amount: BABY(5) }],
+      valAddress: validator1,
       fees: new BigNumber(5000),
       useAllAmount: false,
     } as unknown as Transaction;
@@ -279,7 +286,7 @@ describe("getTransactionStatus undelegate", () => {
     const transaction = {
       mode: "undelegate",
       amount: BABY(2),
-      validators: [{ address: validator1, amount: BABY(2) }],
+      valAddress: validator1,
       fees: new BigNumber(5000),
       useAllAmount: false,
     } as unknown as Transaction;
@@ -294,7 +301,7 @@ describe("getTransactionStatus undelegate", () => {
     const transaction = {
       mode: "undelegate",
       amount: BABY(1),
-      validators: [],
+      valAddress: "",
       fees: new BigNumber(5000),
       useAllAmount: false,
     } as unknown as Transaction;
@@ -326,8 +333,8 @@ describe("getTransactionStatus redelegate", () => {
     });
     const transaction = {
       ...baseRedelegate,
-      sourceValidator: validator1,
-      validators: [{ address: validator2, amount: BABY(2) }],
+      valAddress: validator1,
+      dstValAddress: validator2,
     } as unknown as Transaction;
 
     const status = await getTransactionStatus(account, transaction);
@@ -355,8 +362,8 @@ describe("getTransactionStatus redelegate", () => {
     });
     const transaction = {
       ...baseRedelegate,
-      sourceValidator: validator1,
-      validators: [{ address: validator2, amount: BABY(2) }],
+      valAddress: validator1,
+      dstValAddress: validator2,
     } as unknown as Transaction;
 
     const status = await getTransactionStatus(account, transaction);
@@ -385,8 +392,8 @@ describe("getTransactionStatus redelegate", () => {
     });
     const transaction = {
       ...baseRedelegate,
-      sourceValidator: validator1,
-      validators: [{ address: validator2, amount: BABY(2) }],
+      valAddress: validator1,
+      dstValAddress: validator2,
     } as unknown as Transaction;
 
     const status = await getTransactionStatus(account, transaction);
@@ -407,8 +414,8 @@ describe("getTransactionStatus redelegate", () => {
     });
     const transaction = {
       ...baseRedelegate,
-      sourceValidator: validator1,
-      validators: [{ address: validator1, amount: BABY(2) }],
+      valAddress: validator1,
+      dstValAddress: validator1,
     } as unknown as Transaction;
 
     const status = await getTransactionStatus(account, transaction);
@@ -429,8 +436,8 @@ describe("getTransactionStatus redelegate", () => {
     });
     const transaction = {
       ...baseRedelegate,
-      sourceValidator: validator1,
-      validators: [{ address: validator2, amount: BABY(5) }],
+      valAddress: validator1,
+      dstValAddress: validator2,
     } as unknown as Transaction;
 
     const status = await getTransactionStatus(account, transaction);
@@ -480,7 +487,7 @@ describe("getTransactionStatus claimReward / claimRewardCompound / compoundRewar
     const transaction = {
       mode: "claimReward",
       amount: new BigNumber(0),
-      validators: [{ address: validator1, amount: new BigNumber(0) }],
+      valAddress: validator1,
       fees: new BigNumber(200),
       useAllAmount: false,
     } as unknown as Transaction;
@@ -504,7 +511,7 @@ describe("getTransactionStatus claimReward / claimRewardCompound / compoundRewar
     const transaction = {
       mode: "claimReward",
       amount: new BigNumber(0),
-      validators: [{ address: validator1, amount: new BigNumber(0) }],
+      valAddress: validator1,
       fees: new BigNumber(200),
       useAllAmount: false,
     } as unknown as Transaction;
@@ -536,5 +543,14 @@ describe("getTransactionStatus claimReward / claimRewardCompound / compoundRewar
     const status = await getTransactionStatus(account, transaction);
 
     expect(status.warnings.claimReward?.name).toBe("ClaimRewardsFeesWarning");
+  });
+});
+
+describe("getTransactionStatus guard", () => {
+  it("throws for an account without staking resources", async () => {
+    const account = { currency: getCryptoCurrencyById("cosmos") } as unknown as Account;
+    await expect(
+      getTransactionStatus(account, { mode: "send" } as unknown as Transaction),
+    ).rejects.toThrow("cosmos staking account required");
   });
 });

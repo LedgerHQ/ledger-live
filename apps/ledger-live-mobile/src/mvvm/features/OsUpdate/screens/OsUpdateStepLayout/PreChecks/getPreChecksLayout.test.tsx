@@ -4,6 +4,12 @@ import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { render, screen } from "@tests/test-renderer";
 import { OsUpdateStep } from "../../../components/OsUpdateStep";
 import { stax } from "../../../testUtils/connectedDevice.mock";
+import useExportLogs from "~/components/useExportLogs";
+
+jest.mock("~/components/useExportLogs", () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
 
 function renderView(
   state: PreChecksState,
@@ -29,6 +35,8 @@ jest.mock("@shared/ui-queued-bottom-sheet", () => {
 const isSheetRequested = () =>
   jest.mocked(QueuedBottomSheet).mock.lastCall?.[0].isRequestingToBeOpened;
 
+const hasCloseButton = () => !jest.mocked(QueuedBottomSheet).mock.lastCall?.[0].noCloseButton;
+
 describe("PreChecks step", () => {
   it("shows the preparing screen without a sheet while pre-checks run", () => {
     renderView({ type: PreChecksStateType.LOADING });
@@ -40,6 +48,8 @@ describe("PreChecks step", () => {
   it("asks to unlock the device when it is locked", () => {
     renderView({ type: PreChecksStateType.DEVICE_LOCKED });
 
+    expect(hasCloseButton()).toBe(true);
+
     expect(screen.getByTestId("os-update-device-locked")).toBeVisible();
   });
 
@@ -50,6 +60,25 @@ describe("PreChecks step", () => {
     expect(screen.queryByText("Cancel")).toBeNull();
   });
 
+  it("sends a report and restarts the update from the connection timeout", async () => {
+    const exportLogs = jest.fn();
+    jest.mocked(useExportLogs).mockReturnValue(exportLogs);
+    const retry = jest.fn();
+    const { user } = renderView({ type: PreChecksStateType.CONNECTION_TIMED_OUT, retry });
+
+    expect(screen.getByTestId("os-update-connection-timed-out")).toBeVisible();
+    expect(hasCloseButton()).toBe(false);
+
+    await user.press(screen.getByText("Send report to Ledger"));
+
+    expect(exportLogs).toHaveBeenCalledTimes(1);
+    expect(retry).not.toHaveBeenCalled();
+
+    await user.press(screen.getByText("Restart OS update"));
+
+    expect(retry).toHaveBeenCalledTimes(1);
+  });
+
   it("shows the battery percentage and cancels on press", async () => {
     const cancel = jest.fn();
     const { user } = renderView({
@@ -57,6 +86,8 @@ describe("PreChecks step", () => {
       currentPercentage: 12,
       cancel,
     });
+
+    expect(hasCloseButton()).toBe(false);
 
     expect(screen.getByText(/12%/)).toBeVisible();
     await user.press(screen.getByText("Cancel"));

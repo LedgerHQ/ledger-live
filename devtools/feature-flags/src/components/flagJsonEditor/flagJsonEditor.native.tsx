@@ -1,5 +1,4 @@
-import { Divider, Button, Box, Text, useTheme } from "@ledgerhq/lumen-ui-rnative";
-import { TextInput } from "react-native";
+import { Divider, Button, Box, Text, TextInput } from "@ledgerhq/lumen-ui-rnative";
 import { useState } from "react";
 import { FlagDiffView } from "../flagDiffView/FlagDiffView";
 import type { DiffLine } from "../../utils";
@@ -23,7 +22,6 @@ export function FlagJsonEditor({
   setDiffBaseline,
 }: FlagJsonEditorProps) {
   const [onJsonEditor, setOnJsonEditor] = useState<boolean>(true);
-  const { theme } = useTheme();
 
   return (
     <Box lx={{ backgroundColor: "canvasMuted", borderRadius: "md" }}>
@@ -55,25 +53,18 @@ export function FlagJsonEditor({
       </Box>
       <Divider />
       {onJsonEditor ? (
-        <Box
-          lx={{ padding: "s8", borderRadius: "md" }}
-          style={
-            isValidJson ? undefined : { borderWidth: 2, borderColor: theme.colors.border.error }
-          }
-        >
+        <Box lx={{ padding: "s8" }}>
           <TextInput
             value={value}
             onChangeText={onChange}
             multiline
+            minLines={10}
             autoCapitalize="none"
             autoCorrect={false}
-            style={{
-              minHeight: 200,
-              fontFamily: "monospace",
-              fontSize: 12,
-              color: theme.colors.text.base,
-              textAlignVertical: "top",
-            }}
+            inputStyle={{ fontFamily: "monospace" }}
+            status={isValidJson ? undefined : "error"}
+            helperText={isValidJson ? undefined : "Invalid JSON"}
+            hideClearButton
           />
         </Box>
       ) : (

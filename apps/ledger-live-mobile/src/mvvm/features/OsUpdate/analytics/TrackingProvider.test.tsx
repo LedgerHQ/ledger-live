@@ -47,10 +47,15 @@ const installing = (updateIndex: number, updateCount = 2): OsUpdatePageEvent => 
   updateCount,
   osVersionTo: "1.8.0",
 });
+const installFirmwareRefused: OsUpdatePageEvent = {
+  page: OsUpdatePage.ERROR,
+  step: OsUpdateFlowStep.APPLY_UPDATES,
+  failureType: OsUpdateFailureType.INSTALL_FIRMWARE_REFUSED,
+};
 const error: OsUpdatePageEvent = {
   page: OsUpdatePage.ERROR,
   step: OsUpdateFlowStep.APPLY_UPDATES,
-  failureType: OsUpdateFailureType.OUT_OF_MEMORY,
+  failureType: OsUpdateFailureType.UNEXPECTED_ERROR,
 };
 
 type Props = Partial<React.ComponentProps<typeof TrackingProvider>>;
@@ -124,10 +129,55 @@ describe("TrackingProvider", () => {
       button: OsUpdateButton.CANCEL,
       page: OsUpdatePage.ERROR,
       step: OsUpdateFlowStep.APPLY_UPDATES,
-      failureType: OsUpdateFailureType.OUT_OF_MEMORY,
+      failureType: OsUpdateFailureType.UNEXPECTED_ERROR,
       ...shared,
       updateCount: 2,
     });
+  });
+
+  it("sends the failure with a retry on an error page", () => {
+    const { trackPage, trackClick } = renderProvider();
+
+    trackPage(installFirmwareRefused);
+    trackClick(OsUpdateButton.RETRY);
+
+    expect(mockedTrack).toHaveBeenLastCalledWith("button_clicked", {
+      button: OsUpdateButton.RETRY,
+      page: OsUpdatePage.ERROR,
+      step: OsUpdateFlowStep.APPLY_UPDATES,
+      failureType: OsUpdateFailureType.INSTALL_FIRMWARE_REFUSED,
+      ...shared,
+      updateCount: 2,
+    });
+  });
+
+  it("completes rather than fails when a refused install is retried", () => {
+    const { trackPage, trackClick, unmount } = renderProvider();
+
+    trackPage(installFirmwareRefused);
+    trackClick(OsUpdateButton.RETRY);
+    trackPage(installing(1));
+    trackPage({ page: OsUpdatePage.SUCCESS, restoreStatus: OsUpdateRestoreStatus.NONE });
+    unmount();
+
+    expect(outcomes()).toEqual([[OsUpdateEvent.COMPLETED, expect.anything()]]);
+  });
+
+  it("fails when the install is refused again after a retry", () => {
+    const { trackPage, trackClick, unmount } = renderProvider();
+
+    trackPage(installFirmwareRefused);
+    trackClick(OsUpdateButton.RETRY);
+    trackPage(installing(1));
+    trackPage(installFirmwareRefused);
+    unmount();
+
+    expect(outcomes()).toEqual([
+      [
+        OsUpdateEvent.FAILED,
+        expect.objectContaining({ failureType: OsUpdateFailureType.INSTALL_FIRMWARE_REFUSED }),
+      ],
+    ]);
   });
 
   it("adds the step only on the clicks that carry it", () => {
@@ -147,11 +197,44 @@ describe("TrackingProvider", () => {
     );
 
     trackPage({ page: OsUpdatePage.SUCCESS, restoreStatus: OsUpdateRestoreStatus.NONE });
-    trackClick(OsUpdateButton.CLOSE);
+    trackClick(OsUpdateButton.FINISH);
     expect(mockedTrack).toHaveBeenLastCalledWith(
       "button_clicked",
       expect.not.objectContaining({ step: expect.anything() }),
     );
+  });
+
+  it("adds the step to the clicks on the connection timeout", () => {
+    const { trackPage, trackClick } = renderProvider();
+
+    trackPage({ page: OsUpdatePage.CONNECTION_TIMED_OUT, step: OsUpdateFlowStep.APPLY_UPDATES });
+    trackClick(OsUpdateButton.SEND_REPORT);
+
+    expect(mockedTrack).toHaveBeenLastCalledWith("button_clicked", {
+      button: OsUpdateButton.SEND_REPORT,
+      page: OsUpdatePage.CONNECTION_TIMED_OUT,
+      step: OsUpdateFlowStep.APPLY_UPDATES,
+      ...shared,
+      updateCount: 2,
+    });
+  });
+
+  it("sends the connection timeout page every time it shows", () => {
+    const { trackPage } = renderProvider();
+    const connectionTimedOut: OsUpdatePageEvent = {
+      page: OsUpdatePage.CONNECTION_TIMED_OUT,
+      step: OsUpdateFlowStep.APPLY_UPDATES,
+    };
+
+    trackPage(connectionTimedOut);
+    trackPage({ page: OsUpdatePage.DEVICE_DISCONNECTED, step: OsUpdateFlowStep.APPLY_UPDATES });
+    trackPage(connectionTimedOut);
+
+    expect(
+      mockedTrackPage.mock.calls.filter(
+        ([{ category }]) => category === OsUpdatePage.CONNECTION_TIMED_OUT,
+      ),
+    ).toHaveLength(2);
   });
 
   it("sends screens once, a Preparing page per step and an Installing page per update", () => {
@@ -325,7 +408,7 @@ describe("TrackingProvider", () => {
         {
           page: OsUpdatePage.ERROR,
           step: OsUpdateFlowStep.APPLY_UPDATES,
-          failureType: OsUpdateFailureType.OUT_OF_MEMORY,
+          failureType: OsUpdateFailureType.UNEXPECTED_ERROR,
           updateIndex: 1,
           ...shared,
           updateCount: 2,
@@ -369,7 +452,7 @@ describe("TrackingProvider", () => {
         {
           page: OsUpdatePage.ERROR,
           step: OsUpdateFlowStep.APPLY_UPDATES,
-          failureType: OsUpdateFailureType.OUT_OF_MEMORY,
+          failureType: OsUpdateFailureType.UNEXPECTED_ERROR,
           updateIndex: 1,
           ...shared,
           updateCount: 2,

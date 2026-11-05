@@ -127,12 +127,8 @@ describe("usePortfolioSectionActions", () => {
   });
 
   describe("onPressShowAll", () => {
-    it("navigates to Crypto screen when assetSection is enabled and not readOnly", () => {
-      const { result } = renderHook(() => usePortfolioSectionActions(false, "crypto"), {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { params: { assetSection: true } },
-        }),
-      });
+    it("navigates to Crypto screen when not readOnly", () => {
+      const { result } = renderHook(() => usePortfolioSectionActions(false, "crypto"));
 
       act(() => {
         result.current.onPressShowAll();
@@ -144,28 +140,8 @@ describe("usePortfolioSectionActions", () => {
       });
     });
 
-    it("navigates to Assets screen when assetSection is disabled", () => {
-      const { result } = renderHook(() => usePortfolioSectionActions(false, "crypto"), {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { params: { assetSection: false } },
-        }),
-      });
-
-      act(() => {
-        result.current.onPressShowAll();
-      });
-
-      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Accounts, {
-        screen: ScreenName.Assets,
-      });
-    });
-
-    it("navigates to Assets screen when isReadOnly is true regardless of assetSection", () => {
-      const { result } = renderHook(() => usePortfolioSectionActions(true, "crypto"), {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { params: { assetSection: true } },
-        }),
-      });
+    it("navigates to Assets screen when isReadOnly is true", () => {
+      const { result } = renderHook(() => usePortfolioSectionActions(true, "crypto"));
 
       act(() => {
         result.current.onPressShowAll();

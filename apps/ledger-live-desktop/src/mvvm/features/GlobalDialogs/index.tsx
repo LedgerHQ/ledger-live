@@ -11,6 +11,12 @@ const PerpsDepositRoot = lazy(
 const PerpsWithdrawRoot = lazy(
   () => import("LLD/features/Perps/screens/PerpsWithdraw/PerpsWithdrawDialog"),
 );
+const PerpsWithdrawSummaryRoot = lazy(
+  () => import("LLD/features/Perps/screens/PerpsWithdrawSummary/PerpsWithdrawSummaryDialog"),
+);
+const PerpsWithdrawSignRoot = lazy(
+  () => import("LLD/features/Perps/screens/PerpsWithdrawSign/PerpsWithdrawSignDialog"),
+);
 const PerpsReviewRoot = lazy(
   () => import("LLD/features/Perps/screens/PerpsReview/PerpsReviewDialog"),
 );
@@ -19,6 +25,9 @@ const PerpsDepositSignRoot = lazy(
 );
 const PerpsTransactionSignedRoot = lazy(
   () => import("LLD/features/Perps/screens/PerpsTransactionSigned/PerpsTransactionSignedDialog"),
+);
+const PredictionsDialogRoot = lazy(() =>
+  import("@features/flow-predictions").then(module => ({ default: module.PredictionsSheet })),
 );
 const ReleaseNotes = lazy(() => import("LLD/features/ReleaseNotes"));
 const BuyDevice = lazy(() => import("LLD/features/BuyDevice"));
@@ -53,6 +62,12 @@ const GlobalDialogs = () => (
       <PerpsWithdrawRoot />
     </Suspense>
     <Suspense fallback={null}>
+      <PerpsWithdrawSummaryRoot />
+    </Suspense>
+    <Suspense fallback={null}>
+      <PerpsWithdrawSignRoot />
+    </Suspense>
+    <Suspense fallback={null}>
       <PerpsReviewRoot />
     </Suspense>
     <Suspense fallback={null}>
@@ -60,6 +75,9 @@ const GlobalDialogs = () => (
     </Suspense>
     <Suspense fallback={null}>
       <PerpsTransactionSignedRoot />
+    </Suspense>
+    <Suspense fallback={null}>
+      <PredictionsDialogRoot />
     </Suspense>
     <ActionConfirmationDialog />
     <ActionMenuDialog />

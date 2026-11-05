@@ -9,6 +9,7 @@ export function useChangeNameContentViewModel({
   maxLength,
   isDisabled = false,
   onConfirm,
+  onEvent,
 }: ChangeNameContentProps): ChangeNameContentViewProps {
   const { t } = useTranslation();
   const [value, setValue] = useState(initialName);
@@ -19,8 +20,9 @@ export function useChangeNameContentViewModel({
   const onClear = useCallback(() => setValue(""), []);
   const onSubmit = useCallback(() => {
     if (isSubmitDisabled) return;
+    onEvent?.("validateChangeName");
     onConfirm(normalizedValue);
-  }, [isSubmitDisabled, normalizedValue, onConfirm]);
+  }, [isSubmitDisabled, normalizedValue, onConfirm, onEvent]);
 
   return {
     value,

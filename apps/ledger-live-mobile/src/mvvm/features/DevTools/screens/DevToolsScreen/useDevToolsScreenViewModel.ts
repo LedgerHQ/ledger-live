@@ -12,6 +12,7 @@ import {
   usePayCardToolProps,
   useEnvDevToolProps,
   useAppConfigToolProps,
+  useAccountDetailToolProps,
 } from "@devtools/bindings";
 import type { DevToolsConfig } from "@devtools/shell";
 import { openHostedUrlInSecureBrowser } from "@features/flow-pay-card-auth";
@@ -24,7 +25,7 @@ import { useSelector } from "~/context/hooks";
 import { knownDevicesSelector } from "~/reducers/knownDevices";
 import { navigateToPayTab } from "LLM/features/PayTab/utils/navigateToPayTab";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
-import { useDeviceOnboarding } from "../../../DeviceOnboarding/hooks/useDeviceOnboarding";
+import { useDeviceOnboardingTool } from "../../DeviceOnboarding/useDeviceOnboardingTool";
 import { useOfferSync } from "../../../DeviceOnboarding/hooks/useOfferSync";
 import { useDevToolsRelay } from "./useDevToolsRelay";
 
@@ -100,10 +101,11 @@ export function useDevToolsScreenViewModel() {
   );
   const envToolProps = useEnvDevToolProps();
   const appConfigToolProps = useAppConfigToolProps();
+  const accountDetailToolProps = useAccountDetailToolProps();
   const dmk = useDeviceManagementKit();
   const knownDevices = useSelector(knownDevicesSelector);
   const offerSync = useOfferSync();
-  const deviceOnboardingProps = useDeviceOnboarding({
+  const deviceOnboardingProps = useDeviceOnboardingTool({
     dmk,
     knownDevices,
     offerSync,
@@ -120,8 +122,16 @@ export function useDevToolsScreenViewModel() {
       { id: "app-config", config: appConfigToolProps },
       { id: "pay-card", config: payCardToolProps },
       { id: "device-onboarding", config: deviceOnboardingProps },
+      { id: "account-detail", config: accountDetailToolProps },
     ],
-    [featureFlagsProps, envToolProps, appConfigToolProps, payCardToolProps, deviceOnboardingProps],
+    [
+      featureFlagsProps,
+      envToolProps,
+      appConfigToolProps,
+      payCardToolProps,
+      deviceOnboardingProps,
+      accountDetailToolProps,
+    ],
   );
 
   const screenOptions: NativeStackNavigationOptions = useMemo(() => {

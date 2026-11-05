@@ -1,5 +1,6 @@
 import {
   DeviceActionStatus,
+  DeviceDisconnectedWhileSendingError,
   DeviceLockedError,
   DeviceModelId,
   DmkResultStatus,
@@ -29,12 +30,17 @@ import {
   type OsUpdatesOrchestratorStateMachineActorRef,
   type OsUpdatesOrchestratorStateMachineEvent,
 } from "../orchestrator/types";
-import { POLL_INTERVAL_MS, SESSION_SETTLE_TIMEOUT_MS } from "../shared/constants";
+import {
+  CONNECTION_TIMEOUT_MS,
+  POLL_INTERVAL_MS,
+  SESSION_SETTLE_TIMEOUT_MS,
+} from "../shared/constants";
 import { RestoreBackupStepValue } from "../restore-backup/constants";
 import { applyUpdatesStateMachine } from "./ApplyUpdatesStateMachine";
 import {
   MCU_FLASH_TARGET,
   REBOOT_SETTLE_DELAY_MS,
+  UPDATES_WEIGHT,
   WAIT_READY_TIMEOUT_AFTER_FLASH_MS,
   WAIT_READY_TIMEOUT_MS,
 } from "./constants";
@@ -117,11 +123,6 @@ const BACKUP: Backup = {
 };
 
 const RESTORE_RESULT = { restoredApps: [] } as unknown as RestoreBackupDAOutput;
-
-const OUT_OF_MEMORY_ERROR = {
-  _tag: "OutOfMemoryDAError",
-  message: "no room left",
-};
 
 const success = (data: unknown) => ({ status: DmkResultStatus.Success, data });
 
@@ -787,6 +788,24 @@ describe("ApplyUpdatesStateMachine", () => {
       expect(restoring[restoring.length - 1].progress).toBeCloseTo(1);
     });
 
+    it("should fill the bar when the restore follows a recovery flash that leaves nothing to install", async () => {
+      getBackup.mockResolvedValue(BACKUP);
+      nextOsVersion(IN_BOOTLOADER, ON_OS);
+      await start();
+      await completeDeviceAction(flashed(MCU_FLASH_TARGET));
+      await completeWaitForDeviceReady();
+      await completeDeviceAction([]);
+
+      await emitPending({
+        requiredUserInteraction: UserInteractionRequired.None,
+        step: RestoreBackupStepValue.UploadCustomLockScreen,
+        progress: 1,
+      });
+
+      const restoring = sentStatesOfType(ApplyUpdatesStateType.RESTORING);
+      expect(restoring[restoring.length - 1].progress).toBeCloseTo(1);
+    });
+
     it("should report the restore progress once the updates are applied", async () => {
       getBackup.mockResolvedValue(BACKUP);
       await reachUpdateStart();
@@ -802,6 +821,130 @@ describe("ApplyUpdatesStateMachine", () => {
         type: ApplyUpdatesStateType.RESTORING,
         progress: expect.any(Number),
       });
+    });
+  });
+
+  describe("restart", () => {
+    const lastProgressOf = (
+      type: ApplyUpdatesStateType.UPDATING | ApplyUpdatesStateType.RESTORING,
+    ) => {
+      const states = sentStatesOfType(type);
+      return states[states.length - 1].progress;
+    };
+
+    /** Reports the start of the running action, then gets it well past it. */
+    const progressFromStartToPeak = async () => {
+      await emitPending({ requiredUserInteraction: UserInteractionRequired.None, progress: 0 });
+      const startProgress = lastProgressOf(ApplyUpdatesStateType.UPDATING);
+      await emitPending({ requiredUserInteraction: UserInteractionRequired.None, progress: 0.8 });
+      const peakProgress = lastProgressOf(ApplyUpdatesStateType.UPDATING);
+      expect(peakProgress).toBeGreaterThan(startProgress);
+      return startProgress;
+    };
+
+    const refuseInstall = async () => {
+      await emitPending({ requiredUserInteraction: UserInteractionRequired.AllowInstallFirmware });
+      await failDeviceAction(new RefusedByUserDAError());
+    };
+
+    it("should take the bar back to the start of the OSU install when it is retried", async () => {
+      await reachUpdateStart({ osUpdates: [SIMPLE_UPDATE, SIMPLE_UPDATE] });
+      await completeDeviceAction(undefined);
+      await completeWaitForDeviceReady();
+      const startProgress = await progressFromStartToPeak();
+      await refuseInstall();
+
+      sentStatesOfType(ApplyUpdatesStateType.ALLOW_INSTALL_FIRMWARE_REFUSED)[0].retry();
+      await settle();
+
+      expect(lastSentStateType()).toBe(ApplyUpdatesStateType.UPDATING);
+      expect(lastProgressOf(ApplyUpdatesStateType.UPDATING)).toBe(startProgress);
+    });
+
+    it("should take the bar back to the start of the OSU install once recovered from a failure", async () => {
+      await reachUpdateStart();
+      const startProgress = await progressFromStartToPeak();
+
+      await failDeviceAction(new DeviceLockedError());
+      await jest.advanceTimersByTimeAsync(POLL_INTERVAL_MS);
+      await settle();
+
+      expect(actor.getSnapshot().value).toBe("InstallOsu");
+      expect(lastProgressOf(ApplyUpdatesStateType.UPDATING)).toBe(startProgress);
+    });
+
+    it("should take the bar back to the start of the OSU install when restarted after a connection timeout", async () => {
+      await reachUpdateStart();
+      const startProgress = await progressFromStartToPeak();
+      await failDeviceAction(new DeviceDisconnectedWhileSendingError());
+      await jest.advanceTimersByTimeAsync(CONNECTION_TIMEOUT_MS);
+      await settle();
+      expect(lastSentStateType()).toBe(ApplyUpdatesStateType.CONNECTION_TIMED_OUT);
+
+      availableDevices$.next([REDISCOVERED_DEVICE]);
+      await settle();
+      expect(actor.getSnapshot().value).toBe("CheckErrorCause");
+
+      sentStatesOfType(ApplyUpdatesStateType.CONNECTION_TIMED_OUT)[0].retry();
+      await settle();
+
+      expect(actor.getSnapshot().value).toBe("InstallOsu");
+      expect(lastProgressOf(ApplyUpdatesStateType.UPDATING)).toBe(startProgress);
+    });
+
+    it("should take the bar back to the start of the final firmware install when it is retried", async () => {
+      nextOsVersion(ON_OS, IN_OSU);
+      await reachUpdateStart({ osUpdates: [UPDATE_WITH_FINAL_FIRMWARE] });
+      await completeDeviceAction(undefined);
+      await completeWaitForDeviceReady();
+      const startProgress = await progressFromStartToPeak();
+      await refuseInstall();
+
+      sentStatesOfType(ApplyUpdatesStateType.ALLOW_INSTALL_FIRMWARE_REFUSED)[0].retry();
+      await settle();
+
+      expect(actor.getSnapshot().value).toBe("InstallFinalFirmware");
+      expect(lastProgressOf(ApplyUpdatesStateType.UPDATING)).toBe(startProgress);
+    });
+
+    it("should take the bar back to the start of the flash once recovered from a failure", async () => {
+      nextOsVersion(ON_OS, IN_BOOTLOADER);
+      await reachUpdateStart({ osUpdates: [UPDATE_WITH_FLASH] });
+      await completeDeviceAction(undefined);
+      await completeWaitForDeviceReady();
+      const startProgress = await progressFromStartToPeak();
+
+      await failDeviceAction(new DeviceLockedError());
+      await jest.advanceTimersByTimeAsync(POLL_INTERVAL_MS);
+      await settle();
+
+      expect(actor.getSnapshot().value).toBe("FlashMcu");
+      expect(lastProgressOf(ApplyUpdatesStateType.UPDATING)).toBe(startProgress);
+    });
+
+    it("should take the bar back to the start of the restore when it restarts", async () => {
+      getBackup.mockResolvedValue(BACKUP);
+      await reachUpdateStart();
+      await completeDeviceAction(undefined);
+      await completeWaitForDeviceReady();
+      await emitPending({
+        requiredUserInteraction: UserInteractionRequired.None,
+        step: RestoreBackupStepValue.InstallOrUpdateApps,
+        progress: 0.5,
+      });
+      const peakProgress = lastProgressOf(ApplyUpdatesStateType.RESTORING);
+
+      await failDeviceAction(new DeviceLockedError());
+      await jest.advanceTimersByTimeAsync(POLL_INTERVAL_MS);
+      await settle();
+      await emitPending({
+        requiredUserInteraction: UserInteractionRequired.None,
+        step: RestoreBackupStepValue.InstallLanguagePackage,
+        progress: 0,
+      });
+
+      expect(lastProgressOf(ApplyUpdatesStateType.RESTORING)).toBeLessThan(peakProgress);
+      expect(lastProgressOf(ApplyUpdatesStateType.RESTORING)).toBeCloseTo(UPDATES_WEIGHT);
     });
   });
 
@@ -888,6 +1031,16 @@ describe("ApplyUpdatesStateMachine", () => {
       );
     });
 
+    it("should report the OS version the device runs once the updates are applied", async () => {
+      nextOsVersion(ON_OS, osVersion({ seVersion: "2.3.0" }));
+      await reachUpdateStart();
+      await completeDeviceAction(undefined);
+
+      await completeWaitForDeviceReady();
+
+      expect(sentStatesOfType(ApplyUpdatesStateType.UPDATES_APPLIED)[0].osVersion).toBe("2.3.0");
+    });
+
     it("should report no restore result when the device had no backup", async () => {
       await reachUpdateStart();
       await completeDeviceAction(undefined);
@@ -920,35 +1073,6 @@ describe("ApplyUpdatesStateMachine", () => {
       expect(lastSentStateType()).toBe(ApplyUpdatesStateType.UNEXPECTED_ERROR);
     });
 
-    it("should emit OUT_OF_MEMORY when the device runs out of room reinstalling the apps", async () => {
-      getBackup.mockResolvedValue(BACKUP);
-      await reachUpdateStart();
-      await completeDeviceAction(undefined);
-      await completeWaitForDeviceReady();
-      await failDeviceAction(OUT_OF_MEMORY_ERROR);
-
-      expect(restoreChildState()).toBe("OutOfMemory");
-      expect(lastSentStateType()).toBe(ApplyUpdatesStateType.OUT_OF_MEMORY);
-      expect(sentStatesOfType(ApplyUpdatesStateType.OUT_OF_MEMORY)[0].error).toEqual(
-        OUT_OF_MEMORY_ERROR,
-      );
-    });
-
-    it("should send STOP to the parent when cancel is called on the OUT_OF_MEMORY state", async () => {
-      getBackup.mockResolvedValue(BACKUP);
-      await reachUpdateStart();
-      await completeDeviceAction(undefined);
-      await completeWaitForDeviceReady();
-      await failDeviceAction(OUT_OF_MEMORY_ERROR);
-
-      sentStatesOfType(ApplyUpdatesStateType.OUT_OF_MEMORY)[0].cancel();
-      await settle();
-
-      expect(parentEvents).toContainEqual({
-        type: OsUpdatesOrchestratorStateMachineEventType.STOP,
-      });
-    });
-
     it("should hand any other restore failure over to CheckErrorCause", async () => {
       getBackup.mockResolvedValue(BACKUP);
       await reachUpdateStart();
@@ -972,9 +1096,58 @@ describe("ApplyUpdatesStateMachine", () => {
 
       expect(actor.getSnapshot().value).toBe("AllowInstallFirmwareRefused");
       expect(lastSentStateType()).toBe(ApplyUpdatesStateType.ALLOW_INSTALL_FIRMWARE_REFUSED);
-      expect(
-        sentStatesOfType(ApplyUpdatesStateType.ALLOW_INSTALL_FIRMWARE_REFUSED)[0].error,
-      ).toEqual(new RefusedByUserDAError());
+      const [refused] = sentStatesOfType(ApplyUpdatesStateType.ALLOW_INSTALL_FIRMWARE_REFUSED);
+      expect(refused.error).toEqual(new RefusedByUserDAError());
+      expect(refused.retry).toEqual(expect.any(Function));
+    });
+
+    it("should install the OSU firmware again when retry is called after the install was refused", async () => {
+      await reachUpdateStart();
+      await emitPending({
+        requiredUserInteraction: UserInteractionRequired.AllowInstallFirmware,
+      });
+      await failDeviceAction(new RefusedByUserDAError());
+
+      sentStatesOfType(ApplyUpdatesStateType.ALLOW_INSTALL_FIRMWARE_REFUSED)[0].retry();
+      await settle();
+
+      expect(actor.getSnapshot().value).toBe("InstallOsu");
+    });
+
+    it("should install the final firmware again when retry is called after its install was refused", async () => {
+      nextOsVersion(ON_OS, IN_OSU);
+      await reachUpdateStart({ osUpdates: [UPDATE_WITH_FINAL_FIRMWARE] });
+      await completeDeviceAction(undefined);
+      await completeWaitForDeviceReady();
+      await emitPending({
+        requiredUserInteraction: UserInteractionRequired.AllowInstallFirmware,
+      });
+      await failDeviceAction(new RefusedByUserDAError());
+
+      sentStatesOfType(ApplyUpdatesStateType.ALLOW_INSTALL_FIRMWARE_REFUSED)[0].retry();
+      await settle();
+
+      expect(actor.getSnapshot().value).toBe("InstallFinalFirmware");
+    });
+
+    it("should emit ALLOW_INSTALL_FIRMWARE_REFUSED again when the install is refused after a retry", async () => {
+      await reachUpdateStart();
+      await emitPending({
+        requiredUserInteraction: UserInteractionRequired.AllowInstallFirmware,
+      });
+      await failDeviceAction(new RefusedByUserDAError());
+      sentStatesOfType(ApplyUpdatesStateType.ALLOW_INSTALL_FIRMWARE_REFUSED)[0].retry();
+      await settle();
+
+      await emitPending({
+        requiredUserInteraction: UserInteractionRequired.AllowInstallFirmware,
+      });
+      await failDeviceAction(new RefusedByUserDAError());
+
+      expect(actor.getSnapshot().value).toBe("AllowInstallFirmwareRefused");
+      expect(sentStatesOfType(ApplyUpdatesStateType.ALLOW_INSTALL_FIRMWARE_REFUSED)).toHaveLength(
+        2,
+      );
     });
 
     it("should hand a failure during the install prompt over to CheckErrorCause", async () => {

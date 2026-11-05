@@ -17,14 +17,18 @@ export function openPerpsWithdraw(data: PerpsWithdrawData) {
   _opener?.(data);
 }
 
-function PerpsWithdrawBody({ data }: Readonly<{ data: PerpsWithdrawData }>) {
-  const viewModel = usePerpsWithdrawViewModel(data);
+function PerpsWithdrawBody({
+  data,
+  onClose,
+}: Readonly<{ data: PerpsWithdrawData; onClose: () => void }>) {
+  const viewModel = usePerpsWithdrawViewModel(data, onClose);
   return <PerpsWithdrawView {...viewModel} />;
 }
 
 export default function PerpsWithdrawRoot() {
   const [data, setData] = useState<PerpsWithdrawData | null>(null);
   const [openCount, setOpenCount] = useState(0);
+  const close = useCallback(() => setData(null), []);
 
   // Each open remounts the form so a draft from the summary becomes its initial state.
   useEffect(
@@ -36,16 +40,19 @@ export default function PerpsWithdrawRoot() {
     [],
   );
 
-  const handleOpenChange = useCallback((open: boolean) => {
-    if (open) return;
-    cancelWithdrawRequest();
-    setData(null);
-  }, []);
+  const handleOpenChange = useCallback(
+    (open: boolean) => {
+      if (open) return;
+      cancelWithdrawRequest();
+      close();
+    },
+    [close],
+  );
 
   return (
     <Dialog open={data !== null} onOpenChange={handleOpenChange}>
       <DialogContent onInteractOutside={e => e.preventDefault()}>
-        {data ? <PerpsWithdrawBody key={openCount} data={data} /> : null}
+        {data ? <PerpsWithdrawBody key={openCount} data={data} onClose={close} /> : null}
       </DialogContent>
     </Dialog>
   );

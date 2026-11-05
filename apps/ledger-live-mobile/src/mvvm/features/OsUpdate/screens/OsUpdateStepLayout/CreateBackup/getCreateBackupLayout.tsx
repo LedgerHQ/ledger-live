@@ -2,6 +2,7 @@ import React from "react";
 import { CreateBackupStateType, type CreateBackupState } from "@ledgerhq/live-dmk-shared";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type { OsUpdateSheetSpec, OsUpdateStepLayoutSpec } from "..";
+import { getConnectionTimedOutSheet } from "../getConnectionTimedOutSheet";
 import { OsUpdateButton } from "../../../analytics/types";
 import { PreparingScreen } from "../../PreparingScreen";
 import { BackupSelectionContent } from "../../../sheets/BackupSelectionContent";
@@ -16,6 +17,7 @@ type Props = Readonly<{
   deviceModelId: DeviceModelId;
   deviceName: string;
   trackClick: (button: OsUpdateButton) => void;
+  exportLogs: () => void;
 }>;
 
 function getSheet({
@@ -23,6 +25,7 @@ function getSheet({
   deviceModelId,
   deviceName,
   trackClick,
+  exportLogs,
 }: Props): OsUpdateSheetSpec | undefined {
   switch (state.type) {
     case CreateBackupStateType.LOADING:
@@ -37,7 +40,15 @@ function getSheet({
         state.createNewBackup();
       };
       return {
-        content: <BackupSelectionContent onUseExisting={onUseExisting} onCreateNew={onCreateNew} />,
+        hideHeader: true,
+        content: (
+          <BackupSelectionContent
+            deviceModelId={deviceModelId}
+            backupCreatedAt={state.backupCreatedAt}
+            onUseExisting={onUseExisting}
+            onCreateNew={onCreateNew}
+          />
+        ),
       };
     }
     case CreateBackupStateType.DEVICE_LOCKED:
@@ -58,11 +69,14 @@ function getSheet({
         state.cancel();
       };
       return {
+        hideHeader: true,
         content: <SecureConnectionRefusedContent onRetry={onRetry} onCancel={onCancel} />,
       };
     }
     case CreateBackupStateType.DEVICE_DISCONNECTED:
       return { content: <DeviceDisconnectedContent /> };
+    case CreateBackupStateType.CONNECTION_TIMED_OUT:
+      return getConnectionTimedOutSheet({ retry: state.retry, trackClick, exportLogs });
     case CreateBackupStateType.UNEXPECTED_ERROR: {
       const onCancel = () => {
         trackClick(OsUpdateButton.CANCEL);

@@ -15,6 +15,8 @@
  * As a source, it may only reach `scope:support` and `scope:shared`: tooling carries no domain or
  * feature knowledge, so a test harness that needs a domain's mocks lives in that domain package.
  * Third-party test tooling (lumen, react-native) is not a graph node and stays unconstrained.
+ *
+ * `type:account-data-source` packages are wired by apps only: features and domain go through the router.
  */
 const DEP_CONSTRAINTS = [
   { sourceTag: "scope:support", onlyDependOnLibsWithTags: ["scope:support", "scope:shared"] },
@@ -59,6 +61,8 @@ const DEP_CONSTRAINTS = [
       "scope:support",
     ],
   },
+  { sourceTag: "scope:features", notDependOnLibsWithTags: ["type:account-data-source"] },
+  { sourceTag: "scope:domain", notDependOnLibsWithTags: ["type:account-data-source"] },
 ];
 
 /**
@@ -99,7 +103,13 @@ const BANNED_EXTERNALS_BY_TAG = [
  * A workspace package does not resolve from the pnpm virtual store, so banning
  * the declaration bans the import too — an undeclared import fails to resolve.
  */
-const BANNED_DEPENDENCIES = [];
+const BANNED_DEPENDENCIES = [
+  {
+    name: "@ledgerhq/generators",
+    reason:
+      "Nx resolves it as a local workspace plugin; a declared edge makes the project nx-affected by every skill or lint-tool edit.",
+  },
+];
 
 /**
  * The `@devtools/*` packages each `@devtools/*` package may depend on; "*" allows them all.
@@ -126,6 +136,43 @@ const DEVTOOLS_TYPE_ONLY_IMPORTS = {
 const DEVTOOLS_TYPE_ONLY_RULE =
   'A DEVTOOLS_TYPE_ONLY_IMPORTS target may only be reached through `import type`, `export type … from` or `typeof import("…")`: the build erases them, so the target stays lazily loaded. A value import, `import { type X }`, `import()` or `require()` loads it at runtime.';
 
+/**
+ * The `@devtools/*` packages each `@devtools/*` package may reach under `DEVTOOLS_LAZY_RULE`;
+ * "*" allows them all.
+ */
+const DEVTOOLS_LAZY_IMPORTS = {
+  "@devtools/registry": "*",
+};
+
+const DEVTOOLS_LAZY_RULE =
+  'A DEVTOOLS_LAZY_IMPORTS target may only be reached through `import type`, `export type … from`, `typeof import("…")` or `import()`: the shell loads the registry eagerly, so a value import or `require()` would bundle the tool with it.';
+
+/**
+ * App roots, their DevTools folder and its static entries; see `DEVTOOLS_HOST_APP_RULE` and
+ * `DEVTOOLS_HOST_FOLDER_RULE`.
+ */
+const DEVTOOLS_HOST_APPS = [
+  {
+    root: "apps/ledger-live-desktop",
+    allowedUnder: "src/mvvm/features/DevTools/",
+    entries: [
+      "src/mvvm/features/DevTools/components/DevToolsWindow/index.tsx",
+      "src/mvvm/features/DevTools/components/DevToolsWindow/devToolsWindow.ts",
+    ],
+  },
+  {
+    root: "apps/ledger-live-mobile",
+    allowedUnder: "src/mvvm/features/DevTools/",
+    entries: ["src/mvvm/features/DevTools/screens/DevToolsScreen/index.tsx"],
+  },
+];
+
+const DEVTOOLS_HOST_APP_RULE =
+  "A DEVTOOLS_HOST_APPS app may import `@devtools/*` (type imports included) only from files under its `allowedUnder` folder: product code must not depend on debug tooling.";
+
+const DEVTOOLS_HOST_FOLDER_RULE =
+  "A file outside a DEVTOOLS_HOST_APPS `allowedUnder` folder may import a file under it only through `import()` / `lazy(() => import(...))`, unless that file is one of the app's `entries`: a static import would reach `@devtools/*` in one hop. Test files (`*.test.*`, `__tests__/`, `__integrations__/`) are exempt.";
+
 module.exports = {
   DEP_CONSTRAINTS,
   BOUNDARY_EXCEPTIONS,
@@ -137,4 +184,9 @@ module.exports = {
   DEVTOOLS_ALLOWED_IMPORTS,
   DEVTOOLS_TYPE_ONLY_IMPORTS,
   DEVTOOLS_TYPE_ONLY_RULE,
+  DEVTOOLS_LAZY_IMPORTS,
+  DEVTOOLS_LAZY_RULE,
+  DEVTOOLS_HOST_APPS,
+  DEVTOOLS_HOST_APP_RULE,
+  DEVTOOLS_HOST_FOLDER_RULE,
 };
