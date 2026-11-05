@@ -47,8 +47,8 @@ Point every caller at the replacement and stop new ones from appearing:
 - Ban the old import in the apps with an `eslint/no-restricted-imports` pattern in their
   `.oxlintrc.json`, with `importNamePattern` and a `message` naming the new package. This ban is
   the only real guard: `@deprecated` alone blocks nothing. Both
-  [desktop](../../../apps/ledger-live-desktop/.oxlintrc.json) and
-  [mobile](../../../apps/ledger-live-mobile/.oxlintrc.json) set `typescript/no-deprecated` to
+  [desktop](../../../apps/ledger-live-desktop/oxlint.config.mts) and
+  [mobile](../../../apps/ledger-live-mobile/oxlint.config.mts) set `typescript/no-deprecated` to
   `error`, but it is a type-aware rule and their `lint` scripts (`oxlint src ...` in each
   `package.json`) never pass `--type-aware`, so it reports nothing.
 - Notify open PRs still using the old path: [impacting-prs](../impacting-prs/SKILL.md).
