@@ -114,7 +114,10 @@ export function describeSpeculosApps(device: SpeculosDevice): string {
 
   let info = `App: ${device.appName ?? ""} (${label(device.appVersion, device.appProvider)})`;
   if (device.dependencies?.length) {
-    info += `\nDependencies: ${device.dependencies.map(dep => `${dep.name} (${label(dep.appVersion, dep.provider)})`).join(", ")}`;
+    const dependencies = device.dependencies.map(
+      dep => `${dep.name} (${label(dep.appVersion, dep.provider)})`,
+    );
+    info += `\nDependencies: ${dependencies.join(", ")}`;
   }
   return info;
 }
