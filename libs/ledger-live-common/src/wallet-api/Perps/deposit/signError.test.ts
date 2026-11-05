@@ -5,6 +5,7 @@ import { PayloadStepError, SignatureStepError } from "../../Exchange/SwapError";
 import type { AccountLike } from "@ledgerhq/types-live";
 import {
   isDepositGenericSignError,
+  getDepositSignFailedEvent,
   shouldReturnToDepositForm,
   toDepositSignErrorStep,
 } from "./signError";
@@ -46,37 +47,50 @@ describe("shouldReturnToDepositForm", () => {
 });
 
 describe("toDepositSignErrorStep", () => {
-  const accounts = {
-    depositAccount: { type: "Account", currency: { ticker: "ETH" } } as unknown as AccountLike,
-    receiverAccount: { type: "Account", currency: { ticker: "USDC" } } as unknown as AccountLike,
-  };
-
-  it("tracks a generic failure and marks the step as generic", () => {
-    const track = jest.fn();
+  it("marks a generic failure, which also returns to the form", () => {
     const error = new PayloadStepError();
 
-    expect(toDepositSignErrorStep(error, { ...accounts, track })).toEqual({
+    expect(toDepositSignErrorStep(error)).toEqual({
       kind: "error",
       error,
       isGeneric: true,
+      returnsToForm: true,
     });
-    expect(track).toHaveBeenCalledWith("swap error message", {
+  });
+
+  it("marks a shortfall as a return to the form, without the generic copy", () => {
+    const error = new CompleteExchangeError("INIT", new NotEnoughGas().name, "");
+
+    expect(toDepositSignErrorStep(error)).toMatchObject({ isGeneric: false, returnsToForm: true });
+  });
+
+  it("keeps any other failure on the sign step", () => {
+    expect(toDepositSignErrorStep("boom")).toEqual({
+      kind: "error",
+      error: new Error("boom"),
+      isGeneric: false,
+      returnsToForm: false,
+    });
+  });
+});
+
+describe("getDepositSignFailedEvent", () => {
+  it("describes the generic failure for the swap error analytics", () => {
+    const depositAccount = {
+      type: "Account",
+      currency: { ticker: "ETH" },
+    } as unknown as AccountLike;
+    const receiverAccount = {
+      type: "Account",
+      currency: { ticker: "USDC" },
+    } as unknown as AccountLike;
+
+    expect(getDepositSignFailedEvent(depositAccount, receiverAccount)).toEqual({
       message: "deposit_sign_failed",
       page: "perps_deposit_sign",
       flow: "perps",
       sourceCurrency: "ETH",
       targetCurrency: "USDC",
     });
-  });
-
-  it("keeps any other failure as it is, without an event", () => {
-    const track = jest.fn();
-
-    expect(toDepositSignErrorStep("boom", { ...accounts, track })).toEqual({
-      kind: "error",
-      error: new Error("boom"),
-      isGeneric: false,
-    });
-    expect(track).not.toHaveBeenCalled();
   });
 });

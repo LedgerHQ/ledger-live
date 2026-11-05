@@ -49,9 +49,13 @@ export function usePerpsDepositSignViewModel(
   );
 
   const onDismiss = useCallback(() => {
+    if (deviceStep.kind === "error" && deviceStep.returnsToForm) {
+      returnToDeposit();
+      return;
+    }
     cancelDepositRequest();
     onClose();
-  }, [onClose]);
+  }, [deviceStep, onClose, returnToDeposit]);
 
   const startedRef = useRef(false);
   useEffect(() => {

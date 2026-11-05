@@ -23,12 +23,13 @@ jest.mock("../../PerpsReview/PerpsReviewDialog", () => ({
 }));
 
 let capturedCallbacks: PerpsDepositExecutionCallbacks | undefined;
+let mockDeviceStep: unknown = { kind: "processing" };
 const mockExecuteDeposit = jest.fn();
 jest.mock("LLD/features/Perps/hooks/usePerpsDepositExecution", () => ({
   usePerpsDepositExecution: (_params: unknown, callbacks: PerpsDepositExecutionCallbacks) => {
     capturedCallbacks = callbacks;
     return {
-      deviceStep: { kind: "processing" },
+      deviceStep: mockDeviceStep,
       executeDeposit: mockExecuteDeposit,
       retry: jest.fn(),
     };
@@ -81,6 +82,24 @@ describe("usePerpsDepositSignViewModel", () => {
     expect(mockOpenPerpsDeposit).toHaveBeenCalledWith({ receiverAccount, draft: data.draft });
     expect(mockOpenPerpsReview).not.toHaveBeenCalled();
     expect(onClose).toHaveBeenCalled();
+  });
+
+  it("should reopen the deposit form when the error of a generic failure is closed", () => {
+    mockDeviceStep = {
+      kind: "error",
+      error: new Error("swap api 500"),
+      isGeneric: true,
+      returnsToForm: true,
+    };
+    const onClose = jest.fn();
+    const { result } = renderHook(() => usePerpsDepositSignViewModel(data, onClose));
+
+    result.current.onDismiss();
+
+    expect(mockOpenPerpsDeposit).toHaveBeenCalledWith({ receiverAccount, draft: data.draft });
+    expect(mockCancelDepositRequest).not.toHaveBeenCalled();
+    expect(onClose).toHaveBeenCalled();
+    mockDeviceStep = { kind: "processing" };
   });
 
   it("should close and abandon the deposit when the holder heads to My Ledger", () => {

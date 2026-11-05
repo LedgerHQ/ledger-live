@@ -383,6 +383,7 @@ describe("usePerpsDepositExecution", () => {
       kind: "error",
       error: new Error("signature failed"),
       isGeneric: false,
+      returnsToForm: false,
     });
     expect(mockOpenPerpsTransactionSigned).not.toHaveBeenCalled();
     expect(onDone).not.toHaveBeenCalled();
@@ -433,6 +434,7 @@ describe("usePerpsDepositExecution", () => {
         kind: "error",
         error: shortfall,
         isGeneric: false,
+        returnsToForm: true,
       });
       mockExecuteSwap.mockClear();
 
@@ -467,6 +469,7 @@ describe("usePerpsDepositExecution", () => {
       kind: "error",
       error: payloadFailure,
       isGeneric: true,
+      returnsToForm: true,
     });
     expect(track).toHaveBeenCalledWith("swap error message", {
       message: "deposit_sign_failed",

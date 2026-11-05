@@ -35,7 +35,7 @@ import {
   settleDepositRequest,
 } from "@ledgerhq/live-common/wallet-api/Perps/deposit/request";
 import {
-  shouldReturnToDepositForm,
+  getDepositSignFailedEvent,
   toDepositSignErrorStep,
   type DepositSignErrorStep,
 } from "@ledgerhq/live-common/wallet-api/Perps/deposit/signError";
@@ -334,7 +334,11 @@ export function usePerpsDepositExecution(
         onRefused();
         return;
       }
-      setDeviceStep(toDepositSignErrorStep(e, { depositAccount, receiverAccount, track }));
+      const errorStep = toDepositSignErrorStep(e);
+      if (errorStep.isGeneric) {
+        track("swap error message", getDepositSignFailedEvent(depositAccount, receiverAccount));
+      }
+      setDeviceStep(errorStep);
     }
   }, [
     accounts,
@@ -352,7 +356,7 @@ export function usePerpsDepositExecution(
   ]);
 
   const retry = useCallback(() => {
-    if (deviceStep.kind === "error" && shouldReturnToDepositForm(deviceStep.error)) {
+    if (deviceStep.kind === "error" && deviceStep.returnsToForm) {
       onReturnToForm();
       return;
     }
