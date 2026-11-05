@@ -5,7 +5,7 @@ description: "Official Ledger wallet-cli. Send, pay or transfer crypto from the 
 
 # wallet-cli
 
-Networks: **bitcoin**, **ethereum**, **solana** (mainnets and testnets).
+Networks: **bitcoin**, **ethereum**, **solana** (mainnets and testnets), and native **XRP** (mainnet + testnet).
 
 Run from repo root: `pnpm --silent wallet-cli start <command> [flags]`
 
@@ -107,7 +107,7 @@ When asked for any of these, tell the human wallet-cli does not support it yet:
 
 - NFTs (mint, transfer, view).
 - OpenPGP-compatible output, key sharing or multi-recipient encryption (`ring` encrypts with a per-user Ledger Key Ring).
-- `send`, `receive`, `operations` or `swap execute` on testnets and layer 2s (e.g. Base).
+- `send`, `receive`, `operations` or `swap execute` on unsupported testnets and layer 2s (e.g. Base). Native XRP supports Mainnet and Testnet.
 - Chains outside the Networks line above.
 
 ## Core commands
@@ -116,17 +116,18 @@ Exact flags: `pnpm --silent wallet-cli start <command> --help`. Add `--output js
 
 ```bash
 pnpm --silent wallet-cli start session view
-pnpm --silent wallet-cli start account discover ethereum      # also bitcoin, solana, ethereum_sepolia, bitcoin_testnet, solana_devnet
+pnpm --silent wallet-cli start account discover ethereum      # also bitcoin, solana, XRP: ripple and ripple:testnet, ethereum_sepolia, bitcoin_testnet, solana_devnet
 pnpm --silent wallet-cli start receive ethereum-1             # --no-verify skips the device check
 pnpm --silent wallet-cli start balances ethereum-1 --output json
 pnpm --silent wallet-cli start operations ethereum-1 --limit 20 --cursor <cursor>
 pnpm --silent wallet-cli start send ethereum-1 --to 0xDEF... --amount '0.5 ETH' --dry-run
+pnpm --silent wallet-cli start send ripple-1 --to rHsMGQEkVNJmpGWs8XUBoTBiAAbwxZN5v3 --amount '1 XRP' --destination-tag 123 --dry-run
 ```
 
 - **receive:** when the address on the device differs from the terminal, keep the address unused and unshared; have the human disconnect the device and run `genuine-check` before retrying.
 - **assets:** `assets token <network> <contract>` when you have the contract address, `assets token-by-id <id>` when you have the id; non-EVM chains take `--identifier`. Both exit non-zero when the token is unknown, and the printed `id` is the currency id that `swap` takes in `--from` and `--to`.
 - **operations:** the next page cursor arrives on stderr (human output) or as `nextCursor` (JSON).
-- **send:** the ticker in `--amount` is mandatory and selects the asset, so a token transfer is just `--amount '100 USDT'`. Bitcoin: `--fee-per-byte <sats>`, `--rbf`. Solana: `--mode send|stake.createAccount|stake.delegate|stake.undelegate|stake.withdraw`, `--validator`, `--stake-account`, `--memo`.
+- **send:** the ticker in `--amount` is mandatory and selects the asset, so a token transfer is just `--amount '100 USDT'`. Bitcoin: `--fee-per-byte <sats>`, `--rbf`. Solana: `--mode send|stake.createAccount|stake.delegate|stake.undelegate|stake.withdraw`, `--validator`, `--stake-account`, `--memo`. XRP: `--destination-tag <unsigned 32-bit integer>` for Mainnet and Testnet.
 - **send `--data`** (EVM calldata, `0x` hex with an even digit count) covers contract calls with no dedicated command. Canonical pattern, WETH: wrap with `--data 0xd0e30db0` and the ETH value in `--amount`; unwrap with `--amount '0 ETH' --data 0x2e1a7d4d<amount in wei as hex, left-padded to 32 bytes>`. wallet-cli cannot check what hand-written calldata means, so every `--data` call takes the dry run ([Safety rules](#safety-rules)). What the device shows decides:
   - **Decoded:** the device shows the call field by field, from an ERC-7730 descriptor in Ledger's [registry](https://github.com/LedgerHQ/clear-signing-erc7730-registry) (WETH's covers `deposit` and `withdraw`), token metadata or a plugin; the human reads those fields before approving.
   - **Not decoded:** the Ethereum app refuses the call, or, when Blind signing is already on, shows a blind-signing warning instead of decoded fields: the human rejects it on the device. Stop there: tell the human this call cannot be clear-signed on their Ledger, and never suggest turning on Blind signing.

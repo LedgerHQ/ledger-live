@@ -16,3 +16,6 @@ export const MOCK_SOL_DESCRIPTOR = `account:2:address:solana:${MOCK_SOL_ADDRESS}
 // `earn deposit` / `earn withdraw`, which throws in the command switch before any HTTP call.
 export const MOCK_BTC_ADDRESS = "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq";
 export const MOCK_BTC_DESCRIPTOR = `account:2:address:bitcoin:${MOCK_BTC_ADDRESS}:m/84h/0h/0h/0/0`;
+
+export const MOCK_XRP_ADDRESS = "rN7n7otQDd6FczFgLdSqtcsAUxDkw6fzRH";
+export const MOCK_XRP_DESCRIPTOR = `account:2:address:ripple:${MOCK_XRP_ADDRESS}:m/44h/144h/0h/0/0`;
