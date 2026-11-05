@@ -10,12 +10,12 @@ export function AppSetApiUrl({
   api,
   value,
   setValue,
-}: {
+}: Readonly<{
   buttonTitle: string;
   api: keyof typeof LEDGER_SYNC_BACKENDS.staging;
   value: string;
   setValue: (url: string) => void;
-}) {
+}>) {
   const [localValue, setLocalValue] = useState(value);
 
   useEffect(() => {
@@ -31,6 +31,19 @@ export function AppSetApiUrl({
   );
 
   const action = useCallback(() => Promise.resolve(localValue), [localValue]);
+  const editor = (
+    <div className="flex min-w-0 flex-1 items-center gap-8">
+      <ApiUrlPresets
+        onStaging={() => apply(LEDGER_SYNC_BACKENDS.staging[api])}
+        onProd={() => apply(LEDGER_SYNC_BACKENDS.prod[api])}
+      />
+      <TextInput
+        value={localValue}
+        onChange={e => setLocalValue(e.target.value)}
+        className="min-w-0 flex-1"
+      />
+    </div>
+  );
   return (
     <Actionable
       buttonTitle={buttonTitle}
@@ -38,19 +51,7 @@ export function AppSetApiUrl({
       action={action}
       value={value}
       setValue={v => setValue(v || LEDGER_SYNC_BACKENDS.staging[api])}
-      valueDisplay={() => (
-        <div className="flex min-w-0 flex-1 items-center gap-8">
-          <ApiUrlPresets
-            onStaging={() => apply(LEDGER_SYNC_BACKENDS.staging[api])}
-            onProd={() => apply(LEDGER_SYNC_BACKENDS.prod[api])}
-          />
-          <TextInput
-            value={localValue}
-            onChange={e => setLocalValue(e.target.value)}
-            className="min-w-0 flex-1"
-          />
-        </div>
-      )}
+      valueDisplay={() => editor}
     />
   );
 }
