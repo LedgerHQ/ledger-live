@@ -41,7 +41,6 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
-    "@types/pako": "2.0.3",
     "@types/ws": "8.5.10",
     "jest": "catalog:",
     "msw": "catalog:",

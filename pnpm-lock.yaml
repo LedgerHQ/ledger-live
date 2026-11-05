@@ -16520,9 +16520,6 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
-      '@types/libsodium-wrappers':
-        specifier: 0.7.14
-        version: 0.7.14
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -18926,9 +18923,6 @@ importers:
       '@types/bs58':
         specifier: 'catalog:'
         version: 4.0.4
-      '@types/cbor':
-        specifier: 6.0.0
-        version: 6.0.0
       '@types/invariant':
         specifier: 2.2.37
         version: 2.2.37
@@ -22132,9 +22126,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/pako':
-        specifier: 2.0.3
-        version: 2.0.3
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
@@ -32271,10 +32262,6 @@ packages:
   '@types/cashaddrjs@0.3.3':
     resolution: {integrity: sha512-eZ4NOd1bR5SCccmb3y76BSTPfFGHNe6G7dcJq4OuGV5mt7NNnLhl/UCWz5WJNdpqochsm09czLJY+I+/OsKv2g==}
 
-  '@types/cbor@6.0.0':
-    resolution: {integrity: sha512-mGQ1lbYOwVti5Xlarn1bTeBZqgY0kstsdjnkoEovgohYKdBjGejHyNGXHdMBeqyQazIv32Jjp33+5pBEaSRy2w==}
-    deprecated: This is a stub types definition. cbor provides its own type definitions, so you do not need this installed.
-
   '@types/chart.js@2.9.41':
     resolution: {integrity: sha512-3dvkDvueckY83UyUXtJMalYoH6faOLkWQoaTlJgB4Djde3oORmNP0Jw85HtzTuXyliUHcdp704s0mZFQKio/KQ==}
 
@@ -32388,9 +32375,6 @@ packages:
 
   '@types/ledgerhq__hw-transport@4.21.8':
     resolution: {integrity: sha512-uO2AJYZUVCwgyqgyy2/KW+JsQaO0hcwDdubRaHgF2ehO0ngGAY41PbE8qnPnmUw1uerMXONvL68QFioA7Y6C5g==}
-
-  '@types/libsodium-wrappers@0.7.14':
-    resolution: {integrity: sha512-5Kv68fXuXK0iDuUir1WPGw2R9fOZUlYlSAa0ztMcL0s0BfIDTqg9GXz8K30VJpPP3sxWhbolnQma2x+/TfkzDQ==}
 
   '@types/linkify-it@5.0.0':
     resolution: {integrity: sha512-sVDA58zAw4eWAffKOaQH5/5j3XeayukzDk+ewSsnv3p4yJEZHCCzMDiZM8e0OUrRvmpGZ85jf4yDHkHsgBNr9Q==}
@@ -51943,10 +51927,6 @@ snapshots:
 
   '@types/cashaddrjs@0.3.3': {}
 
-  '@types/cbor@6.0.0':
-    dependencies:
-      cbor: 10.0.11
-
   '@types/chart.js@2.9.41':
     dependencies:
       moment: 2.30.1
@@ -52076,8 +52056,6 @@ snapshots:
   '@types/ledgerhq__hw-transport@4.21.8':
     dependencies:
       '@types/node': 24.12.0
-
-  '@types/libsodium-wrappers@0.7.14': {}
 
   '@types/linkify-it@5.0.0': {}
 
