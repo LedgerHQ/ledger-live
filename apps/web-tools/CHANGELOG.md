@@ -1,5 +1,12 @@
 # web-tools
 
+## 0.62.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@38.6.1
+
 ## 0.62.1-hotfix.0
 
 ### Patch Changes

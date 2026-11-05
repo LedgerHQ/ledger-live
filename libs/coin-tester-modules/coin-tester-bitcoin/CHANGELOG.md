@@ -1,5 +1,12 @@
 # @ledgerhq/coin-tester-bitcoin
 
+## 1.15.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@38.6.1
+
 ## 1.15.2-hotfix.0
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @ledgerhq/coin-tester-stacks
 
+## 0.3.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@38.6.1
+
 ## 0.3.4-hotfix.0
 
 ### Patch Changes

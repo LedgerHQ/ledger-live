@@ -1,5 +1,12 @@
 # @ledgerhq/coin-tester-cosmos
 
+## 0.8.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@38.6.1
+
 ## 0.8.2-hotfix.0
 
 ### Patch Changes

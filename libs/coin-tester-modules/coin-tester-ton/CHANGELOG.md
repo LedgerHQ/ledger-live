@@ -1,5 +1,12 @@
 # @ledgerhq/coin-tester-ton
 
+## 0.0.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@38.6.1
+
 ## 0.0.2-hotfix.0
 
 ### Patch Changes

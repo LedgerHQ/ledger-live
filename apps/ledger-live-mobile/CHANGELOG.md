@@ -1,5 +1,14 @@
 # live-mobile
 
+## 4.27.1
+
+### Patch Changes
+
+- [#24389](https://github.com/LedgerHQ/ledger-live/pull/24389) [`091cf57`](https://github.com/LedgerHQ/ledger-live/commit/091cf57b71ba50a7fd08b5d90630f595ac6e49fa) Thanks [@henri-ly](https://github.com/henri-ly)! - fix(coin-solana): sign a partner-built transaction whose fees another account pays (Jupiter gasless and RFQ swaps): crafting accepts any sender among the transaction's required signers instead of the fee payer only, crafting and fee estimation keep the partner's blockhash when another signer still has to sign (and crafting reports a blockhash's expiry only when it fetched that blockhash), and combine places the device signature in the sender's slot rather than at index 0
+
+- Updated dependencies []:
+  - @ledgerhq/live-send@0.1.7
+
 ## 4.27.1-hotfix.0
 
 ### Patch Changes
