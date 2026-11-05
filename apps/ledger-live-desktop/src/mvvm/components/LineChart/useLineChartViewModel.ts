@@ -45,6 +45,7 @@ export type LineChartViewModelResult = Readonly<{
   xAxis?: LineChartXAxisConfig;
   yAxis?: LineChartYAxisConfig;
   rangeSelectorTrailing?: ReactNode;
+  plotContent?: ReactNode;
 }>;
 
 export function useLineChartViewModel({
@@ -68,6 +69,7 @@ export function useLineChartViewModel({
   xAxis,
   yAxis,
   rangeSelectorTrailing,
+  plotContent,
   ranges,
 }: LineChartProps): LineChartViewModelResult {
   const { t } = useTranslation();
@@ -131,5 +133,6 @@ export function useLineChartViewModel({
     xAxis,
     yAxis,
     rangeSelectorTrailing,
+    plotContent,
   };
 }

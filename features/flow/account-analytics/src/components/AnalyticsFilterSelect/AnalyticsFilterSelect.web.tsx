@@ -63,9 +63,9 @@ export function AnalyticsFilterSelect({
           </MediaButton>
         )}
       />
-      <SelectContent className="w-max min-w-[343px] max-w-(--available-width) bg-canvas-sheet shadow-sm">
+      <SelectContent className="max-h-224 w-max min-w-[343px] max-w-(--available-width) bg-canvas-sheet shadow-sm">
         <SelectList<string, AnalyticsFilterOptionMeta>
-          className="py-12"
+          className="scrollbar-none py-12"
           renderItem={item => (
             <AnalyticsFilterItem
               key={item.value}
