@@ -5,6 +5,11 @@ import { expect } from "@playwright/test";
 export class LiveApp extends AppPage {
   readonly liveAppTitle = this.page.getByTestId("live-app-title");
 
+  @step("Verify the Earn app is opened")
+  async verifyEarnAppIsOpened() {
+    await expect(this.page).toHaveURL(/\/earn/);
+  }
+
   @step("Verify live app title contains $0")
   async verifyLiveAppTitle(provider: string) {
     const liveApp = await this.liveAppTitle.textContent();
