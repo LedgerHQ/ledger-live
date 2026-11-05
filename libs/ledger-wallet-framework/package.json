@@ -129,7 +129,6 @@
     "@types/jest": "catalog:",
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
-    "@types/numeral": "2.0.5",
     "@typescript/native": "catalog:",
     "typescript": "catalog:",
     "cross-env": "7.0.3",

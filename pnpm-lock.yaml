@@ -2968,12 +2968,6 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
-      '@types/react-native-extra-dimensions-android':
-        specifier: 1.2.3
-        version: 1.2.3
-      '@types/react-native-video':
-        specifier: 5.0.20
-        version: 5.0.20(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
       '@types/react-test-renderer':
         specifier: 19.0.0
         version: 19.0.0
@@ -3605,9 +3599,6 @@ importers:
       '@types/react-inspector':
         specifier: 4.0.6
         version: 4.0.6
-      '@types/react-table':
-        specifier: 7.7.20
-        version: 7.7.20
       '@types/semver':
         specifier: 'catalog:'
         version: 7.7.1
@@ -5412,9 +5403,6 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
-      '@types/react':
-        specifier: 19.0.14
-        version: 19.0.14
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -7724,9 +7712,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/react':
-        specifier: 19.0.14
-        version: 19.0.14
       '@types/ws':
         specifier: 8.5.10
         version: 8.5.10
@@ -13974,9 +13959,6 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
-      '@types/semver':
-        specifier: 'catalog:'
-        version: 7.7.1
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -14080,21 +14062,12 @@ importers:
       '@swc/jest':
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
-      '@types/bchaddrjs':
-        specifier: 0.4.3
-        version: 0.4.3
       '@types/bs58':
         specifier: 'catalog:'
         version: 4.0.4
-      '@types/bs58check':
-        specifier: 'catalog:'
-        version: 2.1.2
       '@types/cashaddrjs':
         specifier: 0.3.3
         version: 0.3.3
-      '@types/create-hmac':
-        specifier: 1.1.3
-        version: 1.1.3
       '@types/invariant':
         specifier: 2.2.37
         version: 2.2.37
@@ -14110,12 +14083,6 @@ importers:
       '@types/object-hash':
         specifier: 2.2.1
         version: 2.2.1
-      '@types/ripemd160':
-        specifier: 2.0.3
-        version: 2.0.3
-      '@types/sha.js':
-        specifier: 2.4.4
-        version: 2.4.4
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -14413,9 +14380,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/semver':
-        specifier: 'catalog:'
-        version: 7.7.1
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -14731,9 +14695,6 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
-      '@types/lodash':
-        specifier: 'catalog:'
-        version: 4.17.21
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -14840,9 +14801,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/semver':
-        specifier: 'catalog:'
-        version: 7.7.1
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -15016,9 +14974,6 @@ importers:
       '@swc/jest':
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
-      '@types/invariant':
-        specifier: 2.2.37
-        version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
@@ -15107,9 +15062,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/semver':
-        specifier: 'catalog:'
-        version: 7.7.1
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -15222,9 +15174,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/numeral':
-        specifier: 2.0.5
-        version: 2.0.5
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -15586,9 +15535,6 @@ importers:
       '@swc/jest':
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
-      '@types/invariant':
-        specifier: 2.2.37
-        version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
@@ -15695,9 +15641,6 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
-      '@types/lodash':
-        specifier: 'catalog:'
-        version: 4.17.21
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -16025,9 +15968,6 @@ importers:
       '@swc/jest':
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
-      '@types/invariant':
-        specifier: 2.2.37
-        version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
@@ -16119,9 +16059,6 @@ importers:
       '@swc/jest':
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
-      '@types/invariant':
-        specifier: 2.2.37
-        version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
@@ -17983,9 +17920,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/react':
-        specifier: 19.0.14
-        version: 19.0.14
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -18050,9 +17984,6 @@ importers:
       '@types/semver':
         specifier: 'catalog:'
         version: 7.7.1
-      '@types/sha.js':
-        specifier: 2.4.4
-        version: 2.4.4
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -18248,9 +18179,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/react':
-        specifier: 19.0.14
-        version: 19.0.14
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -18279,9 +18207,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/react':
-        specifier: 19.0.14
-        version: 19.0.14
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -18745,9 +18670,6 @@ importers:
       '@ton/crypto':
         specifier: ^3.3.0
         version: 3.3.0
-      '@types/bchaddrjs':
-        specifier: ^0.4.0
-        version: 0.4.3
       '@types/pako':
         specifier: ^2.0.0
         version: 2.0.3
@@ -19238,9 +19160,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/numeral':
-        specifier: 2.0.5
-        version: 2.0.5
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -21258,9 +21177,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/react':
-        specifier: 19.0.14
-        version: 19.0.14
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -21380,9 +21296,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/react':
-        specifier: 19.0.14
-        version: 19.0.14
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -21505,12 +21418,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/react':
-        specifier: 19.0.14
-        version: 19.0.14
-      '@types/semver':
-        specifier: 'catalog:'
-        version: 7.7.1
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -21584,9 +21491,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/react':
-        specifier: 19.0.14
-        version: 19.0.14
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -21645,9 +21549,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/react':
-        specifier: 19.0.14
-        version: 19.0.14
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -21706,9 +21607,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/react':
-        specifier: 19.0.14
-        version: 19.0.14
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -21770,9 +21668,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/react':
-        specifier: 19.0.14
-        version: 19.0.14
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -21870,9 +21765,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/react':
-        specifier: 19.0.14
-        version: 19.0.14
       '@types/semver':
         specifier: 'catalog:'
         version: 7.7.1
@@ -22041,9 +21933,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/react':
-        specifier: 19.0.14
-        version: 19.0.14
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -22126,9 +22015,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/react':
-        specifier: 19.0.14
-        version: 19.0.14
       '@types/ws':
         specifier: 8.5.10
         version: 8.5.10
@@ -22400,9 +22286,6 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
-      '@types/react-dom':
-        specifier: 19.0.0
-        version: 19.0.0
       '@types/styled-system':
         specifier: 5.1.22
         version: 5.1.22
@@ -22524,9 +22407,6 @@ importers:
       '@types/color':
         specifier: 3.0.6
         version: 3.0.6
-      '@types/hoist-non-react-statics':
-        specifier: 3.3.5
-        version: 3.3.5
       '@types/lodash':
         specifier: 'catalog:'
         version: 4.17.21
@@ -24174,9 +24054,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/react':
-        specifier: 19.0.14
-        version: 19.0.14
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -32415,9 +32292,6 @@ packages:
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
 
-  '@types/numeral@2.0.5':
-    resolution: {integrity: sha512-kH8I7OSSwQu9DS9JYdFWbuvhVzvFRoCPCkGxNwoGgaPeDfEPJlcxNvEOypZhQ3XXHsGbfIuYcxcJxKUfJHnRfw==}
-
   '@types/object-hash@2.2.1':
     resolution: {integrity: sha512-i/rtaJFCsPljrZvP/akBqEwUP2y5cZLOmvO+JaYnz01aPknrQ+hB5MRcO7iqCUsFaYfTG8kGfKUyboA07xeDHQ==}
 
@@ -32457,17 +32331,8 @@ packages:
   '@types/react-motion@0.0.40':
     resolution: {integrity: sha512-Bp6i9WTvW6QFN2E/XQPm8HPGMx1SVJ7H1DPsvptwWWh1XBymDZ7N7SK4nSZT/4tP4bTGvp1KHSAsswWZKO/WHA==}
 
-  '@types/react-native-extra-dimensions-android@1.2.3':
-    resolution: {integrity: sha512-g+Jkc+idhsqzUMWQZlcj132CUKdw/KG+NuGEoRAsWUwQDRVCnY/H4n0xdGxwf7GSdlSuoyjqb8ps7/quHihmRA==}
-
-  '@types/react-native-video@5.0.20':
-    resolution: {integrity: sha512-CdD4T43uEKzTNJ/RylTDViNuGuyOPWQUEuA1Y9GY8T+HiE9cwYw1zQNqk8a7zz9GHamlPfJQ+bYoEE9OWjZ/6g==}
-
   '@types/react-table@6.8.16':
     resolution: {integrity: sha512-R6qpqybJ9EZHrXczGSZRoODkbk5NiwUbdVdBKufDtntycikzOht3wWRs+J4mvr4qyjWVcxXfqKiZ1mIuoxSotw==}
-
-  '@types/react-table@7.7.20':
-    resolution: {integrity: sha512-ahMp4pmjVlnExxNwxyaDrFgmKxSbPwU23sGQw2gJK4EhCvnvmib2s/O/+y1dfV57dXOwpr2plfyBol+vEHbi2w==}
 
   '@types/react-test-renderer@19.0.0':
     resolution: {integrity: sha512-qDVnNybqFm2eZKJ4jD34EvRd6VHD67KjgnWaEMM0Id9L22EpWe3nOSVKHWL1XWRCxUWe3lhXwlEeCKD1BlJCQA==}
@@ -32483,9 +32348,6 @@ packages:
 
   '@types/responselike@1.0.3':
     resolution: {integrity: sha512-H/+L+UkTV33uf49PH5pCAUBVPNj2nDBXTN+qS1dOwyyg24l3CcicicCA7ca+HMvJBZcFgl5r8e+RR6elsb4Lyw==}
-
-  '@types/ripemd160@2.0.3':
-    resolution: {integrity: sha512-/GrtUuorXQGl4/qCgo0YhzHaDbWc6i2kIBt5q7gA0np+/5GmLMK6aYb0pUYFfJ4Y2oraKkrDW4falfLip3Hzdw==}
 
   '@types/semver@7.7.1':
     resolution: {integrity: sha512-FmgJfu+MOcQ370SD0ev7EI8TlCAfKYU+B4m5T3yXc1CiRN94g/SZPtsCkk506aUDtlMnFZvasDwHHUcZUEaYuA==}
@@ -52092,8 +51954,6 @@ snapshots:
 
   '@types/normalize-package-data@2.4.4': {}
 
-  '@types/numeral@2.0.5': {}
-
   '@types/object-hash@2.2.1': {}
 
   '@types/pako@2.0.3': {}
@@ -52131,25 +51991,7 @@ snapshots:
     dependencies:
       '@types/react': 19.0.14
 
-  '@types/react-native-extra-dimensions-android@1.2.3': {}
-
-  '@types/react-native-video@5.0.20(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)':
-    dependencies:
-      '@types/react': 19.0.14
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
-    transitivePeerDependencies:
-      - '@babel/core'
-      - '@react-native-community/cli'
-      - '@react-native/metro-config'
-      - bufferutil
-      - react
-      - utf-8-validate
-
   '@types/react-table@6.8.16':
-    dependencies:
-      '@types/react': 19.0.14
-
-  '@types/react-table@7.7.20':
     dependencies:
       '@types/react': 19.0.14
 
@@ -52168,10 +52010,6 @@ snapshots:
   '@types/redux-actions@2.6.5': {}
 
   '@types/responselike@1.0.3':
-    dependencies:
-      '@types/node': 24.12.0
-
-  '@types/ripemd160@2.0.3':
     dependencies:
       '@types/node': 24.12.0
 
