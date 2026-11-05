@@ -71,6 +71,7 @@ const AMOUNT_TOO_LOW = quoteState({
 function renderForm(overrides: Partial<UsePerpsDepositFormParams> = {}) {
   const track = jest.fn();
   const openBuy = jest.fn();
+  const openSupportUrl = jest.fn();
   const params: UsePerpsDepositFormParams = {
     accounts: [parentAccount, depositAccount, receiverAccount],
     receiverAccount,
@@ -86,12 +87,13 @@ function renderForm(overrides: Partial<UsePerpsDepositFormParams> = {}) {
     getAccountName: (account: AccountLike) => `name of ${account.id}`,
     track,
     openBuy,
+    openSupportUrl,
     ...overrides,
   };
   const view = renderHook((props: UsePerpsDepositFormParams) => usePerpsDepositForm(props), {
     initialProps: params,
   });
-  return { ...view, params, track, openBuy };
+  return { ...view, params, track, openBuy, openSupportUrl };
 }
 
 const errorEvents = (track: jest.Mock) =>
@@ -191,6 +193,27 @@ describe("usePerpsDepositForm", () => {
       "button_clicked",
       expect.objectContaining({ button: "buy more crypto", currency: "ETH" }),
     );
+  });
+
+  it("opens the support article of a coin error instead of the details", () => {
+    const tezos = {
+      type: "Account",
+      id: "js:2:tezos:tz1:",
+      currency: { ...ether, id: "tezos", family: "tezos", ticker: "XTZ" },
+      spendableBalance: new BigNumber("1000000"),
+      readiness: { ready: false },
+    } as unknown as Account;
+    const { result, openSupportUrl } = renderForm({
+      accounts: [tezos, receiverAccount],
+      depositAccount: tezos,
+    });
+
+    expect(result.current.canLearnMore).toBe(true);
+
+    act(() => result.current.openDetails());
+
+    expect(openSupportUrl).toHaveBeenCalledWith(result.current.statusError?.supportUrl);
+    expect(result.current.isDetailsOpen).toBe(false);
   });
 
   it("offers no details and no Buy for an error without them", () => {
