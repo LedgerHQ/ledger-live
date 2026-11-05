@@ -289,6 +289,14 @@ export async function getBlockV2({
           },
         },
       ];
+    } else if (isStakingTransactionType(item)) {
+      operations = [
+        {
+          type: "other",
+          ledgerOpType: "UPDATE_ACCOUNT",
+          familyExtra,
+        },
+      ];
     } else {
       const allTransfers: (
         | HederaMirrorCoinTransfer
