@@ -7,13 +7,14 @@ import type { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 import { escapeRegExp } from "tests/utils/regExpUtils";
 
+export type EarnOptions = SyncWaitOptions & { asset?: Currency };
+
 /** The account page shown when the `accountDetail` flag is on. */
 export class AccountDetailPage extends AppPage {
   private readonly layout = new Layout(this.page);
   private readonly accountDetailLayout = this.page.getByTestId("account-detail-layout");
   private readonly title = this.page.getByTestId("page-header-title");
   private readonly settingsButton = this.page.getByTestId("account-detail-header-settings");
-  private readonly heroActions = this.page.getByTestId("account-detail-hero-actions");
   private readonly heroAction = (action: string) =>
     this.page.getByTestId(`account-detail-hero-actions-${action}`);
   private readonly balance = this.page.getByTestId("account-detail-hero-balance");
@@ -71,16 +72,13 @@ export class AccountDetailPage extends AppPage {
   }
 
   @step("Click `Earn` button")
-  async clickEarn(options?: SyncWaitOptions) {
-    await this.layout.waitForSyncButtonToBeEnabled(options);
+  async clickEarn({ asset, ...syncOptions }: EarnOptions = {}) {
+    await this.layout.waitForSyncButtonToBeEnabled(syncOptions);
     await this.heroAction("earn").click();
-    await this.clickWhenDisplayed(this.firstAccountPickerRow, this.firstAccountPickerRow);
-  }
-
-  @step("Check if the account has a `Send` action")
-  async hasSendAction(): Promise<boolean> {
-    await expect(this.heroActions).toBeVisible();
-    return (await this.heroAction("send").count()) > 0;
+    await this.clickWhenDisplayed(
+      this.firstAccountPickerRow,
+      asset ? this.accountPickerRow(asset) : this.firstAccountPickerRow,
+    );
   }
 
   @step("Click `Send` button")

@@ -1,8 +1,8 @@
 import { expect, type Locator } from "@playwright/test";
-import { Layout, type SyncWaitOptions } from "tests/component/layout.component";
+import { Layout } from "tests/component/layout.component";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
-import { AccountDetailPage } from "tests/page/accountDetail.page";
+import { AccountDetailPage, type EarnOptions } from "tests/page/accountDetail.page";
 import { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 import type { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { escapeRegExp } from "tests/utils/regExpUtils";
@@ -89,11 +89,6 @@ export class AccountPage extends AppPage {
     await this.addTokenButton.click();
   }
 
-  @step("Check if the account has a `Send` button")
-  async hasSendAction(): Promise<boolean> {
-    return (await this.isAccountDetail()) ? this.accountDetail.hasSendAction() : true;
-  }
-
   @step("Click `Send` button")
   async clickSend(asset?: Currency) {
     if (await this.isAccountDetail()) {
@@ -156,13 +151,13 @@ export class AccountPage extends AppPage {
   }
 
   @step("Click Stake button")
-  async startStakingFlowFromMainStakeButton(options?: SyncWaitOptions) {
+  async startStakingFlowFromMainStakeButton({ asset, ...syncOptions }: EarnOptions = {}) {
     if (await this.isAccountDetail()) {
-      await this.accountDetail.clickEarn(options);
+      await this.accountDetail.clickEarn({ asset, ...syncOptions });
       return;
     }
     // Wait if a sync is in progress to avoid empty stake modal
-    await this.layout.waitForSyncButtonToBeEnabled(options);
+    await this.layout.waitForSyncButtonToBeEnabled(syncOptions);
     await this.stakeButton.click();
   }
 

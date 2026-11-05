@@ -59,6 +59,11 @@ const legacySendTransactions: Array<{
   },
 ];
 
+const withoutSendOnAccountDetail = new Set([
+  Account.KASPA_1.currency.id,
+  Account.MINA_4.currency.id,
+]);
+
 const legacyBst = ownedBy(Team.BST, { folder: TestFolder.LEGACY_TESTS });
 
 for (const entry of legacySendTransactions) {
@@ -99,8 +104,9 @@ for (const entry of legacySendTransactions) {
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(tx.accountToDebit.accountName);
         test.skip(
-          !(await app.account.hasSendAction()),
-          "The account detail page has no Send button for this account",
+          withoutSendOnAccountDetail.has(tx.accountToDebit.currency.id) &&
+            (await app.account.usesAccountDetail()),
+          "The account detail page shows no quick actions for this currency",
         );
         await app.account.clickSend(tx.accountToDebit.currency);
         await app.send.craftTx(tx);
