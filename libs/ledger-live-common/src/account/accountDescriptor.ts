@@ -41,7 +41,9 @@ export class MissingAccountXpubError extends Error {
   override name = "MissingAccountXpubError";
 }
 
-const toDescriptorPath = (schemePath: string) => `m/${schemePath.replaceAll("'", "h")}`;
+/** A legacy derivation path ("44'/60'/0'/0/0", with or without "m/") as a descriptor path. */
+export const toDescriptorPath = (path: string) =>
+  `m/${path.replace(/^m\//, "").replaceAll("'", "h")}`;
 const fromDescriptorPath = (path: string) => (path.startsWith("m/") ? path.slice(2) : path);
 
 const stripHardened = (segment: string) => (segment.endsWith("h") ? segment.slice(0, -1) : segment);
