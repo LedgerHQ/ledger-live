@@ -778,16 +778,20 @@ async function sample(meta) {
     record.processStartAt = processStart?.at ?? null;
     // The process start on the clock of the app's events ("JS start epoch").
     record.processStartAppClockAt = processStart?.appClockAt ?? null;
-    record.pid = processStart?.pid ?? null;
+    // The read flow opens a deep link, which would start the app again if it had exited.
+    record.pid = processStart?.pid ?? (await P.pid(meta.device));
+    if (record.pid === null)
+      throw new Error("the app was not running at the end of the settle time");
     if (paused) {
-      paused = false;
+      // Cleared only once resumed, so `finally` retries a failed resume.
       await P.resume(other);
+      paused = false;
     }
     readStart = Date.now();
     const perf = await readPerformance(meta.device, name, { quick: !meta.warmup });
     // A crash or restart between the launch and the read would show another launch's value.
-    const pidAtRead = record.pid === null ? null : await P.pid(meta.device);
-    if (record.pid !== null && pidAtRead !== record.pid) {
+    const pidAtRead = await P.pid(meta.device);
+    if (pidAtRead !== record.pid) {
       throw new Error(`the app process changed before the read (pid ${record.pid} → ${pidAtRead})`);
     }
     Object.assign(record, launch, perf, { ok: true });

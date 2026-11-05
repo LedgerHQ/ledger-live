@@ -27,7 +27,8 @@ self-hosted-runner:
     tools/actions/**/*.yml: ~
     tools/actions/composites/**/*.yml: ~
 paths:
-  # The concurrency `queue` key is newer than the actionlint pinned in mise.toml.
+  # No actionlint release knows the concurrency `queue` key yet (rhysd/actionlint#654): remove this
+  # once the version pinned in mise.toml does.
   .github/workflows/test-mobile-startup-perf.yml:
     ignore:
       - 'unexpected key "queue" for "concurrency" section'

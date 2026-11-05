@@ -122,9 +122,9 @@ export function bootstrapMean(diffs, resamples = 4000) {
   };
 }
 
-// Where the Debug value starts, relative to the first JS import: 0 since develop b3700d9164b
-// (2026-10-26, react-native-startup-time removed), ~0.5–1.3 s on emulators before, when it started
-// at the library's native mark.
+// The first JS import, relative to where the build's Debug value starts: ~0 when it counts from the
+// JS start (4.26–4.27, b3700d9164b), the native start otherwise (react-native-startup-time
+// before 4.26, the app's process start from LIVE-40286 on).
 const jsStartOffset = s => s.events?.["Before js imports"]?.time;
 // The Debug value from the first JS import, whichever start the build's Debug value uses.
 export const fromJsStart = s => s.appStartupTime - (jsStartOffset(s) ?? NaN);
@@ -133,13 +133,43 @@ const jsStartEpoch = s => {
   const name = Object.keys(s.events ?? {}).find(n => /^JS start epoch \d+$/.test(n));
   return name ? Number(name.split(" ").pop()) : NaN;
 };
-// From the process start: the native start the Debug value leaves out, plus fromJsStart. Needs the
-// process start on the app's clock: the host kernel's on iOS (the simulator app shares it), the
-// emulator's own on Android. Runs before processStartAppClockAt only have it on iOS.
+// From the process start: the native start, whatever the Debug value counts from, plus fromJsStart.
+// Needs the process start on the app's clock: the host kernel's on iOS (the simulator app shares
+// it), the emulator's own on Android. Runs before processStartAppClockAt only have it on iOS.
 const appClockProcessStart = s =>
   s.processStartAppClockAt ?? (s.platform === "ios" ? s.processStartAt : NaN);
-export const fromProcessStart = s =>
-  jsStartEpoch(s) - (appClockProcessStart(s) ?? NaN) + fromJsStart(s);
+const harnessNativeStart = s => jsStartEpoch(s) - (appClockProcessStart(s) ?? NaN);
+export const fromProcessStart = s => harnessNativeStart(s) + fromJsStart(s);
+
+// Where a launch's Debug value counts from:
+// - "js": the first JS import (4.26–4.27, or a launch where the app found no process start);
+// - "process": the process start the harness reads (LIVE-40286 on; react-native-startup-time on iOS);
+// - "package": react-native-startup-time's later mark on Android, the React host creation;
+// - "native": a native start, with no harness process start to tell which.
+// The LIVE-40286 module is within 22 ms of the harness, the Android package 237–649 ms off (runs
+// 41853176900, 40872918238, 41835997579).
+export function debugBase(s) {
+  const offset = jsStartOffset(s);
+  if (!Number.isFinite(offset)) return null;
+  if (offset < 50) return "js";
+  const harness = harnessNativeStart(s);
+  if (!Number.isFinite(harness)) return "native";
+  return Math.abs(harness - offset) <= 100 ? "process" : "package";
+}
+// "native" can't be told from "process" or "package", so it matches either.
+const sameBase = (a, b) =>
+  a === b || (a !== "js" && b !== "js" && (a === "native" || b === "native"));
+const mostCommon = values => {
+  const counts = new Map();
+  for (const v of values) counts.set(v, (counts.get(v) ?? 0) + 1);
+  return [...counts].sort((x, y) => y[1] - x[1])[0]?.[0] ?? null;
+};
+const BASE_TEXT = {
+  js: "the first JS import",
+  process: "the process start",
+  package: "react-native-startup-time's later mark",
+  native: "a native start",
+};
 
 // B − A of one measure over the pairs of a platform and scenario.
 function difference(group, metric) {
@@ -158,14 +188,18 @@ function difference(group, metric) {
     const m = median(d);
     return d.map(v => v - m);
   });
+  // Without pairs on both sides of the swap, the device difference stays in B − A: no interval.
+  const oneSideOfSwap = pairs.length > 0 && instanceBias === null;
+  const hl = hodgesLehmann(adjusted);
   return {
     pairs: pairs.length,
+    oneSideOfSwap,
     medianA: median(pairs.map(p => p.A)),
     medianB: median(pairs.map(p => p.B)),
-    hl: hodgesLehmann(adjusted),
+    hl: oneSideOfSwap && hl ? { estimate: hl.estimate, low: null, high: null } : hl,
     spread: robustSd(centred),
     instanceBias,
-    mean: bootstrapMean(adjusted),
+    mean: oneSideOfSwap ? null : bootstrapMean(adjusted),
   };
 }
 
@@ -178,39 +212,51 @@ export function summarise(samples, { preset, thresholdMs }) {
   }
   return [...groups.entries()].flatMap(([key, group]) => {
     const [platform, scenario] = key.split("|");
-    const debugValue = difference(group, s => s.appStartupTime);
+    const measured = group.filter(s => !s.warmup);
+    const read = measured.filter(s => s.ok);
+    // Each build's usual start. When A and B count from different ones, the Debug screen row uses the
+    // time from the first JS import, which means the same in both.
+    const bases = Object.fromEntries(
+      ["A", "B"].map(side => [
+        side,
+        mostCommon(
+          read
+            .filter(s => s.side === side)
+            .map(debugBase)
+            .filter(Boolean),
+        ),
+      ]),
+    );
+    const startsDiffer = Boolean(bases.A && bases.B) && !sameBase(bases.A, bases.B);
+    // A launch that counted from another start than its build's (e.g. the app found no process
+    // start) would be off by the whole native start: it is left out of the Debug screen row.
+    const offBase = s => {
+      const base = debugBase(s);
+      return base !== null && !sameBase(base, bases[s.side]);
+    };
+    const offBaseLaunches = Object.fromEntries(
+      ["A", "B"].map(side => [side, read.filter(s => s.side === side && offBase(s)).length]),
+    );
+    const debugValue = difference(group, s => (offBase(s) ? NaN : s.appStartupTime));
     const jsStart = difference(group, fromJsStart);
     const withNative = difference(group, fromProcessStart);
-    // Builds on both sides of b3700d9164b: their Debug values start at different points, so the
-    // Debug screen row uses the time from the first JS import, which means the same in both.
-    const offset = side =>
-      median(
-        group
-          .filter(s => s.ok && !s.warmup && s.side === side)
-          .map(jsStartOffset)
-          .filter(Number.isFinite),
-      );
-    const offsetA = offset("A");
-    const offsetB = offset("B");
-    // The offset is ~0 ms since b3700d9164b and 0.5–1.3 s with the package; its size alone varies
-    // with the native start (107 ms between the two LIVE-36190 refs in run 41835997579).
-    const countsFromJsStart = offset => offset < 50;
-    const startsDiffer =
-      Number.isFinite(offsetA) &&
-      Number.isFinite(offsetB) &&
-      countsFromJsStart(offsetA) !== countsFromJsStart(offsetB);
     const screen = startsDiffer && jsStart.pairs ? jsStart : debugValue;
-    const measured = group.filter(s => !s.warmup);
     const row = (measure, d, verdict) => ({
       platform,
       scenario,
       measure,
       startsDiffer,
+      bases,
+      offBaseLaunches: screen === debugValue ? offBaseLaunches : { A: 0, B: 0 },
       ...d,
       failed: measured.filter(s => !s.ok).length,
       launches: measured.length,
       detectable: detectableAt80(d.hl, thresholdMs),
-      verdict: verdict ?? verdictFor(preset, d.hl, thresholdMs),
+      verdict:
+        verdict ??
+        (d.oneSideOfSwap
+          ? "Not enough pairs: none on one side of the device swap"
+          : verdictFor(preset, d.hl, thresholdMs)),
     });
     // Only a build too old for the "JS start epoch" event goes without the native verdict; launches
     // that lack a process start count as missing pairs, so a harness fault still shows.
@@ -260,8 +306,8 @@ export function toMarkdown(rows, { preset, labelA, labelB, thresholdMs }) {
   }
   lines.push(
     "",
-    "- **Debug screen**: Settings > Debug > Performance > App startup time, which counts from the first JS import since 4.26 (b3700d9164b).",
-    "- **With native start**: the same end, counted from the start of the app process (the emulator's or the host's kernel), so the native start up to the first JS import (\"JS start epoch\" event) is in again. On iOS this row equals the Debug value of the builds that had react-native-startup-time (within 3 ms). On Android it is about 350–400 ms higher than theirs, because that package started its clock later, when the React host was created.",
+    "- **Debug screen**: Settings > Debug > Performance > App startup time. Builds count it from the first JS import (4.26–4.27, b3700d9164b), from the app process start (LIVE-40286 on, and react-native-startup-time on iOS before 4.26), or from the React host creation (react-native-startup-time on Android before 4.26).",
+    "- **With native start**: the same end, counted from the start of the app process (the emulator's or the host's kernel) whatever the build's Debug value counts from, so builds of every version compare. It equals the Debug value of builds that count from the process start (within about 20 ms), and is about 350–650 ms above Android builds with react-native-startup-time.",
     "",
     "B − A is the Hodges–Lehmann median of the paired differences, after removing the device bias: how much slower the second emulator or simulator is than the first, measured thanks to the halfway swap.",
     `The mean (with a bootstrap 95% interval) is what the manual test compares. "Flags a slowdown of" is the true B − A the ${thresholdMs} ms gate catches 80% of the time at this noise; a true ${thresholdMs} ms is caught half the time.`,
@@ -269,7 +315,17 @@ export function toMarkdown(rows, { preset, labelA, labelB, thresholdMs }) {
       .filter(r => r.startsDiffer && r.measure.startsWith("Debug screen"))
       .map(
         r =>
-          `**${r.platform} ${r.scenario}: A's and B's Debug values start at different points (develop changed it on 2026-10-26, b3700d9164b), so the Debug screen row compares the time from the first JS import.**`,
+          `**${r.platform} ${r.scenario}: A's Debug value counts from ${BASE_TEXT[r.bases.A]} and B's from ${BASE_TEXT[r.bases.B]}, so the Debug screen row compares the time from the first JS import.**`,
+      ),
+    ...rows
+      .filter(r => r.measure.startsWith("Debug screen"))
+      .flatMap(r =>
+        ["A", "B"]
+          .filter(side => r.offBaseLaunches[side] > 0)
+          .map(
+            side =>
+              `**${r.platform} ${r.scenario}: ${r.offBaseLaunches[side]} launch(es) of build ${side} counted from another start than ${BASE_TEXT[r.bases[side]]} (e.g. the app found no process start) and are left out of the Debug screen row.**`,
+          ),
       ),
     "",
   );
