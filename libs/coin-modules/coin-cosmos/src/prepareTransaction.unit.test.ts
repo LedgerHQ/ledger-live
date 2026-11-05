@@ -1,10 +1,10 @@
 import { createEmptyStakingResources } from "@ledgerhq/types-live";
-import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import network from "@ledgerhq/live-network/network";
 import { CryptoCurrencyId } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { messageParamsFromTransaction } from "./buildTransaction";
-import cosmosCoinConfig, { cosmosConfig } from "./config";
+import cosmosCoinConfig, { cosmosDefaults } from "./config";
+import { cosmosDefaultsFor } from "./test/cosmosDefaults";
 import { calculateFees, getEstimatedFees, prepareTransaction } from "./prepareTransaction";
 import { CosmosAccount, Transaction } from "./types";
 
@@ -29,10 +29,7 @@ const transaction = {
 
 describe("getEstimatedFees", () => {
   beforeAll(() => {
-    LiveConfig.setConfig(cosmosConfig);
-    cosmosCoinConfig.setCoinConfig(
-      currencyId => LiveConfig.getValueByKey(`config_currency_${currencyId}`) ?? {},
-    );
+    cosmosCoinConfig.setCoinConfig(cosmosDefaultsFor);
   });
 
   it("should return gas higher than estimate", async () => {
@@ -72,10 +69,7 @@ describe("getEstimatedFees", () => {
 
 describe("calculateFees", () => {
   beforeAll(() => {
-    LiveConfig.setConfig(cosmosConfig);
-    cosmosCoinConfig.setCoinConfig(
-      currencyId => LiveConfig.getValueByKey(`config_currency_${currencyId}`) ?? {},
-    );
+    cosmosCoinConfig.setCoinConfig(cosmosDefaultsFor);
   });
   // Create fresh copies for each test to avoid cross-test pollution
   const createAccount = () =>
@@ -238,11 +232,7 @@ describe("calculateFees", () => {
   });
 
   it("should estimate croeseid fees with the crypto_org config", async () => {
-    cosmosCoinConfig.setCoinConfig(currencyId => {
-      const value = LiveConfig.getValueByKey(`config_currency_${currencyId}`);
-      if (!value) throw new Error(`No currency configuration available for ${currencyId}`);
-      return value;
-    });
+    cosmosCoinConfig.setCoinConfig(cosmosDefaultsFor);
     const acc = createAccount();
     acc.currency.id = "crypto_org_croeseid" as CryptoCurrencyId;
 
@@ -250,9 +240,7 @@ describe("calculateFees", () => {
 
     expect(networkMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        url: expect.stringContaining(
-          (cosmosConfig.config_currency_crypto_org.default as { lcd: string }).lcd,
-        ),
+        url: expect.stringContaining(cosmosDefaults.crypto_org.lcd),
       }),
     );
   });
@@ -285,10 +273,7 @@ describe("prepareTransaction", () => {
     }) as unknown as Transaction;
 
   beforeAll(() => {
-    LiveConfig.setConfig(cosmosConfig);
-    cosmosCoinConfig.setCoinConfig(
-      currencyId => LiveConfig.getValueByKey(`config_currency_${currencyId}`) ?? {},
-    );
+    cosmosCoinConfig.setCoinConfig(cosmosDefaultsFor);
   });
 
   beforeEach(() => {
@@ -380,10 +365,7 @@ describe("prepareTransaction", () => {
 
 describe("getEstimatedFees when the simulation fails", () => {
   beforeAll(() => {
-    LiveConfig.setConfig(cosmosConfig);
-    cosmosCoinConfig.setCoinConfig(
-      currencyId => LiveConfig.getValueByKey(`config_currency_${currencyId}`) ?? {},
-    );
+    cosmosCoinConfig.setCoinConfig(cosmosDefaultsFor);
   });
 
   it("falls back to the chain's default gas, amplified like a simulated one", async () => {

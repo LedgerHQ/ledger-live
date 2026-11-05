@@ -340,7 +340,7 @@
     "autoprefixer": "10.4.22",
     "axios": "catalog:",
     "chalk": "4.1.2",
-    "cross-env": "7.0.3",
+    "cross-env": "catalog:",
     "dmg-builder": "26.15.3",
     "electron": "catalog:",
     "electron-builder": "26.15.3",
