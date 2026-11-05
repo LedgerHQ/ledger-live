@@ -23,12 +23,12 @@ packages:
 
 catalog:
   "@bitcoinerlab/secp256k1": 2.0.0
-  "@commitlint/cli": 21.2.0
-  "@commitlint/config-conventional": 21.2.0
-  "@commitlint/lint": 21.2.0
-  "@commitlint/load": 21.2.2
-  "@commitlint/prompt-cli": 21.2.0
-  "@commitlint/types": 21.2.0
+  "@commitlint/cli": 21.2.4
+  "@commitlint/config-conventional": 21.2.4
+  "@commitlint/lint": 21.2.4
+  "@commitlint/load": 21.2.4
+  "@commitlint/prompt-cli": 21.2.4
+  "@commitlint/types": 21.2.3
   "@dnd-kit/core": 6.3.1
   "@dnd-kit/modifiers": 9.0.0
   "@dnd-kit/sortable": 10.0.0
