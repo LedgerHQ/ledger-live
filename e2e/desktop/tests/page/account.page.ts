@@ -211,7 +211,7 @@ export class AccountPage extends AppPage {
   @step("Wait for account $0 to be visible")
   async expectAccountVisibility(firstAccountName: string) {
     if (await this.isAccountDetail()) {
-      await this.accountDetail.forgetToken();
+      this.accountDetail.forgetToken();
       await this.accountDetail.expectName(this.accountHeaderNamePattern(firstAccountName));
       await this.accountDetail.expectSettingsVisible();
       return;
@@ -333,7 +333,7 @@ export class AccountPage extends AppPage {
       await expect(this.accountName).toHaveValue(pattern);
       return;
     }
-    if (await this.accountDetail.hasSelectedToken()) {
+    if (this.accountDetail.hasSelectedToken()) {
       await this.accountDetail.expectParentOfToken();
       return;
     }

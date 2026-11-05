@@ -2,6 +2,7 @@ import { errors, expect, type Locator } from "@playwright/test";
 import { Layout, type SyncWaitOptions } from "tests/component/layout.component";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
+import { ModularAssetDialog } from "tests/page/dialog/modular.asset.dialog";
 import type { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 import type { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
@@ -12,6 +13,7 @@ export type EarnOptions = SyncWaitOptions & { asset?: Currency };
 /** The account page shown when the `accountDetail` flag is on. */
 export class AccountDetailPage extends AppPage {
   private readonly layout = new Layout(this.page);
+  private readonly modularAssetDialog = new ModularAssetDialog(this.page);
   private readonly accountDetailLayout = this.page.getByTestId("account-detail-layout");
   private readonly title = this.page.getByTestId("page-header-title");
   private readonly settingsButton = this.page.getByTestId("account-detail-header-settings");
@@ -37,12 +39,6 @@ export class AccountDetailPage extends AppPage {
   private readonly firstAccountPickerRow = this.page
     .locator("[data-testid^='account-detail-asset-picker-']")
     .first();
-  private readonly modularSelectorOption = (currency: Currency) =>
-    this.page
-      .getByRole("dialog")
-      .getByRole("button")
-      .filter({ has: this.page.getByText(currency.ticker, { exact: true }) })
-      .first();
   private readonly settingsEntry = (entry: string) =>
     this.page.getByTestId(`account-settings-${entry}`);
   private readonly nameInput = this.page.getByTestId("account-settings-change-name-input");
@@ -65,9 +61,9 @@ export class AccountDetailPage extends AppPage {
   @step("Click `Buy` button")
   async clickBuy(asset?: AccountType) {
     await this.heroAction("buy").click();
-    if (asset) {
-      const option = this.modularSelectorOption(asset.currency);
-      await this.clickWhenDisplayed(option, option);
+    const currency = asset?.currency ?? this.tokenInFocus;
+    if (currency) {
+      await this.modularAssetDialog.selectAssetByTicker(currency);
     }
   }
 
@@ -97,7 +93,7 @@ export class AccountDetailPage extends AppPage {
 
   @step("Click on add token button")
   async clickAddToken() {
-    await expect(this.assets).toBeVisible();
+    await expect(this.accountDetailLayout).toBeVisible();
     const hasAddAssetAction = await this.addAssetButton.isVisible();
     await (hasAddAssetAction ? this.addAssetButton : this.heroAction("receive")).click();
   }
@@ -172,13 +168,11 @@ export class AccountDetailPage extends AppPage {
     this.tokenInFocus = token.currency;
   }
 
-  @step("Forget the selected token")
-  async forgetToken() {
+  forgetToken() {
     this.tokenInFocus = undefined;
   }
 
-  @step("Check if a token is selected")
-  async hasSelectedToken() {
+  hasSelectedToken() {
     return this.tokenInFocus !== undefined;
   }
 
