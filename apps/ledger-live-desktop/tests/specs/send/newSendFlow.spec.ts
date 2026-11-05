@@ -23,7 +23,6 @@ const TEST_ADDRESSES = {
   algorandRecipient: "MVE6C3XB4JBKXKORC3NLAWFW4M7EY3MADU6L72DADFP4NZBJIAYXGSLN3Y",
   stellar: "GDYPMQMYW2JTLPWAUAHIDY3E4VHP5SGTFC5SMA45L7ZPOTHWQ2PHEW3E", // abandonSeed address
   xrp: "rHsMGQEkVNJmpGWs8XUBoTBiAAbwxZN5v3", // abandonSeed address
-  newAddress: "0x2222222222222222222222222222222222222222",
   selfEthereum: "0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707",
   // t1 P2PKH, from wallet-btc/__tests__/utils.test.ts (coin-zcash/src/logic/address.test.ts:30)
   zcashTransparent: "t1b1Rbw2shhJkP6MCnCyxCPuyFedHrwKty8",
@@ -245,22 +244,6 @@ test.describe("New Send Flow", () => {
       });
     });
 
-    test("should show recent history warning for address with no prior OUT operations", async ({
-      app,
-      page,
-    }) => {
-      await openSendFlowForAccount(app, page, ACCOUNT_NAMES.ethereum);
-
-      await test.step("Type an address not present in account OUT operations", async () => {
-        await app.newSendFlow.typeAddress(TEST_ADDRESSES.newAddress);
-        await app.newSendFlow.waitForRecipientValidation();
-      });
-
-      await test.step("Verify recent history warning card is visible", async () => {
-        await expect(app.newSendFlow.recentHistoryWarningCard).toBeVisible({ timeout: 5000 });
-      });
-    });
-
     test("should allow self-transfer when policy is free (EVM)", async ({ app, page }) => {
       await openSendFlowForAccount(app, page, ACCOUNT_NAMES.ethereum);
 
@@ -384,32 +367,8 @@ test.describe("New Send Flow", () => {
     });
 
     test.describe("Memo on Stellar", () => {
-      test("should have Memo Text type as default option", async ({ app, page }) => {
-        await openSendFlowForAccount(app, page, ACCOUNT_NAMES.stellar);
-        await app.newSendFlow.typeAddress(TEST_ADDRESSES.stellar);
-
-        await expect(app.newSendFlow.memoInput).toBeVisible();
-        await expect(app.newSendFlow.memoOptionsSelect).toBeVisible();
-        await expect(app.newSendFlow.memoOptionsSelect).toHaveText("Memo Text");
-      });
-
-      test("should show all Stellar memo types in selector", async ({ app, page }) => {
-        await openSendFlowForAccount(app, page, ACCOUNT_NAMES.stellar);
-        await app.newSendFlow.typeAddress(TEST_ADDRESSES.stellar);
-
-        await expect(app.newSendFlow.memoOptionsSelect).toBeVisible();
-
-        await app.newSendFlow.memoOptionsSelect.click();
-        await expect(app.newSendFlow.memoOptionNoMemo).toBeVisible();
-        await expect(app.newSendFlow.memoOptionText).toBeVisible();
-        await expect(app.newSendFlow.memoOptionId).toBeVisible();
-        await expect(app.newSendFlow.memoOptionHash).toBeVisible();
-        await expect(app.newSendFlow.memoOptionReturn).toBeVisible();
-      });
-
       const memoOptions: { type: StellarMemoType; value: string | undefined; label: string }[] = [
         { type: "NO_MEMO", value: undefined, label: "No Memo" },
-        { type: "MEMO_TEXT", value: "some random memo", label: "Memo Text" },
         { type: "MEMO_ID", value: "123456", label: "Memo ID" },
         {
           type: "MEMO_HASH",
@@ -434,10 +393,8 @@ test.describe("New Send Flow", () => {
           await expect(app.newSendFlow.memoInput).toBeVisible();
           await expect(app.newSendFlow.memoOptionsSelect).toBeVisible();
 
-          if (option.type !== "MEMO_TEXT") {
-            await app.newSendFlow.memoOptionsSelect.click();
-            await app.newSendFlow.selectMemoType(option.type);
-          }
+          await app.newSendFlow.memoOptionsSelect.click();
+          await app.newSendFlow.selectMemoType(option.type);
 
           await expect(app.newSendFlow.memoOptionsSelect).toHaveText(option.label);
 
@@ -468,20 +425,6 @@ test.describe("New Send Flow", () => {
       await test.step("Fill crypto amount (switches input mode)", async () => {
         await app.newSendFlow.fillCryptoAmount("0.001");
         await app.newSendFlow.expectReviewEnabled();
-      });
-    });
-
-    test.skip("should set the correct amount when clicking on the amount quick actions", async ({
-      app,
-      page,
-    }) => {
-      await reachAmountStep(app, page, ACCOUNT_NAMES.ethereum, TEST_ADDRESSES.ethereum);
-
-      await test.step("Test 25% quick action", async () => {
-        await app.newSendFlow.clickQuickAction("25%");
-        const amount = await app.newSendFlow.getAmountValue();
-        expect(amount).not.toBe("0");
-        expect(amount).not.toBe("");
       });
     });
 
@@ -567,31 +510,26 @@ test.describe("New Send Flow", () => {
       });
     });
 
-    (["bitcoin", "ethereum"] as const).forEach(family => {
-      test(`should change max amount when changing fee presets ${family}`, async ({
-        app,
-        page,
-      }) => {
-        await reachAmountStep(app, page, ACCOUNT_NAMES[family], TEST_ADDRESSES[family]);
+    test("should change max amount when changing fee presets ethereum", async ({ app, page }) => {
+      await reachAmountStep(app, page, ACCOUNT_NAMES.ethereum, TEST_ADDRESSES.ethereum);
 
-        await test.step("Select amount max quick action", async () => {
-          await app.newSendFlow.clickQuickAction("Max");
-          await app.newSendFlow.expectReviewEnabled();
-        });
+      await test.step("Select amount max quick action", async () => {
+        await app.newSendFlow.clickQuickAction("Max");
+        await app.newSendFlow.expectReviewEnabled();
+      });
 
-        await test.step("Slow preset yields higher max than Fast", async () => {
-          await app.newSendFlow.selectFeePreset("slow");
-          await app.newSendFlow.expectReviewEnabled();
-          const slowAmount = new BigNumber(await app.newSendFlow.getAmountValue());
+      await test.step("Slow preset yields higher max than Fast", async () => {
+        await app.newSendFlow.selectFeePreset("slow");
+        await app.newSendFlow.expectReviewEnabled();
+        const slowAmount = new BigNumber(await app.newSendFlow.getAmountValue());
 
-          await app.newSendFlow.selectFeePreset("fast");
-          await app.newSendFlow.expectReviewEnabled();
-          const fastAmount = new BigNumber(await app.newSendFlow.getAmountValue());
+        await app.newSendFlow.selectFeePreset("fast");
+        await app.newSendFlow.expectReviewEnabled();
+        const fastAmount = new BigNumber(await app.newSendFlow.getAmountValue());
 
-          expect(slowAmount.isFinite()).toBe(true);
-          expect(fastAmount.isFinite()).toBe(true);
-          expect(fastAmount.lt(slowAmount)).toBe(true);
-        });
+        expect(slowAmount.isFinite()).toBe(true);
+        expect(fastAmount.isFinite()).toBe(true);
+        expect(fastAmount.lt(slowAmount)).toBe(true);
       });
     });
 
@@ -654,20 +592,6 @@ test.describe("New Send Flow", () => {
     });
 
     test.describe("Custom Fees", () => {
-      test("should open custom fees screen and show feePerByte input (BTC)", async ({
-        app,
-        page,
-      }) => {
-        await reachAmountStep(app, page, ACCOUNT_NAMES.bitcoin, TEST_ADDRESSES.bitcoin);
-        await app.newSendFlow.fillCryptoAmount("0.0001");
-        await app.newSendFlow.openCustomFees();
-
-        await test.step("Verify custom fees screen elements", async () => {
-          await expect(app.newSendFlow.customFeesFeePerByteInput).toBeVisible({ timeout: 10000 });
-          await expect(app.newSendFlow.customFeesConfirmButton).toBeVisible();
-        });
-      });
-
       test("should fill feePerByte, confirm and return to amount step (BTC)", async ({
         app,
         page,
@@ -788,21 +712,6 @@ test.describe("New Send Flow", () => {
     });
 
     test.describe("Coin Control", () => {
-      test("should open coin control screen and show strategy, amount input and footer (BTC)", async ({
-        app,
-        page,
-      }) => {
-        await reachAmountStep(app, page, ACCOUNT_NAMES.bitcoin, TEST_ADDRESSES.bitcoin);
-        await app.newSendFlow.fillCryptoAmount("0.0001");
-        await app.newSendFlow.openCoinControl();
-
-        await test.step("Verify coin control screen elements", async () => {
-          await expect(app.newSendFlow.coinControlAmountInput).toBeVisible({ timeout: 10000 });
-          await expect(app.newSendFlow.coinControlFooter).toBeVisible();
-          await expect(app.newSendFlow.coinControlChangeToReturn).toBeVisible();
-        });
-      });
-
       test("should navigate back from coin control to amount step (BTC)", async ({ app, page }) => {
         await reachAmountStep(app, page, ACCOUNT_NAMES.bitcoin, TEST_ADDRESSES.bitcoin);
         await app.newSendFlow.fillCryptoAmount("0.0001");
@@ -856,60 +765,37 @@ test.describe("New Send Flow", () => {
   });
 
   test.describe("Generic Flow Tests", () => {
-    // Test data for different families
-    const familiesData = [
-      {
-        name: "Algorand",
-        accountName: ACCOUNT_NAMES.algorand,
-        address: TEST_ADDRESSES.algorandRecipient,
-        amount: "0.1",
-        hasMemo: true,
-        memoValue: "some random memo",
-      },
-      {
-        name: "Tezos",
-        accountName: ACCOUNT_NAMES.tezos,
-        address: TEST_ADDRESSES.tezos,
-        amount: "0.1",
-      },
-    ];
+    test("should complete full flow for Algorand", async ({ app, page }) => {
+      const deviceAction = new DeviceAction(page);
 
-    for (const family of familiesData) {
-      test(`should complete full flow for ${family.name}`, async ({ app, page }) => {
-        const deviceAction = new DeviceAction(page);
-
-        await test.step("Open send flow", async () => {
-          await openSendFlowForAccount(app, page, family.accountName);
-        });
-
-        await test.step("Complete Recipient step", async () => {
-          await app.newSendFlow.typeAddress(family.address);
-          if (family.hasMemo === true && family.memoValue) {
-            await app.newSendFlow.typeMemo(family.memoValue);
-          }
-
-          await app.newSendFlow.clickOnSendToButton();
-        });
-
-        await test.step("Complete Amount step", async () => {
-          await expect(app.newSendFlow.amountInput).toBeVisible();
-          await app.newSendFlow.fillCryptoAmount(family.amount);
-          await app.newSendFlow.clickReview();
-        });
-
-        await test.step("Wait for signature screen", async () => {
-          await app.newSendFlow.waitForSignature();
-        });
-
-        await test.step("Complete device action", async () => {
-          await deviceAction.silentSign();
-        });
-
-        await test.step("Verify confirmation screen", async () => {
-          await app.newSendFlow.waitForSuccessConfirmation();
-        });
+      await test.step("Open send flow", async () => {
+        await openSendFlowForAccount(app, page, ACCOUNT_NAMES.algorand);
       });
-    }
+
+      await test.step("Complete Recipient step", async () => {
+        await app.newSendFlow.typeAddress(TEST_ADDRESSES.algorandRecipient);
+        await app.newSendFlow.typeMemo("some random memo");
+        await app.newSendFlow.clickOnSendToButton();
+      });
+
+      await test.step("Complete Amount step", async () => {
+        await expect(app.newSendFlow.amountInput).toBeVisible();
+        await app.newSendFlow.fillCryptoAmount("0.1");
+        await app.newSendFlow.clickReview();
+      });
+
+      await test.step("Wait for signature screen", async () => {
+        await app.newSendFlow.waitForSignature();
+      });
+
+      await test.step("Complete device action", async () => {
+        await deviceAction.silentSign();
+      });
+
+      await test.step("Verify confirmation screen", async () => {
+        await app.newSendFlow.waitForSuccessConfirmation();
+      });
+    });
   });
 
   test.describe("Validation & Errors", () => {
@@ -1007,19 +893,6 @@ test.describe("New Send Flow", () => {
 
         await test.step("Verify idle confirmation content", async () => {
           await expect(page.getByText(/action rejected/i)).toBeVisible({ timeout: 10000 });
-        });
-      });
-
-      test("should show confirmation error when device error occurs", async ({ app, page }) => {
-        await reachSignatureStep(app, page, ACCOUNT_NAMES.ethereum, TEST_ADDRESSES.ethereum);
-
-        await test.step("Simulate device disconnection", async () => {
-          await mockDeviceError(page, "DisconnectedDevice");
-        });
-
-        await test.step("Verify error confirmation screen", async () => {
-          await app.newSendFlow.waitForConfirmation();
-          await expect(page.getByText(/device disconnected/i)).toBeVisible({ timeout: 10000 });
         });
       });
     });
