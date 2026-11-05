@@ -25,7 +25,9 @@ const extraProperties = () => ({
 /** The part of the Segment client wallet-cli uses. */
 type SegmentClient = Pick<Analytics, "identify" | "track" | "closeAndFlush">;
 
-const createSegmentClient = (writeKey: string): SegmentClient => new Analytics({ writeKey });
+// The flush timeout does not abort an in-flight request, whose open socket keeps the process alive.
+const createSegmentClient = (writeKey: string): SegmentClient =>
+  new Analytics({ writeKey, httpRequestTimeout: ANALYTICS_FLUSH_TIMEOUT_MS });
 
 let client: unknown | null = null;
 
