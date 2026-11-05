@@ -1329,7 +1329,7 @@ jobs:
   notify-to-slack:
     name: "Notify to Slack"
     runs-on: [ledger-wallet-1cpu-aws-public-cached]
-    needs: [prepare-devices, report-to-allure, report-to-allure-device2, report-to-allure-macos]
+    needs: [prepare-devices, report-to-allure, report-to-allure-device2, report-to-allure-macos, report-to-allure-windows]
     if: ${{ always() && (inputs.slack_notif || github.event_name == 'schedule') }}
     env:
       IS_DUAL: ${{ needs.prepare-devices.outputs.is_dual }}
@@ -1374,3 +1374,11 @@ jobs:
           row3_report_url: ${{ needs.report-to-allure-macos.outputs.report-url }}
           row3_status: ${{ needs.report-to-allure-macos.outputs.status }}
           row3_qaa_url: ${{ needs.report-to-allure-macos.outputs.qaa-report-url }}
+          # Row 4 only renders when the run also ran on Windows.
+          row4_emoji: "🪟"
+          row4_label: ${{ inputs.run_on_windows && 'windows' || '' }}
+          row4_flags: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
+          row4_summary: ${{ needs.report-to-allure-windows.outputs.summary_message }}
+          row4_report_url: ${{ needs.report-to-allure-windows.outputs.report-url }}
+          row4_status: ${{ needs.report-to-allure-windows.outputs.status }}
+          row4_qaa_url: ${{ needs.report-to-allure-windows.outputs.qaa-report-url }}
