@@ -3,16 +3,25 @@
   "targets": {
     "build": {
       "cache": false,
-      "inputs": ["default", "^default", "desktopEnv", "sharedEnv"]
+      "inputs": [
+        "default",
+        "^default",
+        "desktopEnv",
+        "sharedEnv"
+      ]
     },
     "build:testing": {
       "cache": false,
-      "dependsOn": ["^build"]
+      "dependsOn": [
+        "^build"
+      ]
     },
     "build-lib-deps": {
       "executor": "nx:noop",
       "cache": true,
-      "dependsOn": ["^build"]
+      "dependsOn": [
+        "^build"
+      ]
     },
     "lint": {
       "inputs": [
@@ -24,7 +33,9 @@
       ]
     },
     "test": {
-      "dependsOn": ["build:testing"],
+      "dependsOn": [
+        "build:testing"
+      ],
       "inputs": [
         "default",
         "^default",
