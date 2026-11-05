@@ -66,7 +66,9 @@ function AmountMessage({
   depositAmount,
   canLearnMore,
   openDetails,
-}: Pick<PerpsDepositViewModel, "statusError" | "depositAmount" | "canLearnMore" | "openDetails">) {
+}: Readonly<
+  Pick<PerpsDepositViewModel, "statusError" | "depositAmount" | "canLearnMore" | "openDetails">
+>) {
   const { t } = useTranslation();
   const provider = getProviderName(PERPS_DEPOSIT_PROVIDER_ID);
 
@@ -101,7 +103,9 @@ function DepositDetailsSheet({
   details,
   closeDetails,
   buyFromDetails,
-}: Pick<PerpsDepositViewModel, "isDetailsOpen" | "details" | "closeDetails" | "buyFromDetails">) {
+}: Readonly<
+  Pick<PerpsDepositViewModel, "isDetailsOpen" | "details" | "closeDetails" | "buyFromDetails">
+>) {
   const { t } = useTranslation();
   const { bottom: bottomInset } = useSafeAreaInsets();
 

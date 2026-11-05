@@ -25,12 +25,11 @@ function PerpsDepositDetailsView({
 
   return (
     <>
-      <DialogHeader density="compact" onBack={onBack} />
+      <DialogHeader density="compact" title={t(details.titleKey, details.values)} onBack={onBack} />
       <DialogBody>
-        <div className="flex flex-col gap-8 text-center" data-testid="perps-deposit-details">
-          <h3 className="heading-4-semi-bold text-base">{t(details.titleKey, details.values)}</h3>
-          <p className="body-2 text-muted">{t(details.descriptionKey, details.values)}</p>
-        </div>
+        <p className="body-2 text-center text-muted" data-testid="perps-deposit-details">
+          {t(details.descriptionKey, details.values)}
+        </p>
       </DialogBody>
       <DialogFooter>
         <Button className="w-full" onClick={onBuy} data-testid="perps-deposit-details-buy">

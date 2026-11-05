@@ -163,7 +163,7 @@ describe("PerpsDeposit integration", () => {
 
     await user.click(screen.getByTestId("perps-deposit-learn-more"));
 
-    expect(screen.getByText("Minimum required for ETH")).toBeVisible();
+    expect(screen.getByRole("dialog", { name: "Minimum required for ETH" })).toBeVisible();
     expect(screen.getByText("A minimum value of 0.004 ETH is required for quotes")).toBeVisible();
     expect(screen.getByTestId("perps-deposit-details-buy")).toHaveTextContent("Buy ETH");
     expect(screen.queryByTestId("perps-deposit-amount-input")).not.toBeInTheDocument();
