@@ -6,6 +6,7 @@ import { dirname, join } from "node:path";
 import { CliProcessExitError } from "../../cli-process-exit-error";
 import { createCommandOutput } from "../../output";
 import { installOutputCapture } from "../../shared/ui";
+import { pointStateHomeAt } from "../../testing/state-home";
 import {
   activateAgentIntentMocks,
   deactivateAgentIntentMocks,
@@ -32,22 +33,20 @@ beforeAll(() =>
 afterAll(() => deactivateAgentIntentMocks());
 
 let stateHome: string;
-let savedStateHome: string | undefined;
+let restoreStateHome: () => void;
 beforeAll(() => {
-  savedStateHome = process.env.XDG_STATE_HOME;
   stateHome = mkdtempSync(join(tmpdir(), "wallet-cli-wait-test-"));
-  process.env.XDG_STATE_HOME = stateHome;
+  restoreStateHome = pointStateHomeAt(stateHome);
 });
 afterAll(() => {
-  if (savedStateHome === undefined) delete process.env.XDG_STATE_HOME;
-  else process.env.XDG_STATE_HOME = savedStateHome;
+  restoreStateHome();
   rmSync(stateHome, { recursive: true, force: true });
 });
 
 const { default: waitCommand, pollEnrollment } = await import("./wait");
 const { enrollListenerPaths, withEnrollListenerLock } = await import("../../agent-intent/detach");
 
-// Resolved per test: XDG_STATE_HOME only points at the temp dir once `beforeAll` has run.
+// Resolved per test: the state dir only points at the temp dir once `beforeAll` has run.
 let logPath: string;
 let lockPath: string;
 
