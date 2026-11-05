@@ -65,7 +65,7 @@ passes (default 2), the next pass waits for busy locks.
   `--test-list`. The script drops their skipped results from Allure, prints the totals of all
   passes, and merges `.last-run.json`. `--ui`, `--debug` and `--list` run Playwright directly, and
   `--repeat-each` turns deferral off.
-- **Mobile.** `apps/ledger-live-mobile/scripts/e2e-ci.mjs` runs the passes. At `run_start`,
+- **Mobile.** `e2e/mobile/scripts/run-ci.mjs` runs the passes. At `run_start`,
   `jest.environment.ts` skips the deferred file and leaves a marker in
   `artifacts/lock-deferrals`. `jest.config.js` drops the file's results from Allure. The time
   each spec waited for its locks is left out of the shard timings. Mock runs do not defer.

@@ -7790,6 +7790,9 @@ importers:
       ws:
         specifier: 'catalog:'
         version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      zx:
+        specifier: 'catalog:'
+        version: 8.8.5
 
   e2e/tooling/baanx-test-client:
     dependencies:
