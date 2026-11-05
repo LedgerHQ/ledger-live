@@ -205,6 +205,16 @@ android {
     }
 }
 
+// Dev and nightly get push from Braze staging, so they use the staging Firebase file too.
+// Nightly shares the `release` buildType with prod, so we pick it by APP_IDENTIFIER.
+// afterEvaluate: the plugin sets googleServicesJsonFiles when it registers the task, so we must run after it.
+def isNightly = project.findProperty("APP_IDENTIFIER") == "com.ledger.live.nightly"
+afterEvaluate {
+    tasks.matching { it.name == "processDebugGoogleServices" || (isNightly && it.name == "processReleaseGoogleServices") }.configureEach {
+        googleServicesJsonFiles.set([file("src/stagingRelease/google-services.json")])
+    }
+}
+
 
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin

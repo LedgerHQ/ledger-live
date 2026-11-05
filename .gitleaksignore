@@ -11,3 +11,9 @@ libs/ledger-key-ring-protocol/src/__tests__/unit/types.test.ts:generic-api-key:6
 libs/coin-modules/coin-solana/src/logic/tests/listOperations.unit.test.ts:generic-api-key:822
 apps/ledger-live-mobile/src/state-manager/configureStore.test.ts:generic-api-key:62
 apps/ledger-live-desktop/src/state-manager/configureStore.test.ts:generic-api-key:26
+
+# Public client keys built into the mobile app (Firebase Android API key, Braze SDK keys) — not secrets.
+apps/ledger-live-mobile/android/app/src/stagingRelease/google-services.json:gcp-api-key:18
+apps/ledger-live-mobile/android/app/src/stagingRelease/google-services.json:gcp-api-key:37
+apps/ledger-live-mobile/scripts/post.mjs:generic-api-key:102
+apps/ledger-live-mobile/scripts/post.mjs:generic-api-key:103
