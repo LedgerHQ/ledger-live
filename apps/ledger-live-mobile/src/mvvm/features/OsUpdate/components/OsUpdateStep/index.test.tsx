@@ -85,7 +85,7 @@ describe("OsUpdateStep", () => {
         />,
       );
 
-      expect(screen.getByText("Reinstalling your settings...")).toBeVisible();
+      expect(screen.getByText("Reinstalling your apps and settings...")).toBeVisible();
     });
   });
 

@@ -12,7 +12,7 @@ export const CloseConfirmation: CloseConfirmationComponent = ({ isOpen, onContin
     onContinue();
   }, [trackClick, onContinue]);
   const onPressCancel = useCallback(() => {
-    trackClick(OsUpdateButton.CANCEL);
+    trackClick(OsUpdateButton.CANCEL_OS_UPDATE);
     onCancel();
   }, [trackClick, onCancel]);
 

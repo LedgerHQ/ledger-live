@@ -17,6 +17,8 @@ import DebugEnv from "~/screens/Settings/Debug/Configuration/DebugEnv";
 import DeviceSimulationDevToolScreen from "~/screens/Settings/Debug/Configuration/DeviceSimulationDevTool";
 import DebugLargeScreenUpsell from "LLM/features/LargeScreenUpsell/Debug";
 import DebugOsUpdateOrchestrator from "LLM/features/OsUpdate/Debug";
+import DebugOsUpdates from "LLM/features/OsUpdate/Debug/OsUpdatesDebugHub";
+import DebugOsUpdateGallery from "LLM/features/OsUpdate/Debug/Gallery";
 import DebugFeatureFlags from "~/screens/FeatureFlagsSettings";
 import DebugFeatures from "~/screens/Settings/Debug/Features";
 import DebugStartTour from "~/screens/Settings/Debug/Features/StartTour";
@@ -418,10 +420,24 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
+        name={ScreenName.DebugOsUpdates}
+        component={DebugOsUpdates}
+        options={{
+          title: "OS Updates",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugOsUpdateGallery}
+        component={DebugOsUpdateGallery}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
         name={ScreenName.DebugOsUpdateOrchestrator}
         component={DebugOsUpdateOrchestrator}
         options={{
-          title: "OS Update orchestrator",
+          title: "Live flow",
         }}
       />
       <Stack.Screen

@@ -75,6 +75,7 @@ export type ApplyUpdatesState =
   | {
       type: ApplyUpdatesStateType.CONNECTION_TIMED_OUT;
       retry: () => void;
+      cancel: () => void;
     }
   | {
       type: ApplyUpdatesStateType.UPDATES_APPLIED;

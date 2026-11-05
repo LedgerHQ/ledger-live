@@ -36,6 +36,7 @@ export type CreateBackupState =
   | {
       type: CreateBackupStateType.CONNECTION_TIMED_OUT;
       retry: () => void;
+      cancel: () => void;
     }
   | {
       type: CreateBackupStateType.UNEXPECTED_ERROR;
