@@ -3510,7 +3510,7 @@ importers:
         version: 5.10.2(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       react-table:
         specifier: ^6.11.4
-        version: 6.11.4(prop-types@15.8.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+        version: 6.11.5(prop-types@15.8.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       react-tooltip:
         specifier: ^5.30.0
         version: 5.30.0(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -32476,6 +32476,9 @@ packages:
   '@types/react-native-video@5.0.20':
     resolution: {integrity: sha512-CdD4T43uEKzTNJ/RylTDViNuGuyOPWQUEuA1Y9GY8T+HiE9cwYw1zQNqk8a7zz9GHamlPfJQ+bYoEE9OWjZ/6g==}
 
+  '@types/react-table@6.8.16':
+    resolution: {integrity: sha512-R6qpqybJ9EZHrXczGSZRoODkbk5NiwUbdVdBKufDtntycikzOht3wWRs+J4mvr4qyjWVcxXfqKiZ1mIuoxSotw==}
+
   '@types/react-table@7.7.20':
     resolution: {integrity: sha512-ahMp4pmjVlnExxNwxyaDrFgmKxSbPwU23sGQw2gJK4EhCvnvmib2s/O/+y1dfV57dXOwpr2plfyBol+vEHbi2w==}
 
@@ -39715,8 +39718,8 @@ packages:
       '@types/react':
         optional: true
 
-  react-table@6.11.4:
-    resolution: {integrity: sha512-2b114yTjYyDTAha1vOH33QPupzv/KE3i7diouYqmt7O3NIExaWxNxxvbch26MyvL5YSLN17cK9Zk9Eh3ss+Pcg==}
+  react-table@6.11.5:
+    resolution: {integrity: sha512-LM+AS9v//7Y7lAlgTWW/cW6Sn5VOb3EsSkKQfQTzOW8FngB1FUskLLNEVkAYsTX9LjOWR3QlGjykJqCE6eXT/g==}
     peerDependencies:
       prop-types: ^15.7.0
       react: 19.1.4
@@ -52165,6 +52168,10 @@ snapshots:
       - react
       - utf-8-validate
 
+  '@types/react-table@6.8.16':
+    dependencies:
+      '@types/react': 19.0.14
+
   '@types/react-table@7.7.20':
     dependencies:
       '@types/react': 19.0.14
@@ -60782,8 +60789,9 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.0.14
 
-  react-table@6.11.4(prop-types@15.8.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4):
+  react-table@6.11.5(prop-types@15.8.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4):
     dependencies:
+      '@types/react-table': 6.8.16
       classnames: 2.5.1
       prop-types: 15.8.1
       react: 19.1.4
