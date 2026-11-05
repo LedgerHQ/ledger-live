@@ -1,6 +1,3 @@
-/**
- * @jest-environment node
- */
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -46,6 +43,15 @@ function addBinaries(platform: string, targets: string[]): void {
   }
 }
 
+// The check builds its paths with path.join, so they use the host's separator.
+function binary(target: string): string {
+  return path.join(`zcash-utils-${target}`, `index.${target}.node`);
+}
+
+function escapeRegExp(text: string): string {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 function check(platform: string, arch: Arch): () => void {
   return () =>
     checkZcashBinaries({
@@ -80,9 +86,7 @@ describe("checkZcashBinaries", () => {
     "fails for %s %s and lists %j when they are missing",
     (platform, arch, targets) => {
       expect(check(platform, arch)).toThrow(
-        new RegExp(
-          targets.map(target => `zcash-utils-${target}/index\\.${target}\\.node`).join("[\\s\\S]*"),
-        ),
+        new RegExp(targets.map(target => escapeRegExp(binary(target))).join("[\\s\\S]*")),
       );
     },
   );
@@ -99,7 +103,7 @@ describe("checkZcashBinaries", () => {
         message = error instanceof Error ? error.message : String(error);
       }
 
-      expect(message).toContain("zcash-utils-darwin-x64/index.darwin-x64.node");
+      expect(message).toContain(binary("darwin-x64"));
       expect(message).not.toContain("index.darwin-arm64.node");
     },
   );
