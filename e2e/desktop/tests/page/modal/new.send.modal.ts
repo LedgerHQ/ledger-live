@@ -477,9 +477,9 @@ export class NewSendModal extends Modal {
 
   @step("Verify the fees menu offers the Slow, Medium and Fast presets and custom fees")
   async expectEvmFeesMenuOptions() {
-    for (const preset of Object.values(Fee)) {
-      await expect(this.getFeePreset(preset)).toBeVisible();
-    }
+    await expect(this.getFeePreset(Fee.SLOW)).toBeVisible();
+    await expect(this.getFeePreset(Fee.MEDIUM)).toBeVisible();
+    await expect(this.getFeePreset(Fee.FAST)).toBeVisible();
     await expect(this.customFeesMenuItem).toBeVisible();
   }
 
@@ -545,7 +545,7 @@ export class NewSendModal extends Modal {
   @step("Verify the network fee is $0 $1")
   async expectNetworkFee(fee: string, ticker: string) {
     await expect(this.feesMenuTrigger).toHaveText(
-      new RegExp(`^${escapeRegExp(`${fee} ${ticker}`)}\\s`),
+      new RegExp(String.raw`^${escapeRegExp(fee)}\s${escapeRegExp(ticker)}\s`),
     );
   }
 
