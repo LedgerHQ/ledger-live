@@ -12,9 +12,7 @@ import network from "@ledgerhq/live-network/network";
 import { BigNumber } from "bignumber.js";
 import { APITransaction, HashType, StakeDelegationCertificate } from "../api/api-types";
 import { fetchNetworkInfo } from "../api/getNetworkInfo";
-import { CARDANO_API_ENDPOINT, CARDANO_TESTNET_API_ENDPOINT } from "../constants";
 import {
-  isTestnet,
   getMemoFromTx,
   isHexString,
   decodeTokenName,
@@ -369,11 +367,9 @@ async function fetchTransactionsByPaymentKey(
   limit: number;
   blockHeight: number;
 }> {
-  const endpoint = isTestnet(config) ? CARDANO_TESTNET_API_ENDPOINT : CARDANO_API_ENDPOINT;
-
   const res = await network({
     method: "POST",
-    url: `${endpoint}/v1/transaction`,
+    url: `${config.api.url}/v1/transaction`,
     data: {
       paymentKeys: [paymentKey],
       pageNo,
