@@ -2,7 +2,7 @@
 name: devtools-import-boundary
 description: |
   Enforce import boundaries inside the devtools scope.
-  Use for any work in "devtools/**".
+  Use when doing any work in "devtools/**".
 ---
 
 # DevTools import boundaries

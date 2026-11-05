@@ -1,6 +1,6 @@
 ---
 name: pre-review
-description: Deep code review
+description: Deep code review before opening a pull request. Use when running /pre-review on local changes.
 disable-model-invocation: true
 ---
 
