@@ -109,21 +109,33 @@ export function createLedgerSyncWatch<S extends LedgerSyncStateRoot, LocalState,
 
   function onLoopError(error: unknown) {
     dispatch(setWalletSyncError(miniSerializeError(error)));
-    if (isMembershipRevoked(error)) {
-      dispatch(resetTrustchainStore());
-      void cloudSync.save(null, 0, null, dispatch);
-    }
+    if (isMembershipRevoked(error)) resetLedgerSync();
   }
 
   async function refreshTrustchain(trustchain: Trustchain, memberCredentials: MemberCredentials) {
     try {
-      dispatch(setTrustchain(await lkrpSdk.restoreTrustchain(trustchain, memberCredentials)));
+      const restored = await lkrpSdk.restoreTrustchain(trustchain, memberCredentials);
+      if (isCurrentSession(trustchain, memberCredentials)) dispatch(setTrustchain(restored));
     } catch (error) {
-      if (isMembershipRevoked(error)) {
-        dispatch(resetTrustchainStore());
+      if (isMembershipRevoked(error) && isCurrentSession(trustchain, memberCredentials)) {
+        resetLedgerSync();
         track("ledgersync_deactivated");
       }
     }
+  }
+
+  /** A restore that settles after a reset or a new pairing must leave the new session alone. */
+  function isCurrentSession(trustchain: Trustchain, memberCredentials: MemberCredentials) {
+    const state = getState();
+    return (
+      trustchainSelector(state) === trustchain &&
+      memberCredentialsSelector(state) === memberCredentials
+    );
+  }
+
+  function resetLedgerSync() {
+    dispatch(resetTrustchainStore());
+    void cloudSync.save(null, 0, null, dispatch);
   }
 
   return {
@@ -138,6 +150,7 @@ export function createLedgerSyncWatch<S extends LedgerSyncStateRoot, LocalState,
       watching = false;
       current?.loop?.unsubscribe();
       current = undefined;
+      dispatch(setVisualPending(false));
     },
     refresh() {
       current?.loop?.onUserRefreshIntent();

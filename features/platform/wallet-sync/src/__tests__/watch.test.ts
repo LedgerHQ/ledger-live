@@ -1,4 +1,4 @@
-import { resetTrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { resetTrustchainStore, setTrustchain } from "@ledgerhq/ledger-key-ring-protocol/store";
 import type { UnknownAction } from "@reduxjs/toolkit";
 import { track } from "@shared/analytics";
 import { getLkrpSdk } from "../middleware";
@@ -88,6 +88,14 @@ describe("Ledger Sync watch loop", () => {
     expect(mockCloudSyncSdk.pull).toHaveBeenCalledTimes(1);
   });
 
+  it("should stop reporting a sync once the watch stops before its first poll", () => {
+    const store = startedWatch();
+
+    store.dispatch(stopLedgerSyncWatch());
+
+    expect(selectLedgerSyncVisualPending(store.getState())).toBe(false);
+  });
+
   it("should pull again soon after a user refresh", async () => {
     const store = startedWatch();
     await advance(WATCH_CONFIG.initialTimeout);
@@ -152,9 +160,49 @@ describe("Ledger Sync watch loop", () => {
     await advance(WATCH_CONFIG.initialTimeout);
 
     expect(store.getState().trustchain.trustchain).toBeNull();
+    expect(save).toHaveBeenCalledWith(null, 0, null, expect.any(Function));
     expect(track).toHaveBeenCalledWith("ledgersync_deactivated");
   });
+
+  it("should drop a restore that settles after the trustchain was reset", async () => {
+    mockCloudSyncSdk.pull.mockRejectedValueOnce(errorNamed("TrustchainOutdated"));
+    const store = startedWatch();
+    const restore = pendingRestore(store);
+    await advance(WATCH_CONFIG.initialTimeout);
+
+    store.dispatch(resetTrustchainStore());
+    restore.resolve({ ...trustchain, rootId: "restored-root-id" });
+    await advance(0);
+
+    expect(store.getState().trustchain.trustchain).toBeNull();
+  });
+
+  it("should keep a new pairing when a restore of the previous one fails", async () => {
+    const paired = { ...trustchain, rootId: "paired-root-id" };
+    mockCloudSyncSdk.pull.mockRejectedValueOnce(errorNamed("TrustchainOutdated"));
+    const store = startedWatch();
+    const restore = pendingRestore(store);
+    await advance(WATCH_CONFIG.initialTimeout);
+
+    store.dispatch(setTrustchain(paired));
+    restore.reject(errorNamed("TrustchainEjected"));
+    await advance(0);
+
+    expect(store.getState().trustchain.trustchain).toEqual(paired);
+    expect(track).not.toHaveBeenCalledWith("ledgersync_deactivated");
+  });
 });
+
+function pendingRestore(store: ReturnType<typeof createStore>) {
+  let resolve!: (restored: typeof trustchain) => void;
+  let reject!: (error: Error) => void;
+  const promise = new Promise<typeof trustchain>((onResolve, onReject) => {
+    resolve = onResolve;
+    reject = onReject;
+  });
+  jest.mocked(getLkrpSdk(store.dispatch).restoreTrustchain).mockReturnValue(promise);
+  return { resolve, reject };
+}
 
 function startedWatch(options: Parameters<typeof createStore>[0] = ACTIVATED) {
   const store = createStore(options);
