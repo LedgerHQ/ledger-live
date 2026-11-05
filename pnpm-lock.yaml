@@ -3110,8 +3110,8 @@ importers:
         specifier: workspace:^
         version: link:../../features/platform/device-intent
       '@ledgerhq/agent-intent-sdk':
-        specifier: file:vendor/ledgerhq-agent-intent-sdk-0.0.0.tgz
-        version: file:apps/wallet-cli/vendor/ledgerhq-agent-intent-sdk-0.0.0.tgz
+        specifier: 0.2.0
+        version: 0.2.0
       '@ledgerhq/auth':
         specifier: 'catalog:'
         version: 0.1.1
@@ -27611,9 +27611,8 @@ packages:
     resolution: {integrity: sha512-WPXQUaAeAMVaLTEFpoq3T2O1C+FstkjJnDQqy95Ck1UdILajsRhu6mhJ8H2f4NFPRBoCNN+qywTJfq/gGki5mw==}
     engines: {node: '>= 8.0.0'}
 
-  '@ledgerhq/agent-intent-sdk@file:apps/wallet-cli/vendor/ledgerhq-agent-intent-sdk-0.0.0.tgz':
-    resolution: {integrity: sha512-Bci20LvAY3tGkltLG32VdC4SeFMYR2uDCFYB4ZRHM+F1i9i/3H3fCdbZbcUGxFnE1gqjQYGRWT7PaTPIATHHZg==, tarball: file:apps/wallet-cli/vendor/ledgerhq-agent-intent-sdk-0.0.0.tgz}
-    version: 0.0.0
+  '@ledgerhq/agent-intent-sdk@0.2.0':
+    resolution: {integrity: sha512-4ojWhRwkFdByn3xydgFwnmct98PPWCxRcTSl7GQBwHov2ZNO4nlVo4g2Rl9DMDJFIGPL6K6xubCPK6A30roVVw==}
     engines: {node: '>=24.0.0'}
 
   '@ledgerhq/auth@0.1.1':
@@ -46417,7 +46416,7 @@ snapshots:
     dependencies:
       vary: 1.1.2
 
-  '@ledgerhq/agent-intent-sdk@file:apps/wallet-cli/vendor/ledgerhq-agent-intent-sdk-0.0.0.tgz':
+  '@ledgerhq/agent-intent-sdk@0.2.0':
     dependencies:
       '@noble/curves': 2.4.0
       '@noble/hashes': 2.4.0
