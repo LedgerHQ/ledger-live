@@ -1,15 +1,4 @@
-import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
+import { algorandDefaults } from "@ledgerhq/coin-algorand/config";
+import { currencyDefaultsToLiveConfig } from "../../config";
 
-export const algorandConfig: Record<string, ConfigInfo> = {
-  config_currency_algorand: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      name: "Algorand",
-      unit: { name: "ALGO", code: "ALGO", magnitude: 6 },
-    },
-  },
-};
+export const algorandConfig = currencyDefaultsToLiveConfig(algorandDefaults);
