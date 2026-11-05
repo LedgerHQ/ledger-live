@@ -5,9 +5,9 @@ import { createLedgerSyncMiddleware } from "@features/platform-wallet-sync";
 import { selectFeature } from "@shared/feature-flags";
 import { getInstanceName } from "LLD/features/WalletSync/utils/getInstanceName";
 import {
+  applyLocalState,
   createLiveWalletsync,
   localStateSelector,
-  save,
 } from "LLD/features/WalletSync/utils/walletsync";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import type { State } from "~/renderer/reducers";
@@ -37,7 +37,7 @@ export function createDesktopLedgerSyncMiddleware({
       apiBaseUrl: cloudSyncApiBaseUrl,
       walletsyncSelector: createSelector([blacklistedTokenIdsSelector], createLiveWalletsync),
       localStateSelector,
-      save,
+      applyLocalState,
       reencryptOnRotation: true,
     },
   });
