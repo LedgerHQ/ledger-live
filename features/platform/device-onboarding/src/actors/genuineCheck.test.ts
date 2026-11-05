@@ -105,11 +105,22 @@ describe("genuineCheck", () => {
     const fake = createFake();
     const { received, stop } = start(fake);
 
-    pending(fake, UserInteractionRequired.UnlockDevice);
     pending(fake, UserInteractionRequired.AllowSecureConnection);
     await settle();
 
     expect(received).toEqual([{ type: "ALLOW_SECURE_CONNECTION_REQUESTED" }]);
+    stop();
+  });
+
+  it("should report a lock when the device asks to be unlocked", async () => {
+    const fake = createFake();
+    const { received, stop } = start(fake);
+
+    pending(fake, UserInteractionRequired.UnlockDevice);
+    pending(fake, UserInteractionRequired.AllowSecureConnection);
+    await settle();
+
+    expect(received).toEqual([{ type: "LOCKED" }]);
     stop();
   });
 

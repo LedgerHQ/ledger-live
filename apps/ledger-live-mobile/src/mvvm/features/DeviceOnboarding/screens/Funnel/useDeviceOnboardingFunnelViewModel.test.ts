@@ -88,9 +88,13 @@ function session(overrides: Partial<DeviceOnboardingSession> = {}): DeviceOnboar
   };
 }
 
-function checksOf(model: ReturnType<typeof useDeviceOnboardingFunnelViewModel>) {
+function checksModel(model: ReturnType<typeof useDeviceOnboardingFunnelViewModel>) {
   if (model.status !== "checks") throw new Error(model.status);
-  return model.checks;
+  return model;
+}
+
+function checksOf(model: ReturnType<typeof useDeviceOnboardingFunnelViewModel>) {
+  return checksModel(model).checks;
 }
 
 describe("useDeviceOnboardingFunnelViewModel", () => {
@@ -354,6 +358,60 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(send).not.toHaveBeenCalled();
   });
 
+  it("should keep the screen under the unlock sheet when the device locks", () => {
+    const firmware = {
+      firmwareVersion: "1.0.0",
+      availableFirmwareVersion: "1.1.0",
+      checksPaused: false,
+    } as DeviceOnboardingSession["context"];
+    useSession.mockReturnValue(
+      session({ state: "checks.firmwareUpdateOffered", context: firmware }),
+    );
+    const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    expect(checksOf(result.current).state).toBe("updating");
+    expect(checksModel(result.current).unlockSheet).toBeNull();
+
+    useSession.mockReturnValue(session({ state: "deviceLocked", context: firmware }));
+    rerender(undefined as never);
+
+    const locked = checksModel(result.current);
+    expect(locked.checks.state).toBe("updating");
+    expect(locked.checks.update).toEqual({ current: "1.0.0", available: "1.1.0" });
+    expect(locked.checks.suspendSheets).toBe(true);
+    expect(locked.unlockSheet).toEqual({
+      deviceModelId: DeviceModelId.stax,
+      deviceName: "Ledger Stax",
+    });
+
+    useSession.mockReturnValue(session({ state: "readingState", context: firmware }));
+    rerender(undefined as never);
+
+    const reading = checksModel(result.current);
+    expect(reading.checks.state).toBe("updating");
+    expect(reading.checks.suspendSheets).toBe(true);
+    expect(reading.unlockSheet).toBeNull();
+
+    useSession.mockReturnValue(session({ state: "checks.checksSucceeded", context: firmware }));
+    rerender(undefined as never);
+
+    expect(checksOf(result.current).state).toBe("succeeded");
+    expect(checksModel(result.current).unlockSheet).toBeNull();
+  });
+
+  it("should keep the locked screen's close when the device locks during a check", () => {
+    useSession.mockReturnValue(session({ state: "checks.firmwareUpdateDelegated" }));
+    const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    useSession.mockReturnValue(session({ state: "deviceLocked" }));
+    rerender(undefined as never);
+
+    checksOf(result.current).onQuit?.();
+
+    expect(closeFirmwareHandover).toHaveBeenCalledTimes(1);
+    expect(send).not.toHaveBeenCalled();
+  });
+
   it("should hide the firmware offer while the device is locked", () => {
     useSession.mockReturnValue(
       session({
@@ -371,6 +429,11 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
     expect(checks.state).toBe("synchronizing");
     expect(checks.update).toBeNull();
+    expect(checks.suspendSheets).toBe(true);
+    expect(checksModel(result.current).unlockSheet).toEqual({
+      deviceModelId: DeviceModelId.stax,
+      deviceName: "Ledger Stax",
+    });
   });
 
   it("should quit the machine when closing while the device is locked", () => {

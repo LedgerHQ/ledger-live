@@ -19,6 +19,7 @@ type AllowSheetProps = Readonly<{
   deviceModelId: Device["modelId"];
   deviceName?: string;
   title: string;
+  isOpen: boolean;
   onClose?: () => void;
 }>;
 
@@ -147,6 +148,7 @@ export function useChecksScreenViewModel({
   onQuit,
   onAcceptUpdate,
   onDeclineUpdate,
+  suspendSheets = false,
 }: ChecksScreenProps): ChecksViewProps {
   const { t } = useTranslation();
   const layout = checksLayout(state);
@@ -218,14 +220,19 @@ export function useChecksScreenViewModel({
             deviceModelId: device.modelId,
             deviceName: device.deviceName ?? undefined,
             title: t("earlySecurityCheck.allowManagerDrawer.title"),
-            onClose: () => {
-              setAllowClosed(true);
-              onQuit?.();
-            },
+            isOpen: !suspendSheets,
+            onClose: suspendSheets
+              ? undefined
+              : () => {
+                  setAllowClosed(true);
+                  onQuit?.();
+                },
           }
         : undefined,
     firmwareUpdate: {
-      isOpen: firmwareOfferVisible(update !== null, isUnsupportedUpdateOpen, firmwareOfferClosed),
+      isOpen:
+        firmwareOfferVisible(update !== null, isUnsupportedUpdateOpen, firmwareOfferClosed) &&
+        !suspendSheets,
       firmwareVersion: update?.available ?? "",
       productName,
       onUpdate: () => {
@@ -239,6 +246,7 @@ export function useChecksScreenViewModel({
         setUnsupportedFor(updateKey);
       },
       onClose: () => {
+        if (suspendSheets) return;
         if (!firmwareOfferOpen) return;
         if (suppressOfferCloseFor.current === updateKey) return;
         if (onCloseFirmwareOffer) {
@@ -254,30 +262,31 @@ export function useChecksScreenViewModel({
       },
     },
     unsupportedUpdate: {
-      isOpen: isUnsupportedUpdateOpen,
+      isOpen: isUnsupportedUpdateOpen && !suspendSheets,
       isUsbRequired: eligibility?.isUsbRequired ?? false,
       productName,
       onClose: () => {
+        if (suspendSheets) return;
         suppressOfferCloseFor.current = null;
         setUnsupportedFor(null);
       },
     },
     errorDrawer: {
-      isOpen: recoverableKind !== null,
+      isOpen: recoverableKind !== null && !suspendSheets,
       kind: errorDrawerKind,
       productName,
       onRetry,
       onCancel: () => onQuit?.(),
       onClose: () => {
-        if (!recoverableKind) return;
+        if (suspendSheets || !recoverableKind) return;
         onCloseSheet();
       },
     },
     notGenuineDrawer: {
-      isOpen: error?.kind === "notGenuine",
+      isOpen: error?.kind === "notGenuine" && !suspendSheets,
       productName,
       onClose: () => {
-        if (error?.kind !== "notGenuine") return;
+        if (suspendSheets || error?.kind !== "notGenuine") return;
         if (onCloseNotGenuine) {
           onCloseNotGenuine();
           return;

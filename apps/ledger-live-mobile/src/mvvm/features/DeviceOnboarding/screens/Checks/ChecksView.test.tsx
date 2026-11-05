@@ -26,6 +26,11 @@ jest.mock("~/components/QueuedDrawer", () => {
   }) {
     const onCloseRef = React.useRef(onClose);
     onCloseRef.current = onClose;
+    const requestingRef = React.useRef(isRequestingToBeOpened);
+    React.useEffect(() => {
+      if (requestingRef.current && !isRequestingToBeOpened) onCloseRef.current?.();
+      requestingRef.current = isRequestingToBeOpened;
+    }, [isRequestingToBeOpened]);
     React.useEffect(() => {
       return () => {
         onCloseRef.current?.();
@@ -231,6 +236,34 @@ describe("ChecksView", () => {
     expect(screen.getByText(/Version 1\.1\.0/)).toBeVisible();
     expect(screen.getByText(/Ledger\s+Stax OS update available/)).toBeVisible();
     expect(screen.queryByRole("button", { name: "Close" })).toBeNull();
+  });
+
+  it("should hide the firmware offer while sheets are suspended and still decline it afterwards", async () => {
+    const { user, onDeclineUpdate, rerender } = renderChecks("updating", {
+      update: { current: "1.0.0", available: "1.1.0" },
+    });
+
+    rerender({ suspendSheets: true });
+
+    expect(onDeclineUpdate).not.toHaveBeenCalled();
+    expect(screen.queryByText(/Version 1\.1\.0/)).toBeNull();
+
+    rerender({ suspendSheets: false });
+    await user.press(screen.getByTestId("modal-close-button"));
+
+    expect(onDeclineUpdate).toHaveBeenCalledTimes(1);
+  });
+
+  it("should keep the allow sheet mounted and closed while sheets are suspended", () => {
+    const { onQuit, rerender } = renderChecks("awaitingAllow");
+
+    rerender({ suspendSheets: true });
+
+    expect(screen.getByTestId(checksTestIds.allowSheet)).toHaveProp("accessibilityState", {
+      expanded: false,
+    });
+    expect(screen.queryByTestId(`${checksTestIds.allowSheet}-header-close`)).toBeNull();
+    expect(onQuit).not.toHaveBeenCalled();
   });
 
   it("should still decline the offer after it was hidden while the device was locked", async () => {

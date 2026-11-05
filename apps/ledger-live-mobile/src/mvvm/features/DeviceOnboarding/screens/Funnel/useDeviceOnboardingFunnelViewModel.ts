@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
   useNavigation,
   useRoute,
@@ -16,6 +17,7 @@ import {
   useDeviceOnboardingHost,
   useDeviceOnboardingSession,
 } from "LLM/features/DeviceOnboarding/hooks/DeviceOnboardingProvider";
+import type { DeviceOnboardingSession } from "LLM/features/DeviceOnboarding/hooks/useDeviceOnboarding";
 import { useOfferSync } from "LLM/features/DeviceOnboarding/hooks/useOfferSync";
 import type { ChecksScreenProps } from "LLM/features/DeviceOnboarding/types";
 import { toChecksError, toFirmwareUpdate } from "LLM/features/DeviceOnboarding/utils/checksPhase";
@@ -39,9 +41,14 @@ export type QuitConfirmationModel = {
   onLeave: () => void;
 };
 
+export type UnlockSheetModel = Readonly<{
+  deviceModelId: Device["modelId"];
+  deviceName: string;
+}>;
+
 export type DeviceOnboardingFunnelModel = (
   | { status: "karaoke"; onClose: () => void }
-  | { status: "checks"; checks: ChecksScreenProps }
+  | { status: "checks"; checks: ChecksScreenProps; unlockSheet: UnlockSheetModel | null }
   | { status: "connecting"; title: string; closeLabel: string; onQuit: () => void }
   | {
       status: "failed";
@@ -203,6 +210,7 @@ function checksScreen(actions: ScreenActions): DeviceOnboardingFunnelModel {
   return {
     status: "checks",
     quitConfirmation: actions.quitConfirmation,
+    unlockSheet: null,
     checks: {
       device,
       state: screenState,
@@ -262,6 +270,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   );
   useDeviceOnboardingHost(host);
   const started = useRef(false);
+  const [rememberedChecks, setRememberedChecks] = useState<RememberedChecks | null>(null);
 
   useEffect(() => {
     if (started.current) return;
@@ -391,6 +400,10 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   );
   const device = onboarding.liveDevice;
   const closeLabel = t("deviceOnboarding.checks.close");
+  const machineState = onboarding.state;
+  const locked = machineState === "deviceLocked";
+  const holdingLockedScreen =
+    locked || (machineState === "readingState" && rememberedChecks?.holdThroughReading === true);
   const quitConfirmation = unseeded
     ? {
         isOpen: quitConfirmationOpen,
@@ -428,7 +441,95 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     firmwareUpToDate: onboarding.context?.firmwareUpToDate === true,
     genuineFailureKind: readString(onboarding.context?.genuineFailureKind),
   };
-  return earlyScreen(screen) ?? checksScreen(screen);
+  const built = earlyScreen(screen) ?? checksScreen(screen);
+  const freshChecks = built.status === "checks" ? built.checks : null;
+  const nextRemembered = nextRememberedChecks(
+    rememberedChecks,
+    machineState,
+    holdingLockedScreen,
+    freshChecks,
+  );
+  if (nextRemembered !== rememberedChecks) setRememberedChecks(nextRemembered);
+
+  const heldChecks = holdingLockedScreen ? (nextRemembered?.checks ?? freshChecks) : freshChecks;
+  if (!holdingLockedScreen || !heldChecks) return built;
+
+  return {
+    status: "checks",
+    checks: { ...heldChecks, suspendSheets: true },
+    unlockSheet: locked
+      ? {
+          deviceModelId: heldChecks.device.modelId,
+          deviceName: heldChecks.device.deviceName ?? "",
+        }
+      : null,
+    quitConfirmation,
+  };
+}
+
+type RememberedChecks = Readonly<{
+  key: string;
+  signature: string;
+  checks: ChecksScreenProps;
+  holdThroughReading: boolean;
+}>;
+
+function checksSignature(checks: ChecksScreenProps): string {
+  return [
+    checks.state,
+    checks.update?.current ?? "",
+    checks.update?.available ?? "",
+    checks.error?.kind ?? "",
+    checks.firmwareUpToDate,
+    checks.onContinue ? "continue" : "",
+    checks.onQuit ? "quit" : "",
+  ].join("|");
+}
+
+function nextRememberedChecks(
+  remembered: RememberedChecks | null,
+  machineState: string | null,
+  holdingLockedScreen: boolean,
+  freshChecks: ChecksScreenProps | null,
+): RememberedChecks | null {
+  if (
+    remembered &&
+    freshChecks &&
+    remembered.checks.device.deviceId !== freshChecks.device.deviceId
+  ) {
+    return {
+      key: machineState ?? "",
+      signature: checksSignature(freshChecks),
+      checks: freshChecks,
+      holdThroughReading: holdingLockedScreen,
+    };
+  }
+
+  if (!holdingLockedScreen) {
+    if (!freshChecks) return null;
+    const key = machineState ?? "";
+    const signature = checksSignature(freshChecks);
+    if (
+      remembered?.key === key &&
+      remembered.signature === signature &&
+      !remembered.holdThroughReading
+    ) {
+      return remembered;
+    }
+    return { key, signature, checks: freshChecks, holdThroughReading: false };
+  }
+
+  if (machineState !== "deviceLocked") return remembered;
+  if (remembered?.holdThroughReading) return remembered;
+
+  const checks = remembered?.checks ?? freshChecks;
+  if (!checks) return remembered;
+  return {
+    key: remembered?.key ?? "deviceLocked",
+    signature: remembered?.signature ?? checksSignature(checks),
+    checks,
+    holdThroughReading: true,
+  };
 }
 
 function readString(value: unknown): string | null {

@@ -107,7 +107,7 @@ export function ChecksView({
       </Box>
       {allowSheet ? (
         <QueuedBottomSheet
-          isRequestingToBeOpened
+          isRequestingToBeOpened={allowSheet.isOpen}
           noCloseButton={!allowSheet.onClose}
           onHeaderClosePressed={allowSheet.onClose}
           preventBackdropClick
