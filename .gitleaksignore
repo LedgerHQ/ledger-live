@@ -15,3 +15,5 @@ apps/ledger-live-desktop/src/state-manager/configureStore.test.ts:generic-api-ke
 # Public client keys built into the mobile app (Braze SDK keys) — not secrets.
 apps/ledger-live-mobile/scripts/post.mjs:generic-api-key:102
 apps/ledger-live-mobile/scripts/post.mjs:generic-api-key:103
+apps/ledger-live-mobile/.env.android.nightly:generic-api-key:5
+apps/ledger-live-mobile/.env.ios.nightly:generic-api-key:6
