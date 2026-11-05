@@ -23,53 +23,11 @@ const PACKAGE_EXCEPTIONS = {
   },
 };
 
-// Public components allowed to break R1 to R5, keyed by project root, then by component name or,
-// for a check on the entry itself, by subpath. `skip` above does not reach these rules.
+// Component rule waivers (R1 to R5) keyed by project root, then by component name or entry
+// subpath. `skip` above does not reach these rules.
 //
-// Each package that adopts the convention deletes its entries in the same change, so this list is
-// the remaining debt. A waiver that no longer matches a violation fails the check.
-
-const COMPONENT_REASONS = {
-  R1:
-    "It is exported from a universal entry on one platform only, or under another name on each. " +
-    "Exit condition: export it on both platforms under the same name, or move it to a platform " +
-    "entry, make it internal or move it to the app that renders it, then delete this entry.",
-  R2:
-    "Its two implementations do not take one props type from one unsuffixed module. Exit " +
-    "condition: declare the props once in a contract module both implementations import, with " +
-    "no platform-suffixed sibling, annotate each first parameter with it, then delete this entry.",
-  R3:
-    "Its contract depends on a platform: a platform import or type, a className or style prop, " +
-    "a gesture callback name, or a platform-only prop that is not an optional primitive. Exit " +
-    "condition: keep platform types in the implementations, name callbacks after the user's " +
-    "intent, then delete this entry.",
-  R4:
-    "A platform module that declares it also exports something else, such as its props type. " +
-    "Exit condition: move the props type to the contract and anything else to an unsuffixed " +
-    "module, then delete this entry.",
-  R5:
-    "It is exported from both a universal entry and a platform entry. Exit condition: keep one " +
-    "kind of entry for it, then delete this entry.",
-};
-
-const ENTRY_REASON =
-  "TEMPORARY. This platform entry points at a module of a universal entry, or at a module " +
-  "without its platform's suffix. Exit condition: drop the subpath and move its importers to the " +
-  "universal entry, or point it at a suffixed module of its own that holds platform components " +
-  "only, then delete this entry.";
-
-/**
- * @param {...("R1" | "R2" | "R3" | "R4" | "R5")} rules
- * @returns {{ rules: string[], reason: string }}
- */
-function componentWaiver(...rules) {
-  return { rules, reason: `TEMPORARY. ${rules.map(rule => COMPONENT_REASONS[rule]).join(" ")}` };
-}
-
-/** @returns {{ rules: string[], reason: string }} */
-function entryWaiver() {
-  return { rules: ["R5"], reason: ENTRY_REASON };
-}
+// R1 to R5 take no waiver: fix the component instead of adding an entry here. The rollout cleared
+// every waiver; the linter still takes this map, and a stale entry fails the check. Leave it empty.
 
 /** @type {Record<string, Record<string, { rules: string[], reason: string }>>} */
 const COMPONENT_EXCEPTIONS = {};
