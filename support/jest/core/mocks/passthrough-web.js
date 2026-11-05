@@ -2,6 +2,7 @@ const React = require("react");
 const TooltipOpenContext = React.createContext();
 const DialogOpenContext = React.createContext();
 const PopoverOpenContext = React.createContext();
+const SelectContext = React.createContext();
 
 function resolveAvatarColor(identifier) {
   return `avatar-color:${identifier}`;
@@ -136,6 +137,41 @@ function TooltipContent({ children, ...props }) {
   return React.createElement("div", { ...props, role: "tooltip" }, children);
 }
 
+// The Select takes its trigger and its items through render props, which the generic stub would
+// drop. `Select` publishes its items and selection; `SelectList` always renders the items, like
+// `PopoverContent` without `open`, and picking one reports it through `onValueChange`.
+function Select({ children, items, value, onValueChange }) {
+  return React.createElement(
+    SelectContext.Provider,
+    { value: { items: items ?? [], value, onValueChange } },
+    children,
+  );
+}
+
+function SelectTrigger({ render, children }) {
+  if (typeof render === "function") return render({});
+  return React.createElement(React.Fragment, undefined, children);
+}
+
+function SelectList({ renderItem, className }) {
+  const { items } = React.useContext(SelectContext);
+  return React.createElement("div", { className, role: "listbox" }, items.map(renderItem));
+}
+
+function SelectItem({ children, value, className }) {
+  const select = React.useContext(SelectContext);
+  return React.createElement(
+    "div",
+    {
+      className,
+      role: "option",
+      "aria-selected": select.value === value,
+      onClick: () => select.onValueChange?.(value),
+    },
+    children,
+  );
+}
+
 function createPassthroughComponent() {
   return function LumenStub({ children, ...props }) {
     if (props.onChange !== undefined && props.value !== undefined) {
@@ -186,6 +222,10 @@ module.exports = new Proxy(
     Popover,
     PopoverContent,
     PopoverTrigger,
+    Select,
+    SelectItem,
+    SelectList,
+    SelectTrigger,
   },
   {
     get(target, prop) {
