@@ -69,6 +69,14 @@ on:
           - nanoGen5
           - nanoSP and stax
         default: nanoSP
+      app_provider:
+        description: "Nano app provider (4 = pre-release apps, falling back to 1 for apps it doesn't publish)"
+        required: false
+        type: choice
+        options:
+          - "1"
+          - "4"
+        default: "1"
       run_on_macos:
         description: "⚠️ QA and release runs only: also run on macOS (shared Mac runner, Speculinho)"
         required: false
@@ -148,6 +156,11 @@ on:
         description: "Device to be used"
         required: true
         type: string
+      app_provider:
+        description: "Nano app provider (4 = pre-release apps, falling back to 1 for apps it doesn't publish)"
+        required: false
+        type: string
+        default: "1"
       run_on_macos:
         description: "⚠️ QA and release runs only: also run on macOS (shared Mac runner, Speculinho)"
         required: false
@@ -179,6 +192,7 @@ permissions:
 env:
   E2E_DESKTOP_FEATURE_FLAGS: ${{ inputs.feature_flags || 'defaults' }}
   E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
+  SPECULOS_APP_PROVIDER: ${{ inputs.app_provider || '1' }}
   # Broadcast on explicit request, or on the Monday nightly (see the schedule above).
   E2E_BROADCAST_ENABLED: ${{ inputs.enable_broadcast || github.event.schedule == '0 1 * * 1' }}
 

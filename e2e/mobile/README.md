@@ -39,6 +39,7 @@ Set these environment variables before you run tests and change the values as pe
 export MOCK="0"
 export SPECULOS_IMAGE_TAG=ghcr.io/ledgerhq/speculos:latest
 export SPECULOS_DEVICE="nanoX"          # Options: nanoSP | nanoX | nanoS | stax | flex | nanoGen5
+export SPECULOS_APP_PROVIDER="1"        # Optional: 4 runs pre-release apps, falling back to 1 for apps it doesn't publish
 ```
 
 Consider adding these exports to your profile so they persist.
