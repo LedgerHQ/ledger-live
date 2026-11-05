@@ -47,23 +47,26 @@ export function createLedgerSyncServices<S extends LedgerSyncStateRoot, LocalSta
       : undefined,
   );
 
+  const saveUpdate = saveWalletSyncUpdate(dispatch, cloudSync.applyLocalState);
   const cloudSyncSdk = new CloudSyncSDK<DistantDocument>({
     apiBaseUrl: cloudSync.apiBaseUrl,
     slug: liveSlug,
     trustchainSdk: lkrpSdk,
     getCurrentVersion: () => selectWalletSyncState(getState()).version,
-    saveNewUpdate: async (event, trustchain) => {
-      // A call that settles after a reset or a new pairing would restore the old session's data.
-      if (trustchainSelector(getState())?.rootId !== trustchain.rootId) return;
-      await makeSaveNewUpdate({
+    saveNewUpdate: (event, trustchain) =>
+      makeSaveNewUpdate({
         walletsync: cloudSync.walletsyncSelector(getState()),
         getState,
         latestDistantStateSelector: state => selectWalletSyncState(state).data,
         latestDistantVersionSelector: state => selectWalletSyncState(state).version,
         localStateSelector: cloudSync.localStateSelector,
-        saveUpdate: saveWalletSyncUpdate(dispatch, cloudSync.applyLocalState),
-      })(event);
-    },
+        // A call or a resolution that settles after a reset or a new pairing would restore the old
+        // session's data, so the check runs as it saves.
+        saveUpdate: (data, version, localState) => {
+          if (trustchainSelector(getState())?.rootId !== trustchain.rootId) return;
+          saveUpdate(data, version, localState);
+        },
+      })(event),
   });
 
   // A pairing joins the other instance to this one's trustchain when it has one.

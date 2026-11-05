@@ -91,6 +91,19 @@ export const isMockEnv = jest.fn(() => false);
 export const createWalletsync = jest.fn((_blacklistedTokenIds: string[]) => makeWalletsync());
 export const applyLocalState = jest.fn();
 
+/** Makes the next walletsync hold its first incremental resolution until the test settles it. */
+export function holdNextResolution() {
+  const walletsync = makeWalletsync();
+  let settle!: (resolved: Awaited<ReturnType<typeof walletsync.resolveIncrementalUpdate>>) => void;
+  jest.mocked(walletsync.resolveIncrementalUpdate).mockReturnValueOnce(
+    new Promise(resolve => {
+      settle = resolve;
+    }),
+  );
+  createWalletsync.mockReturnValueOnce(walletsync);
+  return { settle };
+}
+
 export function createStore({
   app: appState = {},
   trustchainStore = getInitialStore(),
