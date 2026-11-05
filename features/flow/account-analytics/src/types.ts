@@ -14,6 +14,8 @@ export type AnalyticsAsset = Readonly<{
 export type AnalyticsAccount = Readonly<{
   id: string;
   name: string;
+  iconId: string;
+  ticker: string;
   networkName: string;
   address: string;
 }>;

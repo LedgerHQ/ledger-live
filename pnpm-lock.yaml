@@ -1190,6 +1190,9 @@ importers:
       '@electron/fuses':
         specifier: 2.0.0
         version: 2.0.0
+      '@features/flow-account-analytics':
+        specifier: workspace:^
+        version: link:../../features/flow/account-analytics
       '@features/flow-account-detail':
         specifier: workspace:^
         version: link:../../features/flow/account-detail
