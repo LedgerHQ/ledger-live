@@ -3,7 +3,7 @@ import { shallowEqual } from "react-redux";
 import { useSelector } from "~/context/hooks";
 import { useFocusEffect } from "@react-navigation/native";
 import useEnv from "@features/platform-env";
-import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useFeature } from "@features/platform-feature-flags";
 import { useServicesEntryPointsFeature } from "@features/flow-portfolio-services-entry-points";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import type { Features } from "@shared/feature-flags";
@@ -31,7 +31,6 @@ import { ScreenName } from "~/const";
 
 interface UsePortfolioViewModelResult {
   isAWalletCardDisplayed: boolean;
-  shouldDisplayAssetDiscoverability: boolean;
   shouldDisplayPerpsEntryPoint: boolean;
   showAssets: boolean;
   isLNUpsellBannerShown: boolean;
@@ -46,7 +45,6 @@ const usePortfolioViewModel = (navigation: {
 }): UsePortfolioViewModelResult => {
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
   const { isAWalletCardDisplayed } = useDynamicContent();
-  const { shouldDisplayAssetDiscoverability } = useWalletFeaturesConfig("mobile");
   const { isEnabled: shouldDisplayServicesEntryPoints } = useServicesEntryPointsFeature();
   const llmDatadog = useFeature("llmDatadog");
   const allAccounts = useSelector(flattenAccountsSelector, shallowEqual);
@@ -108,7 +106,6 @@ const usePortfolioViewModel = (navigation: {
 
   return {
     isAWalletCardDisplayed,
-    shouldDisplayAssetDiscoverability,
     shouldDisplayPerpsEntryPoint: !shouldDisplayServicesEntryPoints,
     showAssets,
     isLNUpsellBannerShown,
