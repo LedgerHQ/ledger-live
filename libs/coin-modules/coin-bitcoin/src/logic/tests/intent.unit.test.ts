@@ -13,7 +13,7 @@ const intent = (utxoStrategy?: NonNullable<BitcoinIntent["data"]>["utxoStrategy"
     recipient: "recipient",
     amount: 1n,
     asset: { type: "native" },
-    ...(utxoStrategy ? { data: { type: "string", utxoStrategy } } : {}),
+    ...(utxoStrategy ? { data: { type: "unknown", utxoStrategy } } : {}),
   }) as BitcoinIntent;
 
 describe("coinControlOf", () => {

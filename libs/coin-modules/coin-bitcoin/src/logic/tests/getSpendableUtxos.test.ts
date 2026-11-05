@@ -1,4 +1,4 @@
-import { getSpendableUtxos } from "../getSpendableUtxos";
+import { fetchMempoolView, getSpendableUtxos } from "../getSpendableUtxos";
 import {
   pendingUtxosHandler,
   server,
@@ -123,6 +123,24 @@ describe("getSpendableUtxos", () => {
       ["a".repeat(64), 1, "100"],
       ["c".repeat(64), 0, "50"],
     ]);
+  });
+
+  it("tells which own pending transaction spends and creates what", async () => {
+    server.use(
+      pendingUtxosHandler(ME, {
+        spent: [output("a", "100"), output("b", "200")],
+        created: [output("c", "50", 1), output("c", "20", 2), output("d", "70")],
+      }),
+      txHandler("c".repeat(64), [`${"a".repeat(64)}:0`]),
+      txHandler("d".repeat(64), [`${"e".repeat(64)}:0`]),
+    );
+    const view = await fetchMempoolView(await config(), ME);
+    expect(outpoints(view.spentUtxos)).toEqual(["a:0", "b:0"]);
+    expect(view.spentUtxos.map(utxo => utxo.value)).toEqual(["100", "200"]);
+    expect([...view.spentBy]).toEqual([[`${"a".repeat(64)}:0`, "c".repeat(64)]]);
+    expect([...view.createdBy.keys()]).toEqual(["c".repeat(64)]);
+    expect(outpoints(view.createdBy.get("c".repeat(64)) ?? [])).toEqual(["c:1", "c:2"]);
+    expect(outpoints(view.ownChange)).toEqual(["c:1", "c:2"]);
   });
 
   it("stops when the explorer repeats a page cursor", async () => {

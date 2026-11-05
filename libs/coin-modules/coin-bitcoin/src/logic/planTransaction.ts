@@ -1,7 +1,7 @@
 import type { BitcoinCoinConfig } from "../config";
-import { UnknownUtxo } from "../errors";
+import { ReplacementNotSupported, UnknownUtxo } from "../errors";
 import { getFeeRate } from "./getFeeRate";
-import { getSpendableUtxos, outpoint } from "./getSpendableUtxos";
+import { getSpendableUtxosWithMempool, outpoint } from "./getSpendableUtxos";
 import type { BitcoinIntent } from "./intent";
 import { coinControlOf, opReturnScript } from "./intent";
 import type { DerivationModes, ICrypto, UtxoSelection } from "./selectUtxos";
@@ -31,6 +31,8 @@ export type TransactionPlan = {
   /** Rate the transaction pays, and the network's minimum relay rate, in sat/vB. */
   feePerByte: bigint;
   relayFeePerByte: bigint;
+  /** Minimum rate increase of a replacement, in sat/vB. */
+  incrementalRelayFeePerByte: bigint;
   /** Selected outputs, fee, amount sent and change (see `selectUtxos`). */
   selection: UtxoSelection;
   /** Virtual size of the transaction, in vbytes. */
@@ -62,6 +64,11 @@ export function formatBytes(config: BitcoinCoinConfig, inputCount: number): numb
  * The intent's coin control (`data.utxoStrategy`, see `coinControlOf`) narrows and orders the
  * outputs: excluded ones are never spent, selected ones always are.
  *
+ * Selecting an output a pending transaction of the address already spends plans that transaction's
+ * replacement (speed-up or cancel), on a currency that signals RBF (`ReplacementNotSupported`
+ * otherwise). The replacement spends exactly the selected outputs, as any selection, so it adds no
+ * unconfirmed input (BIP-125), and never spends what the replaced transactions create.
+ *
  * `recipientScript` defaults to the intent's recipient; `estimateFees` passes the sender's own
  * script while the recipient is not yet a valid address. An imposed absolute fee reads no explorer
  * rate: only the relay floor.
@@ -81,28 +88,52 @@ export async function planTransaction(
   const derivationMode = derivationModeOf(senderScript);
   const control = coinControlOf(intent);
 
-  const [spendable, { feePerByte, relayFeePerByte }] = await Promise.all([
-    getSpendableUtxos(config, intent.sender),
-    getFeeRate(config, {
-      feePerByte: fees.feePerByte,
-      feesStrategy: fees.fixedFee === undefined ? fees.feesStrategy : "custom",
+  const [{ spendable, mempool }, { feePerByte, relayFeePerByte, incrementalRelayFeePerByte }] =
+    await Promise.all([
+      getSpendableUtxosWithMempool(config, intent.sender),
+      getFeeRate(config, {
+        feePerByte: fees.feePerByte,
+        feesStrategy: fees.fixedFee === undefined ? fees.feesStrategy : "custom",
+      }),
+    ]);
+
+  const selectedIds = control.selected.map(ref => outpoint(ref.hash, ref.outputIndex));
+  const replaced = new Set(
+    selectedIds.flatMap(id => {
+      const txid = mempool.spentBy.get(id);
+      return txid ? [txid] : [];
     }),
-  ]);
+  );
+  const replacing = selectedIds.some(id => mempool.spent.has(id));
+  if (replacing && !config.transaction?.signalsRbf) {
+    throw new ReplacementNotSupported(`${currencyId} does not signal replaceability (RBF)`, {
+      utxoIds: selectedIds.filter(id => mempool.spent.has(id)),
+    });
+  }
 
   const excluded = new Set(control.excluded.map(ref => outpoint(ref.hash, ref.outputIndex)));
-  const candidates = spendable.filter(utxo => !excluded.has(outpoint(utxo.hash, utxo.outputIndex)));
-  // A selected output that is not spendable (unknown, spent, or spent by a pending transaction) is
-  // refused here, in one place.
-  const selected = control.selected.map(ref => {
-    const id = outpoint(ref.hash, ref.outputIndex);
-    const found = candidates.find(utxo => outpoint(utxo.hash, utxo.outputIndex) === id);
+  const replacedOutputs = new Set(
+    [...replaced].flatMap(txid =>
+      (mempool.createdBy.get(txid) ?? []).map(utxo => outpoint(utxo.hash, utxo.outputIndex)),
+    ),
+  );
+  const candidates = spendable.filter(utxo => {
+    const id = outpoint(utxo.hash, utxo.outputIndex);
+    return !excluded.has(id) && !replacedOutputs.has(id);
+  });
+  // A selected output is spendable, or spent by a pending transaction that is replaced; any other
+  // is refused here, in one place.
+  const selected = selectedIds.map(id => {
+    const found =
+      candidates.find(utxo => outpoint(utxo.hash, utxo.outputIndex) === id) ??
+      mempool.spentUtxos.find(utxo => outpoint(utxo.hash, utxo.outputIndex) === id);
     if (!found) throw new UnknownUtxo(`UTXO ${id} is not a spendable output`, { utxoId: id });
     return found;
   });
-  const selectedIds = new Set(selected.map(utxo => outpoint(utxo.hash, utxo.outputIndex)));
+  const chosenIds = new Set(selectedIds);
 
   const selection = selectUtxos({
-    utxos: candidates.filter(utxo => !selectedIds.has(outpoint(utxo.hash, utxo.outputIndex))),
+    utxos: candidates.filter(utxo => !chosenIds.has(outpoint(utxo.hash, utxo.outputIndex))),
     selected,
     strategy: control.strategy,
     amount: intent.amount,
@@ -134,6 +165,7 @@ export async function planTransaction(
     opReturn,
     feePerByte,
     relayFeePerByte,
+    incrementalRelayFeePerByte,
     selection,
     vsize,
   };

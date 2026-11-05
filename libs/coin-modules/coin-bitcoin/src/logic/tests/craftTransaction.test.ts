@@ -7,7 +7,7 @@ import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { combine } from "../combine";
 import { craftTransaction, RBF_SEQUENCE } from "../craftTransaction";
 import { estimateFees } from "../estimateFees";
-import { PRISTINE_P2PKH } from "./helpers/fixtures";
+import { CURRENCY_ADDRESSES, PRISTINE_P2PKH } from "./helpers/fixtures";
 import { ADDRESSES, PRIVATE_KEY, PUBLIC_KEY, fundingTransaction, signPsbt } from "./helpers/keys";
 import {
   explorerUrl,
@@ -16,6 +16,7 @@ import {
   pendingUtxosHandler,
   server,
   testContext,
+  txHandler,
   useMswServer,
   utxosHandler,
 } from "./helpers/msw";
@@ -391,7 +392,7 @@ describe("craftTransaction with a coin control", () => {
   const sender = ADDRESSES.nativeSegwit;
   const control = (utxoStrategy: Record<string, unknown>, overrides = {}) =>
     intent(sender, {
-      data: { type: "string", utxoStrategy },
+      data: { type: "unknown", utxoStrategy },
       ...overrides,
     } as Partial<TransactionIntent>);
 
@@ -444,17 +445,19 @@ describe("craftTransaction with a coin control", () => {
     ).rejects.toBeInstanceOf(UnknownUtxo);
   });
 
-  it("refuses a selected output a pending transaction spends", async () => {
-    const txs = fund(sender, [80_000, 60_000]);
-    const spentId = txs[0].getId();
+  it("refuses a selected output that is neither spendable nor spent by a pending transaction", async () => {
+    const txs = fund(sender, [80_000]);
+    const pendingId = `${"d".repeat(64)}:0`;
     server.use(
       pendingUtxosHandler(sender, {
-        spent: [{ hash: spentId, txId: spentId, outputIndex: 0, value: "80000", hex: "" }],
+        spent: [
+          { hash: txs[0].getId(), txId: txs[0].getId(), outputIndex: 0, value: "80000", hex: "" },
+        ],
       }),
     );
     await expect(
-      craftTransaction(testContext(), "bitcoin", control({ selectedUtxos: [`${spentId}:0`] })),
-    ).rejects.toBeInstanceOf(UnknownUtxo);
+      craftTransaction(testContext(), "bitcoin", control({ selectedUtxos: [pendingId] })),
+    ).rejects.toEqual(expect.objectContaining({ name: "UnknownUtxo", utxoId: pendingId }));
   });
 
   it("refuses a malformed UTXO id", async () => {
@@ -485,5 +488,103 @@ describe("craftTransaction with a coin control", () => {
     const crafted = await craftTransaction(testContext(), "bitcoin", coinControl);
     expect(estimation.parameters?.inputCount).toBe(inputsOf(crafted).length);
     expect(estimation.value).toBe(crafted.details?.fee);
+  });
+});
+
+describe("craftTransaction replacing an unconfirmed transaction", () => {
+  const sender = ADDRESSES.nativeSegwit;
+  const senderScript = Buffer.from(btcAddress.toOutputScript(sender));
+  const replace = (overrides: Partial<TransactionIntent> = {}) =>
+    intent(sender, {
+      data: { type: "unknown", utxoStrategy: { selectedUtxos } },
+      ...overrides,
+    } as Partial<TransactionIntent>);
+  let selectedUtxos: string[];
+
+  // Confirmed output b (60_000) is free; a (80_000) is spent by pending transaction p, whose change
+  // output p:1 (200_000) is the address's own unconfirmed output.
+  beforeEach(() => {
+    const [a] = fund(sender, [80_000, 60_000]);
+    const aId = a.getId();
+    const pending = "e".repeat(64);
+    const spentA = { hash: aId, txId: aId, outputIndex: 0, value: "80000", hex: "" };
+    selectedUtxos = [`${aId}:0`];
+    server.use(
+      feesHandler({ "2": 3000, "4": 2000, "6": 1000 }),
+      networkHandler(),
+      pendingUtxosHandler(sender, {
+        spent: [spentA],
+        created: [
+          {
+            hash: pending,
+            txId: pending,
+            outputIndex: 1,
+            value: "200000",
+            hex: senderScript.toString("hex"),
+          },
+        ],
+      }),
+      txHandler(pending, [`${aId}:0`]),
+    );
+  });
+
+  it("speeds up: spends the original's input again, at the new rate, signalling RBF", async () => {
+    const crafted = await craftTransaction(testContext(), "bitcoin", replace(), {
+      value: 0n,
+      parameters: { feePerByte: 9n },
+    });
+    expect(inputsOf(crafted).map(input => `${input.hash}:${input.outputIndex}`)).toEqual(
+      selectedUtxos,
+    );
+    expect(crafted.details?.feePerByte).toBe(9n);
+    expect(Psbt.fromBase64(crafted.transaction).txInputs.map(i => i.sequence)).toEqual([
+      RBF_SEQUENCE,
+    ]);
+  });
+
+  it("cancels: sends the whole input back to the sender in a single output", async () => {
+    const crafted = await craftTransaction(
+      testContext(),
+      "bitcoin",
+      replace({ recipient: sender, useAllAmount: true, amount: 0n }),
+      { value: 0n, parameters: { feePerByte: 9n } },
+    );
+    const { txOutputs } = Psbt.fromBase64(crafted.transaction);
+    expect(txOutputs).toHaveLength(1);
+    expect(Buffer.from(txOutputs[0].script).toString("hex")).toBe(senderScript.toString("hex"));
+    expect(inputsOf(crafted)).toHaveLength(1);
+  });
+
+  it("never spends what the replaced transaction creates, and adds no input", async () => {
+    // 100_000 exceeds the selected input; the replaced transaction's 200_000 change and the free
+    // 60_000 output would cover it, but neither is added.
+    const request = replace({ amount: 100_000n });
+    await expect(craftTransaction(testContext(), "bitcoin", request)).rejects.toBeInstanceOf(
+      NotEnoughBalance,
+    );
+    const estimation = await estimateFees(testContext(), "bitcoin", request);
+    expect(estimation.parameters).toEqual(
+      expect.objectContaining({ inputCount: 1, sufficient: false }),
+    );
+  });
+
+  it("refuses on a currency that does not signal RBF", async () => {
+    const ltc = CURRENCY_ADDRESSES.litecoin;
+    const spent = { txId: "a".repeat(64), hash: "a".repeat(64), outputIndex: 0, value: "80000" };
+    server.use(
+      utxosHandler(ltc, [{ data: [spent], token: null }], "ltc"),
+      pendingUtxosHandler(ltc, { spent: [spent] }, "ltc"),
+      feesHandler({ "2": 3000, "4": 2000, "6": 1000 }, "ltc"),
+      networkHandler("0.00001", "ltc"),
+    );
+    const request = intent(ltc, {
+      recipient: ltc,
+      data: { type: "unknown", utxoStrategy: { selectedUtxos: [`${spent.hash}:0`] } },
+    } as Partial<TransactionIntent>);
+    await expect(
+      craftTransaction(testContext({ explorerId: "ltc" }), "litecoin", request),
+    ).rejects.toEqual(
+      expect.objectContaining({ name: "ReplacementNotSupported", utxoIds: [`${spent.hash}:0`] }),
+    );
   });
 });

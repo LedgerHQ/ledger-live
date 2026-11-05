@@ -86,6 +86,8 @@ export type ExplorerFees = Record<string, number>;
 export type ExplorerNetworkInfo = {
   /** Minimum relay fee, in BTC/kB, as a decimal string. */
   relay_fee?: string | null;
+  /** Minimum fee-rate increase of a replacement, in BTC/kB, as a decimal string. */
+  incremental_fee?: string | null;
 };
 
 export type ExplorerTxPage = {

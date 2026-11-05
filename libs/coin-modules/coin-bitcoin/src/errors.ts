@@ -65,3 +65,11 @@ export class InvalidUtxoStrategy extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+export class ReplacementNotSupported extends Error {
+  override name = "ReplacementNotSupported";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ReplacementNotSupported");
+    if (fields) Object.assign(this, fields);
+  }
+}

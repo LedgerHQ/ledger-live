@@ -124,9 +124,13 @@ export const feesHandler = (fees: Record<string, number>, explorerId?: string) =
     HttpResponse.json({ ...fees, last_updated: 1790949312 }),
   );
 
-export const networkHandler = (relayFee: string | null = "0.00001", explorerId?: string) =>
+export const networkHandler = (
+  relayFee: string | null = "0.00001",
+  explorerId?: string,
+  incrementalFee: string | null = "0.00001",
+) =>
   http.get(`${explorerUrl(explorerId)}/network`, () =>
-    HttpResponse.json({ relay_fee: relayFee, incremental_fee: "0.00001" }),
+    HttpResponse.json({ relay_fee: relayFee, incremental_fee: incrementalFee }),
   );
 
 export const pendingUtxosHandler = (

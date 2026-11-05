@@ -15,9 +15,13 @@ import { cryptoFor } from "./selectUtxos";
  * Without a valid recipient yet, the fee is priced with an output of the sender's own type.
  *
  * The returned `parameters` describe the priced transaction: the rate, the network's minimum relay
- * rate and the virtual size (with which `validateIntent` refuses a fee below the relay minimum), the
- * number of inputs, the change, whether the outputs cover the intent (`sufficient`) and, for
+ * rate, the minimum rate increase of a replacement (`incrementalRelayFeePerByte`) and the virtual
+ * size (with which `validateIntent` refuses a fee below the relay minimum), the number of inputs, the change, whether the outputs cover the intent (`sufficient`) and, for
  * `useAllAmount`, the exact `amount` the transaction sends.
+ *
+ * A replacement (see `planTransaction`) is priced like any transaction: the BIP-125 minimum fee
+ * depends on the replaced transactions' fees, which the caller knows; the node refuses a lower fee
+ * at `broadcast`.
  */
 export async function estimateFees(
   context: BitcoinContext,
@@ -32,16 +36,17 @@ export async function estimateFees(
       : crypto.toOutputScript(intent.sender);
 
   const config = await context.config(currencyId);
-  const { selection, feePerByte, relayFeePerByte, vsize } = await planTransaction(
-    config,
-    currencyId,
-    intent,
-    {
-      feePerByte: customFeesParameters?.feePerByte,
-      feesStrategy: customFeesParameters?.feesStrategy,
-    },
-    recipientScript,
-  );
+  const { selection, feePerByte, relayFeePerByte, incrementalRelayFeePerByte, vsize } =
+    await planTransaction(
+      config,
+      currencyId,
+      intent,
+      {
+        feePerByte: customFeesParameters?.feePerByte,
+        feesStrategy: customFeesParameters?.feesStrategy,
+      },
+      recipientScript,
+    );
 
   // A custom absolute fee (custom strategy without a rate) is the caller's: this estimate is only
   // priced at the relay floor meanwhile. Its rate and send-max amount are not returned, so that
@@ -54,6 +59,7 @@ export async function estimateFees(
     parameters: {
       ...(absoluteFee ? {} : { feePerByte }),
       relayFeePerByte,
+      incrementalRelayFeePerByte,
       vsize: BigInt(vsize),
       inputCount: selection.inputs.length,
       change: selection.change,

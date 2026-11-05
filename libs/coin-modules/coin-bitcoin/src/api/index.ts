@@ -48,7 +48,7 @@ export function createApi(currencyId: string) {
     broadcast: (context: BitcoinContext, tx, options?) =>
       broadcast(context, currencyId, tx, options?.broadcastConfig),
     craftTransactionData: (_context: BitcoinContext, intent): BitcoinTxData => ({
-      type: "string",
+      type: "unknown",
       ...(intent.data?.opReturnData ? { opReturnData: intent.data.opReturnData } : {}),
     }),
   } satisfies CoinModuleImpl<BitcoinCoinConfig, MemoNotSupported, BitcoinTxData>;
