@@ -188,14 +188,6 @@ export const getMergedFeatureFlags = ({
   };
 };
 
-const getLwmWallet40StaticFlag = (): Features["lwmWallet40"] | undefined =>
-  getMergedFeatureFlags().lwmWallet40;
-
-export const isQ2WithAggregatedAssets = (): boolean => {
-  const lwmWallet40 = getLwmWallet40StaticFlag();
-  return lwmWallet40?.enabled === true && lwmWallet40?.params?.aggregatedAssets === true;
-};
-
 const getLwmFlag = async (): Promise<Features["lwmWallet40"] | undefined> => {
   const flags = await getFlags();
   const parsed = parseExtraFeatureFlags<PartialFeatures>(flags);

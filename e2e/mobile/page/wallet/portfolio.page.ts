@@ -7,7 +7,6 @@ import type { Features } from "@shared/feature-flags";
 
 const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
 export default class PortfolioPage {
-  addNewOrExistingAccount = "add-new-account-button";
   baseLink = "portfolio";
   baseAssetItem = "assetItem-";
   analyticsBalanceAmountId = "analytics-balance-amount";
@@ -180,9 +179,7 @@ export default class PortfolioPage {
   async goToAccounts(currencyName: string, currencyId?: string) {
     await waitForElementById(this.accountsListView, TIMEOUT.medium);
     if (await isAggregatedAssetsEnabled()) {
-      await revealForTap(this.cryptoAddressesButtonId, { container: this.accountsListView });
-      await tapById(this.cryptoAddressesButtonId);
-      await waitForElementById(this.cryptoAddressesListId);
+      await this.openCryptoAddresses();
       if (currencyId) {
         await scrollToId(this.cryptoAddressItemId(currencyId), this.cryptoAddressesListId);
         await tapById(this.cryptoAddressItemId(currencyId));
@@ -205,12 +202,6 @@ export default class PortfolioPage {
   async checkAssetAllocationSection() {
     await scrollToId(this.cryptosSectionHeaderId, this.accountsListView);
     await detoxExpect(getElementById(this.cryptosSectionHeaderId)).toBeVisible();
-  }
-
-  @Step("Check accounts section")
-  async checkAccountsSection() {
-    await this.tapAddNewOrExistingAccountButton();
-    await app.addAccount.importWithYourLedger();
   }
 
   @Step("Open Crypto Addresses from portfolio")
@@ -246,14 +237,6 @@ export default class PortfolioPage {
   @Step("Tap on Connect button")
   async tapConnectButton() {
     await tapById(this.connectButtonId);
-  }
-
-  @Step("Tap on (Add new or existing account) button")
-  async tapAddNewOrExistingAccountButton() {
-    if (!(await IsIdVisible(this.addNewOrExistingAccount))) {
-      await scrollToId(this.addNewOrExistingAccount, app.portfolio.accountsListView, 400);
-    }
-    await tapById(this.addNewOrExistingAccount);
   }
 
   @Step("Expect market banner to be visible")
