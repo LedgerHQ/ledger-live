@@ -3,6 +3,7 @@ import { track } from "@shared/analytics";
 import {
   ANALYTICS_FLUSH_TIMEOUT_MS,
   WALLET_CLI_USER_ID,
+  createSegmentClient,
   disposeAnalytics,
   startAnalytics,
 } from "./segment";
@@ -111,4 +112,35 @@ describe("disposeAnalytics", () => {
 
     await expect(disposeAnalytics()).resolves.toBeUndefined();
   });
+});
+
+describe("Segment client", () => {
+  it("aborts a request the server never answers within the flush timeout", async () => {
+    let abortedAfterMs: number | undefined;
+    const server = Bun.serve({
+      port: 0,
+      fetch: req => {
+        const receivedAt = Date.now();
+        req.signal.addEventListener("abort", () => {
+          abortedAfterMs = Date.now() - receivedAt;
+        });
+        return new Promise<Response>(() => {});
+      },
+    });
+    try {
+      startAnalytics(writeKey => createSegmentClient(writeKey, `http://127.0.0.1:${server.port}`));
+      track("wallet_cli_test_event");
+      await disposeAnalytics();
+
+      const deadline = Date.now() + ANALYTICS_FLUSH_TIMEOUT_MS + 2_000;
+      while (abortedAfterMs === undefined && Date.now() < deadline) {
+        await Bun.sleep(50);
+      }
+
+      expect(abortedAfterMs).toBeDefined();
+      expect(abortedAfterMs).toBeLessThan(ANALYTICS_FLUSH_TIMEOUT_MS + 1_000);
+    } finally {
+      await server.stop(true);
+    }
+  }, 10_000);
 });

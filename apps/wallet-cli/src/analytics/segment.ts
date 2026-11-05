@@ -26,8 +26,12 @@ const extraProperties = () => ({
 type SegmentClient = Pick<Analytics, "identify" | "track" | "closeAndFlush">;
 
 // The flush timeout does not abort an in-flight request, whose open socket keeps the process alive.
-const createSegmentClient = (writeKey: string): SegmentClient =>
-  new Analytics({ writeKey, httpRequestTimeout: ANALYTICS_FLUSH_TIMEOUT_MS });
+export const createSegmentClient = (writeKey: string, host?: string): SegmentClient =>
+  new Analytics({
+    writeKey,
+    httpRequestTimeout: ANALYTICS_FLUSH_TIMEOUT_MS,
+    ...(host ? { host } : {}),
+  });
 
 let client: unknown | null = null;
 
