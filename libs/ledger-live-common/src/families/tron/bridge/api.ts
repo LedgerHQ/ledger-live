@@ -40,6 +40,9 @@ export async function buildAccountShape(address: string): Promise<FamilyAccountS
 
 // CAL keeps a TRC10 asset id in `tokenIdentifier`; its `contractAddress` is the issuer address,
 // which a TRC10 operation does not carry, so the lookup goes by `tokenIdentifier` alone.
+// To get the issuer (e.g. to hit the persisted cache, keyed by it): TronGrid
+// `POST /wallet/getassetissuebyid` with `{ value: <asset id>, visible: true }` returns it as
+// `owner_address`, at the cost of one extra call per TRC10 asset on every sync.
 const TRC10_ISSUER_UNKNOWN = "";
 
 export async function getTokenFromAsset(
