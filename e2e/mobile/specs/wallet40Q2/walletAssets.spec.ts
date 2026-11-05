@@ -4,17 +4,6 @@ import { FF_LWM_WALLET_40_Q2 } from "@e2e/utils/featureFlagUtils";
 
 const TAGS = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 
-// TODO: temporary override until LIVE-29336 is done
-const FF_WALLET_ASSETS = {
-  lwmWallet40: {
-    ...FF_LWM_WALLET_40_Q2.lwmWallet40,
-    params: {
-      ...FF_LWM_WALLET_40_Q2.lwmWallet40.params,
-      aggregatedAssets: false,
-    },
-  },
-};
-
 setTeamOwner(Team.WALLET_XP);
 describe("Wallet assets", () => {
   const currency = Account.INJ_1.currency;
@@ -23,7 +12,7 @@ describe("Wallet assets", () => {
     await app.init({
       userdata: "skip-onboarding",
       speculosApp: currency.speculosApp,
-      featureFlags: FF_WALLET_ASSETS,
+      featureFlags: FF_LWM_WALLET_40_Q2,
     });
     await app.mainNavigation.waitForWallet40Ready();
     await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible();
@@ -40,8 +29,9 @@ describe("Wallet assets", () => {
   });
 
   $TmsLink("B2CQA-4840");
-  it(`[${currency.testLabel}] - Selecting an asset redirects to its market page`, async () => {
-    await app.portfolio.tapFirstAssetItemW40();
+  it(`[${currency.testLabel}] - Selecting an asset opens its asset detail page`, async () => {
+    const currencyName = await app.portfolio.tapFirstAssetItemW40();
+    expect(currencyName).toBeDefined();
     await app.market.expectAssetPageVisible();
     await app.market.leaveAssetPage();
     await app.mainNavigation.waitForWallet40Ready();
@@ -55,7 +45,7 @@ describe("Wallet assets", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "wallet40-btc-only",
-      featureFlags: FF_WALLET_ASSETS,
+      featureFlags: FF_LWM_WALLET_40_Q2,
     });
     await app.mainNavigation.waitForWallet40Ready();
     await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible();
@@ -77,7 +67,7 @@ describe("Wallet assets", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "wallet40-many-stablecoins",
-      featureFlags: FF_WALLET_ASSETS,
+      featureFlags: FF_LWM_WALLET_40_Q2,
     });
     await app.mainNavigation.waitForWallet40Ready();
     await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible();

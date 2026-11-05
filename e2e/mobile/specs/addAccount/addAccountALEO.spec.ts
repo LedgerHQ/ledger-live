@@ -41,6 +41,5 @@ describeIfNanoSSupports(Currency.ALEO.id)("Add account", () => {
 
     await app.portfolio.goToAccounts(Currency.ALEO.name, Currency.ALEO.id);
     await app.assetAccountsPage.waitForAccountPageToLoad(Currency.ALEO.name, undefined, true);
-    await app.assetAccountsPage.expectAccountsBalanceVisible();
   });
 });

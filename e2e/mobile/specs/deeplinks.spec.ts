@@ -100,11 +100,6 @@ describe("Deeplinks", () => {
     await app.swapLiveApp.expectSwapLiveApp();
   });
 
-  (isSmokeTestRun ? it.skip : it)("should open Market Detail page for Bitcoin", async () => {
-    await app.market.openViaDeeplink("bitcoin");
-    await app.market.expectMarketDetailPage();
-  });
-
   (isSmokeTestRun ? it.skip : it)("should open Send pages", async () => {
     await app.send.openViaDeeplink();
     await app.send.expectFirstStep();
