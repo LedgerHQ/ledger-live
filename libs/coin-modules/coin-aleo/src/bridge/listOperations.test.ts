@@ -343,7 +343,7 @@ describe("listOperations", () => {
     });
   });
 
-  describe("enableStaking gating", () => {
+  describe("staking operations", () => {
     const stakingTxs = [
       TRANSACTION_TYPE.BOND_PUBLIC,
       TRANSACTION_TYPE.UNBOND_PUBLIC,
@@ -367,7 +367,9 @@ describe("listOperations", () => {
       mockToBridgeOperation.mockReturnValue(getMockedOperation({ id: "op1" }));
     });
 
-    it("should keep staking transactions out of the list when staking is disabled", async () => {
+    it("should retain staking transactions when staking is disabled", async () => {
+      mockResolveBondArguments.mockResolvedValue(new Map());
+
       const result = await listOperations({
         config: mockConfig,
         currencyId: mockCurrency.id,
@@ -376,17 +378,17 @@ describe("listOperations", () => {
         options: { minHeight: 0 },
       });
 
-      expect(result.operations).toHaveLength(1);
-      expect(mockToBridgeOperation).toHaveBeenCalledTimes(1);
-      expect(mockToBridgeOperation).toHaveBeenCalledWith(
-        mockLedgerAccountId,
-        transferTx,
-        mockAddress,
-        undefined,
-      );
+      expect(result.operations).toHaveLength(4);
+      expect(mockToBridgeOperation).toHaveBeenCalledTimes(4);
+      expect(mockResolveBondArguments).toHaveBeenCalledWith({
+        config: mockConfig,
+        transactions: [stakingTxs[0]],
+      });
     });
 
-    it("should not resolve bond arguments when staking is disabled", async () => {
+    it("should resolve bond arguments when staking is disabled", async () => {
+      mockResolveBondArguments.mockResolvedValue(new Map());
+
       await listOperations({
         config: mockConfig,
         currencyId: mockCurrency.id,
@@ -395,7 +397,10 @@ describe("listOperations", () => {
         options: { minHeight: 0 },
       });
 
-      expect(mockResolveBondArguments).not.toHaveBeenCalled();
+      expect(mockResolveBondArguments).toHaveBeenCalledWith({
+        config: mockConfig,
+        transactions: [stakingTxs[0]],
+      });
     });
 
     it("should list staking transactions when staking is enabled", async () => {
