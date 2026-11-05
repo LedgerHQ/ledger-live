@@ -53,7 +53,6 @@
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
-    "@types/libsodium-wrappers": "0.7.14",
     "@types/node": "catalog:",
     "@typescript/native": "catalog:",
     "jest": "catalog:",
