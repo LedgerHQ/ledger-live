@@ -2,18 +2,17 @@ import type { BlockInfo } from "@ledgerhq/coin-module-framework/api/index";
 import { getBlockDagInfo, getVirtualChainBlueScore } from "../../network";
 
 /**
- * Latest confirmed block on the Kaspa BlockDAG. `height` is the virtual-chain blue score — the
- * confirmed selected-chain height (already used as `blockHeight` by the legacy bridge sync, see
- * bridge/synchronization.ts), as opposed to `virtualDaaScore` which tracks the unstable DAG tip.
+ * Latest block of the Kaspa selected chain, from two cheap info endpoints (no per-block lookup):
+ * - `height` is the virtual-chain blue score, the same scale as the `accepting_block_blue_score`
+ *   that `listOperations` reports as a transaction's height (and the legacy bridge's `blockHeight`).
+ *   It is not `virtualDaaScore`, a different counter that also counts blocks off the selected chain.
+ * - `hash` is the `sink` (the virtual selected parent), i.e. the chain tip. It comes from a separate
+ *   call than `height`, so the two can be a block apart.
+ * - `time` is approximated as `now`: Kaspa produces several blocks per second, so the tip is at most
+ *   a block interval old.
  *
- * Kept cheap and self-contained (no per-block lookup), mirroring the UTXO reference coin-cardano's
- * `lastBlock`:
- * - `time` is approximated as `now`. Kaspa produces blocks ~every second, so the tip was minted
- *   within the last block interval — a fine approximation *for the tip only*. Accurate per-block
- *   timestamps come from `getBlockInfo`/`getBlock`, which fetch the actual block.
- * - `hash` uses the pruning-point hash (the most recent guaranteed-finalized block). We do NOT
- *   resolve the tip block by blue score here: that endpoint can lag behind the just-produced tip,
- *   which would make `lastBlock` throw — cardano avoids the same second lookup for this reason.
+ * The tip block itself is not fetched: the indexer only serves `/blocks/{hash}` 10–15 s after a block
+ * becomes the tip (HTTP 404 until then), which would make `lastBlock` fail most of the time.
  */
 export async function lastBlock(): Promise<BlockInfo> {
   const [height, blockDagInfo] = await Promise.all([getVirtualChainBlueScore(), getBlockDagInfo()]);
@@ -24,7 +23,7 @@ export async function lastBlock(): Promise<BlockInfo> {
 
   return {
     height,
-    hash: blockDagInfo.pruningPointHash ?? "",
+    hash: blockDagInfo.sink ?? "",
     time: new Date(),
   };
 }
