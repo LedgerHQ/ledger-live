@@ -399,6 +399,70 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(checksModel(result.current).unlockSheet).toBeNull();
   });
 
+  it("should drop the locked screen when the connection is lost", () => {
+    const firmware = {
+      firmwareVersion: "1.0.0",
+      availableFirmwareVersion: "1.1.0",
+      checksPaused: false,
+    } as DeviceOnboardingSession["context"];
+    useSession.mockReturnValue(
+      session({ state: "checks.firmwareUpdateOffered", context: firmware }),
+    );
+    const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    useSession.mockReturnValue(session({ state: "deviceLocked", context: firmware }));
+    rerender(undefined as never);
+    useSession.mockReturnValue(session({ state: "awaitingSession", liveDevice: null }));
+    rerender(undefined as never);
+
+    expect(result.current.status).toBe("failed");
+
+    useSession.mockReturnValue(session({ state: "deviceLocked", context: null }));
+    rerender(undefined as never);
+
+    const locked = checksModel(result.current);
+    expect(locked.checks.state).toBe("synchronizing");
+    expect(locked.checks.update).toBeNull();
+    expect(locked.unlockSheet).toEqual({
+      deviceModelId: DeviceModelId.stax,
+      deviceName: "Ledger Stax",
+    });
+  });
+
+  it("should show the reconnected device when it locks before its session is ready", () => {
+    const firmware = {
+      firmwareVersion: "1.0.0",
+      availableFirmwareVersion: "1.1.0",
+      checksPaused: false,
+    } as DeviceOnboardingSession["context"];
+    useSession.mockReturnValue(
+      session({ state: "checks.firmwareUpdateOffered", context: firmware }),
+    );
+    const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    useSession.mockReturnValue(session({ state: "deviceLocked", context: firmware }));
+    rerender(undefined as never);
+    useSession.mockReturnValue(session({ state: "awaitingSession", liveDevice: null }));
+    rerender(undefined as never);
+
+    const reconnected = {
+      deviceId: "other-device",
+      deviceName: "Nano X",
+      modelId: DeviceModelId.nanoX,
+      wired: false,
+    };
+    useSession.mockReturnValue(session({ state: "deviceLocked", liveDevice: reconnected }));
+    rerender(undefined as never);
+
+    const locked = checksModel(result.current);
+    expect(locked.checks.device.deviceId).toBe("other-device");
+    expect(locked.checks.state).toBe("synchronizing");
+    expect(locked.unlockSheet).toEqual({
+      deviceModelId: DeviceModelId.nanoX,
+      deviceName: "Nano X",
+    });
+  });
+
   it("should keep the locked screen's close when the device locks during a check", () => {
     useSession.mockReturnValue(session({ state: "checks.firmwareUpdateDelegated" }));
     const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());

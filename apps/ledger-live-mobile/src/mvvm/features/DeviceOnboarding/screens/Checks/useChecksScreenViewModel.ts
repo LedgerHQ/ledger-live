@@ -33,6 +33,7 @@ type FirmwareUpdateDrawerProps = Readonly<{
 
 type UnsupportedUpdateDrawerProps = Readonly<{
   isOpen: boolean;
+  mounted: boolean;
   onClose: () => void;
   isUsbRequired: boolean;
   productName: string;
@@ -263,6 +264,7 @@ export function useChecksScreenViewModel({
     },
     unsupportedUpdate: {
       isOpen: isUnsupportedUpdateOpen && !suspendSheets,
+      mounted: isUnsupportedUpdateOpen,
       isUsbRequired: eligibility?.isUsbRequired ?? false,
       productName,
       onClose: () => {

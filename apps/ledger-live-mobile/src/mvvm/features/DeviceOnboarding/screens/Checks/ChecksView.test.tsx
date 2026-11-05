@@ -66,11 +66,38 @@ jest.mock("@ledgerhq/lumen-ui-rnative", () => {
   };
 });
 
-jest.mock("@shared/ui-queued-bottom-sheet", () => ({
-  ...jest.requireActual("@shared/ui-queued-bottom-sheet"),
-  QueuedBottomSheet: jest.requireActual("@shared/ui-queued-bottom-sheet/testing/module-mock")
-    .QueuedBottomSheet,
-}));
+jest.mock("@shared/ui-queued-bottom-sheet", () => {
+  const React = jest.requireActual<typeof import("react")>("react");
+  const { QueuedBottomSheet: QueuedBottomSheetMock } = jest.requireActual(
+    "@shared/ui-queued-bottom-sheet/testing/module-mock",
+  );
+
+  function QueuedBottomSheet(props: React.ComponentProps<typeof QueuedBottomSheetMock>) {
+    const onCloseRef = React.useRef(props.onClose);
+    const requestingRef = React.useRef(props.isRequestingToBeOpened);
+
+    React.useEffect(() => {
+      onCloseRef.current = props.onClose;
+      requestingRef.current = props.isRequestingToBeOpened;
+    }, [props.onClose, props.isRequestingToBeOpened]);
+    React.useEffect(
+      () => () => {
+        if (requestingRef.current) onCloseRef.current?.();
+      },
+      [],
+    );
+
+    const isOpen = Boolean(props.isRequestingToBeOpened || props.isForcingToBeOpened);
+    return (
+      <QueuedBottomSheetMock {...props}>{isOpen ? props.children : null}</QueuedBottomSheetMock>
+    );
+  }
+
+  return {
+    ...jest.requireActual("@shared/ui-queued-bottom-sheet"),
+    QueuedBottomSheet,
+  };
+});
 
 const device = {
   deviceId: "device-id",
@@ -371,6 +398,34 @@ describe("ChecksView", () => {
     expect(onAcceptUpdate).toHaveBeenCalledTimes(1);
     expect(onDeclineUpdate).not.toHaveBeenCalled();
     expect(screen.queryByText("See what's in the update")).toBeNull();
+  });
+
+  it("should keep the unsupported update drawer when sheets are suspended", async () => {
+    const platform = jest.replaceProperty(Platform, "OS", "android");
+
+    try {
+      const { onAcceptUpdate, onDeclineUpdate, rerender, user } = renderChecks("updating", {
+        device: nanoX,
+        update: { current: "2.3.0", available: "2.5.0" },
+      });
+
+      await user.press(screen.getByText("Update now"));
+      expect(screen.getByText("USB cable needed")).toBeVisible();
+
+      rerender({ suspendSheets: true });
+
+      expect(screen.queryByText("USB cable needed")).toBeNull();
+      expect(onAcceptUpdate).not.toHaveBeenCalled();
+      expect(onDeclineUpdate).not.toHaveBeenCalled();
+
+      rerender({ suspendSheets: false });
+
+      expect(screen.getByText("USB cable needed")).toBeVisible();
+      expect(screen.queryByText("Update now")).toBeNull();
+      expect(onDeclineUpdate).not.toHaveBeenCalled();
+    } finally {
+      platform.restore();
+    }
   });
 
   it("should still decline the offer after the unsupported update drawer is closed", async () => {
