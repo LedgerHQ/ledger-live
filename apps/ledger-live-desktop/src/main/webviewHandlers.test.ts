@@ -586,6 +586,41 @@ describe("setupWebviewHandlers", () => {
     });
   });
 
+  it("lets our extra request headers through a CORS preflight", () => {
+    setupWebviewHandlers(["ledgerlive"]);
+
+    const [listener] = jest.mocked(session.defaultSession.webRequest.onHeadersReceived).mock
+      .calls[0] as unknown as [
+      (
+        details: { method?: string; responseHeaders?: Record<string, string[]> },
+        callback: jest.Mock,
+      ) => void,
+    ];
+    const callback = jest.fn();
+
+    listener(
+      {
+        method: "OPTIONS",
+        responseHeaders: {
+          "Access-Control-Allow-Origin": ["https://api.example.com"],
+          "access-control-allow-headers": ["Content-Type"],
+        },
+      },
+      callback,
+    );
+
+    expect(callback.mock.calls).toEqual([
+      [
+        {
+          responseHeaders: {
+            "Access-Control-Allow-Origin": ["https://api.example.com"],
+            "Access-Control-Allow-Headers": ["*"],
+          },
+        },
+      ],
+    ]);
+  });
+
   describe("will-attach-webview", () => {
     type AttachHandler = (
       event: { preventDefault: jest.Mock },

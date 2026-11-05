@@ -202,6 +202,20 @@ export function genAccountLegacy(id: number | string, opts: GenAccountOptions = 
             },
           };
           break;
+        case "concordium":
+          // Concordium sync resolves the account from its public key, so a mock
+          // account without one queries the proxy with `undefined` and gets a 400.
+          Object.assign(account, {
+            concordiumResources: {
+              isOnboarded: false,
+              credId: "",
+              publicKey: account.xpub,
+              identityIndex: 0,
+              credNumber: 0,
+              ipIdentity: 0,
+            },
+          });
+          break;
         default: {
           getAccountBridge(account)
             .then(bridge => {

@@ -124,14 +124,20 @@ function addDelegationOperation(account: CosmosAccount, rng: Prando): CosmosAcco
   };
 
   /** format delegations and randomize rewards and status */
-  const delegations: StakingDelegation[] = delegatedValidators.map(({ address, amount }) => ({
-    validatorAddress: address,
-    amount,
-    pendingRewards: rng.nextBoolean()
-      ? new BigNumber(Math.round(amount.toNumber() * 0.01))
-      : new BigNumber(0),
-    status: rng.next() > 0.33 ? "bonded" : "unbonded",
-  }));
+  const delegations: StakingDelegation[] = delegatedValidators.map(({ address, amount }, index) => {
+    const hasRewards = rng.nextBoolean();
+    return {
+      validatorAddress: address,
+      amount,
+      // always give the first delegation some claimable rewards so the
+      // "claim rewards" mode never ends up completely empty
+      pendingRewards:
+        index === 0 || hasRewards
+          ? new BigNumber(Math.max(1, Math.round(amount.toNumber() * 0.01)))
+          : new BigNumber(0),
+      status: rng.next() > 0.33 ? "bonded" : "unbonded",
+    };
+  });
   setStakingResources(account, delegations, undefined, undefined, undefined);
   const { delegatedBalance } = getStakingResources(account);
   setOperationFeeValue(delegationOp, delegatedBalance);
