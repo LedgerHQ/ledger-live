@@ -129,6 +129,21 @@ describe("getTransactionStatus", () => {
 
     expect(result.errors.amount).toEqual(new NotEnoughBalance());
   });
+  it("does not let staked SUI fund a send", async () => {
+    // `balance` includes staked SUI, which cannot be spent until unstaked.
+    const stakedAccount = createFixtureAccount({
+      balance: BigNumber(10_000_000_000),
+      spendableBalance: BigNumber(1_000_000_000),
+    });
+    const transaction = createFixtureTransaction({
+      amount: BigNumber(2_000_000_000),
+      fees: BigNumber(1_000_000),
+      gasBudget: BigNumber(2_000_000),
+    });
+    const result = await getTransactionStatus(stakedAccount, transaction);
+
+    expect(result.errors.amount).toEqual(new NotEnoughBalance());
+  });
   it("flags NotEnoughBalance when the address balance can't cover amount + gas and real coins are too small for gas (SIP-58)", async () => {
     // Real coins can't cover the gas budget, so gas is withdrawn from the address balance
     // alongside the transfer. The address balance can't cover amount + gas even though the total

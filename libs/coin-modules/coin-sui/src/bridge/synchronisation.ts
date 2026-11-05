@@ -17,7 +17,7 @@ import BigNumber from "bignumber.js";
 import suiConfig from "../config";
 import { BLOCK_HEIGHT } from "../constants";
 import { getAccountBalances, getOperations, getDelegatedStakes } from "../network";
-import { DEFAULT_COIN_TYPE } from "../network/sdk";
+import { DEFAULT_COIN_TYPE, toStakeAmounts } from "../network/sdk";
 import { SuiOperationExtra, SuiAccount } from "../types";
 import { toLongStructTag, toShortStructTag } from "../utils";
 
@@ -59,7 +59,16 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async (info, syncCon
 
   const accountBalances = await getAccountBalances(config, address);
   const suiBalance = accountBalances.find(({ coinType }) => coinType === DEFAULT_COIN_TYPE);
-  const balance = suiBalance?.balance ?? BigNumber(0);
+  const spendableBalance = suiBalance?.balance ?? BigNumber(0);
+  // Staked SUI still belongs to the owner, so it counts in `balance` but never in
+  // `spendableBalance`. Valued as in `getBalance`: principal plus accrued reward.
+  const stakedBalance = (stakes ?? [])
+    .flatMap(pool => pool.stakes)
+    .reduce((sum, stake) => {
+      const { deposited, rewarded } = toStakeAmounts(stake);
+      return sum.plus((deposited + rewarded).toString());
+    }, BigNumber(0));
+  const balance = spendableBalance.plus(stakedBalance);
   // SIP-58 address-balance portion of the native SUI balance — kept so the bridge can validate
   // a spend against it (gas is withdrawn from it when real coins can't cover the budget).
   const fundsInAddressBalance = suiBalance?.fundsInAddressBalance ?? BigNumber(0);
@@ -80,7 +89,7 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async (info, syncCon
     id: accountId,
     syncHash: syncHash ?? undefined,
     balance,
-    spendableBalance: balance,
+    spendableBalance,
     operationsCount: mainAccountOperations.length,
     blockHeight: BLOCK_HEIGHT,
     subAccounts,
