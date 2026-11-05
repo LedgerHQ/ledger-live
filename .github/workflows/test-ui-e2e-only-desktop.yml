@@ -204,7 +204,7 @@ jobs:
       e2e_matrix: ${{ steps.parse.outputs.e2e_matrix }}
       shard_total: ${{ steps.parse.outputs.shard_total }}
       runner_filter: ${{ steps.test-filter.outputs.runner_filter }}
-      os_matrix: ${{ steps.os-legs.outputs.os_matrix }}
+      extra_os_matrix: ${{ steps.extra-os.outputs.extra_os_matrix }}
     steps:
       - name: Parse speculos device input
         id: parse
@@ -266,16 +266,16 @@ jobs:
         shell: bash
 
       - name: Pick the macOS and Windows legs
-        id: os-legs
+        id: extra-os
         env:
           RUN_ON_MACOS: ${{ inputs.run_on_macos || false }}
           RUN_ON_WINDOWS: ${{ inputs.run_on_windows || false }}
         run: |
-          # One leg of e2e-tests-os and report-to-allure-os per run_on_* input that is on.
+          # One leg of e2e-tests-extra-os and report-to-allure-extra-os per run_on_* input that is on.
           jq -rn --argjson macos "$RUN_ON_MACOS" --argjson windows "$RUN_ON_WINDOWS" '{include: [
             if $macos then {os: "macos", label: "macOS", runner: ["macOS", "ARM64", "general-pool"], heap_mb: 7168, workers: "6"} else empty end,
             if $windows then {os: "windows", label: "Windows", runner: ["ledger-live-windows-e2e-32CPU-128RAM"], heap_mb: 14336, workers: "16"} else empty end
-          ]} | "os_matrix=\(tojson)"' >> "$GITHUB_OUTPUT"
+          ]} | "extra_os_matrix=\(tojson)"' >> "$GITHUB_OUTPUT"
         shell: bash
 
       # Everything e2e/tooling/filter reads: the specs and their imports, the generic coin framework
@@ -605,22 +605,22 @@ jobs:
         run: echo "${STATUS_KEY}=${RUN_OUTCOME}" >> "$GITHUB_OUTPUT"
         shell: bash
 
-  e2e-tests-os:
+  e2e-tests-extra-os:
     name: "Desktop E2E (${{ needs.prepare-devices.outputs.device_1 }}, ${{ matrix.label }})"
     needs: [prepare-devices]
     if: ${{ inputs.run_on_macos || inputs.run_on_windows }}
     runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
-      matrix: ${{ fromJSON(needs.prepare-devices.outputs.os_matrix) }}
+      matrix: ${{ fromJSON(needs.prepare-devices.outputs.extra_os_matrix) }}
     permissions:
       id-token: write
       contents: read
     timeout-minutes: 90
     outputs:
       # Each leg's own result for its report: the job's result fails every row when one leg fails.
-      macos: ${{ steps.complete.outputs.macos }}
-      windows: ${{ steps.complete.outputs.windows }}
+      status_macos: ${{ steps.complete.outputs.status_macos }}
+      status_windows: ${{ steps.complete.outputs.status_windows }}
     env:
       NODE_OPTIONS: "--max-old-space-size=${{ matrix.heap_mb }}"
       INSTRUMENT_BUILD: true
@@ -820,7 +820,7 @@ jobs:
       - name: Mark the ${{ matrix.label }} leg as passed
         id: complete
         shell: bash
-        run: echo "${{ matrix.os }}=success" >> "$GITHUB_OUTPUT"
+        run: echo "status_${{ matrix.os }}=success" >> "$GITHUB_OUTPUT"
 
   report-to-allure:
     name: "Create Allure Report - ${{ needs.prepare-devices.outputs.device_1 }}"
@@ -1024,24 +1024,24 @@ jobs:
         with:
           legs: "-${{ needs.prepare-devices.outputs.device_2 }}-shard-*"
 
-  report-to-allure-os:
+  report-to-allure-extra-os:
     name: "Create Allure Report - ${{ matrix.label }}"
     runs-on: [ledger-wallet-1cpu-aws-public-cached]
-    needs: [prepare-devices, e2e-tests-os]
+    needs: [prepare-devices, e2e-tests-extra-os]
     if: ${{ !cancelled() && needs.prepare-devices.result == 'success' && (inputs.run_on_macos || inputs.run_on_windows) }}
     strategy:
       fail-fast: false
-      matrix: ${{ fromJSON(needs.prepare-devices.outputs.os_matrix) }}
+      matrix: ${{ fromJSON(needs.prepare-devices.outputs.extra_os_matrix) }}
     outputs:
       # Each leg's Slack row under its OS name: a matrix job keeps one value per output.
-      macos_status: ${{ steps.row.outputs.macos_status }}
-      macos_summary_message: ${{ steps.row.outputs.macos_summary_message }}
-      macos_report_url: ${{ steps.row.outputs.macos_report_url }}
-      macos_qaa_report_url: ${{ steps.row.outputs.macos_qaa_report_url }}
-      windows_status: ${{ steps.row.outputs.windows_status }}
-      windows_summary_message: ${{ steps.row.outputs.windows_summary_message }}
-      windows_report_url: ${{ steps.row.outputs.windows_report_url }}
-      windows_qaa_report_url: ${{ steps.row.outputs.windows_qaa_report_url }}
+      status_macos: ${{ steps.row.outputs.status_macos }}
+      summary_message_macos: ${{ steps.row.outputs.summary_message_macos }}
+      report_url_macos: ${{ steps.row.outputs.report_url_macos }}
+      qaa_report_url_macos: ${{ steps.row.outputs.qaa_report_url_macos }}
+      status_windows: ${{ steps.row.outputs.status_windows }}
+      summary_message_windows: ${{ steps.row.outputs.summary_message_windows }}
+      report_url_windows: ${{ steps.row.outputs.report_url_windows }}
+      qaa_report_url_windows: ${{ steps.row.outputs.qaa_report_url_windows }}
     env:
       ALLURE_RESULTS: "allure-results-${{ matrix.os }}"
     steps:
@@ -1123,23 +1123,23 @@ jobs:
         env:
           OS: ${{ matrix.os }}
           # A test leg that crashed or timed out fails the row even if the results it left all passed.
-          STATUS: ${{ needs.e2e-tests-os.outputs[matrix.os] != 'success' && 'failure' || steps.summary.outputs.status }}
+          STATUS: ${{ needs.e2e-tests-extra-os.outputs[format('status_{0}', matrix.os)] != 'success' && 'failure' || steps.summary.outputs.status }}
           SUMMARY_MESSAGE: ${{ steps.summary.outputs.summary_message }}
           REPORT_URL: ${{ steps.allure-server.outputs.report-url }}
           QAA_REPORT_URL: ${{ steps.qaa-allure-upload.outputs.report_url }}
         run: |
           {
-            echo "${OS}_status=$STATUS"
-            echo "${OS}_summary_message=$SUMMARY_MESSAGE"
-            echo "${OS}_report_url=$REPORT_URL"
-            echo "${OS}_qaa_report_url=$QAA_REPORT_URL"
+            echo "status_${OS}=$STATUS"
+            echo "summary_message_${OS}=$SUMMARY_MESSAGE"
+            echo "report_url_${OS}=$REPORT_URL"
+            echo "qaa_report_url_${OS}=$QAA_REPORT_URL"
           } >> "$GITHUB_OUTPUT"
         shell: bash
 
   notify-to-slack:
     name: "Notify to Slack"
     runs-on: [ledger-wallet-1cpu-aws-public-cached]
-    needs: [prepare-devices, report-to-allure, report-to-allure-device2, report-to-allure-os]
+    needs: [prepare-devices, report-to-allure, report-to-allure-device2, report-to-allure-extra-os]
     if: ${{ always() && (inputs.slack_notif || github.event_name == 'schedule') }}
     env:
       IS_DUAL: ${{ needs.prepare-devices.outputs.is_dual }}
@@ -1180,15 +1180,15 @@ jobs:
           row3_emoji: "🍎"
           row3_label: ${{ inputs.run_on_macos && 'macos' || '' }}
           row3_flags: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
-          row3_summary: ${{ needs.report-to-allure-os.outputs.macos_summary_message }}
-          row3_report_url: ${{ needs.report-to-allure-os.outputs.macos_report_url }}
-          row3_status: ${{ needs.report-to-allure-os.outputs.macos_status }}
-          row3_qaa_url: ${{ needs.report-to-allure-os.outputs.macos_qaa_report_url }}
+          row3_summary: ${{ needs.report-to-allure-extra-os.outputs.summary_message_macos }}
+          row3_report_url: ${{ needs.report-to-allure-extra-os.outputs.report_url_macos }}
+          row3_status: ${{ needs.report-to-allure-extra-os.outputs.status_macos }}
+          row3_qaa_url: ${{ needs.report-to-allure-extra-os.outputs.qaa_report_url_macos }}
           # Row 4 only renders when the run also ran on Windows.
           row4_emoji: "🪟"
           row4_label: ${{ inputs.run_on_windows && 'windows' || '' }}
           row4_flags: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
-          row4_summary: ${{ needs.report-to-allure-os.outputs.windows_summary_message }}
-          row4_report_url: ${{ needs.report-to-allure-os.outputs.windows_report_url }}
-          row4_status: ${{ needs.report-to-allure-os.outputs.windows_status }}
-          row4_qaa_url: ${{ needs.report-to-allure-os.outputs.windows_qaa_report_url }}
+          row4_summary: ${{ needs.report-to-allure-extra-os.outputs.summary_message_windows }}
+          row4_report_url: ${{ needs.report-to-allure-extra-os.outputs.report_url_windows }}
+          row4_status: ${{ needs.report-to-allure-extra-os.outputs.status_windows }}
+          row4_qaa_url: ${{ needs.report-to-allure-extra-os.outputs.qaa_report_url_windows }}
