@@ -633,6 +633,7 @@ describe("getAccountShape", () => {
             {
               stakedSuiId: "0xstake1",
               status: "Active" as const,
+              estimatedReward: "0",
               principal: mist(1),
               stakeActiveEpoch: "100",
               stakeRequestEpoch: "95",
@@ -686,6 +687,7 @@ describe("getAccountShape", () => {
             {
               stakedSuiId: "0xstake1",
               status: "Active" as const,
+              estimatedReward: "0",
               principal: mist(1),
               stakeActiveEpoch: "100",
               stakeRequestEpoch: "95",
@@ -693,6 +695,7 @@ describe("getAccountShape", () => {
             {
               stakedSuiId: "0xstake2",
               status: "Active" as const,
+              estimatedReward: "0",
               principal: mist(1.5),
               stakeActiveEpoch: "100",
               stakeRequestEpoch: "95",
@@ -732,6 +735,7 @@ describe("getAccountShape", () => {
             {
               stakedSuiId: "0xactive",
               status: "Active" as const,
+              estimatedReward: "0",
               principal: mist(1),
               stakeActiveEpoch: "100",
               stakeRequestEpoch: "95",
@@ -812,6 +816,7 @@ describe("getAccountShape", () => {
             {
               stakedSuiId: "0xexistingStake",
               status: "Active" as const,
+              estimatedReward: "0",
               principal: mist(0.5),
               stakeActiveEpoch: "90",
               stakeRequestEpoch: "85",
@@ -829,6 +834,7 @@ describe("getAccountShape", () => {
             {
               stakedSuiId: "0xnewStake",
               status: "Active" as const,
+              estimatedReward: "0",
               principal: mist(1),
               stakeActiveEpoch: "100",
               stakeRequestEpoch: "95",
@@ -869,6 +875,7 @@ describe("getAccountShape", () => {
             {
               stakedSuiId: "0xlargeStake",
               status: "Active" as const,
+              estimatedReward: "0",
               principal: "999999999999999999999999999999",
               stakeActiveEpoch: "1000",
               stakeRequestEpoch: "995",
@@ -923,6 +930,52 @@ describe("getAccountShape", () => {
 
       // THEN
       expect(shape.suiResources).toEqual({ stakes: null, fundsInAddressBalance: new BigNumber(0) });
+      expect(shape.balance).toEqual(new BigNumber(1000));
+    });
+
+    it("counts staked principal and reward in balance but not in spendableBalance", async () => {
+      // GIVEN
+      mockGetAccountBalances.mockResolvedValue([createAccountBalance()]);
+      mockGetOperations.mockResolvedValue([]);
+      mockGetStakesRaw.mockResolvedValue([
+        {
+          validatorAddress: "0xvalidator1",
+          stakes: [
+            {
+              stakedSuiId: "0xactive",
+              status: "Active" as const,
+              estimatedReward: "50",
+              principal: "200",
+              stakeActiveEpoch: "100",
+              stakeRequestEpoch: "95",
+            },
+            {
+              stakedSuiId: "0xpending",
+              status: "Pending" as const,
+              principal: "300",
+              stakeActiveEpoch: "0",
+              stakeRequestEpoch: "100",
+            },
+          ],
+        },
+      ]);
+
+      // WHEN
+      const shape = await getAccountShape(
+        {
+          index: 0,
+          derivationPath: "44'/784'/0'/0'/0'",
+          currency: getCryptoCurrencyById("sui"),
+          address: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
+          initialAccount: undefined,
+          derivationMode: "sui",
+        },
+        { blacklistedTokenIds: [], paginationConfig: {} },
+      );
+
+      // THEN
+      expect(shape.spendableBalance).toEqual(new BigNumber(1000));
+      expect(shape.balance).toEqual(new BigNumber(1550));
     });
   });
 });
