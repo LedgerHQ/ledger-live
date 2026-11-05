@@ -58,6 +58,7 @@ import { accountAnalyticsIntroductionSlice } from "@features/flow-account-detail
 import { mockServerOverlaySlice } from "@features/flow-device-mock-server/state";
 import { contactsSlice } from "@domain/entity-contact";
 import { accountDataSlice } from "@domain/entity-account-data";
+import { accountReceivesSlice } from "@domain/entity-account-receive";
 import { accountBalancesSlice } from "@domain/entity-account-balance";
 import { accountOperationsSlice } from "@domain/entity-account-operation";
 import { accountBalanceHistoriesSlice } from "@domain/entity-account-balance-history";
@@ -127,6 +128,7 @@ const appReducer = combineReducers({
   supportedFiats: supportedFiatsSlice.reducer,
   contacts: contactsSlice.reducer,
   accountData: accountDataSlice.reducer,
+  accountReceives: accountReceivesSlice.reducer,
   accountBalances: accountBalancesSlice.reducer,
   accountOperations: accountOperationsSlice.reducer,
   accountBalanceHistories: accountBalanceHistoriesSlice.reducer,

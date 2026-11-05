@@ -11,15 +11,15 @@ export type AccountDataRequest = { id: string; append: boolean };
 
 /** How the reads of one kind, account and query went. The data itself lives in the entity's slice. */
 export type AccountDataStatus = {
-  request?: AccountDataRequest;
+  request?: AccountDataRequest | undefined;
   /** Of the last read, cleared by the next answer. */
-  error?: AccountDataError;
+  error?: AccountDataError | undefined;
   /** The source that answered the stored data: only it can serve its next page. */
   sourceId?: AccountDataSourceId;
   /** When the stored head was read, in ms since epoch. */
   readAt?: number;
   /** Where the stored data continues, at its source; absent at the end or on a kind without pages. */
-  nextCursor?: string;
+  nextCursor?: string | undefined;
 };
 
 /** By query, as `accountDataQueryKey` writes it: each query of an account is read and paged on its own. */
