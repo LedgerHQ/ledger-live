@@ -10,6 +10,13 @@ import { PERPS_DEPOSIT_DEFAULT_FUNDING_CURRENCY_ID } from "../../../constants/de
 import { usePerpsDepositViewModel, type PerpsDepositData } from "../usePerpsDepositViewModel";
 
 const mockOpenAssetAndAccount = jest.fn();
+jest.mock("@ledgerhq/live-common/wallet-api/converters", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/wallet-api/converters"),
+  resolveWalletApiSpendableBalance: (account: { spendableBalance: unknown }) => ({
+    then: (onResolved: (balance: unknown) => void) => onResolved(account.spendableBalance),
+  }),
+}));
+
 jest.mock("LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer", () => ({
   useOpenAssetAndAccount: () => ({
     openAssetAndAccountPromise: (params: unknown) => mockOpenAssetAndAccount(params),

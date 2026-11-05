@@ -320,9 +320,11 @@ export function resolveDepositFormError({
   if (!quoteResult) return null;
 
   const { quote } = quoteResult;
+  const hasUsableFee =
+    quote !== undefined && feeAccount !== undefined && !hasForeignFeeCurrency(quote, feeAccount);
   const minimumBalanceError = getMinimumBalanceError(
     depositAccount,
-    quote,
+    hasUsableFee ? quote : undefined,
     sentAmountAtomic,
     locale,
     getSpendableBalance,
@@ -332,11 +334,7 @@ export function resolveDepositFormError({
   const amountLimitError = getAmountLimitError(quoteResult, depositAccount, locale);
   if (amountLimitError) return amountLimitError;
 
-  const isQuoteUsable =
-    quote !== undefined &&
-    feeAccount !== undefined &&
-    !hasForeignFeeCurrency(quote, feeAccount) &&
-    !needsFeeForMinimumBalance(depositAccount, quote);
+  const isQuoteUsable = hasUsableFee && !needsFeeForMinimumBalance(depositAccount, quote);
   return isQuoteUsable ? null : NO_QUOTES_ERROR;
 }
 

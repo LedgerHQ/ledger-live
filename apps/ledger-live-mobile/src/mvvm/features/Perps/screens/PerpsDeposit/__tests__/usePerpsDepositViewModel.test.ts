@@ -17,6 +17,13 @@ import {
 } from "@ledgerhq/live-common/wallet-api/Perps/deposit/request";
 
 const mockOpenDrawer = jest.fn();
+jest.mock("@ledgerhq/live-common/wallet-api/converters", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/wallet-api/converters"),
+  resolveWalletApiSpendableBalance: (account: { spendableBalance: unknown }) => ({
+    then: (onResolved: (balance: unknown) => void) => onResolved(account.spendableBalance),
+  }),
+}));
+
 jest.mock("LLM/features/ModularDrawer", () => ({
   useModularDrawerController: () => ({ openDrawer: mockOpenDrawer }),
 }));
@@ -160,10 +167,7 @@ describe("usePerpsDepositViewModel", () => {
     });
   });
 
-  afterEach(() => {
-    cancelDepositRequest();
-    jest.restoreAllMocks();
-  });
+  afterEach(() => cancelDepositRequest());
 
   it("starts with an empty amount and no funding account", () => {
     const { props } = createProps();
@@ -687,21 +691,25 @@ describe("usePerpsDepositViewModel", () => {
 
   it("opens the support article of a coin error from Learn More", () => {
     const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(true);
-    const tezosAccount = {
-      ...createAccount("tezos-1", "tezos", 10000),
-      readiness: { ready: false },
-    };
-    const { props } = createProps();
-    const { result } = renderViewModel(props, false, [tezosAccount]);
+    try {
+      const tezosAccount = {
+        ...createAccount("tezos-1", "tezos", 10000),
+        readiness: { ready: false },
+      };
+      const { props } = createProps();
+      const { result } = renderViewModel(props, false, [tezosAccount]);
 
-    act(() => result.current.pickDepositAccount());
-    selectFundingAccount(tezosAccount);
-    typeAmount(result.current.pressAmountKey, "20");
+      act(() => result.current.pickDepositAccount());
+      selectFundingAccount(tezosAccount);
+      typeAmount(result.current.pressAmountKey, "20");
 
-    expect(result.current.statusError?.code).toBe("tezosUnrevealed");
+      expect(result.current.statusError?.code).toBe("tezosUnrevealed");
 
-    act(() => result.current.openDetails());
+      act(() => result.current.openDetails());
 
-    expect(openURL).toHaveBeenCalledWith(result.current.statusError?.supportUrl);
+      expect(openURL).toHaveBeenCalledWith(result.current.statusError?.supportUrl);
+    } finally {
+      openURL.mockRestore();
+    }
   });
 });

@@ -66,6 +66,12 @@ export function getDepositAmountState({
   return { baseError, isFormComplete, sentAmountAtomic };
 }
 
+const BALANCE_PENDING_STATE: DepositAmountState = {
+  baseError: null,
+  isFormComplete: false,
+  sentAmountAtomic: undefined,
+};
+
 export type DepositTrack = (event: string, properties: Record<string, string>) => void;
 
 export type UseDepositFormErrorsParams = Readonly<{
@@ -84,6 +90,7 @@ export type UseDepositFormErrorsParams = Readonly<{
   openBuy: (target: DepositBuyTarget) => void;
   openSupportUrl: (url: string) => void;
   getSpendableBalance?: SpendableBalanceReader;
+  isBalancePending?: boolean;
 }>;
 
 export type DepositFormErrors = Readonly<{
@@ -114,22 +121,26 @@ export function useDepositFormErrors({
   openBuy,
   openSupportUrl,
   getSpendableBalance,
+  isBalancePending = false,
 }: UseDepositFormErrorsParams): DepositFormErrors {
   /** What the user typed comes first; a missing quote only matters once it is valid. */
   const statusError = useMemo(
     () =>
-      resolveDepositFormError({
-        isOffline,
-        baseError,
-        depositAccount,
-        parentAccount,
-        depositAmount,
-        sentAmountAtomic,
-        quoteResult,
-        locale,
-        getSpendableBalance,
-      }),
+      isBalancePending
+        ? null
+        : resolveDepositFormError({
+            isOffline,
+            baseError,
+            depositAccount,
+            parentAccount,
+            depositAmount,
+            sentAmountAtomic,
+            quoteResult,
+            locale,
+            getSpendableBalance,
+          }),
     [
+      isBalancePending,
       getSpendableBalance,
       baseError,
       depositAccount,
@@ -296,10 +307,14 @@ export function usePerpsDepositForm({
     ? getDepositFeeAccount(depositAccount, parentAccount)
     : undefined;
   const depositWalletApiBalance = useWalletApiSpendableBalance(depositAccount, parentAccount);
+  const needsFeeBalance = feeAccount !== undefined && feeAccount !== depositAccount;
   const feeWalletApiBalance = useWalletApiSpendableBalance(
-    feeAccount === depositAccount ? undefined : feeAccount,
+    needsFeeBalance ? feeAccount : undefined,
     undefined,
   );
+  const isBalancePending =
+    (depositAccount !== undefined && depositWalletApiBalance === undefined) ||
+    (needsFeeBalance && feeWalletApiBalance === undefined);
   const getSpendableBalance = useCallback<SpendableBalanceReader>(
     account => {
       if (account === depositAccount) return depositWalletApiBalance ?? account.spendableBalance;
@@ -308,7 +323,7 @@ export function usePerpsDepositForm({
     },
     [depositAccount, depositWalletApiBalance, feeAccount, feeWalletApiBalance],
   );
-  const depositSpendableBalance = depositAccount ? getSpendableBalance(depositAccount) : undefined;
+  const depositSpendableBalance = depositWalletApiBalance;
   const maxAmount = useMemo(
     () =>
       depositAccount && depositSpendableBalance
@@ -322,21 +337,27 @@ export function usePerpsDepositForm({
     [depositAccount, toCurrencyAmount],
   );
 
-  const feeAccount = depositAccount
-    ? getDepositFeeAccount(depositAccount, parentAccount)
-    : undefined;
-
   const amountState = useMemo(
     () =>
-      getDepositAmountState({
-        depositAccount,
-        parentAccount,
-        depositAmount,
-        maxAmount,
-        convertedAmount,
-        getSpendableBalance,
-      }),
-    [convertedAmount, depositAccount, depositAmount, getSpendableBalance, maxAmount, parentAccount],
+      isBalancePending
+        ? BALANCE_PENDING_STATE
+        : getDepositAmountState({
+            depositAccount,
+            parentAccount,
+            depositAmount,
+            maxAmount,
+            convertedAmount,
+            getSpendableBalance,
+          }),
+    [
+      convertedAmount,
+      depositAccount,
+      depositAmount,
+      getSpendableBalance,
+      isBalancePending,
+      maxAmount,
+      parentAccount,
+    ],
   );
 
   const { sentAmountAtomic } = amountState;
@@ -373,6 +394,7 @@ export function usePerpsDepositForm({
     openBuy,
     openSupportUrl,
     getSpendableBalance,
+    isBalancePending,
   });
 
   return {

@@ -273,6 +273,17 @@ describe("coin errors in the deposit resolver", () => {
       ).toBe("xlmMinimumBalance");
     });
 
+    it("shows no quote, not the minimum, when the fee is in another currency", () => {
+      expect(
+        resolve(account("stellar", "107"), {
+          quoteResult: {
+            quote: { ...quoteWithFee(), estimatedNetworkFee: { amount: "7", currencyId: "other" } },
+            errors: [],
+          },
+        })?.code,
+      ).toBe("noQuotes");
+    });
+
     it("comes after the fee error", () => {
       expect(
         resolve(account("stellar", "100"), {

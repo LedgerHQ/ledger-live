@@ -18,6 +18,11 @@ jest.mock("./useDepositQuote", () => ({
   usePerpsDepositQuote: (params: unknown) => mockUsePerpsDepositQuote(params),
 }));
 
+const resolveImmediately = (account: AccountLike) =>
+  ({
+    then: (onResolved: (balance: BigNumber) => void) => onResolved(account.spendableBalance),
+  }) as unknown as Promise<BigNumber>;
+
 const mockResolveWalletApiSpendableBalance = jest.fn<Promise<BigNumber>, [AccountLike]>();
 jest.mock("../../converters", () => ({
   ...jest.requireActual("../../converters"),
@@ -108,7 +113,7 @@ const errorEvents = (track: jest.Mock) =>
 describe("usePerpsDepositForm", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockResolveWalletApiSpendableBalance.mockReturnValue(new Promise(() => {}));
+    mockResolveWalletApiSpendableBalance.mockImplementation(resolveImmediately);
     mockUsePerpsDepositQuote.mockReturnValue(
       quoteState({
         quote: { amountTo: new BigNumber(19), quoteId: "q-1", errors: [] },
@@ -123,7 +128,12 @@ describe("usePerpsDepositForm", () => {
     );
     const { result } = renderForm();
 
-    expect(result.current.maxAmount).toBe(50);
+    expect(result.current.maxAmount).toBeNull();
+    expect(result.current.statusError).toBeNull();
+    expect(result.current.canReview).toBe(false);
+    expect(mockUsePerpsDepositQuote).toHaveBeenLastCalledWith(
+      expect.objectContaining({ amount: "" }),
+    );
 
     await waitFor(() => expect(result.current.maxAmount).toBe(10));
     expect(result.current.statusError?.code).toBe("insufficientBalance");
@@ -271,7 +281,7 @@ describe("usePerpsDepositForm", () => {
 describe("usePerpsDepositForm refresh and analytics", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockResolveWalletApiSpendableBalance.mockReturnValue(new Promise(() => {}));
+    mockResolveWalletApiSpendableBalance.mockImplementation(resolveImmediately);
     mockUsePerpsDepositQuote.mockReturnValue(AMOUNT_TOO_LOW);
   });
 
