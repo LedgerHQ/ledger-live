@@ -560,3 +560,48 @@ describe("BridgeAdapter.getSolanaStakes", () => {
     await expect(adapter.getSolanaStakes(descriptor)).resolves.toEqual([]);
   });
 });
+
+describe("BridgeAdapter.getBalances", () => {
+  const descriptor = { id: "sol-acc", currencyId: "solana" } as AccountDescriptor;
+  const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+
+  it("carries the synced token's metadata on each token balance", async () => {
+    const adapter = adapterWithSyncedAccount({
+      currency: { id: "solana" },
+      balance: new BigNumber(5_000_000_000),
+      subAccounts: [
+        {
+          type: "TokenAccount",
+          balance: new BigNumber(1_500_000),
+          token: {
+            type: "TokenCurrency",
+            id: "solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v",
+            ticker: "USDC",
+            name: "USD Coin",
+            contractAddress: USDC_MINT,
+            parentCurrencyId: "solana",
+            tokenType: "spl",
+            units: [{ name: "USDC", code: "USDC", magnitude: 6 }],
+          },
+        },
+      ],
+    });
+
+    await expect(adapter.getBalances(descriptor)).resolves.toEqual([
+      { assetId: "solana", balance: BigNumberStrSchema.parse("5000000000") },
+      {
+        assetId: "solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v",
+        balance: BigNumberStrSchema.parse("1500000"),
+        token: {
+          id: "solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v",
+          ticker: "USDC",
+          name: "USD Coin",
+          contractAddress: USDC_MINT,
+          parentCurrencyId: "solana",
+          tokenType: "spl",
+          decimals: 6,
+        },
+      },
+    ]);
+  });
+});

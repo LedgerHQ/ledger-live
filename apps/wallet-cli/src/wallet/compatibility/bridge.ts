@@ -33,6 +33,7 @@ import {
 } from "@ledgerhq/live-common/families/solana/transactions";
 import BigNumber from "bignumber.js";
 import { BigNumberStrSchema, DateTimeIsoSchema } from "@shared/schema-primitives";
+import { toTokenInfo } from "../models";
 import type { AccountDescriptor, Balance, Operation, SendEvent } from "../models";
 import type { EarnSolanaStake, SolanaStakeLimits } from "../earn/types";
 import { isStakeAmountError, SolanaStakeAmountError } from "../earn/errors";
@@ -168,6 +169,7 @@ export class BridgeAdapter {
         balances.push({
           assetId: sub.token.id,
           balance: BigNumberStrSchema.parse(sub.balance.toFixed()),
+          token: toTokenInfo(sub.token),
         });
       }
     }
