@@ -8,25 +8,33 @@ import { getCardSessionToken } from "@features/platform-card";
 import { featureFlagsReducer, setCachedFlagsSettled } from "@shared/feature-flags";
 import LedgerStoreProvider from "./LedgerStore";
 
-const mockGetSettings = jest.fn(() => Promise.resolve(undefined));
+const mockGetSettings = jest.fn<Promise<unknown>, []>(() => Promise.resolve(undefined));
+const mockGetAccounts = jest.fn<Promise<unknown>, []>(() => Promise.resolve(undefined));
+const mockGetMarketState = jest.fn<Promise<unknown>, []>(() => Promise.resolve(undefined));
+const mockGetKnownDevices = jest.fn<Promise<unknown>, []>(() => Promise.resolve(undefined));
+const mockSaveAccounts = jest.fn(() => Promise.resolve());
+const mockGetPostOnboardingState = jest.fn<Promise<unknown>, []>(() => Promise.resolve(undefined));
+const mockGetFeatureFlagsState = jest.fn<Promise<unknown>, []>(() => Promise.resolve(undefined));
+const mockSaveFeatureFlagsState = jest.fn(() => Promise.resolve());
 
 jest.mock("../db", () => {
   const empty = () => Promise.resolve(undefined);
   return {
-    getAccounts: empty,
+    getAccounts: () => mockGetAccounts(),
+    saveAccounts: () => mockSaveAccounts(),
     getCountervalues: empty,
     getCryptoAssetsCacheState: empty,
-    getFeatureFlagsState: empty,
-    saveFeatureFlagsState: empty,
+    getFeatureFlagsState: () => mockGetFeatureFlagsState(),
+    saveFeatureFlagsState: () => mockSaveFeatureFlagsState(),
     getSettings: () => mockGetSettings(),
     getBle: empty,
     getHistory: empty,
-    getKnownDevices: empty,
+    getKnownDevices: () => mockGetKnownDevices(),
     getLargeScreenUpsellModalState: empty,
     getPredictionsState: empty,
-    getPostOnboardingState: empty,
+    getPostOnboardingState: () => mockGetPostOnboardingState(),
     getProtect: empty,
-    getMarketState: empty,
+    getMarketState: () => mockGetMarketState(),
     getMarketListConfig: empty,
     getMarketBannerState: empty,
     getPayCardState: empty,
@@ -38,8 +46,9 @@ jest.mock("../db", () => {
   };
 });
 jest.mock("../helpers/identities", () => ({ initIdentities: () => Promise.resolve() }));
+const mockBackfillOnboardingDate = jest.fn();
 jest.mock("~/logic/postOnboarding/backfillOnboardingDate", () => ({
-  backfillOnboardingDate: () => {},
+  backfillOnboardingDate: () => mockBackfillOnboardingDate(),
 }));
 const mockBootstrapCardSession = jest.fn(() => Promise.resolve());
 jest.mock("LLM/utils/bootstrapCardSession", () => ({
@@ -64,8 +73,24 @@ const renderProvider = (store: Store) =>
     </LedgerStoreProvider>,
   );
 
+// The error that MMKV `get` rejects with when the stored value is not valid JSON.
+const corruptValueError = () => {
+  const error = new Error("Unexpected token } in JSON at position 1");
+  error.name = "SyntaxError";
+  return error;
+};
+
 describe("LedgerStoreProvider", () => {
   beforeEach(() => {
+    mockGetAccounts.mockReset().mockResolvedValue(undefined);
+    mockGetMarketState.mockReset().mockResolvedValue(undefined);
+    mockGetKnownDevices.mockReset().mockResolvedValue(undefined);
+    mockSaveAccounts.mockClear();
+    mockGetPostOnboardingState.mockReset().mockResolvedValue(undefined);
+    mockBackfillOnboardingDate.mockClear();
+    mockGetFeatureFlagsState.mockReset().mockResolvedValue(undefined);
+    mockSaveFeatureFlagsState.mockClear();
+    jest.spyOn(console, "error").mockImplementation(() => {});
     mockBootstrapCardSession.mockClear();
     jest.mocked(getCardSessionToken).mockReset();
     jest.mocked(getCardSessionToken).mockResolvedValue(null);
@@ -126,5 +151,103 @@ describe("LedgerStoreProvider", () => {
 
     expect(screen.getByText("ready")).toBeOnTheScreen();
     expect(selectCardAuthStatus(store.getState())).toBe("signedIn");
+  });
+
+  it("should become ready when 1 key cannot be read", async () => {
+    mockGetMarketState.mockRejectedValue(corruptValueError());
+    const store = createStore();
+    store.dispatch(setCachedFlagsSettled());
+
+    renderProvider(store);
+    await act(() => jest.runAllTimersAsync());
+
+    expect(screen.getByText("ready")).toBeOnTheScreen();
+    // A retry cannot fix invalid JSON and adds to the storage rollback counter.
+    expect(mockGetMarketState).toHaveBeenCalledTimes(1);
+  });
+
+  it("should retry a read that fails for another reason", async () => {
+    mockGetMarketState.mockRejectedValueOnce(new Error("busy")).mockResolvedValue(undefined);
+    const store = createStore();
+    store.dispatch(setCachedFlagsSettled());
+
+    renderProvider(store);
+    await act(() => jest.runAllTimersAsync());
+
+    expect(screen.getByText("ready")).toBeOnTheScreen();
+    expect(mockGetMarketState).toHaveBeenCalledTimes(2);
+  });
+
+  it("should stop the boot and not write the accounts when they cannot be read", async () => {
+    mockGetAccounts.mockRejectedValue(corruptValueError());
+    const store = createStore();
+    store.dispatch(setCachedFlagsSettled());
+    const onInitFinished = jest.fn();
+
+    render(
+      <LedgerStoreProvider store={store} onInitFinished={onInitFinished}>
+        {({ ready }) => <Text>{ready ? "ready" : "loading"}</Text>}
+      </LedgerStoreProvider>,
+    );
+    await act(() => jest.runAllTimersAsync());
+
+    // The savers mount only after `ready`, so an empty accounts state never reaches the storage.
+    expect(screen.getByText("loading")).toBeOnTheScreen();
+    expect(onInitFinished).not.toHaveBeenCalled();
+    expect(mockBootstrapCardSession).not.toHaveBeenCalled();
+    expect(mockSaveAccounts).not.toHaveBeenCalled();
+  });
+
+  it("should stop the boot when the known devices cannot be read", async () => {
+    mockGetKnownDevices.mockRejectedValue(corruptValueError());
+    const store = createStore();
+    store.dispatch(setCachedFlagsSettled());
+
+    renderProvider(store);
+    await act(() => jest.runAllTimersAsync());
+
+    // The known devices saver writes at start, so it would replace the stored devices.
+    expect(screen.getByText("loading")).toBeOnTheScreen();
+    expect(mockBootstrapCardSession).not.toHaveBeenCalled();
+  });
+
+  it("should stop the boot when the settings cannot be read", async () => {
+    mockGetSettings.mockRejectedValueOnce(corruptValueError());
+    const store = createStore();
+    store.dispatch(setCachedFlagsSettled());
+
+    renderProvider(store);
+    await act(() => jest.runAllTimersAsync());
+
+    // Default settings have no password lock, so the app would open without it.
+    expect(screen.getByText("loading")).toBeOnTheScreen();
+    expect(mockBootstrapCardSession).not.toHaveBeenCalled();
+  });
+
+  it("should not migrate the legacy feature flags over an unreadable value", async () => {
+    mockGetFeatureFlagsState.mockRejectedValue(corruptValueError());
+    mockGetSettings.mockResolvedValueOnce({
+      overriddenFeatureFlags: { someFlag: { enabled: true } },
+    });
+    const store = createStore();
+    store.dispatch(setCachedFlagsSettled());
+
+    renderProvider(store);
+    await act(() => jest.runAllTimersAsync());
+
+    expect(screen.getByText("ready")).toBeOnTheScreen();
+    expect(mockSaveFeatureFlagsState).not.toHaveBeenCalled();
+  });
+
+  it("should not backfill the onboarding date over an unreadable value", async () => {
+    mockGetPostOnboardingState.mockRejectedValue(corruptValueError());
+    const store = createStore();
+    store.dispatch(setCachedFlagsSettled());
+
+    renderProvider(store);
+    await act(() => jest.runAllTimersAsync());
+
+    expect(screen.getByText("ready")).toBeOnTheScreen();
+    expect(mockBackfillOnboardingDate).not.toHaveBeenCalled();
   });
 });

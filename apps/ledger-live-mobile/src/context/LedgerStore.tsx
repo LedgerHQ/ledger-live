@@ -78,14 +78,46 @@ const RETRY_DELAY = 500;
 async function retry<T>(fn: () => Promise<T>, retries: number, delay: number): Promise<T> {
   try {
     return await fn();
-  } catch {
-    if (retries > 0) {
+  } catch (error) {
+    // A value that is not valid JSON stays invalid: each retry only adds to the storage rollback counter.
+    if (retries > 0 && !(error instanceof Error && error.name === "SyntaxError")) {
       await new Promise(res => setTimeout(res, delay));
       return retry(fn, retries - 1, delay);
-    } else {
-      throw new Error(`Max retries reached for ${fn.name}`);
     }
+    throw error;
   }
+}
+
+/**
+ * Without these keys, the savers and Ledger Sync would persist an empty state over the stored one
+ * (the accounts saver deletes every stored account that is not in the state, and the known devices
+ * and identities savers write at start), so the boot stops instead. Default settings would also
+ * open the app without the password lock that the stored settings configure.
+ */
+const BOOT_BLOCKING_KEYS = new Set([
+  "settings",
+  "accounts",
+  "wallet",
+  "trustchain",
+  "knownDevices",
+  "identities",
+  "user",
+]);
+
+/**
+ * Reads 1 key and never rejects, so 1 unreadable value does not block the other reads.
+ * The stored value stays as it is, so that a later fix can recover it.
+ */
+function readKey<T>(
+  key: string,
+  read: () => Promise<T>,
+  unreadableKeys: string[],
+): Promise<T | undefined> {
+  return retry(read, MAX_RETRIES, RETRY_DELAY).catch(error => {
+    unreadableKeys.push(key);
+    console.error(`Failed to read "${key}" from storage during initialization:`, error);
+    return undefined;
+  });
 }
 
 const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store }) => {
@@ -99,6 +131,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       const cachedFlagsSettled = whenCachedFlagsSettled(store);
       const readStorageStart = Date.now();
       mmkvStorageWrapper.monitor(true);
+      const unreadableKeys: string[] = [];
       const [
         bleData,
         persistedKnownDevices,
@@ -122,27 +155,27 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         legacyUser,
         historyState,
       ] = await Promise.all([
-        retry(getBle, MAX_RETRIES, RETRY_DELAY),
-        retry(getKnownDevices, MAX_RETRIES, RETRY_DELAY),
-        retry(getSettings, MAX_RETRIES, RETRY_DELAY),
-        retry(getAccounts, MAX_RETRIES, RETRY_DELAY),
-        retry(getPostOnboardingState, MAX_RETRIES, RETRY_DELAY),
-        retry(getLargeScreenUpsellModalState, MAX_RETRIES, RETRY_DELAY),
-        retry(getPredictionsState, MAX_RETRIES, RETRY_DELAY),
-        retry(getMarketState, MAX_RETRIES, RETRY_DELAY),
-        retry(getMarketListConfig, MAX_RETRIES, RETRY_DELAY),
-        retry(getMarketBannerState, MAX_RETRIES, RETRY_DELAY),
-        retry(getPayCardState, MAX_RETRIES, RETRY_DELAY),
-        retry(getTrustchainState, MAX_RETRIES, RETRY_DELAY),
-        retry(getWalletExportState, MAX_RETRIES, RETRY_DELAY),
-        retry(getProtect, MAX_RETRIES, RETRY_DELAY),
-        retry(getCountervalues, MAX_RETRIES, RETRY_DELAY),
-        retry(getLargeMoverState, MAX_RETRIES, RETRY_DELAY),
-        retry(getCryptoAssetsCacheState, MAX_RETRIES, RETRY_DELAY),
-        retry(getIdentities, MAX_RETRIES, RETRY_DELAY),
-        retry(getFeatureFlagsState, MAX_RETRIES, RETRY_DELAY),
-        retry(getUser, MAX_RETRIES, RETRY_DELAY),
-        retry(getHistory, MAX_RETRIES, RETRY_DELAY),
+        readKey("ble", getBle, unreadableKeys),
+        readKey("knownDevices", getKnownDevices, unreadableKeys),
+        readKey("settings", getSettings, unreadableKeys),
+        readKey("accounts", getAccounts, unreadableKeys),
+        readKey("postOnboarding", getPostOnboardingState, unreadableKeys),
+        readKey("largeScreenUpsellModal", getLargeScreenUpsellModalState, unreadableKeys),
+        readKey("predictions", getPredictionsState, unreadableKeys),
+        readKey("market", getMarketState, unreadableKeys),
+        readKey("marketListConfig", getMarketListConfig, unreadableKeys),
+        readKey("marketBanner", getMarketBannerState, unreadableKeys),
+        readKey("payCard", getPayCardState, unreadableKeys),
+        readKey("trustchain", getTrustchainState, unreadableKeys),
+        readKey("wallet", getWalletExportState, unreadableKeys),
+        readKey("protect", getProtect, unreadableKeys),
+        readKey("countervalues", getCountervalues, unreadableKeys),
+        readKey("largeMover", getLargeMoverState, unreadableKeys),
+        readKey("cryptoAssetsCache", getCryptoAssetsCacheState, unreadableKeys),
+        readKey("identities", getIdentities, unreadableKeys),
+        readKey("featureFlags", getFeatureFlagsState, unreadableKeys),
+        readKey("user", getUser, unreadableKeys),
+        readKey("history", getHistory, unreadableKeys),
       ]).finally(() => {
         logStartupEvent<StoreStorageData>(STARTUP_EVENTS.STORE_STORAGE_READ, {
           readTime: Date.now() - readStorageStart,
@@ -150,10 +183,20 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         });
       });
 
+      const blockingKeys = unreadableKeys.filter(key => BOOT_BLOCKING_KEYS.has(key));
+      if (blockingKeys.length > 0) {
+        console.error(
+          `Storage initialization stopped: cannot read ${blockingKeys.join(", ")}. The stored values are kept.`,
+        );
+        return;
+      }
+
       await cachedFlagsSettled;
       logStartupEvent("Feature flags cache settled");
 
-      store.dispatch(importBle(bleData));
+      if (bleData) {
+        store.dispatch(importBle(bleData));
+      }
       if (persistedKnownDevices) {
         store.dispatch(importKnownDevices(persistedKnownDevices));
       }
@@ -168,7 +211,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         );
       }
 
-      store.dispatch(importSettings(settingsData));
+      store.dispatch(importSettings(settingsData ?? {}));
 
       // Hydrate persisted crypto assets tokens BEFORE importing accounts
       // This ensures tokens are available when decoding accounts (which now uses findTokenById)
@@ -181,7 +224,8 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 
       // Handle account import with error recovery for async issues
       try {
-        (await importAccountsRaw(accountsData))(store.dispatch);
+        // Always set here: an unreadable accounts key stops the boot above.
+        if (accountsData) (await importAccountsRaw(accountsData))(store.dispatch);
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error("Failed to import accounts during initialization:", error);
@@ -193,7 +237,10 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         store.dispatch(importPostOnboardingState({ newState: postOnboardingState }));
       }
 
-      backfillOnboardingDate(store);
+      // The backfill saves at once, so it must not run over an unreadable value.
+      if (!unreadableKeys.includes("postOnboarding")) {
+        backfillOnboardingDate(store);
+      }
 
       if (largeScreenUpsellModalState) {
         store.dispatch(restoreLargeScreenUpsellModalState(largeScreenUpsellModalState));
@@ -248,7 +295,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       if (persistedFeatureFlags) {
         store.dispatch(setAllOverrides(persistedFeatureFlags.overrides));
         store.dispatch(setBannerVisible(persistedFeatureFlags.bannerVisible));
-      } else if (settingsData) {
+      } else if (settingsData && !unreadableKeys.includes("featureFlags")) {
         // One-time migration from legacy settings fields. Write the new featureFlags key directly
         // so DBSave does not need saveAtStart and avoids a spurious write on every subsequent boot.
         // The legacy fields have been removed from SettingsState but may still exist in old persisted payloads.
