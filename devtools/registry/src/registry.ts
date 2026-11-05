@@ -1,3 +1,4 @@
+import * as coinIntegration from "./metadata/coin-integration";
 import * as engagement from "./metadata/engagement";
 import * as platform from "./metadata/platform";
 import * as walletXp from "./metadata/wallet-xp";
@@ -19,6 +20,7 @@ export const tools = {
   "account-name": platform.accountName,
   "mock-accounts": platform.mockAccounts,
   "account-detail": walletXp.accountDetail,
+  "coin-config": coinIntegration.coinConfig,
 } as const;
 
 /**
@@ -52,4 +54,5 @@ export type DevToolConfig =
   | { id: "app-config"; config: platform.AppConfigToolProps }
   | { id: "account-name"; config: platform.AccountNameToolProps }
   | { id: "mock-accounts"; config: platform.MockAccountsToolProps }
-  | { id: "account-detail"; config: walletXp.AccountDetailToolProps };
+  | { id: "account-detail"; config: walletXp.AccountDetailToolProps }
+  | { id: "coin-config"; config: coinIntegration.CoinConfigToolProps };

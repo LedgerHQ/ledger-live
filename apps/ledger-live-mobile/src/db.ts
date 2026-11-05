@@ -28,6 +28,7 @@ import {
   type PersistedKnownDevicesState,
 } from "./reducers/knownDevices";
 import type { FeatureFlagsState } from "@shared/feature-flags";
+import type { LiveConfigOverridesState } from "@shared/live-config-overrides";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { ExportedWalletState } from "~/reducers/wallet";
 import { type PersistedCAL } from "@domain/api-currency-token";
@@ -426,4 +427,13 @@ export async function saveFeatureFlagsState(
   obj: Pick<FeatureFlagsState, "overrides" | "bannerVisible">,
 ): Promise<void> {
   await storage.save("featureFlags", obj);
+}
+
+/** `overrides` is untrusted until `sanitizePersistedOverrides` validates it. */
+export function getLiveConfigOverridesState(): Promise<{ overrides?: unknown } | null> {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  return storage.get("coinConfigOverrides") as Promise<{ overrides?: unknown } | null>;
+}
+export async function saveLiveConfigOverridesState(obj: LiveConfigOverridesState): Promise<void> {
+  await storage.save("coinConfigOverrides", obj);
 }

@@ -32,7 +32,8 @@
     "@devtools/app-config": "workspace:*",
     "@devtools/account-name": "workspace:*",
     "@devtools/mock-accounts": "workspace:*",
-    "@devtools/account-detail": "workspace:*"
+    "@devtools/account-detail": "workspace:*",
+    "@devtools/coin-config": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=19"

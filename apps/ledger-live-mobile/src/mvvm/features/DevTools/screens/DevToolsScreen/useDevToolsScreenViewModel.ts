@@ -6,12 +6,14 @@ import type {
   NativeStackNavigationProp,
 } from "@react-navigation/native-stack";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { getStackNavigationConfigV4 } from "LLM/components/Navigation";
 import {
   useFeatureFlagsToolProps,
   usePayCardToolProps,
   useEnvDevToolProps,
   useAppConfigToolProps,
+  useCoinConfigToolProps,
   useAccountDetailToolProps,
 } from "@devtools/bindings";
 import type { DevToolsConfig } from "@devtools/shell";
@@ -34,6 +36,9 @@ type BaseNavigation = NativeStackNavigationProp<
   keyof BaseNavigatorStackParamList,
   typeof BASE_NAVIGATOR_ID
 >;
+
+const getLiveConfigValue = (key: string): unknown => LiveConfig.getValueByKey(key);
+const getLiveConfigDefaultValue = (key: string): unknown => LiveConfig.getDefaultValueByKey(key);
 
 export function useDevToolsScreenViewModel() {
   const navigation = useNavigation<BaseNavigation>();
@@ -101,6 +106,12 @@ export function useDevToolsScreenViewModel() {
   );
   const envToolProps = useEnvDevToolProps();
   const appConfigToolProps = useAppConfigToolProps();
+  const liveConfigKeys = useMemo(() => Object.keys(LiveConfig.instance.config), []);
+  const coinConfigToolProps = useCoinConfigToolProps({
+    keys: liveConfigKeys,
+    getValueByKey: getLiveConfigValue,
+    getDefaultValueByKey: getLiveConfigDefaultValue,
+  });
   const accountDetailToolProps = useAccountDetailToolProps();
   const dmk = useDeviceManagementKit();
   const knownDevices = useSelector(knownDevicesSelector);
@@ -120,6 +131,7 @@ export function useDevToolsScreenViewModel() {
       { id: "feature-flags", config: featureFlagsProps },
       { id: "env", config: envToolProps },
       { id: "app-config", config: appConfigToolProps },
+      { id: "coin-config", config: coinConfigToolProps },
       { id: "pay-card", config: payCardToolProps },
       { id: "device-onboarding", config: deviceOnboardingProps },
       { id: "account-detail", config: accountDetailToolProps },
@@ -128,6 +140,7 @@ export function useDevToolsScreenViewModel() {
       featureFlagsProps,
       envToolProps,
       appConfigToolProps,
+      coinConfigToolProps,
       payCardToolProps,
       deviceOnboardingProps,
       accountDetailToolProps,

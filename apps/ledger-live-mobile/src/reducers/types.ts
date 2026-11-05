@@ -1,5 +1,6 @@
 import type { Account, DeviceInfo, DeviceModelInfo, PortfolioRange } from "@ledgerhq/types-live";
 import type { FeatureFlagsState } from "@shared/feature-flags";
+import type { LiveConfigOverridesState } from "@shared/live-config-overrides";
 import type { AppConfigState } from "@shared/app-config";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { ActionDialogParams } from "@ledgerhq/live-common/wallet-api/validation/actionDialogParams";
@@ -484,6 +485,7 @@ export type State = LLMRTKApiState & {
   knownDevices: KnownDevicesState;
   largeScreenUpsellModal: LargeScreenUpsellModalState;
   largeMover: LargeMoverState;
+  liveConfigOverrides: LiveConfigOverridesState;
   market: MarketState;
   marketListConfig: MarketListConfigState;
   marketBanner: MarketBannerState;

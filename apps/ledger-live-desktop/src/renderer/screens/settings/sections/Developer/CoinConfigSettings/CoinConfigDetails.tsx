@@ -3,7 +3,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import { Tag } from "@ledgerhq/lumen-ui-react";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { coinConfigOverridesSelector } from "~/renderer/reducers/coinConfigOverrides";
+import { liveConfigOverridesSelector } from "@shared/live-config-overrides";
 import CoinConfigEdit from "./CoinConfigEdit";
 
 type Props = {
@@ -14,7 +14,7 @@ type Props = {
 
 const CoinConfigDetails: React.FC<Props> = ({ configKey, focused, setFocusedName }) => {
   const { t } = useTranslation();
-  const overrides = useSelector(coinConfigOverridesSelector);
+  const overrides = useSelector(liveConfigOverridesSelector);
 
   const isOverridden = Object.hasOwn(overrides, configKey);
   const overrideValue = overrides[configKey];

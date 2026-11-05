@@ -257,6 +257,7 @@
     "@shared/feature-flags": "workspace:*",
     "@shared/i18n": "workspace:*",
     "@shared/linking": "workspace:*",
+    "@shared/live-config-overrides": "workspace:*",
     "@shared/lottie": "workspace:*",
     "@shared/native-performance": "workspace:*",
     "@shared/network-status": "workspace:*",
