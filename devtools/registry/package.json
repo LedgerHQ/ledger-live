@@ -31,6 +31,7 @@
     "@devtools/account-data": "workspace:*",
     "@devtools/app-config": "workspace:*",
     "@devtools/account-name": "workspace:*",
+    "@devtools/account-receive": "workspace:*",
     "@devtools/mock-accounts": "workspace:*",
     "@devtools/account-detail": "workspace:*"
   },
