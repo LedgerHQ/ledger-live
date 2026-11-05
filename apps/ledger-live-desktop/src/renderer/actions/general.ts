@@ -8,7 +8,6 @@ import {
   flattenSortAccounts,
   sortAccountsComparatorFromOrder,
 } from "@ledgerhq/live-common/account/ordering";
-import { useDistribution as useLegacyDistribution } from "@ledgerhq/live-common/portfolio/portfolioReact";
 import {
   useAssetDistribution,
   type DistributionOpts,
@@ -27,23 +26,15 @@ import { walletSelector } from "../reducers/wallet";
 export function useDistribution(opts: DistributionOpts = {}): DistributionResult {
   const accounts = useSelector(accountsSelector);
   const to = useSelector(counterValueCurrencySelector);
-  const { groupBy, ...displayOpts } = opts;
-  const isAssetMode = groupBy === "asset";
-
-  const legacy = useLegacyDistribution({ accounts, to, skip: isAssetMode, ...displayOpts });
   const asset = useAssetDistribution({
     accounts,
     to,
     product: "lld",
     version: __APP_VERSION__,
-    skip: !isAssetMode,
-    ...displayOpts,
+    ...opts,
   });
 
-  if (isAssetMode) {
-    return { ...asset.distribution, isLoading: asset.isLoading };
-  }
-  return { ...legacy, isLoading: false };
+  return { ...asset.distribution, isLoading: asset.isLoading };
 }
 export function useCalculateCountervalueCallback() {
   const to = useSelector(counterValueCurrencySelector);

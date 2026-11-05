@@ -8,7 +8,6 @@ export interface DetailedAllocationViewModelResult {
 export const useDetailedAllocationViewModel = (): DetailedAllocationViewModelResult => {
   const list = useNonBlacklistedDistribution({
     showEmptyAccounts: true,
-    groupBy: "asset",
   });
 
   return { list };
