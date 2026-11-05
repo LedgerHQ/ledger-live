@@ -1,11 +1,17 @@
 import { createApi } from "@ledgerhq/coin-cardano/api/index";
 import { type CardanoConfig } from "@ledgerhq/coin-cardano/config";
+import { MOCK_ENDPOINTS } from "./fixtures";
 import { initYaciIndexer } from "./yaciIndexer";
 
 // getValidators reads /v1/pool/list + the epoch-params endpoint, neither of which Yaci provides — the
 // adapter serves captured Ledger-proxy fixtures (see fixtures/ledgerPools.ts), so this is hermetic and
 // needs no devnet. Exercises getValidators end-to-end through the CoinModule API on real-shaped data.
-const config: CardanoConfig = { maxFeesWarning: 0, maxFeesError: 0, testnet: true };
+const config: CardanoConfig = {
+  maxFeesWarning: 0,
+  maxFeesError: 0,
+  testnet: true,
+  ...MOCK_ENDPOINTS,
+};
 // createApi() is context-driven (framework v6); the getValidators impl ignores the context, but the
 // signature requires one. Derive its type from the api to avoid a direct coin-module-framework dep.
 const context: Parameters<ReturnType<typeof createApi>["getValidators"]>[0] = {

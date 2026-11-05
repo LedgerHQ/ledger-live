@@ -13,6 +13,7 @@ import {
   TEST_TOKEN_ASSET_NAME,
   TEST_TOKEN_POLICY_ID,
   makeAccount,
+  MOCK_ENDPOINTS,
 } from "../fixtures";
 import { getBridges } from "../helpers";
 import { fundToken, initMSW, resetLedger } from "../indexer";
@@ -47,6 +48,7 @@ export const scenarioCardanoToken: Scenario<GenericTransaction, Account> = {
           maxFeesWarning: 0,
           maxFeesError: 0,
           testnet: false,
+          ...MOCK_ENDPOINTS,
         },
       },
     });
