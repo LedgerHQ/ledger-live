@@ -8,10 +8,12 @@
       // - implicit any in ledger-key-ring-protocol and hw-ledger-key-ring-protocol
       // - window in live-network and logs
       // This alias reads LKRP's built declarations; the client preset adds the DOM for logs.
+      // It points at the CommonJS build: Playwright applies it at runtime, and live-network's
+      // ESM build fails to load in Node.
       // Once https://github.com/LedgerHQ/ts-libs/pull/171 is released and installed, drop this
       // alias and extend @support/tsconfig/logic again.
       "@ledgerhq/ledger-key-ring-protocol/*": [
-        "./node_modules/@ledgerhq/ledger-key-ring-protocol/lib-es/*"
+        "./node_modules/@ledgerhq/ledger-key-ring-protocol/lib/*"
       ]
     },
     "types": ["jest", "node"]
