@@ -115,7 +115,7 @@
     "babel-plugin-module-resolver": "5.0.2",
     "babel-plugin-react-docgen-typescript": "1.5.1",
     "buffer": "catalog:",
-    "camelcase": "6.3.0",
+    "camelcase": "10.0.0",
     "csstype": "3.2.3",
     "oxlint": "catalog:",
     "oxfmt": "catalog:",

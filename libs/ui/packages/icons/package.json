@@ -72,7 +72,7 @@
     "@types/react-dom": "catalog:",
     "@types/styled-system": "5.1.22",
     "@typescript/native": "catalog:",
-    "camelcase": "6.3.0",
+    "camelcase": "10.0.0",
     "glob": "^7.2.0",
     "react": "catalog:",
     "react-native": "catalog:",
