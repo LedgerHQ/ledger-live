@@ -13,8 +13,7 @@ export type AccountDetailContentViewModel = Readonly<{
   emptyState: AccountEmptyStateModel;
   /** The page view: `source` is added by the analytics from the previous screen. */
   pageView: Readonly<{
-    currency: string;
-    isTokenAccount: boolean;
+    network: string;
     operationsCount: number;
     hasTokens: boolean;
   }>;
