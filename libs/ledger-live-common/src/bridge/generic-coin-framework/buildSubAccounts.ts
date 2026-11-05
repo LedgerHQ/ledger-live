@@ -157,7 +157,8 @@ export async function buildSubAccounts({
             );
 
       tokenAccounts.push({
-        ...familyShapes?.[token.contractAddress],
+        // By `id` first: one contract address can have several tokens (an XRPL issuer)
+        ...(familyShapes?.[token.id] ?? familyShapes?.[token.contractAddress]),
         ...buildTokenAccount({
           id: encodeTokenAccountId(accountId, token),
           parentAccountId: accountId,

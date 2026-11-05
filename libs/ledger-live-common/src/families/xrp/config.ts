@@ -1,4 +1,14 @@
 import { xrpDefaults } from "@ledgerhq/coin-xrp/config";
-import { currencyDefaultsToLiveConfig } from "../../config";
+import type { XrpCoinConfig, XrpTokenStandard } from "@ledgerhq/coin-xrp/config";
+import { currencyDefaultsToLiveConfig, getCurrencyConfiguration } from "../../config";
+
+const TOKEN_STANDARDS: XrpTokenStandard[] = ["iou", "mpt"];
 
 export const xrpConfig = currencyDefaultsToLiveConfig(xrpDefaults);
+
+/** Known standards only, without duplicates, sorted: Firebase merges arrays by position */
+export function getXrpEnabledTokenStandards(currencyId: string): XrpTokenStandard[] {
+  const { enabledTokenStandards = [] } = getCurrencyConfiguration<XrpCoinConfig>(currencyId);
+
+  return TOKEN_STANDARDS.filter((standard) => enabledTokenStandards.includes(standard));
+}
