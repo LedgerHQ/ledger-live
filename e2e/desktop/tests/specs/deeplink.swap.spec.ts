@@ -74,7 +74,7 @@ test.describe("Swap - deeplinks", () => {
       const reset = async () => {
         await app.swap.clearSwapState();
         await app.mainNavigation.openTargetFromMainNavigation("home");
-        await app.mainNavigation.validateTargetFromMainNavigation("home");
+        await app.mainNavigation.waitForTargetFromMainNavigation("home");
       };
 
       // ─── Token params only, no accountIds ────────────────────────────

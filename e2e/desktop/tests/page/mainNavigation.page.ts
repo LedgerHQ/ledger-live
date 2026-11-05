@@ -6,6 +6,7 @@ import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
 import { MyWalletPage } from "tests/page/myWallet.page";
 import { sendDeepLink } from "tests/utils/deeplink";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 type NavigationTarget = {
   readonly expectedPath?: RegExp;
   readonly selector: Locator;
@@ -39,12 +40,14 @@ export class MainNavigationPage extends AppPage {
     name: "pay",
   });
 
+  private readonly matchesPath = (expectedPath: RegExp) => (url: URL) => {
+    const hashPath = url.hash.replace(/^#/, "");
+    const currentPath = hashPath.startsWith("/") ? hashPath : `${url.pathname}${url.search}`;
+    return expectedPath.test(currentPath);
+  };
+
   private async expectPath(expectedPath: RegExp) {
-    await expect(this.page).toHaveURL(url => {
-      const hashPath = url.hash.replace(/^#/, "");
-      const currentPath = hashPath.startsWith("/") ? hashPath : `${url.pathname}${url.search}`;
-      return expectedPath.test(currentPath);
-    });
+    await expect(this.page).toHaveURL(this.matchesPath(expectedPath));
   }
 
   private getSidebarTargets(): Readonly<Record<SidebarTargetName, NavigationTarget>> {
@@ -102,19 +105,30 @@ export class MainNavigationPage extends AppPage {
     await expect(selector).toBeDisabled();
   }
 
-  @step("Validate $0 target from main navigation is selected and redirect to the expected path")
-  async validateTargetFromMainNavigation(target: TargetName) {
+  private async expectTargetSelected(target: TargetName, assert: typeof expect.soft) {
     if (target === "refer a friend") {
-      await this.expectPath(/^\/platform\/refer-a-friend(?:\/|$|\?)/);
+      await assert(this.page).toHaveURL(this.matchesPath(/^\/platform\/refer-a-friend(?:\/|$|\?)/));
       return;
     }
 
     const targetConfig = this.getSidebarTargets()[target];
-    await expect(targetConfig.selector).toHaveAttribute("aria-current", "page");
+    await assert(targetConfig.selector).toHaveAttribute("aria-current", "page");
 
     if (targetConfig.expectedPath) {
-      await this.expectPath(targetConfig.expectedPath);
+      await assert(this.page).toHaveURL(this.matchesPath(targetConfig.expectedPath));
     }
+  }
+
+  @step("Wait for $0 target from main navigation to be selected")
+  async waitForTargetFromMainNavigation(target: TargetName) {
+    await this.expectTargetSelected(target, expect);
+  }
+
+  @step("Validate $0 target from main navigation is selected and redirect to the expected path")
+  async validateTargetFromMainNavigation(target: TargetName) {
+    await this.softExpect(soft => this.expectTargetSelected(target, soft), {
+      timeout: TIMEOUT.large,
+    });
   }
 
   @step("Open Notification center from top navigation")

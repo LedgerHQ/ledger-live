@@ -115,7 +115,7 @@ test.describe("Ledger Sync - add account", () => {
   );
 });
 
-test.describe("Ledger Sync - rename account", () => {
+test.describe("Ledger Sync - rename account and delete backup", () => {
   setupSeed();
 
   destroyTrustchainAfterAll();
@@ -125,12 +125,12 @@ test.describe("Ledger Sync - rename account", () => {
   test.use(preSeededTrustchain([pushAccountsToTrustchain([ethAccount])]));
 
   test(
-    "[WXP][Ledger Sync] Renaming Account (Online)",
+    "[WXP][Ledger Sync] Renaming Account (Online), then Delete backup",
     {
       tag: deviceTagsWithoutLNS(),
       annotation: {
         type: "TMS",
-        description: "B2CQA-2302",
+        description: "B2CQA-2302, B2CQA-2296",
       },
     },
     async ({ app }) => {
@@ -149,6 +149,19 @@ test.describe("Ledger Sync - rename account", () => {
       await app.layout.syncAccountsIfAvailable();
 
       await app.trustchain.expectAccountName(ethAccount.id, renamedAccountName);
+
+      await app.trustchain.expectToHoldAccount(ethAccount.id, ethAccount.currencyId);
+
+      await app.mainNavigation.openSettings();
+      await app.settings.openManageLedgerSync();
+      await app.ledgerSync.expectLedgerSyncManagementVisible();
+
+      await app.ledgerSync.destroyTrustchain();
+      await app.ledgerSync.expectBackupDeletion();
+      await app.drawer.closeDrawer();
+
+      await app.settings.expectLedgerSyncSettingsEntryPoint();
+      await app.trustchain.expectToBeDestroyed();
     },
   );
 });
@@ -229,39 +242,6 @@ test.describe("Ledger Sync - delete instance", () => {
   );
 });
 
-test.describe("Ledger Sync - delete backup", () => {
-  setupSeed();
-
-  destroyTrustchainAfterAll();
-
-  test.use(preSeededTrustchain([pushAccountsToTrustchain([ethAccount])]));
-
-  test(
-    "[WXP][Ledger Sync] Delete backup",
-    {
-      tag: deviceTagsWithoutLNS(),
-      annotation: {
-        type: "TMS",
-        description: "B2CQA-2296",
-      },
-    },
-    async ({ app }) => {
-      await app.trustchain.expectToHoldAccount(ethAccount.id, ethAccount.currencyId);
-
-      await app.mainNavigation.openSettings();
-      await app.settings.openManageLedgerSync();
-      await app.ledgerSync.expectLedgerSyncManagementVisible();
-
-      await app.ledgerSync.destroyTrustchain();
-      await app.ledgerSync.expectBackupDeletion();
-      await app.drawer.closeDrawer();
-
-      await app.settings.expectLedgerSyncSettingsEntryPoint();
-      await app.trustchain.expectToBeDestroyed();
-    },
-  );
-});
-
 function unactivatedFeatureFlags() {
   return {
     teamOwner: Team.WALLET_XP,
@@ -294,36 +274,16 @@ function unactivatedFeatureFlags() {
   };
 }
 
-test.describe("Ledger Sync - entry point in settings", () => {
+test.describe("Ledger Sync - entry point and activation flow no backup activated", () => {
   test.use(unactivatedFeatureFlags());
 
   test(
-    "[WXP][Ledger Sync] A wallet sync entry point should exist in the settings",
+    "[WXP][Ledger Sync] Settings entry point opens the Activation Flow - No Backup Activated",
     {
       tag: [...deviceTagsWithoutLNS(), "@wallet-xp"],
       annotation: {
         type: "TMS",
-        description: "B2CQA-2292",
-      },
-    },
-    async ({ app }) => {
-      await app.mainNavigation.openSettings();
-      await app.settings.expectLedgerSyncSettingsRow();
-      await app.settings.expectLedgerSyncSettingsEntryPoint();
-    },
-  );
-});
-
-test.describe("Ledger Sync - activation flow no backup activated", () => {
-  test.use(unactivatedFeatureFlags());
-
-  test(
-    "[WXP][Ledger Sync] Activation Flow - No Backup Activated",
-    {
-      tag: [...deviceTagsWithoutLNS(), "@wallet-xp"],
-      annotation: {
-        type: "TMS",
-        description: "B2CQA-2293",
+        description: "B2CQA-2292, B2CQA-2293",
       },
     },
     async ({ app }) => {
