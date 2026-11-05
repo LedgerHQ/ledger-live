@@ -27,7 +27,8 @@ export function createLedgerSyncMiddleware<S extends LedgerSyncStateRoot, LocalS
     return next => action => {
       if (requestLedgerSyncServices.match(action)) return theServices();
       if (startLedgerSyncWatch.match(action)) {
-        (watch ??= createLedgerSyncWatch(store, config, theServices())).start();
+        watch ??= createLedgerSyncWatch(store, config, theServices());
+        watch.start();
       }
       if (stopLedgerSyncWatch.match(action)) watch?.stop();
       if (refreshLedgerSync.match(action)) watch?.refresh();
