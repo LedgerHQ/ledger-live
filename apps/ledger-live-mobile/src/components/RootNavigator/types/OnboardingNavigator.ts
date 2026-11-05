@@ -107,9 +107,12 @@ export type OnboardingNavigatorParamList = {
     success: boolean;
     deviceModelId: DeviceModelId;
   };
-  [ScreenName.OnboardingBleDevicePairingFlow]: {
-    filterByDeviceModelId: DeviceModelId;
-  };
+  // Undefined when opened from the ledgerlive://sync-onboarding deep link
+  [ScreenName.OnboardingBleDevicePairingFlow]:
+    | {
+        filterByDeviceModelId: DeviceModelId;
+      }
+    | undefined;
   [NavigatorName.AnalyticsOptInPrompt]: NavigatorScreenParams<AnalyticsOptInPromptNavigatorParamList>;
   [NavigatorName.LandingPages]: NavigatorScreenParams<LandingPagesNavigatorParamList>;
 };
