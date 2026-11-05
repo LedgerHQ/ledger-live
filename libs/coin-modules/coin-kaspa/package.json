@@ -124,7 +124,7 @@
     "@types/node": "catalog:",
     "@types/numeral": "2.0.5",
     "@typescript/native": "catalog:",
-    "cross-env": "10.1.0",
+    "cross-env": "catalog:",
     "jest": "catalog:",
     "jest-sonar": "0.2.16",
     "msw": "catalog:",

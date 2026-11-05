@@ -593,6 +593,9 @@ catalogs:
     class-variance-authority:
       specifier: 0.7.1
       version: 0.7.1
+    cross-env:
+      specifier: 10.1.0
+      version: 10.1.0
     detox:
       specifier: 20.51.3
       version: 20.51.3
@@ -1903,7 +1906,7 @@ importers:
         specifier: 4.1.2
         version: 4.1.2
       cross-env:
-        specifier: 10.1.0
+        specifier: 'catalog:'
         version: 10.1.0
       dmg-builder:
         specifier: 26.15.3
@@ -15229,7 +15232,7 @@ importers:
         specifier: 'catalog:'
         version: typescript@7.0.2
       cross-env:
-        specifier: 10.1.0
+        specifier: 'catalog:'
         version: 10.1.0
       jest:
         specifier: 'catalog:'
@@ -18951,7 +18954,7 @@ importers:
         specifier: 6.3.0
         version: 6.3.0
       cross-env:
-        specifier: 10.1.0
+        specifier: 'catalog:'
         version: 10.1.0
       env-cmd:
         specifier: 10.1.0
@@ -19245,7 +19248,7 @@ importers:
         specifier: 'catalog:'
         version: typescript@7.0.2
       cross-env:
-        specifier: 10.1.0
+        specifier: 'catalog:'
         version: 10.1.0
       jest:
         specifier: 'catalog:'
@@ -22374,7 +22377,7 @@ importers:
         specifier: workspace:^
         version: link:packages/shared
       cross-env:
-        specifier: 10.1.0
+        specifier: 'catalog:'
         version: 10.1.0
       json:
         specifier: 11.0.0

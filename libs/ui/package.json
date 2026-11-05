@@ -7,7 +7,7 @@
     "@ledgerhq/native-ui": "workspace:^",
     "@ledgerhq/react-ui": "workspace:^",
     "@ledgerhq/ui-shared": "workspace:^",
-    "cross-env": "10.1.0",
+    "cross-env": "catalog:",
     "json": "11.0.0",
     "lint-staged": "14.0.1"
   }
