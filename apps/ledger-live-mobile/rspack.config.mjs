@@ -250,6 +250,8 @@ export default withRozeniteUrlFix(
           },
           fallback: {
             ...require("node-libs-react-native"),
+            // react-native-crypto needs the RNRandomBytes native module; crypto-browserify uses crypto.getRandomValues (LIVE-21311)
+            crypto: require.resolve("crypto-browserify"),
             fs: false,
             net: require.resolve("react-native-tcp-socket"),
             tls: false,
