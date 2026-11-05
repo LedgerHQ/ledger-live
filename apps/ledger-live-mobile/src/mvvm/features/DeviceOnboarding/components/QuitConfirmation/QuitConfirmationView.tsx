@@ -22,6 +22,35 @@ export type QuitConfirmationViewProps = Readonly<{
   onContinue: () => void;
 }>;
 
+type SheetAction = Readonly<{
+  appearance: "base" | "gray";
+  label: string;
+  onPress: () => void;
+  testID: string;
+}>;
+
+function SheetActionButton({ appearance, label, onPress, testID }: SheetAction) {
+  return (
+    <Button
+      appearance={appearance}
+      size="lg"
+      lx={{ width: "full" }}
+      testID={testID}
+      onPress={onPress}
+    >
+      {label}
+    </Button>
+  );
+}
+
+function MutedLine({ children }: Readonly<{ children: string }>) {
+  return (
+    <Text typography="body2" lx={{ color: "muted", textAlign: "center", width: "full" }}>
+      {children}
+    </Text>
+  );
+}
+
 export function QuitConfirmationView({
   isOpen,
   title,
@@ -32,6 +61,22 @@ export function QuitConfirmationView({
   onLeave,
   onContinue,
 }: QuitConfirmationViewProps) {
+  const lines = [description, restart];
+  const actions: SheetAction[] = [
+    {
+      appearance: "base",
+      label: leaveLabel,
+      onPress: onLeave,
+      testID: quitConfirmationTestIds.leave,
+    },
+    {
+      appearance: "gray",
+      label: continueLabel,
+      onPress: onContinue,
+      testID: quitConfirmationTestIds.continue,
+    },
+  ];
+
   return (
     <QueuedBottomSheet
       isRequestingToBeOpened={isOpen}
@@ -43,49 +88,31 @@ export function QuitConfirmationView({
         <BottomSheetHeader />
         <Box
           lx={{
-            width: "full",
+            alignItems: "center",
             gap: "s24",
             paddingHorizontal: "s16",
             paddingTop: "s8",
-            alignItems: "center",
+            width: "full",
           }}
         >
           <Spot appearance="muted" icon={InformationFill} size={72} />
-          <Box lx={{ width: "full", gap: "s12", alignItems: "center" }}>
+          <Box lx={{ alignItems: "center", gap: "s12", width: "full" }}>
             <Text
               typography="heading4SemiBold"
               lx={{ color: "base", textAlign: "center", width: "full" }}
             >
               {title}
             </Text>
-            <Box lx={{ width: "full", alignItems: "center", gap: "s4" }}>
-              <Text typography="body2" lx={{ color: "muted", textAlign: "center", width: "full" }}>
-                {description}
-              </Text>
-              <Text typography="body2" lx={{ color: "muted", textAlign: "center", width: "full" }}>
-                {restart}
-              </Text>
+            <Box lx={{ alignItems: "center", gap: "s4", width: "full" }}>
+              {lines.map(line => (
+                <MutedLine key={line}>{line}</MutedLine>
+              ))}
             </Box>
           </Box>
-          <Box lx={{ width: "full", gap: "s16" }}>
-            <Button
-              appearance="base"
-              size="lg"
-              lx={{ width: "full" }}
-              testID={quitConfirmationTestIds.leave}
-              onPress={onLeave}
-            >
-              {leaveLabel}
-            </Button>
-            <Button
-              appearance="gray"
-              size="lg"
-              lx={{ width: "full" }}
-              testID={quitConfirmationTestIds.continue}
-              onPress={onContinue}
-            >
-              {continueLabel}
-            </Button>
+          <Box lx={{ gap: "s16", width: "full" }}>
+            {actions.map(action => (
+              <SheetActionButton key={action.testID} {...action} />
+            ))}
           </Box>
         </Box>
       </BottomSheetView>
