@@ -340,7 +340,19 @@ export const test = base.extend<TestFixtures>({
     }
 
     try {
-      execFileSync("pkill", ["-f", userdataDestinationPath]);
+      if (process.platform === "win32") {
+        const powershell = path.win32.join(
+          process.env.SystemRoot ?? "C:/Windows",
+          "System32/WindowsPowerShell/v1.0/powershell.exe",
+        );
+        execFileSync(powershell, [
+          "-NoProfile",
+          "-Command",
+          `Get-CimInstance Win32_Process | Where-Object { $_.ProcessId -ne $PID -and $_.CommandLine -like '*${path.basename(userdataDestinationPath)}*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }`,
+        ]);
+      } else {
+        execFileSync("pkill", ["-f", userdataDestinationPath]);
+      }
     } catch {
       // No lingering process (only Reset App reboots the main process into a new instance)
     }
