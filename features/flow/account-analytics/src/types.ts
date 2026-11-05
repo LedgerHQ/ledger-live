@@ -61,6 +61,11 @@ export type AnalyticsBalanceData = Readonly<{
   history: readonly Readonly<{ timestamp: number; amount: number }>[];
 }>;
 
+export type AnalyticsScope = Pick<
+  AnalyticsQueryContext,
+  "assetId" | "accountId" | "fiatCurrencyId" | "positionIds"
+>;
+
 export type AnalyticsReadResult<Data> =
   | Readonly<{ status: "ready"; data: Data }>
   | Readonly<{ status: "unavailable" }>;
