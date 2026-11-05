@@ -151,9 +151,13 @@ export class AccountDetailPage extends AppPage {
   }
 
   @step("Click on last operation and return status")
-  async clickLastOperationAndReturnStatus(): Promise<string> {
-    const type = await this.operationType.first().textContent();
-    await this.operationRows.first().click();
+  async clickLastOperationAndReturnStatus(operationType?: string): Promise<string> {
+    const rows = operationType
+      ? this.operationRows.filter({ has: this.operationType.filter({ hasText: operationType }) })
+      : this.operationRows;
+    const row = rows.first();
+    const type = await row.locator(this.operationType).textContent();
+    await row.click();
     return type?.includes("Failed") ? "Failed" : "Confirmed";
   }
 

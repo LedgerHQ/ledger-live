@@ -406,7 +406,6 @@ type ValidatorSelectionScenario = {
   supportsLNS?: boolean;
   bugTicket?: string;
   featureFlags?: PartialFeatures;
-  hasNoIntroStepOnAccountDetail?: boolean;
 };
 
 const validatorSelectionScenarios: ValidatorSelectionScenario[] = [
@@ -419,7 +418,6 @@ const validatorSelectionScenarios: ValidatorSelectionScenario[] = [
     delegate: new Delegate(Account.SOL_3, "0.001", "Ledger by Figment"),
     xrayTicket: "B2CQA-2764",
     selection: "listedByName",
-    hasNoIntroStepOnAccountDetail: true,
   },
   {
     delegate: new Delegate(Account.NEAR_2, "0.01", "ledgerbyfigment.poolv1.near"),
@@ -510,11 +508,7 @@ for (const scenario of validatorSelectionScenarios) {
         await openAccount(app, delegate.account);
 
         await app.account.startStakingFlowFromMainStakeButton({ asset: delegate.account.currency });
-        const hasIntroStep =
-          !scenario.hasNoIntroStepOnAccountDetail || !(await app.account.usesAccountDetail());
-        if (hasIntroStep) {
-          await app.delegate.continue();
-        }
+        await app.delegate.continue();
 
         await selectValidator(app, delegate, scenario.selection);
         await app.delegate.verifyProvider(1);
@@ -590,8 +584,9 @@ for (const scenario of stakingLiveAppScenarios) {
       async ({ app }) => {
         await openAccount(app, delegate.account);
 
+        const usesAccountDetail = await app.account.usesAccountDetail();
         await app.account.startStakingFlowFromMainStakeButton({ asset: delegate.account.currency });
-        if (await app.account.usesAccountDetail()) {
+        if (usesAccountDetail) {
           await app.liveApp.verifyEarnAppIsOpened();
         } else {
           await app.liveApp.verifyLiveAppTitle(delegate.provider);

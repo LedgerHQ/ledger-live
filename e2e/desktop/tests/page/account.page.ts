@@ -167,9 +167,9 @@ export class AccountPage extends AppPage {
   }
 
   @step("Click on last operation and return status")
-  async clickOnLastOperationAndReturnStatus(): Promise<string> {
+  async clickOnLastOperationAndReturnStatus(operationType?: string): Promise<string> {
     if (await this.isAccountDetail()) {
-      return this.accountDetail.clickLastOperationAndReturnStatus();
+      return this.accountDetail.clickLastOperationAndReturnStatus(operationType);
     }
 
     const status = await this.operationStatus.first().textContent();
