@@ -8,8 +8,6 @@ import {
   SUPPORTED_AGENT_SOURCES,
   AGENT_ENROLLMENT_CHANNEL_VERSION,
   AGENT_INTENT_FRONTEND_URLS,
-  AGENT_NAME_MAX_LENGTH,
-  AGENT_DESCRIPTION_MAX_LENGTH,
 } from "@ledgerhq/agent-intent-sdk";
 import {
   Session,
@@ -33,6 +31,9 @@ import { KeychainUnavailableError } from "../../key-ring/keychain-unavailable-er
 import { authenticateEnrollmentCompletion } from "../../agent-intent/completion-auth";
 import { outputOption, resolveOutputFormat } from "../inputs";
 import { PROFILE_ID_RE, PROFILE_ID_MESSAGE } from "../../agent-intent/profile-format";
+
+const AGENT_NAME_MAX_LENGTH = 64;
+const AGENT_DESCRIPTION_MAX_LENGTH = 256;
 import {
   assertServiceUrl,
   createRelayHost,

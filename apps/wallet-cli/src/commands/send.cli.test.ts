@@ -200,7 +200,7 @@ describe("send --dry-run command", () => {
 
     const data = JSON.parse(stdout);
     expect(data.command).toBe("send");
-    expect(data.network).toBe("ripple:main");
+    expect(data.network).toBe("ripple");
     expect(data.dry_run).toBe(true);
     expect(data.destination_tag).toBe(123);
   });
