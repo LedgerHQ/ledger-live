@@ -151,9 +151,20 @@ export class NativeHandle implements ElementHandle {
     }
   }
 
-  /** Scrolls `container` (default: the first scroll view on screen) until the element is visible. */
+  /**
+   * Scrolls `container` (default: the first scroll view on screen) until the element is visible.
+   * Both resolve to the same match index as every other method of their handle.
+   */
   async scrollTo(container?: NativeHandle): Promise<void> {
-    await scroller.performScroll(this.createMatcher(), container?.createMatcher());
+    try {
+      await scroller.performScroll(() => this.raw, container && (() => container.raw));
+    } catch (error) {
+      const details = error instanceof Error ? error.message : String(error);
+      const scrollView = container?.description ?? "the first scroll view";
+      throw new Error(`${this.description} not reached by scrolling ${scrollView}: ${details}`, {
+        cause: error,
+      });
+    }
   }
 
   /** Asserts the element is visible now. A Detox expect: synchronised with the app, it does not wait. */
