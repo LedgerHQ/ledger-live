@@ -14,7 +14,7 @@ import type { Device } from "../../../hw/actions/types";
 import { withDevice } from "../../../hw/deviceAccess";
 import { isDmkTransport } from "../../../hw/dmkUtils";
 import { WithdrawSignerMismatchError, WithdrawUnsupportedRouteError } from "./errors";
-import type { WithdrawPayload } from "./schemas";
+import { isNearWithdrawPayload, type WithdrawPayload } from "./schemas";
 
 /** The app the withdraw is signed on: it clear-signs Hyperliquid's `sendAsset`. */
 export const PERPS_WITHDRAW_SIGNING_APP_NAME = "Ethereum";
@@ -32,7 +32,7 @@ const DOMAIN_FIELD_TYPES: Record<string, string> = {
  * while the Mayan typed data would be blind-signed.
  */
 export function getWithdrawTypedData(payload: WithdrawPayload): EIP712Message {
-  if (!("hyperCoreAction" in payload)) {
+  if (!isNearWithdrawPayload(payload)) {
     throw new WithdrawUnsupportedRouteError("Only the sendAsset withdraw route can be signed");
   }
   const { domain, types, primaryType, message } = payload.hyperCoreAction.typedData;
