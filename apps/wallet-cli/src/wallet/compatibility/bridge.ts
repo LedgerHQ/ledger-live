@@ -380,7 +380,7 @@ export class BridgeAdapter {
   ): Promise<SolanaStakeLimits> {
     const currencyId = account.currency.id;
     const config = getCurrencyConfiguration<SolanaCoinConfig>(currencyId);
-    const api = getSolanaChainAPI(chainConfigFrom(config, currencyId));
+    const api = getSolanaChainAPI(chainConfigFrom(config));
     const [minimumDelegation, rent, maxSpendable] = await Promise.all([
       api.getStakeMinimumDelegation(),
       getStakeAccountMinimumBalanceForRentExemption(api),
