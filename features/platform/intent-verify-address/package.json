@@ -1,5 +1,5 @@
 {
-  "name": "@features/platform-verify-address-intent",
+  "name": "@features/platform-intent-verify-address",
   "version": "0.3.1",
   "private": true,
   "description": "Cross-platform Device Intent that verifies a receive address on the device Secure Screen",

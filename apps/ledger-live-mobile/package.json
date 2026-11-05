@@ -178,7 +178,7 @@
     "@features/platform-predictions": "workspace:^",
     "@features/platform-quick-actions": "workspace:^",
     "@features/platform-style": "workspace:^",
-    "@features/platform-verify-address-intent": "workspace:^",
+    "@features/platform-intent-verify-address": "workspace:^",
     "@features/platform-wallet-sync": "workspace:^",
     "@formatjs/intl-locale": "3.4.5",
     "@formatjs/intl-pluralrules": "5.2.12",

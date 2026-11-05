@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
-import type { VerifyAddressIntentJobState } from "@features/platform-verify-address-intent";
+import type { VerifyAddressIntentJobState } from "@features/platform-intent-verify-address";
 import { VerifyAddressIntentComponentLWM } from "../componentLWM";
 
 const ADDRESS = "0xAbC0000000000000000000000000000000000001";

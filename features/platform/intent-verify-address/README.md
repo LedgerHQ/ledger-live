@@ -1,4 +1,4 @@
-# @features/platform-verify-address-intent
+# @features/platform-intent-verify-address
 
 > [!CAUTION]
 > **Status: UNSTABLE** — part of the Device Intent Executor (DIE) rollout; API may change.
@@ -49,7 +49,7 @@ import { createIntent } from "@features/platform-device-intent";
 import {
   getAddressVerification,
   verifyAddressIntentDefinition,
-} from "@features/platform-verify-address-intent";
+} from "@features/platform-intent-verify-address";
 
 const verifyAddressIntentPlatformDefinition = {
   ...verifyAddressIntentDefinition,
@@ -87,7 +87,7 @@ Internal package, available to other workspace packages via:
 ```json
 {
   "dependencies": {
-    "@features/platform-verify-address-intent": "workspace:*"
+    "@features/platform-intent-verify-address": "workspace:*"
   }
 }
 ```
