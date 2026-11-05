@@ -123,8 +123,8 @@ export function bootstrapMean(diffs, resamples = 4000) {
 }
 
 // The first JS import, relative to where the build's Debug value starts: ~0 when it counts from the
-// JS start (4.26, b3700d9164b), the native start otherwise (react-native-startup-time before 4.26,
-// the app's process start from LIVE-40286 on).
+// JS start (4.26–4.27, b3700d9164b), the native start otherwise (react-native-startup-time
+// before 4.26, the app's process start from LIVE-40286 on).
 const jsStartOffset = s => s.events?.["Before js imports"]?.time;
 // The Debug value from the first JS import, whichever start the build's Debug value uses.
 export const fromJsStart = s => s.appStartupTime - (jsStartOffset(s) ?? NaN);
@@ -142,7 +142,7 @@ const harnessNativeStart = s => jsStartEpoch(s) - (appClockProcessStart(s) ?? Na
 export const fromProcessStart = s => harnessNativeStart(s) + fromJsStart(s);
 
 // Where a launch's Debug value counts from:
-// - "js": the first JS import (4.26, or a launch where the app found no process start);
+// - "js": the first JS import (4.26–4.27, or a launch where the app found no process start);
 // - "process": the process start the harness reads (LIVE-40286 on; react-native-startup-time on iOS);
 // - "package": react-native-startup-time's later mark on Android, the React host creation;
 // - "native": a native start, with no harness process start to tell which.
@@ -306,7 +306,7 @@ export function toMarkdown(rows, { preset, labelA, labelB, thresholdMs }) {
   }
   lines.push(
     "",
-    "- **Debug screen**: Settings > Debug > Performance > App startup time. Builds count it from the first JS import (4.26, b3700d9164b), from the app process start (LIVE-40286 on, and react-native-startup-time on iOS before 4.26), or from the React host creation (react-native-startup-time on Android before 4.26).",
+    "- **Debug screen**: Settings > Debug > Performance > App startup time. Builds count it from the first JS import (4.26–4.27, b3700d9164b), from the app process start (LIVE-40286 on, and react-native-startup-time on iOS before 4.26), or from the React host creation (react-native-startup-time on Android before 4.26).",
     "- **With native start**: the same end, counted from the start of the app process (the emulator's or the host's kernel) whatever the build's Debug value counts from, so builds of every version compare. It equals the Debug value of builds that count from the process start (within about 20 ms), and is about 350–650 ms above Android builds with react-native-startup-time.",
     "",
     "B − A is the Hodges–Lehmann median of the paired differences, after removing the device bias: how much slower the second emulator or simulator is than the first, measured thanks to the halfway swap.",
