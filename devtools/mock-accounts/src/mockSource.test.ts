@@ -267,6 +267,65 @@ describe("mockSource", () => {
   });
 });
 
+const readAssetReceive = (descriptor: AccountDescriptor, assetId?: string) => {
+  const read = mockSource.read?.receive;
+  if (!read) throw new Error("no receive reader");
+  return read(
+    { accountUUID: computeAccountUUID(descriptor), descriptor },
+    assetId === undefined ? undefined : { assetId: CryptoOrTokenCurrencyIdSchema.parse(assetId) },
+  );
+};
+
+const readReceive = async (descriptor: AccountDescriptor) =>
+  (await readAssetReceive(descriptor)).receive;
+
+describe("mockSource receive", () => {
+  it("answers the address of an address descriptor, the device showing it at its path", async () => {
+    const [account] = mockDescriptors("ethereum", 1, []);
+    if (account.type !== "address") throw new Error("expected an address descriptor");
+    await expect(readReceive(account)).resolves.toEqual({
+      status: "ready",
+      address: account.address,
+      verification: { type: "address", path: account.path, address: account.address },
+    });
+  });
+
+  it("answers the same bitcoin address for the same account, another for another account", async () => {
+    const [first, second] = mockDescriptors("bitcoin", 2, []);
+    const receive = await readReceive(first);
+    expect(receive).toMatchObject({
+      status: "ready",
+      address: expect.stringMatching(/^1/),
+      verification: { path: `${first.path}/0/0` },
+    });
+    await expect(readReceive(first)).resolves.toEqual(receive);
+    await expect(readReceive(second)).resolves.not.toEqual(receive);
+  });
+
+  it("names the native coin when the query names no asset", async () => {
+    const [account] = mockDescriptors("ethereum", 1, []);
+    await expect(readAssetReceive(account)).resolves.toMatchObject({ assetId: "ethereum" });
+  });
+
+  it("receives a token the balance holds on the account's address", async () => {
+    const [account] = mockDescriptors("ethereum", 1, []);
+    const token = (await readBalance(account)).find(({ assetId }) => assetId !== "ethereum");
+    if (!token) throw new Error("expected a token balance");
+    await expect(readAssetReceive(account, token.assetId)).resolves.toEqual({
+      assetId: token.assetId,
+      receive: await readReceive(account),
+    });
+  });
+
+  it("requires the activation of a token the balance does not hold", async () => {
+    const [account] = mockDescriptors("ethereum", 1, []);
+    await expect(readAssetReceive(account, "ethereum/erc20/not_held")).resolves.toEqual({
+      assetId: "ethereum/erc20/not_held",
+      receive: { status: "assetActivationRequired" },
+    });
+  });
+});
+
 describe("mockSource balanceHistory", () => {
   const now = Date.UTC(2026, 9, 20);
   let nowSpy: jest.SpyInstance<number, []>;

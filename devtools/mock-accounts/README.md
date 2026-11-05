@@ -28,4 +28,6 @@ It is paginated, to test the next pages: `limit` rows per page (20 when the quer
 
 It honours `filterAsset`, as FullSync does: it keeps one asset's rows before paging, so each filter pages on its own.
 
+The `receive` kind answers ready on an `address` descriptor's own address, or on a seeded address of the family for a `utxo` account (the same on every read), the device showing it at the account's path. A token the account's balance does not hold answers `assetActivationRequired`, whatever the network, to show that status.
+
 Imports no `@devtools/*` package, as any tool ([import boundaries](../../.claude/skills/devtools-import-boundary/SKILL.md)). Its props come from `useMockAccountsToolProps` in `@devtools/bindings`.

@@ -27,6 +27,7 @@ import {
   useAccountDataToolProps,
   useAppConfigToolProps,
   useAccountNameToolProps,
+  useAccountReceiveToolProps,
   useMockAccountsToolProps,
   useAccountDetailToolProps,
   useReceiveToolProps,
@@ -36,6 +37,7 @@ import type { DevToolsConfig } from "@devtools/shell";
 import { useDevToolsRelay } from "./useDevToolsRelay";
 import { useDeviceOnboardingTool } from "../../DeviceOnboarding/useDeviceOnboardingTool";
 import { useAccountDataRecorder } from "../../accountDataRecorder";
+import { useAccountReceiveDeviceVerify } from "../../AccountReceiveVerify/useAccountReceiveDeviceVerify";
 import { getPortfolioServiceUrl } from "~/config/portfolioService";
 
 const APPLICATION_ID = 16;
@@ -121,6 +123,8 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
   const accountDataToolProps = useAccountDataToolProps(accountDataRecorder);
   const legacyAccounts = useSelector(accountsSelector);
   const accountNameToolProps = useAccountNameToolProps(legacyAccounts);
+  const { deviceVerify, execution: accountReceiveVerify } = useAccountReceiveDeviceVerify();
+  const accountReceiveToolProps = useAccountReceiveToolProps({ deviceVerify });
   const mockAccountsToolProps = useMockAccountsToolProps(accountDataRecorder);
   const accountDetailToolProps = useAccountDetailToolProps();
   const receiveToolProps = useReceiveToolProps();
@@ -141,6 +145,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       { id: "account-operation", config: accountOperationToolProps },
       { id: "account-balance-history", config: accountBalanceHistoryToolProps },
       { id: "account-name", config: accountNameToolProps },
+      { id: "account-receive", config: accountReceiveToolProps },
       { id: "account-portfolio", config: accountPortfolioToolProps },
       { id: "mock-accounts", config: mockAccountsToolProps },
       { id: "account-detail", config: accountDetailToolProps },
@@ -162,6 +167,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       accountPortfolioToolProps,
       accountDataToolProps,
       accountNameToolProps,
+      accountReceiveToolProps,
       mockAccountsToolProps,
       accountDetailToolProps,
       receiveToolProps,
@@ -178,5 +184,6 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
     hubUrl: wireState.hubUrl,
     setHubUrl: wire.setHubUrl,
     role: wireState.role,
+    accountReceiveVerify,
   };
 }
