@@ -21,6 +21,7 @@ export const tools = {
   "mock-accounts": platform.mockAccounts,
   "account-detail": walletXp.accountDetail,
   "coin-config": coinIntegration.coinConfig,
+  "intent-wallet-sync": walletXp.intentWalletSync,
 } as const;
 
 /**
@@ -55,4 +56,5 @@ export type DevToolConfig =
   | { id: "account-name"; config: platform.AccountNameToolProps }
   | { id: "mock-accounts"; config: platform.MockAccountsToolProps }
   | { id: "account-detail"; config: walletXp.AccountDetailToolProps }
-  | { id: "coin-config"; config: coinIntegration.CoinConfigToolProps };
+  | { id: "coin-config"; config: coinIntegration.CoinConfigToolProps }
+  | { id: "intent-wallet-sync"; config: walletXp.IntentWalletSyncToolProps };

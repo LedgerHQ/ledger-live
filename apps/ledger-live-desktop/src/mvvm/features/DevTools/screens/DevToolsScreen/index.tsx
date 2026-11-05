@@ -1,6 +1,7 @@
 import React from "react";
 import { DevTools } from "@devtools/shell";
 import { TransportPanel } from "@devtools/transport-panel";
+import { IntentWalletSyncExecutor } from "../../IntentWalletSync/IntentWalletSyncExecutor";
 import { useDevToolsScreenViewModel } from "./useDevToolsScreenViewModel";
 
 type Props = {
@@ -8,8 +9,16 @@ type Props = {
 };
 
 export default function DevToolsScreen({ onClose: onCloseOverride }: Props) {
-  const { config, onClose, transport, hubUrl, setHubUrl, role } =
-    useDevToolsScreenViewModel(onCloseOverride);
+  const {
+    config,
+    onClose,
+    transport,
+    hubUrl,
+    setHubUrl,
+    role,
+    intentWalletSyncRun,
+    onIntentWalletSyncRunCancelled,
+  } = useDevToolsScreenViewModel(onCloseOverride);
 
   return (
     <div
@@ -22,6 +31,10 @@ export default function DevToolsScreen({ onClose: onCloseOverride }: Props) {
         footer={
           <TransportPanel transport={transport} hubUrl={hubUrl} setHubUrl={setHubUrl} role={role} />
         }
+      />
+      <IntentWalletSyncExecutor
+        run={intentWalletSyncRun}
+        onUserCancel={onIntentWalletSyncRunCancelled}
       />
     </div>
   );

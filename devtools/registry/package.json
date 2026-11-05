@@ -33,7 +33,8 @@
     "@devtools/account-name": "workspace:*",
     "@devtools/mock-accounts": "workspace:*",
     "@devtools/account-detail": "workspace:*",
-    "@devtools/coin-config": "workspace:*"
+    "@devtools/coin-config": "workspace:*",
+    "@devtools/intent-wallet-sync": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=19"

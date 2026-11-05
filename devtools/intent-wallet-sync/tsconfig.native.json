@@ -1,0 +1,4 @@
+{
+  "extends": ["./tsconfig.json", "@support/tsconfig/native"],
+  "include": ["src/**/*", "jest/**/*", "**/*.d.ts"]
+}

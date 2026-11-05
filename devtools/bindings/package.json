@@ -45,8 +45,10 @@
     "@features/flow-pay-feature-tour": "workspace:*",
     "@features/flow-pay-request": "workspace:*",
     "@features/platform-card": "workspace:*",
+    "@features/platform-device-intent": "workspace:*",
     "@features/platform-device-onboarding": "workspace:*",
     "@features/platform-feature-flags": "workspace:*",
+    "@features/platform-intent-wallet-sync": "workspace:*",
     "@ledgerhq/coin-module-framework": "catalog:",
     "@reduxjs/toolkit": "catalog:",
     "@shared/api-services": "workspace:*",
@@ -58,10 +60,12 @@
   },
   "peerDependencies": {
     "react": ">=19.0.0",
-    "react-redux": ">=9.0.0"
+    "react-redux": ">=9.0.0",
+    "@ledgerhq/ledger-key-ring-protocol": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/ledger-key-ring-protocol": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@shared/api-services": "workspace:*",
     "@swc/core": "catalog:",

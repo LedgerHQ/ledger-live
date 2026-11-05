@@ -34,6 +34,7 @@ import {
 import type { DevToolsConfig } from "@devtools/shell";
 import { useDevToolsRelay } from "./useDevToolsRelay";
 import { useDeviceOnboardingTool } from "../../DeviceOnboarding/useDeviceOnboardingTool";
+import { useIntentWalletSyncTool } from "../../IntentWalletSync/useIntentWalletSyncTool";
 import { useAccountDataRecorder } from "../../accountDataRecorder";
 import { getPortfolioServiceUrl } from "~/config/portfolioService";
 
@@ -122,6 +123,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
   const accountNameToolProps = useAccountNameToolProps(legacyAccounts);
   const mockAccountsToolProps = useMockAccountsToolProps(accountDataRecorder);
   const accountDetailToolProps = useAccountDetailToolProps();
+  const intentWalletSync = useIntentWalletSyncTool();
 
   const config: DevToolsConfig = useMemo(
     () => [
@@ -142,6 +144,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       { id: "account-portfolio", config: accountPortfolioToolProps },
       { id: "mock-accounts", config: mockAccountsToolProps },
       { id: "account-detail", config: accountDetailToolProps },
+      { id: "intent-wallet-sync", config: intentWalletSync.toolProps },
     ],
     [
       featureFlagsToolProps,
@@ -161,6 +164,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       accountNameToolProps,
       mockAccountsToolProps,
       accountDetailToolProps,
+      intentWalletSync.toolProps,
     ],
   );
 
@@ -174,5 +178,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
     hubUrl: wireState.hubUrl,
     setHubUrl: wire.setHubUrl,
     role: wireState.role,
+    intentWalletSyncRun: intentWalletSync.run,
+    onIntentWalletSyncRunCancelled: intentWalletSync.onRunCancelled,
   };
 }

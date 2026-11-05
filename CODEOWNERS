@@ -176,6 +176,7 @@ domain/api/ofac/                                         @ledgerhq/wallet-xp
 devtools/pay-card/                                       @ledgerhq/wallet-xp
 devtools/account-portfolio/                              @ledgerhq/wallet-xp
 devtools/account-detail/                                 @ledgerhq/wallet-xp
+devtools/intent-wallet-sync/                             @ledgerhq/wallet-xp
 
 # Platform — desktop mvvm overrides (override WXP mvvm catch-all)
 apps/ledger-live-desktop/src/mvvm/features/AppBlockers/  @ledgerhq/platform
