@@ -4156,6 +4156,60 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
+  devtools/account-receive:
+    devDependencies:
+      '@support/jest':
+        specifier: workspace:*
+        version: link:../../support/jest
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@testing-library/dom':
+        specifier: 'catalog:'
+        version: 10.4.1
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@testing-library/user-event':
+        specifier: 'catalog:'
+        version: 14.6.1(@testing-library/dom@10.4.1)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
+      jest-environment-jsdom:
+        specifier: 'catalog:'
+        version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-dom:
+        specifier: 19.1.4
+        version: 19.1.4(react@19.1.4)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
   devtools/app-config:
     dependencies:
       '@shared/app-config':
@@ -4327,6 +4381,9 @@ importers:
       '@domain/entity-account-operation':
         specifier: workspace:*
         version: link:../../domain/entity/account-operation
+      '@domain/entity-account-receive':
+        specifier: workspace:*
+        version: link:../../domain/entity/account-receive
       '@domain/entity-card-asset-mapping':
         specifier: workspace:*
         version: link:../../domain/entity/card-asset-mapping
@@ -5169,6 +5226,9 @@ importers:
       '@domain/entity-account-operation':
         specifier: workspace:*
         version: link:../../domain/entity/account-operation
+      '@domain/entity-account-receive':
+        specifier: workspace:*
+        version: link:../../domain/entity/account-receive
       '@domain/entity-currency-crypto':
         specifier: workspace:*
         version: link:../../domain/entity/currency-crypto
@@ -5588,6 +5648,9 @@ importers:
       '@devtools/account-portfolio':
         specifier: workspace:*
         version: link:../account-portfolio
+      '@devtools/account-receive':
+        specifier: workspace:*
+        version: link:../account-receive
       '@devtools/app-config':
         specifier: workspace:*
         version: link:../app-config

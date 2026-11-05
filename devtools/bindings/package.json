@@ -33,6 +33,7 @@
     "@domain/entity-account-descriptor": "workspace:*",
     "@domain/entity-account-name": "workspace:*",
     "@domain/entity-account-operation": "workspace:*",
+    "@domain/entity-account-receive": "workspace:*",
     "@domain/entity-account-balance-history": "workspace:*",
     "@domain/entity-card-asset-mapping": "workspace:*",
     "@domain/entity-currency": "workspace:^",
