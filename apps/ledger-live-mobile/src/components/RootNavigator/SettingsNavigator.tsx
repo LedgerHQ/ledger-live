@@ -8,6 +8,7 @@ import DebugConfiguration from "~/screens/Settings/Debug/Configuration";
 import DebugConnectivity, {
   connectivityHeaderOptions,
 } from "~/screens/Settings/Debug/Connectivity";
+import { MockServerSettingsScreen } from "LLM/features/MockServer";
 import DebugCrash from "~/screens/Settings/Debug/Debugging/Crashes";
 import DebugCustomImageGraphics from "~/screens/Settings/Debug/Features/CustomImageGraphics";
 import DebugDebugging from "~/screens/Settings/Debug/Debugging";
@@ -310,6 +311,13 @@ export default function SettingsNavigator() {
         name={ScreenName.DebugConnectivity}
         component={DebugConnectivity}
         options={connectivityHeaderOptions}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugMockServer}
+        component={MockServerSettingsScreen}
+        options={{
+          title: "Mock server",
+        }}
       />
       <Stack.Screen
         name={ScreenName.DebugFeatures}

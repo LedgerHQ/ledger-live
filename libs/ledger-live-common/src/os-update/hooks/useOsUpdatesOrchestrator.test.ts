@@ -227,7 +227,11 @@ describe("useOsUpdatesOrchestrator", () => {
       act(() => created[0].emit(updating(0.2)));
       const applied: OsUpdatesProgress = {
         step: OsUpdatesSteps.APPLY_UPDATES,
-        state: { type: ApplyUpdatesStateType.UPDATES_APPLIED, restoreResult: undefined },
+        state: {
+          type: ApplyUpdatesStateType.UPDATES_APPLIED,
+          osVersion: "2.0.0",
+          restoreResult: undefined,
+        },
       };
 
       act(() => created[0].emit(applied));

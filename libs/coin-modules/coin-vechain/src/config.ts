@@ -56,3 +56,18 @@ export function getChainTag(config: VechainCurrencyConfig): number {
     ? chainTag
     : MAINNET_CHAIN_TAG;
 }
+
+export const vechainDefaults = {
+  vechain: {
+    status: {
+      type: "active",
+      features: [{ id: "blockchain_txs", status: "active" }],
+    },
+    name: "Vechain",
+    unit: { name: "VET", code: "VET", magnitude: 18 },
+    node: {
+      url: "https://vechain.coin.ledger.com",
+    },
+    chainTag: MAINNET_CHAIN_TAG,
+  },
+} satisfies Record<string, VechainCurrencyConfig>;

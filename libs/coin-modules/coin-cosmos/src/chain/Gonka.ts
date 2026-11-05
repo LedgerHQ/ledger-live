@@ -5,9 +5,10 @@ class Gonka extends CosmosBase {
   unbondingPeriod: number;
   prefix: string;
   validatorPrefix: string;
-  // The chain's fee rule is a consensus parameter (FeeParams.MinGasPriceNgonka) currently at 0,
-  // so the family's non-zero default would price transfers a fee-less chain never charges.
-  minGasPrice = 0;
+  // Since the v0.2.16 upgrade the chain prices bank transfers through its "cosmos" fee group at
+  // 1 ngonka per gas, and rejects a lower fee with "insufficient fee". The legacy
+  // FeeParams.MinGasPriceNgonka parameter is still 0 but no longer enforces anything.
+  minGasPrice = 1;
   // Provided by coin config
   ledgerValidator!: string;
   lcd!: string;

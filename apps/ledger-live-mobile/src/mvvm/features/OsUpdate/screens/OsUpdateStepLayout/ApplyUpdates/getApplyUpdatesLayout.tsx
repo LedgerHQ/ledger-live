@@ -16,7 +16,6 @@ import { ContinueOnDeviceContent } from "../../../sheets/ContinueOnDeviceContent
 import { DeviceDisconnectedContent } from "../../../sheets/DeviceDisconnectedContent";
 import { DeviceLockedContent } from "../../../sheets/DeviceLockedContent";
 import { InstallFirmwareRefusedContent } from "../../../sheets/InstallFirmwareRefusedContent";
-import { OutOfMemoryContent } from "../../../sheets/OutOfMemoryContent";
 import { SecureConnectionRefusedContent } from "../../../sheets/SecureConnectionRefusedContent";
 import { UnexpectedErrorContent } from "../../../sheets/UnexpectedErrorContent";
 
@@ -68,7 +67,13 @@ function getScreen({
         );
       }
       return (
-        <UpdatesAppliedScreen productName={productName} isRestoreOnly={false} onClose={onClose} />
+        <UpdatesAppliedScreen
+          productName={productName}
+          isRestoreOnly={false}
+          osVersion={state.osVersion}
+          restoreStatus={state.restoreResult?.restoreStatus}
+          onClose={onClose}
+        />
       );
     case ApplyUpdatesStateType.LOADING:
     case ApplyUpdatesStateType.DEVICE_LOCKED:
@@ -83,7 +88,6 @@ function getScreen({
     case ApplyUpdatesStateType.ALLOW_INSTALL_FIRMWARE_REFUSED:
     case ApplyUpdatesStateType.DEVICE_DISCONNECTED:
     case ApplyUpdatesStateType.CONNECTION_TIMED_OUT:
-    case ApplyUpdatesStateType.OUT_OF_MEMORY:
     case ApplyUpdatesStateType.UNEXPECTED_ERROR:
       return (
         <UpdateProgressScreen
@@ -168,15 +172,6 @@ function getSheet({
       return { content: <DeviceDisconnectedContent /> };
     case ApplyUpdatesStateType.CONNECTION_TIMED_OUT:
       return getConnectionTimedOutSheet({ retry: state.retry, trackClick, exportLogs });
-    case ApplyUpdatesStateType.OUT_OF_MEMORY: {
-      const onCancel = () => {
-        trackClick(OsUpdateButton.CANCEL);
-        state.cancel();
-      };
-      return {
-        content: <OutOfMemoryContent onCancel={onCancel} />,
-      };
-    }
     case ApplyUpdatesStateType.UNEXPECTED_ERROR: {
       const onCancel = () => {
         trackClick(OsUpdateButton.CANCEL);
@@ -225,7 +220,6 @@ export function getApplyUpdatesProgress(state: ApplyUpdatesState): FinishingProg
     case ApplyUpdatesStateType.ALLOW_INSTALL_FIRMWARE_REFUSED:
     case ApplyUpdatesStateType.DEVICE_DISCONNECTED:
     case ApplyUpdatesStateType.CONNECTION_TIMED_OUT:
-    case ApplyUpdatesStateType.OUT_OF_MEMORY:
     case ApplyUpdatesStateType.UNEXPECTED_ERROR:
       return { display: undefined, isDone: false };
     default: {

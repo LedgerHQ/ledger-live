@@ -1,5 +1,4 @@
 import React from "react";
-import { Linking } from "react-native";
 import { Text } from "@ledgerhq/lumen-ui-rnative";
 import {
   dexProvidersContractAddress,
@@ -7,6 +6,7 @@ import {
   termsOfUse,
 } from "@ledgerhq/live-common/exchange/providers/swap";
 import { Trans } from "~/context/Locale";
+import { InlineTextLink } from "LLM/components/InlineTextLink";
 
 export type TermsAndConditionsFooterProps = Readonly<{
   /** Calling live-app manifest id, used to resolve the provider terms. */
@@ -16,28 +16,6 @@ export type TermsAndConditionsFooterProps = Readonly<{
   /** Transaction recipient, used to resolve the DEX provider from its router address. */
   recipient?: string;
 }>;
-
-type InlineTextLinkProps = Readonly<{
-  children?: React.ReactNode;
-  href: string;
-}>;
-
-function InlineTextLink({ children, href }: InlineTextLinkProps) {
-  const handlePress = () => {
-    void Linking.openURL(href);
-  };
-
-  return (
-    <Text
-      typography="body2"
-      lx={{ color: "muted", textDecorationLine: "underline" }}
-      onPress={handlePress}
-      accessibilityRole="link"
-    >
-      {children}
-    </Text>
-  );
-}
 
 /**
  * Non-blocking terms of use notice shown while the user confirms a wallet-api swap on

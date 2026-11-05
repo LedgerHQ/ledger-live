@@ -13,7 +13,7 @@ export function trackStorageMigration(migrateFrom: StorageType) {
 
   const trackData: StorageMigrationUserEvent = {
     from: migrateFrom,
-    to: migrateFrom === STORAGE_TYPE.ASYNC_STORAGE ? STORAGE_TYPE.ASYNC_STORAGE : STORAGE_TYPE.MMKV,
+    to: migrateFrom === STORAGE_TYPE.ASYNC_STORAGE ? STORAGE_TYPE.MMKV : STORAGE_TYPE.ASYNC_STORAGE,
     migrationStatus,
     rollbackStatus,
     errors: {

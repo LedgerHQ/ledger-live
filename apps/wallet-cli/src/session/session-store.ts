@@ -260,14 +260,18 @@ function derivationLabel(path: string): string {
   }
 }
 
-const BITCOIN_NETWORKS = new Set(["bitcoin", "bitcoin_testnet", "bitcoin_regtest"]);
+const BITCOIN_NETWORKS: ReadonlySet<string> = new Set([
+  "bitcoin",
+  "bitcoin_testnet",
+  "bitcoin_regtest",
+]);
 
 export function generateLabel(
   descriptor: AccountDescriptorV1,
   existingLabels: Set<string>,
 ): string {
   const { network } = descriptor;
-  const parts = [network];
+  const parts: string[] = [network];
   if (BITCOIN_NETWORKS.has(network)) parts.push(derivationLabel(descriptor.path));
   const base = parts.join("-");
   for (let n = 1; ; n++) {

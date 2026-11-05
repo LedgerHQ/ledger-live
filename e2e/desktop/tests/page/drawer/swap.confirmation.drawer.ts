@@ -13,7 +13,10 @@ export class SwapConfirmationDrawer extends Drawer {
 
   @step("Verify exchange error text content: $0")
   async verifyExchangeErrorTextContent(text: string) {
-    await expect(this.exchangeError).toHaveText(text);
+    await expect(this.exchangeError).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.exchangeError).toHaveText(text);
+    });
   }
 
   @step("Verify swap completion: $0")
@@ -21,27 +24,37 @@ export class SwapConfirmationDrawer extends Drawer {
     await expect(this.swapCompletedMessage).toHaveText("Transaction broadcast successfully", {
       timeout: TIMEOUT.xxxlarge,
     });
-    await expect(this.swapCompletedDescription).toHaveText(
-      `Your Swap operation has been sent to the network for confirmation. Please wait for your transaction to be confirmed and for the provider to process and send your ${currencyToReceive}.`,
-      { timeout: TIMEOUT.xxlarge },
+    await this.softExpect(
+      async soft => {
+        await soft(this.swapCompletedDescription).toHaveText(
+          `Your Swap operation has been sent to the network for confirmation. Please wait for your transaction to be confirmed and for the provider to process and send your ${currencyToReceive}.`,
+        );
+      },
+      { timeout: TIMEOUT.medium },
     );
   }
 
   @step("Check error message: $0")
   async checkErrorMessage(errorMessage: string) {
-    const error = await this.deviceActionError.textContent();
-    expect(error).toContain(errorMessage);
+    await expect(this.deviceActionError).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.deviceActionError).toContainText(errorMessage);
+    });
   }
 
   @step("Check KYC warning banner is visible")
   async checkKycWarningBannerVisible() {
     await expect(this.kycWarningBanner).toBeVisible();
-    await expect(this.kycWarningBanner).toContainText("AML/KYC");
+    await this.softExpect(async soft => {
+      await soft(this.kycWarningBanner).toContainText("AML/KYC");
+    });
   }
 
   @step("Check share your feedback link is visible")
   async checkShareYourFeedbackLinkVisible() {
     await expect(this.shareYourFeedbackLink).toBeVisible();
-    await expect(this.shareYourFeedbackLink).toHaveText(/tell us about your experience/i);
+    await this.softExpect(async soft => {
+      await soft(this.shareYourFeedbackLink).toHaveText(/tell us about your experience/i);
+    });
   }
 }

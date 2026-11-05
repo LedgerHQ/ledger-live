@@ -1,1 +1,1 @@
-export type ServiceEntryPointId = "perps" | "borrow";
+export type ServiceEntryPointId = "perps" | "borrow" | "predictions";

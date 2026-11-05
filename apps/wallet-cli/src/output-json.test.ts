@@ -4,6 +4,7 @@ import { installOutputCapture } from "./shared/ui";
 import { CliProcessExitError } from "./cli-process-exit-error";
 import { USDT_TOKEN_INFO } from "./testing/cal-fixtures";
 import { SwapBackendError } from "./commands/swap/swap-backend-error";
+import { NetworkIdSchema } from "./shared/accountDescriptor";
 
 const { createCommandOutput } = await import("./output");
 
@@ -602,7 +603,7 @@ describe("JsonCommandOutput", () => {
       purpose: "account",
       version: "2",
       type: "utxo",
-      network: "bitcoin",
+      network: NetworkIdSchema.parse("bitcoin"),
       xpub: "xpub6BosfCnifzxcA",
       path: "m/84h/0h/0h",
     } as const;

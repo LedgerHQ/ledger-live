@@ -3,7 +3,6 @@ import { RestoreBackupStateType } from "../../../api/model/RestoreBackupState";
 import { fromRestoreBackupState } from "./fromRestoreBackupState";
 
 const noop = () => undefined;
-const OUT_OF_MEMORY = { _tag: "OutOfMemoryDAError" };
 const UNEXPECTED = new TypeError("boom");
 
 describe("fromRestoreBackupState", () => {
@@ -65,19 +64,6 @@ describe("fromRestoreBackupState", () => {
           0,
         ),
       ).toEqual({ type: ApplyUpdatesStateType.CONNECTION_TIMED_OUT, retry: noop });
-    });
-
-    it("should keep the cancel the restore offered when the device runs out of room", () => {
-      expect(
-        fromRestoreBackupState(
-          { type: RestoreBackupStateType.OUT_OF_MEMORY, error: OUT_OF_MEMORY, cancel: noop },
-          0,
-        ),
-      ).toEqual({
-        type: ApplyUpdatesStateType.OUT_OF_MEMORY,
-        error: OUT_OF_MEMORY,
-        cancel: noop,
-      });
     });
 
     it("should keep the cancel the restore offered when it fails unexpectedly", () => {

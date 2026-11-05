@@ -41,6 +41,8 @@ import { payCardFeatureTourPersistedSelector } from "@features/flow-pay-feature-
 import { payRequestVerifyHintPersistedSelector } from "@features/flow-pay-request/state";
 import { payCardLoginIntroPersistedSelector } from "@features/flow-pay-card-auth/state";
 import { payCardOnboardingWidgetPersistedSelector } from "@features/flow-pay-card-widget/state";
+import { accountAnalyticsIntroductionPersistedSelector } from "@features/flow-account-detail-analytics-notice/state";
+import { saveAccountAnalyticsIntroductionSafely } from "LLM/features/AccountDetail/analyticsIntroductionStorage";
 import { settingsStoreSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
 import { Maybe } from "../types/helpers";
@@ -221,6 +223,8 @@ export const payCardDbSaveSliceSelector = createSelector(
 );
 const payCardPersistedNotEquals = (a: State, b: State) =>
   !isEqual(payCardPersistedSelector(a), payCardPersistedSelector(b));
+const accountAnalyticsIntroductionNotEquals = (a: State, b: State) =>
+  a.accountAnalyticsIntroduction !== b.accountAnalyticsIntroduction;
 const trustchainNotEquals = (a: State, b: State) => a.trustchain !== b.trustchain;
 const largeMoverNotEquals = (a: State, b: State) => a.largeMover !== b.largeMover;
 
@@ -340,6 +344,14 @@ export const ConfigureDBSaveEffects = () => {
     throttle: 500,
     getChangesStats: payCardPersistedNotEquals,
     lense: payCardPersistedSelector,
+  });
+
+  useDBSaveEffect({
+    stateSelector: (state: State) => state.accountAnalyticsIntroduction,
+    save: saveAccountAnalyticsIntroductionSafely,
+    throttle: 500,
+    getChangesStats: accountAnalyticsIntroductionNotEquals,
+    lense: accountAnalyticsIntroductionPersistedSelector,
   });
 
   useDBSaveEffect({

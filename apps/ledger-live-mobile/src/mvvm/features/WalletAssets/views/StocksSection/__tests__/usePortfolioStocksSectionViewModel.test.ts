@@ -1,5 +1,5 @@
 import { act } from "@testing-library/react-native";
-import { renderHook, withFlagOverrides } from "@tests/test-renderer";
+import { renderHook } from "@tests/test-renderer";
 import { NavigatorName, ScreenName } from "~/const";
 import { Asset } from "~/types/asset";
 import { MAX_STOCKS_TO_DISPLAY } from "LLM/features/WalletAssets/constants";
@@ -71,11 +71,7 @@ describe("usePortfolioStocksSectionViewModel", () => {
   });
 
   it("navigates to the Crypto screen filtered to stocks on show all", () => {
-    const { result } = renderHook(() => usePortfolioStocksSectionViewModel(), {
-      overrideInitialState: withFlagOverrides({
-        lwmWallet40: { params: { assetSection: true } },
-      }),
-    });
+    const { result } = renderHook(() => usePortfolioStocksSectionViewModel());
 
     act(() => {
       result.current.onPressShowAll();

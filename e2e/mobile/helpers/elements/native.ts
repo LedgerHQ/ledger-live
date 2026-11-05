@@ -13,26 +13,37 @@ import { isHardTimeout, waitHardTimeout, withHardTimeout } from "./hardTimeout";
 
 type ElementAttributes = IosElementAttributes | AndroidElementAttributes;
 
+type NativeHandleOptions = {
+  createMatcher: () => NativeMatcher;
+  description: string;
+  /** Which match to act on when several elements match, the first by default. */
+  index?: number;
+};
+
 const scroller = new PageScroller();
 
 /**
  * A native (React Native) element, declared once with its match strategy.
  * Every action waits up to `timeout` (default 60s) for the element to be visible, then acts.
- * Build one with {@link byId}, {@link byIdAndText} or {@link byIdWithDescendantText}.
+ * Build one with {@link byId}, {@link byIdAndText}, {@link byIdWithDescendantText} or
+ * {@link byTextWithAncestorId}.
  */
 export class NativeHandle implements ElementHandle {
   private readonly createMatcher: () => NativeMatcher;
   private readonly description: string;
+  private readonly index: number;
 
-  constructor(createMatcher: () => NativeMatcher, description: string) {
+  constructor(options: NativeHandleOptions) {
+    const { createMatcher, description, index = 0 } = options;
     this.createMatcher = createMatcher;
     this.description = description;
+    this.index = index;
   }
 
-  /** The first matching Detox element, with no wait and no hard timeout. */
+  /** The matching Detox element at `index`, with no wait and no hard timeout. */
   private get raw(): NativeElement {
     // Android's atIndex mutates the matcher it wraps, so every element needs a fresh one.
-    return element(this.createMatcher()).atIndex(0);
+    return element(this.createMatcher()).atIndex(this.index);
   }
 
   /** Waits until at least 75% of the element is visible. */
@@ -56,6 +67,14 @@ export class NativeHandle implements ElementHandle {
       timeout,
       "hidden",
     );
+  }
+
+  /**
+   * Waits until the element is removed from the view hierarchy. Use it for a closing sheet: it can
+   * still block taps once it is no longer visible.
+   */
+  async waitNotExist(timeout = TIMEOUT.xxlarge): Promise<void> {
+    await this.waitUntil(waitFor(this.raw).not.toExist().withTimeout(timeout), timeout, "removed");
   }
 
   /** Waits for visibility, then taps. */
@@ -109,6 +128,18 @@ export class NativeHandle implements ElementHandle {
     return text ?? "";
   }
 
+  /** Waits for visibility, then returns the element's accessibility label ("" when it has none). */
+  async getLabel(timeout = TIMEOUT.xxlarge): Promise<string> {
+    const { label } = await this.getAttributes(timeout);
+    return label ?? "";
+  }
+
+  /** Waits for visibility, then returns the element's `testID`, e.g. the full id behind a regex match. */
+  async getIdentifier(timeout = TIMEOUT.xxlarge): Promise<string> {
+    const { identifier } = await this.getAttributes(timeout);
+    return identifier;
+  }
+
   /**
    * Returns whether the element becomes visible within `timeout`, for an element that may or may not
    * appear. A hung app still throws.
@@ -126,9 +157,20 @@ export class NativeHandle implements ElementHandle {
     }
   }
 
-  /** Scrolls `container` (default: the first scroll view on screen) until the element is visible. */
+  /**
+   * Scrolls `container` (default: the first scroll view on screen) until the element is visible.
+   * Both resolve to the same match index as every other method of their handle.
+   */
   async scrollTo(container?: NativeHandle): Promise<void> {
-    await scroller.performScroll(this.createMatcher(), container?.createMatcher());
+    try {
+      await scroller.performScroll(() => this.raw, container && (() => container.raw));
+    } catch (error) {
+      const details = error instanceof Error ? error.message : String(error);
+      const scrollView = container?.description ?? "the first scroll view";
+      throw new Error(`${this.description} not reached by scrolling ${scrollView}: ${details}`, {
+        cause: error,
+      });
+    }
   }
 
   /** Asserts the element is visible now. A Detox expect: synchronised with the app, it does not wait. */
@@ -141,9 +183,35 @@ export class NativeHandle implements ElementHandle {
     await withHardTimeout(detoxExpect(this.raw).not.toBeVisible());
   }
 
+  /**
+   * Asserts the element is not in the view hierarchy now, e.g. a deleted row. Stricter than
+   * {@link expectNotVisible}: an element scrolled off screen or hidden behind a sheet still fails.
+   */
+  async expectNotExist(): Promise<void> {
+    await withHardTimeout(detoxExpect(this.raw).not.toExist());
+  }
+
   /** Asserts the element's text now. A Detox expect: synchronised with the app, it does not wait. */
   async expectText(text: string): Promise<void> {
     await withHardTimeout(detoxExpect(this.raw).toHaveText(text));
+  }
+
+  /** Waits for visibility, then asserts the element's text contains `text`. */
+  async expectTextContaining(text: string, timeout = TIMEOUT.xxlarge): Promise<void> {
+    jestExpect(await this.getText(timeout)).toContain(text);
+  }
+
+  /** Waits for visibility, then asserts the element's text matches `pattern`. */
+  async expectTextMatching(pattern: RegExp, timeout = TIMEOUT.xxlarge): Promise<void> {
+    jestExpect(await this.getText(timeout)).toMatch(pattern);
+  }
+
+  /**
+   * Waits for visibility, then asserts the element's accessibility label matches `pattern`.
+   * For a control with no text of its own, e.g. a Lumen `Tag`.
+   */
+  async expectLabelMatching(pattern: RegExp, timeout = TIMEOUT.xxlarge): Promise<void> {
+    jestExpect(await this.getLabel(timeout)).toMatch(pattern);
   }
 
   /** Names the element in the failure and keeps the Detox message, hard timeout marker included. */
@@ -157,17 +225,46 @@ export class NativeHandle implements ElementHandle {
   }
 }
 
-/** Matches by React Native `testID` (Detox `by.id`). */
-export const byId = (id: string | RegExp): NativeHandle =>
-  new NativeHandle(() => by.id(id), `#${id}`);
+/**
+ * Matches by React Native `testID` (Detox `by.id`).
+ * `index` picks the n-th match, the first by default.
+ */
+export const byId = (id: string | RegExp, index = 0): NativeHandle =>
+  new NativeHandle({
+    createMatcher: () => by.id(id),
+    description: index ? `#${id}[${index}]` : `#${id}`,
+    index,
+  });
+
+/** A `testID` and a text, named so the two strings cannot be swapped by mistake. */
+type IdAndTextOptions = {
+  id: string | RegExp;
+  text: string | RegExp;
+};
 
 /** Matches by `testID` and the element's own text. */
-export const byIdAndText = (id: string, text: string | RegExp): NativeHandle =>
-  new NativeHandle(() => by.id(id).and(by.text(text)), `#${id} with text "${text}"`);
+export const byIdAndText = (options: IdAndTextOptions): NativeHandle => {
+  const { id, text } = options;
+  return new NativeHandle({
+    createMatcher: () => by.id(id).and(by.text(text)),
+    description: `#${id} with text "${text}"`,
+  });
+};
 
 /** Matches by `testID` and the text of a descendant, e.g. a label inside a button or card. */
-export const byIdWithDescendantText = (id: string, text: string | RegExp): NativeHandle =>
-  new NativeHandle(
-    () => by.id(id).withDescendant(by.text(text)),
-    `#${id} containing text "${text}"`,
-  );
+export const byIdWithDescendantText = (options: IdAndTextOptions): NativeHandle => {
+  const { id, text } = options;
+  return new NativeHandle({
+    createMatcher: () => by.id(id).withDescendant(by.text(text)),
+    description: `#${id} containing text "${text}"`,
+  });
+};
+
+/** Matches a text inside the `testID` element, for a text that has no `testID` of its own. */
+export const byTextWithAncestorId = (options: IdAndTextOptions): NativeHandle => {
+  const { id, text } = options;
+  return new NativeHandle({
+    createMatcher: () => by.text(text).withAncestor(by.id(id)),
+    description: `"${text}" inside #${id}`,
+  });
+};

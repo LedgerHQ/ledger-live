@@ -29,7 +29,8 @@ transforming them and installing every peer, this package redirects them (via
 `moduleNameMapper`) to a generic **Proxy passthrough stub**: every named export becomes
 a component that renders its children. Native `Banner` and `Button` expose their visible
 description, actions, and labels, while web tooltip primitives and `InteractiveIcon` retain their
-accessible test shape.
+accessible test shape. The web `Select` runs its `render` trigger and `renderItem` rows: every item is
+rendered as an `option` that reports its value through `onValueChange`.
 
 The Web `Avatar` boundary renders `fallbackText` and exposes fallback color and size through
 `data-*` attributes for consumer tests. It deliberately does not reproduce Lumen's color-selection

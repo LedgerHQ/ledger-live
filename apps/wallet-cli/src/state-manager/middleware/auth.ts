@@ -6,7 +6,7 @@ import { createAuthFetch, excludeFromAuthDeadline } from "../auth-fetch";
 
 export function createWalletCliAuthMiddleware() {
   // Production Keycloak, copied from the deprecated `@shared/env` team-platform definitions. The
-  // overrides are for development only and do not change the swap API URL.
+  // overrides are for development only; point SWAP_API_BASE at the same environment.
   const auth = {
     clientId: process.env.LEDGER_AUTH_CLIENT_ID ?? "ledger-keycloak",
     keycloakBaseUrl:

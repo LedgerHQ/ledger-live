@@ -15,3 +15,14 @@ export const nodeUrl = (config?: IcpCurrencyConfig): string => {
   while (url.endsWith("/")) url = url.slice(0, -1);
   return url;
 };
+
+export const internet_computerDefaults = {
+  internet_computer: {
+    status: {
+      type: "active",
+      features: [{ id: "blockchain_txs", status: "active" }],
+    },
+    name: "Internet Computer",
+    unit: { name: "ICP", code: "ICP", magnitude: 8 },
+  },
+} satisfies Record<string, IcpCurrencyConfig>;

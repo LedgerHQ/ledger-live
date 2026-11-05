@@ -97,12 +97,13 @@ describe("ApplyUpdates step", () => {
   it("shows the summary once the updates are applied and closes on press", async () => {
     const onClose = jest.fn();
     const { user } = renderView(
-      { type: ApplyUpdatesStateType.UPDATES_APPLIED, restoreResult: undefined },
+      { type: ApplyUpdatesStateType.UPDATES_APPLIED, osVersion: "2.0.0", restoreResult: undefined },
       { onClose },
     );
 
-    expect(screen.getByTestId("os-update-applied-screen")).toBeVisible();
-    await user.press(screen.getByText("Close"));
+    expect(screen.getByText("Your Ledger Stax is now up to date")).toBeVisible();
+    expect(screen.getByText("OS version: 2.0.0")).toBeVisible();
+    await user.press(screen.getByText("Finish"));
 
     expect(onClose).toHaveBeenCalledTimes(1);
   });
@@ -160,19 +161,19 @@ describe("ApplyUpdates step", () => {
     expect(cancel).toHaveBeenCalledTimes(1);
   });
 
-  it.each([
-    [ApplyUpdatesStateType.OUT_OF_MEMORY, "os-update-out-of-memory"],
-    [ApplyUpdatesStateType.UNEXPECTED_ERROR, "os-update-unexpected-error"],
-  ] as const)("only offers cancel for %s", async (type, testID) => {
-    const cancel = jest.fn();
-    const { user } = renderView({ type, error: new Error("boom"), cancel });
+  it.each([[ApplyUpdatesStateType.UNEXPECTED_ERROR, "os-update-unexpected-error"]] as const)(
+    "only offers cancel for %s",
+    async (type, testID) => {
+      const cancel = jest.fn();
+      const { user } = renderView({ type, error: new Error("boom"), cancel });
 
-    expect(screen.getByTestId(testID)).toBeVisible();
-    expect(screen.queryByText("Retry")).toBeNull();
-    await user.press(screen.getByText("Cancel"));
+      expect(screen.getByTestId(testID)).toBeVisible();
+      expect(screen.queryByText("Retry")).toBeNull();
+      await user.press(screen.getByText("Cancel"));
 
-    expect(cancel).toHaveBeenCalledTimes(1);
-  });
+      expect(cancel).toHaveBeenCalledTimes(1);
+    },
+  );
 
   it.each([
     [ApplyUpdatesStateType.DEVICE_LOCKED, "os-update-device-locked"],

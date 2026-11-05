@@ -8,7 +8,7 @@ import {
 
 type AccountDetailToolProps = Extract<DevToolsConfig[number], { id: "account-detail" }>["config"];
 
-/** Requires the host to mount the notice slice at `accountAnalyticsIntroduction` (desktop does). */
+/** Requires the host to mount the notice slice at `accountAnalyticsIntroduction` (desktop and mobile do). */
 export function useAccountDetailToolProps(): AccountDetailToolProps {
   const dispatch = useDispatch();
   const hasDismissed = useSelector(selectAccountAnalyticsIntroductionDismissed);

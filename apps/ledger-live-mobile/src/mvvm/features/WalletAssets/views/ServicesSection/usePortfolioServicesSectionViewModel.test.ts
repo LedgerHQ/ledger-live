@@ -36,4 +36,14 @@ describe("usePortfolioServicesSectionViewModel", () => {
       params: {},
     });
   });
+
+  it("should navigate to the Predictions screen when opening predictions", () => {
+    const { result } = renderHook(usePortfolioServicesSectionViewModel);
+
+    result.current.onOpenService("predictions");
+
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Predictions, {
+      screen: ScreenName.Predictions,
+    });
+  });
 });

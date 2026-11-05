@@ -2,7 +2,7 @@
 name: knip-migration
 description: |
   Dead-code / unused-dependency detection uses `knip`, which requires each package to expose an
-  explicit, minimal `package.json#exports` (no `./*` wildcard). Read this when adding a new package or migrating an existing one to knip.
+  explicit, minimal `package.json#exports` (no `./*` wildcard). Read when adding a new package or migrating an existing one to knip.
 ---
 
 # Dead-code detection: explicit exports + knip

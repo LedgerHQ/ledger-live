@@ -15,6 +15,7 @@ type UseLeaveOnboardingInput = {
   device: Device | null;
   navigateOnExit: boolean;
   wasReadOnlyAtEntry: boolean;
+  getNavigation?: () => NavigationProp<ParamListBase> | null;
 };
 
 /**
@@ -25,14 +26,16 @@ export function useLeaveOnboarding({
   device,
   navigateOnExit,
   wasReadOnlyAtEntry,
+  getNavigation,
 }: UseLeaveOnboardingInput) {
-  const navigation = useNavigation<NavigationProp<ParamListBase>>();
+  const screenNavigation = useNavigation<NavigationProp<ParamListBase>>();
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const { notifyFlowCompleted } = useNotificationsPrompt();
 
   return (reason: DeviceOnboardingExitReason, context: DeviceOnboardingContext) => {
-    if (!navigateOnExit || !device) return;
+    const navigation = getNavigation ? getNavigation() : screenNavigation;
+    if (!navigateOnExit || !device || !navigation) return;
     const genuine = isCurrentSessionGenuine(context);
     const seeded = context.isOnboarded === true;
     const firmwareNeedsLegacyFlow =

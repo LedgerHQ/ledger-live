@@ -89,9 +89,11 @@ const FloatingDebugButton: React.FC<Props> = ({
   );
 };
 
+export const FLOATING_DEBUG_BUTTON_Z_INDEX = 999;
+
 const styles = StyleSheet.create({
   wrap: {
-    zIndex: 999,
+    zIndex: FLOATING_DEBUG_BUTTON_Z_INDEX,
     flex: 1,
     position: "absolute",
     top: 0,

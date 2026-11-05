@@ -1,7 +1,6 @@
 import { UserInteractionRequired, type DeviceModelId } from "@ledgerhq/device-management-kit";
 import {
   RestoreBackupDeviceAction,
-  RestoreBackupStatus,
   type Backup,
   type RestoreBackupDAInput,
 } from "@ledgerhq/dmk-ledger-wallet";
@@ -17,7 +16,6 @@ import { OsUpdatesOrchestratorStateMachineEventType } from "../orchestrator/type
 import { checkErrorCauseStateMachine } from "../shared/checkErrorCauseStateMachine";
 import { DeviceSituationEventType, isRecovered } from "../shared/types";
 import { isAllowSecureConnectionRefusedError } from "../shared/utils/isRefusedByUserError";
-import { isOutOfMemoryError } from "../shared/utils/isOutOfMemoryError";
 import {
   RestoreBackupStateMachineEventType,
   type RestoreBackupStateMachine,
@@ -194,19 +192,6 @@ export const restoreBackupStateMachine: RestoreBackupStateMachine = setup({
         onDone: [
           {
             guard: ({ event }) =>
-              event.output.isLeft() && isOutOfMemoryError(event.output.extract()),
-            actions: assign({ error: ({ event }) => event.output.extract() }),
-            target: "OutOfMemory",
-          },
-          {
-            guard: ({ event }) =>
-              event.output
-                .map(({ restoreStatus }) => restoreStatus === RestoreBackupStatus.OUT_OF_MEMORY)
-                .orDefault(false),
-            target: "OutOfMemory",
-          },
-          {
-            guard: ({ event }) =>
               event.output.isLeft() && isAllowSecureConnectionRefusedError(event.output.extract()),
             actions: assign({ error: ({ event }) => event.output.extract() }),
             target: "AllowSecureConnectionRefused",
@@ -254,19 +239,6 @@ export const restoreBackupStateMachine: RestoreBackupStateMachine = setup({
           target: "RestoreBackup",
           actions: [{ type: "logEvent", params: "retry" }, assign({ lastProgress: 0 })],
         },
-        [RestoreBackupStateMachineEventType.CANCEL]: "Canceled",
-      },
-    },
-    OutOfMemory: {
-      entry: {
-        type: "sendStateUpdate",
-        params: ({ context }) => ({
-          type: RestoreBackupStateType.OUT_OF_MEMORY,
-          error: context.error,
-          cancel: () => context.send({ type: RestoreBackupStateMachineEventType.CANCEL }),
-        }),
-      },
-      on: {
         [RestoreBackupStateMachineEventType.CANCEL]: "Canceled",
       },
     },

@@ -36,7 +36,6 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/semver": "catalog:",
-    "@types/sha.js": "2.4.4",
     "@typescript/native": "catalog:",
     "typescript": "catalog:",
     "axios": "catalog:",

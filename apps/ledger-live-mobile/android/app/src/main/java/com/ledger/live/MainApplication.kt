@@ -14,6 +14,7 @@ import com.facebook.react.defaults.DefaultReactNativeHost
 import expo.modules.ApplicationLifecycleDispatcher
 import expo.modules.ReactNativeHostWrapper
 import cl.json.ShareApplication
+import com.ledger.nativeperformance.AppStartupModule
 
 class MainApplication : Application(), ReactApplication, ShareApplication {
 
@@ -55,6 +56,7 @@ class MainApplication : Application(), ReactApplication, ShareApplication {
   }
 
     override fun onCreate() {
+    AppStartupModule.recordLaunch()
     super.onCreate()
 
     loadReactNative(this)

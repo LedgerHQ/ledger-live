@@ -34,6 +34,7 @@
     "react": ">=19.0.0"
   },
   "devDependencies": {
+    "@domain/entity-currency": "workspace:*",
     "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

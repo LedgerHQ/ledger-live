@@ -1718,10 +1718,10 @@
       "description": "To sync your apps, please make sure both are updated to the latest version."
     },
     "AppManifestUnknownError": {
-      "title": "Swap Live App not found"
+      "title": "Live App not found"
     },
     "AppManifestNotFoundError": {
-      "title": "Failed to load Swap Live App"
+      "title": "Failed to load Live App"
     },
     "InvalidMemoMina": {
       "title": "Memo text cannot be longer than 32 characters"
@@ -3659,6 +3659,10 @@
     "borrow": {
       "title": "Loans",
       "description": "Borrow stablecoins"
+    },
+    "predictions": {
+      "title": "Predictions",
+      "description": "Position on the future"
     }
   },
   "addAccountsModal": {
@@ -5961,7 +5965,8 @@
     "actions": {
       "retry": "Retry",
       "cancel": "Cancel",
-      "close": "Close"
+      "close": "Close",
+      "finish": "Finish"
     },
     "closeConfirmation": {
       "title": "OS update is in progress",
@@ -5987,12 +5992,15 @@
       "restoringDescription": "Almost done. Your settings are being reinstalled on your {{productName}}."
     },
     "applied": {
-      "title": "Update complete",
-      "description": "Your {{productName}} is up to date."
+      "title": "Your {{productName}} is now up to date",
+      "version": "OS version: {{version}}"
     },
     "restored": {
-      "title": "Backup restored",
-      "description": "Your apps and settings are back on your {{productName}}."
+      "title": "Apps and settings reinstalled on your {{productName}}"
+    },
+    "restoreResult": {
+      "partial": "You didn't reinstall your apps and lock screen. Your crypto is safe. You can reinstall your apps and lock screen at any time.",
+      "outOfMemory": "Not enough storage available while reinstalling your apps and lock screen. Your crypto is safe. Reinstall your apps and lock screen at any time."
     },
     "continueOnDevice": {
       "title": "Continue on your {{productName}}",
@@ -6036,10 +6044,6 @@
       "description": "If this was a mistake, restart the update.",
       "restart": "Restart OS update",
       "cancel": "Cancel OS update"
-    },
-    "outOfMemory": {
-      "title": "Not enough space on your device",
-      "description": "Your device does not have enough memory to continue. Free some space and try again."
     }
   },
   "deviceIntentExecutor": {
@@ -6519,6 +6523,7 @@
       "buyDeviceCTA": "<0>Need a new Ledger? </0><1>Buy now</1>",
       "item": {
         "usb": "Connected with USB",
+        "mocked": "Mocked",
         "available": "Available. Tap to connect",
         "unavailable": "Not connected"
       }
@@ -10575,6 +10580,12 @@
     }
   },
   "accountDetail": {
+    "analyticsIntroduction": {
+      "title": "Looking for your account performance?",
+      "description": "All your performance data now lives on the Analytics page.",
+      "cta": "Go to Analytics",
+      "dismiss": "Dismiss Analytics introduction"
+    },
     "assets": {
       "title": "Assets",
       "add": "Add"

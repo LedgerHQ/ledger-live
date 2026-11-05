@@ -1,15 +1,4 @@
-import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
+import { filecoinDefaults } from "@ledgerhq/coin-filecoin/config";
+import { currencyDefaultsToLiveConfig } from "../../config";
 
-export const fileCoinConfig: Record<string, ConfigInfo> = {
-  config_currency_filecoin: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      name: "Filecoin",
-      unit: { name: "FIL", code: "FIL", magnitude: 18 },
-    },
-  },
-};
+export const fileCoinConfig = currencyDefaultsToLiveConfig(filecoinDefaults);

@@ -1182,6 +1182,7 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
         type: "sendStateUpdate",
         params: ({ context }) => ({
           type: ApplyUpdatesStateType.UPDATES_APPLIED,
+          osVersion: context.osVersion!.seVersion,
           restoreResult: context.restoreResult,
         }),
       },

@@ -12,6 +12,7 @@ import {
   usePayCardToolProps,
   useEnvDevToolProps,
   useAppConfigToolProps,
+  useAccountDetailToolProps,
 } from "@devtools/bindings";
 import type { DevToolsConfig } from "@devtools/shell";
 import { openHostedUrlInSecureBrowser } from "@features/flow-pay-card-auth";
@@ -100,6 +101,7 @@ export function useDevToolsScreenViewModel() {
   );
   const envToolProps = useEnvDevToolProps();
   const appConfigToolProps = useAppConfigToolProps();
+  const accountDetailToolProps = useAccountDetailToolProps();
   const dmk = useDeviceManagementKit();
   const knownDevices = useSelector(knownDevicesSelector);
   const offerSync = useOfferSync();
@@ -120,8 +122,16 @@ export function useDevToolsScreenViewModel() {
       { id: "app-config", config: appConfigToolProps },
       { id: "pay-card", config: payCardToolProps },
       { id: "device-onboarding", config: deviceOnboardingProps },
+      { id: "account-detail", config: accountDetailToolProps },
     ],
-    [featureFlagsProps, envToolProps, appConfigToolProps, payCardToolProps, deviceOnboardingProps],
+    [
+      featureFlagsProps,
+      envToolProps,
+      appConfigToolProps,
+      payCardToolProps,
+      deviceOnboardingProps,
+      accountDetailToolProps,
+    ],
   );
 
   const screenOptions: NativeStackNavigationOptions = useMemo(() => {

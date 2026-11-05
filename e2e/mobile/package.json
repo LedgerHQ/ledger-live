@@ -9,15 +9,17 @@
     "format": "oxfmt .",
     "format:check": "oxfmt . --check",
     "typecheck": "tsc --noEmit --project tsconfig.json --customConditions node",
+    "build:ios:framework-cache": "pnpm detox build-framework-cache",
     "test:detox": "pnpm detox test",
     "test:ios": "pnpm test:detox --configuration ios.sim.release",
     "test:android": "pnpm test:detox --configuration android.emu.release",
     "build:ios": "nx run live-mobile:e2e:build -- --configuration ios.sim.release",
     "build:android": "nx run live-mobile:e2e:build -- --configuration android.emu.release",
+    "test:ci": "zx ./scripts/run-ci.mjs",
     "test:ios:debug": "pnpm test:detox --configuration ios.sim.debug",
     "test:android:debug": "pnpm test:detox --configuration android.emu.debug",
-    "build:ios:debug": "pnpm --filter live-mobile run e2e:build --configuration ios.sim.debug",
-    "build:android:debug": "pnpm --filter live-mobile run e2e:build --configuration android.emu.debug",
+    "build:ios:debug": "nx run live-mobile:e2e:build -- --configuration ios.sim.debug",
+    "build:android:debug": "nx run live-mobile:e2e:build -- --configuration android.emu.debug",
     "allure:generate": "pnpm dlx allure-commandline@2.28.0 generate ./artifacts --clean -o ./artifacts/allure-report",
     "allure:open": "pnpm dlx allure-commandline@2.28.0 open ./artifacts/allure-report",
     "allure": "pnpm run allure:generate && pnpm run allure:open"
@@ -30,7 +32,6 @@
     "uuid": "catalog:"
   },
   "devDependencies": {
-    "@types/react": "catalog:",
     "@domain/entity-contact": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:^",
     "@jest/reporters": "catalog:",
@@ -82,6 +83,7 @@
     "tsconfig-paths": "4.2.0",
     "ws": "catalog:",
     "@typescript/native": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "zx": "catalog:"
   }
 }

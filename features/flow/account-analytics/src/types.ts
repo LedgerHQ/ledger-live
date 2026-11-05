@@ -14,6 +14,8 @@ export type AnalyticsAsset = Readonly<{
 export type AnalyticsAccount = Readonly<{
   id: string;
   name: string;
+  iconId: string;
+  ticker: string;
   networkName: string;
   address: string;
 }>;
@@ -58,6 +60,11 @@ export type AnalyticsBalanceData = Readonly<{
   variation: Readonly<{ amount: number; ratio: number | null }>;
   history: readonly Readonly<{ timestamp: number; amount: number }>[];
 }>;
+
+export type AnalyticsScope = Pick<
+  AnalyticsQueryContext,
+  "assetId" | "accountId" | "fiatCurrencyId" | "positionIds"
+>;
 
 export type AnalyticsReadResult<Data> =
   | Readonly<{ status: "ready"; data: Data }>

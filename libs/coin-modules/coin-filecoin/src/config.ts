@@ -21,3 +21,14 @@ const coinConfig: {
 } = buildCoinConfig<FilecoinCoinConfig>();
 
 export default coinConfig;
+
+export const filecoinDefaults = {
+  filecoin: {
+    status: {
+      type: "active",
+      features: [{ id: "blockchain_txs", status: "active" }],
+    },
+    name: "Filecoin",
+    unit: { name: "FIL", code: "FIL", magnitude: 18 },
+  },
+} satisfies Record<string, FilecoinCoinConfig>;

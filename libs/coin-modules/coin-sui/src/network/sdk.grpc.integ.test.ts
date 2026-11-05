@@ -1,4 +1,3 @@
-import { getEnv } from "@ledgerhq/live-env";
 import type { SuiCoinConfig } from "../config";
 import { withGrpcApi } from "./sdk.grpc";
 
@@ -8,8 +7,8 @@ describe("gRPC-web transport (live mainnet)", () => {
   const config: SuiCoinConfig = {
     status: { type: "active" },
     node: {
-      graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
-      grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
+      graphqlUrl: "https://sui.coin.ledger.com/graphql",
+      grpcUrl: "https://sui.coin.ledger.com",
     },
     features: { transport: "grpc" },
     name: "Sui",

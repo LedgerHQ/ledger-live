@@ -30,6 +30,7 @@ jest.mock("../db", () => {
     getMarketListConfig: empty,
     getMarketBannerState: empty,
     getPayCardState: empty,
+    getAccountAnalyticsIntroductionState: empty,
     getTrustchainState: empty,
     getWalletExportState: empty,
     getLargeMoverState: empty,

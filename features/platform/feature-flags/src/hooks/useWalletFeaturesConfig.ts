@@ -26,8 +26,6 @@ export function useWalletFeaturesConfig(platform: WalletPlatform): WalletFeature
     return {
       isEnabled,
       shouldUseLazyOnboarding: isEnabled && Boolean(params?.lazyOnboarding),
-      shouldDisplayAssetSection:
-        platform === "desktop" ? true : isEnabled && Boolean(params?.assetSection),
       shouldDisplayBrazePlacement: isEnabled && Boolean(params?.brazePlacement),
       shouldDisplayAggregatedAssets:
         platform === "desktop" ? true : isEnabled && Boolean(params?.aggregatedAssets),
@@ -62,8 +60,6 @@ export interface WalletFeaturesConfig {
   readonly isEnabled: boolean;
   /** Whether onboarding should skip device setup and open portfolio in read-only mode */
   readonly shouldUseLazyOnboarding: boolean;
-  /** Whether to show the asset section */
-  readonly shouldDisplayAssetSection: boolean;
   /** Whether to show Braze content cards as ContentBanner (e.g. action cards on portfolio, mobile only) */
   readonly shouldDisplayBrazePlacement: boolean;
   /** Whether to show the aggregated assets */

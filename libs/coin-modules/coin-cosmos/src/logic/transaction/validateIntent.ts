@@ -74,7 +74,7 @@ export async function validateIntent(
 ): Promise<TransactionValidation> {
   // The framework hands over `transaction.fees ?? 0`, so an unprepared transaction is
   // indistinguishable from a zero fee by value alone. A zero fee is only a real estimate on a chain
-  // that allows a zero gas price (e.g. gonka); anywhere else it means estimation has not run yet.
+  // that allows a zero gas price (e.g. nyx); anywhere else it means estimation has not run yet.
   const feesLoaded =
     customFees !== undefined &&
     (customFees.value > 0n || cryptoFactory(currencyId, config).minGasPrice === 0);
