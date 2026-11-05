@@ -83,7 +83,7 @@ jobs:
       cache-bucket: ll-nx-cache
       USERDATA_CACHE_ENABLED: "true"
       E2E_GENERATED_USERDATA_DIR: ${{ format('{0}/e2e/userdata/generated', github.workspace) }}
-    runs-on: [ledger-live-4xlarge]
+    runs-on: ledger-wallet-4cpu-aws-public-docker-cached
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -153,6 +153,7 @@ jobs:
           invert_filter: false
           shard_index: 1
           shard_total: 1
+          workers: 4
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}

@@ -30,7 +30,7 @@ Do not add new usages of these labels. When touching a job that already uses one
 | 8 CPU  | `ledger-wallet-8cpu-aws-public-cached`   | `ledger-wallet-8cpu-aws-public`      |
 | 16 CPU | `ledger-wallet-16cpu-aws-public-cached`  | `ledger-wallet-16cpu-aws-public`     |
 
-`ledger-wallet-4cpu-aws-public-docker` is the 4 CPU runner for jobs that need a Docker daemon.
+For jobs that need a Docker daemon, use the 4 CPU Docker runner: `ledger-wallet-4cpu-aws-public-docker-cached` by default, or `ledger-wallet-4cpu-aws-public-docker` for the release process.
 
 Memory is 4 GiB per CPU (e.g. 4cpu = 16 GiB, 8cpu = 32 GiB).
 
