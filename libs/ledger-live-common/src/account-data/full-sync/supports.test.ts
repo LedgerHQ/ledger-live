@@ -2,6 +2,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currenc
 import { genAccount } from "../../mock/account";
 import { fromLegacyAccount } from "../../account/accountDescriptor";
 import { isFullSyncSupported } from "./supports";
+import { NetworkIdSchema } from "@domain/entity-account-descriptor";
 
 const descriptor = fromLegacyAccount(
   genAccount("supports", { currency: getCryptoCurrencyById("ethereum") }),
@@ -13,6 +14,8 @@ describe("isFullSyncSupported", () => {
   });
 
   it("does not support a network no crypto currency matches", () => {
-    expect(isFullSyncSupported({ ...descriptor, network: "nope" })).toBe(false);
+    expect(isFullSyncSupported({ ...descriptor, network: NetworkIdSchema.parse("nope") })).toBe(
+      false,
+    );
   });
 });

@@ -51,6 +51,7 @@ apps/ledger-live-desktop/scripts/                        @ledgerhq/platform
 /shared/cloud-sync/                                      @ledgerhq/platform
 /shared/cloud-sync-module/                               @ledgerhq/platform
 /shared/env/                                             @ledgerhq/platform
+/shared/native-performance/                              @ledgerhq/platform
 
 # Platform — mobile
 apps/ledger-live-mobile/android/                         @ledgerhq/platform
@@ -149,7 +150,7 @@ features/flow/portfolio-services-entry-points/           @ledgerhq/wallet-xp
 features/platform/assets-table/                          @ledgerhq/wallet-xp
 
 # Wallet — Intents
-features/platform/verify-address-intent/                 @ledgerhq/wallet-xp
+features/platform/intent-verify-address/                 @ledgerhq/wallet-xp
 
 # Wallet — App lock
 features/platform/app-lock/                              @ledgerhq/wallet-xp
@@ -350,6 +351,10 @@ apps/ledger-live-desktop/src/mvvm/features/Perps/                               
 apps/ledger-live-mobile/src/mvvm/features/Perps/                                        @ledgerhq/ptx
 apps/ledger-live-desktop/src/mvvm/features/Portfolio/components/PerpsEntryPoint/        @ledgerhq/ptx
 apps/ledger-live-mobile/src/mvvm/features/Portfolio/components/PortfolioPerpsEntryPoint/ @ledgerhq/ptx
+apps/ledger-live-mobile/src/mvvm/features/WalletApiExchange/                            @ledgerhq/ptx
+apps/ledger-live-mobile/src/mvvm/components/InlineTextLink/                             @ledgerhq/ptx
+apps/ledger-live-mobile/src/mvvm/utils/getSwapTermsCopy.ts                              @ledgerhq/ptx
+apps/ledger-live-mobile/src/mvvm/utils/__tests__/getSwapTermsCopy.test.ts               @ledgerhq/ptx
 
 # wallet-cli
 apps/wallet-cli/                                                              @ledgerhq/agentic-core
@@ -610,6 +615,7 @@ apps/ledger-live-mobile/src/e2e/                                            @led
 libs/live-e2e-shared/                                                       @ledgerhq/qaa
 tools/actions/composites/merge-e2e-detox-timings/                           @ledgerhq/qaa
 tools/actions/composites/e2e-shard-diagnostics/                             @ledgerhq/qaa
+tools/actions/composites/check-exclusive-lock/                              @ledgerhq/qaa
 
 # Wallet XP — mobile app mocks
 apps/ledger-live-mobile/e2e/                                                @ledgerhq/wallet-xp

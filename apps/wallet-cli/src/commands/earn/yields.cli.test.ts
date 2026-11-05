@@ -200,6 +200,27 @@ describe("earn yields (no --network): --account override", () => {
     expect(data.ok).toBe(false);
     expect(data.error.message).toContain('No account labeled "nope"');
   });
+
+  it("reports a malformed --network as one earn yields error line", async () => {
+    const fixture = makeSessionDir([{ label: "ethereum-1", descriptor: MOCK_ETH_DESCRIPTOR }]);
+    cleanup = fixture.cleanup;
+
+    const { stdout, exitCode } = await runCli(
+      ["earn", "yields", "--network", "Bit Coin", "--output", "json"],
+      { WALLET_CLI_MOCK_PORT: String(server.port), ...fixture.env },
+    );
+
+    expect(exitCode).toBe(1);
+    expect(stdout.trimEnd().split("\n")).toHaveLength(1);
+    expect(JSON.parse(stdout)).toEqual({
+      ok: false,
+      error: {
+        command: "earn yields",
+        code: "UnknownNetworkError",
+        message: 'Unknown network "bit coin"',
+      },
+    });
+  });
 });
 
 describe("earn yields --network <unsupported>", () => {

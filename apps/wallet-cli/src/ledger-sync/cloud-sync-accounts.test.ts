@@ -11,7 +11,7 @@ import {
   type CreateCloudSyncSdk,
 } from "./cloud-sync-accounts";
 import { walletCliLoaders } from "../coin-module-loaders";
-import { parseV1 } from "../shared/accountDescriptor";
+import { NetworkIdSchema, parseV1 } from "../shared/accountDescriptor";
 import { XPUB, ETH_ADDR, SOL_ADDR } from "../shared/accountDescriptor/test-fixtures";
 
 const BTC_RAW = {
@@ -128,6 +128,22 @@ describe("mergeSyncedAccounts", () => {
     ]);
     expect(report.invalid).toEqual([]);
     expect(report.imported).toEqual([expect.objectContaining({ status: "imported" })]);
+    expect(session.accounts).toHaveLength(1);
+  });
+
+  it("reports an empty currencyId as skipped, not invalid", () => {
+    const session = Session.from([]);
+    const empty = {
+      ...BTC_RAW,
+      id: `js:2::${XPUB}:native_segwit`,
+      currencyId: "",
+    };
+    const report = mergeSyncedAccounts(session, [empty, ETH_RAW]);
+
+    expect(report.skipped).toEqual([
+      expect.objectContaining({ status: "skipped", id: empty.id, reason: 'Unknown network ""' }),
+    ]);
+    expect(report.invalid).toEqual([]);
     expect(session.accounts).toHaveLength(1);
   });
 
@@ -299,7 +315,7 @@ describe("mergeSyncedAccounts", () => {
     ]);
     expect(report.imported).toEqual([expect.objectContaining({ network: "bitcoin" })]);
     expect(session.accounts.map(({ descriptor }) => parseV1(descriptor).network)).toEqual([
-      "bitcoin",
+      NetworkIdSchema.parse("bitcoin"),
     ]);
   });
 

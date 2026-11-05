@@ -11,13 +11,16 @@ export {
   upgradeLegacyDescriptor,
 } from "./v1";
 
-export type { Network } from "./network";
+export type { NetworkId } from "./network";
 export {
-  NetworkSchema,
+  NetworkIdSchema,
   parseNetworkArg,
+  normalizeNetworkArg,
+  toNetworkId,
   networkFromCurrencyId,
   currencyIdFromNetwork,
   mainnetOf,
+  networkOfV0,
   UnknownNetworkError,
   UnsupportedNetworkError,
 } from "./network";

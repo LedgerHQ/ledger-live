@@ -14,7 +14,7 @@ import type { BridgeAdapter } from "./compatibility/bridge";
 import type { CoinFrameworkAdapter, OperationsPage } from "./compatibility/coinframework";
 import type { EarnSolanaStake } from "./earn/types";
 import type { TransactionIntent } from "./intents";
-import type { Network } from "../shared/accountDescriptor";
+import type { NetworkId } from "../shared/accountDescriptor";
 import { currencyIdFromNetwork, toV1 } from "../shared/accountDescriptor";
 
 export class WalletAdapter {
@@ -44,7 +44,7 @@ export class WalletAdapter {
    * Returns V1 descriptors plus the fresh receive address for each account.
    * deviceId is the live-common device id (or "" for the first detected device).
    */
-  discoverAccounts(network: Network, deviceId: string): Observable<DiscoveredAccountRaw> {
+  discoverAccounts(network: NetworkId, deviceId: string): Observable<DiscoveredAccountRaw> {
     const currencyId = currencyIdFromNetwork(network);
     return from(this.getBridge()).pipe(
       switchMap(bridge =>

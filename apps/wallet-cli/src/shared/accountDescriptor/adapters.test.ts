@@ -4,6 +4,7 @@ import { toV1, toV0, UnsupportedFamilyError } from "./adapters";
 import type { AccountDescriptorV0 } from "./v0";
 import type { AccountDescriptorV1, UtxoAccountDescriptorV1, AccountBasedDescriptorV1 } from "./v1";
 import { XPUB, ETH_ADDR } from "./test-fixtures";
+import { NetworkIdSchema } from "./network";
 
 const BTC_V0: AccountDescriptorV0 = {
   id: `js:2:bitcoin:${XPUB}:native_segwit`,
@@ -27,7 +28,7 @@ describe("toV1 (V0 → V1)", () => {
   it("converts bitcoin native_segwit to utxo V1", () => {
     const v1 = toV1(BTC_V0);
     expect(v1.type).toBe("utxo");
-    expect(v1.network).toBe("bitcoin");
+    expect(v1.network).toBe(NetworkIdSchema.parse("bitcoin"));
     expect((v1 as UtxoAccountDescriptorV1).xpub).toBe(XPUB);
     // native_segwit → purpose 84
     expect((v1 as UtxoAccountDescriptorV1).path).toMatch(/^m\/84h/);
@@ -42,7 +43,7 @@ describe("toV1 (V0 → V1)", () => {
   it("converts ethereum ethM to address V1", () => {
     const v1 = toV1(ETH_V0);
     expect(v1.type).toBe("address");
-    expect(v1.network).toBe("ethereum");
+    expect(v1.network).toBe(NetworkIdSchema.parse("ethereum"));
     expect((v1 as AccountBasedDescriptorV1).address).toBe(ETH_ADDR);
     // BIP44 → purpose 44
     expect((v1 as AccountBasedDescriptorV1).path).toMatch(/^m\/44h/);
@@ -59,7 +60,7 @@ describe("toV1 (V0 → V1)", () => {
       currencyId: "bitcoin_testnet",
       id: `js:2:bitcoin_testnet:${XPUB}:native_segwit`,
     });
-    expect(v1.network).toBe("bitcoin_testnet");
+    expect(v1.network).toBe(NetworkIdSchema.parse("bitcoin_testnet"));
   });
 });
 
@@ -69,7 +70,7 @@ describe("toV0 (V1 → V0)", () => {
       purpose: "account",
       version: "2",
       type: "utxo",
-      network: "bitcoin",
+      network: NetworkIdSchema.parse("bitcoin"),
       xpub: XPUB,
       path: "m/84h/0h/0h",
     };
@@ -110,7 +111,7 @@ describe("toV0 (V1 → V0)", () => {
       purpose: "account",
       version: "2",
       type: "utxo",
-      network: "bitcoin",
+      network: NetworkIdSchema.parse("bitcoin"),
       xpub: XPUB,
       path: "m/999h/0h/0h",
     };

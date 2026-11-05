@@ -26,6 +26,7 @@ import ExchangeLiveAppNavigator from "./ExchangeLiveAppNavigator";
 import { CardLiveAppNavigator } from "LLM/features/Card";
 import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import BorrowLiveAppNavigator from "./BorrowLiveAppNavigator";
+import PredictionsLiveAppNavigator from "./PredictionsLiveAppNavigator";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
 import PlatformExchangeNavigator from "./PlatformExchangeNavigator";
 import AccountSettingsNavigator from "./AccountSettingsNavigator";
@@ -631,6 +632,11 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.Borrow}
           component={BorrowLiveAppNavigator}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={NavigatorName.Predictions}
+          component={PredictionsLiveAppNavigator}
           options={{ headerShown: false }}
         />
         <Stack.Screen

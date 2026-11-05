@@ -109,7 +109,7 @@ const testOn = (configuration, args, env) =>
       ${args}`.nothrow();
 
 const testWithLockDeferrals = async specArgs => {
-  const { lockDeferralPasses, runWithDeferralPasses } = loadDeferralPasses();
+  const { LOCK_DEFERRAL_PASSES, runWithDeferralPasses } = loadDeferralPasses();
   await fs.remove(LOCK_DEFERRALS_DIR);
   await fs.remove(EXCLUSIVE_LOCK_WAITS_DIR);
   const configuration = `${platform === "ios" ? "ios.sim" : "android.emu"}.${target}`;
@@ -127,7 +127,7 @@ const testWithLockDeferrals = async specArgs => {
     if (outputFile) await foldPassOutput(number, deferred, lockWaits);
     return { exitCode: result.exitCode, deferred };
   };
-  process.exitCode = await runWithDeferralPasses(runPass, lockDeferralPasses());
+  process.exitCode = await runWithDeferralPasses(runPass, LOCK_DEFERRAL_PASSES);
 };
 
 for (const argName in argv) {

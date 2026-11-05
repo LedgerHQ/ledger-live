@@ -52,6 +52,12 @@
       "exchange/swapTransactionStatus/transactionStatus": [
         "lib-es/exchange/swapTransactionStatus/transactionStatus"
       ],
+      "exchange/intents": [
+        "lib-es/exchange/intents/index"
+      ],
+      "exchange/intents/index": [
+        "lib-es/exchange/intents/index"
+      ],
       "errors": [
         "./src/errors.ts"
       ],
@@ -137,6 +143,16 @@
       "@ledgerhq/source": "./src/exchange/swapTransactionStatus/transactionStatus.ts",
       "types": "./lib-es/exchange/swapTransactionStatus/transactionStatus.d.ts",
       "default": "./lib-es/exchange/swapTransactionStatus/transactionStatus.js"
+    },
+    "./exchange/intents": {
+      "@ledgerhq/source": "./src/exchange/intents/index.ts",
+      "types": "./lib-es/exchange/intents/index.d.ts",
+      "default": "./lib-es/exchange/intents/index.js"
+    },
+    "./exchange/intents/index": {
+      "@ledgerhq/source": "./src/exchange/intents/index.ts",
+      "types": "./lib-es/exchange/intents/index.d.ts",
+      "default": "./lib-es/exchange/intents/index.js"
     },
     ".": {
       "default": "./lib-es/index.js"
@@ -390,7 +406,6 @@
     "@ton-community/ton-ledger": "^7.3.0",
     "@ton/core": "^0.62.0",
     "@ton/crypto": "^3.3.0",
-    "@types/bchaddrjs": "^0.4.0",
     "@types/pako": "^2.0.0",
     "@types/qs": "^6.9.7",
     "@types/redux-actions": "^2.6.2",

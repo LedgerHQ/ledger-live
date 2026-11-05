@@ -1,5 +1,4 @@
-import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
-import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
+import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import { NonEmptyStringSchema } from "@shared/schema-primitives";
 import { z } from "zod";
 import {
@@ -14,7 +13,6 @@ import {
 
 export const ContactIdSchema = NonEmptyStringSchema.brand<"ContactId">();
 export const ContactAddressIdSchema = NonEmptyStringSchema.brand<"ContactAddressId">();
-export const ContactCurrencyIdSchema = z.union([CryptoCurrencyIdSchema, TokenCurrencyIdSchema]);
 
 const ContactNamePattern = /^(?=.*[^ ])[\x20-\x7E]+$/;
 const ContactAddressLabelPattern = /^(?=.*[A-Za-z0-9])[\x20-\x7E]+$/;
@@ -60,7 +58,7 @@ export const ContactAddressValueSchema = NonEmptyStringSchema.brand<"ContactAddr
 
 export const ContactAddressSchema = z.object({
   id: ContactAddressIdSchema,
-  currencyId: ContactCurrencyIdSchema,
+  currencyId: CryptoOrTokenCurrencyIdSchema,
   label: ContactAddressLabelSchema,
   address: ContactAddressValueSchema,
   device: ExternalAddressDeviceContextSchema,
