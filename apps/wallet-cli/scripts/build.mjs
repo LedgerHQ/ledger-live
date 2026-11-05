@@ -6,9 +6,8 @@
 //   node scripts/build.mjs linux-x64  the listed targets
 //
 // Only src/cli.ts is compiled: *.test.ts files are typechecked but never reach the binary.
-// The `usb` native addon is embedded through a literal require() in src/embed-usb-native.ts,
-// because node-gyp-build resolves it dynamically where Bun can't see it. With --minify,
-// process.platform branches are dead-code-eliminated per target.
+// Native addons (`usb`, `@napi-rs/keyring`) load their per-platform package through literal
+// require() calls, so Bun embeds the one matching each --target.
 import { spawnSync } from "node:child_process";
 import { rm } from "node:fs/promises";
 import path from "node:path";

@@ -268,6 +268,35 @@ describe("NodeWebUsbApduSender — real DMK framing round-trip", () => {
     });
   }
 
+  it("ignores frames left by a previous session on another channel", async () => {
+    const fake = createFakeLedgerDevice({
+      data: new Uint8Array([0xca, 0xfe]),
+      status: new Uint8Array([0x90, 0x00]),
+    });
+    let staleSent = false;
+    const device = {
+      ...fake.device,
+      transferIn: async (endpoint: number, length: number) => {
+        if (!staleSent) {
+          staleSent = true;
+          const stale = new Uint8Array(FRAME_SIZE);
+          const [c0 = 0, c1 = 0] = fake.getHostFrames()[0] ?? [];
+          stale.set([c0 ^ 0xff, c1 ^ 0xff, 0x05, 0x00, 0x00, 0x00, 0x02, 0x6a, 0x82]);
+          return { status: "ok" as const, data: new DataView(stale.buffer) };
+        }
+        return fake.device.transferIn(endpoint, length);
+      },
+    };
+
+    const result = await buildSender(device).sendApdu(new Uint8Array([0xe0, 0x01, 0x00, 0x00]));
+
+    expect(result.isRight()).toBe(true);
+    result.ifRight(response => {
+      expect(Array.from(response.data)).toEqual([0xca, 0xfe]);
+      expect(Array.from(response.statusCode)).toEqual([0x90, 0x00]);
+    });
+  });
+
   it("frames a command and reassembles a single-frame response (data + 0x9000)", async () => {
     const command = new Uint8Array([0xe0, 0x01, 0x00, 0x00]);
     const responseData = new Uint8Array([0xde, 0xad, 0xbe, 0xef]);
@@ -283,6 +312,33 @@ describe("NodeWebUsbApduSender — real DMK framing round-trip", () => {
     });
     expect(fake.getReceivedCommands()).toHaveLength(1);
     expect(Array.from(fake.getReceivedCommands()[0]!)).toEqual(Array.from(command));
+  });
+
+  it("waits indefinitely on reads but bounds writes (0 cancels at once in node-usb 3)", async () => {
+    const fake = createFakeLedgerDevice({
+      data: new Uint8Array(),
+      status: new Uint8Array([0x90, 0x00]),
+    });
+    const outTimeouts: Array<number | undefined> = [];
+    const inTimeouts: Array<number | undefined> = [];
+    const device = {
+      ...fake.device,
+      transferOut: (endpoint: number, buffer: ArrayBuffer, timeout?: number) => {
+        outTimeouts.push(timeout);
+        return fake.device.transferOut(endpoint, buffer);
+      },
+      transferIn: (endpoint: number, length: number, timeout?: number) => {
+        inTimeouts.push(timeout);
+        return fake.device.transferIn(endpoint, length);
+      },
+    };
+
+    const result = await buildSender(device).sendApdu(new Uint8Array([0xe0, 0x01, 0x00, 0x00]));
+
+    expect(result.isRight()).toBe(true);
+    expect(outTimeouts).toEqual([10_000]);
+    expect(inTimeouts.length).toBeGreaterThan(0);
+    expect(inTimeouts.every(timeout => timeout === 2_147_483_647)).toBe(true);
   });
 
   it("round-trips a multi-frame command and a multi-frame response", async () => {
@@ -454,13 +510,14 @@ describe("NodeWebUsbApduSender — sendApdu error paths", () => {
   });
 
   it("returns Left when a received frame is rejected by the APDU receiver", async () => {
+    const frame = new Uint8Array(FRAME_SIZE);
     const device = {
       opened: true,
-      transferOut: async () => ({ status: "ok" }),
-      transferIn: async () => ({
-        status: "ok",
-        data: new DataView(new Uint8Array(FRAME_SIZE).buffer),
-      }),
+      transferOut: async (_endpoint: number, buffer: ArrayBuffer) => {
+        frame.set(new Uint8Array(buffer).slice(0, 2));
+        return { status: "ok" };
+      },
+      transferIn: async () => ({ status: "ok", data: new DataView(frame.slice().buffer) }),
     };
     const apduReceiverFactory = (() => ({
       handleFrame: () => Left(new OpeningConnectionError("malformed APDU frame")),
@@ -587,7 +644,7 @@ describe("NodeWebUsbApduSender — setupConnection", () => {
     expect(calls.claimInterface).toBe(1);
   });
 
-  it("releases, resets, closes, reopens, and claims when the device is already opened", async () => {
+  it("releases, closes, reopens, and claims when the device is already opened", async () => {
     const calls: string[] = [];
     const device = {
       opened: true,
@@ -617,23 +674,16 @@ describe("NodeWebUsbApduSender — setupConnection", () => {
 
     await buildSender(device).setupConnection();
 
-    expect(calls).toEqual(
-      process.platform === "win32"
-        ? ["releaseInterface", "close", "open", "selectConfiguration", "claimInterface"]
-        : [
-            "releaseInterface",
-            "reset",
-            "close",
-            "open",
-            "selectConfiguration",
-            "reset",
-            "claimInterface",
-          ],
-    );
+    expect(calls).toEqual([
+      "releaseInterface",
+      "close",
+      "open",
+      "selectConfiguration",
+      "claimInterface",
+    ]);
   });
 
-  it("skips resetting the device on Windows", async () => {
-    const originalPlatform = Object.getOwnPropertyDescriptor(process, "platform");
+  it("never resets the device, which would re-enumerate it and invalidate the handle", async () => {
     const calls: string[] = [];
     const device = {
       opened: false,
@@ -659,14 +709,7 @@ describe("NodeWebUsbApduSender — setupConnection", () => {
       },
     };
 
-    Object.defineProperty(process, "platform", { value: "win32" });
-    try {
-      await buildSender(device).setupConnection();
-    } finally {
-      if (originalPlatform) {
-        Object.defineProperty(process, "platform", originalPlatform);
-      }
-    }
+    await buildSender(device).setupConnection();
 
     expect(calls).toEqual(["open", "claimInterface"]);
   });
@@ -701,11 +744,7 @@ describe("NodeWebUsbApduSender — setupConnection", () => {
 
     await buildSender(device).setupConnection();
 
-    expect(calls).toEqual(
-      process.platform === "win32"
-        ? ["releaseInterface", "close", "open", "claimInterface"]
-        : ["releaseInterface", "reset", "close", "open", "reset", "claimInterface"],
-    );
+    expect(calls).toEqual(["releaseInterface", "close", "open", "claimInterface"]);
   });
 
   it("does not select a configuration when one already exists", async () => {
@@ -780,11 +819,7 @@ describe("NodeWebUsbApduSender — setupConnection", () => {
     finishRelease?.();
     await closePromise;
     await setupPromise;
-    expect(calls).toEqual(
-      process.platform === "win32"
-        ? ["releaseInterface", "close", "open", "claimInterface"]
-        : ["releaseInterface", "close", "open", "reset", "claimInterface"],
-    );
+    expect(calls).toEqual(["releaseInterface", "close", "open", "claimInterface"]);
   });
 
   it("closes the device and rethrows when claiming the interface fails", async () => {
@@ -1015,6 +1050,11 @@ describe("NodeWebUsbApduSender — closeConnection", () => {
   });
 
   it("ignores stale transfer-in errors after close so a later APDU can complete", async () => {
+    const hostChannel = new Uint8Array(2);
+    const channelRecordingSenderFactory = ((args: { channel: Maybe<Uint8Array> }) => {
+      args.channel.ifJust(c => hostChannel.set(c));
+      return { getFrames: () => [{ getRawData: () => new Uint8Array([0xe0, 0x01, 0x00, 0x00]) }] };
+    }) as unknown as ApduSenderServiceFactory;
     type TransferInResult = { status: "ok"; data: DataView };
     const pendingTransfers: Array<{
       resolve: (result: TransferInResult) => void;
@@ -1051,7 +1091,7 @@ describe("NodeWebUsbApduSender — closeConnection", () => {
     })) as unknown as ApduReceiverServiceFactory;
     const sender = new NodeWebUsbApduSender({
       dependencies: { device: device as never, interfaceNumber: 1 },
-      apduSenderFactory: singleFrameApduSenderFactory,
+      apduSenderFactory: channelRecordingSenderFactory,
       apduReceiverFactory,
       loggerFactory: () => createLogger(),
       closeReadLoopTimeoutMs: 5,
@@ -1068,9 +1108,11 @@ describe("NodeWebUsbApduSender — closeConnection", () => {
     await secondTransferStartedPromise;
     pendingTransfers[0]!.reject(new Error("stale read failed"));
     await flushTasks();
+    const responseFrame = new Uint8Array(FRAME_SIZE);
+    responseFrame.set(hostChannel);
     pendingTransfers[1]!.resolve({
       status: "ok",
-      data: new DataView(new Uint8Array(FRAME_SIZE).buffer),
+      data: new DataView(responseFrame.buffer),
     });
     const secondResult = await secondSend;
 

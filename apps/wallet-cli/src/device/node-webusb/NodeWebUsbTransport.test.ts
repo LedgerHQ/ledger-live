@@ -78,13 +78,6 @@ function createStubApduSender() {
 
 let subscriptions: Subscription[] = [];
 
-type NativeLedgerDevice = {
-  deviceDescriptor: {
-    idVendor: number;
-    idProduct: number;
-  };
-};
-
 type WebUsbLedgerDevice = {
   vendorId: number;
   productId: number;
@@ -99,15 +92,7 @@ type WebUsbLedgerDevice = {
 
 type TestPlatformBindings = NonNullable<ConstructorParameters<typeof NodeWebUsbTransport>[6]>;
 type HotplugListenerProbe = { startListeningToConnectionEvents: () => void };
-
-function createNativeLedgerDevice(): NativeLedgerDevice {
-  return {
-    deviceDescriptor: {
-      idVendor: 0x2c97,
-      idProduct: 0x5011,
-    },
-  };
-}
+type UsbConnectionListener = (event: { device: WebUsbLedgerDevice }) => void;
 
 function createWebUsbLedgerDevice(serialNumber = "ledger-1"): WebUsbLedgerDevice {
   return {
@@ -152,16 +137,18 @@ function createUnusedApduReceiverFactory(): ApduReceiverServiceFactory {
   }) as ApduReceiverServiceFactory;
 }
 
-function createPlatformBindings(
-  overrides: Pick<TestPlatformBindings, "getDeviceList" | "createWebUsbDevice"> &
-    Partial<TestPlatformBindings>,
-): TestPlatformBindings {
+function createPlatformBindings({
+  getDevices = async () => [],
+  ...overrides
+}: Partial<TestPlatformBindings> & {
+  getDevices?: TestPlatformBindings["usb"]["getDevices"];
+}): TestPlatformBindings {
   return {
     platform: "win32",
-    usbBindings: {
-      on: () => {},
-      removeListener: () => {},
-      unrefHotplugEvents: () => {},
+    usb: {
+      getDevices,
+      addEventListener: () => {},
+      removeEventListener: () => {},
     },
     setInterval: callback => {
       queueMicrotask(callback);
@@ -200,20 +187,6 @@ function collectDeviceEmissions(
   return emissions;
 }
 
-function collectDeviceStream(transport: NodeWebUsbTransport): {
-  emissions: string[][];
-  errors: unknown[];
-} {
-  const stream = { emissions: [] as string[][], errors: [] as unknown[] };
-  subscriptions.push(
-    transport.listenToAvailableDevices().subscribe({
-      next: devices => stream.emissions.push(devices.map(device => device.id)),
-      error: (error: unknown) => stream.errors.push(error),
-    }),
-  );
-  return stream;
-}
-
 async function waitForFirstDeviceId(
   emissions: Array<Array<{ id: string; transport: string }>>,
 ): Promise<DeviceId> {
@@ -243,10 +216,9 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("refreshes discovered devices from the Windows polling fallback when hotplug attach is missed", async () => {
-    const nativeDevice = createNativeLedgerDevice();
     const webUsbDevice = createWebUsbLedgerDevice();
 
-    let currentDeviceList: (typeof nativeDevice)[] = [];
+    let currentDeviceList: WebUsbLedgerDevice[] = [];
     let pollCallback: (() => void) | undefined;
     let clearedInterval: ReturnType<typeof globalThis.setInterval> | null = null;
 
@@ -255,8 +227,7 @@ describe("NodeWebUsbTransport", () => {
       undefined,
       createPlatformBindings({
         platform: "win32",
-        getDeviceList: () => currentDeviceList as never[],
-        createWebUsbDevice: async () => webUsbDevice as never,
+        getDevices: async () => currentDeviceList as never[],
         setInterval: callback => {
           pollCallback = callback;
           return 0 as unknown as ReturnType<typeof globalThis.setInterval>;
@@ -278,7 +249,7 @@ describe("NodeWebUsbTransport", () => {
     expect(emissions).toHaveLength(0);
     expect(pollCallback).toBeDefined();
 
-    currentDeviceList = [nativeDevice];
+    currentDeviceList = [webUsbDevice];
     pollCallback?.();
     await waitFor(() => {
       expect(emissions).toHaveLength(1);
@@ -291,10 +262,9 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("restarts Windows discovery polling when the connection state machine asks to reconnect", async () => {
-    const nativeDevice = createNativeLedgerDevice();
     const webUsbDevice = createWebUsbLedgerDevice();
 
-    let currentDeviceList: (typeof nativeDevice)[] = [nativeDevice];
+    let currentDeviceList: WebUsbLedgerDevice[] = [webUsbDevice];
     let nextHandle = 0;
     let activePollCallback: (() => void) | undefined;
     const intervalHandles: number[] = [];
@@ -325,8 +295,7 @@ describe("NodeWebUsbTransport", () => {
       () => createStubApduSender() as never,
       createPlatformBindings({
         platform: "win32",
-        getDeviceList: () => currentDeviceList as never[],
-        createWebUsbDevice: async () => webUsbDevice as never,
+        getDevices: async () => currentDeviceList as never[],
         setInterval: callback => {
           nextHandle += 1;
           intervalHandles.push(nextHandle);
@@ -370,10 +339,9 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("reconnects a pending machine from a rescan even if attach arrived before pending mode", async () => {
-    const nativeDevice = createNativeLedgerDevice();
     const webUsbDevice = createWebUsbLedgerDevice();
 
-    let currentDeviceList: (typeof nativeDevice)[] = [nativeDevice];
+    let currentDeviceList: WebUsbLedgerDevice[] = [webUsbDevice];
     let tryToReconnect:
       | DeviceConnectionStateMachineParams<NodeWebUsbApduSenderDependencies>["tryToReconnect"]
       | undefined;
@@ -406,8 +374,7 @@ describe("NodeWebUsbTransport", () => {
       () => createStubApduSender() as never,
       createPlatformBindings({
         platform: "win32",
-        getDeviceList: () => currentDeviceList as never[],
-        createWebUsbDevice: async () => webUsbDevice as never,
+        getDevices: async () => currentDeviceList as never[],
       }),
     );
 
@@ -433,10 +400,9 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("keeps a machine pending when an early reconnect attempt fails before a later scan succeeds", async () => {
-    const nativeDevice = createNativeLedgerDevice();
     const webUsbDevice = createWebUsbLedgerDevice();
 
-    let currentDeviceList: (typeof nativeDevice)[] = [nativeDevice];
+    let currentDeviceList: WebUsbLedgerDevice[] = [webUsbDevice];
     let tryToReconnect:
       | DeviceConnectionStateMachineParams<NodeWebUsbApduSenderDependencies>["tryToReconnect"]
       | undefined;
@@ -475,8 +441,7 @@ describe("NodeWebUsbTransport", () => {
       () => createStubApduSender() as never,
       createPlatformBindings({
         platform: "win32",
-        getDeviceList: () => currentDeviceList as never[],
-        createWebUsbDevice: async () => webUsbDevice as never,
+        getDevices: async () => currentDeviceList as never[],
       }),
     );
 
@@ -513,10 +478,9 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("keeps a machine pending and not active when eventDeviceConnected throws during reconnection", async () => {
-    const nativeDevice = createNativeLedgerDevice();
     const webUsbDevice = createWebUsbLedgerDevice();
 
-    const currentDeviceList: (typeof nativeDevice)[] = [nativeDevice];
+    const currentDeviceList: WebUsbLedgerDevice[] = [webUsbDevice];
     let tryToReconnect:
       | DeviceConnectionStateMachineParams<NodeWebUsbApduSenderDependencies>["tryToReconnect"]
       | undefined;
@@ -559,8 +523,7 @@ describe("NodeWebUsbTransport", () => {
       () => createStubApduSender() as never,
       createPlatformBindings({
         platform: "win32",
-        getDeviceList: () => currentDeviceList as never[],
-        createWebUsbDevice: async () => webUsbDevice as never,
+        getDevices: async () => currentDeviceList as never[],
       }),
     );
 
@@ -593,7 +556,7 @@ describe("NodeWebUsbTransport", () => {
     // would call eventDeviceDisconnected on any entry it finds. With the leak,
     // the broken machine would still be there and would receive the event;
     // with the fix it has been removed and the detach is a no-op.
-    await transport.handleDeviceDisconnection(nativeDevice as never);
+    await transport.handleDeviceDisconnection(webUsbDevice as never);
     expect(eventDeviceDisconnectedCalls).toBe(0);
 
     // The machine was never closed: the reconnect path should leave it
@@ -604,7 +567,6 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("keeps a machine routable when rollback removes only one of several WebUSB keys", async () => {
-    const nativeDevice = createNativeLedgerDevice();
     const originalWebUsbDevice = createWebUsbLedgerDevice("ledger-original");
     const replacementWebUsbDevice = createWebUsbLedgerDevice("ledger-replacement");
 
@@ -648,8 +610,7 @@ describe("NodeWebUsbTransport", () => {
       () => createStubApduSender() as never,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [nativeDevice] as never[],
-        createWebUsbDevice: async () => originalWebUsbDevice as never,
+        getDevices: async () => [originalWebUsbDevice] as never[],
       }),
     );
 
@@ -678,7 +639,6 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("reuses one in-flight connection state machine for concurrent connects to the same device", async () => {
-    const nativeDevice = createNativeLedgerDevice();
     const webUsbDevice = createWebUsbLedgerDevice();
 
     let connectedDeviceId: DeviceId | undefined;
@@ -720,8 +680,7 @@ describe("NodeWebUsbTransport", () => {
       () => createStubApduSender() as never,
       createPlatformBindings({
         platform: "win32",
-        getDeviceList: () => [nativeDevice] as never[],
-        createWebUsbDevice: async () => webUsbDevice as never,
+        getDevices: async () => [webUsbDevice] as never[],
       }),
     );
 
@@ -760,7 +719,6 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("ignores attach and detach events while an explicit disconnect is closing USB resources", async () => {
-    const nativeDevice = createNativeLedgerDevice();
     const webUsbDevice = createWebUsbLedgerDevice();
 
     let connectedDeviceId: DeviceId | undefined;
@@ -768,7 +726,7 @@ describe("NodeWebUsbTransport", () => {
     const usbCloseGate = new Promise<void>(resolve => {
       releaseUsbClose = resolve;
     });
-    let createWebUsbDeviceCalls = 0;
+    let getDevicesCalls = 0;
     let eventDeviceDisconnectedCalls = 0;
     let machineCloseConnectionCalls = 0;
 
@@ -800,10 +758,9 @@ describe("NodeWebUsbTransport", () => {
         }) as never,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [nativeDevice] as never[],
-        createWebUsbDevice: async () => {
-          createWebUsbDeviceCalls += 1;
-          return webUsbDevice as never;
+        getDevices: async () => {
+          getDevicesCalls += 1;
+          return [webUsbDevice] as never[];
         },
       }),
     );
@@ -811,7 +768,7 @@ describe("NodeWebUsbTransport", () => {
     const emissions = collectDeviceEmissions(transport);
 
     connectedDeviceId = await waitForFirstDeviceId(emissions);
-    expect(createWebUsbDeviceCalls).toBe(1);
+    expect(getDevicesCalls).toBe(1);
 
     const connectResult = await transport.connect({
       deviceId: connectedDeviceId!,
@@ -824,11 +781,11 @@ describe("NodeWebUsbTransport", () => {
       expect(machineCloseConnectionCalls).toBe(1);
     });
 
-    await transport.handleDeviceDisconnection(nativeDevice as never);
-    await transport.handleDeviceConnection(nativeDevice as never);
+    await transport.handleDeviceDisconnection(webUsbDevice as never);
+    await transport.handleDeviceConnection(webUsbDevice as never);
 
     expect(eventDeviceDisconnectedCalls).toBe(0);
-    expect(createWebUsbDeviceCalls).toBe(1);
+    expect(getDevicesCalls).toBe(1);
 
     releaseUsbClose?.();
     await disconnectPromise;
@@ -836,7 +793,6 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("cleans up a failed initial connect and allows a later connect to succeed", async () => {
-    const nativeDevice = createNativeLedgerDevice();
     const webUsbDevice = createWebUsbLedgerDevice();
 
     let connectedDeviceId: DeviceId | undefined;
@@ -875,8 +831,7 @@ describe("NodeWebUsbTransport", () => {
       () => createStubApduSender() as never,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [nativeDevice] as never[],
-        createWebUsbDevice: async () => webUsbDevice as never,
+        getDevices: async () => [webUsbDevice] as never[],
       }),
     );
 
@@ -895,7 +850,7 @@ describe("NodeWebUsbTransport", () => {
     });
     expect(firstConnectError).toBeInstanceOf(OpeningConnectionError);
 
-    await transport.handleDeviceDisconnection(nativeDevice as never);
+    await transport.handleDeviceDisconnection(webUsbDevice as never);
     expect(eventDeviceDisconnectedCalls).toBe(0);
     expect(machineSendApduCalls).toBe(0);
 
@@ -914,44 +869,36 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("ignores non-Ledger attach and detach events", async () => {
-    const nonLedgerNativeDevice = {
-      deviceDescriptor: {
-        idVendor: 0x1234,
-        idProduct: 0x5678,
-      },
+    const nonLedgerDevice = {
+      ...createWebUsbLedgerDevice(),
+      vendorId: 0x1234,
+      productId: 0x5678,
     };
 
-    let createWebUsbDeviceCalls = 0;
+    let getDevicesCalls = 0;
 
     const transport = createTestTransport(
       undefined,
       undefined,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [],
-        createWebUsbDevice: async () => {
-          createWebUsbDeviceCalls += 1;
-          return createWebUsbLedgerDevice() as never;
+        getDevices: async () => {
+          getDevicesCalls += 1;
+          return [];
         },
       }),
     );
 
-    await transport.handleDeviceConnection(nonLedgerNativeDevice as never);
-    await transport.handleDeviceDisconnection(nonLedgerNativeDevice as never);
+    await transport.handleDeviceConnection(nonLedgerDevice as never);
+    await transport.handleDeviceDisconnection(nonLedgerDevice as never);
 
-    expect(createWebUsbDeviceCalls).toBe(0);
+    expect(getDevicesCalls).toBe(0);
 
     await transport.destroy();
   });
 
   it("ignores unmatched Ledger detach events", async () => {
-    const nativeDevice = createNativeLedgerDevice();
-    const unmatchedNativeDevice = {
-      deviceDescriptor: {
-        idVendor: 0x2c97,
-        idProduct: 0x9999,
-      },
-    };
+    const unmatchedDevice = { ...createWebUsbLedgerDevice(), productId: 0x9999 };
     const webUsbDevice = createWebUsbLedgerDevice();
 
     let connectedDeviceId: DeviceId | undefined;
@@ -977,8 +924,7 @@ describe("NodeWebUsbTransport", () => {
       () => createStubApduSender() as never,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [nativeDevice] as never[],
-        createWebUsbDevice: async () => webUsbDevice as never,
+        getDevices: async () => [webUsbDevice] as never[],
       }),
     );
 
@@ -991,7 +937,7 @@ describe("NodeWebUsbTransport", () => {
       onDisconnect: () => {},
     });
 
-    await transport.handleDeviceDisconnection(unmatchedNativeDevice as never);
+    await transport.handleDeviceDisconnection(unmatchedDevice as never);
 
     expect(eventDeviceDisconnectedCalls).toBe(0);
 
@@ -999,7 +945,6 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("notifies the matching state machine on Ledger detach and swallows notification errors", async () => {
-    const nativeDevice = createNativeLedgerDevice();
     const webUsbDevice = createWebUsbLedgerDevice();
 
     let connectedDeviceId: DeviceId | undefined;
@@ -1026,8 +971,7 @@ describe("NodeWebUsbTransport", () => {
       () => createStubApduSender() as never,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [nativeDevice] as never[],
-        createWebUsbDevice: async () => webUsbDevice as never,
+        getDevices: async () => [webUsbDevice] as never[],
       }),
     );
 
@@ -1040,7 +984,7 @@ describe("NodeWebUsbTransport", () => {
       onDisconnect: () => {},
     });
 
-    await transport.handleDeviceDisconnection(nativeDevice as never);
+    await transport.handleDeviceDisconnection(webUsbDevice as never);
 
     expect(eventDeviceDisconnectedCalls).toBe(1);
 
@@ -1048,7 +992,6 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("reconnects a pending machine only when both serial numbers match", async () => {
-    const nativeDevice = createNativeLedgerDevice();
     const originalWebUsbDevice = createWebUsbLedgerDevice("ledger-A");
     const differentSerialWebUsbDevice = createWebUsbLedgerDevice("ledger-B");
 
@@ -1088,8 +1031,7 @@ describe("NodeWebUsbTransport", () => {
       () => createStubApduSender() as never,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [nativeDevice] as never[],
-        createWebUsbDevice: async () => currentWebUsbDevice as never,
+        getDevices: async () => [currentWebUsbDevice] as never[],
       }),
     );
 
@@ -1121,7 +1063,6 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("reconnects a pending machine by product when serial numbers are absent", async () => {
-    const nativeDevice = createNativeLedgerDevice();
     const originalWebUsbDevice = createWebUsbLedgerDevice("");
     const replacementWebUsbDevice = createWebUsbLedgerDevice("");
 
@@ -1161,8 +1102,7 @@ describe("NodeWebUsbTransport", () => {
       () => createStubApduSender() as never,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [nativeDevice] as never[],
-        createWebUsbDevice: async () => currentWebUsbDevice as never,
+        getDevices: async () => [currentWebUsbDevice] as never[],
       }),
     );
 
@@ -1188,7 +1128,6 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("reconnects a pending machine by product when only the previous device has a serial number", async () => {
-    const nativeDevice = createNativeLedgerDevice();
     const originalWebUsbDevice = createWebUsbLedgerDevice("ledger-A");
     const replacementWebUsbDevice = createWebUsbLedgerDevice("");
 
@@ -1228,8 +1167,7 @@ describe("NodeWebUsbTransport", () => {
       () => createStubApduSender() as never,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [nativeDevice] as never[],
-        createWebUsbDevice: async () => currentWebUsbDevice as never,
+        getDevices: async () => [currentWebUsbDevice] as never[],
       }),
     );
 
@@ -1255,7 +1193,6 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("reconnects a pending machine by product when only the replacement device has a serial number", async () => {
-    const nativeDevice = createNativeLedgerDevice();
     const originalWebUsbDevice = createWebUsbLedgerDevice("");
     const replacementWebUsbDevice = createWebUsbLedgerDevice("ledger-A");
 
@@ -1295,8 +1232,7 @@ describe("NodeWebUsbTransport", () => {
       () => createStubApduSender() as never,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [nativeDevice] as never[],
-        createWebUsbDevice: async () => currentWebUsbDevice as never,
+        getDevices: async () => [currentWebUsbDevice] as never[],
       }),
     );
 
@@ -1322,14 +1258,8 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("routes tryToReconnect and onTerminated only to machines with the matching deviceId", async () => {
-    const nativeDeviceA = createNativeLedgerDevice();
-    const nativeDeviceB = createNativeLedgerDevice();
     const webUsbDeviceA = createWebUsbLedgerDevice("ledger-A");
     const webUsbDeviceB = createWebUsbLedgerDevice("ledger-B");
-    const nativeToWeb = new Map<unknown, unknown>([
-      [nativeDeviceA, webUsbDeviceA],
-      [nativeDeviceB, webUsbDeviceB],
-    ]);
 
     let deviceIdA: DeviceId | undefined;
     let deviceIdB: DeviceId | undefined;
@@ -1380,8 +1310,7 @@ describe("NodeWebUsbTransport", () => {
       () => createStubApduSender() as never,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [nativeDeviceA, nativeDeviceB] as never[],
-        createWebUsbDevice: async native => nativeToWeb.get(native) as never,
+        getDevices: async () => [webUsbDeviceA, webUsbDeviceB] as never[],
       }),
     );
 
@@ -1422,7 +1351,6 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("serializes APDU calls sent through the same connected device", async () => {
-    const nativeDevice = createNativeLedgerDevice();
     const webUsbDevice = createWebUsbLedgerDevice();
 
     let connectedDeviceId: DeviceId | undefined;
@@ -1458,8 +1386,7 @@ describe("NodeWebUsbTransport", () => {
       () => createStubApduSender() as never,
       createPlatformBindings({
         platform: "win32",
-        getDeviceList: () => [nativeDevice] as never[],
-        createWebUsbDevice: async () => webUsbDevice as never,
+        getDevices: async () => [webUsbDevice] as never[],
       }),
     );
 
@@ -1492,7 +1419,6 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("creates a fresh connection state machine after disconnecting a session", async () => {
-    const nativeDevice = createNativeLedgerDevice();
     const webUsbDevice = createWebUsbLedgerDevice();
 
     let connectedDeviceId: DeviceId | undefined;
@@ -1540,8 +1466,7 @@ describe("NodeWebUsbTransport", () => {
         }) as never,
       createPlatformBindings({
         platform: "win32",
-        getDeviceList: () => [nativeDevice] as never[],
-        createWebUsbDevice: async () => webUsbDevice as never,
+        getDevices: async () => [webUsbDevice] as never[],
       }),
     );
 
@@ -1585,7 +1510,6 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("rejects sendApdu with DeviceDisconnectedBeforeSendingApdu after the machine is unrouted", async () => {
-    const nativeDevice = createNativeLedgerDevice();
     const webUsbDevice = createWebUsbLedgerDevice();
 
     let connectedDeviceId: DeviceId | undefined;
@@ -1617,8 +1541,7 @@ describe("NodeWebUsbTransport", () => {
       () => createStubApduSender() as never,
       createPlatformBindings({
         platform: "win32",
-        getDeviceList: () => [nativeDevice] as never[],
-        createWebUsbDevice: async () => webUsbDevice as never,
+        getDevices: async () => [webUsbDevice] as never[],
       }),
     );
 
@@ -1648,15 +1571,8 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("isolates onDisconnect callbacks and APDU routing per connected device", async () => {
-    const nativeDeviceA = createNativeLedgerDevice();
-    const nativeDeviceB = createNativeLedgerDevice();
     const webUsbDeviceA = createWebUsbLedgerDevice("ledger-A");
     const webUsbDeviceB = createWebUsbLedgerDevice("ledger-B");
-
-    const nativeToWeb = new Map<unknown, unknown>([
-      [nativeDeviceA, webUsbDeviceA],
-      [nativeDeviceB, webUsbDeviceB],
-    ]);
 
     const machineSendApduCounts = new Map<DeviceId, number>();
 
@@ -1693,8 +1609,7 @@ describe("NodeWebUsbTransport", () => {
       () => createStubApduSender() as never,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [nativeDeviceA, nativeDeviceB] as never[],
-        createWebUsbDevice: async native => nativeToWeb.get(native) as never,
+        getDevices: async () => [webUsbDeviceA, webUsbDeviceB] as never[],
       }),
     );
 
@@ -1741,14 +1656,12 @@ describe("NodeWebUsbTransport", () => {
     // when a refresh was already running, which caused promptDeviceAccess() to
     // throw NoAccessibleDeviceError when a Windows polling tick (or attach
     // handler) overlapped with startDiscovering().
-    const nativeDevice = createNativeLedgerDevice();
     const webUsbDevice = createWebUsbLedgerDevice();
 
     let releaseFirstScan: (() => void) | undefined;
     const firstScanGate = new Promise<void>(resolve => {
       releaseFirstScan = resolve;
     });
-    let createWebUsbDeviceCalls = 0;
     let deviceListCalls = 0;
 
     const transport = createTestTransport(
@@ -1756,16 +1669,12 @@ describe("NodeWebUsbTransport", () => {
       undefined,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => {
+        getDevices: async () => {
           deviceListCalls += 1;
-          return [nativeDevice] as never[];
-        },
-        createWebUsbDevice: async () => {
-          createWebUsbDeviceCalls += 1;
-          if (createWebUsbDeviceCalls === 1) {
+          if (deviceListCalls === 1) {
             await firstScanGate;
           }
-          return webUsbDevice as never;
+          return [webUsbDevice] as never[];
         },
         setInterval: () => 0 as unknown as ReturnType<typeof globalThis.setInterval>,
       }),
@@ -1797,7 +1706,6 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("does not emit duplicate discovered-device lists when the rescan is unchanged", async () => {
-    const nativeDevice = createNativeLedgerDevice();
     const webUsbDevice = createWebUsbLedgerDevice();
 
     const transport = createTestTransport(
@@ -1805,8 +1713,7 @@ describe("NodeWebUsbTransport", () => {
       undefined,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [nativeDevice] as never[],
-        createWebUsbDevice: async () => webUsbDevice as never,
+        getDevices: async () => [webUsbDevice] as never[],
       }),
     );
 
@@ -1825,7 +1732,6 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("preserves the discovered device id when the same WebUSB identity appears as a new instance", async () => {
-    const nativeDevice = createNativeLedgerDevice();
     const firstWebUsbDevice = createWebUsbLedgerDevice("same-identity");
     const secondWebUsbDevice = createWebUsbLedgerDevice("same-identity");
     let currentWebUsbDevice = firstWebUsbDevice;
@@ -1835,8 +1741,7 @@ describe("NodeWebUsbTransport", () => {
       undefined,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [nativeDevice] as never[],
-        createWebUsbDevice: async () => currentWebUsbDevice as never,
+        getDevices: async () => [currentWebUsbDevice] as never[],
       }),
     );
 
@@ -1853,22 +1758,15 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("emits two discovered devices when same product devices have different serial numbers", async () => {
-    const nativeDeviceA = createNativeLedgerDevice();
-    const nativeDeviceB = createNativeLedgerDevice();
     const webUsbDeviceA = createWebUsbLedgerDevice("ledger-A");
     const webUsbDeviceB = createWebUsbLedgerDevice("ledger-B");
-    const nativeToWeb = new Map<unknown, unknown>([
-      [nativeDeviceA, webUsbDeviceA],
-      [nativeDeviceB, webUsbDeviceB],
-    ]);
 
     const transport = createTestTransport(
       undefined,
       undefined,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [nativeDeviceA, nativeDeviceB] as never[],
-        createWebUsbDevice: async native => nativeToWeb.get(native) as never,
+        getDevices: async () => [webUsbDeviceA, webUsbDeviceB] as never[],
       }),
     );
 
@@ -1884,22 +1782,15 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("deduplicates serial-less discovered devices by vendor and product", async () => {
-    const nativeDeviceA = createNativeLedgerDevice();
-    const nativeDeviceB = createNativeLedgerDevice();
     const webUsbDeviceA = createWebUsbLedgerDevice("");
     const webUsbDeviceB = createWebUsbLedgerDevice("");
-    const nativeToWeb = new Map<unknown, unknown>([
-      [nativeDeviceA, webUsbDeviceA],
-      [nativeDeviceB, webUsbDeviceB],
-    ]);
 
     const transport = createTestTransport(
       undefined,
       undefined,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [nativeDeviceA, nativeDeviceB] as never[],
-        createWebUsbDevice: async native => nativeToWeb.get(native) as never,
+        getDevices: async () => [webUsbDeviceA, webUsbDeviceB] as never[],
       }),
     );
 
@@ -1913,7 +1804,6 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("reuses an active connection machine id when a rescan sees the same WebUSB identity", async () => {
-    const nativeDevice = createNativeLedgerDevice();
     const originalWebUsbDevice = createWebUsbLedgerDevice("active-identity");
     const rescannedWebUsbDevice = createWebUsbLedgerDevice("active-identity");
     let currentWebUsbDevice = originalWebUsbDevice;
@@ -1940,8 +1830,7 @@ describe("NodeWebUsbTransport", () => {
       () => createStubApduSender() as never,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [nativeDevice] as never[],
-        createWebUsbDevice: async () => currentWebUsbDevice as never,
+        getDevices: async () => [currentWebUsbDevice] as never[],
       }),
     );
 
@@ -1963,22 +1852,15 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("deduplicates WebUSB devices with the same identity during discovery", async () => {
-    const nativeDeviceA = createNativeLedgerDevice();
-    const nativeDeviceB = createNativeLedgerDevice();
     const webUsbDeviceA = createWebUsbLedgerDevice("same-serial");
     const webUsbDeviceB = createWebUsbLedgerDevice("same-serial");
-    let createWebUsbDeviceCalls = 0;
 
     const transport = createTestTransport(
       undefined,
       undefined,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [nativeDeviceA, nativeDeviceB] as never[],
-        createWebUsbDevice: async () => {
-          createWebUsbDeviceCalls += 1;
-          return (createWebUsbDeviceCalls === 1 ? webUsbDeviceA : webUsbDeviceB) as never;
-        },
+        getDevices: async () => [webUsbDeviceA, webUsbDeviceB] as never[],
       }),
     );
 
@@ -1987,17 +1869,15 @@ describe("NodeWebUsbTransport", () => {
     await waitFor(() => {
       expect(emissions.at(-1)).toHaveLength(1);
     });
-    expect(createWebUsbDeviceCalls).toBe(2);
 
     await transport.destroy();
   });
 
   it("restarts hotplug listeners after disconnect even when the explicit-close refresh fails", async () => {
-    const nativeDevice = createNativeLedgerDevice();
     const webUsbDevice = createWebUsbLedgerDevice();
 
-    let attachHandler: ((device: NativeLedgerDevice) => void) | undefined;
-    let detachHandler: ((device: NativeLedgerDevice) => void) | undefined;
+    let attachHandler: UsbConnectionListener | undefined;
+    let detachHandler: UsbConnectionListener | undefined;
     let attachRegistrations = 0;
     let detachRegistrations = 0;
     let removeRegistrations = 0;
@@ -2021,27 +1901,25 @@ describe("NodeWebUsbTransport", () => {
       () => createStubApduSender() as never,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => {
-          if (shouldFailRefresh) {
-            throw new Error("refresh failed");
-          }
-          return [nativeDevice] as never[];
-        },
-        createWebUsbDevice: async () => webUsbDevice as never,
-        usbBindings: {
-          on: (event, handler) => {
-            if (event === "attach") {
+        usb: {
+          getDevices: async () => {
+            if (shouldFailRefresh) {
+              throw new Error("refresh failed");
+            }
+            return [webUsbDevice] as never[];
+          },
+          addEventListener: (event: string, handler: unknown) => {
+            if (event === "connect") {
               attachRegistrations += 1;
-              attachHandler = handler as (device: NativeLedgerDevice) => void;
-            } else if (event === "detach") {
+              attachHandler = handler as UsbConnectionListener;
+            } else if (event === "disconnect") {
               detachRegistrations += 1;
-              detachHandler = handler as (device: NativeLedgerDevice) => void;
+              detachHandler = handler as UsbConnectionListener;
             }
           },
-          removeListener: () => {
+          removeEventListener: () => {
             removeRegistrations += 1;
           },
-          unrefHotplugEvents: () => {},
         },
       }),
     );
@@ -2068,7 +1946,6 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("removes active routing during disconnect even when APDU sender close throws", async () => {
-    const nativeDevice = createNativeLedgerDevice();
     const webUsbDevice = createWebUsbLedgerDevice();
 
     let connectedDeviceId: DeviceId | undefined;
@@ -2104,8 +1981,7 @@ describe("NodeWebUsbTransport", () => {
         }) as never,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [nativeDevice] as never[],
-        createWebUsbDevice: async () => webUsbDevice as never,
+        getDevices: async () => [webUsbDevice] as never[],
       }),
     );
 
@@ -2136,7 +2012,6 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("restores previous dependencies and keeps the machine pending when setupConnection fails during reconnection", async () => {
-    const nativeDevice = createNativeLedgerDevice();
     const originalWebUsbDevice = createWebUsbLedgerDevice("ledger-original");
     const replacementWebUsbDevice = createWebUsbLedgerDevice("ledger-original");
 
@@ -2175,8 +2050,7 @@ describe("NodeWebUsbTransport", () => {
       () => createStubApduSender() as never,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [nativeDevice] as never[],
-        createWebUsbDevice: async () => originalWebUsbDevice as never,
+        getDevices: async () => [originalWebUsbDevice] as never[],
       }),
     );
 
@@ -2204,11 +2078,10 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("does not publish a machine as active when setDependencies throws during reconnection", async () => {
-    const nativeDevice = createNativeLedgerDevice();
     const originalWebUsbDevice = createWebUsbLedgerDevice("ledger-original");
     const replacementWebUsbDevice = createWebUsbLedgerDevice("ledger-original");
 
-    let currentDeviceList: (typeof nativeDevice)[] = [nativeDevice];
+    let currentDeviceList: WebUsbLedgerDevice[] = [originalWebUsbDevice];
     let connectedDeviceId: DeviceId | undefined;
     let tryToReconnect:
       | DeviceConnectionStateMachineParams<NodeWebUsbApduSenderDependencies>["tryToReconnect"]
@@ -2250,8 +2123,7 @@ describe("NodeWebUsbTransport", () => {
       () => createStubApduSender() as never,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => currentDeviceList as never[],
-        createWebUsbDevice: async () => originalWebUsbDevice as never,
+        getDevices: async () => currentDeviceList as never[],
       }),
     );
 
@@ -2272,34 +2144,26 @@ describe("NodeWebUsbTransport", () => {
     expect(setupConnectionCalls).toBe(1);
     expect(eventDeviceConnectedCalls).toBe(0);
 
-    await transport.handleDeviceDisconnection(nativeDevice as never);
+    await transport.handleDeviceDisconnection(originalWebUsbDevice as never);
 
     expect(eventDeviceDisconnectedCalls).toBe(0);
 
     await transport.destroy();
   });
 
-  it("skips non-Ledger USB devices before creating WebUSB wrappers during discovery", async () => {
-    const nonLedgerNativeDevice = {
-      deviceDescriptor: {
-        idVendor: 0x1234,
-        idProduct: 0x5678,
-      },
+  it("skips non-Ledger USB devices during discovery", async () => {
+    const nonLedgerDevice = {
+      ...createWebUsbLedgerDevice("non-ledger"),
+      vendorId: 0x1234,
     };
-    const ledgerNativeDevice = createNativeLedgerDevice();
     const webUsbDevice = createWebUsbLedgerDevice();
-    const wrappedNativeDevices: unknown[] = [];
 
     const transport = createTestTransport(
       undefined,
       undefined,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [nonLedgerNativeDevice, ledgerNativeDevice] as never[],
-        createWebUsbDevice: async native => {
-          wrappedNativeDevices.push(native);
-          return webUsbDevice as never;
-        },
+        getDevices: async () => [nonLedgerDevice, webUsbDevice] as never[],
       }),
     );
 
@@ -2308,13 +2172,13 @@ describe("NodeWebUsbTransport", () => {
     await waitFor(() => {
       expect(emissions.at(-1)).toHaveLength(1);
     });
-    expect(wrappedNativeDevices).toEqual([ledgerNativeDevice]);
+    const scanned = await transport.updateTransportDiscoveredDevices();
+    expect(scanned.map(device => device.device)).toEqual([webUsbDevice as never]);
 
     await transport.destroy();
   });
 
   it("throws no-accessible-device when discovered Ledger devices lack a WebUSB vendor interface", async () => {
-    const nativeDevice = createNativeLedgerDevice();
     const webUsbDeviceWithoutVendorInterface = {
       ...createWebUsbLedgerDevice(),
       configurations: [
@@ -2334,8 +2198,7 @@ describe("NodeWebUsbTransport", () => {
       undefined,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [nativeDevice] as never[],
-        createWebUsbDevice: async () => webUsbDeviceWithoutVendorInterface as never,
+        getDevices: async () => [webUsbDeviceWithoutVendorInterface] as never[],
       }),
     );
 
@@ -2347,7 +2210,6 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("throws no-accessible-device when discovered Ledger devices have no USB configurations", async () => {
-    const nativeDevice = createNativeLedgerDevice();
     const webUsbDeviceWithoutConfigurations = {
       ...createWebUsbLedgerDevice(),
       configurations: [],
@@ -2358,8 +2220,7 @@ describe("NodeWebUsbTransport", () => {
       undefined,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [nativeDevice] as never[],
-        createWebUsbDevice: async () => webUsbDeviceWithoutConfigurations as never,
+        getDevices: async () => [webUsbDeviceWithoutConfigurations] as never[],
       }),
     );
 
@@ -2376,8 +2237,7 @@ describe("NodeWebUsbTransport", () => {
       undefined,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [],
-        createWebUsbDevice: async () => createWebUsbLedgerDevice() as never,
+        getDevices: async () => [],
       }),
     );
 
@@ -2389,7 +2249,6 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("emits a discovered device from startDiscovering when a Ledger device is accessible", async () => {
-    const nativeDevice = createNativeLedgerDevice();
     const webUsbDevice = createWebUsbLedgerDevice();
 
     const transport = createTestTransport(
@@ -2397,8 +2256,7 @@ describe("NodeWebUsbTransport", () => {
       undefined,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [nativeDevice] as never[],
-        createWebUsbDevice: async () => webUsbDevice as never,
+        getDevices: async () => [webUsbDevice] as never[],
       }),
     );
 
@@ -2411,7 +2269,6 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("discovers app-mode devices by shifted product id", async () => {
-    const nativeDevice = createNativeLedgerDevice();
     const webUsbDevice = {
       ...createWebUsbLedgerDevice(),
       productId: 0x5000,
@@ -2422,8 +2279,7 @@ describe("NodeWebUsbTransport", () => {
       undefined,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [nativeDevice] as never[],
-        createWebUsbDevice: async () => webUsbDevice as never,
+        getDevices: async () => [webUsbDevice] as never[],
       }),
     );
 
@@ -2436,7 +2292,6 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("discovers bootloader-mode devices by exact bootloader product id", async () => {
-    const nativeDevice = createNativeLedgerDevice();
     const webUsbDevice = createWebUsbLedgerDevice();
 
     const transport = new NodeWebUsbTransport(
@@ -2457,8 +2312,7 @@ describe("NodeWebUsbTransport", () => {
       undefined,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [nativeDevice] as never[],
-        createWebUsbDevice: async () => webUsbDevice as never,
+        getDevices: async () => [webUsbDevice] as never[],
       }),
     );
 
@@ -2471,25 +2325,18 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("filters unrecognized devices during discovery without dropping recognized devices", async () => {
-    const recognizedNativeDevice = createNativeLedgerDevice();
-    const unrecognizedNativeDevice = createNativeLedgerDevice();
     const recognizedWebUsbDevice = createWebUsbLedgerDevice("recognized");
     const unrecognizedWebUsbDevice = {
       ...createWebUsbLedgerDevice("unrecognized"),
       productId: 0x9911,
     };
-    const nativeToWeb = new Map<unknown, unknown>([
-      [recognizedNativeDevice, recognizedWebUsbDevice],
-      [unrecognizedNativeDevice, unrecognizedWebUsbDevice],
-    ]);
 
     const transport = createTestTransport(
       undefined,
       undefined,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [recognizedNativeDevice, unrecognizedNativeDevice] as never[],
-        createWebUsbDevice: async native => nativeToWeb.get(native) as never,
+        getDevices: async () => [recognizedWebUsbDevice, unrecognizedWebUsbDevice] as never[],
       }),
     );
 
@@ -2505,8 +2352,7 @@ describe("NodeWebUsbTransport", () => {
     await transport.destroy();
   });
 
-  it("returns an empty scan and keeps the current discovery list when a listed Ledger fails to open", async () => {
-    const nativeDevice = createNativeLedgerDevice();
+  it("returns an empty scan and keeps the current discovery list when USB scanning fails", async () => {
     const webUsbDevice = createWebUsbLedgerDevice();
     const records = { errors: [] as unknown[], warnings: [] as unknown[] };
     let shouldThrow = false;
@@ -2520,76 +2366,31 @@ describe("NodeWebUsbTransport", () => {
       undefined,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [nativeDevice] as never[],
-        createWebUsbDevice: async () => {
-          if (shouldThrow) {
-            throw new Error("LIBUSB_ERROR_ACCESS");
-          }
-          return webUsbDevice as never;
-        },
-      }),
-    );
-
-    const stream = collectDeviceStream(transport);
-    await waitFor(() => {
-      expect(stream.emissions.at(-1)).toHaveLength(1);
-    });
-    const listed = stream.emissions.at(-1);
-
-    shouldThrow = true;
-    const scanned = await transport.updateTransportDiscoveredDevices();
-
-    expect(scanned).toEqual([]);
-    expect(stream.emissions.at(-1)).toEqual(listed);
-    expect(stream.errors).toEqual([]);
-    expect(records.errors).toHaveLength(1);
-
-    await transport.destroy();
-  });
-
-  it("returns an empty scan and keeps the current discovery list when listing USB devices fails", async () => {
-    const nativeDevice = createNativeLedgerDevice();
-    const webUsbDevice = createWebUsbLedgerDevice();
-    const records = { errors: [] as unknown[], warnings: [] as unknown[] };
-    let shouldThrow = false;
-
-    const transport = new NodeWebUsbTransport(
-      createLedgerModelDataSource(),
-      () => createRecordingLogger(records),
-      createUnusedApduSenderFactory(),
-      createUnusedApduReceiverFactory(),
-      undefined,
-      undefined,
-      createPlatformBindings({
-        platform: "linux",
-        getDeviceList: () => {
+        getDevices: async () => {
           if (shouldThrow) {
             throw new Error("USB scan failed");
           }
-          return [nativeDevice] as never[];
+          return [webUsbDevice] as never[];
         },
-        createWebUsbDevice: async () => webUsbDevice as never,
       }),
     );
 
-    const stream = collectDeviceStream(transport);
+    const emissions = collectDeviceEmissions(transport);
     await waitFor(() => {
-      expect(stream.emissions.at(-1)).toHaveLength(1);
+      expect(emissions.at(-1)).toHaveLength(1);
     });
 
     shouldThrow = true;
     const scanned = await transport.updateTransportDiscoveredDevices();
 
     expect(scanned).toEqual([]);
-    expect(stream.emissions.at(-1)).toHaveLength(1);
-    expect(stream.errors).toEqual([]);
+    expect(emissions.at(-1)).toHaveLength(1);
     expect(records.errors).toHaveLength(1);
 
     await transport.destroy();
   });
 
   it("reuses the active state machine for a second sequential connect to the same device", async () => {
-    const nativeDevice = createNativeLedgerDevice();
     const webUsbDevice = createWebUsbLedgerDevice();
 
     let machineFactoryCalls = 0;
@@ -2624,8 +2425,7 @@ describe("NodeWebUsbTransport", () => {
       () => createStubApduSender() as never,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [nativeDevice] as never[],
-        createWebUsbDevice: async () => webUsbDevice as never,
+        getDevices: async () => [webUsbDevice] as never[],
       }),
     );
 
@@ -2651,7 +2451,6 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("returns the shared setup error to concurrent connects when initial setup fails", async () => {
-    const nativeDevice = createNativeLedgerDevice();
     const webUsbDevice = createWebUsbLedgerDevice();
 
     let releaseSetup: (() => void) | undefined;
@@ -2683,8 +2482,7 @@ describe("NodeWebUsbTransport", () => {
       () => createStubApduSender() as never,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [nativeDevice] as never[],
-        createWebUsbDevice: async () => webUsbDevice as never,
+        getDevices: async () => [webUsbDevice] as never[],
       }),
     );
 
@@ -2721,8 +2519,7 @@ describe("NodeWebUsbTransport", () => {
       undefined,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [],
-        createWebUsbDevice: async () => createWebUsbLedgerDevice() as never,
+        getDevices: async () => [],
       }),
     );
 
@@ -2746,8 +2543,7 @@ describe("NodeWebUsbTransport", () => {
       undefined,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [],
-        createWebUsbDevice: async () => createWebUsbLedgerDevice() as never,
+        getDevices: async () => [],
       }),
     );
 
@@ -2765,9 +2561,8 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("terminates a pending reconnection machine and notifies only that device", async () => {
-    const nativeDevice = createNativeLedgerDevice();
     const webUsbDevice = createWebUsbLedgerDevice();
-    let currentDeviceList: (typeof nativeDevice)[] = [nativeDevice];
+    let currentDeviceList: WebUsbLedgerDevice[] = [webUsbDevice];
     let tryToReconnect:
       | DeviceConnectionStateMachineParams<NodeWebUsbApduSenderDependencies>["tryToReconnect"]
       | undefined;
@@ -2794,8 +2589,7 @@ describe("NodeWebUsbTransport", () => {
       () => createStubApduSender() as never,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => currentDeviceList as never[],
-        createWebUsbDevice: async () => webUsbDevice as never,
+        getDevices: async () => currentDeviceList as never[],
       }),
     );
 
@@ -2819,38 +2613,32 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("wires hotplug listeners to attach and detach handlers and removes them on destroy", async () => {
-    const nativeDevice = createNativeLedgerDevice();
     const webUsbDevice = createWebUsbLedgerDevice();
 
-    let attachHandler: ((device: NativeLedgerDevice) => void) | undefined;
-    let detachHandler: ((device: NativeLedgerDevice) => void) | undefined;
+    let attachHandler: UsbConnectionListener | undefined;
+    let detachHandler: UsbConnectionListener | undefined;
     const removedListeners: Array<{ event: string; handler: unknown }> = [];
-    let unrefHotplugEventsCalls = 0;
-    let createWebUsbDeviceCalls = 0;
+    let getDevicesCalls = 0;
 
     const transport = createTestTransport(
       undefined,
       undefined,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [],
-        createWebUsbDevice: async () => {
-          createWebUsbDeviceCalls += 1;
-          return webUsbDevice as never;
-        },
-        usbBindings: {
-          on: (event, handler) => {
-            if (event === "attach") {
-              attachHandler = handler as (device: NativeLedgerDevice) => void;
-            } else if (event === "detach") {
-              detachHandler = handler as (device: NativeLedgerDevice) => void;
+        usb: {
+          getDevices: async () => {
+            getDevicesCalls += 1;
+            return [];
+          },
+          addEventListener: (event: string, handler: unknown) => {
+            if (event === "connect") {
+              attachHandler = handler as UsbConnectionListener;
+            } else if (event === "disconnect") {
+              detachHandler = handler as UsbConnectionListener;
             }
           },
-          removeListener: (event, handler) => {
+          removeEventListener: (event: string, handler: unknown) => {
             removedListeners.push({ event, handler });
-          },
-          unrefHotplugEvents: () => {
-            unrefHotplugEventsCalls += 1;
           },
         },
       }),
@@ -2859,20 +2647,43 @@ describe("NodeWebUsbTransport", () => {
     expect(attachHandler).toBeDefined();
     expect(detachHandler).toBeDefined();
 
-    attachHandler?.(nativeDevice);
+    attachHandler?.({ device: webUsbDevice });
     await waitFor(() => {
-      expect(createWebUsbDeviceCalls).toBe(1);
+      expect(getDevicesCalls).toBe(1);
     });
-    detachHandler?.(nativeDevice);
+    detachHandler?.({ device: webUsbDevice });
     await flushTasks();
 
     await transport.destroy();
 
     expect(removedListeners).toEqual([
-      { event: "attach", handler: attachHandler },
-      { event: "detach", handler: detachHandler },
+      { event: "connect", handler: attachHandler },
+      { event: "disconnect", handler: detachHandler },
     ]);
-    expect(unrefHotplugEventsCalls).toBe(1);
+  });
+
+  it("skips hotplug listeners when there is no USB bus, as node-usb 3 would reject unhandled", async () => {
+    const events: string[] = [];
+    const transport = createTestTransport(
+      undefined,
+      undefined,
+      createPlatformBindings({
+        platform: "linux",
+        hasUsbBus: () => false,
+        usb: {
+          getDevices: async () => [],
+          addEventListener: (event: string) => {
+            events.push(event);
+          },
+          removeEventListener: () => {},
+        },
+      }),
+    );
+
+    (transport as unknown as HotplugListenerProbe).startListeningToConnectionEvents();
+
+    expect(events).toEqual([]);
+    await transport.destroy();
   });
 
   it("keeps hotplug listener registration idempotent when listening is requested twice", async () => {
@@ -2885,20 +2696,18 @@ describe("NodeWebUsbTransport", () => {
       undefined,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [],
-        createWebUsbDevice: async () => createWebUsbLedgerDevice() as never,
-        usbBindings: {
-          on: event => {
-            if (event === "attach") {
+        usb: {
+          getDevices: async () => [],
+          addEventListener: (event: string) => {
+            if (event === "connect") {
               attachRegistrations += 1;
-            } else if (event === "detach") {
+            } else if (event === "disconnect") {
               detachRegistrations += 1;
             }
           },
-          removeListener: (event, handler) => {
+          removeEventListener: (event: string, handler: unknown) => {
             removedListeners.push({ event, handler });
           },
-          unrefHotplugEvents: () => {},
         },
       }),
     );
@@ -2913,7 +2722,6 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("ignores Ledger attach events without a vendor interface", async () => {
-    const nativeDevice = createNativeLedgerDevice();
     const webUsbDeviceWithoutVendorInterface = {
       ...createWebUsbLedgerDevice(),
       configurations: [
@@ -2928,29 +2736,28 @@ describe("NodeWebUsbTransport", () => {
       ],
     };
 
-    let getDeviceListCalls = 0;
+    let getDevicesCalls = 0;
     const transport = createTestTransport(
       undefined,
       undefined,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => {
-          getDeviceListCalls += 1;
-          return [nativeDevice] as never[];
+        getDevices: async () => {
+          getDevicesCalls += 1;
+          return [webUsbDeviceWithoutVendorInterface] as never[];
         },
-        createWebUsbDevice: async () => webUsbDeviceWithoutVendorInterface as never,
       }),
     );
 
-    await transport.handleDeviceConnection(nativeDevice as never);
+    await transport.handleDeviceConnection(webUsbDeviceWithoutVendorInterface as never);
 
-    expect(getDeviceListCalls).toBe(0);
+    expect(getDevicesCalls).toBe(0);
 
     await transport.destroy();
   });
 
-  it("swallows WebUSB creation failures from Ledger attach events", async () => {
-    const nativeDevice = createNativeLedgerDevice();
+  it("swallows USB scan failures from Ledger attach events", async () => {
+    const webUsbDevice = createWebUsbLedgerDevice();
     const records = { errors: [] as unknown[], warnings: [] as unknown[] };
 
     const transport = new NodeWebUsbTransport(
@@ -2962,14 +2769,13 @@ describe("NodeWebUsbTransport", () => {
       undefined,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [],
-        createWebUsbDevice: async () => {
-          throw new Error("createInstance failed");
+        getDevices: async () => {
+          throw new Error("getDevices failed");
         },
       }),
     );
 
-    await transport.handleDeviceConnection(nativeDevice as never);
+    await transport.handleDeviceConnection(webUsbDevice as never);
 
     expect(records.errors).toHaveLength(1);
 
@@ -2977,18 +2783,12 @@ describe("NodeWebUsbTransport", () => {
   });
 
   it("closes every active connection and clears hotplug resources on destroy", async () => {
-    const nativeDeviceA = createNativeLedgerDevice();
-    const nativeDeviceB = createNativeLedgerDevice();
     const webUsbDeviceA = createWebUsbLedgerDevice("ledger-A");
     const webUsbDeviceB = createWebUsbLedgerDevice("ledger-B");
-    const nativeToWeb = new Map<unknown, unknown>([
-      [nativeDeviceA, webUsbDeviceA],
-      [nativeDeviceB, webUsbDeviceB],
-    ]);
 
     const machineCloseConnectionCalls: DeviceId[] = [];
     let apduSenderCloseConnectionCalls = 0;
-    let unrefHotplugEventsCalls = 0;
+    const removedListenerEvents: string[] = [];
 
     const transport = createTestTransport(
       params =>
@@ -3016,13 +2816,11 @@ describe("NodeWebUsbTransport", () => {
         }) as never,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [nativeDeviceA, nativeDeviceB] as never[],
-        createWebUsbDevice: async native => nativeToWeb.get(native) as never,
-        usbBindings: {
-          on: () => {},
-          removeListener: () => {},
-          unrefHotplugEvents: () => {
-            unrefHotplugEventsCalls += 1;
+        usb: {
+          getDevices: async () => [webUsbDeviceA, webUsbDeviceB] as never[],
+          addEventListener: () => {},
+          removeEventListener: (event: string) => {
+            removedListenerEvents.push(event);
           },
         },
       }),
@@ -3050,7 +2848,7 @@ describe("NodeWebUsbTransport", () => {
 
     expect(machineCloseConnectionCalls.sort()).toEqual([deviceIdA!, deviceIdB!].sort());
     expect(apduSenderCloseConnectionCalls).toBe(2);
-    expect(unrefHotplugEventsCalls).toBe(1);
+    expect(removedListenerEvents).toEqual(["connect", "disconnect"]);
   });
 
   it("creates a transport from the factory using the Node WebUSB identifier", async () => {
@@ -3064,96 +2862,5 @@ describe("NodeWebUsbTransport", () => {
 
     expect(transport.getIdentifier()).toBe("NODE-WEBUSB");
     await (transport as unknown as NodeWebUsbTransport).destroy();
-  });
-});
-
-/**
- * Recorded on Linux under bubblewrap with the Claude Code sandbox's device layout
- * (`--ro-bind / / --dev /dev`): sysfs lists the Ledger and `/dev/bus/usb` is missing.
- */
-const LINUX_SANDBOX_OPEN_ERROR = "initialize error: Error: LIBUSB_ERROR_NO_DEVICE";
-
-describe("Ledger open failures (LIVE-31394)", () => {
-  afterEach(() => {
-    subscriptions.forEach(subscription => subscription.unsubscribe());
-    subscriptions = [];
-  });
-
-  it("fails the device stream with the open error when no Ledger it lists can be opened", async () => {
-    const openError = new Error(LINUX_SANDBOX_OPEN_ERROR);
-    const transport = createTestTransport(
-      undefined,
-      undefined,
-      createPlatformBindings({
-        platform: "linux",
-        getDeviceList: () => [createNativeLedgerDevice()] as never[],
-        createWebUsbDevice: async () => {
-          throw openError;
-        },
-      }),
-    );
-
-    const stream = collectDeviceStream(transport);
-    await waitFor(() => {
-      expect(stream.errors).toHaveLength(1);
-    });
-
-    const [error] = stream.errors;
-    expect(error).toBeInstanceOf(NoAccessibleDeviceError);
-    expect((error as NoAccessibleDeviceError).originalError).toBe(openError);
-    expect(stream.emissions).toEqual([[]]);
-
-    await transport.destroy();
-  });
-
-  it("lists the Ledger that opened, without failing the stream, when another one fails", async () => {
-    const failingLedger = createNativeLedgerDevice();
-    const transport = createTestTransport(
-      undefined,
-      undefined,
-      createPlatformBindings({
-        platform: "linux",
-        getDeviceList: () => [failingLedger, createNativeLedgerDevice()] as never[],
-        createWebUsbDevice: async native => {
-          if (native === (failingLedger as never)) {
-            throw new Error("LIBUSB_ERROR_ACCESS");
-          }
-          return createWebUsbLedgerDevice("ledger-2") as never;
-        },
-      }),
-    );
-
-    const stream = collectDeviceStream(transport);
-    await waitFor(() => {
-      expect(stream.emissions.at(-1)).toHaveLength(1);
-    });
-    await transport.updateTransportDiscoveredDevices();
-
-    expect(stream.errors).toEqual([]);
-
-    await transport.destroy();
-  });
-
-  it("fails the device stream when a Ledger plugged in later cannot be opened", async () => {
-    const openError = new Error("initialize error: Error: LIBUSB_ERROR_ACCESS");
-    const transport = createTestTransport(
-      undefined,
-      undefined,
-      createPlatformBindings({
-        platform: "linux",
-        getDeviceList: () => [] as never[],
-        createWebUsbDevice: async () => {
-          throw openError;
-        },
-      }),
-    );
-
-    const stream = collectDeviceStream(transport);
-    await transport.handleDeviceConnection(createNativeLedgerDevice() as never);
-
-    expect(stream.errors).toHaveLength(1);
-    expect((stream.errors[0] as NoAccessibleDeviceError).originalError).toBe(openError);
-
-    await transport.destroy();
   });
 });
