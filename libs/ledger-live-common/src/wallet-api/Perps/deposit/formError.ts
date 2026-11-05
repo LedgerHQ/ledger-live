@@ -30,6 +30,7 @@ export type DepositFormErrorCode =
   | "xlmMinimumBalance"
   | "amountTooLow"
   | "amountTooHigh"
+  | "feeEstimationFailed"
   | "noQuotes";
 
 export type DepositFormError = Readonly<{
@@ -51,6 +52,7 @@ export const DEPOSIT_FORM_ERROR_ANALYTICS_MESSAGES: Record<DepositFormErrorCode,
   xlmMinimumBalance: "xlm_prevent_deactivating",
   amountTooLow: "minAmount",
   amountTooHigh: "maxAmount",
+  feeEstimationFailed: "fee_estimation_failed",
   noQuotes: "no_result",
 };
 
@@ -75,6 +77,11 @@ const OFFLINE_ERROR: DepositFormError = {
 const INSUFFICIENT_BALANCE_ERROR: DepositFormError = {
   code: "insufficientBalance",
   labelKey: "perpsDeposit.formErrors.amountExceedsBalance",
+};
+
+const FEE_ESTIMATION_FAILED_ERROR: DepositFormError = {
+  code: "feeEstimationFailed",
+  labelKey: "perpsDeposit.formErrors.feeEstimationFailed",
 };
 
 const NO_QUOTES_ERROR: DepositFormError = {
@@ -320,6 +327,7 @@ export function resolveDepositFormError({
 
   const amountLimitError = getAmountLimitError(quoteResult, depositAccount, locale);
   if (amountLimitError) return amountLimitError;
+  if (quote && quoteResult.feeEstimationFailed) return FEE_ESTIMATION_FAILED_ERROR;
 
   const isQuoteUsable = hasUsableFee && !needsFeeForMinimumBalance(depositAccount, quote);
   return isQuoteUsable ? null : NO_QUOTES_ERROR;
