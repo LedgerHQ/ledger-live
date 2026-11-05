@@ -1,4 +1,4 @@
-import { selectWalletSyncState } from "@domain/entity-wallet-sync";
+import { selectWalletSyncState, walletSyncUpdate } from "@domain/entity-wallet-sync";
 import {
   memberCredentialsSelector,
   resetTrustchainStore,
@@ -19,7 +19,7 @@ import type { MemberCredentials, Trustchain } from "@shared/cloud-sync";
 import { createWalletSyncWatchLoop } from "../createWalletSyncWatchLoop";
 import { makeLocalIncrementalUpdate } from "../incrementalUpdates";
 import type { LedgerSyncMiddlewareConfig, LedgerSyncState, LedgerSyncStateRoot } from "../types";
-import type { createLedgerSyncServices } from "./services";
+import { saveWalletSyncUpdate, type createLedgerSyncServices } from "./services";
 
 const initialState: LedgerSyncState = { visualPending: false, walletSyncError: null };
 
@@ -92,8 +92,7 @@ export function createLedgerSyncWatch<S extends LedgerSyncStateRoot, LocalState,
         getState,
         latestWalletStateSelector: selectWalletSyncState,
         localStateSelector: cloudSync.localStateSelector,
-        saveUpdate: (data, version, newLocalState) =>
-          cloudSync.save(data, version, newLocalState, dispatch),
+        saveUpdate: saveWalletSyncUpdate(dispatch, cloudSync.applyLocalState),
       }),
       trustchain,
       memberCredentials,
@@ -140,9 +139,7 @@ export function createLedgerSyncWatch<S extends LedgerSyncStateRoot, LocalState,
 
   function resetLedgerSync() {
     dispatch(resetTrustchainStore());
-    cloudSync
-      .save(null, 0, null, dispatch)
-      .catch(error => dispatch(setWalletSyncError(miniSerializeError(error))));
+    dispatch(walletSyncUpdate({ data: null, version: 0 }));
   }
 
   return {

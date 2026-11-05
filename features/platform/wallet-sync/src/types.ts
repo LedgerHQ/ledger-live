@@ -23,7 +23,7 @@ export interface LedgerSyncMiddlewareConfig<S extends LedgerSyncStateRoot, Local
     getInstanceName: () => string;
     withDevice: WithDevice;
   };
-  /** What the Cloud Sync SDK needs from the app: its walletsync, its local state and how to save. */
+  /** What the Cloud Sync SDK needs from the app: its walletsync and its local state. */
   cloudSync: {
     apiBaseUrl: string;
     /** Memoized: a new walletsync, such as one for a new token blacklist, restarts the watch loop. */
@@ -31,12 +31,8 @@ export interface LedgerSyncMiddlewareConfig<S extends LedgerSyncStateRoot, Local
       state: S,
     ) => CloudSyncDataManager<LocalState, Update, ZodType, DistantDocument>;
     localStateSelector: (state: S) => LocalState;
-    save: (
-      data: DistantDocument | null,
-      version: number,
-      newLocalState: LocalState | null,
-      dispatch: Dispatch,
-    ) => Promise<void>;
+    /** Writes a local state that a sync brought in to the app's slices. */
+    applyLocalState: (localState: LocalState, dispatch: Dispatch) => void;
     /** Re-encrypts the Cloud Sync data when removing a member rotates the trustchain key. */
     reencryptOnRotation?: boolean;
   };

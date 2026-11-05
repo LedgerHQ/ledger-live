@@ -25,7 +25,7 @@ export function makeSaveNewUpdate<
     data: DistantState | null,
     version: number,
     newLocalState: LocalState | null,
-  ) => Promise<void>;
+  ) => void | Promise<void>;
 }): (event: UpdateEvent<DistantState>) => Promise<void> {
   return async (event: UpdateEvent<DistantState>) => {
     switch (event.type) {
@@ -80,7 +80,7 @@ export function makeLocalIncrementalUpdate<
     data: DistantState | null,
     version: number,
     newLocalState: LocalState | null,
-  ) => Promise<void>;
+  ) => void | Promise<void>;
 }): () => Promise<void> {
   return async () => {
     const state = getState();

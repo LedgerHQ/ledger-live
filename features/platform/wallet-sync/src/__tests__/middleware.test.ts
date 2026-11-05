@@ -1,3 +1,4 @@
+import { selectWalletSyncState } from "@domain/entity-wallet-sync";
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
 import {
   createQRCodeCandidateInstance,
@@ -16,7 +17,6 @@ import {
   isMockEnv,
   LKRP_URL,
   memberCredentials,
-  save,
   trustchain,
 } from "./ledgerSyncFixtures";
 
@@ -72,7 +72,10 @@ describe("createLedgerSyncMiddleware", () => {
     await saveNewUpdate(event, trustchain);
 
     expect(createWalletsync.mock.calls).toEqual([[[]], [["token"]]]);
-    expect(save).toHaveBeenCalledWith({ value: "distant" }, 1, null, expect.any(Function));
+    expect(selectWalletSyncState(store.getState())).toEqual({
+      data: { value: "distant" },
+      version: 1,
+    });
   });
 
   it.each<[string, UnknownAction]>([
@@ -86,7 +89,7 @@ describe("createLedgerSyncMiddleware", () => {
     store.dispatch(action);
     await saveNewUpdate({ type: "new-data", data: { value: "distant" }, version: 1 }, trustchain);
 
-    expect(save).not.toHaveBeenCalled();
+    expect(selectWalletSyncState(store.getState())).toEqual({ data: null, version: 0 });
   });
 
   it("should host a pairing as this instance, adding the other member to its trustchain", async () => {

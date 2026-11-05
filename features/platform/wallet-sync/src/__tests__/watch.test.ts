@@ -1,3 +1,4 @@
+import { selectWalletSyncState } from "@domain/entity-wallet-sync";
 import { resetTrustchainStore, setTrustchain } from "@ledgerhq/ledger-key-ring-protocol/store";
 import type { UnknownAction } from "@reduxjs/toolkit";
 import { track } from "@shared/analytics";
@@ -16,7 +17,6 @@ import {
   createWalletsync,
   enableWalletSync,
   memberCredentials,
-  save,
   trustchain,
   WATCH_CONFIG,
 } from "./ledgerSyncFixtures";
@@ -33,6 +33,8 @@ jest.mock("@shared/cloud-sync", () => ({
   CloudSyncSDK: jest.fn(() => mockCloudSyncSdk),
 }));
 jest.mock("@shared/analytics", () => ({ track: jest.fn() }));
+
+const SYNCED = { ...ACTIVATED, walletSyncState: { data: { value: "distant" }, version: 3 } };
 
 /** createWalletSyncWatchLoop's default, since the watch passes it no visual config. */
 const LOOP_VISUAL_PENDING_TIMEOUT = 1000;
@@ -145,22 +147,12 @@ describe("Ledger Sync watch loop", () => {
 
   it("should reset Ledger Sync when the trustchain no longer allows this instance", async () => {
     mockCloudSyncSdk.pull.mockRejectedValueOnce(errorNamed("TrustchainNotAllowed"));
-    const store = startedWatch();
+    const store = startedWatch(SYNCED);
 
     await advance(WATCH_CONFIG.initialTimeout);
 
     expect(store.getState().trustchain.trustchain).toBeNull();
-    expect(save).toHaveBeenCalledWith(null, 0, null, expect.any(Function));
-  });
-
-  it("should report a reset it could not save", async () => {
-    mockCloudSyncSdk.pull.mockRejectedValueOnce(errorNamed("TrustchainNotAllowed"));
-    save.mockRejectedValueOnce(new Error("storage full"));
-    const store = startedWatch();
-
-    await advance(WATCH_CONFIG.initialTimeout);
-
-    expect(selectLedgerSyncError(store.getState())).toMatchObject({ message: "storage full" });
+    expect(selectWalletSyncState(store.getState())).toEqual({ data: null, version: 0 });
   });
 
   it("should restore an outdated trustchain", async () => {
@@ -176,7 +168,7 @@ describe("Ledger Sync watch loop", () => {
 
   it("should reset Ledger Sync and report it when the trustchain cannot be restored", async () => {
     mockCloudSyncSdk.pull.mockRejectedValueOnce(errorNamed("TrustchainOutdated"));
-    const store = startedWatch();
+    const store = startedWatch(SYNCED);
     jest
       .mocked(getLkrpSdk(store.dispatch).restoreTrustchain)
       .mockRejectedValue(errorNamed("TrustchainEjected"));
@@ -184,7 +176,7 @@ describe("Ledger Sync watch loop", () => {
     await advance(WATCH_CONFIG.initialTimeout);
 
     expect(store.getState().trustchain.trustchain).toBeNull();
-    expect(save).toHaveBeenCalledWith(null, 0, null, expect.any(Function));
+    expect(selectWalletSyncState(store.getState())).toEqual({ data: null, version: 0 });
     expect(track).toHaveBeenCalledWith("ledgersync_deactivated");
   });
 
