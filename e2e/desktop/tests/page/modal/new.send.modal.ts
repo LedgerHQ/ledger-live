@@ -1,5 +1,6 @@
 import { expect } from "@playwright/test";
 import BigNumber from "bignumber.js";
+import escapeRegExp from "lodash/escapeRegExp";
 import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import type { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { AmountQuickAction } from "@ledgerhq/live-e2e-shared/enum/AmountQuickAction";
@@ -11,6 +12,13 @@ import { step } from "tests/misc/reporters/step";
 import { Modal } from "tests/component/modal.component";
 import { looksLikeFiatValue } from "tests/utils/looksLikeFiatValue";
 import type { SavedBalance } from "tests/utils/userdata";
+
+type Eip1559CustomFeesOptions = {
+  maxPriorityFee: string;
+  maxFee: string;
+};
+
+const NUMERIC_INPUT_VALUE = /^\d+([.,]\d+)?$/;
 
 export class NewSendModal extends Modal {
   readonly dialog = this.page.getByRole("dialog");
@@ -52,11 +60,14 @@ export class NewSendModal extends Modal {
     [AmountQuickAction.HALF]: 0.5,
     [AmountQuickAction.THREE_QUARTERS]: 0.75,
   };
-  readonly feesMenuTrigger = this.dialog.getByTestId("send-network-fees-menu-trigger");
+  private readonly feesMenuTrigger = this.dialog.getByTestId("send-network-fees-menu-trigger");
   // Menu items render in a portal, outside the dialog subtree.
   private readonly customFeesMenuItem = this.page.getByTestId("send-custom-fees-menu-item");
   private readonly coinControlMenuItem = this.page.getByTestId("send-coin-control-fees-menu-item");
   private readonly customFeePerByteInput = this.dialog.getByLabel(/fees amount.*sat\/vbyte/i);
+  private readonly customMaxPriorityFeeInput = this.dialog.getByLabel(/max priority fee.*gwei/i);
+  private readonly customMaxFeeInput = this.dialog.getByLabel(/max fee.*gwei/i);
+  private readonly customFeesFiatValue = this.dialog.getByTestId("send-custom-fees-fiat-value");
   private readonly customFeesConfirmButton = this.dialog.getByRole("button", { name: "Confirm" });
   private readonly coinControlStrategySelect = this.dialog.getByTestId(
     "send-coin-control-strategy-select",
@@ -459,6 +470,19 @@ export class NewSendModal extends Modal {
     await item.waitFor({ state: "hidden" });
   }
 
+  @step("Verify the selected network fee is $0")
+  async expectFeePreset(preset: Fee) {
+    await expect(this.feesMenuTrigger).toContainText(preset);
+  }
+
+  @step("Verify the fees menu offers the Slow, Medium and Fast presets and custom fees")
+  async expectEvmFeesMenuOptions() {
+    await expect(this.getFeePreset(Fee.SLOW)).toBeVisible();
+    await expect(this.getFeePreset(Fee.MEDIUM)).toBeVisible();
+    await expect(this.getFeePreset(Fee.FAST)).toBeVisible();
+    await expect(this.customFeesMenuItem).toBeVisible();
+  }
+
   @step("Verify the fees menu offers custom fees and coin control")
   async expectBitcoinFeesMenuOptions() {
     await expect(this.customFeesMenuItem).toBeVisible();
@@ -474,6 +498,55 @@ export class NewSendModal extends Modal {
   async expectCustomFeePerByteScreen() {
     await expect(this.customFeePerByteInput).toBeVisible();
     await expect(this.customFeesConfirmButton).toBeVisible();
+  }
+
+  @step("Verify the EIP-1559 custom fees are pre-filled")
+  async expectEip1559CustomFeesPrefilled() {
+    await expect(this.customMaxPriorityFeeInput).toHaveValue(NUMERIC_INPUT_VALUE);
+    await expect(this.customMaxFeeInput).toHaveValue(NUMERIC_INPUT_VALUE);
+  }
+
+  @step("Read the network fees fiat value")
+  async getCustomFeesFiatValue(): Promise<string> {
+    await expect(this.customFeesFiatValue).toHaveText(/\d/);
+    return this.customFeesFiatValue.innerText();
+  }
+
+  @step("Verify the network fees fiat value is no longer $0")
+  async expectCustomFeesFiatValueChanged(previous: string) {
+    await expect(this.customFeesFiatValue).toHaveText(/\d/);
+    await expect(this.customFeesFiatValue).not.toHaveText(previous);
+  }
+
+  @step("Fill the EIP-1559 max fee: $0 Gwei")
+  async fillEip1559MaxFee(maxFee: string) {
+    await this.customMaxFeeInput.fill(maxFee);
+  }
+
+  @step("Fill the EIP-1559 custom fees")
+  async fillEip1559CustomFees(options: Eip1559CustomFeesOptions) {
+    const { maxPriorityFee, maxFee } = options;
+    await this.customMaxPriorityFeeInput.fill(maxPriorityFee);
+    await this.customMaxFeeInput.fill(maxFee);
+  }
+
+  @step("Confirm the custom fees")
+  async confirmCustomFees() {
+    await expect(this.customFeesConfirmButton).toBeEnabled();
+    await this.customFeesConfirmButton.click();
+  }
+
+  @step("Verify the custom fees are applied")
+  async expectCustomFeesApplied() {
+    await this.expectAmountStepVisible();
+    await expect(this.feesMenuTrigger).toContainText(/custom/i);
+  }
+
+  @step("Verify the network fee is $0 $1")
+  async expectNetworkFee(fee: string, ticker: string) {
+    await expect(this.feesMenuTrigger).toHaveText(
+      new RegExp(String.raw`^${escapeRegExp(fee)}\s${escapeRegExp(ticker)}\s`),
+    );
   }
 
   @step("Open coin control from the fees menu")
