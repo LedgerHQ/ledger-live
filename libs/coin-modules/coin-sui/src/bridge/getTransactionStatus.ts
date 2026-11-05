@@ -149,8 +149,9 @@ export const getTransactionStatus: AccountBridge<
       errors.amount = new OneSuiMinForStake();
     }
 
-    // 0.1 SUI
-    if (account.spendableBalance.minus(transaction.amount).lt(ONE_SUI / 10))
+    // Gas is paid from the same liquid SUI, so the 0.1 SUI left for a later unstake is
+    // measured after the fees.
+    if (account.spendableBalance.minus(totalSpent).lt(ONE_SUI / 10))
       warnings.amount = new SomeSuiForUnstake();
   }
 
