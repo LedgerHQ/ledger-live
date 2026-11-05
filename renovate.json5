@@ -100,6 +100,11 @@
       "minimumReleaseAge": "2 days"
     },
     {
+      "description": "Re.Pack linked updates (plugins peer on the same core version)",
+      "matchPackageNames": ["@callstack/repack", "@callstack/repack-*"],
+      "groupName": "repack"
+    },
+    {
       "description": "Polkadot linked updates",
       "matchPackageNames": ["@polkadot/*"],
       "groupName": "polkadot"
