@@ -50,7 +50,7 @@ wallet-cli skill doctor --fix             # reinstall outdated or missing skills
 ## Prerequisites
 
 - A Ledger on USB, or [Speculos](#speculos), for the commands marked in the Device column. `genuine-check` needs a physical Ledger
-- On Linux, the USB/HID libraries: `sudo apt-get install libudev-dev libusb-1.0-0-dev`
+- On Linux, the Ledger [udev rules](https://github.com/LedgerHQ/udev-rules) so your user can open the device. No system USB library is needed
 
 ## Environment and storage
 

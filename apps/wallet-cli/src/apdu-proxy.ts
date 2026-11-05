@@ -1,7 +1,6 @@
 #!/usr/bin/env bun
 // HTTP + WebSocket APDU proxy reusing the wallet-cli DMK stack: a drop-in for the
 // legacy `run:cli proxy`, without the node-hid native build.
-import "./embed-usb-native";
 import os from "node:os";
 import {
   ensureWalletCliDmkTransport,
