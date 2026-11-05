@@ -405,8 +405,6 @@
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
-    "@types/react-native-extra-dimensions-android": "1.2.3",
-    "@types/react-native-video": "5.0.20",
     "@types/react-test-renderer": "19.0.0",
     "@types/redux-actions": "2.6.5",
     "@types/semver": "catalog:",
