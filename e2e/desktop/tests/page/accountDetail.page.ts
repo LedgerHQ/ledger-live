@@ -48,11 +48,6 @@ export class AccountDetailPage extends AppPage {
 
   private tokenInFocus?: Currency;
 
-  async isDisplayedRatherThan(previousPageMarker: Locator) {
-    await expect(this.accountDetailLayout.or(previousPageMarker)).toBeVisible();
-    return this.accountDetailLayout.isVisible();
-  }
-
   @step("Click `Receive` button")
   async clickReceive() {
     await this.heroAction("receive").click();

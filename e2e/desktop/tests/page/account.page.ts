@@ -5,6 +5,7 @@ import { AppPage } from "tests/page/abstractClasses";
 import { AccountDetailPage, type EarnOptions } from "tests/page/accountDetail.page";
 import { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 import type { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
+import { getFeatureFlags } from "tests/utils/featureFlagUtils";
 import { escapeRegExp } from "tests/utils/regExpUtils";
 
 /** Follows the account page of the previous design or the account detail page, whichever the flag displays. */
@@ -52,11 +53,11 @@ export class AccountPage extends AppPage {
     return new RegExp(`^(${escaped.join("|")})$`, "i");
   }
 
-  private isAccountDetail() {
-    return this.accountDetail.isDisplayedRatherThan(this.accountName);
+  private async isAccountDetail() {
+    return (await getFeatureFlags(this.page)).accountDetail?.enabled === true;
   }
 
-  @step("Check if the account detail page is displayed")
+  @step("Check if the account detail flag is enabled")
   async usesAccountDetail(): Promise<boolean> {
     return this.isAccountDetail();
   }
