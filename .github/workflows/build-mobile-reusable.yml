@@ -46,17 +46,37 @@ permissions:
 
 jobs:
   build-mobile-app-android:
-    name: "Android Build"
+    name: "Android Build (${{ matrix.runner }})"
     permissions:
       id-token: write
       contents: read
-    runs-on: [ledger-live-4xlarge]
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ledger-wallet-4cpu-aws-public-cached, ledger-wallet-8cpu-aws-public-cached]
+    runs-on: ${{ matrix.runner }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref || github.sha }}
+      - name: Start resource sampler (eval only)
+        run: |
+          cat > "$RUNNER_TEMP/sample.sh" <<'SH'
+          #!/usr/bin/env bash
+          CG=/sys/fs/cgroup
+          while true; do
+            cpu=$(awk '{printf "%s=%s ", $1, $2}' "$CG/cpu.stat" 2>/dev/null)
+            mem=$(cat "$CG/memory.current" 2>/dev/null)
+            anon=$(awk '$1=="anon"{print $2}' "$CG/memory.stat" 2>/dev/null)
+            echo "$(date +%s) $cpu memory.current=$mem anon=$anon"
+            sleep 5
+          done
+          SH
+          chmod +x "$RUNNER_TEMP/sample.sh"
+          nohup "$RUNNER_TEMP/sample.sh" > "$RUNNER_TEMP/resources.log" 2>&1 &
+          echo "cpu.max=$(cat /sys/fs/cgroup/cpu.max 2>/dev/null) memory.max=$(cat /sys/fs/cgroup/memory.max 2>/dev/null) nproc=$(nproc)"
       - name: Setup git user
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
       - name: Setup the caches
@@ -111,5 +131,12 @@ jobs:
       - name: upload Android app
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
-          name: ${{ steps.post-version.outputs.version }}-release
+          name: ${{ steps.post-version.outputs.version }}-release-${{ matrix.runner }}
           path: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/stagingRelease
+      - name: Dump resource samples (eval only)
+        if: always()
+        run: |
+          echo "memory.peak=$(cat /sys/fs/cgroup/memory.peak 2>/dev/null)"
+          echo "RESOURCE_SAMPLES_BEGIN"
+          cat "$RUNNER_TEMP/resources.log"
+          echo "RESOURCE_SAMPLES_END"
