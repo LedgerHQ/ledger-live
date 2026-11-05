@@ -1,6 +1,12 @@
-import React from "react";
+import React, { type ReactNode } from "react";
 import { SelectItem, SelectItemText } from "@ledgerhq/lumen-ui-react";
-import type { AnalyticsFilterItemProps } from "./AnalyticsFilterItem.types";
+
+type AnalyticsFilterItemProps = Readonly<{
+  value: string;
+  label: string;
+  icon: ReactNode;
+  description?: string;
+}>;
 
 export function AnalyticsFilterItem({ value, label, icon, description }: AnalyticsFilterItemProps) {
   return (

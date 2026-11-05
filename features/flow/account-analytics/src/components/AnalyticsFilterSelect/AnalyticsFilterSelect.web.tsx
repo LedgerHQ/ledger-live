@@ -9,8 +9,13 @@ import {
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { CoinsCrypto, Wallet } from "@ledgerhq/lumen-ui-react/symbols";
 import { AnalyticsFilterItem } from "../AnalyticsFilterItem/AnalyticsFilterItem";
-import type { AnalyticsFilterOptionMeta } from "../AnalyticsFilters/AnalyticsFiltersView.types";
-import type { AnalyticsFilterSelectProps } from "./AnalyticsFilterSelect.types";
+import type {
+  AnalyticsFilterOptionMeta,
+  AnalyticsFilterViewProps,
+} from "../AnalyticsFilters/AnalyticsFiltersView.types";
+
+type AnalyticsFilterSelectProps = AnalyticsFilterViewProps &
+  Readonly<{ variant: "asset" | "account" }>;
 
 const VARIANTS = {
   asset: {

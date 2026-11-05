@@ -1,6 +1,12 @@
 import React from "react";
 import { Button } from "@ledgerhq/lumen-ui-react";
-import type { AnalyticsStatusContentProps } from "./AnalyticsStatusContent.types";
+import type { AccountAnalyticsLabels } from "../../AccountAnalytics.types";
+
+type AnalyticsStatusContentProps = Readonly<{
+  isError: boolean;
+  labels: Pick<AccountAnalyticsLabels, "error" | "unavailable" | "retry">;
+  onRetry: () => void;
+}>;
 
 export function AnalyticsStatusContent({ isError, labels, onRetry }: AnalyticsStatusContentProps) {
   return (
