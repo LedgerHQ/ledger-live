@@ -70,7 +70,10 @@ jobs:
             cpu=$(awk '{printf "%s=%s ", $1, $2}' "$CG/cpu.stat" 2>/dev/null)
             mem=$(cat "$CG/memory.current" 2>/dev/null)
             anon=$(awk '$1=="anon"{print $2}' "$CG/memory.stat" 2>/dev/null)
-            echo "$(date +%s) $cpu memory.current=$mem anon=$anon"
+            clang=$(pgrep -c -f 'clang\+\+|/clang ' 2>/dev/null)
+            nodes=$(pgrep -c -x node 2>/dev/null)
+            nthreads=$(ps -o nlwp= -C node 2>/dev/null | awk '{s+=$1} END{print s+0}')
+            echo "$(date +%s) $cpu memory.current=$mem anon=$anon clang=$clang node=$nodes node_threads=$nthreads"
             sleep 5
           done
           SH
@@ -104,7 +107,28 @@ jobs:
       - name: setup Android SDK
         uses: android-actions/setup-android@40fd30fb8d7440372e1316f5d1809ec01dcd3699 # v4.0.1
         with:
-          packages: "platform-tools"
+          packages: "platform-tools cmake;3.22.1"
+      - name: Detect CPU quota
+        run: |
+          read -r quota period < /sys/fs/cgroup/cpu.max || true
+          if [ -n "$quota" ] && [ "$quota" != "max" ]; then CPUS=$(( (quota + period - 1) / period )); else CPUS=$(nproc); fi
+          echo "CI_CPUS=$CPUS" >> "$GITHUB_ENV"
+          echo "CI_CPUS=$CPUS nproc=$(nproc)"
+          echo "node os.availableParallelism=$(node -p 'require("os").availableParallelism()') os.cpus=$(node -p 'require("os").cpus().length')"
+          java -XshowSettings:system -version 2>&1 | grep -iE 'cpu|memory limit|provider' || true
+          java -XX:+PrintFlagsFinal -version 2>/dev/null | grep -E ' ActiveProcessorCount | MaxHeapSize ' || true
+      - name: Cap ninja jobs to the CPU quota
+        run: |
+          wrapped=0
+          for ninja in "$ANDROID_HOME"/cmake/*/bin/ninja; do
+            [ -f "$ninja" ] || continue
+            mv "$ninja" "$ninja.real"
+            printf '%s\n' '#!/usr/bin/env bash' "exec \"\$(dirname \"\$0\")/ninja.real\" -j${CI_CPUS} \"\$@\"" > "$ninja"
+            chmod +x "$ninja"
+            echo "wrapped $ninja ($("$ninja.real" --version)) -> -j${CI_CPUS}"; cat "$ninja"
+            wrapped=$((wrapped + 1))
+          done
+          [ "$wrapped" -gt 0 ] || { echo "::error::no ninja found under $ANDROID_HOME/cmake"; exit 1; }
       - name: install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
       - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
@@ -147,6 +171,9 @@ jobs:
         if: always()
         run: |
           echo "memory.peak=$(cat /sys/fs/cgroup/memory.peak 2>/dev/null)"
+          ls -d "${ANDROID_HOME:-/nonexistent}"/cmake/* "${ANDROID_HOME:-/nonexistent}"/ndk/* 2>/dev/null || true
+          for n in $(find "${ANDROID_HOME:-/nonexistent}/cmake" -name 'ninja*' -type f 2>/dev/null); do echo "$n"; head -c 200 "$n" | grep -a exec || "$n" --version; done
+          grep -rhoE '"-j[0-9]+"|ninja[^"]*-j ?[0-9]+' apps/ledger-live-mobile/android 2>/dev/null --include='*.json' | sort | uniq -c | head || true
           echo "RESOURCE_SAMPLES_BEGIN"
           cat "$RUNNER_TEMP/resources.log"
           echo "RESOURCE_SAMPLES_END"
