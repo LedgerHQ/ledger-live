@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { parseV1 } from "../shared/accountDescriptor";
 import { WalletAdapter } from "../wallet";
+import { BalanceSchema, type TokenInfo } from "../wallet/models";
 import { findAccountTokens, findTokensByTicker } from "./token-lookup";
 
 const realFetch = globalThis.fetch;
@@ -100,40 +101,45 @@ describe("findTokensByTicker", () => {
   });
 });
 
+const erc20 = (ticker: string, name: string, contractAddress: string): TokenInfo => ({
+  id: `ethereum/erc20/${contractAddress}`,
+  ticker,
+  name,
+  contractAddress,
+  parentCurrencyId: "ethereum",
+  tokenType: "erc20",
+  decimals: 6,
+});
+
+const tokenBalance = (balance: string, token: TokenInfo) =>
+  BalanceSchema.parse({ assetId: token.id, balance, token });
+
 describe("findAccountTokens", () => {
   const account = parseV1(`account:2:address:ethereum:${SENDER}:m/44h/60h/0h/0/0`);
 
-  it("keeps only listed tokens the account holds a balance of", async () => {
+  it("keeps only listed tokens the account holds a balance of, without a CAL lookup per token", async () => {
     const balances = spyOn(WalletAdapter.prototype, "getAccountBalances").mockResolvedValue([
-      { assetId: "ethereum", balance: "5" },
-      { assetId: "ethereum/erc20/usd__coin", balance: "1" },
-      { assetId: "ethereum/erc20/pepe", balance: "0" },
-      { assetId: "ethereum/erc20/delisted", balance: "1" },
-      { assetId: "ethereum/erc20/unknown", balance: "1" },
-    ] as never);
-    const tokens = spyOn(getCryptoAssetsStore(), "findTokenById").mockImplementation(
-      async id =>
-        ({
-          ethereum: { ticker: "ETH", name: "Ethereum", contractAddress: "0x0" },
-          "ethereum/erc20/usd__coin": { ticker: "USDC", name: "USD Coin", contractAddress: USDC },
-          "ethereum/erc20/pepe": { ticker: "PEPE", name: "Pepe", contractAddress: "0x2" },
-          "ethereum/erc20/delisted": {
-            ticker: "USDC",
-            name: "Old USDC",
-            contractAddress: "0x1",
-            delisted: true,
-          },
-        })[id] as never,
-    );
+      BalanceSchema.parse({ assetId: "ethereum", balance: "5" }),
+      tokenBalance("1", erc20("USDC", "USD Coin", USDC)),
+      tokenBalance("0", erc20("PEPE", "Pepe", "0x2")),
+      tokenBalance("1", { ...erc20("USDC", "Old USDC", "0x1"), delisted: true }),
+    ]);
+    const store = getCryptoAssetsStore();
+    const calLookups = [
+      spyOn(store, "findTokenById").mockResolvedValue(undefined),
+      spyOn(store, "findTokenByAddressInCurrency").mockResolvedValue(undefined),
+    ];
 
     try {
-      expect(await findAccountTokens(account)).toEqual([
-        { ticker: "USDC", name: "USD Coin", address: USDC },
-      ]);
+      const tokens = await findAccountTokens(account);
+
+      expect(calLookups.flatMap(lookup => lookup.mock.calls)).toEqual([]);
+      expect(tokens).toEqual([{ ticker: "USDC", name: "USD Coin", address: USDC }]);
+      expect(balances).toHaveBeenCalledTimes(1);
       expect(balances).toHaveBeenCalledWith(expect.objectContaining({ currencyId: "ethereum" }));
     } finally {
       balances.mockRestore();
-      tokens.mockRestore();
+      calLookups.forEach(lookup => lookup.mockRestore());
     }
   });
 });

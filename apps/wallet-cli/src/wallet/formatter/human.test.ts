@@ -164,6 +164,19 @@ describe("JsonFormatter.balances", () => {
     const result = await json.balances(balances);
     expect(result).toEqual([{ asset: "bitcoin", amount: "100000000 formatted" }]);
   });
+
+  it("leaves a token balance's metadata out of the output", async () => {
+    const json = new JsonFormatter(mockHuman);
+    const balances = [
+      BalanceSchema.parse({
+        assetId: USDT_TOKEN_INFO.id,
+        balance: "1500000",
+        token: USDT_TOKEN_INFO,
+      }),
+    ];
+    const result = await json.balances(balances);
+    expect(result).toEqual([{ asset: USDT_TOKEN_INFO.id, amount: "1500000 formatted" }]);
+  });
 });
 
 describe("HumanFormatter.formatAmount", () => {
@@ -218,6 +231,18 @@ describe("HumanFormatter.formatBalance", () => {
       BalanceSchema.parse({ assetId: "ethereum", balance: "0" }),
     );
     expect(result).toContain("ETH");
+  });
+
+  it("prints a token balance the same with or without its metadata", async () => {
+    const usdtStore = {
+      findTokenById: async () => ({ units: [{ name: "USDT", code: "USDT", magnitude: 6 }] }),
+    } as unknown as CryptoAssetsStore;
+    const f = new HumanFormatter(usdtStore);
+    const bare = BalanceSchema.parse({ assetId: USDT_TOKEN_INFO.id, balance: "1500000" });
+
+    expect(await f.formatBalance({ ...bare, token: USDT_TOKEN_INFO })).toBe(
+      await f.formatBalance(bare),
+    );
   });
 });
 
