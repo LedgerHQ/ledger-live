@@ -1,9 +1,7 @@
 self-hosted-runner:
   labels:
-    - ledger-live-medium
     - ledger-live-4xlarge
     - ledger-live-linux-8CPU-32RAM
-    - ledger-live-linux-16CPU-64RAM
     - ledger-live-linux-e2e-8CPU-32RAM
     - ledger-wallet-1cpu-aws-public
     - ledger-wallet-16cpu-aws-public
