@@ -82,7 +82,8 @@ export function createLedgerSyncWatch<S extends LedgerSyncStateRoot, LocalState,
       dispatch(setWalletSyncError(null));
       return;
     }
-    const loop = createWalletSyncWatchLoop({
+    const run: NonNullable<typeof current> = { inputs };
+    run.loop = createWalletSyncWatchLoop({
       walletsync,
       walletSyncSdk: cloudSyncSdk,
       watchConfig,
@@ -96,7 +97,10 @@ export function createLedgerSyncWatch<S extends LedgerSyncStateRoot, LocalState,
       }),
       trustchain,
       memberCredentials,
-      setVisualPending: pending => dispatch(setVisualPending(pending)),
+      // A loop stopped or replaced while it pulls still settles: only the current one shows it.
+      setVisualPending: pending => {
+        if (current === run) dispatch(setVisualPending(pending));
+      },
       getState,
       localStateSelector: cloudSync.localStateSelector,
       latestDistantStateSelector: state => selectWalletSyncState(state).data,
@@ -104,7 +108,7 @@ export function createLedgerSyncWatch<S extends LedgerSyncStateRoot, LocalState,
       onStartPolling: () => dispatch(setWalletSyncError(null)),
       onTrustchainRefreshNeeded: refreshed => refreshTrustchain(refreshed, memberCredentials),
     });
-    current = { inputs, loop };
+    current = run;
   }
 
   function onLoopError(error: unknown) {
@@ -135,7 +139,9 @@ export function createLedgerSyncWatch<S extends LedgerSyncStateRoot, LocalState,
 
   function resetLedgerSync() {
     dispatch(resetTrustchainStore());
-    void cloudSync.save(null, 0, null, dispatch);
+    cloudSync
+      .save(null, 0, null, dispatch)
+      .catch(error => dispatch(setWalletSyncError(miniSerializeError(error))));
   }
 
   return {
