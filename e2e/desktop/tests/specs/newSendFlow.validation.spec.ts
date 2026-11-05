@@ -1,7 +1,7 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 import { AmountQuickAction } from "@ledgerhq/live-e2e-shared/enum/AmountQuickAction";
-import { EIP1559_CUSTOM_FEES, Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
+import { EIP1559_CUSTOM_FEES, EIP1559_HIGH_MAX_FEE, Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import { coinTeamOwner } from "@ledgerhq/live-e2e-shared/data/coinTeamOwner";
 import { SendScenario, sendFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
 import { ownedBy } from "tests/utils/allureUtils";
@@ -245,11 +245,15 @@ test.describe(
         await app.newSendFlow.selectCustomFeesFromMenu();
         await app.newSendFlow.expectEip1559CustomFeesPrefilled();
         const prefilledFiatFee = await app.newSendFlow.getCustomFeesFiatValue();
-        await app.newSendFlow.fillEip1559CustomFees(EIP1559_CUSTOM_FEES);
+        await app.newSendFlow.fillEip1559MaxFee(EIP1559_HIGH_MAX_FEE);
         await app.newSendFlow.expectCustomFeesFiatValueChanged(prefilledFiatFee);
+        await app.newSendFlow.fillEip1559CustomFees(EIP1559_CUSTOM_FEES);
         await app.newSendFlow.confirmCustomFees();
         await app.newSendFlow.expectCustomFeesApplied();
-        await app.newSendFlow.expectNetworkFee(EIP1559_CUSTOM_FEES.expectedNetworkFee);
+        await app.newSendFlow.expectNetworkFee(
+          EIP1559_CUSTOM_FEES.expectedNetworkFee,
+          tx.accountToDebit.currency.ticker,
+        );
         await app.newSendFlow.clickReview();
         await app.newSendFlow.waitForSignature();
         await app.speculos.signSendTransaction(tx);

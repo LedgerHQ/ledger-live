@@ -9,3 +9,5 @@ export const EIP1559_CUSTOM_FEES = {
   maxFee: "2",
   expectedNetworkFee: "0.000042",
 } as const;
+
+export const EIP1559_HIGH_MAX_FEE = "100";

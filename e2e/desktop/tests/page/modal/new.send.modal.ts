@@ -1,5 +1,6 @@
 import { expect } from "@playwright/test";
 import BigNumber from "bignumber.js";
+import escapeRegExp from "lodash/escapeRegExp";
 import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import type { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { AmountQuickAction } from "@ledgerhq/live-e2e-shared/enum/AmountQuickAction";
@@ -517,6 +518,11 @@ export class NewSendModal extends Modal {
     await expect(this.customFeesFiatValue).not.toHaveText(previous);
   }
 
+  @step("Fill the EIP-1559 max fee: $0 Gwei")
+  async fillEip1559MaxFee(maxFee: string) {
+    await this.customMaxFeeInput.fill(maxFee);
+  }
+
   @step("Fill the EIP-1559 custom fees")
   async fillEip1559CustomFees(options: Eip1559CustomFeesOptions) {
     const { maxPriorityFee, maxFee } = options;
@@ -536,9 +542,11 @@ export class NewSendModal extends Modal {
     await expect(this.feesMenuTrigger).toContainText(/custom/i);
   }
 
-  @step("Verify the network fee is $0")
-  async expectNetworkFee(fee: string) {
-    await expect(this.feesMenuTrigger).toContainText(fee);
+  @step("Verify the network fee is $0 $1")
+  async expectNetworkFee(fee: string, ticker: string) {
+    await expect(this.feesMenuTrigger).toHaveText(
+      new RegExp(`^${escapeRegExp(`${fee} ${ticker}`)}\\s`),
+    );
   }
 
   @step("Open coin control from the fees menu")
