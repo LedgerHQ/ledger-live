@@ -231,8 +231,8 @@ catalogs:
       specifier: 13.1.1
       version: 13.1.1
     '@ledgerhq/crypto-icons':
-      specifier: 2.0.6
-      version: 2.0.6
+      specifier: 2.0.7
+      version: 2.0.7
     '@ledgerhq/device-contacts-kit':
       specifier: 0.5.0
       version: 0.5.0
@@ -1417,7 +1417,7 @@ importers:
         version: 2.8.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.6(5bfec6f530da8ba0e8a834c94b75962c)
+        version: 2.0.7(5bfec6f530da8ba0e8a834c94b75962c)
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
         version: 1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
@@ -2336,7 +2336,7 @@ importers:
         version: 2.8.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.6(5bfec6f530da8ba0e8a834c94b75962c)
+        version: 2.0.7(5bfec6f530da8ba0e8a834c94b75962c)
       '@ledgerhq/device-core':
         specifier: workspace:^
         version: link:../../libs/device-core
@@ -3354,7 +3354,7 @@ importers:
         version: 11.0.1
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.6(5bfec6f530da8ba0e8a834c94b75962c)
+        version: 2.0.7(5bfec6f530da8ba0e8a834c94b75962c)
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
         version: 1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
@@ -4039,7 +4039,7 @@ importers:
     devDependencies:
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.6(5bfec6f530da8ba0e8a834c94b75962c)
+        version: 2.0.7(5bfec6f530da8ba0e8a834c94b75962c)
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
         version: 0.1.34
@@ -8230,7 +8230,7 @@ importers:
         version: link:../../platform/quick-actions
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.6(5bfec6f530da8ba0e8a834c94b75962c)
+        version: 2.0.7(5bfec6f530da8ba0e8a834c94b75962c)
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
@@ -9660,7 +9660,7 @@ importers:
         version: link:../../platform/contacts
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.6(5bfec6f530da8ba0e8a834c94b75962c)
+        version: 2.0.7(5bfec6f530da8ba0e8a834c94b75962c)
       '@shared/clipboard':
         specifier: workspace:*
         version: link:../../../shared/clipboard
@@ -10323,7 +10323,7 @@ importers:
         version: link:../../platform/pay-analytics
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.6(5bfec6f530da8ba0e8a834c94b75962c)
+        version: 2.0.7(5bfec6f530da8ba0e8a834c94b75962c)
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
@@ -10632,7 +10632,7 @@ importers:
         version: link:../../platform/pay-analytics
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.6(5bfec6f530da8ba0e8a834c94b75962c)
+        version: 2.0.7(5bfec6f530da8ba0e8a834c94b75962c)
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
@@ -10790,7 +10790,7 @@ importers:
         version: 5.2.6(db28dd4150d1c921a8a8f9e748e99a4b)
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.6(5bfec6f530da8ba0e8a834c94b75962c)
+        version: 2.0.7(5bfec6f530da8ba0e8a834c94b75962c)
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
         version: 0.1.34
@@ -11307,7 +11307,7 @@ importers:
         version: link:../../platform/contacts
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.6(5bfec6f530da8ba0e8a834c94b75962c)
+        version: 2.0.7(5bfec6f530da8ba0e8a834c94b75962c)
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
@@ -11613,7 +11613,7 @@ importers:
         version: link:../../platform/style
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.6(5bfec6f530da8ba0e8a834c94b75962c)
+        version: 2.0.7(5bfec6f530da8ba0e8a834c94b75962c)
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
@@ -12293,7 +12293,7 @@ importers:
         version: link:../market-countervalues
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.6(5bfec6f530da8ba0e8a834c94b75962c)
+        version: 2.0.7(5bfec6f530da8ba0e8a834c94b75962c)
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
         version: 0.1.34
@@ -27499,8 +27499,8 @@ packages:
     peerDependencies:
       '@ledgerhq/device-management-kit': ^1.11.0
 
-  '@ledgerhq/crypto-icons@2.0.6':
-    resolution: {integrity: sha512-tcvtdkIr6q+pzL+o2RygVRU89ZBNU6aDx3CFA4JoDkCT6Amny/8FhmkRY3d18poBcGSGtsHcfh11iAF1xx26lg==}
+  '@ledgerhq/crypto-icons@2.0.7':
+    resolution: {integrity: sha512-MK3uiQbSskNfLTJZWf2/AfI0AdeMFmp+qVBqN6R1Hs5K6V5eWqFlaaLeFt/xiW7UYCfmAfG65Nlz9R/oZYqe7w==}
     peerDependencies:
       '@ledgerhq/lumen-design-core': '>=0.1.28'
       '@ledgerhq/lumen-ui-react': '>=0.1.58'
@@ -46410,7 +46410,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/crypto-icons@2.0.6(5bfec6f530da8ba0e8a834c94b75962c)':
+  '@ledgerhq/crypto-icons@2.0.7(5bfec6f530da8ba0e8a834c94b75962c)':
     dependencies:
       react: 19.1.4
     optionalDependencies:
