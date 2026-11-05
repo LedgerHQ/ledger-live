@@ -47,11 +47,10 @@ export type QuickActionButton =
 export type QuickActionLocation = "quick_action" | "quick_action_transfer";
 
 /** What the plan puts on every event of the page and of its settings. */
-export type AccountTrackingFacts = Readonly<{ currencyId: string; isTokenAccount: boolean }>;
+export type AccountTrackingFacts = Readonly<{ networkId: string }>;
 
-export const accountTrackingProps = ({ currencyId, isTokenAccount }: AccountTrackingFacts) => ({
-  currency: currencyId,
-  isTokenAccount,
+export const accountTrackingProps = ({ networkId }: AccountTrackingFacts) => ({
+  network: networkId,
 });
 
 export type AccountPageViewFacts = AccountTrackingFacts &

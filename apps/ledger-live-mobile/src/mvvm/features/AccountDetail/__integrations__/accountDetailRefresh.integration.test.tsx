@@ -94,8 +94,7 @@ const status = (suffix: string) => `${ACCOUNT_DETAIL_TEST_IDS.refreshStatus}-${s
 const pulled = (triggeredAfterSyncError: boolean) => [
   "button_clicked",
   {
-    currency: "ethereum",
-    isTokenAccount: false,
+    network: "ethereum",
     button: "pull to refresh",
     page: "Account",
     triggeredAfterSyncError,
