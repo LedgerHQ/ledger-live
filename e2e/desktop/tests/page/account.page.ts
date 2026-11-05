@@ -1,54 +1,75 @@
 import { expect, type Locator } from "@playwright/test";
-import { Layout, type SyncWaitOptions } from "tests/component/layout.component";
+import { Layout } from "tests/component/layout.component";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
+import { AccountDetailPage, type EarnOptions } from "tests/page/accountDetail.page";
 import { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
+import type { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
+import { escapeRegExp } from "tests/utils/regExpUtils";
 
+/** Follows the account page of the previous design or the account detail page, whichever the flag displays. */
 export class AccountPage extends AppPage {
   private readonly layout = new Layout(this.page);
-  readonly settingsButton = this.page.getByTestId("account-settings-button");
-  private settingsDeleteButton = this.page.getByTestId("account-settings-delete-button");
-  private settingsConfirmButton = this.page.getByTestId("modal-confirm-button");
-  private swapButton = this.page.getByTestId("swap-account-action-button");
-  private stakeButton = this.page.getByTestId("stake-button");
-  private receiveButton = this.page.getByRole("button", { name: "Receive", exact: true });
-  private activatePrivateBalanceButton = this.page.getByTestId("show-private-balance-button");
-  private sendButton = this.page.getByRole("button", { name: "Send" });
-  private buyButton = this.page.getByRole("button", { name: "Buy" });
-  private accountName = this.page.locator("#account-header-name");
-  private lastOperation = this.page.locator("text=Latest operations");
-  private tokenValue = (tokenName: string) =>
+  private readonly accountDetail = new AccountDetailPage(this.page);
+  private readonly settingsButton = this.page.getByTestId("account-settings-button");
+  private readonly settingsDeleteButton = this.page.getByTestId("account-settings-delete-button");
+  private readonly settingsConfirmButton = this.page.getByTestId("modal-confirm-button");
+  private readonly swapButton = this.page.getByTestId("swap-account-action-button");
+  private readonly stakeButton = this.page.getByTestId("stake-button");
+  private readonly receiveButton = this.page.getByRole("button", { name: "Receive", exact: true });
+  private readonly activatePrivateBalanceButton = this.page.getByTestId(
+    "show-private-balance-button",
+  );
+  private readonly sendButton = this.page.getByRole("button", { name: "Send" });
+  private readonly buyButton = this.page.getByRole("button", { name: "Buy" });
+  private readonly accountName = this.page.locator("#account-header-name");
+  private readonly lastOperation = this.page.locator("text=Latest operations");
+  private readonly tokenValue = (tokenName: string) =>
     this.page.getByTestId(`account-row-${tokenName.toLowerCase()}`);
-  private tokenRowByTicker = (tokenTicker: string) =>
+  private readonly tokenRowByTicker = (tokenTicker: string) =>
     this.page.getByTestId(`account-row-${tokenTicker.toLowerCase()}`);
-  private accountBalance = this.page.getByTestId("total-balance");
-  private operationList = this.page.locator("id=operation-list");
-  private showMoreButton = this.page.getByText("Show more");
-  private advancedButton = this.page.getByText("Advanced");
-  private accountAdvancedLogs = this.page.getByTestId("Advanced_Logs");
-  private operationRows = this.page.locator("[data-testid^='operation-row-']");
-  private operationStatus = this.page.locator("[data-testid^='operation-status-']");
-  private closeModal = this.page.getByTestId("modal-close-button");
-  private tokenRow = (tokenTicker: string) => this.page.getByTestId(`token-row-${tokenTicker}`);
-  private showAllTokensButton = this.page.getByTestId("account-tokens-show-all-button");
-  private addTokenButton = this.page.getByRole("button", { name: "Add token" });
-  private viewDetailsButton = this.page.getByText("View details");
-  private editName = this.page.locator("#input-edit-name");
-  private applyButton = this.page.getByTestId("account-settings-apply-button");
-  private accountChart = this.page.getByTestId("chart-container");
-  private selectSpecificOperation = (operationType: string) =>
+  private readonly accountBalance = this.page.getByTestId("total-balance");
+  private readonly operationList = this.page.locator("id=operation-list");
+  private readonly showMoreButton = this.page.getByText("Show more");
+  private readonly advancedButton = this.page.getByText("Advanced");
+  private readonly accountAdvancedLogs = this.page.getByTestId("Advanced_Logs");
+  private readonly operationRows = this.page.locator("[data-testid^='operation-row-']");
+  private readonly operationStatus = this.page.locator("[data-testid^='operation-status-']");
+  private readonly closeModal = this.page.getByTestId("modal-close-button");
+  private readonly tokenRow = (tokenTicker: string) =>
+    this.page.getByTestId(`token-row-${tokenTicker}`);
+  private readonly showAllTokensButton = this.page.getByTestId("account-tokens-show-all-button");
+  private readonly addTokenButton = this.page.getByRole("button", { name: "Add token" });
+  private readonly viewDetailsButton = this.page.getByText("View details");
+  private readonly editName = this.page.locator("#input-edit-name");
+  private readonly applyButton = this.page.getByTestId("account-settings-apply-button");
+  private readonly accountChart = this.page.getByTestId("chart-container");
+  private readonly selectSpecificOperation = (operationType: string) =>
     this.page.locator("[data-testid^='operation-row-']").filter({ hasText: operationType });
   private readonly noAssetsTitle = this.page.getByTestId("no-assets-title");
 
   // Case-insensitive: asset names come from the cryptoasset list and don't always match the
   // casing declared in the Currency enum (e.g. "dogwifhat" vs "DOGWIFHAT").
   private accountHeaderNamePattern(...names: string[]) {
-    const escaped = names.map(n => n.trim().replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`));
+    const escaped = names.map(name => escapeRegExp(name.trim()));
     return new RegExp(`^(${escaped.join("|")})$`, "i");
+  }
+
+  private isAccountDetail() {
+    return this.accountDetail.isDisplayedRatherThan(this.accountName);
+  }
+
+  @step("Check if the account detail page is displayed")
+  async usesAccountDetail(): Promise<boolean> {
+    return this.isAccountDetail();
   }
 
   @step("Click `Receive` button")
   async clickReceive() {
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.clickReceive();
+      return;
+    }
     await this.receiveButton.click();
   }
 
@@ -61,11 +82,19 @@ export class AccountPage extends AppPage {
 
   @step("Click on add token button")
   async clickAddToken() {
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.clickAddToken();
+      return;
+    }
     await this.addTokenButton.click();
   }
 
   @step("Click `Send` button")
-  async clickSend() {
+  async clickSend(asset?: Currency) {
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.clickSend(asset);
+      return;
+    }
     if (await this.noAssetsTitle.isVisible()) {
       await this.layout.syncAccounts();
       await this.layout.waitForSyncButtonToBeEnabled();
@@ -75,34 +104,60 @@ export class AccountPage extends AppPage {
 
   @step("Verify `Send` button is visible")
   async verifySendButtonVisibility() {
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.expectSendVisible();
+      return;
+    }
     await expect(this.sendButton).toBeVisible();
   }
 
   @step("Verify `Receive` button is visible")
   async verifyReceiveButtonVisibility() {
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.expectReceiveVisible();
+      return;
+    }
     await expect(this.receiveButton).toBeVisible();
   }
 
   @step("Expect account header (name + settings) to be visible")
   async expectAccountHeaderVisible() {
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.expectHeaderVisible();
+      return;
+    }
     await expect(this.accountName).toBeVisible();
     await expect(this.settingsButton).toBeVisible();
   }
 
   @step("Click `Buy` button")
-  async clickBuy() {
+  async clickBuy(asset?: AccountType) {
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.clickBuy(asset);
+      return;
+    }
     await this.buyButton.click();
+  }
+
+  @step("Get the swap surface of the account page")
+  async swapSurface(): Promise<"full" | "embedded"> {
+    return (await this.isAccountDetail()) ? "embedded" : "full";
   }
 
   @step("Open Swap")
   async navigateToSwap() {
+    if (await this.isAccountDetail()) return;
     await this.swapButton.click();
   }
 
   @step("Click Stake button")
-  async startStakingFlowFromMainStakeButton(options?: SyncWaitOptions) {
+  async startStakingFlowFromMainStakeButton({ asset, ...syncOptions }: EarnOptions = {}) {
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.clickEarn({ asset, ...syncOptions });
+      return;
+    }
     // Wait if a sync is in progress to avoid empty stake modal
-    await this.layout.waitForSyncButtonToBeEnabled(options);
+    await this.layout.waitForSyncButtonToBeEnabled(syncOptions);
     await this.stakeButton.click();
   }
 
@@ -112,7 +167,11 @@ export class AccountPage extends AppPage {
   }
 
   @step("Click on last operation and return status")
-  async clickOnLastOperationAndReturnStatus(): Promise<string> {
+  async clickOnLastOperationAndReturnStatus(operationType?: string): Promise<string> {
+    if (await this.isAccountDetail()) {
+      return this.accountDetail.clickLastOperationAndReturnStatus(operationType);
+    }
+
     const status = await this.operationStatus.first().textContent();
     if (!status) {
       throw new Error("Expected operation status to be defined");
@@ -132,6 +191,10 @@ export class AccountPage extends AppPage {
 
   @step("Delete account")
   async deleteAccount() {
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.remove();
+      return;
+    }
     await this.settingsButton.click();
     await this.settingsDeleteButton.click();
     await this.settingsConfirmButton.click();
@@ -139,6 +202,10 @@ export class AccountPage extends AppPage {
 
   @step("Rename account")
   async renameAccount(newAccountName: string) {
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.rename(newAccountName);
+      return;
+    }
     await this.settingsButton.click();
     await this.editName.fill(newAccountName);
     await this.applyButton.click();
@@ -146,17 +213,31 @@ export class AccountPage extends AppPage {
 
   @step("Wait for account $0 to be visible")
   async expectAccountVisibility(firstAccountName: string) {
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.forgetToken();
+      await this.accountDetail.expectName(this.accountHeaderNamePattern(firstAccountName));
+      await this.accountDetail.expectSettingsVisible();
+      return;
+    }
     await expect(this.accountName).toHaveValue(this.accountHeaderNamePattern(firstAccountName));
     await expect(this.settingsButton).toBeVisible();
   }
 
   @step("Expect account to be not null")
   async expectAccountBalance() {
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.expectBalance();
+      return;
+    }
     await expect(this.accountBalance).toBeVisible();
   }
 
   @step("Expect `Last operations` to be visible")
   async expectLastOperationsVisibility() {
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.expectTransactions();
+      return;
+    }
     await this.scrollToOperations();
     await expect(this.lastOperation).toBeVisible();
     await expect(this.operationList).not.toBeEmpty();
@@ -172,11 +253,19 @@ export class AccountPage extends AppPage {
 
   @step("Expect token Account to be visible")
   async expectTokenAccount(account: AccountType) {
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.expectToken(account);
+      return;
+    }
     await this.waitForAccountHeaderName(account.currency.name, account.currency.ticker);
   }
 
   @step("Expect `show more` button to show more operations")
   async expectShowMoreButton() {
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.expectFullHistoryLink();
+      return;
+    }
     const operationCount = await this.operationRows.count();
     if (await this.showMoreButton.isVisible()) {
       await this.showMoreButton.click();
@@ -187,6 +276,10 @@ export class AccountPage extends AppPage {
 
   @step("Expect `derivate address index to be $0` to be visible")
   async expectAddressIndex(indexNumber: number) {
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.expectAddressIndex(indexNumber);
+      return;
+    }
     await this.settingsButton.click();
     await this.advancedButton.click();
     const advancedLogsText = await this.accountAdvancedLogs.innerText();
@@ -204,6 +297,10 @@ export class AccountPage extends AppPage {
 
   @step("Expect token to be present")
   async expectTokenToBePresent(tokenAccount: AccountType) {
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.expectToken(tokenAccount);
+      return;
+    }
     const row = this.tokenRow(tokenAccount.currency.ticker);
     await this.revealTokenRow(row);
     await expect(row).toBeVisible();
@@ -211,6 +308,10 @@ export class AccountPage extends AppPage {
 
   @step("Navigate to token in account")
   async navigateToTokenInAccount(tokenAccount: AccountType) {
+    if (await this.isAccountDetail()) {
+      await this.accountDetail.selectToken(tokenAccount);
+      return;
+    }
     const row = this.tokenRow(tokenAccount.currency.ticker);
     await this.revealTokenRow(row);
     await row.click();
@@ -222,11 +323,23 @@ export class AccountPage extends AppPage {
     const pattern = fallbackName
       ? this.accountHeaderNamePattern(headerName, fallbackName)
       : this.accountHeaderNamePattern(headerName);
-    await expect(this.accountName).toHaveValue(pattern);
+    await this.expectHeaderName(pattern);
   }
 
   @step("Verify account with header name $0 is visible")
   async verifyAccountHeaderNameIsVisible(headerName: string) {
-    await expect(this.accountName).toHaveValue(this.accountHeaderNamePattern(headerName));
+    await this.expectHeaderName(this.accountHeaderNamePattern(headerName));
+  }
+
+  private async expectHeaderName(pattern: RegExp) {
+    if (!(await this.isAccountDetail())) {
+      await expect(this.accountName).toHaveValue(pattern);
+      return;
+    }
+    if (await this.accountDetail.hasSelectedToken()) {
+      await this.accountDetail.expectParentOfToken();
+      return;
+    }
+    await this.accountDetail.expectName(pattern);
   }
 }

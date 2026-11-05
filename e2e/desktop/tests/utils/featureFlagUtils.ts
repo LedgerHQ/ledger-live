@@ -200,6 +200,27 @@ export const FF_NEW_SEND_FLOW_ENABLED = {
   },
 } satisfies PartialFeatures;
 
+export const FF_ACCOUNT_DETAIL_DISABLED = {
+  accountDetail: { enabled: false, params: { excludedCurrencyIds: [] } },
+} satisfies PartialFeatures;
+
+export const FF_ACCOUNT_DETAIL_ENABLED = {
+  accountDetail: { enabled: true, params: { excludedCurrencyIds: [] } },
+} satisfies PartialFeatures;
+
+const ACCOUNT_DETAIL_FLAG_STATES = [
+  { label: "account detail on", featureFlags: FF_ACCOUNT_DETAIL_ENABLED },
+  { label: "account detail off", featureFlags: FF_ACCOUNT_DETAIL_DISABLED },
+] as const;
+
+/** Runs a spec with the flag on and off when `coveredByBothPages`, with the flag off otherwise. */
+export const accountDetailFlagStates = (coveredByBothPages: boolean) =>
+  coveredByBothPages
+    ? ACCOUNT_DETAIL_FLAG_STATES
+    : ACCOUNT_DETAIL_FLAG_STATES.filter(
+        ({ featureFlags }) => featureFlags === FF_ACCOUNT_DETAIL_DISABLED,
+      );
+
 export const FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED = {
   newSendFlowFirstInteractionBanner: { enabled: true },
 } satisfies PartialFeatures;

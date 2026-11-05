@@ -25,8 +25,13 @@ export class AccountsPage extends AppPage {
     );
   }
 
+  // The account page lists its tokens in a table when the `accountDetail` flag is on, where a row reads "Tether USD USDT 0 USDT $0.00".
   private readonly tokenRow = (childCurrency: Currency) =>
-    this.page.getByTestId(`token-row-${childCurrency.ticker}`);
+    this.page.getByTestId(`token-row-${childCurrency.ticker}`).or(
+      this.page.getByTestId("account-detail-assets").getByRole("button", {
+        name: new RegExp(String.raw`\b${childCurrency.ticker} \d`),
+      }),
+    );
 
   private syncAccountButton = (accountName: string) =>
     this.getAccountRow(accountName).getByTestId("sync-button").locator("div").first();
@@ -75,11 +80,7 @@ export class AccountsPage extends AppPage {
 
   @step("Expect token balance to be null")
   async expectTokenBalanceToBeNull(childCurrency: Currency) {
-    await expect(
-      this.page
-        .getByTestId(`token-row-${childCurrency.ticker}`)
-        .getByText(`0 ${childCurrency.ticker}`),
-    ).toBeVisible();
+    await expect(this.tokenRow(childCurrency).getByText(`0 ${childCurrency.ticker}`)).toBeVisible();
   }
 
   @step("Check $0 account was deleted ")
