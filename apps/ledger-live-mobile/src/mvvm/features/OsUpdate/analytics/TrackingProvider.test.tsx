@@ -55,7 +55,7 @@ const installFirmwareRefused: OsUpdatePageEvent = {
 const error: OsUpdatePageEvent = {
   page: OsUpdatePage.ERROR,
   step: OsUpdateFlowStep.APPLY_UPDATES,
-  failureType: OsUpdateFailureType.OUT_OF_MEMORY,
+  failureType: OsUpdateFailureType.UNEXPECTED_ERROR,
 };
 
 type Props = Partial<React.ComponentProps<typeof TrackingProvider>>;
@@ -129,7 +129,7 @@ describe("TrackingProvider", () => {
       button: OsUpdateButton.CANCEL,
       page: OsUpdatePage.ERROR,
       step: OsUpdateFlowStep.APPLY_UPDATES,
-      failureType: OsUpdateFailureType.OUT_OF_MEMORY,
+      failureType: OsUpdateFailureType.UNEXPECTED_ERROR,
       ...shared,
       updateCount: 2,
     });
@@ -197,7 +197,7 @@ describe("TrackingProvider", () => {
     );
 
     trackPage({ page: OsUpdatePage.SUCCESS, restoreStatus: OsUpdateRestoreStatus.NONE });
-    trackClick(OsUpdateButton.CLOSE);
+    trackClick(OsUpdateButton.FINISH);
     expect(mockedTrack).toHaveBeenLastCalledWith(
       "button_clicked",
       expect.not.objectContaining({ step: expect.anything() }),
@@ -408,7 +408,7 @@ describe("TrackingProvider", () => {
         {
           page: OsUpdatePage.ERROR,
           step: OsUpdateFlowStep.APPLY_UPDATES,
-          failureType: OsUpdateFailureType.OUT_OF_MEMORY,
+          failureType: OsUpdateFailureType.UNEXPECTED_ERROR,
           updateIndex: 1,
           ...shared,
           updateCount: 2,
@@ -452,7 +452,7 @@ describe("TrackingProvider", () => {
         {
           page: OsUpdatePage.ERROR,
           step: OsUpdateFlowStep.APPLY_UPDATES,
-          failureType: OsUpdateFailureType.OUT_OF_MEMORY,
+          failureType: OsUpdateFailureType.UNEXPECTED_ERROR,
           updateIndex: 1,
           ...shared,
           updateCount: 2,

@@ -36,6 +36,7 @@ export enum OsUpdateButton {
   CONTINUE = "Continue",
   CREATE_NEW_BACKUP = "Create new backup",
   DELETE_BACKUP = "Delete backup",
+  FINISH = "Finish",
   RELEASE_NOTES = "Release notes",
   RESTORE = "Restore",
   RETRY = "Retry",
@@ -69,13 +70,13 @@ export enum OsUpdateDeviceAction {
 
 export enum OsUpdateFailureType {
   UNEXPECTED_ERROR = "UnexpectedError",
-  OUT_OF_MEMORY = "OutOfMemory",
   INSTALL_FIRMWARE_REFUSED = "InstallFirmwareRefused",
 }
 
 export enum OsUpdateRestoreStatus {
   FULL = "full",
   PARTIAL = "partial",
+  OUT_OF_MEMORY = "outOfMemory",
   NONE = "none",
 }
 

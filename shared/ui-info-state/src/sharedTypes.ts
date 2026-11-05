@@ -23,8 +23,8 @@ export type InfoStateCta = Readonly<{
 
 /** Lumen banner displayed between content and actions. */
 export type InfoStateBanner = Readonly<{
-  /** Banner title. */
-  title: string;
+  /** Optional banner title. */
+  title?: string;
 
   /** Optional banner body copy. */
   description?: ReactNode;
