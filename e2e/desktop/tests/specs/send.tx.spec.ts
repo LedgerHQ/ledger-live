@@ -59,6 +59,11 @@ const legacySendTransactions: Array<{
   },
 ];
 
+const withoutSendOnAccountDetail = new Set([
+  Account.KASPA_1.currency.id,
+  Account.MINA_4.currency.id,
+]);
+
 const legacyBst = ownedBy(Team.BST, { folder: TestFolder.LEGACY_TESTS });
 
 for (const entry of legacySendTransactions) {
@@ -98,7 +103,12 @@ for (const entry of legacySendTransactions) {
       async ({ app }) => {
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(tx.accountToDebit.accountName);
-        await app.account.clickSend();
+        test.skip(
+          withoutSendOnAccountDetail.has(tx.accountToDebit.currency.id) &&
+            (await app.account.usesAccountDetail()),
+          "The account detail page shows no quick actions for this currency",
+        );
+        await app.account.clickSend(tx.accountToDebit.currency);
         await app.send.craftTx(tx);
         await app.send.continueAmountModal();
         await app.send.expectTxInfoValidity(tx);
@@ -134,7 +144,7 @@ test.describe("Send - legacy families - invalid amount", legacyBst, () => {
     async ({ app }) => {
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(tx.accountToDebit.accountName);
-      await app.account.clickSend();
+      await app.account.clickSend(tx.accountToDebit.currency);
       await app.send.craftTx(tx);
       await app.send.checkContinueButtonDisabled();
       await app.send.checkErrorMessage("Sorry, insufficient funds");
@@ -174,7 +184,7 @@ test.describe("Send - legacy families - invalid address", legacyBst, () => {
       }
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(tx.accountToDebit.accountName);
-      await app.account.clickSend();
+      await app.account.clickSend(tx.accountToDebit.currency);
       await app.send.fillRecipient(recipientAddress);
       await app.send.checkErrorMessage("Recipient address is the same as the sender address");
       await app.send.checkContinueButtonDisabled();
@@ -219,7 +229,7 @@ test.describe("Send - legacy families - Concordium testnet", concordiumDetails, 
     async ({ app }) => {
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(tx.accountToDebit.accountName);
-      await app.account.clickSend();
+      await app.account.clickSend(tx.accountToDebit.currency);
       await app.send.craftTx(tx);
       await app.send.continueAmountModal();
       await app.send.expectTxInfoValidity(tx);
