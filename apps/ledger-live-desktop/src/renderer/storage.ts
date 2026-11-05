@@ -163,6 +163,9 @@ type DebouncedSetKey = ReturnType<typeof debounce<(value: unknown) => Promise<vo
 
 const debouncedSetKeys = new Map<string, DebouncedSetKey>();
 
+/** A reset increments it: the writes queued before the reset do not reach main. */
+let writeGeneration = 0;
+
 /** The debounces called since the last flush. */
 const queuedSetKeys = new Set<DebouncedSetKey>();
 
@@ -170,7 +173,7 @@ function getDebouncedSetKey(ns: string, keyPath: keyof DatabaseValues) {
   const id = `${ns}:${keyPath}`;
   let debouncedSetKey = debouncedSetKeys.get(id);
   if (!debouncedSetKey) {
-    const write = async (value: unknown) => {
+    const write = async (value: unknown, generation: number) => {
       try {
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         const transform = transforms[keyPath as keyof Transforms];
@@ -178,6 +181,7 @@ function getDebouncedSetKey(ns: string, keyPath: keyof DatabaseValues) {
         const transformedValue = transform
           ? await transform.set(value as Parameters<typeof transform.set>[0])
           : value;
+        if (generation !== writeGeneration) return;
         await db.setKey(ns, keyPath, transformedValue as Serializable);
       } catch (e) {
         logger.error("debouncedSetKey failed", { ns, keyPath }, e);
@@ -186,7 +190,8 @@ function getDebouncedSetKey(ns: string, keyPath: keyof DatabaseValues) {
     // One write at a time: an older value that still encodes must not reach main last.
     let lastWrite: Promise<void> = Promise.resolve();
     debouncedSetKey = debounce((value: unknown) => {
-      lastWrite = lastWrite.then(() => write(value));
+      const generation = writeGeneration;
+      lastWrite = lastWrite.then(() => write(value, generation));
       return lastWrite;
     }, SET_KEY_DEBOUNCE_MS);
     debouncedSetKeys.set(id, debouncedSetKey);
@@ -237,6 +242,7 @@ export const hasBeenDecrypted = () => db.hasBeenDecrypted();
 
 // A pending write after the reset would bring back the data that the reset removed.
 export const resetAll = () => {
+  writeGeneration++;
   debouncedSetKeys.forEach(debouncedSetKey => debouncedSetKey.cancel());
   queuedSetKeys.clear();
   return db.resetAll();

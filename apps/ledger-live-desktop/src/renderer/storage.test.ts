@@ -79,4 +79,23 @@ describe("renderer storage", () => {
 
     expect(db.setKey).not.toHaveBeenCalled();
   });
+
+  it("drops on reset a write queued behind a blocked write", async () => {
+    let answer: (() => void) | undefined;
+    jest.mocked(db.setKey).mockReturnValueOnce(new Promise<void>(resolve => (answer = resolve)));
+    setKey("app", "ptx", { lastScreen: "earn" });
+    void flushPendingWrites();
+    await Promise.resolve();
+    // This debounce expires, so its write waits behind the blocked one.
+    setKey("app", "ptx", { lastScreen: "swap" });
+    jest.runAllTimers();
+
+    await resetAll();
+    answer?.();
+    await flushPendingWrites();
+    await jest.runAllTimersAsync();
+
+    expect(db.setKey).toHaveBeenCalledTimes(1);
+    expect(db.setKey).toHaveBeenCalledWith("app", "ptx", { lastScreen: "earn" });
+  });
 });
