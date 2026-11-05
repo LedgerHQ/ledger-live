@@ -10,6 +10,8 @@
 # - the E2E bridge starts only on a launch that passes wsPort (the injection), 20 s after the store
 #   is ready, so measured launches run no bridge code;
 # - the iOS blur is the real one: rspack aliases it to the E2E mock for any "mock" env file;
+# - the bundle is made without DETOX=1, like the store builds: from ef2aed228e8 on, e2e:build sets
+#   it, which keeps the blur mock (rspack) and adds collapsable={false} to every view (babel);
 # - a "JS start epoch <ms>" startup event gives the wall clock of the JS start, from which the
 #   analysis counts every build from its process start, whichever start its Debug value uses.
 #
@@ -51,12 +53,13 @@ case "$delay_ms" in '' | *[!0-9]*) fail "STARTUP_PERF_BRIDGE_DELAY_MS must be a 
 env_file="$app/.env.mock.prerelease"
 index_file="$app/src/index.tsx"
 rspack_file="$app/rspack.config.mjs"
+package_file="$app/package.json"
 js_start_file="$app/src/mvvm/utils/logStartup/beforeJSImports.ts"
 rspack_line='const isDetoxBuild = process.env.DETOX === "1" || (process.env.ENVFILE || "").includes("mock");'
 bridge_import='import { init } from "~/e2e/bridge/client";'
 js_start_line='logStartupEvent("Before js imports");'
 
-for f in "$env_file" "$index_file" "$rspack_file"; do
+for f in "$env_file" "$index_file" "$rspack_file" "$package_file"; do
   [ -f "$f" ] || fail "$f not found"
 done
 if grep -qs 'startup-perf' "$index_file" "$rspack_file" "$js_start_file"; then
@@ -69,6 +72,15 @@ fi
 for line in 'MOCK=1' 'DETOX=1' 'FORCE_DEBUG_VISIBLE=1'; do
   [ "$(LINE="$line" count_exact "$env_file")" = 1 ] || fail "expected one '$line' line in $env_file"
 done
+# Lines of the e2e:build script that set DETOX=1: 0 before ef2aed228e8, 1 from it on.
+e2e_build_detox() {
+  awk 'index($0, "\"e2e:build\":") && index($0, "DETOX=1 ") { n++ } END { print n + 0 }' \
+    "$package_file"
+}
+case "$(e2e_build_detox)" in
+  0 | 1) ;;
+  *) fail "more than one e2e:build line sets DETOX=1 in $package_file" ;;
+esac
 if [ "$(uname -s)" = Darwin ] && [ -e /tmp/envfile ]; then
   fail "/tmp/envfile exists: react-native-config would read it instead of ENVFILE"
 fi
@@ -128,6 +140,18 @@ real_blur() {
   grep -n 'isDetoxBuild =' "$rspack_file"
 }
 
+bundle_without_detox() {
+  [ "$(e2e_build_detox)" = 1 ] || return 0
+  awk_in_place '
+    index($0, "\"e2e:build\":") && (i = index($0, "DETOX=1 ")) {
+      $0 = substr($0, 1, i - 1) substr($0, i + 8)
+    }
+    { print }' "$package_file" || fail "cannot drop DETOX=1 from e2e:build in $package_file"
+  [ "$(e2e_build_detox)" = 0 ] || fail "e2e:build still sets DETOX=1 in $package_file"
+  grep -n '"e2e:build"' "$package_file"
+  summary "e2e:build bundles without DETOX=1"
+}
+
 prod_like_env() {
   # Only key names are printed: the file also holds API keys.
   SWAP="$swap_api_base" awk '
@@ -162,6 +186,7 @@ log_js_start_epoch() {
 
 gate_bridge_on_ws_port
 real_blur
+bundle_without_detox
 prod_like_env
 log_js_start_epoch
 summary "prod-like build: no MOCK/DETOX in the env file, swap on prod, bridge on wsPort only after ${delay_ms} ms, real blur"
