@@ -2,14 +2,13 @@ import BigNumber from "bignumber.js";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { QuoteErrorCodes, QuotesErrorCodes } from "@ledgerhq/wallet-api-exchange-module";
 import {
-  findDepositParentAccount,
   getDepositBaseError,
   getDepositBuyTarget,
   getDepositFeeAccount,
   resolveDepositFormError,
   type ResolveDepositFormErrorParams,
 } from "./formError";
-import type { PerpsDepositQuote } from "./quote";
+import { findDepositParentAccount, type PerpsDepositQuote } from "./quote";
 
 const ether = {
   type: "CryptoCurrency",

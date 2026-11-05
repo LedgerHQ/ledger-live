@@ -94,15 +94,6 @@ export function getDepositBaseError({
   return null;
 }
 
-export function findDepositParentAccount(
-  depositAccount: AccountLike,
-  accounts: readonly AccountLike[],
-): Account | undefined {
-  if (depositAccount.type !== "TokenAccount") return undefined;
-  const parentAccount = accounts.find(account => account.id === depositAccount.parentId);
-  return parentAccount?.type === "Account" ? parentAccount : undefined;
-}
-
 export function getDepositFeeAccount(
   depositAccount: AccountLike,
   parentAccount: Account | undefined,
@@ -111,12 +102,6 @@ export function getDepositFeeAccount(
   if (!mainAccount) return undefined;
   const isFeePaidInMainCurrency = getFeesCurrency(mainAccount).id === mainAccount.currency.id;
   return isFeePaidInMainCurrency ? mainAccount : undefined;
-}
-
-function presentFeeFields(quote: PerpsDepositQuote): QuoteEstimatedNetworkFee[] {
-  return [quote.estimatedNetworkFee, quote.approvalNetworkFee].filter(
-    (fee): fee is QuoteEstimatedNetworkFee => fee !== undefined,
-  );
 }
 
 function toAtomic(fee: QuoteEstimatedNetworkFee | undefined): BigNumber {
@@ -179,7 +164,7 @@ function getFeeError({
 
   if (isTokenDeposit) {
     const totalFee = estimatedFee.plus(toAtomic(quote.approvalNetworkFee));
-    const exceedsBalance = presentFeeFields(quote).length > 0 && totalFee.gt(feeBalance);
+    const exceedsBalance = totalFee.gt(feeBalance);
     return exceedsBalance ? notEnoughFeesError(feeAccount, totalFee, locale) : null;
   }
 

@@ -28,8 +28,9 @@ function PerpsDepositBody({
 
 function PerpsDepositInnerDialog({
   data,
+  requestId,
   onClose,
-}: Readonly<{ data: PerpsDepositData | null; onClose: () => void }>) {
+}: Readonly<{ data: PerpsDepositData | null; requestId: number; onClose: () => void }>) {
   const isOpen = data !== null;
 
   const handleOpenChange = useCallback(
@@ -44,17 +45,27 @@ function PerpsDepositInnerDialog({
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent onInteractOutside={e => e.preventDefault()}>
-        {data ? <PerpsDepositBody data={data} onClose={onClose} /> : null}
+        {data ? <PerpsDepositBody key={requestId} data={data} onClose={onClose} /> : null}
       </DialogContent>
     </Dialog>
   );
 }
 
 export default function PerpsDepositRoot() {
-  const [data, setData] = useState<PerpsDepositData | null>(null);
-  const close = useCallback(() => setData(null), []);
+  const [request, setRequest] = useState<{ data: PerpsDepositData; id: number } | null>(null);
+  const close = useCallback(() => setRequest(null), []);
+  const open = useCallback(
+    (data: PerpsDepositData) => setRequest(previous => ({ data, id: (previous?.id ?? 0) + 1 })),
+    [],
+  );
 
-  useEffect(() => registerPerpsDepositOpener(setData), []);
+  useEffect(() => registerPerpsDepositOpener(open), [open]);
 
-  return <PerpsDepositInnerDialog data={data} onClose={close} />;
+  return (
+    <PerpsDepositInnerDialog
+      data={request?.data ?? null}
+      requestId={request?.id ?? 0}
+      onClose={close}
+    />
+  );
 }

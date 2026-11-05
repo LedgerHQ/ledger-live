@@ -5,7 +5,7 @@ import { fetchPerpsDepositQuote, type PerpsDepositQuoteResult } from "./quote";
 
 const QUOTE_DEBOUNCE_MS = 500;
 
-export type PerpsDepositQuoteParams = {
+export type UsePerpsDepositQuoteParams = {
   accounts: AccountLike[];
   depositAccount: AccountLike | undefined;
   receiverAccount: AccountLike;
@@ -36,7 +36,7 @@ function requestKeyOf({
   isOffline,
   refreshGeneration,
   counterValueCurrency,
-}: PerpsDepositQuoteParams) {
+}: UsePerpsDepositQuoteParams) {
   if (!depositAccount || !amount || isOffline) return null;
   return [
     depositAccount.id,
@@ -50,7 +50,7 @@ function requestKeyOf({
 /**
  * Debounced quote for the funding pair.
  */
-export function usePerpsDepositQuote(params: PerpsDepositQuoteParams): PerpsDepositQuoteState {
+export function usePerpsDepositQuote(params: UsePerpsDepositQuoteParams): PerpsDepositQuoteState {
   const { accounts, depositAccount, receiverAccount, amount, counterValueCurrency, locale } =
     params;
   const [current, setCurrent] = useState<{ key: string | null; state: PerpsDepositQuoteState }>({
@@ -90,7 +90,7 @@ export function usePerpsDepositQuote(params: PerpsDepositQuoteParams): PerpsDepo
       stale = true;
       clearTimeout(timeout);
     };
-    // The key covers every input; account churn must not restart the request.
+    // The key covers every input that changes the quote; account churn must not restart the request.
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [requestKey]);
 

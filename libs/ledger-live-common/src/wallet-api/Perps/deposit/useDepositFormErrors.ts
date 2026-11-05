@@ -5,7 +5,6 @@ import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/in
 import {
   DEPOSIT_FORM_ERROR_ANALYTICS_MESSAGES,
   PERPS_DEPOSIT_ANALYTICS_CONTEXT,
-  findDepositParentAccount,
   getDepositBaseError,
   getDepositBuyTarget,
   resolveDepositFormError,
@@ -14,7 +13,11 @@ import {
   type DepositFormError,
 } from "./formError";
 import { getDepositSpendableBalance } from "./coinErrors";
-import type { PerpsDepositQuote, PerpsDepositQuoteResult } from "./quote";
+import {
+  findDepositParentAccount,
+  type PerpsDepositQuote,
+  type PerpsDepositQuoteResult,
+} from "./quote";
 import { cancelDepositRequest } from "./request";
 import { usePerpsDepositQuote } from "./useDepositQuote";
 
