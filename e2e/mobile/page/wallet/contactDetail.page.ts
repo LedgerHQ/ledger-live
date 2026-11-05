@@ -1,10 +1,10 @@
-import { waitFor } from "detox";
 import { Step } from "jest-allure2-reporter/api";
+import { byId, byIdAndText, byTextWithAncestorId } from "@e2e/helpers/elements/native";
 import { TIMEOUT } from "@e2e/utils/timeouts";
 import type { ContactAddressTestData } from "@ledgerhq/live-e2e-shared/contacts";
 import ContactNameDrawer from "@e2e/page/drawer/contactName.drawer";
 
-// i18n contacts.addAddressEntry.validAddress — no testID on the helper text.
+// i18n contacts.addAddressEntry.validAddress. Lumen renders the helper text without a testID.
 const VALID_ADDRESS_HELPER_TEXT = "Valid address";
 
 // Mirrors truncateContactAddress in features/flow/contacts.
@@ -14,44 +14,45 @@ export default class ContactDetailPage {
   renameDrawer = new ContactNameDrawer();
 
   private readonly addressValueRegExp = /^contacts-detail-address-.+-value$/;
-  private readonly addressDetailDialogId = "contacts-address-detail-dialog";
-  private readonly deleteAddressContentId = "contacts-delete-address-content";
-  private readonly actionsMenuContentId = "contacts-detail-actions-menu";
-  private readonly deleteContentId = "contacts-delete-contact-content";
-  private readonly addAddressInputId = "contacts-add-address-input";
 
-  private readonly screen = () => getElementById("contacts-detail-screen");
-  private readonly name = () => getElementById("contacts-detail-name");
-  private readonly addressCount = () => getElementById("contacts-detail-address-count");
-  private readonly emptyState = () => getElementById("contacts-detail-empty-state");
-  private readonly addAddressButton = () => getElementById("contacts-detail-add-address");
-  private readonly addAddressInput = () => getElementById(this.addAddressInputId);
-  private readonly addAddressEnsDisclaimer = () =>
-    getElementById("contacts-add-address-ens-disclaimer");
-  private readonly addAddressConfirmButton = () => getElementById("contacts-add-address-confirm");
-  private readonly addAddressNameInputId = "contacts-add-address-name-input";
-  private readonly addAddressNameInput = () => getElementById(this.addAddressNameInputId);
-  private readonly addAddressNameContinueId = "contacts-add-address-name-continue";
-  private readonly addAddressNameContinueButton = () =>
-    getElementById(this.addAddressNameContinueId);
-  private readonly registerAddressDeviceConfirmation = () =>
-    getElementById("contacts-register-external-address-continue-on-device");
-  private readonly deleteAddressAction = () => getElementById("contacts-address-detail-delete");
-  private readonly deleteAddressConfirmButton = () =>
-    getElementById("contacts-delete-address-confirm");
+  private readonly screen = byId("contacts-detail-screen");
+  private readonly addressCount = byId("contacts-detail-address-count");
+  private readonly emptyState = byId("contacts-detail-empty-state");
+  private readonly addAddressButton = byId("contacts-detail-add-address");
+  private readonly addAddressInput = byId("contacts-add-address-input");
+  private readonly validAddressHelperText = byTextWithAncestorId({
+    id: "contacts-add-address-entry-screen",
+    text: VALID_ADDRESS_HELPER_TEXT,
+  });
+  private readonly addAddressEnsDisclaimer = byId("contacts-add-address-ens-disclaimer");
+  private readonly addAddressConfirmButton = byId("contacts-add-address-confirm");
+  private readonly addAddressNameInput = byId("contacts-add-address-name-input");
+  private readonly addAddressNameContinueButton = byId("contacts-add-address-name-continue");
+  private readonly registerAddressDeviceConfirmation = byId(
+    "contacts-register-external-address-continue-on-device",
+  );
+  private readonly addressDetailDialog = byId("contacts-address-detail-dialog");
+  private readonly deleteAddressAction = byId("contacts-address-detail-delete");
+  private readonly deleteAddressContent = byId("contacts-delete-address-content");
+  private readonly deleteAddressConfirmButton = byId("contacts-delete-address-confirm");
+  private readonly actionsTrigger = byId("contacts-detail-actions-trigger");
+  private readonly actionsMenuContent = byId("contacts-detail-actions-menu");
+  private readonly editAction = byId("contacts-detail-edit-action");
+  private readonly deleteAction = byId("contacts-detail-delete-action");
+  private readonly deleteContent = byId("contacts-delete-contact-content");
+  private readonly deleteConfirmButton = byId("contacts-delete-contact-confirm");
+  private readonly renameDevicePending = byId("contacts-rename-contact-pending");
+  private readonly renameDeviceContinue = byId("contacts-rename-contact-continue-on-device");
+  private readonly name = byId("contacts-detail-name");
+  private readonly nameWithText = (name: string) =>
+    byIdAndText({ id: "contacts-detail-name", text: name });
   private readonly networkGroup = (networkId: string) =>
-    getElementById(`contacts-detail-network-group-${networkId}`);
+    byId(`contacts-detail-network-group-${networkId}`);
   private readonly addressLabel = (addressId: string) =>
-    getElementById(`contacts-detail-address-${addressId}-label`);
-  private readonly addressRow = (rowId: string) => getElementById(rowId);
-  private readonly actionsTrigger = () => getElementById("contacts-detail-actions-trigger");
-  private readonly editAction = () => getElementById("contacts-detail-edit-action");
-  private readonly deleteAction = () => getElementById("contacts-detail-delete-action");
-  private readonly deleteConfirmButton = () => getElementById("contacts-delete-contact-confirm");
-  private readonly renameDevicePendingId = "contacts-rename-contact-pending";
-  private readonly renameDeviceContinueId = "contacts-rename-contact-continue-on-device";
+    byId(`contacts-detail-address-${addressId}-label`);
+  private readonly addressRow = (rowId: string) => byId(rowId);
   private readonly addressValue = (address: string) =>
-    getElementByIdAndText(this.addressValueRegExp, this.truncatedAddress(address));
+    byIdAndText({ id: this.addressValueRegExp, text: this.truncatedAddress(address) });
 
   private truncatedAddress(address: string) {
     return address.length <= TRUNCATED_ADDRESS_VISIBLE_LENGTH
@@ -61,9 +62,9 @@ export default class ContactDetailPage {
 
   // The id is assigned on save, so the row is found from the displayed value.
   private async getAddressId(address: string): Promise<string> {
-    const valueId = await getIdOfElement(this.addressValue(address));
+    const identifier = await this.addressValue(address).getIdentifier();
 
-    return valueId.replace(/^contacts-detail-address-/, "").replace(/-value$/, "");
+    return identifier.replace(/^contacts-detail-address-/, "").replace(/-value$/, "");
   }
 
   private async getAddressRowId(address: string): Promise<string> {
@@ -72,37 +73,35 @@ export default class ContactDetailPage {
 
   @Step("Expect contact detail screen visible")
   async expectScreenVisible() {
-    await detoxExpect(this.screen()).toBeVisible();
+    await this.screen.expectVisible();
   }
 
   @Step("Expect the rename device sheet to be gone")
   async expectRenameDeviceSheetClosed() {
-    await waitFor(getElementById(this.renameDevicePendingId))
-      .not.toExist()
-      .withTimeout(TIMEOUT.xxlarge);
-    await waitFor(getElementById(this.renameDeviceContinueId))
-      .not.toExist()
-      .withTimeout(TIMEOUT.xxlarge);
+    await this.renameDevicePending.waitNotExist(TIMEOUT.xxlarge);
+    await this.renameDeviceContinue.waitNotExist(TIMEOUT.xxlarge);
   }
 
   @Step("Expect contact detail name to be {{0}}")
   async expectName(name: string, timeout = TIMEOUT.medium) {
-    await waitFor(this.name()).toHaveText(name).withTimeout(timeout);
+    // After a rename the old name stays on screen until the update lands, so wait for the new one.
+    await this.nameWithText(name).waitVisible(timeout);
+    await this.name.expectText(name);
   }
 
   @Step("Expect the contact to have no address")
   async expectNoAddresses() {
-    await detoxExpect(this.emptyState()).toBeVisible();
+    await this.emptyState.expectVisible();
   }
 
   @Step("Expect contact address count to show {{0}}")
   async expectAddressCount(expectedLabel: string) {
-    await detoxExpect(this.addressCount()).toHaveText(expectedLabel);
+    await this.addressCount.expectText(expectedLabel);
   }
 
   @Step("Open Add address")
   async openAddAddress() {
-    await tapByElement(this.addAddressButton());
+    await this.addAddressButton.tap();
     await app.modularDrawer.waitForSearchBar();
   }
 
@@ -113,32 +112,31 @@ export default class ContactDetailPage {
     await app.modularDrawer.performSearchByTicker(data.ticker, false);
     await app.modularDrawer.selectCurrencyByTicker(data.ticker);
     await app.modularDrawer.selectNetworkIfAsked(data.networkName);
-    await waitForFullyVisibleById(this.addAddressInputId);
+    await this.addAddressInput.waitFullyVisible();
     // The action stays above the keyboard, and a newline would land in the field.
-    await typeTextByElement(this.addAddressInput(), data.addressInput, false);
+    await this.addAddressInput.replaceTextKeepKeyboard(data.addressInput);
 
-    await waitForElementByText(VALID_ADDRESS_HELPER_TEXT);
+    await this.validAddressHelperText.waitVisible();
 
     if (data.isEns) {
-      await detoxExpect(this.addAddressEnsDisclaimer()).toBeVisible();
+      await this.addAddressEnsDisclaimer.expectVisible();
     }
 
-    await tapByElement(this.addAddressConfirmButton());
+    await this.addAddressConfirmButton.tap();
     // The name field is clipped by the iOS keyboard inset, so it never reports fully visible.
-    await waitForFullyVisibleById(this.addAddressNameContinueId);
-    await detoxExpect(this.addAddressNameInput()).toHaveText(data.defaultAddressLabel);
+    await this.addAddressNameContinueButton.waitFullyVisible();
+    await this.addAddressNameInput.expectText(data.defaultAddressLabel);
 
     const prefillCollidesWithExistingLabel = data.addressLabel !== data.defaultAddressLabel;
     if (prefillCollidesWithExistingLabel) {
-      await clearTextByElement(this.addAddressNameInput());
-      await typeTextByElement(this.addAddressNameInput(), data.addressLabel, false);
+      await this.addAddressNameInput.replaceTextKeepKeyboard(data.addressLabel);
     }
   }
 
   @Step("Tap address name continue button")
   async tapAddressNameContinue() {
-    await tapByElement(this.addAddressNameContinueButton());
-    await waitForElement(this.registerAddressDeviceConfirmation());
+    await this.addAddressNameContinueButton.tap();
+    await this.registerAddressDeviceConfirmation.waitVisible();
   }
 
   @Step("Add address {{{0.addressInput}}} for {{0.networkName}}")
@@ -150,39 +148,39 @@ export default class ContactDetailPage {
 
   @Step("Expect {{{0}}} saved under {{1}}")
   async expectAddressSaved(address: string, networkId: string) {
-    await waitForElement(this.networkGroup(networkId));
-    await waitForElement(this.addressValue(address));
-    await detoxExpect(this.networkGroup(networkId)).toBeVisible();
-    await detoxExpect(this.addressValue(address)).toBeVisible();
+    await this.networkGroup(networkId).waitVisible();
+    await this.addressValue(address).waitVisible();
+    await this.networkGroup(networkId).expectVisible();
+    await this.addressValue(address).expectVisible();
   }
 
   @Step("Expect {{{0}}} to be labelled {{1}}")
   async expectAddressLabel(address: string, expectedLabel: string) {
     const addressId = await this.getAddressId(address);
 
-    await detoxExpect(this.addressLabel(addressId)).toHaveText(expectedLabel);
+    await this.addressLabel(addressId).expectText(expectedLabel);
   }
 
   @Step("Delete address {{{0}}}")
   async deleteAddress(address: string) {
     const rowId = await this.getAddressRowId(address);
-    await tapByElement(this.addressRow(rowId));
-    await waitForFullyVisibleById(this.addressDetailDialogId);
-    await tapByElement(this.deleteAddressAction());
-    await waitForFullyVisibleById(this.deleteAddressContentId);
-    await tapByElement(this.deleteAddressConfirmButton());
-    await detoxExpect(this.addressRow(rowId)).not.toExist();
+    await this.addressRow(rowId).tap();
+    await this.addressDetailDialog.waitFullyVisible();
+    await this.deleteAddressAction.tap();
+    await this.deleteAddressContent.waitFullyVisible();
+    await this.deleteAddressConfirmButton.tap();
+    await this.addressRow(rowId).expectNotExist();
   }
 
   @Step("Open the contact actions menu")
   async openActionsMenu() {
-    await tapByElement(this.actionsTrigger());
-    await waitForFullyVisibleById(this.actionsMenuContentId);
+    await this.actionsTrigger.tap();
+    await this.actionsMenuContent.waitFullyVisible();
   }
 
   @Step("Open the rename contact drawer")
   async openRenameDrawer() {
-    await tapByElement(this.editAction());
+    await this.editAction.tap();
     await this.renameDrawer.expectVisible();
   }
 
@@ -195,13 +193,13 @@ export default class ContactDetailPage {
 
   @Step("Open the delete contact confirmation")
   async openDeleteConfirmation() {
-    await tapByElement(this.deleteAction());
-    await waitForFullyVisibleById(this.deleteContentId);
+    await this.deleteAction.tap();
+    await this.deleteContent.waitFullyVisible();
   }
 
   @Step("Confirm the contact deletion")
   async tapConfirmDelete() {
-    await tapByElement(this.deleteConfirmButton());
+    await this.deleteConfirmButton.tap();
   }
 
   @Step("Delete the contact")
