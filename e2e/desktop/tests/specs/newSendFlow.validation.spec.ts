@@ -232,10 +232,21 @@ test.describe(
         await app.newSendFlow.typeAddress(recipientAddress);
         await app.newSendFlow.expectAddressMatched(recipientAddress);
         await app.newSendFlow.clickOnSendToButton(tx.accountToCredit);
+        await app.newSendFlow.expectFeePreset(Fee.MEDIUM);
         await app.newSendFlow.fillCryptoAmount(tx.amount);
+        await app.newSendFlow.expectFeePreset(Fee.MEDIUM);
+        await app.newSendFlow.selectFeePreset(Fee.SLOW);
+        await app.newSendFlow.expectFeePreset(Fee.SLOW);
+        await app.newSendFlow.selectFeePreset(Fee.FAST);
+        await app.newSendFlow.expectFeePreset(Fee.FAST);
+
         await app.newSendFlow.openFeesMenu();
+        await app.newSendFlow.expectEvmFeesMenuOptions();
         await app.newSendFlow.selectCustomFeesFromMenu();
+        await app.newSendFlow.expectEip1559CustomFeesPrefilled();
+        const prefilledFiatFee = await app.newSendFlow.getCustomFeesFiatValue();
         await app.newSendFlow.fillEip1559CustomFees(EIP1559_CUSTOM_FEES);
+        await app.newSendFlow.expectCustomFeesFiatValueChanged(prefilledFiatFee);
         await app.newSendFlow.confirmCustomFees();
         await app.newSendFlow.expectCustomFeesApplied();
         await app.newSendFlow.expectNetworkFee(EIP1559_CUSTOM_FEES.expectedNetworkFee);

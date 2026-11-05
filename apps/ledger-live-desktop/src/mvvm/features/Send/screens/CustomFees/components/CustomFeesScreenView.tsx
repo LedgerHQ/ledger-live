@@ -81,7 +81,9 @@ export function CustomFeesScreenView({
         {fiatLabel && (
           <div className="flex items-center justify-between px-4">
             <span className="body-3 text-muted">{fiatLabel}</span>
-            <span className="body-3 text-base">{fiatValue ?? "—"}</span>
+            <span className="body-3 text-base" data-testid="send-custom-fees-fiat-value">
+              {fiatValue ?? "—"}
+            </span>
           </div>
         )}
       </DialogBody>

@@ -17,6 +17,8 @@ type Eip1559CustomFeesOptions = {
   maxFee: string;
 };
 
+const NUMERIC_INPUT_VALUE = /^\d+([.,]\d+)?$/;
+
 export class NewSendModal extends Modal {
   readonly dialog = this.page.getByRole("dialog");
   private readonly backButton = this.dialog
@@ -64,6 +66,7 @@ export class NewSendModal extends Modal {
   private readonly customFeePerByteInput = this.dialog.getByLabel(/fees amount.*sat\/vbyte/i);
   private readonly customMaxPriorityFeeInput = this.dialog.getByLabel(/max priority fee.*gwei/i);
   private readonly customMaxFeeInput = this.dialog.getByLabel(/max fee.*gwei/i);
+  private readonly customFeesFiatValue = this.dialog.getByTestId("send-custom-fees-fiat-value");
   private readonly customFeesConfirmButton = this.dialog.getByRole("button", { name: "Confirm" });
   private readonly coinControlStrategySelect = this.dialog.getByTestId(
     "send-coin-control-strategy-select",
@@ -466,6 +469,19 @@ export class NewSendModal extends Modal {
     await item.waitFor({ state: "hidden" });
   }
 
+  @step("Verify the selected network fee is $0")
+  async expectFeePreset(preset: Fee) {
+    await expect(this.feesMenuTrigger).toContainText(preset);
+  }
+
+  @step("Verify the fees menu offers the Slow, Medium and Fast presets and custom fees")
+  async expectEvmFeesMenuOptions() {
+    for (const preset of Object.values(Fee)) {
+      await expect(this.getFeePreset(preset)).toBeVisible();
+    }
+    await expect(this.customFeesMenuItem).toBeVisible();
+  }
+
   @step("Verify the fees menu offers custom fees and coin control")
   async expectBitcoinFeesMenuOptions() {
     await expect(this.customFeesMenuItem).toBeVisible();
@@ -481,6 +497,24 @@ export class NewSendModal extends Modal {
   async expectCustomFeePerByteScreen() {
     await expect(this.customFeePerByteInput).toBeVisible();
     await expect(this.customFeesConfirmButton).toBeVisible();
+  }
+
+  @step("Verify the EIP-1559 custom fees are pre-filled")
+  async expectEip1559CustomFeesPrefilled() {
+    await expect(this.customMaxPriorityFeeInput).toHaveValue(NUMERIC_INPUT_VALUE);
+    await expect(this.customMaxFeeInput).toHaveValue(NUMERIC_INPUT_VALUE);
+  }
+
+  @step("Read the network fees fiat value")
+  async getCustomFeesFiatValue(): Promise<string> {
+    await expect(this.customFeesFiatValue).toHaveText(/\d/);
+    return this.customFeesFiatValue.innerText();
+  }
+
+  @step("Verify the network fees fiat value is no longer $0")
+  async expectCustomFeesFiatValueChanged(previous: string) {
+    await expect(this.customFeesFiatValue).toHaveText(/\d/);
+    await expect(this.customFeesFiatValue).not.toHaveText(previous);
   }
 
   @step("Fill the EIP-1559 custom fees")
