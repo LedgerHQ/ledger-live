@@ -180,7 +180,7 @@ jobs:
           CARD_BAANX_HOSTED_UI: ${{ secrets.CARD_BAANX_HOSTED_UI }}
           CARD_OAUTH_REDIRECT_URI: ${{ secrets.CARD_OAUTH_REDIRECT_URI }}
         with:
-          command: pnpm exec nx run live-mobile:e2e:ci -- -p ios -b $([[ "$PRODUCTION" == "true" ]] && printf %s '--production')
+          command: GITHUB_STEP_SUMMARY=/dev/null pnpm exec nx run live-mobile:e2e:ci -- -p ios -b $([[ "$PRODUCTION" == "true" ]] && printf %s '--production')
           disable_cache: ${{ inputs.disable-nx-cache || false }}
 
       - name: Upload Detox Build
@@ -260,7 +260,7 @@ jobs:
       - name: Build JS bundle
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
         with:
-          command: pnpm exec nx run live-mobile:e2e:bundle:ios
+          command: GITHUB_STEP_SUMMARY=/dev/null pnpm exec nx run live-mobile:e2e:bundle:ios
           disable_cache: ${{ inputs.disable-nx-cache || false }}
 
       - name: Upload Detox JS Build
