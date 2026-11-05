@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { DepositFormError } from "./formError";
 import { formatDisplayAmount } from "./formatAmount";
 import type { PerpsDepositQuote } from "./quote";
@@ -87,10 +88,7 @@ export function getAccountStateError(
   const hasOnlyPrivateFunds =
     aleoBalances?.privateBalance?.gt(0) === true && aleoBalances.transparentBalance.isZero();
   if (hasOnlyPrivateFunds) {
-    const ticker =
-      depositAccount.type === "TokenAccount"
-        ? depositAccount.token.ticker
-        : depositAccount.currency.ticker;
+    const { ticker } = getAccountCurrency(depositAccount);
     return {
       code: "aleoPrivateBalance",
       labelKey: "perpsDeposit.formErrors.aleoPrivateBalance",

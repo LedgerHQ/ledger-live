@@ -190,7 +190,7 @@ export function useDepositFormErrors({
     statusError,
     canReview: isFormComplete && quoteResult?.quote !== undefined && statusError === null,
     exceedsBalance: statusError?.code === "insufficientBalance",
-    canLearnMore: buyTarget !== null || supportUrl !== undefined,
+    canLearnMore: buyTarget !== null || Boolean(supportUrl),
     isDetailsOpen,
     details: openedBuyTarget?.details ?? null,
     openDetails,

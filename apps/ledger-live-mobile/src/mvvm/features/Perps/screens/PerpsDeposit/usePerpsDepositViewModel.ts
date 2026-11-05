@@ -266,7 +266,9 @@ export function usePerpsDepositViewModel({
 
   const localizeUrl = useUrlLocalizer();
   const openSupportUrl = useCallback(
-    (url: string) => void Linking.openURL(localizeUrl(url)),
+    (url: string) => {
+      Linking.openURL(localizeUrl(url)).catch(() => undefined);
+    },
     [localizeUrl],
   );
 

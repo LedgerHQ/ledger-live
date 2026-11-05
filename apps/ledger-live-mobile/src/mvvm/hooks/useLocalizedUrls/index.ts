@@ -2,10 +2,7 @@ import { useSelector } from "~/context/hooks";
 import { DEFAULT_LANGUAGE_LOCALE, LanguageMap } from "~/languages";
 import { languageSelector } from "~/reducers/settings";
 import { useCallback } from "react";
-import {
-  getLocalizedLedgerUrl,
-  useLocalizedUrl as useLocalizedUrlHook,
-} from "@ledgerhq/live-common/hooks/useLocalizedUrl";
+import { getLocalizedLedgerUrl } from "@ledgerhq/live-common/hooks/useLocalizedUrl";
 
 const languages: LanguageMap = {
   en: "", // Default language so "" => fallback to the base URL
@@ -22,16 +19,6 @@ const languages: LanguageMap = {
   ar: "",
 };
 
-export const useLocalizedUrl = (url: string) => {
-  const language = useSelector(languageSelector);
-
-  return useLocalizedUrlHook(url, {
-    languages,
-    defaultLanguage: DEFAULT_LANGUAGE_LOCALE,
-    currentLanguage: language,
-  });
-};
-
 export const useUrlLocalizer = () => {
   const language = useSelector(languageSelector);
 
@@ -45,3 +32,5 @@ export const useUrlLocalizer = () => {
     [language],
   );
 };
+
+export const useLocalizedUrl = (url: string) => useUrlLocalizer()(url);
