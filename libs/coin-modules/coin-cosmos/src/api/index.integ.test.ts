@@ -14,6 +14,7 @@ const config = {
   minGasPrice: 0.025,
   denom: "uatom",
   status: { type: "active" as const },
+  getBlock: { pagination: { limit: 100 }, concurrency: 5 },
 } as unknown as CosmosCoinConfig;
 
 // The `currencyId` chain selector is captured at createApi; the context carries only config + logger.
@@ -49,6 +50,9 @@ describe("createApi (integ, Cosmos Hub)", () => {
   });
 
   it("getBlock rejects a height above the chain length via the wired api", async () => {
-    await expect(api.getBlock(context, 999999999)).rejects.toThrow("invalid height");
+    await expect(api.getBlock(context, 999999999)).rejects.toMatchObject({
+      name: "GetBlockError",
+      cause: expect.objectContaining({ message: expect.stringContaining("invalid height") }),
+    });
   });
 });

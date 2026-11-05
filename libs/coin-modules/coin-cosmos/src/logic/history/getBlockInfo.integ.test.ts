@@ -16,12 +16,21 @@ describe("getBlockInfo (integ, Cosmos Hub)", () => {
   });
 
   it("rejects a height above the chain length", async () => {
-    await expect(getBlockInfo(api, 999999999)).rejects.toThrow(
-      "requested block height is bigger then the chain length",
-    );
+    await expect(getBlockInfo(api, 999999999)).rejects.toMatchObject({
+      name: "GetBlockInfoError",
+      message:
+        "Failed to get block info 999999999: requested block height is bigger then the chain length",
+      cause: expect.objectContaining({
+        message: "requested block height is bigger then the chain length",
+      }),
+    });
   });
 
   it("rejects an invalid height", async () => {
-    await expect(getBlockInfo(api, 0)).rejects.toThrow("Invalid block height: 0");
+    await expect(getBlockInfo(api, 0)).rejects.toMatchObject({
+      name: "GetBlockInfoError",
+      message: "Failed to get block info 0: Invalid block height: 0",
+      cause: expect.objectContaining({ name: "InvalidParameterError" }),
+    });
   });
 });

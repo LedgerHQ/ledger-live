@@ -23,8 +23,13 @@ import {
   mergeQueuedMessages,
 } from "./babylonEpoching";
 import * as CosmosSDKTypes from "./types";
+import { assertValidConcurrency } from "./assertValidConcurrency";
+import { assertValidPaginationLimit } from "./assertValidPaginationLimit";
 import { toBlockInfo } from "./utils";
 import { BlockInfo } from "@ledgerhq/coin-module-framework/api/types";
+import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
+
+const TX_SEARCH_MAX_PAGE_SIZE = 100;
 
 const USDC_DENOM = "ibc/8E27BA2D5493AF5636760E354E46004562C46AB7EC0CC4C1CA14E9E20E2545B5";
 
@@ -739,40 +744,82 @@ export class CosmosAPI {
     return toBlockInfo(data);
   };
 
-  getBlockWithTxs = async (height: number): Promise<CosmosSDKTypes.GetBlockWithTxsSDK> => {
-    const { data } = await network<CosmosSDKTypes.GetBlockWithTxsSDK>({
-      method: "GET",
-      url: `${this.defaultEndpoint}/cosmos/tx/${this.version}/txs/block/${height}`,
-    });
+  getBlockWithTxs = async (
+    height: number,
+    limit: number,
+    concurrency: number,
+  ): Promise<CosmosSDKTypes.GetBlockWithTxsSDK> => {
+    assertValidPaginationLimit(limit);
+    assertValidConcurrency(concurrency);
 
-    return data;
+    const fetchPage = async (offset: number) => {
+      const params = new URLSearchParams({
+        "pagination.limit": String(limit),
+        "pagination.offset": String(offset),
+      });
+      const { data } = await network<CosmosSDKTypes.GetBlockWithTxsSDK>({
+        method: "GET",
+        url: `${this.defaultEndpoint}/cosmos/tx/${this.version}/txs/block/${height}?${params.toString()}`,
+      });
+      return data;
+    };
+
+    const firstPage = await fetchPage(0);
+    const total = Number(firstPage.pagination?.total ?? firstPage.txs.length);
+    const remainingPageCount = Math.max(0, Math.ceil((total - limit) / limit));
+    const remainingOffsets = Array.from(
+      { length: remainingPageCount },
+      (_, index) => (index + 1) * limit,
+    );
+    const remainingTxs = await promiseAllBatched(
+      concurrency,
+      remainingOffsets,
+      async offset => (await fetchPage(offset)).txs,
+    );
+    const txs = [...firstPage.txs, ...remainingTxs.flat()];
+
+    return { ...firstPage, txs };
   };
 
-  getTransactionsByHeight = async (height: number): Promise<CosmosTx[]> => {
-    const coerced = semver.coerce(await this.cosmosSDKVersion);
-    const useModernParams = coerced !== null && semver.gte(coerced, "0.50.0");
-    const queryParam = useModernParams ? "query" : "events";
-    const pageSize = 100;
-    const allTxs: CosmosTx[] = [];
-    let page = 1;
-    let hasMore = true;
+  getTransactionsByHeight = async (
+    height: number,
+    limit: number,
+    concurrency: number,
+  ): Promise<CosmosTx[]> => {
+    assertValidPaginationLimit(limit);
+    assertValidConcurrency(concurrency);
 
-    while (hasMore) {
+    const coerced = semver.coerce(await this.cosmosSDKVersion);
+    const useQueryParam = coerced !== null && semver.gte(coerced, "0.50.0");
+    const usePageParams = coerced !== null && semver.gte(coerced, "0.46.0");
+    const queryParam = useQueryParam ? "query" : "events";
+    const pageSize = Math.min(limit, TX_SEARCH_MAX_PAGE_SIZE);
+
+    const fetchPage = (page: number) => {
       const params = new URLSearchParams({ [queryParam]: `tx.height=${height}` });
-      if (useModernParams) {
+      if (usePageParams) {
         params.set("page", String(page));
         params.set("limit", String(pageSize));
       } else {
         params.set("pagination.limit", String(pageSize));
         params.set("pagination.offset", String((page - 1) * pageSize));
       }
+      return this.fetchTransactions(params);
+    };
 
-      const { txs, total } = await this.fetchTransactions(params);
-      allTxs.push(...txs);
-      page += 1;
-      hasMore = txs.length > 0 && allTxs.length < total;
+    const firstPage = await fetchPage(1);
+    if (firstPage.txs.length === 0) {
+      return [];
     }
 
-    return allTxs;
+    const remainingPageCount = Math.max(0, Math.ceil(firstPage.total / pageSize) - 1);
+    const remainingPages = Array.from({ length: remainingPageCount }, (_, index) => index + 2);
+    const remainingTxs = await promiseAllBatched(
+      concurrency,
+      remainingPages,
+      async page => (await fetchPage(page)).txs,
+    );
+
+    return [...firstPage.txs, ...remainingTxs.flat()];
   };
 }

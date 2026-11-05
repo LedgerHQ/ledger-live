@@ -47,11 +47,30 @@ describe("getBlock (integ, Cosmos Hub)", () => {
     expect(block.info).toEqual(await getBlockInfo(api, HEIGHT));
   });
 
+  it("returns the same block whatever the pagination limit", async () => {
+    const paged = await getBlock(
+      { ...config, getBlock: { pagination: { limit: 1 }, concurrency: 2 } },
+      api,
+      HEIGHT,
+    );
+
+    expect(paged).toEqual(await getBlock(config, api, HEIGHT));
+    expect(paged.transactions.map(tx => tx.hash)).toEqual([MSG_RECV_PACKET_HASH, MSG_SEND_HASH]);
+  });
+
   it("rejects a height above the chain length", async () => {
-    await expect(getBlock(config, api, 999999999)).rejects.toThrow("invalid height");
+    await expect(getBlock(config, api, 999999999)).rejects.toMatchObject({
+      name: "GetBlockError",
+      message: expect.stringContaining("Failed to get block 999999999: "),
+      cause: expect.objectContaining({ message: expect.stringContaining("invalid height") }),
+    });
   });
 
   it("rejects an invalid height", async () => {
-    await expect(getBlock(config, api, 0)).rejects.toThrow("Invalid block height: 0");
+    await expect(getBlock(config, api, 0)).rejects.toMatchObject({
+      name: "GetBlockError",
+      message: "Failed to get block 0: Invalid block height: 0",
+      cause: expect.objectContaining({ name: "InvalidParameterError" }),
+    });
   });
 });

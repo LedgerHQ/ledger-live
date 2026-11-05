@@ -7,7 +7,7 @@ import {
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
-import { CosmosCoinConfig, CosmosContext } from "../config";
+import { CosmosCoinConfig, CosmosContext, isGetBlockConfigurationValid } from "../config";
 import { getBalance } from "../logic/account/getBalance";
 import { getNextSequence } from "../logic/account/getNextSequence";
 import { getBlock } from "../logic/history/getBlock";
@@ -54,7 +54,6 @@ async function resolve(
  *   - `craftRawTransaction` — the module takes no externally-built transaction.
  *   - `getRewards` — no reward-distribution listing is implemented; the accrued amount is reported
  *     by `getStakes` instead.
- *   - `getBlock`, `getBlockInfo` — no per-height block lookup is implemented (`lastBlock` is).
  * The consumer resolver applies `withDefaults`, which answers "not supported" for each of them.
  */
 export function createApi(currencyId: string) {
@@ -119,6 +118,9 @@ export function createApi(currencyId: string) {
     },
     getBlock: async (context, height) => {
       const { api, config } = await resolve(context, currencyId);
+      if (!isGetBlockConfigurationValid(config.getBlock)) {
+        context.logger(`Invalid getBlock configuration for ${currencyId}, using the default`);
+      }
       return getBlock(config, api, height);
     },
   } satisfies CosmosCoinModuleImpl;

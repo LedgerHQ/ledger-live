@@ -1,15 +1,34 @@
-import type { CosmosCoinConfig } from "../../config";
+import { InvalidParameterError } from "@ledgerhq/coin-module-framework/errors";
+import { LedgerAPI5xx, NetworkDown } from "@ledgerhq/live-network/errors";
+import {
+  DEFAULT_GET_BLOCK_CONCURRENCY,
+  DEFAULT_GET_BLOCK_PAGINATION_LIMIT,
+  type CosmosCoinConfig,
+} from "../../config";
+import { GetBlockError } from "../../errors";
 import { CosmosAPI } from "../../network/Cosmos";
 import { GET_BLOCK_WITH_TXS_SDK_EXAMPLE } from "../../network/fixtures";
 import { BlockTxSDK, GetBlockWithTxsSDK } from "../../network/types";
 import { toBlockInfo } from "../../network/utils";
-import { getBlock } from "./getBlock";
+import { getBlock, isCoinsArray } from "./getBlock";
 
 const TX_HASH = "69FA03588DDD5D61DEA9A47CD51EC4E02921174E24C2A81610124BBA7131F51D";
 const SENDER = "cosmos16exhyvwyy82fnavqgupf67lku4jvvd82h7p20u";
 const RECIPIENT = "cosmos16na4yg4rtt4n8j72n54uy5mvxn7f08l7t4h3xv";
-const config = { denom: "uatom" } as CosmosCoinConfig;
+const config = {
+  denom: "uatom",
+  getBlock: {
+    pagination: { limit: DEFAULT_GET_BLOCK_PAGINATION_LIMIT },
+    concurrency: DEFAULT_GET_BLOCK_CONCURRENCY,
+  },
+} as CosmosCoinConfig;
 const [baseTx] = GET_BLOCK_WITH_TXS_SDK_EXAMPLE.txs;
+
+const getBlockFailure = (message: string, cause: Record<string, unknown>) => ({
+  name: "GetBlockError",
+  message,
+  cause: expect.objectContaining(cause),
+});
 
 function makeTx(overrides: {
   messages?: BlockTxSDK["body"]["messages"];
@@ -26,8 +45,12 @@ function makeApi(
   blockWithTxs: GetBlockWithTxsSDK,
   results: { txhash: string; code: number }[] = [{ txhash: TX_HASH, code: 0 }],
 ) {
-  const getBlockWithTxs = jest.fn(async (_height: number) => blockWithTxs);
-  const getTransactionsByHeight = jest.fn(async (_height: number) => results);
+  const getBlockWithTxs = jest.fn(
+    async (_height: number, _limit: number, _concurrency: number) => blockWithTxs,
+  );
+  const getTransactionsByHeight = jest.fn(
+    async (_height: number, _limit: number, _concurrency: number) => results,
+  );
   return {
     api: { getBlockWithTxs, getTransactionsByHeight } as unknown as CosmosAPI,
     getBlockWithTxs,
@@ -47,8 +70,16 @@ describe("getBlock", () => {
 
     const block = await getBlock(config, api, 33721701);
 
-    expect(getBlockWithTxs).toHaveBeenCalledWith(33721701);
-    expect(getTransactionsByHeight).toHaveBeenCalledWith(33721701);
+    expect(getBlockWithTxs).toHaveBeenCalledWith(
+      33721701,
+      DEFAULT_GET_BLOCK_PAGINATION_LIMIT,
+      DEFAULT_GET_BLOCK_CONCURRENCY,
+    );
+    expect(getTransactionsByHeight).toHaveBeenCalledWith(
+      33721701,
+      DEFAULT_GET_BLOCK_PAGINATION_LIMIT,
+      DEFAULT_GET_BLOCK_CONCURRENCY,
+    );
     expect(block).toEqual({
       info: {
         height: 33721701,
@@ -123,41 +154,137 @@ describe("getBlock", () => {
     expect(transactions).toEqual([expect.objectContaining({ failed: true, fees: 3629n })]);
   });
 
-  it("rejects when the result of a transaction is missing", async () => {
-    const { api } = makeApi(GET_BLOCK_WITH_TXS_SDK_EXAMPLE, []);
+  it("uses the configured pagination limit for the block and its results", async () => {
+    const { api, getBlockWithTxs, getTransactionsByHeight } = makeApi(
+      GET_BLOCK_WITH_TXS_SDK_EXAMPLE,
+    );
 
-    await expect(getBlock(config, api, 33721701)).rejects.toThrow(
-      `Missing result for transaction ${TX_HASH} at block height 33721701`,
+    await getBlock(
+      { ...config, getBlock: { pagination: { limit: 7 }, concurrency: 3 } },
+      api,
+      33721701,
+    );
+
+    expect(getBlockWithTxs).toHaveBeenCalledWith(33721701, 7, 3);
+    expect(getTransactionsByHeight).toHaveBeenCalledWith(33721701, 7, 3);
+  });
+
+  it.each([
+    ["a missing concurrency", { pagination: { limit: 7 } }],
+    ["a zero concurrency", { pagination: { limit: 7 }, concurrency: 0 }],
+  ])(
+    "keeps the configured limit and falls back to the default concurrency for %s",
+    async (_name, partial) => {
+      const { api, getBlockWithTxs } = makeApi(GET_BLOCK_WITH_TXS_SDK_EXAMPLE);
+
+      await getBlock({ ...config, getBlock: partial } as never, api, 33721701);
+
+      expect(getBlockWithTxs).toHaveBeenCalledWith(33721701, 7, DEFAULT_GET_BLOCK_CONCURRENCY);
+    },
+  );
+
+  it.each([
+    ["a null getBlock", null],
+    ["a null pagination", { pagination: null }],
+    ["a zero limit", { pagination: { limit: 0 } }],
+  ])("falls back to the default pagination limit for %s", async (_name, invalid) => {
+    const { api, getBlockWithTxs, getTransactionsByHeight } = makeApi(
+      GET_BLOCK_WITH_TXS_SDK_EXAMPLE,
+    );
+
+    await getBlock({ ...config, getBlock: invalid } as never, api, 33721701);
+
+    expect(getBlockWithTxs).toHaveBeenCalledWith(
+      33721701,
+      DEFAULT_GET_BLOCK_PAGINATION_LIMIT,
+      DEFAULT_GET_BLOCK_CONCURRENCY,
+    );
+    expect(getTransactionsByHeight).toHaveBeenCalledWith(
+      33721701,
+      DEFAULT_GET_BLOCK_PAGINATION_LIMIT,
+      DEFAULT_GET_BLOCK_CONCURRENCY,
+    );
+  });
+
+  it("rejects with the block error when fewer transactions are decoded than the block contains", async () => {
+    const { api } = makeApi({ ...GET_BLOCK_WITH_TXS_SDK_EXAMPLE, txs: [] });
+    const cause = "Block 33721701 returned 0 decoded transactions for 1 raw transactions";
+
+    await expect(getBlock(config, api, 33721701)).rejects.toMatchObject(
+      getBlockFailure(`Failed to get block 33721701: ${cause}`, {
+        name: "BlockTransactionsMismatch",
+        message: cause,
+        height: 33721701,
+        decoded: 0,
+        raw: 1,
+      }),
+    );
+  });
+
+  it("rejects with the block error when the result of a transaction is missing", async () => {
+    const { api } = makeApi(GET_BLOCK_WITH_TXS_SDK_EXAMPLE, []);
+    const cause = `Missing result for transaction ${TX_HASH} at block height 33721701`;
+
+    await expect(getBlock(config, api, 33721701)).rejects.toMatchObject(
+      getBlockFailure(`Failed to get block 33721701: ${cause}`, {
+        name: "TransactionResultNotFound",
+        message: cause,
+        hash: TX_HASH,
+        height: 33721701,
+      }),
     );
   });
 
   it.each([0, -1, 1.5, NaN, Number.MAX_SAFE_INTEGER + 1])(
-    "rejects the invalid height %p without calling the api",
+    "rejects the invalid height %p with the block error, without calling the api",
     async height => {
       const { api, getBlockWithTxs, getTransactionsByHeight } = makeApi(
         GET_BLOCK_WITH_TXS_SDK_EXAMPLE,
       );
+      const cause = `Invalid block height: ${height}`;
 
-      await expect(getBlock(config, api, height)).rejects.toThrow(
-        `Invalid block height: ${height}`,
+      const error = await getBlock(config, api, height).catch((e: unknown) => e);
+
+      expect(error).toBeInstanceOf(GetBlockError);
+      expect(error).toMatchObject(
+        getBlockFailure(`Failed to get block ${height}: ${cause}`, {
+          name: "InvalidParameterError",
+          message: cause,
+        }),
       );
+      expect((error as GetBlockError).cause).toBeInstanceOf(InvalidParameterError);
       expect(getBlockWithTxs).not.toHaveBeenCalled();
       expect(getTransactionsByHeight).not.toHaveBeenCalled();
     },
   );
 
-  it("rejects when the block cannot be fetched", async () => {
+  it("rejects with the block error, keeping the failure as cause, when the block cannot be fetched", async () => {
     const { api, getBlockWithTxs } = makeApi(GET_BLOCK_WITH_TXS_SDK_EXAMPLE);
-    getBlockWithTxs.mockRejectedValue(new Error("invalid height"));
+    const failure = new LedgerAPI5xx("codespace sdk code 26: invalid height");
+    getBlockWithTxs.mockRejectedValue(failure);
 
-    await expect(getBlock(config, api, 999999999)).rejects.toThrow("invalid height");
+    const error = await getBlock(config, api, 999999999).catch((e: unknown) => e);
+
+    expect(error).toMatchObject({
+      name: "GetBlockError",
+      message: "Failed to get block 999999999: codespace sdk code 26: invalid height",
+    });
+    expect((error as GetBlockError).cause).toBe(failure);
+    expect(error).toMatchObject({ height: 999999999 });
   });
 
-  it("rejects when the transaction results cannot be fetched", async () => {
+  it("rejects with the block error, keeping the failure as cause, when the results cannot be fetched", async () => {
     const { api, getTransactionsByHeight } = makeApi(GET_BLOCK_WITH_TXS_SDK_EXAMPLE);
-    getTransactionsByHeight.mockRejectedValue(new Error("results unavailable"));
+    const failure = new NetworkDown("lcd unreachable");
+    getTransactionsByHeight.mockRejectedValue(failure);
 
-    await expect(getBlock(config, api, 33721701)).rejects.toThrow("results unavailable");
+    const error = await getBlock(config, api, 33721701).catch((e: unknown) => e);
+
+    expect(error).toMatchObject({
+      name: "GetBlockError",
+      message: "Failed to get block 33721701: lcd unreachable",
+    });
+    expect((error as GetBlockError).cause).toBe(failure);
   });
 
   describe("fees", () => {
@@ -195,16 +322,22 @@ describe("getBlock", () => {
       return transactions[0].feesPayer;
     };
 
-    it("is the explicit fee payer first", async () => {
+    it("is the granter first, even when an explicit fee payer is set", async () => {
       await expect(
         payerOf(makeTx({ fee: { payer: "cosmos1payer", granter: "cosmos1granter" } })),
-      ).resolves.toBe("cosmos1payer");
+      ).resolves.toBe("cosmos1granter");
     });
 
     it("is the granter when there is no explicit fee payer", async () => {
       await expect(
         payerOf(makeTx({ fee: { payer: "", granter: "cosmos1granter" } })),
       ).resolves.toBe("cosmos1granter");
+    });
+
+    it("is the explicit fee payer when there is no granter", async () => {
+      await expect(payerOf(makeTx({ fee: { payer: "cosmos1payer", granter: "" } }))).resolves.toBe(
+        "cosmos1payer",
+      );
     });
 
     it("is the signer of the first message otherwise", async () => {
@@ -230,6 +363,53 @@ describe("getBlock", () => {
         },
         "cosmos1wrapped",
       ],
+      [
+        "the sender of a contract execution with a string msg",
+        {
+          "@type": "/cosmwasm.wasm.v1.MsgExecuteContract",
+          sender: "cosmos1exec",
+          contract: "cosmos1contract",
+          msg: "eyJ0cmFuc2ZlciI6e319",
+          funds: [],
+        },
+        "cosmos1exec",
+      ],
+      [
+        "the sender of a contract instantiation with a string msg",
+        {
+          "@type": "/cosmwasm.wasm.v1.MsgInstantiateContract",
+          sender: "cosmos1init",
+          code_id: "1",
+          msg: "eyJuYW1lIjoidG9rZW4ifQ==",
+        },
+        "cosmos1init",
+      ],
+      [
+        "the top-level sender of a contract execution with an object msg",
+        {
+          "@type": "/cosmwasm.wasm.v1.MsgExecuteContract",
+          sender: "cosmos1exec",
+          contract: "cosmos1contract",
+          msg: { transfer: {}, sender: "cosmos1payload", from_address: "cosmos1payloadfrom" },
+          funds: [],
+        },
+        "cosmos1exec",
+      ],
+      [
+        "the wrapper itself when a babylon msg is not an object",
+        { "@type": "/babylon.epoching.v1.MsgWrappedDelegate", msg: null, sender: "cosmos1wrap" },
+        "cosmos1wrap",
+      ],
+      [
+        "the top-level sender when msg is null",
+        { "@type": "/cosmwasm.wasm.v1.MsgExecuteContract", sender: "cosmos1null", msg: null },
+        "cosmos1null",
+      ],
+      [
+        "the top-level sender when msg is an array",
+        { "@type": "/cosmwasm.wasm.v1.MsgExecuteContract", sender: "cosmos1array", msg: [] },
+        "cosmos1array",
+      ],
     ])("reads the first signer from %s", async (_name, message, expected) => {
       await expect(payerOf(makeTx({ messages: [message] }))).resolves.toBe(expected);
     });
@@ -241,7 +421,7 @@ describe("getBlock", () => {
     });
 
     it("is absent when the first signer is not a string", async () => {
-      const message = { "@type": "/cosmos.bank.v1beta1.MsgSend", from_address: 42, amount: [] };
+      const message = { "@type": "/cosmos.staking.v1beta1.MsgDelegate", from_address: 42 };
 
       await expect(payerOf(makeTx({ messages: [message] }))).resolves.toBeUndefined();
     });
@@ -306,6 +486,28 @@ describe("getBlock", () => {
       ]);
     });
 
+    it.each([
+      ["a non-array amount", { ...send([]), amount: "5uatom" }],
+      ["a coin that is not an object", { ...send([]), amount: [null] }],
+      ["a coin without a string denom", { ...send([]), amount: [{ denom: 1, amount: "5" }] }],
+      ["a coin without a string amount", { ...send([]), amount: [{ denom: "uatom", amount: 5 }] }],
+      ["a missing sender", { ...send([]), from_address: undefined }],
+      ["a missing recipient", { ...send([]), to_address: 42 }],
+    ])("rejects with the block error for a MsgSend with %s", async (_name, message) => {
+      const { api } = makeApi(blockWithTx(makeTx({ messages: [message] })));
+      const cause = "Invalid /cosmos.bank.v1beta1.MsgSend message";
+
+      const error = await getBlock(config, api, 33721701).catch((e: unknown) => e);
+
+      expect(error).toMatchObject(
+        getBlockFailure(`Failed to get block 33721701: ${cause}`, {
+          name: "InvalidBlockMessage",
+          message: cause,
+          messageType: "/cosmos.bank.v1beta1.MsgSend",
+        }),
+      );
+    });
+
     it("keeps the order of the messages", async () => {
       const operations = await operationsOf([
         { "@type": "/ibc.core.client.v1.MsgUpdateClient" },
@@ -314,5 +516,27 @@ describe("getBlock", () => {
 
       expect(operations.map(op => op.type)).toEqual(["other", "transfer", "transfer"]);
     });
+  });
+});
+
+describe("isCoinsArray", () => {
+  it.each([
+    ["an empty array", []],
+    ["an array of coins", [{ denom: "uatom", amount: "5" }]],
+  ])("accepts %s", (_name, value) => {
+    expect(isCoinsArray(value)).toBe(true);
+  });
+
+  it.each([
+    ["undefined", undefined],
+    ["a string", "5uatom"],
+    ["an object", { denom: "uatom", amount: "5" }],
+    ["an array holding null", [null]],
+    ["an array holding a string", ["uatom"]],
+    ["a coin with a numeric denom", [{ denom: 1, amount: "5" }]],
+    ["a coin with a numeric amount", [{ denom: "uatom", amount: 5 }]],
+    ["a valid coin followed by an invalid one", [{ denom: "uatom", amount: "5" }, {}]],
+  ])("rejects %s", (_name, value) => {
+    expect(isCoinsArray(value)).toBe(false);
   });
 });

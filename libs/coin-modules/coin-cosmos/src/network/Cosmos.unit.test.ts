@@ -1,3 +1,5 @@
+import { InvalidParameterError } from "@ledgerhq/coin-module-framework/errors";
+import { NetworkDown } from "@ledgerhq/live-network/errors";
 import network from "@ledgerhq/live-network/network";
 import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -39,6 +41,28 @@ const mockNodeAndTxs = (
     requestedUrls.push(decodeURIComponent(networkOptions.url));
     const page = pages[served++];
     return Promise.resolve({ data: { tx_responses: page.txs, total: page.total } });
+  });
+  return requestedUrls;
+};
+
+const mockBlockPages = (pages: { txCount: number; total: number | null; firstMemo?: string }[]) => {
+  const requestedUrls: string[] = [];
+  let served = 0;
+  mockNetwork((networkOptions: { url: string }) => {
+    requestedUrls.push(decodeURIComponent(networkOptions.url));
+    const { txCount, total, firstMemo } = pages[served++];
+    const [template] = GET_BLOCK_WITH_TXS_SDK_EXAMPLE.txs;
+    const txs = Array.from({ length: txCount }, (_, index) => ({
+      ...template,
+      body: { ...template.body, memo: index === 0 && firstMemo ? firstMemo : template.body.memo },
+    }));
+    return Promise.resolve({
+      data: {
+        ...GET_BLOCK_WITH_TXS_SDK_EXAMPLE,
+        txs,
+        pagination: total === null ? null : { next_key: null, total: String(total) },
+      },
+    });
   });
   return requestedUrls;
 };
@@ -1175,17 +1199,238 @@ describe("CosmosApi", () => {
     });
 
     it("getBlockWithTxs queries the block with its transactions at the given height", async () => {
-      mockAxiosResponse(GET_BLOCK_WITH_TXS_SDK_EXAMPLE);
+      const requestedUrls = mockBlockPages([{ txCount: 1, total: 1 }]);
 
-      await expect(cosmosApi.getBlockWithTxs(33721701)).resolves.toBe(
+      await expect(cosmosApi.getBlockWithTxs(33721701, 100, 5)).resolves.toEqual(
         GET_BLOCK_WITH_TXS_SDK_EXAMPLE,
       );
-      expect(mockedNetwork).toHaveBeenCalledWith(
-        expect.objectContaining({
-          method: "GET",
-          url: expect.stringMatching(/\/cosmos\/tx\/v1beta1\/txs\/block\/33721701$/),
-        }),
+      expect(requestedUrls).toEqual([
+        expect.stringMatching(
+          /\/cosmos\/tx\/v1beta1\/txs\/block\/33721701\?pagination\.limit=100&pagination\.offset=0$/,
+        ),
+      ]);
+    });
+
+    it("getBlockWithTxs concatenates every page of decoded transactions in block order", async () => {
+      const requestedUrls = mockBlockPages([
+        { txCount: 100, total: 250, firstMemo: "page-1" },
+        { txCount: 100, total: 250, firstMemo: "page-2" },
+        { txCount: 50, total: 250, firstMemo: "page-3" },
+      ]);
+
+      const block = await cosmosApi.getBlockWithTxs(33721701, 100, 5);
+
+      expect(block.txs).toHaveLength(250);
+      expect([0, 100, 200].map(index => block.txs[index].body.memo)).toEqual([
+        "page-1",
+        "page-2",
+        "page-3",
+      ]);
+      expect(block.block_id).toEqual(GET_BLOCK_WITH_TXS_SDK_EXAMPLE.block_id);
+      expect(requestedUrls).toEqual([
+        expect.stringContaining("pagination.limit=100&pagination.offset=0"),
+        expect.stringContaining("pagination.limit=100&pagination.offset=100"),
+        expect.stringContaining("pagination.limit=100&pagination.offset=200"),
+      ]);
+    });
+
+    it("getBlockWithTxs pages by the given limit", async () => {
+      const requestedUrls = mockBlockPages([
+        { txCount: 50, total: 120 },
+        { txCount: 50, total: 120 },
+        { txCount: 20, total: 120 },
+      ]);
+
+      const block = await cosmosApi.getBlockWithTxs(33721701, 50, 5);
+
+      expect(block.txs).toHaveLength(120);
+      expect(requestedUrls).toEqual([
+        expect.stringContaining("pagination.limit=50&pagination.offset=0"),
+        expect.stringContaining("pagination.limit=50&pagination.offset=50"),
+        expect.stringContaining("pagination.limit=50&pagination.offset=100"),
+      ]);
+    });
+
+    it.each([0, -1, 1.5, NaN, Number.MAX_SAFE_INTEGER + 1])(
+      "getBlockWithTxs rejects the invalid limit %p without requesting",
+      async limit => {
+        await expect(cosmosApi.getBlockWithTxs(33721701, limit, 5)).rejects.toMatchObject({
+          name: "InvalidParameterError",
+          message: `Invalid pagination limit: ${limit}`,
+        });
+        await expect(cosmosApi.getBlockWithTxs(33721701, limit, 5)).rejects.toBeInstanceOf(
+          InvalidParameterError,
+        );
+        expect(mockedNetwork).not.toHaveBeenCalled();
+      },
+    );
+
+    it.each([0, -1, 1.5, NaN, Number.MAX_SAFE_INTEGER + 1])(
+      "getBlockWithTxs rejects the invalid concurrency %p without requesting",
+      async concurrency => {
+        await expect(cosmosApi.getBlockWithTxs(33721701, 100, concurrency)).rejects.toMatchObject({
+          name: "InvalidParameterError",
+          message: `Invalid concurrency: ${concurrency}`,
+        });
+        expect(mockedNetwork).not.toHaveBeenCalled();
+      },
+    );
+
+    it("getBlockWithTxs never has more page requests in flight than the concurrency", async () => {
+      const pageCount = 10;
+      const concurrency = 3;
+      let inFlight = 0;
+      let peak = 0;
+      mockNetwork(async ({ url }) => {
+        inFlight += 1;
+        peak = Math.max(peak, inFlight);
+        await new Promise(resolve => setTimeout(resolve, 5));
+        inFlight -= 1;
+        const offset = Number(
+          new URL(decodeURIComponent(url)).searchParams.get("pagination.offset"),
+        );
+        const [template] = GET_BLOCK_WITH_TXS_SDK_EXAMPLE.txs;
+        return {
+          data: {
+            ...GET_BLOCK_WITH_TXS_SDK_EXAMPLE,
+            txs: [{ ...template, body: { ...template.body, memo: `offset-${offset}` } }],
+            pagination: { next_key: null, total: String(pageCount) },
+          },
+        };
+      });
+
+      const block = await cosmosApi.getBlockWithTxs(33721701, 1, concurrency);
+
+      expect(peak).toBe(concurrency);
+      expect(block.txs.map(tx => tx.body.memo)).toEqual(
+        Array.from({ length: pageCount }, (_, offset) => `offset-${offset}`),
       );
+    });
+
+    it.each([0, -1, 1.5, NaN, Number.MAX_SAFE_INTEGER + 1])(
+      "getTransactionsByHeight rejects the invalid limit %p without requesting",
+      async limit => {
+        await expect(cosmosApi.getTransactionsByHeight(33721701, limit, 5)).rejects.toMatchObject({
+          name: "InvalidParameterError",
+          message: `Invalid pagination limit: ${limit}`,
+        });
+        expect(mockedNetwork).not.toHaveBeenCalled();
+      },
+    );
+
+    it.each([0, -1, 1.5, NaN, Number.MAX_SAFE_INTEGER + 1])(
+      "getTransactionsByHeight rejects the invalid concurrency %p without requesting",
+      async concurrency => {
+        await expect(
+          cosmosApi.getTransactionsByHeight(33721701, 100, concurrency),
+        ).rejects.toMatchObject({
+          name: "InvalidParameterError",
+          message: `Invalid concurrency: ${concurrency}`,
+        });
+        expect(mockedNetwork).not.toHaveBeenCalled();
+      },
+    );
+
+    it("getTransactionsByHeight never has more page requests in flight than the concurrency and keeps the page order", async () => {
+      const pageCount = 10;
+      const concurrency = 3;
+      let inFlight = 0;
+      let peak = 0;
+      mockNetwork(async ({ url }) => {
+        if (url.includes("node_info")) {
+          return { data: { application_version: { cosmos_sdk_version: "0.53.0" } } };
+        }
+        inFlight += 1;
+        peak = Math.max(peak, inFlight);
+        await new Promise(resolve => setTimeout(resolve, 5));
+        inFlight -= 1;
+        const page = Number(new URL(decodeURIComponent(url)).searchParams.get("page"));
+        return { data: { tx_responses: [{ txhash: `page-${page}` }], total: pageCount } };
+      });
+
+      const txs = await cosmosApi.getTransactionsByHeight(33721701, 1, concurrency);
+
+      expect(peak).toBe(concurrency);
+      expect(txs.map(tx => tx.txhash)).toEqual(
+        Array.from({ length: pageCount }, (_, index) => `page-${index + 1}`),
+      );
+    });
+
+    it("getTransactionsByHeight pages by the given limit with page params", async () => {
+      const requestedUrls = mockNodeAndTxs("0.53.0", [
+        { txs: [{ txhash: "A" }, { txhash: "B" }], total: 3 },
+        { txs: [{ txhash: "C" }], total: 3 },
+      ]);
+
+      await cosmosApi.getTransactionsByHeight(33721701, 2, 5);
+
+      expect(requestedUrls).toEqual([
+        expect.stringContaining("query=tx.height=33721701&page=1&limit=2"),
+        expect.stringContaining("query=tx.height=33721701&page=2&limit=2"),
+      ]);
+    });
+
+    it("getTransactionsByHeight pages by the given limit with legacy offsets", async () => {
+      const requestedUrls = mockNodeAndTxs("0.45.16", [
+        { txs: [{ txhash: "A" }, { txhash: "B" }], total: 3 },
+        { txs: [{ txhash: "C" }], total: 3 },
+      ]);
+
+      await cosmosApi.getTransactionsByHeight(33721701, 2, 5);
+
+      expect(requestedUrls).toEqual([
+        expect.stringContaining("events=tx.height=33721701&pagination.limit=2&pagination.offset=0"),
+        expect.stringContaining("events=tx.height=33721701&pagination.limit=2&pagination.offset=2"),
+      ]);
+    });
+
+    it("getBlockWithTxs does not request a page past the total", async () => {
+      const requestedUrls = mockBlockPages([
+        { txCount: 100, total: 100 },
+        { txCount: 0, total: 100 },
+      ]);
+
+      const block = await cosmosApi.getBlockWithTxs(33721701, 100, 5);
+
+      expect(block.txs).toHaveLength(100);
+      expect(requestedUrls).toHaveLength(1);
+    });
+
+    it("getBlockWithTxs keeps a block without transactions", async () => {
+      const requestedUrls = mockBlockPages([{ txCount: 0, total: 0 }]);
+
+      await expect(cosmosApi.getBlockWithTxs(33721701, 100, 5)).resolves.toEqual(
+        expect.objectContaining({ txs: [] }),
+      );
+      expect(requestedUrls).toHaveLength(1);
+    });
+
+    it("getBlockWithTxs reads the decoded transactions as the only page when pagination is null", async () => {
+      const requestedUrls = mockBlockPages([{ txCount: 2, total: null }]);
+
+      const block = await cosmosApi.getBlockWithTxs(33721701, 100, 5);
+
+      expect(block.txs).toHaveLength(2);
+      expect(requestedUrls).toHaveLength(1);
+    });
+
+    it("getBlockWithTxs rejects when a page cannot be fetched", async () => {
+      const failure = new NetworkDown("lcd unreachable");
+      let served = 0;
+      mockNetwork(() => {
+        served += 1;
+        return served === 1
+          ? Promise.resolve({
+              data: {
+                ...GET_BLOCK_WITH_TXS_SDK_EXAMPLE,
+                txs: Array.from({ length: 100 }, () => GET_BLOCK_WITH_TXS_SDK_EXAMPLE.txs[0]),
+                pagination: { next_key: null, total: "150" },
+              },
+            })
+          : Promise.reject(failure);
+      });
+
+      await expect(cosmosApi.getBlockWithTxs(33721701, 100, 5)).rejects.toBe(failure);
     });
 
     it("getTransactionsByHeight pages with the modern params from cosmos-sdk 0.50", async () => {
@@ -1194,30 +1439,91 @@ describe("CosmosApi", () => {
         { txs: [{ txhash: "C" }], total: 3 },
       ]);
 
-      const txs = await cosmosApi.getTransactionsByHeight(33721701);
+      const txs = await cosmosApi.getTransactionsByHeight(33721701, 2, 5);
 
       expect(txs.map(tx => tx.txhash)).toEqual(["A", "B", "C"]);
       expect(requestedUrls).toEqual([
-        expect.stringContaining("query=tx.height=33721701&page=1&limit=100"),
-        expect.stringContaining("query=tx.height=33721701&page=2&limit=100"),
+        expect.stringContaining("query=tx.height=33721701&page=1&limit=2"),
+        expect.stringContaining("query=tx.height=33721701&page=2&limit=2"),
       ]);
     });
 
-    it("getTransactionsByHeight pages with the legacy params before cosmos-sdk 0.50", async () => {
-      const requestedUrls = mockNodeAndTxs("0.44.0", [
+    it.each(["0.46.0", "0.47.14"])(
+      "getTransactionsByHeight pages with events and page/limit on cosmos-sdk %s",
+      async sdkVersion => {
+        const requestedUrls = mockNodeAndTxs(sdkVersion, [
+          { txs: [{ txhash: "A" }, { txhash: "B" }], total: 3 },
+          { txs: [{ txhash: "C" }], total: 3 },
+        ]);
+
+        const txs = await cosmosApi.getTransactionsByHeight(33721701, 2, 5);
+
+        expect(txs.map(tx => tx.txhash)).toEqual(["A", "B", "C"]);
+        expect(requestedUrls).toEqual([
+          expect.stringContaining("events=tx.height=33721701&page=1&limit=2"),
+          expect.stringContaining("events=tx.height=33721701&page=2&limit=2"),
+        ]);
+        expect(requestedUrls.join()).not.toContain("pagination.");
+      },
+    );
+
+    it("getTransactionsByHeight pages with query and page/limit from cosmos-sdk 0.50.0", async () => {
+      const requestedUrls = mockNodeAndTxs("0.50.0", [
         { txs: [{ txhash: "A" }], total: 2 },
         { txs: [{ txhash: "B" }], total: 2 },
       ]);
 
-      const txs = await cosmosApi.getTransactionsByHeight(33721701);
+      await cosmosApi.getTransactionsByHeight(33721701, 1, 5);
 
-      expect(txs.map(tx => tx.txhash)).toEqual(["A", "B"]);
+      expect(requestedUrls).toEqual([
+        expect.stringContaining("query=tx.height=33721701&page=1&limit=1"),
+        expect.stringContaining("query=tx.height=33721701&page=2&limit=1"),
+      ]);
+    });
+
+    it("getTransactionsByHeight pages with events and pagination before cosmos-sdk 0.46", async () => {
+      const requestedUrls = mockNodeAndTxs("0.45.16", [
+        { txs: [{ txhash: "A" }], total: 2 },
+        { txs: [{ txhash: "B" }], total: 2 },
+      ]);
+
+      await cosmosApi.getTransactionsByHeight(33721701, 1, 5);
+
+      expect(requestedUrls).toEqual([
+        expect.stringContaining("events=tx.height=33721701&pagination.limit=1&pagination.offset=0"),
+        expect.stringContaining("events=tx.height=33721701&pagination.limit=1&pagination.offset=1"),
+      ]);
+    });
+
+    it.each([
+      ["0.53.0", "query=tx.height=33721701&page=2&limit=100"],
+      ["0.45.16", "events=tx.height=33721701&pagination.limit=100&pagination.offset=100"],
+    ])(
+      "getTransactionsByHeight caps the page size at 100 on cosmos-sdk %s and fetches every page",
+      async (sdkVersion, secondPageQuery) => {
+        const requestedUrls = mockNodeAndTxs(sdkVersion, [
+          { txs: [{ txhash: "A" }], total: 150 },
+          { txs: [{ txhash: "B" }], total: 150 },
+        ]);
+
+        const txs = await cosmosApi.getTransactionsByHeight(33721701, 500, 5);
+
+        expect(txs.map(tx => tx.txhash)).toEqual(["A", "B"]);
+        expect(requestedUrls).toEqual([
+          expect.stringContaining("limit=100"),
+          expect.stringContaining(secondPageQuery),
+        ]);
+      },
+    );
+
+    it("getTransactionsByHeight falls back to events and pagination when the node version is unparseable", async () => {
+      const requestedUrls = mockNodeAndTxs("unknown", [{ txs: [{ txhash: "A" }], total: 1 }]);
+
+      await cosmosApi.getTransactionsByHeight(33721701, 100, 5);
+
       expect(requestedUrls).toEqual([
         expect.stringContaining(
           "events=tx.height=33721701&pagination.limit=100&pagination.offset=0",
-        ),
-        expect.stringContaining(
-          "events=tx.height=33721701&pagination.limit=100&pagination.offset=100",
         ),
       ]);
     });
@@ -1225,21 +1531,22 @@ describe("CosmosApi", () => {
     it("getTransactionsByHeight stops on an empty page even if total is larger", async () => {
       const requestedUrls = mockNodeAndTxs("0.53.0", [{ txs: [], total: 5 }]);
 
-      await expect(cosmosApi.getTransactionsByHeight(33721701)).resolves.toEqual([]);
+      await expect(cosmosApi.getTransactionsByHeight(33721701, 100, 5)).resolves.toEqual([]);
       expect(requestedUrls).toHaveLength(1);
     });
 
     it("getTransactionsByHeight rejects when a page cannot be fetched", async () => {
+      const failure = new NetworkDown("lcd unreachable");
       mockNetwork((networkOptions: { url: string }) => {
         if (networkOptions.url.includes("node_info")) {
           return Promise.resolve({
             data: { application_version: { cosmos_sdk_version: "0.53.0" } },
           });
         }
-        return Promise.reject(new Error("boom"));
+        return Promise.reject(failure);
       });
 
-      await expect(cosmosApi.getTransactionsByHeight(33721701)).rejects.toThrow("boom");
+      await expect(cosmosApi.getTransactionsByHeight(33721701, 100, 5)).rejects.toBe(failure);
     });
   });
 
