@@ -70,12 +70,17 @@ class AppDelegate: RCTAppDelegate, UNUserNotificationCenterDelegate {
       pushAutoEnabled: pushAutoEnabled
     )
 
-    if !pushAutoEnabled {
-      print(
-        "iOS Push Auto disabled - Registering for push manually."
-      )
+    #if targetEnvironment(simulator)
+      // RNFB skips registerForRemoteNotifications on ARM64 simulators, so without this there is no APNs token.
       registerForPushNotifications()
-    }
+    #else
+      if !pushAutoEnabled {
+        print(
+          "iOS Push Auto disabled - Registering for push manually."
+        )
+        registerForPushNotifications()
+      }
+    #endif
 
     BrazeReactUtils
       .sharedInstance()

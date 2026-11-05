@@ -100,7 +100,7 @@ const final = async () => {
     const str = `APP_NAME="LL [DEV]"
 ANALYTICS_TOKEN=ICid4O5K4AE2Utbv1ZT5CLmZalVWz8V9
 BRAZE_ANDROID_API_KEY="4ef07be0-a4ea-4f73-81a9-760e473959f3"
-BRAZE_IOS_API_KEY="4d6c9f5b-823e-4ea0-8158-5359bdf89618"
+BRAZE_IOS_API_KEY="c8445d15-340f-4689-8524-4c01aa468a8b"
 BRAZE_CUSTOM_ENDPOINT="sdk.fra-02.braze.eu"`;
     await fs.promises.writeFile(".env", str, "utf8");
   }
