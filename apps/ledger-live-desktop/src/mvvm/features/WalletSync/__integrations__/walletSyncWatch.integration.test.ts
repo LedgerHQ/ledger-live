@@ -8,7 +8,7 @@ import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { HttpResponse, http, server } from "tests/server";
 import { renderHook, waitFor, withFlagOverrides } from "tests/testSetup";
 import { loadAppConfig } from "~/setup";
-import { WalletSyncProvider, useWalletSyncUserState } from "../components/WalletSyncContext";
+import { useWalletSyncUserState, useLedgerSyncWatch } from "@features/platform-wallet-sync";
 import type { Account } from "@ledgerhq/types-live";
 
 const originalMockEnv = getEnv("MOCK");
@@ -261,37 +261,42 @@ function renderWalletSync({
   cachedDistantAccounts: Account[] | null;
   cursorVersion: number;
 }) {
-  return renderHook(() => useWalletSyncUserState(), {
-    wrapper: WalletSyncProvider,
-    initialState: {
-      ...withFlagOverrides({
-        lldWalletSync: {
-          enabled: true,
-          params: {
-            environment: "PROD",
-            watchConfig: {
-              notificationsEnabled: false,
-              initialTimeout: 1,
-              pollingInterval: 60_000,
+  return renderHook(
+    () => {
+      useLedgerSyncWatch();
+      return useWalletSyncUserState();
+    },
+    {
+      initialState: {
+        ...withFlagOverrides({
+          lldWalletSync: {
+            enabled: true,
+            params: {
+              environment: "PROD",
+              watchConfig: {
+                notificationsEnabled: false,
+                initialTimeout: 1,
+                pollingInterval: 60_000,
+              },
             },
           },
-        },
-      }),
-      accounts: localAccounts,
-      trustchain: { trustchain, memberCredentials },
-      wallet: {
-        walletSync: {
-          walletSyncState: {
-            data:
-              cachedDistantAccounts === null
-                ? null
-                : { accounts: descriptorsFor(cachedDistantAccounts) },
-            version: cursorVersion,
+        }),
+        accounts: localAccounts,
+        trustchain: { trustchain, memberCredentials },
+        wallet: {
+          walletSync: {
+            walletSyncState: {
+              data:
+                cachedDistantAccounts === null
+                  ? null
+                  : { accounts: descriptorsFor(cachedDistantAccounts) },
+              version: cursorVersion,
+            },
           },
         },
       },
     },
-  });
+  );
 }
 
 function expectPullVersion(version: string) {

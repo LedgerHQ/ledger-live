@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useWalletSyncUserState } from "../components/WalletSyncContext";
+import { useWalletSyncUserState } from "@features/platform-wallet-sync";
 import { useFeature } from "@features/platform-feature-flags";
 import { NavigatorName, ScreenName } from "~/const";
 import { useNavigation } from "@react-navigation/core";

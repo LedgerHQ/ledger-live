@@ -7,7 +7,7 @@ import { AppLockProvider } from "LLM/features/AppLock/AppLockProvider";
 import { InViewProvider } from "LLM/contexts/InViewContext";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
 import GlobalDrawers from "./GlobalDrawers";
-import { WalletSyncProvider } from "LLM/features/WalletSync/components/WalletSyncContext";
+import { useLedgerSyncWatch } from "@features/platform-wallet-sync";
 import React from "react";
 import PostOnboardingProviderWrapped from "~/logic/postOnboarding/PostOnboardingProviderWrapped";
 import NotificationsProvider from "~/screens/NotificationCenter/NotificationsProvider";
@@ -22,26 +22,25 @@ const queryClient = new QueryClient();
 function AppProviders({ children }: Readonly<AppProvidersProps>) {
   logStartupEvent("AppProviders render");
   const mockServerConfig = useSelector(mockServerConfigSelector);
+  useLedgerSyncWatch();
 
   return (
     <QueryClientProvider client={queryClient}>
-      <WalletSyncProvider>
-        <DeviceManagementKitProvider mockServerConfig={mockServerConfig}>
-          <BottomSheetModalProvider>
-            <AppLockProvider>
-              <PostOnboardingProviderWrapped>
-                <NotificationsProvider>
-                  <SnackbarContainer />
-                  <InViewProvider>
-                    <GlobalDrawers>{children}</GlobalDrawers>
-                  </InViewProvider>
-                </NotificationsProvider>
-              </PostOnboardingProviderWrapped>
-              <GlobalTooltipBottomSheet />
-            </AppLockProvider>
-          </BottomSheetModalProvider>
-        </DeviceManagementKitProvider>
-      </WalletSyncProvider>
+      <DeviceManagementKitProvider mockServerConfig={mockServerConfig}>
+        <BottomSheetModalProvider>
+          <AppLockProvider>
+            <PostOnboardingProviderWrapped>
+              <NotificationsProvider>
+                <SnackbarContainer />
+                <InViewProvider>
+                  <GlobalDrawers>{children}</GlobalDrawers>
+                </InViewProvider>
+              </NotificationsProvider>
+            </PostOnboardingProviderWrapped>
+            <GlobalTooltipBottomSheet />
+          </AppLockProvider>
+        </BottomSheetModalProvider>
+      </DeviceManagementKitProvider>
     </QueryClientProvider>
   );
 }

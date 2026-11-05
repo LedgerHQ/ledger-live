@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { walletSyncFlowSelector, walletSyncNextStepSelector } from "~/renderer/reducers/walletSync";
-import { useWalletSyncUserState } from "../components/WalletSyncContext";
+import { useWalletSyncUserState } from "@features/platform-wallet-sync";
 import { useFeature } from "@features/platform-feature-flags";
 
 export function useLoadingStep() {

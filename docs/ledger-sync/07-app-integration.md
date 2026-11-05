@@ -5,17 +5,19 @@
 > `src/mvvm/features/WalletSync/`.
 
 The watch loop runs in the Ledger Sync middleware of `@features/platform-wallet-sync`. Each app
-passes it its **selectors** and its **`save`** function, in `state-manager/middleware/ledgerSync.ts`,
-and mounts the provider that starts it.
+passes it its **selectors** and its **`applyLocalState`** function, in
+`state-manager/middleware/ledgerSync.ts`, and starts it with the package's `useLedgerSyncWatch()`.
 
 ## The wiring
 
-Each app mounts a `<WalletSyncProvider>` near the root (LWD `renderer/Default.tsx`, LWM
-`AppProviders.tsx`). It dispatches `startLedgerSyncWatch()` on mount and `stopLedgerSyncWatch()`
-on unmount. In between, the middleware:
+Each app calls `useLedgerSyncWatch()` near the root: LWM in `AppProviders.tsx`, LWD in a
+`<LedgerSyncWatch />` of `renderer/Default.tsx` that mounts once the app is unlocked. The hook
+dispatches `startLedgerSyncWatch()` on mount and `stopLedgerSyncWatch()` on unmount. In between,
+the middleware:
 
 1. runs the watch loop on the store's `TrustchainSDK` and `CloudSyncSDK` (see
-   [Building the SDKs](#building-the-sdks)), with the app's selectors and `save`;
+   [Building the SDKs](#building-the-sdks)), with the app's selectors, and saves what a sync
+   brings: the document in the `walletSyncState`, the local state through `applyLocalState`;
 2. runs it only while the feature flag is on and `trustchain` + `memberCredentials` exist, and
    restarts it after an action changes one of them, the flag's `watchConfig` or the token
    blacklist;
@@ -91,8 +93,9 @@ what `state-manager/middleware/ledgerSync.ts` passes in:
 
 - `lkrp`: the LKRP URL, live-common's `withDevice`, and getters for the mock environment and the
   instance name. The SDK gets the context `{ applicationId: 16, name: <instance name>, apiBaseUrl }`.
-- `cloudSync`: the selectors and `save` of `WalletSync/utils/walletsync.ts`. `walletsyncSelector` is
-  memoized on the token blacklist, and a new walletsync restarts the watch loop.
+- `cloudSync`: the selectors and `applyLocalState` of `WalletSync/utils/walletsync.ts`.
+  `walletsyncSelector` is memoized on the token blacklist, and a new walletsync restarts the watch
+  loop.
 
 Hooks reach them through `dispatch`, with `getLkrpSdk` (`useTrustchainSdk`), `getCloudSyncSdk` (the
 backup deletion, which shares the watch loop's [lock](./04-cloud-sync-sdk.md#atomicity--versioning)),
