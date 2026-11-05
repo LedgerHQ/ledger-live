@@ -365,7 +365,7 @@ describe("ChecksView", () => {
     { kind: "unknown", title: "Ledger Genuine Check error", showsSettings: false },
     { kind: "provider", title: "Initiate Ledger Genuine Check again", showsSettings: true },
   ])(
-    "should open the $kind drawer over the current check",
+    "should leave onboarding when cancelling the $kind drawer",
     async ({ kind, title, showsSettings }) => {
       const { user, onCloseSheet, onQuit, rerender } = renderChecks("checking", {
         error: { kind },
@@ -380,8 +380,8 @@ describe("ChecksView", () => {
 
       await user.press(screen.getByText("Cancel set up"));
 
-      expect(onCloseSheet).toHaveBeenCalledTimes(1);
-      expect(onQuit).not.toHaveBeenCalled();
+      expect(onQuit).toHaveBeenCalledTimes(1);
+      expect(onCloseSheet).not.toHaveBeenCalled();
     },
   );
 

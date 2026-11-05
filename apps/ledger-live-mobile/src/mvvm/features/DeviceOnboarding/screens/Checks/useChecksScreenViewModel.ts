@@ -238,7 +238,7 @@ export function useChecksScreenViewModel({
       kind: errorDrawerKind,
       productName,
       onRetry,
-      onCancel: onCloseSheet,
+      onCancel: () => onQuit?.(),
       onClose: () => {
         if (!recoverableKind) return;
         onCloseSheet();
