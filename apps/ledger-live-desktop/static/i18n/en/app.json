@@ -9740,6 +9740,10 @@
     "borrow": {
       "title": "Loans",
       "description": "Borrow stablecoins"
+    },
+    "predictions": {
+      "title": "Predictions",
+      "description": "Position on the future"
     }
   },
   "marketBanner": {

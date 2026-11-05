@@ -19,6 +19,8 @@ export * from "./ptxEarnTransactionSuccessBanner";
 export * from "./ptxEarnUi";
 export * from "./ptxPerpsLiveApp";
 export * from "./ptxPerpsLiveAppMobile";
+export * from "./ptxPredictionsLiveAppDesktop";
+export * from "./ptxPredictionsLiveAppMobile";
 export * from "./ptxServiceCtaExchangeDrawer";
 export * from "./ptxServiceCtaScreens";
 export * from "./ptxSwapDetailedView";

@@ -20,11 +20,6 @@ jest.mock("~/components/Web3AppWebview/helpers", () => ({
   },
 }));
 
-jest.mock("styled-components/native", () => ({
-  ...jest.requireActual("styled-components/native"),
-  useTheme: () => ({ theme: "dark" }),
-}));
-
 jest.mock("@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index", () => ({
   useRemoteLiveAppManifest: jest.fn(),
   useRemoteLiveAppContext: jest.fn(),
