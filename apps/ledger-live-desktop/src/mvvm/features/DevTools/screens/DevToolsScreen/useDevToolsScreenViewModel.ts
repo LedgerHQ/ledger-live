@@ -11,6 +11,7 @@ import {
 } from "@ledgerhq/ledger-key-ring-protocol/store";
 import type { Trustchain, MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import {
   useFeatureFlagsToolProps,
   usePayCardToolProps,
@@ -28,6 +29,7 @@ import {
   useAccountNameToolProps,
   useMockAccountsToolProps,
   useAccountDetailToolProps,
+  useCoinConfigToolProps,
 } from "@devtools/bindings";
 import type { DevToolsConfig } from "@devtools/shell";
 import { useDevToolsRelay } from "./useDevToolsRelay";
@@ -37,6 +39,9 @@ import { getPortfolioServiceUrl } from "~/config/portfolioService";
 
 const APPLICATION_ID = 16;
 
+const getLiveConfigValue = (key: string): unknown => LiveConfig.getValueByKey(key);
+const getLiveConfigDefaultValue = (key: string): unknown => LiveConfig.getDefaultValueByKey(key);
+
 export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -44,6 +49,12 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
   const payCardToolProps = usePayCardToolProps();
   const envToolProps = useEnvDevToolProps();
   const appConfigToolProps = useAppConfigToolProps();
+  const liveConfigKeys = useMemo(() => Object.keys(LiveConfig.instance.config), []);
+  const coinConfigToolProps = useCoinConfigToolProps({
+    keys: liveConfigKeys,
+    getValueByKey: getLiveConfigValue,
+    getDefaultValueByKey: getLiveConfigDefaultValue,
+  });
   const prodToggle = useProdToggle();
   const { wire, wireState } = useDevToolsRelay();
 
@@ -117,6 +128,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       { id: "feature-flags", config: featureFlagsToolProps },
       { id: "env", config: envToolProps },
       { id: "app-config", config: appConfigToolProps },
+      { id: "coin-config", config: coinConfigToolProps },
       { id: "pay-card", config: payCardToolProps },
       { id: "trustchain", config: trustchainToolProps },
       { id: "cloud-sync", config: cloudSyncToolProps },
@@ -135,6 +147,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       featureFlagsToolProps,
       envToolProps,
       appConfigToolProps,
+      coinConfigToolProps,
       payCardToolProps,
       trustchainToolProps,
       cloudSyncToolProps,

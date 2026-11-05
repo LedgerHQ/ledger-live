@@ -1,8 +1,4 @@
-import coinConfigOverridesReducer, {
-  sanitizePersistedOverrides,
-  setAllCoinConfigOverrides,
-  setCoinConfigOverride,
-} from "../coinConfigOverrides";
+import { sanitizePersistedOverrides } from "./sanitize";
 
 describe("sanitizePersistedOverrides", () => {
   it.each([
@@ -36,7 +32,12 @@ describe("sanitizePersistedOverrides", () => {
   it.each([
     ["a Date", new Date(0)],
     ["a Map", new Map([["k", "v"]])],
-    ["a class instance", new (class Foo {})()],
+    [
+      "a class instance",
+      new (class Foo {
+        readonly config_currency_solana = {};
+      })(),
+    ],
     [
       "an object with a custom prototype",
       (() => {
@@ -88,51 +89,5 @@ describe("sanitizePersistedOverrides", () => {
       });
       expect(sanitized).toEqual({ config_currency_solana: { token2022Enabled: true } });
     });
-  });
-});
-
-describe("coinConfigOverrides reducer", () => {
-  const pollutedKey = "polluted_key";
-
-  afterEach(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    delete (Object.prototype as any)[pollutedKey];
-  });
-
-  it.each(["__proto__", "constructor", "prototype"])(
-    "setCoinConfigOverride is a no-op for the unsafe key %s",
-    unsafeKey => {
-      const next = coinConfigOverridesReducer(
-        { overrides: {} },
-        setCoinConfigOverride({ key: unsafeKey, value: { polluted: pollutedKey } }),
-      );
-      expect(next.overrides).toEqual({});
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      expect((({} as any)[unsafeKey] as any)?.polluted).not.toBe(pollutedKey);
-    },
-  );
-
-  it("setAllCoinConfigOverrides strips unsafe keys and undefined values from the payload", () => {
-    const next = coinConfigOverridesReducer(
-      { overrides: { config_currency_keep: { ok: true } } },
-      setAllCoinConfigOverrides(
-        JSON.parse(
-          `{"__proto__": {"${pollutedKey}": true}, "constructor": "evil", "config_currency_solana": {"token2022Enabled": true}}`,
-        ),
-      ),
-    );
-    expect(next.overrides).toEqual({
-      config_currency_solana: { token2022Enabled: true },
-    });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect(({} as any)[pollutedKey]).toBeUndefined();
-  });
-
-  it("setCoinConfigOverride deletes an existing override when value is undefined", () => {
-    const next = coinConfigOverridesReducer(
-      { overrides: { config_currency_solana: { token2022Enabled: true } } },
-      setCoinConfigOverride({ key: "config_currency_solana", value: undefined }),
-    );
-    expect(next.overrides).toEqual({});
   });
 });

@@ -6,9 +6,11 @@ import type { Store } from "redux";
 import { payCardAuthSlice, selectCardAuthStatus } from "@features/flow-pay-card-auth/state";
 import { getCardSessionToken } from "@features/platform-card";
 import { featureFlagsReducer, setCachedFlagsSettled } from "@shared/feature-flags";
+import { liveConfigOverridesReducer } from "@shared/live-config-overrides";
 import LedgerStoreProvider from "./LedgerStore";
 
 const mockGetSettings = jest.fn(() => Promise.resolve(undefined));
+const mockGetLiveConfigOverridesState = jest.fn<Promise<unknown>, []>(() => Promise.resolve(null));
 
 jest.mock("../db", () => {
   const empty = () => Promise.resolve(undefined);
@@ -18,6 +20,7 @@ jest.mock("../db", () => {
     getCryptoAssetsCacheState: empty,
     getFeatureFlagsState: empty,
     saveFeatureFlagsState: empty,
+    getLiveConfigOverridesState: () => mockGetLiveConfigOverridesState(),
     getSettings: () => mockGetSettings(),
     getBle: empty,
     getHistory: empty,
@@ -57,6 +60,10 @@ jest.mock("@features/platform-card", () => ({
 
 // A store without the feature-flags middleware, so the test decides when the cache settles.
 const createStore = () => configureStore({ reducer: { featureFlags: featureFlagsReducer } });
+const createStoreWithOverrides = () =>
+  configureStore({
+    reducer: { featureFlags: featureFlagsReducer, liveConfigOverrides: liveConfigOverridesReducer },
+  });
 
 const renderProvider = (store: Store) =>
   render(
@@ -127,5 +134,43 @@ describe("LedgerStoreProvider", () => {
 
     expect(screen.getByText("ready")).toBeOnTheScreen();
     expect(selectCardAuthStatus(store.getState())).toBe("signedIn");
+  });
+
+  describe("LiveConfig overrides", () => {
+    afterEach(() => {
+      mockGetLiveConfigOverridesState.mockReset();
+      mockGetLiveConfigOverridesState.mockResolvedValue(null);
+    });
+
+    it("should restore the persisted overrides", async () => {
+      mockGetLiveConfigOverridesState.mockResolvedValue({
+        overrides: { config_currency_solana: { token2022Enabled: true } },
+      });
+      const store = createStoreWithOverrides();
+      store.dispatch(setCachedFlagsSettled());
+
+      renderProvider(store);
+      await act(() => jest.runAllTimersAsync());
+
+      expect(store.getState().liveConfigOverrides.overrides).toEqual({
+        config_currency_solana: { token2022Enabled: true },
+      });
+    });
+
+    it.each([
+      ["an array", { overrides: [1, 2] }],
+      ["a string", "corrupted"],
+      ["no overrides key", {}],
+    ])("should ignore persisted overrides that are %s", async (_label, persisted) => {
+      mockGetLiveConfigOverridesState.mockResolvedValue(persisted);
+      const store = createStoreWithOverrides();
+      store.dispatch(setCachedFlagsSettled());
+
+      renderProvider(store);
+      await act(() => jest.runAllTimersAsync());
+
+      expect(store.getState().liveConfigOverrides.overrides).toEqual({});
+      expect(screen.getByText("ready")).toBeOnTheScreen();
+    });
   });
 });

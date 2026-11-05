@@ -3,6 +3,8 @@ import RNRestart from "react-native-restart";
 import { configureStore, type StoreEnhancer } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { createAppConfigMiddleware } from "@shared/app-config";
+import { createLiveConfigOverridesMiddleware } from "@shared/live-config-overrides";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import reducers from "~/reducers";
 import { subscribeToNetworkState } from "@shared/network-status";
 import { rebootMiddleware } from "~/middleware/rebootMiddleware";
@@ -66,6 +68,11 @@ export const store = configureStore({
         createAppConfigMiddleware({ session: appConfigSession, reload: () => RNRestart.restart() }),
       )
       .concat(createMobileFeatureFlagsMiddleware())
+      .concat(
+        createLiveConfigOverridesMiddleware({
+          applyOverrides: overrides => LiveConfig.setAllOverrides(overrides),
+        }),
+      )
       .concat(sleepingListener.middleware)
       .concat(createMobileCountervaluesMiddleware()),
 
