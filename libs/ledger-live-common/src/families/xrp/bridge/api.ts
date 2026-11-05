@@ -6,7 +6,6 @@ import type {
   BridgeApi,
   OptimisticOperationDescriptor,
 } from "@ledgerhq/ledger-wallet-framework/api/types";
-import type { Account } from "@ledgerhq/types-live";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import type { XrpAccountInfo } from "@ledgerhq/coin-xrp/types";
 import { getCoinModuleApi } from "../../../bridge/generic-coin-framework/api";
@@ -45,8 +44,8 @@ export async function getTokenFromAsset(
   // An intent or an operation built without a token account only knows the generic `"token"`
   const standard = asset.type === "token" ? getStandardFromReference(assetReference) : asset.type;
 
-  const isEnabled = getXrpEnabledTokenStandards(currency.id).some(enabled => enabled === standard);
-  if (!isEnabled) return undefined;
+  const enabledStandards: string[] = getXrpEnabledTokenStandards(currency.id);
+  if (!standard || !enabledStandards.includes(standard)) return undefined;
 
   const store = getCryptoAssetsStore();
   const token = await store.findTokenByAddressInCurrency(assetOwner, currency.id, assetReference);
@@ -57,10 +56,12 @@ export async function getTokenFromAsset(
   return isSameAsset && token.tokenType === standard ? token : undefined;
 }
 
+/**
+ * Not gated on the enabled standards: without an asset, a send from a stored token account falls
+ * back to a native XRP send. coin-xrp refuses the intent of a standard that is not enabled.
+ */
 export function getAssetFromToken(token: TokenCurrency): AssetInfo | undefined {
-  const enabledStandards = getXrpEnabledTokenStandards(token.parentCurrencyId);
-  const isEnabled = enabledStandards.some(enabled => enabled === token.tokenType);
-  if (!token.tokenIdentifier || !isEnabled) return undefined;
+  if (!token.tokenIdentifier) return undefined;
 
   return {
     type: token.tokenType,
@@ -78,6 +79,8 @@ export async function buildTokenAccountShapes(
   currency: CryptoCurrency,
   address: string,
 ): Promise<Record<string, { xrpResources: XrpTokenResources }>> {
+  if (getXrpEnabledTokenStandards(currency.id).length === 0) return {};
+
   const api = await getCoinModuleApi(currency.id, "local");
   const accountInfo = await api.getAccountInfo?.(buildContext(currency.id), address);
   if (!isXrpAccountInfo(accountInfo)) return {};
@@ -104,20 +107,15 @@ export async function buildTokenAccountShapes(
 }
 
 /**
- * A `changeTrust` amount is a trust limit, not XRP: the pending row records 0. On a held token it
- * edits the limit, which syncs as a `FEES` row.
+ * A `changeTrust` amount is a trust limit, not XRP: the pending row records 0. It is an `OPT_IN`
+ * even when it edits the limit of a held token, as sync records every own limit above 0.
  */
 export function describeOptimisticOperation(
   mode: string,
-  account: Account,
-  { assetReference, assetOwner }: Record<string, unknown>,
 ): OptimisticOperationDescriptor | undefined {
   if (mode !== "changeTrust") return undefined;
 
-  const subAccounts = account.subAccounts ?? [];
-  const isHeld = subAccounts.some(({ token }) => isTokenOfAsset(token, assetReference, assetOwner));
-
-  return { type: isHeld ? "FEES" : "OPT_IN", value: new BigNumber(0) };
+  return { type: "OPT_IN", value: new BigNumber(0) };
 }
 
 export default function xrpBridgeApi(currency: CryptoCurrency): BridgeApi {

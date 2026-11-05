@@ -170,14 +170,16 @@ describe("getAssetFromToken", () => {
       assetReference: "USD",
       assetOwner: ISSUER,
     });
-    expect(getXrpEnabledTokenStandardsMock).toHaveBeenCalledTimes(1);
-    expect(getXrpEnabledTokenStandardsMock).toHaveBeenCalledWith("ripple_testnet");
   });
 
-  it("returns nothing for a standard that is not enabled", () => {
-    getXrpEnabledTokenStandardsMock.mockReturnValue(["mpt"]);
+  it("returns the asset of a standard that is not enabled, never a native fallback", () => {
+    getXrpEnabledTokenStandardsMock.mockReturnValue([]);
 
-    expect(getAssetFromToken(usd)).toBeUndefined();
+    expect(getAssetFromToken(usd)).toEqual({
+      type: "iou",
+      assetReference: "USD",
+      assetOwner: ISSUER,
+    });
   });
 });
 
@@ -232,6 +234,13 @@ describe("buildTokenAccountShapes", () => {
     await expect(buildTokenAccountShapes(ripple, "rAddress")).resolves.toEqual({});
   });
 
+  it("reads nothing while no standard is enabled", async () => {
+    getXrpEnabledTokenStandardsMock.mockReturnValue([]);
+
+    await expect(buildTokenAccountShapes(ripple, "rAddress")).resolves.toEqual({});
+    expect(getAccountInfoMock).not.toHaveBeenCalled();
+  });
+
   it("fails when the read fails", async () => {
     getAccountInfoMock.mockRejectedValue(new Error("node down"));
 
@@ -283,7 +292,7 @@ describe("describeOptimisticOperation", () => {
     });
   });
 
-  it("records an edit limit of a held token as FEES with a 0 value", () => {
+  it("records an edit limit of a held token as OPT_IN with a 0 value, as sync does", () => {
     const operation = buildOptimisticOperation(
       account,
       makeTrustSet("USD"),
@@ -291,19 +300,13 @@ describe("describeOptimisticOperation", () => {
       describeOptimisticOperation,
     );
 
-    expect(operation.type).toBe("FEES");
+    expect(operation.type).toBe("OPT_IN");
     expect(operation.value.toFixed()).toBe("0");
     expect(operation.subOperations).toBeUndefined();
   });
 
-  it("holds a token only on its exact pair", () => {
-    const operation = describeOptimisticOperation("changeTrust", account, makeTrustSet("usd"));
-
-    expect(operation?.type).toBe("OPT_IN");
-  });
-
   it("keeps the generic description of a send", () => {
-    expect(describeOptimisticOperation("send", account, {})).toBeUndefined();
+    expect(describeOptimisticOperation("send")).toBeUndefined();
   });
 });
 

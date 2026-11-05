@@ -10,5 +10,5 @@ export const xrpConfig = currencyDefaultsToLiveConfig(xrpDefaults);
 export function getXrpEnabledTokenStandards(currencyId: string): XrpTokenStandard[] {
   const { enabledTokenStandards = [] } = getCurrencyConfiguration<XrpCoinConfig>(currencyId);
 
-  return TOKEN_STANDARDS.filter((standard) => enabledTokenStandards.includes(standard));
+  return TOKEN_STANDARDS.filter(standard => enabledTokenStandards.includes(standard));
 }
