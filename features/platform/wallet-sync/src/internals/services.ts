@@ -1,4 +1,4 @@
-import { selectWalletSyncState } from "@domain/entity-wallet-sync";
+import { selectWalletSyncState, walletSyncUpdate } from "@domain/entity-wallet-sync";
 import getApi from "@ledgerhq/ledger-key-ring-protocol/api";
 import { NoTrustchainInitialized } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
@@ -61,8 +61,7 @@ export function createLedgerSyncServices<S extends LedgerSyncStateRoot, LocalSta
         latestDistantStateSelector: state => selectWalletSyncState(state).data,
         latestDistantVersionSelector: state => selectWalletSyncState(state).version,
         localStateSelector: cloudSync.localStateSelector,
-        saveUpdate: (data, version, newLocalState) =>
-          cloudSync.save(data, version, newLocalState, dispatch),
+        saveUpdate: saveWalletSyncUpdate(dispatch, cloudSync.applyLocalState),
       })(event);
     },
   });
@@ -105,5 +104,16 @@ export function createLedgerSyncServices<S extends LedgerSyncStateRoot, LocalSta
       fetchLkrpStatus: () => getApi(lkrp.apiBaseUrl).fetchStatus(),
       fetchCloudSyncStatus: () => getCloudSyncApi(cloudSync.apiBaseUrl).fetchStatus(),
     },
+  };
+}
+
+/** Saves a sync: the distant document to the Wallet Sync slice, the local state to the app's. */
+export function saveWalletSyncUpdate<LocalState>(
+  dispatch: Dispatch,
+  applyLocalState: (localState: LocalState, dispatch: Dispatch) => void,
+) {
+  return (data: DistantDocument | null, version: number, localState: LocalState | null) => {
+    dispatch(walletSyncUpdate({ data, version }));
+    if (localState) applyLocalState(localState, dispatch);
   };
 }

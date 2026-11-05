@@ -89,7 +89,7 @@ type State = { app: AppState; trustchain: TrustchainStore; wallet: ReturnType<ty
 
 export const isMockEnv = jest.fn(() => false);
 export const createWalletsync = jest.fn((_blacklistedTokenIds: string[]) => makeWalletsync());
-export const save = jest.fn(async () => {});
+export const applyLocalState = jest.fn();
 
 export function createStore({
   app: appState = {},
@@ -129,7 +129,7 @@ export function createStore({
               createWalletsync,
             ),
             localStateSelector: (state: State) => state.app.local,
-            save,
+            applyLocalState,
             reencryptOnRotation,
           },
         }),
