@@ -248,7 +248,7 @@
     "class-variance-authority": "catalog:",
     "color": "4.2.3",
     "crypto-browserify": "^3.12.1",
-    "dotenv": "16.4.5",
+    "dotenv": "16.4.7",
     "electron-context-menu": "4.1.1",
     "electron-store": "8.2.0",
     "electron-updater": "6.6.2",

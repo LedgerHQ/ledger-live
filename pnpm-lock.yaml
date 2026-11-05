@@ -1632,8 +1632,8 @@ importers:
         specifier: ^3.12.1
         version: 3.12.1
       dotenv:
-        specifier: 16.4.5
-        version: 16.4.5
+        specifier: 16.4.7
+        version: 16.4.7
       electron-context-menu:
         specifier: 4.1.1
         version: 4.1.1
@@ -34934,10 +34934,6 @@ packages:
     resolution: {integrity: sha512-uc47g4b+4k/M/SeaW1y4OApx+mtLWl92l5LMPP0GNXctZqELk+YGgOPIIC5elYmUH4OuoK3JLhuRUYegeySiFA==}
     engines: {node: '>=12'}
 
-  dotenv@16.4.5:
-    resolution: {integrity: sha512-ZmdL2rui+eB2YwhsWzjInR8LldtZHGDoQ1ugH85ppHKwpUHL7j7rN0Ti9NCnGiQbhaZ11FpR+7ao1dNsmduNUg==}
-    engines: {node: '>=12'}
-
   dotenv@16.4.7:
     resolution: {integrity: sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==}
     engines: {node: '>=12'}
@@ -53140,7 +53136,7 @@ snapshots:
       ci-info: 4.3.1
       debug: 4.4.3
       dmg-builder: 26.15.3
-      dotenv: 16.4.5
+      dotenv: 16.4.7
       dotenv-expand: 11.0.6
       ejs: 3.1.10
       electron-publish: 26.15.3
@@ -55065,13 +55061,11 @@ snapshots:
 
   dotenv-expand@11.0.6:
     dependencies:
-      dotenv: 16.4.5
+      dotenv: 16.4.7
 
   dotenv-expand@12.0.3:
     dependencies:
       dotenv: 16.4.7
-
-  dotenv@16.4.5: {}
 
   dotenv@16.4.7: {}
 
