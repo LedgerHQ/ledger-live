@@ -83,6 +83,16 @@ export const listFiles = root => {
 
 const unquote = value => value.replace(/^(["'])([\s\S]*)\1$/, "$2");
 
+const isFullLineComment = line => /^\s*#/.test(line);
+
+/** Strip trailing `# comment` from an unquoted YAML scalar on one line. */
+const stripUnquotedInlineComment = text => {
+  const trimmed = text.trimStart();
+  if (trimmed.startsWith('"') || trimmed.startsWith("'")) return text;
+  const hash = text.indexOf(" #");
+  return hash >= 0 ? text.slice(0, hash).trimEnd() : text;
+};
+
 const scalar = ([head, ...more]) => {
   const continuation = more.map(line => line.trim()).filter(Boolean);
   if (/^[|>][-+]?$/.test(head.trim())) return continuation.join(" ");
@@ -99,10 +109,12 @@ export const parseFrontmatter = text => {
   const keyLines = new Map();
   let key;
   lines.slice(1, end).forEach((line, i) => {
+    if (isFullLineComment(line)) return;
     const match = KEY_LINE.exec(line);
     if (match) {
       key = match[1];
-      raw.set(key, [match[2] ?? ""]);
+      const value = stripUnquotedInlineComment(match[2] ?? "");
+      raw.set(key, [value]);
       keyLines.set(key, i + 2);
     } else if (key) raw.get(key).push(line);
   });

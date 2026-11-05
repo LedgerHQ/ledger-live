@@ -9,6 +9,7 @@ import {
   describeProblem,
   listFiles,
   applyWaivers,
+  parseFrontmatter,
   DESCRIPTION_TRIGGER_CLAUSES,
 } from "./rules.mjs";
 
@@ -70,6 +71,20 @@ describe("frontmatter", () => {
     const folded = "description: >-\n  Format the changed files.\n  Use when committing.";
     const root = repo({ ".agents/skills/fmt/SKILL.md": skill(`name: fmt\n${folded}`) });
     assert.deepEqual(codes(root), []);
+  });
+
+  it("ignores YAML comments in frontmatter", () => {
+    const root = repo({
+      ".agents/skills/fmt/SKILL.md": skill(
+        `name: fmt # Folder name\n# Standalone comment\n${GOOD_DESCRIPTION}`,
+      ),
+    });
+    assert.deepEqual(codes(root), []);
+  });
+
+  it("parseFrontmatter keeps hashes in quoted scalars", () => {
+    const fm = parseFrontmatter(skill('name: "a#b"\ndescription: Does things. Use when testing.'));
+    assert.equal(fm.data.name, "a#b");
   });
 
   it("asks no frontmatter of a skill reference file", () => {
