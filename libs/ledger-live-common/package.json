@@ -52,6 +52,12 @@
       "exchange/swapTransactionStatus/transactionStatus": [
         "lib-es/exchange/swapTransactionStatus/transactionStatus"
       ],
+      "exchange/intents": [
+        "lib-es/exchange/intents/index"
+      ],
+      "exchange/intents/index": [
+        "lib-es/exchange/intents/index"
+      ],
       "errors": [
         "./src/errors.ts"
       ],
@@ -137,6 +143,16 @@
       "@ledgerhq/source": "./src/exchange/swapTransactionStatus/transactionStatus.ts",
       "types": "./lib-es/exchange/swapTransactionStatus/transactionStatus.d.ts",
       "default": "./lib-es/exchange/swapTransactionStatus/transactionStatus.js"
+    },
+    "./exchange/intents": {
+      "@ledgerhq/source": "./src/exchange/intents/index.ts",
+      "types": "./lib-es/exchange/intents/index.d.ts",
+      "default": "./lib-es/exchange/intents/index.js"
+    },
+    "./exchange/intents/index": {
+      "@ledgerhq/source": "./src/exchange/intents/index.ts",
+      "types": "./lib-es/exchange/intents/index.d.ts",
+      "default": "./lib-es/exchange/intents/index.js"
     },
     ".": {
       "default": "./lib-es/index.js"

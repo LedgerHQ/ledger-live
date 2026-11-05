@@ -9,10 +9,66 @@ import {
   getSwapStepFromError,
   getIsSwapRetryPending,
   getIsSwapSignatureVerificationError,
+  toExchangeError,
   withSignatureRetryCode,
 } from "./error";
 
 describe("exchange/error", () => {
+  describe("toExchangeError", () => {
+    it("keeps an Error as it is", () => {
+      const error = new TransportStatusError(0x6a80);
+
+      expect(toExchangeError(error)).toBe(error);
+    });
+
+    it("names a DMK error after its tag, with the message of its original error", () => {
+      const dmkError = {
+        _tag: "DeviceDisconnectedWhileSendingError",
+        originalError: new Error("link lost"),
+      };
+
+      const error = toExchangeError(dmkError);
+
+      expect(error).toBeInstanceOf(Error);
+      expect(error.name).toBe("DeviceDisconnectedWhileSendingError");
+      expect(error.message).toBe("link lost");
+      expect(error.cause).toBe(dmkError);
+    });
+
+    it("uses the tag as the message of a DMK error that carries none", () => {
+      expect(toExchangeError({ _tag: "UnknownDeviceError" }).message).toBe("UnknownDeviceError");
+    });
+
+    it("uses the own message of a DMK error that has no original error", () => {
+      const error = toExchangeError({ _tag: "EthAppCommandError", message: "Invalid data" });
+
+      expect(error.name).toBe("EthAppCommandError");
+      expect(error.message).toBe("Invalid data");
+    });
+
+    it("keeps the name and message of a plain object", () => {
+      const rejection = { name: "ProviderUnavailable", message: "Provider is down" };
+
+      const error = toExchangeError(rejection);
+
+      expect(error).toBeInstanceOf(Error);
+      expect(error.name).toBe("ProviderUnavailable");
+      expect(error.message).toBe("Provider is down");
+      expect(error.cause).toBe(rejection);
+    });
+
+    it("keeps the status code of a plain transport error, which the steps map from", () => {
+      const error = toExchangeError({ name: "TransportStatusError", statusCode: 0x6a84 });
+
+      expect(error.name).toBe("TransportStatusError");
+      expect(error).toHaveProperty("statusCode", 0x6a84);
+    });
+
+    it("wraps any other thrown value", () => {
+      expect(toExchangeError("boom")).toEqual(new Error("boom"));
+    });
+  });
+
   describe("getErrorName", () => {
     it("should return name from error object", () => {
       const error = { name: "ValidationError" };
