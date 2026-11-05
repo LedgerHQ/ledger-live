@@ -1339,7 +1339,7 @@ jobs:
       RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
     steps:
       - name: Report e2e results to Slack
-        uses: LedgerHQ/ledger-live/tools/actions/composites/e2e-slack-report@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/e2e-slack-report@ci/e2e-QAA-1576-desktop-windows
         with:
           token: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
           channel: C05FKJ7DFAP
