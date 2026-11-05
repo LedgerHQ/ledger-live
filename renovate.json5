@@ -1,64 +1,64 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: [
     "github>LedgerHQ/renovate-config//base.json5",
     "github>LedgerHQ/renovate-config//infra/gha.json5",
-    ":dependencyDashboard"
+    ":dependencyDashboard",
   ],
-  "dependencyDashboard": true,
-  "gitIgnoredAuthors": ["105061298+live-github-bot[bot]@users.noreply.github.com"],
-  "labels": ["dependencies"],
-  "automerge": false,
-  "vulnerabilityAlerts": {
-    "enabled": true,
-    "labels": ["security"]
+  dependencyDashboard: true,
+  gitIgnoredAuthors: ["105061298+live-github-bot[bot]@users.noreply.github.com"],
+  labels: ["dependencies"],
+  automerge: false,
+  vulnerabilityAlerts: {
+    enabled: true,
+    labels: ["security"],
   },
-  "packageRules": [
+  packageRules: [
     {
-      "description": "Pin PRs: rebase only on conflict, not on every develop merge (Renovate's pin default is behind-base-branch)",
-      "matchUpdateTypes": ["pin", "pinDigest"],
-      "rebaseWhen": "conflicted"
+      description: "Pin PRs: rebase only on conflict, not on every develop merge (Renovate's pin default is behind-base-branch)",
+      matchUpdateTypes: ["pin", "pinDigest"],
+      rebaseWhen: "conflicted",
     },
     {
-      "description": "Coin modules: update PRs are opened by the LedgerHQ/coin-modules release workflow",
-      "matchManagers": ["npm"],
-      "matchPackageNames": ["@ledgerhq/coin-*"],
-      "enabled": false
+      description: "Coin modules: update PRs are opened by the LedgerHQ/coin-modules release workflow",
+      matchManagers: ["npm"],
+      matchPackageNames: ["@ledgerhq/coin-*"],
+      enabled: false,
     },
     {
-      "description": "GitHub Actions Internal (CI)",
-      "matchManagers": ["github-actions"],
-      "matchPackageNames": ["LedgerHQ/*", "ledgerhq/*"],
-      "pinDigests": false,
-      "labels": ["dependencies", "github_actions"],
-      "reviewers": ["team:wallet-ci"],
-      "assignees": ["team:wallet-ci"]
+      description: "GitHub Actions Internal (CI)",
+      matchManagers: ["github-actions"],
+      matchPackageNames: ["LedgerHQ/*", "ledgerhq/*"],
+      pinDigests: false,
+      labels: ["dependencies", "github_actions"],
+      reviewers: ["team:wallet-ci"],
+      assignees: ["team:wallet-ci"],
     },
     {
-      "description": "GitHub Actions External (CI)",
-      "matchManagers": ["github-actions"],
-      "pinDigests": true,
-      "minimumReleaseAge": "15 days",
-      "labels": ["dependencies", "github_actions"],
-      "reviewers": ["team:wallet-ci"],
-      "assignees": ["team:wallet-ci"],
-      "matchPackageNames": ["!/^LedgerHQ/.*/", "!/^ledgerhq/.*/"]
+      description: "GitHub Actions External (CI)",
+      matchManagers: ["github-actions"],
+      pinDigests: true,
+      minimumReleaseAge: "15 days",
+      labels: ["dependencies", "github_actions"],
+      reviewers: ["team:wallet-ci"],
+      assignees: ["team:wallet-ci"],
+      matchPackageNames: ["!/^LedgerHQ/.*/", "!/^ledgerhq/.*/"],
     },
     {
-      "description": "Lumen linked updates",
-      "matchPackageNames": ["@ledgerhq/lumen-*"],
-      "groupName": "lumen",
-      "commitMessagePrefix": "chore:",
-      "labels": ["dependencies", "ui", "lumen"],
-      "reviewers": ["team:live-hub"],
-      "assignees": ["team:live-hub"],
-      "prPriority": 10
+      description: "Lumen linked updates",
+      matchPackageNames: ["@ledgerhq/lumen-*"],
+      groupName: "lumen",
+      commitMessagePrefix: "chore:",
+      labels: ["dependencies", "ui", "lumen"],
+      reviewers: ["team:live-hub"],
+      assignees: ["team:live-hub"],
+      prPriority: 10,
     },
     {
-      "description": "Core Ownership Rules",
-      "reviewers": ["team:live-hub"],
-      "assignees": ["team:live-hub"],
-      "matchPackageNames": [
+      description: "Core Ownership Rules",
+      reviewers: ["team:live-hub"],
+      assignees: ["team:live-hub"],
+      matchPackageNames: [
         "/changesets/",
         "/commitlint/",
         "/esbuild/",
@@ -66,80 +66,76 @@
         "/prettier/",
         "/typescript/",
         "/vite/",
-        "/zx/"
+        "/zx/",
       ],
-      "minimumReleaseAge": "2 days"
+      minimumReleaseAge: "2 days",
     },
     {
-      "description": "Electron ecosystem ownership, one PR per package",
-      "reviewers": ["team:live-hub"],
-      "assignees": ["team:live-hub"],
-      "matchPackageNames": [
+      description: "Electron ecosystem ownership, one PR per package",
+      reviewers: ["team:live-hub"],
+      assignees: ["team:live-hub"],
+      matchPackageNames: [
         "/electron/",
         "/^@electron/",
         "!electron-context-menu",
         "!electron-store",
-        "!vite-plugin-electron"
+        "!vite-plugin-electron",
       ],
-      "minimumReleaseAge": "2 days"
+      minimumReleaseAge: "2 days",
     },
     {
-      "description": "Metro linked updates",
-      "matchPackageNames": [
+      description: "Metro linked updates",
+      matchPackageNames: [
         "metro",
         "metro-core",
         "metro-config",
         "metro-resolver",
         "metro-runtime",
         "metro-source-map",
-        "metro-transform-worker"
+        "metro-transform-worker",
       ],
-      "groupName": "metro",
-      "reviewers": ["team:live-hub"],
-      "assignees": ["team:live-hub"],
-      "minimumReleaseAge": "2 days"
+      groupName: "metro",
+      reviewers: ["team:live-hub"],
+      assignees: ["team:live-hub"],
+      minimumReleaseAge: "2 days",
     },
     {
-      "description": "Polkadot linked updates",
-      "matchPackageNames": ["@polkadot/*"],
-      "groupName": "polkadot"
+      description: "Polkadot linked updates",
+      matchPackageNames: ["@polkadot/*"],
+      groupName: "polkadot",
     },
     {
-      "description": "Expo monorepo grouping",
-      "extends": ["monorepo:expo"],
-      "groupName": null
+      description: "Expo monorepo grouping",
+      extends: ["monorepo:expo"],
+      groupName: null,
     },
     {
-      "description": "E2E Playwright and Allure linked updates",
-      "matchManagers": ["npm"],
-      "groupName": "e2e playwright and allure",
-      "matchPackageNames": [
+      description: "E2E Playwright and Allure linked updates",
+      matchManagers: ["npm"],
+      groupName: "e2e playwright and allure",
+      matchPackageNames: [
         "@playwright/test",
         "playwright",
         "allure-js-commons",
-        "allure-playwright"
+        "allure-playwright",
       ],
-      "commitMessagePrefix": "chore(e2e):",
-      "labels": ["dependencies", "e2e"],
-      "reviewers": ["team:qaa"],
-      "assignees": ["team:qaa"]
+      commitMessagePrefix: "chore(e2e):",
+      labels: ["dependencies", "e2e"],
+      reviewers: ["team:qaa"],
+      assignees: ["team:qaa"],
     },
     {
-      "description": "E2E Detox and Allure linked updates",
-      "matchManagers": ["npm"],
-      "groupName": "e2e detox and allure",
-      "matchPackageNames": [
-        "detox",
-        "detox-allure2-adapter",
-        "jest-allure2-reporter"
-      ],
-      "commitMessagePrefix": "chore(e2e):",
-      "labels": ["dependencies", "e2e"],
-      "reviewers": ["team:qaa"],
-      "assignees": ["team:qaa"]
-    }
+      description: "E2E Detox and Allure linked updates",
+      matchManagers: ["npm"],
+      groupName: "e2e detox and allure",
+      matchPackageNames: ["detox", "detox-allure2-adapter", "jest-allure2-reporter"],
+      commitMessagePrefix: "chore(e2e):",
+      labels: ["dependencies", "e2e"],
+      reviewers: ["team:qaa"],
+      assignees: ["team:qaa"],
+    },
   ],
-  "prConcurrentLimit": 10,
-  "separateMinorPatch": true,
-  "enabledManagers": ["npm", "github-actions"]
+  prConcurrentLimit: 10,
+  separateMinorPatch: true,
+  enabledManagers: ["npm", "github-actions"],
 }

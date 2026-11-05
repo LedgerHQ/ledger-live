@@ -31,7 +31,18 @@ on:
         description: "Run only one team's tests. ANDed with test_filter, Smoke and the device."
         required: false
         type: choice
-        options: [all, bst, buy-and-sell, coin-integration, earn, engagement, my-ledger-onboarding, swap, wallet-xp]
+        options:
+          [
+            all,
+            bst,
+            buy-and-sell,
+            coin-integration,
+            earn,
+            engagement,
+            my-ledger-onboarding,
+            swap,
+            wallet-xp,
+          ]
         default: all
       invert_filter:
         description: Ignore test having name pattern (entered in the previous field)
@@ -987,7 +998,16 @@ jobs:
   notify-to-slack:
     name: "Notify to Slack"
     runs-on: [ledger-wallet-1cpu-aws-public-cached]
-    needs: [prepare-devices, report-to-allure, report-to-allure-device2, report-to-allure-macos, qaa-allure-upload, qaa-allure-upload-device2, qaa-allure-upload-macos]
+    needs:
+      [
+        prepare-devices,
+        report-to-allure,
+        report-to-allure-device2,
+        report-to-allure-macos,
+        qaa-allure-upload,
+        qaa-allure-upload-device2,
+        qaa-allure-upload-macos,
+      ]
     if: ${{ always() && (inputs.slack_notif || github.event_name == 'schedule') }}
     env:
       IS_DUAL: ${{ needs.prepare-devices.outputs.is_dual }}

@@ -1719,7 +1719,14 @@ jobs:
   report-on-slack:
     name: "Test Mobile E2E > Slack Report"
     runs-on: ubuntu-22.04
-    needs: [determine-builds, allure-report-android, allure-report-ios, qaa-allure-upload-ios, qaa-allure-upload-android]
+    needs:
+      [
+        determine-builds,
+        allure-report-android,
+        allure-report-ios,
+        qaa-allure-upload-ios,
+        qaa-allure-upload-android,
+      ]
     if: ${{ !cancelled() && !inputs.ci_smoke && (needs.allure-report-ios.outputs.finalStatus || needs.allure-report-android.outputs.finalStatus) }}
     env:
       SLACK_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}

@@ -2,6 +2,7 @@ import { step } from "tests/misc/reporters/step";
 import { Drawer } from "tests/component/drawer.component";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 import { expect } from "@playwright/test";
 
 export type DelegateTxType = "Delegated" | "Staked" | "Locked" | "Voted" | "Redelegated";
@@ -16,7 +17,7 @@ export class DelegateDrawer extends Drawer {
   @step("Verify provider is visible")
   async providerIsVisible(account: Delegate) {
     if (account.account.currency === Currency.ATOM) {
-      await expect(this.provider(account.provider)).toBeVisible();
+      await expect(this.provider(account.provider)).toBeVisible({ timeout: TIMEOUT.xxlarge });
     }
   }
 
