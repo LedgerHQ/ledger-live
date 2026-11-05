@@ -9,11 +9,9 @@ import { ScreenName } from "~/const";
 import PerpsDepositScreen from "../PerpsDepositScreen";
 
 const mockOpenDrawer = jest.fn();
-jest.mock("@ledgerhq/live-common/wallet-api/converters", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/wallet-api/converters"),
-  resolveWalletApiSpendableBalance: (account: { spendableBalance: unknown }) => ({
-    then: (onResolved: (balance: unknown) => void) => onResolved(account.spendableBalance),
-  }),
+jest.mock("@ledgerhq/live-common/wallet-api/Perps/deposit/useWalletApiSpendableBalance", () => ({
+  useWalletApiSpendableBalance: (account?: { spendableBalance: unknown }) =>
+    account?.spendableBalance,
 }));
 
 jest.mock("LLM/features/ModularDrawer", () => ({

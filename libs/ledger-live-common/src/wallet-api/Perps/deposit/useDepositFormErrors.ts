@@ -13,7 +13,6 @@ import {
   type DepositErrorDetails,
   type DepositFormError,
 } from "./formError";
-import { resolveWalletApiSpendableBalance } from "../../converters";
 import { readStoredSpendableBalance, type SpendableBalanceReader } from "./coinErrors";
 import {
   findDepositParentAccount,
@@ -22,6 +21,7 @@ import {
 } from "./quote";
 import { cancelDepositRequest } from "./request";
 import { usePerpsDepositQuote } from "./useDepositQuote";
+import { useWalletApiSpendableBalance } from "./useWalletApiSpendableBalance";
 
 export function toConvertedDepositAmount(converted: number | null | undefined): BigNumber | null {
   return converted === null || converted === undefined ? null : new BigNumber(converted);
@@ -225,28 +225,6 @@ export function useDepositFormErrors({
     closeDetails,
     buyFromDetails,
   };
-}
-
-function useWalletApiSpendableBalance(
-  account: AccountLike | undefined,
-  parentAccount: Account | undefined,
-): BigNumber | undefined {
-  const [resolved, setResolved] = useState<{ account: AccountLike; balance: BigNumber } | null>(
-    null,
-  );
-
-  useEffect(() => {
-    if (!account) return;
-    let stale = false;
-    void resolveWalletApiSpendableBalance(account, parentAccount).then(balance => {
-      if (!stale) setResolved({ account, balance });
-    });
-    return () => {
-      stale = true;
-    };
-  }, [account, parentAccount]);
-
-  return resolved && resolved.account === account ? resolved.balance : undefined;
 }
 
 export type UsePerpsDepositFormParams = Readonly<{

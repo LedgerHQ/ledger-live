@@ -4,7 +4,7 @@
 import "../../../__tests__/test-helpers/dom-polyfill";
 import BigNumber from "bignumber.js";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
-import { act, renderHook, waitFor } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import { QuotesErrorCodes } from "@ledgerhq/wallet-api-exchange-module";
 import type { PerpsDepositQuoteState } from "./useDepositQuote";
 import {
@@ -18,17 +18,15 @@ jest.mock("./useDepositQuote", () => ({
   usePerpsDepositQuote: (params: unknown) => mockUsePerpsDepositQuote(params),
 }));
 
-const resolveImmediately = (account: AccountLike) =>
-  ({
-    then: (onResolved: (balance: BigNumber) => void) => onResolved(account.spendableBalance),
-  }) as unknown as Promise<BigNumber>;
-
-const mockResolveWalletApiSpendableBalance = jest.fn<Promise<BigNumber>, [AccountLike]>();
-jest.mock("../../converters", () => ({
-  ...jest.requireActual("../../converters"),
-  resolveWalletApiSpendableBalance: (account: AccountLike) =>
-    mockResolveWalletApiSpendableBalance(account),
+const mockUseWalletApiSpendableBalance = jest.fn<
+  BigNumber | undefined,
+  [AccountLike | undefined]
+>();
+jest.mock("./useWalletApiSpendableBalance", () => ({
+  useWalletApiSpendableBalance: (account: AccountLike | undefined) =>
+    mockUseWalletApiSpendableBalance(account),
 }));
+const readStoredBalance = (account: AccountLike | undefined) => account?.spendableBalance;
 
 const mockCancelDepositRequest = jest.fn();
 jest.mock("./request", () => ({
@@ -113,7 +111,7 @@ const errorEvents = (track: jest.Mock) =>
 describe("usePerpsDepositForm", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockResolveWalletApiSpendableBalance.mockImplementation(resolveImmediately);
+    mockUseWalletApiSpendableBalance.mockImplementation(readStoredBalance);
     mockUsePerpsDepositQuote.mockReturnValue(
       quoteState({
         quote: { amountTo: new BigNumber(19), quoteId: "q-1", errors: [] },
@@ -122,10 +120,8 @@ describe("usePerpsDepositForm", () => {
     );
   });
 
-  it("uses the Wallet API balance of the bridge for Max and the sent amount", async () => {
-    mockResolveWalletApiSpendableBalance.mockImplementation(async account =>
-      account === depositAccount ? new BigNumber("10000000") : account.spendableBalance,
-    );
+  it("waits for the Wallet API balance before Max, the quote and Review", () => {
+    mockUseWalletApiSpendableBalance.mockReturnValue(undefined);
     const { result } = renderForm();
 
     expect(result.current.maxAmount).toBeNull();
@@ -134,8 +130,15 @@ describe("usePerpsDepositForm", () => {
     expect(mockUsePerpsDepositQuote).toHaveBeenLastCalledWith(
       expect.objectContaining({ amount: "" }),
     );
+  });
 
-    await waitFor(() => expect(result.current.maxAmount).toBe(10));
+  it("uses the Wallet API balance of the bridge for Max and the balance check", () => {
+    mockUseWalletApiSpendableBalance.mockImplementation(account =>
+      account === depositAccount ? new BigNumber("10000000") : account?.spendableBalance,
+    );
+    const { result } = renderForm();
+
+    expect(result.current.maxAmount).toBe(10);
     expect(result.current.statusError?.code).toBe("insufficientBalance");
     expect(result.current.depositSpendableBalance?.toFixed()).toBe("10000000");
   });
@@ -281,7 +284,7 @@ describe("usePerpsDepositForm", () => {
 describe("usePerpsDepositForm refresh and analytics", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockResolveWalletApiSpendableBalance.mockImplementation(resolveImmediately);
+    mockUseWalletApiSpendableBalance.mockImplementation(readStoredBalance);
     mockUsePerpsDepositQuote.mockReturnValue(AMOUNT_TOO_LOW);
   });
 
