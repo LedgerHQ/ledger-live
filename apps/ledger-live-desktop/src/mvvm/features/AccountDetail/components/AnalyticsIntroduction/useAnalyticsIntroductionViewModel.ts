@@ -1,7 +1,9 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router";
-import { hasConfirmedAccountHistory } from "@features/flow-account-detail-analytics-notice";
-import type { AccountAnalyticsIntroductionProps } from "@features/flow-account-detail-analytics-notice/web";
+import {
+  hasConfirmedAccountHistory,
+  type AccountAnalyticsIntroductionProps,
+} from "@features/flow-account-detail-analytics-notice";
 import {
   dismissAccountAnalyticsIntroduction,
   selectAccountAnalyticsIntroductionDismissed,

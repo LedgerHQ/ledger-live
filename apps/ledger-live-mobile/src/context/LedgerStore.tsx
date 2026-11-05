@@ -58,6 +58,7 @@ import { importMarketListConfig } from "~/reducers/market";
 import { importMarketBannerState } from "~/reducers/marketBanner";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { importWalletState } from "~/reducers/wallet";
+import { restoreAccountAnalyticsIntroductionFromStorage } from "LLM/features/AccountDetail/analyticsIntroductionStorage";
 import { importLargeMoverState } from "~/actions/largeMoverLandingPage";
 import { initHistory } from "~/reducers/history";
 import { restoreTokensToCache, parsePersistedCAL } from "@domain/api-currency-token";
@@ -290,6 +291,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 
       await bootstrapCardSession(store.dispatch);
       await restoreCardAuthStatus(store.dispatch, store.getState);
+      await restoreAccountAnalyticsIntroductionFromStorage(store.dispatch);
 
       setReady(true);
       onInitFinished();
