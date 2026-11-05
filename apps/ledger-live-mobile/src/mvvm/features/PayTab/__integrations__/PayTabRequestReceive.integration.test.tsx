@@ -7,7 +7,7 @@ import {
   createNativeStackNavigator,
   type NativeStackScreenProps,
 } from "@react-navigation/native-stack";
-import type { VerifyAddressIntentJobState } from "@features/platform-verify-address-intent";
+import type { VerifyAddressIntentJobState } from "@features/platform-intent-verify-address";
 import { render, screen, waitFor, act, countervaluesTestUserSettings } from "@tests/test-renderer";
 import { buildDeviceInitializationInput } from "LLM/components/DeviceIntentExecutor";
 import { importCountervalues, pairId } from "@domain/entity-market-countervalues";

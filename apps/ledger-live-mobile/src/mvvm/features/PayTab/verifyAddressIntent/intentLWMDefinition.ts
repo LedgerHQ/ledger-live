@@ -1,7 +1,7 @@
 import {
   verifyAddressIntentDefinition,
   type VerifyAddressIntentPlatformDefinition,
-} from "@features/platform-verify-address-intent";
+} from "@features/platform-intent-verify-address";
 import { VerifyAddressIntentComponentLWM } from "./componentLWM";
 
 export const verifyAddressIntentLWMDefinition: VerifyAddressIntentPlatformDefinition = {

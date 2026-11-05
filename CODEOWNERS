@@ -150,7 +150,7 @@ features/flow/portfolio-services-entry-points/           @ledgerhq/wallet-xp
 features/platform/assets-table/                          @ledgerhq/wallet-xp
 
 # Wallet — Intents
-features/platform/verify-address-intent/                 @ledgerhq/wallet-xp
+features/platform/intent-verify-address/                 @ledgerhq/wallet-xp
 
 # Wallet — App lock
 features/platform/app-lock/                              @ledgerhq/wallet-xp
