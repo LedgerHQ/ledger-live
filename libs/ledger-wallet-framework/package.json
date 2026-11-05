@@ -132,7 +132,7 @@
     "@types/numeral": "2.0.5",
     "@typescript/native": "catalog:",
     "typescript": "catalog:",
-    "cross-env": "7.0.3",
+    "cross-env": "10.1.0",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
