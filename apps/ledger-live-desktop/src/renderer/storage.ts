@@ -170,7 +170,7 @@ function getDebouncedSetKey(ns: string, keyPath: keyof DatabaseValues) {
   const id = `${ns}:${keyPath}`;
   let debouncedSetKey = debouncedSetKeys.get(id);
   if (!debouncedSetKey) {
-    debouncedSetKey = debounce(async (value: unknown) => {
+    const write = async (value: unknown) => {
       try {
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         const transform = transforms[keyPath as keyof Transforms];
@@ -182,6 +182,12 @@ function getDebouncedSetKey(ns: string, keyPath: keyof DatabaseValues) {
       } catch (e) {
         logger.error("debouncedSetKey failed", { ns, keyPath }, e);
       }
+    };
+    // One write at a time: an older value that still encodes must not reach main last.
+    let lastWrite: Promise<void> = Promise.resolve();
+    debouncedSetKey = debounce((value: unknown) => {
+      lastWrite = lastWrite.then(() => write(value));
+      return lastWrite;
     }, SET_KEY_DEBOUNCE_MS);
     debouncedSetKeys.set(id, debouncedSetKey);
   }

@@ -52,6 +52,24 @@ describe("renderer storage", () => {
     expect(db.setKey).toHaveBeenLastCalledWith("app", "ptx", { lastScreen: "swap" });
   });
 
+  it("sends the writes of a key in order", async () => {
+    let answer: (() => void) | undefined;
+    jest.mocked(db.setKey).mockReturnValueOnce(new Promise<void>(resolve => (answer = resolve)));
+    setKey("app", "ptx", { lastScreen: "earn" });
+    const first = flushPendingWrites();
+    await Promise.resolve();
+
+    setKey("app", "ptx", { lastScreen: "swap" });
+    const second = flushPendingWrites();
+    await Promise.resolve();
+    expect(db.setKey).toHaveBeenCalledTimes(1);
+
+    answer?.();
+    await Promise.all([first, second]);
+    expect(db.setKey).toHaveBeenCalledTimes(2);
+    expect(db.setKey).toHaveBeenLastCalledWith("app", "ptx", { lastScreen: "swap" });
+  });
+
   it("drops the pending writes on reset", async () => {
     setKey("app", "ptx", { lastScreen: "market" });
 
