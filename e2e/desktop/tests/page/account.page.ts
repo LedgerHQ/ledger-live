@@ -11,40 +11,37 @@ import { escapeRegExp } from "tests/utils/regExpUtils";
 export class AccountPage extends AppPage {
   private readonly layout = new Layout(this.page);
   private readonly accountDetail = new AccountDetailPage(this.page);
-  private readonly settingsButton = this.page.getByTestId("account-settings-button");
-  private readonly settingsDeleteButton = this.page.getByTestId("account-settings-delete-button");
-  private readonly settingsConfirmButton = this.page.getByTestId("modal-confirm-button");
-  private readonly swapButton = this.page.getByTestId("swap-account-action-button");
-  private readonly stakeButton = this.page.getByTestId("stake-button");
-  private readonly receiveButton = this.page.getByRole("button", { name: "Receive", exact: true });
-  private readonly activatePrivateBalanceButton = this.page.getByTestId(
-    "show-private-balance-button",
-  );
-  private readonly sendButton = this.page.getByRole("button", { name: "Send" });
-  private readonly buyButton = this.page.getByRole("button", { name: "Buy" });
-  private readonly accountName = this.page.locator("#account-header-name");
-  private readonly lastOperation = this.page.locator("text=Latest operations");
-  private readonly tokenValue = (tokenName: string) =>
+  readonly settingsButton = this.page.getByTestId("account-settings-button");
+  private settingsDeleteButton = this.page.getByTestId("account-settings-delete-button");
+  private settingsConfirmButton = this.page.getByTestId("modal-confirm-button");
+  private swapButton = this.page.getByTestId("swap-account-action-button");
+  private stakeButton = this.page.getByTestId("stake-button");
+  private receiveButton = this.page.getByRole("button", { name: "Receive", exact: true });
+  private activatePrivateBalanceButton = this.page.getByTestId("show-private-balance-button");
+  private sendButton = this.page.getByRole("button", { name: "Send" });
+  private buyButton = this.page.getByRole("button", { name: "Buy" });
+  private accountName = this.page.locator("#account-header-name");
+  private lastOperation = this.page.locator("text=Latest operations");
+  private tokenValue = (tokenName: string) =>
     this.page.getByTestId(`account-row-${tokenName.toLowerCase()}`);
-  private readonly tokenRowByTicker = (tokenTicker: string) =>
+  private tokenRowByTicker = (tokenTicker: string) =>
     this.page.getByTestId(`account-row-${tokenTicker.toLowerCase()}`);
-  private readonly accountBalance = this.page.getByTestId("total-balance");
-  private readonly operationList = this.page.locator("id=operation-list");
-  private readonly showMoreButton = this.page.getByText("Show more");
-  private readonly advancedButton = this.page.getByText("Advanced");
-  private readonly accountAdvancedLogs = this.page.getByTestId("Advanced_Logs");
-  private readonly operationRows = this.page.locator("[data-testid^='operation-row-']");
-  private readonly operationStatus = this.page.locator("[data-testid^='operation-status-']");
-  private readonly closeModal = this.page.getByTestId("modal-close-button");
-  private readonly tokenRow = (tokenTicker: string) =>
-    this.page.getByTestId(`token-row-${tokenTicker}`);
-  private readonly showAllTokensButton = this.page.getByTestId("account-tokens-show-all-button");
-  private readonly addTokenButton = this.page.getByRole("button", { name: "Add token" });
-  private readonly viewDetailsButton = this.page.getByText("View details");
-  private readonly editName = this.page.locator("#input-edit-name");
-  private readonly applyButton = this.page.getByTestId("account-settings-apply-button");
-  private readonly accountChart = this.page.getByTestId("chart-container");
-  private readonly selectSpecificOperation = (operationType: string) =>
+  private accountBalance = this.page.getByTestId("total-balance");
+  private operationList = this.page.locator("id=operation-list");
+  private showMoreButton = this.page.getByText("Show more");
+  private advancedButton = this.page.getByText("Advanced");
+  private accountAdvancedLogs = this.page.getByTestId("Advanced_Logs");
+  private operationRows = this.page.locator("[data-testid^='operation-row-']");
+  private operationStatus = this.page.locator("[data-testid^='operation-status-']");
+  private closeModal = this.page.getByTestId("modal-close-button");
+  private tokenRow = (tokenTicker: string) => this.page.getByTestId(`token-row-${tokenTicker}`);
+  private showAllTokensButton = this.page.getByTestId("account-tokens-show-all-button");
+  private addTokenButton = this.page.getByRole("button", { name: "Add token" });
+  private viewDetailsButton = this.page.getByText("View details");
+  private editName = this.page.locator("#input-edit-name");
+  private applyButton = this.page.getByTestId("account-settings-apply-button");
+  private accountChart = this.page.getByTestId("chart-container");
+  private selectSpecificOperation = (operationType: string) =>
     this.page.locator("[data-testid^='operation-row-']").filter({ hasText: operationType });
   private readonly noAssetsTitle = this.page.getByTestId("no-assets-title");
 
