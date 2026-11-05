@@ -4,43 +4,47 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { waitForAccountRenamed } from "tests/utils/userdata";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { buildTags } from "tests/utils/tagsUtils";
+import { accountDetailFlagStates } from "tests/utils/featureFlagUtils";
 
 const accounts = [{ account: Account.ATOM_1, xrayTicket: "B2CQA-2996" }];
 
 for (const account of accounts) {
-  test.describe("Rename account", () => {
-    test.use({
-      teamOwner: Team.WALLET_XP,
-      userdata: "skip-onboarding-with-last-seen-device",
-      cliCommands: [liveDataCommand(account.account)],
-      speculosApp: account.account.currency.speculosApp,
-      speculosForSetupOnly: true,
-    });
+  for (const { label, featureFlags } of accountDetailFlagStates(true)) {
+    test.describe("Rename account", () => {
+      test.use({
+        teamOwner: Team.WALLET_XP,
+        featureFlags,
+        userdata: "skip-onboarding-with-last-seen-device",
+        cliCommands: [liveDataCommand(account.account)],
+        speculosApp: account.account.currency.speculosApp,
+        speculosForSetupOnly: true,
+      });
 
-    test(
-      `[${account.account.currency.testLabel}] - Rename account and persist after restart`,
-      {
-        tag: buildTags({ currencyId: account.account.currency.id }),
-        annotation: {
-          type: "TMS",
-          description: account.xrayTicket,
+      test(
+        `[${account.account.currency.testLabel}] [${label}] - Rename account and persist after restart`,
+        {
+          tag: buildTags({ currencyId: account.account.currency.id }),
+          annotation: {
+            type: "TMS",
+            description: account.xrayTicket,
+          },
         },
-      },
-      async ({ app, userdataFile }) => {
-        await app.redux.listenToReduxActions();
+        async ({ app, userdataFile }) => {
+          await app.redux.listenToReduxActions();
 
-        await app.mainNavigation.openTargetFromMainNavigation("accounts");
-        await app.accounts.navigateToAccountByName(account.account.accountName);
-        await app.account.expectAccountVisibility(account.account.accountName);
+          await app.mainNavigation.openTargetFromMainNavigation("accounts");
+          await app.accounts.navigateToAccountByName(account.account.accountName);
+          await app.account.expectAccountVisibility(account.account.accountName);
 
-        const newName = "New account name";
-        await app.account.renameAccount(newName);
-        await app.account.expectAccountVisibility(newName);
-        await app.redux.waitForReduxAction("UPDATE_ACCOUNT");
+          const newName = "New account name";
+          await app.account.renameAccount(newName);
+          await app.account.expectAccountVisibility(newName);
+          await app.redux.waitForReduxAction("UPDATE_ACCOUNT");
 
-        // Wait for the userdata to be persisted to disk with the renamed account
-        await waitForAccountRenamed(userdataFile, newName);
-      },
-    );
-  });
+          // Wait for the userdata to be persisted to disk with the renamed account
+          await waitForAccountRenamed(userdataFile, newName);
+        },
+      );
+    });
+  }
 }
