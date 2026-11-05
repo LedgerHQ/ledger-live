@@ -11,9 +11,11 @@ import { getCloudSyncSdk, getLkrpQrCode, getLkrpSdk } from "../middleware";
 import { ledgerSyncReducer } from "../watch";
 import {
   ACTIVATED,
+  applyLocalState,
   blacklist,
   createStore,
   createWalletsync,
+  holdNextResolution,
   isMockEnv,
   LKRP_URL,
   memberCredentials,
@@ -81,15 +83,22 @@ describe("createLedgerSyncMiddleware", () => {
   it.each<[string, UnknownAction]>([
     ["a reset", resetTrustchainStore()],
     ["a new pairing", setTrustchain({ ...trustchain, rootId: "paired-root-id" })],
-  ])("should drop an update that settles after %s", async (_, action) => {
+  ])("should drop an update whose resolution settles after %s", async (_, action) => {
     const store = createStore(ACTIVATED);
     getCloudSyncSdk(store.dispatch);
     const { saveNewUpdate } = jest.mocked(CloudSyncSDK).mock.calls[0][0];
+    const resolution = holdNextResolution();
 
+    const saving = saveNewUpdate(
+      { type: "new-data", data: { value: "distant" }, version: 1 },
+      trustchain,
+    );
     store.dispatch(action);
-    await saveNewUpdate({ type: "new-data", data: { value: "distant" }, version: 1 }, trustchain);
+    resolution.settle({ hasChanges: true, update: { newValue: "distant" } });
+    await saving;
 
     expect(selectWalletSyncState(store.getState())).toEqual({ data: null, version: 0 });
+    expect(applyLocalState).not.toHaveBeenCalled();
   });
 
   it("should host a pairing as this instance, adding the other member to its trustchain", async () => {

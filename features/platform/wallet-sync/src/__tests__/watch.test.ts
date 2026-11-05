@@ -17,6 +17,7 @@ import {
   createStore,
   createWalletsync,
   enableWalletSync,
+  holdNextResolution,
   memberCredentials,
   trustchain,
   WATCH_CONFIG,
@@ -182,19 +183,13 @@ describe("Ledger Sync watch loop", () => {
   });
 
   it("should drop a local update that settles after Ledger Sync was reset", async () => {
+    const resolution = holdNextResolution();
     const store = startedWatch(SYNCED);
-    const { resolveIncrementalUpdate } = createWalletsync.mock.results[0].value;
-    let settle!: (resolved: Awaited<ReturnType<typeof resolveIncrementalUpdate>>) => void;
-    jest.mocked(resolveIncrementalUpdate).mockReturnValueOnce(
-      new Promise(resolve => {
-        settle = resolve;
-      }),
-    );
     await advance(WATCH_CONFIG.initialTimeout);
 
     store.dispatch(resetTrustchainStore());
     store.dispatch(walletSyncUpdate({ data: null, version: 0 }));
-    settle({ hasChanges: true, update: { newValue: "distant" } });
+    resolution.settle({ hasChanges: true, update: { newValue: "distant" } });
     await advance(0);
 
     expect(selectWalletSyncState(store.getState())).toEqual({ data: null, version: 0 });
