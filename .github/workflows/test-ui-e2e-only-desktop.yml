@@ -487,17 +487,13 @@ jobs:
         run: GITHUB_STEP_SUMMARY=/dev/null mise run mitmproxy:capture-start
         shell: bash
 
-      # The tests lock on this machine only when R2 fails this check. Skipped on refs that predate
-      # it, which lock in R2.
       - name: Check the exclusive lock store (R2)
         id: exclusive-lock
-        if: ${{ hashFiles('libs/live-e2e-shared/src/cli/checkExclusiveLock.ts') != '' }}
-        run: pnpm --dir libs/live-e2e-shared e2e-cli check-exclusive-lock
-        env:
-          E2E_EXCLUSIVE_LOCK_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
-          E2E_EXCLUSIVE_LOCK_BUCKET: ${{ secrets.R2_ENDPOINT && 'ledger-live-cache' || '' }}
-          E2E_EXCLUSIVE_LOCK_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-          E2E_EXCLUSIVE_LOCK_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/check-exclusive-lock@develop
+        with:
+          r2_endpoint: ${{ secrets.R2_ENDPOINT }}
+          r2_access_key: ${{ secrets.R2_ACCESS_KEY_ID }}
+          r2_secret_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
 
       - name: Run Playwright E2E tests
         id: run-playwright
@@ -709,17 +705,13 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
 
-      # The tests lock on this machine only when R2 fails this check. Skipped on refs that predate
-      # it, which lock in R2.
       - name: Check the exclusive lock store (R2)
         id: exclusive-lock
-        if: ${{ hashFiles('libs/live-e2e-shared/src/cli/checkExclusiveLock.ts') != '' }}
-        run: pnpm --dir libs/live-e2e-shared e2e-cli check-exclusive-lock
-        env:
-          E2E_EXCLUSIVE_LOCK_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
-          E2E_EXCLUSIVE_LOCK_BUCKET: ${{ secrets.R2_ENDPOINT && 'ledger-live-cache' || '' }}
-          E2E_EXCLUSIVE_LOCK_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-          E2E_EXCLUSIVE_LOCK_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/check-exclusive-lock@develop
+        with:
+          r2_endpoint: ${{ secrets.R2_ENDPOINT }}
+          r2_access_key: ${{ secrets.R2_ACCESS_KEY_ID }}
+          r2_secret_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
 
       - name: Run Playwright E2E tests
         id: run-playwright
@@ -910,18 +902,13 @@ jobs:
         shell: pwsh
         run: Set-DisplayResolution -Width 1920 -Height 1080 -Force
 
-      # The tests lock on this machine only when R2 fails this check. Skipped on refs that predate
-      # it, which lock in R2.
       - name: Check the exclusive lock store (R2)
         id: exclusive-lock
-        if: ${{ hashFiles('libs/live-e2e-shared/src/cli/checkExclusiveLock.ts') != '' }}
-        shell: bash
-        run: pnpm --dir libs/live-e2e-shared e2e-cli check-exclusive-lock
-        env:
-          E2E_EXCLUSIVE_LOCK_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
-          E2E_EXCLUSIVE_LOCK_BUCKET: ${{ secrets.R2_ENDPOINT && 'ledger-live-cache' || '' }}
-          E2E_EXCLUSIVE_LOCK_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-          E2E_EXCLUSIVE_LOCK_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/check-exclusive-lock@develop
+        with:
+          r2_endpoint: ${{ secrets.R2_ENDPOINT }}
+          r2_access_key: ${{ secrets.R2_ACCESS_KEY_ID }}
+          r2_secret_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
 
       - name: Run Playwright E2E tests
         id: run-playwright

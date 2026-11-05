@@ -610,6 +610,7 @@ apps/ledger-live-mobile/src/e2e/                                            @led
 libs/live-e2e-shared/                                                       @ledgerhq/qaa
 tools/actions/composites/merge-e2e-detox-timings/                           @ledgerhq/qaa
 tools/actions/composites/e2e-shard-diagnostics/                             @ledgerhq/qaa
+tools/actions/composites/check-exclusive-lock/                              @ledgerhq/qaa
 
 # Wallet XP — mobile app mocks
 apps/ledger-live-mobile/e2e/                                                @ledgerhq/wallet-xp
