@@ -83,6 +83,12 @@ export function createLedgerSyncWatch<S extends LedgerSyncStateRoot, LocalState,
       return;
     }
     const run: NonNullable<typeof current> = { inputs };
+    // A loop stopped or replaced while it awaits still settles: only the current one writes.
+    const whileCurrent =
+      <Args extends unknown[]>(write: (...args: Args) => void) =>
+      (...args: Args) => {
+        if (current === run) write(...args);
+      };
     run.loop = createWalletSyncWatchLoop({
       walletsync,
       walletSyncSdk: cloudSyncSdk,
@@ -92,14 +98,11 @@ export function createLedgerSyncWatch<S extends LedgerSyncStateRoot, LocalState,
         getState,
         latestWalletStateSelector: selectWalletSyncState,
         localStateSelector: cloudSync.localStateSelector,
-        saveUpdate: saveWalletSyncUpdate(dispatch, cloudSync.applyLocalState),
+        saveUpdate: whileCurrent(saveWalletSyncUpdate(dispatch, cloudSync.applyLocalState)),
       }),
       trustchain,
       memberCredentials,
-      // A loop stopped or replaced while it pulls still settles: only the current one shows it.
-      setVisualPending: pending => {
-        if (current === run) dispatch(setVisualPending(pending));
-      },
+      setVisualPending: whileCurrent(pending => dispatch(setVisualPending(pending))),
       getState,
       localStateSelector: cloudSync.localStateSelector,
       latestDistantStateSelector: state => selectWalletSyncState(state).data,
