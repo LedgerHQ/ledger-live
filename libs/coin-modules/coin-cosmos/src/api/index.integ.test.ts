@@ -38,4 +38,17 @@ describe("createApi (integ, Cosmos Hub)", () => {
 
     expect(Number(block.height)).toBeGreaterThan(0);
   });
+
+  it("getBlockInfo and getBlock return the same block info via the wired api", async () => {
+    const info = await api.getBlockInfo(context, 33721701);
+    const block = await api.getBlock(context, 33721701);
+
+    expect(info.height).toBe(33721701);
+    expect(block.info).toEqual(info);
+    expect(block.transactions.length).toBeGreaterThan(0);
+  });
+
+  it("getBlock rejects a height above the chain length via the wired api", async () => {
+    await expect(api.getBlock(context, 999999999)).rejects.toThrow("invalid height");
+  });
 });

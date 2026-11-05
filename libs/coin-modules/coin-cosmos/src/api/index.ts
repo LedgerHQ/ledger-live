@@ -10,6 +10,8 @@ import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craf
 import { CosmosCoinConfig, CosmosContext } from "../config";
 import { getBalance } from "../logic/account/getBalance";
 import { getNextSequence } from "../logic/account/getNextSequence";
+import { getBlock } from "../logic/history/getBlock";
+import { getBlockInfo } from "../logic/history/getBlockInfo";
 import { lastBlock } from "../logic/history/lastBlock";
 import { listOperations } from "../logic/history/listOperations";
 import { broadcast } from "../logic/transaction/broadcast";
@@ -110,6 +112,14 @@ export function createApi(currencyId: string) {
     getValidators: async (context, options?) => {
       const { api } = await resolve(context, currencyId);
       return getValidators(api, options?.cursor);
+    },
+    getBlockInfo: async (context, height) => {
+      const { api } = await resolve(context, currencyId);
+      return getBlockInfo(api, height);
+    },
+    getBlock: async (context, height) => {
+      const { api, config } = await resolve(context, currencyId);
+      return getBlock(config, api, height);
     },
   } satisfies CosmosCoinModuleImpl;
 }
