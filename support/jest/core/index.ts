@@ -5,8 +5,8 @@ import type { Config } from "@jest/types";
 import path from "node:path";
 import { deepFreeze } from "../internals/freeze.ts";
 import { joinPresetPath } from "../internals/join-preset-path.ts";
+import type { PresetOverrideEntry } from "./preset-override-entry.ts";
 import presetOverrides from "./preset-overrides.cts";
-import type { PresetOverrideEntry } from "./preset-overrides.cts";
 
 const PRESET_OVERRIDES: Record<string, PresetOverrideEntry> = presetOverrides;
 

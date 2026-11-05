@@ -4,9 +4,7 @@
 
 const { deepFreeze } = require("../internals/freeze.ts");
 
-export type PresetOverrideEntry = { reason: string; overrides: Record<string, string[]> };
-
-const PRESET_OVERRIDES: Record<string, PresetOverrideEntry> = {
+const PRESET_OVERRIDES = {
   "shared/i18n": {
     reason: "React views on the node preset: no preset covers a web-only shared/ package yet.",
     overrides: { createSharedJestConfig: ["testEnvironment", "transform"] },
@@ -26,6 +24,6 @@ const PRESET_OVERRIDES: Record<string, PresetOverrideEntry> = {
       createLibsCoinIntegJestConfig: ["transform", "transformIgnorePatterns"],
     },
   },
-};
+} satisfies Record<string, import("./preset-override-entry.ts").PresetOverrideEntry>;
 
 module.exports = deepFreeze(PRESET_OVERRIDES);
