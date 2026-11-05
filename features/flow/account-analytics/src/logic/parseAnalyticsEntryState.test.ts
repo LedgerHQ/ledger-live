@@ -1,9 +1,9 @@
-import { resolveAnalyticsEntry } from "../resolveAnalyticsEntry";
+import { parseAnalyticsEntryState } from "./parseAnalyticsEntryState";
 
-describe("resolveAnalyticsEntry", () => {
+describe("parseAnalyticsEntryState", () => {
   it("should keep only the account and currency of a valid balance card entry", () => {
     expect(
-      resolveAnalyticsEntry({
+      parseAnalyticsEntryState({
         accountAnalytics: {
           accountId: "eth-account",
           currencyId: "ethereum",
@@ -16,6 +16,8 @@ describe("resolveAnalyticsEntry", () => {
 
   it.each([
     ["no entry state", undefined],
+    ["a null entry state", null],
+    ["a state without an analytics entry", { from: "/accounts" }],
     [
       "an empty account id",
       { accountAnalytics: { accountId: "", currencyId: "ethereum", metric: "balance" } },
@@ -31,6 +33,6 @@ describe("resolveAnalyticsEntry", () => {
       },
     ],
   ])("should ignore %s", (_, state) => {
-    expect(resolveAnalyticsEntry(state)).toBeUndefined();
+    expect(parseAnalyticsEntryState(state)).toBeUndefined();
   });
 });

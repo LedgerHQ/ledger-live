@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
-import type { AnalyticsPeriod } from "@features/flow-account-analytics";
+import { parseAnalyticsEntryState, type AnalyticsPeriod } from "@features/flow-account-analytics";
 import { findFiatCurrencyByTicker, getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { useSelector } from "LLD/hooks/redux";
 import { useSyncSources } from "LLD/hooks/useSyncSources";
@@ -13,7 +13,6 @@ import { accountsSelector } from "~/renderer/reducers/accounts";
 import { getAccountUrl } from "~/renderer/utils";
 import { useAnalyticsCatalogAdapter } from "../../hooks/useAnalyticsCatalogAdapter";
 import { useAnalyticsBalanceAdapter } from "../../hooks/useAnalyticsBalanceAdapter";
-import { resolveAnalyticsEntry } from "../../utils/resolveAnalyticsEntry";
 
 const PERIODS = {
   day: "1d",
@@ -34,7 +33,10 @@ export function useAccountAnalyticsScreenViewModel() {
   const selectedTimeRange = useSelector(selectedTimeRangeSelector);
   const { catalog, positions, refreshCatalog } = useAnalyticsCatalogAdapter();
   const dataPort = useAnalyticsBalanceAdapter(positions);
-  const initialSelection = useMemo(() => resolveAnalyticsEntry(location.state), [location.state]);
+  const initialSelection = useMemo(
+    () => parseAnalyticsEntryState(location.state),
+    [location.state],
+  );
   const { triggerRefresh } = useSyncSources();
   const onRefresh = useCallback(() => {
     if (refreshCatalog) void refreshCatalog();
