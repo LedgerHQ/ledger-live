@@ -13,6 +13,7 @@ import { dirname, join } from "node:path";
 import { tmpdir } from "node:os";
 import { generateLabel, getSessionPath, Session, withSessionLock } from "./session-store";
 import { NetworkIdSchema, type AccountDescriptorV1 } from "../shared/accountDescriptor";
+import { pointStateHomeAt } from "../testing/state-home";
 
 const btcNative: AccountDescriptorV1 = {
   purpose: "account",
@@ -223,18 +224,17 @@ describe("YAML round-trip", () => {
 
 describe("ring-field resilience", () => {
   let tmpDir: string | undefined;
-  let savedEnv: string | undefined;
+  let restoreStateHome: (() => void) | undefined;
 
   afterEach(() => {
-    if (savedEnv === undefined) delete process.env.XDG_STATE_HOME;
-    else process.env.XDG_STATE_HOME = savedEnv;
+    restoreStateHome?.();
+    restoreStateHome = undefined;
     if (tmpDir) rmSync(tmpDir, { recursive: true, force: true });
   });
 
   function useTmpState(): void {
-    savedEnv = process.env.XDG_STATE_HOME;
     tmpDir = mkdtempSync(join(tmpdir(), "wallet-cli-ring-"));
-    process.env.XDG_STATE_HOME = tmpDir;
+    restoreStateHome = pointStateHomeAt(tmpDir);
     mkdirSync(dirname(getSessionPath()), { recursive: true });
   }
 
@@ -643,18 +643,17 @@ describe("Session.agentIntentProfiles", () => {
 
 describe("Session.write() permissions", () => {
   let tmpDir: string | undefined;
-  let savedEnv: string | undefined;
+  let restoreStateHome: (() => void) | undefined;
 
   afterEach(() => {
-    if (savedEnv === undefined) delete process.env.XDG_STATE_HOME;
-    else process.env.XDG_STATE_HOME = savedEnv;
+    restoreStateHome?.();
+    restoreStateHome = undefined;
     if (tmpDir) rmSync(tmpDir, { recursive: true, force: true });
   });
 
   it("creates state dir 0700 and session file 0600", () => {
-    savedEnv = process.env.XDG_STATE_HOME;
     tmpDir = mkdtempSync(join(tmpdir(), "wallet-cli-perm-"));
-    process.env.XDG_STATE_HOME = tmpDir;
+    restoreStateHome = pointStateHomeAt(tmpDir);
 
     Session.from([]).write();
 
@@ -664,9 +663,8 @@ describe("Session.write() permissions", () => {
   });
 
   it("corrects too-permissive existing dir and file to 0700/0600", () => {
-    savedEnv = process.env.XDG_STATE_HOME;
     tmpDir = mkdtempSync(join(tmpdir(), "wallet-cli-perm-"));
-    process.env.XDG_STATE_HOME = tmpDir;
+    restoreStateHome = pointStateHomeAt(tmpDir);
 
     // Pre-create with permissive modes (simulating a prior installation)
     const stateDirectory = dirname(getSessionPath());
@@ -684,25 +682,20 @@ describe("Session.write() permissions", () => {
 
 describe("withSessionLock", () => {
   let tmpDir: string | undefined;
-  let savedEnv: string | undefined;
+  let restoreStateHome: (() => void) | undefined;
 
   afterEach(() => {
-    if (savedEnv === undefined) delete process.env.XDG_STATE_HOME;
-    else process.env.XDG_STATE_HOME = savedEnv;
+    restoreStateHome?.();
+    restoreStateHome = undefined;
     if (tmpDir) rmSync(tmpDir, { recursive: true, force: true });
   });
 
   it("creates the state directory itself on a machine that has never written a session", async () => {
-    savedEnv = process.env.XDG_STATE_HOME;
     // Deliberately NOT pre-created (unlike useTmpState() elsewhere in this file) — this is the
     // "fresh machine" precondition: nothing has ever written here, so the app's own directory
-    // under it doesn't exist yet either. NOTE: on win32, stateDir() resolves via LOCALAPPDATA, not
-    // XDG_STATE_HOME (a known, separately-tracked gap — see session-fixture.ts) — so on that
-    // platform this doesn't actually exercise the fresh-machine path, only the assertions below,
-    // against whatever LOCALAPPDATA already has. The real fresh-machine case is exercised in CI
-    // (Linux), where XDG_STATE_HOME is honored.
+    // under it doesn't exist yet either.
     tmpDir = mkdtempSync(join(tmpdir(), "wallet-cli-fresh-"));
-    process.env.XDG_STATE_HOME = tmpDir;
+    restoreStateHome = pointStateHomeAt(tmpDir);
 
     const result = await withSessionLock(() => "ran");
 
@@ -711,9 +704,8 @@ describe("withSessionLock", () => {
   });
 
   it("serializes two concurrent calls", async () => {
-    savedEnv = process.env.XDG_STATE_HOME;
     tmpDir = mkdtempSync(join(tmpdir(), "wallet-cli-fresh-"));
-    process.env.XDG_STATE_HOME = tmpDir;
+    restoreStateHome = pointStateHomeAt(tmpDir);
 
     const events: string[] = [];
     const first = withSessionLock(async () => {

@@ -12,8 +12,9 @@ import { _setTestKeychain, _setTestKeychainProbe } from "./keychain-entry";
 import { installOutputCapture } from "../shared/ui";
 import { failingKeychainProbe, overridePlatform } from "../testing/os-keychain";
 import { resetTestSeams } from "../shared/test-seam";
+import { pointStateHomeAt } from "../testing/state-home";
 
-const origStateHome = process.env.XDG_STATE_HOME;
+let restoreStateHome: () => void;
 let keychain: InMemoryKeychain;
 let stderr: string[];
 let restoreOutput: () => void;
@@ -28,8 +29,8 @@ function loadCredentials(): MemberCredentials {
   return memberCredentials;
 }
 
-function useProfile(name: string): void {
-  process.env.XDG_STATE_HOME = `/tmp/wallet-cli-api-auth-test/${name}`;
+function useProfile(name: string): () => void {
+  return pointStateHomeAt(`/tmp/wallet-cli-api-auth-test/${name}`);
 }
 
 beforeEach(() => {
@@ -38,14 +39,13 @@ beforeEach(() => {
   restoreOutput = installOutputCapture({ stderr: chunk => stderr.push(chunk) });
   _setTestKeychain(keychain.open);
   _resetApiAuthIdentity();
-  useProfile("a");
+  restoreStateHome = useProfile("a");
 });
 
 afterEach(() => {
   restoreOutput();
   resetTestSeams();
-  if (origStateHome === undefined) delete process.env.XDG_STATE_HOME;
-  else process.env.XDG_STATE_HOME = origStateHome;
+  restoreStateHome();
 });
 
 describe("loadApiAuthIdentity", () => {
