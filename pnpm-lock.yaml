@@ -2298,15 +2298,9 @@ importers:
       '@features/platform-wallet-sync':
         specifier: workspace:^
         version: link:../../features/platform/wallet-sync
-      '@formatjs/intl-locale':
-        specifier: 3.4.5
-        version: 3.4.5
       '@formatjs/intl-pluralrules':
         specifier: 5.2.12
         version: 5.2.12
-      '@formatjs/intl-relativetimeformat':
-        specifier: 11.2.12
-        version: 11.2.12
       '@gorhom/bottom-sheet':
         specifier: 'catalog:'
         version: 5.2.6(db28dd4150d1c921a8a8f9e748e99a4b)
@@ -27018,24 +27012,11 @@ packages:
   '@formatjs/ecma402-abstract@1.18.2':
     resolution: {integrity: sha512-+QoPW4csYALsQIl8GbN14igZzDbuwzcpWrku9nyMXlaqAlwRBgl5V+p0vWMGFqHOw37czNXaP/lEk4wbLgcmtA==}
 
-  '@formatjs/intl-enumerator@1.4.5':
-    resolution: {integrity: sha512-IbEJHzJO0buoq//RqbLRDettIkZ/WYGOL+8dy5oxzefqlpTsmJFUo5t1sK0/1EoC+eOFiyhdgh5ihCH3Cehc0w==}
-    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
-
-  '@formatjs/intl-getcanonicallocales@2.3.0':
-    resolution: {integrity: sha512-BOXbLwqQ7nKua/l7tKqDLRN84WupDXFDhGJQMFvsMVA2dKuOdRaWTxWpL3cJ7qPkoNw11Jf+Xpj4OSPBBvW0eQ==}
-
-  '@formatjs/intl-locale@3.4.5':
-    resolution: {integrity: sha512-obUNTK0Py9sDSTlCXfNQotC7Oy5xd3iBx6dVtzd9YXProkP0NxcRrhlPmfHO9AuYNXdHuarHlozoBxZjOtM4mQ==}
-
   '@formatjs/intl-localematcher@0.5.4':
     resolution: {integrity: sha512-zTwEpWOzZ2CiKcB93BLngUX59hQkuZjT2+SAQEscSm52peDW/getsawMcWF1rGRpMCX6D7nSJA3CzJ8gn13N/g==}
 
   '@formatjs/intl-pluralrules@5.2.12':
     resolution: {integrity: sha512-V/namV1R/FPlsNMcO6U3saOoUqCp6DIPj4BONjj4yW78BU9gRytEJEdifOv+O1cU2Sb7AqOLOju6/qqIRRauLQ==}
-
-  '@formatjs/intl-relativetimeformat@11.2.12':
-    resolution: {integrity: sha512-Pdj8DkkiuaInJUs0arW8EyluGaSDq2eHccIi4Oc2JIGEKbMmIj6NapqyjWZUjPOI3mRqV3thhEERC+lfKqJT0w==}
 
   '@gitbeaker/core@38.12.1':
     resolution: {integrity: sha512-8XMVcBIdVAAoxn7JtqmZ2Ee8f+AZLcCPmqEmPFOXY2jPS84y/DERISg/+sbhhb18iRy+ZsZhpWgQ/r3CkYNJOQ==}
@@ -45719,32 +45700,11 @@ snapshots:
       '@formatjs/intl-localematcher': 0.5.4
       tslib: 2.6.2
 
-  '@formatjs/intl-enumerator@1.4.5':
-    dependencies:
-      tslib: 2.6.2
-
-  '@formatjs/intl-getcanonicallocales@2.3.0':
-    dependencies:
-      tslib: 2.6.2
-
-  '@formatjs/intl-locale@3.4.5':
-    dependencies:
-      '@formatjs/ecma402-abstract': 1.18.2
-      '@formatjs/intl-enumerator': 1.4.5
-      '@formatjs/intl-getcanonicallocales': 2.3.0
-      tslib: 2.6.2
-
   '@formatjs/intl-localematcher@0.5.4':
     dependencies:
       tslib: 2.6.2
 
   '@formatjs/intl-pluralrules@5.2.12':
-    dependencies:
-      '@formatjs/ecma402-abstract': 1.18.2
-      '@formatjs/intl-localematcher': 0.5.4
-      tslib: 2.6.2
-
-  '@formatjs/intl-relativetimeformat@11.2.12':
     dependencies:
       '@formatjs/ecma402-abstract': 1.18.2
       '@formatjs/intl-localematcher': 0.5.4
