@@ -33,6 +33,9 @@ jest.mock("@shared/cloud-sync", () => ({
   CloudSyncSDK: jest.fn(() => mockCloudSyncSdk),
 }));
 jest.mock("@shared/analytics", () => ({ track: jest.fn() }));
+
+/** createWalletSyncWatchLoop's default, since the watch passes it no visual config. */
+const LOOP_VISUAL_PENDING_TIMEOUT = 1000;
 jest.mock("@ledgerhq/ledger-key-ring-protocol/index", () => ({
   getSdk: jest.fn(() => ({ restoreTrustchain: jest.fn() })),
 }));
@@ -96,6 +99,17 @@ describe("Ledger Sync watch loop", () => {
     expect(selectLedgerSyncVisualPending(store.getState())).toBe(false);
   });
 
+  it("should not report the sync of a loop it stopped while it pulls", async () => {
+    mockCloudSyncSdk.pull.mockReturnValueOnce(new Promise(() => {}));
+    const store = startedWatch();
+    await advance(WATCH_CONFIG.initialTimeout);
+
+    store.dispatch(stopLedgerSyncWatch());
+    await advance(LOOP_VISUAL_PENDING_TIMEOUT);
+
+    expect(selectLedgerSyncVisualPending(store.getState())).toBe(false);
+  });
+
   it("should pull again soon after a user refresh", async () => {
     const store = startedWatch();
     await advance(WATCH_CONFIG.initialTimeout);
@@ -137,6 +151,16 @@ describe("Ledger Sync watch loop", () => {
 
     expect(store.getState().trustchain.trustchain).toBeNull();
     expect(save).toHaveBeenCalledWith(null, 0, null, expect.any(Function));
+  });
+
+  it("should report a reset it could not save", async () => {
+    mockCloudSyncSdk.pull.mockRejectedValueOnce(errorNamed("TrustchainNotAllowed"));
+    save.mockRejectedValueOnce(new Error("storage full"));
+    const store = startedWatch();
+
+    await advance(WATCH_CONFIG.initialTimeout);
+
+    expect(selectLedgerSyncError(store.getState())).toMatchObject({ message: "storage full" });
   });
 
   it("should restore an outdated trustchain", async () => {
