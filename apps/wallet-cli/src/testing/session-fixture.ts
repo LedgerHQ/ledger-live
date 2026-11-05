@@ -14,6 +14,7 @@ const SESSION_FILE = "session.yaml";
  */
 export function makeSessionDir(entries: SessionEntry[]): {
   env: { XDG_STATE_HOME: string; LOCALAPPDATA?: string };
+  sessionPath: string;
   cleanup: () => void;
 } {
   const tmpDir = mkdtempSync(join(tmpdir(), "wallet-cli-test-"));
@@ -26,6 +27,7 @@ export function makeSessionDir(entries: SessionEntry[]): {
       XDG_STATE_HOME: tmpDir,
       ...(process.platform === "win32" ? { LOCALAPPDATA: tmpDir } : {}),
     },
+    sessionPath: join(appDir, SESSION_FILE),
     cleanup: () => rmSync(tmpDir, { recursive: true, force: true }),
   };
 }
