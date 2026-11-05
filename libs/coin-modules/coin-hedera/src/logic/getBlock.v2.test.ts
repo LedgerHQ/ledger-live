@@ -871,16 +871,14 @@ describe("getBlockV2", () => {
 
     expect(result.transactions[0].operations).toEqual([
       {
-        type: "transfer",
-        address: "0.0.999",
-        asset: { type: "native" },
-        amount: BigInt(-1000),
-      },
-      {
-        type: "transfer",
-        address: "0.0.1000",
-        asset: { type: "native" },
-        amount: BigInt(1000),
+        type: "other",
+        ledgerOpType: "UPDATE_ACCOUNT",
+        familyExtra: {
+          pagingToken: mockTx.consensus_timestamp,
+          consensusTimestamp: mockTx.consensus_timestamp,
+          transactionId: mockTx.transaction_id,
+          feesPayer: "0.0.999",
+        },
       },
     ]);
   });

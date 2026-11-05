@@ -58,7 +58,13 @@ const TIMESTAMP = "1704067210.123456789";
 const TRANSACTION_ID = `${ACCOUNT.account}-1704067200-000000000`;
 
 // `listOperations` ledgerOpTypes that `getBlock` emits as an "other" operation
-const OTHER_OP_TYPES = new Set(["ASSOCIATE_TOKEN", "DELEGATE", "UNDELEGATE", "REDELEGATE"]);
+const OTHER_OP_TYPES = new Set([
+  "ASSOCIATE_TOKEN",
+  "UPDATE_ACCOUNT",
+  "DELEGATE",
+  "UNDELEGATE",
+  "REDELEGATE",
+]);
 
 type Scenario = {
   name: string;
@@ -164,6 +170,17 @@ const scenarios: Scenario[] = [
     }),
     mirrorTokens: [getMockedMirrorToken({ token_id: "0.0.456858", created_timestamp: TIMESTAMP })],
     expectedTypes: ["ASSOCIATE_TOKEN"],
+  },
+  {
+    name: "UPDATE_ACCOUNT",
+    mirrorTx: baseTx({
+      name: HEDERA_TRANSACTION_NAMES.UpdateAccount,
+      transfers: [
+        { account: ACCOUNT.account, amount: -FEE },
+        { account: NODE, amount: FEE },
+      ],
+    }),
+    expectedTypes: ["UPDATE_ACCOUNT"],
   },
   stakingScenario({
     operationType: "DELEGATE",
