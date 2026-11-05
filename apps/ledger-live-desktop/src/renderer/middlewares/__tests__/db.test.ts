@@ -414,7 +414,7 @@ describe("DBMiddleware - crypto assets cache branch", () => {
   });
 
   it("persists the CAL token cache on actions of the registered CAL api", () => {
-    const persisted: PersistedCAL = { version: 2, tokens: [{ data: usdcToken, timestamp: 0 }] };
+    const persisted: PersistedCAL = { version: 3, tokens: [{ data: usdcToken, timestamp: 0 }] };
     jest.mocked(extractPersistedCALFromState).mockReturnValueOnce(persisted);
     jest.mocked(persistedCALContentEqual).mockReturnValueOnce(false);
     const state = baseState();
@@ -427,11 +427,11 @@ describe("DBMiddleware - crypto assets cache branch", () => {
   it("replaces stale tokens on disk when a changed hash evicts every token", () => {
     // A changed hash enters the cache before its eviction removes the tokens
     const staleTokens: PersistedCAL = {
-      version: 2,
+      version: 3,
       tokens: [{ data: usdcToken, timestamp: 0 }],
       hashes: { ethereum: "new-hash" },
     };
-    const evicted: PersistedCAL = { version: 2, tokens: [], hashes: { ethereum: "new-hash" } };
+    const evicted: PersistedCAL = { version: 3, tokens: [], hashes: { ethereum: "new-hash" } };
     jest
       .mocked(extractPersistedCALFromState)
       .mockReturnValueOnce(staleTokens)
@@ -445,7 +445,7 @@ describe("DBMiddleware - crypto assets cache branch", () => {
   });
 
   it("does not persist a CAL cache with neither tokens nor hashes", () => {
-    jest.mocked(extractPersistedCALFromState).mockReturnValueOnce({ version: 2, tokens: [] });
+    jest.mocked(extractPersistedCALFromState).mockReturnValueOnce({ version: 3, tokens: [] });
     const state = baseState();
 
     runMiddleware([state, state], cryptoAssetsApi.util.upsertQueryEntries([]));
