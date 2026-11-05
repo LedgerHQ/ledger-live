@@ -21,6 +21,7 @@ type QuoteProps = {
   depositAccount: AccountLike | undefined;
   isOffline?: boolean;
   refreshGeneration?: number;
+  feeAccountBalance?: string;
 };
 
 function renderQuote(initialProps: QuoteProps) {
@@ -88,6 +89,19 @@ describe("usePerpsDepositQuote", () => {
     });
 
     rerender({ amount: "2000", depositAccount, refreshGeneration: 1 });
+
+    await waitFor(() => expect(mockFetchPerpsDepositQuote).toHaveBeenCalledTimes(2), {
+      timeout: 2000,
+    });
+  });
+
+  it("asks again for the same draft when the fee account balance changes", async () => {
+    const { rerender } = renderQuote({ amount: "2000", depositAccount, feeAccountBalance: "0" });
+    await waitFor(() => expect(mockFetchPerpsDepositQuote).toHaveBeenCalledTimes(1), {
+      timeout: 2000,
+    });
+
+    rerender({ amount: "2000", depositAccount, feeAccountBalance: "500" });
 
     await waitFor(() => expect(mockFetchPerpsDepositQuote).toHaveBeenCalledTimes(2), {
       timeout: 2000,
