@@ -17,9 +17,15 @@ import {
 import { fetchAgentSwapQuote, type AgentSwapQuote } from "../../agent-intent/swap-quote";
 import { findEthereumSwapAsset, type SwapAsset } from "../../agent-intent/token-lookup";
 import {
+  anotherChainsCoinError,
+  coinNamed,
+  resolveTokenByTicker,
+} from "../../agent-intent/token-by-ticker";
+import {
   parseSenderInput,
   resolveSenderAccount,
   senderFromAccount,
+  type SenderAccount,
 } from "../../agent-intent/sender";
 import {
   assertSdkAcceptsIntent,
@@ -29,12 +35,40 @@ import {
 import { createCommandOutput, type CommandOutput } from "../../output";
 import { writeStderr } from "../../shared/ui";
 
-async function resolveSwapAsset(id: string, flag: "from" | "to"): Promise<SwapAsset> {
-  const asset = await findEthereumSwapAsset(id);
+async function resolveSwapSender(
+  senderInput: { account: string } | { address: string },
+): Promise<{ sender: string; account: SenderAccount | undefined }> {
+  if ("address" in senderInput) {
+    return { sender: parseEvmAddress(senderInput.address, "sender"), account: undefined };
+  }
+  const account = await resolveSenderAccount(senderInput.account);
+  return { sender: senderFromAccount(account, "swap", "ethereum"), account };
+}
+
+async function swapAssetId(
+  value: string,
+  flag: "from" | "to",
+  holder: SenderAccount | undefined,
+  out: Pick<CommandOutput, "withActivity">,
+): Promise<string> {
+  if (value.includes("/")) return value;
+  const coin = coinNamed("ethereum", value);
+  if (coin?.id === "ethereum") return coin.id;
+  if (coin) throw await anotherChainsCoinError("ethereum", value, coin, flag);
+  return (await resolveTokenByTicker("ethereum", value, holder, out, flag)).id;
+}
+
+async function resolveSwapAsset(
+  value: string,
+  flag: "from" | "to",
+  holder: SenderAccount | undefined,
+  out: Pick<CommandOutput, "withActivity">,
+): Promise<SwapAsset> {
+  const asset = await findEthereumSwapAsset(await swapAssetId(value, flag, holder, out));
   if (!asset) {
     throw new Error(
-      `--${flag} "${id}" is not ethereum or an ERC-20 token on Ethereum mainnet. Use a Ledger ` +
-        "currency id such as ethereum or ethereum/erc20/usd__coin.",
+      `--${flag} "${value}" is not ethereum or an ERC-20 token on Ethereum mainnet. Use a ticker ` +
+        "such as ETH or USDC, or a Ledger currency id such as ethereum/erc20/usd__coin.",
     );
   }
   return asset;
@@ -119,11 +153,18 @@ export default defineCommand({
     }),
     from: option(z.string().min(1), {
       description:
-        "Currency id to sell: ethereum or an ERC-20 id such as ethereum/erc20/usd__coin.",
+        "Asset to sell: a ticker such as ETH or USDC, or a Ledger currency id such as ethereum or " +
+        "ethereum/erc20/usd__coin. A token ticker picks the one the --account holds or the only " +
+        "one CAL lists on Ethereum mainnet, and fails if several match. A coin of another chain " +
+        "Ledger Wallet supports, by currency id, ticker or name (bitcoin, BTC, Solana), is " +
+        "refused. Any other coin's ticker can still pick an unrelated token: check the name and " +
+        "contract stderr prints.",
       short: "f",
     }),
     to: option(z.string().min(1), {
-      description: "Currency id to buy, in the same form as --from.",
+      description:
+        "Asset to buy, in the same form as --from. A token ticker picks the only one CAL lists on " +
+        "Ethereum mainnet, whatever the --account holds, and fails if several match.",
       short: "t",
     }),
     amount: option(z.string().min(1), {
@@ -156,12 +197,9 @@ export default defineCommand({
       );
       const provider = flags.provider ? resolveAgentSwapProvider(flags.provider) : undefined;
       const profile = requireEnrolledProfile(await Session.read(), flags.profile);
-      const sender =
-        "address" in senderInput
-          ? parseEvmAddress(senderInput.address, "sender")
-          : senderFromAccount(await resolveSenderAccount(senderInput.account), "swap", "ethereum");
-      const from = await resolveSwapAsset(flags.from, "from");
-      const to = await resolveSwapAsset(flags.to, "to");
+      const { sender, account } = await resolveSwapSender(senderInput);
+      const from = await resolveSwapAsset(flags.from, "from", account, out);
+      const to = await resolveSwapAsset(flags.to, "to", undefined, out);
       if (from.id === to.id) throw new Error("--from and --to are the same asset.");
       const fromAmount = parseSwapAmount(flags.amount, from, "amount");
       const receive = await expectedReceive({

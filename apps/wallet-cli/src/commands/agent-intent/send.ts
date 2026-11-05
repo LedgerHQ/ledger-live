@@ -27,7 +27,11 @@ import {
   senderFromAccount,
   type SenderAccount,
 } from "../../agent-intent/sender";
-import { resolveTokenByTicker } from "../../agent-intent/token-by-ticker";
+import {
+  anotherChainsCoinError,
+  coinNamed,
+  resolveTokenByTicker,
+} from "../../agent-intent/token-by-ticker";
 import {
   assertSdkAcceptsIntent,
   proposalOptions,
@@ -194,19 +198,26 @@ async function resolveNetworkAsset(
   senderInput: SenderInput,
   out: Pick<CommandOutput, "withActivity">,
 ): Promise<NetworkAsset> {
-  if (!token && nativeNetworkOf(ticker) === network) {
-    return network === "ethereum"
-      ? { network, asset: ethereumAsset() }
-      : { network, asset: solanaAsset() };
+  if (!token) {
+    const coin = coinNamed(network, ticker);
+    if (coin?.id === network) {
+      return network === "ethereum"
+        ? { network, asset: ethereumAsset() }
+        : { network, asset: solanaAsset() };
+    }
+    if (coin) throw await anotherChainsCoinError(network, ticker, coin, "token");
   }
   const address =
     token ??
-    (await resolveTokenByTicker(
-      network,
-      ticker,
-      "account" in senderInput ? senderInput.account : undefined,
-      out,
-    ));
+    (
+      await resolveTokenByTicker(
+        network,
+        ticker,
+        "account" in senderInput ? senderInput.account : undefined,
+        out,
+        "token",
+      )
+    ).address;
   const fromTokenFlag = token !== undefined;
   if (network === "ethereum") {
     return { network, asset: await resolveErc20(ticker, address, fromTokenFlag) };
@@ -243,7 +254,9 @@ export default defineCommand({
       description:
         "Token to send: an ERC-20 contract (0x…, Ethereum mainnet) or an SPL token mint (base58, " +
         "Solana mainnet). Without it, the --amount ticker picks the token the --account holds or " +
-        "the only one CAL lists, on the sender's network, and fails if several match.",
+        "the only one CAL lists, on the sender's network, and fails if several match. A coin of " +
+        "another chain Ledger Wallet supports, by currency id, ticker or name (BTC, Bitcoin, " +
+        "XRP), is refused.",
     }),
     "fee-strategy": option(z.enum(FEE_STRATEGIES).optional(), {
       description:
