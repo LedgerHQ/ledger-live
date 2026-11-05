@@ -8,7 +8,7 @@ import {
   type DeviceOnboardingFunnelModel,
 } from "./useDeviceOnboardingFunnelViewModel";
 
-function FunnelBody({ screen }: { screen: DeviceOnboardingFunnelModel }) {
+function FunnelBody({ screen }: Readonly<{ screen: DeviceOnboardingFunnelModel }>) {
   if (screen.status === "karaoke") {
     return <KaraokeScreen onClose={screen.onClose} />;
   }
