@@ -1,8 +1,7 @@
 {
   "extends": "@support/tsconfig/node",
   "compilerOptions": {
-    "types": ["node", "jest"],
-    "lib": ["ES2022", "DOM"]
+    "types": ["node", "jest"]
   },
   "include": ["index.ts", "preset-overrides.cts", "setup/**/*.ts"]
 }

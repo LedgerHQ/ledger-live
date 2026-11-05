@@ -1,3 +1,4 @@
+/// <reference lib="dom" />
 // Web (jsdom) setup of every dual web/native preset.
 
 // Mock window.matchMedia for components that read it.
