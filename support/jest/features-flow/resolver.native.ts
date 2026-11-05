@@ -1,4 +1,4 @@
-type NativeResolverOptions = {
+export type NativeResolverOptions = {
   conditions?: string[];
   defaultResolver: (request: string, options: object) => string;
 };

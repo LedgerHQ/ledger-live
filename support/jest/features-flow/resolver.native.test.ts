@@ -4,14 +4,9 @@ import assert from "node:assert/strict";
 import path from "node:path";
 import test from "node:test";
 import { pathToFileURL } from "node:url";
+import type { NativeResolverOptions } from "./resolver.native.ts";
 
-type Resolver = (
-  request: string,
-  options: {
-    conditions?: string[];
-    defaultResolver: (request: string, options: object) => string;
-  },
-) => string;
+type Resolver = (request: string, options: NativeResolverOptions) => string;
 
 async function loadResolver(): Promise<Resolver> {
   const resolverPath = path.join(import.meta.dirname, "resolver.native.ts");

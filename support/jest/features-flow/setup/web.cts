@@ -43,6 +43,7 @@ function UnrefMessageChannel() {
 global.ReadableStream ??= ReadableStream;
 global.TransformStream ??= TransformStream;
 global.BroadcastChannel ??= BroadcastChannel;
+// UnrefMessageChannel is a zero-arg factory that returns Node's MessageChannel; assignable at runtime.
 global.MessageChannel ??= UnrefMessageChannel as unknown as typeof MessageChannel;
 global.MessagePort ??= MessagePort;
 

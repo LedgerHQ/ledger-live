@@ -4,7 +4,7 @@
 
 const { deepFreeze } = require("../internals/freeze.ts");
 
-type PresetOverrideEntry = { reason: string; overrides: Record<string, string[]> };
+export type PresetOverrideEntry = { reason: string; overrides: Record<string, string[]> };
 
 const PRESET_OVERRIDES: Record<string, PresetOverrideEntry> = {
   "shared/i18n": {

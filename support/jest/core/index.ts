@@ -6,8 +6,8 @@ import path from "node:path";
 import { deepFreeze } from "../internals/freeze.ts";
 import { joinPresetPath } from "../internals/join-preset-path.ts";
 import presetOverrides from "./preset-overrides.cts";
+import type { PresetOverrideEntry } from "./preset-overrides.cts";
 
-type PresetOverrideEntry = { reason: string; overrides: Record<string, string[]> };
 const PRESET_OVERRIDES: Record<string, PresetOverrideEntry> = presetOverrides;
 
 type Options = Config.InitialOptions;
