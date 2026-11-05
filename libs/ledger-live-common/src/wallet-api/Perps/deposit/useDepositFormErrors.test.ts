@@ -4,7 +4,7 @@
 import "../../../__tests__/test-helpers/dom-polyfill";
 import BigNumber from "bignumber.js";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
-import { act, renderHook } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import { QuotesErrorCodes } from "@ledgerhq/wallet-api-exchange-module";
 import type { PerpsDepositQuoteState } from "./useDepositQuote";
 import {
@@ -16,6 +16,13 @@ import {
 const mockUsePerpsDepositQuote = jest.fn<PerpsDepositQuoteState, [unknown]>();
 jest.mock("./useDepositQuote", () => ({
   usePerpsDepositQuote: (params: unknown) => mockUsePerpsDepositQuote(params),
+}));
+
+const mockResolveWalletApiSpendableBalance = jest.fn<Promise<BigNumber>, [AccountLike]>();
+jest.mock("../../converters", () => ({
+  ...jest.requireActual("../../converters"),
+  resolveWalletApiSpendableBalance: (account: AccountLike) =>
+    mockResolveWalletApiSpendableBalance(account),
 }));
 
 const mockCancelDepositRequest = jest.fn();
@@ -77,10 +84,9 @@ function renderForm(overrides: Partial<UsePerpsDepositFormParams> = {}) {
     receiverAccount,
     depositAccount,
     depositAmount: 20,
-    maxAmount: 50,
+    toFiatAmount: (_currency, atomicAmount) => atomicAmount.shiftedBy(-6).toNumber(),
     toCurrencyAmount: () => new BigNumber("20000000"),
     isOffline: false,
-    refreshGeneration: 0,
     counterValueCurrency: "USD",
     locale: "en",
     sourceCurrency: "USDC",
@@ -102,12 +108,26 @@ const errorEvents = (track: jest.Mock) =>
 describe("usePerpsDepositForm", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockResolveWalletApiSpendableBalance.mockReturnValue(new Promise(() => {}));
     mockUsePerpsDepositQuote.mockReturnValue(
       quoteState({
         quote: { amountTo: new BigNumber(19), quoteId: "q-1", errors: [] },
         errors: [],
       }),
     );
+  });
+
+  it("uses the Wallet API balance of the bridge for Max and the sent amount", async () => {
+    mockResolveWalletApiSpendableBalance.mockImplementation(async account =>
+      account === depositAccount ? new BigNumber("10000000") : account.spendableBalance,
+    );
+    const { result } = renderForm();
+
+    expect(result.current.maxAmount).toBe(50);
+
+    await waitFor(() => expect(result.current.maxAmount).toBe(10));
+    expect(result.current.statusError?.code).toBe("insufficientBalance");
+    expect(result.current.depositSpendableBalance?.toFixed()).toBe("10000000");
   });
 
   it("asks for a quote for the converted amount and allows the review of a usable quote", () => {
@@ -228,6 +248,35 @@ describe("usePerpsDepositForm", () => {
     expect(result.current.canLearnMore).toBe(false);
     expect(result.current.isDetailsOpen).toBe(false);
     expect(openBuy).not.toHaveBeenCalled();
+  });
+});
+
+describe("usePerpsDepositForm refresh and analytics", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockResolveWalletApiSpendableBalance.mockReturnValue(new Promise(() => {}));
+    mockUsePerpsDepositQuote.mockReturnValue(AMOUNT_TOO_LOW);
+  });
+
+  it("asks for a new quote of the same draft when refreshQuote runs", () => {
+    const { result } = renderForm();
+    const before = mockUsePerpsDepositQuote.mock.lastCall?.[0] as { refreshGeneration: number };
+
+    act(() => result.current.refreshQuote());
+
+    const after = mockUsePerpsDepositQuote.mock.lastCall?.[0] as { refreshGeneration: number };
+    expect(after.refreshGeneration).toBe(before.refreshGeneration + 1);
+  });
+
+  it("tracks the same error again for another funding asset", () => {
+    const { rerender, params, track } = renderForm();
+
+    rerender({ ...params, sourceCurrency: "ETH" });
+
+    expect(errorEvents(track).map(([, properties]) => properties.sourceCurrency)).toEqual([
+      "USDC",
+      "ETH",
+    ]);
   });
 });
 

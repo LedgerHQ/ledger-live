@@ -15,7 +15,6 @@ import {
   usePerpsDepositForm,
   type DepositFormErrors,
 } from "@ledgerhq/live-common/wallet-api/Perps/deposit/useDepositFormErrors";
-import { getDepositSpendableBalance } from "@ledgerhq/live-common/wallet-api/Perps/deposit/coinErrors";
 import { Linking } from "react-native";
 import { useUrlLocalizer } from "LLM/hooks/useLocalizedUrls";
 import {
@@ -109,7 +108,6 @@ export function usePerpsDepositViewModel({
   const [isSignOpen, setIsSignOpen] = useState(false);
   const [signingDevice, setSigningDevice] = useState<Device | null | undefined>();
   const [reviewParams, setReviewParams] = useState<PerpsReviewParams | null>(null);
-  const [quoteRefreshGeneration, setQuoteRefreshGeneration] = useState(0);
 
   // Leaving the screen before the deposit settles abandons it; after it settles this is a no-op.
   useEffect(() => cancelDepositRequest, []);
@@ -206,26 +204,12 @@ export function usePerpsDepositViewModel({
     receiverCurrency,
   ]);
 
-  const depositAccountBalanceCounterValue = useMemo(() => {
-    if (!depositAccount || !depositCurrency) return null;
-    return (
-      calculateCountervalue(depositCurrency, getDepositSpendableBalance(depositAccount)) ?? null
-    );
-  }, [calculateCountervalue, depositAccount, depositCurrency]);
-
-  const depositAccountCounterValue = useMemo(() => {
-    if (!depositAccountBalanceCounterValue) return null;
-    return formatCurrencyUnit(counterValueUnit, depositAccountBalanceCounterValue, {
-      showCode: true,
-      discreet,
-      locale,
-    });
-  }, [counterValueUnit, depositAccountBalanceCounterValue, discreet, locale]);
-
-  const maxAmount = useMemo(
-    () =>
-      depositAccountBalanceCounterValue?.shiftedBy(-counterValueUnit.magnitude).toNumber() ?? null,
-    [counterValueUnit.magnitude, depositAccountBalanceCounterValue],
+  const toFiatAmount = useCallback(
+    (currency: CryptoOrTokenCurrency, atomicAmount: BigNumber) =>
+      calculateCountervalue(currency, atomicAmount)
+        ?.shiftedBy(-counterValueUnit.magnitude)
+        .toNumber() ?? null,
+    [calculateCountervalue, counterValueUnit.magnitude],
   );
 
   const tradeMaxConstant = useFeature("ptxTradeMaxConstant");
@@ -272,15 +256,22 @@ export function usePerpsDepositViewModel({
     [localizeUrl],
   );
 
-  const { sentAmount, quote, isQuoteLoading, ...formErrors } = usePerpsDepositForm({
+  const {
+    sentAmount,
+    quote,
+    isQuoteLoading,
+    refreshQuote,
+    maxAmount,
+    depositSpendableBalance,
+    ...formErrors
+  } = usePerpsDepositForm({
     accounts,
     receiverAccount,
     depositAccount,
     depositAmount,
-    maxAmount,
     toCurrencyAmount,
+    toFiatAmount,
     isOffline,
-    refreshGeneration: quoteRefreshGeneration,
     counterValueCurrency: counterValueCurrency.ticker,
     locale,
     sourceCurrency: depositCurrency?.ticker ?? PERPS_DEPOSIT_DEFAULT_FUNDING_TICKER,
@@ -290,6 +281,24 @@ export function usePerpsDepositViewModel({
     openSupportUrl,
   });
   const { canReview } = formErrors;
+
+  const depositAccountCounterValue = useMemo(() => {
+    if (!depositCurrency || !depositSpendableBalance) return null;
+    const counterValue = calculateCountervalue(depositCurrency, depositSpendableBalance);
+    if (!counterValue) return null;
+    return formatCurrencyUnit(counterValueUnit, counterValue, {
+      showCode: true,
+      discreet,
+      locale,
+    });
+  }, [
+    calculateCountervalue,
+    counterValueUnit,
+    depositCurrency,
+    depositSpendableBalance,
+    discreet,
+    locale,
+  ]);
 
   const receiverUnit = receiverCurrency.units[0];
 
@@ -341,9 +350,9 @@ export function usePerpsDepositViewModel({
   }, []);
 
   const returnToForm = useCallback(() => {
-    setQuoteRefreshGeneration(generation => generation + 1);
+    refreshQuote();
     setIsSignOpen(false);
-  }, []);
+  }, [refreshQuote]);
 
   const endSigning = useCallback(
     ({ swapId }: PerpsDepositOutcome) => {

@@ -21,7 +21,6 @@ import {
   usePerpsDepositForm,
   type DepositFormErrors,
 } from "@ledgerhq/live-common/wallet-api/Perps/deposit/useDepositFormErrors";
-import { getDepositSpendableBalance } from "@ledgerhq/live-common/wallet-api/Perps/deposit/coinErrors";
 import { useUrlLocalizer } from "~/renderer/hooks/useLocalizedUrls";
 import { openURL } from "~/renderer/linking";
 import { PERPS_UI_USE_CASE } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
@@ -190,26 +189,12 @@ export function usePerpsDepositViewModel(
     receiverCurrency,
   ]);
 
-  const depositAccountBalanceCounterValue = useMemo(() => {
-    if (!depositAccount || !depositCurrency) return null;
-    return (
-      calculateCountervalue(depositCurrency, getDepositSpendableBalance(depositAccount)) ?? null
-    );
-  }, [calculateCountervalue, depositAccount, depositCurrency]);
-
-  const depositAccountCounterValue = useMemo(() => {
-    if (!depositAccountBalanceCounterValue) return null;
-    return formatCurrencyUnit(counterValueUnit, depositAccountBalanceCounterValue, {
-      showCode: true,
-      discreet,
-      locale,
-    });
-  }, [counterValueUnit, depositAccountBalanceCounterValue, discreet, locale]);
-
-  const maxAmount = useMemo(
-    () =>
-      depositAccountBalanceCounterValue?.shiftedBy(-counterValueUnit.magnitude).toNumber() ?? null,
-    [counterValueUnit.magnitude, depositAccountBalanceCounterValue],
+  const toFiatAmount = useCallback(
+    (currency: CryptoOrTokenCurrency, atomicAmount: BigNumber) =>
+      calculateCountervalue(currency, atomicAmount)
+        ?.shiftedBy(-counterValueUnit.magnitude)
+        .toNumber() ?? null,
+    [calculateCountervalue, counterValueUnit.magnitude],
   );
 
   const tradeMaxConstant = useFeature("ptxTradeMaxConstant");
@@ -229,11 +214,6 @@ export function usePerpsDepositViewModel(
     depositCurrency,
     tradeMaxConstant,
   ]);
-
-  const selectMax = useCallback(() => {
-    if (maxAmount === null) return;
-    setAmountText(toAmountText(applyRatio(maxAmount, 1, maxDecimalLength, maxBuffer)));
-  }, [maxAmount, maxBuffer, maxDecimalLength]);
 
   const missingAccount = !depositAccount && depositAmount > 0;
 
@@ -259,24 +239,47 @@ export function usePerpsDepositViewModel(
   const localizeUrl = useUrlLocalizer();
   const openSupportUrl = useCallback((url: string) => openURL(localizeUrl(url)), [localizeUrl]);
 
-  const { sentAmount, quote, isQuoteLoading, ...formErrors } = usePerpsDepositForm({
-    accounts,
-    receiverAccount,
-    depositAccount,
-    depositAmount,
-    maxAmount,
-    toCurrencyAmount,
-    isOffline,
-    refreshGeneration: 0,
-    counterValueCurrency: counterValueCurrency.ticker,
-    locale,
-    sourceCurrency: depositCurrency?.ticker ?? PERPS_DEPOSIT_DEFAULT_FUNDING_TICKER,
-    getAccountName,
-    track,
-    openBuy,
-    openSupportUrl,
-  });
+  const { sentAmount, quote, isQuoteLoading, maxAmount, depositSpendableBalance, ...formErrors } =
+    usePerpsDepositForm({
+      accounts,
+      receiverAccount,
+      depositAccount,
+      depositAmount,
+      toCurrencyAmount,
+      toFiatAmount,
+      isOffline,
+      counterValueCurrency: counterValueCurrency.ticker,
+      locale,
+      sourceCurrency: depositCurrency?.ticker ?? PERPS_DEPOSIT_DEFAULT_FUNDING_TICKER,
+      getAccountName,
+      track,
+      openBuy,
+      openSupportUrl,
+    });
   const { canReview } = formErrors;
+
+  const depositAccountCounterValue = useMemo(() => {
+    if (!depositCurrency || !depositSpendableBalance) return null;
+    const counterValue = calculateCountervalue(depositCurrency, depositSpendableBalance);
+    if (!counterValue) return null;
+    return formatCurrencyUnit(counterValueUnit, counterValue, {
+      showCode: true,
+      discreet,
+      locale,
+    });
+  }, [
+    calculateCountervalue,
+    counterValueUnit,
+    depositCurrency,
+    depositSpendableBalance,
+    discreet,
+    locale,
+  ]);
+
+  const selectMax = useCallback(() => {
+    if (maxAmount === null) return;
+    setAmountText(toAmountText(applyRatio(maxAmount, 1, maxDecimalLength, maxBuffer)));
+  }, [maxAmount, maxBuffer, maxDecimalLength]);
 
   const receiverUnit = receiverCurrency.units[0];
 

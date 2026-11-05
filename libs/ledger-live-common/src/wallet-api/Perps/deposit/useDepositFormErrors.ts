@@ -7,12 +7,14 @@ import {
   PERPS_DEPOSIT_ANALYTICS_CONTEXT,
   getDepositBaseError,
   getDepositBuyTarget,
+  getDepositFeeAccount,
   resolveDepositFormError,
   type DepositBuyTarget,
   type DepositErrorDetails,
   type DepositFormError,
 } from "./formError";
-import { getDepositSpendableBalance } from "./coinErrors";
+import { resolveWalletApiSpendableBalance } from "../../converters";
+import { readStoredSpendableBalance, type SpendableBalanceReader } from "./coinErrors";
 import {
   findDepositParentAccount,
   type PerpsDepositQuote,
@@ -37,12 +39,14 @@ export function getDepositAmountState({
   depositAmount,
   maxAmount,
   convertedAmount,
+  getSpendableBalance = readStoredSpendableBalance,
 }: Readonly<{
   depositAccount: AccountLike | undefined;
   parentAccount: Account | undefined;
   depositAmount: number;
   maxAmount: number | null;
   convertedAmount: BigNumber | null;
+  getSpendableBalance?: SpendableBalanceReader;
 }>): DepositAmountState {
   const baseError = getDepositBaseError({
     depositAccount,
@@ -50,11 +54,12 @@ export function getDepositAmountState({
     maxAmount,
     hasConversion: convertedAmount !== null,
     parentAccount,
+    getSpendableBalance,
   });
   const isFormComplete = depositAmount > 0 && Boolean(depositAccount) && baseError === null;
   const sentAmountAtomic =
     isFormComplete && depositAccount && convertedAmount
-      ? BigNumber.min(convertedAmount, getDepositSpendableBalance(depositAccount)).integerValue(
+      ? BigNumber.min(convertedAmount, getSpendableBalance(depositAccount)).integerValue(
           BigNumber.ROUND_FLOOR,
         )
       : undefined;
@@ -78,6 +83,7 @@ export type UseDepositFormErrorsParams = Readonly<{
   track: DepositTrack;
   openBuy: (target: DepositBuyTarget) => void;
   openSupportUrl: (url: string) => void;
+  getSpendableBalance?: SpendableBalanceReader;
 }>;
 
 export type DepositFormErrors = Readonly<{
@@ -107,6 +113,7 @@ export function useDepositFormErrors({
   track,
   openBuy,
   openSupportUrl,
+  getSpendableBalance,
 }: UseDepositFormErrorsParams): DepositFormErrors {
   /** What the user typed comes first; a missing quote only matters once it is valid. */
   const statusError = useMemo(
@@ -120,8 +127,10 @@ export function useDepositFormErrors({
         sentAmountAtomic,
         quoteResult,
         locale,
+        getSpendableBalance,
       }),
     [
+      getSpendableBalance,
       baseError,
       depositAccount,
       depositAmount,
@@ -138,18 +147,26 @@ export function useDepositFormErrors({
     [sourceCurrency, targetCurrency],
   );
 
-  const trackedErrorCodeRef = useRef<string | null>(null);
+  const trackedErrorKeyRef = useRef<string | null>(null);
   useEffect(() => {
     if (isQuoteLoading) return;
     const code = statusError?.code ?? null;
-    if (code === trackedErrorCodeRef.current) return;
-    trackedErrorCodeRef.current = code;
+    const key = code && [code, sourceCurrency, targetCurrency].join("|");
+    if (key === trackedErrorKeyRef.current) return;
+    trackedErrorKeyRef.current = key;
     if (!code) return;
     track("swap error message", {
       message: DEPOSIT_FORM_ERROR_ANALYTICS_MESSAGES[code],
       ...analyticsProperties,
     });
-  }, [analyticsProperties, isQuoteLoading, statusError?.code, track]);
+  }, [
+    analyticsProperties,
+    isQuoteLoading,
+    sourceCurrency,
+    statusError?.code,
+    targetCurrency,
+    track,
+  ]);
 
   const buyTarget = useMemo(
     () => getDepositBuyTarget({ statusError, depositAccount, parentAccount, getAccountName }),
@@ -199,15 +216,39 @@ export function useDepositFormErrors({
   };
 }
 
+function useWalletApiSpendableBalance(
+  account: AccountLike | undefined,
+  parentAccount: Account | undefined,
+): BigNumber | undefined {
+  const [resolved, setResolved] = useState<{ account: AccountLike; balance: BigNumber } | null>(
+    null,
+  );
+
+  useEffect(() => {
+    if (!account) return;
+    let stale = false;
+    void resolveWalletApiSpendableBalance(account, parentAccount).then(balance => {
+      if (!stale) setResolved({ account, balance });
+    });
+    return () => {
+      stale = true;
+    };
+  }, [account, parentAccount]);
+
+  return resolved && resolved.account === account ? resolved.balance : undefined;
+}
+
 export type UsePerpsDepositFormParams = Readonly<{
   accounts: AccountLike[];
   receiverAccount: AccountLike;
   depositAccount: AccountLike | undefined;
   depositAmount: number;
-  maxAmount: number | null;
   toCurrencyAmount: (currency: ReturnType<typeof getAccountCurrency>) => BigNumber | null;
+  toFiatAmount: (
+    currency: ReturnType<typeof getAccountCurrency>,
+    atomicAmount: BigNumber,
+  ) => number | null;
   isOffline: boolean;
-  refreshGeneration: number;
   counterValueCurrency: string;
   locale: string;
   sourceCurrency: string;
@@ -222,6 +263,9 @@ export type PerpsDepositForm = DepositFormErrors &
     sentAmount: string;
     quote: PerpsDepositQuote | undefined;
     isQuoteLoading: boolean;
+    refreshQuote: () => void;
+    maxAmount: number | null;
+    depositSpendableBalance: BigNumber | undefined;
   }>;
 
 export function usePerpsDepositForm({
@@ -229,10 +273,9 @@ export function usePerpsDepositForm({
   receiverAccount,
   depositAccount,
   depositAmount,
-  maxAmount,
   toCurrencyAmount,
+  toFiatAmount,
   isOffline,
-  refreshGeneration,
   counterValueCurrency,
   locale,
   sourceCurrency,
@@ -241,9 +284,37 @@ export function usePerpsDepositForm({
   openBuy,
   openSupportUrl,
 }: UsePerpsDepositFormParams): PerpsDepositForm {
+  const [refreshGeneration, setRefreshGeneration] = useState(0);
+  const refreshQuote = useCallback(() => setRefreshGeneration(generation => generation + 1), []);
+
   const parentAccount = useMemo(
     () => (depositAccount ? findDepositParentAccount(depositAccount, accounts) : undefined),
     [accounts, depositAccount],
+  );
+
+  const feeAccount = depositAccount
+    ? getDepositFeeAccount(depositAccount, parentAccount)
+    : undefined;
+  const depositWalletApiBalance = useWalletApiSpendableBalance(depositAccount, parentAccount);
+  const feeWalletApiBalance = useWalletApiSpendableBalance(
+    feeAccount === depositAccount ? undefined : feeAccount,
+    undefined,
+  );
+  const getSpendableBalance = useCallback<SpendableBalanceReader>(
+    account => {
+      if (account === depositAccount) return depositWalletApiBalance ?? account.spendableBalance;
+      if (account === feeAccount) return feeWalletApiBalance ?? account.spendableBalance;
+      return account.spendableBalance;
+    },
+    [depositAccount, depositWalletApiBalance, feeAccount, feeWalletApiBalance],
+  );
+  const depositSpendableBalance = depositAccount ? getSpendableBalance(depositAccount) : undefined;
+  const maxAmount = useMemo(
+    () =>
+      depositAccount && depositSpendableBalance
+        ? toFiatAmount(getAccountCurrency(depositAccount), depositSpendableBalance)
+        : null,
+    [depositAccount, depositSpendableBalance, toFiatAmount],
   );
 
   const convertedAmount = useMemo(
@@ -259,8 +330,9 @@ export function usePerpsDepositForm({
         depositAmount,
         maxAmount,
         convertedAmount,
+        getSpendableBalance,
       }),
-    [convertedAmount, depositAccount, depositAmount, maxAmount, parentAccount],
+    [convertedAmount, depositAccount, depositAmount, getSpendableBalance, maxAmount, parentAccount],
   );
 
   const { sentAmountAtomic } = amountState;
@@ -295,7 +367,16 @@ export function usePerpsDepositForm({
     track,
     openBuy,
     openSupportUrl,
+    getSpendableBalance,
   });
 
-  return { ...formErrors, sentAmount, quote: quoteResult?.quote, isQuoteLoading };
+  return {
+    ...formErrors,
+    sentAmount,
+    quote: quoteResult?.quote,
+    isQuoteLoading,
+    refreshQuote,
+    maxAmount,
+    depositSpendableBalance,
+  };
 }

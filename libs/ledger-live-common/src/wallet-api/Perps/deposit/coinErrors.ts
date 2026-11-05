@@ -44,55 +44,47 @@ const MINIMUM_BALANCE_RULES: Record<
   },
 };
 
-type AleoBalances = Readonly<{
-  transparentBalance: BigNumber;
-  privateBalance: BigNumber | null;
-}>;
+export type SpendableBalanceReader = (account: AccountLike) => BigNumber;
 
-function isAleoBalances(value: unknown): value is AleoBalances {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    "transparentBalance" in value &&
-    BigNumber.isBigNumber(value.transparentBalance)
-  );
+export const readStoredSpendableBalance: SpendableBalanceReader = account =>
+  account.spendableBalance;
+
+const ACCOUNT_NOT_READY_ERROR: DepositFormError = {
+  code: "accountNotReady",
+  labelKey: "perpsDeposit.formErrors.accountNotReady",
+};
+
+function isAleoAccount(account: AccountLike): boolean {
+  return account.type === "Account"
+    ? account.currency.family === "aleo"
+    : ALEO_CURRENCY_IDS.has(account.token.parentCurrencyId);
 }
 
-function getAleoBalances(account: AccountLike): AleoBalances | undefined {
-  if (account.type === "Account") {
-    if (account.currency.family !== "aleo" || !("aleoResources" in account)) return undefined;
-    return isAleoBalances(account.aleoResources) ? account.aleoResources : undefined;
-  }
-  if (account.type !== "TokenAccount" || !ALEO_CURRENCY_IDS.has(account.token.parentCurrencyId)) {
-    return undefined;
-  }
-  return isAleoBalances(account) ? account : undefined;
-}
-
-export function getDepositSpendableBalance(account: AccountLike): BigNumber {
-  return getAleoBalances(account)?.transparentBalance ?? account.spendableBalance;
+function getReadinessError(mainAccount: Account | undefined): DepositFormError | null {
+  if (mainAccount?.readiness?.ready !== false) return null;
+  if (mainAccount.currency.id === "sei_evm") return SEI_EVM_ERROR;
+  if (mainAccount.currency.id === "tezos") return TEZOS_ERROR;
+  return ACCOUNT_NOT_READY_ERROR;
 }
 
 export function getAccountStateError(
   depositAccount: AccountLike,
   parentAccount: Account | undefined,
+  getSpendableBalance: SpendableBalanceReader = readStoredSpendableBalance,
 ): DepositFormError | null {
   const mainAccount = depositAccount.type === "Account" ? depositAccount : parentAccount;
-  const isNotReady = mainAccount?.readiness?.ready === false;
-  const mainCurrencyId = mainAccount?.currency.id;
+  const readinessError = getReadinessError(mainAccount);
+  if (readinessError) return readinessError;
 
-  if (isNotReady && mainCurrencyId === "sei_evm") return SEI_EVM_ERROR;
-  if (isNotReady && mainCurrencyId === "tezos") return TEZOS_ERROR;
-
-  const aleoBalances = getAleoBalances(depositAccount);
   const hasOnlyPrivateFunds =
-    aleoBalances?.privateBalance?.gt(0) === true && aleoBalances.transparentBalance.isZero();
+    isAleoAccount(depositAccount) &&
+    depositAccount.spendableBalance.gt(0) &&
+    getSpendableBalance(depositAccount).isZero();
   if (hasOnlyPrivateFunds) {
-    const { ticker } = getAccountCurrency(depositAccount);
     return {
       code: "aleoPrivateBalance",
       labelKey: "perpsDeposit.formErrors.aleoPrivateBalance",
-      values: { ticker },
+      values: { ticker: getAccountCurrency(depositAccount).ticker },
       supportUrl: ALEO_SUPPORT_URL,
     };
   }
@@ -118,12 +110,13 @@ export function getMinimumBalanceError(
   quote: PerpsDepositQuote | undefined,
   sentAmountAtomic: BigNumber | undefined,
   locale: string,
+  getSpendableBalance: SpendableBalanceReader = readStoredSpendableBalance,
 ): DepositFormError | null {
   const rule = getMinimumBalanceRule(depositAccount);
   const fee = quote?.estimatedNetworkFee;
   if (!rule || !fee || !sentAmountAtomic || depositAccount.type !== "Account") return null;
 
-  const remaining = depositAccount.spendableBalance
+  const remaining = getSpendableBalance(depositAccount)
     .minus(sentAmountAtomic)
     .minus(new BigNumber(fee.amount));
   if (!remaining.lt(rule.minimumAtomic)) return null;

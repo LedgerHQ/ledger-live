@@ -102,6 +102,19 @@ describe("usePerpsDepositQuote", () => {
     expect(result.current.result).toEqual({ errors: [{ code: "noQuotes" }] });
   });
 
+  it("logs an unexpected failure before it reports no quotes", async () => {
+    const warn = jest.spyOn(console, "warn").mockImplementation(() => {});
+    const failure = new TypeError("bug");
+    mockFetchPerpsDepositQuote.mockRejectedValue(failure);
+    const { result } = renderQuote({ amount: "2000", depositAccount });
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false), { timeout: 2000 });
+
+    expect(result.current.result).toEqual({ errors: [{ code: "noQuotes" }] });
+    expect(warn).toHaveBeenCalledWith("[perps] deposit quote failed", failure);
+    warn.mockRestore();
+  });
+
   it("asks nothing while offline, and asks again for the same draft when the network returns", async () => {
     const { result, rerender } = renderQuote({ amount: "2000", depositAccount, isOffline: true });
     await passDebounce();

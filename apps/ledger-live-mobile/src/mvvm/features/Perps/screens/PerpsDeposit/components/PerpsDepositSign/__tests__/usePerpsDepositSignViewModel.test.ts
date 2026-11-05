@@ -75,7 +75,12 @@ describe("usePerpsDepositSignViewModel", () => {
   });
 
   it("returns to the form, not the review, when the sheet of a generic error is dismissed", () => {
-    mockDeviceStep = { kind: "error", error: new PayloadStepError(), isGeneric: true };
+    mockDeviceStep = {
+      kind: "error",
+      error: new PayloadStepError(),
+      isGeneric: true,
+      returnsToForm: true,
+    };
     const { result, onReturnToForm, onRefused } = renderSignViewModel(device);
 
     act(() => result.current.handleDrawerClose());

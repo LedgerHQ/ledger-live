@@ -5,20 +5,23 @@ import {
   getFeesCurrency,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
 import {
+  QuoteErrorCodes,
   QuotesErrorCodes,
   type QuoteEstimatedNetworkFee,
 } from "@ledgerhq/wallet-api-exchange-module";
 import { formatDisplayAmount } from "./formatAmount";
 import {
   getAccountStateError,
-  getDepositSpendableBalance,
   getMinimumBalanceError,
   needsFeeForMinimumBalance,
+  readStoredSpendableBalance,
+  type SpendableBalanceReader,
 } from "./coinErrors";
 import type { PerpsDepositQuote, PerpsDepositQuoteResult } from "./quote";
 
 export type DepositFormErrorCode =
   | "offline"
+  | "accountNotReady"
   | "seiEvmUnlinked"
   | "aleoPrivateBalance"
   | "tezosUnrevealed"
@@ -39,6 +42,7 @@ export type DepositFormError = Readonly<{
 
 export const DEPOSIT_FORM_ERROR_ANALYTICS_MESSAGES: Record<DepositFormErrorCode, string> = {
   offline: "network_down",
+  accountNotReady: "account_not_ready",
   seiEvmUnlinked: "sei_evm_unlinked_account",
   aleoPrivateBalance: "aleo_private_balance_unswappable",
   tezosUnrevealed: "tezos_unrevealed_account",
@@ -54,6 +58,14 @@ export const DEPOSIT_FORM_ERROR_ANALYTICS_MESSAGES: Record<DepositFormErrorCode,
 export const PERPS_DEPOSIT_ANALYTICS_CONTEXT = { page: "perps_deposit", flow: "perps" } as const;
 
 const FEE_DISPLAY_DECIMALS = 7;
+
+const BASE_ERRORS_BEFORE_FEES: ReadonlySet<DepositFormErrorCode> = new Set([
+  "accountNotReady",
+  "seiEvmUnlinked",
+  "aleoPrivateBalance",
+  "tezosUnrevealed",
+  "insufficientBalance",
+]);
 
 const OFFLINE_ERROR: DepositFormError = {
   code: "offline",
@@ -76,6 +88,7 @@ export type DepositBaseCheckParams = Readonly<{
   maxAmount: number | null;
   hasConversion: boolean;
   parentAccount?: Account;
+  getSpendableBalance?: SpendableBalanceReader;
 }>;
 
 export function getDepositBaseError({
@@ -84,14 +97,45 @@ export function getDepositBaseError({
   maxAmount,
   hasConversion,
   parentAccount,
+  getSpendableBalance = readStoredSpendableBalance,
 }: DepositBaseCheckParams): DepositFormError | null {
   if (!depositAccount || depositAmount <= 0) return null;
-  const accountStateError = getAccountStateError(depositAccount, parentAccount);
+  const accountStateError = getAccountStateError(
+    depositAccount,
+    parentAccount,
+    getSpendableBalance,
+  );
   if (accountStateError) return accountStateError;
   if (maxAmount === null) return NO_QUOTES_ERROR;
   if (depositAmount > maxAmount) return INSUFFICIENT_BALANCE_ERROR;
+  const emptyFeeAccountError = getEmptyFeeAccountError(
+    depositAccount,
+    parentAccount,
+    getSpendableBalance,
+  );
+  if (emptyFeeAccountError) return emptyFeeAccountError;
   if (!hasConversion) return NO_QUOTES_ERROR;
   return null;
+}
+
+function feeAccountEmptyError(feeAccount: Account): DepositFormError {
+  return {
+    code: "notEnoughFees",
+    labelKey: "perpsDeposit.formErrors.feeAccountEmpty",
+    values: { ticker: getAccountCurrency(feeAccount).ticker },
+  };
+}
+
+function getEmptyFeeAccountError(
+  depositAccount: AccountLike,
+  parentAccount: Account | undefined,
+  getSpendableBalance: SpendableBalanceReader,
+): DepositFormError | null {
+  if (depositAccount.type === "Account") return null;
+  const feeAccount = getDepositFeeAccount(depositAccount, parentAccount);
+  return feeAccount && getSpendableBalance(feeAccount).isZero()
+    ? feeAccountEmptyError(feeAccount)
+    : null;
 }
 
 export function getDepositFeeAccount(
@@ -102,6 +146,16 @@ export function getDepositFeeAccount(
   if (!mainAccount) return undefined;
   const isFeePaidInMainCurrency = getFeesCurrency(mainAccount).id === mainAccount.currency.id;
   return isFeePaidInMainCurrency ? mainAccount : undefined;
+}
+
+function presentFeeFields(quote: PerpsDepositQuote): QuoteEstimatedNetworkFee[] {
+  return [quote.estimatedNetworkFee, quote.approvalNetworkFee].filter(
+    (fee): fee is QuoteEstimatedNetworkFee => fee !== undefined,
+  );
+}
+
+function hasForeignFeeCurrency(quote: PerpsDepositQuote, feeAccount: Account): boolean {
+  return presentFeeFields(quote).some(fee => fee.currencyId !== feeAccount.currency.id);
 }
 
 function toAtomic(fee: QuoteEstimatedNetworkFee | undefined): BigNumber {
@@ -143,36 +197,42 @@ function getFeeError({
   quote,
   sentAmountAtomic,
   locale,
+  feeBalance,
 }: {
   depositAccount: AccountLike;
   feeAccount: Account;
   quote: PerpsDepositQuote | undefined;
   sentAmountAtomic: BigNumber | undefined;
   locale: string;
+  feeBalance: BigNumber;
 }): DepositFormError | null {
   const isTokenDeposit = depositAccount.type !== "Account";
 
-  const feeBalance = getDepositSpendableBalance(feeAccount);
-
   if (isTokenDeposit && feeBalance.isZero()) {
-    return notEnoughFeesError(feeAccount, new BigNumber(0), locale);
+    return feeAccountEmptyError(feeAccount);
   }
 
-  if (!quote) return null;
+  if (!quote || hasForeignFeeCurrency(quote, feeAccount)) return null;
 
   const estimatedFee = toAtomic(quote.estimatedNetworkFee);
+  const totalFee = estimatedFee.plus(toAtomic(quote.approvalNetworkFee));
+  const isFlaggedByQuote =
+    presentFeeFields(quote).length > 0 &&
+    quote.errors.some(error => error.code === QuoteErrorCodes.NOT_ENOUGH_BALANCE_FOR_FEES);
 
   if (isTokenDeposit) {
-    const totalFee = estimatedFee.plus(toAtomic(quote.approvalNetworkFee));
     const exceedsBalance = totalFee.gt(feeBalance);
-    return exceedsBalance ? notEnoughFeesError(feeAccount, totalFee, locale) : null;
+    return exceedsBalance || isFlaggedByQuote
+      ? notEnoughFeesError(feeAccount, totalFee, locale)
+      : null;
   }
 
   const exceedsBalance =
     quote.estimatedNetworkFee !== undefined &&
     sentAmountAtomic !== undefined &&
     sentAmountAtomic.plus(estimatedFee).gt(feeBalance);
-  return exceedsBalance ? notEnoughFeesError(feeAccount, estimatedFee, locale) : null;
+  if (exceedsBalance) return notEnoughFeesError(feeAccount, estimatedFee, locale);
+  return isFlaggedByQuote ? notEnoughFeesError(feeAccount, totalFee, locale) : null;
 }
 
 function getAmountLimitError(
@@ -226,6 +286,7 @@ export type ResolveDepositFormErrorParams = Readonly<{
   sentAmountAtomic: BigNumber | undefined;
   quoteResult: PerpsDepositQuoteResult | undefined;
   locale: string;
+  getSpendableBalance?: SpendableBalanceReader;
 }>;
 
 export function resolveDepositFormError({
@@ -237,24 +298,23 @@ export function resolveDepositFormError({
   sentAmountAtomic,
   quoteResult,
   locale,
+  getSpendableBalance = readStoredSpendableBalance,
 }: ResolveDepositFormErrorParams): DepositFormError | null {
-  if (isOffline) return OFFLINE_ERROR;
   if (!depositAccount || depositAmount <= 0) return baseError;
-
-  const accountStateError = getAccountStateError(depositAccount, parentAccount);
-  if (accountStateError) return accountStateError;
-  if (baseError?.code === "insufficientBalance") return baseError;
+  if (isOffline) return OFFLINE_ERROR;
+  if (baseError && BASE_ERRORS_BEFORE_FEES.has(baseError.code)) return baseError;
 
   const feeAccount = getDepositFeeAccount(depositAccount, parentAccount);
-  if (!feeAccount) return NO_QUOTES_ERROR;
-
-  const feeError = getFeeError({
-    depositAccount,
-    feeAccount,
-    quote: quoteResult?.quote,
-    sentAmountAtomic,
-    locale,
-  });
+  const feeError = feeAccount
+    ? getFeeError({
+        depositAccount,
+        feeAccount,
+        quote: quoteResult?.quote,
+        sentAmountAtomic,
+        locale,
+        feeBalance: getSpendableBalance(feeAccount),
+      })
+    : null;
   if (feeError) return feeError;
   if (baseError) return baseError;
   if (!quoteResult) return null;
@@ -265,13 +325,19 @@ export function resolveDepositFormError({
     quote,
     sentAmountAtomic,
     locale,
+    getSpendableBalance,
   );
   if (minimumBalanceError) return minimumBalanceError;
 
   const amountLimitError = getAmountLimitError(quoteResult, depositAccount, locale);
   if (amountLimitError) return amountLimitError;
 
-  return quote && !needsFeeForMinimumBalance(depositAccount, quote) ? null : NO_QUOTES_ERROR;
+  const isQuoteUsable =
+    quote !== undefined &&
+    feeAccount !== undefined &&
+    !hasForeignFeeCurrency(quote, feeAccount) &&
+    !needsFeeForMinimumBalance(depositAccount, quote);
+  return isQuoteUsable ? null : NO_QUOTES_ERROR;
 }
 
 export type DepositErrorDetails = Readonly<{

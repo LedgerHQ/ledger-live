@@ -11307,6 +11307,7 @@
       "notEnoughFees": "You need {{fees}} {{ticker}} for the network fees.",
       "amountTooLow": "Enter at least {{amount}} {{ticker}} and try again.",
       "amountTooHigh": "Enter {{amount}} {{ticker}} or less and try again.",
+      "accountNotReady": "This account isn't ready to send yet. Open it in your accounts, then try again.",
       "seiEvmUnlinked": "SEI EVM accounts must be linked before swapping",
       "aleoPrivateBalance": "Swaps are only available for public {{ticker}}. Your funds are currently private and can't be swapped.",
       "tezosUnrevealed": "Your Tezos account isn't activated yet. Please send a small amount of XTZ before swapping.",
