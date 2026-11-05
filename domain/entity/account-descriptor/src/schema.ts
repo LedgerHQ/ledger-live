@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { NetworkSchema } from "./network";
+import { NetworkIdSchema } from "./network";
 import { canonicalPath } from "./path";
 
 /** BIP32 indices are below 2^31, without leading zeros so that one path has one spelling. */
@@ -18,7 +18,7 @@ export const UtxoAccountDescriptorSchema = z.object({
   purpose: AccountPurposeSchema,
   version: z.literal("2"),
   type: z.literal("utxo"),
-  network: NetworkSchema,
+  network: NetworkIdSchema,
   xpub: z
     .string()
     .min(1)
@@ -41,7 +41,7 @@ export const AddressAccountDescriptorSchema = z.object({
   purpose: AccountPurposeSchema,
   version: z.literal("2"),
   type: z.literal("address"),
-  network: NetworkSchema,
+  network: NetworkIdSchema,
   address: z.string().min(1),
   /** Full derivation path, e.g. "m/44h/60h/0h/0/0"; "'" and "H" are read as "h". */
   path: z

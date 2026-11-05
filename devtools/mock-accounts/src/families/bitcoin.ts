@@ -58,11 +58,11 @@ function xpub(testnet: boolean, index: number, random: Random): string {
 
 /** UTXO accounts at the account level of the path; balances are all spendable, one account in six empty. */
 export const bitcoin: MockFamily = {
-  descriptor: (currency, index, random) => ({
+  descriptor: (currency, network, index, random) => ({
     purpose: "mock",
     version: "2",
     type: "utxo",
-    network: currency.id,
+    network,
     xpub: xpub(currency.isTestnetFor !== undefined, index, random),
     path: `m/${SEGWIT.has(currency.id) ? 84 : 44}h/${currency.coinType}h/${index}h`,
   }),
