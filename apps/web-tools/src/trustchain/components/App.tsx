@@ -24,6 +24,8 @@ import { TrustchainSDKContext, defaultContext } from "../context";
 import { DeviceInteractionVisibleContext } from "../deviceInteractionContext";
 import { AppQRCodeHost } from "./AppQRCodeHost";
 import { AppMemberRow } from "./AppMemberRow";
+import { AppInspectTrustchain } from "./AppInspectTrustchain";
+import { AGENT_INTENT_MEMBER_PERMISSIONS, AppAgentIntentMembers } from "./AppAgentIntentMembers";
 import { AppDecryptUserData } from "./AppDecryptUserData";
 import { AppEncryptUserData } from "./AppEncryptUserData";
 import { AppDestroyTrustchain } from "./AppDestroyTrustchain";
@@ -53,6 +55,8 @@ const initialState: State = {
     recentAddresses: {},
   },
 };
+
+const AGENT_INTENT_APPLICATION_ID = 18;
 
 // applicationPath is m/0'/<applicationId>'/<index>'
 const applicationIdOfPath = (applicationPath: string): number =>
@@ -150,6 +154,8 @@ const App = () => {
 
   // Cloud Sync and Accounts Sync are Ledger Sync-only; other apps (e.g. ring) use the Trustchain SDK only.
   const isLedgerSync = applicationId === defaultContext.applicationId;
+  // Agent Intent: the software member cannot add blocks, so its mutations are device-signed.
+  const isAgentIntent = applicationId === AGENT_INTENT_APPLICATION_ID;
 
   const [deviceInteractionVisible, setDeviceInteractionVisible] = useState(false);
   const callbacks = useMemo(
@@ -158,6 +164,18 @@ const App = () => {
       onEndRequestUserInteraction: () => setDeviceInteractionVisible(false),
     }),
     [],
+  );
+  const getOrCreateCallbacks = useMemo(
+    () =>
+      isAgentIntent
+        ? { ...callbacks, softwareMemberPermissions: AGENT_INTENT_MEMBER_PERMISSIONS }
+        : callbacks,
+    [isAgentIntent, callbacks],
+  );
+  const destroyWithDevice = useCallback(
+    (trustchain: Trustchain) =>
+      sdk.closeApplicationStreamWithHardware(deviceId, trustchain, callbacks),
+    [sdk, deviceId, callbacks],
   );
 
   return (
@@ -237,7 +255,7 @@ const App = () => {
                 memberCredentials={memberCredentials}
                 trustchain={trustchain}
                 setTrustchain={setTrustchain}
-                callbacks={callbacks}
+                callbacks={getOrCreateCallbacks}
               />
 
               <AppRestoreTrustchain
@@ -263,14 +281,32 @@ const App = () => {
                   setTrustchain={setTrustchain}
                   setMembers={setMembers}
                   callbacks={callbacks}
+                  removeWithDevice={isAgentIntent}
                 />
               ))}
+
+              {isAgentIntent ? (
+                <AppAgentIntentMembers
+                  deviceId={deviceId}
+                  trustchain={trustchain}
+                  memberCredentials={memberCredentials}
+                  setMembers={setMembers}
+                  callbacks={callbacks}
+                />
+              ) : null}
+
+              <AppInspectTrustchain
+                deviceId={deviceId}
+                memberCredentials={memberCredentials}
+                callbacks={callbacks}
+              />
 
               <AppEncryptUserData trustchain={trustchain} />
 
               <AppDecryptUserData trustchain={trustchain} />
 
               <AppDestroyApplication
+                destroyWithDevice={isAgentIntent ? destroyWithDevice : undefined}
                 trustchain={trustchain}
                 setTrustchain={setTrustchain}
                 memberCredentials={memberCredentials}

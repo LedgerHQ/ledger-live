@@ -358,6 +358,7 @@ patchedDependencies:
   "bigint-buffer@1.1.5": "patches/bigint-buffer@1.1.5.patch"
   "usb@2.17.0": "patches/usb@2.17.0.patch"
   "react-native-worklets@0.8.1": "patches/react-native-worklets@0.8.1.patch"
+  "@ledgerhq/ledger-key-ring-protocol@1.1.0": "patches/@ledgerhq__ledger-key-ring-protocol@1.1.0.patch"
 
 allowBuilds:
   "@apollo/protobufjs": true
