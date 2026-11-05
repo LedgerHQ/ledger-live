@@ -64,9 +64,8 @@ describe("cryptoFactory test", () => {
     expect(chain.validatorPrefix).toBe("gonkavaloper");
     // The endpoint reaches the chain instance through config enrichment (chain/chain.ts).
     expect(chain.lcd).toBe("https://gonka.coin.ledger.com");
-    // Still 0 with the config entry in place — guards against a future entry
-    // re-introducing the family default.
-    expect(chain.minGasPrice).toBe(0);
+    // 1 ngonka per gas, the price of the chain's "cosmos" fee group.
+    expect(chain.minGasPrice).toBe(1);
     expect(chain.ledgerValidator).toBeUndefined();
   });
 

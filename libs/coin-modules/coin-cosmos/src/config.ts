@@ -215,10 +215,9 @@ export const cosmosConfig: Record<string, ConfigInfo> = {
   config_currency_gonka: {
     type: "object",
     default: {
-      // The chain's FeeParams.MinGasPriceNgonka consensus parameter is 0; the family default
-      // of 0.0025 would price transfers the chain never charges.
+      // The chain's "cosmos" fee group charges bank transfers 1 ngonka per gas (v0.2.16 upgrade).
       lcd: "https://gonka.coin.ledger.com",
-      minGasPrice: 0,
+      minGasPrice: 1,
       status: {
         type: "active",
         // Declares the supported set: transfers only. The runtime rejects delegation messages,

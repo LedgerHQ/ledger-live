@@ -354,6 +354,22 @@ describe("prepareTransaction", () => {
     expect(result.gas).toEqual(gas);
   });
 
+  it("prices a gonka send at 1 ngonka per gas", async () => {
+    const gonkaAccount = {
+      ...stakingAccount(),
+      freshAddress: "gonka1testaddress",
+      currency: { id: "gonka", units: [{}, { code: "ngonka" }] },
+    } as unknown as CosmosAccount;
+
+    const prepared = await prepareTransaction(
+      gonkaAccount,
+      sendTransaction({ recipient: "gonka1recipientaddress" }),
+    );
+
+    expect(prepared.gas?.gt(42000)).toBe(true);
+    expect(prepared.fees).toEqual(prepared.gas);
+  });
+
   it("returns the same transaction when nothing needs updating", async () => {
     const account = stakingAccount();
     const prepared = await prepareTransaction(account, sendTransaction());
