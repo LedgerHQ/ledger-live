@@ -1,13 +1,22 @@
-import { OperationType } from "@ledgerhq/types-live";
 import type { OperationTypeView, OperationType as GatewayOperationType } from "../types/gateway";
 
-const OPERATION_TYPE_MAP: Readonly<Partial<Record<GatewayOperationType, OperationType>>> = {
+export type CantonOperationType =
+  | "IN"
+  | "OUT"
+  | "FEES"
+  | "TRANSFER_PROPOSAL"
+  | "TRANSFER_REJECTED"
+  | "TRANSFER_WITHDRAWN"
+  | "PRE_APPROVAL"
+  | "UNKNOWN";
+
+const OPERATION_TYPE_MAP: Readonly<Partial<Record<GatewayOperationType, CantonOperationType>>> = {
   "transfer-proposal": "TRANSFER_PROPOSAL",
   "transfer-rejected": "TRANSFER_REJECTED",
   "transfer-withdrawn": "TRANSFER_WITHDRAWN",
 } as const;
 
-const TX_TYPE_MAP: Readonly<Partial<Record<OperationTypeView, OperationType>>> = {
+const TX_TYPE_MAP: Readonly<Partial<Record<OperationTypeView, CantonOperationType>>> = {
   Receive: "IN",
   Initialize: "PRE_APPROVAL",
 } as const;
@@ -16,7 +25,7 @@ function getSendOperationType(
   transferValue: string,
   senders: string[],
   partyId: string,
-): OperationType {
+): CantonOperationType {
   if (transferValue === "0") {
     return "FEES";
   }
@@ -27,7 +36,9 @@ function isGatewayOperationType(value: string | undefined): value is GatewayOper
   return value !== undefined && Object.prototype.hasOwnProperty.call(OPERATION_TYPE_MAP, value);
 }
 
-function getOperationTypeFromDetails(operationType: string | undefined): OperationType | null {
+function getOperationTypeFromDetails(
+  operationType: string | undefined,
+): CantonOperationType | null {
   if (!isGatewayOperationType(operationType)) {
     return null;
   }
@@ -42,7 +53,7 @@ export function determineOperationType(
   transferValue: string,
   senders: string[],
   partyId: string,
-): OperationType {
+): CantonOperationType {
   const detailsType = getOperationTypeFromDetails(operationType);
   if (detailsType) {
     return detailsType;
