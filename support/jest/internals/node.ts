@@ -1,7 +1,8 @@
-// Internals of the node presets, required by @support/jest/shared and @support/jest/libs-coin and
+// Internals of the node presets, imported by @support/jest/shared and @support/jest/libs-coin and
 // left out of the package exports: sharedNodeConfig() skips the check createSharedJestConfig()
 // runs on a package's overrides.
-const {
+import type { Config } from "@jest/types";
+import {
   freshReporters,
   jestSonarReporter,
   lcovCoverageReporters,
@@ -9,11 +10,19 @@ const {
   quarantineReporter,
   quarantineRetries,
   swcTransform,
-} = require("../core");
-const { deepFreeze } = require("./freeze");
+} from "../core/index.ts";
+import { deepFreeze } from "./freeze.ts";
+
+type Options = Config.InitialOptions;
+
+/** The options of the node factories. */
+export type NodeOptions = { esm?: boolean; extraEsmDeps?: string[]; projectRoot?: string };
 
 // Tail reporters of every node config. The preset sets `reporters`; a package cannot override them.
-const sharedReporters = deepFreeze([jestSonarReporter, quarantineReporter]);
+export const sharedReporters: NonNullable<Options["reporters"]> = deepFreeze([
+  jestSonarReporter,
+  quarantineReporter,
+]);
 
 // ─── ESM-only dependencies ──────────────────────────────────────────────────
 
@@ -33,12 +42,11 @@ const esmDeps = ["@noble\\+"];
  *
  *   module.exports = withEsmDeps({ testEnvironment: "node" });
  *   module.exports = withEsmDeps(config, { extraDeps: ["@ledgerhq\\+"] }); // also keep these transformed
- *
- * @param {import('@jest/types').Config.InitialOptions} config
- * @param {{ extraDeps?: string[] }} [options]
- * @returns {import('@jest/types').Config.InitialOptions}
  */
-function withEsmDeps(config, { extraDeps = [] } = {}) {
+export function withEsmDeps(
+  config: Options,
+  { extraDeps = [] }: { extraDeps?: string[] } = {},
+): Options {
   const deps = [...esmDeps, ...extraDeps].join("|");
   return {
     ...config,
@@ -56,13 +64,12 @@ function withEsmDeps(config, { extraDeps = [] } = {}) {
 /**
  * The flat node config createSharedJestConfig() returns, without the check of its overrides, for
  * the presets built on it, which set some of the keys the preset owns.
- *
- * @param {import('@jest/types').Config.InitialOptions} [overrides]
- * @param {{ esm?: boolean, extraEsmDeps?: string[], projectRoot?: string }} [options]
- * @returns {import('@jest/types').Config.InitialOptions}
  */
-function sharedNodeConfig(overrides = {}, { esm = false, extraEsmDeps = [], projectRoot } = {}) {
-  const config = {
+export function sharedNodeConfig(
+  overrides: Options = {},
+  { esm = false, extraEsmDeps = [], projectRoot }: NodeOptions = {},
+): Options {
+  const config: Options = {
     testEnvironment: "node",
     roots: ["<rootDir>/src"],
     testMatch: ["**/*.test.ts"],
@@ -82,6 +89,8 @@ function sharedNodeConfig(overrides = {}, { esm = false, extraEsmDeps = [], proj
 }
 
 // The options sharedNodeConfig() reads, and the node factories built on it.
-const NODE_OPTIONS = deepFreeze(["esm", "extraEsmDeps", "projectRoot"]);
-
-module.exports = { NODE_OPTIONS, sharedNodeConfig, sharedReporters, withEsmDeps };
+export const NODE_OPTIONS: readonly (keyof NodeOptions)[] = deepFreeze([
+  "esm",
+  "extraEsmDeps",
+  "projectRoot",
+]);

@@ -5,17 +5,22 @@
 // substituted against the *consumer's* root, not this one. Paths that must resolve in the consumer
 // — its node_modules, its jest/ folder — deliberately keep `<rootDir>`.
 
-const path = require("path");
-const { presetFactory } = require("../core");
-const { deepFreeze } = require("../internals/freeze");
+import type { Config } from "@jest/types";
+import { presetFactory } from "../core/index.ts";
+import { deepFreeze } from "../internals/freeze.ts";
+import { joinPresetPath } from "../internals/join-preset-path.ts";
 
-const here = relative => path.join(__dirname, relative);
+const here = (relative: string) => joinPresetPath(import.meta.dirname, relative);
 
 const swcJsc = { target: "esnext", transform: { react: { runtime: "automatic" } } };
 
-const coverageReporters = file => ["json", ["lcov", { file, projectRoot: "../../" }], "text"];
+function coverageReporters(file: string): Config.CoverageReporters {
+  return ["json", ["lcov", { file, projectRoot: "../../" }], "text"];
+}
 
-const sonarReporter = outputName => ["jest-sonar", { outputName, reportedFilePath: "absolute" }];
+function sonarReporter(outputName: string): Config.ReporterConfig {
+  return ["jest-sonar", { outputName, reportedFilePath: "absolute" }];
+}
 
 // Union of what the three devtools packages each allowed through. Naming a package a given consumer
 // does not depend on is harmless, and it removes three drifting copies of this list.
@@ -46,7 +51,7 @@ const TEST_TIMEOUT = 30_000;
 
 // The projects' mappers and setup files, which a package spreads to keep them (the override rule
 // of the `@support/jest` README).
-const webModuleNameMapper = deepFreeze({
+export const webModuleNameMapper: Record<string, string> = deepFreeze({
   "^jest/(.*)$": "<rootDir>/jest/$1",
   // Pin lumen to the consumer's copy. Two reasons: this package does not carry lumen's peer
   // graph (clsx, radix, …), and a second lumen instance would give the ThemeProvider rendered
@@ -54,28 +59,30 @@ const webModuleNameMapper = deepFreeze({
   "^@ledgerhq/lumen-ui-react$": "<rootDir>/node_modules/@ledgerhq/lumen-ui-react",
 });
 
-const nativeModuleNameMapper = deepFreeze({
+export const nativeModuleNameMapper: Record<string, string> = deepFreeze({
   "^jest/(.*)$": "<rootDir>/jest/$1",
   // resolved in the consumer: each devtools package declares lumen itself
   "^@ledgerhq/lumen-ui-rnative$": "<rootDir>/node_modules/@ledgerhq/lumen-ui-rnative/src/index.ts",
   "^@ledgerhq/lumen-design-core$": "<rootDir>/node_modules/@ledgerhq/lumen-design-core",
   "^@sbaiahmed1/react-native-blur$": here("mocks/react-native-blur.tsx"),
-  "^react-native-worklets$": here("mocks/react-native-worklets.js"),
+  "^react-native-worklets$": here("mocks/react-native-worklets.cts"),
   "^react-native-gesture-handler$": here("mocks/react-native-gesture-handler.tsx"),
   "^expo-haptics$": here("mocks/expo-haptics.ts"),
 });
 
-const webSetupFilesAfterEnv = deepFreeze(["@testing-library/jest-dom", here("setup/web.js")]);
+export const webSetupFilesAfterEnv: string[] = deepFreeze([
+  "@testing-library/jest-dom",
+  here("setup/web.ts"),
+]);
 
-const nativeSetupFilesAfterEnv = deepFreeze([here("setup/native.ts")]);
+export const nativeSetupFilesAfterEnv: string[] = deepFreeze([here("setup/native.ts")]);
 
 /**
  * jsdom project for a devtools package's `*.web.test.*` files.
  *
- * @param {import('@jest/types').Config.InitialOptions} [overrides] by the override rule of the `@support/jest` README
- * @returns {import('@jest/types').Config.InitialOptions}
+ * @param overrides by the override rule of the `@support/jest` README
  */
-function webJestConfig(overrides = {}) {
+function webJestConfig(overrides: Config.InitialOptions = {}): Config.InitialOptions {
   return {
     testEnvironment: "jsdom",
     roots: ["<rootDir>/src"],
@@ -102,10 +109,9 @@ function webJestConfig(overrides = {}) {
  * rootDir, and babel-jest needs the React Native preset to parse the Flow-typed `.js` files that
  * ship inside react-native itself.
  *
- * @param {import('@jest/types').Config.InitialOptions} [overrides] by the override rule of the `@support/jest` README
- * @returns {import('@jest/types').Config.InitialOptions}
+ * @param overrides by the override rule of the `@support/jest` README
  */
-function nativeJestConfig(overrides = {}) {
+function nativeJestConfig(overrides: Config.InitialOptions = {}): Config.InitialOptions {
   return {
     preset: "react-native",
     roots: ["<rootDir>/src"],
@@ -127,11 +133,5 @@ function nativeJestConfig(overrides = {}) {
   };
 }
 
-module.exports = {
-  createWebJestConfig: presetFactory("createWebJestConfig", [], webJestConfig),
-  createNativeJestConfig: presetFactory("createNativeJestConfig", [], nativeJestConfig),
-  nativeModuleNameMapper,
-  nativeSetupFilesAfterEnv,
-  webModuleNameMapper,
-  webSetupFilesAfterEnv,
-};
+export const createWebJestConfig = presetFactory("createWebJestConfig", [], webJestConfig);
+export const createNativeJestConfig = presetFactory("createNativeJestConfig", [], nativeJestConfig);

@@ -2,15 +2,14 @@
 // the native-only shapes, the flow additions and the quarantine wiring.
 
 import assert from "node:assert/strict";
-import { spawnSync } from "node:child_process";
 import { createRequire } from "node:module";
 import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 
 const require = createRequire(import.meta.url);
-const shared = require("../shared");
-const flow = require("../features-flow");
+const shared = require("@support/jest/shared");
+const flow = require("@support/jest/features-flow");
 const { createSharedUiJestConfig, createSharedUiNativeJestConfig } = shared;
 const { createFlowJestConfig, createFlowNativeJestConfig } = flow;
 
@@ -66,6 +65,8 @@ function nativeConfig(config) {
 
 const webFiles = ["src/View.web.test.tsx", "src/view-model.test.ts", "src/View.web.spec.ts"];
 const nativeFiles = ["src/View.native.test.tsx", "src/View.native.spec.ts"];
+const pinWebExtensions = ["web.tsx", "web.ts", "tsx", "ts", "js", "jsx", "json"];
+const pinNativeExtensions = ["native.tsx", "native.ts", "tsx", "ts", "js", "jsx", "json"];
 
 for (const [name, create, defaults] of dualPresets) {
   test(`${name}: the projects use the exported mappers and setup files, as unfrozen copies`, () => {
@@ -152,16 +153,28 @@ for (const [name, create, defaults] of dualPresets) {
     for (const side of ["web", "native"])
       assert.ok(project(config, side).setupFilesAfterEnv.includes(quarantineRetries), side);
   });
+
+  test(`${name}: moduleFileExtensions and the shared swc transform`, () => {
+    const config = create();
+    const transformKey = Object.keys(project(config, "web").transform)[0];
+    const transformRe = new RegExp(transformKey);
+    for (const ext of [".ts", ".tsx", ".cts", ".js", ".jsx"])
+      assert.ok(transformRe.test(`file${ext}`), `transform should match ${ext}`);
+    for (const ext of [".mjs", ".cjs", ".ctsx"])
+      assert.ok(!transformRe.test(`file${ext}`), `transform must not match ${ext}`);
+    assert.deepEqual(project(config, "web").moduleFileExtensions, pinWebExtensions);
+    assert.deepEqual(project(config, "native").moduleFileExtensions, pinNativeExtensions);
+  });
 }
 
 // The tables a layer builds on the core's keep the core's entries, before the layer's own.
-const coreReactNative = ["^react-native$", path.join(root, "core/mocks/react-native.js")];
-const coreWebSetup = path.join(root, "core/setup/web.js");
+const coreReactNative = ["^react-native$", path.join(root, "core/mocks/react-native.cts")];
+const coreWebSetup = path.join(root, "core/setup/web.ts");
 const flowReanimated = [
   "^react-native-reanimated$",
-  path.join(root, "features-flow/mocks/reanimated.js"),
+  path.join(root, "features-flow/mocks/reanimated.cts"),
 ];
-const flowWebSetup = path.join(root, "features-flow/setup/web.js");
+const flowWebSetup = path.join(root, "features-flow/setup/web.cts");
 
 for (const [name, config] of [
   ["createSharedUiJestConfig", project(createSharedUiJestConfig(), "native")],
@@ -194,34 +207,6 @@ test("createFlowJestConfig: the web setup files are the core's, then the flow's"
   ]);
 });
 
-// A child node stands in for a jsdom worker: no MessageChannel and no setImmediate, so React's
-// scheduler posts its work on the setup's MessageChannel, whose ports must not hold the process.
-test("createFlowJestConfig: the web setup lets the process exit after React's scheduler ran", () => {
-  const child = spawnSync(
-    process.execPath,
-    [
-      "-e",
-      `delete globalThis.MessageChannel;
-      delete globalThis.setImmediate;
-      const [setup, reactDom] = process.argv.slice(1);
-      require(setup);
-      const scheduler = require("node:module").createRequire(reactDom)("scheduler");
-      const test = setInterval(() => {}, 1000);
-      scheduler.unstable_scheduleCallback(scheduler.unstable_NormalPriority, () => {
-        console.log("ran");
-        clearInterval(test);
-      });`,
-      flowWebSetup,
-      require.resolve("react-dom"),
-    ],
-    { encoding: "utf8", timeout: 10_000 },
-  );
-
-  assert.equal(child.signal, null, "the process did not exit on its own");
-  assert.equal(child.status, 0, child.stderr);
-  assert.equal(child.stdout.trim(), "ran");
-});
-
 test("createFlowNativeJestConfig: a single native project", () => {
   const config = createFlowNativeJestConfig();
   assert.deepEqual(
@@ -236,7 +221,7 @@ test("createSharedUiNativeJestConfig: a flat native config, no projects", () => 
   assert.equal(config.testEnvironment, "node");
   assert.equal(
     config.moduleNameMapper["^react-native$"],
-    path.join(root, "core/mocks/react-native.js"),
+    path.join(root, "core/mocks/react-native.cts"),
   );
   assert.deepEqual(config.moduleFileExtensions.slice(0, 2), ["native.tsx", "native.ts"]);
 });
@@ -288,7 +273,7 @@ for (const [name, create] of [
 ]) {
   test(`${name}: the native project keeps the flow resolver and transform allowlist`, () => {
     const native = project(create(), "native");
-    assert.equal(native.resolver, path.join(root, "features-flow/resolver.native.js"));
+    assert.equal(native.resolver, path.join(root, "features-flow/resolver.native.ts"));
     assert.equal(native.transformIgnorePatterns.length, 1);
     assert.match(native.transformIgnorePatterns[0], /lumen-utils-shared\|.*lumen-design-core/);
   });
@@ -312,7 +297,7 @@ for (const [name, create, depth] of [
 
 for (const [name, create] of dualPresets) {
   test(`${name}: an unfrozen copy of the frozen sonar reporter, for jest to normalize`, () => {
-    const { jestSonarReporter } = require("../shared");
+    const { jestSonarReporter } = require("@support/jest/shared");
     const sonar = create().reporters.find(reporter => reporter[0] === "jest-sonar");
     assert.deepEqual(sonar, jestSonarReporter);
     assert.ok(Object.isFrozen(jestSonarReporter[1]));

@@ -1,4 +1,4 @@
-// Web (jsdom) setup the features-flow preset adds to the core's (see ../core/setup/web.js).
+// Web (jsdom) setup the features-flow preset adds to the core's (see ../core/setup/web.ts).
 
 // jsdom doesn't implement the Encoding API, unlike every runtime this code ships to
 // (browsers, React Native, Node). Packages reading TextEncoder at module-eval time
@@ -20,14 +20,18 @@ const { BroadcastChannel, MessageChannel, MessagePort } = require("node:worker_t
 function UnrefMessageChannel() {
   const channel = new MessageChannel();
   const onmessage = Object.getOwnPropertyDescriptor(MessagePort.prototype, "onmessage");
+  if (!onmessage?.get || !onmessage?.set) {
+    throw new Error("MessagePort.prototype.onmessage must be an accessor with get and set");
+  }
+  const { get, set } = onmessage;
 
   for (const port of [channel.port1, channel.port2]) {
     Object.defineProperty(port, "onmessage", {
       configurable: true,
       enumerable: true,
-      get: () => onmessage.get.call(port),
+      get: () => get.call(port),
       set(handler) {
-        onmessage.set.call(port, handler);
+        set.call(port, handler);
         port.unref();
       },
     });
@@ -39,7 +43,8 @@ function UnrefMessageChannel() {
 global.ReadableStream ??= ReadableStream;
 global.TransformStream ??= TransformStream;
 global.BroadcastChannel ??= BroadcastChannel;
-global.MessageChannel ??= UnrefMessageChannel;
+// UnrefMessageChannel is a zero-arg factory that returns Node's MessageChannel; assignable at runtime.
+global.MessageChannel ??= UnrefMessageChannel as unknown as typeof MessageChannel;
 global.MessagePort ??= MessagePort;
 
 // The fetch primitives come as one set: MSW reads a `Request` and answers a `Response`, so two

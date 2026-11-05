@@ -2,9 +2,8 @@
 // repository root, then by the factory their config calls. A factory finds the entry from the
 // `rootDir` it gets. This list only shrinks: a listed key the config no longer overrides throws.
 
-const { deepFreeze } = require("../internals/freeze");
+const { deepFreeze } = require("../internals/freeze.ts");
 
-/** @type {Record<string, { reason: string, overrides: Record<string, string[]> }>} */
 const PRESET_OVERRIDES = {
   "shared/i18n": {
     reason: "React views on the node preset: no preset covers a web-only shared/ package yet.",
@@ -25,6 +24,6 @@ const PRESET_OVERRIDES = {
       createLibsCoinIntegJestConfig: ["transform", "transformIgnorePatterns"],
     },
   },
-};
+} satisfies Record<string, import("./preset-override-entry.ts").PresetOverrideEntry>;
 
 module.exports = deepFreeze(PRESET_OVERRIDES);

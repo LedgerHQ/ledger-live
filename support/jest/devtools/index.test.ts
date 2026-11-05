@@ -15,7 +15,7 @@ const {
   nativeSetupFilesAfterEnv,
   webModuleNameMapper,
   webSetupFilesAfterEnv,
-} = require("./index.js");
+} = require("@support/jest/devtools");
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 
@@ -26,7 +26,7 @@ const factories = [
     webModuleNameMapper,
     webSetupFilesAfterEnv,
     ["^@ledgerhq/lumen-ui-react$", "<rootDir>/node_modules/@ledgerhq/lumen-ui-react"],
-    path.join(here, "setup/web.js"),
+    path.join(here, "setup/web.ts"),
   ],
   [
     "createNativeJestConfig",

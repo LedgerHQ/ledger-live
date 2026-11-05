@@ -24463,6 +24463,9 @@ importers:
       '@gorhom/bottom-sheet':
         specifier: 'catalog:'
         version: 5.2.6(db28dd4150d1c921a8a8f9e748e99a4b)
+      '@jest/types':
+        specifier: 30.5.0
+        version: 30.5.0
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
         version: 0.1.34

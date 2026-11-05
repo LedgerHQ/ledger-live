@@ -1,4 +1,5 @@
-const {
+import type { Config } from "@jest/types";
+import {
   createDualJestConfig,
   jestSonarReporter,
   nativeMocks,
@@ -8,13 +9,9 @@ const {
   webMocks,
   webSetupFiles,
   withProjectOverrides,
-} = require("../core");
-const {
-  NODE_OPTIONS,
-  sharedNodeConfig,
-  sharedReporters,
-  withEsmDeps,
-} = require("../internals/node");
+  type DualOverrides,
+} from "../core/index.ts";
+import { NODE_OPTIONS, sharedNodeConfig, sharedReporters, withEsmDeps } from "../internals/node.ts";
 
 // ─── shared/* and libs/* (node packages) ────────────────────────────────────
 
@@ -26,12 +23,12 @@ const {
  * `../../` (a package two levels below the repository root).
  *
  * A key the preset owns (`transform`, `testEnvironment`, `reporters`, ...) throws unless
- * `support/jest/core/preset-overrides.js` lists it for the package of `overrides.rootDir`.
+ * `support/jest/core/preset-overrides.cts` lists it for the package of `overrides.rootDir`.
  *
  *   module.exports = createSharedJestConfig();
  *   module.exports = createSharedJestConfig({ rootDir: __dirname }, { esm: true });
  */
-const createSharedJestConfig = presetFactory(
+export const createSharedJestConfig = presetFactory(
   "createSharedJestConfig",
   NODE_OPTIONS,
   sharedNodeConfig,
@@ -54,11 +51,8 @@ const lumenTransform = {
  *
  * Per-project overrides via `webOverrides` / `nativeOverrides`, by the override rule of the
  * `@support/jest` README.
- *
- * @param {{ webOverrides?: object, nativeOverrides?: object } & import('@jest/types').Config.InitialOptions} [overrides]
- * @returns {import('@jest/types').Config.InitialOptions}
  */
-function sharedUiJestConfig(overrides) {
+function sharedUiJestConfig(overrides?: DualOverrides): Config.InitialOptions {
   return createDualJestConfig(
     { depth: "../../", web: lumenTransform, native: lumenTransform },
     overrides,
@@ -71,11 +65,8 @@ function sharedUiJestConfig(overrides) {
  * Provides react-native, safe-area-context, Lumen native, and image stubs by default; overrides
  * follow the override rule of the `@support/jest` README. Requires no web-only dependencies
  * (jest-environment-jsdom, @testing-library/jest-dom).
- *
- * @param {{ moduleNameMapper?: object } & import('@jest/types').Config.InitialOptions} [overrides]
- * @returns {import('@jest/types').Config.InitialOptions}
  */
-function sharedUiNativeJestConfig(overrides = {}) {
+function sharedUiNativeJestConfig(overrides: Config.InitialOptions = {}): Config.InitialOptions {
   return sharedNodeConfig(
     withProjectOverrides(
       {
@@ -90,19 +81,23 @@ function sharedUiNativeJestConfig(overrides = {}) {
   );
 }
 
-module.exports = {
-  createSharedJestConfig,
-  createSharedUiJestConfig: presetFactory("createSharedUiJestConfig", [], sharedUiJestConfig),
-  createSharedUiNativeJestConfig: presetFactory(
-    "createSharedUiNativeJestConfig",
-    [],
-    sharedUiNativeJestConfig,
-  ),
+export const createSharedUiJestConfig = presetFactory(
+  "createSharedUiJestConfig",
+  [],
+  sharedUiJestConfig,
+);
+export const createSharedUiNativeJestConfig = presetFactory(
+  "createSharedUiNativeJestConfig",
+  [],
+  sharedUiNativeJestConfig,
+);
+
+export {
   jestSonarReporter,
-  nativeModuleNameMapper: nativeMocks,
-  nativeSetupFilesAfterEnv: nativeSetupFiles,
+  nativeMocks as nativeModuleNameMapper,
+  nativeSetupFiles as nativeSetupFilesAfterEnv,
   sharedReporters,
-  webModuleNameMapper: webMocks,
-  webSetupFilesAfterEnv: webSetupFiles,
+  webMocks as webModuleNameMapper,
+  webSetupFiles as webSetupFilesAfterEnv,
   withEsmDeps,
 };

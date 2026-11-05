@@ -1,13 +1,7 @@
 // The one freeze for the presets' exported constant tables: a table and everything it holds.
 
-/**
- * @template T
- * @param {T} value
- * @returns {T} the value, frozen with everything it holds
- */
-function deepFreeze(value) {
+/** The value, frozen with everything it holds. */
+export function deepFreeze<T>(value: T): T {
   if (value && typeof value === "object") Object.values(value).forEach(deepFreeze);
   return Object.freeze(value);
 }
-
-module.exports = { deepFreeze };
