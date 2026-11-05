@@ -620,9 +620,9 @@ apps/ledger-live-mobile/e2e/                                                @led
 **/team-wallet-xp/                @ledgerhq/wallet-xp
 **/team-platform/                 @ledgerhq/platform
 **/team-coin-integration/         @ledgerhq/coin-integration
-**/team-blockchain-support/       @ledgerhq/blockchain-support
-**/team-ledger-partner-hoodies/   @ledgerhq/ledger-partner-hoodies
-**/team-ledger-partner-blockydevs/ @ledgerhq/ledger-partner-blockydevs
+**/team-blockchain-support/       @ledgerhq/blockchain-support @ledgerhq/ledger-third-party-leads
+**/team-ledger-partner-hoodies/   @ledgerhq/ledger-partner-hoodies @ledgerhq/ledger-third-party-leads
+**/team-ledger-partner-blockydevs/ @ledgerhq/ledger-partner-blockydevs @ledgerhq/ledger-third-party-leads
 **/team-ptx/                      @ledgerhq/ptx
 **/team-live-devices/             @ledgerhq/live-devices
 **/team-recover-software/         @ledgerhq/recover-software
