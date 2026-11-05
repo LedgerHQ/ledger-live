@@ -17,6 +17,7 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { Copy, ExternalLink, Servers } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { MockServerStatusText } from "../../components/MockServerStatusText";
+import { MockServerActivationWarning } from "./components/MockServerActivationWarning";
 import type { MockServerSettingsFormViewModel } from "./useMockServerSettingsFormViewModel";
 
 export function MockServerSettingsFormView({
@@ -29,6 +30,9 @@ export function MockServerSettingsFormView({
   pendingAction,
   error,
   isFloatingButtonHidden,
+  isActivationWarningOpen,
+  activationUrl,
+  activationToken,
   onToggle,
   onChangeUrlDraft,
   onChangeTokenDraft,
@@ -38,6 +42,8 @@ export function MockServerSettingsFormView({
   onOpenConfigurationUi,
   onSetFloatingButtonHidden,
   onOpenPanel,
+  onConfirmActivation,
+  onCloseActivationWarning,
 }: Readonly<MockServerSettingsFormViewModel>) {
   const isBusy = pendingAction !== null;
 
@@ -161,6 +167,14 @@ export function MockServerSettingsFormView({
           </>
         ) : null}
       </Box>
+
+      <MockServerActivationWarning
+        isOpen={isActivationWarningOpen}
+        url={activationUrl}
+        token={activationToken}
+        onConfirm={onConfirmActivation}
+        onClose={onCloseActivationWarning}
+      />
     </Box>
   );
 }
