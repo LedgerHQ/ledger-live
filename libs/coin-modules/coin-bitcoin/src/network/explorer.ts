@@ -92,10 +92,27 @@ export async function fetchAddressBalance(
   return BigInt(data.balance);
 }
 
+/**
+ * One page of the confirmed (mined) unspent outputs of an address. `token` is the cursor the
+ * previous page returned; the returned `token` is `null` or absent on the last page.
+ */
+export async function fetchUtxoPage(
+  config: ExplorerConfig,
+  address: string,
+  token?: string | null,
+): Promise<{ utxos: ExplorerUtxo[]; token?: string | null }> {
+  const page = await get<ExplorerUtxoPage>(`${explorerBaseUrl(config)}/address/${address}/utxos`, {
+    batch_size: config.explorer.batchSize ?? DEFAULT_BATCH_SIZE,
+    ...(token ? { token } : {}),
+  });
+  return {
+    utxos: (page.data ?? []).map(toUtxo),
+    ...(page.token !== undefined ? { token: page.token } : {}),
+  };
+}
+
 /** Every confirmed (mined) unspent output of an address, following the explorer's pagination to the last page. */
 export async function fetchUtxos(config: ExplorerConfig, address: string): Promise<ExplorerUtxo[]> {
-  const url = `${explorerBaseUrl(config)}/address/${address}/utxos`;
-  const batchSize = config.explorer.batchSize ?? DEFAULT_BATCH_SIZE;
   const utxos: ExplorerUtxo[] = [];
   const seenTokens = new Set<string>();
   let token: string | null | undefined;
@@ -103,11 +120,8 @@ export async function fetchUtxos(config: ExplorerConfig, address: string): Promi
     if (seenTokens.size >= MAX_UTXO_PAGES) {
       throw new Error(`explorer returned more than ${MAX_UTXO_PAGES} pages of UTXOs`);
     }
-    const page = await get<ExplorerUtxoPage>(url, {
-      batch_size: batchSize,
-      ...(token ? { token } : {}),
-    });
-    utxos.push(...(page.data ?? []).map(toUtxo));
+    const page = await fetchUtxoPage(config, address, token);
+    utxos.push(...page.utxos);
     token = page.token;
     // A cursor seen before would page forever: the explorer is misbehaving.
     if (token && seenTokens.has(token)) {
