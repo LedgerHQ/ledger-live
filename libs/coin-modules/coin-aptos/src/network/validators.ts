@@ -6,12 +6,11 @@ import { formatUnlockTime } from "../logic/staking";
 import { AptosAPI } from "../network";
 import { AptosValidator } from "../types";
 import { GetCurrentDelegatorBalancesData } from "./graphql/queries";
-import { CurrentDelegatorBalance, GetCurrentDelegatorBalancesQuery } from "./graphql/types";
+import type { GetCurrentDelegatorBalancesQuery } from "./graphql/types";
 
 export async function getValidators(currencyId: string): Promise<AptosValidator[]> {
   const api = new AptosAPI(currencyId);
-  const queryResponse = await cachedValidators(api, currencyId);
-  const stakingData: CurrentDelegatorBalance[] = queryResponse.data.current_delegator_balances;
+  const { current_delegator_balances: stakingData } = await cachedValidators(api, currencyId);
 
   const list: AptosValidator[] = await Promise.all(
     stakingData.map(async pool => {
@@ -43,13 +42,8 @@ export async function getValidators(currencyId: string): Promise<AptosValidator[
   return list.sort((a, b) => b.activeStake.toNumber() - a.activeStake.toNumber());
 }
 
-const fetchValidatorsData = async (api: AptosAPI, _currencyId: string) => {
-  const query = GetCurrentDelegatorBalancesData;
-  return await api.apolloClient.query<GetCurrentDelegatorBalancesQuery, object>({
-    query: query,
-    fetchPolicy: "network-only",
-  });
-};
+const fetchValidatorsData = (api: AptosAPI, _currencyId: string) =>
+  api.queryIndexer<GetCurrentDelegatorBalancesQuery>(GetCurrentDelegatorBalancesData);
 
 const cachedValidators = makeLRUCache(
   fetchValidatorsData,

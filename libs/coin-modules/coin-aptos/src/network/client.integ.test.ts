@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
   Aptos,
   AptosConfig,
@@ -44,10 +43,10 @@ describe("getAllTransactions", () => {
       ({ transaction_version }) => Number(transaction_version),
     );
 
-    const { data } = await client["apolloClient"].query<{
+    const data = await client.queryIndexer<{
       account_transactions_aggregate: { aggregate: { count: number } };
-    }>({
-      query: gql`
+    }>(
+      `
         query ($address: String, $gt: bigint) {
           account_transactions_aggregate(
             where: { account_address: { _eq: $address }, transaction_version: { _gt: $gt } }
@@ -58,9 +57,8 @@ describe("getAllTransactions", () => {
           }
         }
       `,
-      variables: { address, gt },
-      fetchPolicy: "network-only",
-    });
+      { address, gt },
+    );
 
     expect(versions.length).toBeGreaterThan(300);
     expect(versions).toHaveLength(data.account_transactions_aggregate.aggregate.count);
