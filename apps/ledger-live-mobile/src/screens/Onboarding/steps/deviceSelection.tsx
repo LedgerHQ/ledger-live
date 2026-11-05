@@ -17,7 +17,6 @@ import { urls } from "~/utils/urls";
 import { DeviceCards } from "./Cards/DeviceCard";
 import OnboardingView from "./OnboardingView";
 import { NotCompatibleModal } from "./setupDevice/drawers/NotCompatibleModal";
-import { useFeature } from "@features/platform-feature-flags";
 
 type ScreenProps = StackNavigatorProps<
   OnboardingNavigatorParamList,
@@ -68,11 +67,10 @@ function OnboardingStepDeviceSelection() {
   const missingDevice = route.params?.missingDevice === true;
   const pairingIssuesUrl = useLocalizedUrl(urls.pairingIssues);
 
-  const isApexSupported = useFeature("supportDeviceApex")?.enabled ?? false;
   const availableDevices = [
     devices.stax,
     devices.europa,
-    ...(isApexSupported ? [devices.apex] : []),
+    devices.apex,
     devices.nanoX,
     devices.nanoSP,
     devices.nanoS,

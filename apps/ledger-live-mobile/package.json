@@ -138,6 +138,7 @@
     "@features/flow-contacts-edit-contact": "workspace:^",
     "@features/flow-contacts-introduction": "workspace:^",
     "@features/flow-contacts-list": "workspace:^",
+    "@features/flow-device-mock-server": "workspace:^",
     "@features/flow-fear-and-greed": "workspace:^",
     "@features/flow-large-screen-upsell": "workspace:^",
     "@features/flow-lazy-onboarding-banner": "workspace:^",
@@ -166,6 +167,7 @@
     "@features/platform-currencies": "workspace:^",
     "@features/platform-device-action-content": "workspace:^",
     "@features/platform-device-intent": "workspace:^",
+    "@features/platform-device-mock-server": "workspace:^",
     "@features/platform-device-onboarding": "workspace:^",
     "@features/platform-env": "workspace:*",
     "@features/platform-feature-flags": "workspace:^",
@@ -326,7 +328,7 @@
     "react-native-svg": "catalog:",
     "react-native-tcp-socket": "6.4.2",
     "react-native-url-polyfill": "4.0.0",
-    "react-native-video": "6.16.1",
+    "react-native-video": "6.19.3",
     "react-native-view-shot": "6.2.1",
     "react-native-vision-camera": "4.7.3",
     "react-native-webview": "13.16.1",
@@ -436,6 +438,7 @@
     "tslib": "2.6.2",
     "web-streams-polyfill": "4.2.0",
     "ws": "catalog:",
-    "rimraf": "catalog:"
+    "rimraf": "catalog:",
+    "zx": "catalog:"
   }
 }

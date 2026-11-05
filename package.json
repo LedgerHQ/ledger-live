@@ -230,7 +230,7 @@
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "typescript": "catalog:",
-    "zx": "8.8.5"
+    "zx": "catalog:"
   },
   "packageManager": "pnpm@12.15.0"
 }

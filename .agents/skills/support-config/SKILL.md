@@ -40,10 +40,15 @@ Edit what it wrote with the rules below rather than writing a config by hand.
 
 Each tool a script runs is in `devDependencies` as `"catalog:"`, so Nx hashes its version
 ([ADR-0003](https://github.com/LedgerHQ/architecture-as-code/pull/553)): `tsc` is
-`"@typescript/native": "catalog:"`, and `oxlint`, `oxfmt`, `rimraf`, `zx` and `nx` are declared
-under their own names. The `hygiene` rule checks it for `shared/`, `domain/` and `features/`.
-`rimraf` and `zx` have no entry in the `catalog:` of `pnpm-workspace.yaml` yet; that ends when the
-catalog defines them there. Until then, a script that runs one needs that entry first.
+`"@typescript/native": "catalog:"`, and `knip`, `oxlint`, `oxfmt`, `rimraf`, `zx` and `nx` are
+declared under their own names.
+
+The `tool-dependency` rule guards the tools a package could otherwise reach through the workspace
+root: every executable the root's dependencies install in `node_modules/.bin`. It reads that list
+from the root `package.json` and each dependency's `bin`, so a tool added to the root is guarded at
+once, and a tool the root drops is enforced by the install (`command not found`). It checks every
+script of every workspace package, hooks included. Its message gives the version the root declares;
+outside `shared/`, `domain/` and `features/` any version passes.
 
 The tsconfig, lint and fmt presets resolve from the workspace root, so the package does not declare
 them. `@support/jest` is the one preset a consumer declares, because its presets carry code and peer
@@ -132,7 +137,7 @@ node tools/nx-plugins/enforce-tool-config/validate.mjs features/flow/contacts  #
 ```
 
 Each violation prints as `[rule] file: message`. The rules (`fmt`, `lint`, `tsconfig`, `jest`,
-`hygiene`, and the debt lists they read) and the fix for each check are in
+`hygiene`, `tool-dependency`, and the debt lists they read) and the fix for each check are in
 [references/tool-config-rules.md](references/tool-config-rules.md).
 
 `lint:tool-config` also runs in `pnpm lint:arch`, which CI requires.

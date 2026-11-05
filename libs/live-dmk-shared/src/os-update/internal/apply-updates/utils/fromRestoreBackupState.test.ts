@@ -58,6 +58,15 @@ describe("fromRestoreBackupState", () => {
       });
     });
 
+    it("should keep the retry the restore offered when the connection times out", () => {
+      expect(
+        fromRestoreBackupState(
+          { type: RestoreBackupStateType.CONNECTION_TIMED_OUT, retry: noop },
+          0,
+        ),
+      ).toEqual({ type: ApplyUpdatesStateType.CONNECTION_TIMED_OUT, retry: noop });
+    });
+
     it("should keep the cancel the restore offered when the device runs out of room", () => {
       expect(
         fromRestoreBackupState(

@@ -9,6 +9,7 @@ import {
   isSanctionedFiatTicker,
   selectSupportedFiats,
 } from "@domain/entity-currency-fiat";
+import { getMockServerConfig } from "@features/platform-device-mock-server";
 import { buildSupportedCounterValues } from "~/logic/buildSupportedCounterValues";
 import { getEnv } from "@shared/env";
 import { createSelector } from "~/context/selectors";
@@ -64,6 +65,7 @@ import type {
   SettingsSetClosedWithdrawBannerPayload,
   SettingsSetHasSeenAnalyticsOptInPrompt,
   SettingsSetDebugOsUpdateBannerMode,
+  SettingsSetMockServerSettingsPayload,
   SettingsSetDismissedContentCardsPayload,
   SettingsClearDismissedContentCardsPayload,
   SettingsAddStarredMarketcoinsPayload,
@@ -169,6 +171,7 @@ export const INITIAL_STATE: SettingsState = {
   },
   hasSeenAnalyticsOptInPrompt: false,
   debugOsUpdateBannerMode: "off",
+  mockServer: { enabled: false, url: "", token: "" },
   dismissedContentCards: {},
   starredMarketCoins: [],
   fromLedgerSyncOnboarding: false,
@@ -510,14 +513,16 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     };
   },
 
-  [SettingsActionTypes.SET_LAST_CONNECTED_DEVICE]: (state, action) => ({
-    ...state,
-    lastConnectedDevice: (action as Action<SettingsSetLastConnectedDevicePayload>).payload,
-    knownDeviceModelIds: {
-      ...state.knownDeviceModelIds,
-      [(action as Action<SettingsSetLastConnectedDevicePayload>).payload.modelId]: true,
-    },
-  }),
+  [SettingsActionTypes.SET_LAST_CONNECTED_DEVICE]: (state, action) => {
+    const device = (action as Action<SettingsSetLastConnectedDevicePayload>).payload;
+    return {
+      ...state,
+      lastConnectedDevice: device,
+      knownDeviceModelIds: device
+        ? { ...state.knownDeviceModelIds, [device.modelId]: true }
+        : state.knownDeviceModelIds,
+    };
+  },
 
   [SettingsActionTypes.SET_HAS_ORDERED_NANO]: (state, action) => ({
     ...state,
@@ -592,6 +597,10 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
   [SettingsActionTypes.SET_DEBUG_OS_UPDATE_BANNER_MODE]: (state, action) => ({
     ...state,
     debugOsUpdateBannerMode: (action as Action<SettingsSetDebugOsUpdateBannerMode>).payload,
+  }),
+  [SettingsActionTypes.SET_MOCK_SERVER_SETTINGS]: (state, action) => ({
+    ...state,
+    mockServer: (action as Action<SettingsSetMockServerSettingsPayload>).payload,
   }),
   [SettingsActionTypes.SET_DISMISSED_CONTENT_CARD]: (state, action) => ({
     ...state,
@@ -956,6 +965,15 @@ export const hasSeenAnalyticsOptInPromptSelector = (state: State) =>
   state.settings.hasSeenAnalyticsOptInPrompt;
 export const debugOsUpdateBannerModeSelector = (state: State) =>
   state.settings.debugOsUpdateBannerMode;
+export const mockServerSettingsSelector = (state: State) => state.settings.mockServer;
+export const mockServerConfigSelector = createSelector(
+  mockServerSettingsSelector,
+  getMockServerConfig,
+);
+export const isMockServerEnabledSelector = createSelector(
+  mockServerConfigSelector,
+  config => config !== null,
+);
 export const dismissedContentCardsSelector = (state: State) => state.settings.dismissedContentCards;
 export const isFromLedgerSyncOnboardingSelector = (state: State) =>
   state.settings.fromLedgerSyncOnboarding;

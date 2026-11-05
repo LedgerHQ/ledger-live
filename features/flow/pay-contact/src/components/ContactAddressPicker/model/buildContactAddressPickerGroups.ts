@@ -5,7 +5,7 @@ import {
   resolveContactAddressIconProps,
   truncateContactAddress,
 } from "@features/flow-contacts-detail";
-import type { ContactAddressPickerNetworkGroup } from "../../../types";
+import type { ContactAddressPickerNetworkGroup } from "../ContactAddressPicker.types";
 
 export function buildContactAddressPickerGroups(
   contact: Contact,

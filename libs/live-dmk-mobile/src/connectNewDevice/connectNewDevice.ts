@@ -10,6 +10,7 @@ import type { Observable } from "rxjs";
 
 import type { MobileConnectionError, MobileDiscoveryError } from "../deviceConnectivity/types";
 import type { MobileConnectNewDeviceUIState } from "./types";
+import { MockServerDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/MockServerDeviceDiscoverySource";
 import { RnBleDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/RnBleDeviceDiscoverySource";
 import { RnHidDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/RnHidDeviceDiscoverySource";
 import { SpeculosDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/SpeculosDeviceDiscoverySource";
@@ -21,6 +22,7 @@ export type ConnectNewDeviceInput = {
   dmk: DeviceManagementKit;
   onConnected: (result: DeviceConnectionResult) => void;
   onClose: () => void;
+  isMockServerEnabled: boolean;
   deviceNotFoundDelay?: number;
   successDelay?: number;
 };
@@ -28,12 +30,15 @@ export type ConnectNewDeviceInput = {
 const buildDiscoverySources = (
   dmk: DeviceManagementKit,
   platformOS: typeof Platform.OS,
+  isMockServerEnabled: boolean,
 ): Map<TransportIdentifier, DeviceDiscoverySource<MobileDiscoveryError>> => {
-  const sources: Array<DeviceDiscoverySource<MobileDiscoveryError>> = [
-    new RnBleDeviceDiscoverySource(dmk),
-    ...(platformOS === "android" ? [new RnHidDeviceDiscoverySource(dmk)] : []),
-    new SpeculosDeviceDiscoverySource(dmk),
-  ];
+  const sources: Array<DeviceDiscoverySource<MobileDiscoveryError>> = isMockServerEnabled
+    ? [new MockServerDeviceDiscoverySource(dmk)]
+    : [
+        new RnBleDeviceDiscoverySource(dmk),
+        ...(platformOS === "android" ? [new RnHidDeviceDiscoverySource(dmk)] : []),
+        new SpeculosDeviceDiscoverySource(dmk),
+      ];
 
   return new Map(sources.map(source => [source.transportId, source]));
 };
@@ -44,7 +49,7 @@ export function connectNewDevice(
   return connectNewDeviceUseCase<MobileDiscoveryError, MobileConnectionError>({
     ...input,
     deviceDiscoveryService: new DefaultDeviceDiscoveryService<MobileDiscoveryError>(
-      buildDiscoverySources(input.dmk, Platform.OS),
+      buildDiscoverySources(input.dmk, Platform.OS, input.isMockServerEnabled),
     ),
     mapConnectionError: createConnectionError,
     getDiscoveredDeviceKey,

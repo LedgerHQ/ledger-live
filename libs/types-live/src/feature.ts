@@ -297,7 +297,6 @@ export type Features = CurrencyFeatures & {
   };
   llmNanoSDeprecation: DefaultFeature;
   onboardingIgnoredOsUpdates: Feature_OnboardingIgnoredOSUpdates;
-  supportDeviceApex: DefaultFeature;
   onboardingWidget: DefaultFeature;
   noah: Feature_Noah;
   newSendFlow: Feature_NewSendFlow;
@@ -835,9 +834,6 @@ export type Feature_LlmTransferButtonCopyVariant = Feature<{
   rowCashToStableTitle?: string;
   rowCashToStableDescription?: string;
 }>;
-
-/** @deprecated Moved to `@shared/feature-flags`. Use `Features["supportDeviceApex"]` from `@shared/feature-flags` instead. */
-export type Feature_SupportDeviceApex = DefaultFeature;
 
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["lldOnboardingEnableSync"]` from `@shared/feature-flags` instead. */
 export type Feature_OnboardingEnableSync = Feature<{

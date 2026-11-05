@@ -31,7 +31,8 @@
     "@devtools/account-data": "workspace:*",
     "@devtools/app-config": "workspace:*",
     "@devtools/account-name": "workspace:*",
-    "@devtools/mock-accounts": "workspace:*"
+    "@devtools/mock-accounts": "workspace:*",
+    "@devtools/account-detail": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=19"
@@ -39,6 +40,7 @@
   "devDependencies": {
     "@types/react": "catalog:",
     "@typescript/native": "catalog:",
+    "nx": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "react": "catalog:",

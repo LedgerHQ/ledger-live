@@ -7,8 +7,8 @@ import {
   mockMeContact,
 } from "@domain/entity-contact/schema.mock";
 import type { OutgoingOperation } from "@features/platform-contacts";
-import { Contacts } from "../Contacts.native";
-import { makeContactsProps, renderWithContacts } from "./shared.native";
+import { Contacts } from "../Contacts";
+import { makeContactsProps, renderWithContacts } from "./shared";
 
 function contactTileLabels(): string[] {
   return screen

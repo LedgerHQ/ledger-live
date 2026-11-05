@@ -1,14 +1,16 @@
 import { PreChecksStateType, type PreChecksState } from "../../../api/model/PreChecksState";
-import { DeviceSituation } from "../../shared/types";
+import { DeviceSituation, type DeviceSituationUpdate } from "../../shared/types";
 
-export const toPreChecksState = (situation: DeviceSituation): PreChecksState => {
-  switch (situation) {
+export const toPreChecksState = (update: DeviceSituationUpdate): PreChecksState => {
+  switch (update.situation) {
     case DeviceSituation.LOCKED:
       return { type: PreChecksStateType.DEVICE_LOCKED };
     case DeviceSituation.DISCONNECTED:
       return { type: PreChecksStateType.DEVICE_DISCONNECTED };
+    case DeviceSituation.CONNECTION_TIMED_OUT:
+      return { type: PreChecksStateType.CONNECTION_TIMED_OUT, retry: update.retry };
     default: {
-      const unhandled: never = situation;
+      const unhandled: never = update;
       return unhandled;
     }
   }

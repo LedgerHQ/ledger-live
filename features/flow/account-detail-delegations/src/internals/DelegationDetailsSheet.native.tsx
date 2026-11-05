@@ -15,8 +15,6 @@ import type {
 import { displayCell } from "./display";
 import { TAG_APPEARANCE } from "./tagAppearance";
 
-const CONTENT_BOTTOM_SPACING = 24;
-
 type Props = Readonly<{
   row: DelegationRow | undefined;
   columns: readonly DelegationColumn[];
@@ -28,14 +26,22 @@ type Props = Readonly<{
   testID?: string;
 }>;
 
-const SheetContent = ({ children }: Readonly<{ children: React.ReactNode }>) => {
+const SheetContent = ({
+  title,
+  children,
+}: Readonly<{ title: string; children: React.ReactNode }>) => {
   const bottomInset = useBottomSheetBottomInset();
 
   return (
     <BottomSheetScrollView
-      contentContainerStyle={{ paddingBottom: bottomInset + CONTENT_BOTTOM_SPACING }}
+      stickyHeaderIndices={[0]}
+      contentContainerStyle={{ paddingBottom: bottomInset }}
       showsVerticalScrollIndicator={false}
+      alwaysBounceVertical={false}
     >
+      <Box lx={{ backgroundColor: "canvasSheet" }}>
+        <BottomSheetHeader density="expanded" title={title} />
+      </Box>
       {children}
     </BottomSheetScrollView>
   );
@@ -56,12 +62,12 @@ export const DelegationDetailsSheet = ({
       isRequestingToBeOpened={row !== undefined}
       onClose={onClose}
       enableDynamicSizing
+      maxDynamicContentSize="fullWithOffset"
       contentHasBottomSpace
       testID={testID}
     >
       {row ? (
-        <SheetContent>
-          <BottomSheetHeader density="expanded" title={row.validator.name} />
+        <SheetContent title={row.validator.name}>
           <Box lx={{ gap: "s12", paddingBottom: "s16" }}>
             {row.status ? (
               <Box lx={{ flexDirection: "row", justifyContent: "space-between" }}>

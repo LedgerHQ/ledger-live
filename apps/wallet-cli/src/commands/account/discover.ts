@@ -93,24 +93,23 @@ export default defineCommand({
   },
   handler: async ({ flags, positional }) => {
     const output = resolveOutputFormat(flags.output);
-    const networkArg = flags.network ?? positional[0];
-    if (!networkArg) {
-      throw new Error(
-        'Missing network: use --network <name> or -n <name>, e.g. "bitcoin", "ethereum_sepolia".',
-      );
-    }
-
-    const network = parseNetworkArg(networkArg);
-    const currencyId = currencyIdFromNetwork(network);
-    const managerAppName = getManagerAppNameForCurrencyId(currencyId);
-    walletCliDebug(`account discover: network=${network}, output=${output}`);
-
-    const out = createCommandOutput(output, {
-      command: "account discover",
-      network,
-    });
+    const ctx = { command: "account discover", network: "" };
+    const out = createCommandOutput(output, ctx);
 
     await out.run(async () => {
+      const networkArg = flags.network ?? positional[0];
+      if (!networkArg) {
+        throw new Error(
+          'Missing network: use --network <name> or -n <name>, e.g. "bitcoin", "ethereum_sepolia".',
+        );
+      }
+
+      const network = parseNetworkArg(networkArg);
+      ctx.network = network;
+      walletCliDebug(`account discover: network=${network}, output=${output}`);
+
+      const currencyId = currencyIdFromNetwork(network);
+      const managerAppName = getManagerAppNameForCurrencyId(currencyId);
       out.spin(`Connect device and open ${colors.bold(managerAppName)} app…`);
       await withCurrencyDeviceSession(
         currencyId,

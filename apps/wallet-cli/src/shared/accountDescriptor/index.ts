@@ -19,6 +19,7 @@ export {
   currencyIdFromNetwork,
   mainnetOf,
   UnknownNetworkError,
+  UnsupportedNetworkError,
 } from "./network";
 
 export { toV0, toV1, UnsupportedFamilyError } from "./adapters";

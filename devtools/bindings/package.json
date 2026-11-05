@@ -38,6 +38,7 @@
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-fiat": "workspace:*",
     "@domain/entity-currency-unit": "workspace:*",
+    "@features/flow-account-detail-analytics-notice": "workspace:*",
     "@features/flow-pay-card-auth": "workspace:*",
     "@features/flow-pay-card-wallets": "workspace:*",
     "@features/flow-pay-card-widget": "workspace:*",
@@ -52,14 +53,14 @@
     "@shared/app-config": "workspace:*",
     "@shared/env": "workspace:*",
     "@shared/feature-flags": "workspace:*",
-    "bignumber.js": "catalog:",
-    "xstate": "catalog:"
+    "bignumber.js": "catalog:"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
     "react-redux": ">=9.0.0"
   },
   "devDependencies": {
+    "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@shared/api-services": "workspace:*",
     "@swc/core": "catalog:",

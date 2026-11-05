@@ -4,8 +4,8 @@ import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
 import type {
   ContactAddressPickerNetworkGroup,
   ContactAddressPickerProps,
-} from "../../../../types";
-import { ContactAddressPickerRow } from "../ContactAddressPickerRow/ContactAddressPickerRow.native";
+} from "../../ContactAddressPicker.types";
+import { ContactAddressPickerRow } from "../ContactAddressPickerRow/ContactAddressPickerRow";
 
 const NETWORK_ICON_SIZE = 16;
 

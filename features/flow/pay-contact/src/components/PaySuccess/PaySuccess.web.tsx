@@ -1,23 +1,10 @@
 import React from "react";
 import { Button, DialogBody, DialogFooter } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "@shared/i18n";
-import { PaySuccessHero, type PaySuccessRecipient } from "./PaySuccessHero.web";
-import {
-  PaySuccessSummary,
-  type PaySuccessSummaryIcon,
-  type PaySuccessSummaryRow,
-} from "./PaySuccessSummary.web";
-
-export type PaySuccessProps = Readonly<{
-  recipient?: PaySuccessRecipient;
-  recipientLabel: string;
-  amountFormatted: string;
-  fromAccountName: string;
-  networkIcon?: PaySuccessSummaryIcon;
-  estimatedTime?: string;
-  onViewTransaction: () => void;
-  onClose: () => void;
-}>;
+import type { PaySuccessProps } from "./PaySuccess.types";
+import { PaySuccessHero } from "./PaySuccessHero";
+import { PaySuccessSummary } from "./PaySuccessSummary";
+import { usePaySuccessSummaryRows } from "./usePaySuccessSummaryRows";
 
 export function PaySuccess({
   recipient,
@@ -26,29 +13,17 @@ export function PaySuccess({
   fromAccountName,
   networkIcon,
   estimatedTime,
+  canViewTransaction,
   onViewTransaction,
   onClose,
 }: PaySuccessProps) {
   const { t } = useTranslation();
-
-  const rows: ReadonlyArray<PaySuccessSummaryRow> = [
-    { id: "amount", label: t("payTab.contacts.paySuccess.amount"), value: amountFormatted },
-    ...(estimatedTime
-      ? [
-          {
-            id: "estimatedTime",
-            label: t("payTab.contacts.paySuccess.estimatedTime"),
-            value: estimatedTime,
-          },
-        ]
-      : []),
-    {
-      id: "from",
-      label: t("payTab.contacts.paySuccess.from"),
-      value: fromAccountName,
-      trailingIcon: networkIcon,
-    },
-  ];
+  const rows = usePaySuccessSummaryRows({
+    amountFormatted,
+    estimatedTime,
+    fromAccountName,
+    networkIcon,
+  });
 
   return (
     <>
@@ -59,20 +34,24 @@ export function PaySuccess({
           amountFormatted={amountFormatted}
         />
 
-        <div className="mt-32 mb-16">
-          <PaySuccessSummary rows={rows} />
-        </div>
+        {rows.length > 0 ? (
+          <div className="mt-32 mb-16">
+            <PaySuccessSummary rows={rows} />
+          </div>
+        ) : null}
       </DialogBody>
       <DialogFooter className="flex flex-col gap-16">
-        <Button
-          appearance="gray"
-          size="lg"
-          isFull
-          data-testid="pay-success-view-transaction"
-          onClick={onViewTransaction}
-        >
-          {t("payTab.contacts.paySuccess.viewTransaction")}
-        </Button>
+        {canViewTransaction !== false ? (
+          <Button
+            appearance="gray"
+            size="lg"
+            isFull
+            data-testid="pay-success-view-transaction"
+            onClick={onViewTransaction}
+          >
+            {t("payTab.contacts.paySuccess.viewTransaction")}
+          </Button>
+        ) : null}
         <Button
           appearance="base"
           size="lg"

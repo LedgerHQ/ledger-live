@@ -40,7 +40,7 @@ Test shared UI, hooks, and feature-flag logic in the `@features/flow-*` package 
 
 ### In app integration tests
 
-Mobile Jest maps `@features/flow-contacts` to a logic-only stub (`src/jest.native.ts`). App `__integrations__` tests spread `jest.requireActual("@features/flow-contacts")` and overlay lightweight UI stubs for Lumen RN components.
+App `__integrations__` tests render flow components through the package export map and mock only app-owned external wiring when required.
 
 Mobile Jest is also configured to:
 

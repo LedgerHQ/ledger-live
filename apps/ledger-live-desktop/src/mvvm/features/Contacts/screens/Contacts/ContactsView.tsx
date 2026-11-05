@@ -4,6 +4,14 @@ import {
   type AddContactAppAdapterResult,
   type ContactsViewProps as ContactsFlowViewProps,
 } from "@features/flow-contacts";
+import type {
+  ContactsFeatureIntroduction,
+  ContactsLedgerSyncIntroduction,
+} from "@features/flow-contacts-introduction";
+import {
+  ContactsFeatureIntroductionDialog,
+  ContactsLedgerSyncIntroductionDialog,
+} from "@features/flow-contacts-introduction/web";
 import {
   ContactAddressDetailDialog,
   ContactsEditSignerMismatchDialog,
@@ -25,6 +33,8 @@ import type { ContactDetailEditDeleteDialogProps } from "./useContactDetailEditD
 
 export type ContactsViewProps = ContactsFlowViewProps &
   Readonly<{
+    featureIntroduction: ContactsFeatureIntroduction;
+    ledgerSyncIntroduction: ContactsLedgerSyncIntroduction;
     addContactDialog: AddContactAppAdapterResult;
     addAddressFlowDialog: ContactsAddAddressFlowDialogProps;
     addressDetailDialog: ContactAddressDetailDialogProps;
@@ -40,13 +50,22 @@ export function ContactsView({
   editDeleteDialogs,
   addressDetailActionsDialogs,
   dieProps,
+  featureIntroduction,
+  ledgerSyncIntroduction,
+  ledgerSyncStatus,
   ...pageProps
 }: Readonly<ContactsViewProps>) {
   const areContactsDialogsHidden = dieProps?.enabled === true;
 
   return (
     <>
-      <ContactsFlowView {...pageProps} />
+      <ContactsFlowView {...pageProps} ledgerSyncStatus={ledgerSyncStatus} />
+      <ContactsFeatureIntroductionDialog {...featureIntroduction} />
+      <ContactsLedgerSyncIntroductionDialog
+        open={ledgerSyncIntroduction.isOpen}
+        onActivate={ledgerSyncIntroduction.onActivate}
+        onDismiss={ledgerSyncIntroduction.onDismiss}
+      />
       {areContactsDialogsHidden ? null : (
         <>
           <ContactsAddContactDialog {...addContactDialog} />

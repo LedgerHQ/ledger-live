@@ -2,8 +2,8 @@ import React from "react";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react-native";
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 import { QUEUED_BOTTOM_SHEET_MOCK_TEST_ID } from "@shared/ui-queued-bottom-sheet/testing";
-import { ContactAddressPicker } from "../ContactAddressPicker.native";
-import type { ContactAddressPickerProps } from "../../../types";
+import { ContactAddressPicker } from "../ContactAddressPicker";
+import type { ContactAddressPickerProps } from "../ContactAddressPicker.types";
 
 jest.mock("react-native-safe-area-context", () => ({
   useSafeAreaInsets: () => ({ bottom: 0, top: 0, left: 0, right: 0 }),

@@ -13,6 +13,9 @@ This package may import `@devtools/registry`, may import a tool's props types on
 | Hook | Tool | Behaviour |
 | ---- | ---- | --------- |
 | `useFeatureFlagsToolProps()` | `feature-flags` | Reads `overrides`/`resolved` from the `featureFlags` slice (`@shared/feature-flags` + `@features/platform-feature-flags`) and wires `setOverride` / `setAllOverrides` / `clearOverride` / `clearAllOverrides` to the slice actions. Requires the host to register that slice (desktop, mobile and web-tools already do). |
+| `useAccountDetailToolProps()` | `account-detail` | Analytics card section: reads `hasDismissed` from the `accountAnalyticsIntroduction` slice (`@features/flow-account-detail-analytics-notice`) and wires `onReset` to `resetAccountAnalyticsIntroduction`. Requires the host to register that slice (desktop only for now). |
+| `useDeviceOnboardingToolState({ snapshot, portsRef })` | `device-onboarding` | Builds the debug view of a run: `log` (newest 200 rows), `machineContext` and `nextStates`. Pass its `inspect` to `useDeviceOnboardingActor` from `@features/platform-device-onboarding`, which runs the actor, so the log starts at the actor's creation. |
+| `useDeviceOnboardingToolProps({ session, toolState, featureFlag })` | `device-onboarding` | Assembles the tool props from the host's product session, the tool state and the optional feature-flag switches. |
 
 Future tools add their own builder + row here, each depending only on the state it needs.
 

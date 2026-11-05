@@ -149,6 +149,7 @@
     "@features/platform-currencies": "workspace:^",
     "@features/platform-device-action-content": "workspace:^",
     "@features/platform-device-intent": "workspace:^",
+    "@features/platform-device-mock-server": "workspace:^",
     "@features/platform-device-onboarding": "workspace:^",
     "@features/platform-env": "workspace:*",
     "@features/platform-feature-flags": "workspace:^",
@@ -363,6 +364,7 @@
     "tailwindcss": "catalog:",
     "ts-node": "10.9.2",
     "typescript": "catalog:",
-    "yargs": "17.7.2"
+    "yargs": "17.7.2",
+    "zx": "catalog:"
   }
 }
