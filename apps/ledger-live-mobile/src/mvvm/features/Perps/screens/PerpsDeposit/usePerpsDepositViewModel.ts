@@ -256,49 +256,36 @@ export function usePerpsDepositViewModel({
     [localizeUrl],
   );
 
-  const {
-    sentAmount,
-    quote,
-    isQuoteLoading,
-    refreshQuote,
-    maxAmount,
-    depositSpendableBalance,
-    ...formErrors
-  } = usePerpsDepositForm({
-    accounts,
-    receiverAccount,
-    depositAccount,
-    depositAmount,
-    toCurrencyAmount,
-    toFiatAmount,
-    isOffline,
-    counterValueCurrency: counterValueCurrency.ticker,
-    locale,
-    sourceCurrency: depositCurrency?.ticker ?? PERPS_DEPOSIT_DEFAULT_FUNDING_TICKER,
-    getAccountName,
-    track,
-    openBuy,
-    openSupportUrl,
-  });
+  const { sentAmount, quote, isQuoteLoading, refreshQuote, maxAmount, ...formErrors } =
+    usePerpsDepositForm({
+      accounts,
+      receiverAccount,
+      depositAccount,
+      depositAmount,
+      toCurrencyAmount,
+      toFiatAmount,
+      isOffline,
+      counterValueCurrency: counterValueCurrency.ticker,
+      locale,
+      sourceCurrency: depositCurrency?.ticker ?? PERPS_DEPOSIT_DEFAULT_FUNDING_TICKER,
+      getAccountName,
+      track,
+      openBuy,
+      openSupportUrl,
+    });
   const { canReview } = formErrors;
 
-  const depositAccountCounterValue = useMemo(() => {
-    if (!depositCurrency || !depositSpendableBalance) return null;
-    const counterValue = calculateCountervalue(depositCurrency, depositSpendableBalance);
-    if (!counterValue) return null;
-    return formatCurrencyUnit(counterValueUnit, counterValue, {
-      showCode: true,
-      discreet,
-      locale,
-    });
-  }, [
-    calculateCountervalue,
-    counterValueUnit,
-    depositCurrency,
-    depositSpendableBalance,
-    discreet,
-    locale,
-  ]);
+  const depositAccountCounterValue = useMemo(
+    () =>
+      maxAmount === null
+        ? null
+        : formatCurrencyUnit(
+            counterValueUnit,
+            new BigNumber(maxAmount).shiftedBy(counterValueUnit.magnitude).integerValue(),
+            { showCode: true, discreet, locale },
+          ),
+    [counterValueUnit, discreet, locale, maxAmount],
+  );
 
   const receiverUnit = receiverCurrency.units[0];
 

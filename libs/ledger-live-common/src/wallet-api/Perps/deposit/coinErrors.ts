@@ -1,6 +1,8 @@
 import BigNumber from "bignumber.js";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { isAleoAccount } from "@ledgerhq/coin-aleo/logic/utils";
+import { EXISTENTIAL_DEPOSIT } from "@ledgerhq/coin-polkadot/utils";
 import type { DepositFormError } from "./formError";
 import { formatDisplayAmount } from "./formatAmount";
 import type { PerpsDepositQuote } from "./quote";
@@ -18,8 +20,6 @@ const TEZOS_ERROR: DepositFormError = {
     "https://support.ledger.com/article/360016057774-zd?redirect=false#:~:text=Swapping%20Tezos%20(XTZ)%20in%20Ledger%20Live&text=As%20of%20December%202023%2C%20a,your%20Tezos%20(XTZ)%20account",
 };
 
-const ALEO_CURRENCY_IDS: ReadonlySet<string> = new Set(["aleo", "aleo_testnet"]);
-
 const ALEO_SUPPORT_URL = "https://support.ledger.com/article/Aleo-ALEO";
 
 const MINIMUM_BALANCE_RULES: Record<
@@ -27,7 +27,7 @@ const MINIMUM_BALANCE_RULES: Record<
   Readonly<{ minimumAtomic: BigNumber; error: DepositFormError }>
 > = {
   assethub_polkadot: {
-    minimumAtomic: new BigNumber(10).pow(10),
+    minimumAtomic: EXISTENTIAL_DEPOSIT,
     error: {
       code: "dotMinimumBalance",
       labelKey: "perpsDeposit.formErrors.dotMinimumBalance",
@@ -46,31 +46,28 @@ const MINIMUM_BALANCE_RULES: Record<
 
 export type SpendableBalanceReader = (account: AccountLike) => BigNumber;
 
-export const readStoredSpendableBalance: SpendableBalanceReader = account =>
-  account.spendableBalance;
-
 const ACCOUNT_NOT_READY_ERROR: DepositFormError = {
   code: "accountNotReady",
   labelKey: "perpsDeposit.formErrors.accountNotReady",
 };
 
-function isAleoAccount(account: AccountLike): boolean {
-  return account.type === "Account"
-    ? account.currency.family === "aleo"
-    : ALEO_CURRENCY_IDS.has(account.token.parentCurrencyId);
-}
+const READINESS_ERRORS: Readonly<Record<string, DepositFormError>> = {
+  "sei_evm:activationRequired": SEI_EVM_ERROR,
+  "tezos:unrevealed": TEZOS_ERROR,
+};
 
 function getReadinessError(mainAccount: Account | undefined): DepositFormError | null {
-  if (mainAccount?.readiness?.ready !== false) return null;
-  if (mainAccount.currency.id === "sei_evm") return SEI_EVM_ERROR;
-  if (mainAccount.currency.id === "tezos") return TEZOS_ERROR;
-  return ACCOUNT_NOT_READY_ERROR;
+  const readiness = mainAccount?.readiness;
+  if (!mainAccount || readiness?.ready !== false) return null;
+  return (
+    READINESS_ERRORS[`${mainAccount.currency.id}:${readiness.reason}`] ?? ACCOUNT_NOT_READY_ERROR
+  );
 }
 
 export function getAccountStateError(
   depositAccount: AccountLike,
   parentAccount: Account | undefined,
-  getSpendableBalance: SpendableBalanceReader = readStoredSpendableBalance,
+  getSpendableBalance: SpendableBalanceReader,
 ): DepositFormError | null {
   const mainAccount = depositAccount.type === "Account" ? depositAccount : parentAccount;
   const readinessError = getReadinessError(mainAccount);
@@ -110,7 +107,7 @@ export function getMinimumBalanceError(
   quote: PerpsDepositQuote | undefined,
   sentAmountAtomic: BigNumber | undefined,
   locale: string,
-  getSpendableBalance: SpendableBalanceReader = readStoredSpendableBalance,
+  getSpendableBalance: SpendableBalanceReader,
 ): DepositFormError | null {
   const rule = getMinimumBalanceRule(depositAccount);
   const fee = quote?.estimatedNetworkFee;

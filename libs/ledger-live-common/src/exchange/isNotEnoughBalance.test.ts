@@ -36,6 +36,15 @@ describe("isNotEnoughBalance", () => {
     },
   );
 
+  it.each(["TonNotEnoughBalanceInParentAccount", "CardanoNotEnoughFunds", "NotEnoughEGLDForFees"])(
+    "recognises the %s family shortfall wrapped by executeSwap",
+    familyErrorName => {
+      const error = new CompleteExchangeError("INIT", familyErrorName, "");
+
+      expect(isNotEnoughBalance(error)).toBe(true);
+    },
+  );
+
   it("recognises a shortfall wrapped by the Exchange app, which keeps only the message", () => {
     const bridgeError = new NotEnoughBalance();
     const error = new CompleteExchangeError("INIT", "amount", bridgeError.message);

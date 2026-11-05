@@ -694,7 +694,7 @@ describe("usePerpsDepositViewModel", () => {
     try {
       const tezosAccount = {
         ...createAccount("tezos-1", "tezos", 10000),
-        readiness: { ready: false },
+        readiness: { ready: false, reason: "unrevealed" },
       };
       const { props } = createProps();
       const { result } = renderViewModel(props, false, [tezosAccount]);

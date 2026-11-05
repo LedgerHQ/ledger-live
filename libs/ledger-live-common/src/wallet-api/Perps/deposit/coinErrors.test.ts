@@ -50,6 +50,8 @@ function token(parent: Account, extra: object = {}): TokenAccount {
 }
 
 const notReady = { readiness: { ready: false } };
+const seiNotLinked = { readiness: { ready: false, reason: "activationRequired" } };
+const tezosUnrevealed = { readiness: { ready: false, reason: "unrevealed" } };
 
 const FEE_ACCOUNT_CURRENCY = "fee-account-currency";
 
@@ -117,8 +119,8 @@ function resolve(
 describe("coin errors in the deposit resolver", () => {
   describe("account state, before the balance and the quote", () => {
     it.each([
-      ["an unlinked SEI EVM account", account("sei_evm", "1000", notReady), "seiEvmUnlinked"],
-      ["an unrevealed Tezos account", account("tezos", "1000", notReady), "tezosUnrevealed"],
+      ["an unlinked SEI EVM account", account("sei_evm", "1000", seiNotLinked), "seiEvmUnlinked"],
+      ["an unrevealed Tezos account", account("tezos", "1000", tezosUnrevealed), "tezosUnrevealed"],
     ])("reports %s with its support article", (_case, depositAccount, code) => {
       const error = resolve(depositAccount, {
         maxAmount: 1,
@@ -130,20 +132,21 @@ describe("coin errors in the deposit resolver", () => {
     });
 
     it.each([
-      ["a SEI EVM token whose parent is not linked", "sei_evm", "seiEvmUnlinked"],
-      ["a Tezos token whose parent is not revealed", "tezos", "tezosUnrevealed"],
-    ])("reports %s", (_case, currencyId, code) => {
-      const parentAccount = account(currencyId, "1000", notReady);
+      ["a SEI EVM token whose parent is not linked", "sei_evm", seiNotLinked, "seiEvmUnlinked"],
+      ["a Tezos token whose parent is not revealed", "tezos", tezosUnrevealed, "tezosUnrevealed"],
+    ])("reports %s", (_case, currencyId, readiness, code) => {
+      const parentAccount = account(currencyId, "1000", readiness);
       expect(resolve(token(parentAccount), { parentAccount })?.code).toBe(code);
     });
 
     it("blocks the quote request of a blocked account in the base check", () => {
       expect(
         getDepositBaseError({
-          depositAccount: account("tezos", "1000", notReady),
+          depositAccount: account("tezos", "1000", tezosUnrevealed),
           depositAmount: 20,
           maxAmount: 50,
           hasConversion: true,
+          getSpendableBalance: readerOf(undefined),
         })?.code,
       ).toBe("tezosUnrevealed");
     });
@@ -153,6 +156,11 @@ describe("coin errors in the deposit resolver", () => {
         code: "accountNotReady",
         labelKey: "perpsDeposit.formErrors.accountNotReady",
       });
+    });
+
+    it("reports an unknown not ready reason of SEI EVM or Tezos with the generic error", () => {
+      expect(resolve(account("tezos", "1000", notReady))?.code).toBe("accountNotReady");
+      expect(resolve(account("sei_evm", "1000", notReady))?.code).toBe("accountNotReady");
     });
 
     it("treats a missing readiness as ready", () => {

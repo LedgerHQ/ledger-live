@@ -13,7 +13,7 @@ import {
   type DepositErrorDetails,
   type DepositFormError,
 } from "./formError";
-import { readStoredSpendableBalance, type SpendableBalanceReader } from "./coinErrors";
+import type { SpendableBalanceReader } from "./coinErrors";
 import {
   findDepositParentAccount,
   type PerpsDepositQuote,
@@ -39,14 +39,14 @@ export function getDepositAmountState({
   depositAmount,
   maxAmount,
   convertedAmount,
-  getSpendableBalance = readStoredSpendableBalance,
+  getSpendableBalance,
 }: Readonly<{
   depositAccount: AccountLike | undefined;
   parentAccount: Account | undefined;
   depositAmount: number;
   maxAmount: number | null;
   convertedAmount: BigNumber | null;
-  getSpendableBalance?: SpendableBalanceReader;
+  getSpendableBalance: SpendableBalanceReader;
 }>): DepositAmountState {
   const baseError = getDepositBaseError({
     depositAccount,
@@ -89,7 +89,7 @@ export type UseDepositFormErrorsParams = Readonly<{
   track: DepositTrack;
   openBuy: (target: DepositBuyTarget) => void;
   openSupportUrl: (url: string) => void;
-  getSpendableBalance?: SpendableBalanceReader;
+  getSpendableBalance: SpendableBalanceReader;
   isBalancePending?: boolean;
 }>;
 
@@ -255,7 +255,6 @@ export type PerpsDepositForm = DepositFormErrors &
     isQuoteLoading: boolean;
     refreshQuote: () => void;
     maxAmount: number | null;
-    depositSpendableBalance: BigNumber | undefined;
   }>;
 
 export function usePerpsDepositForm({
@@ -305,13 +304,12 @@ export function usePerpsDepositForm({
     },
     [depositAccount, depositWalletApiBalance, feeAccount, feeWalletApiBalance],
   );
-  const depositSpendableBalance = depositWalletApiBalance;
   const maxAmount = useMemo(
     () =>
-      depositAccount && depositSpendableBalance
-        ? toFiatAmount(getAccountCurrency(depositAccount), depositSpendableBalance)
+      depositAccount && depositWalletApiBalance
+        ? toFiatAmount(getAccountCurrency(depositAccount), depositWalletApiBalance)
         : null,
-    [depositAccount, depositSpendableBalance, toFiatAmount],
+    [depositAccount, depositWalletApiBalance, toFiatAmount],
   );
 
   const convertedAmount = useMemo(
@@ -387,6 +385,5 @@ export function usePerpsDepositForm({
     isQuoteLoading,
     refreshQuote,
     maxAmount,
-    depositSpendableBalance,
   };
 }

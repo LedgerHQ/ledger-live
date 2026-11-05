@@ -163,7 +163,6 @@ describe("usePerpsDepositForm", () => {
 
     expect(result.current.maxAmount).toBe(10);
     expect(result.current.statusError?.code).toBe("insufficientBalance");
-    expect(result.current.depositSpendableBalance?.toFixed()).toBe("10000000");
   });
 
   it("asks for a quote for the converted amount and allows the review of a usable quote", () => {
@@ -274,7 +273,7 @@ describe("usePerpsDepositForm", () => {
       id: "js:2:tezos:tz1:",
       currency: { ...ether, id: "tezos", family: "tezos", ticker: "XTZ" },
       spendableBalance: new BigNumber("1000000"),
-      readiness: { ready: false },
+      readiness: { ready: false, reason: "unrevealed" },
     } as unknown as Account;
     const { result, openSupportUrl } = renderForm({
       accounts: [tezos, receiverAccount],

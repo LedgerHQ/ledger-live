@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import type { Account, TokenAccount } from "@ledgerhq/types-live";
+import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { QuoteErrorCodes, QuotesErrorCodes } from "@ledgerhq/wallet-api-exchange-module";
 import {
   getDepositBaseError,
@@ -45,6 +45,8 @@ const tokenAccount = {
 
 const fee = (amount: string, currencyId = "arbitrum") => ({ amount, currencyId });
 
+const readStoredBalance = (account: AccountLike) => account.spendableBalance;
+
 function quote(overrides: Partial<PerpsDepositQuote> = {}): PerpsDepositQuote {
   return { amountTo: new BigNumber(10), quoteId: "quote-1", errors: [], ...overrides };
 }
@@ -59,6 +61,7 @@ function resolve(overrides: Partial<ResolveDepositFormErrorParams> = {}) {
     sentAmountAtomic: new BigNumber("20000000"),
     quoteResult: { quote: quote(), errors: [] },
     locale: "en",
+    getSpendableBalance: readStoredBalance,
     ...overrides,
   });
 }
@@ -69,6 +72,7 @@ describe("getDepositBaseError", () => {
     depositAmount: 20,
     maxAmount: 50,
     hasConversion: true,
+    getSpendableBalance: readStoredBalance,
   };
 
   it("lets a valid amount ask for a quote", () => {
@@ -82,6 +86,12 @@ describe("getDepositBaseError", () => {
       values: { ticker: "ETH" },
     });
     expect(getDepositBaseError({ ...base, parentAccount: mainAccount("1") })).toBeNull();
+  });
+
+  it("reports the empty fee account before a missing fiat value of the balance", () => {
+    expect(
+      getDepositBaseError({ ...base, maxAmount: null, parentAccount: mainAccount("0") })?.labelKey,
+    ).toBe("perpsDeposit.formErrors.feeAccountEmpty");
   });
 
   it("reports an amount above the balance", () => {
@@ -185,12 +195,19 @@ describe("resolveDepositFormError", () => {
   });
 
   describe("network fees", () => {
-    it("asks for more of the fee currency when a token deposit has an empty fee account", () => {
-      expect(resolve({ parentAccount: mainAccount("0"), quoteResult: undefined })).toEqual({
+    it("keeps the empty fee account error of the base check before the quote fee checks", () => {
+      const feeAccountEmpty = {
         code: "notEnoughFees",
         labelKey: "perpsDeposit.formErrors.feeAccountEmpty",
         values: { ticker: "ETH" },
-      });
+      } as const;
+      expect(
+        resolve({
+          baseError: feeAccountEmpty,
+          parentAccount: mainAccount("0"),
+          quoteResult: { quote: quote({ estimatedNetworkFee: fee("200") }), errors: [] },
+        }),
+      ).toBe(feeAccountEmpty);
     });
 
     it("adds the approval fee to the swap fee of a token deposit, in atomic units", () => {

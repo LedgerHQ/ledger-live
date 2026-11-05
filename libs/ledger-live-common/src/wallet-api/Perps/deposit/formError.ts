@@ -14,7 +14,6 @@ import {
   getAccountStateError,
   getMinimumBalanceError,
   needsFeeForMinimumBalance,
-  readStoredSpendableBalance,
   type SpendableBalanceReader,
 } from "./coinErrors";
 import type { PerpsDepositQuote, PerpsDepositQuoteResult } from "./quote";
@@ -65,6 +64,7 @@ const BASE_ERRORS_BEFORE_FEES: ReadonlySet<DepositFormErrorCode> = new Set([
   "aleoPrivateBalance",
   "tezosUnrevealed",
   "insufficientBalance",
+  "notEnoughFees",
 ]);
 
 const OFFLINE_ERROR: DepositFormError = {
@@ -88,7 +88,7 @@ export type DepositBaseCheckParams = Readonly<{
   maxAmount: number | null;
   hasConversion: boolean;
   parentAccount?: Account;
-  getSpendableBalance?: SpendableBalanceReader;
+  getSpendableBalance: SpendableBalanceReader;
 }>;
 
 export function getDepositBaseError({
@@ -97,7 +97,7 @@ export function getDepositBaseError({
   maxAmount,
   hasConversion,
   parentAccount,
-  getSpendableBalance = readStoredSpendableBalance,
+  getSpendableBalance,
 }: DepositBaseCheckParams): DepositFormError | null {
   if (!depositAccount || depositAmount <= 0) return null;
   const accountStateError = getAccountStateError(
@@ -106,15 +106,14 @@ export function getDepositBaseError({
     getSpendableBalance,
   );
   if (accountStateError) return accountStateError;
-  if (maxAmount === null) return NO_QUOTES_ERROR;
-  if (depositAmount > maxAmount) return INSUFFICIENT_BALANCE_ERROR;
+  if (maxAmount !== null && depositAmount > maxAmount) return INSUFFICIENT_BALANCE_ERROR;
   const emptyFeeAccountError = getEmptyFeeAccountError(
     depositAccount,
     parentAccount,
     getSpendableBalance,
   );
   if (emptyFeeAccountError) return emptyFeeAccountError;
-  if (!hasConversion) return NO_QUOTES_ERROR;
+  if (maxAmount === null || !hasConversion) return NO_QUOTES_ERROR;
   return null;
 }
 
@@ -167,14 +166,6 @@ function notEnoughFeesError(
   feeAtomic: BigNumber,
   locale: string,
 ): DepositFormError {
-  const ticker = getAccountCurrency(feeAccount).ticker;
-  if (feeAtomic.isZero()) {
-    return {
-      code: "notEnoughFees",
-      labelKey: "perpsDeposit.formErrors.feeAccountEmpty",
-      values: { ticker },
-    };
-  }
   const magnitude = feeAccount.currency.units[0].magnitude;
   return {
     code: "notEnoughFees",
@@ -186,7 +177,7 @@ function notEnoughFeesError(
         BigNumber.ROUND_UP,
         locale,
       ),
-      ticker,
+      ticker: getAccountCurrency(feeAccount).ticker,
     },
   };
 }
@@ -207,10 +198,6 @@ function getFeeError({
   feeBalance: BigNumber;
 }): DepositFormError | null {
   const isTokenDeposit = depositAccount.type !== "Account";
-
-  if (isTokenDeposit && feeBalance.isZero()) {
-    return feeAccountEmptyError(feeAccount);
-  }
 
   if (!quote || hasForeignFeeCurrency(quote, feeAccount)) return null;
 
@@ -286,7 +273,7 @@ export type ResolveDepositFormErrorParams = Readonly<{
   sentAmountAtomic: BigNumber | undefined;
   quoteResult: PerpsDepositQuoteResult | undefined;
   locale: string;
-  getSpendableBalance?: SpendableBalanceReader;
+  getSpendableBalance: SpendableBalanceReader;
 }>;
 
 export function resolveDepositFormError({
@@ -298,7 +285,7 @@ export function resolveDepositFormError({
   sentAmountAtomic,
   quoteResult,
   locale,
-  getSpendableBalance = readStoredSpendableBalance,
+  getSpendableBalance,
 }: ResolveDepositFormErrorParams): DepositFormError | null {
   if (!depositAccount || depositAmount <= 0) return baseError;
   if (isOffline) return OFFLINE_ERROR;

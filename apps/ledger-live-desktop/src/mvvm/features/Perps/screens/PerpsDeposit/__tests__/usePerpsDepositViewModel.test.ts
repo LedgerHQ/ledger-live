@@ -572,7 +572,7 @@ describe("usePerpsDepositViewModel", () => {
     it("opens the support article of a coin error from Learn More", () => {
       const tezosAccount = {
         ...createAccount("tezos-1", "tezos", 10000),
-        readiness: { ready: false },
+        readiness: { ready: false, reason: "unrevealed" },
       };
       const { result } = renderViewModel(
         { draft: { depositAccount: tezosAccount, depositAmount: 20 } },
