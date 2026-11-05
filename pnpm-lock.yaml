@@ -605,6 +605,9 @@ catalogs:
     cross-env:
       specifier: 10.1.0
       version: 10.1.0
+    crypto-browserify:
+      specifier: 3.12.1
+      version: 3.12.1
     detox:
       specifier: 20.51.3
       version: 20.51.3
@@ -1647,7 +1650,7 @@ importers:
         specifier: 4.2.3
         version: 4.2.3
       crypto-browserify:
-        specifier: ^3.12.1
+        specifier: 'catalog:'
         version: 3.12.1
       dotenv:
         specifier: 16.4.7
@@ -2611,6 +2614,9 @@ importers:
       color:
         specifier: 4.2.3
         version: 4.2.3
+      crypto-browserify:
+        specifier: 'catalog:'
+        version: 3.12.1
       d3-array:
         specifier: 3.2.4
         version: 3.2.4
@@ -2755,9 +2761,6 @@ importers:
       react-native-qrcode-svg:
         specifier: 6.1.1
         version: 6.1.1(react-native-svg@15.15.4(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
-      react-native-randombytes:
-        specifier: 3.6.1
-        version: 3.6.1
       react-native-reanimated:
         specifier: 'catalog:'
         version: 4.3.4(react-native-worklets@0.8.1(patch_hash=8e8345e8a8ac8f4108e6743d9899f8d9f1e5b8af1901df406704331269df6e25)(@babel/core@7.28.5)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)

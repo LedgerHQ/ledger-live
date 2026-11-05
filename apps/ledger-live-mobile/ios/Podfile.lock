@@ -2227,8 +2227,6 @@ PODS:
     - TOCropViewController (= 2.5.3)
   - react-native-launch-arguments (4.0.2):
     - React
-  - react-native-randombytes (3.6.1):
-    - React-Core
   - react-native-restart (0.0.29):
     - boost
     - DoubleConversion
@@ -3714,7 +3712,6 @@ DEPENDENCIES:
   - "react-native-fast-pbkdf2 (from `../../../node_modules/.pnpm/react-native-fast-pbkdf2@0.3.1_patch_hash=9b199_71fa22f4b6a1db7867a1f89074fa6dc8/node_modules/react-native-fast-pbkdf2`)"
   - "react-native-image-crop-tools (from `../../../node_modules/.pnpm/react-native-image-crop-tools@1.6.4_patch_hash=_8831e4c76ecdceffdebb3efcab12500c/node_modules/react-native-image-crop-tools`)"
   - "react-native-launch-arguments (from `../../../node_modules/.pnpm/react-native-launch-arguments@4.0.2_react-nativ_8050486a74102ec64e9fcab9a4675da1/node_modules/react-native-launch-arguments`)"
-  - "react-native-randombytes (from `../../../node_modules/.pnpm/react-native-randombytes@3.6.1/node_modules/react-native-randombytes`)"
   - "react-native-restart (from `../../../node_modules/.pnpm/react-native-restart@0.0.29_react-native@0.81.6_3f12f2e70724b79971c9ec97a46dcc8b/node_modules/react-native-restart`)"
   - "react-native-safe-area-context (from `../../../node_modules/.pnpm/react-native-safe-area-context@5.7.0_react-nati_dec0d0bf7fd0dd6054bb511d43e0d925/node_modules/react-native-safe-area-context`)"
   - "react-native-slider (from `../../../node_modules/.pnpm/@react-native-community+slider@5.2.0/node_modules/@react-native-community/slider`)"
@@ -3962,8 +3959,6 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/react-native-image-crop-tools@1.6.4_patch_hash=_8831e4c76ecdceffdebb3efcab12500c/node_modules/react-native-image-crop-tools"
   react-native-launch-arguments:
     :path: "../../../node_modules/.pnpm/react-native-launch-arguments@4.0.2_react-nativ_8050486a74102ec64e9fcab9a4675da1/node_modules/react-native-launch-arguments"
-  react-native-randombytes:
-    :path: "../../../node_modules/.pnpm/react-native-randombytes@3.6.1/node_modules/react-native-randombytes"
   react-native-restart:
     :path: "../../../node_modules/.pnpm/react-native-restart@0.0.29_react-native@0.81.6_3f12f2e70724b79971c9ec97a46dcc8b/node_modules/react-native-restart"
   react-native-safe-area-context:
@@ -4187,7 +4182,6 @@ SPEC CHECKSUMS:
   react-native-fast-pbkdf2: 329e89b9929a51ed4d9ba88bf355a266f13d9d93
   react-native-image-crop-tools: 0995d2ece9b4b6b04d298bd1dfe00b2b841507f2
   react-native-launch-arguments: d4759f7591e2766e6c5ec746b7032429edaf7058
-  react-native-randombytes: 3c8f3e89d12487fd03a2f966c288d495415fc116
   react-native-restart: b195f3ec6628c041e52753fe84a4851240267957
   react-native-safe-area-context: eda63a662750758c1fdd7e719c9f1026c8d161cb
   react-native-slider: 205c30f4f19af8469c1c24bd4e3ec74038576a67
