@@ -178,7 +178,7 @@ for (const token of subAccountReceive) {
           token.account.parentAccount?.currency ?? token.account.currency,
         );
         if (token.shouldSelectReceiveCryptoOption) {
-          await app.receive.expectRecieveMenu();
+          await app.receive.expectReceiveMenu();
           await app.receive.clickReceive();
         }
         if (token.shouldSelectTokenOnReceiveFlow) {
