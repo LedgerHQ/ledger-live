@@ -1,3 +1,9 @@
+import {
+  PublicKey,
+  SystemProgram,
+  TransactionMessage,
+  VersionedTransaction,
+} from "@solana/web3.js";
 import type { SolanaCoinConfig } from "../../config";
 import {
   DEFAULT_LEDGER_VALIDATORS,
@@ -10,14 +16,53 @@ import { TEST_CONFIG } from "../../test/coinConfig";
 import {
   chainConfigFrom,
   defaultLedgerValidatorOf,
+  DUMMY_SIGNATURE,
   endpointByCurrencyId,
   feesOf,
   ledgerFirstValidators,
   ledgerValidatorsOf,
+  refreshesBlockhash,
 } from "../../utils";
 
 const configWithRpcUrls = (rpcUrls: SolanaCoinConfig["rpcUrls"]): SolanaCoinConfig =>
   ({ token2022Enabled: false, legacyOCMSMaxVersion: "1.0.0", rpcUrls }) as SolanaCoinConfig;
+
+describe("utils - refreshesBlockhash", () => {
+  const SENDER = new PublicKey("HxCvgjSbF8HMt3fj8P3j49jmajNCMwKAqBu79HUDPtkM");
+  const OTHER = new PublicKey("AjmMiagw33Ad4WdPR3y2QWsDXaLxmsiSZEpMfpT1Q9uZ");
+  const BLOCKHASH = "EEbZs6DmDyDjucyYbo3LwVJU7pQYuVopYcYTSEZXskW3";
+
+  const transfer = (payer: PublicKey, from: PublicKey) =>
+    new VersionedTransaction(
+      new TransactionMessage({
+        payerKey: payer,
+        recentBlockhash: BLOCKHASH,
+        instructions: [SystemProgram.transfer({ fromPubkey: from, toPubkey: OTHER, lamports: 1 })],
+      }).compileToV0Message(),
+    );
+
+  it("refreshes a transaction the sender alone signs, while it is unsigned", () => {
+    expect(refreshesBlockhash(transfer(SENDER, SENDER))).toBe(true);
+  });
+
+  it("keeps the blockhash of a transaction already signed", () => {
+    const signed = transfer(SENDER, SENDER);
+    signed.signatures[0] = Buffer.alloc(64, 7);
+    expect(refreshesBlockhash(signed)).toBe(false);
+  });
+
+  it("keeps the blockhash while a co-signer still has to sign", () => {
+    // The sender pays and a second account signs, or a partner pays and the sender signs second.
+    expect(refreshesBlockhash(transfer(SENDER, OTHER))).toBe(false);
+    expect(refreshesBlockhash(transfer(OTHER, SENDER))).toBe(false);
+  });
+
+  it("treats the 0x01-filled placeholder as unsigned", () => {
+    const placeholder = transfer(SENDER, SENDER);
+    placeholder.signatures[0] = DUMMY_SIGNATURE;
+    expect(refreshesBlockhash(placeholder)).toBe(true);
+  });
+});
 
 describe("utils - endpointByCurrencyId", () => {
   const config = configWithRpcUrls({
