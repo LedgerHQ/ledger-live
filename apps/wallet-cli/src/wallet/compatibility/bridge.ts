@@ -38,6 +38,7 @@ import type { EarnSolanaStake, SolanaStakeLimits } from "../earn/types";
 import { isStakeAmountError, SolanaStakeAmountError } from "../earn/errors";
 import type { TransactionIntent } from "../intents";
 import { parseAmountWithTicker } from "../intents/parse-amount";
+import type { PreparedTransaction } from "../index";
 
 type SendOptions = { deviceId: string; deviceModelId: DeviceModelId };
 
@@ -246,7 +247,7 @@ export class BridgeAdapter {
   async prepareSend(
     descriptor: AccountDescriptor,
     intent: TransactionIntent,
-  ): Promise<{ amount: string; fees: string; recipient: string; destinationTag?: number }> {
+  ): Promise<PreparedTransaction> {
     const account = await this.sync(descriptor);
     const { recipient, amount, fees } = await this.buildValidatedTx(account, intent);
     return {
