@@ -1,4 +1,4 @@
-import { selectWalletSyncState } from "@domain/entity-wallet-sync";
+import { selectWalletSyncState, walletSyncUpdate } from "@domain/entity-wallet-sync";
 import { resetTrustchainStore, setTrustchain } from "@ledgerhq/ledger-key-ring-protocol/store";
 import type { UnknownAction } from "@reduxjs/toolkit";
 import { track } from "@shared/analytics";
@@ -12,6 +12,7 @@ import {
 } from "../watch";
 import {
   ACTIVATED,
+  applyLocalState,
   blacklist,
   createStore,
   createWalletsync,
@@ -178,6 +179,26 @@ describe("Ledger Sync watch loop", () => {
     expect(store.getState().trustchain.trustchain).toBeNull();
     expect(selectWalletSyncState(store.getState())).toEqual({ data: null, version: 0 });
     expect(track).toHaveBeenCalledWith("ledgersync_deactivated");
+  });
+
+  it("should drop a local update that settles after Ledger Sync was reset", async () => {
+    const store = startedWatch(SYNCED);
+    const { resolveIncrementalUpdate } = createWalletsync.mock.results[0].value;
+    let settle!: (resolved: Awaited<ReturnType<typeof resolveIncrementalUpdate>>) => void;
+    jest.mocked(resolveIncrementalUpdate).mockReturnValueOnce(
+      new Promise(resolve => {
+        settle = resolve;
+      }),
+    );
+    await advance(WATCH_CONFIG.initialTimeout);
+
+    store.dispatch(resetTrustchainStore());
+    store.dispatch(walletSyncUpdate({ data: null, version: 0 }));
+    settle({ hasChanges: true, update: { newValue: "distant" } });
+    await advance(0);
+
+    expect(selectWalletSyncState(store.getState())).toEqual({ data: null, version: 0 });
+    expect(applyLocalState).not.toHaveBeenCalled();
   });
 
   it("should drop a restore that settles after the trustchain was reset", async () => {
