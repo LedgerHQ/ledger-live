@@ -20,7 +20,7 @@ describe("evmConfig", () => {
     setEnv("EIP1559_BASE_FEE_MULTIPLIER", 2.5);
 
     expect(getCurrencyConfiguration("ethereum")).toMatchObject({
-      ledgerExplorerUri: "http://url-2.url",
+      ledgerExplorerUri: "https://fresnel.api.live.ledger-test.com",
       ledgerClientVersion: "4.0",
       eip1559BaseFeeMultiplier: 2.5,
     });
@@ -43,7 +43,10 @@ describe("evmConfig", () => {
     setEnv("EVM_FORCE_LEGACY_TRANSACTIONS", false);
 
     const previousConfiguration = getCurrencyConfiguration("ethereum");
-    expect(previousConfiguration).not.toHaveProperty("ledgerExplorerUri");
+    expect(previousConfiguration).toHaveProperty(
+      "ledgerExplorerUri",
+      "https://fresnel.api.live.ledger-test.com",
+    );
     expect(previousConfiguration).not.toHaveProperty("ledgerClientVersion");
     expect(previousConfiguration).not.toHaveProperty("eip1559BaseFeeMultiplier");
     expect(previousConfiguration).not.toHaveProperty("forceLegacyTransactions");
@@ -86,7 +89,7 @@ describe("evmConfig", () => {
 
     expect(getCurrencyConfiguration("ethereum")).toMatchObject({
       eip1559BaseFeeMultiplier: 5.5,
-      ledgerExplorerUri: "http://url.url",
+      ledgerExplorerUri: "https://fresnel.api.live.ledger-test.com",
     });
 
     setEnv("EIP1559_BASE_FEE_MULTIPLIER", 3.5);
@@ -94,7 +97,7 @@ describe("evmConfig", () => {
 
     expect(getCurrencyConfiguration("ethereum")).toMatchObject({
       eip1559BaseFeeMultiplier: 3.5,
-      ledgerExplorerUri: "https://explorer.test",
+      ledgerExplorerUri: "https://fresnel.api.live.ledger-test.com",
     });
   });
 
@@ -103,7 +106,9 @@ describe("evmConfig", () => {
     LiveConfig.setConfig(liveConfig);
     setEnv("EXPLORER", "https://spread.test");
 
-    expect(getCurrencyConfiguration("ethereum").ledgerExplorerUri).toBe("https://spread.test");
+    expect(getCurrencyConfiguration("ethereum").ledgerExplorerUri).toBe(
+      "https://fresnel.api.live.ledger-test.com",
+    );
 
     setEnv("EXPLORER", previousExplorerUri);
     LiveConfig.setConfig(evmConfig as never);
