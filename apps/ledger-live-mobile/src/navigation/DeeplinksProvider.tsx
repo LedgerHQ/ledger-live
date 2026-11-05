@@ -328,11 +328,8 @@ export const DeeplinksProvider = ({
   const llmAccountListUI = useFeature("llmAccountListUI");
   const genericAwarenessModalFlag = useFeature("lwmGenericAwarenessModal");
 
-  const {
-    shouldDisplayAssetSection,
-    shouldDisplayAggregatedAssets,
-    shouldDisplayAssetDiscoverability,
-  } = useWalletFeaturesConfig("mobile");
+  const { shouldDisplayAggregatedAssets, shouldDisplayAssetDiscoverability } =
+    useWalletFeaturesConfig("mobile");
   const web3hubFlag = useFeature("web3hub");
   const lwmProductTourFlag = useFeature("lwmProductTour");
   const lwmBackupHubFlag = useFeature("lwmBackupHub");
@@ -560,13 +557,10 @@ export const DeeplinksProvider = ({
                            */
                           [ScreenName.Asset]: "asset/:currencyId",
                           /**
-                           * if shouldDisplayAssetSection is enabled
                            * @params ?sourceScreenName: string
                            * ie: "ledgerlive://crypto-addresses" will open the crypto addresses screen.
                            */
-                          ...(shouldDisplayAssetSection && {
-                            [ScreenName.CryptoAddresses]: "crypto-addresses",
-                          }),
+                          [ScreenName.CryptoAddresses]: "crypto-addresses",
                         },
                       },
                     },
@@ -906,7 +900,6 @@ export const DeeplinksProvider = ({
     onDeeplinkReceived,
     buySellUiManifestId,
     dispatch,
-    shouldDisplayAssetSection,
     shouldDisplayAggregatedAssets,
     shouldDisplayAssetDiscoverability,
     liveAppProviderInitialized,

@@ -27,7 +27,6 @@ import { ImageType } from "../components/CustomImage/types";
 import type { WalletState } from "./wallet";
 import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
-import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/TabSection";
 import type { BorrowState } from "./borrow";
 import type { CountervaluesStoreState } from "@features/platform-market-countervalues";
 import type { TrackingPair } from "@domain/entity-market-countervalues";
@@ -330,7 +329,6 @@ export type SettingsState = {
   starredMarketCoins: string[];
   fromLedgerSyncOnboarding: boolean;
   mevProtection: boolean;
-  selectedTabPortfolioAssets: TabPortfolioAssetsType;
   hasDismissedContactsFeatureIntroduction: boolean;
   productTourCompleted: boolean;
   hasSeenQ2WalletV4Tour: boolean;
