@@ -9,6 +9,8 @@ import {
   ExchangeSwapParams,
 } from "@ledgerhq/wallet-api-exchange-module";
 import { WalletContext, WalletHandlers } from "@ledgerhq/wallet-api-server";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { NotEnoughGas } from "@ledgerhq/ledger-wallet-framework/errors";
 import BigNumber from "bignumber.js";
 import { genAccount } from "../../mock/account";
 import { AppBranch, AppPlatform, Visibility } from "../types";
@@ -71,6 +73,7 @@ jest.mock("../converters", () => {
   return {
     getAccountIdFromWalletAccountId: (val: string) => val,
     getWalletAPITransactionSignFlowInfos: jest.fn(),
+    resolveWalletApiMaxSpendable: jest.fn(),
   };
 });
 
@@ -651,6 +654,157 @@ describe("handlers", () => {
         expect(swapCancelledPayloads()).toEqual([
           expect.objectContaining({ errorMessage: "Signature verification failed" }),
         ]);
+      });
+    });
+
+    describe("when the swap fails for insufficient funds", () => {
+      const fromAccount = {
+        ...genAccount("accountId1", { currency: getCryptoCurrencyById("bitcoin") }),
+        balance: new BigNumber("25000000"),
+        spendableBalance: new BigNumber("24000000"),
+        pendingOperations: [],
+      };
+
+      const cancelSwapWith = async (
+        error: Error,
+        {
+          resolveMaxSpendable = () => Promise.resolve(new BigNumber("23990000")),
+          throwOnEnrich = false,
+        }: {
+          resolveMaxSpendable?: () => Promise<BigNumber | undefined>;
+          throwOnEnrich?: boolean;
+        } = {},
+      ) => {
+        const toAccount = genAccount("accountId2");
+
+        const { getMainAccount } = jest.requireMock(
+          "@ledgerhq/ledger-wallet-framework/account/index",
+        );
+        const { resolveWalletApiMaxSpendable } = jest.requireMock("../converters");
+        const maxSpendableCallsBefore = resolveWalletApiMaxSpendable.mock.calls.length;
+        getMainAccount.mockImplementation((account: unknown) => {
+          if (
+            throwOnEnrich &&
+            resolveWalletApiMaxSpendable.mock.calls.length > maxSpendableCallsBefore
+          ) {
+            throw new Error("missing parent");
+          }
+          return account;
+        });
+
+        const { getAccountBridge } = jest.requireMock("../../bridge");
+        getAccountBridge.mockResolvedValue({
+          createTransaction: jest.fn().mockReturnValue({ family: "bitcoin", recipient: "" }),
+          updateTransaction: jest.fn().mockImplementation((tx: object, upd: object) => ({
+            ...tx,
+            ...upd,
+            amount: new BigNumber("1000000"),
+          })),
+        });
+
+        resolveWalletApiMaxSpendable.mockImplementation(resolveMaxSpendable);
+
+        mockUiStartExchange.mockImplementation(({ onSuccess }) => {
+          onSuccess("NONCE", { modelId: "nanoX", deviceId: "device-1" });
+        });
+        mockUiSwap.mockImplementation(({ onCancel }) => onCancel(error));
+
+        const handler = handlers({
+          accounts: [fromAccount, toAccount],
+          locale: "en",
+          counterValueCurrency: "USD",
+          tracking: mockTracking,
+          manifest: testAppManifest,
+          uiHooks: mockUiHooks,
+        });
+        const request: RpcRequest<string, ExchangeSwapParams> = {
+          jsonrpc: "2.0",
+          method: "custom.exchange.swap",
+          params: {
+            exchangeType: "SWAP",
+            provider: "TestProvider",
+            fromAccountId: fromAccount.id,
+            toAccountId: toAccount.id,
+            tokenCurrency: undefined,
+            fromAmount: "1000000",
+            fromAmountAtomic: new BigNumber("1000000"),
+            feeStrategy: "medium",
+          },
+          id: "test",
+        };
+        const context = {
+          config: { userId: "u", tracking: false, wallet: { name: "w", version: "2" }, appId: "a" },
+        };
+
+        try {
+          await expect(handler["custom.exchange.swap"](request, context, {})).rejects.toBeDefined();
+
+          const readCancelledSwap = () =>
+            mockedNetwork.mock.calls
+              .map(([req]) => req)
+              .find(req => req.url?.includes("/swap/cancelled"))?.data;
+
+          const deadline = Date.now() + 1_000;
+          let data = readCancelledSwap();
+          while (data === undefined && Date.now() < deadline) {
+            await new Promise(resolve => setImmediate(resolve));
+            data = readCancelledSwap();
+          }
+          return data;
+        } finally {
+          getMainAccount.mockImplementation((account: unknown) => account);
+        }
+      };
+
+      it("reports the balances and max spendable of a shortfall raised at broadcast", async () => {
+        const data = await cancelSwapWith(new Error("Insufficient funds"));
+
+        expect(data).toMatchObject({
+          errorMessage: "Insufficient funds",
+          balance: "0.25",
+          spendableBalance: "0.24",
+          maxSpendable: "0.2399",
+          pendingOperationsCount: "0",
+          nativeBalance: "0.25",
+          nativeCurrency: "BTC",
+        });
+      });
+
+      it("keeps the fee diagnostics completeExchange attached", async () => {
+        const error = Object.assign(new NotEnoughGas(), {
+          totalFees: "0.000025",
+          gasLimit: "21000",
+        });
+
+        const data = await cancelSwapWith(error);
+
+        expect(data).toMatchObject({
+          totalFees: "0.000025",
+          gasLimit: "21000",
+          maxSpendable: "0.2399",
+        });
+      });
+
+      it("reports the balances when max spendable cannot be resolved", async () => {
+        const data = await cancelSwapWith(new Error("Insufficient funds"), {
+          resolveMaxSpendable: () => Promise.reject(new Error("bridge down")),
+        });
+
+        expect(data).toMatchObject({
+          errorMessage: "Insufficient funds",
+          balance: "0.25",
+          spendableBalance: "0.24",
+          nativeBalance: "0.25",
+        });
+        expect(data).not.toHaveProperty("maxSpendable");
+      });
+
+      it("reports the cancel when the shortfall cannot be enriched", async () => {
+        const data = await cancelSwapWith(new Error("Insufficient funds"), { throwOnEnrich: true });
+
+        expect(data).toMatchObject({ errorMessage: "Insufficient funds" });
+        expect(data).not.toHaveProperty("balance");
+        expect(data).not.toHaveProperty("maxSpendable");
       });
     });
   });
