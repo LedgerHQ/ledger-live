@@ -103,6 +103,17 @@ describe("api/createApi", () => {
     expect(() => api.combine(context, "{}", ["00"])).toThrow("public key");
   });
 
+  it("hands the pagination limit of the resolved config to the block queries", async () => {
+    const api = createApi("cosmos");
+    const limitedContext = makeContext({ ...config, getBlock: { pagination: { limit: 25 } } });
+
+    await api.getBlock(limitedContext, 7);
+
+    const instance = jest.mocked(CosmosAPI).mock.results.at(-1)?.value;
+    expect(instance.getBlockWithTxs).toHaveBeenCalledWith(7, 25);
+    expect(instance.getTransactionsByHeight).toHaveBeenCalledWith(7, 25);
+  });
+
   it("threads each currency's config from its own context into the CosmosAPI (no singleton seeding)", async () => {
     (CosmosAPI as unknown as jest.Mock).mockClear();
 

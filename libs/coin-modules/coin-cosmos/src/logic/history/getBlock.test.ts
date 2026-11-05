@@ -1,4 +1,7 @@
-import type { CosmosCoinConfig } from "../../config";
+import { InvalidParameterError } from "@ledgerhq/coin-module-framework/errors";
+import { LedgerAPI5xx, NetworkDown } from "@ledgerhq/live-network/errors";
+import { DEFAULT_GET_BLOCK_PAGINATION_LIMIT, type CosmosCoinConfig } from "../../config";
+import { GetBlockError } from "../../errors";
 import { CosmosAPI } from "../../network/Cosmos";
 import { GET_BLOCK_WITH_TXS_SDK_EXAMPLE } from "../../network/fixtures";
 import { BlockTxSDK, GetBlockWithTxsSDK } from "../../network/types";
@@ -10,6 +13,12 @@ const SENDER = "cosmos16exhyvwyy82fnavqgupf67lku4jvvd82h7p20u";
 const RECIPIENT = "cosmos16na4yg4rtt4n8j72n54uy5mvxn7f08l7t4h3xv";
 const config = { denom: "uatom" } as CosmosCoinConfig;
 const [baseTx] = GET_BLOCK_WITH_TXS_SDK_EXAMPLE.txs;
+
+const getBlockFailure = (message: string, cause: Record<string, unknown>) => ({
+  name: "GetBlockError",
+  message,
+  cause: expect.objectContaining(cause),
+});
 
 function makeTx(overrides: {
   messages?: BlockTxSDK["body"]["messages"];
@@ -26,8 +35,8 @@ function makeApi(
   blockWithTxs: GetBlockWithTxsSDK,
   results: { txhash: string; code: number }[] = [{ txhash: TX_HASH, code: 0 }],
 ) {
-  const getBlockWithTxs = jest.fn(async (_height: number) => blockWithTxs);
-  const getTransactionsByHeight = jest.fn(async (_height: number) => results);
+  const getBlockWithTxs = jest.fn(async (_height: number, _limit: number) => blockWithTxs);
+  const getTransactionsByHeight = jest.fn(async (_height: number, _limit: number) => results);
   return {
     api: { getBlockWithTxs, getTransactionsByHeight } as unknown as CosmosAPI,
     getBlockWithTxs,
@@ -47,8 +56,11 @@ describe("getBlock", () => {
 
     const block = await getBlock(config, api, 33721701);
 
-    expect(getBlockWithTxs).toHaveBeenCalledWith(33721701);
-    expect(getTransactionsByHeight).toHaveBeenCalledWith(33721701);
+    expect(getBlockWithTxs).toHaveBeenCalledWith(33721701, DEFAULT_GET_BLOCK_PAGINATION_LIMIT);
+    expect(getTransactionsByHeight).toHaveBeenCalledWith(
+      33721701,
+      DEFAULT_GET_BLOCK_PAGINATION_LIMIT,
+    );
     expect(block).toEqual({
       info: {
         height: 33721701,
@@ -123,41 +135,90 @@ describe("getBlock", () => {
     expect(transactions).toEqual([expect.objectContaining({ failed: true, fees: 3629n })]);
   });
 
-  it("rejects when the result of a transaction is missing", async () => {
-    const { api } = makeApi(GET_BLOCK_WITH_TXS_SDK_EXAMPLE, []);
+  it("uses the configured pagination limit for the block and its results", async () => {
+    const { api, getBlockWithTxs, getTransactionsByHeight } = makeApi(
+      GET_BLOCK_WITH_TXS_SDK_EXAMPLE,
+    );
 
-    await expect(getBlock(config, api, 33721701)).rejects.toThrow(
-      `Missing result for transaction ${TX_HASH} at block height 33721701`,
+    await getBlock({ ...config, getBlock: { pagination: { limit: 7 } } }, api, 33721701);
+
+    expect(getBlockWithTxs).toHaveBeenCalledWith(33721701, 7);
+    expect(getTransactionsByHeight).toHaveBeenCalledWith(33721701, 7);
+  });
+
+  it("rejects with the block error when fewer transactions are decoded than the block contains", async () => {
+    const { api } = makeApi({ ...GET_BLOCK_WITH_TXS_SDK_EXAMPLE, txs: [] });
+    const cause = "Block 33721701 returned 0 decoded transactions for 1 raw transactions";
+
+    await expect(getBlock(config, api, 33721701)).rejects.toMatchObject(
+      getBlockFailure(`Failed to get block 33721701: ${cause}`, {
+        name: "BlockTransactionsMismatch",
+        message: cause,
+      }),
+    );
+  });
+
+  it("rejects with the block error when the result of a transaction is missing", async () => {
+    const { api } = makeApi(GET_BLOCK_WITH_TXS_SDK_EXAMPLE, []);
+    const cause = `Missing result for transaction ${TX_HASH} at block height 33721701`;
+
+    await expect(getBlock(config, api, 33721701)).rejects.toMatchObject(
+      getBlockFailure(`Failed to get block 33721701: ${cause}`, {
+        name: "TransactionResultNotFound",
+        message: cause,
+      }),
     );
   });
 
   it.each([0, -1, 1.5, NaN, Number.MAX_SAFE_INTEGER + 1])(
-    "rejects the invalid height %p without calling the api",
+    "rejects the invalid height %p with the block error, without calling the api",
     async height => {
       const { api, getBlockWithTxs, getTransactionsByHeight } = makeApi(
         GET_BLOCK_WITH_TXS_SDK_EXAMPLE,
       );
+      const cause = `Invalid block height: ${height}`;
 
-      await expect(getBlock(config, api, height)).rejects.toThrow(
-        `Invalid block height: ${height}`,
+      const error = await getBlock(config, api, height).catch((e: unknown) => e);
+
+      expect(error).toBeInstanceOf(GetBlockError);
+      expect(error).toMatchObject(
+        getBlockFailure(`Failed to get block ${height}: ${cause}`, {
+          name: "InvalidParameterError",
+          message: cause,
+        }),
       );
+      expect((error as GetBlockError).cause).toBeInstanceOf(InvalidParameterError);
       expect(getBlockWithTxs).not.toHaveBeenCalled();
       expect(getTransactionsByHeight).not.toHaveBeenCalled();
     },
   );
 
-  it("rejects when the block cannot be fetched", async () => {
+  it("rejects with the block error, keeping the failure as cause, when the block cannot be fetched", async () => {
     const { api, getBlockWithTxs } = makeApi(GET_BLOCK_WITH_TXS_SDK_EXAMPLE);
-    getBlockWithTxs.mockRejectedValue(new Error("invalid height"));
+    const failure = new LedgerAPI5xx("codespace sdk code 26: invalid height");
+    getBlockWithTxs.mockRejectedValue(failure);
 
-    await expect(getBlock(config, api, 999999999)).rejects.toThrow("invalid height");
+    const error = await getBlock(config, api, 999999999).catch((e: unknown) => e);
+
+    expect(error).toMatchObject({
+      name: "GetBlockError",
+      message: "Failed to get block 999999999: codespace sdk code 26: invalid height",
+    });
+    expect((error as GetBlockError).cause).toBe(failure);
   });
 
-  it("rejects when the transaction results cannot be fetched", async () => {
+  it("rejects with the block error, keeping the failure as cause, when the results cannot be fetched", async () => {
     const { api, getTransactionsByHeight } = makeApi(GET_BLOCK_WITH_TXS_SDK_EXAMPLE);
-    getTransactionsByHeight.mockRejectedValue(new Error("results unavailable"));
+    const failure = new NetworkDown("lcd unreachable");
+    getTransactionsByHeight.mockRejectedValue(failure);
 
-    await expect(getBlock(config, api, 33721701)).rejects.toThrow("results unavailable");
+    const error = await getBlock(config, api, 33721701).catch((e: unknown) => e);
+
+    expect(error).toMatchObject({
+      name: "GetBlockError",
+      message: "Failed to get block 33721701: lcd unreachable",
+    });
+    expect((error as GetBlockError).cause).toBe(failure);
   });
 
   describe("fees", () => {
@@ -195,16 +256,22 @@ describe("getBlock", () => {
       return transactions[0].feesPayer;
     };
 
-    it("is the explicit fee payer first", async () => {
+    it("is the granter first, even when an explicit fee payer is set", async () => {
       await expect(
         payerOf(makeTx({ fee: { payer: "cosmos1payer", granter: "cosmos1granter" } })),
-      ).resolves.toBe("cosmos1payer");
+      ).resolves.toBe("cosmos1granter");
     });
 
     it("is the granter when there is no explicit fee payer", async () => {
       await expect(
         payerOf(makeTx({ fee: { payer: "", granter: "cosmos1granter" } })),
       ).resolves.toBe("cosmos1granter");
+    });
+
+    it("is the explicit fee payer when there is no granter", async () => {
+      await expect(payerOf(makeTx({ fee: { payer: "cosmos1payer", granter: "" } }))).resolves.toBe(
+        "cosmos1payer",
+      );
     });
 
     it("is the signer of the first message otherwise", async () => {

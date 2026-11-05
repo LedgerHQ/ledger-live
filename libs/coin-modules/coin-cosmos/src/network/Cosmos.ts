@@ -23,6 +23,7 @@ import {
   mergeQueuedMessages,
 } from "./babylonEpoching";
 import * as CosmosSDKTypes from "./types";
+import { assertValidPaginationLimit } from "./assertValidPaginationLimit";
 import { toBlockInfo } from "./utils";
 import { BlockInfo } from "@ledgerhq/coin-module-framework/api/types";
 
@@ -739,32 +740,54 @@ export class CosmosAPI {
     return toBlockInfo(data);
   };
 
-  getBlockWithTxs = async (height: number): Promise<CosmosSDKTypes.GetBlockWithTxsSDK> => {
-    const { data } = await network<CosmosSDKTypes.GetBlockWithTxsSDK>({
-      method: "GET",
-      url: `${this.defaultEndpoint}/cosmos/tx/${this.version}/txs/block/${height}`,
-    });
+  getBlockWithTxs = async (
+    height: number,
+    limit: number,
+  ): Promise<CosmosSDKTypes.GetBlockWithTxsSDK> => {
+    assertValidPaginationLimit(limit);
 
-    return data;
+    const fetchPage = async (offset: number) => {
+      const params = new URLSearchParams({
+        "pagination.limit": String(limit),
+        "pagination.offset": String(offset),
+      });
+      const { data } = await network<CosmosSDKTypes.GetBlockWithTxsSDK>({
+        method: "GET",
+        url: `${this.defaultEndpoint}/cosmos/tx/${this.version}/txs/block/${height}?${params.toString()}`,
+      });
+      return data;
+    };
+
+    const firstPage = await fetchPage(0);
+    const total = Number(firstPage.pagination?.total ?? firstPage.txs.length);
+    const txs = [...firstPage.txs];
+
+    for (let offset = limit; offset < total; offset += limit) {
+      txs.push(...(await fetchPage(offset)).txs);
+    }
+
+    return { ...firstPage, txs };
   };
 
-  getTransactionsByHeight = async (height: number): Promise<CosmosTx[]> => {
+  getTransactionsByHeight = async (height: number, limit: number): Promise<CosmosTx[]> => {
+    assertValidPaginationLimit(limit);
+
     const coerced = semver.coerce(await this.cosmosSDKVersion);
-    const useModernParams = coerced !== null && semver.gte(coerced, "0.50.0");
-    const queryParam = useModernParams ? "query" : "events";
-    const pageSize = 100;
+    const useQueryParam = coerced !== null && semver.gte(coerced, "0.50.0");
+    const usePageParams = coerced !== null && semver.gte(coerced, "0.46.0");
+    const queryParam = useQueryParam ? "query" : "events";
     const allTxs: CosmosTx[] = [];
     let page = 1;
     let hasMore = true;
 
     while (hasMore) {
       const params = new URLSearchParams({ [queryParam]: `tx.height=${height}` });
-      if (useModernParams) {
+      if (usePageParams) {
         params.set("page", String(page));
-        params.set("limit", String(pageSize));
+        params.set("limit", String(limit));
       } else {
-        params.set("pagination.limit", String(pageSize));
-        params.set("pagination.offset", String((page - 1) * pageSize));
+        params.set("pagination.limit", String(limit));
+        params.set("pagination.offset", String((page - 1) * limit));
       }
 
       const { txs, total } = await this.fetchTransactions(params);

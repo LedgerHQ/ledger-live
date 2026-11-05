@@ -1,6 +1,7 @@
 import { sha256 } from "@cosmjs/crypto";
 import { Block, BlockOperation, BlockTransaction } from "@ledgerhq/coin-module-framework/api/types";
-import type { CosmosCoinConfig } from "../../config";
+import { DEFAULT_GET_BLOCK_PAGINATION_LIMIT, type CosmosCoinConfig } from "../../config";
+import { BlockTransactionsMismatch, GetBlockError, TransactionResultNotFound } from "../../errors";
 import { CosmosAPI } from "../../network/Cosmos";
 import { BlockTxSDK } from "../../network/types";
 import { toBlockInfo } from "../../network/utils";
@@ -16,21 +17,38 @@ export async function getBlock(
   api: CosmosAPI,
   height: number,
 ): Promise<Block> {
+  try {
+    return await fetchBlock(config, api, height);
+  } catch (cause) {
+    throw new GetBlockError(height, cause);
+  }
+}
+
+async function fetchBlock(
+  config: CosmosCoinConfig,
+  api: CosmosAPI,
+  height: number,
+): Promise<Block> {
   assertValidBlockHeight(height);
 
+  const limit = config.getBlock?.pagination.limit ?? DEFAULT_GET_BLOCK_PAGINATION_LIMIT;
   const [blockWithTxs, results] = await Promise.all([
-    api.getBlockWithTxs(height),
-    api.getTransactionsByHeight(height),
+    api.getBlockWithTxs(height, limit),
+    api.getTransactionsByHeight(height, limit),
   ]);
 
   const codeByHash = new Map(results.map(result => [result.txhash, result.code]));
   const rawTxs = (blockWithTxs.sdk_block ?? blockWithTxs.block).data.txs;
 
+  if (blockWithTxs.txs.length !== rawTxs.length) {
+    throw new BlockTransactionsMismatch(height, blockWithTxs.txs.length, rawTxs.length);
+  }
+
   const transactions = blockWithTxs.txs.map((tx, index) => {
     const hash = toTransactionHash(rawTxs[index]);
     const code = codeByHash.get(hash);
     if (code === undefined) {
-      throw new Error(`Missing result for transaction ${hash} at block height ${height}`);
+      throw new TransactionResultNotFound(hash, height);
     }
     return toBlockTransaction(config.denom, hash, code !== 0, tx);
   });
@@ -54,7 +72,7 @@ function toBlockTransaction(
   const fees = fee.amount
     .filter(coin => coin.denom === denom)
     .reduce((total, coin) => total + BigInt(coin.amount), 0n);
-  const feesPayer = fee.payer || fee.granter || firstSigner(tx.body.messages[0]);
+  const feesPayer = fee.granter || fee.payer || firstSigner(tx.body.messages[0]);
 
   return {
     hash,

@@ -1,3 +1,6 @@
+import { InvalidParameterError } from "@ledgerhq/coin-module-framework/errors";
+import { LedgerAPI4xx } from "@ledgerhq/live-network/errors";
+import { GetBlockInfoError } from "../../errors";
 import { CosmosAPI } from "../../network/Cosmos";
 import { getBlockInfo } from "./getBlockInfo";
 
@@ -20,22 +23,37 @@ describe("getBlockInfo", () => {
   });
 
   it.each([0, -1, 1.5, NaN, Infinity, Number.MAX_SAFE_INTEGER + 1])(
-    "rejects the invalid height %p without calling the api",
+    "rejects the invalid height %p with the block info error, without calling the api",
     async height => {
       const { api, getBlockInfoMock } = makeApi(async () => BLOCK_INFO);
+      const cause = `Invalid block height: ${height}`;
 
-      await expect(getBlockInfo(api, height)).rejects.toThrow(`Invalid block height: ${height}`);
+      const error = await getBlockInfo(api, height).catch((e: unknown) => e);
+
+      expect(error).toBeInstanceOf(GetBlockInfoError);
+      expect(error).toMatchObject({
+        name: "GetBlockInfoError",
+        message: `Failed to get block info ${height}: ${cause}`,
+        cause: expect.objectContaining({ name: "InvalidParameterError", message: cause }),
+      });
+      expect((error as GetBlockInfoError).cause).toBeInstanceOf(InvalidParameterError);
       expect(getBlockInfoMock).not.toHaveBeenCalled();
     },
   );
 
-  it("rejects when the api rejects", async () => {
+  it("rejects with the block info error, keeping the api failure as cause", async () => {
+    const failure = new LedgerAPI4xx("requested block height is bigger then the chain length");
     const { api } = makeApi(async () => {
-      throw new Error("requested block height is bigger then the chain length");
+      throw failure;
     });
 
-    await expect(getBlockInfo(api, 999999999)).rejects.toThrow(
-      "requested block height is bigger then the chain length",
-    );
+    const error = await getBlockInfo(api, 999999999).catch((e: unknown) => e);
+
+    expect(error).toMatchObject({
+      name: "GetBlockInfoError",
+      message:
+        "Failed to get block info 999999999: requested block height is bigger then the chain length",
+    });
+    expect((error as GetBlockInfoError).cause).toBe(failure);
   });
 });

@@ -101,3 +101,35 @@ export class RedelegateDstValAddressRequired extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+export class TransactionResultNotFound extends Error {
+  override name = "TransactionResultNotFound";
+  constructor(hash: string, height: number) {
+    super(`Missing result for transaction ${hash} at block height ${height}`);
+  }
+}
+
+export class BlockTransactionsMismatch extends Error {
+  override name = "BlockTransactionsMismatch";
+  constructor(height: number, decoded: number, raw: number) {
+    super(`Block ${height} returned ${decoded} decoded transactions for ${raw} raw transactions`);
+  }
+}
+
+function describeCause(cause: unknown): string {
+  return cause instanceof Error ? cause.message : String(cause);
+}
+
+export class GetBlockError extends Error {
+  override name = "GetBlockError";
+  constructor(height: number, cause: unknown) {
+    super(`Failed to get block ${height}: ${describeCause(cause)}`, { cause });
+  }
+}
+
+export class GetBlockInfoError extends Error {
+  override name = "GetBlockInfoError";
+  constructor(height: number, cause: unknown) {
+    super(`Failed to get block info ${height}: ${describeCause(cause)}`, { cause });
+  }
+}

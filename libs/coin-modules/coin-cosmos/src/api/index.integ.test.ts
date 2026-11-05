@@ -49,6 +49,9 @@ describe("createApi (integ, Cosmos Hub)", () => {
   });
 
   it("getBlock rejects a height above the chain length via the wired api", async () => {
-    await expect(api.getBlock(context, 999999999)).rejects.toThrow("invalid height");
+    await expect(api.getBlock(context, 999999999)).rejects.toMatchObject({
+      name: "GetBlockError",
+      cause: expect.objectContaining({ message: expect.stringContaining("invalid height") }),
+    });
   });
 });

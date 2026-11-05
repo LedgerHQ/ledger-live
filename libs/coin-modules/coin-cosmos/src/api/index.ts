@@ -54,7 +54,6 @@ async function resolve(
  *   - `craftRawTransaction` — the module takes no externally-built transaction.
  *   - `getRewards` — no reward-distribution listing is implemented; the accrued amount is reported
  *     by `getStakes` instead.
- *   - `getBlock`, `getBlockInfo` — no per-height block lookup is implemented (`lastBlock` is).
  * The consumer resolver applies `withDefaults`, which answers "not supported" for each of them.
  */
 export function createApi(currencyId: string) {

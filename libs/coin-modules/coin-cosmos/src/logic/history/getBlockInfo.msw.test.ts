@@ -38,7 +38,7 @@ describe("getBlockInfo via MSW", () => {
     expect(block.height).toBe(33721700);
   });
 
-  it("rejects when the height is above the chain length", async () => {
+  it("rejects with the block info error when the height is above the chain length", async () => {
     server.use(
       http.get(BLOCK_URL, () =>
         HttpResponse.json(
@@ -50,12 +50,24 @@ describe("getBlockInfo via MSW", () => {
 
     await expect(
       getBlockInfo(makeTestApi("cosmos", TEST_COSMOS_ENDPOINT), 999999999),
-    ).rejects.toThrow("requested block height is bigger then the chain length");
+    ).rejects.toMatchObject({
+      name: "GetBlockInfoError",
+      message:
+        "Failed to get block info 999999999: requested block height is bigger then the chain length",
+      cause: expect.objectContaining({
+        name: "LedgerAPI4xx",
+        message: "requested block height is bigger then the chain length",
+      }),
+    });
   });
 
-  it("rejects an invalid height without querying the network", async () => {
-    await expect(getBlockInfo(makeTestApi("cosmos", TEST_COSMOS_ENDPOINT), 0)).rejects.toThrow(
-      "Invalid block height: 0",
-    );
+  it("rejects an invalid height with the block info error, without querying the network", async () => {
+    await expect(
+      getBlockInfo(makeTestApi("cosmos", TEST_COSMOS_ENDPOINT), 0),
+    ).rejects.toMatchObject({
+      name: "GetBlockInfoError",
+      message: "Failed to get block info 0: Invalid block height: 0",
+      cause: expect.objectContaining({ name: "InvalidParameterError" }),
+    });
   });
 });
