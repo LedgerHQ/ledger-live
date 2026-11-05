@@ -13,15 +13,19 @@ const SESSION_FILE = "session.yaml";
  * Call cleanup() in afterEach/afterAll to remove the temp dir.
  */
 export function makeSessionDir(entries: SessionEntry[]): {
-  env: { XDG_STATE_HOME: string };
+  env: { XDG_STATE_HOME: string; LOCALAPPDATA?: string };
   cleanup: () => void;
 } {
   const tmpDir = mkdtempSync(join(tmpdir(), "wallet-cli-test-"));
-  const appDir = join(tmpDir, APP_NAME);
-  mkdirSync(appDir);
+  const appDir =
+    process.platform === "win32" ? join(tmpDir, APP_NAME, "State") : join(tmpDir, APP_NAME);
+  mkdirSync(appDir, { recursive: true });
   writeFileSync(join(appDir, SESSION_FILE), YAML.stringify({ accounts: entries }));
   return {
-    env: { XDG_STATE_HOME: tmpDir },
+    env: {
+      XDG_STATE_HOME: tmpDir,
+      ...(process.platform === "win32" ? { LOCALAPPDATA: tmpDir } : {}),
+    },
     cleanup: () => rmSync(tmpDir, { recursive: true, force: true }),
   };
 }
