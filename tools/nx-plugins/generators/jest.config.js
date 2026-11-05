@@ -6,7 +6,7 @@ module.exports = {
   testEnvironment: "node",
   testMatch: ["**/*.spec.ts"],
   transform: {
-    "^.+\\.tsx?$": [
+    "^.+\\.(cts|tsx?)$": [
       "@swc/jest",
       {
         jsc: {
