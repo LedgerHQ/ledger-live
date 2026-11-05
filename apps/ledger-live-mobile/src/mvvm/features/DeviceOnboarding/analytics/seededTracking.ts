@@ -1,0 +1,176 @@
+import { getPreviousTrackingPage, track, trackPage } from "@shared/analytics";
+import type { DeviceOnboardingContext } from "@features/platform-device-onboarding";
+import { toChecksError, toChecksScreenState } from "../utils/checksPhase";
+
+type YesNo = "yes" | "no";
+
+export type FirmwareUpdateAvailability = YesNo | "unknown";
+
+/** What the seeded funnel knows about its result, carried from the checks to the Sync offer. */
+export type SeededResult = Readonly<{
+  deviceType: string;
+  ledgerSyncEligible: boolean;
+  firmwareUpdateAvailability: FirmwareUpdateAvailability;
+  firmwareUpdateDone: boolean;
+}>;
+
+export const seededPages = {
+  genuineCheck: "Genuine Check",
+  genuineCheckStarted: "Genuine Check started",
+  genuineCheckRefused: "Genuine Check refused on device",
+  genuineCheckError: "Genuine Check error",
+  genuineCheckSuccess: "Genuine Check success",
+  checkOsVersion: "Check OS version",
+  osUpdateRequired: "OS update required",
+  osUpdateUnsupported: "Drawer : OS update unsupported",
+  checksSuccess: "Genuine Check & OS success",
+  ledgerSync: "Ledger Sync",
+  skipLedgerSyncDrawer: "Drawer : Skip Ledger sync confirmation",
+  ledgerSyncRefused: "Ledger Sync Refused",
+  ledgerSyncSuccess: "Ledger Sync Success",
+} as const;
+
+export const seededButtons = {
+  initiateGenuineCheck: "Initiate Genuine Check",
+  retryGenuineCheck: "Retry genuine check",
+  continue: "Continue",
+  activateSync: "Activate sync",
+  skip: "Skip",
+  learnMore: "Learn more",
+  enableSync: "Enable sync",
+  yesSkip: "Yes, skip",
+  close: "close",
+} as const;
+
+export function seededProps(deviceType: string) {
+  return {
+    sourceFlow: "onboarding",
+    "onboarding type": "seeded device",
+    seedConfiguration: "already_seeded",
+    deviceType,
+  } as const;
+}
+
+const yesNo = (value: boolean): YesNo => (value ? "yes" : "no");
+
+/** Fire and forget: the helpers return nothing, so call sites hold no promise. */
+function send(delivery: void | Promise<void>): void {
+  Promise.resolve(delivery).catch(() => undefined);
+}
+
+function withSource<T extends object>(props: T): T & { source?: string } {
+  const source = getPreviousTrackingPage();
+  return source ? { source, ...props } : props;
+}
+
+/** Null for an unseeded entry: only the seeded funnel is tracked. */
+export function toSeededResult(
+  context: DeviceOnboardingContext,
+  firmwareUpdateDone: boolean,
+): SeededResult | null {
+  if (context.onboardedOnEntry !== true) return null;
+  return {
+    deviceType: context.deviceModelId,
+    ledgerSyncEligible: context.offerSync,
+    firmwareUpdateAvailability: toFirmwareUpdateAvailability(
+      context.firmware?.kind ?? null,
+      firmwareUpdateDone,
+    ),
+    firmwareUpdateDone,
+  };
+}
+
+export function toFirmwareUpdateAvailability(
+  firmwareCheck: string | null,
+  firmwareUpdateDone: boolean,
+): FirmwareUpdateAvailability {
+  if (firmwareUpdateDone) return "yes";
+  if (firmwareCheck === "offered" || firmwareCheck === "declined") return "yes";
+  if (firmwareCheck === "checked" || firmwareCheck === "upToDate") return "no";
+  return "unknown";
+}
+
+/** The page the checks screen shows, read from the same screen state the UI renders. */
+export function seededChecksPage(
+  machineState: string | null,
+  checksPaused: boolean,
+  genuineFailureKind: string | null,
+): string | null {
+  const error = toChecksError(machineState, genuineFailureKind);
+  if (error) {
+    return error.kind === "declined"
+      ? seededPages.genuineCheckRefused
+      : seededPages.genuineCheckError;
+  }
+  switch (toChecksScreenState(machineState, checksPaused, true)) {
+    case "idle":
+      return seededPages.genuineCheck;
+    case "awaitingAllow":
+      return seededPages.genuineCheckStarted;
+    case "updating":
+      return seededPages.osUpdateRequired;
+    case "succeeded":
+      return seededPages.checksSuccess;
+    case "checking":
+      if (machineState?.startsWith("checks.genuineCheck")) return seededPages.genuineCheckStarted;
+      if (machineState?.startsWith("checks.firmwareCheck")) return seededPages.checkOsVersion;
+      return null;
+    default:
+      return null;
+  }
+}
+
+export function trackSeededPage(
+  page: string,
+  deviceType: string,
+  extraProps: Record<string, string> = {},
+): void {
+  send(
+    trackPage(
+      { category: page, props: { ...seededProps(deviceType), ...extraProps } },
+      { updateRoutes: true, refreshSource: true },
+    ),
+  );
+}
+
+export function trackSeededClick(button: string, deviceType: string): void {
+  send(track("button_clicked", withSource({ ...seededProps(deviceType), button })));
+}
+
+export function trackSeededStarted(result: SeededResult): void {
+  send(
+    track(
+      "onboarding_started",
+      withSource({
+        ...seededProps(result.deviceType),
+        ledger_sync_eligibility: yesNo(result.ledgerSyncEligible),
+        firmware_update_availability: result.firmwareUpdateAvailability,
+      }),
+    ),
+  );
+}
+
+function trackSeededEnd(
+  event: "onboarding_done" | "onboarding_aborted",
+  result: SeededResult,
+  ledgerSyncDone: boolean,
+): void {
+  send(
+    track(
+      event,
+      withSource({
+        ...seededProps(result.deviceType),
+        ledger_sync_done: yesNo(ledgerSyncDone),
+        firmware_update_done: yesNo(result.firmwareUpdateDone),
+      }),
+    ),
+  );
+}
+
+export function trackSeededDone(result: SeededResult, ledgerSyncDone = false): void {
+  trackSeededEnd("onboarding_done", result, ledgerSyncDone);
+}
+
+export function trackSeededAborted(result: SeededResult): void {
+  trackSeededEnd("onboarding_aborted", result, false);
+}

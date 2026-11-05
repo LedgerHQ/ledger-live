@@ -20,6 +20,8 @@ export type ChecksScreenProps = {
   onRetry: () => void;
   onAcceptUpdate: () => void;
   onDeclineUpdate: () => void;
+  /** Called when the update cannot run here: the device is not eligible or needs USB. */
+  onUnsupportedUpdate?: (usbRequired: boolean) => void;
   onCloseSheet: () => void;
   /** Missing while the success screen is shown but the machine is not waiting on it yet. */
   onContinue?: () => void;

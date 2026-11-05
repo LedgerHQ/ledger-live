@@ -8,6 +8,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { AnalyticsOptInPromptNavigatorParamList } from "./AnalyticsOptInPromptNavigator";
 import { LandingPagesNavigatorParamList } from "./LandingPagesNavigator";
 import { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
+import type { SeededResult } from "LLM/features/DeviceOnboarding/analytics/seededTracking";
 import { AddAccountsNavigatorParamList } from "./AddAccountsNavigator";
 import { CommonAddAccountNavigatorParamsList } from "./BaseNavigator";
 
@@ -75,6 +76,7 @@ export type OnboardingNavigatorParamList = {
   [ScreenName.DeviceOnboardingSyncOffer]: {
     device: Device;
     wasReadOnlyAtEntry: boolean;
+    seededResult: SeededResult | null;
   };
   [ScreenName.FirmwareUpdate]: {
     deviceInfo?: DeviceInfo | null;

@@ -8,6 +8,11 @@ import {
   type RouteProp,
 } from "@react-navigation/native";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+import {
+  seededPages,
+  trackSeededDone,
+  trackSeededPage,
+} from "LLM/features/DeviceOnboarding/analytics/seededTracking";
 import { useCompleteSeededOnboarding } from "LLM/features/DeviceOnboarding/hooks/useCompleteSeededOnboarding";
 import { closeOnboarding } from "LLM/features/DeviceOnboarding/utils/exitActions";
 import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
@@ -27,7 +32,7 @@ type OfferRoute = RouteProp<OnboardingNavigatorParamList, ScreenName.DeviceOnboa
 export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const dispatch = useDispatch();
-  const { device, wasReadOnlyAtEntry } = useRoute<OfferRoute>().params;
+  const { device, wasReadOnlyAtEntry, seededResult } = useRoute<OfferRoute>().params;
   const hasTrustchain = Boolean(useSelector(trustchainSelector)?.rootId);
   const [handoverStarted, setHandoverStarted] = useState(false);
   const completedOnSync = useRef(false);
@@ -44,19 +49,30 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
     [navigation],
   );
 
-  const finishOnboarding = useCallback(() => {
-    if (completedOnSync.current) return;
-    completedOnSync.current = true;
-    allowLeave.current = true;
-    complete();
-    notifyFlowCompleted("onboarding");
-    closeOnboarding(navigation);
-  }, [complete, navigation, notifyFlowCompleted]);
+  const finishOnboarding = useCallback(
+    (syncDone: boolean) => {
+      if (completedOnSync.current) return;
+      completedOnSync.current = true;
+      allowLeave.current = true;
+      if (seededResult) {
+        if (syncDone) trackSeededPage(seededPages.ledgerSyncSuccess, seededResult.deviceType);
+        trackSeededDone(seededResult, syncDone);
+      }
+      complete();
+      notifyFlowCompleted("onboarding");
+      closeOnboarding(navigation);
+    },
+    [complete, navigation, notifyFlowCompleted, seededResult],
+  );
 
   useEffect(() => {
     if (!handoverStarted || !hasTrustchain) return;
-    finishOnboarding();
+    finishOnboarding(true);
   }, [finishOnboarding, handoverStarted, hasTrustchain]);
+
+  const finishWithoutSync = useCallback(() => {
+    finishOnboarding(false);
+  }, [finishOnboarding]);
 
   const onActivate = useCallback(() => {
     setHandoverStarted(true);
@@ -74,8 +90,9 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
 
   return {
     onActivate,
-    onSkip: finishOnboarding,
-    onQuit: finishOnboarding,
+    onSkip: finishWithoutSync,
+    onQuit: finishWithoutSync,
     onLearnMore,
+    seededDeviceType: seededResult?.deviceType ?? null,
   };
 }

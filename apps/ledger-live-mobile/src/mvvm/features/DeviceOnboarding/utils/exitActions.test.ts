@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import type { DeviceOnboardingExitReason } from "@features/platform-device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -11,7 +12,21 @@ import {
 } from "~/actions/settings";
 import { StackActions } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
+import type { SeededResult } from "../analytics/seededTracking";
 import { exitActions } from "./exitActions";
+
+jest.mock("@shared/analytics", () => ({
+  track: jest.fn(),
+  trackPage: jest.fn(),
+  getPreviousTrackingPage: jest.fn(() => ""),
+}));
+
+const seededResult: SeededResult = {
+  deviceType: "stax",
+  ledgerSyncEligible: false,
+  firmwareUpdateAvailability: "no",
+  firmwareUpdateDone: false,
+};
 
 type ExitDeps = Parameters<(typeof exitActions)[DeviceOnboardingExitReason]>[0];
 type Route = { name: string; params?: unknown; state?: { routes: Route[] } };
@@ -26,6 +41,10 @@ const stax: Device = {
 const portfolio = [NavigatorName.Base, NavigatorName.Main];
 
 describe("exitActions", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it.each([
     [
       "resumeFirmwareUpdate",
@@ -94,6 +113,7 @@ describe("exitActions", () => {
       params: {
         device: stax,
         wasReadOnlyAtEntry: true,
+        seededResult,
       },
     });
   });
@@ -179,6 +199,23 @@ describe("exitActions", () => {
     });
   });
 
+  it.each([
+    ["completed", {}, "onboarding_done"],
+    ["userQuit", { isGenuine: true }, "onboarding_done"],
+    ["userQuit", { isGenuine: false }, "onboarding_aborted"],
+    ["resumeFirmwareUpdate", {}, "onboarding_aborted"],
+    ["legacyFallback", { deviceWasSeeded: true }, "onboarding_aborted"],
+    ["legacyFallback", {}, null],
+    ["legacyFallback", { deviceWasSeeded: true, firmwareNeedsLegacyFlow: true }, null],
+    ["offerLedgerSync", {}, null],
+    ["completed", { seededResult: null }, null],
+  ] as const)("should end the seeded funnel on %s %o with %s", (reason, overrides, event) => {
+    leave(reason, overrides);
+
+    const end = expect.objectContaining({ ledger_sync_done: "no", firmware_update_done: "no" });
+    expect(jest.mocked(track).mock.calls).toEqual(event ? [[event, end]] : []);
+  });
+
   it("should finish a seeded fallback only after a current genuine verdict", () => {
     const { opened, dispatched, wentBack } = leave("legacyFallback", {
       deviceWasSeeded: true,
@@ -225,6 +262,7 @@ function leave(
     wasReadOnlyAtEntry: false,
     isGenuine: false,
     deviceWasSeeded: false,
+    seededResult,
     firmwareNeedsLegacyFlow: false,
     hasCompletedOnboarding: false,
     ...overrides,

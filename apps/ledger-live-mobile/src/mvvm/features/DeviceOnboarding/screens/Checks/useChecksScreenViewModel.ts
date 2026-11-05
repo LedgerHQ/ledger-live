@@ -128,6 +128,7 @@ export function useChecksScreenViewModel({
   onQuit,
   onAcceptUpdate,
   onDeclineUpdate,
+  onUnsupportedUpdate,
 }: ChecksScreenProps): ChecksViewProps {
   const { t } = useTranslation();
   const layout = checksLayout(state);
@@ -215,6 +216,7 @@ export function useChecksScreenViewModel({
         }
         suppressOfferCloseFor.current = updateKey;
         setUnsupportedFor(updateKey);
+        onUnsupportedUpdate?.(eligibility.isUsbRequired);
       },
       onClose: () => {
         if (!firmwareOfferOpen) return;
