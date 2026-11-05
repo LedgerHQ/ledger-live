@@ -23,10 +23,11 @@ import {
   type KnownDevice,
 } from "@ledgerhq/live-dmk-shared";
 import type { Subscription } from "rxjs";
+import type { NavigationProp, ParamListBase } from "@react-navigation/native";
 import { useSelector } from "~/context/hooks";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 import { isMockServerEnabledSelector } from "~/reducers/settings";
-import { isRebootedDevice, useFirmwareUpdateHandover } from "./useFirmwareUpdateHandover";
+import { isRebootedDevice } from "./useFirmwareUpdateHandover";
 import { useLeaveOnboarding } from "./useLeaveOnboarding";
 import { createDeviceOnboardingPorts } from "../utils/ports";
 
@@ -36,6 +37,7 @@ type UseDeviceOnboardingInput = {
   offerSync: boolean;
   navigateOnExit?: boolean;
   wasReadOnlyAtEntry?: boolean;
+  getNavigation?: () => NavigationProp<ParamListBase> | null;
   /** Runs right before the exit navigates, so the host can stop blocking back. */
   onLeave?: () => void;
   /** Watches every machine update from the actor's creation. The funnel passes none. */
@@ -65,10 +67,11 @@ export type DeviceOnboardingSession = Pick<
   /** Set when the host failed to connect a device or to start the flow. */
   error: string | null;
   connect: () => void;
+  adopt: (result: DeviceConnectionResult) => void;
+  discard: () => void;
   reset: () => void;
   liveDevice: Device | null;
-  /** Drops a firmware lookup that has not opened its screen yet. */
-  closeFirmwareHandover: () => void;
+  reconnectAfterUpdate: () => void;
   abortFirmwareReconnect: () => void;
 };
 
@@ -94,6 +97,7 @@ export function useDeviceOnboarding({
   wasReadOnlyAtEntry = false,
   onLeave,
   inspect,
+  getNavigation,
 }: UseDeviceOnboardingInput): DeviceOnboardingSession {
   const isMockServerEnabled = useSelector(isMockServerEnabledSelector);
   const [status, setStatus] = useState<DeviceOnboardingStatus>("idle");
@@ -109,6 +113,7 @@ export function useDeviceOnboarding({
     device: liveDevice,
     navigateOnExit,
     wasReadOnlyAtEntry,
+    getNavigation,
   });
 
   const sessionActorRef = useRef<StoppableActor | null>(null);
@@ -379,6 +384,31 @@ export function useDeviceOnboarding({
     });
   }, [actorRef, adoptConnection, dmk, handleConnectionState, knownDevices, isMockServerEnabled]);
 
+  const adopt = useCallback(
+    (result: DeviceConnectionResult) => {
+      void adoptConnection(result);
+    },
+    [adoptConnection],
+  );
+
+  const discard = useCallback(() => {
+    adoptGeneration.current += 1;
+    connectionRef.current?.unsubscribe();
+    connectionRef.current = null;
+    sessionActorRef.current?.stop();
+    sessionActorRef.current = null;
+    const ports = portsRef.current;
+    portsRef.current = null;
+    discardActor();
+    void ports?.closeSession();
+    retryRef.current = null;
+    waitingAfterUpdateRef.current = false;
+    setStatus("idle");
+    setDevice(null);
+    setLiveDevice(null);
+    setError(null);
+  }, [discardActor, portsRef]);
+
   const reset = useCallback(() => {
     adoptGeneration.current += 1;
     connectionRef.current?.unsubscribe();
@@ -440,14 +470,6 @@ export function useDeviceOnboarding({
     liveDeviceRef.current = liveDevice;
     connectRef.current = connect;
   }, [connect, liveDevice]);
-  const { close: closeFirmwareHandover } = useFirmwareUpdateHandover({
-    device: liveDevice,
-    isDeviceOnboarded: context?.isOnboarded ?? false,
-    machineState: state,
-    currentSessionId: device?.sessionId ?? null,
-    send,
-    onReconnectRequired: reconnectAfterUpdate,
-  });
   useKeepScreenAwake(status === "connecting" || status === "running");
 
   useEffect(
@@ -473,9 +495,11 @@ export function useDeviceOnboarding({
     sendableEvents,
     error,
     connect,
+    adopt,
+    discard,
     send,
     reset,
-    closeFirmwareHandover,
+    reconnectAfterUpdate,
     abortFirmwareReconnect,
     actorRef,
     portsRef,

@@ -20,6 +20,7 @@ jest.mock("../hooks/useLeaveOnboarding", () => ({
 }));
 
 jest.mock("../hooks/useFirmwareUpdateHandover", () => ({
+  ...jest.requireActual("../hooks/useFirmwareUpdateHandover"),
   useFirmwareUpdateHandover: jest.fn(() => ({ close: jest.fn() })),
 }));
 
