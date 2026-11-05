@@ -166,7 +166,9 @@ export class SyncOnboardingPage extends AppPage {
   @step("Expect the restore sources to be offered")
   async expectRestoreChoices() {
     await expect(this.restoreChoiceStep).toBeVisible();
-    for (const source of this.restoreChoiceSources) await expect(source).toBeVisible();
+    await this.softExpect(async soft => {
+      for (const source of this.restoreChoiceSources) await soft(source).toBeVisible();
+    });
   }
 
   @step("Expect the restore to run from the Ledger Recovery Key")
@@ -181,8 +183,10 @@ export class SyncOnboardingPage extends AppPage {
 
   @step("Expect the Ledger Recovery Key backup to be complete")
   async expectRecoveryKeyBackupComplete() {
-    await expect(this.seedStepCompleted).toBeVisible();
     await expect(this.recoveryKeyStep).toBeHidden();
+    await this.softExpect(async soft => {
+      await soft(this.seedStepCompleted).toBeVisible();
+    });
   }
 
   @step("Skip the wallet sync step")
