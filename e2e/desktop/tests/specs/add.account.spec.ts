@@ -8,6 +8,7 @@ import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { buildTags } from "tests/utils/tagsUtils";
 import type { PartialFeatures } from "@shared/feature-flags";
 import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
+import { accountDetailFlagStates } from "tests/utils/featureFlagUtils";
 
 type AddAccountTestCase = {
   readonly currency: Currency;
@@ -52,72 +53,80 @@ const currencies: AddAccountTestCase[] = [
   },
 ];
 
+const currenciesRunOnBothPages = [Currency.BTC, Currency.ETH];
+
 for (const currency of currencies) {
   const owner = ownedBy(coinTeamOwner(currency.currency.id), { folder: TestFolder.ACCOUNTS });
-  test.describe("Add account", owner, () => {
-    test.use({
-      userdata: "skip-onboarding-with-last-seen-device",
-      speculosApp: currency.currency.speculosApp,
-      featureFlags: currency.featureFlags,
-    });
+  const flagStates = accountDetailFlagStates(currenciesRunOnBothPages.includes(currency.currency));
+  for (const { label, featureFlags } of flagStates) {
+    test.describe("Add account", owner, () => {
+      test.use({
+        userdata: "skip-onboarding-with-last-seen-device",
+        speculosApp: currency.currency.speculosApp,
+        featureFlags: { ...featureFlags, ...currency.featureFlags },
+      });
 
-    test(
-      `[${currency.currency.testLabel}] - Add account`,
-      {
-        tag: buildTags({
-          currencyId: currency.currency.id,
-          extraTags: currency.currency === Currency.ETH ? ["@smoke"] : [],
-        }),
-        annotation: {
-          type: "TMS",
-          description: currency.xrayTicket,
+      test(
+        `[${currency.currency.testLabel}] [${label}] - Add account`,
+        {
+          tag: buildTags({
+            currencyId: currency.currency.id,
+            extraTags: currency.currency === Currency.ETH ? ["@smoke"] : [],
+          }),
+          annotation: {
+            type: "TMS",
+            description: currency.xrayTicket,
+          },
         },
-      },
-      async ({ app, userdataFile }) => {
-        const firstAccountName = `${currency.currency.name} 1`;
+        async ({ app, userdataFile }) => {
+          const firstAccountName = `${currency.currency.name} 1`;
 
-        await app.portfolio.expectPortfolioEmptyState();
-        await app.portfolio.clickAddAccountButton();
+          await app.portfolio.expectPortfolioEmptyState();
+          await app.portfolio.clickAddAccountButton();
 
-        const selector = await getModularSelector(app, "ASSET");
-        if (selector) {
-          await selector.validateItems();
-          await selector.selectAssetByTicker(currency.currency);
-          await selector.selectNetwork(currency.currency);
-          await app.scanAccountsDrawer.selectFirstAccount();
-          await app.scanAccountsDrawer.clickCloseButton();
-        } else {
-          await app.addAccount.expectModalVisibility();
-          await app.addAccount.selectCurrency(currency.currency);
-          await app.addAccount.addAccounts();
-          await app.addAccount.done();
-        }
+          const selector = await getModularSelector(app, "ASSET");
+          if (selector) {
+            await selector.validateItems();
+            await selector.selectAssetByTicker(currency.currency);
+            await selector.selectNetwork(currency.currency);
+            await app.scanAccountsDrawer.selectFirstAccount();
+            await app.scanAccountsDrawer.clickCloseButton();
+          } else {
+            await app.addAccount.expectModalVisibility();
+            await app.addAccount.selectCurrency(currency.currency);
+            await app.addAccount.addAccounts();
+            await app.addAccount.done();
+          }
 
-        await app.portfolio.checkOperationHistory();
-        await app.portfolio.expectBalanceVisibility();
-        await app.portfolio.assetsView.waitForAssetsToLoad();
-        if (currency.portfolioAssetName) {
-          await app.portfolio.assetsView.expectSingleAggregatedRow(
-            "cryptos",
-            currency.portfolioAssetName,
-          );
-        } else {
-          await app.portfolio.assetsView.expectAssetVisibleInSection("cryptos", currency.currency);
-        }
-        await app.portfolio.cryptoAddressesBanner.expectBannerVisible();
-        await app.portfolio.cryptoAddressesBanner.expectAddAccountCTANotVisible();
-        await app.portfolio.expectAccountsPersistedInAppJson(userdataFile, 1, TIMEOUT.small);
+          await app.portfolio.checkOperationHistory();
+          await app.portfolio.expectBalanceVisibility();
+          await app.portfolio.assetsView.waitForAssetsToLoad();
+          if (currency.portfolioAssetName) {
+            await app.portfolio.assetsView.expectSingleAggregatedRow(
+              "cryptos",
+              currency.portfolioAssetName,
+            );
+          } else {
+            await app.portfolio.assetsView.expectAssetVisibleInSection(
+              "cryptos",
+              currency.currency,
+            );
+          }
+          await app.portfolio.cryptoAddressesBanner.expectBannerVisible();
+          await app.portfolio.cryptoAddressesBanner.expectAddAccountCTANotVisible();
+          await app.portfolio.expectAccountsPersistedInAppJson(userdataFile, 1, TIMEOUT.small);
 
-        await app.mainNavigation.openTargetFromMainNavigation("accounts");
-        await app.accounts.navigateToAccountByName(firstAccountName);
-        const operationStatus = await app.account.expectFundedAccountDetails(firstAccountName);
-        await app.operationDrawer.expectDrawerInfos(firstAccountName, operationStatus);
-        await app.operationDrawer.closeDrawer();
-        await app.account.expectAddressIndex(0);
-        await app.account.expectShowMoreButton();
-      },
-    );
-  });
+          await app.mainNavigation.openTargetFromMainNavigation("accounts");
+          await app.accounts.navigateToAccountByName(firstAccountName);
+          const operationStatus = await app.account.expectFundedAccountDetails(firstAccountName);
+          await app.operationDrawer.expectDrawerInfos(firstAccountName, operationStatus);
+          await app.operationDrawer.closeDrawer();
+          await app.account.expectAddressIndex(0);
+          await app.account.expectShowMoreButton();
+        },
+      );
+    });
+  }
 }
 
 test.describe("Add account", ownedBy(Team.BST, { folder: TestFolder.ACCOUNTS }), () => {
