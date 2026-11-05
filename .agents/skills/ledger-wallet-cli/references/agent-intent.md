@@ -48,7 +48,7 @@ The id matches `^[a-zA-Z0-9][a-zA-Z0-9._-]{0,62}$` and must not appear in `list`
 
 ## 4. Enroll
 
-`enroll` prints the link at once, then waits until the human approves or the link expires. A terminal tool returns a command's output only when the command exits, so a foreground `enroll` hands you the link after it has expired. An `enroll` that ends before approval loses the enrollment: the profile shows `pending` until its link expires, then `expired`, and neither can be resumed. So the waiting always runs in the background. On Linux and macOS, `--detach` hands it to a **background listener** and exits. Windows refuses `--detach`: there, run the command without it as a background job (below). Either way, `wait` (step 5) reports on it.
+`enroll` prints the link at once, then waits until the human approves or the link expires. A terminal tool returns a command's output only when the command exits, so a foreground `enroll` hands you the link after it has expired. An `enroll` that ends before approval loses the enrollment: the profile shows `pending` until its link expires, then `expired`, and neither can be resumed. So the waiting always runs in the background. `--detach` hands it to a **background listener** and exits. On a host that stops that listener when the command ends (`listener_exited` at once, step 12), run the command without it as a background job (below). Either way, `wait` (step 5) reports on it.
 
 ```bash
 pnpm --silent wallet-cli start agent-intent enroll --profile <id> --name "<display name>" --source <source> --detach --output json
@@ -70,7 +70,7 @@ pnpm --silent wallet-cli start agent-intent enroll --profile <id> --name "<displ
 
 Done when you have the `enrollment-pending` line, or the `enrollment-waiting` line and then the link from `wait` (step 5). When `enroll` fails instead, match its error in the error table (step 12).
 
-**Background job** (`enroll` on Windows, and every `recover`). Start the command without `--detach` as a background job of your terminal tool, read the pending event from the job's output while it runs, and leave the job running through the handoff (step 5; for `recover`, step 10). On a terminal tool without background jobs, tell the human that this enrollment or recovery cannot be completed from this host; every other `agent-intent` command still runs there. Below, `<cmd>` is `enroll` or `recover`. The job's status and its stop come from your tool:
+**Background job** (`enroll` on a host that stops the `--detach` listener, and every `recover`). Start the command without `--detach` as a background job of your terminal tool, read the pending event from the job's output while it runs, and leave the job running through the handoff (step 5; for `recover`, step 10). On a terminal tool without background jobs, tell the human that this enrollment or recovery cannot be completed from this host; every other `agent-intent` command still runs there. Below, `<cmd>` is `enroll` or `recover`. The job's status and its stop come from your tool:
 
 - OpenClaw: `exec` returns a running handle with the output so far after `yieldMs` (10 s by default); `process poll` reads more. The job dies at `tools.exec.timeoutSeconds` (1800 s by default), so pass an `--expires-in` below it, e.g. `25m`.
 - Claude Code: Bash with `run_in_background`, then read the job's output.
@@ -105,7 +105,7 @@ pnpm --silent wallet-cli start agent-intent wait --profile <id> --output json
 
 - `status` `"success"` with `enrolled: true`: final, see Done below.
 - `type` `"enrollment-waiting"` without `enrollmentUrl` and without `expiresAt`: the listener has no link yet (e.g. an OS keychain prompt is still open). Keep calling `wait`, which returns as soon as the link appears, and do not end your turn: hand over the link as above once `wait` reports it with `fingerprint`, `expiresAt` and `keyStore`.
-- `type` `"enrollment-waiting"` with `expiresAt` but without `enrollmentUrl`: a background-job `enroll` (Windows), whose link is in the job's output, never in `wait`'s. Handle it as the next item.
+- `type` `"enrollment-waiting"` with `expiresAt` but without `enrollmentUrl`: a background-job `enroll`, whose link is in the job's output, never in `wait`'s. Handle it as the next item.
 - `type` `"enrollment-waiting"` with `enrollmentUrl` (also `expiresAt`, `fingerprint`, `keyStore`, `listenerPid`): still pending. Run `wait` again for at most about 2 minutes in this turn, then end your turn and ask the human to reply once both approvals finish; run `wait` when they do. If it still reports `enrollment-waiting` after they say they approved, ask them what the page shows.
 - `ok: false` with `error.code` `listener_exited`, `listener_stuck`, `enrollment_expired` or `profile_not_found`: final, the enrollment is lost; error table.
 - `ok: false` with an error the listener logged before saving the profile (e.g. `keychain_unavailable` after the human denied a keychain prompt): handle it like the same error from `enroll`.
@@ -261,15 +261,14 @@ Messages are substrings of the CLI output; a `code` row matches `error.code`. Th
 
 | Message | Cause | Action |
 |---|---|---|
-| code `listener_exited` (from `wait`) | the listener ended before the approval arrived; the message gives its last error, then ends with `Log: <path>.` Causes: the human left the page after Review (`Enrollment relay closed`), the host killed background processes, a reboot | the enrollment is lost: step 2, new id. If the human had approved, tell them the agent stays on their Ledger Sync. When it recurs at once, the host kills background processes: tell the human enrollment cannot be completed from this host |
+| code `listener_exited` (from `wait`) | the listener ended before the approval arrived; the message gives its last error, then ends with `Log: <path>.` Causes: the human left the page after Review (`Enrollment relay closed`), the host killed background processes, a reboot | the enrollment is lost: step 2, new id. If the human had approved, tell them the agent stays on their Ledger Sync. When it recurs at once, the host kills background processes: enroll as a background job (step 4); on a host without background jobs, tell the human enrollment cannot be completed from this host |
 | code `listener_stuck` (from `wait`) | a live listener has not saved the profile within 10 minutes, e.g. a keychain unlock prompt answered too late; the key was removed and nothing was saved | step 2, new id |
 | code `enrollment_expired` (from `wait`) | the link expired without an approval (also a keychain unlock prompt answered too late) | step 2, new id |
 | code `profile_not_found` (from `wait`) | no profile with that id in this machine's state dir | check the id with step 1; otherwise step 2, new id |
 | `An enrollment listener for profile ... is already running` | `enroll --detach` on a profile whose listener still waits | step 5, `wait` on that profile |
 | `The enrollment listener ... before printing its first event` / `did not start` / `printed an unexpected first line` | the `--detach` listener failed to start; the log path is in the message | report the message to the human; step 1: an id missing from `list` is still free, so re-run the same `enroll`, otherwise step 3 |
-| `--detach is not supported on Windows` | Windows | step 4, Background job |
 | the enrollment page says "Agent link not valid" | the URL was damaged on the way, has expired, is for another environment or comes from an outdated CLI; the sentence under it says which | step 5, Relay the URL whole |
-| the enrollment page says "This agent source is not supported" | the frontend does not accept that `--source` | the id is burned (Windows: stop the `enroll` job). Tell the human the frontend refused source `<source>`; enroll again only under the source you run in, when the human asks |
+| the enrollment page says "This agent source is not supported" | the frontend does not accept that `--source` | the id is burned (a background-job `enroll`: stop the job). Tell the human the frontend refused source `<source>`; enroll again only under the source you run in, when the human asks |
 | `Profile id must contain only letters, numbers, dots, underscores, and dashes` | bad `--profile` | pick an id per step 3 |
 | `already exists. Choose a different --profile id` | id already in the session | step 3 |
 | `has an invalid Agent Intent record for profile` / `failed to load (invalid session record)` | broken record in `session.yaml` | tell the human; use a new id (step 3) |
