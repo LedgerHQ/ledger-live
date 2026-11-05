@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef } from "react";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { PerpsDepositReviewParams } from "@ledgerhq/live-common/wallet-api/Perps/server";
-import { shouldReturnToDepositForm } from "@ledgerhq/live-common/wallet-api/Perps/deposit/signError";
 import type { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import {
   usePerpsDepositExecution,
@@ -62,7 +61,7 @@ export function usePerpsDepositSignViewModel({
 
   const handleDrawerClose = useCallback(() => {
     if (isLeavingRef.current) return;
-    if (deviceStep.kind === "error" && shouldReturnToDepositForm(deviceStep.error)) {
+    if (deviceStep.kind === "error" && deviceStep.returnsToForm) {
       handleReturnToForm();
       return;
     }

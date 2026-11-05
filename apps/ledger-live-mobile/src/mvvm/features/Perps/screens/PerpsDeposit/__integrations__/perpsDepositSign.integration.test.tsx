@@ -173,7 +173,12 @@ describe("PerpsDepositSign integration", () => {
     const { user } = renderDeposit();
 
     await user.press(await fillFormAndReview(user));
-    mockDeviceStep = { kind: "error", error: new Error("Device disconnected"), isGeneric: false };
+    mockDeviceStep = {
+      kind: "error",
+      error: new Error("Device disconnected"),
+      isGeneric: false,
+      returnsToForm: false,
+    };
     await user.press(await screen.findByTestId("select-device"));
 
     expect(await screen.findByTestId("perps-deposit-sign-error")).toBeOnTheScreen();
@@ -188,7 +193,12 @@ describe("PerpsDepositSign integration", () => {
     const { user } = renderDeposit();
 
     await user.press(await fillFormAndReview(user));
-    mockDeviceStep = { kind: "error", error: new Error("swap api 500"), isGeneric: true };
+    mockDeviceStep = {
+      kind: "error",
+      error: new Error("swap api 500"),
+      isGeneric: true,
+      returnsToForm: true,
+    };
     await user.press(await screen.findByTestId("select-device"));
 
     expect(await screen.findByText("Something went wrong")).toBeOnTheScreen();
