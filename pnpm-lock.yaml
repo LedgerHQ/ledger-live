@@ -17077,8 +17077,8 @@ importers:
         specifier: ^7.3.1
         version: 7.3.1
       near-sandbox:
-        specifier: ^0.3.2
-        version: 0.3.2
+        specifier: ^0.3.4
+        version: 0.3.4
     devDependencies:
       '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
@@ -38171,8 +38171,8 @@ packages:
   near-hd-key@1.2.1:
     resolution: {integrity: sha512-SIrthcL5Wc0sps+2e1xGj3zceEa68TgNZDLuCx0daxmfTP7sFTB3/mtE2pYhlFsCxWoMn+JfID5E1NlzvvbRJg==}
 
-  near-sandbox@0.3.2:
-    resolution: {integrity: sha512-RuAlxXHU2wMSVIuUiZENipuuF0YQBdtJ1wq34NvLroSODajpEvmApbSyY8aHWYp9AoiremJ4GPb6Cp41ovAqew==}
+  near-sandbox@0.3.4:
+    resolution: {integrity: sha512-ytJF0/5WFn1AiudRQrv1SJe1P9sUeSzjrsUQc4Tx6B3xWh1YfuxPtHiFJm1z7T6UBdT9gPyjYweF0YObb3RALw==}
     engines: {node: '>=22.22.2'}
     hasBin: true
 
@@ -58930,7 +58930,7 @@ snapshots:
       create-hmac: 1.1.7
       tweetnacl: 1.0.3
 
-  near-sandbox@0.3.2:
+  near-sandbox@0.3.4:
     dependencies:
       got: 11.8.6
       json-merge-patch: 1.0.2
