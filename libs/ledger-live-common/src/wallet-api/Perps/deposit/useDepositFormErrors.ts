@@ -5,7 +5,6 @@ import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/in
 import {
   DEPOSIT_FORM_ERROR_ANALYTICS_MESSAGES,
   PERPS_DEPOSIT_ANALYTICS_CONTEXT,
-  findDepositParentAccount,
   getDepositBaseError,
   getDepositBuyTarget,
   resolveDepositFormError,
@@ -13,7 +12,11 @@ import {
   type DepositErrorDetails,
   type DepositFormError,
 } from "./formError";
-import type { PerpsDepositQuote, PerpsDepositQuoteResult } from "./quote";
+import {
+  findDepositParentAccount,
+  type PerpsDepositQuote,
+  type PerpsDepositQuoteResult,
+} from "./quote";
 import { cancelDepositRequest } from "./request";
 import { usePerpsDepositQuote } from "./useDepositQuote";
 
@@ -29,13 +32,11 @@ export type DepositAmountState = Readonly<{
 
 export function getDepositAmountState({
   depositAccount,
-  parentAccount,
   depositAmount,
   maxAmount,
   convertedAmount,
 }: Readonly<{
   depositAccount: AccountLike | undefined;
-  parentAccount: Account | undefined;
   depositAmount: number;
   maxAmount: number | null;
   convertedAmount: BigNumber | null;
@@ -240,12 +241,11 @@ export function usePerpsDepositForm({
     () =>
       getDepositAmountState({
         depositAccount,
-        parentAccount,
         depositAmount,
         maxAmount,
         convertedAmount,
       }),
-    [convertedAmount, depositAccount, depositAmount, maxAmount, parentAccount],
+    [convertedAmount, depositAccount, depositAmount, maxAmount],
   );
 
   const { sentAmountAtomic } = amountState;

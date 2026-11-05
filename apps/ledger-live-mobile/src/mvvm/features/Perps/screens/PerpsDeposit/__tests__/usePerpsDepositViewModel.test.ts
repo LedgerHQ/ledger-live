@@ -147,6 +147,7 @@ function typeAmount(pressAmountKey: (key: string) => void, amount: string) {
 describe("usePerpsDepositViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockNetworkState = {};
     mockCalculateCountervalue.mockImplementation((_currency, value) => value);
     mockCalculate.mockReturnValue(0);
     mockUsePerpsDepositQuote.mockReturnValue({
@@ -648,7 +649,6 @@ describe("usePerpsDepositViewModel", () => {
 
     expect(result.current.statusError?.code).toBe("offline");
     expect(mockUsePerpsDepositQuote.mock.lastCall?.[0].isOffline).toBe(true);
-    mockNetworkState = {};
   });
 
   it("cancels the deposit request and opens Buy for the account from the details", async () => {

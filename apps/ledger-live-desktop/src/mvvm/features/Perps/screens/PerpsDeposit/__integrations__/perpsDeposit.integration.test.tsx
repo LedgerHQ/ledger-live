@@ -173,6 +173,24 @@ describe("PerpsDeposit integration", () => {
     expect(screen.getByTestId("perps-deposit-amount-input")).toBeVisible();
   });
 
+  it("should start a new request on the form, not on the details of the previous one", async () => {
+    mockUsePerpsDepositQuote.mockReturnValue({
+      result: { errors: [{ code: "amountTooLow", minAmount: "0.004" }] },
+      isLoading: false,
+    });
+    const { user } = renderDeposit();
+
+    act(() => openPerpsDeposit({ receiverAccount }));
+    await user.click(screen.getByTestId("perps-deposit-select-currency"));
+    await user.click(screen.getByTestId("perps-deposit-ratio-MAX"));
+    await user.click(screen.getByTestId("perps-deposit-learn-more"));
+
+    act(() => openPerpsDeposit({ receiverAccount }));
+
+    expect(screen.getByTestId("perps-deposit-amount-input")).toBeVisible();
+    expect(screen.queryByTestId("perps-deposit-details")).not.toBeInTheDocument();
+  });
+
   it("should shimmer the quoted amount and keep the CTA disabled while quoting", async () => {
     mockUsePerpsDepositQuote.mockReturnValue({ result: undefined, isLoading: true });
     const { user } = renderDeposit();

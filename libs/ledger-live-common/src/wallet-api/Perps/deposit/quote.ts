@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import type { AccountLike } from "@ledgerhq/types-live";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type {
   Quote,
   QuoteApprovalNetworkFee,
@@ -10,7 +10,6 @@ import type {
 import { getWalletApiIdFromAccountId, setWalletApiIdForAccountId } from "../../converters";
 import { getQuotes } from "../../Exchange/quotes/getQuotes";
 import { PERPS_SWAPKIT_PROVIDER } from "../constants";
-import { findDepositParentAccount } from "./formError";
 
 export type PerpsDepositQuoteParams = {
   accounts: AccountLike[];
@@ -33,6 +32,15 @@ export type PerpsDepositQuoteResult = {
   quote?: PerpsDepositQuote;
   errors: QuotesError[];
 };
+
+export function findDepositParentAccount(
+  depositAccount: AccountLike,
+  accounts: readonly AccountLike[],
+): Account | undefined {
+  if (depositAccount.type !== "TokenAccount") return undefined;
+  const parentAccount = accounts.find(account => account.id === depositAccount.parentId);
+  return parentAccount?.type === "Account" ? parentAccount : undefined;
+}
 
 function toPerpsDepositQuote({ id, quoteDetails, errors }: Quote): PerpsDepositQuote {
   return {
