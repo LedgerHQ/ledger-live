@@ -330,7 +330,14 @@ async function setupDmkMock(
     import("../device/wallet-cli-dmk-transport"),
   ]);
 
-  const mock = new MockDeviceManagementKit({ initialState: stateEnv, appResults });
+  const appTasksBeforeTimeout = env.WALLET_CLI_MOCK_DMK_APP_TASKS_BEFORE_TIMEOUT
+    ? Number(env.WALLET_CLI_MOCK_DMK_APP_TASKS_BEFORE_TIMEOUT)
+    : undefined;
+  const mock = new MockDeviceManagementKit({
+    initialState: stateEnv,
+    appResults,
+    appTasksBeforeTimeout,
+  });
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const transport = new WalletCliDmkTransport(mock as any, "mock-session-id");
   setTestDmkTransport(transport);

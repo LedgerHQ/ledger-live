@@ -4,6 +4,10 @@ import { installOutputCapture } from "./shared/ui";
 import { CliProcessExitError } from "./cli-process-exit-error";
 import { USDT_TOKEN_INFO } from "./testing/cal-fixtures";
 import { SwapBackendError } from "./commands/swap/swap-backend-error";
+import type { DeviceState } from "./device/device-state";
+import { WalletCliDeviceError } from "./device/wallet-cli-device-error";
+import { WALLET_CLI_SKILL_DOCS_URL } from "./device/usb-timeout-hints";
+import { setAgentEnvironment } from "./testing/agent-env";
 
 const { createCommandOutput } = await import("./output");
 
@@ -689,6 +693,120 @@ describe("JsonCommandOutput", () => {
         ok: false,
         error: { command: "swap execute", message: error.message },
       });
+    });
+  });
+
+  describe("USB failure diagnostics (LIVE-31394)", () => {
+    let restoreAgentEnvironment: () => void;
+
+    beforeEach(() => {
+      restoreAgentEnvironment = setAgentEnvironment("none");
+    });
+
+    afterEach(() => {
+      restoreAgentEnvironment();
+    });
+
+    function failWith(state: DeviceState) {
+      const out = createCommandOutput("json", { command: "genuine-check", network: "device" });
+      expect(() => out.fail(new WalletCliDeviceError(state))).toThrow(CliProcessExitError);
+      const line = parseLines().at(-1) as { error: Record<string, unknown> };
+      return line.error;
+    }
+
+    it("keeps publishing a USB timeout as code timeout, so existing matches keep working", () => {
+      expect(failWith({ code: "timeout" }).code).toBe("timeout");
+    });
+
+    it("carries the fields LIVE-31394 specifies for a host-blocked USB failure", () => {
+      const error = failWith({ code: "timeout", likelyCause: "sandbox_blocking_usb" });
+      expect(error.code).toBe("timeout");
+      expect(error.message).toBe(
+        "USB access to the Ledger was refused, likely by the agent sandbox.",
+      );
+      expect(error.likely_cause).toBe("sandbox_blocking_usb");
+      expect(error.agent_hint).toContain("dangerouslyDisableSandbox: true");
+      expect(error.agent_hint).toContain("udev rules");
+      expect(error.user_hint).toContain("no other process");
+      expect(error.user_hint).toContain("udev rules");
+      expect(error.agent_hint).toContain(WALLET_CLI_SKILL_DOCS_URL);
+      expect(error.docs).toBe(WALLET_CLI_SKILL_DOCS_URL);
+    });
+
+    it("diagnoses a discovery failure under its unchanged unknown code", () => {
+      const cause = new Error("No Ledger device found. Unlock the device and try again.");
+      const error = failWith({ code: "unknown", cause, likelyCause: "sandbox_blocking_usb" });
+      expect(error.code).toBe("unknown");
+      expect(error.message).toBe(
+        "USB access to the Ledger was refused, likely by the agent sandbox.",
+      );
+      expect(error.likely_cause).toBe("sandbox_blocking_usb");
+      expect(error.agent_hint).toContain("dangerouslyDisableSandbox: true");
+      expect(error.docs).toBe(WALLET_CLI_SKILL_DOCS_URL);
+    });
+
+    it("leaks none of the diagnostic fields onto an unknown error that is not a USB failure", () => {
+      const error = failWith({ code: "unknown", cause: new Error("boom") });
+      expect(error.code).toBe("unknown");
+      for (const field of ["likely_cause", "agent_hint", "user_hint", "docs"]) {
+        expect(error).not.toHaveProperty(field);
+      }
+    });
+
+    it("tells an agent the sandbox may hide a Ledger the user says is plugged in", () => {
+      restoreAgentEnvironment();
+      restoreAgentEnvironment = setAgentEnvironment("claude");
+      const error = failWith({ code: "disconnected", likelyCause: "device_not_present" });
+      expect(error.agent_hint).toStartWith("If the user confirms the Ledger is plugged in");
+    });
+
+    it("defaults likely_cause to unknown rather than omitting the field", () => {
+      expect(failWith({ code: "timeout" }).likely_cause).toBe("unknown");
+    });
+
+    it("omits agent_hint when the cause is not host-side, but still links the docs", () => {
+      const error = failWith({ code: "timeout", likelyCause: "app_not_open" });
+      expect(error).not.toHaveProperty("agent_hint");
+      expect(error.user_hint).toBeString();
+      expect(error.docs).toBe(WALLET_CLI_SKILL_DOCS_URL);
+    });
+
+    it("diagnoses an unplugged device, which is not published as a timeout at all", () => {
+      const error = failWith({ code: "disconnected", likelyCause: "device_not_present" });
+      expect(error.code).toBe("disconnected");
+      expect(error.likely_cause).toBe("device_not_present");
+      expect(error.user_hint).toContain("Plug the Ledger");
+      expect(error.docs).toBe(WALLET_CLI_SKILL_DOCS_URL);
+      expect(error).not.toHaveProperty("agent_hint");
+    });
+
+    it("defaults an unattributed disconnect to device_not_present rather than omitting the fields", () => {
+      const error = failWith({ code: "disconnected" });
+      expect(error.code).toBe("disconnected");
+      expect(error.likely_cause).toBe("device_not_present");
+      expect(error.user_hint).toContain("Plug the Ledger");
+      expect(error.docs).toBe(WALLET_CLI_SKILL_DOCS_URL);
+      expect(error).not.toHaveProperty("agent_hint");
+    });
+
+    it("leaks none of the diagnostic fields onto a non-USB device error", () => {
+      const error = failWith({ code: "rejected", context: "sign" });
+      expect(error.code).toBe("rejected");
+      for (const field of ["likely_cause", "agent_hint", "user_hint", "docs"]) {
+        expect(error).not.toHaveProperty(field);
+      }
+    });
+
+    it.each([
+      { code: "timeout", speculosUrl: "http://127.0.0.1:40000" },
+      { code: "disconnected", speculosUrl: "http://127.0.0.1:40000" },
+    ] as const)("leaks none of the USB diagnostic fields onto a Speculos $code", state => {
+      const error = failWith(state);
+      expect(error.code).toBe(state.code);
+      expect(error.message).toContain("Speculos");
+      for (const field of ["likely_cause", "agent_hint", "user_hint", "docs"]) {
+        expect(error).not.toHaveProperty(field);
+      }
     });
   });
 });

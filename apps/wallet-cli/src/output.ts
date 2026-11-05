@@ -12,7 +12,13 @@ import type { Spinner } from "yocto-spinner";
 import { z } from "zod";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { CliProcessExitError } from "./cli-process-exit-error";
-import { type DeviceState, isTerminalDeviceState, renderDeviceState } from "./device/device-state";
+import {
+  type DeviceState,
+  isTerminalDeviceState,
+  renderDeviceState,
+  usbLikelyCauseOf,
+} from "./device/device-state";
+import { agentHintFor, userHintFor, WALLET_CLI_SKILL_DOCS_URL } from "./device/usb-timeout-hints";
 import { WalletCliDeviceError } from "./device/wallet-cli-device-error";
 import { KeychainUnavailableError } from "./key-ring/keychain-unavailable-error";
 import { HumanFormatter } from "./wallet/formatter/human";
@@ -461,6 +467,10 @@ class HumanCommandOutput implements CommandOutput {
       writeStderr(displayText + "\n");
     }
     this._activeSpin = null;
+    const likelyCause = usbLikelyCauseOf(err.state);
+    if (likelyCause !== undefined && likelyCause !== "device_not_present") {
+      writeStderr(colors.dim("    see --output json for diagnostic details") + "\n");
+    }
     throw new CliProcessExitError(err.exitCode);
   }
 
@@ -1226,6 +1236,7 @@ class JsonCommandOutput implements CommandOutput {
           command: this._ctx.command,
           code: e.state.code,
           message,
+          ...JsonCommandOutput._usbDiagnosticFields(e.state),
         },
       };
     }
@@ -1246,6 +1257,26 @@ class JsonCommandOutput implements CommandOutput {
         message: HumanFormatter.formatError(e),
         ...(typeof httpStatus === "number" ? { http_status: httpStatus } : {}),
       },
+    };
+  }
+
+  /**
+   * `likely_cause` / `agent_hint` / `user_hint` / `docs` for a USB failure (LIVE-31394).
+   *
+   * Keyed off `usbLikelyCauseOf`, not off `code === "timeout"`: an unplugged device is published as
+   * `disconnected` (exit 3) and is the commonest USB failure there is. `docs` is a field of its own
+   * rather than only a URL inside `agent_hint`, so the link stays machine-readable on the causes
+   * where `agent_hint` is omitted.
+   */
+  private static _usbDiagnosticFields(state: DeviceState): Record<string, unknown> {
+    const likelyCause = usbLikelyCauseOf(state);
+    if (likelyCause === undefined) return {};
+    const agentHint = agentHintFor(likelyCause);
+    return {
+      likely_cause: likelyCause,
+      ...(agentHint === undefined ? {} : { agent_hint: agentHint }),
+      user_hint: userHintFor(likelyCause),
+      docs: WALLET_CLI_SKILL_DOCS_URL,
     };
   }
 
@@ -1279,9 +1310,19 @@ class JsonCommandOutput implements CommandOutput {
       command: this._ctx.command,
       network: this._ctx.network,
       ...(this._ctx.account == null ? {} : { account: this._ctx.account }),
-      state,
+      state: JsonCommandOutput._wireDeviceState(state),
       message,
     });
+  }
+
+  /**
+   * Mapped explicitly rather than spread, so a field added to `DeviceState` cannot leak in
+   * camelCase next to the error envelope's snake_case equivalent.
+   */
+  private static _wireDeviceState(state: DeviceState): Record<string, unknown> {
+    if (!("likelyCause" in state)) return { ...state };
+    const { likelyCause, ...rest } = state;
+    return { ...rest, ...(likelyCause === undefined ? {} : { likely_cause: likelyCause }) };
   }
 
   spin(_text: string): null {
