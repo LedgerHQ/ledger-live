@@ -1,0 +1,8 @@
+{
+  "name": "@features/flow-device-mock-server",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

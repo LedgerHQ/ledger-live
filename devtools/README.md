@@ -75,8 +75,7 @@ A tool is a standalone React component packaged as `@devtools/<id>`. The shell n
 >
 > **Registry (rewritten on every generator run — do not edit manually):**
 > - `devtools/registry/src/registry.ts`
-> - `devtools/registry/src/metadata/<team>/index.ts` *(all team barrel files)*
-> - `devtools/registry/src/metadata/index.ts`
+> - `devtools/registry/src/metadata/<team>/index.ts` *(team barrel; registry imports these directly)*
 > - `devtools/registry/package.json`
 
 > [!NOTE]
@@ -189,8 +188,7 @@ export default MyTool;
 1. Add `"@devtools/my-tool": "workspace:*"` to `devtools/registry/package.json` dependencies.
 2. Create `devtools/registry/src/metadata/<team>/my-tool.ts` (see the Wiring section above for the shape).
 3. Re-export it from `devtools/registry/src/metadata/<team>/index.ts`.
-4. Re-export the team barrel from `devtools/registry/src/metadata/index.ts` if the team folder is new.
-5. In `devtools/registry/src/registry.ts`, add the import, add the entry to `tools`, and add the branch to `DevToolConfig`.
+4. In `devtools/registry/src/registry.ts`, add the import, add the entry to `tools`, and add the branch to `DevToolConfig`.
 
 </details>
 

@@ -128,6 +128,14 @@ test("a component waiver silences its rules only, and a stale one is reported", 
   ]);
 });
 
+test("COMPONENT_EXCEPTIONS stays empty after the universal-components rollout", () => {
+  assert.equal(
+    Object.keys(COMPONENT_EXCEPTIONS).length,
+    0,
+    "Do not add component waivers; fix the component instead. See docs/adr/universal-components.md.",
+  );
+});
+
 test("every component waiver names a package, its rules and an exit condition", () => {
   for (const [root, waivers] of Object.entries(COMPONENT_EXCEPTIONS)) {
     assert.ok(

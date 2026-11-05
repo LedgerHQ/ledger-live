@@ -279,6 +279,7 @@ export enum SettingsActionTypes {
   SET_CLOSED_WITHDRAW_BANNER = "SET_CLOSED_WITHDRAW_BANNER",
   SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT = "SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT",
   SET_DEBUG_OS_UPDATE_BANNER_MODE = "SET_DEBUG_OS_UPDATE_BANNER_MODE",
+  SET_MOCK_SERVER_SETTINGS = "SET_MOCK_SERVER_SETTINGS",
   SET_DISMISSED_CONTENT_CARD = "SET_DISMISSED_CONTENT_CARD",
   CLEAR_DISMISSED_CONTENT_CARDS = "CLEAR_DISMISSED_CONTENT_CARDS",
   SET_LEDGER_SYNC_ONBOARDING = "SET_LEDGER_SYNC_ONBOARDING",
@@ -340,7 +341,7 @@ export type SettingsLastSeenDevicePayload = NonNullable<
 export type SettingsLastSeenDeviceInfoPayload = DeviceModelInfo;
 export type SettingsLastSeenDeviceLanguagePayload = DeviceInfo["languageId"];
 export type SettingsSetKnownDeviceModelIdsPayload = { [key in DeviceModelId]?: boolean };
-export type SettingsSetLastConnectedDevicePayload = Device;
+export type SettingsSetLastConnectedDevicePayload = Device | null;
 export type SettingsSetCustomImageTypePayload = Pick<SettingsState, "customLockScreenType">;
 export type SettingsSetHasOrderedNanoPayload = SettingsState["hasOrderedNano"];
 export type SettingsSetSensitiveAnalyticsPayload = SettingsState["sensitiveAnalytics"];
@@ -373,6 +374,7 @@ export type SettingsIsPostOnboardingFlowPayload = void | SettingsState["isPostOn
 export type SettingsSetGeneralTermsVersionAccepted = SettingsState["generalTermsVersionAccepted"];
 export type SettingsSetHasSeenAnalyticsOptInPrompt = SettingsState["hasSeenAnalyticsOptInPrompt"];
 export type SettingsSetDebugOsUpdateBannerMode = SettingsState["debugOsUpdateBannerMode"];
+export type SettingsSetMockServerSettingsPayload = SettingsState["mockServer"];
 export type SettingsSetAnalyticsConsentInfoPayload = SettingsState["analyticsConsentInfo"];
 export type SettingsSetHasDismissedContactsFeatureIntroductionPayload =
   SettingsState["hasDismissedContactsFeatureIntroduction"];
@@ -438,6 +440,7 @@ export type SettingsPayload =
   | SettingsSetOnboardingTypePayload
   | SettingsSetHasSeenAnalyticsOptInPrompt
   | SettingsSetDebugOsUpdateBannerMode
+  | SettingsSetMockServerSettingsPayload
   | SettingsSetAnalyticsConsentInfoPayload
   | SettingsSetDismissedContentCardsPayload
   | SettingsClearDismissedContentCardsPayload

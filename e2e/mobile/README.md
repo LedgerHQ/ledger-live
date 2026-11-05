@@ -52,10 +52,9 @@ pnpm clean
 pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests..."
 pnpm exec nx run ledger-live-mobile-e2e-tests:build-e2e-deps
 # Android release build
-pnpm mobile e2e:build -c android.emu.release
+pnpm e2e:mobile build:android
 # iOS debug build
-pnpm mobile pod
-pnpm mobile e2e:build -c ios.sim.debug
+pnpm e2e:mobile build:ios:debug
 ```
 
 > `build-e2e-deps` builds the libraries the mobile app

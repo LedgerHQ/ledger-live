@@ -1,5 +1,4 @@
 import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
-import { getEnv } from "@shared/env";
 
 export const tronConfig: Record<string, ConfigInfo> = {
   config_currency_tron: {
@@ -15,7 +14,7 @@ export const tronConfig: Record<string, ConfigInfo> = {
       name: "Tron",
       unit: { name: "TRX", code: "TRX", magnitude: 6 },
       explorer: {
-        url: getEnv("API_TRONGRID_PROXY"),
+        url: "https://tron.coin.ledger.com",
       },
       // The sourceFlag and paymentAddresses come from the remote config only: Tronify must confirm
       // the channel name first, and an array here would merge by index under the remote one.

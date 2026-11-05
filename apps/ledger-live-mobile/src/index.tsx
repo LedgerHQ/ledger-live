@@ -28,6 +28,7 @@ import {
   trackingEnabledSelector,
   reportErrorsEnabledSelector,
   isOnboardingFlowSelector,
+  isMockServerEnabledSelector,
   isPostOnboardingFlowSelector,
 } from "~/reducers/settings";
 import { accountsSelector } from "~/reducers/accounts";
@@ -262,7 +263,13 @@ function App() {
     }
   }, [dmk, baseSocketUrl]);
 
-  useEffect(() => registerTransports(), []);
+  useEffect(
+    () =>
+      registerTransports({
+        isMockServerEnabled: () => isMockServerEnabledSelector(store.getState()),
+      }),
+    [],
+  );
 
   useEffect(() => {
     /*

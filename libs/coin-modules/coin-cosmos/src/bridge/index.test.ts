@@ -57,7 +57,7 @@ describe("hydrate", () => {
   });
 
   it("should hydrate a zero-gas chain instead of treating the zero as a missing config", () => {
-    // Regression test: `minGasPrice: 0` is legitimate on a fee-less chain (e.g. gonka) and must
+    // Regression test: `minGasPrice: 0` is legitimate on a fee-less chain (e.g. nyx) and must
     // not be mistaken for an absent config by the falsy guard in preload.ts.
     const zeroGasConfig = { lcd: "http://lcd-endpoint", minGasPrice: 0 } as CosmosCurrencyConfig;
     const data = { config: zeroGasConfig, validators: mockValidators };

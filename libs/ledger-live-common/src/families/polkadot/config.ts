@@ -1,5 +1,4 @@
 import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
-import { getEnv } from "@shared/env";
 
 export const polkadotConfig: Record<string, ConfigInfo> = {
   config_currency_polkadot: {
@@ -16,7 +15,7 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
       unit: { name: "DOT", code: "DOT", magnitude: 10 },
       sidecar: {
         url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1/rc",
-        credentials: getEnv("API_POLKADOT_SIDECAR_CREDENTIALS"),
+        credentials: "",
       },
       indexer: {
         url: "https://polkadot.coin.ledger.com",

@@ -6519,6 +6519,7 @@
       "buyDeviceCTA": "<0>Need a new Ledger? </0><1>Buy now</1>",
       "item": {
         "usb": "Connected with USB",
+        "mocked": "Mocked",
         "available": "Available. Tap to connect",
         "unavailable": "Not connected"
       }

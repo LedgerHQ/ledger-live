@@ -49,6 +49,7 @@ import {
   SettingsSetClosedWithdrawBannerPayload,
   SettingsSetHasSeenAnalyticsOptInPrompt,
   SettingsSetDebugOsUpdateBannerMode,
+  SettingsSetMockServerSettingsPayload,
   SettingsSetDismissedContentCardsPayload,
   SettingsClearDismissedContentCardsPayload,
   SettingsAddStarredMarketcoinsPayload,
@@ -246,6 +247,9 @@ export const setHasSeenAnalyticsOptInPrompt = createAction<SettingsSetHasSeenAna
 
 export const setDebugOsUpdateBannerMode = createAction<SettingsSetDebugOsUpdateBannerMode>(
   SettingsActionTypes.SET_DEBUG_OS_UPDATE_BANNER_MODE,
+);
+export const setMockServerSettings = createAction<SettingsSetMockServerSettingsPayload>(
+  SettingsActionTypes.SET_MOCK_SERVER_SETTINGS,
 );
 
 export const setAnalyticsConsentInfo = createAction<SettingsSetAnalyticsConsentInfoPayload>(

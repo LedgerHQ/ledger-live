@@ -9,6 +9,8 @@ import {
 } from "@ledgerhq/live-dmk-mobile";
 import type { AppPlatform } from "@ledgerhq/live-common/platform/types";
 import { useSaveConnectedDevice } from "LLM/components/DeviceConnection";
+import { useSelector } from "~/context/hooks";
+import { isMockServerEnabledSelector } from "~/reducers/settings";
 import type {
   ConnectNewDeviceErrorUIState,
   ConnectNewDeviceNonErrorUIState,
@@ -57,6 +59,7 @@ export function useConnectNewDeviceViewModel({
 }: ConnectNewDeviceProps): ConnectNewDeviceViewModel {
   const platform = Platform.OS === "ios" ? "ios" : "android";
   const dmk = useDeviceManagementKit();
+  const isMockServerEnabled = useSelector(isMockServerEnabledSelector);
   const saveConnectedDevice = useSaveConnectedDevice({ isNewDevice: true });
   const [viewState, setViewState] = useState<ViewState>({
     state: INITIAL_STATE,
@@ -85,6 +88,7 @@ export function useConnectNewDeviceViewModel({
       onClose: () => callbacksRef.current.onClose(),
       deviceNotFoundDelay: initialDelaysRef.current?.deviceNotFound,
       successDelay: initialDelaysRef.current?.success,
+      isMockServerEnabled,
     }).subscribe({
       next: state =>
         setViewState(previous => ({
@@ -94,7 +98,7 @@ export function useConnectNewDeviceViewModel({
     });
 
     return () => subscription.unsubscribe();
-  }, [dmk, saveConnectedDevice]);
+  }, [dmk, isMockServerEnabled, saveConnectedDevice]);
 
   const { state } = viewState;
 
