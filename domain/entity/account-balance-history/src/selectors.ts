@@ -1,4 +1,4 @@
-import type { BalanceAssetId } from "@domain/entity-account-balance";
+import type { CryptoOrTokenCurrencyId } from "@domain/entity-currency";
 import type { AccountUUID } from "@domain/entity-account-descriptor";
 import type {
   AccountBalanceHistoriesState,
@@ -20,7 +20,7 @@ export const selectAccountAssetBalanceHistory = (
   state: WithAccountBalanceHistories,
   accountUUID: AccountUUID,
   range: BalanceHistoryRange,
-  assetId: BalanceAssetId,
+  assetId: CryptoOrTokenCurrencyId,
 ): AssetBalanceHistory | undefined =>
   state.accountBalanceHistories[accountUUID]?.[range]?.series.find(
     series => series.assetId === assetId,

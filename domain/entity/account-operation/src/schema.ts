@@ -2,11 +2,11 @@ import { z } from "zod";
 import { DateTimeIsoSchema } from "@shared/schema-primitives";
 import { AccountUUIDSchema } from "@domain/entity-account-descriptor";
 import { FiatCurrencyTickerSchema, type FiatCurrencyTicker } from "@domain/entity-currency-fiat";
+import { AmountStrSchema } from "@domain/entity-account-balance";
 import {
-  AmountStrSchema,
-  BalanceAssetIdSchema,
-  type BalanceAssetId,
-} from "@domain/entity-account-balance";
+  CryptoOrTokenCurrencyIdSchema,
+  type CryptoOrTokenCurrencyId,
+} from "@domain/entity-currency";
 
 export const OperationIdSchema = z.string().min(1).brand<"OperationId">();
 export const TransactionHashSchema = z.string().min(1).brand<"TransactionHash">();
@@ -87,7 +87,7 @@ export const AccountOperationSchema = z.object({
   hash: TransactionHashSchema,
   type: OperationTypeSchema,
   /** The asset `value` and `fee` are expressed in. */
-  assetId: BalanceAssetIdSchema,
+  assetId: CryptoOrTokenCurrencyIdSchema,
   value: AmountStrSchema,
   fee: AmountStrSchema,
   senders: z.array(AddressSchema),
@@ -119,7 +119,7 @@ export type AccountOperationsQuery = {
   /** Rows wished per page; a source may return more or fewer, only `nextCursor` says more exist. */
   limit?: number;
   /** Only the operations of this asset of the account, e.g. one of its tokens. */
-  filterAsset?: BalanceAssetId;
+  filterAsset?: CryptoOrTokenCurrencyId;
 };
 
 export type AccountOperationsPage = {
