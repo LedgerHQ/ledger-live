@@ -47,8 +47,10 @@ function applyAssignFromTokenAccountRaw(
 ): void {
   if (!fromRaw?.assignFromTokenAccountRaw || !res.subAccounts) return;
 
-  res.subAccounts.forEach((subAcc, index) => {
-    const subAccRaw = subAccountsRaw?.[index];
+  // By id, not index: a token whose lookup failed is missing from `res.subAccounts`
+  const subAccountsRawById = new Map(subAccountsRaw?.map(raw => [raw.id, raw]));
+  res.subAccounts.forEach(subAcc => {
+    const subAccRaw = subAccountsRawById.get(subAcc.id);
     if (subAcc.type === "TokenAccount" && subAccRaw?.type === "TokenAccountRaw") {
       fromRaw.assignFromTokenAccountRaw?.(subAccRaw, subAcc);
     }
