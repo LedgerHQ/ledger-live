@@ -61,6 +61,14 @@ on:
           - flex
           - nanoGen5
         default: nanoX
+      app_provider:
+        description: "Nano app provider (4 = pre-release apps, falling back to 1 for apps it doesn't publish)"
+        required: false
+        type: choice
+        options:
+          - "1"
+          - "4"
+        default: "1"
       production_firebase:
         description: "Target Firebase Production env"
         required: false
@@ -142,6 +150,11 @@ on:
         description: "Speculos device to use"
         required: true
         type: string
+      app_provider:
+        description: "Nano app provider (4 = pre-release apps, falling back to 1 for apps it doesn't publish)"
+        required: false
+        type: string
+        default: "1"
       production_firebase:
         description: "Target Firebase Production env"
         required: false
@@ -285,6 +298,7 @@ env:
   ANDROID_FEATURE_FLAGS: ${{ inputs.feature_flags || 'defaults' }}
   IOS_FEATURE_FLAGS: ${{ inputs.feature_flags || 'defaults' }}
   E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
+  SPECULOS_APP_PROVIDER: ${{ inputs.app_provider || '1' }}
   USERDATA_CACHE_ENABLED: ${{ !inputs.production_firebase }}
   E2E_GENERATED_USERDATA_DIR: ${{ !inputs.production_firebase && format('{0}/e2e/userdata/generated', github.workspace) || '' }}
   # Broadcast on explicit request, or on the platform's own broadcast nightly (see the schedule above).
