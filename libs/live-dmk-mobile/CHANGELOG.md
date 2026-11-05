@@ -1,5 +1,21 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.33.1
+
+### Patch Changes
+
+- Updated dependencies [[`a49773f`](https://github.com/LedgerHQ/ledger-live/commit/a49773f51027c607adac26d1133a36a37ada456c), [`797b1ab`](https://github.com/LedgerHQ/ledger-live/commit/797b1ab63e4099c962a74170b43275f149c6fbea)]:
+  - @ledgerhq/live-dmk-shared@0.38.0
+  - @shared/env@0.12.0
+
+## 0.33.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`a49773f`](https://github.com/LedgerHQ/ledger-live/commit/a49773f51027c607adac26d1133a36a37ada456c), [`797b1ab`](https://github.com/LedgerHQ/ledger-live/commit/797b1ab63e4099c962a74170b43275f149c6fbea)]:
+  - @ledgerhq/live-dmk-shared@0.38.0-next.0
+  - @shared/env@0.12.0-next.0
+
 ## 0.33.0
 
 ### Minor Changes
@@ -239,21 +255,5 @@
   - @ledgerhq/live-dmk-shared@0.31.0-next.0
   - @shared/env@0.3.0-next.0
   - @ledgerhq/types-devices@7.0.0-next.0
-
-## 0.29.3
-
-### Patch Changes
-
-- Updated dependencies [[`1e9db75`](https://github.com/LedgerHQ/ledger-live/commit/1e9db750a4882f9db7f95278e33c00262487b37b), [`8a3a0bb`](https://github.com/LedgerHQ/ledger-live/commit/8a3a0bbd8361706daac364d4c89894f56431fc57)]:
-  - @ledgerhq/types-devices@6.32.0
-  - @ledgerhq/live-dmk-shared@0.30.0
-
-## 0.29.3-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`1e9db75`](https://github.com/LedgerHQ/ledger-live/commit/1e9db750a4882f9db7f95278e33c00262487b37b), [`8a3a0bb`](https://github.com/LedgerHQ/ledger-live/commit/8a3a0bbd8361706daac364d4c89894f56431fc57)]:
-  - @ledgerhq/types-devices@6.32.0-next.0
-  - @ledgerhq/live-dmk-shared@0.30.0-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

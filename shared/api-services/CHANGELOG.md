@@ -1,5 +1,27 @@
 # @shared/api-services
 
+## 0.12.0
+
+### Minor Changes
+
+- [#23983](https://github.com/LedgerHQ/ledger-live/pull/23983) [`0c62d35`](https://github.com/LedgerHQ/ledger-live/commit/0c62d3533f72e450c2235f8d23aa1cdb101486a9) Thanks [@ysitbon](https://github.com/ysitbon)! - Add `defineApiServices` and one descriptor per service, so an app lists its service apis and their lazy config once
+
+### Patch Changes
+
+- Updated dependencies [[`4be13d5`](https://github.com/LedgerHQ/ledger-live/commit/4be13d5ee940cb84794b33bed7320287647cc82e)]:
+  - @shared/auth@0.8.0
+
+## 0.12.0-next.0
+
+### Minor Changes
+
+- [#23983](https://github.com/LedgerHQ/ledger-live/pull/23983) [`0c62d35`](https://github.com/LedgerHQ/ledger-live/commit/0c62d3533f72e450c2235f8d23aa1cdb101486a9) Thanks [@ysitbon](https://github.com/ysitbon)! - Add `defineApiServices` and one descriptor per service, so an app lists its service apis and their lazy config once
+
+### Patch Changes
+
+- Updated dependencies [[`4be13d5`](https://github.com/LedgerHQ/ledger-live/commit/4be13d5ee940cb84794b33bed7320287647cc82e)]:
+  - @shared/auth@0.8.0-next.0
+
 ## 0.11.0
 
 ### Minor Changes
@@ -384,34 +406,4 @@
 - Updated dependencies [[`43bf6d8`](https://github.com/LedgerHQ/ledger-live/commit/43bf6d8f6600f70b7c2a85615660e7e150e798bf)]:
   - @shared/auth@0.4.0-next.0
 
-## 0.2.0
-
-### Minor Changes
-
-- [#20341](https://github.com/LedgerHQ/ledger-live/pull/20341) [`c016a95`](https://github.com/LedgerHQ/ledger-live/commit/c016a95538dfef2d7ddf1a17914d8cb3e55b644e) Thanks [@ysitbon](https://github.com/ysitbon)! - Split backend access from use case in the RTK Query layer
-
-  `@shared/api-services` now holds one endpoint-less `createApi` per backend (CAL, CoinMarketCap,
-  Countervalues, Push Devices), owning its base query, `extraArgument` contract and reducer path.
-  `domain/api/*` packages add their endpoints with `injectEndpoints` and their own cache tags with
-  `enhanceEndpoints`, so one reducer, middleware and cache now serve every use case on a backend — the two
-  CoinMarketCap packages previously had one each. Apps register the service apis.
-
-  `extraArgument` builder names are unchanged, so only import paths move. Reducer paths are renamed after
-  their backend (`calApi`, `coinMarketCapApi`, `countervaluesApi`); no persisted data and no endpoint
-  behaviour is affected.
-
-## 0.2.0-next.0
-
-### Minor Changes
-
-- [#20341](https://github.com/LedgerHQ/ledger-live/pull/20341) [`c016a95`](https://github.com/LedgerHQ/ledger-live/commit/c016a95538dfef2d7ddf1a17914d8cb3e55b644e) Thanks [@ysitbon](https://github.com/ysitbon)! - Split backend access from use case in the RTK Query layer
-
-  `@shared/api-services` now holds one endpoint-less `createApi` per backend (CAL, CoinMarketCap,
-  Countervalues, Push Devices), owning its base query, `extraArgument` contract and reducer path.
-  `domain/api/*` packages add their endpoints with `injectEndpoints` and their own cache tags with
-  `enhanceEndpoints`, so one reducer, middleware and cache now serve every use case on a backend — the two
-  CoinMarketCap packages previously had one each. Apps register the service apis.
-
-  `extraArgument` builder names are unchanged, so only import paths move. Reducer paths are renamed after
-  their backend (`calApi`, `coinMarketCapApi`, `countervaluesApi`); no persisted data and no endpoint
-  behaviour is affected.
+<!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

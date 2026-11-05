@@ -238,21 +238,4 @@
 - Updated dependencies []:
   - @ledgerhq/hw-transport@6.35.4-next.0
 
-## 11.1.0
-
-### Minor Changes
-
-- [#18180](https://github.com/LedgerHQ/ledger-live/pull/18180) [`d1792fb`](https://github.com/LedgerHQ/ledger-live/commit/d1792fb26fa22c042bee8098e2fe9fc39feafc0a) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Fix Zcash consensus branch ID by adding NU6.2 activation height
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.35.3
-
-## 11.1.0-next.1
-
-### Minor Changes
-
-- [#18180](https://github.com/LedgerHQ/ledger-live/pull/18180) [`d1792fb`](https://github.com/LedgerHQ/ledger-live/commit/d1792fb26fa22c042bee8098e2fe9fc39feafc0a) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Fix Zcash consensus branch ID by adding NU6.2 activation height
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

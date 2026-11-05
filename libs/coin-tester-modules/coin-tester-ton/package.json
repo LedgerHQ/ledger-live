@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-ton",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "sideEffects": false,
   "description": "Ledger TON Coin Tester",
