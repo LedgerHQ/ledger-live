@@ -27,7 +27,7 @@ import { withCurrencyDeviceSession } from "../session/bridge-device-session";
 import { runObservable } from "../commands/run-observable";
 import { colors } from "../shared/ui";
 import type { CommandOutput } from "../output";
-import type { WalletAdapter } from "./index";
+import type { PreparedTransaction, WalletAdapter } from "./index";
 import type { AccountDescriptor } from "./models";
 import type { TransactionIntent } from "./intents";
 
@@ -35,8 +35,6 @@ import type { TransactionIntent } from "./intents";
  * A prepared (synced + built + validated) transaction, as returned by the dry-run entrypoint.
  * Intent-agnostic: shared by `send` and the earn pipelines, so it is not named after `send`.
  */
-export type PreparedTransaction = Awaited<ReturnType<WalletAdapter["prepareSend"]>>;
-
 /** live-common DeviceModelId resolved from the active DMK session, if any. */
 type ResolvedDeviceModelId = Awaited<ReturnType<typeof getWalletCliDeviceModelId>>;
 
