@@ -4,8 +4,9 @@
 
 const { deepFreeze } = require("../internals/freeze.ts");
 
-/** @type {Record<string, { reason: string, overrides: Record<string, string[]> }>} */
-const PRESET_OVERRIDES = {
+type PresetOverrideEntry = { reason: string; overrides: Record<string, string[]> };
+
+const PRESET_OVERRIDES: Record<string, PresetOverrideEntry> = {
   "shared/i18n": {
     reason: "React views on the node preset: no preset covers a web-only shared/ package yet.",
     overrides: { createSharedJestConfig: ["testEnvironment", "transform"] },
