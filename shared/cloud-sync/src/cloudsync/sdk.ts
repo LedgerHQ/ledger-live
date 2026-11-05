@@ -52,7 +52,10 @@ export class CloudSyncSDK<
   private readonly slug: string;
   private readonly trustchainSdk: TrustchainSDK;
   private readonly getCurrentVersion: () => number | undefined;
-  private readonly saveNewUpdate: (updateEvent: UpdateEvent<Data>) => Promise<void>;
+  private readonly saveNewUpdate: (
+    updateEvent: UpdateEvent<Data>,
+    trustchain: Trustchain,
+  ) => Promise<void>;
   private readonly cipher: Cipher<Data>;
   private readonly api: ReturnType<typeof getCloudSyncApi>;
 
@@ -67,7 +70,8 @@ export class CloudSyncSDK<
     slug: string;
     trustchainSdk: TrustchainSDK;
     getCurrentVersion: () => number | undefined;
-    saveNewUpdate: (event: UpdateEvent<Data>) => Promise<void>;
+    /** Also gets the call's trustchain, so a caller can drop an update of a session it left. */
+    saveNewUpdate: (event: UpdateEvent<Data>, trustchain: Trustchain) => Promise<void>;
   }) {
     this.slug = slug;
     this.trustchainSdk = trustchainSdk;
@@ -93,7 +97,7 @@ export class CloudSyncSDK<
     );
     switch (response.status) {
       case "updated":
-        await this.saveNewUpdate({ type: "pushed-data", version, data });
+        await this.saveNewUpdate({ type: "pushed-data", version, data }, trustchain);
         break;
       case "out-of-sync":
         break;
@@ -108,7 +112,7 @@ export class CloudSyncSDK<
       case "no-data": {
         const version = this.getCurrentVersion();
         if (version) {
-          await this.saveNewUpdate({ type: "deleted-data" });
+          await this.saveNewUpdate({ type: "deleted-data" }, trustchain);
           throw new TrustchainOutdated();
         }
         break;
@@ -119,7 +123,7 @@ export class CloudSyncSDK<
         const json = await this.cipher.decrypt(trustchain, response.payload);
         assertPayloadObject(json, "pull");
         const version = response.version;
-        await this.saveNewUpdate({ type: "new-data", data: json, version });
+        await this.saveNewUpdate({ type: "new-data", data: json, version }, trustchain);
         break;
       }
     }
@@ -129,7 +133,7 @@ export class CloudSyncSDK<
     await this.trustchainSdk.withAuth(trustchain, memberCredentials, jwt =>
       this.api.deleteData(jwt, this.slug, trustchain),
     );
-    await this.saveNewUpdate({ type: "deleted-data" });
+    await this.saveNewUpdate({ type: "deleted-data" }, trustchain);
   }
 
   listenNotifications(

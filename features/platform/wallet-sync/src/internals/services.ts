@@ -6,6 +6,7 @@ import {
   createQRCodeCandidateInstance,
   createQRCodeHostInstance,
 } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
+import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import type { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
 import type { Dispatch, MiddlewareAPI } from "@reduxjs/toolkit";
 import {
@@ -51,8 +52,10 @@ export function createLedgerSyncServices<S extends LedgerSyncStateRoot, LocalSta
     slug: liveSlug,
     trustchainSdk: lkrpSdk,
     getCurrentVersion: () => selectWalletSyncState(getState()).version,
-    saveNewUpdate: event =>
-      makeSaveNewUpdate({
+    saveNewUpdate: async (event, trustchain) => {
+      // A call that settles after a reset or a new pairing would restore the old session's data.
+      if (trustchainSelector(getState())?.rootId !== trustchain.rootId) return;
+      await makeSaveNewUpdate({
         walletsync: cloudSync.walletsyncSelector(getState()),
         getState,
         latestDistantStateSelector: state => selectWalletSyncState(state).data,
@@ -60,7 +63,8 @@ export function createLedgerSyncServices<S extends LedgerSyncStateRoot, LocalSta
         localStateSelector: cloudSync.localStateSelector,
         saveUpdate: (data, version, newLocalState) =>
           cloudSync.save(data, version, newLocalState, dispatch),
-      })(event),
+      })(event);
+    },
   });
 
   // A pairing joins the other instance to this one's trustchain when it has one.
