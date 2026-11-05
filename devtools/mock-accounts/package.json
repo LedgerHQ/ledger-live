@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@domain/api-account-data": "workspace:*",
+    "@domain/entity-account-address": "workspace:*",
     "@domain/entity-account-balance": "workspace:*",
     "@domain/entity-account-balance-history": "workspace:*",
     "@domain/entity-account-data": "workspace:*",

@@ -1124,6 +1124,9 @@ importers:
       '@domain/entity-account':
         specifier: workspace:^
         version: link:../../domain/entity/account
+      '@domain/entity-account-address':
+        specifier: workspace:*
+        version: link:../../domain/entity/account-address
       '@domain/entity-account-alias':
         specifier: workspace:^
         version: link:../../domain/entity/account-alias
@@ -2037,6 +2040,9 @@ importers:
       '@domain/entity-account':
         specifier: workspace:^
         version: link:../../domain/entity/account
+      '@domain/entity-account-address':
+        specifier: workspace:*
+        version: link:../../domain/entity/account-address
       '@domain/entity-account-balance':
         specifier: workspace:*
         version: link:../../domain/entity/account-balance
@@ -4882,6 +4888,9 @@ importers:
       '@domain/api-account-data':
         specifier: workspace:*
         version: link:../../domain/api/account-data
+      '@domain/entity-account-address':
+        specifier: workspace:*
+        version: link:../../domain/entity/account-address
       '@domain/entity-account-balance':
         specifier: workspace:*
         version: link:../../domain/entity/account-balance
@@ -6444,6 +6453,52 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  domain/entity/account-address:
+    dependencies:
+      '@domain/entity-account-data':
+        specifier: workspace:*
+        version: link:../account-data
+      '@domain/entity-account-descriptor':
+        specifier: workspace:*
+        version: link:../account-descriptor
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+      zod:
+        specifier: 'catalog:'
+        version: 4.6.7
+    devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@support/jest':
+        specifier: workspace:*
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -18313,6 +18368,9 @@ importers:
       '@domain/api-swap-quotes':
         specifier: workspace:^
         version: link:../../domain/api/swap-quotes
+      '@domain/entity-account-address':
+        specifier: workspace:^
+        version: link:../../domain/entity/account-address
       '@domain/entity-account-balance':
         specifier: workspace:^
         version: link:../../domain/entity/account-balance

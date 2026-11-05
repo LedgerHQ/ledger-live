@@ -33,6 +33,7 @@ import { predictionsSlice, type PredictionsState } from "@domain/entity-predicti
 import { supportedFiatsSlice, type SupportedFiatsState } from "@domain/entity-currency-fiat";
 import { contactsSlice, type ContactsState } from "@domain/entity-contact";
 import { accountDataSlice, type AccountDataState } from "@domain/entity-account-data";
+import { accountAddressesSlice, type AccountAddressesState } from "@domain/entity-account-address";
 import { accountBalancesSlice, type AccountBalancesState } from "@domain/entity-account-balance";
 import {
   accountOperationsSlice,
@@ -131,6 +132,7 @@ export type State = LLDRTKApiState & {
   supportedFiats: SupportedFiatsState;
   contacts: ContactsState;
   accountData: AccountDataState;
+  accountAddresses: AccountAddressesState;
   accountBalances: AccountBalancesState;
   accountOperations: AccountOperationsState;
   accountBalanceHistories: AccountBalanceHistoriesState;
@@ -185,6 +187,7 @@ const appReducer = combineReducers({
   supportedFiats: supportedFiatsSlice.reducer,
   contacts: contactsSlice.reducer,
   accountData: accountDataSlice.reducer,
+  accountAddresses: accountAddressesSlice.reducer,
   accountBalances: accountBalancesSlice.reducer,
   accountOperations: accountOperationsSlice.reducer,
   accountBalanceHistories: accountBalanceHistoriesSlice.reducer,

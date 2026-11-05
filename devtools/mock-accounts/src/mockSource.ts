@@ -56,5 +56,6 @@ export const mockSource: AccountDataSource = {
     balance: (target, query) => answer("balance", target, query),
     operations: (target, query) => answer("operations", target, query),
     balanceHistory: (target, query) => answer("balanceHistory", target, query),
+    address: (target, query) => answer("address", target, query),
   },
 };

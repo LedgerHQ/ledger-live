@@ -56,6 +56,7 @@ import { payCardAuthSlice, payCardLoginIntroSlice } from "@features/flow-pay-car
 import { payCardOnboardingWidgetSlice } from "@features/flow-pay-card-widget/state";
 import { contactsSlice } from "@domain/entity-contact";
 import { accountDataSlice } from "@domain/entity-account-data";
+import { accountAddressesSlice } from "@domain/entity-account-address";
 import { accountBalancesSlice } from "@domain/entity-account-balance";
 import { accountOperationsSlice } from "@domain/entity-account-operation";
 import { accountBalanceHistoriesSlice } from "@domain/entity-account-balance-history";
@@ -123,6 +124,7 @@ const appReducer = combineReducers({
   supportedFiats: supportedFiatsSlice.reducer,
   contacts: contactsSlice.reducer,
   accountData: accountDataSlice.reducer,
+  accountAddresses: accountAddressesSlice.reducer,
   accountBalances: accountBalancesSlice.reducer,
   accountOperations: accountOperationsSlice.reducer,
   accountBalanceHistories: accountBalanceHistoriesSlice.reducer,

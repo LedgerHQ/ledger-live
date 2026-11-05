@@ -267,6 +267,28 @@ describe("mockSource", () => {
   });
 });
 
+const readAddress = (descriptor: AccountDescriptor) => {
+  const read = mockSource.read?.address;
+  if (!read) throw new Error("no address reader");
+  return read({ accountUUID: computeAccountUUID(descriptor), descriptor }, undefined);
+};
+
+describe("mockSource address", () => {
+  it("answers the address of an address descriptor", async () => {
+    const [account] = mockDescriptors("ethereum", 1, []);
+    if (account.type !== "address") throw new Error("expected an address descriptor");
+    await expect(readAddress(account)).resolves.toEqual({ freshAddress: account.address });
+  });
+
+  it("answers the same bitcoin address for the same account, another for another account", async () => {
+    const [first, second] = mockDescriptors("bitcoin", 2, []);
+    const address = await readAddress(first);
+    expect(address.freshAddress).toMatch(/^1/);
+    await expect(readAddress(first)).resolves.toEqual(address);
+    await expect(readAddress(second)).resolves.not.toEqual(address);
+  });
+});
+
 describe("mockSource balanceHistory", () => {
   const now = Date.UTC(2026, 9, 20);
   let nowSpy: jest.SpyInstance<number, []>;

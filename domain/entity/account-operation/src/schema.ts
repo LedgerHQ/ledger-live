@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { DateTimeIsoSchema } from "@shared/schema-primitives";
-import { AccountUUIDSchema } from "@domain/entity-account-descriptor";
+import { AccountUUIDSchema, AddressSchema } from "@domain/entity-account-descriptor";
 import { FiatCurrencyTickerSchema, type FiatCurrencyTicker } from "@domain/entity-currency-fiat";
 import {
   AmountStrSchema,
@@ -10,8 +10,6 @@ import {
 
 export const OperationIdSchema = z.string().min(1).brand<"OperationId">();
 export const TransactionHashSchema = z.string().min(1).brand<"TransactionHash">();
-/** A sender or recipient: branded so analytics can refuse it. */
-export const AddressSchema = z.string().min(1).brand<"Address">();
 
 /** Mirrors the operation types of `@ledgerhq/types-live`, for backward compatibility. */
 export const OPERATION_TYPES = [
@@ -106,7 +104,6 @@ export const StoredAccountOperationSchema = AccountOperationSchema.omit({ counte
 
 export type OperationId = z.infer<typeof OperationIdSchema>;
 export type TransactionHash = z.infer<typeof TransactionHashSchema>;
-export type Address = z.infer<typeof AddressSchema>;
 export type OperationType = z.infer<typeof OperationTypeSchema>;
 export type AccountOperation = z.infer<typeof AccountOperationSchema>;
 export type StoredAccountOperation = z.infer<typeof StoredAccountOperationSchema>;

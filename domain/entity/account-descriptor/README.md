@@ -34,4 +34,5 @@ mock:2:address:ethereum:0x0000000000000000000000000000000000000001:m/44h/60h/0h/
 | `serializeAccountDescriptor` / `parseAccountDescriptor` | `<purpose>:2:<type>:<network_id>:<xpub or address>:<path>`; a parsed descriptor always has `h` markers |
 | `accountDescriptorKey` | canonical key: the serialized descriptor, normalized (see `key.ts`) |
 | `computeAccountUUID` | uuid v5 of the canonical key; same on every device, no xpub nor address |
+| `AddressSchema` / `Address` | an address on a network, branded so analytics can refuse it |
 | `networkFromCurrencyId` / `currencyIdFromNetwork` | network id ↔ currency id, the same id for now |
