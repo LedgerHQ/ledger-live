@@ -26,6 +26,15 @@ export function cryptoFor(currencyId: string): ICrypto {
   return cryptoFactory(currencyId as Currency);
 }
 
+/** How outputs are added to a transaction: see `selectUtxos`. */
+export type UtxoStrategyName = "deep-outputs-first" | "optimize-size" | "merge-outputs";
+
+export const UTXO_STRATEGIES: UtxoStrategyName[] = [
+  "deep-outputs-first",
+  "optimize-size",
+  "merge-outputs",
+];
+
 export type UtxoSelection = {
   /** Outputs spent, in spending order. */
   inputs: ExplorerUtxo[];
@@ -144,14 +153,95 @@ function spendingOrder(a: ExplorerUtxo, b: ExplorerUtxo): number {
   return a.outputIndex - b.outputIndex;
 }
 
+const sumOf = (utxos: ExplorerUtxo[]) => utxos.reduce((sum, utxo) => sum + BigInt(utxo.value), 0n);
+
+/** Smallest outputs first, to consolidate them (wallet-btc `Merge`); ties as `spendingOrder`. */
+function smallestFirst(a: ExplorerUtxo, b: ExplorerUtxo): number {
+  const valueA = BigInt(a.value);
+  const valueB = BigInt(b.value);
+  if (valueA !== valueB) return valueA < valueB ? -1 : 1;
+  return spendingOrder(a, b);
+}
+
+/** Search budget of `optimizeSizePick`, as wallet-btc's `CoinSelect`. */
+const OPTIMIZE_SIZE_TRIES = 100_000;
+
+/**
+ * Subset of `utxos` that covers `amount` and the fee at the least waste, or `undefined` when the
+ * search finds none. A bigint port of wallet-btc `CoinSelect` (branch and bound over the outputs'
+ * effective values, as Bitcoin Core's coin selection): outputs worth less than their own input's
+ * fee are ignored, the rest are tried largest effective value first. The waste of a subset is its
+ * fee, plus what it leaves above the target when no change output is created.
+ */
+function optimizeSizePick(
+  utxos: ExplorerUtxo[],
+  amount: bigint,
+  outputScripts: Buffer[],
+  feePerByte: bigint,
+  crypto: ICrypto,
+  derivationMode: DerivationModes,
+): ExplorerUtxo[] | undefined {
+  const rate = feePerByte > 1n ? feePerByte : 1n;
+  const sizeOf = (inputCount: number, withChange: boolean) =>
+    BigInt(maxTxSizeCeil(inputCount, outputScripts, withChange, crypto, derivationMode));
+  const inputFee = rate * BigInt(inputSize(crypto, derivationMode));
+
+  const effective = utxos
+    .map(utxo => ({ utxo, value: BigInt(utxo.value) - inputFee }))
+    .filter(candidate => candidate.value > 0n)
+    .sort((a, b) =>
+      a.value === b.value ? spendingOrder(a.utxo, b.utxo) : a.value > b.value ? -1 : 1,
+    );
+  const target = rate * sizeOf(0, false) + amount;
+  if (effective.reduce((sum, candidate) => sum + candidate.value, 0n) < target) return undefined;
+  const changeCost = rate * (sizeOf(0, true) - sizeOf(0, false));
+
+  const taken: boolean[] = [];
+  let value = 0n;
+  let bestWaste: bigint | undefined;
+  let best: ExplorerUtxo[] | undefined;
+  for (let tries = 0; tries < OPTIMIZE_SIZE_TRIES; tries++) {
+    let backtrack = false;
+    if (value >= target) {
+      const count = taken.filter(Boolean).length;
+      const waste =
+        value - target >= changeCost
+          ? rate * sizeOf(count, true)
+          : rate * sizeOf(count, false) + value - target;
+      if (bestWaste === undefined || waste <= bestWaste) {
+        best = effective.filter((_, index) => taken[index]).map(candidate => candidate.utxo);
+        bestWaste = waste;
+      }
+      backtrack = true;
+    }
+    if (taken.length >= effective.length) backtrack = true;
+
+    if (backtrack) {
+      while (taken.length > 0 && !taken[taken.length - 1]) taken.pop();
+      if (taken.length === 0) break;
+      taken[taken.length - 1] = false;
+      value -= effective[taken.length - 1].value;
+    } else {
+      taken.push(true);
+      value += effective[taken.length - 1].value;
+    }
+  }
+  return best;
+}
+
 /**
  * Picks the outputs a single-address transaction spends, and its fee.
  *
  * - `useAllAmount`: every output worth more than the fee to spend it is spent, with no change; the
  *   amount is what remains after the fee. Outputs worth less are left out, as the bridge's maximum
  *   spendable leaves them (wallet-btc `estimateAccountMaxSpendable`).
- * - Otherwise outputs are added deepest first until they cover the amount and the fee. Change below
- *   the dust threshold is not created: it is left to the fee.
+ * - Otherwise outputs are added, in the order of `strategy`, until they cover the amount and the
+ *   fee. Change below the dust threshold is not created: it is left to the fee.
+ *
+ * `utxos` are the candidates (the caller has already left out the excluded outputs). With
+ * `selected`, the inputs are exactly those outputs, as the bridge's coin control: a payment is
+ * insufficient when they do not cover the amount and the fee, and a sweep spends all of them, even
+ * those not worth their own input's fee. `strategy` orders the candidates when nothing is selected.
  *
  * Sizes and the dust threshold come from wallet-btc's pure size maths, as for the bridge.
  */
@@ -170,8 +260,15 @@ export function selectUtxos(params: {
   extraOutputScripts?: Buffer[];
   /** Bytes the currency's format adds to a transaction of so many inputs (see `transactionSize`). */
   formatBytes?: (inputCount: number) => number;
+  /** Outputs to spend, and the only ones: `utxos` are then ignored. */
+  selected?: ExplorerUtxo[];
+  /** Order in which candidates are added. Default: deepest first. */
+  strategy?: UtxoStrategyName;
 }): UtxoSelection {
   const { amount, useAllAmount, recipientScript, crypto, derivationMode, feePerByte } = params;
+  const strategy = params.strategy ?? "deep-outputs-first";
+  const selected = [...(params.selected ?? [])].sort(spendingOrder);
+  const hasSelection = selected.length > 0;
   const utxos = [...params.utxos].sort(spendingOrder);
 
   const size = (inputCount: number, withChange: boolean) =>
@@ -192,12 +289,12 @@ export function selectUtxos(params: {
     // rate of at least 1 sat/vB.
     const costToSpend =
       (feePerByte > 1n ? feePerByte : 1n) * BigInt(inputSize(crypto, derivationMode));
-    const worthSpending = utxos.filter(utxo => BigInt(utxo.value) > costToSpend);
-    const total = worthSpending.reduce((sum, utxo) => sum + BigInt(utxo.value), 0n);
-    const fee = feeFor(worthSpending.length, false);
+    const inputs = hasSelection ? selected : utxos.filter(utxo => BigInt(utxo.value) > costToSpend);
+    const total = inputs.reduce((sum, utxo) => sum + BigInt(utxo.value), 0n);
+    const fee = feeFor(inputs.length, false);
     const sendable = total - fee;
     return {
-      inputs: worthSpending,
+      inputs,
       fee,
       change: 0n,
       amount: sendable > 0n ? sendable : 0n,
@@ -208,31 +305,48 @@ export function selectUtxos(params: {
   const dustFor = (inputCount: number) =>
     dustThreshold(crypto, size(inputCount, true), derivationMode, params.relayFeePerByte);
 
-  let total = 0n;
-  for (let count = 1; count <= utxos.length; count++) {
-    total += BigInt(utxos[count - 1].value);
-    const feeWithoutChange = feeFor(count, false);
-    if (total < amount + feeWithoutChange) continue;
-
-    const change = total - amount - feeFor(count, true);
-    if (change >= dustFor(count)) {
-      return {
-        inputs: utxos.slice(0, count),
-        fee: total - amount - change,
-        change,
-        amount,
-        sufficient: true,
-      };
+  // The selection these inputs make, or undefined when they do not cover the amount and the fee.
+  const priceInputs = (inputs: ExplorerUtxo[], total: bigint): UtxoSelection | undefined => {
+    if (total < amount + feeFor(inputs.length, false)) return undefined;
+    const change = total - amount - feeFor(inputs.length, true);
+    if (change >= dustFor(inputs.length)) {
+      return { inputs, fee: total - amount - change, change, amount, sufficient: true };
     }
-    return {
-      inputs: utxos.slice(0, count),
-      fee: total - amount,
-      change: 0n,
+    return { inputs, fee: total - amount, change: 0n, amount, sufficient: true };
+  };
+
+  // Not enough funds: price the transaction that would spend all of `inputs`, with change.
+  const insufficient = (inputs: ExplorerUtxo[]): UtxoSelection => ({
+    inputs,
+    fee: feeFor(inputs.length, true),
+    change: 0n,
+    amount,
+    sufficient: false,
+  });
+
+  if (hasSelection) return priceInputs(selected, sumOf(selected)) ?? insufficient(selected);
+
+  if (strategy === "optimize-size") {
+    const picked = optimizeSizePick(
+      utxos,
       amount,
-      sufficient: true,
-    };
+      [recipientScript, ...(params.extraOutputScripts ?? [])],
+      feePerByte,
+      crypto,
+      derivationMode,
+    );
+    const inputs = picked?.sort(spendingOrder);
+    const priced = inputs && priceInputs(inputs, sumOf(inputs));
+    if (priced) return priced;
   }
 
-  // Not enough funds: price the transaction that would spend everything, with change.
-  return { inputs: utxos, fee: feeFor(utxos.length, true), change: 0n, amount, sufficient: false };
+  const ordered = strategy === "merge-outputs" ? [...utxos].sort(smallestFirst) : utxos;
+  let total = 0n;
+  for (let count = 1; count <= ordered.length; count++) {
+    total += BigInt(ordered[count - 1].value);
+    const priced = priceInputs(ordered.slice(0, count), total);
+    if (priced) return priced;
+  }
+
+  return insufficient(ordered);
 }

@@ -46,6 +46,7 @@ const select = (
   amount: bigint,
   useAllAmount = false,
   extraOutputScripts?: Buffer[],
+  options: Partial<Parameters<typeof selectUtxos>[0]> = {},
 ) =>
   selectUtxos({
     utxos,
@@ -57,6 +58,7 @@ const select = (
     feePerByte: 10n,
     relayFeePerByte: 1n,
     ...(extraOutputScripts ? { extraOutputScripts } : {}),
+    ...options,
   });
 
 describe("derivationModeOf", () => {
@@ -165,5 +167,109 @@ describe("selectUtxos", () => {
 
   it("prices a one-input transaction for an address without outputs", () => {
     expect(select([], 1_000n).fee).toBe(vsize(1, true) * 10n);
+  });
+});
+
+describe("selectUtxos strategies", () => {
+  const deep = utxo("a", 50_000n, 0, 1);
+  const small = utxo("b", 5_000n, 0, 2);
+  const medium = utxo("c", 9_000n, 0, 3);
+  const set = [medium, deep, small];
+
+  it("deep-outputs-first without any option is the default selection", () => {
+    expect(select(set, 10_000n, false, undefined, { strategy: "deep-outputs-first" })).toEqual(
+      select(set, 10_000n),
+    );
+    expect(select(set, 10_000n, false, undefined, { selected: [] }).inputs).toEqual([deep]);
+  });
+
+  it("merge-outputs spends the smallest outputs first", () => {
+    const selection = select(set, 10_000n, false, undefined, { strategy: "merge-outputs" });
+    expect(selection.inputs).toEqual([small, medium]);
+    expect(selection.sufficient).toBe(true);
+  });
+
+  it("merge-outputs orders equal values by outpoint", () => {
+    const selection = select(
+      [utxo("e", 5_000n, 1), utxo("e", 5_000n, 0), utxo("f", 90_000n)],
+      3_000n,
+      false,
+      undefined,
+      { strategy: "merge-outputs" },
+    );
+    expect(selection.inputs).toEqual([utxo("e", 5_000n, 0)]);
+  });
+
+  describe("optimize-size", () => {
+    const strategy = "optimize-size" as const;
+
+    it("finds the exact match without change that deepest first misses", () => {
+      const exact = utxo("e", 10_000n + vsize(1, false) * 10n, 0, 9);
+      const selection = select([deep, exact], 10_000n, false, undefined, { strategy });
+      expect(selection).toEqual({
+        inputs: [exact],
+        fee: vsize(1, false) * 10n,
+        change: 0n,
+        amount: 10_000n,
+        sufficient: true,
+      });
+      expect(select([deep, exact], 10_000n).inputs).toEqual([deep]);
+    });
+
+    it("prefers fewer inputs to many small ones", () => {
+      const selection = select([small, medium, deep], 8_000n, false, undefined, { strategy });
+      expect(selection.inputs.length).toBe(1);
+      expect(selection.sufficient).toBe(true);
+    });
+
+    it("is deterministic whatever the order of the candidates", () => {
+      const forward = select(set, 10_000n, false, undefined, { strategy });
+      const reversed = select([...set].reverse(), 10_000n, false, undefined, { strategy });
+      expect(reversed).toEqual(forward);
+    });
+
+    it("falls back to deepest first when the search finds nothing", () => {
+      const poor = [utxo("a", 6_000n, 0, 1), utxo("b", 7_000n, 0, 2)];
+      const selection = select(poor, 13_000n, false, undefined, { strategy });
+      expect(selection.sufficient).toBe(false);
+      expect(selection).toEqual(select(poor, 13_000n));
+    });
+  });
+
+  describe("with selected outputs", () => {
+    it("spends exactly the selected outputs ", () => {
+      const selection = select([deep, medium], 3_000n, false, undefined, { selected: [small] });
+      const fee = vsize(1, false) * 10n;
+      expect(selection.inputs).toEqual([small]);
+      expect(selection.sufficient).toBe(true);
+      expect(selection.fee + selection.change + selection.amount).toBe(5_000n);
+      expect(selection.fee).toBeGreaterThanOrEqual(fee);
+    });
+
+    it("is insufficient when the selection does not cover amount and fee", () => {
+      const selection = select([deep], 10_000n, false, undefined, { selected: [small] });
+      expect(selection.inputs).toEqual([small]);
+      expect(selection.sufficient).toBe(false);
+    });
+
+    it("ignores the strategy and the candidates", () => {
+      const options = { selected: [small, medium] };
+      for (const strategy of ["deep-outputs-first", "merge-outputs", "optimize-size"] as const) {
+        expect(select([deep], 10_000n, false, undefined, { ...options, strategy }).inputs).toEqual([
+          small,
+          medium,
+        ]);
+      }
+    });
+
+    it("sweeps exactly the selected outputs, even one not worth its own input's fee", () => {
+      const costToSpend = 10n * INPUT_VSIZE;
+      const tiny = utxo("d", costToSpend);
+      const selection = select([utxo("e", 80_000n)], 0n, true, undefined, {
+        selected: [tiny, utxo("a", 6_000n)],
+      });
+      expect(selection.inputs).toEqual([utxo("a", 6_000n), tiny]);
+      expect(selection.amount).toBe(6_000n + costToSpend - vsize(2, false) * 10n);
+    });
   });
 });

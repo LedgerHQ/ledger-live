@@ -1,8 +1,9 @@
 import type { BitcoinCoinConfig } from "../config";
+import { UnknownUtxo } from "../errors";
 import { getFeeRate } from "./getFeeRate";
-import { getSpendableUtxos } from "./getSpendableUtxos";
+import { getSpendableUtxos, outpoint } from "./getSpendableUtxos";
 import type { BitcoinIntent } from "./intent";
-import { opReturnScript } from "./intent";
+import { coinControlOf, opReturnScript } from "./intent";
 import type { DerivationModes, ICrypto, UtxoSelection } from "./selectUtxos";
 import { cryptoFor, derivationModeOf, selectUtxos, transactionSize } from "./selectUtxos";
 
@@ -58,6 +59,9 @@ export function formatBytes(config: BitcoinCoinConfig, inputCount: number): numb
  * `selectUtxos` selects them. `estimateFees` and `craftTransaction` both start from it, so the
  * estimate prices exactly what crafting builds.
  *
+ * The intent's coin control (`data.utxoStrategy`, see `coinControlOf`) narrows and orders the
+ * outputs: excluded ones are never spent, selected ones always are.
+ *
  * `recipientScript` defaults to the intent's recipient; `estimateFees` passes the sender's own
  * script while the recipient is not yet a valid address. An imposed absolute fee reads no explorer
  * rate: only the relay floor.
@@ -75,8 +79,9 @@ export async function planTransaction(
   const opReturn = opReturnScript(intent, crypto);
   const extraOutputScripts = opReturn ? [opReturn] : [];
   const derivationMode = derivationModeOf(senderScript);
+  const control = coinControlOf(intent);
 
-  const [utxos, { feePerByte, relayFeePerByte }] = await Promise.all([
+  const [spendable, { feePerByte, relayFeePerByte }] = await Promise.all([
     getSpendableUtxos(config, intent.sender),
     getFeeRate(config, {
       feePerByte: fees.feePerByte,
@@ -84,8 +89,22 @@ export async function planTransaction(
     }),
   ]);
 
+  const excluded = new Set(control.excluded.map(ref => outpoint(ref.hash, ref.outputIndex)));
+  const candidates = spendable.filter(utxo => !excluded.has(outpoint(utxo.hash, utxo.outputIndex)));
+  // A selected output that is not spendable (unknown, spent, or spent by a pending transaction) is
+  // refused here, in one place.
+  const selected = control.selected.map(ref => {
+    const id = outpoint(ref.hash, ref.outputIndex);
+    const found = candidates.find(utxo => outpoint(utxo.hash, utxo.outputIndex) === id);
+    if (!found) throw new UnknownUtxo(`UTXO ${id} is not a spendable output`, { utxoId: id });
+    return found;
+  });
+  const selectedIds = new Set(selected.map(utxo => outpoint(utxo.hash, utxo.outputIndex)));
+
   const selection = selectUtxos({
-    utxos,
+    utxos: candidates.filter(utxo => !selectedIds.has(outpoint(utxo.hash, utxo.outputIndex))),
+    selected,
+    strategy: control.strategy,
     amount: intent.amount,
     useAllAmount: !!intent.useAllAmount,
     recipientScript: recipient,
