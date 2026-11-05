@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { QuotesErrorCodes } from "@ledgerhq/wallet-api-exchange-module";
+import { SwapQuotesRequestFailed } from "../../../errors";
 import { fetchPerpsDepositQuote, type PerpsDepositQuoteResult } from "./quote";
 
 const QUOTE_DEBOUNCE_MS = 500;
@@ -81,7 +82,10 @@ export function usePerpsDepositQuote(params: UsePerpsDepositQuoteParams): PerpsD
         .then(result => {
           if (!stale) setCurrent({ key: requestKey, state: { result, isLoading: false } });
         })
-        .catch(() => {
+        .catch((error: unknown) => {
+          if (!(error instanceof SwapQuotesRequestFailed)) {
+            console.warn("[perps] deposit quote failed", error);
+          }
           if (!stale) setCurrent({ key: requestKey, state: NO_QUOTES });
         });
     }, QUOTE_DEBOUNCE_MS);

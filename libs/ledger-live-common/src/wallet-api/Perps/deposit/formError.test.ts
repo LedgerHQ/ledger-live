@@ -74,6 +74,15 @@ describe("getDepositBaseError", () => {
     expect(getDepositBaseError(base)).toBeNull();
   });
 
+  it("blocks the quote of a token deposit whose fee account is empty", () => {
+    expect(getDepositBaseError({ ...base, parentAccount: mainAccount("0") })).toEqual({
+      code: "notEnoughFees",
+      labelKey: "perpsDeposit.formErrors.feeAccountEmpty",
+      values: { ticker: "ETH" },
+    });
+    expect(getDepositBaseError({ ...base, parentAccount: mainAccount("1") })).toBeNull();
+  });
+
   it("reports an amount above the balance", () => {
     expect(getDepositBaseError({ ...base, depositAmount: 51 })?.code).toBe("insufficientBalance");
   });
@@ -113,6 +122,10 @@ describe("resolveDepositFormError", () => {
   });
 
   describe("priority", () => {
+    it("shows offline only once there is an account and an amount", () => {
+      expect(resolve({ isOffline: true, depositAmount: 0 })).toBeNull();
+    });
+
     it("shows offline before everything else", () => {
       expect(
         resolve({
@@ -218,7 +231,7 @@ describe("resolveDepositFormError", () => {
       ).toBe("notEnoughFees");
     });
 
-    it("uses the current balance, not the balance the quote saw", () => {
+    it("obeys the quote flag as one more fee signal, with the fee of the quote", () => {
       expect(
         resolve({
           parentAccount: mainAccount("1000"),
@@ -229,8 +242,28 @@ describe("resolveDepositFormError", () => {
             }),
             errors: [],
           },
-        }),
-      ).toBeNull();
+        })?.code,
+      ).toBe("notEnoughFees");
+    });
+
+    it.each([
+      ["the estimated fee", { estimatedNetworkFee: fee("1", "vethor") }],
+      [
+        "the approval fee",
+        { estimatedNetworkFee: fee("1"), approvalNetworkFee: fee("1", "vethor") },
+      ],
+    ])("shows no quote when %s is in another currency", (_case, fees) => {
+      expect(resolve({ quoteResult: { quote: quote(fees), errors: [] } })?.code).toBe("noQuotes");
+    });
+
+    it("shows the amount limit before a fee currency that cannot be resolved", () => {
+      const vechain = mainAccount("1", { feesCurrency: usdc } as unknown as Partial<Account>);
+      expect(
+        resolve({
+          depositAccount: vechain,
+          quoteResult: { errors: [{ code: QuotesErrorCodes.AMOUNT_TOO_LOW, minAmount: "3" }] },
+        })?.code,
+      ).toBe("amountTooLow");
     });
 
     it("formats the fee for the user locale", () => {

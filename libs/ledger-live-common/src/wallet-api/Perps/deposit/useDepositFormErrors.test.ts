@@ -79,7 +79,6 @@ function renderForm(overrides: Partial<UsePerpsDepositFormParams> = {}) {
     maxAmount: 50,
     toCurrencyAmount: () => new BigNumber("20000000"),
     isOffline: false,
-    refreshGeneration: 0,
     counterValueCurrency: "USD",
     locale: "en",
     sourceCurrency: "USDC",
@@ -205,6 +204,34 @@ describe("usePerpsDepositForm", () => {
     expect(result.current.canLearnMore).toBe(false);
     expect(result.current.isDetailsOpen).toBe(false);
     expect(openBuy).not.toHaveBeenCalled();
+  });
+});
+
+describe("usePerpsDepositForm refresh and analytics", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockUsePerpsDepositQuote.mockReturnValue(AMOUNT_TOO_LOW);
+  });
+
+  it("asks for a new quote of the same draft when refreshQuote runs", () => {
+    const { result } = renderForm();
+    const before = mockUsePerpsDepositQuote.mock.lastCall?.[0] as { refreshGeneration: number };
+
+    act(() => result.current.refreshQuote());
+
+    const after = mockUsePerpsDepositQuote.mock.lastCall?.[0] as { refreshGeneration: number };
+    expect(after.refreshGeneration).toBe(before.refreshGeneration + 1);
+  });
+
+  it("tracks the same error again for another funding asset", () => {
+    const { rerender, params, track } = renderForm();
+
+    rerender({ ...params, sourceCurrency: "ETH" });
+
+    expect(errorEvents(track).map(([, properties]) => properties.sourceCurrency)).toEqual([
+      "USDC",
+      "ETH",
+    ]);
   });
 });
 

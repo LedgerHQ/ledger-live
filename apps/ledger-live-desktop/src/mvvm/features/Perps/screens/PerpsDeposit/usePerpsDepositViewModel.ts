@@ -259,7 +259,6 @@ export function usePerpsDepositViewModel(
     maxAmount,
     toCurrencyAmount,
     isOffline,
-    refreshGeneration: 0,
     counterValueCurrency: counterValueCurrency.ticker,
     locale,
     sourceCurrency: depositCurrency?.ticker ?? PERPS_DEPOSIT_DEFAULT_FUNDING_TICKER,

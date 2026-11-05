@@ -32,11 +32,13 @@ export type DepositAmountState = Readonly<{
 
 export function getDepositAmountState({
   depositAccount,
+  parentAccount,
   depositAmount,
   maxAmount,
   convertedAmount,
 }: Readonly<{
   depositAccount: AccountLike | undefined;
+  parentAccount: Account | undefined;
   depositAmount: number;
   maxAmount: number | null;
   convertedAmount: BigNumber | null;
@@ -46,6 +48,7 @@ export function getDepositAmountState({
     depositAmount,
     maxAmount,
     hasConversion: convertedAmount !== null,
+    parentAccount,
   });
   const isFormComplete = depositAmount > 0 && Boolean(depositAccount) && baseError === null;
   const sentAmountAtomic =
@@ -132,18 +135,26 @@ export function useDepositFormErrors({
     [sourceCurrency, targetCurrency],
   );
 
-  const trackedErrorCodeRef = useRef<string | null>(null);
+  const trackedErrorKeyRef = useRef<string | null>(null);
   useEffect(() => {
     if (isQuoteLoading) return;
     const code = statusError?.code ?? null;
-    if (code === trackedErrorCodeRef.current) return;
-    trackedErrorCodeRef.current = code;
+    const key = code && [code, sourceCurrency, targetCurrency].join("|");
+    if (key === trackedErrorKeyRef.current) return;
+    trackedErrorKeyRef.current = key;
     if (!code) return;
     track("swap error message", {
       message: DEPOSIT_FORM_ERROR_ANALYTICS_MESSAGES[code],
       ...analyticsProperties,
     });
-  }, [analyticsProperties, isQuoteLoading, statusError?.code, track]);
+  }, [
+    analyticsProperties,
+    isQuoteLoading,
+    sourceCurrency,
+    statusError?.code,
+    targetCurrency,
+    track,
+  ]);
 
   const buyTarget = useMemo(
     () => getDepositBuyTarget({ statusError, depositAccount, parentAccount, getAccountName }),
@@ -195,7 +206,6 @@ export type UsePerpsDepositFormParams = Readonly<{
   maxAmount: number | null;
   toCurrencyAmount: (currency: ReturnType<typeof getAccountCurrency>) => BigNumber | null;
   isOffline: boolean;
-  refreshGeneration: number;
   counterValueCurrency: string;
   locale: string;
   sourceCurrency: string;
@@ -209,6 +219,7 @@ export type PerpsDepositForm = DepositFormErrors &
     sentAmount: string;
     quote: PerpsDepositQuote | undefined;
     isQuoteLoading: boolean;
+    refreshQuote: () => void;
   }>;
 
 export function usePerpsDepositForm({
@@ -219,7 +230,6 @@ export function usePerpsDepositForm({
   maxAmount,
   toCurrencyAmount,
   isOffline,
-  refreshGeneration,
   counterValueCurrency,
   locale,
   sourceCurrency,
@@ -227,6 +237,9 @@ export function usePerpsDepositForm({
   track,
   openBuy,
 }: UsePerpsDepositFormParams): PerpsDepositForm {
+  const [refreshGeneration, setRefreshGeneration] = useState(0);
+  const refreshQuote = useCallback(() => setRefreshGeneration(generation => generation + 1), []);
+
   const parentAccount = useMemo(
     () => (depositAccount ? findDepositParentAccount(depositAccount, accounts) : undefined),
     [accounts, depositAccount],
@@ -241,11 +254,12 @@ export function usePerpsDepositForm({
     () =>
       getDepositAmountState({
         depositAccount,
+        parentAccount,
         depositAmount,
         maxAmount,
         convertedAmount,
       }),
-    [convertedAmount, depositAccount, depositAmount, maxAmount],
+    [convertedAmount, depositAccount, depositAmount, maxAmount, parentAccount],
   );
 
   const { sentAmountAtomic } = amountState;
@@ -281,5 +295,5 @@ export function usePerpsDepositForm({
     openBuy,
   });
 
-  return { ...formErrors, sentAmount, quote: quoteResult?.quote, isQuoteLoading };
+  return { ...formErrors, sentAmount, quote: quoteResult?.quote, isQuoteLoading, refreshQuote };
 }

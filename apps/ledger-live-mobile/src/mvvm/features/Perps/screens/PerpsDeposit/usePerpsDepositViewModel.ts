@@ -106,7 +106,6 @@ export function usePerpsDepositViewModel({
   const [isSignOpen, setIsSignOpen] = useState(false);
   const [signingDevice, setSigningDevice] = useState<Device | null | undefined>();
   const [reviewParams, setReviewParams] = useState<PerpsReviewParams | null>(null);
-  const [quoteRefreshGeneration, setQuoteRefreshGeneration] = useState(0);
 
   // Leaving the screen before the deposit settles abandons it; after it settles this is a no-op.
   useEffect(() => cancelDepositRequest, []);
@@ -259,7 +258,7 @@ export function usePerpsDepositViewModel({
     [navigation, openBuySellForAccount, route.key],
   );
 
-  const { sentAmount, quote, isQuoteLoading, ...formErrors } = usePerpsDepositForm({
+  const { sentAmount, quote, isQuoteLoading, refreshQuote, ...formErrors } = usePerpsDepositForm({
     accounts,
     receiverAccount,
     depositAccount,
@@ -267,7 +266,6 @@ export function usePerpsDepositViewModel({
     maxAmount,
     toCurrencyAmount,
     isOffline,
-    refreshGeneration: quoteRefreshGeneration,
     counterValueCurrency: counterValueCurrency.ticker,
     locale,
     sourceCurrency: depositCurrency?.ticker ?? PERPS_DEPOSIT_DEFAULT_FUNDING_TICKER,
@@ -327,9 +325,9 @@ export function usePerpsDepositViewModel({
   }, []);
 
   const returnToForm = useCallback(() => {
-    setQuoteRefreshGeneration(generation => generation + 1);
+    refreshQuote();
     setIsSignOpen(false);
-  }, []);
+  }, [refreshQuote]);
 
   const endSigning = useCallback(
     ({ swapId }: PerpsDepositOutcome) => {
