@@ -13,6 +13,7 @@ export type UsePerpsDepositQuoteParams = {
   amount: string;
   isOffline: boolean;
   refreshGeneration: number;
+  feeAccountBalance?: string;
   counterValueCurrency: string;
   locale: string;
 };
@@ -37,6 +38,7 @@ function requestKeyOf({
   isOffline,
   refreshGeneration,
   counterValueCurrency,
+  feeAccountBalance,
 }: UsePerpsDepositQuoteParams) {
   if (!depositAccount || !amount || isOffline) return null;
   return [
@@ -45,6 +47,7 @@ function requestKeyOf({
     amount,
     counterValueCurrency,
     refreshGeneration,
+    feeAccountBalance,
   ].join("|");
 }
 

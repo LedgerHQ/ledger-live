@@ -7,6 +7,7 @@ import {
   PERPS_DEPOSIT_ANALYTICS_CONTEXT,
   getDepositBaseError,
   getDepositBuyTarget,
+  getDepositFeeAccount,
   resolveDepositFormError,
   type DepositBuyTarget,
   type DepositErrorDetails,
@@ -250,6 +251,10 @@ export function usePerpsDepositForm({
     [depositAccount, toCurrencyAmount],
   );
 
+  const feeAccount = depositAccount
+    ? getDepositFeeAccount(depositAccount, parentAccount)
+    : undefined;
+
   const amountState = useMemo(
     () =>
       getDepositAmountState({
@@ -277,6 +282,7 @@ export function usePerpsDepositForm({
     refreshGeneration,
     counterValueCurrency,
     locale,
+    feeAccountBalance: feeAccount?.spendableBalance.toFixed(),
   });
 
   const formErrors = useDepositFormErrors({

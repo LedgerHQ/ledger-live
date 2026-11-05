@@ -118,6 +118,23 @@ describe("usePerpsDepositForm", () => {
     expect(result.current.canReview).toBe(true);
   });
 
+  it("keys the quote on the fee account balance, so a funded account gets a new fee check", () => {
+    const { rerender, params } = renderForm();
+    expect(mockUsePerpsDepositQuote).toHaveBeenLastCalledWith(
+      expect.objectContaining({ feeAccountBalance: "1000000000000000000" }),
+    );
+
+    const fundedParent = {
+      ...parentAccount,
+      spendableBalance: new BigNumber("2000000000000000000"),
+    };
+    rerender({ ...params, accounts: [fundedParent, depositAccount, receiverAccount] });
+
+    expect(mockUsePerpsDepositQuote).toHaveBeenLastCalledWith(
+      expect.objectContaining({ feeAccountBalance: "2000000000000000000" }),
+    );
+  });
+
   it("asks for nothing and blocks the review while the conversion is missing", () => {
     const { result } = renderForm({ toCurrencyAmount: () => null });
 
