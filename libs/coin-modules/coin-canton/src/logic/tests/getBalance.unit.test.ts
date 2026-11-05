@@ -1,4 +1,3 @@
-import type { CantonCoinConfig } from "../../config";
 import { getBalance as getBalanceFromNetwork, isGatewayEnabled } from "../../network/gateway";
 import {
   createMockCoinConfigValue,
@@ -8,71 +7,107 @@ import {
 import { getBalance } from "../getBalance";
 
 jest.mock("../../network/gateway", () => ({
+  ...jest.requireActual("../../network/gateway"),
   getBalance: jest.fn(),
   isGatewayEnabled: jest.fn(() => true),
 }));
 
 const mockedGetBalanceFromNetwork = jest.mocked(getBalanceFromNetwork);
 const mockedIsGatewayEnabled = jest.mocked(isGatewayEnabled);
-const createMockConfig = (useGateway: boolean, nativeInstrumentId?: string): CantonCoinConfig => ({
-  ...createMockCoinConfigValue(),
-  useGateway,
-  ...(nativeInstrumentId ? { nativeInstrumentId } : {}),
-});
+
+const contextWithReserve = (minReserve: number) =>
+  createMockContext({ ...createMockCoinConfigValue(), minReserve });
 
 describe("getBalance", () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it("should return adapted balances when useGateway is true", async () => {
-    const config = createMockConfig(true, "native-id");
-    const mockInstruments = createMockInstrumentBalances(2, [
+  it("folds every native row, whatever its admin, into one native balance", async () => {
+    mockedGetBalanceFromNetwork.mockResolvedValue(
+      createMockInstrumentBalances(3, [
+        { instrument_id: "Amulet", admin_id: "DSO", amount: "1000", locked: false },
+        { instrument_id: "Amulet", admin_id: "DSO", amount: "300", locked: true },
+        { instrument_id: "Amulet", admin_id: "OtherAdmin", amount: "200", locked: false },
+      ]),
+    );
+
+    const balances = await getBalance(contextWithReserve(0), "party");
+
+    expect(balances).toEqual([{ asset: { type: "native" }, value: 1500n, locked: 300n }]);
+  });
+
+  it("locks the reserve once on top of the locked native rows", async () => {
+    mockedGetBalanceFromNetwork.mockResolvedValue(
+      createMockInstrumentBalances(3, [
+        { instrument_id: "Amulet", admin_id: "DSO", amount: "1000", locked: false },
+        { instrument_id: "Amulet", admin_id: "OtherAdmin", amount: "500", locked: false },
+        { instrument_id: "Amulet", admin_id: "DSO", amount: "300", locked: true },
+      ]),
+    );
+
+    const [native] = await getBalance(contextWithReserve(100), "party");
+
+    expect(native).toEqual({ asset: { type: "native" }, value: 1800n, locked: 400n });
+  });
+
+  it("caps the reserve at the unlocked native amount", async () => {
+    mockedGetBalanceFromNetwork.mockResolvedValue(
+      createMockInstrumentBalances(2, [
+        { instrument_id: "Amulet", amount: "40", locked: false },
+        { instrument_id: "Amulet", amount: "300", locked: true },
+      ]),
+    );
+
+    const [native] = await getBalance(contextWithReserve(100), "party");
+
+    expect(native).toEqual({ asset: { type: "native" }, value: 340n, locked: 340n });
+  });
+
+  it("keys tokens by instrument id and admin, merging their locked and unlocked rows", async () => {
+    mockedGetBalanceFromNetwork.mockResolvedValue(
+      createMockInstrumentBalances(3, [
+        { instrument_id: "USDCx", admin_id: "IssuerA", amount: "700", locked: false },
+        { instrument_id: "USDCx", admin_id: "IssuerA", amount: "50", locked: true },
+        { instrument_id: "USDCx", admin_id: "IssuerB", amount: "9", locked: false },
+      ]),
+    );
+
+    const balances = await getBalance(contextWithReserve(100), "party");
+
+    expect(balances).toEqual([
       {
-        instrument_id: "native-id",
-        amount: "1000",
-        utxo_count: 1,
-        locked: false,
+        asset: { type: "token", assetReference: "USDCx", assetOwner: "IssuerA" },
+        value: 750n,
+        locked: 50n,
       },
       {
-        instrument_id: "token-123",
-        amount: "5000",
-        utxo_count: 1,
-        locked: true,
-      },
-    ]);
-
-    mockedGetBalanceFromNetwork.mockResolvedValue(mockInstruments);
-
-    const result = await getBalance(createMockContext(config), "test-party-id");
-
-    expect(mockedGetBalanceFromNetwork).toHaveBeenCalledWith(config, "test-party-id");
-    expect(result).toEqual([
-      {
-        value: BigInt(1000),
-        locked: BigInt(0),
-        asset: { type: "native-id" },
-        utxoCount: 1,
-        instrumentId: "native-id",
-        adminId: "AmuletAdmin",
-      },
-      {
-        value: BigInt(5000),
-        locked: BigInt(5000),
-        asset: { type: "token", assetReference: "token-123" },
-        utxoCount: 1,
-        instrumentId: "token-123",
-        adminId: "AmuletAdmin",
+        asset: { type: "token", assetReference: "USDCx", assetOwner: "IssuerB" },
+        value: 9n,
+        locked: 0n,
       },
     ]);
   });
 
-  it("should throw an error when useGateway is false (not implemented with node)", async () => {
-    mockedIsGatewayEnabled.mockReturnValue(false);
+  it("returns no balance for a party holding nothing", async () => {
+    mockedGetBalanceFromNetwork.mockResolvedValue([]);
 
-    await expect(getBalance(createMockContext(), "test-party-id")).rejects.toThrow(
-      "Not implemented",
-    );
+    await expect(getBalance(createMockContext(), "party")).resolves.toEqual([]);
+  });
+
+  it("queries the gateway with the resolved config and party", async () => {
+    const config = createMockCoinConfigValue();
+    mockedGetBalanceFromNetwork.mockResolvedValue([]);
+
+    await getBalance(createMockContext(config), "party");
+
+    expect(mockedGetBalanceFromNetwork).toHaveBeenCalledWith(config, "party");
+  });
+
+  it("throws when the gateway is disabled, the only implemented transport", async () => {
+    mockedIsGatewayEnabled.mockReturnValueOnce(false);
+
+    await expect(getBalance(createMockContext(), "party")).rejects.toThrow("Not implemented");
     expect(mockedGetBalanceFromNetwork).not.toHaveBeenCalled();
   });
 });

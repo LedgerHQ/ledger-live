@@ -38,7 +38,7 @@ export const DEFAULT_TAP_REQUEST_AMOUNT = "1000000000000000000000000000000000000
 export const getKey = (id: string, adminId: string) => `${id}${SEPARATOR}${adminId}`;
 
 const getGatewayUrl = (config: CantonCoinConfig) => config.gatewayUrl;
-const getNodeId = (config: CantonCoinConfig) => {
+export const getNodeId = (config: CantonCoinConfig) => {
   const overrideNodeId = getEnv("CANTON_NODE_ID_OVERRIDE");
   if (overrideNodeId) {
     return overrideNodeId;
