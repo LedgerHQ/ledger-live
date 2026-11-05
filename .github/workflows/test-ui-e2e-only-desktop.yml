@@ -1162,7 +1162,8 @@ jobs:
     needs: [prepare-devices, e2e-tests-macos]
     if: ${{ !cancelled() && inputs.run_on_macos }}
     outputs:
-      status: ${{ steps.summary.outputs.status }}
+      # A test job that crashed or timed out fails the row even if the results it left all passed.
+      status: ${{ needs.e2e-tests-macos.result != 'success' && 'failure' || steps.summary.outputs.status }}
       summary_message: ${{ steps.summary.outputs.summary_message }}
       report-url: ${{ steps.allure-server.outputs.report-url }}
       qaa-report-url: ${{ steps.qaa-allure-upload.outputs.report_url }}
