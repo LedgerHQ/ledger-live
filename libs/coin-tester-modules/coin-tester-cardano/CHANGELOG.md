@@ -1,5 +1,12 @@
 # @ledgerhq/coin-tester-cardano
 
+## 0.9.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@38.6.1-hotfix.0
+
 ## 0.9.0
 
 ### Minor Changes

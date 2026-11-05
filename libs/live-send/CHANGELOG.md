@@ -1,5 +1,12 @@
 # @ledgerhq/live-send
 
+## 0.1.7-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@38.6.1-hotfix.0
+
 ## 0.1.6
 
 ### Patch Changes

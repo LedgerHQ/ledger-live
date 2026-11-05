@@ -307,5 +307,7 @@
     "@ledgerhq/generators": "0.2.0",
     "@ledgerhq/prune-changelogs": "0.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "solana-co-signed-raw-tx"
+  ]
 }

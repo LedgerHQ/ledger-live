@@ -1,5 +1,12 @@
 # @ledgerhq/coin-tester-kaspa
 
+## 1.1.3-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@38.6.1-hotfix.0
+
 ## 1.1.2
 
 ### Patch Changes
