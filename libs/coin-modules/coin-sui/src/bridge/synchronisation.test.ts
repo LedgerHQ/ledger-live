@@ -7,7 +7,7 @@ import { mist, ONE_SUI } from "../constants";
 import * as networkModule from "../network";
 import { DEFAULT_COIN_TYPE } from "../network/sdk";
 import { createFixtureAccount, createFixtureOperation } from "../types/bridge.fixture";
-import { getAccountShape } from "./synchronisation";
+import { getAccountShape, revalueStoredStakingOperation } from "./synchronisation";
 
 jest.mock("../network", () => {
   const mockGetAccountBalances = jest.fn();
@@ -977,6 +977,118 @@ describe("getAccountShape", () => {
       expect(shape.spendableBalance).toEqual(new BigNumber(1000));
       expect(shape.balance).toEqual(new BigNumber(1550));
     });
+
+    it("rewrites stored stake operations without refetching them", async () => {
+      // GIVEN
+      const fee = BigNumber(1_000_000);
+      const storedStake = createFixtureOperation({
+        id: "stake-op",
+        hash: "stake-digest",
+        type: "DELEGATE",
+        fee,
+        value: BigNumber(mist(2)).plus(fee),
+        extra: { coinType: DEFAULT_COIN_TYPE, stakedAmount: mist(2) },
+      });
+      const initialAccount = createFixtureAccount({
+        operations: [storedStake],
+        syncHash: "stake-digest",
+      });
+      mockGetAccountBalances.mockResolvedValue([createAccountBalance()]);
+      mockGetOperations.mockResolvedValue([]);
+      mockGetStakesRaw.mockResolvedValue([]);
+
+      // WHEN
+      const shape = await getAccountShape(
+        {
+          index: 0,
+          derivationPath: "44'/784'/0'/0'/0'",
+          currency: getCryptoCurrencyById("sui"),
+          address: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
+          initialAccount,
+          derivationMode: "sui",
+        },
+        { blacklistedTokenIds: [], paginationConfig: {} },
+      );
+
+      // THEN
+      expect(mockGetOperations).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.any(String),
+        expect.any(String),
+        "stake-digest",
+      );
+      expect(shape.operations).toHaveLength(1);
+      expect(shape.operations?.[0].value).toEqual(fee);
+    });
+  });
+});
+
+describe("revalueStoredStakingOperation", () => {
+  const fee = BigNumber(1_000_000);
+
+  it("rewrites a stored stake to the gas share of its value", () => {
+    const op = createFixtureOperation({
+      type: "DELEGATE",
+      fee,
+      value: BigNumber(mist(2)).plus(fee),
+      extra: { stakedAmount: mist(2) },
+    });
+    expect(revalueStoredStakingOperation(op).value).toEqual(fee);
+  });
+
+  it("rewrites a stored sponsored stake to zero", () => {
+    const op = createFixtureOperation({
+      type: "DELEGATE",
+      fee,
+      value: BigNumber(mist(2)),
+      extra: { stakedAmount: mist(2) },
+    });
+    expect(revalueStoredStakingOperation(op).value).toEqual(BigNumber(0));
+  });
+
+  it("rewrites a stored stake without principal, and a stored unstake, to the fee", () => {
+    const stake = createFixtureOperation({
+      type: "DELEGATE",
+      fee,
+      value: BigNumber(mist(2)),
+      extra: {},
+    });
+    const unstake = createFixtureOperation({ type: "UNDELEGATE", fee, value: BigNumber(mist(-2)) });
+    expect(revalueStoredStakingOperation(stake).value).toEqual(fee);
+    expect(revalueStoredStakingOperation(unstake).value).toEqual(fee);
+  });
+
+  it("handles a negative net fee", () => {
+    const rebate = BigNumber(-10);
+    const selfPaid = createFixtureOperation({
+      type: "DELEGATE",
+      fee: rebate,
+      value: BigNumber(mist(2)).plus(rebate),
+      extra: { stakedAmount: mist(2) },
+    });
+    const sponsored = createFixtureOperation({
+      type: "DELEGATE",
+      fee: rebate,
+      value: BigNumber(mist(2)),
+      extra: { stakedAmount: mist(2) },
+    });
+    const rewrittenSponsored = createFixtureOperation({
+      type: "UNDELEGATE",
+      fee: rebate,
+      value: BigNumber(0),
+    });
+    expect(revalueStoredStakingOperation(selfPaid).value).toEqual(rebate);
+    expect(revalueStoredStakingOperation(sponsored).value).toEqual(BigNumber(0));
+    expect(revalueStoredStakingOperation(rewrittenSponsored)).toBe(rewrittenSponsored);
+  });
+
+  it("leaves rewritten stake operations and other operations unchanged", () => {
+    const rewritten = createFixtureOperation({ type: "DELEGATE", fee, value: fee });
+    const sponsored = createFixtureOperation({ type: "UNDELEGATE", fee, value: BigNumber(0) });
+    const out = createFixtureOperation();
+    expect(revalueStoredStakingOperation(rewritten)).toBe(rewritten);
+    expect(revalueStoredStakingOperation(sponsored)).toBe(sponsored);
+    expect(revalueStoredStakingOperation(out)).toBe(out);
   });
 });
 
