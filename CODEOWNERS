@@ -51,6 +51,7 @@ apps/ledger-live-desktop/scripts/                        @ledgerhq/platform
 /shared/cloud-sync/                                      @ledgerhq/platform
 /shared/cloud-sync-module/                               @ledgerhq/platform
 /shared/env/                                             @ledgerhq/platform
+/shared/native-performance/                              @ledgerhq/platform
 
 # Platform — mobile
 apps/ledger-live-mobile/android/                         @ledgerhq/platform
@@ -149,7 +150,7 @@ features/flow/portfolio-services-entry-points/           @ledgerhq/wallet-xp
 features/platform/assets-table/                          @ledgerhq/wallet-xp
 
 # Wallet — Intents
-features/platform/verify-address-intent/                 @ledgerhq/wallet-xp
+features/platform/intent-verify-address/                 @ledgerhq/wallet-xp
 
 # Wallet — App lock
 features/platform/app-lock/                              @ledgerhq/wallet-xp
@@ -196,6 +197,8 @@ apps/ledger-live-mobile/src/components/DelegationDrawer.tsx         @ledgerhq/co
 apps/cli/src/commands/blockchain                                    @ledgerhq/coin-integration
 libs/coin-*/                                                        @ledgerhq/coin-integration
 libs/ledger-wallet-framework/                                       @ledgerhq/coin-integration
+shared/live-config-overrides/                                       @ledgerhq/coin-integration
+devtools/coin-config/                                               @ledgerhq/coin-integration
 libs/ledger-live-common/src/bridge/                                 @ledgerhq/coin-integration
 libs/ledger-live-common/src/coin-modules/                           @ledgerhq/coin-integration
 libs/ledger-live-common/src/families/                               @ledgerhq/coin-integration

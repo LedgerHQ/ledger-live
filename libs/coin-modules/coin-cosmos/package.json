@@ -50,7 +50,6 @@
     "@cosmjs/stargate": "^0.37.0",
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
-    "@ledgerhq/live-config": "catalog:",
     "@ledgerhq/live-env": "catalog:",
     "@ledgerhq/live-network": "catalog:",
     "@ledgerhq/logs": "catalog:",

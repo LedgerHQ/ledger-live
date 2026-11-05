@@ -5,6 +5,7 @@ import { combineReducers, type Store } from "redux";
 import { llmRTKApiReducers } from "~/context/rtkQueryApi";
 import featureFlags from "@shared/feature-flags";
 import { appConfigReducer } from "@shared/app-config";
+import { liveConfigOverridesReducer } from "@shared/live-config-overrides";
 import accounts from "./accounts";
 import appstate from "./appstate";
 import auth from "./auth";
@@ -88,6 +89,7 @@ const appReducer = combineReducers({
   inView,
   knownDevices,
   largeMover,
+  liveConfigOverrides: liveConfigOverridesReducer,
   market,
   marketListConfig: marketListConfigReducer,
   marketBanner: marketBannerReducer,

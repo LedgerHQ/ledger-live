@@ -55,7 +55,7 @@ export interface DeeplinkHandlerContext {
   isPayTabEnabled: boolean;
   /** `lwdContacts` — deeplink navigates to `/contacts` only when this flag is enabled; otherwise falls back to the default handler. */
   isContactsEnabled: boolean;
-  /** Predictions manifest found, or true until the live app catalog loads so a cold-start deeplink is not dropped. */
+  /** `ptxPredictionsLiveAppDesktop` enabled and its manifest found, or the live app catalog still loading so a cold-start deeplink is not dropped. */
   isPredictionsAvailable: boolean;
 }
 

@@ -58,8 +58,12 @@ export function useDeepLinkHandler() {
   const isContactsEnabled = !!lwdContacts?.enabled;
   const { state: liveAppCatalog } = useRemoteLiveAppContext();
   const isLiveAppCatalogLoaded = !!liveAppCatalog.value || !!liveAppCatalog.error;
-  const predictionsManifest = useLiveAppManifest(PREDICTIONS_LIVE_APP_ID);
-  const isPredictionsAvailable = !!predictionsManifest || !isLiveAppCatalogLoaded;
+  const predictionsFlag = useFeature("ptxPredictionsLiveAppDesktop");
+  const predictionsManifest = useLiveAppManifest(
+    predictionsFlag?.params?.manifest_id || PREDICTIONS_LIVE_APP_ID,
+  );
+  const isPredictionsAvailable =
+    !!predictionsFlag?.enabled && (!!predictionsManifest || !isLiveAppCatalogLoaded);
   const accountsPath = ACCOUNTS_SIDEBAR_PATH;
 
   const navigate: NavigateFn = useCallback(

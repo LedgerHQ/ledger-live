@@ -23,15 +23,29 @@ const swipeDirectionFor = (direction: Direction): Direction => {
   }
 };
 
+/**
+ * Builds the element to check on every call, at the match index its element handle uses.
+ * A fresh element each time: Android's atIndex mutates the matcher it wraps.
+ */
+export type ElementFactory = () => NativeElement;
+
+type ScrollTarget = NativeMatcher | ElementFactory;
+
+const toElement = (target: ScrollTarget): NativeElement =>
+  typeof target === "function" ? target() : element(target).atIndex(0);
+
+const describeTarget = (target: ScrollTarget): string =>
+  typeof target === "function" ? "the element handle" : JSON.stringify(target);
+
 export class PageScroller {
   async performScroll(
-    matcher: NativeMatcher,
-    scrollView?: string | RegExp | NativeMatcher,
+    target: ScrollTarget,
+    scrollView?: string | RegExp | ScrollTarget,
     pixels = 300,
     initialDirection: Direction = "down",
     timeout = TIMEOUT.xxxsmall,
   ): Promise<void> {
-    if (await this.isVisible(matcher, timeout)) {
+    if (await this.isVisible(target, timeout)) {
       return;
     }
 
@@ -45,7 +59,7 @@ export class PageScroller {
     for (let attempt = 0; attempt < MAX_ATTEMPTS_PER_DIRECTION * 2; attempt++) {
       await this.scrollOnce(scrollContainer, direction, pixels);
 
-      if (await this.isVisible(matcher, timeout)) {
+      if (await this.isVisible(target, timeout)) {
         await this.waitForScrollToSettle();
         return;
       }
@@ -61,7 +75,7 @@ export class PageScroller {
       }
     }
 
-    throw new Error(`Failed to find element after scrolling. Matcher: ${JSON.stringify(matcher)}`);
+    throw new Error(`Failed to find element after scrolling. Matcher: ${describeTarget(target)}`);
   }
 
   /**
@@ -79,10 +93,10 @@ export class PageScroller {
     await this.waitForScrollToSettle();
   }
 
-  private async isVisible(matcher: NativeMatcher, timeout: number): Promise<boolean> {
+  private async isVisible(target: ScrollTarget, timeout: number): Promise<boolean> {
     try {
       await withHardTimeout(
-        waitFor(element(matcher).atIndex(0)).toBeVisible().withTimeout(timeout),
+        waitFor(toElement(target)).toBeVisible().withTimeout(timeout),
         waitHardTimeout(timeout),
       );
       return true;
@@ -93,19 +107,20 @@ export class PageScroller {
   }
 
   private async getScrollElement(
-    scrollView?: string | RegExp | NativeMatcher,
+    scrollView?: string | RegExp | ScrollTarget,
   ): Promise<Detox.IndexableNativeElement | NativeElement> {
     if (scrollView) {
-      // string | RegExp serves the elementHelpers.ts globals: keep only NativeMatcher once that file is deleted.
-      const scrollElement =
+      // string | RegExp | NativeMatcher serve the elementHelpers.ts globals: keep only
+      // ElementFactory once that file is deleted.
+      const scrollTarget =
         typeof scrollView === "string" || scrollView instanceof RegExp
           ? by.id(scrollView)
           : scrollView;
-      if (await this.isVisible(scrollElement, TIMEOUT.xsmall)) {
-        return element(scrollElement);
+      if (await this.isVisible(scrollTarget, TIMEOUT.xsmall)) {
+        return typeof scrollTarget === "function" ? scrollTarget() : element(scrollTarget);
       } else {
         const name =
-          scrollElement === scrollView ? JSON.stringify(scrollView) : `with id ${scrollView}`;
+          scrollTarget === scrollView ? describeTarget(scrollTarget) : `with id ${scrollView}`;
         throw new Error(`Scroll view ${name} not found or not visible.`);
       }
     }

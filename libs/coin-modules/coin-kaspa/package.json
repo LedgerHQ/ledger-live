@@ -123,7 +123,7 @@
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
     "@typescript/native": "catalog:",
-    "cross-env": "7.0.3",
+    "cross-env": "catalog:",
     "jest": "catalog:",
     "jest-sonar": "0.2.16",
     "msw": "catalog:",

@@ -1,8 +1,8 @@
-import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { CosmosValidatorsManager } from "../CosmosValidatorsManager";
 import cryptoFactory from "../chain/chain";
-import cosmosCoinConfig, { cosmosConfig } from "../config";
+import cosmosCoinConfig from "../config";
+import { cosmosDefaultsFor } from "../test/cosmosDefaults";
 import { asSafeCosmosPreloadData, setCosmosPreloadData } from "../preloadedData";
 import { CosmosCurrencyConfig, CosmosValidatorItem } from "../types";
 import { hydrate } from "./preload";
@@ -25,10 +25,7 @@ describe("hydrate", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    LiveConfig.setConfig(cosmosConfig);
-    cosmosCoinConfig.setCoinConfig(
-      currencyId => LiveConfig.getValueByKey(`config_currency_${currencyId}`) ?? {},
-    );
+    cosmosCoinConfig.setCoinConfig(cosmosDefaultsFor);
   });
 
   it("should return undefined if data is corrupted", () => {

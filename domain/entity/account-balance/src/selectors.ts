@@ -1,5 +1,6 @@
 import type { AccountUUID } from "@domain/entity-account-descriptor";
-import type { AccountAssetBalance, AccountBalancesState, BalanceAssetId } from "./schema";
+import type { CryptoOrTokenCurrencyId } from "@domain/entity-currency";
+import type { AccountAssetBalance, AccountBalancesState } from "./schema";
 
 export type WithAccountBalances = { accountBalances: AccountBalancesState };
 
@@ -11,6 +12,6 @@ export const selectAccountBalances = (
 export const selectAccountAssetBalance = (
   state: WithAccountBalances,
   accountUUID: AccountUUID,
-  assetId: BalanceAssetId,
+  assetId: CryptoOrTokenCurrencyId,
 ): AccountAssetBalance | undefined =>
   state.accountBalances[accountUUID]?.find(row => row.assetId === assetId);

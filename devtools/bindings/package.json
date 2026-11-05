@@ -53,6 +53,7 @@
     "@shared/app-config": "workspace:*",
     "@shared/env": "workspace:*",
     "@shared/feature-flags": "workspace:*",
+    "@shared/live-config-overrides": "workspace:*",
     "bignumber.js": "catalog:"
   },
   "peerDependencies": {

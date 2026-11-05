@@ -10,7 +10,7 @@ import {
   withFlagOverrides,
 } from "tests/testSetup";
 import { useNavigate } from "react-router";
-import type { VerifyAddressIntentJobState } from "@features/platform-verify-address-intent";
+import type { VerifyAddressIntentJobState } from "@features/platform-intent-verify-address";
 import { buildDeviceInitializationInput } from "LLD/components/DeviceIntentExecutor";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 import { track, trackPage } from "@shared/analytics";

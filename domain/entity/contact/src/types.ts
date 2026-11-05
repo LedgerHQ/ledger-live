@@ -5,7 +5,6 @@ import {
   ContactAddressSchema,
   ContactAddressValueSchema,
   ContactGroupSchema,
-  ContactCurrencyIdSchema,
   ContactIdSchema,
   ContactNameSchema,
   ContactSchema,
@@ -14,7 +13,6 @@ import {
 
 export type ContactId = z.infer<typeof ContactIdSchema>;
 export type ContactAddressId = z.infer<typeof ContactAddressIdSchema>;
-export type ContactCurrencyId = z.infer<typeof ContactCurrencyIdSchema>;
 export type ContactName = z.infer<typeof ContactNameSchema>;
 export type ContactAddressLabel = z.infer<typeof ContactAddressLabelSchema>;
 export type ContactAddressValue = z.infer<typeof ContactAddressValueSchema>;

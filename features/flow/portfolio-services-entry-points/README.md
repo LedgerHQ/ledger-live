@@ -3,7 +3,7 @@
 > [!NOTE]
 > **Status: STABLE** — Production-ready; API is considered stable.
 
-Services entry points (Perps, Borrow) displayed as Lumen cards on the Ledger Wallet portfolio, between
+Services entry points (Perps, Borrow, Predictions) displayed as Lumen cards on the Ledger Wallet portfolio, between
 the Crypto and Stablecoins sections. They replace the Perps and Borrow banners behind an A/B test.
 
 ## Exports
@@ -14,7 +14,7 @@ the Crypto and Stablecoins sections. They replace the Perps and Borrow banners b
 | `ServicesEntryPointsProps` | `{ page, onOpenService }` |
 | `useServicesEntryPointsFeature()` | `ServicesEntryPointsFeature`: `{ isEnabled, services }`. Apps hide the legacy entry points when `isEnabled` |
 | `getServicesEntryPointsAttributes(flag)` | Analytics properties for the A/B test |
-| `ServiceEntryPointId` | `"perps" \| "borrow"` |
+| `ServiceEntryPointId` | `"perps" \| "borrow" \| "predictions"` |
 
 ## Feature flag
 
@@ -25,8 +25,10 @@ the Crypto and Stablecoins sections. They replace the Perps and Borrow banners b
 - `params.services` sets which services are shown and their order, e.g. `["borrow", "perps"]`.
   Without `params`, the default order applies.
 
-A service is shown only when its own feature is on: `ptxPerpsLiveApp` on desktop,
-`ptxPerpsLiveAppMobile` on mobile, `ptxBorrowLiveApp` on both.
+A service is shown only when its own feature is on: `ptxPerpsLiveApp` and
+`ptxPredictionsLiveAppDesktop` on desktop, `ptxPerpsLiveAppMobile` and `ptxPredictionsLiveAppMobile`
+on mobile, `ptxBorrowLiveApp` on both. Predictions is not in the default order, so it only shows
+when `params.services` lists it.
 
 ## Usage
 

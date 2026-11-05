@@ -15,13 +15,13 @@ export function useServicesEntryPointsFeature(): ServicesEntryPointsFeature {
   const { availability } = usePlatformServicesConfig();
   const isEnabled = feature?.enabled ?? false;
   const order = getServicesOrder(feature);
-  const { perps, borrow } = availability;
+  const { perps, borrow, predictions } = availability;
 
   const services = useMemo(
     function resolveEnabledServices() {
-      return isEnabled ? resolveServices(order, { perps, borrow }) : [];
+      return isEnabled ? resolveServices(order, { perps, borrow, predictions }) : [];
     },
-    [isEnabled, order, perps, borrow],
+    [isEnabled, order, perps, borrow, predictions],
   );
 
   return { isEnabled, services };

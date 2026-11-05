@@ -62,6 +62,7 @@
     }
   },
   "devDependencies": {
+    "@domain/entity-currency": "workspace:*",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
     "@ledgerhq/coin-module-framework": "catalog:",

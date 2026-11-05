@@ -21,6 +21,9 @@ export function usePortfolioServicesSectionViewModel(): UsePortfolioServicesSect
         case "borrow":
           navigation.navigate(NavigatorName.Borrow, { screen: ScreenName.Borrow, params: {} });
           return;
+        case "predictions":
+          navigation.navigate(NavigatorName.Predictions, { screen: ScreenName.Predictions });
+          return;
       }
     },
     [navigation],

@@ -115,7 +115,6 @@
     "@ledgerhq/devices": "catalog:",
     "@ledgerhq/hw-app-eth": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
-    "@ledgerhq/live-config": "catalog:",
     "@ledgerhq/live-env": "catalog:",
     "@ledgerhq/live-network": "catalog:",
     "@ledgerhq/logs": "catalog:",

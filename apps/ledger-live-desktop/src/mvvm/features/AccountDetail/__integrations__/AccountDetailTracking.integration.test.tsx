@@ -52,7 +52,7 @@ const ethAccount: Account = {
   subAccounts: [genTokenAccount(0, ethRoot, usdcToken)],
 };
 
-const FACTS = { currency: "ethereum", isTokenAccount: false };
+const FACTS = { network: "ethereum" };
 
 function renderAccount(account: Account = ethAccount) {
   return render(
