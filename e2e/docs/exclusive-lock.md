@@ -48,8 +48,10 @@ Android nightly, and `enable_broadcast` runs. CLI token approvals broadcast what
 7. **Nesting.** A CLI approval inside a test that already holds the account joins that hold instead
    of waiting for it. The test's release waits for the approval to finish.
 8. **Without R2.** If `E2E_EXCLUSIVE_LOCK_*` is unset, or `E2E_EXCLUSIVE_LOCK_MODE` is `local`, a
-   file lock under `$TMPDIR/ll-e2e-locks` serializes processes on this machine only. On CI (`CI`
-   set), only `local` allows it.
+   file lock under `$TMPDIR/ll-e2e-locks` serializes processes on this machine only. It keeps the
+   settle window: the next holder takes the lock, then waits out what is left of it. A dead
+   holder's lock is taken over 30 s after its last heartbeat, or 75 s on an account, to cover its
+   settle window. On CI (`CI` set), only `local` allows it.
 
 If a mobile spec cannot get its lock, its tests fail. Its other hooks still run, so the app starts
 with broadcast disabled, and any later lock on those keys in the spec fails at once.
@@ -57,8 +59,8 @@ with broadcast disabled, and any later lock on those keys in the spec fails at o
 ## Deferral passes
 
 Pass 1 tries each lock without waiting. When a lock is busy, the test (desktop) or spec file
-(mobile) is skipped, and a later pass runs it again. After `E2E_EXCLUSIVE_LOCK_DEFERRAL_PASSES`
-passes (default 2), the next pass waits for busy locks.
+(mobile) is skipped, and a later pass runs it again. After 2 passes (`LOCK_DEFERRAL_PASSES`), the
+next pass waits for busy locks.
 
 - **Desktop.** `pnpm e2e:desktop test:playwright` runs `scripts/playwrightWithDeferrals.mjs`. The
   `lockDeferralReporter` lists the deferred tests, and the next pass selects them with
@@ -77,13 +79,18 @@ passes (default 2), the next pass waits for busy locks.
 | Variable | Set by |
 | --- | --- |
 | `E2E_EXCLUSIVE_LOCK_ENDPOINT`, `_BUCKET`, `_ACCESS_KEY_ID`, `_SECRET_ACCESS_KEY` | The workflows, from the `R2_*` secrets. Set all four or none. Desktop removes them from the app's env |
-| `E2E_EXCLUSIVE_LOCK_DEFERRAL_PASSES` | The `lock_deferral_passes` workflow input |
 | `E2E_EXCLUSIVE_LOCK_DEFER` | The pass runners, on each pass. Do not set it |
-| `E2E_EXCLUSIVE_LOCK_MODE` | The `exclusive_lock` workflow input: `remote` (default) or `local` |
+| `E2E_EXCLUSIVE_LOCK_MODE` | The R2 check before the tests: `local` when R2 fails it, otherwise `remote` |
 | `E2E_EXCLUSIVE_LOCK_PRIORITY` | The workflows: `high` when the ref under test is `release` or `hotfix`, otherwise `normal` |
 
-While R2 is down, dispatch with `exclusive_lock: local`. Each machine still keeps its own tests
-apart, but CI machines no longer keep each other away.
+Before its tests, each desktop, iOS and Android job runs the `check-exclusive-lock` composite
+action, which runs `pnpm --dir libs/live-e2e-shared e2e-cli check-exclusive-lock`. It creates, reads
+and replaces a check key the way a lock claim does, so a missing bucket, credentials that cannot
+read or write, a write outage, or an If-None-Match or If-Match that R2 ignores fail it too. It
+retries for about 15 s while R2 fails. When R2 fails, the job's tests lock in `local` mode and the
+job shows an `Exclusive lock on this machine only` warning annotation with the R2 error. The machine
+still keeps its own tests apart, but no longer keeps other CI machines away. When
+`E2E_EXCLUSIVE_LOCK_*` is missing, the check fails the job.
 
 Every run gets time for one full lock wait, since a run without broadcast still locks the Pay card
 and CLI approval accounts. The iOS step's timeout includes 30 extra minutes (60 to 120 min, 120 on
@@ -106,4 +113,4 @@ hides `info`.
 | `ExclusiveLockRefusedError` | Mobile: the spec's own lock failed earlier |
 | `ExclusiveLockConfigError` | `E2E_EXCLUSIVE_LOCK_*` is missing on CI, or only partly set |
 | `ExclusiveLockStoreFatalError` | R2 rejected the request in a way retrying cannot fix |
-| `ExclusiveLockStoreDownError` | Every R2 request failed for 2 min. Rerun with `exclusive_lock: local` |
+| `ExclusiveLockStoreDownError` | Every R2 request failed for 2 min, after the job's R2 check passed. Rerun the job: while R2 is down, its check switches it to `local` |
