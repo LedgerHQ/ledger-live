@@ -11,3 +11,7 @@ export function pointStateHomeAt(dir: string): () => void {
     }
   };
 }
+
+export function stateHomeEnv(dir: string): Record<string, string> {
+  return Object.fromEntries(STATE_HOME_VARS.map(name => [name, dir]));
+}

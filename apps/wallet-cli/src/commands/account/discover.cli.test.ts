@@ -1,5 +1,4 @@
 import { describe, it, expect, beforeAll, afterAll, afterEach } from "bun:test";
-import { join } from "node:path";
 import { YAML } from "bun";
 import { MockServer } from "../../testing/mock-server";
 import { runCli } from "../../testing/cli-runner";
@@ -92,8 +91,7 @@ describe("account discover — session persistence", () => {
     );
     expect(exitCode, `stderr: ${stderr}`).toBe(0);
 
-    const sessionPath = join(fixture.env.XDG_STATE_HOME, "ledger-wallet-cli", "session.yaml");
-    const session = YAML.parse(await Bun.file(sessionPath).text()) as {
+    const session = YAML.parse(await Bun.file(fixture.sessionPath).text()) as {
       accounts: Array<{ label: string; descriptor: string }>;
     };
     expect(Array.isArray(session.accounts)).toBe(true);
@@ -113,8 +111,9 @@ describe("account discover — session persistence", () => {
     const { exitCode, stderr } = await runCli(args, env);
     expect(exitCode, `stderr: ${stderr}`).toBe(0);
 
-    const sessionPath = join(fixture.env.XDG_STATE_HOME, "ledger-wallet-cli", "session.yaml");
-    const session = YAML.parse(await Bun.file(sessionPath).text()) as { accounts: unknown[] };
+    const session = YAML.parse(await Bun.file(fixture.sessionPath).text()) as {
+      accounts: unknown[];
+    };
     expect(session.accounts.length).toBe(1); // no duplicate
   });
 });
