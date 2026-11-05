@@ -486,7 +486,7 @@ platform :android do
           "APP_IDENTIFIER" => ENV["APP_IDENTIFIER"]
         },
         project_dir: 'android/',
-        flags: ' -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dorg.gradle.jvmargs="-XX:MaxRAMPercentage=15.0"'
+        flags: " -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=#{ENV.fetch('GRADLE_MAX_WORKERS', '2')} -Dorg.gradle.jvmargs=\"#{ENV.fetch('GRADLE_BUILD_JVMARGS', '-XX:MaxRAMPercentage=15.0')}\""
       )
     end
   end
