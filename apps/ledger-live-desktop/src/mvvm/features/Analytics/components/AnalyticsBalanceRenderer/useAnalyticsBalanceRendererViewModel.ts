@@ -62,12 +62,12 @@ export function useAnalyticsBalanceRendererViewModel({
     isLoading: catalogStatus === "loading",
     isChartLoading: balance.status === "loading",
     variationStatus: toChartVariationStatus(balance.status),
-    headerStatusContent:
+    headerContent:
       catalogStatus === "error" || (catalogStatus === "ready" && current.status !== "ready")
         ? statusContent
         : undefined,
     filters,
-    statusContent:
+    plotContent:
       balance.status === "error" || balance.status === "unavailable" ? statusContent : undefined,
   };
 }

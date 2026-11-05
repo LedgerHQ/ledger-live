@@ -13,8 +13,8 @@ type ChartSectionProps = Readonly<{
   isChartLoading?: boolean;
   variationStatus?: ChartVariationStatus;
   filters?: ReactNode;
-  statusContent?: ReactNode;
-  headerStatusContent?: ReactNode;
+  plotContent?: ReactNode;
+  headerContent?: ReactNode;
 }>;
 
 export function ChartSection(props: ChartSectionProps) {
@@ -23,8 +23,8 @@ export function ChartSection(props: ChartSectionProps) {
     <ChartSectionView
       viewModel={viewModel}
       filters={props.filters}
-      statusContent={props.statusContent}
-      headerStatusContent={props.headerStatusContent}
+      plotContent={props.plotContent}
+      headerContent={props.headerContent}
     />
   );
 }

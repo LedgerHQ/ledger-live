@@ -7,8 +7,8 @@ import type { ChartSectionViewModelResult } from "./types";
 type ChartSectionViewProps = Readonly<{
   viewModel: ChartSectionViewModelResult;
   filters?: ReactNode;
-  statusContent?: ReactNode;
-  headerStatusContent?: ReactNode;
+  plotContent?: ReactNode;
+  headerContent?: ReactNode;
 }>;
 
 /**
@@ -22,16 +22,16 @@ const ChartSectionChart = React.memo(function ChartSectionChart(props: LineChart
 export function ChartSectionView({
   viewModel,
   filters,
-  statusContent,
-  headerStatusContent,
+  plotContent,
+  headerContent,
 }: ChartSectionViewProps) {
   const { header, chart } = viewModel;
 
   return (
     <div className="flex flex-col gap-24" data-testid="analytics-chart-section">
-      {headerStatusContent ?? <ChartSectionHeader {...header} />}
+      {headerContent ?? <ChartSectionHeader {...header} />}
       {filters}
-      <ChartSectionChart {...chart} plotContent={statusContent} />
+      <ChartSectionChart {...chart} plotContent={plotContent} />
     </div>
   );
 }
