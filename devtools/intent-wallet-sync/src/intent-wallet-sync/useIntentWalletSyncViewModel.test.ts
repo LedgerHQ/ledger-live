@@ -1,4 +1,4 @@
-import { buildProps } from "jest/intentWalletSyncProps";
+import { buildProps, memberId } from "jest/intentWalletSyncProps";
 import { headerCopy, membersCopy } from "./copy";
 import { useIntentWalletSyncViewModel } from "./useIntentWalletSyncViewModel";
 
@@ -47,8 +47,8 @@ describe("useIntentWalletSyncViewModel", () => {
     const vm = useIntentWalletSyncViewModel(
       buildProps({
         members: [
-          { id: "member-1", name: "Desktop" },
-          { id: "member-2", name: "" },
+          { id: memberId("member-1"), name: "Desktop" },
+          { id: memberId("member-2"), name: "" },
         ],
         onRemoveMember,
       }),
@@ -57,7 +57,7 @@ describe("useIntentWalletSyncViewModel", () => {
     vm.members?.[1].onRemove();
 
     expect(vm.members?.map(member => member.name)).toEqual(["Desktop", membersCopy.unnamed]);
-    expect(onRemoveMember).toHaveBeenCalledWith("member-2");
+    expect(onRemoveMember).toHaveBeenCalledWith(memberId("member-2"));
   });
 
   it("should keep the members unloaded until the host fetches them", () => {

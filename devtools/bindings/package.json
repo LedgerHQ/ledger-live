@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@devtools/env": "workspace:*",
+    "@devtools/intent-wallet-sync": "workspace:*",
     "@devtools/registry": "workspace:*",
     "@domain/api-account-data": "workspace:*",
     "@domain/api-account-portfolio": "workspace:*",

@@ -1,3 +1,4 @@
+import type { TrustchainMemberId } from "@features/platform-intent-wallet-sync";
 import type { WalletSyncIntentToolOperation, WalletSyncIntentToolProps } from "../types";
 import { headerCopy, membersCopy } from "./copy";
 
@@ -12,7 +13,7 @@ export interface IntentWalletSyncLogLine {
 }
 
 export interface IntentWalletSyncMemberRow {
-  readonly id: string;
+  readonly id: TrustchainMemberId;
   readonly name: string;
   readonly onRemove: () => void;
 }

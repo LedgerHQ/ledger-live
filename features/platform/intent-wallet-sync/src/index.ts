@@ -1,6 +1,7 @@
 export * from "./createSessionSdk";
 export * from "./ledgerSyncFailure";
 export * from "./ledgerSyncJobState";
+export * from "./trustchainMemberId";
 export * from "./addMemberIntent/types";
 export * from "./addMemberIntent/job";
 export * from "./addMemberIntent/intentDefinition";

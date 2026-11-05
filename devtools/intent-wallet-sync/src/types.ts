@@ -1,3 +1,5 @@
+import type { TrustchainMemberId } from "@features/platform-intent-wallet-sync";
+
 export type WalletSyncIntentToolOperation = "add-member" | "remove-member";
 
 export interface WalletSyncIntentToolLogRow {
@@ -11,7 +13,7 @@ export interface WalletSyncIntentToolLogRow {
 }
 
 export interface WalletSyncIntentToolMember {
-  readonly id: string;
+  readonly id: TrustchainMemberId;
   readonly name: string;
 }
 
@@ -27,7 +29,7 @@ export interface WalletSyncIntentToolProps {
   readonly members: readonly WalletSyncIntentToolMember[] | null;
   readonly log: readonly WalletSyncIntentToolLogRow[];
   readonly onAddMember: () => void;
-  readonly onRemoveMember: (memberId: string) => void;
+  readonly onRemoveMember: (memberId: TrustchainMemberId) => void;
   readonly onRefreshMembers: () => void;
   readonly onClearLog: () => void;
 }

@@ -4254,6 +4254,9 @@ importers:
       '@devtools/env':
         specifier: workspace:*
         version: link:../env
+      '@devtools/intent-wallet-sync':
+        specifier: workspace:*
+        version: link:../intent-wallet-sync
       '@devtools/registry':
         specifier: workspace:*
         version: link:../registry
@@ -5019,6 +5022,10 @@ importers:
         version: '@typescript/typescript6@6.0.2'
 
   devtools/intent-wallet-sync:
+    dependencies:
+      '@features/platform-intent-wallet-sync':
+        specifier: workspace:*
+        version: link:../../features/platform/intent-wallet-sync
     devDependencies:
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
@@ -13438,6 +13445,9 @@ importers:
       '@features/platform-device-intent':
         specifier: workspace:^
         version: link:../device-intent
+      zod:
+        specifier: 'catalog:'
+        version: 4.6.7
     devDependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'

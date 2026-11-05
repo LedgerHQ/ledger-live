@@ -1,6 +1,6 @@
 import { render, screen } from "@support/jest/devtools/web";
 import userEvent from "@testing-library/user-event";
-import { buildProps } from "jest/intentWalletSyncProps";
+import { buildProps, memberId } from "jest/intentWalletSyncProps";
 import { headerCopy, logCopy, membersCopy } from "./copy";
 import IntentWalletSync from "./IntentWalletSync";
 
@@ -34,8 +34,8 @@ describe("IntentWalletSync", () => {
       <IntentWalletSync
         {...buildProps({
           members: [
-            { id: "member-1", name: "Desktop" },
-            { id: "member-2", name: "Mobile" },
+            { id: memberId("member-1"), name: "Desktop" },
+            { id: memberId("member-2"), name: "Mobile" },
           ],
           onRemoveMember,
         })}
@@ -44,13 +44,16 @@ describe("IntentWalletSync", () => {
 
     await userEvent.click(screen.getByRole("button", { name: `${membersCopy.remove} Mobile` }));
 
-    expect(onRemoveMember).toHaveBeenCalledWith("member-2");
+    expect(onRemoveMember).toHaveBeenCalledWith(memberId("member-2"));
   });
 
   it("should disable the operations while one is running", () => {
     render(
       <IntentWalletSync
-        {...buildProps({ status: "running", members: [{ id: "member-1", name: "Desktop" }] })}
+        {...buildProps({
+          status: "running",
+          members: [{ id: memberId("member-1"), name: "Desktop" }],
+        })}
       />,
     );
 

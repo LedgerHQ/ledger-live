@@ -1,4 +1,9 @@
+import { TrustchainMemberId } from "@features/platform-intent-wallet-sync";
 import type { WalletSyncIntentToolProps } from "../src/types";
+
+export function memberId(id: string): TrustchainMemberId {
+  return TrustchainMemberId.parse(id);
+}
 
 export function buildProps(
   overrides: Partial<WalletSyncIntentToolProps> = {},

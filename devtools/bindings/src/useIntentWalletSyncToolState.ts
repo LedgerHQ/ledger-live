@@ -1,27 +1,28 @@
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { createIntent } from "@features/platform-device-intent";
-import type {
-  AddMemberIntent,
-  AddMemberIntentInput,
-  AddMemberIntentPlatformDefinition,
-  CreateSessionSdk,
-  LedgerSyncJobState,
-  RemoveMemberIntent,
-  RemoveMemberIntentPlatformDefinition,
+import {
+  TrustchainMemberId,
+  type AddMemberIntent,
+  type AddMemberIntentInput,
+  type AddMemberIntentPlatformDefinition,
+  type CreateSessionSdk,
+  type LedgerSyncJobState,
+  type RemoveMemberIntent,
+  type RemoveMemberIntentPlatformDefinition,
 } from "@features/platform-intent-wallet-sync";
+import type { UnknownAction } from "@reduxjs/toolkit";
 import type {
   MemberCredentials,
   Trustchain,
   TrustchainMember,
+  TrustchainSDK,
 } from "@ledgerhq/ledger-key-ring-protocol/types";
-import type { DevToolsConfig } from "@devtools/registry";
-
-type IntentWalletSyncToolProps = Extract<
-  DevToolsConfig[number],
-  { id: "intent-wallet-sync" }
->["config"];
-type LogRow = IntentWalletSyncToolProps["log"][number];
-type Operation = LogRow["operation"];
+import type {
+  WalletSyncIntentToolLogRow,
+  WalletSyncIntentToolOperation,
+  WalletSyncIntentToolProps,
+} from "@devtools/intent-wallet-sync";
 
 /** The intent the host mounts its Device Intent Executor with, one executor per run. */
 export type IntentWalletSyncRun =
@@ -32,19 +33,30 @@ export interface IntentWalletSyncToolStateParams {
   readonly addMemberIntentDefinition: AddMemberIntentPlatformDefinition;
   readonly removeMemberIntentDefinition: RemoveMemberIntentPlatformDefinition;
   readonly createSessionSdk: CreateSessionSdk;
-  readonly trustchain: Trustchain | null;
-  readonly memberCredentials: MemberCredentials | null;
-  /** Lists the members without the device: the SDK authenticates with the member credentials. */
-  readonly getMembers: (
-    trustchain: Trustchain,
-    memberCredentials: MemberCredentials,
-  ) => Promise<TrustchainMember[]>;
-  /** Writes an operation's resulting trustchain to the app's store. */
-  readonly onTrustchainChange: (trustchain: Trustchain) => void;
+  /** Lists the members without the device: it authenticates with the member credentials. */
+  readonly sdk: Pick<TrustchainSDK, "getMembers">;
+  /** The key ring store's `setTrustchain`. Its module loads device crypto, so the app passes it. */
+  readonly setTrustchain: (trustchain: Trustchain) => UnknownAction;
+}
+
+/** The key ring store's slice, which both apps mount under `trustchain`. */
+interface TrustchainState {
+  readonly trustchain: {
+    readonly trustchain: Trustchain | null;
+    readonly memberCredentials: MemberCredentials | null;
+  };
+}
+
+function selectTrustchain(state: TrustchainState) {
+  return state.trustchain.trustchain;
+}
+
+function selectMemberCredentials(state: TrustchainState) {
+  return state.trustchain.memberCredentials;
 }
 
 export interface IntentWalletSyncToolState {
-  readonly toolProps: IntentWalletSyncToolProps;
+  readonly toolProps: WalletSyncIntentToolProps;
   /** Null when no operation runs: the host unmounts its executor. */
   readonly run: IntentWalletSyncRun | null;
   /** The user closed the executor: the run ends without a result. */
@@ -75,29 +87,46 @@ function errorName(error: unknown): string | null {
 /**
  * Drives the Ledger Sync intents devtool. The host mounts its own executor
  * with `run.intent`; this hook builds the intents, logs every job state they
- * emit, writes results back through `onTrustchainChange` and reloads members.
+ * emit, stores their resulting trustchain and reloads members.
  */
 export function useIntentWalletSyncToolState(
   params: IntentWalletSyncToolStateParams,
 ): IntentWalletSyncToolState {
-  const paramsRef = useRef(params);
+  const dispatch = useDispatch();
+  const storedTrustchain = useSelector(selectTrustchain);
+  const storedMemberCredentials = useSelector(selectMemberCredentials);
+
+  const latest = {
+    ...params,
+    trustchain: storedTrustchain,
+    memberCredentials: storedMemberCredentials,
+  };
+  const paramsRef = useRef(latest);
   useLayoutEffect(() => {
-    paramsRef.current = params;
+    paramsRef.current = latest;
   });
 
+  const onTrustchainChange = useCallback(
+    (next: Trustchain) => dispatch(paramsRef.current.setTrustchain(next)),
+    [dispatch],
+  );
+
   const [run, setRun] = useState<IntentWalletSyncRun | null>(null);
-  const [log, setLog] = useState<readonly LogRow[]>([]);
+  const [log, setLog] = useState<readonly WalletSyncIntentToolLogRow[]>([]);
   const [members, setMembers] = useState<readonly TrustchainMember[] | null>(null);
 
-  const append = useCallback((operation: Operation, jobState: string, detail: string | null) => {
-    setLog(rows => [...rows, { at: Date.now(), operation, jobState, detail }]);
-  }, []);
+  const append = useCallback(
+    (operation: WalletSyncIntentToolOperation, jobState: string, detail: string | null) => {
+      setLog(rows => [...rows, { at: Date.now(), operation, jobState, detail }]);
+    },
+    [],
+  );
 
   const loadMembers = useCallback(async (trustchain: Trustchain) => {
-    const { memberCredentials, getMembers } = paramsRef.current;
+    const { memberCredentials, sdk } = paramsRef.current;
     if (!memberCredentials) return;
     try {
-      setMembers(await getMembers(trustchain, memberCredentials));
+      setMembers(await sdk.getMembers(trustchain, memberCredentials));
     } catch (error) {
       console.warn("Ledger Sync intents devtool: getMembers failed", errorName(error));
       setMembers(null);
@@ -105,7 +134,7 @@ export function useIntentWalletSyncToolState(
   }, []);
 
   const endRunWithError = useCallback(
-    (operation: Operation) => (error: unknown) => {
+    (operation: WalletSyncIntentToolOperation) => (error: unknown) => {
       append(operation, "error", errorName(error));
       setRun(null);
     },
@@ -128,7 +157,7 @@ export function useIntentWalletSyncToolState(
       onResult: result => {
         resultTrustchain = result.trustchain;
         completedDetail = `${result.type} ${result.trustchain.rootId}`;
-        paramsRef.current.onTrustchainChange(result.trustchain);
+        onTrustchainChange(result.trustchain);
       },
       onJobStateChanged: state =>
         append("add-member", state.type, describeJobState(state, completedDetail)),
@@ -139,10 +168,10 @@ export function useIntentWalletSyncToolState(
       onJobError: endRunWithError("add-member"),
     });
     setRun({ operation: "add-member", intent });
-  }, [append, endRunWithError, loadMembers]);
+  }, [append, endRunWithError, loadMembers, onTrustchainChange]);
 
   const onRemoveMember = useCallback(
-    (memberId: string) => {
+    (memberId: TrustchainMemberId) => {
       const { memberCredentials, trustchain, createSessionSdk, removeMemberIntentDefinition } =
         paramsRef.current;
       const member = members?.find(candidate => candidate.id === memberId);
@@ -155,7 +184,7 @@ export function useIntentWalletSyncToolState(
         {
           onResult: result => {
             resultTrustchain = result;
-            paramsRef.current.onTrustchainChange(result);
+            onTrustchainChange(result);
           },
           onJobStateChanged: state =>
             append(
@@ -172,7 +201,7 @@ export function useIntentWalletSyncToolState(
       );
       setRun({ operation: "remove-member", intent });
     },
-    [append, endRunWithError, loadMembers, members],
+    [append, endRunWithError, loadMembers, members, onTrustchainChange],
   );
 
   const onRefreshMembers = useCallback(() => {
@@ -183,12 +212,17 @@ export function useIntentWalletSyncToolState(
   const onClearLog = useCallback(() => setLog([]), []);
   const onRunCancelled = useCallback(() => setRun(null), []);
 
-  const toolProps = useMemo<IntentWalletSyncToolProps>(
+  const toolMembers = useMemo(
+    () => members?.map(({ id, name }) => ({ id: TrustchainMemberId.parse(id), name })) ?? null,
+    [members],
+  );
+
+  const toolProps = useMemo<WalletSyncIntentToolProps>(
     () => ({
       status: run ? "running" : "idle",
-      hasMemberCredentials: params.memberCredentials !== null,
-      hasTrustchain: params.trustchain !== null,
-      members: members?.map(({ id, name }) => ({ id, name })) ?? null,
+      hasMemberCredentials: storedMemberCredentials !== null,
+      hasTrustchain: storedTrustchain !== null,
+      members: toolMembers,
       log,
       onAddMember,
       onRemoveMember,
@@ -197,9 +231,9 @@ export function useIntentWalletSyncToolState(
     }),
     [
       run,
-      params.memberCredentials,
-      params.trustchain,
-      members,
+      storedMemberCredentials,
+      storedTrustchain,
+      toolMembers,
       log,
       onAddMember,
       onRemoveMember,

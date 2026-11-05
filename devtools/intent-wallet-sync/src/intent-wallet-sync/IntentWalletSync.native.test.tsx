@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@support/jest/devtools/native";
-import { buildProps } from "jest/intentWalletSyncProps";
+import { buildProps, memberId } from "jest/intentWalletSyncProps";
 import { headerCopy, logCopy, membersCopy } from "./copy";
 import IntentWalletSync from "./IntentWalletSync";
 
@@ -33,8 +33,8 @@ describe("IntentWalletSync", () => {
       <IntentWalletSync
         {...buildProps({
           members: [
-            { id: "member-1", name: "Desktop" },
-            { id: "member-2", name: "Mobile" },
+            { id: memberId("member-1"), name: "Desktop" },
+            { id: memberId("member-2"), name: "Mobile" },
           ],
           onRemoveMember,
         })}
@@ -43,7 +43,7 @@ describe("IntentWalletSync", () => {
 
     fireEvent.press(screen.getByLabelText(`${membersCopy.remove} Mobile`));
 
-    expect(onRemoveMember).toHaveBeenCalledWith("member-2");
+    expect(onRemoveMember).toHaveBeenCalledWith(memberId("member-2"));
   });
 
   it("should not launch anything while an operation is running", () => {
