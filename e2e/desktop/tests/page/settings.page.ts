@@ -191,13 +191,15 @@ export class SettingsPage extends AppPage {
   async expectLedgerSupportUrlToBeCorrect() {
     await expect(this.ledgerSupport).toBeVisible();
     const url = await this.ledgerSupport.getAttribute("href");
-    if (!url) {
-      throw new Error("The href attribute is missing or null");
-    }
-    const { status } = await axios.get(url, { validateStatus: () => true });
+    const status = url
+      ? await axios.get(url, { timeout: TIMEOUT.medium, validateStatus: () => true }).then(
+          response => response.status,
+          (error: Error) => error.message,
+        )
+      : "no href";
     await this.softExpect(async soft => {
       await soft(this.ledgerSupport).toHaveAttribute("href", "https://support.ledger.com");
-      soft(status, `Unexpected HTTP status from ${url}`).toBe(200);
+      soft(status, `GET ${url}`).toBe(200);
     });
   }
 
