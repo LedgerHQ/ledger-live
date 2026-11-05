@@ -168,11 +168,11 @@ for (const [name, create, defaults] of dualPresets) {
 }
 
 // The tables a layer builds on the core's keep the core's entries, before the layer's own.
-const coreReactNative = ["^react-native$", path.join(root, "core/mocks/react-native.js")];
-const coreWebSetup = path.join(root, "core/setup/web.js");
+const coreReactNative = ["^react-native$", path.join(root, "core/mocks/react-native.cts")];
+const coreWebSetup = path.join(root, "core/setup/web.ts");
 const flowReanimated = [
   "^react-native-reanimated$",
-  path.join(root, "features-flow/mocks/reanimated.js"),
+  path.join(root, "features-flow/mocks/reanimated.cts"),
 ];
 const flowWebSetup = path.join(root, "features-flow/setup/web.cts");
 
@@ -221,7 +221,7 @@ test("createSharedUiNativeJestConfig: a flat native config, no projects", () => 
   assert.equal(config.testEnvironment, "node");
   assert.equal(
     config.moduleNameMapper["^react-native$"],
-    path.join(root, "core/mocks/react-native.js"),
+    path.join(root, "core/mocks/react-native.cts"),
   );
   assert.deepEqual(config.moduleFileExtensions.slice(0, 2), ["native.tsx", "native.ts"]);
 });
@@ -273,7 +273,7 @@ for (const [name, create] of [
 ]) {
   test(`${name}: the native project keeps the flow resolver and transform allowlist`, () => {
     const native = project(create(), "native");
-    assert.equal(native.resolver, path.join(root, "features-flow/resolver.native.js"));
+    assert.equal(native.resolver, path.join(root, "features-flow/resolver.native.ts"));
     assert.equal(native.transformIgnorePatterns.length, 1);
     assert.match(native.transformIgnorePatterns[0], /lumen-utils-shared\|.*lumen-design-core/);
   });

@@ -24,12 +24,12 @@ const transformIgnorePatterns = [`node_modules/.pnpm/(?!(${transformAllowlist.jo
 // The core's react-native, Lumen and image stubs, then the native modules a flow reaches.
 const flowNativeMocks: Record<string, string> = deepFreeze({
   ...nativeMocks,
-  "^react-native-reanimated$": flowPath("mocks/reanimated.js"),
-  "^react-native-draggable-flatlist$": flowPath("mocks/draggable-flatlist.js"),
-  "^react-native-svg(/.*)?$": flowPath("mocks/react-native-svg.js"),
-  "^react-native-fast-crypto$": flowPath("mocks/fast-crypto.js"),
-  "^expo-clipboard$": flowPath("mocks/expo-clipboard.js"),
-  "^@react-navigation/native$": flowPath("mocks/react-navigation-native.js"),
+  "^react-native-reanimated$": flowPath("mocks/reanimated.cts"),
+  "^react-native-draggable-flatlist$": flowPath("mocks/draggable-flatlist.cts"),
+  "^react-native-svg(/.*)?$": flowPath("mocks/react-native-svg.cts"),
+  "^react-native-fast-crypto$": flowPath("mocks/fast-crypto.cts"),
+  "^expo-clipboard$": flowPath("mocks/expo-clipboard.cts"),
+  "^@react-navigation/native$": flowPath("mocks/react-navigation-native.cts"),
   "^@shared/ui-queued-bottom-sheet$": "@shared/ui-queued-bottom-sheet/testing/module-mock",
   "^@shared/ui-queued-bottom-sheet/keyboard$": "@shared/ui-queued-bottom-sheet/testing/module-mock",
 });
@@ -45,7 +45,7 @@ const flowLayer: DualLayer = {
   },
   native: {
     transformIgnorePatterns,
-    resolver: flowPath("resolver.native.js"),
+    resolver: flowPath("resolver.native.ts"),
     moduleNameMapper: flowNativeMocks,
   },
 };

@@ -54,7 +54,7 @@ function sharedConfig(
  *
  * Every key of `overrides` replaces the preset's; `libsCoinDefaults` holds the lists a package
  * extends by spreading them. A key the preset owns throws unless
- * `support/jest/core/preset-overrides.cjs` lists it for the package of `overrides.rootDir`.
+ * `support/jest/core/preset-overrides.cts` lists it for the package of `overrides.rootDir`.
  *
  *   module.exports = createLibsCoinJestConfig({ rootDir: __dirname });
  */

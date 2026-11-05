@@ -5,7 +5,10 @@ import type { Config } from "@jest/types";
 import path from "node:path";
 import { deepFreeze } from "../internals/freeze.ts";
 import { joinPresetPath } from "../internals/join-preset-path.ts";
-import PRESET_OVERRIDES from "./preset-overrides.cjs";
+import presetOverrides from "./preset-overrides.cts";
+
+type PresetOverrideEntry = { reason: string; overrides: Record<string, string[]> };
+const PRESET_OVERRIDES = presetOverrides as unknown as Record<string, PresetOverrideEntry>;
 
 type Options = Config.InitialOptions;
 type ProjectOptions = Config.InitialProjectOptions;
@@ -61,27 +64,27 @@ const corePath = (file: string) => joinPresetPath(import.meta.dirname, file);
 // override rule of the `@support/jest` README).
 
 // Redirect the heavy Lumen/crypto-icons ESM barrels to a generic passthrough stub so tests
-// don't need to transform them or install their peer graph. See mocks/*.js.
+// don't need to transform them or install their peer graph. See mocks/*.cts.
 export const webMocks: Record<string, string> = deepFreeze({
-  "^@ledgerhq/lumen-ui-react(/.*)?$": corePath("mocks/passthrough-web.js"),
-  "^@ledgerhq/crypto-icons$": corePath("mocks/passthrough-web.js"),
-  "\\.(webp|png|jpg|jpeg|gif|svg)$": corePath("mocks/file-stub.js"),
+  "^@ledgerhq/lumen-ui-react(/.*)?$": corePath("mocks/passthrough-web.cts"),
+  "^@ledgerhq/crypto-icons$": corePath("mocks/passthrough-web.cts"),
+  "\\.(webp|png|jpg|jpeg|gif|svg)$": corePath("mocks/file-stub.cts"),
 });
 
 export const nativeMocks: Record<string, string> = deepFreeze({
   // Stub react-native itself (Flow-typed ESM) so native tests run in a plain node env.
   // Mapped here (not jest.mock in a setup file) so it also intercepts react-native imports
   // from inside @testing-library/react-native.
-  "^react-native$": corePath("mocks/react-native.js"),
-  "^react-native-safe-area-context$": corePath("mocks/safe-area-context.js"),
-  "^@ledgerhq/lumen-ui-rnative(/.*)?$": corePath("mocks/passthrough-native.js"),
-  "^@ledgerhq/crypto-icons$": corePath("mocks/passthrough-native.js"),
-  "\\.(webp|png|jpg|jpeg|gif|svg)$": corePath("mocks/file-stub.js"),
+  "^react-native$": corePath("mocks/react-native.cts"),
+  "^react-native-safe-area-context$": corePath("mocks/safe-area-context.cts"),
+  "^@ledgerhq/lumen-ui-rnative(/.*)?$": corePath("mocks/passthrough-native.cts"),
+  "^@ledgerhq/crypto-icons$": corePath("mocks/passthrough-native.cts"),
+  "\\.(webp|png|jpg|jpeg|gif|svg)$": corePath("mocks/file-stub.cts"),
 });
 
 export const webSetupFiles: string[] = deepFreeze([
   "@testing-library/jest-dom",
-  corePath("setup/web.js"),
+  corePath("setup/web.ts"),
   quarantineRetries,
 ]);
 
@@ -177,10 +180,10 @@ export const PRESET_KEYS: Readonly<Record<string, string>> = deepFreeze({
 export const ALLOWLIST_FIX =
   "add the dependency to the preset's transform allowlist in support/jest";
 const TRANSFORM_KEYS = new Set(["transform", "transformIgnorePatterns"]);
-const OVERRIDES_FILE = "support/jest/core/preset-overrides.cjs";
+const OVERRIDES_FILE = "support/jest/core/preset-overrides.cts";
 
 /**
- * Throws when a package overrides a key its preset owns and `preset-overrides.cjs` does not list
+ * Throws when a package overrides a key its preset owns and `preset-overrides.cts` does not list
  * that key for the package and the factory, and when it lists a key no override sets, so the
  * list only shrinks. The package is found from `rootDir`.
  *
@@ -281,7 +284,7 @@ function checkProjects(factory: string, projects: unknown): void {
  * An exported preset factory: it checks the options and the overrides it gets, then returns what
  * `build` makes of them. Every preset factory is built here, so none can skip the checks.
  *
- * @param name the factory name, for the messages and preset-overrides.cjs
+ * @param name the factory name, for the messages and preset-overrides.cts
  * @param options the options the factory reads
  * @returns a factory with the signature of `build`; a factory of `projects` entries when
  *   `PROJECT_FACTORIES` lists the name

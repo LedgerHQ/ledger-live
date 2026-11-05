@@ -11,7 +11,7 @@
     "./features-flow": "./features-flow/index.ts",
     "./libs-coin": "./libs-coin/index.ts",
     "./shared": "./shared/index.ts",
-    "./shared/mocks/*": "./core/mocks/*.js",
+    "./shared/mocks/*": "./core/mocks/*.cts",
     "./package.json": "./package.json"
   },
   "scripts": {

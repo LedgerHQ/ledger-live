@@ -1,4 +1,4 @@
-// Web (jsdom) setup the features-flow preset adds to the core's (see ../core/setup/web.js).
+// Web (jsdom) setup the features-flow preset adds to the core's (see ../core/setup/web.ts).
 
 // jsdom doesn't implement the Encoding API, unlike every runtime this code ships to
 // (browsers, React Native, Node). Packages reading TextEncoder at module-eval time

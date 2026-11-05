@@ -1,4 +1,4 @@
-// The child process of web.test.mjs, standing in for a jsdom worker: no MessageChannel and no
+// The child process of web.test.ts, standing in for a jsdom worker: no MessageChannel and no
 // setImmediate, so React's scheduler posts its work on the web setup's MessageChannel, whose ports
 // must not hold the process. It prints "ran" once the scheduler ran its callback, then has to exit.
 import { createRequire } from "node:module";

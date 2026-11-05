@@ -1,4 +1,3 @@
-// @ts-check
 // The packages allowed to override a key their preset owns, keyed by package path from the
 // repository root, then by the factory their config calls. A factory finds the entry from the
 // `rootDir` it gets. This list only shrinks: a listed key the config no longer overrides throws.

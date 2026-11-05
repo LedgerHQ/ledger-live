@@ -7,7 +7,7 @@ config.workspaces = {
   ...config.workspaces,
   [jestWorkspace]: {
     ...config.workspaces[jestWorkspace],
-    entry: [...(config.workspaces[jestWorkspace]?.entry ?? []), "**/*.fixture.ts"],
+    entry: [...(config.workspaces[jestWorkspace]?.entry ?? []), "**/*.fixture.ts", "**/*.test.ts"],
   },
 };
 

@@ -17,7 +17,7 @@
       ],
       "options": {
         "cwd": "{workspaceRoot}",
-        "command": "node --test support/jest/core/index.test.mjs support/jest/core/preset-overrides.test.mjs support/jest/devtools/index.test.mjs support/jest/features-flow/resolver.native.test.mjs support/jest/features-flow/setup/web.test.mjs support/jest/libs-coin/index.test.mjs"
+        "command": "node --test support/jest/core/index.test.ts support/jest/core/preset-overrides.test.ts support/jest/devtools/index.test.ts support/jest/features-flow/resolver.native.test.ts support/jest/features-flow/setup/web.test.ts support/jest/libs-coin/index.test.ts"
       }
     }
   }

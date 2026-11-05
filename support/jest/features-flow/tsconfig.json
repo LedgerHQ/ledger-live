@@ -5,8 +5,7 @@
   },
   "include": [
     "index.ts",
-    "resolver.native.js",
-    "mocks/**/*.js",
+    "resolver.native.ts",
     "setup/**/*.cts",
     "setup/**/*.ts"
   ]

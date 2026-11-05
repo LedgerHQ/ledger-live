@@ -55,8 +55,9 @@ which loads the ES module through `require(esm)`. Two rules follow:
   (`import.meta`, typed imports between presets). Imports name the `.ts` file.
 
 `pnpm typecheck` checks the presets against `@jest/types`, so a wrong option type
-(`testTimeout: "60s"`) fails it. Setup files and mocks that jest loads with CommonJS
-`require`/`module.exports` are `.cjs`; side-effect-only setup stays `.js`.
+(`testTimeout: "60s"`) fails it. Mocks and setup files that jest loads with CommonJS
+`require`/`module.exports` are `.cts`. Side-effect-only web setup files are `.ts`. The flow web
+setup that polyfills before `undici` is `.cts`.
 
 ## Overrides
 
@@ -132,7 +133,7 @@ option a factory does not read throws, naming the ones it reads. A key the prese
 `nativeOverrides`, throws with the fix to use instead: `extraEsmDeps` for a dependency jest must
 transform in the node presets, the preset's transform allowlist in the others. The packages that
 still override one are listed, by package path and factory and with their reason, in
-[`core/preset-overrides.cjs`](./core/preset-overrides.cjs); the factory finds the entry from
+[`core/preset-overrides.cts`](./core/preset-overrides.cts); the factory finds the entry from
 `rootDir`, and a listed key the config no longer sets throws, so the list only shrinks. Last, a
 `projects` entry must be what a project factory (`createLibsCoinJestProject`) returned; any other
 entry throws.

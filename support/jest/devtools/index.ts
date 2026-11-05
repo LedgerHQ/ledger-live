@@ -65,14 +65,14 @@ export const nativeModuleNameMapper: Record<string, string> = deepFreeze({
   "^@ledgerhq/lumen-ui-rnative$": "<rootDir>/node_modules/@ledgerhq/lumen-ui-rnative/src/index.ts",
   "^@ledgerhq/lumen-design-core$": "<rootDir>/node_modules/@ledgerhq/lumen-design-core",
   "^@sbaiahmed1/react-native-blur$": here("mocks/react-native-blur.tsx"),
-  "^react-native-worklets$": here("mocks/react-native-worklets.js"),
+  "^react-native-worklets$": here("mocks/react-native-worklets.cts"),
   "^react-native-gesture-handler$": here("mocks/react-native-gesture-handler.tsx"),
   "^expo-haptics$": here("mocks/expo-haptics.ts"),
 });
 
 export const webSetupFilesAfterEnv: string[] = deepFreeze([
   "@testing-library/jest-dom",
-  here("setup/web.js"),
+  here("setup/web.ts"),
 ]);
 
 export const nativeSetupFilesAfterEnv: string[] = deepFreeze([here("setup/native.ts")]);

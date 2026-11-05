@@ -26,7 +26,7 @@ const factories = [
     webModuleNameMapper,
     webSetupFilesAfterEnv,
     ["^@ledgerhq/lumen-ui-react$", "<rootDir>/node_modules/@ledgerhq/lumen-ui-react"],
-    path.join(here, "setup/web.js"),
+    path.join(here, "setup/web.ts"),
   ],
   [
     "createNativeJestConfig",
