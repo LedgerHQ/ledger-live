@@ -28,6 +28,7 @@ export function MockServerSettingsFormView({
   hasDraftChanges,
   pendingAction,
   error,
+  isFloatingButtonHidden,
   onToggle,
   onChangeUrlDraft,
   onChangeTokenDraft,
@@ -35,6 +36,8 @@ export function MockServerSettingsFormView({
   onNewSession,
   onCopyToken,
   onOpenConfigurationUi,
+  onSetFloatingButtonHidden,
+  onOpenPanel,
 }: Readonly<MockServerSettingsFormViewModel>) {
   const isBusy = pendingAction !== null;
 
@@ -138,6 +141,23 @@ export function MockServerSettingsFormView({
             >
               Open in browser
             </Button>
+
+            <Button appearance="gray" size="sm" disabled={isBusy} onPress={onOpenPanel}>
+              Open mock server panel
+            </Button>
+
+            <Box
+              lx={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}
+            >
+              <Text typography="body2" lx={{ color: "base" }}>
+                Hide floating button until restart
+              </Text>
+              <Switch
+                checked={isFloatingButtonHidden}
+                onCheckedChange={onSetFloatingButtonHidden}
+                accessibilityLabel="Hide floating button until restart"
+              />
+            </Box>
           </>
         ) : null}
       </Box>

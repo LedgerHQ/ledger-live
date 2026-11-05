@@ -23,20 +23,28 @@
     "@ledgerhq/device-mockserver-client": "catalog:"
   },
   "peerDependencies": {
-    "@ledgerhq/device-management-kit": "catalog:"
+    "@ledgerhq/device-management-kit": "catalog:",
+    "react": ">=19.0.0",
+    "rxjs": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
     "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
+    "@testing-library/react": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@types/react": "catalog:",
     "@typescript/native": "catalog:",
     "jest": "catalog:",
+    "jest-environment-jsdom": "catalog:",
     "msw": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "rxjs": "catalog:",
     "typescript": "catalog:"
   }
 }

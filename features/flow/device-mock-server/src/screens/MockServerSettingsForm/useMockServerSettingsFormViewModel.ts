@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { Alert, Linking } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 import { copyToClipboard } from "@shared/clipboard";
 import {
   getMockServerConfig,
@@ -11,6 +12,8 @@ import {
   joinMockServerSession,
   startMockServerSession,
 } from "../../mockServerSession";
+import { selectIsMockServerFloatingButtonHidden } from "../../state/selectors";
+import { setMockServerFloatingButtonHidden, setMockServerOverlayMode } from "../../state/slice";
 import { useMockServerStatus, type MockServerStatus } from "../../useMockServerStatus";
 import type { MockServerSettingsFormProps } from "./types";
 
@@ -25,6 +28,7 @@ export type MockServerSettingsFormViewModel = {
   hasDraftChanges: boolean;
   pendingAction: PendingAction | null;
   error: string | null;
+  isFloatingButtonHidden: boolean;
   onToggle: (enabled: boolean) => void;
   onChangeUrlDraft: (url: string) => void;
   onChangeTokenDraft: (token: string) => void;
@@ -32,6 +36,8 @@ export type MockServerSettingsFormViewModel = {
   onNewSession: () => void;
   onCopyToken: () => void;
   onOpenConfigurationUi: () => void;
+  onSetFloatingButtonHidden: (hidden: boolean) => void;
+  onOpenPanel: () => void;
 };
 
 const normalizeUrl = (url: string) => stripTrailingSlashes(url.trim());
@@ -44,7 +50,9 @@ export function useMockServerSettingsFormViewModel({
   seed,
   onApply: applyChange,
 }: MockServerSettingsFormProps): MockServerSettingsFormViewModel {
+  const dispatch = useDispatch();
   const config = useMemo(() => getMockServerConfig({ enabled, url, token }), [enabled, url, token]);
+  const isFloatingButtonHidden = useSelector(selectIsMockServerFloatingButtonHidden);
   const { status, sessionId } = useMockServerStatus(config);
   const [urlDraft, setUrlDraft] = useState(url || defaultUrl);
   const [tokenDraft, setTokenDraft] = useState(config?.token ?? "");
@@ -121,6 +129,16 @@ export function useMockServerSettingsFormViewModel({
     );
   }, [config]);
 
+  const onSetFloatingButtonHidden = useCallback(
+    (hidden: boolean) => dispatch(setMockServerFloatingButtonHidden(hidden)),
+    [dispatch],
+  );
+
+  const onOpenPanel = useCallback(
+    () => dispatch(setMockServerOverlayMode({ type: "main" })),
+    [dispatch],
+  );
+
   return {
     isEnabled: config !== null,
     status,
@@ -130,6 +148,7 @@ export function useMockServerSettingsFormViewModel({
     hasDraftChanges: joinsDraftSession || isUrlChanged,
     pendingAction,
     error,
+    isFloatingButtonHidden,
     onToggle,
     onChangeUrlDraft: setUrlDraft,
     onChangeTokenDraft: setTokenDraft,
@@ -137,5 +156,7 @@ export function useMockServerSettingsFormViewModel({
     onNewSession,
     onCopyToken,
     onOpenConfigurationUi,
+    onSetFloatingButtonHidden,
+    onOpenPanel,
   };
 }

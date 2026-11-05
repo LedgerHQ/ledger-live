@@ -55,6 +55,7 @@ import { TermsAndConditionMigrateLegacyData } from "~/logic/terms";
 import { BrazeContentCardsProvider } from "LLM/features/DynamicContent/components/BrazeContentCardsProvider";
 import { ModalSystemPrimer } from "LLM/components/ModalSystemPrimer";
 import { JsThreadMonitor } from "LLM/components/JsThreadMonitor";
+import { MockServerOverlay } from "LLM/features/MockServer";
 import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
 
 import { DeeplinksProvider } from "~/navigation/DeeplinksProvider";
@@ -332,6 +333,7 @@ function App() {
       )}
 
       <AnalyticsConsole />
+      <MockServerOverlay />
 
       <DebugTheme />
       <JsThreadMonitor />

@@ -1,11 +1,12 @@
 import React from "react";
-import { Alert } from "react-native";
+import { Alert, Linking, Platform, Text } from "react-native";
 import RNRestart from "react-native-restart";
 import { fireEvent, render, screen, waitFor } from "@tests/test-renderer";
 import { HttpResponse, http, server } from "@tests/server";
 import { mockserverIdentifier } from "@ledgerhq/live-dmk-mobile";
+import QueuedDrawer from "LLM/components/QueuedDrawer";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { MockServerSettingsScreen } from "..";
+import { MockServerOverlay, MockServerSettingsScreen } from "..";
 import type { State } from "~/reducers/types";
 import { ScreenName } from "~/const";
 import type { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
@@ -27,6 +28,11 @@ const withMockServerOn = (state: State): State => ({
     ...state.settings,
     mockServer: { enabled: true, url: MOCK_SERVER_URL, token: "token-1" },
   },
+});
+
+const withOpenPanel = (state: State): State => ({
+  ...withMockServerOn(state),
+  mockServerOverlay: { ...state.mockServerOverlay, mode: { type: "main" } },
 });
 
 const Stack = createNativeStackNavigator<SettingsNavigatorStackParamList>();
@@ -67,6 +73,76 @@ describe("MockServer", () => {
       http.post(`${MOCK_SERVER_URL}/auth`, endpoints.auth),
       http.post(`${MOCK_SERVER_URL}/import`, endpoints.import),
     );
+  });
+
+  describe("panel", () => {
+    it("should render nothing when the mock server is off", () => {
+      render(<MockServerOverlay />, {
+        overrideInitialState: state => ({
+          ...state,
+          mockServerOverlay: { ...state.mockServerOverlay, mode: { type: "main" } },
+        }),
+      });
+
+      expect(screen.queryByTestId("mock-server-panel")).toBeNull();
+    });
+
+    it("should show the connected status when the panel opens", async () => {
+      render(<MockServerOverlay />, { overrideInitialState: withOpenPanel });
+
+      expect(await screen.findByText("Connected")).toBeVisible();
+      expect(endpoints.session.mock.calls[0][0].request.headers.get("Authorization")).toBe(
+        "Bearer token-1",
+      );
+    });
+
+    it("should hide the panel when the floating button is pressed", async () => {
+      const { store, user } = render(<MockServerOverlay />, {
+        overrideInitialState: withOpenPanel,
+      });
+
+      await user.press(await screen.findByTestId("mock-server-floating-button"));
+
+      expect(
+        screen.getByTestId("mock-server-panel", { includeHiddenElements: true }),
+      ).not.toBeVisible();
+      expect(store.getState().mockServerOverlay.mode).toEqual({ type: "hidden" });
+    });
+
+    it("should open the session's configuration UI in the browser and keep the panel open", async () => {
+      const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(undefined);
+      const { user } = render(<MockServerOverlay />, { overrideInitialState: withOpenPanel });
+
+      await user.press(
+        await screen.findByLabelText("Open the mock server configuration in the browser"),
+      );
+
+      expect(openURL).toHaveBeenCalledWith(`${MOCK_SERVER_URL}/#token=token-1`);
+      expect(screen.getByTestId("mock-server-panel")).toBeVisible();
+    });
+
+    it("should warn that the session expired when the server rejects the token", async () => {
+      endpoints.session.mockImplementation(() => HttpResponse.json({}, { status: 401 }));
+      render(<MockServerOverlay />, { overrideInitialState: withOpenPanel });
+
+      expect(
+        await screen.findByText("Start a new session to keep using the mock server."),
+      ).toBeVisible();
+    });
+  });
+
+  describe("inside a native modal drawer", () => {
+    it("should show the floating button inside an open drawer on Android", async () => {
+      jest.replaceProperty(Platform, "OS", "android");
+      render(
+        <QueuedDrawer isRequestingToBeOpened>
+          <Text>Drawer content</Text>
+        </QueuedDrawer>,
+        { overrideInitialState: withMockServerOn },
+      );
+
+      expect(await screen.findByTestId("mock-server-floating-button")).toBeVisible();
+    });
   });
 
   describe("settings screen", () => {
