@@ -75,11 +75,11 @@ export class HistoryPage extends AppPage {
     await expect(row).toBeVisible();
 
     const addressCell = row.getByTestId(this.operationAddressTestId);
-
-    await expect(addressCell).toHaveText(new RegExp(`${addressPrefix}\\s*\\S`, "i"));
-
     const amountCell = row.getByTestId(this.operationAmountTestId);
-    await expect(amountCell).toContainText(amountSign);
+    await this.softExpect(async soft => {
+      await soft(addressCell).toHaveText(new RegExp(String.raw`${addressPrefix}\s*\S`, "i"));
+      await soft(amountCell).toContainText(amountSign);
+    });
   }
 
   @step("Open history from top bar")
@@ -125,10 +125,12 @@ export class HistoryPage extends AppPage {
 
   @step("Expect four-column layout (Type, Address, Amount, Value)")
   async expectFourColumnLayout() {
-    await expect(this.columnType).toHaveText("Type");
-    await expect(this.columnAddress).toHaveText("Address");
-    await expect(this.columnAmount).toHaveText("Amount");
-    await expect(this.columnValue).toHaveText("Value");
+    await this.softExpect(async soft => {
+      await soft(this.columnType).toHaveText("Type");
+      await soft(this.columnAddress).toHaveText("Address");
+      await soft(this.columnAmount).toHaveText("Amount");
+      await soft(this.columnValue).toHaveText("Value");
+    });
   }
 
   @step("Expect row renders for IN operation")
@@ -199,11 +201,12 @@ export class HistoryPage extends AppPage {
   @step("Expect exported CSV contains data (testId: $0)")
   async expectExportedFileContents(testId: string) {
     const fileContents = await readFile(HistoryPage.exportArtifactPath(testId), "utf-8");
-
-    expect(fileContents).toContain("Operation Date");
-    expect(fileContents).toContain("Operation Hash");
-    expect(fileContents).toContain("Account Name");
-    expect(fileContents.trim().split(/\r?\n/).length).toBeGreaterThan(1);
+    await this.softExpect(soft => {
+      soft(fileContents).toContain("Operation Date");
+      soft(fileContents).toContain("Operation Hash");
+      soft(fileContents).toContain("Account Name");
+      soft(fileContents.trim().split(/\r?\n/).length).toBeGreaterThan(1);
+    });
   }
 
   @step("Close export success dialog")
