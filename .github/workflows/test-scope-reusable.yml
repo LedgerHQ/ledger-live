@@ -4,9 +4,14 @@ on:
   workflow_call:
     inputs:
       scope:
-        description: "Scope to test. Must match both the directory name and the scope:<name> Nx tag (e.g. features)."
+        description: "Space-separated scopes to test in one job. Each must match both the directory name and the scope:<name> Nx tag (e.g. features or \"features shared\")."
         type: string
         required: true
+      coverage-name:
+        description: "Suffix of the coverage artifact name. Defaults to the scope, so it is required when several scopes are given."
+        type: string
+        required: false
+        default: ""
       extra-targets:
         description: "Comma-separated Nx targets to run before coverage (e.g. check-export-rules)."
         type: string
@@ -23,6 +28,11 @@ on:
         required: false
       skip-coverage:
         description: "Skip coverage and run codechecks only. Set at the merge gate, where no product code executes."
+        type: boolean
+        required: false
+        default: false
+      skip-nx-cache:
+        description: "Run every task instead of replaying the Nx cache, to measure what the job costs"
         type: boolean
         required: false
         default: false
@@ -66,12 +76,23 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.sha }}
 
+      - name: Resolve the scopes
+        id: scopes
+        env:
+          SCOPES: ${{ inputs.scope }}
+        run: |
+          projects=()
+          for scope in $SCOPES; do projects+=("tag:scope:$scope"); done
+          echo "projects=$(IFS=,; echo "${projects[*]}")" >> "$GITHUB_OUTPUT"
+        shell: bash
+
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
+          skip-nx-cache: ${{ inputs.skip-nx-cache && 'true' || 'false' }}
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
           nx-key: ${{ secrets.NX_KEY }}
@@ -86,37 +107,41 @@ jobs:
 
       - name: Install dependencies
         env:
-          SCOPE: ${{ inputs.scope }}
-        run: pnpm i --frozen-lockfile --filter="{./$SCOPE/**}..."
+          SCOPES: ${{ inputs.scope }}
+        run: |
+          filters=()
+          for scope in $SCOPES; do filters+=("--filter={./$scope/**}..."); done
+          pnpm i --frozen-lockfile "${filters[@]}"
         shell: bash
 
       - name: Run extra targets
         if: ${{ inputs.extra-targets != '' }}
         env:
           EXTRA_TARGETS: ${{ inputs.extra-targets }}
-          SCOPE: ${{ inputs.scope }}
-        run: pnpm exec nx run-many -t "$EXTRA_TARGETS" --projects="tag:scope:$SCOPE"
+          PROJECTS: ${{ steps.scopes.outputs.projects }}
+        run: pnpm exec nx run-many -t "$EXTRA_TARGETS" --projects="$PROJECTS"
         shell: bash
 
       - name: Run coverage
         if: ${{ !inputs.skip-coverage }}
         env:
-          SCOPE: ${{ inputs.scope }}
+          PROJECTS: ${{ steps.scopes.outputs.projects }}
         run: |
           mkdir -p ${{ github.workspace }}/coverage
           touch ${{ github.workspace }}/coverage/lcov.info
           touch ${{ github.workspace }}/coverage/sonar-executionTests-report.xml
 
-          pnpm exec nx run-many -t coverage --projects="tag:scope:$SCOPE" --parallel=3 -- --maxWorkers=2
+          pnpm exec nx run-many -t coverage --projects="$PROJECTS" --parallel=3 -- --maxWorkers=2
         shell: bash
 
       - name: Process coverage files
         if: ${{ !inputs.skip-coverage }}
         id: process-coverage
         env:
-          SCOPE: ${{ inputs.scope }}
+          SCOPES: ${{ inputs.scope }}
         run: |
-          for package_json in $(find "./$SCOPE" -name "package.json" -not -path "*/node_modules/*"); do
+          # shellcheck disable=SC2086 # SCOPES is a space-separated list of directories
+          for package_json in $(find $SCOPES -name "package.json" -not -path "*/node_modules/*"); do
             pkg=$(dirname "$package_json")
             echo "Processing package at path: $pkg"
             if [ -f "$package_json" ] && jq -e '.scripts.coverage' "$package_json" > /dev/null 2>&1; then
@@ -135,12 +160,12 @@ jobs:
         if: ${{ !cancelled() }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-codechecks@develop
         with:
-          projects: "tag:scope:${{ inputs.scope }}"
+          projects: ${{ steps.scopes.outputs.projects }}
           parallel: "3"
 
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: ${{ !cancelled() && !inputs.skip-coverage }}
         id: generate_coverage
         with:
-          name: coverage-${{ inputs.scope }}
+          name: coverage-${{ inputs.coverage-name || inputs.scope }}
           path: ${{ github.workspace }}/coverage

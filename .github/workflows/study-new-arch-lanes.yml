@@ -1,0 +1,65 @@
+# Study only (concurrency of the PR test lanes): runs the new architecture scopes as five separate lanes and
+# as one merged job, with the Nx cache skipped (cold) and used (warm), to compare their cost. Not for merge.
+name: "[Study] New architecture lanes merged"
+
+on:
+  push:
+    branches:
+      - study/new-arch-concurrency
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  separate:
+    name: "Separate ${{ matrix.cache }} ${{ matrix.scope }}"
+    strategy:
+      fail-fast: false
+      matrix:
+        cache: [cold, warm]
+        scope: [features, shared, domain, devtools, support]
+    permissions:
+      id-token: write
+      contents: read
+    uses: ./.github/workflows/test-scope-reusable.yml
+    with:
+      scope: ${{ matrix.scope }}
+      coverage-name: ${{ matrix.scope }}-${{ matrix.cache }}
+      extra-targets: ${{ matrix.scope == 'domain' && 'check-export-rules' || '' }}
+      timeout-minutes: 30
+      skip-nx-cache: ${{ matrix.cache == 'cold' }}
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
+
+  merged:
+    name: "Merged ${{ matrix.cache }}"
+    strategy:
+      fail-fast: false
+      matrix:
+        cache: [cold, warm]
+    permissions:
+      id-token: write
+      contents: read
+    uses: ./.github/workflows/test-scope-reusable.yml
+    with:
+      scope: features shared domain devtools support
+      coverage-name: new-arch-${{ matrix.cache }}
+      extra-targets: check-export-rules
+      timeout-minutes: 30
+      skip-nx-cache: ${{ matrix.cache == 'cold' }}
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}

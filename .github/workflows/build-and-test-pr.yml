@@ -154,18 +154,14 @@ jobs:
       js_bundle_hash_android: ${{ needs.determine-affected.outputs.mobile_js_hash_android }}
 
   # Tests
-  # Libs, features, shared, domain, devtools and support in one job, sharded only when determine-affected
-  # plans more work than one shard holds (tools/actions/composites/nx-test-plan).
-  test-packages:
-    name: "Test Packages"
+  test-libraries:
+    name: "Test Libraries"
     permissions:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{ needs.determine-affected.outputs.test_shards != '' && needs.determine-affected.outputs.test_shards != '0' && !github.event.pull_request.head.repo.fork }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-packages-reusable.yml@develop
-    with:
-      matrix: ${{ needs.determine-affected.outputs.test_matrix }}
+    if: ${{contains(needs.determine-affected.outputs.paths, 'libs') && !github.event.pull_request.head.repo.fork}}
+    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -175,6 +171,28 @@ jobs:
       NX_KEY: ${{ secrets.NX_KEY }}
       FLAKE_API_KEY_CI: ${{ secrets.FLAKE_API_KEY_CI }}
       FLAKE_API_HOST: ${{ secrets.FLAKE_API_HOST }}
+
+  # One job for the new architecture scopes: most of each lane was setup, paid once here instead of five times.
+  test-new-arch:
+    name: "Test New Architecture"
+    permissions:
+      id-token: write
+      contents: read
+    needs: determine-affected
+    if: ${{ (contains(needs.determine-affected.outputs.paths, 'features') || contains(needs.determine-affected.outputs.paths, 'shared') || contains(needs.determine-affected.outputs.paths, 'domain') || contains(needs.determine-affected.outputs.paths, 'devtools') || contains(needs.determine-affected.outputs.paths, 'support')) && !github.event.pull_request.head.repo.fork }}
+    uses: LedgerHQ/ledger-live/.github/workflows/test-scope-reusable.yml@develop
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
+    with:
+      scope: ${{ format('{0} {1} {2} {3} {4}', contains(needs.determine-affected.outputs.paths, 'features') && 'features' || '', contains(needs.determine-affected.outputs.paths, 'shared') && 'shared' || '', contains(needs.determine-affected.outputs.paths, 'domain') && 'domain' || '', contains(needs.determine-affected.outputs.paths, 'devtools') && 'devtools' || '', contains(needs.determine-affected.outputs.paths, 'support') && 'support' || '') }}
+      coverage-name: new-arch
+      extra-targets: check-export-rules
+      timeout-minutes: 30
 
   enforce-boundaries:
     name: "Monorepo Checks"
@@ -375,17 +393,19 @@ jobs:
     needs:
       - codecheck-desktop
       - test-mobile
-      - test-packages
+      - test-libraries
+      - test-new-arch
       - build-wallet-cli
       - determine-affected
     uses: LedgerHQ/ledger-live/.github/workflows/scan-sonar-reusable.yml@develop
-    if: ${{ always() && !cancelled() && !github.event.pull_request.head.repo.fork && !contains(needs.*.result, 'failure') && (needs.codecheck-desktop.result == 'success' || needs.test-mobile.result == 'success' || needs.test-packages.result == 'success' || needs.build-wallet-cli.result == 'success' || contains(needs.determine-affected.outputs.paths, 'e2e')) }}
+    if: ${{ always() && !cancelled() && !github.event.pull_request.head.repo.fork && !contains(needs.*.result, 'failure') && (needs.codecheck-desktop.result == 'success' || needs.test-mobile.result == 'success' || needs.test-libraries.result == 'success' || needs.test-new-arch.result == 'success' || needs.build-wallet-cli.result == 'success' || contains(needs.determine-affected.outputs.paths, 'e2e')) }}
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     with:
       should_download_desktop_coverage: ${{ needs.codecheck-desktop.outputs.coverage_generated }}
       should_download_mobile_coverage: ${{ needs.test-mobile.outputs.coverage_generated }}
-      should_download_packages_coverage: ${{ needs.test-packages.result == 'success' }}
+      should_download_libs_coverage: ${{ needs.test-libraries.outputs.coverage_generated }}
+      should_download_new_arch_coverage: ${{ needs.test-new-arch.outputs.coverage_generated }}
       should_download_wallet_cli_coverage: ${{ needs.build-wallet-cli.outputs.coverage_generated }}
 
   # Final Check required
@@ -397,7 +417,8 @@ jobs:
       - codecheck-desktop
       - test-mobile
       - build-test-mobile
-      - test-packages
+      - test-libraries
+      - test-new-arch
       - enforce-boundaries
       - test-design-system
       - build-web-tools

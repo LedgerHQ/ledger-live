@@ -24,12 +24,6 @@ on:
       mobile_js_hash_android:
         description: "Nx hash of live-mobile:e2e:bundle:android, set when ledger-live-mobile is affected"
         value: ${{ jobs.nx-affected.outputs.mobile_js_hash_android }}
-      test_shards:
-        description: "Number of Test Packages shards, 0 when no libs, features, shared, domain, devtools or support project is affected"
-        value: ${{ jobs.nx-affected.outputs.test_shards }}
-      test_matrix:
-        description: "Test Packages matrix JSON (nx-test-plan output `matrix`)"
-        value: ${{ jobs.nx-affected.outputs.test_matrix }}
 
 permissions:
   contents: read
@@ -46,8 +40,6 @@ jobs:
       paths: ${{ steps.nx-affected.outputs.paths }}
       mobile_js_hash_ios: ${{ steps.mobile-js-hash.outputs.ios }}
       mobile_js_hash_android: ${{ steps.mobile-js-hash.outputs.android }}
-      test_shards: ${{ steps.test-plan.outputs.shards }}
-      test_matrix: ${{ steps.test-plan.outputs.matrix }}
     steps:
       - name: Checkout head branch
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -100,13 +92,6 @@ jobs:
         with:
           base: ${{ steps.clean-refs.outputs.base_ref }}
           head: HEAD
-
-      # Reuses the project graph the affected step just built. Only nx and git run, so older branches plan too.
-      - name: Plan package test shards
-        id: test-plan
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-test-plan@develop
-        with:
-          affected: ${{ steps.nx-affected.outputs.packages }}
 
       # Reuses the project graph the affected step just built, so the mobile e2e workflow can look the
       # JS bundles up in the Nx cache without its own install. Like the Build JS jobs, it sets no sharedEnv
