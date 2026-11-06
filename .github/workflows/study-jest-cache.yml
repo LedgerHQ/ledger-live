@@ -1,7 +1,7 @@
-# Study only: how much a warm Jest cache (transforms and coverage instrumentation) saves the package
-# coverage lanes when Nx has to run the tests. Runs the same coverage twice in one pod with the Nx cache
+# Study only: how much a warm Jest cache (transforms and coverage instrumentation) saves the new
+# architecture coverage job when Nx has to run the tests. Runs the same coverage twice in one pod with the Nx cache
 # skipped: first with an empty Jest cache, then with the cache the first pass left behind. Not for merge.
-name: "[Study] Jest cache in the package lanes"
+name: "[Study] Jest cache in the new architecture lane"
 
 on:
   push:
@@ -27,13 +27,8 @@ jobs:
             install: '--filter={./features/**}... --filter={./shared/**}... --filter={./domain/**}... --filter={./devtools/**}... --filter={./support/**}...'
             projects: tag:scope:features,tag:scope:shared,tag:scope:domain,tag:scope:devtools,tag:scope:support
             parallel: 3
-          - lane: libs
-            runner: ledger-wallet-8cpu-aws-public-cached
-            install: '--filter={./libs/**}...'
-            projects: tag:scope:libs-non-ui
-            parallel: 6
     runs-on: ${{ matrix.runner }}
-    timeout-minutes: 75
+    timeout-minutes: 40
     permissions:
       id-token: write
       contents: read
