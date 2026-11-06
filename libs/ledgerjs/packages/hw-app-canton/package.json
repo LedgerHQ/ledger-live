@@ -45,7 +45,7 @@
   "dependencies": {
     "@ledgerhq/hw-transport": "catalog:",
     "bip32-path": "^0.4.2",
-    "protobufjs": "8.4.1"
+    "protobufjs": "8.6.6"
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "catalog:",
@@ -59,7 +59,7 @@
     "@typescript/native": "catalog:",
     "typescript": "catalog:",
     "jest": "catalog:",
-    "protobufjs-cli": "2.4.1",
+    "protobufjs-cli": "2.7.1",
     "rimraf": "4.4.1",
     "source-map-support": "0.5.21",
     "ts-node": "10.9.2",

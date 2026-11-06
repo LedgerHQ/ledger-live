@@ -59,7 +59,7 @@
     "@types/node": "catalog:",
     "@types/jest": "catalog:",
     "@types/lodash": "catalog:",
-    "@types/ws": "8.5.10",
+    "@types/ws": "8.18.2",
     "bignumber.js": "9.1.2",
     "body-parser": "2.4.0",
     "cors": "2.8.5",

@@ -35,7 +35,7 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/pako": "2.0.3",
-    "@types/ws": "8.5.10",
+    "@types/ws": "8.18.2",
     "@typescript/native": "catalog:",
     "jest": "catalog:",
     "msw": "catalog:",

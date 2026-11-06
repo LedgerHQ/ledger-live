@@ -121,7 +121,7 @@
     "fs-extra": "10.1.0",
     "glob": "^7.2.0",
     "lodash": "catalog:",
-    "minimatch": "^5.1.0",
+    "minimatch": "^5.1.7",
     "prop-types": "15.8.1",
     "react": "catalog:",
     "react-dom": "catalog:",
