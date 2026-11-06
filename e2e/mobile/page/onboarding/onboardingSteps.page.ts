@@ -5,7 +5,8 @@ import { byId } from "@e2e/helpers/elements/native";
 // The product name separates its words with non-breaking spaces and may carry zero-width spaces.
 const deviceNamePattern = (name: string) => {
   const gap = String.raw`[\s\u200B]`;
-  return new RegExp(`^${gap}*${escapeRegExp(name).replaceAll(" ", `${gap}+`)}${gap}*$`);
+  const words = escapeRegExp(name).replaceAll(" ", `${gap}+`);
+  return new RegExp(`^${gap}*${words}${gap}*$`);
 };
 
 export default class OnboardingStepsPage {
