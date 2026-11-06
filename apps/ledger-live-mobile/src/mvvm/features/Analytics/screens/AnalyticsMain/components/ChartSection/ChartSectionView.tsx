@@ -31,12 +31,14 @@ export function ChartSectionView({ viewModel, filters, headerContent, plotConten
 
   return (
     <Box lx={containerStyle} testID={CHART_SECTION_TEST_IDS.root}>
-      {headerContent ? (
-        <Box lx={slotStyle}>{headerContent}</Box>
-      ) : (
-        <ChartSectionHeaderView viewModel={header} />
-      )}
-      {filters ? <Box lx={slotStyle}>{filters}</Box> : null}
+      <Box lx={headerBlockStyle}>
+        {headerContent ? (
+          <Box lx={slotStyle}>{headerContent}</Box>
+        ) : (
+          <ChartSectionHeaderView viewModel={header} />
+        )}
+        {filters ? <Box lx={slotStyle}>{filters}</Box> : null}
+      </Box>
       <Box lx={slotStyle}>
         <ChartSectionChart {...chart} plotContent={plotContent} />
       </Box>
@@ -46,6 +48,10 @@ export function ChartSectionView({ viewModel, filters, headerContent, plotConten
 
 const containerStyle: LumenViewStyle = {
   gap: "s24",
+};
+
+const headerBlockStyle: LumenViewStyle = {
+  gap: "s16",
 };
 
 const slotStyle: LumenViewStyle = {
