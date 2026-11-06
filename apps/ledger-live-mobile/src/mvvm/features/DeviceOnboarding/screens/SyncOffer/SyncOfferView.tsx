@@ -28,6 +28,7 @@ function SyncOfferSuccess({
   continueLabel,
   closeLabel,
   onContinue,
+  onQuit,
 }: Extract<SyncOfferViewProps, { showSuccess: true }>) {
   const { colorScheme } = useTheme();
   const { bottom: bottomInset } = useSafeAreaInsets();
@@ -36,7 +37,11 @@ function SyncOfferSuccess({
   return (
     <Box testID={syncOfferTestIds.screen} lx={{ flex: 1, backgroundColor: "canvas" }}>
       <Box lx={{ flex: 1, gap: "s24" }}>
-        <DeviceOnboardingCloseBar label={closeLabel} testID={syncOfferTestIds.quit} />
+        <DeviceOnboardingCloseBar
+          label={closeLabel}
+          testID={syncOfferTestIds.quit}
+          onPress={onQuit}
+        />
         <Box
           lx={{ alignItems: "center", justifyContent: "center", minHeight: "s72", flexShrink: 1 }}
           style={{ height: illustrationHeight }}

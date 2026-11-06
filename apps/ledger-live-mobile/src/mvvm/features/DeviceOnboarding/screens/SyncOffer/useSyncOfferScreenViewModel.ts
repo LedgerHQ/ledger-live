@@ -14,6 +14,7 @@ type SyncOfferSuccessViewProps = Readonly<{
   continueLabel: string;
   closeLabel: string;
   onContinue: () => void;
+  onQuit: () => void;
 }>;
 
 type SyncOfferPromptViewProps = Readonly<{
@@ -61,6 +62,7 @@ export function useSyncOfferScreenViewModel({
       continueLabel: t("deviceOnboarding.syncOffer.success.cta"),
       closeLabel: t("deviceOnboarding.checks.close"),
       onContinue,
+      onQuit,
     };
   }
 

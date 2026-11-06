@@ -131,11 +131,11 @@ describe("SyncOfferView", () => {
     expect(onQuit).not.toHaveBeenCalled();
   });
 
-  it("should continue from the success layout without a close button", async () => {
+  it("should continue or leave from the success layout", async () => {
     const { user, onContinue, onQuit, onActivate, onSkip } = renderSyncOffer(true);
 
     expect(screen.getByText("Sync complete")).toBeVisible();
-    expect(screen.queryByRole("button", { name: "Close" })).toBeNull();
+    expect(screen.getByRole("button", { name: "Close" })).toBeVisible();
     expect(screen.queryByRole("button", { name: "Activate" })).toBeNull();
     expect(screen.queryByRole("button", { name: "Skip for now" })).toBeNull();
 
@@ -145,6 +145,10 @@ describe("SyncOfferView", () => {
     expect(onQuit).not.toHaveBeenCalled();
     expect(onActivate).not.toHaveBeenCalled();
     expect(onSkip).not.toHaveBeenCalled();
+
+    await user.press(screen.getByRole("button", { name: "Close" }));
+
+    expect(onQuit).toHaveBeenCalledTimes(1);
   });
 
   it("should open learn more and leave from the header", async () => {

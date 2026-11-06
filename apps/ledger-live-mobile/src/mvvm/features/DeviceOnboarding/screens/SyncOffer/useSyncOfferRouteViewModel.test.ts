@@ -119,6 +119,20 @@ describe("useSyncOfferRouteViewModel", () => {
     expect(mockNotifyFlowCompleted).toHaveBeenCalledWith("onboarding");
   });
 
+  it("should complete and open the portfolio when quitting the success screen", () => {
+    const { result, store } = renderOffer(true);
+
+    act(() => result.current.onActivate());
+    expect(result.current.showSuccess).toBe(true);
+
+    act(() => result.current.onQuit());
+
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(true);
+    expect(store.getState().settings.readOnlyModeEnabled).toBe(false);
+    expect(reset).toHaveBeenCalledTimes(1);
+    expect(mockNotifyFlowCompleted).toHaveBeenCalledWith("onboarding");
+  });
+
   it("should keep the offer in place when Ledger Sync is abandoned", () => {
     const { store } = renderOffer(false);
     const preventDefault = jest.fn();
