@@ -87,7 +87,10 @@ describe("updateAccountSwapStatus", () => {
       );
     });
 
-    it("is false once anchored, or for a refunded entry that never gets a payout", () => {
+    it("is false once anchored, or for a refunded or expired entry that never gets a payout", () => {
+      expect(isSwapAwaitingPayoutHash(withdrawEntry({ status: TransactionStatus.Expired }))).toBe(
+        false,
+      );
       expect(isSwapAwaitingPayoutHash(withdrawEntry({ operationId: TX_HASH }))).toBe(false);
       expect(isSwapAwaitingPayoutHash(withdrawEntry({ status: TransactionStatus.Refunded }))).toBe(
         false,

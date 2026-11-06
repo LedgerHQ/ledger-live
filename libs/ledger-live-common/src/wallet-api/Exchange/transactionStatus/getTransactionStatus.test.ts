@@ -372,5 +372,27 @@ describe("getTransactionStatus", () => {
         operationHash: "0xpayout",
       });
     });
+
+    it("keeps its details once anchored, until the payout operation is synced", async () => {
+      const anchored = receiverWithEntry();
+      anchored.swapHistory[0] = { ...anchored.swapHistory[0], operationId: "0xpayout" };
+      mockedFetchTransactionSwapStatus.mockResolvedValueOnce({
+        provider: "swapkit_hyperliquid",
+        swapId: "withdraw-1",
+        status: "finished",
+      });
+
+      const response = await getTransactionStatus(
+        { swapId: "withdraw-1" },
+        { accounts: [makeAccount("from"), anchored] },
+      );
+
+      expect(response).toMatchObject({
+        fromAccountId: "from",
+        toAccountId: "to",
+        sentAmount: "5000000",
+        operationHash: "0xpayout",
+      });
+    });
   });
 });
