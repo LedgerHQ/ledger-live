@@ -3,6 +3,7 @@ import lumen from "@ledgerhq/lumen-lint-plugin/oxlint";
 import { defineConfig } from "oxlint";
 import base from "./base.mts";
 import {
+  BIGNUMBER_NAMED_IMPORT,
   EXPO_CLIPBOARD,
   LIVE_COMMON_LIB,
   LODASH,
@@ -63,7 +64,7 @@ export default defineConfig({
     "eslint/no-restricted-imports": [
       "error",
       {
-        paths: [LODASH, EXPO_CLIPBOARD],
+        paths: [LODASH, EXPO_CLIPBOARD, BIGNUMBER_NAMED_IMPORT],
         patterns: [LIVE_COMMON_LIB],
       },
     ],
