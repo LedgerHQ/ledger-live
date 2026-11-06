@@ -119,7 +119,9 @@ const AleoStepRecordPicker = ({ account, transaction, status, updateTransaction 
       allUnspentRecords: accountRecords.filter(r => new BigNumber(r.microcredits).isGreaterThan(0)),
       unspentRecords: accountRecords
         .filter(r => new BigNumber(r.microcredits).isGreaterThan(0))
-        .sort((a, b) => new BigNumber(b.microcredits).comparedTo(new BigNumber(a.microcredits)))
+        .sort(
+          (a, b) => new BigNumber(b.microcredits).comparedTo(new BigNumber(a.microcredits)) ?? 0,
+        )
         .slice(0, MAX_RECORDS_DISPLAYED),
     };
   }, [account]);

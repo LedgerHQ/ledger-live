@@ -37,6 +37,7 @@ describe("AccountBalanceSummaryFooter", () => {
 
     const ACCOUNT = {
       type: "Account",
+      spendableBalance: BigNumber(10),
       stakingResources: STAKING_RESOURCES,
       currency: {
         id: "babylon",
@@ -114,6 +115,7 @@ describe("AccountBalanceSummaryFooter", () => {
 
       const account = {
         type: "Account",
+        spendableBalance: BigNumber(10),
         stakingResources: {
           delegatedBalance: BigNumber(0),
           unbondingBalance: BigNumber(0),
@@ -145,6 +147,7 @@ describe("AccountBalanceSummaryFooter", () => {
 
       const account = {
         type: "Account",
+        spendableBalance: BigNumber(10),
         stakingResources: STAKING_RESOURCES,
         currency: {
           id: "crypto_org_croeseid",
