@@ -71,7 +71,7 @@ export default class OnboardingStepsPage {
       await this.deviceCard(device.id).expectVisible();
       await this.deviceCardPart(device.id, "header").expectText("Ledger");
       const title = await this.deviceCardPart(device.id, "title").getText();
-      const normalizedTitle = title.replaceAll(/\s+/g, " ").replaceAll(/\u200B/g, "").trim();
+      const normalizedTitle = title.replaceAll(/\s+/g, " ").replaceAll("\u200B", "").trim();
       jestExpect(normalizedTitle).toBe(device.name);
       await this.deviceCardPart(device.id, "image").expectVisible();
       if (isIos() && (device.name === "Nano S" || device.name === "Nano S Plus")) {

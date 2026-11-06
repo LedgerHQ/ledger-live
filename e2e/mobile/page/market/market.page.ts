@@ -1,5 +1,5 @@
 import { Step } from "jest-allure2-reporter/api";
-import { openDeeplink } from "@e2e/helpers/commonHelpers";
+import { escapeRegExp, openDeeplink } from "@e2e/helpers/commonHelpers";
 import { byId, byIdWithDescendantText } from "@e2e/helpers/elements/native";
 import { TIMEOUT } from "@e2e/utils/timeouts";
 
@@ -41,8 +41,12 @@ export default class MarketPage {
   private readonly categoryTab = (value: string) =>
     byId(`market-screen-assets-category-switcher-${value}`);
   private readonly marketItem = (marketId: string) => byId(`marketItem-${marketId}`);
+  // Matches the title anywhere in a descendant, ignoring case, so "Tether USD" passes for "Tether".
   private readonly marketItemWithTitle = (marketId: string, title: string) =>
-    byIdWithDescendantText({ id: `marketItem-${marketId}`, text: title });
+    byIdWithDescendantText({
+      id: `marketItem-${marketId}`,
+      text: new RegExp(`.*${escapeRegExp(title)}.*`, "i"),
+    });
   // New MarketScreen keys rows by CoinGecko market.id; ERC20s differ from their ledger currency.id.
   private readonly marketScreenRow = (currency: CurrencyType) =>
     this.marketItem(currency.market?.id ?? currency.id);

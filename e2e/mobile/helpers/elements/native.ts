@@ -286,17 +286,21 @@ export class NativeHandle implements ElementHandle {
     timeout: number,
     state: string,
   ): Promise<void> {
-    const deadline = Date.now() + timeout;
-    while (Date.now() < deadline) {
-      if (await isReached(TIMEOUT.xxxsmall)) return;
-      if (await failFastOn.isVisible(TIMEOUT.xxxsmall)) {
-        const errorText = await failFastOn.getText();
-        throw new Error(
-          `${failFastOn.description} showed while waiting for ${this.description}: ${errorText}`,
-        );
-      }
+    const errorText = await retryUntilTimeout<string | undefined>(
+      async () => {
+        if (await isReached(TIMEOUT.xxxsmall)) return undefined;
+        if (await failFastOn.isVisible(TIMEOUT.xxxsmall)) return await failFastOn.getText();
+        throw new Error(`${this.description} is not ${state} yet`);
+      },
+      timeout,
+      undefined,
+      { messageOnError: `${this.description} did not become ${state} within ${timeout}ms` },
+    );
+    if (errorText !== undefined) {
+      throw new Error(
+        `${failFastOn.description} showed while waiting for ${this.description}: ${errorText}`,
+      );
     }
-    throw new Error(`${this.description} did not become ${state} within ${timeout}ms`);
   }
 
   /** Names the element in the failure and keeps the Detox message, hard timeout marker included. */
