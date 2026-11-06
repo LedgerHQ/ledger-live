@@ -66,10 +66,18 @@ export interface CurrenciesOrder {
   metaCurrencyIds: AggregatedAssetId[];
 }
 
+/** An aggregated asset as the wire sends it: its id is not branded until the response is parsed. */
+export type ApiCryptoAssetMeta = Omit<CryptoAssetMeta, "id"> & { id: string };
+
+/** The ordering as the wire sends it: its ids are not branded until the response is parsed. */
+export type ApiCurrenciesOrder = Omit<CurrenciesOrder, "metaCurrencyIds"> & {
+  metaCurrencyIds: string[];
+};
+
 // Types for raw API response (before transformation)
 export interface RawApiResponse {
   /** Grouped crypto assets by meta-currency */
-  cryptoAssets: Record<AggregatedAssetId, CryptoAssetMeta>;
+  cryptoAssets: Record<string, ApiCryptoAssetMeta>;
   /** Network information */
   networks: Record<string, NetworkInfo>;
   /** Raw crypto currencies and token currencies from API */
@@ -79,5 +87,5 @@ export interface RawApiResponse {
   /** Market data for currencies */
   markets: Record<string, PartialMarketItemResponse>;
   /** Currency ordering information */
-  currenciesOrder: CurrenciesOrder;
+  currenciesOrder: ApiCurrenciesOrder;
 }

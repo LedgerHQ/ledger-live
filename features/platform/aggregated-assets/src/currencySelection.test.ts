@@ -43,18 +43,18 @@ describe("currencySelection", () => {
         },
       };
 
-      const result = selectCurrencyForMetaId("unknown", data);
+      const result = selectCurrencyForMetaId(assetId("unknown"), data);
       expect(result).toBeUndefined();
     });
 
     it("should return undefined when meta-currency does not exist in data", () => {
-      const result = selectCurrencyForMetaId("nonexistent", mockAssetsDataWithPagination);
+      const result = selectCurrencyForMetaId(assetId("nonexistent"), mockAssetsDataWithPagination);
       expect(result).toBeUndefined();
     });
 
     it("should return exact match when currency.id equals metaCurrencyId", () => {
       const data = { ...mockBitcoinAssetsData, pagination: {} } as AssetsDataWithPagination;
-      const result = selectCurrencyForMetaId("bitcoin", data);
+      const result = selectCurrencyForMetaId(assetId("bitcoin"), data);
 
       expect(result).toBeDefined();
       expect(result!.id).toBe("bitcoin");
@@ -63,7 +63,7 @@ describe("currencySelection", () => {
 
     it("should prefer CryptoCurrency type over TokenCurrency", () => {
       const result = selectCurrencyForMetaId(
-        "urn:crypto:meta-currency:injective_protocol",
+        assetId("urn:crypto:meta-currency:injective_protocol"),
         mockAssetsDataWithPagination,
       );
 
@@ -74,7 +74,7 @@ describe("currencySelection", () => {
 
     it("should fall back to first available currency when no CryptoCurrency exists", () => {
       const data = { ...mockUsdcAssetsData, pagination: {} } as AssetsDataWithPagination;
-      const result = selectCurrencyForMetaId("usdc", data);
+      const result = selectCurrencyForMetaId(assetId("usdc"), data);
 
       expect(result).toBeDefined();
       expect(result!.type).toBe("TokenCurrency");
@@ -82,7 +82,7 @@ describe("currencySelection", () => {
 
     it("prefers the ERC-20 token over a same-named L2 chain when their tickers differ", () => {
       const data = { ...mockArbitrumTokenAssetsData, pagination: {} } as AssetsDataWithPagination;
-      const result = selectCurrencyForMetaId("arbitrum", data);
+      const result = selectCurrencyForMetaId(assetId("arbitrum"), data);
 
       expect(result).toBeDefined();
       expect(result!.id).toBe("ethereum/erc20/arbitrum");
