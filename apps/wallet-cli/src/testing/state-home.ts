@@ -12,6 +12,8 @@ export function pointStateHomeAt(dir: string): () => void {
   };
 }
 
-export function stateHomeEnv(dir: string): Record<string, string> {
-  return Object.fromEntries(STATE_HOME_VARS.map(name => [name, dir]));
+export type StateHomeEnv = Record<(typeof STATE_HOME_VARS)[number], string>;
+
+export function stateHomeEnv(dir: string): StateHomeEnv {
+  return { XDG_STATE_HOME: dir, LOCALAPPDATA: dir };
 }

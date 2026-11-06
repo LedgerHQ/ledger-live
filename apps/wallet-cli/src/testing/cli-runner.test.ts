@@ -164,4 +164,24 @@ describe("runCli", () => {
       seeded.cleanup();
     }
   });
+
+  it("refuses a LOCALAPPDATA other than the XDG_STATE_HOME it points the state dir at", async () => {
+    const seeded = makeSessionDir([]);
+    const refusal =
+      "runCli points LOCALAPPDATA at XDG_STATE_HOME: pass only XDG_STATE_HOME, or the same dir in both";
+    try {
+      await expect(
+        runCli(["session", "view"], { LOCALAPPDATA: seeded.env.LOCALAPPDATA }),
+      ).rejects.toThrow(refusal);
+      await expect(
+        runCli(["session", "view"], {
+          ...seeded.env,
+          LOCALAPPDATA: `${seeded.env.XDG_STATE_HOME}-other`,
+        }),
+      ).rejects.toThrow(refusal);
+      expect((await runCli(["session", "view"], seeded.env)).exitCode).toBe(0);
+    } finally {
+      seeded.cleanup();
+    }
+  });
 });

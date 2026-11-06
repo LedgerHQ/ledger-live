@@ -10,7 +10,7 @@ binary.
 |--------|-----------------|
 | `cli-runner` | Runs a command in-process, as if spawned (`runCli`) |
 | `mock-server` | Serves canned HTTP routes on a local port |
-| `session-fixture` | Temp XDG state dir pre-populated with session entries, and the CLI state dir under a temp one (`cliStateDirIn`) |
+| `session-fixture` | Temp state dir pre-populated with session entries, and the CLI state dir under a temp one (`cliStateDirIn`) |
 | `state-home` | Points the CLI state dir at a temp dir, Windows included (`pointStateHomeAt`) |
 | `constants`, `cal-fixtures`, `eth-sync-routes` | Fixed addresses, descriptors, token info and sync routes |
 | `auth-routes`, `swap-quote-routes` | Keycloak + LKRP auth routes, and swap API routes recording each quote's `authorization` header |
