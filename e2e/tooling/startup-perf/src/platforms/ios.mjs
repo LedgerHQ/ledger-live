@@ -1,21 +1,17 @@
 import { writeFile } from "node:fs/promises";
 import path from "node:path";
-import { DEVICE_QUERY_TIMEOUT_MS, INSTALL_TIMEOUT_MS, run, sleep } from "./exec.mjs";
-import { MAESTRO_SCROLL_TIMEOUT_MS } from "./maestro.mjs";
+import { DEVICE_QUERY_TIMEOUT_MS, INSTALL_TIMEOUT_MS, run, sleep } from "../exec.mjs";
+import { FLOWS_DIR, MAESTRO_SCROLL_TIMEOUT_MS } from "../maestro.mjs";
 
-/** @import { Maestro, Platform } from "./types.mjs" */
+/** @import { Maestro, Platform } from "../types.mjs" */
 
 // Up to 15 s for Maestro's xcodebuild driver to exit.
 const DRIVER_EXIT_POLLS = 30;
 const DRIVER_EXIT_POLL_MS = 500;
 const LOG_SHOW_TIMEOUT_MS = 120_000;
 
-const SCROLL_FLOW = path.join(import.meta.dirname, "flows", "scroll-performance.yaml");
-const SCROLL_TO_END_FLOW = path.join(
-  import.meta.dirname,
-  "flows",
-  "scroll-performance-to-end.yaml",
-);
+const SCROLL_FLOW = path.join(FLOWS_DIR, "scroll-performance.yaml");
+const SCROLL_TO_END_FLOW = path.join(FLOWS_DIR, "scroll-performance-to-end.yaml");
 
 // sysctl KERN_PROC_PID: kinfo_proc opens with p_starttime, a timeval.
 const PROCESS_START_PY = `

@@ -7,7 +7,7 @@ import { describe, it } from "node:test";
 
 // What the measurement needs from the mobile app of this checkout: a failure means an app change
 // broke it (README.md, "The build" and "A launch").
-const APP = path.join(import.meta.dirname, "../../../apps/ledger-live-mobile");
+const APP = path.join(import.meta.dirname, "../../../../apps/ledger-live-mobile");
 const PREPARED_FILES = [
   ".env.mock.prerelease",
   "package.json",
@@ -29,7 +29,7 @@ describe("the mobile app of this checkout", () => {
         copyFileSync(path.join(APP, file), path.join(app, file));
       }
       try {
-        execFileSync("bash", [path.join(import.meta.dirname, "prepare-build.sh"), app], {
+        execFileSync("bash", [path.join(import.meta.dirname, "../ci/prepare-build.sh"), app], {
           stdio: "pipe",
         });
       } catch (error) {

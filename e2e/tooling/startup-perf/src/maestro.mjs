@@ -3,6 +3,7 @@ import { run } from "./exec.mjs";
 
 /** @import { Maestro } from "./types.mjs" */
 
+export const FLOWS_DIR = path.join(import.meta.dirname, "..", "flows");
 export const MAESTRO_FLOW_TIMEOUT_MS = 120_000;
 export const MAESTRO_SCROLL_TIMEOUT_MS = 60_000;
 export const MAESTRO_HIERARCHY_TIMEOUT_MS = 60_000;

@@ -4,10 +4,10 @@ import { appendFile, mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
-import { createAndroid } from "./android.mjs";
+import { createAndroid } from "./platforms/android.mjs";
 import { log, sleep } from "./exec.mjs";
 import { createInjector, loadUserdata } from "./inject.mjs";
-import { createIos } from "./ios.mjs";
+import { createIos } from "./platforms/ios.mjs";
 import { createMaestro } from "./maestro.mjs";
 import { createPerformanceReader } from "./performance-screen.mjs";
 
