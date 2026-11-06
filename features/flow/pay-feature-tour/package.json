@@ -37,6 +37,7 @@
     "@ledgerhq/test-quarantine": "workspace:*",
     "@shared/feature-flags": "workspace:^",
     "@support/jest": "workspace:*",
+    "@support/lint": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",

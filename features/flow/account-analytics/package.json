@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@domain/entity-currency-fiat": "workspace:*",
+    "@shared/analytics": "workspace:*",
     "@shared/i18n": "workspace:*",
     "zod": "catalog:"
   },
@@ -33,6 +34,7 @@
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
+    "@support/lint": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

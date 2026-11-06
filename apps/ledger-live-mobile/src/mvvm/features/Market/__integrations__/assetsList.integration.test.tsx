@@ -16,8 +16,6 @@ import type { State } from "~/reducers/types";
 import MarketNavigator from "../Navigator";
 import { MARKET_SCREEN_TEST_IDS } from "../screens/MarketScreen/testIds";
 
-jest.mock("LLM/features/Market/screens//MarketDetail", () => () => null);
-
 const Stack = createNativeStackNavigator<BaseNavigatorStackParamList>();
 
 const NavigatorWrapper = () => (

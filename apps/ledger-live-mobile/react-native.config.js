@@ -1,5 +1,5 @@
 module.exports = {
-  commands: require("@callstack/repack/commands/rspack"),
+  commands: require("@callstack/repack/commands"),
   dependencies: {
     // Expo autolinking links transitive native deps; JS is aliased to the expo-crypto shim (LIVE-37309)
     "react-native-get-random-values": {

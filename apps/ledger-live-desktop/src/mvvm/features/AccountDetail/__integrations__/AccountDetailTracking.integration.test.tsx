@@ -98,6 +98,7 @@ describe("AccountDetail tracking", () => {
             source: "Asset",
             operationsCount: ethAccount.operationsCount,
             hasTokens: true,
+            hasAnalyticsBanner: true,
           },
         },
         { updateRoutes: true, refreshSource: true },
@@ -127,6 +128,7 @@ describe("AccountDetail tracking", () => {
         ...FACTS,
         operationsCount: ethAccount.operationsCount,
         hasTokens: false,
+        hasAnalyticsBanner: false,
       });
     });
   });

@@ -527,6 +527,12 @@ describe("filterValidSettings", () => {
     expect(filtered).toEqual({});
   });
 
+  it.each([null, undefined])("should return an empty object for %p", importedSettings => {
+    const filtered = filterValidSettings(importedSettings);
+
+    expect(filtered).toEqual({});
+  });
+
   it("should handle mixed valid and invalid fields", () => {
     const importedSettings = {
       counterValue: "GBP",
@@ -647,6 +653,17 @@ describe("SETTINGS_IMPORT action", () => {
     expect(newState.hideEmptyTokenAccounts).toBe(false);
     expect("oldField" in newState).toBe(false);
   });
+
+  it.each([null, undefined])(
+    "should import nothing when the payload is %p (fresh install)",
+    payload => {
+      const currentState: SettingsState = { ...SETTINGS_INITIAL_STATE, theme: "dark" };
+
+      const newState = reducer(currentState, importSettings(payload));
+
+      expect(newState).toEqual(currentState);
+    },
+  );
 
   it("should import productTourCompleted when present in payload", () => {
     const action = importSettings({ productTourCompleted: true });

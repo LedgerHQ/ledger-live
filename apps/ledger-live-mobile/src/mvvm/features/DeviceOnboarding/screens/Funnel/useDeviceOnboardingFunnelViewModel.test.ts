@@ -1,4 +1,4 @@
-import { renderHook } from "@tests/test-renderer";
+import { act, renderHook } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 import type { State } from "~/reducers/types";
@@ -624,5 +624,185 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
     expect(checks.state).toBe("succeeded");
     expect(checks.onContinue).toBeUndefined();
+  });
+
+  it("should show the karaoke close when an unseeded device is waiting to start", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "awaitingStart",
+        context: {
+          onboardedOnEntry: false,
+          checksPaused: false,
+        } as DeviceOnboardingSession["context"],
+      }),
+    );
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const screen = result.current;
+    if (screen.status !== "karaoke") throw new Error(screen.status);
+
+    act(() => screen.onClose());
+
+    expect(send).not.toHaveBeenCalled();
+    expect(result.current.quitConfirmation?.isOpen).toBe(true);
+  });
+
+  it("should keep the checks screen when a seeded device is waiting to start", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "awaitingStart",
+        context: {
+          onboardedOnEntry: true,
+          checksPaused: false,
+        } as DeviceOnboardingSession["context"],
+      }),
+    );
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    expect(checksOf(result.current).state).toBe("idle");
+    expect(result.current.quitConfirmation).toBeNull();
+  });
+
+  it("should ask before Android back leaves an unseeded setup", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "checks.firmwareCheck",
+        context: {
+          onboardedOnEntry: false,
+          checksPaused: false,
+        } as DeviceOnboardingSession["context"],
+      }),
+    );
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const preventDefault = jest.fn();
+
+    act(() => {
+      listeners.get("beforeRemove")?.({ preventDefault, data: { action: { type: "GO_BACK" } } });
+    });
+
+    expect(preventDefault).toHaveBeenCalledTimes(1);
+    expect(send).not.toHaveBeenCalled();
+    expect(result.current.quitConfirmation?.isOpen).toBe(true);
+  });
+
+  it("should ask before the allow prompt close leaves an unseeded setup", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "checks.genuineCheck.awaitingApproval",
+        context: {
+          onboardedOnEntry: false,
+          checksPaused: false,
+        } as DeviceOnboardingSession["context"],
+      }),
+    );
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    act(() => checksOf(result.current).onQuit?.());
+
+    expect(send).not.toHaveBeenCalled();
+    expect(result.current.quitConfirmation?.isOpen).toBe(true);
+  });
+
+  it("should close the confirmation without sending anything", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "awaitingStart",
+        context: {
+          onboardedOnEntry: false,
+          checksPaused: false,
+        } as DeviceOnboardingSession["context"],
+      }),
+    );
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const screen = result.current;
+    if (screen.status !== "karaoke") throw new Error(screen.status);
+
+    act(() => screen.onClose());
+    act(() => result.current.quitConfirmation?.onContinue());
+
+    expect(send).not.toHaveBeenCalled();
+    expect(result.current.quitConfirmation?.isOpen).toBe(false);
+  });
+
+  it("should send one QUIT when an unseeded device leaves without saving", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "awaitingStart",
+        context: {
+          onboardedOnEntry: false,
+          checksPaused: false,
+        } as DeviceOnboardingSession["context"],
+      }),
+    );
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const screen = result.current;
+    if (screen.status !== "karaoke") throw new Error(screen.status);
+
+    act(() => screen.onClose());
+    act(() => {
+      result.current.quitConfirmation?.onLeave();
+      result.current.quitConfirmation?.onLeave();
+    });
+
+    expect(send).toHaveBeenCalledTimes(1);
+    expect(send).toHaveBeenCalledWith({ type: "QUIT" });
+  });
+
+  it("should keep the success screen when an unseeded device reaches done", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "done",
+        context: {
+          onboardedOnEntry: false,
+          checksPaused: false,
+        } as DeviceOnboardingSession["context"],
+      }),
+    );
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    expect(checksOf(result.current).state).toBe("succeeded");
+    expect(result.current.status).not.toBe("connecting");
+  });
+
+  it("should close a not genuine sheet with CLOSE on an unseeded device", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "checks.notGenuineSupport",
+        context: {
+          onboardedOnEntry: false,
+          genuineFailureKind: "DEVICE_NOT_GENUINE",
+          checksPaused: false,
+        } as DeviceOnboardingSession["context"],
+      }),
+    );
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    checksOf(result.current).onCloseNotGenuine?.();
+
+    expect(send).toHaveBeenCalledWith({ type: "CLOSE" });
+  });
+
+  it("should close a firmware offer with CLOSE on an unseeded device", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "checks.firmwareUpdateOffered",
+        context: {
+          onboardedOnEntry: false,
+          firmwareVersion: "1.0.0",
+          availableFirmwareVersion: "1.1.0",
+          checksPaused: false,
+        } as DeviceOnboardingSession["context"],
+      }),
+    );
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    checksOf(result.current).onCloseFirmwareOffer?.();
+
+    expect(send).toHaveBeenCalledWith({ type: "CLOSE" });
+    expect(send).not.toHaveBeenCalledWith({ type: "USER_DECLINE" });
   });
 });

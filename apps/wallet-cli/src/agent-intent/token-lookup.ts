@@ -60,7 +60,7 @@ export async function findSolanaToken(mint: string): Promise<SolanaToken | null>
 /** The mint's token program (`spl-token` or `spl-token-2022`) read on chain: CAL types both "spl". */
 export async function findSolanaMintProgram(mint: string): Promise<string | undefined> {
   const config = getCurrencyConfiguration<SolanaCoinConfig>("solana");
-  const api = getChainAPI(chainConfigFrom(config, "solana"));
+  const api = getChainAPI(chainConfigFrom(config));
   const mintAccount = await getMaybeTokenMint(mint, api);
   if (mintAccount instanceof Error) throw mintAccount;
   return mintAccount?.onChainAcc.data.program;

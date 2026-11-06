@@ -417,6 +417,14 @@ export function sendFile(payload: { fileName: string; fileContent: string }) {
   });
 }
 
+export function sendLocalManifestsImported(id: string, manifestIds: string[]) {
+  postMessage({
+    type: "localManifestsImported",
+    id,
+    payload: JSON.stringify(manifestIds),
+  });
+}
+
 export function sendSwapLiveAppReady() {
   postMessage({
     type: "swapLiveAppReady",

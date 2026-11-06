@@ -326,6 +326,35 @@ describe("universal component", () => {
     }
   });
 
+  it("leaves a secondary universal subpath untouched", async () => {
+    seedDualPackage(tree, {
+      ".": UNIVERSAL,
+      "./hooks": { "react-native": "./src/hooks.native.ts", default: "./src/hooks.ts" },
+    });
+    tree.write(`${PACKAGE}/src/hooks.ts`, 'export const hooks = "ts";\n');
+    tree.write(`${PACKAGE}/src/hooks.native.ts`, 'export const hooks = "native";\n');
+
+    await universalComponentGenerator(tree, { name: "ContactsButton", project: PACKAGE });
+
+    expect(readText(tree, `${PACKAGE}/src/hooks.ts`)).toBe('export const hooks = "ts";\n');
+    expect(readText(tree, `${PACKAGE}/src/hooks.native.ts`)).toBe(
+      'export const hooks = "native";\n',
+    );
+  });
+
+  it("refuses a conditioned platform entry on the universal path", async () => {
+    seedDualPackage(tree, {
+      ".": UNIVERSAL,
+      "./web": { default: "./src/web/index.web.ts" },
+    });
+    tree.write(`${PACKAGE}/src/web/index.web.ts`, "export {};\n");
+
+    await expect(
+      universalComponentGenerator(tree, { name: "ContactsButton", project: PACKAGE }),
+    ).rejects.toThrow(/the \.\/web entry has conditions/);
+    expect(tree.exists(`${PACKAGE}/src/ContactsButton.types.ts`)).toBe(false);
+  });
+
   it("refuses a package whose platform entry is the universal entry's module", async () => {
     seedDualPackage(tree, { ".": UNIVERSAL, "./native": "./src/index.native.ts" });
 

@@ -72,7 +72,7 @@ export function closeOnboarding(navigation: NavigationProp<ParamListBase>) {
   else resetToPortfolio(navigation);
 }
 
-function resetToPortfolio(navigation: NavigationProp<ParamListBase>) {
+export function resetToPortfolio(navigation: NavigationProp<ParamListBase>) {
   getRootNavigation(navigation).reset({
     index: 0,
     routes: [

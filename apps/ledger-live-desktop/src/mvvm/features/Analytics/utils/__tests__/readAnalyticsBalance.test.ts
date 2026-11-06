@@ -35,10 +35,26 @@ describe("readAnalyticsBalance", () => {
     expect(result.data.amount).toBe(result.data.history.at(-1)?.amount);
   });
 
-  it("should report unavailable instead of a partial sum when a held position has no price", () => {
+  it("should leave out a held position without a price and chart the priced ones", () => {
     const btcOnly = createAnalyticsCountervalues([btc]);
     const scope = { ...context, assetId: null, accountId: null, positionIds: [eth.id, btc.id] };
-    expect(readAnalyticsBalance(scope, positions, btcOnly, analyticsFiat).status).toBe(
+    const result = readAnalyticsBalance(scope, positions, btcOnly, analyticsFiat);
+    const btcResult = readAnalyticsBalance(
+      { ...scope, positionIds: [btc.id] },
+      positions,
+      btcOnly,
+      analyticsFiat,
+    );
+    if (result.status !== "ready" || btcResult.status !== "ready")
+      throw new Error("Expected a ready balance");
+    expect(result.data.history.length).toBeGreaterThan(0);
+    expect(result.data.amount).toBeGreaterThan(0);
+    expect(result.data.amount).toBe(btcResult.data.amount);
+  });
+
+  it("should report unavailable when every held position lacks a price", () => {
+    const btcOnly = createAnalyticsCountervalues([btc]);
+    expect(readAnalyticsBalance(context, positions, btcOnly, analyticsFiat).status).toBe(
       "unavailable",
     );
   });

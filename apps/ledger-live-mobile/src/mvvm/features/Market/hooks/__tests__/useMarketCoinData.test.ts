@@ -1,18 +1,15 @@
 import { renderHook, waitFor } from "@tests/test-renderer";
-import { useAssetChartDataInCounterValue } from "@ledgerhq/live-common/market/hooks/useAssetChartDataInCounterValue";
 import { useCurrencyData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
-import { useMarketCoinData, useMarketCoinDataWithChart } from "../useMarketCoinData";
+import { useMarketCoinData } from "../useMarketCoinData";
 import { createMarketCurrencyData, withMarketState } from "../../__tests__/helpers";
 
 jest.mock("@ledgerhq/live-common/market/hooks/useMarketDataProvider");
-jest.mock("@ledgerhq/live-common/market/hooks/useAssetChartDataInCounterValue");
 jest.mock("@features/platform-market-countervalues", () => ({
   ...jest.requireActual("@features/platform-market-countervalues"),
   useUsdToFiatRate: jest.fn(() => ({ status: "ready", rate: 2 })),
 }));
 
 const mockedUseCurrencyData = jest.mocked(useCurrencyData);
-const mockedUseAssetChartDataInCounterValue = jest.mocked(useAssetChartDataInCounterValue);
 
 const refetch = jest.fn();
 
@@ -31,13 +28,6 @@ describe("useMarketCoinData hooks", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedUseCurrencyData.mockReturnValue(mockCurrencyData());
-    mockedUseAssetChartDataInCounterValue.mockReturnValue({
-      data: { prices: [[1, 2]] },
-      currentData: { prices: [[1, 2]] },
-      isLoading: false,
-      isFetching: false,
-      isError: false,
-    });
   });
 
   it.each([
@@ -55,44 +45,11 @@ describe("useMarketCoinData hooks", () => {
     },
   );
 
-  it.each([
-    { range: "7d" as const, expected: "7d" },
-    { range: undefined, expected: "24h" },
-  ])(
-    "useMarketCoinDataWithChart should return range=$expected when Redux value is $range",
-    ({ range, expected }) => {
-      const { result } = renderHook(
-        () => useMarketCoinDataWithChart({ currencyId: "bitcoin" }),
-        withMarketState({ marketParams: { range } }),
-      );
-
-      expect(result.current.range).toBe(expected);
-    },
-  );
-
   it("useMarketCoinData should expose loading state and refetch", () => {
     const { result } = renderHook(() => useMarketCoinData({ currencyId: "bitcoin" }));
 
     expect(result.current.loading).toBe(false);
     expect(typeof result.current.refetch).toBe("function");
-  });
-
-  it("useMarketCoinDataWithChart should expose marketParams and counterCurrency from Redux", () => {
-    const { result } = renderHook(
-      () => useMarketCoinDataWithChart({ currencyId: "bitcoin" }),
-      withMarketState({ marketParams: { counterCurrency: "eur" } }),
-    );
-
-    expect(result.current.counterCurrency).toBe("eur");
-    expect(mockedUseAssetChartDataInCounterValue).toHaveBeenCalledWith({
-      counterCurrency: "eur",
-      id: "bitcoin",
-      range: "24h",
-      isCryptoCountervalue: false,
-    });
-    expect(result.current.marketParams).toEqual(
-      expect.objectContaining({ counterCurrency: "eur" }),
-    );
   });
 
   it("useMarketCoinData should request USD and rescale a crypto countervalue", async () => {

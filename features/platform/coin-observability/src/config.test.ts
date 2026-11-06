@@ -1,6 +1,7 @@
 import {
   coinObservabilityConfigFor,
   DEFAULT_MAX_FAILURES_PER_KEY,
+  DEFAULT_PREPARATION_SAMPLE_RATE,
   DEFAULT_SYNC_PATH_SAMPLE_RATE,
   readCoinObservabilityConfig,
   setCoinObservabilityConfigReader,
@@ -23,20 +24,27 @@ describe("toCoinObservabilityConfig", () => {
     expect(
       toCoinObservabilityConfig({
         enabled: true,
-        params: { syncPathSampleRate: 0.3, maxFailuresPerKey: 7 },
+        params: { syncPathSampleRate: 0.3, preparationSampleRate: 0.02, maxFailuresPerKey: 7 },
       }),
-    ).toEqual({ includeSyncPath: true, syncPathSampleRate: 0.3, maxFailuresPerKey: 7 });
+    ).toEqual({
+      includeSyncPath: true,
+      syncPathSampleRate: 0.3,
+      preparationSampleRate: 0.02,
+      maxFailuresPerKey: 7,
+    });
   });
 
   it("falls back to each default when the flag is on without params", () => {
     expect(toCoinObservabilityConfig({ enabled: true })).toEqual({
       includeSyncPath: true,
       syncPathSampleRate: DEFAULT_SYNC_PATH_SAMPLE_RATE,
+      preparationSampleRate: DEFAULT_PREPARATION_SAMPLE_RATE,
       maxFailuresPerKey: DEFAULT_MAX_FAILURES_PER_KEY,
     });
     expect(toCoinObservabilityConfig({ enabled: true, params: { maxFailuresPerKey: 0 } })).toEqual({
       includeSyncPath: true,
       syncPathSampleRate: DEFAULT_SYNC_PATH_SAMPLE_RATE,
+      preparationSampleRate: DEFAULT_PREPARATION_SAMPLE_RATE,
       maxFailuresPerKey: 0,
     });
     expect(
@@ -53,7 +61,12 @@ describe("coin observability config reader", () => {
   });
 
   it("returns what the injected reader returns, and null again once cleared", () => {
-    const config = { includeSyncPath: true, syncPathSampleRate: 0.2, maxFailuresPerKey: 3 };
+    const config = {
+      includeSyncPath: true,
+      syncPathSampleRate: 0.2,
+      preparationSampleRate: 0.2,
+      maxFailuresPerKey: 3,
+    };
     setCoinObservabilityConfigReader(() => config);
     expect(readCoinObservabilityConfig()).toBe(config);
     setCoinObservabilityConfigReader(null);
@@ -71,7 +84,12 @@ describe("coinObservabilityConfigFor", () => {
         datadogEnabled: true,
         coinObservability: flagOn,
       }),
-    ).toEqual({ includeSyncPath: true, syncPathSampleRate: 0.2, maxFailuresPerKey: 3 });
+    ).toEqual({
+      includeSyncPath: true,
+      syncPathSampleRate: 0.2,
+      preparationSampleRate: DEFAULT_PREPARATION_SAMPLE_RATE,
+      maxFailuresPerKey: 3,
+    });
   });
 
   it("sends nothing when the user declined crash or bug reporting", () => {

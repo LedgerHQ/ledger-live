@@ -19,9 +19,17 @@ describe("readAnalyticsCurrentBalance", () => {
     });
   });
 
-  it("should report unavailable instead of a partial sum when a held position has no price", () => {
+  it("should leave out a held position without a price", () => {
     const btcOnly = createAnalyticsCountervalues([btc]);
     expect(readAnalyticsCurrentBalance([eth, btc], btcOnly, analyticsFiat)).toEqual({
+      status: "ready",
+      data: 20000,
+    });
+  });
+
+  it("should report unavailable when every held position lacks a price", () => {
+    const btcOnly = createAnalyticsCountervalues([btc]);
+    expect(readAnalyticsCurrentBalance([eth, token], btcOnly, analyticsFiat)).toEqual({
       status: "unavailable",
     });
   });

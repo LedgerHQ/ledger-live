@@ -78,7 +78,7 @@ function renderAccount(
       overrideInitialState: (state: State): State => {
         const withFlag = withFlagOverrides({
           accountDetail: { enabled: true },
-          lwmWallet40: { enabled: true, params: { aggregatedAssets: true } },
+          lwmWallet40: { enabled: true },
         })(state);
         return {
           ...withFlag,

@@ -71,6 +71,38 @@ describe("accountPortfolioApi", () => {
     });
   });
 
+  it("rejects an update whose time has no offset", async () => {
+    respond({ items: [{ ...updateView, time: "2025-01-01T00:00:00" }] });
+
+    const result = await makeStore().dispatch(
+      accountPortfolioApi.endpoints.getUpdates.initiate({ portfolioId: "p1" }),
+    );
+
+    expect(result.error).toMatchObject({
+      status: "CUSTOM_ERROR",
+      data: { issues: [expect.objectContaining({ path: ["items", 0, "time"] })] },
+    });
+  });
+
+  it("rejects a balance history point whose time has no offset", async () => {
+    const point = {
+      network: "ethereum",
+      account_id: "acc-1",
+      asset: "ethereum",
+      time: "2025-01-01",
+      value: "1",
+    };
+    respond({
+      items: [{ type: "success", network: "ethereum", account_id: "acc-1", items: [point] }],
+    });
+
+    const result = await makeStore().dispatch(
+      accountPortfolioApi.endpoints.getBalanceHistory.initiate({ portfolioId: "p1" }),
+    );
+
+    expect(result.error).toMatchObject({ status: "CUSTOM_ERROR" });
+  });
+
   it("does not call the service when its url is empty", async () => {
     fetchSpy = jest.spyOn(globalThis, "fetch");
 

@@ -68,6 +68,12 @@ describe("AccountAssetPicker (Web)", () => {
     expect(screen.queryByTestId(`${TEST_ID}-bitcoin`)).toBeNull();
   });
 
+  it("sizes the dialog to the listed assets", () => {
+    renderPicker();
+
+    expect(screen.getByTestId(TEST_ID)).toHaveAttribute("data-height", "fit");
+  });
+
   it("renders nothing while closed", () => {
     renderPicker({ open: false });
 

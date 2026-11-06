@@ -128,13 +128,15 @@ export function useDeviceOnboarding({
   const releasedSessionRef = useRef<string | null>(null);
   const releaseRef = useRef<Promise<void>>(Promise.resolve());
   const connectRef = useRef<() => void>(() => undefined);
+  const deferExitStatus = useRef(false);
 
   const handleDone = useCallback(() => {
-    setStatus("exited");
     sessionActorRef.current?.stop();
     sessionActorRef.current = null;
     connectionRef.current?.unsubscribe();
     connectionRef.current = null;
+    if (deferExitStatus.current) return;
+    setStatus("exited");
   }, []);
 
   const {
@@ -157,7 +159,9 @@ export function useDeviceOnboarding({
     onEvent: event => onEventRef.current(event),
     onDone: handleDone,
     leaveOnboarding: (reason, context) => {
-      onLeave?.();
+      const deferCompletion = context.onboardedOnEntry === false && reason === "completed";
+      deferExitStatus.current = deferCompletion;
+      if (!deferCompletion) onLeave?.();
       leaveOnboarding(reason, context);
     },
   });

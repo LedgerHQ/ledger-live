@@ -62,8 +62,8 @@ export async function getUser(): Promise<User> {
 export async function deleteUser(): Promise<void> {
   await storage.delete("user");
 }
-export async function getSettings(): Promise<Partial<SettingsState>> {
-  const settings = (await storage.get("settings")) as Partial<SettingsState>;
+export async function getSettings(): Promise<Partial<SettingsState> | null | undefined> {
+  const settings = (await storage.get("settings")) as Partial<SettingsState> | null | undefined;
   return settings;
 }
 export async function saveSettings(obj: Partial<SettingsState>): Promise<void> {

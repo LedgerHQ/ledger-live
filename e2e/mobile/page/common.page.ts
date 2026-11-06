@@ -6,12 +6,10 @@ import { delay, isIos, openDeeplink } from "@e2e/helpers/commonHelpers";
 import { device, log } from "detox";
 import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
 import ErrorPage from "@e2e/page/error.page";
-import { isAggregatedAssetsEnabled } from "@e2e/utils/featureFlagUtils";
 
 const SYNC_TOGGLE_MAX_ATTEMPTS = 3;
 
 export default class CommonPage {
-  assetScreenFlatlistId = "asset-screen-flatlist";
   searchBarId = "common-search-field";
   successViewDetailsButtonId = "enabled-success-view-details-button";
   validateSuccessScreenId = "validate-success-screen";
@@ -24,16 +22,11 @@ export default class CommonPage {
   closeWithConfirmationButtonId = "button-close-add-account";
   closeButtonId = "NavigationHeaderCloseButton";
   errorPage = new ErrorPage();
-  seeAllTransactionButton = "portfolio-seeAll-transaction";
-  assetDetailScrollViewId = /^asset-detail-scroll-view-.*/;
-  assetDetailTransactionsHeaderId = "asset-detail-transactions-header";
   accountGraphId = (accountId: string) => `account-graph-${accountId}`;
 
   searchBar = () => getElementById(this.searchBarId);
   closeButton = () => getElementById(this.closeButtonId);
   backButton = () => getElementById("navigation-header-back-button");
-  seeAllOperationsButtonElement = () => getElementById(this.seeAllTransactionButton);
-  assetScreenFlatlistElement = () => getElementById(this.assetScreenFlatlistId);
   accountItemRegExp = (id = ".*(?<!-name)$") => new RegExp(`${this.accountItemId}${id}`);
   accountItem = (id: string) => getElementById(this.accountItemRegExp(id));
   accountItemName = (accountId: string) => getElementById(`${this.accountItemId + accountId}-name`);
@@ -82,20 +75,15 @@ export default class CommonPage {
 
   @Step("Go to the account {{{0}}}")
   async goToAccount(accountId: string, currencyId: string) {
-    if (await isAggregatedAssetsEnabled()) {
-      if (await IsIdVisible(this.accountGraphId(accountId))) {
-        return; // already on the account page (e.g. navigated via CryptoAddressesScreen)
-      }
-      const scrollViewId = `asset-detail-scroll-view-${currencyId}`;
-      await openDeeplink(`asset/${currencyId}`);
-      await waitForElementById(scrollViewId);
-      const itemId = `asset-detail-address-item-${accountId}`;
-      await revealForTap(itemId, { container: scrollViewId });
-      await tapByElement(getElementById(itemId));
-    } else {
-      await scrollToId(this.accountItemRegExp(accountId), this.assetScreenFlatlistId);
-      await tapByElement(this.accountItem(accountId));
+    if (await IsIdVisible(this.accountGraphId(accountId))) {
+      return;
     }
+    const scrollViewId = `asset-detail-scroll-view-${currencyId}`;
+    await openDeeplink(`asset/${currencyId}`);
+    await waitForElementById(scrollViewId);
+    const itemId = `asset-detail-address-item-${accountId}`;
+    await revealForTap(itemId, { container: scrollViewId });
+    await tapByElement(getElementById(itemId));
   }
 
   @Step("Tap on close with confirmation button")
@@ -106,17 +94,12 @@ export default class CommonPage {
 
   @Step("Get the account name at index {{{0}}}")
   async getAccountName(index = 0) {
-    if (await isAggregatedAssetsEnabled()) {
-      if (await IsIdVisible("CryptoAddressesList")) {
-        await scrollToId(this.accountItemNameRegExp, "CryptoAddressesList");
-        return await getTextOfElement(this.accountItemNameRegExp, index);
-      } else {
-        await app.assetDetail.scrollToAddressesHeader();
-        return await app.assetDetail.getAddressItemName(index);
-      }
-    } else {
+    if (await IsIdVisible("CryptoAddressesList")) {
+      await scrollToId(this.accountItemNameRegExp, "CryptoAddressesList");
       return await getTextOfElement(this.accountItemNameRegExp, index);
     }
+    await app.assetDetail.scrollToAddressesHeader();
+    return await app.assetDetail.getAddressItemName(index);
   }
 
   @Step("Expect the account name {{{0}}}")
@@ -128,9 +111,6 @@ export default class CommonPage {
   async goToAccountByName(name: string) {
     const accountTitle = getElementByText(name);
     const rowId = (await getIdOfElement(accountTitle)).replace("-name", ""); // Workaround on iOS (name on top of the return arrow clickable layout)
-    if (!(await isAggregatedAssetsEnabled())) {
-      jestExpect(rowId).toContain(this.accountItemId);
-    }
     await tapById(rowId);
   }
 
@@ -191,27 +171,5 @@ export default class CommonPage {
 
   async enableSynchronization() {
     await this.retryDetoxSync(() => device.enableSynchronization(), "enableSynchronization");
-  }
-
-  @Step("Press on see all operations button")
-  async pressOnSeeAllOperationsButton() {
-    await detoxExpect(this.assetScreenFlatlistElement()).toBeVisible();
-    await scrollToId(this.seeAllTransactionButton, this.assetScreenFlatlistId);
-    await tapByElement(this.seeAllOperationsButtonElement());
-  }
-
-  @Step("Press on see all operations button from asset page")
-  async pressOnSeeAllOperationsButtonFromAssetPage() {
-    if (await isAggregatedAssetsEnabled()) {
-      await scrollToId(
-        this.assetDetailTransactionsHeaderId,
-        this.assetDetailScrollViewId,
-        500,
-        "down",
-      );
-      await tapById(this.assetDetailTransactionsHeaderId);
-    } else {
-      await this.pressOnSeeAllOperationsButton();
-    }
   }
 }
