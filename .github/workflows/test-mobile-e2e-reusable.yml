@@ -1278,6 +1278,8 @@ jobs:
         run: tools/scripts/cleanup-android-emulators.sh || true
 
       - name: Boot Android Emulators in Background
+        env:
+          EMULATOR_CORE_DUMPS: ${{ inputs.emulator_diagnostics && '1' || '' }}
         run: |
           LOG_FILE="${{ env.MOBILE_ARTIFACTS_ROOT }}/emulator-boot.log"
           mkdir -p ${{ env.MOBILE_ARTIFACTS_ROOT }}
