@@ -29,7 +29,7 @@ const POLYGON_DAI_ACCOUNT_ID = getFixtureTokenAccountId(
   POLYGON_DAI_TOKEN_ID,
 );
 
-// Reuse the shared Q2 Wallet 4.0 flags (assetDiscoverability enabled).
+// Reuse the shared Q2 Wallet 4.0 flags.
 // lazyOnboarding is forced off: leaving it on opened onboarding modals at startup that
 // broke this flow.
 const ASSET_AGGREGATION_FEATURE_FLAGS = {

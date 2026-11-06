@@ -860,7 +860,6 @@ export type Feature_OnboardingIgnoredOSUpdates = Feature<{
 
 type Feature_Wallet40_Params = {
   lazyOnboarding: boolean;
-  assetDiscoverability: boolean;
   // Specifics
   brazePlacement?: boolean;
   earnUpselling?: boolean;
