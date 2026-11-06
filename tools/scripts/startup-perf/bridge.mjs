@@ -139,14 +139,15 @@ export function startBridge(port = 8099, log = () => {}) {
     waitForClient(timeoutMs) {
       if (socket) return Promise.resolve();
       return new Promise((resolve, reject) => {
-        const timer = setTimeout(
-          () => reject(new Error(`no app connected to the bridge within ${timeoutMs} ms`)),
-          timeoutMs,
-        );
-        waiters.push(() => {
+        const waiter = () => {
           clearTimeout(timer);
           resolve();
-        });
+        };
+        const timer = setTimeout(() => {
+          waiters = waiters.filter(w => w !== waiter);
+          reject(new Error(`no app connected to the bridge within ${timeoutMs} ms`));
+        }, timeoutMs);
+        waiters.push(waiter);
       });
     },
     send(type, payload) {
