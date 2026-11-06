@@ -86,18 +86,19 @@ export function emptyAssetsData(): AssetsData {
 /**
  * Brands the aggregated asset ids of a wire response where it enters the domain, one item at a
  * time: an asset whose id is not a string, or an order entry that is not one, is dropped rather
- * than failing the response.
+ * than failing the response. A page without `cryptoAssets` or `currenciesOrder` does not throw:
+ * it yields no assets and an empty `metaCurrencyIds`, the order's other fields left as sent.
  */
 export function brandAggregatedAssetIds(
   raw: Pick<RawApiResponse, "cryptoAssets" | "currenciesOrder">,
 ): Pick<AssetsData, "cryptoAssets" | "currenciesOrder"> {
   const cryptoAssets: Record<AggregatedAssetId, CryptoAssetMeta> = {};
-  for (const [key, meta] of Object.entries(raw.cryptoAssets)) {
-    const id = AggregatedAssetIdSchema.safeParse(meta.id);
+  for (const [key, meta] of Object.entries(raw.cryptoAssets ?? {})) {
+    const id = AggregatedAssetIdSchema.safeParse(meta?.id);
     if (id.success) cryptoAssets[AggregatedAssetIdSchema.parse(key)] = { ...meta, id: id.data };
   }
 
-  const metaCurrencyIds = raw.currenciesOrder.metaCurrencyIds.flatMap(entry => {
+  const metaCurrencyIds = (raw.currenciesOrder?.metaCurrencyIds ?? []).flatMap(entry => {
     const id = AggregatedAssetIdSchema.safeParse(entry);
     return id.success ? [id.data] : [];
   });
