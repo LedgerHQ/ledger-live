@@ -119,3 +119,7 @@ jobs:
         if: ${{ contains(steps.nx-affected.outputs.paths, 'ledger-live-mobile') && hashFiles('apps/ledger-live-mobile/scripts/native-fingerprint.mjs') != '' }}
         shell: bash
         run: node apps/ledger-live-mobile/scripts/native-fingerprint.mjs ios android | tee -a "$GITHUB_OUTPUT"
+
+      - name: Warn when the mobile native fingerprints are missing
+        if: ${{ steps.mobile-native-fingerprint.outcome == 'failure' }}
+        run: echo "::warning::Mobile native fingerprint failed, the e2e native builds fall back to the hashFiles key"

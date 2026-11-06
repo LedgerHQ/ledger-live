@@ -9,8 +9,13 @@ const { createFingerprintAsync } = createRequire(require.resolve("expo/package.j
   "@expo/fingerprint",
 );
 const projectRoot = fileURLToPath(new URL("..", import.meta.url));
+// Fingerprint ignores a config that fails to load and hashes without it, so load it here first to fail loudly.
+require("../fingerprint.config.js");
 
 for (const platform of process.argv.slice(2)) {
-  const { hash } = await createFingerprintAsync(projectRoot, { platforms: [platform] });
+  const { hash, sources } = await createFingerprintAsync(projectRoot, { platforms: [platform] });
+  if (!sources.some(source => source.reasons?.includes("e2eNativeBuild"))) {
+    throw new Error("fingerprint.config.js was not applied");
+  }
   console.log(`${platform}=${hash}`);
 }
