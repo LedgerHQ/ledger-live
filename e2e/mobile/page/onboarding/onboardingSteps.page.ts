@@ -1,6 +1,12 @@
 import { Step } from "jest-allure2-reporter/api";
-import { isIos } from "@e2e/helpers/commonHelpers";
+import { escapeRegExp, isIos } from "@e2e/helpers/commonHelpers";
 import { byId } from "@e2e/helpers/elements/native";
+
+// The product name separates its words with non-breaking spaces and may carry zero-width spaces.
+const deviceNamePattern = (name: string) => {
+  const gap = String.raw`[\s\u200B]`;
+  return new RegExp(`^${gap}*${escapeRegExp(name).replaceAll(" ", `${gap}+`)}${gap}*$`);
+};
 
 export default class OnboardingStepsPage {
   private readonly getStartedButton = byId("onboarding-getStarted-button");
@@ -70,9 +76,9 @@ export default class OnboardingStepsPage {
       }
       await this.deviceCard(device.id).expectVisible();
       await this.deviceCardPart(device.id, "header").expectText("Ledger");
-      const title = await this.deviceCardPart(device.id, "title").getText();
-      const normalizedTitle = title.replaceAll(/\s+/g, " ").replaceAll("\u200B", "").trim();
-      jestExpect(normalizedTitle).toBe(device.name);
+      await this.deviceCardPart(device.id, "title").expectTextMatching(
+        deviceNamePattern(device.name),
+      );
       await this.deviceCardPart(device.id, "image").expectVisible();
       if (isIos() && (device.name === "Nano S" || device.name === "Nano S Plus")) {
         await this.deviceCardPart(device.id, "text").expectText("No iPhone compatibility");

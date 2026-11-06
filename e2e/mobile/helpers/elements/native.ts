@@ -7,7 +7,7 @@ import type {
 } from "detox/detox";
 import { PageScroller } from "@e2e/helpers/pageScroller";
 import { retryUntilTimeout } from "@e2e/utils/retry";
-import { TIMEOUT } from "@e2e/utils/timeouts";
+import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
 import type { ElementHandle } from "./elementHandle";
 import { isHardTimeout, waitHardTimeout, withHardTimeout } from "./hardTimeout";
 
@@ -18,6 +18,14 @@ type NativeHandleOptions = {
   description: string;
   /** Which match to act on when several elements match, the first by default. */
   index?: number;
+};
+
+type WaitUnlessErrorOptions = {
+  /** One short check of the awaited element. */
+  isFound: () => Promise<boolean>;
+  errorElement: NativeHandle;
+  timeout: number;
+  state: "visible" | "present";
 };
 
 const scroller = new PageScroller();
@@ -47,12 +55,17 @@ export class NativeHandle implements ElementHandle {
   }
 
   /**
-   * Waits until at least 75% of the element is visible. With `failFastOn`, throws as soon as that
+   * Waits until at least 75% of the element is visible. With `errorElement`, throws as soon as that
    * error element is visible instead of waiting out the timeout.
    */
-  async waitVisible(timeout = TIMEOUT.xxlarge, failFastOn?: NativeHandle): Promise<void> {
-    if (failFastOn) {
-      await this.pollUnlessError(probe => this.isVisible(probe), failFastOn, timeout, "visible");
+  async waitVisible(timeout = TIMEOUT.xxlarge, errorElement?: NativeHandle): Promise<void> {
+    if (errorElement) {
+      await this.waitUnlessError({
+        isFound: () => this.isVisible(TIMEOUT.xxxsmall),
+        errorElement,
+        timeout,
+        state: "visible",
+      });
       return;
     }
     await this.waitUntil(waitFor(this.raw).toBeVisible().withTimeout(timeout), timeout, "visible");
@@ -102,31 +115,20 @@ export class NativeHandle implements ElementHandle {
 
   /**
    * Waits until the element is in the view hierarchy, without the visibility check: for a list Detox
-   * does not measure as visible while it renders. With `failFastOn`, throws as soon as that error
+   * does not measure as visible while it renders. With `errorElement`, throws as soon as that error
    * element is visible instead of waiting out the timeout.
    */
-  async waitExist(timeout = TIMEOUT.xxlarge, failFastOn?: NativeHandle): Promise<void> {
-    if (failFastOn) {
-      await this.pollUnlessError(probe => this.exists(probe), failFastOn, timeout, "present");
+  async waitExist(timeout = TIMEOUT.xxlarge, errorElement?: NativeHandle): Promise<void> {
+    if (errorElement) {
+      await this.waitUnlessError({
+        isFound: () => this.exists(TIMEOUT.xxxsmall),
+        errorElement,
+        timeout,
+        state: "present",
+      });
       return;
     }
     await this.waitUntil(waitFor(this.raw).toExist().withTimeout(timeout), timeout, "present");
-  }
-
-  /**
-   * Waits for visibility, then taps again until the element is gone. For a back or close button whose
-   * first tap can be swallowed while the screen is still settling.
-   */
-  async tapUntilNotVisible(timeout = TIMEOUT.xxlarge): Promise<void> {
-    await this.waitVisible(timeout);
-    await retryUntilTimeout(async () => {
-      // A retry can start after the previous tap's screen change finished: nothing left to tap.
-      if (!(await this.isVisible())) return;
-      await withHardTimeout(this.raw.tap());
-      if (await this.isVisible()) {
-        throw new Error(`${this.description} is still visible after the tap`);
-      }
-    }, timeout);
   }
 
   /** Waits for visibility, then focuses the field, replaces its content and presses Enter. */
@@ -279,26 +281,25 @@ export class NativeHandle implements ElementHandle {
     jestExpect(await this.getLabel(timeout)).toMatch(pattern);
   }
 
-  /** Polls `isReached` and `failFastOn` in turn, so an error screen fails the wait at once. */
-  private async pollUnlessError(
-    isReached: (probeTimeout: number) => Promise<boolean>,
-    failFastOn: NativeHandle,
-    timeout: number,
-    state: string,
-  ): Promise<void> {
+  /**
+   * Checks the element, then the error element, every round until one shows. A round returns
+   * rather than throws on the error, since `retryUntilTimeout` retries on any throw.
+   */
+  private async waitUnlessError(options: WaitUnlessErrorOptions): Promise<void> {
+    const { isFound, errorElement, timeout, state } = options;
     const errorText = await retryUntilTimeout<string | undefined>(
       async () => {
-        if (await isReached(TIMEOUT.xxxsmall)) return undefined;
-        if (await failFastOn.isVisible(TIMEOUT.xxxsmall)) return await failFastOn.getText();
+        if (await isFound()) return undefined;
+        if (await errorElement.isVisible(TIMEOUT.xxxsmall)) return await errorElement.getText();
         throw new Error(`${this.description} is not ${state} yet`);
       },
       timeout,
-      undefined,
+      INTERVAL.short,
       { messageOnError: `${this.description} did not become ${state} within ${timeout}ms` },
     );
     if (errorText !== undefined) {
       throw new Error(
-        `${failFastOn.description} showed while waiting for ${this.description}: ${errorText}`,
+        `${errorElement.description} showed while waiting for ${this.description}: ${errorText}`,
       );
     }
   }

@@ -31,13 +31,13 @@ Native and web handles share these methods ([`ElementHandle`](../helpers/element
 
 | Method | Does |
 |---|---|
-| `waitVisible()` | waits for the element; native `waitVisible(timeout, failFastOn)` fails at once if the `failFastOn` error handle shows |
+| `waitVisible()` | waits for the element; native `waitVisible(timeout, errorElement)` fails at once if the `errorElement` handle shows |
 | `waitNotVisible()` | waits until the element is not visible (native) or no longer exists (webview) |
 | `tap()` | waits, then taps |
 | `replaceText(text)` | waits, then replaces the field content |
 | `getText()` | waits, then returns the text |
 
-Native handles also have `waitFullyVisible()` (bottom sheets, see [sheet waits](e2e-mobile-conventions.md#a-sheet-wait-must-use-that-sheets-content-anchor-at-100-visibility)), `clearText()`, `getAttributes()`, `getIdentifier()` (the `testID`, e.g. the full id behind a regex match), `waitExist(timeout?, failFastOn?)` (waits until the element is in the view hierarchy, for a list Detox does not measure as visible; `failFastOn` fails as soon as that error handle is visible), `waitNotExist()` (waits until the element leaves the view hierarchy; for a closing sheet that still blocks taps once hidden), `replaceTextKeepKeyboard()` (types without pressing Enter), `tapExisting()` (waits for the element to exist, not to be visible; only when `waitVisible` never passes for an element on screen, say why at the call site), `tapUntilNotVisible()` (taps again until the element is gone; for a back or close button whose first tap can be swallowed), `scrollTo(container?, pixels?)` (scrolls the container handle, or the first scroll view, until the element is visible; `pixels` sets the step, default 300) and `isVisible(timeout?)` (returns a boolean for an element that may not appear, such as an optional drawer; a hung app still throws).
+Native handles also have `waitFullyVisible()` (bottom sheets, see [sheet waits](e2e-mobile-conventions.md#a-sheet-wait-must-use-that-sheets-content-anchor-at-100-visibility)), `clearText()`, `getAttributes()`, `getIdentifier()` (the `testID`, e.g. the full id behind a regex match), `waitExist(timeout?, errorElement?)` (waits until the element is in the view hierarchy, for a list Detox does not measure as visible; `errorElement` fails as soon as that handle is visible), `waitNotExist()` (waits until the element leaves the view hierarchy; for a closing sheet that still blocks taps once hidden), `replaceTextKeepKeyboard()` (types without pressing Enter), `tapExisting()` (waits for the element to exist, not to be visible; only when `waitVisible` never passes for an element on screen, say why at the call site), `scrollTo(container?, pixels?)` (scrolls the container handle, or the first scroll view, until the element is visible; `pixels` sets the step, default 300) and `isVisible(timeout?)` (returns a boolean for an element that may not appear, such as an optional drawer; a hung app still throws).
 
 Web handles also have `waitEnabled()` and `getValue()`. For the webview URL, use `waitForWebviewUrl(fragment)` from the same file, not the `*WebviewUrl*` globals.
 

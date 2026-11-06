@@ -41,7 +41,7 @@ export default class MarketPage {
   private readonly categoryTab = (value: string) =>
     byId(`market-screen-assets-category-switcher-${value}`);
   private readonly marketItem = (marketId: string) => byId(`marketItem-${marketId}`);
-  // Matches the title anywhere in a descendant, ignoring case, so "Tether USD" passes for "Tether".
+  // Matches the title anywhere in a descendant, ignoring case.
   private readonly marketItemWithTitle = (marketId: string, title: string) =>
     byIdWithDescendantText({
       id: `marketItem-${marketId}`,
@@ -65,7 +65,8 @@ export default class MarketPage {
 
   @Step("Go back from the market screen")
   async goBack() {
-    await this.headerBackButton.tapUntilNotVisible();
+    await this.headerBackButton.tap();
+    await this.headerBackButton.waitNotVisible();
   }
 
   @Step("Open market detail via deeplink {{{0}}}")
