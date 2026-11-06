@@ -8,7 +8,11 @@ import {
   type Observable,
   type Subscription,
 } from "rxjs";
-import type { LedgerSyncJobState } from "../jobState";
+import type {
+  LedgerSyncFailureJobState,
+  LedgerSyncFailureReason,
+  LedgerSyncJobState,
+} from "../jobState";
 
 type LedgerSyncJobStateType = LedgerSyncJobState["type"];
 type LedgerSyncJobStateOf<T extends LedgerSyncJobStateType> = Extract<
@@ -65,6 +69,13 @@ export function createDeferred<T>() {
     reject = onReject;
   });
   return { promise, resolve, reject };
+}
+
+export function failedState(
+  reason: LedgerSyncFailureReason,
+  error: Error,
+): LedgerSyncFailureJobState {
+  return { type: "failed", reason, error };
 }
 
 export function namedError(name: string): Error {

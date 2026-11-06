@@ -13,9 +13,16 @@ import type {
   TrustchainSDK,
 } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { lastValueFrom } from "rxjs";
+import type {
+  LedgerSyncAwaitingDeviceConfirmationJobState,
+  LedgerSyncCompletedJobState,
+  LedgerSyncPendingJobState,
+  LedgerSyncProcessingJobState,
+} from "../../jobState";
 import {
   createDeferred,
   expectState,
+  failedState,
   fakeTrustchainSdk,
   namedError,
   recordJob,
@@ -33,14 +40,14 @@ const TRUSTCHAIN: Trustchain = {
 const ROTATED_TRUSTCHAIN: Trustchain = { ...TRUSTCHAIN, walletSyncEncryptionKey: "rotated" };
 const MEMBER: TrustchainMember = { id: "member-2", name: "Other instance", permissions: 0 };
 
-const PENDING = { type: "pending" };
-const AWAITING = {
+const PENDING: LedgerSyncPendingJobState = { type: "pending" };
+const AWAITING: LedgerSyncAwaitingDeviceConfirmationJobState = {
   type: "awaiting-device-confirmation",
   deviceModelId: DeviceModelId.FLEX,
   deviceName: "Ledger Flex",
 };
-const PROCESSING = { type: "processing" };
-const COMPLETED = { type: "completed" };
+const PROCESSING: LedgerSyncProcessingJobState = { type: "processing" };
+const COMPLETED: LedgerSyncCompletedJobState = { type: "completed" };
 
 const CONNECTION = {
   dmk: {} as never,
@@ -153,7 +160,7 @@ describe("removeMemberIntentJob", () => {
   ] as const)("should end as failed when the SDK throws %s", async (failure, reason) => {
     const { ended, onResult } = startJob(deviceCall(() => Promise.reject(failure)));
 
-    expect((await ended()).at(-1)).toEqual({ type: "failed", reason, error: failure });
+    expect((await ended()).at(-1)).toEqual(failedState(reason, failure));
     expect(onResult).not.toHaveBeenCalled();
   });
 
