@@ -53,7 +53,10 @@ which the presets and the `.mts` configs import and which writes the JSON fragme
 
 `lint:tool-config` rejects an oxlint config anywhere but the layer roots (the workspace root
 included), a missing or edited layer config, a `-c` on an oxlint call, and a rule flag outside the
-allowlist or on another script than `lint`. Subtrees that keep their own config for now (the apps, the e2e
+allowlist or on another script than `lint`. It also requires `"@support/lint": "workspace:*"` in a
+package whose preset imports an npm package other than `oxlint`, directly or through a relative
+import, as `features-flow` imports `@ledgerhq/lumen-lint-plugin`: Nx hashes that package in
+`lint`, and marks the package affected when it changes, only through that edge. Subtrees that keep their own config for now (the apps, the e2e
 suites, a few legacy `libs/` trees) are listed in the plugin's `exclusions.mjs`.
 
 ## Rules

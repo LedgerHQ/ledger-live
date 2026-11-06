@@ -17,6 +17,7 @@ import Expo
 import ExpoModulesCore
 import ExpoSplashScreen
 
+import SharedNativePerformance
 
 @main
 class AppDelegate: RCTAppDelegate, UNUserNotificationCenterDelegate {
@@ -29,6 +30,7 @@ class AppDelegate: RCTAppDelegate, UNUserNotificationCenterDelegate {
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
+    AppStartupModule.recordLaunch(application)
     self.moduleName = "ledgerlivemobile"
     self.dependencyProvider = RCTAppDependencyProvider()
 

@@ -51,6 +51,7 @@ apps/ledger-live-desktop/scripts/                        @ledgerhq/platform
 /shared/cloud-sync/                                      @ledgerhq/platform
 /shared/cloud-sync-module/                               @ledgerhq/platform
 /shared/env/                                             @ledgerhq/platform
+/shared/native-performance/                              @ledgerhq/platform
 
 # Platform — mobile
 apps/ledger-live-mobile/android/                         @ledgerhq/platform
@@ -149,7 +150,7 @@ features/flow/portfolio-services-entry-points/           @ledgerhq/wallet-xp
 features/platform/assets-table/                          @ledgerhq/wallet-xp
 
 # Wallet — Intents
-features/platform/verify-address-intent/                 @ledgerhq/wallet-xp
+features/platform/intent-verify-address/                 @ledgerhq/wallet-xp
 
 # Wallet — App lock
 features/platform/app-lock/                              @ledgerhq/wallet-xp
@@ -196,6 +197,8 @@ apps/ledger-live-mobile/src/components/DelegationDrawer.tsx         @ledgerhq/co
 apps/cli/src/commands/blockchain                                    @ledgerhq/coin-integration
 libs/coin-*/                                                        @ledgerhq/coin-integration
 libs/ledger-wallet-framework/                                       @ledgerhq/coin-integration
+shared/live-config-overrides/                                       @ledgerhq/coin-integration
+devtools/coin-config/                                               @ledgerhq/coin-integration
 libs/ledger-live-common/src/bridge/                                 @ledgerhq/coin-integration
 libs/ledger-live-common/src/coin-modules/                           @ledgerhq/coin-integration
 libs/ledger-live-common/src/families/                               @ledgerhq/coin-integration
@@ -350,6 +353,10 @@ apps/ledger-live-desktop/src/mvvm/features/Perps/                               
 apps/ledger-live-mobile/src/mvvm/features/Perps/                                        @ledgerhq/ptx
 apps/ledger-live-desktop/src/mvvm/features/Portfolio/components/PerpsEntryPoint/        @ledgerhq/ptx
 apps/ledger-live-mobile/src/mvvm/features/Portfolio/components/PortfolioPerpsEntryPoint/ @ledgerhq/ptx
+apps/ledger-live-mobile/src/mvvm/features/WalletApiExchange/                            @ledgerhq/ptx
+apps/ledger-live-mobile/src/mvvm/components/InlineTextLink/                             @ledgerhq/ptx
+apps/ledger-live-mobile/src/mvvm/utils/getSwapTermsCopy.ts                              @ledgerhq/ptx
+apps/ledger-live-mobile/src/mvvm/utils/__tests__/getSwapTermsCopy.test.ts               @ledgerhq/ptx
 
 # wallet-cli
 apps/wallet-cli/                                                              @ledgerhq/agentic-core
@@ -429,6 +436,8 @@ libs/device-core/                                                  @ledgerhq/liv
 features/platform/device-onboarding/                               @ledgerhq/engagement
 features/platform/device-intent/                                   @ledgerhq/live-devices
 features/platform/device-action-content/                           @ledgerhq/live-devices
+features/platform/device-mock-server/                              @ledgerhq/live-devices
+features/flow/device-mock-server/                                  @ledgerhq/live-devices
 features/platform/contacts/src/device/                             @ledgerhq/live-devices
 libs/device-react/                                                 @ledgerhq/live-devices
 libs/speculos-transport/                                           @ledgerhq/live-devices @ledgerhq/qaa
@@ -451,6 +460,7 @@ libs/live-signer-tron/                                             @ledgerhq/liv
 libs/live-dmk-speculos/                                            @ledgerhq/live-devices
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/manager.handler.ts  @ledgerhq/live-devices
 apps/ledger-live-desktop/src/mvvm/components/MockServerDeviceWindow/ @ledgerhq/live-devices
+apps/ledger-live-mobile/src/mvvm/features/MockServer/          @ledgerhq/live-devices
 **/useMockServer*                                                  @ledgerhq/live-devices
 **/mockServerTransport*                                            @ledgerhq/live-devices
 **/EnableMockServerTransportToggle*                                @ledgerhq/live-devices
@@ -607,6 +617,7 @@ apps/ledger-live-mobile/src/e2e/                                            @led
 libs/live-e2e-shared/                                                       @ledgerhq/qaa
 tools/actions/composites/merge-e2e-detox-timings/                           @ledgerhq/qaa
 tools/actions/composites/e2e-shard-diagnostics/                             @ledgerhq/qaa
+tools/actions/composites/check-exclusive-lock/                              @ledgerhq/qaa
 
 # Wallet XP — mobile app mocks
 apps/ledger-live-mobile/e2e/                                                @ledgerhq/wallet-xp
@@ -617,9 +628,9 @@ apps/ledger-live-mobile/e2e/                                                @led
 **/team-wallet-xp/                @ledgerhq/wallet-xp
 **/team-platform/                 @ledgerhq/platform
 **/team-coin-integration/         @ledgerhq/coin-integration
-**/team-blockchain-support/       @ledgerhq/blockchain-support
-**/team-ledger-partner-hoodies/   @ledgerhq/ledger-partner-hoodies
-**/team-ledger-partner-blockydevs/ @ledgerhq/ledger-partner-blockydevs
+**/team-blockchain-support/       @ledgerhq/blockchain-support @ledgerhq/ledger-third-party-leads
+**/team-ledger-partner-hoodies/   @ledgerhq/ledger-partner-hoodies @ledgerhq/ledger-third-party-leads
+**/team-ledger-partner-blockydevs/ @ledgerhq/ledger-partner-blockydevs @ledgerhq/ledger-third-party-leads
 **/team-ptx/                      @ledgerhq/ptx
 **/team-live-devices/             @ledgerhq/live-devices
 **/team-recover-software/         @ledgerhq/recover-software

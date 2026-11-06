@@ -9,7 +9,6 @@ import { useChunkedAssetsData } from "@features/platform-aggregated-assets";
 export type DistributionResult = AssetsDistribution & { isLoading: boolean };
 
 export type DistributionOpts = {
-  groupBy?: "currency" | "asset";
   showEmptyAccounts?: boolean;
   hideEmptyTokenAccount?: boolean;
 };
@@ -26,7 +25,6 @@ export type UseAssetDistributionOpts = {
   version: string;
   showEmptyAccounts?: boolean;
   hideEmptyTokenAccount?: boolean;
-  skip?: boolean;
 };
 
 const emptyDistribution: AssetsDistribution = {
@@ -40,15 +38,14 @@ const emptyDistribution: AssetsDistribution = {
  * Fetches DADA-powered asset data and builds a cross-network asset distribution.
  */
 export function useAssetDistribution(opts: UseAssetDistributionOpts): AssetDistributionResult {
-  const { accounts, to, product, version, skip = false, ...displayOpts } = opts;
+  const { accounts, to, product, version, ...displayOpts } = opts;
 
   const cvState = useCountervaluesCache();
 
   const accountCurrencyIds = useMemo(() => {
-    if (skip) return [];
     const ids = new Set(flattenAccounts(accounts).map(a => getAccountCurrency(a).id));
     return Array.from(ids);
-  }, [accounts, skip]);
+  }, [accounts]);
 
   const {
     data: assetsData,
@@ -58,11 +55,11 @@ export function useAssetDistribution(opts: UseAssetDistributionOpts): AssetDistr
     currencyIds: accountCurrencyIds,
     product,
     version,
-    skip: skip || accountCurrencyIds.length === 0,
+    skip: accountCurrencyIds.length === 0,
   });
 
   const distribution = useMemo<AssetsDistribution>(() => {
-    if (skip || !isChunkedSuccess || !assetsData) {
+    if (!isChunkedSuccess || !assetsData) {
       return emptyDistribution;
     }
 
@@ -71,7 +68,6 @@ export function useAssetDistribution(opts: UseAssetDistributionOpts): AssetDistr
       hideEmptyTokenAccount: !!displayOpts.hideEmptyTokenAccount,
     });
   }, [
-    skip,
     isChunkedSuccess,
     assetsData,
     accounts,

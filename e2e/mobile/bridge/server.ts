@@ -14,6 +14,7 @@ import type {
 } from "@ledgerhq/live-e2e-shared/bridge/types";
 import type { FeatureId, PartialFeatures } from "@shared/feature-flags";
 import { FeatureIdSchema } from "@shared/feature-flags";
+import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { log as detoxLog } from "detox";
 import { getSpeculosModel } from "@ledgerhq/live-e2e-shared/speculosAppVersion";
 import { v4 as uuid } from "uuid";
@@ -198,6 +199,19 @@ export async function overrideLiveConfig(payload: Record<string, unknown>) {
   await postAndAwaitAck({ type: "overrideLiveConfig", id: uniqueId(), payload });
 }
 
+export async function importLocalManifests(manifests: LiveAppManifest[]) {
+  const importedIds = await fetchData({
+    type: "importLocalManifests",
+    id: uniqueId(),
+    payload: manifests,
+  });
+  if (!importedIds) {
+    throw new Error(
+      "importLocalManifests: the app did not confirm the import, is the installed e2e build older than this bridge message?",
+    );
+  }
+}
+
 async function navigate(name: string) {
   postMessage({
     type: "navigate",
@@ -324,6 +338,7 @@ function onMessage(messageStr: string) {
     case "appFlags":
     case "appEnvs":
     case "contactsImported":
+    case "localManifestsImported":
       resolvePending(msg.id, msg.payload);
       break;
     case "swapSetupDone":

@@ -5,7 +5,9 @@ import { LocalLiveAppProvider } from "@ledgerhq/live-common/wallet-api/LocalLive
 import { RampCatalogProvider } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import useEnv from "@features/platform-env";
 import { Platform } from "react-native";
+import Config from "react-native-config";
 import { useLocale } from "~/context/Locale";
+import { LocalManifestsImporter } from "~/e2e/LocalManifestsImporter";
 import { DiscoverDB } from "@ledgerhq/live-common/wallet-api/types";
 import { useDiscoverDB } from "./discoverDB";
 
@@ -36,6 +38,7 @@ export default function PlatformAppProviderWrapper({ children }: PlatformAppProv
       }}
     >
       <LocalLiveAppProvider db={localLiveAppDB}>
+        {Config.DETOX ? <LocalManifestsImporter /> : null}
         <RampCatalogProvider updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}>
           {children}
         </RampCatalogProvider>

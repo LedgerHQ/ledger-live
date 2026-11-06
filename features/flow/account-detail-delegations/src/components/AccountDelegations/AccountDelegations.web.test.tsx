@@ -50,6 +50,13 @@ const renderDelegations = (overrides: Partial<AccountDelegationsProps> = {}) => 
 };
 
 describe("AccountDelegations (Web)", () => {
+  it("gives the validator column a fixed width wider than the actions column", () => {
+    renderDelegations();
+
+    expect(document.querySelector(".w-320")).toBeInTheDocument();
+    expect(document.querySelector(".w-80")).toBeInTheDocument();
+  });
+
   it("shows the validator, its cells and the column headers", () => {
     renderDelegations();
 

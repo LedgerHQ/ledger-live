@@ -67,7 +67,6 @@ export * from "./ethereum_hoodi";
 export * from "./ethereum_sepolia";
 export * from "./etherlink";
 export * from "./factom";
-export * from "./fantom";
 export * from "./fic";
 export * from "./filecoin";
 export * from "./flare";

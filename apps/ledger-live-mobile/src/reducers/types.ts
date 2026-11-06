@@ -1,5 +1,6 @@
 import type { Account, DeviceInfo, DeviceModelInfo, PortfolioRange } from "@ledgerhq/types-live";
 import type { FeatureFlagsState } from "@shared/feature-flags";
+import type { LiveConfigOverridesState } from "@shared/live-config-overrides";
 import type { AppConfigState } from "@shared/app-config";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { ActionDialogParams } from "@ledgerhq/live-common/wallet-api/validation/actionDialogParams";
@@ -27,7 +28,6 @@ import { ImageType } from "../components/CustomImage/types";
 import type { WalletState } from "./wallet";
 import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
-import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/TabSection";
 import type { BorrowState } from "./borrow";
 import type { CountervaluesStoreState } from "@features/platform-market-countervalues";
 import type { TrackingPair } from "@domain/entity-market-countervalues";
@@ -54,6 +54,8 @@ import type { PayCardFeatureTourState } from "@features/flow-pay-feature-tour/st
 import type { PayRequestVerifyHintState } from "@features/flow-pay-request/state";
 import type { PayCardAuthState, PayCardLoginIntroState } from "@features/flow-pay-card-auth/state";
 import type { PayCardOnboardingWidgetState } from "@features/flow-pay-card-widget/state";
+import type { AccountAnalyticsIntroductionState } from "@features/flow-account-detail-analytics-notice/state";
+import type { MockServerOverlayState } from "@features/flow-device-mock-server/state";
 import type { IdentitiesState } from "@domain/entity-client-identity";
 import type { NotificationPermissionStatus } from "~/logic/getNotificationPermissionStatus";
 import { RebornBuyDeviceDrawerState } from "./rebornBuyDeviceDrawer";
@@ -251,6 +253,12 @@ export type supportedCountervaluesData = {
 /** Debug-only override for the OS update banner. */
 export type DebugOsUpdateBannerMode = "off" | "card" | "compact";
 
+export type MockServerSettings = {
+  enabled: boolean;
+  url: string;
+  token: string;
+};
+
 export type SettingsState = {
   counterValue: string;
   counterValueExchange: string | null | undefined;
@@ -319,11 +327,11 @@ export type SettingsState = {
   };
   hasSeenAnalyticsOptInPrompt: boolean;
   debugOsUpdateBannerMode: DebugOsUpdateBannerMode;
+  mockServer: MockServerSettings;
   dismissedContentCards: { [id: string]: number };
   starredMarketCoins: string[];
   fromLedgerSyncOnboarding: boolean;
   mevProtection: boolean;
-  selectedTabPortfolioAssets: TabPortfolioAssetsType;
   hasDismissedContactsFeatureIntroduction: boolean;
   productTourCompleted: boolean;
   hasSeenQ2WalletV4Tour: boolean;
@@ -477,6 +485,7 @@ export type State = LLMRTKApiState & {
   knownDevices: KnownDevicesState;
   largeScreenUpsellModal: LargeScreenUpsellModalState;
   largeMover: LargeMoverState;
+  liveConfigOverrides: LiveConfigOverridesState;
   market: MarketState;
   marketListConfig: MarketListConfigState;
   marketBanner: MarketBannerState;
@@ -498,8 +507,10 @@ export type State = LLMRTKApiState & {
   payCardFeatureTour: PayCardFeatureTourState;
   payRequestVerifyHint: PayRequestVerifyHintState;
   payCardOnboardingWidget: PayCardOnboardingWidgetState;
+  mockServerOverlay: MockServerOverlayState;
   payCardAuth: PayCardAuthState;
   payCardLoginIntro: PayCardLoginIntroState;
+  accountAnalyticsIntroduction: AccountAnalyticsIntroductionState;
   settings: SettingsState;
   toasts: ToastState;
   trustchain: TrustchainStore;

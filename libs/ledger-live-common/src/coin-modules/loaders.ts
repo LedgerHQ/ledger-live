@@ -170,7 +170,6 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       "ethereum_classic",
       "ethereum_sepolia",
       "ethereum_hoodi",
-      "fantom",
       "core",
       "cronos",
       "songbird",
@@ -489,6 +488,8 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadPlatformAdapter: () => import("../families/xrp/platformAdapter").then(m => m.default),
     loadMockBridge: () => import("../families/xrp/bridge/mock").then(m => m.default),
     loadSigner: () => import("../families/xrp/signer").then(m => m.default),
+    loadBridgeApi: () => import("../families/xrp/bridge/api").then(m => m.default),
+    loadAccountRawAssign: () => import("../families/xrp/accountRawAssign").then(m => m.default),
     loadBridgeExtensions: () => import("../families/xrp/bridgeExtensions").then(m => m.default),
   },
   {

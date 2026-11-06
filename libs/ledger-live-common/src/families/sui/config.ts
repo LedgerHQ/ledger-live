@@ -1,38 +1,4 @@
-import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
-import { getEnv } from "@shared/env";
+import { suiDefaults } from "@ledgerhq/coin-sui/config";
+import { currencyDefaultsToLiveConfig } from "../../config";
 
-// `features.transport` is intentionally NOT defaulted here — it's an app-level
-// runtime concern owned by the `suiTransport` feature flag and injected via
-// `setSuiTransport` in `setup.ts`.
-export const suiConfig: Record<string, ConfigInfo> = {
-  config_currency_sui: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      name: "Sui",
-      unit: { name: "Sui", code: "SUI", magnitude: 9 },
-      node: {
-        graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
-        grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
-      },
-    },
-  },
-  config_currency_sui_testnet: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      name: "Sui (Testnet)",
-      unit: { name: "Sui", code: "SUI", magnitude: 9 },
-      node: {
-        graphqlUrl: getEnv("API_SUI_TESTNET_GRAPHQL_PROXY"),
-        grpcUrl: getEnv("API_SUI_TESTNET_GRPC_PROXY"),
-      },
-    },
-  },
-};
+export const suiConfig = currencyDefaultsToLiveConfig(suiDefaults);

@@ -52,7 +52,7 @@ const ethAccount: Account = {
   subAccounts: [genTokenAccount(0, ethRoot, usdcToken)],
 };
 
-const FACTS = { currency: "ethereum", isTokenAccount: false };
+const FACTS = { network: "ethereum" };
 
 function renderAccount(account: Account = ethAccount) {
   return render(
@@ -98,6 +98,7 @@ describe("AccountDetail tracking", () => {
             source: "Asset",
             operationsCount: ethAccount.operationsCount,
             hasTokens: true,
+            hasAnalyticsBanner: true,
           },
         },
         { updateRoutes: true, refreshSource: true },
@@ -127,6 +128,7 @@ describe("AccountDetail tracking", () => {
         ...FACTS,
         operationsCount: ethAccount.operationsCount,
         hasTokens: false,
+        hasAnalyticsBanner: false,
       });
     });
   });

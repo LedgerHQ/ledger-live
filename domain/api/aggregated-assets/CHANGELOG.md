@@ -1,5 +1,29 @@
 # @domain/api-aggregated-assets
 
+## 0.6.3
+
+### Patch Changes
+
+- Updated dependencies [[`0c62d35`](https://github.com/LedgerHQ/ledger-live/commit/0c62d3533f72e450c2235f8d23aa1cdb101486a9), [`9907890`](https://github.com/LedgerHQ/ledger-live/commit/9907890790bf8b804d7cc454a067508df0969137), [`77a85a3`](https://github.com/LedgerHQ/ledger-live/commit/77a85a30abe7b42e5f5b4e0478bec14fa39033cf), [`797b1ab`](https://github.com/LedgerHQ/ledger-live/commit/797b1ab63e4099c962a74170b43275f149c6fbea)]:
+  - @shared/api-services@0.12.0
+  - @domain/entity-currency-crypto@0.18.0
+  - @shared/env@0.12.0
+  - @domain/api-currency-token@0.7.1
+  - @domain/entity-currency@0.4.9
+  - @domain/entity-currency-token@0.5.8
+
+## 0.6.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`0c62d35`](https://github.com/LedgerHQ/ledger-live/commit/0c62d3533f72e450c2235f8d23aa1cdb101486a9), [`9907890`](https://github.com/LedgerHQ/ledger-live/commit/9907890790bf8b804d7cc454a067508df0969137), [`77a85a3`](https://github.com/LedgerHQ/ledger-live/commit/77a85a30abe7b42e5f5b4e0478bec14fa39033cf), [`797b1ab`](https://github.com/LedgerHQ/ledger-live/commit/797b1ab63e4099c962a74170b43275f149c6fbea)]:
+  - @shared/api-services@0.12.0-next.0
+  - @domain/entity-currency-crypto@0.18.0-next.0
+  - @shared/env@0.12.0-next.0
+  - @domain/api-currency-token@0.7.1-next.0
+  - @domain/entity-currency@0.4.9-next.0
+  - @domain/entity-currency-token@0.5.8-next.0
+
 ## 0.6.2
 
 ### Patch Changes
@@ -259,45 +283,5 @@
   - @domain/entity-currency-token@0.5.0-next.0
   - @domain/api-currency-token@0.5.0-next.0
   - @domain/entity-currency@0.4.1-next.0
-
-## 0.3.0
-
-### Minor Changes
-
-- [#20540](https://github.com/LedgerHQ/ledger-live/pull/20540) [`64bb8cf`](https://github.com/LedgerHQ/ledger-live/commit/64bb8cfa5bffde5a1e2c24615f1dd11b864094d2) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Move the dada-client platform layer (hooks, cache selectors, discovery and currency selection) into
-  @features/platform-aggregated-assets, leaving re-export shims at the old paths so no consumer changes
-
-- [#20345](https://github.com/LedgerHQ/ledger-live/pull/20345) [`bbfc8cf`](https://github.com/LedgerHQ/ledger-live/commit/bbfc8cf7929d9bffc1aa1b9a5e3b9593e3016436) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Move the dada-client domain layer into the aggregated-assets DDD packages, leaving re-export shims at the old paths so no consumer changes
-
-### Patch Changes
-
-- Updated dependencies [[`cc8b5b9`](https://github.com/LedgerHQ/ledger-live/commit/cc8b5b9af4a2ec488b6912d3fcb08bcc8f4b72c3), [`43bf6d8`](https://github.com/LedgerHQ/ledger-live/commit/43bf6d8f6600f70b7c2a85615660e7e150e798bf), [`64bb8cf`](https://github.com/LedgerHQ/ledger-live/commit/64bb8cfa5bffde5a1e2c24615f1dd11b864094d2), [`bbfc8cf`](https://github.com/LedgerHQ/ledger-live/commit/bbfc8cf7929d9bffc1aa1b9a5e3b9593e3016436)]:
-  - @domain/entity-currency-crypto@0.10.0
-  - @domain/entity-currency-token@0.4.0
-  - @domain/api-currency-token@0.4.0
-  - @domain/entity-currency@0.4.0
-  - @shared/api-services@0.3.0
-  - @domain/entity-interest-rate@0.3.0
-  - @domain/entity-aggregated-asset@0.3.0
-
-## 0.3.0-next.0
-
-### Minor Changes
-
-- [#20540](https://github.com/LedgerHQ/ledger-live/pull/20540) [`64bb8cf`](https://github.com/LedgerHQ/ledger-live/commit/64bb8cfa5bffde5a1e2c24615f1dd11b864094d2) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Move the dada-client platform layer (hooks, cache selectors, discovery and currency selection) into
-  @features/platform-aggregated-assets, leaving re-export shims at the old paths so no consumer changes
-
-- [#20345](https://github.com/LedgerHQ/ledger-live/pull/20345) [`bbfc8cf`](https://github.com/LedgerHQ/ledger-live/commit/bbfc8cf7929d9bffc1aa1b9a5e3b9593e3016436) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Move the dada-client domain layer into the aggregated-assets DDD packages, leaving re-export shims at the old paths so no consumer changes
-
-### Patch Changes
-
-- Updated dependencies [[`cc8b5b9`](https://github.com/LedgerHQ/ledger-live/commit/cc8b5b9af4a2ec488b6912d3fcb08bcc8f4b72c3), [`43bf6d8`](https://github.com/LedgerHQ/ledger-live/commit/43bf6d8f6600f70b7c2a85615660e7e150e798bf), [`64bb8cf`](https://github.com/LedgerHQ/ledger-live/commit/64bb8cfa5bffde5a1e2c24615f1dd11b864094d2), [`bbfc8cf`](https://github.com/LedgerHQ/ledger-live/commit/bbfc8cf7929d9bffc1aa1b9a5e3b9593e3016436)]:
-  - @domain/entity-currency-crypto@0.10.0-next.0
-  - @domain/entity-currency-token@0.4.0-next.0
-  - @domain/api-currency-token@0.4.0-next.0
-  - @domain/entity-currency@0.4.0-next.0
-  - @shared/api-services@0.3.0-next.0
-  - @domain/entity-interest-rate@0.3.0-next.0
-  - @domain/entity-aggregated-asset@0.3.0-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

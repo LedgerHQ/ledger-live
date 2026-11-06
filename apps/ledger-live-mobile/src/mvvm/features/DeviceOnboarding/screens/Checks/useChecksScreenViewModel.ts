@@ -104,6 +104,23 @@ function deviceModelInfo(device: Device, version: string): DeviceModelInfo {
   } as unknown as DeviceModelInfo;
 }
 
+function headerQuit(
+  state: ChecksScreenState,
+  firmwareOfferClosed: boolean,
+  onQuit: ChecksScreenProps["onQuit"],
+) {
+  if (state === "updating" && !firmwareOfferClosed) return undefined;
+  return onQuit;
+}
+
+function firmwareOfferVisible(
+  hasUpdate: boolean,
+  unsupportedOpen: boolean,
+  firmwareOfferClosed: boolean,
+) {
+  return hasUpdate && !unsupportedOpen && !firmwareOfferClosed;
+}
+
 function firmwareEligibility(device: Device, current: string) {
   const info = deviceModelInfo(device, current);
   const newUxSupported = isNewFirmwareUpdateUxSupported(device, info);
@@ -124,6 +141,8 @@ export function useChecksScreenViewModel({
   onStart,
   onRetry,
   onCloseSheet,
+  onCloseNotGenuine,
+  onCloseFirmwareOffer,
   onContinue,
   onQuit,
   onAcceptUpdate,
@@ -138,12 +157,15 @@ export function useChecksScreenViewModel({
   }
   const errorDrawerKind = recoverableKind ?? retainedRecoverableKind ?? "unknown";
   const [allowClosed, setAllowClosed] = useState(false);
+  const [closedFirmwareOfferKey, setClosedFirmwareOfferKey] = useState<string | null>(null);
+  const closedFirmwareOfferKeyRef = useRef<string | null>(null);
   if (state !== "awaitingAllow" && allowClosed) setAllowClosed(false);
   const updateKey = update ? `${update.current}|${update.available}` : "";
   const [unsupportedFor, setUnsupportedFor] = useState<string | null>(null);
   const declinedFor = useRef<string | null>(null);
   const suppressOfferCloseFor = useRef<string | null>(null);
   const firmwareOfferOpen = state === "updating" && update !== null;
+  const firmwareOfferClosed = closedFirmwareOfferKey === updateKey && updateKey !== "";
   const productName = getDeviceModel(device.modelId).productName || device.modelId;
   const eligibility = update ? firmwareEligibility(device, update.current) : null;
   const isUnsupportedUpdateOpen = unsupportedFor === updateKey && updateKey !== "";
@@ -189,7 +211,7 @@ export function useChecksScreenViewModel({
   return {
     ...layouts[layout],
     closeLabel: t("deviceOnboarding.checks.close"),
-    onQuit: state === "updating" ? undefined : onQuit,
+    onQuit: headerQuit(state, firmwareOfferClosed, onQuit),
     allowSheet:
       state === "awaitingAllow" && !allowClosed
         ? {
@@ -203,7 +225,7 @@ export function useChecksScreenViewModel({
           }
         : undefined,
     firmwareUpdate: {
-      isOpen: update !== null && !isUnsupportedUpdateOpen,
+      isOpen: firmwareOfferVisible(update !== null, isUnsupportedUpdateOpen, firmwareOfferClosed),
       firmwareVersion: update?.available ?? "",
       productName,
       onUpdate: () => {
@@ -219,6 +241,13 @@ export function useChecksScreenViewModel({
       onClose: () => {
         if (!firmwareOfferOpen) return;
         if (suppressOfferCloseFor.current === updateKey) return;
+        if (onCloseFirmwareOffer) {
+          if (closedFirmwareOfferKeyRef.current === updateKey) return;
+          closedFirmwareOfferKeyRef.current = updateKey;
+          setClosedFirmwareOfferKey(updateKey);
+          onCloseFirmwareOffer();
+          return;
+        }
         if (declinedFor.current === updateKey) return;
         declinedFor.current = updateKey;
         onDeclineUpdate();
@@ -238,7 +267,7 @@ export function useChecksScreenViewModel({
       kind: errorDrawerKind,
       productName,
       onRetry,
-      onCancel: onCloseSheet,
+      onCancel: () => onQuit?.(),
       onClose: () => {
         if (!recoverableKind) return;
         onCloseSheet();
@@ -249,6 +278,10 @@ export function useChecksScreenViewModel({
       productName,
       onClose: () => {
         if (error?.kind !== "notGenuine") return;
+        if (onCloseNotGenuine) {
+          onCloseNotGenuine();
+          return;
+        }
         onQuit?.();
       },
     },

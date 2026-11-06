@@ -168,26 +168,4 @@
 - Updated dependencies []:
   - @ledgerhq/live-dmk-speculos@0.2.1-hotfix.0
 
-## 0.13.0
-
-### Minor Changes
-
-- [#12563](https://github.com/LedgerHQ/ledger-live/pull/12563) [`b4a4e16`](https://github.com/LedgerHQ/ledger-live/commit/b4a4e160aae6fd64f944ab25633f6931dc4358d3) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add DMK speculos transport and device controller
-
-### Patch Changes
-
-- Updated dependencies [[`b4a4e16`](https://github.com/LedgerHQ/ledger-live/commit/b4a4e160aae6fd64f944ab25633f6931dc4358d3)]:
-  - @ledgerhq/live-dmk-speculos@0.2.0
-
-## 0.13.0-next.0
-
-### Minor Changes
-
-- [#12563](https://github.com/LedgerHQ/ledger-live/pull/12563) [`b4a4e16`](https://github.com/LedgerHQ/ledger-live/commit/b4a4e160aae6fd64f944ab25633f6931dc4358d3) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add DMK speculos transport and device controller
-
-### Patch Changes
-
-- Updated dependencies [[`b4a4e16`](https://github.com/LedgerHQ/ledger-live/commit/b4a4e160aae6fd64f944ab25633f6931dc4358d3)]:
-  - @ledgerhq/live-dmk-speculos@0.2.0-next.0
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

@@ -5,25 +5,25 @@ import { ConnectionTimedOutContent } from "../../sheets/ConnectionTimedOutConten
 
 type Props = Readonly<{
   retry: () => void;
+  cancel: () => void;
   trackClick: (button: OsUpdateButton) => void;
-  exportLogs: () => void;
 }>;
 
 export function getConnectionTimedOutSheet({
   retry,
+  cancel,
   trackClick,
-  exportLogs,
 }: Props): OsUpdateSheetSpec {
   const onRestart = () => {
-    trackClick(OsUpdateButton.RETRY);
+    trackClick(OsUpdateButton.RESTART_OS_UPDATE);
     retry();
   };
-  const onSendReport = () => {
-    trackClick(OsUpdateButton.SEND_REPORT);
-    exportLogs();
+  const onCancel = () => {
+    trackClick(OsUpdateButton.CANCEL_OS_UPDATE);
+    cancel();
   };
   return {
     hideHeader: true,
-    content: <ConnectionTimedOutContent onRestart={onRestart} onSendReport={onSendReport} />,
+    content: <ConnectionTimedOutContent onRestart={onRestart} onCancel={onCancel} />,
   };
 }

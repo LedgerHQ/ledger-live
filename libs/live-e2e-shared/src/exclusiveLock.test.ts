@@ -1,9 +1,12 @@
 import assert from "node:assert/strict";
+import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, utimesSync } from "node:fs";
 import os from "node:os";
-import test, { mock } from "node:test";
+import path from "node:path";
+import test, { after, mock } from "node:test";
 import {
   accountLockKey,
   acquireExclusiveLock,
+  exclusiveLockStoreFailure,
   PAY_CARD,
   refuseExclusiveLocks,
   runWithExclusiveLock,
@@ -29,7 +32,15 @@ const REMOTE_LOCK: Env = {
   E2E_EXCLUSIVE_LOCK_SECRET_ACCESS_KEY: "secret",
 };
 
-const withEnv = async (env: Env, fn: () => Promise<void>) => {
+const lockDirs = mkdtempSync(path.join(os.tmpdir(), "exclusive-lock-test-"));
+after(() => rmSync(lockDirs, { recursive: true, force: true }));
+let lockDirCount = 0;
+
+// Each run gets a machine-local lock directory of its own, so no settle window an earlier test
+// left delays it. os.tmpdir() reads TMPDIR, or TEMP and TMP on Windows.
+const withEnv = async (runEnv: Env, fn: () => Promise<void>) => {
+  const tmpDir = path.join(lockDirs, String(++lockDirCount));
+  const env = { ...runEnv, TMPDIR: tmpDir, TEMP: tmpDir, TMP: tmpDir };
   const previous = Object.fromEntries(Object.keys(env).map(name => [name, process.env[name]]));
   const apply = (values: Env) => {
     for (const [name, value] of Object.entries(values)) {
@@ -230,14 +241,14 @@ test("does not let a call join a lock whose release has started", { timeout: 10_
     const spec = await acquireExclusiveLock([Account.ETH_1], "ios approval.spec.ts", {
       allowNested: true,
     });
-    const specReleased = spec.release().then(() => steps.push("spec released"));
+    const specAbandoned = spec.abandon().then(() => steps.push("spec abandoned"));
     await runWithExclusiveLock([TokenAccount.ETH_USDT_1], "late approval", async () => {
       steps.push("late approval");
     });
-    await specReleased;
+    await specAbandoned;
   });
 
-  assert.deepEqual(steps, ["spec released", "late approval"]);
+  assert.deepEqual(steps, ["spec abandoned", "late approval"]);
 });
 
 test(
@@ -282,12 +293,12 @@ for (const allowNested of [false, true]) {
         });
 
         await new Promise(resolve => setTimeout(resolve, 300));
-        steps.push("earlier released");
-        await earlier.release();
-        await (await next).release();
+        steps.push("earlier abandoned");
+        await earlier.abandon();
+        await (await next).abandon();
       });
 
-      assert.deepEqual(steps, ["earlier released", "next spec acquired"]);
+      assert.deepEqual(steps, ["earlier abandoned", "next spec acquired"]);
     },
   );
 }
@@ -301,8 +312,8 @@ test(
       const earlier = await acquireExclusiveLock([Account.ETH_1], "earlier spec");
       const next = acquireExclusiveLock([Account.ETH_1], "next spec");
       await new Promise(resolve => setTimeout(resolve, 300));
-      await earlier.release();
-      await (await next).release();
+      await earlier.abandon();
+      await (await next).abandon();
     });
 
     assert.ok(takeExclusiveLockWaitedMs() >= 300);
@@ -316,8 +327,8 @@ test("locks each on-chain account once when several share it", { timeout: 10_000
       [TokenAccount.ETH_USDT_1, Account.ETH_1, Account.ATOM_1],
       "multi-account flow",
     );
-    await lease.release();
-    await lease.release();
+    await lease.abandon();
+    await lease.abandon();
 
     await runWithExclusiveLock([Account.ETH_1], "next flow", async () => {});
   });
@@ -358,6 +369,54 @@ test("locks on this machine only, even on CI, when told to", async () => {
   }
 });
 
+/** The settle windows machine-local releases left in this run's lock directory, by key. */
+const machineLocalSettleWindows = () => {
+  const lockRoot = path.join(os.tmpdir(), "ll-e2e-locks");
+  return readdirSync(lockRoot)
+    .filter(name => name.endsWith(".settled-until"))
+    .map(name => ({
+      key: Buffer.from(name.split(".")[0], "base64url").toString(),
+      leftMs: Number(readFileSync(path.join(lockRoot, name), "utf8")) - Date.now(),
+    }));
+};
+
+test("keeps the settle window on this machine only after a broadcast from an account", async () => {
+  await withEnv({ ...REMOTE_LOCK, CI: "true", E2E_EXCLUSIVE_LOCK_MODE: "local" }, async () => {
+    await (await acquireExclusiveLock([Account.ETH_1], "R2 down, broadcast")).release();
+    await (await acquireExclusiveLock([Account.SOL_1], "R2 down, nothing broadcast")).abandon();
+    await (await acquireExclusiveLock([PAY_CARD], "R2 down, card frozen")).release();
+
+    const [ethSettle, ...others] = machineLocalSettleWindows();
+    assert.equal(ethSettle?.key, accountLockKey(Account.ETH_1));
+    assert.ok(ethSettle.leftMs > 40_000 && ethSettle.leftMs <= 45_000);
+    assert.deepEqual(others, []);
+  });
+});
+
+/** Leaves the machine-local lock on `key` the way a holder that died `ageMs` ago does. */
+const leaveDeadHolderLock = (key: string, ageMs: number) => {
+  const lockDir = path.join(os.tmpdir(), "ll-e2e-locks", Buffer.from(key).toString("base64url"));
+  mkdirSync(lockDir, { recursive: true });
+  const diedAt = new Date(Date.now() - ageMs);
+  utimesSync(lockDir, diedAt, diedAt);
+};
+
+test("takes over an account on this machine only once a dead holder's settle window ends", async () => {
+  await withEnv(NO_REMOTE_LOCK, async () => {
+    leaveDeadHolderLock(PAY_CARD.lockKey, 31_000);
+    leaveDeadHolderLock(accountLockKey(Account.ETH_1), 74_000);
+
+    const startedAt = Date.now();
+    await (await acquireExclusiveLock([PAY_CARD], "after a dead holder")).abandon();
+    const cardWaitedMs = Date.now() - startedAt;
+    await (await acquireExclusiveLock([Account.ETH_1], "after a dead holder")).abandon();
+    const accountWaitedMs = Date.now() - startedAt;
+
+    assert.ok(cardWaitedMs < 500, `waited ${cardWaitedMs}ms for the card`);
+    assert.ok(accountWaitedMs >= 700, `waited ${accountWaitedMs}ms for the account`);
+  });
+});
+
 test("refuses an unknown lock mode", async () => {
   await withEnv({ ...NO_REMOTE_LOCK, E2E_EXCLUSIVE_LOCK_MODE: "off" }, async () => {
     await assert.rejects(acquireExclusiveLock([Account.DOT_1], "unknown mode"), {
@@ -371,6 +430,314 @@ test("refuses an unknown lock priority", async () => {
     await assert.rejects(acquireExclusiveLock([Account.DOT_1], "unknown priority"), {
       name: "ExclusiveLockConfigError",
       message: /E2E_EXCLUSIVE_LOCK_PRIORITY must be "normal" or "high"/,
+    });
+  });
+});
+
+type R2Request = {
+  readonly method: string;
+  readonly headers: Readonly<Record<string, string>>;
+};
+
+const mockR2Responses = (respond: (request: R2Request, call: number) => Response) => {
+  const requests: R2Request[] = [];
+  const fetchMock = mock.method(globalThis, "fetch", async (_url: URL, init: RequestInit) => {
+    const request = {
+      method: init.method ?? "GET",
+      headers: { ...(init.headers as Record<string, string>) },
+    };
+    requests.push(request);
+    return respond(request, requests.length);
+  });
+  return { requests, restore: () => fetchMock.mock.restore() };
+};
+
+const noSleep = async () => {};
+
+const writtenAt = (etag: string) => () => new Response(null, { status: 200, headers: { etag } });
+
+const preconditionFailed = () => new Response("PreconditionFailed", { status: 412 });
+
+const storedAt = (etag: string) => () => {
+  const now = new Date().toUTCString();
+  return new Response(
+    JSON.stringify({
+      holder: "android-runner",
+      label: "lock store check",
+      leaseMs: 0,
+      settleMs: 0,
+      released: true,
+    }),
+    { status: 200, headers: { etag, date: now, "last-modified": now } },
+  );
+};
+
+/** R2 answering these responses in turn, over again for each retry. */
+const answering =
+  (...responses: Array<() => Response>) =>
+  (_request: R2Request, call: number) =>
+    responses[(call - 1) % responses.length]();
+
+const conditions = (requests: readonly R2Request[]) =>
+  requests.map(({ method, headers }) => [
+    method,
+    headers["if-none-match"] ?? headers["if-match"] ?? "",
+  ]);
+
+const recordingSleep = () => {
+  const sleeps: number[] = [];
+  return {
+    sleeps,
+    sleep: async (ms: number) => {
+      sleeps.push(ms);
+    },
+  };
+};
+
+test("finds the lock store taking locks when it creates, reads and replaces its check key", async () => {
+  const r2 = mockR2Responses(
+    answering(
+      writtenAt('"created"'),
+      preconditionFailed,
+      preconditionFailed,
+      storedAt('"created"'),
+      writtenAt('"replaced"'),
+    ),
+  );
+  try {
+    await withEnv(REMOTE_LOCK, async () => {
+      assert.equal(await exclusiveLockStoreFailure({ sleep: noSleep }), undefined);
+    });
+    assert.deepEqual(conditions(r2.requests), [
+      ["PUT", "*"],
+      ["PUT", "*"],
+      ["PUT", '"no-such-etag"'],
+      ["GET", ""],
+      ["PUT", '"created"'],
+    ]);
+  } finally {
+    r2.restore();
+  }
+});
+
+test("finds the lock store taking locks when its check key already exists", async () => {
+  const r2 = mockR2Responses(
+    answering(
+      preconditionFailed,
+      preconditionFailed,
+      storedAt('"stored"'),
+      writtenAt('"replaced"'),
+    ),
+  );
+  try {
+    await withEnv(REMOTE_LOCK, async () => {
+      assert.equal(await exclusiveLockStoreFailure({ sleep: noSleep }), undefined);
+    });
+    assert.deepEqual(conditions(r2.requests), [
+      ["PUT", "*"],
+      ["PUT", '"no-such-etag"'],
+      ["GET", ""],
+      ["PUT", '"stored"'],
+    ]);
+  } finally {
+    r2.restore();
+  }
+});
+
+test("finds the lock store taking locks when another job's check replaced the key first", async () => {
+  const r2 = mockR2Responses(
+    answering(
+      preconditionFailed,
+      preconditionFailed,
+      storedAt('"stored"'),
+      preconditionFailed,
+      storedAt('"theirs"'),
+    ),
+  );
+  try {
+    await withEnv(REMOTE_LOCK, async () => {
+      assert.equal(await exclusiveLockStoreFailure({ sleep: noSleep }), undefined);
+    });
+    assert.equal(r2.requests.length, 5);
+  } finally {
+    r2.restore();
+  }
+});
+
+test("finds the lock store taking locks once a retried request succeeds", async () => {
+  const r2 = mockR2Responses(
+    answering(
+      () => new Response(null, { status: 503 }),
+      preconditionFailed,
+      preconditionFailed,
+      storedAt('"stored"'),
+      writtenAt('"replaced"'),
+    ),
+  );
+  try {
+    await withEnv(REMOTE_LOCK, async () => {
+      assert.equal(await exclusiveLockStoreFailure({ sleep: noSleep }), undefined);
+    });
+    assert.equal(r2.requests.length, 5);
+  } finally {
+    r2.restore();
+  }
+});
+
+test("reports a lock store that keeps rejecting If-Match although nothing rewrote the key", async () => {
+  const r2 = mockR2Responses(
+    answering(
+      preconditionFailed,
+      preconditionFailed,
+      storedAt('"stored"'),
+      preconditionFailed,
+      storedAt('"stored"'),
+    ),
+  );
+  const { sleeps, sleep } = recordingSleep();
+  try {
+    await withEnv(REMOTE_LOCK, async () => {
+      assert.match(
+        (await exclusiveLockStoreFailure({ sleep })) ?? "",
+        /rejected If-Match "stored" .* although nothing rewrote it/,
+      );
+    });
+    assert.equal(r2.requests.length, 20);
+    assert.equal(sleeps.length, 3);
+  } finally {
+    r2.restore();
+  }
+});
+
+test("reports a lock store that lets a create overwrite the key", async () => {
+  const r2 = mockR2Responses(answering(writtenAt('"created"'), writtenAt('"again"')));
+  try {
+    await withEnv(REMOTE_LOCK, async () => {
+      assert.match(
+        (await exclusiveLockStoreFailure({ sleep: noSleep })) ?? "",
+        /ignored If-None-Match: it created "store-check" twice/,
+      );
+    });
+  } finally {
+    r2.restore();
+  }
+});
+
+test("reports a lock store that replaces the key at an ETag it never had", async () => {
+  const r2 = mockR2Responses(answering(preconditionFailed, writtenAt('"replaced"')));
+  try {
+    await withEnv(REMOTE_LOCK, async () => {
+      assert.match(
+        (await exclusiveLockStoreFailure({ sleep: noSleep })) ?? "",
+        /ignored If-Match: it replaced "store-check" at ETag "no-such-etag"/,
+      );
+    });
+  } finally {
+    r2.restore();
+  }
+});
+
+test("reports a lock store that loses the key after rejecting its replacement", async () => {
+  const r2 = mockR2Responses(
+    answering(
+      preconditionFailed,
+      preconditionFailed,
+      storedAt('"stored"'),
+      preconditionFailed,
+      () => new Response("<Error><Code>NoSuchKey</Code></Error>", { status: 404 }),
+    ),
+  );
+  try {
+    await withEnv(REMOTE_LOCK, async () => {
+      assert.match(
+        (await exclusiveLockStoreFailure({ sleep: noSleep })) ?? "",
+        /lost "store-check" after rejecting its replacement/,
+      );
+    });
+  } finally {
+    r2.restore();
+  }
+});
+
+test("reports at once a lock store that writes but refuses reads", async () => {
+  const r2 = mockR2Responses(
+    answering(
+      writtenAt('"created"'),
+      preconditionFailed,
+      preconditionFailed,
+      () => new Response("AccessDenied", { status: 403 }),
+    ),
+  );
+  try {
+    await withEnv(REMOTE_LOCK, async () => {
+      assert.match(
+        (await exclusiveLockStoreFailure({ sleep: noSleep })) ?? "",
+        /R2 GET .* failed with 403/,
+      );
+    });
+    assert.equal(r2.requests.length, 4);
+  } finally {
+    r2.restore();
+  }
+});
+
+test("reports at once a lock store that reads but refuses writes", async () => {
+  const r2 = mockR2Responses(({ method }) =>
+    method === "GET" ? storedAt('"stored"')() : new Response("AccessDenied", { status: 403 }),
+  );
+  try {
+    await withEnv(REMOTE_LOCK, async () => {
+      assert.match(
+        (await exclusiveLockStoreFailure({ sleep: noSleep })) ?? "",
+        /R2 PUT .* failed with 403/,
+      );
+    });
+    assert.equal(r2.requests.length, 1);
+  } finally {
+    r2.restore();
+  }
+});
+
+test("reports at once a missing bucket, which R2 answers with a 404 like a missing key", async () => {
+  const r2 = mockR2Responses(
+    () => new Response("<Error><Code>NoSuchBucket</Code></Error>", { status: 404 }),
+  );
+  try {
+    await withEnv(REMOTE_LOCK, async () => {
+      assert.match(
+        (await exclusiveLockStoreFailure({ sleep: noSleep })) ?? "",
+        /failed with 404: .*NoSuchBucket/,
+      );
+    });
+    assert.equal(r2.requests.length, 1);
+  } finally {
+    r2.restore();
+  }
+});
+
+test("reports why the lock store kept failing after retrying it", async () => {
+  const r2 = mockR2Responses(() => {
+    throw new TypeError("fetch failed", { cause: new Error("connect ECONNREFUSED") });
+  });
+  const { sleeps, sleep } = recordingSleep();
+  try {
+    await withEnv(REMOTE_LOCK, async () => {
+      assert.equal(
+        await exclusiveLockStoreFailure({ sleep }),
+        "fetch failed: connect ECONNREFUSED",
+      );
+    });
+    assert.equal(r2.requests.length, 4);
+    assert.equal(sleeps.length, 3);
+  } finally {
+    r2.restore();
+  }
+});
+
+test("refuses to check the lock store without its configuration", async () => {
+  await withEnv({ ...NO_REMOTE_LOCK, CI: "true" }, async () => {
+    await assert.rejects(exclusiveLockStoreFailure({ sleep: noSleep }), {
+      name: "ExclusiveLockConfigError",
     });
   });
 });

@@ -1,7 +1,6 @@
 import { resolveMarketOrAssetDeeplinkIntent } from "../resolveMarketOrAssetDeeplinkIntent";
 
 const base = {
-  shouldDisplayAggregatedAssets: true,
   shouldDisplayAssetDiscoverability: true,
   categoryParam: null as string | null,
 };
@@ -10,49 +9,25 @@ const tokenPath = "/ethereum/erc20/usd_tether__erc20_";
 const tokenId = "ethereum/erc20/usd_tether__erc20_";
 
 describe("resolveMarketOrAssetDeeplinkIntent", () => {
-  describe("Wallet 4.0 on", () => {
-    it("opens asset detail for a coin (market source)", () => {
-      expect(
-        resolveMarketOrAssetDeeplinkIntent({ ...base, hostname: "market", pathname: "/bitcoin" }),
-      ).toEqual({
-        type: "asset-detail",
-        source: "deeplink_market",
-        currencyId: "bitcoin",
-        marketState: undefined,
-      });
-    });
-
-    it("opens asset detail for a token with market state (asset source)", () => {
-      expect(
-        resolveMarketOrAssetDeeplinkIntent({ ...base, hostname: "asset", pathname: tokenPath }),
-      ).toEqual({
-        type: "asset-detail",
-        source: "deeplink_asset",
-        currencyId: tokenId,
-        marketState: { id: tokenId, ledgerIds: [tokenId] },
-      });
+  it("opens asset detail for a coin (market source)", () => {
+    expect(
+      resolveMarketOrAssetDeeplinkIntent({ ...base, hostname: "market", pathname: "/bitcoin" }),
+    ).toEqual({
+      type: "asset-detail",
+      source: "deeplink_market",
+      currencyId: "bitcoin",
+      marketState: undefined,
     });
   });
 
-  describe("Wallet 4.0 off", () => {
-    const off = { ...base, shouldDisplayAggregatedAssets: false };
-
-    it("routes a coin to the legacy path", () => {
-      expect(
-        resolveMarketOrAssetDeeplinkIntent({ ...off, hostname: "market", pathname: "/bitcoin" }),
-      ).toEqual({ type: "legacy-path", currencyId: "bitcoin" });
-    });
-
-    it("falls back to the market banner for a token on legacy market", () => {
-      expect(
-        resolveMarketOrAssetDeeplinkIntent({ ...off, hostname: "market", pathname: tokenPath }),
-      ).toEqual({ type: "market-banner" });
-    });
-
-    it("falls back to the market banner for a token on legacy asset", () => {
-      expect(
-        resolveMarketOrAssetDeeplinkIntent({ ...off, hostname: "asset", pathname: tokenPath }),
-      ).toEqual({ type: "market-banner" });
+  it("opens asset detail for a token with market state (asset source)", () => {
+    expect(
+      resolveMarketOrAssetDeeplinkIntent({ ...base, hostname: "asset", pathname: tokenPath }),
+    ).toEqual({
+      type: "asset-detail",
+      source: "deeplink_asset",
+      currencyId: tokenId,
+      marketState: { id: tokenId, ledgerIds: [tokenId] },
     });
   });
 
@@ -96,32 +71,20 @@ describe("resolveMarketOrAssetDeeplinkIntent", () => {
       ).toEqual({ type: "market-banner" });
     });
 
-    it("routes an empty asset path to portfolio when Wallet 4.0 is on", () => {
+    it("routes an empty asset path to portfolio", () => {
       expect(
         resolveMarketOrAssetDeeplinkIntent({ ...base, hostname: "asset", pathname: "/" }),
       ).toEqual({ type: "portfolio" });
     });
 
-    it("continues for an empty asset path when Wallet 4.0 is off", () => {
-      expect(
-        resolveMarketOrAssetDeeplinkIntent({
-          ...base,
-          hostname: "asset",
-          pathname: "/",
-          shouldDisplayAggregatedAssets: false,
-        }),
-      ).toEqual({ type: "continue" });
-    });
-
-    it("treats an extra-slash path as empty (no phantom segment)", () => {
+    it("treats an extra-slash path as empty and routes to portfolio", () => {
       expect(
         resolveMarketOrAssetDeeplinkIntent({
           ...base,
           hostname: "asset",
           pathname: "//",
-          shouldDisplayAggregatedAssets: false,
         }),
-      ).toEqual({ type: "continue" });
+      ).toEqual({ type: "portfolio" });
     });
   });
 });

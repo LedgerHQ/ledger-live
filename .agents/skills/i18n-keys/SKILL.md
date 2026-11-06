@@ -4,7 +4,6 @@ description: |
   Write wording keys the i18n key check can verify. Read when adding or changing
   t() / Trans i18nKey calls, key tables (titleKey, labelKey, ...) or English catalog
   entries in features/, domain/ or shared/, or when `lint:i18n-keys` fails.
-globs: ["features/**/*.{ts,tsx}", "domain/**/*.{ts,tsx}", "shared/**/*.{ts,tsx}"]
 ---
 
 # i18n keys

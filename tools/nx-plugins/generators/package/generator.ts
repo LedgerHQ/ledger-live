@@ -20,6 +20,8 @@ type LayerSpec = Readonly<{
   dir: string;
   scope: string;
   lintScript: string;
+  // Packages its lint preset loads reach a package only through this edge (lint:tool-config).
+  lintDevDependencies?: Readonly<Record<string, string>>;
   platforms: Readonly<Partial<Record<Platform, Shape>>>;
 }>;
 
@@ -101,6 +103,7 @@ export const LAYERS: Readonly<Record<Layer, LayerSpec>> = {
     dir: "features/flow",
     scope: "@features/flow-",
     lintScript: "oxlint src",
+    lintDevDependencies: { "@support/lint": "workspace:*" },
     platforms: FEATURE_UI_PLATFORMS,
   },
 };
@@ -208,6 +211,7 @@ function packageJson(
     },
     devDependencies: sorted({
       ...BASE_DEV_DEPENDENCIES,
+      ...layer.lintDevDependencies,
       ...(shape.jest.jsdom && WEB_TEST_DEV_DEPENDENCIES),
     }),
   };

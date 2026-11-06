@@ -1,5 +1,80 @@
 # web-tools
 
+## 0.62.0
+
+### Minor Changes
+
+- [#24035](https://github.com/LedgerHQ/ledger-live/pull/24035) [`180498b`](https://github.com/LedgerHQ/ledger-live/commit/180498bf11ee21c97c2bb55683a3a0849ae66299) Thanks [@ysitbon](https://github.com/ysitbon)! - The web-tools store lists its CAL and countervalues services once with `defineApiServices`, keeping the same reducers, middlewares and `extraArgument`
+
+- [#24080](https://github.com/LedgerHQ/ledger-live/pull/24080) [`08aafc3`](https://github.com/LedgerHQ/ledger-live/commit/08aafc35e7abe1948b34f149d946d1114d6a39a7) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Upgrade rspack to 2.3.0, rsbuild to 2.3.0 and rslib to 1.0.5
+
+### Patch Changes
+
+- Updated dependencies [[`edb6f42`](https://github.com/LedgerHQ/ledger-live/commit/edb6f42309bda273de7d1c058698c4b0f8c1df86), [`304b8b2`](https://github.com/LedgerHQ/ledger-live/commit/304b8b2575f6adfa895b50b6697febd1ccab7e7e), [`3775d3f`](https://github.com/LedgerHQ/ledger-live/commit/3775d3fc1b6eba54ddaccc41f6cd9d935a818782), [`cd14395`](https://github.com/LedgerHQ/ledger-live/commit/cd1439596d45fd4f66a4c778c9a678644078bbca), [`0c62d35`](https://github.com/LedgerHQ/ledger-live/commit/0c62d3533f72e450c2235f8d23aa1cdb101486a9), [`9907890`](https://github.com/LedgerHQ/ledger-live/commit/9907890790bf8b804d7cc454a067508df0969137), [`e6d5e3c`](https://github.com/LedgerHQ/ledger-live/commit/e6d5e3c668cabd575edfd44d7dfe47bf7f37e84e), [`8854aff`](https://github.com/LedgerHQ/ledger-live/commit/8854aff9cace72ad17c6d9fd7ee98a4dcd65ecb1), [`a49773f`](https://github.com/LedgerHQ/ledger-live/commit/a49773f51027c607adac26d1133a36a37ada456c), [`7aeab58`](https://github.com/LedgerHQ/ledger-live/commit/7aeab582f0f6c8d38cf88af0c559dd37d77b9a1c), [`68196b4`](https://github.com/LedgerHQ/ledger-live/commit/68196b4642ad26ccce9b3263e45ee718572acb11), [`df941ac`](https://github.com/LedgerHQ/ledger-live/commit/df941acce2848e62f2a44f8d27cddf0ff28abe2b), [`f95b426`](https://github.com/LedgerHQ/ledger-live/commit/f95b4268782b5cfd8cb4c14c9b0e5c6384cafa4d), [`a9d19d0`](https://github.com/LedgerHQ/ledger-live/commit/a9d19d080fbf0310c6fb7454784e8ac0682dfb51), [`566902e`](https://github.com/LedgerHQ/ledger-live/commit/566902e2101f69e0216ced4fe000daba775ff6bb), [`97be95e`](https://github.com/LedgerHQ/ledger-live/commit/97be95ecba1a1989b8d5ccfc5c4bdf96cc60e767), [`b79c360`](https://github.com/LedgerHQ/ledger-live/commit/b79c360ab24df820c11299c080538fd40ddef820), [`fdb0bdc`](https://github.com/LedgerHQ/ledger-live/commit/fdb0bdc25a803ba7907959d4f390e70b229423e2), [`198fa76`](https://github.com/LedgerHQ/ledger-live/commit/198fa76df6b3048033c21a723be51eebda95bd88), [`2b8aa58`](https://github.com/LedgerHQ/ledger-live/commit/2b8aa5862ed01665cefc11b62ce80d314c5771ba), [`bda0e29`](https://github.com/LedgerHQ/ledger-live/commit/bda0e297ae889fd821721a8dcf0147d320373571), [`80325b3`](https://github.com/LedgerHQ/ledger-live/commit/80325b3fe630a0405a8618dfe498ae480f3224e3), [`4397830`](https://github.com/LedgerHQ/ledger-live/commit/43978303a19c12b516cf9caf30eee84c49e8b478), [`e275739`](https://github.com/LedgerHQ/ledger-live/commit/e27573929d3e688afbb6544c58274e025867e6e4), [`5a6a32d`](https://github.com/LedgerHQ/ledger-live/commit/5a6a32df1c7d16cd6f3e4797002224f352cb2ba9), [`b947ef4`](https://github.com/LedgerHQ/ledger-live/commit/b947ef485dc1351050f14610ba9bf7054717252a), [`54c706e`](https://github.com/LedgerHQ/ledger-live/commit/54c706ecb75b930267d7ba83a6e13ce7a99cbab7), [`e6382fe`](https://github.com/LedgerHQ/ledger-live/commit/e6382fec7ac8b74c432990ecfe9a49224267bb77), [`77a85a3`](https://github.com/LedgerHQ/ledger-live/commit/77a85a30abe7b42e5f5b4e0478bec14fa39033cf), [`496a4ef`](https://github.com/LedgerHQ/ledger-live/commit/496a4ef8f04d08b4df63f5b8632a6b4e73a184cb), [`797b1ab`](https://github.com/LedgerHQ/ledger-live/commit/797b1ab63e4099c962a74170b43275f149c6fbea), [`dbe42b3`](https://github.com/LedgerHQ/ledger-live/commit/dbe42b3c907c59d822419c8444ce1074d1863407), [`c50f3fa`](https://github.com/LedgerHQ/ledger-live/commit/c50f3fac1c822d61332dbb512b21cdda6bb57210)]:
+  - @ledgerhq/live-common@38.6.0
+  - @devtools/bindings@0.14.0
+  - @shared/api-services@0.12.0
+  - @domain/entity-currency-crypto@0.18.0
+  - @features/platform-currencies@0.12.0
+  - @shared/feature-flags@0.29.0
+  - @ledgerhq/types-live@6.130.0
+  - @ledgerhq/ledger-wallet-framework@3.10.0
+  - @ledgerhq/live-dmk-shared@0.38.0
+  - @features/platform-feature-flags@0.11.0
+  - @devtools/shell@0.13.0
+  - @domain/entity-account@0.2.0
+  - @shared/env@0.12.0
+  - @domain/api-market-countervalues@0.2.3
+  - @domain/entity-contact@0.12.3
+  - @domain/entity-currency@0.4.9
+  - @domain/entity-currency-token@0.5.8
+  - @domain/entity-market-countervalues@0.4.2
+  - @ledgerhq/live-wallet@1.1.9
+  - @ledgerhq/wallet-pnl@0.8.3
+  - @ledgerhq/hw-app-eth@7.12.1
+  - @domain/entity-account-name@0.3.1
+
+## 0.62.0-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@38.6.0-next.1
+
+## 0.62.0-next.0
+
+### Minor Changes
+
+- [#24035](https://github.com/LedgerHQ/ledger-live/pull/24035) [`180498b`](https://github.com/LedgerHQ/ledger-live/commit/180498bf11ee21c97c2bb55683a3a0849ae66299) Thanks [@ysitbon](https://github.com/ysitbon)! - The web-tools store lists its CAL and countervalues services once with `defineApiServices`, keeping the same reducers, middlewares and `extraArgument`
+
+- [#24080](https://github.com/LedgerHQ/ledger-live/pull/24080) [`08aafc3`](https://github.com/LedgerHQ/ledger-live/commit/08aafc35e7abe1948b34f149d946d1114d6a39a7) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Upgrade rspack to 2.3.0, rsbuild to 2.3.0 and rslib to 1.0.5
+
+### Patch Changes
+
+- Updated dependencies [[`edb6f42`](https://github.com/LedgerHQ/ledger-live/commit/edb6f42309bda273de7d1c058698c4b0f8c1df86), [`304b8b2`](https://github.com/LedgerHQ/ledger-live/commit/304b8b2575f6adfa895b50b6697febd1ccab7e7e), [`3775d3f`](https://github.com/LedgerHQ/ledger-live/commit/3775d3fc1b6eba54ddaccc41f6cd9d935a818782), [`cd14395`](https://github.com/LedgerHQ/ledger-live/commit/cd1439596d45fd4f66a4c778c9a678644078bbca), [`0c62d35`](https://github.com/LedgerHQ/ledger-live/commit/0c62d3533f72e450c2235f8d23aa1cdb101486a9), [`9907890`](https://github.com/LedgerHQ/ledger-live/commit/9907890790bf8b804d7cc454a067508df0969137), [`e6d5e3c`](https://github.com/LedgerHQ/ledger-live/commit/e6d5e3c668cabd575edfd44d7dfe47bf7f37e84e), [`8854aff`](https://github.com/LedgerHQ/ledger-live/commit/8854aff9cace72ad17c6d9fd7ee98a4dcd65ecb1), [`a49773f`](https://github.com/LedgerHQ/ledger-live/commit/a49773f51027c607adac26d1133a36a37ada456c), [`7aeab58`](https://github.com/LedgerHQ/ledger-live/commit/7aeab582f0f6c8d38cf88af0c559dd37d77b9a1c), [`68196b4`](https://github.com/LedgerHQ/ledger-live/commit/68196b4642ad26ccce9b3263e45ee718572acb11), [`df941ac`](https://github.com/LedgerHQ/ledger-live/commit/df941acce2848e62f2a44f8d27cddf0ff28abe2b), [`f95b426`](https://github.com/LedgerHQ/ledger-live/commit/f95b4268782b5cfd8cb4c14c9b0e5c6384cafa4d), [`a9d19d0`](https://github.com/LedgerHQ/ledger-live/commit/a9d19d080fbf0310c6fb7454784e8ac0682dfb51), [`566902e`](https://github.com/LedgerHQ/ledger-live/commit/566902e2101f69e0216ced4fe000daba775ff6bb), [`97be95e`](https://github.com/LedgerHQ/ledger-live/commit/97be95ecba1a1989b8d5ccfc5c4bdf96cc60e767), [`b79c360`](https://github.com/LedgerHQ/ledger-live/commit/b79c360ab24df820c11299c080538fd40ddef820), [`fdb0bdc`](https://github.com/LedgerHQ/ledger-live/commit/fdb0bdc25a803ba7907959d4f390e70b229423e2), [`198fa76`](https://github.com/LedgerHQ/ledger-live/commit/198fa76df6b3048033c21a723be51eebda95bd88), [`2b8aa58`](https://github.com/LedgerHQ/ledger-live/commit/2b8aa5862ed01665cefc11b62ce80d314c5771ba), [`bda0e29`](https://github.com/LedgerHQ/ledger-live/commit/bda0e297ae889fd821721a8dcf0147d320373571), [`80325b3`](https://github.com/LedgerHQ/ledger-live/commit/80325b3fe630a0405a8618dfe498ae480f3224e3), [`4397830`](https://github.com/LedgerHQ/ledger-live/commit/43978303a19c12b516cf9caf30eee84c49e8b478), [`e275739`](https://github.com/LedgerHQ/ledger-live/commit/e27573929d3e688afbb6544c58274e025867e6e4), [`5a6a32d`](https://github.com/LedgerHQ/ledger-live/commit/5a6a32df1c7d16cd6f3e4797002224f352cb2ba9), [`b947ef4`](https://github.com/LedgerHQ/ledger-live/commit/b947ef485dc1351050f14610ba9bf7054717252a), [`54c706e`](https://github.com/LedgerHQ/ledger-live/commit/54c706ecb75b930267d7ba83a6e13ce7a99cbab7), [`e6382fe`](https://github.com/LedgerHQ/ledger-live/commit/e6382fec7ac8b74c432990ecfe9a49224267bb77), [`77a85a3`](https://github.com/LedgerHQ/ledger-live/commit/77a85a30abe7b42e5f5b4e0478bec14fa39033cf), [`496a4ef`](https://github.com/LedgerHQ/ledger-live/commit/496a4ef8f04d08b4df63f5b8632a6b4e73a184cb), [`797b1ab`](https://github.com/LedgerHQ/ledger-live/commit/797b1ab63e4099c962a74170b43275f149c6fbea), [`dbe42b3`](https://github.com/LedgerHQ/ledger-live/commit/dbe42b3c907c59d822419c8444ce1074d1863407), [`c50f3fa`](https://github.com/LedgerHQ/ledger-live/commit/c50f3fac1c822d61332dbb512b21cdda6bb57210)]:
+  - @ledgerhq/live-common@38.6.0-next.0
+  - @devtools/bindings@0.14.0-next.0
+  - @shared/api-services@0.12.0-next.0
+  - @domain/entity-currency-crypto@0.18.0-next.0
+  - @features/platform-currencies@0.12.0-next.0
+  - @shared/feature-flags@0.29.0-next.0
+  - @ledgerhq/types-live@6.130.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.10.0-next.0
+  - @ledgerhq/live-dmk-shared@0.38.0-next.0
+  - @features/platform-feature-flags@0.11.0-next.0
+  - @devtools/shell@0.13.0-next.0
+  - @domain/entity-account@0.2.0-next.0
+  - @shared/env@0.12.0-next.0
+  - @domain/api-market-countervalues@0.2.3-next.0
+  - @domain/entity-contact@0.12.3-next.0
+  - @domain/entity-currency@0.4.9-next.0
+  - @domain/entity-currency-token@0.5.8-next.0
+  - @domain/entity-market-countervalues@0.4.2-next.0
+  - @ledgerhq/live-wallet@1.1.9-next.0
+  - @ledgerhq/wallet-pnl@0.8.3-next.0
+  - @ledgerhq/hw-app-eth@7.12.1-next.0
+  - @domain/entity-account-name@0.3.1-next.0
+
 ## 0.61.0
 
 ### Minor Changes
@@ -532,86 +607,5 @@
   - @ledgerhq/live-countervalues@0.26.1-next.0
   - @ledgerhq/domain-service@1.8.20-next.0
   - @devtools/wire@0.5.1-next.0
-
-## 0.57.0
-
-### Minor Changes
-
-- [#21738](https://github.com/LedgerHQ/ledger-live/pull/21738) [`9e37f58`](https://github.com/LedgerHQ/ledger-live/commit/9e37f58a84f7ee9585142c0a8ac767da58b6d06f) Thanks [@ysitbon](https://github.com/ysitbon)! - Move the account-coupled tracking-pair code out of the countervalues packages and into `live-common`, next to the portfolio code it belongs with. `inferTrackingPairForAccounts` and `inferTrackingPairForAccountsUnresolved` leave `live-countervalues/logic`, and the `useTrackingPairForAccounts` hook that wraps them leaves `live-countervalues-react`.
-
-  These three were the last things in the countervalues core that needed an `Account`, so `@ledgerhq/types-live` is now gone from the package entirely and from its dependency list. The core no longer knows what an account is; it only knows currency pairs and rates.
-
-  The move was blocked until both packages became private: a published package cannot depend on a private one, and the hook re-exported a function that had to land in private `live-common`.
-
-- [#21892](https://github.com/LedgerHQ/ledger-live/pull/21892) [`e3c31fe`](https://github.com/LedgerHQ/ledger-live/commit/e3c31fe27541fab83214e085e01162977058dae5) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Add the Firmware App Deployments tool: a matrix of which device app version is published on each device, provider and OS track, read from the Manager API.
-
-### Patch Changes
-
-- Updated dependencies [[`e09211c`](https://github.com/LedgerHQ/ledger-live/commit/e09211c3477dc91530c2670a0b34b29fb8d3d943), [`16a454f`](https://github.com/LedgerHQ/ledger-live/commit/16a454fa79be46df6aec3c50ad40407f36dfdea9), [`96a1ca9`](https://github.com/LedgerHQ/ledger-live/commit/96a1ca9fef1b0acc8113708c148890054dea143d), [`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36), [`799219e`](https://github.com/LedgerHQ/ledger-live/commit/799219e262e80a339272113ea164fa506243b438), [`e3535da`](https://github.com/LedgerHQ/ledger-live/commit/e3535da7e5c884f8ada75eff52c0c4538142fffb), [`5b60a96`](https://github.com/LedgerHQ/ledger-live/commit/5b60a968d3292b3897380f2c74c472a51b81e35d), [`da3d09d`](https://github.com/LedgerHQ/ledger-live/commit/da3d09d75d7dcae659611cd371c48d75c03f7ae4), [`cdb273b`](https://github.com/LedgerHQ/ledger-live/commit/cdb273b068df78cd5a0dbd4281fb79f22e0a7506), [`ee1b919`](https://github.com/LedgerHQ/ledger-live/commit/ee1b9192421545035fb547f27319d7f816d85fe8), [`9e37f58`](https://github.com/LedgerHQ/ledger-live/commit/9e37f58a84f7ee9585142c0a8ac767da58b6d06f), [`06b5db9`](https://github.com/LedgerHQ/ledger-live/commit/06b5db9dd2b49bbbf256e9376d67f9c64b3a1a4d), [`7e44af4`](https://github.com/LedgerHQ/ledger-live/commit/7e44af495eccab1fac4b0808d6729a595b610c69), [`600d432`](https://github.com/LedgerHQ/ledger-live/commit/600d432657f1c9adf80af6730dd28f2177e05c5a), [`7050652`](https://github.com/LedgerHQ/ledger-live/commit/70506520dafbccca4e014ac30d75647a5b7fe7d0), [`7bfbb69`](https://github.com/LedgerHQ/ledger-live/commit/7bfbb69b29d66d1b908cddd4b7cad893f77a8ebc), [`60655cd`](https://github.com/LedgerHQ/ledger-live/commit/60655cdf828eebdddd515d52c8fc5876ea50baf8), [`8146728`](https://github.com/LedgerHQ/ledger-live/commit/814672815a08dd57160d3aa4c28e92c3f508807e), [`b30a8cd`](https://github.com/LedgerHQ/ledger-live/commit/b30a8cd8acfeabb444cd7e2acb1ac5eaa959b221), [`a62261e`](https://github.com/LedgerHQ/ledger-live/commit/a62261e2e63218affcd3690a70b5a42f355a48a4), [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb), [`354486c`](https://github.com/LedgerHQ/ledger-live/commit/354486ca79badb49b9c902b1724a36379c278358), [`73eb9bc`](https://github.com/LedgerHQ/ledger-live/commit/73eb9bc68ed87f07142a1fdf54e4cd68af3a36d4), [`d1a8cb2`](https://github.com/LedgerHQ/ledger-live/commit/d1a8cb2403bbe6771dfee3e43fbc4c4df61d4c7c), [`903c180`](https://github.com/LedgerHQ/ledger-live/commit/903c1802ea5d4cc3fe1bfe5609b8cf3871152cf0), [`cef83ae`](https://github.com/LedgerHQ/ledger-live/commit/cef83ae58ffc5529bebda292737502e78e3b7522), [`a6a7a94`](https://github.com/LedgerHQ/ledger-live/commit/a6a7a946b1c1dbdda1cfa2c049f536f7235ddde2), [`fcc2ac4`](https://github.com/LedgerHQ/ledger-live/commit/fcc2ac4c5ed270fb63df4c0079068ad6dac94612), [`eddc89e`](https://github.com/LedgerHQ/ledger-live/commit/eddc89e7b86a13aeedfc0ae4956c2dcd08494e5f), [`5ddb9ab`](https://github.com/LedgerHQ/ledger-live/commit/5ddb9ab2874a6715d706042701e8b2242b1c14b9), [`c72a646`](https://github.com/LedgerHQ/ledger-live/commit/c72a646d28a4a5d144808f4a99e80d7788895603), [`c6a569d`](https://github.com/LedgerHQ/ledger-live/commit/c6a569d5848e6c0fd7973cb5ab7241b39d47f77b), [`a9f0a51`](https://github.com/LedgerHQ/ledger-live/commit/a9f0a51f20cf3e7b038cc6e5762557e93760a37e), [`a17ef12`](https://github.com/LedgerHQ/ledger-live/commit/a17ef128d44c9ca9bc85c3c8b8d691981c5e638f), [`b49d5b5`](https://github.com/LedgerHQ/ledger-live/commit/b49d5b573e84bd63ac460ae398657f1035613141), [`2eb6f5c`](https://github.com/LedgerHQ/ledger-live/commit/2eb6f5c7b3a7694a028bfe62279102188aeac028), [`d1d26de`](https://github.com/LedgerHQ/ledger-live/commit/d1d26def09d28102238b31b684d1745c4f1ad8cc)]:
-  - @ledgerhq/live-common@38.0.0
-  - @shared/feature-flags@0.23.0
-  - @ledgerhq/types-live@6.124.0
-  - @features/platform-feature-flags@0.7.0
-  - @devtools/bindings@0.8.0
-  - @ledgerhq/react-ui@0.55.0
-  - @domain/entity-contact@0.9.0
-  - @shared/env@0.7.0
-  - @ledgerhq/ledger-key-ring-protocol@0.22.0
-  - @ledgerhq/live-countervalues@0.26.0
-  - @ledgerhq/ledger-wallet-framework@3.4.0
-  - @features/platform-style@0.4.0
-  - @features/platform-currencies@0.8.1
-  - @ledgerhq/domain-service@1.8.19
-  - @ledgerhq/hw-app-eth@7.8.19
-  - @ledgerhq/live-wallet@1.1.3
-  - @ledgerhq/wallet-pnl@0.7.11
-  - @shared/api-services@0.7.0
-  - @shared/cloud-sync@0.3.0
-  - @shared/cloud-sync-module@0.4.0
-  - @devtools/shell@0.9.3
-
-## 0.57.0-next.1
-
-### Patch Changes
-
-- Updated dependencies [[`354486c`](https://github.com/LedgerHQ/ledger-live/commit/354486ca79badb49b9c902b1724a36379c278358)]:
-  - @ledgerhq/live-common@38.0.0-next.1
-
-## 0.57.0-next.0
-
-### Minor Changes
-
-- [#21738](https://github.com/LedgerHQ/ledger-live/pull/21738) [`9e37f58`](https://github.com/LedgerHQ/ledger-live/commit/9e37f58a84f7ee9585142c0a8ac767da58b6d06f) Thanks [@ysitbon](https://github.com/ysitbon)! - Move the account-coupled tracking-pair code out of the countervalues packages and into `live-common`, next to the portfolio code it belongs with. `inferTrackingPairForAccounts` and `inferTrackingPairForAccountsUnresolved` leave `live-countervalues/logic`, and the `useTrackingPairForAccounts` hook that wraps them leaves `live-countervalues-react`.
-
-  These three were the last things in the countervalues core that needed an `Account`, so `@ledgerhq/types-live` is now gone from the package entirely and from its dependency list. The core no longer knows what an account is; it only knows currency pairs and rates.
-
-  The move was blocked until both packages became private: a published package cannot depend on a private one, and the hook re-exported a function that had to land in private `live-common`.
-
-- [#21892](https://github.com/LedgerHQ/ledger-live/pull/21892) [`e3c31fe`](https://github.com/LedgerHQ/ledger-live/commit/e3c31fe27541fab83214e085e01162977058dae5) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Add the Firmware App Deployments tool: a matrix of which device app version is published on each device, provider and OS track, read from the Manager API.
-
-### Patch Changes
-
-- Updated dependencies [[`e09211c`](https://github.com/LedgerHQ/ledger-live/commit/e09211c3477dc91530c2670a0b34b29fb8d3d943), [`16a454f`](https://github.com/LedgerHQ/ledger-live/commit/16a454fa79be46df6aec3c50ad40407f36dfdea9), [`96a1ca9`](https://github.com/LedgerHQ/ledger-live/commit/96a1ca9fef1b0acc8113708c148890054dea143d), [`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36), [`799219e`](https://github.com/LedgerHQ/ledger-live/commit/799219e262e80a339272113ea164fa506243b438), [`e3535da`](https://github.com/LedgerHQ/ledger-live/commit/e3535da7e5c884f8ada75eff52c0c4538142fffb), [`5b60a96`](https://github.com/LedgerHQ/ledger-live/commit/5b60a968d3292b3897380f2c74c472a51b81e35d), [`da3d09d`](https://github.com/LedgerHQ/ledger-live/commit/da3d09d75d7dcae659611cd371c48d75c03f7ae4), [`cdb273b`](https://github.com/LedgerHQ/ledger-live/commit/cdb273b068df78cd5a0dbd4281fb79f22e0a7506), [`ee1b919`](https://github.com/LedgerHQ/ledger-live/commit/ee1b9192421545035fb547f27319d7f816d85fe8), [`9e37f58`](https://github.com/LedgerHQ/ledger-live/commit/9e37f58a84f7ee9585142c0a8ac767da58b6d06f), [`06b5db9`](https://github.com/LedgerHQ/ledger-live/commit/06b5db9dd2b49bbbf256e9376d67f9c64b3a1a4d), [`7e44af4`](https://github.com/LedgerHQ/ledger-live/commit/7e44af495eccab1fac4b0808d6729a595b610c69), [`600d432`](https://github.com/LedgerHQ/ledger-live/commit/600d432657f1c9adf80af6730dd28f2177e05c5a), [`7050652`](https://github.com/LedgerHQ/ledger-live/commit/70506520dafbccca4e014ac30d75647a5b7fe7d0), [`7bfbb69`](https://github.com/LedgerHQ/ledger-live/commit/7bfbb69b29d66d1b908cddd4b7cad893f77a8ebc), [`60655cd`](https://github.com/LedgerHQ/ledger-live/commit/60655cdf828eebdddd515d52c8fc5876ea50baf8), [`8146728`](https://github.com/LedgerHQ/ledger-live/commit/814672815a08dd57160d3aa4c28e92c3f508807e), [`b30a8cd`](https://github.com/LedgerHQ/ledger-live/commit/b30a8cd8acfeabb444cd7e2acb1ac5eaa959b221), [`a62261e`](https://github.com/LedgerHQ/ledger-live/commit/a62261e2e63218affcd3690a70b5a42f355a48a4), [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb), [`73eb9bc`](https://github.com/LedgerHQ/ledger-live/commit/73eb9bc68ed87f07142a1fdf54e4cd68af3a36d4), [`d1a8cb2`](https://github.com/LedgerHQ/ledger-live/commit/d1a8cb2403bbe6771dfee3e43fbc4c4df61d4c7c), [`903c180`](https://github.com/LedgerHQ/ledger-live/commit/903c1802ea5d4cc3fe1bfe5609b8cf3871152cf0), [`cef83ae`](https://github.com/LedgerHQ/ledger-live/commit/cef83ae58ffc5529bebda292737502e78e3b7522), [`a6a7a94`](https://github.com/LedgerHQ/ledger-live/commit/a6a7a946b1c1dbdda1cfa2c049f536f7235ddde2), [`fcc2ac4`](https://github.com/LedgerHQ/ledger-live/commit/fcc2ac4c5ed270fb63df4c0079068ad6dac94612), [`eddc89e`](https://github.com/LedgerHQ/ledger-live/commit/eddc89e7b86a13aeedfc0ae4956c2dcd08494e5f), [`5ddb9ab`](https://github.com/LedgerHQ/ledger-live/commit/5ddb9ab2874a6715d706042701e8b2242b1c14b9), [`c72a646`](https://github.com/LedgerHQ/ledger-live/commit/c72a646d28a4a5d144808f4a99e80d7788895603), [`c6a569d`](https://github.com/LedgerHQ/ledger-live/commit/c6a569d5848e6c0fd7973cb5ab7241b39d47f77b), [`a9f0a51`](https://github.com/LedgerHQ/ledger-live/commit/a9f0a51f20cf3e7b038cc6e5762557e93760a37e), [`a17ef12`](https://github.com/LedgerHQ/ledger-live/commit/a17ef128d44c9ca9bc85c3c8b8d691981c5e638f), [`b49d5b5`](https://github.com/LedgerHQ/ledger-live/commit/b49d5b573e84bd63ac460ae398657f1035613141), [`2eb6f5c`](https://github.com/LedgerHQ/ledger-live/commit/2eb6f5c7b3a7694a028bfe62279102188aeac028), [`d1d26de`](https://github.com/LedgerHQ/ledger-live/commit/d1d26def09d28102238b31b684d1745c4f1ad8cc)]:
-  - @ledgerhq/live-common@38.0.0-next.0
-  - @shared/feature-flags@0.23.0-next.0
-  - @ledgerhq/types-live@6.124.0-next.0
-  - @features/platform-feature-flags@0.7.0-next.0
-  - @devtools/bindings@0.8.0-next.0
-  - @ledgerhq/react-ui@0.55.0-next.0
-  - @domain/entity-contact@0.9.0-next.0
-  - @shared/env@0.7.0-next.0
-  - @ledgerhq/ledger-key-ring-protocol@0.22.0-next.0
-  - @ledgerhq/live-countervalues@0.26.0-next.0
-  - @ledgerhq/ledger-wallet-framework@3.4.0-next.0
-  - @features/platform-style@0.4.0-next.0
-  - @features/platform-currencies@0.8.1-next.0
-  - @ledgerhq/domain-service@1.8.19-next.0
-  - @ledgerhq/hw-app-eth@7.8.19-next.0
-  - @ledgerhq/live-wallet@1.1.3-next.0
-  - @ledgerhq/wallet-pnl@0.7.11-next.0
-  - @shared/api-services@0.7.0
-  - @shared/cloud-sync@0.3.0
-  - @shared/cloud-sync-module@0.4.0
-  - @devtools/shell@0.9.3-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

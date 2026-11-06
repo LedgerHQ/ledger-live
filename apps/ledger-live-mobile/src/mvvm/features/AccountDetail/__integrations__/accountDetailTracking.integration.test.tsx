@@ -82,7 +82,7 @@ const ethAccount: Account = {
 };
 const ethWithoutTokens: Account = { ...ethAccount, subAccounts: [] };
 
-const COMMON = { currency: "ethereum", isTokenAccount: false };
+const COMMON = { network: "ethereum" };
 const buttonClicked = (props: Record<string, unknown>) => [
   "button_clicked",
   { ...COMMON, ...props },
@@ -99,7 +99,7 @@ const withAccount =
   (state: State): State => {
     const withFlag = withFlagOverrides({
       accountDetail: { enabled: true },
-      lwmWallet40: { enabled: true, params: { aggregatedAssets: true } },
+      lwmWallet40: { enabled: true },
     })(state);
     return { ...withFlag, accounts: { ...withFlag.accounts, active: [account] } };
   };
@@ -187,7 +187,7 @@ describe("AccountDetail tracking: page", () => {
     expect(trackPage).toHaveBeenCalledWith(
       expect.objectContaining({
         category: "Account",
-        props: expect.objectContaining({ currency: "ethereum", isTokenAccount: false }),
+        props: expect.objectContaining({ network: "ethereum" }),
       }),
       expect.anything(),
     );

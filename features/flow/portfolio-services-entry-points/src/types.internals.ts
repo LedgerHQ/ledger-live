@@ -9,5 +9,4 @@ export type ServicesAvailability = Readonly<Record<ServiceEntryPointId, boolean>
 
 export type PlatformServicesConfig = Readonly<{
   availability: ServicesAvailability;
-  isAssetSectionDisplayed: boolean;
 }>;

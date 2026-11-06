@@ -1,5 +1,23 @@
 # @domain/api-currency-token
 
+## 0.7.1
+
+### Patch Changes
+
+- Updated dependencies [[`0c62d35`](https://github.com/LedgerHQ/ledger-live/commit/0c62d3533f72e450c2235f8d23aa1cdb101486a9), [`9907890`](https://github.com/LedgerHQ/ledger-live/commit/9907890790bf8b804d7cc454a067508df0969137), [`77a85a3`](https://github.com/LedgerHQ/ledger-live/commit/77a85a30abe7b42e5f5b4e0478bec14fa39033cf)]:
+  - @shared/api-services@0.12.0
+  - @domain/entity-currency-crypto@0.18.0
+  - @domain/entity-currency-token@0.5.8
+
+## 0.7.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`0c62d35`](https://github.com/LedgerHQ/ledger-live/commit/0c62d3533f72e450c2235f8d23aa1cdb101486a9), [`9907890`](https://github.com/LedgerHQ/ledger-live/commit/9907890790bf8b804d7cc454a067508df0969137), [`77a85a3`](https://github.com/LedgerHQ/ledger-live/commit/77a85a30abe7b42e5f5b4e0478bec14fa39033cf)]:
+  - @shared/api-services@0.12.0-next.0
+  - @domain/entity-currency-crypto@0.18.0-next.0
+  - @domain/entity-currency-token@0.5.8-next.0
+
 ## 0.7.0
 
 ### Minor Changes
@@ -285,49 +303,5 @@
   - @domain/entity-currency-crypto@0.10.0-next.0
   - @domain/entity-currency-token@0.4.0-next.0
   - @shared/api-services@0.3.0-next.0
-
-## 0.3.0
-
-### Minor Changes
-
-- [#20341](https://github.com/LedgerHQ/ledger-live/pull/20341) [`c016a95`](https://github.com/LedgerHQ/ledger-live/commit/c016a95538dfef2d7ddf1a17914d8cb3e55b644e) Thanks [@ysitbon](https://github.com/ysitbon)! - Split backend access from use case in the RTK Query layer
-
-  `@shared/api-services` now holds one endpoint-less `createApi` per backend (CAL, CoinMarketCap,
-  Countervalues, Push Devices), owning its base query, `extraArgument` contract and reducer path.
-  `domain/api/*` packages add their endpoints with `injectEndpoints` and their own cache tags with
-  `enhanceEndpoints`, so one reducer, middleware and cache now serve every use case on a backend — the two
-  CoinMarketCap packages previously had one each. Apps register the service apis.
-
-  `extraArgument` builder names are unchanged, so only import paths move. Reducer paths are renamed after
-  their backend (`calApi`, `coinMarketCapApi`, `countervaluesApi`); no persisted data and no endpoint
-  behaviour is affected.
-
-### Patch Changes
-
-- Updated dependencies [[`c016a95`](https://github.com/LedgerHQ/ledger-live/commit/c016a95538dfef2d7ddf1a17914d8cb3e55b644e), [`6a531c5`](https://github.com/LedgerHQ/ledger-live/commit/6a531c54ccd1c65df122286de6f136f9d73b9002)]:
-  - @shared/api-services@0.2.0
-  - @domain/entity-currency-crypto@0.9.0
-
-## 0.3.0-next.0
-
-### Minor Changes
-
-- [#20341](https://github.com/LedgerHQ/ledger-live/pull/20341) [`c016a95`](https://github.com/LedgerHQ/ledger-live/commit/c016a95538dfef2d7ddf1a17914d8cb3e55b644e) Thanks [@ysitbon](https://github.com/ysitbon)! - Split backend access from use case in the RTK Query layer
-
-  `@shared/api-services` now holds one endpoint-less `createApi` per backend (CAL, CoinMarketCap,
-  Countervalues, Push Devices), owning its base query, `extraArgument` contract and reducer path.
-  `domain/api/*` packages add their endpoints with `injectEndpoints` and their own cache tags with
-  `enhanceEndpoints`, so one reducer, middleware and cache now serve every use case on a backend — the two
-  CoinMarketCap packages previously had one each. Apps register the service apis.
-
-  `extraArgument` builder names are unchanged, so only import paths move. Reducer paths are renamed after
-  their backend (`calApi`, `coinMarketCapApi`, `countervaluesApi`); no persisted data and no endpoint
-  behaviour is affected.
-
-### Patch Changes
-
-- Updated dependencies [[`c016a95`](https://github.com/LedgerHQ/ledger-live/commit/c016a95538dfef2d7ddf1a17914d8cb3e55b644e), [`6a531c5`](https://github.com/LedgerHQ/ledger-live/commit/6a531c54ccd1c65df122286de6f136f9d73b9002)]:
-  - @shared/api-services@0.2.0-next.0
-  - @domain/entity-currency-crypto@0.9.0-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

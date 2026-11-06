@@ -55,10 +55,10 @@ export default function Features() {
         onPress={() => navigation.navigate(ScreenName.DebugDeviceIntentExecutor)}
       />
       <SettingsRow
-        title="OS Update"
-        desc="Test the OS update orchestrator on a connected device"
+        title="OS Updates"
+        desc="Preview the update screens or run the real flow"
         iconLeft={<IconsLegacy.NanoFirmwareUpdateMedium size={24} color="black" />}
-        onPress={() => navigation.navigate(ScreenName.DebugOsUpdateOrchestrator)}
+        onPress={() => navigation.navigate(ScreenName.DebugOsUpdates)}
       />
 
       <BLEPairingFlow />

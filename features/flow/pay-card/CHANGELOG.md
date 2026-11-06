@@ -1,5 +1,37 @@
 # @features/flow-pay-card
 
+## 0.8.0
+
+### Minor Changes
+
+- [#24041](https://github.com/LedgerHQ/ledger-live/pull/24041) [`c8c49b0`](https://github.com/LedgerHQ/ledger-live/commit/c8c49b07639f2f855e8acb5af7d3def3c1a69e13) Thanks [@ysitbon](https://github.com/ysitbon)! - Split the card assets exports by platform: `CardAssets` moves to the `./web` entry, and the native `CardAssetsView` and the asset drawers (`CardAssetDetailsDrawer`, `CardAssetDetailsWithdrawDrawer`, `CardAssetTransactionDetailDrawer`, `CardAssetsManageDrawer`) move to the `./native` entry, each with its props type. The `.` entry keeps the hooks, the selector and the types on both platforms. `CardAssetsManageFooter` is no longer exported.
+
+### Patch Changes
+
+- Updated dependencies [[`c8c49b0`](https://github.com/LedgerHQ/ledger-live/commit/c8c49b07639f2f855e8acb5af7d3def3c1a69e13)]:
+  - @features/flow-pay-card-assets@0.6.0
+  - @features/flow-pay-card-details@0.10.0
+  - @domain/api-card-management@0.8.4
+  - @features/flow-pay-card-auth@0.11.1
+  - @features/flow-pay-card-transactions@0.7.1
+  - @features/flow-pay-card-widget@0.6.2
+
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#24041](https://github.com/LedgerHQ/ledger-live/pull/24041) [`c8c49b0`](https://github.com/LedgerHQ/ledger-live/commit/c8c49b07639f2f855e8acb5af7d3def3c1a69e13) Thanks [@ysitbon](https://github.com/ysitbon)! - Split the card assets exports by platform: `CardAssets` moves to the `./web` entry, and the native `CardAssetsView` and the asset drawers (`CardAssetDetailsDrawer`, `CardAssetDetailsWithdrawDrawer`, `CardAssetTransactionDetailDrawer`, `CardAssetsManageDrawer`) move to the `./native` entry, each with its props type. The `.` entry keeps the hooks, the selector and the types on both platforms. `CardAssetsManageFooter` is no longer exported.
+
+### Patch Changes
+
+- Updated dependencies [[`c8c49b0`](https://github.com/LedgerHQ/ledger-live/commit/c8c49b07639f2f855e8acb5af7d3def3c1a69e13)]:
+  - @features/flow-pay-card-assets@0.6.0-next.0
+  - @features/flow-pay-card-details@0.10.0-next.0
+  - @domain/api-card-management@0.8.4-next.0
+  - @features/flow-pay-card-auth@0.11.1-next.0
+  - @features/flow-pay-card-transactions@0.7.1-next.0
+  - @features/flow-pay-card-widget@0.6.2-next.0
+
 ## 0.7.2
 
 ### Patch Changes
@@ -608,20 +640,4 @@
   - @features/flow-pay-card-auth@0.5.0
   - @features/flow-pay-card-details@0.2.0
 
-## 0.2.0-next.0
-
-### Minor Changes
-
-- [#21244](https://github.com/LedgerHQ/ledger-live/pull/21244) [`f4986f8`](https://github.com/LedgerHQ/ledger-live/commit/f4986f882385e07dbd531d99a0571c67ca91ada0) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Show a host-provided Crypto card title on the Pay Card web and native views
-
-- [#21363](https://github.com/LedgerHQ/ledger-live/pull/21363) [`ce47443`](https://github.com/LedgerHQ/ledger-live/commit/ce47443e97f559210443547a7948ef61c01f7feb) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Read CARD_API_URL and CARD_BAANX_CLIENT_KEY on every use, and not one time at boot. The debug settings can now change the Card tenant without a restart. The mobile app also applies its `.env` values before the store reads them.
-
-- [#21099](https://github.com/LedgerHQ/ledger-live/pull/21099) [`c8614bf`](https://github.com/LedgerHQ/ledger-live/commit/c8614bfbfd1dc8de12731c2c333b9d137f0f2f93) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add `@features/flow-pay-card`, a Contacts-style orchestrator that aggregates the Pay Card leaf flows behind a single `Card` entry point. It follows the app MVVM split — a `Card` container wires a shared `useCardViewModel` to the platform `CardView` — and composes the card face from `@features/flow-pay-card-details` (`CardVisual` with the balance overlay, or the bare `CardArtwork`) with the authentication controls (`CardLogin` / `CardLogout` from `@features/flow-pay-card-auth`), each of which still decides on its own whether it belongs on screen.
-
-  The flow owns the (currently mocked) card balance and assembles the overlay itself, so hosts no longer pass a pre-built visual: they hand over only what they alone know — `formatCountervalue` (needs the app's locale and counter-value currency) and `balanceLabel` (i18n). Both apps now mount `Card` instead of wiring `CardLogin` / `CardLogout` directly: desktop in the Pay tab's right panel, mobile in the Pay tab body. The package composes rather than re-exports: apps that need a single leaf or its Redux state (`@features/flow-pay-card-auth/state`) keep importing that leaf directly.
-
-### Patch Changes
-
-- Updated dependencies [[`0500726`](https://github.com/LedgerHQ/ledger-live/commit/05007264f5b1726a21c2e545a10c18993fd2fcb5), [`ad1c0ff`](https://github.com/LedgerHQ/ledger-live/commit/ad1c0ff93b94ba9a0b1e7409e5ddbdc2d73bcd30)]:
-  - @features/flow-pay-card-auth@0.5.0-next.0
-  - @features/flow-pay-card-details@0.2.0
+<!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

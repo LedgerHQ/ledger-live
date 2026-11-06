@@ -50,14 +50,14 @@ hooks (never from a view).
 | `ACCOUNT_DETAIL_PAGES` | The `page` values: `Account`, `Account Settings`, `Remove Account` |
 | `ACCOUNT_DETAIL_EVENTS` | Event names: `Page Account`, `Page Account Settings`, `button_clicked`, `transaction_clicked`, `asset_clicked` |
 | `ACCOUNT_DETAIL_BUTTONS` | The `button` values that are not quick actions (`see all transactions`, `account settings`, `edit account name`...) |
-| `accountTrackingProps(facts)` | `{ currency, isTokenAccount }`, on every payload. `currency` is the currency **id**, on both apps |
-| `accountPageViewProps(facts)` | `Page Account`: `source`, `operationsCount`, `hasTokens` |
+| `accountTrackingProps(facts)` | `{ network }`, on every payload. `network` is the currency **id** of the account, on both apps |
+| `accountPageViewProps(facts)` | `Page Account`: `source`, `operationsCount`, `hasTokens`, `hasAnalyticsBanner` |
 | `accountSettingsPageViewProps(facts)` | `Page Account Settings`, from the account page |
 | `quickActionClickedProps(facts, button, location)` | Quick actions; `location` is `quick_action` or `quick_action_transfer` |
 | `accountButtonClickedProps(facts, button, page)` | Every other `button_clicked` |
 | `accountAssetClickedProps`, `accountTransactionClickedProps`, `accountPullToRefreshProps` | `asset_clicked`, `transaction_clicked`, pull to refresh |
 
-`facts` is `{ currencyId, isTokenAccount }`: plain values, no app type.
+`facts` is `{ networkId }`: plain values, no app type.
 
 ```ts
 import { ACCOUNT_DETAIL_EVENTS, quickActionClickedProps } from "@features/flow-account-detail";

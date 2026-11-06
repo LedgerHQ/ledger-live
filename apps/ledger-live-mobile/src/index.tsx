@@ -1,4 +1,5 @@
 import "LLM/utils/logStartup/beforeJSImports";
+import "LLM/utils/logStartup/claimProcessStartTime";
 // Must run before any module that keeps a reference to the global WebSocket (e.g. isomorphic-ws)
 import "./iosWebsocketFix";
 require("./promise-polyfill");
@@ -28,6 +29,7 @@ import {
   trackingEnabledSelector,
   reportErrorsEnabledSelector,
   isOnboardingFlowSelector,
+  isMockServerEnabledSelector,
   isPostOnboardingFlowSelector,
 } from "~/reducers/settings";
 import { accountsSelector } from "~/reducers/accounts";
@@ -54,6 +56,7 @@ import { TermsAndConditionMigrateLegacyData } from "~/logic/terms";
 import { BrazeContentCardsProvider } from "LLM/features/DynamicContent/components/BrazeContentCardsProvider";
 import { ModalSystemPrimer } from "LLM/components/ModalSystemPrimer";
 import { JsThreadMonitor } from "LLM/components/JsThreadMonitor";
+import { MockServerOverlay } from "LLM/features/MockServer";
 import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
 
 import { DeeplinksProvider } from "~/navigation/DeeplinksProvider";
@@ -262,7 +265,13 @@ function App() {
     }
   }, [dmk, baseSocketUrl]);
 
-  useEffect(() => registerTransports(), []);
+  useEffect(
+    () =>
+      registerTransports({
+        isMockServerEnabled: () => isMockServerEnabledSelector(store.getState()),
+      }),
+    [],
+  );
 
   useEffect(() => {
     /*
@@ -325,6 +334,7 @@ function App() {
       )}
 
       <AnalyticsConsole />
+      <MockServerOverlay />
 
       <DebugTheme />
       <JsThreadMonitor />

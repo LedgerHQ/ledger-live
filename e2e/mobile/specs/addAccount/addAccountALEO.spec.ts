@@ -39,8 +39,7 @@ describeIfNanoSSupports(Currency.ALEO.id)("Add account", () => {
     await app.speculos.shareViewKey();
     await app.addAccount.tapCloseAddAccountCta();
 
-    await app.portfolio.goToAccounts(Currency.ALEO.name, Currency.ALEO.id);
+    await app.portfolio.goToAccounts(Currency.ALEO.id);
     await app.assetAccountsPage.waitForAccountPageToLoad(Currency.ALEO.name, undefined, true);
-    await app.assetAccountsPage.expectAccountsBalanceVisible();
   });
 });

@@ -5,6 +5,7 @@ import { JsonFormatter } from "./json";
 import type { DiscoveredAccount, AccountDescriptor } from "../models";
 import { BalanceSchema, OperationSchema } from "../models";
 import { XPUB, ETH_ADDR } from "../../shared/accountDescriptor/test-fixtures";
+import { NetworkIdSchema } from "../../shared/accountDescriptor";
 import { USDT_TOKEN_INFO } from "../../testing/cal-fixtures";
 
 const stubStore = {} as CryptoAssetsStore;
@@ -14,7 +15,7 @@ const btcDiscovered: DiscoveredAccount = {
     purpose: "account",
     version: "2",
     type: "utxo",
-    network: "bitcoin",
+    network: NetworkIdSchema.parse("bitcoin"),
     xpub: XPUB,
     path: "m/84h/0h/0h",
   },
@@ -27,7 +28,7 @@ const ethDiscovered: DiscoveredAccount = {
     purpose: "account",
     version: "2",
     type: "address",
-    network: "ethereum",
+    network: NetworkIdSchema.parse("ethereum"),
     address: ETH_ADDR,
     path: "m/44h/60h/0h/0/0",
   },

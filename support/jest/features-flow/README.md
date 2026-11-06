@@ -29,7 +29,8 @@ transforming them and installing every peer, this package redirects them (via
 `moduleNameMapper`) to a generic **Proxy passthrough stub**: every named export becomes
 a component that renders its children. Native `Banner` and `Button` expose their visible
 description, actions, and labels, while web tooltip primitives and `InteractiveIcon` retain their
-accessible test shape.
+accessible test shape. The web `Select` runs its `render` trigger and `renderItem` rows: every item is
+rendered as an `option` that reports its value through `onValueChange`.
 
 The Web `Avatar` boundary renders `fallbackText` and exposes fallback color and size through
 `data-*` attributes for consumer tests. It deliberately does not reproduce Lumen's color-selection
@@ -58,7 +59,7 @@ contract, and `jest.mock` the module in a test that needs the provider or the qu
 
 ## Web environment polyfills
 
-`setup/web.js`, run after the core's web setup (which mocks `window.matchMedia`), polyfills the
+`setup/web.cts`, run after the core's web setup (which mocks `window.matchMedia`), polyfills the
 Encoding API (`TextEncoder` / `TextDecoder`) on the jsdom global.
 jsdom doesn't implement it, unlike every runtime this code ships to (browsers, React Native,
 Node), so a package reading `TextEncoder` at module-eval time — `@ledgerhq/device-contacts-kit`

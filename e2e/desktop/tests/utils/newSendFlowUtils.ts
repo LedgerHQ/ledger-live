@@ -3,6 +3,7 @@ import { coinTeamOwner } from "@ledgerhq/live-e2e-shared/data/coinTeamOwner";
 import { SendScenario, sendFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
 import {
   Account,
+  type AccountType,
   TokenAccount,
   getParentAccountName,
 } from "@ledgerhq/live-e2e-shared/enum/Account";
@@ -77,15 +78,17 @@ function currencyRequiresMemoStep(currencyId: string): boolean {
   return family ? MEMO_STEP_FAMILIES.has(family) : false;
 }
 
-export function requireRecipientAddress(tx: Transaction): string {
-  const recipientAddress = tx.accountToCredit.address;
-  if (!recipientAddress) {
+export function requireAccountAddress(account: AccountType): string {
+  if (!account.address) {
     throw new Error(
-      `Missing recipient address for ${tx.accountToCredit.accountName}. ` +
-        `Ensure the CLI setup populates the address.`,
+      `Missing address for ${account.accountName}. Ensure the CLI setup populates the address.`,
     );
   }
-  return recipientAddress;
+  return account.address;
+}
+
+export function requireRecipientAddress(tx: Transaction): string {
+  return requireAccountAddress(tx.accountToCredit);
 }
 
 export async function openNewSendFromAccount(

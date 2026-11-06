@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-account-balance",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": true,
   "description": "Account balance entity: the crypto amount of each asset an account holds",
   "main": "src/index.ts",
@@ -23,8 +23,7 @@
   "dependencies": {
     "@domain/entity-account-data": "workspace:*",
     "@domain/entity-account-descriptor": "workspace:*",
-    "@domain/entity-currency-crypto": "workspace:*",
-    "@domain/entity-currency-token": "workspace:*",
+    "@domain/entity-currency": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "@shared/schema-primitives": "workspace:*",
     "zod": "catalog:"

@@ -102,7 +102,7 @@ type FakeState = {
     remoteFlagsReady?: unknown;
     cachedFlagsSettled?: unknown;
   };
-  coinConfigOverrides: { overrides: Record<string, unknown> };
+  liveConfigOverrides: { overrides: Record<string, unknown> };
   largeScreenUpsellModal: { retriesModal: number; lastSeenAt: number | null };
   payCardBalance: {
     balanceFilter: string;
@@ -135,7 +135,7 @@ const baseState = (): FakeState => ({
   identities: {},
   history: {},
   featureFlags: { overrides: {}, bannerVisible: false },
-  coinConfigOverrides: { overrides: {} },
+  liveConfigOverrides: { overrides: {} },
   largeScreenUpsellModal: { retriesModal: 0, lastSeenAt: null },
   payCardBalance: { balanceFilter: "all" },
   payCardFeatureTour: { hasSeenFeatureTour: false },
@@ -331,29 +331,29 @@ describe("DBMiddleware - payCard branch", () => {
   });
 });
 
-describe("DBMiddleware - coinConfigOverrides branch", () => {
+describe("DBMiddleware - liveConfigOverrides branch", () => {
   beforeEach(() => {
     mockedSetKey.mockReset();
   });
 
-  it("persists coinConfigOverrides under app/coinConfigOverrides when the slice reference changes", () => {
+  it("persists liveConfigOverrides under app/coinConfigOverrides when the slice reference changes", () => {
     const before = baseState();
     const newOverrides = { config_currency_solana: { token2022Enabled: true } };
     const after: FakeState = {
       ...before,
-      coinConfigOverrides: { overrides: newOverrides },
+      liveConfigOverrides: { overrides: newOverrides },
     };
 
-    runMiddleware([before, after], { type: "coinConfigOverrides/setCoinConfigOverride" });
+    runMiddleware([before, after], { type: "liveConfigOverrides/setLiveConfigOverride" });
 
     expect(mockedSetKey).toHaveBeenCalledWith("app", "coinConfigOverrides", {
       overrides: newOverrides,
     });
   });
 
-  it("does not persist when the coinConfigOverrides reference is unchanged", () => {
+  it("does not persist when the liveConfigOverrides reference is unchanged", () => {
     const state = baseState();
-    runMiddleware([state, state], { type: "coinConfigOverrides/setCoinConfigOverride" });
+    runMiddleware([state, state], { type: "liveConfigOverrides/setLiveConfigOverride" });
 
     expect(mockedSetKey).not.toHaveBeenCalledWith("app", "coinConfigOverrides", expect.anything());
   });
@@ -361,17 +361,17 @@ describe("DBMiddleware - coinConfigOverrides branch", () => {
   it("persists an empty overrides map (e.g. after Restore all)", () => {
     const before: FakeState = {
       ...baseState(),
-      coinConfigOverrides: {
+      liveConfigOverrides: {
         overrides: { config_currency_solana: { token2022Enabled: true } },
       },
     };
     const after: FakeState = {
       ...before,
-      coinConfigOverrides: { overrides: {} },
+      liveConfigOverrides: { overrides: {} },
     };
 
     runMiddleware([before, after], {
-      type: "coinConfigOverrides/setAllCoinConfigOverrides",
+      type: "liveConfigOverrides/setAllLiveConfigOverrides",
     });
 
     expect(mockedSetKey).toHaveBeenCalledWith("app", "coinConfigOverrides", { overrides: {} });
@@ -414,7 +414,7 @@ describe("DBMiddleware - crypto assets cache branch", () => {
   });
 
   it("persists the CAL token cache on actions of the registered CAL api", () => {
-    const persisted: PersistedCAL = { version: 2, tokens: [{ data: usdcToken, timestamp: 0 }] };
+    const persisted: PersistedCAL = { version: 3, tokens: [{ data: usdcToken, timestamp: 0 }] };
     jest.mocked(extractPersistedCALFromState).mockReturnValueOnce(persisted);
     jest.mocked(persistedCALContentEqual).mockReturnValueOnce(false);
     const state = baseState();
@@ -427,11 +427,11 @@ describe("DBMiddleware - crypto assets cache branch", () => {
   it("replaces stale tokens on disk when a changed hash evicts every token", () => {
     // A changed hash enters the cache before its eviction removes the tokens
     const staleTokens: PersistedCAL = {
-      version: 2,
+      version: 3,
       tokens: [{ data: usdcToken, timestamp: 0 }],
       hashes: { ethereum: "new-hash" },
     };
-    const evicted: PersistedCAL = { version: 2, tokens: [], hashes: { ethereum: "new-hash" } };
+    const evicted: PersistedCAL = { version: 3, tokens: [], hashes: { ethereum: "new-hash" } };
     jest
       .mocked(extractPersistedCALFromState)
       .mockReturnValueOnce(staleTokens)
@@ -445,7 +445,7 @@ describe("DBMiddleware - crypto assets cache branch", () => {
   });
 
   it("does not persist a CAL cache with neither tokens nor hashes", () => {
-    jest.mocked(extractPersistedCALFromState).mockReturnValueOnce({ version: 2, tokens: [] });
+    jest.mocked(extractPersistedCALFromState).mockReturnValueOnce({ version: 3, tokens: [] });
     const state = baseState();
 
     runMiddleware([state, state], cryptoAssetsApi.util.upsertQueryEntries([]));

@@ -36,6 +36,35 @@ export class CompleteExchangeError extends Error {
   }
 }
 
+function isNonEmptyString(value: unknown): value is string {
+  return typeof value === "string" && value.length > 0;
+}
+
+/**
+ * What an exchange step threw, as an `Error`. The DMK session behind a Device Intent job rejects
+ * with `{ _tag }` objects, and other code with plain objects, which `String()` would turn into
+ * "[object Object]". Their tag or name, message and status code are kept: the app's error copy is
+ * keyed on the name, and the step's error mapping reads the status code.
+ */
+export function toExchangeError(error: unknown): Error {
+  if (error instanceof Error) return error;
+  if (typeof error !== "object" || error === null) return new Error(String(error));
+
+  const tag: unknown = get(error, "_tag");
+  const name: unknown = isNonEmptyString(tag) ? tag : get(error, "name");
+  const message = [get(error, "originalError.message"), get(error, "message")].find(
+    isNonEmptyString,
+  );
+
+  const fallbackMessage = isNonEmptyString(name) ? name : String(error);
+  const converted = new Error(message ?? fallbackMessage, { cause: error });
+  if (isNonEmptyString(name)) converted.name = name;
+
+  const statusCode: unknown = get(error, "statusCode");
+  if (typeof statusCode === "number") Object.assign(converted, { statusCode });
+  return converted;
+}
+
 export function convertTransportError(
   step: CompleteExchangeStep,
   err: unknown,

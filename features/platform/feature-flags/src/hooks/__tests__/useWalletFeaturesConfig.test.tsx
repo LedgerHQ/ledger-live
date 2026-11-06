@@ -30,28 +30,13 @@ function expectConfig(result: { current: WalletFeaturesConfig }, expected: Walle
   expect(result.current).toEqual(expected);
 }
 
-function withDesktopGraduatedFlags(
-  platform: WalletPlatform,
-  config: WalletFeaturesConfig,
-): WalletFeaturesConfig {
-  return platform === "desktop"
-    ? {
-        ...config,
-        shouldDisplayAssetSection: true,
-        shouldDisplayAggregatedAssets: true,
-      }
-    : config;
-}
-
 const makeConfig = (
   value: boolean,
   overrides?: Partial<WalletFeaturesConfig>,
 ): WalletFeaturesConfig => ({
   isEnabled: value,
   shouldUseLazyOnboarding: value,
-  shouldDisplayAssetSection: value,
   shouldDisplayBrazePlacement: value,
-  shouldDisplayAggregatedAssets: value,
   shouldDisplayAssetDiscoverability: value,
   shouldDisplayEarnUpselling: value,
   shouldDisplayEarnSimulator: value,
@@ -60,9 +45,7 @@ const makeConfig = (
 
 const makeParams = (value: boolean): Wallet40Params => ({
   lazyOnboarding: value,
-  assetSection: value,
   brazePlacement: value,
-  aggregatedAssets: value,
   assetDiscoverability: value,
   earnUpselling: value,
   earnSimulator: value,
@@ -82,7 +65,7 @@ describe("useWalletFeaturesConfig hook", () => {
           enabled: false,
           params: ALL_PARAMS_ENABLED,
         });
-        expectConfig(result, withDesktopGraduatedFlags(platform, DISABLED_CONFIG));
+        expectConfig(result, DISABLED_CONFIG);
       },
     );
 
@@ -90,7 +73,7 @@ describe("useWalletFeaturesConfig hook", () => {
       "returns DISABLED_CONFIG for %s when the flag is disabled (default)",
       platform => {
         const { result } = renderWalletFeaturesConfig(platform);
-        expectConfig(result, withDesktopGraduatedFlags(platform, DISABLED_CONFIG));
+        expectConfig(result, DISABLED_CONFIG);
       },
     );
   });
@@ -101,31 +84,26 @@ describe("useWalletFeaturesConfig hook", () => {
         enabled: true,
         params: ALL_PARAMS_ENABLED,
       });
-      expectConfig(result, withDesktopGraduatedFlags(platform, ALL_CONFIG_ENABLED));
+      expectConfig(result, ALL_CONFIG_ENABLED);
     });
 
     describe.each(PLATFORMS)("on %s platform", platform => {
       it.each<[string, Wallet40Params, Partial<WalletFeaturesConfig>]>([
         ["lazyOnboarding", { lazyOnboarding: true }, { shouldUseLazyOnboarding: true }],
-        ["assetSection", { assetSection: true }, { shouldDisplayAssetSection: true }],
         ["brazePlacement", { brazePlacement: true }, { shouldDisplayBrazePlacement: true }],
-        ["aggregatedAssets", { aggregatedAssets: true }, { shouldDisplayAggregatedAssets: true }],
         ["earnUpselling", { earnUpselling: true }, { shouldDisplayEarnUpselling: true }],
         ["earnSimulator", { earnSimulator: true }, { shouldDisplayEarnSimulator: true }],
       ])("returns the correct config when only %s is enabled", (_, params, expectedOverrides) => {
         const { result } = renderWalletFeaturesConfig(platform, { enabled: true, params });
-        expectConfig(
-          result,
-          withDesktopGraduatedFlags(platform, {
-            ...ENABLED_NO_PARAMS_CONFIG,
-            ...expectedOverrides,
-          }),
-        );
+        expectConfig(result, {
+          ...ENABLED_NO_PARAMS_CONFIG,
+          ...expectedOverrides,
+        });
       });
 
       it("handles missing params gracefully", () => {
         const { result } = renderWalletFeaturesConfig(platform, { enabled: true });
-        expectConfig(result, withDesktopGraduatedFlags(platform, ENABLED_NO_PARAMS_CONFIG));
+        expectConfig(result, ENABLED_NO_PARAMS_CONFIG);
       });
 
       it("handles partial params", () => {
@@ -133,13 +111,10 @@ describe("useWalletFeaturesConfig hook", () => {
           enabled: true,
           params: { lazyOnboarding: true },
         });
-        expectConfig(
-          result,
-          withDesktopGraduatedFlags(platform, {
-            ...ENABLED_NO_PARAMS_CONFIG,
-            shouldUseLazyOnboarding: true,
-          }),
-        );
+        expectConfig(result, {
+          ...ENABLED_NO_PARAMS_CONFIG,
+          shouldUseLazyOnboarding: true,
+        });
       });
     });
   });

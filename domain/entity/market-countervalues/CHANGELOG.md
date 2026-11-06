@@ -1,5 +1,19 @@
 # @domain/entity-market-countervalues
 
+## 0.4.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/entity-currency@0.4.9
+
+## 0.4.2-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/entity-currency@0.4.9-next.0
+
 ## 0.4.1
 
 ### Patch Changes

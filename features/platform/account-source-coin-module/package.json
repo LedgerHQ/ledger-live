@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-account-source-coin-module",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "The account data source that reads coin modules directly, without the generic coin framework layer",
   "main": "src/index.ts",
@@ -28,6 +28,7 @@
     "@ledgerhq/coin-module-framework": "catalog:"
   },
   "devDependencies": {
+    "@domain/entity-currency": "workspace:*",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
     "@swc/core": "catalog:",

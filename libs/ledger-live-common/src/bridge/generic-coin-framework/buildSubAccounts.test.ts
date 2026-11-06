@@ -347,7 +347,10 @@ describe("buildSubAccounts family shapes", () => {
       operations: [],
       getTokenFromAsset: async asset =>
         asset.type === "token"
-          ? ({ id: asset.assetReference, contractAddress: asset.assetReference } as TokenCurrency)
+          ? ({
+              id: `token/${asset.assetReference}`,
+              contractAddress: asset.assetReference,
+            } as TokenCurrency)
           : undefined,
       familyShapes,
     });
@@ -371,6 +374,13 @@ describe("buildSubAccounts family shapes", () => {
 
     expect(subAccounts[0].id).not.toBe("hijacked");
     expect(subAccounts[0].balance).toEqual(new BigNumber(20));
+  });
+
+  it("prefers the fields keyed by token id over those keyed by contract address", async () => {
+    const subAccounts = await build({ "token/usdt": { state: "frozen" }, usdt: { state: "open" } });
+
+    expect(subAccounts[0]).not.toHaveProperty("state");
+    expect(subAccounts[1]).toMatchObject({ state: "frozen" });
   });
 });
 

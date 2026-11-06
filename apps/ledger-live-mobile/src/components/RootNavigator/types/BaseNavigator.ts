@@ -84,6 +84,7 @@ import type { ClaimRewardsNavigatorParamList } from "./ClaimRewardsNavigator";
 import type { CustomErrorNavigatorParamList } from "./CustomErrorNavigator";
 import type { CustomImageNavigatorParamList } from "./CustomImageNavigator";
 import type { BorrowLiveAppNavigatorParamList } from "./BorrowLiveAppNavigator";
+import type { PredictionsLiveAppNavigatorParamList } from "./PredictionsLiveAppNavigator";
 import type { EarnLiveAppNavigatorParamList } from "./EarnLiveAppNavigator";
 import type { ExchangeStackNavigatorParamList } from "./ExchangeStackNavigator";
 import type { FeesNavigatorParamsList } from "./FeesNavigator";
@@ -230,10 +231,6 @@ export type BaseNavigatorStackParamList = {
   [ScreenName.EditCurrencyUnits]: {
     currency: CryptoCurrency;
   };
-  [ScreenName.MarketDetail]: {
-    currencyId: string;
-    resetSearchOnUmount?: boolean;
-  };
   [NavigatorName.Settings]: NavigatorScreenParams<SettingsNavigatorStackParamList>;
   [NavigatorName.ReceiveFunds]?: NavigatorScreenParams<ReceiveFundsStackParamList>;
   [NavigatorName.SendFunds]: NavigatorScreenParams<SendFundsNavigatorStackParamList>;
@@ -255,6 +252,7 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.GlobalSearch]?: NavigatorScreenParams<GlobalSearchNavigatorParamList>;
   [NavigatorName.Earn]?: NavigatorScreenParams<EarnLiveAppNavigatorParamList>;
   [NavigatorName.Borrow]?: NavigatorScreenParams<BorrowLiveAppNavigatorParamList>;
+  [NavigatorName.Predictions]?: NavigatorScreenParams<PredictionsLiveAppNavigatorParamList>;
   [NavigatorName.Freeze]: NavigatorScreenParams<FreezeNavigatorParamList>;
   [NavigatorName.Unfreeze]: NavigatorScreenParams<UnfreezeNavigatorParamList>;
   [NavigatorName.ClaimRewards]: NavigatorScreenParams<ClaimRewardsNavigatorParamList>;

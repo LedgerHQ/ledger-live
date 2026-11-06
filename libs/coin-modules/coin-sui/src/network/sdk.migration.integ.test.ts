@@ -6,7 +6,6 @@
  *
  * gRPC is the reference leg, and the `rpc`-prefixed locals below hold it.
  */
-import { getEnv } from "@ledgerhq/live-env";
 import BigNumber from "bignumber.js";
 import coinConfig from "../config";
 import { FIGMENT_SUI_VALIDATOR_ADDRESS } from "../constants";
@@ -45,8 +44,8 @@ beforeAll(async () => {
     // Both ids carry the gRPC and GraphQL URLs — `SuiCoinConfig` requires them — and differ only in
     // `features.transport`, so a parity failure can only come from the arm, never from the endpoints.
     const node = {
-      graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
-      grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
+      graphqlUrl: "https://sui.coin.ledger.com/graphql",
+      grpcUrl: "https://sui.coin.ledger.com",
     };
     const name = "Sui";
     const unit = { name: "Sui", code: "SUI", magnitude: 9 };

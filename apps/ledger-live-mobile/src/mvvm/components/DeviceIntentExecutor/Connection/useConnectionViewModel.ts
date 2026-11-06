@@ -18,6 +18,7 @@ import { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-n
 import { useSaveConnectedDevice } from "LLM/components/DeviceConnection";
 import { useSelector } from "~/context/hooks";
 import { knownDevicesSelector } from "~/reducers/knownDevices";
+import { isMockServerEnabledSelector } from "~/reducers/settings";
 import { NavigatorName, ScreenName } from "~/const";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { urls } from "~/utils/urls";
@@ -55,6 +56,7 @@ export function useConnectionViewModel({
   const dmk = useDeviceManagementKit();
   const buyDeviceFromLive = useFeature("buyDeviceFromLive");
   const knownDevices = useSelector(knownDevicesSelector);
+  const isMockServerEnabled = useSelector(isMockServerEnabledSelector);
   const { sourceFlow, analyticsProperties, reportFailure } = useDeviceIntentTracking();
   const [state, setState] = useState<ConnectDeviceUIState>({
     type: ConnectDeviceUIStateTypes.Loading,
@@ -147,6 +149,7 @@ export function useConnectionViewModel({
       ),
       dmk,
       onConnected: wrappedOnConnected,
+      isMockServerEnabled,
     }).subscribe({ next: handleState });
 
     return () => subscription.unsubscribe();
@@ -154,6 +157,7 @@ export function useConnectionViewModel({
     deviceConnectionParams.acceptedDeviceModelIds,
     dmk,
     knownDevices,
+    isMockServerEnabled,
     reportFailure,
     wrappedOnConnected,
   ]);

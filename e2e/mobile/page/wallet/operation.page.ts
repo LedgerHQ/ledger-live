@@ -44,20 +44,14 @@ export default class OperationPage {
   @Step("Expect the card transaction amount")
   async expectCardTransactionAmount() {
     await this.cardTransactionDetailAmountValue.expectVisible();
-    const amount = await this.cardTransactionDetailAmountValue.getText();
-    jestExpect(amount).toMatch(/\d/);
+    await this.cardTransactionDetailAmountValue.expectTextMatching(/\d/);
   }
 
   @Step("Expect the card transaction status to read {{{0}}}")
-  async expectCardTransactionStatus(status: string | RegExp) {
+  async expectCardTransactionStatus(status: RegExp) {
     await this.cardTransactionDetailStatusValue.expectVisible();
-    const { label } = await this.cardTransactionDetailStatusValue.getAttributes();
-    const actualStatus = label != null ? String(label) : "";
-    if (typeof status === "string") {
-      jestExpect(actualStatus).toEqual(status);
-    } else {
-      jestExpect(actualStatus).toMatch(status);
-    }
+    // The status is a Lumen Tag: its value is the accessibility label, not its own text.
+    await this.cardTransactionDetailStatusValue.expectLabelMatching(status);
   }
 
   @Step("Expect Operations List to be visible")
@@ -83,7 +77,6 @@ export default class OperationPage {
 
   @Step("Get operation counter value text")
   async getOperationCounterValue() {
-    await this.operationsList.waitVisible();
     return await this.operationCounterValue.getText();
   }
 }

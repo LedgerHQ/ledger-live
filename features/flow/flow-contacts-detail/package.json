@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-contacts-detail",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
   "description": "Shared Contact Detail flow for Desktop and Mobile",
   "main": "src/index.ts",
@@ -56,8 +56,10 @@
     }
   },
   "devDependencies": {
+    "@domain/entity-currency": "workspace:*",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
+    "@support/lint": "workspace:*",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@reduxjs/toolkit": "catalog:",

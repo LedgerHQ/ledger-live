@@ -4,6 +4,7 @@ import {
   OsUpdatesSteps,
   PreChecksStateType,
   RestoreBackupStateType,
+  RestoreBackupStatus,
   type OsUpdate,
   type OsUpdatesProgress,
 } from "@ledgerhq/live-dmk-shared";
@@ -117,7 +118,11 @@ describe("getPageEvent", () => {
       "Connection Timed Out with the step it happened in",
       {
         step: OsUpdatesSteps.PRE_CHECKS,
-        state: { type: PreChecksStateType.CONNECTION_TIMED_OUT, retry: jest.fn() },
+        state: {
+          type: PreChecksStateType.CONNECTION_TIMED_OUT,
+          retry: jest.fn(),
+          cancel: jest.fn(),
+        },
       },
       { page: OsUpdatePage.CONNECTION_TIMED_OUT, step: OsUpdateFlowStep.PRE_CHECKS },
     ],
@@ -150,18 +155,6 @@ describe("getPageEvent", () => {
       "Restoring during a standalone restore",
       { step: OsUpdatesSteps.RESTORE_BACKUP, state: { type: RestoreBackupStateType.LOADING } },
       { page: OsUpdatePage.RESTORING },
-    ],
-    [
-      "Error when out of memory",
-      {
-        step: OsUpdatesSteps.RESTORE_BACKUP,
-        state: { type: RestoreBackupStateType.OUT_OF_MEMORY, error: undefined, cancel },
-      },
-      {
-        page: OsUpdatePage.ERROR,
-        step: OsUpdateFlowStep.RESTORE_BACKUP,
-        failureType: OsUpdateFailureType.OUT_OF_MEMORY,
-      },
     ],
     [
       "no new page while applying updates loads",
@@ -211,6 +204,16 @@ describe("getPageEvent", () => {
         "nothing is restored",
         { restoredLanguage: false, restoredCLS: false, restoredApps: [app(false)] },
       ],
+      [
+        OsUpdateRestoreStatus.OUT_OF_MEMORY,
+        "the device ran out of memory, even with some apps restored",
+        {
+          restoreStatus: RestoreBackupStatus.OUT_OF_MEMORY,
+          restoredLanguage: true,
+          restoredCLS: undefined,
+          restoredApps: [app(true, true), app(false)],
+        },
+      ],
       [OsUpdateRestoreStatus.NONE, "there is no restore result", undefined],
     ])("is %s when %s", (restoreStatus, _label, restoreResult) => {
       expect(getPageEvent(backupRestored(restoreResult), osUpdates)).toEqual({
@@ -224,7 +227,11 @@ describe("getPageEvent", () => {
         getPageEvent(
           {
             step: OsUpdatesSteps.APPLY_UPDATES,
-            state: { type: ApplyUpdatesStateType.UPDATES_APPLIED, restoreResult: undefined },
+            state: {
+              type: ApplyUpdatesStateType.UPDATES_APPLIED,
+              osVersion: "2.0.0",
+              restoreResult: undefined,
+            },
           },
           osUpdates,
         ),

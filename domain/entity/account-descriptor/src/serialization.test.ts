@@ -2,12 +2,13 @@ import { InvalidAccountDescriptorError } from "./errors";
 import { ETH_ADDR, SOL_ADDR, XPUB } from "./test-fixtures";
 import { AccountDescriptorSchema, type AccountDescriptor } from "./schema";
 import { parseAccountDescriptor, serializeAccountDescriptor } from "./serialization";
+import { NetworkIdSchema } from "./network";
 
 const UTXO: AccountDescriptor = {
   purpose: "account",
   version: "2",
   type: "utxo",
-  network: "bitcoin",
+  network: NetworkIdSchema.parse("bitcoin"),
   xpub: XPUB,
   path: "m/84h/0h/0h",
 };
@@ -16,7 +17,7 @@ const ETH: AccountDescriptor = {
   purpose: "account",
   version: "2",
   type: "address",
-  network: "ethereum",
+  network: NetworkIdSchema.parse("ethereum"),
   address: ETH_ADDR,
   path: "m/44h/60h/0h/0/0",
 };
@@ -25,7 +26,7 @@ const SOL: AccountDescriptor = {
   purpose: "account",
   version: "2",
   type: "address",
-  network: "solana_devnet",
+  network: NetworkIdSchema.parse("solana_devnet"),
   address: SOL_ADDR,
   path: "m/44h/501h/0h/0h",
 };

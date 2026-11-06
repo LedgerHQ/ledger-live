@@ -22,6 +22,8 @@ jest.mock(
     usePayCardToolProps: () => ({ marker: "pay-card-props" }),
     useEnvDevToolProps: () => ({ marker: "env-props" }),
     useAppConfigToolProps: () => ({ marker: "app-config-props" }),
+    useCoinConfigToolProps: () => ({ marker: "coin-config-props" }),
+    useAccountDetailToolProps: () => ({ marker: "account-detail-props" }),
     useDeviceOnboardingToolState: () => ({
       log: [],
       machineContext: null,
@@ -89,6 +91,7 @@ describe("DevToolsScreen", () => {
       { id: "feature-flags", config: { marker: "ff-props" } },
       { id: "env", config: { marker: "env-props" } },
       { id: "app-config", config: { marker: "app-config-props" } },
+      { id: "coin-config", config: { marker: "coin-config-props" } },
       {
         id: "pay-card",
         config: {
@@ -109,6 +112,7 @@ describe("DevToolsScreen", () => {
           reset: expect.any(Function),
         }),
       },
+      { id: "account-detail", config: { marker: "account-detail-props" } },
     ]);
     expect(props.screenOptions.contentStyle).toEqual([expect.anything(), { paddingBottom: 34 }]);
   });

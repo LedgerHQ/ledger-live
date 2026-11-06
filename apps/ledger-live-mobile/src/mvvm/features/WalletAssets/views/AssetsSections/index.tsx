@@ -8,26 +8,19 @@ import { WalletAssetsVariant } from "LLM/features/WalletAssets/types";
 
 interface AssetsSectionsProps {
   variant: WalletAssetsVariant;
-  shouldDisplayAssetSection: boolean;
   shouldDisplayAssetDiscoverability: boolean;
   shouldDisplayServicesEntryPoints: boolean;
 }
 
 export const AssetsSections: React.FC<AssetsSectionsProps> = ({
   variant,
-  shouldDisplayAssetSection,
   shouldDisplayAssetDiscoverability,
   shouldDisplayServicesEntryPoints,
-}) => {
-  if (shouldDisplayAssetSection) {
-    return (
-      <Box lx={{ gap: "s16" }}>
-        <PortfolioCryptosSection variant={variant} />
-        {shouldDisplayServicesEntryPoints && <PortfolioServicesSection />}
-        <PortfolioStablecoinsSection variant={variant} />
-        {shouldDisplayAssetDiscoverability && <PortfolioStocksSection variant={variant} />}
-      </Box>
-    );
-  }
-  return <PortfolioCryptosSection variant="readOnly" />;
-};
+}) => (
+  <Box lx={{ gap: "s16" }}>
+    <PortfolioCryptosSection variant={variant} />
+    {shouldDisplayServicesEntryPoints && <PortfolioServicesSection />}
+    <PortfolioStablecoinsSection variant={variant} />
+    {shouldDisplayAssetDiscoverability && <PortfolioStocksSection variant={variant} />}
+  </Box>
+);

@@ -1,5 +1,5 @@
 import { computeAccountUUID, type AccountDescriptor } from "@domain/entity-account-descriptor";
-import { BalanceAssetIdSchema } from "@domain/entity-account-balance";
+import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import type { BalanceHistoryRange } from "@domain/entity-account-balance-history";
 import type { AccountOperation, AccountOperationsPage } from "@domain/entity-account-operation";
 import { FiatCurrencyTickerSchema, type FiatCurrencyTicker } from "@domain/entity-currency-fiat";
@@ -224,7 +224,7 @@ describe("mockSource", () => {
   it("keeps only the rows of the asset filtered on", async () => {
     const read = mockSource.read?.operations;
     if (!read) throw new Error("no operations reader");
-    const usdc = BalanceAssetIdSchema.parse("ethereum/erc20/usd__coin");
+    const usdc = CryptoOrTokenCurrencyIdSchema.parse("ethereum/erc20/usd__coin");
     let kept = 0;
     for (const account of mockDescriptors("ethereum", 40, [])) {
       const all = await allOperationsOf(account);
@@ -239,7 +239,7 @@ describe("mockSource", () => {
   it("pages the filtered rows, full pages of the asset until its whole history", async () => {
     const read = mockSource.read?.operations;
     if (!read) throw new Error("no operations reader");
-    const usdc = BalanceAssetIdSchema.parse("ethereum/erc20/usd__coin");
+    const usdc = CryptoOrTokenCurrencyIdSchema.parse("ethereum/erc20/usd__coin");
     const limit = 3;
     let walkedAccounts = 0;
     for (const account of mockDescriptors("ethereum", 40, [])) {

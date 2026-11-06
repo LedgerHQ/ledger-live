@@ -1,14 +1,17 @@
 {
   "name": "@features/flow-account-detail-analytics-notice",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Analytics introduction eligibility, dismissal and UI for the Account Detail page",
   "main": "src/index.ts",
   "types": "src/index.ts",
+  "react-native": "src/index.native.ts",
   "exports": {
-    ".": "./src/index.ts",
+    ".": {
+      "react-native": "./src/index.native.ts",
+      "default": "./src/index.ts"
+    },
     "./state": "./src/state/index.ts",
-    "./web": "./src/web/index.web.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -30,13 +33,16 @@
   "devDependencies": {
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
+    "@support/lint": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",
     "@testing-library/jest-dom": "catalog:",
     "@testing-library/react": "catalog:",
+    "@testing-library/react-native": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
@@ -47,13 +53,17 @@
     "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "react-native": "catalog:",
+    "react-test-renderer": "catalog:",
     "typescript": "catalog:"
   },
   "peerDependencies": {
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
     "react": "catalog:",
-    "react-dom": "catalog:"
+    "react-dom": "catalog:",
+    "react-native": "catalog:"
   },
   "peerDependenciesMeta": {
     "@ledgerhq/lumen-design-core": {
@@ -62,7 +72,13 @@
     "@ledgerhq/lumen-ui-react": {
       "optional": true
     },
+    "@ledgerhq/lumen-ui-rnative": {
+      "optional": true
+    },
     "react-dom": {
+      "optional": true
+    },
+    "react-native": {
       "optional": true
     }
   }

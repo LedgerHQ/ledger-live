@@ -36,7 +36,7 @@ PODS:
     - BrazeKit (= 13.3.0)
   - BrazeUI (13.3.0):
     - BrazeKit (= 13.3.0)
-  - callstack-repack (5.2.5):
+  - callstack-repack (5.4.2):
     - boost
     - DoubleConversion
     - fast_float
@@ -3623,6 +3623,8 @@ PODS:
   - segment-analytics-react-native (2.24.2):
     - React-Core
     - sovran-react-native
+  - SharedNativePerformance (0.0.0):
+    - React-Core
   - SocketRocket (0.7.1)
   - sovran-react-native (1.1.4):
     - React-Core
@@ -3641,7 +3643,7 @@ PODS:
 DEPENDENCIES:
   - "boost (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_9f9367c5ec0023717aa72ae7066b0e6b/node_modules/react-native/third-party-podspecs/boost.podspec`)"
   - "braze-react-native-sdk (from `../../../node_modules/.pnpm/@braze+react-native-sdk@18.0.0/node_modules/@braze/react-native-sdk`)"
-  - "callstack-repack (from `../../../node_modules/.pnpm/@callstack+repack@5.2.5_patch_hash=8d7db4e65c89_75863445f1d9f84246a1fad3574c02e8/node_modules/@callstack/repack`)"
+  - "callstack-repack (from `../../../node_modules/.pnpm/@callstack+repack@5.4.2_patch_hash=5bcd139af7a7_7f66561bc200f87ba40e69b68ef66f84/node_modules/@callstack/repack`)"
   - "DatadogSDKReactNative (from `../../../node_modules/.pnpm/@datadog+mobile-react-native@3.7.0_react-native_7a7a1f27b9ac3f989423fe198c72f787/node_modules/@datadog/mobile-react-native`)"
   - "DoubleConversion (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_9f9367c5ec0023717aa72ae7066b0e6b/node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)"
   - "EXApplication (from `../../../node_modules/.pnpm/expo-application@7.0.8_expo@54.0.33_@babel+core_abeb84298ea9ca84ee1055406bccf067/node_modules/expo-application/ios`)"
@@ -3767,6 +3769,7 @@ DEPENDENCIES:
   - "RNSVG (from `../../../node_modules/.pnpm/react-native-svg@15.15.4_react-native@0.81.6_pa_c81e2e988885c3bea45db55cd5611860/node_modules/react-native-svg`)"
   - "RNWorklets (from `../../../node_modules/.pnpm/react-native-worklets@0.8.1_patch_hash=8e8345e8_37d2ad1df67c39bba0bc009c33cc6d1f/node_modules/react-native-worklets`)"
   - "segment-analytics-react-native (from `../../../node_modules/.pnpm/@segment+analytics-react-native@2.24.2_bd1d19cd2883c3dc337815e1feaba81f/node_modules/@segment/analytics-react-native`)"
+  - SharedNativePerformance (from `../../../shared/native-performance`)
   - SocketRocket (~> 0.7.1)
   - "sovran-react-native (from `../../../node_modules/.pnpm/@segment+sovran-react-native@1.1.4_8ba131662a4359217af98865be4aa4b3/node_modules/@segment/sovran-react-native`)"
   - "VisionCamera (from `../../../node_modules/.pnpm/react-native-vision-camera@4.7.3_ab37e4eee70b54dccc0d0b2c265a1e0f/node_modules/react-native-vision-camera`)"
@@ -3819,7 +3822,7 @@ EXTERNAL SOURCES:
   braze-react-native-sdk:
     :path: "../../../node_modules/.pnpm/@braze+react-native-sdk@18.0.0/node_modules/@braze/react-native-sdk"
   callstack-repack:
-    :path: "../../../node_modules/.pnpm/@callstack+repack@5.2.5_patch_hash=8d7db4e65c89_75863445f1d9f84246a1fad3574c02e8/node_modules/@callstack/repack"
+    :path: "../../../node_modules/.pnpm/@callstack+repack@5.4.2_patch_hash=5bcd139af7a7_7f66561bc200f87ba40e69b68ef66f84/node_modules/@callstack/repack"
   DatadogSDKReactNative:
     :path: "../../../node_modules/.pnpm/@datadog+mobile-react-native@3.7.0_react-native_7a7a1f27b9ac3f989423fe198c72f787/node_modules/@datadog/mobile-react-native"
   DoubleConversion:
@@ -4069,6 +4072,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/react-native-worklets@0.8.1_patch_hash=8e8345e8_37d2ad1df67c39bba0bc009c33cc6d1f/node_modules/react-native-worklets"
   segment-analytics-react-native:
     :path: "../../../node_modules/.pnpm/@segment+analytics-react-native@2.24.2_bd1d19cd2883c3dc337815e1feaba81f/node_modules/@segment/analytics-react-native"
+  SharedNativePerformance:
+    :path: "../../../shared/native-performance"
   sovran-react-native:
     :path: "../../../node_modules/.pnpm/@segment+sovran-react-native@1.1.4_8ba131662a4359217af98865be4aa4b3/node_modules/@segment/sovran-react-native"
   VisionCamera:
@@ -4082,7 +4087,7 @@ SPEC CHECKSUMS:
   BrazeKit: 53ac2d77c7d5ab54ab73df75c9058ae89236fc54
   BrazeLocation: 47cde4ac51568718b76d4677475c926ea840633b
   BrazeUI: 4de47810a95f225e0199cf6ddc9756f9dab662eb
-  callstack-repack: 6de6a4d5a87bdf8f6b75e51fd32e557c9be85110
+  callstack-repack: 4b006eeafeda87a9c2ea8785f578e6a24fdb44bb
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   DatadogCore: 7eed8fbaaa1575503c389f343c230858343c8baf
   DatadogCrashReporting: 04f3c3a5bfd9921aef4d44b4ab80accb39c84ddb
@@ -4239,6 +4244,7 @@ SPEC CHECKSUMS:
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
   segment-analytics-react-native: 556a3bdd0a28ed4c6110a6c17322cf641d4ef704
+  SharedNativePerformance: ca26343c7cd7d0cc316fdcaa45d54b6b1a1484f4
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   sovran-react-native: 803ccf23b24c8c5da99f249d4a0e317d62fa35e7
   SwiftyRSA: 8c6dd1ea7db1b8dc4fb517a202f88bb1354bc2c6

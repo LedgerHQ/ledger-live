@@ -1,3 +1,14 @@
+export const karaokeTestIds = {
+  screen: "device-onboarding-karaoke",
+  close: "device-onboarding-karaoke-close",
+} as const;
+
+export const quitConfirmationTestIds = {
+  sheet: "device-onboarding-quit-confirmation",
+  continue: "device-onboarding-quit-confirmation-continue",
+  leave: "device-onboarding-quit-confirmation-leave",
+} as const;
+
 export const checksTestIds = {
   screen: "device-onboarding-checks",
   start: "device-onboarding-checks-start",

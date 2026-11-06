@@ -17,6 +17,7 @@ const {
   formatDevtoolsImportViolation,
   formatDevtoolsHostViolation,
   sourceFiles,
+  walkSourceFiles,
   DEVTOOLS_ROOT,
 } = require("./validate");
 const {
@@ -1571,4 +1572,19 @@ test("lint:boundaries inputs cover the graph configuration and the tags plugin",
     files.filter(file => !isLintBoundariesInput(file)),
     [],
   );
+});
+
+test("walkSourceFiles skips gitignored build output dirs", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "enforce-boundaries-walk-"));
+  try {
+    for (const dir of ["src", ".webpack", "lib-es", "coverage"]) {
+      fs.mkdirSync(path.join(root, dir));
+      fs.writeFileSync(path.join(root, dir, "index.js"), "");
+    }
+    const files = [];
+    walkSourceFiles(root, file => files.push(path.relative(root, file)));
+    assert.deepEqual(files, [path.join("src", "index.js")]);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
 });

@@ -8,7 +8,7 @@ import { TEST_CONFIG } from "./test/coinConfig";
 
 const CONFIG: SolanaCoinConfig = {
   ...TEST_CONFIG,
-  rpcUrls: { solana_devnet: "https://solana-devnet.test.invalid" },
+  rpcUrl: "https://solana-devnet.test.invalid",
   validatorsUrl: "https://validators.test.invalid",
 };
 

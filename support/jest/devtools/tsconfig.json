@@ -5,6 +5,7 @@
   },
   "references": [
     { "path": "./tsconfig.web.json" },
-    { "path": "./tsconfig.native.json" }
+    { "path": "./tsconfig.native.json" },
+    { "path": "./tsconfig.preset.json" }
   ]
 }

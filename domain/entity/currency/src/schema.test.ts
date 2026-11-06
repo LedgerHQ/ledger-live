@@ -1,4 +1,8 @@
-import { CryptoOrTokenCurrencySchema, CurrencySchema } from "./schema";
+import {
+  CryptoOrTokenCurrencyIdSchema,
+  CryptoOrTokenCurrencySchema,
+  CurrencySchema,
+} from "./schema";
 import { mockCryptoCurrency } from "@domain/entity-currency-crypto/schema.mock";
 import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";
 import { mockFiatCurrency } from "@domain/entity-currency-fiat/schema.mock";
@@ -16,6 +20,22 @@ describe("CryptoOrTokenCurrencySchema", () => {
 
   it("rejects a FiatCurrency", () => {
     expect(() => CryptoOrTokenCurrencySchema.parse(mockFiatCurrency())).toThrow();
+  });
+});
+
+describe("CryptoOrTokenCurrencyIdSchema", () => {
+  it("accepts a crypto currency id", () => {
+    expect(CryptoOrTokenCurrencyIdSchema.parse("ethereum")).toBe("ethereum");
+  });
+
+  it("accepts a token id", () => {
+    expect(CryptoOrTokenCurrencyIdSchema.parse("ethereum/erc20/usd_tether__erc20_")).toBe(
+      "ethereum/erc20/usd_tether__erc20_",
+    );
+  });
+
+  it("rejects an empty id", () => {
+    expect(() => CryptoOrTokenCurrencyIdSchema.parse("")).toThrow();
   });
 });
 

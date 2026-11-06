@@ -323,7 +323,10 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
     [DeviceSituationEventType.DEVICE_SITUATION_UPDATE]: {
       actions: {
         type: "sendStateUpdate",
-        params: ({ event }) => toApplyUpdatesState(event),
+        params: ({ context, event }) =>
+          toApplyUpdatesState(event, () =>
+            context.send({ type: ApplyUpdatesStateMachineEventType.CANCEL }),
+          ),
       },
     },
   },
@@ -1105,6 +1108,9 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
     },
     CheckErrorCause: {
       entry: { type: "logError", params: "CheckErrorCause" },
+      on: {
+        [ApplyUpdatesStateMachineEventType.CANCEL]: "Canceled",
+      },
       invoke: {
         src: "checkErrorCause",
         input: ({ context, self }) => ({
@@ -1182,6 +1188,7 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
         type: "sendStateUpdate",
         params: ({ context }) => ({
           type: ApplyUpdatesStateType.UPDATES_APPLIED,
+          osVersion: context.osVersion!.seVersion,
           restoreResult: context.restoreResult,
         }),
       },

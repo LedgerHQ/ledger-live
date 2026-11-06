@@ -11,6 +11,7 @@ import type { ExchangeRequestEvent } from "@ledgerhq/live-common/hw/actions/star
 import type { CompleteExchangeRequestEvent } from "@ledgerhq/live-common/exchange/platform/types";
 import type { RemoveImageEvent } from "@ledgerhq/live-common/hw/customLockScreenRemove";
 import type { RenameDeviceEvent } from "@ledgerhq/live-common/hw/renameDevice";
+import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import type { AccountRaw, PostOnboardingState } from "@ledgerhq/types-live";
 import type { Feature, FeatureId, PartialFeatures } from "@shared/feature-flags";
@@ -59,6 +60,7 @@ export type ServerData =
       payload: string;
     }
   | { type: "contactsImported"; id: string; payload: "" }
+  | { type: "localManifestsImported"; id: string; payload: string }
   | { type: "ACK"; id: string }
   | { type: "swapSetupDone"; id: string }
   | { type: "swapLiveAppReady" }
@@ -92,6 +94,7 @@ export type MessageData<P extends BridgePayloads = BridgePayloads> =
     }
   | { type: "importTrustchain"; id: string; payload: TrustchainStore }
   | { type: "importContacts"; id: string; payload: Contact[] }
+  | { type: "importLocalManifests"; id: string; payload: LiveAppManifest[] }
   | { type: "importBle"; id: string; payload: P["ble"] }
   | { type: "importPostOnboarding"; id: string; payload: Partial<PostOnboardingState> }
   | { type: "importPayCard"; id: string; payload: P["payCard"] }

@@ -1,10 +1,9 @@
 import type { AccountDataSource, AccountTarget } from "@domain/api-account-data";
 import { descriptorOf, sourceIdOf } from "@domain/api-account-data/testing";
-import type { BalanceAssetId } from "@domain/entity-account-balance";
 import { AccountUUIDSchema } from "@domain/entity-account-descriptor";
 import type { AccountOperationsPage } from "@domain/entity-account-operation";
 import { mockAccountOperation } from "@domain/entity-account-operation/schema.mock";
-import type { Currency } from "@domain/entity-currency";
+import type { CryptoOrTokenCurrencyId, Currency } from "@domain/entity-currency";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { FiatCurrencyTickerSchema } from "@domain/entity-currency-fiat";
 import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";
@@ -18,7 +17,7 @@ const currencies = new Map<string, Currency>([
   [eth.id, eth],
   [usdt.id, usdt],
 ]);
-const currencyOf = (assetId: BalanceAssetId) => currencies.get(assetId);
+const currencyOf = (assetId: CryptoOrTokenCurrencyId) => currencies.get(assetId);
 
 const target: AccountTarget = {
   accountUUID: AccountUUIDSchema.parse("6ba7b810-9dad-51d1-80b4-00c04fd430c8"),
@@ -96,7 +95,7 @@ describe("withOperationCountervalues", () => {
   const rates = ratesOf({ "USD ethereum": { "2026-01-01": 2000 } });
   const host = {
     rates: () => rates,
-    findCurrency: jest.fn(async (assetId: BalanceAssetId) => currencyOf(assetId)),
+    findCurrency: jest.fn(async (assetId: CryptoOrTokenCurrencyId) => currencyOf(assetId)),
   };
   const sourceWith = (parts: Partial<AccountDataSource>): AccountDataSource => ({
     id: sourceIdOf("test"),

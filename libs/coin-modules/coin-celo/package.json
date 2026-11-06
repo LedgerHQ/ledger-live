@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-celo",
-  "version": "3.7.0",
+  "version": "3.7.1",
   "description": "celo coin integration",
   "keywords": [
     "Ledger",
@@ -115,7 +115,6 @@
     "@ledgerhq/devices": "catalog:",
     "@ledgerhq/hw-app-eth": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
-    "@ledgerhq/live-config": "catalog:",
     "@ledgerhq/live-env": "catalog:",
     "@ledgerhq/live-network": "catalog:",
     "@ledgerhq/logs": "catalog:",

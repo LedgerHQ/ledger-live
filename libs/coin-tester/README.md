@@ -42,11 +42,3 @@ pnpm coin:tester:<coin-tester-modules-name> start
 # pnpm coin:tester:solana start
 # pnpm coin:tester:bitcoin start
 ```
-
-## Troubleshooting
-
-### EVM Coin tester
-
-> The \"RPC\" variable is not set. Defaulting to a blank string.
-
-This error can safely be ignored. The RPC is passed as a variable env at runtime. Check [here](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-modules/coin-evm/src/__tests__/coin-tester/anvil.ts#L28) and [here](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-modules/coin-evm/src/__tests__/coin-tester/scenarios/ethereum.ts#L144)
