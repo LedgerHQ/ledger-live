@@ -3,10 +3,12 @@ import { FeatureId } from "@shared/feature-flags";
 import {
   cosmosTransaction,
   hederaTransaction,
+  rippleTransaction,
   solanaTransaction,
   TransactionWithCustomFee,
 } from "./transactionStrategies";
 import BigNumber from "bignumber.js";
+import { PayinExtraIdError } from "../../wallet-api/Exchange/SwapError";
 import type { GetFeatureFn } from "../../wallet-api/FeatureFlags/resolver";
 import type { Account } from "@ledgerhq/types-live";
 import { transactionToIntent } from "../../bridge/generic-coin-framework/utils";
@@ -86,6 +88,35 @@ describe("transactionStrategies", () => {
         memoValue: "payin-42",
       });
     });
+  });
+
+  describe("rippleTransaction", () => {
+    const transaction: TransactionWithCustomFee = {
+      family: "xrp",
+      amount: BigNumber(1),
+      recipient: "rRecipient",
+      customFeeConfig: {},
+      payinExtraId: "12345",
+    };
+
+    it.each([
+      ["12345", 12345],
+      ["4294967295", 4294967295],
+    ])("should use the payin extra id %p as the destination tag", (payinExtraId, tag) => {
+      expect(rippleTransaction({ ...transaction, payinExtraId })).toMatchObject({
+        family: "xrp",
+        tag,
+      });
+    });
+
+    it.each(["abc", "1_000", "0x10", " ", "1.5", "-1", "4294967296", "1e12"])(
+      "should throw a payin extra id step error for tag %p",
+      payinExtraId => {
+        expect(() => rippleTransaction({ ...transaction, payinExtraId })).toThrow(
+          PayinExtraIdError,
+        );
+      },
+    );
   });
 
   describe("cosmosTransaction", () => {
