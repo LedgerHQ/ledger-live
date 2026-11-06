@@ -272,6 +272,16 @@ describe("waivers", () => {
     ]);
   });
 
+  it("rejects waivers.json root that is not an array", () => {
+    assert.deepEqual(
+      checkRepo(repo(files), {
+        waivers: { invalid: "root" },
+        waiversFile: "waivers.json",
+      }).map(({ file, line, code }) => `${file}:${line}:${code}`),
+      ["AGENTS.md:1:dead-path", "docs/guide.md:1:dead-path", "waivers.json:1:waiver-list"],
+    );
+  });
+
   it("give every shipped waiver a file, a path and a reason", () => {
     const shipped = JSON.parse(readFileSync(new URL("../waivers.json", import.meta.url), "utf8"));
     const problems = applyWaivers([], shipped, "waivers.json").filter(

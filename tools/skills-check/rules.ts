@@ -48,6 +48,7 @@ export const CHECK_CODES = {
   "dead-path": "backticked repo paths under a top-level folder exist",
   waiver: "waivers.json entry is complete",
   "stale-waiver": "waivers.json entry still matches a finding",
+  "waiver-list": "waivers.json must be a JSON array at the root",
 } as const;
 
 type FindingCode = keyof typeof CHECK_CODES;
@@ -83,12 +84,11 @@ export type ReportFinding = (
 type ProseLine = { line: string; number: number };
 
 /**
- * Narrows parsed JSON to waiver objects: each array element is an object whose file, path,
+ * Narrows JSON array elements to waiver objects: each element is an object whose file, path,
  * and reason are kept only when they are strings (non-string fields are omitted).
  */
-function waiversFromParsedJson(parsed: unknown): Waiver[] {
-  if (!Array.isArray(parsed)) return [];
-  return parsed.map((entry: unknown) => {
+function waiversFromArrayEntries(entries: unknown[]): Waiver[] {
+  return entries.map((entry: unknown) => {
     if (entry === null || typeof entry !== "object" || Array.isArray(entry)) return {};
     const w: Waiver = {};
     if ("file" in entry && typeof entry.file === "string") w.file = entry.file;
@@ -351,7 +351,18 @@ export const applyWaivers = (
   waivers: unknown,
   waiversFile: string,
 ): Finding[] => {
-  const list = waiversFromParsedJson(waivers);
+  if (!Array.isArray(waivers)) {
+    return [
+      ...findings,
+      {
+        file: waiversFile,
+        line: 1,
+        code: "waiver-list",
+        message: `${waiversFile} must be a JSON array at the root`,
+      },
+    ];
+  }
+  const list = waiversFromArrayEntries(waivers);
   const valid = list.filter(isComplete);
   const kept = findings.filter(finding => !valid.some(waiver => isWaived(waiver, finding)));
   list.forEach((waiver, index) => {
