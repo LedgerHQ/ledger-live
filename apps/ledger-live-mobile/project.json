@@ -124,6 +124,7 @@
         "^default",
         "sharedEnv",
         { "env": "ENVFILE" },
+        { "env": "DETOX" },
         { "env": "CI" }
       ],
       "options": {

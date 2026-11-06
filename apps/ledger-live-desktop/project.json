@@ -42,11 +42,8 @@
       "outputs": ["{workspaceRoot}/rsdoctor/desktop-*/**"],
       "inputs": [
         "default",
-        "!{projectRoot}/tests/**",
         "!{projectRoot}/docs/**",
         "!{projectRoot}/fastlane/**",
-        "!{projectRoot}/**/*.md",
-        "!{projectRoot}/**/__mocks__/**",
         "!{projectRoot}/**/__tests__/**",
         "!{projectRoot}/**/*.test.{ts,tsx,js}",
         "^default",
