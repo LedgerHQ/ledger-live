@@ -519,6 +519,20 @@ describe("getQuotes", () => {
       expect(response.quotes[0].errors).toEqual([]);
     });
 
+    it("reports a fee estimation failure only when the fee context cannot be built", async () => {
+      fetchQuotesMock.mockResolvedValue({ rawQuotes: [makeRawQuote()], providerErrors: [] });
+      const onFeeEstimationFailed = jest.fn();
+      const context = { ...emptyContext, onFeeEstimationFailed };
+
+      fetchNetworkFeeContextMock.mockResolvedValue(feeContext);
+      await getQuotes(makeArgs("ethereum", "bitcoin"), context);
+      expect(onFeeEstimationFailed).not.toHaveBeenCalled();
+
+      fetchNetworkFeeContextMock.mockResolvedValue(null);
+      await getQuotes(makeArgs("ethereum", "bitcoin"), context);
+      expect(onFeeEstimationFailed).toHaveBeenCalledTimes(1);
+    });
+
     it("does not drop `oneinchfusion` rows on Ethereum source", async () => {
       // LIVE-29454 / commit b76fc9c4a (Apr 30 2026) added an Ethereum-only
       // exclusion of `oneinchfusion` quotes from the client-side quote list.

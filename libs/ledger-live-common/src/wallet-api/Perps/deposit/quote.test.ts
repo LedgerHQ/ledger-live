@@ -1,40 +1,39 @@
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
+import {
+  QuoteErrorCodes,
+  QuotesErrorCodes,
+  type GetQuotesResponse,
+  type Quote,
+} from "@ledgerhq/wallet-api-exchange-module";
 import { fetchPerpsDepositQuote } from "./quote";
 import { PERPS_SWAPKIT_PROVIDER } from "../constants";
-import { setWalletApiIdForAccountId } from "../../converters";
-import { fetchQuotes } from "../../Exchange/quotes/service/fetchQuotes";
-import type { FetchQuotesResult } from "../../Exchange/quotes/service/types";
+import { getAccountIdFromWalletAccountId, getWalletApiIdFromAccountId } from "../../converters";
+import { getQuotes } from "../../Exchange/quotes/getQuotes";
 
-jest.mock("../../Exchange/quotes/service/fetchQuotes");
+jest.mock("../../Exchange/quotes/getQuotes");
 
-const mockedFetchQuotes = jest.mocked(fetchQuotes);
+const mockedGetQuotes = jest.mocked(getQuotes);
 
 const parentAccount = {
   type: "Account",
-  id: "js:2:arbitrum:0xsender:",
+  id: "js:2:arbitrum:0xperpsdepositquote:",
   currency: { id: "arbitrum" },
-  freshAddress: "0xsender",
 } as unknown as Account;
 
 const depositAccount = {
   type: "TokenAccount",
-  id: "js:2:arbitrum:0xsender:+usd_coin",
+  id: "js:2:arbitrum:0xperpsdepositquote:+usd_coin",
   parentId: parentAccount.id,
   token: { id: "arbitrum/erc20/usd_coin" },
 } as unknown as TokenAccount;
 
 const receiverAccount = {
   type: "Account",
-  id: "js:2:hypercore:0xreceiver:",
+  id: "js:2:hypercore:0xperpsdepositreceiver:",
   currency: { id: "hypercore" },
-  freshAddress: "0xreceiver",
 } as unknown as Account;
 
-const accounts: AccountLike[] = [
-  { ...parentAccount, subAccounts: [depositAccount] },
-  depositAccount,
-  receiverAccount,
-];
+const accounts: AccountLike[] = [parentAccount, depositAccount, receiverAccount];
 
 const params = {
   accounts,
@@ -42,56 +41,110 @@ const params = {
   receiverAccount,
   amount: "10",
   counterValueCurrency: "USD",
+  locale: "en-US",
 };
 
-const rawQuote = {
-  amountTo: 9.87,
-  quoteId: "quote-1",
-} as unknown as FetchQuotesResult["rawQuotes"][number];
+const quote = {
+  id: "quote-1",
+  quoteDetails: {
+    receiveAmount: 9.87,
+    estimatedNetworkFee: { amount: "1200", currencyId: "arbitrum" },
+    approvalNetworkFee: { amount: "300", currencyId: "arbitrum" },
+  },
+  errors: [{ code: QuoteErrorCodes.NOT_ENOUGH_BALANCE_FOR_FEES }],
+} as unknown as Quote;
+
+function respondWith(response: Partial<GetQuotesResponse>) {
+  mockedGetQuotes.mockResolvedValue({
+    quotes: [],
+    providerErrors: [],
+    warnings: [],
+    errors: [],
+    ...response,
+  });
+}
 
 describe("fetchPerpsDepositQuote", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    accounts.forEach(account => setWalletApiIdForAccountId(account.id));
   });
 
-  it("returns the amount the perps account receives, and the quote that priced it", async () => {
-    mockedFetchQuotes.mockResolvedValue({ rawQuotes: [rawQuote], providerErrors: [] });
-
-    const quote = await fetchPerpsDepositQuote(params);
-
-    expect(quote?.amountTo.toString()).toBe("9.87");
-    expect(quote?.quoteId).toBe("quote-1");
-  });
-
-  it("quotes the funding pair through the perps provider only", async () => {
-    mockedFetchQuotes.mockResolvedValue({ rawQuotes: [rawQuote], providerErrors: [] });
+  it("registers the deposit, parent and receiver accounts before it asks for quotes", async () => {
+    const registeredDuringCall: Array<string | undefined> = [];
+    mockedGetQuotes.mockImplementation(async () => {
+      registeredDuringCall.push(
+        ...[depositAccount, parentAccount, receiverAccount].map(account =>
+          getAccountIdFromWalletAccountId(getWalletApiIdFromAccountId(account.id)),
+        ),
+      );
+      return { quotes: [], providerErrors: [], warnings: [], errors: [] };
+    });
 
     await fetchPerpsDepositQuote(params);
 
-    expect(mockedFetchQuotes).toHaveBeenCalledWith(
+    expect(registeredDuringCall).toEqual([depositAccount.id, parentAccount.id, receiverAccount.id]);
+  });
+
+  it("asks the perps provider only, with the wallet context", async () => {
+    respondWith({});
+
+    await fetchPerpsDepositQuote(params);
+
+    expect(mockedGetQuotes).toHaveBeenCalledWith(
       {
         providers: [PERPS_SWAPKIT_PROVIDER],
-        data: expect.objectContaining({
+        data: {
           amount: "10",
-          sendAddress: "0xsender",
-          receiveAddress: "0xreceiver",
-          sendCurrencyId: "arbitrum/erc20/usd_coin",
-          receiveCurrencyId: "hypercore",
-        }),
+          sendAccountId: getWalletApiIdFromAccountId(depositAccount.id),
+          receiveAccountId: getWalletApiIdFromAccountId(receiverAccount.id),
+        },
       },
-      "USD",
+      {
+        accounts,
+        spotPrices: {},
+        locale: "en-US",
+        counterValueCurrency: "USD",
+        onFeeEstimationFailed: expect.any(Function),
+      },
     );
   });
 
-  it("returns nothing when the provider quotes no price", async () => {
-    mockedFetchQuotes.mockResolvedValue({ rawQuotes: [], providerErrors: [] });
+  it("maps the first quote and keeps its fee fields and errors", async () => {
+    respondWith({ quotes: [quote, { ...quote, id: "quote-2" }] });
 
-    await expect(fetchPerpsDepositQuote(params)).resolves.toBeUndefined();
+    const result = await fetchPerpsDepositQuote(params);
+
+    expect(result.quote?.amountTo.toString()).toBe("9.87");
+    expect(result.quote).toMatchObject({
+      quoteId: "quote-1",
+      estimatedNetworkFee: { amount: "1200", currencyId: "arbitrum" },
+      approvalNetworkFee: { amount: "300", currencyId: "arbitrum" },
+      errors: [{ code: QuoteErrorCodes.NOT_ENOUGH_BALANCE_FOR_FEES }],
+    });
   });
 
-  it("does not call the provider when the accounts cannot be resolved", async () => {
-    await expect(fetchPerpsDepositQuote({ ...params, accounts: [] })).resolves.toBeUndefined();
-    expect(mockedFetchQuotes).not.toHaveBeenCalled();
+  it("returns the global errors when no quote comes back", async () => {
+    const errors = [
+      { code: QuotesErrorCodes.NO_QUOTES },
+      { code: QuotesErrorCodes.AMOUNT_TOO_LOW, minAmount: "12.5" },
+    ] as GetQuotesResponse["errors"];
+    respondWith({ errors });
+
+    await expect(fetchPerpsDepositQuote(params)).resolves.toEqual({
+      errors,
+      feeEstimationFailed: false,
+    });
+  });
+
+  it("reports a fee estimation failure of the quote engine", async () => {
+    mockedGetQuotes.mockImplementation(async (_args, context) => {
+      context.onFeeEstimationFailed?.();
+      return { quotes: [quote], providerErrors: [], warnings: [], errors: [] };
+    });
+
+    const result = await fetchPerpsDepositQuote(params);
+
+    expect(result.feeEstimationFailed).toBe(true);
+    expect(result.quote?.quoteId).toBe("quote-1");
   });
 });

@@ -1,9 +1,14 @@
 import BigNumber from "bignumber.js";
-import type { AccountLike } from "@ledgerhq/types-live";
-import { getWalletApiIdFromAccountId } from "../../converters";
-import { resolveQuoteId } from "../../Exchange/quotes/normalizer/quoteHelpers";
-import { resolveQuotesInput } from "../../Exchange/quotes/resolveQuotesInput";
-import { fetchQuotes } from "../../Exchange/quotes/service/fetchQuotes";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type {
+  Quote,
+  QuoteApprovalNetworkFee,
+  QuoteError,
+  QuoteEstimatedNetworkFee,
+  QuotesError,
+} from "@ledgerhq/wallet-api-exchange-module";
+import { getWalletApiIdFromAccountId, setWalletApiIdForAccountId } from "../../converters";
+import { getQuotes } from "../../Exchange/quotes/getQuotes";
 import { PERPS_SWAPKIT_PROVIDER } from "../constants";
 
 export type PerpsDepositQuoteParams = {
@@ -12,16 +17,56 @@ export type PerpsDepositQuoteParams = {
   receiverAccount: AccountLike;
   amount: string;
   counterValueCurrency: string;
+  locale: string;
 };
 
 export type PerpsDepositQuote = {
   amountTo: BigNumber;
   quoteId?: string;
+  estimatedNetworkFee?: QuoteEstimatedNetworkFee;
+  approvalNetworkFee?: QuoteApprovalNetworkFee;
+  errors: QuoteError[];
 };
+
+export type PerpsDepositQuoteResult = {
+  quote?: PerpsDepositQuote;
+  errors: QuotesError[];
+  feeEstimationFailed?: boolean;
+};
+
+export function findDepositParentAccount(
+  depositAccount: AccountLike,
+  accounts: readonly AccountLike[],
+): Account | undefined {
+  if (depositAccount.type !== "TokenAccount") return undefined;
+  const parentAccount = accounts.find(account => account.id === depositAccount.parentId);
+  return parentAccount?.type === "Account" ? parentAccount : undefined;
+}
+
+function toPerpsDepositQuote({ id, quoteDetails, errors }: Quote): PerpsDepositQuote {
+  return {
+    amountTo: new BigNumber(quoteDetails.receiveAmount),
+    quoteId: id,
+    estimatedNetworkFee: quoteDetails.estimatedNetworkFee,
+    approvalNetworkFee: quoteDetails.approvalNetworkFee,
+    errors,
+  };
+}
+
+function registerQuoteAccounts(
+  accounts: AccountLike[],
+  depositAccount: AccountLike,
+  receiverAccount: AccountLike,
+) {
+  const parentAccount = findDepositParentAccount(depositAccount, accounts);
+  setWalletApiIdForAccountId(depositAccount.id);
+  if (parentAccount) setWalletApiIdForAccountId(parentAccount.id);
+  setWalletApiIdForAccountId(receiverAccount.id);
+}
 
 /**
  * Quotes `amount` from `depositAccount` to `receiverAccount` against
- * `swapkit_hyperliquid` and returns the quoted `amountTo` in display units.
+ * `swapkit_hyperliquid` and returns the first quote with the global errors.
  */
 export async function fetchPerpsDepositQuote({
   accounts,
@@ -29,26 +74,33 @@ export async function fetchPerpsDepositQuote({
   receiverAccount,
   amount,
   counterValueCurrency,
-}: PerpsDepositQuoteParams): Promise<PerpsDepositQuote | undefined> {
-  const quotesInput = resolveQuotesInput(
+  locale,
+}: PerpsDepositQuoteParams): Promise<PerpsDepositQuoteResult> {
+  registerQuoteAccounts(accounts, depositAccount, receiverAccount);
+
+  let feeEstimationFailed = false;
+  const { quotes, errors } = await getQuotes(
     {
-      amount,
-      sendAccountId: getWalletApiIdFromAccountId(depositAccount.id),
-      receiveAccountId: getWalletApiIdFromAccountId(receiverAccount.id),
+      providers: [PERPS_SWAPKIT_PROVIDER],
+      data: {
+        amount,
+        sendAccountId: getWalletApiIdFromAccountId(depositAccount.id),
+        receiveAccountId: getWalletApiIdFromAccountId(receiverAccount.id),
+      },
     },
-    accounts,
+    {
+      accounts,
+      spotPrices: {},
+      locale,
+      counterValueCurrency,
+      onFeeEstimationFailed: () => {
+        feeEstimationFailed = true;
+      },
+    },
   );
 
-  if (!quotesInput) return undefined;
-
-  const { rawQuotes } = await fetchQuotes(
-    { providers: [PERPS_SWAPKIT_PROVIDER], data: quotesInput },
-    counterValueCurrency,
-  );
-
-  const [quote] = rawQuotes;
-
+  const [quote] = quotes;
   return quote
-    ? { amountTo: new BigNumber(quote.amountTo), quoteId: resolveQuoteId(quote) }
-    : undefined;
+    ? { quote: toPerpsDepositQuote(quote), errors, feeEstimationFailed }
+    : { errors, feeEstimationFailed };
 }

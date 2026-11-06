@@ -1,6 +1,16 @@
 import React from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { AmountInput, Box, Button, Skeleton, Text } from "@ledgerhq/lumen-ui-rnative";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+  AmountInput,
+  BottomSheetHeader,
+  BottomSheetView,
+  Box,
+  Button,
+  Link,
+  Skeleton,
+  Text,
+} from "@ledgerhq/lumen-ui-rnative";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import type { TFunction } from "i18next";
@@ -54,18 +64,29 @@ function QuotedAmount({
 function AmountMessage({
   statusError,
   depositAmount,
-}: Pick<PerpsDepositViewModel, "statusError" | "depositAmount">) {
+  canLearnMore,
+  openDetails,
+}: Readonly<
+  Pick<PerpsDepositViewModel, "statusError" | "depositAmount" | "canLearnMore" | "openDetails">
+>) {
   const { t } = useTranslation();
   const provider = getProviderName(PERPS_DEPOSIT_PROVIDER_ID);
 
   const message = statusError ? (
-    <Text
-      typography="body3"
-      lx={{ color: "error", textAlign: "center" }}
-      testID="perps-deposit-form-error"
-    >
-      {t(statusError.labelKey, { provider })}
-    </Text>
+    <Box lx={{ alignItems: "center", gap: "s4" }}>
+      <Text
+        typography="body3"
+        lx={{ color: "error", textAlign: "center" }}
+        testID="perps-deposit-form-error"
+      >
+        {t(statusError.labelKey, { provider, ...statusError.values })}
+      </Text>
+      {canLearnMore ? (
+        <Link appearance="base" size="sm" onPress={openDetails} testID="perps-deposit-learn-more">
+          {t("perpsDeposit.learnMore")}
+        </Link>
+      ) : null}
+    </Box>
   ) : depositAmount > 0 ? (
     <Text typography="body3" lx={{ color: "base", textAlign: "center" }}>
       {t("perpsDeposit.inputSubText", { provider })}
@@ -74,6 +95,47 @@ function AmountMessage({
 
   return (
     <Box lx={{ minHeight: "s40", justifyContent: "center", alignItems: "center" }}>{message}</Box>
+  );
+}
+
+function DepositDetailsSheet({
+  isDetailsOpen,
+  details,
+  closeDetails,
+  buyFromDetails,
+}: Readonly<
+  Pick<PerpsDepositViewModel, "isDetailsOpen" | "details" | "closeDetails" | "buyFromDetails">
+>) {
+  const { t } = useTranslation();
+  const { bottom: bottomInset } = useSafeAreaInsets();
+
+  return (
+    <QueuedBottomSheet
+      isRequestingToBeOpened={isDetailsOpen}
+      onClose={closeDetails}
+      enableDynamicSizing
+      testID="perps-deposit-details"
+    >
+      <BottomSheetView style={{ paddingBottom: bottomInset + 16 }}>
+        {details ? (
+          <>
+            <BottomSheetHeader
+              title={t(details.titleKey, details.values)}
+              description={t(details.descriptionKey, details.values)}
+            />
+            <Button
+              appearance="base"
+              size="lg"
+              lx={{ width: "full", marginTop: "s16" }}
+              onPress={buyFromDetails}
+              testID="perps-deposit-details-buy"
+            >
+              {t("perpsDeposit.details.buy", { ticker: details.buyTicker })}
+            </Button>
+          </>
+        ) : null}
+      </BottomSheetView>
+    </QueuedBottomSheet>
   );
 }
 
@@ -94,6 +156,8 @@ function DepositForm({
   maxAmount,
   maxBuffer,
   statusError,
+  canLearnMore,
+  openDetails,
   canReview,
   exceedsBalance,
   missingAccount,
@@ -126,7 +190,12 @@ function DepositForm({
               isQuoteLoading={isQuoteLoading}
             />
           </Box>
-          <AmountMessage statusError={statusError} depositAmount={depositAmount} />
+          <AmountMessage
+            statusError={statusError}
+            depositAmount={depositAmount}
+            canLearnMore={canLearnMore}
+            openDetails={openDetails}
+          />
         </Box>
 
         <PerpsAccountSelector
@@ -188,6 +257,12 @@ export function PerpsDepositView(viewModel: Readonly<PerpsDepositViewModel>) {
   return (
     <SafeAreaView edges={["bottom"]} style={styles.root}>
       <DepositForm {...viewModel} />
+      <DepositDetailsSheet
+        isDetailsOpen={viewModel.isDetailsOpen}
+        details={viewModel.details}
+        closeDetails={viewModel.closeDetails}
+        buyFromDetails={viewModel.buyFromDetails}
+      />
 
       {isSignOpen && reviewParams ? (
         <PerpsDepositSign
@@ -196,7 +271,7 @@ export function PerpsDepositView(viewModel: Readonly<PerpsDepositViewModel>) {
           onSelectDevice={selectSigningDevice}
           onDone={endSigning}
           onRefused={returnToReview}
-          onNotEnoughBalance={returnToForm}
+          onReturnToForm={returnToForm}
         />
       ) : null}
 

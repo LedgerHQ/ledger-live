@@ -9,6 +9,27 @@ import { getAccountBridge } from "../../../bridge";
 import { getAccountIdFromWalletAccountId } from "../../converters";
 import type { NetworkFeeContext } from "./normalizer/networkFeeEstimate";
 
+const BITCOIN_SYNC_REUSE_MS = 30_000;
+
+type AccountBridge = Awaited<ReturnType<typeof getAccountBridge>>;
+
+const recentBitcoinSyncs = new WeakMap<Account, { startedAt: number; synced: Promise<Account> }>();
+
+function syncBitcoinAccount(bridge: AccountBridge, mainAccount: Account): Promise<Account> {
+  const recentSync = recentBitcoinSyncs.get(mainAccount);
+  if (recentSync && Date.now() - recentSync.startedAt < BITCOIN_SYNC_REUSE_MS) {
+    return recentSync.synced;
+  }
+  const synced = firstValueFrom(
+    bridge
+      .sync(mainAccount, { paginationConfig: {} })
+      .pipe(reduce((a: Account, f: (acc: Account) => Account) => f(a), mainAccount)),
+  );
+  recentBitcoinSyncs.set(mainAccount, { startedAt: Date.now(), synced });
+  synced.catch(() => recentBitcoinSyncs.delete(mainAccount));
+  return synced;
+}
+
 export type FetchNetworkFeeContextArgs = {
   accounts: AccountLike[];
   fromAccountId: string;
@@ -43,11 +64,7 @@ export async function fetchNetworkFeeContext(
     // fees because UTXO selection depends on confirmed inputs.
     if (mainAccount.currency.id === "bitcoin") {
       try {
-        mainAccount = await firstValueFrom(
-          bridge
-            .sync(mainAccount, { paginationConfig: {} })
-            .pipe(reduce((a: Account, f: (acc: Account) => Account) => f(a), mainAccount)),
-        );
+        mainAccount = await syncBitcoinAccount(bridge, mainAccount);
       } catch (e) {
         log("swap", "fetchNetworkFeeContext: btc sync failed", e);
       }
