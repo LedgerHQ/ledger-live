@@ -45,7 +45,7 @@ jest.mock("@shared/ui-queued-bottom-sheet", () => ({
   QueuedBottomSheet: QueuedBottomSheetMock,
 }));
 
-function renderSyncOffer(showSuccess = false) {
+function renderSyncOffer(phase: "offer" | "synchronizing" | "success" = "offer") {
   const onActivate = jest.fn();
   const onSkip = jest.fn();
   const onLearnMore = jest.fn();
@@ -60,7 +60,7 @@ function renderSyncOffer(showSuccess = false) {
         onLearnMore={onLearnMore}
         onQuit={onQuit}
         onContinue={onContinue}
-        showSuccess={showSuccess}
+        phase={phase}
       />,
     ),
     onActivate,
@@ -131,8 +131,22 @@ describe("SyncOfferView", () => {
     expect(onQuit).not.toHaveBeenCalled();
   });
 
+  it("should leave from the synchronizing layout", async () => {
+    const { user, onQuit, onContinue, onActivate } = renderSyncOffer("synchronizing");
+
+    expect(screen.getByText("Synchronizing...")).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Continue" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Activate" })).toBeNull();
+
+    await user.press(screen.getByRole("button", { name: "Close" }));
+
+    expect(onQuit).toHaveBeenCalledTimes(1);
+    expect(onContinue).not.toHaveBeenCalled();
+    expect(onActivate).not.toHaveBeenCalled();
+  });
+
   it("should continue or leave from the success layout", async () => {
-    const { user, onContinue, onQuit, onActivate, onSkip } = renderSyncOffer(true);
+    const { user, onContinue, onQuit, onActivate, onSkip } = renderSyncOffer("success");
 
     expect(screen.getByText("Sync complete")).toBeVisible();
     expect(screen.getByRole("button", { name: "Close" })).toBeVisible();

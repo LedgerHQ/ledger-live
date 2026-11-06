@@ -9,7 +9,9 @@ import { syncOfferTestIds } from "LLM/features/DeviceOnboarding/testIds";
 import type { SyncOfferViewProps } from "./useSyncOfferScreenViewModel";
 import darkCloudSyncAnimation from "./animations/dark/cloud-sync.lottie";
 import lightCloudSyncAnimation from "./animations/light/cloud-sync.lottie";
+import darkLoadingAnimation from "../Checks/animations/dark/loading.lottie";
 import darkSuccessAnimation from "../Checks/animations/dark/success.lottie";
+import lightLoadingAnimation from "../Checks/animations/light/loading.lottie";
 import lightSuccessAnimation from "../Checks/animations/light/success.lottie";
 
 const illustrationHeight = 200;
@@ -22,6 +24,10 @@ const successSources = {
   light: resolveLottieSource(lightSuccessAnimation),
   dark: resolveLottieSource(darkSuccessAnimation),
 };
+const loadingSources = {
+  light: resolveLottieSource(lightLoadingAnimation),
+  dark: resolveLottieSource(darkLoadingAnimation),
+};
 
 function SyncOfferSuccess({
   title,
@@ -29,7 +35,7 @@ function SyncOfferSuccess({
   closeLabel,
   onContinue,
   onQuit,
-}: Extract<SyncOfferViewProps, { showSuccess: true }>) {
+}: Extract<SyncOfferViewProps, { phase: "success" }>) {
   const { colorScheme } = useTheme();
   const { bottom: bottomInset } = useSafeAreaInsets();
   const theme = colorScheme === "dark" ? "dark" : "light";
@@ -74,6 +80,43 @@ function SyncOfferSuccess({
   );
 }
 
+function SyncOfferSynchronizing({
+  title,
+  closeLabel,
+  onQuit,
+}: Extract<SyncOfferViewProps, { phase: "synchronizing" }>) {
+  const { colorScheme } = useTheme();
+  const theme = colorScheme === "dark" ? "dark" : "light";
+
+  return (
+    <Box testID={syncOfferTestIds.screen} lx={{ flex: 1, backgroundColor: "canvas" }}>
+      <Box lx={{ flex: 1, gap: "s24" }}>
+        <DeviceOnboardingCloseBar
+          label={closeLabel}
+          testID={syncOfferTestIds.quit}
+          onPress={onQuit}
+        />
+        <Box
+          lx={{ alignItems: "center", justifyContent: "center", minHeight: "s72", flexShrink: 1 }}
+          style={{ height: illustrationHeight }}
+        >
+          <Lottie
+            key={theme}
+            source={loadingSources[theme]}
+            loop
+            style={{ width: illustrationSize, height: illustrationSize }}
+          />
+        </Box>
+        <Box lx={{ flexGrow: 1, gap: "s8", paddingHorizontal: "s16", paddingBottom: "s16" }}>
+          <Text typography="heading3SemiBold" lx={{ color: "base", textAlign: "center" }}>
+            {title}
+          </Text>
+        </Box>
+      </Box>
+    </Box>
+  );
+}
+
 function SyncOfferPrompt({
   title,
   description,
@@ -86,7 +129,7 @@ function SyncOfferPrompt({
   onLearnMore,
   onQuit,
   skipDrawer,
-}: Extract<SyncOfferViewProps, { showSuccess: false }>) {
+}: Extract<SyncOfferViewProps, { phase: "offer" }>) {
   const { colorScheme } = useTheme();
   const { bottom: bottomInset } = useSafeAreaInsets();
   const theme = colorScheme === "dark" ? "dark" : "light";
@@ -158,6 +201,7 @@ function SyncOfferPrompt({
 }
 
 export function SyncOfferView(props: SyncOfferViewProps) {
-  if (props.showSuccess) return <SyncOfferSuccess {...props} />;
+  if (props.phase === "success") return <SyncOfferSuccess {...props} />;
+  if (props.phase === "synchronizing") return <SyncOfferSynchronizing {...props} />;
   return <SyncOfferPrompt {...props} />;
 }

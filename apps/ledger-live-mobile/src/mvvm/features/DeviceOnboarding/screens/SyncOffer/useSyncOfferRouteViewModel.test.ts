@@ -3,7 +3,13 @@ import { act, renderHook } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { NavigatorName, ScreenName } from "~/const";
 import { OnboardingType, type State } from "~/reducers/types";
-import { useSyncOfferRouteViewModel } from "./useSyncOfferRouteViewModel";
+import { syncOfferSettleDelay, useSyncOfferRouteViewModel } from "./useSyncOfferRouteViewModel";
+
+const mockWalletSyncState = { visualPending: false };
+
+jest.mock("LLM/features/WalletSync/components/WalletSyncContext", () => ({
+  useWalletSyncUserState: () => mockWalletSyncState,
+}));
 
 const device = {
   deviceId: "device-id",
@@ -70,8 +76,14 @@ function renderOffer(hasTrustchain: boolean, language?: string) {
 
 describe("useSyncOfferRouteViewModel", () => {
   beforeEach(() => {
+    jest.useFakeTimers();
     jest.clearAllMocks();
     listeners.clear();
+    mockWalletSyncState.visualPending = false;
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   it("should hand over to Ledger Sync without completing", () => {
@@ -83,32 +95,74 @@ describe("useSyncOfferRouteViewModel", () => {
       screen: ScreenName.WalletSyncActivationProcess,
       params: { device, seededOffer: true },
     });
-    expect(result.current.showSuccess).toBe(false);
+    expect(result.current.phase).toBe("offer");
     expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
     expect(store.getState().settings.onboardingType).toBe(OnboardingType.setupNew);
     expect(reset).not.toHaveBeenCalled();
     expect(mockNotifyFlowCompleted).not.toHaveBeenCalled();
   });
 
-  it("should show success without completing when the trustchain lands after the handover", () => {
+  it("should show synchronizing until the first sync round settles", () => {
     const { result, store } = renderOffer(true);
 
-    expect(result.current.showSuccess).toBe(false);
+    expect(result.current.phase).toBe("offer");
     expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
 
     act(() => result.current.onActivate());
 
-    expect(result.current.showSuccess).toBe(true);
+    expect(result.current.phase).toBe("synchronizing");
     expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
     expect(store.getState().settings.readOnlyModeEnabled).toBe(true);
     expect(reset).not.toHaveBeenCalled();
     expect(mockNotifyFlowCompleted).not.toHaveBeenCalled();
+
+    act(() => {
+      jest.advanceTimersByTime(syncOfferSettleDelay(1000));
+    });
+
+    expect(result.current.phase).toBe("success");
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
+  });
+
+  it("should keep synchronizing while accounts are still syncing", () => {
+    mockWalletSyncState.visualPending = true;
+    const { result, rerender } = renderOffer(true);
+
+    act(() => result.current.onActivate());
+    act(() => {
+      jest.advanceTimersByTime(syncOfferSettleDelay(1000));
+    });
+
+    expect(result.current.phase).toBe("synchronizing");
+
+    mockWalletSyncState.visualPending = false;
+    rerender(undefined as never);
+
+    expect(result.current.phase).toBe("success");
+  });
+
+  it("should keep the success screen when a later sync round starts", () => {
+    const { result, rerender } = renderOffer(true);
+
+    act(() => result.current.onActivate());
+    act(() => {
+      jest.advanceTimersByTime(syncOfferSettleDelay(1000));
+    });
+    expect(result.current.phase).toBe("success");
+
+    mockWalletSyncState.visualPending = true;
+    rerender(undefined as never);
+
+    expect(result.current.phase).toBe("success");
   });
 
   it("should complete and open the portfolio from the success screen after activation", () => {
     const { result, store } = renderOffer(true);
 
     act(() => result.current.onActivate());
+    act(() => {
+      jest.advanceTimersByTime(syncOfferSettleDelay(1000));
+    });
     act(() => result.current.onContinue());
 
     expect(store.getState().settings.hasCompletedOnboarding).toBe(true);
@@ -123,7 +177,10 @@ describe("useSyncOfferRouteViewModel", () => {
     const { result, store } = renderOffer(true);
 
     act(() => result.current.onActivate());
-    expect(result.current.showSuccess).toBe(true);
+    act(() => {
+      jest.advanceTimersByTime(syncOfferSettleDelay(1000));
+    });
+    expect(result.current.phase).toBe("success");
 
     act(() => result.current.onQuit());
 
@@ -161,7 +218,7 @@ describe("useSyncOfferRouteViewModel", () => {
 
     act(() => result.current.onSkip());
 
-    expect(result.current.showSuccess).toBe(false);
+    expect(result.current.phase).toBe("offer");
     expect(store.getState().settings.hasCompletedOnboarding).toBe(true);
     expect(store.getState().settings.readOnlyModeEnabled).toBe(false);
     expect(reset).toHaveBeenCalledTimes(1);

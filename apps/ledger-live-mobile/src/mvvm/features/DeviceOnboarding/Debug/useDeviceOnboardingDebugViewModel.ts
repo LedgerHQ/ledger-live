@@ -68,7 +68,7 @@ export function useDeviceOnboardingDebugViewModel() {
       onLearnMore: () => undefined,
       onQuit: closePreview,
       onContinue: () => undefined,
-      showSuccess: false,
+      phase: "offer" as const,
     },
   };
 }
