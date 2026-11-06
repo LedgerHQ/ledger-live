@@ -18,6 +18,32 @@ import { Unit } from "@domain/entity-currency-unit";
 
 type NominationDrawerData = React.ComponentProps<typeof NominationDrawer>["data"];
 
+function NominationAddress({
+  address,
+  onOpenExplorer,
+}: {
+  address: string;
+  onOpenExplorer: (address: string) => void;
+}) {
+  const { colors } = useTheme();
+  return (
+    <Touchable onPress={() => onOpenExplorer(address)} event="NominationOpenExplorer">
+      <LText
+        numberOfLines={1}
+        semiBold
+        ellipsizeMode="middle"
+        style={[styles.valueText]}
+        color="live"
+      >
+        {address}
+        <View style={styles.iconContainer}>
+          <ExternalLink size={14} color={colors.live} />
+        </View>
+      </LText>
+    </Touchable>
+  );
+}
+
 type Props = {
   t: TFunction;
   account: Account;
@@ -41,7 +67,6 @@ export function getDrawerInfo({
   const formattedCommission = validator?.commission
     ? `${validator?.commission.multipliedBy(100).toFixed(2)} %`
     : "-";
-  // @ts-expect-error return type is not matching what we return
   return [
     ...(validator?.identity
       ? [
@@ -57,28 +82,7 @@ export function getDrawerInfo({
       : []),
     {
       label: t("delegation.validatorAddress"),
-      Component: () => {
-        const { colors } = useTheme();
-        return (
-          <Touchable
-            onPress={() => onOpenExplorer(nomination.address)}
-            event="NominationOpenExplorer"
-          >
-            <LText
-              numberOfLines={1}
-              semiBold
-              ellipsizeMode="middle"
-              style={[styles.valueText]}
-              color="live"
-            >
-              {nomination.address}
-              <View style={styles.iconContainer}>
-                <ExternalLink size={14} color={colors.live} />
-              </View>
-            </LText>
-          </Touchable>
-        );
-      },
+      Component: <NominationAddress address={nomination.address} onOpenExplorer={onOpenExplorer} />,
     },
     {
       label: t("polkadot.nomination.status"),
