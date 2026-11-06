@@ -3,7 +3,7 @@ import type {
   StakingTransactionIntent,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getActionCosts, getGasPrice, getStakingPositions } from "../../network";
 import { getCurrentNearPreloadData } from "../../preload-data";
 import { estimateFees } from "../estimateFees";

@@ -13,7 +13,7 @@ import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useState } from "react";
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 import { Trans, withTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import { compose } from "redux";

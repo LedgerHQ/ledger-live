@@ -2,7 +2,7 @@ import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHe
 
 import { AccountBridge } from "@ledgerhq/types-live";
 import { types as TyphonTypes, address as TyphonAddress } from "@stricahq/typhonjs";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { fetchNetworkInfo } from "./api/getNetworkInfo";
 import { buildTransaction } from "./buildTransaction";
 import { CardanoAccount, Transaction } from "./types";

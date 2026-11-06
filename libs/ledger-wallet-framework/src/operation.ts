@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
 import { getCurrenciesResolver } from "./currencies/resolver";
 import type { Account, AccountLike, NFTStandard, Operation } from "@ledgerhq/types-live";

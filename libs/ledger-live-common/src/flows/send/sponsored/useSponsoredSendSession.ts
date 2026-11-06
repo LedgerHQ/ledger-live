@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { getMainAccount } from "../../../account/index";

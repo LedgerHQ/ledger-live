@@ -1,5 +1,5 @@
 import { TEST_CONFIG, TEST_LOGGER } from "../fixtures/coinConfig";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { TransactionInfo } from "@ledgerhq/wallet-btc/types";
 import { buildAccountTx, signAccountTx } from "../../buildAndSign";
 import type { BitcoinSigner } from "../../signer";

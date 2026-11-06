@@ -6,7 +6,7 @@ import { getChainAPI } from "@ledgerhq/coin-solana/network/index";
 import { getMaybeTokenMint } from "@ledgerhq/coin-solana/network/chain/web3";
 import { chainConfigFrom } from "@ledgerhq/coin-solana/utils";
 import { HEADER_X_LEDGER_CLIENT_VERSION } from "@shared/api-services";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { z } from "zod";
 import { toV0, type AccountDescriptorV1 } from "../shared/accountDescriptor";
 import { calApiConfig } from "../shared/cal-config";

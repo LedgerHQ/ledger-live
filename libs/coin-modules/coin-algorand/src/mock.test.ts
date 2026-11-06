@@ -1,5 +1,5 @@
 import type { Account } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import Prando from "prando";
 import mock from "./mock";
 import type { AlgorandAccount } from "./types";

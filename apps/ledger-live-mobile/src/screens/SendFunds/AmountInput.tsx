@@ -2,7 +2,7 @@ import { track } from "@shared/analytics";
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { useSelector } from "~/context/hooks";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useSendAmount } from "@features/platform-market-countervalues";

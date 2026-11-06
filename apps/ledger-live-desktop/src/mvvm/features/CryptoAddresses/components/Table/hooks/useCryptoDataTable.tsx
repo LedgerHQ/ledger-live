@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { useLumenDataTable } from "@ledgerhq/lumen-ui-react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";

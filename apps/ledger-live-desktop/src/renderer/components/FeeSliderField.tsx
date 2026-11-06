@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import styled from "styled-components";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Trans } from "react-i18next";
 import { Unit } from "@domain/entity-currency-unit";
 import { Range, reverseRangeIndex, projectRangeIndex } from "@ledgerhq/live-common/range";

@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { buildEstimateMaxSpendable } from "./estimateMaxSpendable";
 import {
   LEGACY_MARGINAL_FEE,

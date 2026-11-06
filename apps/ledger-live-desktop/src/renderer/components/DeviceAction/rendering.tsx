@@ -6,7 +6,7 @@ import { useDispatch } from "LLD/hooks/redux";
 import { Trans, useTranslation } from "react-i18next";
 import { TFunction } from "i18next";
 import styled from "styled-components";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { TokenCurrency } from "@domain/entity-currency-token";

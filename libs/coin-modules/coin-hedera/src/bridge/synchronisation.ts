@@ -9,7 +9,7 @@ import {
   getDerivationScheme,
   runDerivationScheme,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { HARDCODED_BLOCK_HEIGHT } from "../constants";
 import { listOperationsV2 } from "../logic";

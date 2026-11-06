@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { OperationType } from "@ledgerhq/types-live";
 import type { DecryptedOutput, ShieldedTransaction, SpendableNote } from "../network/types";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";

@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { computeFees } from "./logic/fees";
 import { getGasPrice } from "./network/node";
 import { getCoinConfig } from "./config";

@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Subject } from "rxjs";
 import {
   FALLBACK_GAS_PRICE,

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import { cryptoAssetsApi } from "@domain/api-currency-token";
 import { CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";

@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import getDeviceTransactionConfig from "./deviceTransactionConfig";
 import type { TransactionStatus } from "../types/bridge";
 

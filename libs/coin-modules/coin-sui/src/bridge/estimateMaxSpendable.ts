@@ -1,6 +1,6 @@
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { AccountBridge } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { ONE_SUI } from "../constants";
 import type { SuiAccount, Transaction } from "../types";
 import createTransaction from "./createTransaction";

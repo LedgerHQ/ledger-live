@@ -10,7 +10,7 @@ import {
   Transaction as MultiversXSdkTransaction,
   TransactionPayload,
 } from "@multiversx/sdk-core";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import {
   CHAIN_ID,
   GAS_PER_DATA_BYTE,

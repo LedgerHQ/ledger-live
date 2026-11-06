@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { firstValueFrom } from "rxjs";
 import { concatMap, filter, map } from "rxjs/operators";
 import type { TokenCurrency } from "@domain/entity-currency-token";

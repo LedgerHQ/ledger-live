@@ -1,6 +1,6 @@
 import type { CustomFeeInputDescriptor, FeeDescriptor } from "../../../bridge/descriptor/types";
 import type { Transaction as CeloTransaction } from "../types";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { GWEI_DIVISOR } from "./constants";
 import { celoFeeAssets } from "./feeAssets";
 

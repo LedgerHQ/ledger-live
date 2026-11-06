@@ -7,7 +7,7 @@ import {
   RecipientRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { decodeTokenAssetId, decodeTokenCurrencyId } from "../buildSubAccounts";
 import { buildTransaction } from "../buildTransaction";
 import { CARDANO_MAX_SUPPLY } from "../constants";

@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { BitcoinOutput } from "../../types/bridge";
 import type { ZcashPrivateInfo } from "../../network/types";
 

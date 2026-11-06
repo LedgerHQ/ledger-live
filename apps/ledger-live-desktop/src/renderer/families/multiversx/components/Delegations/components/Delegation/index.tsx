@@ -1,5 +1,5 @@
 import React, { useMemo, Fragment, useCallback, ReactNode } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Trans } from "react-i18next";
 import { useDispatch } from "LLD/hooks/redux";
 import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";

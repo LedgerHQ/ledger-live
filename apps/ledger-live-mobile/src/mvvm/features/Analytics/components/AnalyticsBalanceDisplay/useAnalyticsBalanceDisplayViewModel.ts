@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { type FormattedValue } from "@ledgerhq/lumen-ui-rnative";
 import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { useSelector } from "~/context/hooks";
 import { useLocale } from "~/context/Locale";
 import { discreetModeSelector } from "~/reducers/settings";

@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Account as WalletAccount, TransactionInfo } from "@ledgerhq/wallet-btc/index";
 import type { Transaction, ZcashAccount } from "../types/bridge";
 import { TEST_CONFIG, testContext } from "../test/coinConfig";

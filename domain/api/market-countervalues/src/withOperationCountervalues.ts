@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { AccountDataSource } from "@domain/api-account-data";
 import { AmountStrSchema } from "@domain/entity-account-balance";
 import type { AccountOperationsPage } from "@domain/entity-account-operation";

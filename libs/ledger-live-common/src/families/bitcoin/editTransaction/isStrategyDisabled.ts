@@ -1,4 +1,4 @@
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import { getMinFees } from "./getMinEditTransactionFees";
 

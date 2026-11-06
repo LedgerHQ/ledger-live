@@ -4,7 +4,7 @@ import { forbidRemoteRequests } from "@ledgerhq/coin-tester/localOnly";
 import { startSandbox } from "@ledgerhq/coin-tester/sandbox";
 import type { Sandbox } from "@ledgerhq/coin-tester/sandbox";
 import { Account } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { makeAccount } from "../fixtures";
 import { atlasOf, swapTokens } from "../sandboxEvm";

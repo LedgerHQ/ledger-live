@@ -1,5 +1,5 @@
 import React from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { render, screen } from "@tests/test-renderer";
 import type { AleoOperation } from "@ledgerhq/live-common/families/aleo/types";
 import { ALEO_ACCOUNT_1 } from "../__mocks__/account.mock";

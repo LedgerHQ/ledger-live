@@ -4,7 +4,7 @@ import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-co
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import type { BitcoinCoinConfig } from "@ledgerhq/coin-bitcoin/config";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { mineToWalletAddress } from "../helpers";
 import { killSandbox, spawnSandbox } from "../sandbox";
 import { waitForExplorerSync } from "../utils";

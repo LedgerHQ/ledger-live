@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { useTranslation } from "react-i18next";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {

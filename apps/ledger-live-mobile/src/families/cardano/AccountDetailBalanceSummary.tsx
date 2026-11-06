@@ -1,5 +1,5 @@
 import React from "react";
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { CardanoAccount } from "@ledgerhq/live-common/families/cardano/types";
 import type { AccountLike } from "@ledgerhq/types-live";

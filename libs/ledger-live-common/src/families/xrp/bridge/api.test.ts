@@ -3,7 +3,7 @@ import type { TokenCurrency } from "@domain/entity-currency-token";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { getCoinModuleApi } from "../../../bridge/generic-coin-framework/api";
 import { getXrpEnabledTokenStandards } from "../config";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Account, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import { buildSubAccounts } from "../../../bridge/generic-coin-framework/buildSubAccounts";
 import { buildOptimisticOperation } from "../../../bridge/generic-coin-framework/utils";

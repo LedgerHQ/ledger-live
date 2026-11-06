@@ -1,5 +1,5 @@
 import type { OperationExtra } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { fromOperationExtraRaw, toOperationExtraRaw } from "./serialization";
 
 // The amounts must come back as `BigNumber`s: the app renderers hand them straight to

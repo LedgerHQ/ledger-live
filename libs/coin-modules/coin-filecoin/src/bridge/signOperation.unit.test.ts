@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Account } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";

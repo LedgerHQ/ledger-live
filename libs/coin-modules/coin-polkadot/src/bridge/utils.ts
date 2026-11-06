@@ -1,5 +1,5 @@
 import type { Account, OperationType } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { PolkadotCoinConfig } from "../config";
 import { DEFAULT_FEES_SAFETY_BUFFER } from "../constants";
 import type { PolkadotAccount, PolkadotStakingProgress, Transaction } from "../types";

@@ -1,6 +1,6 @@
 import React from "react";
 import { act, fireEvent, render, screen } from "@tests/test-renderer";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { FeePaymentSheet } from "..";
 
 type SheetProps = Readonly<{ children: React.ReactNode; onClose?: () => void }>;

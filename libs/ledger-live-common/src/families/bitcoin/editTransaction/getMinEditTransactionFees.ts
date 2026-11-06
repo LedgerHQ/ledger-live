@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 
 import type { Account } from "@ledgerhq/types-live";
 import { DEFAULT_RBF_MIN_BUMP_RATIO } from "@ledgerhq/coin-bitcoin/constants";

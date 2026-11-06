@@ -1,5 +1,5 @@
 import { log } from "@ledgerhq/logs";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Observable, Subject } from "rxjs";
 import { PRELOAD_MAX_AGE } from "../logic";
 import { getValidatorGroups } from "../network";

@@ -1,6 +1,6 @@
 // TODO: update path by moving mockHelpers to ledger-wallet-framework
 
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import {
   NotEnoughBalance,
   RecipientRequired,

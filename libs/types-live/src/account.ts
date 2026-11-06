@@ -1,4 +1,4 @@
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 import type { CryptoCurrency, CryptoOrTokenCurrency, TokenCurrency } from "./currency";
 import type { OperationRaw, Operation } from "./operation";
 import type { DerivationMode } from "./derivation";

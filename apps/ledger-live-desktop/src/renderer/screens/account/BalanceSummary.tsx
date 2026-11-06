@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import { useBalanceHistoryWithCountervalue, usePortfolio } from "~/renderer/actions/portfolio";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { formatShort } from "@ledgerhq/live-common/currencies/index";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useTimeRange } from "~/renderer/actions/settings";

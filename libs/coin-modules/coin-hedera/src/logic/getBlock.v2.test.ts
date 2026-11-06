@@ -1,5 +1,5 @@
 import type { BlockInfo } from "@ledgerhq/coin-module-framework/api/types";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { HEDERA_TRANSACTION_NAMES, FINALITY_MS, STAKING_REWARD_ACCOUNT_ID } from "../constants";
 import { apiClient } from "../network/api";
 import { hgraphClient } from "../network/hgraph";

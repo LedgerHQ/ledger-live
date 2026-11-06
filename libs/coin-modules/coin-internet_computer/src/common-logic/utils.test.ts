@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { MAX_MEMO_VALUE } from "../consts";
 import { getNeuronStakeSubAccountIdentifier } from "../logic/buildNeuronTransaction";
 import { derivePrincipalFromPubkey } from "../logic/crypto";

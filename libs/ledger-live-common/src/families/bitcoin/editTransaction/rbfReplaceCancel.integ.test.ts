@@ -11,7 +11,7 @@
  * - Receiver: canceled (replaced) tx removed; unconfirmed can stay until 2 hours.
  * - Single UTXO and multiple UTXO account fixtures.
  */
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { walletBtcCurrencyById } from "@ledgerhq/coin-bitcoin/walletBtcCurrency";

@@ -1,5 +1,5 @@
 import type { CryptoOrTokenCurrency } from "./currency";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 
 /**
  *

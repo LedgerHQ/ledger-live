@@ -7,7 +7,7 @@ jest.mock("@icp-sdk/core/agent", () => ({
 import { Cbor, requestIdOf } from "@icp-sdk/core/agent";
 import { Principal } from "@icp-sdk/core/principal";
 import { InvalidTransactionError } from "@ledgerhq/coin-module-framework/errors";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import {
   MAINNET_GOVERNANCE_CANISTER_ID,
   MAX_FOLLOWEES_PER_TOPIC,

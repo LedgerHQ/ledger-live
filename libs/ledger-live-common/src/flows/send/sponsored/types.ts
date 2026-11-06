@@ -1,4 +1,4 @@
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 import type { Currency } from "@domain/entity-currency";
 import type {
   EnergyRentOrder,

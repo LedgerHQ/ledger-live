@@ -4,7 +4,7 @@ import {
   getDefaultExplorerView,
   CryptoCurrency,
 } from "@domain/entity-currency-crypto";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box";

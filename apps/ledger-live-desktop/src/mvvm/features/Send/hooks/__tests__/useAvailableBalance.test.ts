@@ -4,7 +4,7 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useCalculate } from "@features/platform-market-countervalues";
 import type { Unit } from "@domain/entity-currency-unit";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { renderHook } from "tests/testSetup";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { INITIAL_STATE as INITIAL_STATE_SETTINGS } from "~/renderer/reducers/settings";

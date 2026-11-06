@@ -8,7 +8,7 @@ import {
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/ledger-wallet-framework/serialization";
 import type { Account } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { KaspaAccount, Transaction, TransactionRaw, TransactionStatus } from "./types";
 
 export const formatTransactionStatus = (
