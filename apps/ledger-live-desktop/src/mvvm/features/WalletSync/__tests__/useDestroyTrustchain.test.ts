@@ -33,16 +33,36 @@ describe("useDestroyTrustchain", () => {
     mockTrustchainSdk.destroyApplication.mockResolvedValue(undefined);
   });
 
-  it("should retry the deletion while the watch loop holds the Cloud Sync SDK", async () => {
-    mockCloudSyncSdk.destroy
-      .mockRejectedValueOnce(new CloudSyncSDKLocked("push"))
-      .mockResolvedValue(undefined);
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it("should retry the deletion until the watch loop releases the Cloud Sync SDK", async () => {
+    jest.useFakeTimers();
+    mockCloudSyncSdk.destroy.mockRejectedValue(new CloudSyncSDKLocked("pull"));
     const { result } = renderHook(() => useDestroyTrustchain(), { initialState });
 
-    await result.current.deleteMutation.mutateAsync();
+    const deletion = result.current.deleteMutation.mutateAsync();
+    await jest.advanceTimersByTimeAsync(20_000);
+    mockCloudSyncSdk.destroy.mockResolvedValue(undefined);
+    await jest.advanceTimersByTimeAsync(500);
+    await deletion;
 
-    expect(mockCloudSyncSdk.destroy).toHaveBeenCalledTimes(2);
+    expect(mockCloudSyncSdk.destroy).toHaveBeenCalledTimes(42);
     expect(mockTrustchainSdk.destroyApplication).toHaveBeenCalledTimes(1);
+  });
+
+  it("should give up once the Cloud Sync SDK stays locked for 30 seconds", async () => {
+    jest.useFakeTimers();
+    mockCloudSyncSdk.destroy.mockRejectedValue(new CloudSyncSDKLocked("pull"));
+    const { result } = renderHook(() => useDestroyTrustchain(), { initialState });
+
+    const deletion = result.current.deleteMutation.mutateAsync().catch((error: unknown) => error);
+    await jest.advanceTimersByTimeAsync(30_000);
+
+    expect(await deletion).toBeInstanceOf(CloudSyncSDKLocked);
+    expect(mockCloudSyncSdk.destroy).toHaveBeenCalledTimes(61);
+    expect(mockTrustchainSdk.destroyApplication).not.toHaveBeenCalled();
   });
 
   it("should not retry any other failure", async () => {

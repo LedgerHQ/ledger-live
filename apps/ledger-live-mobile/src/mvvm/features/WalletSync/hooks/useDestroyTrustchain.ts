@@ -14,6 +14,11 @@ import { walletSyncUpdate } from "@domain/entity-wallet-sync";
 import { useCurrentStep } from "./useCurrentStep";
 import { Steps } from "../types/Activation";
 
+// The watch loop shares the Cloud Sync SDK, whose lock refuses a destroy while it pulls or pushes.
+// A pull keeps it through its account sync, so the deletion retries for up to 30 seconds.
+const LOCKED_RETRY_DELAY_MS = 500;
+const LOCKED_RETRIES = 60;
+
 export function useDestroyTrustchain() {
   const dispatch = useDispatch();
   const sdk = useTrustchainSdk();
@@ -30,8 +35,9 @@ export function useDestroyTrustchain() {
       await sdk.destroyApplication(trustchain, memberCredentials);
     },
     mutationKey: [QueryKey.destroyTrustchain, trustchain],
-    // The watch loop shares the Cloud Sync SDK, whose lock refuses a destroy while it pushes or pulls.
-    retry: (failureCount, error) => failureCount < 3 && error.name === "CloudSyncSDKLocked",
+    retry: (failureCount, error) =>
+      failureCount < LOCKED_RETRIES && error.name === "CloudSyncSDKLocked",
+    retryDelay: LOCKED_RETRY_DELAY_MS,
     onSuccess: () => {
       dispatch(resetTrustchainStore());
       track(AnalyticsEvents.LedgerSyncDeactivated);
