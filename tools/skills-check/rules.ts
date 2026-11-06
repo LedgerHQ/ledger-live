@@ -2,7 +2,7 @@ import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { basename, dirname, join, posix, relative, sep } from "node:path";
 
-export const LAYERS = ["support", "shared", "domain", "features", "devtools"];
+export const LAYERS = ["support", "shared", "domain", "features", "devtools"] as const;
 const LAYERS_WITH_CATEGORY_READMES = ["domain", "features"];
 const CURSOR_KEYS = new Set(["globs", "alwaysApply", "model", "is_background"]);
 const IGNORED_DIRS = new Set([".git", "node_modules"]);
@@ -16,9 +16,9 @@ const URL_SCHEME = /^[a-z][a-z\d+.-]*:/i;
 const PLAIN_PATH = /^[\w.@+-]+(?:\/[\w.@+-]+)*\/?$/;
 const MIN_WHAT_WORDS = 3;
 
-export const DESCRIPTION_TRIGGER_CLAUSES = ["Use when", "Read when", "Use before", "Read before"];
+export const DESCRIPTION_TRIGGER_CLAUSES = ["Use when", "Read when", "Use before", "Read before"] as const;
 
-const quotedClauses = clauses =>
+const quotedClauses = (clauses: readonly string[]): string =>
   clauses.length === 1
     ? `"${clauses[0]}"`
     : `${clauses
@@ -26,7 +26,7 @@ const quotedClauses = clauses =>
         .map(c => `"${c}"`)
         .join(", ")} or "${clauses.at(-1)}"`;
 
-export const missingDescriptionClauseMessage = () =>
+export const missingDescriptionClauseMessage = (): string =>
   `has no ${quotedClauses(DESCRIPTION_TRIGGER_CLAUSES)} clause`;
 
 const clausePattern = DESCRIPTION_TRIGGER_CLAUSES.map(phrase =>
@@ -43,11 +43,27 @@ export const CHECK_CODES = {
   "dead-path": "backticked repo paths under a top-level folder exist",
   waiver: "waivers.json entry is complete",
   "stale-waiver": "waivers.json entry still matches a finding",
+} as const;
+
+export type FindingCode = keyof typeof CHECK_CODES;
+
+export type Finding = {
+  file: string;
+  line: number;
+  code: FindingCode | "waiver" | "stale-waiver";
+  message: string;
+  path?: string;
 };
 
-const toPosix = path => path.split(sep).join(posix.sep);
+export type Waiver = {
+  file?: string;
+  path?: string;
+  reason?: string;
+};
 
-const walkMarkdown = (dir, out) => {
+const toPosix = (path: string): string => path.split(sep).join(posix.sep);
+
+const walkMarkdown = (dir: string, out: string[]): string[] => {
   if (!existsSync(dir)) return out;
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     const path = join(dir, entry.name);
@@ -57,14 +73,14 @@ const walkMarkdown = (dir, out) => {
   return out;
 };
 
-const subdirectories = dir =>
+const subdirectories = (dir: string): string[] =>
   existsSync(dir)
     ? readdirSync(dir, { withFileTypes: true })
         .filter(entry => entry.isDirectory())
         .map(entry => join(dir, entry.name))
     : [];
 
-export const listFiles = root => {
+export const listFiles = (root: string): string[] => {
   const files = [
     ...walkMarkdown(join(root, ".agents"), []),
     ...walkMarkdown(join(root, "docs"), []),
@@ -81,33 +97,40 @@ export const listFiles = root => {
     .sort();
 };
 
-const unquote = value => value.replace(/^(["'])([\s\S]*)\1$/, "$2");
+const unquote = (value: string): string => value.replace(/^(["'])([\s\S]*)\1$/, "$2");
 
-const isFullLineComment = line => /^\s*#/.test(line);
+const isFullLineComment = (line: string): boolean => /^\s*#/.test(line);
 
 /** Strip trailing `# comment` from an unquoted YAML scalar on one line. */
-const stripUnquotedInlineComment = text => {
+const stripUnquotedInlineComment = (text: string): string => {
   const trimmed = text.trimStart();
   if (trimmed.startsWith('"') || trimmed.startsWith("'")) return text;
   const hash = text.indexOf(" #");
   return hash >= 0 ? text.slice(0, hash).trimEnd() : text;
 };
 
-const scalar = ([head, ...more]) => {
+const scalar = ([head, ...more]: string[]): string => {
   const continuation = more.map(line => line.trim()).filter(Boolean);
   if (/^[|>][-+]?$/.test(head.trim())) return continuation.join(" ");
   return unquote([head.trim(), ...continuation].join(" ").trim());
 };
 
-export const parseFrontmatter = text => {
+export const parseFrontmatter = (
+  text: string,
+): {
+  data: Record<string, string>;
+  keyLines: Map<string, number>;
+  duplicated: boolean;
+  duplicateLine: number;
+} | null => {
   const lines = text.split(/\r?\n/);
   if (lines[0]?.trimEnd() !== "---") return null;
   const end = lines.findIndex((line, i) => i > 0 && line.trimEnd() === "---");
   if (end < 0) return null;
 
-  const raw = new Map();
-  const keyLines = new Map();
-  let key;
+  const raw = new Map<string, string[]>();
+  const keyLines = new Map<string, number>();
+  let key: string | undefined;
   lines.slice(1, end).forEach((line, i) => {
     if (isFullLineComment(line)) return;
     const match = KEY_LINE.exec(line);
@@ -116,7 +139,7 @@ export const parseFrontmatter = text => {
       const value = stripUnquotedInlineComment(match[2] ?? "");
       raw.set(key, [value]);
       keyLines.set(key, i + 2);
-    } else if (key) raw.get(key).push(line);
+    } else if (key) raw.get(key)!.push(line);
   });
 
   const next = lines.findIndex((line, i) => i > end && line.trim() !== "");
@@ -127,7 +150,7 @@ export const parseFrontmatter = text => {
   return { data, keyLines, duplicated, duplicateLine: next + 1 };
 };
 
-export const describeProblem = description => {
+export const describeProblem = (description: string): string | null => {
   const clause = WHEN_CLAUSE.exec(description);
   if (!clause) return missingDescriptionClauseMessage();
   const what = description
@@ -138,7 +161,12 @@ export const describeProblem = description => {
   return null;
 };
 
-const frontmatterKind = file => {
+type FrontmatterKind =
+  | { kind: "skill"; expectedName: string; nameSource: string }
+  | { kind: "agent"; expectedName: string; nameSource: string }
+  | null;
+
+const frontmatterKind = (file: string): FrontmatterKind => {
   const parts = file.split("/");
   if (parts[0] !== ".agents") return null;
   if (parts[1] === "skills" && parts.length === 4 && parts[3] === "SKILL.md")
@@ -148,7 +176,11 @@ const frontmatterKind = file => {
   return null;
 };
 
-const checkFrontmatter = (file, text, report) => {
+const checkFrontmatter = (
+  file: string,
+  text: string,
+  report: (line: number, code: Finding["code"], message: string, path?: string) => void,
+): void => {
   const target = frontmatterKind(file);
   if (!target) return;
   const fm = parseFrontmatter(text);
@@ -159,7 +191,7 @@ const checkFrontmatter = (file, text, report) => {
   if (!name) report(1, "frontmatter", "has no `name`");
   else if (name !== target.expectedName)
     report(
-      fm.keyLines.get("name"),
+      fm.keyLines.get("name") ?? 1,
       "frontmatter",
       `\`name: ${name}\` differs from the ${target.nameSource} \`${target.expectedName}\``,
     );
@@ -168,20 +200,20 @@ const checkFrontmatter = (file, text, report) => {
   for (const key of fm.keyLines.keys())
     if (CURSOR_KEYS.has(key))
       report(
-        fm.keyLines.get(key),
+        fm.keyLines.get(key) ?? 1,
         "cursor-key",
         `\`${key}\` is a Cursor rule key, not a skill or agent key`,
       );
 
   if (target.kind === "skill" && description) {
     const problem = describeProblem(description);
-    if (problem) report(fm.keyLines.get("description"), "description", `description ${problem}`);
+    if (problem) report(fm.keyLines.get("description") ?? 1, "description", `description ${problem}`);
   }
 };
 
-const proseLines = text => {
-  const out = [];
-  let fence = null;
+const proseLines = (text: string): { line: string; number: number }[] => {
+  const out: { line: string; number: number }[] = [];
+  let fence: string | null = null;
   text.split(/\r?\n/).forEach((line, i) => {
     const marker = FENCE.exec(line)?.[1];
     if (fence) {
@@ -192,7 +224,7 @@ const proseLines = text => {
   return out;
 };
 
-const linkTarget = raw => {
+const linkTarget = (raw: string): string | null => {
   if (URL_SCHEME.test(raw) || raw.startsWith("//") || raw.startsWith("#")) return null;
   const path = raw.replace(/[#?].*$/, "");
   if (!path) return null;
@@ -203,7 +235,7 @@ const linkTarget = raw => {
   }
 };
 
-const pathCandidate = (span, topLevel) => {
+const pathCandidate = (span: string, topLevel: Set<string>): string | null => {
   const path = span.trim().replace(/(?::\d+){1,2}$|#L\d+(?:-L\d+)?$/, "");
   if (!PLAIN_PATH.test(path) || !path.includes("/")) return null;
   const segments = path.split("/");
@@ -213,7 +245,7 @@ const pathCandidate = (span, topLevel) => {
 };
 
 // Build outputs are gitignored: absent from a fresh checkout without being drift.
-const gitIgnored = (root, paths) => {
+const gitIgnored = (root: string, paths: string[]): Set<string> => {
   if (paths.length === 0) return new Set();
   try {
     const out = execFileSync("git", ["check-ignore", "--no-index", "--stdin"], {
@@ -223,13 +255,20 @@ const gitIgnored = (root, paths) => {
       stdio: ["pipe", "pipe", "ignore"],
     });
     return new Set(out.split("\n").filter(Boolean));
-  } catch (error) {
-    return new Set(error.status === 1 ? [] : (error.stdout ?? "").split("\n").filter(Boolean));
+  } catch (error: unknown) {
+    const e = error as { status?: number; stdout?: string };
+    return new Set(e.status === 1 ? [] : (e.stdout ?? "").split("\n").filter(Boolean));
   }
 };
 
-const checkReferences = (root, file, text, topLevel, report) => {
-  const missingPaths = [];
+const checkReferences = (
+  root: string,
+  file: string,
+  text: string,
+  topLevel: Set<string>,
+  report: (line: number, code: Finding["code"], message: string, path?: string) => void,
+): void => {
+  const missingPaths: { path: string; number: number }[] = [];
   for (const { line, number } of proseLines(text)) {
     const spans = [...line.matchAll(CODE_SPAN)].map(match => match[2]);
     for (const span of spans) {
@@ -252,27 +291,34 @@ const checkReferences = (root, file, text, topLevel, report) => {
     }
   }
 
-  const ignored = gitIgnored(root, [...new Set(missingPaths.map(({ path }) => path))]);
+  const ignored = gitIgnored(
+    root,
+    [...new Set(missingPaths.map(({ path }) => path))],
+  );
   for (const { path, number } of missingPaths)
     if (!ignored.has(path)) report(number, "dead-path", `\`${path}\` does not exist`, path);
 };
 
-const topLevelFolders = root =>
+const topLevelFolders = (root: string): Set<string> =>
   new Set(
     readdirSync(root, { withFileTypes: true })
       .filter(entry => entry.isDirectory() && !IGNORED_DIRS.has(entry.name))
       .map(entry => entry.name),
   );
 
-const isWaived = (waiver, finding) =>
+const isWaived = (waiver: Waiver, finding: Finding): boolean =>
   (finding.code === "dead-path" || finding.code === "dead-link") &&
   waiver.file === finding.file &&
   waiver.path === finding.path;
 
-const isComplete = waiver => Boolean(waiver.file && waiver.path && waiver.reason?.trim());
+const isComplete = (waiver: Waiver): boolean => Boolean(waiver.file && waiver.path && waiver.reason?.trim());
 
 // A waiver needs a reason, and one that no longer matches is reported so the list cannot rot.
-export const applyWaivers = (findings, waivers, waiversFile) => {
+export const applyWaivers = (
+  findings: Finding[],
+  waivers: Waiver[],
+  waiversFile: string,
+): Finding[] => {
   const valid = waivers.filter(isComplete);
   const kept = findings.filter(finding => !valid.some(waiver => isWaived(waiver, finding)));
   waivers.forEach((waiver, index) => {
@@ -286,7 +332,7 @@ export const applyWaivers = (findings, waivers, waiversFile) => {
       });
     else if (!findings.some(finding => isWaived(waiver, finding)))
       kept.push({
-        file: waiver.file,
+        file: waiver.file!,
         line: 1,
         code: "stale-waiver",
         message: `\`${waiver.path}\` is waived by ${entry} but no longer reported here`,
@@ -296,15 +342,20 @@ export const applyWaivers = (findings, waivers, waiversFile) => {
 };
 
 export const checkRepo = (
-  root,
-  { files = listFiles(root), waivers = [], waiversFile = "waivers.json" } = {},
-) => {
+  root: string,
+  {
+    files = listFiles(root),
+    waivers = [],
+    waiversFile = "waivers.json",
+  }: { files?: string[]; waivers?: Waiver[]; waiversFile?: string } = {},
+): Finding[] => {
   const topLevel = topLevelFolders(root);
-  const findings = [];
+  const findings: Finding[] = [];
   for (const file of files) {
     const text = readFileSync(join(root, file), "utf8");
-    const report = (line, code, message, path) =>
+    const report = (line: number, code: Finding["code"], message: string, path?: string): void => {
       findings.push({ file, line, code, message, ...(path && { path }) });
+    };
     checkFrontmatter(file, text, report);
     checkReferences(root, file, text, topLevel, report);
   }
@@ -313,5 +364,5 @@ export const checkRepo = (
   );
 };
 
-export const formatFinding = ({ file, line, code, message }) =>
+export const formatFinding = ({ file, line, code, message }: Finding): string =>
   `${file}:${line}: ${code}: ${message}`;

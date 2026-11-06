@@ -5,18 +5,19 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { after, describe, it } from "node:test";
 import {
+  applyWaivers,
   checkRepo,
   describeProblem,
   listFiles,
-  applyWaivers,
   parseFrontmatter,
+  type Waiver,
   DESCRIPTION_TRIGGER_CLAUSES,
-} from "./rules.mjs";
+} from "../rules.ts";
 
-const roots = [];
-after(() => roots.forEach(root => rmSync(root, { recursive: true, force: true })));
+const roots: string[] = [];
+after(() => roots.forEach(r => rmSync(r, { recursive: true, force: true })));
 
-const repo = files => {
+const repo = (files: Record<string, string>): string => {
   const root = mkdtempSync(join(tmpdir(), "skills-check-"));
   roots.push(root);
   for (const [path, content] of Object.entries(files)) {
@@ -26,10 +27,11 @@ const repo = files => {
   return root;
 };
 
-const skill = (frontmatter, body = "# Skill\n") => `---\n${frontmatter}\n---\n\n${body}`;
+const skill = (frontmatter: string, body = "# Skill\n"): string => `---\n${frontmatter}\n---\n\n${body}`;
 const GOOD_DESCRIPTION = "description: Format the changed files. Use when committing.";
 
-const codes = root => checkRepo(root).map(({ file, line, code }) => `${file}:${line}:${code}`);
+const codes = (root: string): string[] =>
+  checkRepo(root).map(({ file, line, code }) => `${file}:${line}:${code}`);
 
 describe("frontmatter", () => {
   it("accepts a skill whose name is its folder and that has a description", () => {
@@ -84,7 +86,7 @@ describe("frontmatter", () => {
 
   it("parseFrontmatter keeps hashes in quoted scalars", () => {
     const fm = parseFrontmatter(skill('name: "a#b"\ndescription: Does things. Use when testing.'));
-    assert.equal(fm.data.name, "a#b");
+    assert.equal(fm?.data.name, "a#b");
   });
 
   it("asks no frontmatter of a skill reference file", () => {
@@ -121,7 +123,7 @@ describe("description", () => {
   });
 
   it(`reports a description without a ${DESCRIPTION_TRIGGER_CLAUSES.map(c => `"${c}"`).join(", ")} clause`, () => {
-    assert.match(describeProblem("Fetch and summarize review comments"), /no "Use when"/);
+    assert.match(describeProblem("Fetch and summarize review comments") ?? "", /no "Use when"/);
     const root = repo({
       ".agents/skills/fmt/SKILL.md": skill("name: fmt\ndescription: Format the changed files."),
     });
@@ -129,7 +131,7 @@ describe("description", () => {
   });
 
   it("reports a description that only says when", () => {
-    assert.match(describeProblem("Use when committing."), /not what it does/);
+    assert.match(describeProblem("Use when committing.") ?? "", /not what it does/);
   });
 
   it("leaves agent descriptions alone", () => {
@@ -215,7 +217,7 @@ describe("dead-path", () => {
   });
 });
 
-const waived = (root, waivers) =>
+const waived = (root: string, waivers: Waiver[]): string[] =>
   checkRepo(root, { waivers, waiversFile: "waivers.json" }).map(
     ({ file, line, code }) => `${file}:${line}:${code}`,
   );
@@ -270,7 +272,9 @@ describe("waivers", () => {
   });
 
   it("give every shipped waiver a file, a path and a reason", () => {
-    const shipped = JSON.parse(readFileSync(new URL("./waivers.json", import.meta.url), "utf8"));
+    const shipped = JSON.parse(
+      readFileSync(new URL("../waivers.json", import.meta.url), "utf8"),
+    ) as Parameters<typeof applyWaivers>[1];
     const problems = applyWaivers([], shipped, "waivers.json").filter(
       finding => finding.code === "waiver",
     );
