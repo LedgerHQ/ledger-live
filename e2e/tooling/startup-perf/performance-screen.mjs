@@ -1,6 +1,7 @@
 import { writeFile } from "node:fs/promises";
 import path from "node:path";
 import { sleep } from "./exec.mjs";
+import { MAESTRO_FLOW_TIMEOUT_MS, MAESTRO_HIERARCHY_TIMEOUT_MS } from "./maestro.mjs";
 
 /** @import { Maestro, Platform, StartupEvent } from "./types.mjs" */
 
@@ -9,6 +10,9 @@ const QUICK_FLOW = path.join(import.meta.dirname, "flows", "read-performance-qui
 // "App startup time" is the later of these two: a read before both exist under-reports it.
 const FINAL_EVENTS = ["App started", "Splash screen faded"];
 const MAX_SCROLLS = 10;
+// Reads of the screen after each flow, while it may still be rendering.
+const SCREEN_READS = 3;
+const SCREEN_READ_RETRY_MS = 2000;
 
 /**
  * The visible strings of a `maestro hierarchy` output, in screen order.
@@ -71,7 +75,11 @@ export function parseEvents(texts) {
  */
 export function createPerformanceReader({ platform: P, maestro }) {
   async function readHierarchyEvents(device) {
-    const hierarchy = await maestro.invoke(device, "hierarchy", [], { timeoutMs: 60_000 });
+    const hierarchy = await maestro.invoke({
+      device,
+      command: "hierarchy",
+      timeoutMs: MAESTRO_HIERARCHY_TIMEOUT_MS,
+    });
     return parseEvents(hierarchyTexts(hierarchy.stdout));
   }
 
@@ -105,9 +113,18 @@ export function createPerformanceReader({ platform: P, maestro }) {
       const flow = quick && attempt === 1 ? QUICK_FLOW : FULL_FLOW;
       // A driver stuck on an abandoned call would otherwise serve the retry too.
       if (attempt === 2) await P.stopDriver(device);
-      lastFlow = await maestro.invoke(device, "test", [flow], { timeoutMs: 120_000 });
-      for (let i = 0; i < 3; i++) {
-        const hierarchy = await maestro.invoke(device, "hierarchy", [], { timeoutMs: 60_000 });
+      lastFlow = await maestro.invoke({
+        device,
+        command: "test",
+        args: [flow],
+        timeoutMs: MAESTRO_FLOW_TIMEOUT_MS,
+      });
+      for (let i = 0; i < SCREEN_READS; i++) {
+        const hierarchy = await maestro.invoke({
+          device,
+          command: "hierarchy",
+          timeoutMs: MAESTRO_HIERARCHY_TIMEOUT_MS,
+        });
         lastTexts = hierarchyTexts(hierarchy.stdout);
         const parsed = parsePerformance(lastTexts);
         if (parsed) {
@@ -120,7 +137,7 @@ export function createPerformanceReader({ platform: P, maestro }) {
           }
           return { ...parsed, events };
         }
-        await sleep(2000);
+        await sleep(SCREEN_READ_RETRY_MS);
       }
       const dialog = await P.blockingDialog(device);
       if (dialog) {

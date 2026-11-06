@@ -3,6 +3,10 @@ import { run } from "./exec.mjs";
 
 /** @import { Maestro } from "./types.mjs" */
 
+export const MAESTRO_FLOW_TIMEOUT_MS = 120_000;
+export const MAESTRO_SCROLL_TIMEOUT_MS = 60_000;
+export const MAESTRO_HIERARCHY_TIMEOUT_MS = 60_000;
+
 // One per simulator, so the calls of a read reuse one driver.
 const IOS_DRIVER_PORT = 22087;
 
@@ -21,7 +25,7 @@ export function createMaestro({ binary, platform, devices }) {
   );
   return {
     calls: [],
-    async invoke(device, command, args, { timeoutMs }) {
+    async invoke({ device, command, args = [], timeoutMs }) {
       const port = platform === "ios" ? IOS_DRIVER_PORT + devices.indexOf(device) : null;
       const startedAt = Date.now();
       const result = await run(

@@ -1,8 +1,14 @@
 import { writeFile } from "node:fs/promises";
 import path from "node:path";
-import { run, sleep } from "./exec.mjs";
+import { DEVICE_QUERY_TIMEOUT_MS, INSTALL_TIMEOUT_MS, run, sleep } from "./exec.mjs";
+import { MAESTRO_SCROLL_TIMEOUT_MS } from "./maestro.mjs";
 
 /** @import { Maestro, Platform } from "./types.mjs" */
+
+// Up to 15 s for Maestro's xcodebuild driver to exit.
+const DRIVER_EXIT_POLLS = 30;
+const DRIVER_EXIT_POLL_MS = 500;
+const LOG_SHOW_TIMEOUT_MS = 120_000;
 
 const SCROLL_FLOW = path.join(import.meta.dirname, "flows", "scroll-performance.yaml");
 const SCROLL_TO_END_FLOW = path.join(
@@ -36,7 +42,7 @@ export function createIos({ appId, maestro }) {
   const ios = {
     async install(device, app) {
       await run("xcrun", ["simctl", "uninstall", device, appId], { allowFail: true });
-      await run("xcrun", ["simctl", "install", device, app], { timeoutMs: 600_000 });
+      await run("xcrun", ["simctl", "install", device, app], { timeoutMs: INSTALL_TIMEOUT_MS });
     },
     async stop(device) {
       await run("xcrun", ["simctl", "terminate", device, appId], { allowFail: true });
@@ -46,9 +52,9 @@ export function createIos({ appId, maestro }) {
     async stopDriver(device) {
       const xcodebuild = `test-without-building.*id=${device}`;
       await run("pkill", ["-f", xcodebuild], { allowFail: true });
-      for (let i = 0; i < 30; i++) {
+      for (let i = 0; i < DRIVER_EXIT_POLLS; i++) {
         if ((await run("pgrep", ["-f", xcodebuild], { allowFail: true })).failed) break;
-        await sleep(500);
+        await sleep(DRIVER_EXIT_POLL_MS);
       }
       await run(
         "xcrun",
@@ -72,7 +78,7 @@ export function createIos({ appId, maestro }) {
       if (!pid) return null;
       const { stdout, failed } = await run("python3", ["-c", PROCESS_START_PY, String(pid)], {
         allowFail: true,
-        timeoutMs: 20_000,
+        timeoutMs: DEVICE_QUERY_TIMEOUT_MS,
       });
       const at = Number(stdout.trim());
       return failed || !Number.isFinite(at) ? null : { at, appClockAt: at, pid };
@@ -96,10 +102,20 @@ export function createIos({ appId, maestro }) {
     },
     async resume() {},
     async scrollDown(device) {
-      await maestro.invoke(device, "test", [SCROLL_FLOW], { timeoutMs: 60_000 });
+      await maestro.invoke({
+        device,
+        command: "test",
+        args: [SCROLL_FLOW],
+        timeoutMs: MAESTRO_SCROLL_TIMEOUT_MS,
+      });
     },
     async scrollToEnd(device) {
-      await maestro.invoke(device, "test", [SCROLL_TO_END_FLOW], { timeoutMs: 60_000 });
+      await maestro.invoke({
+        device,
+        command: "test",
+        args: [SCROLL_TO_END_FLOW],
+        timeoutMs: MAESTRO_SCROLL_TIMEOUT_MS,
+      });
     },
     async diagnostics(device, file) {
       const { stdout } = await run(
@@ -117,7 +133,7 @@ export function createIos({ appId, maestro }) {
           "--predicate",
           'process == "ledgerlivemobile"',
         ],
-        { allowFail: true, timeoutMs: 120_000 },
+        { allowFail: true, timeoutMs: LOG_SHOW_TIMEOUT_MS },
       );
       await writeFile(file, stdout);
     },

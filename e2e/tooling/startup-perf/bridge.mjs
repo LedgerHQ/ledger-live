@@ -5,6 +5,7 @@ import { createServer } from "node:http";
 import { createHash, randomUUID } from "node:crypto";
 
 const WS_GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+const REPLY_POLL_MS = 200;
 
 function encodeFrame(text) {
   const payload = Buffer.from(text, "utf8");
@@ -167,14 +168,15 @@ export function startBridge(port = 8099, log = () => {}) {
     },
     // The app's reply of this type to message `id`: "ACK" once its handler is done (a handler that
     // throws sends none), or e.g. "appEnvs" for getEnvs.
-    async waitFor(id, type, timeoutMs) {
+    /** @param {{ id: string, type: string, timeoutMs: number }} options */
+    async waitFor({ id, type, timeoutMs }) {
       const deadline = Date.now() + timeoutMs;
       for (;;) {
         const reply = received.find(m => m.id === id && m.type === type);
         if (reply) return reply;
         if (Date.now() > deadline)
           throw new Error(`bridge: no ${type} for ${id} within ${timeoutMs} ms`);
-        await new Promise(resolve => setTimeout(resolve, 200));
+        await new Promise(resolve => setTimeout(resolve, REPLY_POLL_MS));
       }
     },
     close() {
