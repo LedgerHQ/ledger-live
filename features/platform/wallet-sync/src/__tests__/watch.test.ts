@@ -2,6 +2,7 @@ import { selectWalletSyncState, walletSyncUpdate } from "@domain/entity-wallet-s
 import { resetTrustchainStore, setTrustchain } from "@ledgerhq/ledger-key-ring-protocol/store";
 import type { UnknownAction } from "@reduxjs/toolkit";
 import { track } from "@shared/analytics";
+import { CloudSyncSDK } from "@shared/cloud-sync";
 import { getLkrpSdk } from "../middleware";
 import {
   refreshLedgerSync,
@@ -193,6 +194,27 @@ describe("Ledger Sync watch loop", () => {
     await advance(0);
 
     expect(selectWalletSyncState(store.getState())).toEqual({ data: null, version: 0 });
+    expect(applyLocalState).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["a backup deletion", { type: "deleted-data" as const }, { data: null, version: 0 }],
+    [
+      "a push",
+      { type: "pushed-data" as const, data: { value: "pushed" }, version: 4 },
+      { data: { value: "pushed" }, version: 4 },
+    ],
+  ])("should drop a local update that settles after %s saved", async (_, event, saved) => {
+    const resolution = holdNextResolution();
+    const store = startedWatch(SYNCED);
+    await advance(WATCH_CONFIG.initialTimeout);
+
+    const { saveNewUpdate } = jest.mocked(CloudSyncSDK).mock.calls[0][0];
+    await saveNewUpdate(event, trustchain);
+    resolution.settle({ hasChanges: true, update: { newValue: "distant" } });
+    await advance(0);
+
+    expect(selectWalletSyncState(store.getState())).toEqual(saved);
     expect(applyLocalState).not.toHaveBeenCalled();
   });
 

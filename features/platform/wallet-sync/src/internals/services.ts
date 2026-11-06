@@ -60,11 +60,14 @@ export function createLedgerSyncServices<S extends LedgerSyncStateRoot, LocalSta
         latestDistantStateSelector: state => selectWalletSyncState(state).data,
         latestDistantVersionSelector: state => selectWalletSyncState(state).version,
         localStateSelector: cloudSync.localStateSelector,
-        // A call or a resolution that settles after a reset or a new pairing would restore the old
-        // session's data, so the check runs as it saves.
+        // A call or a resolution that settles after a reset, a new pairing or a key rotation would
+        // restore the old backup's data, so the check runs as it saves.
         saveUpdate: (data, version, localState) => {
-          if (trustchainSelector(getState())?.rootId !== trustchain.rootId) return;
-          saveUpdate(data, version, localState);
+          const live = trustchainSelector(getState());
+          const sameBackup =
+            live?.rootId === trustchain.rootId &&
+            live.applicationPath === trustchain.applicationPath;
+          if (sameBackup) saveUpdate(data, version, localState);
         },
       })(event),
   });
