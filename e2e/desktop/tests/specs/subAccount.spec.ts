@@ -6,6 +6,7 @@ import {
   Account,
   TokenAccount,
   getParentAccountName,
+  type AccountType,
 } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
@@ -229,59 +230,83 @@ for (const token of subAccounts.filter(subAccount => !subAccount.notPreSeeded)) 
   });
 }
 
-const transactionsAddressInvalid: Array<{
-  transaction: Transaction;
+type InvalidRecipient = {
+  accountToCredit: AccountType;
   recipient?: string;
   expectedErrorMessage: string;
+};
+
+const transactionsAddressInvalid: Array<{
+  accountToDebit: AccountType;
+  recipients: InvalidRecipient[];
   scenario: string;
   xrayTicket: string;
 }> = [
   {
-    transaction: new Transaction(TokenAccount.ALGO_USDT_1, Account.ALGO_3, "0.1", Fee.MEDIUM),
-    recipient: undefined,
-    expectedErrorMessage: "Recipient account has not opted in the selected ASA.",
+    accountToDebit: TokenAccount.ALGO_USDT_1,
+    recipients: [
+      {
+        accountToCredit: Account.ALGO_3,
+        recipient: undefined,
+        expectedErrorMessage: "Recipient account has not opted in the selected ASA.",
+      },
+    ],
     scenario: "recipient not opted in",
     xrayTicket: "B2CQA-2702",
   },
   {
-    transaction: new Transaction(TokenAccount.SOL_GIGA_1, TokenAccount.SOL_WIF_2, "0.1", undefined),
-    recipient: Addresses.SOL_WIF_2_ATA_ADDRESS, //CLI doesn't allow us to get ATA address
-    expectedErrorMessage: "This associated token account holds another token",
+    accountToDebit: TokenAccount.SOL_GIGA_1,
+    recipients: [
+      {
+        accountToCredit: TokenAccount.SOL_WIF_2,
+        recipient: Addresses.SOL_WIF_2_ATA_ADDRESS, //CLI doesn't allow us to get ATA address
+        expectedErrorMessage: "This associated token account holds another token",
+      },
+    ],
     scenario: "recipient holds another token",
     xrayTicket: "B2CQA-3083",
   },
   {
-    transaction: new Transaction(Account.SOL_1, TokenAccount.SOL_GIGA_2, "0.1", undefined),
-    recipient: Addresses.SOL_GIGA_2_ATA_ADDRESS, //CLI doesn't allow us to get ATA address
-    expectedErrorMessage: "This is a token account. Input a regular wallet address",
-    scenario: "token account",
-    xrayTicket: "B2CQA-3084",
+    accountToDebit: Account.SOL_1,
+    recipients: [
+      {
+        accountToCredit: TokenAccount.SOL_GIGA_2,
+        recipient: Addresses.SOL_GIGA_2_ATA_ADDRESS, //CLI doesn't allow us to get ATA address
+        expectedErrorMessage: "This is a token account. Input a regular wallet address",
+      },
+      {
+        accountToCredit: TokenAccount.SOL_WIF_2,
+        recipient: TokenAccount.SOL_WIF_2.currency.contractAddress,
+        expectedErrorMessage: "This is a token address. Input a regular wallet address",
+      },
+    ],
+    scenario: "token account and token address",
+    xrayTicket: "B2CQA-3084, B2CQA-3087",
   },
   {
-    transaction: new Transaction(TokenAccount.SOL_WIF_1, TokenAccount.SOL_WIF_2, "0.1", undefined),
-    recipient: TokenAccount.SOL_WIF_2.currency.contractAddress,
-    expectedErrorMessage: "This is a token address. Input a regular wallet address",
+    accountToDebit: TokenAccount.SOL_WIF_1,
+    recipients: [
+      {
+        accountToCredit: TokenAccount.SOL_WIF_2,
+        recipient: TokenAccount.SOL_WIF_2.currency.contractAddress,
+        expectedErrorMessage: "This is a token address. Input a regular wallet address",
+      },
+      {
+        accountToCredit: TokenAccount.SOL_GIGA_2,
+        recipient: TokenAccount.SOL_GIGA_2.currency.contractAddress,
+        expectedErrorMessage: "This is a token address. Input a regular wallet address",
+      },
+    ],
     scenario: "token address",
-    xrayTicket: "B2CQA-3085",
-  },
-  {
-    transaction: new Transaction(TokenAccount.SOL_WIF_1, TokenAccount.SOL_GIGA_2, "0.1", undefined),
-    recipient: TokenAccount.SOL_GIGA_2.currency.contractAddress,
-    expectedErrorMessage: "This is a token address. Input a regular wallet address",
-    scenario: "token address",
-    xrayTicket: "B2CQA-3086",
-  },
-  {
-    transaction: new Transaction(Account.SOL_1, TokenAccount.SOL_WIF_2, "0.1", undefined),
-    recipient: TokenAccount.SOL_WIF_2.currency.contractAddress,
-    expectedErrorMessage: "This is a token address. Input a regular wallet address",
-    scenario: "token address",
-    xrayTicket: "B2CQA-3087",
+    xrayTicket: "B2CQA-3085, B2CQA-3086",
   },
 ];
 
 for (const transaction of transactionsAddressInvalid) {
-  const { accountToDebit, accountToCredit } = transaction.transaction;
+  const { accountToDebit, recipients } = transaction;
+  const creditLabels = recipients
+    .map(({ accountToCredit }) => accountToCredit.currency.testLabel)
+    .join("/");
   const owner = ownedBy(coinTeamOwner(accountToDebit.currency.id), {
     folder: sendFolder(accountToDebit),
     scenario: SendScenario.INVALID_ADDRESS,
@@ -289,17 +314,20 @@ for (const transaction of transactionsAddressInvalid) {
   test.describe("Send - new flow - token invalid address", owner, () => {
     test.use({
       userdata: "skip-onboarding-with-last-seen-device",
-      speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
+      speculosApp: accountToDebit.currency.speculosApp,
       cliCommands: [
         async (userdataPath?: string) => {
-          await liveDataCommand(transaction.transaction.accountToDebit, {
-            useScheme: false,
-          })(userdataPath);
-          if (transaction.recipient === undefined) {
-            const receiveAddress = await getAccountAddress(transaction.transaction.accountToCredit);
-            transaction.recipient = receiveAddress;
-          }
-          return transaction.recipient;
+          await liveDataCommand(accountToDebit, { useScheme: false })(userdataPath);
+          await Promise.all(
+            recipients
+              .filter(invalidRecipient => invalidRecipient.recipient === undefined)
+              .map(async invalidRecipient => {
+                invalidRecipient.recipient = await getAccountAddress(
+                  invalidRecipient.accountToCredit,
+                );
+              }),
+          );
+          return recipients.map(({ recipient }) => recipient);
         },
       ],
       featureFlags: {
@@ -309,9 +337,9 @@ for (const transaction of transactionsAddressInvalid) {
     });
 
     test(
-      `[${accountToDebit.currency.testLabel}-${accountToCredit.currency.testLabel}] - Send - invalid address - ${transaction.scenario}`,
+      `[${accountToDebit.currency.testLabel}-${creditLabels}] - Send - invalid address - ${transaction.scenario}`,
       {
-        tag: buildTags({ currencyId: transaction.transaction.accountToDebit.currency.id }),
+        tag: buildTags({ currencyId: accountToDebit.currency.id }),
         annotation: {
           type: "TMS",
           description: transaction.xrayTicket,
@@ -319,16 +347,18 @@ for (const transaction of transactionsAddressInvalid) {
       },
       async ({ app }) => {
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
-        await app.accounts.navigateToAccountByName(
-          getParentAccountName(transaction.transaction.accountToDebit),
-        );
-        if (transaction.transaction.accountToDebit instanceof TokenAccount) {
-          await app.account.navigateToTokenInAccount(transaction.transaction.accountToDebit);
+        await app.accounts.navigateToAccountByName(getParentAccountName(accountToDebit));
+        if (accountToDebit instanceof TokenAccount) {
+          await app.account.navigateToTokenInAccount(accountToDebit);
         }
         await app.account.clickSend();
         await app.newSendFlow.waitForDialog();
-        await app.newSendFlow.typeAddress(transaction.recipient ?? "");
-        await app.newSendFlow.expectRecipientError(transaction.expectedErrorMessage);
+        for (const { recipient, expectedErrorMessage } of recipients) {
+          await app.newSendFlow.clearRecipient();
+          await app.newSendFlow.expectRecipientErrorHidden();
+          await app.newSendFlow.typeAddress(recipient ?? "");
+          await app.newSendFlow.expectRecipientError(expectedErrorMessage);
+        }
       },
     );
   });
