@@ -10,6 +10,7 @@
     "lint": "oxlint ./src -A no-console",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
+    "coverage": "jest --coverage",
     "typecheck": "tsc --project ./tsconfig.json --noEmit --customConditions node",
     "start": "node lib/cli.js",
     "start:debug": "node --inspect-brk lib/cli.js"

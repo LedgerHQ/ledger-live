@@ -3,7 +3,10 @@ import * as bridgeModule from "@ledgerhq/live-common/bridge/impl";
 import { makeSync } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import BigNumber from "bignumber.js";
+import { measureThroughput } from "./huge";
 import run from "./run";
+
+jest.mock("./huge");
 
 jest.mock("@ledgerhq/live-common/bridge/impl", () => {
   const actual = jest.requireActual("@ledgerhq/live-common/bridge/impl");
@@ -38,7 +41,7 @@ describe("Coin Modules Monitoring", () => {
       jest.spyOn(bridgeModule, "getAccountBridgeByFamily").mockResolvedValue({
         sync: makeSync({
           getAccountShape: async info => {
-            if (info.address === "2ojv9BAiHUrvsm9gxDe7fJSzbNZSJcxZvf8dqmWGHG8S") {
+            if (info.address === "3ot74WntJpc7mUQQyxi8zF2c21Hb2qM6K28Mb3epLc9U") {
               throw new Error("Unavailable");
             }
             const accountId = encodeAccountId({
@@ -93,6 +96,8 @@ describe("Coin Modules Monitoring", () => {
             },
             totalNetworkCalls: 0, // no network call on unit tests
             networkCallsByDomain: {},
+            opsPerSecond: expect.any(Number),
+            callsPerOperation: 0,
           },
           {
             duration: expect.any(Number),
@@ -151,6 +156,8 @@ describe("Coin Modules Monitoring", () => {
             },
             totalNetworkCalls: 0, // no network call on unit tests
             networkCallsByDomain: {},
+            opsPerSecond: expect.any(Number),
+            callsPerOperation: 0,
           },
           {
             duration: expect.any(Number),
@@ -184,6 +191,75 @@ describe("Coin Modules Monitoring", () => {
         ]),
         failed: true,
       });
+    });
+
+    it("keeps the scan when only the sync fails", async () => {
+      let calls = 0;
+      jest.spyOn(bridgeModule, "getAccountBridgeByFamily").mockResolvedValue({
+        sync: makeSync({
+          getAccountShape: async info => {
+            if (++calls > 1) {
+              throw new Error("Sync unavailable");
+            }
+            return {
+              id: encodeAccountId({
+                type: "js",
+                version: "2",
+                currencyId: info.currency.id,
+                xpubOrAddress: info.address,
+                derivationMode: "",
+              }),
+              balance: new BigNumber(0),
+              operationsCount: 500,
+            };
+          },
+        }),
+      } as unknown as ResolvedAccountBridge<TransactionCommon>);
+
+      const logs = await run(["solana"], ["average"]);
+
+      expect(logs).toEqual({
+        entries: [expect.objectContaining({ operationType: "scan" })],
+        failed: true,
+      });
+    });
+
+    it("reports the throughput of a huge account", async () => {
+      jest.mocked(measureThroughput).mockResolvedValueOnce({
+        operations: 300,
+        pageDurations: [100, 100, 100],
+        exhausted: false,
+      });
+
+      const logs = await run(["solana"], ["huge"]);
+
+      expect(measureThroughput).toHaveBeenCalledWith(
+        "solana",
+        "solana",
+        "2ojv9BAiHUrvsm9gxDe7fJSzbNZSJcxZvf8dqmWGHG8S",
+      );
+      expect(logs).toEqual({
+        entries: [
+          expect.objectContaining({
+            operationType: "throughput",
+            accountType: "huge",
+            duration: 300,
+            transactions: 300,
+            opsPerSecond: 1000,
+            pages: 3,
+            exhausted: false,
+          }),
+        ],
+        failed: false,
+      });
+    });
+
+    it("does not fail the run when a huge account fails", async () => {
+      jest.mocked(measureThroughput).mockRejectedValueOnce(new Error("HTTP 429"));
+
+      const logs = await run(["solana"], ["huge"]);
+
+      expect(logs).toEqual({ entries: [], failed: false });
     });
   });
 });

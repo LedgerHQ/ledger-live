@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       account_types:
-        description: Account types to monitor, separated with commas (,), or "pristine,average,big" (default)
+        description: Account types to monitor (pristine, average, big, huge), separated with commas (,), or "pristine,average,big" (default)
         required: false
         default: "pristine,average,big"
       currencies:
@@ -17,6 +17,10 @@ on:
         description: Run each currency/account combination in isolated processes, true or false (default)
         required: false
         default: false
+      concurrency:
+        description: Number of isolated processes run in parallel, 1 (default)
+        required: false
+        default: "1"
 
 jobs:
   run-monitoring:
@@ -24,6 +28,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    env:
+      MONITOR_CONCURRENCY: ${{ inputs.concurrency }}
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
       - name: Setup the toolchain

@@ -1,16 +1,15 @@
-import { spawn } from "child_process";
-import path from "path";
 import { EventEmitter } from "node:events";
 import commandLineArgs, { CommandLineOptions } from "command-line-args";
 import packageJson from "../package.json";
 import currencies, { type AccountType } from "./currencies";
+import { buildJobs, runIsolated, validateConcurrency } from "./isolated";
 import run from "./run";
 
 // Mute `MaxListenersExceededWarning`
 // TODO: check if emitters can be better handled
 EventEmitter.defaultMaxListeners = 0;
 
-const VALID_ACCOUNT_TYPES = ["pristine", "average", "big"] as const;
+const VALID_ACCOUNT_TYPES = ["pristine", "average", "big", "huge"] as const;
 const VALID_CURRENCIES = Object.keys(currencies);
 
 function isValidAccountType(value: string): value is AccountType {
@@ -69,6 +68,12 @@ const monitorOptionDefinitions = [
     type: Boolean,
     defaultValue: false,
   },
+  {
+    name: "concurrency",
+    alias: "j",
+    type: Number,
+    defaultValue: Number(process.env.MONITOR_CONCURRENCY || 1),
+  },
 ];
 
 function printHelp() {
@@ -97,6 +102,10 @@ function printHelp() {
     "  -i, --isolated             Run each currency/account combination in isolated processes",
   );
   console.log("                             Default: false (run in same process)");
+  console.log(
+    "  -j, --concurrency <n>      Number of isolated processes run in parallel (with --isolated)",
+  );
+  console.log("                             Default: $MONITOR_CONCURRENCY or 1");
   console.log("");
   console.log("Examples:");
   console.log("  pnpm start monitor");
@@ -105,40 +114,11 @@ function printHelp() {
   console.log(
     "  pnpm start monitor --currencies bitcoin,etherem --account-types pristine,big --isolated",
   );
+  console.log("  pnpm start monitor --account-types big,huge --isolated --concurrency 4");
 }
 
 function printVersion() {
   console.log(packageJson.version);
-}
-
-async function runIsolatedMonitor(currency: string, accountType: string): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const child = spawn(
-      "node",
-      [
-        path.join(__dirname, "cli.js"),
-        "monitor",
-        "--currencies",
-        currency,
-        "--account-types",
-        accountType,
-      ],
-      {
-        stdio: "inherit",
-        env: process.env,
-      },
-    );
-
-    child.on("close", code => {
-      if (code === 0) {
-        resolve();
-      } else {
-        reject(new Error(`Process exited with code ${code}`));
-      }
-    });
-
-    child.on("error", reject);
-  });
 }
 
 async function runMonitorCommand(options: CommandLineOptions) {
@@ -165,25 +145,15 @@ async function runMonitorCommand(options: CommandLineOptions) {
   }
 
   if (options.isolated) {
-    let atLeastOneProcessFailed = false;
-    for (const currency of monitoredCurrencies) {
-      for (const accountType of accountTypes) {
-        try {
-          await runIsolatedMonitor(currency, accountType);
-        } catch (error) {
-          if (!atLeastOneProcessFailed) {
-            atLeastOneProcessFailed = true;
-          }
-
-          console.error(
-            `Process failed for currency ${currency} and account type ${accountType} with error ${error}`,
-          );
-          console.log("Global process will continue...");
-        }
-      }
+    // Only validated when used, so that a bad MONITOR_CONCURRENCY does not break a non-isolated run
+    const concurrency = validateConcurrency(options.concurrency);
+    const jobs = buildJobs(monitoredCurrencies, accountTypes);
+    if (!jobs.length) {
+      console.log("No account to monitor. Exit now.");
+      process.exit(0);
     }
-
-    process.exit(atLeastOneProcessFailed ? 1 : 0);
+    console.log(`Monitoring ${jobs.length} process(es) with concurrency ${concurrency}`);
+    process.exit((await runIsolated(jobs, concurrency)) ? 1 : 0);
   }
 
   try {

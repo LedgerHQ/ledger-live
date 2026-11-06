@@ -12,6 +12,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    env:
+      MONITOR_CONCURRENCY: 4
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
       - name: Setup the toolchain
@@ -30,6 +32,7 @@ jobs:
           DD_API_KEY: ${{ secrets.DD_API_KEY }}
           DD_APP_KEY: ${{ secrets.DD_APP_KEY }}
           DD_DOMAIN: datadoghq.eu
+          MONITOR_FILTER_ACCOUNT_TYPES: pristine,average,big,huge
           MONITOR_FILTER_ISOLATED: true
           SUBMIT_LOGS: true
 
