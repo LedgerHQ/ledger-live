@@ -29,3 +29,5 @@ export { useMockAccountsToolProps } from "./useMockAccountsToolProps";
 export { useAccountDetailToolProps } from "./useAccountDetailToolProps";
 export { useCoinConfigToolProps } from "./useCoinConfigToolProps";
 export type { UseCoinConfigToolPropsInput } from "./useCoinConfigToolProps";
+export { usePredictionsToolProps } from "./usePredictionsToolProps";
+export type { LiveAppStore, PredictionsSetup } from "./usePredictionsToolProps";
