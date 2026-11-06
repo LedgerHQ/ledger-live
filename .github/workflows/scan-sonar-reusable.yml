@@ -35,6 +35,11 @@ on:
         required: false
         default: "false"
         type: string
+      should_download_packages_coverage:
+        description: "Download the coverage-packages-<shard> artifacts of test-packages-reusable"
+        required: false
+        default: "false"
+        type: string
       ref:
         description: Git ref to checkout
         required: false
@@ -118,8 +123,21 @@ jobs:
           name: coverage-wallet-cli
           path: coverage-wallet-cli
 
+      - name: Download packages unit test coverage
+        if: ${{ inputs.should_download_packages_coverage == 'true' }}
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: coverage-packages-*
+          path: coverage-packages
+
       - name: Merge coverage files
         run: |
+          for shard in ./coverage-packages/*/; do
+            [ -d "$shard" ] || continue
+            echo "Merging packages coverage files from $shard"
+            cat "$shard/lcov.info" >> ./lcov.info
+            cat "$shard/sonar-executionTests-report.xml" >> ./sonar-executionTests-report.xml
+          done
           if [ -d ./coverage-desktop ]; then
             echo "Merging desktop coverage files"
             cat ./coverage-desktop/lcov.info >> ./lcov.info

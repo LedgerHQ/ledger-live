@@ -1,0 +1,162 @@
+# Study only (concurrency of the PR test lanes): replays three develop commits through the Test Packages
+# planner and runs the planned shards with the Nx cache skipped. Not for merge.
+name: "[Study] Test Packages sharding"
+
+on:
+  push:
+    branches:
+      - study/new-arch-concurrency
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    name: "Plan"
+    runs-on: ledger-wallet-4cpu-aws-public-cached
+    permissions:
+      contents: read
+      id-token: write
+    outputs:
+      shards_small: ${{ steps.plan-small.outputs.shards }}
+      matrix_small: ${{ steps.plan-small.outputs.matrix }}
+      shards_medium: ${{ steps.plan-medium.outputs.shards }}
+      matrix_medium: ${{ steps.plan-medium.outputs.matrix }}
+      shards_large: ${{ steps.plan-large.outputs.shards }}
+      matrix_large: ${{ steps.plan-large.outputs.matrix }}
+    env:
+      # #24443 features/flow change, #24415 new devtool + shared package, #24392 lockfile bump
+      SMALL: c8428923a5cf0ed556ff7a48a6e373c740cdb6a1
+      MEDIUM: 4db45b933feabde39ce1bc98796e118eae10f47d
+      LARGE: 934970adec67ed88f1d546d03b1bb555cbfd128f
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
+
+      - name: Fetch the replayed commits and their parents
+        run: git fetch --depth=2 origin "$SMALL" "$MEDIUM" "$LARGE"
+
+      - name: Install dependencies for the root workspace
+        run: pnpm i --frozen-lockfile --filter="ledger-live" --ignore-scripts
+
+      - name: Affected (small)
+        id: affected-small
+        uses: ./tools/actions/composites/nx-affected-packages
+        with:
+          base: ${{ env.SMALL }}~1
+          head: ${{ env.SMALL }}
+      - name: Plan (small)
+        id: plan-small
+        uses: ./tools/actions/composites/nx-test-plan
+        with:
+          affected: ${{ steps.affected-small.outputs.packages }}
+
+      - name: Affected (medium)
+        id: affected-medium
+        uses: ./tools/actions/composites/nx-affected-packages
+        with:
+          base: ${{ env.MEDIUM }}~1
+          head: ${{ env.MEDIUM }}
+      - name: Plan (medium)
+        id: plan-medium
+        uses: ./tools/actions/composites/nx-test-plan
+        with:
+          affected: ${{ steps.affected-medium.outputs.packages }}
+
+      - name: Affected (large)
+        id: affected-large
+        uses: ./tools/actions/composites/nx-affected-packages
+        with:
+          base: ${{ env.LARGE }}~1
+          head: ${{ env.LARGE }}
+      - name: Plan (large)
+        id: plan-large
+        uses: ./tools/actions/composites/nx-test-plan
+        with:
+          affected: ${{ steps.affected-large.outputs.packages }}
+
+      - name: Summary
+        env:
+          M_SMALL: ${{ steps.plan-small.outputs.matrix }}
+          M_MEDIUM: ${{ steps.plan-medium.outputs.matrix }}
+          M_LARGE: ${{ steps.plan-large.outputs.matrix }}
+        run: |
+          {
+            echo "| scenario | shard | weight | projects |"
+            echo "|---|---|---|---|"
+            for s in SMALL MEDIUM LARGE; do
+              var="M_$s"
+              echo "${!var}" | jq -r --arg s "$s" '.include[] | "| \($s) | \(.shard) | \(.weight) | \(.projects | split(",") | length) |"'
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  test-small:
+    name: "Small"
+    needs: plan
+    if: ${{ needs.plan.outputs.shards_small != '0' }}
+    permissions:
+      id-token: write
+      contents: read
+    uses: ./.github/workflows/test-packages-reusable.yml
+    with:
+      matrix: ${{ needs.plan.outputs.matrix_small }}
+      skip-nx-cache: true
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
+
+  test-medium:
+    name: "Medium"
+    needs: plan
+    if: ${{ needs.plan.outputs.shards_medium != '0' }}
+    permissions:
+      id-token: write
+      contents: read
+    uses: ./.github/workflows/test-packages-reusable.yml
+    with:
+      matrix: ${{ needs.plan.outputs.matrix_medium }}
+      skip-nx-cache: true
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
+
+  test-large:
+    name: "Large"
+    needs: plan
+    if: ${{ needs.plan.outputs.shards_large != '0' }}
+    permissions:
+      id-token: write
+      contents: read
+    uses: ./.github/workflows/test-packages-reusable.yml
+    with:
+      matrix: ${{ needs.plan.outputs.matrix_large }}
+      skip-nx-cache: true
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}

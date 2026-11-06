@@ -154,14 +154,18 @@ jobs:
       js_bundle_hash_android: ${{ needs.determine-affected.outputs.mobile_js_hash_android }}
 
   # Tests
-  test-libraries:
-    name: "Test Libraries"
+  # Libs, features, shared, domain, devtools and support in one job, sharded only when determine-affected
+  # plans more work than one shard holds (tools/actions/composites/nx-test-plan).
+  test-packages:
+    name: "Test Packages"
     permissions:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'libs') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
+    if: ${{ needs.determine-affected.outputs.test_shards != '' && needs.determine-affected.outputs.test_shards != '0' && !github.event.pull_request.head.repo.fork }}
+    uses: LedgerHQ/ledger-live/.github/workflows/test-packages-reusable.yml@develop
+    with:
+      matrix: ${{ needs.determine-affected.outputs.test_matrix }}
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -171,86 +175,6 @@ jobs:
       NX_KEY: ${{ secrets.NX_KEY }}
       FLAKE_API_KEY_CI: ${{ secrets.FLAKE_API_KEY_CI }}
       FLAKE_API_HOST: ${{ secrets.FLAKE_API_HOST }}
-
-  test-features:
-    name: "Test Features"
-    permissions:
-      id-token: write
-      contents: read
-    needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'features') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-features-reusable.yml@develop
-    secrets:
-      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
-      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
-      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
-      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-      NX_KEY: ${{ secrets.NX_KEY }}
-
-  test-shared:
-    name: "Test Shared"
-    permissions:
-      id-token: write
-      contents: read
-    needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'shared') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-shared-reusable.yml@develop
-    secrets:
-      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
-      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
-      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
-      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-      NX_KEY: ${{ secrets.NX_KEY }}
-
-  test-domain:
-    name: "Test Domain"
-    permissions:
-      id-token: write
-      contents: read
-    needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'domain') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-domain-reusable.yml@develop
-    secrets:
-      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
-      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
-      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
-      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-      NX_KEY: ${{ secrets.NX_KEY }}
-
-  test-devtools:
-    name: "Test DevTools"
-    permissions:
-      id-token: write
-      contents: read
-    needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'devtools') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-devtools-reusable.yml@develop
-    secrets:
-      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
-      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
-      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
-      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-      NX_KEY: ${{ secrets.NX_KEY }}
-
-  test-support:
-    name: "Test Support"
-    permissions:
-      id-token: write
-      contents: read
-    needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'support') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-support-reusable.yml@develop
-    secrets:
-      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
-      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
-      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
-      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-      NX_KEY: ${{ secrets.NX_KEY }}
 
   enforce-boundaries:
     name: "Monorepo Checks"
@@ -451,25 +375,17 @@ jobs:
     needs:
       - codecheck-desktop
       - test-mobile
-      - test-libraries
-      - test-features
-      - test-shared
-      - test-domain
-      - test-devtools
+      - test-packages
       - build-wallet-cli
       - determine-affected
     uses: LedgerHQ/ledger-live/.github/workflows/scan-sonar-reusable.yml@develop
-    if: ${{ always() && !cancelled() && !github.event.pull_request.head.repo.fork && !contains(needs.*.result, 'failure') && (needs.codecheck-desktop.result == 'success' || needs.test-mobile.result == 'success' || needs.test-libraries.result == 'success' || needs.test-features.result == 'success' || needs.test-shared.result == 'success' || needs.test-domain.result == 'success' || needs.test-devtools.result == 'success' || needs.build-wallet-cli.result == 'success' || contains(needs.determine-affected.outputs.paths, 'e2e')) }}
+    if: ${{ always() && !cancelled() && !github.event.pull_request.head.repo.fork && !contains(needs.*.result, 'failure') && (needs.codecheck-desktop.result == 'success' || needs.test-mobile.result == 'success' || needs.test-packages.result == 'success' || needs.build-wallet-cli.result == 'success' || contains(needs.determine-affected.outputs.paths, 'e2e')) }}
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     with:
       should_download_desktop_coverage: ${{ needs.codecheck-desktop.outputs.coverage_generated }}
       should_download_mobile_coverage: ${{ needs.test-mobile.outputs.coverage_generated }}
-      should_download_libs_coverage: ${{ needs.test-libraries.outputs.coverage_generated }}
-      should_download_features_coverage: ${{ needs.test-features.outputs.coverage_generated }}
-      should_download_shared_coverage: ${{ needs.test-shared.outputs.coverage_generated }}
-      should_download_domain_coverage: ${{ needs.test-domain.outputs.coverage_generated }}
-      should_download_devtools_coverage: ${{ needs.test-devtools.outputs.coverage_generated }}
+      should_download_packages_coverage: ${{ needs.test-packages.result == 'success' }}
       should_download_wallet_cli_coverage: ${{ needs.build-wallet-cli.outputs.coverage_generated }}
 
   # Final Check required
@@ -481,12 +397,7 @@ jobs:
       - codecheck-desktop
       - test-mobile
       - build-test-mobile
-      - test-libraries
-      - test-features
-      - test-shared
-      - test-domain
-      - test-devtools
-      - test-support
+      - test-packages
       - enforce-boundaries
       - test-design-system
       - build-web-tools
