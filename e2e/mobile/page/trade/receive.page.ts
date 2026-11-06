@@ -1,6 +1,6 @@
 import { Step } from "jest-allure2-reporter/api";
 import { byId } from "@e2e/helpers/elements/native";
-import { currencyParam, escapeRegExp, openDeeplink } from "@e2e/helpers/commonHelpers";
+import { currencyParam, openDeeplink } from "@e2e/helpers/commonHelpers";
 
 const TRON_NEW_ADDRESS_WARNING =
   "You first need to send at least 0.1 TRX to this address to activate it.";
@@ -50,10 +50,9 @@ export default class ReceivePage {
 
   @Step("Expect the device deprecation error screen {{{0}}}")
   async expectDeviceDeprecationError(expectedTitle: string): Promise<void> {
-    // The device name is rendered with non-breaking spaces, so any whitespace stands for a space.
-    const anyWhitespace = String.raw`\s`;
-    const title = new RegExp(`^${escapeRegExp(expectedTitle).replaceAll(" ", anyWhitespace)}$`);
-    await this.deviceDeprecationTitle.expectTextMatching(title);
+    // The device name is rendered with non-breaking spaces, which \s also matches.
+    const title = (await this.deviceDeprecationTitle.getText()).replaceAll(/\s/g, " ");
+    jestExpect(title).toBe(expectedTitle);
     await this.deviceDeprecationContinueButton.expectNotExist();
   }
 

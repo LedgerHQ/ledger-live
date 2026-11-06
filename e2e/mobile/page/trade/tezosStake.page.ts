@@ -2,19 +2,15 @@ import { Step } from "jest-allure2-reporter/api";
 import { byId } from "@e2e/helpers/elements/native";
 import { TIMEOUT } from "@e2e/utils/timeouts";
 
-// Buttons built from ~/components/Button render their testID with an "enabled-"/"disabled-"
-// prefix reflecting the disabled state; the amount continue buttons are only tappable once enabled.
-const enabled = (id: string) => `enabled-${id}`;
-
 export default class TezosStakePage {
   private readonly accountScrollView = byId("account-screen-scrollView");
   private readonly genericErrorModal = byId(app.common.errorPage.genericErrorModalId);
   // Stake flow (TezosStakeFlow)
   private readonly stakeAmountInput = byId("tezos-stake-amount-input");
-  private readonly stakeAmountContinue = byId(enabled("tezos-stake-amount-continue"));
+  private readonly stakeAmountContinue = byId("enabled-tezos-stake-amount-continue");
   // Unstake flow (TezosUnstakeFlow)
   private readonly unstakeAmountInput = byId("tezos-unstake-amount-input");
-  private readonly unstakeAmountContinue = byId(enabled("tezos-unstake-amount-continue"));
+  private readonly unstakeAmountContinue = byId("enabled-tezos-unstake-amount-continue");
   private readonly unstakeUnbondingNotice = byId("tezos-unstake-unbonding-notice");
   private readonly unstakeStakedBalance = byId("tezos-unstake-staked-balance");
   // Earning-choice chooser (TezosDelegationFlow -> TezosEarnRewards) and the delegation summary it leads to
@@ -22,8 +18,8 @@ export default class TezosStakePage {
   private readonly earnRewardsDelegateStep = byId("tezos-earn-rewards-delegate-step");
   private readonly earnRewardsStakeStep = byId("tezos-earn-rewards-stake-step");
   private readonly delegationSummaryValidator = byId("tezos-delegation-summary-validator");
-  private readonly delegationSummaryContinue = byId(enabled("tezos-summary-continue-button"));
-  private readonly delegationSuccessStake = byId(enabled("tezos-delegation-success-stake-button"));
+  private readonly delegationSummaryContinue = byId("enabled-tezos-summary-continue-button");
+  private readonly delegationSuccessStake = byId("enabled-tezos-delegation-success-stake-button");
   private readonly awaitingDelegation = byId("tezos-stake-awaiting-delegation");
   // Account staking-section cards (families/tezos/Delegations)
   private readonly stakingRow = byId("tezos-staking-row");
