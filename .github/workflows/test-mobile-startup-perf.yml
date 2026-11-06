@@ -548,7 +548,7 @@ jobs:
             --samples "$RESULTS_DIR/android/samples.jsonl" \
             --preset "$PRESET" --threshold-ms "$THRESHOLD" \
             --label-a "$LABEL_A" --label-b "$LABEL_B" \
-            --summary "$GITHUB_STEP_SUMMARY" --json "$RESULTS_DIR/android/summary.json"
+            --json "$RESULTS_DIR/android/summary.json"
 
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: ${{ always() }}
@@ -671,7 +671,7 @@ jobs:
             --samples "$RESULTS_DIR/ios/samples.jsonl" \
             --preset "$PRESET" --threshold-ms "$THRESHOLD" \
             --label-a "$LABEL_A" --label-b "$LABEL_B" \
-            --summary "$GITHUB_STEP_SUMMARY" --json "$RESULTS_DIR/ios/summary.json"
+            --json "$RESULTS_DIR/ios/summary.json"
 
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: ${{ always() }}

@@ -4,6 +4,7 @@ import { appendFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
+import { insideWorkingDir } from "./exec.ts";
 import type { Sample, Side } from "./types.ts";
 
 /** An estimate of B − A with its 95% interval; no interval below six differences. */
@@ -11,6 +12,13 @@ export interface Interval {
   estimate: number;
   low: number | null;
   high: number | null;
+}
+
+/** An interval that has both bounds. */
+export interface ClosedInterval {
+  estimate: number;
+  low: number;
+  high: number;
 }
 
 /** Where a build's Debug value counts from: the first JS import (4.26–4.27) or the process start. */
@@ -125,25 +133,34 @@ export function failedRows(rows: Array<Pick<Row, "verdict">>): boolean {
   return !rows.length || rows.some(r => /^(FAIL|Not detected|Not enough pairs)/.test(r.verdict));
 }
 
+/** `hl` when it has both bounds, else null (fewer than six differences). */
+function closed(hl: Interval | null): ClosedInterval | null {
+  const low = hl?.low ?? null;
+  const high = hl?.high ?? null;
+  return hl === null || low === null || high === null ? null : { estimate: hl.estimate, low, high };
+}
+
 function verdictFor({ preset, hl, thresholdMs }: GateOptions & { hl: Interval | null }): string {
-  if (!hl || hl.low === null || hl.high === null) return "Not enough pairs";
-  const ci = `[${Math.round(hl.low)}, ${Math.round(hl.high)}]`;
+  const interval = closed(hl);
+  if (!interval) return "Not enough pairs";
+  const { estimate, low, high } = interval;
+  const ci = `[${Math.round(low)}, ${Math.round(high)}]`;
   if (preset === "aa-noise") {
-    const halfWidth = Math.round((hl.high - hl.low) / 2);
-    const centred = hl.low <= 0 && hl.high >= 0;
+    const halfWidth = Math.round((high - low) / 2);
+    const centred = low <= 0 && high >= 0;
     return `${centred ? "OK" : "Biased"}: resolves about ±${halfWidth} ms`;
   }
   if (preset === "known-regression") {
     // The gate's own rule: would prod-vs-release have failed this B?
-    return hl.estimate > thresholdMs
-      ? `Detected: B is ${Math.round(hl.estimate)} ms slower`
-      : `Not detected: B − A is ${Math.round(hl.estimate)} ms ${ci}, not above ${thresholdMs} ms`;
+    return estimate > thresholdMs
+      ? `Detected: B is ${Math.round(estimate)} ms slower`
+      : `Not detected: B − A is ${Math.round(estimate)} ms ${ci}, not above ${thresholdMs} ms`;
   }
   const inconclusive =
-    hl.low <= thresholdMs && hl.high >= thresholdMs
+    low <= thresholdMs && high >= thresholdMs
       ? ` (inconclusive: ${ci} contains ${thresholdMs} ms)`
       : "";
-  if (hl.estimate > thresholdMs) {
+  if (estimate > thresholdMs) {
     return `FAIL: B is slower by more than ${thresholdMs} ms${inconclusive}`;
   }
   return `PASS${inconclusive}`;
@@ -154,20 +171,19 @@ const MIN_PAIRS_PER_PHASE = 3;
 
 // The true B − A the gate flags 80% of the time: the threshold plus 0.84 standard errors.
 export function detectableAt80(hl: Interval | null, thresholdMs: number): number | null {
-  if (!hl || hl.low === null || hl.high === null) return null;
-  return thresholdMs + 0.8416 * ((hl.high - hl.low) / (2 * Z_95));
+  const interval = closed(hl);
+  return interval && thresholdMs + 0.8416 * ((interval.high - interval.low) / (2 * Z_95));
 }
 
 // Seeded, so the same samples always give the same interval.
-export function bootstrapMean(
-  diffs: number[],
-  resamples = 4000,
-): { estimate: number; low: number; high: number } | null {
+export function bootstrapMean(diffs: number[], resamples = 4000): ClosedInterval | null {
   const n = diffs.length;
   if (n < 6) return null;
-  let seed = 0x9e3779b9;
+  // mulberry32; the Int32Array wraps its state to 32 bits.
+  const state = new Int32Array([0x9e3779b9]);
   const random = () => {
-    seed = (seed + 0x6d2b79f5) | 0;
+    state[0] += 0x6d2b79f5;
+    const seed = state[0];
     let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
     t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
@@ -189,13 +205,13 @@ export function bootstrapMean(
 
 const jsStartOffset = (s: Sample) => s.events?.["Before js imports"]?.time;
 export const fromJsStart = (s: Sample): number =>
-  (s.appStartupTime ?? NaN) - (jsStartOffset(s) ?? NaN);
+  (s.appStartupTime ?? Number.NaN) - (jsStartOffset(s) ?? Number.NaN);
 const jsStartEpoch = (s: Sample): number => {
   const name = Object.keys(s.events ?? {}).find(n => /^JS start epoch \d+$/.test(n));
-  return name ? Number(name.split(" ").pop()) : NaN;
+  return name ? Number(name.split(" ").pop()) : Number.NaN;
 };
 const harnessNativeStart = (s: Sample): number =>
-  jsStartEpoch(s) - (s.processStartAppClockAt ?? NaN);
+  jsStartEpoch(s) - (s.processStartAppClockAt ?? Number.NaN);
 export const fromProcessStart = (s: Sample): number => harnessNativeStart(s) + fromJsStart(s);
 
 export function debugBase(s: Sample): DebugBase | null {
@@ -217,7 +233,7 @@ const baseText = (base: DebugBase | null) => (base ? BASE_TEXT[base] : "an unkno
 function difference(group: Sample[], metric: Metric): Difference {
   const pairs = pairUp(group, metric);
   const phase = (n: number) =>
-    hodgesLehmann(pairs.filter(p => p.phase === n).map(p => p.B - p.A))?.estimate ?? NaN;
+    hodgesLehmann(pairs.filter(p => p.phase === n).map(p => p.B - p.A))?.estimate ?? Number.NaN;
   const phase0 = phase(0);
   const phase1 = phase(1);
   // Phase 0 puts B on the second device, phase 1 on the first: half their gap is the device bias.
@@ -291,7 +307,7 @@ export function summarise(samples: Sample[], { preset, thresholdMs }: GateOption
     };
     const offBaseCount = (side: Side) => read.filter(s => s.side === side && offBase(s)).length;
     const offBaseLaunches = { A: offBaseCount("A"), B: offBaseCount("B") };
-    const debugValue = difference(group, s => (offBase(s) ? NaN : s.appStartupTime));
+    const debugValue = difference(group, s => (offBase(s) ? Number.NaN : s.appStartupTime));
     const jsStart = difference(group, fromJsStart);
     const withNative = difference(group, fromProcessStart);
     const screen = startsDiffer && jsStart.pairs ? jsStart : debugValue;
@@ -319,8 +335,11 @@ export function summarise(samples: Sample[], { preset, thresholdMs }: GateOption
 
 const fmt = (v: number | null | undefined) =>
   typeof v === "number" && Number.isFinite(v) ? String(Math.round(v)) : "–";
-const signed = (v: number | null | undefined) =>
-  typeof v === "number" && Number.isFinite(v) ? `${v > 0 ? "+" : ""}${Math.round(v)}` : "–";
+const signed = (v: number | null | undefined) => {
+  if (typeof v !== "number" || !Number.isFinite(v)) return "–";
+  const sign = v > 0 ? "+" : "";
+  return `${sign}${Math.round(v)}`;
+};
 
 export function toMarkdown(
   rows: Row[],
@@ -379,13 +398,12 @@ async function main(): Promise<void> {
       "threshold-ms": { type: "string", default: "100" },
       "label-a": { type: "string", default: "A" },
       "label-b": { type: "string", default: "B" },
-      summary: { type: "string" },
       json: { type: "string" },
     },
   });
   const samples: Sample[] = [];
   for (const file of values.samples ?? []) {
-    const text = await readFile(file, "utf8").catch(() => "");
+    const text = await readFile(insideWorkingDir(file), "utf8").catch(() => "");
     for (const line of text.split("\n")) if (line.trim()) samples.push(JSON.parse(line));
   }
   const options: ReportOptions = {
@@ -399,10 +417,12 @@ async function main(): Promise<void> {
     ? toMarkdown(rows, options)
     : "### Startup time\n\nNo samples were recorded.\n";
   console.log(markdown);
-  if (values.summary) await appendFile(values.summary, markdown + "\n");
+  const summary = process.env.GITHUB_STEP_SUMMARY;
+  if (summary) await appendFile(summary, markdown + "\n");
   if (values.json) {
-    await mkdir(path.dirname(values.json), { recursive: true });
-    await writeFile(values.json, JSON.stringify(rows, null, 2));
+    const json = insideWorkingDir(values.json);
+    await mkdir(path.dirname(json), { recursive: true });
+    await writeFile(json, JSON.stringify(rows, null, 2));
   }
   if (failedRows(rows)) {
     console.error(
@@ -413,8 +433,5 @@ async function main(): Promise<void> {
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  main().catch(error => {
-    console.error(error);
-    process.exit(1);
-  });
+  await main();
 }

@@ -21,7 +21,7 @@ export interface BridgeMessage {
   raw?: string;
 }
 
-function encodeFrame(text: string): Buffer {
+export function encodeFrame(text: string): Buffer {
   const payload = Buffer.from(text, "utf8");
   const len = payload.length;
   let header;
@@ -41,37 +41,43 @@ function encodeFrame(text: string): Buffer {
   return Buffer.concat([header, payload]);
 }
 
+/** The payload length and where the mask or payload starts; null until the header is complete. */
+function frameHeader(buffer: Buffer, offset: number): { len: number; pos: number } | null {
+  const len = buffer[offset + 1] & 0x7f;
+  const pos = offset + 2;
+  if (len === 126) {
+    return buffer.length < pos + 2 ? null : { len: buffer.readUInt16BE(pos), pos: pos + 2 };
+  }
+  if (len === 127) {
+    return buffer.length < pos + 8
+      ? null
+      : { len: Number(buffer.readBigUInt64BE(pos)), pos: pos + 8 };
+  }
+  return { len, pos };
+}
+
+function unmask(data: Buffer, mask: Buffer): void {
+  for (let i = 0; i < data.length; i++) data[i] ^= mask[i % 4];
+}
+
 function controlFrame(opcode: number, payload: Buffer = Buffer.alloc(0)): Buffer {
   return Buffer.concat([Buffer.from([0x80 | opcode, payload.length]), payload]);
 }
 
 // Parses complete client frames from `buffer`; returns the frames and the unconsumed rest.
-function decodeFrames(buffer: Buffer): { frames: Frame[]; rest: Buffer } {
+export function decodeFrames(buffer: Buffer): { frames: Frame[]; rest: Buffer } {
   const frames: Frame[] = [];
   let offset = 0;
   while (buffer.length - offset >= 2) {
-    const b0 = buffer[offset];
-    const b1 = buffer[offset + 1];
-    let len = b1 & 0x7f;
-    let pos = offset + 2;
-    if (len === 126) {
-      if (buffer.length < pos + 2) break;
-      len = buffer.readUInt16BE(pos);
-      pos += 2;
-    } else if (len === 127) {
-      if (buffer.length < pos + 8) break;
-      len = Number(buffer.readBigUInt64BE(pos));
-      pos += 8;
-    }
-    const masked = (b1 & 0x80) !== 0;
-    const maskLen = masked ? 4 : 0;
-    if (buffer.length < pos + maskLen + len) break;
-    const mask = masked ? buffer.subarray(pos, pos + 4) : null;
-    pos += maskLen;
-    const data = Buffer.from(buffer.subarray(pos, pos + len));
-    if (mask) for (let i = 0; i < data.length; i++) data[i] ^= mask[i % 4];
-    frames.push({ fin: (b0 & 0x80) !== 0, opcode: b0 & 0x0f, data });
-    offset = pos + len;
+    const header = frameHeader(buffer, offset);
+    if (!header) break;
+    const masked = (buffer[offset + 1] & 0x80) !== 0;
+    const start = header.pos + (masked ? 4 : 0);
+    if (buffer.length < start + header.len) break;
+    const data = Buffer.from(buffer.subarray(start, start + header.len));
+    if (masked) unmask(data, buffer.subarray(header.pos, start));
+    frames.push({ fin: (buffer[offset] & 0x80) !== 0, opcode: buffer[offset] & 0x0f, data });
+    offset = start + header.len;
   }
   return { frames, rest: buffer.subarray(offset) };
 }

@@ -1,4 +1,5 @@
 import { execFile } from "node:child_process";
+import path from "node:path";
 import type { RunResult } from "./types.ts";
 
 export const INSTALL_TIMEOUT_MS = 600_000;
@@ -12,6 +13,16 @@ export const sleep = (ms: number): Promise<void> => new Promise(resolve => setTi
 
 export const errorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error);
+
+/** `file` resolved under the working directory, which is all the CLIs read or write. */
+export function insideWorkingDir(file: string): string {
+  const root = process.cwd();
+  const resolved = path.resolve(root, file);
+  if (resolved !== root && !resolved.startsWith(root + path.sep)) {
+    throw new Error(`${file} is outside the working directory ${root}`);
+  }
+  return resolved;
+}
 
 export interface RunOptions {
   timeoutMs?: number;

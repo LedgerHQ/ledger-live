@@ -12,6 +12,19 @@ const FLING_SETTLE_MS = 1500;
 const SWIPE_SETTLE_MS = 800;
 const DEFAULT_SCREEN_SIZE: [number, number] = [1080, 2400];
 
+async function stopDriver(device: string): Promise<void> {
+  for (const pkg of ["dev.mobile.maestro", "dev.mobile.maestro.test"]) {
+    await run("adb", ["-s", device, "shell", "am", "force-stop", pkg], { allowFail: true });
+  }
+}
+
+async function blockingDialog(device: string): Promise<string | null> {
+  const { stdout } = await run("adb", ["-s", device, "shell", "dumpsys", "window"], {
+    allowFail: true,
+  });
+  return parseBlockingDialog(stdout);
+}
+
 /** Android emulators, through adb. */
 export function createAndroid({ appId }: { appId: string }): Platform {
   const components = new Map<string, string>();
@@ -42,26 +55,13 @@ export function createAndroid({ appId }: { appId: string }): Platform {
     return found;
   }
 
-  async function stopDriver(device: string): Promise<void> {
-    for (const pkg of ["dev.mobile.maestro", "dev.mobile.maestro.test"]) {
-      await run("adb", ["-s", device, "shell", "am", "force-stop", pkg], { allowFail: true });
-    }
-  }
-
-  async function blockingDialog(device: string): Promise<string | null> {
-    const { stdout } = await run("adb", ["-s", device, "shell", "dumpsys", "window"], {
-      allowFail: true,
-    });
-    return parseBlockingDialog(stdout);
-  }
-
   async function screenSize(device: string): Promise<[number, number]> {
     const known = screenSizes.get(device);
     if (known) return known;
     const { stdout } = await run("adb", ["-s", device, "shell", "wm", "size"], {
       allowFail: true,
     });
-    const sizes = [...stdout.matchAll(/(\d+)x(\d+)/g)].map((m): [number, number] => [
+    const sizes = [...stdout.matchAll(/(?<!\d)(\d+)x(\d+)/g)].map((m): [number, number] => [
       Number(m[1]),
       Number(m[2]),
     ]);
@@ -119,7 +119,7 @@ export function createAndroid({ appId }: { appId: string }): Platform {
         await component(device),
         ...extras,
       ]);
-      const field = (name: string) => stdout.match(new RegExp(`^${name}: (.+)$`, "m"))?.[1]?.trim();
+      const field = (name: string) => new RegExp(`^${name}: (.+)$`, "m").exec(stdout)?.[1]?.trim();
       const status = field("Status");
       // "timeout" is expected when the splash holds the first frame; the launch itself went through.
       if (status && !["ok", "timeout"].includes(status)) {
@@ -216,7 +216,7 @@ export function createAndroid({ appId }: { appId: string }): Platform {
       const after = Date.now();
       if (failed) return null;
       const at = parseProcessStart(stdout, (before + after) / 2);
-      const guestEpoch = Number(stdout.match(/^epoch (\d+\.\d+)/m)?.[1]) * 1000;
+      const guestEpoch = Number(/^epoch (\d+\.\d+)/m.exec(stdout)?.[1]) * 1000;
       const appClockAt = Number.isFinite(guestEpoch) ? parseProcessStart(stdout, guestEpoch) : null;
       return at === null ? null : { at, appClockAt, pid: parseStatPid(stdout) };
     },
@@ -241,7 +241,7 @@ export function createAndroid({ appId }: { appId: string }): Platform {
 
 // Field 22 of /proc/<pid>/stat is the process start in clock ticks since boot (USER_HZ = 100).
 export function parseProcessStart(text: string, readAt: number): number | null {
-  const uptime = Number(text.match(/^(\d+\.\d+) /m)?.[1]);
+  const uptime = Number(/^(\d+\.\d+) /m.exec(text)?.[1]);
   const stat = text.slice(text.lastIndexOf(")") + 2).split(" ");
   const startTicks = Number(stat[19]);
   if (!Number.isFinite(uptime) || !Number.isFinite(startTicks)) return null;
@@ -249,7 +249,7 @@ export function parseProcessStart(text: string, readAt: number): number | null {
 }
 
 export function parseStatPid(text: string): number | null {
-  const pid = Number(text.match(/^(\d+) \(/m)?.[1]);
+  const pid = Number(/^(\d+) \(/m.exec(text)?.[1]);
   return Number.isInteger(pid) && pid > 0 ? pid : null;
 }
 
@@ -260,9 +260,9 @@ export interface ScreenState {
 }
 
 export function parseScreenState(text: string): ScreenState {
-  const focus = text.match(/mCurrentFocus=Window\{\S+ \S+ ([^}]+)\}/)?.[1]?.trim() ?? null;
+  const focus = /mCurrentFocus=Window\{\S+ \S+ ([^}]+)\}/.exec(text)?.[1]?.trim() ?? null;
   return {
-    wakefulness: text.match(/mWakefulness=(\w+)/)?.[1] ?? null,
+    wakefulness: /mWakefulness=(\w+)/.exec(text)?.[1] ?? null,
     focus,
     keyguard: /NotificationShade|Keyguard/i.test(focus ?? ""),
   };
@@ -270,8 +270,8 @@ export function parseScreenState(text: string): ScreenState {
 
 export function parseBlockingDialog(dumpsysWindow: string): string | null {
   return (
-    dumpsysWindow.match(
-      /mCurrentFocus=.*(?:Application Not Responding|Application Error): ([\w.]+)/,
+    /mCurrentFocus=.*(?:Application Not Responding|Application Error): ([\w.]+)/.exec(
+      dumpsysWindow,
     )?.[1] ?? null
   );
 }

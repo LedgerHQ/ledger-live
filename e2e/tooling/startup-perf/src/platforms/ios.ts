@@ -28,26 +28,26 @@ usec = int.from_bytes(buf.raw[8:12], "little", signed=True)
 print(sec * 1000 + usec / 1000)
 `;
 
+// Maestro's xcodebuild driver outlives the call that started it.
+async function stopDriver(device: string): Promise<void> {
+  const xcodebuild = `test-without-building.*id=${device}`;
+  await run("pkill", ["-f", xcodebuild], { allowFail: true });
+  for (let i = 0; i < DRIVER_EXIT_POLLS; i++) {
+    if ((await run("pgrep", ["-f", xcodebuild], { allowFail: true })).failed) break;
+    await sleep(DRIVER_EXIT_POLL_MS);
+  }
+  await run(
+    "xcrun",
+    ["simctl", "terminate", device, "dev.mobile.maestro-driver-iosUITests.xctrunner"],
+    {
+      allowFail: true,
+    },
+  );
+}
+
 /** iOS simulators, through simctl. */
 export function createIos({ appId, maestro }: { appId: string; maestro: Maestro }): Platform {
   const pids = new Map<string, number | null>();
-
-  // Maestro's xcodebuild driver outlives the call that started it.
-  async function stopDriver(device: string): Promise<void> {
-    const xcodebuild = `test-without-building.*id=${device}`;
-    await run("pkill", ["-f", xcodebuild], { allowFail: true });
-    for (let i = 0; i < DRIVER_EXIT_POLLS; i++) {
-      if ((await run("pgrep", ["-f", xcodebuild], { allowFail: true })).failed) break;
-      await sleep(DRIVER_EXIT_POLL_MS);
-    }
-    await run(
-      "xcrun",
-      ["simctl", "terminate", device, "dev.mobile.maestro-driver-iosUITests.xctrunner"],
-      {
-        allowFail: true,
-      },
-    );
-  }
 
   return {
     async install(device, app) {
@@ -63,7 +63,7 @@ export function createIos({ appId, maestro }: { appId: string; maestro: Maestro 
       // react-native-launch-arguments reads "-key value" pairs from the process arguments.
       const args = Object.entries(launchArgs).flatMap(([k, v]) => [`-${k}`, String(v)]);
       const { stdout } = await run("xcrun", ["simctl", "launch", device, appId, ...args]);
-      const pid = Number(stdout.match(/:\s*(\d+)\s*$/m)?.[1]);
+      const pid = Number(/:\s*(\d+)\s*$/m.exec(stdout)?.[1]);
       pids.set(device, Number.isInteger(pid) && pid > 0 ? pid : null);
       return {};
     },

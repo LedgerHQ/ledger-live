@@ -5,12 +5,12 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
 import { createAndroid } from "./platforms/android.ts";
-import { errorMessage, log, sleep } from "./exec.ts";
+import { errorMessage, insideWorkingDir, log, sleep } from "./exec.ts";
 import { createInjector, loadUserdata } from "./inject.ts";
 import { createIos } from "./platforms/ios.ts";
 import { createMaestro } from "./maestro.ts";
 import { createPerformanceReader } from "./performance-screen.ts";
-import type { PlatformName, Sample, SampleMeta, Side } from "./types.ts";
+import type { PlatformName, Sample, SampleMeta, Side, Userdata } from "./types.ts";
 
 const { values: opts } = parseArgs({
   options: {
@@ -50,7 +50,7 @@ const WARMUPS = Number(opts.warmups);
 const IDLE_MS = Number(opts["idle-ms"]);
 const SETTLE_MS = Number(opts["settle-ms"]);
 const BRIDGE_PORT = Number(opts["bridge-port"]);
-const OUT_DIR = opts["out-dir"];
+const OUT_DIR = insideWorkingDir(opts["out-dir"]);
 const SAMPLES_FILE = path.join(OUT_DIR, "samples.jsonl");
 const DEBUG_DIR = path.join(OUT_DIR, "debug");
 const MAX_CONSECUTIVE_FAILURES = 4;
@@ -153,11 +153,8 @@ async function sample(meta: SampleMeta): Promise<Sample> {
   return record;
 }
 
-async function main(): Promise<void> {
-  validateOptions();
-  await mkdir(DEBUG_DIR, { recursive: true });
-  await writeFile(SAMPLES_FILE, "");
-  await writeFile(
+function writeMeta(): Promise<void> {
+  return writeFile(
     path.join(OUT_DIR, "meta.json"),
     JSON.stringify(
       {
@@ -179,45 +176,70 @@ async function main(): Promise<void> {
       2,
     ),
   );
+}
 
-  for (const scenario of SCENARIOS) {
-    const userdata = await loadUserdata({
-      dir: opts["userdata-dir"],
-      names: scenario === "accounts" ? opts["accounts-userdata"] : opts["no-accounts-userdata"],
-    });
-    log(`=== ${scenario}: ${userdata.accounts.length} accounts from ${userdata.names.join(", ")}`);
-    for (const phase of [0, 1]) {
-      const placement: Record<Side, string> =
-        phase === 0 ? { A: DEVICES[0], B: DEVICES[1] } : { A: DEVICES[1], B: DEVICES[0] };
-      // Never the same device twice in a row, warm-ups included.
-      const order: Side[] = phase === 0 ? ["A", "B"] : ["B", "A"];
-      for (const side of order) {
-        const device = placement[side];
-        log(`installing ${side} on ${device} and injecting ${scenario}`);
-        await P.install(device, APPS[side]);
-        await inject({ device, userdata, side }).catch(async (error: unknown) => {
-          log(`  injection failed (${errorMessage(error)}); retrying once`);
-          await P.stop(device);
-          await inject({ device, userdata, side });
-        });
-        for (let w = 0; w < WARMUPS; w++) {
-          await sample({ scenario, phase, round: -1 - w, side, device, warmup: true });
-        }
+/** Phase 0 puts A on the first device, phase 1 on the second; the side that went last goes first. */
+function layout(phase: number): { placement: Record<Side, string>; order: Side[] } {
+  return phase === 0
+    ? { placement: { A: DEVICES[0], B: DEVICES[1] }, order: ["A", "B"] }
+    : { placement: { A: DEVICES[1], B: DEVICES[0] }, order: ["B", "A"] };
+}
+
+/** Installs a build and imports the scenario's userdata into it, retrying the import once. */
+async function installAndInject({
+  scenario,
+  side,
+  device,
+  userdata,
+}: {
+  scenario: string;
+  side: Side;
+  device: string;
+  userdata: Userdata;
+}): Promise<void> {
+  log(`installing ${side} on ${device} and injecting ${scenario}`);
+  await P.install(device, APPS[side]);
+  await inject({ device, userdata, side }).catch(async (error: unknown) => {
+    log(`  injection failed (${errorMessage(error)}); retrying once`);
+    await P.stop(device);
+    await inject({ device, userdata, side });
+  });
+}
+
+async function measureScenario(scenario: string): Promise<void> {
+  const userdata = await loadUserdata({
+    dir: insideWorkingDir(opts["userdata-dir"]),
+    names: scenario === "accounts" ? opts["accounts-userdata"] : opts["no-accounts-userdata"],
+  });
+  log(`=== ${scenario}: ${userdata.accounts.length} accounts from ${userdata.names.join(", ")}`);
+  for (const phase of [0, 1]) {
+    // Never the same device twice in a row, warm-ups included.
+    const { placement, order } = layout(phase);
+    for (const side of order) {
+      const device = placement[side];
+      await installAndInject({ scenario, side, device, userdata });
+      for (let w = 0; w < WARMUPS; w++) {
+        await sample({ scenario, phase, round: -1 - w, side, device, warmup: true });
       }
-      for (let round = 0; round < PAIRS / 2; round++) {
-        for (const side of order) {
-          await sample({ scenario, phase, round, side, device: placement[side], warmup: false });
-        }
+    }
+    for (let round = 0; round < PAIRS / 2; round++) {
+      for (const side of order) {
+        await sample({ scenario, phase, round, side, device: placement[side], warmup: false });
       }
     }
   }
+}
+
+async function main(): Promise<void> {
+  validateOptions();
+  await mkdir(DEBUG_DIR, { recursive: true });
+  await writeFile(SAMPLES_FILE, "");
+  await writeMeta();
+  for (const scenario of SCENARIOS) await measureScenario(scenario);
   for (const device of DEVICES) await P.stop(device);
   log(`done: ${SAMPLES_FILE}`);
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  main().catch(error => {
-    console.error(error);
-    process.exit(1);
-  });
+  await main();
 }
