@@ -1,6 +1,6 @@
 # Architecture review rules (beyond lint:arch)
 
-CI runs `pnpm lint:arch` (`lint:boundaries`, `lint:structure`, `lint:tool-config`, `lint:i18n-keys`, and `skills:check`). Do not restate failures those targets already report. Use this file for gaps the tooling leaves to review.
+CI runs `pnpm lint:arch` (whatever that script runs in the root `package.json`). Do not restate failures those targets already report. Use this file for gaps the tooling leaves to review.
 
 ## Entity state versus flow state
 
