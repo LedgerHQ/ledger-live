@@ -36,7 +36,11 @@ pnpm nx show projects --affected --files="$FILES" --json \
   | jq -r '.[] | select(. == "ledger-live-desktop" or . == "live-mobile")'
 ```
 
-`ledger-live-desktop` → Desktop, `live-mobile` → Android + iOS. Then narrow by platform suffix, which Nx does not see: a change only in `*.web.ts(x)` files ships on desktop, only in `*.native.ts(x)` on mobile. A `package.json` change marks every dependent app as affected; read what it changes before building all three. A `devtools/` change only shows in the developer tools screen; build it only when someone needs to test that screen.
+`ledger-live-desktop` → Desktop, `live-mobile` → Android + iOS. Then narrow by platform suffix, which Nx does not see: a change only in `*.web.ts(x)` files ships on desktop, only in `*.native.ts(x)` on mobile. A `package.json` change marks every dependent app as affected; read what it changes before building all three.
+
+**`devtools/` packages:** keep every consumer app that Nx returns from the command above (and the platform mapping in this section). The graph connects `devtools/` libraries to real apps, so a change there can still require Android, iOS, or Desktop builds. Do not drop those apps on the assumption that the work only shows on the developer tools screen.
+
+The narrow "developer tools screen only" idea applies only when every **runtime** import of that workspace package from an app lives under that app's in-app DevTools feature tree, for example `apps/ledger-live-mobile/src/mvvm/features/DevTools/` or `apps/ledger-live-desktop/src/mvvm/features/DevTools/`. Check the real paths: `rg '<package-name-from-package-json>' apps/` (for example `rg '@devtools/bindings' apps/`) and read each hit. Imports that all sit under `apps/*/src/**/DevTools/**` are screen-only for that mobile or desktop app; any import outside those folders (for example another feature folder or `apps/web-tools/src/`, which also consumes `@devtools/*`) is not, so you must keep the full Nx-derived app list for builds. Cross-check with `pnpm nx show projects --affected --files="$FILES" --json`: if `live-mobile` or `ledger-live-desktop` appears, keep the matching mobile or desktop builds.
 
 **Scope off the PR's file list, not `git diff develop...HEAD`.** A stale merge-base makes the local three-dot diff pull in hundreds of unrelated files. When a PR exists, use `gh pr view <pr> -R LedgerHQ/ledger-live --json files --jq '.files[].path'` for the true change set.
 
