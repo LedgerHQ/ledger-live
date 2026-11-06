@@ -1,6 +1,6 @@
-import type { AnalyticsBalanceData, AnalyticsResultState } from "@features/flow-account-analytics";
-import { renderHook } from "tests/testSetup";
-import { useRetainedAnalyticsBalance } from "../useRetainedAnalyticsBalance";
+import { renderHook } from "@testing-library/react";
+import type { AnalyticsBalanceData, AnalyticsResultState } from "../types";
+import { useRetainedAnalyticsBalance } from "./useRetainedAnalyticsBalance";
 
 type Balance = AnalyticsResultState<AnalyticsBalanceData>;
 

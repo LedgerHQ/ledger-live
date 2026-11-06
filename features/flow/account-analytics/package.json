@@ -20,7 +20,11 @@
     "coverage": "jest --coverage"
   },
   "dependencies": {
+    "@domain/api-aggregated-assets": "workspace:*",
+    "@domain/entity-currency": "workspace:*",
     "@domain/entity-currency-fiat": "workspace:*",
+    "@domain/entity-market-countervalues": "workspace:*",
+    "@features/platform-aggregated-assets": "workspace:*",
     "@shared/analytics": "workspace:*",
     "@shared/i18n": "workspace:*",
     "zod": "catalog:"
@@ -53,7 +57,8 @@
     "typescript": "catalog:",
     "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/lumen-design-core": "catalog:",
-    "@ledgerhq/lumen-ui-react": "catalog:"
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "@domain/entity-currency-crypto": "workspace:*"
   },
   "peerDependenciesMeta": {
     "@ledgerhq/crypto-icons": {
