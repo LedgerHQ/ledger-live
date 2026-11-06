@@ -15,8 +15,9 @@ including an empty native position when account activity makes its Analytics ent
 
 Balance amounts and history use the host fiat currency's smallest unit; variation ratios use
 fractions (`0.1` means 10%). A ready amount of zero is different from unavailable data. Hosts
-must report unavailable when required pricing/history is missing rather than silently sum a
-partial result. Ports receive an AbortSignal; the ViewModel also rejects outdated requests even
+leave held positions without a price out of the total and history, as the Portfolio does, and
+report unavailable when no held position of the selection is priced or a priced holding has no
+history. Ports receive an AbortSignal; the ViewModel also rejects outdated requests even
 when a port cannot cancel its work. Changing the port callback refreshes the current selection
 when host accounts or countervalues change.
 
