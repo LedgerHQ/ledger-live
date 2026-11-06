@@ -3,16 +3,16 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
-import { boundariesJobChecks, lintArchChecks } from "./arch-steps.mjs";
+import { boundariesJobChecks, lintArchChecks } from "../arch-steps.ts";
 
-const root = join(dirname(fileURLToPath(import.meta.url)), "../..");
+const root = join(dirname(fileURLToPath(import.meta.url)), "../..", "..");
 
-const scripts = {
+const scripts: Record<string, string> = {
   "lint:boundaries": "nx run enforce-boundaries:lint:boundaries",
   "lint:structure": "nx run-many -t lint:structure",
   "lint:tool-config": "nx run-many -t lint:tool-config",
   "lint:i18n-keys": "nx run enforce-i18n-keys:lint:i18n-keys",
-  "skills:check": "node tools/skills-check/check.mjs",
+  "skills:check": "node tools/skills-check/check.ts",
   "lint:arch":
     "pnpm run lint:boundaries && pnpm run lint:structure && pnpm run lint:tool-config && pnpm run lint:i18n-keys && pnpm run skills:check",
 };
@@ -33,7 +33,7 @@ const workflow = `
       - name: Check i18n keys exist in the Desktop and Mobile catalogs
         run: pnpm exec nx run-many -t lint:i18n-keys -p enforce-i18n-keys
       - name: Test the skills and docs check
-        run: node --test "tools/skills-check/*.test.mjs"
+        run: node --test "tools/skills-check/test/*.test.ts"
       - name: Check skills and docs
         run: pnpm skills:check
 `;
@@ -68,7 +68,10 @@ describe("lint:arch and the CI boundaries job", () => {
   });
 
   it("run the same checks in this repository", () => {
-    const rootScripts = JSON.parse(readFileSync(join(root, "package.json"), "utf8")).scripts;
+    const rootScripts = JSON.parse(readFileSync(join(root, "package.json"), "utf8")).scripts as Record<
+      string,
+      string
+    >;
     const job = readFileSync(join(root, ".github/workflows/test-boundaries-reusable.yml"), "utf8");
     const { checks, unclassified } = boundariesJobChecks(job, rootScripts);
     assert.deepEqual(unclassified, []);

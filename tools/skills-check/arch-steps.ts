@@ -5,7 +5,7 @@ const NX_RUN = /\bnx\s+run\s+[^\s:]+:(\S+)/;
 const PNPM_SCRIPT = /^pnpm\s+(?:run\s+)?([\w:-]+)$/;
 const RUN_LINE = /^\s*run:\s*(.+?)\s*$/gm;
 
-const checkName = (command, scripts) => {
+const checkName = (command: string, scripts: Record<string, string>): string | null => {
   const nxTarget = NX_RUN_MANY.exec(command)?.[1] ?? NX_RUN.exec(command)?.[1];
   if (nxTarget) return nxTarget;
   const script = PNPM_SCRIPT.exec(command.trim())?.[1];
@@ -16,19 +16,19 @@ const checkName = (command, scripts) => {
     : script;
 };
 
-export const lintArchChecks = scripts =>
+export const lintArchChecks = (scripts: Record<string, string>): (string | null)[] =>
   (scripts["lint:arch"] ?? "").split("&&").map(command => checkName(command, scripts));
 
-const enforceBoundariesJob = workflow => {
+const enforceBoundariesJob = (workflow: string): string => {
   const lines = workflow.split("\n");
   const start = lines.findIndex(line => /^\s*enforce-boundaries:\s*$/.test(line));
   if (start < 0) return workflow;
-  const jobIndent = lines[start].match(/^(\s*)/)[1].length;
+  const jobIndent = lines[start].match(/^(\s*)/)?.[1].length ?? 0;
   let end = lines.length;
   for (let i = start + 1; i < lines.length; i++) {
     const line = lines[i];
     if (line.trim() === "") continue;
-    const indent = line.match(/^(\s*)/)[1].length;
+    const indent = line.match(/^(\s*)/)?.[1].length ?? 0;
     if (indent <= jobIndent && /^[\w-]+:\s*$/.test(line)) {
       end = i;
       break;
@@ -37,23 +37,28 @@ const enforceBoundariesJob = workflow => {
   return lines.slice(start, end).join("\n");
 };
 
+import type { UnclassifiedBoundariesStep } from "./types.ts";
+
 // Nx test harness steps in the boundaries job, not part of lint:arch.
 const BOUNDARIES_JOB_SKIP = new Set(["test", "test:workspace"]);
 
 // Other enforce-boundaries steps that are not lint:arch parity targets.
 const BOUNDARIES_JOB_OTHER_STEPS = [
   /^pnpm install\b/,
-  /^node --test "tools\/skills-check\//,
+  /^node --test "tools\/skills-check\/test\//,
   /^pnpm exec knip\b/,
 ];
 
-const isOtherBoundariesStep = command =>
+const isOtherBoundariesStep = (command: string): boolean =>
   BOUNDARIES_JOB_OTHER_STEPS.some(pattern => pattern.test(command));
 
-export const boundariesJobChecks = (workflow, scripts) => {
+export const boundariesJobChecks = (
+  workflow: string,
+  scripts: Record<string, string>,
+): { checks: string[]; unclassified: UnclassifiedBoundariesStep[] } => {
   const job = enforceBoundariesJob(workflow);
-  const checks = [];
-  const unclassified = [];
+  const checks: string[] = [];
+  const unclassified: UnclassifiedBoundariesStep[] = [];
   for (const match of job.matchAll(RUN_LINE)) {
     const command = match[1];
     const line = job.slice(0, match.index).split("\n").length;

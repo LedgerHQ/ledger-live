@@ -1,0 +1,16 @@
+{
+  "name": "@ledgerhq/skills-check",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Validates agent skills, docs and layer READMEs for drift and metadata.",
+  "type": "module",
+  "scripts": {
+    "test": "node --test \"test/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:"
+  }
+}
