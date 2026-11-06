@@ -44,8 +44,8 @@ export default class MarketPage {
   }
 
   @Step("Open market screen via deeplink")
-  async openViaDeeplink() {
-    await openDeeplink("market");
+  async openViaDeeplink(currencyId?: string) {
+    await openDeeplink(currencyId ? `market/${currencyId}` : "market");
   }
 
   @Step("Expect asset page")
