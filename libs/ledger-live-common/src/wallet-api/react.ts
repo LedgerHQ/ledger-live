@@ -1721,17 +1721,16 @@ export function useCacheBustedLiveApps([cacheBustedLiveAppsDb, setState]: CacheB
   );
   const edit = useCallback(
     (manifestId: string, cacheBustingId: number) => {
-      const _cacheBustedLiveAppsDb = {
-        ...cacheBustedLiveAppsDb,
-        [manifestId]: cacheBustingId,
-        init: 1,
-      };
-      setState(state => {
-        const newstate = { ...state, cacheBustedLiveApps: _cacheBustedLiveAppsDb };
-        return newstate;
-      });
+      setState(state => ({
+        ...state,
+        cacheBustedLiveApps: {
+          ...state.cacheBustedLiveApps,
+          [manifestId]: cacheBustingId,
+          init: 1,
+        },
+      }));
     },
-    [setState, cacheBustedLiveAppsDb],
+    [setState],
   );
   return { getLatest, edit };
 }
