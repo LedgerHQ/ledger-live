@@ -1,5 +1,13 @@
 import { getEnv } from "@ledgerhq/live-env";
-import { AccountInfo, Cluster, ParsedAccountData, PublicKey, clusterApiUrl } from "@solana/web3.js";
+import {
+  AccountInfo,
+  Cluster,
+  ParsedAccountData,
+  PublicKey,
+  clusterApiUrl,
+  type VersionedMessage,
+  type VersionedTransaction,
+} from "@solana/web3.js";
 import BigNumber from "bignumber.js";
 import { partition } from "lodash/fp";
 import { ValidatorsAppValidator } from "./network/validator-app";
@@ -61,6 +69,27 @@ export const LEDGER_VALIDATOR_LIST: ValidatorsAppValidator[] = [
 ];
 
 export const LEDGER_VALIDATORS_VOTE_ACCOUNTS = LEDGER_VALIDATOR_LIST.map(v => v.voteAccount);
+
+/**
+ * Whether `address` must sign `message`. A partner may pay the fees (Jupiter's gasless and RFQ
+ * swaps do), so the account signs as a secondary signer rather than the fee payer at index 0.
+ */
+export function isRequiredSigner(message: VersionedMessage, address: string): boolean {
+  const index = message.staticAccountKeys.findIndex(key => key.toBase58() === address);
+  return index >= 0 && index < message.header.numRequiredSignatures;
+}
+
+/**
+ * Whether a partner-built transaction gets a fresh blockhash before signing: only while it is
+ * unsigned and the sender alone signs it. A co-signer (the market maker or gas payer of a Jupiter
+ * swap) signs the partner's exact bytes after the sender.
+ */
+export function refreshesBlockhash(transaction: VersionedTransaction): boolean {
+  return (
+    transaction.message.header.numRequiredSignatures === 1 &&
+    !transactionHasNonPlaceholderSignatures(transaction.signatures)
+  );
+}
 
 export const SOLANA_DELEGATION_RESERVE = 0.01;
 

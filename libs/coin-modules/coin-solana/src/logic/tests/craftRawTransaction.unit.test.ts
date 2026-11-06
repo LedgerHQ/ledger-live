@@ -1,14 +1,28 @@
-import { PublicKey, VersionedTransaction, TransactionMessage } from "@solana/web3.js";
+import {
+  PublicKey,
+  SystemProgram,
+  VersionedTransaction,
+  TransactionMessage,
+} from "@solana/web3.js";
 import { craftRawTransaction } from "../craftRawTransaction";
 
 const TEST_BLOCKHASH = "EEbZs6DmDyDjucyYbo3LwVJU7pQYuVopYcYTSEZXskW3";
 const TEST_PAYER = "HxCvgjSbF8HMt3fj8P3j49jmajNCMwKAqBu79HUDPtkM";
+const TEST_CO_SIGNER = "AjmMiagw33Ad4WdPR3y2QWsDXaLxmsiSZEpMfpT1Q9uZ";
 
-function makeSerializedTx(): string {
+function makeSerializedTx(coSigner?: string): string {
   const message = new TransactionMessage({
     payerKey: new PublicKey(TEST_PAYER),
     recentBlockhash: TEST_BLOCKHASH,
-    instructions: [],
+    instructions: coSigner
+      ? [
+          SystemProgram.transfer({
+            fromPubkey: new PublicKey(coSigner),
+            toPubkey: new PublicKey(TEST_PAYER),
+            lamports: 1,
+          }),
+        ]
+      : [],
   });
   const tx = new VersionedTransaction(message.compileToLegacyMessage());
   return Buffer.from(tx.serialize()).toString("base64");
@@ -33,12 +47,20 @@ describe("craftRawTransaction", () => {
     expect(result.details).toEqual({ recentBlockhash: TEST_BLOCKHASH });
   });
 
-  it("should throw when sender does not match the fee payer", async () => {
+  it("should succeed when sender co-signs a transaction another account pays for", async () => {
+    const txBase64 = makeSerializedTx(TEST_CO_SIGNER);
+
+    const result = await craftRawTransaction(txBase64, TEST_CO_SIGNER);
+
+    expect(result.transaction).toBe(txBase64);
+  });
+
+  it("should throw when sender is not a signer of the transaction", async () => {
     const txBase64 = makeSerializedTx();
     const wrongSender = "3Mc6bGBhgRyT5RMa2Cfkp3BD2TXFoaVaKzDrKJLemnaZ";
 
     await expect(craftRawTransaction(txBase64, wrongSender)).rejects.toThrow(
-      "Sender does not match transaction fee payer",
+      "Sender is not a signer of the transaction",
     );
   });
 

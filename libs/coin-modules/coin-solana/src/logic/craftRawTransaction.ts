@@ -1,5 +1,6 @@
 import type { CraftedTransaction } from "@ledgerhq/coin-module-framework/api/index";
 import { VersionedTransaction } from "@solana/web3.js";
+import { isRequiredSigner } from "../utils";
 
 export async function craftRawTransaction(
   transaction: string,
@@ -15,9 +16,8 @@ export async function craftRawTransaction(
     throw new Error("Invalid or unsupported raw transaction");
   }
 
-  const feePayer = tx.message.staticAccountKeys[0]?.toBase58();
-  if (sender && feePayer && sender !== feePayer) {
-    throw new Error("Sender does not match transaction fee payer");
+  if (sender && !isRequiredSigner(tx.message, sender)) {
+    throw new Error("Sender is not a signer of the transaction");
   }
 
   return {
