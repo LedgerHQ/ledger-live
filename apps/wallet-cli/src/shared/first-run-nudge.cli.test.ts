@@ -4,7 +4,7 @@ import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { runCli } from "../testing/cli-runner";
-import { cliStateDirIn } from "../testing/session-fixture";
+import { cliStateDirIn } from "../testing/state-home";
 
 let tmpDir: string | undefined;
 afterEach(async () => {

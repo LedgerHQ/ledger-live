@@ -721,3 +721,19 @@ describe("withSessionLock", () => {
     expect(events).toEqual(["first-start", "first-end", "second-start"]);
   });
 });
+
+describe("getSessionPath", () => {
+  it("keeps session.yaml where existing installs have it", () => {
+    const stateHome = join(tmpdir(), "wallet-cli-layout-test");
+    const restoreStateHome = pointStateHomeAt(stateHome);
+    try {
+      const installedLayout =
+        process.platform === "win32"
+          ? join(stateHome, "ledger-wallet-cli", "State", "session.yaml")
+          : join(stateHome, "ledger-wallet-cli", "session.yaml");
+      expect(getSessionPath()).toBe(installedLayout);
+    } finally {
+      restoreStateHome();
+    }
+  });
+});

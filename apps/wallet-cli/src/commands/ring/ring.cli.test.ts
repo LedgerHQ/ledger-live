@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach } from "bun:test";
 import { TrustchainEjected } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import type { TrustchainSDK } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { existsSync, mkdirSync, mkdtempSync, rmSync, statSync, writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { existsSync, mkdtempSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { Readable } from "node:stream";
 import { YAML } from "bun";
@@ -12,7 +12,7 @@ import { _setTestKeychain } from "../../key-ring/keychain-entry";
 import { _setTestLkrpSdk } from "../../key-ring/lkrp-sdk";
 import { loadDomainKey, loadKeyRing } from "../../key-ring/load-key-ring";
 import { runCli, storedApiAuthPubkey, type RunResult } from "../../testing/cli-runner";
-import { cliStateDirIn, makeSessionDir } from "../../testing/session-fixture";
+import { makeSessionDir, writeSessionIn } from "../../testing/session-fixture";
 import { pointStateHomeAt } from "../../testing/state-home";
 import { ETH_DESCRIPTOR } from "../../testing/constants";
 import { makeAuthenticatedQuoteServer } from "../../testing/authenticated-quote-server";
@@ -542,9 +542,7 @@ describe("ring encrypt — salt without trustchain must not prompt", () => {
   afterAll(cleanup);
 
   it("throws 'not initialized' without asking for a password", async () => {
-    const sessionPath = join(cliStateDirIn(dir), "session.yaml");
-    mkdirSync(dirname(sessionPath), { recursive: true });
-    writeFileSync(sessionPath, YAML.stringify({ accounts: [], passwordSalt: "0".repeat(32) }));
+    writeSessionIn(dir, { accounts: [], passwordSalt: "0".repeat(32) });
 
     // Pass --input to skip the TTY-dependent "No input" guard, so the trustchain check is reached
     // regardless of TTY state. The file is never read — the throw precedes the input read.
@@ -638,15 +636,10 @@ describe("ring destroy — transient remote failure keeps the local key", () => 
 // Seeds the initialized ring state (session + keychain) without `ring init`, so a test fakes only
 // the LKRP SDK method under test.
 async function seedInitializedRing(dir: string): Promise<void> {
-  const sessionPath = join(cliStateDirIn(dir), "session.yaml");
-  mkdirSync(dirname(sessionPath), { recursive: true });
-  writeFileSync(
-    sessionPath,
-    YAML.stringify({
-      accounts: [],
-      trustchain: { rootId: "seed-root", applicationPath: "m/0'/17'/0'" },
-    }),
-  );
+  writeSessionIn(dir, {
+    accounts: [],
+    trustchain: { rootId: "seed-root", applicationPath: "m/0'/17'/0'" },
+  });
   // savePrivateKey hashes the account name from the state dir, so pin it to this temp dir (matching
   // the env passed to runCli) before saving.
   const restoreStateHome = pointStateHomeAt(dir);
