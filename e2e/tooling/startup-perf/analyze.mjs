@@ -1,9 +1,5 @@
 #!/usr/bin/env node
-// Summarises samples.jsonl written by run.mjs. Launches are paired by (scenario, phase, round);
-// the difference is B − A on "App startup time", as read on the Debug screen and with the native
-// start added back, estimated with Hodges–Lehmann and a Wilcoxon signed-rank 95% interval. Writes
-// a markdown table to stdout and, with --summary, appends it there.
-// Exits non-zero when a comparison fails or cannot conclude (see failedRows).
+// Summarises run.mjs's samples.jsonl as B − A per scenario. See README.md.
 import { appendFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
@@ -18,15 +14,14 @@ export function median(values) {
   return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
 }
 
-// Robust standard deviation: median absolute deviation scaled to a normal SD.
+// Median absolute deviation scaled to a normal SD.
 export function robustSd(values) {
   const m = median(values);
   if (m === null) return null;
   return 1.4826 * median(values.map(v => Math.abs(v - m)));
 }
 
-// Hodges–Lehmann estimate of the median difference, with the normal-approximation
-// Wilcoxon interval (Hollander & Wolfe): bounds are the C-th smallest and largest Walsh averages.
+// Normal-approximation Wilcoxon interval (Hollander & Wolfe): C-th smallest and largest Walsh averages.
 export function hodgesLehmann(diffs) {
   const n = diffs.length;
   if (!n) return null;
@@ -54,10 +49,8 @@ export function pairUp(samples, metric) {
   return [...byKey.values()].filter(p => Number.isFinite(p.A) && Number.isFinite(p.B));
 }
 
-// aa-noise and known-regression check the setup; every other preset gates B against A.
 const isGate = preset => !["aa-noise", "known-regression"].includes(preset);
 
-// No samples, too few pairs, a slowdown past the threshold, or a known regression not seen.
 export function failedRows(rows) {
   return !rows.length || rows.some(r => /^(FAIL|Not detected|Not enough pairs)/.test(r.verdict));
 }
@@ -71,12 +64,11 @@ function verdictFor(preset, hl, thresholdMs) {
     return `${centred ? "OK" : "Biased"}: resolves about ±${halfWidth} ms`;
   }
   if (preset === "known-regression") {
-    // B is the fix, so a visible regression means B − A is clearly below zero.
+    // B is the fix: a visible regression means B − A is clearly below zero.
     return hl.high < 0
       ? `Detected: the fix is ${Math.round(-hl.estimate)} ms faster`
       : `Not detected ${ci}`;
   }
-  // The gate is on the estimate; when the interval holds the threshold, more pairs could flip it.
   const inconclusive =
     hl.low <= thresholdMs && hl.high >= thresholdMs
       ? ` (inconclusive: ${ci} contains ${thresholdMs} ms)`
@@ -87,16 +79,13 @@ function verdictFor(preset, hl, thresholdMs) {
   return `PASS${inconclusive}`;
 }
 
-// The true slowdown the gate flags 80% of the time: the estimate exceeds the threshold when the
-// true B − A is the threshold plus 0.84 standard errors, the error read off the 95% interval
-// (normal approximation).
+// The true B − A the gate flags 80% of the time: the threshold plus 0.84 standard errors.
 export function detectableAt80(hl, thresholdMs) {
   if (!hl || hl.low === null) return null;
   return thresholdMs + 0.8416 * ((hl.high - hl.low) / (2 * Z_95));
 }
 
-// Mean of the differences with a percentile bootstrap 95% interval, the mean being what the manual
-// test compares. Seeded, so the same samples always give the same interval.
+// Seeded, so the same samples always give the same interval.
 export function bootstrapMean(diffs, resamples = 4000) {
   const n = diffs.length;
   if (n < 6) return null;
@@ -122,32 +111,18 @@ export function bootstrapMean(diffs, resamples = 4000) {
   };
 }
 
-// The first JS import, relative to where the build's Debug value starts: ~0 when it counts from the
-// JS start (4.26–4.27, b3700d9164b), the native start otherwise (react-native-startup-time
-// before 4.26, the app's process start from LIVE-40286 on).
 const jsStartOffset = s => s.events?.["Before js imports"]?.time;
-// The Debug value from the first JS import, whichever start the build's Debug value uses.
 export const fromJsStart = s => s.appStartupTime - (jsStartOffset(s) ?? NaN);
-// Wall clock of the first JS import, from the "JS start epoch <ms>" event prepare-build.sh adds.
 const jsStartEpoch = s => {
   const name = Object.keys(s.events ?? {}).find(n => /^JS start epoch \d+$/.test(n));
   return name ? Number(name.split(" ").pop()) : NaN;
 };
-// From the process start: the native start, whatever the Debug value counts from, plus fromJsStart.
-// Needs the process start on the app's clock: the host kernel's on iOS (the simulator app shares
-// it), the emulator's own on Android. Runs before processStartAppClockAt only have it on iOS.
+// Samples from before processStartAppClockAt only have the app's clock on iOS (the host's).
 const appClockProcessStart = s =>
   s.processStartAppClockAt ?? (s.platform === "ios" ? s.processStartAt : NaN);
 const harnessNativeStart = s => jsStartEpoch(s) - (appClockProcessStart(s) ?? NaN);
 export const fromProcessStart = s => harnessNativeStart(s) + fromJsStart(s);
 
-// Where a launch's Debug value counts from:
-// - "js": the first JS import (4.26–4.27, or a launch where the app found no process start);
-// - "process": the process start the harness reads (LIVE-40286 on; react-native-startup-time on iOS);
-// - "package": react-native-startup-time's later mark on Android, the React host creation;
-// - "native": a native start, with no harness process start to tell which.
-// The LIVE-40286 module is within 22 ms of the harness, the Android package 237–649 ms off (runs
-// 41853176900, 40872918238, 41835997579).
 export function debugBase(s) {
   const offset = jsStartOffset(s);
   if (!Number.isFinite(offset)) return null;
@@ -171,24 +146,20 @@ const BASE_TEXT = {
   native: "a native start",
 };
 
-// B − A of one measure over the pairs of a platform and scenario.
 function difference(group, metric) {
   const pairs = pairUp(group, metric);
   const phase = n => hodgesLehmann(pairs.filter(p => p.phase === n).map(p => p.B - p.A))?.estimate;
   const phase0 = phase(0);
   const phase1 = phase(1);
-  // Phase 0 puts B on the second device, phase 1 on the first: half their gap is the device effect.
+  // Phase 0 puts B on the second device, phase 1 on the first: half their gap is the device bias.
   const instanceBias =
     Number.isFinite(phase0) && Number.isFinite(phase1) ? (phase0 - phase1) / 2 : null;
-  // Take the device effect out of each pair before estimating B − A and its interval.
   const adjusted = pairs.map(p => p.B - p.A - (instanceBias ?? 0) * (p.phase === 0 ? 1 : -1));
-  // Spread within each half, so the device bias does not inflate it.
   const centred = [0, 1].flatMap(n => {
     const d = pairs.filter(p => p.phase === n).map(p => p.B - p.A);
     const m = median(d);
     return d.map(v => v - m);
   });
-  // Without pairs on both sides of the swap, the device difference stays in B − A: no interval.
   const oneSideOfSwap = pairs.length > 0 && instanceBias === null;
   const hl = hodgesLehmann(adjusted);
   return {
@@ -214,8 +185,6 @@ export function summarise(samples, { preset, thresholdMs }) {
     const [platform, scenario] = key.split("|");
     const measured = group.filter(s => !s.warmup);
     const read = measured.filter(s => s.ok);
-    // Each build's usual start. When A and B count from different ones, the Debug screen row uses the
-    // time from the first JS import, which means the same in both.
     const bases = Object.fromEntries(
       ["A", "B"].map(side => [
         side,
@@ -228,8 +197,6 @@ export function summarise(samples, { preset, thresholdMs }) {
       ]),
     );
     const startsDiffer = Boolean(bases.A && bases.B) && !sameBase(bases.A, bases.B);
-    // A launch that counted from another start than its build's (e.g. the app found no process
-    // start) would be off by the whole native start: it is left out of the Debug screen row.
     const offBase = s => {
       const base = debugBase(s);
       return base !== null && !sameBase(base, bases[s.side]);
@@ -258,8 +225,6 @@ export function summarise(samples, { preset, thresholdMs }) {
           ? "Not enough pairs: none on one side of the device swap"
           : verdictFor(preset, d.hl, thresholdMs)),
     });
-    // Only a build too old for the "JS start epoch" event goes without the native verdict; launches
-    // that lack a process start count as missing pairs, so a harness fault still shows.
     const withoutEpoch = ["A", "B"].filter(
       side =>
         !group.some(s => s.ok && !s.warmup && s.side === side && Number.isFinite(jsStartEpoch(s))),

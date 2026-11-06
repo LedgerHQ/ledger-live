@@ -1,27 +1,11 @@
 #!/usr/bin/env bash
-# Startup performance: turns the checked-out ref into the measured build, before
-# `pnpm mobile e2e:build -c android.emu.prerelease` / `ios.sim.prerelease`. Run from the repo root.
-#
-#   prepare-build.sh [app_dir]
-#
-# The measured build is the E2E "production Firebase" build (.env.mock.prerelease), made prod-like:
-# - MOCK, DETOX and the other test-only keys no store env file has are removed;
-# - swap requests go to prod, like the store builds (.env.android.release / .env.ios.release);
-# - the E2E bridge starts only on a launch that passes wsPort (the injection), 20 s after the store
-#   is ready, so measured launches run no bridge code;
-# - the iOS blur is the real one: rspack aliases it to the E2E mock for any "mock" env file;
-# - the bundle is made without DETOX=1, like the store builds: from ef2aed228e8 on, e2e:build sets
-#   it, which keeps the blur mock (rspack) and adds collapsable={false} to every view (babel);
-# - a "JS start epoch <ms>" startup event gives the wall clock of the JS start, from which the
-#   analysis counts every build from its process start, whichever start its Debug value uses.
-#
-# Every anchor is checked before anything is edited, and a missing one exits non-zero (::error::).
-# The edited lines carry "startup-perf", so a patched checkout can be recognised.
-# POSIX awk only (BWK awk on macOS, mawk or gawk on Linux): ENVIRON, index(), ==, arrays.
+# Makes the checked-out ref's E2E prerelease build prod-like, before `pnpm mobile e2e:build`.
+# Run from the repo root: prepare-build.sh [app_dir]. See README.md.
+# POSIX awk only (BWK awk on macOS, mawk or gawk on Linux).
 set -euo pipefail
 
 app="${1:-apps/ledger-live-mobile}"
-# Must exceed the slowest measured startup plus the settle time; inject() waits 180 s for the app.
+# Above the slowest startup plus the settle time, below inject()'s 180 s wait for the app.
 delay_ms="${STARTUP_PERF_BRIDGE_DELAY_MS:-20000}"
 swap_api_base='SWAP_API_BASE="https://swap.ledger.com/v5"'
 
@@ -33,11 +17,9 @@ summary() {
   echo "$*"
   if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then echo "- $*" >> "$GITHUB_STEP_SUMMARY"; fi
 }
-# Number of lines of $1 exactly equal to $LINE.
 count_exact() {
   awk 'BEGIN { t = ENVIRON["LINE"]; n = 0 } $0 == t { n++ } END { print n }' "$1"
 }
-# Runs awk program $1 on file $2 into a temp file; replaces $2 only when awk exits 0.
 awk_in_place() {
   local prog="$1" file="$2" status=0
   awk "$prog" "$file" > "$file.startup-perf" || status=$?
@@ -72,7 +54,6 @@ fi
 for line in 'MOCK=1' 'DETOX=1' 'FORCE_DEBUG_VISIBLE=1'; do
   [ "$(LINE="$line" count_exact "$env_file")" = 1 ] || fail "expected one '$line' line in $env_file"
 done
-# Lines of the e2e:build script that set DETOX=1: 0 before ef2aed228e8, 1 from it on.
 e2e_build_detox() {
   awk 'index($0, "\"e2e:build\":") && index($0, "DETOX=1 ") { n++ } END { print n + 0 }' \
     "$package_file"
@@ -86,7 +67,6 @@ if [ "$(uname -s)" = Darwin ] && [ -e /tmp/envfile ]; then
 fi
 
 gate_bridge_on_ws_port() {
-  # onInitFinished is the same 5 lines on develop and at the August 2026 refs.
   IMPORT_INIT="$bridge_import" \
   IMPORT_LA='import { LaunchArguments } from "react-native-launch-arguments";' \
   DELAY_MS="$delay_ms" awk_in_place '
@@ -132,8 +112,7 @@ gate_bridge_on_ws_port() {
 }
 
 real_blur() {
-  # Every measured build has ENVFILE=.../.env.mock.prerelease, which aliases the blur library to the
-  # E2E passthrough View. Keep the alias only for an explicit DETOX=1 bundling shell.
+  # rspack aliases the blur to the E2E mock for any "mock" ENVFILE: keep that for DETOX=1 only.
   OLD="$rspack_line" NEW='const isDetoxBuild = process.env.DETOX === "1"; // startup-perf prod-like: no blur mock' \
     awk_in_place 'BEGIN { o = ENVIRON["OLD"]; r = ENVIRON["NEW"] } $0 == o { print r; next } { print }' \
     "$rspack_file" || fail "cannot rewrite isDetoxBuild in $rspack_file"
@@ -166,7 +145,7 @@ prod_like_env() {
   fi
 }
 
-# Measurement only, so a missing anchor (older refs) is a warning.
+# Older refs lack the anchor: a warning, as only the native start goes unmeasured.
 log_js_start_epoch() {
   if [ -f "$js_start_file" ] && [ "$(LINE="$js_start_line" count_exact "$js_start_file")" = 1 ]; then
     LINE="$js_start_line" awk_in_place '

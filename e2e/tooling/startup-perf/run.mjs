@@ -1,16 +1,5 @@
 #!/usr/bin/env node
-// Measures LWM startup on two Android emulators or two iOS simulators, alternating build A and
-// build B, and writes one JSON line per launch to <out-dir>/samples.jsonl.
-//
-// Each launch is a plain `adb shell am start` / `xcrun simctl launch` with no test tool attached.
-// Maestro only opens Settings > Debug > Performance afterwards to read "App startup time" and the
-// startup events.
-// Accounts are injected once per install through the E2E bridge (bridge.mjs), then persisted by the app.
-// Launches strictly alternate between the two devices, so every launch follows one on the other
-// device: in run 39731729203 a launch right after one on the same simulator was ~270 ms faster.
-// Halfway through each scenario the builds swap devices and the starting side flips, so a
-// difference between the two devices cancels out of B − A (analyze.mjs reports it as "device bias").
-// On Android the other emulator is paused from the launch until the read, so it takes no host CPU.
+// Writes one JSON line per launch to <out-dir>/samples.jsonl. See README.md.
 import { execFile } from "node:child_process";
 import { appendFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
@@ -28,7 +17,6 @@ const { values: opts } = parseArgs({
     scenarios: { type: "string", default: "no-accounts,accounts" },
     "userdata-dir": { type: "string", default: "e2e/mobile/userdata" },
     "no-accounts-userdata": { type: "string", default: "skip-onboarding" },
-    // Real BTC, ETH (with tokens) and SOL accounts; settings come from the first file.
     "accounts-userdata": {
       type: "string",
       default: "speculos-x-other-account,swap-history",
@@ -60,9 +48,6 @@ const OUT_DIR = opts["out-dir"];
 const SAMPLES_FILE = path.join(OUT_DIR, "samples.jsonl");
 const DEBUG_DIR = path.join(OUT_DIR, "debug");
 const FULL_FLOW = path.join(import.meta.dirname, "flows", "read-performance.yaml");
-// The flow without the optional taps, for measured reads: when their prompts are absent, they wait
-// up to ~7 s in all. Warm-ups keep the full flow (iOS asks to confirm a simulator's first openLink),
-// and it is the retry when this one fails.
 const QUICK_FLOW = path.join(import.meta.dirname, "flows", "read-performance-quick.yaml");
 const SCROLL_FLOW = path.join(import.meta.dirname, "flows", "scroll-performance.yaml");
 const SCROLL_TO_END_FLOW = path.join(
@@ -70,11 +55,9 @@ const SCROLL_TO_END_FLOW = path.join(
   "flows",
   "scroll-performance-to-end.yaml",
 );
-// "App startup time" is the later of these two; a read before both exist would under-report it.
+// "App startup time" is the later of these two: a read before both exist under-reports it.
 const FINAL_EVENTS = ["App started", "Splash screen faded"];
-// Per device: with strict alternation, a device that never reads would otherwise go unnoticed.
 const MAX_CONSECUTIVE_FAILURES = 4;
-// After a dialog's process is restarted, let the device settle before the next launch.
 const DIALOG_RECOVERY_MS = 30_000;
 
 function validateOptions() {
@@ -91,10 +74,6 @@ function validateOptions() {
   }
 }
 
-// By default Maestro uninstalls and reinstalls its driver apps on every call (about 50 s per read
-// in run 40006507791), which also keeps the host busy right before the next launch. Without the
-// reinstall it installs them once, when missing.
-// No wait for the update check at exit and no analytics upload; on iOS, no Android device listing.
 const MAESTRO_ENV = Object.fromEntries(
   Object.entries({
     ...process.env,
@@ -103,11 +82,8 @@ const MAESTRO_ENV = Object.fromEntries(
     MAESTRO_CLI_ANALYSIS_NOTIFICATION_DISABLED: "true",
   }).filter(([key]) => PLATFORM !== "ios" || !(key === "ANDROID" || key.startsWith("ANDROID_"))),
 );
-// iOS: one driver port per simulator, so the calls of a read reuse the driver the first one started
-// (a `test` otherwise picks a random port and starts its own). The driver is still stopped before
-// every launch.
+// One per simulator, so the calls of a read reuse one driver.
 const IOS_DRIVER_PORT = 22087;
-// Every Maestro call of the current launch, with its duration, recorded in the sample.
 let maestroCalls = [];
 
 async function maestro(device, command, args, { timeoutMs }) {
@@ -160,9 +136,7 @@ const android = {
   components: new Map(),
   async install(device, apk) {
     await run("adb", ["-s", device, "uninstall", APP_ID], { allowFail: true });
-    // -g grants runtime permissions up front, so no permission prompt covers the launch.
-    // --no-incremental: an incremental install (picked when an .idsig sits next to the APK) skips
-    // install-time dexopt on Android 16, which no user's install does.
+    // --no-incremental: an incremental install skips install-time dexopt on Android 16.
     await run("adb", ["-s", device, "install", "--no-incremental", "-r", "-g", apk], {
       timeoutMs: 600_000,
     });
@@ -224,8 +198,6 @@ const android = {
     const totalTime = Number(field("TotalTime"));
     return { amStartMs: Number.isFinite(totalTime) ? totalTime : null };
   },
-  // Screen state before a launch: wakefulness and the focused window. The job keeps the screen on
-  // and the keyguard off, so waking it here should never be needed; when it is, the sample says so.
   async ensureScreenOn(device) {
     const read = async () => {
       const { stdout } = await run(
@@ -255,16 +227,13 @@ const android = {
     await sleep(1000);
     return { ...(await read()), wokenFrom: before };
   },
-  // Package named by a system dialog that has the focus ("System UI isn't responding", a crash
-  // dialog), or null. It covers the app, so Maestro cannot read the screen.
   async blockingDialog(device) {
     const { stdout } = await run("adb", ["-s", device, "shell", "dumpsys", "window"], {
       allowFail: true,
     });
     return parseBlockingDialog(stdout);
   },
-  // Emulators under load show these after boot. Restart the process, like
-  // tools/scripts/wait_emulator_idle.sh does for the E2E emulators.
+  // Like tools/scripts/wait_emulator_idle.sh for the E2E emulators.
   async clearDialogs(device) {
     const cleared = [];
     let pkg = await this.blockingDialog(device);
@@ -292,8 +261,7 @@ const android = {
     }
     return cleared;
   },
-  // Freezes the emulator (console "avd stop"): its virtual CPUs stop, so it takes no host CPU while
-  // the other one launches. adb commands sent to it wait until "avd start".
+  // Freezes the emulator's vCPUs; adb commands sent to it wait until "avd start".
   async pause(device) {
     const { stdout } = await run("adb", ["-s", device, "emu", "avd", "stop"], {
       timeoutMs: 30_000,
@@ -307,9 +275,7 @@ const android = {
     });
     if (!/^OK/m.test(stdout)) throw new Error(`avd start on ${device}: ${stdout.trim()}`);
   },
-  // Epoch ms at which the app process started, on the runner's clock and on the emulator's (which
-  // the app's Date.now() uses: the two differed by ~67 s in run 40847012543). The startup events
-  // count from the JS start, while `am start` spends a few hundred ms before the process exists.
+  // On the runner's clock and on the emulator's, which the app's Date.now() uses.
   async processStart(device) {
     const before = Date.now();
     const { stdout, failed } = await run(
@@ -338,7 +304,6 @@ const android = {
     return failed || !Number.isInteger(pid) || pid <= 0 ? null : pid;
   },
   screenSizes: new Map(),
-  // A slow swipe from 75% to 30% of the screen height, so the list moves about half a screen.
   async scrollDown(device, { fling = false } = {}) {
     if (!this.screenSizes.has(device)) {
       const { stdout } = await run("adb", ["-s", device, "shell", "wm", "size"], {
@@ -367,7 +332,6 @@ const android = {
     });
     await sleep(800);
   },
-  // Three fast swipes fling the list to its end; then the momentum is left to stop.
   async scrollToEnd(device) {
     await this.scrollDown(device, { fling: true });
   },
@@ -379,8 +343,7 @@ const android = {
   },
 };
 
-// /proc/uptime followed by /proc/<pid>/stat, read at `readAt` on the runner's clock. Field 22 of
-// stat is the process start in clock ticks since boot (USER_HZ is 100 on Android).
+// Field 22 of /proc/<pid>/stat is the process start in clock ticks since boot (USER_HZ = 100).
 export function parseProcessStart(text, readAt) {
   const uptime = Number(text.match(/^(\d+\.\d+) /m)?.[1]);
   const stat = text.slice(text.lastIndexOf(")") + 2).split(" ");
@@ -389,14 +352,11 @@ export function parseProcessStart(text, readAt) {
   return Math.round(readAt - (uptime - startTicks / 100) * 1000);
 }
 
-// The pid, first field of the /proc/<pid>/stat line that follows /proc/uptime.
 export function parseStatPid(text) {
   const pid = Number(text.match(/^(\d+) \(/m)?.[1]);
   return Number.isInteger(pid) && pid > 0 ? pid : null;
 }
 
-// "mWakefulness=Awake" and "mCurrentFocus=Window{… u0 <name>}" lines; the keyguard has the focus
-// through the notification shade (API 31+) or its own window.
 export function parseScreenState(text) {
   const focus = text.match(/mCurrentFocus=Window\{\S+ \S+ ([^}]+)\}/)?.[1]?.trim() ?? null;
   return {
@@ -414,8 +374,7 @@ export function parseBlockingDialog(dumpsysWindow) {
   );
 }
 
-// Start time of a host process in epoch ms (µs precision): sysctl KERN_PROC_PID, whose kinfo_proc
-// opens with p_starttime, a timeval.
+// sysctl KERN_PROC_PID: kinfo_proc opens with p_starttime, a timeval.
 const PROCESS_START_PY = `
 import ctypes, sys
 libc = ctypes.CDLL("/usr/lib/libc.dylib")
@@ -440,8 +399,7 @@ const ios = {
     await run("xcrun", ["simctl", "terminate", device, APP_ID], { allowFail: true });
     await this.stopDriver(device);
   },
-  // The `xcodebuild test-without-building` running Maestro's driver outlives the Maestro call that
-  // started it and would react to the driver's end during the next launch: end it first.
+  // Maestro's xcodebuild driver outlives the call that started it.
   async stopDriver(device) {
     const xcodebuild = `test-without-building.*id=${device}`;
     await run("pkill", ["-f", xcodebuild], { allowFail: true });
@@ -462,12 +420,10 @@ const ios = {
     // react-native-launch-arguments reads "-key value" pairs from the process arguments.
     const args = Object.entries(launchArgs).flatMap(([k, v]) => [`-${k}`, String(v)]);
     const { stdout } = await run("xcrun", ["simctl", "launch", device, APP_ID, ...args]);
-    // "com.ledger.live: 12345": a simulator app is a process of the host.
     const pid = Number(stdout.match(/:\s*(\d+)\s*$/m)?.[1]);
     this.pids.set(device, Number.isInteger(pid) && pid > 0 ? pid : null);
     return {};
   },
-  // The host kernel's start time of the launched process, on the clock the app's Date.now() uses.
   async processStart(device) {
     const pid = this.pids.get(device);
     if (!pid) return null;
@@ -478,7 +434,6 @@ const ios = {
     const at = Number(stdout.trim());
     return failed || !Number.isFinite(at) ? null : { at, appClockAt: at, pid };
   },
-  // The launched process while it runs (a crash or a restart ends it), else null.
   async pid(device) {
     const pid = this.pids.get(device);
     if (!pid) return null;
@@ -493,7 +448,6 @@ const ios = {
   async ensureScreenOn() {
     return null;
   },
-  // Simulators are processes on the host: nothing to pause.
   async pause() {
     return false;
   },
@@ -528,7 +482,6 @@ const ios = {
 
 const P = PLATFORM === "android" ? android : ios;
 
-// Flattens `maestro hierarchy` output into its visible strings, in screen order.
 export function hierarchyTexts(stdout) {
   const start = stdout.indexOf("{");
   const end = stdout.lastIndexOf("}");
@@ -552,8 +505,6 @@ export function hierarchyTexts(stdout) {
   return texts;
 }
 
-// Reads the Performance screen (src/screens/Settings/Debug/Performance): "App startup time"
-// then one "<event> (xN)" row per startup event, each followed by "<time> ms".
 export function parsePerformance(texts) {
   const joined = texts.join("\n");
   const label = "App startup time";
@@ -565,7 +516,6 @@ export function parsePerformance(texts) {
   return { appStartupTime: Number(value[1]), events: parseEvents(texts) };
 }
 
-// The "<event> (xN)" rows and their "<time> ms" on whatever part of the list is on screen.
 export function parseEvents(texts) {
   const events = {};
   for (const m of texts.join("\n").matchAll(/([^\n,]+?) \(x(\d+)\)\s*,?\s*(-?\d+)\s*ms\b/g)) {
@@ -574,8 +524,6 @@ export function parseEvents(texts) {
   return events;
 }
 
-// Maestro only dumps the rows on screen, so the list is scrolled until no new event shows up. Each
-// scroll moves about half a screen; 10 covers the ~35 rows of the most instrumented builds.
 const MAX_SCROLLS = 10;
 
 async function readHierarchyEvents(device) {
@@ -596,12 +544,9 @@ async function readAllEvents(device, events) {
   return all;
 }
 
-// The first screen is already read; only the end of the list is added, where the rows are in the
-// order the events were first logged, so the final events are there.
 async function readRemainingEvents(device, events) {
   await P.scrollToEnd(device);
   const all = { ...events, ...(await readHierarchyEvents(device)) };
-  // A list too short to fling, or a fling that stopped early: fall back to scrolling.
   return FINAL_EVENTS.every(name => name in all) ? all : readAllEvents(device, all);
 }
 
@@ -612,7 +557,6 @@ async function readPerformance(device, debugName, { quick }) {
     const flow = quick && attempt === 1 ? QUICK_FLOW : FULL_FLOW;
     // A driver stuck on an abandoned call would otherwise serve the retry too.
     if (attempt === 2) await P.stopDriver(device);
-    // The first call on a device also installs Maestro's driver apps.
     lastFlow = await maestro(device, "test", [flow], { timeoutMs: 120_000 });
     for (let i = 0; i < 3; i++) {
       const hierarchy = await maestro(device, "hierarchy", [], { timeoutMs: 60_000 });
@@ -630,7 +574,6 @@ async function readPerformance(device, debugName, { quick }) {
       }
       await sleep(2000);
     }
-    // A second attempt cannot get past a system dialog; the launch is not trusted either.
     const dialog = await P.blockingDialog(device);
     if (dialog) {
       lastTexts.unshift(`(dialog from ${dialog} has the focus)`);
@@ -668,8 +611,7 @@ async function loadUserdata(names) {
       accounts.push(account);
     }
   }
-  // Same defaults as loadConfig in e2e/mobile/bridge/server.ts. Feature-flag overrides and
-  // trustchains in the userdata are deliberately not imported: flags must come from production Firebase.
+  // Defaults of loadConfig in e2e/mobile/bridge/server.ts; no feature flags: production Firebase's.
   return {
     names: files,
     settings: { shareAnalytics: false, hasSeenAnalyticsOptInPrompt: true, ...settings },
@@ -683,7 +625,6 @@ async function inject(device, userdata, side) {
   await bridge.listening;
   const sent = [];
   const send = (type, payload) => sent.push({ type, id: bridge.send(type, payload) });
-  // An ACK means the app handled the message without throwing (it sends none otherwise).
   const acknowledged = async () => {
     for (const { type, id } of sent.splice(0)) {
       await bridge.waitFor(id, "ACK", 60_000).catch(() => {
@@ -692,13 +633,11 @@ async function inject(device, userdata, side) {
     }
   };
   try {
-    // Only the app being injected may connect: both devices reach the bridge on the same host port.
+    // Both devices reach the bridge on the same host port.
     for (const d of DEVICES) await P.stop(d);
     await P.clearDialogs(device);
     await P.launch(device, { wsPort: BRIDGE_PORT, wsToken: "startup-perf" });
-    // The build connects ~20 s after its store is ready (prepare-build.sh).
     await bridge.waitForClient(180_000);
-    // Let the client finish its handshake before the first message.
     await sleep(2000);
     send("acceptTerms");
     send("importSettings", userdata.settings);
@@ -706,8 +645,7 @@ async function inject(device, userdata, side) {
     if (userdata.accounts.length) send("importAccounts", userdata.accounts);
     if (userdata.postOnboarding) send("importPostOnboarding", userdata.postOnboarding);
     await acknowledged();
-    // Accounts are saved as soon as they are imported. Settings are only saved by the store's
-    // save effect, which may not be mounted yet on a fresh install: send them again once it is.
+    // Settings are saved only once the store's save effect is mounted: send them again.
     await sleep(10_000);
     send("acceptTerms");
     send("importSettings", { ...userdata.settings });
@@ -720,12 +658,10 @@ async function inject(device, userdata, side) {
   }
 }
 
-// MOCK and DETOX as the app sees them once started (empty when off): the measured build has neither.
 async function checkTestModes(bridge, device, side) {
   let envs = null;
   try {
-    // Apps from before mid-September 2026 reply without the message id: take the reply that came
-    // in before this message's ACK, on the same socket.
+    // Builds before mid-September 2026 reply without the message id.
     const from = bridge.received.length;
     const id = bridge.send("getEnvs");
     await bridge.waitFor(id, "ACK", 15_000);
@@ -757,7 +693,6 @@ async function sample(meta) {
   let readStart = null;
   let paused = false;
   try {
-    // Stop the app on both devices so the idle one is not syncing in the background.
     for (const device of DEVICES) await P.stop(device);
     const dialogs = [];
     for (const device of DEVICES) dialogs.push(...(await P.clearDialogs(device)));
@@ -776,7 +711,6 @@ async function sample(meta) {
     await sleep(SETTLE_MS);
     const processStart = await P.processStart(meta.device);
     record.processStartAt = processStart?.at ?? null;
-    // The process start on the clock of the app's events ("JS start epoch").
     record.processStartAppClockAt = processStart?.appClockAt ?? null;
     // The read flow opens a deep link, which would start the app again if it had exited.
     record.pid = processStart?.pid ?? (await P.pid(meta.device));
@@ -789,7 +723,6 @@ async function sample(meta) {
     }
     readStart = Date.now();
     const perf = await readPerformance(meta.device, name, { quick: !meta.warmup });
-    // A crash or restart between the launch and the read would show another launch's value.
     const pidAtRead = await P.pid(meta.device);
     if (pidAtRead !== record.pid) {
       throw new Error(`the app process changed before the read (pid ${record.pid} → ${pidAtRead})`);
@@ -852,8 +785,7 @@ async function main() {
     for (const phase of [0, 1]) {
       const placement =
         phase === 0 ? { A: DEVICES[0], B: DEVICES[1] } : { A: DEVICES[1], B: DEVICES[0] };
-      // A B A B … in the first half, B A B A … after the swap: never the same device twice in a row.
-      // Warm-ups use the same order, so the last one is on the other device from the first launch.
+      // Never the same device twice in a row, warm-ups included.
       const order = phase === 0 ? ["A", "B"] : ["B", "A"];
       for (const side of order) {
         const device = placement[side];
