@@ -22,6 +22,7 @@ class NativeModulesPackage : ReactPackage {
         BluetoothHelperModule(reactContext),
         GoogleWalletModule(reactContext),
         LocationHelperModule(reactContext, coroutineDispatcher = Dispatchers.Default),
-        MeasureTransformModule(reactContext)
+        MeasureTransformModule(reactContext),
+        NavigationBarColorModule(reactContext)
     ).toMutableList()
 }
