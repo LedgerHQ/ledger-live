@@ -65,6 +65,7 @@ describe("CloudSyncSDK", () => {
 
   let version = 0;
   let data: Data | null = null;
+  let savedOn: Trustchain[] = [];
   let trustchainSdk: TrustchainSDK;
   let sdk: CloudSyncSDK<Data>;
 
@@ -77,13 +78,15 @@ describe("CloudSyncSDK", () => {
     storedVersion = 0;
     version = 0;
     data = null;
+    savedOn = [];
     trustchainSdk = makeMockTrustchainSdk();
     sdk = new CloudSyncSDK({
       apiBaseUrl: base,
       slug: "test",
       trustchainSdk,
       getCurrentVersion: () => version,
-      saveNewUpdate: (update: UpdateEvent<Data>) => {
+      saveNewUpdate: (update: UpdateEvent<Data>, on: Trustchain) => {
+        savedOn.push(on);
         switch (update.type) {
           case "new-data":
           case "pushed-data":
@@ -120,6 +123,15 @@ describe("CloudSyncSDK", () => {
     expect(data).toBeNull();
     expect(version).toBe(0);
     expect(storedData).toBeNull();
+  });
+
+  it("hands saveNewUpdate the trustchain each call ran on", async () => {
+    await sdk.push(trustchain, creds, { value: "hello" });
+    version = 0;
+    await sdk.pull(trustchain, creds);
+    await sdk.destroy(trustchain, creds);
+
+    expect(savedOn).toEqual([trustchain, trustchain, trustchain]);
   });
 
   it("rejects non-object payloads on push", async () => {
@@ -159,7 +171,12 @@ describe("CloudSyncSDK", () => {
   it("prevents concurrent push/pull/destroy calls", async () => {
     await expect(
       Promise.all([sdk.pull(trustchain, creds), sdk.pull(trustchain, creds)]),
-    ).rejects.toThrow("CloudSyncSDK locked");
+    ).rejects.toThrow(
+      expect.objectContaining({
+        name: "CloudSyncSDKLocked",
+        message: "CloudSyncSDK locked (pull)",
+      }),
+    );
   });
 
   it("ignores push conflicts without updating local state", async () => {

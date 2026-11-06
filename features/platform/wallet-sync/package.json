@@ -20,20 +20,36 @@
     "coverage": "jest --coverage"
   },
   "dependencies": {
+    "@domain/entity-wallet-sync": "workspace:*",
+    "@ledgerhq/ledger-key-ring-protocol": "catalog:",
+    "@reduxjs/toolkit": "catalog:",
+    "@shared/analytics": "workspace:*",
     "@shared/cloud-sync": "workspace:^",
     "@shared/cloud-sync-module": "workspace:^",
     "zod": "catalog:"
   },
+  "peerDependencies": {
+    "react": ">=19.0.0",
+    "react-redux": ">=9.0.0"
+  },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/react": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@types/react": "catalog:",
     "@typescript/native": "catalog:",
     "jest": "catalog:",
+    "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-redux": "catalog:",
     "typescript": "catalog:"
   }
 }

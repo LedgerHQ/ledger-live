@@ -362,6 +362,28 @@ describe("createWalletSyncWatchLoop", () => {
       handle.unsubscribe();
     });
 
+    it("skips the poll without reporting an error while another call holds the SDK", async () => {
+      const lockError = new Error("CloudSyncSDK locked (destroy)");
+      lockError.name = "CloudSyncSDKLocked";
+      const walletSyncSdk = makeSdk({
+        pull: jest.fn().mockRejectedValueOnce(lockError).mockResolvedValue(undefined),
+      });
+      const { onError, onTrustchainRefreshNeeded, handle } = setup({
+        walletSyncSdk,
+        watchConfig: { initialTimeout: 10, pollingInterval: 100 },
+      });
+
+      jest.advanceTimersByTime(10);
+      await flush();
+      expect(onError).not.toHaveBeenCalled();
+      expect(onTrustchainRefreshNeeded).not.toHaveBeenCalled();
+
+      jest.advanceTimersByTime(100);
+      await flush();
+      expect(walletSyncSdk.pull).toHaveBeenCalledTimes(2);
+      handle.unsubscribe();
+    });
+
     it("does not report errors raised after unsubscribe", async () => {
       let rejectPull: (e: Error) => void = () => {};
       const walletSyncSdk = makeSdk({

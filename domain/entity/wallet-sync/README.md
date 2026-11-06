@@ -5,7 +5,7 @@
 
 RTK slice for WalletSync protocol state (distant data + version).
 
-State shape: `{ walletSyncState: WSState }`. Tracks the current sync status (version, distant state blob). Exports `walletSyncSlice` and action `walletSyncUpdate`.
+State shape: `{ walletSyncState: WSState }`. Tracks the current sync status (version, distant state blob). Exports `walletSyncSlice`, action `walletSyncUpdate` and selector `selectWalletSyncState`, which reads the slice at `wallet.walletSync`, where both apps mount it.
 
 > Account-related sync state (`nonImportedAccountInfos`) lives in [`@ledgerhq/live-wallet/accounts`](../../../libs/live-wallet/src/accounts/) until `@domain/entity-account` exists.
 
