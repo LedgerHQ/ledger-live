@@ -3248,6 +3248,9 @@ importers:
       '@types/w3c-web-usb':
         specifier: 1.0.10
         version: 1.0.10
+      '@types/ws':
+        specifier: 8.5.10
+        version: 8.5.10
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -3266,6 +3269,9 @@ importers:
       fetch-cookie:
         specifier: 3.2.0
         version: 3.2.0
+      https-proxy-agent:
+        specifier: 7.0.6
+        version: 7.0.6
       oxfmt:
         specifier: 'catalog:'
         version: 0.75.0
@@ -3290,6 +3296,9 @@ importers:
       usb:
         specifier: 2.17.0
         version: 2.17.0(patch_hash=489095f60f30e6127e8077a75f64dc1962a7187d3e054910d61a8a5de45c30a5)
+      ws:
+        specifier: 'catalog:'
+        version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       xstate:
         specifier: 'catalog:'
         version: 5.19.2
