@@ -4,7 +4,7 @@ export function getErrorName(error: unknown): string | undefined {
   return typeof name === "string" ? name : undefined;
 }
 
-/** Keeps the original `name`, since the failure mapping and the logs both read it. */
+// Keeps the original name: the failure mapping and the logs read it.
 export function toError(error: unknown): Error {
   if (error instanceof Error) return error;
   if (typeof error === "string") return new Error(error);

@@ -9,7 +9,7 @@ operations on the Device Intent Executor (DIE) session:
 - **Add member** (`addMemberIntentDefinition`): `getOrCreateTrustchain`, which creates the
   trustchain, joins an existing one, or restores it. Its result is the SDK's `TrustchainResult`.
 - **Remove member** (`removeMemberIntentDefinition`): `removeMember`, which rotates the trustchain
-  key. Its result is the new `Trustchain`.
+  key. Its result is the new `Trustchain`, which the app must store.
 
 ## How the device is reached
 
@@ -29,17 +29,18 @@ Both intents emit the same `LedgerSyncJobState` union:
 | `type`                         | Meaning                                                        | Terminal |
 | ------------------------------ | -------------------------------------------------------------- | -------- |
 | `pending`                      | The SDK is working without the user (network, APDUs).          | no       |
-| `awaiting-device-confirmation` | The device waits for the user. Carries the model and name.     | no       |
-| `processing`                   | The SDK resumes after a confirmation, until the next one.      | no       |
+| `awaiting-device-confirmation` | The device waits for the user. The app locks the executor.     | no       |
+| `processing`                   | The SDK finishes after a confirmation. Still locked.           | no       |
 | `device-rejected`              | The user refused on the device. Carries `retry()`.             | no       |
 | `completed`                    | Done. The result went through `onResult` just before.          | yes      |
-| `failed`                       | Any other error, with a `reason` from the table below.         | yes      |
+| `failed`                       | Other errors. The app routes `reason` to its error screen.     | yes      |
 
 Errors are job states, except a device disconnection, which errors the observable so the executor
 shows its Disconnected screen, and an exception thrown by `onResult`, which errors the observable so
 the job still ends.
 
-`mapLedgerSyncErrorToFailure` reads `error.name`, as the apps do today:
+`mapLedgerSyncErrorToFailure` reads `error.name`, not the class, so an error that lost its prototype
+(serialized across a bridge, or thrown by another copy of the SDK) still maps to its reason:
 
 | Error name                                  | `reason`                     |
 | ------------------------------------------- | ---------------------------- |

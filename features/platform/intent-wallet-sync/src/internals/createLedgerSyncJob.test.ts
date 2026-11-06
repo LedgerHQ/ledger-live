@@ -40,7 +40,7 @@ const AWAITING: LedgerSyncAwaitingDeviceConfirmationJobState = {
 const PROCESSING: LedgerSyncProcessingJobState = { type: "processing" };
 const COMPLETED: LedgerSyncCompletedJobState = { type: "completed" };
 
-/** A real subscriber whose notifications land in jest mocks. */
+// A real subscriber whose notifications land in jest mocks.
 function fakeSubscriber() {
   const observer = { next: jest.fn(), complete: jest.fn(), error: jest.fn() };
   let captured: Subscriber<LedgerSyncJobState> | undefined;

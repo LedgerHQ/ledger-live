@@ -24,7 +24,7 @@ function notStubbed(): never {
   throw new Error("TrustchainSDK method not stubbed in this test");
 }
 
-/** A `TrustchainSDK` whose methods throw unless the test stubs them with their own signature. */
+// Every method throws unless the test stubs it with its own signature.
 export function fakeTrustchainSdk(stubs: Partial<TrustchainSDK>): TrustchainSDK {
   return {
     initMemberCredentials: notStubbed,
@@ -50,7 +50,7 @@ export function isState<T extends LedgerSyncJobStateType>(
   return state.type === type;
 }
 
-/** Fails on the state itself when it is not of `type`, and returns it narrowed. */
+// Fails on the state itself, not later with a TypeError on a wrong variant.
 export function expectState<T extends LedgerSyncJobStateType>(
   state: LedgerSyncJobState | undefined,
   type: T,
@@ -84,10 +84,7 @@ export function namedError(name: string): Error {
   return error;
 }
 
-/**
- * Subscribes to a job and records its states, so a test can await the state or
- * the end it expects instead of waiting for an arbitrary tick.
- */
+// Lets a test await the state or the end it expects instead of an arbitrary tick.
 export function recordJob(job$: Observable<LedgerSyncJobState>): {
   states: LedgerSyncJobState[];
   subscription: Subscription;
