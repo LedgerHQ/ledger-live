@@ -1,4 +1,4 @@
-import { getErrorName, toError } from "../internals/errors";
+import { getErrorName, toError } from "./internals/errors";
 
 export type LedgerSyncFailureReason =
   | "already-secured-same-seed"

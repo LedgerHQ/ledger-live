@@ -2,7 +2,7 @@ import type { DeviceConnectionResult } from "@features/platform-device-intent";
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
 import { TrustchainNotAllowed } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { lastValueFrom, Observable, toArray, type Subscriber } from "rxjs";
-import type { LedgerSyncJobState } from "../intents/ledgerSyncJobState";
+import type { LedgerSyncJobState } from "../jobState";
 import {
   completeJob,
   createDeviceCallbacks,
