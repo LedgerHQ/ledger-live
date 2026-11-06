@@ -363,7 +363,7 @@
     "nock": "13.5.4",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "postcss": "8.5.6",
+    "postcss": "8.5.23",
     "postcss-loader": "8.2.0",
     "react-refresh": "catalog:",
     "react-test-renderer": "catalog:",
