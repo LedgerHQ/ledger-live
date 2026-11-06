@@ -1,4 +1,4 @@
-import type { Job } from "@features/platform-device-intent";
+import { isDeviceDisconnectedError, type Job } from "@features/platform-device-intent";
 import type {
   TrustchainDeviceCallbacks,
   TrustchainSDK,
@@ -24,9 +24,9 @@ const COMPLETED: LedgerSyncJobState = { type: "completed" };
  * {@link LedgerSyncJobState}.
  *
  * The SDK is built once per run, so a retry after a refusal reuses it and the
- * JWT it may already hold. Errors are emitted as job states, never as
- * observable errors: a disconnection reaches DIE through its own session
- * monitoring.
+ * JWT it may already hold. Errors are emitted as job states, except a device
+ * disconnection, which errors the observable so DIE shows its Disconnected
+ * screen.
  */
 export function createLedgerSyncJob<Input extends { createSessionSdk: CreateSessionSdk }, Result>(
   call: LedgerSyncDeviceCall<Input, Result>,
@@ -78,8 +78,15 @@ export function createLedgerSyncJob<Input extends { createSessionSdk: CreateSess
           },
           (error: unknown) => {
             if (!isCurrentRun()) return;
+            if (isDeviceDisconnectedError(error)) {
+              subscriber.error(error);
+              return;
+            }
             if (isUserRefusedOnDevice(error)) {
-              subscriber.next({ type: "device-rejected", error: toError(error), retry: run });
+              const retry = () => {
+                if (isCurrentRun()) run();
+              };
+              subscriber.next({ type: "device-rejected", error: toError(error), retry });
               return;
             }
             fail(error);

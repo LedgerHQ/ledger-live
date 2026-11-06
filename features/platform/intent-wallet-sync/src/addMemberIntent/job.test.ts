@@ -145,6 +145,24 @@ describe("addMemberIntentJob", () => {
     expect(observer.complete).toHaveBeenCalledTimes(1);
   });
 
+  it("should start one call only when retry is invoked twice or after unsubscribe", async () => {
+    const getOrCreateTrustchain = deviceCall(() =>
+      Promise.reject(namedError("UserRefusedOnDevice")),
+    );
+    const { states, subscription } = startJob(getOrCreateTrustchain);
+    await flush();
+    const rejected = states.at(-1) as Extract<LedgerSyncJobState, { type: "device-rejected" }>;
+
+    getOrCreateTrustchain.mockImplementation(() => new Promise<TrustchainResult>(() => undefined));
+    rejected.retry();
+    rejected.retry();
+    expect(getOrCreateTrustchain).toHaveBeenCalledTimes(2);
+
+    subscription.unsubscribe();
+    rejected.retry();
+    expect(getOrCreateTrustchain).toHaveBeenCalledTimes(2);
+  });
+
   it.each([
     [new TrustchainAlreadyInitialized(), "already-secured-same-seed"],
     [new TrustchainAlreadyInitializedWithOtherSeed(), "already-secured-other-seed"],
@@ -160,6 +178,22 @@ describe("addMemberIntentJob", () => {
     expect(onResult).not.toHaveBeenCalled();
     expect(observer.complete).toHaveBeenCalledTimes(1);
     expect(observer.error).not.toHaveBeenCalled();
+  });
+
+  it("should error the observable on a device disconnection so DIE shows its Disconnected screen", async () => {
+    const disconnection = Object.assign(new Error("unplugged"), {
+      _tag: "DeviceDisconnectedWhileSendingError",
+    });
+    const { states, onResult, observer } = startJob(
+      deviceCall(() => Promise.reject(disconnection)),
+    );
+
+    await flush();
+
+    expect(states).toEqual([PENDING, AWAITING, PENDING]);
+    expect(observer.error).toHaveBeenCalledWith(disconnection);
+    expect(observer.complete).not.toHaveBeenCalled();
+    expect(onResult).not.toHaveBeenCalled();
   });
 
   it("should end as failed when the SDK throws synchronously", async () => {
