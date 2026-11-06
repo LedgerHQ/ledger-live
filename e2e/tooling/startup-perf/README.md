@@ -17,6 +17,7 @@ signing keystore.
 | `ci/verify-build.sh`              | Checks the built binary: no `MOCK`/`DETOX`, `FORCE_DEBUG_VISIBLE=1`, real blur        |
 | `ci/adapt-mise-toml.sh`           | Drops what an older ref's `mise.toml` declares that no longer installs                |
 | `ci/install-maestro.sh`           | Installs the pinned Maestro, checked against its SHA-256                              |
+| `ci/wait-for-idle-host.sh`        | Waits for the iOS host's load to fall below its CPU count after the simulators boot   |
 | `src/run.mjs`                     | The CLI that measures: installs, injects and launches A and B, writes `samples.jsonl` |
 | `src/analyze.mjs`                 | The CLI that judges: B − A per scenario, verdict, job summary                         |
 | `src/platforms/`                  | `android.mjs` and `ios.mjs`, the two `Platform`s, through adb or simctl               |
@@ -88,7 +89,9 @@ write no remote Nx, pnpm, Gradle or AVD cache: they run with develop's role whil
   cold-booted (the snapshot has 2 cores), animations on, screen kept on, cellular network (the
   emulated Wi-Fi added ~240–500 ms: runs 39941337433, 39966755704), and idle (load average below 1)
   before the first launch.
-- **iOS**: two new simulators of the newest "iPhone N Pro", on the iOS E2E pool, one run at a time.
+- **iOS**: two new simulators of the newest "iPhone N Pro", on the iOS E2E pool, one run at a time,
+  measured once the host's 1-minute load is below its CPU count (at most 10 min after boot): 60 s
+  after `bootstatus` it was still rising (74 → 128 and 83 → 106, runs 42260331032, 42261755814).
 
 ## The analysis
 
