@@ -6,7 +6,7 @@ import { useCountervaluesPolling } from "@features/platform-market-countervalues
 import { useIsFocused, useRoute, useTheme } from "@react-navigation/native";
 import { useNetworkState } from "@shared/network-status";
 import { SYNC_DELAY } from "~/utils/constants";
-import { useWalletSyncUserState } from "LLM/features/WalletSync/components/WalletSyncContext";
+import { useWalletSyncUserState } from "@features/platform-wallet-sync";
 import { useDispatch, useSelector, useStore } from "~/context/hooks";
 import { hasNoAccountsSelector } from "~/reducers/accounts";
 import {

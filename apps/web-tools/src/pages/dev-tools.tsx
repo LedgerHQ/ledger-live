@@ -26,6 +26,7 @@ import {
   combineProtocols,
 } from "@devtools/wire";
 import { store } from "../store";
+import { LEDGER_SYNC_BACKENDS } from "../trustchain/backends";
 import { sleepingListener } from "../store/sleepingListener";
 import { useConnectedDevices, setDevices } from "../store/useConnectedDevices";
 
@@ -47,7 +48,7 @@ export default function DevToolsPage() {
   const devices = useConnectedDevices();
   const featureFlagsProps = useFeatureFlagsToolProps();
   const envProps = useEnvDevToolProps();
-  const prodToggle = useProdToggle();
+  const prodToggle = useProdToggle(LEDGER_SYNC_BACKENDS);
 
   const createTrustchainSdk = useCallback<Parameters<typeof useTrustchainDevToolProps>[0]>(
     ({ trustchainApiBaseUrl }) =>

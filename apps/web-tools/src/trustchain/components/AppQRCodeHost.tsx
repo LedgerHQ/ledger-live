@@ -5,12 +5,13 @@ import { MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protoco
 import { RenderActionable } from "./Actionable";
 import QRCode from "./QRCode";
 import { useTrustchainSDK } from "../context";
-import { getEnv } from "@shared/env";
 
 export function AppQRCodeHost({
+  trustchainApiBaseUrl,
   trustchain,
   memberCredentials,
 }: {
+  trustchainApiBaseUrl: string;
   trustchain: Trustchain | null;
   memberCredentials: MemberCredentials | null;
 }) {
@@ -22,7 +23,7 @@ export function AppQRCodeHost({
     if (!trustchain || !memberCredentials) return;
     setError(null);
     createQRCodeHostInstance({
-      trustchainApiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING"),
+      trustchainApiBaseUrl,
       onDisplayQRCode: url => {
         setUrl(url);
       },
@@ -50,7 +51,7 @@ export function AppQRCodeHost({
         setUrl(null);
         setDigits(null);
       });
-  }, [trustchain, memberCredentials, sdk]);
+  }, [trustchainApiBaseUrl, trustchain, memberCredentials, sdk]);
   return (
     <div className="flex flex-col gap-8">
       <RenderActionable

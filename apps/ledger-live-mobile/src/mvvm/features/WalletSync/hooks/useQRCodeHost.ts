@@ -1,7 +1,5 @@
 import { track } from "@shared/analytics";
 import { useCallback, useEffect, useState } from "react";
-import { createQRCodeHostInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
-import { NoTrustchainInitialized } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useSelector, useDispatch } from "~/context/hooks";
 import {
@@ -11,15 +9,12 @@ import {
 } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { AnalyticsEvents } from "LLM/features/WalletSync/Analytics/enums";
 import { useWalletSyncTrackingFlow } from "./useLedgerSyncAnalytics";
-import { useTrustchainSdk } from "./useTrustchainSdk";
 import { Options, Steps } from "../types/Activation";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
-import { useFeature } from "@features/platform-feature-flags";
-import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
+import { getLkrpQrCode } from "@features/platform-wallet-sync";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { QueryKey } from "./type.hooks";
-import { useInstanceName } from "./useInstanceName";
 import { useCurrentStep } from "./useCurrentStep";
 
 const MIN_TIME_TO_REFRESH = 30_000;
@@ -33,14 +28,7 @@ export function useQRCodeHost({ currentOption }: Props) {
   const queryClient = useQueryClient();
   const trustchain = useSelector(trustchainSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);
-  const sdk = useTrustchainSdk();
   const dispatch = useDispatch();
-
-  const featureWalletSync = useFeature("llmWalletSync");
-  const { trustchainApiBaseUrl } = getWalletSyncEnvironmentParams(
-    featureWalletSync?.params?.environment,
-  );
-  const memberName = useInstanceName();
 
   const [url, setUrl] = useState<string | null>(null);
   const [pinCode, setPinCode] = useState<string | null>(null);
@@ -50,8 +38,9 @@ export function useQRCodeHost({ currentOption }: Props) {
 
   const { mutate, isPending, error } = useMutation({
     mutationFn: (memberCredentials: MemberCredentials) =>
-      createQRCodeHostInstance({
-        trustchainApiBaseUrl,
+      getLkrpQrCode(dispatch).host({
+        trustchain,
+        memberCredentials,
         onDisplayQRCode: url => {
           setUrl(url);
         },
@@ -59,16 +48,6 @@ export function useQRCodeHost({ currentOption }: Props) {
           setPinCode(digits);
           setCurrentStep(Steps.PinDisplay);
         },
-        addMember: async member => {
-          if (trustchain) {
-            await sdk.addMember(trustchain, memberCredentials, member);
-            return trustchain;
-          }
-          throw new NoTrustchainInitialized();
-        },
-        memberCredentials,
-        memberName,
-        initialTrustchainId: trustchain?.rootId,
       }),
 
     onSuccess: newTrustchain => {

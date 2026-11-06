@@ -77,21 +77,25 @@ const teamPlatform = {
     parser: boolParser,
     desc: "Show JS thread stall monitor overlay",
   },
+  /** @deprecated The apps take the Ledger Sync URLs from the `ledgerKeyRing` app config switch. */
   CLOUD_SYNC_API_STAGING: {
     def: "https://cloud-sync-backend.api.aws.stg.ldg-tech.com",
     parser: stringParser,
     desc: "wallet sync api staging base url",
   },
+  /** @deprecated The apps take the Ledger Sync URLs from the `ledgerKeyRing` app config switch. */
   CLOUD_SYNC_API_PROD: {
     def: "https://cloud-sync.api.live.ledger.com",
     parser: stringParser,
     desc: "wallet sync api production base url",
   },
+  /** @deprecated The apps take the Ledger Sync URLs from the `ledgerKeyRing` app config switch. */
   TRUSTCHAIN_API_STAGING: {
     def: "https://trustchain-backend.api.aws.stg.ldg-tech.com",
     parser: stringParser,
     desc: "Trustchain API Staging",
   },
+  /** @deprecated The apps take the Ledger Sync URLs from the `ledgerKeyRing` app config switch. */
   TRUSTCHAIN_API_PROD: {
     def: "https://trustchain.api.live.ledger.com",
     parser: stringParser,

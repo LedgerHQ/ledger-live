@@ -4,23 +4,27 @@
 > `apps/ledger-live-desktop` (LWD) and `apps/ledger-live-mobile` (LWM), under
 > `src/mvvm/features/WalletSync/`.
 
-The [`live-wallet`](../../libs/live-wallet) library is integration-agnostic: it exposes the
-watch loop and asks each app to provide **selectors**, a **`saveUpdate`** function, the **SDK
-instances** and a few **callbacks**. Desktop and Mobile wire those into Redux + React almost
-identically.
+The watch loop runs in the Ledger Sync middleware of `@features/platform-wallet-sync`. Each app
+passes it its **selectors** and its **`applyLocalState`** function, in
+`state-manager/middleware/ledgerSync.ts`, and starts it with the package's `useLedgerSyncWatch()`.
 
 ## The wiring
 
-Each app mounts a `<WalletSyncProvider>` near the root (LWD `renderer/Default.tsx`, LWM
-`AppProviders.tsx`). The provider runs `useWatchWalletSync()`, which:
+Each app calls `useLedgerSyncWatch()` near the root: LWM in `AppProviders.tsx`, LWD in a
+`<LedgerSyncWatch />` of `renderer/Default.tsx` that mounts once the app is unlocked. The hook
+dispatches `startLedgerSyncWatch()` on mount and `stopLedgerSyncWatch()` on unmount. In between,
+the middleware:
 
-1. builds the `TrustchainSDK` (`useTrustchainSdk`) and `CloudSyncSDK` (`useCloudSyncSDK`),
-2. starts the watch loop with the app's selectors + `saveUpdate`,
-3. returns `{ visualPending, walletSyncError, onUserRefresh }` via context
-   (`useWalletSyncUserState()`), consumed by the UI (refresh button, error badge).
+1. runs the watch loop on the store's `TrustchainSDK` and `CloudSyncSDK` (see
+   [Building the SDKs](#building-the-sdks)), with the app's selectors, and saves what a sync
+   brings: the document in the `walletSyncState`, the local state through `applyLocalState`;
+2. runs it only while the feature flag is on and `trustchain` + `memberCredentials` exist, and
+   restarts it after an action changes one of them, the flag's `watchConfig` or the token
+   blacklist;
+3. keeps `visualPending` and the loop's last `walletSyncError` in the `ledgerSync` slice.
 
-The loop only runs when the feature flag is on and `trustchain` + `memberCredentials` exist;
-the returned `unsubscribe` tears it down on unmount / dependency change.
+`useWalletSyncUserState()` reads them as `{ visualPending, walletSyncError, onUserRefresh }` for
+the UI (refresh button, error badge), and `onUserRefresh` dispatches `refreshLedgerSync()`.
 
 ```mermaid
 flowchart TB
@@ -32,7 +36,7 @@ flowchart TB
         accounts["accounts (state.accounts[.active])"]
         wallet["wallet slice<br/>accountNames · nonImportedAccountInfos<br/>walletSyncState { data, version } · recentAddresses"]
     end
-    subgraph loop["Watch loop (live-wallet)"]
+    subgraph loop["Watch loop (Ledger Sync middleware)"]
         wl["createWalletSyncWatchLoop"]
     end
     csapi[("Cloud Sync API")]
@@ -54,10 +58,15 @@ flowchart TB
 | Contract | Desktop / Mobile implementation |
 |---|---|
 | `localStateSelector` | `{ accounts: { list, nonImportedAccountInfos }, accountNames, recentAddresses }` read from Redux. **LWD** reads `state.accounts`; **LWM** reads `state.accounts.active`. |
-| `latestDistantStateSelector` / `latestDistantVersionSelector` | from `walletSelector(state).walletSyncState` (`{ data, version }`). |
 | `saveUpdate` | dispatches into Redux — see below. |
-| `onTrustchainRefreshNeeded` | restores or empties the trustchain store (handles `TrustchainOutdated` / `TrustchainEjected`). |
-| `onError` / `setVisualPending` / `onUserRefreshIntent` | surface error + spinner; debounce expedited pulls. |
+| `featureSelector` | the `lldWalletSync` / `llmWalletSync` flag: whether the loop runs, and its `watchConfig`. It sits at the top level of the middleware config, as the flag gates all of Ledger Sync; the getters are not gated, the screens that use them are. |
+
+The middleware reads the latest distant data and version itself, with `selectWalletSyncState` of
+`@domain/entity-wallet-sync`: the store mounts that slice at `wallet.walletSync`, and `saveUpdate`
+writes to it. It also reads the Ledger Key Ring trustchain store itself, with the selectors and
+actions of `@ledgerhq/ledger-key-ring-protocol/store`: the store mounts it at `trustchain`, and the
+middleware restores it on `TrustchainOutdated` and empties it on `TrustchainEjected` /
+`TrustchainNotAllowed`.
 
 ### The `saveUpdate` callback
 
@@ -78,14 +87,24 @@ UI via selectors; they are not part of the `Account` object itself.
 
 ### Building the SDKs
 
-`useTrustchainSdk` constructs the SDK with context `{ applicationId: 16, name: <instance name>,
-apiBaseUrl }`, where `name` is the user-set instance name and the URLs come from the feature
-flag's `environment` param. `useCloudSyncSDK` builds `new CloudSyncSDK({ slug: "live", schema:
-walletsync.schema, trustchainSdk, getCurrentVersion, saveNewUpdate })`.
+The Ledger Sync middleware builds the store's LKRP SDK (`TrustchainSDK`), Cloud Sync SDK, QR code
+pairings and backend status on the first request, with `@ledgerhq/ledger-key-ring-protocol` and from
+what `state-manager/middleware/ledgerSync.ts` passes in:
 
-A `trustchainLifecycle` implementing the `onTrustchainRotation` hook is passed to the SDK so
-that, on a [key rotation](./02-trustchain-sdk.md#key-rotation-on-member-removal), the Cloud Sync
-data is re-encrypted with the new key (deleting the data tied to the old key and re-pushing).
+- `lkrp`: the LKRP URL, live-common's `withDevice`, and getters for the mock environment and the
+  instance name. The SDK gets the context `{ applicationId: 16, name: <instance name>, apiBaseUrl }`.
+- `cloudSync`: the selectors and `applyLocalState` of `WalletSync/utils/walletsync.ts`.
+  `walletsyncSelector` is memoized on the token blacklist, and a new walletsync restarts the watch
+  loop.
+
+Hooks reach them through `dispatch`, with `getLkrpSdk` (`useTrustchainSdk`), `getCloudSyncSdk` (the
+backup deletion, which shares the watch loop's [lock](./04-cloud-sync-sdk.md#atomicity--versioning)),
+`getLkrpQrCode` (the [QR code](./03-qr-code-protocol.md) hooks) and `getLedgerSyncStatus`. The URLs
+come from the `ledgerKeyRing` switch of the [app config](../../shared/app-config/README.md).
+
+With `cloudSync.reencryptOnRotation`, set on desktop only, the SDK re-encrypts the Cloud Sync data
+on a [key rotation](./02-trustchain-sdk.md#key-rotation-on-member-removal): it deletes the data of
+the old key and pushes it again with the new one.
 
 ## Feature flags & entry points
 

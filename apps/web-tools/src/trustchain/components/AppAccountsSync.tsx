@@ -42,7 +42,6 @@ import { Tick } from "./Tick";
 import { State } from "./types";
 import { Actionable } from "./Actionable";
 import { createContact, ContactsSync } from "./ContactsSync";
-import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 
 const latestWalletStateSelector = (s: State): WSState => s.walletState.walletSyncState;
 
@@ -60,6 +59,7 @@ const latestDistantStateSelector = (state: State) => state.walletState.walletSyn
 const latestDistantVersionSelector = (state: State) => state.walletState.walletSyncState.version;
 
 export default function AppAccountsSync({
+  cloudSyncApiBaseUrl,
   deviceId,
   trustchain,
   memberCredentials,
@@ -67,6 +67,7 @@ export default function AppAccountsSync({
   setState,
   setTrustchain,
 }: {
+  cloudSyncApiBaseUrl: string;
   deviceId: string;
   trustchain: Trustchain;
   memberCredentials: MemberCredentials;
@@ -202,13 +203,13 @@ export default function AppAccountsSync({
   const walletSyncSdk = useMemo(
     () =>
       new CloudSyncSDK({
-        apiBaseUrl: getWalletSyncEnvironmentParams("STAGING").cloudSyncApiBaseUrl,
+        apiBaseUrl: cloudSyncApiBaseUrl,
         slug: liveSlug,
         trustchainSdk,
         getCurrentVersion,
         saveNewUpdate,
       }),
-    [trustchainSdk, getCurrentVersion, saveNewUpdate],
+    [cloudSyncApiBaseUrl, trustchainSdk, getCurrentVersion, saveNewUpdate],
   );
 
   const [visualPending, setVisualPending] = useState(true);
