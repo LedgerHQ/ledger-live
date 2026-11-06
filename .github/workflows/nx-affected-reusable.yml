@@ -1,6 +1,14 @@
 name: "[All Platforms] - Determine Affected (Nx) - Called"
 
 on:
+  workflow_dispatch:
+    inputs:
+      base_branch:
+        type: string
+        required: true
+      head_branch:
+        type: string
+        required: true
   workflow_call:
     inputs:
       base_branch:
