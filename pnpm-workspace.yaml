@@ -364,6 +364,8 @@ patchedDependencies:
   "bigint-buffer@1.1.5": "patches/bigint-buffer@1.1.5.patch"
   "usb@2.17.0": "patches/usb@2.17.0.patch"
   "react-native-worklets@0.8.1": "patches/react-native-worklets@0.8.1.patch"
+  # LIVE-40827: one bignumber.js module for ESM and CJS importers; remove when bignumber.js ships one
+  "bignumber.js@9.1.2": "patches/bignumber.js@9.1.2.patch"
 
 allowBuilds:
   "@apollo/protobufjs": true
