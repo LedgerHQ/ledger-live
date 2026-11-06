@@ -2,18 +2,20 @@ function loadAppVersion({ os, detox }: { os: "ios" | "android"; detox?: string }
   let appVersion = "";
   jest.isolateModules(() => {
     jest.doMock("../../../../package.json", () => ({ version: "3.99.0-nightly.4" }));
-    jest.replaceProperty(require("react-native").Platform, "OS", os);
-    require("react-native-config").default.DETOX = detox;
+    const platformOs = jest.replaceProperty(require("react-native").Platform, "OS", os);
+    const detoxConfig = jest.replaceProperty(
+      require("react-native-config").default,
+      "DETOX",
+      detox,
+    );
     appVersion = require("../appVersion").appVersion;
+    detoxConfig.restore();
+    platformOs.restore();
   });
   return appVersion;
 }
 
 describe("appVersion", () => {
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
-
   it("should report the native version when the build is not a Detox build", () => {
     expect(loadAppVersion({ os: "android" })).toBe("1.0.0");
   });
