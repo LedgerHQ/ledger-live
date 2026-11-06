@@ -41,7 +41,7 @@ describe("Operations history", () => {
     await app.mainNavigation.openPortfolioViaDeeplink();
     await app.portfolio.goToSpecificAsset(CURRENCY.name);
     await app.assetAccountsPage.expectAssetPage(CURRENCY.id);
-    await app.common.pressOnSeeAllOperationsButtonFromAssetPage();
+    await app.assetDetail.openTransactionsHistory();
     await app.operation.expectOperationsListVisible();
   });
 });

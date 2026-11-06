@@ -22,8 +22,6 @@ export default class CommonPage {
   closeWithConfirmationButtonId = "button-close-add-account";
   closeButtonId = "NavigationHeaderCloseButton";
   errorPage = new ErrorPage();
-  assetDetailScrollViewId = /^asset-detail-scroll-view-.*/;
-  assetDetailTransactionsHeaderId = "asset-detail-transactions-header";
   accountGraphId = (accountId: string) => `account-graph-${accountId}`;
 
   searchBar = () => getElementById(this.searchBarId);
@@ -173,16 +171,5 @@ export default class CommonPage {
 
   async enableSynchronization() {
     await this.retryDetoxSync(() => device.enableSynchronization(), "enableSynchronization");
-  }
-
-  @Step("Press on see all operations button from asset page")
-  async pressOnSeeAllOperationsButtonFromAssetPage() {
-    await scrollToId(
-      this.assetDetailTransactionsHeaderId,
-      this.assetDetailScrollViewId,
-      500,
-      "down",
-    );
-    await tapById(this.assetDetailTransactionsHeaderId);
   }
 }
