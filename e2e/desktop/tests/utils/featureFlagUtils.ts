@@ -10,6 +10,9 @@ export const getFeatureFlags = async (page: Page): Promise<PartialFeatures> => {
   return featureFlags as PartialFeatures;
 };
 
+export const isAccountDetailEnabled = async (page: Page) =>
+  (await getFeatureFlags(page)).accountDetail?.enabled === true;
+
 export const useLocalEarnManifest = process.env.USE_LOCAL_EARN_MANIFEST === "1";
 
 const FF_LWD_WALLET_40_Q1 = {
@@ -200,6 +203,10 @@ export const FF_NEW_SEND_FLOW_ENABLED = {
   },
 } satisfies PartialFeatures;
 
+export const FF_ACCOUNT_DETAIL_ENABLED = {
+  accountDetail: { enabled: true, params: { excludedCurrencyIds: [] } },
+} satisfies PartialFeatures;
+
 export const FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED = {
   newSendFlowFirstInteractionBanner: { enabled: true },
 } satisfies PartialFeatures;
@@ -235,6 +242,7 @@ export const getMergedFeatureFlags = ({
      * PLEASE NOTE: non-existing keys will return 'undefined' which spreads to an empty object.
      */
     "wallet40-q1": FF_LWD_WALLET_40_Q1,
+    "account-detail": FF_ACCOUNT_DETAIL_ENABLED,
   };
 
   const defaultFlags: PartialFeatures = {
