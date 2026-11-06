@@ -499,10 +499,16 @@ export const specs: Specs = {
 // the spec's model. The app binary path is deterministic via conventionalAppSubpath,
 // so we no longer scan COINAPPS — for local Docker we only verify the expected
 // .elf is present on disk (COINAPPS is still mounted into the container).
+/** The test suite asking for a device, and the API port to reuse on a local Speculos. */
+export type StartSpeculosOptions = {
+  readonly suite: string;
+  readonly apiPort?: number;
+};
+
 export async function startSpeculos(
   testName: string,
   spec: Specs[keyof Specs],
-  wantedApiPort?: number,
+  { suite, apiPort }: StartSpeculosOptions,
 ): Promise<SpeculosDevice | undefined> {
   log("engine", `test ${testName}`);
 
@@ -556,10 +562,10 @@ export async function startSpeculos(
 
   try {
     if (isSpeculosRemote) {
-      const device = await createSpeculosDeviceCI(deviceParams);
+      const device = await createSpeculosDeviceCI(deviceParams, suite);
       return device && { ...device, appProvider };
     }
-    const device = await createSpeculosDevice(deviceParams, 3, wantedApiPort);
+    const device = await createSpeculosDevice(deviceParams, 3, apiPort);
     invariant(device.ports.apiPort, "[E2E] Speculos apiPort is not defined");
     registerSpeculosScreen(device.id, {
       web: { url: `${getSpeculosAddress()}:${device.ports.apiPort}` },

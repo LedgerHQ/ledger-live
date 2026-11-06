@@ -46,7 +46,9 @@ async function generateCoin(
   let device: SpeculosDevice | undefined;
   try {
     const specKey = group.currency.speculosApp.name.replace(/ /g, "_");
-    device = await startSpeculos(`generate-${coinId}`, specs[specKey]);
+    device = await startSpeculos(`generate-${coinId}`, specs[specKey], {
+      suite: "desktop-e2e-userdata",
+    });
     if (!device) throw new Error(`Speculos not started for ${specKey}`);
 
     setEnv("SPECULOS_API_PORT", device.port);

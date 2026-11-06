@@ -155,10 +155,16 @@ class SpeculinhoSessionError extends Error {
   override name = "SpeculinhoSessionError";
 }
 
+/** Who asks for an instance, static so Speculinho's usage reports add up per suite. */
+function speculinhoOrigin(suite: string): string {
+  return `ledger-live/${suite}`;
+}
+
 function buildAcquirePayload(
   deviceParams: DeviceParams,
   runId: string,
   seed: string,
+  origin: string,
   protectedSession: boolean,
   vnc: boolean,
 ) {
@@ -190,6 +196,7 @@ function buildAcquirePayload(
     device_os_version: firmware,
     seed,
     run_id: runId,
+    origin,
     speculos_version: tag,
     ...(libraries?.length ? { libraries } : {}),
     /** Speculos PKI flag, same as the local Docker provider. */
@@ -214,6 +221,8 @@ export async function waitForSpeculosReady(
   const token = await getSessionToken(deviceId);
   const headers = authHeaders(token);
   const startTime = Date.now();
+  // Put in the timeout error, since the instance may be released before anyone reads /status.
+  let lastStatus = "no answer";
 
   while (Date.now() - startTime < timeout) {
     try {
@@ -222,6 +231,9 @@ export async function waitForSpeculosReady(
         timeout: 10_000,
         validateStatus: s => s >= 200 && s < 500,
       });
+      lastStatus = res.data?.status
+        ? [res.data.status, res.data.error_details].filter(Boolean).join(": ")
+        : `HTTP ${res.status}`;
 
       if (res.status === 401) {
         throw new SpeculinhoSessionError(
@@ -267,7 +279,39 @@ export async function waitForSpeculosReady(
     await new Promise(resolve => setTimeout(resolve, interval));
   }
 
-  throw new Error(`Timeout: ${statusUrl} did not become ready within ${timeout}ms`);
+  throw new Error(
+    `Timeout: ${statusUrl} did not become ready within ${timeout}ms (last status: ${lastStatus})`,
+  );
+}
+
+// While Speculinho is at its instance cap (HTTP 429), /acquire waits up to this long for a slot,
+// so a burst of runs slows down instead of failing every test that starts during it.
+const CAPACITY_WAIT_MS = 90_000;
+const CAPACITY_RETRY_MIN_MS = 5_000;
+const CAPACITY_RETRY_MAX_MS = 15_000;
+
+/** Speculinho's Retry-After in seconds, otherwise a random delay that spreads the waiting tests. */
+function capacityRetryDelayMs(retryAfter: unknown): number {
+  const seconds = Number(retryAfter);
+  if (Number.isFinite(seconds) && seconds > 0) return seconds * 1_000;
+  return CAPACITY_RETRY_MIN_MS + Math.random() * (CAPACITY_RETRY_MAX_MS - CAPACITY_RETRY_MIN_MS);
+}
+
+/** POSTs /acquire, waiting out HTTP 429 until `capacityDeadline`. A 429 creates no instance. */
+async function postAcquire(speculinhoUrl: string, payload: object, capacityDeadline: number) {
+  const res = await axios.post<SpeculinhoAcquireResponse>(`${speculinhoUrl}/acquire`, payload, {
+    headers: { "Content-Type": "application/json" },
+    timeout: 30_000,
+    validateStatus: () => true,
+  });
+  if (res.status !== 429) return res;
+  const delayMs = capacityRetryDelayMs(res.headers?.["retry-after"]);
+  if (Date.now() + delayMs > capacityDeadline) return res;
+  console.warn(
+    `[speculosCI] ${formatAcquireFailure(res.status, res.data)}: retrying in ${Math.ceil(delayMs / 1_000)}s`,
+  );
+  await new Promise(resolve => setTimeout(resolve, delayMs));
+  return postAcquire(speculinhoUrl, payload, capacityDeadline);
 }
 
 function formatAcquireFailure(status: number, data: unknown): string {
@@ -318,6 +362,7 @@ async function rememberSession(runId: string, data?: SpeculinhoAcquireResponse):
 
 export async function createSpeculosDeviceCI(
   deviceParams: DeviceParams,
+  suite: string,
 ): Promise<SpeculosDevice | undefined> {
   const speculinhoUrl = getSpeculinhoBaseUrl();
   if (!speculinhoUrl) {
@@ -334,16 +379,20 @@ export async function createSpeculosDeviceCI(
   let runId = makeRunId(deviceParams);
   let protectedSession = true;
   let vnc = getSpeculosScreenMode() === "vnc";
+  const capacityDeadline = Date.now() + CAPACITY_WAIT_MS;
 
   for (let attempt = 0; attempt < 5; attempt++) {
-    const payload = buildAcquirePayload(deviceParams, runId, seed, protectedSession, vnc);
+    const payload = buildAcquirePayload(
+      deviceParams,
+      runId,
+      seed,
+      speculinhoOrigin(suite),
+      protectedSession,
+      vnc,
+    );
     let res;
     try {
-      res = await axios.post<SpeculinhoAcquireResponse>(`${speculinhoUrl}/acquire`, payload, {
-        headers: { "Content-Type": "application/json" },
-        timeout: 30_000,
-        validateStatus: () => true,
-      });
+      res = await postAcquire(speculinhoUrl, payload, capacityDeadline);
     } catch (error: unknown) {
       throw new SpeculinhoAcquireUnconfirmedError(
         `[speculosCI] Speculinho /acquire transport error (${speculinhoUrl}): ${sanitizeError(error)}`,
