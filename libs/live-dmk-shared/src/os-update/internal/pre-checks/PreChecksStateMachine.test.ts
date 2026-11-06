@@ -585,6 +585,21 @@ describe("PreChecksStateMachine", () => {
       expect(lastSentStateType()).toBe(PreChecksStateType.LOADING);
     });
 
+    it("should stop the OS update when it is canceled after the connection timed out", async () => {
+      await start();
+      await failDeviceAction(new DeviceDisconnectedWhileSendingError());
+      await jest.advanceTimersByTimeAsync(CONNECTION_TIMEOUT_MS);
+      await settle();
+
+      sentStatesOfType(PreChecksStateType.CONNECTION_TIMED_OUT)[0].cancel();
+      await settle();
+
+      expect(parentEvents).toContainEqual({
+        type: OsUpdatesOrchestratorStateMachineEventType.STOP,
+      });
+      expect(actor.getSnapshot().value).toBe("Canceled");
+    });
+
     it("should keep the original session id after reconnecting", async () => {
       await start();
       await failDeviceAction(new UnknownDAError("boom"));

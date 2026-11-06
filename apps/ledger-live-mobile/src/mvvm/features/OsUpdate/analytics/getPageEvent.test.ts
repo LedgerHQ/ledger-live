@@ -118,7 +118,11 @@ describe("getPageEvent", () => {
       "Connection Timed Out with the step it happened in",
       {
         step: OsUpdatesSteps.PRE_CHECKS,
-        state: { type: PreChecksStateType.CONNECTION_TIMED_OUT, retry: jest.fn() },
+        state: {
+          type: PreChecksStateType.CONNECTION_TIMED_OUT,
+          retry: jest.fn(),
+          cancel: jest.fn(),
+        },
       },
       { page: OsUpdatePage.CONNECTION_TIMED_OUT, step: OsUpdateFlowStep.PRE_CHECKS },
     ],

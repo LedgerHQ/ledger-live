@@ -112,7 +112,10 @@ export const restoreBackupStateMachine: RestoreBackupStateMachine = setup({
     [DeviceSituationEventType.DEVICE_SITUATION_UPDATE]: {
       actions: {
         type: "sendStateUpdate",
-        params: ({ event }) => toRestoreBackupState(event),
+        params: ({ context, event }) =>
+          toRestoreBackupState(event, () =>
+            context.send({ type: RestoreBackupStateMachineEventType.CANCEL }),
+          ),
       },
     },
   },
@@ -244,6 +247,9 @@ export const restoreBackupStateMachine: RestoreBackupStateMachine = setup({
     },
     CheckErrorCause: {
       entry: { type: "logError", params: "CheckErrorCause" },
+      on: {
+        [RestoreBackupStateMachineEventType.CANCEL]: "Canceled",
+      },
       invoke: {
         src: "checkErrorCause",
         input: ({ context, self }) => ({

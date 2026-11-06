@@ -29,7 +29,6 @@ type Props = Readonly<{
   lastDisplay?: ProgressDisplay;
   onClose: () => void;
   trackClick: (button: OsUpdateButton) => void;
-  exportLogs: () => void;
 }>;
 
 function getScreen({
@@ -95,7 +94,6 @@ function getSheet({
   deviceModelId,
   deviceName,
   trackClick,
-  exportLogs,
 }: Props): OsUpdateSheetSpec | undefined {
   switch (state.type) {
     case RestoreBackupStateType.LOADING:
@@ -116,28 +114,39 @@ function getSheet({
       };
     case RestoreBackupStateType.ALLOW_SECURE_CONNECTION_REFUSED: {
       const onRetry = () => {
-        trackClick(OsUpdateButton.RETRY);
+        trackClick(OsUpdateButton.RETRY_SECURE_CONNECTION);
         state.retry();
       };
       const onCancel = () => {
-        trackClick(OsUpdateButton.CANCEL);
+        trackClick(OsUpdateButton.CANCEL_SECURE_CONNECTION);
         state.cancel();
       };
       return {
         hideHeader: true,
-        content: <SecureConnectionRefusedContent onRetry={onRetry} onCancel={onCancel} />,
+        content: (
+          <SecureConnectionRefusedContent
+            deviceModelId={deviceModelId}
+            onRetry={onRetry}
+            onCancel={onCancel}
+          />
+        ),
       };
     }
     case RestoreBackupStateType.DEVICE_DISCONNECTED:
-      return { content: <DeviceDisconnectedContent /> };
+      return {
+        content: (
+          <DeviceDisconnectedContent deviceModelId={deviceModelId} deviceName={deviceName} />
+        ),
+      };
     case RestoreBackupStateType.CONNECTION_TIMED_OUT:
-      return getConnectionTimedOutSheet({ retry: state.retry, trackClick, exportLogs });
+      return getConnectionTimedOutSheet({ retry: state.retry, cancel: state.cancel, trackClick });
     case RestoreBackupStateType.UNEXPECTED_ERROR: {
       const onCancel = () => {
-        trackClick(OsUpdateButton.CANCEL);
+        trackClick(OsUpdateButton.CANCEL_OS_UPDATE);
         state.cancel();
       };
       return {
+        hideHeader: true,
         content: <UnexpectedErrorContent onCancel={onCancel} />,
       };
     }
