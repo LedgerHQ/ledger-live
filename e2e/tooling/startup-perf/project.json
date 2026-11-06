@@ -1,17 +1,3 @@
 {
-  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "name": "e2e-startup-perf",
-  "projectType": "library",
-  "tags": ["scope:e2e", "scope:e2e-tooling", "scope:no-apps"],
-  "targets": {
-    "test": {
-      "executor": "nx:run-commands",
-      "cache": true,
-      "inputs": ["{projectRoot}/**/*.mjs"],
-      "options": {
-        "cwd": "{projectRoot}",
-        "command": "node --test"
-      }
-    }
-  }
+  "name": "@ledgerhq/mobile-startup-perf"
 }

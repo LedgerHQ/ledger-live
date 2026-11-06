@@ -3,26 +3,33 @@
 Compares the startup time of two Ledger Wallet Mobile builds, A and B, on two Android emulators or
 two iOS simulators. It automates the manual checks B2CQA-6555 (iOS) and B2CQA-6593 (Android).
 [test-mobile-startup-perf.yml](../../../.github/workflows/test-mobile-startup-perf.yml) runs it in
-CI only. The scripts have no dependencies: the build jobs check out this folder alone, the measure
-jobs add `e2e/mobile/userdata` (and, on Android, `tools/scripts` and the signing keystore).
+CI only. The scripts run on Node alone (the `package.json` only holds the checks' tools). The build
+jobs check out the two shell scripts alone, so the measured ref's Nx never sees a second copy of
+this package; the measure jobs check out this folder, `e2e/mobile/userdata` and, on Android,
+`tools/scripts` and the signing keystore.
 
-| File                | Role                                                                                     |
-| ------------------- | ---------------------------------------------------------------------------------------- |
-| `prepare-build.sh`  | Makes the checked-out ref's E2E prerelease build prod-like, before `pnpm mobile e2e:build` |
-| `verify-build.sh`   | Checks the built binary: no `MOCK`/`DETOX`, `FORCE_DEBUG_VISIBLE=1`, real blur           |
-| `run.mjs`           | Installs, injects and launches A and B, reads each launch, writes `samples.jsonl`        |
-| `bridge.mjs`        | The E2E bridge protocol (`apps/ledger-live-mobile/src/e2e/bridge/client.ts`), dependency-free |
-| `analyze.mjs`       | B − A per scenario, verdict, job summary; exits 1 on a failed or inconclusive check      |
-| `flows/`            | Maestro flows that open Settings > Debug > Performance in the running app                |
+| File                      | Role                                                                                |
+| ------------------------- | ----------------------------------------------------------------------------------- |
+| `prepare-build.sh`        | Makes the checked-out ref's E2E prerelease build prod-like, before `e2e:build`      |
+| `verify-build.sh`         | Checks the built binary: no `MOCK`/`DETOX`, `FORCE_DEBUG_VISIBLE=1`, real blur      |
+| `run.mjs`                 | The CLI: installs, injects and launches A and B, writes `samples.jsonl`             |
+| `android.mjs`, `ios.mjs`  | The two `Platform`s: install, launch, pause, process start, through adb or simctl   |
+| `performance-screen.mjs`  | Reads App startup time and the startup events through Maestro                       |
+| `inject.mjs`              | Imports a scenario's userdata through the E2E bridge, once per install              |
+| `bridge.mjs`              | The E2E bridge protocol (`apps/ledger-live-mobile/src/e2e/bridge/client.ts`)        |
+| `maestro.mjs`, `exec.mjs` | Maestro and child-process calls                                                     |
+| `analyze.mjs`             | B − A per scenario, verdict, job summary; exits 1 on a failed or inconclusive check |
+| `types.d.mts`             | `Sample` (a line of `samples.jsonl`) and `Platform`, checked by `tsc`               |
+| `flows/`                  | Maestro flows that open Settings > Debug > Performance in the running app           |
 
 ## Presets
 
-| Preset             | A                                | B                     | Fails when                    |
-| ------------------ | -------------------------------- | --------------------- | ----------------------------- |
-| `prod-vs-release`  | latest `live-mobile@X.Y.Z` tag   | `release` branch      | B is slower by > threshold_ms |
-| `custom`           | any branch or tag                | any branch or tag     | same                          |
-| `aa-noise`         | one build                        | the same binary       | only on `Not enough pairs`    |
-| `known-regression` | LIVE-36190 present (`03d6f91`)   | fixed (`74af11a`)     | the regression is not seen    |
+| Preset             | A                              | B                 | Fails when                    |
+| ------------------ | ------------------------------ | ----------------- | ----------------------------- |
+| `prod-vs-release`  | latest `live-mobile@X.Y.Z` tag | `release` branch  | B is slower by > threshold_ms |
+| `custom`           | any branch or tag              | any branch or tag | same                          |
+| `aa-noise`         | one build                      | the same binary   | only on `Not enough pairs`    |
+| `known-regression` | LIVE-36190 present (`03d6f91`) | fixed (`74af11a`) | the regression is not seen    |
 
 `aa-noise` reports how finely the setup resolves B − A.
 
@@ -35,7 +42,8 @@ interval.
 The E2E "production Firebase" build (`.env.mock.prerelease`): `detoxPreRelease` x86_64 APK on
 Android, Release simulator app on iOS, with the JS bundled in the binary. `prepare-build.sh`:
 
-- removes `MOCK`, `DETOX` and the other test-only keys no store env file has, and points swap to prod;
+- removes `MOCK`, `DETOX` and the other test-only keys no store env file has, and points swap to
+  prod;
 - starts the E2E bridge only on a launch that passes `wsPort` (the injection), 20 s after the store
   is ready, so measured launches run no bridge code;
 - keeps the real blur, which rspack aliases to the E2E mock for any "mock" env file;
@@ -95,10 +103,14 @@ Two measures, both ending at "App startup time":
 
 `analyze.mjs` exits 1 on `FAIL`, `Not detected`, `Not enough pairs` or no samples.
 
-## Tests
+## Checks
 
 ```bash
-pnpm nx run e2e-startup-perf:test   # or: node --test, in this folder
+pnpm --filter @ledgerhq/mobile-startup-perf test        # also: typecheck, lint, format:check
 ```
 
-They run in the "E2E Tooling Checks" PR job.
+They run in the "E2E Tooling Checks" PR job when this folder changes. `app-contract.test.mjs` checks
+the mobile app of the checkout against what the measurement needs: `prepare-build.sh` still applies,
+the bridge still handles every message `inject.mjs` sends, and the screens the flows open still show
+"Debug", "Performance" and "App startup time". The JavaScript is type-checked from JSDoc
+(`checkJs`), so a field renamed in `Sample` fails wherever it is still used.

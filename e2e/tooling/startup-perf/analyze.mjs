@@ -5,6 +5,8 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
 
+/** @import { Sample } from "./types.mjs" */
+
 const Z_95 = 1.959964;
 
 export function median(values) {
@@ -35,6 +37,10 @@ export function hodgesLehmann(diffs) {
   return { estimate, low: walsh[c - 1], high: walsh[walsh.length - c] };
 }
 
+/**
+ * @param {Sample[]} samples
+ * @param {(s: Sample) => number} metric
+ */
 export function pairUp(samples, metric) {
   const byKey = new Map();
   for (const s of samples) {
@@ -111,18 +117,25 @@ export function bootstrapMean(diffs, resamples = 4000) {
   };
 }
 
+/** @param {Sample} s */
 const jsStartOffset = s => s.events?.["Before js imports"]?.time;
+/** @param {Sample} s */
 export const fromJsStart = s => s.appStartupTime - (jsStartOffset(s) ?? NaN);
+/** @param {Sample} s */
 const jsStartEpoch = s => {
   const name = Object.keys(s.events ?? {}).find(n => /^JS start epoch \d+$/.test(n));
   return name ? Number(name.split(" ").pop()) : NaN;
 };
 // Samples from before processStartAppClockAt only have the app's clock on iOS (the host's).
+/** @param {Sample} s */
 const appClockProcessStart = s =>
   s.processStartAppClockAt ?? (s.platform === "ios" ? s.processStartAt : NaN);
+/** @param {Sample} s */
 const harnessNativeStart = s => jsStartEpoch(s) - (appClockProcessStart(s) ?? NaN);
+/** @param {Sample} s */
 export const fromProcessStart = s => harnessNativeStart(s) + fromJsStart(s);
 
+/** @param {Sample} s */
 export function debugBase(s) {
   const offset = jsStartOffset(s);
   if (!Number.isFinite(offset)) return null;
@@ -174,6 +187,10 @@ function difference(group, metric) {
   };
 }
 
+/**
+ * @param {Sample[]} samples
+ * @param {{ preset: string, thresholdMs: number }} options
+ */
 export function summarise(samples, { preset, thresholdMs }) {
   const groups = new Map();
   for (const s of samples) {

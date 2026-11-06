@@ -15,8 +15,16 @@ import {
   toMarkdown,
 } from "./analyze.mjs";
 
+/** @import { Sample } from "./types.mjs" */
+
 const PROCESS_START = 1_700_000_000_000;
 
+/** @typedef {Partial<Sample> & { jsStartOffset?: number, nativeStartMs?: number }} LaunchOptions */
+
+/**
+ * @param {LaunchOptions & { side: "A" | "B", appStartupTime: number }} options
+ * @returns {Sample}
+ */
 function launch({ side, appStartupTime, jsStartOffset = 5, nativeStartMs = 400, ...rest }) {
   return {
     platform: "android",
@@ -24,6 +32,9 @@ function launch({ side, appStartupTime, jsStartOffset = 5, nativeStartMs = 400, 
     phase: 0,
     round: 0,
     side,
+    device: "emulator-5554",
+    warmup: false,
+    startedAt: "2026-11-06T00:00:00.000Z",
     ok: true,
     appStartupTime,
     processStartAppClockAt: PROCESS_START,
@@ -36,11 +47,14 @@ function launch({ side, appStartupTime, jsStartOffset = 5, nativeStartMs = 400, 
 }
 
 // Phase 0 runs A on the first device and B on the second; phase 1 swaps them.
+/**
+ * @param {{ pairs?: number, deltaMs: number, secondDeviceSlowerByMs?: number, phases?: number[], a?: LaunchOptions, b?: LaunchOptions }} options
+ */
 function comparison({ pairs = 6, deltaMs, secondDeviceSlowerByMs = 0, phases = [0, 1], a, b }) {
   const samples = [];
   for (const phase of phases) {
     for (let round = 0; round < pairs / 2; round++) {
-      for (const side of ["A", "B"]) {
+      for (const side of /** @type {const} */ (["A", "B"])) {
         const onSecondDevice = (side === "B") === (phase === 0);
         const value = 1000 + (side === "B" ? deltaMs : 0);
         samples.push(
@@ -163,7 +177,9 @@ describe("debugBase", () => {
     assert.equal(debugBase(s), "process");
   });
   it("is null without startup events", () => {
-    assert.equal(debugBase({ appStartupTime: 1000 }), null);
+    const s = launch({ side: "A", appStartupTime: 1000 });
+    delete s.events;
+    assert.equal(debugBase(s), null);
   });
 });
 

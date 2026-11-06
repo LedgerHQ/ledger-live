@@ -7714,6 +7714,21 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
+  e2e/tooling/startup-perf:
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
+
   features/flow/account-analytics:
     dependencies:
       '@domain/entity-currency-fiat':

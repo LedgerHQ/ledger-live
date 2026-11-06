@@ -177,7 +177,10 @@ jobs:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           path: .startup-perf
-          sparse-checkout: /e2e/tooling/startup-perf/
+          # Only the scripts: this folder's package.json would clash in Nx with the ref's own copy.
+          sparse-checkout: |
+            /e2e/tooling/startup-perf/prepare-build.sh
+            /e2e/tooling/startup-perf/verify-build.sh
           sparse-checkout-cone-mode: false
           persist-credentials: false
 
@@ -278,7 +281,10 @@ jobs:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           path: .startup-perf
-          sparse-checkout: /e2e/tooling/startup-perf/
+          # Only the scripts: this folder's package.json would clash in Nx with the ref's own copy.
+          sparse-checkout: |
+            /e2e/tooling/startup-perf/prepare-build.sh
+            /e2e/tooling/startup-perf/verify-build.sh
           sparse-checkout-cone-mode: false
           persist-credentials: false
 
