@@ -17,15 +17,17 @@ function isTransientWindowsContention(e: unknown): boolean {
   return code === "EPERM" || code === "EBUSY";
 }
 
-/** Whether a process with this pid is still alive. Any error other than "no such process" (e.g. a
- * live process we lack permission to signal) must NOT read as dead, or a live lock gets stolen. */
-function isHolderAlive(pid: number): boolean {
-  if (!Number.isInteger(pid) || pid <= 0) return false;
+type HolderLiveness = "alive" | "unsignalable" | "dead";
+
+/** Any error other than "no such process" (e.g. a live process we lack permission to signal) must
+ * NOT read as dead, or a live lock gets stolen. */
+function holderLiveness(pid: number): HolderLiveness {
+  if (!Number.isInteger(pid) || pid <= 0) return "dead";
   try {
     process.kill(pid, 0);
-    return true;
+    return "alive";
   } catch (e) {
-    return errorCode(e) !== "ESRCH";
+    return errorCode(e) === "ESRCH" ? "dead" : "unsignalable";
   }
 }
 
@@ -56,10 +58,15 @@ function parsePid(token: string | undefined): number | undefined {
  * counts as abandoned too: a corrupt lock file must never wedge every future command forever. */
 function isAbandoned(lockPath: string, token: string | undefined): boolean {
   const pid = parsePid(token);
-  return pid === undefined || !isHolderAlive(pid) || predatesLastBoot(lockPath);
+  return pid === undefined || !isLiveHolder(lockPath, pid);
 }
 
-/** No holder outlives a reboot, though its pid may be reused and read as alive (`EPERM`). */
+/** Only EPERM pids get the reboot check, so a clock correction never frees a lock we can signal. */
+function isLiveHolder(lockPath: string, pid: number): boolean {
+  const liveness = holderLiveness(pid);
+  return liveness === "alive" || (liveness === "unsignalable" && !predatesLastBoot(lockPath));
+}
+
 function predatesLastBoot(lockPath: string): boolean {
   try {
     return statSync(lockPath).mtimeMs < Date.now() - os.uptime() * 1000;
@@ -72,7 +79,7 @@ function predatesLastBoot(lockPath: string): boolean {
  * abandoned. Read-only: unlike `withFileLock`, it never reclaims an abandoned lock. */
 export function readLiveLockHolderPid(lockPath: string): number | undefined {
   const pid = parsePid(readToken(lockPath));
-  return pid !== undefined && isHolderAlive(pid) && !predatesLastBoot(lockPath) ? pid : undefined;
+  return pid !== undefined && isLiveHolder(lockPath, pid) ? pid : undefined;
 }
 
 /** Tries to publish `token` at `lockPath` via a private per-attempt temp file (see the module doc
@@ -196,9 +203,9 @@ function tryAcquire(lockPath: string, tmpPath: string, token: string, deadline: 
 /**
  * Serializes access to a resource across wallet-cli processes via an exclusive lock file at
  * `lockPath`. The lock file's content is `<pid>:<nonce>` — this process's own token — so:
- *  - staleness is judged by whether that pid is still alive and the lock postdates the last boot,
- *    not by the lock's age, so `fn` can run as long as it needs to without a live holder ever being
- *    mistaken for dead;
+ *  - staleness is judged by whether that pid is still alive (and, for a pid we can't signal,
+ *    whether the lock postdates the last boot), not by the lock's age, so `fn` can run as long as
+ *    it needs to without a live holder ever being mistaken for dead;
  *  - the lock is never observable half-written: the token is written to a private per-attempt temp
  *    file first, and `linkSync(tmp, lockPath)` publishes it — a hard link either creates `lockPath`
  *    with its content already in place or fails with `EEXIST`, unlike create-then-write, which
