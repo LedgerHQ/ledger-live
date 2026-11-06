@@ -5,7 +5,7 @@ run-name: >
 # Compares the startup time of two Ledger Wallet Mobile builds, A and B, as read in
 # Settings > Debug > Performance > App startup time and with the native start (process start to
 # first JS import) added back: the automated version of the manual checks B2CQA-6555 (iOS) and
-# B2CQA-6593 (Android). See tools/scripts/startup-perf/run.mjs and analyze.mjs.
+# B2CQA-6593 (Android). See e2e/tooling/startup-perf/run.mjs and analyze.mjs.
 #
 # Presets:
 #   prod-vs-release   the latest live-mobile@X.Y.Z tag (A) against the release branch (B); B fails
@@ -15,7 +15,7 @@ run-name: >
 #   known-regression  LIVE-36190 present vs fixed (03d6f91 vs 74af11a): does it still see a regression?
 #
 # Builds: the E2E detoxPreRelease (Android) / Release simulator (iOS) build with .env.mock.prerelease
-# and the JS bundled in the binary, made prod-like by tools/scripts/startup-perf/prepare-build.sh.
+# and the JS bundled in the binary, made prod-like by e2e/tooling/startup-perf/prepare-build.sh.
 # The scripts and userdata always come from this workflow's ref, so older refs can be measured.
 
 on:
@@ -200,7 +200,7 @@ jobs:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           path: .startup-perf
-          sparse-checkout: /tools/scripts/startup-perf/
+          sparse-checkout: /e2e/tooling/startup-perf/
           sparse-checkout-cone-mode: false
           persist-credentials: false
 
@@ -252,7 +252,7 @@ jobs:
         run: pnpm build:llm:deps
 
       - name: Prepare the prod-like build
-        run: bash .startup-perf/tools/scripts/startup-perf/prepare-build.sh
+        run: bash .startup-perf/e2e/tooling/startup-perf/prepare-build.sh
 
       # Same build type and env file as the E2E "production Firebase" build, but without
       # SKIP_JS_BUNDLING, so Gradle bundles the JS into the APK like a store build.
@@ -271,7 +271,7 @@ jobs:
           mkdir -p out
           APK=$(find apps/ledger-live-mobile/android/app/build/outputs/apk/detoxPreRelease -name "*x86_64*.apk" | head -1)
           [[ -n "$APK" ]] || { echo "::error::no x86_64 detoxPreRelease APK found"; exit 1; }
-          bash .startup-perf/tools/scripts/startup-perf/verify-build.sh android "$APK"
+          bash .startup-perf/e2e/tooling/startup-perf/verify-build.sh android "$APK"
           cp "$APK" out/app.apk
           git rev-parse HEAD > out/sha.txt
           ls -la out
@@ -312,7 +312,7 @@ jobs:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           path: .startup-perf
-          sparse-checkout: /tools/scripts/startup-perf/
+          sparse-checkout: /e2e/tooling/startup-perf/
           sparse-checkout-cone-mode: false
           persist-credentials: false
 
@@ -352,7 +352,7 @@ jobs:
         run: pnpm build:llm:deps
 
       - name: Prepare the prod-like build
-        run: bash .startup-perf/tools/scripts/startup-perf/prepare-build.sh
+        run: bash .startup-perf/e2e/tooling/startup-perf/prepare-build.sh
 
       # Release configuration for the simulator with .env.mock.prerelease (production Firebase),
       # with the JS bundled by Xcode.
@@ -369,7 +369,7 @@ jobs:
           set -euo pipefail
           mkdir -p out
           APP=apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app
-          bash .startup-perf/tools/scripts/startup-perf/verify-build.sh ios "$APP"
+          bash .startup-perf/e2e/tooling/startup-perf/verify-build.sh ios "$APP"
           ditto -c -k --keepParent "$APP" out/app.zip
           git rev-parse HEAD > out/sha.txt
           ls -la out
@@ -479,6 +479,7 @@ jobs:
           sparse-checkout-cone-mode: false
           sparse-checkout: |
             /tools/scripts/
+            /e2e/tooling/startup-perf/
             /e2e/mobile/userdata/
             /apps/ledger-live-mobile/android/app/staging.kstr
 
@@ -604,7 +605,7 @@ jobs:
           APP_A=builds/a/signed.apk
           APP_B=builds/b/signed.apk
           [[ -f "$APP_B" ]] || APP_B="$APP_A"
-          node tools/scripts/startup-perf/run.mjs \
+          node e2e/tooling/startup-perf/run.mjs \
             --platform android \
             --devices emulator-5554,emulator-5556 \
             --app-a "$APP_A" --app-b "$APP_B" --app-id "$APP_ID" \
@@ -620,7 +621,7 @@ jobs:
           LABEL_A: ${{ needs.plan.outputs.label_a }}
           LABEL_B: ${{ needs.plan.outputs.label_b }}
         run: |
-          node tools/scripts/startup-perf/analyze.mjs \
+          node e2e/tooling/startup-perf/analyze.mjs \
             --samples "$RESULTS_DIR/android/samples.jsonl" \
             --preset "$PRESET" --threshold-ms "$THRESHOLD" \
             --label-a "$LABEL_A" --label-b "$LABEL_B" \
@@ -655,7 +656,7 @@ jobs:
         with:
           persist-credentials: false
           sparse-checkout: |
-            tools/scripts
+            e2e/tooling/startup-perf
             e2e/mobile/userdata
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
@@ -740,7 +741,7 @@ jobs:
           APP_A=builds/a/ledgerlivemobile.app
           APP_B=builds/b/ledgerlivemobile.app
           [[ -d "$APP_B" ]] || APP_B="$APP_A"
-          node tools/scripts/startup-perf/run.mjs \
+          node e2e/tooling/startup-perf/run.mjs \
             --platform ios \
             --devices "$SIM_1,$SIM_2" \
             --app-a "$APP_A" --app-b "$APP_B" --app-id "$APP_ID" \
@@ -756,7 +757,7 @@ jobs:
           LABEL_A: ${{ needs.plan.outputs.label_a }}
           LABEL_B: ${{ needs.plan.outputs.label_b }}
         run: |
-          node tools/scripts/startup-perf/analyze.mjs \
+          node e2e/tooling/startup-perf/analyze.mjs \
             --samples "$RESULTS_DIR/ios/samples.jsonl" \
             --preset "$PRESET" --threshold-ms "$THRESHOLD" \
             --label-a "$LABEL_A" --label-b "$LABEL_B" \
