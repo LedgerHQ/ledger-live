@@ -28,6 +28,8 @@ module.exports = {
     "../../shared/native-performance/src/**",
     "../../shared/native-performance/*.md",
     "../../shared/native-performance/jest.config.js",
+    "../../shared/native-performance/project.json",
+    "../../shared/native-performance/tsconfig.json",
   ],
   extraSources: [
     e2eBuildFile("fingerprint.config.js"),
