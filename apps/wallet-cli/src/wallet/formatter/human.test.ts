@@ -220,26 +220,16 @@ describe("HumanFormatter.formatAmount", () => {
   });
 
   it("throws for unknown assetId", async () => {
-    const storeWithNoToken = {
-      findTokenById: async () => undefined,
-    } as unknown as CryptoAssetsStore;
-    const f = new HumanFormatter(storeWithNoToken);
+    const f = new HumanFormatter(recordingTokenStore().store);
     await expect(f.formatAmount("100", "notacurrency")).rejects.toThrow(/Unknown/);
   });
 
   it("does not query store for known built-in currencies (ethereum)", async () => {
-    const calls: string[] = [];
-    const countingStore = {
-      findTokenById: async (id: string) => {
-        calls.push(id);
-        return undefined;
-      },
-    } as unknown as CryptoAssetsStore;
-    const f = new HumanFormatter(countingStore);
+    const { store, lookups } = recordingTokenStore();
+    const f = new HumanFormatter(store);
     await f.formatAmount("1000000000000000000", "ethereum");
     await f.formatAmount("2000000000000000000", "ethereum");
-    // ethereum is resolved via findCryptoCurrencyById, store never called
-    expect(calls).toHaveLength(0);
+    expect(lookups).toEqual([]);
   });
 });
 
