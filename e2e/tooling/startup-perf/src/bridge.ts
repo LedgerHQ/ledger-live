@@ -1,6 +1,5 @@
 // Minimal WebSocket server speaking the E2E bridge protocol (apps/ledger-live-mobile/src/e2e/bridge/client.ts).
-// Dependency-free so it runs from a sparse checkout, and it accepts any token so it also works with
-// older app builds that connect without one.
+// Dependency-free so it runs from a sparse checkout; it accepts any token.
 import { createServer } from "node:http";
 import { createHash, randomUUID } from "node:crypto";
 import type { Duplex } from "node:stream";

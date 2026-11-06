@@ -156,9 +156,8 @@ describe("failedRows", () => {
   }
   for (const verdict of [
     "PASS (inconclusive: [50, 150] contains 100 ms)",
-    "Detected: the fix is 300 ms faster",
+    "Detected: B is 300 ms slower",
     "OK: resolves about ±20 ms",
-    'Not measured: build A has no "JS start epoch" event',
   ]) {
     it(`passes on "${verdict}"`, () => {
       assert.equal(failedRows([{ verdict }]), false);
@@ -172,27 +171,6 @@ describe("debugBase", () => {
   });
   it("is process when it starts where the harness reads the process start", () => {
     const s = launch({ side: "A", appStartupTime: 1500, jsStartOffset: 800, nativeStartMs: 760 });
-    assert.equal(debugBase(s), "process");
-  });
-  it("is package when it starts more than 100 ms away from the process start", () => {
-    const s = launch({ side: "A", appStartupTime: 1100, jsStartOffset: 300, nativeStartMs: 800 });
-    assert.equal(debugBase(s), "package");
-  });
-  it("is native when the harness has no process start on the app's clock", () => {
-    const s = launch({ side: "A", appStartupTime: 1500, jsStartOffset: 800 });
-    delete s.processStartAppClockAt;
-    assert.equal(debugBase(s), "native");
-  });
-  it("uses the host's process start on iOS samples without the app clock one", () => {
-    const s = launch({
-      side: "A",
-      appStartupTime: 1500,
-      jsStartOffset: 800,
-      nativeStartMs: 800,
-      platform: "ios",
-    });
-    s.processStartAt = s.processStartAppClockAt;
-    delete s.processStartAppClockAt;
     assert.equal(debugBase(s), "process");
   });
   it("is null without startup events", () => {
@@ -384,14 +362,13 @@ describe("summarise", () => {
     assert.equal(row.pairs, 7);
   });
 
-  it("does not measure the native start of a build without the JS start epoch event", () => {
+  it("fails the native start row of a build without the JS start epoch event", () => {
     const samples = comparison({ deltaMs: 0 }).map(s =>
       s.side === "B" ? { ...s, events: { "Before js imports": { count: 1, time: 5 } } } : s,
     );
-    assert.equal(
-      nativeRow(summarise(samples, GATE)).verdict,
-      'Not measured: build B has no "JS start epoch" event',
-    );
+    const row = nativeRow(summarise(samples, GATE));
+    assert.equal(row.verdict, "Not enough pairs");
+    assert.equal(failedRows([row]), true);
   });
 
   it("counts failed launches but not warm-ups", () => {
@@ -405,18 +382,19 @@ describe("summarise", () => {
     assert.equal(row.launches, 13);
   });
 
-  it("detects the known regression when the fix makes B faster", () => {
+  it("detects the re-added regression when B is slower by more than the threshold", () => {
     const row = debugRow(
-      summarise(comparison({ deltaMs: -300 }), { preset: "known-regression", thresholdMs: 100 }),
+      summarise(comparison({ deltaMs: 300 }), { preset: "known-regression", thresholdMs: 100 }),
     );
-    assert.equal(row.verdict, "Detected: the fix is 300 ms faster");
+    assert.equal(row.verdict, "Detected: B is 300 ms slower");
   });
 
-  it("fails known-regression when B is not faster", () => {
+  it("fails known-regression when B is not slower by more than the threshold", () => {
     const row = debugRow(
-      summarise(comparison({ deltaMs: 0 }), { preset: "known-regression", thresholdMs: 100 }),
+      summarise(comparison({ deltaMs: 80 }), { preset: "known-regression", thresholdMs: 100 }),
     );
-    assert.equal(row.verdict, "Not detected [0, 0]");
+    assert.equal(row.verdict, "Not detected: B − A is 80 ms [80, 80], not above 100 ms");
+    assert.equal(failedRows([row]), true);
   });
 
   it("reports the resolution of an A/A run", () => {
@@ -450,5 +428,11 @@ describe("toMarkdown", () => {
     const aa = { ...options, preset: "aa-noise" };
     const markdown = toMarkdown(summarise(comparison({ deltaMs: 0 }), aa), aa);
     assert.doesNotMatch(markdown, /B fails when/);
+  });
+
+  it("says what known-regression's B is", () => {
+    const known = { ...options, preset: "known-regression" };
+    const markdown = toMarkdown(summarise(comparison({ deltaMs: 300 }), known), known);
+    assert.match(markdown, /^B is A with LIVE-36190 re-added/m);
   });
 });

@@ -115,14 +115,9 @@ export function createInjector({
 /** The app's environment variables, or null when it does not answer. */
 async function readAppEnvs(bridge: Bridge): Promise<Record<string, unknown> | null> {
   try {
-    // Builds before mid-September 2026 reply without the message id.
-    const from = bridge.received.length;
     const id = bridge.send("getEnvs");
-    await bridge.waitFor({ id, type: "ACK", timeoutMs: ENVS_TIMEOUT_MS });
-    const reply = bridge.received
-      .slice(from)
-      .find(m => m.type === "appEnvs" && (m.id === id || m.id === undefined));
-    return reply ? JSON.parse(reply.payload as string) : null;
+    const reply = await bridge.waitFor({ id, type: "appEnvs", timeoutMs: ENVS_TIMEOUT_MS });
+    return JSON.parse(reply.payload as string);
   } catch {
     return null;
   }

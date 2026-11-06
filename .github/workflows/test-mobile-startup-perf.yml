@@ -14,7 +14,7 @@ on:
         options: [prod-vs-release, custom, aa-noise, known-regression]
         default: prod-vs-release
       ref_a:
-        description: "Build A, a branch or tag of this repository. Blank: the latest live-mobile@X.Y.Z tag (prod-vs-release) or this branch (aa-noise)"
+        description: "Build A, a branch or tag of this repository (live-mobile@4.26.0 or later). Blank: the latest live-mobile@X.Y.Z tag (prod-vs-release) or this branch (aa-noise, known-regression)"
         required: false
         type: string
       ref_b:
@@ -54,9 +54,6 @@ permissions:
 
 env:
   APP_ID: com.ledger.live
-  # LIVE-36190: fixed by #21001, present in its parent.
-  KNOWN_REGRESSION_SHA: 03d6f9155b084a07e285e37617d16d7f4fab8b25
-  KNOWN_FIX_SHA: 74af11a25844226efdc5570f47e40f98c51e462c
   MAESTRO_VERSION: 2.10.0
   MAESTRO_SHA256: 29b675e10cc12080e445e9bfb2e2b4e4dfb9c0f2e30d5884120d258b5e1cd991
   RESULTS_DIR: startup-perf-results
@@ -127,8 +124,9 @@ jobs:
               B="$A"; SIDES='["a"]'
               LABEL_A="${REF_A:-$GITHUB_REF_NAME}"; LABEL_B="the same binary" ;;
             known-regression)
-              A="$KNOWN_REGRESSION_SHA"; B="$KNOWN_FIX_SHA"; SIDES='["a","b"]'
-              LABEL_A="LIVE-36190 present"; LABEL_B="LIVE-36190 fixed" ;;
+              if [[ -n "$REF_A" ]]; then A=$(resolve "$REF_A"); else A="$BRANCH_SHA"; fi
+              B="$A"; SIDES='["a","b"]'
+              LABEL_A="${REF_A:-$GITHUB_REF_NAME}"; LABEL_B="$LABEL_A with LIVE-36190 re-added" ;;
           esac
           LABEL_A="$LABEL_A (${A:0:10})"
           [[ "$SIDES" == '["a"]' ]] || LABEL_B="$LABEL_B (${B:0:10})"
@@ -182,9 +180,6 @@ jobs:
           sparse-checkout-cone-mode: false
           persist-credentials: false
 
-      - name: Adapt mise.toml of older commits
-        run: bash .startup-perf/e2e/tooling/startup-perf/ci/adapt-mise-toml.sh
-
       # No remote Nx, pnpm or Gradle cache: they would be written with develop's role for another ref.
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
@@ -217,6 +212,8 @@ jobs:
         run: pnpm build:llm:deps
 
       - name: Prepare the prod-like build
+        env:
+          STARTUP_PERF_REGRESSION: ${{ inputs.preset == 'known-regression' && matrix.side == 'b' && 'LIVE-36190' || '' }}
         run: bash .startup-perf/e2e/tooling/startup-perf/ci/prepare-build.sh
 
       - name: Build detoxPreRelease APK (x86_64, JS bundled)
@@ -279,9 +276,6 @@ jobs:
           sparse-checkout-cone-mode: false
           persist-credentials: false
 
-      - name: Adapt mise.toml of older commits
-        run: bash .startup-perf/e2e/tooling/startup-perf/ci/adapt-mise-toml.sh
-
       # No remote caches, as in the Android build.
       - name: setup caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
@@ -308,6 +302,8 @@ jobs:
         run: pnpm build:llm:deps
 
       - name: Prepare the prod-like build
+        env:
+          STARTUP_PERF_REGRESSION: ${{ inputs.preset == 'known-regression' && matrix.side == 'b' && 'LIVE-36190' || '' }}
         run: bash .startup-perf/e2e/tooling/startup-perf/ci/prepare-build.sh
 
       - name: Build Release simulator app (JS bundled)
