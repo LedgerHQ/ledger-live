@@ -17,14 +17,14 @@ import BigNumber from "bignumber.js";
 import suiConfig from "../config";
 import { BLOCK_HEIGHT } from "../constants";
 import { getAccountBalances, getOperations, getDelegatedStakes } from "../network";
-import { DEFAULT_COIN_TYPE } from "../network/sdk";
+import { DEFAULT_COIN_TYPE, toStakeAmounts } from "../network/sdk";
 import { SuiOperationExtra, SuiAccount } from "../types";
 import { toLongStructTag, toShortStructTag } from "../utils";
 
 export const getAccountShape: GetAccountShape<SuiAccount> = async (info, syncConfig) => {
   const { address, initialAccount, currency, derivationMode } = info;
 
-  const oldOperations = initialAccount?.operations || [];
+  const oldOperations = (initialAccount?.operations || []).map(revalueStoredStakingOperation);
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
@@ -59,7 +59,16 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async (info, syncCon
 
   const accountBalances = await getAccountBalances(config, address);
   const suiBalance = accountBalances.find(({ coinType }) => coinType === DEFAULT_COIN_TYPE);
-  const balance = suiBalance?.balance ?? BigNumber(0);
+  const spendableBalance = suiBalance?.balance ?? BigNumber(0);
+  // Staked SUI still belongs to the owner, so it counts in `balance` but never in
+  // `spendableBalance`. Valued as in `getBalance`: principal plus accrued reward.
+  const stakedBalance = (stakes ?? [])
+    .flatMap(pool => pool.stakes)
+    .reduce((sum, stake) => {
+      const { deposited, rewarded } = toStakeAmounts(stake);
+      return sum.plus((deposited + rewarded).toString());
+    }, BigNumber(0));
+  const balance = spendableBalance.plus(stakedBalance);
   // SIP-58 address-balance portion of the native SUI balance — kept so the bridge can validate
   // a spend against it (gas is withdrawn from it when real coins can't cover the budget).
   const fundsInAddressBalance = suiBalance?.fundsInAddressBalance ?? BigNumber(0);
@@ -80,7 +89,7 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async (info, syncCon
     id: accountId,
     syncHash: syncHash ?? undefined,
     balance,
-    spendableBalance: balance,
+    spendableBalance,
     operationsCount: mainAccountOperations.length,
     blockHeight: BLOCK_HEIGHT,
     subAccounts,
@@ -93,6 +102,26 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async (info, syncCon
 };
 
 export const sync = makeSync({ getAccountShape, shouldMergeOps: false });
+
+/**
+ * Stake operations stored by earlier versions carry the liquid SUI they moved as `value`. The
+ * account balance now counts staked SUI, so such a value would distort the balance history. Sync
+ * reads forward from its cursor and never refetches these operations, so they are rewritten in
+ * place to the gas the account paid. A rewritten value is zero or the fee (a net fee can be
+ * negative when the storage rebate exceeds the costs).
+ */
+export function revalueStoredStakingOperation(op: Operation): Operation {
+  if (op.type !== "DELEGATE" && op.type !== "UNDELEGATE") return op;
+  const isRewritten = (value: BigNumber) => value.isZero() || value.eq(op.fee);
+  if (isRewritten(op.value)) return op;
+  // An old stake value is principal plus the gas this account paid, so the principal recovers the
+  // gas share: the fee, or zero for a sponsored stake. A stored operation does not record the gas
+  // payer otherwise, and an unstake value mixes in the reward, so the rest falls back to the fee.
+  const stakedAmount = (op.extra as SuiOperationExtra | undefined)?.stakedAmount;
+  const gasShare =
+    op.type === "DELEGATE" && stakedAmount ? op.value.minus(stakedAmount) : undefined;
+  return { ...op, value: gasShare && isRewritten(gasShare) ? gasShare : op.fee };
+}
 
 async function buildSubAccounts({
   accountId,

@@ -319,6 +319,16 @@ describe("SDK Functions", () => {
     expect(coinTypes).toContain(sdk.DEFAULT_COIN_TYPE);
   });
 
+  test("getAccountBalances bypasses the one-minute balance cache", async () => {
+    const address = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
+    const force = jest.spyOn(sdk.getAllBalancesCached, "force");
+
+    await sdk.getAccountBalances(config, address);
+
+    expect(force).toHaveBeenCalledWith(config, address);
+    force.mockRestore();
+  });
+
   test("getAccountBalances surfaces SIP-58 fundsInAddressBalance when present", async () => {
     const address = "0x44444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
     const balances = await sdk.getAccountBalances(config, address);
@@ -462,7 +472,7 @@ describe("SDK Functions", () => {
 
     const operation = sdk.transactionToOperation("mockAccountId", sender, graphqlTx);
     expect(operation.type).toBe("DELEGATE");
-    expect(operation.value.toString()).toBe("350039759296");
+    expect(operation.value.toString()).toBe("9759296");
     expect(operation.fee.toString()).toBe("9759296");
     expect(operation.senders).toEqual([sender]);
     // getOperationRecipients pushes every pure address input, then the isStaking branch pushes
@@ -470,6 +480,22 @@ describe("SDK Functions", () => {
     expect(operation.recipients).toEqual([validator, validator]);
     expect((operation.extra as { coinType: string }).coinType).toBe(sdk.DEFAULT_COIN_TYPE);
     expect(sdk.getFeesPayer(graphqlTx)).toBe(sender);
+  });
+
+  describe("getStakingOperationValue", () => {
+    const fee = new BigNumber(9_759_296);
+    const stake = mockStakingTx(SENDER, mist(-1));
+
+    test("is the fee when the account pays the gas", () => {
+      expect(sdk.getStakingOperationValue(SENDER, withGasOwner(stake, SENDER), fee)).toEqual(fee);
+    });
+
+    test("is zero when a sponsor pays the gas", () => {
+      const sponsor = "0x" + "ab".repeat(32);
+      expect(sdk.getStakingOperationValue(SENDER, withGasOwner(stake, sponsor), fee)).toEqual(
+        new BigNumber(0),
+      );
+    });
   });
 
   test("transactionToOperation should map transaction to operation", () => {
@@ -905,8 +931,8 @@ describe("Staking Operations", () => {
       expect(stakingExtra.coinType).toBe(sdk.DEFAULT_COIN_TYPE);
       expect(stakingExtra.validatorAddress).toBe(VALIDATOR);
       expect(stakingExtra.stakedAmount).toBe(String(ONE_SUI));
-      // Staking negates the (negative) balance change into a positive value.
-      expect(operation.value).toEqual(new BigNumber(mist(1)));
+      // The staked SUI stays in the account balance, so only the gas moves it.
+      expect(operation.value).toEqual(operation.fee);
       expect(operation.recipients).toEqual([]);
       expect(operation.senders).toEqual([address]);
     });
@@ -932,7 +958,7 @@ describe("Staking Operations", () => {
       expect(unstakingExtra.validatorAddress).toBe(VALIDATOR);
       // `principal_amount` from the unstaking event — see mockUnstakingTx.
       expect(unstakingExtra.stakedAmount).toBe(mist(1.2));
-      expect(operation.value).toEqual(new BigNumber(mist(-1)));
+      expect(operation.value).toEqual(operation.fee);
       expect(operation.recipients).toEqual([]);
       expect(operation.senders).toEqual([address]);
     });

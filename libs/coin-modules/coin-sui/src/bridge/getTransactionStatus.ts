@@ -57,7 +57,7 @@ export const getTransactionStatus: AccountBridge<
     estimatedFees = BigNumber(ONE_SUI).div(10);
   }
   const totalSpent = transaction.subAccountId ? amount : amount.plus(estimatedFees);
-  let accountBalance = account.balance;
+  let accountBalance = account.spendableBalance;
 
   if (transaction.subAccountId) {
     const subAccount = findSubAccountById(account, transaction.subAccountId);
@@ -125,7 +125,7 @@ export const getTransactionStatus: AccountBridge<
       errors.amount = new NotEnoughBalance();
     }
 
-    if (transaction.subAccountId && estimatedFees.gt(account.balance)) {
+    if (transaction.subAccountId && estimatedFees.gt(account.spendableBalance)) {
       errors.amount = new NotEnoughBalanceInParentAccount();
     }
 
@@ -149,8 +149,9 @@ export const getTransactionStatus: AccountBridge<
       errors.amount = new OneSuiMinForStake();
     }
 
-    // 0.1 SUI
-    if (account.balance.minus(transaction.amount).lt(ONE_SUI / 10))
+    // Gas is paid from the same liquid SUI, so the 0.1 SUI left for a later unstake is
+    // measured after the fees.
+    if (account.spendableBalance.minus(totalSpent).lt(ONE_SUI / 10))
       warnings.amount = new SomeSuiForUnstake();
   }
 

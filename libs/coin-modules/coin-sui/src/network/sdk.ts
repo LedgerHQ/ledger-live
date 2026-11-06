@@ -271,12 +271,15 @@ export type AccountBalance = {
  * address-level balances into `totalBalance`. The optional `fundsInAddressBalance` field indicates
  * how much of that total comes from the address balance (used by
  * coin-selection logic in transaction building).
+ *
+ * Reads past the cache: sync adds the uncached delegated stakes to this balance, so a cached
+ * read from before a stake or withdrawal would count the moved SUI twice or not at all.
  */
 export const getAccountBalances = async (
   config: SuiCoinConfig,
   addr: string,
 ): Promise<AccountBalance[]> => {
-  const balances = await getAllBalancesCached(config, addr);
+  const balances = await getAllBalancesCached.force(config, addr);
   return balances.map(({ coinType, totalBalance, fundsInAddressBalance }) => ({
     coinType,
     blockHeight: BLOCK_HEIGHT * 2,
@@ -519,8 +522,9 @@ export function transactionToOperation(
   // Eagerly attach staking metadata at sync time so the operation-details
   // drawer can render synchronously from `extra` instead of re-fetching the
   // whole transaction by digest.
-  const stakingExtra =
-    type === "DELEGATE" || type === "UNDELEGATE" ? getStakingExtra(transaction) : null;
+  const isStakingOp = type === "DELEGATE" || type === "UNDELEGATE";
+  const stakingExtra = isStakingOp ? getStakingExtra(transaction) : null;
+  const fee = getOperationFee(transaction);
 
   return {
     id: encodeOperationId(accountId, hash, type),
@@ -533,15 +537,33 @@ export function transactionToOperation(
       coinType,
       ...(stakingExtra ?? {}),
     },
-    fee: getOperationFee(transaction),
+    fee,
     hasFailed: transaction.effects.status.status !== "success",
     hash,
     recipients: getOperationRecipients(transaction.transaction.data),
     senders: getOperationSenders(transaction.transaction.data),
     type,
-    value: getOperationAmount(address, transaction, coinType),
+    value: isStakingOp
+      ? getStakingOperationValue(address, transaction, fee)
+      : getOperationAmount(address, transaction, coinType),
   };
 }
+
+/**
+ * A stake or unstake moves SUI between liquid and staked, and the account balance counts both. The
+ * operation therefore moves the balance only by the gas this account paid: the fee, or zero when a
+ * sponsor paid it. The staked principal lives in `extra.stakedAmount`.
+ */
+export const getStakingOperationValue = (
+  address: string,
+  transaction: SuiTransactionResponse,
+  fee: BigNumber,
+): BigNumber => {
+  const payer = getFeesPayer(transaction);
+  const paidByAccount =
+    !payer || normalizeSuiAddressForComparison(payer) === normalizeSuiAddressForComparison(address);
+  return paidByAccount ? fee : new BigNumber(0);
+};
 
 // This function is only used by coin-framework code path
 // Logic is similar to getOperationAmount, but we guarantee to return a positive amount in any case
