@@ -45,7 +45,17 @@ const DEPENDENCY_FIELDS = [
   "optionalDependencies",
 ];
 
-const SKIP_DIRS = new Set(["node_modules", "dist", "lib", "build", ".turbo", ".cache"]);
+const SKIP_DIRS = new Set([
+  "node_modules",
+  "dist",
+  "lib",
+  "lib-es",
+  "build",
+  ".webpack",
+  "coverage",
+  ".turbo",
+  ".cache",
+]);
 const SOURCE_EXTS = new Set([".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs"]);
 
 /** Workspace root of the `@devtools/*` packages the devtools import check reads. */
@@ -841,6 +851,7 @@ module.exports = {
   formatDevtoolsImportViolation,
   formatDevtoolsHostViolation,
   sourceFiles,
+  walkSourceFiles,
   SKIP_DIRS,
   SOURCE_EXTS,
   DEVTOOLS_ROOT,
