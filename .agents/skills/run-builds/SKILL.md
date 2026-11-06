@@ -47,19 +47,30 @@ Collect the npm package `name` values to search:
 1. Start with every `devtools/*` package you changed (read each `package.json` `name`).
 2. **Transitive `@devtools/*` consumers:** another package may depend on the one you changed (for example `@devtools/bindings` depends on `@devtools/env`). Grow the set until it stops changing: for each name `P` in the set, run `pnpm nx graph --focus="$P" --print --open=false`, then take every `source` in `.graph.dependencies` where `target` is `P` and `source` matches `^@devtools/`; add any new name to the set and repeat.
 
-Use each collected name `P` in two passes. **Package-name imports:** anchor the pattern so `@devtools/transport` does not match `@devtools/transport-panel`.
+Use each collected name `P` in two passes. **Package-name imports:** anchor the pattern so `@devtools/transport` does not match `@devtools/transport-panel`. Omit test-only trees from both passes: `*.test.*`, `*.spec.*`, `__tests__/`, and `__integrations__/` files never ship in a production bundle.
 
 ```bash
-rg --no-ignore-vcs -l "from ['\"]${P}(['\"/]|$)" apps/ledger-live-desktop/src apps/ledger-live-mobile/src --glob '!**/DevTools/**'
+rg --no-ignore-vcs -l "from ['\"]${P}(['\"/]|$)" apps/ledger-live-desktop/src apps/ledger-live-mobile/src \
+  --glob '!**/DevTools/**' \
+  --glob '!**/*.test.*' \
+  --glob '!**/*.spec.*' \
+  --glob '!**/__tests__/**' \
+  --glob '!**/__integrations__/**'
 ```
 
-**Imports of `DevTools/` by path** (covers files that reach DevTools through a relative or aliased path, for example `../../DevTools/DeviceOnboarding/useDeviceOnboardingTool` from `DeviceOnboarding` tests):
+**Imports of `DevTools/` by path** (covers files that reach DevTools through a relative or aliased path, for example `../../DevTools/DeviceOnboarding/useDeviceOnboardingTool` from production code outside the DevTools screen tree):
 
 ```bash
-rg --no-ignore-vcs -n "from ['\"][^'\"]*DevTools/" apps/ledger-live-desktop/src apps/ledger-live-mobile/src --glob '!**/DevTools/**'
+rg --no-ignore-vcs -n "from ['\"][^'\"]*DevTools/" apps/ledger-live-desktop/src apps/ledger-live-mobile/src \
+  --glob '!**/DevTools/**' \
+  --glob '!**/*.test.*' \
+  --glob '!**/*.spec.*' \
+  --glob '!**/__tests__/**' \
+  --glob '!**/__integrations__/**' \
+  | rg -v "from ['\"][^'\"]*/(DevToolsWindow|DevToolsScreen|devToolsWindow)['\"]"
 ```
 
-On this repo (pin snapshot), the second command lists `apps/ledger-live-mobile/src/mvvm/features/DeviceOnboarding/hooks/useDeviceOnboarding.reconnect.test.ts` and `.../__integrations__/DeviceOnboarding.integration.test.ts` while the first finds no `@devtools/bindings` imports outside `**/DevTools/**`. Treat those path hits like package imports: they mean something outside the DevTools tree pulled in DevTools code, so keep the matching app build unless you are sure they are dev-only and can be ignored.
+**Screen mount, not a consumer:** a hit whose import path ends at the developer tools **screen entry** (the module that mounts only that screen), for example paths ending in `DevToolsWindow`, `DevToolsScreen`, or `devToolsWindow`, is wiring the developer tools surface into the app shell. It does not mean non-DevTools product code depends on your package; treat it like navigation to the screen. The pipeline above drops those lines; when tools or naming change, apply the same idea to whatever module replaces that entry.
 
 The literal package search can miss a workspace package that is only used through a path import or a barrel re-export; the `DevTools/` path search can miss a consumer that only imports by package name. If either pass is inconclusive or the change is risky, keep the builds.
 
