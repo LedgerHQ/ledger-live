@@ -75,6 +75,13 @@ fi
 
 AVD_NAMES=("$AVD_NAME" "${AVD_NAME}_2" "${AVD_NAME}_3")
 
+GPU_EXPERIMENT="${EMULATOR_GPU_EXPERIMENT:-none}"
+if [[ "$GPU_EXPERIMENT" == swangle ]]; then
+  AVD_OPTIONS="${AVD_OPTIONS:-}"
+  AVD_OPTIONS="${AVD_OPTIONS/-gpu swiftshader_indirect/-gpu swangle_indirect}"
+fi
+log "🧪 GPU experiment: $GPU_EXPERIMENT, options: ${AVD_OPTIONS:-}"
+
 log "🛫 Starting emulators..."
 i=1
 for avd in "${AVD_NAMES[@]}"; do
@@ -93,6 +100,10 @@ log "⏳ Waiting for all emulators to finish booting..."
 for serial in "${SERIALS[@]}"; do
   wait_boot_completed "$serial"
   use_cellular_network "$serial"
+  if [[ "$GPU_EXPERIMENT" == hwui-gl ]]; then
+    adb -s "$serial" shell setprop debug.hwui.renderer skiagl
+    log "🧪 $serial debug.hwui.renderer=$(adb -s "$serial" shell getprop debug.hwui.renderer)"
+  fi
   log "✅ $serial booted"
 done
 log "✅ All $_EXPECTED_EMULATOR_COUNT emulators are fully booted"
