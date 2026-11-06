@@ -2,7 +2,7 @@
   "name": "@features/flow-predictions",
   "version": "0.1.0",
   "private": true,
-  "description": "Predictions onboarding sheet (intro, terms and consent steps) Ledger Wallet shows over the Predictions live app",
+  "description": "Predictions onboarding sheet (intro, terms and consent steps) and trading wallet setup Ledger Wallet shows over the Predictions live app",
   "main": "src/index.ts",
   "react-native": "src/index.native.ts",
   "types": "src/index.ts",
@@ -30,6 +30,7 @@
     "@shared/i18n": "workspace:*",
     "@shared/linking": "workspace:*",
     "@shared/ui-animated-height": "workspace:*",
+    "@shared/ui-info-state": "workspace:*",
     "@shared/ui-queued-bottom-sheet": "workspace:*"
   },
   "devDependencies": {

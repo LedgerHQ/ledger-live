@@ -15,16 +15,24 @@ function isSkippedBox(styles: CSSStyleDeclaration): boolean {
   return styles.display === "none" || styles.position === "absolute" || styles.position === "fixed";
 }
 
+/** An SVG has no `offsetHeight`. */
+function svgHeight(svg: SVGElement, styles: CSSStyleDeclaration): number {
+  return (
+    svg.getBoundingClientRect().height + readPx(styles.marginTop) + readPx(styles.marginBottom)
+  );
+}
+
 function columnContentHeight(element: HTMLElement, styles: CSSStyleDeclaration): number {
   let childrenHeight = 0;
   let visibleChildren = 0;
 
   for (const child of element.children) {
-    if (!(child instanceof HTMLElement)) continue;
+    if (!(child instanceof HTMLElement) && !(child instanceof SVGElement)) continue;
     const childStyles = getComputedStyle(child);
     if (isSkippedBox(childStyles)) continue;
     visibleChildren += 1;
-    childrenHeight += measureStackedHeight(child);
+    childrenHeight +=
+      child instanceof HTMLElement ? measureStackedHeight(child) : svgHeight(child, childStyles);
   }
 
   const gap = readPx(styles.rowGap) * Math.max(0, visibleChildren - 1);
