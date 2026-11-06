@@ -87,6 +87,31 @@ describe("addPerpsWithdrawToSwapHistory", () => {
     expect(updated.subAccounts?.[0].swapHistory).toEqual([entry(token)]);
   });
 
+  it("adds a token account the user never held, with the entry", () => {
+    const usdcToken: TokenCurrency = {
+      type: "TokenCurrency",
+      id: TokenCurrencyIdSchema.parse("ethereum/erc20/usd__coin"),
+      name: "USD Coin",
+      ticker: "USDC",
+      contractAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
+      tokenType: "erc20",
+      units: [usdc],
+    };
+    const neverHeld = { ...genTokenAccount(0, receiver, usdcToken), swapHistory: [] };
+    const parent: Account = { ...receiver, subAccounts: [] };
+
+    const updated = addPerpsWithdrawToSwapHistory(parent, entry(neverHeld), neverHeld);
+
+    expect(updated.subAccounts).toEqual([{ ...neverHeld, swapHistory: [entry(neverHeld)] }]);
+  });
+
+  it("leaves the account unchanged when the receiving account is not one of its own", () => {
+    const other = genAccount("other", { operationsSize: 0, currency: ethereum });
+
+    expect(addPerpsWithdrawToSwapHistory(other, entry())).toBe(other);
+  });
+
   it("keeps a single entry when the same swap is added twice", () => {
     const once = addPerpsWithdrawToSwapHistory(receiver, entry());
 

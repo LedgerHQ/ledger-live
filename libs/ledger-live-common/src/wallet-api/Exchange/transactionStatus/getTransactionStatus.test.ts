@@ -303,4 +303,74 @@ describe("getTransactionStatus", () => {
     expect(response).toMatchObject({ feesAmount: "1000000", payoutFeesAmount: "400000000000000" });
     expect(response.operationHash).toBe("0xhash");
   });
+
+  describe("a perps withdraw not anchored to its payout yet", () => {
+    // Held by the receiving account, with the HyperCore account as its sender.
+    const receiverWithEntry = (): Account => ({
+      ...makeAccount("to"),
+      swapHistory: [
+        {
+          provider: "swapkit_hyperliquid",
+          swapId: "withdraw-1",
+          status: "pending",
+          receiverAccountId: "to",
+          fromAccountId: "from",
+          operationId: "",
+          fromAmount: new BigNumber("5000000"),
+          toAmount: new BigNumber("190000"),
+          feesAmount: "1000000",
+          payoutFeesAmount: "3500",
+        },
+      ],
+    });
+
+    beforeEach(() => mockedGetCompleteSwapHistory.mockResolvedValueOnce([]));
+
+    it("shows its details from the entry, e.g. right after signing", async () => {
+      mockedFetchTransactionSwapStatus.mockResolvedValueOnce({
+        provider: "swapkit_hyperliquid",
+        swapId: "withdraw-1",
+        status: "pending",
+      });
+
+      const response = await getTransactionStatus(
+        { swapId: "withdraw-1" },
+        { accounts: [makeAccount("from"), receiverWithEntry()] },
+      );
+
+      expect(response).toMatchObject({
+        provider: "swapkit_hyperliquid",
+        status: "pending",
+        fromAccountId: "from",
+        toAccountId: "to",
+        sentAmount: "5000000",
+        receivedAmount: "190000",
+        feesAmount: "1000000",
+        payoutFeesAmount: "3500",
+      });
+      expect(response.operationHash).toBeUndefined();
+    });
+
+    it("takes the payout tx hash and final amount from the swap status once finished", async () => {
+      mockedFetchTransactionSwapStatus.mockResolvedValueOnce({
+        provider: "swapkit_hyperliquid",
+        swapId: "withdraw-1",
+        status: "finished",
+        finalAmount: "0.0019",
+        txHash: "0xpayout",
+      });
+
+      const response = await getTransactionStatus(
+        { swapId: "withdraw-1" },
+        { accounts: [makeAccount("from"), receiverWithEntry()] },
+      );
+
+      expect(response).toMatchObject({
+        status: "finished",
+        finalAmount: "190000",
+        receivedAmount: "190000",
+        operationHash: "0xpayout",
+      });
+    });
+  });
 });

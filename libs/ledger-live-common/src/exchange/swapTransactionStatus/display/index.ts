@@ -442,14 +442,12 @@ export function useSwapTransactionStatusDisplayViewModel({
   const sendCurrency = sendResolved ? getAccountCurrency(sendResolved.account) : undefined;
   const receiveCurrency = receiveResolved ? getAccountCurrency(receiveResolved.account) : undefined;
   // A perps withdraw is anchored to its payout, made on the receiving account: its explorer is
-  // the receiving currency one.
-  const explorerCurrency = isSwapPayoutOperation(
-    sendResolved,
-    receiveResolved,
-    details?.operationHash,
-  )
-    ? receiveCurrency
-    : sendCurrency;
+  // the receiving currency one, also before the payout operation is synced.
+  const explorerCurrency =
+    isPerpsWithdrawSwap(provider, sendCurrency) ||
+    isSwapPayoutOperation(sendResolved, receiveResolved, details?.operationHash)
+      ? receiveCurrency
+      : sendCurrency;
   const explorerMainCurrency =
     explorerCurrency?.type === "TokenCurrency"
       ? getCryptoCurrencyById(explorerCurrency.parentCurrencyId)
