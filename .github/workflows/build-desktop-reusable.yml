@@ -8,11 +8,6 @@ on:
         type: boolean
         required: false
         default: false
-      linux-only:
-        description: "Deprecated, no effect: Linux is the only default build. Kept until no caller passes it. Remove in LIVE-40712."
-        type: boolean
-        required: false
-        default: false
       skip-artifact-upload:
         description: "Skip uploading the built app. Set at the merge gate, where nothing consumes it."
         type: boolean
