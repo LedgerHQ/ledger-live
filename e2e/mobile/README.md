@@ -134,6 +134,19 @@ Or use the "Choose a feature flag set" options dropdown on the GitHub workflow.
 
 See the `ffPresetMap` in `utils/featureFlagUtils.ts` for available presets.
 
+## Buy/Sell from a custom URL
+
+Set `BUY_SELL_UI_URL` to run Buy/Sell specs against a buy-sell-ui other than the catalog one, such as a PR preview or a local dev server:
+
+```bash
+BUY_SELL_UI_URL=http://localhost:3000 pnpm test:android specs/buySell/sellFlow_BTC.spec.ts
+```
+
+Every `buy-sell-ui*` catalog manifest then loads that URL. Unset, nothing changes.
+
+- On Android, a `localhost` or `127.0.0.1` URL gets its port reversed to the host (`adb reverse`).
+- `*.aws.stg.ldg-tech.com` previews are only reachable from Ledger's network or WARP, so they fail on GitHub-hosted runners.
+
 ## Skipping tests from CI
 
 To keep a spec out of CI, use a `.skip.spec.ts` suffix. See [Known failures and skips](docs/e2e-mobile-conventions.md#a-tracked-failure-must-use-knownfailure).
