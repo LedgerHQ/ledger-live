@@ -35,7 +35,7 @@ export class SwapPage extends WebViewAppPage {
     __dirname,
     "../artifacts/ledgerwallet-swap-history.csv",
   );
-  private static readonly QUOTE_CARD_PROVIDER_NAME_PREFIX = "compact-quote-card-provider-name-";
+  private static readonly QUOTE_CARD_PROVIDER_NAME_PREFIX = "lumen-quote-card-provider-name-";
   private static readonly AMOUNT_LABEL_SUFFIX = "amount-label";
   private static readonly FIAT_AMOUNT_LABEL_SUFFIX = "fiatAmount-label";
   private static readonly NETWORK_FEES_HEADING_SUFFIX = "networkFees-heading";
