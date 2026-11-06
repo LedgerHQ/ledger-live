@@ -5,7 +5,8 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
-const ts = require("typescript");
+const { API } = require("@typescript/native/sync");
+const { serverFS } = require("@typescript/native/fs");
 const {
   findViolations,
   findSourceImportViolations,
@@ -549,6 +550,30 @@ test("an import after a string reading import or from is flagged, a commented im
     "a.ts @ledgerhq/errors",
     "a.ts @ledgerhq/logs",
   ]);
+});
+
+test("a module file augmenting a legacy package is flagged, a global declaration file is not", t => {
+  const root = makeTmpWorkspace({
+    "shared/utils/src/augment.ts": 'declare module "@ledgerhq/logs" {}\nexport {};',
+    "shared/utils/src/global.d.ts": 'declare module "@ledgerhq/errors" {}',
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const legacy = new Set(["@ledgerhq/logs", "@ledgerhq/errors"]);
+  const violations = findSourceImportViolations(root, legacy);
+  assert.deepEqual(
+    violations.map(v => `${path.basename(v.file)} ${v.specifier}`),
+    ["augment.ts @ledgerhq/logs"],
+  );
+});
+
+test("a JSDoc import type of a legacy package is not flagged", t => {
+  const root = makeTmpWorkspace({
+    "shared/utils/src/index.js":
+      '/** @type {import("@ledgerhq/logs").Log} */\nmodule.exports = {};',
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const violations = findSourceImportViolations(root, new Set(["@ledgerhq/logs"]));
+  assert.deepEqual(violations, []);
 });
 
 test("sub-path import is matched by package name", t => {
@@ -1536,17 +1561,33 @@ test("lint:boundaries inputs exclude each skipped directory under the legacy and
  * @returns {string[]}
  */
 function tsconfigChain(appRoot) {
-  const tsconfig = path.join(WORKSPACE_ROOT, appRoot, "tsconfig.json");
-  const source = ts.readJsonConfigFile(tsconfig, ts.sys.readFile);
-  ts.parseJsonSourceFileConfigFileContent(
-    source,
-    { ...ts.sys, readDirectory: () => [] },
-    path.dirname(tsconfig),
-  );
-  const extended = /** @type {{ extendedSourceFiles?: string[] }} */ (source).extendedSourceFiles;
-  return [tsconfig, ...(extended ?? [])].map(f =>
-    path.relative(WORKSPACE_ROOT, f).split(path.sep).join("/"),
-  );
+  /** @type {string[]} */
+  const read = [];
+  const api = new API({
+    cwd: WORKSPACE_ROOT,
+    fs: {
+      directoryExists: serverFS.useOS,
+      fileExists: serverFS.useOS,
+      getAccessibleEntries: () => ({ files: [], directories: [] }),
+      readFile: file => {
+        read.push(file);
+        return serverFS.useOS;
+      },
+      realpath: serverFS.useOS,
+      stat: serverFS.useOS,
+      writeFile: serverFS.error,
+      removeFile: serverFS.error,
+    },
+  });
+  try {
+    api.parseConfigFile(path.join(WORKSPACE_ROOT, appRoot, "tsconfig.json"));
+  } finally {
+    api.close();
+  }
+  // The package.json files read to resolve an `extends` package are not configs.
+  return read
+    .filter(f => path.basename(f) !== "package.json")
+    .map(f => path.relative(WORKSPACE_ROOT, f).split(path.sep).join("/"));
 }
 
 test("lint:boundaries inputs cover every source file and the tsconfig chain of each devtools host app", () => {

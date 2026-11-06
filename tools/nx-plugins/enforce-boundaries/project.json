@@ -52,7 +52,7 @@
         "!{workspaceRoot}/apps/{ledger-live-desktop,ledger-live-mobile}/**/@(node_modules|dist|lib|lib-es|build|.webpack|coverage|.turbo|.cache)/**",
         "hostTsconfigs",
         "{workspaceRoot}/nx.cache-config.json",
-        { "externalDependencies": ["@nx/devkit", "typescript"] }
+        { "externalDependencies": ["@nx/devkit", "@typescript/native"] }
       ],
       "options": {
         "cwd": "{workspaceRoot}",

@@ -9,7 +9,8 @@
 // same symbol, and no obvious original provider.
 
 const path = require("node:path");
-const ts = require("typescript");
+const ts = require("@typescript/native/ast");
+const { parse } = require("./parse");
 
 /** @typedef {{ line: number, code: string, message: string, text: string, breaker?: ChainBreaker }} Violation */
 /** @typedef {{ line: number, reason: string }} ChainBreak why a barrel breaks a pure chain */
@@ -113,16 +114,6 @@ function checkBarrel(source, options, file) {
 }
 
 /**
- * @param {string} source raw file contents
- * @param {string} file parses a `.tsx` or `.jsx` file with JSX, and the rest without
- * @returns {ts.SourceFile}
- */
-function parse(source, file) {
-  const scriptKind = /\.[jt]sx$/.test(file) ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
-  return ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true, scriptKind);
-}
-
-/**
  * Every top-level statement of a module, sorted by kind and read with the TypeScript parser alone,
  * so export-looking text in a string, a template, a pattern or JSX is never taken for a statement.
  * An export declaration is a `star`, `namespace` or `named` export; anything else is `code`.
@@ -132,7 +123,7 @@ function parse(source, file) {
  * @returns {Statement[]}
  */
 function statementsOf(source, file) {
-  const sourceFile = parse(source, file);
+  const sourceFile = parse(file, source);
   const lines = source.split("\n");
   /** @type {Statement[]} */
   const found = [];
