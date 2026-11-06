@@ -31,22 +31,39 @@ If the user explicitly names a platform ("make an APK", "iOS build"), honor that
 
 ```bash
 FILES=$(gh pr view <pr> -R LedgerHQ/ledger-live --json files \
-  --jq '[.files[].path | select(test("^(shared|domain|features|devtools)/") and (endswith("package.json") | not))] | join(",")')
+  --jq '[.files[].path | select(test("^(shared|domain|features|devtools)/") and (test("^devtools/.+/package\\.json$") or (endswith("package.json") | not)))] | join(",")')
 pnpm nx show projects --affected --files="$FILES" --json \
   | jq -r '.[] | select(. == "ledger-live-desktop" or . == "live-mobile")'
 ```
 
-`ledger-live-desktop` → Desktop, `live-mobile` → Android + iOS. Then narrow by platform suffix, which Nx does not see: a change only in `*.web.ts(x)` files ships on desktop, only in `*.native.ts(x)` on mobile. A `package.json` change marks every dependent app as affected; read what it changes before building all three.
+`ledger-live-desktop` → Desktop, `live-mobile` → Android + iOS. Then narrow by platform suffix, which Nx does not see: a change only in `*.web.ts(x)` files ships on desktop, only in `*.native.ts(x)` on mobile. For `shared/`, `domain/`, and `features/` packages, a `package.json` change marks every dependent app as affected, so read what it changes before building all three. For `devtools/` packages, the `FILES` list above includes `devtools/*/package.json`, so Nx can still mark the right apps when only the manifest changes.
 
-**`devtools/` packages:** Nx lists which projects are affected, but both `ledger-live-desktop` and `live-mobile` typically stay in that list for any `devtools/*` `package.json` change because each app declares the workspace dependency. Treat Nx output as **candidate** apps only. Before you map candidates to Desktop or Android plus iOS builds, check **real imports** under each app’s `src` tree (next paragraph). Ignore `apps/web-tools/**` here: this skill does not dispatch web-tools builds, so `@devtools/*` usage in web-tools must not force Desktop, Android, or iOS.
+**`devtools/` packages:** Nx lists which projects are affected, but both `ledger-live-desktop` and `live-mobile` often stay in that list for many `devtools/*` edits because each app declares the workspace dependency. Treat Nx output as **candidate** apps only. Before you map candidates to Desktop or Android plus iOS builds, check **real app imports** under each app’s `src` tree (next paragraph). Ignore `apps/web-tools/**` here: this skill does not dispatch web-tools builds, so `@devtools/*` usage in web-tools must not force Desktop, Android, or iOS.
 
-For each candidate, map the platform the way you already do in this section (`ledger-live-desktop` → Desktop, `live-mobile` → Android plus iOS). For **Desktop**, build only if `ledger-live-desktop` appears among the affected projects **and** at least one import of that package exists under `apps/ledger-live-desktop/src` **outside** `**/DevTools/**`. For **Mobile**, build only if `live-mobile` appears **and** at least one such import exists under `apps/ledger-live-mobile/src` outside `**/DevTools/**`. Use the npm package name from that library’s `package.json` (for example `@devtools/transport-panel`). Scoped search:
+For each candidate, map the platform the way you already do in this section (`ledger-live-desktop` → Desktop, `live-mobile` → Android plus iOS). For **Desktop**, build only if `ledger-live-desktop` appears among the affected projects **and** at least one hit exists under `apps/ledger-live-desktop/src` **outside** `**/DevTools/**` from the import checks below. For **Mobile**, build only if `live-mobile` appears **and** at least one such hit exists under `apps/ledger-live-mobile/src` outside `**/DevTools/**`.
+
+Collect the npm package `name` values to search:
+
+1. Start with every `devtools/*` package you changed (read each `package.json` `name`).
+2. **Transitive `@devtools/*` consumers:** another package may depend on the one you changed (for example `@devtools/bindings` depends on `@devtools/env`). Grow the set until it stops changing: for each name `P` in the set, run `pnpm nx graph --focus="$P" --print --open=false`, then take every `source` in `.graph.dependencies` where `target` is `P` and `source` matches `^@devtools/`; add any new name to the set and repeat.
+
+Use each collected name `P` in two passes. **Package-name imports:** anchor the pattern so `@devtools/transport` does not match `@devtools/transport-panel`.
 
 ```bash
-rg --no-ignore-vcs -l "from ['\"]<package-name>" apps/ledger-live-desktop/src apps/ledger-live-mobile/src --glob '!**/DevTools/**'
+rg --no-ignore-vcs -l "from ['\"]${P}(['\"/]|$)" apps/ledger-live-desktop/src apps/ledger-live-mobile/src --glob '!**/DevTools/**'
 ```
 
-Replace `<package-name>` with the exact `name` field. **No hit for an app tree** means every import for that app lives under DevTools (screen-only for that app), so skip that app’s builds for this change. **Any hit** means a non-DevTools feature imported the package, so keep the matching build (Desktop and/or Android plus iOS). If `rg` fails while reading a workspace ignore file, rerun with `--no-ignore-vcs` as in the command above. You can cross-check what Nx considers affected with `pnpm nx show projects --affected --files="$FILES" --json`; it does not replace the import pass.
+**Imports of `DevTools/` by path** (covers files that reach DevTools through a relative or aliased path, for example `../../DevTools/DeviceOnboarding/useDeviceOnboardingTool` from `DeviceOnboarding` tests):
+
+```bash
+rg --no-ignore-vcs -n "from ['\"][^'\"]*DevTools/" apps/ledger-live-desktop/src apps/ledger-live-mobile/src --glob '!**/DevTools/**'
+```
+
+On this repo (pin snapshot), the second command lists `apps/ledger-live-mobile/src/mvvm/features/DeviceOnboarding/hooks/useDeviceOnboarding.reconnect.test.ts` and `.../__integrations__/DeviceOnboarding.integration.test.ts` while the first finds no `@devtools/bindings` imports outside `**/DevTools/**`. Treat those path hits like package imports: they mean something outside the DevTools tree pulled in DevTools code, so keep the matching app build unless you are sure they are dev-only and can be ignored.
+
+The literal package search can miss a workspace package that is only used through a path import or a barrel re-export; the `DevTools/` path search can miss a consumer that only imports by package name. If either pass is inconclusive or the change is risky, keep the builds.
+
+**No hits for an app tree in either pass** means every way that app reaches the changed devtools surface is under the DevTools screen, so skip that app’s builds for this change **unless someone needs to test the developer tools screen**. **Any hit** means a non-screen path depends on the change, so keep the matching build (Desktop and/or Android plus iOS). If `rg` fails while reading a workspace ignore file, rerun with `--no-ignore-vcs` as in the commands above. You can cross-check what Nx considers affected with the same `pnpm nx show projects --affected --files="$FILES" --json` you used earlier; it does not replace the import pass.
 
 **Scope off the PR's file list, not `git diff develop...HEAD`.** A stale merge-base makes the local three-dot diff pull in hundreds of unrelated files. When a PR exists, use `gh pr view <pr> -R LedgerHQ/ledger-live --json files --jq '.files[].path'` for the true change set.
 
