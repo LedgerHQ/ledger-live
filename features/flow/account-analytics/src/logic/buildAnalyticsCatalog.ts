@@ -89,7 +89,6 @@ export type AnalyticsCatalogStateInput = Readonly<{
   assets: AnalyticsAssetsQuery;
 }>;
 
-/** No eligible position needs no asset metadata, so the catalog is ready and empty without a request. */
 export function createAnalyticsCatalogState({
   positions,
   accounts,

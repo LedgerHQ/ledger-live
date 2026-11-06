@@ -1,6 +1,5 @@
 import type { AnalyticsAccountSource, AnalyticsPositionOf } from "../types";
 
-/** Held positions and empty ones with a confirmed history, without blacklisted currencies; tokens are their own positions. */
 export function selectEligibleAnalyticsPositions<Account extends AnalyticsAccountSource>(
   accounts: readonly Account[],
   blacklistedIds: readonly string[],

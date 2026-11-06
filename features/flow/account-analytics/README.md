@@ -35,9 +35,10 @@ state and its legacy portfolio code:
 
 - **Sources.** Pass host accounts straight in: they match `AnalyticsAccountSource` and
   `AnalyticsTokenAccountSource` structurally, and the helpers return the host's own position type.
-- **Catalog.** `selectEligibleAnalyticsPositions` takes the blacklist and an `isConfirmed(operation, account)`
-  check built from the host confirmation settings. `selectAnalyticsCurrencyIds` gives the ids to
-  request from DADA, and `createAnalyticsCatalogState` turns the response into the catalog state.
+- **Catalog.** `useAnalyticsCatalog` takes the host accounts, their names, the blacklist, an
+  `isConfirmed(operation, account)` check built from the host confirmation settings, and the
+  DADA `product`/`version`. It selects the eligible positions, requests their asset metadata and
+  returns the catalog state, the positions and a refresh callback (none when nothing is eligible).
 - **Balance.** `useAnalyticsBalancePort` builds the `loadBalance` port from the positions, the
   countervalues, the fiat currency and a `readPortfolio` callback. That callback is the only host
   code that reads the legacy portfolio and its variation.

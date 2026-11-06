@@ -105,7 +105,6 @@ export type AccountAnalyticsViewModel = Readonly<{
   retry: () => void;
 }>;
 
-/** The slice of a host balance (a BigNumber in the apps) the analytics rules read. */
 export type AnalyticsAmount = Readonly<{ isZero: () => boolean; toNumber: () => number }>;
 
 export type AnalyticsTokenAccountSource<Operation = unknown> = Readonly<{
@@ -129,7 +128,6 @@ export type AnalyticsAccountSource<Operation = unknown> = Readonly<{
 
 export type AnalyticsPositionSource = AnalyticsAccountSource | AnalyticsTokenAccountSource;
 
-/** A host account or one of its token accounts, so hosts get their own position type back. */
 export type AnalyticsPositionOf<Account extends AnalyticsAccountSource> =
   | Account
   | NonNullable<Account["subAccounts"]>[number];
@@ -149,7 +147,6 @@ export type AnalyticsPortfolioSnapshot = Readonly<{
   readVariation: (currentAmount: number) => AnalyticsBalanceData["variation"];
 }>;
 
-/** Reads the host portfolio of priced positions, the only step that needs the legacy portfolio code. */
 export type ReadAnalyticsPortfolio<Position extends AnalyticsPositionSource> = (
   positions: readonly Position[],
   range: AnalyticsPortfolioRange,

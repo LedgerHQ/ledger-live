@@ -7,8 +7,7 @@ import {
 
 const UNAVAILABLE = { status: "unavailable" } as const;
 
-/** Yields one task before the synchronous portfolio read, so a closing sheet paints and a newer selection can abort it. */
-const yieldToRenderer = () => new Promise<void>(resolve => setTimeout(resolve, 0));
+const yieldBeforeSynchronousRead = () => new Promise<void>(resolve => setTimeout(resolve, 0));
 
 export function useAnalyticsBalancePort<Position extends AnalyticsPositionSource>({
   positions,
@@ -18,7 +17,7 @@ export function useAnalyticsBalancePort<Position extends AnalyticsPositionSource
 }: ReadAnalyticsBalanceInput<Position>): AccountAnalyticsDataPort {
   const loadBalance = useCallback<AccountAnalyticsDataPort["loadBalance"]>(
     async (context, { signal }) => {
-      await yieldToRenderer();
+      await yieldBeforeSynchronousRead();
       if (signal.aborted) return UNAVAILABLE;
       return readAnalyticsBalance(context, { positions, countervalues, fiat, readPortfolio });
     },
