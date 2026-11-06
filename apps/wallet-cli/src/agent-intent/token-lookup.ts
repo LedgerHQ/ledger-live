@@ -129,9 +129,9 @@ export async function findTokensByTicker(
 
 export async function findAccountTokens(account: AccountDescriptorV1): Promise<TokenCandidate[]> {
   const balances = await new WalletAdapter().getAccountBalances(toV0(account));
-  return balances.flatMap(({ token, balance }) =>
-    token && !token.delisted && new BigNumber(balance).gt(0)
-      ? [{ ticker: token.ticker, name: token.name, address: token.contractAddress }]
+  return balances.flatMap(b =>
+    b.kind === "token" && !b.token.delisted && new BigNumber(b.balance).gt(0)
+      ? [{ ticker: b.token.ticker, name: b.token.name, address: b.token.contractAddress }]
       : [],
   );
 }

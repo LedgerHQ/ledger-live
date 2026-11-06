@@ -160,6 +160,7 @@ export class BridgeAdapter {
     const account = await this.sync(descriptor);
     const balances: Balance[] = [
       {
+        kind: "native",
         assetId: account.currency.id,
         balance: BigNumberStrSchema.parse(account.balance.toFixed()),
       },
@@ -167,6 +168,7 @@ export class BridgeAdapter {
     for (const sub of account.subAccounts ?? []) {
       if (sub.type === "TokenAccount") {
         balances.push({
+          kind: "token",
           assetId: sub.token.id,
           balance: BigNumberStrSchema.parse(sub.balance.toFixed()),
           token: toTokenInfo(sub.token),

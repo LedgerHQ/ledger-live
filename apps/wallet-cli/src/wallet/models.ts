@@ -104,11 +104,15 @@ export function toTokenInfo(t: TokenCurrency): TokenInfo {
   };
 }
 
-export const BalanceSchema = z.object({
+const BalanceBaseSchema = z.object({
   assetId: z.string(),
   balance: BigNumberStrSchema,
-  token: TokenInfoSchema.optional(),
 });
+
+export const BalanceSchema = z.discriminatedUnion("kind", [
+  BalanceBaseSchema.extend({ kind: z.literal("native") }),
+  BalanceBaseSchema.extend({ kind: z.literal("token"), token: TokenInfoSchema }),
+]);
 export type Balance = z.infer<typeof BalanceSchema>;
 
 export const OperationSchema = z.object({
