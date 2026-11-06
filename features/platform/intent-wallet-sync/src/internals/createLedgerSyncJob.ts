@@ -8,9 +8,9 @@ import type {
   TrustchainSDK,
 } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { Observable, type Subscriber } from "rxjs";
-import type { CreateSessionSdk } from "../createSessionSdk";
-import { isUserRefusedOnDevice, mapLedgerSyncErrorToFailure } from "../ledgerSyncFailure";
-import type { LedgerSyncJobState } from "../ledgerSyncJobState";
+import type { CreateSessionSdk } from "../intents/createSessionSdk";
+import { isUserRefusedOnDevice, mapLedgerSyncErrorToFailure } from "../intents/ledgerSyncFailure";
+import type { LedgerSyncJobState } from "../intents/ledgerSyncJobState";
 import { toError } from "./errors";
 
 type LedgerSyncDeviceCall<Input, Result> = (params: {
