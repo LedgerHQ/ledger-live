@@ -1,8 +1,7 @@
 import type { DeviceConnectionResult } from "@features/platform-device-intent";
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
 import { TrustchainNotAllowed } from "@ledgerhq/ledger-key-ring-protocol/errors";
-import type { TrustchainSDK } from "@ledgerhq/ledger-key-ring-protocol/types";
-import type { Subscriber } from "rxjs";
+import { lastValueFrom, Observable, toArray, type Subscriber } from "rxjs";
 import type { LedgerSyncJobState } from "../ledgerSyncJobState";
 import {
   completeJob,
@@ -12,6 +11,7 @@ import {
   handleCallError,
   tryCreateSessionSdk,
 } from "./createLedgerSyncJob";
+import { fakeTrustchainSdk, namedError } from "./ledgerSyncJobTestKit";
 
 const CONNECTION = {
   dmk: {} as never,
@@ -22,24 +22,17 @@ const CONNECTION = {
   compatDeviceWired: true,
 } satisfies DeviceConnectionResult;
 
-const SDK = {} as TrustchainSDK;
+const SDK = fakeTrustchainSdk({});
 
+/** A real subscriber whose notifications land in jest mocks. */
 function fakeSubscriber() {
-  const subscriber = { next: jest.fn(), complete: jest.fn(), error: jest.fn(), closed: false };
-  return {
-    ...subscriber,
-    asSubscriber: subscriber as unknown as Subscriber<LedgerSyncJobState>,
-  };
-}
-
-function namedError(name: string): Error {
-  const error = new Error(name);
-  error.name = name;
-  return error;
-}
-
-function flush() {
-  return new Promise(resolve => setTimeout(resolve, 0));
+  const observer = { next: jest.fn(), complete: jest.fn(), error: jest.fn() };
+  let captured: Subscriber<LedgerSyncJobState> | undefined;
+  new Observable<LedgerSyncJobState>(subscriber => {
+    captured = subscriber;
+  }).subscribe(observer);
+  if (!captured) throw new Error("The observable did not hand over its subscriber");
+  return { ...observer, asSubscriber: captured };
 }
 
 describe("failJob", () => {
@@ -199,15 +192,15 @@ describe("createLedgerSyncJob", () => {
     const call = jest.fn(async () => "result");
     const onResult = jest.fn();
     const input = { createSessionSdk: () => SDK, value: 42 };
-    const states: LedgerSyncJobState[] = [];
 
-    createLedgerSyncJob(call)({
-      deviceConnectionResult: CONNECTION,
-      deviceExtractedContext: {} as never,
-      input,
-      onResult,
-    }).subscribe(state => states.push(state));
-    await flush();
+    const states = await lastValueFrom(
+      createLedgerSyncJob(call)({
+        deviceConnectionResult: CONNECTION,
+        deviceExtractedContext: {} as never,
+        input,
+        onResult,
+      }).pipe(toArray()),
+    );
 
     expect(call).toHaveBeenCalledWith({
       sdk: SDK,

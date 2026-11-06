@@ -13514,9 +13514,6 @@ importers:
       '@features/platform-device-intent':
         specifier: workspace:^
         version: link:../device-intent
-      zod:
-        specifier: 'catalog:'
-        version: 4.6.7
     devDependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
