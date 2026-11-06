@@ -1,21 +1,17 @@
 import { Platform } from "react-native";
-import * as ExpoNavigationBar from "expo-navigation-bar";
+import { NavigationBar } from "expo-navigation-bar";
 
 export type NavigationBarTheme = {
-  backgroundColor: string;
   isDark: boolean;
 };
 
 /**
- * Paints the Android navigation bar and picks button colors that stay readable on it.
+ * Picks navigation bar button colors that stay readable on the current theme.
  * Does nothing on iOS, which has no navigation bar.
+ * The style names the button color: "light" = light buttons, "dark" = dark buttons.
  */
-export async function applyNavigationBarTheme({
-  backgroundColor,
-  isDark,
-}: NavigationBarTheme): Promise<void> {
+export function applyNavigationBarTheme({ isDark }: NavigationBarTheme): void {
   if (Platform.OS !== "android") return;
 
-  await ExpoNavigationBar.setButtonStyleAsync(isDark ? "light" : "dark");
-  await ExpoNavigationBar.setBackgroundColorAsync(backgroundColor);
+  NavigationBar.setStyle(isDark ? "light" : "dark");
 }
