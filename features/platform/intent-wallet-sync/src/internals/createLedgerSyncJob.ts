@@ -1,9 +1,13 @@
-import { isDeviceDisconnectedError, type Job } from "@features/platform-device-intent";
+import {
+  isDeviceDisconnectedError,
+  type DeviceConnectionResult,
+  type Job,
+} from "@features/platform-device-intent";
 import type {
   TrustchainDeviceCallbacks,
   TrustchainSDK,
 } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { Observable } from "rxjs";
+import { Observable, type Subscriber } from "rxjs";
 import type { CreateSessionSdk } from "../createSessionSdk";
 import { isUserRefusedOnDevice, mapLedgerSyncErrorToFailure } from "../ledgerSyncFailure";
 import type { LedgerSyncJobState } from "../ledgerSyncJobState";
@@ -16,9 +20,71 @@ type LedgerSyncDeviceCall<Input, Result> = (params: {
   callbacks: TrustchainDeviceCallbacks;
 }) => Promise<Result>;
 
+type JobSubscriber = Subscriber<LedgerSyncJobState>;
+
 const PENDING: LedgerSyncJobState = { type: "pending" };
 const PROCESSING: LedgerSyncJobState = { type: "processing" };
 const COMPLETED: LedgerSyncJobState = { type: "completed" };
+
+function failJob(subscriber: JobSubscriber, error: unknown): void {
+  subscriber.next(mapLedgerSyncErrorToFailure(error));
+  subscriber.complete();
+}
+
+function completeJob<Result>(
+  subscriber: JobSubscriber,
+  onResult: (result: Result) => void,
+  result: Result,
+): void {
+  onResult(result);
+  subscriber.next(COMPLETED);
+  subscriber.complete();
+}
+
+function tryCreateSessionSdk(
+  createSessionSdk: CreateSessionSdk,
+  connection: DeviceConnectionResult,
+  subscriber: JobSubscriber,
+): TrustchainSDK | undefined {
+  try {
+    return createSessionSdk(connection);
+  } catch (error) {
+    failJob(subscriber, error);
+    return undefined;
+  }
+}
+
+function createDeviceCallbacks(
+  subscriber: JobSubscriber,
+  { connectedDevice, compatDeviceName }: DeviceConnectionResult,
+  isCurrentRun: () => boolean,
+): TrustchainDeviceCallbacks {
+  return {
+    onStartRequestUserInteraction: () => {
+      if (!isCurrentRun()) return;
+      subscriber.next({
+        type: "awaiting-device-confirmation",
+        deviceModelId: connectedDevice.modelId,
+        deviceName: compatDeviceName,
+      });
+    },
+    onEndRequestUserInteraction: () => {
+      if (isCurrentRun()) subscriber.next(PROCESSING);
+    },
+  };
+}
+
+function handleCallError(subscriber: JobSubscriber, error: unknown, retry: () => void): void {
+  if (isDeviceDisconnectedError(error)) {
+    subscriber.error(error);
+    return;
+  }
+  if (isUserRefusedOnDevice(error)) {
+    subscriber.next({ type: "device-rejected", error: toError(error), retry });
+    return;
+  }
+  failJob(subscriber, error);
+}
 
 /**
  * Runs one Ledger Sync SDK call on the DIE session and maps its lifecycle to
@@ -34,63 +100,27 @@ export function createLedgerSyncJob<Input extends { createSessionSdk: CreateSess
 ): Job<LedgerSyncJobState, Input, Result> {
   return ({ deviceConnectionResult, input, onResult }) =>
     new Observable<LedgerSyncJobState>(subscriber => {
-      const { compatDeviceId, compatDeviceName, connectedDevice } = deviceConnectionResult;
+      const sdk = tryCreateSessionSdk(input.createSessionSdk, deviceConnectionResult, subscriber);
+      if (!sdk) return;
+
       let runToken = 0;
-
-      const fail = (error: unknown) => {
-        subscriber.next(mapLedgerSyncErrorToFailure(error));
-        subscriber.complete();
-      };
-
-      let sdk: TrustchainSDK;
-      try {
-        sdk = input.createSessionSdk(deviceConnectionResult);
-      } catch (error) {
-        fail(error);
-        return;
-      }
 
       const run = () => {
         const token = ++runToken;
         const isCurrentRun = () => !subscriber.closed && token === runToken;
+        const retry = () => {
+          if (isCurrentRun()) run();
+        };
+        const callbacks = createDeviceCallbacks(subscriber, deviceConnectionResult, isCurrentRun);
 
         subscriber.next(PENDING);
-
-        const callbacks: TrustchainDeviceCallbacks = {
-          onStartRequestUserInteraction: () => {
-            if (!isCurrentRun()) return;
-            subscriber.next({
-              type: "awaiting-device-confirmation",
-              deviceModelId: connectedDevice.modelId,
-              deviceName: compatDeviceName,
-            });
-          },
-          onEndRequestUserInteraction: () => {
-            if (isCurrentRun()) subscriber.next(PROCESSING);
-          },
-        };
-
-        (async () => call({ sdk, deviceId: compatDeviceId, input, callbacks }))().then(
+        (async () =>
+          call({ sdk, deviceId: deviceConnectionResult.compatDeviceId, input, callbacks }))().then(
           result => {
-            if (!isCurrentRun()) return;
-            onResult(result);
-            subscriber.next(COMPLETED);
-            subscriber.complete();
+            if (isCurrentRun()) completeJob(subscriber, onResult, result);
           },
           (error: unknown) => {
-            if (!isCurrentRun()) return;
-            if (isDeviceDisconnectedError(error)) {
-              subscriber.error(error);
-              return;
-            }
-            if (isUserRefusedOnDevice(error)) {
-              const retry = () => {
-                if (isCurrentRun()) run();
-              };
-              subscriber.next({ type: "device-rejected", error: toError(error), retry });
-              return;
-            }
-            fail(error);
+            if (isCurrentRun()) handleCallError(subscriber, error, retry);
           },
         );
       };
