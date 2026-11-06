@@ -5,7 +5,7 @@ import {
   TrustchainEjected,
   TrustchainNotAllowed,
 } from "@ledgerhq/ledger-key-ring-protocol/errors";
-import { isUserRefusedOnDevice, mapLedgerSyncErrorToFailure } from "./ledgerSyncFailure";
+import { isUserRefusedOnDevice, mapLedgerSyncErrorToFailure } from "./failure";
 
 function namedError(name: string): Error {
   const error = new Error(name);

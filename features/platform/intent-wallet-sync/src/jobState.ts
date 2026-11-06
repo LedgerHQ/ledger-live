@@ -1,8 +1,5 @@
 import type { DeviceModelId } from "@ledgerhq/device-management-kit";
-import type {
-  LedgerSyncDeviceRejectedJobState,
-  LedgerSyncFailureJobState,
-} from "./ledgerSyncFailure";
+import type { LedgerSyncDeviceRejectedJobState, LedgerSyncFailureJobState } from "./failure";
 
 /**
  * The states every Ledger Sync device intent emits.

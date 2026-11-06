@@ -8,8 +8,8 @@ import type {
   Trustchain,
   TrustchainResult,
 } from "@ledgerhq/ledger-key-ring-protocol/types";
-import type { CreateSessionSdk } from "../createSessionSdk";
-import type { LedgerSyncJobState } from "../ledgerSyncJobState";
+import type { CreateSessionSdk } from "../../session";
+import type { LedgerSyncJobState } from "../../jobState";
 
 export type AddMemberIntentInput = Readonly<{
   memberCredentials: MemberCredentials;
