@@ -1166,6 +1166,9 @@ importers:
       '@domain/entity-account-operation':
         specifier: workspace:*
         version: link:../../domain/entity/account-operation
+      '@domain/entity-aggregated-asset':
+        specifier: workspace:*
+        version: link:../../domain/entity/aggregated-asset
       '@domain/entity-analytics-consent':
         specifier: workspace:*
         version: link:../../domain/entity/analytics-consent
@@ -5990,6 +5993,9 @@ importers:
       '@shared/env':
         specifier: workspace:*
         version: link:../../../shared/env
+      zod:
+        specifier: 'catalog:'
+        version: 4.6.7
     devDependencies:
       '@jest/globals':
         specifier: 'catalog:'
@@ -13883,6 +13889,9 @@ importers:
       '@domain/api-aggregated-assets':
         specifier: workspace:*
         version: link:../../domain/api/aggregated-assets
+      '@domain/entity-aggregated-asset':
+        specifier: workspace:*
+        version: link:../../domain/entity/aggregated-asset
       '@domain/entity-currency':
         specifier: workspace:*
         version: link:../../domain/entity/currency

@@ -2,7 +2,8 @@ import { renderHook, act } from "tests/testSetup";
 import { useNavigate } from "react-router";
 import { useAssetsViewModel } from "../useAssetsViewModel";
 import { padItems } from "../../utils/assetTableHelpers";
-import { dadaIdToMarketId } from "@ledgerhq/live-common/market/utils/index";
+import { parseMarketRef, toMarketId } from "@domain/api-aggregated-assets";
+import { AggregatedAssetIdSchema, type AggregatedAssetId } from "@domain/entity-aggregated-asset";
 import {
   createMockCategorizedAssets,
   BITCOIN_ASSET,
@@ -123,12 +124,13 @@ function buildMockAssetsData(
   const cryptoAssets: AssetsDataWithPagination["cryptoAssets"] = {};
   const cryptoOrTokenCurrencies: AssetsDataWithPagination["cryptoOrTokenCurrencies"] = {};
   const markets: AssetsDataWithPagination["markets"] = {};
-  const metaCurrencyIds: string[] = [];
+  const metaCurrencyIds: AggregatedAssetId[] = [];
 
   for (const c of cryptos) {
-    metaCurrencyIds.push(c.id);
-    cryptoAssets[c.id] = {
-      id: c.id,
+    const metaId = AggregatedAssetIdSchema.parse(c.id);
+    metaCurrencyIds.push(metaId);
+    cryptoAssets[metaId] = {
+      id: metaId,
       ticker: c.ticker,
       name: c.currencyObj.name,
       assetsIds: { [c.id]: c.id },
@@ -702,7 +704,7 @@ describe("useCryptoAssetsViewModel", () => {
 
     expect(mockNavigate).toHaveBeenCalledWith(
       `/asset/${encodeURIComponent(
-        dadaIdToMarketId(placeholder!.marketId ?? placeholder!.currency.id),
+        toMarketId(parseMarketRef(placeholder!.marketId ?? placeholder!.currency.id)),
       )}`,
     );
   });

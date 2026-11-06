@@ -1,5 +1,5 @@
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import type { CryptoAssetMeta } from "@domain/entity-aggregated-asset";
+import type { AggregatedAssetId, CryptoAssetMeta } from "@domain/entity-aggregated-asset";
 import type { InterestRate } from "@domain/entity-interest-rate";
 import type { CurrenciesOrder, NetworkInfo } from "./schema";
 import type { PartialMarketItemResponse } from "./market";
@@ -7,7 +7,7 @@ import type { PartialMarketItemResponse } from "./market";
 // Types for transformed API response (after transformation)
 export interface AssetsData {
   /** Grouped crypto assets by meta-currency */
-  cryptoAssets: Record<string, CryptoAssetMeta>;
+  cryptoAssets: Record<AggregatedAssetId, CryptoAssetMeta>;
   /** Network information */
   networks: Record<string, NetworkInfo>;
   /** Transformed crypto currencies and token currencies compatible with Ledger Live */

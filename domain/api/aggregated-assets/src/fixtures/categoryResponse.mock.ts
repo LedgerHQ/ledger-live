@@ -1,13 +1,15 @@
 import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import { AggregatedAssetIdSchema } from "@domain/entity-aggregated-asset";
 import type { NetworkInfo } from "../schema";
 import type { PartialMarketItemResponse } from "../market";
 
 /** DADA names every aggregated asset with this prefix. */
 const META_CURRENCY_PREFIX = "urn:crypto:meta-currency:";
 
-export const metaCurrencyId = (slug: string) => `${META_CURRENCY_PREFIX}${slug}`;
+export const metaCurrencyId = (slug: string) =>
+  AggregatedAssetIdSchema.parse(`${META_CURRENCY_PREFIX}${slug}`);
 
 /** The per-network token backing a category asset, when it has one. */
 type TokenSpec = {

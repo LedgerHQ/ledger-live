@@ -10,6 +10,9 @@ import {
   mockUsdcAssetsData,
 } from "@domain/api-aggregated-assets/mock";
 import type { AssetsDataWithPagination } from "@domain/api-aggregated-assets";
+import { AggregatedAssetIdSchema } from "@domain/entity-aggregated-asset";
+
+const assetId = (raw: string) => AggregatedAssetIdSchema.parse(raw);
 
 describe("currencySelection", () => {
   describe("selectCurrency", () => {
@@ -31,22 +34,27 @@ describe("currencySelection", () => {
       const data: AssetsDataWithPagination = {
         ...mockAssetsDataWithPagination,
         cryptoAssets: {
-          unknown: { id: "unknown", ticker: "UNK", name: "Unknown", assetsIds: {} },
+          [assetId("unknown")]: {
+            id: assetId("unknown"),
+            ticker: "UNK",
+            name: "Unknown",
+            assetsIds: {},
+          },
         },
       };
 
-      const result = selectCurrencyForMetaId("unknown", data);
+      const result = selectCurrencyForMetaId(assetId("unknown"), data);
       expect(result).toBeUndefined();
     });
 
     it("should return undefined when meta-currency does not exist in data", () => {
-      const result = selectCurrencyForMetaId("nonexistent", mockAssetsDataWithPagination);
+      const result = selectCurrencyForMetaId(assetId("nonexistent"), mockAssetsDataWithPagination);
       expect(result).toBeUndefined();
     });
 
     it("should return exact match when currency.id equals metaCurrencyId", () => {
       const data = { ...mockBitcoinAssetsData, pagination: {} } as AssetsDataWithPagination;
-      const result = selectCurrencyForMetaId("bitcoin", data);
+      const result = selectCurrencyForMetaId(assetId("bitcoin"), data);
 
       expect(result).toBeDefined();
       expect(result!.id).toBe("bitcoin");
@@ -55,7 +63,7 @@ describe("currencySelection", () => {
 
     it("should prefer CryptoCurrency type over TokenCurrency", () => {
       const result = selectCurrencyForMetaId(
-        "urn:crypto:meta-currency:injective_protocol",
+        assetId("urn:crypto:meta-currency:injective_protocol"),
         mockAssetsDataWithPagination,
       );
 
@@ -66,7 +74,7 @@ describe("currencySelection", () => {
 
     it("should fall back to first available currency when no CryptoCurrency exists", () => {
       const data = { ...mockUsdcAssetsData, pagination: {} } as AssetsDataWithPagination;
-      const result = selectCurrencyForMetaId("usdc", data);
+      const result = selectCurrencyForMetaId(assetId("usdc"), data);
 
       expect(result).toBeDefined();
       expect(result!.type).toBe("TokenCurrency");
@@ -74,7 +82,7 @@ describe("currencySelection", () => {
 
     it("prefers the ERC-20 token over a same-named L2 chain when their tickers differ", () => {
       const data = { ...mockArbitrumTokenAssetsData, pagination: {} } as AssetsDataWithPagination;
-      const result = selectCurrencyForMetaId("arbitrum", data);
+      const result = selectCurrencyForMetaId(assetId("arbitrum"), data);
 
       expect(result).toBeDefined();
       expect(result!.id).toBe("ethereum/erc20/arbitrum");
@@ -90,13 +98,13 @@ describe("currencySelection", () => {
       ...mockAssetsDataWithPagination,
       cryptoAssets: {
         "urn:crypto:meta-currency:usd_coin": {
-          id: "urn:crypto:meta-currency:usd_coin",
+          id: assetId("urn:crypto:meta-currency:usd_coin"),
           ticker: "USDC",
           name: "USDC",
           assetsIds: { ethereum: usdcOnEthereum, solana: usdcOnSolana },
         },
         "urn:crypto:meta-currency:arc_native_usdc": {
-          id: "urn:crypto:meta-currency:arc_native_usdc",
+          id: assetId("urn:crypto:meta-currency:arc_native_usdc"),
           ticker: "USDC",
           name: "USDC",
           assetsIds: { arc: "arc" },
@@ -105,8 +113,8 @@ describe("currencySelection", () => {
       currenciesOrder: {
         ...mockAssetsDataWithPagination.currenciesOrder,
         metaCurrencyIds: [
-          "urn:crypto:meta-currency:usd_coin",
-          "urn:crypto:meta-currency:arc_native_usdc",
+          assetId("urn:crypto:meta-currency:usd_coin"),
+          assetId("urn:crypto:meta-currency:arc_native_usdc"),
         ],
       },
     } as AssetsDataWithPagination;
@@ -132,7 +140,7 @@ describe("currencySelection", () => {
         ...usdcData,
         cryptoAssets: {
           ethereum: {
-            id: "ethereum",
+            id: assetId("ethereum"),
             ticker: "ETH",
             name: "Ethereum",
             assetsIds: { base: "base" },
