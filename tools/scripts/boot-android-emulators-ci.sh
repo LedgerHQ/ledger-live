@@ -104,6 +104,10 @@ for serial in "${SERIALS[@]}"; do
     adb -s "$serial" shell setprop debug.hwui.renderer skiagl
     log "🧪 $serial debug.hwui.renderer=$(adb -s "$serial" shell getprop debug.hwui.renderer)"
   fi
+  if [[ "$GPU_EXPERIMENT" == webview-novulkan ]]; then
+    adb -s "$serial" shell "echo '_ --disable-features=Vulkan' > /data/local/tmp/webview-command-line"
+    log "🧪 $serial webview-command-line: $(adb -s "$serial" shell cat /data/local/tmp/webview-command-line)"
+  fi
   log "✅ $serial booted"
 done
 log "✅ All $_EXPECTED_EMULATOR_COUNT emulators are fully booted"
@@ -111,3 +115,23 @@ log "✅ All $_EXPECTED_EMULATOR_COUNT emulators are fully booted"
 for serial in "${SERIALS[@]}"; do
   disable_ui_animations "$serial"
 done
+
+GPU_LOG_DIR="${MOBILE_ARTIFACTS_ROOT:-e2e/mobile/artifacts}"
+for serial in "${SERIALS[@]}"; do
+  log "🔎 $serial ro.debuggable=$(adb -s "$serial" shell getprop ro.debuggable)" \
+    "ro.hwui.use_vulkan=$(adb -s "$serial" shell getprop ro.hwui.use_vulkan)" \
+    "debug.hwui.renderer=$(adb -s "$serial" shell getprop debug.hwui.renderer)" \
+    "systemui $(adb -s "$serial" shell dumpsys gfxinfo com.android.systemui | grep -m1 Pipeline)"
+  adb -s "$serial" logcat -v time 2>/dev/null \
+    | grep --line-buffered -iE "webview-command-line|command.?line|vulkan|angle" \
+      >"$GPU_LOG_DIR/logcat-gpu-$serial.log" &
+done
+while true; do
+  for serial in "${SERIALS[@]}"; do
+    pipeline=$(adb -s "$serial" shell dumpsys gfxinfo com.ledger.live.detox 2>/dev/null | grep -m1 Pipeline)
+    if [[ -n "$pipeline" ]]; then
+      echo "[$(date +%H:%M:%S)] $serial app $pipeline" >>"$GPU_LOG_DIR/hwui-pipeline.log"
+    fi
+  done
+  sleep 20
+done &
