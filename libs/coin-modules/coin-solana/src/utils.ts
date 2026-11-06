@@ -2,7 +2,7 @@ import { AccountInfo, Cluster, ParsedAccountData, PublicKey } from "@solana/web3
 import BigNumber from "bignumber.js";
 import { partition } from "lodash/fp";
 import { ValidatorsAppValidator } from "./network/validator-app";
-import { type SolanaCoinConfig, type SolanaCurrencyId } from "./config";
+import { type SolanaCoinConfig } from "./config";
 import type { Config as ChainConfig } from "./network/chain";
 import {
   DEFAULT_LEDGER_VALIDATORS,
@@ -48,21 +48,6 @@ export async function drainSeq<T>(jobs: (() => Promise<T>)[]) {
   return items;
 }
 
-export function endpointByCurrencyId(config: SolanaCoinConfig, currencyId: string): string {
-  if (!isSolanaCurrencyId(currencyId)) {
-    throw Error(
-      `unexpected currency id format <${currencyId}>, should be like solana[_(testnet | devnet)]`,
-    );
-  }
-
-  const endpoint = config.rpcUrls?.[currencyId];
-  if (!endpoint) {
-    throw Error(`no rpcUrls.${currencyId} in the coin config of ${currencyId}`);
-  }
-
-  return endpoint;
-}
-
 export function feesOf(config: SolanaCoinConfig) {
   return {
     computeUnitMargin: config.fees?.computeUnitMargin ?? DEFAULT_COMPUTE_UNIT_MARGIN,
@@ -72,9 +57,9 @@ export function feesOf(config: SolanaCoinConfig) {
   };
 }
 
-export function chainConfigFrom(config: SolanaCoinConfig, currencyId: string): ChainConfig {
+export function chainConfigFrom(config: SolanaCoinConfig): ChainConfig {
   return {
-    endpoint: endpointByCurrencyId(config, currencyId),
+    endpoint: config.rpcUrl,
     confirmationTimeoutMs: config.broadcast?.timeoutMs,
     retries: config.node?.retries,
     retryDelayMs: config.node?.retryDelayMs,
@@ -82,12 +67,6 @@ export function chainConfigFrom(config: SolanaCoinConfig, currencyId: string): C
       minPriorityFee: config.fees.minPriorityFee,
     }),
   };
-}
-
-function isSolanaCurrencyId(currencyId: string): currencyId is SolanaCurrencyId {
-  return (
-    currencyId === "solana" || currencyId === "solana_devnet" || currencyId === "solana_testnet"
-  );
 }
 
 export function clusterByCurrencyId(currencyId: string): Cluster {

@@ -1,4 +1,3 @@
-import type { SolanaCoinConfig } from "../../config";
 import {
   DEFAULT_LEDGER_VALIDATORS,
   DEFAULT_TX_FEE,
@@ -10,43 +9,16 @@ import { TEST_CONFIG } from "../../test/coinConfig";
 import {
   chainConfigFrom,
   defaultLedgerValidatorOf,
-  endpointByCurrencyId,
   feesOf,
   ledgerFirstValidators,
   ledgerValidatorsOf,
 } from "../../utils";
 
-const configWithRpcUrls = (rpcUrls: SolanaCoinConfig["rpcUrls"]): SolanaCoinConfig =>
-  ({ token2022Enabled: false, legacyOCMSMaxVersion: "1.0.0", rpcUrls }) as SolanaCoinConfig;
+describe("utils - chainConfigFrom", () => {
+  it("uses the rpcUrl of the coin config as endpoint", () => {
+    const config = { ...TEST_CONFIG, rpcUrl: "https://custom-devnet.example.com" };
 
-describe("utils - endpointByCurrencyId", () => {
-  const config = configWithRpcUrls({
-    solana: "https://custom-mainnet.example.com",
-    solana_devnet: "https://custom-devnet.example.com",
-    solana_testnet: "https://custom-testnet.example.com",
-  });
-
-  it.each([
-    ["solana", "https://custom-mainnet.example.com"],
-    ["solana_devnet", "https://custom-devnet.example.com"],
-    ["solana_testnet", "https://custom-testnet.example.com"],
-  ])("uses the configured URL for %s", (currencyId, url) => {
-    expect(endpointByCurrencyId(config, currencyId)).toBe(url);
-  });
-
-  it.each(["solana", "solana_devnet", "solana_testnet"])(
-    "throws when the coin config has no URL for %s",
-    currencyId => {
-      expect(() => endpointByCurrencyId(configWithRpcUrls({}), currencyId)).toThrow(
-        `no rpcUrls.${currencyId}`,
-      );
-    },
-  );
-
-  it("throws for unknown currency ids", () => {
-    expect(() => endpointByCurrencyId(config, "solana_unknown")).toThrow(
-      /unexpected currency id format/,
-    );
+    expect(chainConfigFrom(config).endpoint).toBe("https://custom-devnet.example.com");
   });
 });
 
@@ -113,13 +85,13 @@ describe("utils - tuning values from the coin config", () => {
       blockhashRetries: 5,
       blockhashRetryDelayMs: 5000,
     });
-    expect(chainConfigFrom(TEST_CONFIG, "solana")).toEqual({
+    expect(chainConfigFrom(TEST_CONFIG)).toEqual({
       endpoint: "https://solana.test.invalid",
       confirmationTimeoutMs: undefined,
       retries: undefined,
       retryDelayMs: undefined,
     });
-    expect(chainConfigFrom(TEST_CONFIG, "solana")).not.toHaveProperty("minPriorityFee");
+    expect(chainConfigFrom(TEST_CONFIG)).not.toHaveProperty("minPriorityFee");
   });
 
   it("reads the configured values", () => {
@@ -142,7 +114,7 @@ describe("utils - tuning values from the coin config", () => {
       blockhashRetries: 5,
       blockhashRetryDelayMs: 6,
     });
-    expect(chainConfigFrom(config, "solana")).toEqual({
+    expect(chainConfigFrom(config)).toEqual({
       endpoint: "https://solana.test.invalid",
       confirmationTimeoutMs: 1,
       retries: 2,
