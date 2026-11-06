@@ -196,10 +196,24 @@ describe("Account Analytics desktop integration", () => {
     expect(screen.queryByTestId("analytics-account-filter")).not.toBeInTheDocument();
   });
 
-  it("should report unavailable data without Retry instead of a partial total when a held asset has no price", async () => {
+  it("should show the priced total and chart for All assets when a held asset has no price", async () => {
     renderAnalytics({ missingTokenPrice: true });
     await waitFor(() => expect(screen.getByTestId("analytics-asset-filter")).toBeEnabled());
     expect(screen.getByTestId("analytics-asset-filter")).toHaveTextContent("All assets");
+    await waitFor(() =>
+      expect(screen.getByTestId("analytics-balance-amount")).toHaveAccessibleName("$ 400.00"),
+    );
+    expect(screen.queryByText("Data is not available for this selection.")).not.toBeInTheDocument();
+  });
+
+  it("should report unavailable data without Retry when the selected asset has no price", async () => {
+    const { user } = renderAnalytics({ fromCard: true, missingTokenPrice: true });
+    await waitFor(() =>
+      expect(screen.getByTestId("analytics-asset-filter")).toHaveTextContent("Ethereum"),
+    );
+    await user.click(screen.getByTestId("analytics-asset-filter"));
+    expect(await screen.findByRole("option", { name: "USD Coin" })).toBeVisible();
+    await user.keyboard("{End}{Enter}");
     expect(
       (await screen.findAllByText("Data is not available for this selection.")).length,
     ).toBeGreaterThan(0);
