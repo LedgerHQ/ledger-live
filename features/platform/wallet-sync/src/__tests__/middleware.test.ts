@@ -7,6 +7,7 @@ import {
 import { resetTrustchainStore, setTrustchain } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { configureStore, type UnknownAction } from "@reduxjs/toolkit";
 import { CloudSyncSDK } from "@shared/cloud-sync";
+import { saveWalletSyncUpdate } from "../internals/services";
 import { getCloudSyncSdk, getLkrpQrCode, getLkrpSdk } from "../middleware";
 import { ledgerSyncReducer } from "../watch";
 import {
@@ -144,5 +145,27 @@ describe("createLedgerSyncMiddleware", () => {
     expect(() => getLkrpSdk(store.dispatch)).toThrow(
       expect.objectContaining({ name: "LedgerSyncMiddlewareMissingError" }),
     );
+  });
+});
+
+describe("saveWalletSyncUpdate", () => {
+  it.each([0, "", false])(
+    "should apply the falsy local state %p, as only null means none",
+    localState => {
+      const dispatch = jest.fn();
+      const applyLocalState = jest.fn();
+
+      saveWalletSyncUpdate(dispatch, applyLocalState)(null, 1, localState);
+
+      expect(applyLocalState).toHaveBeenCalledWith(localState, dispatch);
+    },
+  );
+
+  it("should apply no local state when it is null", () => {
+    const applyLocalState = jest.fn();
+
+    saveWalletSyncUpdate(jest.fn(), applyLocalState)(null, 1, null);
+
+    expect(applyLocalState).not.toHaveBeenCalled();
   });
 });

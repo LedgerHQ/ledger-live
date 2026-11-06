@@ -126,6 +126,6 @@ export function saveWalletSyncUpdate<LocalState>(
 ) {
   return (data: DistantDocument | null, version: number, localState: LocalState | null) => {
     dispatch(walletSyncUpdate({ data, version }));
-    if (localState) applyLocalState(localState, dispatch);
+    if (localState !== null) applyLocalState(localState, dispatch);
   };
 }
