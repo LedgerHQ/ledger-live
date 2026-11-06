@@ -107,7 +107,7 @@ export function ChecksView({
       </Box>
       {allowSheet ? (
         <QueuedBottomSheet
-          isRequestingToBeOpened
+          isRequestingToBeOpened={allowSheet.isOpen}
           noCloseButton={!allowSheet.onClose}
           onHeaderClosePressed={allowSheet.onClose}
           preventBackdropClick
@@ -130,7 +130,14 @@ export function ChecksView({
         </QueuedBottomSheet>
       ) : null}
       <FirmwareUpdateAvailableDrawer {...firmwareUpdate} />
-      {unsupportedUpdate.isOpen ? <UnsupportedUpdateDrawer {...unsupportedUpdate} /> : null}
+      {unsupportedUpdate.mounted ? (
+        <UnsupportedUpdateDrawer
+          isOpen={unsupportedUpdate.isOpen}
+          isUsbRequired={unsupportedUpdate.isUsbRequired}
+          productName={unsupportedUpdate.productName}
+          onClose={unsupportedUpdate.onClose}
+        />
+      ) : null}
       <GenuineCheckErrorDrawer
         isOpen={errorDrawer.isOpen}
         error={null}
