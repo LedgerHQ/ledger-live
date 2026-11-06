@@ -1,9 +1,8 @@
 import { writeFile } from "node:fs/promises";
 import path from "node:path";
-import { DEVICE_QUERY_TIMEOUT_MS, INSTALL_TIMEOUT_MS, run, sleep } from "../exec.mjs";
-import { FLOWS_DIR, MAESTRO_SCROLL_TIMEOUT_MS } from "../maestro.mjs";
-
-/** @import { Maestro, Platform } from "../types.mjs" */
+import { DEVICE_QUERY_TIMEOUT_MS, INSTALL_TIMEOUT_MS, run, sleep } from "../exec.ts";
+import { FLOWS_DIR, MAESTRO_SCROLL_TIMEOUT_MS } from "../maestro.ts";
+import type { Maestro, Platform } from "../types.ts";
 
 // Up to 15 s for Maestro's xcodebuild driver to exit.
 const DRIVER_EXIT_POLLS = 30;
@@ -29,48 +28,47 @@ usec = int.from_bytes(buf.raw[8:12], "little", signed=True)
 print(sec * 1000 + usec / 1000)
 `;
 
-/**
- * iOS simulators, through simctl.
- * @param {{ appId: string, maestro: Maestro }} options
- * @returns {Platform}
- */
-export function createIos({ appId, maestro }) {
-  const ios = {
+/** iOS simulators, through simctl. */
+export function createIos({ appId, maestro }: { appId: string; maestro: Maestro }): Platform {
+  const pids = new Map<string, number | null>();
+
+  // Maestro's xcodebuild driver outlives the call that started it.
+  async function stopDriver(device: string): Promise<void> {
+    const xcodebuild = `test-without-building.*id=${device}`;
+    await run("pkill", ["-f", xcodebuild], { allowFail: true });
+    for (let i = 0; i < DRIVER_EXIT_POLLS; i++) {
+      if ((await run("pgrep", ["-f", xcodebuild], { allowFail: true })).failed) break;
+      await sleep(DRIVER_EXIT_POLL_MS);
+    }
+    await run(
+      "xcrun",
+      ["simctl", "terminate", device, "dev.mobile.maestro-driver-iosUITests.xctrunner"],
+      {
+        allowFail: true,
+      },
+    );
+  }
+
+  return {
     async install(device, app) {
       await run("xcrun", ["simctl", "uninstall", device, appId], { allowFail: true });
       await run("xcrun", ["simctl", "install", device, app], { timeoutMs: INSTALL_TIMEOUT_MS });
     },
     async stop(device) {
       await run("xcrun", ["simctl", "terminate", device, appId], { allowFail: true });
-      await this.stopDriver(device);
+      await stopDriver(device);
     },
-    // Maestro's xcodebuild driver outlives the call that started it.
-    async stopDriver(device) {
-      const xcodebuild = `test-without-building.*id=${device}`;
-      await run("pkill", ["-f", xcodebuild], { allowFail: true });
-      for (let i = 0; i < DRIVER_EXIT_POLLS; i++) {
-        if ((await run("pgrep", ["-f", xcodebuild], { allowFail: true })).failed) break;
-        await sleep(DRIVER_EXIT_POLL_MS);
-      }
-      await run(
-        "xcrun",
-        ["simctl", "terminate", device, "dev.mobile.maestro-driver-iosUITests.xctrunner"],
-        {
-          allowFail: true,
-        },
-      );
-    },
-    pids: new Map(),
+    stopDriver,
     async launch(device, launchArgs = {}) {
       // react-native-launch-arguments reads "-key value" pairs from the process arguments.
       const args = Object.entries(launchArgs).flatMap(([k, v]) => [`-${k}`, String(v)]);
       const { stdout } = await run("xcrun", ["simctl", "launch", device, appId, ...args]);
       const pid = Number(stdout.match(/:\s*(\d+)\s*$/m)?.[1]);
-      this.pids.set(device, Number.isInteger(pid) && pid > 0 ? pid : null);
+      pids.set(device, Number.isInteger(pid) && pid > 0 ? pid : null);
       return {};
     },
     async processStart(device) {
-      const pid = this.pids.get(device);
+      const pid = pids.get(device);
       if (!pid) return null;
       const { stdout, failed } = await run("python3", ["-c", PROCESS_START_PY, String(pid)], {
         allowFail: true,
@@ -80,7 +78,7 @@ export function createIos({ appId, maestro }) {
       return failed || !Number.isFinite(at) ? null : { at, appClockAt: at, pid };
     },
     async pid(device) {
-      const pid = this.pids.get(device);
+      const pid = pids.get(device);
       if (!pid) return null;
       return (await run("kill", ["-0", String(pid)], { allowFail: true })).failed ? null : pid;
     },
@@ -134,5 +132,4 @@ export function createIos({ appId, maestro }) {
       await writeFile(file, stdout);
     },
   };
-  return ios;
 }

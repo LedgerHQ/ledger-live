@@ -1,9 +1,8 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { debugBase } from "./analyze.mjs";
-import { hierarchyTexts, parseEvents, parsePerformance } from "./performance-screen.mjs";
-
-/** @import { Sample } from "./types.mjs" */
+import { debugBase } from "./analyze.ts";
+import { hierarchyTexts, parseEvents, parsePerformance } from "./performance-screen.ts";
+import type { Sample } from "./types.ts";
 
 describe("hierarchyTexts", () => {
   it("lists the visible strings in screen order, trimmed and without repeats", () => {
@@ -61,10 +60,11 @@ describe("parsePerformance", () => {
     assert.equal(parsePerformance(["App startup time", "0 ms"]), null);
     assert.equal(parsePerformance(["App startup time", "-5 ms"]), null);
   });
-  it("gives analyze.mjs the events it reads the Debug value's start from", () => {
-    const { appStartupTime, events } = parsePerformance(PERFORMANCE_SCREEN);
-    /** @type {Sample} */
-    const launch = {
+  it("gives analyze.ts the events it reads the Debug value's start from", () => {
+    const read = parsePerformance(PERFORMANCE_SCREEN);
+    assert.ok(read);
+    const { appStartupTime, events } = read;
+    const launch: Sample = {
       platform: "android",
       scenario: "no-accounts",
       phase: 0,

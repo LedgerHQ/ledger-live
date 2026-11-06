@@ -11,22 +11,22 @@ signing keystore.
 `ci/` holds what the workflow's steps run, `src/` the harness with each test next to its module, and
 `flows/` the Maestro flows.
 
-| Path                              | Role                                                                                  |
-| --------------------------------- | ------------------------------------------------------------------------------------- |
-| `ci/prepare-build.sh`             | Makes the checked-out ref's E2E prerelease build prod-like, before `e2e:build`        |
-| `ci/verify-build.sh`              | Checks the built binary: no `MOCK`/`DETOX`, `FORCE_DEBUG_VISIBLE=1`, real blur        |
-| `ci/adapt-mise-toml.sh`           | Drops what an older ref's `mise.toml` declares that no longer installs                |
-| `ci/install-maestro.sh`           | Installs the pinned Maestro, checked against its SHA-256                              |
-| `ci/wait-for-idle-host.sh`        | Waits for the iOS host's load to fall below its CPU count after the simulators boot   |
-| `src/run.mjs`                     | The CLI that measures: installs, injects and launches A and B, writes `samples.jsonl` |
-| `src/analyze.mjs`                 | The CLI that judges: B − A per scenario, verdict, job summary                         |
-| `src/platforms/`                  | `android.mjs` and `ios.mjs`, the two `Platform`s, through adb or simctl               |
-| `src/performance-screen.mjs`      | Reads App startup time and the startup events through Maestro                         |
-| `src/inject.mjs`                  | Imports a scenario's userdata through the E2E bridge, once per install                |
-| `src/bridge.mjs`                  | The E2E bridge protocol (`apps/ledger-live-mobile/src/e2e/bridge/client.ts`)          |
-| `src/maestro.mjs`, `src/exec.mjs` | Maestro and child-process calls                                                       |
-| `src/types.d.mts`                 | `Sample` (a line of `samples.jsonl`) and `Platform`, checked by `tsc`                 |
-| `flows/`                          | Maestro flows that open Settings > Debug > Performance in the running app             |
+| Path                            | Role                                                                                  |
+| ------------------------------- | ------------------------------------------------------------------------------------- |
+| `ci/prepare-build.sh`           | Makes the checked-out ref's E2E prerelease build prod-like, before `e2e:build`        |
+| `ci/verify-build.sh`            | Checks the built binary: no `MOCK`/`DETOX`, `FORCE_DEBUG_VISIBLE=1`, real blur        |
+| `ci/adapt-mise-toml.sh`         | Drops what an older ref's `mise.toml` declares that no longer installs                |
+| `ci/install-maestro.sh`         | Installs the pinned Maestro, checked against its SHA-256                              |
+| `ci/wait-for-idle-host.sh`      | Waits for the iOS host's load to fall below its CPU count after the simulators boot   |
+| `src/run.ts`                    | The CLI that measures: installs, injects and launches A and B, writes `samples.jsonl` |
+| `src/analyze.ts`                | The CLI that judges: B − A per scenario, verdict, job summary                         |
+| `src/platforms/`                | `android.ts` and `ios.ts`, the two `Platform`s, through adb or simctl                 |
+| `src/performance-screen.ts`     | Reads App startup time and the startup events through Maestro                         |
+| `src/inject.ts`                 | Imports a scenario's userdata through the E2E bridge, once per install                |
+| `src/bridge.ts`                 | The E2E bridge protocol (`apps/ledger-live-mobile/src/e2e/bridge/client.ts`)          |
+| `src/maestro.ts`, `src/exec.ts` | Maestro and child-process calls                                                       |
+| `src/types.ts`                  | `Sample` (a line of `samples.jsonl`) and `Platform`, checked by `tsc`                 |
+| `flows/`                        | Maestro flows that open Settings > Debug > Performance in the running app             |
 
 ## Presets
 
@@ -64,8 +64,8 @@ write no remote Nx, pnpm, Gradle or AVD cache: they run with develop's role whil
 
 ## A launch
 
-- **Inject once per install.** `inject.mjs` launches with `wsPort`, sends the settings, accounts and
-  post-onboarding state of `e2e/mobile/userdata` through `bridge.mjs`, sends the settings again
+- **Inject once per install.** `inject.ts` launches with `wsPort`, sends the settings, accounts and
+  post-onboarding state of `e2e/mobile/userdata` through `bridge.ts`, sends the settings again
   10 s later (the store's save effect may not be mounted yet), and fails when the app reports `MOCK`
   or `DETOX`. Feature flags are not imported: they come from production Firebase.
 - **Launch** with a plain `am start -W` / `simctl launch`, no test tool attached, wait 5 s, then let
@@ -110,7 +110,7 @@ Two measures, both ending at "App startup time":
 - **With native start**: from the process start, read by the harness on the app's clock (the
   emulator's clock was ~67 s off the runner's, run 40847012543) and joined through `JS start epoch`.
 
-`analyze.mjs` exits 1 on `FAIL`, `Not detected`, `Not enough pairs` or no samples.
+`analyze.ts` exits 1 on `FAIL`, `Not detected`, `Not enough pairs` or no samples.
 
 ## Checks
 
@@ -118,8 +118,10 @@ Two measures, both ending at "App startup time":
 pnpm --filter @ledgerhq/mobile-startup-perf test        # also: typecheck, lint, format:check
 ```
 
-They run in the "E2E Tooling Checks" PR job when this folder changes. `app-contract.test.mjs` checks
+They run in the "E2E Tooling Checks" PR job when this folder changes. `app-contract.test.ts` checks
 the mobile app of the checkout against what the measurement needs: `prepare-build.sh` still applies,
-the bridge still handles every message `inject.mjs` sends, and the screens the flows open still show
-"Debug", "Performance" and "App startup time". The JavaScript is type-checked from JSDoc
-(`checkJs`), so a field renamed in `Sample` fails wherever it is still used.
+the bridge still handles every message `inject.ts` sends, and the screens the flows open still show
+"Debug", "Performance" and "App startup time". The code is TypeScript that Node 24 runs as it is,
+with no build step: `tsc` checks it in strict mode, so a field renamed in `Sample` fails wherever
+it is still used. Only erasable syntax is allowed (no `enum` or `namespace`), and imports name the
+`.ts` file.

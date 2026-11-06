@@ -1,9 +1,8 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { startBridge } from "./bridge.mjs";
-import { log, sleep } from "./exec.mjs";
-
-/** @import { Platform, Userdata } from "./types.mjs" */
+import { type Bridge, startBridge } from "./bridge.ts";
+import { log, sleep } from "./exec.ts";
+import type { Platform, Side, Userdata } from "./types.ts";
 
 const APP_CONNECT_TIMEOUT_MS = 180_000;
 // Lets the client finish its handshake before the first message.
@@ -17,18 +16,23 @@ const SETTINGS_SAVE_MS = 10_000;
 
 /**
  * Merges the userdata files of a scenario: settings and post-onboarding come from the first.
- * @param {{ dir: string, names: string }} options names: comma-separated file names, without .json
- * @returns {Promise<Userdata>}
+ * `names` lists the file names, comma-separated, without .json.
  */
-export async function loadUserdata({ dir, names }) {
+export async function loadUserdata({
+  dir,
+  names,
+}: {
+  dir: string;
+  names: string;
+}): Promise<Userdata> {
   const files = names
     .split(",")
     .map(s => s.trim())
     .filter(Boolean);
-  let settings = {};
-  let postOnboarding;
-  const accounts = [];
-  const seen = new Set();
+  let settings: Record<string, unknown> = {};
+  let postOnboarding: unknown;
+  const accounts: Userdata["accounts"] = [];
+  const seen = new Set<string>();
   for (const [index, name] of files.entries()) {
     const { data } = JSON.parse(await readFile(path.join(dir, `${name}.json`), "utf8"));
     if (index === 0) {
@@ -51,17 +55,30 @@ export async function loadUserdata({ dir, names }) {
   };
 }
 
-/**
- * Imports a scenario's userdata into a fresh install through the E2E bridge.
- * @param {{ platform: Platform, devices: string[], port: number }} options
- */
-export function createInjector({ platform: P, devices, port }) {
-  /** @param {{ device: string, userdata: Userdata, side: "A" | "B" }} options */
-  return async function inject({ device, userdata, side }) {
+/** Imports a scenario's userdata into a fresh install through the E2E bridge. */
+export function createInjector({
+  platform: P,
+  devices,
+  port,
+}: {
+  platform: Platform;
+  devices: string[];
+  port: number;
+}) {
+  return async function inject({
+    device,
+    userdata,
+    side,
+  }: {
+    device: string;
+    userdata: Userdata;
+    side: Side;
+  }): Promise<void> {
     const bridge = startBridge(port, m => log(`  [bridge] ${m}`));
     await bridge.listening;
-    const sent = [];
-    const send = (type, payload) => sent.push({ type, id: bridge.send(type, payload) });
+    const sent: Array<{ type: string; id: string }> = [];
+    const send = (type: string, payload?: unknown) =>
+      sent.push({ type, id: bridge.send(type, payload) });
     const acknowledged = async () => {
       for (const { type, id } of sent.splice(0)) {
         await bridge.waitFor({ id, type: "ACK", timeoutMs: ACK_TIMEOUT_MS }).catch(() => {
@@ -95,12 +112,8 @@ export function createInjector({ platform: P, devices, port }) {
   };
 }
 
-/**
- * Fails when the app reports MOCK or DETOX on.
- * @param {{ bridge: ReturnType<typeof startBridge>, device: string, side: "A" | "B" }} options
- */
-async function checkTestModes({ bridge, device, side }) {
-  let envs = null;
+/** The app's environment variables, or null when it does not answer. */
+async function readAppEnvs(bridge: Bridge): Promise<Record<string, unknown> | null> {
   try {
     // Builds before mid-September 2026 reply without the message id.
     const from = bridge.received.length;
@@ -109,10 +122,25 @@ async function checkTestModes({ bridge, device, side }) {
     const reply = bridge.received
       .slice(from)
       .find(m => m.type === "appEnvs" && (m.id === id || m.id === undefined));
-    envs = reply ? JSON.parse(reply.payload) : null;
-  } catch {}
+    return reply ? JSON.parse(reply.payload as string) : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Fails when the app reports MOCK or DETOX on. */
+async function checkTestModes({
+  bridge,
+  device,
+  side,
+}: {
+  bridge: Bridge;
+  device: string;
+  side: Side;
+}): Promise<void> {
+  const envs = await readAppEnvs(bridge);
   if (!envs) throw new Error(`build ${side}: MOCK and DETOX could not be read`);
-  const on = name => Boolean(envs[name]) && envs[name] !== "0";
+  const on = (name: string) => Boolean(envs[name]) && envs[name] !== "0";
   log(
     `  ${device}: build ${side} runs with MOCK ${on("MOCK") ? "on" : "off"}, DETOX ${on("DETOX") ? "on" : "off"}`,
   );

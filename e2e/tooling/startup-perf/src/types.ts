@@ -1,24 +1,27 @@
+export type PlatformName = "android" | "ios";
+export type Side = "A" | "B";
+
 /** A row of Settings > Debug > Performance: how often the event was logged, and when. */
 export interface StartupEvent {
   count: number;
   time: number;
 }
 
-/** Which launch this is: run.mjs passes it to each sample. */
+/** Which launch this is: run.ts passes it to each sample. */
 export interface SampleMeta {
   scenario: string;
   /** 0 before the device swap, 1 after it. */
   phase: number;
   /** Warm-ups count down from -1. */
   round: number;
-  side: "A" | "B";
+  side: Side;
   device: string;
   warmup: boolean;
 }
 
-/** One launch: a line of samples.jsonl, written by run.mjs and read by analyze.mjs. */
+/** One launch: a line of samples.jsonl, written by run.ts and read by analyze.ts. */
 export interface Sample extends SampleMeta {
-  platform: "android" | "ios";
+  platform: PlatformName;
   startedAt: string;
   ok: boolean;
   error?: string;
@@ -53,7 +56,7 @@ export interface MaestroCall {
 }
 
 export interface Maestro {
-  /** The calls since the last reset: run.mjs keeps them with each sample. */
+  /** The calls since the last reset: run.ts keeps them with each sample. */
   calls: MaestroCall[];
   invoke(options: {
     device: string;
@@ -71,7 +74,7 @@ export interface ProcessStart {
   pid: number | null;
 }
 
-/** What run.mjs needs from a device platform: android.mjs and ios.mjs implement it. */
+/** What run.ts needs from a device platform: android.ts and ios.ts implement it. */
 export interface Platform {
   install(device: string, app: string): Promise<void>;
   stop(device: string): Promise<void>;
