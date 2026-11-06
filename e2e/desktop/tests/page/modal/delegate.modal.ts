@@ -140,11 +140,6 @@ export class DelegateModal extends Modal {
     await this.inputSearchField.clear();
   }
 
-  @step("Get selected provider name ")
-  async getSelectedProviderName() {
-    return await this.selectedProviderTitle.textContent();
-  }
-
   @step("Check selected provider is displayed when closing list")
   async closeProviderList(providerRow: number) {
     const selectedProvider = await this.getTitleProvider(providerRow);
@@ -152,12 +147,6 @@ export class DelegateModal extends Modal {
     await this.softExpect(async soft => {
       await soft(this.selectedProviderTitle).toContainText(selectedProvider);
     });
-  }
-
-  @step("Close provider list and verify provider $0 is selected")
-  async closeProviderListByName(providerName: string) {
-    await this.searchCloseButton.click();
-    expect(await this.getSelectedProviderName()).toContain(providerName);
   }
 
   @step("Click on chosen stake provider $0")
@@ -251,12 +240,10 @@ export class DelegateModal extends Modal {
   async checkCeloManageAssetModal() {
     await expect(this.celoLockButton).toBeVisible();
     await expect(this.celoVoteButton).toBeVisible();
-    await this.softExpect(async soft => {
-      await soft(this.celoActivateVoteButton).toBeVisible();
-      await soft(this.celoRevokeVoteButton).toBeVisible();
-      await soft(this.celoUnlockButton).toBeVisible();
-      await soft(this.celoWithdrawButton).toBeVisible();
-    });
+    await expect(this.celoActivateVoteButton).toBeVisible();
+    await expect(this.celoRevokeVoteButton).toBeVisible();
+    await expect(this.celoUnlockButton).toBeVisible();
+    await expect(this.celoWithdrawButton).toBeVisible();
   }
 
   @step("Click on lock button for CELO")
@@ -271,8 +258,6 @@ export class DelegateModal extends Modal {
 
   @step("Check alert message is visible when locking CELO")
   async verifyLockInfoCeloWarning() {
-    await this.softExpect(async soft => {
-      await soft(this.lockInfoCeloWarning).toBeVisible();
-    });
+    await expect(this.lockInfoCeloWarning).toBeVisible();
   }
 }

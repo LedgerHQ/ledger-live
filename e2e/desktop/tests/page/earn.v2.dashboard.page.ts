@@ -301,11 +301,19 @@ export class EarnV2Page extends EarnBasePage {
     );
   }
 
-  @step("Verify the selected provider dapp is opened")
-  async verifyProviderDappOpened() {
+  private static readonly ethProviderDappIds: Record<string, string> = {
+    lido: "lido",
+    kiln_pooling: "kiln-staking",
+  };
+
+  @step("Verify the provider dapp is opened")
+  async verifyProviderDappOpened(providerId?: string) {
+    const dappId = providerId
+      ? (EarnV2Page.ethProviderDappIds[providerId] ?? providerId)
+      : "[^/?#]+";
     await this.softExpect(
       async soft => {
-        await soft(this.page).toHaveURL(/\/platform\//);
+        await soft(this.page).toHaveURL(new RegExp(`/platform/${dappId}(?:[/?#]|$)`));
       },
       { timeout: TIMEOUT.large },
     );

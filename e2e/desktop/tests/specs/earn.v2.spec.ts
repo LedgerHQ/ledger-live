@@ -374,7 +374,7 @@ test.describe("Earn v2", () => {
       await app.earnV2Dashboard.verifyDepositFlowVisible();
       await app.earnV2Dashboard.selectEthProvider(provider.name);
       await app.earnV2Dashboard.depositInSelectedProvider();
-      await app.earnV2Dashboard.verifyProviderDappOpened();
+      await app.earnV2Dashboard.verifyProviderDappOpened(provider.name);
     }
 
     test(
@@ -420,7 +420,7 @@ test.describe("Earn v2", () => {
       }
       await app.earnV2Dashboard.selectEthProviderV2(provider.name);
       await app.earnV2Dashboard.continueWithSelectedEthProvider(provider.name);
-      await app.earnV2Dashboard.verifyProviderDappOpened();
+      await app.earnV2Dashboard.verifyProviderDappOpened(provider.name);
     }
 
     test(

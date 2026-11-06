@@ -36,21 +36,15 @@ export class UndelegateModal extends Modal {
 
   @step("Verify percentage shortcut buttons are visible and enabled")
   async verifyPercentageButtonsVisible() {
-    await this.softExpect(async soft => {
-      await Promise.all(
-        ["25", "50", "75", "100"].map(async pct => {
-          await soft(this.percentageButton(pct)).toBeVisible();
-          await soft(this.percentageButton(pct)).toBeEnabled();
-        }),
-      );
-    });
+    for (const pct of ["25", "50", "75", "100"]) {
+      await expect(this.percentageButton(pct)).toBeVisible();
+      await expect(this.percentageButton(pct)).toBeEnabled();
+    }
   }
 
   @step("Verify the info message is visible")
   async verifyInfoMessage() {
-    await this.softExpect(async soft => {
-      await soft(this.infoMessage).toBeVisible();
-    });
+    await expect(this.infoMessage).toBeVisible();
   }
 
   @step("Continue from the amount step")

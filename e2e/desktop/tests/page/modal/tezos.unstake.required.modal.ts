@@ -33,5 +33,6 @@ export class TezosUnstakeRequiredModal extends Modal {
   @step("Click the unstake-required close button")
   async clickCloseButton() {
     await this.requiredCloseButton.click();
+    await this.requiredCloseButton.waitFor({ state: "hidden" });
   }
 }
