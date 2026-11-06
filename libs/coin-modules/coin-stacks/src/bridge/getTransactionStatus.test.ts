@@ -20,7 +20,7 @@ describe("getTransactionStatus", () => {
   it("should not set error on transaction when memo is validated", async () => {
     spiedValidateMemo.mockReturnValueOnce(true);
 
-    const account = { currency: { name: "" } } as Account;
+    const account = { currency: { name: "" }, spendableBalance: BigNumber(1) } as Account;
     const transaction = { amount: BigNumber(1), memo: "random memo for unit test" } as Transaction;
     const status = await getTransactionStatus(account, transaction);
     expect(status.errors.transaction).toBeUndefined();
@@ -31,7 +31,7 @@ describe("getTransactionStatus", () => {
   it("should set error on transaction when memo is invalidated", async () => {
     spiedValidateMemo.mockReturnValueOnce(false);
 
-    const account = { currency: { name: "" } } as Account;
+    const account = { currency: { name: "" }, spendableBalance: BigNumber(1) } as Account;
     const transaction = { amount: BigNumber(1), memo: "random memo for unit test" } as Transaction;
     const status = await getTransactionStatus(account, transaction);
     expect(status.errors.transaction).toBeInstanceOf(StacksMemoTooLong);
