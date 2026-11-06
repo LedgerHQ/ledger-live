@@ -3522,8 +3522,8 @@ importers:
         specifier: ^14.3.8
         version: 14.3.8(react@19.1.4)
       react-inspector:
-        specifier: ^4.0.1
-        version: 4.0.1(react@19.1.4)
+        specifier: ^9.0.0
+        version: 9.0.0(react@19.1.4)
       react-redux:
         specifier: 'catalog:'
         version: 9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1)
@@ -3627,9 +3627,6 @@ importers:
       '@types/react-dom':
         specifier: 19.0.0
         version: 19.0.0
-      '@types/react-inspector':
-        specifier: 4.0.6
-        version: 4.0.6
       '@types/semver':
         specifier: 'catalog:'
         version: 7.7.1
@@ -32646,9 +32643,6 @@ packages:
   '@types/react-dom@19.0.0':
     resolution: {integrity: sha512-1KfiQKsH1o00p9m5ag12axHQSb3FOU9H20UTrujVSkNhuCrRHiQWFqgEnTNK5ZNfnzZv8UWrnXVqCmCF9fgY3w==}
 
-  '@types/react-inspector@4.0.6':
-    resolution: {integrity: sha512-fTOzxjP+Cve6TVfmmslm+qoD5x0L9aaeX23RONHSWr8pkMFNl5xadXH0oS3S0t3up8lCxmdb9FUCgesCndxn1A==}
-
   '@types/react-motion@0.0.40':
     resolution: {integrity: sha512-Bp6i9WTvW6QFN2E/XQPm8HPGMx1SVJ7H1DPsvptwWWh1XBymDZ7N7SK4nSZT/4tP4bTGvp1KHSAsswWZKO/WHA==}
 
@@ -36648,9 +36642,6 @@ packages:
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
     hasBin: true
 
-  is-dom@1.1.0:
-    resolution: {integrity: sha512-u82f6mvhYxRPKpw8V1N0W8ce1xXwOrQtgGcxl6UCL5zBmZu3is/18K0rR7uFCnMDuAsS/3W54mGL4vsaFUQlEQ==}
-
   is-extglob@2.1.1:
     resolution: {integrity: sha512-SbKbANkN603Vi4jEZv49LeVJMn4yGwsbzZworEoyEiutsN3nJYdbO36zfhGJ6QEDpOZIFkDtnq5JRxmvl3jsoQ==}
     engines: {node: '>=0.10.0'}
@@ -36715,9 +36706,6 @@ packages:
   is-obj@2.0.0:
     resolution: {integrity: sha512-drqDG3cbczxxEJRoOXcOjtdp1J/lyp1mNn0xaznRs8+muBhgQcrnbspox5X5fOw0HnMnbfDzvnEMEtqDEJEo8w==}
     engines: {node: '>=8'}
-
-  is-object@1.0.2:
-    resolution: {integrity: sha512-2rRIahhZr2UWb45fIOuvZGpFtz0TyOZLf32KxBbSoUCeZR495zCKlWUKKUByk3geS2eAs7ZAABt0Y/Rx0GiQGA==}
 
   is-path-inside@3.0.3:
     resolution: {integrity: sha512-Fd4gABb+ycGAmKou8eMftCupSir5lRxqf4aD/vd0cD2qc4HL07OjCeuHMr8Ro4CoMaeCKDB0/ECBOVWjTwUvPQ==}
@@ -36793,9 +36781,6 @@ packages:
 
   is-whitespace-character@1.0.4:
     resolution: {integrity: sha512-SDweEzfIZM0SJV0EUga669UTKlmL0Pq8Lno0QDQsPnvECB3IM2aP0gdx5TrU0A01MAPfViaZiI2V1QMZLaKK5w==}
-
-  is-window@1.0.2:
-    resolution: {integrity: sha512-uj00kdXyZb9t9RcAUAwMZAnkBUwdYGhYlt7djMXhfyhUCzwNba50tIiBKR7q0l7tdoBtFVw/3JmLY6fI3rmZmg==}
 
   is-windows@1.0.2:
     resolution: {integrity: sha512-eXK1UInq2bPmjyX6e3VHIzMLobc4J94i4AWn+Hpq3OU5KkrRC96OAcR3PRJ/pGu6m8TRnBHP9dkXQVsT/COVIA==}
@@ -39454,8 +39439,8 @@ packages:
       typescript:
         optional: true
 
-  react-inspector@4.0.1:
-    resolution: {integrity: sha512-xSiM6CE79JBqSj8Fzd9dWBHv57tLTH7OM57GP3VrE5crzVF3D5Khce9w1Xcw75OAbvrA0Mi2vBneR1OajKmXFg==}
+  react-inspector@9.0.0:
+    resolution: {integrity: sha512-w/VJucSeHxlwRa2nfM2k7YhpT1r5EtlDOClSR+L7DyQP91QMdfFEDXDs9bPYN4kzP7umFtom7L0b2GGjph4Kow==}
     peerDependencies:
       react: 19.1.4
 
@@ -52197,11 +52182,6 @@ snapshots:
     dependencies:
       '@types/react': 19.0.14
 
-  '@types/react-inspector@4.0.6':
-    dependencies:
-      '@types/react': 19.0.14
-      csstype: 3.2.3
-
   '@types/react-motion@0.0.40':
     dependencies:
       '@types/react': 19.0.14
@@ -56863,11 +56843,6 @@ snapshots:
 
   is-docker@3.0.0: {}
 
-  is-dom@1.1.0:
-    dependencies:
-      is-object: 1.0.2
-      is-window: 1.0.2
-
   is-extglob@2.1.1: {}
 
   is-fullwidth-code-point@2.0.0: {}
@@ -56917,8 +56892,6 @@ snapshots:
 
   is-obj@2.0.0: {}
 
-  is-object@1.0.2: {}
-
   is-path-inside@3.0.3: {}
 
   is-plain-obj@1.1.0: {}
@@ -56964,8 +56937,6 @@ snapshots:
   is-unicode-supported@2.1.0: {}
 
   is-whitespace-character@1.0.4: {}
-
-  is-window@1.0.2: {}
 
   is-windows@1.0.2: {}
 
@@ -60368,11 +60339,8 @@ snapshots:
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
       typescript: '@typescript/typescript6@6.0.2'
 
-  react-inspector@4.0.1(react@19.1.4):
+  react-inspector@9.0.0(react@19.1.4):
     dependencies:
-      '@babel/runtime': 7.28.4
-      is-dom: 1.1.0
-      prop-types: 15.8.1
       react: 19.1.4
 
   react-is@16.13.1: {}
