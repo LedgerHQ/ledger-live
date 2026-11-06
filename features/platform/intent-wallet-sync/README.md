@@ -35,8 +35,9 @@ Both intents emit the same `LedgerSyncJobState` union:
 | `completed`                    | Done. The result went through `onResult` just before.          | yes      |
 | `failed`                       | Any other error, with a `reason` from the table below.         | yes      |
 
-Errors are job states, except a device disconnection: it errors the observable, so the executor shows
-its Disconnected screen.
+Errors are job states, except a device disconnection, which errors the observable so the executor
+shows its Disconnected screen, and an exception thrown by `onResult`, which errors the observable so
+the job still ends.
 
 `mapLedgerSyncErrorToFailure` reads `error.name`, as the apps do today:
 
