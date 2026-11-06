@@ -15,23 +15,27 @@ fail() {
 }
 summary() {
   echo "$*"
-  if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then echo "- $*" >> "$GITHUB_STEP_SUMMARY"; fi
+  if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then echo "- $*" >> "$GITHUB_STEP_SUMMARY"; fi
 }
 count_exact() {
-  awk 'BEGIN { t = ENVIRON["LINE"]; n = 0 } $0 == t { n++ } END { print n }' "$1"
+  local file="$1"
+  awk 'BEGIN { t = ENVIRON["LINE"]; n = 0 } $0 == t { n++ } END { print n }' "$file"
 }
 awk_in_place() {
   local prog="$1" file="$2" status=0
   awk "$prog" "$file" > "$file.startup-perf" || status=$?
-  if [ "$status" -ne 0 ]; then
+  if [[ "$status" -ne 0 ]]; then
     rm -f "$file.startup-perf"
     return "$status"
   fi
   mv "$file.startup-perf" "$file"
 }
 
-case "$delay_ms" in '' | *[!0-9]*) fail "STARTUP_PERF_BRIDGE_DELAY_MS must be a number of ms" ;; esac
-[ -d "$app" ] || fail "no app directory $app"
+case "$delay_ms" in
+  '' | *[!0-9]*) fail "STARTUP_PERF_BRIDGE_DELAY_MS must be a number of ms" ;;
+  *) ;;
+esac
+[[ -d "$app" ]] || fail "no app directory $app"
 env_file="$app/.env.mock.prerelease"
 index_file="$app/src/index.tsx"
 rspack_file="$app/rspack.config.mjs"
@@ -42,17 +46,17 @@ bridge_import='import { init } from "~/e2e/bridge/client";'
 js_start_line='logStartupEvent("Before js imports");'
 
 for f in "$env_file" "$index_file" "$rspack_file" "$package_file"; do
-  [ -f "$f" ] || fail "$f not found"
+  [[ -f "$f" ]] || fail "$f not found"
 done
 if grep -qs 'startup-perf' "$index_file" "$rspack_file" "$js_start_file"; then
   fail "this checkout is already patched"
 fi
-[ "$(LINE="$rspack_line" count_exact "$rspack_file")" = 1 ] ||
+[[ "$(LINE="$rspack_line" count_exact "$rspack_file")" == 1 ]] ||
   fail "isDetoxBuild anchor missing in $rspack_file"
-[ "$(LINE="$bridge_import" count_exact "$index_file")" = 1 ] ||
+[[ "$(LINE="$bridge_import" count_exact "$index_file")" == 1 ]] ||
   fail "bridge import anchor missing in $index_file"
 for line in 'MOCK=1' 'DETOX=1' 'FORCE_DEBUG_VISIBLE=1'; do
-  [ "$(LINE="$line" count_exact "$env_file")" = 1 ] || fail "expected one '$line' line in $env_file"
+  [[ "$(LINE="$line" count_exact "$env_file")" == 1 ]] || fail "expected one '$line' line in $env_file"
 done
 e2e_build_detox() {
   awk 'index($0, "\"e2e:build\":") && index($0, "DETOX=1 ") { n++ } END { print n + 0 }' \
@@ -62,7 +66,7 @@ case "$(e2e_build_detox)" in
   0 | 1) ;;
   *) fail "more than one e2e:build line sets DETOX=1 in $package_file" ;;
 esac
-if [ "$(uname -s)" = Darwin ] && [ -e /tmp/envfile ]; then
+if [[ "$(uname -s)" == Darwin && -e /tmp/envfile ]]; then
   fail "/tmp/envfile exists: react-native-config would read it instead of ENVFILE"
 fi
 
@@ -120,13 +124,13 @@ real_blur() {
 }
 
 bundle_without_detox() {
-  [ "$(e2e_build_detox)" = 1 ] || return 0
+  [[ "$(e2e_build_detox)" == 1 ]] || return 0
   awk_in_place '
     index($0, "\"e2e:build\":") && (i = index($0, "DETOX=1 ")) {
       $0 = substr($0, 1, i - 1) substr($0, i + 8)
     }
     { print }' "$package_file" || fail "cannot drop DETOX=1 from e2e:build in $package_file"
-  [ "$(e2e_build_detox)" = 0 ] || fail "e2e:build still sets DETOX=1 in $package_file"
+  [[ "$(e2e_build_detox)" == 0 ]] || fail "e2e:build still sets DETOX=1 in $package_file"
   grep -n '"e2e:build"' "$package_file"
   summary "e2e:build bundles without DETOX=1"
 }
@@ -147,7 +151,7 @@ prod_like_env() {
 
 # Older refs lack the anchor: a warning, as only the native start goes unmeasured.
 log_js_start_epoch() {
-  if [ -f "$js_start_file" ] && [ "$(LINE="$js_start_line" count_exact "$js_start_file")" = 1 ]; then
+  if [[ -f "$js_start_file" && "$(LINE="$js_start_line" count_exact "$js_start_file")" == 1 ]]; then
     LINE="$js_start_line" awk_in_place '
       BEGIN { t = ENVIRON["LINE"] }
       $0 == t {

@@ -26,11 +26,11 @@ case "$platform" in
     gen="$app/android/app/build/generated"
     cfg="$gen/source/buildConfig/detoxPreRelease/com/ledger/live/BuildConfig.java"
     res="$gen/res/resValues/detoxPreRelease/values/gradleResValues.xml"
-    if [ -f "$cfg" ]; then
+    if [[ -f "$cfg" ]]; then
       mock=$(count -E '[[:space:]]String MOCK = ' "$cfg")
       detox=$(count -E '[[:space:]]String DETOX = ' "$cfg")
       debug=$(count -F 'String FORCE_DEBUG_VISIBLE = "1";' "$cfg")
-    elif [ -f "$res" ]; then
+    elif [[ -f "$res" ]]; then
       mock=$(count -F '<string name="MOCK"' "$res")
       detox=$(count -F '<string name="DETOX"' "$res")
       debug=$(count -F '<string name="FORCE_DEBUG_VISIBLE"' "$res")
@@ -38,18 +38,24 @@ case "$platform" in
       fail "neither $cfg nor $res found"
     fi
     unzip -l "$artifact" assets/index.android.bundle > /dev/null || fail "no JS bundle in $artifact"
-    bundle_count() { unzip -p "$artifact" assets/index.android.bundle | grep -a -c -F "$1" || true; }
+    bundle_count() {
+      local needle="$1"
+      unzip -p "$artifact" assets/index.android.bundle | grep -a -c -F "$needle" || true
+    }
     ;;
   ios)
     rnc="$(cd "$app" && node -p 'require("path").dirname(require.resolve("react-native-config/package.json"))')"
     cfg="$rnc/ios/ReactNativeConfig/GeneratedDotEnv.m"
-    [ -f "$cfg" ] || fail "$cfg not found"
+    [[ -f "$cfg" ]] || fail "$cfg not found"
     mock=$(count -F '@"MOCK":' "$cfg")
     detox=$(count -F '@"DETOX":' "$cfg")
     debug=$(count -F '@"FORCE_DEBUG_VISIBLE":@"1"' "$cfg")
     bundle="$artifact/main.jsbundle"
-    [ -f "$bundle" ] || fail "$bundle not found"
-    bundle_count() { grep -a -c -F "$1" "$bundle" || true; }
+    [[ -f "$bundle" ]] || fail "$bundle not found"
+    bundle_count() {
+      local needle="$1"
+      grep -a -c -F "$needle" "$bundle" || true
+    }
     ;;
   *) fail "unknown platform $platform" ;;
 esac
@@ -57,7 +63,7 @@ esac
 blur_mock=$(bundle_count BlurViewMock)
 blur_real=$(bundle_count ReactNativeBlurView)
 echo "config: MOCK lines=$mock DETOX lines=$detox FORCE_DEBUG_VISIBLE=1 lines=$debug; bundle: BlurViewMock=$blur_mock ReactNativeBlurView=$blur_real"
-[ "$debug" -ge 1 ] || fail "FORCE_DEBUG_VISIBLE=1 is not in the generated config: Maestro cannot open Debug"
-[ "$mock" = 0 ] && [ "$detox" = 0 ] || fail "MOCK or DETOX is still in the generated config"
-[ "$blur_mock" = 0 ] || fail "the JS bundle still has the E2E blur mock"
-[ "$blur_real" -ge 1 ] || echo "::warning::no ReactNativeBlurView string in the bundle: check the marker before trusting the blur check"
+[[ "$debug" -ge 1 ]] || fail "FORCE_DEBUG_VISIBLE=1 is not in the generated config: Maestro cannot open Debug"
+[[ "$mock" == 0 && "$detox" == 0 ]] || fail "MOCK or DETOX is still in the generated config"
+[[ "$blur_mock" == 0 ]] || fail "the JS bundle still has the E2E blur mock"
+[[ "$blur_real" -ge 1 ]] || echo "::warning::no ReactNativeBlurView string in the bundle: check the marker before trusting the blur check"
