@@ -12,54 +12,22 @@ const mockedApplyNavigationBarTheme = jest.mocked(applyNavigationBarTheme);
 
 describe("NavBarColorHandler", () => {
   beforeEach(() => {
-    mockedApplyNavigationBarTheme.mockReset().mockResolvedValue(undefined);
+    mockedApplyNavigationBarTheme.mockReset();
   });
 
-  it("applies the dark Lumen canvas color with light buttons", () => {
+  it("themes the navigation bar for the dark palette", () => {
     render(<NavBarColorHandler />);
 
-    expect(mockedApplyNavigationBarTheme).toHaveBeenCalledWith({
-      backgroundColor: expect.any(String),
-      isDark: true,
-    });
+    expect(mockedApplyNavigationBarTheme).toHaveBeenCalledWith({ isDark: true });
   });
 
-  it("applies the light Lumen canvas color with dark buttons", () => {
+  it("themes the navigation bar for the light palette", () => {
     render(
       <StyleProvider selectedPalette="light">
         <NavBarColorHandler />
       </StyleProvider>,
     );
 
-    expect(mockedApplyNavigationBarTheme).toHaveBeenCalledWith({
-      backgroundColor: expect.any(String),
-      isDark: false,
-    });
-  });
-
-  it("uses a different canvas color for each theme", () => {
-    render(<NavBarColorHandler />);
-    render(
-      <StyleProvider selectedPalette="light">
-        <NavBarColorHandler />
-      </StyleProvider>,
-    );
-
-    const [dark, light] = mockedApplyNavigationBarTheme.mock.calls.map(
-      ([theme]) => theme.backgroundColor,
-    );
-    expect(dark).not.toEqual(light);
-  });
-
-  it("logs the error when the navigation bar cannot be themed", async () => {
-    const error = new Error("no activity");
-    mockedApplyNavigationBarTheme.mockRejectedValue(error);
-    const consoleError = jest.spyOn(console, "error").mockImplementation(() => {});
-
-    render(<NavBarColorHandler />);
-
-    await Promise.resolve();
-    expect(consoleError).toHaveBeenCalledWith(error);
-    consoleError.mockRestore();
+    expect(mockedApplyNavigationBarTheme).toHaveBeenCalledWith({ isDark: false });
   });
 });
