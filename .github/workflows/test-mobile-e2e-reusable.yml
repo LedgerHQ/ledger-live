@@ -107,6 +107,7 @@ on:
           - none
           - swangle
           - hwui-gl
+          - webview-novulkan
         default: none
       feature_flags:
         description: "Choose a feature flag set for the run"
