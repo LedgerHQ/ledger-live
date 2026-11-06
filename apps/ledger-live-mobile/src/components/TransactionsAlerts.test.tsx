@@ -84,6 +84,7 @@ const installChainwatchHandlers = (
   initialRemote: { exists: boolean; suffixes: string[] } = { exists: false, suffixes: [] },
   failAddressPuts = 0,
   addressPutGate?: Promise<void>,
+  failingAddressPutIndex?: number,
 ) => {
   const accountUrl = `https://chainwatch/${network.chainwatchId}/account/${chainwatchUserId}/`;
   const addressesUrl = `${accountUrl}addresses/`;
@@ -120,6 +121,9 @@ const installChainwatchHandlers = (
       const body = await request.json();
       addressPuts.push(body);
       await addressPutGate;
+      if (addressPuts.length - 1 === failingAddressPutIndex) {
+        return new HttpResponse(null, { status: 500 });
+      }
       if (remainingAddressPutFailures > 0) {
         remainingAddressPutFailures -= 1;
         return new HttpResponse(null, { status: 500 });
@@ -192,6 +196,22 @@ describe("TransactionsAlerts", () => {
     expect(chainwatch.getRemote().suffixes).toEqual(["0x02"]);
   });
 
+  it("should keep watching an address an account no longer returns", async () => {
+    const chainwatch = installChainwatchHandlers();
+    const { store } = render(<TransactionsAlerts />, {
+      overrideInitialState: withTransactionsAlertsState([account01]),
+    });
+    await waitFor(() => expect(chainwatch.addressPuts).toEqual([["0x01"]]));
+
+    act(() => {
+      store.dispatch(replaceAccounts([{ ...account01, freshAddress: "0x03" }]));
+    });
+
+    await waitFor(() => expect(chainwatch.addressPuts).toEqual([["0x01"], ["0x03"]]));
+    expect(chainwatch.addressDeletes).toHaveLength(0);
+    expect(chainwatch.getRemote().suffixes).toEqual(["0x01", "0x03"]);
+  });
+
   it("should ignore account changes that keep the same desired address set", async () => {
     const chainwatch = installChainwatchHandlers();
     const { store } = render(<TransactionsAlerts />, {
@@ -251,6 +271,26 @@ describe("TransactionsAlerts", () => {
     expect(chainwatch.getRemote().suffixes).toEqual(["0x01"]);
   });
 
+  it("should unwatch the addresses of a partially failed registration once their accounts are removed", async () => {
+    const chainwatch = installChainwatchHandlers(undefined, 0, undefined, 1);
+    const accounts = Array.from({ length: 101 }, (_, index) =>
+      makeAccount(`account-${index}`, `0x${(index + 1).toString(16)}`),
+    );
+    const { store } = render(<TransactionsAlerts />, {
+      overrideInitialState: withTransactionsAlertsState(accounts),
+    });
+    await waitFor(() => expect(chainwatch.addressPuts).toHaveLength(2));
+    const [registeredBatch] = chainwatch.addressPuts;
+
+    await act(async () => {});
+    act(() => {
+      store.dispatch(replaceAccounts([]));
+    });
+
+    await waitFor(() => expect(chainwatch.addressDeletes).toEqual([registeredBatch]));
+    expect(chainwatch.getRemote().suffixes).toEqual([]);
+  });
+
   it("should delete Chainwatch accounts when active alerts are turned off", async () => {
     const chainwatch = installChainwatchHandlers();
     const { store } = render(<TransactionsAlerts />, {
@@ -263,6 +303,29 @@ describe("TransactionsAlerts", () => {
     });
 
     await waitFor(() => expect(chainwatch.getAccountDeletes()).toBe(1));
+  });
+
+  it("should not register again an account removed while alerts were disabled", async () => {
+    const chainwatch = installChainwatchHandlers();
+    const { store } = render(<TransactionsAlerts />, {
+      overrideInitialState: withTransactionsAlertsState([account01, account02]),
+    });
+    await waitFor(() => expect(chainwatch.addressPuts).toEqual([["0x01", "0x02"]]));
+
+    act(() => {
+      store.dispatch(setNotifications({ transactionsAlertsCategory: false }));
+    });
+    await waitFor(() => expect(chainwatch.getAccountDeletes()).toBe(1));
+    act(() => {
+      store.dispatch(replaceAccounts([account02]));
+    });
+    act(() => {
+      store.dispatch(setNotifications({ transactionsAlertsCategory: true }));
+    });
+
+    await waitFor(() => expect(chainwatch.addressPuts).toEqual([["0x01", "0x02"], ["0x02"]]));
+    expect(chainwatch.addressDeletes).toHaveLength(0);
+    expect(chainwatch.getRemote().suffixes).toEqual(["0x02"]);
   });
 
   it("should wait for reconciliation before deleting disabled alerts", async () => {
