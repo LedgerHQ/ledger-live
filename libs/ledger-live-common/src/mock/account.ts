@@ -145,6 +145,7 @@ export function genAccountLegacy(id: number | string, opts: GenAccountOptions = 
               ticker: "ADA",
               name: "Cardano",
               dRepHex: undefined,
+              dRepName: undefined,
               rewards: new BigNumber(42),
             },
             externalCredentials: [

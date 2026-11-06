@@ -49,6 +49,7 @@ describe("getTransactionalDotConfig", () => {
     ["UNFREEZE", "Snow", "muted"],
     ["LEGACY_UNFREEZE", "Snow", "muted"],
     ["VOTE", "Mailbox", "muted"],
+    ["DELEGATE_VOTE", "Mailbox", "muted"],
   ] as const)(
     "maps %s to %s symbol with %s appearance",
     (operationType, expectedSymbol, expectedAppearance) => {

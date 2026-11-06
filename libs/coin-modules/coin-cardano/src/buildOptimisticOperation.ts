@@ -15,6 +15,22 @@ import {
   Transaction,
 } from "./types";
 
+/** Maps a vote certificate's DRep to the `extra.vote` value: a label, or the CIP-129 hex id. */
+function getVoteFromDRep(dRep: TyphonTypes.DRep): string | undefined {
+  switch (dRep.type) {
+    case TyphonTypes.DRepType.ABSTAIN:
+      return "ABSTAIN";
+    case TyphonTypes.DRepType.NO_CONFIDENCE:
+      return "NO CONFIDENCE";
+    case TyphonTypes.DRepType.ADDRESS:
+      return dRep.key ? `22${dRep.key.toString("hex")}` : undefined;
+    case TyphonTypes.DRepType.SCRIPT:
+      return dRep.key ? `23${dRep.key.toString("hex")}` : undefined;
+    default:
+      return undefined;
+  }
+}
+
 export const buildOptimisticOperation = (
   account: CardanoAccount,
   unsignedTransaction: TyphonTransaction,
@@ -55,6 +71,7 @@ export const buildOptimisticOperation = (
   const stakeDeRegistrationCertificates: Array<TyphonTypes.StakeDeRegistrationCertificate> = [];
   const stakeRegConwayCertificates: Array<TyphonTypes.StakeKeyRegistrationCertificate> = [];
   const stakeDeRegConwayCertificates: Array<TyphonTypes.StakeKeyDeRegistrationCertificate> = [];
+  const voteDelegationCertificates: Array<TyphonTypes.VoteDelegationCertificate> = [];
 
   txCertificates.forEach(c => {
     switch (c.type) {
@@ -69,6 +86,9 @@ export const buildOptimisticOperation = (
         break;
       case TyphonTypes.CertificateType.STAKE_KEY_DE_REGISTRATION:
         stakeDeRegConwayCertificates.push(c);
+        break;
+      case TyphonTypes.CertificateType.VOTE_DELEGATION:
+        voteDelegationCertificates.push(c);
         break;
     }
   });
@@ -166,6 +186,15 @@ export const buildOptimisticOperation = (
     }
   }
 
+  const walletVoteDelegation = voteDelegationCertificates.find(
+    c =>
+      c.cert.stakeCredential.type === HashType.ADDRESS &&
+      c.cert.stakeCredential.hash.toString("hex") === stakeCredential.key,
+  );
+  if (walletVoteDelegation) {
+    extra.vote = getVoteFromDRep(walletVoteDelegation.cert.dRep);
+  }
+
   if (txWithdrawals && txWithdrawals.length) {
     const walletWithdraw = txWithdrawals.find(
       w =>
@@ -185,16 +214,22 @@ export const buildOptimisticOperation = (
     }
   }
 
-  const opType: OperationType = txCertificates.find(
-    c => c.type === TyphonTypes.CertificateType.STAKE_DELEGATION,
-  )
-    ? "DELEGATE"
-    : txCertificates.find(c => c.type === TyphonTypes.CertificateType.STAKE_KEY_DE_REGISTRATION)
-      ? "UNDELEGATE"
-      : getOperationType({
-          valueChange: operationValue,
-          fees: unsignedTransaction.getFee(),
-        });
+  let opType: OperationType;
+
+  if (txCertificates.some(c => c.type === TyphonTypes.CertificateType.STAKE_DELEGATION)) {
+    opType = "DELEGATE";
+  } else if (
+    txCertificates.some(c => c.type === TyphonTypes.CertificateType.STAKE_KEY_DE_REGISTRATION)
+  ) {
+    opType = "UNDELEGATE";
+  } else if (walletVoteDelegation) {
+    opType = "DELEGATE_VOTE";
+  } else {
+    opType = getOperationType({
+      valueChange: operationValue,
+      fees: unsignedTransaction.getFee(),
+    });
+  }
 
   const op: CardanoOperation = {
     id: encodeOperationId(account.id, transactionHash, opType),

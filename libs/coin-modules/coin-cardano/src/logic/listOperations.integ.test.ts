@@ -131,7 +131,9 @@ describe("listOperations", () => {
         expect(op).toHaveProperty("asset");
         expect(op).toHaveProperty("tx");
 
-        expect(["NONE", "FEES", "IN", "OUT", "DELEGATE", "UNDELEGATE"]).toContain(op.type);
+        expect(["NONE", "FEES", "IN", "OUT", "DELEGATE", "UNDELEGATE", "DELEGATE_VOTE"]).toContain(
+          op.type,
+        );
 
         expect(Array.isArray(op.senders)).toBe(true);
         expect(Array.isArray(op.recipients)).toBe(true);

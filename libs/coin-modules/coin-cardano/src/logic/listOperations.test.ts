@@ -3,6 +3,7 @@ import { cardanoCoinConfig as config } from "../fixtures/config";
 import { address as TyphonAddress, types as TyphonTypes } from "@stricahq/typhonjs";
 import network from "@ledgerhq/live-network/network";
 import { APITransaction, HashType, TransactionCertificates } from "../api/api-types";
+import { getRewardAddress } from "../logic";
 import { listOperations } from "./listOperations";
 
 jest.mock("@ledgerhq/live-network/network");
@@ -518,6 +519,74 @@ describe("listOperations", () => {
 
     expect(items[0].type).toBe("IN");
     expect(items[0].details).not.toHaveProperty("refund");
+  });
+
+  it("classifies an own vote delegation as DELEGATE_VOTE and records the vote", async () => {
+    mockResponse([
+      makeTx({
+        certificate: {
+          ...emptyCertificate,
+          voteDelegations: [
+            {
+              index: 0,
+              stakeHex: getRewardAddress(STAKE_HASH, TyphonTypes.NetworkId.MAINNET).getHex(),
+              dRepHex: "2",
+            },
+          ],
+        },
+        inputs: [
+          {
+            txId: "in-0",
+            index: 0,
+            address: ADDRESS,
+            value: "3000000",
+            paymentKey: PAYMENT_HASH,
+            tokens: [],
+          },
+        ],
+        outputs: [{ address: ADDRESS, value: "2800000", paymentKey: PAYMENT_HASH, tokens: [] }],
+      }),
+    ]);
+
+    const { items } = await listOperations(config, "cardano", ADDRESS, options);
+
+    expect(items[0].type).toBe("DELEGATE_VOTE");
+    expect(items[0].details).toMatchObject({ vote: "ABSTAIN" });
+    // Outflow whose only cost is the fee → value 0 (adapter re-adds tx.fees).
+    expect(items[0].value).toBe(0n);
+  });
+
+  it("does not attribute another account's vote delegation to this operation", async () => {
+    mockResponse([
+      makeTx({
+        certificate: {
+          ...emptyCertificate,
+          voteDelegations: [
+            {
+              index: 0,
+              stakeHex: getRewardAddress("99".repeat(28), TyphonTypes.NetworkId.MAINNET).getHex(),
+              dRepHex: "2",
+            },
+          ],
+        },
+        inputs: [
+          {
+            txId: "in-0",
+            index: 0,
+            address: COUNTERPARTY_ADDRESS,
+            value: "10000000",
+            paymentKey: OTHER_PAYMENT_HASH,
+            tokens: [],
+          },
+        ],
+        outputs: [{ address: ADDRESS, value: "5000000", paymentKey: PAYMENT_HASH, tokens: [] }],
+      }),
+    ]);
+
+    const { items } = await listOperations(config, "cardano", ADDRESS, options);
+
+    expect(items[0].type).toBe("IN");
+    expect(items[0].details).not.toHaveProperty("vote");
   });
 
   it("records a stake registration deposit", async () => {

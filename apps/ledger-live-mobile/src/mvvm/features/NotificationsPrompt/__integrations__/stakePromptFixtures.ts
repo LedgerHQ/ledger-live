@@ -167,6 +167,17 @@ export const stakePromptCases: StakePromptCase[] = [
     transaction: { family: "cardano", mode: "undelegate" },
   },
   {
+    label: "Cardano vote delegation",
+    bucket: "delegation/staking",
+    flowName: NavigatorName.CardanoVoteDelegationFlow,
+    familyExportKey: "CardanoVoteDelegationFlow",
+    successScreenName: ScreenName.CardanoVoteDelegationValidationSuccess,
+    errorScreenName: ScreenName.CardanoVoteDelegationValidationError,
+    accountKey: "cardano",
+    operationType: "DELEGATE_VOTE",
+    transaction: { family: "cardano", mode: "voteDelegate" },
+  },
+  {
     label: "Celo activate",
     bucket: "revoke/claim/lifecycle",
     flowName: NavigatorName.CeloActivateFlow,

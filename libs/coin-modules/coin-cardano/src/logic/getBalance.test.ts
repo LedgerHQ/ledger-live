@@ -128,6 +128,7 @@ describe("getBalance", () => {
       poolId: "pool1abc",
       ticker: "LDG",
       name: "Ledger",
+      dRepName: undefined,
       dRepHex: undefined,
       rewards: new BigNumber("1500000"),
     });
@@ -165,6 +166,7 @@ describe("getBalance", () => {
       poolId: "pool1abc",
       ticker: "LDG",
       name: "Ledger",
+      dRepName: undefined,
       dRepHex: "drep1abc",
       rewards: new BigNumber("1500000"),
     });

@@ -27,3 +27,8 @@ export const getStakePoolExplorer = (
   explorerView: ExplorerView | undefined,
   poolId: string,
 ): string | undefined => explorerView?.stakePool?.replace("$poolId", poolId);
+
+export const getDRepExplorer = (
+  explorerView: ExplorerView | undefined,
+  hex: string,
+): string | undefined => explorerView?.dRep?.replace("$hex", hex);

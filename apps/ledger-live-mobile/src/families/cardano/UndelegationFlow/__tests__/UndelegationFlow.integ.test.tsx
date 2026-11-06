@@ -178,6 +178,7 @@ describe("UndelegationFlow Integration", () => {
       status: true,
       poolId: "00000000000000000000000000000000000000000000000000000001",
       dRepHex: "drep1", // Set DRep to avoid self-tx path
+      dRepName: undefined,
       deposit: mockDepositValue,
       ticker: undefined,
       name: "Test Pool",
@@ -207,6 +208,7 @@ describe("UndelegationFlow Integration", () => {
       status: true,
       poolId: "00000000000000000000000000000000000000000000000000000001",
       dRepHex: undefined, // Trigger self-tx path
+      dRepName: undefined,
       deposit: mockDepositValue,
       ticker: undefined,
       name: "Test Pool",
@@ -261,6 +263,7 @@ describe("UndelegationFlow Integration", () => {
         status: true,
         poolId: "00000000000000000000000000000000000000000000000000000001",
         dRepHex: "drep1",
+        dRepName: undefined,
         deposit: mockDepositValue,
         ticker: undefined,
         name: "Test Pool",
