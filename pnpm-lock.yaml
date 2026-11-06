@@ -3233,6 +3233,9 @@ importers:
       '@shared/env':
         specifier: workspace:*
         version: link:../../shared/env
+      '@shared/proxy-websocket':
+        specifier: workspace:^
+        version: link:../../shared/proxy-websocket
       '@shared/schema-primitives':
         specifier: workspace:^
         version: link:../../shared/schema-primitives
@@ -3248,9 +3251,6 @@ importers:
       '@types/w3c-web-usb':
         specifier: 1.0.10
         version: 1.0.10
-      '@types/ws':
-        specifier: 8.5.10
-        version: 8.5.10
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -3269,9 +3269,6 @@ importers:
       fetch-cookie:
         specifier: 3.2.0
         version: 3.2.0
-      https-proxy-agent:
-        specifier: 7.0.6
-        version: 7.0.6
       oxfmt:
         specifier: 'catalog:'
         version: 0.75.0
@@ -3296,9 +3293,6 @@ importers:
       usb:
         specifier: 2.17.0
         version: 2.17.0(patch_hash=489095f60f30e6127e8077a75f64dc1962a7187d3e054910d61a8a5de45c30a5)
-      ws:
-        specifier: 'catalog:'
-        version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       xstate:
         specifier: 'catalog:'
         version: 5.19.2
@@ -24187,6 +24181,52 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  shared/proxy-websocket:
+    dependencies:
+      https-proxy-agent:
+        specifier: 7.0.6
+        version: 7.0.6
+      ws:
+        specifier: 'catalog:'
+        version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+    devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
+      '@support/jest':
+        specifier: workspace:*
+        version: link:../../support/jest
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      '@types/ws':
+        specifier: 8.5.10
+        version: 8.5.10
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2

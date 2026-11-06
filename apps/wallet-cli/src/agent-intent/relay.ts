@@ -9,7 +9,7 @@ import {
 } from "@ledgerhq/agent-intent-sdk";
 import { AGENT_INTENT_TRUSTCHAIN_URLS } from "../key-ring/constants";
 import { hasUrlCredentials } from "./profile-format";
-import { createRelayWebSocketFactory } from "./relay-websocket";
+import { createProxyAwareWebSocketFactory } from "@shared/proxy-websocket";
 
 const DURATION_RE = /^([1-9]\d*)([smhd])$/;
 const DURATION_UNITS_MS = { s: 1_000, m: 60_000, h: 3_600_000, d: 86_400_000 } as const;
@@ -73,7 +73,7 @@ export function createRelayHost(
   return createAgentEnrollmentChannelHost({
     environment,
     relayBaseUrl: AGENT_INTENT_TRUSTCHAIN_URLS[environment],
-    webSocketFactory: createRelayWebSocketFactory(),
+    webSocketFactory: createProxyAwareWebSocketFactory(),
     timeouts: { candidateTimeoutMs: expiresInMs, completionTimeoutMs: expiresInMs },
   });
 }

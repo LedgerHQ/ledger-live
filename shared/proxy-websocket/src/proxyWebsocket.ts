@@ -1,9 +1,17 @@
 import { HttpsProxyAgent } from "https-proxy-agent";
 import WebSocket from "ws";
-import type { EnrollmentChannelWebSocketFactory } from "@ledgerhq/agent-intent-sdk";
 
-type ProxyEnvironment = Readonly<Record<string, string | undefined>>;
-type WebSocketConstructor = (url: string, options: WebSocket.ClientOptions) => WebSocket;
+export type ProxyEnvironment = Readonly<Record<string, string | undefined>>;
+
+export type ProxyAwareWebSocket = {
+  send(data: string): void;
+  close(): void;
+  addEventListener(type: "open", listener: () => void): void;
+  addEventListener(type: "message", listener: (event: { data: unknown }) => void): void;
+  addEventListener(type: "error" | "close", listener: () => void): void;
+};
+
+type WebSocketConstructor = (url: string, options: WebSocket.ClientOptions) => ProxyAwareWebSocket;
 
 const proxyVariableNames = {
   wss: ["https_proxy", "HTTPS_PROXY", "http_proxy", "HTTP_PROXY", "all_proxy", "ALL_PROXY"],
@@ -44,7 +52,7 @@ function excludesHost(noProxy: string, target: URL): boolean {
   });
 }
 
-export function resolveRelayProxy(
+export function resolveProxy(
   url: string,
   environment: ProxyEnvironment = process.env,
 ): string | undefined {
@@ -56,19 +64,19 @@ export function resolveRelayProxy(
   return environmentValue(environment, names);
 }
 
-export function createRelayWebSocketFactory(
+export function createProxyAwareWebSocketFactory(
   input: {
     environment?: ProxyEnvironment;
     createWebSocket?: WebSocketConstructor;
   } = {},
-): EnrollmentChannelWebSocketFactory {
+): (url: string) => ProxyAwareWebSocket {
   const {
     environment = process.env,
     createWebSocket = (url, options) => new WebSocket(url, options),
   } = input;
 
   return url => {
-    const proxy = resolveRelayProxy(url, environment);
+    const proxy = resolveProxy(url, environment);
     return createWebSocket(url, proxy ? { agent: new HttpsProxyAgent(proxy) } : {});
   };
 }
