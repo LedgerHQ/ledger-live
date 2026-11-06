@@ -8051,8 +8051,8 @@
       "description": "To stop holding this token, remove it instead."
     },
     "XrpTokenFrozen": {
-      "title": "{{assetCode}} is frozen",
-      "description": "You can only send it back to its issuer."
+      "title": "You can't send this token to this recipient",
+      "description": "Its issuer froze it, or hasn't approved your account to hold it. A frozen token can still go back to its issuer."
     },
     "XrpTokenCannotReceive": {
       "title": "This recipient can't receive {{assetCode}}",
@@ -8074,8 +8074,8 @@
       "title": "This transaction is not supported"
     },
     "XrpReserveIncrease": {
-      "title": "{{amount}} will be reserved",
-      "description": "The XRP Ledger reserves XRP for each token you hold. You get it back when you remove the token."
+      "title": "{{amount}} will be locked on your account while this token is added.",
+      "description": "You'll get it back when you remove the token."
     },
     "InvalidExplorerResponse": {
       "title": "Invalid response from {{currencyName}} explorer"
