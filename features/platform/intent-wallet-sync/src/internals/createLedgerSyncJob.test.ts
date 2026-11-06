@@ -71,6 +71,23 @@ describe("completeJob", () => {
       subscriber.next.mock.invocationCallOrder[0],
     );
   });
+
+  it("should error the observable when onResult throws, so the job still ends", () => {
+    const subscriber = fakeSubscriber();
+    const hostError = new Error("host failed");
+
+    completeJob(
+      subscriber.asSubscriber,
+      () => {
+        throw hostError;
+      },
+      "result",
+    );
+
+    expect(subscriber.error).toHaveBeenCalledWith(hostError);
+    expect(subscriber.next).not.toHaveBeenCalled();
+    expect(subscriber.complete).not.toHaveBeenCalled();
+  });
 });
 
 describe("tryCreateSessionSdk", () => {

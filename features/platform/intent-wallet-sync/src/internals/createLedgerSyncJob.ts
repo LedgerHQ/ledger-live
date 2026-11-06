@@ -36,7 +36,12 @@ export function completeJob<Result>(
   onResult: (result: Result) => void,
   result: Result,
 ): void {
-  onResult(result);
+  try {
+    onResult(result);
+  } catch (error) {
+    subscriber.error(error);
+    return;
+  }
   subscriber.next(COMPLETED);
   subscriber.complete();
 }
