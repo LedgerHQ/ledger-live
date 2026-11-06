@@ -50,6 +50,10 @@
         "desktopEnv",
         "sharedEnv",
         { "env": "CI" },
+        { "env": "DATADOG_APPLICATION_ID" },
+        { "env": "DATADOG_CLIENT_TOKEN" },
+        { "env": "DATADOG_ENV" },
+        { "env": "DATADOG_SITE" },
         { "env": "NIGHTLY" },
         { "env": "STAGING" },
         { "env": "TESTING" }
