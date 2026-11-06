@@ -1411,6 +1411,35 @@ test("R2 to R4 skip the components of platform entries and test entries", () => 
   );
 });
 
+test("export type * from follows value re-exports for export names", () => {
+  const root = workspace({
+    "package.json": { exports: UNIVERSAL },
+    "src/index.ts": 'export type * from "./re";\n',
+    "src/index.native.ts": 'export type * from "./re";\n',
+    "src/re.ts": 'export * from "./Types";\n',
+    "src/Types.ts": "export type X = 1;\nexport interface Y {}\n",
+  });
+  const pkg = path.join(root, "shared/thing");
+  const index = path.join(pkg, "src/index.ts");
+  assert.deepEqual([...exportNamesFromEntry(index, "web")].toSorted(), ["X", "Y"].toSorted());
+});
+
+test("a root export with only default still collects when web and native resolve differently", () => {
+  const root = workspace({
+    "package.json": { exports: { ".": { default: "./src/index.ts" } } },
+    "src/index.ts": 'export * from "./Button";\n',
+    "src/Button.web.tsx": button("Button"),
+    "src/Button.native.tsx": button("Button"),
+  });
+  const pkg = path.join(root, "shared/thing");
+  const manifest = JSON.parse(fs.readFileSync(path.join(pkg, "package.json"), "utf8"));
+  const { universal } = collectEntryComponents(pkg, manifest.exports);
+  assert.ok(universal.some(e => e.subpath === "."));
+  const entry = universal.find(e => e.subpath === ".");
+  assert.ok(entry.components.web.has("Button"));
+  assert.ok(entry.components.native.has("Button"));
+});
+
 test("resolveRelative and collectEntryComponents use the default fs reader", () => {
   const root = workspace({
     "package.json": { exports: UNIVERSAL },

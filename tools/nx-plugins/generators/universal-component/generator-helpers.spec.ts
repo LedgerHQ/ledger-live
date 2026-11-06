@@ -89,7 +89,7 @@ describe("assertDualPlatformPackage", () => {
 describe("assertTemplateDependencies", () => {
   it("throws when required packages are missing from the manifest", () => {
     const tree = createTreeWithEmptyWorkspace();
-    seedDualPackage(tree);
+    seedDualPackage(tree, { ".": UNIVERSAL });
     const manifest = JSON.parse(tree.read(`${PACKAGE}/package.json`, "utf-8")!.toString());
     const stripped = {
       ...manifest,
@@ -104,7 +104,7 @@ describe("assertTemplateDependencies", () => {
 
   it("accepts when all template dependencies are declared", () => {
     const tree = createTreeWithEmptyWorkspace();
-    seedDualPackage(tree);
+    seedDualPackage(tree, { ".": UNIVERSAL });
     const manifest = JSON.parse(tree.read(`${PACKAGE}/package.json`, "utf-8")!.toString());
 
     expect(() => assertTemplateDependencies(PACKAGE, manifest, undefined)).not.toThrow();
@@ -112,7 +112,7 @@ describe("assertTemplateDependencies", () => {
 
   it("requires only the chosen platform packages for a platform entry", () => {
     const tree = createTreeWithEmptyWorkspace();
-    seedDualPackage(tree);
+    seedDualPackage(tree, { ".": UNIVERSAL });
     const manifest = JSON.parse(tree.read(`${PACKAGE}/package.json`, "utf-8")!.toString());
     const webOnly = {
       ...manifest,
@@ -302,7 +302,7 @@ describe("assertNoSharedPlatformUniversalModule", () => {
 describe("generatePlatformEntryComponent", () => {
   it("creates the platform entry files under src/web", () => {
     const tree = createTreeWithEmptyWorkspace();
-    seedDualPackage(tree);
+    seedDualPackage(tree, { ".": UNIVERSAL });
     const reader = createTreeReader(tree, PACKAGE);
     const manifest = JSON.parse(tree.read(`${PACKAGE}/package.json`, "utf-8")!.toString());
     const context: GeneratorContext = {

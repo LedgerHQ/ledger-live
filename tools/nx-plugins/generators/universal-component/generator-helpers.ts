@@ -94,12 +94,24 @@ function absoluteModulePath(entryFile: string): string {
   return posix.join(workspaceRoot, normalized);
 }
 
+function isWin32Absolute(abs: string): boolean {
+  return /^[A-Za-z]:\//.test(abs);
+}
+
 function absoluteToTreePath(absolutePath: string): string {
   const normalized = absolutePath.replace(/\\/g, "/");
   const root = workspaceRoot.replace(/\\/g, "/");
   if (normalized.startsWith(`${root}/`)) return normalized.slice(root.length + 1);
   if (normalized === root) return "";
+  if (isWin32Absolute(normalized) && isWin32Absolute(root)) {
+    const rel = posix.relative(root, normalized);
+    return rel.startsWith("..") ? normalized : rel.replace(/\\/g, "/");
+  }
   return normalized;
+}
+
+function treeNormalizedPath(filePath: string): string {
+  return filePath.replace(/\\/g, "/");
 }
 
 function resolveFromEntry(
@@ -176,12 +188,12 @@ export function universalEntryPaths(
   const paths = new Set<string>();
   for (const entry of collected.universal) {
     if (entry.subpath !== ".") continue;
-    if (entry.files.web) paths.add(entry.files.web);
-    if (entry.files.native) paths.add(entry.files.native);
+    if (entry.files.web) paths.add(treeNormalizedPath(entry.files.web));
+    if (entry.files.native) paths.add(treeNormalizedPath(entry.files.native));
   }
   const { unconditioned } = classifyEntries(exportsField);
   for (const entry of unconditioned) {
-    if (entry.subpath === ".") paths.add(posix.join(projectRoot, entry.target));
+    if (entry.subpath === ".") paths.add(treeNormalizedPath(posix.join(projectRoot, entry.target)));
   }
   return [...paths];
 }

@@ -183,6 +183,20 @@ function classifyEntries(exportsField) {
       platform.push({ subpath, platform: PLATFORM_ENTRIES[subpath], target });
     } else if (typeof target === "string" && SOURCE_FILE.test(target)) {
       unconditioned.push({ subpath, target });
+    } else if (typeof target === "object" && target !== null && !Array.isArray(target)) {
+      const web = selectTarget(target, CONDITIONS.web);
+      const native = selectTarget(target, CONDITIONS.native);
+      if (web && native && web !== native) {
+        universal.push({ subpath, web, native });
+      } else if (
+        web &&
+        native &&
+        web === native &&
+        typeof web === "string" &&
+        SOURCE_FILE.test(web)
+      ) {
+        unconditioned.push({ subpath, target: web });
+      }
     }
   }
   return { universal, platform, unconditioned };
@@ -506,7 +520,9 @@ function createExportCollector(platform, reader = FS_READER) {
     for (const specifier of module.typeStars) {
       const target = resolveRelative(file, specifier, platform, EXTENSIONS[platform], reader);
       if (!target) continue;
-      for (const name of typeNamesOf(target, seen)) names.add(name);
+      for (const name of namesOf(target, seen)) {
+        if (name !== "default") names.add(name);
+      }
     }
     return names;
   }
