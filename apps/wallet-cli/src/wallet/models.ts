@@ -63,12 +63,6 @@ export const OutputFormatSchema = z.enum(["human", "json"]);
 
 export const AccountIdSchema = z.string(); // AccountId: branded type pending
 
-export const BalanceSchema = z.object({
-  assetId: z.string(),
-  balance: BigNumberStrSchema,
-});
-export type Balance = z.infer<typeof BalanceSchema>;
-
 export const OperationTypeSchema = z.string() as z.ZodType<OperationType>; // Typed against the exhaustive live union; runtime bridging ensures validity.
 
 // Flat, fully serializable operation.
@@ -109,6 +103,17 @@ export function toTokenInfo(t: TokenCurrency): TokenInfo {
     ...(t.delisted === undefined ? {} : { delisted: t.delisted }),
   };
 }
+
+const BalanceBaseSchema = z.object({
+  assetId: z.string(),
+  balance: BigNumberStrSchema,
+});
+
+export const BalanceSchema = z.discriminatedUnion("kind", [
+  BalanceBaseSchema.extend({ kind: z.literal("native") }),
+  BalanceBaseSchema.extend({ kind: z.literal("token"), token: TokenInfoSchema }),
+]);
+export type Balance = z.infer<typeof BalanceSchema>;
 
 export const OperationSchema = z.object({
   id: z.string(),

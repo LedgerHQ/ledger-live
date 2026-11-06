@@ -7,6 +7,7 @@ import { BalanceSchema, OperationSchema } from "../models";
 import { XPUB, ETH_ADDR } from "../../shared/accountDescriptor/test-fixtures";
 import { NetworkIdSchema } from "../../shared/accountDescriptor";
 import { USDT_TOKEN_INFO } from "../../testing/cal-fixtures";
+import { colors } from "../../shared/ui";
 
 const stubStore = {} as CryptoAssetsStore;
 
@@ -161,9 +162,25 @@ const mockHuman = {
 describe("JsonFormatter.balances", () => {
   it("maps balances to asset + formatted amount", async () => {
     const json = new JsonFormatter(mockHuman);
-    const balances = [BalanceSchema.parse({ assetId: "bitcoin", balance: "100000000" })];
+    const balances = [
+      BalanceSchema.parse({ kind: "native", assetId: "bitcoin", balance: "100000000" }),
+    ];
     const result = await json.balances(balances);
     expect(result).toEqual([{ asset: "bitcoin", amount: "100000000 formatted" }]);
+  });
+
+  it("leaves a token balance's kind and metadata out of the output", async () => {
+    const json = new JsonFormatter(mockHuman);
+    const balances = [
+      BalanceSchema.parse({
+        kind: "token",
+        assetId: USDT_TOKEN_INFO.id,
+        balance: "1500000",
+        token: USDT_TOKEN_INFO,
+      }),
+    ];
+    const result = await json.balances(balances);
+    expect(result).toEqual([{ asset: USDT_TOKEN_INFO.id, amount: "1500000 formatted" }]);
   });
 });
 
@@ -209,16 +226,33 @@ describe("HumanFormatter.formatBalance", () => {
 
   it("formats a non-zero balance", async () => {
     const result = await formatter.formatBalance(
-      BalanceSchema.parse({ assetId: "ethereum", balance: "1000000000000000000" }),
+      BalanceSchema.parse({ kind: "native", assetId: "ethereum", balance: "1000000000000000000" }),
     );
     expect(result).toContain("ETH");
   });
 
   it("formats a zero balance", async () => {
     const result = await formatter.formatBalance(
-      BalanceSchema.parse({ assetId: "ethereum", balance: "0" }),
+      BalanceSchema.parse({ kind: "native", assetId: "ethereum", balance: "0" }),
     );
     expect(result).toContain("ETH");
+  });
+
+  it("prints a token balance as its amount and asset id only", async () => {
+    const usdtStore = {
+      findTokenById: async () => ({ units: [{ name: "USDT", code: "USDT", magnitude: 6 }] }),
+    } as unknown as CryptoAssetsStore;
+    const f = new HumanFormatter(usdtStore);
+    const usdt = BalanceSchema.parse({
+      kind: "token",
+      assetId: USDT_TOKEN_INFO.id,
+      balance: "1500000",
+      token: USDT_TOKEN_INFO,
+    });
+
+    expect(await f.formatBalance(usdt)).toBe(
+      `${colors.green("1.5\u00a0USDT")} ${colors.dim(`(${USDT_TOKEN_INFO.id})`)}`,
+    );
   });
 });
 
