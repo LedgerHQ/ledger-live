@@ -9,12 +9,20 @@ import {
 import type {
   MemberCredentials,
   Trustchain,
-  TrustchainDeviceCallbacks,
   TrustchainMember,
   TrustchainSDK,
 } from "@ledgerhq/ledger-key-ring-protocol/types";
-import type { LedgerSyncJobState } from "../ledgerSyncJobState";
+import { lastValueFrom } from "rxjs";
+import {
+  createDeferred,
+  expectState,
+  fakeTrustchainSdk,
+  namedError,
+  recordJob,
+} from "../internals/ledgerSyncJobTestKit";
 import { removeMemberIntentJob } from "./job";
+
+type RemoveMember = TrustchainSDK["removeMember"];
 
 const MEMBER_CREDENTIALS: MemberCredentials = { pubkey: "pubkey", privatekey: "privatekey" };
 const TRUSTCHAIN: Trustchain = {
@@ -26,12 +34,13 @@ const ROTATED_TRUSTCHAIN: Trustchain = { ...TRUSTCHAIN, walletSyncEncryptionKey:
 const MEMBER: TrustchainMember = { id: "member-2", name: "Other instance", permissions: 0 };
 
 const PENDING = { type: "pending" };
-const PROCESSING = { type: "processing" };
 const AWAITING = {
   type: "awaiting-device-confirmation",
   deviceModelId: DeviceModelId.FLEX,
   deviceName: "Ledger Flex",
 };
+const PROCESSING = { type: "processing" };
+const COMPLETED = { type: "completed" };
 
 const CONNECTION = {
   dmk: {} as never,
@@ -42,27 +51,17 @@ const CONNECTION = {
   compatDeviceWired: false,
 } satisfies DeviceConnectionResult;
 
-type RemoveMember = TrustchainSDK["removeMember"];
-
-function flush() {
-  return new Promise(resolve => setTimeout(resolve, 0));
-}
-
-function namedError(name: string): Error {
-  const error = new Error(name);
-  error.name = name;
-  return error;
-}
-
-function deviceCall(outcome: () => Promise<Trustchain>): jest.MockedFunction<RemoveMember> {
-  return jest.fn(
-    async (
-      _deviceId: string,
-      _trustchain: Trustchain,
-      _credentials: MemberCredentials,
-      _member: TrustchainMember,
-      callbacks?: TrustchainDeviceCallbacks,
-    ) => {
+/** A device call that asks for `confirmations` confirmations, then settles with `outcome`. */
+function deviceCall(
+  outcome: () => Promise<Trustchain>,
+  confirmations = 1,
+): jest.MockedFunction<RemoveMember> {
+  return jest.fn<ReturnType<RemoveMember>, Parameters<RemoveMember>>(
+    async (_deviceId, _trustchain, _credentials, _member, callbacks) => {
+      for (let confirmation = 1; confirmation < confirmations; confirmation++) {
+        callbacks?.onStartRequestUserInteraction?.();
+        callbacks?.onEndRequestUserInteraction?.();
+      }
       callbacks?.onStartRequestUserInteraction?.();
       try {
         return await outcome();
@@ -73,35 +72,33 @@ function deviceCall(outcome: () => Promise<Trustchain>): jest.MockedFunction<Rem
   );
 }
 
-function startJob(removeMember: RemoveMember) {
-  const sdk = { removeMember } as unknown as TrustchainSDK;
+function createJob(removeMember: RemoveMember) {
   const onResult = jest.fn();
-  const states: LedgerSyncJobState[] = [];
-  const complete = jest.fn();
-  const error = jest.fn();
-
-  const subscription = removeMemberIntentJob({
+  const job$ = removeMemberIntentJob({
     deviceConnectionResult: CONNECTION,
     deviceExtractedContext: {} as never,
     input: {
       trustchain: TRUSTCHAIN,
       memberCredentials: MEMBER_CREDENTIALS,
       member: MEMBER,
-      createSessionSdk: () => sdk,
+      createSessionSdk: () => fakeTrustchainSdk({ removeMember }),
     },
     onResult,
-  }).subscribe({ next: state => states.push(state), complete, error });
+  });
+  return { job$, onResult };
+}
 
-  return { states, onResult, complete, error, subscription };
+function startJob(removeMember: RemoveMember) {
+  const { job$, onResult } = createJob(removeMember);
+  return { ...recordJob(job$), onResult };
 }
 
 describe("removeMemberIntentJob", () => {
   it("should remove the member on the session and report the rotated trustchain", async () => {
     const removeMember = deviceCall(() => Promise.resolve(ROTATED_TRUSTCHAIN));
-    const { states, onResult, complete, error } = startJob(removeMember);
+    const { ended, onResult } = startJob(removeMember);
 
-    await flush();
-
+    expect(await ended()).toEqual([PENDING, AWAITING, PROCESSING, COMPLETED]);
     expect(removeMember).toHaveBeenCalledWith(
       "compat-1",
       TRUSTCHAIN,
@@ -109,56 +106,29 @@ describe("removeMemberIntentJob", () => {
       MEMBER,
       expect.any(Object),
     );
-    expect(states).toEqual([PENDING, AWAITING, PROCESSING, { type: "completed" }]);
     expect(onResult).toHaveBeenCalledWith(ROTATED_TRUSTCHAIN);
-    expect(complete).toHaveBeenCalledTimes(1);
-    expect(error).not.toHaveBeenCalled();
   });
 
   it("should let the user retry after a refusal", async () => {
     const removeMember = deviceCall(() => Promise.reject(namedError("UserRefusedOnDevice")));
-    const { states, onResult, complete } = startJob(removeMember);
+    const { waitFor, ended, onResult } = startJob(removeMember);
 
-    await flush();
-    const rejected = states.at(-1) as Extract<LedgerSyncJobState, { type: "device-rejected" }>;
-    expect(rejected.type).toBe("device-rejected");
-
+    const rejected = await waitFor("device-rejected");
     removeMember.mockImplementation(deviceCall(() => Promise.resolve(ROTATED_TRUSTCHAIN)));
     rejected.retry();
-    await flush();
 
+    expect((await ended()).at(-1)).toEqual(COMPLETED);
     expect(removeMember).toHaveBeenCalledTimes(2);
-    expect(states.at(-1)).toEqual({ type: "completed" });
     expect(onResult).toHaveBeenCalledWith(ROTATED_TRUSTCHAIN);
-    expect(complete).toHaveBeenCalledTimes(1);
-  });
-
-  it.each([
-    [new TrustchainAlreadyInitialized(), "already-secured-same-seed"],
-    [new TrustchainAlreadyInitializedWithOtherSeed(), "already-secured-other-seed"],
-    [new TrustchainNotAllowed(), "not-allowed"],
-    [new NoTrustchainInitialized(), "no-trustchain"],
-    [new Error("network down"), "unknown"],
-  ] as const)("should end as failed when the SDK throws %s", async (failure, reason) => {
-    const { states, onResult, complete, error } = startJob(
-      deviceCall(() => Promise.reject(failure)),
-    );
-
-    await flush();
-
-    expect(states.at(-1)).toEqual({ type: "failed", reason, error: failure });
-    expect(onResult).not.toHaveBeenCalled();
-    expect(complete).toHaveBeenCalledTimes(1);
-    expect(error).not.toHaveBeenCalled();
   });
 
   it("should start one call only when retry is invoked twice or after unsubscribe", async () => {
     const removeMember = deviceCall(() => Promise.reject(namedError("UserRefusedOnDevice")));
-    const { states, subscription } = startJob(removeMember);
-    await flush();
-    const rejected = states.at(-1) as Extract<LedgerSyncJobState, { type: "device-rejected" }>;
+    const { states, waitFor, subscription } = startJob(removeMember);
+    await waitFor("device-rejected");
+    const rejected = expectState(states.at(-1), "device-rejected");
 
-    removeMember.mockImplementation(() => new Promise<Trustchain>(() => undefined));
+    removeMember.mockImplementation(() => createDeferred<Trustchain>().promise);
     rejected.retry();
     rejected.retry();
     expect(removeMember).toHaveBeenCalledTimes(2);
@@ -169,61 +139,50 @@ describe("removeMemberIntentJob", () => {
   });
 
   it("should stay processing between and after device confirmations", async () => {
-    const removeMember = jest.fn(
-      async (
-        _deviceId: string,
-        _trustchain: Trustchain,
-        _credentials: MemberCredentials,
-        _member: TrustchainMember,
-        callbacks?: TrustchainDeviceCallbacks,
-      ) => {
-        callbacks?.onStartRequestUserInteraction?.();
-        callbacks?.onEndRequestUserInteraction?.();
-        callbacks?.onStartRequestUserInteraction?.();
-        callbacks?.onEndRequestUserInteraction?.();
-        return ROTATED_TRUSTCHAIN;
-      },
-    );
-    const { states } = startJob(removeMember);
+    const { ended } = startJob(deviceCall(() => Promise.resolve(ROTATED_TRUSTCHAIN), 2));
 
-    await flush();
+    expect(await ended()).toEqual([PENDING, AWAITING, PROCESSING, AWAITING, PROCESSING, COMPLETED]);
+  });
 
-    expect(states).toEqual([
-      PENDING,
-      AWAITING,
-      PROCESSING,
-      AWAITING,
-      PROCESSING,
-      { type: "completed" },
-    ]);
+  it.each([
+    [new TrustchainAlreadyInitialized(), "already-secured-same-seed"],
+    [new TrustchainAlreadyInitializedWithOtherSeed(), "already-secured-other-seed"],
+    [new TrustchainNotAllowed(), "not-allowed"],
+    [new NoTrustchainInitialized(), "no-trustchain"],
+    [new Error("network down"), "unknown"],
+  ] as const)("should end as failed when the SDK throws %s", async (failure, reason) => {
+    const { ended, onResult } = startJob(deviceCall(() => Promise.reject(failure)));
+
+    expect((await ended()).at(-1)).toEqual({ type: "failed", reason, error: failure });
+    expect(onResult).not.toHaveBeenCalled();
   });
 
   it("should error the observable on a device disconnection so DIE shows its Disconnected screen", async () => {
     const disconnection = Object.assign(new Error("unplugged"), {
       _tag: "DeviceDisconnectedWhileSendingError",
     });
-    const { states, onResult, complete, error } = startJob(
-      deviceCall(() => Promise.reject(disconnection)),
-    );
+    const { states, ended, onResult } = startJob(deviceCall(() => Promise.reject(disconnection)));
 
-    await flush();
-
+    await expect(ended()).rejects.toBe(disconnection);
     expect(states).toEqual([PENDING, AWAITING, PROCESSING]);
-    expect(error).toHaveBeenCalledWith(disconnection);
-    expect(complete).not.toHaveBeenCalled();
     expect(onResult).not.toHaveBeenCalled();
   });
 
   it("should emit nothing after unsubscribe", async () => {
-    const { states, onResult, complete, subscription } = startJob(
-      deviceCall(() => Promise.resolve(ROTATED_TRUSTCHAIN)),
-    );
+    const deviceAnswer = createDeferred<Trustchain>();
+    const removeMember = deviceCall(() => deviceAnswer.promise);
+    const cancelled = startJob(removeMember);
+    // A second run on the same device answer settles after the cancelled one, so awaiting it
+    // proves the cancelled run's handlers already ran.
+    const witness = createJob(removeMember);
+    const witnessEnded = lastValueFrom(witness.job$);
 
-    subscription.unsubscribe();
-    await flush();
+    cancelled.subscription.unsubscribe();
+    deviceAnswer.resolve(ROTATED_TRUSTCHAIN);
+    await witnessEnded;
 
-    expect(states).toEqual([PENDING, AWAITING]);
-    expect(onResult).not.toHaveBeenCalled();
-    expect(complete).not.toHaveBeenCalled();
+    expect(witness.onResult).toHaveBeenCalledWith(ROTATED_TRUSTCHAIN);
+    expect(cancelled.states).toEqual([PENDING, AWAITING]);
+    expect(cancelled.onResult).not.toHaveBeenCalled();
   });
 });

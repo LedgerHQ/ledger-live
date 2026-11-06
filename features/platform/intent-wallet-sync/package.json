@@ -19,8 +19,7 @@
     "coverage": "jest --coverage"
   },
   "dependencies": {
-    "@features/platform-device-intent": "workspace:^",
-    "zod": "catalog:"
+    "@features/platform-device-intent": "workspace:^"
   },
   "peerDependencies": {
     "@ledgerhq/device-management-kit": "catalog:",

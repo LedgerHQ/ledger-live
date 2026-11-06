@@ -8,14 +8,22 @@ import {
 } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import {
   TrustchainResultType,
-  type GetOrCreateTrustchainCallbacks,
   type MemberCredentials,
   type Trustchain,
   type TrustchainResult,
   type TrustchainSDK,
 } from "@ledgerhq/ledger-key-ring-protocol/types";
-import type { LedgerSyncJobState } from "../ledgerSyncJobState";
+import { lastValueFrom } from "rxjs";
+import {
+  createDeferred,
+  expectState,
+  fakeTrustchainSdk,
+  namedError,
+  recordJob,
+} from "../internals/ledgerSyncJobTestKit";
 import { addMemberIntentJob } from "./job";
+
+type GetOrCreateTrustchain = TrustchainSDK["getOrCreateTrustchain"];
 
 const MEMBER_CREDENTIALS: MemberCredentials = { pubkey: "pubkey", privatekey: "privatekey" };
 const TRUSTCHAIN: Trustchain = {
@@ -43,71 +51,50 @@ const CONNECTION = {
   compatDeviceWired: true,
 } satisfies DeviceConnectionResult;
 
-type GetOrCreateTrustchain = TrustchainSDK["getOrCreateTrustchain"];
-
-function flush() {
-  return new Promise(resolve => setTimeout(resolve, 0));
-}
-
-function createDeferred<T>() {
-  let resolve: (value: T) => void = () => undefined;
-  const promise = new Promise<T>(settle => {
-    resolve = settle;
-  });
-  return { promise, resolve };
-}
-
-function namedError(name: string): Error {
-  const error = new Error(name);
-  error.name = name;
-  return error;
-}
-
-/** A device call that asks for one confirmation, then settles with `outcome`. */
+/** A device call that asks for `confirmations` confirmations, then settles with `outcome`. */
 function deviceCall(
   outcome: () => Promise<TrustchainResult>,
+  confirmations = 1,
 ): jest.MockedFunction<GetOrCreateTrustchain> {
-  return jest.fn(async (_deviceId, _credentials, callbacks?: GetOrCreateTrustchainCallbacks) => {
-    callbacks?.onStartRequestUserInteraction?.();
-    try {
-      return await outcome();
-    } finally {
-      callbacks?.onEndRequestUserInteraction?.();
-    }
-  });
+  return jest.fn<ReturnType<GetOrCreateTrustchain>, Parameters<GetOrCreateTrustchain>>(
+    async (_deviceId, _credentials, callbacks) => {
+      for (let confirmation = 1; confirmation < confirmations; confirmation++) {
+        callbacks?.onStartRequestUserInteraction?.();
+        callbacks?.onEndRequestUserInteraction?.();
+      }
+      callbacks?.onStartRequestUserInteraction?.();
+      try {
+        return await outcome();
+      } finally {
+        callbacks?.onEndRequestUserInteraction?.();
+      }
+    },
+  );
 }
 
-function startJob(getOrCreateTrustchain: GetOrCreateTrustchain, currentTrustchain?: Trustchain) {
-  const sdk = { getOrCreateTrustchain } as unknown as TrustchainSDK;
-  const createSessionSdk = jest.fn(() => sdk);
+function createJob(getOrCreateTrustchain: GetOrCreateTrustchain, currentTrustchain?: Trustchain) {
+  const createSessionSdk = jest.fn(() => fakeTrustchainSdk({ getOrCreateTrustchain }));
   const onResult = jest.fn();
-  const states: LedgerSyncJobState[] = [];
-  const observer = { error: jest.fn(), complete: jest.fn() };
-
-  const subscription = addMemberIntentJob({
+  const job$ = addMemberIntentJob({
     deviceConnectionResult: CONNECTION,
     deviceExtractedContext: {} as never,
     input: { memberCredentials: MEMBER_CREDENTIALS, currentTrustchain, createSessionSdk },
     onResult,
-  }).subscribe({
-    next: state => states.push(state),
-    error: observer.error,
-    complete: observer.complete,
   });
+  return { job$, onResult, createSessionSdk };
+}
 
-  return { states, onResult, observer, subscription, createSessionSdk };
+function startJob(getOrCreateTrustchain: GetOrCreateTrustchain, currentTrustchain?: Trustchain) {
+  const { job$, onResult, createSessionSdk } = createJob(getOrCreateTrustchain, currentTrustchain);
+  return { ...recordJob(job$), onResult, createSessionSdk };
 }
 
 describe("addMemberIntentJob", () => {
   it("should run the SDK call on the session and report the trustchain", async () => {
     const getOrCreateTrustchain = deviceCall(() => Promise.resolve(RESULT));
-    const { states, onResult, observer, createSessionSdk } = startJob(
-      getOrCreateTrustchain,
-      TRUSTCHAIN,
-    );
+    const { ended, onResult, createSessionSdk } = startJob(getOrCreateTrustchain, TRUSTCHAIN);
 
-    await flush();
-
+    expect(await ended()).toEqual([PENDING, AWAITING, PROCESSING, COMPLETED]);
     expect(createSessionSdk).toHaveBeenCalledWith(CONNECTION);
     expect(getOrCreateTrustchain).toHaveBeenCalledWith(
       "compat-1",
@@ -116,66 +103,44 @@ describe("addMemberIntentJob", () => {
       undefined,
       TRUSTCHAIN,
     );
-    expect(states).toEqual([PENDING, AWAITING, PROCESSING, COMPLETED]);
     expect(onResult).toHaveBeenCalledWith(RESULT);
-    expect(observer.complete).toHaveBeenCalledTimes(1);
-    expect(observer.error).not.toHaveBeenCalled();
   });
 
   it("should stay processing between and after device confirmations", async () => {
-    const getOrCreateTrustchain = jest.fn(
-      async (
-        _deviceId: string,
-        _credentials: MemberCredentials,
-        callbacks?: GetOrCreateTrustchainCallbacks,
-      ) => {
-        callbacks?.onStartRequestUserInteraction?.();
-        callbacks?.onEndRequestUserInteraction?.();
-        callbacks?.onStartRequestUserInteraction?.();
-        callbacks?.onEndRequestUserInteraction?.();
-        return RESULT;
-      },
-    );
-    const { states } = startJob(getOrCreateTrustchain);
+    const { ended } = startJob(deviceCall(() => Promise.resolve(RESULT), 2));
 
-    await flush();
-
-    expect(states).toEqual([PENDING, AWAITING, PROCESSING, AWAITING, PROCESSING, COMPLETED]);
+    expect(await ended()).toEqual([PENDING, AWAITING, PROCESSING, AWAITING, PROCESSING, COMPLETED]);
   });
 
   it("should emit device-rejected on refusal and re-run the call on the same SDK when retried", async () => {
     const getOrCreateTrustchain = deviceCall(() =>
       Promise.reject(namedError("UserRefusedOnDevice")),
     );
-    const { states, onResult, observer, createSessionSdk } = startJob(getOrCreateTrustchain);
+    const { states, waitFor, ended, onResult, createSessionSdk } = startJob(getOrCreateTrustchain);
 
-    await flush();
+    const rejected = await waitFor("device-rejected");
 
-    const rejected = states.at(-1);
-    expect(states.slice(0, 3)).toEqual([PENDING, AWAITING, PROCESSING]);
-    expect(rejected).toMatchObject({ type: "device-rejected", error: expect.any(Error) });
-    expect(observer.complete).not.toHaveBeenCalled();
+    expect(states).toEqual([PENDING, AWAITING, PROCESSING, rejected]);
+    expect(rejected.error).toBeInstanceOf(Error);
 
     getOrCreateTrustchain.mockImplementation(deviceCall(() => Promise.resolve(RESULT)));
-    (rejected as Extract<LedgerSyncJobState, { type: "device-rejected" }>).retry();
-    await flush();
+    rejected.retry();
 
+    expect((await ended()).slice(4)).toEqual([PENDING, AWAITING, PROCESSING, COMPLETED]);
     expect(getOrCreateTrustchain).toHaveBeenCalledTimes(2);
     expect(createSessionSdk).toHaveBeenCalledTimes(1);
-    expect(states.slice(4)).toEqual([PENDING, AWAITING, PROCESSING, COMPLETED]);
     expect(onResult).toHaveBeenCalledWith(RESULT);
-    expect(observer.complete).toHaveBeenCalledTimes(1);
   });
 
   it("should start one call only when retry is invoked twice or after unsubscribe", async () => {
     const getOrCreateTrustchain = deviceCall(() =>
       Promise.reject(namedError("UserRefusedOnDevice")),
     );
-    const { states, subscription } = startJob(getOrCreateTrustchain);
-    await flush();
-    const rejected = states.at(-1) as Extract<LedgerSyncJobState, { type: "device-rejected" }>;
+    const { states, waitFor, subscription } = startJob(getOrCreateTrustchain);
+    await waitFor("device-rejected");
+    const rejected = expectState(states.at(-1), "device-rejected");
 
-    getOrCreateTrustchain.mockImplementation(() => new Promise<TrustchainResult>(() => undefined));
+    getOrCreateTrustchain.mockImplementation(() => createDeferred<TrustchainResult>().promise);
     rejected.retry();
     rejected.retry();
     expect(getOrCreateTrustchain).toHaveBeenCalledTimes(2);
@@ -192,90 +157,81 @@ describe("addMemberIntentJob", () => {
     [new NoTrustchainInitialized(), "no-trustchain"],
     [new Error("network down"), "unknown"],
   ] as const)("should end as failed when the SDK throws %s", async (error, reason) => {
-    const { states, onResult, observer } = startJob(deviceCall(() => Promise.reject(error)));
+    const { ended, onResult } = startJob(deviceCall(() => Promise.reject(error)));
 
-    await flush();
-
-    expect(states.at(-1)).toEqual({ type: "failed", reason, error });
+    expect((await ended()).at(-1)).toEqual({ type: "failed", reason, error });
     expect(onResult).not.toHaveBeenCalled();
-    expect(observer.complete).toHaveBeenCalledTimes(1);
-    expect(observer.error).not.toHaveBeenCalled();
   });
 
   it("should error the observable on a device disconnection so DIE shows its Disconnected screen", async () => {
     const disconnection = Object.assign(new Error("unplugged"), {
       _tag: "DeviceDisconnectedWhileSendingError",
     });
-    const { states, onResult, observer } = startJob(
-      deviceCall(() => Promise.reject(disconnection)),
-    );
+    const { states, ended, onResult } = startJob(deviceCall(() => Promise.reject(disconnection)));
 
-    await flush();
-
+    await expect(ended()).rejects.toBe(disconnection);
     expect(states).toEqual([PENDING, AWAITING, PROCESSING]);
-    expect(observer.error).toHaveBeenCalledWith(disconnection);
-    expect(observer.complete).not.toHaveBeenCalled();
     expect(onResult).not.toHaveBeenCalled();
   });
 
   it("should end as failed when the SDK throws synchronously", async () => {
     const error = new Error("sync");
-    const { states, observer } = startJob(
-      jest.fn(() => {
-        throw error;
+    const getOrCreateTrustchain = jest.fn<
+      ReturnType<GetOrCreateTrustchain>,
+      Parameters<GetOrCreateTrustchain>
+    >(() => {
+      throw error;
+    });
+    const { ended } = startJob(getOrCreateTrustchain);
+
+    expect(await ended()).toEqual([PENDING, { type: "failed", reason: "unknown", error }]);
+  });
+
+  it("should end as failed when the session SDK cannot be built", async () => {
+    const error = new Error("no sdk");
+    const onResult = jest.fn();
+
+    const { ended } = recordJob(
+      addMemberIntentJob({
+        deviceConnectionResult: CONNECTION,
+        deviceExtractedContext: {} as never,
+        input: {
+          memberCredentials: MEMBER_CREDENTIALS,
+          createSessionSdk: () => {
+            throw error;
+          },
+        },
+        onResult,
       }),
     );
 
-    await flush();
-
-    expect(states).toEqual([PENDING, { type: "failed", reason: "unknown", error }]);
-    expect(observer.complete).toHaveBeenCalledTimes(1);
-  });
-
-  it("should end as failed when the session SDK cannot be built", () => {
-    const error = new Error("no sdk");
-    const onResult = jest.fn();
-    const states: LedgerSyncJobState[] = [];
-    const complete = jest.fn();
-
-    addMemberIntentJob({
-      deviceConnectionResult: CONNECTION,
-      deviceExtractedContext: {} as never,
-      input: {
-        memberCredentials: MEMBER_CREDENTIALS,
-        createSessionSdk: () => {
-          throw error;
-        },
-      },
-      onResult,
-    }).subscribe({ next: state => states.push(state), complete });
-
-    expect(states).toEqual([{ type: "failed", reason: "unknown", error }]);
-    expect(complete).toHaveBeenCalledTimes(1);
+    expect(await ended()).toEqual([{ type: "failed", reason: "unknown", error }]);
+    expect(onResult).not.toHaveBeenCalled();
   });
 
   it("should emit nothing after unsubscribe", async () => {
-    const { promise, resolve } = createDeferred<TrustchainResult>();
-    const getOrCreateTrustchain = jest.fn(
-      async (
-        _deviceId: string,
-        _credentials: MemberCredentials,
-        callbacks?: GetOrCreateTrustchainCallbacks,
-      ) => {
-        const result = await promise;
-        callbacks?.onStartRequestUserInteraction?.();
-        callbacks?.onEndRequestUserInteraction?.();
-        return result;
-      },
-    );
-    const { states, onResult, observer, subscription } = startJob(getOrCreateTrustchain);
+    const deviceAnswer = createDeferred<TrustchainResult>();
+    const getOrCreateTrustchain = jest.fn<
+      ReturnType<GetOrCreateTrustchain>,
+      Parameters<GetOrCreateTrustchain>
+    >(async (_deviceId, _credentials, callbacks) => {
+      const result = await deviceAnswer.promise;
+      callbacks?.onStartRequestUserInteraction?.();
+      callbacks?.onEndRequestUserInteraction?.();
+      return result;
+    });
+    const cancelled = startJob(getOrCreateTrustchain);
+    // A second run on the same device answer settles after the cancelled one, so awaiting it
+    // proves the cancelled run's handlers already ran.
+    const witness = createJob(getOrCreateTrustchain);
+    const witnessEnded = lastValueFrom(witness.job$);
 
-    subscription.unsubscribe();
-    resolve(RESULT);
-    await flush();
+    cancelled.subscription.unsubscribe();
+    deviceAnswer.resolve(RESULT);
+    await witnessEnded;
 
-    expect(states).toEqual([PENDING]);
-    expect(onResult).not.toHaveBeenCalled();
-    expect(observer.complete).not.toHaveBeenCalled();
+    expect(witness.onResult).toHaveBeenCalledWith(RESULT);
+    expect(cancelled.states).toEqual([PENDING]);
+    expect(cancelled.onResult).not.toHaveBeenCalled();
   });
 });
