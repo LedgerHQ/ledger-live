@@ -805,6 +805,7 @@ describe("agent-intent enroll", () => {
       expect(hostOptions).toMatchObject({
         environment: "production",
         relayBaseUrl: "https://trustchain.api.live.ledger.com",
+        webSocketFactory: expect.any(Function),
         timeouts: { candidateTimeoutMs: 30 * 60_000, completionTimeoutMs: 30 * 60_000 },
       });
       expect(requestInputs[0]).toMatchObject({
