@@ -24,6 +24,7 @@ jest.mock(
     useAppConfigToolProps: () => ({ marker: "app-config-props" }),
     useCoinConfigToolProps: () => ({ marker: "coin-config-props" }),
     useAccountDetailToolProps: () => ({ marker: "account-detail-props" }),
+    usePredictionsToolProps: () => ({ marker: "predictions-props" }),
     useDeviceOnboardingToolState: () => ({
       log: [],
       machineContext: null,
@@ -113,6 +114,7 @@ describe("DevToolsScreen", () => {
         }),
       },
       { id: "account-detail", config: { marker: "account-detail-props" } },
+      { id: "predictions", config: { marker: "predictions-props" } },
     ]);
     expect(props.screenOptions.contentStyle).toEqual([expect.anything(), { paddingBottom: 34 }]);
   });
