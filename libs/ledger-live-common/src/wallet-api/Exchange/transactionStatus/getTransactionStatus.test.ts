@@ -394,5 +394,27 @@ describe("getTransactionStatus", () => {
         operationHash: "0xpayout",
       });
     });
+
+    it("uses the final amount stored on the entry when the swap status has none", async () => {
+      const finished = receiverWithEntry();
+      finished.swapHistory[0] = {
+        ...finished.swapHistory[0],
+        status: "finished",
+        operationId: "0xpayout",
+        finalAmount: new BigNumber("0.0019"),
+      };
+      mockedFetchTransactionSwapStatus.mockResolvedValueOnce(undefined);
+
+      const response = await getTransactionStatus(
+        { swapId: "withdraw-1" },
+        { accounts: [makeAccount("from"), finished] },
+      );
+
+      expect(response).toMatchObject({
+        status: "finished",
+        finalAmount: "190000",
+        receivedAmount: "190000",
+      });
+    });
   });
 });
