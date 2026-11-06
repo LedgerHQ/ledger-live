@@ -20,7 +20,7 @@ export function useLedgerSyncWatch() {
 }
 
 /** What the user sees of the watch loop, and how they ask it for an early sync. */
-export function useLedgerSyncUserState() {
+export function useWalletSyncUserState() {
   const dispatch = useDispatch();
   const visualPending = useSelector(selectLedgerSyncVisualPending);
   const walletSyncError = useSelector(selectLedgerSyncError);

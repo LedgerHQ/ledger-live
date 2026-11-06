@@ -14,7 +14,7 @@ Wires together `@shared/cloud-sync` (network), `@shared/cloud-sync-module` (aggr
 - `getLkrpSdk` / `getCloudSyncSdk` / `getLkrpQrCode` / `getLedgerSyncStatus` — hand those services to hooks through `dispatch`: the two SDKs, the QR code pairings and the backend status
 - `startLedgerSyncWatch` / `stopLedgerSyncWatch` / `refreshLedgerSync` — run the watch loop in the middleware while the app is mounted, and ask it for an early sync
 - `ledgerSyncReducer` / `selectLedgerSyncVisualPending` / `selectLedgerSyncError` — what the loop shows of its runs, under `state.ledgerSync`
-- `useLedgerSyncWatch` / `useLedgerSyncUserState` — run the watch loop while a component is mounted, and read what it shows with the user's refresh
+- `useLedgerSyncWatch` / `useWalletSyncUserState` — run the watch loop while a component is mounted, and read what it shows with the user's refresh
 
 ## Related documentation
 
