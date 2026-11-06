@@ -179,18 +179,14 @@ jobs:
           path: .startup-perf
           # Only the scripts: this folder's package.json would clash in Nx with the ref's own copy.
           sparse-checkout: |
+            /e2e/tooling/startup-perf/adapt-mise-toml.sh
             /e2e/tooling/startup-perf/prepare-build.sh
             /e2e/tooling/startup-perf/verify-build.sh
           sparse-checkout-cone-mode: false
           persist-credentials: false
 
       - name: Adapt mise.toml of older commits
-        run: |
-          awk '/^\[/{section=$0} section=="[plugins]"{next} section=="[tools]" && /^npm *=/{next} {print}' mise.toml > "$RUNNER_TEMP/mise.toml"
-          if ! cmp -s mise.toml "$RUNNER_TEMP/mise.toml"; then
-            diff mise.toml "$RUNNER_TEMP/mise.toml" || true
-            cp "$RUNNER_TEMP/mise.toml" mise.toml
-          fi
+        run: bash .startup-perf/e2e/tooling/startup-perf/adapt-mise-toml.sh
 
       # No remote Nx, pnpm or Gradle cache: they would be written with develop's role for another ref.
       - name: Setup the caches
@@ -283,18 +279,14 @@ jobs:
           path: .startup-perf
           # Only the scripts: this folder's package.json would clash in Nx with the ref's own copy.
           sparse-checkout: |
+            /e2e/tooling/startup-perf/adapt-mise-toml.sh
             /e2e/tooling/startup-perf/prepare-build.sh
             /e2e/tooling/startup-perf/verify-build.sh
           sparse-checkout-cone-mode: false
           persist-credentials: false
 
       - name: Adapt mise.toml of older commits
-        run: |
-          awk '/^\[/{section=$0} section=="[plugins]"{next} section=="[tools]" && /^npm *=/{next} {print}' mise.toml > "$RUNNER_TEMP/mise.toml"
-          if ! cmp -s mise.toml "$RUNNER_TEMP/mise.toml"; then
-            diff mise.toml "$RUNNER_TEMP/mise.toml" || true
-            cp "$RUNNER_TEMP/mise.toml" mise.toml
-          fi
+        run: bash .startup-perf/e2e/tooling/startup-perf/adapt-mise-toml.sh
 
       # No remote caches, as in the Android build.
       - name: setup caches
@@ -472,15 +464,7 @@ jobs:
           done
 
       - name: Install Maestro ${{ env.MAESTRO_VERSION }}
-        run: |
-          set -euo pipefail
-          curl -fsSL -o "$RUNNER_TEMP/maestro.zip" "https://github.com/mobile-dev-inc/maestro/releases/download/cli-${MAESTRO_VERSION}/maestro.zip"
-          echo "${MAESTRO_SHA256}  $RUNNER_TEMP/maestro.zip" | sha256sum -c -
-          mkdir -p "$RUNNER_TEMP/maestro-cli"
-          unzip -q "$RUNNER_TEMP/maestro.zip" -d "$RUNNER_TEMP/maestro-cli"
-          BIN=$(dirname "$(find "$RUNNER_TEMP/maestro-cli" -type f -name maestro -path "*/bin/*" | head -1)")
-          echo "$BIN" >> "$GITHUB_PATH"
-          "$BIN/maestro" --version
+        run: bash e2e/tooling/startup-perf/install-maestro.sh
 
       - name: Report the AVD read-ahead
         run: cat "${RUNNER_TEMP}/avd-read-ahead.log" 2>/dev/null || echo "No preinstalled AVD to read ahead."
@@ -638,15 +622,7 @@ jobs:
           done
 
       - name: Install Maestro ${{ env.MAESTRO_VERSION }}
-        run: |
-          set -euo pipefail
-          curl -fsSL -o "$RUNNER_TEMP/maestro.zip" "https://github.com/mobile-dev-inc/maestro/releases/download/cli-${MAESTRO_VERSION}/maestro.zip"
-          echo "${MAESTRO_SHA256}  $RUNNER_TEMP/maestro.zip" | shasum -a 256 -c -
-          mkdir -p "$RUNNER_TEMP/maestro-cli"
-          unzip -q "$RUNNER_TEMP/maestro.zip" -d "$RUNNER_TEMP/maestro-cli"
-          BIN=$(dirname "$(find "$RUNNER_TEMP/maestro-cli" -type f -name maestro -path "*/bin/*" | head -1)")
-          echo "$BIN" >> "$GITHUB_PATH"
-          "$BIN/maestro" --version
+        run: bash e2e/tooling/startup-perf/install-maestro.sh
 
       - name: Create and boot two simulators
         timeout-minutes: 20

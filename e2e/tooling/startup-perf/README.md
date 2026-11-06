@@ -12,6 +12,8 @@ this package; the measure jobs check out this folder, `e2e/mobile/userdata` and,
 | ------------------------- | ----------------------------------------------------------------------------------- |
 | `prepare-build.sh`        | Makes the checked-out ref's E2E prerelease build prod-like, before `e2e:build`      |
 | `verify-build.sh`         | Checks the built binary: no `MOCK`/`DETOX`, `FORCE_DEBUG_VISIBLE=1`, real blur      |
+| `adapt-mise-toml.sh`      | Drops what an older ref's `mise.toml` declares that no longer installs              |
+| `install-maestro.sh`      | Installs the pinned Maestro, checked against its SHA-256                            |
 | `run.mjs`                 | The CLI: installs, injects and launches A and B, writes `samples.jsonl`             |
 | `android.mjs`, `ios.mjs`  | The two `Platform`s: install, launch, pause, process start, through adb or simctl   |
 | `performance-screen.mjs`  | Reads App startup time and the startup events through Maestro                       |
