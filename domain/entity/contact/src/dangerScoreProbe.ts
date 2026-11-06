@@ -1,0 +1,10 @@
+export const dangerScoreProbe1 = 1;
+export const dangerScoreProbe2 = 2;
+export const dangerScoreProbe3 = 3;
+export const dangerScoreProbe4 = 4;
+export const dangerScoreProbe5 = 5;
+export const dangerScoreProbe6 = 6;
+export const dangerScoreProbe7 = 7;
+export const dangerScoreProbe8 = 8;
+export const dangerScoreProbe9 = 9;
+export const dangerScoreProbe10 = 10;
