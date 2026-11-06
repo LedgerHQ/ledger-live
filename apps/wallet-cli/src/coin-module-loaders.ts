@@ -1,7 +1,7 @@
 import type { CoinModuleLoader } from "@ledgerhq/live-common/coin-modules/types";
 
 /**
- * Wallet-cli-specific coin-module loaders (bitcoin, evm, solana only).
+ * Wallet-cli-specific coin-module loaders (bitcoin, evm, solana, xrp).
  *
  * We define these inline instead of importing the shared coinModuleLoaders from live-common
  * because Bun's --compile bundler statically resolves every import — pulling in the shared
@@ -81,5 +81,32 @@ export const walletCliLoaders: CoinModuleLoader[] = [
       import("@ledgerhq/live-common/families/solana/coinModuleApi").then(
         m => m.createLocalSolanaApi,
       ),
+  },
+  {
+    family: "xrp",
+    supportedCoins: ["ripple", "ripple_testnet"],
+    accountDescriptorType: "address",
+    loadSetup: () =>
+      import("@ledgerhq/live-common/families/xrp/setup").then(setup => {
+        setup.setXrpLdmkEnabled(true);
+        return setup;
+      }),
+    loadTransaction: () =>
+      import("@ledgerhq/live-common/families/xrp/transaction").then(m => m.default),
+    loadDeviceTxConfig: () =>
+      import("@ledgerhq/live-common/families/xrp/deviceTransactionConfig").then(m => m.default),
+    loadWalletApiAdapter: () =>
+      import("@ledgerhq/live-common/families/xrp/walletApiAdapter").then(m => m.default),
+    loadPlatformAdapter: () =>
+      import("@ledgerhq/live-common/families/xrp/platformAdapter").then(m => m.default),
+    loadSigner: async () => {
+      const setup = await import("@ledgerhq/live-common/families/xrp/setup");
+      setup.setXrpLdmkEnabled(true);
+      return import("@ledgerhq/live-common/families/xrp/signer").then(m => m.default);
+    },
+    loadBridgeExtensions: () =>
+      import("@ledgerhq/live-common/families/xrp/bridgeExtensions").then(m => m.default),
+    loadLocalApi: () =>
+      import("@ledgerhq/live-common/families/xrp/coinModuleApi").then(m => m.createLocalXrpApi),
   },
 ];

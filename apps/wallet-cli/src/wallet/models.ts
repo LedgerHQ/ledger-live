@@ -74,7 +74,7 @@ export const OperationTypeSchema = z.string() as z.ZodType<OperationType>; // Ty
 // Flat, fully serializable operation.
 // No subOperations / internalOperations recursion — those are flattened at the compatibility layer.
 export type SendEvent =
-  | { type: "prepared"; recipient: string; amount: string; fees: string }
+  | { type: "prepared"; recipient: string; amount: string; fees: string; destinationTag?: number }
   | { type: "device-streaming"; progress: number; index: number; total: number }
   | { type: "device-signature-requested" }
   | { type: "device-signature-granted" }

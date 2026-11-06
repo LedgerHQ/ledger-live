@@ -11,7 +11,6 @@ import { loadMemberCredentials, savePrivateKey } from "../../key-ring/keychain";
 import { _setTestKeychain } from "../../key-ring/keychain-entry";
 import { _setTestLkrpSdk } from "../../key-ring/lkrp-sdk";
 import { loadDomainKey, loadKeyRing } from "../../key-ring/load-key-ring";
-import { APP_NAME } from "../../session/session-store";
 import { runCli, storedApiAuthPubkey, type RunResult } from "../../testing/cli-runner";
 import { makeSessionDir } from "../../testing/session-fixture";
 import { ETH_DESCRIPTOR } from "../../testing/constants";
@@ -396,7 +395,7 @@ describe("ring — the API auth key stays separate from a password-protected rin
     expect(await storedApiAuthPubkey(fixture.env)).toBe(before);
 
     // Reset empties the accounts but keeps the ring, so re-add the one the quote needs on top of it.
-    const sessionPath = join(fixture.env.XDG_STATE_HOME, APP_NAME, "session.yaml");
+    const sessionPath = fixture.sessionPath;
     const session = YAML.parse(await Bun.file(sessionPath).text()) as Record<string, unknown>;
     writeFileSync(sessionPath, YAML.stringify({ ...session, accounts }));
     expect((await runQuoteAndGetAuthSignature(fixture.env)).credential.publicKey).toBe(before);
