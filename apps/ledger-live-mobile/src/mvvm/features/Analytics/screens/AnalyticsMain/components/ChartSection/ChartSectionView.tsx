@@ -5,11 +5,16 @@ import { LineChart } from "LLM/components/LineChart";
 import type { LineChartProps } from "LLM/components/LineChart";
 import type { AnalyticsChartRange } from "@ledgerhq/wallet-analytics";
 import { ChartSectionHeaderView } from "./ChartSectionHeaderView";
-import { CHART_SECTION_TEST_IDS, type ChartSectionViewModel } from "./types";
+import {
+  CHART_SECTION_TEST_IDS,
+  type ChartSectionSlots,
+  type ChartSectionViewModel,
+} from "./types";
 
-type Props = Readonly<{
-  viewModel: ChartSectionViewModel;
-}>;
+type Props = ChartSectionSlots &
+  Readonly<{
+    viewModel: ChartSectionViewModel;
+  }>;
 
 /**
  * Memoized chart subtree. The header re-renders on every scrub frame; keeping
@@ -21,14 +26,19 @@ const ChartSectionChart = React.memo(function ChartSectionChart(
   return <LineChart {...props} />;
 });
 
-export function ChartSectionView({ viewModel }: Props) {
+export function ChartSectionView({ viewModel, filters, headerContent, plotContent }: Props) {
   const { header, chart } = viewModel;
 
   return (
     <Box lx={containerStyle} testID={CHART_SECTION_TEST_IDS.root}>
-      <ChartSectionHeaderView viewModel={header} />
-      <Box lx={chartContainerStyle}>
-        <ChartSectionChart {...chart} />
+      {headerContent ? (
+        <Box lx={slotStyle}>{headerContent}</Box>
+      ) : (
+        <ChartSectionHeaderView viewModel={header} />
+      )}
+      {filters ? <Box lx={slotStyle}>{filters}</Box> : null}
+      <Box lx={slotStyle}>
+        <ChartSectionChart {...chart} plotContent={plotContent} />
       </Box>
     </Box>
   );
@@ -38,6 +48,6 @@ const containerStyle: LumenViewStyle = {
   gap: "s24",
 };
 
-const chartContainerStyle: LumenViewStyle = {
+const slotStyle: LumenViewStyle = {
   paddingHorizontal: "s16",
 };
