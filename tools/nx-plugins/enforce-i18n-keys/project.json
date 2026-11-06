@@ -49,7 +49,8 @@
         "!{workspaceRoot}/shared/**/node_modules/**",
         "!{workspaceRoot}/shared/**/lib/**",
         "!{workspaceRoot}/shared/**/lib-es/**",
-        "!{workspaceRoot}/shared/**/dist/**"
+        "!{workspaceRoot}/shared/**/dist/**",
+        { "externalDependencies": ["typescript"] }
       ],
       "options": {
         "cwd": "{workspaceRoot}",

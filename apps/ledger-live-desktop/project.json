@@ -29,7 +29,8 @@
         "^default",
         {
           "env": "CI_OS"
-        }
+        },
+        { "externalDependencies": [] }
       ]
     },
     "test": {
@@ -41,7 +42,8 @@
         "^default",
         {
           "env": "CI_OS"
-        }
+        },
+        { "externalDependencies": [] }
       ]
     }
   }

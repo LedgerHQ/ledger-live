@@ -8,6 +8,7 @@ const projectJson = require("./project.json");
 /** Input globs of the cached `lint:boundaries` target, named inputs expanded. */
 const lintBoundariesGlobs = projectJson.targets["lint:boundaries"].inputs
   .flatMap(input => projectJson.namedInputs[input] ?? [input])
+  .filter(input => typeof input === "string")
   .map(input => input.replace("{workspaceRoot}/", ""));
 
 /**
