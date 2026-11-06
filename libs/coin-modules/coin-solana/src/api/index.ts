@@ -67,9 +67,9 @@ export function createApi() {
       _context: SolanaContext,
       tx: string,
       signature: string[],
-      _options?: { pubkey?: string },
+      options?: { pubkey?: string },
     ) => {
-      return combine(tx, signature);
+      return combine(tx, signature, options?.pubkey);
     },
     craftTransaction: async (
       context: SolanaContext,
