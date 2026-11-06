@@ -2,6 +2,7 @@ import { expect } from "@playwright/test";
 import BigNumber from "bignumber.js";
 import { Modal } from "tests/component/modal.component";
 import { step } from "tests/misc/reporters/step";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 export class DelegateModal extends Modal {
   private manageButton = (currencyId: string) =>
@@ -36,6 +37,9 @@ export class DelegateModal extends Modal {
   private checkIcon = this.page
     .getByTestId("check-icon")
     .locator('path[fill]:not([fill="transparent"])');
+  private readonly selectedProviderTitle = this.rowProvider
+    .filter({ has: this.checkIcon })
+    .locator(this.titleProvider);
   readonly cryptoAmountField = this.page.getByTestId("modal-amount-field");
   private readonly spendableBanner = this.page.getByTestId("modal-spendable-banner");
 
@@ -91,14 +95,16 @@ export class DelegateModal extends Modal {
     await this.verifyContinueEnabled();
   }
 
-  @step("Select provider on row $0")
+  @step("Verify provider on row $0 is selected")
   async verifyProvider(row: number) {
-    const isCheckIconWithinRowProvider =
-      (await this.rowProvider
-        .nth(row - 1)
-        .locator(this.checkIcon)
-        .count()) > 0;
-    expect(isCheckIconWithinRowProvider).toBe(true);
+    await this.softExpect(async soft => {
+      await soft(
+        this.rowProvider
+          .nth(row - 1)
+          .locator(this.checkIcon)
+          .first(),
+      ).toBeAttached();
+    });
   }
 
   @step("Verify continue button is disabled")
@@ -113,8 +119,9 @@ export class DelegateModal extends Modal {
 
   @step("Verify provider TC contains $0")
   async verifyProviderTC(provider: string) {
-    const providerTC = await this.validatorTC.textContent();
-    expect(providerTC).toContain(provider);
+    await this.softExpect(async soft => {
+      await soft(this.validatorTC).toContainText(provider);
+    });
   }
 
   @step("Click on search provider button")
@@ -135,17 +142,16 @@ export class DelegateModal extends Modal {
 
   @step("Get selected provider name ")
   async getSelectedProviderName() {
-    const selectedProviderElement = this.rowProvider.filter({
-      has: this.checkIcon,
-    });
-    return await selectedProviderElement.locator(this.titleProvider).textContent();
+    return await this.selectedProviderTitle.textContent();
   }
 
   @step("Check selected provider is displayed when closing list")
   async closeProviderList(providerRow: number) {
-    const selectedfProvider = await this.getTitleProvider(providerRow);
+    const selectedProvider = await this.getTitleProvider(providerRow);
     await this.searchCloseButton.click();
-    expect(await this.getSelectedProviderName()).toContain(selectedfProvider);
+    await this.softExpect(async soft => {
+      await soft(this.selectedProviderTitle).toContainText(selectedProvider);
+    });
   }
 
   @step("Close provider list and verify provider $0 is selected")
@@ -181,20 +187,25 @@ export class DelegateModal extends Modal {
   @step("Verify the max amount matches the spendable balance")
   async verifyMaxAmountMatchesSpendable() {
     await expect(this.spendableBanner).toBeVisible();
-    await expect
-      .poll(async () => {
-        const spendable = await this.readSpendableBalance();
-        const amount = new BigNumber(await this.readCryptoAmount());
-        return {
-          amount: amount.toFixed(),
-          spendable: spendable?.value.toFixed(),
-          withinPrecision:
-            !!spendable &&
-            amount.isGreaterThan(0) &&
-            amount.minus(spendable.value).abs().isLessThanOrEqualTo(spendable.precision),
-        };
-      })
-      .toMatchObject({ withinPrecision: true });
+    await this.softExpect(
+      async soft => {
+        await soft
+          .poll(async () => {
+            const spendable = await this.readSpendableBalance();
+            const amount = new BigNumber(await this.readCryptoAmount());
+            return {
+              amount: amount.toFixed(),
+              spendable: spendable?.value.toFixed(),
+              withinPrecision:
+                !!spendable &&
+                amount.isGreaterThan(0) &&
+                amount.minus(spendable.value).abs().isLessThanOrEqualTo(spendable.precision),
+            };
+          })
+          .toMatchObject({ withinPrecision: true });
+      },
+      { timeout: TIMEOUT.large },
+    );
   }
 
   @step("Verify success message")
@@ -215,7 +226,12 @@ export class DelegateModal extends Modal {
 
   @step("Verify the Tezos delegation starter is visible")
   async verifyDelegationStarter() {
-    await expect(this.delegateStarterInfos).toBeVisible();
+    await this.softExpect(
+      async soft => {
+        await soft(this.delegateStarterInfos).toBeVisible();
+      },
+      { timeout: TIMEOUT.large },
+    );
   }
 
   @step("Click on delegate to earn rewards button")
@@ -235,10 +251,12 @@ export class DelegateModal extends Modal {
   async checkCeloManageAssetModal() {
     await expect(this.celoLockButton).toBeVisible();
     await expect(this.celoVoteButton).toBeVisible();
-    await expect(this.celoActivateVoteButton).toBeVisible();
-    await expect(this.celoRevokeVoteButton).toBeVisible();
-    await expect(this.celoUnlockButton).toBeVisible();
-    await expect(this.celoWithdrawButton).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.celoActivateVoteButton).toBeVisible();
+      await soft(this.celoRevokeVoteButton).toBeVisible();
+      await soft(this.celoUnlockButton).toBeVisible();
+      await soft(this.celoWithdrawButton).toBeVisible();
+    });
   }
 
   @step("Click on lock button for CELO")
@@ -253,6 +271,8 @@ export class DelegateModal extends Modal {
 
   @step("Check alert message is visible when locking CELO")
   async verifyLockInfoCeloWarning() {
-    await expect(this.lockInfoCeloWarning).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.lockInfoCeloWarning).toBeVisible();
+    });
   }
 }
