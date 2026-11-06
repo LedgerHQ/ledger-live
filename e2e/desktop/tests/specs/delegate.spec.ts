@@ -166,6 +166,7 @@ async function completeProviderStep(app: Application, provider: string, step: Pr
 for (const scenario of delegateScenarios) {
   const { delegate } = scenario;
   const { currency } = delegate.account;
+  const isBroadcast = IS_BROADCAST_RUN && !scenario.disableBroadcast;
   const delegateLock = exclusiveLockFor({
     broadcastAccounts: scenario.disableBroadcast ? [] : [delegate.account],
   });
@@ -204,10 +205,13 @@ for (const scenario of delegateScenarios) {
         await app.delegate.verifySuccessMessage();
         await app.delegate.clickViewDetailsButton();
 
+        if (isBroadcast) {
+          await app.delegateDrawer.waitForDelegationConfirmed(delegate);
+        }
         await app.delegateDrawer.verifyDelegationSummary(delegate, scenario.transactionType);
         await app.drawer.closeDrawer();
 
-        if (IS_BROADCAST_RUN && !scenario.disableBroadcast) {
+        if (isBroadcast) {
           await app.layout.syncAccounts();
           await app.account.clickOnLastOperationAndReturnStatus();
           await app.delegateDrawer.expectDelegationInfos(delegate);
