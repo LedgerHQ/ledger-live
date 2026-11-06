@@ -37,4 +37,5 @@ export const lldFamilyLoaders: LLDFamilyLoader[] = [
   { family: "ton", importFamily: () => import("./ton/index") },
   { family: "tron", importFamily: () => import("./tron/index") },
   { family: "xrp", importFamily: () => import("./xrp/index") },
+  { family: "zcash", importFamily: () => import("./zcash/index") },
 ];

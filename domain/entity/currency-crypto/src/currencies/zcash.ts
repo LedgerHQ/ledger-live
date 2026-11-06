@@ -9,7 +9,7 @@ export const zcash = currency({
   ticker: "ZEC",
   scheme: "zcash",
   color: "#3790ca",
-  family: "bitcoin",
+  family: "zcash",
   blockAvgTime: 150,
   units: [
     {

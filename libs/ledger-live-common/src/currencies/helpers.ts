@@ -12,8 +12,10 @@ export function isTokenCurrency<T extends { type: string }>(
   return currency.type === "TokenCurrency";
 }
 
+const UTXO_FAMILIES = new Set(["bitcoin", "cardano", "zcash"]);
+
 export function isUTXOCompliant(currencyFamily: string): boolean {
-  return currencyFamily === "bitcoin" || currencyFamily === "cardano";
+  return UTXO_FAMILIES.has(currencyFamily);
 }
 
 export type CurrencyFilters = {

@@ -176,6 +176,12 @@ import type {
   TransactionStatus as xrpTransactionStatus,
   TransactionStatusRaw as xrpTransactionStatusRaw,
 } from "../families/xrp/types";
+import type {
+  Transaction as zcashTransaction,
+  TransactionRaw as zcashTransactionRaw,
+  TransactionStatus as zcashTransactionStatus,
+  TransactionStatusRaw as zcashTransactionStatusRaw,
+} from "@ledgerhq/coin-zcash/types";
 
 export type Transaction =
   | aleoTransaction
@@ -207,7 +213,8 @@ export type Transaction =
   | tonTransaction
   | tronTransaction
   | vechainTransaction
-  | xrpTransaction;
+  | xrpTransaction
+  | zcashTransaction;
 
 export type TransactionRaw =
   | aleoTransactionRaw
@@ -239,7 +246,8 @@ export type TransactionRaw =
   | tonTransactionRaw
   | tronTransactionRaw
   | vechainTransactionRaw
-  | xrpTransactionRaw;
+  | xrpTransactionRaw
+  | zcashTransactionRaw;
 
 export type TransactionStatus =
   | aleoTransactionStatus
@@ -270,7 +278,8 @@ export type TransactionStatus =
   | tonTransactionStatus
   | tronTransactionStatus
   | vechainTransactionStatus
-  | xrpTransactionStatus;
+  | xrpTransactionStatus
+  | zcashTransactionStatus;
 
 export type TransactionStatusRaw =
   | aleoTransactionStatusRaw
@@ -301,4 +310,5 @@ export type TransactionStatusRaw =
   | tonTransactionStatusRaw
   | tronTransactionStatusRaw
   | vechainTransactionStatusRaw
-  | xrpTransactionStatusRaw;
+  | xrpTransactionStatusRaw
+  | zcashTransactionStatusRaw;

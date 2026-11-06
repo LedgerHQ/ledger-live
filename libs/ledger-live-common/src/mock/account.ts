@@ -79,6 +79,7 @@ export function genAccountLegacy(id: number | string, opts: GenAccountOptions = 
           });
           break;
         case "bitcoin":
+        case "zcash":
           (account as BitcoinAccount).bitcoinResources = {
             utxos: [],
             walletAccount: undefined,

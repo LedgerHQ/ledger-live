@@ -24,7 +24,6 @@ import {
 import { Transaction } from "../coin-modules/transaction-types";
 import { prepareMessageToSign } from "../hw/signMessage/index";
 import { getAccountBridge } from "../bridge";
-import { resolveFamily } from "../bridge/zcashRouting";
 import { Exchange } from "../exchange/types";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { type AccountNamesState } from "@domain/entity-account-name";
@@ -32,6 +31,10 @@ import { getWalletAccount } from "@ledgerhq/coin-bitcoin/getWalletAccount";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { normalizePublicKeyForAddress } from "@ledgerhq/coin-tezos/logic-public";
 import { AccountPublicKeyUnavailable } from "../errors";
+
+// Zcash shares bitcoin's account model (xpub, transparent addresses), so live apps reach it
+// through the same bitcoin-family methods.
+const BITCOIN_LIKE_FAMILIES = new Set(["bitcoin", "zcash"]);
 
 export function translateContent(content: string | TranslatableString, locale = "en"): string {
   if (!content || typeof content === "string") return content;
@@ -120,9 +123,9 @@ export async function signTransactionLogic(
     const parentAccount = getParentAccount(account, accounts);
 
     // The family of the bridge that serves the account, which the converted transaction
-    // carries: `zcash` for Zcash, whose currency family is `bitcoin`.
+    // carries: `zcash` for Zcash, whose live apps name it `bitcoin`.
     const accountCurrency = isTokenAccount(account) ? parentAccount?.currency : account.currency;
-    const accountFamily = accountCurrency && resolveFamily(accountCurrency);
+    const accountFamily = accountCurrency?.family;
 
     const mainAccount = getMainAccount(account, parentAccount);
     const currency = tokenCurrency
@@ -278,7 +281,7 @@ export const bitcoinFamilyAccountGetAddressLogic = (
     return Promise.reject(new Error("account not found"));
   }
 
-  if (!isAccount(account) || account.currency.family !== "bitcoin") {
+  if (!isAccount(account) || !BITCOIN_LIKE_FAMILIES.has(account.currency.family)) {
     tracking.bitcoinFamilyAccountAddressFail(manifest);
     return Promise.reject(new Error("account requested is not a bitcoin family account"));
   }
@@ -332,7 +335,7 @@ export const bitcoinFamilyAccountGetPublicKeyLogic = async (
     return Promise.reject(new Error("account not found"));
   }
 
-  if (!isAccount(account) || account.currency.family !== "bitcoin") {
+  if (!isAccount(account) || !BITCOIN_LIKE_FAMILIES.has(account.currency.family)) {
     tracking.bitcoinFamilyAccountPublicKeyFail(manifest);
     return Promise.reject(new Error("account requested is not a bitcoin family account"));
   }
@@ -435,7 +438,7 @@ export const bitcoinFamilyAccountGetXPubLogic = (
     return Promise.reject(new Error("account not found"));
   }
 
-  if (!isAccount(account) || account.currency.family !== "bitcoin") {
+  if (!isAccount(account) || !BITCOIN_LIKE_FAMILIES.has(account.currency.family)) {
     tracking.bitcoinFamilyAccountXpubFail(manifest);
     return Promise.reject(new Error("account requested is not a bitcoin family account"));
   }
@@ -477,7 +480,7 @@ export const bitcoinFamilyAccountGetAddressesLogic = async (
     throw new Error("account not found");
   }
 
-  if (!isAccount(account) || account.currency.family !== "bitcoin") {
+  if (!isAccount(account) || !BITCOIN_LIKE_FAMILIES.has(account.currency.family)) {
     tracking.bitcoinFamilyAccountAddressesFail(manifest);
     throw new Error("account requested is not a bitcoin family account");
   }
@@ -666,7 +669,7 @@ export async function completeExchangeLogic(
 
   const accountBridge = await getAccountBridge(fromAccount, fromParentAccount);
   const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
-  const mainFromAccountFamily = resolveFamily(mainFromAccount.currency);
+  const mainFromAccountFamily = mainFromAccount.currency.family;
 
   const { liveTx } = await getWalletAPITransactionSignFlowInfos({
     walletApiTransaction: transaction,
