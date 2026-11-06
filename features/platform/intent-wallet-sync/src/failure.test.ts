@@ -6,12 +6,7 @@ import {
   TrustchainNotAllowed,
 } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { isUserRefusedOnDevice, mapLedgerSyncErrorToFailure } from "./failure";
-
-function namedError(name: string): Error {
-  const error = new Error(name);
-  error.name = name;
-  return error;
-}
+import { failedState, namedError } from "./internals/ledgerSyncJobTestKit";
 
 describe("mapLedgerSyncErrorToFailure", () => {
   it.each([
@@ -20,7 +15,7 @@ describe("mapLedgerSyncErrorToFailure", () => {
     [new TrustchainNotAllowed(), "not-allowed"],
     [new NoTrustchainInitialized(), "no-trustchain"],
   ] as const)("should map %s to its reason", (error, reason) => {
-    expect(mapLedgerSyncErrorToFailure(error)).toEqual({ type: "failed", reason, error });
+    expect(mapLedgerSyncErrorToFailure(error)).toEqual(failedState(reason, error));
   });
 
   it("should match on the name, not the class", () => {
@@ -39,11 +34,7 @@ describe("mapLedgerSyncErrorToFailure", () => {
     ["a refusal, which is not a failure", namedError("UserRefusedOnDevice")],
     ["a plain error", new Error("network down")],
   ])("should map %s to unknown", (_, error) => {
-    expect(mapLedgerSyncErrorToFailure(error)).toEqual({
-      type: "failed",
-      reason: "unknown",
-      error,
-    });
+    expect(mapLedgerSyncErrorToFailure(error)).toEqual(failedState("unknown", error));
   });
 
   it.each([

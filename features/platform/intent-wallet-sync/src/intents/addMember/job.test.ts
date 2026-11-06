@@ -14,9 +14,16 @@ import {
   type TrustchainSDK,
 } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { lastValueFrom } from "rxjs";
+import type {
+  LedgerSyncAwaitingDeviceConfirmationJobState,
+  LedgerSyncCompletedJobState,
+  LedgerSyncPendingJobState,
+  LedgerSyncProcessingJobState,
+} from "../../jobState";
 import {
   createDeferred,
   expectState,
+  failedState,
   fakeTrustchainSdk,
   namedError,
   recordJob,
@@ -33,14 +40,14 @@ const TRUSTCHAIN: Trustchain = {
 };
 const RESULT: TrustchainResult = { type: TrustchainResultType.created, trustchain: TRUSTCHAIN };
 
-const PENDING = { type: "pending" };
-const AWAITING = {
+const PENDING: LedgerSyncPendingJobState = { type: "pending" };
+const AWAITING: LedgerSyncAwaitingDeviceConfirmationJobState = {
   type: "awaiting-device-confirmation",
   deviceModelId: DeviceModelId.STAX,
   deviceName: "Ledger Stax",
 };
-const PROCESSING = { type: "processing" };
-const COMPLETED = { type: "completed" };
+const PROCESSING: LedgerSyncProcessingJobState = { type: "processing" };
+const COMPLETED: LedgerSyncCompletedJobState = { type: "completed" };
 
 const CONNECTION = {
   dmk: {} as never,
@@ -159,7 +166,7 @@ describe("addMemberIntentJob", () => {
   ] as const)("should end as failed when the SDK throws %s", async (error, reason) => {
     const { ended, onResult } = startJob(deviceCall(() => Promise.reject(error)));
 
-    expect((await ended()).at(-1)).toEqual({ type: "failed", reason, error });
+    expect((await ended()).at(-1)).toEqual(failedState(reason, error));
     expect(onResult).not.toHaveBeenCalled();
   });
 
@@ -184,7 +191,7 @@ describe("addMemberIntentJob", () => {
     });
     const { ended } = startJob(getOrCreateTrustchain);
 
-    expect(await ended()).toEqual([PENDING, { type: "failed", reason: "unknown", error }]);
+    expect(await ended()).toEqual([PENDING, failedState("unknown", error)]);
   });
 
   it("should end as failed when the session SDK cannot be built", async () => {
@@ -205,7 +212,7 @@ describe("addMemberIntentJob", () => {
       }),
     );
 
-    expect(await ended()).toEqual([{ type: "failed", reason: "unknown", error }]);
+    expect(await ended()).toEqual([failedState("unknown", error)]);
     expect(onResult).not.toHaveBeenCalled();
   });
 

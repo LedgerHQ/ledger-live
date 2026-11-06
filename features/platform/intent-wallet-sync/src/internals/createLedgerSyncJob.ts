@@ -10,7 +10,14 @@ import type {
 import { Observable, type Subscriber } from "rxjs";
 import type { CreateSessionSdk } from "../session";
 import { isUserRefusedOnDevice, mapLedgerSyncErrorToFailure } from "../failure";
-import type { LedgerSyncJobState } from "../jobState";
+import type {
+  LedgerSyncAwaitingDeviceConfirmationJobState,
+  LedgerSyncCompletedJobState,
+  LedgerSyncDeviceRejectedJobState,
+  LedgerSyncJobState,
+  LedgerSyncPendingJobState,
+  LedgerSyncProcessingJobState,
+} from "../jobState";
 import { toError } from "./errors";
 
 type LedgerSyncDeviceCall<Input, Result> = (params: {
@@ -22,9 +29,9 @@ type LedgerSyncDeviceCall<Input, Result> = (params: {
 
 type JobSubscriber = Subscriber<LedgerSyncJobState>;
 
-const PENDING: LedgerSyncJobState = { type: "pending" };
-const PROCESSING: LedgerSyncJobState = { type: "processing" };
-const COMPLETED: LedgerSyncJobState = { type: "completed" };
+const PENDING: LedgerSyncPendingJobState = { type: "pending" };
+const PROCESSING: LedgerSyncProcessingJobState = { type: "processing" };
+const COMPLETED: LedgerSyncCompletedJobState = { type: "completed" };
 
 export function failJob(subscriber: JobSubscriber, error: unknown): void {
   subscriber.next(mapLedgerSyncErrorToFailure(error));
@@ -67,11 +74,12 @@ export function createDeviceCallbacks(
   return {
     onStartRequestUserInteraction: () => {
       if (!isCurrentRun()) return;
-      subscriber.next({
+      const awaiting: LedgerSyncAwaitingDeviceConfirmationJobState = {
         type: "awaiting-device-confirmation",
         deviceModelId: connectedDevice.modelId,
         deviceName: compatDeviceName,
-      });
+      };
+      subscriber.next(awaiting);
     },
     onEndRequestUserInteraction: () => {
       if (isCurrentRun()) subscriber.next(PROCESSING);
@@ -89,7 +97,12 @@ export function handleCallError(
     return;
   }
   if (isUserRefusedOnDevice(error)) {
-    subscriber.next({ type: "device-rejected", error: toError(error), retry });
+    const rejected: LedgerSyncDeviceRejectedJobState = {
+      type: "device-rejected",
+      error: toError(error),
+      retry,
+    };
+    subscriber.next(rejected);
     return;
   }
   failJob(subscriber, error);

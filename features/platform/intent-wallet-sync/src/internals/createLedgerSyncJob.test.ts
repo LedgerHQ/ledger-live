@@ -2,7 +2,14 @@ import type { DeviceConnectionResult } from "@features/platform-device-intent";
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
 import { TrustchainNotAllowed } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { lastValueFrom, Observable, toArray, type Subscriber } from "rxjs";
-import type { LedgerSyncJobState } from "../jobState";
+import type {
+  LedgerSyncAwaitingDeviceConfirmationJobState,
+  LedgerSyncCompletedJobState,
+  LedgerSyncDeviceRejectedJobState,
+  LedgerSyncJobState,
+  LedgerSyncPendingJobState,
+  LedgerSyncProcessingJobState,
+} from "../jobState";
 import {
   completeJob,
   createDeviceCallbacks,
@@ -11,7 +18,7 @@ import {
   handleCallError,
   tryCreateSessionSdk,
 } from "./createLedgerSyncJob";
-import { fakeTrustchainSdk, namedError } from "./ledgerSyncJobTestKit";
+import { failedState, fakeTrustchainSdk, namedError } from "./ledgerSyncJobTestKit";
 
 const CONNECTION = {
   dmk: {} as never,
@@ -23,6 +30,15 @@ const CONNECTION = {
 } satisfies DeviceConnectionResult;
 
 const SDK = fakeTrustchainSdk({});
+
+const PENDING: LedgerSyncPendingJobState = { type: "pending" };
+const AWAITING: LedgerSyncAwaitingDeviceConfirmationJobState = {
+  type: "awaiting-device-confirmation",
+  deviceModelId: DeviceModelId.NANO_X,
+  deviceName: "Ledger Nano X",
+};
+const PROCESSING: LedgerSyncProcessingJobState = { type: "processing" };
+const COMPLETED: LedgerSyncCompletedJobState = { type: "completed" };
 
 /** A real subscriber whose notifications land in jest mocks. */
 function fakeSubscriber() {
@@ -42,7 +58,7 @@ describe("failJob", () => {
 
     failJob(subscriber.asSubscriber, error);
 
-    expect(subscriber.next).toHaveBeenCalledWith({ type: "failed", reason: "not-allowed", error });
+    expect(subscriber.next).toHaveBeenCalledWith(failedState("not-allowed", error));
     expect(subscriber.complete).toHaveBeenCalledTimes(1);
     expect(subscriber.next.mock.invocationCallOrder[0]).toBeLessThan(
       subscriber.complete.mock.invocationCallOrder[0],
@@ -58,7 +74,7 @@ describe("completeJob", () => {
     completeJob(subscriber.asSubscriber, onResult, "result");
 
     expect(onResult).toHaveBeenCalledWith("result");
-    expect(subscriber.next).toHaveBeenCalledWith({ type: "completed" });
+    expect(subscriber.next).toHaveBeenCalledWith(COMPLETED);
     expect(subscriber.complete).toHaveBeenCalledTimes(1);
     expect(onResult.mock.invocationCallOrder[0]).toBeLessThan(
       subscriber.next.mock.invocationCallOrder[0],
@@ -106,7 +122,7 @@ describe("tryCreateSessionSdk", () => {
     );
 
     expect(sdk).toBeUndefined();
-    expect(subscriber.next).toHaveBeenCalledWith({ type: "failed", reason: "unknown", error });
+    expect(subscriber.next).toHaveBeenCalledWith(failedState("unknown", error));
     expect(subscriber.complete).toHaveBeenCalledTimes(1);
   });
 });
@@ -118,11 +134,7 @@ describe("createDeviceCallbacks", () => {
 
     callbacks.onStartRequestUserInteraction?.();
 
-    expect(subscriber.next).toHaveBeenCalledWith({
-      type: "awaiting-device-confirmation",
-      deviceModelId: DeviceModelId.NANO_X,
-      deviceName: "Ledger Nano X",
-    });
+    expect(subscriber.next).toHaveBeenCalledWith(AWAITING);
   });
 
   it("should emit processing on end", () => {
@@ -131,7 +143,7 @@ describe("createDeviceCallbacks", () => {
 
     callbacks.onEndRequestUserInteraction?.();
 
-    expect(subscriber.next).toHaveBeenCalledWith({ type: "processing" });
+    expect(subscriber.next).toHaveBeenCalledWith(PROCESSING);
   });
 
   it("should emit nothing once the run is no longer current", () => {
@@ -166,11 +178,12 @@ describe("handleCallError", () => {
 
     handleCallError(subscriber.asSubscriber, refusal, retry);
 
-    expect(subscriber.next).toHaveBeenCalledWith({
+    const rejected: LedgerSyncDeviceRejectedJobState = {
       type: "device-rejected",
       error: refusal,
       retry,
-    });
+    };
+    expect(subscriber.next).toHaveBeenCalledWith(rejected);
     expect(subscriber.complete).not.toHaveBeenCalled();
     expect(retry).not.toHaveBeenCalled();
   });
@@ -181,7 +194,7 @@ describe("handleCallError", () => {
 
     handleCallError(subscriber.asSubscriber, error, jest.fn());
 
-    expect(subscriber.next).toHaveBeenCalledWith({ type: "failed", reason: "not-allowed", error });
+    expect(subscriber.next).toHaveBeenCalledWith(failedState("not-allowed", error));
     expect(subscriber.complete).toHaveBeenCalledTimes(1);
     expect(subscriber.error).not.toHaveBeenCalled();
   });
@@ -212,6 +225,6 @@ describe("createLedgerSyncJob", () => {
       },
     });
     expect(onResult).toHaveBeenCalledWith("result");
-    expect(states).toEqual([{ type: "pending" }, { type: "completed" }]);
+    expect(states).toEqual([PENDING, COMPLETED]);
   });
 });
