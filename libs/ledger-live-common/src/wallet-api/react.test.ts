@@ -4,6 +4,7 @@
 import { renderHook, act, cleanup, waitFor } from "@testing-library/react";
 import BigNumber from "bignumber.js";
 import type { WalletHandlers } from "@ledgerhq/wallet-api-server";
+import type { Account as WalletAPIAccount } from "@ledgerhq/wallet-api-core";
 import type { AccountNamesState } from "@domain/entity-account-name";
 import { createFixtureAccount } from "../mock/fixtures/cryptoCurrencies";
 import type { TrackingAPI } from "./tracking";
@@ -112,6 +113,17 @@ function getRegisteredHandler<Name extends keyof WalletHandlers>(name: Name): Wa
   const calls = mockSetHandler.mock.calls.filter(([handlerName]) => handlerName === name);
   return calls[calls.length - 1]?.[1];
 }
+
+const walletApiAccountFromEntities = (): WalletAPIAccount => ({
+  id: "from-entities",
+  name: "Ethereum 1",
+  address: "0x0",
+  currency: "ethereum",
+  balance: new BigNumber(1),
+  spendableBalance: new BigNumber(1),
+  blockHeight: undefined,
+  lastSyncDate: new Date(0),
+});
 
 function createDefaultOptions(
   overrides?: Partial<useWalletAPIServerOptions>,
@@ -449,6 +461,26 @@ describe("account.list handler", () => {
     expect(resolveWalletApiSpendableBalance).toHaveBeenCalledWith(account, account);
     expect(resolveWalletApiMaxSpendable).not.toHaveBeenCalled();
   });
+
+  it("lists the accounts of the accounts provider, with the manifest's currencies as filter", async () => {
+    const fromEntities = walletApiAccountFromEntities();
+    const list = jest.fn().mockResolvedValue([fromEntities]);
+    const options = createDefaultOptions({
+      accounts: [createFixtureAccount("01")],
+      manifest: { ...createDefaultOptions().manifest, currencies: ["bitcoin", "ethereum/**"] },
+      accountsProvider: { list, fromLegacyAccountId: jest.fn() },
+    });
+
+    renderHook(() => useWalletAPIServer(options));
+    const result = await getHandler()({});
+
+    expect(result).toEqual([fromEntities]);
+    expect(resolveWalletApiSpendableBalance).not.toHaveBeenCalled();
+    const [isAllowed] = list.mock.calls[0];
+    expect(isAllowed("bitcoin", "bitcoin")).toBe(true);
+    expect(isAllowed("ethereum/erc20/usd__coin", "ethereum")).toBe(true);
+    expect(isAllowed("polygon", "polygon")).toBe(false);
+  });
 });
 
 describe("currency.list handler — token lookup concurrency", () => {
@@ -538,6 +570,47 @@ describe("account.request handler", () => {
     expect(resolveWalletApiSpendableBalance).toHaveBeenCalledTimes(1);
     expect(resolveWalletApiSpendableBalance).toHaveBeenCalledWith(account, undefined);
     expect(resolveWalletApiMaxSpendable).not.toHaveBeenCalled();
+  });
+
+  it("resolves with the account the accounts provider builds for the picked legacy account", async () => {
+    const account = createFixtureAccount("01");
+    const fromEntities = walletApiAccountFromEntities();
+    const fromLegacyAccountId = jest.fn().mockResolvedValue(fromEntities);
+    const uiAccountRequest = jest.fn(({ onSuccess }) => {
+      onSuccess(account, undefined);
+    });
+    const options = createDefaultOptions({
+      accounts: [account],
+      uiHook: { "account.request": uiAccountRequest },
+      accountsProvider: { list: jest.fn(), fromLegacyAccountId },
+    });
+
+    renderHook(() => useWalletAPIServer(options));
+    const result = await getHandler()({});
+
+    expect(result).toBe(fromEntities);
+    expect(fromLegacyAccountId).toHaveBeenCalledWith(account.id);
+    expect(resolveWalletApiSpendableBalance).not.toHaveBeenCalled();
+  });
+  it("falls back to the legacy conversion when the accounts provider fails", async () => {
+    const account = createFixtureAccount("01");
+    jest.mocked(resolveWalletApiSpendableBalance).mockResolvedValue(new BigNumber(5));
+    const uiAccountRequest = jest.fn(({ onSuccess }) => {
+      onSuccess(account, undefined);
+    });
+    const options = createDefaultOptions({
+      accounts: [account],
+      uiHook: { "account.request": uiAccountRequest },
+      accountsProvider: {
+        list: jest.fn(),
+        fromLegacyAccountId: jest.fn().mockRejectedValue(new Error("router missing")),
+      },
+    });
+
+    renderHook(() => useWalletAPIServer(options));
+    const result = await getHandler()({});
+
+    expect(result).toEqual(expect.objectContaining({ spendableBalance: new BigNumber(5) }));
   });
 });
 

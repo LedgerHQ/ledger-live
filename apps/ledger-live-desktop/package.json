@@ -162,6 +162,7 @@
     "@features/platform-quick-actions": "workspace:^",
     "@features/platform-style": "workspace:^",
     "@features/platform-verify-address-intent": "workspace:^",
+    "@features/platform-wallet-api-accounts": "workspace:^",
     "@features/platform-wallet-sync": "workspace:^",
     "@firebase/app": "0.16.2",
     "@firebase/remote-config": "0.9.2",

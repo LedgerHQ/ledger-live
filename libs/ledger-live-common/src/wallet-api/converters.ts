@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { v5 as uuidv5 } from "uuid";
+import { walletApiIdOf } from "@features/platform-wallet-api-accounts";
 import {
   accountNameWithDefaultSelector,
   type AccountNamesState,
@@ -21,14 +21,12 @@ import {
 } from "./types";
 import { FAMILIES_MAPPING_LL_TO_WAPI, FAMILIES_MAPPING_WAPI_TO_LL } from "./constants";
 
-// The namespace is a randomly generated uuid v4 from https://www.uuidgenerator.net/
-const NAMESPACE = "c3c78073-6844-409e-9e75-171ab4c7f9a2";
 const uuidToAccountId = new Map<string, string>();
 
 export const getAccountIdFromWalletAccountId = (walletAccountId: string): string | undefined =>
   uuidToAccountId.get(walletAccountId);
 
-export const getWalletApiIdFromAccountId = (id: string): string => uuidv5(id, NAMESPACE);
+export const getWalletApiIdFromAccountId = (id: string): string => walletApiIdOf(id);
 
 export const setWalletApiIdForAccountId = (accountId: string): void => {
   const walletApiId = getWalletApiIdFromAccountId(accountId);

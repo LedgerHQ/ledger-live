@@ -92,6 +92,10 @@ jest.mock("~/renderer/reducers/wallet", () => ({
   walletSelector: () => ({ accountNames: new Map() }),
 }));
 
+jest.mock("@features/platform-wallet-api-accounts", () => ({
+  useWalletAPIAccountsProvider: () => undefined,
+}));
+
 jest.mock("@features/platform-feature-flags", () => ({
   useFeature: () => null,
 }));

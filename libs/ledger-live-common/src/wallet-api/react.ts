@@ -71,12 +71,28 @@ import { LiveAppManifest } from "../platform/types";
 import { ModularDrawerConfiguration } from "./ModularDrawer/types";
 import { useCurrenciesUnderFeatureFlag } from "../modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
 import { bindUiFlowToSession, type BridgeSession } from "./bridgeSession";
+import type {
+  WalletAPIAccountFilter,
+  WalletAPIAccountsProvider,
+} from "@features/platform-wallet-api-accounts";
 
 export function safeGetRefValue<T>(ref: RefObject<T>): NonNullable<T> {
   if (!ref.current) {
     throw new Error("Ref objects doesn't have a current value");
   }
   return ref.current;
+}
+
+/** The provider's account, or `undefined` for the legacy conversion to answer, the provider failing included. */
+async function fromAccountsProvider(
+  accountsProvider: WalletAPIAccountsProvider | undefined,
+  legacyId: string,
+): Promise<WalletAPIAccount | undefined> {
+  try {
+    return await accountsProvider?.fromLegacyAccountId(legacyId);
+  } catch {
+    return undefined;
+  }
 }
 
 export function useSetWalletAPIAccounts(accounts: AccountLike[]): void {
@@ -338,6 +354,8 @@ export type useWalletAPIServerOptions = {
   bridgeSession: BridgeSession;
   uiHook: Partial<UiHook>;
   customHandlers?: WalletAPICustomHandlers;
+  /** Serves `account.list` and `account.request` from the account data entities instead of `accounts`. */
+  accountsProvider?: WalletAPIAccountsProvider;
 };
 
 /**
@@ -376,6 +394,7 @@ export function useWalletAPIServer({
   uiHook,
   customHandlers,
   bridgeSession,
+  accountsProvider,
 }: useWalletAPIServerOptions): {
   server: WalletAPIServer;
   onLoad: () => void;
@@ -641,19 +660,18 @@ export function useWalletAPIServer({
       }
 
       // 4. Filter accounts based on effective currency IDs
-      const filteredAccounts = accounts.filter(account => {
-        const accountCurrencyId =
-          account.type === "TokenAccount" ? account.token.id : account.currency.id;
-        const parentCurrencyId =
-          account.type === "TokenAccount" ? account.token.parentCurrencyId : account.currency.id;
+      const isAllowed: WalletAPIAccountFilter = (currencyId, parentCurrencyId) =>
+        includeAllCurrencies ||
+        allowedCurrencyIds.has(currencyId) ||
+        tokenFamilyPrefixes.has(parentCurrencyId);
 
-        // Check if account currency ID matches the effective patterns
-        return (
-          includeAllCurrencies ||
-          allowedCurrencyIds.has(accountCurrencyId) ||
-          tokenFamilyPrefixes.has(parentCurrencyId)
-        );
-      });
+      if (accountsProvider) return accountsProvider.list(isAllowed);
+
+      const filteredAccounts = accounts.filter(account =>
+        account.type === "TokenAccount"
+          ? isAllowed(account.token.id, account.token.parentCurrencyId)
+          : isAllowed(account.currency.id, account.currency.id),
+      );
 
       const wapiAccounts = await Promise.all(
         filteredAccounts.map(async (account): Promise<WalletAPIAccount> => {
@@ -669,7 +687,7 @@ export function useWalletAPIServer({
 
       return wapiAccounts;
     });
-  }, [accountNames, manifest, server, accounts]);
+  }, [accountNames, manifest, server, accounts, accountsProvider]);
 
   useEffect(() => {
     if (!uiAccountRequest) return;
@@ -691,6 +709,12 @@ export function useWalletAPIServer({
                 if (done) return;
                 done = true;
                 try {
+                  const fromEntities = await fromAccountsProvider(accountsProvider, account.id);
+                  if (fromEntities) {
+                    tracking.requestAccountSuccess(manifest);
+                    resolve(fromEntities);
+                    return;
+                  }
                   const spendableBalance = await resolveWalletApiSpendableBalance(
                     account,
                     parentAccount,
@@ -720,7 +744,7 @@ export function useWalletAPIServer({
         });
       },
     );
-  }, [accountNames, manifest, server, tracking, uiAccountRequest]);
+  }, [accountNames, manifest, server, tracking, uiAccountRequest, accountsProvider]);
 
   useEffect(() => {
     if (!uiAccountReceive) return;

@@ -48,6 +48,7 @@ import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDialog"
 import { useDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/useDrawerConfiguration";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 import { useFeature } from "@features/platform-feature-flags";
+import { useWalletAPIAccountsProvider } from "@features/platform-wallet-api-accounts";
 import { setOriginFlow } from "~/renderer/analytics/originFlow";
 import { getTrackingRouteLiveAppSource } from "./analytics";
 
@@ -332,6 +333,8 @@ function useWebView(
   const bridge = useWebviewBridgeSession(webviewRef, mainFrameUrl);
 
   const walletState = useSelector(walletSelector);
+  const accountsProvider = useWalletAPIAccountsProvider(walletState.accountNames);
+  const accountDataEnabled = useFeature("walletApiAccountData")?.enabled;
 
   const { widgetLoaded, onLoad, onReload, server } = useWalletAPIServer({
     accountNames: walletState.accountNames,
@@ -343,6 +346,7 @@ function useWebView(
     uiHook,
     customHandlers,
     bridgeSession: bridge.session,
+    accountsProvider: accountDataEnabled ? accountsProvider : undefined,
   });
 
   useEffect(() => {
