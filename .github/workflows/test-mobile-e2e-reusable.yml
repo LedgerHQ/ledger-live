@@ -99,6 +99,15 @@ on:
         required: false
         type: boolean
         default: false
+      emulator_gpu_experiment:
+        description: "QAA-1509 experiment"
+        required: false
+        type: choice
+        options:
+          - none
+          - swangle
+          - hwui-gl
+        default: none
       feature_flags:
         description: "Choose a feature flag set for the run"
         required: false
@@ -1280,6 +1289,7 @@ jobs:
       - name: Boot Android Emulators in Background
         env:
           EMULATOR_CORE_DUMPS: ${{ inputs.emulator_diagnostics && '1' || '' }}
+          EMULATOR_GPU_EXPERIMENT: ${{ inputs.emulator_gpu_experiment }}
         run: |
           LOG_FILE="${{ env.MOBILE_ARTIFACTS_ROOT }}/emulator-boot.log"
           mkdir -p ${{ env.MOBILE_ARTIFACTS_ROOT }}
@@ -1353,6 +1363,11 @@ jobs:
           r2_endpoint: ${{ secrets.R2_ENDPOINT }}
           r2_access_key: ${{ secrets.R2_ACCESS_KEY_ID }}
           r2_secret_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+
+      - name: Wait for the GPU experiment emulators
+        if: inputs.emulator_gpu_experiment && inputs.emulator_gpu_experiment != 'none'
+        timeout-minutes: 10
+        run: until grep -q "All 3 emulators are fully booted" "${{ env.MOBILE_ARTIFACTS_ROOT }}/emulator-boot.log"; do sleep 5; done
 
       - name: Check Android emulators are ready
         timeout-minutes: 2
