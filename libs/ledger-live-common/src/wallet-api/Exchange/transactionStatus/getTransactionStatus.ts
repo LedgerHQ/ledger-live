@@ -89,11 +89,16 @@ function mapPendingSwapEntry(
   remoteStatus: SwapStatus | undefined,
 ): Partial<GetTransactionStatusResponse> {
   const receiver = accounts.find(account => account.id === entry.receiverAccountId);
-  const finalAmount =
-    receiver && remoteStatus?.finalAmount && isAmountGreaterThanZero(remoteStatus.finalAmount)
+  // In human units: from the swap status, or the one stored when the status was last polled.
+  const humanFinalAmount =
+    remoteStatus?.finalAmount && isAmountGreaterThanZero(remoteStatus.finalAmount)
       ? new BigNumber(remoteStatus.finalAmount)
-          .shiftedBy(getAccountCurrency(receiver).units[0].magnitude)
-          .toFixed()
+      : entry.finalAmount?.isGreaterThan(0)
+        ? entry.finalAmount
+        : undefined;
+  const finalAmount =
+    receiver && humanFinalAmount
+      ? humanFinalAmount.shiftedBy(getAccountCurrency(receiver).units[0].magnitude).toFixed()
       : undefined;
 
   return {

@@ -114,6 +114,35 @@ describe("account persistence predicates", () => {
       expect(accountPersistedStateChanged(account, withSwap)).toBe(true);
     });
 
+    it("returns true when an existing swap got anchored or changed status, false otherwise", () => {
+      const swap: SwapOperation = {
+        provider: "swapkit_hyperliquid",
+        swapId: "withdraw-1",
+        status: "pending",
+        receiverAccountId: "receiver",
+        operationId: "",
+        fromAmount: new BigNumber(5_000_000),
+        toAmount: new BigNumber(4_000_000),
+      };
+      const account: Account = {
+        ...genAccount("seed-anchor", { currency: Ethereum, operationsSize: 0 }),
+        swapHistory: [swap],
+      };
+      const withSwap = (changes: Partial<SwapOperation>): Account => ({
+        ...account,
+        swapHistory: [{ ...swap, ...changes }],
+      });
+
+      expect(accountPersistedStateChanged(account, withSwap({ operationId: "0xpayout" }))).toBe(
+        true,
+      );
+      expect(accountPersistedStateChanged(account, withSwap({ status: "finished" }))).toBe(true);
+      expect(
+        accountPersistedStateChanged(account, withSwap({ finalAmount: new BigNumber("0.0019") })),
+      ).toBe(true);
+      expect(accountPersistedStateChanged(account, withSwap({}))).toBe(false);
+    });
+
     it("returns false when same account (reference equality)", () => {
       const account = genAccount("seed", { currency: Ethereum });
       expect(accountPersistedStateChanged(account, account)).toBe(false);
