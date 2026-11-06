@@ -8002,9 +8002,21 @@ importers:
 
   features/flow/account-analytics:
     dependencies:
+      '@domain/api-aggregated-assets':
+        specifier: workspace:*
+        version: link:../../../domain/api/aggregated-assets
+      '@domain/entity-currency':
+        specifier: workspace:*
+        version: link:../../../domain/entity/currency
       '@domain/entity-currency-fiat':
         specifier: workspace:*
         version: link:../../../domain/entity/currency-fiat
+      '@domain/entity-market-countervalues':
+        specifier: workspace:*
+        version: link:../../../domain/entity/market-countervalues
+      '@features/platform-aggregated-assets':
+        specifier: workspace:*
+        version: link:../../platform/aggregated-assets
       '@shared/analytics':
         specifier: workspace:*
         version: link:../../../shared/analytics
@@ -8015,6 +8027,9 @@ importers:
         specifier: 'catalog:'
         version: 4.6.7
     devDependencies:
+      '@domain/entity-currency-crypto':
+        specifier: workspace:*
+        version: link:../../../domain/entity/currency-crypto
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
         version: 2.0.7(5bfec6f530da8ba0e8a834c94b75962c)

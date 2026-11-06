@@ -1,11 +1,9 @@
-import type { AccountLike } from "@ledgerhq/types-live";
-
-export function resolveAnalyticsPositions(
+export function resolveAnalyticsPositions<Position extends Readonly<{ id: string }>>(
   positionIds: readonly string[],
-  positions: readonly AccountLike[],
-): AccountLike[] | undefined {
+  positions: readonly Position[],
+): Position[] | undefined {
   const byId = new Map(positions.map(position => [position.id, position]));
-  const selected: AccountLike[] = [];
+  const selected: Position[] = [];
   for (const id of positionIds) {
     const position = byId.get(id);
     if (!position) return undefined;

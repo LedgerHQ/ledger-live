@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { AnalyticsBalanceData, AnalyticsResultState } from "@features/flow-account-analytics";
+import type { AnalyticsBalanceData, AnalyticsResultState } from "../types";
 
 export type RetainedAnalyticsBalance = Readonly<{
   data: AnalyticsBalanceData | undefined;
