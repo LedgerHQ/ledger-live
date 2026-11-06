@@ -266,6 +266,12 @@ describe("sendFeatures", () => {
     expect(sendFeatures.canSendMax(xrp)).toBe(false);
   });
 
+  it("should return the amount unchanged when the descriptor has no roundAmount (bitcoin)", () => {
+    const bitcoin = getCryptoCurrencyById("bitcoin");
+    const amount = new BigNumber("123456789012345678999.5");
+    expect(sendFeatures.roundAmount(bitcoin, amount)).toBe(amount);
+  });
+
   it("should return true for canSendMax when currency is undefined (default)", () => {
     expect(sendFeatures.canSendMax(undefined)).toBe(true);
   });

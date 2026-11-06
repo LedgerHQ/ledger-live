@@ -66,6 +66,7 @@ describe("useQuickActions", () => {
       .mocked(getAccountCurrency)
       .mockReturnValue(mockCurrency as ReturnType<typeof getAccountCurrency>);
     jest.mocked(sendFeatures.canSendMax).mockReturnValue(true);
+    jest.mocked(sendFeatures.roundAmount).mockImplementation((_, amount) => amount);
   });
 
   describe("structure", () => {

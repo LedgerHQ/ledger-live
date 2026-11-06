@@ -1,5 +1,6 @@
 import { BigNumber } from "bignumber.js";
-import { fromTransactionRaw, toTransactionRaw } from "./transaction";
+import type { Account } from "@ledgerhq/types-live";
+import { formatTransaction, fromTransactionRaw, toTransactionRaw } from "./transaction";
 import type { Transaction } from "./types";
 
 const ISSUER = "rQhWct2fv4Vc4KRjRgMrxa8xPN9Zx9iLKV";
@@ -39,5 +40,36 @@ describe("xrp transaction raw conversion", () => {
     expect(raw).not.toHaveProperty("mode");
     expect(raw).not.toHaveProperty("assetReference");
     expect(raw).not.toHaveProperty("assetOwner");
+  });
+});
+
+describe("xrp formatTransaction", () => {
+  const account = {
+    type: "Account",
+    currency: { units: [{ name: "XRP", code: "XRP", magnitude: 6 }] },
+    subAccounts: [
+      {
+        type: "TokenAccount",
+        id: "usd-account",
+        token: { units: [{ name: "USD", code: "USD", magnitude: 38 }] },
+      },
+    ],
+  } as unknown as Account;
+
+  it("formats a token send in the token unit and its fee in XRP", () => {
+    const text = formatTransaction(makeTransaction({ subAccountId: "usd-account" }), account);
+
+    expect(text).toMatch(/SEND 2\.5\sUSD/);
+    expect(text).toMatch(/with fee=0\.000012\sXRP/);
+  });
+
+  it("formats an opt-in with its token and limit", () => {
+    const text = formatTransaction(
+      makeTransaction({ mode: "changeTrust", assetReference: "USD", assetOwner: ISSUER }),
+      account,
+    );
+
+    expect(text).toContain(`TRUST USD ISSUED BY ${ISSUER}`);
+    expect(text).toContain(`LIMIT ${new BigNumber("2.5").shiftedBy(38).toFixed()}`);
   });
 });

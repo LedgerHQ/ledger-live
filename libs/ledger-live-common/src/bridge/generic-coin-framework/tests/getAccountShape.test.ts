@@ -1002,6 +1002,93 @@ describe("genericGetAccountShape", () => {
       expect(topOp?.subOperations?.[0]?.value?.toFixed()).toBe("8000000");
     });
 
+    describe("buildOneParentOpPerHash: token-only opt-in or opt-out", () => {
+      const syncTokenOptOperation = async ({
+        type,
+        precedingType,
+        feePayer,
+      }: {
+        type: "OPT_IN" | "OPT_OUT";
+        precedingType?: "OUT";
+        feePayer: string;
+      }) => {
+        getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 1000n, locked: 0n }]);
+        extractBalanceMock.mockReturnValue({ value: 1000n, locked: 0n });
+        listOperationsMock.mockResolvedValue({
+          items: [
+            ...(precedingType ? [{ hash: "trust-hash", type: precedingType, height: 20 }] : []),
+            { hash: "trust-hash", type, height: 20 },
+          ],
+        });
+        lastBlockMock.mockResolvedValue({ height: 100 });
+        adaptCoreOperationToLiveOperationMock.mockImplementation((_accId, op) => ({
+          hash: op.hash,
+          type: op.type,
+          blockHeight: op.height,
+          fee: new BigNumber(12),
+          value: new BigNumber(0),
+          hasFailed: false,
+          senders: [`${currency.id}_addr_trust`],
+          recipients: ["issuer"],
+          extra: { assetReference: "USD", assetOwner: "issuer", feePayer },
+        }));
+        buildSubAccountsMock.mockReturnValue([]);
+        inferSubOperationsMock.mockReturnValue([]);
+        cleanedOperationMock.mockImplementation((op: any) => op);
+        mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps);
+
+        const getShape = genericGetAccountShape(network, currency.id);
+        const result = await getShape(
+          {
+            address: `${currency.id}_addr_trust`,
+            initialAccount: undefined,
+            currency,
+            derivationMode: "",
+          } as any,
+          { paginationConfig: {} as any },
+        );
+
+        return result.operations ?? [];
+      };
+
+      test.each(["OPT_IN", "OPT_OUT"] as const)(
+        "produces one %s parent worth the fee",
+        async type => {
+          const operations = await syncTokenOptOperation({
+            type,
+            feePayer: `${currency.id}_addr_trust`,
+          });
+
+          expect(operations).toHaveLength(1);
+          expect(operations[0]).toMatchObject({
+            id: `accId-trust-hash-${type}`,
+            type,
+            hasFailed: false,
+          });
+          expect(operations[0].value?.toFixed()).toBe("12");
+        },
+      );
+
+      test("picks the opt-in op when another op shares the hash", async () => {
+        const operations = await syncTokenOptOperation({
+          type: "OPT_IN",
+          precedingType: "OUT",
+          feePayer: `${currency.id}_addr_trust`,
+        });
+
+        expect(operations).toHaveLength(1);
+        expect(operations[0].type).toBe("OPT_IN");
+      });
+
+      test("values the OPT_IN parent at 0 when another account paid the fee", async () => {
+        const operations = await syncTokenOptOperation({ type: "OPT_IN", feePayer: "sponsor" });
+
+        expect(operations).toHaveLength(1);
+        expect(operations[0].type).toBe("OPT_IN");
+        expect(operations[0].value?.toFixed()).toBe("0");
+      });
+    });
+
     test("buildOneParentOpPerHash: native op with same hash as token uses native as parent with subOperations", async () => {
       const txHash = "native-and-token-hash";
       const nativeOpFromList = { hash: txHash, type: "OUT", height: 18, tx: { failed: false } };

@@ -1608,6 +1608,44 @@
     "XrpDestinationTagRequired": {
       "title": "A destination tag is required for this recipient"
     },
+    "XrpTokenStandardNotEnabled": {
+      "title": "This token type isn't supported yet"
+    },
+    "XrpAmountPrecisionExceeded": {
+      "title": "The amount has too many digits",
+      "description": "XRP Ledger tokens accept at most 16 significant digits."
+    },
+    "XrpTrustLimitZero": {
+      "title": "The limit must be above 0",
+      "description": "To stop holding this token, remove it instead."
+    },
+    "XrpTokenFrozen": {
+      "title": "You can't send this token to this recipient",
+      "description": "Its issuer froze it, or hasn't approved your account to hold it. A frozen token can still go back to its issuer."
+    },
+    "XrpTokenCannotReceive": {
+      "title": "This recipient can't receive {{assetCode}}",
+      "description": "The recipient may need to add this token first, or the issuer doesn't allow this transfer."
+    },
+    "XrpTokenAmountNotDeliverable": {
+      "title": "This amount can't be delivered",
+      "description": "The recipient's limit or the issuer's transfer fee doesn't allow it. Try a smaller amount."
+    },
+    "XrpTokenOptInRefused": {
+      "title": "The issuer refused this request",
+      "description": "The issuer doesn't accept new holders for this token, or the token doesn't exist."
+    },
+    "XrpTransactionWouldFail": {
+      "title": "This transaction would fail",
+      "description": "The XRP Ledger rejected it with {{code}}."
+    },
+    "XrpUnsupportedIntent": {
+      "title": "This transaction is not supported"
+    },
+    "XrpReserveIncrease": {
+      "title": "{{amount}} will be locked on your account while this token is added.",
+      "description": "You'll get it back when you remove the token."
+    },
     "HederaMemoExceededSizeError": {
       "title": "Invalid memo size, maximum allowed is 100 characters"
     },

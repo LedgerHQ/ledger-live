@@ -237,7 +237,11 @@ function parentOpsFromNativeOps(
   return out;
 }
 
-/** One synthetic FEES or NONE parent when the tx has no native ops (e.g. token-only). */
+function isOptInOrOut(op: OperationCommon): boolean {
+  return op.type === "OPT_IN" || op.type === "OPT_OUT";
+}
+
+/** One synthetic parent when the tx has no native ops (e.g. token-only). */
 function syntheticParentForTokenOnlyTx(
   referenceOp: OperationCommon,
   accountId: string,
@@ -252,7 +256,8 @@ function syntheticParentForTokenOnlyTx(
   const feePayer = getFeePayer(referenceOp);
   const isFeePayer = feePayer !== undefined && isSameAddress(address, feePayer);
   const paysFee = isFeePayer && !referenceOp.fee?.isZero();
-  const parentType = paysFee ? "FEES" : "NONE";
+  const feeType = paysFee ? "FEES" : "NONE";
+  const parentType = isOptInOrOut(referenceOp) ? referenceOp.type : feeType;
   const parentValue = paysFee ? referenceOp.fee : new BigNumber(0);
   // In the case of smart contract interaction, the contract must be the recipient of the parent operation => this
   // is why we need to extract this information from the operation details.
@@ -298,9 +303,15 @@ function parentOpsForTxWithNonInternalOperations(
     return parentOpsFromNativeOps(nativeOps, accountId, subOperations, internalOperations);
 
   // If transaction has no native ops, create a synthetic parent
-  const firstOp = transactionOps[0];
+  const referenceOp = transactionOps.find(isOptInOrOut) ?? transactionOps[0];
   return [
-    syntheticParentForTokenOnlyTx(firstOp, accountId, address, subOperations, internalOperations),
+    syntheticParentForTokenOnlyTx(
+      referenceOp,
+      accountId,
+      address,
+      subOperations,
+      internalOperations,
+    ),
   ];
 }
 
