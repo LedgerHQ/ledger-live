@@ -63,8 +63,13 @@ react {
     // extraPackagerArgs = []
 
     /* Hermes Commands */
-    //   The hermes compiler command to run. By default it is 'hermesc'
-    // hermesCommand = "$rootDir/my-custom-hermesc/bin/hermesc"
+    //   pnpm keeps hermes-compiler next to react-native, not in the app's node_modules where RN looks by default
+    def hermesCompilerPackageJson = ["node", "--print", "require.resolve('hermes-compiler/package.json', { paths: [require.resolve('react-native/package.json')] })"].execute(null, rootDir).text.trim()
+    if (!hermesCompilerPackageJson) {
+        throw new GradleException("Cannot resolve hermes-compiler from react-native: run pnpm install")
+    }
+    def hermesCompilerDir = new File(hermesCompilerPackageJson).getParentFile()
+    hermesCommand = "${hermesCompilerDir}/hermesc/%OS-BIN%/hermesc".toString()
     //
     //   The list of flags to pass to the Hermes compiler. By default is "-O", "-output-source-map"
     // hermesFlags = ["-O", "-output-source-map"]

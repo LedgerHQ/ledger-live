@@ -3100,8 +3100,8 @@ importers:
         specifier: 'catalog:'
         version: 1.90.0
       react-native-launch-arguments:
-        specifier: 4.0.2
-        version: 4.0.2(react-native@0.86.3(patch_hash=938a67fa2a9dbeb93e51e74dbf6566291acec6d698f435064caa46c48c90ea47)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@react-native/jest-preset@0.86.3(@babel/core@7.28.5)(react@19.2.3))(@types/react@19.2.17)(bufferutil@4.1.0)(react@19.2.3)(utf-8-validate@6.0.6))(react@19.2.3)
+        specifier: 4.1.1
+        version: 4.1.1(react-native@0.86.3(patch_hash=938a67fa2a9dbeb93e51e74dbf6566291acec6d698f435064caa46c48c90ea47)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@react-native/jest-preset@0.86.3(@babel/core@7.28.5)(react@19.2.3))(@types/react@19.2.17)(bufferutil@4.1.0)(react@19.2.3)(utf-8-validate@6.0.6))(react@19.2.3)
       react-native-sse:
         specifier: 1.2.1
         version: 1.2.1
@@ -40618,8 +40618,8 @@ packages:
     resolution: {integrity: sha512-YzPKSAnSzGEJ12IK6CctNLU79T1W15WDrElRQ+1/FsOazGX9ucFPTQwgYe8Dy8jiSEDJKM4wkVa3g4lD2Z+Pnw==}
     engines: {node: '>=16'}
 
-  react-native-launch-arguments@4.0.2:
-    resolution: {integrity: sha512-OaXXOG9jVrmb66cTV8wPdhKxaSVivOBKuYr8wgKCM5uAHkY5B6SkvydgJ3B/x8uGoWqtr87scSYYDm4MMU4rSg==}
+  react-native-launch-arguments@4.1.1:
+    resolution: {integrity: sha512-7tkJNHKhn37eXmGKz4UJ+47AywEqb3fknUsJ1GjCLNL0cpxDddKr43JbLrPGpASIxUSu36oYV/a0o0T6IWyKMg==}
     peerDependencies:
       react: 19.2.3
       react-native: '>=0.60.0-rc.0 <1.0.x'
@@ -61603,7 +61603,7 @@ snapshots:
 
   react-native-keychain@10.0.0: {}
 
-  react-native-launch-arguments@4.0.2(react-native@0.86.3(patch_hash=938a67fa2a9dbeb93e51e74dbf6566291acec6d698f435064caa46c48c90ea47)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@react-native/jest-preset@0.86.3(@babel/core@7.28.5)(react@19.2.3))(@types/react@19.2.17)(bufferutil@4.1.0)(react@19.2.3)(utf-8-validate@6.0.6))(react@19.2.3):
+  react-native-launch-arguments@4.1.1(react-native@0.86.3(patch_hash=938a67fa2a9dbeb93e51e74dbf6566291acec6d698f435064caa46c48c90ea47)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@react-native/jest-preset@0.86.3(@babel/core@7.28.5)(react@19.2.3))(@types/react@19.2.17)(bufferutil@4.1.0)(react@19.2.3)(utf-8-validate@6.0.6))(react@19.2.3):
     dependencies:
       react: 19.2.3
       react-native: 0.86.3(patch_hash=938a67fa2a9dbeb93e51e74dbf6566291acec6d698f435064caa46c48c90ea47)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@react-native/jest-preset@0.86.3(@babel/core@7.28.5)(react@19.2.3))(@types/react@19.2.17)(bufferutil@4.1.0)(react@19.2.3)(utf-8-validate@6.0.6)
