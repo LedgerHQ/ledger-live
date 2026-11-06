@@ -20,6 +20,8 @@ Do not add new usages of these labels. When touching a job that already uses one
 
 **Exception: Windows desktop E2E.** The Windows leg of `e2e-tests-extra-os` in `test-ui-e2e-only-desktop.yml` runs on `ledger-live-windows-e2e-32CPU-128RAM`, a Windows runner Platform Engineering provisioned for LWD E2E. Its egress IP is allow-listed on Speculinho, which other GitHub-hosted runners can't reach. It is not deprecated despite the `ledger-live-` prefix. Use it only for Windows desktop E2E.
 
+**Exception: other Windows jobs.** There is no self-hosted Windows runner for general use. Windows builds and tests run on GitHub-hosted `windows-2022` (`build-desktop-reusable.yml`, `test-integration-pr.yml`, `test-wallet-cli-windows-reusable.yml`), billed at twice the Linux rate.
+
 ## ✅ Allowed runners
 
 | Size   | Cached (default)                         | Uncached (release)                   |

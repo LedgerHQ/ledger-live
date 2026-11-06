@@ -48,7 +48,7 @@ The id matches `^[a-zA-Z0-9][a-zA-Z0-9._-]{0,62}$` and must not appear in `list`
 
 ## 4. Enroll
 
-`enroll` prints the link at once, then waits until the human approves or the link expires. A terminal tool returns a command's output only when the command exits, so a foreground `enroll` hands you the link after it has expired. An `enroll` that ends before approval loses the enrollment: the profile shows `pending` until its link expires, then `expired`, and neither can be resumed. So the waiting always runs in the background. `--detach` hands it to a **background listener** and exits. On a host that stops that listener when the command ends (`listener_exited` at once, step 12), run the command without it as a background job (below). Either way, `wait` (step 5) reports on it.
+`enroll` prints the link at once, then waits until the human approves or the link expires. A terminal tool returns a command's output only when the command exits, so a foreground `enroll` hands you the link after it has expired. An `enroll` that ends before approval loses the enrollment: the profile shows `pending` until its link expires, then `expired`, and neither can be resumed. So the waiting always runs in the background. `--detach` hands it to a **background listener** and exits. Some hosts stop that listener when the command ends, so check that it survived before you hand over anything (below); on such a host, run the command without `--detach` as a background job (below). Either way, `wait` (step 5) reports on it.
 
 ```bash
 pnpm --silent wallet-cli start agent-intent enroll --profile <id> --name "<display name>" --source <source> --detach --output json
@@ -68,7 +68,17 @@ pnpm --silent wallet-cli start agent-intent enroll --profile <id> --name "<displ
 - `type` `"enrollment-pending"` with `enrollmentUrl`, `fingerprint`, `expiresAt`, `keyStore`, `listenerPid` and `logPath`;
 - `type` `"enrollment-waiting"` with `profileId`, `listenerPid` and `logPath` but no link yet: the listener is still starting, e.g. at an OS keychain unlock prompt. If such a prompt is showing, ask the human to answer it; until they do, other wallet-cli commands that change local state may fail with a lock timeout. A profile still at that prompt does not show in `list`, so remember its id: before enrolling under a new id, run `wait` (step 5) on this one.
 
-Done when you have the `enrollment-pending` line, or the `enrollment-waiting` line and then the link from `wait` (step 5). When `enroll` fails instead, match its error in the error table (step 12).
+**Check that the listener survived.** Right after `enroll --detach` returns, and before you send the human anything, run `wait` with the same host sandbox setting:
+
+```bash
+pnpm --silent wallet-cli start agent-intent wait --profile <id> --timeout 2s --output json
+```
+
+- `type` `"enrollment-waiting"`: the listener is running; go on.
+- `ok: false` with `error.code` `listener_exited`: the host stopped the listener when `enroll` returned. Never send that link: the human could still approve it, which adds the agent to their Ledger Sync with nothing left to receive the approval. The id is burned: pick a new one (step 3) and enroll as a background job (below).
+- any other error: error table (step 12).
+
+Done when that check reports `enrollment-waiting` and you have the link: from the `enrollment-pending` line, or from `wait` (step 5) after an `enrollment-waiting` line. When `enroll` fails instead, match its error in the error table (step 12).
 
 **Background job** (`enroll` on a host that stops the `--detach` listener, and every `recover`). Start the command without `--detach` as a background job of your terminal tool, read the pending event from the job's output while it runs, and leave the job running through the handoff (step 5; for `recover`, step 10). On a terminal tool without background jobs, tell the human that this enrollment or recovery cannot be completed from this host; every other `agent-intent` command still runs there. Below, `<cmd>` is `enroll` or `recover`. The job's status and its stop come from your tool:
 
@@ -261,7 +271,7 @@ Messages are substrings of the CLI output; a `code` row matches `error.code`. Th
 
 | Message | Cause | Action |
 |---|---|---|
-| code `listener_exited` (from `wait`) | the listener ended before the approval arrived; the message gives its last error, then ends with `Log: <path>.` Causes: the human left the page after Review (`Enrollment relay closed`), the host killed background processes, a reboot | the enrollment is lost: step 2, new id. If the human had approved, tell them the agent stays on their Ledger Sync. When it recurs at once, the host kills background processes: enroll as a background job (step 4); on a host without background jobs, tell the human enrollment cannot be completed from this host |
+| code `listener_exited` (from `wait`) | the listener ended before the approval arrived; the message gives its last error, then ends with `Log: <path>.` Causes: the human left the page after Review (`Enrollment relay closed`), the host killed background processes, a reboot | the enrollment is lost: step 2, new id. If the human had approved, tell them the agent stays on their Ledger Sync. When it comes from the check right after `enroll --detach`, or recurs at once, the host kills background processes: enroll under a new id as a background job (step 4); on a host without background jobs, tell the human enrollment cannot be completed from this host |
 | code `listener_stuck` (from `wait`) | a live listener has not saved the profile within 10 minutes, e.g. a keychain unlock prompt answered too late; the key was removed and nothing was saved | step 2, new id |
 | code `enrollment_expired` (from `wait`) | the link expired without an approval (also a keychain unlock prompt answered too late) | step 2, new id |
 | code `profile_not_found` (from `wait`) | no profile with that id in this machine's state dir | check the id with step 1; otherwise step 2, new id |

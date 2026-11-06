@@ -28,11 +28,18 @@ beforeEach(() => {
   children = [];
 });
 
-afterEach(() => {
-  for (const child of children) child.kill();
+afterEach(async () => {
+  await Promise.all(children.map(stopChild));
   restoreStateHome();
   rmSync(stateHome, { recursive: true, force: true });
 });
+
+function stopChild(child: ChildProcess): Promise<void> {
+  if (child.exitCode !== null || child.signalCode !== null) return Promise.resolve();
+  const exited = new Promise<void>(resolve => child.once("exit", () => resolve()));
+  child.kill();
+  return exited;
+}
 
 /** A real child process running `script` under this test's own Bun. */
 function startChild(script: string, logPath: string): ChildProcess {
