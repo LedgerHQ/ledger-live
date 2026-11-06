@@ -39,7 +39,7 @@ function buildTarget(projectRoot) {
       `{workspaceRoot}/${PLUGIN_ROOT}/validate.js`,
       `{workspaceRoot}/${PLUGIN_ROOT}/exceptions.js`,
       `{workspaceRoot}/${PLUGIN_ROOT}/intermediate-barrels.js`,
-      { externalDependencies: ["typescript"] },
+      { externalDependencies: ["@typescript/native"] },
     ],
     options: {
       cwd: "{workspaceRoot}",

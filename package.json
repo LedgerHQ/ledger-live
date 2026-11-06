@@ -223,6 +223,7 @@
     "@swc-node/register": "1.12.1",
     "@ton/crypto": "3.3.0",
     "@typescript-eslint/parser": "catalog:",
+    "@typescript/native": "catalog:",
     "chalk": "catalog:",
     "eslint": "8.57.0",
     "jest-sonar": "0.2.16",

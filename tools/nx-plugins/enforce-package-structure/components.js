@@ -34,7 +34,7 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
-const ts = require("typescript");
+const ts = require("@typescript/native/ast");
 const { defaultLibDirectory, parse } = require("./parse");
 
 /** @typedef {"web" | "native"} Platform */
@@ -244,7 +244,7 @@ function unwrap(expression) {
     ts.isParenthesizedExpression(current) ||
     ts.isAsExpression(current) ||
     ts.isSatisfiesExpression(current) ||
-    ts.isTypeAssertionExpression(current) ||
+    ts.isTypeAssertion(current) ||
     ts.isNonNullExpression(current)
   ) {
     current = current.expression;
@@ -915,7 +915,7 @@ function enclosingScopeNames(node, values) {
   const names = new Set();
   let child = node;
   for (let scope = node.parent; scope && !ts.isSourceFile(scope); scope = scope.parent) {
-    if (values && ts.isFunctionLike(scope)) {
+    if (values && ts.isSignatureDeclaration(scope)) {
       for (const parameter of scope.parameters) {
         for (const name of bindingNames(parameter.name)) names.add(name);
       }
@@ -990,7 +990,7 @@ function inferringConditional(parameter) {
  *
  * @param {ts.TypeAliasDeclaration | ts.InterfaceDeclaration} declaration
  * @param {ReturnType<typeof parseModule>} module
- * @returns {Set<ts.PropertySignature | ts.MethodSignature>}
+ * @returns {Set<ts.PropertySignatureDeclaration | ts.MethodSignatureDeclaration>}
  */
 function reachableProps(declaration, module) {
   // Where a node is visited: the contract's own expansion, whose parameters stay unbound; the
@@ -1159,8 +1159,8 @@ function reachableProps(declaration, module) {
     const before = reads.get(parameter) ?? -1;
     if (index <= before) return;
     reads.set(parameter, index);
-    if (parameter.default && (omittedFrom.get(local) ?? Infinity) <= position) {
-      visit(parameter.default, parameter);
+    if (parameter.defaultType && (omittedFrom.get(local) ?? Infinity) <= position) {
+      visit(parameter.defaultType, parameter);
     }
     const byGiven = entryOf(referencesOf, local, () => new Map());
     for (let given = Math.max(before, position) + 1; given <= index; given++) {
@@ -1182,9 +1182,9 @@ function reachableProps(declaration, module) {
     // `{ [id: string]: Tile }` and `{ get tile(): Tile }` hold a tile but declare no callback.
     if (ts.isIndexSignatureDeclaration(prop)) visit(prop.type, context);
     if (ts.isGetAccessorDeclaration(prop) && prop.type) visit(prop.type, context);
-    if (!ts.isPropertySignature(prop) && !ts.isMethodSignature(prop)) return;
+    if (!ts.isPropertySignatureDeclaration(prop) && !ts.isMethodSignatureDeclaration(prop)) return;
     props.add(prop);
-    if (ts.isPropertySignature(prop) && prop.type) visit(prop.type, context);
+    if (ts.isPropertySignatureDeclaration(prop) && prop.type) visit(prop.type, context);
   }
   /**
    * Binds the arguments of `reference` to the parameters of `local`, then visits its body once.
@@ -1212,9 +1212,9 @@ function reachableProps(declaration, module) {
       const from = omittedFrom.get(local) ?? parameters.length;
       for (let index = given; index < from; index++) {
         const parameter = parameters[index];
-        if (!parameter.default) continue;
-        bind(parameter, { node: parameter.default, context: parameter });
-        if (reads.has(parameter)) visit(parameter.default, parameter);
+        if (!parameter.defaultType) continue;
+        bind(parameter, { node: parameter.defaultType, context: parameter });
+        if (reads.has(parameter)) visit(parameter.defaultType, parameter);
       }
       omittedFrom.set(local, Math.min(from, given));
     }
@@ -1439,7 +1439,7 @@ function checkContractProps(module, declaration) {
     }
     const isCallback =
       CALLBACK_NAME.test(name) ||
-      ts.isMethodSignature(prop) ||
+      ts.isMethodSignatureDeclaration(prop) ||
       Boolean(prop.type && ts.isFunctionTypeNode(prop.type));
     if (isCallback && isGestureName(name)) {
       report(
@@ -1458,8 +1458,8 @@ function checkContractProps(module, declaration) {
         `\`${name}\` is tagged \`@platform ${value}\`, not web or native`,
       );
     } else if (
-      !ts.isPropertySignature(prop) ||
-      !prop.questionToken ||
+      !ts.isPropertySignatureDeclaration(prop) ||
+      prop.postfixToken?.kind !== ts.SyntaxKind.QuestionToken ||
       !isPlatformPropType(prop.type)
     ) {
       report(

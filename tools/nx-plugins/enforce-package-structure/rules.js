@@ -9,7 +9,7 @@
 // same symbol, and no obvious original provider.
 
 const path = require("node:path");
-const ts = require("typescript");
+const ts = require("@typescript/native/ast");
 const { parse } = require("./parse");
 
 /** @typedef {{ line: number, code: string, message: string, text: string, breaker?: ChainBreaker }} Violation */

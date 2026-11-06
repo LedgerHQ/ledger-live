@@ -344,6 +344,7 @@
     "@types/styled-system": "5.1.22",
     "@types/write-file-atomic": "4.0.3",
     "@typescript-eslint/parser": "catalog:",
+    "@typescript/native": "catalog:",
     "allure-playwright": "catalog:",
     "autoprefixer": "10.4.22",
     "axios": "catalog:",

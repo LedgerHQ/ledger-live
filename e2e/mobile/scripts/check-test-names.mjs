@@ -23,7 +23,8 @@
  * Keep the value out of the name and log it from the test body instead. If a call really is
  * deterministic, put `// deterministic-title-ok` on the line above the declaration.
  */
-import ts from "typescript";
+import * as ts from "@typescript/native/ast";
+import { API } from "@typescript/native/sync";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -68,11 +69,20 @@ const containsCall = node => {
   return found;
 };
 
+const api = new API({ cwd: ROOT });
+const parse = (file, text) => {
+  const retained = api.createSourceFile(file, text, {
+    scriptKind: file.endsWith("x") ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
+  });
+  retained.dispose();
+  return retained.sourceFile;
+};
+
 const violations = [];
 
 for (const file of files) {
   const text = fs.readFileSync(file, "utf8");
-  const src = ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true);
+  const src = parse(file, text);
   const rel = path.relative(ROOT, file);
   const lineOf = node => src.getLineAndCharacterOfPosition(node.getStart(src)).line + 1;
   const optedOut = node =>
@@ -140,6 +150,8 @@ for (const file of files) {
     node.forEachChild(visit);
   })(src);
 }
+
+api.close();
 
 if (violations.length === 0) {
   console.log(`✅ ${files.length} files: every test title is stable across retries.`);
