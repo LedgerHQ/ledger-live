@@ -53,6 +53,40 @@ export type Trc20TransferData = {
  * @returns Decoded transfer data with TRON-format recipient address (41 + 20 bytes) and amount, or null if invalid
  */
 export const abiDecodeTrc20Transfer = (data: string): Trc20TransferData | null => {
+  const decoded = abiDecodeAddressUint256Call(data, TRC20_TRANSFER_SELECTOR);
+  return decoded ? { to: decoded.address, amount: decoded.amount } : null;
+};
+
+/**
+ * Function selector for TRC20 approve(address,uint256)
+ * Computed as: keccak256("approve(address,uint256)").slice(0, 8) = "095ea7b3"
+ */
+const TRC20_APPROVE_SELECTOR = "095ea7b3";
+
+export type Trc20ApproveData = {
+  /** TRON hex address (`41` + 20 bytes) of the account allowed to spend the tokens. */
+  spender: string;
+  /** The allowance granted to the spender; zero revokes it. */
+  amount: BigNumber;
+};
+
+/**
+ * Decodes ABI-encoded TRC20 `approve(spender, amount)` call data. The layout is the one of
+ * {@link abiDecodeTrc20Transfer}, with the spender in the address slot.
+ *
+ * @param data - Hex-encoded call data, optionally prefixed with "0x"
+ * @returns The TRON-format spender address (41 + 20 bytes) and the allowance, or null if invalid
+ */
+export const abiDecodeTrc20Approve = (data: string): Trc20ApproveData | null => {
+  const decoded = abiDecodeAddressUint256Call(data, TRC20_APPROVE_SELECTOR);
+  return decoded ? { spender: decoded.address, amount: decoded.amount } : null;
+};
+
+/** Decodes the call data of a `(address, uint256)` function with the given selector. */
+const abiDecodeAddressUint256Call = (
+  data: string,
+  expectedSelector: string,
+): { address: string; amount: BigNumber } | null => {
   const has0xPrefix = data.toLowerCase().startsWith("0x");
   const cleanData = has0xPrefix ? data.slice(2) : data;
 
@@ -63,22 +97,21 @@ export const abiDecodeTrc20Transfer = (data: string): Trc20TransferData | null =
   if (!HEX_REGEX.test(cleanData)) return null;
 
   const selector = cleanData.slice(0, 8).toLowerCase();
-  if (selector !== TRC20_TRANSFER_SELECTOR) return null;
+  if (selector !== expectedSelector) return null;
 
   // Extract address parameter (64 hex chars = 32 bytes)
-  const toHex = cleanData.slice(8, 72);
+  const addressSlot = cleanData.slice(8, 72);
   const amountHex = cleanData.slice(72, 136);
 
   // Skip 12 bytes (24 hex chars) of padding + "41" prefix, extract 20-byte address
-  const addressHex = toHex.slice(24);
+  const addressHex = addressSlot.slice(24);
   if (addressHex.length !== 40) return null;
 
-  // Reconstruct TRON address: "41" prefix + 20-byte address
-  const to = "41" + addressHex;
   const amount = new BigNumber(amountHex, 16);
   if (amount.isNaN()) return null;
 
-  return { to, amount };
+  // Reconstruct TRON address: "41" prefix + 20-byte address
+  return { address: "41" + addressHex, amount };
 };
 
 /**
@@ -134,6 +167,18 @@ const decodeTrc20TokenEventLog = (
   if (!contractAddress || !from || !to) return null;
 
   return { contractAddress, from, to };
+};
+
+/**
+ * Decodes a TRC20 `Approval(address,address,uint256)` event log: the token contract, the owner
+ * (`from`) and the spender (`to`). A TRC721 `Approval` shares the signature but indexes the token
+ * id as a fourth topic and carries no data: it is not a TRC20 approval, so null is returned.
+ */
+export const decodeTrc20ApprovalLog = (log: TransactionLogAPI): Trc20TokenEventLog | null => {
+  if (log.topics?.length !== 3) return null;
+  const data = (log.data ?? "").replace(/^0x/, "");
+  if (data.length !== UINT256_HEX_LENGTH || !HEX_REGEX.test(data)) return null;
+  return decodeTrc20TokenEventLog(log, TRC20_APPROVAL_EVENT_TOPIC);
 };
 
 export type Trc20TransferLog = Trc20TokenEventLog & { amount: BigNumber };
