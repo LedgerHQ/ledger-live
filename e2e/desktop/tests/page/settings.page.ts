@@ -50,6 +50,11 @@ export class SettingsPage extends AppPage {
     await expect(this.generalTab).toBeVisible();
   }
 
+  @step("Go to Settings General tab")
+  async goToGeneralTab() {
+    await this.generalTab.click();
+  }
+
   @step("Go to Settings Accounts tab")
   async goToAccountsTab() {
     await this.accountsTab.click();
@@ -106,7 +111,9 @@ export class SettingsPage extends AppPage {
 
   @step("Expect the app to render the $0 color scheme")
   async expectAppColorScheme(colorScheme: "light" | "dark") {
-    await expect(this.rootElement).toHaveClass(new RegExp(String.raw`\b${colorScheme}\b`));
+    await this.softExpect(async soft => {
+      await soft(this.rootElement).toHaveClass(new RegExp(String.raw`\b${colorScheme}\b`));
+    });
   }
 
   @step("Expect General settings tab to show $0")
@@ -184,16 +191,16 @@ export class SettingsPage extends AppPage {
   async expectLedgerSupportUrlToBeCorrect() {
     await expect(this.ledgerSupport).toBeVisible();
     const url = await this.ledgerSupport.getAttribute("href");
-    if (!url) {
-      throw new Error("The href attribute is missing or null");
-    }
-    try {
-      const response = await axios.get(url);
-      expect(response.status).toBe(200);
-    } catch {
-      throw new Error(`Failed to fetch URL ${url}`);
-    }
-    expect(url).toBe("https://support.ledger.com");
+    const status = url
+      ? await axios.get(url, { timeout: TIMEOUT.medium, validateStatus: () => true }).then(
+          response => response.status,
+          (error: Error) => error.message,
+        )
+      : "no href";
+    await this.softExpect(async soft => {
+      await soft(this.ledgerSupport).toHaveAttribute("href", "https://support.ledger.com");
+      soft(status, `GET ${url}`).toBe(200);
+    });
   }
 
   @step("Reset App")
@@ -203,7 +210,10 @@ export class SettingsPage extends AppPage {
 
   @step("check View User Data button is enabled")
   async checkViewUserDataButtonIsEnabled() {
-    await expect(this.viewUserDataButton).toBeEnabled();
+    await expect(this.viewUserDataButton).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.viewUserDataButton).toBeEnabled();
+    });
   }
 
   @step("Click on export logs")

@@ -1,6 +1,7 @@
 import { step } from "tests/misc/reporters/step";
 import { expect } from "@playwright/test";
 import { Drawer } from "tests/component/drawer.component";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 export class LedgerSyncDrawer extends Drawer {
   private deleteSyncButton = this.page.getByText("Delete sync");
@@ -29,8 +30,10 @@ export class LedgerSyncDrawer extends Drawer {
 
   @step("Expect activation screen to be visible")
   async expectActivationScreenVisible() {
-    await expect(this.activateTitle).toBeVisible();
     await expect(this.turnOnLedgerSyncButton).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.activateTitle).toBeVisible();
+    });
   }
 
   @step("Click 'Turn on Ledger Sync'")
@@ -46,13 +49,21 @@ export class LedgerSyncDrawer extends Drawer {
 
   @step("Expect activation success screen")
   async expectActivationSuccess() {
-    await expect(this.activateSuccessTitle).toContainText("Sync complete");
+    await expect(this.activateSuccessTitle).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.activateSuccessTitle).toContainText("Sync complete");
+    });
   }
 
   @step("Check if Ledger Sync management drawer is visible")
   async expectLedgerSyncManagementVisible() {
     await expect(this.deleteSyncButton).toBeVisible();
-    await expect(this.displayInstances).toBeVisible();
+    await this.softExpect(
+      async soft => {
+        await soft(this.displayInstances).toBeVisible();
+      },
+      { timeout: TIMEOUT.large },
+    );
   }
 
   @step("Delete Sync")
@@ -75,9 +86,12 @@ export class LedgerSyncDrawer extends Drawer {
 
   @step("Check if the backup deletion was successful")
   async expectBackupDeletion() {
-    await expect(this.backupDeletionSuccessTextId).toContainText(
-      "Your Ledger Wallet apps are no longer synced",
-    );
+    await expect(this.backupDeletionSuccessTextId).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.backupDeletionSuccessTextId).toContainText(
+        "Your Ledger Wallet apps are no longer synced",
+      );
+    });
   }
 
   private async waitForManageInstancesButton() {

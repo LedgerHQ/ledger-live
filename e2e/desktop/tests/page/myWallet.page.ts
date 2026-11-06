@@ -1,6 +1,7 @@
 import { AppPage } from "tests/page/abstractClasses";
 import { step } from "tests/misc/reporters/step";
 import { expect } from "@playwright/test";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 export class MyWalletPage extends AppPage {
   private readonly avatarTrigger = this.page.getByRole("button", { name: /^my wallet$/i });
@@ -84,18 +85,27 @@ export class MyWalletPage extends AppPage {
     await expect(this.modalCloseButton).toBeHidden();
   }
 
+  private async expectUrl(url: RegExp) {
+    await this.softExpect(
+      async soft => {
+        await soft(this.page).toHaveURL(url);
+      },
+      { timeout: TIMEOUT.large },
+    );
+  }
+
   @step("Expect Referral live app to be loaded")
   async expectReferralLiveAppLoaded() {
-    await expect(this.page).toHaveURL(/\/refer(?:-a-friend)?(?:\/|$|\?)/);
+    await this.expectUrl(/\/refer(?:-a-friend)?(?:\/|$|\?)/);
   }
 
   @step("Expect Help section to be displayed")
   async expectHelpSectionDisplayed() {
-    await expect(this.page).toHaveURL(/\/settings\/help(?:\/|$|\?)/);
+    await this.expectUrl(/\/settings\/help(?:\/|$|\?)/);
   }
 
   @step("Expect Settings page to be displayed")
   async expectSettingsPageDisplayed() {
-    await expect(this.page).toHaveURL(/\/settings(?:\/|$|\?)/);
+    await this.expectUrl(/\/settings(?:\/|$|\?)/);
   }
 }

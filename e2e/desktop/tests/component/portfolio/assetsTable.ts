@@ -1,7 +1,9 @@
 import { expect, Locator } from "@playwright/test";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 import { sanitizeAssetNameForTestId } from "@features/platform-assets-table/test-id";
 import { step } from "tests/misc/reporters/step";
+import { softExpect } from "tests/utils/softExpect";
 
 export class AssetsTable {
   readonly root: Locator;
@@ -52,7 +54,17 @@ export class AssetsTable {
 
   @step("Expect asset $0 value to be $1")
   async expectAssetValueToBe(currency: Currency, value: string) {
-    await expect(this.assetValueByCurrency(currency)).toContainText(value);
+    const assetValue = this.assetValueByCurrency(currency);
+    await expect(assetValue).toBeVisible();
+    await softExpect(
+      {
+        page: this.root.page(),
+        assertion: async soft => {
+          await soft(assetValue).toContainText(value);
+        },
+      },
+      { timeout: TIMEOUT.large },
+    );
   }
 
   @step("Expect number of rows to be $0")

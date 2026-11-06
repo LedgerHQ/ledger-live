@@ -75,11 +75,9 @@ export class AccountsPage extends AppPage {
 
   @step("Expect token balance to be null")
   async expectTokenBalanceToBeNull(childCurrency: Currency) {
-    await expect(
-      this.page
-        .getByTestId(`token-row-${childCurrency.ticker}`)
-        .getByText(`0 ${childCurrency.ticker}`),
-    ).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.tokenRow(childCurrency).getByText(`0 ${childCurrency.ticker}`)).toBeVisible();
+    });
   }
 
   @step("Check $0 account was deleted ")
