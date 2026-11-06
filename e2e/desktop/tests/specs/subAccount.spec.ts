@@ -174,7 +174,9 @@ for (const token of subAccountReceive) {
         await app.accounts.navigateToAccountByName(getParentAccountName(token.account));
         await app.account.expectAccountVisibility(getParentAccountName(token.account));
 
-        await app.account.clickAddToken();
+        await app.account.clickAddToken(
+          token.account.parentAccount?.currency ?? token.account.currency,
+        );
         if (token.shouldSelectReceiveCryptoOption) {
           await app.receive.expectRecieveMenu();
           await app.receive.clickReceive();
