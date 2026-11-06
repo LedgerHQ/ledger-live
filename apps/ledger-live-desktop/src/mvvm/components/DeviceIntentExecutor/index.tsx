@@ -77,7 +77,7 @@ export function DeviceIntentExecutor<JobState, Input, ExtraProps, Result = undef
     <Dialog open={wrappedProps.enabled} onOpenChange={onOpenChange} height="fit">
       <DialogContent
         aria-describedby={undefined}
-        className="max-h-[90vh] w-[400px] bg-base p-0"
+        className="max-h-[90vh] w-[400px] p-0"
         data-testid="device-intent-executor-dialog"
         onPointerDownOutside={onOverlayDismiss}
         onEscapeKeyDown={onEscapeKeyDown}
