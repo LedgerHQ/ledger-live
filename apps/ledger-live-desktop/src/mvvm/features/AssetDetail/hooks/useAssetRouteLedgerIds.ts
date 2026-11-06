@@ -21,7 +21,6 @@ export function useAssetRouteLedgerIds(routeAssetId?: string): {
   const counterCurrency = useSelector(counterValueCurrencySelector).ticker.toLowerCase();
   const hideEmptyTokenAccount = useSelector(hideEmptyTokenAccountsSelector);
   const distribution = useDistribution({
-    groupBy: "asset",
     showEmptyAccounts: true,
     hideEmptyTokenAccount,
   });

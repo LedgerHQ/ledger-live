@@ -57,13 +57,13 @@ describe("fromRestoreBackupState", () => {
       });
     });
 
-    it("should keep the retry the restore offered when the connection times out", () => {
+    it("should keep the retry and cancel the restore offered when the connection times out", () => {
       expect(
         fromRestoreBackupState(
-          { type: RestoreBackupStateType.CONNECTION_TIMED_OUT, retry: noop },
+          { type: RestoreBackupStateType.CONNECTION_TIMED_OUT, retry: noop, cancel: noop },
           0,
         ),
-      ).toEqual({ type: ApplyUpdatesStateType.CONNECTION_TIMED_OUT, retry: noop });
+      ).toEqual({ type: ApplyUpdatesStateType.CONNECTION_TIMED_OUT, retry: noop, cancel: noop });
     });
 
     it("should keep the cancel the restore offered when it fails unexpectedly", () => {

@@ -204,12 +204,12 @@ function isValidSettingsKey(key: string): key is keyof SettingsState {
 }
 
 export function filterValidSettings(
-  importedSettings: Partial<SettingsState>,
+  importedSettings: SettingsImportPayload,
 ): Partial<SettingsState> {
   const validKeys = new Set<string>(Object.keys(INITIAL_STATE));
 
   return Object.fromEntries(
-    Object.entries(importedSettings).filter(
+    Object.entries(importedSettings ?? {}).filter(
       ([key]) => validKeys.has(key) && isValidSettingsKey(key),
     ),
   ) as Partial<SettingsState>;

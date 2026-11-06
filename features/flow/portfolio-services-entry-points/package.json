@@ -39,6 +39,7 @@
     "@ledgerhq/test-quarantine": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "@support/jest": "workspace:*",
+    "@support/lint": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

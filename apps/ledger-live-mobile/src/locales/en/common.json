@@ -2601,6 +2601,22 @@
         "cta": "Continue"
       }
     },
+    "quitConfirmation": {
+      "title": "Pause setup for now?",
+      "description": "Any unsaved progress on this step will be lost.",
+      "restart": "You'll need to restart from {{step}} next time.",
+      "leave": "Leave without saving",
+      "continue": "Continue setup",
+      "steps": {
+        "intro": "Introduction",
+        "checks": "Genuine & OS check",
+        "name": "Device name",
+        "pin": "PIN",
+        "setupChoice": "Setup choice",
+        "security": "Security setup",
+        "restore": "Restore access"
+      }
+    },
     "syncOffer": {
       "title": "Sync your wallet",
       "description": "Keep your balance and portfolio in sync when switching phones or using a computer.",
@@ -5931,7 +5947,7 @@
   "osUpdates": {
     "backupBanner": {
       "title": "Saved settings found",
-      "description": "Apps and settings were not fully restored on your device.",
+      "description": "Apps and settings were not fully reinstalled on your device.",
       "restore": "Reinstall",
       "delete": "Discard"
     },
@@ -5963,14 +5979,13 @@
       "cancel": "Cancel"
     },
     "actions": {
-      "retry": "Retry",
-      "cancel": "Cancel",
+      "cancelOsUpdate": "Cancel OS update",
       "close": "Close",
       "finish": "Finish"
     },
     "closeConfirmation": {
       "title": "OS update is in progress",
-      "description": "Your settings and apps may not be restored properly if you cancel the update now.",
+      "description": "Your settings and apps may not be reinstalled properly if you cancel the update now.",
       "continue": "Continue OS update",
       "cancel": "Cancel OS update"
     },
@@ -5987,16 +6002,20 @@
     },
     "progress": {
       "updatingTitle": "Update {{index}}/{{count}}",
-      "restoringTitle": "Reinstalling your settings...",
-      "updatingDescription": "Your {{productName}} will restart automatically multiple times and you will be asked to unlock it with your PIN during installation.",
-      "restoringDescription": "Almost done. Your settings are being reinstalled on your {{productName}}."
+      "restoringTitle": "Reinstalling your apps and settings...",
+      "updatingDescription": "Your {{productName}} will restart automatically and you will be asked to unlock it with your PIN during installation.\n\nStay on this screen until the update is complete.",
+      "whyUpdatesTitle": "Why {{count}} updates?",
+      "whyUpdatesDescription": "Your device needs an earlier version of Ledger OS before it can install the latest one. The next update follows right after this one.",
+      "restoringDescription": "Almost done. Your language, lock screen picture and apps are being reinstalled on your {{productName}}.",
+      "stayOnScreen": "Stay on this screen until the update is complete."
     },
     "applied": {
       "title": "Your {{productName}} is now up to date",
       "version": "OS version: {{version}}"
     },
     "restored": {
-      "title": "Apps and settings reinstalled on your {{productName}}"
+      "title": "Apps and settings reinstalled on your {{productName}}",
+      "description": "Lock screen, Language and apps."
     },
     "restoreResult": {
       "partial": "You didn't reinstall your apps and lock screen. Your crypto is safe. You can reinstall your apps and lock screen at any time.",
@@ -6010,22 +6029,22 @@
       "title": "Unlock your {{productName}}"
     },
     "deviceDisconnected": {
-      "title": "Device disconnected",
-      "description": "Reconnect your Ledger device to continue. The update will resume automatically."
+      "title": "Power on and unlock your {{productName}}"
     },
     "connectionTimedOut": {
       "title": "Connection timed out",
       "description": "Restart the update.",
-      "restart": "Restart OS update",
-      "sendReport": "Send report to Ledger"
+      "restart": "Restart OS update"
     },
     "unexpectedError": {
       "title": "Something went wrong",
-      "description": "The OS update could not continue. Contact Ledger support if the problem persists."
+      "description": "The OS update could not continue. Contact <supportLink>Ledger support</supportLink> if the problem persists."
     },
     "batteryTooLow": {
-      "title": "Charge your {{productName}}",
-      "description": "Your device battery is at {{percentage}}%. Plug it in or charge it above 20% to continue."
+      "title": "Plug in your {{productName}} to continue",
+      "description": "Installation will start when your {{productName}} is plugged in or charged at least 20%.",
+      "batteryLevel": "Battery level: {{percentage}}%",
+      "cancel": "Cancel OS update"
     },
     "backupSelection": {
       "title": "Settings previously saved",
@@ -6036,8 +6055,10 @@
       "lastSaveDate": "{{date}}, {{time}}"
     },
     "secureConnectionRefused": {
-      "title": "Secure connection refused",
-      "description": "You refused the secure connection on your device. Retry to continue."
+      "title": "Cancel secure connection?",
+      "description": "Secure connection is mandatory to continue updating your {{productName}}.",
+      "retry": "Retry secure connection",
+      "cancel": "Cancel secure connection"
     },
     "installFirmwareRefused": {
       "title": "OS update installation cancelled on {{productName}}",
@@ -6733,7 +6754,7 @@
     "updateCancelled": "OS update install cancelled on {{deviceName}}",
     "updateCancelledDescription": "If this was a mistake, restart the update.",
     "updateNotYetComplete": "OS update is in progress",
-    "updateNotYetCompleteDescription": "Your settings and apps may not be restored properly if you cancel the update now.",
+    "updateNotYetCompleteDescription": "Your settings and apps may not be reinstalled properly if you cancel the update now.",
     "restartUpdate": "Restart OS update",
     "quitUpdate": "Cancel OS Update",
     "continueUpdate": "Continue OS Update",

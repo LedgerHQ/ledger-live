@@ -8,12 +8,6 @@ import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { render, screen } from "@tests/test-renderer";
 import { OsUpdateStep } from "../../../components/OsUpdateStep";
 import { stax } from "../../../testUtils/connectedDevice.mock";
-import useExportLogs from "~/components/useExportLogs";
-
-jest.mock("~/components/useExportLogs", () => ({
-  __esModule: true,
-  default: jest.fn(),
-}));
 
 function renderView(
   state: CreateBackupState,
@@ -88,8 +82,8 @@ describe("CreateBackup step", () => {
 
     expect(hasCloseButton()).toBe(false);
 
-    await user.press(screen.getByText("Retry"));
-    await user.press(screen.getByText("Cancel"));
+    await user.press(screen.getByText("Retry secure connection"));
+    await user.press(screen.getByText("Cancel secure connection"));
 
     expect(retry).toHaveBeenCalledTimes(1);
     expect(cancel).toHaveBeenCalledTimes(1);
@@ -104,22 +98,26 @@ describe("CreateBackup step", () => {
     expect(screen.getByTestId(testID)).toBeVisible();
   });
 
-  it("sends a report and restarts the update from the connection timeout", async () => {
-    const exportLogs = jest.fn();
-    jest.mocked(useExportLogs).mockReturnValue(exportLogs);
+  it("restarts or cancels the update from the connection timeout", async () => {
     const retry = jest.fn();
-    const { user } = renderView({ type: CreateBackupStateType.CONNECTION_TIMED_OUT, retry });
+    const cancel = jest.fn();
+    const { user } = renderView({
+      type: CreateBackupStateType.CONNECTION_TIMED_OUT,
+      retry,
+      cancel,
+    });
 
     expect(screen.getByTestId("os-update-connection-timed-out")).toBeVisible();
     expect(hasCloseButton()).toBe(false);
 
-    await user.press(screen.getByText("Send report to Ledger"));
-
-    expect(exportLogs).toHaveBeenCalledTimes(1);
-    expect(retry).not.toHaveBeenCalled();
-
     await user.press(screen.getByText("Restart OS update"));
 
+    expect(retry).toHaveBeenCalledTimes(1);
+    expect(cancel).not.toHaveBeenCalled();
+
+    await user.press(screen.getByText("Cancel OS update"));
+
+    expect(cancel).toHaveBeenCalledTimes(1);
     expect(retry).toHaveBeenCalledTimes(1);
   });
 
@@ -131,7 +129,8 @@ describe("CreateBackup step", () => {
       cancel,
     });
 
-    await user.press(screen.getByText("Cancel"));
+    expect(hasCloseButton()).toBe(false);
+    await user.press(screen.getByText("Cancel OS update"));
 
     expect(cancel).toHaveBeenCalledTimes(1);
   });

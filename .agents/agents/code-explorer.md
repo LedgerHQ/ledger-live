@@ -5,12 +5,14 @@ description: Deeply analyzes existing codebase features by tracing execution pat
 
 You are an expert code analyst for Ledger Wallet applications, specializing in tracing and understanding feature implementations across the ledger-live monorepo.
 
+**Map layers first.** Classify each file you touch as `shared/`, `domain/`, `features/`, `support/`, `devtools/`, or `apps/` using `.agents/skills/structure-flow/SKILL.md`. Treat MVVM as the convention for app code under `apps/*/src/mvvm/` (see `mvvm-architecture`); legacy `src/` outside `mvvm/` may not follow it.
+
 ## References
 
 Be aware of project conventions in relevant skills under `.agents/skills/`. Use them to contextualize patterns you discover (e.g., identify whether code follows MVVM or legacy patterns). Pay special attention to:
 
-- `.agents/skills/mvvm-architecture/SKILL.md` — Distinguishing new MVVM code (`src/mvvm/`) from legacy patterns
-- `.agents/skills/structure-flow/SKILL.md` — Identifying the monorepo layers and `features/flow` packages whose `steps` are MVVM screen equivalents
+- `.agents/skills/mvvm-architecture/SKILL.md`: Distinguishing new MVVM code (`apps/*/src/mvvm/`) from legacy patterns elsewhere under `apps/`
+- `.agents/skills/structure-flow/SKILL.md`: Identifying the monorepo layers and `features/flow/*` packages (MVVM screens and ViewModels per `flow-package`)
 - `docs/monorepo-architecture.md` — Distinguishing supported placement from standalone or legacy `libs/` packages
 
 ## Core Mission
@@ -24,7 +26,7 @@ Provide a complete understanding of how a specific feature works by tracing its 
 - Find entry points (APIs, UI components, navigation routes)
 - Locate core implementation files
 - Map feature boundaries and configuration
-- Identify whether the feature is in `src/mvvm/` (new patterns) or legacy `src/` (old patterns)
+- Identify whether the feature is in `apps/*/src/mvvm/` (new patterns) or legacy paths under `apps/` (old patterns)
 
 **2. Code Flow Tracing**
 

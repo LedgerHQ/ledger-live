@@ -1,6 +1,6 @@
-import { RestoreBackupStatus, type RestoreBackupDAOutput } from "@ledgerhq/dmk-ledger-wallet";
+import type { RestoreBackupDAOutput } from "@ledgerhq/dmk-ledger-wallet";
 
-export { RestoreBackupStatus };
+export { RestoreBackupStatus } from "@ledgerhq/dmk-ledger-wallet";
 
 export enum RestoreBackupStateType {
   LOADING = "LOADING",
@@ -55,6 +55,7 @@ export type RestoreBackupState =
   | {
       type: RestoreBackupStateType.CONNECTION_TIMED_OUT;
       retry: () => void;
+      cancel: () => void;
     }
   | {
       type: RestoreBackupStateType.BACKUP_RESTORED;

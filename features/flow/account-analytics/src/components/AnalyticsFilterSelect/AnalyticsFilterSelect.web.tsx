@@ -40,6 +40,7 @@ export function AnalyticsFilterSelect({
   triggerLabel,
   selectedMeta,
   disabled,
+  onOpenChange,
   onValueChange,
 }: AnalyticsFilterSelectProps) {
   const { testId, FallbackIcon, iconShape, showSelectedIcon } = VARIANTS[variant];
@@ -47,7 +48,7 @@ export function AnalyticsFilterSelect({
     <CryptoIcon ledgerId={meta.iconId} ticker={meta.ticker} size={24} shape={iconShape} />
   );
   return (
-    <Select items={items} value={value} onValueChange={onValueChange}>
+    <Select items={items} value={value} onOpenChange={onOpenChange} onValueChange={onValueChange}>
       <SelectTrigger
         disabled={disabled}
         render={() => (

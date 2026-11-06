@@ -8,12 +8,14 @@ import {
   accountAssetClickedProps,
 } from "@features/flow-account-detail";
 import { setTrackingSource, track } from "@shared/analytics";
+import { useMarketDayChangeByCurrencyId } from "@features/platform-aggregated-assets";
 import {
   useAllCurrencyTrends,
   useAssetsTable,
   type AssetTableItem,
 } from "@features/platform-assets-table";
 import { useSelector } from "LLD/hooks/redux";
+import { ASSETS_PRICE_REFRESH_INTERVAL_MS } from "LLD/features/Assets/constants";
 import { getAssetDetailPath } from "LLD/utils/marketAssetNavigation";
 import { useCalculateCountervalueCallback } from "~/renderer/actions/general";
 import {
@@ -44,7 +46,15 @@ export function useAssetsSectionViewModel(account: Account): AssetsSectionViewMo
     [account, hideEmptyTokenAccounts, blacklistedTokenIds, calculateCountervalue],
   );
 
-  const trends = useAllCurrencyTrends(assetItems, "day");
+  const currencyIds = useMemo(() => assetItems.map(item => item.currency.id), [assetItems]);
+  const marketDayChange = useMarketDayChangeByCurrencyId({
+    currencyIds,
+    product: "lld",
+    version: __APP_VERSION__,
+    pollingInterval: ASSETS_PRICE_REFRESH_INTERVAL_MS,
+    skipPollingIfUnfocused: true,
+  });
+  const trends = useAllCurrencyTrends(assetItems, "day", marketDayChange);
   const items = useMemo(
     () => assetItems.map(item => ({ ...item, trend: trends.get(item.currency.id) ?? null })),
     [assetItems, trends],

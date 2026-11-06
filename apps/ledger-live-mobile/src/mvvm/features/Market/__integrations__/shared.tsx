@@ -4,7 +4,6 @@ import type { MarketNavigatorStackParamList } from "LLM/features/Market/Navigato
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ScreenName } from "~/const";
 import MarketList from "../screens/MarketList";
-import MarketDetail from "../screens/MarketDetail";
 import MarketCurrencySelect from "../screens/MarketCurrencySelect";
 import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 
@@ -15,7 +14,6 @@ export function MarketPages() {
     <NotificationsPromptProvider>
       <StackWalletTab.Navigator initialRouteName={ScreenName.MarketList}>
         <StackWalletTab.Screen name={ScreenName.MarketList} component={MarketList} />
-        <StackWalletTab.Screen name={ScreenName.MarketDetail} component={MarketDetail} />
         <StackWalletTab.Screen
           name={ScreenName.MarketCurrencySelect}
           component={MarketCurrencySelect}

@@ -44,7 +44,6 @@ export const ratingsPrompt = flagWith(
           type: "on_enter",
         },
         { route_name: "SendValidationSuccess", timer: 2000, type: "on_enter" },
-        { route_name: "MarketDetail", timer: 3000, type: "on_enter" },
       ],
       support_email: "support@ledger.com",
       typeform_url:

@@ -15,6 +15,7 @@ function createAssetFilter(): AnalyticsFilterViewProps {
     triggerLabel: "USD Coin",
     selectedMeta: { iconId: "ethereum/erc20/usdc", ticker: "USDC" },
     disabled: false,
+    onOpenChange: jest.fn(),
     onValueChange: jest.fn(),
   };
 }
@@ -38,6 +39,7 @@ function createAccountFilter(): AnalyticsFilterViewProps {
     value: "tron-account",
     triggerLabel: "Savings",
     disabled: false,
+    onOpenChange: jest.fn(),
     onValueChange: jest.fn(),
   };
 }

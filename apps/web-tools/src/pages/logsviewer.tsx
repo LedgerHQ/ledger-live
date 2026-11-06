@@ -144,7 +144,7 @@ async function copyText(text: string) {
   document.body.removeChild(input);
 }
 
-// react-inspector (v4) supports a `theme` prop; follow Lumen's resolved color
+// react-inspector supports a `theme` prop; follow Lumen's resolved color
 // scheme via a single context so the many inspector instances in the
 // virtualized table don't each call useTheme.
 const InspectorThemeContext = React.createContext<"chromeLight" | "chromeDark">("chromeLight");

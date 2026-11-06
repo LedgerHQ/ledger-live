@@ -3,17 +3,14 @@ import { escapeRegExp, openDeeplink } from "@e2e/helpers/commonHelpers";
 import { byId, byIdWithDescendantText } from "@e2e/helpers/elements/native";
 import { TIMEOUT } from "@e2e/utils/timeouts";
 
-import {
-  isAssetDiscoverabilityEnabled,
-  isAggregatedAssetsEnabled,
-} from "@e2e/utils/featureFlagUtils";
+import { isAssetDiscoverabilityEnabled } from "@e2e/utils/featureFlagUtils";
 
 import type { CurrencyType } from "@ledgerhq/live-e2e-shared/enum/Currency";
 
 type MarketQuickAction = "send" | "receive" | "buy" | "sell" | "swap";
 
-// The aggregated asset detail screen gives some quick actions their own testID.
-const AGGREGATED_QUICK_ACTION_IDS: Partial<Record<MarketQuickAction, string>> = {
+// The asset detail screen gives some quick actions their own testID.
+const ASSET_DETAIL_QUICK_ACTION_IDS: Partial<Record<MarketQuickAction, string>> = {
   buy: "asset-detail-buy-button",
   swap: "asset-detail-swap-button",
   receive: "asset-detail-footer-receive-button",
@@ -23,9 +20,7 @@ export default class MarketPage {
   private readonly marketScreenSearchBar = byId("market-screen-search-bar");
   private readonly legacySearchBar = byId("search-box");
   private readonly headerBackButton = byId("navigation-header-back-button");
-  private readonly marketBackButton = byId("market-back-btn");
   private readonly marketListHeaderLeft = byId("market-list-header-left");
-  private readonly starButton = byId("star-asset");
   private readonly starMarketListButton = byId("toggle-starred-currencies");
   private readonly filterSortButton = byId("market-filter-sort");
   private readonly filterTimeButton = byId("market-filter-time");
@@ -36,8 +31,6 @@ export default class MarketPage {
   private readonly assetDetailMarketPrice = byId("asset-detail-market-price");
   private readonly coinOptionsTrigger = byId("asset-detail-coin-options-trailing");
   private readonly coinOptionsFavouriteRow = byId("asset-detail-coin-options-favourite-row");
-  private readonly assetDetailScrollViewFor = (currencyId: string) =>
-    byId(`asset-detail-scroll-view-${currencyId.toLowerCase()}`);
   private readonly categoryTab = (value: string) =>
     byId(`market-screen-assets-category-switcher-${value}`);
   private readonly marketItem = (marketId: string) => byId(`marketItem-${marketId}`);
@@ -52,10 +45,8 @@ export default class MarketPage {
     this.marketItem(currency.market?.id ?? currency.id);
   private readonly marketRowTitle = (currency: CurrencyType) =>
     byId(`market-row-title-${currency.ticker}`);
-  private readonly marketQuickActionButton = (action: MarketQuickAction) =>
-    byId(`market-quick-action-button-${action}`);
-  private readonly aggregatedQuickActionButton = (action: MarketQuickAction) =>
-    byId(AGGREGATED_QUICK_ACTION_IDS[action] ?? `asset-quick-action-button-${action}`);
+  private readonly quickActionButton = (action: MarketQuickAction) =>
+    byId(ASSET_DETAIL_QUICK_ACTION_IDS[action] ?? `asset-quick-action-button-${action}`);
 
   private async searchBar() {
     return (await isAssetDiscoverabilityEnabled())
@@ -71,44 +62,23 @@ export default class MarketPage {
     await this.headerBackButton.waitNotVisible();
   }
 
-  @Step("Open market detail via deeplink {{{0}}}")
+  @Step("Open market screen via deeplink")
   async openViaDeeplink(currencyId?: string) {
     await openDeeplink(currencyId ? `market/${currencyId}` : "market");
   }
 
-  @Step("Expect market detail page")
-  async expectMarketDetailPage(currencyId?: string) {
-    if (await isAggregatedAssetsEnabled()) {
-      const scrollView = currencyId
-        ? this.assetDetailScrollViewFor(currencyId)
-        : this.assetDetailScrollView;
-      await scrollView.waitVisible();
-      await scrollView.expectVisible();
-    } else {
-      await this.starButton.expectVisible();
-    }
-  }
-
   @Step("Expect asset page")
   async expectAssetPageVisible() {
-    if (await isAggregatedAssetsEnabled()) {
-      await this.assetDetailScrollView.waitVisible();
-      await this.assetDetailScrollView.expectVisible();
-      await this.assetDetailMarketPrice.expectVisible();
-      await this.assetDetailCoinCapsule.expectVisible();
-      await this.coinOptionsTrigger.expectVisible();
-    } else {
-      await this.expectMarketDetailPage();
-    }
+    await this.assetDetailScrollView.waitVisible();
+    await this.assetDetailScrollView.expectVisible();
+    await this.assetDetailMarketPrice.expectVisible();
+    await this.assetDetailCoinCapsule.expectVisible();
+    await this.coinOptionsTrigger.expectVisible();
   }
 
   @Step("Leave asset page")
   async leaveAssetPage() {
-    if (await isAggregatedAssetsEnabled()) {
-      await this.headerBackButton.tap();
-    } else {
-      await this.leaveMarketDetailPage();
-    }
+    await this.headerBackButton.tap();
   }
 
   @Step("Expect market screen")
@@ -123,15 +93,6 @@ export default class MarketPage {
       await this.goBack();
     } else {
       await this.marketListHeaderLeft.tap();
-    }
-  }
-
-  @Step("Leave market detail page")
-  async leaveMarketDetailPage() {
-    if (await isAggregatedAssetsEnabled()) {
-      await this.headerBackButton.tap();
-    } else {
-      await this.marketBackButton.tap(TIMEOUT.small);
     }
   }
 
@@ -151,22 +112,14 @@ export default class MarketPage {
 
   @Step("Star favorite coin")
   async starFavoriteCoin() {
-    if (await isAggregatedAssetsEnabled()) {
-      await this.coinOptionsTrigger.tap();
-      await this.coinOptionsFavouriteRow.tap();
-    } else {
-      await this.starButton.tap();
-    }
+    await this.coinOptionsTrigger.tap();
+    await this.coinOptionsFavouriteRow.tap();
   }
 
   @Step("Back to asset list")
   async backToAssetList() {
-    if (await isAggregatedAssetsEnabled()) {
-      await this.headerBackButton.tap();
-      await (await this.searchBar()).waitVisible();
-    } else {
-      await this.marketBackButton.tap();
-    }
+    await this.headerBackButton.tap();
+    await (await this.searchBar()).waitVisible();
   }
 
   @Step("Filter starred asset")
@@ -201,11 +154,7 @@ export default class MarketPage {
 
   @Step("Tap on market quick action button {{{0}}}")
   async tapOnMarketQuickActionButton(action: MarketQuickAction) {
-    if (await isAggregatedAssetsEnabled()) {
-      await this.aggregatedQuickActionButton(action).tap();
-    } else {
-      await this.marketQuickActionButton(action).tap();
-    }
+    await this.quickActionButton(action).tap();
   }
 
   @Step("Expect filters visible")

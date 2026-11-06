@@ -1,7 +1,6 @@
 import { Account } from "@ledgerhq/types-live";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import { executeScenario, Scenario } from "@ledgerhq/coin-tester/main";
-import { killAnvil } from "./anvil";
 import { scenarioEthereum } from "./scenarii/ethereum";
 import { scenarioPolygon } from "./scenarii/polygon";
 import { scenarioScroll } from "./scenarii/scroll";
@@ -25,7 +24,6 @@ const safeExecuteScenario = async (
     await executeScenario(scenario);
   } catch (e) {
     if (e !== "done") {
-      await killAnvil();
       throw e;
     }
   }
@@ -43,9 +41,3 @@ describe("EVM Deterministic Tester", () => {
   it("scenario Arc", () => safeExecuteScenario(scenarioArc));
   it("scenario Robinhood", () => safeExecuteScenario(scenarioRobinhood));
 });
-
-["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].forEach(e =>
-  process.on(e, () => {
-    killAnvil().catch(() => {});
-  }),
-);

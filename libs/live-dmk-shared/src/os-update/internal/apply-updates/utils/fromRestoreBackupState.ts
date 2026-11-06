@@ -43,7 +43,11 @@ export const fromRestoreBackupState = (
     case RestoreBackupStateType.DEVICE_DISCONNECTED:
       return { type: ApplyUpdatesStateType.DEVICE_DISCONNECTED };
     case RestoreBackupStateType.CONNECTION_TIMED_OUT:
-      return { type: ApplyUpdatesStateType.CONNECTION_TIMED_OUT, retry: state.retry };
+      return {
+        type: ApplyUpdatesStateType.CONNECTION_TIMED_OUT,
+        retry: state.retry,
+        cancel: state.cancel,
+      };
     case RestoreBackupStateType.UNEXPECTED_ERROR:
       return {
         type: ApplyUpdatesStateType.UNEXPECTED_ERROR,
