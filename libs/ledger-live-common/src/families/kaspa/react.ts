@@ -1,6 +1,6 @@
 import type { Account, FeeStrategy } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/coin-kaspa/types/index";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 
 export const useFeesStrategy = (a: Account, t: Transaction): FeeStrategy[] => {
   const allSameEstimatedSeconds: boolean = t.networkInfo.every(

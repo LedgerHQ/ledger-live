@@ -1,7 +1,7 @@
 import { track } from "@shared/analytics";
 import React, { useCallback, useMemo } from "react";
 import useEnv from "@features/platform-env";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import isEqual from "lodash/isEqual";
 import { GestureResponderEvent } from "react-native";
 

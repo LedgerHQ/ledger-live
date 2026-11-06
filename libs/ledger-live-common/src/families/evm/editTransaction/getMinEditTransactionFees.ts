@@ -1,5 +1,5 @@
 import { getEnv } from "@shared/env";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Transaction } from "../types";
 
 /**

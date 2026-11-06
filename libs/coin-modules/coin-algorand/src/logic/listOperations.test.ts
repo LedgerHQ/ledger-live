@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import * as network from "../network";
 import { AlgoTransactionType } from "../network";
 import { listOperations } from "./listOperations";

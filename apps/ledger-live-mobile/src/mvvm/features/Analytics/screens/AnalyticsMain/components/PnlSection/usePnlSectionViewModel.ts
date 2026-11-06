@@ -1,6 +1,6 @@
 import { track } from "@shared/analytics";
 import { useCallback, useMemo, useState, useRef } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { usePortfolioPnL } from "@ledgerhq/wallet-pnl/hooks";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useSelector } from "~/context/hooks";

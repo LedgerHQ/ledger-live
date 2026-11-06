@@ -31,7 +31,7 @@ import {
   type GetQuotesWireArgs,
 } from "@ledgerhq/wallet-api-exchange-module";
 import { customWrapper, RPCHandler } from "@ledgerhq/wallet-api-server";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getAccountBridge } from "../../bridge";
 import { resolveFamily } from "../../bridge/zcashRouting";
 import type { GetFeatureFn } from "../FeatureFlags/resolver";

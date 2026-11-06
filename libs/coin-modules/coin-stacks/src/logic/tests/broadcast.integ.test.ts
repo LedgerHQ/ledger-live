@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { makeRandomPrivKey, makeSTXTokenTransfer, transactionToHex } from "@stacks/transactions";
 import { broadcast } from "../broadcast";
 

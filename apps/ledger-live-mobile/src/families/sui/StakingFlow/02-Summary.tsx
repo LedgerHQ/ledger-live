@@ -11,7 +11,7 @@ import {
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text, Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { Trans } from "~/context/Locale";

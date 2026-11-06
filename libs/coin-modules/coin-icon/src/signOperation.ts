@@ -8,7 +8,7 @@ import type {
   Operation,
   SignOperationEvent,
 } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import IconService, { IcxTransaction } from "icon-sdk-js";
 import { Observable } from "rxjs";
 

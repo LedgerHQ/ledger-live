@@ -1,6 +1,6 @@
 import { TrackScreen } from "@shared/analytics-react";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import React, { Fragment, useCallback, useState, useEffect } from "react";
 import { View, StyleSheet, TouchableWithoutFeedback, Keyboard, Linking } from "react-native";
 import Switch from "~/components/Switch";

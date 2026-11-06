@@ -1,5 +1,5 @@
 import { ExchangeStartResult, SwapLiveError } from "@ledgerhq/wallet-api-exchange-module";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { ExchangeSwap } from "../../exchange/swap/types";
 import { Exchange } from "../../exchange/types";
 import { Transaction } from "../../coin-modules/transaction-types";

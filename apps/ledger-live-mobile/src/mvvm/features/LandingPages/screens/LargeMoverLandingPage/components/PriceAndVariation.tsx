@@ -9,7 +9,7 @@ import { KeysPriceChange, MarketCoinDataChart } from "@ledgerhq/live-common/mark
 import { useLocale, useTranslation } from "~/context/Locale";
 import { counterValueFormatter } from "LLM/features/Market/utils";
 import { getColors } from "../utils";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 
 type PriceChangePercentageByRange = Record<
   Exclude<KeysPriceChange, KeysPriceChange.sixMonths>,

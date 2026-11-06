@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { isSwapOperationPending } from "./";
 import { getMultipleStatus } from "./getStatus";
 import type { TokenAccount, Account, SwapOperation, Operation } from "@ledgerhq/types-live";

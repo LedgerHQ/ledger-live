@@ -1,7 +1,7 @@
 import { track } from "@shared/analytics";
 import { act, renderHook } from "@testing-library/react-native";
 import { Linking } from "react-native";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type {
   FeePaymentOption,
   SponsoredFeeAmounts,

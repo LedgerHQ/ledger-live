@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import coinConfig from "../config";
 import { extractCoinTypeFromUnsignedTx } from "../test/testUtils";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";

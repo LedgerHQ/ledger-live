@@ -1,5 +1,5 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { formatAccountSpecifics } from "./formatters";
 import type { Account, StakingAccount } from "@ledgerhq/types-live";
 

@@ -1,6 +1,6 @@
 import invariant from "invariant";
 import React from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Transaction } from "@ledgerhq/live-common/families/sui/types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";

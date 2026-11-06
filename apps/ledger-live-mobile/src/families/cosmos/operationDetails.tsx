@@ -5,7 +5,7 @@ import { getDefaultExplorerView, getAddressExplorer } from "@domain/entity-curre
 import type { OperationType, Operation } from "@ledgerhq/types-live";
 import { accountValidators } from "@ledgerhq/live-common/families/cosmos/logic";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { CosmosAccount, CosmosOperation } from "@ledgerhq/live-common/families/cosmos/types";
 import { useSelector } from "~/context/hooks";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain";

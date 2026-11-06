@@ -1,4 +1,4 @@
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 import { getAleoCurrencyConfigById } from "@ledgerhq/live-common/families/aleo/config";
 import {
   formatCurrencyUnit,

@@ -1,5 +1,5 @@
 import { TEST_CONFIG, TEST_LOGGER } from "../fixtures/coinConfig";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { bitcoinPickingStrategy } from "../../types";
 
 // --------- MOCK ./wallet-btc  ---------

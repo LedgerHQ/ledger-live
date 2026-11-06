@@ -14,7 +14,7 @@ import type {
 import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { buildContext } from "../../../bridge/generic-coin-framework/api/context";
 
 /**

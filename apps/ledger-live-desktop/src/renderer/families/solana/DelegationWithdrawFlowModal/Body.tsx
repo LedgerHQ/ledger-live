@@ -10,7 +10,7 @@ import {
   SolanaAccount,
 } from "@ledgerhq/live-common/families/solana/types";
 import { Operation, Account } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { assertStakingResources } from "../shared/assertStakingResources";
 import React, { useCallback, useState } from "react";

@@ -1,6 +1,6 @@
 import { accountsABI, electionABI, lockedGoldABI } from "@celo/abis";
 import type { BufferTxData, MemoNotSupported } from "@ledgerhq/coin-module-framework/api/index";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { encodeFunctionData } from "viem";
 
 jest.mock("../network/client", () => ({ getCeloClient: jest.fn() }));

@@ -9,7 +9,7 @@ import type { CardanoCoinConfig } from "../config";
 import { OperationType } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
 import network from "@ledgerhq/live-network/network";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { APITransaction, HashType, StakeDelegationCertificate } from "../api/api-types";
 import { fetchNetworkInfo } from "../api/getNetworkInfo";
 import { CARDANO_API_ENDPOINT, CARDANO_TESTNET_API_ENDPOINT } from "../constants";

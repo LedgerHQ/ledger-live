@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import { intentToMessageParams } from "./intentAdapter";
 

@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getCurrenciesResolver } from "./resolver";
 import type { CryptoCurrency } from "../types";
 // see https://github.com/bitcoin/bips/blob/master/bip-0021.mediawiki

@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction as BtcTransaction } from "@ledgerhq/coin-bitcoin/types";
 import { buildRbfCancelTx, buildRbfSpeedUpTx } from "./buildRbfTransaction";

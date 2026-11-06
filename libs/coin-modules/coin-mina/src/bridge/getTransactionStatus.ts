@@ -8,7 +8,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { isValidAddress, getMaxAmount, getTotalSpent } from "../logic/utils";
 import { validateMemo } from "../logic/validateMemo";
 import type { Transaction, MinaAccount, TransactionStatus, StatusErrorMap } from "../types/common";

@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
 import type { BalanceTypeConfig } from "@ledgerhq/live-common/bridge/descriptor/types";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";

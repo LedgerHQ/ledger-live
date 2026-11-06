@@ -31,7 +31,7 @@ import {
   setTransactionMemo,
   undelegateTransaction,
 } from "@ledgerhq/live-common/families/solana/transactions";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { BigNumberStrSchema, DateTimeIsoSchema } from "@shared/schema-primitives";
 import type { AccountDescriptor, Balance, Operation, SendEvent } from "../models";
 import type { EarnSolanaStake, SolanaStakeLimits } from "../earn/types";

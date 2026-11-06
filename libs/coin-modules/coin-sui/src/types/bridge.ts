@@ -8,7 +8,7 @@ import type {
 } from "@ledgerhq/types-live";
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import type { DelegatedStake, StakeObject } from "./model";
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 
 export type MappedStake = StakeObject & {
   rank: number;

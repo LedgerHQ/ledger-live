@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Transaction } from "bitcoinjs-lib";
 import { getWalletAccount } from "./getWalletAccount";
 import type { Account } from "@ledgerhq/types-live";

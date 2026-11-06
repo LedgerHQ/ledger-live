@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { fromTransactionRaw, toTransactionRaw } from "./transaction";
 import type { Transaction } from "./types";
 

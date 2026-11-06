@@ -2,7 +2,7 @@ import React from "react";
 import { renderHook } from "@testing-library/react";
 import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { buildCV } from "@domain/entity-market-countervalues/mock";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";

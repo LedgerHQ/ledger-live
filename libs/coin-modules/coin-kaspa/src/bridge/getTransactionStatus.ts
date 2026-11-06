@@ -9,7 +9,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import { DustLimit } from "../errors";
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import {
   calcMaxSpendableAmount,
   getFeeRate,

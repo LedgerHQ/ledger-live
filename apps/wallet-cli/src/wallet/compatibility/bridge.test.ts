@@ -1,6 +1,6 @@
 import "../../live-common-setup";
 import { afterEach, describe, expect, it, spyOn } from "bun:test";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { descriptorToAccount } from "@ledgerhq/live-wallet/accounts";
 import { getGasLimit } from "@ledgerhq/live-common/families/evm/utils";

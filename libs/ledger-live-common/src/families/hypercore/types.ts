@@ -4,7 +4,7 @@ import type {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 
 // HyperCore has no send flow on Ledger Wallet — the transaction shape is minimal and only exists so
 // accounts can round-trip through (de)serialization via the generic coin framework.

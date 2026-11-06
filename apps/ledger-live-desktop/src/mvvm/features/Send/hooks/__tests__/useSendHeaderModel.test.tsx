@@ -1,6 +1,6 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { act } from "tests/testSetup";
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { mockContact } from "@domain/entity-contact/schema.mock";

@@ -13,7 +13,7 @@ import {
   overrideStateWithFunds,
 } from "LLM/features/QuickActions/__integrations__/shared";
 import { State } from "~/reducers/types";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { TransferDrawerScope } from "~/reducers/transferDrawer";

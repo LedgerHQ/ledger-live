@@ -9,7 +9,7 @@ import type {
 import { useCoinControlScreenViewModelCore } from "@ledgerhq/live-common/flows/send/coinControl/hooks/useCoinControlScreenViewModelCore";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { useCallback, useMemo } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";

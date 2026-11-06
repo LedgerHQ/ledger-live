@@ -4,7 +4,7 @@ import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { Account } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { forbidRemoteRequests } from "@ledgerhq/coin-tester/localOnly";
 import { startSandbox } from "@ledgerhq/coin-tester/sandbox";

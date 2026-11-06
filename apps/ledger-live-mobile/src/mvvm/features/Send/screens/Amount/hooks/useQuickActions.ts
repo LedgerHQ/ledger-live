@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { useTranslation } from "~/context/Locale";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, mock, spyOn } from "bun:test";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
 import type { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 import type { Unit } from "@domain/entity-currency-unit";

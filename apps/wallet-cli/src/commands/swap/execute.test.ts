@@ -2,7 +2,7 @@ import { ETH_SYNC_ROUTES } from "../../testing/eth-sync-routes";
 import { MockServer } from "../../testing/mock-server";
 import "../../live-common-setup";
 import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Account } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@domain/entity-currency-token";

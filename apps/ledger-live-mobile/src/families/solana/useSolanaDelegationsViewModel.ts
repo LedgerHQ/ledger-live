@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { Linking } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
   solanaActivationState,

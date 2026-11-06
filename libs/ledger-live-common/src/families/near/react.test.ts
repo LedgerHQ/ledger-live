@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import "../../__tests__/test-helpers/dom-polyfill";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { renderHook, waitFor } from "@testing-library/react";
 import {
   getNearBalanceBreakdown,

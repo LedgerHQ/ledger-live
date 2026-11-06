@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { FeeDescriptor } from "../../../bridge/descriptor/types";
 

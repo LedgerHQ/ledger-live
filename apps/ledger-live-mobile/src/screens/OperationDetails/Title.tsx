@@ -4,7 +4,7 @@ import { useTheme } from "@react-navigation/native";
 import type { Operation } from "@ledgerhq/types-live";
 import type { Currency } from "@domain/entity-currency";
 import type { Unit } from "@domain/entity-currency-unit";
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import DoubleCounterValue from "~/components/DoubleCountervalue";

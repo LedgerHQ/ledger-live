@@ -1,6 +1,6 @@
 import { accountsABI, electionABI, ierc20ABI, lockedGoldABI } from "@celo/abis";
 import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { encodeFunctionData } from "viem";
 import {
   CELO_STABLE_TOKENS,

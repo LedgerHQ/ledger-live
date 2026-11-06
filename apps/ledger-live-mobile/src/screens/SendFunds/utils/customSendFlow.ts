@@ -1,5 +1,5 @@
 import type { ComponentType } from "react";
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { NativeStackNavigationOptions } from "@react-navigation/native-stack";

@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { NearActionCosts } from "../network/protocolConfig";
 import { getStakingFees, isImplicitAccount } from "../logic";
 

@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import bs58check from "bs58check";
 import { MINA_DECODED_ADDRESS_LENGTH } from "../consts";
 import { Transaction, MinaAccount } from "../types/common";

@@ -8,7 +8,7 @@ import type {
   OperationType,
   AccountBridge,
 } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { Observable } from "rxjs";
 import { MINA_CANCEL_RETURN_CODE } from "../consts";
