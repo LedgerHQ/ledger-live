@@ -33,3 +33,4 @@ public final class AppStartupModule: NSObject, RCTBridgeModule {
     return Double(Int64(startTime.tv_sec) * 1000 + Int64(startTime.tv_usec) / 1000)
   }
 }
+// ci-test: swift-only change to check the iOS key invalidates
