@@ -31,7 +31,7 @@ function startStubServer(): Promise<string> {
 
 /**
  * Makes the catalog live apps that match load a blank local page instead of their site, and
- * returns that page's origin. The page path is the original host.
+ * returns that page's origin. The page path is the live app id.
  */
 export async function stubLiveApps(
   matches: (manifest: LiveAppManifest) => boolean,
@@ -43,7 +43,7 @@ export async function stubLiveApps(
     throw new Error("stubLiveApps: no catalog manifest matched");
   }
   const stubs = manifests.map(manifest => {
-    const url = `${origin}/${new URL(manifest.url).host}/`;
+    const url = `${origin}/${manifest.id}/`;
     return { ...manifest, url, homepageUrl: url, domains: [origin] };
   });
   await importLocalManifests(stubs);
