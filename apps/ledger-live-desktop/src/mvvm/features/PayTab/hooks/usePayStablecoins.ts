@@ -31,7 +31,6 @@ export function usePayStablecoins(): PayStablecoins {
   const heldAccounts = useSelector(flattenAccountsSelector);
 
   // groupBy: "asset" aggregates each ticker across chains into one row.
-  // This path does not read the aggregatedAssets wallet flag.
   const distribution = useDistribution({
     showEmptyAccounts: true,
     hideEmptyTokenAccount,

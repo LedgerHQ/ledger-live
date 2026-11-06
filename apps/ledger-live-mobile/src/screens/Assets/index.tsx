@@ -9,7 +9,6 @@ import { useTranslation } from "~/context/Locale";
 import { useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { FlatList, FlatListProps, type ListRenderItem } from "react-native";
 import useEnv from "@features/platform-env";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 import { useDistribution, useRefreshAccountsOrdering } from "~/actions/general";
 import { isUpToDateSelector } from "~/reducers/accounts";
@@ -34,11 +33,10 @@ function Assets() {
   const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
 
   const { t } = useTranslation();
-  const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("mobile");
   const distribution = useDistribution({
     showEmptyAccounts: true,
     hideEmptyTokenAccount,
-    groupBy: shouldDisplayAggregatedAssets ? "asset" : undefined,
+    groupBy: "asset",
   });
 
   const refreshAccountsOrdering = useRefreshAccountsOrdering();

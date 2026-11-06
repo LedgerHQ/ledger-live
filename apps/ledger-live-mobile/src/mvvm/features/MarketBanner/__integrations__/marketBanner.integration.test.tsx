@@ -334,11 +334,7 @@ describe("MarketBanner Integration Tests", () => {
       server.use(http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)));
 
       const { user } = renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: {
-            params: { aggregatedAssets: true },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({}),
       });
 
       const tile = await screen.findByTestId("market-banner-tile-0");
@@ -388,15 +384,11 @@ describe("MarketBanner Integration Tests", () => {
   });
 
   describe("Navigation", () => {
-    it("navigates to AssetDetail when aggregatedAssets is enabled", async () => {
+    it("navigates to AssetDetail", async () => {
       server.use(http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)));
 
       const { user } = renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: {
-            params: { aggregatedAssets: true },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({}),
       });
 
       const tile = await screen.findByTestId("market-banner-tile-0");
@@ -410,27 +402,6 @@ describe("MarketBanner Integration Tests", () => {
             source: "market_banner",
             marketState: { id: "bitcoin", ledgerIds: ["bitcoin"] },
           },
-        });
-      });
-    });
-
-    it("falls back to MarketDetail when aggregatedAssets is disabled", async () => {
-      server.use(http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)));
-
-      const { user } = renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: {
-            params: { aggregatedAssets: false },
-          },
-        }),
-      });
-
-      const tile = await screen.findByTestId("market-banner-tile-0");
-      await user.press(tile);
-
-      await waitFor(() => {
-        expect(mockNavigate).toHaveBeenCalledWith("MarketDetail", {
-          currencyId: "bitcoin",
         });
       });
     });

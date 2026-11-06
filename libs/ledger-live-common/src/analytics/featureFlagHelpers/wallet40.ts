@@ -23,9 +23,6 @@ export const getWallet40Attributes = (
     assetDiscoverability:
       platform === "lwd" ||
       Boolean(params && "assetDiscoverability" in params && params.assetDiscoverability),
-    aggregatedAssets:
-      platform === "lwd" ||
-      Boolean(params && "aggregatedAssets" in params && params.aggregatedAssets),
     earnUpselling: params?.earnUpselling ?? false,
     earnSimulator: params?.earnSimulator ?? false,
   };

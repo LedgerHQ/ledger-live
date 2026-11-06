@@ -240,8 +240,7 @@ export default class AssetDetailPage {
   @Step("Open Asset Detail transactions history")
   async openTransactionsHistory() {
     const scrollViewId = await this.getScrollViewId();
-    await scrollToId(this.transactionsHeaderId, scrollViewId, 500, "down");
-    await detoxExpect(getElementById(this.transactionsHeaderId)).toBeVisible();
+    await revealForTap(this.transactionsHeaderId, { container: scrollViewId });
     await tapById(this.transactionsHeaderId);
   }
 
