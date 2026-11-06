@@ -8,8 +8,10 @@ type SkipDrawerProps = Readonly<{
   onActivate: () => void;
 }>;
 
+export type SyncOfferPhase = "offer" | "synchronizing" | "success";
+
 type SyncOfferSuccessViewProps = Readonly<{
-  showSuccess: true;
+  phase: "success";
   title: string;
   continueLabel: string;
   closeLabel: string;
@@ -17,8 +19,15 @@ type SyncOfferSuccessViewProps = Readonly<{
   onQuit: () => void;
 }>;
 
+type SyncOfferSynchronizingViewProps = Readonly<{
+  phase: "synchronizing";
+  title: string;
+  closeLabel: string;
+  onQuit: () => void;
+}>;
+
 type SyncOfferPromptViewProps = Readonly<{
-  showSuccess: false;
+  phase: "offer";
   title: string;
   description: string;
   learnMoreLabel: string;
@@ -32,7 +41,10 @@ type SyncOfferPromptViewProps = Readonly<{
   skipDrawer: SkipDrawerProps;
 }>;
 
-export type SyncOfferViewProps = SyncOfferSuccessViewProps | SyncOfferPromptViewProps;
+export type SyncOfferViewProps =
+  | SyncOfferSuccessViewProps
+  | SyncOfferSynchronizingViewProps
+  | SyncOfferPromptViewProps;
 
 export type SyncOfferScreenProps = Readonly<{
   onActivate: () => void;
@@ -40,7 +52,7 @@ export type SyncOfferScreenProps = Readonly<{
   onLearnMore: () => void;
   onQuit: () => void;
   onContinue: () => void;
-  showSuccess: boolean;
+  phase: SyncOfferPhase;
 }>;
 
 export function useSyncOfferScreenViewModel({
@@ -49,15 +61,15 @@ export function useSyncOfferScreenViewModel({
   onLearnMore,
   onQuit,
   onContinue,
-  showSuccess,
+  phase,
 }: SyncOfferScreenProps): SyncOfferViewProps {
   const { t } = useTranslation();
   const [isSkipDrawerOpen, setIsSkipDrawerOpen] = useState(false);
   const closeSkipDrawer = () => setIsSkipDrawerOpen(false);
 
-  if (showSuccess) {
+  if (phase === "success") {
     return {
-      showSuccess: true,
+      phase,
       title: t("deviceOnboarding.syncOffer.success.title"),
       continueLabel: t("deviceOnboarding.syncOffer.success.cta"),
       closeLabel: t("deviceOnboarding.checks.close"),
@@ -66,8 +78,17 @@ export function useSyncOfferScreenViewModel({
     };
   }
 
+  if (phase === "synchronizing") {
+    return {
+      phase,
+      title: t("deviceOnboarding.checks.synchronizing.title"),
+      closeLabel: t("deviceOnboarding.checks.close"),
+      onQuit,
+    };
+  }
+
   return {
-    showSuccess: false,
+    phase,
     title: t("deviceOnboarding.syncOffer.title"),
     description: t("deviceOnboarding.syncOffer.description"),
     learnMoreLabel: t("deviceOnboarding.syncOffer.learnMore"),
