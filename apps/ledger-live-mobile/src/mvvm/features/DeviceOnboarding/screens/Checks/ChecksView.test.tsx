@@ -401,6 +401,21 @@ describe("ChecksView", () => {
     expect(onQuit).not.toHaveBeenCalled();
   });
 
+  it("should close the firmware offer without declining it when that close is separate", async () => {
+    const onCloseFirmwareOffer = jest.fn();
+    const { user, onDeclineUpdate, onQuit } = renderChecks("updating", {
+      update: { current: "1.0.0", available: "1.1.0" },
+      onCloseFirmwareOffer,
+    });
+
+    await user.press(screen.getByTestId("modal-close-button"));
+
+    expect(onCloseFirmwareOffer).toHaveBeenCalledTimes(1);
+    expect(onDeclineUpdate).not.toHaveBeenCalled();
+    expect(screen.getByRole("button", { name: "Close" })).toBeVisible();
+    expect(onQuit).not.toHaveBeenCalled();
+  });
+
   it("should leave onboarding when closing the non genuine drawer", async () => {
     const { user, onCloseSheet, onQuit } = renderChecks("checking", {
       error: { kind: "notGenuine" },
@@ -413,6 +428,20 @@ describe("ChecksView", () => {
     await user.press(screen.getByTestId("modal-close-button"));
 
     expect(onQuit).toHaveBeenCalledTimes(1);
+    expect(onCloseSheet).not.toHaveBeenCalled();
+  });
+
+  it("should stay on the check when the non genuine close is separate", async () => {
+    const onCloseNotGenuine = jest.fn();
+    const { user, onQuit, onCloseSheet } = renderChecks("checking", {
+      error: { kind: "notGenuine" },
+      onCloseNotGenuine,
+    });
+
+    await user.press(screen.getByTestId("modal-close-button"));
+
+    expect(onCloseNotGenuine).toHaveBeenCalledTimes(1);
+    expect(onQuit).not.toHaveBeenCalled();
     expect(onCloseSheet).not.toHaveBeenCalled();
   });
 });
