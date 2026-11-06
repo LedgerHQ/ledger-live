@@ -107,7 +107,7 @@ export const cosmosDefaults = {
     denom: "ustars",
   },
   coreum: {
-    lcd: "https://rest-coreum.ecostake.com",
+    lcd: "https://tx.coin.ledger.com",
     minGasPrice: 0.1,
     status: {
       type: "active",
