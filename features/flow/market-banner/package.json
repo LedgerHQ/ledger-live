@@ -27,6 +27,7 @@
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
+    "@support/lint": "workspace:*",
     "@typescript/native": "catalog:",
     "tailwindcss": "catalog:",
     "oxfmt": "catalog:",

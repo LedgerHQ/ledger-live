@@ -23,7 +23,6 @@ import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
 const TRACKING_SOURCES = {
   Accounts: "Account",
   Main: "Portfolio",
-  MarketDetail: "Assets",
 };
 
 const getTrackingSource = (routeName: string) => {

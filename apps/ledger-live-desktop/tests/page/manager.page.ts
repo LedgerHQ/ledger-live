@@ -59,10 +59,6 @@ export class ManagerPage extends AppPage {
     await this.firmwareUpdateButton.waitFor({ state: "visible" });
   }
 
-  async openFirmwareUpdateModal() {
-    await this.firmwareUpdateButton.click();
-  }
-
   async openCustomImage() {
     await this.waitForFirmwareUpdateButton(); // this avoids click jacking when the firmware update banner appears
     await this.customImageButton.click();

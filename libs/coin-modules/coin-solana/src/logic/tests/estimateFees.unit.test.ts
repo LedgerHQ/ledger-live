@@ -2,6 +2,12 @@ import type {
   StakingTransactionIntent,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
+import {
+  PublicKey,
+  SystemProgram,
+  TransactionMessage,
+  VersionedTransaction,
+} from "@solana/web3.js";
 import type { ChainAPI } from "../../network";
 import { estimateFees, estimateTxFee } from "../estimateFees";
 import { TEST_CONFIG } from "../../test/coinConfig";
@@ -287,6 +293,38 @@ describe("estimateFees", () => {
 
     const [message] = (api.getFeeForMessage as jest.Mock).mock.calls[0];
     expect(message.recentBlockhash).toBe("newBlockhash");
+  });
+
+  it("prices a transaction another signer still signs on the partner's blockhash", async () => {
+    const api = createMockApi([7000]);
+    const partnerBlockhash = "BNrsuybC7PXC2KLaUB9XK9LLqcP3odbiUX13PmumJMas";
+    const coSigned = new VersionedTransaction(
+      new TransactionMessage({
+        payerKey: new PublicKey(TEST_RECIPIENT),
+        recentBlockhash: partnerBlockhash,
+        instructions: [
+          SystemProgram.transfer({
+            fromPubkey: new PublicKey(TEST_ADDRESS),
+            toPubkey: new PublicKey(TEST_RECIPIENT),
+            lamports: 1,
+          }),
+        ],
+      }).compileToV0Message(),
+    );
+
+    await estimateFees(api, TEST_CONFIG, {
+      intentType: "transaction",
+      type: "send",
+      sender: TEST_ADDRESS,
+      recipient: "",
+      amount: 0n,
+      asset: { type: "native" },
+      data: { type: "buffer", value: Buffer.from(coSigned.serialize()) },
+    } as unknown as TransactionIntent);
+
+    const [message] = (api.getFeeForMessage as jest.Mock).mock.calls[0];
+    expect(message.recentBlockhash).toBe(partnerBlockhash);
+    expect(api.getLatestBlockhash).not.toHaveBeenCalled();
   });
 
   it("adds the recipient's ATA rent when the transfer has to create it", async () => {

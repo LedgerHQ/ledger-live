@@ -1,8 +1,12 @@
-import { VersionedTransaction } from "@solana/web3.js";
+import { PublicKey, VersionedTransaction } from "@solana/web3.js";
 
 const ED25519_SIGNATURE_LENGTH = 64;
 
-export function combine(tx: string, signature: string[]): string {
+/**
+ * `signer` is the account the device signed for. Without it the signature goes to the fee payer's
+ * slot, which is wrong when a partner pays the fees and the account signs second.
+ */
+export function combine(tx: string, signature: string[], signer?: string): string {
   if (signature.length !== 1) {
     throw new Error(`Solana combine expects exactly one signature, got ${signature.length}`);
   }
@@ -15,7 +19,7 @@ export function combine(tx: string, signature: string[]): string {
     );
   }
 
-  const signerPubkey = transaction.message.staticAccountKeys[0];
+  const signerPubkey = signer ? new PublicKey(signer) : transaction.message.staticAccountKeys[0];
   if (!signerPubkey) {
     throw new Error("Transaction has no account keys to sign with");
   }

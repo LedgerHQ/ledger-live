@@ -4,7 +4,6 @@ import { useTranslation } from "~/context/Locale";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { ScreenName } from "~/const";
 import MarketCurrencySelect from "LLM/features/Market/screens/MarketCurrencySelect";
-import MarketDetail from "LLM/features/Market/screens//MarketDetail";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { getStackNavigationConfigV4 } from "LLM/components/Navigation";
@@ -19,10 +18,6 @@ import type { MarketListRouteParams } from "LLM/features/Market/types";
 export type MarketNavigatorStackParamList = {
   [ScreenName.MarketList]: MarketListRouteParams | undefined;
   [ScreenName.MarketCurrencySelect]: undefined;
-  [ScreenName.MarketDetail]: {
-    currencyId: string;
-    resetSearchOnUmount?: boolean;
-  };
 };
 
 interface NavigatorProps<NavId extends string | undefined = string | undefined> {
@@ -72,13 +67,6 @@ export default function MarketNavigator<NavId extends string | undefined = strin
           headerLeft: () => null,
           // FIXME: ONLY ON BOTTOM TABS AND DRAWER NAVIGATION
           // unmountOnBlur: true,
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.MarketDetail}
-        component={MarketDetail}
-        options={{
-          headerShown: false,
         }}
       />
     </Stack.Group>

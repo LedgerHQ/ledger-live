@@ -136,13 +136,13 @@ describe("usePortfolioStablecoinsSectionViewModel", () => {
 
       act(() => result.current.onItemPress(result.current.assetsToDisplay[0]));
 
-      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Accounts, {
-        screen: ScreenName.Asset,
-        params: { currency: ethereum },
+      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.AssetDetail, {
+        screen: ScreenName.AssetDetail,
+        params: { currencyId: ethereum.id, source: "portfolio" },
       });
     });
 
-    it("should navigate to MarketDetail on onItemPress for placeholder assets", () => {
+    it("should open Asset Detail for a placeholder and forward its market id", () => {
       const placeholder: Asset = {
         ...createAsset(bitcoin, 0),
         isPlaceholder: true,
@@ -152,7 +152,14 @@ describe("usePortfolioStablecoinsSectionViewModel", () => {
 
       act(() => result.current.onItemPress(placeholder));
 
-      expect(mockNavigate).toHaveBeenCalledWith(ScreenName.MarketDetail, { currencyId: "bitcoin" });
+      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.AssetDetail, {
+        screen: ScreenName.AssetDetail,
+        params: {
+          currencyId: bitcoin.id,
+          source: "portfolio",
+          marketState: { id: "bitcoin", ledgerIds: [bitcoin.id] },
+        },
+      });
     });
   });
 

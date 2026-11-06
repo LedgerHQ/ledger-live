@@ -12,15 +12,13 @@ import { useSelector } from "~/context/hooks";
 import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 
 export function useCategorizedAssetsFromPortfolio() {
-  const { shouldDisplayAggregatedAssets, shouldDisplayAssetDiscoverability } =
-    useWalletFeaturesConfig("mobile");
+  const { shouldDisplayAssetDiscoverability } = useWalletFeaturesConfig("mobile");
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
   const version = appVersion;
 
   const distribution = useDistribution({
     showEmptyAccounts: true,
     hideEmptyTokenAccount,
-    groupBy: shouldDisplayAggregatedAssets ? "asset" : undefined,
   });
 
   const {

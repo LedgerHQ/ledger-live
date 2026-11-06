@@ -6,10 +6,7 @@
       "{workspaceRoot}/nx.s3.defaults.json",
       "{workspaceRoot}/sonar-project.properties",
       "{workspaceRoot}/tsconfig.base.json",
-      "{workspaceRoot}/support/tsconfig/base.json",
-      "{workspaceRoot}/package.json",
-      "{workspaceRoot}/pnpm-workspace.yaml",
-      "{workspaceRoot}/patches/**/*"
+      "{workspaceRoot}/support/tsconfig/base.json"
     ],
     "default": [
       "sharedGlobals",
@@ -349,7 +346,7 @@
         "{projectRoot}/lib-es/**",
         "{projectRoot}/build/**"
       ],
-      "inputs": ["default", "^default", "tsConfig"],
+      "inputs": ["default", "^default", "tsConfig", { "externalDependencies": [] }],
       "cache": true
     },
     "lint": {
@@ -360,7 +357,8 @@
         "lintConfig",
         {
           "env": "CI_OS"
-        }
+        },
+        { "externalDependencies": [] }
       ]
     },
     "lint:fix": {
@@ -368,7 +366,7 @@
     },
     "format:check": {
       "cache": true,
-      "inputs": ["default", "^default", "formatConfig"]
+      "inputs": ["default", "^default", "formatConfig", { "externalDependencies": [] }]
     },
     "check-export-rules": {
       "cache": false
@@ -382,7 +380,8 @@
         "tsConfig",
         {
           "env": "CI_OS"
-        }
+        },
+        { "externalDependencies": [] }
       ]
     },
     "test": {
@@ -393,7 +392,8 @@
         "^default",
         {
           "env": "CI_OS"
-        }
+        },
+        { "externalDependencies": [] }
       ]
     },
     "start": {
@@ -449,7 +449,7 @@
     },
     "coverage": {
       "dependsOn": ["^build", "build"],
-      "inputs": ["default", "^default"],
+      "inputs": ["default", "^default", { "externalDependencies": [] }],
       "outputs": [
         "{projectRoot}/coverage/lcov.info",
         "{projectRoot}/coverage/sonar-executionTests-report.xml"

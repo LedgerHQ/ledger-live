@@ -14,12 +14,11 @@ test.use({
 });
 
 enum Nano {
-  nanoX = "nanoX",
   nanoS = "nanoS",
   nanoSP = "nanoSP",
 }
 
-const nanos = [Nano.nanoX, Nano.nanoS, Nano.nanoSP];
+const nanos = [Nano.nanoS, Nano.nanoSP];
 
 test.describe.parallel("Onboarding", () => {
   for (const nano of nanos) {

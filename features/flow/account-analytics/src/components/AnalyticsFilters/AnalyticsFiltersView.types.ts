@@ -17,6 +17,7 @@ export type AnalyticsFilterViewProps = Readonly<{
   triggerLabel: string;
   selectedMeta?: AnalyticsFilterOptionMeta;
   disabled: boolean;
+  onOpenChange: (open: boolean) => void;
   onValueChange: (value: string | null) => void;
 }>;
 

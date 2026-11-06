@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@shared/api-services": "workspace:*",
+    "@shared/schema-primitives": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "zod": "catalog:"
   },

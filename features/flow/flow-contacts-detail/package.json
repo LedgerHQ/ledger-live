@@ -59,6 +59,7 @@
     "@domain/entity-currency": "workspace:*",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
+    "@support/lint": "workspace:*",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@reduxjs/toolkit": "catalog:",

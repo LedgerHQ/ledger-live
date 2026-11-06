@@ -23,16 +23,9 @@ const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\
 const quoteNetValue = (quote: { rate: number; fees: number }) => quote.rate - quote.fees;
 
 export default class SwapLiveAppPage {
-  // swap-live-app's own `ptxLumenQuoteCard` flag picks the quote card markup: compact on stg,
-  // lumen can be served on prod (PRODUCTION=true runs). Drop the unused prefix (and the lumen CTA
-  // label in checkQuoteCardCtaLabel) once the flag is settled.
-  private static readonly PROVIDER_NAME_PREFIXES = [
-    "compact-quote-card-provider-name-",
-    "lumen-quote-card-provider-name-",
-  ];
-  private static readonly PROVIDER_NAME_CSS = SwapLiveAppPage.PROVIDER_NAME_PREFIXES.map(
-    prefix => `[data-testid^='${prefix}']`,
-  ).join(", ");
+  // `ptxLumenQuoteCard` is on for everyone with `ptxLumenQuoteSameCtaCopy`: lumen card, old CTA copy.
+  private static readonly PROVIDER_NAME_PREFIX = "lumen-quote-card-provider-name-";
+  private static readonly PROVIDER_NAME_CSS = `[data-testid^='${SwapLiveAppPage.PROVIDER_NAME_PREFIX}']`;
 
   fromSelector = "from-account-coin-selector";
   fromAmount = "from-account";
@@ -170,9 +163,7 @@ export default class SwapLiveAppPage {
   // (1inch renders as `oneinchfusion` when its Fusion quote wins).
   private async tapProviderName(providerName: string) {
     const providerNameElement = getWebElementByCssSelector(
-      SwapLiveAppPage.PROVIDER_NAME_PREFIXES.map(
-        prefix => `[data-testid^='${prefix}${providerName}']`,
-      ).join(", "),
+      `[data-testid^='${SwapLiveAppPage.PROVIDER_NAME_PREFIX}${providerName}']`,
     );
     await waitWebElement(providerNameElement);
     await tapWebElementByElement(providerNameElement);
@@ -340,8 +331,7 @@ export default class SwapLiveAppPage {
     const actualButtonText =
       (await getWebElementsText(this.swapMainContainerWebElement, selector))[0] ?? "";
     const ctaVerb = approvalRequired ? "Approve spending" : "Swap";
-    const lumenCtaLabel = approvalRequired ? "Continue" : "Review";
-    jestExpect([`${ctaVerb} with ${provider}`, lumenCtaLabel]).toContain(actualButtonText);
+    jestExpect(actualButtonText).toBe(`${ctaVerb} with ${provider}`);
   }
 
   @Step('Check "Best Offer" corresponds to the best quote')

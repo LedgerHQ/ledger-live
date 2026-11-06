@@ -1,21 +1,33 @@
 import BigNumber from "bignumber.js";
 import { act, renderHook } from "tests/testSetup";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { ACCOUNT_DETAIL_PAGES } from "@features/flow-account-detail";
 import type { TronAccount } from "@ledgerhq/live-common/families/tron/types";
-import { track } from "@shared/analytics";
+import { setTrackingSource, track } from "@shared/analytics";
 import { urls } from "~/config/urls";
 import { setDiscreetMode } from "~/renderer/actions/settings";
 import { openURL } from "~/renderer/linking";
 import { useTronDelegationsViewModel } from "./useTronDelegationsViewModel";
 
 const mockNavigate = jest.fn();
+const mockNavigateToStakeForAccount = jest.fn();
+const mockGetCanStakeCurrency = jest.fn();
 const DAY_MS = 24 * 60 * 60 * 1000;
+const ONE_TRX = 1_000_000;
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
   useNavigate: () => mockNavigate,
 }));
-jest.mock("@shared/analytics", () => ({ track: jest.fn() }));
+jest.mock("@shared/analytics", () => ({ track: jest.fn(), setTrackingSource: jest.fn() }));
+jest.mock("LLD/hooks/useNavigateToStakeForAccount", () => ({
+  useNavigateToStakeForAccount: () => ({
+    navigateToStakeForAccount: mockNavigateToStakeForAccount,
+  }),
+}));
+jest.mock("LLD/hooks/useStake", () => ({
+  useStake: () => ({ getCanStakeCurrency: mockGetCanStakeCurrency }),
+}));
 jest.mock("~/renderer/linking", () => ({ openURL: jest.fn() }));
 jest.mock("@ledgerhq/live-common/families/tron/react", () => ({
   ...jest.requireActual("@ledgerhq/live-common/families/tron/react"),
@@ -24,12 +36,12 @@ jest.mock("@ledgerhq/live-common/families/tron/react", () => ({
 
 type Resources = Partial<TronAccount["tronResources"]>;
 
-const accountWith = (resources: Resources = {}): TronAccount =>
+const accountWith = (resources: Resources = {}, spendable = 0): TronAccount =>
   ({
     type: "Account",
     id: "tron-account",
     currency: getCryptoCurrencyById("tron"),
-    spendableBalance: new BigNumber(0),
+    spendableBalance: new BigNumber(spendable),
     operations: [],
     tronResources: {
       votes: [],
@@ -53,7 +65,10 @@ const getProps = (account: TronAccount) =>
   renderHook(() => useTronDelegationsViewModel(account)).result.current;
 
 describe("useTronDelegationsViewModel", () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockGetCanStakeCurrency.mockReturnValue(true);
+  });
 
   describe("rows", () => {
     it("lists the votes with their amount and share of the tron power", () => {
@@ -152,12 +167,21 @@ describe("useTronDelegationsViewModel", () => {
 
   describe("footer", () => {
     it("reminds the remaining votes when not all of them are cast", () => {
-      const { footer } = getProps(accountWith({ votes: [vote("sr-1", 4)], tronPower: 10 }));
+      const { footer } = getProps(
+        accountWith({ votes: [vote("sr-1", 4)], tronPower: 10 }, ONE_TRX),
+      );
 
       expect(footer).toMatchObject({
         title: "You still have 6 votes remaining",
-        actionDisabled: true,
+        actionLabel: "Vote now",
+        actionDisabled: false,
       });
+    });
+
+    it("disables the remaining votes action without a balance to stake", () => {
+      const { footer } = getProps(accountWith({ votes: [vote("sr-1", 4)], tronPower: 10 }));
+
+      expect(footer?.actionDisabled).toBe(true);
     });
 
     it("masks the remaining votes when discreet mode is on", () => {
@@ -182,22 +206,35 @@ describe("useTronDelegationsViewModel", () => {
   });
 
   describe("empty state", () => {
-    it("invites to freeze when there is no tron power", () => {
-      const { emptyState } = getProps(accountWith());
+    it("invites to earn rewards when there is no tron power", () => {
+      const { emptyState } = getProps(accountWith({}, ONE_TRX));
 
       expect(emptyState).toMatchObject({
         description: "You can now earn rewards by freezing and voting.",
-        actionDisabled: true,
+        actionLabel: "Earn rewards",
+        actionDisabled: false,
       });
     });
 
     it("invites to cast votes when there is tron power but no vote", () => {
-      const { emptyState } = getProps(accountWith({ tronPower: 10 }));
+      const { emptyState } = getProps(accountWith({ tronPower: 10 }, ONE_TRX));
 
       expect(emptyState).toMatchObject({
         description: expect.stringContaining("Cast your votes"),
         actionLabel: "Cast votes",
+        actionDisabled: false,
       });
+    });
+
+    it("disables the action without a balance to stake", () => {
+      expect(getProps(accountWith()).emptyState?.actionDisabled).toBe(true);
+    });
+
+    it("disables the action when staking is not offered for the currency", () => {
+      mockGetCanStakeCurrency.mockReturnValue(false);
+
+      expect(getProps(accountWith({}, ONE_TRX)).emptyState?.actionDisabled).toBe(true);
+      expect(mockGetCanStakeCurrency).toHaveBeenCalledWith("tron");
     });
   });
 
@@ -241,6 +278,35 @@ describe("useTronDelegationsViewModel", () => {
       );
     });
 
+    it("sends the user to the earn flow of the account to cast the remaining votes", () => {
+      const account = accountWith({ votes: [vote("sr-1", 4)], tronPower: 10 }, ONE_TRX);
+      const props = getProps(account);
+
+      act(() => props.onSelectFooterAction?.());
+
+      expect(mockNavigateToStakeForAccount).toHaveBeenCalledWith(
+        account,
+        undefined,
+        expect.objectContaining({ source: ACCOUNT_DETAIL_PAGES.account }),
+      );
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
+
+    it("sends the user to the earn flow of the account from the empty state", () => {
+      const account = accountWith({}, ONE_TRX);
+      const { result } = renderHook(() => useTronDelegationsViewModel(account), {
+        initialRoute: "/account/tron-account",
+      });
+
+      act(() => result.current.onStartDelegating());
+
+      expect(setTrackingSource).toHaveBeenCalledWith(ACCOUNT_DETAIL_PAGES.account);
+      expect(mockNavigateToStakeForAccount).toHaveBeenCalledWith(account, undefined, {
+        source: ACCOUNT_DETAIL_PAGES.account,
+        returnTo: "/account/tron-account",
+      });
+    });
+
     it("ignores an unknown header action", () => {
       const props = getProps(votingAccount());
 
@@ -261,12 +327,8 @@ describe("useTronDelegationsViewModel", () => {
       expect(openURL).toHaveBeenCalledWith(expect.stringContaining(new URL(urls.stakingTron).host));
     });
 
-    it("keeps the row and start delegating callbacks inert", () => {
-      const props = getProps(votingAccount());
-
-      expect(props.onSelectRowAction("sr-1", "any")).toBeUndefined();
-      expect(props.onStartDelegating()).toBeUndefined();
-      expect(props.onSelectFooterAction?.()).toBeUndefined();
+    it("keeps the row callback inert", () => {
+      expect(getProps(votingAccount()).onSelectRowAction("sr-1", "any")).toBeUndefined();
     });
   });
 });
