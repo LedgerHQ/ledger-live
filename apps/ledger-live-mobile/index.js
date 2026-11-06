@@ -1,3 +1,5 @@
+// TEST-BRANCH ONLY (LIVE-39321): rejection scan for e2e builds. Do not merge.
+import "./src/rejectionScan";
 import "./src/getRandomValuesPolyfill";
 // Injects node.js shims.
 // https://github.com/parshap/node-libs-react-native

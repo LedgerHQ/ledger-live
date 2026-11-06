@@ -54,6 +54,7 @@ import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculo
 import { setSpeculosDeviceModel, setSpeculosSessionToken } from "~/services/registerTransports";
 import { appNetworkLogStore, initAppNetworkLogging } from "../appNetworkLogStore";
 import { readLaunchForceProvider } from "~/launchForceProvider";
+import { setRejectionSink } from "~/rejectionScan";
 
 export const e2eBridgeClient = new Subject<MessageData>();
 
@@ -176,6 +177,11 @@ export function init() {
   ws.onopen = () => {
     log(`Connection opened on ${path}`);
     retryCount = 0; // Reset retry count on successful connection
+    setRejectionSink(entry => {
+      if (ws?.readyState !== WebSocket.OPEN) return false;
+      postMessage({ type: "unhandledRejection", payload: JSON.stringify(entry) });
+      return true;
+    });
   };
 
   ws.onerror = error => {

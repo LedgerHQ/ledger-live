@@ -335,6 +335,9 @@ function onMessage(messageStr: string) {
     case "earnLiveAppReady":
       resolvePending("waitEarnReady", "Earn Live App is ready");
       break;
+    case "unhandledRejection":
+      recordUnhandledRejection(msg.payload);
+      break;
     case "appFile":
       try {
         const { fileName, fileContent }: { fileName: string; fileContent: string } = JSON.parse(
@@ -352,6 +355,33 @@ function onMessage(messageStr: string) {
       break;
     default:
       break;
+  }
+}
+
+type JestExpectState = { testPath?: string; currentTestName?: string };
+
+/** Spec file and test running now. testName is empty during beforeAll/afterAll. */
+function currentTestContext(): { testPath?: string; testName?: string } {
+  const jestExpect = (globalThis as { expect?: { getState?: () => JestExpectState } }).expect;
+  const state = jestExpect?.getState?.();
+  const e2eRoot = path.resolve(__dirname, "..");
+  return {
+    testPath: state?.testPath ? path.relative(e2eRoot, state.testPath) : undefined,
+    testName: state?.currentTestName,
+  };
+}
+
+// TEST-BRANCH ONLY (LIVE-39321): one JSON line per rejection, collected by scripts/rejection-scan.
+function recordUnhandledRejection(payload: string) {
+  try {
+    const entry = { ...JSON.parse(payload), receivedAt: Date.now(), ...currentTestContext() };
+    const artifactsDir = path.resolve(__dirname, "../artifacts");
+    fs.mkdirSync(artifactsDir, { recursive: true });
+    const workerId = process.env.JEST_WORKER_ID ?? "0";
+    const filePath = path.join(artifactsDir, `unhandled-rejections-${workerId}.jsonl`);
+    fs.appendFileSync(filePath, `${JSON.stringify(entry)}\n`, "utf8");
+  } catch (err) {
+    log(`Failed to record unhandled rejection: ${err}`);
   }
 }
 

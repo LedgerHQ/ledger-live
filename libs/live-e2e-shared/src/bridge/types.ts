@@ -44,6 +44,10 @@ export type ServerData =
       payload: string;
     }
   | {
+      type: "unhandledRejection";
+      payload: string;
+    }
+  | {
       type: "appFlags";
       id: string;
       payload: string;
