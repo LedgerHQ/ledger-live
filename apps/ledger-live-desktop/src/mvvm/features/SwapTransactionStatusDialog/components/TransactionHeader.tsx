@@ -13,10 +13,12 @@ type TransactionHeaderProps = Readonly<{
   createdAt?: number;
   locale: string;
   origin?: SwapTransactionStatusOrigin;
+  isPerpsWithdraw?: boolean;
 }>;
 
 type HeaderTitleProps = Readonly<{
   origin?: SwapTransactionStatusOrigin;
+  isPerpsWithdraw?: boolean;
   sendTicker: string;
   receiveTicker: string;
 }>;
@@ -35,16 +37,23 @@ function HeaderCurrencyIcon({
 }
 
 /** Perps leads with the deposit it is funding, and keeps the swapped pair on its own line. */
-function HeaderTitle({ origin, sendTicker, receiveTicker }: HeaderTitleProps) {
+function HeaderTitle({ origin, isPerpsWithdraw, sendTicker, receiveTicker }: HeaderTitleProps) {
   const { t } = useTranslation();
 
-  if (origin === "perps") {
+  // A withdraw is titled as such wherever it is opened from, Swap History included.
+  if (origin === "perps" || isPerpsWithdraw) {
     return (
       <h2
         data-testid="swap-transaction-title"
         className="heading-4-semi-bold text-base text-center"
       >
-        <span className="block">{t("perpsTransactionStatus.title")}</span>
+        <span className="block">
+          {t(
+            isPerpsWithdraw
+              ? "perpsTransactionStatus.withdrawTitle"
+              : "perpsTransactionStatus.title",
+          )}
+        </span>
         <span className="block">
           {t("perpsTransactionStatus.currencies", { sendTicker, receiveTicker })}
         </span>
@@ -65,6 +74,7 @@ export function TransactionHeader({
   createdAt,
   locale,
   origin,
+  isPerpsWithdraw,
 }: TransactionHeaderProps) {
   const hasCurrencies = sendCurrency !== undefined && receiveCurrency !== undefined;
 
@@ -86,6 +96,7 @@ export function TransactionHeader({
       {hasCurrencies ? (
         <HeaderTitle
           origin={origin}
+          isPerpsWithdraw={isPerpsWithdraw}
           sendTicker={sendCurrency.ticker}
           receiveTicker={receiveCurrency.ticker}
         />

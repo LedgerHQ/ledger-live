@@ -1,11 +1,31 @@
 import BigNumber from "bignumber.js";
 import { isSwapOperationPending } from "./";
 import { getMultipleStatus } from "./getStatus";
-import type { TokenAccount, Account, SwapOperation, Operation } from "@ledgerhq/types-live";
+import type {
+  TokenAccount,
+  Account,
+  AccountLike,
+  SwapOperation,
+  Operation,
+} from "@ledgerhq/types-live";
 import type { SwapStatus, SwapStatusRequest, UpdateAccountSwapStatus } from "./types";
 import { log } from "@ledgerhq/logs";
 import { swapProviderRequiresOperationId } from "./providersRequiringOperationId";
 import { TransactionStatus } from "@ledgerhq/wallet-api-exchange-module";
+
+/**
+ * Whether the swap is not anchored to an operation yet and still waits for its payout tx hash
+ * (perps withdraw). It stays out of the swap history meanwhile, so a screen only checking the shown
+ * swaps would never poll its status.
+ */
+export function isSwapAwaitingPayoutHash({ operationId, status }: SwapOperation): boolean {
+  return !operationId && (isSwapOperationPending(status) || status === TransactionStatus.Finished);
+}
+
+/** Whether any of the (flattened) accounts holds a swap waiting for its payout tx hash. */
+export function hasSwapsAwaitingPayoutHash(accounts: AccountLike[]): boolean {
+  return accounts.some(account => account.swapHistory?.some(isSwapAwaitingPayoutHash));
+}
 
 const maybeGetUpdatedSwapHistory = async (
   swapHistory: SwapOperation[] | null | undefined,
@@ -21,7 +41,9 @@ const maybeGetUpdatedSwapHistory = async (
       const { provider, swapId, status, operationId } = swap;
       const updatedSwap: SwapOperation = { ...swap };
 
-      if (isSwapOperationPending(status)) {
+      // A finished entry not anchored to an operation yet is polled until its payout tx hash is known.
+      const awaitsPayoutHash = !operationId && status === TransactionStatus.Finished;
+      if (isSwapOperationPending(status) || awaitsPayoutHash) {
         // if swapId is in operationId, then we can get the status from the operation
         // it means DEX swap like Uniswap
         if (operationId && swapId && operationId.includes(swapId)) {
@@ -92,11 +114,14 @@ const maybeGetUpdatedSwapHistory = async (
           const finalAmountChanged =
             hasValidFinalAmount && newStatus.finalAmount !== swap.finalAmount?.toString();
 
-          if (statusChanged || finalAmountChanged) {
+          const anchorsOperation = !swap.operationId && Boolean(newStatus.txHash);
+
+          if (statusChanged || finalAmountChanged || anchorsOperation) {
             accountNeedsUpdating = true;
             return {
               ...swap,
               status: newStatus.status,
+              ...(anchorsOperation && { operationId: newStatus.txHash }),
               ...(hasValidFinalAmount && {
                 finalAmount: new BigNumber(newStatus.finalAmount!),
               }),

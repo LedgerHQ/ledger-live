@@ -60,7 +60,8 @@ function makeSwapOperation(overrides: Partial<MappedSwapOperation> = {}): Mapped
     provider: "lifi",
     swapId: "swap-1",
     status: "pending",
-    fromAccount: makeAccount("from"),
+    // The swap operation is the sender's own, as in the swap history.
+    fromAccount: makeAccountWithOperation(operation),
     toAccount: makeAccount("to"),
     toExists: true,
     operation,
@@ -275,5 +276,31 @@ describe("getTransactionStatus", () => {
       sendStatus: "refunded",
       receiveStatus: "refunded",
     });
+  });
+
+  it("shows the fees of the swap history entry, not of a payout the sender did not make (perps withdraw)", async () => {
+    // The payout lands on the receiving account, so the sender has no operation of its own.
+    mockedGetCompleteSwapHistory.mockResolvedValueOnce([
+      {
+        day: new Date("2026-01-02"),
+        data: [
+          makeSwapOperation({
+            provider: "swapkit_hyperliquid",
+            fromAccount: makeAccount("from"),
+            feesAmount: "1000000",
+            payoutFeesAmount: "400000000000000",
+          }),
+        ],
+      },
+    ]);
+    mockedFetchTransactionSwapStatus.mockResolvedValueOnce(undefined);
+
+    const response = await getTransactionStatus(
+      { swapId: "swap-1" },
+      { accounts: [makeAccount("from")] },
+    );
+
+    expect(response).toMatchObject({ feesAmount: "1000000", payoutFeesAmount: "400000000000000" });
+    expect(response.operationHash).toBe("0xhash");
   });
 });

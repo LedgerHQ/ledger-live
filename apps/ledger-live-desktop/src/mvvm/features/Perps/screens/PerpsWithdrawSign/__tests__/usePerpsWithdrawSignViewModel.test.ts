@@ -71,7 +71,9 @@ const appResult = { device } as AppResult;
 
 function renderViewModel() {
   const onClose = jest.fn();
-  const hook = renderHook(() => usePerpsWithdrawSignViewModel(data, onClose));
+  const hook = renderHook(() => usePerpsWithdrawSignViewModel(data, onClose), {
+    initialState: { accounts: [sourceAccount, destinationAccount] },
+  });
   return { ...hook, onClose };
 }
 
@@ -111,6 +113,25 @@ describe("usePerpsWithdrawSignViewModel", () => {
       swapId: "swap-1",
       provider: "swapkit_hyperliquid",
     });
+  });
+
+  it("should record the submitted withdraw in the swap history of the receiving account", async () => {
+    mockExecute.mockResolvedValue({ swapId: "swap-1" });
+    const { result, store, onClose } = renderViewModel();
+
+    act(() => result.current.handleDeviceResult(appResult));
+
+    await waitFor(() => expect(onClose).toHaveBeenCalled());
+    const receiver = store.getState().accounts.find(a => a.id === destinationAccount.id);
+    expect(receiver?.swapHistory).toEqual([
+      expect.objectContaining({
+        swapId: "swap-1",
+        provider: "swapkit_hyperliquid",
+        status: "pending",
+        fromAccountId: sourceAccount.id,
+        operationId: "",
+      }),
+    ]);
   });
 
   it("should reopen the summary when the withdrawal is declined on the device", async () => {

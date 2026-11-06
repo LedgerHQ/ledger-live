@@ -177,7 +177,10 @@ export type GetTransactionStatusResponse = {
   toAccountId?: string;
   sentAmount?: string;
   receivedAmount?: string;
+  /** Atomic, in the sender main account currency. */
   feesAmount?: string;
+  /** Atomic, in the receiving account currency: fees taken from the payout (perps withdraw). */
+  payoutFeesAmount?: string;
   operationHash?: string;
   createdAt?: number;
   providerRequired?: boolean;
