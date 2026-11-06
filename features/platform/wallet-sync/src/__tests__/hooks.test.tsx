@@ -4,7 +4,7 @@
 import { act, renderHook } from "@testing-library/react";
 import React, { type ReactNode } from "react";
 import { Provider } from "react-redux";
-import { useLedgerSyncUserState, useLedgerSyncWatch } from "../hooks";
+import { useWalletSyncUserState, useLedgerSyncWatch } from "../hooks";
 import { refreshLedgerSync, selectLedgerSyncVisualPending } from "../watch";
 import { ACTIVATED, createStore } from "./ledgerSyncFixtures";
 
@@ -37,7 +37,7 @@ describe("Ledger Sync hooks", () => {
   it("should show the watch state, and ask the watch for an early sync on a user refresh", () => {
     const store = createStore(ACTIVATED);
     const dispatch = jest.spyOn(store, "dispatch");
-    const { result } = renderHook(() => useLedgerSyncUserState(), { wrapper: withStore(store) });
+    const { result } = renderHook(() => useWalletSyncUserState(), { wrapper: withStore(store) });
     expect(result.current).toMatchObject({ visualPending: false, walletSyncError: null });
 
     act(() => result.current.onUserRefresh());
