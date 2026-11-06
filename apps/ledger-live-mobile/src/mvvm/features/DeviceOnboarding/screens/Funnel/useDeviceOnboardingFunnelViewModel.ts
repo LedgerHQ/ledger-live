@@ -12,17 +12,19 @@ import { useSelector } from "~/context/hooks";
 import { knownDevicesSelector } from "~/reducers/knownDevices";
 import type { ScreenName } from "~/const";
 import type { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
+import { lastSavedStepName } from "LLM/features/DeviceOnboarding/components/QuitConfirmation/lastSavedStep";
 import {
   useDeviceOnboardingHost,
   useDeviceOnboardingSession,
 } from "LLM/features/DeviceOnboarding/hooks/DeviceOnboardingProvider";
+import { useFirmwareUpdateHandover } from "LLM/features/DeviceOnboarding/hooks/useFirmwareUpdateHandover";
 import { useOfferSync } from "LLM/features/DeviceOnboarding/hooks/useOfferSync";
+import type { SetupScreenProps } from "LLM/features/DeviceOnboarding/screens/Setup/types";
 import type { ChecksScreenProps } from "LLM/features/DeviceOnboarding/types";
 import { toChecksError, toFirmwareUpdate } from "LLM/features/DeviceOnboarding/utils/checksPhase";
 import { checksScreenForPhase, phaseOf } from "LLM/features/DeviceOnboarding/utils/funnelPhase";
 import { selectPairedKnownDevices } from "LLM/features/DeviceOnboarding/utils/pairedDevice";
-import { useFirmwareUpdateHandover } from "LLM/features/DeviceOnboarding/hooks/useFirmwareUpdateHandover";
-import { lastSavedStepName } from "../../components/QuitConfirmation/lastSavedStep";
+import { useUnseededFunnelViewModel } from "./useUnseededFunnelViewModel";
 
 type FunnelRoute = RouteProp<OnboardingNavigatorParamList, ScreenName.DeviceOnboardingFunnel>;
 
@@ -42,6 +44,7 @@ export type QuitConfirmationModel = {
 export type DeviceOnboardingFunnelModel = (
   | { status: "karaoke"; onClose: () => void }
   | { status: "checks"; checks: ChecksScreenProps }
+  | { status: "setup"; setup: SetupScreenProps }
   | { status: "connecting"; title: string; closeLabel: string; onQuit: () => void }
   | {
       status: "failed";
@@ -245,6 +248,8 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   const allowLeave = useRef(false);
   const quitSent = useRef(false);
   const [quitConfirmationOpen, setQuitConfirmationOpen] = useState(false);
+  const [setupLeaveRequest, setSetupLeaveRequest] = useState(0);
+  const [setupVisible, setSetupVisible] = useState(false);
   const onLeave = useCallback(() => {
     allowLeave.current = true;
   }, []);
@@ -305,8 +310,12 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   });
 
   const requestQuit = useCallback(() => {
+    if (setupVisible) {
+      setSetupLeaveRequest(request => request + 1);
+      return;
+    }
     setQuitConfirmationOpen(true);
-  }, []);
+  }, [setupVisible]);
 
   const continueSetup = useCallback(() => {
     setQuitConfirmationOpen(false);
@@ -381,6 +390,21 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     ],
   );
 
+  const unseededSetup = useUnseededFunnelViewModel({
+    machineState: onboarding.state,
+    onboardedOnEntry: onboarding.context?.onboardedOnEntry ?? null,
+    currentStep: onboarding.context?.currentOnboardingStep ?? null,
+    checksPaused: onboarding.context?.checksPaused === true,
+    genuineFailureKind: readString(onboarding.context?.genuineFailureKind),
+    firmwareVersion: readString(onboarding.context?.firmwareVersion),
+    availableFirmwareVersion: readString(onboarding.context?.availableFirmwareVersion),
+    device: onboarding.liveDevice,
+    firmwareUpToDate: onboarding.context?.firmwareUpToDate === true,
+    send,
+    closeFirmwareHandover,
+  });
+  if ((unseededSetup !== null) !== setupVisible) setSetupVisible(unseededSetup !== null);
+
   const onboardedOnEntry = onboarding.context?.onboardedOnEntry ?? null;
   const phase = phaseOf(onboarding.state, onboardedOnEntry);
   const screenState = checksScreenForPhase(
@@ -428,6 +452,13 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     firmwareUpToDate: onboarding.context?.firmwareUpToDate === true,
     genuineFailureKind: readString(onboarding.context?.genuineFailureKind),
   };
+  if (unseededSetup) {
+    return {
+      status: "setup",
+      setup: { ...unseededSetup.setup, leaveRequest: setupLeaveRequest },
+      quitConfirmation: null,
+    };
+  }
   return earlyScreen(screen) ?? checksScreen(screen);
 }
 

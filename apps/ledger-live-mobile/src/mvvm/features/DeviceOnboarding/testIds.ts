@@ -17,6 +17,16 @@ export const checksTestIds = {
   allowSheet: "device-onboarding-checks-allow-sheet",
 } as const;
 
+export const setupTestIds = {
+  screen: "device-onboarding-setup",
+  close: "device-onboarding-setup-close",
+  start: "device-onboarding-setup-start",
+  allowSheet: "device-onboarding-setup-allow-sheet",
+  quit: "device-onboarding-setup-quit",
+  quitContinue: "device-onboarding-setup-quit-continue",
+  quitLeave: "device-onboarding-setup-quit-leave",
+} as const;
+
 export const syncOfferTestIds = {
   screen: "device-onboarding-sync-offer",
   activate: "device-onboarding-sync-offer-activate",
