@@ -5,7 +5,7 @@ import { YAML } from "bun";
 import { stateDir } from "@bunli/utils";
 import { APP_NAME } from "../session/session-store";
 import type { SessionEntry } from "../session/session-store";
-import { stateHomeEnv } from "./state-home";
+import { stateHomeEnv, type StateHomeEnv } from "./state-home";
 
 const SESSION_FILE = "session.yaml";
 
@@ -18,12 +18,12 @@ export function cliStateDirIn(stateHome: string): string {
 }
 
 /**
- * Creates a temp XDG state dir pre-populated with session entries.
- * Pass { env } to the CLI subprocess — XDG_STATE_HOME redirects all session I/O there.
+ * Creates a temp state dir pre-populated with session entries.
+ * Pass { env } to the CLI — it points the state dir there on every platform.
  * Call cleanup() in afterEach/afterAll to remove the temp dir.
  */
 export function makeSessionDir(entries: SessionEntry[]): {
-  env: { XDG_STATE_HOME: string };
+  env: StateHomeEnv;
   sessionPath: string;
   cleanup: () => void;
 } {
@@ -33,7 +33,7 @@ export function makeSessionDir(entries: SessionEntry[]): {
   const sessionPath = join(appDir, SESSION_FILE);
   writeFileSync(sessionPath, YAML.stringify({ accounts: entries }));
   return {
-    env: { XDG_STATE_HOME: tmpDir },
+    env: stateHomeEnv(tmpDir),
     sessionPath,
     cleanup: () => rmSync(tmpDir, { recursive: true, force: true }),
   };

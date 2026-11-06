@@ -412,6 +412,11 @@ export async function runCli(args: string[], env: Record<string, string> = {}): 
       "runCli ignores process.env.XDG_STATE_HOME, which this test changed: pass it in env too",
     );
   }
+  if (env.LOCALAPPDATA !== undefined && env.LOCALAPPDATA !== env.XDG_STATE_HOME) {
+    throw new Error(
+      "runCli points LOCALAPPDATA at XDG_STATE_HOME: pass only XDG_STATE_HOME, or the same dir in both",
+    );
+  }
 
   // 0. Lazy-load the CLI module graph (once per test process; cached once it loads).
   //    Doing this lazily ensures module-resolution failures appear as individual
