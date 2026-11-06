@@ -26,12 +26,12 @@ const PENDING: LedgerSyncJobState = { type: "pending" };
 const PROCESSING: LedgerSyncJobState = { type: "processing" };
 const COMPLETED: LedgerSyncJobState = { type: "completed" };
 
-function failJob(subscriber: JobSubscriber, error: unknown): void {
+export function failJob(subscriber: JobSubscriber, error: unknown): void {
   subscriber.next(mapLedgerSyncErrorToFailure(error));
   subscriber.complete();
 }
 
-function completeJob<Result>(
+export function completeJob<Result>(
   subscriber: JobSubscriber,
   onResult: (result: Result) => void,
   result: Result,
@@ -41,7 +41,7 @@ function completeJob<Result>(
   subscriber.complete();
 }
 
-function tryCreateSessionSdk(
+export function tryCreateSessionSdk(
   createSessionSdk: CreateSessionSdk,
   connection: DeviceConnectionResult,
   subscriber: JobSubscriber,
@@ -54,7 +54,7 @@ function tryCreateSessionSdk(
   }
 }
 
-function createDeviceCallbacks(
+export function createDeviceCallbacks(
   subscriber: JobSubscriber,
   { connectedDevice, compatDeviceName }: DeviceConnectionResult,
   isCurrentRun: () => boolean,
@@ -74,7 +74,11 @@ function createDeviceCallbacks(
   };
 }
 
-function handleCallError(subscriber: JobSubscriber, error: unknown, retry: () => void): void {
+export function handleCallError(
+  subscriber: JobSubscriber,
+  error: unknown,
+  retry: () => void,
+): void {
   if (isDeviceDisconnectedError(error)) {
     subscriber.error(error);
     return;
