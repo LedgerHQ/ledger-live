@@ -90,6 +90,8 @@ function tokenAccountPersistedStateChanged(prev: TokenAccount, next: TokenAccoun
   return (
     prev.id !== next.id ||
     !prev.balance.eq(next.balance) ||
-    prev.operationsCount !== next.operationsCount
+    prev.operationsCount !== next.operationsCount ||
+    // As for main accounts: a swap recorded on a token account (e.g. a perps withdraw) is saved.
+    (prev.swapHistory?.length ?? 0) !== (next.swapHistory?.length ?? 0)
   );
 }

@@ -29,12 +29,11 @@ export async function getTransactionStatus(
 ): Promise<GetTransactionStatusResponse> {
   const accounts = flattenAccounts(context.accounts);
   const swapOperation = await findSwapOperation(accounts, args.swapId);
-  // A perps withdraw stays out of the swap history until its payout tx hash is known: its details
-  // come from its entry meanwhile, e.g. when opened right after signing.
-  const unanchoredEntry = swapOperation
-    ? undefined
-    : findUnanchoredSwapEntry(accounts, args.swapId);
-  const provider = swapOperation?.provider ?? unanchoredEntry?.provider ?? args.provider;
+  // A perps withdraw stays out of the swap history until its payout operation is found on the
+  // receiving account (hash unknown yet, or known but not synced yet): its details come from its
+  // entry meanwhile, e.g. when opened right after signing.
+  const pendingEntry = swapOperation ? undefined : findWithdrawSwapEntry(accounts, args.swapId);
+  const provider = swapOperation?.provider ?? pendingEntry?.provider ?? args.provider;
 
   if (!provider) {
     return {
@@ -52,7 +51,7 @@ export async function getTransactionStatus(
   );
   const status =
     remoteStatus?.status ??
-    getTransactionStatusValue(swapOperation?.status ?? unanchoredEntry?.status);
+    getTransactionStatusValue(swapOperation?.status ?? pendingEntry?.status);
   const legStatuses = getSwapTransactionLegStatusesFromAccounts({
     accounts,
     operationHash: swapOperation?.operation.hash,
@@ -64,8 +63,8 @@ export async function getTransactionStatus(
     provider,
     status,
     ...legStatuses,
-    ...(unanchoredEntry
-      ? mapUnanchoredSwapEntry(unanchoredEntry, accounts, remoteStatus)
+    ...(pendingEntry
+      ? mapPendingSwapEntry(pendingEntry, accounts, remoteStatus)
       : {
           finalAmount:
             getMagnitudeAwareRemoteFinalAmount(remoteStatus?.finalAmount, swapOperation) ??
@@ -75,21 +74,16 @@ export async function getTransactionStatus(
   };
 }
 
-/** A perps withdraw entry, held by the receiving account and not anchored to an operation yet. */
-function findUnanchoredSwapEntry(
-  accounts: AccountLike[],
-  swapId: string,
-): SwapOperation | undefined {
+/** A perps withdraw entry: held by the receiving account, with the HyperCore account as sender. */
+function findWithdrawSwapEntry(accounts: AccountLike[], swapId: string): SwapOperation | undefined {
   for (const account of accounts) {
-    const entry = account.swapHistory?.find(
-      e => e.swapId === swapId && !e.operationId && e.fromAccountId,
-    );
+    const entry = account.swapHistory?.find(e => e.swapId === swapId && e.fromAccountId);
     if (entry) return entry;
   }
   return undefined;
 }
 
-function mapUnanchoredSwapEntry(
+function mapPendingSwapEntry(
   entry: SwapOperation,
   accounts: AccountLike[],
   remoteStatus: SwapStatus | undefined,
@@ -110,8 +104,8 @@ function mapUnanchoredSwapEntry(
     receivedAmount: finalAmount ?? entry.toAmount.toFixed(),
     feesAmount: entry.feesAmount,
     payoutFeesAmount: entry.payoutFeesAmount,
-    // The payout tx, for the explorer link, once the swap status returns it.
-    operationHash: remoteStatus?.txHash,
+    // The payout tx, for the explorer link: anchored already, or returned by the swap status.
+    operationHash: entry.operationId || remoteStatus?.txHash,
   };
 }
 

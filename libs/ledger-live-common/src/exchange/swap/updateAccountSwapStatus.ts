@@ -19,7 +19,10 @@ import { TransactionStatus } from "@ledgerhq/wallet-api-exchange-module";
  * swaps would never poll its status.
  */
 export function isSwapAwaitingPayoutHash({ operationId, status }: SwapOperation): boolean {
-  return !operationId && (isSwapOperationPending(status) || status === TransactionStatus.Finished);
+  if (operationId) return false;
+  // Expired is terminal, like refunded: no payout tx will ever come.
+  if (status === TransactionStatus.Expired) return false;
+  return isSwapOperationPending(status) || status === TransactionStatus.Finished;
 }
 
 /** Whether any of the (flattened) accounts holds a swap waiting for its payout tx hash. */
