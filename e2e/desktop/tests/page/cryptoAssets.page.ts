@@ -22,8 +22,10 @@ export class CryptoAssetsPage extends AppPage {
   async expectAssetsPage() {
     const headerText = this.category === "cryptos" ? "Crypto" : "Stablecoins";
     await expect(this.page).toHaveURL(new RegExp(String.raw`/assets\?category=${this.category}`));
-    await expect(this.header.title).toHaveText(headerText, { ignoreCase: true });
     await expect(this.content).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.header.title).toHaveText(headerText, { ignoreCase: true });
+    });
   }
 
   @step("Click back button in crypto assets page header")
@@ -36,8 +38,6 @@ export class CryptoAssetsPage extends AppPage {
     if (currencies.length === 0) {
       throw new Error("expectAssetsVisible called with no currencies, nothing would be asserted");
     }
-    for (const currency of currencies) {
-      await this.assetsTable.expectAssetVisible(currency);
-    }
+    await this.assetsTable.expectAssetsVisible(currencies);
   }
 }

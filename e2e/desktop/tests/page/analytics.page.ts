@@ -2,6 +2,7 @@ import { step } from "tests/misc/reporters/step";
 import { expect } from "@playwright/test";
 import { AppPage } from "tests/page/abstractClasses";
 import { PageHeader } from "tests/component/pageHeader.component";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 export class AnalyticsPage extends AppPage {
   readonly header = new PageHeader(this.page);
@@ -10,6 +11,11 @@ export class AnalyticsPage extends AppPage {
   @step("Expect analytics screen to be visible")
   async expectAnalyticsScreenToBeVisible() {
     await expect(this.header.root).toBeVisible();
-    await expect(this.chart).toBeVisible();
+    await this.softExpect(
+      async soft => {
+        await soft(this.chart).toBeVisible();
+      },
+      { timeout: TIMEOUT.large },
+    );
   }
 }

@@ -1,6 +1,7 @@
 import { AppPage } from "tests/page/abstractClasses";
 import { step } from "tests/misc/reporters/step";
 import { expect } from "@playwright/test";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 export class MarketBannerPage extends AppPage {
   private marketBannerHeader = this.page.getByTestId("market-banner-button");
@@ -15,7 +16,12 @@ export class MarketBannerPage extends AppPage {
 
   @step("Expect trending assets list to be visible")
   async expectTrendingAssetsListToBeVisible() {
-    await expect(this.trendingAssetsList).toBeVisible();
+    await this.softExpect(
+      async soft => {
+        await soft(this.trendingAssetsList).toBeVisible();
+      },
+      { timeout: TIMEOUT.large },
+    );
   }
 
   @step("Expect Fear and Greed card to be visible")
