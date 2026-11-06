@@ -25,7 +25,7 @@ Run the tests with the usual commands. Compared with Docker:
 
 ## Sessions
 
-Each Speculos is a session named by its `run_id` (`<app>-lw-local-<id>` locally, `-lw-ci-` in CI). The suite acquires it with `POST /acquire`, waits for `/status/<run_id>` to report it ready, and releases it at the end of the test, or as soon as it fails to become ready.
+Each Speculos is a session named by its `run_id` (`<app>-lw-local-<id>` locally, `-lw-ci-` in CI). The suite acquires it with `POST /acquire`, waits for `/status/<run_id>` to report it ready, and releases it at the end of the test, or as soon as it fails to become ready. Each `/acquire` names its `origin` for Speculinho's usage reports: `ledger-live/<suite>`, with `<suite>` one of `desktop-e2e`, `mobile-e2e`, `desktop-e2e-userdata`, `desktop-e2e-addresses` or `borrow`.
 
 Sessions are protected: Speculinho returns a session token, and every request about the session (`/status`, `/logs`, `/release` and the Speculos URL itself) must carry it as `Authorization: Bearer <token>`. A browser therefore can't open the Speculos URL; see [Watch the device](#watch-the-device). An operator without protected sessions makes the suite warn `Speculinho sessions are not protected` and carry on without tokens.
 
@@ -48,7 +48,7 @@ Common failures:
 
 - **`Timeout: …/status/<run_id> did not become ready within …ms`**: the Speculos never started. Most often its pod can't pull its image, because of a `SPECULOS_IMAGE_TAG` Speculinho doesn't have or a registry problem on the infra side. The error ends with the last status Speculinho reported, e.g. `(last status: pending: ImagePullBackOff)`, since desktop releases the session right away.
 - **`Speculinho rejected the session token`**: `/status` answered 401 to the session's token, so the suite stopped waiting for it.
-- **`Speculinho POST /acquire failed with HTTP 429: {"error":"max instances reached"}`**: Speculinho stayed at its instance cap, which every CI and QAA run shares, for the 90 s the suite waits for a slot (it logs `retrying in …s` meanwhile). `$SPECULINHO_URL/_metrics` shows the load (`speculinho_active_instances`, `speculinho_capacity_rejections_total`).
+- **`Speculinho POST /acquire failed with HTTP 429: {"error":"max instances reached"}`**: Speculinho stayed at its instance cap, which every CI and QAA run shares, for the 90 s the suite waits for a slot (it logs `retrying in …s` meanwhile). `$SPECULINHO_URL/_metrics` shows the load (`speculinho_active_instances`, `speculinho_capacity_rejections_total`), and the `origin` of each session tells which suites hold the instances.
 
 ## Watch the device
 

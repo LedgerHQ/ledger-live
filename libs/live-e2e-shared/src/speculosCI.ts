@@ -155,10 +155,16 @@ class SpeculinhoSessionError extends Error {
   override name = "SpeculinhoSessionError";
 }
 
+/** Who asks for an instance, static so Speculinho's usage reports add up per suite. */
+function speculinhoOrigin(suite: string): string {
+  return `ledger-live/${suite}`;
+}
+
 function buildAcquirePayload(
   deviceParams: DeviceParams,
   runId: string,
   seed: string,
+  origin: string,
   protectedSession: boolean,
   vnc: boolean,
 ) {
@@ -190,6 +196,7 @@ function buildAcquirePayload(
     device_os_version: firmware,
     seed,
     run_id: runId,
+    origin,
     speculos_version: tag,
     ...(libraries?.length ? { libraries } : {}),
     /** Speculos PKI flag, same as the local Docker provider. */
@@ -355,6 +362,7 @@ async function rememberSession(runId: string, data?: SpeculinhoAcquireResponse):
 
 export async function createSpeculosDeviceCI(
   deviceParams: DeviceParams,
+  suite: string,
 ): Promise<SpeculosDevice | undefined> {
   const speculinhoUrl = getSpeculinhoBaseUrl();
   if (!speculinhoUrl) {
@@ -374,7 +382,14 @@ export async function createSpeculosDeviceCI(
   const capacityDeadline = Date.now() + CAPACITY_WAIT_MS;
 
   for (let attempt = 0; attempt < 5; attempt++) {
-    const payload = buildAcquirePayload(deviceParams, runId, seed, protectedSession, vnc);
+    const payload = buildAcquirePayload(
+      deviceParams,
+      runId,
+      seed,
+      speculinhoOrigin(suite),
+      protectedSession,
+      vnc,
+    );
     let res;
     try {
       res = await postAcquire(speculinhoUrl, payload, capacityDeadline);

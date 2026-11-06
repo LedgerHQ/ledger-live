@@ -29,7 +29,10 @@ export async function launchSpeculos(
   const device = await startSpeculos(
     testTitle ?? "cli_speculos",
     specs[appName.replace(/ /g, "_")],
-    previousDevice?.port,
+    {
+      suite: "desktop-e2e",
+      apiPort: previousDevice?.port,
+    },
   );
 
   invariant(device, "[E2E Setup] Speculos not started");
