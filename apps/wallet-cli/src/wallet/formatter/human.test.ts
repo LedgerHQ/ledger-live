@@ -245,18 +245,18 @@ describe("HumanFormatter.formatAmount", () => {
 describe("HumanFormatter.formatBalance", () => {
   const formatter = new HumanFormatter(stubStore);
 
-  it("formats a non-zero balance", async () => {
+  it("prints a native balance as its amount only", async () => {
     const result = await formatter.formatBalance(
       BalanceSchema.parse({ kind: "native", assetId: "ethereum", balance: "1000000000000000000" }),
     );
-    expect(result).toContain("ETH");
+    expect(result).toBe(colors.green("1\u00a0ETH"));
   });
 
-  it("formats a zero balance", async () => {
+  it("dims a zero balance", async () => {
     const result = await formatter.formatBalance(
       BalanceSchema.parse({ kind: "native", assetId: "ethereum", balance: "0" }),
     );
-    expect(result).toContain("ETH");
+    expect(result).toBe(colors.dim("0\u00a0ETH"));
   });
 
   it("prints a token balance as its amount and asset id only", async () => {
