@@ -9,6 +9,10 @@ import { syncOfferTestIds } from "LLM/features/DeviceOnboarding/testIds";
 import type { SyncOfferViewProps } from "./useSyncOfferScreenViewModel";
 import darkCloudSyncAnimation from "./animations/dark/cloud-sync.lottie";
 import lightCloudSyncAnimation from "./animations/light/cloud-sync.lottie";
+import darkLoadingAnimation from "../Checks/animations/dark/loading.lottie";
+import darkSuccessAnimation from "../Checks/animations/dark/success.lottie";
+import lightLoadingAnimation from "../Checks/animations/light/loading.lottie";
+import lightSuccessAnimation from "../Checks/animations/light/success.lottie";
 
 const illustrationHeight = 200;
 const illustrationSize = 96;
@@ -16,8 +20,104 @@ const cloudSyncSources = {
   light: resolveLottieSource(lightCloudSyncAnimation),
   dark: resolveLottieSource(darkCloudSyncAnimation),
 };
+const successSources = {
+  light: resolveLottieSource(lightSuccessAnimation),
+  dark: resolveLottieSource(darkSuccessAnimation),
+};
+const loadingSources = {
+  light: resolveLottieSource(lightLoadingAnimation),
+  dark: resolveLottieSource(darkLoadingAnimation),
+};
 
-export function SyncOfferView({
+function SyncOfferSuccess({
+  title,
+  continueLabel,
+  closeLabel,
+  onContinue,
+  onQuit,
+}: Extract<SyncOfferViewProps, { phase: "success" }>) {
+  const { colorScheme } = useTheme();
+  const { bottom: bottomInset } = useSafeAreaInsets();
+  const theme = colorScheme === "dark" ? "dark" : "light";
+
+  return (
+    <Box testID={syncOfferTestIds.screen} lx={{ flex: 1, backgroundColor: "canvas" }}>
+      <Box lx={{ flex: 1, gap: "s24" }}>
+        <DeviceOnboardingCloseBar
+          label={closeLabel}
+          testID={syncOfferTestIds.quit}
+          onPress={onQuit}
+        />
+        <Box
+          lx={{ alignItems: "center", justifyContent: "center", minHeight: "s72", flexShrink: 1 }}
+          style={{ height: illustrationHeight }}
+        >
+          <Lottie
+            key={theme}
+            source={successSources[theme]}
+            loop={false}
+            style={{ width: illustrationSize, height: illustrationSize }}
+          />
+        </Box>
+        <Box lx={{ flexGrow: 1, gap: "s8", paddingHorizontal: "s16", paddingBottom: "s16" }}>
+          <Text typography="heading3SemiBold" lx={{ color: "base", textAlign: "center" }}>
+            {title}
+          </Text>
+        </Box>
+        <Box lx={{ paddingHorizontal: "s16" }} style={{ paddingBottom: bottomInset }}>
+          <Button
+            appearance="base"
+            size="lg"
+            isFull
+            testID={syncOfferTestIds.continue}
+            onPress={onContinue}
+          >
+            {continueLabel}
+          </Button>
+        </Box>
+      </Box>
+    </Box>
+  );
+}
+
+function SyncOfferSynchronizing({
+  title,
+  closeLabel,
+  onQuit,
+}: Extract<SyncOfferViewProps, { phase: "synchronizing" }>) {
+  const { colorScheme } = useTheme();
+  const theme = colorScheme === "dark" ? "dark" : "light";
+
+  return (
+    <Box testID={syncOfferTestIds.screen} lx={{ flex: 1, backgroundColor: "canvas" }}>
+      <Box lx={{ flex: 1, gap: "s24" }}>
+        <DeviceOnboardingCloseBar
+          label={closeLabel}
+          testID={syncOfferTestIds.quit}
+          onPress={onQuit}
+        />
+        <Box
+          lx={{ alignItems: "center", justifyContent: "center", minHeight: "s72", flexShrink: 1 }}
+          style={{ height: illustrationHeight }}
+        >
+          <Lottie
+            key={theme}
+            source={loadingSources[theme]}
+            loop
+            style={{ width: illustrationSize, height: illustrationSize }}
+          />
+        </Box>
+        <Box lx={{ flexGrow: 1, gap: "s8", paddingHorizontal: "s16", paddingBottom: "s16" }}>
+          <Text typography="heading3SemiBold" lx={{ color: "base", textAlign: "center" }}>
+            {title}
+          </Text>
+        </Box>
+      </Box>
+    </Box>
+  );
+}
+
+function SyncOfferPrompt({
   title,
   description,
   learnMoreLabel,
@@ -29,7 +129,7 @@ export function SyncOfferView({
   onLearnMore,
   onQuit,
   skipDrawer,
-}: SyncOfferViewProps) {
+}: Extract<SyncOfferViewProps, { phase: "offer" }>) {
   const { colorScheme } = useTheme();
   const { bottom: bottomInset } = useSafeAreaInsets();
   const theme = colorScheme === "dark" ? "dark" : "light";
@@ -98,4 +198,10 @@ export function SyncOfferView({
       />
     </Box>
   );
+}
+
+export function SyncOfferView(props: SyncOfferViewProps) {
+  if (props.phase === "success") return <SyncOfferSuccess {...props} />;
+  if (props.phase === "synchronizing") return <SyncOfferSynchronizing {...props} />;
+  return <SyncOfferPrompt {...props} />;
 }
