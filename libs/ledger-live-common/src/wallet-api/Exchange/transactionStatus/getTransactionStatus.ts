@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import type { AccountLike } from "@ledgerhq/types-live";
+import type { AccountLike, SwapOperation } from "@ledgerhq/types-live";
 import { flattenAccounts, getAccountCurrency } from "../../../account";
 import getCompleteSwapHistory from "../../../exchange/swap/getCompleteSwapHistory";
 import { swapProviderRequiresOperationId } from "../../../exchange/swap/providersRequiringOperationId";
@@ -29,7 +29,12 @@ export async function getTransactionStatus(
 ): Promise<GetTransactionStatusResponse> {
   const accounts = flattenAccounts(context.accounts);
   const swapOperation = await findSwapOperation(accounts, args.swapId);
-  const provider = swapOperation?.provider ?? args.provider;
+  // A perps withdraw stays out of the swap history until its payout tx hash is known: its details
+  // come from its entry meanwhile, e.g. when opened right after signing.
+  const unanchoredEntry = swapOperation
+    ? undefined
+    : findUnanchoredSwapEntry(accounts, args.swapId);
+  const provider = swapOperation?.provider ?? unanchoredEntry?.provider ?? args.provider;
 
   if (!provider) {
     return {
@@ -45,7 +50,9 @@ export async function getTransactionStatus(
       swapOperation,
     }),
   );
-  const status = remoteStatus?.status ?? getTransactionStatusValue(swapOperation?.status);
+  const status =
+    remoteStatus?.status ??
+    getTransactionStatusValue(swapOperation?.status ?? unanchoredEntry?.status);
   const legStatuses = getSwapTransactionLegStatusesFromAccounts({
     accounts,
     operationHash: swapOperation?.operation.hash,
@@ -57,10 +64,54 @@ export async function getTransactionStatus(
     provider,
     status,
     ...legStatuses,
-    finalAmount:
-      getMagnitudeAwareRemoteFinalAmount(remoteStatus?.finalAmount, swapOperation) ??
-      getFinalAmount(swapOperation),
-    ...mapSwapOperation(swapOperation),
+    ...(unanchoredEntry
+      ? mapUnanchoredSwapEntry(unanchoredEntry, accounts, remoteStatus)
+      : {
+          finalAmount:
+            getMagnitudeAwareRemoteFinalAmount(remoteStatus?.finalAmount, swapOperation) ??
+            getFinalAmount(swapOperation),
+          ...mapSwapOperation(swapOperation),
+        }),
+  };
+}
+
+/** A perps withdraw entry, held by the receiving account and not anchored to an operation yet. */
+function findUnanchoredSwapEntry(
+  accounts: AccountLike[],
+  swapId: string,
+): SwapOperation | undefined {
+  for (const account of accounts) {
+    const entry = account.swapHistory?.find(
+      e => e.swapId === swapId && !e.operationId && e.fromAccountId,
+    );
+    if (entry) return entry;
+  }
+  return undefined;
+}
+
+function mapUnanchoredSwapEntry(
+  entry: SwapOperation,
+  accounts: AccountLike[],
+  remoteStatus: SwapStatus | undefined,
+): Partial<GetTransactionStatusResponse> {
+  const receiver = accounts.find(account => account.id === entry.receiverAccountId);
+  const finalAmount =
+    receiver && remoteStatus?.finalAmount && isAmountGreaterThanZero(remoteStatus.finalAmount)
+      ? new BigNumber(remoteStatus.finalAmount)
+          .shiftedBy(getAccountCurrency(receiver).units[0].magnitude)
+          .toFixed()
+      : undefined;
+
+  return {
+    finalAmount,
+    fromAccountId: entry.fromAccountId,
+    toAccountId: entry.receiverAccountId,
+    sentAmount: entry.fromAmount.absoluteValue().toFixed(),
+    receivedAmount: finalAmount ?? entry.toAmount.toFixed(),
+    feesAmount: entry.feesAmount,
+    payoutFeesAmount: entry.payoutFeesAmount,
+    // The payout tx, for the explorer link, once the swap status returns it.
+    operationHash: remoteStatus?.txHash,
   };
 }
 

@@ -54,11 +54,14 @@ export function createPerpsWithdrawSwapOperation({
 
 /**
  * Adds the entry to the account it is received on: the main account itself or one of its token
- * accounts. Adding the same swap twice keeps a single entry.
+ * accounts. A token account the user never held is not among the token accounts yet: the
+ * `destinationAccount` picked in the form is then added with the entry. Adding the same swap twice
+ * keeps a single entry.
  */
 export function addPerpsWithdrawToSwapHistory(
   account: Account,
   swapOperation: SwapOperation,
+  destinationAccount?: AccountLike,
 ): Account {
   const { receiverAccountId, swapId } = swapOperation;
   const withEntry = <T extends { swapHistory: SwapOperation[] }>(holder: T): T =>
@@ -67,12 +70,23 @@ export function addPerpsWithdrawToSwapHistory(
       : { ...holder, swapHistory: [...holder.swapHistory, swapOperation] };
 
   if (account.id === receiverAccountId) return withEntry(account);
-  return {
-    ...account,
-    subAccounts: account.subAccounts?.map(subAccount =>
-      subAccount.id === receiverAccountId ? withEntry(subAccount) : subAccount,
-    ),
-  };
+  const subAccounts = account.subAccounts ?? [];
+  if (subAccounts.some(subAccount => subAccount.id === receiverAccountId)) {
+    return {
+      ...account,
+      subAccounts: subAccounts.map(subAccount =>
+        subAccount.id === receiverAccountId ? withEntry(subAccount) : subAccount,
+      ),
+    };
+  }
+  if (
+    destinationAccount?.type === "TokenAccount" &&
+    destinationAccount.id === receiverAccountId &&
+    destinationAccount.parentId === account.id
+  ) {
+    return { ...account, subAccounts: [...subAccounts, withEntry(destinationAccount)] };
+  }
+  return account;
 }
 
 /**
@@ -89,6 +103,6 @@ export function getPerpsWithdrawHistoryUpdate(
       destinationAccount.type === "TokenAccount"
         ? destinationAccount.parentId
         : destinationAccount.id,
-    updater: account => addPerpsWithdrawToSwapHistory(account, swapOperation),
+    updater: account => addPerpsWithdrawToSwapHistory(account, swapOperation, destinationAccount),
   };
 }
