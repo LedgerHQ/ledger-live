@@ -35,13 +35,19 @@ index 9af637accdf7ac699063f3acdc01e7ccf0f1a539..e2a69a739bdd1976c2cffe066e839ba4
 +const { hostname } = getDevServerLocation();
 +__webpack_public_path__ = __webpack_public_path__.replace(/\/\/[^:/]+/, '//' + hostname);
 diff --git a/dist/modules/getDevServerLocation.js b/dist/modules/getDevServerLocation.js
-index f74842575b5c4716de4dc657c9e9849734cb0529..74cb1e0dbc72abef72f841f8a7389c322d4fd9e5 100644
+index 196b0c10b96cfa951e74282d2bc66d9496ede8b1..0b121fd87bb66250e7533022a58829309d9654da 100644
 --- a/dist/modules/getDevServerLocation.js
 +++ b/dist/modules/getDevServerLocation.js
-@@ -1,16 +1,46 @@
--let hostname = __PUBLIC_HOST__;
--if (__PLATFORM__ === 'android' && __PUBLIC_HOST__ === 'localhost') {
--  hostname = '10.0.2.2';
+@@ -1,12 +1,46 @@
+-const location = {
+-  host: `${__PUBLIC_HOST__}:${__PUBLIC_PORT__}`,
+-  hostname: __PUBLIC_HOST__,
+-  href: `${__PUBLIC_PROTOCOL__}://${__PUBLIC_HOST__}:${__PUBLIC_PORT__}/`,
+-  origin: `${__PUBLIC_PROTOCOL__}://${__PUBLIC_HOST__}:${__PUBLIC_PORT__}`,
+-  pathname: '/',
+-  port: __PUBLIC_PORT__,
+-  protocol: __PUBLIC_PROTOCOL__
+-};
 +let cached = null;
 +
 +function getScriptURL() {
@@ -52,16 +58,7 @@ index f74842575b5c4716de4dc657c9e9849734cb0529..74cb1e0dbc72abef72f841f8a7389c32
 +    if (c?.scriptURL) return c.scriptURL;
 +  } catch (_) {}
 +  return null;
- }
--const location = {
--  host: `${hostname}:${__PUBLIC_PORT__}`,
--  hostname,
--  href: `${__PUBLIC_PROTOCOL__}://${hostname}:${__PUBLIC_PORT__}/`,
--  origin: `${__PUBLIC_PROTOCOL__}://${hostname}:${__PUBLIC_PORT__}`,
--  pathname: '/',
--  port: __PUBLIC_PORT__,
--  protocol: __PUBLIC_PROTOCOL__
--};
++}
 +
 +function computeLocation() {
 +  if (cached) return cached;
