@@ -19,8 +19,7 @@ import {
   saveAgentIntentKeyFile,
 } from "./agent-intent-key-file";
 import { installOutputCapture } from "../shared/ui";
-import { cliStateDirIn } from "../testing/session-fixture";
-import { pointStateHomeAt } from "../testing/state-home";
+import { cliStateDirIn, pointStateHomeAt } from "../testing/state-home";
 
 let stateHome: string;
 let restoreStateHome: () => void;

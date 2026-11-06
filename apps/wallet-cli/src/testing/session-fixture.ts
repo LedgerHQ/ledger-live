@@ -1,20 +1,17 @@
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
-import { homedir, tmpdir } from "node:os";
-import { join } from "node:path";
+import { tmpdir } from "node:os";
+import { dirname, join } from "node:path";
 import { YAML } from "bun";
-import { stateDir } from "@bunli/utils";
-import { APP_NAME } from "../session/session-store";
 import type { SessionEntry } from "../session/session-store";
-import { stateHomeEnv, type StateHomeEnv } from "./state-home";
+import { cliStateDirIn, stateHomeEnv, type StateHomeEnv } from "./state-home";
 
 const SESSION_FILE = "session.yaml";
 
-export function cliStateDirIn(stateHome: string): string {
-  return stateDir(APP_NAME, {
-    platform: process.platform,
-    env: stateHomeEnv(stateHome),
-    homedir: homedir(),
-  });
+export function writeSessionIn(stateHome: string, session: Record<string, unknown>): string {
+  const sessionPath = join(cliStateDirIn(stateHome), SESSION_FILE);
+  mkdirSync(dirname(sessionPath), { recursive: true });
+  writeFileSync(sessionPath, YAML.stringify(session));
+  return sessionPath;
 }
 
 /**
@@ -28,13 +25,9 @@ export function makeSessionDir(entries: SessionEntry[]): {
   cleanup: () => void;
 } {
   const tmpDir = mkdtempSync(join(tmpdir(), "wallet-cli-test-"));
-  const appDir = cliStateDirIn(tmpDir);
-  mkdirSync(appDir, { recursive: true });
-  const sessionPath = join(appDir, SESSION_FILE);
-  writeFileSync(sessionPath, YAML.stringify({ accounts: entries }));
   return {
     env: stateHomeEnv(tmpDir),
-    sessionPath,
+    sessionPath: writeSessionIn(tmpDir, { accounts: entries }),
     cleanup: () => rmSync(tmpDir, { recursive: true, force: true }),
   };
 }
