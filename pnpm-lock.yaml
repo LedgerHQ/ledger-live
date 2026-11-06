@@ -12187,6 +12187,9 @@ importers:
       '@shared/ui-animated-height':
         specifier: workspace:*
         version: link:../../../shared/ui-animated-height
+      '@shared/ui-info-state':
+        specifier: workspace:*
+        version: link:../../../shared/ui-info-state
       '@shared/ui-queued-bottom-sheet':
         specifier: workspace:*
         version: link:../../../shared/ui-queued-bottom-sheet
@@ -13636,13 +13639,22 @@ importers:
 
   features/platform/predictions:
     dependencies:
+      '@features/platform-device-intent':
+        specifier: workspace:^
+        version: link:../device-intent
       '@ledgerhq/wallet-api-server':
         specifier: 'catalog:'
         version: 3.6.0(@ton/crypto@3.3.0)(encoding@0.1.13)
+      ethers:
+        specifier: 6.15.0
+        version: 6.15.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       zod:
         specifier: 'catalog:'
         version: 4.6.7
     devDependencies:
+      '@ledgerhq/device-management-kit':
+        specifier: 'catalog:'
+        version: 1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -13664,6 +13676,9 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      rxjs:
+        specifier: 'catalog:'
+        version: 7.8.2
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
