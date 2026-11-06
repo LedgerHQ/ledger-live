@@ -150,8 +150,10 @@ function getAccountType(coreInput: CoreInput, btc: Btc): StandardPurpose {
 }
 
 export function creatDummyXpub(pubkey: Buffer): string {
-  const xpubDecoded = bs58check.decode(
-    "tpubDHcN44A4UHqdHJZwBxgTbu8Cy87ZrZkN8tQnmJGhcijHqe4rztuvGcD4wo36XSviLmiqL5fUbDnekYaQ7LzAnaqauBb9RsyahsTTFHdeJGd",
+  const xpubDecoded = Buffer.from(
+    bs58check.decode(
+      "tpubDHcN44A4UHqdHJZwBxgTbu8Cy87ZrZkN8tQnmJGhcijHqe4rztuvGcD4wo36XSviLmiqL5fUbDnekYaQ7LzAnaqauBb9RsyahsTTFHdeJGd",
+    ),
   );
   const pubkey33 = pubkey.length == 33 ? pubkey : Buffer.concat([Buffer.from([2]), pubkey]);
   xpubDecoded.fill(pubkey33, xpubDecoded.length - 33);
