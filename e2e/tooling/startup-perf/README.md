@@ -3,9 +3,10 @@
 Compares the startup time of two Ledger Wallet Mobile builds, A and B, on two Android emulators or
 two iOS simulators. It automates the manual checks B2CQA-6555 (iOS) and B2CQA-6593 (Android).
 [test-mobile-startup-perf.yml](../../../.github/workflows/test-mobile-startup-perf.yml) runs it in
-CI only. The scripts run on Node alone (the `package.json` only holds the checks' tools): the build
-jobs check out this folder alone, the measure jobs add `e2e/mobile/userdata` (and, on Android,
-`tools/scripts` and the signing keystore).
+CI only. The scripts run on Node alone (the `package.json` only holds the checks' tools). The build
+jobs check out the two shell scripts alone, so the measured ref's Nx never sees a second copy of
+this package; the measure jobs check out this folder, `e2e/mobile/userdata` and, on Android,
+`tools/scripts` and the signing keystore.
 
 | File                      | Role                                                                                |
 | ------------------------- | ----------------------------------------------------------------------------------- |
