@@ -83,6 +83,21 @@ describe("fetchAssetsPage", () => {
     expect(result.currenciesOrder).toEqual(emptyRaw.currenciesOrder);
   });
 
+  it("drops a non-string meta-currency id from the ordering and keeps the rest", async () => {
+    baseQuery.mockResolvedValue({
+      data: {
+        ...emptyRaw,
+        cryptoAssets: { btc: { id: "btc", ticker: "BTC", name: "Bitcoin", assetsIds: {} } },
+        currenciesOrder: { key: "marketCap", order: "desc", metaCurrencyIds: ["btc", 42, "eth"] },
+      },
+    });
+
+    const result = await fetchAssetsPage(baseQuery, params());
+
+    expect(result.currenciesOrder.metaCurrencyIds).toEqual(["btc", "eth"]);
+    expect(Object.keys(result.cryptoAssets)).toEqual(["btc"]);
+  });
+
   /*
    * Rethrows the base query's own error object so the chunked endpoint can return it verbatim,
    * which is how an HTTP failure keeps its numeric status instead of collapsing to FETCH_ERROR.
