@@ -168,6 +168,7 @@ catalog:
   bs58: ^4.0.1
   bs58check: ^2.1.2
   buffer: 6.0.3
+  chalk: 4.1.2
   class-variance-authority: 0.7.1
   cross-env: 10.1.0
   electron: 45.2.1

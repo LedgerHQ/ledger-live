@@ -47,6 +47,7 @@
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
+    "@support/lint": "workspace:*",
     "@features/platform-feature-flags": "workspace:^",
     "@shared/feature-flags": "workspace:^",
     "@ledgerhq/lumen-ui-react": "catalog:",
