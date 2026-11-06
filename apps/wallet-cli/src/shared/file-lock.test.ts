@@ -1,4 +1,4 @@
-import { describe, it, expect, afterEach } from "bun:test";
+import { describe, it, expect, afterEach, spyOn } from "bun:test";
 import {
   existsSync,
   mkdtempSync,
@@ -27,6 +27,13 @@ function lockPath(): string {
 function backdateBeforeLastBoot(path: string): void {
   const beforeBoot = new Date(Date.now() - uptime() * 1000 - 60_000);
   utimesSync(path, beforeBoot, beforeBoot);
+}
+
+function mockKillEperm(): () => void {
+  const kill = spyOn(process, "kill").mockImplementation(() => {
+    throw Object.assign(new Error("kill EPERM"), { code: "EPERM" });
+  });
+  return () => kill.mockRestore();
 }
 
 /**
@@ -113,12 +120,28 @@ describe("withFileLock", () => {
     expect(result).toBe("acquired");
   });
 
-  it("steals a lock written before the last boot, even when its pid now reads as alive", async () => {
+  it("steals a lock written before the last boot whose pid it can't signal (EPERM)", async () => {
     const path = lockPath();
     writeFileSync(path, `${process.pid}:a1b2c3d4e5f60718`);
     backdateBeforeLastBoot(path);
 
-    expect(await withFileLock(path, () => "acquired", 300)).toBe("acquired");
+    const restoreKill = mockKillEperm();
+    try {
+      expect(await withFileLock(path, () => "acquired", 300)).toBe("acquired");
+    } finally {
+      restoreKill();
+    }
+  });
+
+  it("never steals a held lock when a forward clock correction makes it look older than the last boot", async () => {
+    const path = lockPath();
+
+    await withFileLock(path, async () => {
+      backdateBeforeLastBoot(path);
+      await expect(withFileLock(path, () => "stolen", 300)).rejects.toThrow(
+        /Timed out waiting for a lock/,
+      );
+    });
   });
 
   it("never steals a lock held by a live process, even if fn runs long", async () => {
@@ -253,11 +276,37 @@ describe("readLiveLockHolderPid", () => {
     expect(readLiveLockHolderPid(path)).toBeUndefined();
   });
 
-  it("returns undefined for a lock written before the last boot, even when its pid now reads as alive", () => {
+  it("returns the pid it can't signal (EPERM) when the lock postdates the last boot", () => {
+    const path = lockPath();
+    writeFileSync(path, `${process.pid}:a1b2c3d4e5f60718`);
+
+    const restoreKill = mockKillEperm();
+    try {
+      expect(readLiveLockHolderPid(path)).toBe(process.pid);
+    } finally {
+      restoreKill();
+    }
+  });
+
+  it("returns undefined for a lock written before the last boot whose pid it can't signal (EPERM)", () => {
     const path = lockPath();
     writeFileSync(path, `${process.pid}:a1b2c3d4e5f60718`);
     backdateBeforeLastBoot(path);
 
-    expect(readLiveLockHolderPid(path)).toBeUndefined();
+    const restoreKill = mockKillEperm();
+    try {
+      expect(readLiveLockHolderPid(path)).toBeUndefined();
+    } finally {
+      restoreKill();
+    }
+  });
+
+  it("still returns the holder after a forward clock correction makes its lock look older than the last boot", async () => {
+    const path = lockPath();
+    const seen = await withFileLock(path, () => {
+      backdateBeforeLastBoot(path);
+      return readLiveLockHolderPid(path);
+    });
+    expect(seen).toBe(process.pid);
   });
 });

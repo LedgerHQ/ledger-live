@@ -1,7 +1,7 @@
 import "../../live-common-setup";
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, spyOn } from "bun:test";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
 import { mkdirSync, mkdtempSync, rmSync, utimesSync, writeFileSync } from "node:fs";
-import os, { tmpdir } from "node:os";
+import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { CliProcessExitError } from "../../cli-process-exit-error";
 import { createCommandOutput } from "../../output";
@@ -49,16 +49,6 @@ const { enrollListenerPaths, withEnrollListenerLock } = await import("../../agen
 // Resolved per test: the state dir only points at the temp dir once `beforeAll` has run.
 let logPath: string;
 let lockPath: string;
-
-const DAY_S = 24 * 60 * 60;
-
-/** Mocks a day of uptime, so a freshly booted CI machine doesn't read the aged lock as pre-boot. */
-function ageListenerLock(ageMs: number): () => void {
-  const uptime = spyOn(os, "uptime").mockReturnValue(DAY_S);
-  const takenAt = (Date.now() - ageMs) / 1000;
-  utimesSync(lockPath, takenAt, takenAt);
-  return () => uptime.mockRestore();
-}
 
 function pendingProfile(expiresInMs = 30 * 60_000): Profile {
   return {
@@ -491,15 +481,12 @@ describe("agent-intent wait", () => {
     profileReads = [undefined];
 
     await withEnrollListenerLock("test-agent", async () => {
-      const restoreLockAge = ageListenerLock(4 * 60_000);
-      try {
-        const { code, line } = await pollWaitJson(stdout, 50);
+      const takenAt = (Date.now() - 4 * 60_000) / 1000;
+      utimesSync(lockPath, takenAt, takenAt);
+      const { code, line } = await pollWaitJson(stdout, 50);
 
-        expect(code).toBe(0);
-        expect(line).toMatchObject({ type: "enrollment-waiting", listenerPid: process.pid });
-      } finally {
-        restoreLockAge();
-      }
+      expect(code).toBe(0);
+      expect(line).toMatchObject({ type: "enrollment-waiting", listenerPid: process.pid });
     });
   });
 
@@ -507,22 +494,19 @@ describe("agent-intent wait", () => {
     profileReads = [undefined];
 
     await withEnrollListenerLock("test-agent", async () => {
-      const restoreLockAge = ageListenerLock(10 * 60_000 + 1_000);
-      try {
-        const { code, line } = await pollWaitJson(stdout);
+      const takenAt = (Date.now() - 10 * 60_000 - 1_000) / 1000;
+      utimesSync(lockPath, takenAt, takenAt);
+      const { code, line } = await pollWaitJson(stdout);
 
-        expect(code).toBe(1);
-        expect(line).toMatchObject({
-          error: {
-            code: "listener_stuck",
-            message: expect.stringContaining(
-              `listener (pid ${process.pid}) has not saved it within 10 minutes`,
-            ),
-          },
-        });
-      } finally {
-        restoreLockAge();
-      }
+      expect(code).toBe(1);
+      expect(line).toMatchObject({
+        error: {
+          code: "listener_stuck",
+          message: expect.stringContaining(
+            `listener (pid ${process.pid}) has not saved it within 10 minutes`,
+          ),
+        },
+      });
     });
   });
 
