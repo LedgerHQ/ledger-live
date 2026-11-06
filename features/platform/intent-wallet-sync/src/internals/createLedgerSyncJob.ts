@@ -108,15 +108,7 @@ export function handleCallError(
   failJob(subscriber, error);
 }
 
-/**
- * Runs one Ledger Sync SDK call on the DIE session and maps its lifecycle to
- * {@link LedgerSyncJobState}.
- *
- * The SDK is built once per run, so a retry after a refusal reuses it and the
- * JWT it may already hold. Errors are emitted as job states, except a device
- * disconnection, which errors the observable so DIE shows its Disconnected
- * screen.
- */
+// Builds the SDK once per run, so a retry after a refusal reuses it and its JWT.
 export function createLedgerSyncJob<Input extends { createSessionSdk: CreateSessionSdk }, Result>(
   call: LedgerSyncDeviceCall<Input, Result>,
 ): Job<LedgerSyncJobState, Input, Result> {

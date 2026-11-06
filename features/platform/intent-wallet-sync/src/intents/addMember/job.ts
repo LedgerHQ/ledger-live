@@ -4,8 +4,12 @@ import { createLedgerSyncJob } from "../../internals/createLedgerSyncJob";
 import type { AddMemberIntentInput, AddMemberJobState } from "./types";
 
 /**
- * Creates the trustchain, joins an existing one, or restores it, with the
- * device of the DIE session signing the member in.
+ * Runs `getOrCreateTrustchain` on the DIE session: creates the trustchain of the device seed,
+ * joins it, or restores it, with the device signing this instance in.
+ *
+ * Emits `pending`, then `awaiting-device-confirmation` and `processing` for each confirmation,
+ * then `completed` after `onResult`. A refusal emits `device-rejected`, any other SDK error
+ * `failed`. A device disconnection errors the observable so DIE shows its Disconnected screen.
  */
 export const addMemberIntentJob: Job<AddMemberJobState, AddMemberIntentInput, TrustchainResult> =
   createLedgerSyncJob<AddMemberIntentInput, TrustchainResult>(
