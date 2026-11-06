@@ -11,6 +11,7 @@ type TransactionHeaderProps = Readonly<{
   createdAt?: number;
   locale: string;
   origin?: SwapTransactionStatusOrigin;
+  isPerpsWithdraw?: boolean;
 }>;
 
 export function TransactionHeader({
@@ -19,6 +20,7 @@ export function TransactionHeader({
   createdAt,
   locale,
   origin,
+  isPerpsWithdraw,
 }: TransactionHeaderProps) {
   const { title, currencies, formattedDate } = useTransactionHeaderViewModel({
     sendCurrency,
@@ -26,6 +28,7 @@ export function TransactionHeader({
     createdAt,
     locale,
     origin,
+    isPerpsWithdraw,
   });
 
   return (

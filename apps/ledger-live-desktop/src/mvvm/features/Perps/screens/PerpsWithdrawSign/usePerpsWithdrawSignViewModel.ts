@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import BigNumber from "bignumber.js";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -12,6 +13,9 @@ import {
   getWithdrawRequestId,
 } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/request";
 import { PERPS_WITHDRAW_SIGNING_APP_NAME } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/sign";
+import { getPerpsWithdrawHistoryUpdate } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/history";
+import { useDispatch } from "LLD/hooks/redux";
+import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import useConnectAppAction from "~/renderer/hooks/useConnectAppAction";
 import { isUserRefusal } from "LLD/features/Perps/utils/isUserRefusal";
 import { openPerpsTransactionSigned } from "../PerpsTransactionSigned/PerpsTransactionSignedDialog";
@@ -46,6 +50,7 @@ export function usePerpsWithdrawSignViewModel(
 ): PerpsWithdrawSignViewModel {
   const [step, setStep] = useState<PerpsWithdrawSignStep>({ kind: "connect" });
   const [attempt, setAttempt] = useState(0);
+  const dispatch = useDispatch();
   const action = useConnectAppAction();
   const request = useMemo(() => ({ appName: PERPS_WITHDRAW_SIGNING_APP_NAME }), []);
 
@@ -83,6 +88,18 @@ export function usePerpsWithdrawSignViewModel(
             if (!closedRef.current) setStep({ kind: "submitting" });
           },
         });
+        // Recorded even when the dialog was closed meanwhile: the withdraw went through.
+        if (result.swapId) {
+          const { accountId, updater } = getPerpsWithdrawHistoryUpdate({
+            swapId: result.swapId,
+            sourceAccount,
+            destinationAccount,
+            amountFrom: new BigNumber(quoteParams.amount),
+            amountTo: quote.amountTo,
+            payoutNetworkFees: quote.payoutNetworkFees,
+          });
+          dispatch(updateAccountWithUpdater(accountId, updater));
+        }
         if (closedRef.current) return;
         openPerpsTransactionSigned({
           receiveCurrencyTicker: getAccountCurrency(destinationAccount).ticker,
@@ -100,7 +117,7 @@ export function usePerpsWithdrawSignViewModel(
         setStep({ kind: "error", error, canRetry: isPerpsWithdrawRetryable(error) });
       }
     },
-    [backToSummary, data, onClose],
+    [backToSummary, data, dispatch, onClose],
   );
 
   const handleDeviceResult = useCallback(

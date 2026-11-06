@@ -181,6 +181,8 @@ export type SwapStatus = {
   swapId: string;
   status: ValidSwapStatus;
   finalAmount?: string;
+  /** The payout transaction hash, returned once known (e.g. perps withdraw). */
+  txHash?: string;
 };
 
 // -----
@@ -260,6 +262,10 @@ export type MappedSwapOperation = {
   fromAmount: BigNumber;
   toAmount: BigNumber;
   finalAmount?: BigNumber;
+  /** Atomic, in the sender currency, when not carried by the operation. */
+  feesAmount?: string;
+  /** Atomic, in the receiving account currency. */
+  payoutFeesAmount?: string;
 };
 export type SwapState = {
   // NB fromAccount and fromParentAccount and amount come from `useBridgeTransaction`

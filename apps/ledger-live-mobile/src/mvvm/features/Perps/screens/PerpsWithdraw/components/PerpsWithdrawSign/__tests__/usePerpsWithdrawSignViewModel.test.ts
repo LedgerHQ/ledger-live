@@ -7,6 +7,7 @@ import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import type { PerpsWithdrawExecutionParams } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/execute";
 import { WithdrawSubmitUnknownOutcomeError } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/errors";
 import { act, renderHook, waitFor } from "@tests/test-renderer";
+import type { State } from "~/reducers/types";
 import {
   usePerpsWithdrawSignViewModel,
   type PerpsWithdrawSignProps,
@@ -58,7 +59,15 @@ function renderViewModel() {
     onRefused: jest.fn(),
     onLeave: jest.fn(),
   };
-  return { ...renderHook(() => usePerpsWithdrawSignViewModel(props)), props };
+  return {
+    ...renderHook(() => usePerpsWithdrawSignViewModel(props), {
+      overrideInitialState: (state: State) => ({
+        ...state,
+        accounts: { ...state.accounts, active: [sourceAccount, destinationAccount] },
+      }),
+    }),
+    props,
+  };
 }
 
 describe("usePerpsWithdrawSignViewModel", () => {
@@ -69,6 +78,27 @@ describe("usePerpsWithdrawSignViewModel", () => {
 
     expect(result.current.step).toEqual({ kind: "connect" });
     expect(result.current.request).toEqual({ appName: "Ethereum" });
+  });
+
+  it("should record the submitted withdraw in the swap history of the receiving account", async () => {
+    mockExecute.mockResolvedValue({ swapId: "swap-1" });
+    const { result, store, props } = renderViewModel();
+
+    act(() => result.current.handleDeviceResult(appResult));
+
+    await waitFor(() => expect(props.onDone).toHaveBeenCalled());
+    const receiver = store
+      .getState()
+      .accounts.active.find(account => account.id === destinationAccount.id);
+    expect(receiver?.swapHistory).toEqual([
+      expect.objectContaining({
+        swapId: "swap-1",
+        provider: "swapkit_hyperliquid",
+        status: "pending",
+        fromAccountId: sourceAccount.id,
+        operationId: "",
+      }),
+    ]);
   });
 
   it("should sign the confirmed quote and hand the swap id over", async () => {

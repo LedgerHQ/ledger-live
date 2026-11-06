@@ -10930,6 +10930,7 @@
   },
   "perpsTransactionStatus": {
     "title": "Fund Perpetuals",
+    "withdrawTitle": "Withdraw",
     "currencies": "{{sendTicker}} → {{receiveTicker}}",
     "returnToPerps": "Return to Perps"
   },

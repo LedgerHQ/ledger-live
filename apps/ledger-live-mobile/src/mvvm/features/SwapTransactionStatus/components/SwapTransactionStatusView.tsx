@@ -34,6 +34,7 @@ export function SwapTransactionStatusView({
   explorerUrl,
   isStatusSectionLoading,
   isFooterLoading,
+  isPerpsWithdraw,
   origin,
   onClose,
 }: SwapTransactionStatusViewProps) {
@@ -49,6 +50,7 @@ export function SwapTransactionStatusView({
           createdAt={createdAt}
           locale={locale}
           origin={origin}
+          isPerpsWithdraw={isPerpsWithdraw}
         />
 
         <StatusSection

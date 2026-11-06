@@ -62,6 +62,7 @@ describe("SwapTransactionStatusDrawer", () => {
       explorerUrl: "https://scan.li.fi/tx/hash-1",
       isStatusSectionLoading: false,
       isFooterLoading: false,
+      isPerpsWithdraw: false,
     });
   });
 
