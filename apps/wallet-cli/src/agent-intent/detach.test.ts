@@ -4,6 +4,7 @@ import { mkdtempSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { readLiveLockHolderPid } from "../shared/file-lock";
+import { pointStateHomeAt } from "../testing/state-home";
 import {
   enrollListenerPaths,
   readFirstLogJsonLine,
@@ -18,22 +19,27 @@ import {
 const isPosix = process.platform !== "win32";
 
 let stateHome: string;
-let savedStateHome: string | undefined;
+let restoreStateHome: () => void;
 let children: ChildProcess[];
 
 beforeEach(() => {
-  savedStateHome = process.env.XDG_STATE_HOME;
   stateHome = mkdtempSync(join(tmpdir(), "wallet-cli-detach-test-"));
-  process.env.XDG_STATE_HOME = stateHome;
+  restoreStateHome = pointStateHomeAt(stateHome);
   children = [];
 });
 
-afterEach(() => {
-  for (const child of children) child.kill();
-  if (savedStateHome === undefined) delete process.env.XDG_STATE_HOME;
-  else process.env.XDG_STATE_HOME = savedStateHome;
+afterEach(async () => {
+  await Promise.all(children.map(stopChild));
+  restoreStateHome();
   rmSync(stateHome, { recursive: true, force: true });
 });
+
+function stopChild(child: ChildProcess): Promise<void> {
+  if (child.exitCode !== null || child.signalCode !== null) return Promise.resolve();
+  const exited = new Promise<void>(resolve => child.once("exit", () => resolve()));
+  child.kill();
+  return exited;
+}
 
 /** A real child process running `script` under this test's own Bun. */
 function startChild(script: string, logPath: string): ChildProcess {
@@ -43,8 +49,11 @@ function startChild(script: string, logPath: string): ChildProcess {
 }
 
 describe("enrollListenerPaths", () => {
-  it.skipIf(!isPosix)("puts the log and lock under the CLI state dir", () => {
-    const dir = join(stateHome, "ledger-wallet-cli", "agent-intent-enroll");
+  it("puts the log and lock under the CLI state dir", () => {
+    const cliStateDir = isPosix
+      ? join(stateHome, "ledger-wallet-cli")
+      : join(stateHome, "ledger-wallet-cli", "State");
+    const dir = join(cliStateDir, "agent-intent-enroll");
     expect(enrollListenerPaths("My-Agent")).toEqual({
       logPath: join(dir, "my-agent-b59f3481.log"),
       lockPath: join(dir, "my-agent-b59f3481.lock"),
@@ -142,11 +151,26 @@ describe("selfCommand", () => {
     ]);
   });
 
-  it("re-runs the binary alone when compiled", () => {
-    process.argv[1] = "/$bunfs/root/wallet-cli";
+  it.each([
+    "/$bunfs/root/wallet-cli",
+    "B:/~BUN/root/wallet-cli.exe",
+    "B:\\~BUN\\root\\wallet-cli.exe",
+  ])("re-runs the binary alone when compiled (entry point %s)", entryPoint => {
+    process.argv[1] = entryPoint;
 
     expect(selfCommand(["agent-intent", "enroll"])).toEqual([
       process.execPath,
+      "agent-intent",
+      "enroll",
+    ]);
+  });
+
+  it("re-runs a Windows script through the runtime in dev", () => {
+    process.argv[1] = "C:\\repo\\apps\\wallet-cli\\src\\cli.ts";
+
+    expect(selfCommand(["agent-intent", "enroll"])).toEqual([
+      process.execPath,
+      "C:\\repo\\apps\\wallet-cli\\src\\cli.ts",
       "agent-intent",
       "enroll",
     ]);
