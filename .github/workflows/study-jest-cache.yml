@@ -1,0 +1,96 @@
+# Study only: how much a warm Jest cache (transforms and coverage instrumentation) saves the package
+# coverage lanes when Nx has to run the tests. Runs the same coverage twice in one pod with the Nx cache
+# skipped: first with an empty Jest cache, then with the cache the first pass left behind. Not for merge.
+name: "[Study] Jest cache in the package lanes"
+
+on:
+  push:
+    branches:
+      - study/new-arch-concurrency
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  coverage-twice:
+    name: "${{ matrix.lane }}"
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - lane: new-arch
+            runner: ledger-wallet-4cpu-aws-public-cached
+            install: '--filter={./features/**}... --filter={./shared/**}... --filter={./domain/**}... --filter={./devtools/**}... --filter={./support/**}...'
+            projects: tag:scope:features,tag:scope:shared,tag:scope:domain,tag:scope:devtools,tag:scope:support
+            parallel: 3
+          - lane: libs
+            runner: ledger-wallet-8cpu-aws-public-cached
+            install: '--filter={./libs/**}...'
+            projects: tag:scope:libs-non-ui
+            parallel: 6
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 75
+    permissions:
+      id-token: write
+      contents: read
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      FORCE_COLOR: 0
+      CI_OS: ubuntu-22.04
+      INSTALL: ${{ matrix.install }}
+      PROJECTS: ${{ matrix.projects }}
+      PARALLEL: ${{ matrix.parallel }}
+      LANE: ${{ matrix.lane }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          skip-nx-cache: "true"
+
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          read -ra filters <<< "$INSTALL"
+          pnpm i --frozen-lockfile "${filters[@]}"
+
+      # Jest's default cacheDirectory is <tmpdir>/jest_<hash>; every package config leaves it at the default.
+      - name: Coverage, cold Jest cache
+        shell: bash
+        run: |
+          echo "jest caches before: $(ls -d "${TMPDIR:-/tmp}"/jest_* 2>/dev/null | wc -l)"
+          start=$(date +%s)
+          pnpm exec nx run-many -t coverage --projects="$PROJECTS" --parallel="$PARALLEL" --nxBail=false -- --maxWorkers=2 || echo "some coverage tasks failed" 
+          echo "cold=$(( $(date +%s) - start ))" >> "$RUNNER_TEMP/times"
+          du -sh "${TMPDIR:-/tmp}"/jest_* | tee "$RUNNER_TEMP/size"
+
+      - name: Coverage, warm Jest cache
+        shell: bash
+        run: |
+          start=$(date +%s)
+          pnpm exec nx run-many -t coverage --projects="$PROJECTS" --parallel="$PARALLEL" --nxBail=false -- --maxWorkers=2 || echo "some coverage tasks failed"
+          echo "warm=$(( $(date +%s) - start ))" >> "$RUNNER_TEMP/times"
+
+      - name: Summary
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: |
+          {
+            echo "### $LANE"
+            echo '```'
+            cat "$RUNNER_TEMP/times" "$RUNNER_TEMP/size"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          cat "$RUNNER_TEMP/times"
