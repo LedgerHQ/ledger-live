@@ -575,7 +575,8 @@ jobs:
     name: "iOS startup (2 simulators)"
     needs: [plan, build-ios]
     if: ${{ inputs.platforms != 'Android Only' }}
-    # One iOS measurement at a time; queue: max keeps every waiting run instead of the latest.
+    # One iOS measurement at a time on the performance pool, so two never measure side by side;
+    # queue: max keeps every waiting run instead of only the latest.
     concurrency:
       group: mobile-startup-perf-ios
       cancel-in-progress: false
@@ -631,7 +632,7 @@ jobs:
           # simctl itself rather than xcrun, so the alarm kills it (macOS has no `timeout`).
           SIMCTL="$(xcrun -f simctl)"
           with_timeout() { perl -e 'alarm shift; exec @ARGV or die "exec failed: $!\n"' "$@"; }
-          xcrun simctl list devices booted
+          # A no-op on a fresh VM; on a reused one, a booted simulator would compete for the CPU.
           xcrun simctl shutdown all || true
           RUNTIME=$(xcrun simctl list runtimes iOS -j | jq -r '[.runtimes[] | select(.isAvailable)] | last | .identifier')
           # Newest "iPhone N Pro" of the runtime.
@@ -647,8 +648,11 @@ jobs:
             with_timeout 300 "$SIMCTL" boot "$udid"
             with_timeout 300 "$SIMCTL" bootstatus "$udid" -b
           done
-          # First-boot work goes on after bootstatus: let it settle, like Android's idle-load wait.
+          # A fixed margin for first-boot work after bootstatus, unlike Android's condition wait:
+          # the host load printed around it is the data such a wait would need.
+          sysctl -n vm.loadavg
           sleep 60
+          sysctl -n vm.loadavg
 
       - name: Measure
         env:
