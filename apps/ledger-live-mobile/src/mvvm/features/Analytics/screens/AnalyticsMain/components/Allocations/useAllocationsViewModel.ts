@@ -18,7 +18,6 @@ export function useAllocationsViewModel(screenName: string, onPress: () => void)
   const distribution = useDistribution({
     showEmptyAccounts: true,
     hideEmptyTokenAccount: true,
-    groupBy: "asset",
   });
   const { colors } = useTheme();
   const { theme } = useLumenTheme();

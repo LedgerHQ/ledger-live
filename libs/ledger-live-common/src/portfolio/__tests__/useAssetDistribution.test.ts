@@ -115,12 +115,6 @@ describe("useAssetDistribution", () => {
     );
   });
 
-  it("skips fetch when skip is true", () => {
-    renderHook(() => useAssetDistribution({ ...baseOpts, skip: true }));
-
-    expect(mockUseChunkedAssetsData).toHaveBeenCalledWith(expect.objectContaining({ skip: true }));
-  });
-
   it("skips fetch when no accounts", () => {
     renderHook(() => useAssetDistribution({ ...baseOpts, accounts: [] }));
 

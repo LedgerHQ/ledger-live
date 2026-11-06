@@ -29,7 +29,6 @@ const useAssetsListViewModel = ({
   const filteredDistribution = useNonBlacklistedDistribution({
     showEmptyAccounts: true,
     hideEmptyTokenAccount,
-    groupBy: "asset",
   });
 
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
