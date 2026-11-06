@@ -151,6 +151,7 @@ features/platform/assets-table/                          @ledgerhq/wallet-xp
 
 # Wallet — Intents
 features/platform/intent-verify-address/                 @ledgerhq/wallet-xp
+features/platform/intent-wallet-sync/                    @ledgerhq/wallet-xp
 
 # Wallet — App lock
 features/platform/app-lock/                              @ledgerhq/wallet-xp
