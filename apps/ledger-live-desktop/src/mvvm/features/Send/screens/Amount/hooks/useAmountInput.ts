@@ -11,6 +11,7 @@ import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducer
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { formatCurrencyUnit } from "@ledgerhq/live-currency-format";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import {
   formatAmountForInput,
   formatFiatForInput,
@@ -161,7 +162,10 @@ export function useAmountInput({
         return;
       }
 
-      const nextAmount = calculateCryptoAmount(processed.value) ?? new BigNumber(0);
+      const nextAmount = sendFeatures.roundAmount(
+        accountCurrency,
+        calculateCryptoAmount(processed.value) ?? new BigNumber(0),
+      );
       lastFiatAmountRef.current = processed.value;
       lastTransactionAmountRef.current = nextAmount;
       debouncedUpdateTransaction({
@@ -169,7 +173,7 @@ export function useAmountInput({
         useAllAmount: false,
       });
     },
-    [calculateCryptoAmount, debouncedUpdateTransaction, fiatUnit, locale],
+    [accountCurrency, calculateCryptoAmount, debouncedUpdateTransaction, fiatUnit, locale],
   );
 
   const handleCryptoInput = useCallback(

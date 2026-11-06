@@ -7,7 +7,7 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/ledger-wallet-framework/serialization/transaction";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import type { Transaction, TransactionRaw } from "./types";
 
@@ -19,27 +19,34 @@ function pickTokenFields({ mode, assetReference, assetOwner }: Transaction | Tra
   };
 }
 
-export const formatTransaction = (
-  { amount, recipient, fees, tag, useAllAmount }: Transaction,
-  account: Account,
-): string => `
-SEND ${
-  useAllAmount
-    ? "MAX"
-    : formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
-        showCode: true,
-        disableRounding: true,
-      })
+function formatAmount(account: AccountLike, amount: BigNumber): string {
+  return formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
+    showCode: true,
+    disableRounding: true,
+  });
 }
-TO ${recipient}
-with fee=${
-  !fees
-    ? "?"
-    : formatCurrencyUnit(getAccountCurrency(account).units[0], fees, {
-        showCode: true,
-        disableRounding: true,
-      })
-}${tag ? "\n  tag=" + tag : ""}`;
+
+export function formatTransaction(transaction: Transaction, mainAccount: Account): string {
+  const { amount, fees, tag, subAccountId } = transaction;
+  const account =
+    mainAccount.subAccounts?.find(subAccount => subAccount.id === subAccountId) ?? mainAccount;
+
+  const sentAmount = transaction.useAllAmount ? "MAX" : formatAmount(account, amount);
+
+  // An opt-in has no token account to give the limit a unit
+  const action =
+    transaction.mode === "changeTrust"
+      ? `TRUST ${transaction.assetReference} ISSUED BY ${transaction.assetOwner}\nLIMIT ${amount.toFixed()}`
+      : `SEND ${sentAmount}\nTO ${transaction.recipient}`;
+
+  const fee = fees ? formatAmount(mainAccount, fees) : "?";
+
+  const tagLine = tag ? `\n  tag=${tag}` : "";
+
+  return `
+${action}
+with fee=${fee}${tagLine}`;
+}
 
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);

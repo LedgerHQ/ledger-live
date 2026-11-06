@@ -5,6 +5,7 @@ import React, { useCallback } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { useSendAmount } from "@features/platform-market-countervalues";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import IconTransfer from "~/renderer/icons/Transfer";
@@ -74,18 +75,19 @@ export default function RequestAmount({
 }: Props) {
   const fiatCurrency = useSelector(counterValueCurrencySelector);
   const cryptoUnit = useAccountUnit(account);
+  const cryptoCurrency = getAccountCurrency(account);
   const { fiatAmount, fiatUnit, calculateCryptoAmount } = useSendAmount({
-    cryptoCurrency: getAccountCurrency(account),
+    cryptoCurrency,
     fiatCurrency,
     cryptoAmount,
   });
 
   const onChangeFiatAmount = useCallback(
     (fiatAmount: BigNumber) => {
-      const amount = calculateCryptoAmount(fiatAmount);
+      const amount = sendFeatures.roundAmount(cryptoCurrency, calculateCryptoAmount(fiatAmount));
       onChange(amount);
     },
-    [onChange, calculateCryptoAmount],
+    [onChange, calculateCryptoAmount, cryptoCurrency],
   );
 
   return (
