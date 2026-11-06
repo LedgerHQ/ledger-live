@@ -40,6 +40,11 @@ export class HumanFormatter {
     return formatCurrencyUnit(unit, new BigNumber(rawDecimal), { showCode: true });
   }
 
+  async formatBalanceAmount(b: Balance): Promise<string> {
+    const unit = b.kind === "token" ? b.unit : await this.resolveUnit(b.assetId);
+    return formatCurrencyUnit(unit, new BigNumber(b.balance), { showCode: true });
+  }
+
   /** @deprecated Use formatDiscoveredAccount — kept for any internal callers during migration. */
   formatAccountDescriptor(d: AccountDescriptor): string {
     const mode = d.derivationMode ? colors.dim(` (${d.derivationMode})`) : "";
@@ -54,7 +59,7 @@ export class HumanFormatter {
   }
 
   async formatBalance(b: Balance): Promise<string> {
-    const amount = await this.formatAmount(b.balance, b.assetId);
+    const amount = await this.formatBalanceAmount(b);
     const colored = b.balance === "0" ? colors.dim(amount) : colors.green(amount);
     if (findCryptoCurrencyById(b.assetId)) return colored;
     return `${colored} ${colors.dim(`(${b.assetId})`)}`;

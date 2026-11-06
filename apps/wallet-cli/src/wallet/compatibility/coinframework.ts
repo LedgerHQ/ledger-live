@@ -44,6 +44,7 @@ export class CoinFrameworkAdapter {
           assetId: token.id,
           balance: BigNumberStrSchema.parse(String(value)),
           token: toTokenInfo(token),
+          unit: token.units[0],
         };
       }),
     );

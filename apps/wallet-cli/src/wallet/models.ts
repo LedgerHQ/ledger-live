@@ -7,6 +7,7 @@ import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index
 import { BigNumberStrSchema, DateTimeIsoSchema } from "@shared/schema-primitives";
 import type { OperationType } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@domain/entity-currency-token";
+import { UnitSchema } from "@domain/entity-currency-unit";
 import { parseV1, toV0 } from "../shared/accountDescriptor";
 import type { AccountDescriptorV1 } from "../shared/accountDescriptor";
 
@@ -111,7 +112,7 @@ const BalanceBaseSchema = z.object({
 
 export const BalanceSchema = z.discriminatedUnion("kind", [
   BalanceBaseSchema.extend({ kind: z.literal("native") }),
-  BalanceBaseSchema.extend({ kind: z.literal("token"), token: TokenInfoSchema }),
+  BalanceBaseSchema.extend({ kind: z.literal("token"), token: TokenInfoSchema, unit: UnitSchema }),
 ]);
 export type Balance = z.infer<typeof BalanceSchema>;
 

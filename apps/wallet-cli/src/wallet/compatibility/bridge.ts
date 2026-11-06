@@ -172,6 +172,7 @@ export class BridgeAdapter {
           assetId: sub.token.id,
           balance: BigNumberStrSchema.parse(sub.balance.toFixed()),
           token: toTokenInfo(sub.token),
+          unit: sub.token.units[0],
         });
       }
     }
