@@ -13,6 +13,7 @@ import {
   robustSd,
   summarise,
   toMarkdown,
+  unevenPhasesFactor,
 } from "./analyze.mjs";
 
 /** @import { Sample } from "./types.mjs" */
@@ -197,6 +198,16 @@ describe("fromJsStart and fromProcessStart", () => {
   });
 });
 
+describe("unevenPhasesFactor", () => {
+  it("leaves the interval of even phases as is", () => {
+    assert.equal(unevenPhasesFactor(10, 10), 1);
+  });
+  it("widens it as the phases get uneven", () => {
+    assert.equal(unevenPhasesFactor(3, 9).toFixed(3), "1.155");
+    assert.equal(unevenPhasesFactor(9, 1).toFixed(3), "1.667");
+  });
+});
+
 describe("detectableAt80", () => {
   it("adds 0.84 standard errors, read off the 95% interval, to the threshold", () => {
     const standardError = 100 / (2 * 1.959964);
@@ -274,13 +285,52 @@ describe("summarise", () => {
 
   it("gives no verdict without pairs on both sides of the device swap", () => {
     const row = debugRow(summarise(comparison({ deltaMs: 0, phases: [0] }), GATE));
-    assert.equal(row.verdict, "Not enough pairs: none on one side of the device swap");
+    assert.equal(
+      row.verdict,
+      "Not enough pairs: 3 before the device swap, 0 after (3 needed on each side)",
+    );
     assert.equal(failedRows([row]), true);
   });
 
-  it("gives no verdict below six pairs", () => {
+  it("gives no verdict below three pairs on each side of the device swap", () => {
     const row = debugRow(summarise(comparison({ pairs: 4, deltaMs: 0 }), GATE));
-    assert.equal(row.verdict, "Not enough pairs");
+    assert.equal(
+      row.verdict,
+      "Not enough pairs: 2 before the device swap, 2 after (3 needed on each side)",
+    );
+  });
+
+  it("does not rest the device bias on a phase of one pair", () => {
+    const pair = (phase, round, a, b) => [
+      launch({ side: "A", phase, round, appStartupTime: a }),
+      launch({ side: "B", phase, round, appStartupTime: b }),
+    ];
+    const samples = [
+      ...Array.from({ length: 9 }, (_, round) => pair(0, round, 1000, 1000)).flat(),
+      ...pair(1, 0, 1400, 1000),
+    ];
+    const row = debugRow(summarise(samples, { preset: "known-regression", thresholdMs: 100 }));
+    assert.equal(
+      row.verdict,
+      "Not enough pairs: 9 before the device swap, 1 after (3 needed on each side)",
+    );
+    assert.equal(failedRows([row]), true);
+  });
+
+  it("still gives a verdict with three pairs on one side of the device swap", () => {
+    const pair = (phase, round, b) => [
+      launch({ side: "A", phase, round, appStartupTime: 1000 }),
+      launch({ side: "B", phase, round, appStartupTime: b }),
+    ];
+    const samples = [
+      ...[990, 1000, 1010].map((b, round) => pair(0, round, b)).flat(),
+      ...[980, 995, 1000, 1005, 1020, 990, 1010, 1000, 985]
+        .map((b, round) => pair(1, round, b))
+        .flat(),
+    ];
+    const row = debugRow(summarise(samples, GATE));
+    assert.deepEqual(row.pairsPerPhase, [3, 9]);
+    assert.match(row.verdict, /^PASS/);
   });
 
   it("compares from the first JS import when A and B count from different starts", () => {

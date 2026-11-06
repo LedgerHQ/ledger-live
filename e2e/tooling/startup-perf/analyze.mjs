@@ -85,6 +85,9 @@ function verdictFor(preset, hl, thresholdMs) {
   return `PASS${inconclusive}`;
 }
 
+// Fewer would rest a phase's share of the device bias on one or two launches.
+const MIN_PAIRS_PER_PHASE = 3;
+
 // The true B − A the gate flags 80% of the time: the threshold plus 0.84 standard errors.
 export function detectableAt80(hl, thresholdMs) {
   if (!hl || hl.low === null) return null;
@@ -173,19 +176,48 @@ function difference(group, metric) {
     const m = median(d);
     return d.map(v => v - m);
   });
-  const oneSideOfSwap = pairs.length > 0 && instanceBias === null;
+  const pairsPerPhase = [0, 1].map(n => pairs.filter(p => p.phase === n).length);
+  const thinPhase = pairs.length > 0 && Math.min(...pairsPerPhase) < MIN_PAIRS_PER_PHASE;
+  const widening =
+    Math.min(...pairsPerPhase) > 0 ? unevenPhasesFactor(pairsPerPhase[0], pairsPerPhase[1]) : 1;
   const hl = hodgesLehmann(adjusted);
   return {
     pairs: pairs.length,
-    oneSideOfSwap,
+    pairsPerPhase,
+    thinPhase,
     medianA: median(pairs.map(p => p.A)),
     medianB: median(pairs.map(p => p.B)),
-    hl: oneSideOfSwap && hl ? { estimate: hl.estimate, low: null, high: null } : hl,
+    hl: thinPhase && hl ? { estimate: hl.estimate, low: null, high: null } : widen(hl, widening),
     spread: robustSd(centred),
     instanceBias,
-    mean: oneSideOfSwap ? null : bootstrapMean(adjusted),
+    mean: thinPhase ? null : widen(bootstrapMean(adjusted), widening),
   };
 }
+
+/**
+ * How much wider the B − A interval is than the pooled pairs give: the device bias correction
+ * averages the two phases, so uneven ones add uncertainty. 1 when both phases have as many pairs.
+ * @param {number} n0
+ * @param {number} n1
+ */
+export function unevenPhasesFactor(n0, n1) {
+  return Math.sqrt(((n0 + n1) / 4) * (1 / n0 + 1 / n1));
+}
+
+/**
+ * @template {{ estimate: number, low: number | null, high: number | null }} T
+ * @param {T | null} interval
+ * @param {number} factor
+ * @returns {T | null}
+ */
+const widen = (interval, factor) =>
+  factor !== 1 && interval && interval.low !== null && interval.high !== null
+    ? {
+        ...interval,
+        low: interval.estimate - factor * (interval.estimate - interval.low),
+        high: interval.estimate + factor * (interval.high - interval.estimate),
+      }
+    : interval;
 
 /**
  * @param {Sample[]} samples
@@ -238,8 +270,8 @@ export function summarise(samples, { preset, thresholdMs }) {
       detectable: detectableAt80(d.hl, thresholdMs),
       verdict:
         verdict ??
-        (d.oneSideOfSwap
-          ? "Not enough pairs: none on one side of the device swap"
+        (d.thinPhase
+          ? `Not enough pairs: ${d.pairsPerPhase[0]} before the device swap, ${d.pairsPerPhase[1]} after (${MIN_PAIRS_PER_PHASE} needed on each side)`
           : verdictFor(preset, d.hl, thresholdMs)),
     });
     const withoutEpoch = ["A", "B"].filter(
