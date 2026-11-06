@@ -18,6 +18,7 @@ private readonly keyboardKey = (char: string) => byId(`keyboard-key-${char}`);
 | Factory | Matches |
 |---|---|
 | `byId(id, index?)` | React Native `testID`; `index` picks the n-th match (default `0`) |
+| `byText(text, index?)` | visible text, for an element with no `testID` (e.g. a navigation header title) |
 | `byIdAndText({ id, text })` | `testID` and the element's own text |
 | `byIdWithDescendantText({ id, text })` | `testID` and the text of a descendant, e.g. a button label |
 | `byTextWithAncestorId({ id, text })` | a text inside the `testID` element, when the text has no `testID` of its own (e.g. a Lumen input helper text) |
@@ -30,13 +31,13 @@ Native and web handles share these methods ([`ElementHandle`](../helpers/element
 
 | Method | Does |
 |---|---|
-| `waitVisible()` | waits for the element |
+| `waitVisible()` | waits for the element; native `waitVisible(timeout, errorElement)` fails at once if the `errorElement` handle shows |
 | `waitNotVisible()` | waits until the element is not visible (native) or no longer exists (webview) |
 | `tap()` | waits, then taps |
 | `replaceText(text)` | waits, then replaces the field content |
 | `getText()` | waits, then returns the text |
 
-Native handles also have `waitFullyVisible()` (bottom sheets, see [sheet waits](e2e-mobile-conventions.md#a-sheet-wait-must-use-that-sheets-content-anchor-at-100-visibility)), `clearText()`, `getAttributes()`, `getLabel()` (the accessibility label), `getIdentifier()` (the `testID`, e.g. the full id behind a regex match), `waitNotExist()` (waits until the element leaves the view hierarchy; for a closing sheet that still blocks taps once hidden), `replaceTextKeepKeyboard()` (types without pressing Enter), `tapExisting()` (waits for the element to exist, not to be visible; only when `waitVisible` never passes for an element on screen, say why at the call site), `scrollTo(container?)` (scrolls the container handle, or the first scroll view, until the element is visible) and `isVisible(timeout?)` (returns a boolean for an element that may not appear, such as an optional drawer; a hung app still throws).
+Native handles also have `waitFullyVisible()` (bottom sheets, see [sheet waits](e2e-mobile-conventions.md#a-sheet-wait-must-use-that-sheets-content-anchor-at-100-visibility)), `clearText()`, `getAttributes()`, `getIdentifier()` (the `testID`, e.g. the full id behind a regex match), `waitExist(timeout?, errorElement?)` (waits until the element is in the view hierarchy, for a list Detox does not measure as visible; `errorElement` fails as soon as that handle is visible), `waitNotExist()` (waits until the element leaves the view hierarchy; for a closing sheet that still blocks taps once hidden), `replaceTextKeepKeyboard()` (types without pressing Enter), `tapExisting()` (waits for the element to exist, not to be visible; only when `waitVisible` never passes for an element on screen, say why at the call site), `scrollTo(container?, pixels?)` (scrolls the container handle, or the first scroll view, until the element is visible; `pixels` sets the step, default 300) and `isVisible(timeout?)` (returns a boolean for an element that may not appear, such as an optional drawer; a hung app still throws).
 
 Web handles also have `waitEnabled()` and `getValue()`. For the webview URL, use `waitForWebviewUrl(fragment)` from the same file, not the `*WebviewUrl*` globals.
 
@@ -49,14 +50,17 @@ Web handles also have `waitEnabled()` and `getValue()`. For the webview URL, use
 
 ## Assertions
 
-A wait is not an assertion. To check the current state, `expectVisible`, `expectNotVisible`, `expectNotExist` (native) and `expectText` run a Detox `expect` on the element: synchronised with the app, they do not wait. Wait first when the element may still be appearing. `expectTextContaining`, `expectTextMatching` and `expectLabelMatching` wait for the element, read its text or accessibility label, then compare. A page object does not call `jestExpect` on a value it read from an element; `jestExpect` stays for plain values (counts, URLs, parsed amounts).
+A wait is not an assertion. To check the current state, `expectVisible`, `expectNotVisible`, `expectExist`, `expectNotExist`, `expectId`, `expectToggleValue` (native) and `expectText` run a Detox `expect` on the element: synchronised with the app, they do not wait. Wait first when the element may still be appearing. `expectTextContaining`, `expectTextMatching` and `expectLabelMatching` wait for the element, read its text or accessibility label, then compare. A page object does not call `jestExpect` on a value it read from an element; `jestExpect` stays for plain values (counts, URLs, parsed amounts).
 
 | Was | Now |
 |---|---|
 | `detoxExpect(getElementById(id)).toBeVisible()` | `handle.expectVisible()` |
 | `detoxExpect(getElementById(id)).not.toBeVisible()` | `handle.expectNotVisible()` |
+| `detoxExpect(getElementById(id)).toExist()` | `handle.expectExist()` (native) |
 | `detoxExpect(getElementById(id)).not.toExist()` | `handle.expectNotExist()` (native) |
+| `jestExpect(await getIdByRegexp(regex)).toBe(id)` | `handle.expectId(id)` (native) |
 | `detoxExpect(getElementById(id)).toHaveText(text)` | `handle.expectText(text)` |
+| `detoxExpect(getElementById(id)).toHaveToggleValue(value)` | `handle.expectToggleValue(value)` (native) |
 | `jestExpect(await handle.getText()).toContain(text)` | `handle.expectTextContaining(text)` |
 | `jestExpect(await handle.getText()).toMatch(regex)` | `handle.expectTextMatching(regex)` |
 | `jestExpect(await getLabelOfElement(id)).toMatch(regex)` | `handle.expectLabelMatching(regex)` (a control whose value is its accessibility label, e.g. a Lumen `Tag`) |

@@ -1,33 +1,36 @@
 import { Step } from "jest-allure2-reporter/api";
+import { byId } from "@e2e/helpers/elements/native";
 import { currencyParam, openDeeplink } from "@e2e/helpers/commonHelpers";
-import { TokenType } from "@ledgerhq/live-e2e-shared/enum/TokenType";
-import { ReceiveFundsOptionsType } from "@ledgerhq/live-e2e-shared/enum/ReceiveFundsOptions";
+
+const TRON_NEW_ADDRESS_WARNING =
+  "You first need to send at least 0.1 TRX to this address to activate it.";
 
 export default class ReceivePage {
-  accountAddress = "receive-fresh-address";
-  accountFreshAddress = "receive-verifyAddress-freshAdress";
-  baseLink = "receive";
-  buttonContinueId = "enabled-add-accounts-continue-button";
-  buttonVerifyAddressId = "button-verify-my-address";
-  networkBasedStep2HeaderTitleId = "addAccounts-header-step2-title";
-  noVerifyAddressButton = "button-DontVerify-my-address";
-  noVerifyValidateButton = "button-confirm-dont-verify";
-  receiveConnectDeviceHeaderId = "receive-connect-device-header";
-  receivePageScrollViewId = "receive-screen-scrollView";
-  selectCryptoScrollViewId = "select-crypto-scrollView";
+  private readonly baseLink = "receive";
 
-  accountNameReceiveId = (t: string) => `receive-account-name-${t}`;
-  currencyNameId = (t: string) => `big-currency-name-${t}`;
-  currencyNameIdByRegex = (type: string) => new RegExp(`big-currency-name-.*\\/${type}\\/.*`);
-  receiveFundsOptionId = (receiveFundsOption: ReceiveFundsOptionsType) =>
-    `option-button-content-${receiveFundsOption}`;
-  receiveQrCodeContainerId = (t: string) => `receive-qr-code-container-${t}`;
-  titleReceiveConfirmationPageId = (t: string) => `receive-confirmation-title-${t}`;
-  private readonly receiveNetworkWarningId = "receive-network-warning";
-  private readonly deviceDeprecationTitleId = "warning-deprecation-title";
+  private readonly scrollView = byId("receive-screen-scrollView");
+  private readonly accountAddress = byId("receive-fresh-address");
+  private readonly freshAddress = byId("receive-verifyAddress-freshAdress");
+  private readonly continueButton = byId("enabled-add-accounts-continue-button");
+  private readonly verifyAddressButton = byId("button-verify-my-address");
+  private readonly dontVerifyAddressButton = byId("button-DontVerify-my-address");
+  private readonly confirmDontVerifyButton = byId("button-confirm-dont-verify");
+  private readonly connectDeviceHeader = byId("receive-connect-device-header");
+  private readonly networkWarning = byId("receive-network-warning");
+  private readonly tronNewAddressWarning = byId("tron-receive-newAddress-warning");
+  private readonly tronNewAddressWarningDescription = byId(
+    "tron-receive-newAddress-warning-description",
+  );
+  private readonly deviceDeprecationTitle = byId("warning-deprecation-title");
   // Button prefixes its testID with enabled- or disabled-.
-  private readonly deviceDeprecationContinueButton = () =>
-    getElementById(/^(enabled|disabled)-warning-deprecation-continue$/);
+  private readonly deviceDeprecationContinueButton = byId(
+    /^(enabled|disabled)-warning-deprecation-continue$/,
+  );
+  private readonly accountName = (name: string) => byId(`receive-account-name-${name}`);
+  private readonly confirmationTitle = (ticker: string) =>
+    byId(`receive-confirmation-title-${ticker}`);
+  private readonly qrCodeContainer = (accountName: string) =>
+    byId(`receive-qr-code-container-${accountName}`);
 
   @Step("Open receive via deeplink")
   async openViaDeeplink(): Promise<void> {
@@ -40,95 +43,54 @@ export default class ReceivePage {
     await openDeeplink(link);
   }
 
-  @Step("Select currency in receive list {{{0}}}")
-  async selectCurrency(currencyName: string): Promise<void> {
-    const id = this.currencyNameId(currencyName.toLowerCase());
-    if (!(await IsIdVisible(id))) {
-      await scrollToId(id, this.selectCryptoScrollViewId);
-    }
-    await tapById(id);
-  }
-
-  @Step("Select currency in receive list {{{0}}}")
-  async selectCurrencyByType(currencyType: TokenType): Promise<void> {
-    const id = this.currencyNameIdByRegex(currencyType.toLowerCase());
-    if (!(await IsIdVisible(id))) {
-      await scrollToId(id, this.selectCryptoScrollViewId);
-    }
-    await tapById(id);
-  }
-
-  @Step("Select network {{{0}}}")
-  async selectNetwork(networkId: string): Promise<void> {
-    const id = this.currencyNameId(networkId);
-    await tapById(id);
-  }
-
-  @Step("Select network in list if needed {{{0}}}")
-  async selectNetworkIfAsked(networkId: string): Promise<void> {
-    const id = this.networkBasedStep2HeaderTitleId;
-    if (await IsIdVisible(id)) {
-      await this.selectNetwork(networkId);
-    }
-  }
-
   @Step("Accept to verify address")
   async selectVerifyAddress(): Promise<void> {
-    await waitForElementById(this.buttonVerifyAddressId);
-    await tapById(this.buttonVerifyAddressId);
+    await this.verifyAddressButton.tap();
   }
 
   @Step("Expect the device deprecation error screen {{{0}}}")
   async expectDeviceDeprecationError(expectedTitle: string): Promise<void> {
-    await waitForElementById(this.deviceDeprecationTitleId);
     // The device name is rendered with non-breaking spaces, which \s also matches.
-    const title = (await getTextOfElement(this.deviceDeprecationTitleId)).replace(/\s/g, " ");
+    const title = (await this.deviceDeprecationTitle.getText()).replaceAll(/\s/g, " ");
     jestExpect(title).toBe(expectedTitle);
-    await detoxExpect(this.deviceDeprecationContinueButton()).not.toExist();
+    await this.deviceDeprecationContinueButton.expectNotExist();
   }
 
   @Step("Get the fresh address displayed")
   async getFreshAddressDisplayed(): Promise<string> {
-    await waitForElementById(this.accountFreshAddress);
-    return await getTextOfElement(this.accountFreshAddress);
+    return await this.freshAddress.getText();
   }
 
   @Step("Continue to create account")
   async continueCreateAccount(): Promise<void> {
-    await waitForElementById(this.buttonContinueId);
-    await tapById(this.buttonContinueId);
+    await this.continueButton.tap();
   }
 
   @Step("Select dont verify address")
   async selectDontVerifyAddress(): Promise<void> {
-    await waitForElementById(this.noVerifyAddressButton);
-    await tapById(this.noVerifyAddressButton);
+    await this.dontVerifyAddressButton.tap();
   }
 
   @Step("Select reconfirm dont verify")
   async selectReconfirmDontVerify(): Promise<void> {
-    await waitForElementById(this.noVerifyValidateButton);
-    await tapById(this.noVerifyValidateButton);
+    await this.confirmDontVerifyButton.tap();
   }
 
   @Step("Expect receive page header {{{0}}} for {{{1}}}")
   private async expectReceivePageHeader(tickerName: string, accountName: string): Promise<void> {
-    const titleID = this.titleReceiveConfirmationPageId(tickerName);
-    const accountNameID = this.accountNameReceiveId(accountName);
-
-    await waitForElementById(this.accountAddress);
-    await waitForElementById(titleID);
-    await detoxExpect(getElementById(titleID)).toBeVisible();
-    await detoxExpect(getElementById(accountNameID)).toBeVisible();
+    await this.accountAddress.waitVisible();
+    await this.confirmationTitle(tickerName).waitVisible();
+    await this.confirmationTitle(tickerName).expectVisible();
+    await this.accountName(accountName).expectVisible();
   }
 
   @Step("Expect account receive page is displayed for {{{1}}} ({{{0}}})")
   async expectReceivePageIsDisplayed(tickerName: string, accountName: string): Promise<void> {
-    const qrCodeContainerID = this.receiveQrCodeContainerId(accountName);
+    const qrCodeContainer = this.qrCodeContainer(accountName);
 
     await this.expectReceivePageHeader(tickerName, accountName);
-    await scrollToId(qrCodeContainerID, this.receivePageScrollViewId);
-    await detoxExpect(getElementById(qrCodeContainerID)).toBeVisible();
+    await qrCodeContainer.scrollTo(this.scrollView);
+    await qrCodeContainer.expectVisible();
   }
 
   @Step("Expect receive warning page is displayed for {{{1}}} ({{{0}}})")
@@ -141,34 +103,26 @@ export default class ReceivePage {
 
   @Step("Verify address {{{0}}}")
   async verifyAddress(address: string): Promise<void> {
-    await detoxExpect(getElementById(this.accountAddress)).toHaveText(address);
+    await this.accountAddress.expectText(address);
   }
 
   @Step("Expect given address is displayed on receive page {{{0}}}")
   async expectAddressIsCorrect(address: string): Promise<void> {
-    await detoxExpect(getElementById(this.accountAddress)).toHaveText(address);
+    await this.accountAddress.expectText(address);
   }
 
   @Step("Expect tron new address warning")
   async expectTronNewAddressWarning(): Promise<void> {
-    const warnId = "tron-receive-newAddress-warning";
-    const descId = `${warnId}-description`;
-    const scrollView = this.receivePageScrollViewId;
-
-    await scrollToId(warnId, scrollView);
-    await detoxExpect(getElementById(warnId)).toBeVisible();
-    await detoxExpect(getElementById(descId)).toHaveText(
-      "You first need to send at least 0.1 TRX to this address to activate it.",
-    );
+    await this.tronNewAddressWarning.scrollTo(this.scrollView);
+    await this.tronNewAddressWarning.expectVisible();
+    await this.tronNewAddressWarningDescription.expectText(TRON_NEW_ADDRESS_WARNING);
   }
 
   @Step("Expect receive network warning message for {{{0}}}")
   async expectSendCurrencyTokensWarningMessage(expectedWarningMessage: string): Promise<void> {
-    await scrollToId(this.receiveNetworkWarningId, this.receivePageScrollViewId);
-    await detoxExpect(getElementById(this.receiveNetworkWarningId)).toBeVisible();
-    await detoxExpect(getElementById(this.receiveNetworkWarningId)).toHaveText(
-      expectedWarningMessage,
-    );
+    await this.networkWarning.scrollTo(this.scrollView);
+    await this.networkWarning.expectVisible();
+    await this.networkWarning.expectText(expectedWarningMessage);
   }
 
   @Step("Refuse to verify address")
@@ -179,15 +133,7 @@ export default class ReceivePage {
 
   @Step("Expect device connection screen")
   async expectDeviceConnectionScreen(): Promise<void> {
-    await waitForElementById(this.receiveConnectDeviceHeaderId);
-    await detoxExpect(getElementById(this.receiveConnectDeviceHeaderId)).toHaveText(
-      "Connect Device",
-    );
-  }
-
-  @Step("Select receive funds option {{{0}}}")
-  async selectReceiveFundsOption(receiveFundsOption: ReceiveFundsOptionsType): Promise<void> {
-    await waitForElementById(this.receiveFundsOptionId(receiveFundsOption));
-    await tapById(this.receiveFundsOptionId(receiveFundsOption));
+    await this.connectDeviceHeader.waitVisible();
+    await this.connectDeviceHeader.expectText("Connect Device");
   }
 }
