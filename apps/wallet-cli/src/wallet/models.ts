@@ -11,6 +11,7 @@ import {
 } from "@shared/schema-primitives";
 import type { OperationType } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@domain/entity-currency-token";
+import { UnitSchema } from "@domain/entity-currency-unit";
 import { parseV1, toV0 } from "../shared/accountDescriptor";
 import type { AccountDescriptorV1 } from "../shared/accountDescriptor";
 import { walletCliDebug } from "../shared/log";
@@ -116,7 +117,7 @@ const BalanceBaseSchema = z.object({
 
 export const BalanceSchema = z.discriminatedUnion("kind", [
   BalanceBaseSchema.extend({ kind: z.literal("native") }),
-  BalanceBaseSchema.extend({ kind: z.literal("token"), token: TokenInfoSchema }),
+  BalanceBaseSchema.extend({ kind: z.literal("token"), token: TokenInfoSchema, unit: UnitSchema }),
 ]);
 export type Balance = z.infer<typeof BalanceSchema>;
 
@@ -125,7 +126,13 @@ export function toTokenBalance(token: TokenCurrency, balance: BigNumberStr): Bal
     walletCliDebug(`balances: skipping ${token.id}, it has no units`);
     return undefined;
   }
-  return { kind: "token", assetId: token.id, balance, token: toTokenInfo(token) };
+  return {
+    kind: "token",
+    assetId: token.id,
+    balance,
+    token: toTokenInfo(token),
+    unit: token.units[0],
+  };
 }
 
 export const OperationSchema = z.object({

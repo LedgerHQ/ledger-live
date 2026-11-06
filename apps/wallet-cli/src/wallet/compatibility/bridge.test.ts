@@ -592,6 +592,7 @@ describe("BridgeAdapter.getBalances", () => {
       tokenType: "spl",
       decimals: 6,
     },
+    unit: { name: "USDC", code: "USDC", magnitude: 6 },
   };
 
   const adapterHolding = (...tokens: Array<typeof usdc>) =>
