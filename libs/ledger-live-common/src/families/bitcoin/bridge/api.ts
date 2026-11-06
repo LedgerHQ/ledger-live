@@ -1,6 +1,8 @@
 import { FeeEstimationFailed } from "../../../errors";
 import network from "@ledgerhq/live-network";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
+import type { BitcoinTxData } from "@ledgerhq/coin-bitcoin/logic/intent";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import { blockchainBaseURL } from "@ledgerhq/coin-bitcoin/explorer";
@@ -86,3 +88,38 @@ export const getFeeItems = async (currency: CryptoCurrency): Promise<FeeItems> =
     defaultFeePerByte,
   };
 };
+
+const isStringList = (value: unknown): value is string[] =>
+  Array.isArray(value) && value.every(item => typeof item === "string");
+
+// The generic bridge calls this instead of the coin module's `craftTransactionData`, so it carries
+// everything that one carried (the OP_RETURN data) plus the coin control the module reads from
+// `intent.data`. A value of the wrong type is dropped; the module reports what it cannot parse.
+export function buildIntentData(transaction: Record<string, unknown>): BitcoinTxData {
+  const data: BitcoinTxData = { type: "unknown" };
+
+  // The legacy transaction holds the OP_RETURN data as a Buffer, the intent as hex.
+  const { opReturnData, utxoStrategy } = transaction;
+  if (Buffer.isBuffer(opReturnData)) {
+    if (opReturnData.length > 0) data.opReturnData = opReturnData.toString("hex");
+  } else if (typeof opReturnData === "string" && opReturnData !== "") {
+    data.opReturnData = opReturnData;
+  }
+
+  if (typeof utxoStrategy === "object" && utxoStrategy !== null) {
+    const { strategy, selectedUtxos, excludedUtxos } = utxoStrategy as Record<string, unknown>;
+    const control: NonNullable<BitcoinTxData["utxoStrategy"]> = {};
+    if (typeof strategy === "string") {
+      control.strategy = strategy as NonNullable<BitcoinTxData["utxoStrategy"]>["strategy"];
+    }
+    if (isStringList(selectedUtxos)) control.selectedUtxos = selectedUtxos;
+    if (isStringList(excludedUtxos)) control.excludedUtxos = excludedUtxos;
+    if (Object.keys(control).length > 0) data.utxoStrategy = control;
+  }
+
+  return data;
+}
+
+export default function bitcoinBridge(_currency: CryptoCurrency): BridgeApi {
+  return { buildIntentData };
+}

@@ -2,7 +2,12 @@ import network from "@ledgerhq/live-network";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { BitcoinCoinConfig } from "@ledgerhq/coin-bitcoin/config";
 import { getBitcoinCoinConfig } from "../coinConfig";
-import { getFeeItems } from "./api";
+import { BigNumber } from "bignumber.js";
+import type { Account } from "@ledgerhq/types-live";
+import type { BitcoinTxData } from "@ledgerhq/coin-bitcoin/logic/intent";
+import { transactionToIntent } from "../../../bridge/generic-coin-framework/utils";
+import type { GenericTransaction } from "../../../bridge/generic-coin-framework/types";
+import bitcoinBridge, { buildIntentData, getFeeItems } from "./api";
 
 jest.mock("@ledgerhq/live-network", () => ({
   __esModule: true,
@@ -65,5 +70,79 @@ describe("getFeeItems", () => {
 
     expect(defaultFeePerByte.toNumber()).toBe(2);
     expect(items.map(item => item.speed)).toEqual(["fast", "medium", "slow"]);
+  });
+});
+
+describe("buildIntentData", () => {
+  const utxoStrategy = {
+    strategy: "optimize-size",
+    selectedUtxos: ["aa:0"],
+    excludedUtxos: ["bb:1", "cc:2"],
+  };
+
+  it("returns bitcoin data without options for a plain transaction", () => {
+    expect(buildIntentData({})).toEqual({ type: "unknown" });
+  });
+
+  it("passes the OP_RETURN data through as hex, from a string or a buffer", () => {
+    expect(buildIntentData({ opReturnData: "abcd" })).toEqual({
+      type: "unknown",
+      opReturnData: "abcd",
+    });
+    expect(buildIntentData({ opReturnData: Buffer.from("hello") })).toEqual({
+      type: "unknown",
+      opReturnData: "68656c6c6f",
+    });
+    expect(buildIntentData({ opReturnData: Buffer.alloc(0) })).toEqual({ type: "unknown" });
+  });
+
+  it("passes the coin control through", () => {
+    expect(buildIntentData({ utxoStrategy })).toEqual({ type: "unknown", utxoStrategy });
+  });
+
+  it("drops values of the wrong type", () => {
+    expect(
+      buildIntentData({
+        opReturnData: 12,
+        utxoStrategy: { strategy: 1, selectedUtxos: "aa:0", excludedUtxos: ["bb:1", 2] },
+      }),
+    ).toEqual({ type: "unknown" });
+    expect(buildIntentData({ utxoStrategy: "deep-outputs-first" })).toEqual({ type: "unknown" });
+    expect(buildIntentData({ utxoStrategy: null })).toEqual({ type: "unknown" });
+  });
+
+  it("is the hook of the bitcoin bridge api", () => {
+    expect(bitcoinBridge(getCryptoCurrencyById("bitcoin")).buildIntentData).toBe(buildIntentData);
+  });
+
+  describe("through transactionToIntent", () => {
+    const account = { freshAddress: "bcrt1qsender", xpub: "xpub" } as Account;
+    const transaction = {
+      family: "bitcoin",
+      recipient: "bcrt1qrecipient",
+      amount: new BigNumber(1000),
+      utxoStrategy,
+      opReturnData: Buffer.from("memo"),
+    } as unknown as GenericTransaction;
+    // What the coin module crafts on its own: no coin control.
+    const craftTransactionData = jest.fn(() => ({ type: "unknown" as const }));
+
+    it("puts the coin control and the OP_RETURN data in intent.data, ahead of the module's crafting", () => {
+      const intent = transactionToIntent(
+        account,
+        transaction,
+        undefined,
+        craftTransactionData,
+        buildIntentData,
+      );
+      const data = intent.data as BitcoinTxData;
+      expect(data).toEqual({ type: "unknown", opReturnData: "6d656d6f", utxoStrategy });
+      expect(craftTransactionData).not.toHaveBeenCalled();
+    });
+
+    it("loses the coin control without the hook", () => {
+      const intent = transactionToIntent(account, transaction, undefined, craftTransactionData);
+      expect(intent.data).toEqual({ type: "unknown" });
+    });
   });
 });
