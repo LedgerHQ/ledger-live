@@ -1,69 +1,125 @@
 #!/usr/bin/env node
-// Summarises run.mjs's samples.jsonl as B − A per scenario. See README.md.
+// Summarises run.ts's samples.jsonl as B − A per scenario. See README.md.
 import { appendFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
+import type { Sample, Side } from "./types.ts";
 
-/** @import { Sample } from "./types.mjs" */
+/** An estimate of B − A with its 95% interval; no interval below six differences. */
+export interface Interval {
+  estimate: number;
+  low: number | null;
+  high: number | null;
+}
+
+/** Where a build's Debug value counts from. */
+export type DebugBase = "js" | "process" | "package" | "native";
+
+/** A launch's value for one measure: NaN or undefined leaves the launch out. */
+type Metric = (s: Sample) => number | undefined;
+
+interface Pair {
+  platform: string;
+  scenario: string;
+  phase: number;
+  A: number;
+  B: number;
+}
+
+interface Difference {
+  pairs: number;
+  pairsPerPhase: number[];
+  thinPhase: boolean;
+  medianA: number | null;
+  medianB: number | null;
+  hl: Interval | null;
+  spread: number | null;
+  instanceBias: number | null;
+  mean: Interval | null;
+}
+
+/** A line of the result table, and of summary.json. */
+export interface Row extends Difference {
+  platform: string;
+  scenario: string;
+  measure: string;
+  startsDiffer: boolean;
+  bases: Record<Side, DebugBase | null>;
+  offBaseLaunches: Record<Side, number>;
+  failed: number;
+  launches: number;
+  detectable: number | null;
+  verdict: string;
+}
+
+export interface GateOptions {
+  preset: string;
+  thresholdMs: number;
+}
+
+export interface ReportOptions extends GateOptions {
+  labelA: string;
+  labelB: string;
+}
 
 const Z_95 = 1.959964;
+const SIDES: Side[] = ["A", "B"];
 
-export function median(values) {
+const middleOfSorted = (sorted: number[]): number => {
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+};
+
+export function median(values: number[]): number | null {
   if (!values.length) return null;
-  const s = [...values].sort((a, b) => a - b);
-  const mid = Math.floor(s.length / 2);
-  return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
+  return middleOfSorted([...values].sort((a, b) => a - b));
 }
 
 // Median absolute deviation scaled to a normal SD.
-export function robustSd(values) {
+export function robustSd(values: number[]): number | null {
   const m = median(values);
   if (m === null) return null;
-  return 1.4826 * median(values.map(v => Math.abs(v - m)));
+  const deviation = median(values.map(v => Math.abs(v - m)));
+  return deviation === null ? null : 1.4826 * deviation;
 }
 
 // Normal-approximation Wilcoxon interval (Hollander & Wolfe): C-th smallest and largest Walsh averages.
-export function hodgesLehmann(diffs) {
+export function hodgesLehmann(diffs: number[]): Interval | null {
   const n = diffs.length;
   if (!n) return null;
-  const walsh = [];
+  const walsh: number[] = [];
   for (let i = 0; i < n; i++) for (let j = i; j < n; j++) walsh.push((diffs[i] + diffs[j]) / 2);
   walsh.sort((a, b) => a - b);
-  const estimate = median(walsh);
+  const estimate = middleOfSorted(walsh);
   if (n < 6) return { estimate, low: null, high: null };
   const k = (n * (n + 1)) / 4 - Z_95 * Math.sqrt((n * (n + 1) * (2 * n + 1)) / 24);
   const c = Math.max(1, Math.floor(k + 0.5));
   return { estimate, low: walsh[c - 1], high: walsh[walsh.length - c] };
 }
 
-/**
- * @param {Sample[]} samples
- * @param {(s: Sample) => number} metric
- */
-export function pairUp(samples, metric) {
-  const byKey = new Map();
+export function pairUp(samples: Sample[], metric: Metric): Pair[] {
+  const byKey = new Map<string, Omit<Pair, Side> & Partial<Pick<Pair, Side>>>();
   for (const s of samples) {
     if (!s.ok || s.warmup) continue;
     const value = metric(s);
-    if (!Number.isFinite(value)) continue;
+    if (value === undefined || !Number.isFinite(value)) continue;
     const key = `${s.platform}|${s.scenario}|${s.phase}|${s.round}`;
     const entry = byKey.get(key) ?? { platform: s.platform, scenario: s.scenario, phase: s.phase };
     entry[s.side] = value;
     byKey.set(key, entry);
   }
-  return [...byKey.values()].filter(p => Number.isFinite(p.A) && Number.isFinite(p.B));
+  return [...byKey.values()].filter((p): p is Pair => Number.isFinite(p.A) && Number.isFinite(p.B));
 }
 
-const isGate = preset => !["aa-noise", "known-regression"].includes(preset);
+const isGate = (preset: string) => !["aa-noise", "known-regression"].includes(preset);
 
-export function failedRows(rows) {
+export function failedRows(rows: Array<Pick<Row, "verdict">>): boolean {
   return !rows.length || rows.some(r => /^(FAIL|Not detected|Not enough pairs)/.test(r.verdict));
 }
 
-/** @param {{ preset: string, hl: ReturnType<typeof hodgesLehmann>, thresholdMs: number }} options */
-function verdictFor({ preset, hl, thresholdMs }) {
-  if (!hl || hl.low === null) return "Not enough pairs";
+function verdictFor({ preset, hl, thresholdMs }: GateOptions & { hl: Interval | null }): string {
+  if (!hl || hl.low === null || hl.high === null) return "Not enough pairs";
   const ci = `[${Math.round(hl.low)}, ${Math.round(hl.high)}]`;
   if (preset === "aa-noise") {
     const halfWidth = Math.round((hl.high - hl.low) / 2);
@@ -90,13 +146,16 @@ function verdictFor({ preset, hl, thresholdMs }) {
 const MIN_PAIRS_PER_PHASE = 3;
 
 // The true B − A the gate flags 80% of the time: the threshold plus 0.84 standard errors.
-export function detectableAt80(hl, thresholdMs) {
-  if (!hl || hl.low === null) return null;
+export function detectableAt80(hl: Interval | null, thresholdMs: number): number | null {
+  if (!hl || hl.low === null || hl.high === null) return null;
   return thresholdMs + 0.8416 * ((hl.high - hl.low) / (2 * Z_95));
 }
 
 // Seeded, so the same samples always give the same interval.
-export function bootstrapMean(diffs, resamples = 4000) {
+export function bootstrapMean(
+  diffs: number[],
+  resamples = 4000,
+): { estimate: number; low: number; high: number } | null {
   const n = diffs.length;
   if (n < 6) return null;
   let seed = 0x9e3779b9;
@@ -106,8 +165,8 @@ export function bootstrapMean(diffs, resamples = 4000) {
     t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
-  const mean = values => values.reduce((a, v) => a + v, 0) / values.length;
-  const means = [];
+  const mean = (values: number[]) => values.reduce((a, v) => a + v, 0) / values.length;
+  const means: number[] = [];
   for (let r = 0; r < resamples; r++) {
     let sum = 0;
     for (let i = 0; i < n; i++) sum += diffs[Math.floor(random() * n)];
@@ -121,51 +180,48 @@ export function bootstrapMean(diffs, resamples = 4000) {
   };
 }
 
-/** @param {Sample} s */
-const jsStartOffset = s => s.events?.["Before js imports"]?.time;
-/** @param {Sample} s */
-export const fromJsStart = s => s.appStartupTime - (jsStartOffset(s) ?? NaN);
-/** @param {Sample} s */
-const jsStartEpoch = s => {
+const jsStartOffset = (s: Sample) => s.events?.["Before js imports"]?.time;
+export const fromJsStart = (s: Sample): number =>
+  (s.appStartupTime ?? NaN) - (jsStartOffset(s) ?? NaN);
+const jsStartEpoch = (s: Sample): number => {
   const name = Object.keys(s.events ?? {}).find(n => /^JS start epoch \d+$/.test(n));
   return name ? Number(name.split(" ").pop()) : NaN;
 };
 // Samples from before processStartAppClockAt only have the app's clock on iOS (the host's).
-/** @param {Sample} s */
-const appClockProcessStart = s =>
+const appClockProcessStart = (s: Sample) =>
   s.processStartAppClockAt ?? (s.platform === "ios" ? s.processStartAt : NaN);
-/** @param {Sample} s */
-const harnessNativeStart = s => jsStartEpoch(s) - (appClockProcessStart(s) ?? NaN);
-/** @param {Sample} s */
-export const fromProcessStart = s => harnessNativeStart(s) + fromJsStart(s);
+const harnessNativeStart = (s: Sample): number =>
+  jsStartEpoch(s) - (appClockProcessStart(s) ?? NaN);
+export const fromProcessStart = (s: Sample): number => harnessNativeStart(s) + fromJsStart(s);
 
-/** @param {Sample} s */
-export function debugBase(s) {
+export function debugBase(s: Sample): DebugBase | null {
   const offset = jsStartOffset(s);
-  if (!Number.isFinite(offset)) return null;
+  if (offset === undefined || !Number.isFinite(offset)) return null;
   if (offset < 50) return "js";
   const harness = harnessNativeStart(s);
   if (!Number.isFinite(harness)) return "native";
   return Math.abs(harness - offset) <= 100 ? "process" : "package";
 }
 // "native" can't be told from "process" or "package", so it matches either.
-const sameBase = (a, b) =>
+const sameBase = (a: DebugBase, b: DebugBase | null) =>
   a === b || (a !== "js" && b !== "js" && (a === "native" || b === "native"));
-const mostCommon = values => {
-  const counts = new Map();
+const mostCommon = <T>(values: T[]): T | null => {
+  const counts = new Map<T, number>();
   for (const v of values) counts.set(v, (counts.get(v) ?? 0) + 1);
   return [...counts].sort((x, y) => y[1] - x[1])[0]?.[0] ?? null;
 };
-const BASE_TEXT = {
+const BASE_TEXT: Record<DebugBase, string> = {
   js: "the first JS import",
   process: "the process start",
   package: "react-native-startup-time's later mark",
   native: "a native start",
 };
+const baseText = (base: DebugBase | null) => (base ? BASE_TEXT[base] : "an unknown start");
 
-function difference(group, metric) {
+function difference(group: Sample[], metric: Metric): Difference {
   const pairs = pairUp(group, metric);
-  const phase = n => hodgesLehmann(pairs.filter(p => p.phase === n).map(p => p.B - p.A))?.estimate;
+  const phase = (n: number) =>
+    hodgesLehmann(pairs.filter(p => p.phase === n).map(p => p.B - p.A))?.estimate ?? NaN;
   const phase0 = phase(0);
   const phase1 = phase(1);
   // Phase 0 puts B on the second device, phase 1 on the first: half their gap is the device bias.
@@ -175,7 +231,7 @@ function difference(group, metric) {
   const centred = [0, 1].flatMap(n => {
     const d = pairs.filter(p => p.phase === n).map(p => p.B - p.A);
     const m = median(d);
-    return d.map(v => v - m);
+    return m === null ? [] : d.map(v => v - m);
   });
   const pairsPerPhase = [0, 1].map(n => pairs.filter(p => p.phase === n).length);
   const thinPhase = pairs.length > 0 && Math.min(...pairsPerPhase) < MIN_PAIRS_PER_PHASE;
@@ -198,20 +254,12 @@ function difference(group, metric) {
 /**
  * How much wider the B − A interval is than the pooled pairs give: the device bias correction
  * averages the two phases, so uneven ones add uncertainty. 1 when both phases have as many pairs.
- * @param {number} n0
- * @param {number} n1
  */
-export function unevenPhasesFactor(n0, n1) {
+export function unevenPhasesFactor(n0: number, n1: number): number {
   return Math.sqrt(((n0 + n1) / 4) * (1 / n0 + 1 / n1));
 }
 
-/**
- * @template {{ estimate: number, low: number | null, high: number | null }} T
- * @param {T | null} interval
- * @param {number} factor
- * @returns {T | null}
- */
-const widen = (interval, factor) =>
+const widen = <T extends Interval>(interval: T | null, factor: number): T | null =>
   factor !== 1 && interval && interval.low !== null && interval.high !== null
     ? {
         ...interval,
@@ -220,45 +268,38 @@ const widen = (interval, factor) =>
       }
     : interval;
 
-/**
- * @param {Sample[]} samples
- * @param {{ preset: string, thresholdMs: number }} options
- */
-export function summarise(samples, { preset, thresholdMs }) {
-  const groups = new Map();
+export function summarise(samples: Sample[], { preset, thresholdMs }: GateOptions): Row[] {
+  const groups = new Map<string, Sample[]>();
   for (const s of samples) {
     const key = `${s.platform}|${s.scenario}`;
-    if (!groups.has(key)) groups.set(key, []);
-    groups.get(key).push(s);
+    const group = groups.get(key) ?? [];
+    group.push(s);
+    groups.set(key, group);
   }
   return [...groups.entries()].flatMap(([key, group]) => {
     const [platform, scenario] = key.split("|");
     const measured = group.filter(s => !s.warmup);
     const read = measured.filter(s => s.ok);
-    const bases = Object.fromEntries(
-      ["A", "B"].map(side => [
-        side,
-        mostCommon(
-          read
-            .filter(s => s.side === side)
-            .map(debugBase)
-            .filter(Boolean),
-        ),
-      ]),
-    );
-    const startsDiffer = Boolean(bases.A && bases.B) && !sameBase(bases.A, bases.B);
-    const offBase = s => {
+    const baseOf = (side: Side) =>
+      mostCommon(
+        read
+          .filter(s => s.side === side)
+          .map(debugBase)
+          .filter(base => base !== null),
+      );
+    const bases = { A: baseOf("A"), B: baseOf("B") };
+    const startsDiffer = bases.A !== null && bases.B !== null && !sameBase(bases.A, bases.B);
+    const offBase = (s: Sample) => {
       const base = debugBase(s);
       return base !== null && !sameBase(base, bases[s.side]);
     };
-    const offBaseLaunches = Object.fromEntries(
-      ["A", "B"].map(side => [side, read.filter(s => s.side === side && offBase(s)).length]),
-    );
+    const offBaseCount = (side: Side) => read.filter(s => s.side === side && offBase(s)).length;
+    const offBaseLaunches = { A: offBaseCount("A"), B: offBaseCount("B") };
     const debugValue = difference(group, s => (offBase(s) ? NaN : s.appStartupTime));
     const jsStart = difference(group, fromJsStart);
     const withNative = difference(group, fromProcessStart);
     const screen = startsDiffer && jsStart.pairs ? jsStart : debugValue;
-    const row = (measure, d, verdict) => ({
+    const row = (measure: string, d: Difference, verdict?: string): Row => ({
       platform,
       scenario,
       measure,
@@ -275,7 +316,7 @@ export function summarise(samples, { preset, thresholdMs }) {
           ? `Not enough pairs: ${d.pairsPerPhase[0]} before the device swap, ${d.pairsPerPhase[1]} after (${MIN_PAIRS_PER_PHASE} needed on each side)`
           : verdictFor({ preset, hl: d.hl, thresholdMs })),
     });
-    const withoutEpoch = ["A", "B"].filter(
+    const withoutEpoch = SIDES.filter(
       side =>
         !group.some(s => s.ok && !s.warmup && s.side === side && Number.isFinite(jsStartEpoch(s))),
     );
@@ -293,11 +334,15 @@ export function summarise(samples, { preset, thresholdMs }) {
   });
 }
 
-const fmt = v =>
-  v === null || v === undefined || !Number.isFinite(v) ? "–" : String(Math.round(v));
-const signed = v => (Number.isFinite(v) ? `${v > 0 ? "+" : ""}${Math.round(v)}` : "–");
+const fmt = (v: number | null | undefined) =>
+  typeof v === "number" && Number.isFinite(v) ? String(Math.round(v)) : "–";
+const signed = (v: number | null | undefined) =>
+  typeof v === "number" && Number.isFinite(v) ? `${v > 0 ? "+" : ""}${Math.round(v)}` : "–";
 
-export function toMarkdown(rows, { preset, labelA, labelB, thresholdMs }) {
+export function toMarkdown(
+  rows: Row[],
+  { preset, labelA, labelB, thresholdMs }: ReportOptions,
+): string {
   const lines = [
     `### Startup time, ${preset}: B − A`,
     "",
@@ -330,24 +375,22 @@ export function toMarkdown(rows, { preset, labelA, labelB, thresholdMs }) {
       .filter(r => r.startsDiffer && r.measure.startsWith("Debug screen"))
       .map(
         r =>
-          `**${r.platform} ${r.scenario}: A's Debug value counts from ${BASE_TEXT[r.bases.A]} and B's from ${BASE_TEXT[r.bases.B]}, so the Debug screen row compares the time from the first JS import.**`,
+          `**${r.platform} ${r.scenario}: A's Debug value counts from ${baseText(r.bases.A)} and B's from ${baseText(r.bases.B)}, so the Debug screen row compares the time from the first JS import.**`,
       ),
     ...rows
       .filter(r => r.measure.startsWith("Debug screen"))
       .flatMap(r =>
-        ["A", "B"]
-          .filter(side => r.offBaseLaunches[side] > 0)
-          .map(
-            side =>
-              `**${r.platform} ${r.scenario}: ${r.offBaseLaunches[side]} launch(es) of build ${side} counted from another start than ${BASE_TEXT[r.bases[side]]} (e.g. the app found no process start) and are left out of the Debug screen row.**`,
-          ),
+        SIDES.filter(side => r.offBaseLaunches[side] > 0).map(
+          side =>
+            `**${r.platform} ${r.scenario}: ${r.offBaseLaunches[side]} launch(es) of build ${side} counted from another start than ${baseText(r.bases[side])} (e.g. the app found no process start) and are left out of the Debug screen row.**`,
+        ),
       ),
     "",
   );
   return lines.filter((l, i) => l !== "" || lines[i - 1] !== "").join("\n");
 }
 
-async function main() {
+async function main(): Promise<void> {
   const { values } = parseArgs({
     options: {
       samples: { type: "string", multiple: true },
@@ -359,12 +402,12 @@ async function main() {
       json: { type: "string" },
     },
   });
-  const samples = [];
+  const samples: Sample[] = [];
   for (const file of values.samples ?? []) {
     const text = await readFile(file, "utf8").catch(() => "");
     for (const line of text.split("\n")) if (line.trim()) samples.push(JSON.parse(line));
   }
-  const options = {
+  const options: ReportOptions = {
     preset: values.preset,
     thresholdMs: Number(values["threshold-ms"]),
     labelA: values["label-a"],

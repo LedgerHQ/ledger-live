@@ -4,12 +4,13 @@
     "lib": ["ES2023"],
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "allowJs": true,
-    "checkJs": true,
+    "allowImportingTsExtensions": true,
+    "erasableSyntaxOnly": true,
+    "verbatimModuleSyntax": true,
     "noEmit": true,
-    "strict": false,
+    "strict": true,
     "skipLibCheck": true,
     "types": ["node"]
   },
-  "include": ["src/**/*.mjs", "src/**/*.d.mts"]
+  "include": ["src/**/*.ts"]
 }

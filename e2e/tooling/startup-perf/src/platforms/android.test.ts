@@ -5,7 +5,7 @@ import {
   parseProcessStart,
   parseScreenState,
   parseStatPid,
-} from "./android.mjs";
+} from "./android.ts";
 
 const FIELDS_BEFORE_START_TIME = "S 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18";
 const PROCESS_START_OUTPUT = [

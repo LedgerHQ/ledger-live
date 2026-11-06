@@ -16,8 +16,9 @@ const PREPARED_FILES = [
   "src/mvvm/utils/logStartup/beforeJSImports.ts",
 ];
 
-/** @param {string} root @param {string} file */
-const read = (root, file) => readFileSync(path.join(root, file), "utf8");
+const read = (root: string, file: string) => readFileSync(path.join(root, file), "utf8");
+const stderrOf = (error: unknown) =>
+  error instanceof Error && "stderr" in error ? String(error.stderr) : String(error);
 
 describe("the mobile app of this checkout", () => {
   it("takes every edit of prepare-build.sh", () => {
@@ -33,7 +34,7 @@ describe("the mobile app of this checkout", () => {
           stdio: "pipe",
         });
       } catch (error) {
-        assert.fail(`prepare-build.sh no longer applies:\n${error.stderr}`);
+        assert.fail(`prepare-build.sh no longer applies:\n${stderrOf(error)}`);
       }
       assert.doesNotMatch(read(app, "package.json"), /"e2e:build": "[^"]*DETOX=1/);
       assert.match(read(app, "rspack.config.mjs"), /startup-perf prod-like: no blur mock/);
@@ -48,9 +49,9 @@ describe("the mobile app of this checkout", () => {
   it("handles every bridge message the injection sends", () => {
     const client = read(APP, "src/e2e/bridge/client.ts");
     const sent = new Set(
-      [...read(import.meta.dirname, "inject.mjs").matchAll(/send\("(\w+)"/g)].map(m => m[1]),
+      [...read(import.meta.dirname, "inject.ts").matchAll(/send\("(\w+)"/g)].map(m => m[1]),
     );
-    assert.ok(sent.has("getEnvs") && sent.has("importSettings"), "inject.mjs was not parsed");
+    assert.ok(sent.has("getEnvs") && sent.has("importSettings"), "inject.ts was not parsed");
     for (const type of sent) {
       assert.match(client, new RegExp(`case "${type}"`), `client.ts no longer handles ${type}`);
     }

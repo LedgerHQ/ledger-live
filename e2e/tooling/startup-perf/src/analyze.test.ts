@@ -14,19 +14,21 @@ import {
   summarise,
   toMarkdown,
   unevenPhasesFactor,
-} from "./analyze.mjs";
-
-/** @import { Sample } from "./types.mjs" */
+  type Row,
+} from "./analyze.ts";
+import type { Sample, Side } from "./types.ts";
 
 const PROCESS_START = 1_700_000_000_000;
 
-/** @typedef {Partial<Sample> & { jsStartOffset?: number, nativeStartMs?: number }} LaunchOptions */
+type LaunchOptions = Partial<Sample> & { jsStartOffset?: number; nativeStartMs?: number };
 
-/**
- * @param {LaunchOptions & { side: "A" | "B", appStartupTime: number }} options
- * @returns {Sample}
- */
-function launch({ side, appStartupTime, jsStartOffset = 5, nativeStartMs = 400, ...rest }) {
+function launch({
+  side,
+  appStartupTime,
+  jsStartOffset = 5,
+  nativeStartMs = 400,
+  ...rest
+}: LaunchOptions & { side: Side; appStartupTime: number }): Sample {
   return {
     platform: "android",
     scenario: "accounts",
@@ -48,14 +50,25 @@ function launch({ side, appStartupTime, jsStartOffset = 5, nativeStartMs = 400, 
 }
 
 // Phase 0 runs A on the first device and B on the second; phase 1 swaps them.
-/**
- * @param {{ pairs?: number, deltaMs: number, secondDeviceSlowerByMs?: number, phases?: number[], a?: LaunchOptions, b?: LaunchOptions }} options
- */
-function comparison({ pairs = 6, deltaMs, secondDeviceSlowerByMs = 0, phases = [0, 1], a, b }) {
-  const samples = [];
+function comparison({
+  pairs = 6,
+  deltaMs,
+  secondDeviceSlowerByMs = 0,
+  phases = [0, 1],
+  a,
+  b,
+}: {
+  pairs?: number;
+  deltaMs: number;
+  secondDeviceSlowerByMs?: number;
+  phases?: number[];
+  a?: LaunchOptions;
+  b?: LaunchOptions;
+}): Sample[] {
+  const samples: Sample[] = [];
   for (const phase of phases) {
     for (let round = 0; round < pairs / 2; round++) {
-      for (const side of /** @type {const} */ (["A", "B"])) {
+      for (const side of ["A", "B"] as const) {
         const onSecondDevice = (side === "B") === (phase === 0);
         const value = 1000 + (side === "B" ? deltaMs : 0);
         samples.push(
@@ -74,8 +87,13 @@ function comparison({ pairs = 6, deltaMs, secondDeviceSlowerByMs = 0, phases = [
 }
 
 const GATE = { preset: "custom", thresholdMs: 100 };
-const debugRow = rows => rows.find(r => r.measure.startsWith("Debug screen"));
-const nativeRow = rows => rows.find(r => r.measure === "With native start");
+function rowOf(rows: Row[], measure: (name: string) => boolean): Row {
+  const row = rows.find(r => measure(r.measure));
+  assert.ok(row, "no such row");
+  return row;
+}
+const debugRow = (rows: Row[]) => rowOf(rows, name => name.startsWith("Debug screen"));
+const nativeRow = (rows: Row[]) => rowOf(rows, name => name === "With native start");
 
 describe("median", () => {
   it("takes the middle value of an odd count", () => {
@@ -103,7 +121,7 @@ describe("hodgesLehmann", () => {
     assert.deepEqual(hodgesLehmann([0, 1, 2, 3, 4, 5]), { estimate: 2.5, low: 0, high: 5 });
   });
   it("is not pulled by one outlier", () => {
-    assert.equal(hodgesLehmann([10, 10, 10, 10, 10, 1000]).estimate, 10);
+    assert.equal(hodgesLehmann([10, 10, 10, 10, 10, 1000])?.estimate, 10);
   });
   it("is null without differences", () => {
     assert.equal(hodgesLehmann([]), null);
@@ -211,9 +229,9 @@ describe("unevenPhasesFactor", () => {
 describe("detectableAt80", () => {
   it("adds 0.84 standard errors, read off the 95% interval, to the threshold", () => {
     const standardError = 100 / (2 * 1.959964);
-    assert.ok(
-      Math.abs(detectableAt80({ low: -50, high: 50 }, 100) - (100 + 0.8416 * standardError)) < 1e-9,
-    );
+    const detectable = detectableAt80({ estimate: 0, low: -50, high: 50 }, 100);
+    assert.ok(detectable !== null);
+    assert.ok(Math.abs(detectable - (100 + 0.8416 * standardError)) < 1e-9);
   });
   it("is null without an interval", () => {
     assert.equal(detectableAt80({ estimate: 0, low: null, high: null }, 100), null);
@@ -226,7 +244,9 @@ describe("bootstrapMean", () => {
     assert.deepEqual(bootstrapMean(diffs), bootstrapMean(diffs));
   });
   it("brackets the mean", () => {
-    const { estimate, low, high } = bootstrapMean(diffs);
+    const mean = bootstrapMean(diffs);
+    assert.ok(mean);
+    const { estimate, low, high } = mean;
     assert.equal(estimate, 14.375);
     assert.ok(low < estimate && estimate < high);
   });
@@ -249,7 +269,7 @@ describe("summarise", () => {
 
   it("fails when B is slower than A by more than the threshold", () => {
     const row = debugRow(summarise(comparison({ deltaMs: 200 }), GATE));
-    assert.equal(row.hl.estimate, 200);
+    assert.equal(row.hl?.estimate, 200);
     assert.equal(row.verdict, "FAIL: B is slower by more than 100 ms");
   });
 
@@ -260,11 +280,13 @@ describe("summarise", () => {
     assert.equal(row.verdict, "PASS");
   });
 
-  const noisy = slowdowns => {
+  const noisy = (slowdowns: number[]) => {
     const samples = comparison({ pairs: 12, deltaMs: 0 });
     samples
       .filter(s => s.side === "B")
-      .forEach((s, i) => (s.appStartupTime += slowdowns[i % slowdowns.length]));
+      .forEach(
+        (s, i) => (s.appStartupTime = (s.appStartupTime ?? 0) + slowdowns[i % slowdowns.length]),
+      );
     return debugRow(summarise(samples, GATE));
   };
 
@@ -301,7 +323,7 @@ describe("summarise", () => {
   });
 
   it("does not rest the device bias on a phase of one pair", () => {
-    const pair = (phase, round, a, b) => [
+    const pair = (phase: number, round: number, a: number, b: number) => [
       launch({ side: "A", phase, round, appStartupTime: a }),
       launch({ side: "B", phase, round, appStartupTime: b }),
     ];
@@ -318,7 +340,7 @@ describe("summarise", () => {
   });
 
   it("still gives a verdict with three pairs on one side of the device swap", () => {
-    const pair = (phase, round, b) => [
+    const pair = (phase: number, round: number, b: number) => [
       launch({ side: "A", phase, round, appStartupTime: 1000 }),
       launch({ side: "B", phase, round, appStartupTime: b }),
     ];
@@ -338,7 +360,7 @@ describe("summarise", () => {
       deltaMs: 0,
       a: { jsStartOffset: 0, nativeStartMs: 800 },
       b: { jsStartOffset: 800, nativeStartMs: 800 },
-    }).map(s => (s.side === "B" ? { ...s, appStartupTime: s.appStartupTime + 800 } : s));
+    }).map(s => (s.side === "B" ? { ...s, appStartupTime: (s.appStartupTime ?? 0) + 800 } : s));
     const rows = summarise(samples, GATE);
     const row = debugRow(rows);
     assert.equal(row.measure, "Debug screen, from JS start");
@@ -354,7 +376,9 @@ describe("summarise", () => {
       a: { jsStartOffset: 800, nativeStartMs: 800 },
       b: { jsStartOffset: 800, nativeStartMs: 800 },
     });
-    samples.find(s => s.side === "A").events["Before js imports"].time = 0;
+    const firstA = samples.find(s => s.side === "A");
+    assert.ok(firstA?.events);
+    firstA.events["Before js imports"].time = 0;
     const row = debugRow(summarise(samples, GATE));
     assert.deepEqual(row.offBaseLaunches, { A: 1, B: 0 });
     assert.equal(row.pairs, 7);

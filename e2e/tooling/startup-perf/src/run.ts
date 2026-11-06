@@ -4,14 +4,13 @@ import { appendFile, mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
-import { createAndroid } from "./platforms/android.mjs";
-import { log, sleep } from "./exec.mjs";
-import { createInjector, loadUserdata } from "./inject.mjs";
-import { createIos } from "./platforms/ios.mjs";
-import { createMaestro } from "./maestro.mjs";
-import { createPerformanceReader } from "./performance-screen.mjs";
-
-/** @import { Sample, SampleMeta } from "./types.mjs" */
+import { createAndroid } from "./platforms/android.ts";
+import { errorMessage, log, sleep } from "./exec.ts";
+import { createInjector, loadUserdata } from "./inject.ts";
+import { createIos } from "./platforms/ios.ts";
+import { createMaestro } from "./maestro.ts";
+import { createPerformanceReader } from "./performance-screen.ts";
+import type { PlatformName, Sample, SampleMeta, Side } from "./types.ts";
 
 const { values: opts } = parseArgs({
   options: {
@@ -37,9 +36,10 @@ const { values: opts } = parseArgs({
   },
 });
 
-const PLATFORM = /** @type {"android" | "ios"} */ (opts.platform);
+// validateOptions() checks it before any device is touched.
+const PLATFORM = opts.platform as PlatformName;
 const DEVICES = (opts.devices ?? "").split(",").filter(Boolean);
-const APPS = { A: opts["app-a"], B: opts["app-b"] };
+const APPS: Record<Side, string> = { A: opts["app-a"] ?? "", B: opts["app-b"] ?? "" };
 const APP_ID = opts["app-id"];
 const SCENARIOS = opts.scenarios
   .split(",")
@@ -56,7 +56,7 @@ const DEBUG_DIR = path.join(OUT_DIR, "debug");
 const MAX_CONSECUTIVE_FAILURES = 4;
 const DIALOG_RECOVERY_MS = 30_000;
 
-function validateOptions() {
+function validateOptions(): void {
   if (!["android", "ios"].includes(PLATFORM)) throw new Error("--platform must be android or ios");
   if (DEVICES.length !== 2) throw new Error("--devices needs exactly two ids, comma-separated");
   if (!APPS.A || !APPS.B) {
@@ -76,25 +76,23 @@ const P =
 const readPerformance = createPerformanceReader({ platform: P, maestro });
 const inject = createInjector({ platform: P, devices: DEVICES, port: BRIDGE_PORT });
 
-const consecutiveFailures = new Map();
+const consecutiveFailures = new Map<string, number>();
 
-/** @param {SampleMeta} meta */
-async function sample(meta) {
-  /** @type {Sample} */
-  const record = {
+async function sample(meta: SampleMeta): Promise<Sample> {
+  const record: Sample = {
     platform: PLATFORM,
     ...meta,
     startedAt: new Date().toISOString(),
     ok: false,
   };
   const name = `${meta.scenario}-p${meta.phase}-r${meta.round}-${meta.side}`;
-  const other = DEVICES.find(d => d !== meta.device);
+  const other = meta.device === DEVICES[0] ? DEVICES[1] : DEVICES[0];
   maestro.calls = [];
-  let readStart = null;
+  let readStart: number | null = null;
   let paused = false;
   try {
     for (const device of DEVICES) await P.stop(device);
-    const dialogs = [];
+    const dialogs: string[] = [];
     for (const device of DEVICES) dialogs.push(...(await P.clearDialogs(device)));
     if (dialogs.length) {
       record.clearedDialogs = dialogs;
@@ -102,8 +100,8 @@ async function sample(meta) {
     }
     record.screen = await P.ensureScreenOn(meta.device);
     await sleep(IDLE_MS);
-    paused = await P.pause(other).catch(error => {
-      log(`  could not pause ${other}, launching with it running: ${error.message}`);
+    paused = await P.pause(other).catch((error: unknown) => {
+      log(`  could not pause ${other}, launching with it running: ${errorMessage(error)}`);
       return false;
     });
     record.otherPaused = paused;
@@ -133,7 +131,7 @@ async function sample(meta) {
     Object.assign(record, launch, perf, { ok: true });
     consecutiveFailures.set(meta.device, 0);
   } catch (error) {
-    record.error = String(error?.message ?? error).slice(0, 1500);
+    record.error = errorMessage(error).slice(0, 1500);
     consecutiveFailures.set(meta.device, (consecutiveFailures.get(meta.device) ?? 0) + 1);
     await P.diagnostics(meta.device, path.join(DEBUG_DIR, `${name}.log`)).catch(() => {});
   } finally {
@@ -143,9 +141,11 @@ async function sample(meta) {
   if (readStart !== null) record.readMs = Date.now() - readStart;
   record.maestroCalls = maestro.calls;
   await appendFile(SAMPLES_FILE, JSON.stringify(record) + "\n");
-  const what = record.ok ? `${record.appStartupTime} ms` : `FAILED: ${record.error.split("\n")[0]}`;
+  const what = record.ok
+    ? `${record.appStartupTime} ms`
+    : `FAILED: ${record.error?.split("\n")[0]}`;
   log(`${meta.warmup ? "warm-up " : ""}${name} on ${meta.device}: ${what}`);
-  if (consecutiveFailures.get(meta.device) >= MAX_CONSECUTIVE_FAILURES) {
+  if ((consecutiveFailures.get(meta.device) ?? 0) >= MAX_CONSECUTIVE_FAILURES) {
     throw new Error(
       `${MAX_CONSECUTIVE_FAILURES} launches in a row failed on ${meta.device}; stopping (see ${DEBUG_DIR})`,
     );
@@ -153,7 +153,7 @@ async function sample(meta) {
   return record;
 }
 
-async function main() {
+async function main(): Promise<void> {
   validateOptions();
   await mkdir(DEBUG_DIR, { recursive: true });
   await writeFile(SAMPLES_FILE, "");
@@ -187,17 +187,16 @@ async function main() {
     });
     log(`=== ${scenario}: ${userdata.accounts.length} accounts from ${userdata.names.join(", ")}`);
     for (const phase of [0, 1]) {
-      const placement =
+      const placement: Record<Side, string> =
         phase === 0 ? { A: DEVICES[0], B: DEVICES[1] } : { A: DEVICES[1], B: DEVICES[0] };
       // Never the same device twice in a row, warm-ups included.
-      /** @type {Array<"A" | "B">} */
-      const order = phase === 0 ? ["A", "B"] : ["B", "A"];
+      const order: Side[] = phase === 0 ? ["A", "B"] : ["B", "A"];
       for (const side of order) {
         const device = placement[side];
         log(`installing ${side} on ${device} and injecting ${scenario}`);
         await P.install(device, APPS[side]);
-        await inject({ device, userdata, side }).catch(async error => {
-          log(`  injection failed (${error.message}); retrying once`);
+        await inject({ device, userdata, side }).catch(async (error: unknown) => {
+          log(`  injection failed (${errorMessage(error)}); retrying once`);
           await P.stop(device);
           await inject({ device, userdata, side });
         });

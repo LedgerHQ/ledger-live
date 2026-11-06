@@ -3,11 +3,26 @@
 // older app builds that connect without one.
 import { createServer } from "node:http";
 import { createHash, randomUUID } from "node:crypto";
+import type { Duplex } from "node:stream";
 
 const WS_GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 const REPLY_POLL_MS = 200;
 
-function encodeFrame(text) {
+interface Frame {
+  fin: boolean;
+  opcode: number;
+  data: Buffer;
+}
+
+/** A message from the app; `raw` holds one that was not JSON. */
+export interface BridgeMessage {
+  type?: string;
+  id?: string;
+  payload?: unknown;
+  raw?: string;
+}
+
+function encodeFrame(text: string): Buffer {
   const payload = Buffer.from(text, "utf8");
   const len = payload.length;
   let header;
@@ -27,13 +42,13 @@ function encodeFrame(text) {
   return Buffer.concat([header, payload]);
 }
 
-function controlFrame(opcode, payload = Buffer.alloc(0)) {
+function controlFrame(opcode: number, payload: Buffer = Buffer.alloc(0)): Buffer {
   return Buffer.concat([Buffer.from([0x80 | opcode, payload.length]), payload]);
 }
 
 // Parses complete client frames from `buffer`; returns the frames and the unconsumed rest.
-function decodeFrames(buffer) {
-  const frames = [];
+function decodeFrames(buffer: Buffer): { frames: Frame[]; rest: Buffer } {
+  const frames: Frame[] = [];
   let offset = 0;
   while (buffer.length - offset >= 2) {
     const b0 = buffer[offset];
@@ -62,22 +77,22 @@ function decodeFrames(buffer) {
   return { frames, rest: buffer.subarray(offset) };
 }
 
+export type Bridge = ReturnType<typeof startBridge>;
+
 /**
  * Starts the bridge on 127.0.0.1:`port`. The Android emulator reaches it as 10.0.2.2, the iOS
  * simulator as localhost. One client at a time: a new connection replaces the previous one.
- * @param {number} [port]
- * @param {(message: string) => void} [log]
  */
-export function startBridge(port = 8099, log = () => {}) {
-  let socket = null;
-  let waiters = [];
-  const received = [];
+export function startBridge(port = 8099, log: (message: string) => void = () => {}) {
+  let socket: Duplex | null = null;
+  let waiters: Array<() => void> = [];
+  const received: BridgeMessage[] = [];
 
   const server = createServer((_req, res) => {
     res.writeHead(426).end();
   });
 
-  server.on("upgrade", (req, sock) => {
+  server.on("upgrade", (req, sock: Duplex) => {
     const key = req.headers["sec-websocket-key"];
     if (!key) {
       sock.destroy();
@@ -96,9 +111,9 @@ export function startBridge(port = 8099, log = () => {}) {
     socket = sock;
     log("client connected");
 
-    let pending = Buffer.alloc(0);
-    let fragments = [];
-    sock.on("data", chunk => {
+    let pending: Buffer = Buffer.alloc(0);
+    let fragments: Buffer[] = [];
+    sock.on("data", (chunk: Buffer) => {
       const { frames, rest } = decodeFrames(Buffer.concat([pending, chunk]));
       pending = rest;
       for (const frame of frames) {
@@ -131,8 +146,7 @@ export function startBridge(port = 8099, log = () => {}) {
     ready.forEach(resolve => resolve());
   });
 
-  /** @type {Promise<void>} */
-  const listening = new Promise((resolve, reject) => {
+  const listening = new Promise<void>((resolve, reject) => {
     server.once("error", reject);
     server.listen(port, "127.0.0.1", () => resolve());
   });
@@ -140,36 +154,38 @@ export function startBridge(port = 8099, log = () => {}) {
   return {
     listening,
     received,
-    waitForClient(timeoutMs) {
+    waitForClient(timeoutMs: number): Promise<void> {
       if (socket) return Promise.resolve();
-      return new Promise(
-        /** @param {(value?: void) => void} resolve @param {(error: Error) => void} reject */ (
-          resolve,
-          reject,
-        ) => {
-          const waiter = () => {
-            clearTimeout(timer);
-            resolve();
-          };
-          const timer = setTimeout(() => {
-            waiters = waiters.filter(w => w !== waiter);
-            reject(new Error(`no app connected to the bridge within ${timeoutMs} ms`));
-          }, timeoutMs);
-          waiters.push(waiter);
-        },
-      );
+      return new Promise((resolve, reject) => {
+        const waiter = () => {
+          clearTimeout(timer);
+          resolve();
+        };
+        const timer = setTimeout(() => {
+          waiters = waiters.filter(w => w !== waiter);
+          reject(new Error(`no app connected to the bridge within ${timeoutMs} ms`));
+        }, timeoutMs);
+        waiters.push(waiter);
+      });
     },
-    send(type, payload) {
+    send(type: string, payload?: unknown): string {
       if (!socket) throw new Error(`bridge: no client to send ${type} to`);
-      const message = { type, id: randomUUID() };
+      const message: { type: string; id: string; payload?: unknown } = { type, id: randomUUID() };
       if (payload !== undefined) message.payload = payload;
       socket.write(encodeFrame(JSON.stringify(message)));
       return message.id;
     },
     // The app's reply of this type to message `id`: "ACK" once its handler is done (a handler that
     // throws sends none), or e.g. "appEnvs" for getEnvs.
-    /** @param {{ id: string, type: string, timeoutMs: number }} options */
-    async waitFor({ id, type, timeoutMs }) {
+    async waitFor({
+      id,
+      type,
+      timeoutMs,
+    }: {
+      id: string;
+      type: string;
+      timeoutMs: number;
+    }): Promise<BridgeMessage> {
       const deadline = Date.now() + timeoutMs;
       for (;;) {
         const reply = received.find(m => m.id === id && m.type === type);
@@ -179,12 +195,10 @@ export function startBridge(port = 8099, log = () => {}) {
         await new Promise(resolve => setTimeout(resolve, REPLY_POLL_MS));
       }
     },
-    close() {
+    close(): Promise<void> {
       socket?.destroy();
       socket = null;
-      return new Promise(
-        /** @param {(value?: void) => void} resolve */ resolve => server.close(() => resolve()),
-      );
+      return new Promise(resolve => server.close(() => resolve()));
     },
   };
 }

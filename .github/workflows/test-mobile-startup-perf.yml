@@ -532,7 +532,7 @@ jobs:
           APP_A=builds/a/signed.apk
           APP_B=builds/b/signed.apk
           [[ -f "$APP_B" ]] || APP_B="$APP_A"
-          node e2e/tooling/startup-perf/src/run.mjs \
+          node e2e/tooling/startup-perf/src/run.ts \
             --platform android \
             --devices emulator-5554,emulator-5556 \
             --app-a "$APP_A" --app-b "$APP_B" --app-id "$APP_ID" \
@@ -548,7 +548,7 @@ jobs:
           LABEL_A: ${{ needs.plan.outputs.label_a }}
           LABEL_B: ${{ needs.plan.outputs.label_b }}
         run: |
-          node e2e/tooling/startup-perf/src/analyze.mjs \
+          node e2e/tooling/startup-perf/src/analyze.ts \
             --samples "$RESULTS_DIR/android/samples.jsonl" \
             --preset "$PRESET" --threshold-ms "$THRESHOLD" \
             --label-a "$LABEL_A" --label-b "$LABEL_B" \
@@ -655,7 +655,7 @@ jobs:
           APP_A=builds/a/ledgerlivemobile.app
           APP_B=builds/b/ledgerlivemobile.app
           [[ -d "$APP_B" ]] || APP_B="$APP_A"
-          node e2e/tooling/startup-perf/src/run.mjs \
+          node e2e/tooling/startup-perf/src/run.ts \
             --platform ios \
             --devices "$SIM_1,$SIM_2" \
             --app-a "$APP_A" --app-b "$APP_B" --app-id "$APP_ID" \
@@ -671,7 +671,7 @@ jobs:
           LABEL_A: ${{ needs.plan.outputs.label_a }}
           LABEL_B: ${{ needs.plan.outputs.label_b }}
         run: |
-          node e2e/tooling/startup-perf/src/analyze.mjs \
+          node e2e/tooling/startup-perf/src/analyze.ts \
             --samples "$RESULTS_DIR/ios/samples.jsonl" \
             --preset "$PRESET" --threshold-ms "$THRESHOLD" \
             --label-a "$LABEL_A" --label-b "$LABEL_B" \
