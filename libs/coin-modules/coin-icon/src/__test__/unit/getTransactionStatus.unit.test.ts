@@ -14,7 +14,18 @@ import { getSendTransactionStatus, getTransactionStatus } from "../../getTransac
 import * as logic from "../../logic";
 import { IconAccount, Transaction } from "../../types";
 
-jest.mock("../../logic");
+jest.mock("../../logic", () => {
+  const BigNumber = jest.requireActual("bignumber.js");
+  return {
+    calculateAmount: jest.fn(),
+    getMinimumBalance: jest.fn(),
+    isSelfTransaction: jest.fn(),
+    isValidAddress: jest.fn(),
+    EXISTENTIAL_DEPOSIT: new BigNumber(1),
+    EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN: new BigNumber(1),
+    FEES_SAFETY_BUFFER: new BigNumber(1),
+  };
+});
 jest.mock("../../api");
 jest.mock("@ledgerhq/coin-module-framework/currencies/index");
 

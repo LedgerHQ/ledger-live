@@ -359,7 +359,7 @@ export async function buildUnsignedTransaction(
 
   // Spend the largest UTXOs first so Typhon's coin selection covers the outputs with the fewest
   // inputs (smaller tx, lower fee) — mirrors the legacy builder's largest-first ordering.
-  inputs.sort((a, b) => b.amount.comparedTo(a.amount));
+  inputs.sort((a, b) => b.amount.comparedTo(a.amount) ?? 0);
 
   const sweepAll = intent.intentType === "transaction" && !isTokenTransfer && !!intent.useAllAmount;
   const baseOutputCount = typhonTx.getOutputs().length;

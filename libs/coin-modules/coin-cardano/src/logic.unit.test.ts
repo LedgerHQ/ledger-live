@@ -41,6 +41,8 @@ describe("isAlreadyStaking", () => {
 describe("isValidNumString", () => {
   it("should return false for invalid number", () => {
     expect(isValidNumString("")).toEqual(false);
+    expect(isValidNumString(" ")).toEqual(false);
+    expect(isValidNumString("abc")).toEqual(false);
     expect(isValidNumString(undefined)).toEqual(false);
     expect(isValidNumString(null)).toEqual(false);
     expect(isValidNumString({})).toEqual(false);

@@ -10,6 +10,7 @@ import {
 import ShelleyTypeAddress from "@stricahq/typhonjs/dist/address/ShelleyTypeAddress";
 import bech32 from "bech32";
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import groupBy from "lodash/groupBy";
 import { APITransaction, HashType } from "./api/api-types";
 import {
@@ -411,9 +412,7 @@ export function getBech32PoolId(poolId: string, networkName: string): string {
 
 export function isValidNumString(value: unknown): boolean {
   if (typeof value !== "string" && typeof value !== "number") return false;
-  if (isNaN(Number(value))) return false;
-  if (new BigNumber(value).isNaN()) return false;
-  return true;
+  return parseFiniteBigNumber(value) !== undefined;
 }
 
 /** Convert the Strica `/v1/*` ProtocolParams (string-encoded) into Typhon's BigNumber/number shape. */

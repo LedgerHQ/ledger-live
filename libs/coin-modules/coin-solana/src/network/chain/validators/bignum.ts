@@ -7,6 +7,6 @@ export const BigNumFromString = coerce(instance(BigNumber), string(), value => {
 });
 
 export const BigNumFromNumber = coerce(instance(BigNumber), number(), value => {
-  if (typeof value === "number") return new BigNumber(value, 10);
+  if (typeof value === "number") return new BigNumber(value);
   throw new Error("invalid big num");
 });
