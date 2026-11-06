@@ -620,7 +620,7 @@ jobs:
         run: bash e2e/tooling/startup-perf/ci/install-maestro.sh
 
       - name: Create and boot two simulators
-        timeout-minutes: 20
+        timeout-minutes: 30
         run: |
           set -euo pipefail
           # simctl itself rather than xcrun, so the alarm kills it (macOS has no `timeout`).
@@ -642,11 +642,8 @@ jobs:
             with_timeout 300 "$SIMCTL" boot "$udid"
             with_timeout 300 "$SIMCTL" bootstatus "$udid" -b
           done
-          # A fixed margin for first-boot work after bootstatus, unlike Android's condition wait:
-          # the host load printed around it is the data such a wait would need.
-          /usr/sbin/sysctl -n vm.loadavg || true
-          sleep 60
-          /usr/sbin/sysctl -n vm.loadavg || true
+          # bootstatus returns before first-boot work ends: the host load still rose 60 s later.
+          bash e2e/tooling/startup-perf/ci/wait-for-idle-host.sh 600
 
       - name: Measure
         env:
