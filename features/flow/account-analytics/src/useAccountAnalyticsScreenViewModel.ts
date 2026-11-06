@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useAccountAnalyticsViewModel } from "./useAccountAnalyticsViewModel";
-import { useAccountAnalyticsLabels } from "./useAccountAnalyticsLabels";
+import { useAccountAnalyticsLabels } from "./copy/useAccountAnalyticsLabels";
 import type { AccountAnalyticsProps, AccountAnalyticsViewProps } from "./AccountAnalytics.types";
 
 export function useAccountAnalyticsScreenViewModel(

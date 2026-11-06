@@ -13,6 +13,8 @@ import PnlSection from "./components/PnlSection";
 import { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { ANALYTICS_PAGE } from "../../const";
 import useAnalyticsMainViewModel from "./useAnalyticsMainViewModel";
+import { useAnalyticsGateViewModel } from "../../useAnalyticsGateViewModel";
+import { AccountAnalyticsContent } from "./components/AccountAnalyticsContent";
 
 type Props = StackNavigatorProps<AnalyticsNavigatorParamsList, ScreenName.Analytics>;
 
@@ -20,6 +22,7 @@ export default function AnalyticsMain({ route }: Props): JSX.Element {
   const { params } = route;
   const sourceScreenName = params?.sourceScreenName;
   const { isExchangeEnabled } = useAnalyticsMainViewModel();
+  const { enabled: isAccountAnalyticsEnabled } = useAnalyticsGateViewModel();
 
   return (
     <SafeAreaView edges={["left", "right", "bottom"]} isFlex>
@@ -27,8 +30,14 @@ export default function AnalyticsMain({ route }: Props): JSX.Element {
       <Box lx={Container}>
         <ScrollView style={scrollViewStyle} contentContainerStyle={scrollViewContentStyle}>
           <Box lx={ContentContainer}>
-            <MainGraph />
-            <PnlSection />
+            {isAccountAnalyticsEnabled ? (
+              <AccountAnalyticsContent routeKey={route.key} params={params} />
+            ) : (
+              <>
+                <MainGraph />
+                <PnlSection />
+              </>
+            )}
             <Box lx={AssetAllocationBannerContainer}>
               <AssetAllocationBanner />
             </Box>

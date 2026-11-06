@@ -1,4 +1,6 @@
 export * from "./types";
+export * from "./AccountAnalytics";
+export type * from "./AccountAnalytics.types";
 export * from "./logic/resolveAnalyticsSelection";
 export * from "./logic/selectAnalyticsPositions";
 export * from "./logic/createAnalyticsQueryKeys";
