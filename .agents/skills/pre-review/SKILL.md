@@ -6,14 +6,14 @@ disable-model-invocation: true
 
 # Pre-Review
 
-Deep code review
+Deep code review before you open a PR.
 
 ## Process
 
-1. Run `git diff develop...HEAD` to get the full diff.
+1. Run `git diff develop...HEAD` to get the full diff (or the range the user names).
 
 2. Launch 5 `code-reviewer` agents **in parallel**, each with a different focus:
-   - **A** — Architecture & MVVM compliance
+   - **A** — **Layers and boundaries first** (`.agents/skills/structure-flow/SKILL.md`, `.agents/skills/flow-package/SKILL.md`, `.agents/skills/domain-data/SKILL.md`, `.agents/skills/package-public-api/SKILL.md`), then **MVVM** only for paths under `apps/*/src/mvvm/` (`.agents/skills/mvvm-architecture/SKILL.md`). Apply review-only gaps from `.agents/agents/references/review-rules.md`; do not repeat what `pnpm lint:arch` already fails on CI.
    - **B** — Correctness (edge cases, null handling, error states)
    - **C** — Code quality & conventions (Lumen UI, TypeScript, naming, new deps). Reject new `.pnpmfile.cjs` hooks and `pnpm.packageExtensions` (skill `pnpm-resolution`).
    - **D** — General review — DRY, KISS, missing tests, anything that would slow down a reviewer or cause future regressions
