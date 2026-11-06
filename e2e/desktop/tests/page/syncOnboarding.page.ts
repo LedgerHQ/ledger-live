@@ -167,7 +167,7 @@ export class SyncOnboardingPage extends AppPage {
   async expectRestoreChoices() {
     await expect(this.restoreChoiceStep).toBeVisible();
     await this.softExpect(async soft => {
-      for (const source of this.restoreChoiceSources) await soft(source).toBeVisible();
+      await Promise.all(this.restoreChoiceSources.map(source => soft(source).toBeVisible()));
     });
   }
 
