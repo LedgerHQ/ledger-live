@@ -37,6 +37,8 @@ const enforceBoundariesJob = (workflow: string): string => {
   return lines.slice(start, end).join("\n");
 };
 
+import type { UnclassifiedBoundariesStep } from "./types.ts";
+
 // Nx test harness steps in the boundaries job, not part of lint:arch.
 const BOUNDARIES_JOB_SKIP = new Set(["test", "test:workspace"]);
 
@@ -53,10 +55,10 @@ const isOtherBoundariesStep = (command: string): boolean =>
 export const boundariesJobChecks = (
   workflow: string,
   scripts: Record<string, string>,
-): { checks: string[]; unclassified: { line: number; command: string }[] } => {
+): { checks: string[]; unclassified: UnclassifiedBoundariesStep[] } => {
   const job = enforceBoundariesJob(workflow);
   const checks: string[] = [];
-  const unclassified: { line: number; command: string }[] = [];
+  const unclassified: UnclassifiedBoundariesStep[] = [];
   for (const match of job.matchAll(RUN_LINE)) {
     const command = match[1];
     const line = job.slice(0, match.index).split("\n").length;

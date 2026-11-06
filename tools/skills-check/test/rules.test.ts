@@ -10,6 +10,7 @@ import {
   describeProblem,
   listFiles,
   parseFrontmatter,
+  parseWaiversJson,
   type Waiver,
   DESCRIPTION_TRIGGER_CLAUSES,
 } from "../rules.ts";
@@ -27,7 +28,8 @@ const repo = (files: Record<string, string>): string => {
   return root;
 };
 
-const skill = (frontmatter: string, body = "# Skill\n"): string => `---\n${frontmatter}\n---\n\n${body}`;
+const skill = (frontmatter: string, body = "# Skill\n"): string =>
+  `---\n${frontmatter}\n---\n\n${body}`;
 const GOOD_DESCRIPTION = "description: Format the changed files. Use when committing.";
 
 const codes = (root: string): string[] =>
@@ -272,9 +274,12 @@ describe("waivers", () => {
   });
 
   it("give every shipped waiver a file, a path and a reason", () => {
-    const shipped = JSON.parse(
+    const raw: unknown = JSON.parse(
       readFileSync(new URL("../waivers.json", import.meta.url), "utf8"),
-    ) as Parameters<typeof applyWaivers>[1];
+    );
+    const parsed = parseWaiversJson(raw, "waivers.json");
+    assert.ok(parsed.ok, "shipped waivers.json must match the expected schema");
+    const shipped: Waiver[] = parsed.waivers;
     const problems = applyWaivers([], shipped, "waivers.json").filter(
       finding => finding.code === "waiver",
     );

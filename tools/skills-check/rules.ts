@@ -16,7 +16,12 @@ const URL_SCHEME = /^[a-z][a-z\d+.-]*:/i;
 const PLAIN_PATH = /^[\w.@+-]+(?:\/[\w.@+-]+)*\/?$/;
 const MIN_WHAT_WORDS = 3;
 
-export const DESCRIPTION_TRIGGER_CLAUSES = ["Use when", "Read when", "Use before", "Read before"] as const;
+export const DESCRIPTION_TRIGGER_CLAUSES = [
+  "Use when",
+  "Read when",
+  "Use before",
+  "Read before",
+] as const;
 
 const quotedClauses = (clauses: readonly string[]): string =>
   clauses.length === 1
@@ -60,6 +65,77 @@ export type Waiver = {
   path?: string;
   reason?: string;
 };
+
+/** A waiver with all fields present; `reason` is non-whitespace. */
+export type CompleteWaiver = Waiver & {
+  file: string;
+  path: string;
+  reason: string;
+};
+
+export type ReportFinding = (
+  line: number,
+  code: Finding["code"],
+  message: string,
+  path?: string,
+) => void;
+
+export type ProseLine = { line: string; number: number };
+
+const isNonEmptyString = (value: unknown): value is string =>
+  typeof value === "string" && value.trim().length > 0;
+
+/**
+ * Validates parsed JSON from waivers.json: root must be an array of objects with string
+ * file, path and reason. Returns findings when structure is invalid.
+ */
+export function parseWaiversJson(
+  raw: unknown,
+  waiversFile: string,
+): { ok: true; waivers: Waiver[] } | { ok: false; findings: Finding[] } {
+  if (!Array.isArray(raw)) {
+    return {
+      ok: false,
+      findings: [
+        {
+          file: waiversFile,
+          line: 1,
+          code: "waiver",
+          message: "waivers.json must be a JSON array of waiver objects",
+        },
+      ],
+    };
+  }
+  const findings: Finding[] = [];
+  const waivers: Waiver[] = [];
+  raw.forEach((entry, index) => {
+    const n = index + 1;
+    const prefix = `entry ${n} of ${waiversFile}`;
+    if (entry === null || typeof entry !== "object" || Array.isArray(entry)) {
+      findings.push({
+        file: waiversFile,
+        line: 1,
+        code: "waiver",
+        message: `${prefix} must be an object`,
+      });
+      return;
+    }
+    const rec = entry as Record<string, unknown>;
+    const { file, path, reason } = rec;
+    if (typeof file !== "string" || typeof path !== "string" || typeof reason !== "string") {
+      findings.push({
+        file: waiversFile,
+        line: 1,
+        code: "waiver",
+        message: `${prefix} must have string fields file, path and reason`,
+      });
+      return;
+    }
+    waivers.push({ file, path, reason });
+  });
+  if (findings.length > 0) return { ok: false, findings };
+  return { ok: true, waivers };
+}
 
 const toPosix = (path: string): string => path.split(sep).join(posix.sep);
 
@@ -176,11 +252,7 @@ const frontmatterKind = (file: string): FrontmatterKind => {
   return null;
 };
 
-const checkFrontmatter = (
-  file: string,
-  text: string,
-  report: (line: number, code: Finding["code"], message: string, path?: string) => void,
-): void => {
+const checkFrontmatter = (file: string, text: string, report: ReportFinding): void => {
   const target = frontmatterKind(file);
   if (!target) return;
   const fm = parseFrontmatter(text);
@@ -207,12 +279,13 @@ const checkFrontmatter = (
 
   if (target.kind === "skill" && description) {
     const problem = describeProblem(description);
-    if (problem) report(fm.keyLines.get("description") ?? 1, "description", `description ${problem}`);
+    if (problem)
+      report(fm.keyLines.get("description") ?? 1, "description", `description ${problem}`);
   }
 };
 
-const proseLines = (text: string): { line: string; number: number }[] => {
-  const out: { line: string; number: number }[] = [];
+const proseLines = (text: string): ProseLine[] => {
+  const out: ProseLine[] = [];
   let fence: string | null = null;
   text.split(/\r?\n/).forEach((line, i) => {
     const marker = FENCE.exec(line)?.[1];
@@ -266,7 +339,7 @@ const checkReferences = (
   file: string,
   text: string,
   topLevel: Set<string>,
-  report: (line: number, code: Finding["code"], message: string, path?: string) => void,
+  report: ReportFinding,
 ): void => {
   const missingPaths: { path: string; number: number }[] = [];
   for (const { line, number } of proseLines(text)) {
@@ -291,10 +364,7 @@ const checkReferences = (
     }
   }
 
-  const ignored = gitIgnored(
-    root,
-    [...new Set(missingPaths.map(({ path }) => path))],
-  );
+  const ignored = gitIgnored(root, [...new Set(missingPaths.map(({ path }) => path))]);
   for (const { path, number } of missingPaths)
     if (!ignored.has(path)) report(number, "dead-path", `\`${path}\` does not exist`, path);
 };
@@ -311,7 +381,12 @@ const isWaived = (waiver: Waiver, finding: Finding): boolean =>
   waiver.file === finding.file &&
   waiver.path === finding.path;
 
-const isComplete = (waiver: Waiver): boolean => Boolean(waiver.file && waiver.path && waiver.reason?.trim());
+export const isComplete = (waiver: Waiver): waiver is CompleteWaiver =>
+  typeof waiver.file === "string" &&
+  waiver.file.length > 0 &&
+  typeof waiver.path === "string" &&
+  waiver.path.length > 0 &&
+  isNonEmptyString(waiver.reason);
 
 // A waiver needs a reason, and one that no longer matches is reported so the list cannot rot.
 export const applyWaivers = (
@@ -332,7 +407,7 @@ export const applyWaivers = (
       });
     else if (!findings.some(finding => isWaived(waiver, finding)))
       kept.push({
-        file: waiver.file!,
+        file: waiver.file,
         line: 1,
         code: "stale-waiver",
         message: `\`${waiver.path}\` is waived by ${entry} but no longer reported here`,
@@ -353,7 +428,7 @@ export const checkRepo = (
   const findings: Finding[] = [];
   for (const file of files) {
     const text = readFileSync(join(root, file), "utf8");
-    const report = (line: number, code: Finding["code"], message: string, path?: string): void => {
+    const report: ReportFinding = (line, code, message, path): void => {
       findings.push({ file, line, code, message, ...(path && { path }) });
     };
     checkFrontmatter(file, text, report);
