@@ -9669,6 +9669,32 @@
     "cta": "Open Perps"
   },
   "predictions": {
+    "binding": {
+      "preparing": "Preparing the signature",
+      "title": "Confirm account ownership on your {{productName}}",
+      "description": "Follow the instructions displayed on your Secure Screen",
+      "settingUp": {
+        "title": "Setting up your trading account"
+      },
+      "setUp": {
+        "created": "Trading account created",
+        "found": "Trading account found",
+        "description": "Your trading account is ready to use.",
+        "continue": "Continue"
+      },
+      "mismatch": {
+        "title": "This signature doesn't match the account",
+        "description": "Connect the Ledger that holds this account, with the same passphrase if you use one, then try again."
+      },
+      "setupFailed": {
+        "title": "Your trading account couldn't be set up",
+        "failed-deploy": "MoonPay couldn't deploy your trading wallet.",
+        "failed-permission": "MoonPay couldn't set up your trading wallet's permissions.",
+        "timeout": "The setup is taking too long.",
+        "unavailable": "MoonPay couldn't be reached.",
+        "unknown": "Something went wrong while setting it up."
+      }
+    },
     "onboarding": {
       "intro": {
         "title": "Trade on future events",
