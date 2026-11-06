@@ -26,3 +26,18 @@ existing current/lifetime PnL definitions remain unchanged. Historical return-se
 and data are delivered separately.
 Routing, legacy portfolio access, formatting and widgets belong to host adapters. No global
 portfolio state is written and no user data is persisted here.
+
+## Tracking
+
+The Analytics rows of the tracking plan ([Account detail - Tracking Plan](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/7644020738))
+are encoded in `src/tracking/accountAnalyticsTracking.ts`. The module is **pure**: it builds
+payloads, and the filters view model calls `track(...)`. The banner on the account page is
+tracked by `@features/flow-account-detail`.
+
+| Event | When | Properties |
+| --- | --- | --- |
+| `button_clicked` | A filter dropdown opens | `button`: `asset filter` or `account filter`, `page`: `Analytics` |
+| `filter_changed` | Another option is picked (not when the current one is re-selected) | `filter`: `Asset` or `Account`, `page`: `Analytics`, `value`, `previousValue` |
+
+`value` and `previousValue` are the asset name for the asset filter and the network name for the
+account filter, never the account name. The "All" options send `all`.

@@ -7999,6 +7999,9 @@ importers:
       '@domain/entity-currency-fiat':
         specifier: workspace:*
         version: link:../../../domain/entity/currency-fiat
+      '@shared/analytics':
+        specifier: workspace:*
+        version: link:../../../shared/analytics
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
