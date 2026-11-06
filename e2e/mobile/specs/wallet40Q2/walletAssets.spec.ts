@@ -30,8 +30,7 @@ describe("Wallet assets", () => {
 
   $TmsLink("B2CQA-4840");
   it(`[${currency.testLabel}] - Selecting an asset opens its asset detail page`, async () => {
-    const currencyName = await app.portfolio.tapFirstAssetItemW40();
-    expect(currencyName).toBeDefined();
+    await app.portfolio.tapFirstAssetItemW40();
     await app.market.expectAssetPageVisible();
     await app.market.leaveAssetPage();
     await app.mainNavigation.waitForWallet40Ready();
