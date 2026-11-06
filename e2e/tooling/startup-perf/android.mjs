@@ -1,7 +1,16 @@
 import { writeFile } from "node:fs/promises";
-import { log, run, sleep } from "./exec.mjs";
+import { DEVICE_QUERY_TIMEOUT_MS, INSTALL_TIMEOUT_MS, log, run, sleep } from "./exec.mjs";
 
 /** @import { Platform } from "./types.mjs" */
+
+const EMULATOR_PAUSE_TIMEOUT_MS = 30_000;
+// Before the screen state is read again after a wake key.
+const WAKE_SETTLE_MS = 1000;
+// Before the dialog is checked again after its process was killed.
+const DIALOG_RESTART_MS = 5000;
+// Before the next hierarchy read: a fling coasts longer than a swipe.
+const FLING_SETTLE_MS = 1500;
+const SWIPE_SETTLE_MS = 800;
 
 /**
  * Android emulators, through adb.
@@ -15,7 +24,7 @@ export function createAndroid({ appId }) {
       await run("adb", ["-s", device, "uninstall", appId], { allowFail: true });
       // --no-incremental: an incremental install skips install-time dexopt on Android 16.
       await run("adb", ["-s", device, "install", "--no-incremental", "-r", "-g", apk], {
-        timeoutMs: 600_000,
+        timeoutMs: INSTALL_TIMEOUT_MS,
       });
       this.components.delete(device);
     },
@@ -85,7 +94,7 @@ export function createAndroid({ appId }) {
             "shell",
             "dumpsys power | grep -m1 mWakefulness=; dumpsys window | grep -m1 mCurrentFocus=",
           ],
-          { allowFail: true, timeoutMs: 20_000 },
+          { allowFail: true, timeoutMs: DEVICE_QUERY_TIMEOUT_MS },
         );
         return parseScreenState(stdout);
       };
@@ -101,7 +110,7 @@ export function createAndroid({ appId }) {
           allowFail: true,
         },
       );
-      await sleep(1000);
+      await sleep(WAKE_SETTLE_MS);
       return { ...(await read()), wokenFrom: before };
     },
     async blockingDialog(device) {
@@ -133,7 +142,7 @@ export function createAndroid({ appId }) {
             { allowFail: true },
           );
         }
-        await sleep(5000);
+        await sleep(DIALOG_RESTART_MS);
         pkg = await this.blockingDialog(device);
       }
       return cleared;
@@ -141,14 +150,14 @@ export function createAndroid({ appId }) {
     // Freezes the emulator's vCPUs; adb commands sent to it wait until "avd start".
     async pause(device) {
       const { stdout } = await run("adb", ["-s", device, "emu", "avd", "stop"], {
-        timeoutMs: 30_000,
+        timeoutMs: EMULATOR_PAUSE_TIMEOUT_MS,
       });
       if (!/^OK/m.test(stdout)) throw new Error(`avd stop on ${device}: ${stdout.trim()}`);
       return true;
     },
     async resume(device) {
       const { stdout } = await run("adb", ["-s", device, "emu", "avd", "start"], {
-        timeoutMs: 30_000,
+        timeoutMs: EMULATOR_PAUSE_TIMEOUT_MS,
       });
       if (!/^OK/m.test(stdout)) throw new Error(`avd start on ${device}: ${stdout.trim()}`);
     },
@@ -163,7 +172,7 @@ export function createAndroid({ appId }) {
           "shell",
           `echo "epoch \${EPOCHREALTIME:-$(date +%s.%N)}"; cat /proc/uptime; cat /proc/$(pidof -s ${appId})/stat`,
         ],
-        { allowFail: true, timeoutMs: 20_000 },
+        { allowFail: true, timeoutMs: DEVICE_QUERY_TIMEOUT_MS },
       );
       const after = Date.now();
       if (failed) return null;
@@ -175,7 +184,7 @@ export function createAndroid({ appId }) {
     async pid(device) {
       const { stdout, failed } = await run("adb", ["-s", device, "shell", "pidof", "-s", appId], {
         allowFail: true,
-        timeoutMs: 20_000,
+        timeoutMs: DEVICE_QUERY_TIMEOUT_MS,
       });
       const pid = Number(stdout.trim());
       return failed || !Number.isInteger(pid) || pid <= 0 ? null : pid;
@@ -199,7 +208,7 @@ export function createAndroid({ appId }) {
             allowFail: true,
           });
         }
-        await sleep(1500);
+        await sleep(FLING_SETTLE_MS);
         return;
       }
       const from = String(Math.round(height * 0.75));
@@ -207,7 +216,7 @@ export function createAndroid({ appId }) {
       await run("adb", ["-s", device, "shell", "input", "swipe", x, from, x, to, "600"], {
         allowFail: true,
       });
-      await sleep(800);
+      await sleep(SWIPE_SETTLE_MS);
     },
     async scrollToEnd(device) {
       await this.scrollDown(device, { fling: true });

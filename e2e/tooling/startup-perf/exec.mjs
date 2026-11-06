@@ -2,6 +2,10 @@ import { execFile } from "node:child_process";
 
 /** @import { RunResult } from "./types.mjs" */
 
+export const INSTALL_TIMEOUT_MS = 600_000;
+// A query of a device's state: its processes, screen or clock.
+export const DEVICE_QUERY_TIMEOUT_MS = 20_000;
+
 /** @param {string} message */
 export const log = message => console.log(`[${new Date().toISOString().slice(11, 19)}] ${message}`);
 

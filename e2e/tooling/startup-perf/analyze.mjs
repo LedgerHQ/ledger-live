@@ -61,7 +61,8 @@ export function failedRows(rows) {
   return !rows.length || rows.some(r => /^(FAIL|Not detected|Not enough pairs)/.test(r.verdict));
 }
 
-function verdictFor(preset, hl, thresholdMs) {
+/** @param {{ preset: string, hl: ReturnType<typeof hodgesLehmann>, thresholdMs: number }} options */
+function verdictFor({ preset, hl, thresholdMs }) {
   if (!hl || hl.low === null) return "Not enough pairs";
   const ci = `[${Math.round(hl.low)}, ${Math.round(hl.high)}]`;
   if (preset === "aa-noise") {
@@ -272,7 +273,7 @@ export function summarise(samples, { preset, thresholdMs }) {
         verdict ??
         (d.thinPhase
           ? `Not enough pairs: ${d.pairsPerPhase[0]} before the device swap, ${d.pairsPerPhase[1]} after (${MIN_PAIRS_PER_PHASE} needed on each side)`
-          : verdictFor(preset, d.hl, thresholdMs)),
+          : verdictFor({ preset, hl: d.hl, thresholdMs })),
     });
     const withoutEpoch = ["A", "B"].filter(
       side =>

@@ -55,12 +55,12 @@ export interface MaestroCall {
 export interface Maestro {
   /** The calls since the last reset: run.mjs keeps them with each sample. */
   calls: MaestroCall[];
-  invoke(
-    device: string,
-    command: string,
-    args: string[],
-    options: { timeoutMs: number },
-  ): Promise<RunResult>;
+  invoke(options: {
+    device: string;
+    command: string;
+    args?: string[];
+    timeoutMs: number;
+  }): Promise<RunResult>;
 }
 
 export interface ProcessStart {

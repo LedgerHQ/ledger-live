@@ -181,10 +181,10 @@ async function main() {
   );
 
   for (const scenario of SCENARIOS) {
-    const userdata = await loadUserdata(
-      opts["userdata-dir"],
-      scenario === "accounts" ? opts["accounts-userdata"] : opts["no-accounts-userdata"],
-    );
+    const userdata = await loadUserdata({
+      dir: opts["userdata-dir"],
+      names: scenario === "accounts" ? opts["accounts-userdata"] : opts["no-accounts-userdata"],
+    });
     log(`=== ${scenario}: ${userdata.accounts.length} accounts from ${userdata.names.join(", ")}`);
     for (const phase of [0, 1]) {
       const placement =
@@ -196,10 +196,10 @@ async function main() {
         const device = placement[side];
         log(`installing ${side} on ${device} and injecting ${scenario}`);
         await P.install(device, APPS[side]);
-        await inject(device, userdata, side).catch(async error => {
+        await inject({ device, userdata, side }).catch(async error => {
           log(`  injection failed (${error.message}); retrying once`);
           await P.stop(device);
-          await inject(device, userdata, side);
+          await inject({ device, userdata, side });
         });
         for (let w = 0; w < WARMUPS; w++) {
           await sample({ scenario, phase, round: -1 - w, side, device, warmup: true });

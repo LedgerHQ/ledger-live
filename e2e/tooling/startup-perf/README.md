@@ -60,14 +60,15 @@ write no remote Nx, pnpm, Gradle or AVD cache: they run with develop's role whil
 
 ## A launch
 
-- **Inject once per install.** `run.mjs` launches with `wsPort`, sends the settings, accounts and
+- **Inject once per install.** `inject.mjs` launches with `wsPort`, sends the settings, accounts and
   post-onboarding state of `e2e/mobile/userdata` through `bridge.mjs`, sends the settings again
   10 s later (the store's save effect may not be mounted yet), and fails when the app reports `MOCK`
   or `DETOX`. Feature flags are not imported: they come from production Firebase.
 - **Launch** with a plain `am start -W` / `simctl launch`, no test tool attached, wait 5 s, then let
   Maestro open the Performance screen and read "App startup time" and the startup events. Measured
   reads use `read-performance-quick.yaml`; warm-ups and retries use the full flow, whose optional
-  taps cost ~7 s when no prompt shows.
+  taps cost ~7 s when no prompt shows. The flows select by text: the Debug and Performance screens
+  have no testIDs, on develop as on the older builds measured.
 - **Alternate devices** on every launch: right after a launch on the same simulator, one was
   ~270 ms faster (run 39731729203). Halfway through each scenario A and B swap devices, so the
   difference between the devices cancels out. On Android the other emulator is paused from the
