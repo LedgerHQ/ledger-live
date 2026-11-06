@@ -84,6 +84,7 @@ describe("createLedgerSyncMiddleware", () => {
     ["a reset", resetTrustchainStore()],
     ["a new pairing", setTrustchain({ ...trustchain, rootId: "paired-root-id" })],
     ["a key rotation", setTrustchain({ ...trustchain, applicationPath: "m/0'/16'/1'" })],
+    ["a token blacklist change", blacklist(["token"])],
   ])("should drop an update whose resolution settles after %s", async (_, action) => {
     const store = createStore(ACTIVATED);
     getCloudSyncSdk(store.dispatch);

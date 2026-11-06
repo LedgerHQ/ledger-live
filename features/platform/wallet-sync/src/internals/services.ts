@@ -53,9 +53,10 @@ export function createLedgerSyncServices<S extends LedgerSyncStateRoot, LocalSta
     slug: liveSlug,
     trustchainSdk: lkrpSdk,
     getCurrentVersion: () => selectWalletSyncState(getState()).version,
-    saveNewUpdate: (event, trustchain) =>
-      makeSaveNewUpdate({
-        walletsync: cloudSync.walletsyncSelector(getState()),
+    saveNewUpdate: (event, trustchain) => {
+      const walletsync = cloudSync.walletsyncSelector(getState());
+      return makeSaveNewUpdate({
+        walletsync,
         getState,
         latestDistantStateSelector: state => selectWalletSyncState(state).data,
         latestDistantVersionSelector: state => selectWalletSyncState(state).version,
@@ -63,13 +64,18 @@ export function createLedgerSyncServices<S extends LedgerSyncStateRoot, LocalSta
         // A call or a resolution that settles after a reset, a new pairing or a key rotation would
         // restore the old backup's data, so the check runs as it saves.
         saveUpdate: (data, version, localState) => {
-          const live = trustchainSelector(getState());
+          const state = getState();
+          const live = trustchainSelector(state);
           const sameBackup =
             live?.rootId === trustchain.rootId &&
             live.applicationPath === trustchain.applicationPath;
-          if (sameBackup) saveUpdate(data, version, localState);
+          // New data resolved with the walletsync of a replaced token blacklist is pulled again.
+          const resolvedWithCurrentWalletsync =
+            event.type !== "new-data" || cloudSync.walletsyncSelector(state) === walletsync;
+          if (sameBackup && resolvedWithCurrentWalletsync) saveUpdate(data, version, localState);
         },
-      })(event),
+      })(event);
+    },
   });
 
   // A pairing joins the other instance to this one's trustchain when it has one.
