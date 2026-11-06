@@ -29,7 +29,7 @@ import {
 } from "../constants";
 import { buildAssetsPagePath } from "../utils/buildAssetsPagePath";
 import { padItems } from "../utils/assetTableHelpers";
-import { dadaIdToMarketId } from "@ledgerhq/live-common/market/utils/index";
+import { parseMarketRef, toMarketId } from "@domain/api-aggregated-assets";
 import {
   ASSETS_TRACKING_PAGE_NAME,
   CRYPTO_TRACKING_PAGE_NAME,
@@ -103,7 +103,7 @@ export function useAssetsViewModel(): AssetsViewModelResult {
       const rawId = item.marketId ?? item.currency.id;
       navigate(
         item.isPlaceholder
-          ? `/asset/${encodeURIComponent(dadaIdToMarketId(rawId))}`
+          ? `/asset/${encodeURIComponent(toMarketId(parseMarketRef(rawId)))}`
           : `/asset/${item.currency.id}`,
       );
     },

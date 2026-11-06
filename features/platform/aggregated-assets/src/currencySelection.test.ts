@@ -10,6 +10,9 @@ import {
   mockUsdcAssetsData,
 } from "@domain/api-aggregated-assets/mock";
 import type { AssetsDataWithPagination } from "@domain/api-aggregated-assets";
+import { AggregatedAssetIdSchema } from "@domain/entity-aggregated-asset";
+
+const assetId = (raw: string) => AggregatedAssetIdSchema.parse(raw);
 
 describe("currencySelection", () => {
   describe("selectCurrency", () => {
@@ -31,7 +34,12 @@ describe("currencySelection", () => {
       const data: AssetsDataWithPagination = {
         ...mockAssetsDataWithPagination,
         cryptoAssets: {
-          unknown: { id: "unknown", ticker: "UNK", name: "Unknown", assetsIds: {} },
+          [assetId("unknown")]: {
+            id: assetId("unknown"),
+            ticker: "UNK",
+            name: "Unknown",
+            assetsIds: {},
+          },
         },
       };
 
@@ -90,13 +98,13 @@ describe("currencySelection", () => {
       ...mockAssetsDataWithPagination,
       cryptoAssets: {
         "urn:crypto:meta-currency:usd_coin": {
-          id: "urn:crypto:meta-currency:usd_coin",
+          id: assetId("urn:crypto:meta-currency:usd_coin"),
           ticker: "USDC",
           name: "USDC",
           assetsIds: { ethereum: usdcOnEthereum, solana: usdcOnSolana },
         },
         "urn:crypto:meta-currency:arc_native_usdc": {
-          id: "urn:crypto:meta-currency:arc_native_usdc",
+          id: assetId("urn:crypto:meta-currency:arc_native_usdc"),
           ticker: "USDC",
           name: "USDC",
           assetsIds: { arc: "arc" },
@@ -105,8 +113,8 @@ describe("currencySelection", () => {
       currenciesOrder: {
         ...mockAssetsDataWithPagination.currenciesOrder,
         metaCurrencyIds: [
-          "urn:crypto:meta-currency:usd_coin",
-          "urn:crypto:meta-currency:arc_native_usdc",
+          assetId("urn:crypto:meta-currency:usd_coin"),
+          assetId("urn:crypto:meta-currency:arc_native_usdc"),
         ],
       },
     } as AssetsDataWithPagination;
@@ -132,7 +140,7 @@ describe("currencySelection", () => {
         ...usdcData,
         cryptoAssets: {
           ethereum: {
-            id: "ethereum",
+            id: assetId("ethereum"),
             ticker: "ETH",
             name: "Ethereum",
             assetsIds: { base: "base" },
