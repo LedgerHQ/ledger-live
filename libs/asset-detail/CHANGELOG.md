@@ -1,5 +1,12 @@
 # @ledgerhq/asset-detail
 
+## 0.12.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@38.5.1
+
 ## 0.12.3-hotfix.0
 
 ### Patch Changes

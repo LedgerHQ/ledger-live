@@ -1,5 +1,12 @@
 # @ledgerhq/coin-tester-vechain
 
+## 0.1.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@38.5.1
+
 ## 0.1.12-hotfix.0
 
 ### Patch Changes

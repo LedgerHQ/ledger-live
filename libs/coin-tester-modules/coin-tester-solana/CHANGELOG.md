@@ -1,5 +1,13 @@
 # @ledgerhq/coin-tester-solana
 
+## 1.28.2
+
+### Patch Changes
+
+- Updated dependencies [[`b307620`](https://github.com/LedgerHQ/ledger-live/commit/b30762011796445f46a4696609138d47427ed458)]:
+  - @ledgerhq/coin-solana@2.6.1
+  - @ledgerhq/live-common@38.5.1
+
 ## 1.28.2-hotfix.0
 
 ### Patch Changes

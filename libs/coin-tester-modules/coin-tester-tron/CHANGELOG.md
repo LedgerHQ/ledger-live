@@ -1,5 +1,12 @@
 # @ledgerhq/coin-tester-tron
 
+## 0.9.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@38.5.1
+
 ## 0.9.2-hotfix.0
 
 ### Patch Changes

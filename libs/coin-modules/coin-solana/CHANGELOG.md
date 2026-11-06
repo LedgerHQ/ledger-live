@@ -1,5 +1,11 @@
 # @ledgerhq/coin-solana
 
+## 2.6.1
+
+### Patch Changes
+
+- [#24459](https://github.com/LedgerHQ/ledger-live/pull/24459) [`b307620`](https://github.com/LedgerHQ/ledger-live/commit/b30762011796445f46a4696609138d47427ed458) Thanks [@henri-ly](https://github.com/henri-ly)! - fix(coin-solana): sign a partner-built transaction whose fees another account pays (Jupiter gasless and RFQ swaps): crafting accepts any sender among the transaction's required signers instead of the fee payer only, crafting and fee estimation keep the partner's blockhash when another signer still has to sign (and crafting reports a blockhash's expiry only when it fetched that blockhash), and combine places the device signature in the sender's slot rather than at index 0
+
 ## 2.6.1-hotfix.0
 
 ### Patch Changes

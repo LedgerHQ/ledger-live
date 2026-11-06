@@ -1,5 +1,12 @@
 # @ledgerhq/test-utils
 
+## 0.5.17
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@38.5.1
+
 ## 0.5.17-hotfix.0
 
 ### Patch Changes

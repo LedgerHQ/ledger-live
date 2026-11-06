@@ -1,5 +1,12 @@
 # @ledgerhq/live-e2e-shared
 
+## 0.17.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@38.5.1
+
 ## 0.17.1-hotfix.0
 
 ### Patch Changes
