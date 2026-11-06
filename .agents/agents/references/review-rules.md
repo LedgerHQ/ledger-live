@@ -4,13 +4,13 @@ CI runs `pnpm lint:arch` (whatever that script runs in the root `package.json`).
 
 ## Entity state versus flow state
 
-**Rule:** Data several flows or screens must read belongs in `domain/entity/<name>`. State only this flow owns while the journey is open stays in that flow package `src/state/` (or the flow-owned reducer). Never promote flow state to an entity just to share it.
+**Rule:** Classify by ownership, not by how many readers a value has. Shared business data that should be the entity vocabulary across packages belongs in `domain/entity/<name>`. Journey-owned state (drafts, steps, filters, or other UI state this flow package owns while the journey runs) stays in that flow `src/state/` (or its reducer), including when the app registers or persists it for the flow. Never promote flow-owned state to an entity just because several screens or the app surface read it inside the same journey.
 
-**Why:** Entity slices are the shared vocabulary; flow state is journey-scoped. Mixing them hides coupling.
+**Why:** Entity slices are the cross-journey vocabulary; flow state is journey-scoped. Reader count alone mislabels flow-owned data as entity data.
 
-**How to check:** For new state in the diff, ask whether anything outside this flow package must read the same data. If yes, it belongs in `domain/entity`; if only this journey needs it, keep it in the flow package. Read `.agents/skills/structure-flow/SKILL.md` (entity or flow state) and `.agents/skills/flow-package/SKILL.md` (flow state versus entity state).
+**How to check:** For new state in the diff, use `structure-flow` and `flow-package` heuristics: is this the shared entity model, or state only this flow owns? If only this flow package should own it, keep it there. Read `.agents/skills/structure-flow/SKILL.md` (references/heuristics, entity versus flow state) and `.agents/skills/flow-package/SKILL.md`.
 
-**Example:** A filter only `@features/flow-pay-balance` uses stays in that flow `state/`; contacts many features read live in `@domain/entity-contact`.
+**Example:** A filter only `@features/flow-pay-balance` uses stays in that flow `state/`; contact records many features read live in `@domain/entity-contact`.
 
 ## One flow, one journey
 
