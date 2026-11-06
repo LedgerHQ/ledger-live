@@ -24,6 +24,12 @@ on:
       mobile_js_hash_android:
         description: "Nx hash of live-mobile:e2e:bundle:android, set when ledger-live-mobile is affected"
         value: ${{ jobs.nx-affected.outputs.mobile_js_hash_android }}
+      mobile_native_fingerprint_ios:
+        description: "Expo fingerprint of the live-mobile iOS native project, set when ledger-live-mobile is affected"
+        value: ${{ jobs.nx-affected.outputs.mobile_native_fingerprint_ios }}
+      mobile_native_fingerprint_android:
+        description: "Expo fingerprint of the live-mobile Android native project, set when ledger-live-mobile is affected"
+        value: ${{ jobs.nx-affected.outputs.mobile_native_fingerprint_android }}
 
 permissions:
   contents: read
@@ -40,6 +46,8 @@ jobs:
       paths: ${{ steps.nx-affected.outputs.paths }}
       mobile_js_hash_ios: ${{ steps.mobile-js-hash.outputs.ios }}
       mobile_js_hash_android: ${{ steps.mobile-js-hash.outputs.android }}
+      mobile_native_fingerprint_ios: ${{ steps.mobile-native-fingerprint.outputs.ios }}
+      mobile_native_fingerprint_android: ${{ steps.mobile-native-fingerprint.outputs.android }}
     steps:
       - name: Checkout head branch
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -101,3 +109,11 @@ jobs:
         if: ${{ contains(steps.nx-affected.outputs.paths, 'ledger-live-mobile') }}
         shell: bash
         run: node tools/nx/task-hash.mjs live-mobile e2e:bundle ios android | tee -a "$GITHUB_OUTPUT"
+
+      # Reuses the install above, so the mobile e2e workflow can key the native builds on what they are built
+      # from rather than on hashFiles. Guard until release and hotfix have the script.
+      - name: Compute mobile native fingerprints
+        id: mobile-native-fingerprint
+        if: ${{ contains(steps.nx-affected.outputs.paths, 'ledger-live-mobile') && hashFiles('apps/ledger-live-mobile/scripts/native-fingerprint.mjs') != '' }}
+        shell: bash
+        run: node apps/ledger-live-mobile/scripts/native-fingerprint.mjs ios android | tee -a "$GITHUB_OUTPUT"
