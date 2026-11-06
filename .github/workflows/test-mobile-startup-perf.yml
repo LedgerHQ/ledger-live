@@ -2,21 +2,7 @@ name: "[Mobile] - Startup Performance - Manual"
 run-name: >
   @Mobile startup perf • ${{ inputs.preset }} • ${{ inputs.platforms }} • ${{ github.ref_name }} • ${{ github.actor }}
 
-# Compares the startup time of two Ledger Wallet Mobile builds, A and B, as read in
-# Settings > Debug > Performance > App startup time and with the native start (process start to
-# first JS import) added back: the automated version of the manual checks B2CQA-6555 (iOS) and
-# B2CQA-6593 (Android). See e2e/tooling/startup-perf/run.mjs and analyze.mjs.
-#
-# Presets:
-#   prod-vs-release   the latest live-mobile@X.Y.Z tag (A) against the release branch (B); B fails
-#                     when it is slower than A by more than threshold_ms
-#   custom            any two refs, same rule
-#   aa-noise          one build against itself: how precise the setup is
-#   known-regression  LIVE-36190 present vs fixed (03d6f91 vs 74af11a): does it still see a regression?
-#
-# Builds: the E2E detoxPreRelease (Android) / Release simulator (iOS) build with .env.mock.prerelease
-# and the JS bundled in the binary, made prod-like by e2e/tooling/startup-perf/prepare-build.sh.
-# The scripts and userdata always come from this workflow's ref, so older refs can be measured.
+# B2CQA-6555 (iOS) and B2CQA-6593 (Android). See e2e/tooling/startup-perf/README.md.
 
 on:
   workflow_dispatch:
@@ -68,15 +54,12 @@ permissions:
 
 env:
   APP_ID: com.ledger.live
-  # LIVE-36190: the regression was fixed by 74af11a (#21001); its parent still has it.
+  # LIVE-36190: fixed by #21001, present in its parent.
   KNOWN_REGRESSION_SHA: 03d6f9155b084a07e285e37617d16d7f4fab8b25
   KNOWN_FIX_SHA: 74af11a25844226efdc5570f47e40f98c51e462c
   MAESTRO_VERSION: 2.10.0
   MAESTRO_SHA256: 29b675e10cc12080e445e9bfb2e2b4e4dfb9c0f2e30d5884120d258b5e1cd991
   RESULTS_DIR: startup-perf-results
-  # Two emulators share the 8-CPU runner, the idle one paused during each launch (the E2E AVD has
-  # 2 cores). 4 was faster with tighter A/A margins than 3 or 2 (runs 39989878998, 39966762708,
-  # 39970514979).
   PERF_AVD_CORES: "4"
 
 jobs:
@@ -104,16 +87,13 @@ jobs:
           REPO_URL: ${{ github.server_url }}/${{ github.repository }}.git
         run: |
           set -euo pipefail
-          # Fewer than 6 pairs give no 95% interval, so the analysis could only fail.
           if ! [[ "$PAIRS" =~ ^[0-9]+$ ]] || (( PAIRS < 6 || PAIRS % 2 )); then
             echo "::error::pairs must be an even number ≥ 6, got '$PAIRS'"; exit 1
           fi
           [[ "$THRESHOLD" =~ ^[0-9]+$ ]] || { echo "::error::threshold_ms must be a number"; exit 1; }
-          # A branch or tag of this repository, as a commit SHA. No raw SHA: one from a fork's pull
-          # request can be fetched here too, and its scripts would run with this workflow's secrets.
+          # No raw SHA: a fork's commit can be fetched here too and would run with this workflow's secrets.
           resolve() {
             local ref="$1" out sha
-            # An annotated tag's "^{}" line is the commit it points to.
             out=$(git ls-remote "$REPO_URL" "refs/heads/$ref" "refs/tags/$ref" "refs/tags/$ref^{}")
             sha=$(awk -v t="refs/tags/$ref^{}" '$2 == t { print $1 }' <<< "$out")
             [[ -n "$sha" ]] || sha=$(awk -v h="refs/heads/$ref" -v t="refs/tags/$ref" '$2 == h || $2 == t { print $1; exit }' <<< "$out")
@@ -129,7 +109,6 @@ jobs:
                 [[ -n "$REF_A" ]] || { echo "::error::no live-mobile@X.Y.Z tag found"; exit 1; }
               fi
               if [[ -z "$REF_B" ]]; then
-                # The release branch only exists while a pre-release is in progress.
                 [[ -n "$(git ls-remote --heads "$REPO_URL" refs/heads/release)" ]] ||
                   { echo "::error::no release branch: no pre-release in progress (set ref_b, e.g. hotfix)"; exit 1; }
                 REF_B=release
@@ -144,7 +123,6 @@ jobs:
               A=$(resolve "$REF_A"); B=$(resolve "$REF_B"); SIDES='["a","b"]'
               LABEL_A="$REF_A"; LABEL_B="$REF_B" ;;
             aa-noise)
-              # Blank: the commit this run was dispatched on.
               if [[ -n "$REF_A" ]]; then A=$(resolve "$REF_A"); else A="$BRANCH_SHA"; fi
               B="$A"; SIDES='["a"]'
               LABEL_A="${REF_A:-$GITHUB_REF_NAME}"; LABEL_B="the same binary" ;;
@@ -182,7 +160,6 @@ jobs:
       fail-fast: true
       matrix:
         side: ${{ fromJSON(needs.plan.outputs.sides) }}
-    # 8 CPU like the E2E Android build; move to the 16 CPU runner if the JS bundler runs out of memory.
     runs-on: ledger-wallet-8cpu-aws-public-cached
     timeout-minutes: 120
     env:
@@ -204,11 +181,6 @@ jobs:
           sparse-checkout-cone-mode: false
           persist-credentials: false
 
-      # Older commits (e.g. the LIVE-36190 pair) don't install with the mise of setup-caches@develop:
-      # - two unused plugins declared as "owner/repo" are read as local folders (their tools are commented out);
-      # - the npm pin sometimes fails on a fresh runner ("requires configured install dependency node@…,
-      #   but its selected version is not installed"). Develop dropped it; installs use pnpm.
-      # Both are removed; the other tool versions stay the commit's own.
       - name: Adapt mise.toml of older commits
         run: |
           awk '/^\[/{section=$0} section=="[plugins]"{next} section=="[tools]" && /^npm *=/{next} {print}' mise.toml > "$RUNNER_TEMP/mise.toml"
@@ -217,8 +189,7 @@ jobs:
             cp "$RUNNER_TEMP/mise.toml" mise.toml
           fi
 
-      # No remote Nx or pnpm cache: this workflow runs from develop, where those caches would be
-      # written with develop's role while building any other ref.
+      # No remote Nx, pnpm or Gradle cache: they would be written with develop's role for another ref.
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
@@ -231,7 +202,6 @@ jobs:
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
-      # No Gradle cache either: it would be saved for develop after building another ref's code.
       - name: setup JDK 17
         uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
         with:
@@ -247,15 +217,12 @@ jobs:
         run: |
           pnpm i --frozen-lockfile --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --unsafe-perm
 
-      # The JS bundle imports the compiled output of the workspace libraries (live-common, native-ui…).
       - name: Build mobile dependencies
         run: pnpm build:llm:deps
 
       - name: Prepare the prod-like build
         run: bash .startup-perf/e2e/tooling/startup-perf/prepare-build.sh
 
-      # Same build type and env file as the E2E "production Firebase" build, but without
-      # SKIP_JS_BUNDLING, so Gradle bundles the JS into the APK like a store build.
       - name: Build detoxPreRelease APK (x86_64, JS bundled)
         env:
           E2E_ANDROID_ABI: x86_64
@@ -308,7 +275,6 @@ jobs:
           repository: LedgerHQ/ledger-live
           persist-credentials: false
 
-      # This workflow's scripts, which the commit being built may predate.
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           path: .startup-perf
@@ -316,7 +282,6 @@ jobs:
           sparse-checkout-cone-mode: false
           persist-credentials: false
 
-      # See the Android build.
       - name: Adapt mise.toml of older commits
         run: |
           awk '/^\[/{section=$0} section=="[plugins]"{next} section=="[tools]" && /^npm *=/{next} {print}' mise.toml > "$RUNNER_TEMP/mise.toml"
@@ -325,7 +290,7 @@ jobs:
             cp "$RUNNER_TEMP/mise.toml" mise.toml
           fi
 
-      # See the Android build: no remote Nx or pnpm cache.
+      # No remote caches, as in the Android build.
       - name: setup caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
@@ -347,15 +312,12 @@ jobs:
           command: pnpm i --frozen-lockfile --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --unsafe-perm
           new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --frozen-lockfile --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --unsafe-perm
 
-      # The JS bundle imports the compiled output of the workspace libraries (live-common, native-ui…).
       - name: Build mobile dependencies
         run: pnpm build:llm:deps
 
       - name: Prepare the prod-like build
         run: bash .startup-perf/e2e/tooling/startup-perf/prepare-build.sh
 
-      # Release configuration for the simulator with .env.mock.prerelease (production Firebase),
-      # with the JS bundled by Xcode.
       - name: Build Release simulator app (JS bundled)
         env:
           CARD_BAANX_API_URL: ${{ secrets.CARD_BAANX_API_URL }}
@@ -380,8 +342,6 @@ jobs:
           path: out/
           retention-days: 7
 
-  # One job per scenario, in parallel. Each job runs builds A and B on its own runner, so a
-  # difference between runners never enters B − A; it only halves the wall time.
   measure-android:
     name: "Android startup (2 emulators, ${{ matrix.scenario }})"
     needs: [plan, build-android]
@@ -390,13 +350,9 @@ jobs:
       fail-fast: false
       matrix:
         scenario: ${{ fromJSON(needs.plan.outputs.scenarios) }}
-    # Needs /dev/kvm: the runner for Android emulator jobs, whose image holds the toolchain and the
-    # E2E AVD.
     runs-on: ledger-wallet-8cpu-github-public-cached
     timeout-minutes: 300
     steps:
-      # Same as the E2E shards: the image's disk can be slow on first read, so read the
-      # preinstalled AVD in the background before "Duplicate the AVD" copies it.
       - name: Read the preinstalled AVD ahead (background)
         run: |
           [ -f "${HOME}/.android/avd-cache-key" ] || exit 0
@@ -408,8 +364,6 @@ jobs:
             echo "read $(du -sh "${HOME}/.android/avd" | cut -f1) in $(( $(date +%s) - start ))s, done $(date -u +%T)"
           ' >> "$log" 2>&1 &
 
-      # AVD_* and AVD_CACHE_KEY from develop's avd.env: the emulator measured is E2E's, whatever
-      # commit the builds come from.
       - name: Load AVD configuration
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@develop
         with:
@@ -421,8 +375,6 @@ jobs:
           # adb, build-tools and the emulator are on the image.
           install_sdk: "false"
 
-      # As in the E2E shards: use the image's AVD when its stamp matches the key, otherwise remove
-      # it so the R2 copy isn't extracted on top of it.
       - name: Check for a preinstalled AVD
         id: preinstalled-avd
         run: |
@@ -440,7 +392,6 @@ jobs:
           fi
           echo "found=false" >> "$GITHUB_OUTPUT"
 
-      # A miss (no copy in R2) fails the download; the next step then creates the AVD.
       - name: Download android emulator
         if: steps.preinstalled-avd.outputs.found != 'true'
         timeout-minutes: 10
@@ -487,7 +438,6 @@ jobs:
         with:
           node-version: 22
 
-      # One folder per build. A pattern matching a single artifact would unpack it straight into builds/.
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: startup-perf-android-a
@@ -499,14 +449,12 @@ jobs:
           name: startup-perf-android-b
           path: builds/b
 
-      # Signed with the same staging key as the E2E APKs.
       - name: Sign APKs
         env:
           KS_PATH: ${{ secrets.ANDROID_KEYSTORE_PATH }}
           KS_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
         run: |
           set -euo pipefail
-          # Same build-tools as the E2E signing step.
           BT="$ANDROID_HOME/build-tools/36.0.0"
           mkdir -p "$RESULTS_DIR/android"
           for dir in builds/a builds/b; do
@@ -531,7 +479,6 @@ jobs:
       - name: Report the AVD read-ahead
         run: cat "${RUNNER_TEMP}/avd-read-ahead.log" 2>/dev/null || echo "No preinstalled AVD to read ahead."
 
-      # Last before booting, so the read-ahead started at the top has had time to run.
       - name: Duplicate the AVD for the second emulator
         uses: LedgerHQ/ledger-live/tools/actions/composites/duplicate-avd@develop
         with:
@@ -556,8 +503,7 @@ jobs:
             for key in window_animation_scale transition_animation_scale animator_duration_scale; do
               adb -s "$serial" shell settings put global "$key" 1
             done
-            # Screen on and unlocked for the whole run, as Detox ensures for E2E: wake it, drop the
-            # keyguard, keep it on while plugged in (3 = AC + USB) and never time out.
+            # Screen on and unlocked for the whole run, as Detox ensures for E2E.
             adb -s "$serial" shell input keyevent KEYCODE_WAKEUP
             adb -s "$serial" shell locksettings set-disabled true || true
             adb -s "$serial" shell wm dismiss-keyguard
@@ -565,9 +511,7 @@ jobs:
             adb -s "$serial" shell settings put system screen_off_timeout 2147483647
             echo "$serial booted, $(adb -s "$serial" shell nproc | tr -d '\r') CPUs"
           done
-          # Cellular like the E2E emulators (tools/scripts/boot-android-emulators-ci.sh, which boots
-          # three emulators and can't be reused here): the emulated Wi-Fi delayed large answers by
-          # ~240–500 ms while the app is busy (runs 39941337433, 39966755704); cellular adds ~0 ms.
+          # Cellular like the E2E emulators (tools/scripts/boot-android-emulators-ci.sh).
           for serial in emulator-5554 emulator-5556; do
             adb -s "$serial" shell svc wifi disable
             cellular=false
@@ -581,7 +525,6 @@ jobs:
             done
             [[ "$cellular" == true ]] || echo "::warning title=Emulator not on cellular::$serial is not on cellular after 60 s"
           done
-          # Wait until post-boot work is done: 1-minute load average below 1 on both (max 15 min).
           deadline=$((SECONDS + 900))
           for serial in emulator-5554 emulator-5556; do
             idle=false
@@ -642,13 +585,11 @@ jobs:
     name: "iOS startup (2 simulators)"
     needs: [plan, build-ios]
     if: ${{ inputs.platforms != 'Android Only' }}
-    # One iOS measurement at a time on the shared Mac pool; Android jobs each get their own VM.
-    # queue: max keeps every waiting run in line (by default a new one replaces the waiting one).
+    # One iOS measurement at a time; queue: max keeps every waiting run instead of the latest.
     concurrency:
       group: mobile-startup-perf-ios
       cancel-in-progress: false
       queue: max
-    # Same pool as the iOS E2E tests.
     runs-on: ["qaa", macOS, ARM64, "performance-pool"]
     timeout-minutes: 300
     steps:
@@ -669,7 +610,6 @@ jobs:
           distribution: "zulu"
           java-version: "17"
 
-      # One folder per build. A pattern matching a single artifact would unpack it straight into builds/.
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: startup-perf-ios-a
@@ -702,25 +642,21 @@ jobs:
           echo "$BIN" >> "$GITHUB_PATH"
           "$BIN/maestro" --version
 
-      # Fresh simulators, so no state is left over from other jobs on this machine.
       - name: Create and boot two simulators
         timeout-minutes: 20
         run: |
           set -euo pipefail
-          # Called directly rather than through xcrun, so the alarm kills simctl itself (macOS has no
-          # `timeout`), as boot-ios-simulators-background does.
+          # simctl itself rather than xcrun, so the alarm kills it (macOS has no `timeout`).
           SIMCTL="$(xcrun -f simctl)"
           with_timeout() { perl -e 'alarm shift; exec @ARGV or die "exec failed: $!\n"' "$@"; }
-          # Simulators left booted by earlier E2E jobs on this pool would compete for the CPU.
           xcrun simctl list devices booted
           xcrun simctl shutdown all || true
           RUNTIME=$(xcrun simctl list runtimes iOS -j | jq -r '[.runtimes[] | select(.isAvailable)] | last | .identifier')
-          # Newest "iPhone N Pro" the runtime supports (list order differs between Xcode versions).
+          # Newest "iPhone N Pro" of the runtime.
           TYPE=$(xcrun simctl list runtimes iOS -j | jq -r --arg rt "$RUNTIME" '.runtimes[] | select(.identifier==$rt) | [.supportedDeviceTypes[] | select(.name|test("^iPhone [0-9]+ Pro$"))] | max_by(.name|capture("(?<n>[0-9]+)").n|tonumber) | .identifier')
           [[ -n "$TYPE" && "$TYPE" != null ]] || { echo "::error::no iPhone Pro device type for $RUNTIME"; exit 1; }
           echo "Runtime $RUNTIME, device type $TYPE"
-          # Each id is saved as soon as the simulator exists, so "Delete simulators" removes it even
-          # when booting fails.
+          # Each id is saved at once, so "Delete simulators" removes it even when booting fails.
           SIM_1=$(xcrun simctl create "Startup Perf 1" "$TYPE" "$RUNTIME")
           echo "SIM_1=$SIM_1" >> "$GITHUB_ENV"
           SIM_2=$(xcrun simctl create "Startup Perf 2" "$TYPE" "$RUNTIME")
@@ -729,6 +665,7 @@ jobs:
             with_timeout 300 "$SIMCTL" boot "$udid"
             with_timeout 300 "$SIMCTL" bootstatus "$udid" -b
           done
+          # First-boot work goes on after bootstatus: let it settle, like Android's idle-load wait.
           sleep 60
 
       - name: Measure
