@@ -8,7 +8,7 @@ import {
   type Observable,
   type Subscription,
 } from "rxjs";
-import type { LedgerSyncJobState } from "../ledgerSyncJobState";
+import type { LedgerSyncJobState } from "../intents/ledgerSyncJobState";
 
 type LedgerSyncJobStateType = LedgerSyncJobState["type"];
 type LedgerSyncJobStateOf<T extends LedgerSyncJobStateType> = Extract<

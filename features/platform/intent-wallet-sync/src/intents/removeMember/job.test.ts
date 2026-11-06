@@ -19,7 +19,7 @@ import {
   fakeTrustchainSdk,
   namedError,
   recordJob,
-} from "../internals/ledgerSyncJobTestKit";
+} from "../../internals/ledgerSyncJobTestKit";
 import { removeMemberIntentJob } from "./job";
 
 type RemoveMember = TrustchainSDK["removeMember"];

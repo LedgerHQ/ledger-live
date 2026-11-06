@@ -1,6 +1,6 @@
 import type { Job } from "@features/platform-device-intent";
 import type { TrustchainResult } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { createLedgerSyncJob } from "../internals/createLedgerSyncJob";
+import { createLedgerSyncJob } from "../../internals/createLedgerSyncJob";
 import type { AddMemberIntentInput, AddMemberJobState } from "./types";
 
 /**

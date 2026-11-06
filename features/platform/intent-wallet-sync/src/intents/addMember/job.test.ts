@@ -20,7 +20,7 @@ import {
   fakeTrustchainSdk,
   namedError,
   recordJob,
-} from "../internals/ledgerSyncJobTestKit";
+} from "../../internals/ledgerSyncJobTestKit";
 import { addMemberIntentJob } from "./job";
 
 type GetOrCreateTrustchain = TrustchainSDK["getOrCreateTrustchain"];

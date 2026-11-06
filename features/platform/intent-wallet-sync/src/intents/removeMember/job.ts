@@ -1,6 +1,6 @@
 import type { Job } from "@features/platform-device-intent";
 import type { Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { createLedgerSyncJob } from "../internals/createLedgerSyncJob";
+import { createLedgerSyncJob } from "../../internals/createLedgerSyncJob";
 import type { RemoveMemberIntentInput, RemoveMemberJobState } from "./types";
 
 /** Removes a member from the trustchain, which rotates its key with the device of the DIE session. */
