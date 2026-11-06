@@ -1,6 +1,6 @@
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createIntent } from "@features/platform-device-intent";
+import { createIntent, isDeviceDisconnectedError } from "@features/platform-device-intent";
 import {
   TrustchainMemberId,
   type AddMemberIntent,
@@ -122,19 +122,28 @@ export function useIntentWalletSyncToolState(
     [],
   );
 
+  const membersRequestRef = useRef(0);
   const loadMembers = useCallback(async (trustchain: Trustchain) => {
     const { memberCredentials, sdk } = paramsRef.current;
     if (!memberCredentials) return;
+    const request = ++membersRequestRef.current;
+    const isLatestRequest = () => request === membersRequestRef.current;
     try {
-      setMembers(await sdk.getMembers(trustchain, memberCredentials));
+      const loaded = await sdk.getMembers(trustchain, memberCredentials);
+      if (isLatestRequest()) setMembers(loaded);
     } catch (error) {
       console.warn("Ledger Sync intents devtool: getMembers failed", errorName(error));
-      setMembers(null);
+      if (isLatestRequest()) setMembers(null);
     }
   }, []);
 
   const endRunWithError = useCallback(
     (operation: WalletSyncIntentToolOperation) => (error: unknown) => {
+      if (isDeviceDisconnectedError(error)) {
+        // The executor stays mounted to show its Disconnected screen until the user closes it.
+        append(operation, "disconnected", errorName(error));
+        return;
+      }
       append(operation, "error", errorName(error));
       setRun(null);
     },
@@ -175,7 +184,10 @@ export function useIntentWalletSyncToolState(
       const { memberCredentials, trustchain, createSessionSdk, removeMemberIntentDefinition } =
         paramsRef.current;
       const member = members?.find(candidate => candidate.id === memberId);
-      if (!memberCredentials || !trustchain || !member) return;
+      // The SDK refuses to remove the current member: that needs its own flow.
+      if (!memberCredentials || !trustchain || !member || member.id === memberCredentials.pubkey) {
+        return;
+      }
 
       let resultTrustchain: Trustchain | null = null;
       const intent: RemoveMemberIntent = createIntent(
@@ -213,8 +225,11 @@ export function useIntentWalletSyncToolState(
   const onRunCancelled = useCallback(() => setRun(null), []);
 
   const toolMembers = useMemo(
-    () => members?.map(({ id, name }) => ({ id: TrustchainMemberId.parse(id), name })) ?? null,
-    [members],
+    () =>
+      members
+        ?.filter(({ id }) => id !== storedMemberCredentials?.pubkey)
+        .map(({ id, name }) => ({ id: TrustchainMemberId.parse(id), name })) ?? null,
+    [members, storedMemberCredentials],
   );
 
   const toolProps = useMemo<WalletSyncIntentToolProps>(

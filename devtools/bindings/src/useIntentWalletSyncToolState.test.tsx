@@ -195,6 +195,34 @@ describe("useIntentWalletSyncToolState", () => {
     );
   });
 
+  it("should neither list nor remove this instance's own member", async () => {
+    const { result, params } = renderTool();
+    const self: TrustchainMember = { id: MEMBER_CREDENTIALS.pubkey, name: "This", permissions: 1 };
+    params.sdk.getMembers.mockResolvedValue([...MEMBERS, self]);
+
+    act(() => result.current.toolProps.onRefreshMembers());
+    await waitFor(() => expect(result.current.toolProps.members).toHaveLength(2));
+    act(() => result.current.toolProps.onRemoveMember(TrustchainMemberId.parse(self.id)));
+
+    expect(result.current.toolProps.members?.map(({ id }) => id)).not.toContain(self.id);
+    expect(result.current.run).toBeNull();
+  });
+
+  it("should keep the latest members when an older fetch settles last", async () => {
+    const { result, params } = renderTool();
+    let resolveOlder: (members: TrustchainMember[]) => void = () => undefined;
+    params.sdk.getMembers
+      .mockImplementationOnce(() => new Promise(resolve => (resolveOlder = resolve)))
+      .mockResolvedValueOnce([MEMBERS[0]]);
+
+    act(() => result.current.toolProps.onRefreshMembers());
+    act(() => result.current.toolProps.onRefreshMembers());
+    await waitFor(() => expect(result.current.toolProps.members).toHaveLength(1));
+    await act(async () => resolveOlder(MEMBERS));
+
+    expect(result.current.toolProps.members).toEqual([{ id: "member-1", name: "Desktop" }]);
+  });
+
   it("should end the run when the user closes the executor or the job errors", () => {
     const { result } = renderTool();
 
@@ -210,6 +238,23 @@ describe("useIntentWalletSyncToolState", () => {
     expect(result.current.toolProps.log.at(-1)).toMatchObject({
       jobState: "error",
       detail: "Boom",
+    });
+  });
+
+  it("should keep the executor mounted on a device disconnection", () => {
+    const { result } = renderTool();
+    act(() => result.current.toolProps.onAddMember());
+
+    act(() =>
+      result.current.run?.intent.onJobError?.(
+        Object.assign(new Error(), { name: "Unplugged", _tag: "DisconnectError" }),
+      ),
+    );
+
+    expect(result.current.run).not.toBeNull();
+    expect(result.current.toolProps.log.at(-1)).toMatchObject({
+      jobState: "disconnected",
+      detail: "Unplugged",
     });
   });
 
