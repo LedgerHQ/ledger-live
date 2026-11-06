@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach } from "bun:test";
 import { TrustchainEjected } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import type { TrustchainSDK } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { existsSync, mkdirSync, mkdtempSync, rmSync, statSync, writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { existsSync, mkdtempSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { Readable } from "node:stream";
 import { YAML } from "bun";
@@ -11,9 +11,9 @@ import { loadMemberCredentials, savePrivateKey } from "../../key-ring/keychain";
 import { _setTestKeychain } from "../../key-ring/keychain-entry";
 import { _setTestLkrpSdk } from "../../key-ring/lkrp-sdk";
 import { loadDomainKey, loadKeyRing } from "../../key-ring/load-key-ring";
-import { APP_NAME } from "../../session/session-store";
 import { runCli, storedApiAuthPubkey, type RunResult } from "../../testing/cli-runner";
-import { makeSessionDir } from "../../testing/session-fixture";
+import { makeSessionDir, writeSessionIn } from "../../testing/session-fixture";
+import { pointStateHomeAt } from "../../testing/state-home";
 import { ETH_DESCRIPTOR } from "../../testing/constants";
 import { makeAuthenticatedQuoteServer } from "../../testing/authenticated-quote-server";
 import { InMemoryKeychain } from "../../testing/in-memory-keychain";
@@ -396,7 +396,7 @@ describe("ring — the API auth key stays separate from a password-protected rin
     expect(await storedApiAuthPubkey(fixture.env)).toBe(before);
 
     // Reset empties the accounts but keeps the ring, so re-add the one the quote needs on top of it.
-    const sessionPath = join(fixture.env.XDG_STATE_HOME, APP_NAME, "session.yaml");
+    const sessionPath = fixture.sessionPath;
     const session = YAML.parse(await Bun.file(sessionPath).text()) as Record<string, unknown>;
     writeFileSync(sessionPath, YAML.stringify({ ...session, accounts }));
     expect((await runQuoteAndGetAuthSignature(fixture.env)).credential.publicKey).toBe(before);
@@ -410,8 +410,7 @@ describe("ring — uninitialized with a stray password-protected key", () => {
   // Asserted at unit level because Bunli prints a plain Error to the real stderr, which runCli's
   // output capture does not observe.
   it("throws 'not initialized' rather than a password error", async () => {
-    const saved = process.env.XDG_STATE_HOME;
-    process.env.XDG_STATE_HOME = dir; // pin the session dir + keychain account to this temp dir
+    const restoreStateHome = pointStateHomeAt(dir); // pin the session dir + keychain account to this temp dir
     try {
       _store.clear();
       const wrappingKey = await deriveWrappingKey("pw", "0".repeat(32));
@@ -421,8 +420,7 @@ describe("ring — uninitialized with a stray password-protected key", () => {
       await expect(loadKeyRing()).rejects.toThrow(/not initialized/i);
       await expect(loadKeyRing()).rejects.not.toThrow(/password/i);
     } finally {
-      if (saved === undefined) delete process.env.XDG_STATE_HOME;
-      else process.env.XDG_STATE_HOME = saved;
+      restoreStateHome();
     }
   });
 });
@@ -432,14 +430,12 @@ describe("ring init — orphan guard", () => {
   afterAll(cleanup);
 
   it("refuses to init over a stray keychain key when the session has no trustchain", async () => {
-    const saved = process.env.XDG_STATE_HOME;
-    process.env.XDG_STATE_HOME = dir; // pin the keychain account to this temp dir
+    const restoreStateHome = pointStateHomeAt(dir); // pin the keychain account to this temp dir
     try {
       _store.clear();
       await savePrivateKey("aa".repeat(32), "bb".repeat(33)); // stray key, no trustchain on disk
     } finally {
-      if (saved === undefined) delete process.env.XDG_STATE_HOME;
-      else process.env.XDG_STATE_HOME = saved;
+      restoreStateHome();
     }
 
     const before = [..._store.values()];
@@ -459,8 +455,7 @@ describe("ring — CRLF-stored keychain entry", () => {
 
   // Regression guard for a bare split("\n"), which left a trailing \r on the private-key line.
   it("loadMemberCredentials strips \\r from a CRLF-joined entry", async () => {
-    const saved = process.env.XDG_STATE_HOME;
-    process.env.XDG_STATE_HOME = dir;
+    const restoreStateHome = pointStateHomeAt(dir);
     try {
       _store.clear();
       const priv = "aa".repeat(32);
@@ -473,8 +468,7 @@ describe("ring — CRLF-stored keychain entry", () => {
       expect(creds?.privatekey).toBe(priv);
       expect(creds?.pubkey).toBe(pub);
     } finally {
-      if (saved === undefined) delete process.env.XDG_STATE_HOME;
-      else process.env.XDG_STATE_HOME = saved;
+      restoreStateHome();
     }
   });
 });
@@ -484,13 +478,11 @@ describe("ring — password-protected keychain entry decode errors", () => {
   afterAll(cleanup);
 
   async function withStateDir<T>(fn: () => Promise<T>): Promise<T> {
-    const saved = process.env.XDG_STATE_HOME;
-    process.env.XDG_STATE_HOME = dir; // pin the keychain account to this temp dir
+    const restoreStateHome = pointStateHomeAt(dir); // pin the keychain account to this temp dir
     try {
       return await fn();
     } finally {
-      if (saved === undefined) delete process.env.XDG_STATE_HOME;
-      else process.env.XDG_STATE_HOME = saved;
+      restoreStateHome();
     }
   }
 
@@ -524,13 +516,11 @@ describe("ring destroy — stray key with no trustchain (local-only recovery)", 
 
   it("wipes the stray local key and unblocks a fresh init", async () => {
     _store.clear();
-    const saved = process.env.XDG_STATE_HOME;
-    process.env.XDG_STATE_HOME = dir; // pin the keychain account to this temp dir
+    const restoreStateHome = pointStateHomeAt(dir); // pin the keychain account to this temp dir
     try {
       await savePrivateKey("aa".repeat(32), "bb".repeat(33)); // stray key, no trustchain on disk
     } finally {
-      if (saved === undefined) delete process.env.XDG_STATE_HOME;
-      else process.env.XDG_STATE_HOME = saved;
+      restoreStateHome();
     }
     expect([..._store.values()]).toHaveLength(1);
 
@@ -552,9 +542,7 @@ describe("ring encrypt — salt without trustchain must not prompt", () => {
   afterAll(cleanup);
 
   it("throws 'not initialized' without asking for a password", async () => {
-    const sessionPath = join(dir, "ledger-wallet-cli", "session.yaml");
-    mkdirSync(dirname(sessionPath), { recursive: true });
-    writeFileSync(sessionPath, YAML.stringify({ accounts: [], passwordSalt: "0".repeat(32) }));
+    writeSessionIn(dir, { accounts: [], passwordSalt: "0".repeat(32) });
 
     // Pass --input to skip the TTY-dependent "No input" guard, so the trustchain check is reached
     // regardless of TTY state. The file is never read — the throw precedes the input read.
@@ -648,24 +636,17 @@ describe("ring destroy — transient remote failure keeps the local key", () => 
 // Seeds the initialized ring state (session + keychain) without `ring init`, so a test fakes only
 // the LKRP SDK method under test.
 async function seedInitializedRing(dir: string): Promise<void> {
-  const sessionPath = join(dir, "ledger-wallet-cli", "session.yaml");
-  mkdirSync(dirname(sessionPath), { recursive: true });
-  writeFileSync(
-    sessionPath,
-    YAML.stringify({
-      accounts: [],
-      trustchain: { rootId: "seed-root", applicationPath: "m/0'/17'/0'" },
-    }),
-  );
-  // savePrivateKey hashes the account name from XDG_STATE_HOME, so pin it to this temp dir (matching
+  writeSessionIn(dir, {
+    accounts: [],
+    trustchain: { rootId: "seed-root", applicationPath: "m/0'/17'/0'" },
+  });
+  // savePrivateKey hashes the account name from the state dir, so pin it to this temp dir (matching
   // the env passed to runCli) before saving.
-  const saved = process.env.XDG_STATE_HOME;
-  process.env.XDG_STATE_HOME = dir;
+  const restoreStateHome = pointStateHomeAt(dir);
   try {
     await savePrivateKey("aa".repeat(32), "bb".repeat(33));
   } finally {
-    if (saved === undefined) delete process.env.XDG_STATE_HOME;
-    else process.env.XDG_STATE_HOME = saved;
+    restoreStateHome();
   }
 }
 
@@ -712,14 +693,12 @@ describe("ring encrypt/decrypt — closed application stream gives reactivation 
       },
     });
 
-    const saved = process.env.XDG_STATE_HOME;
-    process.env.XDG_STATE_HOME = dir; // pin the session dir + keychain account to this temp dir
+    const restoreStateHome = pointStateHomeAt(dir); // pin the session dir + keychain account to this temp dir
     try {
       await expect(loadDomainKey("mykey")).rejects.toThrow(/deactivated/i);
       await expect(loadDomainKey("mykey")).rejects.toThrow(/ring init/i);
     } finally {
-      if (saved === undefined) delete process.env.XDG_STATE_HOME;
-      else process.env.XDG_STATE_HOME = saved;
+      restoreStateHome();
     }
   });
 

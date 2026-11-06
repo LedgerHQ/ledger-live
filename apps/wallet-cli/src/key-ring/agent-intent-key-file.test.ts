@@ -19,27 +19,27 @@ import {
   saveAgentIntentKeyFile,
 } from "./agent-intent-key-file";
 import { installOutputCapture } from "../shared/ui";
+import { cliStateDirIn, pointStateHomeAt } from "../testing/state-home";
 
-const origStateHome = process.env.XDG_STATE_HOME;
 let stateHome: string;
+let restoreStateHome: () => void;
 
 const mode = (p: string) => statSync(p).mode & 0o777;
 
 beforeEach(() => {
   stateHome = mkdtempSync(join(tmpdir(), "wallet-cli-agent-key-file-"));
-  process.env.XDG_STATE_HOME = stateHome;
+  restoreStateHome = pointStateHomeAt(stateHome);
 });
 
 afterEach(() => {
   rmSync(stateHome, { recursive: true, force: true });
-  if (origStateHome === undefined) delete process.env.XDG_STATE_HOME;
-  else process.env.XDG_STATE_HOME = origStateHome;
+  restoreStateHome();
 });
 
 describe("agent-intent key file", () => {
   it("lives under the state dir's agent-intent-keys directory, named by profile id", () => {
     expect(agentIntentKeyFilePath("bot")).toBe(
-      join(stateHome, "ledger-wallet-cli", "agent-intent-keys", "bot.key"),
+      join(cliStateDirIn(stateHome), "agent-intent-keys", "bot.key"),
     );
   });
 
