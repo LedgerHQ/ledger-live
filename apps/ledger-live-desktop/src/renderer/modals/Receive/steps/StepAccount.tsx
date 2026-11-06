@@ -20,7 +20,6 @@ import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAle
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import Alert from "~/renderer/components/Alert";
 import { useLLDCoinFamily } from "~/renderer/families";
-import { useTokenTypes } from "~/renderer/families/useTokenTypes";
 import { StepProps } from "../Body";
 
 type OnChangeAccount = (account?: AccountLike | null, tokenAccount?: Account | null) => void;
@@ -148,7 +147,7 @@ export default function StepAccount(props: Readonly<StepProps>) {
     accountError,
   } = props;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
-  const tokenTypes = useTokenTypes(mainAccount?.currency);
+  const tokenTypes = mainAccount?.currency.tokenTypes ?? [];
 
   // Nb in the context of LL-6449 (nft integration) simplified the wording for the warning.
   const tokenType =

@@ -6,6 +6,7 @@ import { TFunction } from "i18next";
 import { openModal } from "~/renderer/actions/modals";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { canReceive, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import IconReceive from "~/renderer/icons/Receive";
 import IconExchange from "~/renderer/icons/Exchange";
 import Box from "~/renderer/components/Box";
@@ -19,7 +20,6 @@ import { useNavigate, useLocation } from "react-router";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { setTrackingSource } from "@shared/analytics";
 import { RECEIVE_SOURCE_PAGE } from "LLD/features/Receive/types";
-import { useTokenTypes } from "~/renderer/families/useTokenTypes";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 const mapDispatchToProps = {
   openModal,
@@ -38,7 +38,6 @@ function EmptyStateAccount({ t, account, parentAccount, openModal }: Props) {
   const { isCurrencyAvailable } = useRampCatalog();
   const navigate = useNavigate();
   const location = useLocation();
-  const tokenTypes = useTokenTypes(mainAccount?.currency);
   const availableOnBuy = !!currency && isCurrencyAvailable(currency.id, "onRamp");
 
   const hasTokens =
@@ -87,7 +86,11 @@ function EmptyStateAccount({ t, account, parentAccount, openModal }: Props) {
               </Text>
               {"and"}
               <Text ff="Inter|SemiBold" color="neutral.c100">
-                {account && account.type === "TokenAccount" && tokenTypes.join(", ")}
+                {account &&
+                  account.type === "TokenAccount" &&
+                  (getCryptoCurrencyById(account.token.parentCurrencyId).tokenTypes || []).join(
+                    ", ",
+                  )}
                 {"tokens"}
               </Text>
             </Trans>

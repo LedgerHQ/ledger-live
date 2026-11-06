@@ -4,7 +4,6 @@ import { Trans } from "react-i18next";
 import { Currency } from "@domain/entity-currency";
 import Tooltip from "~/renderer/components/Tooltip";
 import CryptoCurrencyIcon from "./CryptoCurrencyIcon";
-import { useTokenTypes } from "~/renderer/families/useTokenTypes";
 import { Flex } from "@ledgerhq/react-ui/index";
 
 type Props = {
@@ -20,10 +19,8 @@ const CryptoCurrencyIconWithCount = ({ currency, withTooltip, count }: Props) =>
       {count > 0 && <Chip>{`+${count}`}</Chip>}
     </Wrapper>
   );
-  const hasTooltip = withTooltip && count > 0;
-  const tooltipCurrency = hasTooltip && currency.type === "CryptoCurrency" ? currency : undefined;
-  const isToken = useTokenTypes(tooltipCurrency).length > 0;
-  if (hasTooltip) {
+  const isToken = currency.type === "CryptoCurrency" && (currency.tokenTypes || []).length > 0;
+  if (withTooltip && count > 0) {
     return (
       <Tooltip
         content={
