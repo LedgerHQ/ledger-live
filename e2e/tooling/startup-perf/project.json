@@ -1,3 +1,21 @@
 {
-  "name": "@ledgerhq/mobile-startup-perf"
+  "name": "@ledgerhq/mobile-startup-perf",
+  "targets": {
+    "test": {
+      "inputs": [
+        "default",
+        "^default",
+        { "env": "CI_OS" },
+        "{workspaceRoot}/apps/ledger-live-mobile/.env.mock.prerelease",
+        "{workspaceRoot}/apps/ledger-live-mobile/package.json",
+        "{workspaceRoot}/apps/ledger-live-mobile/rspack.config.mjs",
+        "{workspaceRoot}/apps/ledger-live-mobile/src/index.tsx",
+        "{workspaceRoot}/apps/ledger-live-mobile/src/mvvm/utils/logStartup/beforeJSImports.ts",
+        "{workspaceRoot}/apps/ledger-live-mobile/src/e2e/bridge/client.ts",
+        "{workspaceRoot}/apps/ledger-live-mobile/src/locales/en/common.json",
+        "{workspaceRoot}/apps/ledger-live-mobile/src/screens/Settings/Debug/index.tsx",
+        "{workspaceRoot}/apps/ledger-live-mobile/src/screens/Settings/Debug/Performance/index.tsx"
+      ]
+    }
+  }
 }
