@@ -2,8 +2,8 @@ name: "[All Platforms] - Build and Test - Scheduled"
 
 on:
   schedule:
-    # Hourly, 09:00-18:00 Paris on weekdays (08:00-17:00 once CET resumes - cron is UTC only).
-    - cron: "0 7-16 * * 1-5"
+    # Every other hour, 09:00-17:00 Paris on weekdays (08:00-16:00 once CET resumes - cron is UTC only).
+    - cron: "0 7-16/2 * * 1-5"
   workflow_dispatch:
 
 concurrency:
