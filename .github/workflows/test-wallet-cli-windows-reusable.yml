@@ -10,7 +10,7 @@ jobs:
   test-wallet-cli-windows:
     name: "Test (Windows)"
     runs-on: windows-2022
-    timeout-minutes: 45
+    timeout-minutes: 20
     continue-on-error: true
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
