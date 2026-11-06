@@ -6,12 +6,15 @@ import { CosmosAPI } from "../../network/Cosmos";
 import { GET_BLOCK_WITH_TXS_SDK_EXAMPLE } from "../../network/fixtures";
 import { BlockTxSDK, GetBlockWithTxsSDK } from "../../network/types";
 import { toBlockInfo } from "../../network/utils";
-import { getBlock } from "./getBlock";
+import { getBlock, isCoinsArray } from "./getBlock";
 
 const TX_HASH = "69FA03588DDD5D61DEA9A47CD51EC4E02921174E24C2A81610124BBA7131F51D";
 const SENDER = "cosmos16exhyvwyy82fnavqgupf67lku4jvvd82h7p20u";
 const RECIPIENT = "cosmos16na4yg4rtt4n8j72n54uy5mvxn7f08l7t4h3xv";
-const config = { denom: "uatom" } as CosmosCoinConfig;
+const config = {
+  denom: "uatom",
+  getBlock: { pagination: { limit: DEFAULT_GET_BLOCK_PAGINATION_LIMIT } },
+} as CosmosCoinConfig;
 const [baseTx] = GET_BLOCK_WITH_TXS_SDK_EXAMPLE.txs;
 
 const getBlockFailure = (message: string, cause: Record<string, unknown>) => ({
@@ -146,6 +149,24 @@ describe("getBlock", () => {
     expect(getTransactionsByHeight).toHaveBeenCalledWith(33721701, 7);
   });
 
+  it.each([
+    ["a null getBlock", null],
+    ["a null pagination", { pagination: null }],
+    ["a zero limit", { pagination: { limit: 0 } }],
+  ])("falls back to the default pagination limit for %s", async (_name, invalid) => {
+    const { api, getBlockWithTxs, getTransactionsByHeight } = makeApi(
+      GET_BLOCK_WITH_TXS_SDK_EXAMPLE,
+    );
+
+    await getBlock({ ...config, getBlock: invalid } as never, api, 33721701);
+
+    expect(getBlockWithTxs).toHaveBeenCalledWith(33721701, DEFAULT_GET_BLOCK_PAGINATION_LIMIT);
+    expect(getTransactionsByHeight).toHaveBeenCalledWith(
+      33721701,
+      DEFAULT_GET_BLOCK_PAGINATION_LIMIT,
+    );
+  });
+
   it("rejects with the block error when fewer transactions are decoded than the block contains", async () => {
     const { api } = makeApi({ ...GET_BLOCK_WITH_TXS_SDK_EXAMPLE, txs: [] });
     const cause = "Block 33721701 returned 0 decoded transactions for 1 raw transactions";
@@ -154,6 +175,9 @@ describe("getBlock", () => {
       getBlockFailure(`Failed to get block 33721701: ${cause}`, {
         name: "BlockTransactionsMismatch",
         message: cause,
+        height: 33721701,
+        decoded: 0,
+        raw: 1,
       }),
     );
   });
@@ -166,6 +190,8 @@ describe("getBlock", () => {
       getBlockFailure(`Failed to get block 33721701: ${cause}`, {
         name: "TransactionResultNotFound",
         message: cause,
+        hash: TX_HASH,
+        height: 33721701,
       }),
     );
   });
@@ -205,6 +231,7 @@ describe("getBlock", () => {
       message: "Failed to get block 999999999: codespace sdk code 26: invalid height",
     });
     expect((error as GetBlockError).cause).toBe(failure);
+    expect(error).toMatchObject({ height: 999999999 });
   });
 
   it("rejects with the block error, keeping the failure as cause, when the results cannot be fetched", async () => {
@@ -308,7 +335,7 @@ describe("getBlock", () => {
     });
 
     it("is absent when the first signer is not a string", async () => {
-      const message = { "@type": "/cosmos.bank.v1beta1.MsgSend", from_address: 42, amount: [] };
+      const message = { "@type": "/cosmos.staking.v1beta1.MsgDelegate", from_address: 42 };
 
       await expect(payerOf(makeTx({ messages: [message] }))).resolves.toBeUndefined();
     });
@@ -373,6 +400,28 @@ describe("getBlock", () => {
       ]);
     });
 
+    it.each([
+      ["a non-array amount", { ...send([]), amount: "5uatom" }],
+      ["a coin that is not an object", { ...send([]), amount: [null] }],
+      ["a coin without a string denom", { ...send([]), amount: [{ denom: 1, amount: "5" }] }],
+      ["a coin without a string amount", { ...send([]), amount: [{ denom: "uatom", amount: 5 }] }],
+      ["a missing sender", { ...send([]), from_address: undefined }],
+      ["a missing recipient", { ...send([]), to_address: 42 }],
+    ])("rejects with the block error for a MsgSend with %s", async (_name, message) => {
+      const { api } = makeApi(blockWithTx(makeTx({ messages: [message] })));
+      const cause = "Invalid /cosmos.bank.v1beta1.MsgSend message";
+
+      const error = await getBlock(config, api, 33721701).catch((e: unknown) => e);
+
+      expect(error).toMatchObject(
+        getBlockFailure(`Failed to get block 33721701: ${cause}`, {
+          name: "InvalidBlockMessage",
+          message: cause,
+          messageType: "/cosmos.bank.v1beta1.MsgSend",
+        }),
+      );
+    });
+
     it("keeps the order of the messages", async () => {
       const operations = await operationsOf([
         { "@type": "/ibc.core.client.v1.MsgUpdateClient" },
@@ -381,5 +430,27 @@ describe("getBlock", () => {
 
       expect(operations.map(op => op.type)).toEqual(["other", "transfer", "transfer"]);
     });
+  });
+});
+
+describe("isCoinsArray", () => {
+  it.each([
+    ["an empty array", []],
+    ["an array of coins", [{ denom: "uatom", amount: "5" }]],
+  ])("accepts %s", (_name, value) => {
+    expect(isCoinsArray(value)).toBe(true);
+  });
+
+  it.each([
+    ["undefined", undefined],
+    ["a string", "5uatom"],
+    ["an object", { denom: "uatom", amount: "5" }],
+    ["an array holding null", [null]],
+    ["an array holding a string", ["uatom"]],
+    ["a coin with a numeric denom", [{ denom: 1, amount: "5" }]],
+    ["a coin with a numeric amount", [{ denom: "uatom", amount: 5 }]],
+    ["a valid coin followed by an invalid one", [{ denom: "uatom", amount: "5" }, {}]],
+  ])("rejects %s", (_name, value) => {
+    expect(isCoinsArray(value)).toBe(false);
   });
 });

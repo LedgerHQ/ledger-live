@@ -53,6 +53,7 @@ describe("getBlockInfo", () => {
       name: "GetBlockInfoError",
       message:
         "Failed to get block info 999999999: requested block height is bigger then the chain length",
+      height: 999999999,
     });
     expect((error as GetBlockInfoError).cause).toBe(failure);
   });

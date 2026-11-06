@@ -1,11 +1,21 @@
 import { sha256 } from "@cosmjs/crypto";
 import { Block, BlockOperation, BlockTransaction } from "@ledgerhq/coin-module-framework/api/types";
-import { DEFAULT_GET_BLOCK_PAGINATION_LIMIT, type CosmosCoinConfig } from "../../config";
-import { BlockTransactionsMismatch, GetBlockError, TransactionResultNotFound } from "../../errors";
+import {
+  DEFAULT_GET_BLOCK_PAGINATION_LIMIT,
+  isGetBlockConfigurationValid,
+  type CosmosCoinConfig,
+} from "../../config";
+import {
+  BlockTransactionsMismatch,
+  GetBlockError,
+  InvalidBlockMessage,
+  TransactionResultNotFound,
+} from "../../errors";
 import { CosmosAPI } from "../../network/Cosmos";
 import { BlockTxSDK } from "../../network/types";
 import { toBlockInfo } from "../../network/utils";
 import { assertValidBlockHeight } from "./assertValidBlockHeight";
+import { describeCause } from "./describeCause";
 
 const MSG_SEND_TYPE = "/cosmos.bank.v1beta1.MsgSend";
 
@@ -20,7 +30,10 @@ export async function getBlock(
   try {
     return await fetchBlock(config, api, height);
   } catch (cause) {
-    throw new GetBlockError(height, cause);
+    throw new GetBlockError(`Failed to get block ${height}: ${describeCause(cause)}`, {
+      height,
+      cause,
+    });
   }
 }
 
@@ -31,7 +44,9 @@ async function fetchBlock(
 ): Promise<Block> {
   assertValidBlockHeight(height);
 
-  const limit = config.getBlock?.pagination.limit ?? DEFAULT_GET_BLOCK_PAGINATION_LIMIT;
+  const limit = isGetBlockConfigurationValid(config.getBlock)
+    ? config.getBlock.pagination.limit
+    : DEFAULT_GET_BLOCK_PAGINATION_LIMIT;
   const [blockWithTxs, results] = await Promise.all([
     api.getBlockWithTxs(height, limit),
     api.getTransactionsByHeight(height, limit),
@@ -41,19 +56,38 @@ async function fetchBlock(
   const rawTxs = (blockWithTxs.sdk_block ?? blockWithTxs.block).data.txs;
 
   if (blockWithTxs.txs.length !== rawTxs.length) {
-    throw new BlockTransactionsMismatch(height, blockWithTxs.txs.length, rawTxs.length);
+    throw new BlockTransactionsMismatch(
+      `Block ${height} returned ${blockWithTxs.txs.length} decoded transactions for ${rawTxs.length} raw transactions`,
+      { height, decoded: blockWithTxs.txs.length, raw: rawTxs.length },
+    );
   }
 
   const transactions = blockWithTxs.txs.map((tx, index) => {
     const hash = toTransactionHash(rawTxs[index]);
     const code = codeByHash.get(hash);
     if (code === undefined) {
-      throw new TransactionResultNotFound(hash, height);
+      throw new TransactionResultNotFound(
+        `Missing result for transaction ${hash} at block height ${height}`,
+        { hash, height },
+      );
     }
     return toBlockTransaction(config.denom, hash, code !== 0, tx);
   });
 
   return { info: toBlockInfo(blockWithTxs), transactions };
+}
+
+export function isCoinsArray(amount: unknown): amount is Coin[] {
+  return (
+    Array.isArray(amount) &&
+    amount.every(
+      coin =>
+        typeof coin === "object" &&
+        coin !== null &&
+        typeof coin.denom === "string" &&
+        typeof coin.amount === "string",
+    )
+  );
 }
 
 function toTransactionHash(rawTx: string): string {
@@ -95,9 +129,14 @@ function toBlockOperations(denom: string, message: Message): BlockOperation[] {
     return [{ type: "other", messageType: message["@type"] }];
   }
 
-  const from = message.from_address as string;
-  const to = message.to_address as string;
-  return (message.amount as Coin[])
+  const { from_address: from, to_address: to, amount: coins } = message;
+  if (typeof from !== "string" || typeof to !== "string" || !isCoinsArray(coins)) {
+    throw new InvalidBlockMessage(`Invalid ${MSG_SEND_TYPE} message`, {
+      messageType: message["@type"],
+    });
+  }
+
+  return coins
     .filter(coin => coin.denom === denom && BigInt(coin.amount) > 0n)
     .flatMap(coin => {
       const amount = BigInt(coin.amount);

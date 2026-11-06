@@ -157,20 +157,23 @@ describe("getBlock via MSW", () => {
       expect(resultRequests.map(request => request.page)).toEqual([1, 2, 3, 4, 5]);
       expect(resultRequests.every(request => request.limit === 60)).toBe(true);
     });
-  });
 
-  it.each([0, -5, 2.5])("rejects the configured pagination limit %p", async limit => {
-    await expect(
-      getBlock(
-        { ...config, getBlock: { pagination: { limit } } },
-        makeTestApi("cosmos", TEST_COSMOS_ENDPOINT),
-        33721701,
-      ),
-    ).rejects.toMatchObject({
-      name: "GetBlockError",
-      message: `Failed to get block 33721701: Invalid pagination limit: ${limit}`,
-      cause: expect.objectContaining({ name: "InvalidParameterError" }),
-    });
+    it.each([0, -5, 2.5])(
+      "falls back to the default limit for the invalid configured limit %p",
+      async limit => {
+        const { blockRequests, resultRequests } = serveBlock();
+
+        const { transactions } = await getBlock(
+          { ...config, getBlock: { pagination: { limit } } },
+          makeTestApi("cosmos", TEST_COSMOS_ENDPOINT),
+          33721701,
+        );
+
+        expect(transactions.map(tx => tx.hash)).toEqual(hashes);
+        expect(blockRequests.every(request => request.limit === 100)).toBe(true);
+        expect(resultRequests.every(request => request.limit === 100)).toBe(true);
+      },
+    );
   });
 
   it("flags a transaction the chain reports as failed", async () => {

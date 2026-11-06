@@ -3,8 +3,24 @@ import buildCoinConfig, {
   type Context,
   type CurrencyConfig,
 } from "@ledgerhq/coin-module-framework/config";
+import { isValidPaginationLimit } from "./network/assertValidPaginationLimit";
 
 export const DEFAULT_GET_BLOCK_PAGINATION_LIMIT = 100;
+
+export type GetBlockConfiguration = { pagination: { limit: number } };
+
+/** The remote config can set a wrong value; callers then fall back to a default instead of crashing the app. */
+export function isGetBlockConfigurationValid(
+  getBlockConfiguration: unknown,
+): getBlockConfiguration is GetBlockConfiguration {
+  if (typeof getBlockConfiguration !== "object" || getBlockConfiguration === null) return false;
+  if (!("pagination" in getBlockConfiguration)) return false;
+  const { pagination } = getBlockConfiguration;
+  if (typeof pagination !== "object" || pagination === null || !("limit" in pagination)) {
+    return false;
+  }
+  return isValidPaginationLimit(pagination.limit);
+}
 
 export const cosmosDefaults = {
   axelar: {
@@ -207,7 +223,7 @@ export const cosmosDefaults = {
 type CosmosConfig = {
   /** On-chain base denom (e.g. `uatom`), used to match balances, delegations and rewards. */
   denom: string;
-  getBlock?: { pagination: { limit: number } };
+  getBlock: GetBlockConfiguration;
   [key: string]: unknown;
 };
 

@@ -104,32 +104,40 @@ export class RedelegateDstValAddressRequired extends Error {
 
 export class TransactionResultNotFound extends Error {
   override name = "TransactionResultNotFound";
-  constructor(hash: string, height: number) {
-    super(`Missing result for transaction ${hash} at block height ${height}`);
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "TransactionResultNotFound");
+    if (fields) Object.assign(this, fields);
   }
 }
 
 export class BlockTransactionsMismatch extends Error {
   override name = "BlockTransactionsMismatch";
-  constructor(height: number, decoded: number, raw: number) {
-    super(`Block ${height} returned ${decoded} decoded transactions for ${raw} raw transactions`);
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "BlockTransactionsMismatch");
+    if (fields) Object.assign(this, fields);
   }
 }
 
-function describeCause(cause: unknown): string {
-  return cause instanceof Error ? cause.message : String(cause);
+export class InvalidBlockMessage extends Error {
+  override name = "InvalidBlockMessage";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "InvalidBlockMessage");
+    if (fields) Object.assign(this, fields);
+  }
 }
 
 export class GetBlockError extends Error {
   override name = "GetBlockError";
-  constructor(height: number, cause: unknown) {
-    super(`Failed to get block ${height}: ${describeCause(cause)}`, { cause });
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "GetBlockError");
+    if (fields) Object.assign(this, fields);
   }
 }
 
 export class GetBlockInfoError extends Error {
   override name = "GetBlockInfoError";
-  constructor(height: number, cause: unknown) {
-    super(`Failed to get block info ${height}: ${describeCause(cause)}`, { cause });
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "GetBlockInfoError");
+    if (fields) Object.assign(this, fields);
   }
 }

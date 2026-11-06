@@ -7,7 +7,7 @@ import {
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
-import { CosmosCoinConfig, CosmosContext } from "../config";
+import { CosmosCoinConfig, CosmosContext, isGetBlockConfigurationValid } from "../config";
 import { getBalance } from "../logic/account/getBalance";
 import { getNextSequence } from "../logic/account/getNextSequence";
 import { getBlock } from "../logic/history/getBlock";
@@ -118,6 +118,9 @@ export function createApi(currencyId: string) {
     },
     getBlock: async (context, height) => {
       const { api, config } = await resolve(context, currencyId);
+      if (!isGetBlockConfigurationValid(config.getBlock)) {
+        context.logger(`Invalid getBlock configuration for ${currencyId}, using the default`);
+      }
       return getBlock(config, api, height);
     },
   } satisfies CosmosCoinModuleImpl;

@@ -14,6 +14,7 @@ const config = {
   minGasPrice: 0.025,
   denom: "uatom",
   status: { type: "active" as const },
+  getBlock: { pagination: { limit: 100 } },
 } as unknown as CosmosCoinConfig;
 
 // The `currencyId` chain selector is captured at createApi; the context carries only config + logger.
