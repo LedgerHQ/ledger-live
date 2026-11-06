@@ -82,59 +82,21 @@ export type ReportFinding = (
 
 export type ProseLine = { line: string; number: number };
 
-const isNonEmptyString = (value: unknown): value is string =>
-  typeof value === "string" && value.trim().length > 0;
-
 /**
- * Validates parsed JSON from waivers.json: root must be an array of objects with string
- * file, path and reason. Returns findings when structure is invalid.
+ * Narrows parsed JSON to waiver objects: each array element is an object whose file, path,
+ * and reason are kept only when they are strings (non-string fields are omitted).
  */
-export function parseWaiversJson(
-  raw: unknown,
-  waiversFile: string,
-): { ok: true; waivers: Waiver[] } | { ok: false; findings: Finding[] } {
-  if (!Array.isArray(raw)) {
-    return {
-      ok: false,
-      findings: [
-        {
-          file: waiversFile,
-          line: 1,
-          code: "waiver",
-          message: "waivers.json must be a JSON array of waiver objects",
-        },
-      ],
-    };
-  }
-  const findings: Finding[] = [];
-  const waivers: Waiver[] = [];
-  raw.forEach((entry, index) => {
-    const n = index + 1;
-    const prefix = `entry ${n} of ${waiversFile}`;
-    if (entry === null || typeof entry !== "object" || Array.isArray(entry)) {
-      findings.push({
-        file: waiversFile,
-        line: 1,
-        code: "waiver",
-        message: `${prefix} must be an object`,
-      });
-      return;
-    }
+export function waiversFromParsedJson(parsed: unknown): Waiver[] {
+  if (!Array.isArray(parsed)) return [];
+  return parsed.map((entry: unknown) => {
+    if (entry === null || typeof entry !== "object" || Array.isArray(entry)) return {};
     const rec = entry as Record<string, unknown>;
-    const { file, path, reason } = rec;
-    if (typeof file !== "string" || typeof path !== "string" || typeof reason !== "string") {
-      findings.push({
-        file: waiversFile,
-        line: 1,
-        code: "waiver",
-        message: `${prefix} must have string fields file, path and reason`,
-      });
-      return;
-    }
-    waivers.push({ file, path, reason });
+    const w: Waiver = {};
+    if (typeof rec.file === "string") w.file = rec.file;
+    if (typeof rec.path === "string") w.path = rec.path;
+    if (typeof rec.reason === "string") w.reason = rec.reason;
+    return w;
   });
-  if (findings.length > 0) return { ok: false, findings };
-  return { ok: true, waivers };
 }
 
 const toPosix = (path: string): string => path.split(sep).join(posix.sep);
@@ -382,11 +344,7 @@ const isWaived = (waiver: Waiver, finding: Finding): boolean =>
   waiver.path === finding.path;
 
 export const isComplete = (waiver: Waiver): waiver is CompleteWaiver =>
-  typeof waiver.file === "string" &&
-  waiver.file.length > 0 &&
-  typeof waiver.path === "string" &&
-  waiver.path.length > 0 &&
-  isNonEmptyString(waiver.reason);
+  Boolean(waiver.file && waiver.path && waiver.reason?.trim());
 
 // A waiver needs a reason, and one that no longer matches is reported so the list cannot rot.
 export const applyWaivers = (

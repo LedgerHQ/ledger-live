@@ -10,7 +10,7 @@ import {
   describeProblem,
   listFiles,
   parseFrontmatter,
-  parseWaiversJson,
+  waiversFromParsedJson,
   type Waiver,
   DESCRIPTION_TRIGGER_CLAUSES,
 } from "../rules.ts";
@@ -277,9 +277,7 @@ describe("waivers", () => {
     const raw: unknown = JSON.parse(
       readFileSync(new URL("../waivers.json", import.meta.url), "utf8"),
     );
-    const parsed = parseWaiversJson(raw, "waivers.json");
-    assert.ok(parsed.ok, "shipped waivers.json must match the expected schema");
-    const shipped: Waiver[] = parsed.waivers;
+    const shipped: Waiver[] = waiversFromParsedJson(raw);
     const problems = applyWaivers([], shipped, "waivers.json").filter(
       finding => finding.code === "waiver",
     );
