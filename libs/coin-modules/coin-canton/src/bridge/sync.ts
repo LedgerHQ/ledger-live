@@ -8,8 +8,8 @@ import { Operation, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { CantonCoinConfig } from "../config";
 import { isCantonAccountEmpty } from "../helpers";
-import { getBalance } from "../logic/getBalance";
-import { determineOperationType } from "./operationType";
+import { getInstrumentBalances } from "./instrumentBalances";
+import { determineOperationType } from "../logic/operationType";
 import {
   getCalTokensCached,
   getEnabledInstrumentsCached,
@@ -190,7 +190,7 @@ export function makeGetAccountShape(
 
     const { nativeInstrumentId } = config;
     const balances = xpubOrAddress
-      ? await getBalance(getBridgeContext(currency), xpubOrAddress)
+      ? await getInstrumentBalances(getBridgeContext(currency), xpubOrAddress)
       : [];
     const pendingTransferProposals = xpubOrAddress
       ? await getPendingTransferProposals(config, xpubOrAddress)
