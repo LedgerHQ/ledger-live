@@ -147,13 +147,10 @@ export default class PortfolioPage {
   }
 
   @Step("Go to {{{0}}} accounts from portfolio")
-  async goToAccounts(_currencyName: string, currencyId?: string) {
-    await waitForElementById(this.accountsListView, TIMEOUT.medium);
+  async goToAccounts(currencyId: string) {
     await this.openCryptoAddresses();
-    if (currencyId) {
-      await scrollToId(this.cryptoAddressItemId(currencyId), this.cryptoAddressesListId);
-      await tapById(this.cryptoAddressItemId(currencyId));
-    }
+    await scrollToId(this.cryptoAddressItemId(currencyId), this.cryptoAddressesListId);
+    await tapById(this.cryptoAddressItemId(currencyId));
   }
 
   @Step("Check quick action buttons visibility")
