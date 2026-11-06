@@ -1,4 +1,5 @@
 import { BigNumber } from "bignumber.js";
+import bs58 from "bs58";
 import { firstValueFrom, lastValueFrom, Observable, of, Subject, throwError, toArray } from "rxjs";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { SYNC_TYPE_SHIELDED, SYNC_TYPE_TRANSPARENT } from "@ledgerhq/types-live";
@@ -208,9 +209,7 @@ const signerContext = (async (_deviceId: string, fn: (signer: unknown) => unknow
  * the base58check serialization -- bytes 0..4, 4 and 9..13 of the BIP-32 header.
  */
 const serializedXpub = (xpub: string): { version: number; depth: number; childNumber: number } => {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const bs58 = require("bs58");
-  const raw = Buffer.from(bs58.decode(xpub) as Uint8Array);
+  const raw = Buffer.from(bs58.decode(xpub));
   return { version: raw.readUInt32BE(0), depth: raw[4], childNumber: raw.readUInt32BE(9) };
 };
 
