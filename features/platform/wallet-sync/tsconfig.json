@@ -2,19 +2,7 @@
   "extends": "@support/tsconfig/client-react",
   "compilerOptions": {
     "paths": {
-      "*": ["./*"],
-      // Through the @ledgerhq/source condition, tsc compiles ts-libs sources with this package's
-      // strict, no-DOM settings, and four lines fail:
-      // - implicit any in ledger-key-ring-protocol and hw-ledger-key-ring-protocol
-      // - window in live-network and logs
-      // This alias reads LKRP's built declarations; the client presets add the DOM for logs.
-      // It points at the CommonJS build: Playwright applies it at runtime, and live-network's
-      // ESM build fails to load in Node.
-      // Once https://github.com/LedgerHQ/ts-libs/pull/171 is released and installed, drop this
-      // alias.
-      "@ledgerhq/ledger-key-ring-protocol/*": [
-        "./node_modules/@ledgerhq/ledger-key-ring-protocol/lib/*"
-      ]
+      "*": ["./*"]
     },
     "types": ["jest", "node"]
   }
