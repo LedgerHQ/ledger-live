@@ -1,5 +1,12 @@
 # @ledgerhq/coin-tester-near
 
+## 0.4.3-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@38.5.1-hotfix.0
+
 ## 0.4.2
 
 ### Patch Changes

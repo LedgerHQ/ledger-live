@@ -1,5 +1,12 @@
 # live-mobile
 
+## 4.26.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-send@0.1.6-hotfix.0
+
 ## 4.26.0
 
 ### Minor Changes
