@@ -96,7 +96,6 @@ jobs:
 
       - name: JFrog npm auth
         uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
-        if: ${{ matrix.config.name == 'Linux' }}
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
