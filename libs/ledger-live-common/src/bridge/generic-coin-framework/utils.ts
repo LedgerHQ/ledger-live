@@ -15,6 +15,7 @@ import type {
 } from "@ledgerhq/types-live";
 import { isStakingAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import { fromBigNumberToBigInt } from "@ledgerhq/coin-module-framework/utils";
 import type {
   AssetInfo,
@@ -452,11 +453,9 @@ export function extractBalances(
  * Reads a numeric field (bigint/number/string) as BigNumber, else `undefined`.
  */
 export function optionalNumeric(value: unknown): BigNumber | undefined {
-  if (typeof value !== "bigint" && typeof value !== "number" && typeof value !== "string") {
-    return undefined;
-  }
-  const parsed = new BigNumber(value.toString());
-  return parsed.isFinite() ? parsed : undefined;
+  return typeof value === "bigint" || typeof value === "number" || typeof value === "string"
+    ? parseFiniteBigNumber(value)
+    : undefined;
 }
 
 /** Reads a numeric `parameters` field (bigint/number/string) as BigNumber, else `fallback`. */

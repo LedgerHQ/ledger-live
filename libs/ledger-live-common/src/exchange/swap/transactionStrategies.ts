@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 
 import { Transaction } from "../../coin-modules/transaction-types";
 import { TransactionCommon } from "@ledgerhq/types-live";
@@ -6,6 +7,7 @@ import { createStepError, StepError, CustomErrorType } from "../../wallet-api/Ex
 import type { GetFeatureFn } from "../../wallet-api/FeatureFlags/resolver";
 import { hasParametersForSolana } from "./hasParametersForSolana";
 import { cosmosMemoPatch } from "../../bridge/descriptor/send/memo";
+import { XRP_TAG_MAX_VALUE } from "../../families/xrp/descriptor/memo";
 
 export type { SwapLiveError } from "@ledgerhq/wallet-api-exchange-module";
 
@@ -121,12 +123,20 @@ export function rippleTransaction({
       customErrorType,
     });
 
+  const tag = parseFiniteBigNumber(payinExtraId);
+  if (!tag || !tag.isInteger() || tag.isNegative() || tag.gt(XRP_TAG_MAX_VALUE))
+    throw createStepError({
+      error: new Error("Invalid payinExtraId"),
+      step: StepError.PAYIN_EXTRA_ID,
+      customErrorType,
+    });
+
   return {
     family: "xrp",
     amount,
     recipient,
     ...customFeeConfig,
-    tag: new BigNumber(payinExtraId).toNumber(),
+    tag: tag.toNumber(),
   };
 }
 

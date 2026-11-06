@@ -443,6 +443,94 @@ describe("handlers", () => {
       expect(data.swapId).toBe("swap-123");
     });
 
+    describe("with invalid numeric params from the live app", () => {
+      const [fromAccount, toAccount] = [genAccount("accountId1"), genAccount("accountId2")];
+
+      const runSwapWith = (overrides: Record<string, unknown>) => {
+        const handler = handlers({
+          accounts: [fromAccount, toAccount],
+          locale: "en",
+          counterValueCurrency: "USD",
+          tracking: mockTracking,
+          manifest: testAppManifest,
+          uiHooks: mockUiHooks,
+        });
+        // Live App params arrive as JSON over the wire, so numbers are untyped strings here.
+        const request: RpcRequest<string, ExchangeSwapParams> = JSON.parse(
+          JSON.stringify({
+            jsonrpc: "2.0",
+            method: "custom.exchange.swap",
+            params: {
+              exchangeType: "SWAP",
+              provider: "TestProvider",
+              fromAccountId: fromAccount.id,
+              toAccountId: toAccount.id,
+              fromAmount: "1",
+              fromAmountAtomic: "1000000",
+              feeStrategy: "custom",
+              ...overrides,
+            },
+            id: "test",
+          }),
+        );
+        const context = {
+          config: { userId: "u", tracking: false, wallet: { name: "w", version: "2" }, appId: "a" },
+        };
+        return handler["custom.exchange.swap"](request, context, {});
+      };
+
+      it.each([
+        { fromAmountAtomic: "" },
+        { fromAmountAtomic: "abc" },
+        { fromAmountAtomic: "1_000" },
+        { fromAmountAtomic: "0x10" },
+        { fromAmountAtomic: null },
+        { customFeeConfig: { gasPrice: "abc" } },
+        { customFeeConfig: { gasPrice: "1_000" } },
+      ])("rejects %j as wrong swap params before opening the device", async overrides => {
+        await expect(runSwapWith(overrides)).rejects.toMatchObject({
+          name: "ExchangeError",
+          cause: "WRONG_SWAP_PARAMS",
+        });
+        expect(mockTracking.startExchangeRequested).toHaveBeenCalledTimes(1);
+        expect(mockUiStartExchange).not.toHaveBeenCalled();
+      });
+
+      it("reads hex and empty customFeeConfig values", async () => {
+        const { getMainAccount } = jest.requireMock(
+          "@ledgerhq/ledger-wallet-framework/account/index",
+        );
+        getMainAccount.mockReturnValue(fromAccount);
+        const { getAccountBridge } = jest.requireMock("../../bridge");
+        getAccountBridge.mockResolvedValue({
+          createTransaction: jest.fn().mockReturnValue({ family: "evm", recipient: "" }),
+          updateTransaction: jest.fn().mockImplementation((tx: object, upd: object) => ({
+            ...tx,
+            ...upd,
+          })),
+        });
+        mockUiStartExchange.mockImplementation(({ onSuccess }) => onSuccess("NONCE"));
+        mockUiSwap.mockImplementation(({ onSuccess }) =>
+          onSuccess({ operationHash: "0xhash", swapId: "swap-123" }),
+        );
+        const { transactionStrategy } = jest.requireMock(
+          "../../exchange/swap/transactionStrategies",
+        );
+
+        await runSwapWith({
+          customFeeConfig: { gasPrice: "0x10", maxFeePerGas: "", utxoStrategy: "OPTIMIZE_SIZE" },
+        });
+
+        expect(transactionStrategy.evm).toHaveBeenCalledWith(
+          expect.objectContaining({
+            amount: new BigNumber("1000000"),
+            customFeeConfig: { gasPrice: new BigNumber(16), maxFeePerGas: new BigNumber(0) },
+          }),
+          undefined,
+        );
+      });
+    });
+
     describe("when the device rejects the payload signature", () => {
       type UiSwapCall = {
         exchangeParams: { willRetryOnSignatureError?: boolean };
