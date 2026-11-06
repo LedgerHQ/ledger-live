@@ -6,9 +6,10 @@ import {
   readFileSync,
   rmSync,
   statSync,
+  utimesSync,
   writeFileSync,
 } from "node:fs";
-import { tmpdir } from "node:os";
+import { tmpdir, uptime } from "node:os";
 import { join } from "node:path";
 import { readLiveLockHolderPid, withFileLock } from "./file-lock";
 
@@ -21,6 +22,11 @@ afterEach(() => {
 function lockPath(): string {
   dir = mkdtempSync(join(tmpdir(), "file-lock-test-"));
   return join(dir, ".test.lock");
+}
+
+function backdateBeforeLastBoot(path: string): void {
+  const beforeBoot = new Date(Date.now() - uptime() * 1000 - 60_000);
+  utimesSync(path, beforeBoot, beforeBoot);
 }
 
 /**
@@ -105,6 +111,14 @@ describe("withFileLock", () => {
 
     const result = await withFileLock(path, () => "acquired");
     expect(result).toBe("acquired");
+  });
+
+  it("steals a lock written before the last boot, even when its pid now reads as alive", async () => {
+    const path = lockPath();
+    writeFileSync(path, `${process.pid}:a1b2c3d4e5f60718`);
+    backdateBeforeLastBoot(path);
+
+    expect(await withFileLock(path, () => "acquired", 300)).toBe("acquired");
   });
 
   it("never steals a lock held by a live process, even if fn runs long", async () => {
@@ -235,6 +249,14 @@ describe("readLiveLockHolderPid", () => {
   it("returns undefined for a malformed token even when its pid is alive", () => {
     const path = lockPath();
     writeFileSync(path, `${process.pid}:not-a-nonce`);
+
+    expect(readLiveLockHolderPid(path)).toBeUndefined();
+  });
+
+  it("returns undefined for a lock written before the last boot, even when its pid now reads as alive", () => {
+    const path = lockPath();
+    writeFileSync(path, `${process.pid}:a1b2c3d4e5f60718`);
+    backdateBeforeLastBoot(path);
 
     expect(readLiveLockHolderPid(path)).toBeUndefined();
   });
