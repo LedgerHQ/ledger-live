@@ -4,7 +4,11 @@ import { Transaction as CantonTransaction, CantonAccount } from "@ledgerhq/coin-
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { CANTON_UNSET_RECIPIENT } from "@ledgerhq/coin-canton/constants";
 import { BigNumber } from "bignumber.js";
+import { Observable } from "rxjs";
 import { validateAddress } from "../../../bridge/validateAddress";
+import { scanAccounts } from "../../../bridge/mockHelpers";
+
+type CantonAccountBridge = AccountBridge<CantonTransaction, CantonAccount>;
 
 // The calls data can be copied to mock-data.ts from the file.
 // This function creates a live API with logging for generating mock data
@@ -43,7 +47,7 @@ const updateTransaction = (
   return { ...t, ...patch };
 };
 
-const getTransactionStatus = async (): Promise<any> => {
+const getTransactionStatus: CantonAccountBridge["getTransactionStatus"] = async () => {
   return {
     errors: {},
     warnings: {},
@@ -67,34 +71,27 @@ const prepareTransaction = async (
   };
 };
 
-const sync = (_initialAccount: CantonAccount): any => {
-  return {
-    subscribe: (observer: any) => {
-      observer.next((acc: CantonAccount) => acc);
-      observer.complete();
-      return { unsubscribe: () => {} };
-    },
-  };
-};
+const sync: CantonAccountBridge["sync"] = _initialAccount =>
+  new Observable(observer => {
+    observer.next((acc: CantonAccount) => acc);
+    observer.complete();
+  });
 
-const receive = (_account: CantonAccount, _opts: { deviceId: string }): any => {
-  return {
-    subscribe: (observer: any) => {
-      observer.next({
-        address: "mock-address",
-        path: "44'/60'/0'/0/0",
-        publicKey: "mock-public-key",
-      });
-      observer.complete();
-      return { unsubscribe: () => {} };
-    },
-  };
-};
+const receive: CantonAccountBridge["receive"] = (_account, _opts) =>
+  new Observable(observer => {
+    observer.next({
+      address: "mock-address",
+      path: "44'/60'/0'/0/0",
+      publicKey: "mock-public-key",
+    });
+    observer.complete();
+  });
 
-const signOperation = (): any => {
-  return {
-    subscribe: (observer: any) => {
-      observer.next({
+const signOperation: CantonAccountBridge["signOperation"] = () =>
+  new Observable(observer => {
+    observer.next({
+      type: "signed",
+      signedOperation: {
         operation: {
           id: "mock-operation-id",
           hash: "mock-hash",
@@ -105,17 +102,17 @@ const signOperation = (): any => {
           blockHeight: 12345,
           accountId: "mock-account-id",
           date: new Date(),
+          senders: [],
+          recipients: [],
           extra: {},
         },
         signature: "mock-signature",
-      });
-      observer.complete();
-      return { unsubscribe: () => {} };
-    },
-  };
-};
+      },
+    });
+    observer.complete();
+  });
 
-const broadcast = async (): Promise<any> => {
+const broadcast: CantonAccountBridge["broadcast"] = async () => {
   return {
     id: "mock-operation-id",
     hash: "mock-hash",
@@ -126,35 +123,9 @@ const broadcast = async (): Promise<any> => {
     blockHeight: 12345,
     accountId: "mock-account-id",
     date: new Date(),
+    senders: [],
+    recipients: [],
     extra: {},
-  };
-};
-
-const scanAccounts = (): any => {
-  return {
-    subscribe: (observer: any) => {
-      observer.next({
-        type: "discovered",
-        account: {
-          id: "mock-account-id",
-          name: "Mock Canton Account",
-          address: "mock-address",
-          currency: { id: "canton_network_devnet" },
-          balance: new BigNumber(0),
-          spendableBalance: new BigNumber(0),
-          blockHeight: 0,
-          lastSyncDate: new Date(),
-          operations: [],
-          pendingOperations: [],
-          cantonResources: {
-            instrumentUtxoCounts: {},
-            pendingTransferProposals: [],
-          },
-        },
-      });
-      observer.complete();
-      return { unsubscribe: () => {} };
-    },
   };
 };
 
