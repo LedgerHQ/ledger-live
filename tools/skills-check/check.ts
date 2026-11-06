@@ -5,23 +5,16 @@
 import { readFileSync } from "node:fs";
 import { dirname, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import {
-  checkRepo,
-  formatFinding,
-  listFiles,
-  waiversFromParsedJson,
-  type Waiver,
-} from "./rules.ts";
+import { checkRepo, formatFinding, listFiles } from "./rules.ts";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "../..");
 const waiversPath = resolve(here, "waivers.json");
 const files = listFiles(root);
 const waiversFile = relative(root, waiversPath);
-const waivers: Waiver[] = waiversFromParsedJson(JSON.parse(readFileSync(waiversPath, "utf8")));
 const findings = checkRepo(root, {
   files,
-  waivers,
+  waivers: JSON.parse(readFileSync(waiversPath, "utf8")),
   waiversFile,
 });
 

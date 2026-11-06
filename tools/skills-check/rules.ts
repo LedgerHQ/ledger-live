@@ -50,12 +50,12 @@ export const CHECK_CODES = {
   "stale-waiver": "waivers.json entry still matches a finding",
 } as const;
 
-export type FindingCode = keyof typeof CHECK_CODES;
+type FindingCode = keyof typeof CHECK_CODES;
 
 export type Finding = {
   file: string;
   line: number;
-  code: FindingCode | "waiver" | "stale-waiver";
+  code: FindingCode;
   message: string;
   path?: string;
 };
@@ -67,7 +67,7 @@ export type Waiver = {
 };
 
 /** A waiver with all fields present; `reason` is non-whitespace. */
-export type CompleteWaiver = Waiver & {
+type CompleteWaiver = Waiver & {
   file: string;
   path: string;
   reason: string;
@@ -75,26 +75,25 @@ export type CompleteWaiver = Waiver & {
 
 export type ReportFinding = (
   line: number,
-  code: Finding["code"],
+  code: FindingCode,
   message: string,
   path?: string,
 ) => void;
 
-export type ProseLine = { line: string; number: number };
+type ProseLine = { line: string; number: number };
 
 /**
  * Narrows parsed JSON to waiver objects: each array element is an object whose file, path,
  * and reason are kept only when they are strings (non-string fields are omitted).
  */
-export function waiversFromParsedJson(parsed: unknown): Waiver[] {
+function waiversFromParsedJson(parsed: unknown): Waiver[] {
   if (!Array.isArray(parsed)) return [];
   return parsed.map((entry: unknown) => {
     if (entry === null || typeof entry !== "object" || Array.isArray(entry)) return {};
-    const rec = entry as Record<string, unknown>;
     const w: Waiver = {};
-    if (typeof rec.file === "string") w.file = rec.file;
-    if (typeof rec.path === "string") w.path = rec.path;
-    if (typeof rec.reason === "string") w.reason = rec.reason;
+    if ("file" in entry && typeof entry.file === "string") w.file = entry.file;
+    if ("path" in entry && typeof entry.path === "string") w.path = entry.path;
+    if ("reason" in entry && typeof entry.reason === "string") w.reason = entry.reason;
     return w;
   });
 }
@@ -343,18 +342,19 @@ const isWaived = (waiver: Waiver, finding: Finding): boolean =>
   waiver.file === finding.file &&
   waiver.path === finding.path;
 
-export const isComplete = (waiver: Waiver): waiver is CompleteWaiver =>
+const isComplete = (waiver: Waiver): waiver is CompleteWaiver =>
   Boolean(waiver.file && waiver.path && waiver.reason?.trim());
 
 // A waiver needs a reason, and one that no longer matches is reported so the list cannot rot.
 export const applyWaivers = (
   findings: Finding[],
-  waivers: Waiver[],
+  waivers: unknown,
   waiversFile: string,
 ): Finding[] => {
-  const valid = waivers.filter(isComplete);
+  const list = waiversFromParsedJson(waivers);
+  const valid = list.filter(isComplete);
   const kept = findings.filter(finding => !valid.some(waiver => isWaived(waiver, finding)));
-  waivers.forEach((waiver, index) => {
+  list.forEach((waiver, index) => {
     const entry = `entry ${index + 1} of ${waiversFile}`;
     if (!isComplete(waiver))
       kept.push({
@@ -380,7 +380,7 @@ export const checkRepo = (
     files = listFiles(root),
     waivers = [],
     waiversFile = "waivers.json",
-  }: { files?: string[]; waivers?: Waiver[]; waiversFile?: string } = {},
+  }: { files?: string[]; waivers?: unknown; waiversFile?: string } = {},
 ): Finding[] => {
   const topLevel = topLevelFolders(root);
   const findings: Finding[] = [];
