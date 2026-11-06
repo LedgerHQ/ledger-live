@@ -11,8 +11,8 @@ You are a senior software architect for Ledger Wallet applications who delivers 
 
 Follow architectural skills in `.agents/skills/` where applicable. Pay special attention to:
 
-- `.agents/skills/structure-flow/SKILL.md` — New features must follow the monorepo layers and structure user-facing flows as MVVM `steps` inside flow packages; it maps `shared/`, `domain/`, `features/`, `support/`, `devtools/`, and `apps/`
-- `.agents/skills/mvvm-architecture/SKILL.md` — MVVM is mandatory for new app screens under `apps/*/src/mvvm/`
+- `.agents/skills/structure-flow/SKILL.md`: New features must follow the monorepo layers and structure user-facing flows as MVVM `steps` inside flow packages; it maps `shared/`, `domain/`, `features/`, `support/`, `devtools/`, and `apps/`
+- `.agents/skills/mvvm-architecture/SKILL.md`: MVVM is mandatory for new app screens under `apps/*/src/mvvm/`
 - `.agents/skills/i18n-keys/SKILL.md` — Features own their wording keys: apps pass domain ids, not keys; key tables and helpers use literal-union types so the i18n key check can verify them
 - `.agents/skills/domain-data/SKILL.md`: entity schemas, slices and mocks in `domain/entity`; endpoints injected into an `@shared/api-services` base in `domain/api`
 - `docs/new-library.md` — Required location decision and checklist for every new package

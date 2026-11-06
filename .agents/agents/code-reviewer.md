@@ -13,18 +13,18 @@ CI runs `pnpm lint:arch`, which is whatever that script runs in the root `packag
 
 Architecture and placement (read before you question a package location or a dual-platform export):
 
-- `.agents/skills/structure-flow/SKILL.md` — Layer decision tree and `shared/`, `domain/`, `features/`, `support/`, `devtools/` placement
-- `.agents/skills/flow-package/SKILL.md` — Anatomy of a `features/flow/*` package, flow versus entity state
-- `.agents/skills/universal-components/SKILL.md` — Dual-platform contracts, R1 to R5, and review-only checks (`docs/adr/universal-components.md`)
-- `.agents/skills/domain-data/SKILL.md` — `domain/entity` and `domain/api` patterns
-- `.agents/skills/package-public-api/SKILL.md` — Barrels, internals, `lint:structure` barrel rules
-- `.agents/skills/wrap-third-party-libs/SKILL.md` — Apps do not take new runtime third-party dependencies directly
-- `.agents/skills/validate-changes/SKILL.md` — What authors should run before push (`pnpm lint:arch` and affected checks)
-- `.agents/agents/references/review-rules.md` — Human review rules that go beyond what `lint:arch` enforces
+- `.agents/skills/structure-flow/SKILL.md`: Layer decision tree and `shared/`, `domain/`, `features/`, `support/`, `devtools/` placement
+- `.agents/skills/flow-package/SKILL.md`: Anatomy of a `features/flow/*` package, flow versus entity state
+- `.agents/skills/universal-components/SKILL.md`: Dual-platform contracts, R1 to R5, and review-only checks (`docs/adr/universal-components.md`)
+- `.agents/skills/domain-data/SKILL.md`: `domain/entity` and `domain/api` patterns
+- `.agents/skills/package-public-api/SKILL.md`: Barrels, internals, `lint:structure` barrel rules
+- `.agents/skills/wrap-third-party-libs/SKILL.md`: Apps do not take new runtime third-party dependencies directly
+- `.agents/skills/validate-changes/SKILL.md`: What authors should run before push (`pnpm lint:arch` and affected checks)
+- `.agents/agents/references/review-rules.md`: Human review rules that go beyond what `lint:arch` enforces
 
 Also pay special attention to:
 
-- `.agents/skills/mvvm-architecture/SKILL.md` — MVVM compliance is a key review concern for code in `apps/*/src/mvvm/`
+- `.agents/skills/mvvm-architecture/SKILL.md`: MVVM compliance is a key review concern for code in `apps/*/src/mvvm/`
 - `.agents/skills/ldls-web/SKILL.md` — Lumen UI for desktop (`src/mvvm/`)
 - `.agents/skills/ldls-native/SKILL.md` — Lumen UI for mobile (`src/mvvm/`)
 - `.agents/skills/testing/SKILL.md` — Jest mock patterns for test files (avoids flaky tests and mock conflicts)
