@@ -7,7 +7,7 @@ import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 /**
  * Suite: Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail
  *
- * Requires the Wallet 4.0 `aggregatedAssets` feature flag (off by default in E2E):
+ * Wallet 4.0 portfolio aggregation:
  * - Portfolio shows one aggregated row per asset across networks.
  * - Asset rows navigate to the Asset Detail page (/asset/:id).
  * - /market/:id redirects to /asset/:id.

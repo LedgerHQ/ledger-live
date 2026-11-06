@@ -5,7 +5,6 @@ import type {
   Account,
   AccountLike,
   AccountPortfolio,
-  AssetsDistribution,
   CurrencyPortfolio,
   Portfolio,
   PortfolioRange,
@@ -15,16 +14,12 @@ import {
   getAccountCurrency,
   flattenAccounts,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
-import {
-  useCountervaluesCache,
-  useCountervaluesState,
-} from "@features/platform-market-countervalues";
+import { useCountervaluesState } from "@features/platform-market-countervalues";
 import { useThrottledValues } from "../hooks/useThrottledValues";
 import {
   getBalanceHistoryWithCountervalue,
   getPortfolio,
   getCurrencyPortfolio,
-  getAssetsDistribution,
   getPortfolioCount,
   GetPortfolioOptionsType,
 } from "./portfolio";
@@ -151,35 +146,4 @@ export function useCurrencyPortfolio({
   // Re-renders on every load: the history is dated from the clock.
   const state = useCountervaluesState();
   return getCurrencyPortfolio(accounts, range, state, to);
-}
-
-const emptyDistribution: AssetsDistribution = {
-  isAvailable: false,
-  list: [],
-  showFirst: 0,
-  sum: 0,
-};
-
-export function useDistribution({
-  accounts,
-  to,
-  skip,
-  showEmptyAccounts,
-  hideEmptyTokenAccount,
-}: {
-  accounts: Account[];
-  to: Currency;
-  skip?: boolean;
-  showEmptyAccounts?: boolean;
-  hideEmptyTokenAccount?: boolean;
-}): AssetsDistribution {
-  const state = useCountervaluesCache();
-  if (skip) return emptyDistribution;
-  return getAssetsDistribution(accounts, state, to, {
-    minShowFirst: 6,
-    maxShowFirst: 6,
-    showFirstThreshold: 0.95,
-    showEmptyAccounts: !!showEmptyAccounts,
-    hideEmptyTokenAccount: !!hideEmptyTokenAccount,
-  });
 }

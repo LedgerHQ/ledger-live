@@ -39,6 +39,21 @@ const ts = require("typescript");
 /** @typedef {"web" | "native"} Platform */
 /** @typedef {{ file: string, line: number, isComponent: boolean, node: ts.Node | undefined }} ExportInfo */
 /** @typedef {{ rule: "R1" | "R2" | "R3" | "R4" | "R5", subject: string, file: string, line: number, code: string, message: string, text: string }} ComponentViolation */
+/** @typedef {{ isFile(path: string): boolean; readFile(path: string): string }} FileReader */
+
+/** @type {FileReader} */
+const FS_READER = {
+  isFile(file) {
+    try {
+      return fs.statSync(file).isFile();
+    } catch {
+      return false;
+    }
+  },
+  readFile(file) {
+    return fs.readFileSync(file, "utf8");
+  },
+};
 
 const CONFIG = require("./components.config.json");
 
@@ -168,21 +183,23 @@ function classifyEntries(exportsField) {
       platform.push({ subpath, platform: PLATFORM_ENTRIES[subpath], target });
     } else if (typeof target === "string" && SOURCE_FILE.test(target)) {
       unconditioned.push({ subpath, target });
+    } else if (typeof target === "object" && target !== null && !Array.isArray(target)) {
+      const web = selectTarget(target, CONDITIONS.web);
+      const native = selectTarget(target, CONDITIONS.native);
+      if (web && native && web !== native) {
+        universal.push({ subpath, web, native });
+      } else if (
+        web &&
+        native &&
+        web === native &&
+        typeof web === "string" &&
+        SOURCE_FILE.test(web)
+      ) {
+        unconditioned.push({ subpath, target: web });
+      }
     }
   }
   return { universal, platform, unconditioned };
-}
-
-/**
- * @param {string} file
- * @returns {boolean}
- */
-function isFile(file) {
-  try {
-    return fs.statSync(file).isFile();
-  } catch {
-    return false;
-  }
 }
 
 /**
@@ -193,18 +210,25 @@ function isFile(file) {
  * @param {string} specifier
  * @param {Platform} platform
  * @param {string[]} [extensions] the platform's own by default
+ * @param {FileReader} [reader]
  * @returns {string | null} absolute path, or null for a package specifier or a missing file
  */
-function resolveRelative(fromFile, specifier, platform, extensions = EXTENSIONS[platform]) {
+function resolveRelative(
+  fromFile,
+  specifier,
+  platform,
+  extensions = EXTENSIONS[platform],
+  reader = FS_READER,
+) {
   if (!specifier.startsWith(".")) return null;
   const base = path.resolve(path.dirname(fromFile), specifier);
-  if (isFile(base)) return base;
+  if (reader.isFile(base)) return base;
   for (const ext of extensions) {
-    if (isFile(base + ext)) return base + ext;
+    if (reader.isFile(base + ext)) return base + ext;
   }
   for (const ext of extensions) {
     const index = path.join(base, `index${ext}`);
-    if (isFile(index)) return index;
+    if (reader.isFile(index)) return index;
   }
   return null;
 }
@@ -297,6 +321,8 @@ function parseModule(file, source) {
   const named = new Map();
   /** @type {string[]} */
   const stars = [];
+  /** @type {string[]} */
+  const typeStars = [];
 
   for (const statement of sourceFile.statements) {
     if (ts.isFunctionDeclaration(statement) && statement.name) {
@@ -340,6 +366,9 @@ function parseModule(file, source) {
     } else if (ts.isTypeAliasDeclaration(statement) || ts.isInterfaceDeclaration(statement)) {
       types.set(statement.name.text, statement);
       if (hasDefaultModifier(statement)) types.set("default", statement);
+      if (hasExportModifier(statement)) typeExports.set(statement.name.text, statement.name.text);
+    } else if (ts.isEnumDeclaration(statement) && statement.name && hasExportModifier(statement)) {
+      typeExports.set(statement.name.text, statement.name.text);
     } else if (ts.isImportDeclaration(statement) && ts.isStringLiteral(statement.moduleSpecifier)) {
       const clause = statement.importClause;
       if (!clause) continue;
@@ -366,7 +395,8 @@ function parseModule(file, source) {
           : null;
       const clause = statement.exportClause;
       if (!clause) {
-        if (specifier && !statement.isTypeOnly) stars.push(specifier);
+        if (specifier && statement.isTypeOnly) typeStars.push(specifier);
+        else if (specifier && !statement.isTypeOnly) stars.push(specifier);
         continue;
       }
       if (!ts.isNamedExports(clause)) continue;
@@ -374,7 +404,7 @@ function parseModule(file, source) {
         const exported = element.name.text;
         const local = (element.propertyName ?? element.name).text;
         if (statement.isTypeOnly || element.isTypeOnly) {
-          if (!specifier) typeExports.set(exported, local);
+          typeExports.set(exported, specifier ? `${specifier}\0${local}` : local);
         } else if (specifier) {
           named.set(exported, { specifier, imported: local });
         } else {
@@ -395,6 +425,7 @@ function parseModule(file, source) {
     typeExports,
     named,
     stars,
+    typeStars,
   };
 }
 
@@ -403,8 +434,9 @@ function parseModule(file, source) {
  * the named exports of an entry module to their declarations, `load` parses one module.
  *
  * @param {Platform} platform
+ * @param {FileReader} [reader]
  */
-function createExportCollector(platform) {
+function createExportCollector(platform, reader = FS_READER) {
   /** @type {Map<string, ReturnType<typeof parseModule> | null>} */
   const parsed = new Map();
 
@@ -412,7 +444,7 @@ function createExportCollector(platform) {
     if (!parsed.has(file)) {
       let source = null;
       try {
-        source = fs.readFileSync(file, "utf8");
+        source = reader.readFile(file);
       } catch {
         // A missing target leaves the entry empty; typecheck reports it.
       }
@@ -452,7 +484,7 @@ function createExportCollector(platform) {
     if (reexport) return follow(file, reexport, seen);
     if (name === "default") return null;
     for (const specifier of module.stars) {
-      const target = resolveRelative(file, specifier, platform);
+      const target = resolveRelative(file, specifier, platform, EXTENSIONS[platform], reader);
       if (!target) continue;
       const found = declarationOf(target, name, seen);
       if (found) return found;
@@ -461,8 +493,38 @@ function createExportCollector(platform) {
   }
 
   function follow(file, { specifier, imported }, seen) {
-    const target = resolveRelative(file, specifier, platform);
+    const target = resolveRelative(file, specifier, platform, EXTENSIONS[platform], reader);
     return target ? declarationOf(target, imported, seen) : null;
+  }
+
+  /**
+   * @param {string} file
+   * @param {Set<string>} seen
+   * @returns {Set<string>}
+   */
+  function typeNamesOf(file, seen) {
+    const names = new Set();
+    const key = `type:${file}`;
+    if (seen.has(key)) return names;
+    seen.add(key);
+    const module = load(file);
+    if (!module) return names;
+    for (const [exported, local] of module.typeExports) {
+      names.add(exported);
+      if (local.includes("\0")) {
+        const [specifier] = local.split("\0");
+        const target = resolveRelative(file, specifier, platform, EXTENSIONS[platform], reader);
+        if (target) typeNamesOf(target, seen);
+      }
+    }
+    for (const specifier of module.typeStars) {
+      const target = resolveRelative(file, specifier, platform, EXTENSIONS[platform], reader);
+      if (!target) continue;
+      for (const name of namesOf(target, seen)) {
+        if (name !== "default") names.add(name);
+      }
+    }
+    return names;
   }
 
   /**
@@ -478,8 +540,9 @@ function createExportCollector(platform) {
     if (!module) return names;
     for (const name of module.localExports.keys()) names.add(name);
     for (const name of module.named.keys()) names.add(name);
+    for (const name of typeNamesOf(file, seen)) names.add(name);
     for (const specifier of module.stars) {
-      const target = resolveRelative(file, specifier, platform);
+      const target = resolveRelative(file, specifier, platform, EXTENSIONS[platform], reader);
       if (!target) continue;
       for (const name of namesOf(target, seen)) {
         if (name !== "default") names.add(name);
@@ -503,7 +566,7 @@ function createExportCollector(platform) {
     return out;
   }
 
-  return { exportsOf, load };
+  return { exportsOf, load, namesOf };
 }
 
 /**
@@ -517,17 +580,33 @@ function componentsOf(exported) {
 }
 
 /**
+ * Every export name reachable from one entry module, star re-exports included.
+ *
+ * @param {string} entryFile absolute path
+ * @param {Platform} platform
+ * @param {FileReader} [reader]
+ * @returns {Set<string>}
+ */
+function exportNamesFromEntry(entryFile, platform, reader = FS_READER) {
+  return createExportCollector(platform, reader).namesOf(entryFile, new Set());
+}
+
+/**
  * Components of every entry of a package.
  *
  * @param {string} packageDir absolute path
  * @param {unknown} exportsField
+ * @param {FileReader} [reader]
  */
-function collectEntryComponents(packageDir, exportsField) {
+function collectEntryComponents(packageDir, exportsField, reader = FS_READER) {
   const { universal, platform, unconditioned } = classifyEntries(exportsField);
-  const collectors = { web: createExportCollector("web"), native: createExportCollector("native") };
+  const collectors = {
+    web: createExportCollector("web", reader),
+    native: createExportCollector("native", reader),
+  };
 
   function absolute(target) {
-    return target ? path.resolve(packageDir, target) : null;
+    return target ? path.join(packageDir, target) : null;
   }
 
   function resolvesPerPlatform(target) {
@@ -687,7 +766,7 @@ function suffixedSiblings(file) {
   const base = file.slice(0, -path.extname(file).length);
   return PLATFORM_SUFFIXES.flatMap(suffix =>
     CONTRACT_EXTENSIONS.map(extension => `${base}${suffix}${extension}`),
-  ).filter(isFile);
+  ).filter(FS_READER.isFile);
 }
 
 /**
@@ -1766,6 +1845,8 @@ module.exports = {
   checkComponents,
   classifyEntries,
   collectEntryComponents,
+  exportNamesFromEntry,
+  hasReactNativeCondition,
   isIgnoredEntry,
   parseModule,
   resolveRelative,

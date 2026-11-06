@@ -26,8 +26,7 @@ export class AssetsTable {
     return this.root.getByTestId(`w40-asset-row-value-${this.getCurrencyTestIdSuffix(currency)}`);
   }
 
-  // Wallet 4.0 Q2 `aggregatedAssets` renders one synthetic row per asset across networks; those
-  // rows have no single Currency-enum id, so they are matched by their displayed name instead.
+  // One synthetic row per asset spans networks and has no single Currency id, so match by name.
   private rowsByName(assetName: string): Locator {
     return this.rows.filter({ hasText: assetName });
   }

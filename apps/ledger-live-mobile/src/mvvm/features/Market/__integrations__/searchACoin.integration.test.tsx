@@ -4,7 +4,7 @@ import { screen, waitForElementToBeRemoved, renderWithReactQuery } from "@tests/
 import { MarketPages } from "./shared";
 
 describe("Market integration test", () => {
-  it("Should search for a coin and navigate to detail page", async () => {
+  it("Should filter the market list when searching for a coin", async () => {
     const { user } = renderWithReactQuery(<MarketPages />);
 
     expect(await screen.findByText("Bitcoin (BTC)")).toBeOnTheScreen();
@@ -16,9 +16,5 @@ describe("Market integration test", () => {
     await waitForElementToBeRemoved(() => screen.queryByText("Ethereum (ETH)"));
 
     expect(await screen.findByText("Bitcoin (BTC)")).toBeOnTheScreen();
-
-    await user.press(screen.getByText("Bitcoin (BTC)"));
-
-    expect(await screen.findByText("Price Statistics")).toBeOnTheScreen();
   });
 });

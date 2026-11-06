@@ -37,11 +37,10 @@ const AssetRow = ({ asset, hideDelta, topLink, bottomLink }: Props) => {
       openFromAsset({
         currency,
         source: "wallet_centric_asset",
-        isPlaceholder: asset.isPlaceholder,
         marketId: asset.marketId,
       });
     },
-    [currency, asset.isPlaceholder, asset.marketId, openFromAsset],
+    [currency, asset.marketId, openFromAsset],
   );
 
   /**

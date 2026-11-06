@@ -2373,6 +2373,33 @@
                                     "balances": []
                                 }
                             }
+                        },
+                        {
+                            "type": "TokenAccountRaw",
+                            "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Ffrax",
+                            "parentId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+                            "tokenId": "ethereum/erc20/frax",
+                            "balance": "2000000000000000000",
+                            "spendableBalance": "2000000000000000000",
+                            "creationDate": "2026-09-02T09:23:23.000Z",
+                            "operationsCount": 0,
+                            "operations": [],
+                            "pendingOperations": [],
+                            "swapHistory": [],
+                            "balanceHistoryCache": {
+                                "HOUR": {
+                                    "latestDate": null,
+                                    "balances": []
+                                },
+                                "DAY": {
+                                    "latestDate": null,
+                                    "balances": []
+                                },
+                                "WEEK": {
+                                    "latestDate": null,
+                                    "balances": []
+                                }
+                            }
                         }
                     ],
                     "swapHistory": [],
@@ -3028,6 +3055,10 @@
                     "oldestDateRequested": "2025-09-07T22:00:00.000Z"
                 },
                 "USD ethereum/erc20/gho_token": {
+                    "timestamp": 1788863903703,
+                    "oldestDateRequested": "2025-09-07T22:00:00.000Z"
+                },
+                "USD ethereum/erc20/frax": {
                     "timestamp": 1788863903703,
                     "oldestDateRequested": "2025-09-07T22:00:00.000Z"
                 },

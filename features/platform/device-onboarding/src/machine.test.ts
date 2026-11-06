@@ -336,6 +336,21 @@ describe("the genuine check", () => {
     });
   });
 
+  it("returns to the genuine check when the support sheet is closed", async () => {
+    const { actor, fake } = await start({
+      osVersion: [os(unseeded)],
+      genuineCheck: [notGenuine, genuine],
+      firmwareCheck: [upToDate],
+    });
+
+    actor.send({ type: "CLOSE" });
+    await settle();
+
+    expect(stateOf(actor)).toBe("checksIdle");
+    expect(actor.getSnapshot().context.checksPaused).toBe(true);
+    expect(fake.genuineCheckRuns()).toBe(1);
+  });
+
   it("holds a counterfeit device on the support screen across a lock it triggered itself", async () => {
     const { actor, fake } = await start({
       osVersion: [os(unseeded)],

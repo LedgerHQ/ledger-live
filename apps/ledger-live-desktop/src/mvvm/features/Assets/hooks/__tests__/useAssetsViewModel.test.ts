@@ -56,9 +56,11 @@ jest.mock("LLD/hooks/useCategorizedAssets", () => ({
 }));
 
 const mockUseAssetsData = jest.fn();
+const mockUseMarketDayChange = jest.fn((_params: unknown) => new Map<string, number>());
 jest.mock("@features/platform-aggregated-assets", () => ({
   ...jest.requireActual("@features/platform-aggregated-assets"),
   useAssetsData: (...args: unknown[]) => mockUseAssetsData(...args),
+  useMarketDayChangeByCurrencyId: (params: unknown) => mockUseMarketDayChange(params),
 }));
 
 const mockUseUsdToFiatRate = jest.fn();
@@ -625,6 +627,17 @@ describe("useCryptoAssetsViewModel", () => {
         item => item.currency.id === BITCOIN_ASSET.currency.id && !item.isPlaceholder,
       ),
     ).toBe(true);
+  });
+
+  it("looks up the market of owned cryptos whether or not placeholders are needed", () => {
+    mockSearchParamsRef.current.set("category", "cryptos");
+    renderHook(() => useCryptoAssetsViewModel(), { initialState: onboardedStateWithAccounts });
+
+    expect(mockUseMarketDayChange).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        currencyIds: expect.arrayContaining([BITCOIN_ASSET.currency.id]),
+      }),
+    );
   });
 
   it("navigates home when onBack is called", () => {

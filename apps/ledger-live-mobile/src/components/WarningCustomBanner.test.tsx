@@ -18,8 +18,8 @@ describe("WarningCustomBanner", () => {
 
   it("renders nothing if banner.isDisplay is false", () => {
     const cfg: CurrencyConfig = {
-      name: "Fantom",
-      unit: { name: "FTM", code: "FTM", magnitude: 18 },
+      name: "Sonic",
+      unit: { name: "S", code: "S", magnitude: 18 },
       customBanner: {
         isDisplay: false,
         bannerText: "Migration in progress",
@@ -39,8 +39,8 @@ describe("WarningCustomBanner", () => {
     const bannerText = "Network maintenance scheduled for October 1st.";
     const bannerLinkText = "Learn more";
     const cfg: CurrencyConfig = {
-      name: "Fantom",
-      unit: { name: "FTM", code: "FTM", magnitude: 18 },
+      name: "Sonic",
+      unit: { name: "S", code: "S", magnitude: 18 },
       customBanner: {
         isDisplay: true,
         bannerText,
@@ -60,8 +60,8 @@ describe("WarningCustomBanner", () => {
   it("renders the banner even without bannerLinkText (minimal fallback)", () => {
     const bannerText = "Important announcement without link text.";
     const cfg: CurrencyConfig = {
-      name: "Fantom",
-      unit: { name: "FTM", code: "FTM", magnitude: 18 },
+      name: "Sonic",
+      unit: { name: "S", code: "S", magnitude: 18 },
       customBanner: {
         isDisplay: true,
         bannerText,

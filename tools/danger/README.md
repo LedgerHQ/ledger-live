@@ -18,6 +18,8 @@ A last validation, [node-modules-size.ts](./validation/node-modules-size.ts), es
 
 The same diff lists packages already installed that gain one more version, from 1 MB each, with the dependency chain that brought it. It warns when the new version is in the caret range of one already installed (one copy could serve both: align the catalog or add an override); a new major is listed for information. Existing duplicates are never reported, only the ones a PR adds.
 
+[legacy-score.ts](./validation/legacy-score.ts) scores where new code lands ([engine](./legacy-score.ts)): added production `.ts`/`.tsx` lines (no tests, fixtures, mocks, stories, test helpers, configs or generated code) in the [new layers](../../docs/monorepo-architecture.md) (`shared/`, `domain/`, `features/`) divided by those lines plus the net growth (added minus deleted) of legacy areas (`libs/`, desktop `src/renderer` and `src/mvvm`, mobile `src/*/` except composition folders such as `navigation` and `setup`). Below 20% it fails 🔴 unless the PR has the `legacy-code-approved` label (then it only warns), and it reports 🟡 up to 80%; 🟢 and PRs with fewer than 50 counted lines stay silent. Coin modules and per-coin app UI have no new home yet, and test or e2e infrastructure libs are not product code: neither is counted. A file moved across areas counts as whole: deleted at its source, added at its destination. Release and hotfix merge-conflict PRs are exempt. Removing 1000 or more net lines from legacy areas earns a thanks. The `ALLOWLIST` holds legacy folders where shipping is still legitimate, each with a README explaining why.
+
 Run the tests with `pnpm test` from `tools/danger`.
 
 Both title and commit checks read the repo-root [commitlint.config.js](../../commitlint.config.js) via

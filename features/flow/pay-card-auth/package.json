@@ -44,6 +44,7 @@
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
+    "@support/lint": "workspace:*",
     "@features/platform-style": "workspace:*",
     "@gorhom/bottom-sheet": "catalog:",
     "@ledgerhq/crypto-icons": "catalog:",

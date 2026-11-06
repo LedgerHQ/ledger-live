@@ -11,7 +11,7 @@ describe("config_currency_solana* defaults", () => {
   it.each<SolanaCurrencyId>(["solana", "solana_devnet", "solana_testnet"])(
     "registers an RPC endpoint for %s",
     currencyId => {
-      const url = defaultsOf(currencyId)?.rpcUrls[currencyId];
+      const url = defaultsOf(currencyId)?.rpcUrl;
 
       expect(url).toBeDefined();
       expect(new URL(url!).protocol).toBe("https:");
@@ -41,7 +41,7 @@ describe("config_currency_solana* defaults", () => {
   });
 
   it("points the mainnet RPC at production", () => {
-    const { hostname } = new URL(defaultsOf("solana")!.rpcUrls.solana!);
+    const { hostname } = new URL(defaultsOf("solana")!.rpcUrl);
 
     expect(hostname).toBe("solana.coin.ledger.com");
   });

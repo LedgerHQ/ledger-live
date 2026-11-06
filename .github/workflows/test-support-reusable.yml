@@ -8,6 +8,20 @@ on:
         type: boolean
         required: false
         default: false
+      ref:
+        description: "Ref to check out. Defaults to github.sha, or to the default branch when `repository` is set."
+        type: string
+        required: false
+      repository:
+        description: "Repository to check out, as owner/name. Defaults to the calling repository. Set it when calling this workflow from another repository."
+        type: string
+        required: false
+        default: ""
+      runs-on:
+        description: "Runner label for the job."
+        type: string
+        required: false
+        default: "ledger-wallet-4cpu-aws-public-cached"
 
     outputs:
       coverage_generated:
@@ -15,17 +29,17 @@ on:
 
     secrets:
       AWS_ACCOUNT_ID_PROD:
-        required: true
+        required: false
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH:
-        required: true
+        required: false
       AWS_CACHE_OIDC_ROLE_ARN_DEVELOP:
-        required: true
+        required: false
       AWS_CACHE_REGION:
-        required: true
+        required: false
       AWS_CACHE_ROLE_NAME:
-        required: true
+        required: false
       NX_KEY:
-        required: true
+        required: false
   workflow_dispatch:
     inputs:
       ref:
@@ -52,5 +66,7 @@ jobs:
       NX_KEY: ${{ secrets.NX_KEY }}
     with:
       scope: support
-      ref: ${{ inputs.ref || github.sha }}
+      ref: ${{ inputs.ref || (inputs.repository == '' && github.sha || '') }}
+      repository: ${{ inputs.repository || '' }}
+      runs-on: ${{ inputs.runs-on || 'ledger-wallet-4cpu-aws-public-cached' }}
       skip-coverage: ${{ inputs.skip-coverage || false }}

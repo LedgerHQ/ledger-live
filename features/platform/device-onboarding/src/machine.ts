@@ -230,7 +230,11 @@ export const deviceOnboardingMachine = setup({
           },
         },
 
-        notGenuineSupport: {},
+        notGenuineSupport: {
+          on: {
+            CLOSE: { target: "checksIdle", actions: "pauseChecks" },
+          },
+        },
 
         firmwareCheck: {
           invoke: {

@@ -8,17 +8,20 @@ function resolveAvatarColor(identifier) {
   return `avatar-color:${identifier}`;
 }
 
-// The real Dialog keeps its content out of the DOM while closed, so consumers can assert on
-// `queryByTestId(...)` being absent. `Dialog` only publishes `open` (no DOM node of its own) and
-// `DialogContent` opts out of rendering when closed, mirroring the Tooltip stubs below.
-function Dialog({ children, open }) {
-  return React.createElement(DialogOpenContext.Provider, { value: open }, children);
+// Closed dialogs render nothing, matching the real Dialog. `height` is forwarded as `data-height`.
+function Dialog({ children, open, height }) {
+  return React.createElement(DialogOpenContext.Provider, { value: { open, height } }, children);
 }
 
 function DialogContent({ children, ...props }) {
-  if (React.useContext(DialogOpenContext) === false) return null;
+  const { open, height } = React.useContext(DialogOpenContext) ?? {};
+  if (open === false) return null;
 
-  return React.createElement("div", props, children);
+  return React.createElement(
+    "div",
+    height === undefined ? props : { ...props, "data-height": height },
+    children,
+  );
 }
 
 // Render the header's back and close buttons so tests can query them by their real Lumen labels.

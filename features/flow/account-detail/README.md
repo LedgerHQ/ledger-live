@@ -51,7 +51,7 @@ hooks (never from a view).
 | `ACCOUNT_DETAIL_EVENTS` | Event names: `Page Account`, `Page Account Settings`, `button_clicked`, `transaction_clicked`, `asset_clicked` |
 | `ACCOUNT_DETAIL_BUTTONS` | The `button` values that are not quick actions (`see all transactions`, `account settings`, `edit account name`...) |
 | `accountTrackingProps(facts)` | `{ network }`, on every payload. `network` is the currency **id** of the account, on both apps |
-| `accountPageViewProps(facts)` | `Page Account`: `source`, `operationsCount`, `hasTokens` |
+| `accountPageViewProps(facts)` | `Page Account`: `source`, `operationsCount`, `hasTokens`, `hasAnalyticsBanner` |
 | `accountSettingsPageViewProps(facts)` | `Page Account Settings`, from the account page |
 | `quickActionClickedProps(facts, button, location)` | Quick actions; `location` is `quick_action` or `quick_action_transfer` |
 | `accountButtonClickedProps(facts, button, page)` | Every other `button_clicked` |

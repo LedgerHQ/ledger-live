@@ -1,11 +1,20 @@
 import React from "react";
 import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
+import { QuitConfirmation } from "LLM/features/DeviceOnboarding/components/QuitConfirmation";
 import { ChecksScreen } from "LLM/features/DeviceOnboarding/screens/Checks";
-import { useDeviceOnboardingFunnelViewModel } from "./useDeviceOnboardingFunnelViewModel";
+import { KaraokeScreen } from "LLM/features/DeviceOnboarding/screens/Karaoke";
+import {
+  useDeviceOnboardingFunnelViewModel,
+  type DeviceOnboardingFunnelModel,
+} from "./useDeviceOnboardingFunnelViewModel";
 
-export function DeviceOnboardingFunnel() {
-  const screen = useDeviceOnboardingFunnelViewModel();
-  if (screen.status === "checks") return <ChecksScreen {...screen.checks} />;
+function FunnelBody({ screen }: Readonly<{ screen: DeviceOnboardingFunnelModel }>) {
+  if (screen.status === "karaoke") {
+    return <KaraokeScreen onClose={screen.onClose} />;
+  }
+  if (screen.status === "checks") {
+    return <ChecksScreen {...screen.checks} />;
+  }
 
   return (
     <Box lx={{ flex: 1, justifyContent: "center", gap: "s16", padding: "s16" }}>
@@ -21,5 +30,16 @@ export function DeviceOnboardingFunnel() {
         {screen.closeLabel}
       </Button>
     </Box>
+  );
+}
+
+export function DeviceOnboardingFunnel() {
+  const screen = useDeviceOnboardingFunnelViewModel();
+
+  return (
+    <>
+      <FunnelBody screen={screen} />
+      {screen.quitConfirmation ? <QuitConfirmation {...screen.quitConfirmation} /> : null}
+    </>
   );
 }

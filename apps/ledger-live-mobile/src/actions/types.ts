@@ -297,7 +297,7 @@ export enum SettingsActionTypes {
   SET_HAS_CLICKED_RECOVER = "SET_HAS_CLICKED_RECOVER",
 }
 
-export type SettingsImportPayload = Partial<SettingsState>;
+export type SettingsImportPayload = Partial<SettingsState> | null | undefined;
 export type SettingsUpdateCurrencyPayload = {
   ticker: string;
   patch: Partial<CurrencySettings>;

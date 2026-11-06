@@ -1,8 +1,15 @@
-import { AccountInfo, Cluster, ParsedAccountData, PublicKey } from "@solana/web3.js";
+import {
+  AccountInfo,
+  Cluster,
+  ParsedAccountData,
+  PublicKey,
+  type VersionedMessage,
+  type VersionedTransaction,
+} from "@solana/web3.js";
 import BigNumber from "bignumber.js";
 import { partition } from "lodash/fp";
 import { ValidatorsAppValidator } from "./network/validator-app";
-import { type SolanaCoinConfig, type SolanaCurrencyId } from "./config";
+import { type SolanaCoinConfig } from "./config";
 import type { Config as ChainConfig } from "./network/chain";
 import {
   DEFAULT_LEDGER_VALIDATORS,
@@ -34,6 +41,27 @@ export function transactionHasNonPlaceholderSignatures(
   return false;
 }
 
+/**
+ * Whether `address` must sign `message`. A partner may pay the fees (Jupiter's gasless and RFQ
+ * swaps do), so the account signs as a secondary signer rather than the fee payer at index 0.
+ */
+export function isRequiredSigner(message: VersionedMessage, address: string): boolean {
+  const index = message.staticAccountKeys.findIndex(key => key.toBase58() === address);
+  return index >= 0 && index < message.header.numRequiredSignatures;
+}
+
+/**
+ * Whether a partner-built transaction gets a fresh blockhash before signing: only while it is
+ * unsigned and the sender alone signs it. A co-signer (the market maker or gas payer of a Jupiter
+ * swap) signs the partner's exact bytes after the sender.
+ */
+export function refreshesBlockhash(transaction: VersionedTransaction): boolean {
+  return (
+    transaction.message.header.numRequiredSignatures === 1 &&
+    !transactionHasNonPlaceholderSignatures(transaction.signatures)
+  );
+}
+
 export const SOLANA_DELEGATION_RESERVE = 0.01;
 
 export const assertUnreachable = (_: never): never => {
@@ -48,21 +76,6 @@ export async function drainSeq<T>(jobs: (() => Promise<T>)[]) {
   return items;
 }
 
-export function endpointByCurrencyId(config: SolanaCoinConfig, currencyId: string): string {
-  if (!isSolanaCurrencyId(currencyId)) {
-    throw Error(
-      `unexpected currency id format <${currencyId}>, should be like solana[_(testnet | devnet)]`,
-    );
-  }
-
-  const endpoint = config.rpcUrls?.[currencyId];
-  if (!endpoint) {
-    throw Error(`no rpcUrls.${currencyId} in the coin config of ${currencyId}`);
-  }
-
-  return endpoint;
-}
-
 export function feesOf(config: SolanaCoinConfig) {
   return {
     computeUnitMargin: config.fees?.computeUnitMargin ?? DEFAULT_COMPUTE_UNIT_MARGIN,
@@ -72,9 +85,9 @@ export function feesOf(config: SolanaCoinConfig) {
   };
 }
 
-export function chainConfigFrom(config: SolanaCoinConfig, currencyId: string): ChainConfig {
+export function chainConfigFrom(config: SolanaCoinConfig): ChainConfig {
   return {
-    endpoint: endpointByCurrencyId(config, currencyId),
+    endpoint: config.rpcUrl,
     confirmationTimeoutMs: config.broadcast?.timeoutMs,
     retries: config.node?.retries,
     retryDelayMs: config.node?.retryDelayMs,
@@ -82,12 +95,6 @@ export function chainConfigFrom(config: SolanaCoinConfig, currencyId: string): C
       minPriorityFee: config.fees.minPriorityFee,
     }),
   };
-}
-
-function isSolanaCurrencyId(currencyId: string): currencyId is SolanaCurrencyId {
-  return (
-    currencyId === "solana" || currencyId === "solana_devnet" || currencyId === "solana_testnet"
-  );
 }
 
 export function clusterByCurrencyId(currencyId: string): Cluster {

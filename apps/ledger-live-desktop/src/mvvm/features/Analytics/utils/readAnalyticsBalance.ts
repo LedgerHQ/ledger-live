@@ -11,8 +11,8 @@ import {
   lineChartRangeToPortfolioRange,
   resolveAnalyticsValueChange,
 } from "@ledgerhq/wallet-analytics";
-import { readAnalyticsPositionValue } from "./readAnalyticsPositionValue";
 import { resolveAnalyticsPositions } from "./resolveAnalyticsPositions";
+import { selectPricedAnalyticsPositions } from "./selectPricedAnalyticsPositions";
 
 export function readAnalyticsBalance(
   context: AnalyticsQueryContext,
@@ -26,16 +26,18 @@ export function readAnalyticsBalance(
   const selected = resolveAnalyticsPositions(context.positionIds, positions);
   if (!range || !selected) return { status: "unavailable" };
 
-  const hasUnpricedHolding = selected.some(
-    position => readAnalyticsPositionValue(position, countervalues, fiatCurrency) === null,
+  const { priced, hasOnlyUnpricedHoldings } = selectPricedAnalyticsPositions(
+    selected,
+    countervalues,
+    fiatCurrency,
   );
-  if (hasUnpricedHolding) return { status: "unavailable" };
+  if (hasOnlyUnpricedHoldings) return { status: "unavailable" };
 
-  const portfolio = getPortfolio(selected, range, countervalues, fiatCurrency, {
+  const portfolio = getPortfolio(priced, range, countervalues, fiatCurrency, {
     flattenSourceAccounts: false,
   });
   const withHistory = new Set(portfolio.availableAccounts.map(account => account.id));
-  const hasHoldingWithoutHistory = selected.some(
+  const hasHoldingWithoutHistory = priced.some(
     position => !position.balance.isZero() && !withHistory.has(position.id),
   );
   if (hasHoldingWithoutHistory) return { status: "unavailable" };
@@ -43,7 +45,7 @@ export function readAnalyticsBalance(
   const amount = portfolio.balanceHistory.at(-1)?.value ?? 0;
   const variation = resolveAnalyticsValueChange({
     selectedTimeRange: range,
-    accounts: selected,
+    accounts: priced,
     currentBalance: amount,
     portfolio,
     cvState: countervalues,

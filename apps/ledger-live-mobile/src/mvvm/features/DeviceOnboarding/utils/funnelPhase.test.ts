@@ -42,6 +42,7 @@ describe("phaseOf", () => {
     expect(phaseOf("done", true)).toBe("checks");
     expect(phaseOf("syncOffer", false)).toBe("synchronizing");
     expect(phaseOf("done")).toBe("synchronizing");
+    expect(phaseOf("done", false)).toBe("checks");
   });
 
   it("should not claim to know a state the machine does not have", () => {
@@ -60,6 +61,7 @@ describe("checksScreenForPhase", () => {
   it("should keep the checks screen for a checks phase", () => {
     expect(checksScreenForPhase("checks", "checks.checksSucceeded", false, true)).toBe("succeeded");
     expect(checksScreenForPhase("checks", "syncOffer", false, true)).toBe("succeeded");
+    expect(checksScreenForPhase("checks", "done", false, false)).toBe("succeeded");
   });
 
   it("should show no checks screen while connecting or failed", () => {

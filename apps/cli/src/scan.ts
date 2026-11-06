@@ -145,7 +145,7 @@ export const inferCurrency = <
   file,
   xpub,
   id,
-}: Partial<T>) => {
+}: Partial<T>): Observable<CryptoCurrency | null | undefined> => {
   if (currency) {
     return defer(() => of(findCryptoCurrencyByKeyword(currency)));
   }

@@ -44,6 +44,7 @@
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
+    "@support/lint": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
