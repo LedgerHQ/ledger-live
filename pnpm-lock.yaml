@@ -1373,6 +1373,9 @@ importers:
       '@features/platform-verify-address-intent':
         specifier: workspace:^
         version: link:../../features/platform/verify-address-intent
+      '@features/platform-wallet-api-accounts':
+        specifier: workspace:^
+        version: link:../../features/platform/wallet-api-accounts
       '@features/platform-wallet-sync':
         specifier: workspace:^
         version: link:../../features/platform/wallet-sync
@@ -2301,6 +2304,9 @@ importers:
       '@features/platform-verify-address-intent':
         specifier: workspace:^
         version: link:../../features/platform/verify-address-intent
+      '@features/platform-wallet-api-accounts':
+        specifier: workspace:^
+        version: link:../../features/platform/wallet-api-accounts
       '@features/platform-wallet-sync':
         specifier: workspace:^
         version: link:../../features/platform/wallet-sync
@@ -13495,6 +13501,88 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
+  features/platform/wallet-api-accounts:
+    dependencies:
+      '@domain/api-account-data':
+        specifier: workspace:*
+        version: link:../../../domain/api/account-data
+      '@domain/api-currency-token':
+        specifier: workspace:*
+        version: link:../../../domain/api/currency-token
+      '@domain/entity-account':
+        specifier: workspace:*
+        version: link:../../../domain/entity/account
+      '@domain/entity-account-balance':
+        specifier: workspace:*
+        version: link:../../../domain/entity/account-balance
+      '@domain/entity-account-data':
+        specifier: workspace:*
+        version: link:../../../domain/entity/account-data
+      '@domain/entity-account-descriptor':
+        specifier: workspace:*
+        version: link:../../../domain/entity/account-descriptor
+      '@domain/entity-account-name':
+        specifier: workspace:*
+        version: link:../../../domain/entity/account-name
+      '@domain/entity-account-receive':
+        specifier: workspace:*
+        version: link:../../../domain/entity/account-receive
+      '@domain/entity-currency-crypto':
+        specifier: workspace:*
+        version: link:../../../domain/entity/currency-crypto
+      '@ledgerhq/wallet-api-core':
+        specifier: 'catalog:'
+        version: 2.2.0(@ton/crypto@3.3.0)(encoding@0.1.13)
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+      bignumber.js:
+        specifier: 9.1.2
+        version: 9.1.2
+      uuid:
+        specifier: 'catalog:'
+        version: 11.1.0
+    devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      jest-environment-jsdom:
+        specifier: 'catalog:'
+        version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-redux:
+        specifier: 'catalog:'
+        version: 9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
   features/platform/wallet-sync:
     dependencies:
       '@shared/cloud-sync':
@@ -18497,6 +18585,9 @@ importers:
       '@features/platform-market-countervalues':
         specifier: workspace:*
         version: link:../../features/platform/market-countervalues
+      '@features/platform-wallet-api-accounts':
+        specifier: workspace:*
+        version: link:../../features/platform/wallet-api-accounts
       '@ledgerhq/asset-aggregation':
         specifier: workspace:^
         version: link:../asset-aggregation

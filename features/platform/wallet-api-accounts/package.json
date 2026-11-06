@@ -1,0 +1,56 @@
+{
+  "name": "@features/platform-wallet-api-accounts",
+  "version": "0.0.0",
+  "private": true,
+  "description": "The accounts the Wallet API exposes to live apps, built from the account data entities instead of the legacy Account",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "lint": "oxlint ./src",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage"
+  },
+  "dependencies": {
+    "@domain/api-account-data": "workspace:*",
+    "@domain/api-currency-token": "workspace:*",
+    "@domain/entity-account": "workspace:*",
+    "@domain/entity-account-balance": "workspace:*",
+    "@domain/entity-account-data": "workspace:*",
+    "@domain/entity-account-descriptor": "workspace:*",
+    "@domain/entity-account-name": "workspace:*",
+    "@domain/entity-account-receive": "workspace:*",
+    "@domain/entity-currency-crypto": "workspace:*",
+    "@ledgerhq/wallet-api-core": "catalog:",
+    "@reduxjs/toolkit": "catalog:",
+    "bignumber.js": "catalog:",
+    "uuid": "catalog:"
+  },
+  "peerDependencies": {
+    "react": ">=19.0.0",
+    "react-redux": ">=9.0.0"
+  },
+  "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
+    "jest": "catalog:",
+    "jest-environment-jsdom": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "react": "catalog:",
+    "react-redux": "catalog:",
+    "typescript": "catalog:"
+  }
+}

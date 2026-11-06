@@ -1,4 +1,6 @@
 import { track } from "@shared/analytics";
+import { useWalletAPIAccountsProvider } from "@features/platform-wallet-api-accounts";
+import { useFeature } from "@features/platform-feature-flags";
 import { AppManifest, WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
 import { getClientHeaders, getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
 import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
@@ -216,6 +218,8 @@ export function useWebView(
   const allowedDomains = useBridgeAllowedDomains(manifest.domains, manifestDomainCheckEnabled);
 
   const walletState = useSelector(walletSelector);
+  const accountsProvider = useWalletAPIAccountsProvider(walletState.accountNames);
+  const accountDataEnabled = useFeature("walletApiAccountData")?.enabled;
 
   const { onLoadError, server } = useWalletAPIServer({
     accountNames: walletState.accountNames,
@@ -227,6 +231,7 @@ export function useWebView(
     uiHook,
     customHandlers,
     bridgeSession: bridge.session,
+    accountsProvider: accountDataEnabled ? accountsProvider : undefined,
   });
   const [cacheBustedLiveAppsDb, setCacheBustedLiveAppsDbState, cacheBustedLoaded] =
     useCacheBustedLiveAppsDB();

@@ -1,5 +1,7 @@
 import type { Account, AccountLike, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";
+import { encodeLegacyTokenId, walletApiIdOf } from "@features/platform-wallet-api-accounts";
+import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import type { AccountNamesState } from "@domain/entity-account-name";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { makeEmptyTokenAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
@@ -14,6 +16,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getAccountBridge } from "../bridge";
 import {
   accountToWalletAPIAccount,
+  getWalletApiIdFromAccountId,
   getWalletAPITransactionSignFlowInfos,
   resolveWalletApiSpendableBalance,
   resolveWalletApiMaxSpendable,
@@ -471,5 +474,16 @@ describe("accountToWalletAPIAccount", () => {
       ready: false,
       reason: "unrevealed",
     });
+  });
+});
+
+describe("Wallet API ids of the account data provider", () => {
+  it("should derive the same token account id as the legacy token account", () => {
+    const parentId = "js:2:ethereum:0x71C7656EC7ab88b098defB751B7401B5f6d8976F:";
+    const token = mockTokenCurrency();
+    const legacyTokenAccountId = encodeTokenAccountId(parentId, token);
+    expect(walletApiIdOf(`${parentId}+${encodeLegacyTokenId(token.id)}`)).toBe(
+      getWalletApiIdFromAccountId(legacyTokenAccountId),
+    );
   });
 });

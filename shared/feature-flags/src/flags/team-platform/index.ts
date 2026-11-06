@@ -12,3 +12,4 @@ export * from "./lwdLedgerSyncOptimisation";
 export * from "./lwmLedgerSyncOptimisation";
 export * from "./mixpanelAnalytics";
 export * from "./mockFeature";
+export * from "./walletApiAccountData";
