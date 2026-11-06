@@ -11,5 +11,5 @@
     "skipLibCheck": true,
     "types": ["node"]
   },
-  "include": ["*.mjs", "*.d.mts"]
+  "include": ["src/**/*.mjs", "src/**/*.d.mts"]
 }

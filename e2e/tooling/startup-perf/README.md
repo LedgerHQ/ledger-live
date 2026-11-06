@@ -4,25 +4,28 @@ Compares the startup time of two Ledger Wallet Mobile builds, A and B, on two An
 two iOS simulators. It automates the manual checks B2CQA-6555 (iOS) and B2CQA-6593 (Android).
 [test-mobile-startup-perf.yml](../../../.github/workflows/test-mobile-startup-perf.yml) runs it in
 CI only. The scripts run on Node alone (the `package.json` only holds the checks' tools). The build
-jobs check out the two shell scripts alone, so the measured ref's Nx never sees a second copy of
-this package; the measure jobs check out this folder, `e2e/mobile/userdata` and, on Android,
-`tools/scripts` and the signing keystore.
+jobs check out `ci/` alone, so the measured ref's Nx never sees a second copy of this package; the
+measure jobs check out this folder, `e2e/mobile/userdata` and, on Android, `tools/scripts` and the
+signing keystore.
 
-| File                      | Role                                                                                |
-| ------------------------- | ----------------------------------------------------------------------------------- |
-| `prepare-build.sh`        | Makes the checked-out ref's E2E prerelease build prod-like, before `e2e:build`      |
-| `verify-build.sh`         | Checks the built binary: no `MOCK`/`DETOX`, `FORCE_DEBUG_VISIBLE=1`, real blur      |
-| `adapt-mise-toml.sh`      | Drops what an older ref's `mise.toml` declares that no longer installs              |
-| `install-maestro.sh`      | Installs the pinned Maestro, checked against its SHA-256                            |
-| `run.mjs`                 | The CLI: installs, injects and launches A and B, writes `samples.jsonl`             |
-| `android.mjs`, `ios.mjs`  | The two `Platform`s: install, launch, pause, process start, through adb or simctl   |
-| `performance-screen.mjs`  | Reads App startup time and the startup events through Maestro                       |
-| `inject.mjs`              | Imports a scenario's userdata through the E2E bridge, once per install              |
-| `bridge.mjs`              | The E2E bridge protocol (`apps/ledger-live-mobile/src/e2e/bridge/client.ts`)        |
-| `maestro.mjs`, `exec.mjs` | Maestro and child-process calls                                                     |
-| `analyze.mjs`             | B − A per scenario, verdict, job summary; exits 1 on a failed or inconclusive check |
-| `types.d.mts`             | `Sample` (a line of `samples.jsonl`) and `Platform`, checked by `tsc`               |
-| `flows/`                  | Maestro flows that open Settings > Debug > Performance in the running app           |
+`ci/` holds what the workflow's steps run, `src/` the harness with each test next to its module, and
+`flows/` the Maestro flows.
+
+| Path                              | Role                                                                                  |
+| --------------------------------- | ------------------------------------------------------------------------------------- |
+| `ci/prepare-build.sh`             | Makes the checked-out ref's E2E prerelease build prod-like, before `e2e:build`        |
+| `ci/verify-build.sh`              | Checks the built binary: no `MOCK`/`DETOX`, `FORCE_DEBUG_VISIBLE=1`, real blur        |
+| `ci/adapt-mise-toml.sh`           | Drops what an older ref's `mise.toml` declares that no longer installs                |
+| `ci/install-maestro.sh`           | Installs the pinned Maestro, checked against its SHA-256                              |
+| `src/run.mjs`                     | The CLI that measures: installs, injects and launches A and B, writes `samples.jsonl` |
+| `src/analyze.mjs`                 | The CLI that judges: B − A per scenario, verdict, job summary                         |
+| `src/platforms/`                  | `android.mjs` and `ios.mjs`, the two `Platform`s, through adb or simctl               |
+| `src/performance-screen.mjs`      | Reads App startup time and the startup events through Maestro                         |
+| `src/inject.mjs`                  | Imports a scenario's userdata through the E2E bridge, once per install                |
+| `src/bridge.mjs`                  | The E2E bridge protocol (`apps/ledger-live-mobile/src/e2e/bridge/client.ts`)          |
+| `src/maestro.mjs`, `src/exec.mjs` | Maestro and child-process calls                                                       |
+| `src/types.d.mts`                 | `Sample` (a line of `samples.jsonl`) and `Platform`, checked by `tsc`                 |
+| `flows/`                          | Maestro flows that open Settings > Debug > Performance in the running app             |
 
 ## Presets
 

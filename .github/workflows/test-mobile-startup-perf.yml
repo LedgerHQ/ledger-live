@@ -177,16 +177,13 @@ jobs:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           path: .startup-perf
-          # Only the scripts: this folder's package.json would clash in Nx with the ref's own copy.
-          sparse-checkout: |
-            /e2e/tooling/startup-perf/adapt-mise-toml.sh
-            /e2e/tooling/startup-perf/prepare-build.sh
-            /e2e/tooling/startup-perf/verify-build.sh
+          # Only ci/: the package.json beside it would clash in Nx with the ref's own copy.
+          sparse-checkout: /e2e/tooling/startup-perf/ci/
           sparse-checkout-cone-mode: false
           persist-credentials: false
 
       - name: Adapt mise.toml of older commits
-        run: bash .startup-perf/e2e/tooling/startup-perf/adapt-mise-toml.sh
+        run: bash .startup-perf/e2e/tooling/startup-perf/ci/adapt-mise-toml.sh
 
       # No remote Nx, pnpm or Gradle cache: they would be written with develop's role for another ref.
       - name: Setup the caches
@@ -220,7 +217,7 @@ jobs:
         run: pnpm build:llm:deps
 
       - name: Prepare the prod-like build
-        run: bash .startup-perf/e2e/tooling/startup-perf/prepare-build.sh
+        run: bash .startup-perf/e2e/tooling/startup-perf/ci/prepare-build.sh
 
       - name: Build detoxPreRelease APK (x86_64, JS bundled)
         env:
@@ -237,7 +234,7 @@ jobs:
           mkdir -p out
           APK=$(find apps/ledger-live-mobile/android/app/build/outputs/apk/detoxPreRelease -name "*x86_64*.apk" | head -1)
           [[ -n "$APK" ]] || { echo "::error::no x86_64 detoxPreRelease APK found"; exit 1; }
-          bash .startup-perf/e2e/tooling/startup-perf/verify-build.sh android "$APK"
+          bash .startup-perf/e2e/tooling/startup-perf/ci/verify-build.sh android "$APK"
           cp "$APK" out/app.apk
           git rev-parse HEAD > out/sha.txt
           ls -la out
@@ -277,16 +274,13 @@ jobs:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           path: .startup-perf
-          # Only the scripts: this folder's package.json would clash in Nx with the ref's own copy.
-          sparse-checkout: |
-            /e2e/tooling/startup-perf/adapt-mise-toml.sh
-            /e2e/tooling/startup-perf/prepare-build.sh
-            /e2e/tooling/startup-perf/verify-build.sh
+          # Only ci/: the package.json beside it would clash in Nx with the ref's own copy.
+          sparse-checkout: /e2e/tooling/startup-perf/ci/
           sparse-checkout-cone-mode: false
           persist-credentials: false
 
       - name: Adapt mise.toml of older commits
-        run: bash .startup-perf/e2e/tooling/startup-perf/adapt-mise-toml.sh
+        run: bash .startup-perf/e2e/tooling/startup-perf/ci/adapt-mise-toml.sh
 
       # No remote caches, as in the Android build.
       - name: setup caches
@@ -314,7 +308,7 @@ jobs:
         run: pnpm build:llm:deps
 
       - name: Prepare the prod-like build
-        run: bash .startup-perf/e2e/tooling/startup-perf/prepare-build.sh
+        run: bash .startup-perf/e2e/tooling/startup-perf/ci/prepare-build.sh
 
       - name: Build Release simulator app (JS bundled)
         env:
@@ -329,7 +323,7 @@ jobs:
           set -euo pipefail
           mkdir -p out
           APP=apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app
-          bash .startup-perf/e2e/tooling/startup-perf/verify-build.sh ios "$APP"
+          bash .startup-perf/e2e/tooling/startup-perf/ci/verify-build.sh ios "$APP"
           ditto -c -k --keepParent "$APP" out/app.zip
           git rev-parse HEAD > out/sha.txt
           ls -la out
@@ -464,7 +458,7 @@ jobs:
           done
 
       - name: Install Maestro ${{ env.MAESTRO_VERSION }}
-        run: bash e2e/tooling/startup-perf/install-maestro.sh
+        run: bash e2e/tooling/startup-perf/ci/install-maestro.sh
 
       - name: Report the AVD read-ahead
         run: cat "${RUNNER_TEMP}/avd-read-ahead.log" 2>/dev/null || echo "No preinstalled AVD to read ahead."
@@ -538,7 +532,7 @@ jobs:
           APP_A=builds/a/signed.apk
           APP_B=builds/b/signed.apk
           [[ -f "$APP_B" ]] || APP_B="$APP_A"
-          node e2e/tooling/startup-perf/run.mjs \
+          node e2e/tooling/startup-perf/src/run.mjs \
             --platform android \
             --devices emulator-5554,emulator-5556 \
             --app-a "$APP_A" --app-b "$APP_B" --app-id "$APP_ID" \
@@ -554,7 +548,7 @@ jobs:
           LABEL_A: ${{ needs.plan.outputs.label_a }}
           LABEL_B: ${{ needs.plan.outputs.label_b }}
         run: |
-          node e2e/tooling/startup-perf/analyze.mjs \
+          node e2e/tooling/startup-perf/src/analyze.mjs \
             --samples "$RESULTS_DIR/android/samples.jsonl" \
             --preset "$PRESET" --threshold-ms "$THRESHOLD" \
             --label-a "$LABEL_A" --label-b "$LABEL_B" \
@@ -623,7 +617,7 @@ jobs:
           done
 
       - name: Install Maestro ${{ env.MAESTRO_VERSION }}
-        run: bash e2e/tooling/startup-perf/install-maestro.sh
+        run: bash e2e/tooling/startup-perf/ci/install-maestro.sh
 
       - name: Create and boot two simulators
         timeout-minutes: 20
@@ -664,7 +658,7 @@ jobs:
           APP_A=builds/a/ledgerlivemobile.app
           APP_B=builds/b/ledgerlivemobile.app
           [[ -d "$APP_B" ]] || APP_B="$APP_A"
-          node e2e/tooling/startup-perf/run.mjs \
+          node e2e/tooling/startup-perf/src/run.mjs \
             --platform ios \
             --devices "$SIM_1,$SIM_2" \
             --app-a "$APP_A" --app-b "$APP_B" --app-id "$APP_ID" \
@@ -680,7 +674,7 @@ jobs:
           LABEL_A: ${{ needs.plan.outputs.label_a }}
           LABEL_B: ${{ needs.plan.outputs.label_b }}
         run: |
-          node e2e/tooling/startup-perf/analyze.mjs \
+          node e2e/tooling/startup-perf/src/analyze.mjs \
             --samples "$RESULTS_DIR/ios/samples.jsonl" \
             --preset "$PRESET" --threshold-ms "$THRESHOLD" \
             --label-a "$LABEL_A" --label-b "$LABEL_B" \

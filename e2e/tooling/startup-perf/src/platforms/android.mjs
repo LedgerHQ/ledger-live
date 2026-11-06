@@ -1,7 +1,7 @@
 import { writeFile } from "node:fs/promises";
-import { DEVICE_QUERY_TIMEOUT_MS, INSTALL_TIMEOUT_MS, log, run, sleep } from "./exec.mjs";
+import { DEVICE_QUERY_TIMEOUT_MS, INSTALL_TIMEOUT_MS, log, run, sleep } from "../exec.mjs";
 
-/** @import { Platform } from "./types.mjs" */
+/** @import { Platform } from "../types.mjs" */
 
 const EMULATOR_PAUSE_TIMEOUT_MS = 30_000;
 // Before the screen state is read again after a wake key.

@@ -1,12 +1,12 @@
 import { writeFile } from "node:fs/promises";
 import path from "node:path";
 import { sleep } from "./exec.mjs";
-import { MAESTRO_FLOW_TIMEOUT_MS, MAESTRO_HIERARCHY_TIMEOUT_MS } from "./maestro.mjs";
+import { FLOWS_DIR, MAESTRO_FLOW_TIMEOUT_MS, MAESTRO_HIERARCHY_TIMEOUT_MS } from "./maestro.mjs";
 
 /** @import { Maestro, Platform, StartupEvent } from "./types.mjs" */
 
-const FULL_FLOW = path.join(import.meta.dirname, "flows", "read-performance.yaml");
-const QUICK_FLOW = path.join(import.meta.dirname, "flows", "read-performance-quick.yaml");
+const FULL_FLOW = path.join(FLOWS_DIR, "read-performance.yaml");
+const QUICK_FLOW = path.join(FLOWS_DIR, "read-performance-quick.yaml");
 // "App startup time" is the later of these two: a read before both exist under-reports it.
 const FINAL_EVENTS = ["App started", "Splash screen faded"];
 const MAX_SCROLLS = 10;
