@@ -1,8 +1,11 @@
 import { createTreeWithEmptyWorkspace } from "@nx/devkit/testing";
 import { join } from "path";
 import {
+  assertComponentName,
+  assertDualPlatformPackage,
   assertNoSharedPlatformUniversalModule,
   assertRawPlatformExportTargetsAreStrings,
+  assertTemplateDependencies,
   barrelsForComponent,
   componentTargetDirectory,
   createTreeReader,
@@ -19,6 +22,13 @@ import {
 
 const PACKAGE = "shared/thing";
 const UNIVERSAL = { "react-native": "./src/index.native.ts", default: "./src/index.ts" };
+const TEMPLATE_DEPENDENCIES = {
+  dependencies: { react: "catalog:", "react-native": "catalog:" },
+  devDependencies: {
+    "@testing-library/react": "catalog:",
+    "@testing-library/react-native": "catalog:",
+  },
+};
 
 function seedDualPackage(
   tree: ReturnType<typeof createTreeWithEmptyWorkspace>,
@@ -28,6 +38,7 @@ function seedDualPackage(
     `${PACKAGE}/package.json`,
     JSON.stringify({
       name: "@shared/thing",
+      ...TEMPLATE_DEPENDENCIES,
       exports: { ...exportsField, "./package.json": "./package.json" },
     }),
   );
@@ -35,6 +46,86 @@ function seedDualPackage(
   tree.write(`${PACKAGE}/src/index.native.ts`, 'export * from "./Folder";\n');
   tree.write(`${PACKAGE}/src/Folder/index.ts`, 'export * from "./Widget";\n');
 }
+
+describe("assertComponentName", () => {
+  it("throws when the name is not PascalCase", () => {
+    expect(() => assertComponentName("contactsButton", "contacts-button")).toThrow(
+      /does not give a PascalCase component name/,
+    );
+  });
+
+  it("accepts a valid PascalCase name", () => {
+    expect(() => assertComponentName("ContactsButton", "contacts-button")).not.toThrow();
+  });
+
+  it.each(["React", "View"])("throws when %s shadows a template import", name => {
+    expect(() => assertComponentName(name, name)).toThrow(/shadows an import/);
+  });
+});
+
+describe("assertDualPlatformPackage", () => {
+  it("throws when the package is not dual-platform", () => {
+    const tree = createTreeWithEmptyWorkspace();
+    tree.write("shared/logic/package.json", JSON.stringify({ exports: { ".": "./src/index.ts" } }));
+    tree.write("shared/logic/src/index.ts", 'export * from "./sum";\n');
+    const manifest = JSON.parse(tree.read("shared/logic/package.json", "utf-8")!.toString());
+
+    expect(() =>
+      assertDualPlatformPackage(tree, "shared/logic", manifest, "docs/adr/universal-components.md"),
+    ).toThrow(/not a dual-platform package.*docs\/adr\/universal-components\.md/);
+  });
+
+  it("accepts a package with a react-native export condition", () => {
+    const tree = createTreeWithEmptyWorkspace();
+    seedDualPackage(tree, { ".": UNIVERSAL });
+    const manifest = JSON.parse(tree.read(`${PACKAGE}/package.json`, "utf-8")!.toString());
+
+    expect(() =>
+      assertDualPlatformPackage(tree, PACKAGE, manifest, "docs/adr/universal-components.md"),
+    ).not.toThrow();
+  });
+});
+
+describe("assertTemplateDependencies", () => {
+  it("throws when required packages are missing from the manifest", () => {
+    const tree = createTreeWithEmptyWorkspace();
+    seedDualPackage(tree);
+    const manifest = JSON.parse(tree.read(`${PACKAGE}/package.json`, "utf-8")!.toString());
+    const stripped = {
+      ...manifest,
+      dependencies: { react: "catalog:" },
+      devDependencies: {},
+    };
+
+    expect(() => assertTemplateDependencies(PACKAGE, stripped, undefined)).toThrow(
+      "does not declare @testing-library/react, react-native, @testing-library/react-native, which the generated files import",
+    );
+  });
+
+  it("accepts when all template dependencies are declared", () => {
+    const tree = createTreeWithEmptyWorkspace();
+    seedDualPackage(tree);
+    const manifest = JSON.parse(tree.read(`${PACKAGE}/package.json`, "utf-8")!.toString());
+
+    expect(() => assertTemplateDependencies(PACKAGE, manifest, undefined)).not.toThrow();
+  });
+
+  it("requires only the chosen platform packages for a platform entry", () => {
+    const tree = createTreeWithEmptyWorkspace();
+    seedDualPackage(tree);
+    const manifest = JSON.parse(tree.read(`${PACKAGE}/package.json`, "utf-8")!.toString());
+    const webOnly = {
+      ...manifest,
+      dependencies: { react: "catalog:" },
+      devDependencies: { "@testing-library/react": "catalog:" },
+    };
+
+    expect(() => assertTemplateDependencies(PACKAGE, webOnly, "web")).not.toThrow();
+    expect(() => assertTemplateDependencies(PACKAGE, webOnly, "native")).toThrow(
+      /does not declare react-native, @testing-library\/react-native,/,
+    );
+  });
+});
 
 describe("normalizeDirectory", () => {
   it("rejects paths that escape src", () => {

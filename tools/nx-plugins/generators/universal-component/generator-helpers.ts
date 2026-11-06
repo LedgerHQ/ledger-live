@@ -4,6 +4,7 @@ import {
   classifyEntries,
   collectEntryComponents,
   exportNamesFromEntry,
+  hasReactNativeCondition,
   parseModule,
   resolveRelative,
 } from "../../enforce-package-structure/components.js";
@@ -20,6 +21,72 @@ export type FileReader = {
 const BARREL = /^index(?:\.(?:web|native))?\.tsx?$/;
 const PLATFORMS: Platform[] = ["web", "native"];
 const PLATFORM_FILE = /\.(?:web|native|ios|android)\.[cm]?[jt]sx?$/;
+const PASCAL_CASE = /^[A-Z][A-Za-z0-9]*$/;
+/** Names the templates import, which a component of the same name would shadow. */
+const TEMPLATE_IMPORTS = new Set(["React", "View"]);
+/** The packages each platform's templates import. */
+const TEMPLATE_DEPENDENCIES: Record<Platform, string[]> = {
+  web: ["react", "@testing-library/react"],
+  native: ["react", "react-native", "@testing-library/react-native"],
+};
+
+/**
+ * @param {string} className PascalCase name derived from the schema `name`.
+ * @param {string} rawName The schema `name` value (used in error messages).
+ */
+export function assertComponentName(className: string, rawName: string): void {
+  if (!PASCAL_CASE.test(className)) {
+    throw new Error(`"${rawName}" does not give a PascalCase component name.`);
+  }
+  if (TEMPLATE_IMPORTS.has(className)) {
+    throw new Error(`"${className}" shadows an import of the generated files, pick another name.`);
+  }
+}
+
+/**
+ * @param {import("@nx/devkit").Tree} tree Nx virtual file tree.
+ * @param {string} projectRoot Package root path in the tree.
+ * @param {Record<string, unknown>} manifest Parsed package.json.
+ * @param {string} adrDocPath Path to the ADR referenced in error messages.
+ */
+export function assertDualPlatformPackage(
+  tree: Tree,
+  projectRoot: string,
+  manifest: Record<string, unknown>,
+  adrDocPath: string,
+): void {
+  if (!hasReactNativeCondition(manifest.exports) && !hasPlatformFiles(tree, `${projectRoot}/src`)) {
+    throw new Error(
+      `${projectRoot} is not a dual-platform package: package.json#exports has no "react-native" condition and src/ holds no .web or .native file. Universal and platform components belong to dual-platform packages, see ${adrDocPath}.`,
+    );
+  }
+}
+
+/**
+ * @param {string} projectRoot Package root path.
+ * @param {Record<string, unknown>} manifest Parsed package.json.
+ * @param {Platform | undefined} platformEntry When set, only that platform's template imports are required.
+ */
+export function assertTemplateDependencies(
+  projectRoot: string,
+  manifest: Record<string, unknown>,
+  platformEntry: Platform | undefined,
+): void {
+  const declared = new Set(
+    ["dependencies", "devDependencies", "peerDependencies"].flatMap(field =>
+      Object.keys((manifest[field] as Record<string, unknown> | undefined) ?? {}),
+    ),
+  );
+  const required = (platformEntry ? [platformEntry] : PLATFORMS).flatMap(
+    platform => TEMPLATE_DEPENDENCIES[platform],
+  );
+  const missing = [...new Set(required)].filter(name => !declared.has(name));
+  if (missing.length > 0) {
+    throw new Error(
+      `${projectRoot} does not declare ${missing.join(", ")}, which the generated files import. Add them to its package.json first.`,
+    );
+  }
+}
 
 function absoluteModulePath(entryFile: string): string {
   const normalized = entryFile.replace(/\\/g, "/");
