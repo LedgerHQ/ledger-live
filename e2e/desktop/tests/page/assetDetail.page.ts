@@ -29,6 +29,7 @@ export class AssetDetailPage extends AppPage {
   private readonly pnlDetailDialog = this.page.getByTestId("pnl-detail-dialog");
   private readonly addFavoriteMenuItem = this.page.getByTestId("asset-detail-add-favorite");
   private readonly removeFavoriteMenuItem = this.page.getByTestId("asset-detail-remove-favorite");
+  private readonly favoriteMenuItem = this.addFavoriteMenuItem.or(this.removeFavoriteMenuItem);
 
   constructor(page: Page, assetId: string) {
     super(page);
@@ -136,18 +137,25 @@ export class AssetDetailPage extends AppPage {
   @step("Open the asset options menu")
   private async openOptionsMenu() {
     await this.optionsTrigger.click();
+    await expect(this.optionsTrigger).toHaveAttribute("aria-expanded", "true");
+  }
+
+  private async waitForOptionsMenuClosed() {
+    await expect(this.favoriteMenuItem).toBeHidden();
   }
 
   @step("Add asset to favorites from options menu")
   async addToFavorites() {
     await this.openOptionsMenu();
     await this.addFavoriteMenuItem.click();
+    await this.waitForOptionsMenuClosed();
   }
 
   @step("Remove asset from favorites from options menu")
   async removeFromFavorites() {
     await this.openOptionsMenu();
     await this.removeFavoriteMenuItem.click();
+    await this.waitForOptionsMenuClosed();
   }
 
   @step("Expect asset to be marked as favorite")
@@ -155,6 +163,7 @@ export class AssetDetailPage extends AppPage {
     await this.openOptionsMenu();
     await expect(this.removeFavoriteMenuItem).toBeVisible();
     await this.page.keyboard.press("Escape");
+    await this.waitForOptionsMenuClosed();
   }
 
   @step("Expect asset not to be marked as favorite")
@@ -162,6 +171,7 @@ export class AssetDetailPage extends AppPage {
     await this.openOptionsMenu();
     await expect(this.addFavoriteMenuItem).toBeVisible();
     await this.page.keyboard.press("Escape");
+    await this.waitForOptionsMenuClosed();
   }
 
   @step("Start the staking flow from the asset detail page")
