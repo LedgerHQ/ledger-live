@@ -40,6 +40,7 @@ export class CoinFrameworkAdapter {
         const token = await bridgeApi.getTokenFromAsset?.(asset);
         if (!token) return null;
         return {
+          kind: "token",
           assetId: token.id,
           balance: BigNumberStrSchema.parse(String(value)),
           token: toTokenInfo(token),
@@ -48,7 +49,11 @@ export class CoinFrameworkAdapter {
     );
 
     return [
-      { assetId: currency.id, balance: BigNumberStrSchema.parse(String(native.value)) },
+      {
+        kind: "native",
+        assetId: currency.id,
+        balance: BigNumberStrSchema.parse(String(native.value)),
+      },
       ...tokenBalances.filter((b): b is Balance => b !== null),
     ];
   }

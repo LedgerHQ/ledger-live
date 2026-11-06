@@ -36,8 +36,13 @@ describe("CoinFrameworkAdapter.getBalances", () => {
     const balances = await new CoinFrameworkAdapter().getBalances(toV0(parseV1(ETH_DESCRIPTOR)));
 
     expect(balances).toEqual([
-      { assetId: "ethereum", balance: BigNumberStrSchema.parse("2000000000000000000") },
       {
+        kind: "native",
+        assetId: "ethereum",
+        balance: BigNumberStrSchema.parse("2000000000000000000"),
+      },
+      {
+        kind: "token",
         assetId: USDT_TOKEN_INFO.id,
         balance: BigNumberStrSchema.parse("1500000"),
         token: USDT_TOKEN_INFO,

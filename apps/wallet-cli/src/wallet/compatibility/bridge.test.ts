@@ -588,8 +588,9 @@ describe("BridgeAdapter.getBalances", () => {
     });
 
     await expect(adapter.getBalances(descriptor)).resolves.toEqual([
-      { assetId: "solana", balance: BigNumberStrSchema.parse("5000000000") },
+      { kind: "native", assetId: "solana", balance: BigNumberStrSchema.parse("5000000000") },
       {
+        kind: "token",
         assetId: "solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v",
         balance: BigNumberStrSchema.parse("1500000"),
         token: {

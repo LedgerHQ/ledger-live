@@ -112,14 +112,14 @@ const erc20 = (ticker: string, name: string, contractAddress: string): TokenInfo
 });
 
 const tokenBalance = (balance: string, token: TokenInfo) =>
-  BalanceSchema.parse({ assetId: token.id, balance, token });
+  BalanceSchema.parse({ kind: "token", assetId: token.id, balance, token });
 
 describe("findAccountTokens", () => {
   const account = parseV1(`account:2:address:ethereum:${SENDER}:m/44h/60h/0h/0/0`);
 
   it("keeps only listed tokens the account holds a balance of, without a CAL lookup per token", async () => {
     const balances = spyOn(WalletAdapter.prototype, "getAccountBalances").mockResolvedValue([
-      BalanceSchema.parse({ assetId: "ethereum", balance: "5" }),
+      BalanceSchema.parse({ kind: "native", assetId: "ethereum", balance: "5" }),
       tokenBalance("1", erc20("USDC", "USD Coin", USDC)),
       tokenBalance("0", erc20("PEPE", "Pepe", "0x2")),
       tokenBalance("1", { ...erc20("USDC", "Old USDC", "0x1"), delisted: true }),
