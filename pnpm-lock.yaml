@@ -366,8 +366,20 @@ catalogs:
       specifier: 2.4.1
       version: 2.4.1
     '@ledgerhq/zcash-utils':
-      specifier: 2.8.0
-      version: 2.8.0
+      specifier: 2.9.0
+      version: 2.9.0
+    '@ledgerhq/zcash-utils-darwin-arm64':
+      specifier: 2.9.0
+      version: 2.9.0
+    '@ledgerhq/zcash-utils-darwin-x64':
+      specifier: 2.9.0
+      version: 2.9.0
+    '@ledgerhq/zcash-utils-linux-x64-gnu':
+      specifier: 2.9.0
+      version: 2.9.0
+    '@ledgerhq/zcash-utils-win32-x64-msvc':
+      specifier: 2.9.0
+      version: 2.9.0
     '@noble/curves':
       specifier: 2.4.0
       version: 2.4.0
@@ -993,6 +1005,9 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../libs/types-live
+      '@ledgerhq/zcash-utils':
+        specifier: 'catalog:'
+        version: 2.9.0
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
@@ -1525,7 +1540,7 @@ importers:
         version: link:../../libs/wallet-pnl
       '@ledgerhq/zcash-utils':
         specifier: 'catalog:'
-        version: 2.8.0
+        version: 2.9.0
       '@radix-ui/react-dialog':
         specifier: 'catalog:'
         version: 1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -1986,6 +2001,19 @@ importers:
       zx:
         specifier: 'catalog:'
         version: 8.8.5
+    optionalDependencies:
+      '@ledgerhq/zcash-utils-darwin-arm64':
+        specifier: 'catalog:'
+        version: 2.9.0
+      '@ledgerhq/zcash-utils-darwin-x64':
+        specifier: 'catalog:'
+        version: 2.9.0
+      '@ledgerhq/zcash-utils-linux-x64-gnu':
+        specifier: 'catalog:'
+        version: 2.9.0
+      '@ledgerhq/zcash-utils-win32-x64-msvc':
+        specifier: 'catalog:'
+        version: 2.9.0
 
   apps/ledger-live-mobile:
     dependencies:
@@ -13790,6 +13818,9 @@ importers:
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.2.0(axios@1.20.0(debug@4.4.3))
+      '@ledgerhq/zcash-utils':
+        specifier: 'catalog:'
+        version: 2.9.0
       command-line-args:
         specifier: 6.0.2
         version: 6.0.2
@@ -16450,7 +16481,7 @@ importers:
         version: link:../../wallet-btc
       '@ledgerhq/zcash-utils':
         specifier: 'catalog:'
-        version: 2.8.0
+        version: 2.9.0
       '@noble/hashes':
         specifier: 'catalog:'
         version: 1.8.0
@@ -18013,7 +18044,7 @@ importers:
         version: link:../../wallet-btc
       '@ledgerhq/zcash-utils':
         specifier: 'catalog:'
-        version: 2.8.0
+        version: 2.9.0
       '@noble/curves':
         specifier: 'catalog:'
         version: 2.4.0
@@ -28018,8 +28049,40 @@ packages:
   '@ledgerhq/wallet-api-simulator@2.4.1':
     resolution: {integrity: sha512-PPxhwqUXsVGzIbHfCCLCS6AaUbyiw4DFxRj6PIAU4j8+SlxyZ8qTp+H7hsHFYIJ84niWFeeeoebQgjJTmJUdmg==}
 
-  '@ledgerhq/zcash-utils@2.8.0':
-    resolution: {integrity: sha512-/pctCGDG+njgxmGKEHzX+ioYCuL4QAPOCrEjIFuqkF4nOsDAx15dMRjp0fO80hvdwpd+7ypIGiBmFPhlNdRLuQ==}
+  '@ledgerhq/zcash-utils-darwin-arm64@2.9.0':
+    resolution: {integrity: sha512-AQXezJ2/u1VSAQwrl+qoMFnSJKcHVAIz6biA9WZWJuCgkGCBi1XYnQsna0LYeLZI9J5yiX3B+WXuhSdLENZN3w==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@ledgerhq/zcash-utils-darwin-x64@2.9.0':
+    resolution: {integrity: sha512-bfdhCyriS/ZeNKEW5REMhy2oMye+p3lbZU0hXUZnJuZgCDe6wVRl2RR2TLMGrhJCrDdzYqKfmI4YH2pl7UV0Lw==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@ledgerhq/zcash-utils-linux-arm64-gnu@2.9.0':
+    resolution: {integrity: sha512-nDKg0OeD4qntRN6RFUJqEBZRkmygQiECUpiIxGdyAKSiv0sYENVSVlWPmJTWal8rT0Q8Hp0xpwHTnycdHBxtUQ==}
+    cpu: [arm64]
+    os: [linux]
+    libc: [glibc]
+
+  '@ledgerhq/zcash-utils-linux-x64-gnu@2.9.0':
+    resolution: {integrity: sha512-hF7y+dGKPxxFAcdPIYUbwFScY2PEeWTUeo60+++c0M9auWLiMztX1eo2h4kUAUgpo7UA3t7wpAM+CQtd1cGmoQ==}
+    cpu: [x64]
+    os: [linux]
+    libc: [glibc]
+
+  '@ledgerhq/zcash-utils-win32-arm64-msvc@2.9.0':
+    resolution: {integrity: sha512-u4Bjx7uumOeNZxz3q2XPYiqZBCpkh0zuu4UB5UcluVwbd2VQ9p3c+uR7+oCULrA3ktGjF4FU4QkTYmcbBJLw5g==}
+    cpu: [arm64]
+    os: [win32]
+
+  '@ledgerhq/zcash-utils-win32-x64-msvc@2.9.0':
+    resolution: {integrity: sha512-v7PS2WfiDPFyFnsBrYr148uLyjdg6OuJgGzqJhQri0ec+RsoqhyrlvbjJqA6SJ27OYkOj2zG+XRdPzqzM/QNxg==}
+    cpu: [x64]
+    os: [win32]
+
+  '@ledgerhq/zcash-utils@2.9.0':
+    resolution: {integrity: sha512-oj7/q8d6JKHsop49ovjSvqOTIBL8DaIz+JW4gOB5uvPV86/F/8tmmmsvnD4nzKzTEz+iACJ1PuQZuEfP/YlxbA==}
 
   '@lezer/common@1.5.1':
     resolution: {integrity: sha512-6YRVG9vBkaY7p1IVxL4s44n5nUnaNnGM2/AckNgYOnxTG2kWh1vR8BMxPseWPjRNpb5VtXnMpeYAEAADoRV1Iw==}
@@ -47042,7 +47105,32 @@ snapshots:
       - encoding
       - utf-8-validate
 
-  '@ledgerhq/zcash-utils@2.8.0': {}
+  '@ledgerhq/zcash-utils-darwin-arm64@2.9.0':
+    optional: true
+
+  '@ledgerhq/zcash-utils-darwin-x64@2.9.0':
+    optional: true
+
+  '@ledgerhq/zcash-utils-linux-arm64-gnu@2.9.0':
+    optional: true
+
+  '@ledgerhq/zcash-utils-linux-x64-gnu@2.9.0':
+    optional: true
+
+  '@ledgerhq/zcash-utils-win32-arm64-msvc@2.9.0':
+    optional: true
+
+  '@ledgerhq/zcash-utils-win32-x64-msvc@2.9.0':
+    optional: true
+
+  '@ledgerhq/zcash-utils@2.9.0':
+    optionalDependencies:
+      '@ledgerhq/zcash-utils-darwin-arm64': 2.9.0
+      '@ledgerhq/zcash-utils-darwin-x64': 2.9.0
+      '@ledgerhq/zcash-utils-linux-arm64-gnu': 2.9.0
+      '@ledgerhq/zcash-utils-linux-x64-gnu': 2.9.0
+      '@ledgerhq/zcash-utils-win32-arm64-msvc': 2.9.0
+      '@ledgerhq/zcash-utils-win32-x64-msvc': 2.9.0
 
   '@lezer/common@1.5.1': {}
 

@@ -42,6 +42,7 @@
     "@shared/env": "workspace:*",
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
+    "@ledgerhq/zcash-utils": "catalog:",
     "@reduxjs/toolkit": "catalog:",
     "bigint-buffer": "*",
     "bignumber.js": "9.1.2",
