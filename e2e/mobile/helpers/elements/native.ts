@@ -283,19 +283,23 @@ export class NativeHandle implements ElementHandle {
 
   /**
    * Checks the element, then the error element, every round until one shows. A round returns
-   * rather than throws on the error, since `retryUntilTimeout` retries on any throw.
+   * rather than throws on the error, since `retryUntilTimeout` retries on any throw. The whole wait
+   * has the same hard timeout as a plain wait, so a hung app cannot stretch it.
    */
   private async waitUnlessError(options: WaitUnlessErrorOptions): Promise<void> {
     const { isFound, errorElement, timeout, state } = options;
-    const errorText = await retryUntilTimeout<string | undefined>(
-      async () => {
-        if (await isFound()) return undefined;
-        if (await errorElement.isVisible(TIMEOUT.xxxsmall)) return await errorElement.getText();
-        throw new Error(`${this.description} is not ${state} yet`);
-      },
-      timeout,
-      INTERVAL.short,
-      { messageOnError: `${this.description} did not become ${state} within ${timeout}ms` },
+    const errorText = await withHardTimeout(
+      retryUntilTimeout<string | undefined>(
+        async () => {
+          if (await isFound()) return undefined;
+          if (await errorElement.isVisible(TIMEOUT.xxxsmall)) return await errorElement.getText();
+          throw new Error(`${this.description} is not ${state} yet`);
+        },
+        timeout,
+        INTERVAL.short,
+        { messageOnError: `${this.description} did not become ${state} within ${timeout}ms` },
+      ),
+      waitHardTimeout(timeout),
     );
     if (errorText !== undefined) {
       throw new Error(

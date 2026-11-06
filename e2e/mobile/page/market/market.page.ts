@@ -65,6 +65,8 @@ export default class MarketPage {
 
   @Step("Go back from the market screen")
   async goBack() {
+    // The header slides in with the screen: at 100% the push has settled, so the tap is not lost.
+    await this.headerBackButton.waitFullyVisible();
     await this.headerBackButton.tap();
     await this.headerBackButton.waitNotVisible();
   }
@@ -171,7 +173,7 @@ export default class MarketPage {
   async filterStaredAsset() {
     if (await isAssetDiscoverabilityEnabled()) {
       // CategorySwitcher is hidden while search is active — clear search bar first
-      await (await this.searchBar()).clearText();
+      await this.marketScreenSearchBar.clearText();
       await this.categoryTab("starred").tap();
     } else {
       await this.starMarketListButton.tap();
