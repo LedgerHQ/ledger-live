@@ -650,9 +650,9 @@ jobs:
           done
           # A fixed margin for first-boot work after bootstatus, unlike Android's condition wait:
           # the host load printed around it is the data such a wait would need.
-          sysctl -n vm.loadavg
+          /usr/sbin/sysctl -n vm.loadavg || true
           sleep 60
-          sysctl -n vm.loadavg
+          /usr/sbin/sysctl -n vm.loadavg || true
 
       - name: Measure
         env:
