@@ -4,9 +4,6 @@
 // in the autolinking config is its only signal for npm native modules. Keep the version and patch, drop the peer
 // suffix: peer-only changes would otherwise trigger native rebuilds. Podfile.lock and project.pbxproj embed the
 // same paths.
-const fs = require("node:fs");
-const path = require("node:path");
-
 const PNPM_STORE_DIR =
   /\.pnpm\/((?:@[^+/]+\+)?[^@/]+@[^_/"`'\s]+(?:_patch_hash=[0-9a-f]+)?)[^/"`'\s]*\/node_modules/g;
 const dropPeerSuffix = text => text.replace(PNPM_STORE_DIR, ".pnpm/$1/node_modules");
@@ -15,17 +12,8 @@ const pendingChunks = new Map();
 
 const e2eBuildFile = filePath => ({ type: "file", filePath, reasons: ["e2eNativeBuild"] });
 
-// pnpm truncates long store dir names, patch hash included, so hash the patches that touch native code.
+// pnpm truncates long store dir names, patch hash included, so hash the patches themselves.
 const PATCHES_DIR = "../../patches";
-const NATIVE_PATCHED_FILE =
-  /^diff --git a\/\S*(\/(android|ios)\/|\.(podspec|gradle|kts|java|kt|m|mm|swift|h|hpp|c|cpp)\s|CMakeLists|react-native\.config|codegen)/m;
-const nativePatches = fs
-  .readdirSync(path.join(__dirname, PATCHES_DIR))
-  .filter(name =>
-    NATIVE_PATCHED_FILE.test(fs.readFileSync(path.join(__dirname, PATCHES_DIR, name), "utf8")),
-  )
-  .sort()
-  .map(name => e2eBuildFile(`${PATCHES_DIR}/${name}`));
 
 // The Android test APK is built against node_modules/detox, which is not autolinked.
 const detoxVersion = require(require.resolve("detox/package.json", { paths: [__dirname] })).version;
@@ -36,6 +24,7 @@ module.exports = {
   sourceSkips: ["PackageJsonScriptsAll"],
   ignorePaths: [
     "../../shared/native-performance/node_modules/**",
+    // Only TypeScript today: a TurboModule codegen spec added here would need to be hashed.
     "../../shared/native-performance/src/**",
     "../../shared/native-performance/*.md",
     "../../shared/native-performance/jest.config.js",
@@ -50,7 +39,7 @@ module.exports = {
     e2eBuildFile("scripts/e2e-binaries.cjs"),
     e2eBuildFile("scripts/syncAppVersion.js"),
     e2eBuildFile("../../e2e/mobile/detox.config.js"),
-    ...nativePatches,
+    { type: "dir", filePath: PATCHES_DIR, reasons: ["e2eNativeBuild"] },
     { type: "contents", id: "detoxVersion", contents: detoxVersion, reasons: ["e2eNativeBuild"] },
   ],
   fileHookTransform(source, chunk, isEndOfFile) {
