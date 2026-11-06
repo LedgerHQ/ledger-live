@@ -140,10 +140,21 @@ function mapSwapOperation(
     toAccountId: swapOperation.toAccount.id,
     sentAmount: swapOperation.fromAmount.absoluteValue().toFixed(),
     receivedAmount: receivedAmount.toFixed(),
-    feesAmount: swapOperation.operation.fee?.toFixed(),
+    // The fee of an operation the sender did not make (a perps withdraw payout) is not the sender's:
+    // the swap history entry carries its fees instead.
+    feesAmount: isSenderOperation(swapOperation)
+      ? swapOperation.operation.fee?.toFixed()
+      : swapOperation.feesAmount,
+    payoutFeesAmount: swapOperation.payoutFeesAmount,
     operationHash: swapOperation.operation.hash,
     createdAt,
   };
+}
+
+function isSenderOperation({ fromAccount, operation }: MappedSwapOperation): boolean {
+  return [...fromAccount.operations, ...fromAccount.pendingOperations].some(
+    o => o.id === operation.id,
+  );
 }
 
 function getOperationCreatedAt(

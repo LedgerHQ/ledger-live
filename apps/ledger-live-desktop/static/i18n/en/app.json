@@ -11344,6 +11344,7 @@
   "perpsTransactionStatus": {
     "dialogTitle": "Transaction detail",
     "title": "Fund Perpetuals",
+    "withdrawTitle": "Withdraw",
     "currencies": "{{sendTicker}} → {{receiveTicker}}"
   },
   "accountAnalytics": {

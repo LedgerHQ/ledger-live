@@ -9,6 +9,7 @@ type UseTransactionHeaderViewModelProps = Readonly<{
   createdAt?: number;
   locale: string;
   origin?: SwapTransactionStatusOrigin;
+  isPerpsWithdraw?: boolean;
 }>;
 
 export function useTransactionHeaderViewModel({
@@ -17,6 +18,7 @@ export function useTransactionHeaderViewModel({
   createdAt,
   locale,
   origin,
+  isPerpsWithdraw,
 }: UseTransactionHeaderViewModelProps) {
   const { t } = useTranslation();
   const hasCurrencies = sendCurrency !== undefined && receiveCurrency !== undefined;
@@ -24,9 +26,13 @@ export function useTransactionHeaderViewModel({
     ? { sendTicker: sendCurrency.ticker, receiveTicker: receiveCurrency.ticker }
     : undefined;
 
-  const isPerps = origin === "perps";
+  // A withdraw is titled as such wherever it is opened from, Swap History included.
+  const isPerps = origin === "perps" || Boolean(isPerpsWithdraw);
+  const perpsTitle = isPerpsWithdraw
+    ? t("perpsTransactionStatus.withdrawTitle")
+    : t("perpsTransactionStatus.title");
   const title = isPerps
-    ? t("perpsTransactionStatus.title")
+    ? perpsTitle
     : tickers
       ? t("transfer.swap2.modals.transactionStatus.title", tickers)
       : undefined;
