@@ -1,4 +1,4 @@
-import type { CryptoAssetMeta } from "@domain/entity-aggregated-asset";
+import type { AggregatedAssetId, CryptoAssetMeta } from "@domain/entity-aggregated-asset";
 import type { InterestRate } from "@domain/entity-interest-rate";
 import type { PartialMarketItemResponse } from "./market";
 
@@ -63,13 +63,13 @@ export interface CurrenciesOrder {
   /** Sort order (e.g. "desc") */
   order: string;
   /** Ordered list of meta-currency IDs */
-  metaCurrencyIds: string[];
+  metaCurrencyIds: AggregatedAssetId[];
 }
 
 // Types for raw API response (before transformation)
 export interface RawApiResponse {
   /** Grouped crypto assets by meta-currency */
-  cryptoAssets: Record<string, CryptoAssetMeta>;
+  cryptoAssets: Record<AggregatedAssetId, CryptoAssetMeta>;
   /** Network information */
   networks: Record<string, NetworkInfo>;
   /** Raw crypto currencies and token currencies from API */

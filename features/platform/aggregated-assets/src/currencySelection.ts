@@ -1,11 +1,12 @@
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { AssetsData, AssetsDataWithPagination } from "@domain/api-aggregated-assets";
+import { AggregatedAssetIdSchema } from "@domain/entity-aggregated-asset";
 
 export function selectCurrencyForMetaId(
   metaCurrencyId: string,
   data: AssetsDataWithPagination,
 ): CryptoOrTokenCurrency | undefined {
-  const meta = data.cryptoAssets[metaCurrencyId];
+  const meta = data.cryptoAssets[AggregatedAssetIdSchema.parse(metaCurrencyId)];
   const assetsIds = meta?.assetsIds;
   if (!assetsIds) return undefined;
 
