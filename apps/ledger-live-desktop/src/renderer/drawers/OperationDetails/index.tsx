@@ -53,6 +53,7 @@ import OperationComponent from "~/renderer/components/OperationsList/Operation";
 import Text, { TextProps } from "~/renderer/components/Text";
 import ToolTip from "~/renderer/components/Tooltip";
 import { useLLDCoinFamily } from "~/renderer/families";
+import { useTokenTypes } from "~/renderer/families/useTokenTypes";
 import { getOperationTypeI18nKey } from "~/renderer/helpers/operationTypeI18nKey";
 import IconChevronRight from "~/renderer/icons/ChevronRight";
 import IconExternalLink from "~/renderer/icons/ExternalLink";
@@ -206,7 +207,7 @@ const OperationD = (props: Props) => {
     [operation.subOperations],
   );
   const internalOperations = operation.internalOperations || [];
-  const isToken = (mainAccount.currency.tokenTypes || []).length > 0;
+  const isToken = useTokenTypes(mainAccount.currency).length > 0;
   const openOperation = useCallback(
     (type: openOperationType, operation: Operation, parentOperation?: Operation) => {
       const data = {

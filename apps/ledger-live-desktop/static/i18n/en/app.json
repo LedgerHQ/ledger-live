@@ -2128,6 +2128,14 @@
       "link": "Learn more about Stellar assets",
       "seeTokens": "Show assets ({{tokenCount}})",
       "hideTokens": "Hide assets ({{tokenCount}})"
+    },
+    "xrp": {
+      "title": "Tokens",
+      "cta": "Add token",
+      "placeholder": "You can add tokens to your {{currencyName}} account.",
+      "link": "Learn more about XRP Ledger tokens",
+      "seeTokens": "Show tokens ({{tokenCount}})",
+      "hideTokens": "Hide tokens ({{tokenCount}})"
     }
   },
   "subAccounts": {
@@ -4288,6 +4296,69 @@
           "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
         }
       }
+    }
+  },
+  "xrp": {
+    "addToken": {
+      "title": "Add token",
+      "steps": {
+        "token": {
+          "title": "Token",
+          "selectLabel": "Choose a token",
+          "allAdded": "You've already added all available tokens to this account.",
+          "info": "Adding a token sends a transaction that pays a network fee and reserves XRP while you hold the token. It appears in your transaction history."
+        },
+        "settings": {
+          "title": "Settings",
+          "limit": "Trust limit",
+          "max": "Max",
+          "limitInfo": "The trust limit is the most {{token}} your account accepts to hold."
+        },
+        "review": {
+          "title": "Review",
+          "token": "Token",
+          "issuer": "Issuer"
+        },
+        "connectDevice": {
+          "title": "Device"
+        },
+        "confirmation": {
+          "title": "Confirmation",
+          "success": {
+            "title": "{{token}} token successfully added",
+            "text": "You can now receive <0>{{token}}</0> on your XRP account.",
+            "cta": "View details"
+          },
+          "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+        }
+      }
+    },
+    "tokenSettings": {
+      "title": "Token settings",
+      "steps": {
+        "confirmation": {
+          "success": {
+            "title": "{{token}} trust limit updated",
+            "text": "Your XRP account now accepts <0>{{token}}</0> up to the new limit."
+          }
+        }
+      }
+    },
+    "tokenAccount": {
+      "editSettings": "Edit settings",
+      "trustLimit": "Trust limit",
+      "trustLimitTooltip": "The most of this token your account accepts to hold."
+    },
+    "rippling": {
+      "label": "Rippling",
+      "on": "On",
+      "off": "Off",
+      "warning": "Turning this on allows other users' payments to move your balance between tokens with the same currency code. Only turn it on if you know what you're doing."
+    },
+    "receive": {
+      "addToken": "Add token",
+      "addTokenFirst": "To receive an XRP Ledger token, add it to your account first.",
+      "tokenNotHeld": "Your account no longer holds {{token}}. Add it again before receiving it."
     }
   },
   "stellar": {
@@ -8038,6 +8109,26 @@
     },
     "XrpDestinationTagRequired": {
       "title": "A destination tag is required for this recipient"
+    },
+    "XrpTrustLimitZero": {
+      "title": "Enter a trust limit above 0. To remove the token, use Remove token instead.",
+      "description": "A trust limit of 0 removes the token, which is a separate action: Remove token."
+    },
+    "XrpReserveIncrease": {
+      "title": "{{amount}} will be reserved",
+      "description": "Holding this token locks {{amount}} of your balance. You get it back when you remove the token."
+    },
+    "XrpTokenOptInRefused": {
+      "title": "This token can't be added",
+      "description": "The issuer doesn't exist or doesn't accept new holders."
+    },
+    "XrpTokenStandardNotEnabled": {
+      "title": "This token type isn't supported yet",
+      "description": "Ledger Wallet can't use this type of XRP Ledger token yet."
+    },
+    "XrpTransactionWouldFail": {
+      "title": "The network would reject this transaction",
+      "description": "XRP Ledger result: {{code}}. Please retry or contact Ledger Support."
     },
     "InvalidExplorerResponse": {
       "title": "Invalid response from {{currencyName}} explorer"

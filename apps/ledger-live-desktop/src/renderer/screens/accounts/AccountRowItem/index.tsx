@@ -18,6 +18,7 @@ import Star from "~/renderer/components/Stars/Star";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import Button from "~/renderer/components/Button";
 import { useLLDCoinFamily } from "~/renderer/families";
+import { useTokenTypes } from "~/renderer/families/useTokenTypes";
 import { useSelector } from "LLD/hooks/redux";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { getDefaultAccountName } from "@domain/entity-account-name";
@@ -160,15 +161,14 @@ const AccountRowItem = (props: Props) => {
   const resolvedMainAccount: Account | null | undefined =
     account.type !== "Account" ? parentAccount : account;
   const specific = useLLDCoinFamily(resolvedMainAccount?.currency.family).tokenList;
+  const isToken = useTokenTypes(resolvedMainAccount?.currency).length > 0;
   let currency;
   let mainAccount: Account | null | undefined;
   let tokens;
   let disabled;
-  let isToken;
   if (account.type !== "Account") {
     currency = account.token;
     mainAccount = parentAccount;
-    isToken = mainAccount && (mainAccount.currency.tokenTypes || []).length > 0;
     if (!mainAccount) return null;
   } else {
     currency = account.currency;
@@ -177,7 +177,6 @@ const AccountRowItem = (props: Props) => {
       subAccount => !blacklistedTokenIds.includes(getAccountCurrency(subAccount).id),
     );
     disabled = !accountMatchesSearch(walletState, search, account);
-    isToken = (currency.tokenTypes || []).length > 0;
     if (tokens) tokens = tokens.filter(t => accountMatchesSearch(walletState, search, t));
   }
   const showTokensIndicator = Boolean(tokens && tokens.length > 0 && !hidden);
