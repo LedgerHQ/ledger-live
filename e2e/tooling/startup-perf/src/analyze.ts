@@ -4,6 +4,7 @@ import { appendFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
+import { insideWorkingDir } from "./exec.ts";
 import type { Sample, Side } from "./types.ts";
 
 /** An estimate of B − A with its 95% interval; no interval below six differences. */
@@ -13,8 +14,15 @@ export interface Interval {
   high: number | null;
 }
 
-/** Where a build's Debug value counts from. */
-export type DebugBase = "js" | "process" | "package" | "native";
+/** An interval that has both bounds. */
+export interface ClosedInterval {
+  estimate: number;
+  low: number;
+  high: number;
+}
+
+/** Where a build's Debug value counts from: the first JS import (4.26–4.27) or the process start. */
+export type DebugBase = "js" | "process";
 
 /** A launch's value for one measure: NaN or undefined leaves the launch out. */
 type Metric = (s: Sample) => number | undefined;
@@ -112,31 +120,47 @@ export function pairUp(samples: Sample[], metric: Metric): Pair[] {
   return [...byKey.values()].filter((p): p is Pair => Number.isFinite(p.A) && Number.isFinite(p.B));
 }
 
-const isGate = (preset: string) => !["aa-noise", "known-regression"].includes(preset);
+const gateRule = (thresholdMs: number) =>
+  `B fails when it is slower than A by more than ${thresholdMs} ms on either measure.`;
+const PRESET_RULES: Partial<Record<string, (thresholdMs: number) => string>> = {
+  "prod-vs-release": gateRule,
+  custom: gateRule,
+  "known-regression": t =>
+    `B is A with LIVE-36190 re-added: it is detected when it is slower than A by more than ${t} ms, as the gate would fail it.`,
+};
 
 export function failedRows(rows: Array<Pick<Row, "verdict">>): boolean {
   return !rows.length || rows.some(r => /^(FAIL|Not detected|Not enough pairs)/.test(r.verdict));
 }
 
+/** `hl` when it has both bounds, else null (fewer than six differences). */
+function closed(hl: Interval | null): ClosedInterval | null {
+  const low = hl?.low ?? null;
+  const high = hl?.high ?? null;
+  return hl === null || low === null || high === null ? null : { estimate: hl.estimate, low, high };
+}
+
 function verdictFor({ preset, hl, thresholdMs }: GateOptions & { hl: Interval | null }): string {
-  if (!hl || hl.low === null || hl.high === null) return "Not enough pairs";
-  const ci = `[${Math.round(hl.low)}, ${Math.round(hl.high)}]`;
+  const interval = closed(hl);
+  if (!interval) return "Not enough pairs";
+  const { estimate, low, high } = interval;
+  const ci = `[${Math.round(low)}, ${Math.round(high)}]`;
   if (preset === "aa-noise") {
-    const halfWidth = Math.round((hl.high - hl.low) / 2);
-    const centred = hl.low <= 0 && hl.high >= 0;
+    const halfWidth = Math.round((high - low) / 2);
+    const centred = low <= 0 && high >= 0;
     return `${centred ? "OK" : "Biased"}: resolves about ±${halfWidth} ms`;
   }
   if (preset === "known-regression") {
-    // B is the fix: a visible regression means B − A is clearly below zero.
-    return hl.high < 0
-      ? `Detected: the fix is ${Math.round(-hl.estimate)} ms faster`
-      : `Not detected ${ci}`;
+    // The gate's own rule: would prod-vs-release have failed this B?
+    return estimate > thresholdMs
+      ? `Detected: B is ${Math.round(estimate)} ms slower`
+      : `Not detected: B − A is ${Math.round(estimate)} ms ${ci}, not above ${thresholdMs} ms`;
   }
   const inconclusive =
-    hl.low <= thresholdMs && hl.high >= thresholdMs
+    low <= thresholdMs && high >= thresholdMs
       ? ` (inconclusive: ${ci} contains ${thresholdMs} ms)`
       : "";
-  if (hl.estimate > thresholdMs) {
+  if (estimate > thresholdMs) {
     return `FAIL: B is slower by more than ${thresholdMs} ms${inconclusive}`;
   }
   return `PASS${inconclusive}`;
@@ -147,20 +171,19 @@ const MIN_PAIRS_PER_PHASE = 3;
 
 // The true B − A the gate flags 80% of the time: the threshold plus 0.84 standard errors.
 export function detectableAt80(hl: Interval | null, thresholdMs: number): number | null {
-  if (!hl || hl.low === null || hl.high === null) return null;
-  return thresholdMs + 0.8416 * ((hl.high - hl.low) / (2 * Z_95));
+  const interval = closed(hl);
+  return interval && thresholdMs + 0.8416 * ((interval.high - interval.low) / (2 * Z_95));
 }
 
 // Seeded, so the same samples always give the same interval.
-export function bootstrapMean(
-  diffs: number[],
-  resamples = 4000,
-): { estimate: number; low: number; high: number } | null {
+export function bootstrapMean(diffs: number[], resamples = 4000): ClosedInterval | null {
   const n = diffs.length;
   if (n < 6) return null;
-  let seed = 0x9e3779b9;
+  // mulberry32; the Int32Array wraps its state to 32 bits.
+  const state = new Int32Array([0x9e3779b9]);
   const random = () => {
-    seed = (seed + 0x6d2b79f5) | 0;
+    state[0] += 0x6d2b79f5;
+    const seed = state[0];
     let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
     t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
@@ -182,29 +205,20 @@ export function bootstrapMean(
 
 const jsStartOffset = (s: Sample) => s.events?.["Before js imports"]?.time;
 export const fromJsStart = (s: Sample): number =>
-  (s.appStartupTime ?? NaN) - (jsStartOffset(s) ?? NaN);
+  (s.appStartupTime ?? Number.NaN) - (jsStartOffset(s) ?? Number.NaN);
 const jsStartEpoch = (s: Sample): number => {
   const name = Object.keys(s.events ?? {}).find(n => /^JS start epoch \d+$/.test(n));
-  return name ? Number(name.split(" ").pop()) : NaN;
+  return name ? Number(name.split(" ").pop()) : Number.NaN;
 };
-// Samples from before processStartAppClockAt only have the app's clock on iOS (the host's).
-const appClockProcessStart = (s: Sample) =>
-  s.processStartAppClockAt ?? (s.platform === "ios" ? s.processStartAt : NaN);
 const harnessNativeStart = (s: Sample): number =>
-  jsStartEpoch(s) - (appClockProcessStart(s) ?? NaN);
+  jsStartEpoch(s) - (s.processStartAppClockAt ?? Number.NaN);
 export const fromProcessStart = (s: Sample): number => harnessNativeStart(s) + fromJsStart(s);
 
 export function debugBase(s: Sample): DebugBase | null {
   const offset = jsStartOffset(s);
   if (offset === undefined || !Number.isFinite(offset)) return null;
-  if (offset < 50) return "js";
-  const harness = harnessNativeStart(s);
-  if (!Number.isFinite(harness)) return "native";
-  return Math.abs(harness - offset) <= 100 ? "process" : "package";
+  return offset < 50 ? "js" : "process";
 }
-// "native" can't be told from "process" or "package", so it matches either.
-const sameBase = (a: DebugBase, b: DebugBase | null) =>
-  a === b || (a !== "js" && b !== "js" && (a === "native" || b === "native"));
 const mostCommon = <T>(values: T[]): T | null => {
   const counts = new Map<T, number>();
   for (const v of values) counts.set(v, (counts.get(v) ?? 0) + 1);
@@ -213,15 +227,13 @@ const mostCommon = <T>(values: T[]): T | null => {
 const BASE_TEXT: Record<DebugBase, string> = {
   js: "the first JS import",
   process: "the process start",
-  package: "react-native-startup-time's later mark",
-  native: "a native start",
 };
 const baseText = (base: DebugBase | null) => (base ? BASE_TEXT[base] : "an unknown start");
 
 function difference(group: Sample[], metric: Metric): Difference {
   const pairs = pairUp(group, metric);
   const phase = (n: number) =>
-    hodgesLehmann(pairs.filter(p => p.phase === n).map(p => p.B - p.A))?.estimate ?? NaN;
+    hodgesLehmann(pairs.filter(p => p.phase === n).map(p => p.B - p.A))?.estimate ?? Number.NaN;
   const phase0 = phase(0);
   const phase1 = phase(1);
   // Phase 0 puts B on the second device, phase 1 on the first: half their gap is the device bias.
@@ -288,18 +300,18 @@ export function summarise(samples: Sample[], { preset, thresholdMs }: GateOption
           .filter(base => base !== null),
       );
     const bases = { A: baseOf("A"), B: baseOf("B") };
-    const startsDiffer = bases.A !== null && bases.B !== null && !sameBase(bases.A, bases.B);
+    const startsDiffer = bases.A !== null && bases.B !== null && bases.A !== bases.B;
     const offBase = (s: Sample) => {
       const base = debugBase(s);
-      return base !== null && !sameBase(base, bases[s.side]);
+      return base !== null && base !== bases[s.side];
     };
     const offBaseCount = (side: Side) => read.filter(s => s.side === side && offBase(s)).length;
     const offBaseLaunches = { A: offBaseCount("A"), B: offBaseCount("B") };
-    const debugValue = difference(group, s => (offBase(s) ? NaN : s.appStartupTime));
+    const debugValue = difference(group, s => (offBase(s) ? Number.NaN : s.appStartupTime));
     const jsStart = difference(group, fromJsStart);
     const withNative = difference(group, fromProcessStart);
     const screen = startsDiffer && jsStart.pairs ? jsStart : debugValue;
-    const row = (measure: string, d: Difference, verdict?: string): Row => ({
+    const row = (measure: string, d: Difference): Row => ({
       platform,
       scenario,
       measure,
@@ -310,34 +322,24 @@ export function summarise(samples: Sample[], { preset, thresholdMs }: GateOption
       failed: measured.filter(s => !s.ok).length,
       launches: measured.length,
       detectable: detectableAt80(d.hl, thresholdMs),
-      verdict:
-        verdict ??
-        (d.thinPhase
-          ? `Not enough pairs: ${d.pairsPerPhase[0]} before the device swap, ${d.pairsPerPhase[1]} after (${MIN_PAIRS_PER_PHASE} needed on each side)`
-          : verdictFor({ preset, hl: d.hl, thresholdMs })),
+      verdict: d.thinPhase
+        ? `Not enough pairs: ${d.pairsPerPhase[0]} before the device swap, ${d.pairsPerPhase[1]} after (${MIN_PAIRS_PER_PHASE} needed on each side)`
+        : verdictFor({ preset, hl: d.hl, thresholdMs }),
     });
-    const withoutEpoch = SIDES.filter(
-      side =>
-        !group.some(s => s.ok && !s.warmup && s.side === side && Number.isFinite(jsStartEpoch(s))),
-    );
-    const nativeMissing = withoutEpoch.length > 0 && screen.pairs > 0;
     return [
       row(screen === jsStart ? "Debug screen, from JS start" : "Debug screen", screen),
-      row(
-        "With native start",
-        withNative,
-        nativeMissing
-          ? `Not measured: ${withoutEpoch.length > 1 ? "builds A and B have" : `build ${withoutEpoch[0]} has`} no "JS start epoch" event`
-          : undefined,
-      ),
+      row("With native start", withNative),
     ];
   });
 }
 
 const fmt = (v: number | null | undefined) =>
   typeof v === "number" && Number.isFinite(v) ? String(Math.round(v)) : "–";
-const signed = (v: number | null | undefined) =>
-  typeof v === "number" && Number.isFinite(v) ? `${v > 0 ? "+" : ""}${Math.round(v)}` : "–";
+const signed = (v: number | null | undefined) => {
+  if (typeof v !== "number" || !Number.isFinite(v)) return "–";
+  const sign = v > 0 ? "+" : "";
+  return `${sign}${Math.round(v)}`;
+};
 
 export function toMarkdown(
   rows: Row[],
@@ -347,9 +349,7 @@ export function toMarkdown(
     `### Startup time, ${preset}: B − A`,
     "",
     `A = ${labelA} · B = ${labelB}.`,
-    isGate(preset)
-      ? `B fails when it is slower than A by more than ${thresholdMs} ms on either measure.`
-      : "",
+    PRESET_RULES[preset]?.(thresholdMs) ?? "",
     "",
     "| Platform | Scenario | Measure | Pairs | Median A (ms) | Median B (ms) | B − A (ms) | 95% interval (ms) | Mean B − A (ms) | Flags a slowdown of (ms) | Spread of B − A (ms) | Device bias (ms) | Failed launches | Verdict |",
     "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
@@ -366,8 +366,8 @@ export function toMarkdown(
   }
   lines.push(
     "",
-    "- **Debug screen**: Settings > Debug > Performance > App startup time. Builds count it from the first JS import (4.26–4.27, b3700d9164b), from the app process start (LIVE-40286 on, and react-native-startup-time on iOS before 4.26), or from the React host creation (react-native-startup-time on Android before 4.26).",
-    "- **With native start**: the same end, counted from the start of the app process (the emulator's or the host's kernel) whatever the build's Debug value counts from, so builds of every version compare. It equals the Debug value of builds that count from the process start (within about 20 ms), and is about 350–650 ms above Android builds with react-native-startup-time.",
+    "- **Debug screen**: Settings > Debug > Performance > App startup time. Builds count it from the first JS import (4.26–4.27) or from the app process start (LIVE-40286 on).",
+    "- **With native start**: the same end, counted from the start of the app process (the emulator's or the host's kernel) whatever the build's Debug value counts from, so builds of every version compare. It equals the Debug value of builds that count from the process start (within about 20 ms).",
     "",
     "B − A is the Hodges–Lehmann median of the paired differences, after removing the device bias: how much slower the second emulator or simulator is than the first, measured thanks to the halfway swap.",
     `The mean (with a bootstrap 95% interval) is what the manual test compares. "Flags a slowdown of" is the true B − A the ${thresholdMs} ms gate catches 80% of the time at this noise; a true ${thresholdMs} ms is caught half the time.`,
@@ -398,13 +398,12 @@ async function main(): Promise<void> {
       "threshold-ms": { type: "string", default: "100" },
       "label-a": { type: "string", default: "A" },
       "label-b": { type: "string", default: "B" },
-      summary: { type: "string" },
       json: { type: "string" },
     },
   });
   const samples: Sample[] = [];
   for (const file of values.samples ?? []) {
-    const text = await readFile(file, "utf8").catch(() => "");
+    const text = await readFile(insideWorkingDir(file), "utf8").catch(() => "");
     for (const line of text.split("\n")) if (line.trim()) samples.push(JSON.parse(line));
   }
   const options: ReportOptions = {
@@ -418,10 +417,12 @@ async function main(): Promise<void> {
     ? toMarkdown(rows, options)
     : "### Startup time\n\nNo samples were recorded.\n";
   console.log(markdown);
-  if (values.summary) await appendFile(values.summary, markdown + "\n");
+  const summary = process.env.GITHUB_STEP_SUMMARY;
+  if (summary) await appendFile(summary, markdown + "\n");
   if (values.json) {
-    await mkdir(path.dirname(values.json), { recursive: true });
-    await writeFile(values.json, JSON.stringify(rows, null, 2));
+    const json = insideWorkingDir(values.json);
+    await mkdir(path.dirname(json), { recursive: true });
+    await writeFile(json, JSON.stringify(rows, null, 2));
   }
   if (failedRows(rows)) {
     console.error(
@@ -432,8 +433,5 @@ async function main(): Promise<void> {
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  main().catch(error => {
-    console.error(error);
-    process.exit(1);
-  });
+  await main();
 }

@@ -7,6 +7,8 @@ set -euo pipefail
 app="${1:-apps/ledger-live-mobile}"
 # Above the slowest startup plus the settle time, below inject()'s 180 s wait for the app.
 delay_ms="${STARTUP_PERF_BRIDGE_DELAY_MS:-20000}"
+# known-regression's build B: LIVE-36190, the only regression it re-adds.
+regression="${STARTUP_PERF_REGRESSION:-}"
 swap_api_base='SWAP_API_BASE="https://swap.ledger.com/v5"'
 
 fail() {
@@ -35,19 +37,29 @@ case "$delay_ms" in
   '' | *[!0-9]*) fail "STARTUP_PERF_BRIDGE_DELAY_MS must be a number of ms" ;;
   *) ;;
 esac
+case "$regression" in
+  '' | LIVE-36190) ;;
+  *) fail "unknown STARTUP_PERF_REGRESSION $regression" ;;
+esac
 [[ -d "$app" ]] || fail "no app directory $app"
 env_file="$app/.env.mock.prerelease"
 index_file="$app/src/index.tsx"
 rspack_file="$app/rspack.config.mjs"
 package_file="$app/package.json"
 js_start_file="$app/src/mvvm/utils/logStartup/beforeJSImports.ts"
+db_save_file="$app/src/components/DBSave.ts"
 rspack_line='const isDetoxBuild = process.env.DETOX === "1" || (process.env.ENVFILE || "").includes("mock");'
 bridge_import='import { init } from "~/e2e/bridge/client";'
 js_start_line='logStartupEvent("Before js imports");'
+trustchain_lense='    lense: trustchainStoreSelector,'
+save_at_start='    saveAtStart: true,'
 
-for f in "$env_file" "$index_file" "$rspack_file" "$package_file"; do
+for f in "$env_file" "$index_file" "$rspack_file" "$package_file" "$js_start_file"; do
   [[ -f "$f" ]] || fail "$f not found"
 done
+if grep -qF '"react-native-startup-time"' "$package_file"; then
+  fail "refs before live-mobile@4.26.0 are not supported: this one still has react-native-startup-time"
+fi
 if grep -qs 'startup-perf' "$index_file" "$rspack_file" "$js_start_file"; then
   fail "this checkout is already patched"
 fi
@@ -55,6 +67,20 @@ fi
   fail "isDetoxBuild anchor missing in $rspack_file"
 [[ "$(LINE="$bridge_import" count_exact "$index_file")" == 1 ]] ||
   fail "bridge import anchor missing in $index_file"
+[[ "$(LINE="$js_start_line" count_exact "$js_start_file")" == 1 ]] ||
+  fail "JS start anchor missing in $js_start_file"
+trustchain_saves_at_start() {
+  L="$trustchain_lense" S="$save_at_start" awk '
+    BEGIN { l = ENVIRON["L"]; s = ENVIRON["S"] }
+    prev == l && $0 == s { n++ }
+    { prev = $0 }
+    END { print n + 0 }' "$db_save_file"
+}
+if [[ -n "$regression" ]]; then
+  [[ -f "$db_save_file" ]] || fail "$db_save_file not found"
+  [[ "$(trustchain_saves_at_start)" == 1 ]] ||
+    fail "LIVE-36190 anchor missing in $db_save_file: the trustchain save has no saveAtStart"
+fi
 for line in 'MOCK=1' 'DETOX=1' 'FORCE_DEBUG_VISIBLE=1'; do
   [[ "$(LINE="$line" count_exact "$env_file")" == 1 ]] || fail "expected one '$line' line in $env_file"
 done
@@ -149,22 +175,30 @@ prod_like_env() {
   fi
 }
 
-# Older refs lack the anchor: a warning, as only the native start goes unmeasured.
 log_js_start_epoch() {
-  if [[ -f "$js_start_file" && "$(LINE="$js_start_line" count_exact "$js_start_file")" == 1 ]]; then
-    LINE="$js_start_line" awk_in_place '
-      BEGIN { t = ENVIRON["LINE"] }
-      $0 == t {
-        print "const startupPerfJsStart = logStartupEvent(\"Before js imports\");"
-        print "logStartupEvent(`JS start epoch ${startupPerfJsStart.time}`); // startup-perf: JS start wall clock"
-        next
-      }
-      { print }
-    ' "$js_start_file"
-    summary "startup events include \"JS start epoch <ms>\""
-  else
-    echo "::warning::startup-perf: no '$js_start_line' in $js_start_file: native start not measured"
-  fi
+  LINE="$js_start_line" awk_in_place '
+    BEGIN { t = ENVIRON["LINE"] }
+    $0 == t {
+      print "const startupPerfJsStart = logStartupEvent(\"Before js imports\");"
+      print "logStartupEvent(`JS start epoch ${startupPerfJsStart.time}`); // startup-perf: JS start wall clock"
+      next
+    }
+    { print }
+  ' "$js_start_file" || fail "cannot add the JS start epoch to $js_start_file"
+  summary "startup events include \"JS start epoch <ms>\""
+}
+
+# The trustchain's member keypair is then generated again at every launch (#21001 fixed it; its
+# other half, a zod check of the keypair, no longer exists).
+readd_live_36190() {
+  [[ -n "$regression" ]] || return 0
+  L="$trustchain_lense" S="$save_at_start" awk_in_place '
+    BEGIN { l = ENVIRON["L"]; s = ENVIRON["S"] }
+    prev == l && $0 == s { prev = $0; next }
+    { prev = $0; print }' "$db_save_file" || fail "cannot re-add LIVE-36190 in $db_save_file"
+  [[ "$(trustchain_saves_at_start)" == 0 ]] || fail "$db_save_file still saves the trustchain at start"
+  grep -n -A1 'lense: trustchainStoreSelector' "$db_save_file"
+  summary "LIVE-36190 re-added: the trustchain is no longer saved at start"
 }
 
 gate_bridge_on_ws_port
@@ -172,4 +206,5 @@ real_blur
 bundle_without_detox
 prod_like_env
 log_js_start_epoch
+readd_live_36190
 summary "prod-like build: no MOCK/DETOX in the env file, swap on prod, bridge on wsPort only after ${delay_ms} ms, real blur"

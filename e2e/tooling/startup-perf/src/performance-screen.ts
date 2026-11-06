@@ -43,7 +43,7 @@ export function hierarchyTexts(stdout: string): string[] {
     for (const key of ["text", "accessibilityText", "hintText", "value"]) {
       const attribute = attributes[key];
       const value = typeof attribute === "string" ? attribute.trim() : "";
-      if (value && texts[texts.length - 1] !== value) texts.push(value);
+      if (value && texts.at(-1) !== value) texts.push(value);
     }
     (node?.children ?? []).forEach(visit);
   };
@@ -57,14 +57,18 @@ export function parsePerformance(texts: string[]): PerformanceRead | null {
   const at = joined.indexOf(label);
   if (at < 0) return null;
   const after = joined.slice(at + label.length);
-  const value = after.match(/(-?\d+)\s*ms\b/);
+  const value = /(?<![\d-])(-?\d+)\s*ms\b/.exec(after);
   if (!value || Number(value[1]) <= 0) return null;
   return { appStartupTime: Number(value[1]), events: parseEvents(texts) };
 }
 
+// "<name> (x<count>)" then "<time> ms", in one text after a comma or in the next one. A name starts
+// after a newline or a comma, so the scan stays linear.
+const EVENT_ROW = /(?<![^\n,])([^\n,]+?) \(x(\d+)\)\s*(?:,\s*)?(-?\d+)\s*ms\b/g;
+
 export function parseEvents(texts: string[]): StartupEvents {
   const events: StartupEvents = {};
-  for (const m of texts.join("\n").matchAll(/([^\n,]+?) \(x(\d+)\)\s*,?\s*(-?\d+)\s*ms\b/g)) {
+  for (const m of texts.join("\n").matchAll(EVENT_ROW)) {
     events[m[1].trim()] = { count: Number(m[2]), time: Number(m[3]) };
   }
   return events;
@@ -109,6 +113,36 @@ export function createPerformanceReader({
     return FINAL_EVENTS.every(name => name in all) ? all : readAllEvents(device, all);
   }
 
+  /** Reads the screen a few times while it renders; `read` is null when the value never shows. */
+  async function readScreen(
+    device: string,
+  ): Promise<{ read: PerformanceRead | null; texts: string[] }> {
+    let texts: string[] = [];
+    for (let i = 0; i < SCREEN_READS; i++) {
+      const hierarchy = await maestro.invoke({
+        device,
+        command: "hierarchy",
+        timeoutMs: MAESTRO_HIERARCHY_TIMEOUT_MS,
+      });
+      texts = hierarchyTexts(hierarchy.stdout);
+      const read = parsePerformance(texts);
+      if (read) return { read, texts };
+      await sleep(SCREEN_READ_RETRY_MS);
+    }
+    return { read: null, texts };
+  }
+
+  async function withAllEvents(device: string, read: PerformanceRead): Promise<PerformanceRead> {
+    const events = await readRemainingEvents(device, read.events);
+    const missing = FINAL_EVENTS.filter(name => !(name in events));
+    if (missing.length) {
+      throw new Error(
+        `${missing.join(" and ")} not logged when the screen opened: App startup time would be under-reported`,
+      );
+    }
+    return { ...read, events };
+  }
+
   return async function readPerformance(
     device: string,
     { quick, debugFile }: { quick: boolean; debugFile: string },
@@ -125,26 +159,9 @@ export function createPerformanceReader({
         args: [flow],
         timeoutMs: MAESTRO_FLOW_TIMEOUT_MS,
       });
-      for (let i = 0; i < SCREEN_READS; i++) {
-        const hierarchy = await maestro.invoke({
-          device,
-          command: "hierarchy",
-          timeoutMs: MAESTRO_HIERARCHY_TIMEOUT_MS,
-        });
-        lastTexts = hierarchyTexts(hierarchy.stdout);
-        const parsed = parsePerformance(lastTexts);
-        if (parsed) {
-          const events = await readRemainingEvents(device, parsed.events);
-          const missing = FINAL_EVENTS.filter(name => !(name in events));
-          if (missing.length) {
-            throw new Error(
-              `${missing.join(" and ")} not logged when the screen opened: App startup time would be under-reported`,
-            );
-          }
-          return { ...parsed, events };
-        }
-        await sleep(SCREEN_READ_RETRY_MS);
-      }
+      const screen = await readScreen(device);
+      lastTexts = screen.texts;
+      if (screen.read) return withAllEvents(device, screen.read);
       const dialog = await P.blockingDialog(device);
       if (dialog) {
         lastTexts.unshift(`(dialog from ${dialog} has the focus)`);

@@ -15,7 +15,6 @@ signing keystore.
 | ------------------------------- | ------------------------------------------------------------------------------------- |
 | `ci/prepare-build.sh`           | Makes the checked-out ref's E2E prerelease build prod-like, before `e2e:build`        |
 | `ci/verify-build.sh`            | Checks the built binary: no `MOCK`/`DETOX`, `FORCE_DEBUG_VISIBLE=1`, real blur        |
-| `ci/adapt-mise-toml.sh`         | Drops what an older ref's `mise.toml` declares that no longer installs                |
 | `ci/install-maestro.sh`         | Installs the pinned Maestro, checked against its SHA-256                              |
 | `ci/wait-for-idle-host.sh`      | Waits for the iOS host's load to fall below its CPU count after the simulators boot   |
 | `src/run.ts`                    | The CLI that measures: installs, injects and launches A and B, writes `samples.jsonl` |
@@ -30,16 +29,21 @@ signing keystore.
 
 ## Presets
 
-| Preset             | A                              | B                 | Fails when                    |
-| ------------------ | ------------------------------ | ----------------- | ----------------------------- |
-| `prod-vs-release`  | latest `live-mobile@X.Y.Z` tag | `release` branch  | B is slower by > threshold_ms |
-| `custom`           | any branch or tag              | any branch or tag | same                          |
-| `aa-noise`         | one build                      | the same binary   | only on `Not enough pairs`    |
-| `known-regression` | LIVE-36190 present (`03d6f91`) | fixed (`74af11a`) | the regression is not seen    |
+| Preset             | A                              | B                          | Fails when                        |
+| ------------------ | ------------------------------ | -------------------------- | --------------------------------- |
+| `prod-vs-release`  | latest `live-mobile@X.Y.Z` tag | `release` branch           | B is slower by > threshold_ms     |
+| `custom`           | any branch or tag              | any branch or tag          | same                              |
+| `aa-noise`         | one build                      | the same binary            | only on `Not enough pairs`        |
+| `known-regression` | this branch or `ref_a`         | A with LIVE-36190 re-added | B is not slower by > threshold_ms |
 
-`aa-noise` reports how finely the setup resolves B − A.
+`aa-noise` reports how finely the setup resolves B − A. `known-regression` shows whether the gate
+still catches LIVE-36190 on today's code: B no longer saves the trustchain at start, so every launch
+generates its keypair again, the cost #21001 removed (its other half, a zod check of the keypair, no
+longer exists).
 
 Refs are branches or tags only: a raw SHA could be a fork's commit, run with the workflow's secrets.
+They start at `live-mobile@4.26.0`: `prepare-build.sh` rejects older ones, which still count the
+Debug value with react-native-startup-time.
 Pairs are even and at least 6, half before and half after the device swap; fewer give no 95%
 interval.
 
@@ -55,11 +59,11 @@ Android, Release simulator app on iOS, with the JS bundled in the binary. `prepa
 - keeps the real blur, which rspack aliases to the E2E mock for any "mock" env file;
 - bundles without `DETOX=1`, which `e2e:build` sets from ef2aed228e8 on (blur mock, and
   `collapsable={false}` on every view);
-- adds a `JS start epoch <ms>` startup event, the wall clock of the JS start.
+- adds a `JS start epoch <ms>` startup event, the wall clock of the JS start;
+- for `known-regression`'s B, drops the trustchain's `saveAtStart` (LIVE-36190, above).
 
 It checks every anchor before editing, and the edited lines carry `startup-perf`. The scripts and
-userdata come from the workflow's ref, so older refs can be measured; the build jobs drop two things
-older `mise.toml` files have that no longer install (`owner/repo` plugins, the npm pin). The jobs
+userdata come from the workflow's ref, so released tags are measured with today's harness. The jobs
 write no remote Nx, pnpm, Gradle or AVD cache: they run with develop's role while building any ref.
 
 ## A launch
@@ -72,7 +76,7 @@ write no remote Nx, pnpm, Gradle or AVD cache: they run with develop's role whil
   Maestro open the Performance screen and read "App startup time" and the startup events. Measured
   reads use `read-performance-quick.yaml`; warm-ups and retries use the full flow, whose optional
   taps cost ~7 s when no prompt shows. The flows select by text: the Debug and Performance screens
-  have no testIDs, on develop as on the older builds measured.
+  have no testIDs on any supported ref.
 - **Alternate devices** on every launch: right after a launch on the same simulator, one was
   ~270 ms faster (run 39731729203). Halfway through each scenario A and B swap devices, so the
   difference between the devices cancels out. On Android the other emulator is paused from the
@@ -103,10 +107,8 @@ the manual test compares.
 Two measures, both ending at "App startup time":
 
 - **Debug screen**: the value as shown. Builds count it from the first JS import (4.26–4.27,
-  b3700d9164b), from the process start (LIVE-40286 on; react-native-startup-time on iOS before
-  4.26) or from the React host creation (react-native-startup-time on Android before 4.26, 237–649
-  ms after the process start: runs 41853176900, 40872918238, 41835997579). When A and B count from
-  different starts, this row compares from the first JS import.
+  b3700d9164b) or from the process start (LIVE-40286 on). When A and B count from different starts,
+  this row compares from the first JS import.
 - **With native start**: from the process start, read by the harness on the app's clock (the
   emulator's clock was ~67 s off the runner's, run 40847012543) and joined through `JS start epoch`.
 
@@ -119,9 +121,9 @@ pnpm --filter @ledgerhq/mobile-startup-perf test        # also: typecheck, lint,
 ```
 
 They run in the "E2E Tooling Checks" PR job when this folder changes. `app-contract.test.ts` checks
-the mobile app of the checkout against what the measurement needs: `prepare-build.sh` still applies,
-the bridge still handles every message `inject.ts` sends, and the screens the flows open still show
-"Debug", "Performance" and "App startup time". The code is TypeScript that Node 24 runs as it is,
-with no build step: `tsc` checks it in strict mode, so a field renamed in `Sample` fails wherever
-it is still used. Only erasable syntax is allowed (no `enum` or `namespace`), and imports name the
-`.ts` file.
+the mobile app of the checkout against what the measurement needs: `prepare-build.sh` still applies
+(LIVE-36190 included), the bridge still handles every message `inject.ts` sends, and the screens the
+flows open still show "Debug", "Performance" and "App startup time". The code is TypeScript that
+Node 24 runs as it is, with no build step: `tsc` checks it in strict mode, so a field renamed in
+`Sample` fails wherever it is still used. Only erasable syntax is allowed (no `enum` or
+`namespace`), and imports name the `.ts` file.
