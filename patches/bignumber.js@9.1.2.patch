@@ -1,0 +1,37 @@
+diff --git a/bignumber.cjs-wrapper.mjs b/bignumber.cjs-wrapper.mjs
+new file mode 100644
+index 0000000000000000000000000000000000000000..df326d30fbe8c1b66c7702aef762e8f922845483
+--- /dev/null
++++ b/bignumber.cjs-wrapper.mjs
+@@ -0,0 +1,4 @@
++// LIVE-40827: ESM entry re-exporting the CJS build so ESM and CJS share one module; remove when bignumber.js ships one
++import BigNumber from "./bignumber.js";
++export { BigNumber };
++export default BigNumber;
+diff --git a/package.json b/package.json
+index 71fc0d177026eb7f20735eec40f6684b2da3eeea..95e882406d73d3f1b21b46f4f059e819a93442e3 100644
+--- a/package.json
++++ b/package.json
+@@ -21,17 +21,18 @@
+     "url": "https://github.com/MikeMcl/bignumber.js.git"
+   },
+   "main": "bignumber",
+-  "module": "bignumber.mjs",
++  "module": "bignumber.cjs-wrapper.mjs",
+   "browser": "bignumber.js",
+   "types": "bignumber.d.ts",
+   "exports": {
+     ".": {
+       "types": "./bignumber.d.ts",
+       "require": "./bignumber.js",
+-      "import": "./bignumber.mjs",
+-      "browser": "./bignumber.js"
++      "import": "./bignumber.cjs-wrapper.mjs",
++      "browser": "./bignumber.js",
++      "default": "./bignumber.js"
+     },
+-    "./bignumber.mjs": "./bignumber.mjs",
++    "./bignumber.mjs": "./bignumber.cjs-wrapper.mjs",
+     "./bignumber.js": "./bignumber.js",
+     "./package.json": "./package.json"
+   },

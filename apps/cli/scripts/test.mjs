@@ -6,6 +6,8 @@ if (os.platform() === "win32") {
   usePowerShell();
 }
 
+await $`node --test scripts/*.test.mjs`;
+
 const p = await $`node ./bin/index.js version`;
 
 const acceptedWarnings = [
