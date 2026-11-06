@@ -67,10 +67,10 @@ export interface CurrenciesOrder {
 }
 
 /** An aggregated asset as the wire sends it: its id is not branded until the response is parsed. */
-export type ApiCryptoAssetMeta = Omit<CryptoAssetMeta, "id"> & { id: string };
+type ApiCryptoAssetMeta = Omit<CryptoAssetMeta, "id"> & { id: string };
 
 /** The ordering as the wire sends it: its ids are not branded until the response is parsed. */
-export type ApiCurrenciesOrder = Omit<CurrenciesOrder, "metaCurrencyIds"> & {
+type ApiCurrenciesOrder = Omit<CurrenciesOrder, "metaCurrencyIds"> & {
   metaCurrencyIds: string[];
 };
 
