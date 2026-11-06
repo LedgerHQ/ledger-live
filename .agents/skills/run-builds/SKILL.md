@@ -47,10 +47,10 @@ Collect the npm package `name` values to search:
 1. Start with every `devtools/*` package you changed (read each `package.json` `name`).
 2. **Transitive `@devtools/*` consumers:** another package may depend on the one you changed (for example `@devtools/bindings` depends on `@devtools/env`). Grow the set until it stops changing: for each name `P` in the set, run `pnpm nx graph --focus="$P" --print --open=false`, then take every `source` in `.graph.dependencies` where `target` is `P` and `source` matches `^@devtools/`; add any new name to the set and repeat.
 
-Use each collected name `P` in two passes. **Package-name imports:** anchor the pattern so `@devtools/transport` does not match `@devtools/transport-panel`. Omit test-only trees from both passes: `*.test.*`, `*.spec.*`, `__tests__/`, and `__integrations__/` files never ship in a production bundle.
+Use each collected name `P` in two passes. **Package-name imports:** anchor the pattern so `@devtools/transport` does not match `@devtools/transport-panel`. Include **dynamic** imports the repo allows from outside the DevTools screen folder (`import()` / `lazy(() => import(...))` per `DEVTOOLS_HOST_FOLDER_RULE` in `tools/nx-plugins/enforce-boundaries/constraints.js`), not only `from` forms. Omit test-only trees from both passes: `*.test.*`, `*.spec.*`, `__tests__/`, and `__integrations__/` files never ship in a production bundle.
 
 ```bash
-rg --no-ignore-vcs -l "from ['\"]${P}(['\"/]|$)" apps/ledger-live-desktop/src apps/ledger-live-mobile/src \
+rg --no-ignore-vcs -l -e "from ['\"]${P}(['\"/]|$)" -e "import\s*\(\s*['\"]${P}['\"]" apps/ledger-live-desktop/src apps/ledger-live-mobile/src \
   --glob '!**/DevTools/**' \
   --glob '!**/*.test.*' \
   --glob '!**/*.spec.*' \
@@ -58,17 +58,19 @@ rg --no-ignore-vcs -l "from ['\"]${P}(['\"/]|$)" apps/ledger-live-desktop/src ap
   --glob '!**/__integrations__/**'
 ```
 
-**Imports of `DevTools/` by path** (covers files that reach DevTools through a relative or aliased path, for example `../../DevTools/DeviceOnboarding/useDeviceOnboardingTool` from production code outside the DevTools screen tree):
+**Imports of `DevTools/` by path** (covers files that reach DevTools through a relative or aliased path, for example `../../DevTools/DeviceOnboarding/useDeviceOnboardingTool` from production code outside the DevTools screen tree). Prefer **static** `from` lines for the path pass; if you only see a dynamic `import('...DevTools/...')`, apply the same **screen-entry** filter below (drop paths that only load the screen entry module).
 
 ```bash
-rg --no-ignore-vcs -n "from ['\"][^'\"]*DevTools/" apps/ledger-live-desktop/src apps/ledger-live-mobile/src \
+rg --no-ignore-vcs -n -e "from ['\"][^'\"]*DevTools/" -e "import\s*\(\s*['\"][^'\"]*DevTools/" apps/ledger-live-desktop/src apps/ledger-live-mobile/src \
   --glob '!**/DevTools/**' \
   --glob '!**/*.test.*' \
   --glob '!**/*.spec.*' \
   --glob '!**/__tests__/**' \
   --glob '!**/__integrations__/**' \
-  | rg -v "from ['\"][^'\"]*/(DevToolsWindow|DevToolsScreen|devToolsWindow)['\"]"
+  | rg -v "from ['\"][^'\"]*/(DevToolsWindow|DevToolsScreen|devToolsWindow)['\"]|import\s*\(\s*['\"][^'\"]*/(DevToolsWindow|DevToolsScreen|devToolsWindow)['\"]"
 ```
+
+A path hit is a signal only when the **imported module** is part of the **same devtools change you are evaluating**: resolve the target file from each hit (including re-exports and barrel files). Count the line as a build driver when that file lives under `devtools/` **and** under one of the packages in your collected `P` set (changed packages plus transitive `@devtools/*` dependents). If the hit pulls in a different devtools subtree than your change, ignore it for skip-or-build decisions. If resolution is unclear, treat the pass as inconclusive and keep the builds.
 
 **Screen mount, not a consumer:** a hit whose import path ends at the developer tools **screen entry** (the module that mounts only that screen), for example paths ending in `DevToolsWindow`, `DevToolsScreen`, or `devToolsWindow`, is wiring the developer tools surface into the app shell. It does not mean non-DevTools product code depends on your package; treat it like navigation to the screen. The pipeline above drops those lines; when tools or naming change, apply the same idea to whatever module replaces that entry.
 
