@@ -242,18 +242,22 @@ export class PortfolioPage extends AppPage {
 
   @step("Expect the no-device title in place of a balance")
   async expectNoDeviceHeader() {
-    await expect(this.noDeviceTitle).toBeVisible();
-    await expect(this.portfolioBalance).toBeHidden();
-    await expect(this.portfolioTotalBalance).toBeHidden();
-    await expect(this.portfolioTrend).toBeHidden();
+    await this.softExpect(async soft => {
+      await soft(this.noDeviceTitle).toBeVisible();
+      await soft(this.portfolioBalance).toBeHidden();
+      await soft(this.portfolioTotalBalance).toBeHidden();
+      await soft(this.portfolioTrend).toBeHidden();
+    });
   }
 
   /** Without a device, Receive, Buy, Sell and Send are not rendered at all, and desktop has no Swap action. */
   @step("Expect Connect and Buy a Ledger to be the only quick actions")
   async expectNoDeviceQuickActions() {
-    await expect(this.connectQuickActionButton).toBeVisible();
-    await expect(this.buyALedgerQuickActionButton).toBeVisible();
-    await expect(this.quickActionButtons).toHaveCount(2);
+    await this.softExpect(async soft => {
+      await soft(this.connectQuickActionButton).toBeVisible();
+      await soft(this.buyALedgerQuickActionButton).toBeVisible();
+      await soft(this.quickActionButtons).toHaveCount(2);
+    });
   }
 
   @step("Click send button")
