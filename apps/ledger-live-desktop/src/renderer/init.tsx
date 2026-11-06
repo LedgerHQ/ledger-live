@@ -19,10 +19,10 @@ import { restorePayCardLoginIntro } from "@features/flow-pay-card-auth/state";
 import { restorePayCardOnboardingWidget } from "@features/flow-pay-card-widget/state";
 import i18n from "~/renderer/i18n/init";
 import { setVisualZoomLevelLimits } from "~/renderer/webFrame";
-import { deeplink } from "~/renderer/bridge";
+import { db, deeplink } from "~/renderer/bridge";
 import { startDomainCheckViolationReporting } from "~/renderer/components/Web3AppWebview/domainCheckReport";
 import each from "lodash/each";
-import { reload, getKey } from "~/renderer/storage";
+import { reload, getKey, flushPendingWrites } from "~/renderer/storage";
 import "~/renderer/styles/global";
 import { registerTransportModules } from "~/renderer/live-common-setup";
 import { bootstrapMockServerTransport } from "~/renderer/mockServerTransport";
@@ -110,6 +110,9 @@ const rootNode = document.getElementById("react-root");
 async function init() {
   // at this step. we know the app error handling will happen here. so we can unset the global onerror
   window.onerror = null;
+
+  // Main waits for the debounced writes before the app quits.
+  db.onFlushRequest(flushPendingWrites);
 
   const logVerbose = getEnv("VERBOSE");
 

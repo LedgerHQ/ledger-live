@@ -17,11 +17,30 @@ import { LARGE_SCREEN_UPSELL_MODAL } from "@features/flow-large-screen-upsell";
 import { encryptData, decryptData } from "~/main/db/crypto";
 import { readFile, writeFile } from "~/main/db/fsHelper";
 
-const debounce = <T, R>(fn: (...args: T[]) => R, ms: number) => {
+const debounce = <T, R>(fn: (...args: T[]) => Promise<R>, ms: number) => {
   let timeout: NodeJS.Timeout | undefined;
+  let pendingArgs: T[] = [];
   let resolveRefs: Array<(value: R | PromiseLike<R>) => void> = [];
   let rejectRefs: Array<(error: unknown) => void> = [];
-  return (...args: T[]) => {
+  let inFlight: Promise<void> = Promise.resolve();
+  const run = () => {
+    timeout = undefined;
+    const args = pendingArgs;
+    const resolves = resolveRefs;
+    const rejects = rejectRefs;
+    resolveRefs = [];
+    rejectRefs = [];
+    // One write at a time: flush() then waits for all of them.
+    inFlight = inFlight.then(async () => {
+      try {
+        const res = await fn(...args);
+        resolves.forEach(r => r(res));
+      } catch (err) {
+        rejects.forEach(r => r(err));
+      }
+    });
+  };
+  const debounced = (...args: T[]) => {
     const promise: Promise<R> = new Promise((resolve, reject) => {
       resolveRefs.push(resolve);
       rejectRefs.push(reject);
@@ -29,18 +48,22 @@ const debounce = <T, R>(fn: (...args: T[]) => R, ms: number) => {
     if (timeout) {
       clearTimeout(timeout);
     }
-    timeout = setTimeout(async () => {
-      try {
-        const res = await fn(...args);
-        resolveRefs.forEach(r => r(res));
-      } catch (err) {
-        rejectRefs.forEach(r => r(err));
-      }
-      resolveRefs = [];
-      rejectRefs = [];
-    }, ms);
+    pendingArgs = args;
+    timeout = setTimeout(run, ms);
     return promise;
   };
+  /** Runs the pending call now, and waits for the call in progress. */
+  debounced.flush = () => {
+    if (timeout) {
+      clearTimeout(timeout);
+      run();
+    }
+    return inFlight;
+  };
+  debounced.pending = () => timeout !== undefined;
+  /** The last write in progress, to see if a write started after a flush. */
+  debounced.inFlight = () => inFlight;
+  return debounced;
 };
 
 let DBPath: string | null = null;
@@ -48,7 +71,38 @@ let memoryNamespaces: Record<string, Record<string, unknown> | null | undefined>
 let encryptionKeys: Record<string, Record<string, string> | null | undefined> = {};
 const DEBOUNCE_MS =
   process.env.NODE_ENV === "test" || getEnv("PLAYWRIGHT_RUN") || getEnv("MOCK") ? 16 : 500;
-const save = debounce(saveToDisk, DEBOUNCE_MS);
+
+// One debounce for each namespace: a save of one namespace must not cancel a save of another.
+const saves: Map<string, ReturnType<typeof debounce<string, void>>> = new Map();
+function save(ns: string): Promise<void> {
+  let debouncedSave = saves.get(ns);
+  if (!debouncedSave) {
+    debouncedSave = debounce(saveToDisk, DEBOUNCE_MS);
+    saves.set(ns, debouncedSave);
+  }
+  return debouncedSave(ns);
+}
+
+/**
+ * Write the pending saves of all namespaces now, before the app quits.
+ */
+function flush(): Promise<void> {
+  return flushSaves(0);
+}
+
+/** Saves that keep coming must not hold the quit. */
+const MAX_FLUSH_ROUNDS = 5;
+
+async function flushSaves(round: number): Promise<void> {
+  const writes = Array.from(saves.values(), debouncedSave => debouncedSave.flush());
+  await Promise.all(writes);
+  // A save can be queued or start its write while the flush waits: flush that one too.
+  // New namespaces come last in the map, so they have no write at their index.
+  const busy = Array.from(saves.values()).some(
+    (debouncedSave, i) => debouncedSave.pending() || debouncedSave.inFlight() !== writes[i],
+  );
+  if (busy && round + 1 < MAX_FLUSH_ROUNDS) return flushSaves(round + 1);
+}
 
 // Track which keyPaths triggered saves for each namespace
 const saveTriggers: Map<string, Set<string>> = new Map();
@@ -144,12 +198,27 @@ async function ensureNSLoaded(ns: string) {
   }
 }
 
+/** Settles when the last reload has cleared the memory. */
+let reloading: Promise<void> = Promise.resolve();
+
 /**
  * In the event of a user refreshing the app we need to reload the data
  * to ensure the lock/unlock detection is still valid.
  */
 async function reload() {
-  if (DBPath) init(DBPath);
+  // A pending save would otherwise load the file again and write its old values back.
+  reloading = flush().then(() => {
+    if (DBPath) init(DBPath);
+  });
+  await reloading;
+}
+
+/**
+ * The renderer must not read the memory of the previous session while a reload flushes it:
+ * it holds the decrypted data. The saves do not wait, so the flush can finish.
+ */
+function waitForReload(): Promise<void> {
+  return reloading;
 }
 
 /**
@@ -223,6 +292,7 @@ async function setEncryptionKey(
   encryptionKey: string,
   currentEncryptionKey?: string,
 ): Promise<boolean> {
+  await waitForReload();
   if (typeof encryptionKey !== "string" || !encryptionKey) throw new DBWrongPassword();
   const replacesHeldKey = assertHeldKey(currentEncryptionKey);
 
@@ -260,6 +330,7 @@ async function setEncryptionKey(
   return replacesHeldKey || decrypted.length > 0;
 }
 async function removeEncryptionKey(currentEncryptionKey?: string): Promise<boolean> {
+  await waitForReload();
   const removesHeldKey = assertHeldKey(currentEncryptionKey);
   const nsToSave = new Set<string>();
   for (const [ns, keyPath] of encryptedDataPaths) {
@@ -288,6 +359,7 @@ async function removeEncryptionKey(currentEncryptionKey?: string): Promise<boole
  * Set a key in the given namespace
  */
 async function setKey<K>(ns: string, keyPath: string, value: K): Promise<void> {
+  await waitForReload();
   if (ns === "app") {
     assertAppNamespaceSetKeyAllowed(keyPath);
   }
@@ -309,6 +381,7 @@ async function getKey<V>(
   keyPath: string,
   defaultValue?: V,
 ): Promise<V | Record<string, V> | undefined> {
+  await waitForReload();
   await ensureNSLoaded(ns);
   if (!keyPath) return (memoryNamespaces[ns] as Record<string, V>) || defaultValue;
   return get(memoryNamespaces[ns], keyPath, defaultValue) as V;
@@ -351,13 +424,18 @@ function buildAppNamespacePayload(memory: Record<string, unknown>): Record<strin
  */
 async function saveToDisk(ns: string) {
   if (!DBPath) throw new NoDBPathGiven();
-  await ensureNSLoaded(ns);
+  // A reset cleared the namespace: nothing to write. Loading it here would queue a save behind
+  // this one, which waits for it.
+  const memory = memoryNamespaces[ns];
+  if (!memory) {
+    saveTriggers.delete(ns);
+    return;
+  }
 
   const startTime = Date.now();
   const triggersSet = saveTriggers.get(ns);
   const triggers = triggersSet ? Array.from(triggersSet) : [];
 
-  const memory = memoryNamespaces[ns]!;
   const raw = ns === "app" ? buildAppNamespacePayload(memory) : memory;
   const clone = cloneDeep(raw);
 
@@ -396,6 +474,7 @@ async function cleanCache() {
   await save("app");
 }
 async function resetAll() {
+  await waitForReload();
   if (!DBPath) throw new NoDBPathGiven();
   memoryNamespaces.app = null;
   encryptionKeys = {}; // Clear encryption keys to prevent re-encryption of old data
@@ -437,4 +516,5 @@ export default {
   hasBeenDecrypted,
   cleanCache,
   resetAll,
+  flush,
 };

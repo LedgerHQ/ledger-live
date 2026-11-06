@@ -6,7 +6,6 @@ import type { ConfigSelectionId } from "@shared/app-config";
 import { useDBRaw } from "@ledgerhq/live-common/hooks/useDBRaw";
 import { DiscoverDB } from "@ledgerhq/live-common/wallet-api/types";
 import accountModel from "~/helpers/accountModel";
-import memoize from "lodash/memoize";
 import debounce from "lodash/debounce";
 
 import { Account, AccountRaw, AccountUserData } from "@ledgerhq/types-live";
@@ -157,18 +156,24 @@ export const getKey = async <
   return data as V;
 };
 
-let debounceToUse = debounce;
-if (getEnv("PLAYWRIGHT_RUN")) {
-  debounceToUse =
-    fn =>
-    (...args) =>
-      // @ts-expect-error This is specific to playwright, silence the error
-      setTimeout(() => fn(...args));
-}
+// E2E: write on the next tick, so the tests read the data at once.
+const SET_KEY_DEBOUNCE_MS = getEnv("PLAYWRIGHT_RUN") ? 0 : 1000;
 
-const debouncedSetKey = memoize(
-  <K extends keyof DatabaseValues, V = DatabaseValue<K>>(ns: string, keyPath: K) =>
-    debounceToUse(async (value: V) => {
+type DebouncedSetKey = ReturnType<typeof debounce<(value: unknown) => Promise<void>>>;
+
+const debouncedSetKeys = new Map<string, DebouncedSetKey>();
+
+/** A reset increments it: the writes queued before the reset do not reach main. */
+let writeGeneration = 0;
+
+/** The debounces called since the last flush. */
+const queuedSetKeys = new Set<DebouncedSetKey>();
+
+function getDebouncedSetKey(ns: string, keyPath: keyof DatabaseValues) {
+  const id = `${ns}:${keyPath}`;
+  let debouncedSetKey = debouncedSetKeys.get(id);
+  if (!debouncedSetKey) {
+    const write = async (value: unknown, generation: number) => {
       try {
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         const transform = transforms[keyPath as keyof Transforms];
@@ -176,21 +181,50 @@ const debouncedSetKey = memoize(
         const transformedValue = transform
           ? await transform.set(value as Parameters<typeof transform.set>[0])
           : value;
+        if (generation !== writeGeneration) return;
         await db.setKey(ns, keyPath, transformedValue as Serializable);
       } catch (e) {
         logger.error("debouncedSetKey failed", { ns, keyPath }, e);
       }
-    }, 1000),
-  (ns: string, keyPath: string) => `${ns}:${keyPath}`,
-);
+    };
+    // One write at a time: an older value that still encodes must not reach main last.
+    let lastWrite: Promise<void> = Promise.resolve();
+    debouncedSetKey = debounce((value: unknown) => {
+      const generation = writeGeneration;
+      lastWrite = lastWrite.then(() => write(value, generation));
+      return lastWrite;
+    }, SET_KEY_DEBOUNCE_MS);
+    debouncedSetKeys.set(id, debouncedSetKey);
+  }
+  return debouncedSetKey;
+}
 
 export const setKey = <K extends keyof DatabaseValues, V = DatabaseValue<K>, Val extends V = V>(
   ns: string,
   keyPath: K,
   value: Val,
 ) => {
-  debouncedSetKey<K, V>(ns, keyPath)(value);
+  const debouncedSetKey = getDebouncedSetKey(ns, keyPath);
+  queuedSetKeys.add(debouncedSetKey);
+  debouncedSetKey(value);
 };
+
+/** A store that keeps writing must not hold the quit. */
+const MAX_FLUSH_ROUNDS = 5;
+
+/**
+ * Send the debounced `setKey` calls to main now, and wait until main has them.
+ */
+export const flushPendingWrites = () => flushQueuedSetKeys(0);
+
+async function flushQueuedSetKeys(round: number): Promise<void> {
+  if (round >= MAX_FLUSH_ROUNDS || queuedSetKeys.size === 0) return;
+  const toFlush = Array.from(queuedSetKeys);
+  queuedSetKeys.clear();
+  await Promise.all(toFlush.map(debouncedSetKey => debouncedSetKey.flush()));
+  // The store can queue more writes while main saves the first ones: flush those too.
+  return flushQueuedSetKeys(round + 1);
+}
 
 export const hasEncryptionKey = (ns: string, keyPath: keyof DatabaseValues) =>
   db.hasEncryptionKey(ns, keyPath);
@@ -206,7 +240,13 @@ export const isEncryptionKeyCorrect = (encryptionKey: string) =>
 
 export const hasBeenDecrypted = () => db.hasBeenDecrypted();
 
-export const resetAll = () => db.resetAll();
+// A pending write after the reset would bring back the data that the reset removed.
+export const resetAll = () => {
+  writeGeneration++;
+  debouncedSetKeys.forEach(debouncedSetKey => debouncedSetKey.cancel());
+  queuedSetKeys.clear();
+  return db.resetAll();
+};
 
 export const reload = () => db.reload();
 
