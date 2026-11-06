@@ -2,7 +2,10 @@ import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router";
 import { useCategorizedAssetsFromPortfolio } from "LLD/hooks/useCategorizedAssets";
-import { useAssetsData } from "@features/platform-aggregated-assets";
+import {
+  useAssetsData,
+  useMarketDayChangeByCurrencyId,
+} from "@features/platform-aggregated-assets";
 import { useSelector } from "LLD/hooks/redux";
 import {
   hasOnboardedDeviceSelector,
@@ -110,7 +113,18 @@ export default function useCryptoAssetsViewModel(): CryptoAssetsViewModel {
   );
   useOnDemandCurrenciesCountervalues(nonPlaceholderCurrencies, counterValueCurrency);
 
-  const trends = useAllCurrencyTrends(items, "day");
+  const currencyIds = useMemo(
+    () => nonPlaceholderCurrencies.map(currency => currency.id),
+    [nonPlaceholderCurrencies],
+  );
+  const marketDayChange = useMarketDayChangeByCurrencyId({
+    currencyIds,
+    product: "lld",
+    version: __APP_VERSION__,
+    pollingInterval: ASSETS_PRICE_REFRESH_INTERVAL_MS,
+    skipPollingIfUnfocused: true,
+  });
+  const trends = useAllCurrencyTrends(items, "day", marketDayChange);
   const itemsWithTrend = useMemo(
     () => items.map(item => ({ ...item, trend: trends.get(item.currency.id) ?? null })),
     [items, trends],
