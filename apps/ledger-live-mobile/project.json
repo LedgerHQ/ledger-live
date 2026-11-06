@@ -125,6 +125,7 @@
         "sharedEnv",
         { "env": "ENVFILE" },
         { "env": "DETOX" },
+        { "env": "MSW_ENABLED" },
         { "env": "CI" }
       ],
       "options": {
