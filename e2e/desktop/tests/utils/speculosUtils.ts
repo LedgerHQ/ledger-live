@@ -35,7 +35,13 @@ export async function launchSpeculos(
   invariant(device, "[E2E Setup] Speculos not started");
 
   if (process.env.REMOTE_SPECULOS === "true") {
-    await waitForSpeculosReady(device.id);
+    try {
+      await waitForSpeculosReady(device.id);
+    } catch (error) {
+      // The caller never gets this device, so nothing else would free its Speculinho slot.
+      await cleanSpeculos(device);
+      throw error;
+    }
     console.warn(
       `[E2E Setup] Remote Speculos ready - SPECULOS_ADDRESS: ${process.env.SPECULOS_ADDRESS}`,
     );
