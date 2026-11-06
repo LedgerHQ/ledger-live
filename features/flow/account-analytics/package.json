@@ -6,9 +6,11 @@
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
-    ".": "./src/index.ts",
-    "./package.json": "./package.json",
-    "./web": "./src/web/index.web.ts"
+    ".": {
+      "react-native": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./package.json": "./package.json"
   },
   "sideEffects": false,
   "scripts": {
@@ -27,15 +29,23 @@
     "@features/platform-aggregated-assets": "workspace:*",
     "@shared/analytics": "workspace:*",
     "@shared/i18n": "workspace:*",
+    "@shared/ui-queued-bottom-sheet": "workspace:*",
     "zod": "catalog:"
   },
   "peerDependencies": {
     "react": "catalog:",
     "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/lumen-design-core": "catalog:",
-    "@ledgerhq/lumen-ui-react": "catalog:"
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "react-native": "catalog:"
   },
   "devDependencies": {
+    "@domain/entity-currency-crypto": "workspace:*",
+    "@ledgerhq/crypto-icons": "catalog:",
+    "@ledgerhq/lumen-design-core": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
     "@support/lint": "workspace:*",
@@ -44,8 +54,10 @@
     "@testing-library/dom": "catalog:",
     "@testing-library/jest-dom": "catalog:",
     "@testing-library/react": "catalog:",
+    "@testing-library/react-native": "catalog:",
     "@testing-library/user-event": "catalog:",
     "@types/jest": "catalog:",
+    "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@typescript/native": "catalog:",
     "jest": "catalog:",
@@ -54,11 +66,9 @@
     "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "typescript": "catalog:",
-    "@ledgerhq/crypto-icons": "catalog:",
-    "@ledgerhq/lumen-design-core": "catalog:",
-    "@ledgerhq/lumen-ui-react": "catalog:",
-    "@domain/entity-currency-crypto": "workspace:*"
+    "react-native": "catalog:",
+    "react-test-renderer": "catalog:",
+    "typescript": "catalog:"
   },
   "peerDependenciesMeta": {
     "@ledgerhq/crypto-icons": {
@@ -68,6 +78,12 @@
       "optional": true
     },
     "@ledgerhq/lumen-ui-react": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-ui-rnative": {
+      "optional": true
+    },
+    "react-native": {
       "optional": true
     }
   }

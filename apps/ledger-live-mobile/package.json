@@ -114,6 +114,7 @@
     "@domain/entity-recent-addresses": "workspace:^",
     "@domain/entity-starred-account": "workspace:^",
     "@domain/entity-wallet-sync": "workspace:^",
+    "@features/flow-account-analytics": "workspace:^",
     "@features/flow-account-detail": "workspace:^",
     "@features/flow-account-detail-analytics-notice": "workspace:^",
     "@features/flow-account-detail-balance-summary": "workspace:^",
