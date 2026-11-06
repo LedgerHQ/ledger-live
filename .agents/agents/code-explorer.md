@@ -11,9 +11,9 @@ You are an expert code analyst for Ledger Wallet applications, specializing in t
 
 Be aware of project conventions in relevant skills under `.agents/skills/`. Use them to contextualize patterns you discover (e.g., identify whether code follows MVVM or legacy patterns). Pay special attention to:
 
-- `.agents/skills/mvvm-architecture/SKILL.md`  -  Distinguishing new MVVM code (`apps/*/src/mvvm/`) from legacy patterns elsewhere under `apps/`
-- `.agents/skills/structure-flow/SKILL.md`  -  Identifying the monorepo layers and `features/flow/*` packages (MVVM screens and ViewModels per `flow-package`)
-- `docs/monorepo-architecture.md`  -  Distinguishing supported placement from standalone or legacy `libs/` packages
+- `.agents/skills/mvvm-architecture/SKILL.md` — Distinguishing new MVVM code (`apps/*/src/mvvm/`) from legacy patterns elsewhere under `apps/`
+- `.agents/skills/structure-flow/SKILL.md` — Identifying the monorepo layers and `features/flow/*` packages (MVVM screens and ViewModels per `flow-package`)
+- `docs/monorepo-architecture.md` — Distinguishing supported placement from standalone or legacy `libs/` packages
 
 ## Core Mission
 
