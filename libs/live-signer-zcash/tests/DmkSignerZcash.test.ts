@@ -6,7 +6,7 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { SignerZcashBuilder } from "@ledgerhq/device-signer-kit-zcash";
 import { DmkSignerZcash } from "../src/DmkSignerZcash";
-import { UnsupportedV6SourceTransaction } from "../src/errors";
+import { UnsupportedV6SourceTransaction, UserAddressRefusedOnDevice } from "../src/errors";
 import type { PcztTransaction, SignerTransactionLike } from "../src/types";
 
 jest.mock("@ledgerhq/device-signer-kit-zcash", () => ({
@@ -496,6 +496,86 @@ describe("DmkSignerZcash", () => {
       await expect(signer.createPaymentTransaction(baseArg)).rejects.toMatchObject({
         name: "UnsupportedV6SourceTransaction",
         message: expect.stringContaining("does not support V6 (Ironwood) source transactions"),
+      });
+    });
+
+    describe("user address refusal", () => {
+      const refusal = {
+        _tag: "UserAddressRefusedError",
+        errorCode: "user_address_refused",
+        message: "The device refused the receivers of the entered address.",
+      };
+
+      it("maps the kit's error code to UserAddressRefusedOnDevice with the kit message", async () => {
+        mockSignerZcash.signTransaction.mockReturnValue({
+          observable: createErrorStatusObservable(refusal),
+        });
+
+        const rejection: unknown = await signer
+          .createPaymentTransaction(baseArg)
+          .then(() => undefined)
+          .catch((reason: unknown) => reason);
+
+        expect(rejection).toBeInstanceOf(UserAddressRefusedOnDevice);
+        expect((rejection as Error).message).toBe(refusal.message);
+      });
+
+      it("falls back to a default message when the kit reports none", async () => {
+        mockSignerZcash.signTransaction.mockReturnValue({
+          observable: createErrorStatusObservable({
+            _tag: refusal._tag,
+            errorCode: refusal.errorCode,
+          }),
+        });
+
+        await expect(signer.createPaymentTransaction(baseArg)).rejects.toMatchObject({
+          name: "UserAddressRefusedOnDevice",
+          message: expect.stringContaining("receivers of the address you entered"),
+        });
+      });
+
+      it("maps a matching tag alone", async () => {
+        mockSignerZcash.signTransaction.mockReturnValue({
+          observable: createErrorStatusObservable({ _tag: refusal._tag }),
+        });
+
+        await expect(signer.createPaymentTransaction(baseArg)).rejects.toBeInstanceOf(
+          UserAddressRefusedOnDevice,
+        );
+      });
+
+      it("maps a matching code alone, and also on the PCZT signing path", async () => {
+        mockSignerZcash.signPcztTransaction.mockReturnValue({
+          observable: createErrorStatusObservable({
+            _tag: "SomethingElse",
+            errorCode: refusal.errorCode,
+          }),
+        });
+
+        await expect(
+          signer.signPcztTransaction({
+            global: {
+              txVersion: 5,
+              versionGroupId: 0x26a7270a,
+              consensusBranchId: 0xc2d6d0b4,
+              fallbackLockTime: null,
+              expiryHeight: 0,
+              coinType: 133,
+              txModifiable: 0,
+            },
+            transparentInputs: [],
+            transparentOutputs: [],
+            orchardBundle: null,
+          }),
+        ).rejects.toBeInstanceOf(UserAddressRefusedOnDevice);
+      });
+
+      it("leaves other tagged errors on their current mapping", async () => {
+        mockSignerZcash.signTransaction.mockReturnValue({
+          observable: createErrorStatusObservable({ _tag: "OtherError", errorCode: "1234" }),
+        });
+
+        await expect(signer.createPaymentTransaction(baseArg)).rejects.toThrow("OtherError");
       });
     });
 
