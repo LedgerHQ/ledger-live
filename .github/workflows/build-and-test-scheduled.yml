@@ -32,6 +32,8 @@ jobs:
       CARD_BAANX_HOSTED_UI: ${{ secrets.CARD_BAANX_HOSTED_UI }}
       CARD_OAUTH_REDIRECT_URI: ${{ secrets.CARD_OAUTH_REDIRECT_URI }}
       NX_KEY: ${{ secrets.NX_KEY }}
+    with:
+      include-macos: true
 
   test-desktop:
     name: "Desktop E2E & Mock Tests"
