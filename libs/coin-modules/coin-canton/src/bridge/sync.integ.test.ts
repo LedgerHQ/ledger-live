@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import coinConfig from "../config";
+import coinConfig, { type CantonCoinConfig } from "../config";
 import * as gateway from "../network/gateway";
 import { generateMockKeyPair, createMockSigner } from "../test/cantonTestUtils";
 import { CantonAccount } from "../types";
@@ -36,6 +36,17 @@ const ACCOUNT_SHAPE_INFO: AccountShapeInfo<CantonAccount> = {
   } as CantonAccount,
 };
 const TIMEOUT = 30000;
+const devnetConfig: CantonCoinConfig = {
+  gatewayUrl: "https://canton-gateway-devnet.api.live.ledger-test.com",
+  useGateway: true,
+  networkType: "devnet",
+  nativeInstrumentId: "Amulet",
+  status: {
+    type: "active",
+  },
+  name: "Canton Network (Devnet)",
+  unit: { name: "cc", code: "CC", magnitude: 38 },
+};
 
 // Mock signer context for testing
 const keyPair = generateMockKeyPair();
@@ -46,17 +57,7 @@ const mockSignerContext = jest.fn().mockImplementation((_deviceId, callback) => 
 
 describe.skip("sync (devnet)", () => {
   beforeAll(async () => {
-    coinConfig.setCoinConfig(() => ({
-      gatewayUrl: "https://canton-gateway-devnet.api.live.ledger-test.com",
-      useGateway: true,
-      networkType: "devnet",
-      nativeInstrumentId: "Amulet",
-      status: {
-        type: "active",
-      },
-      name: "Canton Network (Devnet)",
-      unit: { name: "cc", code: "CC", magnitude: 38 },
-    }));
+    coinConfig.setCoinConfig(() => devnetConfig);
   });
 
   describe("makeGetAccountShape", () => {
@@ -211,7 +212,7 @@ describe.skip("sync (devnet)", () => {
           { paginationConfig: {} },
         );
 
-        expect(mockGetOperations).toHaveBeenCalledWith(currency, TEST_ADDRESS, {
+        expect(mockGetOperations).toHaveBeenCalledWith(devnetConfig, TEST_ADDRESS, {
           cursor: (operation.blockHeight || 0) + 1,
           limit: 100,
         });
@@ -230,7 +231,7 @@ describe.skip("sync (devnet)", () => {
 
         expect(result.operationsCount).toBeGreaterThanOrEqual(1);
 
-        expect(mockGetOperations).toHaveBeenCalledWith(currency, TEST_ADDRESS, {
+        expect(mockGetOperations).toHaveBeenCalledWith(devnetConfig, TEST_ADDRESS, {
           cursor: 0,
           limit: 100,
         });

@@ -3,13 +3,13 @@ import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index
 import { GetAccountShape, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { Operation, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { getBalance } from "../common-logic/account/getBalance";
-import { determineOperationType } from "../common-logic/history/operationType";
-import coinConfig from "../config";
+import type { CantonCoinConfig } from "../config";
 import { isCantonAccountEmpty } from "../helpers";
+import { getBalance } from "../logic/getBalance";
+import { determineOperationType } from "./operationType";
 import {
   getCalTokensCached,
   getEnabledInstrumentsCached,
@@ -25,6 +25,7 @@ import {
 import resolver from "../signer";
 import { CantonAccount, CantonResources, CantonSigner } from "../types";
 import { buildSubAccounts } from "./buildSubAccounts";
+import { getBridgeConfig, getBridgeContext } from "./context";
 import { isAccountOnboarded } from "./onboard";
 
 type ValidOperationInfo = OperationInfo & {
@@ -121,7 +122,7 @@ const filterOperations = (
 };
 
 export async function filterDisabledTokenAccounts(
-  currency: CryptoCurrency,
+  config: CantonCoinConfig,
   subAccounts: TokenAccount[] | undefined,
   calTokens: Map<string, string>,
 ): Promise<TokenAccount[]> {
@@ -129,7 +130,7 @@ export async function filterDisabledTokenAccounts(
     return [];
   }
 
-  const enabledInstruments = await getEnabledInstrumentsCached(currency);
+  const enabledInstruments = await getEnabledInstrumentsCached(config);
   return subAccounts.filter(subAccount => {
     const instrumentId = calTokens.get(subAccount.token.id);
     const adminId = subAccount.token.contractAddress;
@@ -146,6 +147,7 @@ export function makeGetAccountShape(
 ): GetAccountShape<CantonAccount> {
   return async info => {
     const { address, currency, derivationMode, derivationPath, initialAccount } = info;
+    const config = getBridgeConfig(currency);
 
     let isOnboarded = initialAccount?.cantonResources?.isOnboarded ?? false;
     let xpubOrAddress = (initialAccount?.xpub || initialAccount?.cantonResources?.xpub) ?? "";
@@ -161,7 +163,7 @@ export function makeGetAccountShape(
       });
       publicKey = addressResult.publicKey;
 
-      const result = await isAccountOnboarded(currency, publicKey);
+      const result = await isAccountOnboarded(config, publicKey);
       isOnboarded = result.isOnboarded;
 
       if (isOnboarded && result.partyId) {
@@ -174,7 +176,7 @@ export function makeGetAccountShape(
     // gateway party lookup returns it. Without publicKey, validateTopology can't
     // run and the topology-change prompt never shows. LIVE-34585
     if (xpubOrAddress && !publicKey) {
-      const { public_key } = await getPartyById(currency, xpubOrAddress);
+      const { public_key } = await getPartyById(config, xpubOrAddress);
       if (public_key) publicKey = public_key;
     }
 
@@ -186,10 +188,12 @@ export function makeGetAccountShape(
       derivationMode,
     });
 
-    const { nativeInstrumentId } = coinConfig.getCoinConfig(currency.id);
-    const balances = xpubOrAddress ? await getBalance(currency, xpubOrAddress) : [];
+    const { nativeInstrumentId } = config;
+    const balances = xpubOrAddress
+      ? await getBalance(getBridgeContext(currency), xpubOrAddress)
+      : [];
     const pendingTransferProposals = xpubOrAddress
-      ? await getPendingTransferProposals(currency, xpubOrAddress)
+      ? await getPendingTransferProposals(config, xpubOrAddress)
       : [];
 
     // Aggregate all balances by instrument (unlocked + locked)
@@ -223,7 +227,7 @@ export function makeGetAccountShape(
       });
     }
 
-    const calTokens = await getCalTokensCached(currency);
+    const calTokens = await getCalTokensCached(currency.id);
     const tokenIdentifierToId = new Map<string, string>();
     for (const [tokenId, tokenIdentifier] of calTokens.entries()) {
       tokenIdentifierToId.set(tokenIdentifier, tokenId);
@@ -269,7 +273,7 @@ export function makeGetAccountShape(
     const unlockedAmount = new BigNumber((nativeBalance?.unlockedBalance ?? 0n).toString());
     const lockedAmount = new BigNumber((nativeBalance?.lockedBalance ?? 0n).toString());
     const totalBalance = unlockedAmount.plus(lockedAmount);
-    const reserveMin = new BigNumber(coinConfig.getCoinConfig(currency.id).minReserve || 0);
+    const reserveMin = new BigNumber(config.minReserve || 0);
     const spendableBalance = BigNumber.max(0, unlockedAmount.minus(reserveMin));
 
     const instrumentUtxoCounts: Record<string, number> = {};
@@ -290,7 +294,7 @@ export function makeGetAccountShape(
     if (xpubOrAddress) {
       const oldOperations = initialAccount?.operations || [];
       const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
-      const transactionData = await getOperations(currency, xpubOrAddress, {
+      const transactionData = await getOperations(config, xpubOrAddress, {
         cursor: startAt,
         limit: 100,
       });
@@ -328,7 +332,7 @@ export function makeGetAccountShape(
       xpub: xpubOrAddress,
     };
 
-    const filteredSubAccounts = await filterDisabledTokenAccounts(currency, subAccounts, calTokens);
+    const filteredSubAccounts = await filterDisabledTokenAccounts(config, subAccounts, calTokens);
 
     const used = !isCantonAccountEmpty({
       operationsCount: mainAccountOperations.length,
@@ -337,7 +341,7 @@ export function makeGetAccountShape(
       cantonResources,
     });
 
-    const blockHeight = await getLedgerEnd(currency);
+    const blockHeight = await getLedgerEnd(config);
 
     const creationDate =
       mainAccountOperations.length > 0

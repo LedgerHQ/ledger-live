@@ -1,6 +1,6 @@
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { firstValueFrom, toArray } from "rxjs";
-import coinConfig from "../config";
+import coinConfig, { type CantonCoinConfig } from "../config";
 import {
   isTopologyChangeRequiredCached,
   clearIsTopologyChangeRequiredCache,
@@ -21,6 +21,17 @@ describe("onboard (devnet)", () => {
   const mockDeviceId = "test-device-id";
   const mockCurrency = createMockCantonCurrency();
   const mockAccount = createMockCantonAccount();
+  const mockConfig: CantonCoinConfig = {
+    gatewayUrl: "https://canton-gateway-devnet.api.live.ledger-test.com",
+    useGateway: true,
+    networkType: "devnet",
+    nativeInstrumentId: "Amulet",
+    status: {
+      type: "active",
+    },
+    name: "Canton Network (Devnet)",
+    unit: { name: "cc", code: "CC", magnitude: 38 },
+  };
 
   let onboardedAccount: {
     keyPair: ReturnType<typeof generateMockKeyPair>;
@@ -30,17 +41,7 @@ describe("onboard (devnet)", () => {
   } | null = null;
 
   beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      gatewayUrl: "https://canton-gateway-devnet.api.live.ledger-test.com",
-      useGateway: true,
-      networkType: "devnet",
-      nativeInstrumentId: "Amulet",
-      status: {
-        type: "active",
-      },
-      name: "Canton Network (Devnet)",
-      unit: { name: "cc", code: "CC", magnitude: 38 },
-    }));
+    coinConfig.setCoinConfig(() => mockConfig);
   });
 
   const getOnboardedAccount = () => {
@@ -86,7 +87,7 @@ describe("onboard (devnet)", () => {
       // We retry a few times with a small delay to account for this.
       let result: Awaited<ReturnType<typeof isAccountOnboarded>> = { isOnboarded: false };
       for (let i = 0; i < 10; i++) {
-        result = await isAccountOnboarded(mockCurrency, keyPair.publicKeyHex);
+        result = await isAccountOnboarded(mockConfig, keyPair.publicKeyHex);
         if (result.isOnboarded && result.partyId) {
           break;
         }
@@ -114,7 +115,7 @@ describe("onboard (devnet)", () => {
       const keyPair = generateMockKeyPair();
 
       // WHEN
-      const result = await isAccountOnboarded(mockCurrency, keyPair.publicKeyHex);
+      const result = await isAccountOnboarded(mockConfig, keyPair.publicKeyHex);
 
       // THEN
       expect(result).toEqual({ isOnboarded: false });
@@ -125,7 +126,7 @@ describe("onboard (devnet)", () => {
       const keyPair = generateMockKeyPair();
 
       // WHEN
-      const result = await isAccountOnboarded(mockCurrency, keyPair.publicKeyHex);
+      const result = await isAccountOnboarded(mockConfig, keyPair.publicKeyHex);
 
       // THEN
       expect(result).toEqual({ isOnboarded: false });
@@ -252,18 +253,18 @@ describe("onboard (devnet)", () => {
 
       // Verify account is accessible on devnet node
       const isTopologyChangeRequiredOnDevnet = await isTopologyChangeRequiredCached(
-        mockCurrency,
+        mockConfig,
         keyPair.publicKeyHex,
       );
       expect(isTopologyChangeRequiredOnDevnet).toBe(false);
 
       // WHEN: Switch to different node
       setEnv("CANTON_NODE_ID_OVERRIDE", "devnet-replicated");
-      clearIsTopologyChangeRequiredCache(mockCurrency, keyPair.publicKeyHex);
+      clearIsTopologyChangeRequiredCache(mockConfig, keyPair.publicKeyHex);
 
       // THEN: Verify topology change is required
       const isTopologyChangeRequiredOnReplicated = await isTopologyChangeRequiredCached(
-        mockCurrency,
+        mockConfig,
         keyPair.publicKeyHex,
       );
       expect(isTopologyChangeRequiredOnReplicated).toBe(true);

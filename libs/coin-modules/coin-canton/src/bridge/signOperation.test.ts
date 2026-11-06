@@ -1,16 +1,18 @@
 import prepareTransferMock from "@ledgerhq/hw-app-canton/tests/fixtures/prepare-transfer.json";
-import { craftTransaction } from "../common-logic";
+import coinConfig, { type CantonCoinConfig } from "../config";
+import { craftTransaction } from "../logic/craftTransaction";
 import {
   createMockCantonAccount,
   createMockCantonSigner,
+  createMockCoinConfigValue,
   createMockSignerContext,
   createMockTransaction,
 } from "../test/fixtures";
 import { Transaction } from "../types";
 import { buildSignOperation } from "./signOperation";
 
-jest.mock("../common-logic", () => {
-  const actual = jest.requireActual("../common-logic");
+jest.mock("../logic/craftTransaction", () => {
+  const actual = jest.requireActual("../logic/craftTransaction");
   return {
     ...actual,
     craftTransaction: jest.fn(),
@@ -67,7 +69,7 @@ describe("buildSignOperation", () => {
 
     // THEN
     expect(mockCraftTransaction).toHaveBeenCalledWith(
-      mockAccount.currency,
+      expect.objectContaining({ config: expect.any(Function), logger: expect.any(Function) }),
       expect.any(Object),
       expect.objectContaining({
         expireInSeconds: 24 * 60 * 60, // Default 1 day
@@ -113,7 +115,7 @@ describe("buildSignOperation", () => {
 
     // THEN
     expect(mockCraftTransaction).toHaveBeenCalledWith(
-      mockAccount.currency,
+      expect.objectContaining({ config: expect.any(Function), logger: expect.any(Function) }),
       expect.any(Object),
       expect.objectContaining({
         expireInSeconds: customExpireSeconds,
@@ -166,5 +168,42 @@ describe("buildSignOperation", () => {
         new RegExp(`^[0-9a-f]+__PARTY__${mockAccount.freshAddress}$`, "i"),
       ),
     });
+  });
+
+  it("crafts with the config of the account's currency", async () => {
+    // GIVEN
+    const accountCurrencyConfig: CantonCoinConfig = {
+      ...createMockCoinConfigValue(),
+      gatewayUrl: "https://account.test",
+    };
+    coinConfig.setCoinConfig(currencyId =>
+      currencyId === mockAccount.currency.id ? accountCurrencyConfig : createMockCoinConfigValue(),
+    );
+    mockCraftTransaction.mockResolvedValue({
+      nativeTransaction: prepareTransferMock.json,
+      serializedTransaction: prepareTransferMock.serialized,
+      hash: prepareTransferMock.hash,
+    });
+    const signOperation = buildSignOperation(createMockSignerContext());
+
+    // WHEN
+    await new Promise((resolve, reject) => {
+      signOperation({
+        account: mockAccount,
+        deviceId: mockDeviceId,
+        transaction: mockTransaction,
+      }).subscribe({
+        next: value => {
+          if (value.type === "signed") {
+            resolve(value);
+          }
+        },
+        error: reject,
+      });
+    });
+
+    // THEN
+    const [context] = mockCraftTransaction.mock.calls[0];
+    await expect(context.config()).resolves.toBe(accountCurrencyConfig);
   });
 });

@@ -1,24 +1,17 @@
-import coinConfig from "../../config";
 import { isGatewayEnabled } from "../../network/gateway";
 import { getOperations } from "../../network/gateway";
-import { createMockCantonCurrency, createMockCoinConfigValue } from "../../test/fixtures";
+import { createMockCoinConfigValue, createMockContext } from "../../test/fixtures";
 import type { OperationView } from "../../types/gateway";
-import { listOperations } from "./listOperations";
+import { listOperations } from "../listOperations";
 
 jest.mock("../../network/gateway", () => ({
   getOperations: jest.fn(),
   isGatewayEnabled: jest.fn(() => true),
 }));
-jest.mock("../../config", () => ({
-  __esModule: true,
-  default: {
-    getCoinConfig: jest.fn(),
-  },
-}));
 
-const mockCurrency = createMockCantonCurrency();
+const mockConfig = createMockCoinConfigValue();
+const mockContext = createMockContext(mockConfig);
 const mockedGetOperations = jest.mocked(getOperations);
-const mockedGetCoinConfig = jest.mocked(coinConfig.getCoinConfig);
 const mockedIsGatewayEnabled = jest.mocked(isGatewayEnabled);
 
 const feeAssetNative = {
@@ -76,13 +69,12 @@ describe("listOperations", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedIsGatewayEnabled.mockReturnValue(true);
-    mockedGetCoinConfig.mockReturnValue(createMockCoinConfigValue());
   });
 
   it("should throw when gateway is disabled in config", async () => {
     mockedIsGatewayEnabled.mockReturnValue(false);
 
-    await expect(listOperations(mockCurrency, "alice-party", 0)).rejects.toThrow("Not implemented");
+    await expect(listOperations(mockContext, "alice-party", 0)).rejects.toThrow("Not implemented");
     expect(mockedGetOperations).not.toHaveBeenCalled();
   });
 
@@ -96,7 +88,7 @@ describe("listOperations", () => {
       ],
     });
 
-    const page = await listOperations(mockCurrency, "alice-party", 0);
+    const page = await listOperations(mockContext, "alice-party", 0);
 
     expect(page.items).toHaveLength(1);
     expect(page.items[0].asset).toEqual({ type: "Amulet" });
@@ -116,7 +108,7 @@ describe("listOperations", () => {
       ],
     });
 
-    const page = await listOperations(mockCurrency, "alice-party", 0);
+    const page = await listOperations(mockContext, "alice-party", 0);
 
     expect(page.items[0].asset).toEqual({
       type: "token",
@@ -131,7 +123,7 @@ describe("listOperations", () => {
       operations: [mockOperationViewWithoutAsset()],
     });
 
-    const page = await listOperations(mockCurrency, "alice-party", 0);
+    const page = await listOperations(mockContext, "alice-party", 0);
 
     expect(page.items[0].asset).toEqual({ type: "Amulet" });
   });
@@ -146,7 +138,7 @@ describe("listOperations", () => {
       ],
     });
 
-    const page = await listOperations(mockCurrency, "alice-party", 0);
+    const page = await listOperations(mockContext, "alice-party", 0);
 
     expect(page.items[0].tx.hash).toBe("0xtxhash");
     expect(page.items[0].tx.block.hash).toBe("");
@@ -158,7 +150,7 @@ describe("listOperations", () => {
       operations: [createMockOperationView()],
     });
 
-    const page = await listOperations(mockCurrency, "alice-party", 0);
+    const page = await listOperations(mockContext, "alice-party", 0);
 
     expect(page.items[0].type).toBe("OUT");
   });
@@ -169,7 +161,7 @@ describe("listOperations", () => {
       operations: [createMockOperationView()],
     });
 
-    const page = await listOperations(mockCurrency, "other-party", 0);
+    const page = await listOperations(mockContext, "other-party", 0);
 
     expect(page.items[0].type).toBe("IN");
   });
@@ -184,7 +176,7 @@ describe("listOperations", () => {
       ],
     });
 
-    const page = await listOperations(mockCurrency, "alice-party", 0);
+    const page = await listOperations(mockContext, "alice-party", 0);
 
     expect(page.items).toHaveLength(0);
   });
@@ -192,9 +184,9 @@ describe("listOperations", () => {
   it("passes pagination options to getOperations", async () => {
     mockedGetOperations.mockResolvedValue({ next: 5, operations: [] });
 
-    const page = await listOperations(mockCurrency, "alice-party", 3, "10", 20);
+    const page = await listOperations(mockContext, "alice-party", 3, "10", 20);
 
-    expect(mockedGetOperations).toHaveBeenCalledWith(mockCurrency, "alice-party", {
+    expect(mockedGetOperations).toHaveBeenCalledWith(mockConfig, "alice-party", {
       cursor: 10,
       minOffset: 3,
       limit: 20,

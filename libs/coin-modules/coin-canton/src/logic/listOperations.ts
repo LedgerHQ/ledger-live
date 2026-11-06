@@ -1,9 +1,7 @@
 import type { AssetInfo, Cursor, Operation, Page } from "@ledgerhq/coin-module-framework/api/index";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import coinConfig from "../../config";
-import { isGatewayEnabled } from "../../network/gateway";
-import { getOperations } from "../../network/gateway";
-import type { AssetView } from "../../types/gateway";
+import type { CantonContext } from "../config";
+import { getOperations, isGatewayEnabled } from "../network/gateway";
+import type { AssetView } from "../types/gateway";
 
 function convertAssetViewToAssetInfo(nativeInstrumentId: string, asset?: AssetView): AssetInfo {
   if (!asset || asset.type === "native") {
@@ -30,16 +28,17 @@ function convertAssetViewToAssetInfo(nativeInstrumentId: string, asset?: AssetVi
  * @returns Operations found and the next cursor for pagination.
  */
 export async function listOperations(
-  currency: CryptoCurrency,
+  context: CantonContext,
   partyId: string,
   minHeight: number,
   cursor?: Cursor,
   limit?: number,
   _order?: "asc" | "desc",
 ): Promise<Page<Operation>> {
-  if (!isGatewayEnabled(currency)) throw new Error("Not implemented");
-  const { nativeInstrumentId } = coinConfig.getCoinConfig(currency.id);
-  const { operations, next } = await getOperations(currency, partyId, {
+  const config = await context.config();
+  if (!isGatewayEnabled(config)) throw new Error("Not implemented");
+  const { nativeInstrumentId } = config;
+  const { operations, next } = await getOperations(config, partyId, {
     cursor: cursor !== undefined ? parseInt(cursor) : undefined,
     minOffset: minHeight,
     limit: limit,

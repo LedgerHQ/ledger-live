@@ -1,9 +1,10 @@
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account } from "@ledgerhq/types-live";
-import { signTransaction } from "../common-logic/transaction/sign";
+import { signTransaction } from "./sign";
 import { prepareTransferInstruction, submitTransferInstruction } from "../network/gateway";
 import type { CantonSigner } from "../types";
+import { getBridgeConfig } from "./context";
 import { validateTopology } from "./getTransactionStatus";
 import { isCantonAccount } from "./serialization";
 
@@ -30,7 +31,8 @@ export const buildTransferInstruction =
       }
     }
 
-    const preparedTransaction = await prepareTransferInstruction(currency, partyId, {
+    const config = getBridgeConfig(currency);
+    const preparedTransaction = await prepareTransferInstruction(config, partyId, {
       type,
       contract_id: contractId,
       ...(reason ? { reason } : {}),
@@ -40,5 +42,5 @@ export const buildTransferInstruction =
       return await signTransaction(signer, account.freshAddressPath, preparedTransaction);
     });
 
-    await submitTransferInstruction(currency, partyId, preparedTransaction.serialized, signature);
+    await submitTransferInstruction(config, partyId, preparedTransaction.serialized, signature);
   };

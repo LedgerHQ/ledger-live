@@ -1,15 +1,16 @@
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { firstValueFrom, toArray } from "rxjs";
-import * as signTransactionModule from "../common-logic/transaction/sign";
+import * as signTransactionModule from "./sign";
 import * as gateway from "../network/gateway";
-import { createMockCantonAccount } from "../test/fixtures";
+import coinConfig from "../config";
+import { createMockCantonAccount, createMockCoinConfigValue } from "../test/fixtures";
 import type { CantonSigner, CantonSignature } from "../types";
 import { OnboardStatus, CantonOnboardProgress, CantonOnboardResult } from "../types/onboard";
 import { buildOnboardAccount, isCantonCoinPreapproved } from "./onboard";
 
 jest.mock("../network/gateway");
-jest.mock("../common-logic/transaction/sign");
+jest.mock("./sign");
 const mockedGateway = gateway as jest.Mocked<typeof gateway>;
 const mockedSignTransaction = signTransactionModule as jest.Mocked<typeof signTransactionModule>;
 
@@ -18,6 +19,11 @@ describe("onboard", () => {
   const mockCurrency = {
     id: "canton_network",
   } as unknown as CryptoCurrency;
+  const mockConfig = createMockCoinConfigValue();
+
+  beforeAll(() => {
+    coinConfig.setCoinConfig(() => mockConfig);
+  });
 
   describe("isCantonCoinPreapproved", () => {
     it("should return true when contract exists and is not expired", async () => {
@@ -35,11 +41,11 @@ describe("onboard", () => {
       });
 
       // WHEN
-      const result = await isCantonCoinPreapproved(mockCurrency, mockPartyId);
+      const result = await isCantonCoinPreapproved(mockConfig, mockPartyId);
 
       // THEN
       expect(result).toBe(true);
-      expect(mockedGateway.getTransferPreApproval).toHaveBeenCalledWith(mockCurrency, mockPartyId);
+      expect(mockedGateway.getTransferPreApproval).toHaveBeenCalledWith(mockConfig, mockPartyId);
     });
 
     it("should return false when contract exists but is expired", async () => {
@@ -57,11 +63,11 @@ describe("onboard", () => {
       });
 
       // WHEN
-      const result = await isCantonCoinPreapproved(mockCurrency, mockPartyId);
+      const result = await isCantonCoinPreapproved(mockConfig, mockPartyId);
 
       // THEN
       expect(result).toBe(false);
-      expect(mockedGateway.getTransferPreApproval).toHaveBeenCalledWith(mockCurrency, mockPartyId);
+      expect(mockedGateway.getTransferPreApproval).toHaveBeenCalledWith(mockConfig, mockPartyId);
     });
   });
 
@@ -161,13 +167,13 @@ describe("onboard", () => {
       expect(statuses).toContain(OnboardStatus.SUBMIT);
 
       // Should call prepareOnboarding and submitOnboarding
-      expect(mockedGateway.prepareOnboarding).toHaveBeenCalledWith(mockCurrency, mockPublicKey);
+      expect(mockedGateway.prepareOnboarding).toHaveBeenCalledWith(mockConfig, mockPublicKey);
       expect(mockedGateway.submitOnboarding).toHaveBeenCalled();
       expect(mockedSignTransaction.signTransaction).toHaveBeenCalled();
 
       // Should clear topology change cache
       expect(mockedGateway.clearIsTopologyChangeRequiredCache).toHaveBeenCalledWith(
-        mockCurrency,
+        mockConfig,
         mockPublicKey,
       );
 

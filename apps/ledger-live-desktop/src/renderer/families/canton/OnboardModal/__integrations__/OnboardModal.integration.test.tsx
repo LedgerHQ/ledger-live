@@ -45,7 +45,7 @@ jest.mock("@ledgerhq/coin-canton/signer", () => ({
   ),
 }));
 
-jest.mock("@ledgerhq/coin-canton/common-logic/transaction/sign", () => ({
+jest.mock("@ledgerhq/coin-canton/bridge/sign", () => ({
   __esModule: true,
   signTransaction: jest.fn().mockResolvedValue({
     signature: "cc".repeat(66),

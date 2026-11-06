@@ -12,9 +12,8 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { isRecipientValid } from "../common-logic/utils";
-import coinConfig from "../config";
 import { CANTON_UNSET_RECIPIENT } from "../constants";
+import { isRecipientValid } from "../logic/utils";
 import { isTopologyChangeRequiredCached } from "../network/gateway";
 import {
   Transaction,
@@ -24,6 +23,7 @@ import {
   TooManyUtxosWarning,
 } from "../types";
 import { TopologyChangeError } from "../types/errors";
+import { getBridgeConfig } from "./context";
 
 export const TO_MANY_UTXOS_CRITICAL_COUNT = 24;
 export const TO_MANY_UTXOS_WARNING_COUNT = 10;
@@ -37,9 +37,7 @@ export const getTransactionStatus: AccountBridge<
   const warnings: Record<string, Error> = {};
 
   // reserveAmount is the minimum amount of currency that an account must hold in order to stay activated
-  const reserveAmount = new BigNumber(
-    coinConfig.getCoinConfig(account.currency.id).minReserve || 0,
-  );
+  const reserveAmount = new BigNumber(getBridgeConfig(account.currency).minReserve || 0);
   const estimatedFees = new BigNumber(transaction.fee || 0);
   const amount = new BigNumber(transaction.amount);
 
@@ -173,7 +171,7 @@ export async function validateTopology(account: CantonAccount): Promise<Error | 
 
   try {
     const isTopologyChangeRequired = await isTopologyChangeRequiredCached(
-      account.currency,
+      getBridgeConfig(account.currency),
       publicKey,
     );
 

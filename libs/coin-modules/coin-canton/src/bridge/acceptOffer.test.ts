@@ -1,9 +1,11 @@
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account } from "@ledgerhq/types-live";
-import * as signTransactionModule from "../common-logic/transaction/sign";
+import coinConfig from "../config";
+import * as signTransactionModule from "./sign";
 import type { PrepareTransferResponse } from "../network/gateway";
 import * as gateway from "../network/gateway";
+import { createMockCoinConfigValue } from "../test/fixtures";
 import type { CantonAccount } from "../types";
 import { TopologyChangeError } from "../types/errors";
 import type { CantonSignature, CantonSigner } from "../types/signer";
@@ -11,7 +13,7 @@ import { buildTransferInstruction } from "./acceptOffer";
 import * as getTransactionStatusModule from "./getTransactionStatus";
 
 jest.mock("../network/gateway");
-jest.mock("../common-logic/transaction/sign");
+jest.mock("./sign");
 jest.mock("./getTransactionStatus");
 
 const mockedGateway = gateway as jest.Mocked<typeof gateway>;
@@ -24,6 +26,11 @@ describe("acceptOffer", () => {
   const mockCurrency = {
     id: "canton_network",
   } as unknown as CryptoCurrency;
+  const mockConfig = createMockCoinConfigValue();
+
+  beforeAll(() => {
+    coinConfig.setCoinConfig(() => mockConfig);
+  });
 
   const mockAccount = {
     id: "test-account-id",
@@ -126,7 +133,7 @@ describe("acceptOffer", () => {
 
       // THEN
       expect(mockedGateway.prepareTransferInstruction).toHaveBeenCalledWith(
-        mockCurrency,
+        mockConfig,
         mockPartyId,
         {
           type: "accept-transfer-instruction",
@@ -139,7 +146,7 @@ describe("acceptOffer", () => {
         mockPreparedTransaction,
       );
       expect(mockedGateway.submitTransferInstruction).toHaveBeenCalledWith(
-        mockCurrency,
+        mockConfig,
         mockPartyId,
         mockPreparedTransaction.serialized,
         mockSignature.signature,
@@ -165,7 +172,7 @@ describe("acceptOffer", () => {
 
       // THEN
       expect(mockedGateway.prepareTransferInstruction).toHaveBeenCalledWith(
-        mockCurrency,
+        mockConfig,
         mockPartyId,
         {
           type: "accept-transfer-instruction",
@@ -179,7 +186,7 @@ describe("acceptOffer", () => {
         mockPreparedTransaction,
       );
       expect(mockedGateway.submitTransferInstruction).toHaveBeenCalledWith(
-        mockCurrency,
+        mockConfig,
         mockPartyId,
         mockPreparedTransaction.serialized,
         mockSignature.signature,
@@ -202,7 +209,7 @@ describe("acceptOffer", () => {
 
       // THEN
       expect(mockedGateway.prepareTransferInstruction).toHaveBeenCalledWith(
-        mockCurrency,
+        mockConfig,
         mockPartyId,
         {
           type: "reject-transfer-instruction",
@@ -229,7 +236,7 @@ describe("acceptOffer", () => {
 
       // THEN
       expect(mockedGateway.prepareTransferInstruction).toHaveBeenCalledWith(
-        mockCurrency,
+        mockConfig,
         mockPartyId,
         {
           type: "withdraw-transfer-instruction",

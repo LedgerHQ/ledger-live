@@ -1,10 +1,10 @@
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
-import { prepareTransferRequest } from "../../network/gateway";
-import type { PrepareTransferRequest, PrepareTransferResponse } from "../../types/gateway";
+import type { CantonContext } from "../config";
+import { prepareTransferRequest } from "../network/gateway";
+import type { PrepareTransferRequest, PrepareTransferResponse } from "../types/gateway";
 
 export async function craftTransaction(
-  currency: CryptoCurrency,
+  context: CantonContext,
   account: {
     address: string;
     nextSequenceNumber?: number;
@@ -36,7 +36,7 @@ export async function craftTransaction(
   };
 
   const { serialized, json, hash } = await prepareTransferRequest(
-    currency,
+    await context.config(),
     account.address,
     params,
   );
