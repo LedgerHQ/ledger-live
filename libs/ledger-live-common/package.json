@@ -465,7 +465,6 @@
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",
     "@testing-library/react": "catalog:",
-    "@types/bs58": "catalog:",
     "@types/invariant": "2.2.37",
     "@types/jest": "catalog:",
     "@types/lodash": "catalog:",
