@@ -3,25 +3,16 @@
   "targets": {
     "build": {
       "cache": false,
-      "inputs": [
-        "default",
-        "^default",
-        "desktopEnv",
-        "sharedEnv"
-      ]
+      "inputs": ["default", "^default", "desktopEnv", "sharedEnv"]
     },
     "build:testing": {
       "cache": false,
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "build-lib-deps": {
       "executor": "nx:noop",
       "cache": true,
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "lint": {
       "inputs": [
@@ -34,9 +25,7 @@
       ]
     },
     "test": {
-      "dependsOn": [
-        "build:testing"
-      ],
+      "dependsOn": ["build:testing"],
       "inputs": [
         "default",
         "^default",
@@ -45,6 +34,36 @@
         },
         { "externalDependencies": [] }
       ]
+    },
+    "rsdoctor": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["^build"],
+      "cache": true,
+      "outputs": ["{workspaceRoot}/rsdoctor/desktop-*/**"],
+      "inputs": [
+        "default",
+        "!{projectRoot}/tests/**",
+        "!{projectRoot}/docs/**",
+        "!{projectRoot}/fastlane/**",
+        "!{projectRoot}/**/*.md",
+        "!{projectRoot}/**/__mocks__/**",
+        "!{projectRoot}/**/__tests__/**",
+        "!{projectRoot}/**/*.test.{ts,tsx,js}",
+        "^default",
+        "desktopEnv",
+        "sharedEnv",
+        { "env": "CI" },
+        { "env": "NIGHTLY" },
+        { "env": "STAGING" },
+        { "env": "TESTING" }
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "pnpm run build:js",
+        "env": {
+          "RSDOCTOR": "1"
+        }
+      }
     }
   }
 }

@@ -106,6 +106,35 @@
         }
       }
     },
+    "rsdoctor": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["^build"],
+      "cache": true,
+      "outputs": ["{workspaceRoot}/rsdoctor/mobile/**"],
+      "inputs": [
+        "default",
+        "!{projectRoot}/ios/**",
+        "!{projectRoot}/android/**",
+        "!{projectRoot}/fastlane/**",
+        "!{projectRoot}/docs/**",
+        "!{projectRoot}/**/*.md",
+        "!{projectRoot}/**/__tests__/**",
+        "!{projectRoot}/**/__integrations__/**",
+        "!{projectRoot}/**/*.test.{ts,tsx,js}",
+        "^default",
+        "sharedEnv",
+        { "env": "ENVFILE" },
+        { "env": "CI" }
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "pnpm exec react-native bundle --platform ios --entry-file index.js --dev false --bundle-output main.jsbundle",
+        "env": {
+          "NODE_OPTIONS": "--max-old-space-size=8192",
+          "RSDOCTOR": "1"
+        }
+      }
+    },
     "build": {
       "executor": "nx:noop"
     },
