@@ -54,6 +54,17 @@ describe("resolveEligibleAddressCurrencyIds", () => {
     ]);
   });
 
+  it("includes Solana only WHEN the solana family is eligible", () => {
+    expect(resolveEligibleAddressCurrencyIds(["evm", "solana"], NETWORKS, [], getConfig)).toEqual([
+      "ethereum",
+      "base",
+      "solana",
+    ]);
+    expect(resolveEligibleAddressCurrencyIds(["evm"], NETWORKS, [], getConfig)).not.toContain(
+      "solana",
+    );
+  });
+
   it("returns no networks for unknown families", () => {
     expect(resolveEligibleAddressCurrencyIds(["unknown"], NETWORKS, [], getConfig)).toEqual([]);
   });

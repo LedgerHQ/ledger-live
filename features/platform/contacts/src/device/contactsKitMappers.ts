@@ -1,9 +1,19 @@
 import { bufferToHexaString, hexaStringToBuffer } from "@ledgerhq/device-management-kit";
 import { ContactDeviceIntentInputError } from "./errors";
+import { tryDecodeSolanaAddress } from "./solanaAddress";
 import { tryDecodeTronAddress } from "./tronAddress";
 
 const EVM_BLOCKCHAIN_FAMILY = "evm";
 const TRON_BLOCKCHAIN_FAMILY = "tron";
+const SOLANA_BLOCKCHAIN_FAMILY = "solana";
+
+/** Families whose human-readable address is base58, decoded to device bytes per family. */
+const BASE58_IDENTIFIER_DECODERS: Readonly<
+  Record<string, Readonly<{ decode: (address: string) => Uint8Array | null; label: string }>>
+> = {
+  [TRON_BLOCKCHAIN_FAMILY]: { decode: tryDecodeTronAddress, label: "Tron" },
+  [SOLANA_BLOCKCHAIN_FAMILY]: { decode: tryDecodeSolanaAddress, label: "Solana" },
+};
 
 /**
  * Shared conversions between Ledger Wallet's string/number Contacts contracts
@@ -46,20 +56,21 @@ function decodeHexOrThrow(value: string, subject: string): Uint8Array {
  * Contact addresses are stored in each family's human-readable form, so the
  * encoding to device bytes is per family (keyed by Ledger Wallet's own family,
  * e.g. "evm", not the kit's coin-app one): Tron's base58check `T…` address
- * becomes its 21-byte `0x41`-prefixed form, and every other supported family
- * (EVM) is hex. A malformed identifier throws `ContactDeviceIntentInputError`,
+ * becomes its 21-byte `0x41`-prefixed form, a base58 Solana address its
+ * 32-byte public key, and every other supported family (EVM) is hex. A malformed identifier throws `ContactDeviceIntentInputError`,
  * which the job already turns into a graceful `invalid-input` job state rather
  * than an uncaught error.
  */
 export function mapIdentifierToBytes(identifier: string, blockchainFamily: string): Uint8Array {
-  if (blockchainFamily !== TRON_BLOCKCHAIN_FAMILY) {
+  const base58Decoder = BASE58_IDENTIFIER_DECODERS[blockchainFamily];
+  if (base58Decoder === undefined) {
     return decodeHexOrThrow(identifier, "identifier");
   }
 
-  const bytes = tryDecodeTronAddress(identifier);
+  const bytes = base58Decoder.decode(identifier);
   if (bytes === null) {
     throw new ContactDeviceIntentInputError(
-      `identifier ${JSON.stringify(identifier)} is not a valid Tron address`,
+      `identifier ${JSON.stringify(identifier)} is not a valid ${base58Decoder.label} address`,
     );
   }
 
@@ -79,7 +90,8 @@ export function mapChainIdToBigInt(chainId: string | number): bigint {
  * The firmware only defines one for the EVM family (many networks share one
  * address format); every other family registers without it, and the family's
  * signer provides the contact without one too, so sending Ledger Wallet's own
- * `chainId` (Tron's coin type) would bind proofs the signer can never match.
+ * `chainId` (Tron's or Solana's coin type) would bind proofs the signer can
+ * never match.
  */
 export function mapChainIdForFamily(
   chainId: string | number,

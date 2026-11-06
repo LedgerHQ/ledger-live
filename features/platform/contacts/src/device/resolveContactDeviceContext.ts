@@ -11,6 +11,7 @@ import type { ContactsDeviceInitializationInput } from "./types";
 const CONTACT_DEVICE_APP_BY_FAMILY: Readonly<Record<string, string>> = {
   evm: "Ethereum",
   tron: "Tron",
+  solana: "Solana",
 };
 
 export class UnsupportedContactDeviceCurrencyError extends Error {
