@@ -13,33 +13,33 @@ CI runs `pnpm lint:arch` (`lint:boundaries`, `lint:structure`, `lint:tool-config
 
 Architecture and placement (read before you question a package location or a dual-platform export):
 
-- `.agents/skills/structure-flow/SKILL.md` — Layer decision tree and `shared/`, `domain/`, `features/`, `support/`, `devtools/` placement
-- `.agents/skills/flow-package/SKILL.md` — Anatomy of a `features/flow/*` package, flow versus entity state
-- `.agents/skills/universal-components/SKILL.md` — Dual-platform contracts, R1 to R5, and review-only checks (`docs/adr/universal-components.md`)
-- `.agents/skills/domain-data/SKILL.md` — `domain/entity` and `domain/api` patterns
-- `.agents/skills/package-public-api/SKILL.md` — Barrels, internals, `lint:structure` barrel rules
-- `.agents/skills/wrap-third-party-libs/SKILL.md` — Apps do not take new runtime third-party dependencies directly
-- `.agents/skills/validate-changes/SKILL.md` — What authors should run before push (`pnpm lint:arch` and affected checks)
-- `.agents/agents/references/review-rules.md` — Human review rules that go beyond what `lint:arch` enforces
+- `.agents/skills/structure-flow/SKILL.md`  -  Layer decision tree and `shared/`, `domain/`, `features/`, `support/`, `devtools/` placement
+- `.agents/skills/flow-package/SKILL.md`  -  Anatomy of a `features/flow/*` package, flow versus entity state
+- `.agents/skills/universal-components/SKILL.md`  -  Dual-platform contracts, R1 to R5, and review-only checks (`docs/adr/universal-components.md`)
+- `.agents/skills/domain-data/SKILL.md`  -  `domain/entity` and `domain/api` patterns
+- `.agents/skills/package-public-api/SKILL.md`  -  Barrels, internals, `lint:structure` barrel rules
+- `.agents/skills/wrap-third-party-libs/SKILL.md`  -  Apps do not take new runtime third-party dependencies directly
+- `.agents/skills/validate-changes/SKILL.md`  -  What authors should run before push (`pnpm lint:arch` and affected checks)
+- `.agents/agents/references/review-rules.md`  -  Human review rules that go beyond what `lint:arch` enforces
 
 Also pay special attention to:
 
-- `.agents/skills/mvvm-architecture/SKILL.md` — MVVM compliance for code in `apps/*/src/mvvm/`
-- `.agents/skills/ldls-web/SKILL.md` — Lumen UI for desktop (`src/mvvm/`)
-- `.agents/skills/ldls-native/SKILL.md` — Lumen UI for mobile (`src/mvvm/`)
-- `.agents/skills/testing/SKILL.md` — Jest mock patterns for test files (avoids flaky tests and mock conflicts)
-- `.agents/skills/coin-modules/SKILL.md` — Module layout, Coin Module API path, and import rules for `libs/coin-modules/`
-- `.agents/skills/client-ids/SKILL.md` — Privacy rules for sensitive identifiers (DeviceId, UserId, DatadogId)
-- `.agents/skills/detect-data-leaks/SKILL.md` — Data leak detection: third-party sinks, risky patterns, and scoring
-- `.agents/skills/typescript/SKILL.md` — Canonical TypeScript review guidance; use for typing, error-handling, and general TS code quality rules
-- `.agents/skills/react-general/SKILL.md` — Canonical React review guidance; use for component patterns, hooks, rendering, and React architecture rules
-- `.agents/skills/coin-families-contract/SKILL.md` — Coin-families contract: no coin-specific branches (`if (family === "evm")` etc.) in generic UI; extend the families contract and implement in `families/<family>/` instead
-- `.agents/skills/codeownership/SKILL.md` — Team-split convention: multi-team files should be split into `[foo]/index.ts` and `[foo]/team-[team]/*.ts`; suggest this when a touched file clearly involves many teams
-- `.agents/skills/knip-migration/SKILL.md` — Dead-code detection uses `knip`, which needs explicit (non-`./*`) `package.json#exports`; new packages must use explicit exports + knip
-- `.agents/skills/console-log/SKILL.md` — Console logging levels: `console.error` is forwarded to monitoring tools as an error event; flag any new `console.error` that isn't an illegal/unexpected state
-- `.agents/skills/configuration/SKILL.md` — Where a configuration value belongs; flag any new `@shared/env` / `@ledgerhq/live-env` definition or call site (`getEnv`, `getEnvDefault`, `useEnv`, `setEnv`, `setEnvUnsafe`, `injectDefinitions`), including in tests, and any real secret added to an app `.env` file
-- `.agents/skills/dependency-patches/SKILL.md` — Dependency patch policy; review changes to `patches/*.patch` and `patchedDependencies` (`pnpm-workspace.yaml`) against its upstream, tracking, and removal requirements
-- `.agents/skills/i18n-keys/SKILL.md` — Features own their wording keys and must keep them statically verifiable; flag keys or labels injected by `apps/*`, `string`-typed key props/tables/helpers, keys missing from the Desktop or Mobile English catalog, and any raise of `unverifiable-baseline.json`
+- `.agents/skills/mvvm-architecture/SKILL.md`  -  MVVM compliance for code in `apps/*/src/mvvm/`
+- `.agents/skills/ldls-web/SKILL.md`  -  Lumen UI for desktop (`src/mvvm/`)
+- `.agents/skills/ldls-native/SKILL.md`  -  Lumen UI for mobile (`src/mvvm/`)
+- `.agents/skills/testing/SKILL.md`  -  Jest mock patterns for test files (avoids flaky tests and mock conflicts)
+- `.agents/skills/coin-modules/SKILL.md`  -  Module layout, Coin Module API path, and import rules for `libs/coin-modules/`
+- `.agents/skills/client-ids/SKILL.md`  -  Privacy rules for sensitive identifiers (DeviceId, UserId, DatadogId)
+- `.agents/skills/detect-data-leaks/SKILL.md`  -  Data leak detection: third-party sinks, risky patterns, and scoring
+- `.agents/skills/typescript/SKILL.md`  -  Canonical TypeScript review guidance; use for typing, error-handling, and general TS code quality rules
+- `.agents/skills/react-general/SKILL.md`  -  Canonical React review guidance; use for component patterns, hooks, rendering, and React architecture rules
+- `.agents/skills/coin-families-contract/SKILL.md`  -  Coin-families contract: no coin-specific branches (`if (family === "evm")` etc.) in generic UI; extend the families contract and implement in `families/<family>/` instead
+- `.agents/skills/codeownership/SKILL.md`  -  Team-split convention: multi-team files should be split into `[foo]/index.ts` and `[foo]/team-[team]/*.ts`; suggest this when a touched file clearly involves many teams
+- `.agents/skills/knip-migration/SKILL.md`  -  Dead-code detection uses `knip`, which needs explicit (non-`./*`) `package.json#exports`; new packages must use explicit exports + knip
+- `.agents/skills/console-log/SKILL.md`  -  Console logging levels: `console.error` is forwarded to monitoring tools as an error event; flag any new `console.error` that isn't an illegal/unexpected state
+- `.agents/skills/configuration/SKILL.md`  -  Where a configuration value belongs; flag any new `@shared/env` / `@ledgerhq/live-env` definition or call site (`getEnv`, `getEnvDefault`, `useEnv`, `setEnv`, `setEnvUnsafe`, `injectDefinitions`), including in tests, and any real secret added to an app `.env` file
+- `.agents/skills/dependency-patches/SKILL.md`  -  Dependency patch policy; review changes to `patches/*.patch` and `patchedDependencies` (`pnpm-workspace.yaml`) against its upstream, tracking, and removal requirements
+- `.agents/skills/i18n-keys/SKILL.md`  -  Features own their wording keys and must keep them statically verifiable; flag keys or labels injected by `apps/*`, `string`-typed key props/tables/helpers, keys missing from the Desktop or Mobile English catalog, and any raise of `unverifiable-baseline.json`
 
 ## Review scope
 
@@ -53,7 +53,7 @@ When the diff touches **`apps/*/src/mvvm/`**, apply `mvvm-architecture` and the 
 
 **Project guidelines compliance**: Verify adherence to the rules listed above: layer placement, MVVM where it applies, import conventions, framework usage, TypeScript style, error handling, testing practices, and naming conventions.
 
-**Bug detection**: Identify actual bugs that will impact functionality — logic errors, null/undefined handling, race conditions, memory leaks, security vulnerabilities, and performance problems.
+**Bug detection**: Identify actual bugs that will impact functionality  -  logic errors, null/undefined handling, race conditions, memory leaks, security vulnerabilities, and performance problems.
 
 **Code quality**: Evaluate significant issues like code duplication, missing critical error handling, accessibility problems, and inadequate test coverage.
 
@@ -63,7 +63,7 @@ When the diff touches **`apps/*/src/mvvm/`**, apply `mvvm-architecture` and the 
 - **New dependency in `package.json`**: must not duplicate an existing capability; peer compatibility must be verified; link to [bundlephobia](https://bundlephobia.com) with size impact.
 - **`pnpm-lock.yaml` diff**: Flag unrelated version bumps, mass reformatting, or entries not explained by the PR's `package.json` changes. The lockfile diff should be entirely explainable by the stated dependency changes.
 - **Translations**: Only edit `apps/ledger-live-desktop/static/i18n/en/app.json` (desktop) or `apps/ledger-live-mobile/src/locales/en/common.json` (mobile). No other locale files.
-- **New code goes in the monorepo layers**, not `libs/` — flag it unless it matches one of the exceptions in `docs/new-library.md`. `libs/ui/` and `libs/ledgerjs/` are frozen; `libs/ledger-live-common/` takes no new features.
+- **New code goes in the monorepo layers**, not `libs/`  -  flag it unless it matches one of the exceptions in `docs/new-library.md`. `libs/ui/` and `libs/ledgerjs/` are frozen; `libs/ledger-live-common/` takes no new features.
 - **`domain/` packages**: no `@ledgerhq/` scope, every `package.json` must have `"private": true`, no subdirectories other than `entity/` and `api/`. For the full conventions, also read `domain/entity/README.md` and `domain/api/README.md`.
 - **`shared/` packages**: no `@ledgerhq/` scope, `"private": true`, no dependencies on `domain/` packages. For the full conventions, also read `shared/README.md`.
 - Sonar issues: complexity, duplication, security hotspots
@@ -72,10 +72,10 @@ When the diff touches **`apps/*/src/mvvm/`**, apply `mvvm-architecture` and the 
 - Lumen UI compliance: verify new UI in `src/mvvm/` uses design-system components
 - **Coin-families contract:** In generic code (outside `families/<family>/`), flag new `if (family === "…")` or coin-specific hooks; suggest extending the families contract and implementing in the family folder instead.
 - **Cross-team files:** When a PR touches a file owned by multiple teams, suggest the team-split convention: split into `[foo]/index.ts` and `[foo]/team-[team]/*.ts`; one file or small set per team; index re-exports all. CODEOWNERS defines the allowed `team-*` slugs.
-- **Dead-code tooling — explicit exports + knip (new packages):** For a **new** package, flag a `./*` wildcard in `package.json#exports`. New packages must enumerate explicit, minimal `exports` (no `./*`, so knip can detect unused files) and run `knip`. Also flag a new `knip.json` `workspaces` entry that defines an explicit `entry` list — knip derives entry files from `package.json`, so registering a package there is the exception, not the rule. See `.agents/skills/knip-migration/SKILL.md`.
-- **Dead-code tooling — migrating an existing package to knip:** Check that every consumer of the package was audited before narrowing `exports`, that `package.json#exports` is explicit and minimal (no `./*`), and that the package has a scoped `knip` target. See `.agents/skills/knip-migration/SKILL.md`.
+- **Dead-code tooling  -  explicit exports + knip (new packages):** For a **new** package, flag a `./*` wildcard in `package.json#exports`. New packages must enumerate explicit, minimal `exports` (no `./*`, so knip can detect unused files) and run `knip`. Also flag a new `knip.json` `workspaces` entry that defines an explicit `entry` list  -  knip derives entry files from `package.json`, so registering a package there is the exception, not the rule. See `.agents/skills/knip-migration/SKILL.md`.
+- **Dead-code tooling  -  migrating an existing package to knip:** Check that every consumer of the package was audited before narrowing `exports`, that `package.json#exports` is explicit and minimal (no `./*`), and that the package has a scoped `knip` target. See `.agents/skills/knip-migration/SKILL.md`.
 - **Updating `minimumReleaseAgeExclude` is forbidden.** If there are changes to `pnpm-workspace.yaml`, check that `minimumReleaseAgeExclude` has not been edited. Only `@ledgerhq/*` is permitted; JFrog enforces the same gate in CI so bypassing it locally will still fail.
-- **New `.png` images**: Flag any newly added `.png` (or other raster) image file in the diff and ask the author to convert it to `.webp` instead — webp is smaller and reduces app size, and is already the convention for new image assets elsewhere in the repo (e.g. mobile). This is a strong default recommendation, not an absolute block: a justified exception (e.g. a firmware/device-image asset that must stay `.png`, as noted in `apps/ledger-live-desktop/CHANGELOG.md` for the Custom Lock Screen) is fine if the author calls it out in the PR description.
+- **New `.png` images**: Flag any newly added `.png` (or other raster) image file in the diff and ask the author to convert it to `.webp` instead  -  webp is smaller and reduces app size, and is already the convention for new image assets elsewhere in the repo (e.g. mobile). This is a strong default recommendation, not an absolute block: a justified exception (e.g. a firmware/device-image asset that must stay `.png`, as noted in `apps/ledger-live-desktop/CHANGELOG.md` for the Custom Lock Screen) is fine if the author calls it out in the PR description.
 
 ## Confidence scoring
 
@@ -87,7 +87,7 @@ Rate each potential issue on a scale from 0–100:
 - **75**: Highly confident. Verified this is very likely a real issue that will be hit in practice. Directly impacts functionality or is explicitly mentioned in project guidelines.
 - **100**: Absolutely certain. Confirmed this will happen frequently. Evidence directly confirms this.
 
-**Only report issues with confidence >= 80.** Focus on issues that truly matter — quality over quantity.
+**Only report issues with confidence >= 80.** Focus on issues that truly matter  -  quality over quantity.
 
 ## Report format
 
