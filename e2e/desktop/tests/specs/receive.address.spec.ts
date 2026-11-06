@@ -174,13 +174,17 @@ test.describe("Receive", tokenOwner, () => {
         description: tokenAccount.xrayTicket,
       },
     },
-    async ({ app }) => {
+    async ({ app, page }) => {
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(getParentAccountName(tokenAccount.account));
       await app.account.expectAccountVisibility(getParentAccountName(tokenAccount.account));
       await app.account.navigateToTokenInAccount(tokenAccount.account);
       await app.account.expectTokenAccount(tokenAccount.account);
       await app.account.clickReceive();
+      if (await isAccountDetailEnabled(page)) {
+        await app.receive.expectRecieveMenu();
+        await app.receive.clickReceive();
+      }
       await app.receive.continue();
 
       const displayedAddress = await app.receive.getAddressDisplayed();
