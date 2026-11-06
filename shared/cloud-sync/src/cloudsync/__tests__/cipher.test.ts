@@ -23,4 +23,12 @@ describe(makeCipher.name, () => {
     const decrypted = await cipher.decrypt(trustchain, encrypted);
     expect(decrypted).toEqual(data);
   });
+
+  it("decrypts a payload compressed by pako 2", async () => {
+    const cipher = makeCipher(makeMockTrustchainSdk());
+    const pako2Payload =
+      "eJyrVkrLz1eyiq5WSkosUrICklVKtTomsTpKqbn5WZnFQKEP82c1KOko5ZXmJqUClZgY1QIA1acRtg==";
+    const decrypted = await cipher.decrypt(trustchain, pako2Payload);
+    expect(decrypted).toEqual(data);
+  });
 });

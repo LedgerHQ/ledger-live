@@ -309,7 +309,7 @@ export async function generateCustomLockScreenImageFormat(
 
   const compressedChunkedImgData = await Promise.all(
     chunkedImgData.map(async chunk => {
-      const compressedChunk = await gzip(chunk);
+      const compressedChunk = await gzip(chunk, { legacyHash: true });
 
       const compressedChunkSize = Buffer.alloc(2);
       compressedChunkSize.writeUInt16LE(compressedChunk.length);

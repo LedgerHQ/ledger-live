@@ -1,4 +1,6 @@
-import customLockScreenLoad from "./customLockScreenLoad";
+import { createHash } from "crypto";
+import customLockScreenLoad, { generateCustomLockScreenImageFormat } from "./customLockScreenLoad";
+import { getScreenSpecs } from "../device/use-cases/screenSpecs";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { CLSSupportedDeviceModelId } from "@ledgerhq/device-core";
 import { lastValueFrom, of } from "rxjs";
@@ -106,6 +108,27 @@ describe("customLockScreenLoad", () => {
     expect(mockWithTransport).toHaveBeenCalledWith(
       "deviceId",
       expect.objectContaining({ matchDeviceByName: "My Device" }),
+    );
+  });
+});
+
+describe("generateCustomLockScreenImageFormat", () => {
+  it("compresses chunks to the same bytes as pako 2", async () => {
+    const hexImage = Buffer.from(
+      Array.from({ length: 4096 }, (_, i) =>
+        ((i * i) >> 5) % 7 === 0 ? i & 0xf0 : (i >> 6) & 0xff,
+      ),
+    ).toString("hex");
+
+    const imageData = await generateCustomLockScreenImageFormat(
+      hexImage,
+      true,
+      false,
+      getScreenSpecs(DeviceModelId.stax),
+    );
+
+    expect(createHash("sha256").update(imageData).digest("hex")).toBe(
+      "df8ce6d88bb3015793641c5c636165349ba6d4e911d8f39efbcf704e8fa25b73",
     );
   });
 });
