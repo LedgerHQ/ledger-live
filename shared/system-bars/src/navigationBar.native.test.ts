@@ -1,22 +1,18 @@
 import { Platform } from "react-native";
-import * as ExpoNavigationBar from "expo-navigation-bar";
+import { NavigationBar } from "expo-navigation-bar";
 import { applyNavigationBarTheme } from "./navigationBar";
 
 jest.mock("expo-navigation-bar", () => ({
-  setButtonStyleAsync: jest.fn(),
-  setBackgroundColorAsync: jest.fn(),
+  NavigationBar: { setStyle: jest.fn() },
 }));
 
-const mockedSetButtonStyleAsync = jest.mocked(ExpoNavigationBar.setButtonStyleAsync);
-const mockedSetBackgroundColorAsync = jest.mocked(ExpoNavigationBar.setBackgroundColorAsync);
+const mockedSetStyle = jest.mocked(NavigationBar.setStyle);
 
 describe("applyNavigationBarTheme", () => {
   const initialOS = Platform.OS;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockedSetButtonStyleAsync.mockResolvedValue(undefined);
-    mockedSetBackgroundColorAsync.mockResolvedValue(undefined);
   });
 
   afterEach(() => {
@@ -28,43 +24,24 @@ describe("applyNavigationBarTheme", () => {
       Platform.OS = "android";
     });
 
-    it("paints the bar and uses dark buttons for a light theme", async () => {
-      await applyNavigationBarTheme({ backgroundColor: "#FFFFFF", isDark: false });
+    it("uses dark buttons for a light theme", () => {
+      applyNavigationBarTheme({ isDark: false });
 
-      expect(mockedSetBackgroundColorAsync).toHaveBeenCalledWith("#FFFFFF");
-      expect(mockedSetButtonStyleAsync).toHaveBeenCalledWith("dark");
+      expect(mockedSetStyle).toHaveBeenCalledWith("dark");
     });
 
-    it("paints the bar and uses light buttons for a dark theme", async () => {
-      await applyNavigationBarTheme({ backgroundColor: "#131214", isDark: true });
+    it("uses light buttons for a dark theme", () => {
+      applyNavigationBarTheme({ isDark: true });
 
-      expect(mockedSetBackgroundColorAsync).toHaveBeenCalledWith("#131214");
-      expect(mockedSetButtonStyleAsync).toHaveBeenCalledWith("light");
-    });
-
-    it("rejects when setting the button style fails", async () => {
-      mockedSetButtonStyleAsync.mockRejectedValue(new Error("no activity"));
-
-      await expect(
-        applyNavigationBarTheme({ backgroundColor: "#FFFFFF", isDark: false }),
-      ).rejects.toThrow("no activity");
-    });
-
-    it("rejects when painting the bar fails", async () => {
-      mockedSetBackgroundColorAsync.mockRejectedValue(new Error("no activity"));
-
-      await expect(
-        applyNavigationBarTheme({ backgroundColor: "#FFFFFF", isDark: false }),
-      ).rejects.toThrow("no activity");
+      expect(mockedSetStyle).toHaveBeenCalledWith("light");
     });
   });
 
-  it("does nothing on ios", async () => {
+  it("does nothing on ios", () => {
     Platform.OS = "ios";
 
-    await applyNavigationBarTheme({ backgroundColor: "#FFFFFF", isDark: false });
+    applyNavigationBarTheme({ isDark: false });
 
-    expect(mockedSetButtonStyleAsync).not.toHaveBeenCalled();
-    expect(mockedSetBackgroundColorAsync).not.toHaveBeenCalled();
+    expect(mockedSetStyle).not.toHaveBeenCalled();
   });
 });
