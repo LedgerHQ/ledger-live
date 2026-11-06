@@ -45,11 +45,12 @@ jest.mock("@shared/ui-queued-bottom-sheet", () => ({
   QueuedBottomSheet: QueuedBottomSheetMock,
 }));
 
-function renderSyncOffer() {
+function renderSyncOffer(showSuccess = false) {
   const onActivate = jest.fn();
   const onSkip = jest.fn();
   const onLearnMore = jest.fn();
   const onQuit = jest.fn();
+  const onContinue = jest.fn();
 
   return {
     ...render(
@@ -58,12 +59,15 @@ function renderSyncOffer() {
         onSkip={onSkip}
         onLearnMore={onLearnMore}
         onQuit={onQuit}
+        onContinue={onContinue}
+        showSuccess={showSuccess}
       />,
     ),
     onActivate,
     onSkip,
     onLearnMore,
     onQuit,
+    onContinue,
   };
 }
 
@@ -125,6 +129,22 @@ describe("SyncOfferView", () => {
     expect(screen.queryByText("Are you sure?")).toBeNull();
     expect(onSkip).not.toHaveBeenCalled();
     expect(onQuit).not.toHaveBeenCalled();
+  });
+
+  it("should continue from the success layout without a close button", async () => {
+    const { user, onContinue, onQuit, onActivate, onSkip } = renderSyncOffer(true);
+
+    expect(screen.getByText("Sync complete")).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Close" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Activate" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Skip for now" })).toBeNull();
+
+    await user.press(screen.getByRole("button", { name: "Continue" }));
+
+    expect(onContinue).toHaveBeenCalledTimes(1);
+    expect(onQuit).not.toHaveBeenCalled();
+    expect(onActivate).not.toHaveBeenCalled();
+    expect(onSkip).not.toHaveBeenCalled();
   });
 
   it("should open learn more and leave from the header", async () => {

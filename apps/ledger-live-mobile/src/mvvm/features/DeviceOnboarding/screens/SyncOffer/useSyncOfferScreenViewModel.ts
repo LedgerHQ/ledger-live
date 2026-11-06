@@ -8,7 +8,16 @@ type SkipDrawerProps = Readonly<{
   onActivate: () => void;
 }>;
 
-export type SyncOfferViewProps = Readonly<{
+type SyncOfferSuccessViewProps = Readonly<{
+  showSuccess: true;
+  title: string;
+  continueLabel: string;
+  closeLabel: string;
+  onContinue: () => void;
+}>;
+
+type SyncOfferPromptViewProps = Readonly<{
+  showSuccess: false;
   title: string;
   description: string;
   learnMoreLabel: string;
@@ -22,11 +31,15 @@ export type SyncOfferViewProps = Readonly<{
   skipDrawer: SkipDrawerProps;
 }>;
 
+export type SyncOfferViewProps = SyncOfferSuccessViewProps | SyncOfferPromptViewProps;
+
 export type SyncOfferScreenProps = Readonly<{
   onActivate: () => void;
   onSkip: () => void;
   onLearnMore: () => void;
   onQuit: () => void;
+  onContinue: () => void;
+  showSuccess: boolean;
 }>;
 
 export function useSyncOfferScreenViewModel({
@@ -34,12 +47,25 @@ export function useSyncOfferScreenViewModel({
   onSkip,
   onLearnMore,
   onQuit,
+  onContinue,
+  showSuccess,
 }: SyncOfferScreenProps): SyncOfferViewProps {
   const { t } = useTranslation();
   const [isSkipDrawerOpen, setIsSkipDrawerOpen] = useState(false);
   const closeSkipDrawer = () => setIsSkipDrawerOpen(false);
 
+  if (showSuccess) {
+    return {
+      showSuccess: true,
+      title: t("deviceOnboarding.syncOffer.success.title"),
+      continueLabel: t("deviceOnboarding.syncOffer.success.cta"),
+      closeLabel: t("deviceOnboarding.checks.close"),
+      onContinue,
+    };
+  }
+
   return {
+    showSuccess: false,
     title: t("deviceOnboarding.syncOffer.title"),
     description: t("deviceOnboarding.syncOffer.description"),
     learnMoreLabel: t("deviceOnboarding.syncOffer.learnMore"),

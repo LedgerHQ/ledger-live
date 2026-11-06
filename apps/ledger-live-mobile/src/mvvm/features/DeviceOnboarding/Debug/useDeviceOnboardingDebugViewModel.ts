@@ -67,6 +67,8 @@ export function useDeviceOnboardingDebugViewModel() {
       onSkip: () => undefined,
       onLearnMore: () => undefined,
       onQuit: closePreview,
+      onContinue: () => undefined,
+      showSuccess: false,
     },
   };
 }

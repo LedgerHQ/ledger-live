@@ -35,6 +35,7 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
   const complete = useCompleteSeededOnboarding(wasReadOnlyAtEntry);
   const { notifyFlowCompleted } = useNotificationsPrompt();
   const learnMoreUrl = useLocalizedUrl(LEDGER_SYNC_LEARN_MORE_URL);
+  const showSuccess = handoverStarted && hasTrustchain;
 
   useEffect(
     () =>
@@ -53,20 +54,17 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
     closeOnboarding(navigation);
   }, [complete, navigation, notifyFlowCompleted]);
 
-  useEffect(() => {
-    if (!handoverStarted || !hasTrustchain) return;
-    finishOnboarding();
-  }, [finishOnboarding, handoverStarted, hasTrustchain]);
-
   const onActivate = useCallback(() => {
     setHandoverStarted(true);
     // Ledger Sync only creates a trustchain for a new setup or a completed onboarding.
     dispatch(setOnboardingType(OnboardingType.setupNew));
     navigation.getParent()?.navigate(NavigatorName.WalletSync, {
       screen: ScreenName.WalletSyncActivationProcess,
-      params: { device },
+      params: { device, seededOffer: true },
     });
   }, [device, dispatch, navigation]);
+
+  const onSkip = finishOnboarding;
 
   const onLearnMore = useCallback(() => {
     Linking.openURL(learnMoreUrl);
@@ -74,8 +72,10 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
 
   return {
     onActivate,
-    onSkip: finishOnboarding,
+    onSkip,
     onQuit: finishOnboarding,
     onLearnMore,
+    onContinue: finishOnboarding,
+    showSuccess,
   };
 }

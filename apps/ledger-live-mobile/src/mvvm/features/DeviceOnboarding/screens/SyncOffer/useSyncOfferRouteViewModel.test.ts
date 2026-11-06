@@ -81,20 +81,35 @@ describe("useSyncOfferRouteViewModel", () => {
 
     expect(parentNavigate).toHaveBeenCalledWith(NavigatorName.WalletSync, {
       screen: ScreenName.WalletSyncActivationProcess,
-      params: { device },
+      params: { device, seededOffer: true },
     });
+    expect(result.current.showSuccess).toBe(false);
     expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
     expect(store.getState().settings.onboardingType).toBe(OnboardingType.setupNew);
     expect(reset).not.toHaveBeenCalled();
     expect(mockNotifyFlowCompleted).not.toHaveBeenCalled();
   });
 
-  it("should complete when the trustchain lands after the handover", () => {
+  it("should show success without completing when the trustchain lands after the handover", () => {
     const { result, store } = renderOffer(true);
 
+    expect(result.current.showSuccess).toBe(false);
     expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
 
     act(() => result.current.onActivate());
+
+    expect(result.current.showSuccess).toBe(true);
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
+    expect(store.getState().settings.readOnlyModeEnabled).toBe(true);
+    expect(reset).not.toHaveBeenCalled();
+    expect(mockNotifyFlowCompleted).not.toHaveBeenCalled();
+  });
+
+  it("should complete and open the portfolio from the success screen after activation", () => {
+    const { result, store } = renderOffer(true);
+
+    act(() => result.current.onActivate());
+    act(() => result.current.onContinue());
 
     expect(store.getState().settings.hasCompletedOnboarding).toBe(true);
     expect(store.getState().settings.readOnlyModeEnabled).toBe(false);
@@ -132,17 +147,32 @@ describe("useSyncOfferRouteViewModel", () => {
 
     act(() => result.current.onSkip());
 
+    expect(result.current.showSuccess).toBe(false);
     expect(store.getState().settings.hasCompletedOnboarding).toBe(true);
+    expect(store.getState().settings.readOnlyModeEnabled).toBe(false);
     expect(reset).toHaveBeenCalledTimes(1);
     expect(parentNavigate).not.toHaveBeenCalled();
     expect(mockNotifyFlowCompleted).toHaveBeenCalledWith("onboarding");
   });
 
-  it("should let Ledger Sync leave once the trustchain has landed", () => {
+  it("should keep the offer in place after the trustchain lands", () => {
+    const { result, store } = renderOffer(true);
+    const preventDefault = jest.fn();
+
+    act(() => result.current.onActivate());
+    act(() => listeners.get("beforeRemove")?.({ preventDefault }));
+
+    expect(preventDefault).toHaveBeenCalledTimes(1);
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
+    expect(reset).not.toHaveBeenCalled();
+  });
+
+  it("should let the offer leave once continue is pressed", () => {
     const { result } = renderOffer(true);
     const preventDefault = jest.fn();
 
     act(() => result.current.onActivate());
+    act(() => result.current.onContinue());
     act(() => listeners.get("beforeRemove")?.({ preventDefault }));
 
     expect(preventDefault).not.toHaveBeenCalled();
