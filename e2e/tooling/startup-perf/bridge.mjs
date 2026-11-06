@@ -64,6 +64,8 @@ function decodeFrames(buffer) {
 /**
  * Starts the bridge on 127.0.0.1:`port`. The Android emulator reaches it as 10.0.2.2, the iOS
  * simulator as localhost. One client at a time: a new connection replaces the previous one.
+ * @param {number} [port]
+ * @param {(message: string) => void} [log]
  */
 export function startBridge(port = 8099, log = () => {}) {
   let socket = null;
@@ -128,9 +130,10 @@ export function startBridge(port = 8099, log = () => {}) {
     ready.forEach(resolve => resolve());
   });
 
+  /** @type {Promise<void>} */
   const listening = new Promise((resolve, reject) => {
     server.once("error", reject);
-    server.listen(port, "127.0.0.1", resolve);
+    server.listen(port, "127.0.0.1", () => resolve());
   });
 
   return {
@@ -138,17 +141,22 @@ export function startBridge(port = 8099, log = () => {}) {
     received,
     waitForClient(timeoutMs) {
       if (socket) return Promise.resolve();
-      return new Promise((resolve, reject) => {
-        const waiter = () => {
-          clearTimeout(timer);
-          resolve();
-        };
-        const timer = setTimeout(() => {
-          waiters = waiters.filter(w => w !== waiter);
-          reject(new Error(`no app connected to the bridge within ${timeoutMs} ms`));
-        }, timeoutMs);
-        waiters.push(waiter);
-      });
+      return new Promise(
+        /** @param {(value?: void) => void} resolve @param {(error: Error) => void} reject */ (
+          resolve,
+          reject,
+        ) => {
+          const waiter = () => {
+            clearTimeout(timer);
+            resolve();
+          };
+          const timer = setTimeout(() => {
+            waiters = waiters.filter(w => w !== waiter);
+            reject(new Error(`no app connected to the bridge within ${timeoutMs} ms`));
+          }, timeoutMs);
+          waiters.push(waiter);
+        },
+      );
     },
     send(type, payload) {
       if (!socket) throw new Error(`bridge: no client to send ${type} to`);
@@ -172,7 +180,9 @@ export function startBridge(port = 8099, log = () => {}) {
     close() {
       socket?.destroy();
       socket = null;
-      return new Promise(resolve => server.close(() => resolve()));
+      return new Promise(
+        /** @param {(value?: void) => void} resolve */ resolve => server.close(() => resolve()),
+      );
     },
   };
 }
