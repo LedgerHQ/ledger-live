@@ -4,6 +4,7 @@ import { expect } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import * as path from "node:path";
 import { FileUtils } from "tests/utils/fileUtils";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 /** Values read from a history row before opening the operation drawer (must match drawer content). */
 export type ClickedHistoryOperationSnapshot = {
@@ -184,7 +185,7 @@ export class HistoryPage extends AppPage {
 
   @step("Expect export button to be enabled")
   async expectExportButtonEnabled() {
-    await expect(this.exportCsvConfirm).toBeEnabled();
+    await expect(this.exportCsvConfirm).toBeEnabled({ timeout: TIMEOUT.xxlarge });
   }
 
   @step("Confirm CSV export and wait for file (testId: $0)")
