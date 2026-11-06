@@ -1411,6 +1411,21 @@ test("R2 to R4 skip the components of platform entries and test entries", () => 
   );
 });
 
+test("export type * cycle between modules terminates", () => {
+  const root = workspace({
+    "package.json": { exports: UNIVERSAL },
+    "src/index.ts": 'export type * from "./a";\n',
+    "src/index.native.ts": 'export type * from "./a";\n',
+    "src/a.ts": 'export type * from "./b";\nexport type X = 1;\n',
+    "src/b.ts": 'export type * from "./a";\n',
+  });
+  const pkg = path.join(root, "shared/thing");
+  const index = path.join(pkg, "src/index.ts");
+  assert.doesNotThrow(() => {
+    exportNamesFromEntry(index, "web");
+  });
+});
+
 test("export type * from follows value re-exports for export names", () => {
   const root = workspace({
     "package.json": { exports: UNIVERSAL },

@@ -540,7 +540,7 @@ function createExportCollector(platform, reader = FS_READER) {
     if (!module) return names;
     for (const name of module.localExports.keys()) names.add(name);
     for (const name of module.named.keys()) names.add(name);
-    for (const name of typeNamesOf(file, new Set())) names.add(name);
+    for (const name of typeNamesOf(file, seen)) names.add(name);
     for (const specifier of module.stars) {
       const target = resolveRelative(file, specifier, platform, EXTENSIONS[platform], reader);
       if (!target) continue;
