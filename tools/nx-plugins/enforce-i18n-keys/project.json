@@ -50,7 +50,7 @@
         "!{workspaceRoot}/shared/**/lib/**",
         "!{workspaceRoot}/shared/**/lib-es/**",
         "!{workspaceRoot}/shared/**/dist/**",
-        { "externalDependencies": ["typescript"] }
+        { "externalDependencies": ["@typescript/native"] }
       ],
       "options": {
         "cwd": "{workspaceRoot}",

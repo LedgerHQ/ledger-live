@@ -20,7 +20,10 @@ const {
 } = require("./constraints");
 const fs = require("node:fs");
 const path = require("node:path");
-const ts = require("typescript");
+const { API } = require("@typescript/native/sync");
+const { serverFS } = require("@typescript/native/fs");
+const { NodeFlags, SyntaxKind } = require("@typescript/native/ast");
+const ts = require("@typescript/native/ast/is");
 
 /**
  * @typedef {{ data?: { root?: string, tags?: string[] } }} GraphNode
@@ -36,6 +39,8 @@ const ts = require("typescript");
  * @typedef {{ file: string, line: number, specifier: string, rule: DevtoolsHostRule }} DevtoolsHostViolation
  * @typedef {{ root: string, allowedUnder: string, entries: string[] }} DevtoolsHostApp
  * @typedef {{ prefix: string, target: string }} PathAlias
+ * @typedef {import("@typescript/native/sync").CompilerOptions} CompilerOptions
+ * @typedef {import("@typescript/native/sync").Diagnostic} Diagnostic
  */
 
 const DEPENDENCY_FIELDS = [
@@ -107,15 +112,34 @@ function readManifest(workspaceRoot, root) {
   }
 }
 
+/** @type {API | undefined} */
+let api;
+
 /**
- * Specifiers of the imports, re-exports, `require()` and `import()` calls of a source file.
- * The TypeScript scanner skips comments and string contents.
+ * The TypeScript 7 server, started on first use and closed on exit. Config files are parsed
+ * without listing directories: only module resolution reads their options.
  *
- * @param {string} content
- * @returns {string[]}
+ * @returns {API}
  */
-function importSpecifiers(content) {
-  return ts.preProcessFile(content, true, true).importedFiles.map(f => f.fileName);
+function server() {
+  if (!api) {
+    const started = new API({
+      cwd: process.cwd(),
+      fs: {
+        directoryExists: serverFS.useOS,
+        fileExists: serverFS.useOS,
+        getAccessibleEntries: () => ({ files: [], directories: [] }),
+        readFile: serverFS.useOS,
+        realpath: serverFS.useOS,
+        stat: serverFS.useOS,
+        writeFile: serverFS.error,
+        removeFile: serverFS.error,
+      },
+    });
+    process.once("exit", () => started.close());
+    api = started;
+  }
+  return api;
 }
 
 const sourceFiles = {
@@ -124,10 +148,12 @@ const sourceFiles = {
    *
    * @param {string} file
    * @param {string} [content] the file's content, read from disk when omitted
-   * @returns {import("typescript").SourceFile}
+   * @returns {import("@typescript/native/ast").SourceFile}
    */
   parse(file, content = fs.readFileSync(file, "utf8")) {
-    return ts.createSourceFile(file, content, ts.ScriptTarget.Latest, false);
+    const retained = server().createSourceFile(file, content);
+    retained.dispose();
+    return retained.sourceFile;
   },
 };
 
@@ -142,20 +168,22 @@ const sourceFiles = {
 /**
  * Every module a source file references, with how it loads it and the 1-based line.
  *
- * @param {import("typescript").SourceFile} source
+ * @param {import("@typescript/native/ast").SourceFile} source
  * @returns {ModuleReference[]}
  */
 function moduleReferences(source) {
   /** @type {ModuleReference[]} */
   const references = [];
-  /** @param {import("typescript").Node} node */
+  /** @param {import("@typescript/native/ast").Node} node */
   const visit = node => {
+    // TypeScript 7 adds JSDoc types to the tree; the build never loads their imports.
+    if (node.flags & NodeFlags.Reparsed) return;
     let spec;
     /** @type {ReferenceKind} */
     let kind = "static";
     if (ts.isImportDeclaration(node)) {
       spec = node.moduleSpecifier;
-      if (node.importClause?.isTypeOnly) kind = "type";
+      if (node.importClause?.phaseModifier === SyntaxKind.TypeKeyword) kind = "type";
     } else if (ts.isExportDeclaration(node)) {
       spec = node.moduleSpecifier;
       if (node.isTypeOnly) kind = "type";
@@ -168,21 +196,39 @@ function moduleReferences(source) {
       if (ts.isLiteralTypeNode(node.argument)) spec = node.argument.literal;
       kind = "type";
     } else if (ts.isCallExpression(node)) {
-      if (node.expression.kind === ts.SyntaxKind.ImportKeyword) {
+      if (node.expression.kind === SyntaxKind.ImportKeyword) {
         spec = node.arguments[0];
         kind = "dynamic";
       } else if (ts.isIdentifier(node.expression) && node.expression.text === "require") {
         spec = node.arguments[0];
       }
     }
-    if (spec && ts.isStringLiteralLike(spec)) {
+    if (spec && ts.isStringLiteralLikeNode(spec)) {
       const { line } = source.getLineAndCharacterOfPosition(spec.getStart(source));
       references.push({ specifier: spec.text, kind, line: line + 1 });
     }
-    ts.forEachChild(node, visit);
+    node.forEachChild(visit);
   };
   visit(source);
   return references;
+}
+
+/**
+ * Specifiers of the imports, re-exports, `require()` and `import()` calls of a source file, then
+ * of the modules a module file augments with `declare module "…"`.
+ *
+ * @param {string} file
+ * @returns {string[]}
+ */
+function importSpecifiers(file) {
+  const source = sourceFiles.parse(file);
+  const augmented =
+    source.externalModuleIndicator === undefined
+      ? []
+      : source.statements.flatMap(s =>
+          ts.isModuleDeclaration(s) && ts.isStringLiteral(s.name) ? [s.name.text] : [],
+        );
+  return [...moduleReferences(source).map(r => r.specifier), ...augmented];
 }
 
 /**
@@ -254,9 +300,7 @@ function findSourceImportViolations(workspaceRoot, legacyPackages, exceptions = 
 
   for (const root of roots) {
     walkSourceFiles(root, file => {
-      const content = fs.readFileSync(file, "utf8");
-
-      for (const spec of importSpecifiers(content)) {
+      for (const spec of importSpecifiers(file)) {
         if (spec.startsWith("@ledgerhq/")) {
           const pkg = packageNameOf(spec);
           if (legacyPackages.has(pkg)) {
@@ -351,8 +395,7 @@ function findBannedExternalViolations(graph, workspaceRoot, rules = []) {
       }
 
       walkSourceFiles(path.join(workspaceRoot, root), file => {
-        const content = fs.readFileSync(file, "utf8");
-        for (const spec of importSpecifiers(content)) {
+        for (const spec of importSpecifiers(file)) {
           if (banned.has(packageNameOf(spec))) {
             violations.push({
               file: path.relative(workspaceRoot, file),
@@ -499,31 +542,31 @@ function findDevtoolsImportViolations(
 const TEST_FILE = /(^|\/)(__tests__|__integrations__)\/|\.test\.[^/]+$/;
 
 /**
+ * @param {Diagnostic} diagnostic
+ * @returns {string} the message and its chain, one message per line
+ */
+function messageOf(diagnostic) {
+  return [diagnostic.text, ...(diagnostic.messageChain ?? []).map(messageOf)].join("\n");
+}
+
+/**
  * The compiler options TypeScript computes for an app from its `tsconfig.json`, `extends` included.
  * The file list is not expanded: only module resolution reads these options.
  *
  * @param {string} appRoot absolute
- * @returns {import("typescript").CompilerOptions}
+ * @returns {CompilerOptions}
  */
 function readCompilerOptions(appRoot) {
   const tsconfig = path.join(appRoot, "tsconfig.json");
-  const { config, error } = ts.readConfigFile(tsconfig, ts.sys.readFile);
-  const { options, errors } = ts.parseJsonConfigFileContent(
-    config,
-    { ...ts.sys, readDirectory: () => [] },
-    appRoot,
-    undefined,
-    tsconfig,
-  );
+  const { config, error } = server().readConfigFile(tsconfig);
+  if (error) throw new Error(`${tsconfig}: ${messageOf(error)}`);
+  const { options, errors } = server().parseJsonConfigFileContent(config, {
+    configFileName: tsconfig,
+  });
   const NO_INPUTS = 18003;
-  const fatal = [error, ...errors].filter(
-    /** @returns {d is import("typescript").Diagnostic} */
-    d => d !== undefined && d.code !== NO_INPUTS,
-  );
+  const fatal = errors.filter(d => d.code !== NO_INPUTS);
   if (fatal.length > 0) {
-    throw new Error(
-      `${tsconfig}: ${fatal.map(d => ts.flattenDiagnosticMessageText(d.messageText, "\n")).join("\n")}`,
-    );
+    throw new Error(`${tsconfig}: ${fatal.map(messageOf).join("\n")}`);
   }
   return options;
 }
@@ -532,13 +575,12 @@ function readCompilerOptions(appRoot) {
  * The `paths` prefix aliases of resolved compiler options, longest first (only `prefix*` patterns,
  * mapped to their first target).
  *
- * @param {import("typescript").CompilerOptions} options
+ * @param {CompilerOptions} options
  * @param {string} appRoot absolute, the base of `paths` when the config sets no `baseUrl`
  * @returns {PathAlias[]}
  */
 function pathAliases(options, appRoot) {
-  const base =
-    options.baseUrl ?? /** @type {string | undefined} */ (options.pathsBasePath) ?? appRoot;
+  const base = options.baseUrl ?? options.pathsBasePath ?? appRoot;
   return Object.entries(options.paths ?? {})
     .filter(([pattern, targets]) => pattern.endsWith("*") && targets[0]?.endsWith("*"))
     .map(([pattern, targets]) => ({
@@ -564,41 +606,60 @@ function resolveSpecifier(file, spec, aliases) {
 }
 
 /**
- * `ts.sys` with its file-system lookups memoized: module resolution probes the same files,
- * directories and symlinks for every importer, and the check does not write.
+ * The file TypeScript loads for a specifier imported from a file of the app, resolved with the
+ * app's compiler options. When it resolves none, the path the specifier names, so a missing file
+ * under `devtools/` or the DevTools folder never passes.
  *
- * @returns {import("typescript").ModuleResolutionHost}
+ * @param {string} appRoot absolute
+ * @returns {(file: string, specifier: string) => { target: string | undefined, resolved: boolean }}
  */
-function cachedResolutionHost() {
+function moduleLoader(appRoot) {
+  const options = readCompilerOptions(appRoot);
+  const aliases = pathAliases(options, appRoot);
+  const resolver = server().createModuleResolver(options);
+  /** @type {Map<string, string>} */
+  const scopes = new Map();
   /**
-   * @template T
-   * @param {(p: string) => T} lookup
-   * @returns {(p: string) => T}
+   * The nearest directory holding a `package.json` or a `node_modules`: a bare specifier
+   * resolves the same from any directory under it.
+   *
+   * @param {string} dir
+   * @returns {string}
    */
-  const memoize = lookup => {
-    /** @type {Map<string, T>} */
-    const results = new Map();
-    return p => {
-      if (!results.has(p)) results.set(p, lookup(p));
-      return /** @type {T} */ (results.get(p));
-    };
+  const scopeOf = dir => {
+    let scope = scopes.get(dir);
+    if (scope === undefined) {
+      const parent = path.dirname(dir);
+      const isScope =
+        parent === dir ||
+        fs.existsSync(path.join(dir, "package.json")) ||
+        fs.existsSync(path.join(dir, "node_modules"));
+      scope = isScope ? dir : scopeOf(parent);
+      scopes.set(dir, scope);
+    }
+    return scope;
   };
-  return {
-    fileExists: memoize(ts.sys.fileExists),
-    directoryExists: memoize(p => ts.sys.directoryExists(p)),
-    readFile: memoize(p => ts.sys.readFile(p)),
-    realpath: memoize(p => (ts.sys.realpath ? ts.sys.realpath(p) : p)),
-    getDirectories: memoize(p => ts.sys.getDirectories(p)),
-    getCurrentDirectory: ts.sys.getCurrentDirectory,
-    useCaseSensitiveFileNames: ts.sys.useCaseSensitiveFileNames,
+  /** @type {Map<string, string | undefined>} */
+  const resolutions = new Map();
+  return (file, specifier) => {
+    const isRelative = /^\.\.?($|\/)/.test(specifier) || path.isAbsolute(specifier);
+    const dir = isRelative ? path.dirname(file) : scopeOf(path.dirname(file));
+    const key = `${dir}\n${specifier}`;
+    if (!resolutions.has(key)) {
+      const { resolvedModule } = resolver.resolveModuleName(specifier, dir);
+      resolutions.set(key, resolvedModule && path.normalize(resolvedModule.resolvedFileName));
+    }
+    const target = resolutions.get(key);
+    if (target) return { target, resolved: true };
+    return { target: resolveSpecifier(file, specifier, aliases), resolved: false };
   };
 }
 
 /**
  * Check the source files of each host app under `DEVTOOLS_HOST_APP_RULE` and
  * `DEVTOOLS_HOST_FOLDER_RULE`. Files under the app's `allowedUnder` folder are not checked. Each
- * specifier is resolved with `ts.resolveModuleName` and the app's compiler options, so the file
- * compared against the entries is the one TypeScript loads.
+ * specifier is resolved by TypeScript with the app's compiler options, so the file compared
+ * against the entries is the one TypeScript loads.
  *
  * @param {string} workspaceRoot
  * @param {DevtoolsHostApp[]} hostApps
@@ -609,7 +670,6 @@ function findDevtoolsHostViolations(workspaceRoot, hostApps) {
   const devtoolsRoot = path.join(realRoot, DEVTOOLS_ROOT);
   /** @type {DevtoolsHostViolation[]} */
   const violations = [];
-  const host = cachedResolutionHost();
   /**
    * @param {string | undefined} p
    * @param {string} dir
@@ -619,27 +679,9 @@ function findDevtoolsHostViolations(workspaceRoot, hostApps) {
 
   for (const app of hostApps) {
     const appRoot = path.join(realRoot, app.root);
-    const options = readCompilerOptions(appRoot);
-    const aliases = pathAliases(options, appRoot);
-    const cache = ts.createModuleResolutionCache(appRoot, f => f, options);
+    const load = moduleLoader(appRoot);
     const folder = path.resolve(appRoot, app.allowedUnder);
     const entryFiles = new Set(app.entries.map(e => path.resolve(appRoot, e)));
-
-    /**
-     * The file TypeScript loads for `specifier`. When it resolves none, the path the specifier
-     * names, so a missing file under `devtools/` or the DevTools folder never passes.
-     *
-     * @param {string} file
-     * @param {string} specifier
-     * @returns {{ target: string | undefined, resolved: boolean }}
-     */
-    const load = (file, specifier) => {
-      const { resolvedModule } = ts.resolveModuleName(specifier, file, options, host, cache);
-      if (resolvedModule) {
-        return { target: path.normalize(resolvedModule.resolvedFileName), resolved: true };
-      }
-      return { target: resolveSpecifier(file, specifier, aliases), resolved: false };
-    };
 
     walkSourceFiles(appRoot, file => {
       if (isUnder(file, folder)) return;

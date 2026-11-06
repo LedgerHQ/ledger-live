@@ -34,11 +34,12 @@ function buildTarget(projectRoot) {
       `{projectRoot}/package.json`,
       `{workspaceRoot}/${PLUGIN_ROOT}/rules.js`,
       `{workspaceRoot}/${PLUGIN_ROOT}/components.js`,
+      `{workspaceRoot}/${PLUGIN_ROOT}/parse.js`,
       `{workspaceRoot}/${PLUGIN_ROOT}/components.config.json`,
       `{workspaceRoot}/${PLUGIN_ROOT}/validate.js`,
       `{workspaceRoot}/${PLUGIN_ROOT}/exceptions.js`,
       `{workspaceRoot}/${PLUGIN_ROOT}/intermediate-barrels.js`,
-      { externalDependencies: ["typescript"] },
+      { externalDependencies: ["@typescript/native"] },
     ],
     options: {
       cwd: "{workspaceRoot}",
