@@ -4,39 +4,67 @@
 // in the autolinking config is its only signal for npm native modules. Keep the version and patch, drop the peer
 // suffix: peer-only changes would otherwise trigger native rebuilds. Podfile.lock and project.pbxproj embed the
 // same paths.
+const fs = require("node:fs");
+const path = require("node:path");
+
 const PNPM_STORE_DIR =
   /\.pnpm\/((?:@[^+/]+\+)?[^@/]+@[^_/"`'\s]+(?:_patch_hash=[0-9a-f]+)?)[^/"`'\s]*\/node_modules/g;
 const dropPeerSuffix = text => text.replace(PNPM_STORE_DIR, ".pnpm/$1/node_modules");
 const FILES_WITH_STORE_PATHS = /(Podfile\.lock|project\.pbxproj)$/;
-const pendingFiles = new Map();
+const pendingChunks = new Map();
 
 const e2eBuildFile = filePath => ({ type: "file", filePath, reasons: ["e2eNativeBuild"] });
 
+// pnpm truncates long store dir names, patch hash included, so hash the patches that touch native code.
+const PATCHES_DIR = "../../patches";
+const NATIVE_PATCHED_FILE =
+  /^diff --git a\/\S*(\/(android|ios)\/|\.(podspec|gradle|kts|java|kt|m|mm|swift|h|hpp|c|cpp)\s|CMakeLists|react-native\.config|codegen)/m;
+const nativePatches = fs
+  .readdirSync(path.join(__dirname, PATCHES_DIR))
+  .filter(name =>
+    NATIVE_PATCHED_FILE.test(fs.readFileSync(path.join(__dirname, PATCHES_DIR, name), "utf8")),
+  )
+  .sort()
+  .map(name => e2eBuildFile(`${PATCHES_DIR}/${name}`));
+
+// The Android test APK is built against node_modules/detox, which is not autolinked.
+const detoxVersion = require(require.resolve("detox/package.json", { paths: [__dirname] })).version;
+
 /** @type {import('@expo/fingerprint').Config} */
 module.exports = {
-  // The e2e builds don't depend on the app version or the package.json scripts.
-  sourceSkips: ["ExpoConfigVersions", "PackageJsonScriptsAll"],
+  // The app version stays in the key: syncAppVersion.js writes it into the native projects.
+  sourceSkips: ["PackageJsonScriptsAll"],
+  ignorePaths: [
+    "../../shared/native-performance/node_modules/**",
+    "../../shared/native-performance/src/**",
+    "../../shared/native-performance/*.md",
+    "../../shared/native-performance/jest.config.js",
+  ],
   extraSources: [
     e2eBuildFile("fingerprint.config.js"),
     e2eBuildFile("react-native.config.js"),
+    e2eBuildFile(".env.mock"),
+    e2eBuildFile(".env.mock.prerelease"),
     e2eBuildFile("scripts/native-fingerprint.mjs"),
     e2eBuildFile("scripts/e2e-build.mjs"),
     e2eBuildFile("scripts/e2e-binaries.cjs"),
     e2eBuildFile("scripts/syncAppVersion.js"),
     e2eBuildFile("../../e2e/mobile/detox.config.js"),
+    ...nativePatches,
+    { type: "contents", id: "detoxVersion", contents: detoxVersion, reasons: ["e2eNativeBuild"] },
   ],
   fileHookTransform(source, chunk, isEndOfFile) {
     if (source.type === "contents")
       return typeof chunk === "string" ? dropPeerSuffix(chunk) : chunk;
     if (!FILES_WITH_STORE_PATHS.test(source.filePath)) return chunk;
-    // A store path can straddle two chunks, so buffer the whole file.
-    const text =
-      (pendingFiles.get(source.filePath) ?? "") + (chunk == null ? "" : chunk.toString());
+    // A store path or a UTF-8 character can straddle two chunks, so decode the whole file at once.
+    const chunks = pendingChunks.get(source.filePath) ?? [];
+    if (chunk != null) chunks.push(Buffer.from(chunk));
     if (!isEndOfFile) {
-      pendingFiles.set(source.filePath, text);
+      pendingChunks.set(source.filePath, chunks);
       return "";
     }
-    pendingFiles.delete(source.filePath);
-    return dropPeerSuffix(text);
+    pendingChunks.delete(source.filePath);
+    return dropPeerSuffix(Buffer.concat(chunks).toString("utf8"));
   },
 };

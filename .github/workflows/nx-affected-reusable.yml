@@ -111,9 +111,11 @@ jobs:
         run: node tools/nx/task-hash.mjs live-mobile e2e:bundle ios android | tee -a "$GITHUB_OUTPUT"
 
       # Reuses the install above, so the mobile e2e workflow can key the native builds on what they are built
-      # from rather than on hashFiles. Guard until release and hotfix have the script.
+      # from rather than on hashFiles. Guard until release and hotfix have the script. Without an output the
+      # e2e workflow falls back to hashFiles, so a failure here must not fail the affected job.
       - name: Compute mobile native fingerprints
         id: mobile-native-fingerprint
+        continue-on-error: true
         if: ${{ contains(steps.nx-affected.outputs.paths, 'ledger-live-mobile') && hashFiles('apps/ledger-live-mobile/scripts/native-fingerprint.mjs') != '' }}
         shell: bash
         run: node apps/ledger-live-mobile/scripts/native-fingerprint.mjs ios android | tee -a "$GITHUB_OUTPUT"
