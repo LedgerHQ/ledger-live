@@ -38,12 +38,7 @@ import type {
   TransactionModel,
   TransferFeeCalculated,
 } from "../types";
-import {
-  DUMMY_SIGNATURE,
-  LEDGER_VALIDATOR_DEFAULT,
-  ZERO_FILLED_DUMMY_SIGNATURE,
-  assertUnreachable,
-} from "../utils";
+import { LEDGER_VALIDATOR_DEFAULT, refreshesBlockhash, assertUnreachable } from "../utils";
 
 const DEFAULT_TX_FEE = 5000;
 
@@ -77,11 +72,7 @@ export async function estimateFees(
 
     const { message } = transaction;
     // The framework reuses this value as `customFees`, so it must price what crafting will sign.
-    const unsigned = transaction.signatures.every(sig => {
-      const buf = Buffer.from(sig);
-      return buf.equals(DUMMY_SIGNATURE) || buf.equals(ZERO_FILLED_DUMMY_SIGNATURE);
-    });
-    if (unsigned) {
+    if (refreshesBlockhash(transaction)) {
       message.recentBlockhash = (await api.getLatestBlockhash()).blockhash;
     }
 

@@ -7,6 +7,8 @@ import {
   BlockhashWithExpiryBlockHeight,
   PublicKey,
   RecentPrioritizationFees,
+  SystemProgram,
+  TransactionMessage,
   VersionedTransaction,
 } from "@solana/web3.js";
 import { SolanaTokenAccountHoldsAnotherToken } from "../../errors";
@@ -151,6 +153,21 @@ describe("craftTransaction — partner-built transaction", () => {
     );
     expect(deserialized.message.recentBlockhash).toBe(TEST_BLOCKHASH);
     expect(result.details?.recentBlockhash).toBe(TEST_BLOCKHASH);
+    expect(result.details?.lastValidBlockHeight).toBe(280064048);
+  });
+
+  it("keeps the blockhash of a transaction already signed, with no unrelated expiry", async () => {
+    const signed = VersionedTransaction.deserialize(Buffer.from(PREBUILT_TX, "base64"));
+    signed.signatures[0] = Buffer.alloc(64, 7);
+
+    const result = await craftTransaction(api, {
+      ...intent,
+      data: { type: "buffer", value: Buffer.from(signed.serialize()) },
+    } as unknown as TransactionIntent);
+
+    expect(result.details?.recentBlockhash).toBe(signed.message.recentBlockhash);
+    expect(result.details).not.toHaveProperty("lastValidBlockHeight");
+    expect(mockGetLatestBlockhash).not.toHaveBeenCalled();
   });
 
   it("honours custom fees without asking the chain", async () => {
@@ -160,10 +177,53 @@ describe("craftTransaction — partner-built transaction", () => {
     expect(mockGetFeeForMessage).not.toHaveBeenCalled();
   });
 
-  it("refuses a transaction whose fee payer is not the sender", async () => {
+  // The partner pays the fees (index 0) and TEST_ADDRESS signs second, as in a gasless swap;
+  // TEST_RECIPIENT is in the transaction without signing it.
+  const partnerBlockhash = "BNrsuybC7PXC2KLaUB9XK9LLqcP3odbiUX13PmumJMas";
+  const coSignedIntent = (sender: string) => {
+    const coSigned = new VersionedTransaction(
+      new TransactionMessage({
+        payerKey: new PublicKey(PREBUILT_FEE_PAYER),
+        recentBlockhash: partnerBlockhash,
+        instructions: [
+          SystemProgram.transfer({
+            fromPubkey: new PublicKey(TEST_ADDRESS),
+            toPubkey: new PublicKey(TEST_RECIPIENT),
+            lamports: 1,
+          }),
+        ],
+      }).compileToV0Message(),
+    );
+    return {
+      ...intent,
+      sender,
+      data: { type: "buffer", value: Buffer.from(coSigned.serialize()) },
+    } as unknown as TransactionIntent;
+  };
+
+  it("accepts a transaction the sender co-signs while a partner pays the fees", async () => {
+    const result = await craftTransaction(api, coSignedIntent(TEST_ADDRESS));
+
+    const crafted = VersionedTransaction.deserialize(Buffer.from(result.transaction, "base64"));
+    expect(crafted.message.staticAccountKeys[0].toBase58()).toBe(PREBUILT_FEE_PAYER);
+    // The partner signs after the sender, so its bytes, blockhash included, are left untouched.
+    expect(crafted.message.recentBlockhash).toBe(partnerBlockhash);
+    // The kept blockhash's expiry is unknown, so no unrelated one is reported.
+    expect(result.details?.recentBlockhash).toBe(partnerBlockhash);
+    expect(result.details).not.toHaveProperty("lastValidBlockHeight");
+    expect(mockGetLatestBlockhash).not.toHaveBeenCalled();
+  });
+
+  it("refuses a sender that appears in the transaction without signing it", async () => {
+    await expect(craftTransaction(api, coSignedIntent(TEST_RECIPIENT))).rejects.toThrow(
+      "Sender is not a signer of the transaction",
+    );
+  });
+
+  it("refuses a transaction the sender does not sign", async () => {
     await expect(
       craftTransaction(api, { ...intent, sender: TEST_ADDRESS } as TransactionIntent),
-    ).rejects.toThrow("Sender does not match transaction fee payer");
+    ).rejects.toThrow("Sender is not a signer of the transaction");
   });
 
   it("refuses bytes it cannot deserialize", async () => {
