@@ -813,6 +813,43 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(result.current.quitConfirmation?.isOpen).toBe(true);
   });
 
+  it("should hide the quit confirmation while an unseeded device is locked", () => {
+    const context = {
+      onboardedOnEntry: false,
+      checksPaused: false,
+    } as DeviceOnboardingSession["context"];
+    useSession.mockReturnValue(session({ state: "checks.firmwareCheck", context }));
+    const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const preventDefault = jest.fn();
+
+    act(() => {
+      listeners.get("beforeRemove")?.({ preventDefault, data: { action: { type: "GO_BACK" } } });
+    });
+    expect(result.current.quitConfirmation?.isOpen).toBe(true);
+
+    useSession.mockReturnValue(session({ state: "deviceLocked", context }));
+    rerender(undefined as never);
+
+    const locked = result.current;
+    if (locked.status !== "checks") throw new Error(locked.status);
+    expect(locked.unlockSheet).toEqual({
+      deviceModelId: DeviceModelId.stax,
+      deviceName: "Ledger Stax",
+    });
+    expect(locked.quitConfirmation?.isOpen).toBe(false);
+    act(() => locked.quitConfirmation?.onContinue());
+    expect(result.current.quitConfirmation?.isOpen).toBe(false);
+    expect(send).not.toHaveBeenCalled();
+
+    useSession.mockReturnValue(session({ state: "readingState", context }));
+    rerender(undefined as never);
+    expect(result.current.quitConfirmation?.isOpen).toBe(false);
+
+    useSession.mockReturnValue(session({ state: "checks.firmwareCheck", context }));
+    rerender(undefined as never);
+    expect(result.current.quitConfirmation?.isOpen).toBe(true);
+  });
+
   it("should ask before the allow prompt close leaves an unseeded setup", () => {
     useSession.mockReturnValue(
       session({

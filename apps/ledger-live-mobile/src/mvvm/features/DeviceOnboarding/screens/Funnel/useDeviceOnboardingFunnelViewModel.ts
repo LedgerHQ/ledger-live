@@ -17,7 +17,6 @@ import {
   useDeviceOnboardingHost,
   useDeviceOnboardingSession,
 } from "LLM/features/DeviceOnboarding/hooks/DeviceOnboardingProvider";
-import type { DeviceOnboardingSession } from "LLM/features/DeviceOnboarding/hooks/useDeviceOnboarding";
 import { useOfferSync } from "LLM/features/DeviceOnboarding/hooks/useOfferSync";
 import type { ChecksScreenProps } from "LLM/features/DeviceOnboarding/types";
 import { toChecksError, toFirmwareUpdate } from "LLM/features/DeviceOnboarding/utils/checksPhase";
@@ -193,6 +192,68 @@ function earlyScreen(actions: ScreenActions): DeviceOnboardingFunnelModel | null
   return null;
 }
 
+function connectWhenIdle(
+  started: { current: boolean },
+  onboarding: {
+    status: string;
+    state: string | null;
+    error: string | null;
+    connect: () => void;
+  },
+) {
+  if (started.current) return;
+  started.current = true;
+  if (onboarding.status !== "idle" || onboarding.state !== null || onboarding.error) return;
+  onboarding.connect();
+}
+
+function isHoldingLockedScreen(machineState: string | null, remembered: RememberedChecks | null) {
+  return (
+    machineState === "deviceLocked" ||
+    (machineState === "readingState" && remembered?.holdThroughReading === true)
+  );
+}
+
+function quitConfirmationWhileUnlocked(
+  unseeded: boolean,
+  open: boolean,
+  holdingLockedScreen: boolean,
+  stepName: string,
+  onContinue: () => void,
+  onLeave: () => void,
+): QuitConfirmationModel | null {
+  if (!unseeded) return null;
+  return {
+    isOpen: open && !holdingLockedScreen,
+    stepName,
+    onContinue: holdingLockedScreen ? () => undefined : onContinue,
+    onLeave,
+  };
+}
+
+function checksUnderUnlockSheet(
+  built: DeviceOnboardingFunnelModel,
+  holdingLockedScreen: boolean,
+  remembered: RememberedChecks | null,
+  freshChecks: ChecksScreenProps | null,
+  locked: boolean,
+  quitConfirmation: QuitConfirmationModel | null,
+): DeviceOnboardingFunnelModel {
+  const heldChecks = holdingLockedScreen ? (remembered?.checks ?? freshChecks) : freshChecks;
+  if (!holdingLockedScreen || !heldChecks) return built;
+  return {
+    status: "checks",
+    checks: { ...heldChecks, suspendSheets: true },
+    unlockSheet: locked
+      ? {
+          deviceModelId: heldChecks.device.modelId,
+          deviceName: heldChecks.device.deviceName ?? "",
+        }
+      : null,
+    quitConfirmation,
+  };
+}
+
 function checksScreen(actions: ScreenActions): DeviceOnboardingFunnelModel {
   const device = actions.device;
   const screenState = actions.screenState;
@@ -273,10 +334,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   const [rememberedChecks, setRememberedChecks] = useState<RememberedChecks | null>(null);
 
   useEffect(() => {
-    if (started.current) return;
-    started.current = true;
-    if (onboarding.status !== "idle" || onboarding.state !== null || onboarding.error) return;
-    onboarding.connect();
+    connectWhenIdle(started, onboarding);
   }, [onboarding]);
 
   const sessionReady = onboarding.sendableEvents.some(
@@ -402,16 +460,15 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   const closeLabel = t("deviceOnboarding.checks.close");
   const machineState = onboarding.state;
   const locked = machineState === "deviceLocked";
-  const holdingLockedScreen =
-    locked || (machineState === "readingState" && rememberedChecks?.holdThroughReading === true);
-  const quitConfirmation = unseeded
-    ? {
-        isOpen: quitConfirmationOpen,
-        stepName: lastSavedStepName(onboarding.state, onboarding.context?.currentSetupStep, t),
-        onContinue: continueSetup,
-        onLeave: leaveWithoutSaving,
-      }
-    : null;
+  const holdingLockedScreen = isHoldingLockedScreen(machineState, rememberedChecks);
+  const quitConfirmation = quitConfirmationWhileUnlocked(
+    unseeded,
+    quitConfirmationOpen,
+    holdingLockedScreen,
+    lastSavedStepName(onboarding.state, onboarding.context?.currentSetupStep, t),
+    continueSetup,
+    leaveWithoutSaving,
+  );
   const leaveFromHeader = unseeded ? requestQuit : quitMachine;
 
   const screen = {
@@ -451,20 +508,14 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   );
   if (nextRemembered !== rememberedChecks) setRememberedChecks(nextRemembered);
 
-  const heldChecks = holdingLockedScreen ? (nextRemembered?.checks ?? freshChecks) : freshChecks;
-  if (!holdingLockedScreen || !heldChecks) return built;
-
-  return {
-    status: "checks",
-    checks: { ...heldChecks, suspendSheets: true },
-    unlockSheet: locked
-      ? {
-          deviceModelId: heldChecks.device.modelId,
-          deviceName: heldChecks.device.deviceName ?? "",
-        }
-      : null,
+  return checksUnderUnlockSheet(
+    built,
+    holdingLockedScreen,
+    nextRemembered,
+    freshChecks,
+    locked,
     quitConfirmation,
-  };
+  );
 }
 
 type RememberedChecks = Readonly<{
