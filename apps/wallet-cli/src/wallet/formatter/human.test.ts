@@ -2,13 +2,32 @@ import { describe, expect, it } from "bun:test";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import { HumanFormatter } from "./human";
 import { JsonFormatter } from "./json";
-import type { DiscoveredAccount, AccountDescriptor } from "../models";
+import type { Balance, DiscoveredAccount, AccountDescriptor } from "../models";
 import { BalanceSchema, OperationSchema } from "../models";
 import { XPUB, ETH_ADDR } from "../../shared/accountDescriptor/test-fixtures";
-import { USDT_TOKEN_INFO } from "../../testing/cal-fixtures";
+import { USDT_TOKEN_CURRENCY, USDT_TOKEN_INFO } from "../../testing/cal-fixtures";
 import { colors } from "../../shared/ui";
 
 const stubStore = {} as CryptoAssetsStore;
+
+function recordingTokenStore() {
+  const lookups: string[] = [];
+  const store = {
+    findTokenById: async (id: string) => {
+      lookups.push(id);
+      return undefined;
+    },
+  } as unknown as CryptoAssetsStore;
+  return { store, lookups };
+}
+
+const usdtBalance = BalanceSchema.parse({
+  kind: "token",
+  assetId: USDT_TOKEN_INFO.id,
+  balance: "1500000",
+  token: USDT_TOKEN_INFO,
+  unit: USDT_TOKEN_CURRENCY.units[0],
+});
 
 const btcDiscovered: DiscoveredAccount = {
   descriptor: {
@@ -156,6 +175,7 @@ describe("JsonFormatter.discoveredAccounts", () => {
 
 const mockHuman = {
   formatAmount: async (val: string, _id: string) => `${val} formatted`,
+  formatBalanceAmount: async (b: Balance) => `${b.balance} formatted`,
 } as unknown as HumanFormatter;
 
 describe("JsonFormatter.balances", () => {
@@ -169,17 +189,19 @@ describe("JsonFormatter.balances", () => {
   });
 
   it("leaves a token balance's kind and metadata out of the output", async () => {
-    const json = new JsonFormatter(mockHuman);
-    const balances = [
-      BalanceSchema.parse({
-        kind: "token",
-        assetId: USDT_TOKEN_INFO.id,
-        balance: "1500000",
-        token: USDT_TOKEN_INFO,
-      }),
-    ];
-    const result = await json.balances(balances);
-    expect(result).toEqual([{ asset: USDT_TOKEN_INFO.id, amount: "1500000 formatted" }]);
+    const json = new JsonFormatter(new HumanFormatter(recordingTokenStore().store));
+
+    const result = await json.balances([usdtBalance]);
+
+    expect(result).toEqual([{ asset: USDT_TOKEN_INFO.id, amount: "1.5\u00a0USDT" }]);
+  });
+
+  it("formats a token balance without looking the token up in CAL", async () => {
+    const { store, lookups } = recordingTokenStore();
+
+    await new JsonFormatter(new HumanFormatter(store)).balances([usdtBalance]);
+
+    expect(lookups).toEqual([]);
   });
 });
 
@@ -238,20 +260,19 @@ describe("HumanFormatter.formatBalance", () => {
   });
 
   it("prints a token balance as its amount and asset id only", async () => {
-    const usdtStore = {
-      findTokenById: async () => ({ units: [{ name: "USDT", code: "USDT", magnitude: 6 }] }),
-    } as unknown as CryptoAssetsStore;
-    const f = new HumanFormatter(usdtStore);
-    const usdt = BalanceSchema.parse({
-      kind: "token",
-      assetId: USDT_TOKEN_INFO.id,
-      balance: "1500000",
-      token: USDT_TOKEN_INFO,
-    });
+    const f = new HumanFormatter(recordingTokenStore().store);
 
-    expect(await f.formatBalance(usdt)).toBe(
+    expect(await f.formatBalance(usdtBalance)).toBe(
       `${colors.green("1.5\u00a0USDT")} ${colors.dim(`(${USDT_TOKEN_INFO.id})`)}`,
     );
+  });
+
+  it("formats a token balance without looking the token up in CAL", async () => {
+    const { store, lookups } = recordingTokenStore();
+
+    await new HumanFormatter(store).formatBalance(usdtBalance);
+
+    expect(lookups).toEqual([]);
   });
 });
 

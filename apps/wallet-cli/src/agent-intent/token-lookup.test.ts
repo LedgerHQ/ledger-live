@@ -112,7 +112,13 @@ const erc20 = (ticker: string, name: string, contractAddress: string): TokenInfo
 });
 
 const tokenBalance = (balance: string, token: TokenInfo) =>
-  BalanceSchema.parse({ kind: "token", assetId: token.id, balance, token });
+  BalanceSchema.parse({
+    kind: "token",
+    assetId: token.id,
+    balance,
+    token,
+    unit: { name: token.ticker, code: token.ticker, magnitude: token.decimals },
+  });
 
 describe("findAccountTokens", () => {
   const account = parseV1(`account:2:address:ethereum:${SENDER}:m/44h/60h/0h/0/0`);

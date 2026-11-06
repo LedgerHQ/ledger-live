@@ -26,7 +26,7 @@ export class JsonFormatter {
     return Promise.all(
       balances.map(async b => ({
         asset: b.assetId,
-        amount: await this.human.formatAmount(b.balance, b.assetId),
+        amount: await this.human.formatBalanceAmount(b),
       })),
     );
   }
