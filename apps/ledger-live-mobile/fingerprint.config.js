@@ -1,5 +1,5 @@
-const fs = require("fs");
-const path = require("path");
+const fs = require("node:fs");
+const path = require("node:path");
 
 // Expo fingerprint of the native projects: the cache key of the e2e native builds (scripts/native-fingerprint.mjs).
 //
