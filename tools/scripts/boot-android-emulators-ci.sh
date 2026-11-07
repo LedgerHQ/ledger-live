@@ -129,7 +129,26 @@ for serial in "${SERIALS[@]}"; do
   adb -s "$serial" logcat -v time 2>/dev/null \
     | grep --line-buffered -iE "webview-command-line|command.?line|vulkan|angle" \
       >"$GPU_LOG_DIR/logcat-gpu-$serial.log" &
+  log "🔎 $serial wm size=$(adb -s "$serial" shell wm size | tr '\n' ' ')" \
+    "density=$(adb -s "$serial" shell wm density | tr '\n' ' ')" \
+    "heapgrowthlimit=$(adb -s "$serial" shell getprop dalvik.vm.heapgrowthlimit)" \
+    "heapsize=$(adb -s "$serial" shell getprop dalvik.vm.heapsize)" \
+    "MemTotal=$(adb -s "$serial" shell grep MemTotal /proc/meminfo | tr -s ' ')"
+  adb -s "$serial" logcat -b main,system,events,crash -v time 2>/dev/null \
+    | grep --line-buffered -iE "lowmemorykiller|lmkd|am_kill|am_proc_died|am_low_memory|Kill '|Fatal signal|com\.ledger\.live\.detox.*(died|crash|kill)|ApplicationExitInfo" \
+      >"$GPU_LOG_DIR/logcat-exits-$serial.log" &
 done
+declare -A LAST_EXITS=()
+while true; do
+  for serial in "${SERIALS[@]}"; do
+    exits=$(adb -s "$serial" shell dumpsys activity exit-info com.ledger.live.detox 2>/dev/null)
+    if [[ "$exits" != "${LAST_EXITS[$serial]:-}" ]]; then
+      LAST_EXITS[$serial]="$exits"
+      { echo "=== [$(date +%H:%M:%S)] $serial"; echo "$exits"; } >>"$GPU_LOG_DIR/exit-info-$serial.log"
+    fi
+  done
+  sleep 5
+done &
 while true; do
   for serial in "${SERIALS[@]}"; do
     pipeline=$(adb -s "$serial" shell dumpsys gfxinfo com.ledger.live.detox 2>/dev/null | grep -m1 Pipeline)
