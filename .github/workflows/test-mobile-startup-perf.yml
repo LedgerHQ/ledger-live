@@ -44,7 +44,7 @@ on:
         type: string
         default: "speculos-x-other-account,swap-history"
       threshold_ms:
-        description: "prod-vs-release and custom: B fails when it is slower than A by more than this, on the Debug screen value (from the first JS import when A and B count from different points) or with the native start"
+        description: "B fails (prod-vs-release, custom) or counts as detected (known-regression) when it is slower than A by more than this, on the Debug screen value (from the first JS import when A and B count from different points) or with the native start"
         required: true
         type: string
         default: "100"
@@ -511,7 +511,8 @@ jobs:
         run: bash e2e/tooling/startup-perf/devices/install-maestro.sh
 
       - name: Create and boot two simulators
-        timeout-minutes: 30
+        # Two boots and bootstatus waits of up to 5 min each, then up to 10 min of idle wait.
+        timeout-minutes: 35
         run: bash e2e/tooling/startup-perf/devices/boot-simulators.sh
 
       - name: Measure
