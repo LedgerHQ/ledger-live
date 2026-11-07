@@ -868,7 +868,8 @@ test("Wallet API methods: accounts, currencies and wallet @smoke", async ({
     await liveAppWebview.walletCapabilities();
 
     const res = await liveAppWebview.getResOutput();
-    expect(res).toEqual(methods);
+    // Capabilities are a set: their order follows when each handler was registered.
+    expect([...res].sort()).toEqual([...methods].sort());
 
     await resetWebview();
   });

@@ -4,7 +4,6 @@ import semver from "semver";
 import { intervalToDuration } from "date-fns";
 import { Account, AccountLike, AnyMessage, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { WalletHandlers, ServerConfig, WalletAPIServer } from "@ledgerhq/wallet-api-server";
-import { Permission, RpcRequest } from "@ledgerhq/wallet-api-core";
 import { first } from "rxjs/operators";
 import { getEnv } from "@shared/env";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
@@ -54,7 +53,6 @@ import {
   accountGetPublicKeyLogic,
   bitcoinFamilyAccountGetPublicKeyLogic,
   signRawTransactionLogic,
-  protectStorageLogic,
 } from "./logic";
 import { handlers as featureFlagsHandlers } from "./FeatureFlags";
 import { getAccountBridge } from "../bridge";
@@ -71,10 +69,12 @@ import { LiveAppManifest } from "../platform/types";
 import { ModularDrawerConfiguration } from "./ModularDrawer/types";
 import { useCurrenciesUnderFeatureFlag } from "../modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
 import { bindUiFlowToSession, type BridgeSession } from "./bridgeSession";
-import type {
-  WalletAPIAccountFilter,
-  WalletAPIAccountsProvider,
-} from "@features/platform-wallet-api-accounts";
+import type { WalletAPIAccountsProvider } from "@features/platform-wallet-api-accounts";
+import {
+  accountFilterOf,
+  effectiveCurrencyIds,
+  useWalletAPIServerCore,
+} from "@features/platform-wallet-api-server";
 
 export function safeGetRefValue<T>(ref: RefObject<T>): NonNullable<T> {
   if (!ref.current) {
@@ -194,30 +194,6 @@ export interface UiHook {
     onSuccess: (hash: string) => void;
     onCancel: (error: Error) => void;
   }) => void;
-}
-
-export function usePermission(manifest: AppManifest): Omit<Permission, "currencyIds"> {
-  return useMemo(
-    () => ({
-      methodIds: manifest.permissions,
-    }),
-    [manifest],
-  );
-}
-
-/** A server per bridge session: closing the session rejects its pending requests. */
-class BridgeSessionWalletAPIServer extends WalletAPIServer {
-  constructor(
-    private readonly session: BridgeSession,
-    config: ServerConfig,
-    customHandlers: WalletAPICustomHandlers,
-  ) {
-    super(session, config, undefined, customHandlers);
-  }
-
-  protected onRequest(request: RpcRequest): Promise<unknown> {
-    return this.session.cancelOnClose(super.onRequest(request));
-  }
 }
 
 /**
@@ -407,6 +383,10 @@ export function useWalletAPIServer({
     "storage.set": uiStorageSet,
     "transaction.broadcast": uiTxBroadcast,
   } = uiHook;
+  const storage = useMemo(
+    () => ({ "storage.get": uiStorageGet, "storage.set": uiStorageSet }),
+    [uiStorageGet, uiStorageSet],
+  );
   const uiAccountRequest = useSessionUiFlow(bridgeSession, uiHook["account.request"]);
   const uiAccountReceive = useSessionUiFlow(bridgeSession, uiHook["account.receive"]);
   const uiAccountPublicKeyUnavailable = useSessionUiFlow(
@@ -427,7 +407,6 @@ export function useWalletAPIServer({
   const { deactivatedCurrencyIds } = useCurrenciesUnderFeatureFlag();
   const flags = useFeatureFlags();
   const getFeature = useCallback((id: FeatureId): Feature | null => flags[id] ?? null, [flags]);
-  const permission = usePermission(manifest);
   const [widgetLoaded, setWidgetLoaded] = useState(false);
 
   // We need to set the wallet API account IDs mapping upfront
@@ -444,27 +423,14 @@ export function useWalletAPIServer({
     };
   }, [manifest, customHandlers, getFeature]);
 
-  // A new server for each session: the effects below register its handlers, config and
-  // permissions again. Config and custom handlers are kept up to date by those effects.
-  const server = useMemo<WalletAPIServer>(
-    () => new BridgeSessionWalletAPIServer(bridgeSession, config, mergedCustomHandlers),
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
-    [bridgeSession],
-  );
-
-  useEffect(() => {
-    if (mergedCustomHandlers) {
-      server.setCustomHandlers(mergedCustomHandlers);
-    }
-  }, [mergedCustomHandlers, server]);
-
-  useEffect(() => {
-    server.setConfig(config);
-  }, [config, server]);
-
-  useEffect(() => {
-    server.setPermissions(permission);
-  }, [permission, server]);
+  const server = useWalletAPIServerCore({
+    session: bridgeSession,
+    manifest,
+    config,
+    customHandlers: mergedCustomHandlers,
+    storage,
+    accountsProvider,
+  });
 
   useEffect(() => {
     tracking.load(manifest);
@@ -473,39 +439,14 @@ export function useWalletAPIServer({
   // TODO: refactor each handler into its own logic function for clarity
   useEffect(() => {
     server.setHandler("currency.list", async ({ currencyIds }) => {
-      // 1. Parse manifest currency patterns to determine what to include
-      const manifestCurrencyIds = manifest.currencies === "*" ? ["**"] : manifest.currencies;
+      const effectiveIds = effectiveCurrencyIds(manifest.currencies, currencyIds);
 
-      // 2. Apply query filter early - intersect with manifest patterns
-      const queryCurrencyIdsSet = currencyIds ? new Set(currencyIds) : undefined;
-      let effectiveCurrencyIds = manifestCurrencyIds;
-
-      if (queryCurrencyIdsSet) {
-        // If we have a query filter, narrow down what we need to fetch
-        effectiveCurrencyIds = manifestCurrencyIds.flatMap(manifestId => {
-          if (manifestId === "**") {
-            // Query can ask for anything, so use the query list
-            return [...queryCurrencyIdsSet];
-          } else if (manifestId.endsWith("/**")) {
-            // Pattern like "ethereum/**" - keep tokens from query that match this family
-            const family = manifestId.slice(0, -3);
-            return [...queryCurrencyIdsSet].filter(qId => qId.startsWith(`${family}/`));
-          } else if (queryCurrencyIdsSet.has(manifestId)) {
-            // Specific currency/token that's in the query
-            return [manifestId];
-          }
-          // Not in query, skip it
-          return [];
-        });
-      }
-
-      // 3. Parse effective currency IDs to determine what to fetch
-      const includeAllCurrencies = effectiveCurrencyIds.includes("**");
+      const includeAllCurrencies = effectiveIds.includes("**");
       const specificCurrencies = new Set<string>();
       const tokenFamilies = new Set<string>();
       const specificTokenIds = new Set<string>();
 
-      for (const id of effectiveCurrencyIds) {
+      for (const id of effectiveIds) {
         if (id === "**") {
           // Already handled above
           continue;
@@ -524,14 +465,14 @@ export function useWalletAPIServer({
         }
       }
 
-      // 4. Gather all supported parent currencies
+      // Gather all supported parent currencies
       const allCurrencies = listSupportedCurrencies().reduce<WalletAPICurrency[]>((acc, c) => {
         if (isWalletAPISupportedCurrency(c) && !deactivatedCurrencyIds.has(c.id))
           acc.push(currencyToWalletAPICurrency(c));
         return acc;
       }, []);
 
-      // 5. Determine which currencies to include based on patterns
+      // Determine which currencies to include based on patterns
       let includedCurrencies: WalletAPICurrency[] = [];
       if (includeAllCurrencies) {
         includedCurrencies = allCurrencies;
@@ -539,7 +480,7 @@ export function useWalletAPIServer({
         includedCurrencies = allCurrencies.filter(c => specificCurrencies.has(c.id));
       }
 
-      // 6. Fetch specific tokens by ID if any.
+      // Fetch specific tokens by ID if any.
       // One request per token — CAL has no bulk id lookup — and the Buy screen asks for
       // 736. See TOKEN_LOOKUP_CONCURRENCY for why this is bounded and why at that value.
       const specificTokens: WalletAPICurrency[] = [];
@@ -559,7 +500,7 @@ export function useWalletAPIServer({
         specificTokens.push(...resolvedTokens.filter((t): t is WalletAPICurrency => t !== null));
       }
 
-      // 7. Determine which token families to fetch (only if not already fetched as specific tokens)
+      // Determine which token families to fetch (only if not already fetched as specific tokens)
       const familiesToFetch = new Set<string>();
       if (includeAllCurrencies) {
         // Fetch tokens for all currency families
@@ -571,7 +512,7 @@ export function useWalletAPIServer({
         tokenFamilies.forEach(family => familiesToFetch.add(family));
       }
 
-      // 8. Fetch tokens for relevant families
+      // Fetch tokens for relevant families
       const fetchAllPagesForFamily = async (family: string) => {
         const args = { networkFamily: family, pageSize: 1000 };
         let hasNextPage = true;
@@ -602,7 +543,7 @@ export function useWalletAPIServer({
         [...familiesToFetch].map(f => fetchAllPagesForFamily(f)),
       );
 
-      // 9. Combine all results (no additional filter needed since we pre-filtered)
+      // Combine all results (no additional filter needed since we pre-filtered)
       const result = tokensByFamily.reduce<WalletAPICurrency[]>(
         (acc, tokens) => [...acc, ...tokens.map(t => currencyToWalletAPICurrency(t))],
         [...includedCurrencies, ...specificTokens],
@@ -613,60 +554,9 @@ export function useWalletAPIServer({
   }, [accountNames, manifest, server, tracking, dispatch, deactivatedCurrencyIds]);
 
   useEffect(() => {
+    if (accountsProvider) return;
     server.setHandler("account.list", async ({ currencyIds }) => {
-      // 1. Parse manifest currency patterns to determine what to include
-      const manifestCurrencyIds = manifest.currencies === "*" ? ["**"] : manifest.currencies;
-
-      // 2. Apply query filter early - intersect with manifest patterns
-      const queryCurrencyIdsSet = currencyIds ? new Set(currencyIds) : undefined;
-      let effectiveCurrencyIds = manifestCurrencyIds;
-
-      if (queryCurrencyIdsSet) {
-        // If we have a query filter, narrow down what we need to check
-        effectiveCurrencyIds = manifestCurrencyIds.flatMap(manifestId => {
-          if (manifestId === "**") {
-            // Query can ask for anything, so use the query list
-            return [...queryCurrencyIdsSet];
-          } else if (manifestId.endsWith("/**")) {
-            // Pattern like "ethereum/**" - keep tokens from query that match this family
-            const family = manifestId.slice(0, -3);
-            return [...queryCurrencyIdsSet].filter(qId => qId.startsWith(`${family}/`));
-          } else if (queryCurrencyIdsSet.has(manifestId)) {
-            // Specific currency/token that's in the query
-            return [manifestId];
-          }
-          // Not in query, skip it
-          return [];
-        });
-      }
-
-      // 3. Build a set of allowed currency IDs based on effective patterns
-      const allowedCurrencyIds = new Set<string>();
-      const includeAllCurrencies = effectiveCurrencyIds.includes("**");
-      const tokenFamilyPrefixes = new Set<string>();
-
-      for (const id of effectiveCurrencyIds) {
-        if (id === "**") {
-          // Will match all currencies
-          continue;
-        } else if (id.endsWith("/**")) {
-          // Pattern like "ethereum/**" - store prefix for matching
-          const family = id.slice(0, -3);
-          tokenFamilyPrefixes.add(family);
-        } else {
-          // Specific currency/token ID
-          allowedCurrencyIds.add(id);
-        }
-      }
-
-      // 4. Filter accounts based on effective currency IDs
-      const isAllowed: WalletAPIAccountFilter = (currencyId, parentCurrencyId) =>
-        includeAllCurrencies ||
-        allowedCurrencyIds.has(currencyId) ||
-        tokenFamilyPrefixes.has(parentCurrencyId);
-
-      if (accountsProvider) return accountsProvider.list(isAllowed);
-
+      const isAllowed = accountFilterOf(effectiveCurrencyIds(manifest.currencies, currencyIds));
       const filteredAccounts = accounts.filter(account =>
         account.type === "TokenAccount"
           ? isAllowed(account.token.id, account.token.parentCurrencyId)
@@ -828,18 +718,6 @@ export function useWalletAPIServer({
       ),
     );
   }, [bridgeSession, accounts, manifest, server, tracking, uiMessageSign]);
-
-  useEffect(() => {
-    if (!uiStorageGet) return;
-
-    server.setHandler("storage.get", protectStorageLogic(manifest, uiStorageGet));
-  }, [manifest, server, uiStorageGet]);
-
-  useEffect(() => {
-    if (!uiStorageSet) return;
-
-    server.setHandler("storage.set", protectStorageLogic(manifest, uiStorageSet));
-  }, [manifest, server, uiStorageSet]);
 
   useEffect(() => {
     if (!uiTxSignRaw) return;
@@ -1556,19 +1434,6 @@ export function useWalletAPIServer({
       );
     });
   }, [uiExchangeComplete, accounts, manifest, server, tracking]);
-
-  // The session receives messages once every handler above is registered, and once the hooks the
-  // host calls after this one (e.g. `useDappLogic` and its websocket) have run their effects for
-  // this session: the microtask runs after every effect of the current commit.
-  useEffect(() => {
-    let isCurrent = true;
-    queueMicrotask(() => {
-      if (isCurrent) bridgeSession.activate();
-    });
-    return () => {
-      isCurrent = false;
-    };
-  }, [bridgeSession, server]);
 
   return {
     widgetLoaded: widgetLoaded,
