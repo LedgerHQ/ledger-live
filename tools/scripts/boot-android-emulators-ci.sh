@@ -104,6 +104,10 @@ for serial in "${SERIALS[@]}"; do
     adb -s "$serial" shell setprop debug.hwui.renderer skiagl
     log "🧪 $serial debug.hwui.renderer=$(adb -s "$serial" shell getprop debug.hwui.renderer)"
   fi
+  if [[ "$GPU_EXPERIMENT" == hwui-vk ]]; then
+    adb -s "$serial" shell setprop debug.hwui.renderer skiavk
+    log "🧪 $serial debug.hwui.renderer=$(adb -s "$serial" shell getprop debug.hwui.renderer)"
+  fi
   if [[ "$GPU_EXPERIMENT" == webview-novulkan ]]; then
     adb -s "$serial" shell "echo '_ --disable-features=Vulkan' > /data/local/tmp/webview-command-line"
     log "🧪 $serial webview-command-line: $(adb -s "$serial" shell cat /data/local/tmp/webview-command-line)"
