@@ -291,6 +291,7 @@
     "@features/platform-feature-flags-firebase": "workspace:^",
     "@features/platform-market-countervalues": "workspace:*",
     "@features/platform-wallet-api-accounts": "workspace:*",
+    "@features/platform-wallet-api-server": "workspace:*",
     "@ledgerhq/asset-aggregation": "workspace:^",
     "@ledgerhq/coin-aleo": "workspace:^",
     "@ledgerhq/coin-algorand": "workspace:^",
