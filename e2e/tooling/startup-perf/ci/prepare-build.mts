@@ -28,6 +28,24 @@ const DETOX_BRIDGE_BLOCK = [
   "  };",
 ];
 export const JS_START_LINE = 'logStartupEvent("Before js imports");';
+export const STARTUP_END_LINE =
+  "  if (!alreadyLogged.has(eventName) && otherStartupEvents.every(e => alreadyLogged.has(e))) {";
+// How an app that logs the startup itself (logStartupForMeasurement.ts) calls it, and the launch
+// argument it waits for, which src/measure/startup-log.ts passes.
+export const APP_STARTUP_LOG_CALL = "      logStartupForMeasurement(eventName);";
+const APP_STARTUP_LOG_ARGUMENT = 'export const STARTUP_PERF_LOG_ARGUMENT = "startupPerfLog";';
+// The refs before it get the app's log line: React Native's hook behind console.*, at the only
+// level iOS release builds keep, and unlike console.error unseen by Datadog.
+const STARTUP_LOG_LINES = [
+  "    // startup-perf: the startup in the device log, as logStartupForMeasurement writes it",
+  "    const startupPerfEvents = resolveStartupEvents();",
+  "    const startupPerfLine = JSON.stringify({",
+  "      t: startupPerfEvents.find(e => e.event === eventName)?.time ?? 0,",
+  "      e: startupPerfEvents.map(e => [e.event, e.time, e.count]),",
+  "    });",
+  "    type StartupPerfLog = { nativeLoggingHook?: (message: string, level: number) => void };",
+  "    (globalThis as StartupPerfLog).nativeLoggingHook?.(`startup-perf ${startupPerfLine}`, 3);",
+];
 const TRUSTCHAIN_LENSE = "    lense: trustchainStoreSelector,";
 const SAVE_AT_START = "    saveAtStart: true,";
 const SWAP_API_BASE = 'SWAP_API_BASE="https://swap.ledger.com/v5"';
@@ -134,6 +152,18 @@ export const logJsStartEpoch = (source: string): string =>
   );
 
 /**
+ * For the refs whose app does not log the startup itself: writes it to the device log as soon as it
+ * is over, as `startup-perf {"t": app startup time, "e": [[event, time, count], ...]}`, on every
+ * launch. The harness reads it there instead of opening the Debug screen.
+ */
+export const logStartupForMeasurement = (source: string): string =>
+  textOf(
+    linesOf(source).flatMap(line =>
+      line === STARTUP_END_LINE ? [line, ...STARTUP_LOG_LINES] : [line],
+    ),
+  );
+
+/**
  * LIVE-36190: the trustchain is no longer saved at start, so its member keypair is generated again
  * at every launch (#21001 fixed it; its other half, a zod check of the keypair, no longer exists).
  */
@@ -148,6 +178,8 @@ interface AppFiles {
   rspack: string;
   packageJson: string;
   jsStart: string;
+  lastStartupEvents: string;
+  startupLog: string;
   dbSave: string;
 }
 
@@ -157,11 +189,15 @@ const appFiles = (app: string): AppFiles => ({
   rspack: path.join(app, "rspack.config.mjs"),
   packageJson: path.join(app, "package.json"),
   jsStart: path.join(app, "src/mvvm/utils/logStartup/beforeJSImports.ts"),
+  lastStartupEvents: path.join(app, "src/mvvm/utils/logLastStartupEvents.ts"),
+  startupLog: path.join(app, "src/mvvm/utils/logStartupForMeasurement.ts"),
   dbSave: path.join(app, "src/components/DBSave.ts"),
 });
 
 const read = (file: string) => readFileSync(file, "utf8");
 const exactly = (file: string, line: string) => countLines(linesOf(read(file)), l => l === line);
+const appLogsStartup = (files: AppFiles) =>
+  exactly(files.lastStartupEvents, APP_STARTUP_LOG_CALL) > 0;
 
 function requireOne(file: string, line: string, anchor: string): void {
   if (exactly(file, line) !== 1) throw new StepFailure(`${anchor} anchor missing in ${file}`);
@@ -169,7 +205,8 @@ function requireOne(file: string, line: string, anchor: string): void {
 
 /** Every anchor, before any file is edited. */
 function checkApp(files: AppFiles, regression: string): void {
-  for (const file of [files.env, files.index, files.rspack, files.packageJson, files.jsStart]) {
+  const required = [files.env, files.index, files.rspack, files.packageJson, files.jsStart];
+  for (const file of [...required, files.lastStartupEvents]) {
     if (!existsSync(file)) throw new StepFailure(`${file} not found`);
   }
   if (read(files.packageJson).includes('"react-native-startup-time"')) {
@@ -178,13 +215,21 @@ function checkApp(files: AppFiles, regression: string): void {
     );
   }
   if (
-    [files.index, files.rspack, files.jsStart].some(file => read(file).includes("startup-perf"))
+    [files.index, files.rspack, files.jsStart, files.lastStartupEvents].some(file =>
+      read(file).includes("startup-perf"),
+    )
   ) {
     throw new StepFailure("this checkout is already patched");
   }
   requireOne(files.rspack, RSPACK_LINE, "isDetoxBuild");
   requireOne(files.index, BRIDGE_IMPORT, "bridge import");
   requireOne(files.jsStart, JS_START_LINE, "JS start");
+  if (appLogsStartup(files)) {
+    if (!existsSync(files.startupLog)) throw new StepFailure(`${files.startupLog} not found`);
+    requireOne(files.startupLog, APP_STARTUP_LOG_ARGUMENT, "startup log argument");
+  } else {
+    requireOne(files.lastStartupEvents, STARTUP_END_LINE, "startup end");
+  }
   if (regression) checkLive36190(files.dbSave);
   for (const line of ["MOCK=1", "DETOX=1", "FORCE_DEBUG_VISIBLE=1"]) {
     if (exactly(files.env, line) !== 1) {
@@ -255,6 +300,15 @@ function main(): void {
 
   rewrite(files.jsStart, logJsStartEpoch);
   summary('startup events include "JS start epoch <ms>"');
+
+  if (appLogsStartup(files)) {
+    summary(
+      'the app logs the startup itself ("startup-perf {...}") when launched with startupPerfLog',
+    );
+  } else {
+    rewrite(files.lastStartupEvents, logStartupForMeasurement);
+    summary('the startup is logged as "startup-perf {...}" as soon as it is over');
+  }
 
   if (regression) {
     rewrite(files.dbSave, readdLive36190);

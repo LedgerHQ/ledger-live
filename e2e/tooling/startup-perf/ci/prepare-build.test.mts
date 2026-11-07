@@ -6,10 +6,12 @@ import {
   gateBridgeOnWsPort,
   JS_START_LINE,
   logJsStartEpoch,
+  logStartupForMeasurement,
   prodLikeEnv,
   readdLive36190,
   realBlur,
   RSPACK_LINE,
+  STARTUP_END_LINE,
 } from "./prepare-build.mts";
 import { linesOf, textOf } from "./step.mts";
 
@@ -126,6 +128,21 @@ describe("logJsStartEpoch", () => {
       'const startupPerfJsStart = logStartupEvent("Before js imports");',
       "logStartupEvent(`JS start epoch ${startupPerfJsStart.time}`); // startup-perf: JS start wall clock",
     ]);
+  });
+});
+
+describe("logStartupForMeasurement", () => {
+  it("logs the startup as soon as it is over, before the analytics wait", () => {
+    const lines = linesOf(logStartupForMeasurement(textOf([STARTUP_END_LINE, "    try {"])));
+    assert.equal(lines[0], STARTUP_END_LINE);
+    assert.equal(lines.at(-1), "    try {");
+    const added = lines.slice(1, -1).join("\n");
+    assert.match(added, /const startupPerfEvents = resolveStartupEvents\(\);/);
+    assert.match(
+      added,
+      /t: startupPerfEvents\.find\(e => e\.event === eventName\)\?\.time \?\? 0,/,
+    );
+    assert.match(added, /nativeLoggingHook\?\.\(`startup-perf \$\{startupPerfLine\}`, 3\);$/);
   });
 });
 
