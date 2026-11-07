@@ -61,3 +61,20 @@ export function comparison({
     rounds.flatMap(round => [launchOf("A", phase, round), launchOf("B", phase, round)]),
   );
 }
+
+/**
+ * A counts from the first JS import, B from the process start, 800 ms earlier, and one B launch
+ * fell back to the first JS import (the app found no process start). Both builds are as fast.
+ */
+export function startsDifferWithFallback(): Sample[] {
+  const samples = comparison({
+    deltaMs: 0,
+    a: { jsStartOffset: 0, nativeStartMs: 800 },
+    b: { jsStartOffset: 800, nativeStartMs: 800, appStartupTime: 1800 },
+  });
+  const fallback = samples.find(s => s.side === "B");
+  if (!fallback?.events) throw new Error("no B launch");
+  fallback.appStartupTime = 1000;
+  fallback.events["Before js imports"].time = 0;
+  return samples;
+}

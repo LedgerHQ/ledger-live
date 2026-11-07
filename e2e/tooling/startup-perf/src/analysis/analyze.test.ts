@@ -9,7 +9,7 @@ import {
   summarise,
   type Row,
 } from "./analyze.ts";
-import { comparison, launch } from "./fake-samples.ts";
+import { comparison, launch, startsDifferWithFallback } from "./fake-samples.ts";
 
 const GATE = { preset: "custom", thresholdMs: 100 };
 function rowOf(rows: Row[], measure: (name: string) => boolean): Row {
@@ -198,6 +198,14 @@ describe("summarise", () => {
     assert.deepEqual(row.bases, { A: "js", B: "process" });
     assert.equal(row.verdict, "PASS");
     assert.equal(nativeRow(rows).verdict, "PASS");
+  });
+
+  it("keeps a launch that fell back to the first JS import when comparing from there", () => {
+    const row = debugRow(summarise(startsDifferWithFallback(), GATE));
+    assert.equal(row.measure, "Debug screen, from JS start");
+    assert.equal(row.pairs, 6);
+    assert.deepEqual(row.hl, { estimate: 0, low: 0, high: 0 });
+    assert.deepEqual(row.offBaseLaunches, { A: 0, B: 1 });
   });
 
   it("leaves out of the Debug screen row a launch that counted from another start", () => {

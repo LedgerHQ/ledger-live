@@ -203,7 +203,7 @@ export function summarise(samples: Sample[], { preset, thresholdMs }: GateOption
       measure,
       startsDiffer,
       bases,
-      offBaseLaunches: screen === debugValue ? offBaseLaunches : { A: 0, B: 0 },
+      offBaseLaunches,
       ...d,
       failed: measured.filter(s => !s.ok).length,
       launches: measured.length,
