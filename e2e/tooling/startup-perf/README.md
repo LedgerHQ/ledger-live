@@ -8,13 +8,18 @@ jobs check out `ci/` alone, so the measured ref's Nx never sees a second copy of
 measure jobs check out this folder, `e2e/mobile/userdata` and, on Android, `tools/scripts` and the
 signing keystore.
 
-`ci/` holds what the workflow's steps run, `src/` the harness with each test next to its module, and
-`flows/` the Maestro flows.
+`ci/` holds what the workflow's steps run, `src/` the harness, each test next to its module, and
+`flows/` the Maestro flows. The `ci/` scripts run from that checkout of `ci/` alone, with the
+measured ref's Node (24.14 or later from `live-mobile@4.26.0` on): they never import from `src/`
+(`src/` may import from `ci/`), and they are `.mts` so Node runs them as ES modules without the
+`package.json`. Shell is kept for the two steps that only call system tools.
 
 | Path                            | Role                                                                                  |
 | ------------------------------- | ------------------------------------------------------------------------------------- |
-| `ci/prepare-build.sh`           | Makes the checked-out ref's E2E prerelease build prod-like, before `e2e:build`        |
-| `ci/verify-build.sh`            | Checks the built binary: no `MOCK`/`DETOX`, `FORCE_DEBUG_VISIBLE=1`, real blur        |
+| `ci/resolve-refs.mts`           | The plan job: resolves refs A and B to commits, branches and tags only                |
+| `ci/prepare-build.mts`          | Makes the checked-out ref's E2E prerelease build prod-like, before `e2e:build`        |
+| `ci/verify-build.mts`           | Checks the built binary: no `MOCK`/`DETOX`, `FORCE_DEBUG_VISIBLE=1`, real blur        |
+| `ci/step.mts`                   | What those three share: workspace paths, error annotations, job summary               |
 | `ci/install-maestro.sh`         | Installs the pinned Maestro, checked against its SHA-256                              |
 | `ci/wait-for-idle-host.sh`      | Waits for the iOS host's load to fall below its CPU count after the simulators boot   |
 | `src/run.ts`                    | The CLI that measures: installs, injects and launches A and B, writes `samples.jsonl` |
@@ -42,7 +47,7 @@ generates its keypair again, the cost #21001 removed (its other half, a zod chec
 longer exists).
 
 Refs are branches or tags only: a raw SHA could be a fork's commit, run with the workflow's secrets.
-They start at `live-mobile@4.26.0`: `prepare-build.sh` rejects older ones, which still count the
+They start at `live-mobile@4.26.0`: `prepare-build.mts` rejects older ones, which still count the
 Debug value with react-native-startup-time.
 Pairs are even and at least 6, half before and half after the device swap; fewer give no 95%
 interval.
@@ -50,7 +55,7 @@ interval.
 ## The build
 
 The E2E "production Firebase" build (`.env.mock.prerelease`): `detoxPreRelease` x86_64 APK on
-Android, Release simulator app on iOS, with the JS bundled in the binary. `prepare-build.sh`:
+Android, Release simulator app on iOS, with the JS bundled in the binary. `prepare-build.mts`:
 
 - removes `MOCK`, `DETOX` and the other test-only keys no store env file has, and points swap to
   prod;
@@ -121,7 +126,7 @@ pnpm --filter @ledgerhq/mobile-startup-perf test        # also: typecheck, lint,
 ```
 
 They run in the "E2E Tooling Checks" PR job when this folder changes. `app-contract.test.ts` checks
-the mobile app of the checkout against what the measurement needs: `prepare-build.sh` still applies
+the mobile app of the checkout against what the measurement needs: `prepare-build.mts` still applies
 (LIVE-36190 included), the bridge still handles every message `inject.ts` sends, and the screens the
 flows open still show "Debug", "Performance" and "App startup time". The code is TypeScript that
 Node 24 runs as it is, with no build step: `tsc` checks it in strict mode, so a field renamed in

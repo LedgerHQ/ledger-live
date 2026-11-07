@@ -71,6 +71,17 @@ jobs:
       label_a: ${{ steps.plan.outputs.label_a }}
       label_b: ${{ steps.plan.outputs.label_b }}
     steps:
+      # This workflow's scripts only.
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          sparse-checkout: /e2e/tooling/startup-perf/ci/
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+
       - name: Resolve refs
         id: plan
         env:
@@ -82,70 +93,7 @@ jobs:
           SCENARIOS: ${{ inputs.scenarios }}
           BRANCH_SHA: ${{ github.sha }}
           REPO_URL: ${{ github.server_url }}/${{ github.repository }}.git
-        run: |
-          set -euo pipefail
-          if ! [[ "$PAIRS" =~ ^[0-9]+$ ]] || (( PAIRS < 6 || PAIRS % 2 )); then
-            echo "::error::pairs must be an even number ≥ 6, got '$PAIRS'"; exit 1
-          fi
-          [[ "$THRESHOLD" =~ ^[0-9]+$ ]] || { echo "::error::threshold_ms must be a number"; exit 1; }
-          # No raw SHA: a fork's commit can be fetched here too and would run with this workflow's secrets.
-          resolve() {
-            local ref="$1" out sha
-            out=$(git ls-remote "$REPO_URL" "refs/heads/$ref" "refs/tags/$ref" "refs/tags/$ref^{}")
-            sha=$(awk -v t="refs/tags/$ref^{}" '$2 == t { print $1 }' <<< "$out")
-            [[ -n "$sha" ]] || sha=$(awk -v h="refs/heads/$ref" -v t="refs/tags/$ref" '$2 == h || $2 == t { print $1; exit }' <<< "$out")
-            [[ -n "$sha" ]] || { echo "::error::'$ref' is not a branch or tag of this repository (to measure a commit, push a branch or tag at it)" >&2; return 1; }
-            echo "$sha"
-          }
-          case "$PRESET" in
-            prod-vs-release)
-              if [[ -z "$REF_A" ]]; then
-                REF_A=$(git ls-remote --tags --refs "$REPO_URL" 'refs/tags/live-mobile@*' |
-                  awk '{ sub("refs/tags/", "", $2); print $2 }' |
-                  grep -E '^live-mobile@[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1) || true
-                [[ -n "$REF_A" ]] || { echo "::error::no live-mobile@X.Y.Z tag found"; exit 1; }
-              fi
-              if [[ -z "$REF_B" ]]; then
-                [[ -n "$(git ls-remote --heads "$REPO_URL" refs/heads/release)" ]] ||
-                  { echo "::error::no release branch: no pre-release in progress (set ref_b, e.g. hotfix)"; exit 1; }
-                REF_B=release
-              fi
-              A=$(resolve "$REF_A"); B=$(resolve "$REF_B"); SIDES='["a","b"]'
-              LABEL_A="$REF_A"; LABEL_B="$REF_B"
-              [[ "$A" != "$B" ]] || echo "::warning::$REF_A and $REF_B are the same commit" ;;
-            custom)
-              if [[ -z "$REF_A" || -z "$REF_B" ]]; then
-                echo "::error::custom needs both ref_a and ref_b"; exit 1
-              fi
-              A=$(resolve "$REF_A"); B=$(resolve "$REF_B"); SIDES='["a","b"]'
-              LABEL_A="$REF_A"; LABEL_B="$REF_B" ;;
-            aa-noise)
-              if [[ -n "$REF_A" ]]; then A=$(resolve "$REF_A"); else A="$BRANCH_SHA"; fi
-              B="$A"; SIDES='["a"]'
-              LABEL_A="${REF_A:-$GITHUB_REF_NAME}"; LABEL_B="the same binary" ;;
-            known-regression)
-              if [[ -n "$REF_A" ]]; then A=$(resolve "$REF_A"); else A="$BRANCH_SHA"; fi
-              B="$A"; SIDES='["a","b"]'
-              LABEL_A="${REF_A:-$GITHUB_REF_NAME}"; LABEL_B="$LABEL_A with LIVE-36190 re-added" ;;
-          esac
-          LABEL_A="$LABEL_A (${A:0:10})"
-          [[ "$SIDES" == '["a"]' ]] || LABEL_B="$LABEL_B (${B:0:10})"
-          {
-            echo "sides=$SIDES"
-            echo "scenarios=[\"${SCENARIOS//,/\",\"}\"]"
-            echo "ref_a=$A"
-            echo "ref_b=$B"
-            echo "label_a=$LABEL_A"
-            echo "label_b=$LABEL_B"
-          } >> "$GITHUB_OUTPUT"
-          {
-            echo "### Startup performance: $PRESET"
-            echo ""
-            echo "- A: \`$LABEL_A\` → \`$A\`"
-            echo "- B: \`$LABEL_B\` → \`$B\`"
-            echo "- $PAIRS pairs per scenario"
-            echo "- Android: one job (runner) per scenario, two emulators with $PERF_AVD_CORES cores each, cellular network like E2E"
-          } >> "$GITHUB_STEP_SUMMARY"
+        run: node e2e/tooling/startup-perf/ci/resolve-refs.mts
 
   build-android:
     name: "Android build ${{ matrix.side }}"
@@ -214,7 +162,7 @@ jobs:
       - name: Prepare the prod-like build
         env:
           STARTUP_PERF_REGRESSION: ${{ inputs.preset == 'known-regression' && matrix.side == 'b' && 'LIVE-36190' || '' }}
-        run: bash .startup-perf/e2e/tooling/startup-perf/ci/prepare-build.sh
+        run: node .startup-perf/e2e/tooling/startup-perf/ci/prepare-build.mts
 
       - name: Build detoxPreRelease APK (x86_64, JS bundled)
         env:
@@ -231,7 +179,7 @@ jobs:
           mkdir -p out
           APK=$(find apps/ledger-live-mobile/android/app/build/outputs/apk/detoxPreRelease -name "*x86_64*.apk" | head -1)
           [[ -n "$APK" ]] || { echo "::error::no x86_64 detoxPreRelease APK found"; exit 1; }
-          bash .startup-perf/e2e/tooling/startup-perf/ci/verify-build.sh android "$APK"
+          node .startup-perf/e2e/tooling/startup-perf/ci/verify-build.mts android "$APK"
           cp "$APK" out/app.apk
           git rev-parse HEAD > out/sha.txt
           ls -la out
@@ -304,7 +252,7 @@ jobs:
       - name: Prepare the prod-like build
         env:
           STARTUP_PERF_REGRESSION: ${{ inputs.preset == 'known-regression' && matrix.side == 'b' && 'LIVE-36190' || '' }}
-        run: bash .startup-perf/e2e/tooling/startup-perf/ci/prepare-build.sh
+        run: node .startup-perf/e2e/tooling/startup-perf/ci/prepare-build.mts
 
       - name: Build Release simulator app (JS bundled)
         env:
@@ -319,7 +267,7 @@ jobs:
           set -euo pipefail
           mkdir -p out
           APP=apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app
-          bash .startup-perf/e2e/tooling/startup-perf/ci/verify-build.sh ios "$APP"
+          node .startup-perf/e2e/tooling/startup-perf/ci/verify-build.mts ios "$APP"
           ditto -c -k --keepParent "$APP" out/app.zip
           git rev-parse HEAD > out/sha.txt
           ls -la out
