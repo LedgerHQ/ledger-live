@@ -17,6 +17,7 @@ const READ = {
 describe("parseStartupLog", () => {
   it("reads logcat's raw ReactNativeJS lines", () => {
     assert.deepEqual(parseStartupLog(`startup-perf ${PAYLOAD}\n`), READ);
+    assert.deepEqual(parseStartupLog(`startup-perf ${PAYLOAD}\r\n`), READ);
   });
 
   it("reads `log show`'s compact lines and skips its header, which quotes the marker", () => {
