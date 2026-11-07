@@ -141,7 +141,10 @@ pnpm --filter @ledgerhq/mobile-startup-perf test        # also: typecheck, lint,
 They run in the "E2E Tooling Checks" PR job when this folder changes. `app-contract.test.ts` checks
 the mobile app of the checkout against what the measurement needs: `prepare-build.mts` still applies
 (LIVE-36190 included), the bridge still handles every message `inject.ts` sends, and the screens the
-flows open still show "Debug", "Performance" and "App startup time". The code is TypeScript that
+flows open still show "Debug", "Performance" and "App startup time". The package does not depend on
+`live-mobile`, so a mobile PR does not run it: an app change that breaks the measurement fails this
+test at the next change to this folder, and a workflow run before that stops in `prepare-build.mts`
+on the missing anchor. The code is TypeScript that
 Node 24 runs as it is, with no build step: `tsc` checks it in strict mode, so a field renamed in
 `Sample` fails wherever it is still used. Only erasable syntax is allowed (no `enum` or
 `namespace`), and imports name the `.ts` file.
