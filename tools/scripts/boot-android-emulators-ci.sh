@@ -82,6 +82,9 @@ if [[ "$GPU_EXPERIMENT" == swangle ]]; then
 fi
 log "🧪 GPU experiment: $GPU_EXPERIMENT, options: ${AVD_OPTIONS:-}"
 
+ADB_SERVER_LOG="${TMPDIR:-/tmp}/adb.$(id -u).log"
+log "🔎 adb server log: $ADB_SERVER_LOG ($(grep -c '' "$ADB_SERVER_LOG" 2>/dev/null || echo 0) lines so far)"
+
 log "🛫 Starting emulators..."
 i=1
 for avd in "${AVD_NAMES[@]}"; do
@@ -157,4 +160,30 @@ while true; do
     fi
   done
   sleep 20
+done &
+
+declare -A LAST_TRANSPORT=()
+while true; do
+  devices=$(adb devices -l 2>/dev/null)
+  for serial in "${SERIALS[@]}"; do
+    line=$(grep "^${serial}[[:space:]]" <<<"$devices")
+    now="$(awk '{print $2}' <<<"$line") $(grep -o 'transport_id:[0-9]*' <<<"$line")"
+    if [[ "$now" != "${LAST_TRANSPORT[$serial]:-}" ]]; then
+      echo "[$(date +%H:%M:%S.%3N)] $serial ${LAST_TRANSPORT[$serial]:-start} -> ${now:-missing}" \
+        >>"$GPU_LOG_DIR/adb-transports.log"
+      LAST_TRANSPORT[$serial]="$now"
+    fi
+  done
+  sleep 1
+done &
+
+while true; do
+  cp "$ADB_SERVER_LOG" "$GPU_LOG_DIR/adb-server.log" 2>/dev/null
+  for serial in "${SERIALS[@]}"; do
+    if adb -s "$serial" logcat -d -v time -s adbd:* >"$GPU_LOG_DIR/.adbd-$serial.tmp" 2>/dev/null \
+      && [[ -s "$GPU_LOG_DIR/.adbd-$serial.tmp" ]]; then
+      mv "$GPU_LOG_DIR/.adbd-$serial.tmp" "$GPU_LOG_DIR/adbd-$serial.log"
+    fi
+  done
+  sleep 30
 done &
