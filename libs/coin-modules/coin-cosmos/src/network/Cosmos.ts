@@ -23,6 +23,9 @@ import {
   mergeQueuedMessages,
 } from "./babylonEpoching";
 import * as CosmosSDKTypes from "./types";
+import { assertValidPaginationLimit } from "./assertValidPaginationLimit";
+import { toBlockInfo } from "./utils";
+import { BlockInfo } from "@ledgerhq/coin-module-framework/api/types";
 
 const USDC_DENOM = "ibc/8E27BA2D5493AF5636760E354E46004562C46AB7EC0CC4C1CA14E9E20E2545B5";
 
@@ -324,20 +327,13 @@ export class CosmosAPI {
   };
 
   /** Latest block metadata — unlike {@link getHeight}, also returns the block hash and time. */
-  getLatestBlockInfo = async (): Promise<{ height: number; hash: string; time: Date }> => {
-    const {
-      data: { block_id, block, sdk_block },
-    } = await network<CosmosSDKTypes.GetLatestBlockSDK>({
+  getLatestBlockInfo = async (): Promise<BlockInfo> => {
+    const { data } = await network<CosmosSDKTypes.GetLatestBlockSDK>({
       method: "GET",
       url: `${this.defaultEndpoint}/cosmos/base/tendermint/${this.version}/blocks/latest`,
     });
 
-    const header = (sdk_block ?? block).header;
-    return {
-      height: Number.parseInt(header.height),
-      hash: block_id.hash,
-      time: new Date(header.time),
-    };
+    return toBlockInfo(data);
   };
 
   /**
@@ -733,5 +729,75 @@ export class CosmosAPI {
     } catch {
       throw new Error(`Can't fetch usdc rewards for address ${address}`);
     }
+  };
+
+  getBlockInfo = async (height: number): Promise<BlockInfo> => {
+    const { data } = await network<CosmosSDKTypes.GetBlockByHeightSDK>({
+      method: "GET",
+      url: `${this.defaultEndpoint}/cosmos/base/tendermint/${this.version}/blocks/${height}`,
+    });
+
+    return toBlockInfo(data);
+  };
+
+  getBlockWithTxs = async (
+    height: number,
+    limit: number,
+  ): Promise<CosmosSDKTypes.GetBlockWithTxsSDK> => {
+    assertValidPaginationLimit(limit);
+
+    const fetchPage = async (offset: number) => {
+      const params = new URLSearchParams({
+        "pagination.limit": String(limit),
+        "pagination.offset": String(offset),
+      });
+      const { data } = await network<CosmosSDKTypes.GetBlockWithTxsSDK>({
+        method: "GET",
+        url: `${this.defaultEndpoint}/cosmos/tx/${this.version}/txs/block/${height}?${params.toString()}`,
+      });
+      return data;
+    };
+
+    const firstPage = await fetchPage(0);
+    const total = Number(firstPage.pagination?.total ?? firstPage.txs.length);
+    const remainingPageCount = Math.max(0, Math.ceil((total - limit) / limit));
+    const remainingOffsets = Array.from(
+      { length: remainingPageCount },
+      (_, index) => (index + 1) * limit,
+    );
+    const remainingPages = await Promise.all(remainingOffsets.map(fetchPage));
+    const txs = [firstPage, ...remainingPages].flatMap(page => page.txs);
+
+    return { ...firstPage, txs };
+  };
+
+  getTransactionsByHeight = async (height: number, limit: number): Promise<CosmosTx[]> => {
+    assertValidPaginationLimit(limit);
+
+    const coerced = semver.coerce(await this.cosmosSDKVersion);
+    const useQueryParam = coerced !== null && semver.gte(coerced, "0.50.0");
+    const usePageParams = coerced !== null && semver.gte(coerced, "0.46.0");
+    const queryParam = useQueryParam ? "query" : "events";
+    const allTxs: CosmosTx[] = [];
+    let page = 1;
+    let hasMore = true;
+
+    while (hasMore) {
+      const params = new URLSearchParams({ [queryParam]: `tx.height=${height}` });
+      if (usePageParams) {
+        params.set("page", String(page));
+        params.set("limit", String(limit));
+      } else {
+        params.set("pagination.limit", String(limit));
+        params.set("pagination.offset", String((page - 1) * limit));
+      }
+
+      const { txs, total } = await this.fetchTransactions(params);
+      allTxs.push(...txs);
+      page += 1;
+      hasMore = txs.length > 0 && allTxs.length < total;
+    }
+
+    return allTxs;
   };
 }

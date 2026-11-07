@@ -10,6 +10,13 @@ jest.mock("../network/Cosmos", () => ({
       .fn()
       .mockResolvedValue({ accountNumber: 0, sequence: 0, pubKeyType: "", pubKey: "" }),
     getLatestBlockInfo: jest.fn().mockResolvedValue({ height: 1, hash: "hash", time: new Date() }),
+    getBlockInfo: jest.fn().mockResolvedValue({ height: 7, hash: "hash7", time: new Date(0) }),
+    getBlockWithTxs: jest.fn().mockResolvedValue({
+      block_id: { hash: "hash7" },
+      block: { header: { height: "7", time: "1970-01-01T00:00:00Z" }, data: { txs: [] } },
+      txs: [],
+    }),
+    getTransactionsByHeight: jest.fn().mockResolvedValue([]),
     getTransactionsPage: jest.fn().mockResolvedValue({ streams: [] }),
     getValidators: jest.fn().mockResolvedValue([]),
     getDelegations: jest.fn().mockResolvedValue([]),
@@ -21,7 +28,11 @@ jest.mock("../network/Cosmos", () => ({
 
 import { createApi } from "./index";
 
-const config = { status: { type: "active" }, denom: "uatom" } as unknown as CosmosCoinConfig;
+const config = {
+  status: { type: "active" },
+  denom: "uatom",
+  getBlock: { pagination: { limit: 100 } },
+} as unknown as CosmosCoinConfig;
 
 const makeContext = (cfg: CosmosCoinConfig = config): CosmosContext => ({
   config: async () => cfg,
@@ -43,14 +54,7 @@ describe("api/createApi", () => {
   // Absent, raising "<name> is not supported" through the resolver — exhaustive by `toEqual`.
   it("omits the capabilities the chain has none of", async () => {
     await expect(capabilityReport(createApi("cosmos"), context)).resolves.toEqual({
-      unsupported: [
-        "call",
-        "craftRawTransaction",
-        "getBlock",
-        "getBlockInfo",
-        "getRewards",
-        "register",
-      ],
+      unsupported: ["call", "craftRawTransaction", "getRewards", "register"],
       inconsistent: [],
     });
   });
@@ -61,6 +65,8 @@ describe("api/createApi", () => {
       "getBalance",
       "getNextSequence",
       "lastBlock",
+      "getBlockInfo",
+      "getBlock",
       "validateAddress",
       "broadcast",
       "craftTransaction",
@@ -85,6 +91,11 @@ describe("api/createApi", () => {
     ]);
     await expect(api.getNextSequence(context, "cosmos1a")).resolves.toBe(0n);
     await expect(api.lastBlock(context)).resolves.toHaveProperty("height", 1);
+    await expect(api.getBlockInfo(context, 7)).resolves.toHaveProperty("hash", "hash7");
+    await expect(api.getBlock(context, 7)).resolves.toEqual({
+      info: { height: 7, hash: "hash7", time: new Date(0) },
+      transactions: [],
+    });
     await expect(api.listOperations(context, "cosmos1a", { minHeight: 0 })).resolves.toEqual({
       items: [],
     });
@@ -94,6 +105,44 @@ describe("api/createApi", () => {
     await expect(api.validateIntent(context, sendIntent, [])).resolves.toHaveProperty("errors");
     await expect(api.validateAddress(context, "cosmos1sender", {})).resolves.toBe(false);
     expect(() => api.combine(context, "{}", ["00"])).toThrow("public key");
+  });
+
+  it.each([
+    ["a null getBlock", null],
+    ["a null pagination", { pagination: null }],
+    ["a zero limit", { pagination: { limit: 0 } }],
+  ])("logs and falls back to the default limit for %s", async (_name, invalid) => {
+    const api = createApi("cosmos");
+    const logger = jest.fn();
+
+    await api.getBlock({ ...makeContext({ ...config, getBlock: invalid } as never), logger }, 7);
+
+    const instance = jest.mocked(CosmosAPI).mock.results.at(-1)?.value;
+    expect(logger).toHaveBeenCalledWith(
+      "Invalid getBlock configuration for cosmos, using the default",
+    );
+    expect(instance.getBlockWithTxs).toHaveBeenCalledWith(7, 100);
+    expect(instance.getTransactionsByHeight).toHaveBeenCalledWith(7, 100);
+  });
+
+  it("does not log for a valid getBlock configuration", async () => {
+    const api = createApi("cosmos");
+    const logger = jest.fn();
+
+    await api.getBlock({ ...context, logger }, 7);
+
+    expect(logger).not.toHaveBeenCalled();
+  });
+
+  it("hands the pagination limit of the resolved config to the block queries", async () => {
+    const api = createApi("cosmos");
+    const limitedContext = makeContext({ ...config, getBlock: { pagination: { limit: 25 } } });
+
+    await api.getBlock(limitedContext, 7);
+
+    const instance = jest.mocked(CosmosAPI).mock.results.at(-1)?.value;
+    expect(instance.getBlockWithTxs).toHaveBeenCalledWith(7, 25);
+    expect(instance.getTransactionsByHeight).toHaveBeenCalledWith(7, 25);
   });
 
   it("threads each currency's config from its own context into the CosmosAPI (no singleton seeding)", async () => {
