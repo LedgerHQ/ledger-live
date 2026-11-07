@@ -551,6 +551,52 @@ test("an import after a string reading import or from is flagged, a commented im
   ]);
 });
 
+test("an import or require written inside a string or template is not flagged", t => {
+  const root = makeTmpWorkspace({
+    "shared/utils/src/index.ts":
+      'const a = \'import { x } from "@ledgerhq/logs"\';\nconst b = `require("@ledgerhq/errors")`;\nexport {};',
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const legacy = new Set(["@ledgerhq/logs", "@ledgerhq/errors"]);
+  assert.deepEqual(findSourceImportViolations(root, legacy), []);
+});
+
+test("a module file augmenting a legacy package is flagged, a global declaration file is not", t => {
+  const root = makeTmpWorkspace({
+    "shared/utils/src/augment.ts": 'declare module "@ledgerhq/logs" {}\nexport {};',
+    "shared/utils/src/global.d.ts": 'declare module "@ledgerhq/errors" {}',
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const legacy = new Set(["@ledgerhq/logs", "@ledgerhq/errors"]);
+  const violations = findSourceImportViolations(root, legacy);
+  assert.deepEqual(
+    violations.map(v => `${path.basename(v.file)} ${v.specifier}`),
+    ["augment.ts @ledgerhq/logs"],
+  );
+});
+
+test("a namespace re-export of a legacy package is flagged", t => {
+  const root = makeTmpWorkspace({
+    "shared/utils/src/index.ts": 'export * as logs from "@ledgerhq/logs";',
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const violations = findSourceImportViolations(root, new Set(["@ledgerhq/logs"]));
+  assert.deepEqual(
+    violations.map(v => v.specifier),
+    ["@ledgerhq/logs"],
+  );
+});
+
+test("a JSDoc import type of a legacy package is not flagged", t => {
+  const root = makeTmpWorkspace({
+    "shared/utils/src/index.js":
+      '/** @type {import("@ledgerhq/logs").Log} */\nmodule.exports = {};',
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const violations = findSourceImportViolations(root, new Set(["@ledgerhq/logs"]));
+  assert.deepEqual(violations, []);
+});
+
 test("sub-path import is matched by package name", t => {
   const root = makeTmpWorkspace({
     "shared/utils/src/index.ts": 'import type { Foo } from "@ledgerhq/logs/types";',
