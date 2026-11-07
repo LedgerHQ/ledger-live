@@ -14,6 +14,7 @@ import {
   type StoreStorageData,
 } from "../logLastStartupEvents";
 import { resetStartupOriginForTests, STARTUP_EVENTS } from "../resolveStartupEvents";
+import { logStartupForMeasurement } from "../logStartupForMeasurement";
 
 jest.mock("@shared/native-performance", () => ({ getProcessStartTime: jest.fn() }));
 
@@ -27,6 +28,7 @@ jest.mock("@datadog/mobile-react-native", () => ({
 }));
 jest.mock("~/rootnavigation", () => ({ navigationRef: { current: {} } }));
 jest.mock("~/datadog", () => ({ viewNamePredicate: jest.fn() }));
+jest.mock("../logStartupForMeasurement", () => ({ logStartupForMeasurement: jest.fn() }));
 
 describe("logLastStartupEvents", () => {
   const originalDev = __DEV__;
@@ -90,6 +92,19 @@ describe("logLastStartupEvents", () => {
         appStartupTime: appStartedEvent.time - startupFirstImportTime + 1000,
       }),
     );
+  });
+
+  it("asks for the startup measurement's log line as soon as the startup is over", async () => {
+    await logLastStartupEvents(STARTUP_EVENTS.NAV_READY);
+    expect(logStartupForMeasurement).not.toHaveBeenCalled();
+
+    const appStartedEventPromise = logLastStartupEvents(STARTUP_EVENTS.APP_STARTED);
+    expect(logStartupForMeasurement).toHaveBeenCalledTimes(1);
+    expect(logStartupForMeasurement).toHaveBeenCalledWith(STARTUP_EVENTS.APP_STARTED);
+
+    jest.advanceTimersByTime(LAST_EVENTS_BUFFER);
+    await appStartedEventPromise;
+    expect(logStartupForMeasurement).toHaveBeenCalledTimes(1);
   });
 
   it("does not track startup events if APP_STARTED is not logged", async () => {
