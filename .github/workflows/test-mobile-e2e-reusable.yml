@@ -1296,6 +1296,9 @@ jobs:
           LOG_FILE="${{ env.MOBILE_ARTIFACTS_ROOT }}/emulator-boot.log"
           mkdir -p ${{ env.MOBILE_ARTIFACTS_ROOT }}
           # AVD_NAME and AVD_OPTIONS come from the "Load AVD configuration" step.
+          adb kill-server || true
+          rm -f "${TMPDIR:-/tmp}/adb.$(id -u).log"
+          ADB_TRACE=adb,transport,sockets adb start-server
           nohup bash tools/scripts/boot-android-emulators-ci.sh > "$LOG_FILE" 2>&1 &
           echo "ℹ️ Android emulators boot started in background."
         shell: bash
