@@ -36,6 +36,26 @@ function offBaseNote(r: Row, side: Side): string {
   return `**${r.platform} ${r.scenario}: ${launches} counted from another start than ${start} (e.g. the app found no process start) and ${fate}.**`;
 }
 
+function readNotes({ platform, scenario, reads }: Row): string[] {
+  const where = `${platform} ${scenario}`;
+  const notes: string[] = [];
+  if (reads.fromLog && reads.fromScreen) {
+    notes.push(
+      `${where}: ${reads.fromScreen} launch(es) read from the Debug screen, the device log line missing.`,
+    );
+  }
+  if (reads.screenMismatches) {
+    notes.push(
+      `**${where}: the Debug screen showed another App startup time than the device log on ${reads.screenMismatches} of the ${reads.screenChecks} launches read both ways.**`,
+    );
+  } else if (reads.screenChecks) {
+    notes.push(
+      `${where}: the Debug screen showed the device log's App startup time on the ${reads.screenChecks} launches read both ways.`,
+    );
+  }
+  return notes;
+}
+
 const fmt = (v: number | null | undefined) =>
   typeof v === "number" && Number.isFinite(v) ? String(Math.round(v)) : "–";
 const signed = (v: number | null | undefined) => {
@@ -69,7 +89,7 @@ export function toMarkdown(
   }
   lines.push(
     "",
-    "- **Debug screen**: Settings > Debug > Performance > App startup time. Builds count it from the first JS import (4.26–4.27) or from the app process start (LIVE-40286 on).",
+    "- **Debug screen**: Settings > Debug > Performance > App startup time, which the app also writes to the device log as soon as the startup is over: the measurement reads it there, and on the screen when the line is missing. Builds count it from the first JS import (4.26–4.27) or from the app process start (LIVE-40286 on).",
     "- **With native start**: the same end, counted from the start of the app process (the emulator's or the host's kernel) whatever the build's Debug value counts from, so builds of every version compare. It equals the Debug value of builds that count from the process start (within about 20 ms).",
     "",
     "B − A is the Hodges–Lehmann median of the paired differences, after removing the device bias: how much slower the second emulator or simulator is than the first, measured thanks to the halfway swap.",
@@ -85,6 +105,7 @@ export function toMarkdown(
       .flatMap(r =>
         SIDES.filter(side => r.offBaseLaunches[side] > 0).map(side => offBaseNote(r, side)),
       ),
+    ...rows.filter(r => r.measure.startsWith("Debug screen")).flatMap(readNotes),
     "",
   );
   return lines.filter((l, i) => l !== "" || lines[i - 1] !== "").join("\n");
