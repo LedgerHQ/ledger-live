@@ -33,7 +33,7 @@ const SAVE_AT_START = "    saveAtStart: true,";
 const SWAP_API_BASE = 'SWAP_API_BASE="https://swap.ledger.com/v5"';
 // Keys no store env file has.
 const TEST_ONLY_KEY =
-  /^(MOCK|DETOX|MOCK_COUNTERVALUES|DISABLE_YELLOW_BOX|FEATURE_FLAGS|SIMCTL_CHILD_[A-Za-z0-9_]*)=/;
+  /^(MOCK|DETOX|MOCK_COUNTERVALUES|DISABLE_YELLOW_BOX|FEATURE_FLAGS|SIMCTL_CHILD_\w*)=/;
 const TEST_MODE_KEY = /^\s*(?:export\s+)?(?:MOCK|DETOX|MOCK_COUNTERVALUES)\s*=/;
 // known-regression's build B: LIVE-36190, the only regression it re-adds.
 const REGRESSIONS = new Set(["LIVE-36190"]);
@@ -211,12 +211,10 @@ function checkLive36190(dbSave: string): void {
   }
 }
 
-/** Rewrites `file` with `edit` and prints its lines that `show` picks, like grep -n. */
-function rewrite(file: string, edit: (text: string) => string, show: (line: string) => boolean) {
+// Names the file only: app files are not printed, as the env file holds API keys.
+function rewrite(file: string, edit: (text: string) => string): void {
   writeFileSync(file, edit(read(file)));
-  linesOf(read(file)).forEach((line, i) => {
-    if (show(line)) console.log(`${i + 1}:${line}`);
-  });
+  console.log(`edited ${path.relative(process.cwd(), file)}`);
 }
 
 function options(): { app: string; delayMs: number; regression: string } {
@@ -240,23 +238,12 @@ function main(): void {
   const files = appFiles(app);
   checkApp(files, regression);
 
-  rewrite(
-    files.index,
-    source => gateBridgeOnWsPort(source, delayMs),
-    line =>
-      line.includes("react-native-launch-arguments") ||
-      line.includes("~/e2e/bridge/client") ||
-      line.includes("startup-perf"),
-  );
-  rewrite(files.rspack, realBlur, line => line.includes("isDetoxBuild ="));
+  rewrite(files.index, source => gateBridgeOnWsPort(source, delayMs));
+  rewrite(files.rspack, realBlur);
 
   const withoutDetox = bundleWithoutDetox(read(files.packageJson));
   if (withoutDetox !== null) {
-    rewrite(
-      files.packageJson,
-      () => withoutDetox,
-      line => line.includes('"e2e:build"'),
-    );
+    rewrite(files.packageJson, () => withoutDetox);
     summary("e2e:build bundles without DETOX=1");
   }
 
@@ -266,11 +253,11 @@ function main(): void {
   env.removed.forEach(key => console.error(`  removed ${key}`));
   if (env.swap) console.error("  SWAP_API_BASE set to prod");
 
-  rewrite(files.jsStart, logJsStartEpoch, line => line.includes("startup-perf"));
+  rewrite(files.jsStart, logJsStartEpoch);
   summary('startup events include "JS start epoch <ms>"');
 
   if (regression) {
-    rewrite(files.dbSave, readdLive36190, line => line.includes("trustchainStoreSelector"));
+    rewrite(files.dbSave, readdLive36190);
     summary("LIVE-36190 re-added: the trustchain is no longer saved at start");
   }
   summary(
