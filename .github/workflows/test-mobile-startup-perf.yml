@@ -365,7 +365,7 @@ jobs:
           persist-credentials: false
           sparse-checkout-cone-mode: false
           sparse-checkout: |
-            /tools/scripts/
+            /tools/scripts/cleanup-android-emulators.sh
             /e2e/tooling/startup-perf/
             /e2e/mobile/userdata/
             /apps/ledger-live-mobile/android/app/staging.kstr
@@ -402,7 +402,7 @@ jobs:
           done
 
       - name: Install Maestro ${{ env.MAESTRO_VERSION }}
-        run: bash e2e/tooling/startup-perf/ci/install-maestro.sh
+        run: bash e2e/tooling/startup-perf/devices/install-maestro.sh
 
       - name: Report the AVD read-ahead
         run: cat "${RUNNER_TEMP}/avd-read-ahead.log" 2>/dev/null || echo "No preinstalled AVD to read ahead."
@@ -415,7 +415,7 @@ jobs:
           avd_api: ${{ env.AVD_API }}
 
       - name: Boot two emulators
-        run: bash e2e/tooling/startup-perf/ci/boot-emulators.sh "$RESULTS_DIR/android"
+        run: bash e2e/tooling/startup-perf/devices/boot-emulators.sh "$RESULTS_DIR/android"
 
       - name: Measure
         env:
@@ -512,11 +512,11 @@ jobs:
           done
 
       - name: Install Maestro ${{ env.MAESTRO_VERSION }}
-        run: bash e2e/tooling/startup-perf/ci/install-maestro.sh
+        run: bash e2e/tooling/startup-perf/devices/install-maestro.sh
 
       - name: Create and boot two simulators
         timeout-minutes: 30
-        run: bash e2e/tooling/startup-perf/ci/boot-simulators.sh
+        run: bash e2e/tooling/startup-perf/devices/boot-simulators.sh
 
       - name: Measure
         env:

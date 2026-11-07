@@ -1,90 +1,15 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
-  bootstrapMean,
   debugBase,
-  detectableAt80,
   failedRows,
   fromJsStart,
   fromProcessStart,
-  hodgesLehmann,
-  median,
   pairUp,
-  robustSd,
   summarise,
-  toMarkdown,
-  unevenPhasesFactor,
   type Row,
 } from "./analyze.ts";
-import type { Sample, Side } from "./types.ts";
-
-const PROCESS_START = 1_700_000_000_000;
-
-type LaunchOptions = Partial<Sample> & { jsStartOffset?: number; nativeStartMs?: number };
-
-function launch({
-  side,
-  appStartupTime,
-  jsStartOffset = 5,
-  nativeStartMs = 400,
-  ...rest
-}: LaunchOptions & { side: Side; appStartupTime: number }): Sample {
-  return {
-    platform: "android",
-    scenario: "accounts",
-    phase: 0,
-    round: 0,
-    side,
-    device: "emulator-5554",
-    warmup: false,
-    startedAt: "2026-11-06T00:00:00.000Z",
-    ok: true,
-    appStartupTime,
-    processStartAppClockAt: PROCESS_START,
-    events: {
-      "Before js imports": { count: 1, time: jsStartOffset },
-      [`JS start epoch ${PROCESS_START + nativeStartMs}`]: { count: 1, time: jsStartOffset + 1 },
-    },
-    ...rest,
-  };
-}
-
-// Phase 0 runs A on the first device and B on the second; phase 1 swaps them.
-function comparison({
-  pairs = 6,
-  deltaMs,
-  secondDeviceSlowerByMs = 0,
-  phases = [0, 1],
-  a,
-  b,
-}: {
-  pairs?: number;
-  deltaMs: number;
-  secondDeviceSlowerByMs?: number;
-  phases?: number[];
-  a?: LaunchOptions;
-  b?: LaunchOptions;
-}): Sample[] {
-  const samples: Sample[] = [];
-  for (const phase of phases) {
-    for (let round = 0; round < pairs / 2; round++) {
-      for (const side of ["A", "B"] as const) {
-        const onSecondDevice = (side === "B") === (phase === 0);
-        const value = 1000 + (side === "B" ? deltaMs : 0);
-        samples.push(
-          launch({
-            side,
-            phase,
-            round,
-            appStartupTime: value + (onSecondDevice ? secondDeviceSlowerByMs : 0),
-            ...(side === "A" ? a : b),
-          }),
-        );
-      }
-    }
-  }
-  return samples;
-}
+import { comparison, launch } from "./fake-samples.ts";
 
 const GATE = { preset: "custom", thresholdMs: 100 };
 function rowOf(rows: Row[], measure: (name: string) => boolean): Row {
@@ -94,39 +19,6 @@ function rowOf(rows: Row[], measure: (name: string) => boolean): Row {
 }
 const debugRow = (rows: Row[]) => rowOf(rows, name => name.startsWith("Debug screen"));
 const nativeRow = (rows: Row[]) => rowOf(rows, name => name === "With native start");
-
-describe("median", () => {
-  it("takes the middle value of an odd count", () => {
-    assert.equal(median([3, 1, 2]), 2);
-  });
-  it("averages the two middle values of an even count", () => {
-    assert.equal(median([4, 1, 3, 2]), 2.5);
-  });
-  it("is null without values", () => {
-    assert.equal(median([]), null);
-  });
-});
-
-describe("robustSd", () => {
-  it("ignores a single outlier", () => {
-    assert.equal(robustSd([1, 2, 3, 4, 100]), 1.4826);
-  });
-});
-
-describe("hodgesLehmann", () => {
-  it("gives no interval below six differences", () => {
-    assert.deepEqual(hodgesLehmann([1, 2, 3]), { estimate: 2, low: null, high: null });
-  });
-  it("spans the extremes with exactly six differences", () => {
-    assert.deepEqual(hodgesLehmann([0, 1, 2, 3, 4, 5]), { estimate: 2.5, low: 0, high: 5 });
-  });
-  it("is not pulled by one outlier", () => {
-    assert.equal(hodgesLehmann([10, 10, 10, 10, 10, 1000])?.estimate, 10);
-  });
-  it("is null without differences", () => {
-    assert.equal(hodgesLehmann([]), null);
-  });
-});
 
 describe("pairUp", () => {
   it("pairs A and B of the same round and drops warm-ups, failures and unpaired launches", () => {
@@ -191,45 +83,6 @@ describe("fromJsStart and fromProcessStart", () => {
     const processBased = launch({ side: "B", appStartupTime: 1500, jsStartOffset: 800 });
     assert.equal(fromJsStart(jsBased), fromJsStart(processBased));
     assert.equal(fromProcessStart(jsBased), 1500);
-  });
-});
-
-describe("unevenPhasesFactor", () => {
-  it("leaves the interval of even phases as is", () => {
-    assert.equal(unevenPhasesFactor(10, 10), 1);
-  });
-  it("widens it as the phases get uneven", () => {
-    assert.equal(unevenPhasesFactor(3, 9).toFixed(3), "1.155");
-    assert.equal(unevenPhasesFactor(9, 1).toFixed(3), "1.667");
-  });
-});
-
-describe("detectableAt80", () => {
-  it("adds 0.84 standard errors, read off the 95% interval, to the threshold", () => {
-    const standardError = 100 / (2 * 1.959964);
-    const detectable = detectableAt80({ estimate: 0, low: -50, high: 50 }, 100);
-    assert.ok(detectable !== null);
-    assert.ok(Math.abs(detectable - (100 + 0.8416 * standardError)) < 1e-9);
-  });
-  it("is null without an interval", () => {
-    assert.equal(detectableAt80({ estimate: 0, low: null, high: null }, 100), null);
-  });
-});
-
-describe("bootstrapMean", () => {
-  const diffs = [12, -40, 33, 7, 85, -3, 21, 0];
-  it("returns the same interval for the same differences", () => {
-    assert.deepEqual(bootstrapMean(diffs), bootstrapMean(diffs));
-  });
-  it("brackets the mean", () => {
-    const mean = bootstrapMean(diffs);
-    assert.ok(mean);
-    const { estimate, low, high } = mean;
-    assert.equal(estimate, 14.375);
-    assert.ok(low < estimate && estimate < high);
-  });
-  it("is null below six differences", () => {
-    assert.equal(bootstrapMean([1, 2, 3]), null);
   });
 });
 
@@ -402,37 +255,5 @@ describe("summarise", () => {
       summarise(comparison({ deltaMs: 0 }), { preset: "aa-noise", thresholdMs: 100 }),
     );
     assert.equal(row.verdict, "OK: resolves about ±0 ms");
-  });
-});
-
-describe("toMarkdown", () => {
-  const options = {
-    preset: "custom",
-    labelA: "live-mobile@4.27.0",
-    labelB: "release",
-    thresholdMs: 100,
-  };
-
-  it("writes one table row per measure with its verdict", () => {
-    const markdown = toMarkdown(summarise(comparison({ deltaMs: 200 }), options), options);
-    assert.match(markdown, /^### Startup time, custom: B − A$/m);
-    assert.match(markdown, /^A = live-mobile@4\.27\.0 · B = release\.$/m);
-    assert.match(
-      markdown,
-      /^\| android \| accounts \| Debug screen \| 6 \| .* \| FAIL: B is slower by more than 100 ms \|$/m,
-    );
-    assert.match(markdown, /^\| android \| accounts \| With native start \| 6 \| /m);
-  });
-
-  it("states the gate only for presets that gate B against A", () => {
-    const aa = { ...options, preset: "aa-noise" };
-    const markdown = toMarkdown(summarise(comparison({ deltaMs: 0 }), aa), aa);
-    assert.doesNotMatch(markdown, /B fails when/);
-  });
-
-  it("says what known-regression's B is", () => {
-    const known = { ...options, preset: "known-regression" };
-    const markdown = toMarkdown(summarise(comparison({ deltaMs: 300 }), known), known);
-    assert.match(markdown, /^B is A with LIVE-36190 re-added/m);
   });
 });
