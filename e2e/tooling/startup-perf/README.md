@@ -116,6 +116,12 @@ differences, after removing the device bias (half the gap between the two phases
 signed-rank 95% interval. The gate is on the estimate; the mean with a bootstrap interval is what
 the manual test compares.
 
+`calibration.test.ts` checks these claims on simulated runs with a known B − A, a 150 ms device bias
+and launch outliers. The interval covers the true B − A in 94% of runs (90.5% with 3 and 9 pairs
+around the swap), slightly under 95% since the bias is fitted from the same launches. The gate holds
+what the report says: a B as fast as A never fails, one slower by the threshold fails about half the
+time, and one slower by "Flags a slowdown of" in more than 80% of runs.
+
 Two measures, both ending at "App startup time":
 
 - **Debug screen**: the value as shown. Builds count it from the first JS import (4.26–4.27,

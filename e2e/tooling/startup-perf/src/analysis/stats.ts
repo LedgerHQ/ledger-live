@@ -62,19 +62,24 @@ export function detectableAt80(hl: Interval | null, thresholdMs: number): number
   return interval && thresholdMs + 0.8416 * ((interval.high - interval.low) / (2 * Z_95));
 }
 
+/** mulberry32: numbers in [0, 1), the same sequence for the same seed. */
+export function seededRandom(seed: number): () => number {
+  // The Int32Array wraps the state to 32 bits.
+  const state = new Int32Array([seed]);
+  return () => {
+    state[0] += 0x6d2b79f5;
+    const current = state[0];
+    let t = Math.imul(current ^ (current >>> 15), 1 | current);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
 // Seeded, so the same samples always give the same interval.
 export function bootstrapMean(diffs: number[], resamples = 4000): ClosedInterval | null {
   const n = diffs.length;
   if (n < 6) return null;
-  // mulberry32; the Int32Array wraps its state to 32 bits.
-  const state = new Int32Array([0x9e3779b9]);
-  const random = () => {
-    state[0] += 0x6d2b79f5;
-    const seed = state[0];
-    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
+  const random = seededRandom(0x9e3779b9);
   const mean = (values: number[]) => values.reduce((a, v) => a + v, 0) / values.length;
   const means: number[] = [];
   for (let r = 0; r < resamples; r++) {
