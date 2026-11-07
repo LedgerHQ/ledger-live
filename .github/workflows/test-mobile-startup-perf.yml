@@ -433,7 +433,6 @@ jobs:
             --app-a "$APP_A" --app-b "$APP_B" --app-id "$APP_ID" \
             --scenarios "$SCENARIO" --pairs "$PAIRS" \
             --accounts-userdata "$ACCOUNTS_USERDATA" \
-            --read both \
             --out-dir "$RESULTS_DIR/android"
 
       - name: Analyse
@@ -532,7 +531,6 @@ jobs:
             --app-a "$APP_A" --app-b "$APP_B" --app-id "$APP_ID" \
             --scenarios "$SCENARIOS" --pairs "$PAIRS" \
             --accounts-userdata "$ACCOUNTS_USERDATA" \
-            --read both \
             --out-dir "$RESULTS_DIR/ios"
 
       - name: Analyse

@@ -10,7 +10,7 @@ export const STARTUP_LOG_LAUNCH_ARGS = { startupPerfLog: 1 };
 export const STARTUP_LOG_MARKER = "startup-perf ";
 // The payload ends the line. In `log show`'s "Filtering the log data using ..." header, a quote
 // follows the marker.
-const STARTUP_LOG_LINE = /startup-perf (\{.*?)\s*$/;
+const STARTUP_LOG_LINE = /startup-perf (\{.*)$/;
 const POLL_MS = 1000;
 
 type Payload = { t: number; e: Array<[string, number, number]> };
@@ -33,7 +33,9 @@ const isPayload = (value: unknown): value is Payload =>
 
 /** The startup in the last startup-perf line of `log`, or null when there is none. */
 export function parseStartupLog(log: string): PerformanceRead | null {
-  const payloads = log.split("\n").flatMap(line => STARTUP_LOG_LINE.exec(line)?.[1] ?? []);
+  const payloads = log
+    .split(/\r?\n/)
+    .flatMap(line => STARTUP_LOG_LINE.exec(line)?.[1].trimEnd() ?? []);
   const payload = payloads.at(-1);
   if (payload === undefined) return null;
   const parsed: unknown = JSON.parse(payload);
