@@ -212,6 +212,16 @@ on:
         required: false
         type: string
         default: ""
+      native_fingerprint_ios:
+        description: "Expo fingerprint of the iOS native project (scripts/native-fingerprint.mjs); when set, it keys the iOS native build instead of hashFiles"
+        required: false
+        type: string
+        default: ""
+      native_fingerprint_android:
+        description: "Expo fingerprint of the Android native project (scripts/native-fingerprint.mjs); when set, it keys the Android native build instead of hashFiles"
+        required: false
+        type: string
+        default: ""
     secrets:
       SPECULINHO_URL:
         description: Base URL for the Speculinho operator (remote Speculos, both platforms). Repository secret; pass via secrets inherit when reusing this workflow.
@@ -517,13 +527,17 @@ jobs:
         id: cache-keys
         env:
           REF_NAME: ${{ github.ref_name }}
+          IOS_FINGERPRINT: ${{ inputs.native_fingerprint_ios }}
+          ANDROID_FINGERPRINT: ${{ inputs.native_fingerprint_android }}
         run: |
           PREFIX=""
           if [ "$REF_NAME" = "develop" ]; then
             PREFIX="develop/"
           fi
-          echo "ios_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/ios', 'shared/native-performance/ios', 'shared/native-performance/SharedNativePerformance.podspec', 'apps/ledger-live-mobile/package.json', 'apps/ledger-live-mobile/scripts/e2e-build.mjs', 'apps/ledger-live-mobile/scripts/e2e-binaries.cjs', 'apps/ledger-live-mobile/scripts/syncAppVersion.js', 'pnpm-workspace.yaml', 'e2e/mobile/detox.config.js', 'e2e/mobile/scripts/syncAppVersion.js') }}-detox-native-ios-${{ inputs.production_firebase == true && 'prod-3' || '4' }}" >> $GITHUB_OUTPUT
-          echo "android_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/android', 'shared/native-performance/android', 'apps/ledger-live-mobile/package.json', 'apps/ledger-live-mobile/scripts/e2e-build.mjs', 'apps/ledger-live-mobile/scripts/e2e-binaries.cjs', 'apps/ledger-live-mobile/scripts/syncAppVersion.js', 'pnpm-workspace.yaml', 'e2e/mobile/detox.config.js', 'e2e/mobile/scripts/syncAppVersion.js') }}-detox-native-android-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
+          IOS_NATIVE_HASH="${IOS_FINGERPRINT:+fp-$IOS_FINGERPRINT}"
+          ANDROID_NATIVE_HASH="${ANDROID_FINGERPRINT:+fp-$ANDROID_FINGERPRINT}"
+          echo "ios_native_key=${PREFIX}longterm-${IOS_NATIVE_HASH:-${{ hashFiles('apps/ledger-live-mobile/ios', 'shared/native-performance/ios', 'shared/native-performance/SharedNativePerformance.podspec', 'apps/ledger-live-mobile/package.json', 'apps/ledger-live-mobile/scripts/e2e-build.mjs', 'apps/ledger-live-mobile/scripts/e2e-binaries.cjs', 'apps/ledger-live-mobile/scripts/syncAppVersion.js', 'pnpm-workspace.yaml', 'e2e/mobile/detox.config.js', 'e2e/mobile/scripts/syncAppVersion.js') }}}-detox-native-ios-${{ inputs.production_firebase == true && 'prod-3' || '4' }}" >> $GITHUB_OUTPUT
+          echo "android_native_key=${PREFIX}longterm-${ANDROID_NATIVE_HASH:-${{ hashFiles('apps/ledger-live-mobile/android', 'shared/native-performance/android', 'apps/ledger-live-mobile/package.json', 'apps/ledger-live-mobile/scripts/e2e-build.mjs', 'apps/ledger-live-mobile/scripts/e2e-binaries.cjs', 'apps/ledger-live-mobile/scripts/syncAppVersion.js', 'pnpm-workspace.yaml', 'e2e/mobile/detox.config.js', 'e2e/mobile/scripts/syncAppVersion.js') }}}-detox-native-android-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
           HEAD_SHA=$(git rev-parse HEAD)
           echo "ios_js_key=${PREFIX}${HEAD_SHA}-detox-js-ios" >> $GITHUB_OUTPUT
           echo "android_js_key=${PREFIX}${HEAD_SHA}-detox-js-android" >> $GITHUB_OUTPUT
