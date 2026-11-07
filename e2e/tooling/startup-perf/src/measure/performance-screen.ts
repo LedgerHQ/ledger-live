@@ -2,18 +2,23 @@ import { writeFile } from "node:fs/promises";
 import path from "node:path";
 import { sleep } from "./exec.ts";
 import { FLOWS_DIR, MAESTRO_FLOW_TIMEOUT_MS, MAESTRO_HIERARCHY_TIMEOUT_MS } from "./maestro.ts";
-import type { Maestro, Platform, RunResult, StartupEvent } from "./types.ts";
+import type { StartupEvent } from "../types.ts";
+import type { Maestro, Platform, RunResult } from "./types.ts";
 
 const FULL_FLOW = path.join(FLOWS_DIR, "read-performance.yaml");
 const QUICK_FLOW = path.join(FLOWS_DIR, "read-performance-quick.yaml");
 // "App startup time" is the later of these two: a read before both exist under-reports it.
 const FINAL_EVENTS = ["App started", "Splash screen faded"];
 const MAX_SCROLLS = 10;
+// A scroll can show nothing new and still be short of the end: two in a row mean the list ended.
+const SCROLLS_WITHOUT_NEW_EVENTS_AT_END = 2;
 // Reads of the screen after each flow, while it may still be rendering.
 const SCREEN_READS = 3;
 const SCREEN_READ_RETRY_MS = 2000;
 
 type StartupEvents = Record<string, StartupEvent>;
+
+const hasFinalEvents = (events: StartupEvents) => FINAL_EVENTS.every(name => name in events);
 
 export interface PerformanceRead {
   appStartupTime: number;
@@ -91,14 +96,22 @@ export function createPerformanceReader({
     return parseEvents(hierarchyTexts(hierarchy.stdout));
   }
 
+  /** Scrolls down until the final events show, the list ends, or MAX_SCROLLS. */
   async function readAllEvents(device: string, events: StartupEvents): Promise<StartupEvents> {
     const all = { ...events };
-    for (let i = 0; i < MAX_SCROLLS; i++) {
+    let scrollsWithoutNewEvents = 0;
+    for (
+      let i = 0;
+      i < MAX_SCROLLS &&
+      !hasFinalEvents(all) &&
+      scrollsWithoutNewEvents < SCROLLS_WITHOUT_NEW_EVENTS_AT_END;
+      i++
+    ) {
       await P.scrollDown(device);
       const found = Object.entries(await readHierarchyEvents(device)).filter(
         ([name]) => !(name in all),
       );
-      if (!found.length) break;
+      scrollsWithoutNewEvents = found.length ? 0 : scrollsWithoutNewEvents + 1;
       for (const [name, event] of found) all[name] = event;
     }
     return all;
@@ -110,7 +123,7 @@ export function createPerformanceReader({
   ): Promise<StartupEvents> {
     await P.scrollToEnd(device);
     const all = { ...events, ...(await readHierarchyEvents(device)) };
-    return FINAL_EVENTS.every(name => name in all) ? all : readAllEvents(device, all);
+    return hasFinalEvents(all) ? all : readAllEvents(device, all);
   }
 
   /** Reads the screen a few times while it renders; `read` is null when the value never shows. */

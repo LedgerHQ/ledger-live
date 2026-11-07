@@ -22,7 +22,7 @@ const read = (root: string, file: string) => readFileSync(path.join(root, file),
 const stderrOf = (error: unknown) =>
   error instanceof Error && "stderr" in error ? String(error.stderr) : String(error);
 
-/** Runs prepare-build.sh on a copy of the app files it edits, then hands the copy to `check`. */
+/** Runs prepare-build.mts on a copy of the app files it edits, then hands the copy to `check`. */
 function prepare(env: Record<string, string>, check: (app: string) => void): void {
   const dir = mkdtempSync(path.join(tmpdir(), "startup-perf-"));
   const app = path.join(dir, "app");
@@ -32,12 +32,17 @@ function prepare(env: Record<string, string>, check: (app: string) => void): voi
       copyFileSync(path.join(APP, file), path.join(app, file));
     }
     try {
-      execFileSync("bash", [path.join(import.meta.dirname, "../ci/prepare-build.sh"), app], {
-        stdio: "pipe",
-        env: { ...process.env, GITHUB_STEP_SUMMARY: "", ...env },
-      });
+      execFileSync(
+        process.execPath,
+        [path.join(import.meta.dirname, "../ci/prepare-build.mts"), "app"],
+        {
+          cwd: dir,
+          stdio: "pipe",
+          env: { ...process.env, GITHUB_STEP_SUMMARY: "", ...env },
+        },
+      );
     } catch (error) {
-      assert.fail(`prepare-build.sh no longer applies:\n${stderrOf(error)}`);
+      assert.fail(`prepare-build.mts no longer applies:\n${stderrOf(error)}`);
     }
     check(app);
   } finally {
@@ -46,7 +51,7 @@ function prepare(env: Record<string, string>, check: (app: string) => void): voi
 }
 
 describe("the mobile app of this checkout", () => {
-  it("takes every edit of prepare-build.sh", () => {
+  it("takes every edit of prepare-build.mts", () => {
     prepare({}, app => {
       assert.doesNotMatch(read(app, "package.json"), /"e2e:build": "[^"]*DETOX=1/);
       assert.match(read(app, "rspack.config.mjs"), /startup-perf prod-like: no blur mock/);
@@ -66,7 +71,7 @@ describe("the mobile app of this checkout", () => {
   it("handles every bridge message the injection sends", () => {
     const client = read(APP, "src/e2e/bridge/client.ts");
     const sent = new Set(
-      [...read(import.meta.dirname, "inject.ts").matchAll(/send\("(\w+)"/g)].map(m => m[1]),
+      [...read(import.meta.dirname, "measure/inject.ts").matchAll(/send\("(\w+)"/g)].map(m => m[1]),
     );
     assert.ok(sent.has("getEnvs") && sent.has("importSettings"), "inject.ts was not parsed");
     for (const type of sent) {

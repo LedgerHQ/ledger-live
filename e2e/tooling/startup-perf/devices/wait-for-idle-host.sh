@@ -4,6 +4,9 @@
 #
 #   wait-for-idle-host.sh [max_wait_s]
 set -euo pipefail
+# sysctl and awk print and read the load with the locale's decimal separator: "3,04" in French
+# compares as text and never as below the CPU count.
+export LC_ALL=C
 
 max_wait_s="${1:-600}"
 poll_s=15

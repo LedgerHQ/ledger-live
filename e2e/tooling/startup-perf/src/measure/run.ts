@@ -10,7 +10,8 @@ import { createInjector, loadUserdata } from "./inject.ts";
 import { createIos } from "./platforms/ios.ts";
 import { createMaestro } from "./maestro.ts";
 import { createPerformanceReader } from "./performance-screen.ts";
-import type { PlatformName, Sample, SampleMeta, Side, Userdata } from "./types.ts";
+import type { PlatformName, Sample, SampleMeta, Side } from "../types.ts";
+import type { Userdata } from "./types.ts";
 
 const { values: opts } = parseArgs({
   options: {

@@ -1,8 +1,9 @@
 import path from "node:path";
 import { run } from "./exec.ts";
-import type { Maestro, PlatformName } from "./types.ts";
+import type { PlatformName } from "../types.ts";
+import type { Maestro } from "./types.ts";
 
-export const FLOWS_DIR = path.join(import.meta.dirname, "..", "flows");
+export const FLOWS_DIR = path.join(import.meta.dirname, "..", "..", "flows");
 export const MAESTRO_FLOW_TIMEOUT_MS = 120_000;
 export const MAESTRO_SCROLL_TIMEOUT_MS = 60_000;
 export const MAESTRO_HIERARCHY_TIMEOUT_MS = 60_000;

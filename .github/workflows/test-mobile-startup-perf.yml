@@ -71,6 +71,17 @@ jobs:
       label_a: ${{ steps.plan.outputs.label_a }}
       label_b: ${{ steps.plan.outputs.label_b }}
     steps:
+      # This workflow's scripts only.
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          sparse-checkout: /e2e/tooling/startup-perf/ci/
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+
       - name: Resolve refs
         id: plan
         env:
@@ -82,70 +93,7 @@ jobs:
           SCENARIOS: ${{ inputs.scenarios }}
           BRANCH_SHA: ${{ github.sha }}
           REPO_URL: ${{ github.server_url }}/${{ github.repository }}.git
-        run: |
-          set -euo pipefail
-          if ! [[ "$PAIRS" =~ ^[0-9]+$ ]] || (( PAIRS < 6 || PAIRS % 2 )); then
-            echo "::error::pairs must be an even number ≥ 6, got '$PAIRS'"; exit 1
-          fi
-          [[ "$THRESHOLD" =~ ^[0-9]+$ ]] || { echo "::error::threshold_ms must be a number"; exit 1; }
-          # No raw SHA: a fork's commit can be fetched here too and would run with this workflow's secrets.
-          resolve() {
-            local ref="$1" out sha
-            out=$(git ls-remote "$REPO_URL" "refs/heads/$ref" "refs/tags/$ref" "refs/tags/$ref^{}")
-            sha=$(awk -v t="refs/tags/$ref^{}" '$2 == t { print $1 }' <<< "$out")
-            [[ -n "$sha" ]] || sha=$(awk -v h="refs/heads/$ref" -v t="refs/tags/$ref" '$2 == h || $2 == t { print $1; exit }' <<< "$out")
-            [[ -n "$sha" ]] || { echo "::error::'$ref' is not a branch or tag of this repository (to measure a commit, push a branch or tag at it)" >&2; return 1; }
-            echo "$sha"
-          }
-          case "$PRESET" in
-            prod-vs-release)
-              if [[ -z "$REF_A" ]]; then
-                REF_A=$(git ls-remote --tags --refs "$REPO_URL" 'refs/tags/live-mobile@*' |
-                  awk '{ sub("refs/tags/", "", $2); print $2 }' |
-                  grep -E '^live-mobile@[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1) || true
-                [[ -n "$REF_A" ]] || { echo "::error::no live-mobile@X.Y.Z tag found"; exit 1; }
-              fi
-              if [[ -z "$REF_B" ]]; then
-                [[ -n "$(git ls-remote --heads "$REPO_URL" refs/heads/release)" ]] ||
-                  { echo "::error::no release branch: no pre-release in progress (set ref_b, e.g. hotfix)"; exit 1; }
-                REF_B=release
-              fi
-              A=$(resolve "$REF_A"); B=$(resolve "$REF_B"); SIDES='["a","b"]'
-              LABEL_A="$REF_A"; LABEL_B="$REF_B"
-              [[ "$A" != "$B" ]] || echo "::warning::$REF_A and $REF_B are the same commit" ;;
-            custom)
-              if [[ -z "$REF_A" || -z "$REF_B" ]]; then
-                echo "::error::custom needs both ref_a and ref_b"; exit 1
-              fi
-              A=$(resolve "$REF_A"); B=$(resolve "$REF_B"); SIDES='["a","b"]'
-              LABEL_A="$REF_A"; LABEL_B="$REF_B" ;;
-            aa-noise)
-              if [[ -n "$REF_A" ]]; then A=$(resolve "$REF_A"); else A="$BRANCH_SHA"; fi
-              B="$A"; SIDES='["a"]'
-              LABEL_A="${REF_A:-$GITHUB_REF_NAME}"; LABEL_B="the same binary" ;;
-            known-regression)
-              if [[ -n "$REF_A" ]]; then A=$(resolve "$REF_A"); else A="$BRANCH_SHA"; fi
-              B="$A"; SIDES='["a","b"]'
-              LABEL_A="${REF_A:-$GITHUB_REF_NAME}"; LABEL_B="$LABEL_A with LIVE-36190 re-added" ;;
-          esac
-          LABEL_A="$LABEL_A (${A:0:10})"
-          [[ "$SIDES" == '["a"]' ]] || LABEL_B="$LABEL_B (${B:0:10})"
-          {
-            echo "sides=$SIDES"
-            echo "scenarios=[\"${SCENARIOS//,/\",\"}\"]"
-            echo "ref_a=$A"
-            echo "ref_b=$B"
-            echo "label_a=$LABEL_A"
-            echo "label_b=$LABEL_B"
-          } >> "$GITHUB_OUTPUT"
-          {
-            echo "### Startup performance: $PRESET"
-            echo ""
-            echo "- A: \`$LABEL_A\` → \`$A\`"
-            echo "- B: \`$LABEL_B\` → \`$B\`"
-            echo "- $PAIRS pairs per scenario"
-            echo "- Android: one job (runner) per scenario, two emulators with $PERF_AVD_CORES cores each, cellular network like E2E"
-          } >> "$GITHUB_STEP_SUMMARY"
+        run: node e2e/tooling/startup-perf/ci/resolve-refs.mts
 
   build-android:
     name: "Android build ${{ matrix.side }}"
@@ -214,7 +162,7 @@ jobs:
       - name: Prepare the prod-like build
         env:
           STARTUP_PERF_REGRESSION: ${{ inputs.preset == 'known-regression' && matrix.side == 'b' && 'LIVE-36190' || '' }}
-        run: bash .startup-perf/e2e/tooling/startup-perf/ci/prepare-build.sh
+        run: node .startup-perf/e2e/tooling/startup-perf/ci/prepare-build.mts
 
       - name: Build detoxPreRelease APK (x86_64, JS bundled)
         env:
@@ -231,7 +179,7 @@ jobs:
           mkdir -p out
           APK=$(find apps/ledger-live-mobile/android/app/build/outputs/apk/detoxPreRelease -name "*x86_64*.apk" | head -1)
           [[ -n "$APK" ]] || { echo "::error::no x86_64 detoxPreRelease APK found"; exit 1; }
-          bash .startup-perf/e2e/tooling/startup-perf/ci/verify-build.sh android "$APK"
+          node .startup-perf/e2e/tooling/startup-perf/ci/verify-build.mts android "$APK"
           cp "$APK" out/app.apk
           git rev-parse HEAD > out/sha.txt
           ls -la out
@@ -304,7 +252,7 @@ jobs:
       - name: Prepare the prod-like build
         env:
           STARTUP_PERF_REGRESSION: ${{ inputs.preset == 'known-regression' && matrix.side == 'b' && 'LIVE-36190' || '' }}
-        run: bash .startup-perf/e2e/tooling/startup-perf/ci/prepare-build.sh
+        run: node .startup-perf/e2e/tooling/startup-perf/ci/prepare-build.mts
 
       - name: Build Release simulator app (JS bundled)
         env:
@@ -319,7 +267,7 @@ jobs:
           set -euo pipefail
           mkdir -p out
           APP=apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app
-          bash .startup-perf/e2e/tooling/startup-perf/ci/verify-build.sh ios "$APP"
+          node .startup-perf/e2e/tooling/startup-perf/ci/verify-build.mts ios "$APP"
           ditto -c -k --keepParent "$APP" out/app.zip
           git rev-parse HEAD > out/sha.txt
           ls -la out
@@ -417,7 +365,7 @@ jobs:
           persist-credentials: false
           sparse-checkout-cone-mode: false
           sparse-checkout: |
-            /tools/scripts/
+            /tools/scripts/cleanup-android-emulators.sh
             /e2e/tooling/startup-perf/
             /e2e/mobile/userdata/
             /apps/ledger-live-mobile/android/app/staging.kstr
@@ -454,7 +402,7 @@ jobs:
           done
 
       - name: Install Maestro ${{ env.MAESTRO_VERSION }}
-        run: bash e2e/tooling/startup-perf/ci/install-maestro.sh
+        run: bash e2e/tooling/startup-perf/devices/install-maestro.sh
 
       - name: Report the AVD read-ahead
         run: cat "${RUNNER_TEMP}/avd-read-ahead.log" 2>/dev/null || echo "No preinstalled AVD to read ahead."
@@ -467,56 +415,7 @@ jobs:
           avd_api: ${{ env.AVD_API }}
 
       - name: Boot two emulators
-        run: |
-          set -euo pipefail
-          tools/scripts/cleanup-android-emulators.sh || true
-          mkdir -p "$RESULTS_DIR/android"
-          # Cold boot: the cached snapshot was taken with 2 cores and cannot be loaded with 4.
-          # shellcheck disable=SC2086
-          nohup "$ANDROID_HOME/emulator/emulator" -avd "$AVD_NAME" -port 5554 $AVD_OPTIONS -no-snapshot-load -no-snapshot-save -cores "$PERF_AVD_CORES" > "$RESULTS_DIR/android/emulator-1.log" 2>&1 &
-          # shellcheck disable=SC2086
-          nohup "$ANDROID_HOME/emulator/emulator" -avd "${AVD_NAME}_2" -port 5556 $AVD_OPTIONS -no-snapshot-load -no-snapshot-save -cores "$PERF_AVD_CORES" > "$RESULTS_DIR/android/emulator-2.log" 2>&1 &
-          for serial in emulator-5554 emulator-5556; do
-            timeout 900 adb -s "$serial" wait-for-device
-            timeout 900 adb -s "$serial" shell 'while [ "$(getprop sys.boot_completed)" != 1 ]; do sleep 2; done'
-            # The cached AVD was saved with animations off; a user's phone has them on.
-            for key in window_animation_scale transition_animation_scale animator_duration_scale; do
-              adb -s "$serial" shell settings put global "$key" 1
-            done
-            # Screen on and unlocked for the whole run, as Detox ensures for E2E.
-            adb -s "$serial" shell input keyevent KEYCODE_WAKEUP
-            adb -s "$serial" shell locksettings set-disabled true || true
-            adb -s "$serial" shell wm dismiss-keyguard
-            adb -s "$serial" shell settings put global stay_on_while_plugged_in 3
-            adb -s "$serial" shell settings put system screen_off_timeout 2147483647
-            echo "$serial booted, $(adb -s "$serial" shell nproc | tr -d '\r') CPUs"
-          done
-          # Cellular like the E2E emulators (tools/scripts/boot-android-emulators-ci.sh).
-          for serial in emulator-5554 emulator-5556; do
-            adb -s "$serial" shell svc wifi disable
-            cellular=false
-            for _ in $(seq 30); do
-              dump=$(adb -s "$serial" shell dumpsys connectivity)
-              net=$(sed -n 's/.*Active default network: \([0-9]*\).*/\1/p' <<<"$dump" | head -1)
-              if [[ -n "$net" && "$(grep -F "NetworkAgentInfo{network{$net}" <<<"$dump")" == *"Transports: CELLULAR"* ]]; then
-                echo "$serial is on cellular"; cellular=true; break
-              fi
-              sleep 2
-            done
-            [[ "$cellular" == true ]] || echo "::warning title=Emulator not on cellular::$serial is not on cellular after 60 s"
-          done
-          deadline=$((SECONDS + 900))
-          for serial in emulator-5554 emulator-5556; do
-            idle=false
-            while (( SECONDS < deadline )); do
-              load=$(adb -s "$serial" shell cat /proc/loadavg | cut -d' ' -f1)
-              awk -v l="$load" 'BEGIN { exit !(l < 1.0) }' && { idle=true; break; }
-              echo "$serial load $load, waiting"
-              sleep 15
-            done
-            [[ "$idle" == true ]] || echo "::warning title=Emulator not idle::$serial load average still ${load:-unknown} after 15 min; measuring anyway"
-          done
-          adb devices
+        run: bash e2e/tooling/startup-perf/devices/boot-emulators.sh "$RESULTS_DIR/android"
 
       - name: Measure
         env:
@@ -528,7 +427,7 @@ jobs:
           APP_A=builds/a/signed.apk
           APP_B=builds/b/signed.apk
           [[ -f "$APP_B" ]] || APP_B="$APP_A"
-          node e2e/tooling/startup-perf/src/run.ts \
+          node e2e/tooling/startup-perf/src/measure/run.ts \
             --platform android \
             --devices emulator-5554,emulator-5556 \
             --app-a "$APP_A" --app-b "$APP_B" --app-id "$APP_ID" \
@@ -544,7 +443,7 @@ jobs:
           LABEL_A: ${{ needs.plan.outputs.label_a }}
           LABEL_B: ${{ needs.plan.outputs.label_b }}
         run: |
-          node e2e/tooling/startup-perf/src/analyze.ts \
+          node e2e/tooling/startup-perf/src/analysis/analyze.ts \
             --samples "$RESULTS_DIR/android/samples.jsonl" \
             --preset "$PRESET" --threshold-ms "$THRESHOLD" \
             --label-a "$LABEL_A" --label-b "$LABEL_B" \
@@ -613,33 +512,11 @@ jobs:
           done
 
       - name: Install Maestro ${{ env.MAESTRO_VERSION }}
-        run: bash e2e/tooling/startup-perf/ci/install-maestro.sh
+        run: bash e2e/tooling/startup-perf/devices/install-maestro.sh
 
       - name: Create and boot two simulators
         timeout-minutes: 30
-        run: |
-          set -euo pipefail
-          # simctl itself rather than xcrun, so the alarm kills it (macOS has no `timeout`).
-          SIMCTL="$(xcrun -f simctl)"
-          with_timeout() { perl -e 'alarm shift; exec @ARGV or die "exec failed: $!\n"' "$@"; }
-          # A no-op on a fresh VM; on a reused one, a booted simulator would compete for the CPU.
-          xcrun simctl shutdown all || true
-          RUNTIME=$(xcrun simctl list runtimes iOS -j | jq -r '[.runtimes[] | select(.isAvailable)] | last | .identifier')
-          # Newest "iPhone N Pro" of the runtime.
-          TYPE=$(xcrun simctl list runtimes iOS -j | jq -r --arg rt "$RUNTIME" '.runtimes[] | select(.identifier==$rt) | [.supportedDeviceTypes[] | select(.name|test("^iPhone [0-9]+ Pro$"))] | max_by(.name|capture("(?<n>[0-9]+)").n|tonumber) | .identifier')
-          [[ -n "$TYPE" && "$TYPE" != null ]] || { echo "::error::no iPhone Pro device type for $RUNTIME"; exit 1; }
-          echo "Runtime $RUNTIME, device type $TYPE"
-          # Each id is saved at once, so "Delete simulators" removes it even when booting fails.
-          SIM_1=$(xcrun simctl create "Startup Perf 1" "$TYPE" "$RUNTIME")
-          echo "SIM_1=$SIM_1" >> "$GITHUB_ENV"
-          SIM_2=$(xcrun simctl create "Startup Perf 2" "$TYPE" "$RUNTIME")
-          echo "SIM_2=$SIM_2" >> "$GITHUB_ENV"
-          for udid in "$SIM_1" "$SIM_2"; do
-            with_timeout 300 "$SIMCTL" boot "$udid"
-            with_timeout 300 "$SIMCTL" bootstatus "$udid" -b
-          done
-          # bootstatus returns before first-boot work ends: the host load still rose 60 s later.
-          bash e2e/tooling/startup-perf/ci/wait-for-idle-host.sh 600
+        run: bash e2e/tooling/startup-perf/devices/boot-simulators.sh
 
       - name: Measure
         env:
@@ -651,7 +528,7 @@ jobs:
           APP_A=builds/a/ledgerlivemobile.app
           APP_B=builds/b/ledgerlivemobile.app
           [[ -d "$APP_B" ]] || APP_B="$APP_A"
-          node e2e/tooling/startup-perf/src/run.ts \
+          node e2e/tooling/startup-perf/src/measure/run.ts \
             --platform ios \
             --devices "$SIM_1,$SIM_2" \
             --app-a "$APP_A" --app-b "$APP_B" --app-id "$APP_ID" \
@@ -667,7 +544,7 @@ jobs:
           LABEL_A: ${{ needs.plan.outputs.label_a }}
           LABEL_B: ${{ needs.plan.outputs.label_b }}
         run: |
-          node e2e/tooling/startup-perf/src/analyze.ts \
+          node e2e/tooling/startup-perf/src/analysis/analyze.ts \
             --samples "$RESULTS_DIR/ios/samples.jsonl" \
             --preset "$PRESET" --threshold-ms "$THRESHOLD" \
             --label-a "$LABEL_A" --label-b "$LABEL_B" \
