@@ -35,6 +35,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const ts = require("typescript");
+const { defaultLibDirectory, parse } = require("./parse");
 
 /** @typedef {"web" | "native"} Platform */
 /** @typedef {{ file: string, line: number, isComponent: boolean, node: ts.Node | undefined }} ExportInfo */
@@ -272,7 +273,7 @@ function isFunctionExpression(expression) {
  * @returns {boolean}
  */
 function hasExportModifier(node) {
-  return (ts.getModifiers(node) ?? []).some(m => m.kind === ts.SyntaxKind.ExportKeyword);
+  return (node.modifiers ?? []).some(m => m.kind === ts.SyntaxKind.ExportKeyword);
 }
 
 /**
@@ -280,7 +281,7 @@ function hasExportModifier(node) {
  * @returns {boolean}
  */
 function hasDefaultModifier(node) {
-  return (ts.getModifiers(node) ?? []).some(m => m.kind === ts.SyntaxKind.DefaultKeyword);
+  return (node.modifiers ?? []).some(m => m.kind === ts.SyntaxKind.DefaultKeyword);
 }
 
 /**
@@ -297,9 +298,7 @@ function hasDefaultModifier(node) {
  * @param {string} source
  */
 function parseModule(file, source) {
-  const kind =
-    file.endsWith(".tsx") || file.endsWith(".jsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
-  const sourceFile = ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true, kind);
+  const sourceFile = parse(file, source);
 
   function lineOf(node) {
     return sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile)).line + 1;
@@ -813,6 +812,19 @@ function nameSegments(name) {
   return segments.length > 0 ? [...segments, right.text] : [];
 }
 
+/**
+ * @param {ts.Node} node
+ * @returns {boolean} whether `node` is the `const` of a `const` assertion, `x as const`
+ */
+function isConstTypeReference(node) {
+  return (
+    ts.isTypeReferenceNode(node) &&
+    ts.isIdentifier(node.typeName) &&
+    node.typeName.text === "const" &&
+    !node.typeArguments
+  );
+}
+
 /** @type {Set<string> | undefined} */
 let standardGlobals;
 
@@ -823,13 +835,9 @@ let standardGlobals;
 function standardGlobalNames() {
   if (standardGlobals) return standardGlobals;
   standardGlobals = new Set();
-  const directory = path.dirname(ts.getDefaultLibFilePath({}));
+  const directory = defaultLibDirectory();
   for (const file of fs.readdirSync(directory).filter(name => STANDARD_LIB_FILE.test(name))) {
-    const source = ts.createSourceFile(
-      file,
-      fs.readFileSync(path.join(directory, file), "utf8"),
-      ts.ScriptTarget.Latest,
-    );
+    const source = parse(file, fs.readFileSync(path.join(directory, file), "utf8"));
     for (const statement of source.statements) {
       if (ts.isVariableStatement(statement)) {
         for (const declaration of statement.declarationList.declarations) {
@@ -890,7 +898,7 @@ function inferredParameters(node) {
   const parameters = [];
   function visit(child) {
     if (ts.isInferTypeNode(child)) parameters.push(child.typeParameter);
-    ts.forEachChild(child, visit);
+    child.forEachChild(visit);
   }
   visit(node);
   return parameters;
@@ -1100,7 +1108,7 @@ function reachableProps(declaration, module) {
   function mentionsBoundParameter(node, context) {
     return (
       isBoundParameter(node, context) ||
-      Boolean(ts.forEachChild(node, child => mentionsBoundParameter(child, context) || undefined))
+      Boolean(node.forEachChild(child => mentionsBoundParameter(child, context) || undefined))
     );
   }
   /**
@@ -1262,7 +1270,7 @@ function reachableProps(declaration, module) {
         ? node.expression
         : undefined;
     if (!reference) {
-      ts.forEachChild(node, child => visit(child, context));
+      node.forEachChild(child => visit(child, context));
       return;
     }
     const name = ts.isIdentifier(reference) ? reference.text : "";
@@ -1274,8 +1282,7 @@ function reachableProps(declaration, module) {
     // A namespace declaration shadows the module-level type of the same name.
     const local = name && !enclosingScopeNames(node, false).has(name) && module.types.get(name);
     // `interface CardProps extends Base<{ onPress(): void }>`, with `Base` imported.
-    const contractHeritage =
-      ts.isExpressionWithTypeArguments(node) && node.parent.parent === declaration;
+    const contractHeritage = ts.isHeritageClause(node.parent) && node.parent.parent === declaration;
     if (local) {
       expand(local, node, context);
     } else if (PROPS_PRESERVING_TYPES.has(name) || contractHeritage) {
@@ -1400,15 +1407,15 @@ function checkContractModule(module) {
       );
     } else if (head === "React" && !isDeclared(node, head)) {
       checkReactType(node, rest[0]);
-    } else if (head && !ts.isConstTypeReference(node)) {
+    } else if (head && !isConstTypeReference(node)) {
       checkGlobal(node, head, false);
     }
     // `typeof document` exposes a DOM value as much as `Document` does.
     const [query] = ts.isTypeQueryNode(node) ? nameSegments(node.exprName) : [];
     if (query && query !== "React") checkGlobal(node, query, true);
-    ts.forEachChild(node, visit);
+    node.forEachChild(visit);
   }
-  ts.forEachChild(module.sourceFile, visit);
+  module.sourceFile.forEachChild(visit);
   return found;
 }
 
@@ -1471,9 +1478,7 @@ function checkContractProps(module, declaration) {
  */
 function bindingNames(name) {
   if (ts.isIdentifier(name)) return [name.text];
-  return name.elements.flatMap(element =>
-    ts.isOmittedExpression(element) ? [] : bindingNames(element.name),
-  );
+  return name.elements.flatMap(element => (element.name ? bindingNames(element.name) : []));
 }
 
 /**
