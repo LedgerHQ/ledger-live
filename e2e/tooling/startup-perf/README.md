@@ -12,7 +12,8 @@ signing keystore.
 `flows/` the Maestro flows. The `ci/` scripts run from that checkout of `ci/` alone, with the
 measured ref's Node (24.14 or later from `live-mobile@4.26.0` on): they never import from `src/`
 (`src/` may import from `ci/`), and they are `.mts` so Node runs them as ES modules without the
-`package.json`. Shell is kept for the two steps that only call system tools.
+`package.json`. Shell is kept for the scripts that only drive system tools: Maestro's install and
+the devices' boot.
 
 | Path                            | Role                                                                                  |
 | ------------------------------- | ------------------------------------------------------------------------------------- |
@@ -20,6 +21,8 @@ measured ref's Node (24.14 or later from `live-mobile@4.26.0` on): they never im
 | `ci/prepare-build.mts`          | Makes the checked-out ref's E2E prerelease build prod-like, before `e2e:build`        |
 | `ci/verify-build.mts`           | Checks the built binary: no `MOCK`/`DETOX`, `FORCE_DEBUG_VISIBLE=1`, real blur        |
 | `ci/step.mts`                   | What those three share: workspace paths, error annotations, job summary               |
+| `ci/boot-emulators.sh`          | Boots the two Android emulators: 4 cores, animations on, cellular, idle               |
+| `ci/boot-simulators.sh`         | Creates and boots the two simulators, then waits for an idle host                     |
 | `ci/install-maestro.sh`         | Installs the pinned Maestro, checked against its SHA-256                              |
 | `ci/wait-for-idle-host.sh`      | Waits for the iOS host's load to fall below its CPU count after the simulators boot   |
 | `src/run.ts`                    | The CLI that measures: installs, injects and launches A and B, writes `samples.jsonl` |
