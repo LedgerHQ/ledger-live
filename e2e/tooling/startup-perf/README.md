@@ -101,6 +101,11 @@ write no remote Nx, pnpm, Gradle or AVD cache: they run with develop's role whil
   `read-performance-quick.yaml`; warm-ups and retries use the full flow, whose optional taps cost
   ~7 s when no prompt shows. The flows select by text: the Debug and Performance screens have no
   testIDs on any supported ref.
+- **Why the log.** Run 42352894550 read 64 launches both ways: the same time on every one. With the
+  log only (run 42356679784, 20 pairs), a launch takes 8.5 s on iOS and 10–11 s on Android instead
+  of 34–44 s, so the measure jobs take 33 and 22 min instead of ~65 and ~40. Measured iOS launches
+  also no longer follow a Maestro read, which made them ~280 ms slower than the warm-ups (runs
+  42325407516, 42352894550), and the iOS interval narrowed from about ±30 to ±18 ms.
 - **Alternate devices** on every launch: right after a launch on the same simulator, one was
   ~270 ms faster (run 39731729203). Halfway through each scenario A and B swap devices, so the
   difference between the devices cancels out. On Android the other emulator is paused from the
