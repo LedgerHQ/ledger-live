@@ -1,6 +1,6 @@
 // Fake launches for the analysis tests: A and B pairs, with the Debug value's start and the
 // native start chosen per build.
-import type { Sample, Side } from "./types.ts";
+import type { Sample, Side } from "../types.ts";
 
 const PROCESS_START = 1_700_000_000_000;
 

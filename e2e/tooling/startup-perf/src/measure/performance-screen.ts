@@ -2,7 +2,8 @@ import { writeFile } from "node:fs/promises";
 import path from "node:path";
 import { sleep } from "./exec.ts";
 import { FLOWS_DIR, MAESTRO_FLOW_TIMEOUT_MS, MAESTRO_HIERARCHY_TIMEOUT_MS } from "./maestro.ts";
-import type { Maestro, Platform, RunResult, StartupEvent } from "./types.ts";
+import type { StartupEvent } from "../types.ts";
+import type { Maestro, Platform, RunResult } from "./types.ts";
 
 const FULL_FLOW = path.join(FLOWS_DIR, "read-performance.yaml");
 const QUICK_FLOW = path.join(FLOWS_DIR, "read-performance-quick.yaml");

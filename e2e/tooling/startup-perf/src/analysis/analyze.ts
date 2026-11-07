@@ -4,8 +4,8 @@ import { appendFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
-import { insideWorkingDir } from "./exec.ts";
-import type { Sample, Side } from "./types.ts";
+import { insideWorkingDir } from "../../ci/step.mts";
+import type { Sample, Side } from "../types.ts";
 import { type ReportOptions, toMarkdown } from "./report.ts";
 import {
   bootstrapMean,

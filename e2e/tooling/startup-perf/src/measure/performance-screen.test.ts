@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { debugBase } from "./analyze.ts";
+import { debugBase } from "../analysis/analyze.ts";
 import { hierarchyTexts, parseEvents, parsePerformance } from "./performance-screen.ts";
-import type { Sample } from "./types.ts";
+import type { Sample } from "../types.ts";
 
 describe("hierarchyTexts", () => {
   it("lists the visible strings in screen order, trimmed and without repeats", () => {

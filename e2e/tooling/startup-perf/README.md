@@ -12,31 +12,32 @@ signing keystore.
 jobs, with the measured ref's Node (24.14 or later from `live-mobile@4.26.0` on): it never imports
 from `src/` (`src/` may import from `ci/`), and its scripts are `.mts` so Node runs them as ES
 modules without the `package.json`. `devices/` holds the shell the measure jobs run to get the
-emulators or simulators and Maestro ready, `src/` the harness, and `flows/` the Maestro flows. Each
-test sits next to its module.
+emulators or simulators and Maestro ready, `src/` the two programs (`measure/` writes
+`samples.jsonl`, `analysis/` reads it), and `flows/` the Maestro flows. Each test sits next to its
+module.
 
-| Path                            | Role                                                                                        |
-| ------------------------------- | ------------------------------------------------------------------------------------------- |
-| `ci/resolve-refs.mts`           | The plan job: resolves refs A and B to commits, branches and tags only                      |
-| `ci/prepare-build.mts`          | Makes the checked-out ref's E2E prerelease build prod-like, before `e2e:build`              |
-| `ci/verify-build.mts`           | Checks the built binary: no `MOCK`/`DETOX`, `FORCE_DEBUG_VISIBLE=1`, real blur              |
-| `ci/step.mts`                   | What those three share: workspace paths, error annotations, job summary                     |
-| `devices/boot-emulators.sh`     | Boots the two Android emulators: 4 cores, animations on, cellular, idle                     |
-| `devices/boot-simulators.sh`    | Creates and boots the two simulators, then waits for an idle host                           |
-| `devices/install-maestro.sh`    | Installs the pinned Maestro, checked against its SHA-256                                    |
-| `devices/wait-for-idle-host.sh` | Waits for the iOS host's load to fall below its CPU count after the simulators boot         |
-| `src/run.ts`                    | The CLI that measures: installs, injects and launches A and B, writes `samples.jsonl`       |
-| `src/analyze.ts`                | The CLI that judges: pairs A and B, tells which start each Debug value counts from, verdict |
-| `src/stats.ts`                  | Median, Hodges–Lehmann with its Wilcoxon interval, bootstrap mean, uneven-phase widening    |
-| `src/report.ts`                 | The job summary: B − A per platform, scenario and measure                                   |
-| `src/fake-samples.ts`           | Fake launches for the analysis tests                                                        |
-| `src/platforms/`                | `android.ts` and `ios.ts`, the two `Platform`s, through adb or simctl                       |
-| `src/performance-screen.ts`     | Reads App startup time and the startup events through Maestro                               |
-| `src/inject.ts`                 | Imports a scenario's userdata through the E2E bridge, once per install                      |
-| `src/bridge.ts`                 | The E2E bridge protocol (`apps/ledger-live-mobile/src/e2e/bridge/client.ts`)                |
-| `src/maestro.ts`, `src/exec.ts` | Maestro and child-process calls                                                             |
-| `src/types.ts`                  | `Sample` (a line of `samples.jsonl`) and `Platform`, checked by `tsc`                       |
-| `flows/`                        | Maestro flows that open Settings > Debug > Performance in the running app                   |
+| Path                                | Role                                                                                        |
+| ----------------------------------- | ------------------------------------------------------------------------------------------- |
+| `ci/resolve-refs.mts`               | The plan job: resolves refs A and B to commits, branches and tags only                      |
+| `ci/prepare-build.mts`              | Makes the checked-out ref's E2E prerelease build prod-like, before `e2e:build`              |
+| `ci/verify-build.mts`               | Checks the built binary: no `MOCK`/`DETOX`, `FORCE_DEBUG_VISIBLE=1`, real blur              |
+| `ci/step.mts`                       | What those three share: workspace paths, error annotations, job summary                     |
+| `devices/boot-emulators.sh`         | Boots the two Android emulators: 4 cores, animations on, cellular, idle                     |
+| `devices/boot-simulators.sh`        | Creates and boots the two simulators, then waits for an idle host                           |
+| `devices/install-maestro.sh`        | Installs the pinned Maestro, checked against its SHA-256                                    |
+| `devices/wait-for-idle-host.sh`     | Waits for the iOS host's load to fall below its CPU count after the simulators boot         |
+| `src/types.ts`                      | `Sample`: a line of `samples.jsonl`, which `measure/` writes and `analysis/` reads          |
+| `src/measure/run.ts`                | The CLI that measures: installs, injects and launches A and B, writes `samples.jsonl`       |
+| `src/measure/platforms/`            | `android.ts` and `ios.ts`, the two `Platform`s, through adb or simctl                       |
+| `src/measure/performance-screen.ts` | Reads App startup time and the startup events through Maestro                               |
+| `src/measure/inject.ts`             | Imports a scenario's userdata through the E2E bridge, once per install                      |
+| `src/measure/bridge.ts`             | The E2E bridge protocol (`apps/ledger-live-mobile/src/e2e/bridge/client.ts`)                |
+| `src/measure/maestro.ts`, `exec.ts` | Maestro and child-process calls                                                             |
+| `src/analysis/analyze.ts`           | The CLI that judges: pairs A and B, tells which start each Debug value counts from, verdict |
+| `src/analysis/stats.ts`             | Median, Hodges–Lehmann with its Wilcoxon interval, bootstrap mean, uneven-phase widening    |
+| `src/analysis/report.ts`            | The job summary: B − A per platform, scenario and measure                                   |
+| `src/analysis/fake-samples.ts`      | Fake launches for the analysis tests                                                        |
+| `flows/`                            | Maestro flows that open Settings > Debug > Performance in the running app                   |
 
 ## Presets
 

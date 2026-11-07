@@ -1,6 +1,6 @@
 // The job summary: B − A per platform, scenario and measure, and what the rows mean.
 import type { DebugBase, GateOptions, Row } from "./analyze.ts";
-import type { Side } from "./types.ts";
+import type { Side } from "../types.ts";
 
 export interface ReportOptions extends GateOptions {
   labelA: string;

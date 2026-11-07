@@ -2,7 +2,8 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { type Bridge, startBridge } from "./bridge.ts";
 import { log, sleep } from "./exec.ts";
-import type { Platform, Side, Userdata } from "./types.ts";
+import type { Side } from "../types.ts";
+import type { Platform, Userdata } from "./types.ts";
 
 const APP_CONNECT_TIMEOUT_MS = 180_000;
 // Lets the client finish its handshake before the first message.

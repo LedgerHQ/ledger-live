@@ -17,7 +17,7 @@ export function insideWorkingDir(file: string): string {
   return resolved;
 }
 
-/** A system tool's output. Like src/exec.ts's run(), it finds `tool` on the runner's PATH. */
+/** A system tool's output. Like src/measure/exec.ts's run(), it finds `tool` on the runner's PATH. */
 export function toolOutput(
   tool: string,
   args: string[],

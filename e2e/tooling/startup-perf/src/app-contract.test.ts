@@ -71,7 +71,7 @@ describe("the mobile app of this checkout", () => {
   it("handles every bridge message the injection sends", () => {
     const client = read(APP, "src/e2e/bridge/client.ts");
     const sent = new Set(
-      [...read(import.meta.dirname, "inject.ts").matchAll(/send\("(\w+)"/g)].map(m => m[1]),
+      [...read(import.meta.dirname, "measure/inject.ts").matchAll(/send\("(\w+)"/g)].map(m => m[1]),
     );
     assert.ok(sent.has("getEnvs") && sent.has("importSettings"), "inject.ts was not parsed");
     for (const type of sent) {

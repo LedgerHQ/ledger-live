@@ -13,7 +13,7 @@ export const sleep = (ms: number): Promise<void> => new Promise(resolve => setTi
 export const errorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error);
 
-export { insideWorkingDir } from "../ci/step.mts";
+export { insideWorkingDir } from "../../ci/step.mts";
 
 export interface RunOptions {
   timeoutMs?: number;
