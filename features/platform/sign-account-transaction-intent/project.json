@@ -1,0 +1,8 @@
+{
+  "name": "@features/platform-sign-account-transaction-intent",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

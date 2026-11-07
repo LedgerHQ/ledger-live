@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import type { RpcRequest, Transport } from "@ledgerhq/wallet-api-core";
 import {
   WalletAPIServer,
@@ -13,6 +13,7 @@ import {
   type ManifestCurrencies,
 } from "./manifestCurrencies";
 import { protectStorageLogic } from "./protectStorage";
+import { createHandlerRoutes, ensureRoute, type WalletHandlerName } from "./routeHandlers";
 
 /** The transport of one live app origin: requests are held until `activate`, and dropped on close. */
 export interface WalletAPIServerSession extends Transport {
@@ -34,22 +35,33 @@ export type WalletAPIServerCoreOptions = {
   config: ServerConfig;
   customHandlers?: CustomHandlers;
   storage?: Partial<Pick<WalletHandlers, "storage.get" | "storage.set">>;
-  /** Serves `account.list`; without it, the host registers its own handler. */
+  /** Serves `account.list` before the host's handler. */
   accountsProvider?: WalletAPIAccountsProvider;
+  /** Handlers served from the account data, tried before the host's; see `NotServedByAccountDataError`. */
+  accountDataHandlers?: Partial<WalletHandlers>;
 };
 
-class SessionWalletAPIServer extends WalletAPIServer {
-  constructor(
-    private readonly session: WalletAPIServerSession,
-    config: ServerConfig,
-    customHandlers: CustomHandlers,
-  ) {
-    super(session, config, undefined, customHandlers);
-  }
+/** Registers a legacy handler, answered only when the account data does not serve the request. */
+export type SetLegacyHandler = <K extends WalletHandlerName>(
+  method: K,
+  handler: WalletHandlers[K],
+) => void;
 
-  protected onRequest(request: RpcRequest): Promise<unknown> {
-    return this.session.cancelOnClose(super.onRequest(request));
+export type WalletAPIServerCore = { server: WalletAPIServer; setHandler: SetLegacyHandler };
+
+/** A server whose requests are dropped once its session is closed. */
+function createSessionServer(
+  session: WalletAPIServerSession,
+  config: ServerConfig,
+  customHandlers: CustomHandlers,
+): WalletAPIServer {
+  // Declared on use: a module that only needs the session helpers loads without the server.
+  class SessionWalletAPIServer extends WalletAPIServer {
+    protected onRequest(request: RpcRequest): Promise<unknown> {
+      return session.cancelOnClose(super.onRequest(request));
+    }
   }
+  return new SessionWalletAPIServer(session, config, undefined, customHandlers);
 }
 
 /** One Wallet API server per session, with the handlers that need no legacy `Account`. */
@@ -60,13 +72,44 @@ export function useWalletAPIServerCore({
   customHandlers,
   storage,
   accountsProvider,
-}: WalletAPIServerCoreOptions): WalletAPIServer {
-  // A new server per session; the effects below keep its config and custom handlers current.
-  const server = useMemo<WalletAPIServer>(
-    () => new SessionWalletAPIServer(session, config, customHandlers ?? {}),
+  accountDataHandlers,
+}: WalletAPIServerCoreOptions): WalletAPIServerCore {
+  // A new server and routes per session; the effects below keep its config and custom handlers current.
+  const { server, routes } = useMemo(
+    () => ({
+      server: createSessionServer(session, config, customHandlers ?? {}),
+      routes: createHandlerRoutes(),
+    }),
     // oxlint-disable-next-line react-hooks/exhaustive-deps
     [session],
   );
+
+  const setHandler = useCallback<SetLegacyHandler>(
+    (method, handler) => {
+      routes.legacy[method] = handler;
+      ensureRoute(server, routes, method);
+    },
+    [routes, server],
+  );
+
+  const own = useMemo<Partial<WalletHandlers>>(
+    () => ({
+      ...accountDataHandlers,
+      ...(accountsProvider && {
+        "account.list": ({ currencyIds }) =>
+          accountsProvider.list(
+            accountFilterOf(effectiveCurrencyIds(manifest.currencies, currencyIds)),
+          ),
+      }),
+    }),
+    [accountDataHandlers, accountsProvider, manifest.currencies],
+  );
+
+  useEffect(() => {
+    routes.own = own;
+    for (const method of Object.keys(own) as WalletHandlerName[])
+      ensureRoute(server, routes, method);
+  }, [own, routes, server]);
 
   useEffect(() => {
     if (customHandlers) server.setCustomHandlers(customHandlers);
@@ -95,15 +138,6 @@ export function useWalletAPIServerCore({
     server.setHandler("storage.set", protectStorageLogic(rule, storageSet));
   }, [manifestId, manifestStorage, server, storageSet]);
 
-  useEffect(() => {
-    if (!accountsProvider) return;
-    server.setHandler("account.list", ({ currencyIds }) =>
-      accountsProvider.list(
-        accountFilterOf(effectiveCurrencyIds(manifest.currencies, currencyIds)),
-      ),
-    );
-  }, [accountsProvider, manifest.currencies, server]);
-
   // Requests flow once every effect of this commit has run, the host's handlers included.
   useEffect(() => {
     let isCurrent = true;
@@ -115,5 +149,13 @@ export function useWalletAPIServerCore({
     };
   }, [session, server]);
 
-  return server;
+  return useMemo(() => ({ server, setHandler }), [server, setHandler]);
+}
+
+/** Registers each of `handlers` as a legacy handler. */
+export function setHandlers(setHandler: SetLegacyHandler, handlers: Partial<WalletHandlers>): void {
+  for (const method of Object.keys(handlers) as WalletHandlerName[]) {
+    const handler = handlers[method];
+    if (handler) setHandler(method, handler as WalletHandlers[typeof method]);
+  }
 }

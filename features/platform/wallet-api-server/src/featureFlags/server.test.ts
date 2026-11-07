@@ -1,6 +1,6 @@
-import { handlers } from "./server";
+import { featureFlagsHandlers as handlers } from "./server";
 import { getFeatureFlagsForLiveApp } from "./resolver";
-import { LiveAppManifest } from "../../platform/types";
+import type { FeatureFlagsManifest } from "./types";
 import type { Feature, FeatureId } from "@shared/feature-flags";
 
 jest.mock("./resolver");
@@ -13,7 +13,7 @@ jest.mock("@ledgerhq/wallet-api-server", () => ({
 const mockGetFeatureFlagsForLiveApp = jest.mocked(getFeatureFlagsForLiveApp);
 
 describe("FeatureFlags server handlers", () => {
-  const createMockManifest = (): LiveAppManifest => {
+  const createMockManifest = (): FeatureFlagsManifest & Record<string, unknown> => {
     return {
       id: "test-app",
       name: "Test App",

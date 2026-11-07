@@ -116,3 +116,30 @@ export const portfolioSource: AccountDataSource = {
 - Add the source to `accountDataSources` in each app's `account-data-setup.ts`. The order is the fallback order: `coin-module` first, then `full-sync`.
 
 Without React or Redux, `createAccountDataRouter(sources).read(kind, descriptor)` answers the same.
+
+## Sending
+
+A source that sends from the accounts it supports adds `send` (`AccountSendCapability` of [`@domain/api-account-transaction`](../domain/api/account-transaction)) next to its readers, on the same object: the router's `sources()` give the rank, `purposes` keep `mock` accounts to the mock source.
+
+```mermaid
+sequenceDiagram
+    participant F as send flow
+    participant T as prepareSend / signSend / broadcastSend
+    participant X as source (send)
+    participant D as Device Intent job
+    participant P as accountPendingOperations
+    F->>T: prepareSend(descriptor, request)
+    T->>X: prepare, first ranked source that does not hand it over
+    X-->>F: PreparedSend (fees, totals, errors, payload)
+    F->>D: sign intent, input signSend(prepared)
+    D->>X: sign(target, prepared, device), same source only
+    X-->>F: SignedTransaction
+    F->>T: broadcastSend(prepared, signed)
+    T->>X: broadcast, same source only
+    T->>P: its pending rows, until a read lists their hash
+```
+
+- Values, not ids: the flow keeps the `PreparedSend` and the `SignedTransaction`, so a signature always goes with the preparation it signed.
+- Payloads are the source's own (FullSync keeps the family's objects in memory behind a handle; a restart means preparing again).
+- `selectAccountOperationsWithPending` heads the operations read with the pending rows no read lists yet.
+

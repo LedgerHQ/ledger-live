@@ -6,6 +6,32 @@
     "transactionDate": "Transaction date"
   },
   "platform": {
+    "accountDataSign": {
+      "transaction": {
+        "title": "Review transaction",
+        "recipient": "Recipient",
+        "amount": "Amount",
+        "fees": "Network fees",
+        "total": "Total"
+      },
+      "message": {
+        "title": "Sign message",
+        "messageLabel": "Message"
+      },
+      "receive": {
+        "title": "Receive",
+        "addressLabel": "Address",
+        "verify": "Verify on device",
+        "confirm": "Confirm",
+        "verified": "Address verified",
+        "mismatch": "The address on your device does not match",
+        "unsupported": "This address cannot be verified on your device"
+      },
+      "confirm": "Continue on device",
+      "signed": "Signed",
+      "pending": "Preparing your Ledger device",
+      "rejected": "Operation rejected on Ledger device"
+    },
     "flows": {
       "requestAccount": {
         "title": "Select an account"

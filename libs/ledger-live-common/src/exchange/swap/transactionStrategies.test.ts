@@ -7,7 +7,7 @@ import {
   TransactionWithCustomFee,
 } from "./transactionStrategies";
 import BigNumber from "bignumber.js";
-import type { GetFeatureFn } from "../../wallet-api/FeatureFlags/resolver";
+import type { GetFeatureFn } from "../../wallet-api/FeatureFlags";
 import type { Account } from "@ledgerhq/types-live";
 import { transactionToIntent } from "../../bridge/generic-coin-framework/utils";
 import type { GenericTransaction } from "../../bridge/generic-coin-framework/types";

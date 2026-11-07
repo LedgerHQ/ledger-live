@@ -1,7 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { walletApiIdOf } from "@features/platform-wallet-api-accounts";
 import {
   accountNameWithDefaultSelector,
@@ -13,13 +12,8 @@ import type { Transaction } from "../coin-modules/transaction-types";
 import { isTokenAccount } from "../account";
 import { getAccountBridge } from "../bridge";
 import { getPendingTokenSpent } from "../bridge/generic-coin-framework/utils";
-import {
-  WalletAPIAccount,
-  WalletAPICurrency,
-  WalletAPITransaction,
-  WalletAPISupportedCurrency,
-} from "./types";
-import { FAMILIES_MAPPING_LL_TO_WAPI, FAMILIES_MAPPING_WAPI_TO_LL } from "./constants";
+import { WalletAPIAccount, WalletAPITransaction } from "./types";
+import { FAMILIES_MAPPING_WAPI_TO_LL } from "./constants";
 
 const uuidToAccountId = new Map<string, string>();
 
@@ -80,33 +74,7 @@ export function accountToWalletAPIAccount(
   };
 }
 
-export function currencyToWalletAPICurrency(
-  currency: WalletAPISupportedCurrency,
-): WalletAPICurrency {
-  if (currency.type === "TokenCurrency") {
-    return {
-      type: "TokenCurrency",
-      standard: "ERC20",
-      id: currency.id,
-      ticker: currency.ticker,
-      contract: currency.contractAddress,
-      name: currency.name,
-      parent: currency.parentCurrencyId,
-      color: getCryptoCurrencyById(currency.parentCurrencyId).color,
-      decimals: currency.units[0].magnitude,
-    };
-  }
-
-  return {
-    type: "CryptoCurrency",
-    id: currency.id,
-    ticker: currency.ticker,
-    name: currency.name,
-    family: FAMILIES_MAPPING_LL_TO_WAPI[currency.family] ?? currency.family,
-    color: currency.color,
-    decimals: currency.units[0].magnitude,
-  };
-}
+export { currencyToWalletAPICurrency } from "@features/platform-wallet-api-server";
 
 export const getWalletAPITransactionSignFlowInfos = async ({
   walletApiTransaction,

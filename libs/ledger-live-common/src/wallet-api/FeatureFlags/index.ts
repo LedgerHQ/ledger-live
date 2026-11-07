@@ -1,3 +1,8 @@
-export * from "./types";
-export * from "./resolver";
-export * from "./server";
+export {
+  getFeatureFlagsForLiveApp,
+  featureFlagsHandlers as handlers,
+  type FeatureFlagsGetParams,
+  type FeatureFlagsGetResponse,
+  type GetFeatureFn,
+  type MethodIds,
+} from "@features/platform-wallet-api-server";

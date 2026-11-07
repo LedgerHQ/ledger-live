@@ -12,11 +12,12 @@ import type {
   AccountDataReadOptions,
   AddAccountDataSourceOptions,
 } from "../router";
-import type {
-  AccountDataBatchReader,
-  AccountDataReader,
-  AccountDataSource,
-  AccountTarget,
+import {
+  servesPurpose,
+  type AccountDataBatchReader,
+  type AccountDataReader,
+  type AccountDataSource,
+  type AccountTarget,
 } from "../source";
 import { chunk, createLimiter, type Limiter } from "./limiter";
 
@@ -216,8 +217,6 @@ export function collectTargets(reads: readonly PendingRead[]): {
   return { slots, targets };
 }
 
-const DEFAULT_PURPOSES: readonly AccountDescriptor["purpose"][] = ["account"];
-
 /** The first ranked source with a reader for the kind that supports the account, among the pinned one if any. */
 export function pickSource(
   context: RouterContext,
@@ -231,7 +230,7 @@ export function pickSource(
       !tried.has(candidate) &&
       (sourceId === undefined || candidate.id === sourceId) &&
       serves(candidate, kind) &&
-      (candidate.purposes ?? DEFAULT_PURPOSES).includes(target.descriptor.purpose) &&
+      servesPurpose(candidate, target.descriptor) &&
       candidate.supports(target.descriptor, kind),
   );
 }

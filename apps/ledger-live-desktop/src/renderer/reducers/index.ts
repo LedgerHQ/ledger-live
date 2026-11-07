@@ -37,7 +37,9 @@ import { accountReceivesSlice, type AccountReceivesState } from "@domain/entity-
 import { accountBalancesSlice, type AccountBalancesState } from "@domain/entity-account-balance";
 import {
   accountOperationsSlice,
+  accountPendingOperationsSlice,
   type AccountOperationsState,
+  type AccountPendingOperationsState,
 } from "@domain/entity-account-operation";
 import {
   accountBalanceHistoriesSlice,
@@ -135,6 +137,7 @@ export type State = LLDRTKApiState & {
   accountReceives: AccountReceivesState;
   accountBalances: AccountBalancesState;
   accountOperations: AccountOperationsState;
+  accountPendingOperations: AccountPendingOperationsState;
   accountBalanceHistories: AccountBalanceHistoriesState;
   accountEntries: AccountEntriesState;
   largeScreenUpsellModal: LargeScreenUpsellModalState;
@@ -190,6 +193,7 @@ const appReducer = combineReducers({
   accountReceives: accountReceivesSlice.reducer,
   accountBalances: accountBalancesSlice.reducer,
   accountOperations: accountOperationsSlice.reducer,
+  accountPendingOperations: accountPendingOperationsSlice.reducer,
   accountBalanceHistories: accountBalanceHistoriesSlice.reducer,
   accountEntries: accountsSlice.reducer,
   largeScreenUpsellModal: largeScreenUpsellModalSlice.reducer,

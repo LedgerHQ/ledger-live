@@ -6,12 +6,14 @@ import {
 } from "@domain/api-account-data";
 import { AccountDataSourceIdSchema } from "@domain/entity-account-data";
 import type { AccountUUID } from "@domain/entity-account-descriptor";
+import type { AccountSendCapability } from "@domain/api-account-transaction";
 import { getEnv } from "@shared/env";
 import { FullSyncAccountNotFoundError } from "./errors";
 import { toAccountReceive } from "./receive";
 import { toAccountBalances } from "./balance";
 import { toAccountBalanceHistory } from "./balanceHistory";
 import { toAccountOperations } from "./operations";
+import { createFullSyncSender } from "./send";
 import { isFullSyncSupported } from "./supports";
 import { syncLegacyAccount, type SyncLegacyAccountOptions } from "./syncLegacyAccount";
 
@@ -27,6 +29,8 @@ export type FullSyncHost = Pick<
 export type FullSyncSource = AccountDataSource & {
   /** The account as the store holds it once synced, sharing the sync in flight for it if any. */
   sync(target: AccountTarget): Promise<Account>;
+  /** Sends through the same legacy bridge, from the account the store holds. */
+  send: AccountSendCapability;
 };
 
 const notFound = (accountUUID: AccountUUID) =>
@@ -65,5 +69,6 @@ export function createFullSyncSource(host: FullSyncHost): FullSyncSource {
       receive: target => sync(target).then(toAccountReceive),
     },
     sync,
+    send: createFullSyncSender(host),
   };
 }

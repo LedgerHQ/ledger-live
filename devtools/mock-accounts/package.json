@@ -21,14 +21,17 @@
   },
   "dependencies": {
     "@domain/api-account-data": "workspace:*",
+    "@domain/api-account-transaction": "workspace:*",
     "@domain/entity-account-balance": "workspace:*",
     "@domain/entity-account-balance-history": "workspace:*",
     "@domain/entity-account-data": "workspace:*",
     "@domain/entity-account-descriptor": "workspace:*",
     "@domain/entity-account-operation": "workspace:*",
+    "@domain/entity-account-transaction": "workspace:*",
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-fiat": "workspace:*",
-    "@noble/hashes": "catalog:"
+    "@noble/hashes": "catalog:",
+    "rxjs": "catalog:"
   },
   "peerDependencies": {
     "react": ">=19.0.0"

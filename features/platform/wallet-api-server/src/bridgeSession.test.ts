@@ -3,7 +3,7 @@
  */
 import { StrictMode } from "react";
 import { act, renderHook } from "@testing-library/react";
-import { BridgeSessionClosed } from "../errors";
+import { BridgeSessionClosed } from "./bridgeSessionClosed";
 import {
   BridgeSession,
   bindUiFlowToSession,
