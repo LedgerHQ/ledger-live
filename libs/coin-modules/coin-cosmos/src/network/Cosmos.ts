@@ -760,11 +760,13 @@ export class CosmosAPI {
 
     const firstPage = await fetchPage(0);
     const total = Number(firstPage.pagination?.total ?? firstPage.txs.length);
-    const txs = [...firstPage.txs];
-
-    for (let offset = limit; offset < total; offset += limit) {
-      txs.push(...(await fetchPage(offset)).txs);
-    }
+    const remainingPageCount = Math.max(0, Math.ceil((total - limit) / limit));
+    const remainingOffsets = Array.from(
+      { length: remainingPageCount },
+      (_, index) => (index + 1) * limit,
+    );
+    const remainingPages = await Promise.all(remainingOffsets.map(fetchPage));
+    const txs = [firstPage, ...remainingPages].flatMap(page => page.txs);
 
     return { ...firstPage, txs };
   };
