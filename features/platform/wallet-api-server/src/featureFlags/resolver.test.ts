@@ -1,9 +1,11 @@
 import { getFeatureFlagsForLiveApp } from "./resolver";
-import { LiveAppManifest } from "../../platform/types";
+import type { FeatureFlagsManifest } from "./types";
 import type { Feature, FeatureId } from "@shared/feature-flags";
 
 describe("getFeatureFlagsForLiveApp", () => {
-  const createMockManifest = (featureFlags?: string[] | "*"): LiveAppManifest => {
+  const createMockManifest = (
+    featureFlags?: string[] | "*",
+  ): FeatureFlagsManifest & Record<string, unknown> => {
     return {
       id: "test-app",
       name: "Test App",

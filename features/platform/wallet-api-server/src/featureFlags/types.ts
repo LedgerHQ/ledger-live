@@ -9,3 +9,6 @@ export type FeatureFlagsGetResponse = {
 };
 
 export type MethodIds = "custom.featureFlags.get";
+
+/** What the feature flag rule reads of a manifest: the flags it may read, all of them with `"*"`. */
+export type FeatureFlagsManifest = { featureFlags?: string[] | "*" };

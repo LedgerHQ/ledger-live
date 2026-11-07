@@ -42,3 +42,11 @@ export type AccountDataSource = {
   /** The most calls in flight on this source at once, overriding the router's default. */
   readonly concurrency?: number;
 };
+
+const DEFAULT_PURPOSES: readonly AccountPurpose[] = ["account"];
+
+/** Whether the source serves the descriptor's purpose: a `mock` descriptor only reaches the sources that list it. */
+export const servesPurpose = (
+  source: Pick<AccountDataSource, "purposes">,
+  descriptor: AccountDescriptor,
+): boolean => (source.purposes ?? DEFAULT_PURPOSES).includes(descriptor.purpose);

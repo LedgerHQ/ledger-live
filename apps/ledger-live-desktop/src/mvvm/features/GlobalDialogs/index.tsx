@@ -44,6 +44,7 @@ const CurrencyRegionRestrictedDialog = lazy(
 const AccountPublicKeyUnavailableDialog = lazy(
   () => import("LLD/features/AccountPublicKeyUnavailableDialog"),
 );
+const WalletAPIAccountDataSignDialog = lazy(() => import("LLD/features/WalletAPIAccountDataSign"));
 
 /** Mounts all root-level dialogs and flows. Add new global dialogs here. */
 const GlobalDialogs = () => (
@@ -107,6 +108,9 @@ const GlobalDialogs = () => (
     </Suspense>
     <Suspense fallback={null}>
       <CurrencyRegionRestrictedDialog />
+    </Suspense>
+    <Suspense fallback={null}>
+      <WalletAPIAccountDataSignDialog />
     </Suspense>
   </>
 );

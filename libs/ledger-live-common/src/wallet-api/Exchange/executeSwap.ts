@@ -41,7 +41,7 @@ import { setBroadcastTransaction } from "../../exchange/swap/setBroadcastTransac
 import { transactionStrategy } from "../../exchange/swap/transactionStrategies";
 import { FeatureFlags } from "../../exchange/swap/types";
 import { getAccountIdFromWalletAccountId } from "../converters";
-import type { GetFeatureFn } from "../FeatureFlags/resolver";
+import type { GetFeatureFn } from "../FeatureFlags";
 import { createAccounIdNotFound, createWrongSwapParams, ExchangeError } from "./error";
 import { handleErrors } from "./handleSwapErrors";
 import { createStepError, StepError, toError } from "./parser";

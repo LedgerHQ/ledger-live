@@ -1,5 +1,5 @@
 import type { Feature, FeatureId } from "@shared/feature-flags";
-import { LiveAppManifest } from "../../platform/types";
+import type { FeatureFlagsManifest } from "./types";
 
 export type GetFeatureFn = (featureId: FeatureId) => Feature | null;
 
@@ -9,7 +9,7 @@ export function getFeatureFlagsForLiveApp({
   getFeature,
 }: {
   requestedFeatureFlagIds: string[];
-  manifest: LiveAppManifest;
+  manifest: FeatureFlagsManifest;
   getFeature: GetFeatureFn;
 }): Record<string, Feature<unknown> | null> {
   // Check if wildcard is present - if so, allow all feature flags

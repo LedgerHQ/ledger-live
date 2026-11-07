@@ -34,7 +34,7 @@ import { customWrapper, RPCHandler } from "@ledgerhq/wallet-api-server";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "../../bridge";
 import { resolveFamily } from "../../bridge/zcashRouting";
-import type { GetFeatureFn } from "../FeatureFlags/resolver";
+import type { GetFeatureFn } from "../FeatureFlags";
 import { FeatureFlags } from "../../exchange/swap/types";
 import { Exchange } from "../../exchange/types";
 import {

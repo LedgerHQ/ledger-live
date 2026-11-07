@@ -1134,12 +1134,7 @@ export class PaginationIntegrityError extends Error {
 }
 
 /** A Live App request that was pending when the webview main frame moved to another origin. */
-export class BridgeSessionClosed extends Error {
-  override name = "BridgeSessionClosed";
-  constructor() {
-    super("The Live App main frame changed origin: the request was cancelled");
-  }
-}
+export { BridgeSessionClosed } from "@features/platform-wallet-api-server/errors";
 
 /** A Platform API method that is not listed in the Live App manifest `permissions`. */
 export class PlatformAPIPermissionDenied extends Error {
