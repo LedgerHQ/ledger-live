@@ -456,10 +456,6 @@ jobs:
           path: ${{ env.RESULTS_DIR }}/android
           retention-days: 30
 
-      - name: Stop emulators
-        if: ${{ always() }}
-        run: tools/scripts/cleanup-android-emulators.sh || true
-
   measure-ios:
     name: "iOS startup (2 simulators)"
     needs: [plan, build-ios]
@@ -556,12 +552,3 @@ jobs:
           name: startup-perf-results-ios
           path: ${{ env.RESULTS_DIR }}/ios
           retention-days: 30
-
-      - name: Delete simulators
-        if: ${{ always() }}
-        run: |
-          for udid in "${SIM_1:-}" "${SIM_2:-}"; do
-            [[ -n "$udid" ]] || continue
-            xcrun simctl shutdown "$udid" || true
-            xcrun simctl delete "$udid" || true
-          done
