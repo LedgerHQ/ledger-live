@@ -49,23 +49,32 @@ export function comparison({
   a?: LaunchOptions;
   b?: LaunchOptions;
 }): Sample[] {
-  const samples: Sample[] = [];
-  for (const phase of phases) {
-    for (let round = 0; round < pairs / 2; round++) {
-      for (const side of ["A", "B"] as const) {
-        const onSecondDevice = (side === "B") === (phase === 0);
-        const value = 1000 + (side === "B" ? deltaMs : 0);
-        samples.push(
-          launch({
-            side,
-            phase,
-            round,
-            appStartupTime: value + (onSecondDevice ? secondDeviceSlowerByMs : 0),
-            ...(side === "A" ? a : b),
-          }),
-        );
-      }
-    }
-  }
+  const launchOf = (side: Side, phase: number, round: number) => {
+    const onSecondDevice = (side === "B") === (phase === 0);
+    const delta = side === "B" ? deltaMs : 0;
+    const deviceBias = onSecondDevice ? secondDeviceSlowerByMs : 0;
+    const options = side === "A" ? a : b;
+    return launch({ side, phase, round, appStartupTime: 1000 + delta + deviceBias, ...options });
+  };
+  const rounds = Array.from({ length: Math.ceil(pairs / 2) }, (_, round) => round);
+  return phases.flatMap(phase =>
+    rounds.flatMap(round => [launchOf("A", phase, round), launchOf("B", phase, round)]),
+  );
+}
+
+/**
+ * A counts from the first JS import, B from the process start, 800 ms earlier, and one B launch
+ * fell back to the first JS import (the app found no process start). Both builds are as fast.
+ */
+export function startsDifferWithFallback(): Sample[] {
+  const samples = comparison({
+    deltaMs: 0,
+    a: { jsStartOffset: 0, nativeStartMs: 800 },
+    b: { jsStartOffset: 800, nativeStartMs: 800, appStartupTime: 1800 },
+  });
+  const fallback = samples.find(s => s.side === "B");
+  if (!fallback?.events) throw new Error("no B launch");
+  fallback.appStartupTime = 1000;
+  fallback.events["Before js imports"].time = 0;
   return samples;
 }

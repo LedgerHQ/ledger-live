@@ -24,6 +24,18 @@ const BASE_TEXT: Record<DebugBase, string> = {
 };
 const baseText = (base: DebugBase | null) => (base ? BASE_TEXT[base] : "an unknown start");
 
+// The Debug screen row leaves those launches out; the row from the JS start keeps them, as the time
+// from the first JS import is the same whatever start the Debug value counts from.
+function offBaseNote(r: Row, side: Side): string {
+  const launches = `${r.offBaseLaunches[side]} launch(es) of build ${side}`;
+  const start = baseText(r.bases[side]);
+  const fate =
+    r.measure === "Debug screen"
+      ? "are left out of the Debug screen row"
+      : "are kept in the row from the first JS import, which they measure the same way";
+  return `**${r.platform} ${r.scenario}: ${launches} counted from another start than ${start} (e.g. the app found no process start) and ${fate}.**`;
+}
+
 const fmt = (v: number | null | undefined) =>
   typeof v === "number" && Number.isFinite(v) ? String(Math.round(v)) : "–";
 const signed = (v: number | null | undefined) => {
@@ -71,10 +83,7 @@ export function toMarkdown(
     ...rows
       .filter(r => r.measure.startsWith("Debug screen"))
       .flatMap(r =>
-        SIDES.filter(side => r.offBaseLaunches[side] > 0).map(
-          side =>
-            `**${r.platform} ${r.scenario}: ${r.offBaseLaunches[side]} launch(es) of build ${side} counted from another start than ${baseText(r.bases[side])} (e.g. the app found no process start) and are left out of the Debug screen row.**`,
-        ),
+        SIDES.filter(side => r.offBaseLaunches[side] > 0).map(side => offBaseNote(r, side)),
       ),
     "",
   );

@@ -32,7 +32,7 @@ if [[ -z "$device_type" || "$device_type" == null ]]; then
 fi
 echo "Runtime $runtime, device type $device_type"
 
-# Each id is saved at once, so "Delete simulators" removes it even when booting fails.
+# The Measure step reads the ids from GITHUB_ENV.
 udids=()
 for n in 1 2; do
   udid=$(xcrun simctl create "Startup Perf $n" "$device_type" "$runtime")

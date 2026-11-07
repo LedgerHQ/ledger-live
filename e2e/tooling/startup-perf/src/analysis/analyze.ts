@@ -203,7 +203,7 @@ export function summarise(samples: Sample[], { preset, thresholdMs }: GateOption
       measure,
       startsDiffer,
       bases,
-      offBaseLaunches: screen === debugValue ? offBaseLaunches : { A: 0, B: 0 },
+      offBaseLaunches,
       ...d,
       failed: measured.filter(s => !s.ok).length,
       launches: measured.length,
@@ -230,11 +230,15 @@ async function main(): Promise<void> {
       json: { type: "string" },
     },
   });
-  const samples: Sample[] = [];
-  for (const file of values.samples ?? []) {
-    const text = await readFile(insideWorkingDir(file), "utf8").catch(() => "");
-    for (const line of text.split("\n")) if (line.trim()) samples.push(JSON.parse(line));
-  }
+  const texts = await Promise.all(
+    (values.samples ?? []).map(file => readFile(insideWorkingDir(file), "utf8").catch(() => "")),
+  );
+  const samples: Sample[] = texts.flatMap(text =>
+    text
+      .split("\n")
+      .filter(line => line.trim())
+      .map(line => JSON.parse(line)),
+  );
   const options: ReportOptions = {
     preset: values.preset,
     thresholdMs: Number(values["threshold-ms"]),

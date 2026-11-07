@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { summarise } from "./analyze.ts";
-import { comparison } from "./fake-samples.ts";
+import { comparison, startsDifferWithFallback } from "./fake-samples.ts";
 import { toMarkdown } from "./report.ts";
 
 describe("toMarkdown", () => {
@@ -27,6 +27,14 @@ describe("toMarkdown", () => {
     const aa = { ...options, preset: "aa-noise" };
     const markdown = toMarkdown(summarise(comparison({ deltaMs: 0 }), aa), aa);
     assert.doesNotMatch(markdown, /B fails when/);
+  });
+
+  it("says a launch that fell back is kept in the row from the first JS import", () => {
+    const markdown = toMarkdown(summarise(startsDifferWithFallback(), options), options);
+    assert.match(
+      markdown,
+      /1 launch\(es\) of build B counted from another start than the process start .* are kept in the row from the first JS import/,
+    );
   });
 
   it("says what known-regression's B is", () => {
