@@ -37,6 +37,38 @@ describe("toMarkdown", () => {
     );
   });
 
+  it("says which launches were read from the screen, and whether the screen matched the log", () => {
+    const samples = comparison({
+      deltaMs: 0,
+      a: { readFrom: "log" },
+      b: { readFrom: "log", screenAppStartupTime: 1000 },
+    });
+    const fellBack = samples.find(s => s.side === "A");
+    if (!fellBack) throw new Error("no A launch");
+    fellBack.readFrom = "screen";
+    const agreed = toMarkdown(summarise(samples, options), options);
+    assert.match(agreed, /android accounts: 1 launch\(es\) read from the Debug screen/);
+    assert.match(
+      agreed,
+      /showed the device log's App startup time on the 6 launches read both ways/,
+    );
+
+    const differs = samples.find(s => s.side === "B");
+    if (!differs) throw new Error("no B launch");
+    differs.screenAppStartupTime = 1040;
+    assert.match(
+      toMarkdown(summarise(samples, options), options),
+      /\*\*android accounts: the Debug screen showed another App startup time than the device log on 1 of the 6 launches read both ways\.\*\*/,
+    );
+  });
+
+  it("adds no read note to launches measured before the log line", () => {
+    assert.doesNotMatch(
+      toMarkdown(summarise(comparison({ deltaMs: 0 }), options), options),
+      /read from the Debug screen|read both ways/,
+    );
+  });
+
   it("says what known-regression's B is", () => {
     const known = { ...options, preset: "known-regression" };
     const markdown = toMarkdown(summarise(comparison({ deltaMs: 300 }), known), known);

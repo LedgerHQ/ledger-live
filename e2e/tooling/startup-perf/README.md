@@ -29,7 +29,8 @@ module.
 | `src/types.ts`                      | `Sample`: a line of `samples.jsonl`, which `measure/` writes and `analysis/` reads          |
 | `src/measure/run.ts`                | The CLI that measures: installs, injects and launches A and B, writes `samples.jsonl`       |
 | `src/measure/platforms/`            | `android.ts` and `ios.ts`, the two `Platform`s, through adb or simctl                       |
-| `src/measure/performance-screen.ts` | Reads App startup time and the startup events through Maestro                               |
+| `src/measure/startup-log.ts`        | Reads App startup time and the startup events from the app's `startup-perf` log line        |
+| `src/measure/performance-screen.ts` | Reads them on the Debug screen through Maestro: warm-ups, and launches without the line     |
 | `src/measure/inject.ts`             | Imports a scenario's userdata through the E2E bridge, once per install                      |
 | `src/measure/bridge.ts`             | The E2E bridge protocol (`apps/ledger-live-mobile/src/e2e/bridge/client.ts`)                |
 | `src/measure/maestro.ts`, `exec.ts` | Maestro and child-process calls                                                             |
@@ -72,6 +73,9 @@ Android, Release simulator app on iOS, with the JS bundled in the binary. `prepa
 - bundles without `DETOX=1`, which `e2e:build` sets from ef2aed228e8 on (blur mock, and
   `collapsable={false}` on every view);
 - adds a `JS start epoch <ms>` startup event, the wall clock of the JS start;
+- writes the startup to the device log as soon as it is over, as `startup-perf {"t": App startup
+  time, "e": [[event, time, count], ...]}`, unless the app does it itself when launched with
+  `startupPerfLog` (`logStartupForMeasurement.ts`);
 - for `known-regression`'s B, drops the trustchain's `saveAtStart` (LIVE-36190, above).
 
 It checks every anchor before editing, and the edited lines carry `startup-perf`. The scripts and
@@ -84,11 +88,19 @@ write no remote Nx, pnpm, Gradle or AVD cache: they run with develop's role whil
   post-onboarding state of `e2e/mobile/userdata` through `bridge.ts`, sends the settings again
   10 s later (the store's save effect may not be mounted yet), and fails when the app reports `MOCK`
   or `DETOX`. Feature flags are not imported: they come from production Firebase.
-- **Launch** with a plain `am start -W` / `simctl launch`, no test tool attached, wait 5 s, then let
-  Maestro open the Performance screen and read "App startup time" and the startup events. Measured
-  reads use `read-performance-quick.yaml`; warm-ups and retries use the full flow, whose optional
-  taps cost ~7 s when no prompt shows. The flows select by text: the Debug and Performance screens
-  have no testIDs on any supported ref.
+- **Launch** with a plain `am start -W` / `simctl launch` and the `startupPerfLog` argument, no test
+  tool attached, wait 5 s, then read the `startup-perf` line of the launched process in the device
+  log (logcat's `ReactNativeJS`, the simulator's `log show`): "App startup time" and the startup
+  events of the Debug screen, written as soon as the startup is over. The app writes it at the error
+  level, the only one iOS release builds keep, through React Native's `nativeLoggingHook`, which
+  Datadog does not see.
+- **Check it on the screen.** Warm-ups also let Maestro open the Performance screen, which must show
+  the same time (the report says on how many launches it did), and a launch whose line has not come
+  20 s after the settle time is read on the screen. `--read both` reads every launch both ways,
+  `--read screen` the screen only. Screen reads of measured launches use
+  `read-performance-quick.yaml`; warm-ups and retries use the full flow, whose optional taps cost
+  ~7 s when no prompt shows. The flows select by text: the Debug and Performance screens have no
+  testIDs on any supported ref.
 - **Alternate devices** on every launch: right after a launch on the same simulator, one was
   ~270 ms faster (run 39731729203). Halfway through each scenario A and B swap devices, so the
   difference between the devices cancels out. On Android the other emulator is paused from the
