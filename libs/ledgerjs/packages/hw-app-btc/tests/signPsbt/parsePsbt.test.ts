@@ -1,6 +1,19 @@
 import { deserializePsbt } from "../../src/signPsbt/parsePsbt";
+import { MerkelizedPsbt } from "../../src/newops/merkelizedPsbt";
 import { PsbtV2 } from "@ledgerhq/psbtv2";
 import { Psbt, networks } from "bitcoinjs-lib";
+
+// A proprietary (0xFC) output key, as a device app derived from the Bitcoin app reads it
+const PROPRIETARY_KEY = Buffer.from("fc05686173686900", "hex");
+const PROPRIETARY_VALUE = Buffer.from("ab".repeat(32), "hex");
+const P2TR_SCRIPT = Buffer.from("5120" + "22".repeat(32), "hex");
+
+/** Value committed to the device for `key` in the output map of output `index`. */
+function committedOutputValue(psbt: PsbtV2, index: number, key: Buffer): Buffer | undefined {
+  const outputMap = new MerkelizedPsbt(psbt).outputMerkleMaps[index];
+  const position = outputMap.keys.findIndex(k => k.equals(key));
+  return position === -1 ? undefined : outputMap.values[position];
+}
 
 describe("parsePsbt / deserializePsbt", () => {
   describe("PSBT v2", () => {
@@ -32,6 +45,21 @@ describe("parsePsbt / deserializePsbt", () => {
       expect(result).toBeInstanceOf(PsbtV2);
       expect(result.serialize()).toEqual(psbtBuf);
     });
+
+    it("commits a proprietary output field to the device unchanged", () => {
+      const psbtv2 = new PsbtV2();
+      psbtv2.setGlobalTxVersion(2);
+      psbtv2.setGlobalInputCount(0);
+      psbtv2.setGlobalOutputCount(1);
+      psbtv2.setGlobalPsbtVersion(2);
+      psbtv2.setOutputAmount(0, 60000);
+      psbtv2.setOutputScript(0, P2TR_SCRIPT);
+      psbtv2["outputMaps"][0].set(PROPRIETARY_KEY.toString("hex"), PROPRIETARY_VALUE);
+
+      const result = deserializePsbt(psbtv2.serialize());
+
+      expect(committedOutputValue(result, 0, PROPRIETARY_KEY)).toEqual(PROPRIETARY_VALUE);
+    });
   });
 
   describe("PSBT v0", () => {
@@ -57,6 +85,30 @@ describe("parsePsbt / deserializePsbt", () => {
       expect(result).toBeInstanceOf(PsbtV2);
       expect(result.getGlobalInputCount()).toBe(1);
       expect(result.getGlobalOutputCount()).toBe(1);
+    });
+
+    it("commits a proprietary output field to the device unchanged, on its own output only", () => {
+      const psbtv0 = new Psbt({ network: networks.testnet });
+      psbtv0.addInput({
+        //@ts-expect-error TransactionInput interface is not declared correctly in bip174 lib
+        hash: Buffer.alloc(32, 0),
+        index: 0,
+        witnessUtxo: {
+          script: Buffer.from("0014" + "00".repeat(20), "hex"),
+          value: BigInt(100000),
+        },
+      });
+      psbtv0.addOutput({ script: P2TR_SCRIPT, value: BigInt(60000) });
+      psbtv0.addOutput({
+        script: Buffer.from("0014" + "11".repeat(20), "hex"),
+        value: BigInt(30000),
+      });
+      psbtv0.addUnknownKeyValToOutput(0, { key: PROPRIETARY_KEY, value: PROPRIETARY_VALUE });
+
+      const result = deserializePsbt(Buffer.from(psbtv0.toBuffer()));
+
+      expect(committedOutputValue(result, 0, PROPRIETARY_KEY)).toEqual(PROPRIETARY_VALUE);
+      expect(committedOutputValue(result, 1, PROPRIETARY_KEY)).toBeUndefined();
     });
   });
 });
