@@ -324,6 +324,8 @@ overrides:
   "@ledgerhq/device-signer-kit-aleo>@ledgerhq/signer-utils": "1.1.3"
   "@ton/ton>zod": "catalog:"
   jest-environment-node: "30.5.2"
+  # @react-native/jest-preset 0.86 still declares babel-jest ^29; align it with Jest 30.5
+  "@react-native/jest-preset>babel-jest": "30.5.2"
   jest-mock: "30.5.2"
   jest-matcher-utils: "30.5.2"
   jest-diff: "30.5.2"

@@ -5,12 +5,17 @@
 // substituted against the *consumer's* root, not this one. Paths that must resolve in the consumer
 // — its node_modules, its jest/ folder — deliberately keep `<rootDir>`.
 
+import { createRequire } from "node:module";
 import type { Config } from "@jest/types";
 import { presetFactory } from "../core/index.ts";
 import { deepFreeze } from "../internals/freeze.ts";
 import { joinPresetPath } from "../internals/join-preset-path.ts";
 
 const here = (relative: string) => joinPresetPath(import.meta.dirname, relative);
+
+const reactNativeJestPreset = createRequire(import.meta.url).resolve(
+  "@react-native/jest-preset/jest-preset.js",
+);
 
 const swcJsc = { target: "esnext", transform: { react: { runtime: "automatic" } } };
 
@@ -113,7 +118,7 @@ function webJestConfig(overrides: Config.InitialOptions = {}): Config.InitialOpt
  */
 function nativeJestConfig(overrides: Config.InitialOptions = {}): Config.InitialOptions {
   return {
-    preset: "react-native",
+    preset: reactNativeJestPreset,
     roots: ["<rootDir>/src"],
     testMatch: ["**/*.native.test.{ts,tsx}"],
     testTimeout: TEST_TIMEOUT,

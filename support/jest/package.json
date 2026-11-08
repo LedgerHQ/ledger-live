@@ -81,6 +81,7 @@
     }
   },
   "dependencies": {
+    "@react-native/jest-preset": "catalog:",
     "undici": "catalog:"
   },
   "devDependencies": {
