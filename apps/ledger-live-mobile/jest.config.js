@@ -67,7 +67,7 @@ module.exports = {
   // can replay captured logs only on failure. Local: keep verbose streaming so
   // engineers see per-test logs live.
   verbose: !process.env.CI,
-  preset: "react-native",
+  preset: "@react-native/jest-preset",
   workerIdleMemoryLimit: "1GB",
   setupFilesAfterEnv: [
     "./node_modules/react-native-gesture-handler/jestSetup.js",
