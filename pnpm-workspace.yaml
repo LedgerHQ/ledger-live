@@ -132,7 +132,7 @@ catalog:
   "@jest/reporters": 30.5.0
   "@jest/test-result": 30.5.0
   "@reduxjs/toolkit": 2.13.0
-  "@rsbuild/core": 2.3.0
+  "@rsbuild/core": 2.3.1
   "@rsbuild/plugin-node-polyfill": 1.4.6
   "@rsbuild/plugin-react": 2.1.1
   "@rsbuild/plugin-styled-components": 1.7.0
