@@ -28,6 +28,17 @@ type WaitUnlessErrorOptions = {
   state: "visible" | "present";
 };
 
+type ExpectTextOptions = {
+  /** Any run of whitespace, non-breaking spaces included, counts as one space; zero-width spaces and edges are dropped. */
+  normaliseWhitespace?: boolean;
+  /** The element's text contains `text` instead of being equal to it. */
+  containing?: boolean;
+};
+
+/** Applies the options that change the text itself, to the actual and the expected text alike. */
+const prepareText = (value: string, { normaliseWhitespace }: ExpectTextOptions) =>
+  normaliseWhitespace ? value.replaceAll(/\s+/g, " ").replaceAll("\u200B", "").trim() : value;
+
 const scroller = new PageScroller();
 
 /**
@@ -258,9 +269,23 @@ export class NativeHandle implements ElementHandle {
     await withHardTimeout(detoxExpect(this.raw).toHaveId(id));
   }
 
-  /** Asserts the element's text now. A Detox expect: synchronised with the app, it does not wait. */
-  async expectText(text: string): Promise<void> {
-    await withHardTimeout(detoxExpect(this.raw).toHaveText(text));
+  /**
+   * Asserts the element's text. Without options, a Detox expect on the exact text now: it does not
+   * wait. With options, waits for visibility, reads the text, then compares it as the options say.
+   */
+  async expectText(text: string, options: ExpectTextOptions = {}): Promise<void> {
+    const noOptionSet = !Object.values(options).some(Boolean);
+    if (noOptionSet) {
+      await withHardTimeout(detoxExpect(this.raw).toHaveText(text));
+      return;
+    }
+    const actual = prepareText(await this.getText(), options);
+    const expected = prepareText(text, options);
+    if (options.containing) {
+      jestExpect(actual).toContain(expected);
+    } else {
+      jestExpect(actual).toBe(expected);
+    }
   }
 
   /** Waits for visibility, then asserts the element's text contains `text`. */

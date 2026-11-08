@@ -50,9 +50,8 @@ export default class ReceivePage {
 
   @Step("Expect the device deprecation error screen {{{0}}}")
   async expectDeviceDeprecationError(expectedTitle: string): Promise<void> {
-    // The device name is rendered with non-breaking spaces, which \s also matches.
-    const title = (await this.deviceDeprecationTitle.getText()).replaceAll(/\s/g, " ");
-    jestExpect(title).toBe(expectedTitle);
+    // The device name is rendered with non-breaking spaces.
+    await this.deviceDeprecationTitle.expectText(expectedTitle, { normaliseWhitespace: true });
     await this.deviceDeprecationContinueButton.expectNotExist();
   }
 

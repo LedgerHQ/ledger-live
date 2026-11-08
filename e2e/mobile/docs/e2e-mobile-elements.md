@@ -52,6 +52,8 @@ Web handles also have `waitEnabled()` and `getValue()`. For the webview URL, use
 
 A wait is not an assertion. To check the current state, `expectVisible`, `expectNotVisible`, `expectExist`, `expectNotExist`, `expectId`, `expectToggleValue` (native) and `expectText` run a Detox `expect` on the element: synchronised with the app, they do not wait. Wait first when the element may still be appearing. `expectTextContaining`, `expectTextMatching` and `expectLabelMatching` wait for the element, read its text or accessibility label, then compare. A page object does not call `jestExpect` on a value it read from an element; `jestExpect` stays for plain values (counts, URLs, parsed amounts).
 
+Native `expectText(text, options)` takes string options, like [expect-webdriverio](https://webdriver.io/docs/api/expect-webdriverio#string-options): `normaliseWhitespace` (any whitespace, non-breaking spaces included, counts as one space; zero-width spaces and edges are dropped) and `containing` (contains instead of equals). With options it waits for the element, reads its text, then compares.
+
 | Was | Now |
 |---|---|
 | `detoxExpect(getElementById(id)).toBeVisible()` | `handle.expectVisible()` |
@@ -60,6 +62,8 @@ A wait is not an assertion. To check the current state, `expectVisible`, `expect
 | `detoxExpect(getElementById(id)).not.toExist()` | `handle.expectNotExist()` (native) |
 | `jestExpect(await getIdByRegexp(regex)).toBe(id)` | `handle.expectId(id)` (native) |
 | `detoxExpect(getElementById(id)).toHaveText(text)` | `handle.expectText(text)` |
+| `jestExpect(normalizeText(await getTextOfElement(id))).toEqual(normalizeText(text))` | `handle.expectText(text, { normaliseWhitespace: true })` (native) |
+| `jestExpect(normalizeText(await getTextOfElement(id))).toContain(normalizeText(text))` | `handle.expectText(text, { normaliseWhitespace: true, containing: true })` (native) |
 | `detoxExpect(getElementById(id)).toHaveToggleValue(value)` | `handle.expectToggleValue(value)` (native) |
 | `jestExpect(await handle.getText()).toContain(text)` | `handle.expectTextContaining(text)` |
 | `jestExpect(await handle.getText()).toMatch(regex)` | `handle.expectTextMatching(regex)` |
