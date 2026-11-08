@@ -141,7 +141,7 @@ catalog:
   "@rspack/core": 2.3.0
   "@rspack/dev-server": 2.2.2
   "@rspack/plugin-react-refresh": 2.0.2
-  "@rslib/core": 1.0.5
+  "@rslib/core": 1.0.6
   react-refresh: 0.18.0
   "@stacks/network": 7.6.0
   "@stacks/transactions": 7.6.0
