@@ -71,11 +71,6 @@ export default class MarketPage {
     await this.categoryTab("starred").expectVisible();
   }
 
-  @Step("Go back to portfolio")
-  async goBackToPortfolio() {
-    await this.goBack();
-  }
-
   @Step("Search for asset {{{0}}}")
   async searchAsset(asset: string) {
     await this.marketScreenSearchBar.replaceText(asset);
@@ -99,10 +94,10 @@ export default class MarketPage {
   }
 
   @Step("Filter starred asset")
-  async filterStaredAsset() {
+  async filterStarredAsset() {
     // CategorySwitcher is hidden while search is active.
     await this.marketScreenSearchBar.clearText();
-    await this.categoryTab("starred").tap();
+    await this.filterStarredAssetsOnMarketScreen();
   }
 
   @Step("Filter starred assets on market screen")
@@ -110,8 +105,8 @@ export default class MarketPage {
     await this.categoryTab("starred").tap();
   }
 
-  @Step("Expect market row title {{{0.name}}}")
-  async expectMarketRowTitle(currency: CurrencyType) {
+  @Step("Expect market row {{{0.name}}}")
+  async expectMarketRowVisible(currency: CurrencyType) {
     await this.marketScreenRow(currency).expectVisible();
   }
 
