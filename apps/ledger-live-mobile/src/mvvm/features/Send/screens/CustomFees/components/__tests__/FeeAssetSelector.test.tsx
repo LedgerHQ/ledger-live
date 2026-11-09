@@ -4,7 +4,7 @@ import { ThemeProvider } from "@ledgerhq/lumen-ui-rnative";
 import { ledgerLiveThemes } from "@ledgerhq/lumen-design-core";
 import { type CryptoCurrency } from "@domain/entity-currency-crypto";
 import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
-import type { FeeAssetUiOption } from "@ledgerhq/live-common/flows/send/customFees/hooks/useCustomFeesViewModelCore";
+import type { FeeAssetUiOption } from "@features/platform-send-flow";
 import { FeeAssetSelector } from "../FeeAssetSelector";
 
 function render(ui: React.ReactElement) {

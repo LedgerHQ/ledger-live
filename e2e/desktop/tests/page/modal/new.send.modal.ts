@@ -6,7 +6,7 @@ import type { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { AmountQuickAction } from "@ledgerhq/live-e2e-shared/enum/AmountQuickAction";
 import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 import { STELLAR_MEMO_TYPE_LABELS, StellarMemoType } from "@ledgerhq/live-e2e-shared/enum/MemoType";
-import { SEND_ADDRESS_FORMAT_OPTIONS } from "@ledgerhq/live-common/flows/send/utils";
+import { SEND_ADDRESS_FORMAT_OPTIONS } from "@features/platform-send-flow";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { step } from "tests/misc/reporters/step";
 import { Modal } from "tests/component/modal.component";

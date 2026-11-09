@@ -17,9 +17,8 @@ import {
   createMockCurrency,
   createMockTokenCurrency,
 } from "../../__integrations__/__fixtures__/accounts";
-import type { SendFlowState } from "@ledgerhq/live-common/flows/send/types";
+import type { SendFlowState, AddressSearchResult } from "@features/platform-send-flow";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { AddressSearchResult } from "@ledgerhq/live-common/flows/send/recipient/types";
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 import { useRecipientContactSelection } from "../../../../context/RecipientContactSelectionContext";
 import { useRecipientContinuation } from "../../../../context/RecipientContinuationContext";

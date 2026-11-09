@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { AssetCategory } from "@domain/api-aggregated-assets";
 import type { Contact, ContactAddress } from "@domain/entity-contact";
-import { SEND_FLOW_SOURCE } from "@ledgerhq/live-common/flows/send/types";
+import { SEND_FLOW_SOURCE } from "@features/platform-send-flow";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 
 // Card payments only spend stablecoins; filter the account picker by category so the

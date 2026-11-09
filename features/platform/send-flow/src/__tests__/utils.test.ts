@@ -1,0 +1,190 @@
+import type { SendTransaction } from "../registry";
+import {
+  buildRecipientForMemoChange,
+  getRecipientDisplayValue,
+  getRecipientSearchPrefillValue,
+  saveRecentSendRecipient,
+  SEND_ADDRESS_FORMAT_OPTIONS,
+} from "../utils";
+
+describe("saveRecentSendRecipient", () => {
+  const addAddress = jest.fn();
+  const ethAccount = { type: "Account", id: "eth-account", currency: { id: "ethereum" } } as never;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should persist the recipient after broadcast", () => {
+    saveRecentSendRecipient(addAddress, ethAccount, null, {
+      recipient: "0xrecipient",
+    } as SendTransaction);
+
+    expect(addAddress).toHaveBeenCalledWith("ethereum", "0xrecipient", undefined);
+  });
+
+  it("should prefer the flow ENS name over the transaction domain", () => {
+    saveRecentSendRecipient(
+      addAddress,
+      ethAccount,
+      null,
+      {
+        recipient: "0xrecipient",
+        recipientDomain: { domain: "from-transaction.eth" },
+      } as SendTransaction,
+      "from-flow.eth",
+    );
+
+    expect(addAddress).toHaveBeenCalledWith("ethereum", "0xrecipient", "from-flow.eth");
+  });
+
+  it("should skip empty recipients", () => {
+    saveRecentSendRecipient(addAddress, ethAccount, null, {
+      recipient: "   ",
+    } as SendTransaction);
+
+    expect(addAddress).not.toHaveBeenCalled();
+  });
+});
+
+const ADDRESS = "0x1234567890abcdef1234567890abcdef12345678";
+
+describe("getRecipientDisplayValue", () => {
+  it("should return empty for null recipient", () => {
+    expect(getRecipientDisplayValue(null)).toBe("");
+  });
+
+  it("should return formatted address without ENS", () => {
+    expect(getRecipientDisplayValue({ address: ADDRESS })).toBe("0x123456...12345678");
+  });
+
+  it("should keep 8 characters on each side of the ellipsis by default", () => {
+    expect(SEND_ADDRESS_FORMAT_OPTIONS).toEqual({ prefixLength: 8, suffixLength: 8 });
+  });
+
+  it("should return the address untouched when shorter than the ellipsis threshold", () => {
+    expect(getRecipientDisplayValue({ address: "0x1234567890abcdef" })).toBe("0x1234567890abcdef");
+  });
+
+  it("should use custom options for formatting", () => {
+    expect(
+      getRecipientDisplayValue({ address: ADDRESS }, { prefixLength: 4, suffixLength: 4 }),
+    ).toBe("0x12...5678");
+  });
+
+  it("should return ENS name with formatted address when ENS exists", () => {
+    expect(getRecipientDisplayValue({ address: ADDRESS, ensName: "vitalik.eth" })).toBe(
+      "vitalik.eth (0x123456...12345678)",
+    );
+  });
+
+  it("should return displayLabel alone when set, ignoring address and ensName", () => {
+    expect(
+      getRecipientDisplayValue({
+        address: ADDRESS,
+        ensName: "vitalik.eth",
+        displayLabel: "Private balance",
+      }),
+    ).toBe("Private balance");
+  });
+
+  it("should return displayLabel when address is missing", () => {
+    expect(getRecipientDisplayValue({ displayLabel: "Private balance" })).toBe("Private balance");
+  });
+
+  it("should return empty when neither displayLabel nor address is set", () => {
+    expect(getRecipientDisplayValue({ ensName: "vitalik.eth" })).toBe("");
+  });
+});
+
+describe("getRecipientSearchPrefillValue", () => {
+  it("should return empty for null recipient", () => {
+    expect(getRecipientSearchPrefillValue(null)).toBe("");
+  });
+
+  it("should return address when no ENS", () => {
+    expect(getRecipientSearchPrefillValue({ address: "0x1234567890abcdef" })).toBe(
+      "0x1234567890abcdef",
+    );
+  });
+
+  it("should return ENS name when present", () => {
+    expect(
+      getRecipientSearchPrefillValue({ address: "0x1234567890abcdef", ensName: "vitalik.eth" }),
+    ).toBe("vitalik.eth");
+  });
+});
+
+describe("buildRecipientForMemoChange", () => {
+  const memo = { value: "", type: "NO_MEMO" };
+
+  it("should use the search value when there is no committed recipient", () => {
+    expect(buildRecipientForMemoChange("rNewRecipient", null, memo)).toEqual({
+      address: "rNewRecipient",
+      ensName: undefined,
+      displayLabel: undefined,
+      memo,
+    });
+  });
+
+  it("should use the new search value after the recipient is edited", () => {
+    expect(
+      buildRecipientForMemoChange(
+        "rNewRecipient",
+        { address: "rOldRecipient", memo: { value: "", type: "NO_MEMO" } },
+        memo,
+      ),
+    ).toEqual({
+      address: "rNewRecipient",
+      ensName: undefined,
+      displayLabel: undefined,
+      memo,
+    });
+  });
+
+  it("should keep the committed address and ENS when the search still matches", () => {
+    expect(
+      buildRecipientForMemoChange(
+        "vitalik.eth",
+        { address: ADDRESS, ensName: "vitalik.eth", displayLabel: "Private balance" },
+        memo,
+      ),
+    ).toEqual({
+      address: ADDRESS,
+      ensName: "vitalik.eth",
+      displayLabel: "Private balance",
+      memo,
+    });
+  });
+
+  it("should keep the selected contact when the memo changes", () => {
+    expect(
+      buildRecipientForMemoChange(
+        ADDRESS,
+        { address: ADDRESS, contactId: "contact-alice", displayLabel: "Alice" },
+        memo,
+      ),
+    ).toEqual({
+      address: ADDRESS,
+      ensName: undefined,
+      displayLabel: "Alice",
+      contactId: "contact-alice",
+      memo,
+    });
+  });
+
+  it("should drop the previous ENS when the search no longer matches", () => {
+    expect(
+      buildRecipientForMemoChange(
+        "rNewRecipient",
+        { address: ADDRESS, ensName: "vitalik.eth", displayLabel: "Private balance" },
+        memo,
+      ),
+    ).toEqual({
+      address: "rNewRecipient",
+      ensName: undefined,
+      displayLabel: undefined,
+      memo,
+    });
+  });
+});

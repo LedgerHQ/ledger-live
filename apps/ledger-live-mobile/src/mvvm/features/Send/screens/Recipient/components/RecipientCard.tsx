@@ -1,6 +1,6 @@
 import { ContactIdSchema } from "@domain/entity-contact";
 import { ContactAvatar, useContactDisplayName } from "@features/platform-contacts";
-import type { MatchedContact } from "@ledgerhq/live-common/flows/send/recipient/types";
+import type { MatchedContact } from "@features/platform-send-flow";
 import {
   Box,
   Button,

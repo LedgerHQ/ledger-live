@@ -1,12 +1,12 @@
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { track } from "@shared/analytics";
-import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
-import type {
-  FeePaymentLabels,
-  FeePaymentOption,
-} from "@ledgerhq/live-common/flows/send/sponsored/types";
-import { useFeePaymentOptions } from "@ledgerhq/live-common/flows/send/sponsored/useFeePaymentOptions";
+import { SEND_FLOW_STEP, type SendFlowStep } from "@features/platform-send-flow";
+import {
+  useFeePaymentOptions,
+  type FeePaymentLabels,
+  type FeePaymentOption,
+} from "@features/platform-send-flow/sponsored";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { openURL } from "~/renderer/linking";

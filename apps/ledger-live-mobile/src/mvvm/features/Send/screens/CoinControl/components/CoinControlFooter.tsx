@@ -3,7 +3,7 @@ import { Box, Button, Divider } from "@ledgerhq/lumen-ui-rnative";
 import React from "react";
 import { NetworkFeesRow } from "../../../components/NetworkFeesRow";
 import { NetworkFeesViewModel } from "../../../types";
-import type { CoinControlChangeToReturnViewModel } from "@ledgerhq/live-common/flows/send/coinControl/hooks/useCoinControlScreenViewModelCore";
+import type { CoinControlChangeToReturnViewModel } from "@features/platform-send-flow";
 import { ChangeToReturn } from "./ChangeToReturn";
 
 type AmountFooterProps = Readonly<{

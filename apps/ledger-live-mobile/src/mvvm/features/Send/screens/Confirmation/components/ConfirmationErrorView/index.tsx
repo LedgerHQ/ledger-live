@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Link } from "@ledgerhq/lumen-ui-rnative";
-import { isSendConfirmationRetryable } from "@ledgerhq/live-common/flows/send/presentBroadcastError";
+import { isSendConfirmationRetryable } from "@features/platform-send-flow";
 import TranslatedError from "~/components/TranslatedError";
 import { ConfirmationStatusLayout } from "../ConfirmationStatusLayout";
 

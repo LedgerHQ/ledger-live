@@ -12,7 +12,7 @@ import {
   ListItemTrailing,
 } from "@ledgerhq/lumen-ui-react";
 import { ChevronRight } from "@ledgerhq/lumen-ui-react/symbols";
-import type { FeeAssetUiOption } from "@ledgerhq/live-common/flows/send/customFees/hooks/useCustomFeesViewModelCore";
+import type { FeeAssetUiOption } from "@features/platform-send-flow";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 
 type FeeAssetSelectorProps = Readonly<{

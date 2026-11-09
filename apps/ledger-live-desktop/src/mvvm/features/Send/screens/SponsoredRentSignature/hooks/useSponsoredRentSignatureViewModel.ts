@@ -4,7 +4,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { localeSelector } from "~/renderer/reducers/settings";
 import type { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useSponsoredRentPayment } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredRentPayment";
+import { useSponsoredRentPayment } from "@features/platform-send-flow/sponsored";
 import { useRawTransactionAction } from "~/renderer/hooks/useConnectAppAction";
 import logger from "~/renderer/logger";
 import { openURL } from "~/renderer/linking";

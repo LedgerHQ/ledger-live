@@ -1,6 +1,8 @@
-import { act, renderHook, waitFor } from "@testing-library/react-native";
-import { SPONSORED_PHASE } from "@ledgerhq/live-common/flows/send/sponsored/types";
-import { isSendConfirmationRetryable } from "@ledgerhq/live-common/flows/send/presentBroadcastError";
+import { act, renderHook as renderHookWithoutPorts, waitFor } from "@testing-library/react-native";
+import React from "react";
+import { liveCommonSendFlowPorts } from "@ledgerhq/live-common/flows/send-ports/ports";
+import { SPONSORED_PHASE } from "@features/platform-send-flow/sponsored";
+import { isSendConfirmationRetryable, SendFlowPortsProvider } from "@features/platform-send-flow";
 import type { SignTransactionIntentJobState } from "@ledgerhq/live-common/intents/signTransactionIntent";
 import { useSignatureViewModel } from "../useSignatureViewModel";
 
@@ -73,6 +75,14 @@ const signedJobState = {
 beforeEach(() => {
   jest.clearAllMocks();
 });
+
+function SendFlowPortsWrapper({ children }: { children: React.ReactNode }) {
+  return React.createElement(SendFlowPortsProvider, { ports: liveCommonSendFlowPorts }, children);
+}
+
+function renderHook<Result>(callback: () => Result) {
+  return renderHookWithoutPorts(callback, { wrapper: SendFlowPortsWrapper });
+}
 
 describe("useSignatureViewModel broadcast", () => {
   it("presents a node rejection after signing as a non-retryable broadcast error", async () => {

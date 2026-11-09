@@ -1,9 +1,4 @@
-import type {
-  FlowStep,
-  FlowStepConfig,
-  FlowConfig,
-  StepRenderer,
-} from "@ledgerhq/live-common/flows/wizard/types";
+import type { FlowStep, FlowStepConfig, FlowConfig, StepRenderer } from "@shared/flow-wizard";
 
 /**
  * LLD-specific types for FlowWizard navigation

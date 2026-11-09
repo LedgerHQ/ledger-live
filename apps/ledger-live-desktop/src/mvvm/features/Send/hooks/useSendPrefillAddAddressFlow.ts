@@ -1,10 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuid } from "uuid";
 import { addAddress, contactAddress, type Contact } from "@domain/entity-contact";
-import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
-import { resolvePrefillAddAddressParams } from "@ledgerhq/live-common/flows/send/recipient/utils/resolvePrefillAddAddressParams";
+import {
+  SEND_FLOW_STEP,
+  type SendFlowStep,
+  resolvePrefillAddAddressParams,
+} from "@features/platform-send-flow";
 import { getMinVersion } from "@ledgerhq/live-common/apps/support";
-import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send-ports/resolveCurrencyConfig";
 import {
   useContactsIntentsOrchestrator,
   type ContactsDeviceIntentExecutorProps,

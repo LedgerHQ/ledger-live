@@ -2,8 +2,8 @@ import { trackPage, track } from "@shared/analytics";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuid } from "uuid";
 import { addAddress, contactAddress, type Contact } from "@domain/entity-contact";
-import { resolvePrefillAddAddressParams } from "@ledgerhq/live-common/flows/send/recipient/utils/resolvePrefillAddAddressParams";
-import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
+import { resolvePrefillAddAddressParams } from "@features/platform-send-flow";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send-ports/resolveCurrencyConfig";
 import {
   buildContactsSaveAddressClickProperties,
   CONTACTS_EVENT_SOURCE,

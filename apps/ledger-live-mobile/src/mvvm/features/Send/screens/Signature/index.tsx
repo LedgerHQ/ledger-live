@@ -1,6 +1,6 @@
 import React from "react";
 import { useFeature } from "@features/platform-feature-flags";
-import { SPONSORED_PHASE } from "@ledgerhq/live-common/flows/send/sponsored/types";
+import { SPONSORED_PHASE } from "@features/platform-send-flow/sponsored";
 import { useSponsoredSend } from "../../context/SponsoredSendContext";
 import { SignatureExecutorScreen } from "./SignatureExecutorScreen";
 import { SignatureDeviceActionScreen } from "./SignatureDeviceActionScreen";

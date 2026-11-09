@@ -20,7 +20,7 @@ import type {
 } from "~/components/RootNavigator/types/helpers";
 import type { AddAccountsNavigatorParamList } from "~/components/RootNavigator/types/AddAccountsNavigator";
 
-import type { FlowStep } from "@ledgerhq/live-common/flows/wizard/types";
+import type { FlowStep } from "@shared/flow-wizard";
 import type {
   FlowStackNavigatorProps,
   ReactNativeFlowScreenPresentation,

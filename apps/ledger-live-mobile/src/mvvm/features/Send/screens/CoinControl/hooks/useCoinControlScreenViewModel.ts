@@ -2,11 +2,11 @@ import {
   getAccountCurrency,
   getMainAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import { useCoinControlScreenViewModelCore } from "@ledgerhq/live-common/flows/send/coinControl/hooks/useCoinControlScreenViewModelCore";
-import type {
-  SendFlowTransactionActions,
-  SendFlowUiConfig,
-} from "@ledgerhq/live-common/flows/send/types";
+import {
+  useCoinControlScreenViewModelCore,
+  type SendFlowTransactionActions,
+  type SendFlowUiConfig,
+} from "@features/platform-send-flow";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";

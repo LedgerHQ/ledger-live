@@ -2,7 +2,7 @@ import React from "react";
 import { SuccessContent } from "./Content/SuccessContent";
 import { InfoContent } from "./Content/InfoContent";
 import { ErrorContent } from "./Content/ErrorContent";
-import { FLOW_STATUS, type FlowStatus } from "@ledgerhq/live-common/flows/wizard/types";
+import { FLOW_STATUS, type FlowStatus } from "@shared/flow-wizard";
 
 interface ConfirmationBodyProps {
   status: FlowStatus;

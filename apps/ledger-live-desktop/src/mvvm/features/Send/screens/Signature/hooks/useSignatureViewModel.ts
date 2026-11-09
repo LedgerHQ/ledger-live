@@ -5,16 +5,18 @@ import { getActiveWarningsTrackingProperties } from "../../../utils/tracking";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
-import { useSendFlowSignatureCore } from "@ledgerhq/live-common/flows/send/hooks/useSendFlowSignatureCore";
-import type { SignatureDeviceActionResult } from "@ledgerhq/live-common/flows/send/hooks/useSendFlowSignatureCore";
 import {
+  useSendFlowSignatureCore,
   SEND_FLOW_COMPLETION,
   SEND_FLOW_SOURCE,
   SEND_FLOW_STEP,
   type SendFlowCompletion,
-} from "@ledgerhq/live-common/flows/send/types";
-import { SPONSORED_PHASE } from "@ledgerhq/live-common/flows/send/sponsored/types";
-import { reportSponsoredTransferOutcome } from "@ledgerhq/live-common/flows/send/sponsored/transferOutcome";
+  type SignatureDeviceActionResult,
+} from "@features/platform-send-flow";
+import {
+  SPONSORED_PHASE,
+  reportSponsoredTransferOutcome,
+} from "@features/platform-send-flow/sponsored";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { useTransactionAction } from "~/renderer/hooks/useConnectAppAction";

@@ -4,18 +4,16 @@ import { useSelector } from "~/context/hooks";
 import { useCalculateCountervalueCallback } from "@features/platform-market-countervalues";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import type { SendFlowTransactionActions } from "@ledgerhq/live-common/flows/send/types";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import {
   useCustomFeesViewModelCore,
   type CustomFeeInputState,
   type CustomFeesViewModel,
   type CustomFeesViewModelLabels,
-} from "@ledgerhq/live-common/flows/send/customFees/hooks/useCustomFeesViewModelCore";
-import {
   getCustomFeeLabelKey,
   getCustomFeeHelperLabelKey,
-} from "@ledgerhq/live-common/flows/send/customFees/utils/customFeeUtils";
+  type SendFlowTransactionActions,
+} from "@features/platform-send-flow";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 
 type TrackedCustomFeesViewModel = Omit<CustomFeesViewModel, "inputs"> &

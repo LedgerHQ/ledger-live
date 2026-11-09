@@ -8,8 +8,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { BalanceTypeConfig } from "@ledgerhq/live-common/bridge/descriptor/types";
 import type { SponsoredCoinApi } from "@ledgerhq/live-common/bridge/generic-coin-framework/sponsored";
-import { SPONSORED_PHASE } from "@ledgerhq/live-common/flows/send/sponsored/types";
-import type { SponsoredState } from "@ledgerhq/live-common/flows/send/sponsored/types";
+import { SPONSORED_PHASE, type SponsoredState } from "@features/platform-send-flow/sponsored";
 import { TRON_USDT_FEE_ASSET } from "../screens/Recipient/__integrations__/__fixtures__/accounts";
 import { SendWorkflow } from "../index";
 
@@ -243,10 +242,6 @@ jest.mock("@ledgerhq/live-common/bridge/generic-coin-framework/sponsored", () =>
   getSponsoredCoinApi: jest.fn(() => Promise.resolve(mockSponsoredApi)),
 }));
 
-jest.mock("@ledgerhq/live-common/bridge/generic-coin-framework/buildIntent", () => ({
-  buildGenericTransactionIntent: jest.fn(() => Promise.resolve(mockSponsoredIntent)),
-}));
-
 // Fake orchestration: the real one's POLLING setInterval stops act() settling. Must start IDLE:
 // useSponsoredPhaseNavigator routes any other phase on mount, sponsored or not.
 const initialMockOrchestrationState: SponsoredState = {
@@ -286,13 +281,72 @@ const resetMockOrchestration = () => {
   mockOrchestrationSetState = null;
 };
 
-jest.mock("@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendOrchestration", () => ({
-  useSponsoredSendOrchestration: () => {
-    const [state, setState] = React.useState(mockOrchestrationState);
-    mockOrchestrationSetState = setState;
-    return { state, actions: mockSponsoredOrchestrationActions };
-  },
-}));
+type MockSessionParams = Readonly<{
+  enabled: boolean;
+  account: AccountLike | null | undefined;
+  parentAccount: Account | null | undefined;
+  transaction: Transaction | null | undefined;
+}>;
+
+// Fake session around the fake orchestration; the rent-delivery watch is the real one.
+jest.mock("@features/platform-send-flow/sponsored", () => {
+  const actual = jest.requireActual("@features/platform-send-flow/sponsored");
+  const { useEffect, useMemo, useState } = jest.requireActual<typeof import("react")>("react");
+  return {
+    ...actual,
+    useSponsoredSendSession: ({
+      enabled,
+      account,
+      parentAccount,
+      transaction,
+    }: MockSessionParams) => {
+      const mainAccount = account?.type === "Account" ? account : (parentAccount ?? null);
+      const [seam, setSeam] = useState<SponsoredCoinApi | null>(null);
+      useEffect(() => {
+        let ignore = false;
+        setSeam(null);
+        if (!enabled || !mainAccount) return;
+        void Promise.resolve(mockSponsoredApi).then(resolved => {
+          if (!ignore) setSeam(resolved);
+        });
+        return () => {
+          ignore = true;
+        };
+      }, [enabled, mainAccount]);
+
+      const intentKey = [
+        transaction?.recipient,
+        transaction?.useAllAmount ? "max" : transaction?.amount?.toString(),
+        transaction?.subAccountId,
+      ].join("|");
+      const intent = useMemo(
+        () => (seam && transaction ? { ...(mockSponsoredIntent as object), intentKey } : null),
+        // oxlint-disable-next-line react-hooks/exhaustive-deps
+        [seam, intentKey],
+      );
+
+      const [state, setState] = useState(mockOrchestrationState);
+      mockOrchestrationSetState = setState;
+
+      const { rentArriving, deliveredAt } = actual.usePendingRentDelivery({
+        mainAccountId: mainAccount?.id ?? null,
+        seam,
+        idle: state.phase === actual.SPONSORED_PHASE.IDLE,
+      });
+
+      return {
+        mainAccount,
+        seam,
+        intent,
+        intentFailed: false,
+        state,
+        actions: mockSponsoredOrchestrationActions,
+        rentArriving,
+        rentDeliveredAt: deliveredAt,
+      };
+    },
+  };
+});
 
 jest.mock("@ledgerhq/live-common/market/state-manager/api", () => ({
   marketApi: {
@@ -393,7 +447,8 @@ jest.mock("@ledgerhq/ledger-wallet-framework/sanction/index", () => ({
   isAddressSanctioned: jest.fn(() => Promise.resolve(false)),
 }));
 
-jest.mock("@ledgerhq/live-common/flows/send/recipient/hooks/useBridgeRecipientValidation", () => ({
+jest.mock("@features/platform-send-flow", () => ({
+  ...jest.requireActual("@features/platform-send-flow"),
   useBridgeRecipientValidation: jest.fn(() => mockBridgeRecipientValidation),
 }));
 

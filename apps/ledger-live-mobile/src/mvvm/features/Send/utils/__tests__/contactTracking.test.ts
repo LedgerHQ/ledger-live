@@ -1,5 +1,4 @@
-import type { AddressSearchResult } from "@ledgerhq/live-common/flows/send/recipient/types";
-import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import { SEND_FLOW_STEP, type AddressSearchResult } from "@features/platform-send-flow";
 import { getRecipientResolution, getSendFlowTrackingPage } from "../contactTracking";
 
 function createResult(overrides: Partial<AddressSearchResult> = {}): AddressSearchResult {

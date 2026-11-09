@@ -3,7 +3,7 @@
  */
 import React from "react";
 import { render, screen } from "tests/testSetup";
-import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import { SEND_FLOW_STEP } from "@features/platform-send-flow";
 import { mockContact } from "@domain/entity-contact/schema.mock";
 import { SendFlowLayout } from "../SendFlowLayout";
 import { useFlowWizard } from "../../../FlowWizard/FlowWizardContext";

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { trackPage } from "@shared/analytics";
-import type { SendFlowState } from "@ledgerhq/live-common/flows/send/types";
+import type { SendFlowState } from "@features/platform-send-flow";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useAccountBridgeOrNull } from "@ledgerhq/live-common/bridge/useAccountBridge";

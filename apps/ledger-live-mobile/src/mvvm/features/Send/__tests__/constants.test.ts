@@ -1,4 +1,4 @@
-import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import { SEND_FLOW_STEP } from "@features/platform-send-flow";
 import { getFlowStackScreenOptions } from "../../FlowWizard/FlowStackNavigator";
 import { SEND_STEP_CONFIGS } from "../constants";
 

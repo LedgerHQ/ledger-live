@@ -10,7 +10,7 @@ import {
   useBottomSheetRef,
 } from "@ledgerhq/lumen-ui-rnative";
 import { Information } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { sanitizeMemoValue } from "@ledgerhq/live-common/flows/send/recipient/utils/memoValue";
+import { sanitizeMemoValue } from "@features/platform-send-flow";
 import { useTranslation } from "~/context/Locale";
 import { useTranslatedBridgeError } from "../../screens/Recipient/hooks/useTranslatedBridgeError";
 

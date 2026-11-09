@@ -1,66 +1,43 @@
-import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import {
   getRecipientDisplayValue,
   getRecipientSearchPrefillValue,
-} from "@ledgerhq/live-common/flows/send/utils";
-
-jest.mock("@ledgerhq/live-common/utils/addressUtils", () => ({
-  formatAddress: jest.fn(),
-}));
-
-const mockedFormatAddress = jest.mocked(formatAddress);
+} from "@features/platform-send-flow";
 
 describe("getRecipientDisplayValue", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   it("returns empty string when recipient is null", () => {
     expect(getRecipientDisplayValue(null)).toBe("");
   });
 
   it("returns formatted address when no ensName", () => {
-    mockedFormatAddress.mockReturnValue("0x1234...5678");
     const recipient = { address: "0x1234567890123456789012345678901234567890" };
 
-    expect(getRecipientDisplayValue(recipient)).toBe("0x1234...5678");
-    expect(mockedFormatAddress).toHaveBeenCalledWith(recipient.address, {
-      prefixLength: 8,
-      suffixLength: 8,
-    });
+    expect(getRecipientDisplayValue(recipient)).toBe("0x123456...34567890");
   });
 
   it("returns ensName with formatted address when ensName exists", () => {
-    mockedFormatAddress.mockReturnValue("0x1234...5678");
     const recipient = {
       address: "0x1234567890123456789012345678901234567890",
       ensName: "vitalik.eth",
     };
 
-    expect(getRecipientDisplayValue(recipient)).toBe("vitalik.eth (0x1234...5678)");
-    expect(mockedFormatAddress).toHaveBeenCalledWith(recipient.address, {
-      prefixLength: 8,
-      suffixLength: 8,
-    });
+    expect(getRecipientDisplayValue(recipient)).toBe("vitalik.eth (0x123456...34567890)");
   });
 
   it("handles different address formats", () => {
-    mockedFormatAddress.mockReturnValue("bc1q...xyz");
     const recipient = {
       address: "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4",
     };
 
-    expect(getRecipientDisplayValue(recipient)).toBe("bc1q...xyz");
+    expect(getRecipientDisplayValue(recipient)).toBe("bc1qw508...7kv8f3t4");
   });
 
   it("handles empty ensName string", () => {
-    mockedFormatAddress.mockReturnValue("0x1234...5678");
     const recipient = {
       address: "0x1234567890123456789012345678901234567890",
       ensName: "",
     };
 
-    expect(getRecipientDisplayValue(recipient)).toBe("0x1234...5678");
+    expect(getRecipientDisplayValue(recipient)).toBe("0x123456...34567890");
   });
 });
 

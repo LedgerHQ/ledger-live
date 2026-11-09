@@ -1,0 +1,63 @@
+{
+  "name": "@features/platform-send-flow",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Platform-agnostic Send flow state, hooks and the ports binding it to the host's coin layer",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./descriptor": "./src/descriptor/index.ts",
+    "./errors": "./src/broadcastErrors.ts",
+    "./fees": "./src/fees.ts",
+    "./sponsored": "./src/sponsored/index.ts",
+    "./sponsored-api": "./src/sponsoredApi.ts",
+    "./testing/sponsored": "./src/sponsored/fixtures/usdt.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "lint": "oxlint src",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "coverage": "jest --coverage"
+  },
+  "dependencies": {
+    "@domain/entity-currency": "workspace:*",
+    "@domain/entity-currency-crypto": "workspace:*",
+    "@domain/entity-currency-token": "workspace:*",
+    "@domain/entity-currency-unit": "workspace:*",
+    "@features/platform-market-countervalues": "workspace:*",
+    "@ledgerhq/coin-module-framework": "catalog:",
+    "@ledgerhq/logs": "catalog:",
+    "@shared/flow-wizard": "workspace:*",
+    "bignumber.js": "^9.1.2",
+    "lodash": "catalog:"
+  },
+  "peerDependencies": {
+    "react": ">=19.0.0"
+  },
+  "devDependencies": {
+    "@domain/entity-currency-fiat": "workspace:*",
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/jest": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/lodash": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
+    "jest": "catalog:",
+    "jest-environment-jsdom": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "typescript": "catalog:"
+  }
+}

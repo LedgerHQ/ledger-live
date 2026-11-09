@@ -1,6 +1,6 @@
 import { useMemo, useCallback } from "react";
 import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
-import type { SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
+import type { SendFlowStep } from "@features/platform-send-flow";
 import type { BalanceTypeSelfTransferTarget } from "@ledgerhq/live-common/bridge/descriptor/types";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import { useRecipientContinuation } from "../../../context/RecipientContinuationContext";

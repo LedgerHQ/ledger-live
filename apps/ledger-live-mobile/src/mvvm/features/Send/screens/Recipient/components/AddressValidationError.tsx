@@ -1,4 +1,4 @@
-import type { AddressValidationError as AddressValidationErrorType } from "@ledgerhq/live-common/flows/send/recipient/types";
+import type { AddressValidationError as AddressValidationErrorType } from "@features/platform-send-flow";
 import { Box, Text, Spot } from "@ledgerhq/lumen-ui-rnative";
 import { Search } from "@ledgerhq/lumen-ui-rnative/symbols";
 import React from "react";

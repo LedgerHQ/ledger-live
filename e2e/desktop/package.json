@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@features/platform-assets-table": "workspace:*",
+    "@features/platform-send-flow": "workspace:*",
     "@ledgerhq/device-mockserver-client": "catalog:",
     "@ledgerhq/baanx-test-client": "workspace:^",
     "@ledgerhq/live-cli": "workspace:^",

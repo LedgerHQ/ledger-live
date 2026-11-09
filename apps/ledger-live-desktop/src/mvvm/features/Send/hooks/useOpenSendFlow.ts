@@ -7,9 +7,13 @@ import { accountsSelector } from "~/renderer/reducers/accounts";
 import BigNumber from "bignumber.js";
 import { openSendFlowDialog, type SendFlowParams } from "~/renderer/reducers/sendFlow";
 import { useNewSendFlowFeature } from "./useNewSendFlowFeature";
-import { getSendUiConfig } from "@ledgerhq/live-common/flows/send/uiConfig";
+import {
+  getSendUiConfig,
+  hasDirectRecipient,
+  SEND_FLOW_SOURCE,
+} from "@features/platform-send-flow";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
-import { hasDirectRecipient, SEND_FLOW_SOURCE } from "@ledgerhq/live-common/flows/send/types";
 import { PAY_ACCOUNT_UI_USE_CASE } from "LLD/features/ModularDialog/types";
 import {
   closeDialog,
@@ -61,7 +65,7 @@ export function useOpenSendFlow() {
         const family = getFamilyFromAccount(account, parentAccount ?? null);
         const currencyId = getCurrencyIdFromAccount(account, parentAccount ?? null);
         const currency = getCurrencyFromAccount(account, parentAccount ?? null);
-        const uiConfig = currency ? getSendUiConfig(currency) : null;
+        const uiConfig = currency ? getSendUiConfig(sendFeatures, currency) : null;
         return (
           isEnabledForFamily(family, currencyId) ||
           (isEnabledForFamily(family) && (uiConfig?.hasBalanceTypeStep ?? false))

@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, DialogFooter } from "@ledgerhq/lumen-ui-react";
-import type { CoinControlChangeToReturnViewModel } from "@ledgerhq/live-common/flows/send/coinControl/hooks/useCoinControlScreenViewModelCore";
+import type { CoinControlChangeToReturnViewModel } from "@features/platform-send-flow";
 import { ChangeToReturn } from "./ChangeToReturn";
 import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
 import type { NetworkFeesViewModel } from "../../../hooks/useNetworkFees";

@@ -1,10 +1,7 @@
 import React from "react";
 import { Keyboard, Pressable } from "react-native";
 import { Box, Button, Text, TextInput } from "@ledgerhq/lumen-ui-rnative";
-import type {
-  CustomFeeInputState,
-  FeeAssetUiOption,
-} from "@ledgerhq/live-common/flows/send/customFees/hooks/useCustomFeesViewModelCore";
+import type { CustomFeeInputState, FeeAssetUiOption } from "@features/platform-send-flow";
 import { SendFlowLayout } from "../../../components/SendFlowLayout";
 import { FeeAssetSelector } from "./FeeAssetSelector";
 

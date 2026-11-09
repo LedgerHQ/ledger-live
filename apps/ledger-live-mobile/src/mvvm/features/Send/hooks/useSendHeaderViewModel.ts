@@ -8,25 +8,23 @@ import { ScreenName } from "~/const";
 import type { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
 import { useSendFlowTrackingProperties } from "../hooks/useSendFlowTrackingProperties";
 
-import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
-import { getSelectedBalanceTypeBalance } from "@ledgerhq/live-send";
-import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
-import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
 import {
+  SEND_FLOW_STEP,
+  useSendAmountDisplayMode,
   buildTransactionPatchFromURIScheme,
   type DecodedURISchemePayment,
-} from "@ledgerhq/live-common/flows/send/utils/uriScheme";
+  getRecipientSearchPrefillValue,
+  SEND_ADDRESS_FORMAT_OPTIONS,
+  getRecipientHeaderPresentation,
+  type RecipientHeaderContact,
+} from "@features/platform-send-flow";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
+import { getSelectedBalanceTypeBalance } from "@ledgerhq/live-send";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send-ports/resolveCurrencyConfig";
 import { useSendFlowData, useSendFlowActions } from "../context/SendFlowContext";
 import { useSendMemoReset } from "../context/SendMemoResetContext";
 import { useAvailableBalance } from "./useAvailableBalance";
 import { useCurrentSendFlowStep } from "./useCurrentSendFlowStep";
-import {
-  getRecipientSearchPrefillValue,
-  SEND_ADDRESS_FORMAT_OPTIONS,
-} from "@ledgerhq/live-common/flows/send/utils";
-import { getRecipientHeaderPresentation } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
-import type { RecipientHeaderContact } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
 import {
   isEligibleAddressCurrency,
   useContactsFeature,

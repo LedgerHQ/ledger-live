@@ -14,7 +14,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { AddressSearchResult } from "@ledgerhq/live-common/flows/send/recipient/types";
+import type { AddressSearchResult } from "@features/platform-send-flow";
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 import { createMockAccount, createMockCurrency } from "./accounts";
 import { useRecipientContactSelection } from "../../../../context/RecipientContactSelectionContext";

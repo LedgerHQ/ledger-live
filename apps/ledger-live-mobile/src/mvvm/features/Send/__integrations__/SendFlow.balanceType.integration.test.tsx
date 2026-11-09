@@ -13,8 +13,8 @@ import {
   SEND_FLOW_STEP,
   type SendFlowInitParams,
   type SendFlowStep,
-} from "@ledgerhq/live-common/flows/send/types";
-import type { StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
+} from "@features/platform-send-flow";
+import type { StepRegistry } from "@shared/flow-wizard";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Account } from "@ledgerhq/types-live";
 import { act, renderWithReactQuery, screen } from "@tests/test-renderer";

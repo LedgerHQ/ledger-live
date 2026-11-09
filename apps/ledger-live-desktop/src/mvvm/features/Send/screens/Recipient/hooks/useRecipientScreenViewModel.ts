@@ -1,8 +1,7 @@
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send-ports/resolveCurrencyConfig";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { Memo } from "@ledgerhq/live-common/flows/send/types";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import {
   isEligibleAddressCurrency,
@@ -15,7 +14,7 @@ import { useRecipientScanner } from "../../../context/RecipientScannerContext";
 import { trackPage } from "@shared/analytics";
 import { t } from "~/renderer/i18n/init";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
-import { filterContactsByNetwork } from "@ledgerhq/live-common/flows/send/recipient/utils/filterContactsByNetwork";
+import { filterContactsByNetwork, type Memo } from "@features/platform-send-flow";
 import { getAccountSelfTransferTarget } from "../../../utils/selfTransferTarget";
 
 type RecipientScreenViewModelBase = Readonly<{

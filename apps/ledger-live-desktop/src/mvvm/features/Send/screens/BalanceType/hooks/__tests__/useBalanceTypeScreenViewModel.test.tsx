@@ -1,7 +1,7 @@
 import React, { forwardRef, useImperativeHandle } from "react";
 import { render, cleanup } from "tests/testSetup";
 import BigNumber from "bignumber.js";
-import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import { SEND_FLOW_STEP } from "@features/platform-send-flow";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { BalanceTypeOption } from "@ledgerhq/live-common/bridge/descriptor/types";
 import { trackPage } from "@shared/analytics";

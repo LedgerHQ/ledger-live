@@ -4,7 +4,7 @@ import { createIntent } from "@features/platform-device-intent";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { FlowName } from "@ledgerhq/live-common/device-action/utils";
 import type { EnergyRentOrder } from "@ledgerhq/live-common/bridge/generic-coin-framework/sponsored";
-import { useSponsoredRentPayment } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredRentPayment";
+import { useSponsoredRentPayment } from "@features/platform-send-flow/sponsored";
 import type {
   SignRawTransactionIntent,
   SignRawTransactionIntentInput,

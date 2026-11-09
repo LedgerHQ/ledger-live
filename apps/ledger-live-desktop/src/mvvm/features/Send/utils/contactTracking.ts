@@ -1,7 +1,10 @@
 import { isValidContactName } from "@domain/entity-contact";
-import type { AddressSearchResult } from "@ledgerhq/live-common/flows/send/recipient/types";
-import { addressesMatch } from "@ledgerhq/live-common/flows/send/recipient/utils/addressesMatch";
-import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
+import {
+  addressesMatch,
+  SEND_FLOW_STEP,
+  type SendFlowStep,
+  type AddressSearchResult,
+} from "@features/platform-send-flow";
 
 export type RecipientInputMethod = "manual" | "paste" | "qr_code";
 export type RecipientQueryType = "address" | "ens" | "contact name" | "unrecognised";

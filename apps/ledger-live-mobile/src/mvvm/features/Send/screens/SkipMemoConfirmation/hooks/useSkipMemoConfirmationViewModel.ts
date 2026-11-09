@@ -1,7 +1,7 @@
 import { track } from "@shared/analytics";
 import { useCallback, useState } from "react";
 import { Linking } from "react-native";
-import { getMemoFamilyCurrencyId } from "@ledgerhq/live-common/flows/send/utils/memoFamilyCurrencyId";
+import { getMemoFamilyCurrencyId } from "@features/platform-send-flow";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { useTranslation } from "~/context/Locale";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";

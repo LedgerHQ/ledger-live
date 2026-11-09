@@ -1,8 +1,5 @@
 import type { ChangeEvent } from "react";
-import type {
-  FeeSelectorOptionKind,
-  FeeSelectorOption,
-} from "@ledgerhq/live-common/flows/send/utils/feeSelectorOptions";
+import type { FeeSelectorOptionKind, FeeSelectorOption } from "@features/platform-send-flow";
 import type { FeeAmountDisplay } from "LLD/features/Send/types";
 import type { SponsoredFeeNudgeProps } from "./components/Fees/SponsoredFeeNudge";
 

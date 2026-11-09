@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { Button, DialogBody, DialogFooter } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
-import type { SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
+import type { SendFlowStep } from "@features/platform-send-flow";
 import { useFlowWizard } from "../../../FlowWizard/FlowWizardContext";
 
 export function RecentHistoryScreen() {

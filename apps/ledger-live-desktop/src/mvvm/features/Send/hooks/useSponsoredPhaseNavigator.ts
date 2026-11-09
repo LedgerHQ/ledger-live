@@ -1,9 +1,6 @@
 import { useEffect, useRef } from "react";
-import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
-import {
-  SPONSORED_PHASE,
-  type SponsoredPhase,
-} from "@ledgerhq/live-common/flows/send/sponsored/types";
+import { SEND_FLOW_STEP, type SendFlowStep } from "@features/platform-send-flow";
+import { SPONSORED_PHASE, type SponsoredPhase } from "@features/platform-send-flow/sponsored";
 import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
 import { useSponsoredSend } from "../context/SponsoredSendContext";
 

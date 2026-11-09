@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useRoute } from "@react-navigation/native";
-import type { SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
+import type { SendFlowStep } from "@features/platform-send-flow";
 
 import { SEND_FLOW_CONFIG } from "../constants";
 import type { SendStepConfig } from "../types";

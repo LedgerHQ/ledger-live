@@ -9,7 +9,7 @@ import {
   SEND_FLOW_STEP,
   type SendFlowTransactionActions,
   type SendFlowUiConfig,
-} from "@ledgerhq/live-common/flows/send/types";
+} from "@features/platform-send-flow";
 import { trackPage } from "@shared/analytics";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { openURL } from "~/renderer/linking";

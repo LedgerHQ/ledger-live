@@ -4,7 +4,8 @@ import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge"
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
 import { isFirstBondPending } from "@ledgerhq/live-common/families/aleo/utils";
-import { getSendUiConfig } from "@ledgerhq/live-common/flows/send/uiConfig";
+import { getSendUiConfig } from "@features/platform-send-flow";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useNewSendFlowFeature } from "LLD/features/Send/hooks/useNewSendFlowFeature";
 import { openModal } from "~/renderer/actions/modals";
 import IconTransfer from "~/renderer/icons/Transfer";
@@ -29,7 +30,8 @@ const AccountHeaderActions: AleoFamily["accountHeaderManageActions"] = ({
   const { family, id: currencyId } = mainAccount.currency;
   const isNewSendFlowActive =
     isEnabledForFamily(family, currencyId) ||
-    (isEnabledForFamily(family) && getSendUiConfig(mainAccount.currency).hasBalanceTypeStep);
+    (isEnabledForFamily(family) &&
+      getSendUiConfig(sendFeatures, mainAccount.currency).hasBalanceTypeStep);
   const showSelfTransferAction = !isNewSendFlowActive;
 
   const hasBondedPosition = !!mainAccount.aleoResources?.bondedValidator;

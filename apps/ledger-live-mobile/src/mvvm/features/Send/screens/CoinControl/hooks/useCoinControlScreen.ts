@@ -1,7 +1,7 @@
 import {
   type SendFlowTransactionActions,
   type SendFlowUiConfig,
-} from "@ledgerhq/live-common/flows/send/types";
+} from "@features/platform-send-flow";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback } from "react";

@@ -5,7 +5,7 @@ import React from "react";
 import { render, screen } from "tests/testSetup";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { type TokenCurrency, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
-import type { FeeAssetUiOption } from "@ledgerhq/live-common/flows/send/customFees/hooks/useCustomFeesViewModelCore";
+import type { FeeAssetUiOption } from "@features/platform-send-flow";
 import { FeeAssetSelector } from "../FeeAssetSelector";
 
 jest.mock("~/renderer/components/CryptoCurrencyIcon", () => ({

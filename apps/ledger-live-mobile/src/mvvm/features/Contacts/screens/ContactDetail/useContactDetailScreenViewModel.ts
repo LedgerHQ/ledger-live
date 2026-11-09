@@ -34,7 +34,7 @@ import {
   type AddAddressInputSource,
 } from "@features/flow-contacts-add-address";
 import { getMinVersion } from "@ledgerhq/live-common/apps/support";
-import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send-ports/resolveCurrencyConfig";
 import {
   useContactDisplayName,
   resolveEligibleAddressCurrencyIds,

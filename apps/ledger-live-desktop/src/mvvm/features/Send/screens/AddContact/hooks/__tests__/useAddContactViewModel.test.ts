@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { renderHook } from "tests/testSetup";
-import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import { SEND_FLOW_STEP } from "@features/platform-send-flow";
 import { useAddContactViewModel } from "../useAddContactViewModel";
 
 const goToStep = jest.fn();

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useIsFocused } from "@react-navigation/native";
-import type { SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
+import type { SendFlowStep } from "@features/platform-send-flow";
 import {
   type SendFlowMessageTrackingRequest,
   useSendFlowTracking,

@@ -1,5 +1,5 @@
 import React from "react";
-import { FLOW_STATUS } from "@ledgerhq/live-common/flows/wizard/types";
+import { FLOW_STATUS } from "@shared/flow-wizard";
 import { useTranslation } from "~/context/Locale";
 import { ConfirmationScreenView } from "./components/ConfirmationScreenView";
 import { ConfirmationErrorView } from "./components/ConfirmationErrorView";

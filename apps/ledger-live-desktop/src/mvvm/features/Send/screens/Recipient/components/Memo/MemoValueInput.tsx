@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { TextInput, Tooltip, TooltipContent, TooltipTrigger } from "@ledgerhq/lumen-ui-react";
 import { Information } from "@ledgerhq/lumen-ui-react/symbols";
-import { sanitizeMemoValue } from "@ledgerhq/live-common/flows/send/recipient/utils/memoValue";
+import { sanitizeMemoValue } from "@features/platform-send-flow";
 import { useTranslation } from "react-i18next";
 import { useTranslatedBridgeError } from "../../hooks/useTranslatedBridgeError";
 

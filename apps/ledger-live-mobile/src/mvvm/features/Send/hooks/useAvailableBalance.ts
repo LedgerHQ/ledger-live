@@ -8,7 +8,7 @@ import { useCalculate } from "@features/platform-market-countervalues";
 import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { useLocale } from "~/context/Locale";
-import type { SendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
+import type { SendAmountDisplayMode } from "@features/platform-send-flow";
 
 export function useAvailableBalance(
   account?: AccountLike | null,

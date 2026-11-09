@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import type { AddressValidationError as AddressValidationErrorType } from "@ledgerhq/live-common/flows/send/recipient/types";
+import type { AddressValidationError as AddressValidationErrorType } from "@features/platform-send-flow";
 import { StatusMessage } from "./StatusMessage";
 
 type AddressValidationErrorProps = Readonly<{

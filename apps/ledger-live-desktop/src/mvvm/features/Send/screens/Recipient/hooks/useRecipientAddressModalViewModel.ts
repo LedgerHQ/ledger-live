@@ -5,20 +5,20 @@ import {
   useContactsFeature,
 } from "@features/platform-contacts";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send-ports/resolveCurrencyConfig";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
-import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
-import { filterContactsByNetwork } from "@ledgerhq/live-common/flows/send/recipient/utils/filterContactsByNetwork";
-import { pickContactAddressForCurrency } from "@ledgerhq/live-common/flows/send/recipient/utils/pickContactAddressForCurrency";
+import {
+  useRecipientSearchState,
+  filterContactsByNetwork,
+  pickContactAddressForCurrency,
+  SEND_FLOW_STEP,
+  type Memo,
+  type SendFlowStep,
+} from "@features/platform-send-flow";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Contact, ContactAddress } from "@domain/entity-contact";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import {
-  SEND_FLOW_STEP,
-  type Memo,
-  type SendFlowStep,
-} from "@ledgerhq/live-common/flows/send/types";
 import { useFlowWizard } from "../../../../FlowWizard/FlowWizardContext";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 import { useRecipientContinuation } from "../../../context/RecipientContinuationContext";

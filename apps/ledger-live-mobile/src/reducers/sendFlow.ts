@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { SendFlowInitParams } from "@ledgerhq/live-common/flows/send/types";
+import type { SendFlowInitParams } from "@features/platform-send-flow";
 
 export type SendFlowState = Readonly<{
   isOpen: boolean;

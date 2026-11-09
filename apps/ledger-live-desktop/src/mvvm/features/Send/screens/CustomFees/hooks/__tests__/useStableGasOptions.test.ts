@@ -2,7 +2,7 @@
 import BigNumber from "bignumber.js";
 import { renderHook } from "tests/testSetup";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import { useStableGasOptions } from "@ledgerhq/live-common/flows/send/customFees/hooks/useStableGasOptions";
+import { useStableGasOptions } from "@features/platform-send-flow";
 
 function createEvmTransaction(params: { gasOptions?: Record<string, unknown> }): Transaction {
   return {

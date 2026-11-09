@@ -27,11 +27,9 @@ jest.mock("../../../context/SendFlowContext", () => ({
   useSendFlowActions: jest.fn(() => ({ transaction: mockTransactionActions })),
 }));
 
-jest.mock("@ledgerhq/live-common/flows/send/customFees/hooks/useStableGasOptions", () => ({
+jest.mock("@features/platform-send-flow", () => ({
+  ...jest.requireActual("@features/platform-send-flow"),
   useStableGasOptions: jest.fn(tx => tx),
-}));
-
-jest.mock("@ledgerhq/live-common/flows/send/effects/hooks/useFlowEffects", () => ({
   useFlowEffects: jest.fn(() => ({ loading: false, error: null })),
 }));
 

@@ -1,5 +1,5 @@
 import type { AccountLike } from "@ledgerhq/types-live";
-import type { SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
+import type { SendFlowStep } from "@features/platform-send-flow";
 
 type SendFlowTrackingAccount = Readonly<{
   type?: AccountLike["type"];

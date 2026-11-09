@@ -24,7 +24,7 @@ import type {
   ContactsRenameAddressDialogProps,
 } from "@features/flow-contacts-edit-address";
 import type { ContactDeviceIntentsPort } from "@features/platform-contacts";
-import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send-ports/resolveCurrencyConfig";
 import { useOpenSendFlow } from "LLM/features/Send/hooks/useOpenSendFlow";
 import { useCallback } from "react";
 import { ScreenName } from "~/const";

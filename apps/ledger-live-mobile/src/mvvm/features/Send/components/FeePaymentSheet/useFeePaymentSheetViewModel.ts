@@ -1,9 +1,11 @@
 import { useCallback, useMemo } from "react";
 import { Linking } from "react-native";
 import { track } from "@shared/analytics";
-import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
-import type { FeePaymentLabels } from "@ledgerhq/live-common/flows/send/sponsored/types";
-import { useFeePaymentOptions } from "@ledgerhq/live-common/flows/send/sponsored/useFeePaymentOptions";
+import { SEND_FLOW_STEP } from "@features/platform-send-flow";
+import {
+  useFeePaymentOptions,
+  type FeePaymentLabels,
+} from "@features/platform-send-flow/sponsored";
 import { useTranslation } from "~/context/Locale";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { urls } from "~/utils/urls";

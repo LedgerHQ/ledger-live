@@ -7,16 +7,18 @@ import {
   useContactsFeature,
 } from "@features/platform-contacts";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send-ports/resolveCurrencyConfig";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
-import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
-import { filterContactsByNetwork } from "@ledgerhq/live-common/flows/send/recipient/utils/filterContactsByNetwork";
+import {
+  useRecipientSearchState,
+  filterContactsByNetwork,
+  type Memo,
+} from "@features/platform-send-flow";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Contact, ContactAddress } from "@domain/entity-contact";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { Memo } from "@ledgerhq/live-common/flows/send/types";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Keyboard } from "react-native";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";

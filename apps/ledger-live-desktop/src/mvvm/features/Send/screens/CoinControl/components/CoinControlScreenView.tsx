@@ -6,7 +6,7 @@ import type { NetworkFeesViewModel } from "../../../hooks/useNetworkFees";
 import { UtxoSelector } from "./UtxoSelector";
 import { DialogBody } from "@ledgerhq/lumen-ui-react";
 import type { CoinControlDisplayData } from "@ledgerhq/live-common/bridge/descriptor/types";
-import type { CoinControlChangeToReturnViewModel } from "@ledgerhq/live-common/flows/send/coinControl/hooks/useCoinControlScreenViewModelCore";
+import type { CoinControlChangeToReturnViewModel } from "@features/platform-send-flow";
 
 type StrategyOptionWithLabel = Readonly<{ value: number; label: string }>;
 

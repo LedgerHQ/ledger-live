@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import { SEND_FLOW_STEP } from "@features/platform-send-flow";
 import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
 import { useLLDCoinFamily } from "~/renderer/families";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";

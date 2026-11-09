@@ -1,10 +1,7 @@
 import React from "react";
 import { Text } from "react-native";
 import { render } from "@testing-library/react-native";
-import {
-  SPONSORED_PHASE,
-  type SponsoredPhase,
-} from "@ledgerhq/live-common/flows/send/sponsored/types";
+import { SPONSORED_PHASE, type SponsoredPhase } from "@features/platform-send-flow/sponsored";
 import { SponsoredFlowHost } from "../SponsoredFlowHost";
 import { SignatureOverlayHost } from "../SignatureOverlayHost";
 

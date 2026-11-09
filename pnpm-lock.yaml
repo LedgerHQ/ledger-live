@@ -1382,6 +1382,9 @@ importers:
       '@features/platform-quick-actions':
         specifier: workspace:^
         version: link:../../features/platform/quick-actions
+      '@features/platform-send-flow':
+        specifier: workspace:*
+        version: link:../../features/platform/send-flow
       '@features/platform-style':
         specifier: workspace:^
         version: link:../../features/platform/style
@@ -1583,6 +1586,9 @@ importers:
       '@shared/feature-flags':
         specifier: workspace:*
         version: link:../../shared/feature-flags
+      '@shared/flow-wizard':
+        specifier: workspace:*
+        version: link:../../shared/flow-wizard
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../shared/i18n
@@ -2320,6 +2326,9 @@ importers:
       '@features/platform-quick-actions':
         specifier: workspace:^
         version: link:../../features/platform/quick-actions
+      '@features/platform-send-flow':
+        specifier: workspace:*
+        version: link:../../features/platform/send-flow
       '@features/platform-style':
         specifier: workspace:^
         version: link:../../features/platform/style
@@ -2557,6 +2566,9 @@ importers:
       '@shared/feature-flags':
         specifier: workspace:*
         version: link:../../shared/feature-flags
+      '@shared/flow-wizard':
+        specifier: workspace:*
+        version: link:../../shared/flow-wizard
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../shared/i18n
@@ -7791,6 +7803,9 @@ importers:
       '@features/platform-assets-table':
         specifier: workspace:*
         version: link:../../features/platform/assets-table
+      '@features/platform-send-flow':
+        specifier: workspace:*
+        version: link:../../features/platform/send-flow
       '@ledgerhq/baanx-test-client':
         specifier: workspace:^
         version: link:../tooling/baanx-test-client
@@ -7907,6 +7922,9 @@ importers:
       '@domain/entity-currency-crypto':
         specifier: workspace:^
         version: link:../../domain/entity/currency-crypto
+      '@features/platform-send-flow':
+        specifier: workspace:*
+        version: link:../../features/platform/send-flow
       '@features/platform-wallet-sync':
         specifier: workspace:^
         version: link:../../features/platform/wallet-sync
@@ -13890,6 +13908,97 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
+  features/platform/send-flow:
+    dependencies:
+      '@domain/entity-currency':
+        specifier: workspace:*
+        version: link:../../../domain/entity/currency
+      '@domain/entity-currency-crypto':
+        specifier: workspace:*
+        version: link:../../../domain/entity/currency-crypto
+      '@domain/entity-currency-token':
+        specifier: workspace:*
+        version: link:../../../domain/entity/currency-token
+      '@domain/entity-currency-unit':
+        specifier: workspace:*
+        version: link:../../../domain/entity/currency-unit
+      '@features/platform-market-countervalues':
+        specifier: workspace:*
+        version: link:../market-countervalues
+      '@ledgerhq/coin-module-framework':
+        specifier: 'catalog:'
+        version: 11.0.1
+      '@ledgerhq/logs':
+        specifier: 'catalog:'
+        version: 6.20.0
+      '@shared/flow-wizard':
+        specifier: workspace:*
+        version: link:../../../shared/flow-wizard
+      bignumber.js:
+        specifier: 9.1.2
+        version: 9.1.2
+      lodash:
+        specifier: 4.18.1
+        version: 4.18.1
+    devDependencies:
+      '@domain/entity-currency-fiat':
+        specifier: workspace:*
+        version: link:../../../domain/entity/currency-fiat
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@support/jest':
+        specifier: workspace:*
+        version: link:../../../support/jest
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@testing-library/dom':
+        specifier: 'catalog:'
+        version: 10.4.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/lodash':
+        specifier: 'catalog:'
+        version: 4.17.21
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
+      jest-environment-jsdom:
+        specifier: 'catalog:'
+        version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-dom:
+        specifier: 19.1.4
+        version: 19.1.4(react@19.1.4)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
   features/platform/sign-account-transaction-intent:
     dependencies:
       '@domain/api-account-transaction':
@@ -18964,6 +19073,9 @@ importers:
       '@features/platform-market-countervalues':
         specifier: workspace:*
         version: link:../../features/platform/market-countervalues
+      '@features/platform-send-flow':
+        specifier: workspace:*
+        version: link:../../features/platform/send-flow
       '@ledgerhq/asset-aggregation':
         specifier: workspace:^
         version: link:../asset-aggregation
@@ -23903,6 +24015,24 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  shared/flow-wizard:
+    devDependencies:
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.75.0

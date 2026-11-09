@@ -1,6 +1,6 @@
 import { track } from "@shared/analytics";
 import { useNavigation } from "@react-navigation/native";
-import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import { SEND_FLOW_STEP, useSendAmountDisplayMode } from "@features/platform-send-flow";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
@@ -10,7 +10,6 @@ import { useMaybeAccountName } from "~/reducers/wallet";
 
 import { useSendFlowActions, useSendFlowData } from "../../context/SendFlowContext";
 import { useSendMemoReset } from "../../context/SendMemoResetContext";
-import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
 import { useAvailableBalance } from "../useAvailableBalance";
 import { useCurrentSendFlowStep } from "../useCurrentSendFlowStep";
 import { useSendHeaderViewModel } from "../useSendHeaderViewModel";
@@ -40,7 +39,10 @@ jest.mock("../../context/SendFlowContext");
 jest.mock("../../context/SendMemoResetContext");
 jest.mock("../../context/RecipientContactSelectionContext");
 jest.mock("../../context/SendFlowTrackingContext");
-jest.mock("@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext");
+jest.mock("@features/platform-send-flow", () => ({
+  ...jest.requireActual("@features/platform-send-flow"),
+  useSendAmountDisplayMode: jest.fn(),
+}));
 jest.mock("../useAvailableBalance");
 jest.mock("../useCurrentSendFlowStep");
 const mockedUseNavigation = jest.mocked(useNavigation);

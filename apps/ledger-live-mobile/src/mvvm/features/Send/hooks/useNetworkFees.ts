@@ -2,10 +2,6 @@ import { useMemo } from "react";
 import { useTranslation, useLocale } from "~/context/Locale";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import type {
-  SendFlowTransactionActions,
-  SendFlowUiConfig,
-} from "@ledgerhq/live-common/flows/send/types";
 import {
   getAccountCurrency,
   getMainAccount,
@@ -14,14 +10,16 @@ import { useSelector } from "~/context/hooks";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
 import { useCalculateCountervalueCallback } from "@features/platform-market-countervalues";
-import { useNetworkFeesCore } from "@ledgerhq/live-common/flows/send/hooks/useNetworkFeesCore";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
-import { feeSelectorLabelKeySuffix } from "@ledgerhq/live-common/flows/send/utils/feeStrategyLabels";
 import {
+  useNetworkFeesCore,
+  feeSelectorLabelKeySuffix,
   buildFeeSelectorOptions,
   feeStrategySublabel,
-} from "@ledgerhq/live-common/flows/send/utils/feeSelectorOptions";
-import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
+  useSendAmountDisplayMode,
+  type SendFlowTransactionActions,
+  type SendFlowUiConfig,
+} from "@features/platform-send-flow";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { FeeSelectorOption, NetworkFeesViewModel } from "../types";
 
 type UseNetworkFeesParams = Readonly<{

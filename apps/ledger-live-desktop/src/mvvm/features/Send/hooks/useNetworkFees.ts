@@ -5,7 +5,12 @@ import {
 import {
   SendFlowTransactionActions,
   SendFlowUiConfig,
-} from "@ledgerhq/live-common/flows/send/types";
+  useNetworkFeesCore,
+  feeSelectorLabelKeySuffix,
+  buildFeeSelectorOptions,
+  feeStrategySublabel,
+  useSendAmountDisplayMode,
+} from "@features/platform-send-flow";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useSelector } from "LLD/hooks/redux";
@@ -15,13 +20,6 @@ import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducer
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useCalculateCountervalueCallback } from "@features/platform-market-countervalues";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
-import { useNetworkFeesCore } from "@ledgerhq/live-common/flows/send/hooks/useNetworkFeesCore";
-import { feeSelectorLabelKeySuffix } from "@ledgerhq/live-common/flows/send/utils/feeStrategyLabels";
-import {
-  buildFeeSelectorOptions,
-  feeStrategySublabel,
-} from "@ledgerhq/live-common/flows/send/utils/feeSelectorOptions";
-import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
 import { FEE_PLACEHOLDER } from "../constants";
 import type { FeeSelectorOption } from "../screens/Amount/types";
 

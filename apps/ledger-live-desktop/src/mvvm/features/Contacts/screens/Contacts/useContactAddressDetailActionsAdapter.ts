@@ -1,6 +1,6 @@
 import { ContactIdSchema, type ContactAddressId, type ContactId } from "@domain/entity-contact";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send-ports/resolveCurrencyConfig";
 import {
   CONTACTS_EVENT_SOURCE,
   CONTACTS_FLOW,

@@ -1,5 +1,5 @@
 import { act, renderHook } from "@testing-library/react";
-import type { Memo } from "@ledgerhq/live-common/flows/send/types";
+import type { Memo } from "@features/platform-send-flow";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useRecipientMemo } from "../../screens/Recipient/hooks/useRecipientMemo";
 import { useSendHeaderMemo } from "../useSendHeaderMemo";
@@ -24,7 +24,8 @@ jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
     getTrackingAttributes: jest.fn(() => ({})),
   },
 }));
-jest.mock("@ledgerhq/live-common/flows/send/utils/memoFamilyCurrencyId", () => ({
+jest.mock("@features/platform-send-flow", () => ({
+  ...jest.requireActual("@features/platform-send-flow"),
   getMemoFamilyCurrencyId: jest.fn(() => "ripple"),
 }));
 

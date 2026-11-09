@@ -1,10 +1,6 @@
 import { act, renderHook } from "@testing-library/react-native";
-import {
-  SPONSORED_PHASE,
-  type SponsoredPhase,
-} from "@ledgerhq/live-common/flows/send/sponsored/types";
-import { SEND_FLOW_COMPLETION } from "@ledgerhq/live-common/flows/send/types";
-import { useSendFlowSignatureCore } from "@ledgerhq/live-common/flows/send/hooks/useSendFlowSignatureCore";
+import { SPONSORED_PHASE, type SponsoredPhase } from "@features/platform-send-flow/sponsored";
+import { SEND_FLOW_COMPLETION, useSendFlowSignatureCore } from "@features/platform-send-flow";
 import { useSignatureViewModel } from "../useSignatureViewModel";
 
 const mockFinishSigning = jest.fn();
@@ -15,7 +11,8 @@ const mockSponsoredActions = {
 };
 let mockSponsoredState: { phase: SponsoredPhase; paymentTxId: string | null };
 
-jest.mock("@ledgerhq/live-common/flows/send/hooks/useSendFlowSignatureCore", () => ({
+jest.mock("@features/platform-send-flow", () => ({
+  ...jest.requireActual("@features/platform-send-flow"),
   useSendFlowSignatureCore: jest.fn(() => ({
     request: null,
     finishWithError: jest.fn(),

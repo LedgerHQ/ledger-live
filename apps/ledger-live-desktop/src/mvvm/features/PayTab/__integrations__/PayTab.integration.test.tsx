@@ -20,7 +20,7 @@ import PayTab from "LLD/features/PayTab";
 import { usePayStablecoins, type PayStablecoins } from "../hooks/usePayStablecoins";
 import { USDC, makeItem } from "../hooks/__tests__/fixtures";
 import { AssetCategory } from "@domain/api-aggregated-assets";
-import { SEND_FLOW_SOURCE } from "@ledgerhq/live-common/flows/send/types";
+import { SEND_FLOW_SOURCE } from "@features/platform-send-flow";
 import {
   EMPTY_DESCRIPTION,
   EMPTY_TITLE,

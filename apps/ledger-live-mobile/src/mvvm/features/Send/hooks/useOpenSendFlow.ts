@@ -5,8 +5,8 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
-import { getSendUiConfig } from "@ledgerhq/live-common/flows/send/uiConfig";
-import { canSkipRecipientStep } from "@ledgerhq/live-common/flows/send/types";
+import { getSendUiConfig, canSkipRecipientStep } from "@features/platform-send-flow";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { AssetCategory } from "@domain/api-aggregated-assets";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
@@ -88,7 +88,7 @@ export function useOpenSendFlow({
       if (
         canSkipRecipientStep(
           { recipient: prefilledRecipient, skipRecipientStep },
-          getSendUiConfig(getAccountCurrency(account)),
+          getSendUiConfig(sendFeatures, getAccountCurrency(account)),
         ) &&
         params.transaction
       ) {

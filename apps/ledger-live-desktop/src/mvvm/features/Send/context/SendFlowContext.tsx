@@ -1,16 +1,16 @@
 import React, { createContext, useContext, type ReactNode, useMemo } from "react";
-import type {
-  SendFlowState,
-  SendFlowUiConfig,
-  SendFlowTransactionActions,
-  SendFlowOperationActions,
-  SendFlowStep,
-} from "@ledgerhq/live-common/flows/send/types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { FlowStatusActions } from "@ledgerhq/live-common/flows/wizard/types";
+import type { FlowStatusActions } from "@shared/flow-wizard";
 import type { FlowWizardContextValue } from "../../FlowWizard/types";
 import { FlowWizardProvider } from "../../FlowWizard/FlowWizardContext";
-import { SendAmountDisplayModeProvider } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
+import {
+  SendAmountDisplayModeProvider,
+  type SendFlowState,
+  type SendFlowUiConfig,
+  type SendFlowTransactionActions,
+  type SendFlowOperationActions,
+  type SendFlowStep,
+} from "@features/platform-send-flow";
 import type { SendStepConfig } from "../types";
 
 /**

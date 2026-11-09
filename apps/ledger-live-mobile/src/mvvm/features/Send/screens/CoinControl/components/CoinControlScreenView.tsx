@@ -6,7 +6,7 @@ import { AmountInput } from "./AmountInput";
 import { CoinControlFooter } from "./CoinControlFooter";
 import { StrategySelect } from "./StrategySelect";
 import { UtxoSelector } from "./UtxoSelector";
-import type { CoinControlChangeToReturnViewModel } from "@ledgerhq/live-common/flows/send/coinControl/hooks/useCoinControlScreenViewModelCore";
+import type { CoinControlChangeToReturnViewModel } from "@features/platform-send-flow";
 import { SendFlowLayout } from "../../../components/SendFlowLayout";
 
 type StrategyOptionWithLabel = Readonly<{ value: number; label: string }>;

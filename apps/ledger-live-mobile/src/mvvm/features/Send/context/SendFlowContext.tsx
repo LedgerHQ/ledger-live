@@ -1,14 +1,14 @@
 import React, { createContext, useContext, useMemo, type ReactNode } from "react";
-import type {
-  SendFlowState,
-  SendFlowUiConfig,
-  SendFlowTransactionActions,
-  SendFlowOperationActions,
-  SendFlowBusinessContext,
-} from "@ledgerhq/live-common/flows/send/types";
-import { SendAmountDisplayModeProvider } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
+import {
+  SendAmountDisplayModeProvider,
+  type SendFlowState,
+  type SendFlowUiConfig,
+  type SendFlowTransactionActions,
+  type SendFlowOperationActions,
+  type SendFlowBusinessContext,
+} from "@features/platform-send-flow";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { FlowStatusActions } from "@ledgerhq/live-common/flows/wizard/types";
+import type { FlowStatusActions } from "@shared/flow-wizard";
 
 type DataContextValue = Readonly<{
   state: SendFlowState;

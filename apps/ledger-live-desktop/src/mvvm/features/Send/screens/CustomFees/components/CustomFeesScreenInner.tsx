@@ -1,13 +1,15 @@
 import React, { useMemo } from "react";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import type { SendFlowTransactionActions } from "@ledgerhq/live-common/flows/send/types";
 import {
   getAccountCurrency,
   getMainAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import { useStableGasOptions } from "@ledgerhq/live-common/flows/send/customFees/hooks/useStableGasOptions";
-import { useFlowEffects } from "@ledgerhq/live-common/flows/send/effects/hooks/useFlowEffects";
+import {
+  useStableGasOptions,
+  useFlowEffects,
+  type SendFlowTransactionActions,
+} from "@features/platform-send-flow";
 import { CustomFeesScreenInnerBase } from "./CustomFeesScreenInnerBase";
 
 type CustomFeesScreenInnerProps = Readonly<{

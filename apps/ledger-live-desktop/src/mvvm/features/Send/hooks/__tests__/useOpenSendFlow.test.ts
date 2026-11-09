@@ -1,7 +1,7 @@
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { AssetCategory } from "@domain/api-aggregated-assets";
-import { SEND_FLOW_SOURCE } from "@ledgerhq/live-common/flows/send/types";
+import { SEND_FLOW_SOURCE } from "@features/platform-send-flow";
 import {
   isZcashShieldedEnabled,
   setZcashShieldedEnabled,

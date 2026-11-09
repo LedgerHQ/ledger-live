@@ -7,7 +7,7 @@ import {
   TRON_USDT_FEE_ASSET,
   createMockTronUsdtAccount,
 } from "../../../Recipient/__integrations__/__fixtures__/accounts";
-import { buildRentReservationOperation } from "@ledgerhq/live-common/flows/send/sponsored/rentReservation";
+import { buildRentReservationOperation } from "@features/platform-send-flow/sponsored";
 import { useSponsoredFailureViewModel } from "../useSponsoredFailureViewModel";
 
 const mockClose = jest.fn();

@@ -16,18 +16,16 @@ import {
   SPONSORED_PHASE,
   type SponsoredFeeAmounts,
   type SponsoredState,
-} from "@ledgerhq/live-common/flows/send/sponsored/types";
-import { useSponsoredFeeQuote } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredFeeQuote";
-import { useSponsoredSendFunnelTracking } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendFunnelTracking";
-import type { SponsoredSendActions } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendOrchestration";
-import { useSponsoredSendSession } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendSession";
-import { useSponsoredFeeAmounts } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredFeeAmounts";
-import { useReestimateOnRentDelivery } from "@ledgerhq/live-common/flows/send/sponsored/useReestimateOnRentDelivery";
-import { formatRentPayment } from "@ledgerhq/live-common/flows/send/sponsored/feeAsset";
-import {
+  useSponsoredFeeQuote,
+  useSponsoredSendFunnelTracking,
+  useSponsoredSendSession,
+  useSponsoredFeeAmounts,
+  useReestimateOnRentDelivery,
+  formatRentPayment,
   STANDARD_FEE_OPTION_ID,
   useSponsoredFeeSelection,
-} from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredFeeSelection";
+  type SponsoredSendActions,
+} from "@features/platform-send-flow/sponsored";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { useLocale } from "~/context/Locale";
 import { updateAccountWithUpdater } from "~/actions/accounts";

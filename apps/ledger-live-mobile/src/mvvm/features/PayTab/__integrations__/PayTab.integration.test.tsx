@@ -4,7 +4,7 @@ import type { QueuedBottomSheetProps } from "@shared/ui-queued-bottom-sheet";
 import { screen, waitFor, within } from "@tests/test-renderer";
 import { PAY_CARD_BALANCE_FILTER_ALL } from "@features/flow-pay-balance/state";
 import { AssetCategory } from "@domain/api-aggregated-assets";
-import { SEND_FLOW_SOURCE } from "@ledgerhq/live-common/flows/send/types";
+import { SEND_FLOW_SOURCE } from "@features/platform-send-flow";
 import { ScreenName } from "~/const";
 import { track, trackPage } from "@shared/analytics";
 import {

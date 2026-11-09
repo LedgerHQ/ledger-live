@@ -1,7 +1,7 @@
 import {
   useRecipientMemoCore,
   type UseRecipientMemoCoreParams,
-} from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientMemoCore";
+} from "@features/platform-send-flow";
 import { useDoNotAskAgainSkipMemo } from "../../../hooks/useDoNotAskAgainSkipMemo";
 
 export type UseRecipientMemoProps = Omit<

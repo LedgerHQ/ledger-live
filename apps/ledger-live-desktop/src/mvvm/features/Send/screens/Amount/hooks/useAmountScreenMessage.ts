@@ -4,7 +4,7 @@ import { useTranslatedBridgeError } from "../../Recipient/hooks/useTranslatedBri
 import {
   getAmountScreenRawMessage,
   isAmountInputDisabledByRecipientError,
-} from "@ledgerhq/live-common/flows/send/amount/utils/messages";
+} from "@features/platform-send-flow";
 import type { AmountScreenMessage } from "../types";
 
 export function useAmountScreenMessage(params: {

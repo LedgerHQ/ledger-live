@@ -1,0 +1,8 @@
+{
+  "name": "@shared/flow-wizard",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import type { SendFlowTransactionActions } from "@ledgerhq/live-common/flows/send/types";
+import type { SendFlowTransactionActions } from "@features/platform-send-flow";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import type { SendFlowNavigationProp } from "../../../types";
 

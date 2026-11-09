@@ -1,6 +1,6 @@
 import { renderHook, waitFor } from "@testing-library/react-native";
 import { readClipboard } from "@shared/clipboard";
-import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
+import { useRecipientSearchState } from "@features/platform-send-flow";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { AppState } from "react-native";
@@ -19,7 +19,7 @@ jest.mock("@react-navigation/native", () => ({
 }));
 
 jest.mock("../useAddressValidation");
-jest.mock("@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState");
+jest.mock("@features/platform-send-flow");
 
 const mockedReadClipboard = jest.mocked(readClipboard);
 const mockedUseAddressValidation = jest.mocked(useAddressValidation);

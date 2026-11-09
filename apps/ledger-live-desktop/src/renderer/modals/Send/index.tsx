@@ -11,8 +11,8 @@ import { openSendFlowDialog } from "~/renderer/reducers/sendFlow";
 import type { State } from "~/renderer/reducers";
 import { useNewSendFlowFeature } from "LLD/features/Send/hooks/useNewSendFlowFeature";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
-import { getSendUiConfig } from "@ledgerhq/live-common/flows/send/uiConfig";
-import { canSkipRecipientStep } from "@ledgerhq/live-common/flows/send/types";
+import { getSendUiConfig, canSkipRecipientStep } from "@features/platform-send-flow";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 
 type Props = {
   stepId?: StepId;
@@ -62,7 +62,7 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
         recipient: modalData.recipient,
         skipRecipientStep: modalData.skipRecipientStep,
       },
-      getSendUiConfig(getAccountCurrency(modalData.account)),
+      getSendUiConfig(sendFeatures, getAccountCurrency(modalData.account)),
     );
   const effectiveStepId = !hasStartedDirectSend && canStartDirectSend ? "amount" : stepId;
   const isModalLocked = MODAL_LOCKED[effectiveStepId];

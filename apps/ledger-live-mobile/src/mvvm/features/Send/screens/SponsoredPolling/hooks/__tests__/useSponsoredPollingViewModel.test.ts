@@ -1,5 +1,5 @@
 import { act, renderHook } from "@testing-library/react-native";
-import { SPONSORED_PHASE } from "@ledgerhq/live-common/flows/send/sponsored/types";
+import { SPONSORED_PHASE } from "@features/platform-send-flow/sponsored";
 import { useSponsoredPollingViewModel } from "../useSponsoredPollingViewModel";
 
 let mockPhase: string = SPONSORED_PHASE.POLLING;

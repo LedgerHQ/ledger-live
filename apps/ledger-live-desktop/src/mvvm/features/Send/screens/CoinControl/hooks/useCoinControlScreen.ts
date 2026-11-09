@@ -2,7 +2,7 @@ import {
   SEND_FLOW_STEP,
   type SendFlowTransactionActions,
   type SendFlowUiConfig,
-} from "@ledgerhq/live-common/flows/send/types";
+} from "@features/platform-send-flow";
 import { useNavigate } from "react-router";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";

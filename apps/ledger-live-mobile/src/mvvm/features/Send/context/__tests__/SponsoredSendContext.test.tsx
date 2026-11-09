@@ -2,10 +2,7 @@ import React from "react";
 import { act, renderHook } from "@testing-library/react-native";
 import BigNumber from "bignumber.js";
 import { track } from "@shared/analytics";
-import {
-  SPONSORED_PHASE,
-  type SponsoredPhase,
-} from "@ledgerhq/live-common/flows/send/sponsored/types";
+import { SPONSORED_PHASE, type SponsoredPhase } from "@features/platform-send-flow/sponsored";
 import {
   STANDARD_FEE_OPTION_ID,
   SponsoredSendProvider,
@@ -40,11 +37,6 @@ const mockQuoteWithoutSeam = {
 const mockUseSponsoredFeeQuote = jest.fn((params: { seam: unknown }) =>
   params.seam ? mockQuoteResult : mockQuoteWithoutSeam,
 );
-const mockFeeAmounts = {
-  sponsored: { value: "€2.80", secondaryValue: "3.2 USDT", originalValue: "€3.60" },
-  standard: { value: "€3.60", secondaryValue: "13 TRX" },
-};
-const mockFormatSponsoredFeeAmounts = jest.fn((..._args: unknown[]) => mockFeeAmounts);
 const TRX_UNIT = { name: "TRX", code: "TRX", magnitude: 6 };
 const USDT_UNIT = { name: "USDT", code: "USDT", magnitude: 6 };
 
@@ -82,20 +74,18 @@ jest.mock("../SendFlowContext", () => ({
     },
   }),
 }));
-jest.mock("@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendSession", () => ({
-  useSponsoredSendSession: jest.fn(),
-}));
-jest.mock("@ledgerhq/live-common/flows/send/sponsored/useSponsoredFeeQuote", () => ({
-  useSponsoredFeeQuote: (params: { seam: unknown }) => mockUseSponsoredFeeQuote(params),
-}));
-jest.mock("@ledgerhq/live-common/flows/send/sponsored/feeAmounts", () => ({
-  formatSponsoredFeeAmounts: (...args: unknown[]) => mockFormatSponsoredFeeAmounts(...args),
-}));
 const mockUseSponsoredSendFunnelTracking = jest.fn();
-jest.mock("@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendFunnelTracking", () => ({
-  useSponsoredSendFunnelTracking: (...args: unknown[]) =>
-    mockUseSponsoredSendFunnelTracking(...args),
-}));
+jest.mock("@features/platform-send-flow/sponsored", () => {
+  const actual = jest.requireActual("@features/platform-send-flow/sponsored");
+  return {
+    ...actual,
+    useSponsoredSendSession: jest.fn(),
+    useSponsoredFeeQuote: (params: { seam: unknown }) => mockUseSponsoredFeeQuote(params),
+    useSponsoredFeeAmounts: jest.fn(actual.useSponsoredFeeAmounts),
+    useSponsoredSendFunnelTracking: (...args: unknown[]) =>
+      mockUseSponsoredSendFunnelTracking(...args),
+  };
+});
 jest.mock("../SendFlowTrackingContext", () => ({
   useSendFlowTracking: () => ({ flowSessionId: "session-1" }),
 }));
@@ -103,8 +93,8 @@ jest.mock("../../hooks/useSendFlowTrackingProperties", () => ({
   useSendFlowTrackingProperties: () => ({ flow: "send" }),
 }));
 
-const { useSponsoredSendSession } = jest.requireMock(
-  "@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendSession",
+const { useSponsoredSendSession, useSponsoredFeeAmounts } = jest.requireMock(
+  "@features/platform-send-flow/sponsored",
 );
 
 const SEAM = {
@@ -255,16 +245,18 @@ describe("SponsoredSendProvider", () => {
   it("prices the sponsored fee in the fee asset's unit and the standard fee in the account's", () => {
     const { result } = renderContext();
 
-    expect(result.current.value.sponsoredFeeAmounts).toBe(mockFeeAmounts);
-    expect(mockFormatSponsoredFeeAmounts).toHaveBeenLastCalledWith(
+    expect(useSponsoredFeeAmounts).toHaveBeenLastCalledWith(
       expect.objectContaining({
         quote: QUOTE,
-        feeUnit: USDT_UNIT,
         nativeUnit: TRX_UNIT,
         sponsoredFeeFiat: new BigNumber(280),
         standardFeeFiat: new BigNumber(360),
       }),
     );
+    expect(result.current.value.sponsoredFeeAmounts).toEqual({
+      sponsored: expect.objectContaining({ secondaryValue: expect.stringMatching(/^3\.2\sUSDT$/) }),
+      standard: expect.objectContaining({ secondaryValue: expect.stringMatching(/^13\sTRX$/) }),
+    });
   });
 
   it("has no fee amounts before a quote", () => {

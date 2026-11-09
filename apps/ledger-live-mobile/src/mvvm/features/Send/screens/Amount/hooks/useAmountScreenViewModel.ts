@@ -5,24 +5,24 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import type {
-  SendFlowTransactionActions,
-  SendFlowUiConfig,
-} from "@ledgerhq/live-common/flows/send/types";
-import { useSendFlowAmountReviewCore } from "@ledgerhq/live-common/flows/send/hooks/useSendFlowAmountReviewCore";
+import {
+  useSendFlowAmountReviewCore,
+  getAmountScreenRawMessage,
+  isAmountInputDisabledByRecipientError,
+  type SendFlowTransactionActions,
+  type SendFlowUiConfig,
+} from "@features/platform-send-flow";
 import { getSelectedBalanceTypeBalance } from "@ledgerhq/live-send";
-import type { SponsoredFeeAmounts } from "@ledgerhq/live-common/flows/send/sponsored/types";
 import type { SponsoredFeeEntryViewModel } from "../../../types";
 import type { AmountScreenMessage, AmountScreenViewModel } from "../types";
 import { useAmountInputController } from "./useAmountInputController";
 import { useQuickActions } from "./useQuickActions";
-import { withoutWaivedStatus } from "@ledgerhq/live-common/flows/send/sponsored/waivedStatus";
+import {
+  withoutWaivedStatus,
+  type SponsoredFeeAmounts,
+} from "@features/platform-send-flow/sponsored";
 import { useNetworkFees } from "../../../hooks/useNetworkFees";
 import { useSponsoredSend } from "../../../context/SponsoredSendContext";
-import {
-  getAmountScreenRawMessage,
-  isAmountInputDisabledByRecipientError,
-} from "@ledgerhq/live-common/flows/send/amount/utils/messages";
 
 const PENDING_SPONSORED_FEE: SponsoredFeeAmounts["sponsored"] = {
   value: "-",

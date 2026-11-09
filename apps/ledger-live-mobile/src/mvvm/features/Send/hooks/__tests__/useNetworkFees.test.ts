@@ -6,10 +6,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { useNetworkFees } from "../useNetworkFees";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import type {
-  SendFlowTransactionActions,
-  SendFlowUiConfig,
-} from "@ledgerhq/live-common/flows/send/types";
+import type { SendFlowTransactionActions, SendFlowUiConfig } from "@features/platform-send-flow";
 import { useSelector } from "~/context/hooks";
 
 const mockT = (key: string) => key;
@@ -23,18 +20,17 @@ jest.mock("@features/platform-market-countervalues", () => ({
   ...jest.requireActual("@features/platform-market-countervalues"),
   useCalculateCountervalueCallback: jest.fn(() => jest.fn()),
 }));
-jest.mock("@ledgerhq/live-common/flows/send/hooks/useNetworkFeesCore");
 let mockDisplayMode: "fiat" | "crypto" = "fiat";
-jest.mock("@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext", () => ({
+jest.mock("@features/platform-send-flow", () => ({
+  ...jest.requireActual("@features/platform-send-flow"),
+  useNetworkFeesCore: jest.fn(),
   useSendAmountDisplayMode: () => ({
     displayMode: mockDisplayMode,
     setDisplayMode: jest.fn(),
   }),
 }));
 
-const mockUseNetworkFeesCore = jest.requireMock(
-  "@ledgerhq/live-common/flows/send/hooks/useNetworkFeesCore",
-).useNetworkFeesCore;
+const mockUseNetworkFeesCore = jest.requireMock("@features/platform-send-flow").useNetworkFeesCore;
 
 const mockUpdateTransaction = jest.fn();
 

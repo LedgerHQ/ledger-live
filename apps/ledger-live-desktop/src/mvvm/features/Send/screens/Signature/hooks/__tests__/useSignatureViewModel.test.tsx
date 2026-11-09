@@ -1,11 +1,8 @@
 import React, { forwardRef, useImperativeHandle } from "react";
 import { render, cleanup, waitFor } from "tests/testSetup";
 import { track } from "@shared/analytics";
-import { SEND_FLOW_SOURCE, SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
-import {
-  SPONSORED_PHASE,
-  type SponsoredPhase,
-} from "@ledgerhq/live-common/flows/send/sponsored/types";
+import { SEND_FLOW_SOURCE, SEND_FLOW_STEP } from "@features/platform-send-flow";
+import { SPONSORED_PHASE, type SponsoredPhase } from "@features/platform-send-flow/sponsored";
 import { useSignatureViewModel } from "../useSignatureViewModel";
 
 jest.mock("@shared/analytics", () => ({

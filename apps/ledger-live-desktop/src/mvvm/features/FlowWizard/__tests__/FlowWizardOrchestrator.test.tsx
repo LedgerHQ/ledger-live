@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen } from "tests/testSetup";
 import { FlowWizardOrchestrator } from "../FlowWizardOrchestrator";
 import { useFlowWizard, FlowWizardProvider } from "../FlowWizardContext";
-import type { FlowConfig, StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
+import type { FlowConfig, StepRegistry } from "@shared/flow-wizard";
 
 const TEST_STEPS = {
   FIRST: "FIRST",

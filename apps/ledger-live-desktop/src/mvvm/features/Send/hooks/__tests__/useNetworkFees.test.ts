@@ -31,10 +31,12 @@ jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
       fees: undefined,
     })),
     hasFeeRateLegend: jest.fn(() => false),
+    getFeePresetLegend: jest.fn(() => undefined),
   },
 }));
 let mockDisplayMode: "fiat" | "crypto" = "fiat";
-jest.mock("@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext", () => ({
+jest.mock("@features/platform-send-flow", () => ({
+  ...jest.requireActual("@features/platform-send-flow"),
   useSendAmountDisplayMode: () => ({
     displayMode: mockDisplayMode,
     setDisplayMode: jest.fn(),

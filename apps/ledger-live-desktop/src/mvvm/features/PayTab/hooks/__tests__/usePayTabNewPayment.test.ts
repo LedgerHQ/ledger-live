@@ -5,7 +5,7 @@ import {
   mockContactWithAddress,
   mockContactWithMultipleAddresses,
 } from "@domain/entity-contact/schema.mock";
-import { SEND_FLOW_SOURCE } from "@ledgerhq/live-common/flows/send/types";
+import { SEND_FLOW_SOURCE } from "@features/platform-send-flow";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 import { usePayTabNewPayment } from "../usePayTabNewPayment";
 

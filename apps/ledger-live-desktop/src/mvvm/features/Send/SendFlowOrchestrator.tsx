@@ -1,5 +1,5 @@
 import React, { useMemo, type ReactNode } from "react";
-import type { StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
+import type { StepRegistry } from "@shared/flow-wizard";
 import { SendFlowProvider } from "./context/SendFlowContext";
 import { useSendFlowBusinessLogic } from "./hooks/useSendFlowState";
 import { SEND_FLOW_CONFIG } from "./constants";
@@ -9,7 +9,7 @@ import {
   type SendFlowStep,
   type SendFlowInitParams,
   type SendFlowUiConfig,
-} from "@ledgerhq/live-common/flows/send/types";
+} from "@features/platform-send-flow";
 import type { SendStepConfig as DesktopSendStepConfig } from "./types";
 import { FlowWizardOrchestrator } from "../FlowWizard/FlowWizardOrchestrator";
 

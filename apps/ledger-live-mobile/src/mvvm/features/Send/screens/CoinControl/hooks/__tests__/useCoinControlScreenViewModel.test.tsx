@@ -20,7 +20,6 @@ const { getMainAccount, getAccountCurrency } = jest.requireMock(
 jest.mock("@ledgerhq/live-common/bridge/impl");
 
 const mockUpdateTransaction = jest.fn();
-const mockOnAmountChange = jest.fn();
 
 jest.mock("../../../../hooks/useNetworkFees", () => ({
   useNetworkFees: () => ({
@@ -75,15 +74,6 @@ jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => {
     },
   };
 });
-
-jest.mock("@ledgerhq/live-common/flows/send/coinControl/hooks/useCoinControlAmountInput", () => ({
-  useCoinControlAmountInput: () => ({
-    amountValue: "0",
-    onAmountChange: mockOnAmountChange,
-    cancelPendingUpdates: jest.fn(),
-    debounceTimeoutRef: { current: null },
-  }),
-}));
 
 function buildBaseParams(overrides?: {
   account?: Partial<Account>;
@@ -145,7 +135,7 @@ describe("useCoinControlScreenViewModel", () => {
     const { result } = renderHook(() => useCoinControlScreenViewModel(params));
 
     expect(result.current).toMatchObject({
-      amountValue: "0",
+      amountValue: "",
       amountError: undefined,
       reviewShowIcon: true,
       reviewDisabled: true,

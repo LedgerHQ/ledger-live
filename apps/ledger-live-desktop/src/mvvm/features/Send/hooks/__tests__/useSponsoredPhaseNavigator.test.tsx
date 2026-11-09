@@ -1,6 +1,6 @@
 import { renderHook } from "tests/testSetup";
-import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
-import { SPONSORED_PHASE } from "@ledgerhq/live-common/flows/send/sponsored/types";
+import { SEND_FLOW_STEP } from "@features/platform-send-flow";
+import { SPONSORED_PHASE } from "@features/platform-send-flow/sponsored";
 import { useSponsoredPhaseNavigator } from "../useSponsoredPhaseNavigator";
 
 const mockGoToStep = jest.fn();

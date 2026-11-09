@@ -2,9 +2,8 @@ import React from "react";
 import { Text } from "react-native";
 import { render, screen } from "@tests/test-renderer";
 import { SendFlowOrchestrator } from "../SendFlowOrchestrator";
-import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
-import type { SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
-import type { StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
+import { SEND_FLOW_STEP, type SendFlowStep } from "@features/platform-send-flow";
+import type { StepRegistry } from "@shared/flow-wizard";
 import type { SendFlowConfig } from "../types";
 
 jest.mock("../hooks/useSendFlowState", () => ({

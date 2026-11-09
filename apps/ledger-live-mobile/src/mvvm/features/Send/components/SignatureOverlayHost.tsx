@@ -1,9 +1,6 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import {
-  SPONSORED_PHASE,
-  type SponsoredPhase,
-} from "@ledgerhq/live-common/flows/send/sponsored/types";
+import { SPONSORED_PHASE, type SponsoredPhase } from "@features/platform-send-flow/sponsored";
 import { SignatureScreen } from "../screens/Signature";
 import { useSendSignature } from "../context/SendSignatureContext";
 import { useIsSponsoredSelected, useSponsoredSend } from "../context/SponsoredSendContext";

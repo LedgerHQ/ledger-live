@@ -37,7 +37,7 @@ import type { Transaction } from "../../coin-modules/transaction-types";
 import {
   buildPresetEstimationPatch,
   getFeesStrategyForPreset,
-} from "../../flows/send/utils/feeEstimation";
+} from "@features/platform-send-flow/fees";
 import { log } from "@ledgerhq/logs";
 import {
   FullSyncAccountNotFoundError,

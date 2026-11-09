@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from "react";
-import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
+import { SEND_FLOW_STEP, type SendFlowStep } from "@features/platform-send-flow";
 import { useFlowWizard } from "../../../../FlowWizard/FlowWizardContext";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { track, trackPage } from "@shared/analytics";

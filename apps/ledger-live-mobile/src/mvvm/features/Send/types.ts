@@ -1,12 +1,12 @@
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { ReactNativeFlowStepConfig, ReactNativeFlowConfig } from "../FlowWizard/types";
-import type { SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
-import type { NetworkFeesInfo } from "@ledgerhq/live-common/bridge/descriptor/types";
-import type { SponsoredFeeAmounts } from "@ledgerhq/live-common/flows/send/sponsored/types";
 import type {
+  SendFlowStep,
   FeeSelectorOptionKind,
   FeeSelectorOption,
-} from "@ledgerhq/live-common/flows/send/utils/feeSelectorOptions";
+} from "@features/platform-send-flow";
+import type { NetworkFeesInfo } from "@ledgerhq/live-common/bridge/descriptor/types";
+import type { SponsoredFeeAmounts } from "@features/platform-send-flow/sponsored";
 import { ScreenName } from "~/const";
 
 export type { FeeSelectorOptionKind, FeeSelectorOption };

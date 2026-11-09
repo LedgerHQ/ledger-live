@@ -13,11 +13,11 @@ import {
   USDT_CONTRACT,
   USDT_FEE_ASSET,
   USDT_RENT_PAYMENT,
-} from "@ledgerhq/live-common/flows/send/sponsored/fixtures/usdt";
+} from "@features/platform-send-flow/testing/sponsored";
 import {
   recordPendingRent,
   resetPendingRentsForTests,
-} from "@ledgerhq/live-common/flows/send/sponsored/pendingRents";
+} from "@features/platform-send-flow/sponsored";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { act, renderWithReactQuery, screen, within, withFlagOverrides } from "@tests/test-renderer";
 import type { Account, Operation, SignedOperation, TokenAccount } from "@ledgerhq/types-live";
@@ -31,8 +31,8 @@ import { CoinControlScreen } from "../screens/CoinControl";
 import { SignatureScreen } from "../screens/Signature";
 import { ConfirmationScreen } from "../screens/Confirmation";
 import { PaySuccessScreen } from "../screens/PaySuccess";
-import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
-import type { StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
+import { SEND_FLOW_STEP, type SendFlowStep } from "@features/platform-send-flow";
+import type { StepRegistry } from "@shared/flow-wizard";
 
 const tronCurrency = getCryptoCurrencyById("tron");
 const RECIPIENT = genAccount("sponsored-recipient", {

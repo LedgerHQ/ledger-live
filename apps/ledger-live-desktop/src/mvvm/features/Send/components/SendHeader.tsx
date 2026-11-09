@@ -3,12 +3,12 @@ import { useTranslation } from "react-i18next";
 import { AddressInput, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
 import { useSendFlowData } from "../context/SendFlowContext";
-import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
 import {
+  useSendAmountDisplayMode,
   SEND_FLOW_STEP,
   type SendFlowBusinessContext,
   type SendFlowStep,
-} from "@ledgerhq/live-common/flows/send/types";
+} from "@features/platform-send-flow";
 import { getSelectedBalanceTypeBalance } from "@ledgerhq/live-send";
 import { useAvailableBalance } from "../hooks/useAvailableBalance";
 import { useSendHeaderMemo } from "../hooks/useSendHeaderMemo";

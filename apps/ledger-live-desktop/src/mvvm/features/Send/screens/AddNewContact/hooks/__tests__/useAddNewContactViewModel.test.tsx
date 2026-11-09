@@ -4,7 +4,7 @@
 import React from "react";
 import { act, renderHook, waitFor } from "tests/testSetup";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import { SEND_FLOW_STEP } from "@features/platform-send-flow";
 import { addAddress } from "@domain/entity-contact";
 import {
   mockContact,

@@ -1,4 +1,4 @@
-import { useSponsoredPollingElapsed } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredPollingElapsed";
+import { useSponsoredPollingElapsed } from "@features/platform-send-flow/sponsored";
 import { useTranslation } from "~/context/Locale";
 import { useSponsoredSend } from "../../../context/SponsoredSendContext";
 

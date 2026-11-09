@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useMemo, type ReactNode } from "react";
-import type { FlowStep, FlowStepConfig } from "@ledgerhq/live-common/flows/wizard/types";
+import type { FlowStep, FlowStepConfig } from "@shared/flow-wizard";
 import type { FlowWizardContextValue } from "./types";
 
 /**

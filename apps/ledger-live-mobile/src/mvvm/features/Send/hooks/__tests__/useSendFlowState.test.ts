@@ -1,8 +1,11 @@
 import { renderHook } from "@tests/test-renderer";
 import { useSendFlowBusinessLogic } from "../useSendFlowState";
-import * as commonBusinessLogicModule from "@ledgerhq/live-common/flows/send/hooks/useSendFlowBusinessLogic";
+import * as commonBusinessLogicModule from "@features/platform-send-flow";
 
-jest.mock("@ledgerhq/live-common/flows/send/hooks/useSendFlowBusinessLogic");
+jest.mock("@features/platform-send-flow", () => ({
+  ...jest.requireActual("@features/platform-send-flow"),
+  useSendFlowBusinessLogic: jest.fn(),
+}));
 jest.mock("../useSendFlowTransaction", () => ({
   useSendFlowTransaction: jest.fn(),
 }));

@@ -1,4 +1,4 @@
-import type { FeePaymentOption } from "@ledgerhq/live-common/flows/send/sponsored/types";
+import type { FeePaymentOption } from "@features/platform-send-flow/sponsored";
 
 export type FeePaymentSheetViewModel = Readonly<{
   title: string;

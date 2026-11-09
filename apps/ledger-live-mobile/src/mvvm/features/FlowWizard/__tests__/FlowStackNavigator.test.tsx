@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { render, screen } from "@tests/test-renderer";
 import { FlowStackNavigator, getFlowStackScreenOptions } from "../FlowStackNavigator";
-import type { FlowStep, StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
+import type { FlowStep, StepRegistry } from "@shared/flow-wizard";
 import type { ReactNativeFlowConfig } from "../types";
 
 const TestStack = createNativeStackNavigator();

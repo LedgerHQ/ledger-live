@@ -1,4 +1,4 @@
-import type { AddressValidationError } from "@ledgerhq/live-common/flows/send/recipient/types";
+import type { AddressValidationError } from "@features/platform-send-flow";
 import type { SendFlowTrackedMessage } from "./tracking";
 
 type ErrorRecord = Record<string, Error | undefined>;

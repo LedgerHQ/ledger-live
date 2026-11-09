@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, DialogFooter } from "@ledgerhq/lumen-ui-react";
-import { isSendConfirmationRetryable } from "@ledgerhq/live-common/flows/send/presentBroadcastError";
-import { FLOW_STATUS, type FlowStatus } from "@ledgerhq/live-common/flows/wizard/types";
+import { isSendConfirmationRetryable } from "@features/platform-send-flow";
+import { FLOW_STATUS, type FlowStatus } from "@shared/flow-wizard";
 
 interface ButtonConfig {
   label: string;

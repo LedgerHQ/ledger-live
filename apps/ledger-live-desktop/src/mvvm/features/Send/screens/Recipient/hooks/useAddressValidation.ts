@@ -6,16 +6,16 @@ import { InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/ledger-w
 import { selectContacts } from "@domain/entity-contact";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
-import { useBridgeRecipientValidation } from "@ledgerhq/live-common/flows/send/recipient/hooks/useBridgeRecipientValidation";
-import { findMatchedContact } from "@ledgerhq/live-common/flows/send/recipient/utils/findMatchedContact";
-import type {
-  AddressSearchResult,
-  AddressValidationError,
-  AddressValidationStatus,
-  BridgeValidationErrors,
-  MatchedAccount,
-  RecentAddress,
-} from "@ledgerhq/live-common/flows/send/recipient/types";
+import {
+  useBridgeRecipientValidation,
+  findMatchedContact,
+  type AddressSearchResult,
+  type AddressValidationError,
+  type AddressValidationStatus,
+  type BridgeValidationErrors,
+  type MatchedAccount,
+  type RecentAddress,
+} from "@features/platform-send-flow";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";

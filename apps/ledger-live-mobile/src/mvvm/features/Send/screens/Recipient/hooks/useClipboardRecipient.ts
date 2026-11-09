@@ -1,5 +1,5 @@
 import { readClipboard } from "@shared/clipboard";
-import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
+import { useRecipientSearchState } from "@features/platform-send-flow";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";

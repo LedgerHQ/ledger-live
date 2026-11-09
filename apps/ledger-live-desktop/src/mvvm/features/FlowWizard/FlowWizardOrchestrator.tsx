@@ -1,11 +1,6 @@
 import React, { useMemo, type ComponentType, type ReactNode } from "react";
 import { useFlowWizardNavigation } from "./hooks/useFlowWizardNavigation";
-import type {
-  FlowStep,
-  FlowConfig,
-  StepRegistry,
-  FlowStepConfig,
-} from "@ledgerhq/live-common/flows/wizard/types";
+import type { FlowStep, FlowConfig, StepRegistry, FlowStepConfig } from "@shared/flow-wizard";
 import type { FlowWizardContextValue } from "./types";
 
 type FlowWizardOrchestratorProps<

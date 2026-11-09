@@ -2,7 +2,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import BigNumber from "bignumber.js";
 import { act } from "tests/testSetup";
-import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import { SEND_FLOW_STEP } from "@features/platform-send-flow";
 import { mockContact } from "@domain/entity-contact/schema.mock";
 import { ContactsI18nTestProvider } from "@features/platform-contacts/testing";
 import { useSendHeaderModel } from "../useSendHeaderModel";

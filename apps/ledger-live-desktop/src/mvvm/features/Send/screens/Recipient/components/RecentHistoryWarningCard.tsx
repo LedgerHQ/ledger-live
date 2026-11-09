@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { Information } from "@ledgerhq/lumen-ui-react/symbols";
 import { useTranslation } from "react-i18next";
-import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
+import { SEND_FLOW_STEP, type SendFlowStep } from "@features/platform-send-flow";
 import { useFlowWizard } from "../../../../FlowWizard/FlowWizardContext";
 
 export function RecentHistoryWarningCard() {

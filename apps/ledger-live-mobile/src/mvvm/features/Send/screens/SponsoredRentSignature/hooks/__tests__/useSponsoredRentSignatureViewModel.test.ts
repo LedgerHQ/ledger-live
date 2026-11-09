@@ -1,5 +1,5 @@
 import { act, renderHook, waitFor } from "@testing-library/react-native";
-import { SPONSORED_PHASE } from "@ledgerhq/live-common/flows/send/sponsored/types";
+import { SPONSORED_PHASE } from "@features/platform-send-flow/sponsored";
 import { buildDeviceInitializationInput } from "LLM/components/DeviceIntentExecutor";
 import { useSponsoredRentSignatureViewModel } from "../useSponsoredRentSignatureViewModel";
 

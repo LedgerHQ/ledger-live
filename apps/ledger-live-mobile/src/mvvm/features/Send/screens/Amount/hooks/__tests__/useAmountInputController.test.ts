@@ -20,10 +20,11 @@ jest.mock("@features/platform-market-countervalues");
 jest.mock("~/context/Locale");
 jest.mock("LLM/hooks/useAccountUnit");
 jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers");
-jest.mock("@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext", () => {
+jest.mock("@features/platform-send-flow", () => {
   const React = jest.requireActual<typeof import("react")>("react");
 
   return {
+    ...jest.requireActual("@features/platform-send-flow"),
     useSendAmountDisplayMode: () => {
       const [displayMode, setDisplayMode] = React.useState<"fiat" | "crypto">("fiat");
       return { displayMode, setDisplayMode, isFiatModeAvailable: true };

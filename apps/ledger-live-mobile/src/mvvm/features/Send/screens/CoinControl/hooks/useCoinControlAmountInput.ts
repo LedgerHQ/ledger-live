@@ -6,7 +6,7 @@ import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/gener
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useMemo } from "react";
 import { useMaybeAccountUnit } from "~/hooks";
-import { useCoinControlAmountInput as useCoinControlAmountInputCommon } from "@ledgerhq/live-common/flows/send/coinControl/hooks/useCoinControlAmountInput";
+import { useCoinControlAmountInput as useCoinControlAmountInputCommon } from "@features/platform-send-flow";
 
 type UseAmountInputParams = Readonly<{
   account: AccountLike;

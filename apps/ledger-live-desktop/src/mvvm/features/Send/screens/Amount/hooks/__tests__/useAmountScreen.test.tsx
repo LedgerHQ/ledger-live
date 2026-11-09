@@ -1,5 +1,5 @@
 import { renderHook, act } from "tests/testSetup";
-import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import { SEND_FLOW_STEP } from "@features/platform-send-flow";
 import { useAmountScreen } from "../useAmountScreen";
 
 const mockGoToStep = jest.fn();

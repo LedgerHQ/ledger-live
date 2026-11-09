@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useReducer } from "react";
-import type { FlowStep, FlowStepConfig } from "@ledgerhq/live-common/flows/wizard/types";
+import type { FlowStep, FlowStepConfig } from "@shared/flow-wizard";
 import {
   FLOW_NAVIGATION_DIRECTION,
   type FlowNavigationState,

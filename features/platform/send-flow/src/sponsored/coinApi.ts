@@ -1,0 +1,82 @@
+import type { AssetInfo, FeeOptionMeta } from "@ledgerhq/coin-module-framework/api/index";
+import type { Unit } from "@domain/entity-currency-unit";
+
+export type EnergyRentStatus = "pending" | "paid" | "delivered" | "failed" | "unknown";
+
+export type EnergyRentRequest = {
+  payerAddress: string;
+  receiverAddress: string;
+  energy: bigint;
+  durationSeconds: number;
+  extraTrx?: number;
+  // Cost ceiling: craftEnergyRentTransaction refuses a request without one.
+  maxPayCoinAmt?: string;
+  maxPayCoinCode?: string;
+};
+
+export type EnergyRentOrder = {
+  orderId: string;
+  transaction: unknown;
+  payCoinCode: string;
+  payCoinAmt: string;
+  /** When the payment stops being valid on-chain, in ms since epoch, read from its verified bytes. */
+  paymentExpiresAt: number;
+};
+
+/** A failed rent order the Send flow explains instead of reporting a generic payment failure. */
+export type RentOrderRejection =
+  | Readonly<{ reason: "insufficientBalance" }>
+  | Readonly<{ reason: "priceAboveApproved"; offered: RentPayment }>;
+
+export type EnergyRentOrderRef = { orderId: string; payerAddress: string };
+
+/** The asset a sponsored fee is paid in, with the unit the Send flow displays it in: the framework's
+ * `AssetInfo` only identifies an asset, so the seam carries the unit itself. */
+export type SponsoredFeeAsset = AssetInfo & { unit: Unit };
+
+/** `value` is in `feeAsset` base units; `originalValue` is the standard fee it replaces, in the
+ * network's native base units. No delta: the two can be in different units. */
+export type SponsoredFeeQuote = {
+  feeAsset: SponsoredFeeAsset;
+  value: bigint;
+  originalValue: bigint;
+};
+
+/** The rent payment the app locks against the payer until it syncs. */
+export type RentPayment = { asset: SponsoredFeeAsset; amount: bigint };
+
+/** Models TRON energy rental only; not validated against a second mechanism. */
+export interface SponsoredCoinApi {
+  readonly feeOptionId: string;
+  readonly providerName: string;
+  /** The provider's terms, which the user accepts by signing the rent payment. */
+  readonly providerTermsUrl: string;
+  /** Status error keys the sponsored fee pays for; the Send flow drops them before gating Review. */
+  readonly waivesErrorKeys: readonly string[];
+  /** Status warning keys the sponsored fee makes moot; the Send flow hides them. */
+  readonly waivesWarningKeys: readonly string[];
+  /** Decimal-string sequence for the TX-A pending reservation: a local dedup key, not a nonce. */
+  reservationDedupKey(paymentTxId: string): string;
+  listFeeOptions(intent: unknown): Promise<FeeOptionMeta[]>;
+  estimateSponsoredFeeQuote(intent: unknown): Promise<SponsoredFeeQuote>;
+  /** `approvedFee` is the sponsored fee approved on Review, in `feeAsset` base units: the order is
+   * bound to it. */
+  buildEnergyRentRequest(intent: unknown, approvedFee: bigint): Promise<EnergyRentRequest>;
+  craftEnergyRentTransaction(request: EnergyRentRequest): Promise<EnergyRentOrder>;
+  /** Null for a failure the flow reports as a generic payment failure. */
+  classifyRentOrderError(error: unknown): RentOrderRejection | null;
+  submitEnergyRentPayment(payment: { orderId: string; signedTransaction: unknown }): Promise<void>;
+  getEnergyRentStatus(ref: EnergyRentOrderRef): Promise<EnergyRentStatus>;
+  awaitEnergyDelivery(
+    ref: EnergyRentOrderRef,
+    // On-chain delivery gate: polls the live resource state rather than trusting order status (ADR-058 C4).
+    target: { receiverAddress: string; energyNeeded: bigint },
+    opts?: { intervalMs?: number; timeoutMs?: number; paymentTxId?: string; signal?: AbortSignal },
+  ): Promise<void>;
+  // One-shot on-chain check for reconcile paths; the provider's "delivered" is never trusted alone (ADR-058 C4).
+  isEnergyDelivered(target: { receiverAddress: string; energyNeeded: bigint }): Promise<boolean>;
+  // Family-owned so the generic Send flow never handles the opaque `transaction` directly.
+  getEnergyRentSignaturePayload(transaction: unknown): { toSign: string; paymentTxId: string };
+  buildSignedEnergyRentTransaction(transaction: unknown, deviceSignature: string): unknown;
+  rentPayment(order: EnergyRentOrder): RentPayment;
+}

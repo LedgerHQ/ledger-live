@@ -18,9 +18,9 @@ import {
   processRawInput,
   processFiatInput,
   calculateFiatEquivalent,
-} from "@ledgerhq/live-common/flows/send/amount/utils/amountInput";
-import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
-import { syncAmountInputs } from "@ledgerhq/live-common/flows/send/amount/utils/amountInputSync";
+  useSendAmountDisplayMode,
+  syncAmountInputs,
+} from "@features/platform-send-flow";
 
 type UseAmountInputControllerParams = Readonly<{
   account: AccountLike;

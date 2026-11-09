@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
-import type { Memo } from "@ledgerhq/live-common/flows/send/types";
-import { getMemoFamilyCurrencyId } from "@ledgerhq/live-common/flows/send/utils/memoFamilyCurrencyId";
+import { getMemoFamilyCurrencyId, type Memo } from "@features/platform-send-flow";
 import { useTranslation } from "~/context/Locale";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import { useSendMemoReset } from "../../../context/SendMemoResetContext";

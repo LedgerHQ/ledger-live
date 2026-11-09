@@ -40,7 +40,7 @@ jest.mock("../../../../context/SendFlowTrackingContext", () => ({
 jest.mock("../../../../hooks/useSendFlowTrackingProperties", () => ({
   useSendFlowTrackingProperties: () => ({}),
 }));
-jest.mock("@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext", () => ({
+jest.mock("@features/platform-send-flow", () => ({
   useSendAmountDisplayMode: () => ({ displayMode: "crypto" }),
 }));
 

@@ -4,7 +4,7 @@ import { useTranslation } from "~/context/Locale";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
-import { areAmountsEqual } from "@ledgerhq/live-common/flows/send/amount/utils/amount";
+import { areAmountsEqual } from "@features/platform-send-flow";
 import type { AmountScreenQuickAction } from "../types";
 import {
   getAccountCurrency,

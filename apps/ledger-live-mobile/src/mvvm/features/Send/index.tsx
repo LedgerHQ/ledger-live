@@ -4,10 +4,12 @@ import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import {
   SEND_FLOW_STEP,
+  SendFlowPortsProvider,
   type SendFlowStep,
   type SendFlowInitParams,
-} from "@ledgerhq/live-common/flows/send/types";
-import type { StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
+} from "@features/platform-send-flow";
+import { liveCommonSendFlowPorts } from "@ledgerhq/live-common/flows/send-ports/ports";
+import type { StepRegistry } from "@shared/flow-wizard";
 
 import { SendFlowOrchestrator } from "./SendFlowOrchestrator";
 import { SEND_FLOW_CONFIG } from "./constants";
@@ -91,14 +93,16 @@ export default function SendWorkflow() {
 
   return (
     <DomainServiceProvider>
-      <React.Suspense fallback={null}>
-        <SendFlowOrchestrator
-          initParams={initParams}
-          onClose={handleClose}
-          stepRegistry={stepRegistry}
-          flowConfig={SEND_FLOW_CONFIG}
-        />
-      </React.Suspense>
+      <SendFlowPortsProvider ports={liveCommonSendFlowPorts}>
+        <React.Suspense fallback={null}>
+          <SendFlowOrchestrator
+            initParams={initParams}
+            onClose={handleClose}
+            stepRegistry={stepRegistry}
+            flowConfig={SEND_FLOW_CONFIG}
+          />
+        </React.Suspense>
+      </SendFlowPortsProvider>
     </DomainServiceProvider>
   );
 }

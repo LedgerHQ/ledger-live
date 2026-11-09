@@ -1,6 +1,6 @@
 import React from "react";
 import { TextInput, Button, DialogBody, DialogFooter } from "@ledgerhq/lumen-ui-react";
-import type { FeeAssetUiOption } from "@ledgerhq/live-common/flows/send/customFees/hooks/useCustomFeesViewModelCore";
+import type { FeeAssetUiOption } from "@features/platform-send-flow";
 import type { CustomFeeInputState } from "../hooks/useCustomFeesViewModel";
 import { FeeAssetSelector } from "./FeeAssetSelector";
 

@@ -4,10 +4,6 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import type {
-  SendFlowTransactionActions,
-  SendFlowUiConfig,
-} from "@ledgerhq/live-common/flows/send/types";
 import { ScreenName } from "~/const";
 import { getSendSuccessScreenName } from "../../../utils/getSendSuccessScreenName";
 import type { SendFlowNavigationProp } from "../../../types";
@@ -17,7 +13,11 @@ import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackin
 import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
 import { getActiveWarningsTrackingProperties } from "../../../utils/tracking";
 import { getActiveWarningIds } from "../../../utils/messageTracking";
-import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
+import {
+  useSendAmountDisplayMode,
+  type SendFlowTransactionActions,
+  type SendFlowUiConfig,
+} from "@features/platform-send-flow";
 
 type AmountScreenViewModelBase = Readonly<{
   onReview: () => void;

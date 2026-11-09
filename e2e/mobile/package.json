@@ -32,6 +32,7 @@
     "uuid": "catalog:"
   },
   "devDependencies": {
+    "@features/platform-send-flow": "workspace:*",
     "@domain/entity-contact": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:^",
     "@jest/reporters": "catalog:",

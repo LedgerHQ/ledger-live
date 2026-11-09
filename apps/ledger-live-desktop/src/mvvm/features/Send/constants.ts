@@ -1,4 +1,4 @@
-import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
+import { SEND_FLOW_STEP, type SendFlowStep } from "@features/platform-send-flow";
 import type { SendStepConfig, SendFlowConfig } from "./types";
 
 export const FEE_PLACEHOLDER = "--";

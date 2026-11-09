@@ -20,7 +20,7 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import type { SelectListItemData } from "@ledgerhq/lumen-ui-rnative";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import type { FeeAssetUiOption } from "@ledgerhq/live-common/flows/send/customFees/hooks/useCustomFeesViewModelCore";
+import type { FeeAssetUiOption } from "@features/platform-send-flow";
 import CurrencyIcon from "~/components/CurrencyIcon";
 
 type FeeAssetSelectorProps = Readonly<{

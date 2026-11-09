@@ -6,7 +6,7 @@ import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import {
   useSendFlowSignatureCore,
   type SignatureDeviceActionResult,
-} from "@ledgerhq/live-common/flows/send/hooks/useSendFlowSignatureCore";
+} from "@features/platform-send-flow";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { updateAccountWithUpdater } from "~/actions/accounts";
 import { lastConnectedDeviceSelector, mevProtectionSelector } from "~/reducers/settings";

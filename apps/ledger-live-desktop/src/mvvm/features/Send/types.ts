@@ -1,5 +1,5 @@
-import type { FlowStepConfig, FlowConfig } from "@ledgerhq/live-common/flows/wizard/types";
-import type { SendFlowStep, SendFlowBusinessContext } from "@ledgerhq/live-common/flows/send/types";
+import type { FlowStepConfig, FlowConfig } from "@shared/flow-wizard";
+import type { SendFlowStep, SendFlowBusinessContext } from "@features/platform-send-flow";
 import type { FlowNavigationDirection, FlowNavigationActions } from "../FlowWizard/types";
 
 export type SendStepConfig = FlowStepConfig<SendFlowStep> &
@@ -38,4 +38,4 @@ export type {
   FeeAmountDisplay,
   FeePaymentOption,
   SponsoredFeeAmounts,
-} from "@ledgerhq/live-common/flows/send/sponsored/types";
+} from "@features/platform-send-flow/sponsored";

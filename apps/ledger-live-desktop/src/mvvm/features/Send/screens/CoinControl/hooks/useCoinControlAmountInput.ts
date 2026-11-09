@@ -7,7 +7,7 @@ import {
   getMainAccount,
   getAccountCurrency,
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import { useCoinControlAmountInput as useCoinControlAmountInputCommon } from "@ledgerhq/live-common/flows/send/coinControl/hooks/useCoinControlAmountInput";
+import { useCoinControlAmountInput as useCoinControlAmountInputCommon } from "@features/platform-send-flow";
 
 type UseAmountInputParams = Readonly<{
   account: AccountLike;

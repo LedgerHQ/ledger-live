@@ -62,6 +62,8 @@ import type { FeatureId, Features, PartialFeatures, Feature } from "@shared/feat
 import { getEnv } from "@shared/env";
 import { calApiExtra, coinMarketCapApiExtra, cvsApiExtra } from "@shared/api-services";
 import { LinkingProvider } from "@shared/linking";
+import { SendFlowPortsProvider } from "@features/platform-send-flow";
+import { liveCommonSendFlowPorts } from "@ledgerhq/live-common/flows/send-ports/ports";
 import StyleProvider from "~/StyleProvider";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
 import { llmRtkApiInitialStates, applyLlmRTKApiMiddlewares } from "~/context/rtkQueryApi";
@@ -307,7 +309,9 @@ function Providers({
       <I18nProvider i18n={i18n}>
         <LinkingProvider config={{ openExternal: () => {} }}>
           <Provider store={store}>
-            <StyleProvider selectedPalette="dark">{extraProviders}</StyleProvider>
+            <SendFlowPortsProvider ports={liveCommonSendFlowPorts}>
+              <StyleProvider selectedPalette="dark">{extraProviders}</StyleProvider>
+            </SendFlowPortsProvider>
           </Provider>
         </LinkingProvider>
       </I18nProvider>

@@ -1,14 +1,14 @@
 import { useMemo } from "react";
-import { useSendFlowBusinessLogic as useCommonBusinessLogic } from "@ledgerhq/live-common/flows/send/hooks/useSendFlowBusinessLogic";
+import {
+  useSendFlowBusinessLogic as useCommonBusinessLogic,
+  type SendFlowBusinessContext,
+  type SendFlowInitParams,
+} from "@features/platform-send-flow";
 import { useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { useSendFlowTransaction } from "./useSendFlowTransaction";
 import { useSendFlowOperation } from "./useSendFlowOperation";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type {
-  SendFlowBusinessContext,
-  SendFlowInitParams,
-} from "@ledgerhq/live-common/flows/send/types";
 
 type UseSendFlowBusinessLogicParams = Readonly<{
   initParams?: SendFlowInitParams;

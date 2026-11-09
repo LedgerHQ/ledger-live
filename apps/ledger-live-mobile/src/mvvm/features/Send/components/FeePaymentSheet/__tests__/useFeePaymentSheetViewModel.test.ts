@@ -2,10 +2,7 @@ import { track } from "@shared/analytics";
 import { act, renderHook } from "@testing-library/react-native";
 import { Linking } from "react-native";
 import BigNumber from "bignumber.js";
-import type {
-  FeePaymentOption,
-  SponsoredFeeAmounts,
-} from "@ledgerhq/live-common/flows/send/sponsored/types";
+import type { FeePaymentOption, SponsoredFeeAmounts } from "@features/platform-send-flow/sponsored";
 import { useFeePaymentSheetViewModel } from "../useFeePaymentSheetViewModel";
 
 const SPONSORED_ID = "sponsored-fixture";

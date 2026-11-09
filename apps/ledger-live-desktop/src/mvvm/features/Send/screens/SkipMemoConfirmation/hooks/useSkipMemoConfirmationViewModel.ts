@@ -1,6 +1,10 @@
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { getMemoFamilyCurrencyId } from "@ledgerhq/live-common/flows/send/utils/memoFamilyCurrencyId";
+import {
+  getMemoFamilyCurrencyId,
+  SEND_FLOW_STEP,
+  type SendFlowStep,
+} from "@features/platform-send-flow";
 import { useFlowWizard } from "../../../../FlowWizard/FlowWizardContext";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import { useDoNotAskAgainSkipMemo } from "../../../hooks/useDoNotAskAgainSkipMemo";
@@ -9,7 +13,6 @@ import { track } from "@shared/analytics";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
-import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 
 export function useSkipMemoConfirmationViewModel() {
   const { t } = useTranslation();

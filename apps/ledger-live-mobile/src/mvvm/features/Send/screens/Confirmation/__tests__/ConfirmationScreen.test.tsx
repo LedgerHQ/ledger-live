@@ -1,5 +1,5 @@
 import React from "react";
-import { FLOW_STATUS } from "@ledgerhq/live-common/flows/wizard/types";
+import { FLOW_STATUS } from "@shared/flow-wizard";
 import { render, screen, fireEvent } from "@tests/test-renderer";
 import { ConfirmationScreen } from "../index";
 import * as UseConfirmationViewModelModule from "../hooks/useConfirmationViewModel";

@@ -22,7 +22,6 @@ const defaultInitialState = {
 };
 
 const mockUpdateTransaction = jest.fn();
-const mockOnAmountChange = jest.fn();
 
 jest.mock("../../../../hooks/useInitialTransactionPreparation");
 jest.mock("../../../../hooks/useNetworkFees", () => ({
@@ -57,14 +56,6 @@ jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => {
     },
   };
 });
-jest.mock("@ledgerhq/live-common/flows/send/coinControl/hooks/useCoinControlAmountInput", () => ({
-  useCoinControlAmountInput: () => ({
-    amountValue: "0",
-    onAmountChange: mockOnAmountChange,
-    cancelPendingUpdates: jest.fn(),
-    debounceTimeoutRef: { current: null },
-  }),
-}));
 jest.mock("~/config/urls", () => ({
   urls: { coinControl: "https://support.ledger.com/coin-control" },
 }));
@@ -173,7 +164,7 @@ describe("useCoinControlScreenViewModel", () => {
     });
 
     expect(result.current).toMatchObject({
-      amountValue: "0",
+      amountValue: "",
       amountError: undefined,
       reviewShowIcon: true,
       reviewDisabled: true,

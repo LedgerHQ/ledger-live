@@ -11,7 +11,8 @@ jest.mock("~/context/Locale", () => ({
   useTranslation: () => ({ t: (key: string) => key }),
 }));
 
-jest.mock("@ledgerhq/live-common/flows/send/hooks/useSendFlowAmountReviewCore", () => ({
+jest.mock("@features/platform-send-flow", () => ({
+  ...jest.requireActual("@features/platform-send-flow"),
   useSendFlowAmountReviewCore: jest.fn(),
 }));
 
@@ -38,9 +39,7 @@ jest.mock("../../../../context/SponsoredSendContext", () => ({
   useSponsoredSend: jest.fn(),
 }));
 
-const { useSendFlowAmountReviewCore } = jest.requireMock(
-  "@ledgerhq/live-common/flows/send/hooks/useSendFlowAmountReviewCore",
-);
+const { useSendFlowAmountReviewCore } = jest.requireMock("@features/platform-send-flow");
 const { useAmountInputController } = jest.requireMock("../useAmountInputController");
 const { useSponsoredSend } = jest.requireMock("../../../../context/SponsoredSendContext");
 

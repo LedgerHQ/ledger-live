@@ -1,6 +1,6 @@
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { Memo } from "@ledgerhq/live-common/flows/send/types";
+import type { Memo } from "@features/platform-send-flow";
 import React, { useEffect } from "react";
 import { useSendFlowActions } from "../../../context/SendFlowContext";
 import { useRecipientContinuation } from "../../../context/RecipientContinuationContext";

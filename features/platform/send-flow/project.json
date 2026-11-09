@@ -1,0 +1,8 @@
+{
+  "name": "@features/platform-send-flow",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

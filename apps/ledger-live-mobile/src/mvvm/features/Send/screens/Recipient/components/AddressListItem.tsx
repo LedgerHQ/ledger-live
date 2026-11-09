@@ -1,5 +1,5 @@
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
-import { SEND_ADDRESS_FORMAT_OPTIONS } from "@ledgerhq/live-common/flows/send/utils";
+import { SEND_ADDRESS_FORMAT_OPTIONS } from "@features/platform-send-flow";
 import {
   ListItem,
   ListItemContent,

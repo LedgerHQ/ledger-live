@@ -10,7 +10,7 @@ import React, {
 } from "react";
 import { v4 as uuid } from "uuid";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
+import type { SendFlowStep } from "@features/platform-send-flow";
 import { track } from "@shared/analytics";
 import type {
   RecipientInputMethod,

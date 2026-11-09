@@ -1,10 +1,5 @@
 import type { NativeStackNavigationOptions } from "@react-navigation/native-stack";
-import type {
-  FlowStep,
-  FlowStepConfig,
-  StepRegistry,
-  FlowConfig,
-} from "@ledgerhq/live-common/flows/wizard/types";
+import type { FlowStep, FlowStepConfig, StepRegistry, FlowConfig } from "@shared/flow-wizard";
 
 type ScreenComponentFunction = (props: Record<string, never>) => React.JSX.Element | null;
 

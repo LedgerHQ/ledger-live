@@ -9,8 +9,7 @@ import {
   getMainAccount,
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
-import { useBridgeRecipientValidation } from "@ledgerhq/live-common/flows/send/recipient/hooks/useBridgeRecipientValidation";
-import { findMatchedContact } from "@ledgerhq/live-common/flows/send/recipient/utils/findMatchedContact";
+import { useBridgeRecipientValidation, findMatchedContact } from "@features/platform-send-flow";
 import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 import { useFormattedAccountBalance } from "LLM/hooks/useFormattedAccountBalance";
@@ -25,8 +24,8 @@ jest.mock("~/reducers/wallet");
 jest.mock("@ledgerhq/domain-service/hooks/index");
 jest.mock("@ledgerhq/ledger-wallet-framework/sanction/index");
 jest.mock("@ledgerhq/live-common/account/index");
-jest.mock("@ledgerhq/live-common/flows/send/recipient/hooks/useBridgeRecipientValidation");
-jest.mock("@ledgerhq/live-common/flows/send/recipient/utils/findMatchedContact");
+jest.mock("@features/platform-send-flow");
+jest.mock("@features/platform-send-flow");
 jest.mock("LLM/hooks/useFormattedAccountBalance");
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features");
 

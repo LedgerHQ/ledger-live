@@ -1,11 +1,11 @@
-import { getRecipientMatchPresentation } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientMatchPresentation";
-import type {
-  AddressSearchResult,
-  MatchedAccount,
-  MatchedContact,
-  RecentAddress,
-} from "@ledgerhq/live-common/flows/send/recipient/types";
-import { SEND_ADDRESS_FORMAT_OPTIONS } from "@ledgerhq/live-common/flows/send/utils";
+import {
+  getRecipientMatchPresentation,
+  SEND_ADDRESS_FORMAT_OPTIONS,
+  type AddressSearchResult,
+  type MatchedAccount,
+  type MatchedContact,
+  type RecentAddress,
+} from "@features/platform-send-flow";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { useFeature } from "@features/platform-feature-flags";
 import { useTranslation } from "~/context/Locale";

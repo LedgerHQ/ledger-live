@@ -1,4 +1,4 @@
-import { SEND_FLOW_SOURCE } from "@ledgerhq/live-common/flows/send/types";
+import { SEND_FLOW_SOURCE } from "@features/platform-send-flow";
 import { ScreenName } from "~/const";
 import { getSendSuccessScreenName } from "../getSendSuccessScreenName";
 

@@ -1,5 +1,5 @@
 import { act, renderHook } from "tests/testSetup";
-import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
+import { SEND_FLOW_STEP, type SendFlowStep } from "@features/platform-send-flow";
 import type { FlowNavigationActions } from "LLD/features/FlowWizard/types";
 import { useFlowWizardNavigation } from "LLD/features/FlowWizard/hooks/useFlowWizardNavigation";
 import { useLLDCoinFamily } from "~/renderer/families";

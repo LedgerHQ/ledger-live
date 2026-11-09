@@ -6,16 +6,14 @@ import { track } from "@shared/analytics";
 import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { bitcoinPickingStrategy } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import { SEND_FLOW_SOURCE } from "@ledgerhq/live-common/flows/send/types";
+import { SEND_FLOW_SOURCE } from "@features/platform-send-flow";
 import {
   recordPendingRent,
   resetPendingRentsForTests,
-} from "@ledgerhq/live-common/flows/send/sponsored/pendingRents";
-import type { SponsoredCoinApi } from "@ledgerhq/live-common/bridge/generic-coin-framework/sponsored";
-import {
   SPONSORED_FAILURE_KIND,
   SPONSORED_PHASE,
-} from "@ledgerhq/live-common/flows/send/sponsored/types";
+} from "@features/platform-send-flow/sponsored";
+import type { SponsoredCoinApi } from "@ledgerhq/live-common/bridge/generic-coin-framework/sponsored";
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 import {
   TRON_USDT_FEE_ASSET,

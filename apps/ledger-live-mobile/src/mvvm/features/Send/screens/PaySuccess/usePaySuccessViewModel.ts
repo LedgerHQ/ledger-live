@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import BigNumber from "bignumber.js";
 import type { PaySuccessProps } from "@features/flow-pay-contact";
-import { getRecipientHeaderPresentation } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
+import { getRecipientHeaderPresentation } from "@features/platform-send-flow";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useContactsFeature, useContactDisplayName } from "@features/platform-contacts";
 import { selectContacts, ContactIdSchema } from "@domain/entity-contact";

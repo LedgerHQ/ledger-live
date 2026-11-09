@@ -1,6 +1,6 @@
 import React from "react";
 import { DialogBody } from "@ledgerhq/lumen-ui-react";
-import type { AddressValidationError as AddressValidationErrorType } from "@ledgerhq/live-common/flows/send/recipient/types";
+import type { AddressValidationError as AddressValidationErrorType } from "@features/platform-send-flow";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { Contact, ContactAddress } from "@domain/entity-contact";
 import type { ContactsFeatureIntroduction } from "@features/flow-contacts-introduction";

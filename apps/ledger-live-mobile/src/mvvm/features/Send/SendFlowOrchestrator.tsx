@@ -1,12 +1,12 @@
 import React, { useMemo, useCallback } from "react";
-import type { StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
+import type { StepRegistry } from "@shared/flow-wizard";
 import {
   SEND_FLOW_STEP,
   canSkipRecipientStep,
   type SendFlowStep,
   type SendFlowInitParams,
   type SendFlowUiConfig,
-} from "@ledgerhq/live-common/flows/send/types";
+} from "@features/platform-send-flow";
 
 import { FlowStackNavigator } from "../FlowWizard/FlowStackNavigator";
 import { SendFlowProvider } from "./context/SendFlowContext";

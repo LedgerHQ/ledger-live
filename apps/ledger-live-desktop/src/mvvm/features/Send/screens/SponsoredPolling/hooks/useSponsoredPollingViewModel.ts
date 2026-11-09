@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { useSponsoredPollingElapsed } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredPollingElapsed";
+import { useSponsoredPollingElapsed } from "@features/platform-send-flow/sponsored";
 import { useSponsoredSend } from "../../../context/SponsoredSendContext";
 
 export type SponsoredPollingViewModel = Readonly<{

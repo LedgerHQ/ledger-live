@@ -10,7 +10,7 @@ import type {
   SendFlowTransactionState,
   SendFlowTransactionActions,
   RecipientData,
-} from "@ledgerhq/live-common/flows/send/types";
+} from "@features/platform-send-flow";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 
 type UseSendFlowTransactionParams = Readonly<{

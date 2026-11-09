@@ -1,7 +1,7 @@
 import { findCryptoCurrencyById, type CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { Contact, ContactAddress } from "@domain/entity-contact";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
-import { SEND_ADDRESS_FORMAT_OPTIONS } from "@ledgerhq/live-common/flows/send/utils";
+import { SEND_ADDRESS_FORMAT_OPTIONS } from "@features/platform-send-flow";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import {
   Card,

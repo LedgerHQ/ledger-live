@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { SPONSORED_PHASE } from "@ledgerhq/live-common/flows/send/sponsored/types";
+import { SPONSORED_PHASE } from "@features/platform-send-flow/sponsored";
 import { SponsoredRentSignatureScreen } from "../screens/SponsoredRentSignature/SponsoredRentSignatureScreen";
 import { SponsoredPollingScreen } from "../screens/SponsoredPolling/SponsoredPollingScreen";
 import { SponsoredFailureScreen } from "../screens/SponsoredFailure/SponsoredFailureScreen";

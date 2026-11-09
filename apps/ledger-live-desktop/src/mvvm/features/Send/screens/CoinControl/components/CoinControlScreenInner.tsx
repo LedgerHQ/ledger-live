@@ -1,11 +1,11 @@
 import React, { useCallback, useMemo } from "react";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import type {
-  SendFlowTransactionActions,
-  SendFlowUiConfig,
-} from "@ledgerhq/live-common/flows/send/types";
-import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import {
+  SEND_FLOW_STEP,
+  type SendFlowTransactionActions,
+  type SendFlowUiConfig,
+} from "@features/platform-send-flow";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useCoinControlScreenViewModel } from "../hooks/useCoinControlScreenViewModel";
 import { CoinControlScreenView } from "./CoinControlScreenView";

@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import type { AddressSearchResult } from "@ledgerhq/live-common/flows/send/recipient/types";
+import type { AddressSearchResult } from "@features/platform-send-flow";
 import React from "react";
 import { render, screen, withFlagOverrides } from "tests/testSetup";
 import {

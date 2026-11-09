@@ -4,11 +4,11 @@ import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/accou
 import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import logger from "~/renderer/logger";
-import { useSendFlowOperationState } from "@ledgerhq/live-common/flows/send/hooks/useSendFlowOperationState";
-import type {
-  SendFlowOperationResult,
-  SendFlowOperationActions,
-} from "@ledgerhq/live-common/flows/send/types";
+import {
+  useSendFlowOperationState,
+  type SendFlowOperationResult,
+  type SendFlowOperationActions,
+} from "@features/platform-send-flow";
 
 type UseSendFlowOperationParams = Readonly<{
   account: AccountLike | null;

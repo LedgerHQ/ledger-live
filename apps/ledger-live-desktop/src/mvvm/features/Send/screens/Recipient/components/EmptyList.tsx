@@ -1,4 +1,4 @@
-import type { AddressValidationError as AddressValidationErrorType } from "@ledgerhq/live-common/flows/send/recipient/types";
+import type { AddressValidationError as AddressValidationErrorType } from "@features/platform-send-flow";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { StatusMessage } from "./StatusMessage";

@@ -1,4 +1,4 @@
-import type { AddressSearchResult } from "@ledgerhq/live-common/flows/send/recipient/types";
+import type { AddressSearchResult } from "@features/platform-send-flow";
 import React from "react";
 import { fireEvent, render as renderWithoutI18n, screen } from "@testing-library/react-native";
 import { ContactsI18nTestProvider } from "@features/platform-contacts/testing";

@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useSelector } from "LLD/hooks/redux";
-import { findMatchedContact } from "@ledgerhq/live-common/flows/send/recipient/utils/findMatchedContact";
+import { findMatchedContact } from "@features/platform-send-flow";
 import { ContactIdSchema, selectContacts, type ContactId } from "@domain/entity-contact";
 import {
   isContactsEnabledForCurrency,

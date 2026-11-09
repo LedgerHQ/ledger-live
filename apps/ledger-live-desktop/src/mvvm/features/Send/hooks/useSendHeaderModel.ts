@@ -1,14 +1,18 @@
-import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
-import { SPONSORED_PHASE } from "@ledgerhq/live-common/flows/send/sponsored/types";
+import {
+  SEND_FLOW_STEP,
+  type SendFlowStep,
+  getRecipientSearchPrefillValue,
+  getMemoFamilyCurrencyId,
+  getRecipientHeaderPresentation,
+  buildTransactionPatchFromURIScheme,
+  type RecipientHeaderContact,
+} from "@features/platform-send-flow";
+import { SPONSORED_PHASE } from "@features/platform-send-flow/sponsored";
 import { decodeURIScheme } from "@ledgerhq/live-common/currencies/index";
-import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send-ports/resolveCurrencyConfig";
 import { t } from "~/renderer/i18n/init";
 import { useMemo, useCallback, useRef } from "react";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
-import { getRecipientSearchPrefillValue } from "@ledgerhq/live-common/flows/send/utils";
-import { getMemoFamilyCurrencyId } from "@ledgerhq/live-common/flows/send/utils/memoFamilyCurrencyId";
-import { getRecipientHeaderPresentation } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
-import type { RecipientHeaderContact } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
 import {
   isEligibleAddressCurrency,
   useContactsFeature,
@@ -16,7 +20,6 @@ import {
 } from "@features/platform-contacts";
 import { selectContacts } from "@domain/entity-contact";
 import { useSelector } from "LLD/hooks/redux";
-import { buildTransactionPatchFromURIScheme } from "@ledgerhq/live-common/flows/send/utils/uriScheme";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import {
   SendFlowBusinessContext,

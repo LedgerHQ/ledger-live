@@ -1,8 +1,7 @@
 import React, { useMemo } from "react";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import type { SendFlowTransactionActions } from "@ledgerhq/live-common/flows/send/types";
-import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import { SEND_FLOW_STEP, type SendFlowTransactionActions } from "@features/platform-send-flow";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { getSelectedBalanceTypeBalance } from "@ledgerhq/live-send";
 import { useCustomFeesViewModel } from "../hooks/useCustomFeesViewModel";

@@ -3,7 +3,7 @@
  */
 import React from "react";
 import { render, screen } from "tests/testSetup";
-import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import { SEND_FLOW_STEP } from "@features/platform-send-flow";
 import { SendHeader } from "../SendHeader";
 import { useSendHeaderModel } from "../../hooks/useSendHeaderModel";
 import { useFlowWizard } from "../../../FlowWizard/FlowWizardContext";
@@ -20,7 +20,8 @@ jest.mock("../../context/SendFlowContext", () => ({
 jest.mock("../../hooks/useAvailableBalance", () => ({
   useAvailableBalance: () => "",
 }));
-jest.mock("@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext", () => ({
+jest.mock("@features/platform-send-flow", () => ({
+  ...jest.requireActual("@features/platform-send-flow"),
   useSendAmountDisplayMode: () => ({
     displayMode: "fiat",
     setDisplayMode: jest.fn(),

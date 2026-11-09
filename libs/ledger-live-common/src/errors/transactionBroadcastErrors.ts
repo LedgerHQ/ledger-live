@@ -1,14 +1,6 @@
-export class TransactionBroadcastError extends Error {
-  override name = "TransactionBroadcastError";
-  coin?: string;
-  network?: string;
-  url?: string;
+import { TransactionBroadcastError } from "@features/platform-send-flow/errors";
 
-  constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message);
-    if (fields) Object.assign(this, fields);
-  }
-}
+export { TransactionBroadcastError };
 
 export const createTransactionBroadcastError = (
   error: Error,

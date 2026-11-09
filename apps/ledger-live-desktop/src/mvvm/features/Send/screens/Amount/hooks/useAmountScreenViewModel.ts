@@ -5,12 +5,12 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import type {
-  SendFlowTransactionActions,
-  SendFlowUiConfig,
-} from "@ledgerhq/live-common/flows/send/types";
-import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
-import { useSendFlowAmountReviewCore } from "@ledgerhq/live-common/flows/send/hooks/useSendFlowAmountReviewCore";
+import {
+  SEND_FLOW_STEP,
+  useSendFlowAmountReviewCore,
+  type SendFlowTransactionActions,
+  type SendFlowUiConfig,
+} from "@features/platform-send-flow";
 import { getSelectedBalanceTypeBalance } from "@ledgerhq/live-send";
 import type { AmountScreenViewModel } from "../types";
 import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
@@ -22,7 +22,7 @@ import { useNetworkFees } from "../../../hooks/useNetworkFees";
 import { track } from "@shared/analytics";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { useSponsoredSend } from "../../../context/SponsoredSendContext";
-import { withoutWaivedStatus } from "@ledgerhq/live-common/flows/send/sponsored/waivedStatus";
+import { withoutWaivedStatus } from "@features/platform-send-flow/sponsored";
 import { FEE_PLACEHOLDER } from "LLD/features/Send/constants";
 import type { SponsoredFeeAmounts } from "LLD/features/Send/types";
 

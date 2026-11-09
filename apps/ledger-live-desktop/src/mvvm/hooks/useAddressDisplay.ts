@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { findMatchedContact } from "@ledgerhq/live-common/flows/send/recipient/utils/findMatchedContact";
+import { findMatchedContact } from "@features/platform-send-flow";
 import { selectContacts } from "@domain/entity-contact";
 import { useContactDisplayName } from "@features/platform-contacts";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";

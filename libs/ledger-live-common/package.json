@@ -307,6 +307,7 @@
     "@features/platform-feature-flags": "workspace:^",
     "@features/platform-feature-flags-firebase": "workspace:^",
     "@features/platform-market-countervalues": "workspace:*",
+    "@features/platform-send-flow": "workspace:*",
     "@ledgerhq/asset-aggregation": "workspace:^",
     "@ledgerhq/coin-aleo": "workspace:^",
     "@ledgerhq/coin-algorand": "workspace:^",

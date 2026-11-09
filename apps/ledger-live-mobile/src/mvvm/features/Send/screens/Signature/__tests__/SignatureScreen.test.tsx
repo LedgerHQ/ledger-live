@@ -1,6 +1,6 @@
 import React from "react";
 import { Observable } from "rxjs";
-import type { SignatureRequest } from "@ledgerhq/live-common/flows/send/hooks/useSendFlowSignatureCore";
+import type { SignatureRequest } from "@features/platform-send-flow";
 import type { SignTransactionIntent } from "@ledgerhq/live-common/intents/signTransactionIntent";
 import type { InitializationInput } from "LLM/components/DeviceIntentExecutor";
 import { useFeature } from "@features/platform-feature-flags";

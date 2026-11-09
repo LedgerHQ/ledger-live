@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { allure } from "jest-allure2-reporter/api";
-import { formatFeeCurrencyAmount } from "@ledgerhq/live-common/flows/send/utils/networkFeesDisplay";
+import { formatFeeCurrencyAmount } from "@features/platform-send-flow";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { SendScenario, sendFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
 import { TransactionType } from "@ledgerhq/live-e2e-shared/models/Transaction";

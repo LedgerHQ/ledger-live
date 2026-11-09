@@ -4,7 +4,7 @@ import type {
   IntentPlatformDefinition,
 } from "@features/platform-device-intent";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
-import type { SignatureRequest } from "../../flows/send/hooks/useSendFlowSignatureCore";
+import type { SignatureRequest } from "@features/platform-send-flow";
 import type { SignedOperation } from "@ledgerhq/types-live";
 
 /** The states every signature goes through, whatever happens when the user refuses. */

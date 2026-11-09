@@ -1,6 +1,6 @@
 import { trackPage } from "@shared/analytics";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send-ports/resolveCurrencyConfig";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -9,8 +9,7 @@ import {
   useContacts,
   useContactsFeature,
 } from "@features/platform-contacts";
-import { filterContactsByNetwork } from "@ledgerhq/live-common/flows/send/recipient/utils/filterContactsByNetwork";
-import type { Memo } from "@ledgerhq/live-common/flows/send/types";
+import { filterContactsByNetwork, type Memo } from "@features/platform-send-flow";
 import { useNavigation } from "@react-navigation/native";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { ScreenName } from "~/const";

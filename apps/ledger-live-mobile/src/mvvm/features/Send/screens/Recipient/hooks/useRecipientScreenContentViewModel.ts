@@ -3,8 +3,7 @@ import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/featu
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { Memo } from "@ledgerhq/live-common/flows/send/types";
-import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import { SEND_FLOW_STEP, type Memo } from "@features/platform-send-flow";
 import { useCallback, useEffect, useMemo } from "react";
 import type { KeyboardAvoidingViewProps } from "react-native";
 import { Platform } from "react-native";

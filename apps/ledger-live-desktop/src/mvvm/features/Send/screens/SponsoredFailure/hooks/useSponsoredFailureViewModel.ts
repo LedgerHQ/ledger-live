@@ -8,12 +8,12 @@ import {
   getSponsoredFailureFeeTicker,
   getSponsoredFailureMessage,
   isSponsoredRetryUnaffordable,
-} from "@ledgerhq/live-common/flows/send/sponsored/failure";
-import { useSponsoredRetryLocked } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredRetryLocked";
+  useSponsoredRetryLocked,
+} from "@features/platform-send-flow/sponsored";
 import { useSelector } from "LLD/hooks/redux";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
-import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import { SEND_FLOW_STEP } from "@features/platform-send-flow";
 import { useSponsoredSend } from "../../../context/SponsoredSendContext";
 import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";

@@ -10,7 +10,7 @@ import {
   mockMeContact,
 } from "@domain/entity-contact/schema.mock";
 import { render, screen, withFlagOverrides } from "@tests/test-renderer";
-import { SEND_FLOW_SOURCE } from "@ledgerhq/live-common/flows/send/types";
+import { SEND_FLOW_SOURCE } from "@features/platform-send-flow";
 import { NavigatorName, ScreenName } from "~/const";
 import { useContactsLedgerSyncStatus } from "LLM/features/Contacts/hooks/useContactsLedgerSyncStatus";
 import { PaySelectContactScreen } from "LLM/features/PayTab/screens/PaySelectContact";

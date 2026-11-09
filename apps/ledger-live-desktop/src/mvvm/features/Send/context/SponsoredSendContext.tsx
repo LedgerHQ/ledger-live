@@ -10,23 +10,21 @@ import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import type BigNumber from "bignumber.js";
 import { useFeature } from "@features/platform-feature-flags";
 import { track } from "@shared/analytics";
-import type { SponsoredSendActions } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendOrchestration";
-import { useSponsoredSendSession } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendSession";
-import { useSponsoredFeeQuote } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredFeeQuote";
-import { useSponsoredSendFunnelTracking } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendFunnelTracking";
 import {
+  useSponsoredSendSession,
+  useSponsoredFeeQuote,
+  useSponsoredSendFunnelTracking,
   SPONSORED_PHASE,
   type SponsoredState,
-} from "@ledgerhq/live-common/flows/send/sponsored/types";
-import type { SponsoredFeeQuote } from "@ledgerhq/live-common/bridge/generic-coin-framework/sponsored";
-import { addPendingOperation } from "@ledgerhq/live-common/account/index";
-import {
   STANDARD_FEE_OPTION_ID,
   useSponsoredFeeSelection,
-} from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredFeeSelection";
-import { useSponsoredFeeAmounts } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredFeeAmounts";
-import { useReestimateOnRentDelivery } from "@ledgerhq/live-common/flows/send/sponsored/useReestimateOnRentDelivery";
-import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
+  useSponsoredFeeAmounts,
+  useReestimateOnRentDelivery,
+  type SponsoredSendActions,
+} from "@features/platform-send-flow/sponsored";
+import type { SponsoredFeeQuote } from "@ledgerhq/live-common/bridge/generic-coin-framework/sponsored";
+import { addPendingOperation } from "@ledgerhq/live-common/account/index";
+import { SEND_FLOW_STEP, type SendFlowStep } from "@features/platform-send-flow";
 import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";

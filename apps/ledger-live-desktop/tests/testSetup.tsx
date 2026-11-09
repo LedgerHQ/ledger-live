@@ -30,6 +30,7 @@ import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router";
 import { config } from "react-transition-group";
 import { LinkingProvider } from "@shared/linking";
+import { SendFlowPortsProvider, type SendFlowPorts } from "@features/platform-send-flow";
 import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWrapper";
 import type { ReduxStore } from "~/state-manager/configureStore";
 import createStore from "~/state-manager/configureStore";
@@ -149,6 +150,24 @@ function CountervaluesTestSync({
  * @returns {React.JSX.Element} The wrapped children with the specified context providers.
  */
 
+// Loaded on first use, so live-common modules mocked by a test helper's jest.mock still apply.
+const loadSendFlowPorts = (): SendFlowPorts =>
+  jest.requireActual<typeof import("@ledgerhq/live-common/flows/send-ports/ports")>(
+    "@ledgerhq/live-common/flows/send-ports/ports",
+  ).liveCommonSendFlowPorts;
+const testSendFlowPorts: SendFlowPorts = {
+  get sendFeatures() {
+    return loadSendFlowPorts().sendFeatures;
+  },
+  getAccountBridge: (account, parentAccount) =>
+    loadSendFlowPorts().getAccountBridge(account, parentAccount),
+  applyMemoToTransaction: (...args) => loadSendFlowPorts().applyMemoToTransaction(...args),
+  addRecentAddress: (...args) => loadSendFlowPorts().addRecentAddress(...args),
+  useAccountSync: () => loadSendFlowPorts().useAccountSync(),
+  getSponsoredCoinApi: (...args) => loadSendFlowPorts().getSponsoredCoinApi(...args),
+  buildSponsoredIntent: (...args) => loadSendFlowPorts().buildSponsoredIntent(...args),
+};
+
 function Providers({
   children,
   store,
@@ -200,15 +219,17 @@ function Providers({
         <QueryClientProvider client={queryClient}>
           <LinkingProvider config={{ openExternal: () => {} }}>
             <Provider store={store}>
-              <DesktopAssetsTableProvider>
-                {skipRouter ? (
-                  routerContent
-                ) : (
-                  <MemoryRouter initialEntries={initialRoute ? [initialRoute] : undefined}>
-                    {routerContent}
-                  </MemoryRouter>
-                )}
-              </DesktopAssetsTableProvider>
+              <SendFlowPortsProvider ports={testSendFlowPorts}>
+                <DesktopAssetsTableProvider>
+                  {skipRouter ? (
+                    routerContent
+                  ) : (
+                    <MemoryRouter initialEntries={initialRoute ? [initialRoute] : undefined}>
+                      {routerContent}
+                    </MemoryRouter>
+                  )}
+                </DesktopAssetsTableProvider>
+              </SendFlowPortsProvider>
             </Provider>
           </LinkingProvider>
         </QueryClientProvider>

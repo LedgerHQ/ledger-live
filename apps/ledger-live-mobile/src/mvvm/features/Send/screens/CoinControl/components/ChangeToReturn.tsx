@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
-import type { CoinControlChangeToReturnViewModel } from "@ledgerhq/live-common/flows/send/coinControl/hooks/useCoinControlScreenViewModelCore";
+import type { CoinControlChangeToReturnViewModel } from "@features/platform-send-flow";
 
 type ChangeToReturnProps = Readonly<{
   changeToReturn: CoinControlChangeToReturnViewModel;

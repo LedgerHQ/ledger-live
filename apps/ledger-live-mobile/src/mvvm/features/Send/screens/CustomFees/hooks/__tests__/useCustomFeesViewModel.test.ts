@@ -1,10 +1,15 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import BigNumber from "bignumber.js";
-import { renderHook } from "@testing-library/react-native";
+import { renderHook as renderHookWithoutPorts } from "@testing-library/react-native";
+import React from "react";
+import { liveCommonSendFlowPorts } from "@ledgerhq/live-common/flows/send-ports/ports";
 import type { Account } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import type { SendFlowTransactionActions } from "@ledgerhq/live-common/flows/send/types";
+import {
+  SendFlowPortsProvider,
+  type SendFlowTransactionActions,
+} from "@features/platform-send-flow";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { useSelector } from "~/context/hooks";
 import { createMockAccount } from "../../../Recipient/hooks/__tests__/accounts";
@@ -94,6 +99,14 @@ function createTransactionActions(): SendFlowTransactionActions {
     setAccount: jest.fn(),
     updateAccount: jest.fn(),
   };
+}
+
+function SendFlowPortsWrapper({ children }: { children: React.ReactNode }) {
+  return React.createElement(SendFlowPortsProvider, { ports: liveCommonSendFlowPorts }, children);
+}
+
+function renderHook<Result>(callback: () => Result) {
+  return renderHookWithoutPorts(callback, { wrapper: SendFlowPortsWrapper });
 }
 
 describe("useCustomFeesViewModel", () => {

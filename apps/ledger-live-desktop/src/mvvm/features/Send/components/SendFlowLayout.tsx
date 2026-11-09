@@ -4,12 +4,12 @@ import { cn } from "LLD/utils/cn";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
 import { useSendFlowData } from "../context/SendFlowContext";
 import { RecipientScannerProvider } from "../context/RecipientScannerContext";
-import { FLOW_STATUS, type StepRenderer } from "@ledgerhq/live-common/flows/wizard/types";
+import { FLOW_STATUS, type StepRenderer } from "@shared/flow-wizard";
 import {
   SEND_FLOW_STEP,
   type SendFlowStep,
   type SendFlowBusinessContext,
-} from "@ledgerhq/live-common/flows/send/types";
+} from "@features/platform-send-flow";
 import type { SendStepConfig } from "../types";
 import { SendHeader } from "./SendHeader";
 import { AnimatedHeight, useAnimatedHeightCapped } from "@shared/ui-animated-height";

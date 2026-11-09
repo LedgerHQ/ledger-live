@@ -3,9 +3,11 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { SendFlowOrchestrator } from "./SendFlowOrchestrator";
 import {
   SEND_FLOW_STEP,
+  SendFlowPortsProvider,
   type SendFlowStep,
   type SendFlowInitParams,
-} from "@ledgerhq/live-common/flows/send/types";
+} from "@features/platform-send-flow";
+import { liveCommonSendFlowPorts } from "@ledgerhq/live-common/flows/send-ports/ports";
 import { SignatureScreen } from "./screens/Signature/SignatureScreen";
 import { ConfirmationScreen } from "./screens/Confirmation/ConfirmationScreen";
 import { SendFlowLayout } from "./components/SendFlowLayout";
@@ -25,7 +27,7 @@ import { SkipMemoConfirmationScreen } from "./screens/SkipMemoConfirmation/SkipM
 import { PaySuccessScreen } from "./screens/PaySuccess/PaySuccessScreen";
 import { BalanceTypeScreen } from "./screens/BalanceType/BalanceTypeScreen";
 import { BalanceTypeSyncScreen } from "./screens/BalanceTypeSync/BalanceTypeSyncScreen";
-import type { StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
+import type { StepRegistry } from "@shared/flow-wizard";
 import { SendFlowTrackingProvider } from "./context/SendFlowTrackingContext";
 import { AddNewContactHeaderProvider } from "./context/AddNewContactHeaderContext";
 import { RecipientContactSelectionProvider } from "./context/RecipientContactSelectionContext";
@@ -91,18 +93,24 @@ export function SendWorkflow({ onClose, params, isOpen }: SendWorkflowProps) {
   );
 
   return (
-    <SendFlowOrchestrator initParams={initParams} onClose={handleClose} stepRegistry={stepRegistry}>
-      <SendFlowTrackingProvider>
-        <AddNewContactHeaderProvider>
-          <RecipientContactSelectionProvider>
-            <RecipientContinuationProvider>
-              <SponsoredSendProvider>
-                <SendFlowLayout isOpen={isOpen} onClose={handleClose} />
-              </SponsoredSendProvider>
-            </RecipientContinuationProvider>
-          </RecipientContactSelectionProvider>
-        </AddNewContactHeaderProvider>
-      </SendFlowTrackingProvider>
-    </SendFlowOrchestrator>
+    <SendFlowPortsProvider ports={liveCommonSendFlowPorts}>
+      <SendFlowOrchestrator
+        initParams={initParams}
+        onClose={handleClose}
+        stepRegistry={stepRegistry}
+      >
+        <SendFlowTrackingProvider>
+          <AddNewContactHeaderProvider>
+            <RecipientContactSelectionProvider>
+              <RecipientContinuationProvider>
+                <SponsoredSendProvider>
+                  <SendFlowLayout isOpen={isOpen} onClose={handleClose} />
+                </SponsoredSendProvider>
+              </RecipientContinuationProvider>
+            </RecipientContactSelectionProvider>
+          </AddNewContactHeaderProvider>
+        </SendFlowTrackingProvider>
+      </SendFlowOrchestrator>
+    </SendFlowPortsProvider>
   );
 }

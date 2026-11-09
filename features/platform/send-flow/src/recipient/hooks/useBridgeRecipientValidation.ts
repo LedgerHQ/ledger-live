@@ -1,0 +1,230 @@
+import type {
+  SendAccount,
+  SendAccountLike,
+  SendTransaction,
+  SendTransactionStatus,
+} from "../../registry";
+import { getMainAccount } from "../../internals/account";
+import { useSendFlowPorts } from "../../ports/SendFlowPortsContext";
+import type { Memo } from "../../types";
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
+import type { BridgeValidationErrors, BridgeValidationWarnings } from "../types";
+
+export type BridgeRecipientValidationResult = {
+  errors: BridgeValidationErrors;
+  warnings: BridgeValidationWarnings;
+  isLoading: boolean;
+  status: SendTransactionStatus | null;
+  cleanup: () => void;
+};
+
+type UseBridgeRecipientValidationProps = {
+  recipient: string;
+  account: SendAccountLike | null;
+  parentAccount?: SendAccount | null;
+  transaction?: SendTransaction | null;
+  memo?: Memo;
+  enabled?: boolean;
+  /**
+   * Debounce applied before triggering the bridge validation. Defaults to 300ms,
+   * which suits live typing. One-shot validations (e.g. a pasted/clipboard value)
+   * can pass `0` to validate immediately without the typing debounce.
+   */
+  debounceMs?: number;
+};
+
+const DEBOUNCE_DELAY = 300;
+
+/**
+ * Hook to validate recipient address using the bridge transaction status.
+ * This hook leverages the existing bridge infrastructure to get
+ * recipient and sender validation errors/warnings.
+ */
+export function useBridgeRecipientValidation({
+  recipient,
+  account,
+  parentAccount,
+  transaction: baseTransaction,
+  memo,
+  enabled = true,
+  debounceMs = DEBOUNCE_DELAY,
+}: UseBridgeRecipientValidationProps): BridgeRecipientValidationResult {
+  const { getAccountBridge, applyMemoToTransaction } = useSendFlowPorts();
+  const [validationState, setValidationState] = useState<{
+    errors: BridgeValidationErrors;
+    warnings: BridgeValidationWarnings;
+    isLoading: boolean;
+    status: SendTransactionStatus | null;
+  }>({
+    errors: {},
+    warnings: {},
+    isLoading: false,
+    status: null,
+  });
+
+  const prevRecipientRef = useRef<string>("");
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Cleanup function to clear timeout and abort pending validations
+  const cleanup = useCallback(() => {
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+      debounceTimeoutRef.current = null;
+    }
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+  }, []);
+
+  const validateRecipient = useCallback(async () => {
+    // Clear timeout reference when callback executes
+    debounceTimeoutRef.current = null;
+
+    if (!account || !recipient || !enabled) {
+      setValidationState({
+        errors: {},
+        warnings: {},
+        isLoading: false,
+        status: null,
+      });
+      return;
+    }
+
+    // Cancel any pending validation
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    abortControllerRef.current = new AbortController();
+    const signal = abortControllerRef.current.signal;
+
+    setValidationState(prev => ({ ...prev, isLoading: true }));
+
+    try {
+      const mainAccount = getMainAccount(account, parentAccount);
+      const bridge = await getAccountBridge(account, parentAccount);
+
+      let transaction = baseTransaction ?? bridge.createTransaction(mainAccount);
+      transaction = bridge.updateTransaction(transaction, { recipient });
+
+      if (memo) {
+        const memoUpdates = applyMemoToTransaction(
+          transaction.family,
+          memo.value,
+          memo.type,
+          transaction,
+        );
+        transaction = bridge.updateTransaction(transaction, memoUpdates);
+      }
+
+      const preparedTransaction = await bridge.prepareTransaction(mainAccount, transaction);
+
+      if (signal.aborted) return;
+
+      const status = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
+
+      if (signal.aborted) return;
+
+      const errors: BridgeValidationErrors = {};
+      const warnings: BridgeValidationWarnings = {};
+
+      if (status.errors.recipient) {
+        errors.recipient = status.errors.recipient;
+      }
+      if (status.errors.sender) {
+        errors.sender = status.errors.sender;
+      }
+
+      Object.entries(status.warnings).forEach(([key, value]) => {
+        if (value) {
+          warnings[key] = value;
+        }
+      });
+
+      setValidationState({
+        errors,
+        warnings,
+        isLoading: false,
+        status,
+      });
+    } catch (error) {
+      if (signal.aborted) return;
+
+      console.error("Bridge recipient validation failed:", error);
+      setValidationState({
+        errors: {},
+        warnings: {},
+        isLoading: false,
+        status: null,
+      });
+    }
+  }, [
+    account,
+    recipient,
+    enabled,
+    parentAccount,
+    baseTransaction,
+    memo,
+    getAccountBridge,
+    applyMemoToTransaction,
+  ]);
+
+  // Reset / schedule validation in an effect — never call setState during render.
+  // useLayoutEffect keeps recipient-change resets synchronous before paint so
+  // consumers can tell "awaiting first bridge result" apart from a revalidation
+  // without a flash of the previous settled status.
+  useLayoutEffect(() => {
+    const recipientChanged = recipient !== prevRecipientRef.current;
+    prevRecipientRef.current = recipient;
+
+    cleanup();
+
+    if (!recipient) {
+      setValidationState({
+        errors: {},
+        warnings: {},
+        isLoading: false,
+        status: null,
+      });
+      return cleanup;
+    }
+
+    // Clear settled results when the recipient changes so consumers can tell
+    // "awaiting first bridge result" apart from a revalidation of the same address.
+    // Keeping the previous status on transaction-only changes avoids UI flicker.
+    if (recipientChanged) {
+      setValidationState({
+        errors: {},
+        warnings: {},
+        isLoading: enabled,
+        status: null,
+      });
+    }
+
+    if (!enabled) {
+      return cleanup;
+    }
+
+    if (!recipientChanged) {
+      setValidationState(prev => ({ ...prev, isLoading: true }));
+    }
+
+    debounceTimeoutRef.current = setTimeout(() => {
+      validateRecipient();
+    }, debounceMs);
+
+    return cleanup;
+  }, [recipient, baseTransaction, enabled, debounceMs, validateRecipient, cleanup]);
+
+  return useMemo(
+    () => ({
+      errors: validationState.errors,
+      warnings: validationState.warnings,
+      isLoading: validationState.isLoading,
+      status: validationState.status,
+      cleanup,
+    }),
+    [validationState, cleanup],
+  );
+}

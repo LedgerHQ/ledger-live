@@ -3,7 +3,11 @@ import { createIntent } from "@features/platform-device-intent";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { useSendFlowSignatureCore } from "@ledgerhq/live-common/flows/send/hooks/useSendFlowSignatureCore";
+import {
+  useSendFlowSignatureCore,
+  SEND_FLOW_COMPLETION,
+  type SendFlowCompletion,
+} from "@features/platform-send-flow";
 import { FlowName } from "@ledgerhq/live-common/device-action/utils";
 import type { SignTransactionIntentJobState } from "@ledgerhq/live-common/intents/signTransactionIntent";
 import { useDispatch, useSelector } from "~/context/hooks";
@@ -14,12 +18,10 @@ import {
   type InitializationInput,
 } from "LLM/components/DeviceIntentExecutor";
 import { broadcastLogger } from "~/datadog";
-import { SPONSORED_PHASE } from "@ledgerhq/live-common/flows/send/sponsored/types";
-import { reportSponsoredTransferOutcome } from "@ledgerhq/live-common/flows/send/sponsored/transferOutcome";
 import {
-  SEND_FLOW_COMPLETION,
-  type SendFlowCompletion,
-} from "@ledgerhq/live-common/flows/send/types";
+  SPONSORED_PHASE,
+  reportSponsoredTransferOutcome,
+} from "@features/platform-send-flow/sponsored";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import { useSendSignature } from "../../../context/SendSignatureContext";
 import { useSponsoredSend } from "../../../context/SponsoredSendContext";

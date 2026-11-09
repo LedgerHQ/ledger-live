@@ -6,7 +6,7 @@ import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/gener
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useCustomFeesViewModel } from "../useCustomFeesViewModel";
-import type { SendFlowTransactionActions } from "@ledgerhq/live-common/flows/send/types";
+import type { SendFlowTransactionActions } from "@features/platform-send-flow";
 
 // Mock dependencies
 jest.mock("react-i18next", () => ({
@@ -114,16 +114,6 @@ jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => {
   const actual = jest.requireActual("@ledgerhq/live-common/bridge/descriptor/send/features");
   return {
     ...actual,
-    resolveFeeUnitLabel: (
-      unitLabel: string | ((currency: CryptoOrTokenCurrency) => string | undefined) | undefined,
-      currency: CryptoOrTokenCurrency | undefined,
-    ) => {
-      if (typeof unitLabel === "function") {
-        return currency ? unitLabel(currency) : undefined;
-      }
-
-      return unitLabel;
-    },
     sendFeatures: {
       ...actual.sendFeatures,
       getCustomFeeConfig: (currency: CryptoOrTokenCurrency) =>

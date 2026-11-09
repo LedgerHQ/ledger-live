@@ -19,16 +19,16 @@ import { useSelector } from "~/context/hooks";
 import { accountsSelector } from "~/reducers/accounts";
 import { useMaybeAccountName } from "~/reducers/wallet";
 
-import { useBridgeRecipientValidation } from "@ledgerhq/live-common/flows/send/recipient/hooks/useBridgeRecipientValidation";
-import { findMatchedContact } from "@ledgerhq/live-common/flows/send/recipient/utils/findMatchedContact";
-import type {
-  AddressSearchResult,
-  AddressValidationError,
-  AddressValidationStatus,
-  BridgeValidationErrors,
-  MatchedAccount,
-  RecentAddress,
-} from "@ledgerhq/live-common/flows/send/recipient/types";
+import {
+  useBridgeRecipientValidation,
+  findMatchedContact,
+  type AddressSearchResult,
+  type AddressValidationError,
+  type AddressValidationStatus,
+  type BridgeValidationErrors,
+  type MatchedAccount,
+  type RecentAddress,
+} from "@features/platform-send-flow";
 import { normalizeLastUsedTimestamp } from "../utils/dateFormatter";
 import { applyRecipientSelfTransferState } from "../../../utils/selfTransferTarget";
 import { useFormattedAccountBalance } from "LLM/hooks/useFormattedAccountBalance";

@@ -1,0 +1,184 @@
+import type {
+  SendAccount,
+  SendAccountLike,
+  SendOperation,
+  SendTransaction,
+  SendTransactionStatus,
+} from "./registry";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type {
+  FlowStatus,
+  FlowStatusActions,
+  FlowStepConfig,
+  FlowConfig,
+} from "@shared/flow-wizard";
+
+export const SEND_FLOW_STEP = {
+  RECIPIENT: "RECIPIENT",
+  BALANCE_TYPE: "BALANCE_TYPE",
+  BALANCE_TYPE_SYNC: "BALANCE_TYPE_SYNC",
+  SKIP_MEMO_CONFIRMATION: "SKIP_MEMO_CONFIRMATION",
+  RECENT_HISTORY: "RECENT_HISTORY",
+  ADD_CONTACT: "ADD_CONTACT",
+  ADD_NEW_CONTACT: "ADD_NEW_CONTACT",
+  ADD_TO_EXISTING_CONTACT: "ADD_TO_EXISTING_CONTACT",
+  AMOUNT: "AMOUNT",
+  CUSTOM_FEES: "CUSTOM_FEES",
+  COIN_CONTROL: "COIN_CONTROL",
+  SIGNATURE: "SIGNATURE",
+  CONFIRMATION: "CONFIRMATION",
+  PAY_SUCCESS: "PAY_SUCCESS",
+  FEE_PAYMENT: "FEE_PAYMENT",
+  SPONSORED_RENT_SIGNATURE: "SPONSORED_RENT_SIGNATURE",
+  SPONSORED_POLLING: "SPONSORED_POLLING",
+  SPONSORED_FAILURE: "SPONSORED_FAILURE",
+} as const;
+
+export type SendFlowStep = (typeof SEND_FLOW_STEP)[keyof typeof SEND_FLOW_STEP];
+
+export const SEND_FLOW_COMPLETION = {
+  SUCCESS: "SUCCESS",
+  FAILURE: "FAILURE",
+} as const;
+
+export type SendFlowCompletion = (typeof SEND_FLOW_COMPLETION)[keyof typeof SEND_FLOW_COMPLETION];
+
+export const SEND_FLOW_SOURCE = {
+  PAY: "pay",
+} as const;
+
+export type BaseSendStepConfig = FlowStepConfig<SendFlowStep> &
+  Readonly<{
+    addressInput?: boolean;
+    showTitle?: boolean;
+    height?: "fixed" | "fit";
+  }>;
+
+export type BaseSendFlowConfig = FlowConfig<SendFlowStep, BaseSendStepConfig>;
+
+export type SendFlowUiConfig = Readonly<{
+  /** Whether the currency supports memos. */
+  hasMemo: boolean;
+  memoType?: string;
+  memoMaxLength?: number;
+  memoMaxValue?: number | bigint;
+  memoOptions?: readonly string[];
+  recipientSupportsDomain: boolean;
+  hasFeePresets: boolean;
+  hasCustomFees: boolean;
+  hasCoinControl: boolean;
+  hasDefaultStrategy: boolean;
+  /** Whether the flow should start with a balance-type (pool) selection step. */
+  hasBalanceTypeStep: boolean;
+  /** Whether the amount can be typed and shown in fiat. Testnets have no countervalue. */
+  hasFiatAmountInput: boolean;
+}>;
+
+export type Memo = { value: string; type?: string };
+
+export type RecipientData = Readonly<{
+  address?: string;
+  ensName?: string;
+  /** Contact explicitly selected for this recipient; disambiguates duplicate saved addresses. */
+  contactId?: string;
+  /** Overrides address/ensName display. Clear when address or ensName changes unless setting a new label. */
+  displayLabel?: string;
+  /**
+   * Set by the transfer-to-my-other-pool shortcut, which prefills an address the user
+   * never typed. Coins that hold self-transfer state read it from here, so clear it
+   * whenever the address changes.
+   */
+  isSelfTransfer?: boolean;
+  memo?: Memo;
+  destinationTag?: string;
+}>;
+
+export type SendFlowTransactionState = Readonly<{
+  transaction: SendTransaction | null;
+  status: SendTransactionStatus;
+  bridgeError: Error | null;
+  bridgePending: boolean;
+}>;
+
+export type SendFlowAccountState = Readonly<{
+  account: SendAccountLike | null;
+  parentAccount: SendAccount | null;
+  currency: CryptoOrTokenCurrency | null;
+}>;
+
+export type SendFlowOperationResult = Readonly<{
+  optimisticOperation: SendOperation | null;
+  transactionError: Error | null;
+  signed: boolean;
+}>;
+
+export type SendFlowState = Readonly<{
+  account: SendFlowAccountState;
+  transaction: SendFlowTransactionState;
+  recipient: RecipientData | null;
+  operation: SendFlowOperationResult;
+  isLoading: boolean;
+  flowStatus: FlowStatus;
+}>;
+
+export type SendFlowTransactionActions = Readonly<{
+  setTransaction: (tx: SendTransaction) => void;
+  updateTransaction: (updater: (tx: SendTransaction) => SendTransaction) => void;
+  setRecipient: (recipient: RecipientData) => void;
+  setAccount: (account: SendAccountLike, parentAccount?: SendAccount | null) => void;
+  updateAccount: (account: SendAccountLike, parentAccount?: SendAccount | null) => void;
+}>;
+
+export type SendFlowOperationActions = Readonly<{
+  onOperationBroadcasted: (operation: SendOperation) => void;
+  onTransactionError: (error: Error) => void;
+  onSigned: () => void;
+  onRetry: () => void;
+}>;
+
+export type SendFlowInitParams = Readonly<{
+  account?: SendAccountLike;
+  parentAccount?: SendAccount;
+  recipient?: string;
+  skipRecipientStep?: boolean;
+  amount?: string;
+  memo?: string;
+  fromMAD?: boolean;
+  source?: string;
+}>;
+
+export function hasDirectRecipient(
+  params: Pick<SendFlowInitParams, "recipient" | "skipRecipientStep"> | undefined,
+): params is Pick<SendFlowInitParams, "recipient"> & {
+  recipient: string;
+  skipRecipientStep: true;
+} {
+  return params?.skipRecipientStep === true && Boolean(params.recipient?.trim());
+}
+
+export function canSkipRecipientStep(
+  params: Pick<SendFlowInitParams, "recipient" | "skipRecipientStep" | "source"> | undefined,
+  uiConfig: Pick<SendFlowUiConfig, "hasMemo">,
+): boolean {
+  const isPay = params?.source === SEND_FLOW_SOURCE.PAY;
+  return hasDirectRecipient(params) && (isPay || !uiConfig.hasMemo);
+}
+
+export type SendFlowBusinessContext = Readonly<{
+  state: SendFlowState;
+  transaction: SendFlowTransactionActions;
+  operation: SendFlowOperationActions;
+  status: FlowStatusActions;
+  uiConfig: SendFlowUiConfig;
+  source?: string;
+  recipientSearch: Readonly<{
+    value: string;
+    setValue: (value: string) => void;
+    clear: () => void;
+  }>;
+  isRecipientAddressComplete: boolean;
+  setIsRecipientAddressComplete: (value: boolean) => void;
+  resetRecipient: () => void;
+  close: () => void;
+  setAccountAndNavigate: (account: SendAccountLike, parentAccount?: SendAccount) => void;
+}>;

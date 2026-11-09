@@ -3,7 +3,7 @@
  */
 import React from "react";
 import { render, screen } from "tests/testSetup";
-import { FLOW_STATUS } from "@ledgerhq/live-common/flows/wizard/types";
+import { FLOW_STATUS } from "@shared/flow-wizard";
 import { useConfirmationViewModel } from "../hooks/useConfirmationViewModel";
 import { ConfirmationScreen } from "../ConfirmationScreen";
 

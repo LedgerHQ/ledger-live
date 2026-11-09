@@ -3,7 +3,7 @@ import { MemoryRouter, Route, Routes } from "react-router";
 import type { ContactId } from "@domain/entity-contact";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { resolveEligibleAddressCurrencyIds } from "@features/platform-contacts";
-import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send-ports/resolveCurrencyConfig";
 import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import {
   mockContact,

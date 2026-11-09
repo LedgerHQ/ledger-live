@@ -6,7 +6,13 @@ import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { SEND_ADDRESS_FORMAT_OPTIONS } from "@ledgerhq/live-common/flows/send/utils";
+import {
+  SEND_ADDRESS_FORMAT_OPTIONS,
+  SEND_FLOW_SOURCE,
+  SEND_FLOW_STEP,
+  type SendFlowStep,
+  type SendFlowInitParams,
+} from "@features/platform-send-flow";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import {
   act,
@@ -26,13 +32,7 @@ import { CoinControlScreen } from "../screens/CoinControl";
 import { SignatureScreen } from "../screens/Signature";
 import { ConfirmationScreen } from "../screens/Confirmation";
 import { PaySuccessScreen } from "../screens/PaySuccess";
-import {
-  SEND_FLOW_SOURCE,
-  SEND_FLOW_STEP,
-  type SendFlowStep,
-  type SendFlowInitParams,
-} from "@ledgerhq/live-common/flows/send/types";
-import type { StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
+import type { StepRegistry } from "@shared/flow-wizard";
 
 const stellarCurrency = getCryptoCurrencyById("stellar");
 const ethereumCurrency = getCryptoCurrencyById("ethereum");
