@@ -54,6 +54,11 @@ jest.mock("@devtools/bindings", () => ({
   }),
   useAppConfigToolProps: () => ({ marker: "app-config-props" }),
   useCoinConfigToolProps: () => ({ marker: "coin-config-props" }),
+  useAccountDiscoveryToolProps: () => ({ marker: "account-discovery-props" }),
+}));
+
+jest.mock("../screens/DevToolsScreen/useAccountDiscoveryToolInputs", () => ({
+  useAccountDiscoveryToolInputs: () => ({}),
 }));
 
 jest.mock("../DeviceOnboarding/useDeviceOnboardingTool", () => ({
@@ -96,6 +101,7 @@ describe("DevToolsScreen", () => {
           { id: "device-onboarding", config: { marker: "device-onboarding-props" } },
           { id: "account-data", config: { marker: "account-data-props" } },
           { id: "account-descriptor", config: { marker: "account-descriptor-props" } },
+          { id: "account-discovery", config: { marker: "account-discovery-props" } },
           { id: "account-balance", config: { marker: "account-balance-props" } },
           { id: "account-operation", config: { marker: "account-operation-props" } },
           { id: "account-balance-history", config: { marker: "account-balance-history-props" } },

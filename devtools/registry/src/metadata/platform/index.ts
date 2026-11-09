@@ -3,6 +3,7 @@ export * from "./env";
 export * from "./trustchain";
 export * from "./cloud-sync";
 export * from "./account-descriptor";
+export * from "./account-discovery";
 export * from "./account-data";
 export * from "./account-portfolio";
 export * from "./app-config";

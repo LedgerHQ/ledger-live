@@ -111,3 +111,6 @@ export function connectAccounts(store: AccountsReduxStore<{ accounts: AccountsSt
     onError: error => console.warn("Account left out of the accounts slice", error),
   });
 }
+
+/** Derives discovery candidates on the device with the legacy signers, until DMK signer kits do. */
+export { deriveWithLegacySigners } from "@ledgerhq/live-common/account-data/discovery/deriveWithLegacySigners";

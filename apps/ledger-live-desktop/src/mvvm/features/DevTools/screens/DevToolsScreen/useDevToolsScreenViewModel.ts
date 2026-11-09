@@ -30,8 +30,10 @@ import {
   useMockAccountsToolProps,
   useAccountDetailToolProps,
   useCoinConfigToolProps,
+  useAccountDiscoveryToolProps,
 } from "@devtools/bindings";
 import type { DevToolsConfig } from "@devtools/shell";
+import { useAccountDiscoveryToolInputs } from "./useAccountDiscoveryToolInputs";
 import { useDevToolsRelay } from "./useDevToolsRelay";
 import { useDeviceOnboardingTool } from "../../DeviceOnboarding/useDeviceOnboardingTool";
 import { useAccountDataRecorder } from "../../accountDataRecorder";
@@ -122,6 +124,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
   const accountNameToolProps = useAccountNameToolProps(legacyAccounts);
   const mockAccountsToolProps = useMockAccountsToolProps(accountDataRecorder);
   const accountDetailToolProps = useAccountDetailToolProps();
+  const accountDiscoveryToolProps = useAccountDiscoveryToolProps(useAccountDiscoveryToolInputs());
 
   const config: DevToolsConfig = useMemo(
     () => [
@@ -135,6 +138,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       { id: "device-onboarding", config: deviceOnboardingProps },
       { id: "account-data", config: accountDataToolProps },
       { id: "account-descriptor", config: accountDescriptorToolProps },
+      { id: "account-discovery", config: accountDiscoveryToolProps },
       { id: "account-balance", config: accountBalanceToolProps },
       { id: "account-operation", config: accountOperationToolProps },
       { id: "account-balance-history", config: accountBalanceHistoryToolProps },
@@ -161,6 +165,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       accountNameToolProps,
       mockAccountsToolProps,
       accountDetailToolProps,
+      accountDiscoveryToolProps,
     ],
   );
 

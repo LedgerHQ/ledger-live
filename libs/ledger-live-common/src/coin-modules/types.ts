@@ -15,10 +15,12 @@ import type {
 } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountCandidate } from "@domain/entity-derivation";
 import type { Transaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import type { CoinModuleImpl } from "@ledgerhq/coin-module-framework/api/index";
 import type Prando from "prando";
+import type { Observable } from "rxjs";
 import type { Resolver } from "../hw/getAddress/types";
 import type { SignMessage } from "../hw/signMessage/types";
 import type {
@@ -120,7 +122,16 @@ export type FamilySetup<
   };
   resolver?: Resolver;
   messageSigner?: MessageSignerModule;
+  /** The descriptor of a discovery candidate, when the family is not known by the address `resolver` gives (UTXO). */
+  deriveAccountDescriptor?: DeriveAccountDescriptor;
 };
+
+/** Unsubscribing releases the device. */
+export type DeriveAccountDescriptor = (
+  deviceId: string,
+  currency: CryptoCurrency,
+  candidate: AccountCandidate,
+) => Observable<AccountDescriptor>;
 
 export type ValidateAddressFn = (
   address: string,
@@ -142,6 +153,8 @@ export type CoinModuleLoader<
   supportedCoins: string[]; // TO BE REPLACED soon by branded id
   /** How an account of this family is identified as an AccountDescriptor. */
   accountDescriptorType: AccountDescriptor["type"];
+  /** `false` when a first sync needs more than the descriptor holds: a public key (TON, ICP) or an onboarding. */
+  syncsFromDescriptor?: false;
   loadSetup: () => Promise<FamilySetup<T, A, U, O, R>>;
   loadTransaction: () => Promise<TransactionModule<T, U, A, TRaw, URaw>>;
   loadDeviceTxConfig?: () => Promise<DeviceTransactionConfigFn<T, any, A>>;

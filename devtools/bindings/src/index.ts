@@ -29,3 +29,5 @@ export { useMockAccountsToolProps } from "./useMockAccountsToolProps";
 export { useAccountDetailToolProps } from "./useAccountDetailToolProps";
 export { useCoinConfigToolProps } from "./useCoinConfigToolProps";
 export type { UseCoinConfigToolPropsInput } from "./useCoinConfigToolProps";
+export { useAccountDiscoveryToolProps } from "./useAccountDiscoveryToolProps";
+export type { AccountDiscoveryInputs } from "./useAccountDiscoveryToolProps";

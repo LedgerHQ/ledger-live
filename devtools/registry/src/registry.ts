@@ -15,6 +15,7 @@ export const tools = {
   "account-balance-history": walletXp.accountBalanceHistory,
   "account-portfolio": platform.accountPortfolio,
   "account-descriptor": platform.accountDescriptor,
+  "account-discovery": platform.accountDiscovery,
   "account-data": platform.accountData,
   "app-config": platform.appConfig,
   "account-name": platform.accountName,
@@ -55,4 +56,5 @@ export type DevToolConfig =
   | { id: "account-name"; config: platform.AccountNameToolProps }
   | { id: "mock-accounts"; config: platform.MockAccountsToolProps }
   | { id: "account-detail"; config: walletXp.AccountDetailToolProps }
-  | { id: "coin-config"; config: coinIntegration.CoinConfigToolProps };
+  | { id: "coin-config"; config: coinIntegration.CoinConfigToolProps }
+  | { id: "account-discovery"; config: platform.AccountDiscoveryToolProps };

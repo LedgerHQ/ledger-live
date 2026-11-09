@@ -57,7 +57,7 @@ This list is not complete: more entities are needed before no screen reads `Acco
 | `operations` | [`@domain/entity-account-operation`](../../domain/entity/account-operation) | merged: pages, `filterAsset`, `countervalue` |
 | `balanceHistory` | [`@domain/entity-account-balance-history`](../../domain/entity/account-balance-history) | merged; valued in a fiat in [#24309](https://github.com/LedgerHQ/ledger-live/pull/24309) |
 | `receive` | `@domain/entity-account-receive` | discovery [LIVE-40837](https://ledgerhq.atlassian.net/browse/LIVE-40837), PoC [#24410](https://github.com/LedgerHQ/ledger-live/pull/24410) |
-| `existence` | `@domain/entity-account-existence` | discovery [LIVE-40835](https://ledgerhq.atlassian.net/browse/LIVE-40835), closed PoC [#23602](https://github.com/LedgerHQ/ledger-live/pull/23602) |
+| `existence` | [`@domain/entity-account-existence`](../../domain/entity/account-existence) | FullSync reader; discovery [LIVE-40835](https://ledgerhq.atlassian.net/browse/LIVE-40835), [#24600](https://github.com/LedgerHQ/ledger-live/pull/24600), coin module `exists` [#24601](https://github.com/LedgerHQ/ledger-live/pull/24601) |
 | `send` capability, not a kind | none yet | discovery [LIVE-40836](https://ledgerhq.atlassian.net/browse/LIVE-40836) |
 | staking, locked balances, family kinds | none yet | to explore |
 

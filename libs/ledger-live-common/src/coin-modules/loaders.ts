@@ -6,6 +6,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     family: "aleo",
     supportedCoins: ["aleo", "aleo_testnet"],
     accountDescriptorType: "address",
+    syncsFromDescriptor: false,
     loadSetup: () => import("../families/aleo/setup"),
     loadTransaction: () => import("@ledgerhq/coin-aleo/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
@@ -66,6 +67,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     family: "canton",
     supportedCoins: ["canton_network", "canton_network_devnet", "canton_network_testnet"],
     accountDescriptorType: "address",
+    syncsFromDescriptor: false,
     loadSetup: () => import("../families/canton/setup"),
     loadLocalApi: () =>
       import("../families/canton/coinModuleApi").then(m => m.createLocalCantonApi),
@@ -118,6 +120,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     family: "concordium",
     supportedCoins: ["concordium", "concordium_testnet"],
     accountDescriptorType: "address",
+    syncsFromDescriptor: false,
     loadSetup: () => import("../families/concordium/setup"),
     loadTransaction: () => import("@ledgerhq/coin-concordium/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
@@ -249,6 +252,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     family: "hedera",
     supportedCoins: ["hedera", "hedera_testnet"],
     accountDescriptorType: "address",
+    syncsFromDescriptor: false,
     loadSetup: () => import("../families/hedera/setup"),
     loadTransaction: () =>
       isGenericCoinFrameworkFamily("hedera")
@@ -294,6 +298,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     family: "internet_computer",
     supportedCoins: ["internet_computer"],
     accountDescriptorType: "address",
+    syncsFromDescriptor: false,
     loadSetup: () => import("../families/internet_computer/setup"),
     loadTransaction: () =>
       import("@ledgerhq/coin-internet_computer/transaction").then(m => m.default),
@@ -435,6 +440,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     family: "ton",
     supportedCoins: ["ton"],
     accountDescriptorType: "address",
+    syncsFromDescriptor: false,
     loadSetup: () => import("../families/ton/setup"),
     loadLocalApi: () => import("../families/ton/coinModuleApi").then(m => m.createLocalTonApi),
     loadTransaction: () => import("@ledgerhq/coin-ton/transaction").then(m => m.default),

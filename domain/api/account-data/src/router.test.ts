@@ -666,3 +666,102 @@ describe("fall-through", () => {
     await expect(router.read("counter", descriptor)).rejects.toThrow("down");
   });
 });
+
+describe("cancellation", () => {
+  const aborted = () => {
+    const controller = new AbortController();
+    controller.abort();
+    return controller.signal;
+  };
+
+  it("rejects an already aborted read without asking any source", async () => {
+    const counter = jest.fn(async () => 1);
+    const router = createAccountDataRouter([
+      { id: sourceIdOf("a"), supports: () => true, read: { counter } },
+    ]);
+    await expect(router.read("counter", descriptor, { signal: aborted() })).rejects.toMatchObject({
+      name: "AbortError",
+    });
+    await settle();
+    expect(counter).not.toHaveBeenCalled();
+  });
+
+  it("rejects the read as soon as it aborts, and tells the source through the target", async () => {
+    const single = singleSource();
+    const router = createAccountDataRouter([single.source]);
+    const controller = new AbortController();
+    const read = router.read("counter", descriptor, { signal: controller.signal });
+    await settle();
+    controller.abort();
+    await expect(read).rejects.toMatchObject({ name: "AbortError" });
+    expect(single.counter.mock.calls[0][0].signal?.aborted).toBe(true);
+    single.release();
+  });
+
+  it("never starts a read queued behind the concurrency limit once aborted", async () => {
+    const single = singleSource("single", { concurrency: 1 });
+    const router = createAccountDataRouter([single.source]);
+    const controller = new AbortController();
+    const first = router.read("counter", descriptorOf(0));
+    const second = router.read("counter", descriptorOf(1), { signal: controller.signal });
+    await settle();
+    controller.abort();
+    single.release();
+    await expect(first).resolves.toMatchObject({ data: 0 });
+    await expect(second).rejects.toMatchObject({ name: "AbortError" });
+    expect(single.counter).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps a coalesced account's work alive while another read still waits for it", async () => {
+    const single = singleSource();
+    const router = createAccountDataRouter([single.source]);
+    const controller = new AbortController();
+    const dropped = router.read("counter", descriptor, { signal: controller.signal });
+    const kept = router.read("counter", descriptor, { signal: new AbortController().signal });
+    await settle();
+    controller.abort();
+    expect(single.counter.mock.calls[0][0].signal?.aborted).toBe(false);
+    single.release();
+    await expect(dropped).rejects.toMatchObject({ name: "AbortError" });
+    await expect(kept).resolves.toMatchObject({ data: 0 });
+  });
+
+  it("never aborts the source's work when one coalesced read has no signal", async () => {
+    const single = singleSource();
+    const router = createAccountDataRouter([single.source]);
+    const controller = new AbortController();
+    const dropped = router.read("counter", descriptor, { signal: controller.signal });
+    const kept = router.read("counter", descriptor);
+    await settle();
+    expect(single.counter.mock.calls[0][0].signal).toBeUndefined();
+    controller.abort();
+    single.release();
+    await expect(dropped).rejects.toMatchObject({ name: "AbortError" });
+    await expect(kept).resolves.toMatchObject({ data: 0 });
+  });
+
+  it("skips a batch chunk whose reads all aborted before it started", async () => {
+    const { source, calls } = batchSource();
+    const router = createAccountDataRouter([source]);
+    const controller = new AbortController();
+    const reads = readAll(router, descriptors(2), { signal: controller.signal });
+    controller.abort();
+    expect((await reads).map(read => read.status)).toEqual(["rejected", "rejected"]);
+    await settle();
+    expect(calls).toHaveLength(0);
+  });
+
+  it("hands the source the caller's own signal when every read shares it", async () => {
+    const single = singleSource();
+    const router = createAccountDataRouter([single.source]);
+    const { signal } = new AbortController();
+    const reads = [
+      router.read("counter", descriptor, { signal }),
+      router.read("counter", descriptor, { signal }),
+    ];
+    await settle();
+    expect(single.counter.mock.calls[0][0].signal).toBe(signal);
+    single.release();
+    await Promise.all(reads);
+  });
+});

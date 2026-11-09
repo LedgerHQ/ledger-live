@@ -11,6 +11,9 @@ import { FullSyncAccountNotFoundError } from "./errors";
 import { toAccountBalances } from "./balance";
 import { toAccountBalanceHistory } from "./balanceHistory";
 import { toAccountOperations } from "./operations";
+import { from } from "rxjs";
+import { lastValueUntilAborted } from "../abort";
+import { isAccountUsed, syncDetached } from "./existence";
 import { isFullSyncSupported } from "./supports";
 import { syncLegacyAccount, type SyncLegacyAccountOptions } from "./syncLegacyAccount";
 
@@ -31,7 +34,7 @@ export type FullSyncSource = AccountDataSource & {
 const notFound = (accountUUID: AccountUUID) =>
   new FullSyncAccountNotFoundError(`No legacy account in the store for ${accountUUID}`);
 
-/** Every kind from one `AccountBridge.sync()`, the one the background sync runs: the legacy path. */
+/** Every kind from one `AccountBridge.sync()`, the one the background sync runs: the legacy path. `existence` also answers for accounts the store does not hold. */
 export function createFullSyncSource(host: FullSyncHost): FullSyncSource {
   const sync = async ({ accountUUID }: AccountTarget): Promise<Account> => {
     const account = host.findAccount(accountUUID);
@@ -61,6 +64,21 @@ export function createFullSyncSource(host: FullSyncHost): FullSyncSource {
         sync(target).then(account => toAccountOperations(account, query)),
       balanceHistory: (target, query) =>
         sync(target).then(account => toAccountBalanceHistory(account, query)),
+      // An account the store holds is synced into it; any other (a discovery candidate) apart.
+      existence: async target => {
+        // Stops waiting once aborted; the store sync itself goes on for the other readers of the account.
+        const account = host.findAccount(target.accountUUID)
+          ? await lastValueUntilAborted(from(sync(target)), target.signal)
+          : await syncDetached(
+              target.descriptor,
+              {
+                prepareCurrency: host.prepareCurrency,
+                blacklistedTokenIds: host.blacklistedTokenIds?.() ?? [],
+              },
+              target.signal,
+            );
+        return { used: await isAccountUsed(account) };
+      },
     },
     sync,
   };

@@ -5,6 +5,7 @@ import type {
   AccountDataSourceId,
 } from "@domain/entity-account-data";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import { throwIfAborted, untilAborted } from "./internals/abort";
 import { addSource, coalesce, createRouterContext } from "./internals/router";
 import type { AccountDataSource } from "./source";
 
@@ -17,6 +18,8 @@ export type AccountDataReadOptions<K extends AccountDataKind> = {
   sourceId?: AccountDataSourceId;
   /** Read the page after the one that handed out this cursor. */
   cursor?: string;
+  /** Rejects this read once aborted; the source stops only when every read sharing its call has aborted. */
+  signal?: AbortSignal;
 };
 
 export type AccountDataAnswer<K extends AccountDataKind> = {
@@ -58,11 +61,14 @@ export function createAccountDataRouter(
 ): AccountDataRouter {
   const context = createRouterContext(sources, concurrency);
   return {
-    async read(kind, descriptor, options = {}) {
+    async read(kind, descriptor, { signal, ...options } = {}) {
+      throwIfAborted(signal);
       const batch = coalesce(context, kind, options);
-      const index = batch.reads.push({ descriptor, cursor: options.cursor }) - 1;
-      const answers = await batch.answers;
-      const own = await answers[index];
+      const index = batch.reads.push({ descriptor, cursor: options.cursor, signal }) - 1;
+      const own = await untilAborted(
+        batch.answers.then(answers => answers[index]),
+        signal,
+      );
       if (own.status === "rejected") throw own.reason;
       return own.value;
     },
