@@ -8,7 +8,10 @@ const STORAGE_KEY = "accountAnalyticsIntroduction";
 
 const withIntroduction =
   (hasDismissed: boolean) =>
-  (state: State): State => ({ ...state, accountAnalyticsIntroduction: { hasDismissed } });
+  (state: State): State => ({
+    ...state,
+    accountAnalyticsIntroduction: { hasDismissed, isEligible: null },
+  });
 
 describe("account-detail DevTools tool on mobile", () => {
   beforeEach(async () => {
@@ -47,7 +50,7 @@ describe("account-detail DevTools tool on mobile", () => {
     act(() => result.current.analyticsIntroduction.onReset());
 
     await waitFor(async () =>
-      expect(await storage.get(STORAGE_KEY)).toEqual({ hasDismissed: false }),
+      expect(await storage.get(STORAGE_KEY)).toEqual({ hasDismissed: false, isEligible: null }),
     );
   });
 });

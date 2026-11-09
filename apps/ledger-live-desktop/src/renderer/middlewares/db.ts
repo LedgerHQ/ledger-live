@@ -39,6 +39,7 @@ import { isPayAction, persistPayCard } from "./payPersistence";
 import {
   accountAnalyticsIntroductionPersistedSelector,
   dismissAccountAnalyticsIntroduction,
+  recordAccountAnalyticsIntroductionEligibility,
   resetAccountAnalyticsIntroduction,
 } from "@features/flow-account-detail-analytics-notice/state";
 
@@ -172,7 +173,8 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
 
   if (
     (dismissAccountAnalyticsIntroduction.match(action) ||
-      resetAccountAnalyticsIntroduction.match(action)) &&
+      resetAccountAnalyticsIntroduction.match(action) ||
+      recordAccountAnalyticsIntroductionEligibility.match(action)) &&
     oldState.accountAnalyticsIntroduction !== newState.accountAnalyticsIntroduction
   ) {
     setKey(
