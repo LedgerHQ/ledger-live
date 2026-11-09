@@ -27,6 +27,7 @@ import {
   setMarketBannerRanking,
   type MarketBannerRanking,
 } from "~/renderer/reducers/marketBanner";
+import { withHeldDayChange } from "@features/platform-aggregated-assets";
 import { useMarketDayChange } from "LLD/hooks/useMarketDayChange";
 import { MARKET_BANNER_ITEMS_COUNT } from "../utils/constants";
 
@@ -197,15 +198,4 @@ export function useMarketBannerViewModel(): MarketBannerItems {
     [banner.items, heldDayChange],
   );
   return { ...banner, items };
-}
-
-function withHeldDayChange(
-  items: MarketItemPerformer[],
-  heldDayChange: ReadonlyMap<string, number>,
-): MarketItemPerformer[] {
-  if (heldDayChange.size === 0) return items;
-  return items.map(item => {
-    const change = heldDayChange.get(item.id);
-    return change === undefined ? item : { ...item, priceChangePercentage24h: change };
-  });
 }

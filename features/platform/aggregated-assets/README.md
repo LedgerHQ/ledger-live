@@ -17,6 +17,11 @@ a hook already fetched — `selectTopStocks`, `selectTopAssetsByCategory`, `sele
 `selectCurrencyForMetaId`. Global Search, the Stocks section and the asset selectors call those
 directly rather than through a hook, so exporting them is deliberate.
 
+`heldMarketDayChange` and its helpers turn a `/v3/markets` response for held currencies into the
+24h change by ledger id and by market id. The desktop app fetches that response once and every 1D
+variation (tables, banner, asset page, account header) reads it through these helpers. A network id
+pairs with the market of the same ticker, so ETH held on Optimism reads ETH and not the OP token.
+
 What stays internal: the RTK Query endpoint objects, the `assetsDataApi` instance, and the cache
 selectors in `selectors/` — nothing outside this package imports them.
 

@@ -46,7 +46,6 @@ jest.mock("~/renderer/hooks/useAccountUnit", () => ({
 
 const mockHeldDayChangeByLedgerId = jest.fn((): Map<string, number> => new Map<string, number>());
 jest.mock("LLD/hooks/useMarketDayChange", () => ({
-  ...jest.requireActual("LLD/hooks/useMarketDayChange"),
   useMarketDayChange: () => ({
     byLedgerId: mockHeldDayChangeByLedgerId(),
     byMarketId: new Map(),
@@ -87,7 +86,7 @@ const baseProps = {
 
 beforeEach(() => {
   jest.clearAllMocks();
-  jest.mocked(useTimeRange).mockReturnValue(["month", jest.fn()]);
+  jest.mocked(useTimeRange).mockReturnValue(["month", jest.fn(), []]);
   mockHeldDayChangeByLedgerId.mockReturnValue(new Map());
 });
 
@@ -114,7 +113,7 @@ describe("AccountBalanceSummary — AccountBalanceSummaryFooter family slot", ()
 describe("AccountBalanceSummary day variation", () => {
   it("should use the market 24h change when the range is a day", () => {
     mockFamily.mockReturnValue({} as never);
-    jest.mocked(useTimeRange).mockReturnValue(["day", jest.fn()]);
+    jest.mocked(useTimeRange).mockReturnValue(["day", jest.fn(), []]);
     mockHeldDayChangeByLedgerId.mockReturnValue(new Map([["bitcoin", 1.4]]));
 
     render(<AccountBalanceSummary {...baseProps} />);

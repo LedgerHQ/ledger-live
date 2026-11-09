@@ -1,7 +1,8 @@
 import React, { useCallback } from "react";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useSelector } from "LLD/hooks/redux";
-import { countervalueChangeFromDayPercent, useMarketDayChange } from "LLD/hooks/useMarketDayChange";
+import { countervalueChangeFromDayPercent } from "@features/platform-aggregated-assets";
+import { useMarketDayChange } from "LLD/hooks/useMarketDayChange";
 import { useBalanceHistoryWithCountervalue, usePortfolio } from "~/renderer/actions/portfolio";
 import BigNumber from "bignumber.js";
 import { formatShort } from "@ledgerhq/live-common/currencies/index";

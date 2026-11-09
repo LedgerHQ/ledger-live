@@ -17,6 +17,7 @@ import {
 import { useAssetDetailChartSeries } from "../../hooks/useAssetDetailChartSeries";
 import { isChartDerivedPriceChangeRange } from "@ledgerhq/live-common/market/utils/chartRangeVariation";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
+import { heldDayChangeOfAsset } from "@features/platform-aggregated-assets";
 import { useMarketDayChange } from "LLD/hooks/useMarketDayChange";
 import {
   resolveMarketPriceSectionSourceId,
@@ -101,8 +102,7 @@ export function useMarketPriceSectionViewModel({
     resolveAssetDetailSectionLoading(isDistributionLoading, marketData.isLoading, hasPriceData),
   );
 
-  const { byLedgerId, byMarketId } = useMarketDayChange();
-  const heldChange = heldDayChangeForAsset(ledgerId, data, byLedgerId, byMarketId);
+  const heldChange = heldDayChangeOfAsset(useMarketDayChange(), ledgerId, data?.id);
   const priceChangePercentage = useMemo(
     () =>
       data && heldChange !== undefined
@@ -190,18 +190,6 @@ export function useMarketPriceSectionViewModel({
     isScrubbing,
     scrubbedDateLabel: isScrubbing ? formatHoverDate(selection.timestamp) : undefined,
   };
-}
-
-function heldDayChangeForAsset(
-  ledgerId: string | undefined,
-  market: { readonly id: string; readonly ledgerIds: readonly string[] } | null | undefined,
-  byLedgerId: ReadonlyMap<string, number>,
-  byMarketId: ReadonlyMap<string, number>,
-): number | undefined {
-  if (ledgerId != null && byLedgerId.has(ledgerId)) return byLedgerId.get(ledgerId);
-  const ledgerMatch = market?.ledgerIds.find(id => byLedgerId.has(id));
-  if (ledgerMatch != null) return byLedgerId.get(ledgerMatch);
-  return market ? byMarketId.get(market.id) : undefined;
 }
 
 export type MarketPriceSectionViewModelResult = Omit<
