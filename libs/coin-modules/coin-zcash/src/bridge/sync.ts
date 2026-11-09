@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import { catchError, defer, from, map, merge, mergeMap, Observable, of, scan, timeout } from "rxjs";
 import type {

@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { getDefaultTrustLimit } from "@ledgerhq/coin-xrp/logic-public";
 import { buildContext } from "../../bridge/generic-coin-framework/api/context";

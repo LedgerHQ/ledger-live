@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { renderHook } from "@testing-library/react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { IDLE_SPONSORED_STATE } from "./fixtures/state";
 import { USDT_FEE_ASSET, USDT_RENT_PAYMENT } from "./fixtures/usdt";

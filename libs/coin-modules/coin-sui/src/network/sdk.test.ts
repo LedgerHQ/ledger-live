@@ -2,7 +2,7 @@ import assert from "assert";
 import { NotEnoughBalanceFees } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { ClientWithCoreApi } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import coinConfig from "../config";
 import type { SuiCoinConfig } from "../config";
 import { mist, ONE_SUI } from "../constants";

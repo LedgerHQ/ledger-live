@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { DEFAULT_FEES_SAFETY_BUFFER } from "../constants";
 import { polkadotMainnetConfigValue } from "../test/config.fixture";
 import { PolkadotAccount, PolkadotResources } from "../types";

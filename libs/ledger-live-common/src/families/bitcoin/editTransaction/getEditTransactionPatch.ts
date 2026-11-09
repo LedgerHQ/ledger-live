@@ -1,5 +1,5 @@
 import type { Account } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import type { EditType, Transaction as BtcTransaction } from "../types";
 import { buildRbfCancelTx, buildRbfSpeedUpTx } from "./buildRbfTransaction";

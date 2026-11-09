@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { genAccount } from "../../mock/account";
 import { createFixtureTokenAccount } from "../../mock/fixtures/cryptoCurrencies";

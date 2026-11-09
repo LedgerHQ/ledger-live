@@ -1,5 +1,5 @@
 import { defineCommand, option } from "@bunli/core";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { z } from "zod";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";

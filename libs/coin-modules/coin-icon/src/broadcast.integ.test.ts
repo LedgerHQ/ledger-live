@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import IconService, { SignedTransaction, Wallet } from "icon-sdk-js";
 import { broadcast } from "./broadcast";
 import { MAINNET_NID, RPC_VERSION } from "./constants";

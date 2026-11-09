@@ -1,4 +1,4 @@
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 import type { PnlTrend } from "@ledgerhq/wallet-pnl";
 import type { PnlDetailItem } from "./components/PnlDetailDrawer/types";
 

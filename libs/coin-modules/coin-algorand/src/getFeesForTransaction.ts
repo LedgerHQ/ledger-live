@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { buildTransactionPayload, encodeToSign } from "./buildTransaction";
 import { getCoinConfig } from "./config";
 import { getTransactionParams } from "./network";

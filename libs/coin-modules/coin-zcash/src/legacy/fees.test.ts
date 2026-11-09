@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import cryptoFactory from "@ledgerhq/wallet-btc/crypto/factory";
 import type { TransactionInfo } from "@ledgerhq/wallet-btc/index";
 import { maxTxVBytesCeil } from "@ledgerhq/wallet-btc/utils";

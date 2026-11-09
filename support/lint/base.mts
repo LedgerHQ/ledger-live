@@ -1,5 +1,6 @@
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "oxlint";
+import { BIGNUMBER_NAMED_IMPORT } from "./restricted-imports.mts";
 
 // The root of the lint preset chain. Every other preset in this package extends it, so the baseline
 // is written once and a layer preset only records where it differs. A layer that does not differ
@@ -23,6 +24,7 @@ export default defineConfig({
     "eslint/no-console": ["error", { allow: ["warn", "error"] }],
     "eslint/no-empty-pattern": "warn",
     "eslint/no-unused-vars": "warn",
+    "eslint/no-restricted-imports": ["error", { paths: [BIGNUMBER_NAMED_IMPORT] }],
     "import/no-duplicates": "error",
     "import/no-named-as-default": "off",
     "typescript/no-deprecated": "error",

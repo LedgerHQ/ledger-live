@@ -6,7 +6,7 @@ import { useCalculate } from "@features/platform-market-countervalues";
 import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
 import { discreetModeSelector } from "~/reducers/settings";
 import type { Account } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";

@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import suiAPI from "../network";
 import type { SuiCoinConfig } from "../config";
 import { estimateFees } from "./estimateFees";

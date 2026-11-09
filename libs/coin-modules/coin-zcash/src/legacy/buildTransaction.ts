@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import wallet, { Merge, type Account as WalletAccount } from "@ledgerhq/wallet-btc/index";
 import type { TransactionInfo } from "@ledgerhq/wallet-btc/index";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";

@@ -11,7 +11,7 @@ import {
 import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { isValidSuiAddress } from "@mysten/sui/utils";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { ONE_SUI } from "../constants";
 import {
   OneSuiMinForStake,

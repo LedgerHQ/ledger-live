@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import type { Currency } from "@domain/entity-currency";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";

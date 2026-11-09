@@ -4,7 +4,7 @@ import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
 import { sha256 } from "@noble/hashes/sha2";
 import { isAxiosError } from "axios";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import {
   JsonRpcProvider,
   base64Decode,

@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getAmountAndRecipient, getRbfContext } from "@ledgerhq/coin-bitcoin/rbfContext";
 import { bitcoinPickingStrategy } from "@ledgerhq/coin-bitcoin/types";
 import { buildRbfCancelTx, buildRbfSpeedUpTx } from "./buildRbfTransaction";

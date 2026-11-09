@@ -1,6 +1,6 @@
 import React from "react";
 import { View } from "react-native";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { render, screen, waitFor } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";

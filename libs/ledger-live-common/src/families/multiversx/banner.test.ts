@@ -1,6 +1,6 @@
 import { getAccountBannerState } from "./banner";
 import { MultiversXAccount, MultiversXDelegation, MultiversXProvider } from "./types";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { MULTIVERSX_LEDGER_VALIDATOR_ADDRESS } from "./constants";
 
 describe("getAccountBannerState", () => {

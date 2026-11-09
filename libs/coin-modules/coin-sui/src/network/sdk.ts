@@ -18,7 +18,7 @@ import type { SuiGrpcClient } from "@mysten/sui/grpc";
 import { coinWithBalance, Transaction } from "@mysten/sui/transactions";
 import { makeSuiClientFromGraphQL } from "./graphql/sui-client-adapter";
 import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { type SuiCoinConfig, type SuiTransport } from "../config";
 import { BLOCK_HEIGHT, ONE_SUI } from "../constants";
 import type {

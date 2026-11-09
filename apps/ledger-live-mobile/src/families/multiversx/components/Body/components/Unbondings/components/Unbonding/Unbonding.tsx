@@ -4,7 +4,7 @@ import { useTheme } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";
 import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
 import { useTranslation } from "~/context/Locale";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { MULTIVERSX_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/multiversx/constants";
 
 import CounterValue from "~/components/CounterValue";

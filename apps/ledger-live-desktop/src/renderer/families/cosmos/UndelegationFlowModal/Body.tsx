@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import React, { useCallback, useState } from "react";
 import { withTranslation } from "react-i18next";
 import { TFunction } from "i18next";

@@ -7,7 +7,7 @@ import {
 import { getDefaultAccountName } from "@domain/entity-account-name";
 import type { Unit } from "@domain/entity-currency-unit";
 import type { Account, Operation } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { formatCurrencyUnit } from "../currencies";
 import { toAccountRaw } from "./serialization";

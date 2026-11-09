@@ -1,5 +1,5 @@
 import { AccountBridge } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import isEqual from "lodash/isEqual";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { getEstimatedFees } from "./getFeesForTransaction";

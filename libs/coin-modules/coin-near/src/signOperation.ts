@@ -1,7 +1,7 @@
 import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { Account, DeviceId, SignOperationEvent, AccountBridge } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import * as nearAPI from "near-api-js";
 import { Observable } from "rxjs";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";

@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { AlgorandAccount } from "./types";
 
 export function initAccount(account: AlgorandAccount): void {

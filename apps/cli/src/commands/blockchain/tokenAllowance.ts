@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { from } from "rxjs";
 import { concatMap } from "rxjs/operators";
 import type { Account, DerivationMode } from "@ledgerhq/types-live";

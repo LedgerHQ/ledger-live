@@ -3,7 +3,7 @@
  * native addon throws as soon as anything requires it, and every send step of a
  * transparent-only bridge still completes.
  */
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { firstValueFrom, toArray } from "rxjs";
 import type { TransactionInfo } from "@ledgerhq/wallet-btc/index";
 import type { Operation, SignedOperation } from "@ledgerhq/types-live";

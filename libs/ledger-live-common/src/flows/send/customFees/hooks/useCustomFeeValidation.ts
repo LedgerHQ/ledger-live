@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "../../../../coin-modules/transaction-types";
 import type { CustomFeeInputDescriptor } from "../../../../bridge/descriptor/types";

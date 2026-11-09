@@ -4,7 +4,7 @@ import { MinaAccount, Transaction } from "@ledgerhq/live-common/families/mina/ty
 import { AccountLike } from "@ledgerhq/types-live";
 import { Box, Text } from "@ledgerhq/native-ui";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "~/context/Locale";
 import { urls } from "~/utils/urls";

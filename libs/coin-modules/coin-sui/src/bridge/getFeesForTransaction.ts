@@ -1,5 +1,5 @@
 import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import suiConfig from "../config";
 import { SUI_DUMMY_ADDRESS } from "../constants";
 import { estimateFees } from "../logic";

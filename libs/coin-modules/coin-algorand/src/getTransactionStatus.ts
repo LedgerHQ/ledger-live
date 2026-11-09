@@ -11,7 +11,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { isValidAddress } from "algosdk";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import invariant from "invariant";
 
 import { computeAlgoMaxSpendable, isAmountValid, recipientHasAsset } from "./bridgeLogic";

@@ -1,6 +1,6 @@
 import { defineConfig } from "oxlint";
 import base from "./libs.mts";
-import { COIN_MODULE_CREATE_API } from "./restricted-imports.mts";
+import { BIGNUMBER_NAMED_IMPORT, COIN_MODULE_CREATE_API } from "./restricted-imports.mts";
 
 // The coin modules, and wallet-btc beside them. They run the correctness rules as errors and the
 // suspicious ones as warnings, forbid import cycles, and keep the generic coin framework between
@@ -16,7 +16,10 @@ export default defineConfig({
   rules: {
     // What the coin modules add.
     "eslint/eqeqeq": "error",
-    "eslint/no-restricted-imports": ["error", { patterns: [COIN_MODULE_CREATE_API] }],
+    "eslint/no-restricted-imports": [
+      "error",
+      { paths: [BIGNUMBER_NAMED_IMPORT], patterns: [COIN_MODULE_CREATE_API] },
+    ],
     "eslint/no-unsafe-optional-chaining": "warn",
     "import/no-cycle": "error",
     "jest/no-focused-tests": "warn",
@@ -49,6 +52,7 @@ export default defineConfig({
         "eslint/no-restricted-imports": [
           "warn",
           {
+            paths: [BIGNUMBER_NAMED_IMPORT],
             patterns: [
               {
                 group: [
@@ -71,7 +75,10 @@ export default defineConfig({
     {
       files: ["**/src/api/**"],
       rules: {
-        "eslint/no-restricted-imports": ["error", { patterns: [COIN_MODULE_CREATE_API] }],
+        "eslint/no-restricted-imports": [
+          "error",
+          { paths: [BIGNUMBER_NAMED_IMPORT], patterns: [COIN_MODULE_CREATE_API] },
+        ],
       },
     },
     {
@@ -92,12 +99,12 @@ export default defineConfig({
         "eslint/no-console": "off",
         "typescript/no-explicit-any": "off",
         "typescript/consistent-type-assertions": "off",
-        "eslint/no-restricted-imports": "off",
+        "eslint/no-restricted-imports": ["error", { paths: [BIGNUMBER_NAMED_IMPORT] }],
       },
     },
     {
       files: ["coin-celo/src/api/index.ts", "coin-celo/src/bridge/synchronisation.ts"],
-      rules: { "eslint/no-restricted-imports": "off" },
+      rules: { "eslint/no-restricted-imports": ["error", { paths: [BIGNUMBER_NAMED_IMPORT] }] },
     },
     {
       // coin-bitcoin and wallet-btc have import cycles they have not broken yet. The globs anchor

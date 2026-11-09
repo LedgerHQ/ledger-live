@@ -6,7 +6,7 @@ import {
 import { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { toNano } from "@ton/core";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { TOKEN_TRANSFER_MAX_FEE } from "./constants";
 import type { Transaction, TransactionStatus } from "./types";
 

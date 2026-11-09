@@ -1,5 +1,5 @@
 import { useState, useRef, useMemo } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { Transaction } from "../../../../coin-modules/transaction-types";

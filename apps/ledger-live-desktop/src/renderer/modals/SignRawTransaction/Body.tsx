@@ -1,6 +1,6 @@
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";

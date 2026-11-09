@@ -1,7 +1,7 @@
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import liveNetwork from "@ledgerhq/live-network";
 import { Operation, OperationType } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { type NearConfig } from "../config";
 import { NearTransaction, NearV3Response } from "./sdk.types";
 

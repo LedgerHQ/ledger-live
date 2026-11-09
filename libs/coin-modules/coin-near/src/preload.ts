@@ -1,5 +1,5 @@
 import { log } from "@ledgerhq/logs";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { VALIDATORS_COUNT } from "./constants";
 import { getGasPrice, getValidators } from "./network/node";
 import { getActionCosts } from "./network/protocolConfig";

@@ -2,7 +2,7 @@ import React from "react";
 import { act, renderHook } from "@testing-library/react";
 import { configureStore, type Middleware, type UnknownAction } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import {
   applyRatePatches,
   pairId,

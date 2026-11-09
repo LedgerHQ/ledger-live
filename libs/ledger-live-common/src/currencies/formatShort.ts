@@ -1,5 +1,5 @@
 import numeral from "numeral";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import type { Unit } from "@domain/entity-currency-unit";
 
