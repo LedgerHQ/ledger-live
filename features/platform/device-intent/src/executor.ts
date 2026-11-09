@@ -155,8 +155,6 @@ export interface DeviceIntentExecutorProps<
   deviceConnectionParams: DeviceConnectionParams;
   /** Initialization input; changing it triggers a new device-context initialisation. */
   deviceInitializationInput: InitInput;
-  /** Optional. Called whenever the executor's own lifecycle state changes. */
-  onExecutorStateChanged?: (executorState: ExecutorState) => void;
   /** The current intent to execute. */
   intent: Intent<JobState, Input, ExtraProps, Result>;
   /** Extra props forwarded directly to the intent's UI component. */
@@ -169,6 +167,8 @@ export interface DeviceIntentExecutorProps<
   onUserCancel: () => void;
   /** Optional. Set to a new value to request cancellation of the ongoing job. */
   cancelIntentRequestId?: string;
+  /** Optional. Called whenever the executor's own lifecycle state changes. */
+  onExecutorStateChanged?: (executorState: ExecutorState) => void;
   /** Optional. Called whenever the running job emits a new state. */
   onIntentJobStateChanged?: (jobState: JobState) => void;
   /** Optional. Called when the job observable completes. */
