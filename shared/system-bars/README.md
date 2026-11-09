@@ -34,8 +34,10 @@ failure cannot be caught here.
 `paintBackground`, which gets the color as an Android ARGB number; without it only the button color
 changes. Ledger Wallet Mobile passes its native `NavigationBarColorModule`, which paints only on
 Android 10–14, where the app is not edge-to-edge. Android 15+ always draws edge-to-edge, so the app
-canvas shows behind the bar. On Android 8–9 the library draws a translucent scrim that matches the
-button color; below Android 8 nothing changes.
+canvas shows behind the bar. When the Activity resumes, the module repaints the last color and, on
+Android 10+, restores the button style from its luminance, so both survive Activity recreation. On
+Android 8–9 the library draws a translucent scrim that matches the button color; below Android 8
+nothing changes.
 
 ## Testing
 
