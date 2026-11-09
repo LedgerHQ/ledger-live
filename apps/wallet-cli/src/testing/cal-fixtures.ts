@@ -1,3 +1,5 @@
+import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
+import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
 import type { TokenInfo } from "../wallet/models";
 
 export const USDT_CONTRACT = "0xdac17f958d2ee523a2206206994597c13d831ec7";
@@ -26,4 +28,18 @@ export const USDT_TOKEN_INFO: TokenInfo = {
   parentCurrencyId: "ethereum",
   tokenType: "erc20",
   decimals: 6,
+};
+
+export const USDT_TOKEN_CURRENCY: TokenCurrency = {
+  type: "TokenCurrency",
+  id: TokenCurrencyIdSchema.parse("ethereum/erc20/usd_tether__erc20_"),
+  name: "Tether USD",
+  ticker: "USDT",
+  contractAddress: USDT_CONTRACT,
+  tokenType: "erc20",
+  units: [
+    { name: "USDT", code: "USDT", magnitude: 6 },
+    { name: "micro USDT", code: "uUSDT", magnitude: 0 },
+  ],
+  parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
 };
