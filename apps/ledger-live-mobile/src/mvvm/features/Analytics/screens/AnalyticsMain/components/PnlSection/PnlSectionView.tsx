@@ -19,7 +19,7 @@ export function PnlSectionView({
   realised,
   openDrawer,
   drawer,
-}: PnlSectionViewProps) {
+}: Readonly<PnlSectionViewProps>) {
   return (
     <Box lx={{ gap: "s12", paddingHorizontal: "s16" }} testID={PNL_SECTION_TEST_IDS.root}>
       <Subheader>

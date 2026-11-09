@@ -124,7 +124,8 @@ export function useChartSectionModel({
     [dispatch, selectedTimeRange, setSelection],
   );
 
-  const rangePercentageValue = valueChange.percentage == null ? NaN : valueChange.percentage * 100;
+  const rangePercentageValue =
+    valueChange.percentage == null ? Number.NaN : valueChange.percentage * 100;
   const scrubVariation = useMemo(() => {
     if (selection == null) return undefined;
     const baselinePrice = prices[0];
