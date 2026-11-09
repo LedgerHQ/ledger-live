@@ -7,7 +7,7 @@ import {
   type AgentIntentEnvironment,
   type AgentKeycloakConfig,
 } from "@ledgerhq/agent-intent-sdk";
-import { AGENT_INTENT_TRUSTCHAIN_URLS } from "../key-ring/constants";
+import { TRUSTCHAIN_URLS } from "../key-ring/constants";
 import { hasUrlCredentials } from "./profile-format";
 
 const DURATION_RE = /^([1-9]\d*)([smhd])$/;
@@ -71,7 +71,7 @@ export function createRelayHost(
 ): AgentEnrollmentChannelHost {
   return createAgentEnrollmentChannelHost({
     environment,
-    relayBaseUrl: AGENT_INTENT_TRUSTCHAIN_URLS[environment],
+    relayBaseUrl: TRUSTCHAIN_URLS[environment],
     timeouts: { candidateTimeoutMs: expiresInMs, completionTimeoutMs: expiresInMs },
   });
 }
