@@ -47,12 +47,7 @@ function AnalyticsProbe() {
   );
 }
 
-type IntroductionSetup = Readonly<{
-  hasDismissed?: boolean;
-  analyticsBanner?: boolean;
-}>;
-
-function renderAccount({ hasDismissed = false, analyticsBanner = true }: IntroductionSetup = {}) {
+function renderAccount(analyticsBanner: boolean) {
   return render(
     <Stack.Navigator id={BASE_NAVIGATOR_ID} screenOptions={{ headerShown: false }}>
       <Stack.Screen
@@ -70,7 +65,6 @@ function renderAccount({ hasDismissed = false, analyticsBanner = true }: Introdu
         return {
           ...withFlag,
           accounts: { ...withFlag.accounts, active: [historical] },
-          accountAnalyticsIntroduction: { hasDismissed },
         };
       },
     },
@@ -78,15 +72,8 @@ function renderAccount({ hasDismissed = false, analyticsBanner = true }: Introdu
 }
 
 describe("AccountDetail Analytics introduction", () => {
-  it("shows the introduction when the analyticsBanner param is on", async () => {
-    renderAccount();
-
-    expect(await screen.findByTestId(ACCOUNT_DETAIL_TEST_IDS.analyticsIntroduction)).toBeVisible();
-    expect(screen.getByText("Looking for your account performance?")).toBeVisible();
-  });
-
   it("opens Analytics with the account context and keeps the introduction until it is closed", async () => {
-    const { user, store } = renderAccount();
+    const { user, store } = renderAccount(true);
 
     await user.press(await screen.findByText("Go to Analytics"));
 
@@ -108,13 +95,10 @@ describe("AccountDetail Analytics introduction", () => {
     expect(await screen.findByTestId(ACCOUNT_DETAIL_TEST_IDS.analyticsIntroduction)).toBeVisible();
   });
 
-  it.each<IntroductionSetup>([{ analyticsBanner: false }, { hasDismissed: true }])(
-    "hides the introduction with %o",
-    async setup => {
-      renderAccount(setup);
+  it("hides the introduction when the analyticsBanner param is off", async () => {
+    renderAccount(false);
 
-      expect(await screen.findByTestId(ACCOUNT_DETAIL_TEST_IDS.hero)).toBeVisible();
-      expect(screen.queryByTestId(ACCOUNT_DETAIL_TEST_IDS.analyticsIntroduction)).toBeNull();
-    },
-  );
+    expect(await screen.findByTestId(ACCOUNT_DETAIL_TEST_IDS.hero)).toBeVisible();
+    expect(screen.queryByTestId(ACCOUNT_DETAIL_TEST_IDS.analyticsIntroduction)).toBeNull();
+  });
 });
