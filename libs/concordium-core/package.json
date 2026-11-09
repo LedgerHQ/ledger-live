@@ -27,7 +27,7 @@
     "format:check": "pnpm exec oxfmt ./src --check"
   },
   "dependencies": {
-    "bs58check": "^3.0.1"
+    "bs58check": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
