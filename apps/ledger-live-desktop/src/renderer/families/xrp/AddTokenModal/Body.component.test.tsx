@@ -4,7 +4,7 @@ import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Operation } from "@ledgerhq/types-live";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { getMaxTrustLimitForToken } from "@ledgerhq/live-common/families/xrp/logicPublic";
-import { act, render } from "tests/testSetup";
+import { act, render, screen } from "tests/testSetup";
 import logger from "~/renderer/logger";
 import Body, { type Data } from "./Body";
 import type { StepId, StepProps } from "./types";
@@ -41,19 +41,25 @@ jest.mock("@ledgerhq/live-common/bridge/useBridgeTransaction", () => ({
   },
 }));
 jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
-  SyncSkipUnderPriority: () => null,
+  SyncSkipUnderPriority: () => "sync paused",
 }));
 jest.mock("@shared/analytics-react", () => ({
   ...jest.requireActual("@shared/analytics-react"),
   Track: () => null,
 }));
 
-type StepperProps = Omit<StepProps, "transitionTo"> & { errorSteps: number[] };
+type StepperProps = Omit<StepProps, "transitionTo"> & {
+  errorSteps: number[];
+  children: React.ReactNode;
+};
 
 const mockStepper = jest.fn<null, [StepperProps]>(() => null);
 jest.mock("~/renderer/components/Stepper", () => ({
   __esModule: true,
-  default: (props: StepperProps) => mockStepper(props),
+  default: (props: StepperProps) => {
+    mockStepper(props);
+    return props.children;
+  },
 }));
 
 const mockGetMaxTrustLimit = jest.mocked(getMaxTrustLimitForToken);
@@ -79,11 +85,11 @@ function deferMaxLimits() {
     });
 }
 
-function renderBody(params: Partial<Data> = {}) {
+function renderBody(params: Partial<Data> = {}, stepId: StepId = "token") {
   const onChangeStepId = jest.fn<void, [StepId]>();
   render(
     <Body
-      stepId="token"
+      stepId={stepId}
       onClose={jest.fn()}
       onChangeStepId={onChangeStepId}
       params={{ account: XRP_ACCOUNT, ...params }}
@@ -195,6 +201,14 @@ describe("xrp AddTokenModal Body", () => {
     const edit = renderBody({ tokenAccount: XRP_IOU_TOKEN_ACCOUNT });
     act(() => stepper().onRetry());
     expect(edit.onChangeStepId).toHaveBeenCalledWith("settings");
+  });
+
+  it("pauses background syncs until the confirmation, which syncs the account", () => {
+    renderBody({}, "review");
+    expect(screen.getByText("sync paused")).toBeInTheDocument();
+
+    renderBody({}, "confirmation");
+    expect(screen.getAllByText("sync paused")).toHaveLength(1);
   });
 
   it("forgets the previous signature on retry", () => {

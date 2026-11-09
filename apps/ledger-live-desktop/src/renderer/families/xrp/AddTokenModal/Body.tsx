@@ -268,7 +268,7 @@ export default function Body({ stepId, onClose, onChangeStepId, params }: Props)
       hideBreadcrumb={!!error}
       onStepChange={(step: AddTokenStep) => onChangeStepId(step.id)}
     >
-      <SyncSkipUnderPriority priority={100} />
+      {stepId === "confirmation" ? null : <SyncSkipUnderPriority priority={100} />}
       <Track onUnmount event="CloseModalXrpAddToken" />
     </Stepper>
   );
