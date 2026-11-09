@@ -1,5 +1,5 @@
 import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
-import { InvalidUtxoId, UnknownUtxo } from "../../errors";
+import { InvalidReplacementInput, InvalidUtxoId, UnknownUtxo } from "../../errors";
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { Psbt, Transaction, address as btcAddress } from "bitcoinjs-lib";
 import { http, HttpResponse } from "msw";
@@ -566,6 +566,100 @@ describe("craftTransaction replacing an unconfirmed transaction", () => {
     expect(estimation.parameters).toEqual(
       expect.objectContaining({ inputCount: 1, sufficient: false }),
     );
+  });
+
+  const output = (hash: string, outputIndex: number, value: number) => ({
+    hash,
+    txId: hash,
+    outputIndex,
+    value: String(value),
+    hex: senderScript.toString("hex"),
+  });
+  const aId = () => selectedUtxos[0].split(":")[0];
+  // The free confirmed output b is the second funding transaction.
+  const bId = () => fundingTransaction(senderScript, 60_000, 1).getId();
+  const selecting = (...ids: string[]) =>
+    replace({ data: { type: "unknown", utxoStrategy: { selectedUtxos: ids } } } as never);
+
+  describe("selecting more than the original's inputs", () => {
+    const pending = "e".repeat(64);
+    const child = "f".repeat(64);
+    const unrelated = "d".repeat(64);
+
+    it("refuses an output created by a transaction it replaces", async () => {
+      // pending spends a and creates pending:1; child spends pending:1 and is replaced with it.
+      server.use(
+        pendingUtxosHandler(sender, {
+          spent: [output(aId(), 0, 80_000), output(pending, 1, 200_000)],
+          created: [output(pending, 1, 200_000), output(child, 0, 150_000)],
+        }),
+        txHandler(child, [`${pending}:1`]),
+      );
+      const ids = [`${aId()}:0`, `${pending}:1`];
+      await expect(craftTransaction(testContext(), "bitcoin", selecting(...ids))).rejects.toEqual(
+        expect.objectContaining({ name: "InvalidReplacementInput", utxoIds: [`${pending}:1`] }),
+      );
+      await expect(
+        estimateFees(testContext(), "bitcoin", selecting(...ids)),
+      ).rejects.toBeInstanceOf(InvalidReplacementInput);
+    });
+
+    it("refuses adding the unconfirmed change of an unrelated pending transaction", async () => {
+      server.use(
+        pendingUtxosHandler(sender, {
+          spent: [output(aId(), 0, 80_000), output(bId(), 0, 60_000)],
+          created: [output(pending, 1, 200_000), output(unrelated, 0, 40_000)],
+        }),
+        txHandler(unrelated, [`${bId()}:0`]),
+      );
+      await expect(
+        craftTransaction(testContext(), "bitcoin", selecting(`${aId()}:0`, `${unrelated}:0`)),
+      ).rejects.toEqual(
+        expect.objectContaining({ name: "InvalidReplacementInput", utxoIds: [`${unrelated}:0`] }),
+      );
+    });
+
+    it("accepts an original input that is itself unconfirmed change", async () => {
+      // upstream spends b and creates upstream:0; pending spends a and upstream:0.
+      const upstreamTx = fundingTransaction(senderScript, 50_000, 5);
+      const upstream = upstreamTx.getId();
+      server.use(
+        http.get(`${explorerUrl()}/tx/${upstream}/hex`, () =>
+          HttpResponse.json({ transaction_hash: upstream, hex: upstreamTx.toHex() }),
+        ),
+        pendingUtxosHandler(sender, {
+          spent: [output(aId(), 0, 80_000), output(bId(), 0, 60_000), output(upstream, 0, 50_000)],
+          created: [output(upstream, 0, 50_000), output(pending, 1, 100_000)],
+        }),
+        txHandler(upstream, [`${bId()}:0`]),
+        txHandler(pending, [`${aId()}:0`, `${upstream}:0`]),
+      );
+      const crafted = await craftTransaction(
+        testContext(),
+        "bitcoin",
+        selecting(`${aId()}:0`, `${upstream}:0`),
+        { value: 0n, parameters: { feePerByte: 9n } },
+      );
+      expect(
+        inputsOf(crafted)
+          .map(input => `${input.hash}:${input.outputIndex}`)
+          .sort(),
+      ).toEqual([`${aId()}:0`, `${upstream}:0`].sort());
+    });
+
+    it("accepts a confirmed output next to a replaced input", async () => {
+      const crafted = await craftTransaction(
+        testContext(),
+        "bitcoin",
+        selecting(`${aId()}:0`, `${bId()}:0`),
+        { value: 0n, parameters: { feePerByte: 9n } },
+      );
+      expect(
+        inputsOf(crafted)
+          .map(input => `${input.hash}:${input.outputIndex}`)
+          .sort(),
+      ).toEqual([`${aId()}:0`, `${bId()}:0`].sort());
+    });
   });
 
   it("refuses on a currency that does not signal RBF", async () => {

@@ -1,5 +1,5 @@
 import type { BitcoinCoinConfig } from "../config";
-import { ReplacementNotSupported, UnknownUtxo } from "../errors";
+import { InvalidReplacementInput, ReplacementNotSupported, UnknownUtxo } from "../errors";
 import { getFeeRate } from "./getFeeRate";
 import { getSpendableUtxosWithMempool, outpoint } from "./getSpendableUtxos";
 import type { BitcoinIntent } from "./intent";
@@ -66,8 +66,11 @@ export function formatBytes(config: BitcoinCoinConfig, inputCount: number): numb
  *
  * Selecting an output a pending transaction of the address already spends plans that transaction's
  * replacement (speed-up or cancel), on a currency that signals RBF (`ReplacementNotSupported`
- * otherwise). The replacement spends exactly the selected outputs, as any selection, so it adds no
- * unconfirmed input (BIP-125), and never spends what the replaced transactions create.
+ * otherwise). The replacement spends exactly the selected outputs, as any selection. Each must be
+ * an input of a replaced transaction (even an unconfirmed one: the original already spent it), or a
+ * confirmed output; anything else is refused (`InvalidReplacementInput`), as the node would refuse
+ * it at broadcast: an output a replaced transaction creates (it would conflict with itself), or any
+ * other unconfirmed output, which adds an unconfirmed input (BIP-125).
  *
  * `recipientScript` defaults to the intent's recipient; `estimateFees` passes the sender's own
  * script while the recipient is not yet a valid address. An imposed absolute fee reads no explorer
@@ -121,9 +124,23 @@ export async function planTransaction(
     const id = outpoint(utxo.hash, utxo.outputIndex);
     return !excluded.has(id) && !replacedOutputs.has(id);
   });
+  const ownChangeIds = new Set(
+    mempool.ownChange.map(utxo => outpoint(utxo.hash, utxo.outputIndex)),
+  );
   // A selected output is spendable, or spent by a pending transaction that is replaced; any other
-  // is refused here, in one place.
+  // is refused here, in one place. A replacement also refuses the outputs the node would.
   const selected = selectedIds.map(id => {
+    if (replacing && replacedOutputs.has(id)) {
+      throw new InvalidReplacementInput(
+        `UTXO ${id} is created by a transaction the replacement replaces`,
+        { utxoIds: [id] },
+      );
+    }
+    if (replacing && !mempool.spent.has(id) && ownChangeIds.has(id)) {
+      throw new InvalidReplacementInput(`UTXO ${id} is unconfirmed: a replacement cannot add it`, {
+        utxoIds: [id],
+      });
+    }
     const found =
       candidates.find(utxo => outpoint(utxo.hash, utxo.outputIndex) === id) ??
       mempool.spentUtxos.find(utxo => outpoint(utxo.hash, utxo.outputIndex) === id);
