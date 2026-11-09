@@ -548,6 +548,80 @@ describe("adaptA4OperationToLiveOperation", () => {
     ).toEqual([]);
   });
 
+  it("skips ERC-721 transfer parts", () => {
+    const op: A4OperationView = {
+      block: { hash: "0xblockhash", height: 1000, time: "2024-01-01T00:00:00Z" },
+      tx: { hash: "0xtxhash" },
+      assets: { "erc721.0xcontract.42": "-1" },
+      events: {},
+      failed: false,
+      fees: "21000",
+      feeAsset: "native",
+      senders: ["0xaddress"],
+      recipients: ["0x0000000000000000000000000000000000000000"],
+      parts: [
+        { type: "transfer", address: "0xaddress", asset: "erc721.0xcontract.42", amount: "-1" },
+      ],
+    };
+    expect(adaptA4OperationToLiveOperation("accountId", "0xaddress", op)).toEqual([]);
+  });
+
+  it("skips ERC-1155 transfer parts", () => {
+    const op: A4OperationView = {
+      block: { hash: "0xblockhash", height: 1000, time: "2024-01-01T00:00:00Z" },
+      tx: { hash: "0xtxhash" },
+      assets: { "erc1155.0xcontract.7": "5" },
+      events: {},
+      failed: false,
+      fees: "21000",
+      feeAsset: "native",
+      senders: ["0xother"],
+      recipients: ["0xaddress"],
+      parts: [
+        { type: "transfer", address: "0xaddress", asset: "erc1155.0xcontract.7", amount: "5" },
+      ],
+    };
+    expect(adaptA4OperationToLiveOperation("accountId", "0xaddress", op)).toEqual([]);
+  });
+
+  it("keeps the native part of a transaction that also moves an NFT", () => {
+    const op: A4OperationView = {
+      block: { hash: "0xblockhash", height: 1000, time: "2024-01-01T00:00:00Z" },
+      tx: { hash: "0xtxhash" },
+      assets: { native: "-1000000", "erc721.0xcontract.42": "-1" },
+      events: {},
+      failed: false,
+      fees: "21000",
+      feeAsset: "native",
+      senders: ["0xaddress"],
+      recipients: ["0xrecipient"],
+      parts: [
+        { type: "transfer", address: "0xaddress", asset: "native", amount: "-1000000" },
+        { type: "transfer", address: "0xaddress", asset: "erc721.0xcontract.42", amount: "-1" },
+      ],
+    };
+    expect(adaptA4OperationToLiveOperation("accountId", "0xaddress", op)).toEqual([
+      expect.objectContaining({ type: "OUT", value: new BigNumber(1021000) }),
+    ]);
+  });
+
+  it("skips NFT assets when there are no parts", () => {
+    const op: A4OperationView = {
+      block: { hash: "0xblockhash", height: 1000, time: "2024-01-01T00:00:00Z" },
+      tx: { hash: "0xtxhash" },
+      assets: { native: "-1000000", "erc721.0xcontract.42": "-1" },
+      events: {},
+      failed: false,
+      fees: "21000",
+      feeAsset: "native",
+      senders: ["0xaddress"],
+      recipients: ["0xrecipient"],
+    };
+    expect(adaptA4OperationToLiveOperation("accountId", "0xaddress", op)).toEqual([
+      expect.objectContaining({ type: "OUT", value: new BigNumber(1000000) }),
+    ]);
+  });
+
   it("skips event parts", () => {
     const op: A4OperationView = {
       block: { hash: "0xblockhash", height: 1000, time: "2024-01-01T00:00:00Z" },

@@ -1,7 +1,7 @@
 import "../../../../__tests__/test-helpers/setup.integration";
 import { deriveA4AccountId } from "./accountId";
 import { A4Client } from "./index";
-import { fetchA4Operations } from "./operations";
+import { adaptA4OperationToLiveOperation, fetchA4Operations } from "./operations";
 import { resolveA4BaseUrl } from "./utils";
 
 describe("A4 operations against the production server", () => {
@@ -37,6 +37,31 @@ describe("A4 operations against the production server", () => {
     ).resolves.toEqual(
       expect.objectContaining({ data: expect.objectContaining({ items: expect.any(Array) }) }),
     );
+  });
+
+  it("adapts no operation for a transaction made only of ERC-721 transfers", async () => {
+    const { data } = await client.listOperations(deriveA4AccountId(address), {
+      blocks: [26368599, 26368599],
+    });
+
+    expect(data.items).toContainEqual(
+      expect.objectContaining({
+        tx: expect.objectContaining({
+          hash: "0x360544d3d40995e7502c944b5b3a1181b791db0d89a25aad8b274fd33ae4dd2f",
+        }),
+        parts: expect.arrayContaining([
+          expect.objectContaining({ asset: expect.stringMatching(/^erc721\./) }),
+        ]),
+      }),
+    );
+    expect(
+      data.items
+        .filter(
+          item =>
+            item.tx.hash === "0x360544d3d40995e7502c944b5b3a1181b791db0d89a25aad8b274fd33ae4dd2f",
+        )
+        .flatMap(item => adaptA4OperationToLiveOperation("liveAccountId", address, item)),
+    ).toEqual([]);
   });
 
   it("fetches and adapts operations from a minimum height", async () => {
