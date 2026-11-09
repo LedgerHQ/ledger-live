@@ -29,7 +29,6 @@
     "@features/platform-predictions": "workspace:*",
     "@shared/i18n": "workspace:*",
     "@shared/linking": "workspace:*",
-    "@shared/ui-animated-height": "workspace:*",
     "@shared/ui-info-state": "workspace:*",
     "@shared/ui-queued-bottom-sheet": "workspace:*"
   },

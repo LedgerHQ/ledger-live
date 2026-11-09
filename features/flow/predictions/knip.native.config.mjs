@@ -5,5 +5,4 @@ export default createDualPlatformKnipConfig({
   platform: "native",
   entry: [],
   additionalProjectExcludes: ["src/index.ts"],
-  additionalIgnoreDependencies: ["@shared/ui-animated-height"],
 });

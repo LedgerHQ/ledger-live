@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { getProductName } from "@ledgerhq/devices";
 import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import type { PredictionsBindingJobState } from "@features/platform-predictions";
-import { AnimatedHeight } from "@shared/ui-animated-height";
 import { InfoState } from "@shared/ui-info-state";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { DeviceActionContent } from "LLD/components/DeviceActionContent";
@@ -107,10 +106,8 @@ export function PredictionsBindingIntentComponentLWD({
   if (!jobState) return null;
 
   return (
-    <AnimatedHeight>
-      <div key={jobState.type} className="flex animate-fade-in flex-col">
-        <Step jobState={jobState} onClose={onClose} />
-      </div>
-    </AnimatedHeight>
+    <div key={jobState.type} className="flex animate-fade-in flex-col">
+      <Step jobState={jobState} onClose={onClose} />
+    </div>
   );
 }

@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
-import { AnimatedHeight } from "@shared/ui-animated-height";
 import { useTranslation } from "@shared/i18n";
 import { DialogBackgroundToneProvider } from "@shared/ui-info-state/web";
 import type { PredictionsSetupSheetViewProps } from "./PredictionsSetupSheet.types";
@@ -25,7 +24,7 @@ export function PredictionsSetupSheetView({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+    <Dialog animated open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent
         className="max-h-[90vh]"
         aria-describedby={undefined}
@@ -38,11 +37,9 @@ export function PredictionsSetupSheetView({
           <DialogHeader density="compact" className="mb-0" />
           <DialogBody className="mb-0 px-24">
             {shownSetup ? (
-              <AnimatedHeight>
-                <div key={shownSetup.key} className="flex animate-fade-in flex-col">
-                  <SetupContent outcome={shownSetup.outcome} onDismiss={onDismiss} />
-                </div>
-              </AnimatedHeight>
+              <div key={shownSetup.key} className="flex animate-fade-in flex-col">
+                <SetupContent outcome={shownSetup.outcome} onDismiss={onDismiss} />
+              </div>
             ) : null}
           </DialogBody>
         </DialogBackgroundToneProvider>
