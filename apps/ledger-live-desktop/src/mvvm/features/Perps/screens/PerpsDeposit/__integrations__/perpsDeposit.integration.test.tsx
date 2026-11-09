@@ -4,6 +4,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Account } from "@ledgerhq/types-live";
 import { act, render, screen } from "tests/testSetup";
+import { setDrawer } from "~/renderer/drawers/Provider";
 import PerpsDepositRoot, { openPerpsDeposit } from "../PerpsDepositDialog";
 import PerpsReviewRoot from "../../PerpsReview/PerpsReviewDialog";
 
@@ -196,5 +197,29 @@ describe("PerpsDeposit integration", () => {
     expect(await screen.findByTestId("perps-deposit-cta")).toBeVisible();
     expect(screen.getByTestId("perps-deposit-amount-sent")).toBeVisible();
     expect(screen.queryByTestId("perps-deposit-amount-input")).not.toBeInTheDocument();
+  });
+
+  it("should step aside for the add account drawer and come back with the new account", async () => {
+    let resolvePick: (result: { account: Account }) => void = () => undefined;
+    mockOpenAssetAndAccount.mockReturnValue(
+      new Promise(resolve => {
+        resolvePick = resolve;
+      }),
+    );
+    const { user } = renderDeposit();
+
+    act(() => openPerpsDeposit({ receiverAccount }));
+
+    await user.type(screen.getByTestId("perps-deposit-amount-input"), "20");
+    await user.click(screen.getByTestId("perps-deposit-select-currency"));
+    act(() => setDrawer(() => null, {}));
+
+    expect(screen.queryByTestId("perps-deposit-amount-input")).not.toBeInTheDocument();
+
+    await act(async () => resolvePick({ account: fundingAccount }));
+    act(() => setDrawer());
+
+    expect(await screen.findByTestId("perps-deposit-amount-input")).toHaveValue("20");
+    expect(screen.getByTestId("perps-deposit-review-cta")).not.toBeDisabled();
   });
 });

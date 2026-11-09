@@ -6,7 +6,11 @@ import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { FEATURE_FLAGS_DEFAULTS, FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import { act, renderHook } from "tests/testSetup";
 import { PERPS_DEPOSIT_DEFAULT_FUNDING_CURRENCY_ID } from "../../../constants/depositFunding";
-import { usePerpsDepositViewModel, type PerpsDepositData } from "../usePerpsDepositViewModel";
+import {
+  usePerpsDepositFormState,
+  usePerpsDepositViewModel,
+  type PerpsDepositData,
+} from "../usePerpsDepositViewModel";
 
 const mockOpenAssetAndAccount = jest.fn();
 jest.mock("LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer", () => ({
@@ -93,19 +97,22 @@ function renderViewModel(
   const tradeMaxConstant = maxConstants && {
     ptxTradeMaxConstant: { enabled: true, params: { constants: maxConstants } },
   };
-  const { result, store } = renderHook(() => usePerpsDepositViewModel(props, onClose), {
-    initialState: {
-      accounts,
-      settings: { discreetMode },
-      ...(tradeMaxConstant && {
-        featureFlags: {
-          ...FEATURE_FLAGS_INITIAL_STATE,
-          overrides: { ...FEATURE_FLAGS_INITIAL_STATE.overrides, ...tradeMaxConstant },
-          resolved: { ...FEATURE_FLAGS_DEFAULTS, ...tradeMaxConstant },
-        },
-      }),
+  const { result, store } = renderHook(
+    () => usePerpsDepositViewModel(props, onClose, usePerpsDepositFormState(props)),
+    {
+      initialState: {
+        accounts,
+        settings: { discreetMode },
+        ...(tradeMaxConstant && {
+          featureFlags: {
+            ...FEATURE_FLAGS_INITIAL_STATE,
+            overrides: { ...FEATURE_FLAGS_INITIAL_STATE.overrides, ...tradeMaxConstant },
+            resolved: { ...FEATURE_FLAGS_DEFAULTS, ...tradeMaxConstant },
+          },
+        }),
+      },
     },
-  });
+  );
   return { result, onClose, store };
 }
 

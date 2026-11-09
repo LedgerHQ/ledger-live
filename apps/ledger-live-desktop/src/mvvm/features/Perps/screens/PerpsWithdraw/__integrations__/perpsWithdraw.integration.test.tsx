@@ -10,6 +10,7 @@ import {
   WithdrawMinimumAmountError,
 } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/errors";
 import { act, render, screen } from "tests/testSetup";
+import { setDrawer } from "~/renderer/drawers/Provider";
 import PerpsWithdrawRoot, { openPerpsWithdraw } from "../PerpsWithdrawDialog";
 import type { PerpsWithdrawData } from "../usePerpsWithdrawViewModel";
 
@@ -356,5 +357,28 @@ describe("PerpsWithdraw integration", () => {
       }),
     );
     expect(screen.queryByTestId("perps-withdraw-amount-input")).not.toBeInTheDocument();
+  });
+
+  it("should step aside for the add account drawer and come back with the new account", async () => {
+    let resolvePick: (result: { account: Account }) => void = () => undefined;
+    mockOpenAssetAndAccount.mockReturnValue(
+      new Promise(resolve => {
+        resolvePick = resolve;
+      }),
+    );
+    const { user } = renderWithdraw();
+    openWithdraw();
+
+    await user.type(input(), "500");
+    await user.click(screen.getByTestId("perps-withdraw-select-currency"));
+    act(() => setDrawer(() => null, {}));
+
+    expect(screen.queryByTestId("perps-withdraw-amount-input")).not.toBeInTheDocument();
+
+    await act(async () => resolvePick({ account: btcAccount }));
+    act(() => setDrawer());
+
+    expect(await screen.findByText("Withdraw to BTC")).toBeVisible();
+    expect(input()).toHaveValue("500");
   });
 });

@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 import BigNumber from "bignumber.js";
 import type { AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
@@ -54,6 +61,25 @@ function toAmountText(amount: number | undefined): string {
   return amount ? new BigNumber(amount).toFixed() : EMPTY_AMOUNT_TEXT;
 }
 
+export type PerpsDepositFormState = Readonly<{
+  depositAccountId: string | undefined;
+  setDepositAccountId: Dispatch<SetStateAction<string | undefined>>;
+  amountText: string;
+  setAmountText: Dispatch<SetStateAction<string>>;
+}>;
+
+export function usePerpsDepositFormState(data: PerpsDepositData | null): PerpsDepositFormState {
+  const [depositAccountId, setDepositAccountId] = useState(data?.draft?.depositAccount.id);
+  const [amountText, setAmountText] = useState(() => toAmountText(data?.draft?.depositAmount));
+
+  useEffect(() => {
+    setDepositAccountId(data?.draft?.depositAccount.id);
+    setAmountText(toAmountText(data?.draft?.depositAmount));
+  }, [data]);
+
+  return { depositAccountId, setDepositAccountId, amountText, setAmountText };
+}
+
 export type PerpsDepositViewModel = Readonly<{
   headerDescription: string | undefined;
   amountText: string;
@@ -82,6 +108,7 @@ export type PerpsDepositViewModel = Readonly<{
 export function usePerpsDepositViewModel(
   data: PerpsDepositData,
   onClose: () => void,
+  { depositAccountId, setDepositAccountId, amountText, setAmountText }: PerpsDepositFormState,
 ): PerpsDepositViewModel {
   const walletState = useSelector(walletSelector);
   const accounts = useSelector(flattenAccountsSelector);
@@ -89,15 +116,7 @@ export function usePerpsDepositViewModel(
   const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);
   const { openAssetAndAccountPromise } = useOpenAssetAndAccount();
-
-  const [depositAccountId, setDepositAccountId] = useState(data.draft?.depositAccount.id);
-  const [amountText, setAmountText] = useState(() => toAmountText(data.draft?.depositAmount));
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    setDepositAccountId(data.draft?.depositAccount.id);
-    setAmountText(toAmountText(data.draft?.depositAmount));
-  }, [data]);
 
   /** The input owns the text it displays; the number is derived for quoting and validation. */
   const depositAmount = useMemo(() => {
@@ -108,7 +127,7 @@ export function usePerpsDepositViewModel(
   /** Fills the input with the amount a ratio pill resolved to. */
   const selectAmountRatio = useCallback(
     (amount: number) => setAmountText(toAmountText(amount)),
-    [],
+    [setAmountText],
   );
 
   /** The USDC funding account with the highest spendable balance, used as the default. */
@@ -224,7 +243,7 @@ export function usePerpsDepositViewModel(
   const selectMax = useCallback(() => {
     if (maxAmount === null) return;
     setAmountText(toAmountText(applyRatio(maxAmount, 1, maxDecimalLength, maxBuffer)));
-  }, [maxAmount, maxBuffer, maxDecimalLength]);
+  }, [maxAmount, maxBuffer, maxDecimalLength, setAmountText]);
 
   const submitError = useMemo(
     () =>
@@ -279,9 +298,12 @@ export function usePerpsDepositViewModel(
     [locale, quote, receiverUnit],
   );
 
-  const changeDepositAmount = useCallback((formattedValue: string) => {
-    setAmountText(formattedValue === "" ? EMPTY_AMOUNT_TEXT : formattedValue);
-  }, []);
+  const changeDepositAmount = useCallback(
+    (formattedValue: string) => {
+      setAmountText(formattedValue === "" ? EMPTY_AMOUNT_TEXT : formattedValue);
+    },
+    [setAmountText],
+  );
 
   const pickDepositAccount = useCallback(() => {
     dispatch(setFlowValue(PERPS_UI_USE_CASE.fund));
@@ -293,7 +315,7 @@ export function usePerpsDepositViewModel(
         setDepositAccountId(account.id);
       })
       .catch(() => undefined);
-  }, [dispatch, openAssetAndAccountPromise]);
+  }, [dispatch, openAssetAndAccountPromise, setDepositAccountId]);
 
   const handleReview = useCallback(() => {
     if (!canReview || !depositAccount || !depositCurrency || !quote) return;
