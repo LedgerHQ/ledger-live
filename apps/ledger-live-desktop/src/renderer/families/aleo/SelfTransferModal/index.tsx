@@ -7,6 +7,7 @@ import { useDispatch } from "LLD/hooks/redux";
 import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 import Modal from "~/renderer/components/Modal";
 import DefaultSendBody from "~/renderer/modals/Send/Body";
+import type { StepId as SendStepId } from "~/renderer/modals/Send/types";
 import { closeModal } from "~/renderer/actions/modals";
 import { AleoCustomModal } from "../constants";
 import type { ModalProps, StepId } from "../modals/send/types";
@@ -55,10 +56,8 @@ const SelfTransferModal = ({ stepId: initialStepId, onClose }: ModalProps) => {
               title={t("aleo.selfTransfer.modal.title")}
               modalName={AleoCustomModal.SELF_TRANSFER}
               onClose={onClose}
-              // @ts-expect-error - there is no easy way to add custom steps yet
-              stepId={stepId}
-              // @ts-expect-error - there is no easy way to add custom steps yet
-              onChangeStepId={handleStepChange}
+              stepId={stepId as SendStepId}
+              onChangeStepId={handleStepChange as (id: SendStepId) => void}
               params={{
                 account: data.account,
                 parentAccount: data.parentAccount,

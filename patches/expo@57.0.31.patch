@@ -1,0 +1,63 @@
+Align expo 57 web style types with React Native 0.86 so ViewStyle and TextStyle stay assignable.
+- ViewStyle userSelect and TextStyle transitionDuration, from https://github.com/expo/expo/pull/51805
+- Drop TextStyle boxShadow/filter/outlineColor (from https://github.com/expo/expo/pull/50610) and TextStyle cursor (Ledger-only: RN 0.86 declares it)
+- Skip the ViewStyle cursor of #51805: RN 0.86 already declares it (that line targets RN 0.88 types)
+Upstream issue: https://github.com/expo/expo/issues/51747 (SDK 58 fixes userSelect/transitionDuration/boxShadow/filter/outlineColor, not cursor)
+Remove when expo stops redeclaring ViewStyle/TextStyle cursor (https://github.com/expo/expo/pull/52703 was closed unmerged) and mobile typecheck passes without this patch.
+
+diff --git a/types/react-native-web.d.ts b/types/react-native-web.d.ts
+index d615904..b7e4e87 100644
+--- a/types/react-native-web.d.ts
++++ b/types/react-native-web.d.ts
+@@ -3,6 +3,7 @@
+ import { StyleProp } from 'react-native';
+ import * as RN from 'react-native';
+ 
++// Ledger patch, see patches/expo@57.0.31.patch header before removing: https://github.com/expo/expo/issues/51747
+ declare module 'react-native' {
+   /**
+    * View
+@@ -101,7 +102,7 @@ declare module 'react-native' {
+     /** @platform web */
+     transitionTimingFunction?: string | Function | (string | Function)[];
+     /** @platform web */
+-    userSelect?: string;
++    userSelect?: 'auto' | 'text' | 'none' | 'contain' | 'all';
+     /** @platform web */
+     visibility?: string;
+     /** @platform web */
+@@ -158,16 +159,10 @@ declare module 'react-native' {
+     /** @platform web */
+     backgroundSize?: string;
+     /** @platform web */
+-    boxShadow?: string;
+-    /** @platform web */
+     boxSizing?: string;
+     /** @platform web */
+     clip?: string;
+     /** @platform web */
+-    cursor?: string;
+-    /** @platform web */
+-    filter?: string;
+-    /** @platform web */
+     gridAutoColumns?: string;
+     /** @platform web */
+     gridAutoFlow?: string;
+@@ -194,8 +189,6 @@ declare module 'react-native' {
+     /** @platform web */
+     outline?: string;
+     /** @platform web */
+-    outlineColor?: string;
+-    /** @platform web */
+     overflowX?: string;
+     /** @platform web */
+     overflowY?: string;
+@@ -214,7 +207,7 @@ declare module 'react-native' {
+     /** @platform web */
+     transitionDelay?: string | string[];
+     /** @platform web */
+-    transitionDuration?: string | string[];
++    transitionDuration?: string | string[] | number;
+     /** @platform web */
+     transitionProperty?: string | string[];
+     /** @platform web */

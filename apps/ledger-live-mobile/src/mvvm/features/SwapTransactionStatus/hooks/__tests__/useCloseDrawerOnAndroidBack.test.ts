@@ -1,15 +1,17 @@
-import { BackHandler } from "react-native";
+import { BackHandler, type HardwareBackPressEvent } from "react-native";
 import { renderHook } from "@tests/test-renderer";
 import { useCloseDrawerOnAndroidBack } from "../useCloseDrawerOnAndroidBack";
 
+const backPressEvent: HardwareBackPressEvent = { type: "hardwareBackPress", timeStamp: 0 };
+
 describe("useCloseDrawerOnAndroidBack", () => {
-  let backPressHandlers: Array<() => boolean | null | undefined>;
+  let backPressHandlers: Array<Parameters<typeof BackHandler.addEventListener>[1]>;
 
   // Mirrors RN's BackHandler: invokes registered handlers most-recent-first until one
   // returns true. Other handlers in the render tree (e.g. navigation) register too.
   const simulateHardwareBackPress = () => {
     for (let i = backPressHandlers.length - 1; i >= 0; i--) {
-      if (backPressHandlers[i]()) return true;
+      if (backPressHandlers[i](backPressEvent)) return true;
     }
     return false;
   };

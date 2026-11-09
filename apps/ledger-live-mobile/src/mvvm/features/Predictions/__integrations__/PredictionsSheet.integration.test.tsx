@@ -1,5 +1,5 @@
 import React from "react";
-import { BackHandler } from "react-native";
+import { BackHandler, type HardwareBackPressEvent } from "react-native";
 import { act, render, renderHook, screen } from "@tests/test-renderer";
 import type { QueuedBottomSheetProps } from "@shared/ui-queued-bottom-sheet";
 import { PredictionsSheet } from "@features/flow-predictions";
@@ -85,8 +85,10 @@ const isSheetOpen = () =>
 
 const lastSheetProps = (): QueuedBottomSheetProps => mockQueuedBottomSheet.mock.lastCall[0];
 
+const backPressEvent: HardwareBackPressEvent = { type: "hardwareBackPress", timeStamp: 0 };
+
 function spyOnBackPressHandlers() {
-  const backPressHandlers: Array<() => boolean | null | undefined> = [];
+  const backPressHandlers: Array<Parameters<typeof BackHandler.addEventListener>[1]> = [];
   jest.spyOn(BackHandler, "addEventListener").mockImplementation((event, handler) => {
     if (event === "hardwareBackPress") backPressHandlers.push(handler);
     return {
@@ -266,7 +268,7 @@ describe("PredictionsSheet", () => {
 
     let isConsumed: boolean | null | undefined;
     act(() => {
-      isConsumed = backPressHandlers.at(-1)?.();
+      isConsumed = backPressHandlers.at(-1)?.(backPressEvent);
     });
 
     expect(isConsumed).toBe(true);
