@@ -1691,6 +1691,59 @@ const createTransactionForOthers = (
     grpc: api => buildOthersBody(address, transaction, withObjects, withoutBuildSimulation(api)),
   });
 
+const COIN_OBJECT_TYPE = /^0x0*2::coin::Coin<(.+)>$/;
+
+/**
+ * Distinct non-SUI coin types a built transaction moves: `0x2::coin::Coin<T>` object inputs and
+ * `FundsWithdrawal` inputs drawn from the address balance. Types are in short struct-tag form.
+ */
+async function collectCoinTypes(tx: Transaction, client: ClientWithCoreApi): Promise<string[]> {
+  const { inputs } = tx.getData();
+  const types = new Set<string>();
+
+  const objectIds = inputs.flatMap(input =>
+    input.$kind === "Object" && input.Object.$kind === "ImmOrOwnedObject"
+      ? [input.Object.ImmOrOwnedObject.objectId]
+      : [],
+  );
+  if (objectIds.length > 0) {
+    const { objects } = await client.core.getObjects({ objectIds });
+    for (const object of objects) {
+      if (object instanceof Error) continue;
+      const coinType = COIN_OBJECT_TYPE.exec(toShortStructTag(object.type))?.[1];
+      if (coinType) types.add(coinType);
+    }
+  }
+
+  for (const input of inputs) {
+    if (input.$kind === "FundsWithdrawal") {
+      types.add(toShortStructTag(input.FundsWithdrawal.typeArg.Balance));
+    }
+  }
+
+  types.delete(DEFAULT_COIN_TYPE);
+  return [...types];
+}
+
+/**
+ * Builds a transaction that a dApp supplied, resolving only the fields it left unset (gas price,
+ * budget and payment, object versions). Commands and any gas data already set are kept as is.
+ * Also returns the input objects' BCS for clear signing and the non-SUI coin types it moves.
+ */
+export const buildRawTransaction = (
+  config: SuiCoinConfig,
+  tx: Transaction,
+): Promise<{ serialized: Uint8Array; bcsObjects: Uint8Array[]; coinTypes: string[] }> => {
+  const build = async (client: ClientWithCoreApi) => {
+    const built = await finalizeBuild(tx, client, true);
+    return { ...built, coinTypes: await collectCoinTypes(tx, client) };
+  };
+  return withTransport(config, {
+    graphql: api => build(makeSuiClientFromGraphQL(api)),
+    grpc: api => build(withoutBuildSimulation(api)),
+  });
+};
+
 /**
  * Performs a dry run of a transaction to estimate gas costs and fees.
  *

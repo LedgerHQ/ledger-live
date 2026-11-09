@@ -19,11 +19,13 @@ export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
   const {
     operation,
     signature,
-    rawData: { unsigned },
+    rawData: { unsigned, serializedSignature },
   } = signedOperation as unknown as SuiSignedOperation;
+  // The raw signing path puts the serialized signed transaction in `signature` for the caller and
+  // keeps the bare signature the node expects in `rawData`.
   const hash = await logicBroadcast(suiConfig.getCoinConfig(account.currency.id), {
     transactionBlock: unsigned,
-    signature,
+    signature: serializedSignature ?? signature,
   });
   return patchOperationWithHash(operation, hash);
 };
