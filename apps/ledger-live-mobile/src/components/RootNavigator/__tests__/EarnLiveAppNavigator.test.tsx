@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
+import { act } from "@testing-library/react-native";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { render } from "@tests/test-renderer";
 import { BASE_NAVIGATOR_ID, NavigatorName, ScreenName } from "~/const";
+import { addOneAccount, updateAccount } from "~/actions/accounts";
 import { Earn } from "../EarnLiveAppNavigator";
 
 // `Earn` reads `props.route` for the deeplink action and `useRoute()` for the staking-drawer parent
@@ -23,7 +26,15 @@ jest.mock("~/screens/PTX/Earn/EarnInfoBottomSheet", () => ({ EarnInfoBottomSheet
 jest.mock("~/screens/PTX/Earn/ActionConfirmationDialog", () => ({
   ActionConfirmationDialog: () => null,
 }));
-jest.mock("../../Stake/useStakingDrawer", () => ({ useStakingDrawer: () => jest.fn() }));
+const mockOpenStakingDrawer = jest.fn();
+jest.mock("../../Stake/useStakingDrawer", () => ({
+  useStakingDrawer: () => mockOpenStakingDrawer,
+}));
+// Wallet API account ids are mapped to Ledger Wallet ids through a runtime table; use them as-is here.
+jest.mock("@ledgerhq/live-common/wallet-api/converters", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/wallet-api/converters"),
+  getAccountIdFromWalletAccountId: (walletAccountId: string) => walletAccountId,
+}));
 jest.mock("LLM/features/Stake", () => ({
   useOpenStakeDrawer: () => ({ handleOpenStakeDrawer: jest.fn() }),
 }));
@@ -85,5 +96,83 @@ describe("EarnLiveAppNavigator › Earn deeplink routing", () => {
 
     expect(navigation.navigate).not.toHaveBeenCalled();
     expect(baseNavigation.navigate).not.toHaveBeenCalled();
+  });
+});
+
+// Keeps the route params in state so `setParams` re-renders the screen like a real navigator does.
+function EarnWithLiveParams({ initialParams }: { initialParams: Record<string, string> }) {
+  const [params, setParams] = useState<Record<string, string | undefined>>(initialParams);
+  const navigation = useMemo(
+    () => ({
+      navigate: jest.fn(),
+      canGoBack: () => false,
+      getParent: () => undefined,
+      setParams: (next: Record<string, string | undefined>) =>
+        setParams(previous => ({ ...previous, ...next })),
+    }),
+    [],
+  );
+
+  return (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    <Earn
+      navigation={navigation as any}
+      route={{ key: "k", name: ScreenName.Earn, params } as any}
+    />
+  );
+}
+
+describe("EarnLiveAppNavigator › stake-account deeplink", () => {
+  beforeEach(() => {
+    mockOpenStakingDrawer.mockClear();
+  });
+
+  it("opens the staking flow once, even when the account is updated afterwards", () => {
+    const account = genAccount("earn-stake-account");
+
+    const { store } = render(
+      <EarnWithLiveParams initialParams={{ action: "stake-account", accountId: account.id }} />,
+      {
+        overrideInitialState: state => ({
+          ...state,
+          accounts: { ...state.accounts, active: [account] },
+        }),
+      },
+    );
+
+    expect(mockOpenStakingDrawer).toHaveBeenCalledTimes(1);
+
+    // A successful stake adds a pending operation, which updates the account in the store.
+    act(() => {
+      store.dispatch(updateAccount({ id: account.id, pendingOperations: [] }));
+    });
+
+    expect(mockOpenStakingDrawer).toHaveBeenCalledTimes(1);
+  });
+
+  it("waits for the account to load, then opens the staking flow once", () => {
+    const account = genAccount("earn-stake-account-late");
+
+    const { store } = render(
+      <EarnWithLiveParams initialParams={{ action: "stake-account", accountId: account.id }} />,
+      {
+        overrideInitialState: state => ({
+          ...state,
+          accounts: { ...state.accounts, active: [] },
+        }),
+      },
+    );
+
+    expect(mockOpenStakingDrawer).not.toHaveBeenCalled();
+
+    act(() => {
+      store.dispatch(addOneAccount(account));
+    });
+    expect(mockOpenStakingDrawer).toHaveBeenCalledTimes(1);
+
+    act(() => {
+      store.dispatch(updateAccount({ id: account.id, pendingOperations: [] }));
+    });
+    expect(mockOpenStakingDrawer).toHaveBeenCalledTimes(1);
   });
 });

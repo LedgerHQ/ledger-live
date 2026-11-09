@@ -63,7 +63,8 @@ export const Earn = (props: NavigationProps) => {
       return;
     }
 
-    // Reset params so that it will retrigger actions if a new deeplink is used
+    // Reset params once the action is handled, so it runs once per deeplink. Clearing it only on
+    // cleanup let a re-render of this effect (e.g. an account update after a stake) run it again.
     const clearDeepLink = () =>
       navigation.setParams({
         action: undefined,
@@ -73,7 +74,8 @@ export const Earn = (props: NavigationProps) => {
         protocolId: undefined,
       });
 
-    function deeplinkRouting() {
+    /** Returns `false` only when the action has to wait for data that is not loaded yet. */
+    function deeplinkRouting(): boolean {
       switch (paramAction) {
         case "deposit": {
           (navigation.getParent(BASE_NAVIGATOR_ID) ?? navigation).navigate(NavigatorName.Earn, {
@@ -109,19 +111,18 @@ export const Earn = (props: NavigationProps) => {
           if (!walletId) {
             // eslint-disable-next-line no-console
             console.log("Wallet accountId required for 'stake-account' action.");
-            return;
+            return true;
           }
 
           const accountId = getAccountIdFromWalletAccountId(walletId);
           const account = accounts.find(acc => acc.id === accountId);
-          if (account) {
-            const parent = isTokenAccount(account)
-              ? getParentAccount(account, accounts)
-              : undefined;
-            openStakingDrawerRef.current(account, parent);
-          } else {
+          if (!account) {
+            // Accounts may still be loading on a cold start: keep the action until they arrive.
             console.warn("no matching account found for given id.");
+            return false;
           }
+          const parent = isTokenAccount(account) ? getParentAccount(account, accounts) : undefined;
+          openStakingDrawerRef.current(account, parent);
           break;
         }
         case "get-funds": {
@@ -160,11 +161,12 @@ export const Earn = (props: NavigationProps) => {
           console.warn(`EarnLiveAppNavigator: No route for action "${paramAction}"`);
         }
       }
+      return true;
     }
 
-    deeplinkRouting();
-
-    return () => clearDeepLink();
+    if (deeplinkRouting()) {
+      clearDeepLink();
+    }
   }, [
     paramAction,
     props.route.params,
