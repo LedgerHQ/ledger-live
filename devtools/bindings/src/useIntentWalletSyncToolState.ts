@@ -82,6 +82,25 @@ function describeJobState(state: LedgerSyncJobState, completedDetail: string | n
   }
 }
 
+/** Members belong to the trustchain and credentials they were loaded with. */
+interface LoadedMembers {
+  readonly rootId: string;
+  readonly pubkey: string;
+  readonly members: readonly TrustchainMember[];
+}
+
+function isLoadedFor(
+  loaded: LoadedMembers | null,
+  trustchain: Trustchain | null,
+  memberCredentials: MemberCredentials | null,
+): loaded is LoadedMembers {
+  return (
+    loaded !== null &&
+    loaded.rootId === trustchain?.rootId &&
+    loaded.pubkey === memberCredentials?.pubkey
+  );
+}
+
 function errorName(error: unknown): string | null {
   const name = (error as { name?: unknown } | null)?.name;
   return typeof name === "string" ? name : null;
@@ -116,7 +135,7 @@ export function useIntentWalletSyncToolState(
 
   const [run, setRun] = useState<IntentWalletSyncRun | null>(null);
   const [log, setLog] = useState<readonly WalletSyncIntentToolLogRow[]>([]);
-  const [members, setMembers] = useState<readonly TrustchainMember[] | null>(null);
+  const [loadedMembers, setLoadedMembers] = useState<LoadedMembers | null>(null);
 
   const append = useCallback(
     (operation: WalletSyncIntentToolOperation, jobState: string, detail: string | null) => {
@@ -132,11 +151,13 @@ export function useIntentWalletSyncToolState(
     const request = ++membersRequestRef.current;
     const isLatestRequest = () => request === membersRequestRef.current;
     try {
-      const loaded = await sdk.getMembers(trustchain, memberCredentials);
-      if (isLatestRequest()) setMembers(loaded);
+      const members = await sdk.getMembers(trustchain, memberCredentials);
+      if (isLatestRequest()) {
+        setLoadedMembers({ rootId: trustchain.rootId, pubkey: memberCredentials.pubkey, members });
+      }
     } catch (error) {
       console.warn("Ledger Sync intents devtool: getMembers failed", errorName(error));
-      if (isLatestRequest()) setMembers(null);
+      if (isLatestRequest()) setLoadedMembers(null);
     }
   }, []);
 
@@ -186,11 +207,11 @@ export function useIntentWalletSyncToolState(
     (memberId: TrustchainMemberId) => {
       const { memberCredentials, trustchain, createSessionSdk, removeMemberIntentDefinition } =
         paramsRef.current;
-      const member = members?.find(candidate => candidate.id === memberId);
+      if (!memberCredentials || !trustchain) return;
+      if (!isLoadedFor(loadedMembers, trustchain, memberCredentials)) return;
+      const member = loadedMembers.members.find(candidate => candidate.id === memberId);
       // The SDK refuses to remove the current member: that needs its own flow.
-      if (!memberCredentials || !trustchain || !member || member.id === memberCredentials.pubkey) {
-        return;
-      }
+      if (!member || member.id === memberCredentials.pubkey) return;
 
       let resultTrustchain: Trustchain | null = null;
       const intent: RemoveMemberIntent = createIntent(
@@ -216,7 +237,7 @@ export function useIntentWalletSyncToolState(
       );
       setRun({ operation: "remove-member", intent });
     },
-    [append, endRunWithError, loadMembers, members, onTrustchainChange],
+    [append, endRunWithError, loadMembers, loadedMembers, onTrustchainChange],
   );
 
   const onRefreshMembers = useCallback(() => {
@@ -227,13 +248,12 @@ export function useIntentWalletSyncToolState(
   const onClearLog = useCallback(() => setLog([]), []);
   const onRunCancelled = useCallback(() => setRun(null), []);
 
-  const toolMembers = useMemo(
-    () =>
-      members
-        ?.filter(({ id }) => id !== storedMemberCredentials?.pubkey)
-        .map(({ id, name }) => ({ id: TrustchainMemberId.parse(id), name })) ?? null,
-    [members, storedMemberCredentials],
-  );
+  const toolMembers = useMemo(() => {
+    if (!isLoadedFor(loadedMembers, storedTrustchain, storedMemberCredentials)) return null;
+    return loadedMembers.members
+      .filter(({ id }) => id !== storedMemberCredentials?.pubkey)
+      .map(({ id, name }) => ({ id: TrustchainMemberId.parse(id), name }));
+  }, [loadedMembers, storedTrustchain, storedMemberCredentials]);
 
   const toolProps = useMemo<WalletSyncIntentToolProps>(
     () => ({

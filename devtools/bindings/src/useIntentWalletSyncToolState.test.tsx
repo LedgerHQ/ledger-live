@@ -38,10 +38,13 @@ interface TrustchainStore {
 }
 
 const setTrustchain = createAction<Trustchain>("SET_TRUSTCHAIN");
+const setMemberCredentials = createAction<MemberCredentials>("SET_MEMBER_CREDENTIALS");
 
 function trustchainReducer(state: TrustchainStore | undefined, action: UnknownAction) {
   const current = state ?? { trustchain: null, memberCredentials: null };
-  return setTrustchain.match(action) ? { ...current, trustchain: action.payload } : current;
+  if (setTrustchain.match(action)) return { ...current, trustchain: action.payload };
+  if (setMemberCredentials.match(action)) return { ...current, memberCredentials: action.payload };
+  return current;
 }
 
 function createDeferred<T>() {
@@ -231,6 +234,28 @@ describe("useIntentWalletSyncToolState", () => {
     await act(async () => older.resolve(MEMBERS));
 
     expect(result.current.toolProps.members).toEqual([{ id: "member-1", name: "Desktop" }]);
+  });
+
+  it.each([
+    ["trustchain", setTrustchain({ ...TRUSTCHAIN, rootId: "other-root-id" })],
+    ["member credentials", setMemberCredentials({ pubkey: "other-pubkey", privatekey: "other" })],
+  ])("should hide members and ignore a pending fetch after a %s change", async (_, change) => {
+    const { result, store, params } = renderTool();
+    act(() => result.current.toolProps.onRefreshMembers());
+    await waitFor(() => expect(result.current.toolProps.members).toHaveLength(2));
+    const pending = createDeferred<TrustchainMember[]>();
+    params.sdk.getMembers.mockImplementationOnce(() => pending.promise);
+
+    act(() => result.current.toolProps.onRefreshMembers());
+    act(() => {
+      store.dispatch(change);
+    });
+    expect(result.current.toolProps.members).toBeNull();
+    await act(async () => pending.resolve(MEMBERS));
+
+    expect(result.current.toolProps.members).toBeNull();
+    act(() => result.current.toolProps.onRemoveMember(TrustchainMemberId.parse("member-2")));
+    expect(result.current.run).toBeNull();
   });
 
   it("should end the run when the user closes the executor or the job errors", () => {
