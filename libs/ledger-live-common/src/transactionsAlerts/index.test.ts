@@ -1,16 +1,22 @@
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Account, ChainwatchNetwork } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getAccountBridge } from "../bridge/index";
 import ChainwatchAccountManager from "./ChainwatchAccountManager";
 import {
   getTransactionsAlertsAddresses,
   getTransactionsAlertsAddressKey,
+  flattenTransactionsAlertsAddresses,
+  mergeTransactionsAlertsAddresses,
   reconcileTransactionsAlertsAddresses,
+  resolveTransactionsAlertsAddressesByAccount,
 } from ".";
 
 jest.mock("./ChainwatchAccountManager");
+jest.mock("../bridge/index", () => ({ getAccountBridge: jest.fn() }));
 
 const MockedChainwatchAccountManager = jest.mocked(ChainwatchAccountManager);
+const mockedGetAccountBridge = jest.mocked(getAccountBridge);
 const avalanche = getCryptoCurrencyById("avalanche_c_chain");
 const network: ChainwatchNetwork = {
   ledgerLiveId: avalanche.id,
@@ -37,6 +43,132 @@ describe("getTransactionsAlertsAddressKey", () => {
 describe("getTransactionsAlertsAddresses", () => {
   it("should ignore accounts without an address", () => {
     expect(getTransactionsAlertsAddresses([makeAccount("account", "")])).toEqual([]);
+  });
+});
+
+describe("resolveTransactionsAlertsAddressesByAccount", () => {
+  const mockAddressesToWatch = (addressesToWatch: Record<string, string[]>) => {
+    mockedGetAccountBridge.mockResolvedValue({
+      getAddressesToWatch: (account: Account) =>
+        Promise.resolve(addressesToWatch[account.freshAddress]),
+    } as unknown as Awaited<ReturnType<typeof getAccountBridge>>);
+  };
+
+  it("should return the addresses to watch of each account", async () => {
+    mockAddressesToWatch({
+      "0x01": ["0x01", "0x0a"],
+      "0x02": ["0x02"],
+    });
+    const firstAccount = makeAccount("account-1", "0x01");
+    const secondAccount = makeAccount("account-2", "0x02");
+
+    const addresses = await resolveTransactionsAlertsAddressesByAccount([
+      firstAccount,
+      secondAccount,
+    ]);
+
+    expect(addresses).toEqual({
+      [firstAccount.id]: [makeAddress("0x01"), makeAddress("0x0a")],
+      [secondAccount.id]: [makeAddress("0x02")],
+    });
+  });
+
+  it("should leave out an account whose addresses cannot be resolved", async () => {
+    jest.spyOn(console, "warn").mockImplementation(() => {});
+    mockedGetAccountBridge.mockResolvedValue({
+      getAddressesToWatch: (account: Account) =>
+        account.freshAddress === "0x01"
+          ? Promise.reject(new Error("corrupt wallet state"))
+          : Promise.resolve([account.freshAddress]),
+    } as unknown as Awaited<ReturnType<typeof getAccountBridge>>);
+    const failingAccount = makeAccount("account-1", "0x01");
+    const workingAccount = makeAccount("account-2", "0x02");
+
+    const addresses = await resolveTransactionsAlertsAddressesByAccount([
+      failingAccount,
+      workingAccount,
+    ]);
+
+    expect(addresses).toEqual({ [workingAccount.id]: [makeAddress("0x02")] });
+  });
+});
+
+describe("mergeTransactionsAlertsAddresses", () => {
+  it("should keep the addresses an account no longer returns", () => {
+    expect(
+      mergeTransactionsAlertsAddresses(
+        { account: [makeAddress("0x01"), makeAddress("0x02")] },
+        { account: [makeAddress("0x02"), makeAddress("0x03")] },
+        ["account"],
+      ),
+    ).toEqual({ account: [makeAddress("0x01"), makeAddress("0x02"), makeAddress("0x03")] });
+  });
+
+  it("should only remember the 100 addresses most recently returned", () => {
+    const remembered = Array.from({ length: 101 }, (_, index) => makeAddress(`0x${index + 1}`));
+
+    const merged = mergeTransactionsAlertsAddresses(
+      { account: [makeAddress("0xa"), ...remembered] },
+      { account: [makeAddress("0xa"), makeAddress("0xb")] },
+      ["account"],
+    );
+
+    expect(merged.account).toEqual([
+      ...remembered.slice(1),
+      makeAddress("0xa"),
+      makeAddress("0xb"),
+    ]);
+  });
+
+  it("should treat an address returned again as the most recent", () => {
+    const remembered = Array.from({ length: 100 }, (_, index) => makeAddress(`0x${index + 1}`));
+    const watched = mergeTransactionsAlertsAddresses(
+      { account: remembered },
+      { account: [makeAddress("0x1"), makeAddress("0xb")] },
+      ["account"],
+    );
+
+    const merged = mergeTransactionsAlertsAddresses(watched, { account: [makeAddress("0xc")] }, [
+      "account",
+    ]);
+
+    expect(merged.account).toHaveLength(101);
+    expect(merged.account).toContainEqual(makeAddress("0x1"));
+    expect(merged.account).not.toContainEqual(makeAddress("0x2"));
+  });
+
+  it("should drop the addresses of removed accounts", () => {
+    expect(
+      mergeTransactionsAlertsAddresses(
+        { removed: [makeAddress("0x01")], kept: [makeAddress("0x02")] },
+        { kept: [makeAddress("0x02")] },
+        ["kept"],
+      ),
+    ).toEqual({ kept: [makeAddress("0x02")] });
+  });
+
+  it("should keep the watched addresses of an account that could not be resolved", () => {
+    expect(
+      mergeTransactionsAlertsAddresses(
+        { failed: [makeAddress("0x01")], resolved: [makeAddress("0x02")] },
+        { resolved: [makeAddress("0x03")] },
+        ["failed", "resolved"],
+      ),
+    ).toEqual({
+      failed: [makeAddress("0x01")],
+      resolved: [makeAddress("0x02"), makeAddress("0x03")],
+    });
+  });
+});
+
+describe("flattenTransactionsAlertsAddresses", () => {
+  it("should return an address shared by several accounts once", () => {
+    expect(
+      flattenTransactionsAlertsAddresses({
+        first: [makeAddress("0x01"), makeAddress("0xAB")],
+        second: [makeAddress("0x02"), makeAddress("0xab")],
+      }).map(({ address }) => address.toLowerCase()),
+    ).toEqual(["0x01", "0xab", "0x02"]);
   });
 });
 
