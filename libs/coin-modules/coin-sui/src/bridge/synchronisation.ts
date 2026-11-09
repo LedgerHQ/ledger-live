@@ -14,17 +14,16 @@ import { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { type Operation } from "@ledgerhq/types-live";
 import type { SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import suiConfig from "../config";
+import suiConfig, { type SuiCoinConfig } from "../config";
 import { BLOCK_HEIGHT } from "../constants";
 import { getAccountBalances, getOperations, getDelegatedStakes } from "../network";
-import { DEFAULT_COIN_TYPE, toStakeAmounts } from "../network/sdk";
+import { DEFAULT_COIN_TYPE, getUnstakedPrincipalByDigest, toStakeAmounts } from "../network/sdk";
 import { SuiOperationExtra, SuiAccount } from "../types";
 import { toLongStructTag, toShortStructTag } from "../utils";
 
 export const getAccountShape: GetAccountShape<SuiAccount> = async (info, syncConfig) => {
   const { address, initialAccount, currency, derivationMode } = info;
 
-  const oldOperations = (initialAccount?.operations || []).map(revalueStoredStakingOperation);
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
@@ -34,6 +33,10 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async (info, syncCon
   });
 
   const config = suiConfig.getCoinConfig(currency.id);
+  const oldOperations = await revalueStoredStakingOperations(
+    config,
+    initialAccount?.operations || [],
+  );
   const stakes = await getDelegatedStakes(config, address);
 
   // `syncHash` holds the resume digest of the newest stored operation, from which `getOperations`
@@ -111,16 +114,56 @@ export const sync = makeSync({ getAccountShape, shouldMergeOps: false });
  * for an unstake. The gas is zero or the fee (a net fee can be negative when the storage rebate
  * exceeds the costs). `extra.principalExcluded` marks a new or rewritten value, so the rewrite
  * applies once.
+ *
+ * An unstake can withdraw several stakes, but `extra.stakedAmount` holds only the first principal,
+ * so the principal of each unmarked unstake is refetched. A failed or possibly incomplete fetch
+ * leaves the operation unmarked, and the next sync retries it. A transaction that is no longer found falls back to the
+ * stored principal, which is exact only for a single withdrawal.
  */
-export function revalueStoredStakingOperation(op: Operation): Operation {
+export async function revalueStoredStakingOperations(
+  config: SuiCoinConfig,
+  operations: Operation[],
+): Promise<Operation[]> {
+  const unstakedPrincipals = new Map<string, BigNumber>();
+  const legacyUnstakes = operations.filter(op => op.type === "UNDELEGATE" && !isMarked(op));
+  await promiseAllBatched(3, legacyUnstakes, async op => {
+    try {
+      unstakedPrincipals.set(op.id, await getUnstakedPrincipalByDigest(config, op.hash));
+    } catch {
+      // Left unmarked; the next sync retries.
+    }
+  });
+  return operations.map(op => {
+    if (op.type !== "UNDELEGATE") return revalueStoredStakingOperation(op);
+    const principal = unstakedPrincipals.get(op.id);
+    return principal ? revalueStoredStakingOperation(op, principal) : op;
+  });
+}
+
+/**
+ * Rewrites one unmarked stake operation. For an unstake, `unstakedPrincipal` is the refetched sum
+ * of the withdrawn principals; when it is zero (transaction or events not found), the stored
+ * `extra.stakedAmount` stands in.
+ */
+export function revalueStoredStakingOperation(
+  op: Operation,
+  unstakedPrincipal?: BigNumber,
+): Operation {
   if (op.type !== "DELEGATE" && op.type !== "UNDELEGATE") return op;
+  if (isMarked(op)) return op;
   const extra = (op.extra ?? {}) as SuiOperationExtra;
-  if (extra.principalExcluded) return op;
+  const storedPrincipal = extra.stakedAmount ? new BigNumber(extra.stakedAmount) : undefined;
+  const principal =
+    unstakedPrincipal && !unstakedPrincipal.isZero() ? unstakedPrincipal : storedPrincipal;
   return {
     ...op,
-    value: legacyStakingOperationValue(op, extra.stakedAmount),
+    value: legacyStakingOperationValue(op, principal),
     extra: { ...extra, principalExcluded: "true" },
   };
+}
+
+function isMarked(op: Operation): boolean {
+  return Boolean((op.extra as SuiOperationExtra | undefined)?.principalExcluded);
 }
 
 /**
@@ -130,10 +173,10 @@ export function revalueStoredStakingOperation(op: Operation): Operation {
  * first, the old value equals the fee and nothing is recoverable. That case, and a missing
  * principal, fall back to the fee.
  */
-function legacyStakingOperationValue(op: Operation, stakedAmount: string | undefined): BigNumber {
-  if (!stakedAmount || op.value.eq(op.fee)) return op.fee;
-  if (op.type === "UNDELEGATE") return op.value.plus(stakedAmount);
-  const gasShare = op.value.minus(stakedAmount);
+function legacyStakingOperationValue(op: Operation, principal: BigNumber | undefined): BigNumber {
+  if (!principal || principal.isZero() || op.value.eq(op.fee)) return op.fee;
+  if (op.type === "UNDELEGATE") return op.value.plus(principal);
+  const gasShare = op.value.minus(principal);
   return gasShare.isZero() || gasShare.eq(op.fee) ? gasShare : op.fee;
 }
 

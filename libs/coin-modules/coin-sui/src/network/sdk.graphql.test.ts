@@ -9,8 +9,9 @@ const config = {
   status: { type: "active" },
   features: { transport: "graphql" },
 } as unknown as SuiCoinConfig;
+import BigNumber from "bignumber.js";
 import { mist } from "../constants";
-import { RATE_BATCH_CHUNK_SIZE, STAKES_PAGE_SIZE } from "./graphql/constants";
+import { EVENTS_PAGE_SIZE, RATE_BATCH_CHUNK_SIZE, STAKES_PAGE_SIZE } from "./graphql/constants";
 import { UNKNOWN_VALIDATOR, APY_LOOKBACK_EPOCHS } from "./staking";
 import {
   executeTransactionBlock,
@@ -21,6 +22,7 @@ import {
   getListOperations,
   getOperations,
   getStakingExtraByDigest,
+  getUnstakedPrincipalByDigest,
   getValidators,
 } from "./sdk";
 import {
@@ -1446,6 +1448,37 @@ describe("getStakingExtraByDigest on GraphQL transport", () => {
     const out = await getStakingExtraByDigest(config, "0xdigest", "OUT");
     expect(out).toBeNull();
     expect(query).not.toHaveBeenCalled();
+  });
+});
+
+describe("getUnstakedPrincipalByDigest on GraphQL transport", () => {
+  const unstakeNode = (principal: string) => ({
+    contents: {
+      type: { repr: "0x3::validator::UnstakingRequestEvent" },
+      json: { validator_address: "0xval", principal_amount: principal },
+    },
+  });
+  const eventsResponse = (nodes: unknown[]) => ({
+    data: { transaction: { effects: { events: { nodes } } } },
+  });
+
+  it("sums the principal of every withdrawn stake", async () => {
+    const query = jest
+      .fn()
+      .mockResolvedValueOnce(eventsResponse([unstakeNode("1000"), unstakeNode("2000")]));
+    mockNext({ query });
+    await expect(getUnstakedPrincipalByDigest(config, "0xdigest")).resolves.toEqual(
+      new BigNumber(3000),
+    );
+  });
+
+  it("throws on a full page of events, which can omit principals", async () => {
+    const nodes = Array.from({ length: EVENTS_PAGE_SIZE }, () => unstakeNode("1000"));
+    const query = jest.fn().mockResolvedValueOnce(eventsResponse(nodes));
+    mockNext({ query });
+    await expect(getUnstakedPrincipalByDigest(config, "0xdigest")).rejects.toThrow(
+      "may exceed one page",
+    );
   });
 });
 

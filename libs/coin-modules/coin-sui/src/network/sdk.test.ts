@@ -1124,6 +1124,57 @@ describe("getStakingExtraByDigest on the gRPC transport", () => {
   });
 });
 
+describe("getUnstakedPrincipalByDigest on the gRPC transport", () => {
+  beforeEach(() => {
+    mockStakingEvents.mockReset();
+  });
+
+  it("sums the principal of every withdrawn stake", async () => {
+    const unstakeEvent = (principal: string) => ({
+      type: "0x3::validator::UnstakingRequestEvent",
+      parsedJson: { validator_address: "0xval", principal_amount: principal, reward_amount: "5" },
+    });
+    mockStakingEvents.mockResolvedValueOnce([
+      unstakeEvent(mist(1)),
+      { type: "0x2::coin::Other", parsedJson: { principal_amount: mist(9) } },
+      unstakeEvent(mist(2)),
+    ]);
+    const out = await sdk.getUnstakedPrincipalByDigest(config, "0xdigest");
+    expect(out).toEqual(BigNumber(mist(3)));
+    expect(mockStakingEvents).toHaveBeenCalledWith(mockGrpcClient, "0xdigest");
+  });
+
+  it("returns zero when the digest has no unstake event", async () => {
+    mockStakingEvents.mockResolvedValueOnce([]);
+    const out = await sdk.getUnstakedPrincipalByDigest(config, "0xmissing");
+    expect(out).toEqual(BigNumber(0));
+  });
+
+  it("returns zero when the transaction is not found", async () => {
+    mockStakingEvents.mockRejectedValueOnce(new Error("Transaction 0xmissing not found"));
+    const notFoundCode = Object.assign(new Error("pruned"), { code: "NOT_FOUND" });
+    mockStakingEvents.mockRejectedValueOnce(notFoundCode);
+    await expect(sdk.getUnstakedPrincipalByDigest(config, "0xmissing")).resolves.toEqual(
+      BigNumber(0),
+    );
+    await expect(sdk.getUnstakedPrincipalByDigest(config, "0xmissing")).resolves.toEqual(
+      BigNumber(0),
+    );
+  });
+
+  it("rethrows other errors", async () => {
+    mockStakingEvents.mockRejectedValueOnce(new Error("UNAVAILABLE"));
+    const unrelated = Object.assign(new Error("upstream service not found"), {
+      code: "UNAVAILABLE",
+    });
+    mockStakingEvents.mockRejectedValueOnce(unrelated);
+    await expect(sdk.getUnstakedPrincipalByDigest(config, "0xdigest")).rejects.toThrow(
+      "UNAVAILABLE",
+    );
+    await expect(sdk.getUnstakedPrincipalByDigest(config, "0xdigest")).rejects.toBe(unrelated);
+  });
+});
+
 describe("getStakingEventDetails", () => {
   const withEvents = (events: SuiTransactionResponse["events"]) => makeTx({ events });
 

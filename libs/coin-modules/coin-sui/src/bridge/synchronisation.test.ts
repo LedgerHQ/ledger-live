@@ -2,13 +2,18 @@ import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currenc
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
-import coinConfig from "../config";
+import coinConfig, { type SuiCoinConfig } from "../config";
 import { mist, ONE_SUI } from "../constants";
 import * as networkModule from "../network";
 import { DEFAULT_COIN_TYPE } from "../network/sdk";
+import type { SuiOperationExtra } from "../types";
 import { createFixtureAccount, createFixtureOperation } from "../types/bridge.fixture";
 import { fromOperationExtraRaw, toOperationExtraRaw } from "./formatters";
-import { getAccountShape, revalueStoredStakingOperation } from "./synchronisation";
+import {
+  getAccountShape,
+  revalueStoredStakingOperation,
+  revalueStoredStakingOperations,
+} from "./synchronisation";
 
 jest.mock("../network", () => {
   const mockGetAccountBalances = jest.fn();
@@ -21,6 +26,12 @@ jest.mock("../network", () => {
     createTransaction: jest.fn(),
   };
 });
+
+const mockGetUnstakedPrincipal = jest.fn();
+jest.mock("../network/sdk", () => ({
+  ...jest.requireActual("../network/sdk"),
+  getUnstakedPrincipalByDigest: (...args: unknown[]) => mockGetUnstakedPrincipal(...args),
+}));
 
 const mockedFindTokenByAddressInCurrency = jest.fn();
 setCryptoAssetsStore({
@@ -1137,9 +1148,86 @@ describe("revalueStoredStakingOperation", () => {
     expect(revalueStoredStakingOperation(sponsored).value).toEqual(BigNumber(0));
   });
 
+  it("prefers a refetched unstake principal over the stored one", () => {
+    const op = createFixtureOperation({
+      type: "UNDELEGATE",
+      fee,
+      value: fee.minus(mist(3)).minus(500),
+      extra: { stakedAmount: mist(1) },
+    });
+    expect(revalueStoredStakingOperation(op, BigNumber(mist(3))).value).toEqual(fee.minus(500));
+    expect(revalueStoredStakingOperation(op, BigNumber(0)).value).toEqual(
+      fee.minus(mist(2)).minus(500),
+    );
+  });
+
   it("leaves other operations unchanged", () => {
     const out = createFixtureOperation();
     expect(revalueStoredStakingOperation(out)).toBe(out);
+  });
+});
+
+describe("revalueStoredStakingOperations", () => {
+  const suiConfig = {} as SuiCoinConfig;
+  const fee = BigNumber(mist(0.01));
+
+  beforeEach(() => {
+    mockGetUnstakedPrincipal.mockReset();
+  });
+
+  it("adds back every principal an unstake withdrew", async () => {
+    // Two 1 SUI stakes withdrawn with a 0.1 SUI reward: stored as -2.09, worth -0.09.
+    const op = createFixtureOperation({
+      type: "UNDELEGATE",
+      hash: "unstake-digest",
+      fee,
+      value: BigNumber(mist(-2.09)),
+      extra: { stakedAmount: mist(1) },
+    });
+    mockGetUnstakedPrincipal.mockResolvedValueOnce(BigNumber(mist(2)));
+
+    const [revalued] = await revalueStoredStakingOperations(suiConfig, [op]);
+
+    expect(mockGetUnstakedPrincipal).toHaveBeenCalledWith(suiConfig, "unstake-digest");
+    expect(revalued.value).toEqual(BigNumber(mist(-0.09)));
+    expect((revalued.extra as SuiOperationExtra).principalExcluded).toBe("true");
+  });
+
+  it("leaves an unstake unmarked when the fetch fails, so the next sync retries", async () => {
+    const op = createFixtureOperation({
+      type: "UNDELEGATE",
+      fee,
+      value: BigNumber(mist(-2.09)),
+      extra: { stakedAmount: mist(1) },
+    });
+    mockGetUnstakedPrincipal.mockRejectedValueOnce(new Error("network"));
+
+    const [revalued] = await revalueStoredStakingOperations(suiConfig, [op]);
+
+    expect(revalued).toBe(op);
+  });
+
+  it("fetches only unmarked unstakes and keeps the order", async () => {
+    const stake = createFixtureOperation({
+      type: "DELEGATE",
+      fee,
+      value: BigNumber(mist(2)).plus(fee),
+      extra: { stakedAmount: mist(2) },
+    });
+    const marked = createFixtureOperation({
+      type: "UNDELEGATE",
+      fee,
+      value: BigNumber(-500),
+      extra: { stakedAmount: mist(1), principalExcluded: "true" },
+    });
+    const out = createFixtureOperation();
+
+    const revalued = await revalueStoredStakingOperations(suiConfig, [stake, marked, out]);
+
+    expect(mockGetUnstakedPrincipal).not.toHaveBeenCalled();
+    expect(revalued[0].value).toEqual(fee);
+    expect(revalued[1]).toBe(marked);
+    expect(revalued[2]).toBe(out);
   });
 });
 

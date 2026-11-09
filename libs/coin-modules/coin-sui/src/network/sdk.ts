@@ -16,6 +16,7 @@ import { getInputObjects } from "@mysten/ledger-signer";
 import type { ClientWithCoreApi } from "@mysten/sui/client";
 import type { SuiGrpcClient } from "@mysten/sui/grpc";
 import { coinWithBalance, Transaction } from "@mysten/sui/transactions";
+import { EVENTS_PAGE_SIZE } from "./graphql/constants";
 import { makeSuiClientFromGraphQL } from "./graphql/sui-client-adapter";
 import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
 import BigNumber from "bignumber.js";
@@ -462,6 +463,53 @@ export const getStakingExtraByDigest = (
     },
   });
 };
+
+/**
+ * The principal an unstake withdrew, summed over its `UnstakingRequestEvent`s: one transaction can
+ * withdraw several stakes. Zero when the transaction or its events are not found. GraphQL returns
+ * no events for an unknown digest, while gRPC throws; the gRPC not-found error maps to zero so
+ * both transports give the same result. GraphQL reads one page of events, so a full page can
+ * omit principals and throws instead of returning a partial sum.
+ */
+export const getUnstakedPrincipalByDigest = (
+  config: SuiCoinConfig,
+  digest: string,
+): Promise<BigNumber> =>
+  withTransport(config, {
+    graphql: async api => {
+      const events = await getStakingEventsByDigestGraphQL(api, digest);
+      if (events.length >= EVENTS_PAGE_SIZE) {
+        throw new Error(`Events of transaction ${digest} may exceed one page`);
+      }
+      return sumUnstakedPrincipal(events);
+    },
+    grpc: async api => {
+      try {
+        return sumUnstakedPrincipal(await getStakingEventsByDigestGrpc(api, digest));
+      } catch (error) {
+        if (isTransactionNotFound(error)) return new BigNumber(0);
+        throw error;
+      }
+    },
+  });
+
+/** The SDK throws "Transaction <digest> not found"; the transport reports a `NOT_FOUND` code. */
+function isTransactionNotFound(error: unknown): boolean {
+  if (!(error instanceof Error)) return false;
+  return (
+    (error as { code?: unknown }).code === "NOT_FOUND" ||
+    /^Transaction \S+ not found$/.test(error.message)
+  );
+}
+
+function sumUnstakedPrincipal(events: readonly StakingEventLike[]): BigNumber {
+  return events
+    .filter(e => e.type === UNSTAKING_REQUEST_EVENT)
+    .reduce((sum, e) => {
+      const parsed = e.parsedJson as { principal_amount?: string | number } | undefined;
+      return sum.plus(String(parsed?.principal_amount ?? 0));
+    }, new BigNumber(0));
+}
 
 /**
  * Extract date from transaction
