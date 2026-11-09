@@ -150,7 +150,6 @@ export * from "./somnia";
 export * from "./songbird";
 export * from "./sonic";
 export * from "./stacks";
-export * from "./stargaze";
 export * from "./stellar";
 export * from "./story";
 export * from "./stride";

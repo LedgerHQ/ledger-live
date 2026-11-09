@@ -96,16 +96,6 @@ export const cosmosDefaults = {
     unit: { name: "Secret", code: "SCRT", magnitude: 6 },
     denom: "uscrt",
   },
-  stargaze: {
-    lcd: "https://stargaze-api.polkachu.com",
-    minGasPrice: 1,
-    status: {
-      type: "active",
-    },
-    name: "Stargaze",
-    unit: { name: "Stargaze", code: "STARS", magnitude: 6 },
-    denom: "ustars",
-  },
   coreum: {
     lcd: "https://rest-coreum.ecostake.com",
     minGasPrice: 0.1,

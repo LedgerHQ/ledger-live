@@ -28,7 +28,6 @@ const weeklyIntegrationTests = [
   "src/families/cosmos/lastBlock.integration.test.ts",
   "src/families/cosmos/datasets/cosmos.integration.test.ts",
   "src/families/cosmos/datasets/persistence.integration.test.ts",
-  "src/families/cosmos/datasets/stargaze.integration.test.ts",
   "src/families/cosmos/datasets/xion.integration.test.ts",
   "src/families/mina/bridge.integration.test.ts",
 ];
