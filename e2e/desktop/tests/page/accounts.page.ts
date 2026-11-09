@@ -4,6 +4,7 @@ import { AppPage } from "tests/page/abstractClasses";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 import { isAccountDetailEnabled } from "tests/utils/featureFlagUtils";
+import { escapeRegExp } from "tests/utils/regExpUtils";
 
 const CRYPTO_ACCOUNT_ROW_PREFIX = "crypto-account-row-";
 
@@ -83,10 +84,11 @@ export class AccountsPage extends AppPage {
 
   @step("Expect token balance to be null")
   async expectTokenBalanceToBeNull(childCurrency: Currency) {
-    const tokenRow = await this.tokenRow(childCurrency);
-    await this.softExpect(async soft => {
-      await soft(tokenRow.getByText(`0 ${childCurrency.ticker}`)).toBeVisible();
-    });
+    const zeroBalance = new RegExp(
+      String.raw`(?:^|\s)0(?:[.,]0+)?\s+${escapeRegExp(childCurrency.ticker)}(?:\s|$)`,
+      "i",
+    );
+    await expect((await this.tokenRow(childCurrency)).getByText(zeroBalance)).toBeVisible();
   }
 
   @step("Check $0 account was deleted ")

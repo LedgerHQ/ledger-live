@@ -114,6 +114,30 @@ test.describe("Settings", () => {
 test.describe("Settings", () => {
   test.use({
     teamOwner: Team.WALLET_XP,
+    userdata: "skip-onboarding-with-last-seen-device",
+  });
+
+  test(
+    "Access Ledger Support web link",
+    {
+      tag: [...DEVICE_TAGS],
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-820",
+      },
+    },
+    async ({ app }) => {
+      await app.mainNavigation.openSettings();
+      await app.settings.goToHelpTab();
+
+      await app.settings.expectLedgerSupportUrlToBeCorrect();
+    },
+  );
+});
+
+test.describe("Settings", () => {
+  test.use({
+    teamOwner: Team.WALLET_XP,
     userdata: "1AccountBTC1AccountETH",
   });
 
@@ -186,24 +210,20 @@ test.describe("Settings", () => {
   });
 
   test(
-    "Change app theme and language, and access Ledger Support web link",
+    "Change app theme and language",
     {
       tag: [...DEVICE_TAGS],
-      annotation: { type: "TMS", description: "B2CQA-5432, B2CQA-820, B2CQA-2344" },
+      annotation: { type: "TMS", description: "B2CQA-5432, B2CQA-2344" },
     },
     async ({ app }) => {
       await app.mainNavigation.openSettings();
-      // Theme labels and the support link are localized, so both run before the language changes.
+      // Theme labels are localized, so the theme changes run before the language changes.
       for (const theme of themeTestData) {
         await app.settings.changeTheme(theme.label);
         await app.settings.expectThemeSelected(theme.label);
         await app.settings.expectAppColorScheme(theme.colorScheme);
       }
 
-      await app.settings.goToHelpTab();
-      await app.settings.expectLedgerSupportUrlToBeCorrect();
-
-      await app.settings.goToGeneralTab();
       for (const l10n of languageTestData) {
         await app.settings.changeLanguage(l10n.lang);
         await app.settings.expectLanguageSelected(l10n.lang);

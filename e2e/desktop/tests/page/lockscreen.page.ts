@@ -18,15 +18,6 @@ export class LockscreenPage extends AppPage {
 
   @step("Check input error state visibility: $0")
   async checkInputErrorVisibility(expectedState: "visible" | "hidden") {
-    await this.softExpect(
-      async soft => {
-        if (expectedState === "visible") {
-          await soft(this.inputError).toBeVisible();
-        } else {
-          await soft(this.inputError).toBeHidden();
-        }
-      },
-      { timeout: TIMEOUT.large },
-    );
+    await this.inputError.waitFor({ state: expectedState });
   }
 }

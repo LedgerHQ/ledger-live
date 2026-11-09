@@ -88,12 +88,7 @@ export class PortfolioPage extends AppPage {
   @step("Expect total balance to display the correct counter value $0")
   async expectTotalBalanceCounterValue(counterValue: string) {
     await expect(this.portfolioTotalBalance).toBeVisible();
-    await this.softExpect(
-      async soft => {
-        await soft(this.portfolioTotalBalance).toContainText(counterValue);
-      },
-      { timeout: TIMEOUT.large },
-    );
+    await expect(this.portfolioTotalBalance).toContainText(counterValue);
   }
 
   @step("Expect total balance to be zero")
@@ -108,10 +103,11 @@ export class PortfolioPage extends AppPage {
     await expect(this.portfolioTrendPercentage).toBeVisible();
 
     // W40 trend percentage can be hidden in discreet mode and displayed as "***".
-    const expected = counterValue === "%" ? /%|\*\*\*/ : counterValue;
-    await this.softExpect(async soft => {
-      await soft(this.portfolioTrendPercentage).toContainText(expected);
-    });
+    if (counterValue === "%") {
+      await expect(this.portfolioTrendPercentage).toContainText(/%|\*\*\*/);
+    } else {
+      await expect(this.portfolioTrendPercentage).toContainText(counterValue);
+    }
   }
 
   @step("Expect operation to contain counter value $0")
@@ -119,12 +115,7 @@ export class PortfolioPage extends AppPage {
     await this.openHistoryPage();
     const valueCell = this.historyOperationValue.first();
     await this.checkVisibility(valueCell);
-    await this.softExpect(
-      async soft => {
-        await soft(valueCell).toContainText(this.getExpectedCounterValuePattern(counterValue));
-      },
-      { timeout: TIMEOUT.large },
-    );
+    await expect(valueCell).toContainText(this.getExpectedCounterValuePattern(counterValue));
   }
 
   @step("Wait for balance to be visible")

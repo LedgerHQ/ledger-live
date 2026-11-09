@@ -50,11 +50,6 @@ export class SettingsPage extends AppPage {
     await expect(this.generalTab).toBeVisible();
   }
 
-  @step("Go to Settings General tab")
-  async goToGeneralTab() {
-    await this.generalTab.click();
-  }
-
   @step("Go to Settings Accounts tab")
   async goToAccountsTab() {
     await this.accountsTab.click();
