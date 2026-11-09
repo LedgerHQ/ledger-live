@@ -1,7 +1,7 @@
 import path from "path";
 import type { RspackOptions } from "@rspack/core";
 
-export const rootFolder = path.resolve(__dirname, "..", "..");
+export const rootFolder = path.resolve(import.meta.dirname, "..", "..");
 export const srcFolder = path.resolve(rootFolder, "src");
 export const outputFolder = path.resolve(rootFolder, ".webpack");
 

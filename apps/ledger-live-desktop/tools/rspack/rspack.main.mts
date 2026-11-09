@@ -1,18 +1,18 @@
 import path from "path";
 import { rspack, type RspackOptions } from "@rspack/core";
-import { commonConfig, rootFolder } from "./rspack.common";
+import { commonConfig, rootFolder, outputFolder } from "./rspack.common.mts";
 import {
   buildMainEnv,
   buildDotEnvDefine,
   DOTENV_FILE,
   getRsdoctorPlugin,
   isRsdoctorEnabled,
-} from "./utils";
+} from "./utils.mts";
 
 /**
- * Creates the rspack configuration for the webview preloader script
+ * Creates the rspack configuration for the Electron main process
  */
-export function createWebviewPreloaderConfig(
+export function createMainConfig(
   mode: "development" | "production",
   argv?: { port?: number },
 ): RspackOptions {
@@ -20,25 +20,37 @@ export function createWebviewPreloaderConfig(
 
   return {
     ...commonConfig,
-    name: "webviewPreloader",
+    name: "main",
     mode,
-    target: "electron-preload",
+    target: "electron-main",
     entry: {
-      webviewPreloader: path.resolve(rootFolder, "src", "webviewPreloader", "index.ts"),
+      main: path.resolve(rootFolder, "src", "index.ts"),
     },
     output: {
       ...commonConfig.output,
-      filename: "webviewPreloader.bundle.js",
+      filename: "main.bundle.js",
       library: {
         type: "commonjs2",
       },
     },
     devtool: isRsdoctorEnabled() ? false : "source-map",
+    resolve: {
+      ...commonConfig.resolve,
+      mainFields: ["main", "module"],
+    },
     plugins: [
-      ...getRsdoctorPlugin("webviewPreloader"),
+      ...getRsdoctorPlugin("main"),
       new rspack.DefinePlugin({
         ...buildMainEnv(mode, argv),
         ...buildDotEnvDefine(DOTENV_FILE),
+      }),
+      new rspack.CopyRspackPlugin({
+        patterns: [
+          {
+            from: path.join(rootFolder, "build", "icons"),
+            to: path.join(outputFolder, "build", "icons"),
+          },
+        ],
       }),
     ],
     optimization: {
@@ -48,4 +60,4 @@ export function createWebviewPreloaderConfig(
   };
 }
 
-export default createWebviewPreloaderConfig;
+export default createMainConfig;
