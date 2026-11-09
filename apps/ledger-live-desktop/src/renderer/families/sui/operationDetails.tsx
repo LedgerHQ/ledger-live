@@ -96,7 +96,8 @@ const OperationDetailsExtra = ({
     </OpDetailsSection>
   );
 };
-// A stake operation's value is only its gas; the staked principal is shown beside it.
+// A stake operation's value is only its gas (minus the reward for an unstake); the staked
+// principal is shown beside it.
 const StakingAmountCell = ({ operation, currency, unit }: AmountCellExtraProps<SuiOperation>) => {
   const stakedAmount = operation.extra?.stakedAmount;
   if (!stakedAmount) return null;

@@ -536,6 +536,7 @@ export function transactionToOperation(
     extra: {
       coinType,
       ...(stakingExtra ?? {}),
+      ...(isStakingOp ? { principalExcluded: "true" } : {}),
     },
     fee,
     hasFailed: transaction.effects.status.status !== "success",
@@ -550,9 +551,11 @@ export function transactionToOperation(
 }
 
 /**
- * A stake or unstake moves SUI between liquid and staked, and the account balance counts both. The
- * operation therefore moves the balance only by the gas this account paid: the fee, or zero when a
- * sponsor paid it. The staked principal lives in `extra.stakedAmount`.
+ * A stake or unstake moves SUI between liquid and staked, and the account balance counts both. A
+ * stake therefore moves the balance only by the gas this account paid: the fee, or zero when a
+ * sponsor paid it. An unstake also pays out the reward, which the history must add at that point,
+ * so its value is the gas minus the reward and can be negative. The principal lives in
+ * `extra.stakedAmount`.
  */
 export const getStakingOperationValue = (
   address: string,
@@ -562,7 +565,15 @@ export const getStakingOperationValue = (
   const payer = getFeesPayer(transaction);
   const paidByAccount =
     !payer || normalizeSuiAddressForComparison(payer) === normalizeSuiAddressForComparison(address);
-  return paidByAccount ? fee : new BigNumber(0);
+  const gas = paidByAccount ? fee : new BigNumber(0);
+  // One transaction can withdraw several stakes, each with its own event.
+  const reward = (transaction.events ?? [])
+    .filter(e => e.type === UNSTAKING_REQUEST_EVENT)
+    .reduce((sum, e) => {
+      const parsed = e.parsedJson as { reward_amount?: string | number } | undefined;
+      return sum.plus(String(parsed?.reward_amount ?? 0));
+    }, new BigNumber(0));
+  return gas.minus(reward);
 };
 
 // This function is only used by coin-framework code path

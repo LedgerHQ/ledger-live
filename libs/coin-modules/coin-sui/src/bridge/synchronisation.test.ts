@@ -7,6 +7,7 @@ import { mist, ONE_SUI } from "../constants";
 import * as networkModule from "../network";
 import { DEFAULT_COIN_TYPE } from "../network/sdk";
 import { createFixtureAccount, createFixtureOperation } from "../types/bridge.fixture";
+import { fromOperationExtraRaw, toOperationExtraRaw } from "./formatters";
 import { getAccountShape, revalueStoredStakingOperation } from "./synchronisation";
 
 jest.mock("../network", () => {
@@ -1046,7 +1047,67 @@ describe("revalueStoredStakingOperation", () => {
     expect(revalueStoredStakingOperation(op).value).toEqual(BigNumber(0));
   });
 
-  it("rewrites a stored stake without principal, and a stored unstake, to the fee", () => {
+  it("rewrites a stored unstake to the gas minus the reward", () => {
+    const reward = BigNumber(500);
+    const selfPaid = createFixtureOperation({
+      type: "UNDELEGATE",
+      fee,
+      value: fee.minus(mist(2)).minus(reward),
+      extra: { stakedAmount: mist(2) },
+    });
+    const sponsored = createFixtureOperation({
+      type: "UNDELEGATE",
+      fee,
+      value: BigNumber(mist(-2)).minus(reward),
+      extra: { stakedAmount: mist(2) },
+    });
+    expect(revalueStoredStakingOperation(selfPaid).value).toEqual(fee.minus(reward));
+    expect(revalueStoredStakingOperation(sponsored).value).toEqual(reward.negated());
+  });
+
+  it("falls back to the fee when the sponsor's gas change was stored as the value", () => {
+    const op = createFixtureOperation({
+      type: "UNDELEGATE",
+      fee,
+      value: fee,
+      extra: { stakedAmount: mist(2) },
+    });
+    expect(revalueStoredStakingOperation(op).value).toEqual(fee);
+  });
+
+  it("marks a rewritten operation and leaves a marked one unchanged", () => {
+    // A marked value may exceed the principal: a sponsored unstake paying a large reward.
+    const op = createFixtureOperation({
+      type: "UNDELEGATE",
+      fee: BigNumber(mist(2)),
+      value: BigNumber(mist(-3)),
+      extra: { stakedAmount: mist(1), principalExcluded: "true" },
+    });
+    expect(revalueStoredStakingOperation(op)).toBe(op);
+
+    const legacy = createFixtureOperation({
+      type: "DELEGATE",
+      fee,
+      value: BigNumber(mist(2)).plus(fee),
+      extra: { stakedAmount: mist(2) },
+    });
+    const rewritten = revalueStoredStakingOperation(legacy);
+    expect(rewritten.extra).toEqual({ stakedAmount: mist(2), principalExcluded: "true" });
+    expect(revalueStoredStakingOperation(rewritten)).toBe(rewritten);
+  });
+
+  it("keeps the marker through persistence, so a restart does not rewrite again", () => {
+    const op = createFixtureOperation({
+      type: "UNDELEGATE",
+      fee,
+      value: fee.minus(500),
+      extra: { stakedAmount: mist(2), principalExcluded: "true" },
+    });
+    const restored = { ...op, extra: fromOperationExtraRaw(toOperationExtraRaw(op.extra)) };
+    expect(revalueStoredStakingOperation(restored).value).toEqual(fee.minus(500));
+  });
+
+  it("rewrites a stored stake without principal, and an unstake without principal, to the fee", () => {
     const stake = createFixtureOperation({
       type: "DELEGATE",
       fee,
@@ -1072,22 +1133,12 @@ describe("revalueStoredStakingOperation", () => {
       value: BigNumber(mist(2)),
       extra: { stakedAmount: mist(2) },
     });
-    const rewrittenSponsored = createFixtureOperation({
-      type: "UNDELEGATE",
-      fee: rebate,
-      value: BigNumber(0),
-    });
     expect(revalueStoredStakingOperation(selfPaid).value).toEqual(rebate);
     expect(revalueStoredStakingOperation(sponsored).value).toEqual(BigNumber(0));
-    expect(revalueStoredStakingOperation(rewrittenSponsored)).toBe(rewrittenSponsored);
   });
 
-  it("leaves rewritten stake operations and other operations unchanged", () => {
-    const rewritten = createFixtureOperation({ type: "DELEGATE", fee, value: fee });
-    const sponsored = createFixtureOperation({ type: "UNDELEGATE", fee, value: BigNumber(0) });
+  it("leaves other operations unchanged", () => {
     const out = createFixtureOperation();
-    expect(revalueStoredStakingOperation(rewritten)).toBe(rewritten);
-    expect(revalueStoredStakingOperation(sponsored)).toBe(sponsored);
     expect(revalueStoredStakingOperation(out)).toBe(out);
   });
 });

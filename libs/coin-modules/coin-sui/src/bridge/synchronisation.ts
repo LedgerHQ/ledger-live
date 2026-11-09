@@ -107,20 +107,34 @@ export const sync = makeSync({ getAccountShape, shouldMergeOps: false });
  * Stake operations stored by earlier versions carry the liquid SUI they moved as `value`. The
  * account balance now counts staked SUI, so such a value would distort the balance history. Sync
  * reads forward from its cursor and never refetches these operations, so they are rewritten in
- * place to the gas the account paid. A rewritten value is zero or the fee (a net fee can be
- * negative when the storage rebate exceeds the costs).
+ * place to the value `getStakingOperationValue` gives: the gas the account paid, minus the reward
+ * for an unstake. The gas is zero or the fee (a net fee can be negative when the storage rebate
+ * exceeds the costs). `extra.principalExcluded` marks a new or rewritten value, so the rewrite
+ * applies once.
  */
 export function revalueStoredStakingOperation(op: Operation): Operation {
   if (op.type !== "DELEGATE" && op.type !== "UNDELEGATE") return op;
-  const isRewritten = (value: BigNumber) => value.isZero() || value.eq(op.fee);
-  if (isRewritten(op.value)) return op;
-  // An old stake value is principal plus the gas this account paid, so the principal recovers the
-  // gas share: the fee, or zero for a sponsored stake. A stored operation does not record the gas
-  // payer otherwise, and an unstake value mixes in the reward, so the rest falls back to the fee.
-  const stakedAmount = (op.extra as SuiOperationExtra | undefined)?.stakedAmount;
-  const gasShare =
-    op.type === "DELEGATE" && stakedAmount ? op.value.minus(stakedAmount) : undefined;
-  return { ...op, value: gasShare && isRewritten(gasShare) ? gasShare : op.fee };
+  const extra = (op.extra ?? {}) as SuiOperationExtra;
+  if (extra.principalExcluded) return op;
+  return {
+    ...op,
+    value: legacyStakingOperationValue(op, extra.stakedAmount),
+    extra: { ...extra, principalExcluded: "true" },
+  };
+}
+
+/**
+ * An old value is the negated first balance change of the transaction. When that change is the
+ * account's own, the principal recovers the new value exactly, whoever paid the gas: a stake held
+ * principal plus gas, an unstake gas minus principal and reward. When the sponsor's gas change came
+ * first, the old value equals the fee and nothing is recoverable. That case, and a missing
+ * principal, fall back to the fee.
+ */
+function legacyStakingOperationValue(op: Operation, stakedAmount: string | undefined): BigNumber {
+  if (!stakedAmount || op.value.eq(op.fee)) return op.fee;
+  if (op.type === "UNDELEGATE") return op.value.plus(stakedAmount);
+  const gasShare = op.value.minus(stakedAmount);
+  return gasShare.isZero() || gasShare.eq(op.fee) ? gasShare : op.fee;
 }
 
 async function buildSubAccounts({

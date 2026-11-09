@@ -496,6 +496,24 @@ describe("SDK Functions", () => {
         new BigNumber(0),
       );
     });
+
+    test("subtracts the reward an unstake pays out", () => {
+      const unstake = mockUnstakingTx(SENDER, mist(1.2));
+      const sponsor = "0x" + "ab".repeat(32);
+      const reward = new BigNumber(mist(0.05));
+      expect(sdk.getStakingOperationValue(SENDER, unstake, fee)).toEqual(fee.minus(reward));
+      expect(sdk.getStakingOperationValue(SENDER, withGasOwner(unstake, sponsor), fee)).toEqual(
+        reward.negated(),
+      );
+    });
+
+    test("subtracts the reward of every stake one transaction withdraws", () => {
+      const unstake = mockUnstakingTx(SENDER, mist(2.4));
+      const twoWithdrawals = { ...unstake, events: [...unstake.events, ...unstake.events] };
+      expect(sdk.getStakingOperationValue(SENDER, twoWithdrawals, fee)).toEqual(
+        fee.minus(mist(0.1)),
+      );
+    });
   });
 
   test("transactionToOperation should map transaction to operation", () => {
@@ -958,7 +976,9 @@ describe("Staking Operations", () => {
       expect(unstakingExtra.validatorAddress).toBe(VALIDATOR);
       // `principal_amount` from the unstaking event — see mockUnstakingTx.
       expect(unstakingExtra.stakedAmount).toBe(mist(1.2));
-      expect(operation.value).toEqual(operation.fee);
+      // The fee minus the `reward_amount` the unstake pays out.
+      expect(operation.value).toEqual(operation.fee.minus(mist(0.05)));
+      expect(operation.extra).toHaveProperty("principalExcluded", "true");
       expect(operation.recipients).toEqual([]);
       expect(operation.senders).toEqual([address]);
     });

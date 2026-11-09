@@ -138,21 +138,21 @@ describe("getTransactionStatus", () => {
       gasBudget: BigNumber(100_000_000),
     });
 
-    it("warns when the gas budget leaves less than 0.1 SUI", async () => {
-      // 2.15 - 2 = 0.15 SUI before gas, 0.05 SUI after the 0.1 SUI budget.
+    it("warns when the fee leaves less than 0.1 SUI", async () => {
+      // 0.105 SUI before gas, about 0.095 SUI after the fee.
       const acc = createFixtureAccount({
-        balance: BigNumber(2_150_000_000),
-        spendableBalance: BigNumber(2_150_000_000),
+        balance: BigNumber(2_105_000_000),
+        spendableBalance: BigNumber(2_105_000_000),
       });
       const result = await getTransactionStatus(acc, delegate);
 
       expect(result.warnings.amount).toEqual(new SomeSuiForUnstake());
     });
 
-    it("does not warn when at least 0.1 SUI is left after gas", async () => {
+    it("does not warn on a max stake, which leaves exactly 0.1 SUI after the fee", async () => {
       const acc = createFixtureAccount({
-        balance: BigNumber(3_000_000_000),
-        spendableBalance: BigNumber(3_000_000_000),
+        balance: BigNumber(2_109_759_296),
+        spendableBalance: BigNumber(2_109_759_296),
       });
       const result = await getTransactionStatus(acc, delegate);
 
