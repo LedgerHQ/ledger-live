@@ -9615,6 +9615,14 @@
     }
   },
   "ApplicationVersion": "v{{version}}",
+  "accountAnalytics": {
+    "assets": "Asset filter",
+    "accounts": "Account filter",
+    "allAssets": "All assets",
+    "allAccounts": "All accounts",
+    "error": "Unable to load analytics. Please try again.",
+    "unavailable": "Data is not available for this selection."
+  },
   "analytics": {
     "title": "Analytics",
     "operations": {
