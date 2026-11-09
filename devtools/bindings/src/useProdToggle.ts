@@ -1,26 +1,22 @@
-import { useEffect, useState } from "react";
-import { changes, getEnv } from "@shared/env";
+import { useState } from "react";
 
-export interface ProdToggle {
-  useProd: boolean;
-  setUseProd: (v: boolean) => void;
+/** The Trustchain and Cloud Sync URLs of one Ledger Sync backend, which must match. */
+export interface LedgerSyncBackend {
   trustchainApiBaseUrl: string;
   cloudSyncApiBaseUrl: string;
 }
 
-export function useProdToggle(): ProdToggle {
+export interface ProdToggle extends LedgerSyncBackend {
+  useProd: boolean;
+  setUseProd: (v: boolean) => void;
+}
+
+/** Starts on the host's staging backend, and switches to its prod one on `setUseProd(true)`. */
+export function useProdToggle(backends: {
+  prod: LedgerSyncBackend;
+  staging: LedgerSyncBackend;
+}): ProdToggle {
   const [useProd, setUseProd] = useState(false);
-  const [_tick, forceUpdate] = useState(0);
-
-  useEffect(() => {
-    const sub = changes.subscribe(() => forceUpdate(n => n + 1));
-    return () => sub.unsubscribe();
-  }, []);
-
-  return {
-    useProd,
-    setUseProd,
-    trustchainApiBaseUrl: getEnv(useProd ? "TRUSTCHAIN_API_PROD" : "TRUSTCHAIN_API_STAGING"),
-    cloudSyncApiBaseUrl: getEnv(useProd ? "CLOUD_SYNC_API_PROD" : "CLOUD_SYNC_API_STAGING"),
-  };
+  const { trustchainApiBaseUrl, cloudSyncApiBaseUrl } = useProd ? backends.prod : backends.staging;
+  return { useProd, setUseProd, trustchainApiBaseUrl, cloudSyncApiBaseUrl };
 }

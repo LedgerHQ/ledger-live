@@ -100,6 +100,23 @@ authProvider: new AuthSDK(
 )
 ```
 
+## Adding a switch
+
+Values that must move together go in one switch: the `ledgerKeyRing` switch moves Keycloak,
+Trustchain and Cloud Sync, since Cloud Sync rejects a token another environment minted.
+
+1. Declare its values in `apps/*/src/setup/schema.ts` and its `prod` and `staging` options in
+   `apps/*/src/setup/load.ts`, on both apps.
+2. In `apps/*/src/state-manager/configureStore.ts`, hand the values to what reads them: the
+   middleware that builds a dependency once per store, such as the auth and Ledger Sync
+   middlewares, or the thunk `extraArgument`, through the builder of the package whose base
+   queries, thunks or listeners read them.
+3. Never read them in React: a hook reaches the dependency through `dispatch`, or dispatches a
+   thunk that hands the value to its library.
+4. The devtool lists the new switch as is. E2E runs select its option with the `appConfig` option
+   of the desktop Playwright fixture, which writes `PLAYWRIGHT_RUN.appConfig`, and with the
+   `appConfig` launch argument on Detox builds.
+
 ## Changes take a reload
 
 The configuration never changes while the app runs. A new selection, `.env` value or debug override
@@ -114,8 +131,9 @@ choice, not a limitation to work around:
 
 So the store never re-reads a configuration value on a request to follow a runtime change, and a
 debug tool that changes one saves it, then reloads when the developer asks: a reload can be slow
-under a debugger or on an emulator, so several changes take a single one. Only Keycloak reads the configuration so
-far: the other services keep their `@shared/env` reads until they move to it.
+under a debugger or on an emulator, so several changes take a single one. Only Keycloak and Ledger
+Sync read the configuration so far: the other services keep their `@shared/env` reads until they
+move to it.
 
 ## Selecting an option
 

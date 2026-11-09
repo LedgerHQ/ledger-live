@@ -111,8 +111,9 @@ flowchart TD
 ## Atomicity & versioning
 
 - **Single in-flight lock**: `pull`, `push`, and `destroy` share one lock — a concurrent call
-  rejects with `CloudSyncSDKLocked` (`CloudSyncSDK locked (...)`), and the watch loop skips a poll
-  that meets it. Combined with the watch-loop semaphore, only one operation ever runs at a time.
+  rejects with `CloudSyncSDKLocked` (`CloudSyncSDK locked (...)`). Each app store holds one SDK,
+  so the lock covers every caller: the watch loop skips a poll that meets it, and a backup
+  deletion retries.
 - **Optimistic locking**: each push commits `version + 1`; the backend accepts it only if it
   matches `serverVersion + 1`, otherwise returns `out-of-sync`.
 - `saveNewUpdate` must persist the **data and the version together**, so local state and version

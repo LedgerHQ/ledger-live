@@ -11,7 +11,10 @@ import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { LedgerSyncCliHelper } from "@ledgerhq/live-e2e-shared/ledgerSync/helper";
 import type { LedgerSyncCliCommand } from "@ledgerhq/live-e2e-shared/ledgerSync/setup";
-import { ledgerSyncEnvironment } from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
+import {
+  ledgerSyncAppConfig,
+  ledgerSyncEnvironment,
+} from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
 import {
   destroyTrustchain,
   generateLedgerSyncSeed,
@@ -68,6 +71,7 @@ function contactsTestOptions(seedCommands: CliCommand[] = []) {
   return {
     teamOwner: Team.WALLET_XP,
     userdata: "skip-onboarding-with-last-seen-device",
+    appConfig: ledgerSyncAppConfig,
     speculosApp: AppInfos.LS,
     settings: { hasDismissedContactsFeatureIntroduction: true },
     cliCommands: [

@@ -41,5 +41,5 @@ it("should show an error when the push fails", async () => {
 
 ## Examples
 
-- [useWatchWalletSync.integration.test.ts](../../../../apps/ledger-live-desktop/src/mvvm/features/WalletSync/__integrations__/useWatchWalletSync.integration.test.ts)
+- [walletSyncWatch.integration.test.ts](../../../../apps/ledger-live-desktop/src/mvvm/features/WalletSync/__integrations__/walletSyncWatch.integration.test.ts)
 - [createAuthenticatedBaseQuery.test.ts](../../../../shared/auth/src/createAuthenticatedBaseQuery.test.ts)

@@ -2,7 +2,7 @@ import {
   type SyncSourcesState,
   useSyncSources as useSyncSourcesCommon,
 } from "@ledgerhq/live-common/bridge/react/index";
-import { useWalletSyncUserState } from "LLD/features/WalletSync/components/WalletSyncContext";
+import { useWalletSyncUserState } from "@features/platform-wallet-sync";
 
 export type { SyncSourcesState } from "@ledgerhq/live-common/bridge/react/index";
 

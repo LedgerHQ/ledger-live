@@ -2,12 +2,12 @@ import React, { useContext } from "react";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { TrustchainSDK } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
-import { getEnv } from "@shared/env";
+import { LEDGER_SYNC_BACKENDS } from "./backends";
 
 export const defaultContext = {
   applicationId: 16,
   name: "WebTools",
-  apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING"),
+  apiBaseUrl: LEDGER_SYNC_BACKENDS.staging.trustchainApiBaseUrl,
 };
 
 export const TrustchainSDKContext = React.createContext<TrustchainSDK>(

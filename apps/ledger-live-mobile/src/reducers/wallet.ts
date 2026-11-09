@@ -142,14 +142,6 @@ export const accountUserDataExportSelector = (
   };
 };
 
-export function latestDistantStateSelector(state: State): WSState["data"] {
-  return walletSelector(state).walletSync.walletSyncState.data;
-}
-
-export function latestDistantVersionSelector(state: State): number {
-  return walletSelector(state).walletSync.walletSyncState.version;
-}
-
 export function recentAddressesSelector(state: State): RecentAddressesState {
   return walletSelector(state).recentAddresses;
 }

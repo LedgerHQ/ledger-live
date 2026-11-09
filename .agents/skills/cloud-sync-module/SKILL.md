@@ -128,9 +128,9 @@ Registration is where the module becomes real — and where the persistence risk
 2. Reducers — LWD [`wallet.core.ts`](../../../apps/ledger-live-desktop/src/renderer/reducers/wallet.core.ts),
    LWM [`wallet.ts`](../../../apps/ledger-live-mobile/src/reducers/wallet.ts): reducer,
    `ExportedWalletState`, `exportWalletState`, `walletStateExportShouldDiffer`, `importWalletState`.
-3. `useWatchWalletSync.ts` — [LWD](../../../apps/ledger-live-desktop/src/mvvm/features/WalletSync/hooks/useWatchWalletSync.ts),
-   [LWM](../../../apps/ledger-live-mobile/src/mvvm/features/WalletSync/hooks/useWatchWalletSync.ts):
-   add the key to `localStateSelector` and dispatch it in `save`.
+3. `walletsync.ts` — [LWD](../../../apps/ledger-live-desktop/src/mvvm/features/WalletSync/utils/walletsync.ts),
+   [LWM](../../../apps/ledger-live-mobile/src/mvvm/features/WalletSync/utils/walletsync.ts):
+   add the key to `localStateSelector` and dispatch it in `applyLocalState`.
 4. [`AppAccountsSync.tsx`](../../../apps/web-tools/src/trustchain/components/AppAccountsSync.tsx) — a
    **third full registration site** (its own `createAggregator`, `AggLocalState`, `localStateSelector`).
    It is also the only place to verify by hand, with several

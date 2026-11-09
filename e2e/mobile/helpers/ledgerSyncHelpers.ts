@@ -1,14 +1,11 @@
-import { sleep } from "@ledgerhq/live-e2e-shared";
 import { ledgerSyncEnvironment } from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
-import { parseExtraFeatureFlags } from "@ledgerhq/live-e2e-shared/featureFlagsJsonUtils";
-import { getFlags } from "@e2e/bridge/server";
-import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
+import { INTERVAL } from "@e2e/utils/timeouts";
 
 import type { PartialFeatures } from "@shared/feature-flags";
 
 /**
- * Every suite that boots into a pre-seeded trustchain needs this flag on: the app reads the
- * environment from it to build its trustchain SDK, and Ledger Sync stays unavailable without it.
+ * Every suite that boots into a pre-seeded trustchain needs this flag on: Ledger Sync stays
+ * unavailable without it. The backend comes from the `appConfig` launch argument, not this flag.
  */
 export const LEDGER_SYNC_FEATURE_FLAGS: PartialFeatures = {
   llmWalletSync: {
@@ -46,40 +43,6 @@ export const LEDGER_SYNC_ACTIVATION_FEATURE_FLAGS: PartialFeatures = {
   },
   lwmLedgerSyncOptimisation: { enabled: true },
 };
-
-const ENVIRONMENT_READ_TIMEOUT_MS = TIMEOUT.xlarge;
-const ENVIRONMENT_READ_POLL_MS = INTERVAL.medium;
-
-/** `getFlags` returns "" when the bridge has not connected yet, so poll before believing it. */
-async function readAppLedgerSyncEnvironment() {
-  const deadline = Date.now() + ENVIRONMENT_READ_TIMEOUT_MS;
-
-  while (Date.now() < deadline) {
-    const rawFlags = await getFlags();
-    if (rawFlags) {
-      return parseExtraFeatureFlags<PartialFeatures>(rawFlags).llmWalletSync?.params?.environment;
-    }
-    await sleep(ENVIRONMENT_READ_POLL_MS);
-  }
-
-  throw new Error(
-    `Ledger Sync: the app never answered \`getFlags\` within ${ENVIRONMENT_READ_TIMEOUT_MS / 1_000}s, ` +
-      "so its environment could not be checked. " +
-      "The bridge is down — look for a launch or connection failure above.",
-  );
-}
-
-/** Call before `app.init`: once a suite has pushed its own flags, this reads them back to itself. */
-export async function verifyLedgerSyncEnvironment() {
-  const appEnvironment = await readAppLedgerSyncEnvironment();
-
-  if (appEnvironment !== ledgerSyncEnvironment) {
-    throw new Error(
-      `Ledger Sync: the app booted on ${appEnvironment}, the e2e CLI targets ${ledgerSyncEnvironment}. ` +
-        "Both sides must share a backend: the trustchain mints the JWT cloud-sync validates.",
-    );
-  }
-}
 
 /**
  * A seed per run, so every suite builds its trustchain from scratch instead of clearing whatever

@@ -1,8 +1,7 @@
 import { track } from "@shared/analytics";
 import { useCallback, useState, useRef } from "react";
-import { MemberCredentials, TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { createQRCodeCandidateInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
-import { NoTrustchainInitialized } from "@ledgerhq/ledger-key-ring-protocol/errors";
+import { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
+import { getLkrpQrCode } from "@features/platform-wallet-sync";
 import { setTrustchain, trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useNavigation } from "@react-navigation/native";
@@ -10,8 +9,6 @@ import { AnalyticsEvents } from "LLM/features/WalletSync/Analytics/enums";
 import { useWalletSyncTrackingFlow } from "./useLedgerSyncAnalytics";
 import { Steps } from "../types/Activation";
 import { NavigatorName, ScreenName } from "~/const";
-import { useInstanceName } from "./useInstanceName";
-import { useTrustchainSdk } from "./useTrustchainSdk";
 import { useCurrentStep } from "./useCurrentStep";
 
 function resolveSyncErrorStep(error: unknown, trustchainRootId?: string): Steps | undefined {
@@ -42,9 +39,7 @@ export const useSyncWithQrCode = () => {
   const { setCurrentStep } = useCurrentStep();
   const [nbDigits, setDigits] = useState<number | null>(null);
   const [input, setInput] = useState<string | null>(null);
-  const instanceName = useInstanceName();
   const trustchain = useSelector(trustchainSelector);
-  const sdk = useTrustchainSdk();
 
   const navigation = useNavigation();
 
@@ -75,19 +70,11 @@ export const useSyncWithQrCode = () => {
   const handleStart = useCallback(
     async (url: string, memberCredentials: MemberCredentials) => {
       try {
-        const newTrustchain = await createQRCodeCandidateInstance({
+        const newTrustchain = await getLkrpQrCode(dispatch).join({
+          trustchain,
           memberCredentials,
           scannedUrl: url,
-          memberName: instanceName,
           onRequestQRCodeInput,
-          addMember: async (member: TrustchainMember) => {
-            if (trustchain) {
-              await sdk.addMember(trustchain, memberCredentials, member);
-              return trustchain;
-            }
-            throw new NoTrustchainInitialized();
-          },
-          initialTrustchainId: trustchain?.rootId,
         });
         if (newTrustchain) {
           dispatch(setTrustchain(newTrustchain));
@@ -104,16 +91,7 @@ export const useSyncWithQrCode = () => {
         throw e;
       }
     },
-    [
-      instanceName,
-      onRequestQRCodeInput,
-      trustchain,
-      onSyncFinished,
-      sdk,
-      dispatch,
-      setCurrentStep,
-      trackingFlow,
-    ],
+    [onRequestQRCodeInput, trustchain, onSyncFinished, dispatch, setCurrentStep, trackingFlow],
   );
 
   const handleSendDigits = useCallback(

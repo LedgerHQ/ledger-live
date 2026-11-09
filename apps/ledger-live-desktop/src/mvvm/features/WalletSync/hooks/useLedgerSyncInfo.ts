@@ -1,31 +1,24 @@
 import { useQueries, UseQueryResult } from "@tanstack/react-query";
 import { QueryKey } from "./type.hooks";
-import getTrustchainApi, {
-  StatusAPIResponse as TrustchainStatus,
-} from "@ledgerhq/ledger-key-ring-protocol/api";
-import { getCloudSyncApi, StatusAPIResponse as CloudSyncStatus } from "@shared/cloud-sync";
-import { useFeature } from "@features/platform-feature-flags";
-import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
+import type { StatusAPIResponse } from "@shared/cloud-sync";
+import { getLedgerSyncStatus } from "@features/platform-wallet-sync";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { useSelector } from "LLD/hooks/redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { walletSelector } from "~/renderer/reducers/wallet";
 
 export function useLedgerSyncInfo() {
   const trustchain = useSelector(trustchainSelector);
   const walletState = useSelector(walletSelector);
+  const dispatch = useDispatch();
 
-  const featureWalletSync = useFeature("lldWalletSync");
-  const { trustchainApiBaseUrl, cloudSyncApiBaseUrl } = getWalletSyncEnvironmentParams(
-    featureWalletSync?.params?.environment,
-  );
   const QUERIES = [
     {
       queryKey: [QueryKey.fetchTrustchainStatus],
-      queryFn: () => getTrustchainApi(trustchainApiBaseUrl).fetchStatus(),
+      queryFn: () => getLedgerSyncStatus(dispatch).fetchLkrpStatus(),
     },
     {
       queryKey: [QueryKey.fetchCloudSyncStatus],
-      queryFn: () => getCloudSyncApi(cloudSyncApiBaseUrl).fetchStatus(),
+      queryFn: () => getLedgerSyncStatus(dispatch).fetchCloudSyncStatus(),
     },
   ];
 
@@ -41,7 +34,7 @@ export function useLedgerSyncInfo() {
   };
 }
 
-function combineData(results: UseQueryResult<TrustchainStatus | CloudSyncStatus, Error>[]) {
+function combineData(results: UseQueryResult<StatusAPIResponse, Error>[]) {
   return {
     error: results.find(result => result.isError)?.error || null,
     isLoading: results.some(result => result.isLoading),

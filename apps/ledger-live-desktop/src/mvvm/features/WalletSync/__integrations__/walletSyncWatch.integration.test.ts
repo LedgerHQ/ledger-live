@@ -7,11 +7,13 @@ import { accountsSyncModule } from "@ledgerhq/live-wallet/accounts";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { HttpResponse, http, server } from "tests/server";
 import { renderHook, waitFor, withFlagOverrides } from "tests/testSetup";
-import { useWatchWalletSync } from "../hooks/useWatchWalletSync";
+import { loadAppConfig } from "~/setup";
+import { useWalletSyncUserState, useLedgerSyncWatch } from "@features/platform-wallet-sync";
 import type { Account } from "@ledgerhq/types-live";
 
 const originalMockEnv = getEnv("MOCK");
-const cloudSyncApiBaseUrl = getEnv("CLOUD_SYNC_API_PROD");
+// The backend of the store `renderHook` creates.
+const { cloudSyncApiBaseUrl } = loadAppConfig().config;
 
 const trustchain: Trustchain = {
   rootId: "mock-root-id-cursor-regression",
@@ -35,7 +37,7 @@ const endpoints = {
   push: jest.fn<EndpointResult, EndpointParams>(),
 };
 
-describe("useWatchWalletSync PROD cursor synchronization", () => {
+describe("Wallet Sync watch loop PROD cursor synchronization", () => {
   beforeEach(() => {
     setEnv("MOCK", "cursor-regression");
     endpoints.pull.mockReset();
@@ -259,36 +261,42 @@ function renderWalletSync({
   cachedDistantAccounts: Account[] | null;
   cursorVersion: number;
 }) {
-  return renderHook(() => useWatchWalletSync(), {
-    initialState: {
-      ...withFlagOverrides({
-        lldWalletSync: {
-          enabled: true,
-          params: {
-            environment: "PROD",
-            watchConfig: {
-              notificationsEnabled: false,
-              initialTimeout: 1,
-              pollingInterval: 60_000,
+  return renderHook(
+    () => {
+      useLedgerSyncWatch();
+      return useWalletSyncUserState();
+    },
+    {
+      initialState: {
+        ...withFlagOverrides({
+          lldWalletSync: {
+            enabled: true,
+            params: {
+              environment: "PROD",
+              watchConfig: {
+                notificationsEnabled: false,
+                initialTimeout: 1,
+                pollingInterval: 60_000,
+              },
             },
           },
-        },
-      }),
-      accounts: localAccounts,
-      trustchain: { trustchain, memberCredentials },
-      wallet: {
-        walletSync: {
-          walletSyncState: {
-            data:
-              cachedDistantAccounts === null
-                ? null
-                : { accounts: descriptorsFor(cachedDistantAccounts) },
-            version: cursorVersion,
+        }),
+        accounts: localAccounts,
+        trustchain: { trustchain, memberCredentials },
+        wallet: {
+          walletSync: {
+            walletSyncState: {
+              data:
+                cachedDistantAccounts === null
+                  ? null
+                  : { accounts: descriptorsFor(cachedDistantAccounts) },
+              version: cursorVersion,
+            },
           },
         },
       },
     },
-  });
+  );
 }
 
 function expectPullVersion(version: string) {

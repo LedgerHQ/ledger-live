@@ -28,12 +28,6 @@ jest.mock("@devtools/bindings", () => ({
   useFeatureFlagsToolProps: () => ({ marker: "ff-props" }),
   usePayCardToolProps: () => ({ marker: "pay-card-props" }),
   useEnvDevToolProps: () => ({ marker: "env-props" }),
-  useProdToggle: () => ({
-    useProd: false,
-    setUseProd: jest.fn(),
-    trustchainApiBaseUrl: "http://trustchain.test",
-    cloudSyncApiBaseUrl: "http://cloud-sync.test",
-  }),
   useTrustchainDevToolProps: () => ({ marker: "trustchain-props" }),
   useCloudSyncDevToolProps: () => ({ marker: "cloud-sync-props" }),
   useAccountDescriptorToolProps: () => ({ marker: "account-descriptor-props" }),

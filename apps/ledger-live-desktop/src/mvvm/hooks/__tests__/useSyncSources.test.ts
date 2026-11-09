@@ -1,7 +1,7 @@
 import { renderHook } from "tests/testSetup";
 import { useSyncSources } from "../useSyncSources";
 import * as liveCommon from "@ledgerhq/live-common/bridge/react/index";
-import * as walletSyncContext from "LLD/features/WalletSync/components/WalletSyncContext";
+import * as walletSync from "@features/platform-wallet-sync";
 import { defaultWalletSyncReturn } from "./fixtures";
 
 jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
@@ -9,12 +9,13 @@ jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
   useSyncSources: jest.fn(),
 }));
 
-jest.mock("LLD/features/WalletSync/components/WalletSyncContext", () => ({
+jest.mock("@features/platform-wallet-sync", () => ({
+  ...jest.requireActual("@features/platform-wallet-sync"),
   useWalletSyncUserState: jest.fn(),
 }));
 
 const mockUseSyncSourcesCommon = jest.mocked(liveCommon.useSyncSources);
-const mockUseWalletSyncUserState = jest.mocked(walletSyncContext.useWalletSyncUserState);
+const mockUseWalletSyncUserState = jest.mocked(walletSync.useWalletSyncUserState);
 
 const fakeSyncSourcesReturn: liveCommon.SyncSourcesState = {
   isPending: false,

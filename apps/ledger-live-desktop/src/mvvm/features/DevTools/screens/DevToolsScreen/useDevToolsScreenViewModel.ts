@@ -3,20 +3,19 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { useNavigate } from "react-router";
-import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
 import {
   setTrustchain,
   setMemberCredentials,
   resetTrustchainStore,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
 import type { Trustchain, MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { getLkrpSdk } from "@features/platform-wallet-sync";
+import { appConfigSessionSelector } from "@shared/app-config";
 import {
   useFeatureFlagsToolProps,
   usePayCardToolProps,
   useEnvDevToolProps,
-  useProdToggle,
   useTrustchainDevToolProps,
   useCloudSyncDevToolProps,
   useAccountBalanceToolProps,
@@ -37,8 +36,6 @@ import { useDeviceOnboardingTool } from "../../DeviceOnboarding/useDeviceOnboard
 import { useAccountDataRecorder } from "../../accountDataRecorder";
 import { getPortfolioServiceUrl } from "~/config/portfolioService";
 
-const APPLICATION_ID = 16;
-
 const getLiveConfigValue = (key: string): unknown => LiveConfig.getValueByKey(key);
 const getLiveConfigDefaultValue = (key: string): unknown => LiveConfig.getDefaultValueByKey(key);
 
@@ -55,28 +52,14 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
     getValueByKey: getLiveConfigValue,
     getDefaultValueByKey: getLiveConfigDefaultValue,
   });
-  const prodToggle = useProdToggle();
+  // The Ledger Sync tools run on the backends of the app's live trustchain.
+  const appConfigValues = useSelector(appConfigSessionSelector)?.values;
+  const trustchainUrl = urlOf(appConfigValues, "trustchainApiBaseUrl");
+  const cloudSyncUrl = urlOf(appConfigValues, "cloudSyncApiBaseUrl");
   const { wire, wireState } = useDevToolsRelay();
 
-  const createTrustchainSdk = useCallback<Parameters<typeof useTrustchainDevToolProps>[0]>(
-    ({ trustchainApiBaseUrl }) =>
-      getSdk(
-        false,
-        { applicationId: APPLICATION_ID, name: "DevTools", apiBaseUrl: trustchainApiBaseUrl },
-        withDevice,
-      ),
-    [],
-  );
-
-  const createCloudSyncSdk = useCallback<Parameters<typeof useCloudSyncDevToolProps>[0]>(
-    ({ trustchainApiBaseUrl }) =>
-      getSdk(
-        false,
-        { applicationId: APPLICATION_ID, name: "DevTools", apiBaseUrl: trustchainApiBaseUrl },
-        withDevice,
-      ),
-    [],
-  );
+  // The tools act as the app's member, so they run on the store's LKRP SDK.
+  const createSdk = useCallback(() => getLkrpSdk(dispatch), [dispatch]);
 
   const onTrustchainChange = useCallback(
     (tc: Trustchain | null) => {
@@ -96,17 +79,13 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
   );
 
   const trustchainToolProps = useTrustchainDevToolProps(
-    createTrustchainSdk,
-    prodToggle.trustchainApiBaseUrl,
+    createSdk,
+    trustchainUrl,
     onTrustchainChange,
     onMemberCredentialsChange,
   );
 
-  const cloudSyncToolProps = useCloudSyncDevToolProps(
-    createCloudSyncSdk,
-    prodToggle.cloudSyncApiBaseUrl,
-    prodToggle.trustchainApiBaseUrl,
-  );
+  const cloudSyncToolProps = useCloudSyncDevToolProps(createSdk, cloudSyncUrl, trustchainUrl);
   const deviceOnboardingProps = useDeviceOnboardingTool();
   const accountDescriptorToolProps = useAccountDescriptorToolProps();
   const accountBalanceToolProps = useAccountBalanceToolProps();
@@ -175,4 +154,10 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
     setHubUrl: wire.setHubUrl,
     role: wireState.role,
   };
+}
+
+/** Empty until the app config middleware sets the session, a microtask after the store is created. */
+function urlOf(values: Readonly<Record<string, unknown>> | undefined, name: string): string {
+  const value = values?.[name];
+  return typeof value === "string" ? value : "";
 }
