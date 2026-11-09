@@ -207,6 +207,34 @@ describe("createWalletSyncWatchLoop", () => {
       expect(walletSyncSdk.push).not.toHaveBeenCalled();
     });
 
+    it.each([
+      ["a backup deletion", null],
+      ["a push", { value: "pushed" }],
+    ])("ends a pass when %s saves while the local update is in flight", async (_, saved) => {
+      let resolveLocal: () => void = () => {};
+      const localIncrementUpdate = jest.fn(
+        () => new Promise<void>(resolve => (resolveLocal = resolve)),
+      );
+      const walletsync = makeModule({
+        diffLocalToDistant: jest.fn(() => ({ hasChanges: true, nextState: { value: "next" } })),
+      });
+      const { walletSyncSdk, state, handle } = setup({
+        walletsync,
+        localIncrementUpdate,
+        watchConfig: { initialTimeout: 10 },
+      });
+
+      jest.advanceTimersByTime(10);
+      await flush();
+      state.distant = saved;
+      resolveLocal();
+      await flush();
+
+      expect(walletsync.diffLocalToDistant).not.toHaveBeenCalled();
+      expect(walletSyncSdk.push).not.toHaveBeenCalled();
+      handle.unsubscribe();
+    });
+
     it("stops polling after unsubscribe", async () => {
       const { walletSyncSdk, handle } = setup({
         watchConfig: { initialTimeout: 10, pollingInterval: 100 },

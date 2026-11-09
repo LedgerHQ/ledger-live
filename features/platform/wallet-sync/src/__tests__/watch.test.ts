@@ -204,8 +204,11 @@ describe("Ledger Sync watch loop", () => {
       { type: "pushed-data" as const, data: { value: "pushed" }, version: 4 },
       { data: { value: "pushed" }, version: 4 },
     ],
-  ])("should drop a local update that settles after %s saved", async (_, event, saved) => {
+  ])("should drop a local update and skip the push after %s saved", async (_, event, saved) => {
     const resolution = holdNextResolution();
+    jest
+      .mocked(resolution.walletsync.diffLocalToDistant)
+      .mockReturnValue({ hasChanges: true, nextState: { value: "local" } });
     const store = startedWatch(SYNCED);
     await advance(WATCH_CONFIG.initialTimeout);
 
@@ -216,6 +219,7 @@ describe("Ledger Sync watch loop", () => {
 
     expect(selectWalletSyncState(store.getState())).toEqual(saved);
     expect(applyLocalState).not.toHaveBeenCalled();
+    expect(mockCloudSyncSdk.push).not.toHaveBeenCalled();
   });
 
   it("should drop a restore that settles after the trustchain was reset", async () => {

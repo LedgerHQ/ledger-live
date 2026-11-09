@@ -101,7 +101,7 @@ export function holdNextResolution() {
     }),
   );
   createWalletsync.mockReturnValueOnce(walletsync);
-  return { settle };
+  return { settle, walletsync };
 }
 
 export function createStore({

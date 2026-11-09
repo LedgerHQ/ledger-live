@@ -74,13 +74,14 @@ export function createWalletSyncWatchLoop<
       if (onStartPolling) onStartPolling();
       await walletSyncSdk.pull(trustchain, memberCredentials);
       if (unsubscribed) return;
+      const pulled = latestDistantStateSelector(getState());
       await localIncrementUpdate();
       if (unsubscribed) return;
       const state = getState();
-      const diff = walletsync.diffLocalToDistant(
-        localStateSelector(state),
-        latestDistantStateSelector(state),
-      );
+      const latest = latestDistantStateSelector(state);
+      // A deletion or a push saved during the local update, which runs unlocked, ends the pass.
+      if (latest !== pulled) return;
+      const diff = walletsync.diffLocalToDistant(localStateSelector(state), latest);
       if (diff.hasChanges) {
         await walletSyncSdk.push(trustchain, memberCredentials, diff.nextState);
       }
