@@ -31,6 +31,7 @@ import { type AccountNamesState } from "@domain/entity-account-name";
 import { getWalletAccount } from "@ledgerhq/coin-bitcoin/getWalletAccount";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { normalizePublicKeyForAddress } from "@ledgerhq/coin-tezos/logic-public";
+import { suiPublicKeyMatchesAddress } from "@ledgerhq/coin-sui/signer/publicKey";
 import { AccountPublicKeyUnavailable } from "../errors";
 
 export function translateContent(content: string | TranslatableString, locale = "en"): string {
@@ -371,6 +372,14 @@ const ACCOUNT_PUBLIC_KEY_RESOLVERS: Partial<Record<string, AccountPublicKeyResol
   },
   cosmos: account =>
     account.xpub !== undefined && COMPRESSED_SECP256K1_HEX.test(account.xpub) ? account.xpub : null,
+  // xpub holds the raw Ed25519 public key (hex) saved at scan. Accounts added before that have
+  // none, and the user must re-add them.
+  sui: account => {
+    if (account.xpub && suiPublicKeyMatchesAddress(account.xpub, account.freshAddress)) {
+      return account.xpub;
+    }
+    throw new AccountPublicKeyUnavailable();
+  },
 };
 
 export const accountGetPublicKeyLogic = async (
