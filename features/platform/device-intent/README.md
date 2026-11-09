@@ -428,11 +428,12 @@ function MyFlowScreen({ enabled, onDone }: Props) {
       onIntentJobError={error => {
         /* handle error */
       }}
-      cancelIntentRequestId={undefined}
     />
   );
 }
 ```
+
+`onExecutorStateChanged` and `cancelIntentRequestId` are optional.
 
 ### Custom headers from intent components
 
@@ -646,16 +647,12 @@ function SignTransactionStep({
       deviceInitializationInput={deviceInitializationInput}
       intent={intent}
       intentComponentExtraProps={{}}
-      onExecutorStateChanged={state => {
-        /* track lifecycle if needed */
-      }}
       onIntentJobStateChanged={state => {
         /* optional UI / debug reaction — not for flow results */
       }}
       onIntentJobComplete={() => onSigned()}
       onIntentJobError={onError}
       onUserCancel={onClose}
-      cancelIntentRequestId={undefined}
     />
   );
 }
@@ -1207,12 +1204,12 @@ There are two levels of callbacks for job lifecycle events:
 
 The executor reports progress and lifecycle changes through callback props:
 
-| Callback                            | Fires when                                                                                                                                                |
-| ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `onExecutorStateChanged(state)`     | The executor transitions between lifecycle phases (`connectingDevice`, `initializingDeviceContext`, `executingIntent`, `idle`, and their error variants). |
-| `onIntentJobStateChanged(jobState)` | Optional. The running job's observable emits a new `JobState` value (UI / observability only).                                                            |
-| `onIntentJobComplete()`             | Optional. The job observable completes (no more emissions). The executor transitions to `idle`.                                                           |
-| `onIntentJobError(error)`           | Optional. The job observable errors. The executor transitions to `executingIntentError`.                                                                  |
+| Callback                            | Fires when                                                                                                                                                          |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `onExecutorStateChanged(state)`     | Optional. The executor transitions between lifecycle phases (`connectingDevice`, `initializingDeviceContext`, `executingIntent`, `idle`, and their error variants). |
+| `onIntentJobStateChanged(jobState)` | Optional. The running job's observable emits a new `JobState` value (UI / observability only).                                                                      |
+| `onIntentJobComplete()`             | Optional. The job observable completes (no more emissions). The executor transitions to `idle`.                                                                     |
+| `onIntentJobError(error)`           | Optional. The job observable errors. The executor transitions to `executingIntentError`.                                                                            |
 
 All callbacks use refs internally, so the executor always calls the **latest**
 version of each callback without needing to be recreated when the callback
@@ -1262,7 +1259,7 @@ cross-cutting concerns (updating global state, logging, debug UI).
 To cancel the currently running job, set `cancelIntentRequestId` to a new
 value (typically a UUID). The executor stops the job observable, transitions to
 idle, and the `lastIntentSnapshot` preserves the job state at the time of
-cancellation.
+cancellation. A caller that never cancels the job leaves the prop out.
 
 ```typescript
 const [cancelId, setCancelId] = useState<string | undefined>(undefined);
