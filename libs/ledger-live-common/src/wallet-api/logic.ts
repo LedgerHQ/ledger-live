@@ -31,8 +31,9 @@ import { type AccountNamesState } from "@domain/entity-account-name";
 import { getWalletAccount } from "@ledgerhq/coin-bitcoin/getWalletAccount";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { normalizePublicKeyForAddress } from "@ledgerhq/coin-tezos/logic-public";
-import { suiPublicKeyMatchesAddress } from "@ledgerhq/coin-sui/signer/publicKey";
 import { AccountPublicKeyUnavailable } from "../errors";
+import { loadAccountPublicKeyResolverForFamily } from "../coin-modules/registry";
+import type { AccountPublicKeyResolver } from "../coin-modules/types";
 
 export function translateContent(content: string | TranslatableString, locale = "en"): string {
   if (!content || typeof content === "string") return content;
@@ -357,8 +358,6 @@ export const bitcoinFamilyAccountGetPublicKeyLogic = async (
   return publicKey.toString("hex");
 };
 
-type AccountPublicKeyResolver = (account: Account) => string | null;
-
 const COMPRESSED_SECP256K1_HEX = /^0[23][0-9a-f]{64}$/i;
 
 const ACCOUNT_PUBLIC_KEY_RESOLVERS: Partial<Record<string, AccountPublicKeyResolver>> = {
@@ -372,14 +371,6 @@ const ACCOUNT_PUBLIC_KEY_RESOLVERS: Partial<Record<string, AccountPublicKeyResol
   },
   cosmos: account =>
     account.xpub !== undefined && COMPRESSED_SECP256K1_HEX.test(account.xpub) ? account.xpub : null,
-  // xpub holds the raw Ed25519 public key (hex) saved at scan. Accounts added before that have
-  // none, and the user must re-add them.
-  sui: account => {
-    if (account.xpub && suiPublicKeyMatchesAddress(account.xpub, account.freshAddress)) {
-      return account.xpub;
-    }
-    throw new AccountPublicKeyUnavailable();
-  },
 };
 
 export const accountGetPublicKeyLogic = async (
@@ -410,7 +401,11 @@ export const accountGetPublicKeyLogic = async (
 
   let publicKey: string | null | undefined;
   try {
-    publicKey = ACCOUNT_PUBLIC_KEY_RESOLVERS[mainAccount.currency.family]?.(mainAccount);
+    // A family that registers its own resolver keeps its coin-specific code out of this module.
+    const { family } = mainAccount.currency;
+    const resolver =
+      (await loadAccountPublicKeyResolverForFamily(family)) ?? ACCOUNT_PUBLIC_KEY_RESOLVERS[family];
+    publicKey = resolver?.(mainAccount);
   } catch (error) {
     // A resolver may throw a typed error (e.g. tezos AccountPublicKeyUnavailable) to signal a
     // recoverable "re-add the account" state; record the failure before propagating it.

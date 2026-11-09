@@ -174,6 +174,10 @@ export const loadAccountRawAssignForFamily = makeLoaderCache(family =>
   loaders.get(family)?.loadAccountRawAssign?.(),
 );
 
+export const loadAccountPublicKeyResolverForFamily = makeLoaderCache(family =>
+  loaders.get(family)?.loadAccountPublicKeyResolver?.(),
+);
+
 export const loadLocalApiForFamily = makeLoaderCache(family =>
   loaders.get(family)?.loadLocalApi?.(),
 );

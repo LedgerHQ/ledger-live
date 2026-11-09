@@ -84,6 +84,12 @@ export type PlatformAdapterModule = {
   };
 };
 
+/**
+ * Returns the public key the Wallet API `account.getPublicKey` hands to a live app, or null when the
+ * family has none to give. Throws `AccountPublicKeyUnavailable` when the user must re-add the account.
+ */
+export type AccountPublicKeyResolver<A extends Account = Account> = (account: A) => string | null;
+
 export type AccountModule<A extends Account = Account> = {
   injectGetAddressParams?(account: A): Record<string, unknown>;
   [key: string]: unknown;
@@ -154,6 +160,7 @@ export type CoinModuleLoader<
   loadBridgeExtensions?: () => Promise<AccountBridgeExtensions<T>>;
   loadBridgeApi?: () => Promise<BridgeApi | ((currency: CryptoCurrency) => BridgeApi)>;
   loadAccountRawAssign?: () => Promise<AccountRawAssignHooks>;
+  loadAccountPublicKeyResolver?: () => Promise<AccountPublicKeyResolver<A>>;
   /**
    * Both generics are `any`: the registry is heterogeneous and cannot name one memo / `TxData`
    * instantiation for every family. Pinning `TxDataType` (its default is `TxDataNotSupported`) would
