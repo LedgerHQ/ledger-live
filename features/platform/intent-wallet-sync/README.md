@@ -13,9 +13,11 @@ operations on the Device Intent Executor (DIE) session:
 
 ## How the device is reached
 
-The Ledger Sync SDK (`@ledgerhq/ledger-key-ring-protocol`) talks to the device through a
-`withDevice` function. Each intent input carries a `createSessionSdk` that the host app builds: it
-returns an SDK whose `withDevice` wraps the DIE session in `DmkCompatTransport`. The job calls it
+The Ledger Sync SDK (`@ledgerhq/ledger-key-ring-protocol`) has no device API of its own: `getSdk`
+takes device access as an injected callback, named `withDevice`. Today the apps inject live-common's
+legacy `withDevice`. Here, each intent input carries a `createSessionSdk` that the host app builds:
+it injects a callback that runs on the DIE session through `DmkCompatTransport`, so no legacy
+`withDevice` is involved. The job calls it
 once per run, so a Retry after a refusal reuses the same SDK on the same session. The host also
 passes the SDK context and, on desktop, its trustchain lifecycle.
 
