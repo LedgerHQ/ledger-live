@@ -502,17 +502,25 @@ export default class PortfolioPage {
     return await IsIdVisible(this.stablecoinListId, timeout);
   }
 
+  /**
+   * Starts from the top of the list so the header is reached from below: a header already scrolled
+   * up to the floating top bar would otherwise be pushed under it by revealForTap.
+   */
+  private async revealSectionHeader(headerId: string) {
+    await waitForElementById(this.accountsListView);
+    await this.ensureHeroVisible(this.quickActionsCtasContainerId);
+    await revealForTap(headerId, { container: this.accountsListView });
+  }
+
   @Step("Tap cryptos section title")
   async tapCryptosSectionTitle() {
-    await waitForElementById(this.accountsListView);
-    await revealForTap(this.cryptosSectionHeaderId, { container: this.accountsListView });
+    await this.revealSectionHeader(this.cryptosSectionHeaderId);
     await tapById(this.cryptosSectionHeaderId);
   }
 
   @Step("Tap stablecoins section title")
   async tapStablecoinsSectionTitle() {
-    await waitForElementById(this.accountsListView);
-    await revealForTap(this.stablecoinsSectionHeaderId, { container: this.accountsListView });
+    await this.revealSectionHeader(this.stablecoinsSectionHeaderId);
     await tapById(this.stablecoinsSectionHeaderId);
   }
 
