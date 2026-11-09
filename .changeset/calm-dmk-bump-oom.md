@@ -1,6 +1,5 @@
 ---
 "@ledgerhq/live-dmk-shared": patch
-"ledger-live-desktop": patch
 "live-mobile": patch
 ---
 
