@@ -8011,6 +8011,9 @@ importers:
       '@domain/entity-currency-fiat':
         specifier: workspace:*
         version: link:../../../domain/entity/currency-fiat
+      '@domain/entity-market-countervalues':
+        specifier: workspace:*
+        version: link:../../../domain/entity/market-countervalues
       '@features/platform-aggregated-assets':
         specifier: workspace:*
         version: link:../../platform/aggregated-assets
