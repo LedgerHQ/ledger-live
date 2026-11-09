@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/live-cli": patch
+"@ledgerhq/live-cli": minor
 "ledger-live-desktop": minor
 "live-mobile": minor
 ---

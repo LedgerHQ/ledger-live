@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/wallet-cli": patch
+"@ledgerhq/wallet-cli": minor
 ---
 
 fix(wallet-cli): reject unaffordable swaps with a typed error instead of a raw HTTP status

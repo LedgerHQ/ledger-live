@@ -1,7 +1,7 @@
 ---
 "@features/flow-predictions": minor
 "@features/platform-predictions": minor
-"@shared/ui-animated-height": patch
+"@shared/ui-animated-height": minor
 "ledger-live-desktop": minor
 "live-mobile": minor
 ---

@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/web-tools": patch
+"@ledgerhq/web-tools": minor
 ---
 
 chore(deps): update dependency react-table to v6.11.5

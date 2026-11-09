@@ -716,24 +716,4 @@
 
   `EIP1559_BASE_FEE_MULTIPLIER` goes from 1.27 to 1.6, so an estimated transaction stays includable for 4 blocks instead of 2 (the base fee grows by at most 12.5% per block). Max fees displayed on chains using the Ledger gas tracker will be higher, but the amount actually paid is unchanged: EIP-1559 charges the base fee plus the priority fee, and the max fee is only a ceiling (LIVE-32650).
 
-## 0.2.0
-
-### Minor Changes
-
-- [#20258](https://github.com/LedgerHQ/ledger-live/pull/20258) [`f60f9cb`](https://github.com/LedgerHQ/ledger-live/commit/f60f9cbc79557cfa815ea714b375ace11aea8754) Thanks [@thesan](https://github.com/thesan)! - Update the staging Keycloak base URL to use the Gravitee gateway
-
-- [#19634](https://github.com/LedgerHQ/ledger-live/pull/19634) [`4015ade`](https://github.com/LedgerHQ/ledger-live/commit/4015ade1f9744d4bb575282060fdb1beb9aafc89) Thanks [@thesan](https://github.com/thesan)! - Connect @ledgerhq/ledger-auth to the Ledger Wallet apps Redux store
-
-- [#20299](https://github.com/LedgerHQ/ledger-live/pull/20299) [`e44d972`](https://github.com/LedgerHQ/ledger-live/commit/e44d97239af10b46ae3ef703e0c6181cc0c87712) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(llc): add base URLs and network mapping for A4
-
-## 0.2.0-next.0
-
-### Minor Changes
-
-- [#20258](https://github.com/LedgerHQ/ledger-live/pull/20258) [`f60f9cb`](https://github.com/LedgerHQ/ledger-live/commit/f60f9cbc79557cfa815ea714b375ace11aea8754) Thanks [@thesan](https://github.com/thesan)! - Update the staging Keycloak base URL to use the Gravitee gateway
-
-- [#19634](https://github.com/LedgerHQ/ledger-live/pull/19634) [`4015ade`](https://github.com/LedgerHQ/ledger-live/commit/4015ade1f9744d4bb575282060fdb1beb9aafc89) Thanks [@thesan](https://github.com/thesan)! - Connect @ledgerhq/ledger-auth to the Ledger Wallet apps Redux store
-
-- [#20299](https://github.com/LedgerHQ/ledger-live/pull/20299) [`e44d972`](https://github.com/LedgerHQ/ledger-live/commit/e44d97239af10b46ae3ef703e0c6181cc0c87712) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(llc): add base URLs and network mapping for A4
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

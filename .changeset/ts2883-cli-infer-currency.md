@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/live-cli": patch
+"@ledgerhq/live-cli": minor
 ---
 
 Give inferCurrency an explicit return type for declaration emit

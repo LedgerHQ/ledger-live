@@ -1,8 +1,8 @@
 ---
-"@ledgerhq/coin-bitcoin": patch
-"@ledgerhq/ledger-wallet-framework": patch
-"ledger-live-desktop": patch
-"live-mobile": patch
+"@ledgerhq/coin-bitcoin": minor
+"@ledgerhq/ledger-wallet-framework": minor
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 fix(coin-bitcoin): do not spend the inputs of pending operations

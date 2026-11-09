@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/coin-polkadot": patch
-"@ledgerhq/coin-tester-polkadot": patch
+"@ledgerhq/coin-polkadot": minor
+"@ledgerhq/coin-tester-polkadot": minor
 ---
 
 chore(deps): update polkadot (patch)
