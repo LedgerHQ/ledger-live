@@ -23,4 +23,5 @@ export const syncOfferTestIds = {
   skip: "device-onboarding-sync-offer-skip",
   learnMore: "device-onboarding-sync-offer-learn-more",
   quit: "device-onboarding-sync-offer-quit",
+  continue: "device-onboarding-sync-offer-continue",
 } as const;
