@@ -9,6 +9,7 @@ import {
 import { createRetryPolicy } from "../retry";
 import { runActor, settle } from "../tests/actorHarness";
 import { createDeviceManagementKit } from "../tests/createDeviceManagementKit";
+import { commandNames } from "../tests/dashboardDevice";
 import { createFakeCommandDmk, type ScriptedCommand } from "../tests/fakeDmk";
 import {
   createOsVersionResponse,
@@ -138,18 +139,19 @@ describe("readDeviceState", () => {
 
     await settle();
 
-    expect(sentCommands(sendCommand)).toEqual(["getAppAndVersion", "getOsVersion"]);
+    expect(commandNames(sendCommand)).toEqual(["getAppAndVersion", "getOsVersion"]);
     expect(received).toEqual([readEvent]);
     stop();
   });
 
   it("closes an open app, then reads the state on the dashboard", async () => {
-    const { dmk, sendCommand } = fakeDevice({ app: () => running("Bitcoin") });
+    const { dmk, sendCommand, device } = createFakeCommandDmk([success(onboardedDevice)]);
+    device.openApp("Bitcoin");
     const { received, stop } = start(dmk);
 
     await settle();
 
-    expect(sentCommands(sendCommand)).toEqual(["getAppAndVersion", "closeApp", "getOsVersion"]);
+    expect(commandNames(sendCommand)).toEqual(["getAppAndVersion", "closeApp", "getOsVersion"]);
     expect(received).toEqual([readEvent]);
     stop();
   });
@@ -163,7 +165,7 @@ describe("readDeviceState", () => {
 
     await settle();
 
-    expect(sentCommands(sendCommand)).toEqual(["getAppAndVersion", "getOsVersion"]);
+    expect(commandNames(sendCommand)).toEqual(["getAppAndVersion", "getOsVersion"]);
     expect(received).toEqual([readEvent]);
     stop();
   });
@@ -181,7 +183,7 @@ describe("readDeviceState", () => {
 
     await settle();
 
-    expect(sentCommands(sendCommand)).toEqual(["getAppAndVersion"]);
+    expect(commandNames(sendCommand)).toEqual(["getAppAndVersion"]);
     expect(received).toEqual([]);
   });
 
@@ -199,7 +201,7 @@ describe("readDeviceState", () => {
 
     await settle();
 
-    expect(sentCommands(sendCommand)).toEqual(["getAppAndVersion", "closeApp"]);
+    expect(commandNames(sendCommand)).toEqual(["getAppAndVersion", "closeApp"]);
     expect(received).toEqual([]);
   });
 
@@ -305,12 +307,8 @@ function fakeDevice({
   return { dmk: createDeviceManagementKit({ sendCommand }), sendCommand };
 }
 
-function sentCommands(sendCommand: jest.Mock): string[] {
-  return sendCommand.mock.calls.map(([{ command }]) => command.name);
-}
-
 function stateReads(sendCommand: jest.Mock): number {
-  return sentCommands(sendCommand).filter(name => name === "getOsVersion").length;
+  return commandNames(sendCommand).filter(name => name === "getOsVersion").length;
 }
 
 function start(dmk: DeviceManagementKit) {
