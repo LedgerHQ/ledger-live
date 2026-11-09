@@ -1,8 +1,8 @@
 import BigNumber from "bignumber.js";
 import type { TFunction } from "i18next";
+import { parseMarketRef, toMarketId } from "@domain/api-aggregated-assets";
 import type { Unit } from "@domain/entity-currency-unit";
 import type { PartialMarketItemResponse } from "@ledgerhq/live-common/market/utils/types";
-import { dadaIdToMarketId } from "@ledgerhq/live-common/market/utils/index";
 import { formatPrice } from "@ledgerhq/live-currency-format";
 import type { MarketAssetDisplayData } from "LLM/components/AssetListItem";
 import { counterValueFormatter } from "LLM/features/Market/utils";
@@ -41,7 +41,7 @@ export function mapDadaMarketToDisplayData(
           .times(new BigNumber(10).pow(counterValueUnit.magnitude));
 
   return {
-    id: dadaIdToMarketId(market?.id ?? meta.id),
+    id: toMarketId(parseMarketRef(market?.id ?? meta.id)),
     name: market?.name ?? meta.name,
     ticker: (market?.ticker ?? meta.ticker).toUpperCase(),
     ledgerIds: market?.ledgerIds?.length ? market.ledgerIds : [meta.ledgerId],

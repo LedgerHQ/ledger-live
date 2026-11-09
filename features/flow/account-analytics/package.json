@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@domain/api-aggregated-assets": "workspace:*",
+    "@domain/entity-aggregated-asset": "workspace:*",
     "@domain/entity-currency": "workspace:*",
     "@domain/entity-currency-fiat": "workspace:*",
     "@domain/entity-market-countervalues": "workspace:*",

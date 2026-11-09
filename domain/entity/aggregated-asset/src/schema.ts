@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+/** Identifier of an aggregated asset, such as `urn:crypto:meta-currency:usd_coin` or `bitcoin`. */
+export const AggregatedAssetIdSchema = z.string().brand<"AggregatedAssetId">();
+
 /**
  * An aggregated asset: one logical asset grouping several per-network currencies.
  *
@@ -8,7 +11,7 @@ import { z } from "zod";
  */
 export const CryptoAssetMetaSchema = z.object({
   /** Asset identifier */
-  id: z.string(),
+  id: AggregatedAssetIdSchema,
   /** Asset ticker symbol */
   ticker: z.string(),
   /** Asset display name */

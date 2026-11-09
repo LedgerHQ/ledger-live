@@ -1,4 +1,5 @@
 import type { AssetsData } from "@domain/api-aggregated-assets";
+import type { CryptoAssetMeta } from "@domain/entity-aggregated-asset";
 import { selectAssetCurrencyIds } from "@features/platform-aggregated-assets";
 import type {
   AnalyticsAccountSource,
@@ -50,9 +51,7 @@ export function selectEligibleAnalyticsPositions<Account extends AnalyticsAccoun
   return positions;
 }
 
-type AssetMeta = AssetsData["cryptoAssets"][string];
-
-function findAssetMeta(assetsData: AssetsData, currencyId: string): AssetMeta | undefined {
+function findAssetMeta(assetsData: AssetsData, currencyId: string): CryptoAssetMeta | undefined {
   const meta = Object.values(assetsData.cryptoAssets).find(candidate =>
     Object.values(candidate.assetsIds).includes(currencyId),
   );

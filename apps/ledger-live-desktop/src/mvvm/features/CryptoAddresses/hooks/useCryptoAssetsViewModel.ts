@@ -18,7 +18,7 @@ import { setTrackingSource, track } from "@shared/analytics";
 import { buildPlaceholderAssetItemsFromAssetsData } from "LLD/features/Assets/utils/buildPlaceholderAssetItemsFromAssetsData";
 import { parseAssetsPageCategory } from "LLD/features/Assets/utils/buildAssetsPagePath";
 import { padItems } from "LLD/features/Assets/utils/assetTableHelpers";
-import { dadaIdToMarketId } from "@ledgerhq/live-common/market/utils/index";
+import { parseMarketRef, toMarketId } from "@domain/api-aggregated-assets";
 import {
   ASSETS_PAGE_CATEGORY_CRYPTOS,
   ASSETS_PAGE_CATEGORY_STABLECOINS,
@@ -156,7 +156,7 @@ export default function useCryptoAssetsViewModel(): CryptoAssetsViewModel {
       const rawId = item.marketId ?? item.currency.id;
       navigate(
         item.isPlaceholder
-          ? `/asset/${encodeURIComponent(dadaIdToMarketId(rawId))}`
+          ? `/asset/${encodeURIComponent(toMarketId(parseMarketRef(rawId)))}`
           : `/asset/${item.currency.id}`,
       );
     },
