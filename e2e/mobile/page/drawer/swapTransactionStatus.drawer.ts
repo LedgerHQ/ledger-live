@@ -1,5 +1,4 @@
 import { Step } from "jest-allure2-reporter/api";
-import { isIos } from "@e2e/helpers/commonHelpers";
 import { byId } from "@e2e/helpers/elements/native";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { TIMEOUT } from "@e2e/utils/timeouts";
@@ -64,10 +63,7 @@ export default class SwapTransactionStatusDrawer {
     if (details.providerUrl) {
       await this.providerLink.scrollTo(this.scrollView);
       await this.providerLink.expectVisible();
-      const attributes = await this.providerLink.getAttributes();
-      // iOS exposes the link URL as the accessibility value, Android as the label.
-      const linkText = isIos() && "value" in attributes ? attributes.value : attributes.label;
-      jestExpect(linkText).toContain(details.providerUrl);
+      await this.providerLink.expectAccessibilityValue(details.providerUrl, { containing: true });
     } else {
       await this.providerLink.expectNotExist();
     }

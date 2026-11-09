@@ -1,6 +1,7 @@
-import { by, element, expect as detoxExpect, waitFor } from "detox";
+import { by, device, element, expect as detoxExpect, waitFor } from "detox";
 import type {
   AndroidElementAttributes,
+  Direction,
   IosElementAttributes,
   NativeElement,
   NativeMatcher,
@@ -39,7 +40,21 @@ type ExpectTextOptions = {
 const prepareText = (value: string, { normaliseWhitespace }: ExpectTextOptions) =>
   normaliseWhitespace ? value.replaceAll(/\s+/g, " ").replaceAll("\u200B", "").trim() : value;
 
+/** Compares an element's text as the options say: equal by default, or containing. */
+const compareText = (actual: string, expected: string, options: ExpectTextOptions) => {
+  const preparedActual = prepareText(actual, options);
+  const preparedExpected = prepareText(expected, options);
+  if (options.containing) {
+    jestExpect(preparedActual).toContain(preparedExpected);
+  } else {
+    jestExpect(preparedActual).toBe(preparedExpected);
+  }
+};
+
 const scroller = new PageScroller();
+
+/** How far past the viewport edge `revealForTap` pushes an element, so a sticky header or footer cannot take the tap. */
+const EDGE_CLEARANCE_PIXELS = 200;
 
 /**
  * A native (React Native) element, declared once with its match strategy.
@@ -178,7 +193,7 @@ export class NativeHandle implements ElementHandle {
   }
 
   /** Waits for visibility, then returns the element's accessibility label ("" when it has none). */
-  private async getLabel(timeout = TIMEOUT.xxlarge): Promise<string> {
+  async getLabel(timeout = TIMEOUT.xxlarge): Promise<string> {
     const { label } = await this.getAttributes(timeout);
     return label ?? "";
   }
@@ -203,6 +218,20 @@ export class NativeHandle implements ElementHandle {
     } catch (error) {
       if (isHardTimeout(error)) throw error;
       return false;
+    }
+  }
+
+  /**
+   * Returns how many elements match, 0 when none, e.g. the rows of a list. It ignores the handle's
+   * index and does not wait. A hung app still throws.
+   */
+  async count(): Promise<number> {
+    try {
+      const attributes = await withHardTimeout(element(this.createMatcher()).getAttributes());
+      return "elements" in attributes ? attributes.elements.length : 1;
+    } catch (error) {
+      if (isHardTimeout(error)) throw error;
+      return 0;
     }
   }
 
@@ -234,6 +263,23 @@ export class NativeHandle implements ElementHandle {
         cause: error,
       });
     }
+  }
+
+  /**
+   * Scrolls to the element, then on by `EDGE_CLEARANCE_PIXELS` in the same direction. `scrollTo`
+   * stops as soon as the element is visible at the edge it came in through, where a sticky header or
+   * footer can still take the tap (Android reports it visible anyway). Use before a tap; `scrollTo`
+   * stays right for assertions.
+   */
+  async revealForTap(container?: NativeHandle): Promise<void> {
+    await this.scrollTo(container);
+    await scroller.scrollByPixels(container && (() => container.raw), EDGE_CLEARANCE_PIXELS);
+  }
+
+  /** Waits for visibility, then swipes on the element, e.g. down on a bottom sheet to close it. */
+  async swipe(direction: Direction, timeout = TIMEOUT.xxlarge): Promise<void> {
+    await this.waitVisible(timeout);
+    await withHardTimeout(this.raw.swipe(direction));
   }
 
   /** Asserts the element is visible now. A Detox expect: synchronised with the app, it does not wait. */
@@ -279,13 +325,17 @@ export class NativeHandle implements ElementHandle {
       await withHardTimeout(detoxExpect(this.raw).toHaveText(text));
       return;
     }
-    const actual = prepareText(await this.getText(), options);
-    const expected = prepareText(text, options);
-    if (options.containing) {
-      jestExpect(actual).toContain(expected);
-    } else {
-      jestExpect(actual).toBe(expected);
-    }
+    compareText(await this.getText(), text, options);
+  }
+
+  /**
+   * Waits for visibility, then asserts the accessibility value (iOS `value`, Android `label`), e.g. a
+   * link that carries its URL there. Compares like {@link expectText} with options.
+   */
+  async expectAccessibilityValue(text: string, options: ExpectTextOptions = {}): Promise<void> {
+    const { value, label } = await this.getAttributes();
+    const accessibilityValue = device.getPlatform() === "ios" ? value : label;
+    compareText(String(accessibilityValue ?? ""), text, options);
   }
 
   /** Waits for visibility, then asserts the element's text contains `text`. */
