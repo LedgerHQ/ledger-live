@@ -22,25 +22,29 @@ type LocaleFields = {
   regionCode?: string | null;
 };
 
-function givenLocales(...locales: LocaleFields[]) {
-  mockedGetLocales.mockReturnValue(
-    locales.map(locale => ({
-      languageCode: null,
-      languageScriptCode: null,
-      languageRegionCode: null,
-      regionCode: null,
-      textDirection: "ltr",
-      digitGroupingSeparator: ",",
-      decimalSeparator: ".",
-      measurementSystem: "metric",
-      currencyCode: null,
-      currencySymbol: null,
-      languageCurrencyCode: null,
-      languageCurrencySymbol: null,
-      temperatureUnit: "celsius",
-      ...locale,
-    })),
-  );
+type DeviceLocales = ReturnType<typeof getLocales>;
+
+function toLocale(locale: LocaleFields): DeviceLocales[number] {
+  return {
+    languageCode: null,
+    languageScriptCode: null,
+    languageRegionCode: null,
+    regionCode: null,
+    textDirection: "ltr",
+    digitGroupingSeparator: ",",
+    decimalSeparator: ".",
+    measurementSystem: "metric",
+    currencyCode: null,
+    currencySymbol: null,
+    languageCurrencyCode: null,
+    languageCurrencySymbol: null,
+    temperatureUnit: "celsius",
+    ...locale,
+  };
+}
+
+function givenLocales(first: LocaleFields, ...rest: LocaleFields[]) {
+  mockedGetLocales.mockReturnValue([toLocale(first), ...rest.map(toLocale)]);
 }
 
 beforeEach(() => jest.clearAllMocks());
@@ -141,7 +145,7 @@ describe("getDeviceLanguageTag", () => {
   });
 
   it("returns undefined when the device reports no language", () => {
-    givenLocales();
+    mockedGetLocales.mockReturnValue([] as unknown as DeviceLocales);
 
     expect(getDeviceLanguageTag()).toBeUndefined();
   });

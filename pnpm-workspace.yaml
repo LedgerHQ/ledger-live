@@ -363,6 +363,7 @@ patchedDependencies:
   "detox-allure2-adapter@1.0.0-alpha.42": "patches/detox-allure2-adapter@1.0.0-alpha.42.patch"
   "@callstack/repack@5.4.2": "patches/@callstack__repack@5.4.2.patch"
   "bigint-buffer@1.1.5": "patches/bigint-buffer@1.1.5.patch"
+  "expo@57.0.31": "patches/expo@57.0.31.patch"
 
 allowBuilds:
   "@apollo/protobufjs": true

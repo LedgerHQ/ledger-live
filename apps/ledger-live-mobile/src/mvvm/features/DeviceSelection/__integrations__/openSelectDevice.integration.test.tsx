@@ -1,5 +1,5 @@
 import React from "react";
-import { BackHandler } from "react-native";
+import { BackHandler, type HardwareBackPressEvent } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { Button, Text } from "@ledgerhq/lumen-ui-rnative";
@@ -17,10 +17,11 @@ const Stack = createNativeStackNavigator();
 const onCloseNavigation = jest.fn();
 
 // Jest runs as iOS: call the back listeners like Android, newest first.
-let backHandlers: (() => boolean | null | undefined)[] = [];
+let backHandlers: Parameters<typeof BackHandler.addEventListener>[1][] = [];
+const backPressEvent: HardwareBackPressEvent = { type: "hardwareBackPress", timeStamp: 0 };
 function pressAndroidBack() {
   act(() => {
-    [...backHandlers].reverse().some(handler => handler());
+    [...backHandlers].reverse().some(handler => handler(backPressEvent));
   });
 }
 
