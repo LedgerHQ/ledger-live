@@ -1,10 +1,12 @@
 import {
+  abortReason,
   AccountDataNotServedError,
   type AccountDataReader,
   type AccountDataSource,
 } from "@domain/api-account-data";
 import { AccountDataSourceIdSchema, type AccountDataKind } from "@domain/entity-account-data";
 import { currencyIdFromNetwork, type AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountExistence } from "@domain/entity-account-existence";
 import type { CoinModuleHost } from "./host";
 import { toAccountBalances } from "./internals/toAccountBalances";
 import { readOperationsPage } from "./internals/readOperationsPage";
@@ -58,9 +60,23 @@ export function createCoinModuleSource(host: CoinModuleHost): AccountDataSource 
     });
   };
 
+  // A module without `exists` hands the account to the next source, the full sync.
+  const readExistence: AccountDataReader<"existence"> = async ({
+    descriptor,
+    signal,
+  }): Promise<AccountExistence> => {
+    const currencyId = currencyIdFromNetwork(descriptor.network);
+    const api = await host.getExistenceApi?.(currencyId);
+    if (signal?.aborted) throw abortReason(signal);
+    if (!api) {
+      throw new AccountDataNotServedError(`No existence check in the ${currencyId} coin module`);
+    }
+    return { used: await api.exists(subjectOf(descriptor)) };
+  };
+
   return {
     id: AccountDataSourceIdSchema.parse("coin-module"),
     supports,
-    read: { balance: readBalance, operations: readOperations },
+    read: { balance: readBalance, operations: readOperations, existence: readExistence },
   };
 }

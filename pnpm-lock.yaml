@@ -12670,6 +12670,9 @@ importers:
       '@domain/entity-account-descriptor':
         specifier: workspace:*
         version: link:../../../domain/entity/account-descriptor
+      '@domain/entity-account-existence':
+        specifier: workspace:*
+        version: link:../../../domain/entity/account-existence
       '@domain/entity-account-operation':
         specifier: workspace:*
         version: link:../../../domain/entity/account-operation

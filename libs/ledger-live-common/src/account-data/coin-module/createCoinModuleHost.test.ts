@@ -282,3 +282,20 @@ describe("createCoinModuleHost", () => {
     expect(host.blacklistedTokenIds?.()).toEqual(["spam"]);
   });
 });
+
+describe("getExistenceApi", () => {
+  it("asks the coin module's exists with the currency context", async () => {
+    const exists = jest.fn(async () => true);
+    createLocalApi.mockReturnValue({ getBalance, exists });
+    const api = await createCoinModuleHost().getExistenceApi?.("ethereum");
+    await expect(api?.exists("0xabc")).resolves.toBe(true);
+    expect(exists).toHaveBeenCalledWith(
+      expect.objectContaining({ config: expect.any(Function) }),
+      "0xabc",
+    );
+  });
+
+  it("has none for a coin module without exists", async () => {
+    await expect(createCoinModuleHost().getExistenceApi?.("ethereum")).resolves.toBeUndefined();
+  });
+});

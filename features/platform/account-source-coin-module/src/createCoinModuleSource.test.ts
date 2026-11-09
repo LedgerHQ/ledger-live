@@ -603,3 +603,55 @@ describe("createCoinModuleSource", () => {
     });
   });
 });
+
+describe("existence", () => {
+  const target = { accountUUID: computeAccountUUID(ethereum), descriptor: ethereum };
+
+  it("asks the coin module whether the address has any history", async () => {
+    const exists = jest.fn(async (subject: string) => subject === "0xabc");
+    const source = createCoinModuleSource({
+      isCurrencySupported: () => true,
+      getApi: async () => undefined,
+      getExistenceApi: async () => ({ exists }),
+    });
+    await expect(source.read?.existence?.(target, undefined)).resolves.toEqual({ used: true });
+    expect(exists).toHaveBeenCalledWith("0xabc");
+  });
+
+  it("does not ask the coin module once the read aborted while it loaded", async () => {
+    const exists = jest.fn(async () => true);
+    const controller = new AbortController();
+    const source = createCoinModuleSource({
+      isCurrencySupported: () => true,
+      getApi: async () => undefined,
+      getExistenceApi: async () => {
+        controller.abort();
+        return { exists };
+      },
+    });
+    await expect(
+      source.read?.existence?.({ ...target, signal: controller.signal }, undefined),
+    ).rejects.toMatchObject({ name: "AbortError" });
+    expect(exists).not.toHaveBeenCalled();
+  });
+
+  it("hands the account to the next source when the coin module has no exists", async () => {
+    const fallback: AccountDataSource = {
+      id: AccountDataSourceIdSchema.parse("full-sync"),
+      supports: () => true,
+      read: { existence: async () => ({ used: false }) },
+    };
+    const router = createAccountDataRouter([
+      createCoinModuleSource({
+        isCurrencySupported: () => true,
+        getApi: async () => undefined,
+        getExistenceApi: async () => undefined,
+      }),
+      fallback,
+    ]);
+    await expect(router.read("existence", ethereum)).resolves.toEqual({
+      data: { used: false },
+      sourceId: fallback.id,
+    });
+  });
+});

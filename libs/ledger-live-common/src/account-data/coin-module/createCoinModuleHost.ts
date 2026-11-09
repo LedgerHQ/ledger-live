@@ -68,6 +68,13 @@ function pageSizeOf({ id, family }: CryptoCurrency): number | undefined {
   return resolveOperationHistoryBound(id, family).pageSize ?? familyPageSize;
 }
 
+type ExistsCapability = {
+  exists(context: Context<CurrencyConfig>, address: string): Promise<boolean>;
+};
+
+const hasExists = (api: object): api is ExistsCapability =>
+  "exists" in api && typeof api.exists === "function";
+
 export type CoinModuleHostOptions = Pick<CoinModuleHost, "blacklistedTokenIds"> & {
   /** Off until the source lists pending operations: FullSync answers the operations meanwhile. */
   servesOperations?: boolean;
@@ -116,6 +123,15 @@ export function createCoinModuleHost({
       } catch {
         return false;
       }
+    },
+    // `exists` is a proposal (docs/adr/coin-module-exists.md): read only from a module that has it.
+    async getExistenceApi(currencyId) {
+      const currency = getCryptoCurrencyById(currencyId);
+      const { createLocalApi } = await loadApis(currency);
+      const localApi: object = createLocalApi(currency.id);
+      if (!hasExists(localApi)) return undefined;
+      const context = contextOf(currency.id);
+      return { exists: subject => localApi.exists(context, subject) };
     },
     async getOperationsApi(currencyId) {
       const currency = getCryptoCurrencyById(currencyId);

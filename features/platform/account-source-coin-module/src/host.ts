@@ -50,6 +50,12 @@ export type CoinModuleOperationsApi = CoinModuleTokenResolver & {
   ): Promise<CoinModuleOperationsPage>;
 };
 
+/** What the source needs of one currency's coin module to tell whether an account exists. */
+export type CoinModuleExistenceApi = {
+  /** Whether the address has any history, in as few calls as the chain allows. */
+  exists(subject: string): Promise<boolean>;
+};
+
 /** What the source takes from the coin modules, implemented by the app on top of its registry. */
 export type CoinModuleHost = {
   /** Synchronous: whether a coin module is registered for the currency, loaded or not. */
@@ -62,5 +68,7 @@ export type CoinModuleHost = {
   paginatesOperations?(currencyId: string): boolean;
   /** The coin module of the currency, loaded on first use; `undefined` when it does not implement the operations read. */
   getOperationsApi?(currencyId: string): Promise<CoinModuleOperationsApi | undefined>;
+  /** The coin module of the currency, loaded on first use; `undefined` when it does not implement `exists`. */
+  getExistenceApi?(currencyId: string): Promise<CoinModuleExistenceApi | undefined>;
   blacklistedTokenIds?(): readonly string[];
 };

@@ -18,6 +18,7 @@ import { broadcast } from "../logic/broadcast";
 import { combine } from "../logic/combine";
 import { craftTransaction } from "../logic/craftTransaction";
 import { estimateFees } from "../logic/estimateFees";
+import { exists } from "../logic/exists";
 import { getBalance } from "../logic/getBalance";
 import { getBlockInfo } from "../logic/getBlockInfo";
 import { getNextSequence } from "../logic/getNextSequence";
@@ -26,6 +27,9 @@ import { listOperations } from "../logic/listOperations";
 import { validateIntent } from "../logic/validateIntent";
 import type { TonMemo } from "../types";
 import { validateAddress } from "../validateAddress";
+
+/** Proposed for `CoinModuleApi` in docs/adr/coin-module-exists.md; declared here until the framework has it. */
+type ExistsCapability<C> = { exists: (context: C, address: string) => Promise<boolean> };
 
 // Checked against CoinModuleImpl with `satisfies` rather than annotated as it, so the precise shape
 // survives and a caller sees exactly which methods exist.
@@ -60,6 +64,7 @@ export function createApi() {
       address: string,
       options: ListOperationsOptions,
     ): Promise<Page<Operation>> => listOperations(context, address, options),
+    exists: (context: TonContext, address: string): Promise<boolean> => exists(context, address),
     getNextSequence: (context: TonContext, address: string): Promise<bigint> =>
       getNextSequence(context, address),
     validateAddress: (
@@ -83,5 +88,5 @@ export function createApi() {
     validateIntent: (context, intent, balances, options?): Promise<TransactionValidation> =>
       validateIntent(context, intent, balances, options?.customFees),
     craftTransactionData: (_context, intent) => craftTransactionData(intent),
-  } satisfies CoinModuleImpl<TonConfig, TonMemo>;
+  } satisfies CoinModuleImpl<TonConfig, TonMemo> & ExistsCapability<TonContext>;
 }
