@@ -256,6 +256,9 @@ libs/wallet-framework-test-setup/                        @ledgerhq/coin-integrat
 tools/actions/composites/run-coin-tester/                @ledgerhq/coin-integration
 tools/actions/composites/setup-coin-tester-env/          @ledgerhq/coin-integration
 tools/actions/composites/monitor/                        @ledgerhq/coin-integration
+tools/scripts/ci-slack-notify.mjs                        @ledgerhq/coin-integration
+tools/scripts/ci-slack-notify/                           @ledgerhq/coin-integration
+.github/slack-codeowners.json                            @ledgerhq/coin-integration
 
 # Coin modules owned by Coin Integration
 # (libs/coin-*/ above already defaults to @ledgerhq/coin-integration; these make
