@@ -1,11 +1,16 @@
 import React from "react";
-import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
+import { BottomSheetHeader, BottomSheetView, Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
+import { UnlockDevice } from "LLM/components/DeviceIntentExecutor/components/DeviceGenericStates/UnlockDevice";
 import { QuitConfirmation } from "LLM/features/DeviceOnboarding/components/QuitConfirmation";
 import { ChecksScreen } from "LLM/features/DeviceOnboarding/screens/Checks";
 import { KaraokeScreen } from "LLM/features/DeviceOnboarding/screens/Karaoke";
+import { funnelTestIds } from "LLM/features/DeviceOnboarding/testIds";
 import {
   useDeviceOnboardingFunnelViewModel,
   type DeviceOnboardingFunnelModel,
+  type UnlockSheetModel,
 } from "./useDeviceOnboardingFunnelViewModel";
 
 function FunnelBody({ screen }: Readonly<{ screen: DeviceOnboardingFunnelModel }>) {
@@ -13,7 +18,12 @@ function FunnelBody({ screen }: Readonly<{ screen: DeviceOnboardingFunnelModel }
     return <KaraokeScreen onClose={screen.onClose} />;
   }
   if (screen.status === "checks") {
-    return <ChecksScreen {...screen.checks} />;
+    return (
+      <>
+        <ChecksScreen {...screen.checks} />
+        {screen.unlockSheet ? <DeviceUnlockSheet {...screen.unlockSheet} /> : null}
+      </>
+    );
   }
 
   return (
@@ -41,5 +51,28 @@ export function DeviceOnboardingFunnel() {
       <FunnelBody screen={screen} />
       {screen.quitConfirmation ? <QuitConfirmation {...screen.quitConfirmation} /> : null}
     </>
+  );
+}
+
+function DeviceUnlockSheet({ deviceModelId, deviceName }: UnlockSheetModel) {
+  const { bottom: bottomInset } = useSafeAreaInsets();
+
+  return (
+    <QueuedBottomSheet
+      isRequestingToBeOpened
+      noCloseButton
+      preventBackdropClick
+      enablePanDownToClose={false}
+      enableDynamicSizing
+      contentHasBottomSpace
+      testID={funnelTestIds.unlockSheet}
+    >
+      <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
+        <BottomSheetHeader />
+        <Box lx={{ paddingHorizontal: "s16" }}>
+          <UnlockDevice deviceModelId={deviceModelId} deviceName={deviceName} />
+        </Box>
+      </BottomSheetView>
+    </QueuedBottomSheet>
   );
 }

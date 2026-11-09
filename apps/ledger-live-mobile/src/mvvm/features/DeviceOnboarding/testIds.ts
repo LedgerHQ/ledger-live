@@ -9,6 +9,10 @@ export const quitConfirmationTestIds = {
   leave: "device-onboarding-quit-confirmation-leave",
 } as const;
 
+export const funnelTestIds = {
+  unlockSheet: "device-onboarding-unlock-sheet",
+} as const;
+
 export const checksTestIds = {
   screen: "device-onboarding-checks",
   start: "device-onboarding-checks-start",
