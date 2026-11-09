@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
+import { useAccountDetailAnalyticsBannerFeature } from "@features/flow-account-detail";
 import {
   hasConfirmedAccountHistory,
   type AccountAnalyticsIntroductionProps,
@@ -20,6 +21,7 @@ export function useAnalyticsIntroductionViewModel(
 ): AccountAnalyticsIntroductionProps {
   const dispatch = useDispatch();
   const navigation = useNavigation<BaseNavigation>();
+  const isEnabled = useAccountDetailAnalyticsBannerFeature();
   const hasDismissed = useSelector(selectAccountAnalyticsIntroductionDismissed);
   const confirmationsNb = useSelector(state =>
     confirmationsNbForCurrencySelector(state, { currency: account.currency }),
@@ -50,5 +52,5 @@ export function useAnalyticsIntroductionViewModel(
     });
   }, [navigation, account.id, account.currency.id]);
 
-  return { hasConfirmedHistory, hasDismissed, onDismiss, onOpenAnalytics };
+  return { isEnabled, hasConfirmedHistory, hasDismissed, onDismiss, onOpenAnalytics };
 }

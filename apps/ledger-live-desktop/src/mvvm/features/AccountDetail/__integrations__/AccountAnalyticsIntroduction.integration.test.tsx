@@ -5,7 +5,7 @@ import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/m
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import type { Account } from "@ledgerhq/types-live";
-import { render, screen } from "tests/testSetup";
+import { render, screen, withFlagOverrides } from "tests/testSetup";
 import { getAccountUrl } from "~/renderer/utils";
 import { AnalyticsIntroduction } from "../components/AnalyticsIntroduction";
 
@@ -38,7 +38,15 @@ function DestinationProbe() {
   );
 }
 
-function renderIntroduction(account = historical, hasDismissed = false) {
+type IntroductionSetup = Readonly<{
+  hasDismissed?: boolean;
+  analyticsBanner?: boolean;
+}>;
+
+function renderIntroduction(
+  account = historical,
+  { hasDismissed = false, analyticsBanner = true }: IntroductionSetup = {},
+) {
   return render(
     <>
       <Routes>
@@ -57,6 +65,7 @@ function renderIntroduction(account = historical, hasDismissed = false) {
     {
       initialRoute: getAccountUrl(account.id),
       initialState: {
+        ...withFlagOverrides({ accountDetail: { enabled: true, params: { analyticsBanner } } }),
         accounts: [account, otherAccount],
         accountAnalyticsIntroduction: { hasDismissed },
       },
@@ -89,12 +98,12 @@ describe("Account Analytics introduction desktop integration", () => {
     expect(store.getState().accountAnalyticsIntroduction.hasDismissed).toBe(true);
   });
 
-  it("should send native asset and account context after consuming the introduction", async () => {
+  it("should send native asset and account context and keep the introduction until it is closed", async () => {
     const { user, store } = renderIntroduction();
 
     await user.click(screen.getByRole("button", { name: "Go to Analytics" }));
 
-    expect(store.getState().accountAnalyticsIntroduction.hasDismissed).toBe(true);
+    expect(store.getState().accountAnalyticsIntroduction.hasDismissed).toBe(false);
     expect(screen.getByLabelText("Analytics entry context")).toHaveTextContent(
       JSON.stringify({
         accountAnalytics: {
@@ -106,11 +115,17 @@ describe("Account Analytics introduction desktop integration", () => {
       }),
     );
     await user.click(screen.getByRole("button", { name: "Return to account" }));
+    expect(screen.getByRole("button", { name: "Go to Analytics" })).toBeVisible();
+  });
+
+  it("should stay hidden when the analyticsBanner param is off", () => {
+    renderIntroduction(historical, { analyticsBanner: false });
+
     expect(screen.queryByRole("button", { name: "Go to Analytics" })).toBeNull();
   });
 
   it("should remain hidden when a prior installation dismissal is restored", () => {
-    renderIntroduction(historical, true);
+    renderIntroduction(historical, { hasDismissed: true });
 
     expect(screen.queryByRole("button", { name: "Go to Analytics" })).toBeNull();
   });

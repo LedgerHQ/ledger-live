@@ -28,6 +28,7 @@ import { buildContactsGlobalProperties } from "@features/platform-contacts";
 import { getPayAttributes } from "./getPayAttributes";
 import { getSwapConsoleAbtestAttributes } from "./getSwapConsoleAbtestAttributes";
 import { getServicesEntryPointsAttributes } from "@features/flow-portfolio-services-entry-points";
+import { isAccountDetailAnalyticsBannerEnabled } from "@features/flow-account-detail";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { idsToLanguage } from "@ledgerhq/types-live";
 import type { Feature, FeatureId, Features } from "@shared/feature-flags";
@@ -360,7 +361,9 @@ const extraProperties = (store: ReduxStore) => {
   const entryPointsServices = getServicesEntryPointsAttributes(
     analyticsFeatureFlagMethod?.("entryPointsServices"),
   );
-  const accountDetail = analyticsFeatureFlagMethod?.("accountDetail")?.enabled ?? false;
+  const accountDetailFeature = analyticsFeatureFlagMethod?.("accountDetail");
+  const accountDetail = accountDetailFeature?.enabled ?? false;
+  const accountDetailAnalyticsBanner = isAccountDetailAnalyticsBannerEnabled(accountDetailFeature);
   const remoteABTestingAttributes = getRemoteABTestingAttributes(analyticsFeatureFlagMethod);
   const payAttributes = getPayAttributes(
     state,
@@ -422,6 +425,7 @@ const extraProperties = (store: ReduxStore) => {
     lwdSwapConsoleAbtest,
     entryPointsServices,
     accountDetail,
+    accountDetailAnalyticsBanner,
     ...remoteABTestingAttributes,
   };
 };

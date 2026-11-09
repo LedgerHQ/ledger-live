@@ -1,4 +1,5 @@
 export type AccountAnalyticsIntroductionProps = Readonly<{
+  isEnabled: boolean;
   hasConfirmedHistory: boolean;
   hasDismissed: boolean;
   onDismiss: () => void;
