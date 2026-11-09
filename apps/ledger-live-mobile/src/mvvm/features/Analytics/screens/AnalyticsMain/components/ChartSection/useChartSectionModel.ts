@@ -5,16 +5,12 @@ import { getScrubVariation } from "@ledgerhq/live-common/market/utils/scrubVaria
 import { useDispatch, useSelector } from "~/context/hooks";
 import { useTranslation, useLocale } from "~/context/Locale";
 import { formatPrice, formatSignedFiatVariation } from "@ledgerhq/live-currency-format";
-import { useCountervaluesCache } from "@features/platform-market-countervalues";
-import { accountsSelector } from "~/reducers/accounts";
 import {
   counterValueCurrencySelector,
   discreetModeSelector,
   selectedTimeRangeSelector,
 } from "~/reducers/settings";
 import { setSelectedTimeRange } from "~/actions/settings";
-import { usePortfolioAllAccounts } from "~/hooks/portfolio";
-import { usePortfolioBalanceForDisplay } from "LLM/hooks/usePortfolioBalanceForDisplay";
 import {
   DEFAULT_LINE_CHART_HEIGHT,
   getExtremaPointMarkers,
@@ -29,59 +25,49 @@ import {
   isAnalyticsChartRange,
   lineChartRangeToPortfolioRange,
   portfolioRangeToLineChartRange,
-  resolveAnalyticsValueChange,
   type AnalyticsChartRange,
 } from "@ledgerhq/wallet-analytics";
 import {
   buildAnalyticsChartXAxisConfig,
   buildAnalyticsChartYAxisConfig,
 } from "LLM/features/Analytics/utils/chartAxisConfig";
-import type { ChartSectionViewModel } from "./types";
+import type { ChartSectionModelInput, ChartSectionViewModel } from "./types";
 
 type ScrubSelection = Readonly<{ balance: number; timestamp: number }>;
+type ScrubState = Readonly<{ contextKey: string | undefined; selection: ScrubSelection }>;
 
-export function useChartSectionViewModel(): ChartSectionViewModel {
+export function useChartSectionModel({
+  prices,
+  timestamps,
+  valueChange,
+  isVariationAvailable,
+  isVariationLoading = false,
+  isChartLoading,
+  contextKey,
+  balance,
+}: ChartSectionModelInput): ChartSectionViewModel {
   const { t } = useTranslation();
   const { locale } = useLocale();
   const dispatch = useDispatch();
   const selectedTimeRange = useSelector(selectedTimeRangeSelector);
   const counterValue = useSelector(counterValueCurrencySelector);
-  const accounts = useSelector(accountsSelector);
-  const countervalues = useCountervaluesCache();
   const discreet = useSelector(discreetModeSelector);
-  const portfolio = usePortfolioAllAccounts();
-  const { displayedBalance, isBalanceAvailable } = usePortfolioBalanceForDisplay();
 
   const selectedRange = portfolioRangeToLineChartRange(selectedTimeRange);
   const fiatUnit = counterValue.units[0];
-  const [selection, setSelection] = useState<ScrubSelection | undefined>(undefined);
-
-  const valueChange = useMemo(
-    () =>
-      resolveAnalyticsValueChange({
-        selectedTimeRange,
-        accounts,
-        currentBalance: displayedBalance,
-        portfolio,
-        cvState: countervalues,
-        counterValue,
-      }),
-    [selectedTimeRange, accounts, displayedBalance, portfolio, countervalues, counterValue],
+  const [scrub, setScrub] = useState<ScrubState | undefined>(undefined);
+  const selection = scrub && scrub.contextKey === contextKey ? scrub.selection : undefined;
+  const setSelection = useCallback(
+    (next: ScrubSelection | undefined) =>
+      setScrub(next ? { contextKey, selection: next } : undefined),
+    [contextKey],
   );
-
-  const { prices, timestamps } = useMemo(() => {
-    const history = portfolio.balanceHistory;
-    return {
-      prices: history.map(point => point.value),
-      timestamps: history.map(point => point.date.getTime()),
-    };
-  }, [portfolio.balanceHistory]);
 
   const series = useMemo<LineChartSeries[]>(
     () => [
       {
         id: "analytics-portfolio-balance",
-        data: prices,
+        data: [...prices],
         label: t("analytics.title"),
         stroke: "",
       },
@@ -124,7 +110,7 @@ export function useChartSectionViewModel(): ChartSectionViewModel {
         Number.isFinite(value) && timestamp != null ? { balance: value, timestamp } : undefined,
       );
     },
-    [prices, timestamps],
+    [prices, timestamps, setSelection],
   );
 
   const onRangeChange = useCallback(
@@ -135,7 +121,7 @@ export function useChartSectionViewModel(): ChartSectionViewModel {
       dispatch(setSelectedTimeRange(portfolioRange));
       track("timeframe_clicked", { timeframe: portfolioRange });
     },
-    [dispatch, selectedTimeRange],
+    [dispatch, selectedTimeRange, setSelection],
   );
 
   const rangePercentageValue = valueChange.percentage == null ? NaN : valueChange.percentage * 100;
@@ -182,7 +168,7 @@ export function useChartSectionViewModel(): ChartSectionViewModel {
       color: resolveLineChartColorFromPercentChange(
         valueChange.percentage == null ? undefined : rangePercentageValue,
       ),
-      isLoading: !isBalanceAvailable,
+      isLoading: isChartLoading,
       height: DEFAULT_LINE_CHART_HEIGHT,
       formatValue,
       onScrubberPositionChange,
@@ -190,7 +176,11 @@ export function useChartSectionViewModel(): ChartSectionViewModel {
       showScrubberBeacons: false,
       showXAxis: false,
       showYAxis: false,
-      xAxis: buildAnalyticsChartXAxisConfig({ timestamps, selectedRange, formatDate }),
+      xAxis: buildAnalyticsChartXAxisConfig({
+        timestamps: [...timestamps],
+        selectedRange,
+        formatDate,
+      }),
       yAxis: buildAnalyticsChartYAxisConfig(),
       points: getExtremaPointMarkers(series),
       accessibilityLabel: t("assetDetail.balanceGraph.timeframeSelector"),
@@ -203,7 +193,7 @@ export function useChartSectionViewModel(): ChartSectionViewModel {
       t,
       valueChange.percentage,
       rangePercentageValue,
-      isBalanceAvailable,
+      isChartLoading,
       formatValue,
       onScrubberPositionChange,
       timestamps,
@@ -215,11 +205,13 @@ export function useChartSectionViewModel(): ChartSectionViewModel {
     header: {
       hoveredBalance,
       scrubDateLabel,
-      isBalanceAvailable,
+      isVariationAvailable,
+      isVariationLoading,
       percentageValue,
       variationText,
       rangeLabel,
       discreet,
+      balance,
     },
     chart,
   };

@@ -9,16 +9,17 @@ import {
 import { PnlCard } from "LLM/features/Pnl/components/PnlCard";
 import { PnlDetailDrawer } from "LLM/features/Pnl/components/PnlDetailDrawer";
 import { PNL_SECTION_TEST_IDS } from "./testIds";
-import { usePnlSectionViewModel } from "./usePnlSectionViewModel";
+import type { PnlSectionViewModel } from "./types";
 
-export { PNL_SECTION_TEST_IDS };
+type PnlSectionViewProps = Omit<PnlSectionViewModel, "shouldDisplayPnl">;
 
-export default function PnlSection() {
-  const { shouldDisplayPnl, title, unrealised, realised, openDrawer, drawer } =
-    usePnlSectionViewModel();
-
-  if (!shouldDisplayPnl) return null;
-
+export function PnlSectionView({
+  title,
+  unrealised,
+  realised,
+  openDrawer,
+  drawer,
+}: PnlSectionViewProps) {
   return (
     <Box lx={{ gap: "s12", paddingHorizontal: "s16" }} testID={PNL_SECTION_TEST_IDS.root}>
       <Subheader>

@@ -5,24 +5,23 @@ import { usePortfolioPnL } from "@ledgerhq/wallet-pnl/hooks";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useSelector } from "~/context/hooks";
 import { useLocale, useTranslation } from "~/context/Locale";
-import { shallowAccountsSelector } from "~/reducers/accounts";
 import { useCountervaluesCache } from "@features/platform-market-countervalues";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 import { buildReturnCard } from "LLM/features/Pnl/builders/buildReturnCard";
 import { buildPnlDetail } from "LLM/features/Pnl/builders/buildPnlDetail";
 import { PNL_BUTTON, PNL_DETAIL_PAGE } from "LLM/features/Pnl/const";
-import { useShouldDisplayAnalyticsPnl } from "LLM/features/Analytics/hooks/useShouldDisplayAnalyticsPnl";
-import type { PnlSectionViewModel } from "./types";
+import type { PnlSectionModelInput, PnlSectionViewModel } from "./types";
 import { ANALYTICS_PAGE } from "../../../../const";
 
 const ZERO = new BigNumber(0);
 const EMPTY_ACCOUNTS: Parameters<typeof usePortfolioPnL>[0] = [];
 
-export function usePnlSectionViewModel(): PnlSectionViewModel {
+export function usePnlSectionModel({
+  accounts,
+  shouldDisplayPnl,
+}: PnlSectionModelInput): PnlSectionViewModel {
   const { t } = useTranslation();
   const { locale } = useLocale();
-  const shouldDisplayPnl = useShouldDisplayAnalyticsPnl();
-  const accounts = useSelector(shallowAccountsSelector);
   const countervalues = useCountervaluesCache();
   const fiat = useSelector(counterValueCurrencySelector);
   const discreet = useSelector(discreetModeSelector);
