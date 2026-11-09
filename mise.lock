@@ -112,15 +112,7 @@ url = "https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8
 checksum = "sha256:551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb"
 url = "https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz"
 
-[tools.gitleaks."platforms.linux-x64-baseline"]
-checksum = "sha256:551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb"
-url = "https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz"
-
 [tools.gitleaks."platforms.linux-x64-musl"]
-checksum = "sha256:551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb"
-url = "https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz"
-
-[tools.gitleaks."platforms.linux-x64-musl-baseline"]
 checksum = "sha256:551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb"
 url = "https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz"
 
@@ -132,19 +124,11 @@ url = "https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8
 checksum = "sha256:dfe101a4db2255fc85120ac7f3d25e4342c3c20cf749f2c20a18081af1952709"
 url = "https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_darwin_x64.tar.gz"
 
-[tools.gitleaks."platforms.macos-x64-baseline"]
-checksum = "sha256:dfe101a4db2255fc85120ac7f3d25e4342c3c20cf749f2c20a18081af1952709"
-url = "https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_darwin_x64.tar.gz"
-
 [tools.gitleaks."platforms.windows-arm64"]
 checksum = "sha256:d29144deff3a68aa93ced33dddf84b7fdc26070add4aa0f4513094c8332afc4e"
 url = "https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_windows_x64.zip"
 
 [tools.gitleaks."platforms.windows-x64"]
-checksum = "sha256:d29144deff3a68aa93ced33dddf84b7fdc26070add4aa0f4513094c8332afc4e"
-url = "https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_windows_x64.zip"
-
-[tools.gitleaks."platforms.windows-x64-baseline"]
 checksum = "sha256:d29144deff3a68aa93ced33dddf84b7fdc26070add4aa0f4513094c8332afc4e"
 url = "https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_windows_x64.zip"
 
@@ -164,10 +148,6 @@ url = "https://github.com/jdx/hk/releases/download/v1.40.0/hk-aarch64-unknown-li
 checksum = "sha256:5feb9eab6b8539aba09ed73eb49d4e01b3a56471172c14212d0b649ed2c16142"
 url = "https://github.com/jdx/hk/releases/download/v1.40.0/hk-x86_64-unknown-linux-gnu.tar.gz"
 
-[tools.hk."platforms.linux-x64-baseline"]
-checksum = "sha256:5feb9eab6b8539aba09ed73eb49d4e01b3a56471172c14212d0b649ed2c16142"
-url = "https://github.com/jdx/hk/releases/download/v1.40.0/hk-x86_64-unknown-linux-gnu.tar.gz"
-
 [tools.hk."platforms.linux-x64-musl"]
 checksum = "sha256:5feb9eab6b8539aba09ed73eb49d4e01b3a56471172c14212d0b649ed2c16142"
 url = "https://github.com/jdx/hk/releases/download/v1.40.0/hk-x86_64-unknown-linux-gnu.tar.gz"
@@ -184,9 +164,9 @@ url = "https://github.com/jdx/hk/releases/download/v1.40.0/hk-aarch64-pc-windows
 checksum = "sha256:2d177c1ac965a7c7843c2849c0eb5fe5c3bb2a560a3c1b67afdb8a62b416d27a"
 url = "https://github.com/jdx/hk/releases/download/v1.40.0/hk-x86_64-pc-windows-msvc.zip"
 
-[tools.hk."platforms.windows-x64-baseline"]
-checksum = "sha256:2d177c1ac965a7c7843c2849c0eb5fe5c3bb2a560a3c1b67afdb8a62b416d27a"
-url = "https://github.com/jdx/hk/releases/download/v1.40.0/hk-x86_64-pc-windows-msvc.zip"
+[[tools.mitmproxy]]
+version = "12.2.1"
+backend = "pypi:mitmproxy"
 
 [[tools.node]]
 version = "24.22.1"
@@ -204,15 +184,7 @@ url = "https://unofficial-builds.nodejs.org/download/release/v24.22.1/node-v24.2
 checksum = "sha256:eb6728e77c576a35162c122c45ccadf224d89ff00abc8dae46cc2897c6002d7c"
 url = "https://nodejs.org/dist/v24.22.1/node-v24.22.1-linux-x64.tar.gz"
 
-[tools.node."platforms.linux-x64-baseline"]
-checksum = "sha256:eb6728e77c576a35162c122c45ccadf224d89ff00abc8dae46cc2897c6002d7c"
-url = "https://nodejs.org/dist/v24.22.1/node-v24.22.1-linux-x64.tar.gz"
-
 [tools.node."platforms.linux-x64-musl"]
-checksum = "sha256:0a9eddce2d2e8f3addbe94fa46d751325b2d74f7fd1ce63296164d36b6dfc6e5"
-url = "https://unofficial-builds.nodejs.org/download/release/v24.22.1/node-v24.22.1-linux-x64-musl.tar.gz"
-
-[tools.node."platforms.linux-x64-musl-baseline"]
 checksum = "sha256:0a9eddce2d2e8f3addbe94fa46d751325b2d74f7fd1ce63296164d36b6dfc6e5"
 url = "https://unofficial-builds.nodejs.org/download/release/v24.22.1/node-v24.22.1-linux-x64-musl.tar.gz"
 
@@ -224,19 +196,11 @@ url = "https://nodejs.org/dist/v24.22.1/node-v24.22.1-darwin-arm64.tar.gz"
 checksum = "sha256:d132557e7ee2b85af08b0c8c34338e65c6430f2238d01f727728ef42dc83b035"
 url = "https://nodejs.org/dist/v24.22.1/node-v24.22.1-darwin-x64.tar.gz"
 
-[tools.node."platforms.macos-x64-baseline"]
-checksum = "sha256:d132557e7ee2b85af08b0c8c34338e65c6430f2238d01f727728ef42dc83b035"
-url = "https://nodejs.org/dist/v24.22.1/node-v24.22.1-darwin-x64.tar.gz"
-
 [tools.node."platforms.windows-arm64"]
 checksum = "sha256:a0c807319fede24c4a0d8f84564c82a619bd313b16b10c007c383c2609e99171"
 url = "https://nodejs.org/dist/v24.22.1/node-v24.22.1-win-arm64.zip"
 
 [tools.node."platforms.windows-x64"]
-checksum = "sha256:d2046d28c2c3dcd211ac5145c0bf30e2047ef9dfb306693c8c6e2eccd8b95fa5"
-url = "https://nodejs.org/dist/v24.22.1/node-v24.22.1-win-x64.zip"
-
-[tools.node."platforms.windows-x64-baseline"]
 checksum = "sha256:d2046d28c2c3dcd211ac5145c0bf30e2047ef9dfb306693c8c6e2eccd8b95fa5"
 url = "https://nodejs.org/dist/v24.22.1/node-v24.22.1-win-x64.zip"
 
@@ -256,15 +220,7 @@ url = "https://github.com/apple/pkl/releases/download/0.31.1/pkl-linux-aarch64"
 checksum = "sha256:618f13955d755cafbfe8c9cba1d27635848cd49dbc6abffd398d2751db1231bf"
 url = "https://github.com/apple/pkl/releases/download/0.31.1/pkl-linux-amd64"
 
-[tools.pkl."platforms.linux-x64-baseline"]
-checksum = "sha256:618f13955d755cafbfe8c9cba1d27635848cd49dbc6abffd398d2751db1231bf"
-url = "https://github.com/apple/pkl/releases/download/0.31.1/pkl-linux-amd64"
-
 [tools.pkl."platforms.linux-x64-musl"]
-checksum = "sha256:618f13955d755cafbfe8c9cba1d27635848cd49dbc6abffd398d2751db1231bf"
-url = "https://github.com/apple/pkl/releases/download/0.31.1/pkl-linux-amd64"
-
-[tools.pkl."platforms.linux-x64-musl-baseline"]
 checksum = "sha256:618f13955d755cafbfe8c9cba1d27635848cd49dbc6abffd398d2751db1231bf"
 url = "https://github.com/apple/pkl/releases/download/0.31.1/pkl-linux-amd64"
 
@@ -276,19 +232,11 @@ url = "https://github.com/apple/pkl/releases/download/0.31.1/pkl-macos-aarch64"
 checksum = "sha256:22123ed4ae4c03afa8c54c69f77f0bec39b0fa0f67b09d6d148e0a376a2a471d"
 url = "https://github.com/apple/pkl/releases/download/0.31.1/pkl-macos-amd64"
 
-[tools.pkl."platforms.macos-x64-baseline"]
-checksum = "sha256:22123ed4ae4c03afa8c54c69f77f0bec39b0fa0f67b09d6d148e0a376a2a471d"
-url = "https://github.com/apple/pkl/releases/download/0.31.1/pkl-macos-amd64"
-
 [tools.pkl."platforms.windows-arm64"]
 checksum = "sha256:a8834481667325b44c539dbb758d7365a16389070f343c04b639bbe525ede013"
 url = "https://github.com/apple/pkl/releases/download/0.31.1/pkl-windows-amd64.exe"
 
 [tools.pkl."platforms.windows-x64"]
-checksum = "sha256:a8834481667325b44c539dbb758d7365a16389070f343c04b639bbe525ede013"
-url = "https://github.com/apple/pkl/releases/download/0.31.1/pkl-windows-amd64.exe"
-
-[tools.pkl."platforms.windows-x64-baseline"]
 checksum = "sha256:a8834481667325b44c539dbb758d7365a16389070f343c04b639bbe525ede013"
 url = "https://github.com/apple/pkl/releases/download/0.31.1/pkl-windows-amd64.exe"
 

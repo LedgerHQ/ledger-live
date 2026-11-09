@@ -1,0 +1,303 @@
+import { BigNumber } from "bignumber.js";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Trans, useTranslation } from "react-i18next";
+import type { TokenCurrency } from "@domain/entity-currency-token";
+import type { Account, AccountBridge, Operation, TokenAccount } from "@ledgerhq/types-live";
+import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import { addPendingOperation } from "@ledgerhq/live-common/account/index";
+import { getAssetFromToken } from "@ledgerhq/live-common/families/xrp/bridge/api";
+import { getMaxTrustLimitForToken } from "@ledgerhq/live-common/families/xrp/logicPublic";
+import type { Transaction, XrpTokenAccount } from "@ledgerhq/live-common/families/xrp/types";
+import { Track } from "@shared/analytics-react";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
+import { getCurrentDevice } from "~/renderer/reducers/devices";
+import Stepper from "~/renderer/components/Stepper";
+import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
+import logger from "~/renderer/logger";
+import StepToken, { StepTokenFooter } from "./steps/StepToken";
+import StepSettings, { StepSettingsFooter } from "./steps/StepSettings";
+import StepReview, { StepReviewFooter } from "./steps/StepReview";
+import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
+import { ACTION_I18N, AddTokenStep, StepId, StepProps, TokenAction } from "./types";
+
+export type Data = {
+  account: Account;
+  tokenAccount?: TokenAccount;
+  token?: TokenCurrency;
+  remove?: boolean;
+};
+
+type Props = {
+  stepId: StepId;
+  onClose: () => void;
+  onChangeStepId: (stepId: StepId) => void;
+  params: Data;
+};
+
+const tokenStep: AddTokenStep = {
+  id: "token",
+  label: <Trans i18nKey="xrp.addToken.steps.token.title" />,
+  component: StepToken,
+  noScroll: true,
+  footer: StepTokenFooter,
+};
+
+const settingsStep: AddTokenStep = {
+  id: "settings",
+  label: <Trans i18nKey="xrp.addToken.steps.settings.title" />,
+  component: StepSettings,
+  footer: StepSettingsFooter,
+};
+
+const reviewStepWithoutBack: AddTokenStep = {
+  id: "review",
+  label: <Trans i18nKey="xrp.addToken.steps.review.title" />,
+  component: StepReview,
+  footer: StepReviewFooter,
+};
+
+const reviewStep: AddTokenStep = {
+  ...reviewStepWithoutBack,
+  onBack: ({ token, transitionTo }) =>
+    transitionTo(token?.tokenType === "mpt" ? "token" : "settings"),
+};
+
+const connectDeviceStep: AddTokenStep = {
+  id: "connectDevice",
+  label: <Trans i18nKey="xrp.addToken.steps.connectDevice.title" />,
+  component: GenericStepConnectDevice,
+  onBack: ({ transitionTo }) => transitionTo("review"),
+};
+
+const confirmationStep: AddTokenStep = {
+  id: "confirmation",
+  label: <Trans i18nKey="xrp.addToken.steps.confirmation.title" />,
+  component: StepConfirmation,
+  footer: StepConfirmationFooter,
+};
+
+export function getSteps(action: TokenAction, token: TokenCurrency | undefined): AddTokenStep[] {
+  if (action === "remove") {
+    return [reviewStepWithoutBack, connectDeviceStep, confirmationStep];
+  }
+
+  if (action === "edit") {
+    return [settingsStep, reviewStep, connectDeviceStep, confirmationStep];
+  }
+
+  const hasSettings = token?.tokenType !== "mpt";
+  const settingsStepWithBack: AddTokenStep = {
+    ...settingsStep,
+    onBack: ({ transitionTo }) => transitionTo("token"),
+  };
+
+  return [
+    tokenStep,
+    ...(hasSettings ? [settingsStepWithBack] : []),
+    reviewStep,
+    connectDeviceStep,
+    confirmationStep,
+  ];
+}
+
+function toAssetFields(token: TokenCurrency) {
+  const asset = getAssetFromToken(token);
+  if (!asset || !("assetReference" in asset)) return {};
+
+  return { assetReference: asset.assetReference, assetOwner: asset.assetOwner };
+}
+
+async function fetchMaxLimit(token: TokenCurrency): Promise<BigNumber | null> {
+  try {
+    return await getMaxTrustLimitForToken(token);
+  } catch (error) {
+    logger.warn("xrp: max trust limit unavailable", error);
+    return null;
+  }
+}
+
+export function makeChangeTrustTransaction(
+  bridge: AccountBridge<Transaction>,
+  account: Account,
+  tokenAccount: TokenAccount | undefined,
+): Transaction {
+  const currentLimit = (tokenAccount as XrpTokenAccount | undefined)?.xrpResources?.limit;
+
+  return bridge.updateTransaction(bridge.createTransaction(account), {
+    mode: "changeTrust",
+    ...(tokenAccount && { ...toAssetFields(tokenAccount.token), amount: currentLimit }),
+  });
+}
+
+export function makeOptOutTransaction(
+  bridge: AccountBridge<Transaction>,
+  account: Account,
+  tokenAccount: TokenAccount,
+): Transaction {
+  return bridge.updateTransaction(bridge.createTransaction(account), {
+    mode: "optOut",
+    ...toAssetFields(tokenAccount.token),
+    amount: new BigNumber(0),
+  });
+}
+
+export function getAction({ tokenAccount, remove }: Data): TokenAction {
+  if (tokenAccount && remove) return "remove";
+
+  return tokenAccount ? "edit" : "add";
+}
+
+export default function Body({ stepId, onClose, onChangeStepId, params }: Props) {
+  const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const device = useSelector(getCurrentDevice);
+  const { tokenAccount } = params;
+  const action = getAction(params);
+
+  const [token, setToken] = useState<TokenCurrency | undefined>(
+    tokenAccount?.token ?? params.token,
+  );
+  const [maxLimit, setMaxLimit] = useState<BigNumber | null>(null);
+  const [isRippling, setIsRippling] = useState(
+    (tokenAccount as XrpTokenAccount | undefined)?.xrpResources?.isRippling ?? false,
+  );
+  const [optimisticOperation, setOptimisticOperation] = useState<Operation | undefined>();
+  const [transactionError, setTransactionError] = useState<Error | null>(null);
+  const [signed, setSigned] = useState(false);
+  const latestTokenId = useRef<string | null>(null);
+
+  const bridge = useAccountBridge<Transaction>(params.account, undefined);
+  const {
+    transaction,
+    updateTransaction,
+    account,
+    parentAccount,
+    status,
+    bridgeError,
+    bridgePending,
+  } = useBridgeTransaction<Transaction>(bridge, () => {
+    return {
+      transaction:
+        action === "remove" && tokenAccount
+          ? makeOptOutTransaction(bridge, params.account, tokenAccount)
+          : makeChangeTrustTransaction(bridge, params.account, tokenAccount),
+      account: params.account,
+      parentAccount: undefined,
+    };
+  });
+
+  const applyToken = useCallback(
+    async (picked: TokenCurrency) => {
+      latestTokenId.current = picked.id;
+
+      const max = picked.tokenType === "iou" ? await fetchMaxLimit(picked) : null;
+      if (latestTokenId.current !== picked.id) return;
+
+      setMaxLimit(max);
+      updateTransaction(tx => {
+        return bridge.updateTransaction(tx, {
+          ...toAssetFields(picked),
+          amount: max ?? new BigNumber(0),
+        });
+      });
+    },
+    [bridge, updateTransaction],
+  );
+
+  const onChangeToken = useCallback(
+    (picked: TokenCurrency | undefined | null) => {
+      if (!picked) return;
+      setToken(picked);
+      setMaxLimit(null);
+      applyToken(picked);
+    },
+    [applyToken],
+  );
+
+  useEffect(() => {
+    if (action === "remove") return;
+
+    if (tokenAccount) {
+      fetchMaxLimit(tokenAccount.token).then(setMaxLimit);
+      return;
+    }
+
+    if (params.token) {
+      applyToken(params.token);
+    }
+  }, [action, tokenAccount, params.token, applyToken]);
+
+  const handleRetry = useCallback(() => {
+    setTransactionError(null);
+    onChangeStepId(getSteps(action, token)[0].id);
+  }, [action, token, onChangeStepId]);
+
+  const handleTransactionError = useCallback((error: Error) => {
+    if (error?.name !== "UserRefusedOnDevice") {
+      logger.critical(error);
+    }
+    setTransactionError(error);
+  }, []);
+
+  const handleOperationBroadcasted = useCallback(
+    (operation: Operation) => {
+      if (!account) return;
+
+      dispatch(
+        updateAccountWithUpdater(account.id, storedAccount => {
+          return addPendingOperation(storedAccount, operation);
+        }),
+      );
+      setOptimisticOperation(operation);
+      setTransactionError(null);
+    },
+    [account, dispatch],
+  );
+
+  const steps = useMemo(() => getSteps(action, token), [action, token]);
+  const error = transactionError ?? bridgeError ?? undefined;
+
+  const stepProps: Omit<StepProps, "transitionTo"> = {
+    t,
+    device,
+    account,
+    parentAccount,
+    onClose,
+    optimisticOperation,
+    error,
+    signed,
+    transaction,
+    status,
+    setSigned,
+    bridgePending,
+    action,
+    token,
+    onChangeToken,
+    maxLimit,
+    isRippling,
+    tokenAccount,
+    onChangeRippling: setIsRippling,
+    onRetry: handleRetry,
+    onUpdateTransaction: updateTransaction,
+    onTransactionError: handleTransactionError,
+    onOperationBroadcasted: handleOperationBroadcasted,
+  };
+
+  return (
+    <Stepper
+      {...stepProps}
+      title={t(`${ACTION_I18N[action]}.title`)}
+      stepId={stepId}
+      steps={steps}
+      errorSteps={transactionError ? [steps.length - 1] : []}
+      hideBreadcrumb={!!error}
+      onStepChange={(step: AddTokenStep) => onChangeStepId(step.id)}
+    >
+      <SyncSkipUnderPriority priority={100} />
+      <Track onUnmount event="CloseModalXrpAddToken" />
+    </Stepper>
+  );
+}

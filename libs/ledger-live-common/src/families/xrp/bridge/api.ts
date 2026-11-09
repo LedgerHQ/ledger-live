@@ -8,6 +8,7 @@ import type {
 } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import type { XrpAccountInfo } from "@ledgerhq/coin-xrp/types";
+import type { Account } from "@ledgerhq/types-live";
 import { getCoinModuleApi } from "../../../bridge/generic-coin-framework/api";
 import { buildContext } from "../../../bridge/generic-coin-framework/api/context";
 import { getXrpEnabledTokenStandards } from "../config";
@@ -113,16 +114,42 @@ export async function buildTokenAccountShapes(
 export function describeOptimisticOperation(
   mode: string,
 ): OptimisticOperationDescriptor | undefined {
-  if (mode !== "changeTrust") return undefined;
+  if (mode === "changeTrust") return { type: "OPT_IN", value: new BigNumber(0) };
+  if (mode === "optOut") return { type: "OPT_OUT", value: new BigNumber(0) };
 
-  return { type: "OPT_IN", value: new BigNumber(0) };
+  return undefined;
 }
+
+// The default mapping knows no "optOut", and throws on it
+export function computeIntentType(transaction: Record<string, unknown>): string {
+  const { mode } = transaction;
+  if (mode === undefined) return "Payment";
+  if (mode === "send" || mode === "changeTrust" || mode === "optOut") return mode;
+
+  throw new Error(`Unsupported transaction mode: ${JSON.stringify(mode)}`);
+}
+
+// TEMP prototype: sends MPT transactions to the MPT signer (families/xrp/signer.ts). An opt-in has
+// no token account: its MPT issuance id is 48 hex characters, an IOU currency code 3 or 40.
+const getDeviceSignOptions = (transaction: Record<string, unknown>, account: Account) => {
+  const subAccount = account.subAccounts?.find(sub => sub.id === transaction.subAccountId);
+
+  const isMptIssuanceId =
+    typeof transaction.assetReference === "string" &&
+    MPT_ISSUANCE_ID.test(transaction.assetReference);
+  const isMpt = subAccount ? subAccount.token.tokenType === "mpt" : isMptIssuanceId;
+
+  return isMpt ? { mptSigner: true } : undefined;
+};
 
 export default function xrpBridgeApi(currency: CryptoCurrency): BridgeApi {
   const enabledStandards = getXrpEnabledTokenStandards(currency.id);
 
   return {
     getAssetFromToken,
+    computeIntentType,
+    getDeviceSignOptions,
+    exactAssetMatch: true,
     describeOptimisticOperation,
     balanceListsEveryToken: true,
     getTokenFromAsset: asset => getTokenFromAsset(currency, asset),

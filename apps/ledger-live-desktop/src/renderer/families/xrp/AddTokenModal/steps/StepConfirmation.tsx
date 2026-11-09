@@ -1,0 +1,109 @@
+import invariant from "invariant";
+import React from "react";
+import { Trans } from "react-i18next";
+import styled from "styled-components";
+import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
+import { TrackScreen } from "@shared/analytics-react";
+import Box from "~/renderer/components/Box";
+import Button from "~/renderer/components/Button";
+import RetryButton from "~/renderer/components/RetryButton";
+import ErrorDisplay from "~/renderer/components/ErrorDisplay";
+import SuccessDisplay from "~/renderer/components/SuccessDisplay";
+import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
+import { OperationDetails } from "~/renderer/drawers/OperationDetails";
+import { setDrawer } from "~/renderer/drawers/Provider";
+import { ACTION_I18N, StepProps } from "../types";
+
+const Container = styled(Box).attrs(() => ({
+  alignItems: "center",
+  grow: true,
+  color: "neutral.c100",
+}))<{ $shouldSpace?: boolean }>`
+  justify-content: ${p => (p.$shouldSpace ? "space-between" : "center")};
+`;
+
+export default function StepConfirmation({
+  account,
+  optimisticOperation,
+  error,
+  signed,
+  token,
+  action,
+}: StepProps) {
+  invariant(account, "xrp: account required");
+  const successKey = `${ACTION_I18N[action]}.steps.confirmation.success`;
+
+  if (optimisticOperation) {
+    return (
+      <Container>
+        <TrackScreen category="XRP add token" name="Step Confirmed" />
+        <SyncOneAccountOnMount
+          reason="transaction-flow-confirmation"
+          priority={10}
+          accountId={optimisticOperation.accountId}
+        />
+        <SuccessDisplay
+          title={<Trans i18nKey={`${successKey}.title`} values={{ token: token?.name }} />}
+          description={
+            <div>
+              <Trans i18nKey={`${successKey}.text`} values={{ token: token?.name }}>
+                <b></b>
+              </Trans>
+            </div>
+          }
+        />
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container $shouldSpace={signed}>
+        <TrackScreen category="XRP add token" name="Step Confirmation Error" />
+        {signed ? (
+          <BroadcastErrorDisclaimer
+            title={<Trans i18nKey="xrp.addToken.steps.confirmation.broadcastError" />}
+          />
+        ) : null}
+        <ErrorDisplay error={error} withExportLogs />
+      </Container>
+    );
+  }
+
+  return null;
+}
+
+export function StepConfirmationFooter({
+  account,
+  parentAccount,
+  onRetry,
+  error,
+  onClose,
+  optimisticOperation,
+}: StepProps) {
+  const onViewDetails = () => {
+    onClose();
+    if (!account || !optimisticOperation) return;
+
+    setDrawer(OperationDetails, {
+      operationId: optimisticOperation.id,
+      accountId: account.id,
+      parentId: parentAccount?.id,
+    });
+  };
+
+  return (
+    <Box horizontal alignItems="right">
+      <Button ml={2} onClick={onClose}>
+        <Trans i18nKey="common.close" />
+      </Button>
+      {optimisticOperation ? (
+        <Button primary ml={2} onClick={onViewDetails}>
+          <Trans i18nKey="xrp.addToken.steps.confirmation.success.cta" />
+        </Button>
+      ) : error ? (
+        <RetryButton primary ml={2} onClick={onRetry} />
+      ) : null}
+    </Box>
+  );
+}

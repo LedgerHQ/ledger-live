@@ -33,10 +33,10 @@ export type XrpTokenAccountRaw = TokenAccountRaw & { xrpResources?: XrpTokenReso
 /**
  * `changeTrust` opts in to a token or edits its trust limit, the `amount`. `assetReference` and
  * `assetOwner` name the token, never a `subAccountId`: it adds a pending token sub-operation worth
- * the limit, which locks the token balance until the next sync.
+ * the limit, which locks the token balance until the next sync. `optOut` removes a held token.
  */
 type XrpTokenFields = {
-  mode?: "send" | "changeTrust";
+  mode?: "send" | "changeTrust" | "optOut";
   assetReference?: string;
   assetOwner?: string;
 };

@@ -227,9 +227,6 @@ catalogs:
     '@ledgerhq/coin-tezos':
       specifier: 14.1.1
       version: 14.1.1
-    '@ledgerhq/coin-xrp':
-      specifier: 13.3.0
-      version: 13.3.0
     '@ledgerhq/crypto-icons':
       specifier: 2.0.7
       version: 2.0.7
@@ -844,6 +841,7 @@ overrides:
   '@ledgerhq/device-signer-kit-aleo>@ledgerhq/signer-utils': 1.1.3
   '@ton/ton>zod': 4.6.7
   '@expo/cli>@react-native/dev-middleware': 0.81.6
+  '@ledgerhq/coin-xrp': link:../coin-modules/libs/coin-modules/coin-xrp
   jest-environment-node: 30.5.0
   jest-mock: 30.5.0
   jest-matcher-utils: 30.5.0
@@ -18847,8 +18845,8 @@ importers:
         specifier: workspace:^
         version: link:../coin-modules/coin-vechain
       '@ledgerhq/coin-xrp':
-        specifier: 'catalog:'
-        version: 13.3.0(@ledgerhq/live-network@3.3.0(axios@1.20.0(debug@4.4.3)))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        specifier: link:../../../coin-modules/libs/coin-modules/coin-xrp
+        version: link:../../../coin-modules/libs/coin-modules/coin-xrp
       '@ledgerhq/coin-zcash':
         specifier: workspace:^
         version: link:../coin-modules/coin-zcash
@@ -27869,11 +27867,6 @@ packages:
     peerDependencies:
       '@ledgerhq/live-network': ^3.1.0
 
-  '@ledgerhq/coin-xrp@13.3.0':
-    resolution: {integrity: sha512-9ludLyqqc5aIQyxy2qZOi2FYyEmInNblYfc39x0MVXPj8VgGoeYUuc+oxVJqGEL49PyzpIORbL1InlQQhgJgeA==}
-    peerDependencies:
-      '@ledgerhq/live-network': ^3.1.0
-
   '@ledgerhq/context-module@2.8.0':
     resolution: {integrity: sha512-bndTxEdV15CirIq47kCx5Q0ilKSX9V2gDSy9n6X37GKUffFrr6r9TLOx3AISZDWKX5UorCUzxRWKtT0Q2OozJA==}
     peerDependencies:
@@ -33318,10 +33311,6 @@ packages:
   '@xrplf/isomorphic@1.0.0':
     resolution: {integrity: sha512-IyMsxyjkJK8YWq566KyuFuh/PUiLzQ02RbUO5qa+vEQb6zIAR9MzFwN7wBmBy7wmKkjligcdNDMG5EaBRH8FxQ==}
     engines: {node: '>=16.0.0'}
-
-  '@xrplf/isomorphic@1.0.2':
-    resolution: {integrity: sha512-ncZUdMXr6VlSXtdoiDi0jTH+gBrgGxwVeEidhoegII3PmyErbQsyj6e+j7acmR4LW/lvBkPkzb9QzRfJH0n3rA==}
-    engines: {node: '>=18.0.0'}
 
   '@xstate/react@5.0.2':
     resolution: {integrity: sha512-x5GOrE0ZYjU2ba986u0CCp7SaPwzElSn1SW0mZ9MuBgsZ+BW7vTLVOvGmURynwojdso8d6nVbK3c2+MRVqGVgA==}
@@ -40303,17 +40292,9 @@ packages:
     resolution: {integrity: sha512-de7osLRH/pt5HX2xw2TRJtbdLLWHu0RXirpQaEeCnWKY5DYHykh3ETSkofvm0aX0LJiV7kwkegJxQkmbO94gWw==}
     engines: {node: '>= 16'}
 
-  ripple-address-codec@5.0.1:
-    resolution: {integrity: sha512-JQHLKuVJV8lv9Qobmn4aUM2Dpv9WRRLKnNWfM8tN02fAbUtG8mUPsu9q9UYX8P76G4qzytEc5ZKMp/3JggNYmw==}
-    engines: {node: '>= 18'}
-
   ripple-binary-codec@1.11.0:
     resolution: {integrity: sha512-g7+gs3T+NfoeW6vIq5dcN0CkIT4t/zwRzFxz8X2RzfbrWRnewPUKqQbmBgs05tXLX5NuWPaneiaAVpFpYBcdfw==}
     engines: {node: '>= 10'}
-
-  ripple-binary-codec@2.11.0:
-    resolution: {integrity: sha512-qad61CYAqIi8H7DuPnuDpj40wrXY8wYrc1YbuDcA9G/NZG0Uu8unHNbTC6Itz8SlOSL0P/nF/8HTFW/1caVlTg==}
-    engines: {node: '>= 18'}
 
   ripple-keypairs@2.0.0:
     resolution: {integrity: sha512-b5rfL2EZiffmklqZk1W+dvSy97v3V/C7936WxCCgDynaGPp7GE6R2XO7EU9O2LlM/z95rj870IylYnOQs+1Rag==}
@@ -46677,18 +46658,6 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@ledgerhq/coin-xrp@13.3.0(@ledgerhq/live-network@3.3.0(axios@1.20.0(debug@4.4.3)))(bufferutil@4.1.0)(utf-8-validate@6.0.6)':
-    dependencies:
-      '@ledgerhq/coin-module-framework': 11.0.1
-      '@ledgerhq/live-network': 3.3.0(axios@1.20.0(debug@4.4.3))
-      bignumber.js: 9.1.2
-      invariant: 2.2.4
-      ripple-address-codec: 5.0.1(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      ripple-binary-codec: 2.11.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-
   '@ledgerhq/context-module@2.8.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(utf-8-validate@6.0.6)':
     dependencies:
       '@ledgerhq/device-management-kit': 1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
@@ -53036,15 +53005,6 @@ snapshots:
   '@xrplf/isomorphic@1.0.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)':
     dependencies:
       '@noble/hashes': 1.8.0
-      eventemitter3: 5.0.1
-      ws: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-
-  '@xrplf/isomorphic@1.0.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)':
-    dependencies:
-      '@noble/hashes': 2.4.0
       eventemitter3: 5.0.1
       ws: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
     transitivePeerDependencies:
@@ -61283,14 +61243,6 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  ripple-address-codec@5.0.1(bufferutil@4.1.0)(utf-8-validate@6.0.6):
-    dependencies:
-      '@scure/base': 2.3.0
-      '@xrplf/isomorphic': 1.0.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-
   ripple-binary-codec@1.11.0:
     dependencies:
       assert: 2.1.0
@@ -61299,15 +61251,6 @@ snapshots:
       create-hash: 1.2.0
       decimal.js: 10.6.0
       ripple-address-codec: 4.3.1
-
-  ripple-binary-codec@2.11.0(bufferutil@4.1.0)(utf-8-validate@6.0.6):
-    dependencies:
-      '@xrplf/isomorphic': 1.0.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      bignumber.js: 9.1.2
-      ripple-address-codec: 5.0.1(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
 
   ripple-keypairs@2.0.0(bufferutil@4.1.0)(utf-8-validate@6.0.6):
     dependencies:

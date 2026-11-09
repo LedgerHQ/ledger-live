@@ -1461,7 +1461,6 @@
         "switchLabel": "<1>I have read and agree with the </1><0>Terms of Use</0><1>.</1>"
       },
       "steps": {
-        "title": "Step <0>{{step}} / {{total}}</0>",
         "1": {
           "subtitle": "Approve an account to allow the protocol to",
           "subtitle2": "process future loans.",
@@ -1474,7 +1473,8 @@
         "3": {
           "subtitle": "Withdraw assets at any time",
           "description": "You can withdraw your assets and earned interest at any time, partially or entirely, directly from your Ledger account."
-        }
+        },
+        "title": "Step <0>{{step}} / {{total}}</0>"
       }
     },
     "supply": {
@@ -2128,6 +2128,14 @@
       "link": "Learn more about Stellar assets",
       "seeTokens": "Show assets ({{tokenCount}})",
       "hideTokens": "Hide assets ({{tokenCount}})"
+    },
+    "xrp": {
+      "title": "Tokens",
+      "cta": "Add token",
+      "placeholder": "You can add tokens to your {{currencyName}} account.",
+      "link": "Learn more about XRP Ledger tokens",
+      "seeTokens": "Show tokens ({{tokenCount}})",
+      "hideTokens": "Hide tokens ({{tokenCount}})"
     }
   },
   "subAccounts": {
@@ -2658,8 +2666,6 @@
     }
   },
   "buyDeviceModal": {
-    "title": "Connect a Ledger device",
-    "subtitle": "To unlock the full potential of your Ledger Wallet, connect a Ledger device.",
     "0": {
       "title": "Full ownership",
       "desc": "You have control over your private keys."
@@ -2672,6 +2678,8 @@
       "title": "Access the most powerful wallet",
       "desc": "Manage thousands of assets in one place."
     },
+    "title": "Connect a Ledger device",
+    "subtitle": "To unlock the full potential of your Ledger Wallet, connect a Ledger device.",
     "connectCTA": "Connect",
     "buyCTA": "Buy your Ledger device"
   },
@@ -3240,7 +3248,9 @@
           "validator": {
             "title": "Staking Providers"
           },
-          "connectDevice": { "title": "Device" },
+          "connectDevice": {
+            "title": "Device"
+          },
           "confirmation": {
             "title": "Confirmation",
             "success": {
@@ -6463,7 +6473,6 @@
             }
           },
           "recoverHowTo": {
-            "title": "Select ‘Restore using Ledger Recover’",
             "1": {
               "title": "Select ‘Restore’",
               "descr": "Press both buttons simultaneously to select."
@@ -6471,6 +6480,7 @@
             "2": {
               "title": "Select ‘Restore using Ledger Recover’"
             },
+            "title": "Select ‘Restore using Ledger Recover’",
             "help": {
               "iDontSee": "I don’t see ‘Restore using Ledger Recover’",
               "modal": {
@@ -6731,12 +6741,6 @@
     "connected": "Connected!",
     "backToPortfolio": "Back to Portfolio",
     "steps": {
-      "entry": {
-        "title": "Troubleshoot USB connection",
-        "desc": "There seems to be a problem connecting to your device. Don’t worry, you can try different solutions one by one until your device connects!",
-        "cta": "Let’s fix it!",
-        "back": "Go back"
-      },
       "1": {
         "windows": {
           "title": "Run Ledger Wallet as Administrator",
@@ -6849,6 +6853,12 @@
           "updateInstructions": "Follow device update instructions",
           "somethingElse": "Something else"
         }
+      },
+      "entry": {
+        "title": "Troubleshoot USB connection",
+        "desc": "There seems to be a problem connecting to your device. Don’t worry, you can try different solutions one by one until your device connects!",
+        "cta": "Let’s fix it!",
+        "back": "Go back"
       }
     }
   },
@@ -6911,6 +6921,7 @@
       "claimRewardCompound": "validator that will receive the rewards",
       "compoundReward": "validator that will receive the rewards",
       "optIn": "recipient",
+      "changeTrust": "recipient",
       "tokenAssociate": "recipient",
       "nominate": "validator",
       "stake": "validator",
@@ -8038,6 +8049,54 @@
     },
     "XrpDestinationTagRequired": {
       "title": "A destination tag is required for this recipient"
+    },
+    "XrpTokenFrozen": {
+      "title": "This token is frozen in your account",
+      "description": "The issuer has frozen or locked your balance. You can only send it back to the issuer."
+    },
+    "XrpTokenStandardNotEnabled": {
+      "title": "This token type isn't supported yet",
+      "description": "Ledger Wallet can't use this type of XRP Ledger token yet."
+    },
+    "XrpMemoTooLarge": {
+      "title": "Memo is too long",
+      "description": "Keep the memo under {{maxLength}} bytes."
+    },
+    "XrpAmountPrecisionExceeded": {
+      "title": "Amount has too many digits",
+      "description": "XRP Ledger token amounts hold at most 16 significant digits. Round the amount and try again."
+    },
+    "XrpTokenCannotReceive": {
+      "title": "The recipient can't receive this token",
+      "description": "The recipient may not hold this token yet, or the issuer blocks the transfer. Ask them to add the token first."
+    },
+    "XrpTokenAmountNotDeliverable": {
+      "title": "The recipient can't receive this amount",
+      "description": "The amount exceeds the recipient's limit for this token, or doesn't cover the issuer's transfer fee. Try a smaller amount."
+    },
+    "XrpTokenOptInRefused": {
+      "title": "This token can't be added",
+      "description": "The issuer doesn't exist or doesn't accept new holders."
+    },
+    "XrpTransactionWouldFail": {
+      "title": "The network would reject this transaction",
+      "description": "XRP Ledger result: {{code}}. Please retry or contact Ledger Support."
+    },
+    "XrpTrustLimitZero": {
+      "title": "Enter a trust limit above 0. To remove the token, use Remove token instead.",
+      "description": "A trust limit of 0 removes the token, which is a separate action: Remove token."
+    },
+    "XrpTokenNotHeld": {
+      "title": "You don't hold this token",
+      "description": "There is nothing to remove."
+    },
+    "XrpTokenBalanceNotZero": {
+      "title": "This token still holds a balance",
+      "description": "Send your whole balance of this token before removing it."
+    },
+    "XrpReserveIncrease": {
+      "title": "{{amount}} will be reserved",
+      "description": "Holding this token locks {{amount}} of your balance. You get it back when you remove the token."
     },
     "InvalidExplorerResponse": {
       "title": "Invalid response from {{currencyName}} explorer"
@@ -10321,7 +10380,9 @@
             "info": "This claims all ALEO whose unbonding period has elapsed back to your account.",
             "claimableAmountLabel": "Claimable amount"
           },
-          "connectDevice": { "title": "Device" },
+          "connectDevice": {
+            "title": "Device"
+          },
           "confirmation": {
             "title": "Confirmation",
             "success": {
@@ -11353,5 +11414,84 @@
     "allAccounts": "All accounts",
     "error": "Unable to load analytics. Please try again.",
     "unavailable": "Data is not available for this selection."
+  },
+  "xrp": {
+    "addToken": {
+      "title": "Add token",
+      "steps": {
+        "token": {
+          "title": "Token",
+          "selectLabel": "Choose a token",
+          "allAdded": "You've already added all available tokens to this account.",
+          "info": "Adding a token sends a transaction that pays a network fee and reserves XRP while you hold the token. It appears in your transaction history."
+        },
+        "settings": {
+          "title": "Settings",
+          "limit": "Trust limit",
+          "max": "Max",
+          "limitInfo": "The trust limit is the most {{token}} your account accepts to hold."
+        },
+        "review": {
+          "title": "Review",
+          "token": "Token",
+          "issuer": "Issuer"
+        },
+        "connectDevice": {
+          "title": "Device"
+        },
+        "confirmation": {
+          "title": "Confirmation",
+          "success": {
+            "title": "{{token}} token successfully added",
+            "text": "You can now receive <0>{{token}}</0> on your XRP account.",
+            "cta": "View details"
+          },
+          "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+        }
+      }
+    },
+    "tokenSettings": {
+      "title": "Token settings",
+      "steps": {
+        "confirmation": {
+          "success": {
+            "title": "{{token}} trust limit updated",
+            "text": "Your XRP account now accepts <0>{{token}}</0> up to the new limit."
+          }
+        }
+      }
+    },
+    "tokenAccount": {
+      "editSettings": "Edit settings",
+      "trustLimit": "Trust limit",
+      "trustLimitTooltip": "The most of this token your account accepts to hold.",
+      "removeToken": "Remove token",
+      "removeDisabled": "Send your whole balance of this token before removing it."
+    },
+    "rippling": {
+      "label": "Rippling",
+      "on": "On",
+      "off": "Off",
+      "warning": "Turning this on allows other users' payments to move your balance between tokens with the same currency code. Only turn it on if you know what you're doing."
+    },
+    "receive": {
+      "addToken": "Add token",
+      "addTokenFirst": "To receive an XRP Ledger token, add it to your account first.",
+      "tokenNotHeld": "Your account no longer holds {{token}}. Add it again before receiving it."
+    },
+    "removeToken": {
+      "title": "Remove token",
+      "steps": {
+        "token": {
+          "info": "Removing a token sends a transaction that pays a network fee and frees the XRP reserved for the token. It appears in your transaction history."
+        },
+        "confirmation": {
+          "success": {
+            "title": "{{token}} token removed",
+            "text": "Your XRP account no longer holds <0>{{token}}</0>, and its reserve is freed."
+          }
+        }
+      }
+    }
   }
 }

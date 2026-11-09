@@ -1,6 +1,7 @@
 import { buildCryptoAssetsStore } from "@features/platform-currencies";
 import { setCountervaluesLogger } from "@features/platform-market-countervalues";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { withXrpDevTokens } from "@ledgerhq/live-common/families/xrp/devTokens";
 import { log } from "@ledgerhq/logs";
 import { setRateLookup as setAssetAggregationRateLookup } from "@ledgerhq/asset-aggregation/rateLookup";
 import { setRateLookup as setWalletAnalyticsRateLookup } from "@ledgerhq/wallet-analytics";
@@ -15,7 +16,11 @@ import type { ReduxStore } from "~/state-manager/configureStore";
 
 export function setupCryptoAssetsStore(store: ReduxStore): void {
   const cryptoAssetsStore = buildCryptoAssetsStore({ dispatch: store.dispatch });
-  setCryptoAssetsStore(cryptoAssetsStore);
+  // TEMP local bypass: CAL has no ripple_testnet entry, so its sync hash lookup throws.
+  const getTokensSyncHash = cryptoAssetsStore.getTokensSyncHash;
+  cryptoAssetsStore.getTokensSyncHash = async currencyId =>
+    currencyId === "ripple_testnet" ? "" : getTokensSyncHash(currencyId);
+  setCryptoAssetsStore(withXrpDevTokens(cryptoAssetsStore));
 }
 
 /**

@@ -54,7 +54,7 @@
     "@shared/env": "workspace:*",
     "@shared/feature-flags": "workspace:*",
     "@shared/live-config-overrides": "workspace:*",
-    "bignumber.js": "catalog:"
+    "bignumber.js": "9.1.2"
   },
   "peerDependencies": {
     "react": ">=19.0.0",

@@ -4,7 +4,11 @@ import { currencyDefaultsToLiveConfig, getCurrencyConfiguration } from "../../co
 
 const TOKEN_STANDARDS: XrpTokenStandard[] = ["iou", "mpt"];
 
-export const xrpConfig = currencyDefaultsToLiveConfig(xrpDefaults);
+export const xrpConfig = currencyDefaultsToLiveConfig({
+  ...xrpDefaults,
+  // TEMP prototype: tokens on without Firebase
+  ripple_testnet: { ...xrpDefaults.ripple_testnet, enabledTokenStandards: TOKEN_STANDARDS },
+});
 
 /** Known standards only, without duplicates, sorted: Firebase merges arrays by position */
 export function getXrpEnabledTokenStandards(currencyId: string): XrpTokenStandard[] {
