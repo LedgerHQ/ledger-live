@@ -32,7 +32,7 @@ For `rxjs` (Apache-2.0), the same Apache-2.0 v2.0 text shipped in the `LICENSE` 
 
 The packages below are inlined into `bin/wallet-cli` by the bundler, in addition to the direct dependencies listed above. They are grouped by license; full license texts are reproduced in section 4. Copyright information was resolved by reading the upstream `LICENSE` file when available, otherwise by reading the `author`/`contributors` field of the upstream `package.json`, otherwise (rare cases) by alignment with the package's homepage or repository.
 
-### MIT License (198 packages)
+### MIT License (196 packages)
 
 | Package | Version | Copyright |
 |---|---|---|
@@ -145,7 +145,6 @@ The packages below are inlined into `bin/wallet-cli` by the bundler, in addition
 | @types/node | 24.12.0 | Copyright (c) Microsoft Corporation. |
 | @types/w3c-web-usb | 1.0.10 | Copyright (c) Microsoft Corporation. |
 | abort-controller | 3.0.0 | Copyright (c) 2017 Toru Nagashima |
-| agent-base | 7.1.3 | Copyright (c) 2013 Nathan Rajlich |
 | any-base | 1.1.0 | Kamil Harasimowicz |
 | await-to-js | 3.0.0 | Dima Grossman |
 | base64-js | 1.5.1 | Copyright (c) 2014 Jameson Little |
@@ -171,7 +170,6 @@ The packages below are inlined into `bin/wallet-cli` by the bundler, in addition
 | gopd | 1.2.0 | Copyright (c) 2022 Jordan Harband |
 | has-symbols | 1.1.0 | Copyright (c) 2016 Jordan Harband |
 | hasown | 2.0.2 | Copyright (c) Jordan Harband and contributors |
-| https-proxy-agent | 7.0.6 | Copyright (c) 2013 Nathan Rajlich |
 | image-q | 4.0.0 | Copyright (c) 2015 Igor Bezkrovny |
 | immer | 11.1.3 | Copyright (c) 2017 Michel Weststrate |
 | inversify | 7.5.1 | Copyright (c) 2015-2017 Remo H. Jansen |
@@ -227,7 +225,7 @@ The packages below are inlined into `bin/wallet-cli` by the bundler, in addition
 | use-sync-external-store | 1.6.0 | Copyright (c) Meta Platforms, Inc. and affiliates. |
 | utif2 | 4.1.0 | photopea |
 | uuid | 11.0.3 | Copyright (c) 2010-2020 Robert Kieffer and other contributors |
-| ws | 8.22.0 | Einar Otto Stangvik |
+| ws | 8.18.3 | Einar Otto Stangvik |
 | xml-parse-from-string | 1.0.1 | Matt DesLauriers |
 | xml2js | 0.5.0 | Copyright (c) Marek Kubica, maqr, Ben Weaver, Jae Kwon |
 | xmlbuilder | 11.0.1 | Copyright (c) 2013 Ozgur Ozcitak |

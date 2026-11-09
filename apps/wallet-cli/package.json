@@ -92,7 +92,6 @@
     "@shared/cloud-sync": "workspace:*",
     "@shared/env": "workspace:*",
     "@shared/schema-primitives": "workspace:^",
-    "@shared/proxy-websocket": "workspace:^",
     "@types/debug": "4.1.12",
     "@types/node": "catalog:",
     "@types/w3c-web-usb": "1.0.10",

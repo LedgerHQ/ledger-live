@@ -1,8 +1,0 @@
-{
-  "extends": "@support/tsconfig/logic",
-  "compilerOptions": {
-    "types": [
-      "jest"
-    ]
-  }
-}
