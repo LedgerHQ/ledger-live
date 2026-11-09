@@ -104,11 +104,79 @@ describe("buildIntentData", () => {
     expect(
       buildIntentData({
         opReturnData: 12,
-        utxoStrategy: { strategy: 1, selectedUtxos: "aa:0", excludedUtxos: ["bb:1", 2] },
+        utxoStrategy: { strategy: 99, selectedUtxos: "aa:0", excludedUtxos: ["bb:1", 2] },
       }),
     ).toEqual({ type: "unknown" });
     expect(buildIntentData({ utxoStrategy: "deep-outputs-first" })).toEqual({ type: "unknown" });
     expect(buildIntentData({ utxoStrategy: null })).toEqual({ type: "unknown" });
+  });
+
+  describe("from the legacy coin control", () => {
+    const hash = "ab".repeat(32);
+
+    it.each([
+      [0, "deep-outputs-first"],
+      [1, "optimize-size"],
+      [2, "merge-outputs"],
+      [3, "deep-outputs-first"],
+    ])("maps the picking strategy %d to %s", (strategy, name) => {
+      expect(buildIntentData({ utxoStrategy: { strategy, excludeUTXOs: [] } })).toEqual({
+        type: "unknown",
+        utxoStrategy: { strategy: name },
+      });
+    });
+
+    it("maps the unticked UTXOs to excluded ids, never to a selection", () => {
+      expect(
+        buildIntentData({
+          utxoStrategy: {
+            strategy: 3,
+            excludeUTXOs: [
+              { hash, outputIndex: 0 },
+              { hash, outputIndex: 2 },
+            ],
+          },
+        }),
+      ).toEqual({
+        type: "unknown",
+        utxoStrategy: { strategy: "deep-outputs-first", excludedUtxos: [`${hash}:0`, `${hash}:2`] },
+      });
+    });
+
+    it("drops malformed exclusions", () => {
+      expect(
+        buildIntentData({
+          utxoStrategy: {
+            excludeUTXOs: [
+              { outputIndex: 0 },
+              { hash, outputIndex: -1 },
+              { hash, outputIndex: 1.5 },
+              { hash, outputIndex: "1" },
+              null,
+              { hash, outputIndex: 1 },
+            ],
+          },
+        }),
+      ).toEqual({ type: "unknown", utxoStrategy: { excludedUtxos: [`${hash}:1`] } });
+    });
+
+    it("merges both shapes' exclusions without duplicates", () => {
+      expect(
+        buildIntentData({
+          utxoStrategy: {
+            strategy: "merge-outputs",
+            excludedUtxos: [`${hash}:0`],
+            excludeUTXOs: [
+              { hash, outputIndex: 0 },
+              { hash, outputIndex: 1 },
+            ],
+          },
+        }),
+      ).toEqual({
+        type: "unknown",
+        utxoStrategy: { strategy: "merge-outputs", excludedUtxos: [`${hash}:0`, `${hash}:1`] },
+      });
+    });
   });
 
   it("is the hook of the bitcoin bridge api", () => {
@@ -138,6 +206,25 @@ describe("buildIntentData", () => {
       const data = intent.data as BitcoinTxData;
       expect(data).toEqual({ type: "unknown", opReturnData: "6d656d6f", utxoStrategy });
       expect(craftTransactionData).not.toHaveBeenCalled();
+    });
+
+    it("carries a legacy transaction's unticked UTXOs into intent.data", () => {
+      const hash = "cd".repeat(32);
+      const legacy = {
+        ...transaction,
+        utxoStrategy: { strategy: 3, excludeUTXOs: [{ hash, outputIndex: 1 }] },
+      } as unknown as GenericTransaction;
+      const intent = transactionToIntent(
+        account,
+        legacy,
+        undefined,
+        craftTransactionData,
+        buildIntentData,
+      );
+      expect((intent.data as BitcoinTxData).utxoStrategy).toEqual({
+        strategy: "deep-outputs-first",
+        excludedUtxos: [`${hash}:1`],
+      });
     });
 
     it("loses the coin control without the hook", () => {

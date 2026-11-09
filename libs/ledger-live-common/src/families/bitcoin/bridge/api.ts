@@ -9,6 +9,7 @@ import { blockchainBaseURL } from "@ledgerhq/coin-bitcoin/explorer";
 import { makeLRUCacheWithTtlOf } from "@ledgerhq/coin-bitcoin/cache";
 import type { BitcoinCoinConfig } from "@ledgerhq/coin-bitcoin/config";
 import { DEFAULT_FEE_RATES_CACHE_TTL_MS } from "@ledgerhq/coin-bitcoin/constants";
+import { bitcoinPickingStrategy } from "@ledgerhq/coin-bitcoin/types";
 import { getBitcoinCoinConfig } from "../coinConfig";
 import type { FeeItems } from "../types";
 
@@ -92,6 +93,64 @@ export const getFeeItems = async (currency: CryptoCurrency): Promise<FeeItems> =
 const isStringList = (value: unknown): value is string[] =>
   Array.isArray(value) && value.every(item => typeof item === "string");
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
+
+type CoinControl = NonNullable<BitcoinTxData["utxoStrategy"]>;
+type UtxoStrategyName = NonNullable<CoinControl["strategy"]>;
+
+// The legacy bridge's picking strategies. `CUSTOM` is what the coin-control screen sets once the
+// user unticks a UTXO: wallet-btc's `Custom` picks deepest first.
+const LEGACY_STRATEGIES: Record<number, UtxoStrategyName> = {
+  [bitcoinPickingStrategy.DEEP_OUTPUTS_FIRST]: "deep-outputs-first",
+  [bitcoinPickingStrategy.OPTIMIZE_SIZE]: "optimize-size",
+  [bitcoinPickingStrategy.MERGE_OUTPUTS]: "merge-outputs",
+  [bitcoinPickingStrategy.CUSTOM]: "deep-outputs-first",
+};
+
+// A strategy name is passed on as is: the coin module refuses one it does not know.
+const isStrategyName = (value: unknown): value is UtxoStrategyName => typeof value === "string";
+
+function strategyOf(strategy: unknown): UtxoStrategyName | undefined {
+  if (isStrategyName(strategy)) return strategy;
+  if (typeof strategy === "number") return LEGACY_STRATEGIES[strategy];
+  return undefined;
+}
+
+// A legacy exclusion `{ hash, outputIndex }` as the `txid:vout` id the coin module reads.
+function legacyUtxoId(entry: unknown): string | undefined {
+  if (!isRecord(entry)) return undefined;
+  const { hash, outputIndex } = entry;
+  if (typeof hash !== "string" || typeof outputIndex !== "number") return undefined;
+  if (!Number.isInteger(outputIndex) || outputIndex < 0) return undefined;
+  return `${hash}:${outputIndex}`;
+}
+
+// Both shapes reach the bridge: the coin module's (a strategy name, `excludedUtxos`) and the legacy
+// transaction's (a strategy number, `excludeUTXOs`). Exclusions are merged without duplicates, since
+// the module refuses an id listed twice. A ticked UTXO stays a candidate the strategy picks from:
+// the legacy screen never maps to `selectedUtxos`, which spends every listed UTXO.
+function coinControlOf(utxoStrategy: unknown): CoinControl | undefined {
+  if (!isRecord(utxoStrategy)) return undefined;
+  const { strategy, selectedUtxos, excludedUtxos, excludeUTXOs } = utxoStrategy;
+
+  const control: CoinControl = {};
+  const name = strategyOf(strategy);
+  if (name) control.strategy = name;
+  if (isStringList(selectedUtxos)) control.selectedUtxos = selectedUtxos;
+
+  const excluded = new Set(isStringList(excludedUtxos) ? excludedUtxos : []);
+  if (Array.isArray(excludeUTXOs)) {
+    for (const entry of excludeUTXOs) {
+      const id = legacyUtxoId(entry);
+      if (id) excluded.add(id);
+    }
+  }
+  if (excluded.size > 0) control.excludedUtxos = [...excluded];
+
+  return Object.keys(control).length > 0 ? control : undefined;
+}
+
 // The generic bridge calls this instead of the coin module's `craftTransactionData`, so it carries
 // everything that one carried (the OP_RETURN data) plus the coin control the module reads from
 // `intent.data`. A value of the wrong type is dropped; the module reports what it cannot parse.
@@ -106,16 +165,8 @@ export function buildIntentData(transaction: Record<string, unknown>): BitcoinTx
     data.opReturnData = opReturnData;
   }
 
-  if (typeof utxoStrategy === "object" && utxoStrategy !== null) {
-    const { strategy, selectedUtxos, excludedUtxos } = utxoStrategy as Record<string, unknown>;
-    const control: NonNullable<BitcoinTxData["utxoStrategy"]> = {};
-    if (typeof strategy === "string") {
-      control.strategy = strategy as NonNullable<BitcoinTxData["utxoStrategy"]>["strategy"];
-    }
-    if (isStringList(selectedUtxos)) control.selectedUtxos = selectedUtxos;
-    if (isStringList(excludedUtxos)) control.excludedUtxos = excludedUtxos;
-    if (Object.keys(control).length > 0) data.utxoStrategy = control;
-  }
+  const control = coinControlOf(utxoStrategy);
+  if (control) data.utxoStrategy = control;
 
   return data;
 }
