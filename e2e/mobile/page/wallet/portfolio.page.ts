@@ -505,16 +505,14 @@ export default class PortfolioPage {
   @Step("Tap cryptos section title")
   async tapCryptosSectionTitle() {
     await waitForElementById(this.accountsListView);
-    await scrollToId(this.cryptosSectionHeaderId, this.accountsListView);
-    await detoxExpect(getElementById(this.cryptosSectionHeaderId)).toBeVisible();
+    await revealForTap(this.cryptosSectionHeaderId, { container: this.accountsListView });
     await tapById(this.cryptosSectionHeaderId);
   }
 
   @Step("Tap stablecoins section title")
   async tapStablecoinsSectionTitle() {
     await waitForElementById(this.accountsListView);
-    await scrollToId(this.stablecoinsSectionHeaderId, this.accountsListView);
-    await detoxExpect(getElementById(this.stablecoinsSectionHeaderId)).toBeVisible();
+    await revealForTap(this.stablecoinsSectionHeaderId, { container: this.accountsListView });
     await tapById(this.stablecoinsSectionHeaderId);
   }
 
