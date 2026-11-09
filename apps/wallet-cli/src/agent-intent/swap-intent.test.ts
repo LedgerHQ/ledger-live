@@ -173,54 +173,53 @@ describe("fetchAgentSwapQuote", () => {
       tokenAllowance: { isApproved: true },
     });
 
-    function needingApproval(
-      allowance: { to?: string; calldata?: string; approvedAmount?: string } = {},
-    ): Quote {
-      const {
-        to = USDC_CONTRACT.toLowerCase(),
-        calldata = approveCalldata,
-        approvedAmount,
-      } = allowance;
-      return quote("okx", {
-        receiveAmount: 1300,
-        tokenAllowance: {
-          isApproved: false,
-          ...(approvedAmount === undefined ? {} : { approvedAmount }),
-          approvalTransaction: { to, calldata, from: "", gasLimit: 0, gasPrice: 1, value: "0" },
+    function needingApproval({
+      provider = "okx",
+      providerType = "DEX",
+      to = USDC_CONTRACT.toLowerCase(),
+      calldata = approveCalldata,
+      approvedAmount,
+    }: {
+      provider?: string;
+      providerType?: "DEX" | "CEX";
+      to?: string;
+      calldata?: string;
+      approvedAmount?: string;
+    } = {}): Quote {
+      return quote(
+        provider,
+        {
+          receiveAmount: 1300,
+          tokenAllowance: {
+            isApproved: false,
+            ...(approvedAmount === undefined ? {} : { approvedAmount }),
+            approvalTransaction: { to, calldata, from: "", gasLimit: 0, gasPrice: 1, value: "0" },
+          },
         },
-      });
+        providerType,
+      );
     }
 
-    it("keeps the best quote when the frontend can send its approval, and says so", async () => {
-      const result = await fetchAgentSwapQuote(sellUsdc, async () =>
-        response({ quotes: [needingApproval(), approved] }),
-      );
+    it.each(["oneinch", "velora", "okx"])(
+      "keeps the best %s DEX quote when the frontend can send its approval, and says so",
+      async provider => {
+        const result = await fetchAgentSwapQuote(sellUsdc, async () =>
+          response({ quotes: [needingApproval({ provider }), approved] }),
+        );
 
-      expect(result).toEqual({ provider: "okx", receiveAmount: 1300, needsTokenApproval: true });
-    });
+        expect(result).toEqual({ provider, receiveAmount: 1300, needsTokenApproval: true });
+      },
+    );
 
     it("keeps a LI.FI quote that needs an approval, since its swap comes with calldata", async () => {
       const result = await fetchAgentSwapQuote(sellUsdc, async () =>
-        response({ quotes: [quote("lifi", needingApproval().quoteDetails, "CEX"), approved] }),
+        response({
+          quotes: [needingApproval({ provider: "lifi", providerType: "CEX" }), approved],
+        }),
       );
 
       expect(result).toEqual({ provider: "lifi", receiveAmount: 1300, needsTokenApproval: true });
     });
-
-    it.each(["oneinch", "velora", "okx"])(
-      "skips a non-DEX %s quote that needs an approval",
-      async provider => {
-        const result = await fetchAgentSwapQuote(sellUsdc, async () =>
-          response({ quotes: [quote(provider, needingApproval().quoteDetails, "CEX"), approved] }),
-        );
-
-        expect(result).toEqual({
-          provider: "oneinch",
-          receiveAmount: 1270,
-          needsTokenApproval: false,
-        });
-      },
-    );
 
     it("accepts a USDT approval only when the quote says no allowance is left", async () => {
       const sellUsdt = { ...sellUsdc, fromContract: USDT_CONTRACT };
@@ -257,7 +256,19 @@ describe("fetchAgentSwapQuote", () => {
       ],
       [
         "an approval from a DEX the frontend has no endpoint for",
-        quote("uniswap", needingApproval().quoteDetails),
+        needingApproval({ provider: "uniswap" }),
+      ],
+      [
+        "an approval from oneinch without a DEX provider type",
+        needingApproval({ provider: "oneinch", providerType: "CEX" }),
+      ],
+      [
+        "an approval from velora without a DEX provider type",
+        needingApproval({ provider: "velora", providerType: "CEX" }),
+      ],
+      [
+        "an approval from okx without a DEX provider type",
+        needingApproval({ provider: "okx", providerType: "CEX" }),
       ],
       [
         "an approval with no transaction to send",
