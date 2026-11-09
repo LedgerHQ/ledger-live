@@ -33,7 +33,8 @@ import {
 } from "@ledgerhq/live-common/families/solana/transactions";
 import BigNumber from "bignumber.js";
 import { BigNumberStrSchema, DateTimeIsoSchema } from "@shared/schema-primitives";
-import { toTokenBalance } from "../models";
+import type { Unit } from "@domain/entity-currency-unit";
+import { tokenUnit, toTokenBalance } from "../models";
 import type { AccountDescriptor, Balance, Operation, SendEvent } from "../models";
 import type { EarnSolanaStake, SolanaStakeLimits } from "../earn/types";
 import { isStakeAmountError, SolanaStakeAmountError } from "../earn/errors";
@@ -180,7 +181,7 @@ export class BridgeAdapter {
       ops.push(this.mapOperation(op, account.currency.id));
       // internalOperations: internal ETH transfers from contract calls — not exposed via subAccounts
       for (const internal of op.internalOperations ?? []) {
-        ops.push(this.mapOperation(internal, account.currency.id, op.id));
+        ops.push(this.mapOperation(internal, account.currency.id, { parentId: op.id }));
       }
       // subOperations: ERC-20 transfer events within this tx — already covered by the subAccounts
       // loop below (full token history), so we skip them here to avoid duplicates.
@@ -188,7 +189,8 @@ export class BridgeAdapter {
     for (const sub of account.subAccounts ?? []) {
       if (sub.type === "TokenAccount") {
         const tokenId = sub.token.id;
-        for (const op of sub.operations) ops.push(this.mapOperation(op, tokenId));
+        const unit = tokenUnit(sub.token);
+        for (const op of sub.operations) ops.push(this.mapOperation(op, tokenId, { unit }));
       }
     }
     // ISO 8601 strings from toISOString() are UTC and lexicographically ordered — string compare is safe.
@@ -428,7 +430,7 @@ export class BridgeAdapter {
   private mapOperation(
     op: Account["operations"][number],
     assetId: string,
-    parentId?: string,
+    { parentId, unit }: { parentId?: string; unit?: Unit } = {},
   ): Operation {
     return {
       id: op.id,
@@ -441,6 +443,7 @@ export class BridgeAdapter {
       blockHeight: op.blockHeight ?? null,
       accountId: op.accountId,
       assetId,
+      ...(unit === undefined ? {} : { unit }),
       date: DateTimeIsoSchema.parse(op.date.toISOString()),
       ...(parentId === undefined ? {} : { parentId }),
     };

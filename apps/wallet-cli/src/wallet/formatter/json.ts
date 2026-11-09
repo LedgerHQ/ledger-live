@@ -43,7 +43,7 @@ export class JsonFormatter {
         accountId: accountV1Str,
         asset: op.assetId,
         type: op.type,
-        value: await this.human.formatAmount(op.value, op.assetId),
+        value: await this.human.formatAmount(op.value, op.assetId, op.unit),
         fee: await this.human.formatAmount(op.fee, currencyId),
         senders: op.senders,
         recipients: op.recipients,

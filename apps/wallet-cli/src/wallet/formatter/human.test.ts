@@ -303,6 +303,21 @@ describe("HumanFormatter.formatOperation", () => {
     const result = await formatter.formatOperation({ ...op, type: "IN" }, "ethereum");
     expect(result).toContain("IN");
   });
+
+  it("formats a token operation with its unit, without looking the token up in CAL", async () => {
+    const { store, lookups } = recordingTokenStore();
+    const usdtOp = OperationSchema.parse({
+      ...op,
+      assetId: USDT_TOKEN_INFO.id,
+      value: "1500000",
+      unit: USDT_TOKEN_INFO.unit,
+    });
+
+    const result = await new HumanFormatter(store).formatOperation(usdtOp, "ethereum");
+
+    expect(result).toContain("1.5 USDT");
+    expect(lookups).toEqual([]);
+  });
 });
 
 describe("JsonFormatter.operations", () => {
@@ -349,5 +364,33 @@ describe("JsonFormatter.operations", () => {
     });
     const result = await json.operations([op], "ethereum", "acct");
     expect(result[0].parentId).toBe("parent1");
+  });
+
+  it("formats a token operation with its unit, without looking the token up in CAL", async () => {
+    const { store, lookups } = recordingTokenStore();
+    const op = OperationSchema.parse({
+      id: "op3",
+      hash: "0x123",
+      type: "OUT",
+      value: "1500000",
+      fee: "100",
+      senders: [],
+      recipients: [],
+      blockHeight: 1,
+      accountId: "acc1",
+      assetId: USDT_TOKEN_INFO.id,
+      unit: USDT_TOKEN_INFO.unit,
+      date: "2024-01-01T00:00:00.000Z",
+    });
+
+    const [result] = await new JsonFormatter(new HumanFormatter(store)).operations(
+      [op],
+      "ethereum",
+      "acct",
+    );
+
+    expect(result.value).toBe("1.5 USDT");
+    expect(result).not.toHaveProperty("unit");
+    expect(lookups).toEqual([]);
   });
 });

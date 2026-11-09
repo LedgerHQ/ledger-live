@@ -622,3 +622,41 @@ describe("BridgeAdapter.getBalances", () => {
     ]);
   });
 });
+
+const liveOperation = (id: string, date: string) => ({
+  id,
+  hash: `0x${id}`,
+  type: "OUT",
+  value: new BigNumber(1_500_000),
+  fee: new BigNumber(21_000),
+  senders: [],
+  recipients: [],
+  blockHeight: 1,
+  accountId: "eth-acc",
+  date: new Date(date),
+});
+
+describe("BridgeAdapter.getOperations", () => {
+  const descriptor = { id: "eth-acc", currencyId: "ethereum" } as AccountDescriptor;
+  const usdtUnit = { name: "USDT", code: "USDT", magnitude: 6 };
+
+  it("puts the synced token's unit on each token operation only", async () => {
+    const adapter = adapterWithSyncedAccount({
+      currency: { id: "ethereum" },
+      operations: [liveOperation("native", "2024-01-01T00:00:00.000Z")],
+      subAccounts: [
+        {
+          type: "TokenAccount",
+          token: { id: "ethereum/erc20/usd_tether__erc20_", units: [usdtUnit] },
+          operations: [liveOperation("token", "2024-01-02T00:00:00.000Z")],
+        },
+      ],
+    });
+
+    const [tokenOp, nativeOp] = await adapter.getOperations(descriptor);
+
+    expect(tokenOp).toMatchObject({ id: "token", unit: usdtUnit });
+    expect(nativeOp).toMatchObject({ id: "native" });
+    expect(nativeOp).not.toHaveProperty("unit");
+  });
+});

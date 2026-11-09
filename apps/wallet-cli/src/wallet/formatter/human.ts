@@ -90,12 +90,10 @@ export class HumanFormatter {
   }
 
   async formatOperation(op: Operation, nativeCurrencyId: string): Promise<string> {
-    const [valueUnit, feeUnit] = await Promise.all([
-      this.resolveUnit(op.assetId),
-      this.resolveUnit(nativeCurrencyId),
+    const [value, fee] = await Promise.all([
+      this.formatAmount(op.value, op.assetId, op.unit),
+      this.formatAmount(op.fee, nativeCurrencyId),
     ]);
-    const value = formatCurrencyUnit(valueUnit, new BigNumber(op.value), { showCode: true });
-    const fee = formatCurrencyUnit(feeUnit, new BigNumber(op.fee), { showCode: true });
     const date = colors.dim(formatDate(new Date(op.date)));
     const block =
       op.blockHeight == null ? colors.yellow("pending") : colors.dim(`#${op.blockHeight}`);

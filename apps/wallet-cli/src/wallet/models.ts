@@ -150,6 +150,7 @@ export const OperationSchema = z.object({
   // (e.g. "ethereum/erc20/usd~!underscore!~tether"). Stored explicitly to avoid decoding
   // accountId, which may be a TokenAccount id and cannot be parsed by decodeAccountId.
   assetId: z.string(),
+  unit: UnitSchema.optional(),
   date: DateTimeIsoSchema,
   /** Set on internal operations (e.g. ETH contract calls): the id of the parent operation. */
   parentId: z.string().optional(),
