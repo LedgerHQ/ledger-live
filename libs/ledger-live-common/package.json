@@ -494,7 +494,6 @@
     "redux-actions": "2.6.5",
     "rimraf": "catalog:",
     "timemachine": "0.3.2",
-    "ts-node": "10.9.2",
     "typescript": "catalog:",
     "undici": "catalog:",
     "uuid": "catalog:",
