@@ -9,7 +9,7 @@ import type {
   AnalyticsPositionSource,
   AnalyticsTokenAccountSource,
 } from "./types";
-import { getAnalyticsPositionCurrency } from "./logic/analyticsPositionSource";
+import { getAnalyticsPositionCurrency } from "./logic/positions/analyticsPositionSource";
 
 export type MockOperation = Readonly<{ isConfirmed: boolean }>;
 export type MockAccount = AnalyticsAccountSource<MockOperation>;
