@@ -26,8 +26,10 @@ addAccount,deeplinks
 > **Separators and escaping differ per runner — keep patterns simple.** `,` and `|` work
 > on both runners. On **mobile**, whitespace *also* separates patterns (a space starts
 > another OR alternative) and backslash-escaping is **not** applied. On **desktop**, the
-> patterns become a `--grep` **regex**, so spaces and regex metacharacters are significant.
-> Avoid spaces inside a single pattern, and don't rely on escaping separators.
+> patterns become a `--grep` **regex**, so regex metacharacters are significant, and a space
+> also separates patterns when the filter has no `|`. Write a space inside a desktop pattern
+> as `\s` (`Send\sBTC`), and don't rely on escaping separators. The rerun pattern in a failed
+> run's summary already does this.
 
 ### What a pattern matches
 
