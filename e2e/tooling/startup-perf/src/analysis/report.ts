@@ -1,5 +1,5 @@
 // The job summary: B − A per platform, scenario and measure, and what the rows mean.
-import type { DebugBase, GateOptions, Row } from "./analyze.ts";
+import type { DebugBase, GateOptions, Reads, Row } from "./analyze.ts";
 import type { Side } from "../types.ts";
 
 export interface ReportOptions extends GateOptions {
@@ -36,6 +36,47 @@ function offBaseNote(r: Row, side: Side): string {
   return `**${r.platform} ${r.scenario}: ${launches} counted from another start than ${start} (e.g. the app found no process start) and ${fate}.**`;
 }
 
+export const screenMismatchText = ({ screenMismatches, screenChecks }: Reads): string =>
+  `the Debug screen showed another App startup time than the device log on ${screenMismatches} of the ${screenChecks} launches read both ways`;
+
+// What the device log keeps of a line: 1020 bytes, measured on macOS, whose unified log iOS shares;
+// a logcat entry holds 4068 with the priority and the ReactNativeJS tag.
+const LOG_LINE_LIMITS: Partial<Record<string, { bytes: number; log: string }>> = {
+  ios: { bytes: 1020, log: "the iOS log" },
+  android: { bytes: 4052, log: "logcat" },
+};
+
+function logLineNote(where: string, platform: string, longest: number | null): string[] {
+  const limit = LOG_LINE_LIMITS[platform];
+  if (longest === null || !limit) return [];
+  const text = `${where}: the longest device log line was ${longest} bytes, of the ${limit.bytes} ${limit.log} keeps.`;
+  return [longest > 0.8 * limit.bytes ? `**${text}**` : text];
+}
+
+function readNotes({ platform, scenario, reads }: Row): string[] {
+  const where = `${platform} ${scenario}`;
+  const notes: string[] = [];
+  const fallbacks = reads.fallbacks.A + reads.fallbacks.B;
+  if (fallbacks) {
+    notes.push(
+      `**${where}: ${fallbacks} of the ${reads.fromLog + fallbacks} launches read from the Debug screen, their device log line missing (A: ${reads.fallbacks.A}, B: ${reads.fallbacks.B}).**`,
+    );
+  }
+  if (reads.unevenPairs) {
+    notes.push(
+      `**${where}: ${reads.unevenPairs} pair(s) left out, as only one of their launches followed a read of the Debug screen (on iOS, ~280 ms slower).**`,
+    );
+  }
+  if (reads.screenMismatches) {
+    notes.push(`**${where}: ${screenMismatchText(reads)}.**`);
+  } else if (reads.screenChecks) {
+    notes.push(
+      `${where}: the Debug screen showed the device log's App startup time on the ${reads.screenChecks} launches read both ways.`,
+    );
+  }
+  return [...notes, ...logLineNote(where, platform, reads.longestLogLine)];
+}
+
 const fmt = (v: number | null | undefined) =>
   typeof v === "number" && Number.isFinite(v) ? String(Math.round(v)) : "–";
 const signed = (v: number | null | undefined) => {
@@ -69,7 +110,7 @@ export function toMarkdown(
   }
   lines.push(
     "",
-    "- **Debug screen**: Settings > Debug > Performance > App startup time. Builds count it from the first JS import (4.26–4.27) or from the app process start (LIVE-40286 on).",
+    "- **Debug screen**: Settings > Debug > Performance > App startup time, which the app also writes to the device log as soon as the startup is over: the measurement reads it there, and on the screen when the line is missing. Builds count it from the first JS import (4.26–4.27) or from the app process start (LIVE-40286 on).",
     "- **With native start**: the same end, counted from the start of the app process (the emulator's or the host's kernel) whatever the build's Debug value counts from, so builds of every version compare. It equals the Debug value of builds that count from the process start (within about 20 ms).",
     "",
     "B − A is the Hodges–Lehmann median of the paired differences, after removing the device bias: how much slower the second emulator or simulator is than the first, measured thanks to the halfway swap.",
@@ -85,6 +126,7 @@ export function toMarkdown(
       .flatMap(r =>
         SIDES.filter(side => r.offBaseLaunches[side] > 0).map(side => offBaseNote(r, side)),
       ),
+    ...rows.filter(r => r.measure.startsWith("Debug screen")).flatMap(readNotes),
     "",
   );
   return lines.filter((l, i) => l !== "" || lines[i - 1] !== "").join("\n");

@@ -82,6 +82,18 @@ export function createIos({ appId, maestro }: { appId: string; maestro: Maestro 
       if (!pid) return null;
       return (await run("kill", ["-0", String(pid)], { allowFail: true })).failed ? null : pid;
     },
+    async jsLog(device, pid, text) {
+      const predicate = `processID == ${pid} AND eventMessage CONTAINS ${JSON.stringify(text)}`;
+      const { stdout } = await run(
+        "xcrun",
+        ["simctl", "spawn", device, "log", "show", "--last", "2m", "--style", "compact"].concat([
+          "--predicate",
+          predicate,
+        ]),
+        { allowFail: true, timeoutMs: DEVICE_QUERY_TIMEOUT_MS },
+      );
+      return stdout;
+    },
     async blockingDialog() {
       return null;
     },

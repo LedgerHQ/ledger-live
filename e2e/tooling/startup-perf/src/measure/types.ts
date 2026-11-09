@@ -45,6 +45,8 @@ export interface Platform {
   resume(device: string): Promise<void>;
   processStart(device: string): Promise<ProcessStart | null>;
   pid(device: string): Promise<number | null>;
+  /** What the JavaScript of the app process `pid` wrote to the device log, its lines with `text`. */
+  jsLog(device: string, pid: number, text: string): Promise<string>;
   scrollDown(device: string): Promise<void>;
   scrollToEnd(device: string): Promise<void>;
   diagnostics(device: string, file: string): Promise<void>;
