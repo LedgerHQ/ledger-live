@@ -1,10 +1,11 @@
 import { Step } from "jest-allure2-reporter/api";
 import { byId } from "@e2e/helpers/elements/native";
+import { GENERIC_ERROR_MODAL_ID } from "@e2e/page/error.page";
 import { TIMEOUT } from "@e2e/utils/timeouts";
 
 export default class TezosStakePage {
   private readonly accountScrollView = byId("account-screen-scrollView");
-  private readonly genericErrorModal = byId(app.common.errorPage.genericErrorModalId);
+  private readonly genericErrorModal = byId(GENERIC_ERROR_MODAL_ID);
   // Stake flow (TezosStakeFlow)
   private readonly stakeAmountInput = byId("tezos-stake-amount-input");
   private readonly stakeAmountContinue = byId("enabled-tezos-stake-amount-continue");

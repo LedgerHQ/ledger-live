@@ -52,6 +52,7 @@ export default class PortfolioPage {
   cryptosSectionHeaderId = "portfolio-cryptos-section-header";
   cryptoAddressesButtonId = "crypto-addresses-button";
   cryptoAddressesListId = "CryptoAddressesList";
+  private readonly accountItemNameRegExp = /account-item-.*-name/;
   cryptoAddressItemId = (currencyId: string) => `crypto-address-item-${currencyId}`;
   stablecoinsSectionHeaderId = "portfolio-stablecoins-section-header";
   portfolioStocksListId = "PortfolioStocksList";
@@ -177,8 +178,8 @@ export default class PortfolioPage {
 
   @Step("Count Accounts")
   async countAccounts() {
-    await scrollToId(app.common.accountItemNameRegExp, this.cryptoAddressesListId);
-    return await countElementsById(app.common.accountItemNameRegExp);
+    await scrollToId(this.accountItemNameRegExp, this.cryptoAddressesListId);
+    return await countElementsById(this.accountItemNameRegExp);
   }
 
   @Step("Expect at least one account")

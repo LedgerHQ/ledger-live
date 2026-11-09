@@ -17,8 +17,7 @@ const EXPORTED_HISTORY_PATH = path.resolve(
 export default class SwapPage {
   private readonly baseLink = "swap";
 
-  private readonly walletApiWebview = byId(app.common.walletApiWebview);
-  private readonly proceedButton = byId(app.common.proceedButtonId);
+  private readonly proceedButton = byId("proceed-button");
   private readonly deviceActionError = byId(app.swapLiveApp.deviceActionErrorDescriptionId);
   private readonly swapSuccessTitle = byId("swap-success-title");
   private readonly historyButton = byId("navigation-header-swap-history");
@@ -41,12 +40,12 @@ export default class SwapPage {
     await openDeeplink(deeplinkPath);
     // Exists, not visible: an ambiguous token can open an account-picker drawer
     // that covers the webview first; callers already check visibility themselves.
-    await this.walletApiWebview.waitExist();
+    await app.common.waitForWalletApiWebview();
   }
 
   @Step("Expect swap page")
   async expectSwapPage() {
-    await this.walletApiWebview.expectVisible();
+    await app.common.expectWalletApiWebview();
   }
 
   @Step("Go to swap history")
