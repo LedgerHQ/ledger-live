@@ -1,5 +1,5 @@
 import { useTranslation } from "@shared/i18n";
-import type { AccountAnalyticsLabels } from "./AccountAnalytics.types";
+import type { AccountAnalyticsLabels } from "../AccountAnalytics.types";
 
 export function useAccountAnalyticsLabels(): AccountAnalyticsLabels {
   const { t } = useTranslation();
