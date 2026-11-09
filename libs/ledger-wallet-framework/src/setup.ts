@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 
 const BIG_NUMBER_DECIMAL_PLACES = 40;
 

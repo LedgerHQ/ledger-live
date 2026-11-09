@@ -195,7 +195,6 @@ export type BaseNavigatorStackParamList = {
     deviceInfo: DeviceInfo;
     onNameChange(name: string): void;
   };
-  [ScreenName.MarketCurrencySelect]: undefined;
   [ScreenName.MarketList]: MarketListRouteParams | undefined;
   [ScreenName.PortfolioOperationHistory]: undefined;
   [ScreenName.Account]: {
@@ -230,10 +229,6 @@ export type BaseNavigatorStackParamList = {
   };
   [ScreenName.EditCurrencyUnits]: {
     currency: CryptoCurrency;
-  };
-  [ScreenName.MarketDetail]: {
-    currencyId: string;
-    resetSearchOnUmount?: boolean;
   };
   [NavigatorName.Settings]: NavigatorScreenParams<SettingsNavigatorStackParamList>;
   [NavigatorName.ReceiveFunds]?: NavigatorScreenParams<ReceiveFundsStackParamList>;

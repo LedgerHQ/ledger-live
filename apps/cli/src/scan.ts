@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Observable, from, defer, of, throwError, concat } from "rxjs";
 import { skip, take, reduce, mergeMap, map, filter, concatMap } from "rxjs/operators";
 import type { Account, DerivationMode, SyncConfig } from "@ledgerhq/types-live";
@@ -145,7 +145,7 @@ export const inferCurrency = <
   file,
   xpub,
   id,
-}: Partial<T>) => {
+}: Partial<T>): Observable<CryptoCurrency | null | undefined> => {
   if (currency) {
     return defer(() => of(findCryptoCurrencyByKeyword(currency)));
   }

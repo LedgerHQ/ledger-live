@@ -1,5 +1,5 @@
 import type { Account } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Transaction as BtcTransaction } from "@ledgerhq/coin-bitcoin/types";
 import { getAdditionalFeeRequiredForRbf } from "./rbfValidation";
 import { hasMinimumFundsToCancel, hasMinimumFundsToSpeedUp } from "./hasMinimumFunds";

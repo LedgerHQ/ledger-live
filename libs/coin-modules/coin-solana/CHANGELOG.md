@@ -1,5 +1,139 @@
 # @ledgerhq/coin-solana
 
+## 2.7.0
+
+### Minor Changes
+
+- [#24258](https://github.com/LedgerHQ/ledger-live/pull/24258) [`16ef2fa`](https://github.com/LedgerHQ/ledger-live/commit/16ef2fab932ca52098c9029467faf627076de0c8) Thanks [@henri-ly](https://github.com/henri-ly)! - fix(coin-solana): keep transactions within the 4 instructions the Nano S app parses, by leaving out the compute-unit limit when it and the price don't both fit (a stake creation with its delegation, a token transfer creating the recipient account with a memo), instead of requiring blind signing
+
+- [#23736](https://github.com/LedgerHQ/ledger-live/pull/23736) [`797b1ab`](https://github.com/LedgerHQ/ledger-live/commit/797b1ab63e4099c962a74170b43275f149c6fbea) Thanks [@qperrot](https://github.com/qperrot)! - fix(coin-solana): read endpoints and tuning values from the coin config
+
+  `rpcUrls` is now a required field of `SolanaCoinConfig` and `endpointByCurrencyId` resolves the
+  endpoint of a currency from `rpcUrls[<currencyId>]` alone: the `API_SOLANA_PROXY` env and the
+  web3.js `clusterApiUrl` fallbacks are removed, and a missing entry throws. live-common registers
+  `config_currency_solana_devnet` and `config_currency_solana_testnet` next to
+  `config_currency_solana`, each carrying its own endpoint, and the legacy coin config resolves the
+  configuration of the requested currency instead of always reading the mainnet one.
+
+  The legacy validators list is read from `validatorsUrl` of the requested currency, the field the
+  Alpaca `getValidators` already reads: `config_currency_solana` defaults to the production Earn API
+  list (`/v0/network/solana/validator-details`) and `config_currency_solana_testnet` to the
+  `validators-solana` testnet list. `solana_devnet` still derives its validators from the RPC vote
+  accounts. A missing `validatorsUrl` on mainnet or testnet throws.
+
+  The validator APY is read from `staking.validatorsSummaryUrl` (default in `config_currency_solana`:
+  the production Figment summary on the Earn API) in both the legacy and the Alpaca paths, at call
+  time instead of once at module load. A currency without it lists its validators without APY, so
+  `solana_testnet` no longer fetches the mainnet APY through the Alpaca API.
+
+  The tuning values are read from the coin config at call time, each falling back to one exported
+  module default in `constants`: `broadcast.timeoutMs` (`DEFAULT_BROADCAST_TIMEOUT_MS`, 100000),
+  `node.retries` / `node.retryDelayMs` (`DEFAULT_NODE_RETRIES` 3, `DEFAULT_NODE_RETRY_DELAY_MS` 500),
+  `node.maxTxQuery` / `node.batchSize` (100 / 100), `fees.computeUnitMargin` (0.1),
+  `fees.defaultTxFee` (5000, also replacing the `?? 5000` copies in `craftTransaction`),
+  `fees.blockhashRetries` / `fees.blockhashRetryDelayMs` (5 / 5000), `staking.ledgerValidators`
+  (`DEFAULT_LEDGER_VALIDATORS`) and `validators.cacheTtlMs` (`DEFAULT_VALIDATORS_CACHE_TTL_MS`,
+  900000). The ky HTTP retry on status codes stays a constant.
+
+  The module keeps no configuration state: `config.ts` holds types only and every reader resolves
+  `config_currency_<id>` through a `SolanaContext` at call time. live-common builds it with
+  `buildContext` for the message signer and the validators hook.
+
+  Breaking: the `API_SOLANA_PROXY`, `SOLANA_VALIDATORS_APP_BASE_URL`,
+  `SOLANA_TESTNET_VALIDATORS_APP_BASE_URL`, `SOLANA_VALIDATORS_SUMMARY_BASE_URL` and
+  `SOLANA_TX_CONFIRMATION_TIMEOUT` env definitions are removed; override `rpcUrls.<id>`, `validatorsUrl` and `staking.validatorsSummaryUrl` in
+  `config_currency_<id>` instead. The legacy `getValidators` of `network/validator-app` now takes
+  `(validatorsUrl, validatorsSummaryUrl?)` instead of a cluster, and the Alpaca `getValidators` takes
+  the summary URL as its second argument. `craftTransaction`, `estimateFees`, `estimateTxFee`,
+  `unstakeReserve`, `computeUnstakeReserve`, `getBalance` and `listOperations` take the
+  `SolanaCoinConfig` as their second argument, `buildVersionedTransaction` as its fourth, and the
+  `network/chain/web3` instruction builders take the resolved `computeUnitMargin`.
+  `getChainAPI` accepts `confirmationTimeoutMs`, `retries` and `retryDelayMs`; build its config with
+  `chainConfigFrom(config, currencyId)`. `LEDGER_VALIDATOR_DEFAULT`, `LEDGER_VALIDATOR_LIST` and
+  `LEDGER_VALIDATORS_VOTE_ACCOUNTS` are removed: use `ledgerValidatorsOf(config)` /
+  `defaultLedgerValidatorOf(config)`; `LEDGER_VALIDATOR_BY_FIGMENT` / `_BY_BITWISE` moved to
+  `constants`. `ledgerFirstValidators` takes the Ledger list as its second argument. The `coinConfig` default export of `config` (`setCoinConfig` / `getCoinConfig`) is removed:
+  `getSolanaValidators(context, currencyId)` and `fetchValidators(config, currencyId)` take the
+  config explicitly, and `signMessage(signerContext, contextOf)` resolves the account's currency
+  context when signing.
+
+- [#23633](https://github.com/LedgerHQ/ledger-live/pull/23633) [`dbe42b3`](https://github.com/LedgerHQ/ledger-live/commit/dbe42b3c907c59d822419c8444ce1074d1863407) Thanks [@henri-ly](https://github.com/henri-ly)! - fix(coin-solana): clamp the compute-unit price to a minimum floor (`fees.minPriorityFee`, default 10,000 microLamports/CU, also used when the configured value is not positive) instead of sending unpriced transactions. Also simulates compute units with the price instruction, estimates a SOL or token transfer with its memo (whose compute units the price now charges), makes the priority-fee median return the middle sample for an odd count and the average of the two middle samples for an even count, fixes the Solana mock bridge recursing forever on `api.config`, and adapts the coin tester's staking checks to the priority fee
+
+### Patch Changes
+
+- Updated dependencies [[`9907890`](https://github.com/LedgerHQ/ledger-live/commit/9907890790bf8b804d7cc454a067508df0969137), [`8854aff`](https://github.com/LedgerHQ/ledger-live/commit/8854aff9cace72ad17c6d9fd7ee98a4dcd65ecb1), [`77a85a3`](https://github.com/LedgerHQ/ledger-live/commit/77a85a30abe7b42e5f5b4e0478bec14fa39033cf), [`c50f3fa`](https://github.com/LedgerHQ/ledger-live/commit/c50f3fac1c822d61332dbb512b21cdda6bb57210)]:
+  - @ledgerhq/types-live@6.130.0
+  - @ledgerhq/ledger-wallet-framework@3.10.0
+
+## 2.7.0-next.1
+
+### Minor Changes
+
+- [#24258](https://github.com/LedgerHQ/ledger-live/pull/24258) [`16ef2fa`](https://github.com/LedgerHQ/ledger-live/commit/16ef2fab932ca52098c9029467faf627076de0c8) Thanks [@henri-ly](https://github.com/henri-ly)! - fix(coin-solana): keep transactions within the 4 instructions the Nano S app parses, by leaving out the compute-unit limit when it and the price don't both fit (a stake creation with its delegation, a token transfer creating the recipient account with a memo), instead of requiring blind signing
+
+## 2.7.0-next.0
+
+### Minor Changes
+
+- [#23736](https://github.com/LedgerHQ/ledger-live/pull/23736) [`797b1ab`](https://github.com/LedgerHQ/ledger-live/commit/797b1ab63e4099c962a74170b43275f149c6fbea) Thanks [@qperrot](https://github.com/qperrot)! - fix(coin-solana): read endpoints and tuning values from the coin config
+
+  `rpcUrls` is now a required field of `SolanaCoinConfig` and `endpointByCurrencyId` resolves the
+  endpoint of a currency from `rpcUrls[<currencyId>]` alone: the `API_SOLANA_PROXY` env and the
+  web3.js `clusterApiUrl` fallbacks are removed, and a missing entry throws. live-common registers
+  `config_currency_solana_devnet` and `config_currency_solana_testnet` next to
+  `config_currency_solana`, each carrying its own endpoint, and the legacy coin config resolves the
+  configuration of the requested currency instead of always reading the mainnet one.
+
+  The legacy validators list is read from `validatorsUrl` of the requested currency, the field the
+  Alpaca `getValidators` already reads: `config_currency_solana` defaults to the production Earn API
+  list (`/v0/network/solana/validator-details`) and `config_currency_solana_testnet` to the
+  `validators-solana` testnet list. `solana_devnet` still derives its validators from the RPC vote
+  accounts. A missing `validatorsUrl` on mainnet or testnet throws.
+
+  The validator APY is read from `staking.validatorsSummaryUrl` (default in `config_currency_solana`:
+  the production Figment summary on the Earn API) in both the legacy and the Alpaca paths, at call
+  time instead of once at module load. A currency without it lists its validators without APY, so
+  `solana_testnet` no longer fetches the mainnet APY through the Alpaca API.
+
+  The tuning values are read from the coin config at call time, each falling back to one exported
+  module default in `constants`: `broadcast.timeoutMs` (`DEFAULT_BROADCAST_TIMEOUT_MS`, 100000),
+  `node.retries` / `node.retryDelayMs` (`DEFAULT_NODE_RETRIES` 3, `DEFAULT_NODE_RETRY_DELAY_MS` 500),
+  `node.maxTxQuery` / `node.batchSize` (100 / 100), `fees.computeUnitMargin` (0.1),
+  `fees.defaultTxFee` (5000, also replacing the `?? 5000` copies in `craftTransaction`),
+  `fees.blockhashRetries` / `fees.blockhashRetryDelayMs` (5 / 5000), `staking.ledgerValidators`
+  (`DEFAULT_LEDGER_VALIDATORS`) and `validators.cacheTtlMs` (`DEFAULT_VALIDATORS_CACHE_TTL_MS`,
+  900000). The ky HTTP retry on status codes stays a constant.
+
+  The module keeps no configuration state: `config.ts` holds types only and every reader resolves
+  `config_currency_<id>` through a `SolanaContext` at call time. live-common builds it with
+  `buildContext` for the message signer and the validators hook.
+
+  Breaking: the `API_SOLANA_PROXY`, `SOLANA_VALIDATORS_APP_BASE_URL`,
+  `SOLANA_TESTNET_VALIDATORS_APP_BASE_URL`, `SOLANA_VALIDATORS_SUMMARY_BASE_URL` and
+  `SOLANA_TX_CONFIRMATION_TIMEOUT` env definitions are removed; override `rpcUrls.<id>`, `validatorsUrl` and `staking.validatorsSummaryUrl` in
+  `config_currency_<id>` instead. The legacy `getValidators` of `network/validator-app` now takes
+  `(validatorsUrl, validatorsSummaryUrl?)` instead of a cluster, and the Alpaca `getValidators` takes
+  the summary URL as its second argument. `craftTransaction`, `estimateFees`, `estimateTxFee`,
+  `unstakeReserve`, `computeUnstakeReserve`, `getBalance` and `listOperations` take the
+  `SolanaCoinConfig` as their second argument, `buildVersionedTransaction` as its fourth, and the
+  `network/chain/web3` instruction builders take the resolved `computeUnitMargin`.
+  `getChainAPI` accepts `confirmationTimeoutMs`, `retries` and `retryDelayMs`; build its config with
+  `chainConfigFrom(config, currencyId)`. `LEDGER_VALIDATOR_DEFAULT`, `LEDGER_VALIDATOR_LIST` and
+  `LEDGER_VALIDATORS_VOTE_ACCOUNTS` are removed: use `ledgerValidatorsOf(config)` /
+  `defaultLedgerValidatorOf(config)`; `LEDGER_VALIDATOR_BY_FIGMENT` / `_BY_BITWISE` moved to
+  `constants`. `ledgerFirstValidators` takes the Ledger list as its second argument. The `coinConfig` default export of `config` (`setCoinConfig` / `getCoinConfig`) is removed:
+  `getSolanaValidators(context, currencyId)` and `fetchValidators(config, currencyId)` take the
+  config explicitly, and `signMessage(signerContext, contextOf)` resolves the account's currency
+  context when signing.
+
+- [#23633](https://github.com/LedgerHQ/ledger-live/pull/23633) [`dbe42b3`](https://github.com/LedgerHQ/ledger-live/commit/dbe42b3c907c59d822419c8444ce1074d1863407) Thanks [@henri-ly](https://github.com/henri-ly)! - fix(coin-solana): clamp the compute-unit price to a minimum floor (`fees.minPriorityFee`, default 10,000 microLamports/CU, also used when the configured value is not positive) instead of sending unpriced transactions. Also simulates compute units with the price instruction, estimates a SOL or token transfer with its memo (whose compute units the price now charges), makes the priority-fee median return the middle sample for an odd count and the average of the two middle samples for an even count, fixes the Solana mock bridge recursing forever on `api.config`, and adapts the coin tester's staking checks to the priority fee
+
+### Patch Changes
+
+- Updated dependencies [[`9907890`](https://github.com/LedgerHQ/ledger-live/commit/9907890790bf8b804d7cc454a067508df0969137), [`8854aff`](https://github.com/LedgerHQ/ledger-live/commit/8854aff9cace72ad17c6d9fd7ee98a4dcd65ecb1), [`77a85a3`](https://github.com/LedgerHQ/ledger-live/commit/77a85a30abe7b42e5f5b4e0478bec14fa39033cf), [`c50f3fa`](https://github.com/LedgerHQ/ledger-live/commit/c50f3fac1c822d61332dbb512b21cdda6bb57210)]:
+  - @ledgerhq/types-live@6.130.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.10.0-next.0
+
 ## 2.6.0
 
 ### Minor Changes
@@ -405,36 +539,5 @@
   - @ledgerhq/types-live@6.121.0
   - @ledgerhq/ledger-wallet-framework@3.1.0
   - @ledgerhq/live-env@3.1.0
-
-## 1.0.1-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`aa39333`](https://github.com/LedgerHQ/ledger-live/commit/aa393339789242783b168398cb5122a7f1e3f620), [`6c425e0`](https://github.com/LedgerHQ/ledger-live/commit/6c425e0e869c6feed4bd4c87ee0fef5443617708), [`585d8d7`](https://github.com/LedgerHQ/ledger-live/commit/585d8d78d5e153186c39ee2abfcdb7dc4a5d06e0), [`8161bac`](https://github.com/LedgerHQ/ledger-live/commit/8161bac542474212dfefc8519e714da345b03f71), [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e), [`39a676d`](https://github.com/LedgerHQ/ledger-live/commit/39a676d2f861d04913264e61100205b4f6044cf9)]:
-  - @ledgerhq/types-live@6.121.0-next.0
-  - @ledgerhq/ledger-wallet-framework@3.1.0-next.0
-  - @ledgerhq/live-env@3.1.0-next.0
-
-## 1.0.0
-
-### Major Changes
-
-- [#20752](https://github.com/LedgerHQ/ledger-live/pull/20752) [`b2896a9`](https://github.com/LedgerHQ/ledger-live/commit/b2896a9b10cf6daaa8f532eaa12f016df606eb8b) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Update combine to accept string[] per ADR-047
-
-### Minor Changes
-
-- [#20571](https://github.com/LedgerHQ/ledger-live/pull/20571) [`7c8d5df`](https://github.com/LedgerHQ/ledger-live/commit/7c8d5dfa862a2e9c3a35251b5d06a3cd4f905d2a) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Thread the coin-module `Context` (ADR-019) explicitly through the coin-evm, coin-vechain and coin-near api and logic layers instead of resolving configuration from the module-level `getCoinConfig` singleton. Exported logic functions now take the context as their first argument, resolve `config` from it (`await context.config(currencyId)`), and pass an explicit, required `config` down to the network layer — no `config?` optionals and no singleton reads on the data path. `getCoinConfig`/`setCoinConfig` remain only as the compatibility surface for the classic account bridge. Ledger Live consumers (live-common, desktop, mobile and coin-celo) are updated to resolve and pass config/context explicitly. Also fixes a coin-polkadot type-inference issue where `getTransactionMaterialWithMetadata`'s cache-key extractor narrowed the cached signature and dropped the `config` argument.
-
-- [#20778](https://github.com/LedgerHQ/ledger-live/pull/20778) [`eecf99a`](https://github.com/LedgerHQ/ledger-live/commit/eecf99af5c17ab63724843c31d5f3facc6352dad) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-evm): replace `CryptoCurrency` with `currencyId`
-
-- [#19581](https://github.com/LedgerHQ/ledger-live/pull/19581) [`6a437fd`](https://github.com/LedgerHQ/ledger-live/commit/6a437fd60cb8d5c197f104a522ce1406da197e51) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - feat(lwdm): improve error context on datadog
-
-- [#20786](https://github.com/LedgerHQ/ledger-live/pull/20786) [`75d0c9b`](https://github.com/LedgerHQ/ledger-live/commit/75d0c9b97aced42be1f465319ee17ccaafcd649d) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Add unsupported `register` to CoinModuleApi implementations (ADR-046)
-
-### Patch Changes
-
-- Updated dependencies [[`da0a5ce`](https://github.com/LedgerHQ/ledger-live/commit/da0a5ceb8f889f1bace45ed2d3d4c640cdf24ca8), [`eecf99a`](https://github.com/LedgerHQ/ledger-live/commit/eecf99af5c17ab63724843c31d5f3facc6352dad), [`030fc67`](https://github.com/LedgerHQ/ledger-live/commit/030fc677db03e8a411d3d33d2fa88e1ab04df80b), [`5b39a67`](https://github.com/LedgerHQ/ledger-live/commit/5b39a67dd93d4c541a77b0b146881073ca00ed15), [`0807eca`](https://github.com/LedgerHQ/ledger-live/commit/0807ecacfd06057811a3d6f8845b9f4bfc6f693c), [`b6da6b1`](https://github.com/LedgerHQ/ledger-live/commit/b6da6b1b1c98d022f30985c6103c239bffd0c7df), [`79882e2`](https://github.com/LedgerHQ/ledger-live/commit/79882e26a14f246f1cc969937e011b16e701b8f2), [`a20805c`](https://github.com/LedgerHQ/ledger-live/commit/a20805cebd95f2f620d394c4d7598ec93506c83e), [`030b427`](https://github.com/LedgerHQ/ledger-live/commit/030b42707768af3f9c98a15fc6751f1d64b36fe6)]:
-  - @ledgerhq/types-live@6.120.0
-  - @ledgerhq/ledger-wallet-framework@3.0.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

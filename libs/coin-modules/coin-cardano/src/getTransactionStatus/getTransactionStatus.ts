@@ -9,7 +9,7 @@ import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanc
 import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import coinConfig from "../config";
 import { validateMemo } from "../logic/validateMemo";
 import type { CardanoAccount, CardanoOutput, Transaction, TransactionStatus } from "../types";

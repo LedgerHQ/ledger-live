@@ -36,6 +36,23 @@ describe("UpdatesAppliedScreen", () => {
     expect(screen.queryByText(/OS version/)).toBeNull();
   });
 
+  it.each([
+    RestoreBackupStatus.FULL,
+    RestoreBackupStatus.PARTIAL,
+    RestoreBackupStatus.OUT_OF_MEMORY,
+  ])("lists what a standalone restore reinstalls after a %s restore", restoreStatus => {
+    render(
+      <UpdatesAppliedScreen
+        productName="Ledger Stax"
+        isRestoreOnly
+        restoreStatus={restoreStatus}
+        onClose={jest.fn()}
+      />,
+    );
+
+    expect(screen.getByText("Lock screen, Language and apps.")).toBeVisible();
+  });
+
   describe.each([
     ["an OS update", { isRestoreOnly: false, osVersion: "2.0.0" } as const],
     ["a standalone restore", { isRestoreOnly: true } as const],

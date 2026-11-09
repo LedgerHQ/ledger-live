@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { useSelector } from "LLD/hooks/redux";
 import {
   counterValueCurrencySelector,

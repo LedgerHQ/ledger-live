@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { ICrypto } from "@ledgerhq/wallet-btc/crypto/types";
 import type Xpub from "@ledgerhq/wallet-btc/xpub";
 import { ZcashPreparedBuildMismatch } from "../types/errors";

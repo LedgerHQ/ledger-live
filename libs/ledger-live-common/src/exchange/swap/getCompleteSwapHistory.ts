@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import type { AccountLike, Operation, SwapOperation } from "@ledgerhq/types-live";
 import { TransactionStatus } from "@ledgerhq/wallet-api-exchange-module";

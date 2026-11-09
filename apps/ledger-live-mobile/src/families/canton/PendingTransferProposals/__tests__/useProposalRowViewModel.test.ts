@@ -1,5 +1,5 @@
 import { act, renderHook } from "@tests/test-renderer";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { useProposalRowViewModel } from "../components/useProposalRowViewModel";
 import { createProcessedProposal } from "./test-utils";
 

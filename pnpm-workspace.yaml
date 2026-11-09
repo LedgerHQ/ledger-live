@@ -23,17 +23,17 @@ packages:
 
 catalog:
   "@bitcoinerlab/secp256k1": 2.0.0
-  "@commitlint/cli": 21.2.0
-  "@commitlint/config-conventional": 21.2.0
-  "@commitlint/lint": 21.2.0
-  "@commitlint/load": 21.2.2
-  "@commitlint/prompt-cli": 21.2.0
-  "@commitlint/types": 21.2.0
+  "@commitlint/cli": 21.2.4
+  "@commitlint/config-conventional": 21.2.4
+  "@commitlint/lint": 21.2.4
+  "@commitlint/load": 21.2.4
+  "@commitlint/prompt-cli": 21.2.4
+  "@commitlint/types": 21.2.3
   "@dnd-kit/core": 6.3.1
   "@dnd-kit/modifiers": 9.0.0
   "@dnd-kit/sortable": 10.0.0
   "@dnd-kit/utilities": 3.2.2
-  "@jest/globals": 30.5.0
+  "@jest/globals": 30.5.2
   "@ledgerhq/context-module": 2.8.0
   "@ledgerhq/crypto-icons": "2.0.7"
   "@ledgerhq/device-contacts-kit": 0.5.0
@@ -59,21 +59,21 @@ catalog:
   "@ledgerhq/signer-utils": 1.3.0
   "@ledgerhq/device-transport-kit-web-hid": 1.2.4
   "@ledgerhq/speculos-device-controller": 0.4.0
-  "@ledgerhq/logs": 6.19.0
-  "@ledgerhq/auth": 0.1.1
-  "@ledgerhq/devices": 8.18.1
-  "@ledgerhq/hw-transport": 6.36.1
-  "@ledgerhq/hw-transport-mocker": 6.35.1
-  "@ledgerhq/live-network": 3.2.0
-  "@ledgerhq/live-promise": 0.4.0
-  "@ledgerhq/psbtv2": 0.6.2
-  "@ledgerhq/hw-ledger-key-ring-protocol": 1.0.1
-  "@ledgerhq/ledger-key-ring-protocol": 1.1.0
-  "@ledgerhq/live-config": 3.9.1
-  "@ledgerhq/live-env": 4.1.0
-  "@ledgerhq/live-currency-format": 0.16.0
-  "@ledgerhq/domain-service": 1.9.1
-  "@ledgerhq/evm-tools": 2.0.0
+  "@ledgerhq/logs": 6.20.0
+  "@ledgerhq/auth": 0.2.0
+  "@ledgerhq/devices": 8.19.0
+  "@ledgerhq/hw-transport": 6.37.0
+  "@ledgerhq/hw-transport-mocker": 6.36.0
+  "@ledgerhq/live-network": 3.3.0
+  "@ledgerhq/live-promise": 0.5.0
+  "@ledgerhq/psbtv2": 0.7.0
+  "@ledgerhq/hw-ledger-key-ring-protocol": 1.1.0
+  "@ledgerhq/ledger-key-ring-protocol": 1.2.0
+  "@ledgerhq/live-config": 3.10.0
+  "@ledgerhq/live-env": 4.2.0
+  "@ledgerhq/live-currency-format": 0.17.0
+  "@ledgerhq/domain-service": 1.10.0
+  "@ledgerhq/evm-tools": 2.1.0
   "@ledgerhq/lumen-design-core": 0.1.34
   "@ledgerhq/lumen-lint-plugin": 0.1.2
   "@ledgerhq/lumen-ui-react": 0.1.69
@@ -85,7 +85,11 @@ catalog:
   "@ledgerhq/wallet-api-core": 2.2.0
   "@ledgerhq/wallet-api-server": 3.6.0
   "@ledgerhq/wallet-api-simulator": 2.4.1
-  "@ledgerhq/zcash-utils": 2.8.0
+  "@ledgerhq/zcash-utils": 2.9.0
+  "@ledgerhq/zcash-utils-darwin-arm64": 2.9.0
+  "@ledgerhq/zcash-utils-darwin-x64": 2.9.0
+  "@ledgerhq/zcash-utils-linux-x64-gnu": 2.9.0
+  "@ledgerhq/zcash-utils-win32-x64-msvc": 2.9.0
   # React Native
   react-native: 0.81.6
   "@react-native/assets-registry": 0.81.6
@@ -125,8 +129,8 @@ catalog:
   expo-splash-screen: 31.0.13
   expo-modules-autolinking: 3.0.24
   expo-modules-core: 3.0.29
-  "@jest/reporters": 30.5.0
-  "@jest/test-result": 30.5.0
+  "@jest/reporters": 30.5.2
+  "@jest/test-result": 30.5.2
   "@reduxjs/toolkit": 2.13.0
   "@rsbuild/core": 2.3.0
   "@rsbuild/plugin-node-polyfill": 1.4.6
@@ -149,8 +153,6 @@ catalog:
   "@testing-library/react": 16.3.1
   "@testing-library/react-native": 13.3.3
   "@testing-library/user-event": 14.6.1
-  "@types/bs58": ^4.0.1
-  "@types/bs58check": ^2.1.2
   "@types/jest": 30.0.0
   "@types/lodash": ^4.17.21
   "@typescript-eslint/eslint-plugin": 8.48.1
@@ -160,10 +162,11 @@ catalog:
   "@types/node": 24.12.0
   "@gorhom/bottom-sheet": 5.2.6
   axios: 1.20.0
-  babel-jest: 30.5.0
-  bs58: ^4.0.1
-  bs58check: ^2.1.2
+  babel-jest: 30.5.2
+  bs58: 6.0.0
+  bs58check: 4.0.0
   buffer: 6.0.3
+  chalk: 4.1.2
   class-variance-authority: 0.7.1
   cross-env: 10.1.0
   electron: 45.2.1
@@ -181,18 +184,18 @@ catalog:
   "@polkadot/rpc-provider": 16.5.6
   "@polkadot/util": 14.0.3
   "@polkadot/util-crypto": 14.0.3
-  expect: 30.5.0
+  expect: 30.5.2
   i18next: 25.7.3
   isomorphic-ws: 5.0.0
   bip39: 3.1.2
   bitcoinjs-lib: 7.0.5
   lodash: 4.18.1
   msw: ^2.7.3
-  jest: 30.5.0
-  jest-circus: 30.5.0
+  jest: 30.5.2
+  jest-circus: 30.5.2
   jest-docblock: 30.5.0
-  jest-environment-jsdom: 30.5.0
-  jest-environment-node: 30.5.0
+  jest-environment-jsdom: 30.5.2
+  jest-environment-node: 30.5.2
   jest-file-snapshot: 0.7.0
   jest-util: 30.5.0
   react: 19.1.4
@@ -252,12 +255,12 @@ catalog:
   rimraf: 4.4.1
   zx: 8.8.5
   # Modules published by coin-modules
-  "@ledgerhq/coin-evm": 16.2.5
+  "@ledgerhq/coin-evm": 16.4.0
   "@ledgerhq/coin-hypercore": 4.0.3
   "@ledgerhq/coin-module-framework": 11.0.1
   "@ledgerhq/coin-stellar": 12.1.2
   "@ledgerhq/coin-tezos": 14.1.1
-  "@ledgerhq/coin-xrp": 13.1.1
+  "@ledgerhq/coin-xrp": 13.3.1
 
 minimumReleaseAge: 3000
 minimumReleaseAgeExclude:
@@ -320,16 +323,16 @@ overrides:
   "@ton/ton>zod": "catalog:"
   # @expo/cli 54.x pins 0.81.5 exactly; align on react-native 0.81.6 to dedupe debugger-frontend
   "@expo/cli>@react-native/dev-middleware": "0.81.6"
-  jest-environment-node: "30.5.0"
-  jest-mock: "30.5.0"
-  jest-matcher-utils: "30.5.0"
-  jest-diff: "30.5.0"
+  jest-environment-node: "30.5.2"
+  jest-mock: "30.5.2"
+  jest-matcher-utils: "30.5.2"
+  jest-diff: "30.5.2"
   jest-message-util: "30.5.0"
   jest-util: "30.5.0"
-  "@jest/expect-utils": "30.5.0"
+  "@jest/expect-utils": "30.5.2"
   "@jest/create-cache-key-function": "30.5.0"
   "@jest/types": "30.5.0"
-  expect: "30.5.0"
+  expect: "30.5.2"
   "pretty-format@^30.0.0": "30.5.0"
   # Only @polkadot/rpc-provider/mock (MockProvider) imports these; we never load it
   "@polkadot/rpc-provider>@polkadot/types-support": "-"
@@ -355,7 +358,7 @@ patchedDependencies:
   "styled-components@6.1.19": "patches/styled-components@6.1.19.patch"
   "react-native@0.81.6": "patches/react-native@0.81.6.patch"
   "detox-allure2-adapter@1.0.0-alpha.42": "patches/detox-allure2-adapter@1.0.0-alpha.42.patch"
-  "@callstack/repack@5.2.5": "patches/@callstack__repack@5.2.5.patch"
+  "@callstack/repack@5.4.2": "patches/@callstack__repack@5.4.2.patch"
   "bigint-buffer@1.1.5": "patches/bigint-buffer@1.1.5.patch"
   "usb@2.17.0": "patches/usb@2.17.0.patch"
   "react-native-worklets@0.8.1": "patches/react-native-worklets@0.8.1.patch"

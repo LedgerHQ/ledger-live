@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-bitcoin",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Ledger Bitcoin Coin integration",
   "keywords": [
     "Ledger",
@@ -78,7 +78,6 @@
     "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
-    "@types/bs58": "catalog:",
     "@types/cashaddrjs": "0.3.3",
     "@types/invariant": "2.2.37",
     "@types/jest": "catalog:",

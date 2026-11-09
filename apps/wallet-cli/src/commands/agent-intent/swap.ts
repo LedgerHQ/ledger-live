@@ -1,7 +1,7 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { createNonce, encodeSwapIntentTlv } from "@ledgerhq/agent-intent-sdk";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Session } from "../../session/session-store";
 import { requireEnrolledProfile } from "../../agent-intent/enrolled-profile";
 import { resolveOutputFormat } from "../inputs";

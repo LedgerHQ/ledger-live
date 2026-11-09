@@ -1,5 +1,6 @@
 import { defineConfig } from "oxlint";
 import {
+  BIGNUMBER_NAMED_IMPORT,
   COIN_MODULE_CREATE_API,
   LIVE_COMMON_CURRENCY_ACCESSORS,
   LIVE_COMMON_LIB,
@@ -23,7 +24,7 @@ export default defineConfig({
     "eslint/no-restricted-imports": [
       "error",
       {
-        paths: [LODASH, ...WALLET_FRAMEWORK_CURRENCY_TYPES],
+        paths: [LODASH, BIGNUMBER_NAMED_IMPORT, ...WALLET_FRAMEWORK_CURRENCY_TYPES],
         patterns: [LIVE_COMMON_LIB, LIVE_COMMON_CURRENCY_ACCESSORS, COIN_MODULE_CREATE_API],
       },
     ],
@@ -74,7 +75,7 @@ export default defineConfig({
       rules: {
         "typescript/no-explicit-any": "warn",
         "eslint/no-console": "off",
-        "eslint/no-restricted-imports": "off",
+        "eslint/no-restricted-imports": ["error", { paths: [BIGNUMBER_NAMED_IMPORT] }],
       },
     },
     {
@@ -84,7 +85,7 @@ export default defineConfig({
         "src/families/tezos/bridge/api.ts",
         "src/families/canton/bridge/mock.ts",
       ],
-      rules: { "eslint/no-restricted-imports": "off" },
+      rules: { "eslint/no-restricted-imports": ["error", { paths: [BIGNUMBER_NAMED_IMPORT] }] },
     },
   ],
 });

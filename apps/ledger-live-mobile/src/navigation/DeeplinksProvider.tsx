@@ -12,7 +12,7 @@ import {
 import Config from "react-native-config";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
-import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useFeature } from "@features/platform-feature-flags";
 import Braze from "@braze/react-native-sdk";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
@@ -164,10 +164,6 @@ const linkingOptions = () => ({
             },
           },
           [ScreenName.Recover]: "recover/:platform",
-          /**
-           * ie: "ledgerlive://market/:currencyId" will open the market detail page for the given currency
-           */
-          [ScreenName.MarketDetail]: "market/:currencyId",
           [NavigatorName.PostOnboarding]: {
             screens: {
               /**
@@ -334,8 +330,6 @@ export const DeeplinksProvider = ({
   const llmAccountListUI = useFeature("llmAccountListUI");
   const genericAwarenessModalFlag = useFeature("lwmGenericAwarenessModal");
 
-  const { shouldDisplayAggregatedAssets, shouldDisplayAssetDiscoverability } =
-    useWalletFeaturesConfig("mobile");
   const web3hubFlag = useFeature("web3hub");
   const lwmProductTourFlag = useFeature("lwmProductTour");
   const lwmBackupHubFlag = useFeature("lwmBackupHub");
@@ -694,8 +688,6 @@ export const DeeplinksProvider = ({
             const intent = resolveMarketOrAssetDeeplinkIntent({
               hostname,
               pathname,
-              shouldDisplayAggregatedAssets,
-              shouldDisplayAssetDiscoverability,
               categoryParam: searchParams.get("category"),
             });
 
@@ -706,15 +698,10 @@ export const DeeplinksProvider = ({
                   source: intent.source,
                   marketState: intent.marketState,
                 });
-              case "legacy-path":
-                url.pathname = `/${intent.currencyId}`;
-                return getStateFromPath(url.href?.split("://")[1], config);
               case "market-banner":
                 return handleMarketBannerDeeplink(intent.category);
               case "portfolio":
                 return getStateFromPath("portfolio", config);
-              case "continue":
-                break;
             }
           }
 
@@ -918,8 +905,6 @@ export const DeeplinksProvider = ({
     onDeeplinkReceived,
     buySellUiManifestId,
     dispatch,
-    shouldDisplayAggregatedAssets,
-    shouldDisplayAssetDiscoverability,
     liveAppProviderInitialized,
     manifests,
     localManifests,

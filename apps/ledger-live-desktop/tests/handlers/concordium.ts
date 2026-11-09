@@ -9,7 +9,7 @@ const wcRelay = ws.link("wss://relay.walletconnect.com");
 
 const handlers = [
   ...CONCORDIUM_PROXY_URLS.flatMap(baseUrl => [
-    http.put(`${baseUrl}/v0/submitCredential/`, () => {
+    http.put(`${baseUrl}/v0/submitCredential`, () => {
       return HttpResponse.json({ submissionId: "test-submission-id" });
     }),
   ]),

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/ledger-cal-service",
-  "version": "1.19.10",
+  "version": "1.19.11",
   "private": true,
   "description": "Ledger CAL service client",
   "keywords": [
@@ -78,7 +78,6 @@
     "msw": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "ts-node": "10.9.2",
     "rimraf": "catalog:"
   },
   "scripts": {

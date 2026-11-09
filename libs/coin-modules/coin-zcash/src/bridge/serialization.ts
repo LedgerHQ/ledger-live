@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import wallet from "@ledgerhq/wallet-btc/index";
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import type {

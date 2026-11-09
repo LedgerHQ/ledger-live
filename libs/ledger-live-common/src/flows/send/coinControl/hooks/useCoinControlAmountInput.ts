@@ -1,7 +1,7 @@
 import type { Unit } from "@domain/entity-currency-unit";
 import { formatAmountForInput, processRawInput } from "../../amount/utils/amountInput";
 import type { Transaction, TransactionStatus } from "../../../../coin-modules/transaction-types";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { useCallback, useMemo, useRef, useState } from "react";
 
 export type UseCoinControlAmountInputParams = Readonly<{

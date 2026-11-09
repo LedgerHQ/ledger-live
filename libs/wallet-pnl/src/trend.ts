@@ -1,4 +1,4 @@
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 
 /**
  * The trend direction implied by a signed PnL value.

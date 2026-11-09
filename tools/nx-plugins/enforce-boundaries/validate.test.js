@@ -17,6 +17,7 @@ const {
   formatDevtoolsImportViolation,
   formatDevtoolsHostViolation,
   sourceFiles,
+  walkSourceFiles,
   DEVTOOLS_ROOT,
 } = require("./validate");
 const {
@@ -548,6 +549,52 @@ test("an import after a string reading import or from is flagged, a commented im
     "a.ts @ledgerhq/errors",
     "a.ts @ledgerhq/logs",
   ]);
+});
+
+test("an import or require written inside a string or template is not flagged", t => {
+  const root = makeTmpWorkspace({
+    "shared/utils/src/index.ts":
+      'const a = \'import { x } from "@ledgerhq/logs"\';\nconst b = `require("@ledgerhq/errors")`;\nexport {};',
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const legacy = new Set(["@ledgerhq/logs", "@ledgerhq/errors"]);
+  assert.deepEqual(findSourceImportViolations(root, legacy), []);
+});
+
+test("a module file augmenting a legacy package is flagged, a global declaration file is not", t => {
+  const root = makeTmpWorkspace({
+    "shared/utils/src/augment.ts": 'declare module "@ledgerhq/logs" {}\nexport {};',
+    "shared/utils/src/global.d.ts": 'declare module "@ledgerhq/errors" {}',
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const legacy = new Set(["@ledgerhq/logs", "@ledgerhq/errors"]);
+  const violations = findSourceImportViolations(root, legacy);
+  assert.deepEqual(
+    violations.map(v => `${path.basename(v.file)} ${v.specifier}`),
+    ["augment.ts @ledgerhq/logs"],
+  );
+});
+
+test("a namespace re-export of a legacy package is flagged", t => {
+  const root = makeTmpWorkspace({
+    "shared/utils/src/index.ts": 'export * as logs from "@ledgerhq/logs";',
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const violations = findSourceImportViolations(root, new Set(["@ledgerhq/logs"]));
+  assert.deepEqual(
+    violations.map(v => v.specifier),
+    ["@ledgerhq/logs"],
+  );
+});
+
+test("a JSDoc import type of a legacy package is not flagged", t => {
+  const root = makeTmpWorkspace({
+    "shared/utils/src/index.js":
+      '/** @type {import("@ledgerhq/logs").Log} */\nmodule.exports = {};',
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const violations = findSourceImportViolations(root, new Set(["@ledgerhq/logs"]));
+  assert.deepEqual(violations, []);
 });
 
 test("sub-path import is matched by package name", t => {
@@ -1571,4 +1618,19 @@ test("lint:boundaries inputs cover the graph configuration and the tags plugin",
     files.filter(file => !isLintBoundariesInput(file)),
     [],
   );
+});
+
+test("walkSourceFiles skips gitignored build output dirs", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "enforce-boundaries-walk-"));
+  try {
+    for (const dir of ["src", ".webpack", "lib-es", "coverage"]) {
+      fs.mkdirSync(path.join(root, dir));
+      fs.writeFileSync(path.join(root, dir, "index.js"), "");
+    }
+    const files = [];
+    walkSourceFiles(root, file => files.push(path.relative(root, file)));
+    assert.deepEqual(files, [path.join("src", "index.js")]);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
 });

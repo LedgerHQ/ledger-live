@@ -5,6 +5,7 @@ export type TransactionType = Transaction;
 
 export class Transaction {
   public recipientAddress?: string;
+  public expectedFee?: string;
 
   constructor(
     public accountToDebit: AccountType,

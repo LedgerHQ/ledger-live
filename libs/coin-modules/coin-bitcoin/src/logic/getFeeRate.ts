@@ -1,5 +1,5 @@
 import type { FeesStrategy } from "@ledgerhq/coin-module-framework/api/types";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { BitcoinCoinConfig } from "../config";
 import { BitcoinInfrastructureError } from "../errors";
 import { fetchFeeRates, fetchNetworkInfo } from "../network/explorer";

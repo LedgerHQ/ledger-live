@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "./currencies";
 import { getAccountCurrency, getMainAccount, flattenAccounts } from "./account";

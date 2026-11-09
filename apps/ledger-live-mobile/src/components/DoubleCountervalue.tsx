@@ -1,6 +1,6 @@
 import React, { useState, useCallback, memo, useMemo } from "react";
 import { TouchableOpacity, StyleSheet, View } from "react-native";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { useSelector } from "~/context/hooks";
 import type { Currency } from "@domain/entity-currency";
 import { useCalculate } from "@features/platform-market-countervalues";

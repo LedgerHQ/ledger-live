@@ -2,7 +2,7 @@ import { Cbor } from "@icp-sdk/core/agent";
 import { Principal } from "@icp-sdk/core/principal";
 import type { CraftedTransaction, FeeEstimation } from "@ledgerhq/coin-module-framework/api/index";
 import { InvalidTransactionError } from "@ledgerhq/coin-module-framework/errors";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { parseNeuronId } from "../common-logic/neuron";
 import {
   FOLLOWABLE_TOPICS,

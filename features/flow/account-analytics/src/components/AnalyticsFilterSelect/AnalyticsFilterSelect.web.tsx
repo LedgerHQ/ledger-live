@@ -9,28 +9,11 @@ import {
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { CoinsCrypto, Wallet } from "@ledgerhq/lumen-ui-react/symbols";
 import { AnalyticsFilterItem } from "../AnalyticsFilterItem/AnalyticsFilterItem";
-import type {
-  AnalyticsFilterOptionMeta,
-  AnalyticsFilterViewProps,
-} from "../AnalyticsFilters/AnalyticsFiltersView.types";
+import type { AnalyticsFilterOptionMeta } from "../AnalyticsFilters/AnalyticsFiltersView.types";
+import { ANALYTICS_FILTER_VARIANTS } from "./analyticsFilterVariants";
+import type { AnalyticsFilterSelectProps } from "./AnalyticsFilterSelect.types";
 
-type AnalyticsFilterSelectProps = AnalyticsFilterViewProps &
-  Readonly<{ variant: "asset" | "account" }>;
-
-const VARIANTS = {
-  asset: {
-    testId: "analytics-asset-filter",
-    FallbackIcon: CoinsCrypto,
-    iconShape: undefined,
-    showSelectedIcon: true,
-  },
-  account: {
-    testId: "analytics-account-filter",
-    FallbackIcon: Wallet,
-    iconShape: "square",
-    showSelectedIcon: false,
-  },
-} as const;
+const FALLBACK_ICONS = { asset: CoinsCrypto, account: Wallet } as const;
 
 export function AnalyticsFilterSelect({
   variant,
@@ -40,14 +23,16 @@ export function AnalyticsFilterSelect({
   triggerLabel,
   selectedMeta,
   disabled,
+  onOpenChange,
   onValueChange,
 }: AnalyticsFilterSelectProps) {
-  const { testId, FallbackIcon, iconShape, showSelectedIcon } = VARIANTS[variant];
+  const { testId, iconShape, showSelectedIcon } = ANALYTICS_FILTER_VARIANTS[variant];
+  const FallbackIcon = FALLBACK_ICONS[variant];
   const renderIcon = (meta: AnalyticsFilterOptionMeta) => (
     <CryptoIcon ledgerId={meta.iconId} ticker={meta.ticker} size={24} shape={iconShape} />
   );
   return (
-    <Select items={items} value={value} onValueChange={onValueChange}>
+    <Select items={items} value={value} onOpenChange={onOpenChange} onValueChange={onValueChange}>
       <SelectTrigger
         disabled={disabled}
         render={() => (
@@ -63,9 +48,9 @@ export function AnalyticsFilterSelect({
           </MediaButton>
         )}
       />
-      <SelectContent className="w-max min-w-[343px] max-w-(--available-width) bg-canvas-sheet shadow-sm">
+      <SelectContent className="max-h-224 w-max min-w-[343px] max-w-(--available-width) bg-canvas-sheet shadow-sm">
         <SelectList<string, AnalyticsFilterOptionMeta>
-          className="py-12"
+          className="scrollbar-none py-12"
           renderItem={item => (
             <AnalyticsFilterItem
               key={item.value}

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-cosmos",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "private": true,
   "description": "Ledger Cosmos Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -76,8 +76,6 @@
     "@ledgerhq/live-config": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "bignumber.js": "^9.1.2",
-    "chalk": "^4.1.2",
-    "docker-compose": "^1.1.0",
     "msw": "catalog:"
   },
   "devDependencies": {

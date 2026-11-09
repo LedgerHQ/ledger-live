@@ -1,6 +1,6 @@
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type {
   CoinControlBuildStrategyChangePatchParams,
   CoinControlBuildToggleRowExclusionPatchParams,

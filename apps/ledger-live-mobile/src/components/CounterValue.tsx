@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo, useEffect } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { useDispatch, useSelector } from "~/context/hooks";
 import type { Currency } from "@domain/entity-currency";
 import { useCalculate, useCountervaluesPolling } from "@features/platform-market-countervalues";

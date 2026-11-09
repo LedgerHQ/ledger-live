@@ -1,4 +1,7 @@
+import type { AssetsData } from "@domain/api-aggregated-assets";
+import type { CryptoOrTokenCurrency, Currency } from "@domain/entity-currency";
 import type { FiatCurrencyTicker } from "@domain/entity-currency-fiat";
+import type { CounterValuesCacheView } from "@domain/entity-market-countervalues";
 
 export type AnalyticsMetric = "balance" | "realised-return" | "unrealised-return" | "total-return";
 
@@ -100,4 +103,80 @@ export type AccountAnalyticsViewModel = Readonly<{
   selectAccount: (accountId: string | null) => void;
   selectMetric: (metric: AnalyticsMetric) => void;
   retry: () => void;
+}>;
+
+export type AnalyticsAmount = Readonly<{ isZero: () => boolean; toNumber: () => number }>;
+
+export type AnalyticsTokenAccountSource<Operation = unknown> = Readonly<{
+  type: "TokenAccount";
+  id: string;
+  parentId: string;
+  token: CryptoOrTokenCurrency;
+  balance: AnalyticsAmount;
+  operations: readonly Operation[];
+}>;
+
+export type AnalyticsAccountSource<Operation = unknown> = Readonly<{
+  type: "Account";
+  id: string;
+  currency: CryptoOrTokenCurrency;
+  freshAddress: string;
+  balance: AnalyticsAmount;
+  operations: readonly Operation[];
+  subAccounts?: readonly AnalyticsTokenAccountSource<Operation>[];
+}>;
+
+export type AnalyticsPositionSource = AnalyticsAccountSource | AnalyticsTokenAccountSource;
+
+export type AnalyticsPositionOf<Account extends AnalyticsAccountSource> =
+  | Account
+  | NonNullable<Account["subAccounts"]>[number];
+
+export type AnalyticsPortfolioRange = "day" | "week" | "month" | "year" | "all";
+
+export type AnalyticsCountervalueInput = Readonly<{
+  countervalues: CounterValuesCacheView;
+  fiat: Currency;
+}>;
+
+export type AnalyticsPortfolioSnapshot = Readonly<{
+  balanceHistory: readonly Readonly<{ date: Date; value: number }>[];
+  availableAccounts: readonly Readonly<{ id: string }>[];
+  readVariation: (
+    currentBalance: number,
+  ) => Readonly<{ value: number; percentage?: number | null }>;
+}>;
+
+export type ReadAnalyticsPortfolio<
+  Position extends AnalyticsPositionSource,
+  Countervalues extends CounterValuesCacheView = CounterValuesCacheView,
+> = (
+  positions: readonly Position[],
+  range: AnalyticsPortfolioRange,
+  countervalues: Countervalues,
+  fiat: Currency,
+) => AnalyticsPortfolioSnapshot;
+
+export type AnalyticsAssetsQuery = Readonly<{
+  data: AssetsData | undefined;
+  isSuccess: boolean;
+  isError: boolean;
+}>;
+
+export type AnalyticsVariationStatus = "loading" | "ready" | "unavailable";
+
+export type AnalyticsBalanceSummary = Readonly<{
+  currentAmount: number;
+  data: AnalyticsBalanceData | undefined;
+  isCurrentAvailable: boolean;
+  isCatalogLoading: boolean;
+  isChartLoading: boolean;
+  variationStatus: AnalyticsVariationStatus;
+  showHeaderStatus: boolean;
+  showPlotStatus: boolean;
+}>;
+
+export type AnalyticsPnlPositions<Position> = Readonly<{
+  positions: Position[] | undefined;
+  status: "loading" | "error" | "ready" | "unavailable";
 }>;

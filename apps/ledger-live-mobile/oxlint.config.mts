@@ -2,6 +2,7 @@ import { defineConfig } from "oxlint";
 import {
   ACCOUNT_DATA_SETUP_FILES,
   ACCOUNT_DATA_SOURCES,
+  BIGNUMBER_NAMED_IMPORT,
   EXPO_CLIPBOARD,
   LIVE_COMMON_CURRENCY_ACCESSORS,
   LIVE_COMMON_FEATURE_FLAGS,
@@ -16,7 +17,12 @@ const MVVM_ALIAS = {
   message: "Use 'LLM' alias instead of '~/mvvm'. Replace '~/mvvm' with 'LLM' in your imports.",
 };
 
-const RESTRICTED_PATHS = [LODASH, EXPO_CLIPBOARD, ...WALLET_FRAMEWORK_CURRENCY_TYPES];
+const RESTRICTED_PATHS = [
+  LODASH,
+  BIGNUMBER_NAMED_IMPORT,
+  EXPO_CLIPBOARD,
+  ...WALLET_FRAMEWORK_CURRENCY_TYPES,
+];
 
 // Test and debug files may import these directly.
 const APP_INSTANCE_PATHS = [
@@ -156,6 +162,9 @@ export default defineConfig({
       files: ["src/mvvm/features/WalletSync/hooks/useFollowInstructionDrawer.ts"],
       rules: { "react-hooks/exhaustive-deps": "off" },
     },
-    { files: ACCOUNT_DATA_SETUP_FILES, rules: { "eslint/no-restricted-imports": "off" } },
+    {
+      files: ACCOUNT_DATA_SETUP_FILES,
+      rules: { "eslint/no-restricted-imports": ["error", { paths: [BIGNUMBER_NAMED_IMPORT] }] },
+    },
   ],
 });

@@ -1,11 +1,16 @@
 import { expect, type Locator } from "@playwright/test";
-import { Layout, type SyncWaitOptions } from "tests/component/layout.component";
+import { Layout } from "tests/component/layout.component";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
+import { AccountDetailPage, type EarnOptions } from "tests/page/accountDetail.page";
 import { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
+import type { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
+import { isAccountDetailEnabled } from "tests/utils/featureFlagUtils";
+import { escapeRegExp } from "tests/utils/regExpUtils";
 
 export class AccountPage extends AppPage {
   private readonly layout = new Layout(this.page);
+  private readonly accountDetail = new AccountDetailPage(this.page);
   readonly settingsButton = this.page.getByTestId("account-settings-button");
   private settingsDeleteButton = this.page.getByTestId("account-settings-delete-button");
   private settingsConfirmButton = this.page.getByTestId("modal-confirm-button");
@@ -43,12 +48,16 @@ export class AccountPage extends AppPage {
   // Case-insensitive: asset names come from the cryptoasset list and don't always match the
   // casing declared in the Currency enum (e.g. "dogwifhat" vs "DOGWIFHAT").
   private accountHeaderNamePattern(...names: string[]) {
-    const escaped = names.map(n => n.trim().replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`));
+    const escaped = names.map(name => escapeRegExp(name.trim()));
     return new RegExp(`^(${escaped.join("|")})$`, "i");
   }
 
   @step("Click `Receive` button")
   async clickReceive() {
+    if (await isAccountDetailEnabled(this.page)) {
+      await this.accountDetail.clickReceive();
+      return;
+    }
     await this.receiveButton.click();
   }
 
@@ -60,12 +69,20 @@ export class AccountPage extends AppPage {
   }
 
   @step("Click on add token button")
-  async clickAddToken() {
+  async clickAddToken(parent: Currency) {
+    if (await isAccountDetailEnabled(this.page)) {
+      await this.accountDetail.clickAddToken(parent);
+      return;
+    }
     await this.addTokenButton.click();
   }
 
   @step("Click `Send` button")
-  async clickSend() {
+  async clickSend(asset?: Currency) {
+    if (await isAccountDetailEnabled(this.page)) {
+      await this.accountDetail.clickSend(asset);
+      return;
+    }
     if (await this.noAssetsTitle.isVisible()) {
       await this.layout.syncAccounts();
       await this.layout.waitForSyncButtonToBeEnabled();
@@ -75,34 +92,60 @@ export class AccountPage extends AppPage {
 
   @step("Verify `Send` button is visible")
   async verifySendButtonVisibility() {
+    if (await isAccountDetailEnabled(this.page)) {
+      await this.accountDetail.expectSendVisible();
+      return;
+    }
     await expect(this.sendButton).toBeVisible();
   }
 
   @step("Verify `Receive` button is visible")
   async verifyReceiveButtonVisibility() {
+    if (await isAccountDetailEnabled(this.page)) {
+      await this.accountDetail.expectReceiveVisible();
+      return;
+    }
     await expect(this.receiveButton).toBeVisible();
   }
 
   @step("Expect account header (name + settings) to be visible")
   async expectAccountHeaderVisible() {
+    if (await isAccountDetailEnabled(this.page)) {
+      await this.accountDetail.expectHeaderVisible();
+      return;
+    }
     await expect(this.accountName).toBeVisible();
     await expect(this.settingsButton).toBeVisible();
   }
 
   @step("Click `Buy` button")
-  async clickBuy() {
+  async clickBuy(asset?: AccountType) {
+    if (await isAccountDetailEnabled(this.page)) {
+      await this.accountDetail.clickBuy(asset);
+      return;
+    }
     await this.buyButton.click();
+  }
+
+  @step("Get the swap surface of the account page")
+  async swapSurface(): Promise<"full" | "embedded"> {
+    return (await isAccountDetailEnabled(this.page)) ? "embedded" : "full";
   }
 
   @step("Open Swap")
   async navigateToSwap() {
+    if (await isAccountDetailEnabled(this.page)) return;
     await this.swapButton.click();
   }
 
   @step("Click Stake button")
-  async startStakingFlowFromMainStakeButton(options?: SyncWaitOptions) {
+  async startStakingFlowFromMainStakeButton({ asset, ...syncOptions }: EarnOptions = {}) {
+    if (await isAccountDetailEnabled(this.page)) {
+      await this.accountDetail.clickEarn({ asset, ...syncOptions });
+      return;
+    }
     // Wait if a sync is in progress to avoid empty stake modal
-    await this.layout.waitForSyncButtonToBeEnabled(options);
+    await this.layout.waitForSyncButtonToBeEnabled(syncOptions);
     await this.stakeButton.click();
   }
 
@@ -112,7 +155,11 @@ export class AccountPage extends AppPage {
   }
 
   @step("Click on last operation and return status")
-  async clickOnLastOperationAndReturnStatus(): Promise<string> {
+  async clickOnLastOperationAndReturnStatus(operationType?: string): Promise<string> {
+    if (await isAccountDetailEnabled(this.page)) {
+      return this.accountDetail.clickLastOperationAndReturnStatus(operationType);
+    }
+
     const status = await this.operationStatus.first().textContent();
     if (!status) {
       throw new Error("Expected operation status to be defined");
@@ -132,6 +179,10 @@ export class AccountPage extends AppPage {
 
   @step("Delete account")
   async deleteAccount() {
+    if (await isAccountDetailEnabled(this.page)) {
+      await this.accountDetail.remove();
+      return;
+    }
     await this.settingsButton.click();
     await this.settingsDeleteButton.click();
     await this.settingsConfirmButton.click();
@@ -139,6 +190,10 @@ export class AccountPage extends AppPage {
 
   @step("Rename account")
   async renameAccount(newAccountName: string) {
+    if (await isAccountDetailEnabled(this.page)) {
+      await this.accountDetail.rename(newAccountName);
+      return;
+    }
     await this.settingsButton.click();
     await this.editName.fill(newAccountName);
     await this.applyButton.click();
@@ -146,17 +201,31 @@ export class AccountPage extends AppPage {
 
   @step("Wait for account $0 to be visible")
   async expectAccountVisibility(firstAccountName: string) {
+    if (await isAccountDetailEnabled(this.page)) {
+      this.accountDetail.forgetToken();
+      await this.accountDetail.expectName(this.accountHeaderNamePattern(firstAccountName));
+      await this.accountDetail.expectSettingsVisible();
+      return;
+    }
     await expect(this.accountName).toHaveValue(this.accountHeaderNamePattern(firstAccountName));
     await expect(this.settingsButton).toBeVisible();
   }
 
   @step("Expect account to be not null")
   async expectAccountBalance() {
+    if (await isAccountDetailEnabled(this.page)) {
+      await this.accountDetail.expectBalance();
+      return;
+    }
     await expect(this.accountBalance).toBeVisible();
   }
 
   @step("Expect `Last operations` to be visible")
   async expectLastOperationsVisibility() {
+    if (await isAccountDetailEnabled(this.page)) {
+      await this.accountDetail.expectTransactions();
+      return;
+    }
     await this.scrollToOperations();
     await expect(this.lastOperation).toBeVisible();
     await expect(this.operationList).not.toBeEmpty();
@@ -172,11 +241,19 @@ export class AccountPage extends AppPage {
 
   @step("Expect token Account to be visible")
   async expectTokenAccount(account: AccountType) {
+    if (await isAccountDetailEnabled(this.page)) {
+      await this.accountDetail.expectToken(account);
+      return;
+    }
     await this.waitForAccountHeaderName(account.currency.name, account.currency.ticker);
   }
 
   @step("Expect `show more` button to show more operations")
   async expectShowMoreButton() {
+    if (await isAccountDetailEnabled(this.page)) {
+      await this.accountDetail.expectFullHistoryLink();
+      return;
+    }
     const operationCount = await this.operationRows.count();
     if (await this.showMoreButton.isVisible()) {
       await this.showMoreButton.click();
@@ -187,6 +264,10 @@ export class AccountPage extends AppPage {
 
   @step("Expect `derivate address index to be $0` to be visible")
   async expectAddressIndex(indexNumber: number) {
+    if (await isAccountDetailEnabled(this.page)) {
+      await this.accountDetail.expectAddressIndex(indexNumber);
+      return;
+    }
     await this.settingsButton.click();
     await this.advancedButton.click();
     const advancedLogsText = await this.accountAdvancedLogs.innerText();
@@ -204,6 +285,10 @@ export class AccountPage extends AppPage {
 
   @step("Expect token to be present")
   async expectTokenToBePresent(tokenAccount: AccountType) {
+    if (await isAccountDetailEnabled(this.page)) {
+      await this.accountDetail.expectToken(tokenAccount);
+      return;
+    }
     const row = this.tokenRow(tokenAccount.currency.ticker);
     await this.revealTokenRow(row);
     await expect(row).toBeVisible();
@@ -211,6 +296,10 @@ export class AccountPage extends AppPage {
 
   @step("Navigate to token in account")
   async navigateToTokenInAccount(tokenAccount: AccountType) {
+    if (await isAccountDetailEnabled(this.page)) {
+      await this.accountDetail.selectToken(tokenAccount);
+      return;
+    }
     const row = this.tokenRow(tokenAccount.currency.ticker);
     await this.revealTokenRow(row);
     await row.click();
@@ -222,11 +311,23 @@ export class AccountPage extends AppPage {
     const pattern = fallbackName
       ? this.accountHeaderNamePattern(headerName, fallbackName)
       : this.accountHeaderNamePattern(headerName);
-    await expect(this.accountName).toHaveValue(pattern);
+    await this.expectHeaderName(pattern);
   }
 
   @step("Verify account with header name $0 is visible")
   async verifyAccountHeaderNameIsVisible(headerName: string) {
-    await expect(this.accountName).toHaveValue(this.accountHeaderNamePattern(headerName));
+    await this.expectHeaderName(this.accountHeaderNamePattern(headerName));
+  }
+
+  private async expectHeaderName(pattern: RegExp) {
+    if (!(await isAccountDetailEnabled(this.page))) {
+      await expect(this.accountName).toHaveValue(pattern);
+      return;
+    }
+    if (this.accountDetail.hasSelectedToken()) {
+      await this.accountDetail.expectParentOfToken();
+      return;
+    }
+    await this.accountDetail.expectName(pattern);
   }
 }

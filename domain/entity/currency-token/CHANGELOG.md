@@ -1,5 +1,19 @@
 # @domain/entity-currency-token
 
+## 0.5.8
+
+### Patch Changes
+
+- Updated dependencies [[`9907890`](https://github.com/LedgerHQ/ledger-live/commit/9907890790bf8b804d7cc454a067508df0969137), [`77a85a3`](https://github.com/LedgerHQ/ledger-live/commit/77a85a30abe7b42e5f5b4e0478bec14fa39033cf)]:
+  - @domain/entity-currency-crypto@0.18.0
+
+## 0.5.8-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`9907890`](https://github.com/LedgerHQ/ledger-live/commit/9907890790bf8b804d7cc454a067508df0969137), [`77a85a3`](https://github.com/LedgerHQ/ledger-live/commit/77a85a30abe7b42e5f5b4e0478bec14fa39033cf)]:
+  - @domain/entity-currency-crypto@0.18.0-next.0
+
 ## 0.5.7
 
 ### Patch Changes
@@ -165,33 +179,5 @@
 ### Minor Changes
 
 - [#20048](https://github.com/LedgerHQ/ledger-live/pull/20048) [`4148019`](https://github.com/LedgerHQ/ledger-live/commit/414801922232b6d9514270e8876e783c11555c2c) Thanks [@ysitbon](https://github.com/ysitbon)! - Re-export CryptoCurrencyId / CryptoCurrencyIdSchema from @domain/entity-currency-crypto and TokenCurrencyId / TokenCurrencyIdSchema from @domain/entity-currency-token
-
-## 0.2.0
-
-### Minor Changes
-
-- [#19137](https://github.com/LedgerHQ/ledger-live/pull/19137) [`714411f`](https://github.com/LedgerHQ/ledger-live/commit/714411fcbf054244444ec97f2e53039417cba54e) Thanks [@ysitbon](https://github.com/ysitbon)! - chore: make new domain/shared/features packages "born migrated" for knip
-
-  Add an explicit, minimal `package.json#exports` surface (no `./*` wildcard) and a `knip.json` workspace entry to every new `@domain/*`, `@shared/*`, and `@features/*` package, plus an `unimported` script that runs knip scoped to the workspace. This lets dead-code / unused-dependency detection actually analyze these packages and detect zombie top-level source files. Also removes the unused `cn` util and its `clsx` / `tailwind-merge` dependencies from `@features/flow-market-banner` (surfaced by knip).
-
-### Patch Changes
-
-- Updated dependencies [[`714411f`](https://github.com/LedgerHQ/ledger-live/commit/714411fcbf054244444ec97f2e53039417cba54e)]:
-  - @domain/entity-currency-unit@0.3.0
-  - @shared/schema-primitives@0.3.0
-
-## 0.2.0-next.0
-
-### Minor Changes
-
-- [#19137](https://github.com/LedgerHQ/ledger-live/pull/19137) [`714411f`](https://github.com/LedgerHQ/ledger-live/commit/714411fcbf054244444ec97f2e53039417cba54e) Thanks [@ysitbon](https://github.com/ysitbon)! - chore: make new domain/shared/features packages "born migrated" for knip
-
-  Add an explicit, minimal `package.json#exports` surface (no `./*` wildcard) and a `knip.json` workspace entry to every new `@domain/*`, `@shared/*`, and `@features/*` package, plus an `unimported` script that runs knip scoped to the workspace. This lets dead-code / unused-dependency detection actually analyze these packages and detect zombie top-level source files. Also removes the unused `cn` util and its `clsx` / `tailwind-merge` dependencies from `@features/flow-market-banner` (surfaced by knip).
-
-### Patch Changes
-
-- Updated dependencies [[`714411f`](https://github.com/LedgerHQ/ledger-live/commit/714411fcbf054244444ec97f2e53039417cba54e)]:
-  - @domain/entity-currency-unit@0.3.0-next.0
-  - @shared/schema-primitives@0.3.0-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

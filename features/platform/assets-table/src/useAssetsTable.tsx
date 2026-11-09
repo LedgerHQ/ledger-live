@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import {
   TableCellContent,

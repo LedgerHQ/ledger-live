@@ -1,5 +1,19 @@
 # @features/platform-content-ab-tests
 
+## 0.2.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @features/platform-feature-flags-firebase@0.1.3
+
+## 0.2.3-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @features/platform-feature-flags-firebase@0.1.3-next.0
+
 ## 0.2.2
 
 ### Patch Changes

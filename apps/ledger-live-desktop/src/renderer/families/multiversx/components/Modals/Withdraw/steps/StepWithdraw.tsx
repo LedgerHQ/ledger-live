@@ -2,7 +2,7 @@ import React, { Fragment, useCallback } from "react";
 import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Trans } from "react-i18next";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";

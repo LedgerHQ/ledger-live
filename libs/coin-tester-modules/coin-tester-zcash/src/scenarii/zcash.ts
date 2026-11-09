@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { createBridges } from "@ledgerhq/coin-zcash";
 import type {

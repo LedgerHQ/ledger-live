@@ -25,7 +25,6 @@ interface MarketBannerViewProps {
   items: MarketItemPerformer[];
   range: PortfolioRange;
   isError: boolean;
-  showFilter: boolean;
   bannerFilter: MarketBannerFilterController;
   moodIndexAvailable: boolean;
   onTilePress: (item: MarketItemPerformer) => void;
@@ -43,7 +42,6 @@ const MarketBannerView = ({
   items,
   range,
   isError,
-  showFilter,
   bannerFilter,
   moodIndexAvailable,
   onTilePress,
@@ -72,15 +70,13 @@ const MarketBannerView = ({
         >
           <SubheaderTitle>{t("marketBanner.title")}</SubheaderTitle>
           <SubheaderShowMore />
-          {showFilter ? (
-            <MarketBannerFilterTrigger
-              label={t(MARKET_BANNER_FILTER_LABEL_KEYS[bannerFilter.filter])}
-              onPress={bannerFilter.onOpen}
-              accessibilityLabel={t("marketBanner.filter.accessibilityLabel")}
-              accessibilityHint={t("marketBanner.filter.accessibilityHint")}
-              testID={MARKET_BANNER_TEST_IDS.filterButton}
-            />
-          ) : null}
+          <MarketBannerFilterTrigger
+            label={t(MARKET_BANNER_FILTER_LABEL_KEYS[bannerFilter.filter])}
+            onPress={bannerFilter.onOpen}
+            accessibilityLabel={t("marketBanner.filter.accessibilityLabel")}
+            accessibilityHint={t("marketBanner.filter.accessibilityHint")}
+            testID={MARKET_BANNER_TEST_IDS.filterButton}
+          />
         </SubheaderRow>
       </Subheader>
 
@@ -105,7 +101,7 @@ const MarketBannerView = ({
         />
       )}
 
-      {showFilter ? <MarketBannerFilterDrawer controller={bannerFilter} /> : null}
+      <MarketBannerFilterDrawer controller={bannerFilter} />
     </Box>
   );
 };

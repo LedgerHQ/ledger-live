@@ -1,5 +1,5 @@
 import type { Currency } from "@domain/entity-currency";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useSelector } from "LLD/hooks/redux";
 import { localeSelector, discreetModeSelector } from "~/renderer/reducers/settings";

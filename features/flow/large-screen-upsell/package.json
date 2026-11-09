@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-large-screen-upsell",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "private": true,
   "description": "Large-screen upsell decision engine, feature-scoped modal state, and portable modal UI",
   "main": "src/index.ts",
@@ -48,6 +48,7 @@
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/lint": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

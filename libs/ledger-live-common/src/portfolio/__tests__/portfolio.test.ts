@@ -13,7 +13,6 @@ import {
   getCurrencyPortfolio,
   getCurrentBalanceCountervalueChange,
   alignFlatDayCountervalueChange,
-  getAssetsDistribution,
   orderAccountsByFiatValue,
 } from "../portfolio";
 import {
@@ -24,7 +23,6 @@ import {
   getDates,
   getPortfolioRangeConfig,
 } from "../ranges";
-import { defaultAssetsDistribution } from "../assetsDistribution";
 import { setEnv } from "@ledgerhq/live-env";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
@@ -400,39 +398,6 @@ describe("Portfolio", () => {
     });
   });
 
-  describe("getAssetsDistribution", () => {
-    it("snapshot", async () => {
-      const account = genAccountBitcoin();
-      const { state, to } = await loadCV(account);
-      const assets = getAssetsDistribution([account], state, to);
-      expect(assets).toMatchSnapshot();
-    });
-
-    it("should include an asset with a countervalue of 0 in the distribution", async () => {
-      const account = genAccountBitcoin();
-      const { state, to } = await loadCV(account);
-
-      const zeroBalance = account.balance.minus(account.balance);
-      const zeroBalanceAccount: Account = {
-        ...account,
-        balance: zeroBalance,
-        spendableBalance: zeroBalance,
-      };
-
-      const assets = getAssetsDistribution([zeroBalanceAccount], state, to, {
-        ...defaultAssetsDistribution,
-        showEmptyAccounts: true,
-      });
-
-      expect(assets.isAvailable).toBe(true);
-      expect(assets.list.length).toBeGreaterThan(0);
-
-      const btcEntry = assets.list.find(a => a.currency.id === "bitcoin");
-      expect(btcEntry).toBeDefined();
-      expect(btcEntry!.countervalue).toBe(0);
-      expect(assets.sum).toBe(0);
-    });
-  });
   describe("range module", () => {
     test("getRanges", () => {
       const ranges = ["all", "year", "month", "week", "day"];

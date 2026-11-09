@@ -1,3 +1,4 @@
+import { DateTimeIsoSchema } from "@shared/schema-primitives";
 import { z } from "zod";
 
 /** Fields this package reads. A response may carry more; those stay on the payload, unchecked. */
@@ -42,7 +43,7 @@ export const AssetChangeSchema = z.object({
 export const UpdateViewSchema = z.object({
   network: z.string(),
   account_id: z.string(),
-  time: z.string(),
+  time: DateTimeIsoSchema,
   block: z.unknown().nullish(),
   tx: z.object({ hash: z.string() }),
   failed: z.boolean(),
@@ -98,7 +99,7 @@ export const BalanceHistoryPointSchema = z.object({
   name: z.string().nullish(),
   ticker: z.string().nullish(),
   decimals: z.number().int().nullish(),
-  time: z.string(),
+  time: DateTimeIsoSchema,
   value: z.string(),
   currency_value: z.number().nullish(),
 });

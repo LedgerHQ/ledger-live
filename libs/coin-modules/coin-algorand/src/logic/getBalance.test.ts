@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import * as network from "../network";
 import { getBalance } from "./getBalance";
 import { mockAlgorandContext } from "../test/context";

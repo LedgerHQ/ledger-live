@@ -170,16 +170,4 @@
 
 - [#18616](https://github.com/LedgerHQ/ledger-live/pull/18616) [`1c1e25d`](https://github.com/LedgerHQ/ledger-live/commit/1c1e25d866e8ad9bf8d29c4bd102ebd5fd02c2b3) Thanks [@may01](https://github.com/may01)! - Route transparent Zcash signing through the DMK signer. `DmkSignerZcash` now implements `createPaymentTransaction`, mapping the Bitcoin signer's `CreateTransaction` onto `@ledgerhq/device-signer-kit-zcash`'s `signTransaction(LegacyCreateTransactionArg)` and returning the broadcast-ready signed-tx hex (the device's `0x` prefix is stripped). The Zcash chain adapter wires this method into its `createSigner` augmentation, so transparent transactions are signed via the Device Management Kit instead of `hw-app-btc`, leaving other UTXO chains and the broadcast path unchanged.
 
-## 0.3.0
-
-### Minor Changes
-
-- [#18627](https://github.com/LedgerHQ/ledger-live/pull/18627) [`7fcf623`](https://github.com/LedgerHQ/ledger-live/commit/7fcf62387e642e10b23503a786e230b11d051cb6) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Bump Device Management Kit to 1.7.1
-
-## 0.3.0-next.0
-
-### Minor Changes
-
-- [#18627](https://github.com/LedgerHQ/ledger-live/pull/18627) [`7fcf623`](https://github.com/LedgerHQ/ledger-live/commit/7fcf62387e642e10b23503a786e230b11d051cb6) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Bump Device Management Kit to 1.7.1
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

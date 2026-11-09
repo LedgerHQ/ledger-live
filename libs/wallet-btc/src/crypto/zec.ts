@@ -41,25 +41,24 @@ class ZCash extends Base {
     if (!this.validateAddress(address)) {
       throw new InvalidAddress();
     }
-    const version = Number("0x" + bs58check.decode(address).slice(0, 2).toString("hex"));
+    const decoded = Buffer.from(bs58check.decode(address));
+    const version = Number("0x" + decoded.slice(0, 2).toString("hex"));
     if (version === this.network.pubKeyHash) {
       //Pay-to-PubkeyHash
-      return Buffer.from(
-        bjs.payments.p2pkh({ hash: bs58check.decode(address).slice(2) }).output ?? [],
-      );
+      return Buffer.from(bjs.payments.p2pkh({ hash: decoded.slice(2) }).output ?? []);
     }
     if (version === this.network.scriptHash) {
       //Pay-to-Script-Hash
-      return Buffer.from(
-        bjs.payments.p2sh({ hash: bs58check.decode(address).slice(2) }).output ?? [],
-      );
+      return Buffer.from(bjs.payments.p2sh({ hash: decoded.slice(2) }).output ?? []);
     }
     throw new InvalidAddress();
   }
 
   validateAddress(address: string): boolean {
     try {
-      const version = Number("0x" + bs58check.decode(address).slice(0, 2).toString("hex"));
+      const version = Number(
+        "0x" + Buffer.from(bs58check.decode(address)).slice(0, 2).toString("hex"),
+      );
       // refer to https://github.com/zcash-hackworks/bitcore-lib-zcash/blob/master/lib%2Faddress.js for the address validation
       if (version === this.network.pubKeyHash || version === this.network.scriptHash) {
         return true;

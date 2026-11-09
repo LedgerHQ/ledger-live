@@ -263,7 +263,7 @@ export async function pollUtxos(
   throw new Error("pollUtxos: condition not met in time");
 }
 
-// Best-effort teardown on exit/interrupt (matches flextesa/anvil/agave) so an aborted run doesn't leak.
+// Best-effort teardown on exit/interrupt (matches flextesa/agave) so an aborted run doesn't leak.
 ["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].forEach(e =>
   process.on(e, () => {
     killYaci().catch(() => {});

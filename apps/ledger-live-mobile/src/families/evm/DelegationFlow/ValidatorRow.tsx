@@ -1,7 +1,7 @@
 import type { StakingValidatorItem } from "@ledgerhq/live-common/families/evm/staking/types";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import React, { useCallback, useMemo } from "react";
 import { Trans } from "~/context/Locale";
 import { StyleSheet, View } from "react-native";

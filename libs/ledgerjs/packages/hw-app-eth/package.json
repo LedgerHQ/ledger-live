@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-eth",
-  "version": "7.12.0",
+  "version": "7.12.1",
   "description": "Ledger Hardware Wallet Ethereum Application API",
   "keywords": [
     "Ledger",
@@ -85,7 +85,6 @@
     "react": "catalog:",
     "rimraf": "4.4.1",
     "source-map-support": "0.5.21",
-    "ts-node": "10.9.2",
     "@typescript/native": "catalog:",
     "typescript": "catalog:",
     "oxlint": "catalog:"

@@ -8,7 +8,7 @@ import {
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/ledger-wallet-framework/serialization";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Transaction, TransactionRaw } from "./types";
 
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => ({

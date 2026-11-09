@@ -1,6 +1,6 @@
 import { accountsABI, electionABI, lockedGoldABI } from "@celo/abis";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { celoGasPrice, getCeloClient } from "./client";
 import { getRegistryAddressFor } from "./registry";
 import type { CeloVote } from "../types/types";

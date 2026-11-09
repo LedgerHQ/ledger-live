@@ -89,9 +89,9 @@ import {
   type FeatureId,
 } from "@shared/feature-flags";
 import {
-  setAllCoinConfigOverrides,
+  setAllLiveConfigOverrides,
   sanitizePersistedOverrides,
-} from "~/renderer/reducers/coinConfigOverrides";
+} from "@shared/live-config-overrides";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { installLiveConfigProvider } from "~/firebase/remoteConfig";
 import { setAnalyticsFeatureFlagMethod } from "~/renderer/analytics/segment";
@@ -299,6 +299,12 @@ async function init() {
   const filterTokenOperationsZeroAmount = filterTokenOperationsZeroAmountSelector(state);
   setEnvOnAllThreads("FILTER_ZERO_AMOUNT_ERC20_EVENTS", filterTokenOperationsZeroAmount);
 
+  const persistedCoinConfigOverrides = await getKey("app", "coinConfigOverrides");
+  const safeOverrides = sanitizePersistedOverrides(persistedCoinConfigOverrides?.overrides);
+  if (safeOverrides) {
+    store.dispatch(setAllLiveConfigOverrides(safeOverrides));
+  }
+
   // hydrate the store with the bridge/cache
   await Promise.allSettled(
     listCachedCurrencyIds().map(id => {
@@ -313,22 +319,6 @@ async function init() {
     // if accountData is falsy, it's a lock case, we need to globally decrypted the app data, we use app.accounts as general safe guard for possible other app.* encrypted fields
     store.dispatch(lock());
   }
-
-  const persistedCoinConfigOverrides = await getKey("app", "coinConfigOverrides");
-  const safeOverrides = sanitizePersistedOverrides(persistedCoinConfigOverrides?.overrides);
-  if (safeOverrides) {
-    LiveConfig.setAllOverrides(safeOverrides);
-    store.dispatch(setAllCoinConfigOverrides(safeOverrides));
-  }
-
-  let lastCoinConfigOverrides = store.getState().coinConfigOverrides.overrides;
-  store.subscribe(() => {
-    const current = store.getState().coinConfigOverrides.overrides;
-    if (current !== lastCoinConfigOverrides) {
-      lastCoinConfigOverrides = current;
-      LiveConfig.setAllOverrides(current);
-    }
-  });
 
   const persistedFeatureFlags = await getKey("app", "featureFlags");
   if (persistedFeatureFlags) {

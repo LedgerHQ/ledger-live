@@ -19,6 +19,7 @@ import {
   saveKnownDevices,
   saveLargeMoverState,
   saveLargeScreenUpsellModalState,
+  saveLiveConfigOverridesState,
   savePredictionsState,
   saveMarketState,
   saveMarketListConfig,
@@ -237,6 +238,8 @@ export const featureFlagsLense = (state: State) => ({
   overrides: state.featureFlags.overrides,
   bannerVisible: state.featureFlags.bannerVisible,
 });
+const liveConfigOverridesNotEquals = (a: State, b: State) =>
+  a.liveConfigOverrides.overrides !== b.liveConfigOverrides.overrides;
 const historyNotEquals = (a: State, b: State) => a.history !== b.history;
 const identitiesNotEquals = (a: State, b: State) => a.identities !== b.identities;
 
@@ -411,6 +414,14 @@ export const ConfigureDBSaveEffects = () => {
     throttle: 400,
     getChangesStats: featureFlagsNotEquals,
     lense: featureFlagsLense,
+  });
+
+  useDBSaveEffect({
+    stateSelector: (state: State) => state.liveConfigOverrides,
+    save: saveLiveConfigOverridesState,
+    throttle: 400,
+    getChangesStats: liveConfigOverridesNotEquals,
+    lense: (state: State) => state.liveConfigOverrides,
   });
 
   return null;

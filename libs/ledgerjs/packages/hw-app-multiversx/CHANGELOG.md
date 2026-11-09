@@ -134,18 +134,4 @@
 - Updated dependencies []:
   - @ledgerhq/hw-transport@6.35.2-hotfix.0
 
-## 6.30.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.35.1
-
-## 6.30.1-next.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.35.1-next.0
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

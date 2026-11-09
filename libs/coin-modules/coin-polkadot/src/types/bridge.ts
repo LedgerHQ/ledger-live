@@ -14,7 +14,7 @@ import type {
   OperationExtra,
   OperationExtraRaw,
 } from "@ledgerhq/types-live";
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 import { PolkadotOperationMode } from "./model";
 
 export type RewardDestinationType = "Staked" | "Stash" | "Account" | "Controller";

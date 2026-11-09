@@ -74,12 +74,16 @@ const transmitCoinModuleCall = createCoinModuleCallTransmitter(readCoinObservabi
  * applied here, before the consent gate in `beforeSend`, so a dropped event never reaches the SDK.
  */
 export function coinModuleCallLogger(event: CoinModuleCallEvent): void {
-  if (!initialized || !transmitCoinModuleCall(event)) return;
+  if (!initialized) return;
+  const sampling = transmitCoinModuleCall(event);
+  if (!sampling) return;
 
+  // The sampling attributes let a dashboard correct for sampling: see `CoinModuleCallSampling`.
+  const coinModule = { ...event, ...sampling };
   if (event.status === "failure") {
-    datadogLogs.logger.error("coin_module_call", { coinModule: event });
+    datadogLogs.logger.error("coin_module_call", { coinModule });
   } else {
-    datadogLogs.logger.info("coin_module_call", { coinModule: event });
+    datadogLogs.logger.info("coin_module_call", { coinModule });
   }
 }
 

@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import type { SponsoredFeeAsset } from "../../../bridge/generic-coin-framework/sponsored";
 import { IDLE_SPONSORED_STATE } from "./fixtures/state";

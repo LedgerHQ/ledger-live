@@ -59,7 +59,7 @@ contract, and `jest.mock` the module in a test that needs the provider or the qu
 
 ## Web environment polyfills
 
-`setup/web.js`, run after the core's web setup (which mocks `window.matchMedia`), polyfills the
+`setup/web.cts`, run after the core's web setup (which mocks `window.matchMedia`), polyfills the
 Encoding API (`TextEncoder` / `TextDecoder`) on the jsdom global.
 jsdom doesn't implement it, unlike every runtime this code ships to (browsers, React Native,
 Node), so a package reading `TextEncoder` at module-eval time — `@ledgerhq/device-contacts-kit`

@@ -1,4 +1,4 @@
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 import type { Observable } from "rxjs";
 import type { PcztTransaction } from "@ledgerhq/live-signer-zcash";
 

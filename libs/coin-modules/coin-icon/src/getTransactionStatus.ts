@@ -7,7 +7,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   AmountRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 
 import { IconAllFundsWarning, IconDoMaxSendInstead } from "./errors";
 import {

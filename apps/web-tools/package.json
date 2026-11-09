@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/web-tools",
-  "version": "0.61.0",
+  "version": "0.62.0",
   "private": true,
   "engines": {
     "node": "24.x"
@@ -92,7 +92,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-dropzone": "^14.3.8",
-    "react-inspector": "^4.0.1",
+    "react-inspector": "^9.0.0",
     "react-redux": "catalog:",
     "react-router-dom": "^6.30.3",
     "react-select": "^5.10.2",
@@ -129,7 +129,6 @@
     "@types/qrcode": "1.5.6",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@types/react-inspector": "4.0.6",
     "@types/semver": "catalog:",
     "@typescript/native": "catalog:",
     "autoprefixer": "10.4.22",

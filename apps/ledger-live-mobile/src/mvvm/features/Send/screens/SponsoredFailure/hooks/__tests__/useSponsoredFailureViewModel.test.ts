@@ -1,5 +1,5 @@
 import { act, renderHook } from "@testing-library/react-native";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { track } from "@shared/analytics";
 import { SPONSORED_FAILURE_KIND } from "@ledgerhq/live-common/flows/send/sponsored/types";
 import { useSponsoredFailureViewModel } from "../useSponsoredFailureViewModel";

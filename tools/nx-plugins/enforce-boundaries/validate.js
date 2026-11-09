@@ -45,7 +45,17 @@ const DEPENDENCY_FIELDS = [
   "optionalDependencies",
 ];
 
-const SKIP_DIRS = new Set(["node_modules", "dist", "lib", "build", ".turbo", ".cache"]);
+const SKIP_DIRS = new Set([
+  "node_modules",
+  "dist",
+  "lib",
+  "lib-es",
+  "build",
+  ".webpack",
+  "coverage",
+  ".turbo",
+  ".cache",
+]);
 const SOURCE_EXTS = new Set([".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs"]);
 
 /** Workspace root of the `@devtools/*` packages the devtools import check reads. */
@@ -95,17 +105,6 @@ function readManifest(workspaceRoot, root) {
   } catch (error) {
     throw new Error(`${manifest}: ${error.message}`, { cause: error });
   }
-}
-
-/**
- * Specifiers of the imports, re-exports, `require()` and `import()` calls of a source file.
- * The TypeScript scanner skips comments and string contents.
- *
- * @param {string} content
- * @returns {string[]}
- */
-function importSpecifiers(content) {
-  return ts.preProcessFile(content, true, true).importedFiles.map(f => f.fileName);
 }
 
 const sourceFiles = {
@@ -173,6 +172,23 @@ function moduleReferences(source) {
   };
   visit(source);
   return references;
+}
+
+/**
+ * Specifiers of the imports, re-exports, `require()` and `import()` calls of a source file, then
+ * of the modules a module file augments with `declare module "…"`.
+ *
+ * @param {string} file
+ * @returns {string[]}
+ */
+function importSpecifiers(file) {
+  const source = sourceFiles.parse(file);
+  const augmented = ts.isExternalModule(source)
+    ? source.statements.flatMap(s =>
+        ts.isModuleDeclaration(s) && ts.isStringLiteral(s.name) ? [s.name.text] : [],
+      )
+    : [];
+  return [...moduleReferences(source).map(r => r.specifier), ...augmented];
 }
 
 /**
@@ -244,9 +260,7 @@ function findSourceImportViolations(workspaceRoot, legacyPackages, exceptions = 
 
   for (const root of roots) {
     walkSourceFiles(root, file => {
-      const content = fs.readFileSync(file, "utf8");
-
-      for (const spec of importSpecifiers(content)) {
+      for (const spec of importSpecifiers(file)) {
         if (spec.startsWith("@ledgerhq/")) {
           const pkg = packageNameOf(spec);
           if (legacyPackages.has(pkg)) {
@@ -341,8 +355,7 @@ function findBannedExternalViolations(graph, workspaceRoot, rules = []) {
       }
 
       walkSourceFiles(path.join(workspaceRoot, root), file => {
-        const content = fs.readFileSync(file, "utf8");
-        for (const spec of importSpecifiers(content)) {
+        for (const spec of importSpecifiers(file)) {
           if (banned.has(packageNameOf(spec))) {
             violations.push({
               file: path.relative(workspaceRoot, file),
@@ -585,10 +598,32 @@ function cachedResolutionHost() {
 }
 
 /**
+ * The file TypeScript loads for a specifier imported from a file of the app, resolved with the
+ * app's compiler options. When it resolves none, the path the specifier names, so a missing file
+ * under `devtools/` or the DevTools folder never passes.
+ *
+ * @param {string} appRoot absolute
+ * @returns {(file: string, specifier: string) => { target: string | undefined, resolved: boolean }}
+ */
+function moduleLoader(appRoot) {
+  const options = readCompilerOptions(appRoot);
+  const aliases = pathAliases(options, appRoot);
+  const host = cachedResolutionHost();
+  const cache = ts.createModuleResolutionCache(appRoot, f => f, options);
+  return (file, specifier) => {
+    const { resolvedModule } = ts.resolveModuleName(specifier, file, options, host, cache);
+    if (resolvedModule) {
+      return { target: path.normalize(resolvedModule.resolvedFileName), resolved: true };
+    }
+    return { target: resolveSpecifier(file, specifier, aliases), resolved: false };
+  };
+}
+
+/**
  * Check the source files of each host app under `DEVTOOLS_HOST_APP_RULE` and
  * `DEVTOOLS_HOST_FOLDER_RULE`. Files under the app's `allowedUnder` folder are not checked. Each
- * specifier is resolved with `ts.resolveModuleName` and the app's compiler options, so the file
- * compared against the entries is the one TypeScript loads.
+ * specifier is resolved by TypeScript with the app's compiler options, so the file compared
+ * against the entries is the one TypeScript loads.
  *
  * @param {string} workspaceRoot
  * @param {DevtoolsHostApp[]} hostApps
@@ -599,7 +634,6 @@ function findDevtoolsHostViolations(workspaceRoot, hostApps) {
   const devtoolsRoot = path.join(realRoot, DEVTOOLS_ROOT);
   /** @type {DevtoolsHostViolation[]} */
   const violations = [];
-  const host = cachedResolutionHost();
   /**
    * @param {string | undefined} p
    * @param {string} dir
@@ -609,27 +643,9 @@ function findDevtoolsHostViolations(workspaceRoot, hostApps) {
 
   for (const app of hostApps) {
     const appRoot = path.join(realRoot, app.root);
-    const options = readCompilerOptions(appRoot);
-    const aliases = pathAliases(options, appRoot);
-    const cache = ts.createModuleResolutionCache(appRoot, f => f, options);
+    const load = moduleLoader(appRoot);
     const folder = path.resolve(appRoot, app.allowedUnder);
     const entryFiles = new Set(app.entries.map(e => path.resolve(appRoot, e)));
-
-    /**
-     * The file TypeScript loads for `specifier`. When it resolves none, the path the specifier
-     * names, so a missing file under `devtools/` or the DevTools folder never passes.
-     *
-     * @param {string} file
-     * @param {string} specifier
-     * @returns {{ target: string | undefined, resolved: boolean }}
-     */
-    const load = (file, specifier) => {
-      const { resolvedModule } = ts.resolveModuleName(specifier, file, options, host, cache);
-      if (resolvedModule) {
-        return { target: path.normalize(resolvedModule.resolvedFileName), resolved: true };
-      }
-      return { target: resolveSpecifier(file, specifier, aliases), resolved: false };
-    };
 
     walkSourceFiles(appRoot, file => {
       if (isUnder(file, folder)) return;
@@ -841,6 +857,7 @@ module.exports = {
   formatDevtoolsImportViolation,
   formatDevtoolsHostViolation,
   sourceFiles,
+  walkSourceFiles,
   SKIP_DIRS,
   SOURCE_EXTS,
   DEVTOOLS_ROOT,

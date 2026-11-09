@@ -99,6 +99,7 @@ on:
         options:
           - defaults
           - wallet40-q1
+          - account-detail
         default: defaults
       feature_flags_json:
         description: "JSON to override feature flags (takes precedence if set)"
@@ -629,7 +630,7 @@ jobs:
       npm_config_loglevel: warn
       pnpm_config_loglevel: warn
       DO_NOT_TRACK: 1
-      # Nx cache writes hit EMFILE on Windows (see build-desktop-reusable.yml).
+      # Nx cache writes hit EMFILE on Windows.
       NX_POWERPACK_CACHE_MODE: ${{ matrix.os == 'windows' && 'read-only' || '' }}
       # The Windows frame and menu bar eat into the default 1024x768 window.
       LEDGER_DEFAULT_WINDOW_WIDTH: ${{ matrix.os == 'windows' && '1280' || '' }}

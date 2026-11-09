@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-stacks",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "private": true,
   "description": "Ledger Stacks Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -64,7 +64,7 @@
     "@ledgerhq/types-live": "workspace:^",
     "@stacks/transactions": "catalog:",
     "bignumber.js": "^9",
-    "chalk": "^4.1.2",
+    "chalk": "catalog:",
     "msw": "catalog:"
   },
   "devDependencies": {

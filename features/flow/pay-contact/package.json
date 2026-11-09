@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-pay-contact",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "private": true,
   "description": "Pay tab contact flow for Ledger Wallet",
   "main": "src/index.ts",
@@ -40,6 +40,7 @@
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@support/jest": "workspace:*",
+    "@support/lint": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

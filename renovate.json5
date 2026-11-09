@@ -105,6 +105,16 @@
       "groupName": "repack"
     },
     {
+      "description": "Rstack linked updates (rslib pins ~rsbuild, rsbuild pins ~rspack: one alone adds an @rspack/binding)",
+      "matchPackageNames": ["@rspack/*", "@rsbuild/*", "@rslib/*", "@rsdoctor/*"],
+      "groupName": "rstack",
+      "separateMajorMinor": false,
+      "separateMinorPatch": false,
+      "minimumReleaseAge": "3 days",
+      "reviewers": ["team:live-hub"],
+      "assignees": ["team:live-hub"]
+    },
+    {
       "description": "Polkadot linked updates",
       "matchPackageNames": ["@polkadot/*"],
       "groupName": "polkadot"

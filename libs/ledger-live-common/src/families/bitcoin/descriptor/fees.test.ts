@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { fees } from "./fees";
 
 const feePerByteInput = fees.custom?.inputs.find(input => input.key === "feePerByte");

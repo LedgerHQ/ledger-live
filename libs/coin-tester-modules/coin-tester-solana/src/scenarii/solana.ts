@@ -582,7 +582,7 @@ export const scenarioSolana: Scenario<GenericTransaction, Account> = {
           unit: { name: "SOL", code: "SOL", magnitude: 9 },
           token2022Enabled: true,
           legacyOCMSMaxVersion: "1.8.0",
-          rpcUrls: { solana: rpc },
+          rpcUrl: rpc,
         },
       },
     });

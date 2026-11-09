@@ -1,5 +1,5 @@
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 
 export const solanaUnit = {
   name: "Solana",

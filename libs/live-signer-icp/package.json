@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-signer-icp",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "private": true,
   "description": "Ledger Hardware Wallet Internet Computer Application API",
   "keywords": [
@@ -55,7 +55,6 @@
     "rimraf": "4.4.1",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
-    "ts-node": "10.9.2",
     "@typescript/native": "catalog:",
     "typescript": "catalog:",
     "oxlint": "catalog:"

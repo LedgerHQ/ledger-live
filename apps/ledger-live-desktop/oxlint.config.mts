@@ -2,6 +2,7 @@ import { defineConfig } from "oxlint";
 import {
   ACCOUNT_DATA_SETUP_FILES,
   ACCOUNT_DATA_SOURCES,
+  BIGNUMBER_NAMED_IMPORT,
   ELECTRON_CLIPBOARD,
   EXPO_CLIPBOARD,
   LIVE_COMMON_CURRENCY_ACCESSORS,
@@ -66,6 +67,7 @@ export default defineConfig({
       {
         paths: [
           LODASH,
+          BIGNUMBER_NAMED_IMPORT,
           EXPO_CLIPBOARD,
           ELECTRON_CLIPBOARD,
           {
@@ -104,10 +106,16 @@ export default defineConfig({
   overrides: [
     {
       files: ["src/main/systemHandlers.ts", "src/main/systemHandlers.test.ts"],
-      rules: { "eslint/no-restricted-imports": "off" },
+      rules: { "eslint/no-restricted-imports": ["error", { paths: [BIGNUMBER_NAMED_IMPORT] }] },
     },
-    { files: ACCOUNT_DATA_SETUP_FILES, rules: { "eslint/no-restricted-imports": "off" } },
-    { files: ["src/renderer/families/**"], rules: { "eslint/no-restricted-imports": "off" } },
+    {
+      files: ACCOUNT_DATA_SETUP_FILES,
+      rules: { "eslint/no-restricted-imports": ["error", { paths: [BIGNUMBER_NAMED_IMPORT] }] },
+    },
+    {
+      files: ["src/renderer/families/**"],
+      rules: { "eslint/no-restricted-imports": ["error", { paths: [BIGNUMBER_NAMED_IMPORT] }] },
+    },
     {
       files: [
         "tests/**/*.ts",

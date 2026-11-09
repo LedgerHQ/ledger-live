@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { descriptor } from "./index";

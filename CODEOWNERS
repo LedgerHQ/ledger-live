@@ -151,6 +151,7 @@ features/platform/assets-table/                          @ledgerhq/wallet-xp
 
 # Wallet — Intents
 features/platform/intent-verify-address/                 @ledgerhq/wallet-xp
+features/platform/intent-wallet-sync/                    @ledgerhq/wallet-xp
 
 # Wallet — App lock
 features/platform/app-lock/                              @ledgerhq/wallet-xp
@@ -197,6 +198,8 @@ apps/ledger-live-mobile/src/components/DelegationDrawer.tsx         @ledgerhq/co
 apps/cli/src/commands/blockchain                                    @ledgerhq/coin-integration
 libs/coin-*/                                                        @ledgerhq/coin-integration
 libs/ledger-wallet-framework/                                       @ledgerhq/coin-integration
+shared/live-config-overrides/                                       @ledgerhq/coin-integration
+devtools/coin-config/                                               @ledgerhq/coin-integration
 libs/ledger-live-common/src/bridge/                                 @ledgerhq/coin-integration
 libs/ledger-live-common/src/coin-modules/                           @ledgerhq/coin-integration
 libs/ledger-live-common/src/families/                               @ledgerhq/coin-integration
@@ -254,6 +257,9 @@ libs/wallet-framework-test-setup/                        @ledgerhq/coin-integrat
 tools/actions/composites/run-coin-tester/                @ledgerhq/coin-integration
 tools/actions/composites/setup-coin-tester-env/          @ledgerhq/coin-integration
 tools/actions/composites/monitor/                        @ledgerhq/coin-integration
+tools/scripts/ci-slack-notify.mjs                        @ledgerhq/coin-integration
+tools/scripts/ci-slack-notify/                           @ledgerhq/coin-integration
+.github/slack-codeowners.json                            @ledgerhq/coin-integration
 
 # Coin modules owned by Coin Integration
 # (libs/coin-*/ above already defaults to @ledgerhq/coin-integration; these make

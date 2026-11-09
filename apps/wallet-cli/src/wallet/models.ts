@@ -4,11 +4,17 @@
 
 import { z } from "zod";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { BigNumberStrSchema, DateTimeIsoSchema } from "@shared/schema-primitives";
+import {
+  BigNumberStrSchema,
+  DateTimeIsoSchema,
+  type BigNumberStr,
+} from "@shared/schema-primitives";
 import type { OperationType } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@domain/entity-currency-token";
+import { UnitSchema, type Unit } from "@domain/entity-currency-unit";
 import { parseV1, toV0 } from "../shared/accountDescriptor";
 import type { AccountDescriptorV1 } from "../shared/accountDescriptor";
+import { walletCliDebug } from "../shared/log";
 
 import { accountDescriptorSchema, type AccountDescriptor } from "@ledgerhq/live-wallet/accounts";
 
@@ -63,12 +69,6 @@ export const OutputFormatSchema = z.enum(["human", "json"]);
 
 export const AccountIdSchema = z.string(); // AccountId: branded type pending
 
-export const BalanceSchema = z.object({
-  assetId: z.string(),
-  balance: BigNumberStrSchema,
-});
-export type Balance = z.infer<typeof BalanceSchema>;
-
 export const OperationTypeSchema = z.string() as z.ZodType<OperationType>; // Typed against the exhaustive live union; runtime bridging ensures validity.
 
 // Flat, fully serializable operation.
@@ -89,13 +89,18 @@ export const TokenInfoSchema = z.object({
   parentCurrencyId: z.string(),
   tokenType: z.string(),
   decimals: z.number().int().nonnegative(),
+  unit: UnitSchema,
   delisted: z.boolean().optional(),
 });
 export type TokenInfo = z.infer<typeof TokenInfoSchema>;
 
+export function tokenUnit(t: TokenCurrency): Unit | undefined {
+  return t.units[0];
+}
+
 export function toTokenInfo(t: TokenCurrency): TokenInfo {
-  const magnitude = t.units[0]?.magnitude;
-  if (magnitude == null) {
+  const unit = tokenUnit(t);
+  if (!unit) {
     throw new Error(`Token ${t.id} has no units; cannot determine decimals`);
   }
   return {
@@ -105,9 +110,29 @@ export function toTokenInfo(t: TokenCurrency): TokenInfo {
     contractAddress: t.contractAddress,
     parentCurrencyId: t.parentCurrencyId,
     tokenType: t.tokenType,
-    decimals: magnitude,
+    decimals: unit.magnitude,
+    unit,
     ...(t.delisted === undefined ? {} : { delisted: t.delisted }),
   };
+}
+
+const BalanceBaseSchema = z.object({
+  assetId: z.string(),
+  balance: BigNumberStrSchema,
+});
+
+export const BalanceSchema = z.discriminatedUnion("kind", [
+  BalanceBaseSchema.extend({ kind: z.literal("native") }),
+  BalanceBaseSchema.extend({ kind: z.literal("token"), token: TokenInfoSchema }),
+]);
+export type Balance = z.infer<typeof BalanceSchema>;
+
+export function toTokenBalance(token: TokenCurrency, balance: BigNumberStr): Balance | undefined {
+  if (!tokenUnit(token)) {
+    walletCliDebug(`balances: skipping ${token.id}, it has no units`);
+    return undefined;
+  }
+  return { kind: "token", assetId: token.id, balance, token: toTokenInfo(token) };
 }
 
 export const OperationSchema = z.object({
@@ -125,6 +150,7 @@ export const OperationSchema = z.object({
   // (e.g. "ethereum/erc20/usd~!underscore!~tether"). Stored explicitly to avoid decoding
   // accountId, which may be a TokenAccount id and cannot be parsed by decodeAccountId.
   assetId: z.string(),
+  unit: UnitSchema.optional(),
   date: DateTimeIsoSchema,
   /** Set on internal operations (e.g. ETH contract calls): the id of the parent operation. */
   parentId: z.string().optional(),

@@ -1,6 +1,6 @@
 import React, { ElementType, ReactNode } from "react";
 import { useSelector } from "LLD/hooks/redux";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Unit } from "@domain/entity-currency-unit";
 import {
   formatCurrencyUnit,

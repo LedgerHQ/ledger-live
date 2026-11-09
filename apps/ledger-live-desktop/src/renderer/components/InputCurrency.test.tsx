@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { render, screen } from "tests/testSetup";
 import InputCurrency from "./InputCurrency";
 

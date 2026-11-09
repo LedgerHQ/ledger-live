@@ -1,6 +1,7 @@
 import { StackActions, type NavigationProp, type ParamListBase } from "@react-navigation/native";
 import type { DeviceOnboardingExitReason } from "@features/platform-device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 import { NavigatorName, ScreenName } from "~/const";
 import type { useDispatch } from "~/context/hooks";
 import { completeSeededOnboarding } from "../hooks/useCompleteSeededOnboarding";
@@ -39,7 +40,7 @@ export const exitActions: Record<DeviceOnboardingExitReason, (deps: ExitDeps) =>
     hasCompletedOnboarding,
   }) => {
     if (!deviceWasSeeded) {
-      resetToLegacyOnboarding(navigation, device);
+      openLegacySetup(navigation, device);
       return;
     }
     if (!isGenuine) {
@@ -72,7 +73,7 @@ export function closeOnboarding(navigation: NavigationProp<ParamListBase>) {
   else resetToPortfolio(navigation);
 }
 
-function resetToPortfolio(navigation: NavigationProp<ParamListBase>) {
+export function resetToPortfolio(navigation: NavigationProp<ParamListBase>) {
   getRootNavigation(navigation).reset({
     index: 0,
     routes: [
@@ -154,28 +155,48 @@ function resetToLegacySeededChecks(navigation: NavigationProp<ParamListBase>, de
   });
 }
 
-function resetToLegacyOnboarding(navigation: NavigationProp<ParamListBase>, device: Device) {
-  getRootNavigation(navigation).reset({
-    index: 0,
-    routes: [
-      {
-        name: NavigatorName.BaseOnboarding,
-        state: {
-          routes: [
-            {
-              name: NavigatorName.Onboarding,
-              state: {
-                routes: [
-                  {
-                    name: ScreenName.OnboardingUseCase,
-                    params: { deviceModelId: device.modelId },
-                  },
-                ],
-              },
-            },
-          ],
+const onboardingHostScreens = new Set<string>([
+  ScreenName.OnboardingPairNew,
+  ScreenName.DeviceOnboardingFunnel,
+]);
+
+function openLegacySetup(navigation: NavigationProp<ParamListBase>, device: Device) {
+  const previousRoutes = navigation
+    .getState()
+    .routes.filter(route => !onboardingHostScreens.has(route.name))
+    .map(({ name, params }) => (params === undefined ? { name } : { name, params }));
+
+  if (isSyncOnboardingSupported(device.modelId)) {
+    navigation.getParent()?.reset({
+      index: 1,
+      routes: [
+        {
+          name: NavigatorName.Onboarding,
+          ...(previousRoutes.length > 0
+            ? { state: { index: previousRoutes.length - 1, routes: previousRoutes } }
+            : {}),
         },
-      },
+        {
+          name: NavigatorName.SyncOnboarding,
+          state: {
+            routes: [
+              {
+                name: ScreenName.SyncOnboardingCompanion,
+                params: { device, backReturnsToPrevious: true },
+              },
+            ],
+          },
+        },
+      ],
+    });
+    return;
+  }
+
+  navigation.reset({
+    index: previousRoutes.length,
+    routes: [
+      ...previousRoutes,
+      { name: ScreenName.OnboardingUseCase, params: { deviceModelId: device.modelId } },
     ],
   });
 }

@@ -1,5 +1,39 @@
 # @features/flow-pay-card-details
 
+## 0.10.0
+
+### Minor Changes
+
+- [#24041](https://github.com/LedgerHQ/ledger-live/pull/24041) [`c8c49b0`](https://github.com/LedgerHQ/ledger-live/commit/c8c49b07639f2f855e8acb5af7d3def3c1a69e13) Thanks [@ysitbon](https://github.com/ysitbon)! - Split the card assets exports by platform: `CardAssets` moves to the `./web` entry, and the native `CardAssetsView` and the asset drawers (`CardAssetDetailsDrawer`, `CardAssetDetailsWithdrawDrawer`, `CardAssetTransactionDetailDrawer`, `CardAssetsManageDrawer`) move to the `./native` entry, each with its props type. The `.` entry keeps the hooks, the selector and the types on both platforms. `CardAssetsManageFooter` is no longer exported.
+
+### Patch Changes
+
+- Updated dependencies [[`c8c49b0`](https://github.com/LedgerHQ/ledger-live/commit/c8c49b07639f2f855e8acb5af7d3def3c1a69e13)]:
+  - @features/flow-pay-card-assets@0.6.0
+  - @domain/api-card-management@0.8.4
+  - @domain/entity-currency@0.4.9
+  - @features/flow-pay-card-auth@0.11.1
+  - @features/flow-pay-card-transactions@0.7.1
+  - @features/flow-pay-card-wallets@0.6.3
+  - @features/flow-pay-card-widget@0.6.2
+
+## 0.10.0-next.0
+
+### Minor Changes
+
+- [#24041](https://github.com/LedgerHQ/ledger-live/pull/24041) [`c8c49b0`](https://github.com/LedgerHQ/ledger-live/commit/c8c49b07639f2f855e8acb5af7d3def3c1a69e13) Thanks [@ysitbon](https://github.com/ysitbon)! - Split the card assets exports by platform: `CardAssets` moves to the `./web` entry, and the native `CardAssetsView` and the asset drawers (`CardAssetDetailsDrawer`, `CardAssetDetailsWithdrawDrawer`, `CardAssetTransactionDetailDrawer`, `CardAssetsManageDrawer`) move to the `./native` entry, each with its props type. The `.` entry keeps the hooks, the selector and the types on both platforms. `CardAssetsManageFooter` is no longer exported.
+
+### Patch Changes
+
+- Updated dependencies [[`c8c49b0`](https://github.com/LedgerHQ/ledger-live/commit/c8c49b07639f2f855e8acb5af7d3def3c1a69e13)]:
+  - @features/flow-pay-card-assets@0.6.0-next.0
+  - @domain/api-card-management@0.8.4-next.0
+  - @domain/entity-currency@0.4.9-next.0
+  - @features/flow-pay-card-auth@0.11.1-next.0
+  - @features/flow-pay-card-transactions@0.7.1-next.0
+  - @features/flow-pay-card-wallets@0.6.3-next.0
+  - @features/flow-pay-card-widget@0.6.2-next.0
+
 ## 0.9.0
 
 ### Minor Changes
@@ -598,10 +632,4 @@
 
 - [#21081](https://github.com/LedgerHQ/ledger-live/pull/21081) [`35c12b6`](https://github.com/LedgerHQ/ledger-live/commit/35c12b61d14889fe2863be4e9bfa0db581b206e9) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add `CardVisual`: the card artwork with a balance overlay (localized caption + `AmountDisplay` amount), cross-platform (web + native). Props-only and i18n-agnostic.
 
-## 0.2.0-next.0
-
-### Minor Changes
-
-- [#21079](https://github.com/LedgerHQ/ledger-live/pull/21079) [`f567f20`](https://github.com/LedgerHQ/ledger-live/commit/f567f20c247b03e6335d90a6ac13dc181722c8cb) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add the `pay-card-details` package with the `CardArtwork` card-face visual (dark gradient, halftone artwork and network logo) for the Pay tab, cross-platform (web + native).
-
-- [#21081](https://github.com/LedgerHQ/ledger-live/pull/21081) [`35c12b6`](https://github.com/LedgerHQ/ledger-live/commit/35c12b61d14889fe2863be4e9bfa0db581b206e9) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add `CardVisual`: the card artwork with a balance overlay (localized caption + `AmountDisplay` amount), cross-platform (web + native). Props-only and i18n-agnostic.
+<!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

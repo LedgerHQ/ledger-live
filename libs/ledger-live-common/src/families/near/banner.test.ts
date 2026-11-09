@@ -2,7 +2,7 @@ import { getAccountBannerState } from "./banner";
 import * as preloadedData from "@ledgerhq/coin-near/preload";
 import * as logic from "@ledgerhq/coin-near/logic";
 
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { NearAccount, NearValidatorItem } from "@ledgerhq/coin-near/types";
 
 const ledgerValidator: NearValidatorItem = {

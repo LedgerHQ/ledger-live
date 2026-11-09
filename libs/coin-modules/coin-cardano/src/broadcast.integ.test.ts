@@ -7,15 +7,14 @@ import {
   types as TyphonTypes,
 } from "@stricahq/typhonjs";
 import { broadcast } from "./broadcast";
-import coinConfig from "./config";
+import coinConfig, { cardanoDefaults } from "./config";
 
 describe("Broadcast", () => {
   beforeAll(() => {
     coinConfig.setCoinConfig(() => ({
-      status: { type: "active" },
+      ...cardanoDefaults.cardano,
       maxFeesWarning: 0,
       maxFeesError: 0,
-      testnet: false,
     }));
   });
   it("throws when broadcasting a transaction spending nonexistent inputs", async () => {

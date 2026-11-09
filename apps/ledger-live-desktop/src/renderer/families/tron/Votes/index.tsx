@@ -21,7 +21,7 @@ import Vote from "~/renderer/icons/Vote";
 import Header from "./Header";
 import Row from "./Row";
 import Footer from "./Footer";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import ToolTip from "~/renderer/components/Tooltip";
 import ClaimRewards from "~/renderer/icons/ClaimReward";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
