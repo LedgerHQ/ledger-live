@@ -2,10 +2,8 @@ import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useCategorizedAssetsFromPortfolio } from "LLD/hooks/useCategorizedAssets";
-import {
-  useAssetsData,
-  useMarketDayChangeByCurrencyId,
-} from "@features/platform-aggregated-assets";
+import { useAssetsData } from "@features/platform-aggregated-assets";
+import { useMarketDayChange } from "LLD/hooks/useMarketDayChange";
 import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import type { AssetsViewModelResult } from "../types";
 import { useAllCurrencyTrends, type AssetTableItem } from "@features/platform-assets-table";
@@ -149,18 +147,8 @@ export function useAssetsViewModel(): AssetsViewModelResult {
   );
   useOnDemandCurrenciesCountervalues(nonPlaceholderCurrencies, counterValueCurrency);
 
-  const heldCurrencyIds = useMemo(
-    () => nonPlaceholderCurrencies.map(currency => currency.id),
-    [nonPlaceholderCurrencies],
-  );
-  const marketDayChange = useMarketDayChangeByCurrencyId({
-    currencyIds: heldCurrencyIds,
-    product: "lld",
-    version: __APP_VERSION__,
-    pollingInterval: ASSETS_PRICE_REFRESH_INTERVAL_MS,
-    skipPollingIfUnfocused: true,
-  });
-  const trends = useAllCurrencyTrends(allItems, "day", marketDayChange);
+  const { byLedgerId: marketDayChange } = useMarketDayChange();
+  const trends = useAllCurrencyTrends(allItems, "day", marketDayChange, "market");
 
   const cryptosWithTrend = useMemo(
     () =>
