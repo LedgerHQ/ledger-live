@@ -58,7 +58,6 @@ export function AnalyticsFilterSelect({
               label={item.label}
               description={item.meta?.networkName}
               icon={item.meta ? renderIcon(item.meta) : <FallbackIcon size={24} />}
-              testID={`${testId}-option-${item.value || "all"}`}
             />
           )}
         />
