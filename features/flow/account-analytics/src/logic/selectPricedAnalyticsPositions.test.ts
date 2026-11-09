@@ -1,14 +1,14 @@
-import BigNumber from "bignumber.js";
-import { selectPricedAnalyticsPositions } from "../selectPricedAnalyticsPositions";
+import { selectPricedAnalyticsPositions } from "./selectPricedAnalyticsPositions";
 import {
   analyticsFiat,
   createAnalyticsAccount,
   createAnalyticsCountervalues,
-} from "../../__fixtures__/analyticsFixtures";
+  mockAmount,
+} from "../analyticsSources.mock";
 
 const eth = createAnalyticsAccount("analytics-priced-eth");
 const btc = createAnalyticsAccount("analytics-priced-btc", "bitcoin");
-const emptyEth = { ...eth, balance: new BigNumber(0), spendableBalance: new BigNumber(0) };
+const emptyEth = { ...eth, balance: mockAmount(0) };
 const btcOnly = createAnalyticsCountervalues([btc]);
 
 describe("selectPricedAnalyticsPositions", () => {
@@ -27,7 +27,7 @@ describe("selectPricedAnalyticsPositions", () => {
   });
 
   it("should flag an unpriced holding next to empty priced positions", () => {
-    const emptyBtc = { ...btc, balance: new BigNumber(0), spendableBalance: new BigNumber(0) };
+    const emptyBtc = { ...btc, balance: mockAmount(0) };
     expect(
       selectPricedAnalyticsPositions([eth, emptyBtc], btcOnly, analyticsFiat)
         .hasOnlyUnpricedHoldings,

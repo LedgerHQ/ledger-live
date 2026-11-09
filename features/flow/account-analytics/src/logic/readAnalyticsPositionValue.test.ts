@@ -1,11 +1,11 @@
-import BigNumber from "bignumber.js";
 import { buildMultiCV } from "@domain/entity-market-countervalues/mock";
-import { readAnalyticsPositionValue } from "../readAnalyticsPositionValue";
+import { readAnalyticsPositionValue } from "./readAnalyticsPositionValue";
 import {
   analyticsFiat,
   createAnalyticsAccount,
   createAnalyticsCountervalues,
-} from "../../__fixtures__/analyticsFixtures";
+  mockAmount,
+} from "../analyticsSources.mock";
 
 const eth = createAnalyticsAccount("analytics-value-eth");
 
@@ -21,7 +21,7 @@ describe("readAnalyticsPositionValue", () => {
   });
 
   it("should value a zero balance at zero without requiring its price", () => {
-    const empty = { ...eth, balance: new BigNumber(0) };
+    const empty = { ...eth, balance: mockAmount(0) };
     expect(readAnalyticsPositionValue(empty, buildMultiCV([]), analyticsFiat)).toBe(0);
   });
 });

@@ -1,5 +1,5 @@
-import { resolveAnalyticsPositions } from "../resolveAnalyticsPositions";
-import { createAnalyticsAccount, createAnalyticsToken } from "../../__fixtures__/analyticsFixtures";
+import { resolveAnalyticsPositions } from "./resolveAnalyticsPositions";
+import { createAnalyticsAccount, createAnalyticsToken } from "../analyticsSources.mock";
 
 const eth = createAnalyticsAccount("analytics-resolve-eth");
 const token = createAnalyticsToken(eth);

@@ -1,30 +1,28 @@
+import type { CounterValuesCacheView } from "@domain/entity-market-countervalues";
+import type { Currency } from "@domain/entity-currency";
 import type {
   AnalyticsBalanceData,
+  AnalyticsPositionSource,
   AnalyticsQueryContext,
   AnalyticsReadResult,
-} from "@features/flow-account-analytics";
-import type { CounterValuesState } from "@domain/entity-market-countervalues";
-import type { Currency } from "@domain/entity-currency";
-import type { AccountLike } from "@ledgerhq/types-live";
-import { getPortfolio } from "@ledgerhq/live-common/portfolio/portfolio";
-import {
-  lineChartRangeToPortfolioRange,
-  resolveAnalyticsValueChange,
-} from "@ledgerhq/wallet-analytics";
+  ReadAnalyticsPortfolio,
+} from "../types";
+import { toAnalyticsPortfolioRange } from "./analyticsPeriod";
 import { resolveAnalyticsPositions } from "./resolveAnalyticsPositions";
 import { selectPricedAnalyticsPositions } from "./selectPricedAnalyticsPositions";
 
-export function readAnalyticsBalance(
+export function readAnalyticsBalance<Position extends AnalyticsPositionSource>(
   context: AnalyticsQueryContext,
-  positions: readonly AccountLike[],
-  countervalues: CounterValuesState,
+  positions: readonly Position[],
+  countervalues: CounterValuesCacheView,
   fiatCurrency: Currency,
+  readPortfolio: ReadAnalyticsPortfolio<Position>,
 ): AnalyticsReadResult<AnalyticsBalanceData> {
   if (context.metric !== "balance" || context.fiatCurrencyId !== fiatCurrency.ticker)
     return { status: "unavailable" };
-  const range = lineChartRangeToPortfolioRange(context.period);
+  const range = toAnalyticsPortfolioRange(context.period);
   const selected = resolveAnalyticsPositions(context.positionIds, positions);
-  if (!range || !selected) return { status: "unavailable" };
+  if (!selected) return { status: "unavailable" };
 
   const { priced, hasOnlyUnpricedHoldings } = selectPricedAnalyticsPositions(
     selected,
@@ -33,9 +31,7 @@ export function readAnalyticsBalance(
   );
   if (hasOnlyUnpricedHoldings) return { status: "unavailable" };
 
-  const portfolio = getPortfolio(priced, range, countervalues, fiatCurrency, {
-    flattenSourceAccounts: false,
-  });
+  const portfolio = readPortfolio(priced, range);
   const withHistory = new Set(portfolio.availableAccounts.map(account => account.id));
   const hasHoldingWithoutHistory = priced.some(
     position => !position.balance.isZero() && !withHistory.has(position.id),
@@ -43,14 +39,7 @@ export function readAnalyticsBalance(
   if (hasHoldingWithoutHistory) return { status: "unavailable" };
 
   const amount = portfolio.balanceHistory.at(-1)?.value ?? 0;
-  const variation = resolveAnalyticsValueChange({
-    selectedTimeRange: range,
-    accounts: priced,
-    currentBalance: amount,
-    portfolio,
-    cvState: countervalues,
-    counterValue: fiatCurrency,
-  });
+  const variation = portfolio.readVariation(amount);
   return {
     status: "ready",
     data: {

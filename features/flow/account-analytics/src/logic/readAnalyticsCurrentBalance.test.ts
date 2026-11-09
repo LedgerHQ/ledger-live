@@ -1,10 +1,10 @@
-import { readAnalyticsCurrentBalance } from "../readAnalyticsCurrentBalance";
+import { readAnalyticsCurrentBalance } from "./readAnalyticsCurrentBalance";
 import {
   analyticsFiat,
   createAnalyticsAccount,
   createAnalyticsCountervalues,
   createAnalyticsToken,
-} from "../../__fixtures__/analyticsFixtures";
+} from "../analyticsSources.mock";
 
 const eth = createAnalyticsAccount("analytics-current-eth");
 const token = createAnalyticsToken(eth);

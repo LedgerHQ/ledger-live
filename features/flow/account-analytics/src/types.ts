@@ -1,6 +1,7 @@
 import type { AssetsData } from "@domain/api-aggregated-assets";
-import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type { CryptoOrTokenCurrency, Currency } from "@domain/entity-currency";
 import type { FiatCurrencyTicker } from "@domain/entity-currency-fiat";
+import type { CounterValuesCacheView } from "@domain/entity-market-countervalues";
 
 export type AnalyticsMetric = "balance" | "realised-return" | "unrealised-return" | "total-return";
 
@@ -131,8 +132,46 @@ export type AnalyticsPositionOf<Account extends AnalyticsAccountSource> =
   | Account
   | NonNullable<Account["subAccounts"]>[number];
 
+export type AnalyticsPortfolioRange = "day" | "week" | "month" | "year" | "all";
+
+export type AnalyticsCountervalueInput = Readonly<{
+  countervalues: CounterValuesCacheView;
+  fiat: Currency;
+}>;
+
+export type AnalyticsPortfolioSnapshot = Readonly<{
+  balanceHistory: readonly Readonly<{ date: Date; value: number }>[];
+  availableAccounts: readonly Readonly<{ id: string }>[];
+  readVariation: (
+    currentBalance: number,
+  ) => Readonly<{ value: number; percentage?: number | null }>;
+}>;
+
+export type ReadAnalyticsPortfolio<Position extends AnalyticsPositionSource> = (
+  positions: readonly Position[],
+  range: AnalyticsPortfolioRange,
+) => AnalyticsPortfolioSnapshot;
+
 export type AnalyticsAssetsQuery = Readonly<{
   data: AssetsData | undefined;
   isSuccess: boolean;
   isError: boolean;
+}>;
+
+export type AnalyticsVariationStatus = "loading" | "ready" | "unavailable";
+
+export type AnalyticsBalanceSummary = Readonly<{
+  current: AnalyticsReadResult<number>;
+  data: AnalyticsBalanceData | undefined;
+  isCurrentAvailable: boolean;
+  isCatalogLoading: boolean;
+  isChartLoading: boolean;
+  variationStatus: AnalyticsVariationStatus;
+  showHeaderStatus: boolean;
+  showPlotStatus: boolean;
+}>;
+
+export type AnalyticsPnlPositions<Position> = Readonly<{
+  positions: Position[] | undefined;
+  status: "loading" | "error" | "ready" | "unavailable";
 }>;

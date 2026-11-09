@@ -1,4 +1,7 @@
-import { readAnalyticsBalance } from "../readAnalyticsBalance";
+import { readAnalyticsBalance as readBalance } from "@features/flow-account-analytics";
+import type { CounterValuesState } from "@domain/entity-market-countervalues";
+import type { AccountLike } from "@ledgerhq/types-live";
+import { createReadAnalyticsPortfolio } from "../readAnalyticsPortfolio";
 import {
   analyticsFiat,
   createAnalyticsAccount,
@@ -9,7 +12,7 @@ import {
 const eth = createAnalyticsAccount("analytics-balance-eth");
 const token = createAnalyticsToken(eth);
 const btc = createAnalyticsAccount("analytics-balance-btc", "bitcoin");
-const positions = [eth, token, btc];
+const positions: AccountLike[] = [eth, token, btc];
 const countervalues = createAnalyticsCountervalues(positions);
 const context = {
   assetId: "ethereum",
@@ -20,7 +23,16 @@ const context = {
   metric: "balance" as const,
 };
 
-describe("readAnalyticsBalance", () => {
+function readAnalyticsBalance(
+  scope: Parameters<typeof readBalance>[0],
+  list: readonly AccountLike[],
+  rates: CounterValuesState,
+  fiat: typeof analyticsFiat,
+) {
+  return readBalance(scope, list, rates, fiat, createReadAnalyticsPortfolio(rates, fiat));
+}
+
+describe("readAnalyticsBalance with the desktop portfolio read", () => {
   it.each(["1d", "1m", "all"] as const)("should build a native balance series for %s", period => {
     const result = readAnalyticsBalance(
       { ...context, period },
