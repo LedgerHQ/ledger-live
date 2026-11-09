@@ -1,15 +1,16 @@
 import type { Holding, ListHoldingsOptions, Page } from "@ledgerhq/coin-module-framework/api/types";
 import type { BitcoinContext } from "../config";
-import { fetchUtxoPage } from "../network/explorer";
+import { fetchPendingUtxos, fetchUtxoPage } from "../network/explorer";
 import type { ExplorerUtxo } from "../network/types";
 import { explorerAddress } from "./cashaddr";
-import { fetchMempoolView, outpoint } from "./getSpendableUtxos";
+import { fetchMempoolView, mempoolSpent, outpoint } from "./getSpendableUtxos";
 
-const toHolding = (utxo: ExplorerUtxo): Holding => ({
+// `height` is absent when the explorer does not say (unknown), null only for unconfirmed change.
+const toHolding = (utxo: ExplorerUtxo, height: number | null | undefined): Holding => ({
   id: outpoint(utxo.hash, utxo.outputIndex),
   asset: { type: "native" },
   value: BigInt(utxo.value),
-  height: utxo.height ?? null,
+  ...(height === undefined ? {} : { height }),
 });
 
 /**
@@ -19,8 +20,9 @@ const toHolding = (utxo: ExplorerUtxo): Holding => ({
  * with a `null` height.
  *
  * A page is one explorer page (`next` is the explorer's cursor), so it can be empty while more
- * follow. The mempool view is read afresh on every call: the listing is a snapshot, not a
- * consistent cut across pages.
+ * follow. The mempool view is read afresh on every call, so pages are snapshots, not a consistent
+ * cut: the same id can appear on two pages when own unconfirmed change confirms between calls, so
+ * callers de-duplicate by id. Later pages only need the mempool-spent outpoints, not the change.
  */
 export async function listHoldings(
   context: BitcoinContext,
@@ -34,17 +36,33 @@ export async function listHoldings(
   const config = await context.config(currencyId);
   const queried = explorerAddress(config, address);
   const cursor = options?.cursor;
-  const [page, { spent, ownChange }] = await Promise.all([
-    fetchUtxoPage(config, queried, cursor),
-    fetchMempoolView(config, queried),
-  ]);
+  let page;
+  let spent: Set<string>;
+  let ownChange: ExplorerUtxo[] = [];
+  if (cursor) {
+    let pending;
+    [page, pending] = await Promise.all([
+      fetchUtxoPage(config, queried, cursor),
+      fetchPendingUtxos(config, queried),
+    ]);
+    spent = mempoolSpent(pending);
+  } else {
+    let view;
+    [page, view] = await Promise.all([
+      fetchUtxoPage(config, queried),
+      fetchMempoolView(config, queried),
+    ]);
+    ({ spent, ownChange } = view);
+  }
 
   // The explorer can list an own transaction's output more than once.
   const holdings = new Map<string, Holding>();
-  for (const utxo of cursor ? page.utxos : [...page.utxos, ...ownChange]) {
-    const holding = toHolding(utxo);
+  const add = (utxo: ExplorerUtxo, height: number | null | undefined) => {
+    const holding = toHolding(utxo, height);
     if (!spent.has(holding.id) && !holdings.has(holding.id)) holdings.set(holding.id, holding);
-  }
+  };
+  for (const utxo of page.utxos) add(utxo, utxo.height ?? undefined);
+  for (const utxo of ownChange) add(utxo, null);
   const items = Array.from(holdings.values());
 
   // A cursor handed back unchanged would page forever: the explorer is misbehaving.

@@ -1,6 +1,6 @@
 import type { BitcoinCoinConfig } from "../config";
 import { fetchPendingUtxos, fetchTx, fetchUtxos } from "../network/explorer";
-import type { ExplorerTx, ExplorerUtxo } from "../network/types";
+import type { ExplorerPendingUtxos, ExplorerTx, ExplorerUtxo } from "../network/types";
 import { txidOf } from "../network/types";
 import { explorerAddress } from "./cashaddr";
 
@@ -19,6 +19,10 @@ async function fetchTxs(config: BitcoinCoinConfig, txids: string[]): Promise<Exp
   return txs;
 }
 
+/** The outpoints an unconfirmed transaction spends. */
+export const mempoolSpent = (pending: ExplorerPendingUtxos): Set<string> =>
+  new Set(pending.spent.map(utxo => outpoint(utxo.hash, utxo.outputIndex)));
+
 /**
  * What the mempool says about an address: the outpoints an unconfirmed transaction spends, and the
  * unconfirmed outputs that are the address's own change (see {@link getSpendableUtxos} for why that
@@ -29,7 +33,7 @@ export async function fetchMempoolView(
   queriedAddress: string,
 ): Promise<{ spent: Set<string>; ownChange: ExplorerUtxo[] }> {
   const pending = await fetchPendingUtxos(config, queriedAddress);
-  const spent = new Set(pending.spent.map(utxo => outpoint(utxo.hash, utxo.outputIndex)));
+  const spent = mempoolSpent(pending);
 
   const pendingTxids = [...new Set(pending.created.map(utxo => utxo.hash))];
   const pendingTxs = spent.size === 0 ? [] : await fetchTxs(config, pendingTxids);
