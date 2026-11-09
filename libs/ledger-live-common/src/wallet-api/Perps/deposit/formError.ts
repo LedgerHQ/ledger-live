@@ -278,9 +278,6 @@ const feesRule: DepositFormRule = ({
   );
 };
 
-const missingConversionRule: DepositFormRule = ({ maxAmount, hasConversion }) =>
-  maxAmount === null || !hasConversion ? NO_QUOTES_ERROR : null;
-
 const minimumBalanceRule: DepositFormRule = context =>
   context.quoteResult
     ? getMinimumBalanceError(
@@ -296,6 +293,7 @@ const amountLimitsRule: DepositFormRule = ({ quoteResult, depositAccount, locale
   quoteResult ? getAmountLimitError(quoteResult, depositAccount, locale) : null;
 
 const noQuotesRule: DepositFormRule = context => {
+  if (context.maxAmount === null || !context.hasConversion) return NO_QUOTES_ERROR;
   if (!context.quoteResult) return null;
   const quote = getUsableQuote(context);
   return quote && !needsFeeForMinimumBalance(context.depositAccount, quote)
@@ -308,7 +306,6 @@ const DEPOSIT_FORM_RULES: readonly DepositFormRule[] = [
   accountStateRule,
   insufficientBalanceRule,
   feesRule,
-  missingConversionRule,
   minimumBalanceRule,
   amountLimitsRule,
   noQuotesRule,
