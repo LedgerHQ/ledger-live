@@ -1,4 +1,4 @@
-import type { CardanoCoinConfig } from "../config";
+import { cardanoDefaults, type CardanoCoinConfig } from "../config";
 
 export const cardanoCoinConfig: CardanoCoinConfig = {
   status: { type: "active" },
@@ -7,10 +7,14 @@ export const cardanoCoinConfig: CardanoCoinConfig = {
   maxFeesWarning: 0,
   maxFeesError: 0,
   testnet: false,
+  api: cardanoDefaults.cardano.api,
+  epochParams: cardanoDefaults.cardano.epochParams,
 };
 
 export const cardanoTestnetCoinConfig: CardanoCoinConfig = {
   ...cardanoCoinConfig,
   name: "Cardano Testnet",
   testnet: true,
+  api: cardanoDefaults.cardano_testnet.api,
+  epochParams: cardanoDefaults.cardano_testnet.epochParams,
 };

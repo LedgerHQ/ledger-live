@@ -16939,9 +16939,6 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
-      '@shared/env':
-        specifier: workspace:*
-        version: link:../../../shared/env
       '@stricahq/bip32ed25519':
         specifier: ^1.0.4
         version: 1.0.4
