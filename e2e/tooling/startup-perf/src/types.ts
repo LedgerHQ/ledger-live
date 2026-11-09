@@ -36,9 +36,13 @@ export interface Sample extends SampleMeta {
   pid?: number | null;
   /** `am start -W` TotalTime, Android only. */
   amStartMs?: number | null;
-  /** The "App startup time" shown on the Debug screen. */
+  /** The "App startup time" of the Debug screen, read from the device log or from the screen. */
   appStartupTime?: number;
   events?: Record<string, StartupEvent>;
+  /** Where appStartupTime and events come from: the device log line, or the Debug screen. */
+  readFrom?: "log" | "screen";
+  /** What the Debug screen showed, when it was read as well as the log: the two must match. */
+  screenAppStartupTime?: number;
   readMs?: number;
   maestroCalls?: MaestroCall[];
 }
