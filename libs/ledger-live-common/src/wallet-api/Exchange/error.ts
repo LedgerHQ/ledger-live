@@ -44,6 +44,36 @@ export function createAccounIdNotFound(accountId: string): ExchangeErrorData {
   };
 }
 
+export function createWrongTronifyParams(params: unknown): ExchangeErrorData {
+  return {
+    code: "WRONG_TRONIFY_PARAMS",
+    message: "tronify params are not correctly set",
+    data: { params },
+  };
+}
+
+export function createTronifyUnsupportedAccount(accountId: string): ExchangeErrorData {
+  return {
+    code: "TRONIFY_UNSUPPORTED_ACCOUNT",
+    message: "tronify energy rental needs a TRON TRC-20 token account",
+    data: { accountId },
+  };
+}
+
+export function createTronifyDisabled(): ExchangeErrorData {
+  return {
+    code: "TRONIFY_DISABLED",
+    message: "tronify energy rental is disabled",
+  };
+}
+
+export function createTronifyUnavailable(): ExchangeErrorData {
+  return {
+    code: "TRONIFY_UNAVAILABLE",
+    message: "tronify energy rental is not available on this wallet",
+  };
+}
+
 export class ExchangeError implements Error {
   readonly name = "ExchangeError";
   get message() {

@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { of, throwError } from "rxjs";
 import { createExchange } from "@ledgerhq/hw-app-exchange";
 import { ErrorStatus } from "@ledgerhq/hw-app-exchange/ReturnCode";
 import type Transport from "@ledgerhq/hw-transport";
@@ -92,6 +93,9 @@ function createExchangeApp(overrides: Record<string, jest.Mock> = {}) {
     ...overrides,
   };
 }
+
+/** A bridge `sync` that emits one update replacing the account with `account`. */
+const syncTo = (account: Account) => jest.fn(() => of(() => account));
 
 function run(callbacks: Partial<Parameters<typeof confirmSwapExchange>[1]> = {}) {
   return confirmSwapExchange(input, {
@@ -208,6 +212,127 @@ describe("confirmSwapExchange", () => {
     await run({ isCancelled: () => cancelled });
 
     expect(exchangeApp.validatePayoutOrAsset).not.toHaveBeenCalled();
+  });
+
+  describe("TRON fee shortfall", () => {
+    const tron = getCryptoCurrencyById("tron");
+    const staleTronAccount = {
+      ...fromAccount,
+      id: "tron-from",
+      currency: tron,
+      balance: new BigNumber(0),
+      spendableBalance: new BigNumber(0),
+    } as unknown as Account;
+    const syncedTronAccount = {
+      ...staleTronAccount,
+      balance: new BigNumber(800_000),
+      spendableBalance: new BigNumber(800_000),
+      pendingOperations: [{ id: "unconfirmed" }],
+    } as unknown as Account;
+    const tronTransaction = { family: "tron", amount: new BigNumber(1) } as Transaction;
+    const preparedOnStale = { ...tronTransaction, preparedOn: "stale" } as unknown as Transaction;
+    const preparedOnSynced = { ...tronTransaction, preparedOn: "synced" } as unknown as Transaction;
+    const tronInput = {
+      ...input,
+      exchange: { ...input.exchange, fromAccount: staleTronAccount, fromCurrency: tron },
+      transaction: tronTransaction,
+    } as unknown as ConfirmSwapExchangeInput;
+    const notEnoughGas = {
+      errors: { gasLimit: new Error("NotEnoughGas") },
+      estimatedFees: new BigNumber(350_000),
+    };
+    const noError = { errors: {}, estimatedFees: new BigNumber(350_000) };
+
+    function mockBridge(statuses: object[], sync: jest.Mock) {
+      const bridge = {
+        prepareTransaction: jest
+          .fn()
+          .mockImplementation(async (account: Account) =>
+            account === syncedTronAccount ? preparedOnSynced : preparedOnStale,
+          ),
+        getTransactionStatus: jest.fn(),
+        getSerializedAddressParameters: jest.fn(() => Buffer.from("03", "hex")),
+        sync,
+      };
+      for (const status of statuses) bridge.getTransactionStatus.mockResolvedValueOnce(status);
+      jest
+        .mocked(getAccountBridge)
+        .mockResolvedValue(bridge as unknown as Awaited<ReturnType<typeof getAccountBridge>>);
+      return bridge;
+    }
+
+    function runTron() {
+      return confirmSwapExchange(tronInput, {
+        transport,
+        isCancelled: () => false,
+        onConfirmationRequested: jest.fn(),
+      });
+    }
+
+    it("validates again on a synced account, and signs what was prepared on it", async () => {
+      const exchangeApp = createExchangeApp();
+      jest.mocked(createExchange).mockReturnValue(exchangeApp as never);
+      const sync = syncTo(syncedTronAccount);
+      const bridge = mockBridge([notEnoughGas, noError], sync);
+
+      await expect(runTron()).resolves.toBe(preparedOnSynced);
+
+      expect(sync).toHaveBeenCalledWith(staleTronAccount, { paginationConfig: {} });
+      expect(bridge.getTransactionStatus).toHaveBeenNthCalledWith(
+        2,
+        syncedTronAccount,
+        preparedOnSynced,
+      );
+      expect(exchangeApp.signCoinTransaction).toHaveBeenCalledTimes(1);
+    });
+
+    it("still aborts when the synced balance is short too", async () => {
+      const exchangeApp = createExchangeApp();
+      jest.mocked(createExchange).mockReturnValue(exchangeApp as never);
+      const bridge = mockBridge([notEnoughGas, notEnoughGas], syncTo(syncedTronAccount));
+
+      await expect(runTron()).rejects.toThrow("NotEnoughGas");
+
+      expect(bridge.getTransactionStatus).toHaveBeenCalledTimes(2);
+      expect(exchangeApp.setPartnerKey).not.toHaveBeenCalled();
+    });
+
+    it("keeps the original shortfall when the sync fails", async () => {
+      const exchangeApp = createExchangeApp();
+      jest.mocked(createExchange).mockReturnValue(exchangeApp as never);
+      const bridge = mockBridge(
+        [notEnoughGas],
+        jest.fn(() => throwError(() => new Error("network down"))),
+      );
+
+      await expect(runTron()).rejects.toThrow("NotEnoughGas");
+
+      expect(bridge.getTransactionStatus).toHaveBeenCalledTimes(1);
+      expect(exchangeApp.setPartnerKey).not.toHaveBeenCalled();
+    });
+
+    it("does not sync for an error other than a fee shortfall", async () => {
+      jest.mocked(createExchange).mockReturnValue(createExchangeApp() as never);
+      const sync = syncTo(syncedTronAccount);
+      mockBridge(
+        [{ errors: { amount: new Error("NotEnoughBalance") }, estimatedFees: new BigNumber(0) }],
+        sync,
+      );
+
+      await expect(runTron()).rejects.toThrow("NotEnoughBalance");
+
+      expect(sync).not.toHaveBeenCalled();
+    });
+
+    it("does not sync for a fee shortfall on another family", async () => {
+      jest.mocked(createExchange).mockReturnValue(createExchangeApp() as never);
+      const sync = syncTo(fromAccount);
+      mockBridge([notEnoughGas], sync);
+
+      await expect(run()).rejects.toThrow("NotEnoughGas");
+
+      expect(sync).not.toHaveBeenCalled();
+    });
   });
 
   it("reports a rejection of the review as a userRefused error of the refund check", async () => {
