@@ -1,3 +1,5 @@
+import type { AssetsData } from "@domain/api-aggregated-assets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { FiatCurrencyTicker } from "@domain/entity-currency-fiat";
 
 export type AnalyticsMetric = "balance" | "realised-return" | "unrealised-return" | "total-return";
@@ -100,4 +102,37 @@ export type AccountAnalyticsViewModel = Readonly<{
   selectAccount: (accountId: string | null) => void;
   selectMetric: (metric: AnalyticsMetric) => void;
   retry: () => void;
+}>;
+
+export type AnalyticsAmount = Readonly<{ isZero: () => boolean; toNumber: () => number }>;
+
+export type AnalyticsTokenAccountSource<Operation = unknown> = Readonly<{
+  type: "TokenAccount";
+  id: string;
+  parentId: string;
+  token: CryptoOrTokenCurrency;
+  balance: AnalyticsAmount;
+  operations: readonly Operation[];
+}>;
+
+export type AnalyticsAccountSource<Operation = unknown> = Readonly<{
+  type: "Account";
+  id: string;
+  currency: CryptoOrTokenCurrency;
+  freshAddress: string;
+  balance: AnalyticsAmount;
+  operations: readonly Operation[];
+  subAccounts?: readonly AnalyticsTokenAccountSource<Operation>[];
+}>;
+
+export type AnalyticsPositionSource = AnalyticsAccountSource | AnalyticsTokenAccountSource;
+
+export type AnalyticsPositionOf<Account extends AnalyticsAccountSource> =
+  | Account
+  | NonNullable<Account["subAccounts"]>[number];
+
+export type AnalyticsAssetsQuery = Readonly<{
+  data: AssetsData | undefined;
+  isSuccess: boolean;
+  isError: boolean;
 }>;

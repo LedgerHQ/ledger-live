@@ -1,14 +1,19 @@
-import BigNumber from "bignumber.js";
 import type { AssetsData } from "@domain/api-aggregated-assets";
 import { mockArbitrumTokenAssetsData } from "@domain/api-aggregated-assets/mock";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import assetResponse from "tests/handlers/fixtures/assets/getAssets.json";
-import { buildAnalyticsCatalog, selectEligibleAnalyticsPositions } from "../buildAnalyticsCatalog";
-import { createAnalyticsAccount, createAnalyticsToken } from "../../__fixtures__/analyticsFixtures";
+import { buildAnalyticsCatalog, selectEligibleAnalyticsPositions } from "./buildAnalyticsCatalog";
+import {
+  createAnalyticsAccount,
+  createAnalyticsToken,
+  mockAmount,
+  pendingOperation,
+  type MockOperation,
+} from "../analyticsSources.mock";
 
 const eth = createAnalyticsAccount("analytics-catalog-eth");
 const token = createAnalyticsToken(eth);
 const parent = { ...eth, subAccounts: [token] };
+const isConfirmed = (operation: MockOperation) => operation.isConfirmed;
 
 function createAssetsData(
   cryptoAssets: AssetsData["cryptoAssets"],
@@ -28,14 +33,14 @@ function createAssetsData(
 
 describe("selectEligibleAnalyticsPositions", () => {
   it("should list native ETH without its tokens, then each token as its own position", () => {
-    const positions = selectEligibleAnalyticsPositions([parent], [], { ethereum: 2 });
+    const positions = selectEligibleAnalyticsPositions([parent], [], isConfirmed);
     expect(positions.map(p => p.id)).toEqual([eth.id, token.id]);
     expect(positions[0]).toMatchObject({ id: eth.id, subAccounts: undefined });
   });
 
   it("should include zero native ETH when confirmed token history makes its account eligible", () => {
-    const zero = { ...parent, balance: new BigNumber(0), operations: [] };
-    expect(selectEligibleAnalyticsPositions([zero], [], { ethereum: 2 }).map(p => p.id)).toEqual([
+    const zero = { ...parent, balance: mockAmount(0), operations: [] };
+    expect(selectEligibleAnalyticsPositions([zero], [], isConfirmed).map(p => p.id)).toEqual([
       eth.id,
       token.id,
     ]);
@@ -44,21 +49,42 @@ describe("selectEligibleAnalyticsPositions", () => {
   it("should exclude pending-only zero positions and blacklisted assets", () => {
     const pending = {
       ...eth,
-      balance: new BigNumber(0),
-      operations: [],
-      pendingOperations: eth.operations,
+      balance: mockAmount(0),
+      operations: [pendingOperation],
     };
-    expect(selectEligibleAnalyticsPositions([pending], [], { ethereum: 2 })).toEqual([]);
+    expect(selectEligibleAnalyticsPositions([pending], [], isConfirmed)).toEqual([]);
     expect(
-      selectEligibleAnalyticsPositions([parent], [token.token.id], { ethereum: 2 }).map(p => p.id),
+      selectEligibleAnalyticsPositions([parent], [token.token.id], isConfirmed).map(p => p.id),
     ).toEqual([eth.id]);
+  });
+
+  it("should exclude a zero token without confirmed history", () => {
+    const emptyToken = { ...token, balance: mockAmount(0), operations: [pendingOperation] };
+    expect(
+      selectEligibleAnalyticsPositions(
+        [{ ...eth, subAccounts: [emptyToken] }],
+        [],
+        isConfirmed,
+      ).map(p => p.id),
+    ).toEqual([eth.id]);
+  });
+
+  it("should check confirmations against the parent account", () => {
+    const check = jest.fn(() => true);
+    selectEligibleAnalyticsPositions([{ ...parent, balance: mockAmount(0) }], [], check);
+    expect(check).toHaveBeenCalledWith(eth.operations[0], expect.objectContaining({ id: eth.id }));
   });
 });
 
 describe("buildAnalyticsCatalog", () => {
   it("should group cross-network ETH while keeping each account's network identity", () => {
     const base = createAnalyticsAccount("analytics-catalog-base", "base");
-    const meta = assetResponse.cryptoAssets["urn:crypto:meta-currency:ethereum"];
+    const meta = {
+      id: "urn:crypto:meta-currency:ethereum",
+      ticker: "ETH",
+      name: "Ethereum",
+      assetsIds: {},
+    };
     const catalog = buildAnalyticsCatalog(
       [eth, base],
       [eth, base],
@@ -97,5 +123,23 @@ describe("buildAnalyticsCatalog", () => {
     );
     expect(catalog.positions.map(p => p.assetId)).toEqual(["currency:arbitrum", "asset:arbitrum"]);
     expect(catalog.assets.map(asset => asset.ticker).sort()).toEqual(["ARB", "ETH"]);
+  });
+
+  it("should attach a token position to its parent account", () => {
+    const catalog = buildAnalyticsCatalog([token], [eth], {}, createAssetsData({}, []));
+    expect(catalog.positions).toEqual([
+      {
+        positionId: token.id,
+        accountId: eth.id,
+        currencyId: token.token.id,
+        assetId: `currency:${token.token.id}`,
+      },
+    ]);
+  });
+
+  it("should sort assets by name", () => {
+    const btc = createAnalyticsAccount("analytics-catalog-btc", "bitcoin");
+    const catalog = buildAnalyticsCatalog([eth, btc], [eth, btc], {}, createAssetsData({}, []));
+    expect(catalog.assets.map(asset => asset.name)).toEqual(["Bitcoin", "Ethereum"]);
   });
 });
