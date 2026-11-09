@@ -3,8 +3,18 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { AppWalletSync } from "../AppCloudSync";
 
+jest.mock("@ledgerhq/lumen-ui-react", () => {
+  const React = jest.requireActual<typeof import("react")>("react");
+
+  return {
+    Button: ({ children, ...props }: React.ComponentProps<"button">) =>
+      React.createElement("button", props, children),
+    Spinner: () => null,
+  };
+});
+
 jest.mock("uuid", () => ({
-  v4: jest.fn(() => "mock-uuid-cloud-sync"),
+  v4: jest.fn(() => "00000000-0000-4000-8000-000000000001"),
 }));
 
 const mockGenAccount = jest.fn(() => ({
@@ -15,7 +25,7 @@ const mockGenAccount = jest.fn(() => ({
   derivationMode: "",
   freshAddress: "0x",
 }));
-jest.mock("@ledgerhq/coin-module-framework/mocks/account", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/mocks/account", () => ({
   genAccount: (...args: unknown[]) => Reflect.apply(mockGenAccount, null, args),
 }));
 
@@ -73,12 +83,14 @@ describe("AppWalletSync (AppCloudSync)", () => {
     const user = userEvent.setup();
     render(<AppWalletSync {...defaultProps} />);
 
-    const diceButton = screen.getByRole("button", { name: /🎲/ });
-    await user.click(diceButton);
+    const randomButton = screen.getByRole("button", { name: "Random" });
+    await user.click(randomButton);
 
     expect(mockGenAccount).toHaveBeenCalled();
     expect(
-      mockGenAccount.mock.calls.every((call: unknown[]) => call[0] === "mock-uuid-cloud-sync"),
+      mockGenAccount.mock.calls.every(
+        (call: unknown[]) => call[0] === "00000000-0000-4000-8000-000000000001",
+      ),
     ).toBe(true);
     expect(mockSetData).toHaveBeenCalled();
     mathRandomSpy.mockRestore();
@@ -89,8 +101,8 @@ describe("AppWalletSync (AppCloudSync)", () => {
     const user = userEvent.setup();
     render(<AppWalletSync {...defaultProps} />);
 
-    const diceButton = screen.getByRole("button", { name: /🎲/ });
-    await user.click(diceButton);
+    const randomButton = screen.getByRole("button", { name: "Random" });
+    await user.click(randomButton);
 
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
     expect(mockGenAccount).toHaveBeenCalled();
