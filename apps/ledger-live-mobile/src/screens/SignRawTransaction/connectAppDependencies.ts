@@ -1,7 +1,7 @@
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import { dependenciesToAppRequests } from "@ledgerhq/live-common/hw/actions/app";
-import { BITCOIN_SIGN_PSBT_ALLOWED_APPS } from "@ledgerhq/live-common/wallet-api/constants";
+import { isAppAllowedInPlaceOfAccountApp } from "@ledgerhq/live-common/wallet-api/helpers";
 
 /**
  * Apps the device must have installed to raw-sign with `appName`. The account's own app is
@@ -13,8 +13,7 @@ export function getConnectAppDependencies(
   appName: string | undefined,
   dependencies: string[] | undefined,
 ): AppRequest[] {
-  const signsInPlaceOfAccountApp =
-    appName !== undefined && (BITCOIN_SIGN_PSBT_ALLOWED_APPS[currency.id]?.has(appName) ?? false);
+  const signsInPlaceOfAccountApp = isAppAllowedInPlaceOfAccountApp(currency, appName);
   return [
     ...(signsInPlaceOfAccountApp ? [] : [{ currency }]),
     ...dependenciesToAppRequests(dependencies),
