@@ -1,25 +1,8 @@
 import React from "react";
 import { Dialog, DialogContent } from "@ledgerhq/lumen-ui-react";
-import { cn } from "@ledgerhq/lumen-design-core/cn";
-import { AnimatedHeight, useAnimatedHeightCapped } from "@shared/ui-animated-height";
 import { INTRO_TITLE_ID } from "./introTitleId";
 import type { PredictionsSheetViewProps } from "./PredictionsSheet.types";
 import { SheetContent } from "./SheetContent";
-
-function AnimatedStep({ children }: Readonly<{ children: React.ReactNode }>) {
-  const isCapped = useAnimatedHeightCapped();
-
-  return (
-    <div
-      className={cn(
-        "flex animate-slide-in-from-right flex-col",
-        isCapped && "scrollbar-custom min-h-0 flex-1 overflow-y-auto",
-      )}
-    >
-      {children}
-    </div>
-  );
-}
 
 export function PredictionsSheetView({ isOpen, shownStep, onDismiss }: PredictionsSheetViewProps) {
   const stepType = shownStep?.step.type;
@@ -28,7 +11,7 @@ export function PredictionsSheetView({ isOpen, shownStep, onDismiss }: Predictio
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+    <Dialog animated open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent
         className="max-h-[90vh]"
         // Only the consent step has a description for the dialog to point to.
@@ -38,11 +21,9 @@ export function PredictionsSheetView({ isOpen, shownStep, onDismiss }: Predictio
         onInteractOutside={e => e.preventDefault()}
       >
         {shownStep ? (
-          <AnimatedHeight>
-            <AnimatedStep key={shownStep.key}>
-              <SheetContent shownStep={shownStep} />
-            </AnimatedStep>
-          </AnimatedHeight>
+          <div key={shownStep.key} className="flex min-h-0 animate-slide-in-from-right flex-col">
+            <SheetContent shownStep={shownStep} />
+          </div>
         ) : null}
       </DialogContent>
     </Dialog>

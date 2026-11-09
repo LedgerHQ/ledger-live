@@ -4,7 +4,7 @@ import { cn } from "LLD/utils/cn";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
 import { useSendFlowData } from "../context/SendFlowContext";
 import { RecipientScannerProvider } from "../context/RecipientScannerContext";
-import { FLOW_STATUS, type StepRenderer } from "@ledgerhq/live-common/flows/wizard/types";
+import { FLOW_STATUS } from "@ledgerhq/live-common/flows/wizard/types";
 import {
   SEND_FLOW_STEP,
   type SendFlowStep,
@@ -12,7 +12,6 @@ import {
 } from "@ledgerhq/live-common/flows/send/types";
 import type { SendStepConfig } from "../types";
 import { SendHeader } from "./SendHeader";
-import { AnimatedHeight, useAnimatedHeightCapped } from "@shared/ui-animated-height";
 import { track } from "@shared/analytics";
 import { useSendFlowTrackingProperties } from "../hooks/useSendFlowTrackingProperties";
 import { useRecipientContactSelection } from "../context/RecipientContactSelectionContext";
@@ -24,16 +23,6 @@ type SendFlowLayoutProps = Readonly<{
   isOpen: boolean;
   onClose: () => void;
 }>;
-
-function SendFlowAnimatedStep({ StepComponent }: { StepComponent: StepRenderer }) {
-  const isCapped = useAnimatedHeightCapped();
-
-  return (
-    <div className={cn("flex animate-fade-in flex-col", isCapped && "min-h-0 flex-1")}>
-      <StepComponent />
-    </div>
-  );
-}
 
 export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
   const wizard = useFlowWizard<SendFlowStep, SendFlowBusinessContext, SendStepConfig>();
@@ -73,10 +62,9 @@ export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
 
   const shouldShowStatusGradient =
     state.flowStatus === FLOW_STATUS.ERROR || state.flowStatus === FLOW_STATUS.SUCCESS;
-  const shouldAnimateHeight = dialogHeight === "fit";
 
   return (
-    <Dialog height={dialogHeight} open={isOpen} onOpenChange={handleDialogOpenChange}>
+    <Dialog height={dialogHeight} animated open={isOpen} onOpenChange={handleDialogOpenChange}>
       <DialogContent className="text-base">
         {shouldShowStatusGradient && (
           <div
@@ -87,24 +75,11 @@ export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
           />
         )}
         <RecipientScannerProvider>
-          {shouldAnimateHeight ? (
-            <AnimatedHeight header={<SendHeader />}>
-              {StepComponent ? (
-                <SendFlowAnimatedStep key={wizard.currentStep} StepComponent={StepComponent} />
-              ) : null}
-            </AnimatedHeight>
-          ) : (
-            <>
-              <SendHeader />
-              {StepComponent && (
-                <div
-                  key={wizard.currentStep}
-                  className="flex min-h-0 flex-1 animate-fade-in flex-col"
-                >
-                  <StepComponent />
-                </div>
-              )}
-            </>
+          <SendHeader />
+          {StepComponent && (
+            <div key={wizard.currentStep} className="flex min-h-0 flex-1 animate-fade-in flex-col">
+              <StepComponent />
+            </div>
           )}
         </RecipientScannerProvider>
       </DialogContent>
