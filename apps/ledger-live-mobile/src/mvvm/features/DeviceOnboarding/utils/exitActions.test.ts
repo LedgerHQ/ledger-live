@@ -97,6 +97,37 @@ describe("exitActions", () => {
     });
   });
 
+  it("should keep the previous screen params when an unseeded touchscreen falls back", () => {
+    const { parentReset } = fallBackFrom([
+      {
+        name: ScreenName.OnboardingPostWelcomeSelection,
+        params: { userHasDevice: true },
+      },
+      { name: ScreenName.OnboardingPairNew },
+    ]);
+
+    expect(parentReset?.mock.calls[0][0].routes[0].state.routes[0]).toEqual({
+      name: ScreenName.OnboardingPostWelcomeSelection,
+      params: { userHasDevice: true },
+    });
+  });
+
+  it("should open the old checks without an onboarding history when pairing was the only screen", () => {
+    const { parentReset } = fallBackFrom([{ name: ScreenName.OnboardingPairNew }]);
+
+    expect(parentReset?.mock.calls[0][0].routes[0]).toEqual({ name: NavigatorName.Onboarding });
+  });
+
+  it("should leave the stack untouched when the onboarding navigator has no parent", () => {
+    const { onboardingReset, parentReset } = fallBackFrom(
+      [{ name: ScreenName.OnboardingPairNew }],
+      false,
+    );
+
+    expect(onboardingReset).not.toHaveBeenCalled();
+    expect(parentReset).toBeNull();
+  });
+
   it("should drop the funnel from the stack when an unseeded device falls back from it", () => {
     const { baseOnboardingReset } = leave("legacyFallback", {}, undefined, [
       ScreenName.OnboardingWelcomeBack,
@@ -262,6 +293,27 @@ describe("exitActions", () => {
     ]);
   });
 });
+
+function fallBackFrom(routes: { name: string; params?: unknown }[], withParent = true) {
+  const parentReset = jest.fn();
+  const onboardingReset = jest.fn();
+  exitActions.legacyFallback({
+    dispatch: jest.fn() as unknown as ExitDeps["dispatch"],
+    navigation: {
+      getState: () => ({ routes }),
+      reset: onboardingReset,
+      getParent: () => (withParent ? { reset: parentReset } : undefined),
+    } as unknown as ExitDeps["navigation"],
+    device: stax,
+    wasReadOnlyAtEntry: false,
+    isGenuine: false,
+    deviceWasSeeded: false,
+    firmwareNeedsLegacyFlow: false,
+    hasCompletedOnboarding: false,
+  });
+
+  return { onboardingReset, parentReset: withParent ? parentReset : null };
+}
 
 function leave(
   reason: DeviceOnboardingExitReason,
