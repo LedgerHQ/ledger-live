@@ -18,6 +18,7 @@ import type {
   AccountDataSource,
   AccountTarget,
 } from "../source";
+import { throwIfAborted, whenAllAborted } from "./abort";
 import { chunk, createLimiter, type Limiter } from "./limiter";
 
 export type Settled<T> = PromiseSettledResult<T>;
@@ -26,7 +27,7 @@ export type Settled<T> = PromiseSettledResult<T>;
 export type Answers<T> = Promise<Settled<T>>[];
 
 /** A read waiting for its tick to be routed. */
-export type PendingRead = { descriptor: AccountDescriptor; cursor?: string };
+export type PendingRead = { descriptor: AccountDescriptor; cursor?: string; signal?: AbortSignal };
 
 /** The reads of one tick that share a kind, a query and a pinned source, and their answers. */
 export type Coalesced<K extends AccountDataKind> = {
@@ -106,7 +107,14 @@ export function readEachTarget<K extends AccountDataKind>(
   targets: readonly AccountTarget[],
   query: AccountDataQuery<K> | undefined,
 ): Answers<AccountDataResult<K>> {
-  return targets.map(target => settled(run(() => read(target, query))));
+  return targets.map(target =>
+    settled(
+      run(() => {
+        throwIfAborted(target.signal);
+        return read(target, query);
+      }),
+    ),
+  );
 }
 
 /** The answers of one batch call, or a throw when the source answered a different count. */
@@ -133,9 +141,13 @@ export function readInChunks<K extends AccountDataKind>(
 ): Answers<AccountDataResult<K>> {
   const parts = chunk(targets, Math.max(1, source.maxBatchSize ?? targets.length));
   return parts.flatMap(part => {
-    const answered = run(() => read(part, query)).then(answers =>
-      checkBatchAnswer(source.id, part, answers),
-    );
+    const { signal, release } = whenAllAborted(part.map(target => target.signal));
+    const answered = run(() => {
+      throwIfAborted(signal);
+      return read(part, query);
+    })
+      .finally(release)
+      .then(answers => checkBatchAnswer(source.id, part, answers));
     return part.map((_target, index) =>
       answered.then(
         answers => answers[index],
@@ -196,13 +208,15 @@ export function addSource(
   };
 }
 
-/** One target per account and cursor, a slot per read; a read whose descriptor throws fails alone. */
+/** One target per account and cursor, aborting once all its reads have; a slot per read; a read whose descriptor throws fails alone. */
 export function collectTargets(reads: readonly PendingRead[]): {
   slots: ReadSlot[];
   targets: Map<string, AccountTarget>;
+  /** Stops listening to the reads' signals, once the target's answer settled. */
+  releases: Map<string, () => void>;
 } {
-  const targets = new Map<string, AccountTarget>();
-  const slots = reads.map(({ descriptor, cursor }): ReadSlot => {
+  const found = new Map<string, { target: AccountTarget; signals: (AbortSignal | undefined)[] }>();
+  const slots = reads.map(({ descriptor, cursor, signal }): ReadSlot => {
     let accountUUID;
     try {
       accountUUID = computeAccountUUID(descriptor);
@@ -210,10 +224,19 @@ export function collectTargets(reads: readonly PendingRead[]): {
       return { failure };
     }
     const key = JSON.stringify([accountUUID, cursor ?? null]);
-    if (!targets.has(key)) targets.set(key, { accountUUID, descriptor, cursor });
+    const existing = found.get(key);
+    if (existing) existing.signals.push(signal);
+    else found.set(key, { target: { accountUUID, descriptor, cursor }, signals: [signal] });
     return { key };
   });
-  return { slots, targets };
+  const targets = new Map<string, AccountTarget>();
+  const releases = new Map<string, () => void>();
+  for (const [key, { target, signals }] of found) {
+    const { signal, release } = whenAllAborted(signals);
+    targets.set(key, signal ? { ...target, signal } : target);
+    releases.set(key, release);
+  }
+  return { slots, targets, releases };
 }
 
 const DEFAULT_PURPOSES: readonly AccountDescriptor["purpose"][] = ["account"];
@@ -302,7 +325,7 @@ export function route<K extends AccountDataKind>(
   reads: readonly PendingRead[],
   { query, sourceId }: AccountDataReadOptions<K>,
 ): Answers<AccountDataAnswer<K>> {
-  const { slots, targets } = collectTargets(reads);
+  const { slots, targets, releases } = collectTargets(reads);
   const { groups, answers } = groupBySource(context, kind, targets, sourceId);
   for (const [source, group] of groups) {
     const results = readFromSource(
@@ -317,6 +340,7 @@ export function route<K extends AccountDataKind>(
       answers.set(key, orNextSource(context, kind, target, { query, sourceId }, source, result));
     });
   }
+  for (const [key, answer] of answers) void answer.finally(releases.get(key));
   return answersInReadOrder(slots, answers);
 }
 
