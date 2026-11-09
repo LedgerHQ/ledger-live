@@ -3,8 +3,6 @@ import { escapeRegExp, openDeeplink } from "@e2e/helpers/commonHelpers";
 import { byId, byIdWithDescendantText } from "@e2e/helpers/elements/native";
 import { TIMEOUT } from "@e2e/utils/timeouts";
 
-import { isAssetDiscoverabilityEnabled } from "@e2e/utils/featureFlagUtils";
-
 import type { CurrencyType } from "@ledgerhq/live-e2e-shared/enum/Currency";
 
 type MarketQuickAction = "send" | "receive" | "buy" | "sell" | "swap";
@@ -18,13 +16,7 @@ const ASSET_DETAIL_QUICK_ACTION_IDS: Partial<Record<MarketQuickAction, string>> 
 
 export default class MarketPage {
   private readonly marketScreenSearchBar = byId("market-screen-search-bar");
-  private readonly legacySearchBar = byId("search-box");
   private readonly headerBackButton = byId("navigation-header-back-button");
-  private readonly marketListHeaderLeft = byId("market-list-header-left");
-  private readonly starMarketListButton = byId("toggle-starred-currencies");
-  private readonly filterSortButton = byId("market-filter-sort");
-  private readonly filterTimeButton = byId("market-filter-time");
-  private readonly filterCurrencyButton = byId("market-filter-currency");
   private readonly marketScreenFilterButton = byId("market-screen-assets-filter-button");
   private readonly assetDetailScrollView = byId(/^asset-detail-scroll-view-.*/);
   private readonly assetDetailCoinCapsule = byId("asset-detail-coin-capsule");
@@ -43,16 +35,8 @@ export default class MarketPage {
   // New MarketScreen keys rows by CoinGecko market.id; ERC20s differ from their ledger currency.id.
   private readonly marketScreenRow = (currency: CurrencyType) =>
     this.marketItem(currency.market?.id ?? currency.id);
-  private readonly marketRowTitle = (currency: CurrencyType) =>
-    byId(`market-row-title-${currency.ticker}`);
   private readonly quickActionButton = (action: MarketQuickAction) =>
     byId(ASSET_DETAIL_QUICK_ACTION_IDS[action] ?? `asset-quick-action-button-${action}`);
-
-  private async searchBar() {
-    return (await isAssetDiscoverabilityEnabled())
-      ? this.marketScreenSearchBar
-      : this.legacySearchBar;
-  }
 
   @Step("Go back from the market screen")
   async goBack() {
@@ -87,27 +71,14 @@ export default class MarketPage {
     await this.categoryTab("starred").expectVisible();
   }
 
-  @Step("Expect market list header left")
-  async goBackToPortfolio() {
-    if (await isAssetDiscoverabilityEnabled()) {
-      await this.goBack();
-    } else {
-      await this.marketListHeaderLeft.tap();
-    }
-  }
-
   @Step("Search for asset {{{0}}}")
   async searchAsset(asset: string) {
-    await (await this.searchBar()).replaceText(asset);
+    await this.marketScreenSearchBar.replaceText(asset);
   }
 
   @Step("Open asset page {{{0.name}}}")
   async openAssetPage(currency: CurrencyType) {
-    if (await isAssetDiscoverabilityEnabled()) {
-      await this.marketScreenRow(currency).tap();
-    } else {
-      await this.marketRowTitle(currency).tap();
-    }
+    await this.marketScreenRow(currency).tap();
   }
 
   @Step("Star favorite coin")
@@ -119,18 +90,14 @@ export default class MarketPage {
   @Step("Back to asset list")
   async backToAssetList() {
     await this.headerBackButton.tap();
-    await (await this.searchBar()).waitVisible();
+    await this.marketScreenSearchBar.waitVisible();
   }
 
   @Step("Filter starred asset")
-  async filterStaredAsset() {
-    if (await isAssetDiscoverabilityEnabled()) {
-      // CategorySwitcher is hidden while search is active — clear search bar first
-      await this.marketScreenSearchBar.clearText();
-      await this.categoryTab("starred").tap();
-    } else {
-      await this.starMarketListButton.tap();
-    }
+  async filterStarredAsset() {
+    // CategorySwitcher is hidden while search is active.
+    await this.marketScreenSearchBar.clearText();
+    await this.filterStarredAssetsOnMarketScreen();
   }
 
   @Step("Filter starred assets on market screen")
@@ -138,13 +105,9 @@ export default class MarketPage {
     await this.categoryTab("starred").tap();
   }
 
-  @Step("Expect market row title {{{0.name}}}")
-  async expectMarketRowTitle(currency: CurrencyType) {
-    if (await isAssetDiscoverabilityEnabled()) {
-      await this.marketScreenRow(currency).expectVisible();
-    } else {
-      await this.marketRowTitle(currency).expectVisible();
-    }
+  @Step("Expect market row {{{0.name}}}")
+  async expectMarketRowVisible(currency: CurrencyType) {
+    await this.marketScreenRow(currency).expectVisible();
   }
 
   @Step("Check market screen item {{{0}}} is visible")
@@ -159,13 +122,7 @@ export default class MarketPage {
 
   @Step("Expect filters visible")
   async expectFiltersVisible() {
-    if (await isAssetDiscoverabilityEnabled()) {
-      await this.marketScreenFilterButton.expectVisible();
-    } else {
-      await this.filterSortButton.expectVisible();
-      await this.filterTimeButton.expectVisible();
-      await this.filterCurrencyButton.expectVisible();
-    }
+    await this.marketScreenFilterButton.expectVisible();
   }
 
   @Step("Expect category tab {{{0}}} to be visible")
