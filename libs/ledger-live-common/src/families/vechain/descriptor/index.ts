@@ -6,6 +6,7 @@ export const descriptor: CoinDescriptor = {
     fees: {
       hasPresets: false,
       hasCustom: false,
+      feeAssetId: "vechain/vip180/vtho",
     },
     selfTransfer: "warning",
   },

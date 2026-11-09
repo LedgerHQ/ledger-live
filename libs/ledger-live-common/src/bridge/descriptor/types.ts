@@ -287,6 +287,8 @@ export type FeeDescriptor = {
    * inspecting `transaction.family`.
    */
   getFeeCurrencyAccountId?: (transaction: unknown) => string | null;
+  /** The asset every fee is paid in when it is not the network's coin, e.g. VeChain's VTHO. */
+  feeAssetId?: string;
   /** Family-specific network-fees explanation derived from the tx status; `null` ⇒ generic copy. */
   getNetworkFeesInfo?: (ctx: { transaction: unknown; status: unknown }) => NetworkFeesInfo | null;
   /** Whether a rented resource still on its way would lower this currency's send fee, so the Amount

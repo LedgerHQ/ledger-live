@@ -60,7 +60,10 @@ import { mockServerOverlaySlice } from "@features/flow-device-mock-server/state"
 import { contactsSlice } from "@domain/entity-contact";
 import { accountDataSlice } from "@domain/entity-account-data";
 import { accountBalancesSlice } from "@domain/entity-account-balance";
-import { accountOperationsSlice } from "@domain/entity-account-operation";
+import {
+  accountOperationsSlice,
+  accountPendingOperationsSlice,
+} from "@domain/entity-account-operation";
 import { accountBalanceHistoriesSlice } from "@domain/entity-account-balance-history";
 import { accountsSlice } from "@domain/entity-account";
 import { appLockSlice } from "@features/platform-app-lock";
@@ -131,6 +134,7 @@ const appReducer = combineReducers({
   accountData: accountDataSlice.reducer,
   accountBalances: accountBalancesSlice.reducer,
   accountOperations: accountOperationsSlice.reducer,
+  accountPendingOperations: accountPendingOperationsSlice.reducer,
   accountBalanceHistories: accountBalanceHistoriesSlice.reducer,
   accountEntries: accountsSlice.reducer,
   appLock: appLockSlice.reducer,

@@ -1,0 +1,44 @@
+{
+  "name": "@features/platform-sign-account-transaction-intent",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Cross-platform Device Intent that signs a prepared account transaction on the device, whatever source prepared it",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "lint": "oxlint src",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage"
+  },
+  "dependencies": {
+    "@domain/api-account-transaction": "workspace:*",
+    "@features/platform-device-intent": "workspace:^"
+  },
+  "peerDependencies": {
+    "@ledgerhq/device-management-kit": "catalog:",
+    "rxjs": "catalog:"
+  },
+  "devDependencies": {
+    "@domain/entity-account-data": "workspace:*",
+    "@domain/entity-account-descriptor": "workspace:*",
+    "@ledgerhq/device-management-kit": "catalog:",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "@typescript/native": "catalog:",
+    "jest": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "rxjs": "catalog:",
+    "typescript": "catalog:"
+  }
+}

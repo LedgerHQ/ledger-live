@@ -1,0 +1,8 @@
+{
+  "name": "@domain/entity-account-transaction",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

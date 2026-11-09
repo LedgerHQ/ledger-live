@@ -107,6 +107,7 @@ export const sendFeatures = {
     return allowZeroAmount ?? false;
   },
   getAmountEffects: fromDescriptor(d => d.amount?.effects, noAmountEffects),
+  getFeeAssetId: fromDescriptor(d => d.fees.feeAssetId, undefined),
   getFeeCurrencyAccountId: (
     currency: CryptoOrTokenCurrency | undefined,
     transaction: unknown,

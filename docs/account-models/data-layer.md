@@ -116,3 +116,49 @@ export const portfolioSource: AccountDataSource = {
 - Add the source to `accountDataSources` in each app's `account-data-setup.ts`. The order is the fallback order: `coin-module` first, then `full-sync`.
 
 Without React or Redux, `createAccountDataRouter(sources).read(kind, descriptor)` answers the same. Its `sourcesFor(descriptor)` gives the ranked sources serving the descriptor's purpose, for a capability other than reads to follow the same ranking.
+
+## Sending
+
+A source that sends from the accounts it supports adds `send` (`AccountSendCapability` of [`@domain/api-account-transaction`](../../domain/api/account-transaction)) next to its readers, on the same object: the router's `sourcesFor(descriptor)` gives the ranked sources serving the descriptor's purpose, so `mock` accounts only reach the mock source.
+
+```mermaid
+sequenceDiagram
+    participant F as send flow
+    participant T as prepareSend / signSend / broadcastSend
+    participant X as source (send)
+    participant D as Device Intent job
+    participant P as accountPendingOperations
+    F->>T: prepareSend(descriptor, request)
+    T->>X: prepare, first ranked source that does not hand it over
+    X-->>F: PreparedSend (fees, totals, errors, payload)
+    F->>D: sign intent, input signSend(prepared)
+    D->>X: sign(target, prepared, device), same source only
+    X-->>F: SignedSend (bound to the preparation id, account and source)
+    F->>T: broadcastSend(prepared, signed)
+    T->>X: broadcast, same source and preparation only
+    T->>P: its pending rows, until a read lists their hash
+```
+
+- Values, not ids: the flow keeps the `PreparedSend` and the `SignedSend`. `broadcastSend` rejects a signature of another preparation, account or source with `SignatureMismatchError`, and each source checks it again on its own payloads.
+- `estimateSendFees` gives each fee preset's cost for a fee picker, and `releaseSend` frees a preparation the flow abandons or replaces.
+- Payloads are the source's own. FullSync keeps the family's objects in memory behind handles namespaced per sender instance, held 30 minutes after their last use; a restart means preparing again. Concurrent broadcasts of one signature share one network call.
+- `selectAccountOperationsWithPending` heads a window with the pending rows no stored row lists by hash, whatever order the read and the broadcast came in, and only those of the window's `filterAsset`.
+
+### What a send request covers
+
+| Send flow need | `SendRequest` / capability |
+| --- | --- |
+| Asset, recipient, amount, send max | `assetId`, `recipient`, `amount`, `useAllAmount` |
+| ENS or other domain | `recipientDomain` (display), the resolution object a family signs with in `familyOptions` |
+| Fee presets and their values | `feeStrategy` (any preset id of the send descriptor), `estimateSendFees` |
+| Custom fees | `feeStrategy: "custom"` + `customFees`, the descriptor's custom fee input values |
+| Pay fees in another asset | `feeAssetId`: FullSync maps it through the descriptor's `customAssets`, otherwise `FeeAssetNotSupported` |
+| Memo, tag, typed memo | `memo: { value, type? }`, the descriptor's default memo type when `type` is absent |
+| Coin control, balance pool, self transfer, sponsored flag | `familyOptions`, applied as a patch by the sources that know the family |
+| Validation as the user types | `errors` / `warnings` with `field` and translation `params` |
+| Device refusal and retry | `SignatureRefusedError` → the sign intent's `cancelled` + `retry`, same preparation |
+
+### Pending operations and the nonce
+
+The domain `accountPendingOperations` slice is what the new screens show. FullSync also keeps adding the optimistic operation to the legacy account's `pendingOperations`, which is what its families read to pick the next nonce (EVM) or to skip spent inputs (UTXO): a second send prepared before any read lists the first one still gets the next nonce. A source that does not go through the legacy account owns its nonce: it reads it from the network at `prepare` and counts its own broadcasts not yet listed.
+
