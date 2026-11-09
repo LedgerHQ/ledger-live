@@ -12,6 +12,7 @@ import { toA4HttpError } from "./errors";
 import { logA4 } from "../log";
 import { clearA4RegistrationCache, ensureA4Registered } from "./registration";
 import type { A4OperationView } from "./types";
+import { normalizeAccountKey } from "./utils";
 import type { A4Client } from "./index";
 
 export function parseA4Asset(assetPath: string, owner: string): AssetInfo {
@@ -150,8 +151,13 @@ function buildOpsFromParts(
   makeOp: MakeOp,
 ): Operation[] {
   const results: Operation[] = [];
+  const accountKey = normalizeAccountKey(address);
   for (const part of parts) {
-    if (part.address !== address || part.type === "event" || part.type === "fee") {
+    if (
+      normalizeAccountKey(part.address) !== accountKey ||
+      part.type === "event" ||
+      part.type === "fee"
+    ) {
       continue;
     }
     const delta = new BigNumber(part.amount);

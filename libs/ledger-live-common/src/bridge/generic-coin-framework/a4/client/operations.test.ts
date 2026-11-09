@@ -494,6 +494,60 @@ describe("adaptA4OperationToLiveOperation", () => {
     ]);
   });
 
+  it("matches a checksummed EVM address against the lowercase address of a part", () => {
+    const op: A4OperationView = {
+      block: { hash: "0xblockhash", height: 1000, time: "2024-01-01T00:00:00Z" },
+      tx: { hash: "0xtxhash" },
+      assets: {},
+      events: {},
+      failed: false,
+      fees: "21000",
+      feeAsset: "native",
+      senders: ["0x137cb526bccdd996b6af83b4e96b5d71fb28aff6"],
+      recipients: ["0xd8da6bf26964af9d7eed9e03e53415d37aa96045"],
+      parts: [
+        {
+          type: "transfer",
+          address: "0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
+          asset: "native",
+          amount: "1000000",
+        },
+      ],
+    };
+    expect(
+      adaptA4OperationToLiveOperation(
+        "accountId",
+        "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+        op,
+      ),
+    ).toEqual([expect.objectContaining({ type: "IN", value: new BigNumber(1000000) })]);
+  });
+
+  it("keeps the case of a non-EVM address when matching a part", () => {
+    const op: A4OperationView = {
+      block: { hash: "0xblockhash", height: 1000, time: "2024-01-01T00:00:00Z" },
+      tx: { hash: "0xtxhash" },
+      assets: {},
+      events: {},
+      failed: false,
+      fees: "21000",
+      feeAsset: "native",
+      senders: ["TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t"],
+      recipients: ["TLsV52sRDL79HXGGm9yzwKibb6BeruhUzy"],
+      parts: [
+        {
+          type: "transfer",
+          address: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+          asset: "native",
+          amount: "1000000",
+        },
+      ],
+    };
+    expect(
+      adaptA4OperationToLiveOperation("accountId", "tr7nhqjekqxgtci8q8zy4pl8otszgjlj6t", op),
+    ).toEqual([]);
+  });
+
   it("skips event parts", () => {
     const op: A4OperationView = {
       block: { hash: "0xblockhash", height: 1000, time: "2024-01-01T00:00:00Z" },

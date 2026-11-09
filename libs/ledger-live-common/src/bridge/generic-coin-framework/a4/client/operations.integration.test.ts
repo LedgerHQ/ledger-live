@@ -42,7 +42,7 @@ describe("A4 operations against the production server", () => {
   it("fetches and adapts operations from a minimum height", async () => {
     const { operations } = await fetchA4Operations(client, deriveA4AccountId(address), {
       liveAccountId: "liveAccountId",
-      address: address.toLowerCase(),
+      address,
       chain: "ethereum",
       minHeight: 0,
       maxDcRoamRetries: 0,
