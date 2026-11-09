@@ -16,6 +16,7 @@ import { getInputObjects } from "@mysten/ledger-signer";
 import type { ClientWithCoreApi } from "@mysten/sui/client";
 import type { SuiGrpcClient } from "@mysten/sui/grpc";
 import { coinWithBalance, Transaction } from "@mysten/sui/transactions";
+import { EVENTS_PAGE_SIZE } from "./graphql/constants";
 import { makeSuiClientFromGraphQL } from "./graphql/sui-client-adapter";
 import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
 import BigNumber from "bignumber.js";
@@ -67,6 +68,7 @@ import {
   getLastBlockGrpc,
   getStakingEventsByDigestGrpc,
   getValidatorsGrpc,
+  isNotFoundError,
   withGrpcApi,
   withoutBuildSimulation,
 } from "./sdk.grpc";
@@ -271,12 +273,15 @@ export type AccountBalance = {
  * address-level balances into `totalBalance`. The optional `fundsInAddressBalance` field indicates
  * how much of that total comes from the address balance (used by
  * coin-selection logic in transaction building).
+ *
+ * Reads past the cache: sync adds the uncached delegated stakes to this balance, so a cached
+ * read from before a stake or withdrawal would count the moved SUI twice or not at all.
  */
 export const getAccountBalances = async (
   config: SuiCoinConfig,
   addr: string,
 ): Promise<AccountBalance[]> => {
-  const balances = await getAllBalancesCached(config, addr);
+  const balances = await getAllBalancesCached.force(config, addr);
   return balances.map(({ coinType, totalBalance, fundsInAddressBalance }) => ({
     coinType,
     blockHeight: BLOCK_HEIGHT * 2,
@@ -461,6 +466,52 @@ export const getStakingExtraByDigest = (
 };
 
 /**
+ * The principal an unstake withdrew, summed over its `UnstakingRequestEvent`s: one transaction can
+ * withdraw several stakes. Zero when the transaction or its events are not found. GraphQL returns
+ * no events for an unknown digest, while gRPC throws; the gRPC not-found error maps to zero so
+ * both transports give the same result. GraphQL reads one page of events, so a full page can
+ * omit principals and throws instead of returning a partial sum.
+ */
+export const getUnstakedPrincipalByDigest = (
+  config: SuiCoinConfig,
+  digest: string,
+): Promise<BigNumber> =>
+  withTransport(config, {
+    graphql: async api => {
+      const events = await getStakingEventsByDigestGraphQL(api, digest);
+      if (events.length >= EVENTS_PAGE_SIZE) {
+        throw new Error(`Events of transaction ${digest} may exceed one page`);
+      }
+      return sumUnstakedPrincipal(events);
+    },
+    grpc: async api => {
+      try {
+        return sumUnstakedPrincipal(await getStakingEventsByDigestGrpc(api, digest));
+      } catch (error) {
+        if (isTransactionNotFound(error)) return new BigNumber(0);
+        throw error;
+      }
+    },
+  });
+
+/** The SDK throws "Transaction <digest> not found"; the transport reports a `NOT_FOUND` code. */
+function isTransactionNotFound(error: unknown): boolean {
+  return (
+    isNotFoundError(error) ||
+    (error instanceof Error && /^Transaction \S+ not found$/.test(error.message))
+  );
+}
+
+function sumUnstakedPrincipal(events: readonly StakingEventLike[]): BigNumber {
+  return events
+    .filter(e => e.type === UNSTAKING_REQUEST_EVENT)
+    .reduce((sum, e) => {
+      const parsed = e.parsedJson as { principal_amount?: string | number } | undefined;
+      return sum.plus(String(parsed?.principal_amount ?? 0));
+    }, new BigNumber(0));
+}
+
+/**
  * Extract date from transaction
  */
 export const getOperationDate = (transaction: SuiTransactionResponse): Date => {
@@ -519,8 +570,9 @@ export function transactionToOperation(
   // Eagerly attach staking metadata at sync time so the operation-details
   // drawer can render synchronously from `extra` instead of re-fetching the
   // whole transaction by digest.
-  const stakingExtra =
-    type === "DELEGATE" || type === "UNDELEGATE" ? getStakingExtra(transaction) : null;
+  const isStakingOp = type === "DELEGATE" || type === "UNDELEGATE";
+  const stakingExtra = isStakingOp ? getStakingExtra(transaction) : null;
+  const fee = getOperationFee(transaction);
 
   return {
     id: encodeOperationId(accountId, hash, type),
@@ -532,16 +584,45 @@ export function transactionToOperation(
     extra: {
       coinType,
       ...(stakingExtra ?? {}),
+      ...(isStakingOp ? { principalExcluded: "true" } : {}),
     },
-    fee: getOperationFee(transaction),
+    fee,
     hasFailed: transaction.effects.status.status !== "success",
     hash,
     recipients: getOperationRecipients(transaction.transaction.data),
     senders: getOperationSenders(transaction.transaction.data),
     type,
-    value: getOperationAmount(address, transaction, coinType),
+    value: isStakingOp
+      ? getStakingOperationValue(address, transaction, fee)
+      : getOperationAmount(address, transaction, coinType),
   };
 }
+
+/**
+ * A stake or unstake moves SUI between liquid and staked, and the account balance counts both. A
+ * stake therefore moves the balance only by the gas this account paid: the fee, or zero when a
+ * sponsor paid it. An unstake also pays out the reward, which the history must add at that point,
+ * so its value is the gas minus the reward and can be negative. The principal lives in
+ * `extra.stakedAmount`.
+ */
+export const getStakingOperationValue = (
+  address: string,
+  transaction: SuiTransactionResponse,
+  fee: BigNumber,
+): BigNumber => {
+  const payer = getFeesPayer(transaction);
+  const paidByAccount =
+    !payer || normalizeSuiAddressForComparison(payer) === normalizeSuiAddressForComparison(address);
+  const gas = paidByAccount ? fee : new BigNumber(0);
+  // One transaction can withdraw several stakes, each with its own event.
+  const reward = (transaction.events ?? [])
+    .filter(e => e.type === UNSTAKING_REQUEST_EVENT)
+    .reduce((sum, e) => {
+      const parsed = e.parsedJson as { reward_amount?: string | number } | undefined;
+      return sum.plus(String(parsed?.reward_amount ?? 0));
+    }, new BigNumber(0));
+  return gas.minus(reward);
+};
 
 // This function is only used by coin-framework code path
 // Logic is similar to getOperationAmount, but we guarantee to return a positive amount in any case

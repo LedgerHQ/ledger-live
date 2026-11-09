@@ -31,11 +31,11 @@ describe("Market", () => {
   it(`[${currency.testLabel}] - Market filters behavior`, async () => {
     await app.portfolio.tapMarketBannerTitle();
     await app.market.searchAsset(currency.ticker);
-    await app.market.expectMarketRowTitle(currency);
+    await app.market.expectMarketRowVisible(currency);
     await app.market.openAssetPage(currency);
     await app.market.starFavoriteCoin();
     await app.market.backToAssetList();
-    await app.market.filterStaredAsset();
-    await app.market.expectMarketRowTitle(currency);
+    await app.market.filterStarredAsset();
+    await app.market.expectMarketRowVisible(currency);
   });
 });

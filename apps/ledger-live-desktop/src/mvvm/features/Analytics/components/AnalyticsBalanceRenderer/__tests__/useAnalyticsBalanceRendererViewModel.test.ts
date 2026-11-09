@@ -1,4 +1,4 @@
-import type { AnalyticsBalanceRenderProps } from "@features/flow-account-analytics/web";
+import type { AnalyticsBalanceRenderProps } from "@features/flow-account-analytics";
 import { renderHook } from "tests/testSetup";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import { analyticsFiat } from "../../../__fixtures__/analyticsFixtures";

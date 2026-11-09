@@ -8,16 +8,26 @@ import {
   type RouteProp,
 } from "@react-navigation/native";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { useFeature } from "@features/platform-feature-flags";
 import { useCompleteSeededOnboarding } from "LLM/features/DeviceOnboarding/hooks/useCompleteSeededOnboarding";
 import { closeOnboarding } from "LLM/features/DeviceOnboarding/utils/exitActions";
 import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
+import { useWalletSyncUserState } from "LLM/features/WalletSync/components/WalletSyncContext";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { NavigatorName, ScreenName } from "~/const";
 import { setOnboardingType } from "~/actions/settings";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { OnboardingType } from "~/reducers/types";
 import type { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
-import type { SyncOfferScreenProps } from "./useSyncOfferScreenViewModel";
+import type { SyncOfferPhase, SyncOfferScreenProps } from "./useSyncOfferScreenViewModel";
+
+const DEFAULT_WATCH_INITIAL_TIMEOUT_MS = 1000;
+const VISUAL_PENDING_TIMEOUT_MS = 1000;
+const WATCH_LOOP_SLACK_MS = 500;
+
+export function syncOfferSettleDelay(initialTimeout: number): number {
+  return initialTimeout + VISUAL_PENDING_TIMEOUT_MS + WATCH_LOOP_SLACK_MS;
+}
 
 const LEDGER_SYNC_LEARN_MORE_URL =
   "https://www.ledger.com/academy/topics/ledgersolutions/ledger-sync-effortlessly-sync-your-accounts-in-ledger-live-safely-securely-and-with-complete-privacy";
@@ -29,12 +39,23 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
   const dispatch = useDispatch();
   const { device, wasReadOnlyAtEntry } = useRoute<OfferRoute>().params;
   const hasTrustchain = Boolean(useSelector(trustchainSelector)?.rootId);
+  const { visualPending } = useWalletSyncUserState();
+  const featureWalletSync = useFeature("llmWalletSync");
+  const initialTimeout =
+    featureWalletSync?.params?.watchConfig?.initialTimeout || DEFAULT_WATCH_INITIAL_TIMEOUT_MS;
   const [handoverStarted, setHandoverStarted] = useState(false);
+  const [watchLoopSettled, setWatchLoopSettled] = useState(false);
   const completedOnSync = useRef(false);
+  const initialSyncDone = useRef(false);
   const allowLeave = useRef(false);
   const complete = useCompleteSeededOnboarding(wasReadOnlyAtEntry);
   const { notifyFlowCompleted } = useNotificationsPrompt();
   const learnMoreUrl = useLocalizedUrl(LEDGER_SYNC_LEARN_MORE_URL);
+  const awaitingSync = handoverStarted && hasTrustchain;
+  if (awaitingSync && watchLoopSettled && !visualPending) {
+    initialSyncDone.current = true;
+  }
+  const phase: SyncOfferPhase = syncOfferPhase(awaitingSync, initialSyncDone.current);
 
   useEffect(
     () =>
@@ -43,6 +64,15 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
       }),
     [navigation],
   );
+
+  useEffect(() => {
+    if (!awaitingSync) return;
+    const timeout = setTimeout(
+      () => setWatchLoopSettled(true),
+      syncOfferSettleDelay(initialTimeout),
+    );
+    return () => clearTimeout(timeout);
+  }, [awaitingSync, initialTimeout]);
 
   const finishOnboarding = useCallback(() => {
     if (completedOnSync.current) return;
@@ -53,20 +83,17 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
     closeOnboarding(navigation);
   }, [complete, navigation, notifyFlowCompleted]);
 
-  useEffect(() => {
-    if (!handoverStarted || !hasTrustchain) return;
-    finishOnboarding();
-  }, [finishOnboarding, handoverStarted, hasTrustchain]);
-
   const onActivate = useCallback(() => {
     setHandoverStarted(true);
     // Ledger Sync only creates a trustchain for a new setup or a completed onboarding.
     dispatch(setOnboardingType(OnboardingType.setupNew));
     navigation.getParent()?.navigate(NavigatorName.WalletSync, {
       screen: ScreenName.WalletSyncActivationProcess,
-      params: { device },
+      params: { device, seededOffer: true },
     });
   }, [device, dispatch, navigation]);
+
+  const onSkip = finishOnboarding;
 
   const onLearnMore = useCallback(() => {
     Linking.openURL(learnMoreUrl);
@@ -74,8 +101,16 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
 
   return {
     onActivate,
-    onSkip: finishOnboarding,
+    onSkip,
     onQuit: finishOnboarding,
     onLearnMore,
+    onContinue: finishOnboarding,
+    phase,
   };
+}
+
+function syncOfferPhase(awaitingSync: boolean, initialSyncDone: boolean): SyncOfferPhase {
+  if (!awaitingSync) return "offer";
+  if (initialSyncDone) return "success";
+  return "synchronizing";
 }

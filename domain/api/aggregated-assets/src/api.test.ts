@@ -8,6 +8,7 @@ jest.mock("@shared/env", () => ({
 }));
 
 import { configureStore } from "@reduxjs/toolkit";
+import { AggregatedAssetIdSchema } from "@domain/entity-aggregated-asset";
 import { getEnv } from "@shared/env";
 import { assetsDataApi, buildAssetsQueryParams } from "./index";
 import {
@@ -34,8 +35,9 @@ const getEnvMock = jest.mocked(getEnv);
 function makePage(tickers: string[]): RawApiResponse {
   const cryptoAssets: RawApiResponse["cryptoAssets"] = {};
   for (const ticker of tickers) {
-    cryptoAssets[ticker.toLowerCase()] = {
-      id: ticker.toLowerCase(),
+    const id = AggregatedAssetIdSchema.parse(ticker.toLowerCase());
+    cryptoAssets[id] = {
+      id,
       ticker,
       name: ticker,
       assetsIds: {},
@@ -194,7 +196,8 @@ function makePageWithIds(
 ): RawApiResponse {
   const cryptoAssets: RawApiResponse["cryptoAssets"] = {};
   for (const { key, assetsIds } of assets) {
-    cryptoAssets[key] = { id: key, ticker: key.toUpperCase(), name: key, assetsIds };
+    const id = AggregatedAssetIdSchema.parse(key);
+    cryptoAssets[id] = { id, ticker: key.toUpperCase(), name: key, assetsIds };
   }
   return {
     cryptoAssets,

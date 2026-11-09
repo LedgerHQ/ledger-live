@@ -1,14 +1,19 @@
 import { http, HttpResponse } from "msw";
 import jsonResponse from "./fixtures/assets/getAssets.json";
+import { AggregatedAssetIdSchema } from "@domain/entity-aggregated-asset";
 import type { RawApiResponse } from "@domain/api-aggregated-assets";
 import { mockStablecoinsResponse } from "@domain/api-aggregated-assets/mock/stablecoins";
 import { mockStocksResponse } from "@domain/api-aggregated-assets/mock/stocks";
+
+const ETHEREUM_META_ID = AggregatedAssetIdSchema.parse("urn:crypto:meta-currency:ethereum");
+const BITCOIN_META_ID = AggregatedAssetIdSchema.parse("bitcoin");
+const USD_COIN_META_ID = AggregatedAssetIdSchema.parse("urn:crypto:meta-currency:usd_coin");
 
 const handleEthereumAssets = (
   name: "ethereum" | "arbitrum" | "base" | "scroll",
   res: RawApiResponse,
 ) => {
-  if (!res.cryptoAssets["urn:crypto:meta-currency:ethereum"]) {
+  if (!res.cryptoAssets[ETHEREUM_META_ID]) {
     Object.assign(res.cryptoAssets, {
       "urn:crypto:meta-currency:ethereum": {
         ...jsonResponse.cryptoAssets["urn:crypto:meta-currency:ethereum"],
@@ -16,7 +21,7 @@ const handleEthereumAssets = (
       },
     });
   } else {
-    Object.assign(res.cryptoAssets["urn:crypto:meta-currency:ethereum"].assetsIds, {
+    Object.assign(res.cryptoAssets[ETHEREUM_META_ID].assetsIds, {
       [name]: name,
     });
   }
@@ -33,8 +38,8 @@ const handleEthereumAssets = (
     [name]: { ...jsonResponse.markets[name] },
   });
 
-  if (!res.currenciesOrder.metaCurrencyIds.includes("urn:crypto:meta-currency:ethereum")) {
-    res.currenciesOrder.metaCurrencyIds.push("urn:crypto:meta-currency:ethereum");
+  if (!res.currenciesOrder.metaCurrencyIds.includes(ETHEREUM_META_ID)) {
+    res.currenciesOrder.metaCurrencyIds.push(ETHEREUM_META_ID);
   }
 };
 
@@ -99,7 +104,7 @@ const handleFilteredCurrencyIds = (currencyIds: string[]) => {
     Object.assign(res.markets, {
       bitcoin: { ...jsonResponse.markets.bitcoin },
     });
-    res.currenciesOrder.metaCurrencyIds.push("bitcoin");
+    res.currenciesOrder.metaCurrencyIds.push(BITCOIN_META_ID);
   }
 
   if (hasUsdCoin) {
@@ -122,7 +127,7 @@ const handleFilteredCurrencyIds = (currencyIds: string[]) => {
     Object.assign(res.markets, {
       "ethereum/erc20/usd__coin": { ...jsonResponse.markets["ethereum/erc20/usd__coin"] },
     });
-    res.currenciesOrder.metaCurrencyIds.push("urn:crypto:meta-currency:usd_coin");
+    res.currenciesOrder.metaCurrencyIds.push(USD_COIN_META_ID);
   }
 
   return HttpResponse.json(res);

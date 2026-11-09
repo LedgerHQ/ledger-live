@@ -51,7 +51,6 @@ export default class SwapLiveAppPage {
   swapMainContainerCssSelector = "main";
   swapMainContainerWebElement = getWebElementByCssSelector(this.swapMainContainerCssSelector);
   swapMaxToggle = "from-account-max-toggle";
-  switchButton = "to-account-switch-accounts";
   lnsUnsupportedBannerPattern =
     /Ledger Nano S[\s\S]*(not supported|unsupported|does not support|not compatible)/i;
   revokeApprovalButton = "revoke-approval-button";
@@ -398,12 +397,6 @@ export default class SwapLiveAppPage {
     await this.expectQuotesButtonNotVisible();
   }
 
-  @Step("Verify swap cross account error message match: {{{0}}}")
-  async verifySwapCrossAccountErrorMessageIsCorrect(expectedMessage: string | RegExp) {
-    // Cross-account warnings render in the same from-account error slot as amount errors.
-    await this.verifySwapAmountErrorMessageIsCorrect(expectedMessage);
-  }
-
   @Step("Verify swap CTA banner displayed")
   async checkCtaBanner(quotesVisible: boolean) {
     const showDetailsLink = quotesVisible
@@ -454,11 +447,6 @@ export default class SwapLiveAppPage {
         )
       )[0] ?? "";
     return { amount, fiatAmount };
-  }
-
-  @Step("Tap on Switch currencies button")
-  async switchYouSendAndYouReceive() {
-    await tapWebElementByTestId(this.switchButton);
   }
 
   @Step("Check currency to swap from is {{{0}}} with amount {{{1}}}")

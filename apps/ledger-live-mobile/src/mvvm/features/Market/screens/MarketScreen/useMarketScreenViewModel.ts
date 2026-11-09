@@ -1,6 +1,5 @@
 import { useEffect, useMemo } from "react";
 import { useRoute, type RouteProp } from "@react-navigation/native";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import type { MarketAssetDisplayData } from "LLM/components/AssetListItem";
 import type { MarketNavigatorStackParamList } from "LLM/features/Market/Navigator";
 import { parseMarketListCategory } from "@ledgerhq/live-common/market/utils/category";
@@ -44,10 +43,7 @@ export type MarketScreenViewModel = {
 
 export function useMarketScreenViewModel(): MarketScreenViewModel {
   const route = useRoute<MarketScreenRoute>();
-  const { shouldDisplayAssetDiscoverability } = useWalletFeaturesConfig("mobile");
-  const routeCategory = shouldDisplayAssetDiscoverability
-    ? parseMarketListCategory(route.params?.category)
-    : undefined;
+  const routeCategory = parseMarketListCategory(route.params?.category);
   const search = useMarketSearch();
   const highlights = useMarketHighlights();
   const categories = useMarketCategories({ routeCategory });

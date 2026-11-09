@@ -20,9 +20,7 @@ export const getWallet40Attributes = (
     isEnabled,
     lazyOnboarding: params?.lazyOnboarding ?? false,
     brazePlacement: params?.brazePlacement ?? false,
-    assetDiscoverability:
-      platform === "lwd" ||
-      Boolean(params && "assetDiscoverability" in params && params.assetDiscoverability),
+    assetDiscoverability: true,
     earnUpselling: params?.earnUpselling ?? false,
     earnSimulator: params?.earnSimulator ?? false,
   };

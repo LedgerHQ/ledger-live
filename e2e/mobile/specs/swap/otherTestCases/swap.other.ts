@@ -480,37 +480,6 @@ export function runSwapWithSendMaxTest(
   });
 }
 
-export function runSwapSwitchSendAndReceiveCurrenciesTest(
-  swap: SwapType,
-  tmsLinks: string[],
-  tags: string[],
-) {
-  describe("Swap - switch currencies", () => {
-    beforeAll(async () => {
-      await app.speculos.setExchangeDependencies(swap);
-      await beforeAllFunctionSwap({
-        userdata: "speculos-tests-app",
-        speculosApp: AppInfos.EXCHANGE,
-      });
-    });
-
-    setTeamOwner(Team.SWAP);
-    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
-    tags.forEach(tag => $Tag(tag));
-    it(`[${swap.accountToDebit.currency.testLabel}-${swap.accountToCredit.currency.testLabel}] - Switch you send and you receive currency`, async () => {
-      await performSwapUntilQuoteSelectionStep(
-        swap.accountToDebit,
-        swap.accountToCredit,
-        swap.amount,
-        false,
-      );
-      await app.swapLiveApp.switchYouSendAndYouReceive();
-      await app.swapLiveApp.checkAssetFrom(swap.accountToCredit.currency.ticker, "");
-      await app.swapLiveApp.checkAssetTo(swap.accountToDebit.currency.ticker, "0");
-    });
-  });
-}
-
 async function validateSwapAssetsPage(accountFrom: string, accountTo: string) {
   await app.swapLiveApp.expectSwapLiveApp();
   await app.swapLiveApp.checkAssetFrom(accountFrom, "");

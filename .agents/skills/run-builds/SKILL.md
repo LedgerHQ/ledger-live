@@ -36,7 +36,7 @@ pnpm nx show projects --affected --files="$FILES" --json \
   | jq -r '.[] | select(. == "ledger-live-desktop" or . == "live-mobile")'
 ```
 
-`ledger-live-desktop` → Desktop, `live-mobile` → Android + iOS. Then narrow by platform suffix, which Nx does not see: a change only in `*.web.ts(x)` files ships on desktop, only in `*.native.ts(x)` on mobile. A `package.json` change marks every dependent app as affected; read what it changes before building all three. A `devtools/` change only shows in the developer tools screen; build it only when someone needs to test that screen.
+`ledger-live-desktop` → Desktop, `live-mobile` → Android + iOS. Then narrow by platform suffix, which Nx does not see: a change only in `*.web.ts(x)` files ships on desktop, only in `*.native.ts(x)` on mobile. A `package.json` change marks every dependent app as affected; read what it changes before building all three. A `devtools/` change only shows in the developer tools screen: `lint:boundaries` lets app code import `@devtools/*` only from the app's DevTools folder, and reach that folder only through its screen entries or `import()` (`DEVTOOLS_HOST_APP_RULE` and `DEVTOOLS_HOST_FOLDER_RULE` in `tools/nx-plugins/enforce-boundaries/constraints.js`). Build it only when someone needs to test that screen.
 
 **Scope off the PR's file list, not `git diff develop...HEAD`.** A stale merge-base makes the local three-dot diff pull in hundreds of unrelated files. When a PR exists, use `gh pr view <pr> -R LedgerHQ/ledger-live --json files --jq '.files[].path'` for the true change set.
 

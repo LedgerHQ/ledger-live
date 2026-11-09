@@ -1,5 +1,6 @@
 import type { AssetsData } from "@domain/api-aggregated-assets";
 import { mockArbitrumTokenAssetsData } from "@domain/api-aggregated-assets/mock";
+import { AggregatedAssetIdSchema } from "@domain/entity-aggregated-asset";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { buildAnalyticsCatalog, selectEligibleAnalyticsPositions } from "./buildAnalyticsCatalog";
 import {
@@ -85,12 +86,13 @@ describe("buildAnalyticsCatalog", () => {
       name: "Ethereum",
       assetsIds: {},
     };
+    const metaId = AggregatedAssetIdSchema.parse(meta.id);
     const catalog = buildAnalyticsCatalog(
       [eth, base],
       [eth, base],
       { [eth.id]: "Savings", [base.id]: "Savings" },
       createAssetsData(
-        { [meta.id]: { ...meta, assetsIds: { ethereum: "ethereum", base: "base" } } },
+        { [metaId]: { ...meta, id: metaId, assetsIds: { ethereum: "ethereum", base: "base" } } },
         ["ethereum", "base"],
       ),
     );

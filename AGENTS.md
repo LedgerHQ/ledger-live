@@ -40,6 +40,10 @@ Reusable workflows and composite actions are called `@develop`, even from releas
 
 Runner images bake the mise toolchain and the Android AVD. Before changing a version in `mise.toml` or the AVD configuration, read the [runner-images](./.agents/skills/runner-images/SKILL.md) skill.
 
+## Accounts
+
+The legacy `Account` type is being retired. Before reading or showing account data, read [/docs/account-models](/docs/account-models/README.md).
+
 ## Configuration and environment variables
 
 Before adding any configuration value — an environment variable, a URL, a partner key — read [/docs/configuration.md](/docs/configuration.md) to pick its home. `@shared/env` is deprecated and takes no new definitions.

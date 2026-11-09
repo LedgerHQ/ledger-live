@@ -19,6 +19,7 @@ export * from "./lwdWallet40";
 export * from "./lwmContacts";
 export * from "./lwmDustFiltering";
 export * from "./lwmPasswordRevamp";
+export * from "./newReceiveFlow";
 export * from "./lwmWallet40";
 export * from "./llmTransferButtonCopyVariant";
 export * from "./llRobinhoodDisclaimer";

@@ -2128,6 +2128,14 @@
       "link": "Learn more about Stellar assets",
       "seeTokens": "Show assets ({{tokenCount}})",
       "hideTokens": "Hide assets ({{tokenCount}})"
+    },
+    "xrp": {
+      "title": "Tokens",
+      "cta": "Add token",
+      "placeholder": "You can add tokens to your {{currencyName}} account.",
+      "link": "Learn more about XRP Ledger tokens",
+      "seeTokens": "Show tokens ({{tokenCount}})",
+      "hideTokens": "Hide tokens ({{tokenCount}})"
     }
   },
   "subAccounts": {
@@ -4288,6 +4296,70 @@
           "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
         }
       }
+    }
+  },
+  "xrp": {
+    "addToken": {
+      "title": "Add token",
+      "steps": {
+        "token": {
+          "title": "Token",
+          "selectLabel": "Choose a token",
+          "allAdded": "You've already added all available tokens to this account.",
+          "loadError": "The token list couldn't load.",
+          "info": "Adding a token sends a transaction that pays a network fee and reserves XRP while you hold the token. It appears in your transaction history."
+        },
+        "settings": {
+          "title": "Settings",
+          "limit": "Trust limit",
+          "max": "Max",
+          "limitInfo": "The trust limit is the most {{token}} your account accepts to hold."
+        },
+        "review": {
+          "title": "Review",
+          "token": "Token",
+          "issuer": "Issuer"
+        },
+        "connectDevice": {
+          "title": "Device"
+        },
+        "confirmation": {
+          "title": "Confirmation",
+          "success": {
+            "title": "{{token}} token successfully added",
+            "text": "You can now receive <0>{{token}}</0> on your XRP account.",
+            "cta": "View details"
+          },
+          "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+        }
+      }
+    },
+    "tokenSettings": {
+      "title": "Token settings",
+      "steps": {
+        "confirmation": {
+          "success": {
+            "title": "{{token}} trust limit updated",
+            "text": "Your XRP account now accepts <0>{{token}}</0> up to the new limit."
+          }
+        }
+      }
+    },
+    "tokenAccount": {
+      "editSettings": "Edit settings",
+      "trustLimit": "Trust limit",
+      "trustLimitTooltip": "The most of this token your account accepts to hold."
+    },
+    "rippling": {
+      "label": "Rippling",
+      "on": "On",
+      "off": "Off",
+      "warning": "Turning this on allows other users' payments to move your balance between tokens with the same currency code. Only turn it on if you know what you're doing."
+    },
+    "receive": {
+      "addToken": "Add token",
+      "addTokenFirst": "To receive an XRP Ledger token, add it to your account first.",
+      "tokenNotHeld": "Your account no longer holds {{token}}. Add it again before receiving it."
     }
   },
   "stellar": {
@@ -8039,6 +8111,44 @@
     "XrpDestinationTagRequired": {
       "title": "A destination tag is required for this recipient"
     },
+    "XrpTokenStandardNotEnabled": {
+      "title": "This token type isn't supported yet"
+    },
+    "XrpAmountPrecisionExceeded": {
+      "title": "The amount has too many digits",
+      "description": "XRP Ledger tokens accept at most 16 significant digits."
+    },
+    "XrpTrustLimitZero": {
+      "title": "The limit must be above 0",
+      "description": "To stop holding this token, remove it instead."
+    },
+    "XrpTokenFrozen": {
+      "title": "You can't send this token to this recipient",
+      "description": "Its issuer froze it, or hasn't approved your account to hold it. A frozen token can still go back to its issuer."
+    },
+    "XrpTokenCannotReceive": {
+      "title": "This recipient can't receive {{assetCode}}",
+      "description": "The recipient may need to add this token first, or the issuer doesn't allow this transfer."
+    },
+    "XrpTokenAmountNotDeliverable": {
+      "title": "This amount can't be delivered",
+      "description": "The recipient's limit or the issuer's transfer fee doesn't allow it. Try a smaller amount."
+    },
+    "XrpTokenOptInRefused": {
+      "title": "The issuer refused this request",
+      "description": "The issuer doesn't accept new holders for this token, or the token doesn't exist."
+    },
+    "XrpTransactionWouldFail": {
+      "title": "This transaction would fail",
+      "description": "The XRP Ledger rejected it with {{code}}."
+    },
+    "XrpUnsupportedIntent": {
+      "title": "This transaction is not supported"
+    },
+    "XrpReserveIncrease": {
+      "title": "{{amount}} will be locked on your account while this token is added.",
+      "description": "You'll get it back when you remove the token."
+    },
     "InvalidExplorerResponse": {
       "title": "Invalid response from {{currencyName}} explorer"
     },
@@ -9669,6 +9779,32 @@
     "cta": "Open Perps"
   },
   "predictions": {
+    "binding": {
+      "preparing": "Preparing the signature",
+      "title": "Confirm account ownership on your {{productName}}",
+      "description": "Follow the instructions displayed on your Secure Screen",
+      "settingUp": {
+        "title": "Setting up your trading account"
+      },
+      "setUp": {
+        "created": "Trading account created",
+        "found": "Trading account found",
+        "description": "Your trading account is ready to use.",
+        "continue": "Continue"
+      },
+      "mismatch": {
+        "title": "This signature doesn't match the account",
+        "description": "Connect the Ledger that holds this account, with the same passphrase if you use one, then try again."
+      },
+      "setupFailed": {
+        "title": "Your trading account couldn't be set up",
+        "failed-deploy": "MoonPay couldn't deploy your trading wallet.",
+        "failed-permission": "MoonPay couldn't set up your trading wallet's permissions.",
+        "timeout": "The setup is taking too long.",
+        "unavailable": "MoonPay couldn't be reached.",
+        "unknown": "Something went wrong while setting it up."
+      }
+    },
     "onboarding": {
       "intro": {
         "title": "Trade on future events",
