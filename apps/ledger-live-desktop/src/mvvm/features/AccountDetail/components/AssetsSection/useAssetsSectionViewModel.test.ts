@@ -1,13 +1,12 @@
 import { renderHook } from "tests/testSetup";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { useMarketDayChangeByCurrencyId } from "@features/platform-aggregated-assets";
 import { useAllCurrencyTrends } from "@features/platform-assets-table";
+import { useMarketDayChange } from "LLD/hooks/useMarketDayChange";
 import { useAssetsSectionViewModel } from "./useAssetsSectionViewModel";
 
-jest.mock("@features/platform-aggregated-assets", () => ({
-  ...jest.requireActual("@features/platform-aggregated-assets"),
-  useMarketDayChangeByCurrencyId: jest.fn(),
+jest.mock("LLD/hooks/useMarketDayChange", () => ({
+  useMarketDayChange: jest.fn(),
 }));
 
 jest.mock("@features/platform-assets-table", () => ({
@@ -16,7 +15,7 @@ jest.mock("@features/platform-assets-table", () => ({
   useAssetsTable: jest.fn(() => ({})),
 }));
 
-const mockedUseMarketDayChange = jest.mocked(useMarketDayChangeByCurrencyId);
+const mockedUseMarketDayChange = jest.mocked(useMarketDayChange);
 const mockedUseAllCurrencyTrends = jest.mocked(useAllCurrencyTrends);
 
 describe("useAssetsSectionViewModel", () => {
@@ -28,20 +27,15 @@ describe("useAssetsSectionViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedUseAllCurrencyTrends.mockReturnValue(new Map());
-    mockedUseMarketDayChange.mockReturnValue(new Map());
-  });
-
-  it("should look up the market of every asset of the account", () => {
-    renderHook(() => useAssetsSectionViewModel(account));
-
-    expect(mockedUseMarketDayChange).toHaveBeenCalledWith(
-      expect.objectContaining({ currencyIds: ["ethereum"] }),
-    );
+    mockedUseMarketDayChange.mockReturnValue({ byLedgerId: new Map(), byMarketId: new Map() });
   });
 
   it("should use the 24h market change of the account currency", () => {
     const marketDayChange = new Map([["ethereum", 3.5]]);
-    mockedUseMarketDayChange.mockReturnValue(marketDayChange);
+    mockedUseMarketDayChange.mockReturnValue({
+      byLedgerId: marketDayChange,
+      byMarketId: new Map(),
+    });
 
     renderHook(() => useAssetsSectionViewModel(account));
 
@@ -49,6 +43,7 @@ describe("useAssetsSectionViewModel", () => {
       expect.any(Array),
       "day",
       marketDayChange,
+      "market",
     );
   });
 });

@@ -26,6 +26,11 @@ jest.mock("@ledgerhq/live-common/market/hooks/useMarketDataProvider");
 jest.mock("@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog");
 jest.mock("@ledgerhq/live-common/exchange/swap/hooks/index");
 
+const mockHeldDayChange = { current: new Map<string, number>() };
+jest.mock("LLD/hooks/useMarketDayChange", () => ({
+  useMarketDayChange: () => ({ byLedgerId: new Map(), byMarketId: mockHeldDayChange.current }),
+}));
+
 const mockedUseMarketPerformers = jest.mocked(useMarketPerformers);
 const mockedUseTrendingPerformers = jest.mocked(useTrendingPerformers);
 const mockedUseMarketData = jest.mocked(useMarketData);
@@ -78,6 +83,7 @@ function mockMarketDataQuery(
 describe("MarketBanner view models", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockHeldDayChange.current = new Map();
 
     // The view model always calls every ranking hook (skipping the inactive ones), so provide a
     // safe default for trending to avoid destructuring an undefined query result.
@@ -282,6 +288,22 @@ describe("MarketBanner view models", () => {
   });
 
   describe("useMarketBannerViewModel", () => {
+    it("should show the held coin's shared 24h change so it matches the asset tables", () => {
+      mockPerformersQuery({ data: MOCK_MARKET_PERFORMERS });
+      mockMarketDataQuery({});
+      mockHeldDayChange.current = new Map([["ethereum", -5.41]]);
+
+      const { result } = renderHook(() => useMarketBannerViewModel(), {
+        initialState: { marketBanner: { ranking: "losers" } },
+      });
+
+      const items = result.current.items;
+      expect(items.find(item => item.id === "ethereum")?.priceChangePercentage24h).toBe(-5.41);
+      expect(items.find(item => item.id === "bitcoin")?.priceChangePercentage24h).toBe(
+        MOCK_MARKET_PERFORMERS.find(item => item.id === "bitcoin")?.priceChangePercentage24h,
+      );
+    });
+
     it("returns favorites data and skips the performers query when ranking is favorites", () => {
       mockPerformersQuery({ data: MOCK_MARKET_PERFORMERS });
       mockMarketDataQuery({ data: [createMockMarketCurrencyData({ id: "bitcoin" })] });

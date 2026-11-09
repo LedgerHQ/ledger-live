@@ -6,6 +6,7 @@ import {
   useAssetsData,
   useMarketDayChangeByCurrencyId,
 } from "@features/platform-aggregated-assets";
+import { useMarketDayChange } from "LLD/hooks/useMarketDayChange";
 import { useSelector } from "LLD/hooks/redux";
 import {
   hasOnboardedDeviceSelector,
@@ -113,18 +114,26 @@ export default function useCryptoAssetsViewModel(): CryptoAssetsViewModel {
   );
   useOnDemandCurrenciesCountervalues(nonPlaceholderCurrencies, counterValueCurrency);
 
-  const currencyIds = useMemo(
-    () => nonPlaceholderCurrencies.map(currency => currency.id),
-    [nonPlaceholderCurrencies],
+  const usesCryptoMarket = category !== ASSETS_PAGE_CATEGORY_STOCKS;
+  const stockCurrencyIds = useMemo(
+    () => (usesCryptoMarket ? [] : nonPlaceholderCurrencies.map(currency => currency.id)),
+    [usesCryptoMarket, nonPlaceholderCurrencies],
   );
-  const marketDayChange = useMarketDayChangeByCurrencyId({
-    currencyIds,
+  const { byLedgerId: cryptoMarketDayChange } = useMarketDayChange();
+  const stockMarketDayChange = useMarketDayChangeByCurrencyId({
+    currencyIds: stockCurrencyIds,
     product: "lld",
     version: __APP_VERSION__,
     pollingInterval: ASSETS_PRICE_REFRESH_INTERVAL_MS,
     skipPollingIfUnfocused: true,
   });
-  const trends = useAllCurrencyTrends(items, "day", marketDayChange);
+  const marketDayChange = usesCryptoMarket ? cryptoMarketDayChange : stockMarketDayChange;
+  const trends = useAllCurrencyTrends(
+    items,
+    "day",
+    marketDayChange,
+    usesCryptoMarket ? "market" : "flat-holding",
+  );
   const itemsWithTrend = useMemo(
     () => items.map(item => ({ ...item, trend: trends.get(item.currency.id) ?? null })),
     [items, trends],
