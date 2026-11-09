@@ -18700,9 +18700,6 @@ importers:
       source-map-support:
         specifier: 0.5.21
         version: 0.5.21
-      ts-node:
-        specifier: 10.9.2
-        version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -19361,9 +19358,6 @@ importers:
       timemachine:
         specifier: 0.3.2
         version: 0.3.2
-      ts-node:
-        specifier: 10.9.2
-        version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -19699,9 +19693,6 @@ importers:
       source-map-support:
         specifier: 0.5.21
         version: 0.5.21
-      ts-node:
-        specifier: 10.9.2
-        version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -19754,9 +19745,6 @@ importers:
       source-map-support:
         specifier: 0.5.21
         version: 0.5.21
-      ts-node:
-        specifier: 10.9.2
-        version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -19842,9 +19830,6 @@ importers:
       source-map-support:
         specifier: 0.5.21
         version: 0.5.21
-      ts-node:
-        specifier: 10.9.2
-        version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -19903,9 +19888,6 @@ importers:
       source-map-support:
         specifier: 0.5.21
         version: 0.5.21
-      ts-node:
-        specifier: 10.9.2
-        version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -19967,9 +19949,6 @@ importers:
       source-map-support:
         specifier: 0.5.21
         version: 0.5.21
-      ts-node:
-        specifier: 10.9.2
-        version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -20022,9 +20001,6 @@ importers:
       source-map-support:
         specifier: 0.5.21
         version: 0.5.21
-      ts-node:
-        specifier: 10.9.2
-        version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -20122,9 +20098,6 @@ importers:
       source-map-support:
         specifier: 0.5.21
         version: 0.5.21
-      ts-node:
-        specifier: 10.9.2
-        version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -20195,9 +20168,6 @@ importers:
       rimraf:
         specifier: 'catalog:'
         version: 4.4.1
-      ts-node:
-        specifier: 10.9.2
-        version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -20247,9 +20217,6 @@ importers:
       source-map-support:
         specifier: 0.5.21
         version: 0.5.21
-      ts-node:
-        specifier: 10.9.2
-        version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -20302,9 +20269,6 @@ importers:
       source-map-support:
         specifier: 0.5.21
         version: 0.5.21
-      ts-node:
-        specifier: 10.9.2
-        version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -20354,9 +20318,6 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
-      ts-node:
-        specifier: 10.9.2
-        version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -20418,9 +20379,6 @@ importers:
       source-map-support:
         specifier: 0.5.21
         version: 0.5.21
-      ts-node:
-        specifier: 10.9.2
-        version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -20473,9 +20431,6 @@ importers:
       source-map-support:
         specifier: 0.5.21
         version: 0.5.21
-      ts-node:
-        specifier: 10.9.2
-        version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -20531,9 +20486,6 @@ importers:
       source-map-support:
         specifier: 0.5.21
         version: 0.5.21
-      ts-node:
-        specifier: 10.9.2
-        version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -20589,9 +20541,6 @@ importers:
       source-map-support:
         specifier: 0.5.21
         version: 0.5.21
-      ts-node:
-        specifier: 10.9.2
-        version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -20641,9 +20590,6 @@ importers:
       source-map-support:
         specifier: 0.5.21
         version: 0.5.21
-      ts-node:
-        specifier: 10.9.2
-        version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -20702,9 +20648,6 @@ importers:
       source-map-support:
         specifier: 0.5.21
         version: 0.5.21
-      ts-node:
-        specifier: 10.9.2
-        version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -20763,9 +20706,6 @@ importers:
       source-map-support:
         specifier: 0.5.21
         version: 0.5.21
-      ts-node:
-        specifier: 10.9.2
-        version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -20815,9 +20755,6 @@ importers:
       source-map-support:
         specifier: 0.5.21
         version: 0.5.21
-      ts-node:
-        specifier: 10.9.2
-        version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -20870,9 +20807,6 @@ importers:
       source-map-support:
         specifier: 0.5.21
         version: 0.5.21
-      ts-node:
-        specifier: 10.9.2
-        version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -20925,9 +20859,6 @@ importers:
       source-map-support:
         specifier: 0.5.21
         version: 0.5.21
-      ts-node:
-        specifier: 10.9.2
-        version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -20968,9 +20899,6 @@ importers:
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
-      ts-node:
-        specifier: 10.9.2
-        version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -22612,9 +22540,6 @@ importers:
       source-map-support:
         specifier: 0.5.21
         version: 0.5.21
-      ts-node:
-        specifier: 10.9.2
-        version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -22664,9 +22589,6 @@ importers:
       source-map-support:
         specifier: 0.5.21
         version: 0.5.21
-      ts-node:
-        specifier: 10.9.2
-        version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
