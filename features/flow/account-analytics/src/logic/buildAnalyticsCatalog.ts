@@ -1,21 +1,37 @@
-import type { AnalyticsCatalog } from "@features/flow-account-analytics";
-import { hasConfirmedAccountHistory } from "@features/flow-account-detail-analytics-notice";
-import { selectAssetCurrencyIds } from "@features/platform-aggregated-assets";
 import type { AssetsData } from "@domain/api-aggregated-assets";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account";
-import { isConfirmedOperation } from "@ledgerhq/ledger-wallet-framework/operation";
+import { selectAssetCurrencyIds } from "@features/platform-aggregated-assets";
+import type {
+  AnalyticsAccountSource,
+  AnalyticsCatalog,
+  AnalyticsPositionOf,
+  AnalyticsPositionSource,
+} from "../types";
+import { getAnalyticsPositionCurrency } from "./analyticsPositionSource";
 
-export function selectEligibleAnalyticsPositions(
+type HistorySource<Operation> = Readonly<{
+  operations: readonly Operation[];
+  subAccounts?: readonly Readonly<{ operations: readonly Operation[] }>[];
+}>;
+
+function hasConfirmedAccountHistory<Operation>(
+  account: HistorySource<Operation>,
+  isConfirmed: (operation: Operation) => boolean,
+): boolean {
+  return [account, ...(account.subAccounts ?? [])].some(({ operations }) =>
+    operations.some(isConfirmed),
+  );
+}
+
+export function selectEligibleAnalyticsPositions<Account extends AnalyticsAccountSource>(
   accounts: readonly Account[],
   blacklistedIds: readonly string[],
-  confirmations: Readonly<Record<string, number>>,
-): readonly AccountLike[] {
+  isConfirmedOperation: (operation: Account["operations"][number], account: Account) => boolean,
+): readonly AnalyticsPositionOf<Account>[] {
   const excluded = new Set(blacklistedIds);
-  const positions: AccountLike[] = [];
+  const positions: AnalyticsPositionOf<Account>[] = [];
   for (const account of accounts) {
     const isConfirmed = (operation: Account["operations"][number]) =>
-      isConfirmedOperation(operation, account, confirmations[account.currency.id]);
+      isConfirmedOperation(operation, account);
     if (
       !excluded.has(account.currency.id) &&
       (!account.balance.isZero() || hasConfirmedAccountHistory(account, isConfirmed))
@@ -46,15 +62,15 @@ function findAssetMeta(assetsData: AssetsData, currencyId: string): AssetMeta | 
 }
 
 export function buildAnalyticsCatalog(
-  positions: readonly AccountLike[],
-  accounts: readonly Account[],
+  positions: readonly AnalyticsPositionSource[],
+  accounts: readonly AnalyticsAccountSource[],
   namesById: Readonly<Record<string, string | undefined>>,
   assetsData: AssetsData,
 ): AnalyticsCatalog {
   const assets = new Map<string, AnalyticsCatalog["assets"][number]>();
   const selectedAccounts = new Set<string>();
   const catalogPositions = positions.map(position => {
-    const currency = getAccountCurrency(position);
+    const currency = getAnalyticsPositionCurrency(position);
     const meta = findAssetMeta(assetsData, currency.id);
     const assetId = meta ? `asset:${meta.id}` : `currency:${currency.id}`;
     const accountId = position.type === "Account" ? position.id : position.parentId;
