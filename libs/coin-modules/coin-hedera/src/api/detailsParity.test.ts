@@ -311,7 +311,7 @@ describe("getBlock and listOperations details parity", () => {
 
   // `getBlock` describes the transaction once for every account in it, so its `ledgerOpType` is the
   // transaction's. `listOperations` is per account: a peer that someone else's contract call only
-  // credited gets an IN with no `ledgerOpType`. The block keeps what a consumer needs to apply the
+  // credited gets an IN (`ledgerOpType: "IN"`). The block keeps what a consumer needs to apply the
   // same rule: the peer is credited by a transfer and is not the fees payer.
   it("keeps the transaction-level CONTRACT_CALL for a peer that listOperations reports as IN", async () => {
     const mirrorTx = baseTx({
@@ -344,8 +344,12 @@ describe("getBlock and listOperations details parity", () => {
 
     const blockTx = block.transactions.find(tx => tx.hash === mirrorTx.transaction_hash);
     invariant(blockTx, `getBlock is missing ${mirrorTx.transaction_hash}`);
-    expect(history.map(op => op.type)).toEqual(["IN"]);
-    expect(history[0].details?.ledgerOpType).not.toBe("CONTRACT_CALL");
+    expect(history).toEqual([
+      expect.objectContaining({
+        type: "IN",
+        details: expect.objectContaining({ ledgerOpType: "IN" }),
+      }),
+    ]);
     expect(blockTx.details?.ledgerOpType).toBe("CONTRACT_CALL");
     expect(blockTx.feesPayer).toBe(ACCOUNT.account);
     expect(blockTx.operations).toContainEqual(

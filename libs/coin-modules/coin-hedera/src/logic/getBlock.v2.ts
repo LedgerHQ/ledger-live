@@ -38,9 +38,12 @@ function isStakingTransactionType(
   return item.type === "mirror" && item.data.name === HEDERA_TRANSACTION_NAMES.UpdateAccount;
 }
 
-function isTokenAssociateTransactionType(
-  item: MergedTransaction,
-): item is Extract<MergedTransaction, { type: "mirror" }> {
+function isTokenAssociateTransactionType(item: MergedTransaction): item is Extract<
+  MergedTransaction,
+  { type: "mirror" }
+> & {
+  data: { name: typeof HEDERA_TRANSACTION_NAMES.TokenAssociate };
+} {
   return item.type === "mirror" && item.data.name === HEDERA_TRANSACTION_NAMES.TokenAssociate;
 }
 
@@ -263,14 +266,6 @@ export async function getBlockV2({
     };
 
     let operations: BlockOperation[];
-    // Ledger operation type `listOperations` gives a transaction whose operations are plain transfers
-    // here (CONTRACT_CALL, non-staking UPDATE_ACCOUNT). Same mapping and same scope as `listOperations`:
-    // HBAR-only mirror transactions, as token transfers (HTS, ERC20) are typed from their transfers there.
-    // Absent for plain transfers and for transactions that already produce an "other" operation.
-    const mappedLedgerOpType =
-      item.type === "mirror" && mirrorTx.token_transfers.length === 0
-        ? MAP_TX_NAME_TO_CUSTOM_OPERATION_TYPE[mirrorTx.name]
-        : undefined;
     let ledgerOpType: string | undefined;
 
     // "other" operations carry the transaction's familyExtra plus their own keys, so they hold the
@@ -313,7 +308,11 @@ export async function getBlockV2({
         ...(item.type === "erc20" ? item.data.transfers : []),
       ];
 
-      ledgerOpType = mappedLedgerOpType;
+      // `listOperations` types token transfers (HTS, ERC20) from the transfers, not the tx name
+      ledgerOpType =
+        item.type === "mirror" && mirrorTx.token_transfers.length === 0
+          ? MAP_TX_NAME_TO_CUSTOM_OPERATION_TYPE[mirrorTx.name]
+          : undefined;
       operations = allTransfers.flatMap(transfer => {
         if ("token_evm_address" in transfer) {
           return createBlockOperationFromERC20TokenTransfer({ transfer });
