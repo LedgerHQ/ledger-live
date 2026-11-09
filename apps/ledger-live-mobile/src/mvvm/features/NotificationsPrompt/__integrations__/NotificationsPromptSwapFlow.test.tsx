@@ -135,12 +135,7 @@ describe("NotificationsPrompt swap flow", () => {
 
       // Keep a parent stack entry under the swap flow so the success screen can go back.
       useEffect(() => {
-        navigation.dispatch(
-          CommonActions.navigate({
-            name: NavigatorName.SwapSubScreens,
-            params: swapParams,
-          }),
-        );
+        navigation.dispatch(CommonActions.navigate(NavigatorName.SwapSubScreens, swapParams));
       }, [navigation, swapParams]);
 
       return <View />;
