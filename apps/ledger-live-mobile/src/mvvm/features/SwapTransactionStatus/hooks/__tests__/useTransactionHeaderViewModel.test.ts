@@ -5,15 +5,15 @@ import { useTransactionHeaderViewModel } from "../useTransactionHeaderViewModel"
 const sendCurrency = getCryptoCurrencyById("hypercore");
 const receiveCurrency = getCryptoCurrencyById("ethereum");
 
-function renderHeader(props: { origin?: "swap" | "perps"; isPerpsWithdraw?: boolean }) {
+function renderHeader(props: { origin?: "swap" | "perps"; customTitle?: string }) {
   return renderHook(() =>
     useTransactionHeaderViewModel({ sendCurrency, receiveCurrency, locale: "en", ...props }),
   ).result.current;
 }
 
 describe("useTransactionHeaderViewModel", () => {
-  it("titles a perps withdraw as a withdraw, even when opened from Swap History", () => {
-    expect(renderHeader({ isPerpsWithdraw: true })).toMatchObject({
+  it("uses a custom title over the default one, with the pair on its own line", () => {
+    expect(renderHeader({ customTitle: "Withdraw" })).toMatchObject({
       title: "Withdraw",
       currencies: `${sendCurrency.ticker} → ${receiveCurrency.ticker}`,
     });

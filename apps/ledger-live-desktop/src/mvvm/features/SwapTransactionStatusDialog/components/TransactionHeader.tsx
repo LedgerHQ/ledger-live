@@ -13,12 +13,13 @@ type TransactionHeaderProps = Readonly<{
   createdAt?: number;
   locale: string;
   origin?: SwapTransactionStatusOrigin;
-  isPerpsWithdraw?: boolean;
+  /** Replaces the default title, with the swapped pair on its own line. */
+  title?: string;
 }>;
 
 type HeaderTitleProps = Readonly<{
   origin?: SwapTransactionStatusOrigin;
-  isPerpsWithdraw?: boolean;
+  customTitle?: string;
   sendTicker: string;
   receiveTicker: string;
 }>;
@@ -36,24 +37,20 @@ function HeaderCurrencyIcon({
   );
 }
 
-/** Perps leads with the deposit it is funding, and keeps the swapped pair on its own line. */
-function HeaderTitle({ origin, isPerpsWithdraw, sendTicker, receiveTicker }: HeaderTitleProps) {
+/**
+ * Perps leads with the deposit it is funding, and a custom title replaces the default one;
+ * both keep the swapped pair on its own line.
+ */
+function HeaderTitle({ origin, customTitle, sendTicker, receiveTicker }: HeaderTitleProps) {
   const { t } = useTranslation();
 
-  // A withdraw is titled as such wherever it is opened from, Swap History included.
-  if (origin === "perps" || isPerpsWithdraw) {
+  if (origin === "perps" || customTitle !== undefined) {
     return (
       <h2
         data-testid="swap-transaction-title"
         className="heading-4-semi-bold text-base text-center"
       >
-        <span className="block">
-          {t(
-            isPerpsWithdraw
-              ? "perpsTransactionStatus.withdrawTitle"
-              : "perpsTransactionStatus.title",
-          )}
-        </span>
+        <span className="block">{customTitle ?? t("perpsTransactionStatus.title")}</span>
         <span className="block">
           {t("perpsTransactionStatus.currencies", { sendTicker, receiveTicker })}
         </span>
@@ -74,7 +71,7 @@ export function TransactionHeader({
   createdAt,
   locale,
   origin,
-  isPerpsWithdraw,
+  title,
 }: TransactionHeaderProps) {
   const hasCurrencies = sendCurrency !== undefined && receiveCurrency !== undefined;
 
@@ -96,7 +93,7 @@ export function TransactionHeader({
       {hasCurrencies ? (
         <HeaderTitle
           origin={origin}
-          isPerpsWithdraw={isPerpsWithdraw}
+          customTitle={title}
           sendTicker={sendCurrency.ticker}
           receiveTicker={receiveCurrency.ticker}
         />

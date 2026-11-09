@@ -63,6 +63,7 @@ describe("SwapTransactionStatusDrawer", () => {
       isStatusSectionLoading: false,
       isFooterLoading: false,
       isPerpsWithdraw: false,
+      title: undefined,
     });
   });
 

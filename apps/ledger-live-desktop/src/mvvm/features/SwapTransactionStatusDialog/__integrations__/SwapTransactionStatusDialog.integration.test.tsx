@@ -33,6 +33,7 @@ const loadingViewModel: SwapTransactionStatusViewModel = {
   sendStatus: "pending",
   sentAmount: undefined,
   swapId: "swap-1",
+  title: undefined,
 };
 
 function useViewModelWithMountedSwapId({

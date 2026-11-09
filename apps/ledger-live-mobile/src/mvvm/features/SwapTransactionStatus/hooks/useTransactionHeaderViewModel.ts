@@ -9,7 +9,7 @@ type UseTransactionHeaderViewModelProps = Readonly<{
   createdAt?: number;
   locale: string;
   origin?: SwapTransactionStatusOrigin;
-  isPerpsWithdraw?: boolean;
+  customTitle?: string;
 }>;
 
 export function useTransactionHeaderViewModel({
@@ -18,7 +18,7 @@ export function useTransactionHeaderViewModel({
   createdAt,
   locale,
   origin,
-  isPerpsWithdraw,
+  customTitle,
 }: UseTransactionHeaderViewModelProps) {
   const { t } = useTranslation();
   const hasCurrencies = sendCurrency !== undefined && receiveCurrency !== undefined;
@@ -26,18 +26,17 @@ export function useTransactionHeaderViewModel({
     ? { sendTicker: sendCurrency.ticker, receiveTicker: receiveCurrency.ticker }
     : undefined;
 
-  // A withdraw is titled as such wherever it is opened from, Swap History included.
-  const isPerps = origin === "perps" || Boolean(isPerpsWithdraw);
-  const perpsTitle = isPerpsWithdraw
-    ? t("perpsTransactionStatus.withdrawTitle")
-    : t("perpsTransactionStatus.title");
-  const title = isPerps
-    ? perpsTitle
+  const isPerps = origin === "perps";
+  const defaultTitle = isPerps
+    ? t("perpsTransactionStatus.title")
     : tickers
       ? t("transfer.swap2.modals.transactionStatus.title", tickers)
       : undefined;
+  const title = customTitle ?? defaultTitle;
+  // The perps and custom titles don't name the pair, so it gets its own line.
+  const showsPairLine = isPerps || customTitle !== undefined;
   const currencies =
-    tickers && isPerps ? t("perpsTransactionStatus.currencies", tickers) : undefined;
+    tickers && showsPairLine ? t("perpsTransactionStatus.currencies", tickers) : undefined;
 
   const formattedDate = createdAt
     ? formatSwapTransactionStatusCreatedAt(createdAt, locale)
