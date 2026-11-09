@@ -127,6 +127,54 @@ describe("getAccountShape", () => {
     });
   });
 
+  describe("account public key", () => {
+    const ADDRESS = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
+    const PUBLIC_KEY = "ab".repeat(32);
+    const shapeFor = (extra: {
+      rest?: unknown;
+      initialAccount?: ReturnType<typeof createFixtureAccount>;
+    }) =>
+      getAccountShape(
+        {
+          index: 0,
+          derivationPath: "44'/784'/0'/0'/0'",
+          currency: getCryptoCurrencyById("sui"),
+          address: ADDRESS,
+          derivationMode: "sui",
+          initialAccount: extra.initialAccount,
+          rest: extra.rest,
+        },
+        { blacklistedTokenIds: [], paginationConfig: {} },
+      );
+
+    beforeEach(() => {
+      mockGetAccountBalances.mockResolvedValue([createAccountBalance()]);
+      mockGetOperations.mockResolvedValue([]);
+      mockGetStakesRaw.mockResolvedValue([]);
+    });
+
+    it("stores the device public key as xpub at scan and keeps the address-based id", async () => {
+      const shape = await shapeFor({ rest: { publicKey: PUBLIC_KEY } });
+
+      expect(shape.xpub).toBe(PUBLIC_KEY);
+      expect(shape.id).toBe(`js:2:sui:${ADDRESS}:sui`);
+    });
+
+    it("keeps the stored xpub on a sync that carries no public key", async () => {
+      const shape = await shapeFor({
+        initialAccount: createFixtureAccount({ xpub: PUBLIC_KEY }),
+      });
+
+      expect(shape.xpub).toBe(PUBLIC_KEY);
+    });
+
+    it("leaves xpub unset when neither the scan nor the account has a key", async () => {
+      const shape = await shapeFor({});
+
+      expect(shape.xpub).toBeUndefined();
+    });
+  });
+
   it("handles balance entirely from address balance (SIP-58, no coin objects)", async () => {
     // GIVEN — all funds are in address balance, coinObjectCount = 0
     const initialAccount = undefined;
