@@ -160,7 +160,7 @@ catalog:
   typescript: "npm:@typescript/typescript6@^6.0.2"
   "@typescript/native": "npm:typescript@^7.0.2"
   "@types/node": 24.12.0
-  "@gorhom/bottom-sheet": 5.2.6
+  "@gorhom/bottom-sheet": 5.2.7
   axios: 1.20.0
   babel-jest: 30.5.2
   bs58: 6.0.0
