@@ -1,6 +1,7 @@
 import * as coinIntegration from "./metadata/coin-integration";
 import * as engagement from "./metadata/engagement";
 import * as platform from "./metadata/platform";
+import * as ptx from "./metadata/ptx";
 import * as walletXp from "./metadata/wallet-xp";
 
 export const tools = {
@@ -22,6 +23,7 @@ export const tools = {
   "account-detail": walletXp.accountDetail,
   "coin-config": coinIntegration.coinConfig,
   receive: walletXp.receive,
+  predictions: ptx.predictions,
 } as const;
 
 /**
@@ -57,4 +59,5 @@ export type DevToolConfig =
   | { id: "mock-accounts"; config: platform.MockAccountsToolProps }
   | { id: "account-detail"; config: walletXp.AccountDetailToolProps }
   | { id: "coin-config"; config: coinIntegration.CoinConfigToolProps }
-  | { id: "receive"; config: walletXp.ReceiveToolProps };
+  | { id: "receive"; config: walletXp.ReceiveToolProps }
+  | { id: "predictions"; config: ptx.PredictionsToolProps };

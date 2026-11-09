@@ -10,6 +10,7 @@
     { "path": "./device-onboarding" },
     { "path": "./app-config" },
     { "path": "./account-detail" },
+    { "path": "./predictions" },
     { "path": "./registry" },
     { "path": "./transport" },
     { "path": "./transport-panel" },

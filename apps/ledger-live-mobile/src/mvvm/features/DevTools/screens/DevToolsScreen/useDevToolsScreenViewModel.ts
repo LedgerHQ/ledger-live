@@ -16,7 +16,12 @@ import {
   useCoinConfigToolProps,
   useAccountDetailToolProps,
   useReceiveToolProps,
+  usePredictionsToolProps,
+  type LiveAppStore,
+  type PredictionsSetup,
 } from "@devtools/bindings";
+import { usePredictionsSetupHooks } from "@features/flow-predictions";
+import { PREDICTIONS_SETUP_FAILURE_REASONS } from "@features/platform-predictions";
 import type { DevToolsConfig } from "@devtools/shell";
 import { openHostedUrlInSecureBrowser } from "@features/flow-pay-card-auth";
 import { useCurrenciesByIds } from "@features/platform-currencies";
@@ -31,6 +36,9 @@ import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 import { useDeviceOnboardingTool } from "../../DeviceOnboarding/useDeviceOnboardingTool";
 import { useOfferSync } from "../../../DeviceOnboarding/hooks/useOfferSync";
 import { useDevToolsRelay } from "./useDevToolsRelay";
+import { getStoreValue, setStoreValue } from "~/store";
+
+const LIVE_APP_STORE: LiveAppStore = { get: getStoreValue, set: setStoreValue };
 
 type BaseNavigation = NativeStackNavigationProp<
   BaseNavigatorStackParamList,
@@ -115,6 +123,12 @@ export function useDevToolsScreenViewModel() {
   });
   const accountDetailToolProps = useAccountDetailToolProps();
   const receiveToolProps = useReceiveToolProps();
+  const predictionsSetupHooks = usePredictionsSetupHooks();
+  const predictionsSetup = useMemo<PredictionsSetup>(
+    () => ({ hooks: predictionsSetupHooks, failureReasons: PREDICTIONS_SETUP_FAILURE_REASONS }),
+    [predictionsSetupHooks],
+  );
+  const predictionsToolProps = usePredictionsToolProps(LIVE_APP_STORE, predictionsSetup);
   const dmk = useDeviceManagementKit();
   const knownDevices = useSelector(knownDevicesSelector);
   const offerSync = useOfferSync();
@@ -138,6 +152,7 @@ export function useDevToolsScreenViewModel() {
       { id: "device-onboarding", config: deviceOnboardingProps },
       { id: "account-detail", config: accountDetailToolProps },
       { id: "receive", config: receiveToolProps },
+      { id: "predictions", config: predictionsToolProps },
     ],
     [
       featureFlagsProps,
@@ -148,6 +163,7 @@ export function useDevToolsScreenViewModel() {
       deviceOnboardingProps,
       accountDetailToolProps,
       receiveToolProps,
+      predictionsToolProps,
     ],
   );
 
