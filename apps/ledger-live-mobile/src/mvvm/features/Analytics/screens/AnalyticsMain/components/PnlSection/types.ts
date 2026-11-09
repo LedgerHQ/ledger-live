@@ -1,3 +1,4 @@
+import type { usePortfolioPnL } from "@ledgerhq/wallet-pnl/hooks";
 import type { PnlReturnCard } from "LLM/features/Pnl/types";
 import type { PnlDetailItem } from "LLM/features/Pnl/components/PnlDetailDrawer/types";
 
@@ -20,3 +21,8 @@ export type PnlSectionViewModel = {
     discreet: boolean;
   };
 };
+
+export type PnlSectionModelInput = Readonly<{
+  accounts: Parameters<typeof usePortfolioPnL>[0];
+  shouldDisplayPnl: boolean;
+}>;

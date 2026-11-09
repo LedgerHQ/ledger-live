@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Skeleton, Text } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useTranslation } from "~/context/Locale";
 import { TrendSection } from "LLM/components/TrendSection";
@@ -15,11 +15,13 @@ export function ChartSectionHeaderView({ viewModel }: Props) {
   const {
     hoveredBalance,
     scrubDateLabel,
-    isBalanceAvailable,
+    isVariationAvailable,
     percentageValue,
     variationText,
     rangeLabel,
     discreet,
+    isVariationLoading,
+    balance,
   } = viewModel;
 
   const isScrubbing = scrubDateLabel != null;
@@ -33,8 +35,18 @@ export function ChartSectionHeaderView({ viewModel }: Props) {
       >
         {t("portfolio.totalBalance")}
       </Text>
-      <AnalyticsBalanceDisplay hoveredValue={hoveredBalance} animate={!isScrubbing} />
-      {isBalanceAvailable && (
+      <AnalyticsBalanceDisplay
+        hoveredValue={hoveredBalance}
+        animate={!isScrubbing}
+        balance={balance}
+      />
+      {isVariationLoading && (
+        <Skeleton
+          testID={CHART_SECTION_TEST_IDS.variationSkeleton}
+          lx={{ height: "s20", width: "s128" }}
+        />
+      )}
+      {isVariationAvailable && (
         <TrendSection
           percentage={percentageValue}
           formattedChange={variationText}
