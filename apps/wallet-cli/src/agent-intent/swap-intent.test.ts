@@ -77,10 +77,15 @@ describe("fetchAgentSwapQuote", () => {
     providers: AGENT_INTENT_SWAP_PROVIDERS,
   };
 
-  function quote(provider: string, details: Partial<Quote["quoteDetails"]> = {}): Quote {
+  function quote(
+    provider: string,
+    details: Partial<Quote["quoteDetails"]> = {},
+    providerType: "DEX" | "CEX" = "DEX",
+  ): Quote {
     return {
       key: provider,
       provider,
+      providerDetails: { type: providerType },
       errors: [],
       quoteDetails: { receiveAmount: 1250, ...details },
     } as unknown as Quote;
@@ -194,6 +199,29 @@ describe("fetchAgentSwapQuote", () => {
       expect(result).toEqual({ provider: "okx", receiveAmount: 1300, needsTokenApproval: true });
     });
 
+    it("keeps a LI.FI quote that needs an approval, since its swap comes with calldata", async () => {
+      const result = await fetchAgentSwapQuote(sellUsdc, async () =>
+        response({ quotes: [quote("lifi", needingApproval().quoteDetails, "CEX"), approved] }),
+      );
+
+      expect(result).toEqual({ provider: "lifi", receiveAmount: 1300, needsTokenApproval: true });
+    });
+
+    it.each(["oneinch", "velora", "okx"])(
+      "skips a non-DEX %s quote that needs an approval",
+      async provider => {
+        const result = await fetchAgentSwapQuote(sellUsdc, async () =>
+          response({ quotes: [quote(provider, needingApproval().quoteDetails, "CEX"), approved] }),
+        );
+
+        expect(result).toEqual({
+          provider: "oneinch",
+          receiveAmount: 1270,
+          needsTokenApproval: false,
+        });
+      },
+    );
+
     it("accepts a USDT approval only when the quote says no allowance is left", async () => {
       const sellUsdt = { ...sellUsdc, fromContract: USDT_CONTRACT };
       const usdtApproval = (approvedAmount?: string) =>
@@ -222,6 +250,14 @@ describe("fetchAgentSwapQuote", () => {
       [
         "an approval that isn't an ERC-20 approve call",
         needingApproval({ calldata: "0x12345678" }),
+      ],
+      [
+        "an approval to the zero address",
+        needingApproval({ calldata: `0x095ea7b3${"0".repeat(64)}${"5f5e100".padStart(64, "0")}` }),
+      ],
+      [
+        "an approval from a DEX the frontend has no endpoint for",
+        quote("uniswap", needingApproval().quoteDetails),
       ],
       [
         "an approval with no transaction to send",
