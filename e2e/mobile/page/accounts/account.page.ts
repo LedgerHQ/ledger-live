@@ -32,7 +32,7 @@ export default class AccountPage {
   private readonly anyOperationRow = byId(OPERATION_ROW_REGEXP);
   // A sub-account graph id carries the parent and token ids joined by "+".
   private readonly subAccountGraph = (index = 0) =>
-    byId(new RegExp(`^${ACCOUNT_GRAPH_PREFIX}.+\\+.+`), index);
+    byId(new RegExp(String.raw`^${ACCOUNT_GRAPH_PREFIX}.+\+.+`), index);
   private readonly accountNameAt = (index: number) =>
     byId(new RegExp(`${ACCOUNT_NAME_PREFIX}.*`), index);
   private readonly accountNameRow = (name: string) => byId(`${ACCOUNT_NAME_PREFIX}${name}`);
