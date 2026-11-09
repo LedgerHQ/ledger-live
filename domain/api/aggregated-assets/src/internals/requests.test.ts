@@ -108,6 +108,18 @@ describe("fetchAssetsPage", () => {
     expect(result.currenciesOrder).toEqual({ metaCurrencyIds: [] });
   });
 
+  it("keeps an own __proto__ key from the wire as an asset", async () => {
+    const data = JSON.parse(
+      `{"cryptoAssets":{"__proto__":{"id":"__proto__","ticker":"P","name":"Proto","assetsIds":{}}}}`,
+    );
+    baseQuery.mockResolvedValue({ data: { ...emptyRaw, cryptoAssets: data.cryptoAssets } });
+
+    const result = await fetchAssetsPage(baseQuery, params());
+
+    expect(Object.keys(result.cryptoAssets)).toEqual(["__proto__"]);
+    expect(Object.getPrototypeOf(result.cryptoAssets)).toBe(Object.prototype);
+  });
+
   it("drops an asset whose meta is null and keeps the rest", async () => {
     baseQuery.mockResolvedValue({
       data: {

@@ -92,11 +92,15 @@ export function emptyAssetsData(): AssetsData {
 export function brandAggregatedAssetIds(
   raw: Pick<RawApiResponse, "cryptoAssets" | "currenciesOrder">,
 ): Pick<AssetsData, "cryptoAssets" | "currenciesOrder"> {
-  const cryptoAssets: Record<AggregatedAssetId, CryptoAssetMeta> = {};
-  for (const [key, meta] of Object.entries(raw.cryptoAssets ?? {})) {
-    const id = AggregatedAssetIdSchema.safeParse(meta?.id);
-    if (id.success) cryptoAssets[AggregatedAssetIdSchema.parse(key)] = { ...meta, id: id.data };
-  }
+  // fromEntries defines own properties, so a wire key such as "__proto__" stays a key.
+  const cryptoAssets: Record<AggregatedAssetId, CryptoAssetMeta> = Object.fromEntries(
+    Object.entries(raw.cryptoAssets ?? {}).flatMap<[AggregatedAssetId, CryptoAssetMeta]>(
+      ([key, meta]) => {
+        const id = AggregatedAssetIdSchema.safeParse(meta?.id);
+        return id.success ? [[AggregatedAssetIdSchema.parse(key), { ...meta, id: id.data }]] : [];
+      },
+    ),
+  );
 
   const metaCurrencyIds = (raw.currenciesOrder?.metaCurrencyIds ?? []).flatMap(entry => {
     const id = AggregatedAssetIdSchema.safeParse(entry);
