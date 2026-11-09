@@ -3,6 +3,7 @@ import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
 import type { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
+import type { DeviceModelId } from "@ledgerhq/types-devices";
 
 type CatalogFilter = "all" | "not_installed" | "supported";
 type CatalogSort = "marketcap_desc" | "name_asc" | "name_desc";
@@ -18,6 +19,16 @@ const SORT_LABEL: Record<CatalogSort, string> = {
   marketcap_desc: "Market cap",
   name_asc: "Name A-Z",
   name_desc: "Name Z-A",
+};
+
+// Written out rather than imported from the app, so a rename of a product fails here.
+const PRODUCT_NAME: Partial<Record<DeviceModelId, string>> = {
+  nanoS: "Ledger Nano S",
+  nanoSP: "Ledger Nano S Plus",
+  nanoX: "Ledger Nano X",
+  stax: "Ledger Stax",
+  europa: "Ledger Flex",
+  apex: "Ledger Nano Gen5",
 };
 
 const BYTE_SIZE = /\d+(\.\d+)? (bytes|KB|MB)/;
@@ -82,6 +93,16 @@ export class MyLedgerPage extends AppPage {
     "close-language-installation-button",
   );
 
+  private readonly deviceNotOnboardedError = this.page.locator("#error-device-not-onboarded");
+  private readonly setUpDeviceButton = (device: DeviceModelId) => {
+    const productName = PRODUCT_NAME[device];
+    if (!productName) throw new Error(`No product name known for device model ${device}`);
+    return this.deviceNotOnboardedError.getByRole("button", {
+      name: `Set up my ${productName}`,
+      exact: true,
+    });
+  };
+
   private readonly customImageButton = this.page.getByTestId("manager-custom-image-button");
 
   private readonly appRow = (app: AppInfos) =>
@@ -113,6 +134,17 @@ export class MyLedgerPage extends AppPage {
   async waitForDashboard() {
     await expect(this.storageCard).toBeVisible();
     await expect(this.deviceOptions).toBeAttached();
+  }
+
+  @step("Expect My Ledger to report the device as not set up")
+  async expectDeviceNotOnboarded() {
+    await expect(this.deviceNotOnboardedError).toBeVisible();
+    await expect(this.storageCard).toBeHidden();
+  }
+
+  @step("Click the device setup button for $0")
+  async startDeviceSetup(device: DeviceModelId) {
+    await this.setUpDeviceButton(device).click();
   }
 
   /** The submit button becomes the close button once the rename lands, so both are needed. */
