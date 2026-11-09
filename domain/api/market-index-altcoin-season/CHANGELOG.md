@@ -1,5 +1,18 @@
 # @domain/api-altcoins-sentiment
 
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#24392](https://github.com/LedgerHQ/ledger-live/pull/24392) [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @reduxjs/toolkit to v2.13.0
+
+  - Updated `@reduxjs/toolkit` to `2.13.0`
+
+### Patch Changes
+
+- Updated dependencies [[`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f)]:
+  - @shared/api-services@0.13.0-next.0
+
 ## 0.4.4
 
 ### Patch Changes

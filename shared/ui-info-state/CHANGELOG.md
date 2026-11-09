@@ -1,5 +1,15 @@
 # @shared/ui-info-state
 
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#23473](https://github.com/LedgerHQ/ledger-live/pull/23473) [`6196234`](https://github.com/LedgerHQ/ledger-live/commit/61962349d0487b0e1f318d2ab36753befc434624) Thanks [@ishaba](https://github.com/ishaba)! - Keep a paid Tronify rental in mind after Send is closed: a reopened USDT send no longer offers a second rental while the energy is arriving, tells the user it is on its way, and re-estimates the fee on the amount step once it lands. Add the mobile E2E for the Tronify sponsored send. InfoState gives its description a testID derived from its own
+
+- [#24451](https://github.com/LedgerHQ/ledger-live/pull/24451) [`49ae0f6`](https://github.com/LedgerHQ/ledger-live/commit/49ae0f60632ad4ad518b8a7420ab02239f3fa144) Thanks [@benruseau](https://github.com/benruseau)! - Align the OS update screens with the latest designs and add an OS update screen gallery to the debug menu
+
+- [#24355](https://github.com/LedgerHQ/ledger-live/pull/24355) [`52622fa`](https://github.com/LedgerHQ/ledger-live/commit/52622fa571b8c7b549d185525f4511dc3ebdfa82) Thanks [@benruseau](https://github.com/benruseau)! - Show the OS update success screen for full, partial and out-of-memory restores, with the installed OS version and a banner about what was not reinstalled, drop the backup in every case, and track an out-of-memory restore with its own `outOfMemory` restore status
+
 ## 0.6.0
 
 ### Minor Changes

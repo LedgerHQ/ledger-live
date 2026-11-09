@@ -1,5 +1,11 @@
 # @features/platform-device-intent
 
+## 5.4.0-next.0
+
+### Minor Changes
+
+- [#24575](https://github.com/LedgerHQ/ledger-live/pull/24575) [`235a1ae`](https://github.com/LedgerHQ/ledger-live/commit/235a1ae2d5de213ab2f59a2aa584ef59e2058372) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Make `onExecutorStateChanged` and `cancelIntentRequestId` optional on the device intent executor
+
 ## 5.3.0
 
 ### Minor Changes

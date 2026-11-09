@@ -1,5 +1,17 @@
 # @domain/entity-currency-crypto
 
+## 0.19.0-next.0
+
+### Minor Changes
+
+- [#24564](https://github.com/LedgerHQ/ledger-live/pull/24564) [`a95a6bc`](https://github.com/LedgerHQ/ledger-live/commit/a95a6bcb630289fde6782430fb511b9c48c9ffcc) Thanks [@semeano](https://github.com/semeano)! - add the alpen evm currency, the mainnet of alpen_testnet
+
+- [#24583](https://github.com/LedgerHQ/ledger-live/pull/24583) [`31f7eba`](https://github.com/LedgerHQ/ledger-live/commit/31f7ebace98301cb3e46185a91621aa3ef59bb3b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Stop exporting `ExplorerViewSchema` and `CRYPTO_CURRENCY_ALIASES`, both internal to the package
+
+- [#24110](https://github.com/LedgerHQ/ledger-live/pull/24110) [`7324065`](https://github.com/LedgerHQ/ledger-live/commit/732406590c11eca310f977f401429e4e1270c4b4) Thanks [@qperrot](https://github.com/qperrot)! - Remove Fantom, whose network migrated to Sonic
+
+- [#24568](https://github.com/LedgerHQ/ledger-live/pull/24568) [`e7b21f8`](https://github.com/LedgerHQ/ledger-live/commit/e7b21f816021dbbe7314ff51bf32cc4d87291b98) Thanks [@qperrot](https://github.com/qperrot)! - Remove Stargaze from Ledger Wallet
+
 ## 0.18.0
 
 ### Minor Changes

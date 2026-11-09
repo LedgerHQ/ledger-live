@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.32.0-next.0
+
+### Minor Changes
+
+- [#24522](https://github.com/LedgerHQ/ledger-live/pull/24522) [`e67063f`](https://github.com/LedgerHQ/ledger-live/commit/e67063fc1fdb96c419c42a452433870b588f201e) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Import bignumber.js through its default export, the form bignumber.js 11 types support
+
 ## 0.31.0
 
 ### Minor Changes

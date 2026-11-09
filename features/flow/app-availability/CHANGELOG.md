@@ -1,5 +1,12 @@
 # @features/flow-app-availability
 
+## 0.3.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f)]:
+  - @domain/api-ofac@0.2.0-next.0
+
 ## 0.3.1
 
 ### Patch Changes

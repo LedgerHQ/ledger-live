@@ -1,5 +1,19 @@
 # @domain/api-currency-fiat
 
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#24392](https://github.com/LedgerHQ/ledger-live/pull/24392) [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @reduxjs/toolkit to v2.13.0
+
+  - Updated `@reduxjs/toolkit` to `2.13.0`
+
+### Patch Changes
+
+- Updated dependencies [[`ac116ba`](https://github.com/LedgerHQ/ledger-live/commit/ac116baae8763f331fd21885be36474933b52dff), [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f)]:
+  - @domain/entity-currency-fiat@0.6.0-next.0
+  - @shared/api-services@0.13.0-next.0
+
 ## 0.5.1
 
 ### Patch Changes

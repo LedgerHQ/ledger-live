@@ -1,6 +1,6 @@
 {
   "name": "@devtools/coin-config",
-  "version": "0.1.0",
+  "version": "0.2.0-next.0",
   "private": true,
   "description": "DevTools panel to override LiveConfig values, such as the config_currency_* coin configs, applied right away and kept across restarts",
   "main": "src/index.ts",

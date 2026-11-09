@@ -1,5 +1,19 @@
 # @ledgerhq/live-signer-solana
 
+## 0.23.0-next.0
+
+### Minor Changes
+
+- [#24488](https://github.com/LedgerHQ/ledger-live/pull/24488) [`3835bab`](https://github.com/LedgerHQ/ledger-live/commit/3835babeb6da9775f5750a2219f480a5422269ab) Thanks [@gre-ledger](https://github.com/gre-ledger)! - chore: upgrade bs58 to 6.0.0 and bs58check to 4.0.0, drop @types/bs58 and @types/bs58check
+
+### Patch Changes
+
+- Updated dependencies [[`d701bc7`](https://github.com/LedgerHQ/ledger-live/commit/d701bc7564f9f479e0cc867ef76ec40b73f5c49c), [`3835bab`](https://github.com/LedgerHQ/ledger-live/commit/3835babeb6da9775f5750a2219f480a5422269ab), [`6ab5a87`](https://github.com/LedgerHQ/ledger-live/commit/6ab5a87d796726b2fc38b34862209abf82521f72), [`19eed0f`](https://github.com/LedgerHQ/ledger-live/commit/19eed0fa359f4af78d4bca8367092d6e38c5d943), [`8ee0ffd`](https://github.com/LedgerHQ/ledger-live/commit/8ee0ffdaa8e77c3fefc5fb49a277f04d52301a8f), [`d4bccad`](https://github.com/LedgerHQ/ledger-live/commit/d4bccadbcafe6365dd589ada054bd05d307722d2), [`e67063f`](https://github.com/LedgerHQ/ledger-live/commit/e67063fc1fdb96c419c42a452433870b588f201e), [`d3f59ae`](https://github.com/LedgerHQ/ledger-live/commit/d3f59ae3fc6b9d9240bd81df9f93c1223cb64ddb)]:
+  - @ledgerhq/ledger-wallet-framework@3.11.0-next.0
+  - @ledgerhq/coin-solana@3.0.0-next.0
+  - @ledgerhq/ledger-cal-service@1.19.12-next.0
+  - @ledgerhq/ledger-trust-service@0.8.23-next.0
+
 ## 0.22.4
 
 ### Patch Changes

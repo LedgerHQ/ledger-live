@@ -1,5 +1,21 @@
 # @features/platform-device-onboarding
 
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#24346](https://github.com/LedgerHQ/ledger-live/pull/24346) [`72da4b1`](https://github.com/LedgerHQ/ledger-live/commit/72da4b19bd803dc85ef83d3b09a45445f95186fa) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Confirm before leaving an unseeded device setup, and keep onboarding incomplete until the end
+
+- [#24303](https://github.com/LedgerHQ/ledger-live/pull/24303) [`e8ca231`](https://github.com/LedgerHQ/ledger-live/commit/e8ca231d007f43839987343437507ea02d0dad0d) Thanks [@ysitbon](https://github.com/ysitbon)! - Split device onboarding by job: `@features/platform-device-onboarding` runs the actor with `useDeviceOnboardingActor`, and `@devtools/bindings` builds the devtool's log, context and next states with `useDeviceOnboardingToolState` and `useDeviceOnboardingToolProps`. The mobile funnel no longer imports `@devtools/*`, and the desktop device onboarding code moves under DevTools
+
+- [#24273](https://github.com/LedgerHQ/ledger-live/pull/24273) [`8dae360`](https://github.com/LedgerHQ/ledger-live/commit/8dae360c044392da40c67e29416d11bbe34afd8b) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Keep polling the device through seed entry before treating the transport as lost
+
+- [#24441](https://github.com/LedgerHQ/ledger-live/pull/24441) [`e0ac369`](https://github.com/LedgerHQ/ledger-live/commit/e0ac36999d2ff30c0788c40a4a7ed80293d72fe0) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Show the unlock sheet when a device locks during onboarding checks
+
+- [#24282](https://github.com/LedgerHQ/ledger-live/pull/24282) [`80b6233`](https://github.com/LedgerHQ/ledger-live/commit/80b62337e7e2b754004ca5f93b9f7d569015e1eb) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Remember which seed path an unseeded device took
+
+- [#24199](https://github.com/LedgerHQ/ledger-live/pull/24199) [`f53d517`](https://github.com/LedgerHQ/ledger-live/commit/f53d517815a694c54cb535ba39ebc1b249a88775) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Open the unseeded device funnel from Set up your Ledger, and skip Ledger Sync after setup
+
 ## 0.4.0
 
 ### Minor Changes

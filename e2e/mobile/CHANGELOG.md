@@ -1,5 +1,23 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.46.0-next.0
+
+### Minor Changes
+
+- [#24406](https://github.com/LedgerHQ/ledger-live/pull/24406) [`3a0d8aa`](https://github.com/LedgerHQ/ledger-live/commit/3a0d8aa1d4904fa0ccc53528ec092bc32a63dcd4) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Always show aggregated assets and drop the lwmWallet40 aggregatedAssets param
+
+- [#24448](https://github.com/LedgerHQ/ledger-live/pull/24448) [`96fac1e`](https://github.com/LedgerHQ/ledger-live/commit/96fac1eb64856beb33cc68594e98c25e8b308898) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Always show asset discoverability and drop the lwmWallet40 assetDiscoverability param
+
+- [#24347](https://github.com/LedgerHQ/ledger-live/pull/24347) [`0d83181`](https://github.com/LedgerHQ/ledger-live/commit/0d83181e9a96f55811f2ce5532527739bdb7e62a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Always show the mobile asset section and drop the lwmWallet40 assetSection param
+
+- [#24202](https://github.com/LedgerHQ/ledger-live/pull/24202) [`e186896`](https://github.com/LedgerHQ/ledger-live/commit/e186896213df32feb1e6a80e38f45cf189655866) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Always show mobile My Wallet and drop the lwmWallet40 myWallet param
+
+- [#23473](https://github.com/LedgerHQ/ledger-live/pull/23473) [`6196234`](https://github.com/LedgerHQ/ledger-live/commit/61962349d0487b0e1f318d2ab36753befc434624) Thanks [@ishaba](https://github.com/ishaba)! - Keep a paid Tronify rental in mind after Send is closed: a reopened USDT send no longer offers a second rental while the energy is arriving, tells the user it is on its way, and re-estimates the fee on the amount step once it lands. Add the mobile E2E for the Tronify sponsored send. InfoState gives its description a testID derived from its own
+
+- [#24159](https://github.com/LedgerHQ/ledger-live/pull/24159) [`88d4ca7`](https://github.com/LedgerHQ/ledger-live/commit/88d4ca7fde2bece3d23708748a5c93ff570bb09d) Thanks [@abdurrahman-ledger](https://github.com/abdurrahman-ledger)! - Check R2 before E2E tests and lock on the machine only when it fails, with a fixed number of lock deferral passes
+
+- [#24522](https://github.com/LedgerHQ/ledger-live/pull/24522) [`e67063f`](https://github.com/LedgerHQ/ledger-live/commit/e67063fc1fdb96c419c42a452433870b588f201e) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Import bignumber.js through its default export, the form bignumber.js 11 types support
+
 ## 0.45.0
 
 ### Minor Changes

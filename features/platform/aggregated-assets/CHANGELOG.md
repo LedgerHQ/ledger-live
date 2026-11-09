@@ -1,5 +1,29 @@
 # @features/platform-aggregated-assets
 
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#24189](https://github.com/LedgerHQ/ledger-live/pull/24189) [`711b543`](https://github.com/LedgerHQ/ledger-live/commit/711b543456a56c18f5aa0828de974a2ee9b94c6b) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Let users pick the network when they swap a multi-network asset from Market or Asset Detail, also when they have no account for it. Show only the networks of the asset itself, so USDC no longer opens an extra asset step. When the drawer keeps only one network, open the account step on that network.
+
+- [#24520](https://github.com/LedgerHQ/ledger-live/pull/24520) [`f781149`](https://github.com/LedgerHQ/ledger-live/commit/f7811490b8965dabe3be45c36b9ffb5e29bd1ead) Thanks [@ysitbon](https://github.com/ysitbon)! - Brand `AggregatedAssetId` and `MarketId`, and replace both copies of `dadaIdToMarketId` with the typed `toMarketId` and `parseMarketRef` bridge in `@domain/api-aggregated-assets`
+
+- [#24472](https://github.com/LedgerHQ/ledger-live/pull/24472) [`55a43bc`](https://github.com/LedgerHQ/ledger-live/commit/55a43bcb1d736466d956eb8645d9e310e3daaaab) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Show the 1D market variation for an unchanged account balance
+
+- [#24594](https://github.com/LedgerHQ/ledger-live/pull/24594) [`b67184a`](https://github.com/LedgerHQ/ledger-live/commit/b67184adc0aa9a2e0871a8a636fa8bdcee846877) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Align desktop 1D asset and account variation with the market banner
+
+- [#24392](https://github.com/LedgerHQ/ledger-live/pull/24392) [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @reduxjs/toolkit to v2.13.0
+
+  - Updated `@reduxjs/toolkit` to `2.13.0`
+
+### Patch Changes
+
+- Updated dependencies [[`f781149`](https://github.com/LedgerHQ/ledger-live/commit/f7811490b8965dabe3be45c36b9ffb5e29bd1ead), [`cea0076`](https://github.com/LedgerHQ/ledger-live/commit/cea0076fb3fd7c19d0e73b99ac76507278e390a4), [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f)]:
+  - @domain/entity-aggregated-asset@0.4.0-next.0
+  - @domain/api-aggregated-assets@0.7.0-next.0
+  - @domain/entity-currency@0.5.0-next.0
+  - @features/platform-env@0.4.5-next.0
+
 ## 0.6.0
 
 ### Minor Changes

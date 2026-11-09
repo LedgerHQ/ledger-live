@@ -1,5 +1,11 @@
 # @domain/entity-aggregated-asset
 
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#24520](https://github.com/LedgerHQ/ledger-live/pull/24520) [`f781149`](https://github.com/LedgerHQ/ledger-live/commit/f7811490b8965dabe3be45c36b9ffb5e29bd1ead) Thanks [@ysitbon](https://github.com/ysitbon)! - Brand `AggregatedAssetId` and `MarketId`, and replace both copies of `dadaIdToMarketId` with the typed `toMarketId` and `parseMarketRef` bridge in `@domain/api-aggregated-assets`
+
 ## 0.3.0
 
 ### Minor Changes

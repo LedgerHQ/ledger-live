@@ -1,5 +1,22 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.34.0-next.0
+
+### Minor Changes
+
+- [#24250](https://github.com/LedgerHQ/ledger-live/pull/24250) [`a6c95e2`](https://github.com/LedgerHQ/ledger-live/commit/a6c95e2ae469bfe6eb3432fc691efea35d70a741) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add a floating bar to Ledger Wallet Mobile's mock server mode, with the mock server overlay and the live screen of each mocked device
+
+- [#24050](https://github.com/LedgerHQ/ledger-live/pull/24050) [`6a70efc`](https://github.com/LedgerHQ/ledger-live/commit/6a70efc3eb1e625206286d913d7f5d07b01ee8ad) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Run Ledger Wallet Mobile on the device mock server from Settings > Debug > Connectivity > Mock server, with mock devices in DIE, SelectDevice2 and legacy flows
+
+- [#23599](https://github.com/LedgerHQ/ledger-live/pull/23599) [`0d2268d`](https://github.com/LedgerHQ/ledger-live/commit/0d2268d099e6ad7adac33bcb1e4456a28712a2ec) Thanks [@CremaFR](https://github.com/CremaFR)! - Run the custom.exchange device steps (nonce, Exchange app confirmation, signature) and their errors of wallet-api live apps in the Device Intent Executor drawer, behind the llmWalletApiDeviceIntentExchange flag, and send its A/B assignment to analytics and the swap live app. Keep the httpdebug compat device id of HTTP proxy devices instead of prefixing it with usb|
+
+### Patch Changes
+
+- Updated dependencies [[`b282f26`](https://github.com/LedgerHQ/ledger-live/commit/b282f26a470c5f3519d252eb301b5ddb98fe68e9), [`420409b`](https://github.com/LedgerHQ/ledger-live/commit/420409ba20ed5eca81813b15b7dcb85a92de1b5b), [`ef95b2e`](https://github.com/LedgerHQ/ledger-live/commit/ef95b2e00e490f024b81bfbf35cb582b5fed8783), [`62bdc34`](https://github.com/LedgerHQ/ledger-live/commit/62bdc344261d600a3d7d2b78a8cdb9e7b3c97c25), [`a6c95e2`](https://github.com/LedgerHQ/ledger-live/commit/a6c95e2ae469bfe6eb3432fc691efea35d70a741), [`2cee99e`](https://github.com/LedgerHQ/ledger-live/commit/2cee99e4b728ef315e5df94271c2bd6b695a7ade), [`8777c73`](https://github.com/LedgerHQ/ledger-live/commit/8777c73879acf3e38b8cef00fb88213c55011f96), [`49ae0f6`](https://github.com/LedgerHQ/ledger-live/commit/49ae0f60632ad4ad518b8a7420ab02239f3fa144), [`52622fa`](https://github.com/LedgerHQ/ledger-live/commit/52622fa571b8c7b549d185525f4511dc3ebdfa82), [`7282cc0`](https://github.com/LedgerHQ/ledger-live/commit/7282cc0d6d7431ecb4d49534d267f5f562652965), [`6a70efc`](https://github.com/LedgerHQ/ledger-live/commit/6a70efc3eb1e625206286d913d7f5d07b01ee8ad)]:
+  - @ledgerhq/live-dmk-shared@0.39.0-next.0
+  - @shared/env@0.13.0-next.0
+  - @features/platform-device-mock-server@0.1.0-next.0
+
 ## 0.33.1
 
 ### Patch Changes

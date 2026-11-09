@@ -1,5 +1,19 @@
 # @ledgerhq/coin-tron
 
+## 10.4.0-next.0
+
+### Minor Changes
+
+- [#24488](https://github.com/LedgerHQ/ledger-live/pull/24488) [`3835bab`](https://github.com/LedgerHQ/ledger-live/commit/3835babeb6da9775f5750a2219f480a5422269ab) Thanks [@gre-ledger](https://github.com/gre-ledger)! - chore: upgrade bs58 to 6.0.0 and bs58check to 4.0.0, drop @types/bs58 and @types/bs58check
+
+- [#24373](https://github.com/LedgerHQ/ledger-live/pull/24373) [`6ab5a87`](https://github.com/LedgerHQ/ledger-live/commit/6ab5a87d796726b2fc38b34862209abf82521f72) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Export the default coin configs from each coin package and wrap them in `ledger-live-common` (ADR-063). `coin-celo` and `coin-cosmos` replace their `celoConfig` and `cosmosConfig` exports, which wrapped the defaults in `ConfigInfo`, with plain typed `celoDefaults` and `cosmosDefaults`; their `features` now use the `status` key instead of `type`, Desmos gets the active status it was missing, and Gonka defaults to a minimum gas price of 1 ngonka
+
+- [#23539](https://github.com/LedgerHQ/ledger-live/pull/23539) [`310127f`](https://github.com/LedgerHQ/ledger-live/commit/310127f2b7fbc19eba7b2e45bd1d6467e447e84e) Thanks [@ishaba](https://github.com/ishaba)! - Show the energy provider's terms on the Tronify rent signature step, which the user accepts by signing, and align the rent, polling and transfer step copy with the validated wording
+
+- [#24522](https://github.com/LedgerHQ/ledger-live/pull/24522) [`e67063f`](https://github.com/LedgerHQ/ledger-live/commit/e67063fc1fdb96c419c42a452433870b588f201e) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Import bignumber.js through its default export, the form bignumber.js 11 types support
+
+- [#24264](https://github.com/LedgerHQ/ledger-live/pull/24264) [`92d7620`](https://github.com/LedgerHQ/ledger-live/commit/92d7620ee6f6f3861fc856b61d29372e6b963843) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - getBlock reads TRC20 transfers from the Transfer events of every smart contract call (swaps, transferFrom, payouts, airdrops) and maps approve() calls to an APPROVE operation (BACK-11822)
+
 ## 10.3.0
 
 ### Minor Changes

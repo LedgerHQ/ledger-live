@@ -1,5 +1,43 @@
 # @ledgerhq/wallet-cli
 
+## 3.3.0-next.0
+
+### Minor Changes
+
+- [#24491](https://github.com/LedgerHQ/ledger-live/pull/24491) [`a52deaf`](https://github.com/LedgerHQ/ledger-live/commit/a52deafcd8f621c41c19f4cdf593cbade71a7f70) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `balances` and `operations` no longer look up each held token in the Crypto Assets List to format its amounts
+
+- [#24420](https://github.com/LedgerHQ/ledger-live/pull/24420) [`21c1140`](https://github.com/LedgerHQ/ledger-live/commit/21c1140a5e1593177e5cdacc2a929ed9b93d8141) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `agent-intent send` without `--token` no longer looks up each token the `--account` holds a second time in the Crypto Assets List
+
+- [#24566](https://github.com/LedgerHQ/ledger-live/pull/24566) [`09af998`](https://github.com/LedgerHQ/ledger-live/commit/09af998b94d2be8023bb2bdcb0952adabaca9771) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `agent-intent swap` checks token approvals with the Agent Intent SDK rules: it skips quotes that approve the zero address, have malformed `approve` calldata, or need an approval on a non-DEX 1inch, Velora or OKX quote
+
+- [#24323](https://github.com/LedgerHQ/ledger-live/pull/24323) [`770d2fe`](https://github.com/LedgerHQ/ledger-live/commit/770d2fe582869d404dcd75ef914d8e7cbf4709dc) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - After `session reset`, `agent-intent sync` pulls every Ledger Sync account again instead of reporting it up to date
+
+- [#24324](https://github.com/LedgerHQ/ledger-live/pull/24324) [`211def6`](https://github.com/LedgerHQ/ledger-live/commit/211def676e1c8104b78f6bad43b00bdca3ac871c) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `skill doctor` names the files of a locally modified skill that changed since wallet-cli installed it; `--output json` adds them as `changedFiles`
+
+- [#24294](https://github.com/LedgerHQ/ledger-live/pull/24294) [`4b13cf2`](https://github.com/LedgerHQ/ledger-live/commit/4b13cf2aae14432b3e98603d120403e98fca8baf) Thanks [@michalmisiejuk-ext-collab](https://github.com/michalmisiejuk-ext-collab)! - Let `SWAP_API_BASE` point the swap commands at another Swap API, such as staging. wallet-cli prints that URL on stderr and refuses a value that is not an http(s) URL or carries `user:pass@`, a query or a fragment
+
+- [#24439](https://github.com/LedgerHQ/ledger-live/pull/24439) [`59c8e4e`](https://github.com/LedgerHQ/ledger-live/commit/59c8e4e5c5d6308428361772922790cd4bac5959) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - Install `@ledgerhq/agent-intent-sdk` 0.2.0 from the npm registry instead of a vendored tarball
+
+- [#24272](https://github.com/LedgerHQ/ledger-live/pull/24272) [`842a9a5`](https://github.com/LedgerHQ/ledger-live/commit/842a9a547be2224eec86295c57c288f0c51f8fbd) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Brand the account descriptor network as `NetworkId`, distinct from `CryptoCurrencyId`, bridged only by `currencyIdFromNetwork` and `networkFromCurrencyId`
+
+- [#24392](https://github.com/LedgerHQ/ledger-live/pull/24392) [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @reduxjs/toolkit to v2.13.0
+
+  - Updated `@reduxjs/toolkit` to `2.13.0`
+
+- [#24455](https://github.com/LedgerHQ/ledger-live/pull/24455) [`d4bccad`](https://github.com/LedgerHQ/ledger-live/commit/d4bccadbcafe6365dd589ada054bd05d307722d2) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(coin-solana): replace `rpcUrls` by a single `rpcUrl` per currency config. Breaking: `endpointByCurrencyId` is removed, `chainConfigFrom` and `createApi` no longer take a currency id.
+
+- [#24522](https://github.com/LedgerHQ/ledger-live/pull/24522) [`e67063f`](https://github.com/LedgerHQ/ledger-live/commit/e67063fc1fdb96c419c42a452433870b588f201e) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Import bignumber.js through its default export, the form bignumber.js 11 types support
+
+- [#24454](https://github.com/LedgerHQ/ledger-live/pull/24454) [`1bb9463`](https://github.com/LedgerHQ/ledger-live/commit/1bb94636a978707449705afcc04228983649b495) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Exit within about 3 s after a command when the analytics endpoint is unreachable, instead of waiting up to 75 s for Segment to give up.
+
+- [#22506](https://github.com/LedgerHQ/ledger-live/pull/22506) [`437d3e2`](https://github.com/LedgerHQ/ledger-live/commit/437d3e254d041164ca6f77679ac22e7300fce55f) Thanks [@mmysl-ledger-ext](https://github.com/mmysl-ledger-ext)! - Reject networks wallet-cli does not support (e.g. `base`) up front with a clear error, instead of connecting to the device and running discovery
+
+- [#24315](https://github.com/LedgerHQ/ledger-live/pull/24315) [`9ae389d`](https://github.com/LedgerHQ/ledger-live/commit/9ae389d1f0cf2b0641f4cd989be524f81addd26d) Thanks [@Justkant](https://github.com/Justkant)! - The embedded wallet-cli skill no longer says every `send --data` call is decoded on the device: when the device does not decode the call, the human rejects it and the agent stops instead of suggesting blind signing
+
+- [#22441](https://github.com/LedgerHQ/ledger-live/pull/22441) [`aacc8ab`](https://github.com/LedgerHQ/ledger-live/commit/aacc8ab5ff32db1337d568e30431a08bd560cd0b) Thanks [@mmysl-ledger-ext](https://github.com/mmysl-ledger-ext)! - fix(wallet-cli): reject unaffordable swaps with a typed error instead of a raw HTTP status
+
+  JSON error envelopes of every command now carry a `code` (the error name, omitted for built-in errors) and, for swap backend rejections, `http_status`.
+
 ## 3.2.0
 
 ### Minor Changes

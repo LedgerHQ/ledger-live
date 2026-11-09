@@ -1,5 +1,29 @@
 # @ledgerhq/coin-solana
 
+## 3.0.0-next.0
+
+### Major Changes
+
+- [#24455](https://github.com/LedgerHQ/ledger-live/pull/24455) [`d4bccad`](https://github.com/LedgerHQ/ledger-live/commit/d4bccadbcafe6365dd589ada054bd05d307722d2) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(coin-solana): replace `rpcUrls` by a single `rpcUrl` per currency config. Breaking: `endpointByCurrencyId` is removed, `chainConfigFrom` and `createApi` no longer take a currency id.
+
+### Minor Changes
+
+- [#24488](https://github.com/LedgerHQ/ledger-live/pull/24488) [`3835bab`](https://github.com/LedgerHQ/ledger-live/commit/3835babeb6da9775f5750a2219f480a5422269ab) Thanks [@gre-ledger](https://github.com/gre-ledger)! - chore: upgrade bs58 to 6.0.0 and bs58check to 4.0.0, drop @types/bs58 and @types/bs58check
+
+- [#24373](https://github.com/LedgerHQ/ledger-live/pull/24373) [`6ab5a87`](https://github.com/LedgerHQ/ledger-live/commit/6ab5a87d796726b2fc38b34862209abf82521f72) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Export the default coin configs from each coin package and wrap them in `ledger-live-common` (ADR-063). `coin-celo` and `coin-cosmos` replace their `celoConfig` and `cosmosConfig` exports, which wrapped the defaults in `ConfigInfo`, with plain typed `celoDefaults` and `cosmosDefaults`; their `features` now use the `status` key instead of `type`, Desmos gets the active status it was missing, and Gonka defaults to a minimum gas price of 1 ngonka
+
+- [#24374](https://github.com/LedgerHQ/ledger-live/pull/24374) [`19eed0f`](https://github.com/LedgerHQ/ledger-live/commit/19eed0fa359f4af78d4bca8367092d6e38c5d943) Thanks [@henri-ly](https://github.com/henri-ly)! - fix(coin-solana): sign a partner-built transaction whose fees another account pays (Jupiter gasless and RFQ swaps): crafting accepts any sender among the transaction's required signers instead of the fee payer only, crafting and fee estimation keep the partner's blockhash when another signer still has to sign (and crafting reports a blockhash's expiry only when it fetched that blockhash), and combine places the device signature in the sender's slot rather than at index 0
+
+- [#24242](https://github.com/LedgerHQ/ledger-live/pull/24242) [`8ee0ffd`](https://github.com/LedgerHQ/ledger-live/commit/8ee0ffdaa8e77c3fefc5fb49a277f04d52301a8f) Thanks [@henri-ly](https://github.com/henri-ly)! - fix(coin-solana): keep transactions within the 4 instructions the Nano S app parses, by leaving out the compute-unit limit when it and the price don't both fit (a stake creation with its delegation, a token transfer creating the recipient account with a memo), instead of requiring blind signing
+
+- [#24522](https://github.com/LedgerHQ/ledger-live/pull/24522) [`e67063f`](https://github.com/LedgerHQ/ledger-live/commit/e67063fc1fdb96c419c42a452433870b588f201e) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Import bignumber.js through its default export, the form bignumber.js 11 types support
+
+### Patch Changes
+
+- Updated dependencies [[`b77803f`](https://github.com/LedgerHQ/ledger-live/commit/b77803ffbca90848d55bca56b9d8cd3547464620), [`d701bc7`](https://github.com/LedgerHQ/ledger-live/commit/d701bc7564f9f479e0cc867ef76ec40b73f5c49c), [`d36ed0a`](https://github.com/LedgerHQ/ledger-live/commit/d36ed0a5b624f1842e2ad3a857d502621dfb5fb9), [`e051c84`](https://github.com/LedgerHQ/ledger-live/commit/e051c84a8486b78327ea49500c38b6e2138bbc21), [`3a0d8aa`](https://github.com/LedgerHQ/ledger-live/commit/3a0d8aa1d4904fa0ccc53528ec092bc32a63dcd4), [`96fac1e`](https://github.com/LedgerHQ/ledger-live/commit/96fac1eb64856beb33cc68594e98c25e8b308898), [`0d83181`](https://github.com/LedgerHQ/ledger-live/commit/0d83181e9a96f55811f2ce5532527739bdb7e62a), [`e186896`](https://github.com/LedgerHQ/ledger-live/commit/e186896213df32feb1e6a80e38f45cf189655866), [`e7b21f8`](https://github.com/LedgerHQ/ledger-live/commit/e7b21f816021dbbe7314ff51bf32cc4d87291b98), [`e67063f`](https://github.com/LedgerHQ/ledger-live/commit/e67063fc1fdb96c419c42a452433870b588f201e), [`d3f59ae`](https://github.com/LedgerHQ/ledger-live/commit/d3f59ae3fc6b9d9240bd81df9f93c1223cb64ddb)]:
+  - @ledgerhq/types-live@6.131.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.11.0-next.0
+
 ## 2.7.0
 
 ### Minor Changes
