@@ -2,16 +2,16 @@
 
 A screen asks for one kind of data of one account (a balance, a page of operations) when it needs it, instead of reading a monolithic `Account` filled by the background sync. The router picks, per account, the first source able to serve it; the answer lands in that kind's entity slice, and how the read went in the framework's `accountData` slice.
 
-Accounts are identified by an `AccountDescriptor` and keyed by its `AccountUUID`, both from [`@domain/entity-account-descriptor`](../domain/entity/account-descriptor). The accounts of the app live in the `accounts` slice of [`@domain/entity-account`](../domain/entity/account), by `AccountUUID` (each app mounts it at `accountEntries` while the legacy store holds `accounts`, and binds its selectors there), kept in step with the legacy accounts by `connectAccountsStore` (wired in each app's `account-data-setup.ts`), so a screen holding a legacy account finds its descriptor with `selectAccountUUIDByLegacyId`.
+Accounts are identified by an `AccountDescriptor` and keyed by its `AccountUUID`, both from [`@domain/entity-account-descriptor`](../../domain/entity/account-descriptor). The accounts of the app live in the `accounts` slice of [`@domain/entity-account`](../../domain/entity/account), by `AccountUUID` (each app mounts it at `accountEntries` while the legacy store holds `accounts`, and binds its selectors there), kept in step with the legacy accounts by `connectAccountsStore` (wired in each app's `account-data-setup.ts`), so a screen holding a legacy account finds its descriptor with `selectAccountUUIDByLegacyId`.
 
 ## Packages
 
 | Package | Holds |
 | --- | --- |
-| [`@domain/entity-account-data`](../domain/entity/account-data) | `AccountDataRegistry`, the open map of kinds; the `accountData` status slice and the `accountDataReceived` action entities store from |
-| [`@domain/api-account-data`](../domain/api/account-data) | `AccountDataSource`, `createAccountDataRouter`, `fetchAccountData`, `fetchMoreAccountData`; `./testing` holds two toy kinds |
-| [`@features/platform-account-data`](../features/platform/account-data) | `useAccountData` |
-| [`@features/platform-account-source-coin-module`](../features/platform/account-source-coin-module) | the `coin-module` source, reading coin modules directly (`balance`; `operations` once it lists pending operations) |
+| [`@domain/entity-account-data`](../../domain/entity/account-data) | `AccountDataRegistry`, the open map of kinds; the `accountData` status slice and the `accountDataReceived` action entities store from |
+| [`@domain/api-account-data`](../../domain/api/account-data) | `AccountDataSource`, `createAccountDataRouter`, `fetchAccountData`, `fetchMoreAccountData`; `./testing` holds two toy kinds |
+| [`@features/platform-account-data`](../../features/platform/account-data) | `useAccountData` for one account, `useAccountDataBatch` for many |
+| [`@features/platform-account-source-coin-module`](../../features/platform/account-source-coin-module) | the `coin-module` source, reading coin modules directly (`balance`; `operations` once it lists pending operations) |
 | `@domain/entity-account-<kind>` | one kind: its models, its data slice, and the `declare module` adding the kind |
 | apps, `src/config/account-data-setup.ts` | the ranked sources, spread into the thunk `extraArgument` |
 
@@ -45,7 +45,7 @@ sequenceDiagram
 - **Freshness.** A head read of a query younger than `maxAge` (30 s by default) is skipped; one already in flight is joined. `refresh` reads whatever the age.
 - **Latest wins.** An answer arriving after a newer read of the same account and query started is dropped.
 - **Next page.** A paginated kind's result carries `nextCursor`, opaque to everyone but the source that wrote it. `fetchMoreAccountData` hands it back to that source only, for the same query.
-- **Many accounts.** Reads issued in the same tick for one kind, query and source are routed together: one call per chunk of `maxBatchSize` on a source with a batch reader, otherwise its single reader once per account. Either way, at most `concurrency` calls (default 4) are in flight per source. "Refresh all" is one `fetchAccountData` per account, dispatched in one go.
+- **Many accounts.** Reads issued in the same tick for one kind, query and source are routed together: one call per chunk of `maxBatchSize` on a source with a batch reader, otherwise its single reader once per account. Either way, at most `concurrency` calls (default 4) are in flight per source. `useAccountDataBatch` dispatches one `fetchAccountData` per account in one go, so each account keeps its own freshness, join and status while the source still gets one call per chunk.
 - **Failures** are per account: an account no source serves fails with `NoAccountDataSourceError`; a failed batch call fails its chunk only, without retrying account by account. A source that cannot serve one account after all rejects it with `AccountDataNotServedError`: the router asks the next ranked source, each source at most once, except on a next page.
 
 Why not RTK Query: its cache would hold the data, where entity slices are what screens and other domains select from, keyed by `AccountUUID`. It also caches per endpoint argument, so it cannot merge the reads of many screens into one source call, nor fall back between sources per account.
@@ -64,7 +64,7 @@ In a new `domain/entity/account-<kind>` package:
    }
    ```
 
-2. Write the slice: it stores the data keyed by `AccountUUID`, from the answers of its kind. A kind with a query also keys it by `payload.queryKey` (see [`@domain/entity-account-operation`](../domain/entity/account-operation)). `append` is `true` on a next page, to merge rather than replace:
+2. Write the slice: it stores the data keyed by `AccountUUID`, from the answers of its kind. A kind with a query also keys it by `payload.queryKey` (see [`@domain/entity-account-operation`](../../domain/entity/account-operation)). `append` is `true` on a next page, to merge rather than replace:
 
    ```ts
    extraReducers: builder => {
@@ -76,7 +76,7 @@ In a new `domain/entity/account-<kind>` package:
 
 3. Register the reducer in each app, next to `accountData`.
 
-[`newKind.test.tsx`](../features/platform/account-data/src/newKind.test.tsx) does all of this in one file.
+[`newKind.test.tsx`](../../features/platform/account-data/src/newKind.test.tsx) does all of this in one file.
 
 ## Adding a source
 
@@ -110,7 +110,7 @@ export const portfolioSource: AccountDataSource = {
 
 - `id` is an `AccountDataSourceId` (`AccountDataSourceIdSchema` in `@domain/entity-account-data`): the answering source is stored with the data, and only it serves the next page.
 - `supports` is pure and synchronous, decided from the descriptor alone.
-- `purposes` lists the descriptor purposes a source serves, `["account"]` by default: a `mock` descriptor (a generated account) only reaches the mock source of [`@devtools/mock-accounts`](../devtools/mock-accounts), which that tool adds at runtime with `addAccountDataSource`.
+- `purposes` lists the descriptor purposes a source serves, `["account"]` by default: a `mock` descriptor (a generated account) only reaches the mock source of [`@devtools/mock-accounts`](../../devtools/mock-accounts), which that tool adds at runtime with `addAccountDataSource`.
 - On a next page, each target carries the `cursor` the source wrote in the previous page's `nextCursor`.
 - A source with both readers for a kind is always read through `readBatch`: its `read` is never called.
 - Add the source to `accountDataSources` in each app's `account-data-setup.ts`. The order is the fallback order: `coin-module` first, then `full-sync`.

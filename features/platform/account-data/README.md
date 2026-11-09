@@ -18,4 +18,4 @@ const { pending } = useAccountDataBatch("balance", descriptors);
 const total = useSelector(state => selectTotal(state, descriptors));
 ```
 
-See [the account data layer](../../../docs/account-data-layer.md).
+See [the account data layer](../../../docs/account-models/data-layer.md).

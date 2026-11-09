@@ -52,7 +52,7 @@ export type CompressedBalanceHistoryCache = Record<
   CompressedBalanceHistoryDataCache
 >;
 
-/** A token belongs to an Account and share the parent account address */
+/** Legacy, like `Account`: tokens are rows of each `account-*` entity, see https://github.com/LedgerHQ/ledger-live/tree/develop/docs/account-models. A token belongs to an Account and share the parent account address */
 export type TokenAccount = {
   type: "TokenAccount";
   id: string;
@@ -92,6 +92,8 @@ export type AccountReadiness = {
 };
 
 /**
+ * Legacy: new code takes an `AccountDescriptor` and reads `account-*` entities, see https://github.com/LedgerHQ/ledger-live/tree/develop/docs/account-models.
+ *
  * Account type is the main level account of a blockchain currency.
  * Each family maybe need an extra field, to solve this, you can have some subtyping like this:
 
@@ -187,7 +189,7 @@ export type Account = {
   nfts?: ProtoNFT[];
 };
 
-/** One of the Account type */
+/** Legacy, like `Account`, see https://github.com/LedgerHQ/ledger-live/tree/develop/docs/account-models. One of the Account type */
 export type AccountLike<A extends Account = Account> = A | TokenAccount;
 
 /**
