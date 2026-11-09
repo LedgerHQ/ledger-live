@@ -6,7 +6,6 @@ import {
   listCryptoCurrencies,
   findCryptoCurrency,
   findCryptoCurrencyByScheme,
-  findCryptoCurrencyByTicker,
   findCryptoCurrencyByKeyword,
 } from "./accessors";
 
@@ -104,7 +103,7 @@ describe("listCryptoCurrencies", () => {
   it("alpen_testnet is absent by default, present with withDevCrypto, and does not take over the BTC ticker", () => {
     expect(listCryptoCurrencies().some(c => c.id === "alpen_testnet")).toBe(false);
     expect(listCryptoCurrencies(true)).toContain(CRYPTO_CURRENCIES_REGISTRY.alpen_testnet);
-    expect(findCryptoCurrencyByTicker("BTC")).toBe(CRYPTO_CURRENCIES_REGISTRY.bitcoin);
+    expect(findCryptoCurrencyByKeyword("BTC", ["ticker"])).toBe(CRYPTO_CURRENCIES_REGISTRY.bitcoin);
   });
 
   it("returns the same registry object references (not copies)", () => {
@@ -151,30 +150,6 @@ describe("findCryptoCurrencyByScheme", () => {
   );
 });
 
-describe("findCryptoCurrencyByTicker", () => {
-  it("resolves an unambiguous ticker to its registry object", () => {
-    // BTC is unique — only bitcoin holds it
-    expect(findCryptoCurrencyByTicker("BTC")).toBe(CRYPTO_CURRENCIES_REGISTRY.bitcoin);
-  });
-
-  it("returns undefined for an unknown ticker", () => {
-    expect(findCryptoCurrencyByTicker("DOES_NOT_EXIST")).toBeUndefined();
-  });
-
-  it("excludes testnet currencies from ticker resolution", () => {
-    // ethereum_sepolia has ticker "ETH" but isTestnetFor is set — it must not win
-    const result = findCryptoCurrencyByTicker("ETH");
-    expect(result?.isTestnetFor).toBeUndefined();
-  });
-
-  it.each(["__proto__", "constructor", "toString"])(
-    "returns undefined for the Object.prototype key %s",
-    key => {
-      expect(findCryptoCurrencyByTicker(key)).toBeUndefined();
-    },
-  );
-});
-
 describe("findCryptoCurrencyByKeyword", () => {
   it("matches by currency name (case-insensitive, whitespace stripped)", () => {
     expect(findCryptoCurrencyByKeyword("bitcoin")).toBe(CRYPTO_CURRENCIES_REGISTRY.bitcoin);
@@ -194,6 +169,10 @@ describe("findCryptoCurrencyByKeyword", () => {
   it("matches by ticker", () => {
     // ticker strategy uppercases the search term
     expect(findCryptoCurrencyByKeyword("btc", ["ticker"])).toBe(CRYPTO_CURRENCIES_REGISTRY.bitcoin);
+  });
+
+  it("excludes testnet currencies from ticker matching", () => {
+    expect(findCryptoCurrencyByKeyword("ETH", ["ticker"])?.isTestnetFor).toBeUndefined();
   });
 
   it("matches by manager app name", () => {

@@ -92,7 +92,7 @@ export const LIVE_COMMON_CURRENCY_ACCESSORS = {
   importNamePattern:
     "^(listCryptoCurrencies|getCryptoCurrencyById|hasCryptoCurrencyId|findCryptoCurrency|" +
     "findCryptoCurrencyById|findCryptoCurrencyByScheme|findCryptoCurrencyByKeyword|" +
-    "findCryptoCurrencyByTicker|listFiatCurrencies|findFiatCurrencyByTicker|" +
+    "listFiatCurrencies|findFiatCurrencyByTicker|" +
     "getFiatCurrencyByTicker|hasFiatCurrencyTicker)$",
   message:
     "Currency accessors are owned by the domain layer. Import crypto accessors from " +

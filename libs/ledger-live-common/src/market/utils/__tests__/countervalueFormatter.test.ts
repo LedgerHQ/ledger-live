@@ -1,4 +1,4 @@
-import { findCryptoCurrencyByTicker } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { findFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { counterValueFormatter } from "../countervalueFormatter";
 
@@ -7,7 +7,7 @@ const cad = findFiatCurrencyByTicker("CAD")!.units[0];
 const eur = findFiatCurrencyByTicker("EUR")!.units[0];
 // BTC is defined as a FiatCurrency (₿) in our registry; ETH is a CryptoCurrency.
 const btc = findFiatCurrencyByTicker("BTC")!.units[0];
-const eth = findCryptoCurrencyByTicker("ETH")!.units[0];
+const eth = getCryptoCurrencyById("ethereum").units[0];
 
 describe("counterValueFormatter (live-common)", () => {
   it("returns '-' for falsy values", () => {

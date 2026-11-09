@@ -58,21 +58,6 @@ export function findCryptoCurrencyByScheme(scheme: string | undefined): CryptoCu
 }
 
 /**
- * Resolve a crypto currency by its ticker symbol (e.g. `"BTC"`, `"ETH"`), returning `undefined`
- * when unknown.
- *
- * When two non-testnet currencies share a ticker, the one whose `keywords` list contains that
- * ticker (case-insensitive) wins. This matches the tiebreak previously applied by the
- * legacy currency registry.
- *
- * @deprecated Tickers are not globally unique — the result can be ambiguous. Prefer
- * {@link findCryptoCurrencyById} when the currency id is available.
- */
-export function findCryptoCurrencyByTicker(ticker: string): CryptoCurrency | undefined {
-  return Object.hasOwn(byTicker, ticker) ? byTicker[ticker] : undefined;
-}
-
-/**
  * Search for a crypto currency by a free-form keyword string.
  *
  * The search is tried against each strategy in `tests` in order; the first match wins. The default
@@ -80,7 +65,7 @@ export function findCryptoCurrencyByTicker(ticker: string): CryptoCurrency | und
  * Pass a custom `tests` array to restrict or reorder the strategies.
  *
  * The keyword is normalised to lower-case with all whitespace stripped before comparison. For exact
- * matches, prefer {@link findCryptoCurrencyById} or {@link findCryptoCurrencyByTicker}.
+ * matches, prefer {@link findCryptoCurrencyById}.
  */
 export function findCryptoCurrencyByKeyword(
   keyword: string,
@@ -112,16 +97,6 @@ const byScheme: Record<string, CryptoCurrency> = Object.fromEntries(
   allCurrencies.map(c => [c.scheme, c]),
 );
 
-const byTicker: Partial<Record<string, CryptoCurrency>> = {};
-for (const c of allCurrencies) {
-  if (c.isTestnetFor) continue;
-  const existing = byTicker[c.ticker];
-  const hasTickerAsKeyword = Boolean(
-    c.keywords?.some(k => k.toLowerCase() === c.ticker.toLowerCase()),
-  );
-  if (!existing || hasTickerAsKeyword) byTicker[c.ticker] = c;
-}
-
 const keywordTests = {
   keywords: (s: string) =>
     findCryptoCurrency(c =>
@@ -129,6 +104,6 @@ const keywordTests = {
     ),
   name: (s: string) => findCryptoCurrency(c => c.name.replace(/\s+/g, "").toLowerCase() === s),
   id: (s: string) => findCryptoCurrencyById(s.toLowerCase()),
-  ticker: (s: string) => findCryptoCurrencyByTicker(s.toUpperCase()),
+  ticker: (s: string) => prodCurrencies.find(c => c.ticker.toLowerCase() === s),
   manager: (s: string) => findByManagerApp(s),
 } as const;
