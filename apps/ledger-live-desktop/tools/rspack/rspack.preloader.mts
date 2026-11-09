@@ -1,18 +1,18 @@
 import path from "path";
 import { rspack, type RspackOptions } from "@rspack/core";
-import { commonConfig, rootFolder, outputFolder } from "./rspack.common";
+import { commonConfig, rootFolder } from "./rspack.common.mts";
 import {
   buildMainEnv,
   buildDotEnvDefine,
   DOTENV_FILE,
   getRsdoctorPlugin,
   isRsdoctorEnabled,
-} from "./utils";
+} from "./utils.mts";
 
 /**
- * Creates the rspack configuration for the Electron main process
+ * Creates the rspack configuration for the Electron preloader script
  */
-export function createMainConfig(
+export function createPreloaderConfig(
   mode: "development" | "production",
   argv?: { port?: number },
 ): RspackOptions {
@@ -20,37 +20,25 @@ export function createMainConfig(
 
   return {
     ...commonConfig,
-    name: "main",
+    name: "preloader",
     mode,
-    target: "electron-main",
+    target: "electron-preload",
     entry: {
-      main: path.resolve(rootFolder, "src", "index.ts"),
+      preloader: path.resolve(rootFolder, "src", "preloader", "index.ts"),
     },
     output: {
       ...commonConfig.output,
-      filename: "main.bundle.js",
+      filename: "preloader.bundle.js",
       library: {
         type: "commonjs2",
       },
     },
     devtool: isRsdoctorEnabled() ? false : "source-map",
-    resolve: {
-      ...commonConfig.resolve,
-      mainFields: ["main", "module"],
-    },
     plugins: [
-      ...getRsdoctorPlugin("main"),
+      ...getRsdoctorPlugin("preloader"),
       new rspack.DefinePlugin({
         ...buildMainEnv(mode, argv),
         ...buildDotEnvDefine(DOTENV_FILE),
-      }),
-      new rspack.CopyRspackPlugin({
-        patterns: [
-          {
-            from: path.join(rootFolder, "build", "icons"),
-            to: path.join(outputFolder, "build", "icons"),
-          },
-        ],
       }),
     ],
     optimization: {
@@ -60,4 +48,4 @@ export function createMainConfig(
   };
 }
 
-export default createMainConfig;
+export default createPreloaderConfig;

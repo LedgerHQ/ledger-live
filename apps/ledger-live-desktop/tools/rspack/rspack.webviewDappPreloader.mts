@@ -1,18 +1,18 @@
 import path from "path";
 import { rspack, type RspackOptions } from "@rspack/core";
-import { commonConfig, rootFolder } from "./rspack.common";
+import { commonConfig, rootFolder } from "./rspack.common.mts";
 import {
   buildMainEnv,
   buildDotEnvDefine,
   DOTENV_FILE,
   getRsdoctorPlugin,
   isRsdoctorEnabled,
-} from "./utils";
+} from "./utils.mts";
 
 /**
- * Creates the rspack configuration for the Electron preloader script
+ * Creates the rspack configuration for the webview DApp preloader script
  */
-export function createPreloaderConfig(
+export function createWebviewDappPreloaderConfig(
   mode: "development" | "production",
   argv?: { port?: number },
 ): RspackOptions {
@@ -20,22 +20,22 @@ export function createPreloaderConfig(
 
   return {
     ...commonConfig,
-    name: "preloader",
+    name: "webviewDappPreloader",
     mode,
     target: "electron-preload",
     entry: {
-      preloader: path.resolve(rootFolder, "src", "preloader", "index.ts"),
+      webviewDappPreloader: path.resolve(rootFolder, "src", "webviewPreloader", "dappPreloader.ts"),
     },
     output: {
       ...commonConfig.output,
-      filename: "preloader.bundle.js",
+      filename: "webviewDappPreloader.bundle.js",
       library: {
         type: "commonjs2",
       },
     },
     devtool: isRsdoctorEnabled() ? false : "source-map",
     plugins: [
-      ...getRsdoctorPlugin("preloader"),
+      ...getRsdoctorPlugin("webviewDappPreloader"),
       new rspack.DefinePlugin({
         ...buildMainEnv(mode, argv),
         ...buildDotEnvDefine(DOTENV_FILE),
@@ -48,4 +48,4 @@ export function createPreloaderConfig(
   };
 }
 
-export default createPreloaderConfig;
+export default createWebviewDappPreloaderConfig;

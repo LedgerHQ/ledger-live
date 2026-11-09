@@ -1,13 +1,13 @@
 import { rspack, type RspackOptions, type Watching } from "@rspack/core";
 import { RspackDevServer } from "@rspack/dev-server";
 import type { Configuration as DevServerConfiguration } from "@rspack/dev-server";
-import { createRendererConfig } from "./rspack.renderer";
-import { createMainConfig } from "./rspack.main";
-import { createPreloaderConfig } from "./rspack.preloader";
-import { createWebviewPreloaderConfig } from "./rspack.webviewPreloader";
-import { createWebviewDappPreloaderConfig } from "./rspack.webviewDappPreloader";
-import { createZcashUtilityConfig } from "./rspack.zcashUtility";
-import { lldRoot } from "./utils";
+import { createRendererConfig } from "./rspack.renderer.mts";
+import { createMainConfig } from "./rspack.main.mts";
+import { createPreloaderConfig } from "./rspack.preloader.mts";
+import { createWebviewPreloaderConfig } from "./rspack.webviewPreloader.mts";
+import { createWebviewDappPreloaderConfig } from "./rspack.webviewDappPreloader.mts";
+import { createZcashUtilityConfig } from "./rspack.zcashUtility.mts";
+import { lldRoot } from "./utils.mts";
 import path from "path";
 
 export interface DevServerOptions {

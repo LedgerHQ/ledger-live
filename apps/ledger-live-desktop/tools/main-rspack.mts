@@ -1,8 +1,7 @@
-#!/usr/bin/env ts-node
-/* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import fs from "fs";
+import { createRequire } from "module";
 import path from "path";
 import { rspack } from "@rspack/core";
 
@@ -16,8 +15,9 @@ import {
   createZcashUtilityConfig,
   startDev,
   lldRoot,
-} from "./rspack";
+} from "./rspack/index.mts";
 
+const require = createRequire(import.meta.url);
 const yargs = require("yargs");
 const processReleaseNotes = require("./utils/processReleaseNotes");
 
