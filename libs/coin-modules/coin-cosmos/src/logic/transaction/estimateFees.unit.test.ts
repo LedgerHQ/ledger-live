@@ -52,4 +52,68 @@ describe("logic/transaction/estimateFees", () => {
     expect(params.recipient).toBe("cosmos1recipient");
     expect(params.amount.toFixed()).toBe("1000000");
   });
+
+  describe("default memo", () => {
+    const delegateIntent = (memo?: { type: "string"; kind: "text"; value: string }) =>
+      ({
+        intentType: "staking",
+        type: "delegate",
+        mode: "delegate",
+        sender: "cosmos1sender",
+        valAddress: "cosmosvaloper1validator",
+        amount: 1_000_000n,
+        asset: { type: "native" },
+        ...(memo ? { memo } : {}),
+      }) as unknown as TransactionIntent;
+
+    beforeEach(() => {
+      mockedGetEstimatedFees.mockResolvedValue({
+        gasWanted: new BigNumber("250000"),
+        gasWantedFees: new BigNumber("6250"),
+      });
+    });
+
+    it("returns the Ledger Live memo for a staking intent without a memo", async () => {
+      const res = await estimateFees(config, "cosmos", delegateIntent());
+
+      expect(res.parameters).toEqual({ gasLimit: "250000", memo: "Ledger Live" });
+    });
+
+    it("returns no memo for a staking intent with a memo", async () => {
+      const res = await estimateFees(
+        config,
+        "cosmos",
+        delegateIntent({ type: "string", kind: "text", value: "my memo" }),
+      );
+
+      expect(res.parameters).toEqual({ gasLimit: "250000" });
+    });
+
+    it("returns no memo for a send", async () => {
+      const res = await estimateFees(config, "cosmos", sendIntent);
+
+      expect(res.parameters).toEqual({ gasLimit: "250000" });
+    });
+
+    it.each(["undelegate", "redelegate", "claimReward", "compoundReward"])(
+      "returns the Ledger Live memo for a %s without a memo",
+      async operation => {
+        const intent = {
+          ...delegateIntent(),
+          type: operation,
+          mode: operation,
+        } as unknown as TransactionIntent;
+
+        const res = await estimateFees(config, "cosmos", intent);
+
+        expect(res.parameters).toEqual({ gasLimit: "250000", memo: "Ledger Live" });
+      },
+    );
+  });
+
+  it("rejects when the simulation fails", async () => {
+    mockedGetEstimatedFees.mockRejectedValueOnce(new Error("simulation failed"));
+
+    await expect(estimateFees(config, "cosmos", sendIntent)).rejects.toThrow("simulation failed");
+  });
 });
