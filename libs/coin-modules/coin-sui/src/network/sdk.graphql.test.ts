@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import { createSuiGraphQLClient } from "./graphql/client";
 import type { SuiCoinConfig } from "../config";
 
@@ -9,7 +10,6 @@ const config = {
   status: { type: "active" },
   features: { transport: "graphql" },
 } as unknown as SuiCoinConfig;
-import BigNumber from "bignumber.js";
 import { mist } from "../constants";
 import { EVENTS_PAGE_SIZE, RATE_BATCH_CHUNK_SIZE, STAKES_PAGE_SIZE } from "./graphql/constants";
 import { UNKNOWN_VALIDATOR, APY_LOOKBACK_EPOCHS } from "./staking";

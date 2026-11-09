@@ -1154,6 +1154,11 @@ describe("getUnstakedPrincipalByDigest on the gRPC transport", () => {
     mockStakingEvents.mockRejectedValueOnce(new Error("Transaction 0xmissing not found"));
     const notFoundCode = Object.assign(new Error("pruned"), { code: "NOT_FOUND" });
     mockStakingEvents.mockRejectedValueOnce(notFoundCode);
+    const numericNotFoundCode = Object.assign(new Error("pruned"), { code: 5 });
+    mockStakingEvents.mockRejectedValueOnce(numericNotFoundCode);
+    await expect(sdk.getUnstakedPrincipalByDigest(config, "0xmissing")).resolves.toEqual(
+      BigNumber(0),
+    );
     await expect(sdk.getUnstakedPrincipalByDigest(config, "0xmissing")).resolves.toEqual(
       BigNumber(0),
     );

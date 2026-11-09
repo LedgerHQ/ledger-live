@@ -68,6 +68,7 @@ import {
   getLastBlockGrpc,
   getStakingEventsByDigestGrpc,
   getValidatorsGrpc,
+  isNotFoundError,
   withGrpcApi,
   withoutBuildSimulation,
 } from "./sdk.grpc";
@@ -495,10 +496,9 @@ export const getUnstakedPrincipalByDigest = (
 
 /** The SDK throws "Transaction <digest> not found"; the transport reports a `NOT_FOUND` code. */
 function isTransactionNotFound(error: unknown): boolean {
-  if (!(error instanceof Error)) return false;
   return (
-    (error as { code?: unknown }).code === "NOT_FOUND" ||
-    /^Transaction \S+ not found$/.test(error.message)
+    isNotFoundError(error) ||
+    (error instanceof Error && /^Transaction \S+ not found$/.test(error.message))
   );
 }
 
