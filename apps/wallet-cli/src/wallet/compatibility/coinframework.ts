@@ -12,7 +12,7 @@ import {
   adaptCoreOperationToLiveOperation,
 } from "@ledgerhq/live-common/bridge/generic-coin-framework/utils";
 import { BigNumberStrSchema, DateTimeIsoSchema } from "@shared/schema-primitives";
-import { toTokenInfo } from "../models";
+import { toTokenBalance } from "../models";
 import type { AccountDescriptor, Balance, Operation } from "../models";
 
 export type OperationsPage = {
@@ -39,12 +39,7 @@ export class CoinFrameworkAdapter {
       tokenAssets.map(async ({ asset, value }): Promise<Balance | null> => {
         const token = await bridgeApi.getTokenFromAsset?.(asset);
         if (!token) return null;
-        return {
-          kind: "token",
-          assetId: token.id,
-          balance: BigNumberStrSchema.parse(String(value)),
-          token: toTokenInfo(token),
-        };
+        return toTokenBalance(token, BigNumberStrSchema.parse(String(value))) ?? null;
       }),
     );
 

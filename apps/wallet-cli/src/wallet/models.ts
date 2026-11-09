@@ -4,11 +4,16 @@
 
 import { z } from "zod";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { BigNumberStrSchema, DateTimeIsoSchema } from "@shared/schema-primitives";
+import {
+  BigNumberStrSchema,
+  DateTimeIsoSchema,
+  type BigNumberStr,
+} from "@shared/schema-primitives";
 import type { OperationType } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { parseV1, toV0 } from "../shared/accountDescriptor";
 import type { AccountDescriptorV1 } from "../shared/accountDescriptor";
+import { walletCliDebug } from "../shared/log";
 
 import { accountDescriptorSchema, type AccountDescriptor } from "@ledgerhq/live-wallet/accounts";
 
@@ -114,6 +119,14 @@ export const BalanceSchema = z.discriminatedUnion("kind", [
   BalanceBaseSchema.extend({ kind: z.literal("token"), token: TokenInfoSchema }),
 ]);
 export type Balance = z.infer<typeof BalanceSchema>;
+
+export function toTokenBalance(token: TokenCurrency, balance: BigNumberStr): Balance | undefined {
+  if (token.units.length === 0) {
+    walletCliDebug(`balances: skipping ${token.id}, it has no units`);
+    return undefined;
+  }
+  return { kind: "token", assetId: token.id, balance, token: toTokenInfo(token) };
+}
 
 export const OperationSchema = z.object({
   id: z.string(),
