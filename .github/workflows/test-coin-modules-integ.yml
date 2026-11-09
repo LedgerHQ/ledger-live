@@ -46,6 +46,8 @@ jobs:
     needs: is-affected
     if: ${{ needs.is-affected.outputs.is-affected == 'true' }}
     runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-22.04' || 'ledger-wallet-4cpu-aws-public' }}
+    outputs:
+      failed_packages: ${{ steps.test-scheduled.outputs.failed_packages }}
 
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -99,17 +101,27 @@ jobs:
           fi
 
       - name: Test (Scheduled)
+        id: test-scheduled
         if: ${{ github.event_name == 'schedule' }}
         shell: bash
         env:
           VERBOSE_FILE: logs.txt
-        run: pnpm coin-modules:test-integ
+        run: |
+          set +e
+          pnpm coin-modules:test-integ 2>&1 | tee "$RUNNER_TEMP/nx-out.txt"
+          NX_EXIT=${PIPESTATUS[0]}
+          FAILED=$(sed 's/\x1b\[[0-9;]*[mK]//g' "$RUNNER_TEMP/nx-out.txt" | awk '/Failed tasks:/{found=1;next} found{print}' | grep -oE '^- @ledgerhq/[^: ]+:test-integ' | sed 's|^- @ledgerhq/\([^:]*\):test-integ|\1|' | awk '!seen[$0]++' | paste -sd, - || true)
+          echo "failed_packages=$FAILED" >> "$GITHUB_OUTPUT"
+          exit $NX_EXIT
 
   integ-tests-fail:
     name: failure report
     needs: integ-tests
     if: failure() && (github.event_name == 'schedule' || (github.event_name == 'push' && github.ref_name == 'develop'))
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
     steps:
       - name: post to live-repo-health slack channel
         uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
@@ -145,6 +157,19 @@ jobs:
                 text:
                   type: "mrkdwn"
                   text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - name: Setup the toolchain
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: post to CODEOWNERS team slack channels
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          SKIP_CHANNELS: C05FKJ7DFAP,C06RTDKT324
+          FAILED_PACKAGES: ${{ needs.integ-tests.outputs.failed_packages }}
+        run: node tools/scripts/ci-slack-notify.mjs
   integ-tests-success:
     name: success report
     needs: integ-tests
