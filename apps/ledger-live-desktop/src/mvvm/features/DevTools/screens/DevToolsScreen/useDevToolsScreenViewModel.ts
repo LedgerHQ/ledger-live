@@ -21,6 +21,7 @@ import {
   useCloudSyncDevToolProps,
   useAccountBalanceToolProps,
   useAccountOperationToolProps,
+  useAccountTransactionToolProps,
   useAccountBalanceHistoryToolProps,
   useAccountPortfolioToolProps,
   useAccountDescriptorToolProps,
@@ -112,6 +113,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
   const accountBalanceToolProps = useAccountBalanceToolProps();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const accountOperationToolProps = useAccountOperationToolProps(counterValueCurrency.ticker);
+  const accountTransactionToolProps = useAccountTransactionToolProps();
   const accountBalanceHistoryToolProps = useAccountBalanceHistoryToolProps();
   const accountPortfolioToolProps = useAccountPortfolioToolProps({
     serviceUrl: getPortfolioServiceUrl(),
@@ -137,6 +139,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       { id: "account-descriptor", config: accountDescriptorToolProps },
       { id: "account-balance", config: accountBalanceToolProps },
       { id: "account-operation", config: accountOperationToolProps },
+      { id: "account-transaction", config: accountTransactionToolProps },
       { id: "account-balance-history", config: accountBalanceHistoryToolProps },
       { id: "account-name", config: accountNameToolProps },
       { id: "account-portfolio", config: accountPortfolioToolProps },
@@ -155,6 +158,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       accountDescriptorToolProps,
       accountBalanceToolProps,
       accountOperationToolProps,
+      accountTransactionToolProps,
       accountBalanceHistoryToolProps,
       accountPortfolioToolProps,
       accountDataToolProps,

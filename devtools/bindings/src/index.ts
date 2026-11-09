@@ -29,3 +29,4 @@ export { useMockAccountsToolProps } from "./useMockAccountsToolProps";
 export { useAccountDetailToolProps } from "./useAccountDetailToolProps";
 export { useCoinConfigToolProps } from "./useCoinConfigToolProps";
 export type { UseCoinConfigToolPropsInput } from "./useCoinConfigToolProps";
+export { useAccountTransactionToolProps } from "./useAccountTransactionToolProps";
