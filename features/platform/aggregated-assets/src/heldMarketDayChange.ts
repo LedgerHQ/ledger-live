@@ -22,16 +22,14 @@ function dayChangeOf(market: HeldMarket): number | undefined {
   return change != null && Number.isFinite(change) ? change : undefined;
 }
 
-function listsLedgerId(market: HeldMarket, ledgerId: string): boolean {
-  return market.id === ledgerId || Boolean(market.ledgerIds?.includes(ledgerId));
-}
-
 // A network id is listed by its native coin and by the token named after it: Optimism lists ETH and OP
 function marketOfHeldCurrency(
   markets: readonly HeldMarket[],
   currency: HeldCurrency,
 ): HeldMarket | undefined {
-  const candidates = markets.filter(market => listsLedgerId(market, currency.id));
+  const candidates = markets.filter(
+    market => market.id === currency.id || market.ledgerIds?.includes(currency.id),
+  );
   const ticker = currency.ticker.toLowerCase();
   return (
     candidates.find(market => market.ticker?.toLowerCase() === ticker) ??
@@ -52,33 +50,23 @@ export function heldMarketDayChange(
   }
 
   const byLedgerId = new Map<string, number>();
-  const heldMarkets: { market: HeldMarket; change: number }[] = [];
+  const heldMarkets = new Map<HeldMarket, number>();
   for (const currency of heldCurrencies) {
     const market = marketOfHeldCurrency(markets, currency);
-    const change = market ? byMarketId.get(market.id) : undefined;
+    const change = market && byMarketId.get(market.id);
     if (!market || change === undefined) continue;
     byLedgerId.set(currency.id, change);
-    heldMarkets.push({ market, change });
+    heldMarkets.set(market, change);
   }
 
   // Portfolio rows group networks under one asset id: ETH held on Base is listed as `ethereum`
-  for (const { market, change } of heldMarkets) {
+  for (const [market, change] of heldMarkets) {
     for (const ledgerId of market.ledgerIds ?? []) {
       if (!byLedgerId.has(ledgerId)) byLedgerId.set(ledgerId, change);
     }
   }
 
   return { byLedgerId, byMarketId };
-}
-
-/** Held 24h change of an asset page, by its ledger id first, then by its market id. */
-export function heldDayChangeOfAsset(
-  { byLedgerId, byMarketId }: HeldMarketDayChange,
-  ledgerId: string | undefined,
-  marketId: string | undefined,
-): number | undefined {
-  const byLedger = ledgerId == null ? undefined : byLedgerId.get(ledgerId);
-  return byLedger ?? (marketId == null ? undefined : byMarketId.get(marketId));
 }
 
 /** Replaces the 24h change of each held market item. */

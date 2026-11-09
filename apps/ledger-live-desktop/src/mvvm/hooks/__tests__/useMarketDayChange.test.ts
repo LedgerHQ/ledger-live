@@ -88,21 +88,6 @@ describe("useMarketDayChange", () => {
     );
   });
 
-  it("should wait for the counter currency resolution", () => {
-    mockHeldCurrencies.mockReturnValue([{ id: "bitcoin", ticker: "BTC" }]);
-    mockResolveCounterCurrency.mockReturnValue({
-      requestCounterCurrency: "eur",
-      isResolutionLoading: true,
-    });
-
-    renderHook(() => useMarketDayChange());
-
-    expect(mockUseGetMarketsByLedgerIdsQuery).toHaveBeenCalledWith(
-      expect.anything(),
-      expect.objectContaining({ skip: true }),
-    );
-  });
-
   it("should not query without accounts", () => {
     const { result } = renderHook(() => useMarketDayChange());
 

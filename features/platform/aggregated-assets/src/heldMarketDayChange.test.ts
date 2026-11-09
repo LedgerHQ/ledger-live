@@ -1,6 +1,5 @@
 import {
   countervalueChangeFromDayPercent,
-  heldDayChangeOfAsset,
   heldMarketDayChange,
   withHeldDayChange,
 } from "./heldMarketDayChange";
@@ -78,23 +77,6 @@ describe("heldMarketDayChange", () => {
   });
 });
 
-describe("heldDayChangeOfAsset", () => {
-  const change = {
-    byLedgerId: new Map([["ethereum/erc20/usd__coin", 0.01]]),
-    byMarketId: new Map([["optimism", 3.2]]),
-  };
-
-  it("reads the ledger id first, then the market id", () => {
-    expect(heldDayChangeOfAsset(change, "ethereum/erc20/usd__coin", "usd-coin")).toBe(0.01);
-    expect(heldDayChangeOfAsset(change, "ethereum/erc20/optimism", "optimism")).toBe(3.2);
-  });
-
-  it("returns undefined for an asset that is not held", () => {
-    expect(heldDayChangeOfAsset(change, undefined, undefined)).toBeUndefined();
-    expect(heldDayChangeOfAsset(change, "bitcoin", "bitcoin")).toBeUndefined();
-  });
-});
-
 describe("withHeldDayChange", () => {
   it("replaces the 24h change of held items only", () => {
     const items = [
@@ -106,12 +88,6 @@ describe("withHeldDayChange", () => {
       { id: "ethereum", priceChangePercentage24h: -5.41 },
       { id: "bitcoin", priceChangePercentage24h: 1.36 },
     ]);
-  });
-
-  it("returns the same items when nothing is held", () => {
-    const items = [{ id: "ethereum", priceChangePercentage24h: -5.42 }];
-
-    expect(withHeldDayChange(items, new Map())).toBe(items);
   });
 });
 

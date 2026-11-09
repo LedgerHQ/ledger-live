@@ -51,14 +51,15 @@ export function useAssetsSectionViewModel(account: Account): AssetsSectionViewMo
   );
 
   const { ids: stockAssetIds } = useStockAssetIds("lld", __APP_VERSION__);
-  const { cryptoItems, stockItems, stockCurrencyIds } = useMemo(() => {
-    const stocks = assetItems.filter(item => stockAssetIds.has(item.currency.id));
-    return {
-      cryptoItems: assetItems.filter(item => !stockAssetIds.has(item.currency.id)),
-      stockItems: stocks,
-      stockCurrencyIds: stocks.map(item => item.currency.id),
-    };
-  }, [assetItems, stockAssetIds]);
+  const stockItems = useMemo(
+    () => assetItems.filter(item => stockAssetIds.has(item.currency.id)),
+    [assetItems, stockAssetIds],
+  );
+  const cryptoItems = useMemo(
+    () => assetItems.filter(item => !stockAssetIds.has(item.currency.id)),
+    [assetItems, stockAssetIds],
+  );
+  const stockCurrencyIds = useMemo(() => stockItems.map(item => item.currency.id), [stockItems]);
 
   const { byLedgerId: cryptoDayChange } = useMarketDayChange();
   const stockDayChange = useMarketDayChangeByCurrencyId({
@@ -72,11 +73,11 @@ export function useAssetsSectionViewModel(account: Account): AssetsSectionViewMo
   const stockTrends = useAllCurrencyTrends(stockItems, "day", stockDayChange);
   const items = useMemo(
     () =>
-      assetItems.map(item => {
-        const trends = stockAssetIds.has(item.currency.id) ? stockTrends : cryptoTrends;
-        return { ...item, trend: trends.get(item.currency.id) ?? null };
-      }),
-    [assetItems, stockAssetIds, cryptoTrends, stockTrends],
+      assetItems.map(item => ({
+        ...item,
+        trend: stockTrends.get(item.currency.id) ?? cryptoTrends.get(item.currency.id) ?? null,
+      })),
+    [assetItems, cryptoTrends, stockTrends],
   );
 
   const onRowClick = useCallback(

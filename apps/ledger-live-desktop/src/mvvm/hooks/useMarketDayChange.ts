@@ -17,19 +17,17 @@ const MARKET_DAY_CHANGE_REFRESH_MS = REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH;
 
 function useHeldCurrencies(): readonly HeldCurrency[] {
   const accounts = useSelector(flattenAccountsSelector);
-  const heldKey = useMemo(() => {
+  return useMemo(() => {
     const tickerById = new Map(
       accounts.map(account => {
         const { id, ticker } = getAccountCurrency(account);
         return [id, ticker];
       }),
     );
-    return JSON.stringify([...tickerById].sort(([a], [b]) => a.localeCompare(b)));
+    return [...tickerById]
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([id, ticker]) => ({ id, ticker }));
   }, [accounts]);
-  return useMemo(
-    () => (JSON.parse(heldKey) as [string, string][]).map(([id, ticker]) => ({ id, ticker })),
-    [heldKey],
-  );
 }
 
 /** One `/v3/markets` request for every held currency, shared by all desktop 1D variations. */

@@ -17,7 +17,6 @@ import {
 import { useAssetDetailChartSeries } from "../../hooks/useAssetDetailChartSeries";
 import { isChartDerivedPriceChangeRange } from "@ledgerhq/live-common/market/utils/chartRangeVariation";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
-import { heldDayChangeOfAsset } from "@features/platform-aggregated-assets";
 import { useMarketDayChange } from "LLD/hooks/useMarketDayChange";
 import {
   resolveMarketPriceSectionSourceId,
@@ -102,7 +101,10 @@ export function useMarketPriceSectionViewModel({
     resolveAssetDetailSectionLoading(isDistributionLoading, marketData.isLoading, hasPriceData),
   );
 
-  const heldChange = heldDayChangeOfAsset(useMarketDayChange(), ledgerId, data?.id);
+  const { byLedgerId, byMarketId } = useMarketDayChange();
+  const heldChange =
+    (ledgerId == null ? undefined : byLedgerId.get(ledgerId)) ??
+    (data ? byMarketId.get(data.id) : undefined);
   const priceChangePercentage = useMemo(
     () =>
       data && heldChange !== undefined

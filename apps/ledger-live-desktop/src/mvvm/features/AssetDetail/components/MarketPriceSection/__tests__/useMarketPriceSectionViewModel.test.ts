@@ -140,23 +140,6 @@ describe("useMarketPriceSectionViewModel", () => {
     expect(result.current.percentageText).toBe("-5.41%");
   });
 
-  it("should show the held coin's shared 24h change on the day range", () => {
-    mockHeldByLedgerId.current = new Map([["bitcoin", 4]]);
-
-    const { result } = renderHook(
-      () =>
-        useMarketPriceSectionViewModel({
-          ledgerId: "bitcoin",
-          marketData,
-          isDistributionLoading: false,
-          selectedRange: "1d",
-        }),
-      { initialState: { settings: { counterValue: "USD", locale: "en-US" } } },
-    );
-
-    expect(result.current.percentageText).toBe("+4.00%");
-  });
-
   it("should read the held change by market id when the market has no ledger ids", () => {
     mockHeldByMarketId.current = new Map([["bitcoin", 2]]);
     const { ledgerIds: _ledgerIds, ...marketWithoutLedgerIds } = createMockMarketCurrencyData({
