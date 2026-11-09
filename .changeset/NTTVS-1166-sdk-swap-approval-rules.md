@@ -2,4 +2,4 @@
 "@ledgerhq/wallet-cli": minor
 ---
 
-`agent-intent swap` skips quotes whose token approval the Agent Intent frontend refuses: a zero-address spender, malformed `approve` calldata, or a non-DEX 1inch, Velora or OKX quote
+`agent-intent swap` checks token approvals with the Agent Intent SDK rules: it skips quotes that approve the zero address, have malformed `approve` calldata, or need an approval on a non-DEX 1inch, Velora or OKX quote
