@@ -166,7 +166,10 @@ describe("fetchAgentSwapQuote", () => {
     const USDC_CONTRACT = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
     const USDT_CONTRACT = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
     const ROUTER = "111111125421ca6dc452d289314280a0f8842a65";
-    const approveCalldata = `0x095ea7b3${ROUTER.padStart(64, "0")}${"5f5e100".padStart(64, "0")}`;
+    const APPROVE = "0x095ea7b3";
+    const routerWord = ROUTER.padStart(64, "0");
+    const amountWord = "5f5e100".padStart(64, "0");
+    const approveCalldata = `${APPROVE}${routerWord}${amountWord}`;
     const sellUsdc = { ...request, from: USDC.id, fromContract: USDC_CONTRACT, to: ETH.id };
     const approved = quote("oneinch", {
       receiveAmount: 1270,
@@ -251,8 +254,24 @@ describe("fetchAgentSwapQuote", () => {
         needingApproval({ calldata: "0x12345678" }),
       ],
       [
+        "an approval whose calldata has no amount",
+        needingApproval({ calldata: `${APPROVE}${routerWord}` }),
+      ],
+      [
+        "an approval whose amount isn't hex",
+        needingApproval({ calldata: `${APPROVE}${routerWord}${"5f5e10g".padStart(64, "0")}` }),
+      ],
+      [
+        "an approval with dirty bits above the spender",
+        needingApproval({ calldata: `${APPROVE}${ROUTER.padStart(64, "f")}${amountWord}` }),
+      ],
+      [
+        "an approval with bytes after the amount",
+        needingApproval({ calldata: `${approveCalldata}00` }),
+      ],
+      [
         "an approval to the zero address",
-        needingApproval({ calldata: `0x095ea7b3${"0".repeat(64)}${"5f5e100".padStart(64, "0")}` }),
+        needingApproval({ calldata: `${APPROVE}${"0".repeat(64)}${amountWord}` }),
       ],
       [
         "an approval from a DEX the frontend has no endpoint for",
