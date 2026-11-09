@@ -15,6 +15,7 @@ import {
   useAppConfigToolProps,
   useCoinConfigToolProps,
   useAccountDetailToolProps,
+  useReceiveToolProps,
 } from "@devtools/bindings";
 import type { DevToolsConfig } from "@devtools/shell";
 import { openHostedUrlInSecureBrowser } from "@features/flow-pay-card-auth";
@@ -113,6 +114,7 @@ export function useDevToolsScreenViewModel() {
     getDefaultValueByKey: getLiveConfigDefaultValue,
   });
   const accountDetailToolProps = useAccountDetailToolProps();
+  const receiveToolProps = useReceiveToolProps();
   const dmk = useDeviceManagementKit();
   const knownDevices = useSelector(knownDevicesSelector);
   const offerSync = useOfferSync();
@@ -135,6 +137,7 @@ export function useDevToolsScreenViewModel() {
       { id: "pay-card", config: payCardToolProps },
       { id: "device-onboarding", config: deviceOnboardingProps },
       { id: "account-detail", config: accountDetailToolProps },
+      { id: "receive", config: receiveToolProps },
     ],
     [
       featureFlagsProps,
@@ -144,6 +147,7 @@ export function useDevToolsScreenViewModel() {
       payCardToolProps,
       deviceOnboardingProps,
       accountDetailToolProps,
+      receiveToolProps,
     ],
   );
 
