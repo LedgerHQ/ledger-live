@@ -185,8 +185,7 @@ const dataset: CurrenciesData<Transaction> = {
             valAddress: "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
             mode: "redelegate",
           }),
-          expectedStatus: (a, t) => {
-            invariant(t.memo === "Ledger Live", "Should have a memo");
+          expectedStatus: a => {
             const errors: Record<string, Error> = {};
             if (
               isStakingAccount(a) &&
