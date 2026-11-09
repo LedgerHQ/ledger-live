@@ -30,7 +30,8 @@ module.
 | `src/types.ts`                      | `Sample`: a line of `samples.jsonl`, which `measure/` writes and `analysis/` reads          |
 | `src/measure/run.ts`                | The CLI that measures: installs, injects and launches A and B, writes `samples.jsonl`       |
 | `src/measure/platforms/`            | `android.ts` and `ios.ts`, the two `Platform`s, through adb or simctl                       |
-| `src/measure/performance-screen.ts` | Reads App startup time and the startup events through Maestro                               |
+| `src/measure/startup-log.ts`        | Reads App startup time and the startup events from the app's `startup-perf` log line        |
+| `src/measure/performance-screen.ts` | Reads them on the Debug screen through Maestro: warm-ups, and launches without the line     |
 | `src/measure/inject.ts`             | Imports a scenario's userdata through the E2E bridge, once per install                      |
 | `src/measure/bridge.ts`             | The E2E bridge protocol (`apps/ledger-live-mobile/src/e2e/bridge/client.ts`)                |
 | `src/measure/maestro.ts`, `exec.ts` | Maestro and child-process calls                                                             |
@@ -103,11 +104,24 @@ straight from Maven Central, the shared runner IP can get a 429 (run 42829119387
   post-onboarding state of `e2e/mobile/userdata` through `bridge.ts`, sends the settings again
   10 s later (the store's save effect may not be mounted yet), and fails when the app reports `MOCK`
   or `DETOX`. Feature flags are not imported: they come from production Firebase.
-- **Launch** with a plain `am start -W` / `simctl launch`, no test tool attached, wait 5 s, then let
-  Maestro open the Performance screen and read "App startup time" and the startup events. Measured
-  reads use `read-performance-quick.yaml`; warm-ups and retries use the full flow, whose optional
-  taps cost ~7 s when no prompt shows. The flows select by text: the Debug and Performance screens
-  have no testIDs on any supported ref.
+- **Launch** with a plain `am start -W` / `simctl launch` and the `startupPerfLog` argument, no test
+  tool attached, wait 5 s, then read the `startup-perf` line of the launched process in the device
+  log (logcat's `ReactNativeJS`, the simulator's `log show`): "App startup time" and the startup
+  events of the Debug screen, written as soon as the startup is over. The app writes it at the error
+  level, the only one iOS release builds keep, through React Native's `nativeLoggingHook`, which
+  Datadog does not see.
+- **Check it on the screen.** Warm-ups also let Maestro open the Performance screen, which must show
+  the same time (the report says on how many launches it did), and a launch whose line has not come
+  20 s after the settle time is read on the screen. `--read both` reads every launch both ways,
+  `--read screen` the screen only. Screen reads of measured launches use
+  `read-performance-quick.yaml`; warm-ups and retries use the full flow, whose optional taps cost
+  ~7 s when no prompt shows. The flows select by text: the Debug and Performance screens have no
+  testIDs on any supported ref.
+- **Why the log.** Run 42352894550 read 64 launches both ways: the same time on every one. With the
+  log only (run 42356679784, 20 pairs), a launch takes 8.5 s on iOS and 10–11 s on Android instead
+  of 34–44 s, so the measure jobs take 33 and 22 min instead of ~65 and ~40. Measured iOS launches
+  also no longer follow a Maestro read, which made them ~280 ms slower than the warm-ups (runs
+  42325407516, 42352894550), and the iOS interval narrowed from about ±30 to ±18 ms.
 - **Alternate devices** on every launch: right after a launch on the same simulator, one was
   ~270 ms faster (run 39731729203). Halfway through each scenario A and B swap devices, so the
   difference between the devices cancels out. On Android the other emulator is paused from the

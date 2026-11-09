@@ -54,10 +54,32 @@ export interface Row extends Difference {
   startsDiffer: boolean;
   bases: Record<Side, DebugBase | null>;
   offBaseLaunches: Record<Side, number>;
+  reads: Reads;
   failed: number;
   launches: number;
   detectable: number | null;
   verdict: string;
+}
+
+/** Where the launches were read, and how often the Debug screen agreed with the device log. */
+export interface Reads {
+  fromLog: number;
+  fromScreen: number;
+  /** Launches, warm-ups included, read from both. */
+  screenChecks: number;
+  screenMismatches: number;
+}
+
+function readsOf(group: Sample[]): Reads {
+  const ok = group.filter(s => s.ok);
+  const measured = ok.filter(s => !s.warmup);
+  const checked = ok.filter(s => s.screenAppStartupTime !== undefined);
+  return {
+    fromLog: measured.filter(s => s.readFrom === "log").length,
+    fromScreen: measured.filter(s => s.readFrom === "screen").length,
+    screenChecks: checked.length,
+    screenMismatches: checked.filter(s => s.screenAppStartupTime !== s.appStartupTime).length,
+  };
 }
 
 export interface GateOptions {
@@ -194,6 +216,7 @@ export function summarise(samples: Sample[], { preset, thresholdMs }: GateOption
     };
     const offBaseCount = (side: Side) => read.filter(s => s.side === side && offBase(s)).length;
     const offBaseLaunches = { A: offBaseCount("A"), B: offBaseCount("B") };
+    const reads = readsOf(group);
     const debugValue = difference(group, s => (offBase(s) ? Number.NaN : s.appStartupTime));
     const jsStart = difference(group, fromJsStart);
     const withNative = difference(group, fromProcessStart);
@@ -205,6 +228,7 @@ export function summarise(samples: Sample[], { preset, thresholdMs }: GateOption
       startsDiffer,
       bases,
       offBaseLaunches,
+      reads,
       ...d,
       failed: measured.filter(s => !s.ok).length,
       launches: measured.length,
