@@ -69,9 +69,10 @@ export default class StakePage {
   async selectFirstValidator(currencyId: string): Promise<string> {
     await this.summaryValidator(currencyId).tap();
     const rowId = await this.anyProviderRow.getIdentifier();
-    await this.anyProviderRow.tap();
+    const provider = rowId.slice(PROVIDER_ROW_PREFIX.length);
+    await this.providerRow(provider).tap();
     await this.summaryValidator(currencyId).waitVisible();
-    return rowId.slice(PROVIDER_ROW_PREFIX.length);
+    return provider;
   }
 
   // Families whose flow opens on the validator list have no summary row to tap first.
