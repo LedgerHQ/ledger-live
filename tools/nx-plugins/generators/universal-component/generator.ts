@@ -1,6 +1,7 @@
 import { type Tree, names, readJson } from "@nx/devkit";
 import type { UniversalComponentGeneratorSchema } from "./schema";
-import { join } from "path";
+import { dirname, join } from "path";
+import { fileURLToPath } from "url";
 import {
   assertComponentName,
   assertDualPlatformPackage,
@@ -13,7 +14,7 @@ import {
   platformEntryPath,
   type GeneratorContext,
   universalEntryPaths,
-} from "./generator-helpers";
+} from "./generator-helpers.ts";
 
 const ADR = "docs/adr/universal-components.md";
 const BREAKS_R5 = `which breaks R5, see ${ADR}.`;
@@ -56,7 +57,7 @@ export default async function universalComponentGenerator(
     manifestPath,
     exportsField,
     reader,
-    templatesDir: join(__dirname, "files"),
+    templatesDir: join(dirname(fileURLToPath(import.meta.url)), "files"),
     className,
     fileName,
     breaksR5: BREAKS_R5,
