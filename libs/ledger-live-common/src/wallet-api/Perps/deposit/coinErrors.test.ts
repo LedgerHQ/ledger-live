@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { QuotesErrorCodes } from "@ledgerhq/wallet-api-exchange-module";
-import { getDepositAmountState } from "./useDepositFormErrors";
+import { getDepositAmountState } from "./usePerpsDepositForm";
 import {
   getDepositBaseError,
   resolveDepositFormError,
@@ -78,7 +78,7 @@ function inFeeAccountCurrency(
 }
 
 type ResolveOverrides = Partial<ResolveDepositFormErrorParams> &
-  Readonly<{ maxAmount?: number; walletApiBalances?: Map<AccountLike, BigNumber> }>;
+  Readonly<{ walletApiBalances?: Map<AccountLike, BigNumber> }>;
 
 function readerOf(walletApiBalances: Map<AccountLike, BigNumber> | undefined) {
   return (account: AccountLike) => walletApiBalances?.get(account) ?? account.spendableBalance;
@@ -86,34 +86,25 @@ function readerOf(walletApiBalances: Map<AccountLike, BigNumber> | undefined) {
 
 function resolve(
   depositAccount: AccountLike,
-  { maxAmount = 1e12, walletApiBalances, ...overrides }: ResolveOverrides = {},
+  { walletApiBalances, ...overrides }: ResolveOverrides = {},
 ) {
   const params = {
     isOffline: false,
     depositAccount,
     parentAccount: undefined,
     depositAmount: 20,
+    maxAmount: 1e12,
+    hasConversion: true,
     sentAmountAtomic: new BigNumber(100),
     quoteResult: { quote: quoteWithFee("1"), errors: [] },
     locale: "en",
     getSpendableBalance: readerOf(walletApiBalances),
     ...overrides,
   };
-  const baseError =
-    "baseError" in overrides
-      ? (overrides.baseError ?? null)
-      : getDepositBaseError({
-          depositAccount: params.depositAccount,
-          depositAmount: params.depositAmount,
-          maxAmount,
-          hasConversion: true,
-          parentAccount: params.parentAccount,
-          getSpendableBalance: params.getSpendableBalance,
-        });
   const mainAccount =
     params.depositAccount.type === "Account" ? params.depositAccount : params.parentAccount;
   const quoteResult = inFeeAccountCurrency(params.quoteResult, mainAccount?.currency.id);
-  return resolveDepositFormError({ ...params, quoteResult, baseError });
+  return resolveDepositFormError({ ...params, quoteResult });
 }
 
 describe("coin errors in the deposit resolver", () => {
@@ -143,9 +134,11 @@ describe("coin errors in the deposit resolver", () => {
       expect(
         getDepositBaseError({
           depositAccount: account("tezos", "1000", tezosUnrevealed),
+          parentAccount: undefined,
           depositAmount: 20,
           maxAmount: 50,
           hasConversion: true,
+          locale: "en",
           getSpendableBalance: readerOf(undefined),
         })?.code,
       ).toBe("tezosUnrevealed");
@@ -229,6 +222,7 @@ describe("coin errors in the deposit resolver", () => {
         depositAmount: 20,
         maxAmount: 50,
         convertedAmount: new BigNumber(400),
+        locale: "en",
         getSpendableBalance: readerOf(publicBalances([depositAccount, "10"])),
       });
       expect(sentAmountAtomic?.toFixed()).toBe("10");

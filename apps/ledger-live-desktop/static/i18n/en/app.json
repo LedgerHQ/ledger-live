@@ -11307,7 +11307,6 @@
       "notEnoughFees": "You need {{fees}} {{ticker}} for the network fees.",
       "amountTooLow": "Enter at least {{amount}} {{ticker}} and try again.",
       "amountTooHigh": "Enter {{amount}} {{ticker}} or less and try again.",
-      "feeEstimationFailed": "We were unable to calculate fees at this time. Your crypto accounts could be out of sync. Restart Ledger Wallet app and try again.",
       "accountNotReady": "This account isn't ready to send yet. Open it in your accounts, then try again.",
       "seiEvmUnlinked": "SEI EVM accounts must be linked before swapping",
       "aleoPrivateBalance": "Swaps are only available for public {{ticker}}. Your funds are currently private and can't be swapped.",

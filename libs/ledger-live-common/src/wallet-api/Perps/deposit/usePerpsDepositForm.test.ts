@@ -11,7 +11,7 @@ import {
   toConvertedDepositAmount,
   usePerpsDepositForm,
   type UsePerpsDepositFormParams,
-} from "./useDepositFormErrors";
+} from "./usePerpsDepositForm";
 
 const mockUsePerpsDepositQuote = jest.fn<PerpsDepositQuoteState, [unknown]>();
 jest.mock("./useDepositQuote", () => ({

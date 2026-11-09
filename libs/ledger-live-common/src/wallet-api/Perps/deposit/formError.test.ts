@@ -54,10 +54,11 @@ function quote(overrides: Partial<PerpsDepositQuote> = {}): PerpsDepositQuote {
 function resolve(overrides: Partial<ResolveDepositFormErrorParams> = {}) {
   return resolveDepositFormError({
     isOffline: false,
-    baseError: null,
     depositAccount: tokenAccount,
     parentAccount: mainAccount("1000000"),
     depositAmount: 20,
+    maxAmount: 50,
+    hasConversion: true,
     sentAmountAtomic: new BigNumber("20000000"),
     quoteResult: { quote: quote(), errors: [] },
     locale: "en",
@@ -70,8 +71,10 @@ describe("getDepositBaseError", () => {
   const base = {
     depositAccount: tokenAccount,
     depositAmount: 20,
+    parentAccount: undefined,
     maxAmount: 50,
     hasConversion: true,
+    locale: "en",
     getSpendableBalance: readStoredBalance,
   };
 
@@ -141,7 +144,7 @@ describe("resolveDepositFormError", () => {
       expect(
         resolve({
           isOffline: true,
-          baseError: { code: "insufficientBalance", labelKey: "x" },
+          depositAmount: 51,
           parentAccount: mainAccount("0"),
         }),
       ).toEqual({ code: "offline", labelKey: "perpsDeposit.formErrors.offline" });
@@ -150,7 +153,7 @@ describe("resolveDepositFormError", () => {
     it("shows insufficient balance before the fee errors", () => {
       expect(
         resolve({
-          baseError: { code: "insufficientBalance", labelKey: "x" },
+          depositAmount: 51,
           parentAccount: mainAccount("0"),
         })?.code,
       ).toBe("insufficientBalance");
@@ -195,19 +198,17 @@ describe("resolveDepositFormError", () => {
   });
 
   describe("network fees", () => {
-    it("keeps the empty fee account error of the base check before the quote fee checks", () => {
-      const feeAccountEmpty = {
-        code: "notEnoughFees",
-        labelKey: "perpsDeposit.formErrors.feeAccountEmpty",
-        values: { ticker: "ETH" },
-      } as const;
+    it("shows the empty fee account error before the quote fee checks", () => {
       expect(
         resolve({
-          baseError: feeAccountEmpty,
           parentAccount: mainAccount("0"),
           quoteResult: { quote: quote({ estimatedNetworkFee: fee("200") }), errors: [] },
         }),
-      ).toBe(feeAccountEmpty);
+      ).toEqual({
+        code: "notEnoughFees",
+        labelKey: "perpsDeposit.formErrors.feeAccountEmpty",
+        values: { ticker: "ETH" },
+      });
     });
 
     it("adds the approval fee to the swap fee of a token deposit, in atomic units", () => {
@@ -308,48 +309,11 @@ describe("resolveDepositFormError", () => {
     });
   });
 
-  describe("fee estimation failure", () => {
-    it("blocks the review of a quote without a fee estimate", () => {
-      expect(
-        resolve({ quoteResult: { quote: quote(), errors: [], feeEstimationFailed: true } }),
-      ).toEqual({
-        code: "feeEstimationFailed",
-        labelKey: "perpsDeposit.formErrors.feeEstimationFailed",
-      });
-    });
-
-    it("shows the amount limit before the fee estimation failure", () => {
-      expect(
-        resolve({
-          quoteResult: {
-            quote: quote(),
-            errors: [{ code: QuotesErrorCodes.AMOUNT_TOO_HIGH, maxAmount: "1000" }],
-            feeEstimationFailed: true,
-          },
-        })?.code,
-      ).toBe("amountTooHigh");
-    });
-
-    it("shows no quote when the fee estimation failed and no quote came back", () => {
-      expect(
-        resolve({
-          quoteResult: {
-            errors: [{ code: QuotesErrorCodes.NO_QUOTES }],
-            feeEstimationFailed: true,
-          },
-        })?.code,
-      ).toBe("noQuotes");
-    });
-  });
-
   describe("no quotes", () => {
     it.each([
       ["a global noQuotes", { quoteResult: { errors: [{ code: QuotesErrorCodes.NO_QUOTES }] } }],
       ["an empty result", { quoteResult: { errors: [] } }],
-      [
-        "a missing conversion",
-        { baseError: { code: "noQuotes", labelKey: "x" }, quoteResult: undefined },
-      ],
+      ["a missing conversion", { hasConversion: false, quoteResult: undefined }],
       [
         "a chain that pays fees in another currency",
         {

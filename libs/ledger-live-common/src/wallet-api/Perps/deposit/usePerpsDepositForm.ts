@@ -28,7 +28,6 @@ export function toConvertedDepositAmount(converted: number | null | undefined): 
 }
 
 export type DepositAmountState = Readonly<{
-  baseError: DepositFormError | null;
   isFormComplete: boolean;
   sentAmountAtomic: BigNumber | undefined;
 }>;
@@ -39,6 +38,7 @@ export function getDepositAmountState({
   depositAmount,
   maxAmount,
   convertedAmount,
+  locale,
   getSpendableBalance,
 }: Readonly<{
   depositAccount: AccountLike | undefined;
@@ -46,14 +46,16 @@ export function getDepositAmountState({
   depositAmount: number;
   maxAmount: number | null;
   convertedAmount: BigNumber | null;
+  locale: string;
   getSpendableBalance: SpendableBalanceReader;
 }>): DepositAmountState {
   const baseError = getDepositBaseError({
     depositAccount,
+    parentAccount,
     depositAmount,
     maxAmount,
     hasConversion: convertedAmount !== null,
-    parentAccount,
+    locale,
     getSpendableBalance,
   });
   const isFormComplete = depositAmount > 0 && Boolean(depositAccount) && baseError === null;
@@ -63,11 +65,10 @@ export function getDepositAmountState({
           BigNumber.ROUND_FLOOR,
         )
       : undefined;
-  return { baseError, isFormComplete, sentAmountAtomic };
+  return { isFormComplete, sentAmountAtomic };
 }
 
 const BALANCE_PENDING_STATE: DepositAmountState = {
-  baseError: null,
   isFormComplete: false,
   sentAmountAtomic: undefined,
 };
@@ -80,6 +81,8 @@ export type UseDepositFormErrorsParams = Readonly<{
   depositAccount: AccountLike | undefined;
   parentAccount: Account | undefined;
   depositAmount: number;
+  maxAmount: number | null;
+  hasConversion: boolean;
   quoteResult: PerpsDepositQuoteResult | undefined;
   isQuoteLoading: boolean;
   locale: string;
@@ -106,11 +109,13 @@ export type DepositFormErrors = Readonly<{
 }>;
 
 export function useDepositFormErrors({
-  amountState: { baseError, isFormComplete, sentAmountAtomic },
+  amountState: { isFormComplete, sentAmountAtomic },
   isOffline,
   depositAccount,
   parentAccount,
   depositAmount,
+  maxAmount,
+  hasConversion,
   quoteResult,
   isQuoteLoading,
   locale,
@@ -130,10 +135,11 @@ export function useDepositFormErrors({
         ? null
         : resolveDepositFormError({
             isOffline,
-            baseError,
             depositAccount,
             parentAccount,
             depositAmount,
+            maxAmount,
+            hasConversion,
             sentAmountAtomic,
             quoteResult,
             locale,
@@ -142,11 +148,12 @@ export function useDepositFormErrors({
     [
       isBalancePending,
       getSpendableBalance,
-      baseError,
       depositAccount,
       depositAmount,
+      hasConversion,
       isOffline,
       locale,
+      maxAmount,
       parentAccount,
       quoteResult,
       sentAmountAtomic,
@@ -327,6 +334,7 @@ export function usePerpsDepositForm({
             depositAmount,
             maxAmount,
             convertedAmount,
+            locale,
             getSpendableBalance,
           }),
     [
@@ -335,6 +343,7 @@ export function usePerpsDepositForm({
       depositAmount,
       getSpendableBalance,
       isBalancePending,
+      locale,
       maxAmount,
       parentAccount,
     ],
@@ -364,6 +373,8 @@ export function usePerpsDepositForm({
     depositAccount,
     parentAccount,
     depositAmount,
+    maxAmount,
+    hasConversion: convertedAmount !== null,
     quoteResult,
     isQuoteLoading,
     locale,

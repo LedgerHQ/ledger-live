@@ -99,13 +99,7 @@ describe("fetchPerpsDepositQuote", () => {
           receiveAccountId: getWalletApiIdFromAccountId(receiverAccount.id),
         },
       },
-      {
-        accounts,
-        spotPrices: {},
-        locale: "en-US",
-        counterValueCurrency: "USD",
-        onFeeEstimationFailed: expect.any(Function),
-      },
+      { accounts, spotPrices: {}, locale: "en-US", counterValueCurrency: "USD" },
     );
   });
 
@@ -130,21 +124,6 @@ describe("fetchPerpsDepositQuote", () => {
     ] as GetQuotesResponse["errors"];
     respondWith({ errors });
 
-    await expect(fetchPerpsDepositQuote(params)).resolves.toEqual({
-      errors,
-      feeEstimationFailed: false,
-    });
-  });
-
-  it("reports a fee estimation failure of the quote engine", async () => {
-    mockedGetQuotes.mockImplementation(async (_args, context) => {
-      context.onFeeEstimationFailed?.();
-      return { quotes: [quote], providerErrors: [], warnings: [], errors: [] };
-    });
-
-    const result = await fetchPerpsDepositQuote(params);
-
-    expect(result.feeEstimationFailed).toBe(true);
-    expect(result.quote?.quoteId).toBe("quote-1");
+    await expect(fetchPerpsDepositQuote(params)).resolves.toEqual({ errors });
   });
 });

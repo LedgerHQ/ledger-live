@@ -30,7 +30,6 @@ export type DepositFormErrorCode =
   | "xlmMinimumBalance"
   | "amountTooLow"
   | "amountTooHigh"
-  | "feeEstimationFailed"
   | "noQuotes";
 
 export type DepositFormError = Readonly<{
@@ -52,22 +51,12 @@ export const DEPOSIT_FORM_ERROR_ANALYTICS_MESSAGES: Record<DepositFormErrorCode,
   xlmMinimumBalance: "xlm_prevent_deactivating",
   amountTooLow: "minAmount",
   amountTooHigh: "maxAmount",
-  feeEstimationFailed: "fee_estimation_failed",
   noQuotes: "no_result",
 };
 
 export const PERPS_DEPOSIT_ANALYTICS_CONTEXT = { page: "perps_deposit", flow: "perps" } as const;
 
 const FEE_DISPLAY_DECIMALS = 7;
-
-const BASE_ERRORS_BEFORE_FEES: ReadonlySet<DepositFormErrorCode> = new Set([
-  "accountNotReady",
-  "seiEvmUnlinked",
-  "aleoPrivateBalance",
-  "tezosUnrevealed",
-  "insufficientBalance",
-  "notEnoughFees",
-]);
 
 const OFFLINE_ERROR: DepositFormError = {
   code: "offline",
@@ -79,50 +68,10 @@ const INSUFFICIENT_BALANCE_ERROR: DepositFormError = {
   labelKey: "perpsDeposit.formErrors.amountExceedsBalance",
 };
 
-const FEE_ESTIMATION_FAILED_ERROR: DepositFormError = {
-  code: "feeEstimationFailed",
-  labelKey: "perpsDeposit.formErrors.feeEstimationFailed",
-};
-
 const NO_QUOTES_ERROR: DepositFormError = {
   code: "noQuotes",
   labelKey: "perpsDeposit.formErrors.quoteUnavailable",
 };
-
-export type DepositBaseCheckParams = Readonly<{
-  depositAccount: AccountLike | undefined;
-  depositAmount: number;
-  maxAmount: number | null;
-  hasConversion: boolean;
-  parentAccount?: Account;
-  getSpendableBalance: SpendableBalanceReader;
-}>;
-
-export function getDepositBaseError({
-  depositAccount,
-  depositAmount,
-  maxAmount,
-  hasConversion,
-  parentAccount,
-  getSpendableBalance,
-}: DepositBaseCheckParams): DepositFormError | null {
-  if (!depositAccount || depositAmount <= 0) return null;
-  const accountStateError = getAccountStateError(
-    depositAccount,
-    parentAccount,
-    getSpendableBalance,
-  );
-  if (accountStateError) return accountStateError;
-  if (maxAmount !== null && depositAmount > maxAmount) return INSUFFICIENT_BALANCE_ERROR;
-  const emptyFeeAccountError = getEmptyFeeAccountError(
-    depositAccount,
-    parentAccount,
-    getSpendableBalance,
-  );
-  if (emptyFeeAccountError) return emptyFeeAccountError;
-  if (maxAmount === null || !hasConversion) return NO_QUOTES_ERROR;
-  return null;
-}
 
 function feeAccountEmptyError(feeAccount: Account): DepositFormError {
   return {
@@ -134,12 +83,11 @@ function feeAccountEmptyError(feeAccount: Account): DepositFormError {
 
 function getEmptyFeeAccountError(
   depositAccount: AccountLike,
-  parentAccount: Account | undefined,
+  feeAccount: Account,
   getSpendableBalance: SpendableBalanceReader,
 ): DepositFormError | null {
-  if (depositAccount.type === "Account") return null;
-  const feeAccount = getDepositFeeAccount(depositAccount, parentAccount);
-  return feeAccount && getSpendableBalance(feeAccount).isZero()
+  const isTokenDeposit = depositAccount.type !== "Account";
+  return isTokenDeposit && getSpendableBalance(feeAccount).isZero()
     ? feeAccountEmptyError(feeAccount)
     : null;
 }
@@ -273,64 +221,128 @@ function getAmountLimitError(
 
 export type ResolveDepositFormErrorParams = Readonly<{
   isOffline: boolean;
-  baseError: DepositFormError | null;
   depositAccount: AccountLike | undefined;
   parentAccount: Account | undefined;
   depositAmount: number;
+  maxAmount: number | null;
+  hasConversion: boolean;
   sentAmountAtomic: BigNumber | undefined;
   quoteResult: PerpsDepositQuoteResult | undefined;
   locale: string;
   getSpendableBalance: SpendableBalanceReader;
 }>;
 
-export function resolveDepositFormError({
-  isOffline,
-  baseError,
+type DepositFormRuleContext = ResolveDepositFormErrorParams &
+  Readonly<{ depositAccount: AccountLike; feeAccount: Account | undefined }>;
+
+type DepositFormRule = (context: DepositFormRuleContext) => DepositFormError | null;
+
+function getUsableQuote({
+  quoteResult,
+  feeAccount,
+}: DepositFormRuleContext): PerpsDepositQuote | undefined {
+  const quote = quoteResult?.quote;
+  return quote && feeAccount && !hasForeignFeeCurrency(quote, feeAccount) ? quote : undefined;
+}
+
+const offlineRule: DepositFormRule = ({ isOffline }) => (isOffline ? OFFLINE_ERROR : null);
+
+const accountStateRule: DepositFormRule = ({
   depositAccount,
   parentAccount,
-  depositAmount,
-  sentAmountAtomic,
+  getSpendableBalance,
+}) => getAccountStateError(depositAccount, parentAccount, getSpendableBalance);
+
+const insufficientBalanceRule: DepositFormRule = ({ depositAmount, maxAmount }) =>
+  maxAmount !== null && depositAmount > maxAmount ? INSUFFICIENT_BALANCE_ERROR : null;
+
+const feesRule: DepositFormRule = ({
+  depositAccount,
+  feeAccount,
   quoteResult,
+  sentAmountAtomic,
   locale,
   getSpendableBalance,
-}: ResolveDepositFormErrorParams): DepositFormError | null {
-  if (!depositAccount || depositAmount <= 0) return baseError;
-  if (isOffline) return OFFLINE_ERROR;
-  if (baseError && BASE_ERRORS_BEFORE_FEES.has(baseError.code)) return baseError;
-
-  const feeAccount = getDepositFeeAccount(depositAccount, parentAccount);
-  const feeError = feeAccount
-    ? getFeeError({
-        depositAccount,
-        feeAccount,
-        quote: quoteResult?.quote,
-        sentAmountAtomic,
-        locale,
-        feeBalance: getSpendableBalance(feeAccount),
-      })
-    : null;
-  if (feeError) return feeError;
-  if (baseError) return baseError;
-  if (!quoteResult) return null;
-
-  const { quote } = quoteResult;
-  const hasUsableFee =
-    quote !== undefined && feeAccount !== undefined && !hasForeignFeeCurrency(quote, feeAccount);
-  const minimumBalanceError = getMinimumBalanceError(
-    depositAccount,
-    hasUsableFee ? quote : undefined,
-    sentAmountAtomic,
-    locale,
-    getSpendableBalance,
+}) => {
+  if (!feeAccount) return null;
+  return (
+    getEmptyFeeAccountError(depositAccount, feeAccount, getSpendableBalance) ??
+    getFeeError({
+      depositAccount,
+      feeAccount,
+      quote: quoteResult?.quote,
+      sentAmountAtomic,
+      locale,
+      feeBalance: getSpendableBalance(feeAccount),
+    })
   );
-  if (minimumBalanceError) return minimumBalanceError;
+};
 
-  const amountLimitError = getAmountLimitError(quoteResult, depositAccount, locale);
-  if (amountLimitError) return amountLimitError;
-  if (quote && quoteResult.feeEstimationFailed) return FEE_ESTIMATION_FAILED_ERROR;
+const missingConversionRule: DepositFormRule = ({ maxAmount, hasConversion }) =>
+  maxAmount === null || !hasConversion ? NO_QUOTES_ERROR : null;
 
-  const isQuoteUsable = hasUsableFee && !needsFeeForMinimumBalance(depositAccount, quote);
-  return isQuoteUsable ? null : NO_QUOTES_ERROR;
+const minimumBalanceRule: DepositFormRule = context =>
+  context.quoteResult
+    ? getMinimumBalanceError(
+        context.depositAccount,
+        getUsableQuote(context),
+        context.sentAmountAtomic,
+        context.locale,
+        context.getSpendableBalance,
+      )
+    : null;
+
+const amountLimitsRule: DepositFormRule = ({ quoteResult, depositAccount, locale }) =>
+  quoteResult ? getAmountLimitError(quoteResult, depositAccount, locale) : null;
+
+const noQuotesRule: DepositFormRule = context => {
+  if (!context.quoteResult) return null;
+  const quote = getUsableQuote(context);
+  return quote && !needsFeeForMinimumBalance(context.depositAccount, quote)
+    ? null
+    : NO_QUOTES_ERROR;
+};
+
+const DEPOSIT_FORM_RULES: readonly DepositFormRule[] = [
+  offlineRule,
+  accountStateRule,
+  insufficientBalanceRule,
+  feesRule,
+  missingConversionRule,
+  minimumBalanceRule,
+  amountLimitsRule,
+  noQuotesRule,
+];
+
+export function resolveDepositFormError(
+  params: ResolveDepositFormErrorParams,
+): DepositFormError | null {
+  const { depositAccount, parentAccount, depositAmount } = params;
+  if (!depositAccount || depositAmount <= 0) return null;
+  const context: DepositFormRuleContext = {
+    ...params,
+    depositAccount,
+    feeAccount: getDepositFeeAccount(depositAccount, parentAccount),
+  };
+  for (const rule of DEPOSIT_FORM_RULES) {
+    const error = rule(context);
+    if (error) return error;
+  }
+  return null;
+}
+
+export type DepositBaseCheckParams = Omit<
+  ResolveDepositFormErrorParams,
+  "isOffline" | "quoteResult" | "sentAmountAtomic"
+>;
+
+export function getDepositBaseError(params: DepositBaseCheckParams): DepositFormError | null {
+  return resolveDepositFormError({
+    ...params,
+    isOffline: false,
+    quoteResult: undefined,
+    sentAmountAtomic: undefined,
+  });
 }
 
 export type DepositErrorDetails = Readonly<{

@@ -69,7 +69,6 @@ export type GetQuotesContext = {
     version: string | null;
   };
   highValueLossThreshold?: number;
-  onFeeEstimationFailed?: () => void;
 };
 
 function getParentCurrencyId(accounts: AccountLike[], walletAccountId: string): string | undefined {
@@ -170,8 +169,6 @@ export async function getQuotes(
       amountFrom: args.data.amount,
     }),
   ]);
-
-  if (feeContext === null) context.onFeeEstimationFailed?.();
 
   const normalizationContext = {
     sendCurrencyId: quotesInput.sendCurrencyId,

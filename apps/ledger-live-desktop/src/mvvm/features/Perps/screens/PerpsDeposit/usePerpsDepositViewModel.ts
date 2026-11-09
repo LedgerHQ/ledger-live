@@ -20,7 +20,7 @@ import {
   toConvertedDepositAmount,
   usePerpsDepositForm,
   type DepositFormErrors,
-} from "@ledgerhq/live-common/wallet-api/Perps/deposit/useDepositFormErrors";
+} from "@ledgerhq/live-common/wallet-api/Perps/deposit/usePerpsDepositForm";
 import { useUrlLocalizer } from "~/renderer/hooks/useLocalizedUrls";
 import { openURL } from "~/renderer/linking";
 import { PERPS_UI_USE_CASE } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";

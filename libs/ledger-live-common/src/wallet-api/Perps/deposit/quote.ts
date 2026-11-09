@@ -31,7 +31,6 @@ export type PerpsDepositQuote = {
 export type PerpsDepositQuoteResult = {
   quote?: PerpsDepositQuote;
   errors: QuotesError[];
-  feeEstimationFailed?: boolean;
 };
 
 export function findDepositParentAccount(
@@ -78,7 +77,6 @@ export async function fetchPerpsDepositQuote({
 }: PerpsDepositQuoteParams): Promise<PerpsDepositQuoteResult> {
   registerQuoteAccounts(accounts, depositAccount, receiverAccount);
 
-  let feeEstimationFailed = false;
   const { quotes, errors } = await getQuotes(
     {
       providers: [PERPS_SWAPKIT_PROVIDER],
@@ -88,19 +86,9 @@ export async function fetchPerpsDepositQuote({
         receiveAccountId: getWalletApiIdFromAccountId(receiverAccount.id),
       },
     },
-    {
-      accounts,
-      spotPrices: {},
-      locale,
-      counterValueCurrency,
-      onFeeEstimationFailed: () => {
-        feeEstimationFailed = true;
-      },
-    },
+    { accounts, spotPrices: {}, locale, counterValueCurrency },
   );
 
   const [quote] = quotes;
-  return quote
-    ? { quote: toPerpsDepositQuote(quote), errors, feeEstimationFailed }
-    : { errors, feeEstimationFailed };
+  return quote ? { quote: toPerpsDepositQuote(quote), errors } : { errors };
 }

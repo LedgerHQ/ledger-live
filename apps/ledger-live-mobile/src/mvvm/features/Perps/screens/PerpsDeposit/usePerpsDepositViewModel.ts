@@ -14,7 +14,7 @@ import {
   toConvertedDepositAmount,
   usePerpsDepositForm,
   type DepositFormErrors,
-} from "@ledgerhq/live-common/wallet-api/Perps/deposit/useDepositFormErrors";
+} from "@ledgerhq/live-common/wallet-api/Perps/deposit/usePerpsDepositForm";
 import { Linking } from "react-native";
 import { useUrlLocalizer } from "LLM/hooks/useLocalizedUrls";
 import {
