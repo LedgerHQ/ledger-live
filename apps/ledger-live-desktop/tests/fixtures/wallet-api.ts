@@ -584,15 +584,6 @@ export const expectedCurrencyList = [
   },
   {
     type: "CryptoCurrency",
-    id: "fantom",
-    ticker: "FTM",
-    name: "Fantom",
-    family: "ethereum",
-    color: "#1969ff",
-    decimals: 18,
-  },
-  {
-    type: "CryptoCurrency",
     id: "core",
     ticker: "CORE",
     name: "Core",

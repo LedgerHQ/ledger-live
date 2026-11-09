@@ -36,7 +36,6 @@ function Assets() {
   const distribution = useDistribution({
     showEmptyAccounts: true,
     hideEmptyTokenAccount,
-    groupBy: "asset",
   });
 
   const refreshAccountsOrdering = useRefreshAccountsOrdering();

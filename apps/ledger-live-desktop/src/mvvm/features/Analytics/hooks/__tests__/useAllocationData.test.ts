@@ -124,7 +124,6 @@ describe("useAllocationData", () => {
 
     expect(mockUseDistribution).toHaveBeenCalledWith({
       hideEmptyTokenAccount: true,
-      groupBy: "asset",
     });
   });
 

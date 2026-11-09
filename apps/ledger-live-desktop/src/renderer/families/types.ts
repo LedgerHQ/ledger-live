@@ -518,6 +518,9 @@ export type LLDCoinFamily<
    */
   addAssetAction?: (args: { account: A; dispatch: AppDispatch }) => void;
 
+  /** Overrides `currency.tokenTypes`. Read it through `useTokenTypes` */
+  getTokenTypes?: (currency: CryptoCurrency) => string[];
+
   /**
    * Allow to add component below the token select on Account step in Receive modal
    */

@@ -30,11 +30,9 @@ export function usePayStablecoins(): PayStablecoins {
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const heldAccounts = useSelector(flattenAccountsSelector);
 
-  // groupBy: "asset" aggregates each ticker across chains into one row.
   const distribution = useDistribution({
     showEmptyAccounts: true,
     hideEmptyTokenAccount,
-    groupBy: "asset",
   });
 
   const {

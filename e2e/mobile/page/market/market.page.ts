@@ -1,34 +1,49 @@
 import { Step } from "jest-allure2-reporter/api";
-import { openDeeplink } from "@e2e/helpers/commonHelpers";
+import { escapeRegExp, openDeeplink } from "@e2e/helpers/commonHelpers";
+import { byId, byIdWithDescendantText } from "@e2e/helpers/elements/native";
+import { TIMEOUT } from "@e2e/utils/timeouts";
 
 import type { CurrencyType } from "@ledgerhq/live-e2e-shared/enum/Currency";
 
+type MarketQuickAction = "send" | "receive" | "buy" | "sell" | "swap";
+
+// The asset detail screen gives some quick actions their own testID.
+const ASSET_DETAIL_QUICK_ACTION_IDS: Partial<Record<MarketQuickAction, string>> = {
+  buy: "asset-detail-buy-button",
+  swap: "asset-detail-swap-button",
+  receive: "asset-detail-footer-receive-button",
+};
+
 export default class MarketPage {
-  marketScreenSearchBarId = "market-screen-search-bar";
-  marketAssetsCategorySwitcherStarredId = "market-screen-assets-category-switcher-starred";
-  marketItemId = (id: string) => `marketItem-${id}`;
-  marketScreenItemWithTitle = (marketId: string, title: string) =>
-    getElementByIdWithDescendantTexts(this.marketItemId(marketId), title);
-
-  marketCategorySwitcherId = "market-screen-assets-category-switcher";
-  marketCategoryTabId = (value: string) => `${this.marketCategorySwitcherId}-${value}`;
-  headerBackButtonId = "navigation-header-back-button";
-  assetDetailScrollViewId = /^asset-detail-scroll-view-.*/;
-  assetDetailCoinCapsuleId = "asset-detail-coin-capsule";
-  assetDetailMarketPriceId = "asset-detail-market-price";
-  assetDetailCoinOptionsTrailingId = "asset-detail-coin-options-trailing";
-
-  marketScreenFilterButton = () => getElementById("market-screen-assets-filter-button");
-  coinOptionsTrigger = () => getElementById("asset-detail-coin-options-trailing");
-  coinOptionsFavouriteRow = () => getElementById("asset-detail-coin-options-favourite-row");
+  private readonly marketScreenSearchBar = byId("market-screen-search-bar");
+  private readonly headerBackButton = byId("navigation-header-back-button");
+  private readonly marketScreenFilterButton = byId("market-screen-assets-filter-button");
+  private readonly assetDetailScrollView = byId(/^asset-detail-scroll-view-.*/);
+  private readonly assetDetailCoinCapsule = byId("asset-detail-coin-capsule");
+  private readonly assetDetailMarketPrice = byId("asset-detail-market-price");
+  private readonly coinOptionsTrigger = byId("asset-detail-coin-options-trailing");
+  private readonly coinOptionsFavouriteRow = byId("asset-detail-coin-options-favourite-row");
+  private readonly categoryTab = (value: string) =>
+    byId(`market-screen-assets-category-switcher-${value}`);
+  private readonly marketItem = (marketId: string) => byId(`marketItem-${marketId}`);
+  // Matches the title anywhere in a descendant, ignoring case.
+  private readonly marketItemWithTitle = (marketId: string, title: string) =>
+    byIdWithDescendantText({
+      id: `marketItem-${marketId}`,
+      text: new RegExp(`.*${escapeRegExp(title)}.*`, "i"),
+    });
   // New MarketScreen keys rows by CoinGecko market.id; ERC20s differ from their ledger currency.id.
-  marketScreenRow = (currency: CurrencyType) =>
-    getElementById(this.marketItemId(currency.market?.id ?? currency.id));
+  private readonly marketScreenRow = (currency: CurrencyType) =>
+    this.marketItem(currency.market?.id ?? currency.id);
+  private readonly quickActionButton = (action: MarketQuickAction) =>
+    byId(ASSET_DETAIL_QUICK_ACTION_IDS[action] ?? `asset-quick-action-button-${action}`);
 
   @Step("Go back from the market screen")
   async goBack() {
-    await waitForElementById(this.headerBackButtonId);
-    await tapByIdAndExpectToDisappear(this.headerBackButtonId);
+    // The header slides in with the screen: at 100% the push has settled, so the tap is not lost.
+    await this.headerBackButton.waitFullyVisible();
+    await this.headerBackButton.tap();
+    await this.headerBackButton.waitNotVisible();
   }
 
   @Step("Open market screen via deeplink")
@@ -38,22 +53,22 @@ export default class MarketPage {
 
   @Step("Expect asset page")
   async expectAssetPageVisible() {
-    await waitForElementById(this.assetDetailScrollViewId);
-    await detoxExpect(getElementById(this.assetDetailScrollViewId)).toBeVisible();
-    await detoxExpect(getElementById(this.assetDetailMarketPriceId)).toBeVisible();
-    await detoxExpect(getElementById(this.assetDetailCoinCapsuleId)).toBeVisible();
-    await detoxExpect(getElementById(this.assetDetailCoinOptionsTrailingId)).toBeVisible();
+    await this.assetDetailScrollView.waitVisible();
+    await this.assetDetailScrollView.expectVisible();
+    await this.assetDetailMarketPrice.expectVisible();
+    await this.assetDetailCoinCapsule.expectVisible();
+    await this.coinOptionsTrigger.expectVisible();
   }
 
   @Step("Leave asset page")
   async leaveAssetPage() {
-    await tapById(this.headerBackButtonId);
+    await this.headerBackButton.tap();
   }
 
   @Step("Expect market screen")
   async expectMarketScreenVisible() {
-    await waitForElementById(this.marketScreenSearchBarId);
-    await detoxExpect(getElementById(this.marketAssetsCategorySwitcherStarredId)).toBeVisible();
+    await this.marketScreenSearchBar.waitVisible();
+    await this.categoryTab("starred").expectVisible();
   }
 
   @Step("Go back to portfolio")
@@ -63,77 +78,62 @@ export default class MarketPage {
 
   @Step("Search for asset {{{0}}}")
   async searchAsset(asset: string) {
-    await typeTextByElement(getElementById(this.marketScreenSearchBarId), asset);
+    await this.marketScreenSearchBar.replaceText(asset);
   }
 
   @Step("Open asset page {{{0.name}}}")
   async openAssetPage(currency: CurrencyType) {
-    await tapByElement(this.marketScreenRow(currency));
+    await this.marketScreenRow(currency).tap();
   }
 
   @Step("Star favorite coin")
   async starFavoriteCoin() {
-    await tapByElement(this.coinOptionsTrigger());
-    await tapByElement(this.coinOptionsFavouriteRow());
+    await this.coinOptionsTrigger.tap();
+    await this.coinOptionsFavouriteRow.tap();
   }
 
   @Step("Back to asset list")
   async backToAssetList() {
-    await waitForElementById(this.headerBackButtonId);
-    await tapById(this.headerBackButtonId);
-    await waitForElementById(this.marketScreenSearchBarId);
+    await this.headerBackButton.tap();
+    await this.marketScreenSearchBar.waitVisible();
   }
 
   @Step("Filter starred asset")
   async filterStaredAsset() {
     // CategorySwitcher is hidden while search is active.
-    await clearTextByElement(getElementById(this.marketScreenSearchBarId));
-    await waitForElementById(this.marketCategoryTabId("starred"));
-    await tapById(this.marketCategoryTabId("starred"));
+    await this.marketScreenSearchBar.clearText();
+    await this.categoryTab("starred").tap();
   }
 
   @Step("Filter starred assets on market screen")
   async filterStarredAssetsOnMarketScreen() {
-    await waitForElementById(this.marketAssetsCategorySwitcherStarredId);
-    await tapById(this.marketAssetsCategorySwitcherStarredId);
+    await this.categoryTab("starred").tap();
   }
 
   @Step("Expect market row title {{{0.name}}}")
   async expectMarketRowTitle(currency: CurrencyType) {
-    await detoxExpect(this.marketScreenRow(currency)).toBeVisible();
+    await this.marketScreenRow(currency).expectVisible();
   }
 
   @Step("Check market screen item {{{0}}} is visible")
   async isMarketScreenItemVisible(marketId: string, title: string): Promise<boolean> {
-    try {
-      await waitForElement(this.marketScreenItemWithTitle(marketId, title));
-      return true;
-    } catch {
-      return false;
-    }
+    return await this.marketItemWithTitle(marketId, title).isVisible(TIMEOUT.xxlarge);
   }
 
   @Step("Tap on market quick action button {{{0}}}")
-  async tapOnMarketQuickActionButton(action: "send" | "receive" | "buy" | "sell" | "swap") {
-    const assetDetailTestIds: Partial<Record<typeof action, string>> = {
-      buy: "asset-detail-buy-button",
-      swap: "asset-detail-swap-button",
-      receive: "asset-detail-footer-receive-button",
-    };
-    const testId = assetDetailTestIds[action] ?? `asset-quick-action-button-${action}`;
-    await waitForElementById(testId);
-    await tapById(testId);
+  async tapOnMarketQuickActionButton(action: MarketQuickAction) {
+    await this.quickActionButton(action).tap();
   }
 
   @Step("Expect filters visible")
   async expectFiltersVisible() {
-    await detoxExpect(this.marketScreenFilterButton()).toBeVisible();
+    await this.marketScreenFilterButton.expectVisible();
   }
 
   @Step("Expect category tab {{{0}}} to be visible")
   async expectCategoryTabVisible(value: string) {
-    await waitForElementById(this.marketCategoryTabId(value));
-    await detoxExpect(getElementById(this.marketCategoryTabId(value))).toBeVisible();
+    await this.categoryTab(value).waitVisible();
+    await this.categoryTab(value).expectVisible();
   }
 
   @Step("Expect category {{{0}}} to be selected")
