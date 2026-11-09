@@ -27,5 +27,6 @@ export * from "./useAppConfigToolProps";
 export { useAccountPortfolioToolProps } from "./useAccountPortfolioToolProps";
 export { useMockAccountsToolProps } from "./useMockAccountsToolProps";
 export { useAccountDetailToolProps } from "./useAccountDetailToolProps";
+export { useReceiveToolProps } from "./useReceiveToolProps";
 export { useCoinConfigToolProps } from "./useCoinConfigToolProps";
 export type { UseCoinConfigToolPropsInput } from "./useCoinConfigToolProps";
