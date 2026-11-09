@@ -1,4 +1,4 @@
-import { BackHandler } from "react-native";
+import { BackHandler, type HardwareBackPressEvent } from "react-native";
 import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { useNetworkState, type NetworkState } from "@shared/network-status";
 import {
@@ -67,6 +67,8 @@ const setManifests = ({ local, remote }: { local?: LiveAppManifest; remote?: Liv
   jest.mocked(useLocalLiveAppManifest).mockReturnValue(local);
   jest.mocked(useRemoteLiveAppManifest).mockReturnValue(remote);
 };
+
+const backPressEvent: HardwareBackPressEvent = { type: "hardwareBackPress", timeStamp: 0 };
 
 describe("usePredictionsLiveAppViewModel", () => {
   beforeEach(() => {
@@ -213,11 +215,11 @@ describe("usePredictionsLiveAppViewModel", () => {
       loading: false,
       isAppUnavailable: false,
     };
-    let backPressHandlers: Array<() => boolean | null | undefined>;
+    let backPressHandlers: Array<Parameters<typeof BackHandler.addEventListener>[1]>;
 
     const pressBack = () => {
       for (let i = backPressHandlers.length - 1; i >= 0; i--) {
-        if (backPressHandlers[i]()) return true;
+        if (backPressHandlers[i](backPressEvent)) return true;
       }
       return false;
     };
