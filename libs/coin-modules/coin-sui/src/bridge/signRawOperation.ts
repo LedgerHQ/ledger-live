@@ -133,6 +133,9 @@ async function performSignRawOperation(
   const unsigned = built.serialized;
   const resolution = await resolveToken(account, built.coinTypes, deviceModelId);
 
+  // Building and token lookup are async: a flow closed meanwhile must not prompt the device.
+  if (isCancelled()) return;
+
   observer.next({ type: "device-signature-requested" });
 
   const signed = await signerContext(deviceId, suiSigner =>

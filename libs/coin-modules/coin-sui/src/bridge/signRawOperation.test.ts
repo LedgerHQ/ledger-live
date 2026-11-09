@@ -409,5 +409,31 @@ describe("buildSignRawOperation", () => {
 
       expect(events.map(e => e.type)).toEqual(["device-signature-requested"]);
     });
+
+    it("never opens the device when unsubscribed while the transaction is being built", async () => {
+      let build: () => void = () => {};
+      const built = new Promise<void>(resolve => (build = resolve));
+      const implementation = mockBuildRawTransaction.getMockImplementation();
+      if (!implementation) throw new Error("no buildRawTransaction mock");
+      mockBuildRawTransaction.mockImplementation(async (...args) => {
+        await built;
+        return implementation(...args);
+      });
+      const events: SignOperationEvent[] = [];
+      const subscription = sign(await hashiDepositTransaction().toJSON()).subscribe(e =>
+        events.push(e),
+      );
+      while (mockBuildRawTransaction.mock.calls.length === 0) {
+        await new Promise(resolve => setTimeout(resolve, 0));
+      }
+
+      subscription.unsubscribe();
+      build();
+      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise(resolve => setTimeout(resolve, 0));
+
+      expect(signerContext).not.toHaveBeenCalled();
+      expect(events).toEqual([]);
+    });
   });
 });
