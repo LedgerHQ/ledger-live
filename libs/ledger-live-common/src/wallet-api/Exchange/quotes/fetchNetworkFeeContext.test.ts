@@ -112,7 +112,7 @@ describe("fetchNetworkFeeContext", () => {
     expect(mockedGetBridge).not.toHaveBeenCalled();
   });
 
-  it("returns null when bridge.prepareTransaction throws", async () => {
+  it("returns null and reports the failure when bridge.prepareTransaction throws", async () => {
     const account = makeEvmAccount();
     mockedResolveId.mockReturnValue(account.id);
     mockedGetParent.mockReturnValue(undefined as unknown as Account);
@@ -122,14 +122,42 @@ describe("fetchNetworkFeeContext", () => {
         prepareTransaction: jest.fn().mockRejectedValue(new Error("boom")),
       }) as unknown as ReturnType<typeof getAccountBridge>,
     );
+    const onFeeEstimationFailed = jest.fn();
 
     const result = await fetchNetworkFeeContext({
       accounts: [account as unknown as AccountLike],
       fromAccountId: "wallet:evm:1",
       amountFrom: "1",
+      onFeeEstimationFailed,
     });
 
     expect(result).toBeNull();
+    expect(onFeeEstimationFailed).toHaveBeenCalledTimes(1);
+  });
+
+  it("skips the fee estimate without a failure for a chain with no estimation recipient", async () => {
+    const account = makeEvmAccount();
+    mockedResolveId.mockReturnValue(account.id);
+    mockedGetParent.mockReturnValue(undefined as unknown as Account);
+    mockedGetMain.mockReturnValue(account);
+    const bridge = makeBridge({
+      getEstimationRecipient: jest.fn(() => {
+        throw new Error("no estimation recipient for currency ethereum");
+      }),
+    });
+    mockedGetBridge.mockReturnValue(bridge as unknown as ReturnType<typeof getAccountBridge>);
+    const onFeeEstimationFailed = jest.fn();
+
+    const result = await fetchNetworkFeeContext({
+      accounts: [account as unknown as AccountLike],
+      fromAccountId: "wallet:evm:1",
+      amountFrom: "1",
+      onFeeEstimationFailed,
+    });
+
+    expect(result).toBeNull();
+    expect(bridge.prepareTransaction).not.toHaveBeenCalled();
+    expect(onFeeEstimationFailed).not.toHaveBeenCalled();
   });
 
   it("builds an EVM context from the prepared transaction and balance", async () => {
@@ -192,6 +220,26 @@ describe("fetchNetworkFeeContext", () => {
     expect(result?.estimatedFeesAtomic).toEqual(new BigNumber("3000"));
     const [, preparedArg] = bridge.prepareTransaction.mock.calls[0];
     expect(preparedArg.recipient).toBe("bc1qed3mqr92zvq2s782aqkyx785u23723w02qfrgs");
+  });
+
+  it("reuses a recent bitcoin sync for the next quote of the same account", async () => {
+    const account = makeBtcAccount();
+    mockedResolveId.mockReturnValue(account.id);
+    mockedGetParent.mockReturnValue(undefined as unknown as Account);
+    mockedGetMain.mockReturnValue(account);
+    const bridge = makeBridge({ prepareTransaction: jest.fn().mockResolvedValue({}) });
+    mockedGetBridge.mockReturnValue(bridge as unknown as ReturnType<typeof getAccountBridge>);
+    const args = {
+      accounts: [account as unknown as AccountLike],
+      fromAccountId: "wallet:btc:1",
+      amountFrom: "0.5",
+    };
+
+    await fetchNetworkFeeContext(args);
+    await fetchNetworkFeeContext({ ...args, amountFrom: "0.6" });
+
+    expect(bridge.sync).toHaveBeenCalledTimes(1);
+    expect(bridge.prepareTransaction).toHaveBeenCalledTimes(2);
   });
 
   it("caps the prepared amount on the freshly-synced bitcoin balance, not the stale one", async () => {

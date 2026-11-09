@@ -309,6 +309,40 @@ describe("resolveDepositFormError", () => {
     });
   });
 
+  describe("fee estimation failure", () => {
+    it("blocks the review of a quote without a fee estimate", () => {
+      expect(
+        resolve({ quoteResult: { quote: quote(), errors: [], feeEstimationFailed: true } }),
+      ).toEqual({
+        code: "feeEstimationFailed",
+        labelKey: "perpsDeposit.formErrors.feeEstimationFailed",
+      });
+    });
+
+    it("shows the amount limit before the fee estimation failure", () => {
+      expect(
+        resolve({
+          quoteResult: {
+            quote: quote(),
+            errors: [{ code: QuotesErrorCodes.AMOUNT_TOO_HIGH, maxAmount: "1000" }],
+            feeEstimationFailed: true,
+          },
+        })?.code,
+      ).toBe("amountTooHigh");
+    });
+
+    it("shows no quote when the fee estimation failed and no quote came back", () => {
+      expect(
+        resolve({
+          quoteResult: {
+            errors: [{ code: QuotesErrorCodes.NO_QUOTES }],
+            feeEstimationFailed: true,
+          },
+        })?.code,
+      ).toBe("noQuotes");
+    });
+  });
+
   describe("no quotes", () => {
     it.each([
       ["a global noQuotes", { quoteResult: { errors: [{ code: QuotesErrorCodes.NO_QUOTES }] } }],
