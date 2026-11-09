@@ -153,6 +153,7 @@ describe("createPerformanceReader", () => {
       resume: unused,
       processStart: unused,
       pid: unused,
+      jsLog: unused,
       scrollDown: async () => {
         scrolls++;
         top = Math.min(lastTop, top + (steps.shift() ?? VISIBLE_ROWS / 2));
