@@ -8,9 +8,11 @@ import type { Sandbox } from "@ledgerhq/coin-tester/sandbox";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
+import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { makeAccount } from "../fixtures";
 import { blockscoutOf, swapTokens } from "../sandboxEvm";
 import { VITALIK, alpenTestnet, expectAddressInList, getBridges } from "../helpers";
+import { WABTC_ON_ALPEN_TESTNET } from "../tokenFixtures";
 import { buildSigner } from "../signer";
 
 type AlpenTestnetScenarioTransaction = ScenarioTransaction<GenericTransaction, Account>;
@@ -18,37 +20,96 @@ type AlpenTestnetScenarioTransaction = ScenarioTransaction<GenericTransaction, A
 // The floor of production's configuration: Live sends legacy transactions, priced at least at this gas price
 const MIN_GAS_PRICE = "2000000";
 
-const makeScenarioTransactions = (): AlpenTestnetScenarioTransaction[] => [
-  {
-    name: "Send 1 BTC",
-    amount: new BigNumber(1e18),
-    recipient: VITALIK,
-    expect: (previousAccount, currentAccount) => {
-      const [latestOperation] = currentAccount.operations;
-      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
-      expect(latestOperation.type).toBe("OUT");
-      expect(latestOperation.value.toFixed()).toBe(latestOperation.fee.plus(1e18).toFixed());
-      expect(currentAccount.balance.toFixed()).toBe(
-        previousAccount.balance.minus(latestOperation.value).toFixed(),
-      );
-      expectAddressInList(latestOperation.senders, currentAccount.freshAddress);
-      expectAddressInList(latestOperation.recipients, VITALIK);
+const WABTC_DECIMALS = WABTC_ON_ALPEN_TESTNET.units[0].magnitude;
+
+const makeScenarioTransactions = ({
+  address,
+}: {
+  address: string;
+}): AlpenTestnetScenarioTransaction[] => {
+  const subAccountId = encodeTokenAccountId(
+    `js:2:alpen_testnet:${address}:`,
+    WABTC_ON_ALPEN_TESTNET,
+  );
+
+  return [
+    {
+      name: "Send 1 BTC",
+      amount: new BigNumber(1e18),
+      recipient: VITALIK,
+      expect: (previousAccount, currentAccount) => {
+        const [latestOperation] = currentAccount.operations;
+        expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+        expect(latestOperation.type).toBe("OUT");
+        expect(latestOperation.value.toFixed()).toBe(latestOperation.fee.plus(1e18).toFixed());
+        expect(currentAccount.balance.toFixed()).toBe(
+          previousAccount.balance.minus(latestOperation.value).toFixed(),
+        );
+        expectAddressInList(latestOperation.senders, currentAccount.freshAddress);
+        expectAddressInList(latestOperation.recipients, VITALIK);
+      },
     },
-  },
-  {
-    name: "Send Max BTC",
-    useAllAmount: true,
-    recipient: VITALIK,
-    expect: (previousAccount, currentAccount) => {
-      const [latestOperation] = currentAccount.operations;
-      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
-      expect(latestOperation.type).toBe("OUT");
-      expect(currentAccount.balance.toFixed()).toBe("0");
-      expectAddressInList(latestOperation.senders, currentAccount.freshAddress);
-      expectAddressInList(latestOperation.recipients, VITALIK);
+    {
+      name: "Send 1 tWABTC",
+      amount: new BigNumber(ethers.parseUnits("1", WABTC_DECIMALS).toString()),
+      recipient: VITALIK,
+      subAccountId,
+      expect: (previousAccount, currentAccount) => {
+        const [latestOperation] = currentAccount.operations;
+        expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+        expect(latestOperation.type).toBe("FEES");
+        expect(latestOperation.value.toFixed()).toBe(latestOperation.fee.toFixed());
+        expect(latestOperation.subOperations?.[0].type).toBe("OUT");
+        expect(latestOperation.subOperations?.[0].value.toFixed()).toBe(
+          ethers.parseUnits("1", WABTC_DECIMALS).toString(),
+        );
+        expect(currentAccount.subAccounts?.[0].balance.toFixed()).toBe(
+          ethers.parseUnits(String(WABTC_AIRDROP - 1), WABTC_DECIMALS).toString(),
+        );
+        expectAddressInList(latestOperation.senders, currentAccount.freshAddress);
+        expectAddressInList(latestOperation.recipients, WABTC_ON_ALPEN_TESTNET.contractAddress);
+        const subOp = latestOperation.subOperations?.[0];
+        expectAddressInList(subOp?.senders, currentAccount.freshAddress);
+        expectAddressInList(subOp?.recipients, VITALIK);
+      },
     },
-  },
-];
+    {
+      name: "Send Max tWABTC",
+      useAllAmount: true,
+      recipient: VITALIK,
+      subAccountId,
+      expect: (previousAccount, currentAccount) => {
+        const [latestOperation] = currentAccount.operations;
+        expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+        expect(latestOperation.type).toBe("FEES");
+        expect(latestOperation.subOperations?.[0].type).toBe("OUT");
+        // Everything that was left after the first send
+        expect(latestOperation.subOperations?.[0].value.toFixed()).toBe(
+          ethers.parseUnits(String(WABTC_AIRDROP - 1), WABTC_DECIMALS).toString(),
+        );
+        expect(currentAccount.subAccounts?.[0]?.balance.toFixed() ?? "0").toBe("0");
+        expectAddressInList(latestOperation.senders, currentAccount.freshAddress);
+        expectAddressInList(latestOperation.recipients, WABTC_ON_ALPEN_TESTNET.contractAddress);
+        const subOp = latestOperation.subOperations?.[0];
+        expectAddressInList(subOp?.senders, currentAccount.freshAddress);
+        expectAddressInList(subOp?.recipients, VITALIK);
+      },
+    },
+    {
+      name: "Send Max BTC",
+      useAllAmount: true,
+      recipient: VITALIK,
+      expect: (previousAccount, currentAccount) => {
+        const [latestOperation] = currentAccount.operations;
+        expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+        expect(latestOperation.type).toBe("OUT");
+        expect(currentAccount.balance.toFixed()).toBe("0");
+        expectAddressInList(latestOperation.senders, currentAccount.freshAddress);
+        expectAddressInList(latestOperation.recipients, VITALIK);
+      },
+    },
+  ];
+};
 
 let sandbox: Sandbox | undefined;
 let closeGuard: (() => void) | null = null;
@@ -59,6 +120,7 @@ let blockscout: ReturnType<typeof blockscoutOf>;
 
 /** Whole units airdropped to the scenario's account: the chain starts with the dealer only. */
 const BTC_AIRDROP = 10_000;
+const WABTC_AIRDROP = 100;
 
 export const scenarioAlpenTestnet: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Basic Alpen Testnet Transactions",
@@ -95,8 +157,8 @@ export const scenarioAlpenTestnet: Scenario<GenericTransaction, Account> = {
       },
     });
 
-    // The chain preloads no token: an empty store, so that nothing asks the CAL
-    restoreTokens = swapTokens(alpenTestnet.id, []);
+    // WABTC is the testnet token the sandbox preloads at its address
+    restoreTokens = swapTokens(alpenTestnet.id, [WABTC_ON_ALPEN_TESTNET]);
 
     closeGuard = forbidRemoteRequests();
 
@@ -109,9 +171,10 @@ export const scenarioAlpenTestnet: Scenario<GenericTransaction, Account> = {
 
     provider = new ethers.JsonRpcProvider(rpc);
 
-    // The chain starts with the dealer only: the account gets its BTC by airdrop
+    // The chain starts with the dealer only: the account gets its BTC and its tWABTC by airdrop
     await sandbox.airdrop(address, BTC_AIRDROP);
-    // The first sync must see the airdrop
+    await sandbox.airdrop(address, WABTC_AIRDROP, WABTC_ON_ALPEN_TESTNET.contractAddress);
+    // The first sync must see both airdrops
     await blockscout.waitForBlock(await provider.getBlockNumber());
 
     return {
@@ -120,7 +183,7 @@ export const scenarioAlpenTestnet: Scenario<GenericTransaction, Account> = {
       account: makeAccount(address, alpenTestnet),
     };
   },
-  getTransactions: () => makeScenarioTransactions(),
+  getTransactions: address => makeScenarioTransactions({ address }),
   mockIndexer: async (_account, optimistic) => {
     const receipt = await provider.waitForTransaction(optimistic.hash, 1, 60_000);
     if (receipt === null) throw new Error(`${optimistic.hash} is not in a block after 60 s`);
@@ -132,10 +195,15 @@ export const scenarioAlpenTestnet: Scenario<GenericTransaction, Account> = {
   },
   beforeAll: account => {
     expect(account.balance.toFixed()).toBe(ethers.parseEther("10000").toString());
+    expect(account.subAccounts?.[0]?.type).toBe("TokenAccount");
+    expect(account.subAccounts?.[0]?.balance?.toFixed()).toBe(
+      ethers.parseUnits(String(WABTC_AIRDROP), WABTC_DECIMALS).toString(),
+    );
   },
   afterAll: account => {
-    // The airdrop (IN), then the two sends
-    expect(account.operations.length).toBe(3);
+    expect(account.subAccounts?.[0]?.balance.toFixed() ?? "0").toBe("0");
+    // The BTC airdrop (IN), the tWABTC airdrop (NONE on the parent account), then the four sends
+    expect(account.operations.length).toBe(6);
   },
   teardown: async () => {
     closeGuard?.();
