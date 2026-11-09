@@ -218,6 +218,9 @@ export function collectTargets(reads: readonly PendingRead[]): {
 
 const DEFAULT_PURPOSES: readonly AccountDescriptor["purpose"][] = ["account"];
 
+const servesPurpose = (source: AccountDataSource, descriptor: AccountDescriptor) =>
+  (source.purposes ?? DEFAULT_PURPOSES).includes(descriptor.purpose);
+
 /** The first ranked source with a reader for the kind that supports the account, among the pinned one if any. */
 export function pickSource(
   context: RouterContext,
@@ -231,7 +234,7 @@ export function pickSource(
       !tried.has(candidate) &&
       (sourceId === undefined || candidate.id === sourceId) &&
       serves(candidate, kind) &&
-      (candidate.purposes ?? DEFAULT_PURPOSES).includes(target.descriptor.purpose) &&
+      servesPurpose(candidate, target.descriptor) &&
       candidate.supports(target.descriptor, kind),
   );
 }
@@ -385,4 +388,12 @@ export function coalesce<K extends AccountDataKind>(
   const created: Coalesced<K> = { reads, answers };
   context.coalescing.set(key, created);
   return created;
+}
+
+/** The ranked sources serving the descriptor's purpose, runtime ones included. */
+export function sourcesFor(
+  context: RouterContext,
+  descriptor: AccountDescriptor,
+): readonly AccountDataSource[] {
+  return context.ranked.filter(source => servesPurpose(source, descriptor));
 }

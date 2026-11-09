@@ -115,4 +115,4 @@ export const portfolioSource: AccountDataSource = {
 - A source with both readers for a kind is always read through `readBatch`: its `read` is never called.
 - Add the source to `accountDataSources` in each app's `account-data-setup.ts`. The order is the fallback order: `coin-module` first, then `full-sync`.
 
-Without React or Redux, `createAccountDataRouter(sources).read(kind, descriptor)` answers the same.
+Without React or Redux, `createAccountDataRouter(sources).read(kind, descriptor)` answers the same. Its `sourcesFor(descriptor)` gives the ranked sources serving the descriptor's purpose, for a capability other than reads to follow the same ranking.

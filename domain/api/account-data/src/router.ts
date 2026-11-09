@@ -5,7 +5,7 @@ import type {
   AccountDataSourceId,
 } from "@domain/entity-account-data";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
-import { addSource, coalesce, createRouterContext } from "./internals/router";
+import { addSource, coalesce, createRouterContext, sourcesFor } from "./internals/router";
 import type { AccountDataSource } from "./source";
 
 /** As many calls in flight per source as the legacy sync queue allows by default. */
@@ -31,6 +31,8 @@ export type AccountDataRouter = {
     descriptor: AccountDescriptor,
     options?: AccountDataReadOptions<K>,
   ): Promise<AccountDataAnswer<K>>;
+  /** The sources serving the descriptor's purpose in rank order, runtime ones included: what a source's other capabilities route on. */
+  sourcesFor(descriptor: AccountDescriptor): readonly AccountDataSource[];
   /** Ranks a runtime source last, or first, or in place of the one sharing its id; returns its remover. */
   addSource(source: AccountDataSource, options?: AddAccountDataSourceOptions): () => void;
 };
@@ -66,6 +68,7 @@ export function createAccountDataRouter(
       if (own.status === "rejected") throw own.reason;
       return own.value;
     },
+    sourcesFor: descriptor => sourcesFor(context, descriptor),
     addSource: (source, options) => addSource(context, source, options),
   };
 }

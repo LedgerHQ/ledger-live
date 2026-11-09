@@ -586,6 +586,23 @@ describe("addSource", () => {
     await expect(router.read("counter", mock)).resolves.toMatchObject({ data: 1 });
     await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 0 });
   });
+
+  it("lists, in rank order, only the sources serving a descriptor's purpose", () => {
+    const mock = { ...descriptor, purpose: "mock" as const };
+    const router = createAccountDataRouter([constant("real", 0), constant("other", 1)]);
+    const remove = router.addSource(
+      { ...constant("mock", 2), purposes: ["mock", "account"] },
+      { first: true },
+    );
+    expect(router.sourcesFor(descriptor).map(source => source.id)).toEqual([
+      "mock",
+      "real",
+      "other",
+    ]);
+    expect(router.sourcesFor(mock).map(source => source.id)).toEqual(["mock"]);
+    remove();
+    expect(router.sourcesFor(mock)).toEqual([]);
+  });
 });
 
 describe("fall-through", () => {
