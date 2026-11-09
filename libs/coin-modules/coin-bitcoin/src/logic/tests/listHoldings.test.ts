@@ -54,10 +54,10 @@ describe("listHoldings", () => {
           id: `${"b".repeat(64)}:1`,
           asset: { type: "native" },
           value: 200n,
-          height: null,
         },
       ],
     });
+    expect(page.items[1]).not.toHaveProperty("height");
     expect(page).not.toHaveProperty("next");
   });
 
@@ -83,6 +83,18 @@ describe("listHoldings", () => {
       value: 50n,
       height: null,
     });
+  });
+
+  it("keeps the height of a confirmed output and gives own change a null one", async () => {
+    server.use(
+      utxosHandler(ME, [
+        { data: [output("a", "100", 0, 800000), output("b", "200", 1, 800001)], token: null },
+      ]),
+      pendingUtxosHandler(ME, { spent: [output("a", "100")], created: [output("c", "50", 1)] }),
+      txHandler("c".repeat(64), [`${"a".repeat(64)}:0`]),
+    );
+    const page = await list();
+    expect(page.items.map(holding => holding.height)).toEqual([800001, null]);
   });
 
   it("lists an own change the explorer repeats only once", async () => {
@@ -122,6 +134,23 @@ describe("listHoldings", () => {
     const second = await list({ cursor: first.next as string });
     expect(ids(second)).toEqual(["b:0"]);
     expect(second).not.toHaveProperty("next");
+  });
+
+  it("reads no transaction on a later page, yet still drops mempool-spent outputs", async () => {
+    const requested: string[] = [];
+    server.use(
+      http.get(`${explorerUrl()}/tx/*`, ({ request }) => {
+        requested.push(new URL(request.url).pathname);
+        return HttpResponse.json({});
+      }),
+      utxosHandler(ME, [
+        { data: [output("a", "100")], token: "1" },
+        { data: [output("b", "200"), output("d", "300")], token: null },
+      ]),
+      pendingUtxosHandler(ME, { spent: [output("b", "200")], created: [output("c", "50")] }),
+    );
+    expect(ids(await list({ cursor: "1" }))).toEqual(["d:0"]);
+    expect(requested).toEqual([]);
   });
 
   it("returns an empty page with a next when every output of the page is mempool-spent", async () => {
