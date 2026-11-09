@@ -32,7 +32,7 @@ describe("useAnalyticsBalanceSummary", () => {
       ),
     );
     expect(result.current).toMatchObject({
-      current: { status: "ready", data: 20000 },
+      currentAmount: 20000,
       data,
       isCurrentAvailable: true,
     });
@@ -50,7 +50,7 @@ describe("useAnalyticsBalanceSummary", () => {
       ),
     );
     expect(result.current).toMatchObject({
-      current: { status: "unavailable" },
+      currentAmount: 0,
       showHeaderStatus: true,
       isChartLoading: true,
     });

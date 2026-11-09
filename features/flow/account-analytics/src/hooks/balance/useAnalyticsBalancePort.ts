@@ -1,31 +1,38 @@
 import { useCallback, useMemo } from "react";
+import type { Currency } from "@domain/entity-currency";
+import type { CounterValuesCacheView } from "@domain/entity-market-countervalues";
 import type {
   AccountAnalyticsDataPort,
-  AnalyticsCountervalueInput,
   AnalyticsPositionSource,
   ReadAnalyticsPortfolio,
 } from "../../types";
 import { readAnalyticsBalance } from "../../logic/balance/readAnalyticsBalance";
 
-export type AnalyticsBalancePortInput<Position extends AnalyticsPositionSource> =
-  AnalyticsCountervalueInput &
-    Readonly<{ positions: readonly Position[]; readPortfolio: ReadAnalyticsPortfolio<Position> }>;
+export type AnalyticsBalancePortInput<
+  Position extends AnalyticsPositionSource,
+  Countervalues extends CounterValuesCacheView,
+> = Readonly<{
+  positions: readonly Position[];
+  countervalues: Countervalues;
+  fiat: Currency;
+  readPortfolio: ReadAnalyticsPortfolio<Position, Countervalues>;
+}>;
 
-const UNAVAILABLE = { status: "unavailable" } as const;
-
-const yieldBeforeSynchronousRead = () => new Promise<void>(resolve => setTimeout(resolve, 0));
-
-export function useAnalyticsBalancePort<Position extends AnalyticsPositionSource>({
+export function useAnalyticsBalancePort<
+  Position extends AnalyticsPositionSource,
+  Countervalues extends CounterValuesCacheView,
+>({
   positions,
   countervalues,
   fiat,
   readPortfolio,
-}: AnalyticsBalancePortInput<Position>): AccountAnalyticsDataPort {
+}: AnalyticsBalancePortInput<Position, Countervalues>): AccountAnalyticsDataPort {
   const loadBalance = useCallback<AccountAnalyticsDataPort["loadBalance"]>(
-    async (context, { signal }) => {
-      await yieldBeforeSynchronousRead();
-      if (signal.aborted) return UNAVAILABLE;
-      return readAnalyticsBalance(context, positions, countervalues, fiat, readPortfolio);
+    (context, { signal }) => {
+      if (signal.aborted) return Promise.resolve({ status: "unavailable" });
+      return Promise.resolve(
+        readAnalyticsBalance(context, positions, countervalues, fiat, readPortfolio),
+      );
     },
     [positions, countervalues, fiat, readPortfolio],
   );

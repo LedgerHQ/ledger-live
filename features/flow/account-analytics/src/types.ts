@@ -147,9 +147,14 @@ export type AnalyticsPortfolioSnapshot = Readonly<{
   ) => Readonly<{ value: number; percentage?: number | null }>;
 }>;
 
-export type ReadAnalyticsPortfolio<Position extends AnalyticsPositionSource> = (
+export type ReadAnalyticsPortfolio<
+  Position extends AnalyticsPositionSource,
+  Countervalues extends CounterValuesCacheView = CounterValuesCacheView,
+> = (
   positions: readonly Position[],
   range: AnalyticsPortfolioRange,
+  countervalues: Countervalues,
+  fiat: Currency,
 ) => AnalyticsPortfolioSnapshot;
 
 export type AnalyticsAssetsQuery = Readonly<{
@@ -161,7 +166,7 @@ export type AnalyticsAssetsQuery = Readonly<{
 export type AnalyticsVariationStatus = "loading" | "ready" | "unavailable";
 
 export type AnalyticsBalanceSummary = Readonly<{
-  current: AnalyticsReadResult<number>;
+  currentAmount: number;
   data: AnalyticsBalanceData | undefined;
   isCurrentAvailable: boolean;
   isCatalogLoading: boolean;

@@ -22,16 +22,17 @@ const context: AnalyticsQueryContext = {
 };
 
 function createReadPortfolio(positionIdsWithHistory = positions.map(position => position.id)) {
-  return jest.fn<ReturnType<ReadAnalyticsPortfolio<MockAccount>>, [readonly MockAccount[], string]>(
-    () => ({
-      balanceHistory: [
-        { date: new Date(1), value: 100 },
-        { date: new Date(2), value: 150 },
-      ],
-      availableAccounts: positionIdsWithHistory.map(id => ({ id })),
-      readVariation: (currentBalance: number) => ({ value: currentBalance - 100, percentage: 0.5 }),
-    }),
-  );
+  return jest.fn<
+    ReturnType<ReadAnalyticsPortfolio<MockAccount>>,
+    Parameters<ReadAnalyticsPortfolio<MockAccount>>
+  >(() => ({
+    balanceHistory: [
+      { date: new Date(1), value: 100 },
+      { date: new Date(2), value: 150 },
+    ],
+    availableAccounts: positionIdsWithHistory.map(id => ({ id })),
+    readVariation: (currentBalance: number) => ({ value: currentBalance - 100, percentage: 0.5 }),
+  }));
 }
 
 type ReadInput = Readonly<{
@@ -70,13 +71,13 @@ describe("readAnalyticsBalance", () => {
         ],
       },
     });
-    expect(readPortfolio).toHaveBeenCalledWith([eth, btc], "month");
+    expect(readPortfolio).toHaveBeenCalledWith([eth, btc], "month", countervalues, analyticsFiat);
   });
 
   it("should read only the priced positions when a held position has no price", () => {
     const readPortfolio = createReadPortfolio();
     read(context, { readPortfolio, countervalues: createAnalyticsCountervalues([btc]) });
-    expect(readPortfolio).toHaveBeenCalledWith([btc], "month");
+    expect(readPortfolio).toHaveBeenCalledWith([btc], "month", expect.anything(), analyticsFiat);
   });
 
   it("should report unavailable when every held position lacks a price", () => {
@@ -121,5 +122,16 @@ describe("readAnalyticsBalance", () => {
     expect(
       read({ ...context, fiatCurrencyId: "EUR" as AnalyticsQueryContext["fiatCurrencyId"] }).status,
     ).toBe("unavailable");
+  });
+
+  it.each([
+    ["1d", "day"],
+    ["1w", "week"],
+    ["1y", "year"],
+    ["all", "all"],
+  ] as const)("should read the %s period over the %s portfolio range", (period, range) => {
+    const readPortfolio = createReadPortfolio();
+    read({ ...context, period }, { readPortfolio });
+    expect(readPortfolio).toHaveBeenCalledWith(positions, range, countervalues, analyticsFiat);
   });
 });

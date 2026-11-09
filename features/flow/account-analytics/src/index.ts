@@ -5,7 +5,6 @@ export * from "./logic/selection/selectAnalyticsPositions";
 export * from "./logic/selection/createAnalyticsQueryKeys";
 export * from "./logic/selection/parseAnalyticsEntryState";
 export * from "./logic/positions/resolveAnalyticsPositions";
-export * from "./logic/balance/readAnalyticsBalance";
 export * from "./logic/settings/analyticsPeriod";
 export * from "./logic/settings/resolveAnalyticsFiatCurrencyId";
 export * from "./hooks/catalog/useAnalyticsCatalog";

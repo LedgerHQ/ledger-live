@@ -34,8 +34,5 @@ export function useAnalyticsBalanceSummary(
       : ({ status: "unavailable" } as const);
   }, [context.positionIds, positions, countervalues, fiat]);
   const retained = useRetainedAnalyticsBalance(balance);
-  return useMemo(
-    () => resolveAnalyticsBalanceSummary({ balance, catalogStatus, current, retained }),
-    [balance, catalogStatus, current, retained],
-  );
+  return resolveAnalyticsBalanceSummary({ balance, catalogStatus, current, retained });
 }

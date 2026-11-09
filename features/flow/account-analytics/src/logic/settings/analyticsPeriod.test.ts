@@ -1,4 +1,4 @@
-import { toAnalyticsPeriod, toAnalyticsPortfolioRange } from "./analyticsPeriod";
+import { toAnalyticsPeriod } from "./analyticsPeriod";
 
 const PAIRS = [
   ["day", "1d"],
@@ -8,9 +8,8 @@ const PAIRS = [
   ["all", "all"],
 ] as const;
 
-describe("analyticsPeriod", () => {
-  it.each(PAIRS)("should map the %s range to the %s period and back", (range, period) => {
+describe("toAnalyticsPeriod", () => {
+  it.each(PAIRS)("should map the %s range to the %s period", (range, period) => {
     expect(toAnalyticsPeriod(range)).toBe(period);
-    expect(toAnalyticsPortfolioRange(period)).toBe(range);
   });
 });

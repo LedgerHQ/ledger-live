@@ -43,16 +43,17 @@ describe("useAnalyticsBalancePort", () => {
         history: [{ timestamp: 1, amount: 5 }],
       },
     });
-    expect(readPortfolio).toHaveBeenCalledWith(positions, "day");
+    expect(readPortfolio).toHaveBeenCalledWith(positions, "day", countervalues, analyticsFiat);
   });
 
-  it("should skip the portfolio read once a newer selection aborted the request", async () => {
+  it("should skip the portfolio read of an aborted request", async () => {
     readPortfolio.mockClear();
     const { result } = renderPort();
     const controller = new AbortController();
-    const pending = result.current.loadBalance(context, { signal: controller.signal });
     controller.abort();
-    await expect(pending).resolves.toEqual({ status: "unavailable" });
+    await expect(
+      result.current.loadBalance(context, { signal: controller.signal }),
+    ).resolves.toEqual({ status: "unavailable" });
     expect(readPortfolio).not.toHaveBeenCalled();
   });
 

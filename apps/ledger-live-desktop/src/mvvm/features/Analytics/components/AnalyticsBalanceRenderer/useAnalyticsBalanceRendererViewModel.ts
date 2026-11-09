@@ -24,7 +24,7 @@ export function useAnalyticsBalanceRendererViewModel({
     { balance, context, catalogStatus },
     { positions, countervalues, fiat },
   );
-  const { current, data } = summary;
+  const { currentAmount, data } = summary;
   const portfolio = useMemo(
     () => ({
       balanceHistory:
@@ -35,14 +35,14 @@ export function useAnalyticsBalanceRendererViewModel({
   );
   const balanceInfo = useMemo(
     () => ({
-      totalBalance: current.status === "ready" ? current.data : 0,
+      totalBalance: currentAmount,
       isAvailable: summary.isCurrentAvailable,
       valueChange: {
         value: data?.variation.amount ?? 0,
         percentage: data?.variation.ratio ?? null,
       },
     }),
-    [data, current, summary.isCurrentAvailable],
+    [data, currentAmount, summary.isCurrentAvailable],
   );
   return {
     contextKey,

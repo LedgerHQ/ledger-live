@@ -30,7 +30,7 @@ export function resolveAnalyticsBalanceSummary({
   retained,
 }: AnalyticsBalanceSummaryInput): AnalyticsBalanceSummary {
   return {
-    current,
+    currentAmount: current.status === "ready" ? current.data : 0,
     data: retained.data,
     isCurrentAvailable: current.status === "ready" && catalogStatus === "ready",
     isCatalogLoading: catalogStatus === "loading",

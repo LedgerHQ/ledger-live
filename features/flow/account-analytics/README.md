@@ -40,8 +40,10 @@ state and its legacy portfolio code:
   DADA `product`/`version`. It selects the eligible positions, requests their asset metadata and
   returns the catalog state, the positions and a refresh callback (none when nothing is eligible).
 - **Balance.** `useAnalyticsBalancePort` builds the `loadBalance` port from the positions, the
-  countervalues, the fiat currency and a `readPortfolio` callback. That callback is the only host
-  code that reads the legacy portfolio and its variation.
+  countervalues, the fiat currency and a module-level `readPortfolio(positions, range, countervalues,
+  fiat)` function. It is the only host code that reads the legacy portfolio: it returns the raw
+  `balanceHistory` and `availableAccounts` with a `readVariation(currentBalance)` callback, and the
+  package maps them.
 - **Renderers.** `useAnalyticsBalanceSummary` and `useAnalyticsPnlPositions` give the statuses,
   the current balance and the scoped positions a host renderer shows.
 - **Settings.** `toAnalyticsPeriod` maps the host range setting, and `resolveAnalyticsFiatCurrencyId`

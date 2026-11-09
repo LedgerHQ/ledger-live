@@ -20,7 +20,7 @@ const base: AnalyticsBalanceSummaryInput = {
 describe("resolveAnalyticsBalanceSummary", () => {
   it("should show a ready balance without any status", () => {
     expect(resolveAnalyticsBalanceSummary(base)).toEqual({
-      current: base.current,
+      currentAmount: 10,
       data,
       isCurrentAvailable: true,
       isCatalogLoading: false,
@@ -63,7 +63,7 @@ describe("resolveAnalyticsBalanceSummary", () => {
     ).toBe(true);
     expect(
       resolveAnalyticsBalanceSummary({ ...base, current: { status: "unavailable" } }),
-    ).toMatchObject({ showHeaderStatus: true, isCurrentAvailable: false });
+    ).toMatchObject({ showHeaderStatus: true, isCurrentAvailable: false, currentAmount: 0 });
   });
 
   it("should flag a loading catalog without a header status", () => {
