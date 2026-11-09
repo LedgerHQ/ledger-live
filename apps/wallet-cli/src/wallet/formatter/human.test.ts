@@ -6,7 +6,7 @@ import type { Balance, DiscoveredAccount, AccountDescriptor } from "../models";
 import { BalanceSchema, OperationSchema } from "../models";
 import { XPUB, ETH_ADDR } from "../../shared/accountDescriptor/test-fixtures";
 import { NetworkIdSchema } from "../../shared/accountDescriptor";
-import { USDT_TOKEN_CURRENCY, USDT_TOKEN_INFO } from "../../testing/cal-fixtures";
+import { USDT_TOKEN_INFO, USDT_TOKEN_JSON } from "../../testing/cal-fixtures";
 import { colors } from "../../shared/ui";
 
 const stubStore = {} as CryptoAssetsStore;
@@ -27,7 +27,6 @@ const usdtBalance = BalanceSchema.parse({
   assetId: USDT_TOKEN_INFO.id,
   balance: "1500000",
   token: USDT_TOKEN_INFO,
-  unit: USDT_TOKEN_CURRENCY.units[0],
 });
 
 const btcDiscovered: DiscoveredAccount = {
@@ -92,8 +91,8 @@ describe("HumanFormatter.formatTokenInfo", () => {
 describe("JsonFormatter.token", () => {
   const json = new JsonFormatter({} as unknown as HumanFormatter);
 
-  it("returns the TokenInfo payload as-is", () => {
-    expect(json.token(USDT_TOKEN_INFO)).toEqual(USDT_TOKEN_INFO);
+  it("returns the token without its unit", () => {
+    expect(json.token(USDT_TOKEN_INFO)).toEqual(USDT_TOKEN_JSON);
   });
 
   it("omits delisted when absent on input", () => {

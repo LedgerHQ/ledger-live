@@ -1,9 +1,11 @@
 import "../live-common-setup";
 import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
+import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import { parseV1 } from "../shared/accountDescriptor";
 import { WalletAdapter } from "../wallet";
-import { BalanceSchema, type TokenInfo } from "../wallet/models";
+import { BalanceSchema, toTokenInfo, type TokenInfo } from "../wallet/models";
 import { findAccountTokens, findTokensByTicker } from "./token-lookup";
 
 const realFetch = globalThis.fetch;
@@ -101,24 +103,20 @@ describe("findTokensByTicker", () => {
   });
 });
 
-const erc20 = (ticker: string, name: string, contractAddress: string): TokenInfo => ({
-  id: `ethereum/erc20/${contractAddress}`,
-  ticker,
-  name,
-  contractAddress,
-  parentCurrencyId: "ethereum",
-  tokenType: "erc20",
-  decimals: 6,
-});
+const erc20 = (ticker: string, name: string, contractAddress: string): TokenInfo =>
+  toTokenInfo({
+    type: "TokenCurrency",
+    id: TokenCurrencyIdSchema.parse(`ethereum/erc20/${contractAddress}`),
+    ticker,
+    name,
+    contractAddress,
+    parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
+    tokenType: "erc20",
+    units: [{ name, code: ticker, magnitude: 6 }],
+  });
 
 const tokenBalance = (balance: string, token: TokenInfo) =>
-  BalanceSchema.parse({
-    kind: "token",
-    assetId: token.id,
-    balance,
-    token,
-    unit: { name: token.ticker, code: token.ticker, magnitude: token.decimals },
-  });
+  BalanceSchema.parse({ kind: "token", assetId: token.id, balance, token });
 
 describe("findAccountTokens", () => {
   const account = parseV1(`account:2:address:ethereum:${SENDER}:m/44h/60h/0h/0/0`);

@@ -11,7 +11,7 @@ import {
 } from "@shared/schema-primitives";
 import type { OperationType } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import { UnitSchema } from "@domain/entity-currency-unit";
+import { UnitSchema, type Unit } from "@domain/entity-currency-unit";
 import { parseV1, toV0 } from "../shared/accountDescriptor";
 import type { AccountDescriptorV1 } from "../shared/accountDescriptor";
 import { walletCliDebug } from "../shared/log";
@@ -89,13 +89,18 @@ export const TokenInfoSchema = z.object({
   parentCurrencyId: z.string(),
   tokenType: z.string(),
   decimals: z.number().int().nonnegative(),
+  unit: UnitSchema,
   delisted: z.boolean().optional(),
 });
 export type TokenInfo = z.infer<typeof TokenInfoSchema>;
 
+export function tokenUnit(t: TokenCurrency): Unit | undefined {
+  return t.units[0];
+}
+
 export function toTokenInfo(t: TokenCurrency): TokenInfo {
-  const magnitude = t.units[0]?.magnitude;
-  if (magnitude == null) {
+  const unit = tokenUnit(t);
+  if (!unit) {
     throw new Error(`Token ${t.id} has no units; cannot determine decimals`);
   }
   return {
@@ -105,7 +110,8 @@ export function toTokenInfo(t: TokenCurrency): TokenInfo {
     contractAddress: t.contractAddress,
     parentCurrencyId: t.parentCurrencyId,
     tokenType: t.tokenType,
-    decimals: magnitude,
+    decimals: unit.magnitude,
+    unit,
     ...(t.delisted === undefined ? {} : { delisted: t.delisted }),
   };
 }
@@ -117,22 +123,16 @@ const BalanceBaseSchema = z.object({
 
 export const BalanceSchema = z.discriminatedUnion("kind", [
   BalanceBaseSchema.extend({ kind: z.literal("native") }),
-  BalanceBaseSchema.extend({ kind: z.literal("token"), token: TokenInfoSchema, unit: UnitSchema }),
+  BalanceBaseSchema.extend({ kind: z.literal("token"), token: TokenInfoSchema }),
 ]);
 export type Balance = z.infer<typeof BalanceSchema>;
 
 export function toTokenBalance(token: TokenCurrency, balance: BigNumberStr): Balance | undefined {
-  if (token.units.length === 0) {
+  if (!tokenUnit(token)) {
     walletCliDebug(`balances: skipping ${token.id}, it has no units`);
     return undefined;
   }
-  return {
-    kind: "token",
-    assetId: token.id,
-    balance,
-    token: toTokenInfo(token),
-    unit: token.units[0],
-  };
+  return { kind: "token", assetId: token.id, balance, token: toTokenInfo(token) };
 }
 
 export const OperationSchema = z.object({

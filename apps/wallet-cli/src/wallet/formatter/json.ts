@@ -5,6 +5,8 @@ export type JsonBalance = { asset: string; amount: string };
 
 export type JsonDiscoveredAccount = { label: string; freshAddress: string };
 
+export type JsonTokenInfo = Omit<TokenInfo, "unit">;
+
 export type JsonOperation = {
   accountId: string;
   asset: string;
@@ -57,7 +59,7 @@ export class JsonFormatter {
     return accounts.map(a => ({ label: a.label, freshAddress: a.freshAddress }));
   }
 
-  token(t: TokenInfo): TokenInfo {
-    return t;
+  token({ unit: _unit, ...token }: TokenInfo): JsonTokenInfo {
+    return token;
   }
 }

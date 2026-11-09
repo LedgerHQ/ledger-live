@@ -41,7 +41,6 @@ const USDT_BALANCE: Balance = {
   assetId: USDT_TOKEN_INFO.id,
   balance: BigNumberStrSchema.parse("1500000"),
   token: USDT_TOKEN_INFO,
-  unit: USDT_TOKEN_CURRENCY.units[0],
 };
 
 describe("CoinFrameworkAdapter.getBalances", () => {

@@ -35,14 +35,13 @@ export class HumanFormatter {
     return unit;
   }
 
-  async formatAmount(rawDecimal: string, assetId: string): Promise<string> {
-    const unit = await this.resolveUnit(assetId);
+  async formatAmount(rawDecimal: string, assetId: string, knownUnit?: Unit): Promise<string> {
+    const unit = knownUnit ?? (await this.resolveUnit(assetId));
     return formatCurrencyUnit(unit, new BigNumber(rawDecimal), { showCode: true });
   }
 
-  async formatBalanceAmount(b: Balance): Promise<string> {
-    const unit = b.kind === "token" ? b.unit : await this.resolveUnit(b.assetId);
-    return formatCurrencyUnit(unit, new BigNumber(b.balance), { showCode: true });
+  formatBalanceAmount(b: Balance): Promise<string> {
+    return this.formatAmount(b.balance, b.assetId, b.kind === "token" ? b.token.unit : undefined);
   }
 
   /** @deprecated Use formatDiscoveredAccount — kept for any internal callers during migration. */
