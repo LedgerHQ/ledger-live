@@ -207,11 +207,28 @@ function connectWhenIdle(
   onboarding.connect();
 }
 
-function isHoldingLockedScreen(machineState: string | null, remembered: RememberedChecks | null) {
+type HeldState = Readonly<{ state: string; afterLock: boolean }>;
+
+function isHoldingLockedScreen(machineState: string | null, held: HeldState | null) {
   return (
-    machineState === "deviceLocked" ||
-    (machineState === "readingState" && remembered?.holdThroughReading === true)
+    machineState === "deviceLocked" || (machineState === "readingState" && held?.afterLock === true)
   );
+}
+
+function nextHeldState(
+  held: HeldState | null,
+  machineState: string | null,
+  holding: boolean,
+  showsChecks: boolean,
+): HeldState | null {
+  if (machineState === null) return null;
+  if (holding) {
+    return held?.afterLock ? held : { state: held?.state ?? machineState, afterLock: true };
+  }
+  if (!showsChecks) return null;
+  return held?.state === machineState && !held.afterLock
+    ? held
+    : { state: machineState, afterLock: false };
 }
 
 function quitConfirmationWhileUnlocked(
@@ -234,23 +251,16 @@ function quitConfirmationWhileUnlocked(
 function checksUnderUnlockSheet(
   built: DeviceOnboardingFunnelModel,
   holdingLockedScreen: boolean,
-  remembered: RememberedChecks | null,
-  freshChecks: ChecksScreenProps | null,
   locked: boolean,
-  quitConfirmation: QuitConfirmationModel | null,
 ): DeviceOnboardingFunnelModel {
-  const heldChecks = holdingLockedScreen ? (remembered?.checks ?? freshChecks) : freshChecks;
-  if (!holdingLockedScreen || !heldChecks) return built;
+  if (!holdingLockedScreen || built.status !== "checks") return built;
+  const { device } = built.checks;
   return {
-    status: "checks",
-    checks: { ...heldChecks, suspendSheets: true },
+    ...built,
+    checks: { ...built.checks, suspendSheets: true },
     unlockSheet: locked
-      ? {
-          deviceModelId: heldChecks.device.modelId,
-          deviceName: heldChecks.device.deviceName ?? "",
-        }
+      ? { deviceModelId: device.modelId, deviceName: device.deviceName ?? "" }
       : null,
-    quitConfirmation,
   };
 }
 
@@ -331,7 +341,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   );
   useDeviceOnboardingHost(host);
   const started = useRef(false);
-  const [rememberedChecks, setRememberedChecks] = useState<RememberedChecks | null>(null);
+  const [heldState, setHeldState] = useState<HeldState | null>(null);
 
   useEffect(() => {
     connectWhenIdle(started, onboarding);
@@ -448,19 +458,20 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     ],
   );
 
+  const machineState = onboarding.state;
+  const locked = machineState === "deviceLocked";
+  const holdingLockedScreen = isHoldingLockedScreen(machineState, heldState);
+  const shownState = holdingLockedScreen ? (heldState?.state ?? machineState) : machineState;
   const onboardedOnEntry = onboarding.context?.onboardedOnEntry ?? null;
-  const phase = phaseOf(onboarding.state, onboardedOnEntry);
+  const phase = phaseOf(shownState, onboardedOnEntry);
   const screenState = checksScreenForPhase(
     phase,
-    onboarding.state,
+    shownState,
     onboarding.context?.checksPaused === true,
     onboardedOnEntry === true,
   );
   const device = onboarding.liveDevice;
   const closeLabel = t("deviceOnboarding.checks.close");
-  const machineState = onboarding.state;
-  const locked = machineState === "deviceLocked";
-  const holdingLockedScreen = isHoldingLockedScreen(machineState, rememberedChecks);
   const quitConfirmation = quitConfirmationWhileUnlocked(
     unseeded,
     quitConfirmationOpen,
@@ -472,7 +483,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   const leaveFromHeader = unseeded ? requestQuit : quitMachine;
 
   const screen = {
-    state: onboarding.state,
+    state: shownState,
     error: onboarding.error,
     device,
     screenState,
@@ -499,88 +510,15 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     genuineFailureKind: readString(onboarding.context?.genuineFailureKind),
   };
   const built = earlyScreen(screen) ?? checksScreen(screen);
-  const freshChecks = built.status === "checks" ? built.checks : null;
-  const nextRemembered = nextRememberedChecks(
-    rememberedChecks,
+  const nextHeld = nextHeldState(
+    heldState,
     machineState,
     holdingLockedScreen,
-    freshChecks,
+    built.status === "checks",
   );
-  if (nextRemembered !== rememberedChecks) setRememberedChecks(nextRemembered);
+  if (nextHeld !== heldState) setHeldState(nextHeld);
 
-  return checksUnderUnlockSheet(
-    built,
-    holdingLockedScreen,
-    nextRemembered,
-    freshChecks,
-    locked,
-    quitConfirmation,
-  );
-}
-
-type RememberedChecks = Readonly<{
-  key: string;
-  signature: string;
-  checks: ChecksScreenProps;
-  holdThroughReading: boolean;
-}>;
-
-function checksSignature(checks: ChecksScreenProps): string {
-  return [
-    checks.state,
-    checks.update?.current ?? "",
-    checks.update?.available ?? "",
-    checks.error?.kind ?? "",
-    checks.firmwareUpToDate,
-    checks.onContinue ? "continue" : "",
-    checks.onQuit ? "quit" : "",
-  ].join("|");
-}
-
-function nextRememberedChecks(
-  remembered: RememberedChecks | null,
-  machineState: string | null,
-  holdingLockedScreen: boolean,
-  freshChecks: ChecksScreenProps | null,
-): RememberedChecks | null {
-  if (
-    remembered &&
-    freshChecks &&
-    remembered.checks.device.deviceId !== freshChecks.device.deviceId
-  ) {
-    return {
-      key: machineState ?? "",
-      signature: checksSignature(freshChecks),
-      checks: freshChecks,
-      holdThroughReading: holdingLockedScreen,
-    };
-  }
-
-  if (!holdingLockedScreen) {
-    if (!freshChecks) return null;
-    const key = machineState ?? "";
-    const signature = checksSignature(freshChecks);
-    if (
-      remembered?.key === key &&
-      remembered.signature === signature &&
-      !remembered.holdThroughReading
-    ) {
-      return remembered;
-    }
-    return { key, signature, checks: freshChecks, holdThroughReading: false };
-  }
-
-  if (machineState !== "deviceLocked") return remembered;
-  if (remembered?.holdThroughReading) return remembered;
-
-  const checks = remembered?.checks ?? freshChecks;
-  if (!checks) return remembered;
-  return {
-    key: remembered?.key ?? "deviceLocked",
-    signature: remembered?.signature ?? checksSignature(checks),
-    checks,
-    holdThroughReading: true,
-  };
+  return checksUnderUnlockSheet(built, holdingLockedScreen, locked);
 }
 
 function readString(value: unknown): string | null {
