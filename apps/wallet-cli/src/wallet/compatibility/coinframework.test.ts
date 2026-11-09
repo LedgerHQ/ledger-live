@@ -5,6 +5,7 @@ import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAs
 import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
 import { BigNumberStrSchema } from "@shared/schema-primitives";
 import { parseV1, toV0 } from "../../shared/accountDescriptor";
+import { installOutputCapture } from "../../shared/ui";
 import { ETH_DESCRIPTOR } from "../../testing/constants";
 import { USDT_CONTRACT, USDT_TOKEN_CURRENCY, USDT_TOKEN_INFO } from "../../testing/cal-fixtures";
 import type { Balance } from "../models";
@@ -79,12 +80,18 @@ describe("CoinFrameworkAdapter.getBalances", () => {
     expect(await balancesHolding(erc20Asset(UNLISTED_CONTRACT, 1n))).toEqual([NATIVE_BALANCE]);
   });
 
-  it("skips a token without units and keeps the other balances", async () => {
+  it("skips a token without units with a warning and keeps the other balances", async () => {
+    const stderr: string[] = [];
+    restores.push(installOutputCapture({ stderr: line => stderr.push(line) }));
+
     expect(
       await balancesHolding(
         erc20Asset(NO_UNITS_CONTRACT, 1n),
         erc20Asset(USDT_CONTRACT, 1_500_000n),
       ),
     ).toEqual([NATIVE_BALANCE, USDT_BALANCE]);
+    expect(stderr).toEqual([
+      `⚠ Skipped token ${NO_UNITS_TOKEN.id}: the Crypto Assets List gives no unit for it.\n`,
+    ]);
   });
 });

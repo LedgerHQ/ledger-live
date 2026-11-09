@@ -14,7 +14,7 @@ import type { TokenCurrency } from "@domain/entity-currency-token";
 import { UnitSchema, type Unit } from "@domain/entity-currency-unit";
 import { parseV1, toV0 } from "../shared/accountDescriptor";
 import type { AccountDescriptorV1 } from "../shared/accountDescriptor";
-import { walletCliDebug } from "../shared/log";
+import { writeStderr } from "../shared/ui";
 
 import { accountDescriptorSchema, type AccountDescriptor } from "@ledgerhq/live-wallet/accounts";
 
@@ -129,7 +129,7 @@ export type Balance = z.infer<typeof BalanceSchema>;
 
 export function toTokenBalance(token: TokenCurrency, balance: BigNumberStr): Balance | undefined {
   if (!tokenUnit(token)) {
-    walletCliDebug(`balances: skipping ${token.id}, it has no units`);
+    writeStderr(`⚠ Skipped token ${token.id}: the Crypto Assets List gives no unit for it.\n`);
     return undefined;
   }
   return { kind: "token", assetId: token.id, balance, token: toTokenInfo(token) };
