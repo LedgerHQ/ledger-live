@@ -92,8 +92,10 @@ describe("toTokenInfo", () => {
     expect(info.tokenType).toBe("erc20");
   });
 
-  it("pulls decimals from units[0].magnitude", () => {
-    expect(toTokenInfo(usdtFixture).decimals).toBe(6);
+  it("takes the unit and its magnitude as decimals from units[0]", () => {
+    const info = toTokenInfo(usdtFixture);
+    expect(info.unit).toEqual({ name: "USDT", code: "USDT", magnitude: 6 });
+    expect(info.decimals).toBe(6);
   });
 
   it("maps parentCurrencyId verbatim", () => {

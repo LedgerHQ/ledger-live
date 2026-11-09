@@ -35,9 +35,13 @@ export class HumanFormatter {
     return unit;
   }
 
-  async formatAmount(rawDecimal: string, assetId: string): Promise<string> {
-    const unit = await this.resolveUnit(assetId);
+  async formatAmount(rawDecimal: string, assetId: string, knownUnit?: Unit): Promise<string> {
+    const unit = knownUnit ?? (await this.resolveUnit(assetId));
     return formatCurrencyUnit(unit, new BigNumber(rawDecimal), { showCode: true });
+  }
+
+  formatBalanceAmount(b: Balance): Promise<string> {
+    return this.formatAmount(b.balance, b.assetId, b.kind === "token" ? b.token.unit : undefined);
   }
 
   /** @deprecated Use formatDiscoveredAccount — kept for any internal callers during migration. */
@@ -54,9 +58,9 @@ export class HumanFormatter {
   }
 
   async formatBalance(b: Balance): Promise<string> {
-    const amount = await this.formatAmount(b.balance, b.assetId);
+    const amount = await this.formatBalanceAmount(b);
     const colored = b.balance === "0" ? colors.dim(amount) : colors.green(amount);
-    if (findCryptoCurrencyById(b.assetId)) return colored;
+    if (b.kind === "native") return colored;
     return `${colored} ${colors.dim(`(${b.assetId})`)}`;
   }
 
@@ -86,12 +90,10 @@ export class HumanFormatter {
   }
 
   async formatOperation(op: Operation, nativeCurrencyId: string): Promise<string> {
-    const [valueUnit, feeUnit] = await Promise.all([
-      this.resolveUnit(op.assetId),
-      this.resolveUnit(nativeCurrencyId),
+    const [value, fee] = await Promise.all([
+      this.formatAmount(op.value, op.assetId, op.unit),
+      this.formatAmount(op.fee, nativeCurrencyId),
     ]);
-    const value = formatCurrencyUnit(valueUnit, new BigNumber(op.value), { showCode: true });
-    const fee = formatCurrencyUnit(feeUnit, new BigNumber(op.fee), { showCode: true });
     const date = colors.dim(formatDate(new Date(op.date)));
     const block =
       op.blockHeight == null ? colors.yellow("pending") : colors.dim(`#${op.blockHeight}`);
