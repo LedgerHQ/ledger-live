@@ -12,6 +12,7 @@ binary.
 | `mock-server` | Serves canned HTTP routes on a local port |
 | `session-fixture` | Temp state dir pre-populated with session entries, or a session file under a given one (`writeSessionIn`) |
 | `state-home` | Points the CLI state dir at a temp dir, Windows included (`pointStateHomeAt`), and the CLI state dir under a temp one (`cliStateDirIn`) |
+| `symlinks` | Links a directory as a junction on Windows, which needs no symlink rights (`linkDirectory`), and whether this host can create file symlinks (`canSymlinkFiles`: not on Windows without admin rights or Developer Mode) |
 | `constants`, `cal-fixtures`, `eth-sync-routes` | Fixed addresses, descriptors, token info and sync routes |
 | `auth-routes`, `swap-quote-routes` | Keycloak + LKRP auth routes, and swap API routes recording each quote's `authorization` header |
 | `authenticated-quote-server` | Both of the above behind one server, with a helper that runs `swap quote` and returns its signed challenge |
