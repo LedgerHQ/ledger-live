@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
-import { createAnalyticsCatalogKey } from "./logic/createAnalyticsCatalogKey";
-import { createAnalyticsQueryKey } from "./logic/createAnalyticsQueryKeys";
+import { createAnalyticsCatalogKey } from "./logic/catalog/createAnalyticsCatalogKey";
+import { createAnalyticsQueryKey } from "./logic/selection/createAnalyticsQueryKeys";
 import {
   resolveAnalyticsSelection,
   resolveInitialAnalyticsSelection,
-} from "./logic/resolveAnalyticsSelection";
+} from "./logic/selection/resolveAnalyticsSelection";
 import {
   selectAnalyticsAccounts,
   selectAnalyticsPositions,
-} from "./logic/selectAnalyticsPositions";
+} from "./logic/selection/selectAnalyticsPositions";
 import {
   analyticsSelectionReducer,
   INITIAL_ANALYTICS_SELECTION_STATE,

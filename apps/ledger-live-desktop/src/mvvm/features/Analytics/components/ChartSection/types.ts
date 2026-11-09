@@ -1,9 +1,10 @@
+import type { AnalyticsVariationStatus } from "@features/flow-account-analytics";
 import type { PortfolioBalanceInfo } from "LLD/hooks/usePortfolioBalanceDisplayState";
 import type { LineChartProps } from "LLD/components/LineChart";
 
 export type ScrubSelection = Readonly<{ balance: number; timestamp: number }>;
 
-export type ChartVariationStatus = "loading" | "ready" | "unavailable";
+export type ChartVariationStatus = AnalyticsVariationStatus;
 
 export type ChartSectionHeaderInput = Readonly<{
   balanceInfo: PortfolioBalanceInfo;
