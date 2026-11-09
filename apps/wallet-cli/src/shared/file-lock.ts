@@ -69,7 +69,10 @@ function isLiveHolder(lockPath: string, pid: number): boolean {
 
 function predatesLastBoot(lockPath: string): boolean {
   try {
-    return statSync(lockPath).mtimeMs < Date.now() - os.uptime() * 1000;
+    const secondsSinceBoot = os.uptime();
+    return (
+      secondsSinceBoot > 0 && statSync(lockPath).mtimeMs < Date.now() - secondsSinceBoot * 1000
+    );
   } catch {
     return false;
   }

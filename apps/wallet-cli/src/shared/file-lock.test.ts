@@ -9,7 +9,7 @@ import {
   utimesSync,
   writeFileSync,
 } from "node:fs";
-import { tmpdir, uptime } from "node:os";
+import os, { tmpdir, uptime } from "node:os";
 import { join } from "node:path";
 import { readLiveLockHolderPid, withFileLock } from "./file-lock";
 
@@ -27,6 +27,16 @@ function lockPath(): string {
 function backdateBeforeLastBoot(path: string): void {
   const beforeBoot = new Date(Date.now() - uptime() * 1000 - 60_000);
   utimesSync(path, beforeBoot, beforeBoot);
+}
+
+function takenAMinuteAgo(path: string): void {
+  const aMinuteAgo = new Date(Date.now() - 60_000);
+  utimesSync(path, aMinuteAgo, aMinuteAgo);
+}
+
+function mockUnreadableUptime(): () => void {
+  const uptimeSpy = spyOn(os, "uptime").mockReturnValue(0);
+  return () => uptimeSpy.mockRestore();
 }
 
 function mockKillEperm(): () => void {
@@ -130,6 +140,23 @@ describe("withFileLock", () => {
       expect(await withFileLock(path, () => "acquired", 300)).toBe("acquired");
     } finally {
       restoreKill();
+    }
+  });
+
+  it("keeps an EPERM holder's lock when uptime reads 0, as Bun's does in the macOS sandbox", async () => {
+    const path = lockPath();
+    writeFileSync(path, `${process.pid}:a1b2c3d4e5f60718`);
+    takenAMinuteAgo(path);
+
+    const restoreUptime = mockUnreadableUptime();
+    const restoreKill = mockKillEperm();
+    try {
+      await expect(withFileLock(path, () => "stolen", 300)).rejects.toThrow(
+        /Timed out waiting for a lock/,
+      );
+    } finally {
+      restoreKill();
+      restoreUptime();
     }
   });
 
@@ -298,6 +325,21 @@ describe("readLiveLockHolderPid", () => {
       expect(readLiveLockHolderPid(path)).toBeUndefined();
     } finally {
       restoreKill();
+    }
+  });
+
+  it("returns an EPERM holder's pid when uptime reads 0, as Bun's does in the macOS sandbox", () => {
+    const path = lockPath();
+    writeFileSync(path, `${process.pid}:a1b2c3d4e5f60718`);
+    takenAMinuteAgo(path);
+
+    const restoreUptime = mockUnreadableUptime();
+    const restoreKill = mockKillEperm();
+    try {
+      expect(readLiveLockHolderPid(path)).toBe(process.pid);
+    } finally {
+      restoreKill();
+      restoreUptime();
     }
   });
 
