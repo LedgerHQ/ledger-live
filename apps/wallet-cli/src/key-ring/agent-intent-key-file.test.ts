@@ -24,6 +24,7 @@ import { cliStateDirIn, pointStateHomeAt } from "../testing/state-home";
 let stateHome: string;
 let restoreStateHome: () => void;
 
+const isPosix = process.platform !== "win32";
 const mode = (p: string) => statSync(p).mode & 0o777;
 
 beforeEach(() => {
@@ -43,7 +44,7 @@ describe("agent-intent key file", () => {
     );
   });
 
-  it("writes the key at 0600 inside a 0700 directory and reads it back", () => {
+  it.skipIf(!isPosix)("writes the key at 0600 inside a 0700 directory and reads it back", () => {
     saveAgentIntentKeyFile("bot", "deadbeef");
 
     const path = agentIntentKeyFilePath("bot");
@@ -53,7 +54,7 @@ describe("agent-intent key file", () => {
     expect(hasAgentIntentKeyFile("bot")).toBe(true);
   });
 
-  it("tightens an existing key directory to 0700", () => {
+  it.skipIf(!isPosix)("tightens an existing key directory to 0700", () => {
     const dir = dirname(agentIntentKeyFilePath("bot"));
     mkdirSync(dir, { recursive: true });
     chmodSync(dir, 0o755);
@@ -63,14 +64,14 @@ describe("agent-intent key file", () => {
     expect(mode(dir)).toBe(0o700);
   });
 
-  it("tolerates a trailing newline added by hand", () => {
+  it.skipIf(!isPosix)("tolerates a trailing newline added by hand", () => {
     saveAgentIntentKeyFile("bot", "deadbeef");
     writeFileSync(agentIntentKeyFilePath("bot"), "deadbeef\r\n");
 
     expect(loadAgentIntentKeyFile("bot")).toBe("deadbeef");
   });
 
-  it("refuses a key file readable by others, with a chmod hint", () => {
+  it.skipIf(!isPosix)("refuses a key file readable by others, with a chmod hint", () => {
     saveAgentIntentKeyFile("bot", "deadbeef");
     chmodSync(agentIntentKeyFilePath("bot"), 0o644);
 
@@ -79,7 +80,7 @@ describe("agent-intent key file", () => {
     );
   });
 
-  it("refuses a symlink in place of the key file", () => {
+  it.skipIf(!isPosix)("refuses a symlink in place of the key file", () => {
     const target = join(stateHome, "elsewhere.key");
     writeFileSync(target, "deadbeef", { mode: 0o600 });
     mkdirSync(dirname(agentIntentKeyFilePath("bot")), { recursive: true });
@@ -94,15 +95,12 @@ describe("agent-intent key file", () => {
     expect(() => loadAgentIntentKeyFile("bot")).toThrow(/bot\.key is not a regular file/);
   });
 
-  it.skipIf(process.platform === "win32")(
-    "refuses a FIFO in place of the key file without blocking",
-    () => {
-      mkdirSync(dirname(agentIntentKeyFilePath("bot")), { recursive: true, mode: 0o700 });
-      execFileSync("mkfifo", ["-m", "600", agentIntentKeyFilePath("bot")]);
+  it.skipIf(!isPosix)("refuses a FIFO in place of the key file without blocking", () => {
+    mkdirSync(dirname(agentIntentKeyFilePath("bot")), { recursive: true, mode: 0o700 });
+    execFileSync("mkfifo", ["-m", "600", agentIntentKeyFilePath("bot")]);
 
-      expect(() => loadAgentIntentKeyFile("bot")).toThrow(/bot\.key is not a regular file/);
-    },
-  );
+    expect(() => loadAgentIntentKeyFile("bot")).toThrow(/bot\.key is not a regular file/);
+  });
 
   it("refuses a key file owned by another user", () => {
     saveAgentIntentKeyFile("bot", "deadbeef");
@@ -117,7 +115,7 @@ describe("agent-intent key file", () => {
     }
   });
 
-  it("reads a 0600 key file without a permissions warning", () => {
+  it.skipIf(!isPosix)("reads a 0600 key file without a permissions warning", () => {
     saveAgentIntentKeyFile("bot", "deadbeef");
     const stderr: string[] = [];
     const restore = installOutputCapture({ stderr: s => stderr.push(s) });

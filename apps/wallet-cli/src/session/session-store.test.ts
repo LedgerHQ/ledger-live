@@ -641,7 +641,7 @@ describe("Session.agentIntentProfiles", () => {
   });
 });
 
-describe("Session.write() permissions", () => {
+describe.skipIf(process.platform === "win32")("Session.write() permissions", () => {
   let tmpDir: string | undefined;
   let restoreStateHome: (() => void) | undefined;
 

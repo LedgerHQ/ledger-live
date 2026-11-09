@@ -144,10 +144,13 @@ describe("ring — happy path", () => {
     expect(ct.byteLength).toBeGreaterThan("hello key ring".length);
   });
 
-  it("encrypt writes the output file with 0600 permissions", async () => {
-    await encryptPlainFile();
-    expect(statSync(encFile).mode & 0o777).toBe(0o600);
-  });
+  it.skipIf(process.platform === "win32")(
+    "encrypt writes the output file with 0600 permissions",
+    async () => {
+      await encryptPlainFile();
+      expect(statSync(encFile).mode & 0o777).toBe(0o600);
+    },
+  );
 
   it("keys shows key after encrypt", async () => {
     await encryptPlainFile();
