@@ -1,17 +1,19 @@
-import React, { type ReactNode } from "react";
+import React from "react";
 import { SelectItem, SelectItemText } from "@ledgerhq/lumen-ui-react";
 
-type AnalyticsFilterItemProps = Readonly<{
-  value: string;
-  label: string;
-  icon: ReactNode;
-  description?: string;
-}>;
+import type { AnalyticsFilterItemProps } from "./AnalyticsFilterItem.types";
 
-export function AnalyticsFilterItem({ value, label, icon, description }: AnalyticsFilterItemProps) {
+export function AnalyticsFilterItem({
+  value,
+  label,
+  icon,
+  description,
+  testID,
+}: AnalyticsFilterItemProps) {
   return (
     <SelectItem
       value={value}
+      data-testid={testID}
       className="min-h-40 data-highlighted:aria-selected:bg-base-transparent focus-visible:ring-2 focus-visible:ring-focus"
     >
       <span className="flex size-24 shrink-0 items-center justify-center" aria-hidden="true">

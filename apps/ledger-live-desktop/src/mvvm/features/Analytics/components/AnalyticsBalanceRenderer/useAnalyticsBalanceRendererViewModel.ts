@@ -1,6 +1,8 @@
 import { useMemo } from "react";
-import { useAnalyticsBalanceSummary } from "@features/flow-account-analytics";
-import type { AnalyticsBalanceRenderProps } from "@features/flow-account-analytics/web";
+import {
+  useAnalyticsBalanceSummary,
+  type AnalyticsBalanceRenderProps,
+} from "@features/flow-account-analytics";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { useCountervaluesState } from "@features/platform-market-countervalues";
 import { useSelector } from "LLD/hooks/redux";
