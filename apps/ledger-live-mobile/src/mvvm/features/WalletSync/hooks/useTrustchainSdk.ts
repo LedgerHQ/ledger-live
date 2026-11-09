@@ -1,30 +1,15 @@
-import { useMemo } from "react";
-import { getEnv } from "@shared/env";
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { TrustchainSDK } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { useFeature } from "@features/platform-feature-flags";
-import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
-import { useInstanceName } from "./useInstanceName";
+import { useTrustchainSdkContext } from "./useTrustchainSdkContext";
 
 let sdkInstance: TrustchainSDK | null = null;
 
 export function useTrustchainSdk() {
-  const featureWalletSync = useFeature("llmWalletSync");
-  const environment = featureWalletSync?.params?.environment;
-  const { trustchainApiBaseUrl } = getWalletSyncEnvironmentParams(environment);
-  const isMockEnv = !!getEnv("MOCK");
-  const instanceName = useInstanceName();
-
-  const defaultContext = useMemo(() => {
-    const applicationId = 16;
-
-    const name = instanceName;
-    return { applicationId, name, apiBaseUrl: trustchainApiBaseUrl };
-  }, [trustchainApiBaseUrl, instanceName]);
+  const { isMockEnv, context } = useTrustchainSdkContext();
 
   if (sdkInstance === null) {
-    sdkInstance = getSdk(isMockEnv, defaultContext, withDevice);
+    sdkInstance = getSdk(isMockEnv, context, withDevice);
   }
 
   return sdkInstance;

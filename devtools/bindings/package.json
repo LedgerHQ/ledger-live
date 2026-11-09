@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@devtools/env": "workspace:*",
+    "@devtools/intent-wallet-sync": "workspace:*",
     "@devtools/registry": "workspace:*",
     "@domain/api-account-data": "workspace:*",
     "@domain/api-account-portfolio": "workspace:*",
@@ -47,8 +48,10 @@
     "@features/flow-pay-request": "workspace:*",
     "@features/flow-predictions": "workspace:*",
     "@features/platform-card": "workspace:*",
+    "@features/platform-device-intent": "workspace:*",
     "@features/platform-device-onboarding": "workspace:*",
     "@features/platform-feature-flags": "workspace:*",
+    "@features/platform-intent-wallet-sync": "workspace:*",
     "@features/platform-predictions": "workspace:*",
     "@ledgerhq/coin-module-framework": "catalog:",
     "@reduxjs/toolkit": "catalog:",
@@ -61,10 +64,12 @@
   },
   "peerDependencies": {
     "react": ">=19.0.0",
-    "react-redux": ">=9.0.0"
+    "react-redux": ">=9.0.0",
+    "@ledgerhq/ledger-key-ring-protocol": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/ledger-key-ring-protocol": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@shared/api-services": "workspace:*",
     "@swc/core": "catalog:",

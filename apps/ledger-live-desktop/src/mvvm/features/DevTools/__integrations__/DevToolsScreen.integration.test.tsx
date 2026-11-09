@@ -62,6 +62,14 @@ jest.mock("../DeviceOnboarding/useDeviceOnboardingTool", () => ({
   useDeviceOnboardingTool: () => ({ marker: "device-onboarding-props" }),
 }));
 
+jest.mock("../IntentWalletSync/useIntentWalletSyncTool", () => ({
+  useIntentWalletSyncTool: () => ({
+    toolProps: { marker: "intent-wallet-sync-props" },
+    run: null,
+    onRunCancelled: jest.fn(),
+  }),
+}));
+
 jest.mock("@devtools/wire", () => {
   const wireState = { hubUrl: "ws://127.0.0.1:9090", role: "host" };
   return {
@@ -107,6 +115,7 @@ describe("DevToolsScreen", () => {
           { id: "account-detail", config: { marker: "account-detail-props" } },
           { id: "receive", config: { marker: "receive-props" } },
           { id: "predictions", config: { marker: "predictions-props" } },
+          { id: "intent-wallet-sync", config: { marker: "intent-wallet-sync-props" } },
         ],
       }),
     );

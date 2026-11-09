@@ -34,6 +34,7 @@ import { knownDevicesSelector } from "~/reducers/knownDevices";
 import { navigateToPayTab } from "LLM/features/PayTab/utils/navigateToPayTab";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 import { useDeviceOnboardingTool } from "../../DeviceOnboarding/useDeviceOnboardingTool";
+import { useIntentWalletSyncTool } from "../../IntentWalletSync/useIntentWalletSyncTool";
 import { useOfferSync } from "../../../DeviceOnboarding/hooks/useOfferSync";
 import { useDevToolsRelay } from "./useDevToolsRelay";
 import { getStoreValue, setStoreValue } from "~/store";
@@ -138,6 +139,7 @@ export function useDevToolsScreenViewModel() {
     offerSync,
     navigateOnExit: false,
   });
+  const intentWalletSync = useIntentWalletSyncTool();
   const { theme } = useTheme();
   const { bottom } = useSafeAreaInsets();
   const { wire, wireState } = useDevToolsRelay();
@@ -153,6 +155,7 @@ export function useDevToolsScreenViewModel() {
       { id: "account-detail", config: accountDetailToolProps },
       { id: "receive", config: receiveToolProps },
       { id: "predictions", config: predictionsToolProps },
+      { id: "intent-wallet-sync", config: intentWalletSync.toolProps },
     ],
     [
       featureFlagsProps,
@@ -164,6 +167,7 @@ export function useDevToolsScreenViewModel() {
       accountDetailToolProps,
       receiveToolProps,
       predictionsToolProps,
+      intentWalletSync.toolProps,
     ],
   );
 
@@ -182,5 +186,7 @@ export function useDevToolsScreenViewModel() {
     hubUrl: wireState.hubUrl,
     setHubUrl: wire.setHubUrl,
     role: wireState.role,
+    intentWalletSyncRun: intentWalletSync.run,
+    onIntentWalletSyncRunCancelled: intentWalletSync.onRunCancelled,
   };
 }
