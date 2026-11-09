@@ -2,13 +2,32 @@ import type { AccountLike } from "@ledgerhq/types-live";
 import type { Currency } from "@domain/entity-currency";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account";
 import { initialCostBasisState, reduceCostBasis } from "./costBasis";
+import { classifyOperation } from "./classifyOperation";
 import { getRateLookup } from "./rateLookup";
 import type { ComputePnLOptions, CostBasisState } from "./types";
 
 const cache = new Map<string, CostBasisState>();
 
-function getLastOpBookmark(account: AccountLike): { id: string; date: Date | null } {
-  const ops = account.operations;
+function getCostBasisOperations(account: AccountLike) {
+  return account.operations.flatMap(operation => [
+    operation,
+    ...(operation.internalOperations?.filter(
+      internal => classifyOperation(internal) === "inflow",
+    ) ?? []),
+  ]);
+}
+
+function getOperationsCacheKey(operations: ReturnType<typeof getCostBasisOperations>): string {
+  return operations
+    .map(operation => `${operation.id}:${operation.date.getTime()}`)
+    .sort()
+    .join(",");
+}
+
+function getLastOpBookmark(ops: ReturnType<typeof getCostBasisOperations>): {
+  id: string;
+  date: Date | null;
+} {
   if (ops.length === 0) return { id: "_", date: null };
 
   let best = ops[0];
@@ -28,11 +47,12 @@ export function getCostBasis(
   options?: ComputePnLOptions,
 ): CostBasisState {
   const asset = getAccountCurrency(account);
+  const operations = getCostBasisOperations(account);
 
   if (options?.isSpamOperation) {
     return reduceCostBasis(
       initialCostBasisState,
-      account.operations,
+      operations,
       account,
       countervalues,
       fiat,
@@ -41,17 +61,18 @@ export function getCostBasis(
   }
 
   const rateLookup = getRateLookup();
-  const { id: lastOpId, date: lastOpDate } = getLastOpBookmark(account);
+  const { id: lastOpId, date: lastOpDate } = getLastOpBookmark(operations);
+  const operationsKey = getOperationsCacheKey(operations);
   const historyKey = rateLookup.historyKey(countervalues, asset, fiat, lastOpDate);
   const fiatKey = rateLookup.currencyApiId(fiat);
-  const key = `${account.id}|${fiatKey}|${lastOpId}|${historyKey}`;
+  const key = `${account.id}|${fiatKey}|${lastOpId}|${operationsKey}|${historyKey}`;
 
   const hit = cache.get(key);
   if (hit) return hit;
 
   const fresh = reduceCostBasis(
     initialCostBasisState,
-    account.operations,
+    operations,
     account,
     countervalues,
     fiat,

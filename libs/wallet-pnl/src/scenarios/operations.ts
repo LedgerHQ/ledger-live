@@ -24,6 +24,7 @@ export type OpOverrides = {
   senders?: string[];
   recipients?: string[];
   accountId?: string;
+  internalOperations?: Operation[];
 };
 
 let _counter = 0;
@@ -59,6 +60,7 @@ export function makeOp(overrides: OpOverrides = {}): Operation {
     accountId: overrides.accountId ?? "acc",
     date: toDate(overrides.date),
     hasFailed: overrides.hasFailed ?? false,
+    internalOperations: overrides.internalOperations,
     extra: {},
   };
 }
