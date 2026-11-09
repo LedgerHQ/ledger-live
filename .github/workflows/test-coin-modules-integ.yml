@@ -140,23 +140,6 @@ jobs:
                 text:
                   type: "mrkdwn"
                   text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
-      - name: post to coin-integration-private slack channel
-        uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
-        with:
-          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
-          method: chat.postMessage
-          payload: |
-            channel: "C06RTDKT324"
-            text: "[Test] Coin modules"
-            blocks: 
-              - type: "section"
-                text:
-                  type: "mrkdwn"
-                  text: "❌ *Coin modules integration tests failed*"
-              - type: "section"
-                text:
-                  type: "mrkdwn"
-                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
       - name: Setup the toolchain
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
@@ -167,7 +150,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
-          SKIP_CHANNELS: C05FKJ7DFAP,C06RTDKT324
+          SKIP_CHANNELS: C05FKJ7DFAP
           FAILED_PACKAGES: ${{ needs.integ-tests.outputs.failed_packages }}
         run: node tools/scripts/ci-slack-notify.mjs
   integ-tests-success:
