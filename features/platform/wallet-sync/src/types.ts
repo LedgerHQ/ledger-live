@@ -13,7 +13,10 @@ import type { WatchConfig } from "./createWalletSyncWatchLoop";
 export type LedgerSyncStateRoot = WalletSyncStateRoot & { trustchain: TrustchainStore };
 
 export interface LedgerSyncMiddlewareConfig<S extends LedgerSyncStateRoot, LocalState, Update> {
-  /** The watch loop runs while this flag is enabled, polling as its `watchConfig` says. */
+  /**
+   * The watch loop runs while this flag is enabled, polling as its `watchConfig` says. Keep
+   * `watchConfig` reference-stable: a new object, such as a `?? {}` fallback, restarts the loop.
+   */
   featureSelector: (state: S) => { enabled?: boolean; watchConfig?: WatchConfig };
   /** What the LKRP SDK needs from the app: its backend, its instance name and its device access. */
   lkrp: {

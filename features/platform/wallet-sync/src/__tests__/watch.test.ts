@@ -169,6 +169,18 @@ describe("Ledger Sync watch loop", () => {
     expect(store.getState().trustchain.trustchain).toEqual(restored);
   });
 
+  it("should stop reporting the sync of a loop that the restored trustchain replaces", async () => {
+    const restored = { ...trustchain, rootId: "restored-root-id" };
+    mockCloudSyncSdk.pull.mockRejectedValueOnce(errorNamed("TrustchainOutdated"));
+    const store = startedWatch();
+    jest.mocked(getLkrpSdk(store.dispatch).restoreTrustchain).mockResolvedValue(restored);
+
+    await advance(WATCH_CONFIG.initialTimeout);
+
+    expect(store.getState().trustchain.trustchain).toEqual(restored);
+    expect(selectLedgerSyncVisualPending(store.getState())).toBe(false);
+  });
+
   it("should reset Ledger Sync and report it when the trustchain cannot be restored", async () => {
     mockCloudSyncSdk.pull.mockRejectedValueOnce(errorNamed("TrustchainOutdated"));
     const store = startedWatch(SYNCED);

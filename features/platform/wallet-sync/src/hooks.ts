@@ -8,7 +8,10 @@ import {
   stopLedgerSyncWatch,
 } from "./watch";
 
-/** Runs the Ledger Sync middleware's Wallet Sync watch loop while the caller is mounted. */
+/**
+ * Runs the Ledger Sync middleware's Wallet Sync watch loop while the caller is mounted. Mount it
+ * once, at the app root: the first caller to unmount stops the watch for every other one.
+ */
 export function useLedgerSyncWatch() {
   const dispatch = useDispatch();
   useEffect(() => {

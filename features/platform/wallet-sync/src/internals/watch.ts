@@ -74,7 +74,8 @@ export function createLedgerSyncWatch<S extends LedgerSyncStateRoot, LocalState,
     if (!watching) return;
     const inputs = selectInputs(getState());
     if (inputs === current?.inputs) return;
-    current?.loop?.unsubscribe();
+    const replaced = current?.loop;
+    replaced?.unsubscribe();
     const { enabled, watchConfig, trustchain, memberCredentials, walletsync } = inputs;
     if (!enabled || !trustchain || !memberCredentials) {
       current = { inputs };
@@ -111,6 +112,8 @@ export function createLedgerSyncWatch<S extends LedgerSyncStateRoot, LocalState,
       onTrustchainRefreshNeeded: refreshed => refreshTrustchain(refreshed, memberCredentials),
     });
     current = run;
+    // A replaced loop never ends its pass, so it never clears the sync it shows.
+    if (replaced) dispatch(setVisualPending(false));
   }
 
   function onLoopError(error: unknown) {
