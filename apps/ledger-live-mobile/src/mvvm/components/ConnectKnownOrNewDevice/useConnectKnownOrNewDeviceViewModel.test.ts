@@ -1,5 +1,10 @@
 import { act, renderHook } from "@tests/test-renderer";
-import { AppState, BackHandler, type AppStateStatus } from "react-native";
+import {
+  AppState,
+  BackHandler,
+  type AppStateStatus,
+  type HardwareBackPressEvent,
+} from "react-native";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { DeviceModelId as DMKDeviceModelId } from "@ledgerhq/device-management-kit";
 import {
@@ -401,7 +406,8 @@ describe("useConnectKnownOrNewDeviceViewModel", () => {
 
     it("GIVEN the Add mode, WHEN the Android back button is pressed, THEN it should close the Add mode", () => {
       // GIVEN
-      const listeners: Array<() => boolean | null | undefined> = [];
+      const listeners: Array<Parameters<typeof BackHandler.addEventListener>[1]> = [];
+      const backPressEvent: HardwareBackPressEvent = { type: "hardwareBackPress", timeStamp: 0 };
       jest.spyOn(BackHandler, "addEventListener").mockImplementation((_, listener) => {
         listeners.push(listener);
         return { remove: jest.fn() };
@@ -411,7 +417,7 @@ describe("useConnectKnownOrNewDeviceViewModel", () => {
       emit(makeAddModeState(close));
 
       // WHEN
-      const handled = listeners[listeners.length - 1]?.();
+      const handled = listeners[listeners.length - 1]?.(backPressEvent);
 
       // THEN
       expect(handled).toBe(true);

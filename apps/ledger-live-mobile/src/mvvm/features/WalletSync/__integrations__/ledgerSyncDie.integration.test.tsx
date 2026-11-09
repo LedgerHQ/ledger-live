@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BackHandler, Text, View } from "react-native";
+import { BackHandler, type HardwareBackPressEvent, Text, View } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { track } from "@shared/analytics";
@@ -156,7 +156,8 @@ jest.mock("LLM/components/DeviceIntentExecutor", () => {
 });
 
 // Android hardware Back: the last listener added runs first, until one handles it.
-type BackListener = () => boolean | null | undefined;
+type BackListener = Parameters<typeof BackHandler.addEventListener>[1];
+const backPressEvent: HardwareBackPressEvent = { type: "hardwareBackPress", timeStamp: 0 };
 let backListeners: BackListener[] = [];
 jest.spyOn(BackHandler, "addEventListener").mockImplementation((_event, listener) => {
   backListeners.push(listener);
@@ -170,7 +171,7 @@ jest.spyOn(BackHandler, "addEventListener").mockImplementation((_event, listener
 function pressBack() {
   act(() => {
     for (const listener of [...backListeners].reverse()) {
-      if (listener()) return;
+      if (listener(backPressEvent)) return;
     }
   });
 }
