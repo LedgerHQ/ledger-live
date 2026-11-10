@@ -2,7 +2,7 @@ import React from "react";
 import CryptoIcon from "@ledgerhq/crypto-icons/native";
 import {
   BottomSheetHeader,
-  BottomSheetView,
+  BottomSheetScrollView,
   MediaButton,
   SelectList,
   SelectListContent,
@@ -56,9 +56,10 @@ export function AnalyticsFilterSelectView({
         testID={`${testId}-sheet`}
         isRequestingToBeOpened={sheet.isOpen}
         enableDynamicSizing
+        maxDynamicContentSize="fullWithOffset"
         onClose={sheet.close}
       >
-        <BottomSheetView>
+        <BottomSheetScrollView>
           <BottomSheetHeader />
           <SelectList items={items} value={value} onValueChange={sheet.selectOption}>
             <SelectListContent
@@ -78,7 +79,7 @@ export function AnalyticsFilterSelectView({
               }}
             />
           </SelectList>
-        </BottomSheetView>
+        </BottomSheetScrollView>
       </QueuedBottomSheet>
     </>
   );

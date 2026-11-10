@@ -2128,6 +2128,9 @@ importers:
       '@domain/entity-wallet-sync':
         specifier: workspace:^
         version: link:../../domain/entity/wallet-sync
+      '@features/flow-account-analytics':
+        specifier: workspace:^
+        version: link:../../features/flow/account-analytics
       '@features/flow-account-detail':
         specifier: workspace:^
         version: link:../../features/flow/account-detail
