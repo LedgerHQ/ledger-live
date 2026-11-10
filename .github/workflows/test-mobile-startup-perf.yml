@@ -51,6 +51,12 @@ on:
         required: true
         type: string
         default: "100"
+      read:
+        description: "Where each launch's startup is read: the device log (log), also the Debug screen to check they match (both, slower), or the Debug screen only (screen)"
+        required: true
+        type: choice
+        options: [log, both, screen]
+        default: log
       slack_notif:
         description: "Post the result to Slack #live-repo-health"
         required: false
@@ -84,6 +90,7 @@ jobs:
       pairs: ${{ steps.plan.outputs.pairs }}
       threshold_ms: ${{ steps.plan.outputs.threshold_ms }}
       accounts_userdata: ${{ steps.plan.outputs.accounts_userdata }}
+      read: ${{ steps.plan.outputs.read }}
     steps:
       # This workflow's scripts only.
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -107,6 +114,7 @@ jobs:
           THRESHOLD: ${{ inputs.threshold_ms }}
           SCENARIOS: ${{ inputs.scenarios }}
           ACCOUNTS_USERDATA: ${{ inputs.accounts_userdata }}
+          READ: ${{ inputs.read }}
           BRANCH_SHA: ${{ github.sha }}
           REPO_URL: ${{ github.server_url }}/${{ github.repository }}.git
         run: node e2e/tooling/startup-perf/ci/resolve-refs.mts
@@ -445,6 +453,7 @@ jobs:
         env:
           SCENARIO: ${{ matrix.scenario }}
           PAIRS: ${{ needs.plan.outputs.pairs }}
+          READ: ${{ needs.plan.outputs.read }}
           ACCOUNTS_USERDATA: ${{ needs.plan.outputs.accounts_userdata }}
         run: |
           set -euo pipefail
@@ -456,6 +465,7 @@ jobs:
             --devices emulator-5554,emulator-5556 \
             --app-a "$APP_A" --app-b "$APP_B" --app-id "$APP_ID" \
             --scenarios "$SCENARIO" --pairs "$PAIRS" \
+            --read "$READ" \
             --accounts-userdata "$ACCOUNTS_USERDATA" \
             --out-dir "$RESULTS_DIR/android"
 
@@ -549,6 +559,7 @@ jobs:
         env:
           SCENARIOS: ${{ join(fromJSON(needs.plan.outputs.scenarios), ',') }}
           PAIRS: ${{ needs.plan.outputs.pairs }}
+          READ: ${{ needs.plan.outputs.read }}
           ACCOUNTS_USERDATA: ${{ needs.plan.outputs.accounts_userdata }}
         run: |
           set -euo pipefail
@@ -560,6 +571,7 @@ jobs:
             --devices "$SIM_1,$SIM_2" \
             --app-a "$APP_A" --app-b "$APP_B" --app-id "$APP_ID" \
             --scenarios "$SCENARIOS" --pairs "$PAIRS" \
+            --read "$READ" \
             --accounts-userdata "$ACCOUNTS_USERDATA" \
             --out-dir "$RESULTS_DIR/ios"
 

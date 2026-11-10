@@ -117,8 +117,8 @@ straight from Maven Central, the shared runner IP can get a 429 (run 42829119387
   ~280 ms, on either simulator (run 42356679784: the first launch of round 0 by 261–301 ms, the
   second not), so the last warm-up before the rounds reads only the log, and each build is checked
   once per scenario. A launch whose line has not come 20 s after the settle time is read on the
-  screen, and the report counts those per build. `--read both` reads every launch both ways,
-  `--read screen` the screen only. Screen reads of measured launches
+  screen, and the report counts those per build. `--read both` (the workflow's `read` input) reads
+  every launch both ways, `--read screen` the screen only. Screen reads of measured launches
   use `read-performance-quick.yaml`; warm-ups and retries use the full flow, whose optional taps
   cost ~7 s when no prompt shows. The flows select by text: the Debug and Performance screens have
   no testIDs on any supported ref.
