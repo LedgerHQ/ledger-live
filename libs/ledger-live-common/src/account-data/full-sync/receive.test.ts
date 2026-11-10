@@ -192,6 +192,12 @@ describe("toAccountReceive on Zcash", () => {
     await expect(toAccountReceive(zcash(null))).resolves.toEqual(transparent);
   });
 
+  it("refuses a shielded verification at a non-hardened account path", async () => {
+    setZcashShieldedEnabled(true);
+    const account = { ...zcash("u1shielded"), freshAddressPath: "44'/133'/0/0/3" };
+    await expect(toAccountReceive(account)).rejects.toThrow(ReceivePathUnknownError);
+  });
+
   it("receives on the transparent address alone while the shielded engine is off", async () => {
     await expect(toAccountReceive(zcash("u1shielded"))).resolves.toEqual(transparent);
   });

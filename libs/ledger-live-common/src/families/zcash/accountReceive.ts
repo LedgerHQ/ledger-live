@@ -1,6 +1,6 @@
 import type { ZcashAccount } from "@ledgerhq/coin-zcash/types";
 import {
-  AccountReceiveSchema,
+  ReceiveAddressSchema,
   ReceivePathUnknownError,
   type AccountReceive,
 } from "@domain/entity-account-receive";
@@ -10,7 +10,7 @@ import { isZcashShieldedEnabled } from "../../bridge/zcashRouting";
 /** The ZIP-32 account path `m/32h/<coin>h/<account>h`, where the device derives the shielded address. */
 function zip32AccountPath(account: ZcashAccount): string {
   const [, , coinType, accountIndex] = freshAddressDevicePath(account).split("/");
-  if (!coinType || !accountIndex) {
+  if (!coinType?.endsWith("h") || !accountIndex?.endsWith("h")) {
     throw new ReceivePathUnknownError(`${account.id} has no ZIP-32 account path`);
   }
   return `m/32h/${coinType}/${accountIndex}`;
@@ -20,15 +20,15 @@ function zip32AccountPath(account: ZcashAccount): string {
 export default function zcashAccountReceive(account: ZcashAccount): AccountReceive {
   const shieldedAddress = account.privateInfo?.shieldedAddress;
   if (!isZcashShieldedEnabled() || !shieldedAddress) return defaultAccountReceive(account);
-  return AccountReceiveSchema.parse({
+  return {
     ...defaultAccountReceive(account),
-    shielded: {
+    shielded: ReceiveAddressSchema.parse({
       address: shieldedAddress,
       verification: {
         type: "shieldedAddress",
         path: zip32AccountPath(account),
         address: shieldedAddress,
       },
-    },
-  });
+    }),
+  };
 }

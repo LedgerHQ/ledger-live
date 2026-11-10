@@ -5,22 +5,17 @@ import {
   DerivationPathSchema,
 } from "@domain/entity-account-descriptor";
 
+const addressVerification = <T extends string>(type: T) =>
+  z.object({ type: z.literal(type), path: DerivationPathSchema, address: AddressSchema });
+
 /** What the device confirms at `path` for an address to be trusted. */
 export const ReceiveVerificationSchema = z.discriminatedUnion("type", [
   /** The device derives and shows this address, not always the one received on. */
-  z.object({ type: z.literal("address"), path: DerivationPathSchema, address: AddressSchema }),
+  addressVerification("address"),
   /** The device is given this address and confirms its key owns it: it cannot derive it. */
-  z.object({
-    type: z.literal("addressConfirmation"),
-    path: DerivationPathSchema,
-    address: AddressSchema,
-  }),
+  addressVerification("addressConfirmation"),
   /** The device derives and shows this shielded address with its shielded derivation, not `getAddress`. */
-  z.object({
-    type: z.literal("shieldedAddress"),
-    path: DerivationPathSchema,
-    address: AddressSchema,
-  }),
+  addressVerification("shieldedAddress"),
   /** The device only knows a key, which controls the account. */
   z.object({
     type: z.literal("publicKey"),

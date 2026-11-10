@@ -1,8 +1,7 @@
-import { AccountReceiveSchema, type AccountReceive } from "./schema";
+import type { z } from "zod";
+import { AccountReceiveSchema, ReceiveVerificationSchema, type AccountReceive } from "./schema";
 
-type VerificationInput =
-  | { type: "address" | "addressConfirmation" | "shieldedAddress"; path: string; address: string }
-  | { type: "publicKey"; path: string; publicKey: string };
+type VerificationInput = z.input<typeof ReceiveVerificationSchema>;
 
 /** Shown at an ethereum path, unless `verification` is given (even `undefined`). */
 export function mockAccountReceive(
