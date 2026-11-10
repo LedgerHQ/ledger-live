@@ -2,8 +2,9 @@ import "./live-common-setup";
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { installOutputCapture } from "./shared/ui";
 import { CliProcessExitError } from "./cli-process-exit-error";
-import { USDT_TOKEN_INFO } from "./testing/cal-fixtures";
+import { USDT_TOKEN_INFO, USDT_TOKEN_JSON } from "./testing/cal-fixtures";
 import { SwapBackendError } from "./commands/swap/swap-backend-error";
+import { NetworkIdSchema } from "./shared/accountDescriptor";
 
 const { createCommandOutput } = await import("./output");
 
@@ -195,8 +196,9 @@ describe("JsonCommandOutput", () => {
       status: "success",
       command: "assets token",
       network: "ethereum",
-      token: USDT_TOKEN_INFO,
+      token: USDT_TOKEN_JSON,
     });
+    expect((lines[0] as Record<string, unknown>).token).not.toHaveProperty("unit");
   });
 
   it("ringInit emits member and snake_case root_id in envelope", () => {
@@ -602,7 +604,7 @@ describe("JsonCommandOutput", () => {
       purpose: "account",
       version: "2",
       type: "utxo",
-      network: "bitcoin",
+      network: NetworkIdSchema.parse("bitcoin"),
       xpub: "xpub6BosfCnifzxcA",
       path: "m/84h/0h/0h",
     } as const;

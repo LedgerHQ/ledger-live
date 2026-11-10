@@ -1,5 +1,7 @@
 import type { RestoreBackupDAOutput } from "@ledgerhq/dmk-ledger-wallet";
 
+export { RestoreBackupStatus } from "@ledgerhq/dmk-ledger-wallet";
+
 export enum RestoreBackupStateType {
   LOADING = "LOADING",
   RESTORING = "RESTORING",
@@ -12,7 +14,6 @@ export enum RestoreBackupStateType {
   AWAITING_CONFIRM_COMMIT_IMAGE = "AWAITING_CONFIRM_COMMIT_IMAGE",
   DEVICE_DISCONNECTED = "DEVICE_DISCONNECTED",
   CONNECTION_TIMED_OUT = "CONNECTION_TIMED_OUT",
-  OUT_OF_MEMORY = "OUT_OF_MEMORY",
   BACKUP_RESTORED = "BACKUP_RESTORED",
   UNEXPECTED_ERROR = "UNEXPECTED_ERROR",
 }
@@ -54,10 +55,6 @@ export type RestoreBackupState =
   | {
       type: RestoreBackupStateType.CONNECTION_TIMED_OUT;
       retry: () => void;
-    }
-  | {
-      type: RestoreBackupStateType.OUT_OF_MEMORY;
-      error: unknown;
       cancel: () => void;
     }
   | {

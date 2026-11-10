@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import styled from "styled-components";
 import { Account } from "@ledgerhq/types-live";
 import {

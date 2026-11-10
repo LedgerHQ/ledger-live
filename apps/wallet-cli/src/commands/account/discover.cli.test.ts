@@ -43,6 +43,34 @@ describe("account discover command (mock DMK)", () => {
   });
 });
 
+describe("account discover — rejected network", () => {
+  it("rejects a network outside the supported list without touching the device", async () => {
+    const { stdout, stderr, exitCode } = await runCli(
+      ["account", "discover", "base", "--output", "json"],
+      { WALLET_CLI_MOCK_DMK: "1" },
+    );
+    expect(exitCode, `stderr: ${stderr}`).toBe(1);
+    expect(stdout).not.toContain("device-state");
+    const data = JSON.parse(stdout);
+    expect(data.error.message).toContain('Network "base" is not supported by wallet-cli');
+  });
+
+  it.each([
+    ["a malformed network", ["ethereum:"], "ethereum:"],
+    ["a missing network", [], "Missing network"],
+  ])("reports %s in the JSON error envelope", async (_case, networkArgs, message) => {
+    const { stdout, stderr, exitCode } = await runCli(
+      ["account", "discover", ...networkArgs, "--output", "json"],
+      { WALLET_CLI_MOCK_DMK: "1" },
+    );
+    expect(exitCode, `stderr: ${stderr}`).toBe(1);
+    const data = JSON.parse(stdout);
+    expect(data.ok).toBe(false);
+    expect(data.error.command).toBe("account discover");
+    expect(data.error.message).toContain(message);
+  });
+});
+
 describe("account discover — session persistence", () => {
   const server = new MockServer(ETH_SYNC_ROUTES);
   let cleanup: (() => void) | undefined;

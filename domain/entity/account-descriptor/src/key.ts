@@ -2,7 +2,7 @@ import { v5 as uuidv5 } from "uuid";
 import { z } from "zod";
 import type { AccountDescriptor } from "./schema";
 import { canonicalPath } from "./path";
-import { serializeAccountDescriptor } from "./serialization";
+import { formatDescriptorFields } from "./serialization.internals";
 
 /** Build-time namespace of AccountUUID. Not a secret; changing it changes every AccountUUID. */
 const ACCOUNT_UUID_NAMESPACE = "b4a1d3a8-6c0e-4f0e-9a52-7d1f3c5e8a21";
@@ -14,15 +14,18 @@ export type AccountUUID = z.infer<typeof AccountUUIDSchema>;
 
 /** Canonical key and identity of an account: network case, hardened marker and `0x` address case collapse to one key. */
 export function accountDescriptorKey(descriptor: AccountDescriptor): string {
-  const normalized: AccountDescriptor = {
+  const subject =
+    descriptor.type === "utxo"
+      ? descriptor.xpub
+      : descriptor.address.startsWith("0x")
+        ? descriptor.address.toLowerCase()
+        : descriptor.address;
+  return formatDescriptorFields({
     ...descriptor,
     network: descriptor.network.toLowerCase(),
+    subject,
     path: canonicalPath(descriptor.path),
-  };
-  if (normalized.type === "address" && normalized.address.startsWith("0x")) {
-    normalized.address = normalized.address.toLowerCase();
-  }
-  return serializeAccountDescriptor(normalized);
+  });
 }
 
 export function computeAccountUUID(descriptor: AccountDescriptor): AccountUUID {

@@ -139,7 +139,10 @@ export type BridgeApi = {
     address: string,
     accountInfo?: AccountInfo,
   ) => Promise<FamilyAccountShape | undefined> | FamilyAccountShape | undefined;
-  /** Family-specific token sub-account fields, keyed by the token's `contractAddress`. */
+  /**
+   * Family-specific token sub-account fields, keyed by the token's `contractAddress`, or by its `id`
+   * where one contract address has several tokens (an XRPL issuer). The `id` key wins.
+   */
   buildTokenAccountShapes?: (
     address: string,
   ) => Promise<Record<string, FamilyAccountShape>> | Record<string, FamilyAccountShape>;

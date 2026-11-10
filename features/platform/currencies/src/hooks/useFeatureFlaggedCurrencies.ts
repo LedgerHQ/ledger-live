@@ -33,7 +33,6 @@ export function useFeatureFlaggedCurrencies(mock = false): FeatureFlaggedCurrenc
   const aptos = useFeature("currencyAptos");
   const aptosTestnet = useFeature("currencyAptosTestnet");
   const axelar = useFeature("currencyAxelar");
-  const stargaze = useFeature("currencyStargaze");
   const secretNetwork = useFeature("currencySecretNetwork");
   const desmos = useFeature("currencyDesmos");
   const dydx = useFeature("currencyDydx");
@@ -124,7 +123,6 @@ export function useFeatureFlaggedCurrencies(mock = false): FeatureFlaggedCurrenc
       aptos,
       aptos_testnet: aptosTestnet,
       axelar,
-      stargaze,
       secret_network: secretNetwork,
       desmos,
       dydx,
@@ -214,7 +212,6 @@ export function useFeatureFlaggedCurrencies(mock = false): FeatureFlaggedCurrenc
       aptos,
       aptosTestnet,
       axelar,
-      stargaze,
       secretNetwork,
       desmos,
       dydx,

@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { AccountAddresses } from "../../types";
 import { parseExtendedPublicKey } from "../kaspaAddresses";
 import { scanAddresses } from "../account/scanAddresses";

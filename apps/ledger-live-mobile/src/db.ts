@@ -28,6 +28,7 @@ import {
   type PersistedKnownDevicesState,
 } from "./reducers/knownDevices";
 import type { FeatureFlagsState } from "@shared/feature-flags";
+import type { LiveConfigOverridesState } from "@shared/live-config-overrides";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { ExportedWalletState } from "~/reducers/wallet";
 import { type PersistedCAL } from "@domain/api-currency-token";
@@ -37,6 +38,7 @@ import type { PayCardFeatureTourState } from "@features/flow-pay-feature-tour/st
 import type { PayRequestVerifyHintState } from "@features/flow-pay-request/state";
 import type { PayCardLoginIntroState } from "@features/flow-pay-card-auth/state";
 import type { PayCardOnboardingWidgetPersistedState } from "@features/flow-pay-card-widget/state";
+import type { AccountAnalyticsIntroductionState } from "@features/flow-account-detail-analytics-notice/state";
 
 export type PayCardPersistedState = PayCardFeatureTourState &
   PayRequestVerifyHintState &
@@ -60,8 +62,8 @@ export async function getUser(): Promise<User> {
 export async function deleteUser(): Promise<void> {
   await storage.delete("user");
 }
-export async function getSettings(): Promise<Partial<SettingsState>> {
-  const settings = (await storage.get("settings")) as Partial<SettingsState>;
+export async function getSettings(): Promise<Partial<SettingsState> | null | undefined> {
+  const settings = (await storage.get("settings")) as Partial<SettingsState> | null | undefined;
   return settings;
 }
 export async function saveSettings(obj: Partial<SettingsState>): Promise<void> {
@@ -337,6 +339,16 @@ export async function savePayCardState(obj: PayCardPersistedState): Promise<void
   await storage.save("payCard", obj);
 }
 
+export function getAccountAnalyticsIntroductionState(): Promise<unknown> {
+  return storage.get("accountAnalyticsIntroduction");
+}
+
+export async function saveAccountAnalyticsIntroductionState(
+  obj: AccountAnalyticsIntroductionState,
+): Promise<void> {
+  await storage.save("accountAnalyticsIntroduction", obj);
+}
+
 export function getTrustchainState(): Promise<TrustchainStore> {
   return storage.get("trustchain") as Promise<TrustchainStore>;
 }
@@ -415,4 +427,13 @@ export async function saveFeatureFlagsState(
   obj: Pick<FeatureFlagsState, "overrides" | "bannerVisible">,
 ): Promise<void> {
   await storage.save("featureFlags", obj);
+}
+
+/** `overrides` is untrusted until `sanitizePersistedOverrides` validates it. */
+export function getLiveConfigOverridesState(): Promise<{ overrides?: unknown } | null> {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  return storage.get("coinConfigOverrides") as Promise<{ overrides?: unknown } | null>;
+}
+export async function saveLiveConfigOverridesState(obj: LiveConfigOverridesState): Promise<void> {
+  await storage.save("coinConfigOverrides", obj);
 }

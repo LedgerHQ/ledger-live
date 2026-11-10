@@ -1,22 +1,11 @@
-import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
+import { stacksDefaults } from "@ledgerhq/coin-stacks/config";
+import type { ConfigSchema } from "@ledgerhq/live-config/LiveConfig";
+import { currencyDefaultsToLiveConfig } from "../../config";
 
-export const stacksConfig: Record<string, ConfigInfo> = {
+export const stacksConfig: ConfigSchema = {
   config_stacks_generic_bridge: {
     type: "boolean",
     default: true,
   },
-  config_currency_stacks: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [
-          { id: "blockchain_txs", status: "active" },
-          { id: "staking_txs", status: "active" },
-        ],
-      },
-      name: "Stacks",
-      unit: { name: "STX", code: "STX", magnitude: 6 },
-    },
-  },
+  ...currencyDefaultsToLiveConfig(stacksDefaults),
 };

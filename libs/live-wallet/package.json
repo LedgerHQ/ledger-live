@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-wallet",
-  "version": "1.1.8",
+  "version": "1.1.9",
   "private": true,
   "description": "Ledger Live wallet",
   "keywords": [
@@ -32,7 +32,6 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@types/react": "catalog:",
     "@domain/entity-account": "workspace:^",
     "@ledgerhq/hw-transport-mocker": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
@@ -41,7 +40,6 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
-    "@types/pako": "2.0.3",
     "@types/ws": "8.5.10",
     "jest": "catalog:",
     "msw": "catalog:",

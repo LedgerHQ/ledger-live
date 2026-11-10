@@ -1,4 +1,5 @@
 import React from "react";
+import { ScrollView, type ViewStyle } from "react-native";
 import {
   Box,
   Card,
@@ -9,7 +10,7 @@ import {
   CardLeading,
   Spot,
 } from "@ledgerhq/lumen-ui-rnative";
-import { Coins, Infinite } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { Coins, Infinite, Lightbulb } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "@shared/i18n";
 import type { ServiceEntryPointId } from "../../types";
 import type { ServicesEntryPointsViewProps } from "./ServicesEntryPointsView.types";
@@ -17,14 +18,23 @@ import type { ServicesEntryPointsViewProps } from "./ServicesEntryPointsView.typ
 const ICONS = {
   perps: Infinite,
   borrow: Coins,
+  predictions: Lightbulb,
 } as const satisfies Record<ServiceEntryPointId, unknown>;
+
+const CAROUSEL_MIN_CARDS = 3;
+const CARD_WIDTH = 140;
+const CARD_GAP = 12;
+const PADDING_HORIZONTAL = 16;
+// Cancels the portfolio's side padding so the carousel scrolls to the screen edges.
+const MARGIN_HORIZONTAL = -16;
 
 type ServiceCardProps = Readonly<{
   service: ServiceEntryPointId;
+  style: ViewStyle;
   onOpenService: (service: ServiceEntryPointId) => void;
 }>;
 
-function ServiceCard({ service, onOpenService }: ServiceCardProps) {
+function ServiceCard({ service, style, onOpenService }: ServiceCardProps) {
   const { t } = useTranslation();
 
   function handlePress() {
@@ -32,7 +42,7 @@ function ServiceCard({ service, onOpenService }: ServiceCardProps) {
   }
 
   return (
-    <Card lx={{ flex: 1 }} onPress={handlePress}>
+    <Card style={style} onPress={handlePress}>
       <CardHeader>
         <CardLeading lx={{ flex: 0, flexDirection: "column", alignItems: "flex-start", gap: "s8" }}>
           <Spot icon={ICONS[service]} />
@@ -51,11 +61,35 @@ function ServiceCard({ service, onOpenService }: ServiceCardProps) {
 export function ServicesEntryPointsView({ services, onOpenService }: ServicesEntryPointsViewProps) {
   if (services.length === 0) return null;
 
+  const isCarousel = services.length >= CAROUSEL_MIN_CARDS;
+  const cards = services.map(function renderServiceCard(service) {
+    return (
+      <ServiceCard
+        key={service}
+        service={service}
+        style={isCarousel ? { width: CARD_WIDTH } : { flex: 1 }}
+        onOpenService={onOpenService}
+      />
+    );
+  });
+
+  if (!isCarousel) {
+    return (
+      <Box lx={{ flexDirection: "row", gap: "s12" }} testID="portfolio-services-entry-points">
+        {cards}
+      </Box>
+    );
+  }
+
   return (
-    <Box lx={{ flexDirection: "row", gap: "s12" }} testID="portfolio-services-entry-points">
-      {services.map(function renderServiceCard(service) {
-        return <ServiceCard key={service} service={service} onOpenService={onOpenService} />;
-      })}
-    </Box>
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      testID="portfolio-services-entry-points"
+      contentContainerStyle={{ paddingHorizontal: PADDING_HORIZONTAL, gap: CARD_GAP }}
+      style={{ marginHorizontal: MARGIN_HORIZONTAL }}
+    >
+      {cards}
+    </ScrollView>
   );
 }

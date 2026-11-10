@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-signer-aleo",
-  "version": "0.19.16",
+  "version": "0.19.17",
   "private": true,
   "description": "Ledger Hardware Wallet Aleo Application API",
   "keywords": [
@@ -46,7 +46,6 @@
     "coverage": "jest --coverage"
   },
   "devDependencies": {
-    "@types/react": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/types-live": "workspace:^",
     "@swc/core": "catalog:",
@@ -55,7 +54,6 @@
     "@types/node": "catalog:",
     "jest": "catalog:",
     "rimraf": "4.4.1",
-    "ts-node": "10.9.2",
     "ws": "catalog:",
     "@typescript/native": "catalog:",
     "typescript": "catalog:",

@@ -25,6 +25,7 @@ export type PreChecksState =
   | {
       type: PreChecksStateType.CONNECTION_TIMED_OUT;
       retry: () => void;
+      cancel: () => void;
     }
   | {
       type: PreChecksStateType.UNEXPECTED_ERROR;

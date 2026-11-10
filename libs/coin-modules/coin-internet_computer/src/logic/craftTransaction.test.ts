@@ -1,6 +1,6 @@
 import { Cbor } from "@icp-sdk/core/agent";
 import { Principal } from "@icp-sdk/core/principal";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { MAINNET_LEDGER_CANISTER_ID } from "../consts";
 import { InvalidMemoICP } from "../errors";
 import { decodeCanisterIdlArgs, getCanisterIdlFunc, ledgerIdlFactory } from "../network/candid";

@@ -1,5 +1,5 @@
 import { TEST_CONFIG } from "./__tests__/fixtures/coinConfig";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Transaction as BitcoinTransaction, address as bitcoinAddress } from "bitcoinjs-lib";
 import { getAmountAndRecipient, getRbfContext } from "./rbfContext";
 import wallet from "@ledgerhq/wallet-btc/index";

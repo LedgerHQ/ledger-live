@@ -4,7 +4,8 @@
 // and its layer root or at the workspace root overrides the preset for that subtree, and a missing
 // layer config leaves its packages on whatever config is found next. A `-c` flag replaces it for
 // one script. A package that needs one rule of its own passes it on its `lint` script, from the
-// allowlist below.
+// allowlist below. A package whose preset loads an npm package other than oxlint declares
+// @support/lint, the only way nx hashes that package in its lint and marks it affected.
 
 import fs from "node:fs";
 import path from "node:path";
@@ -43,6 +44,26 @@ const CONFIG_FLAG = /(^|\s)(-c|--config)(=|\s)/;
 const RULE_FLAG = /(?:^|\s)(-A|-W|-D|--allow|--warn|--deny)(?:=|\s+)(\S+)/g;
 
 const SHORT_FLAG = { "--allow": "-A", "--warn": "-W", "--deny": "-D" };
+
+// Packages a preset may import without its consumers declaring @support/lint: oxlint is declared
+// by every package that runs it (tool-dependency rule), and @support/lint is the preset itself.
+const PRESET_PACKAGES_DECLARED_ELSEWHERE = new Set(["oxlint", "@support/lint"]);
+
+const DEPENDENCY_FIELDS = [
+  "dependencies",
+  "devDependencies",
+  "peerDependencies",
+  "optionalDependencies",
+];
+
+// A static import or re-export at the start of a line: `import "x"`, `import a from "x"`,
+// `import { a } from "x"`, `import a, { b } from "x"`, `import * as a from "x"`,
+// `export { a } from "x"`, `export * from "x"`, each optionally `type`.
+const IMPORT_CLAUSE = String.raw`(?:[\w$]+\s*,\s*)?(?:\{[^}]*\}|\*(?:\s+as\s+[\w$]+)?|[\w$]+)`;
+const MODULE_SPECIFIER = new RegExp(
+  String.raw`^(?:import|export)\s+(?:type\s+)?(?:${IMPORT_CLAUSE}\s*from\s*)?["']([^"'\n]+)["']`,
+  "gm",
+);
 
 /**
  * @param {string} workspaceRoot
@@ -135,6 +156,77 @@ function layerConfig(workspaceRoot, file) {
 }
 
 /**
+ * @param {string} specifier
+ * @returns {string} the package a bare specifier names, e.g. "@scope/pkg" for "@scope/pkg/sub"
+ */
+function packageName(specifier) {
+  const parts = specifier.split("/");
+  return specifier.startsWith("@") ? parts.slice(0, 2).join("/") : parts[0];
+}
+
+/**
+ * The npm packages a support/lint preset loads, through its relative imports too. Nx hashes them,
+ * and marks a package affected when they change, only through a dependency edge, so a package
+ * linted by such a preset declares @support/lint.
+ *
+ * @param {string} workspaceRoot
+ * @param {string} preset
+ * @returns {string[]}
+ */
+export function presetPackages(workspaceRoot, preset) {
+  const packages = new Set();
+  const seen = new Set();
+  const visit = file => {
+    if (seen.has(file)) return;
+    seen.add(file);
+    let source;
+    try {
+      source = fs.readFileSync(file, "utf8");
+    } catch {
+      return;
+    }
+    for (const [, specifier] of source.matchAll(MODULE_SPECIFIER)) {
+      if (specifier.startsWith(".")) visit(path.resolve(path.dirname(file), specifier));
+      else if (!specifier.startsWith("node:")) packages.add(packageName(specifier));
+    }
+  };
+  visit(path.join(workspaceRoot, "support/lint", `${preset}.mts`));
+  return [...packages].filter(name => !PRESET_PACKAGES_DECLARED_ELSEWHERE.has(name)).sort();
+}
+
+/**
+ * @param {string} workspaceRoot
+ * @param {string} projectRoot
+ * @param {string | undefined} layerConfigFile
+ * @returns {Array<{ file: string, message: string }>}
+ */
+function presetDependency(workspaceRoot, projectRoot, layerConfigFile) {
+  if (!layerConfigFile) return [];
+  const file = `${projectRoot}/package.json`;
+  let manifest;
+  try {
+    manifest = JSON.parse(fs.readFileSync(path.join(workspaceRoot, file), "utf8"));
+  } catch {
+    return [];
+  }
+  if (!manifest.scripts?.lint) return [];
+  if (DEPENDENCY_FIELDS.some(field => manifest[field]?.["@support/lint"])) return [];
+  const preset = LAYER_CONFIGS.get(layerConfigFile);
+  const packages = presetPackages(workspaceRoot, preset);
+  return packages.length === 0
+    ? []
+    : [
+        {
+          file,
+          message:
+            `the ${preset} lint preset loads ${packages.join(", ")}: declare ` +
+            '"@support/lint": "workspace:*" in devDependencies, so nx hashes them in lint and ' +
+            "marks the package affected when they change",
+        },
+      ];
+}
+
+/**
  * @param {string} workspaceRoot
  * @param {string} projectRoot
  * @returns {Array<{ file: string, message: string }>}
@@ -189,6 +281,7 @@ export default {
     "{projectRoot}/package.json",
     "{workspaceRoot}/**/.oxlintrc.*",
     "{workspaceRoot}/**/oxlint.config.*",
+    "{workspaceRoot}/support/lint/**/*.@(mts|ts|js)",
   ],
   check({ workspaceRoot, projectRoot }) {
     const found = [
@@ -220,6 +313,7 @@ export default {
         .filter(file => isLayerConfig(file, projectRoot))
         .flatMap(file => layerConfig(workspaceRoot, file)),
       ...scriptFlags(workspaceRoot, projectRoot),
+      ...presetDependency(workspaceRoot, projectRoot, required),
     ];
   },
 };

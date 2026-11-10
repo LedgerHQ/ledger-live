@@ -41,7 +41,6 @@
     "bignumber.js": "9.1.2"
   },
   "devDependencies": {
-    "@types/react": "catalog:",
     "@types/node": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",

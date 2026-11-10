@@ -88,7 +88,10 @@ import { recoverStateReducer, RecoverStateSliceState } from "./recoverState";
 import genericAwarenessModal, {
   GenericAwarenessModalSliceState,
 } from "./genericAwarenessModalSlice";
-import coinConfigOverrides, { CoinConfigOverridesState } from "./coinConfigOverrides";
+import {
+  liveConfigOverridesReducer as liveConfigOverrides,
+  type LiveConfigOverridesState,
+} from "@shared/live-config-overrides";
 import knownDevices, { KnownDevicesState } from "./knownDevices";
 
 export type State = LLDRTKApiState & {
@@ -126,7 +129,7 @@ export type State = LLDRTKApiState & {
   countervaluesExtraTracking: CountervaluesExtraTrackingState;
   recoverState: RecoverStateSliceState;
   genericAwarenessModal: GenericAwarenessModalSliceState;
-  coinConfigOverrides: CoinConfigOverridesState;
+  liveConfigOverrides: LiveConfigOverridesState;
   knownDevices: KnownDevicesState;
   supportedFiats: SupportedFiatsState;
   contacts: ContactsState;
@@ -180,7 +183,7 @@ const appReducer = combineReducers({
   countervaluesExtraTracking,
   recoverState: recoverStateReducer,
   genericAwarenessModal,
-  coinConfigOverrides,
+  liveConfigOverrides,
   knownDevices,
   supportedFiats: supportedFiatsSlice.reducer,
   contacts: contactsSlice.reducer,

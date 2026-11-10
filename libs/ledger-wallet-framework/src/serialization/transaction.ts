@@ -4,7 +4,7 @@ import type {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import mapValues from "lodash/mapValues";
 
 export const fromTransactionCommonRaw = (raw: TransactionCommonRaw): TransactionCommon => {

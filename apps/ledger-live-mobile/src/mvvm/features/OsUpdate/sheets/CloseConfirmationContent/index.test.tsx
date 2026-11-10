@@ -3,14 +3,14 @@ import { render, screen } from "@tests/test-renderer";
 import { CloseConfirmationContent } from ".";
 
 describe("CloseConfirmationContent", () => {
-  it("warns that leaving now may leave the settings and apps unrestored", () => {
+  it("warns that leaving now may leave the settings and apps not reinstalled", () => {
     render(<CloseConfirmationContent onContinue={jest.fn()} onCancel={jest.fn()} />);
 
     expect(screen.getByTestId("os-update-close-confirmation")).toBeVisible();
     expect(screen.getByText("OS update is in progress")).toBeVisible();
     expect(
       screen.getByText(
-        "Your settings and apps may not be restored properly if you cancel the update now.",
+        "Your settings and apps may not be reinstalled properly if you cancel the update now.",
       ),
     ).toBeVisible();
   });

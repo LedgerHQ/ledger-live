@@ -1,7 +1,7 @@
 import { shortAddressPreview } from "@ledgerhq/live-common/account/index";
 import type { Unit } from "@domain/entity-currency-unit";
 import { useTheme } from "@react-navigation/native";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import CurrencyUnitValue from "./CurrencyUnitValue";

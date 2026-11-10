@@ -1,9 +1,9 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { genAccount } from "../../mock/account";
 import { createFixtureTokenAccount } from "../../mock/fixtures/cryptoCurrencies";
-import { BalanceAssetIdSchema } from "@domain/entity-account-balance";
+import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import { toAccountOperations } from "./operations";
 
 const base = genAccount("operations", { currency: getCryptoCurrencyById("ethereum") });
@@ -250,7 +250,7 @@ describe("toAccountOperations", () => {
     const received = op(tokenAccount.id, "0xb", "IN", "2026-01-02T00:00:00.000Z");
     const sent = op(base.id, "0xa", "OUT", "2026-01-01T00:00:00.000Z");
     const legacy = account([sent], { operations: [received] });
-    const filterAsset = BalanceAssetIdSchema.parse(tokenId);
+    const filterAsset = CryptoOrTokenCurrencyIdSchema.parse(tokenId);
     expect(toAccountOperations(legacy, { filterAsset }).operations.map(row => row.id)).toEqual([
       `${tokenId}-0xb-IN`,
     ]);

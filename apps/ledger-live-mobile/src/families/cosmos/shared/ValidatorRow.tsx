@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
 import cosmosBase from "@ledgerhq/live-common/families/cosmos/cosmosBase";
 import { AccountLike } from "@ledgerhq/types-live";

@@ -66,7 +66,7 @@ describe("mockDescriptors", () => {
     expect(mockDescriptors("bitcoin", 1, ethereum).map(accountIndexOf)).toEqual([0]);
   });
 
-  it("rejects an unknown network", () => {
-    expect(() => mockDescriptors("nope", 1, [])).toThrow(UnknownNetworkError);
+  it.each(["nope", "", "bit coin"])("rejects the unknown network %p", network => {
+    expect(() => mockDescriptors(network, 1, [])).toThrow(UnknownNetworkError);
   });
 });

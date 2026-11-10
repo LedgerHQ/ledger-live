@@ -1,5 +1,5 @@
 import type { AccountLike } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { DEFAULT_GAS, DEFAULT_GAS_PRICE } from "../constants";
 import type { AptosAccount, Transaction } from "../types";
 import { getMaxSendBalance } from "./logic";

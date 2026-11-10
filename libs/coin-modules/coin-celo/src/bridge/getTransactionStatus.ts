@@ -12,7 +12,7 @@ import {
 import { log } from "@ledgerhq/logs";
 import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { CeloAllFundsWarning, CeloEpochProcessingActive, CeloGroupNotVotable } from "../errors";
 import { getPendingStakingOperationAmounts, getVote } from "../logic";
 import { getCeloClient } from "../network/client";

@@ -25,7 +25,6 @@ export function useAssetDetailViewModel(): AssetDetailViewModel {
   const location = useLocation();
   const hideEmptyTokenAccount = useSelector(hideEmptyTokenAccountsSelector);
   const distribution = useDistribution({
-    groupBy: "asset",
     showEmptyAccounts: true,
     hideEmptyTokenAccount,
   });

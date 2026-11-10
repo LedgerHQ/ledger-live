@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { useSelector } from "LLD/hooks/redux";
 import { Trans } from "react-i18next";
 import { localeSelector } from "~/renderer/reducers/settings";

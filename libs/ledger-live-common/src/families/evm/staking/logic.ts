@@ -2,7 +2,7 @@
 import invariant from "invariant";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import type { Unit } from "@ledgerhq/coin-module-framework/api/types";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type {
   StakingAccount,
   StakingDelegation,

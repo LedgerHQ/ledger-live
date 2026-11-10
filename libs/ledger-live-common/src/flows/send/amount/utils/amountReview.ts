@@ -1,6 +1,6 @@
 import type { AccountLike } from "@ledgerhq/types-live";
 import type { TransactionStatus } from "../../../../coin-modules/transaction-types";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 
 /**
  * Known "insufficient funds" amount error names used by bridges.

@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-account-operation",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "Account operation entity: the paginated operations of an account, token operations included",
   "main": "src/index.ts",
@@ -25,6 +25,7 @@
     "@domain/entity-account-balance": "workspace:*",
     "@domain/entity-account-data": "workspace:*",
     "@domain/entity-account-descriptor": "workspace:*",
+    "@domain/entity-currency": "workspace:*",
     "@domain/entity-currency-fiat": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "@shared/schema-primitives": "workspace:*",

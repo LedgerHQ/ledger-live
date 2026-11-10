@@ -5,6 +5,7 @@ import {
   networkFromCurrencyId,
   type AccountDescriptor,
 } from "@domain/entity-account-descriptor";
+import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import type { Account, DerivationMode } from "@ledgerhq/types-live";
 import {
   asDerivationMode,
@@ -82,7 +83,7 @@ export function fromLegacyAccount(account: LegacyAccountIdentity): AccountDescri
 
 function buildDescriptor(account: LegacyAccountIdentity): AccountDescriptor {
   const currency = getCryptoCurrencyById(account.currency.id);
-  const network = networkFromCurrencyId(account.currency.id);
+  const network = networkFromCurrencyId(CryptoCurrencyIdSchema.parse(account.currency.id));
   const derivationMode = asDerivationMode(account.derivationMode);
   const scheme = getDerivationScheme({ derivationMode, currency });
 

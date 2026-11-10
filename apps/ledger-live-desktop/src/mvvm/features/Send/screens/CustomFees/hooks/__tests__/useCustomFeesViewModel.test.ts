@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { act } from "@testing-library/react";
 import { renderHook } from "tests/testSetup";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";

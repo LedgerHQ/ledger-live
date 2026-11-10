@@ -12,7 +12,7 @@ import {
 import Config from "react-native-config";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
-import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useFeature } from "@features/platform-feature-flags";
 import Braze from "@braze/react-native-sdk";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
@@ -164,10 +164,6 @@ const linkingOptions = () => ({
             },
           },
           [ScreenName.Recover]: "recover/:platform",
-          /**
-           * ie: "ledgerlive://market/:currencyId" will open the market detail page for the given currency
-           */
-          [ScreenName.MarketDetail]: "market/:currencyId",
           [NavigatorName.PostOnboarding]: {
             screens: {
               /**
@@ -215,6 +211,7 @@ const linkingOptions = () => ({
               [ScreenName.ExperimentalSettings]: "settings/experimental",
               [ScreenName.DeveloperSettings]: "settings/developer",
               [ScreenName.NotificationsSettings]: "settings/notifications",
+              [ScreenName.DebugMockServer]: "mockserver/config",
             },
           },
 
@@ -276,6 +273,11 @@ const getOnboardingLinkingOptions = (acceptedTermsOfUse: boolean) => ({
               [ScreenName.PlatformApp]: "discover/:platform",
               [ScreenName.Recover]: "recover/:platform",
               [ScreenName.RedirectToOnboardingRecoverFlow]: "recover-restore-flow",
+              [NavigatorName.Settings]: {
+                screens: {
+                  [ScreenName.DebugMockServer]: "mockserver/config",
+                },
+              },
             },
           },
         },
@@ -328,18 +330,15 @@ export const DeeplinksProvider = ({
   const llmAccountListUI = useFeature("llmAccountListUI");
   const genericAwarenessModalFlag = useFeature("lwmGenericAwarenessModal");
 
-  const {
-    shouldDisplayAssetSection,
-    shouldDisplayAggregatedAssets,
-    shouldDisplayAssetDiscoverability,
-  } = useWalletFeaturesConfig("mobile");
   const web3hubFlag = useFeature("web3hub");
   const lwmProductTourFlag = useFeature("lwmProductTour");
   const lwmBackupHubFlag = useFeature("lwmBackupHub");
   const lwmPayTabFlag = useFeature("lwmPayTab");
   const lwmContactsFlag = useFeature("lwmContacts");
+  const predictionsFlag = useFeature("ptxPredictionsLiveAppMobile");
 
   const buySellUiManifestId = buySellUiFlag?.params?.manifestId;
+  const predictionsManifestId = predictionsFlag?.params?.manifest_id;
 
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const theme = themes[resolvedTheme] as ReactNavigation.Theme;
@@ -421,6 +420,14 @@ export const DeeplinksProvider = ({
                       [NavigatorName.Borrow]: {
                         screens: {
                           [ScreenName.Borrow]: "borrow",
+                        },
+                      },
+                      /**
+                       * ie: "ledgerlive://predictions?eventSlug=XXXX" will open the predictions screen on that event
+                       */
+                      [NavigatorName.Predictions]: {
+                        screens: {
+                          [ScreenName.Predictions]: "predictions",
                         },
                       },
                       /**
@@ -560,13 +567,10 @@ export const DeeplinksProvider = ({
                            */
                           [ScreenName.Asset]: "asset/:currencyId",
                           /**
-                           * if shouldDisplayAssetSection is enabled
                            * @params ?sourceScreenName: string
                            * ie: "ledgerlive://crypto-addresses" will open the crypto addresses screen.
                            */
-                          ...(shouldDisplayAssetSection && {
-                            [ScreenName.CryptoAddresses]: "crypto-addresses",
-                          }),
+                          [ScreenName.CryptoAddresses]: "crypto-addresses",
                         },
                       },
                     },
@@ -684,8 +688,6 @@ export const DeeplinksProvider = ({
             const intent = resolveMarketOrAssetDeeplinkIntent({
               hostname,
               pathname,
-              shouldDisplayAggregatedAssets,
-              shouldDisplayAssetDiscoverability,
               categoryParam: searchParams.get("category"),
             });
 
@@ -696,15 +698,10 @@ export const DeeplinksProvider = ({
                   source: intent.source,
                   marketState: intent.marketState,
                 });
-              case "legacy-path":
-                url.pathname = `/${intent.currencyId}`;
-                return getStateFromPath(url.href?.split("://")[1], config);
               case "market-banner":
                 return handleMarketBannerDeeplink(intent.category);
               case "portfolio":
                 return getStateFromPath("portfolio", config);
-              case "continue":
-                break;
             }
           }
 
@@ -887,6 +884,8 @@ export const DeeplinksProvider = ({
               isLiveAppProviderInitialized: liveAppProviderInitialized,
               localManifests,
               remoteManifests: manifests,
+              isPredictionsEnabled: !!predictionsFlag?.enabled,
+              predictionsManifestId,
               config,
             });
           }
@@ -906,12 +905,11 @@ export const DeeplinksProvider = ({
     onDeeplinkReceived,
     buySellUiManifestId,
     dispatch,
-    shouldDisplayAssetSection,
-    shouldDisplayAggregatedAssets,
-    shouldDisplayAssetDiscoverability,
     liveAppProviderInitialized,
     manifests,
     localManifests,
+    predictionsManifestId,
+    predictionsFlag?.enabled,
     web3hubFlag?.enabled,
     genericAwarenessModalFlag?.enabled,
     lwmProductTourFlag?.enabled,

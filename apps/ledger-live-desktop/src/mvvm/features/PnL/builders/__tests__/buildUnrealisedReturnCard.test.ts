@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { TFunction } from "i18next";
 import { trendFromSign } from "@ledgerhq/wallet-pnl";
 import type { PnLCardProps } from "../../components/PnLCard/types";

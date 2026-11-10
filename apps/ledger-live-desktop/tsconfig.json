@@ -16,6 +16,8 @@
       "LLD/*": ["./src/mvvm/*"]
     },
     "outDir": "dist",
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
     "typeRoots": ["./node_modules/@types", "./node_modules/@testing-library"]
   },
   "exclude": ["**/node_modules/*"],

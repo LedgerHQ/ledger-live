@@ -15,7 +15,7 @@ export function ContactsButton() {
       title={title}
       description={description}
       newBadgeLabel={newBadgeLabel}
-      onPress={handleClick}
+      onOpenContacts={handleClick}
     />
   );
 }

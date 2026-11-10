@@ -1,4 +1,3 @@
-import { getEnv } from "@ledgerhq/live-env";
 import { TRANSACTION_TYPE } from "../../constants";
 import type { AleoCoinConfig, TransactionType } from "../../types";
 
@@ -50,8 +49,8 @@ export const getTestnetIntegConfig = (overrides?: Partial<AleoCoinConfig>): Aleo
   networkType: "testnet",
   defaultValidator: "aleo1validator000000000000000000000000000000000000000000000000q",
   apiUrls: {
-    node: getEnv("ALEO_NODE_ENDPOINT"),
-    sdk: getEnv("ALEO_TESTNET_SDK_ENDPOINT"),
+    node: "https://aleo.coin.ledger.com",
+    sdk: "https://aleo-backend.api.live.ledger.com/network/testnet",
   },
   feeByTransactionType: mockFeeByTransactionType,
   feeSafetyMultiplier: 1,

@@ -10,8 +10,15 @@ import { PnLSection } from "./components/PnL";
 import { ChartSection } from "./components/ChartSection";
 import { cn } from "LLD/utils/cn";
 import { useTranslation } from "react-i18next";
+import { AccountAnalyticsScreen } from "./screens/AccountAnalytics";
+import { useAnalyticsGateViewModel } from "./useAnalyticsGateViewModel";
 
 export default function Analytics() {
+  const { enabled } = useAnalyticsGateViewModel();
+  return enabled ? <AccountAnalyticsScreen /> : <LegacyAnalytics />;
+}
+
+function LegacyAnalytics() {
   const viewModel = useAnalyticsViewModel();
   return <AnalyticsView viewModel={viewModel} />;
 }

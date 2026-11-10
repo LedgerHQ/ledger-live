@@ -44,6 +44,7 @@ export type LineChartViewModelResult<TRange extends string = string> = Readonly<
   xAxis?: LineChartXAxisConfig;
   yAxis?: LineChartYAxisConfig;
   rangeSelectorTrailing?: ReactNode;
+  plotContent?: ReactNode;
 }>;
 
 export function useLineChartViewModel<TRange extends string>({
@@ -72,6 +73,7 @@ export function useLineChartViewModel<TRange extends string>({
   xAxis,
   yAxis,
   rangeSelectorTrailing,
+  plotContent,
 }: LineChartProps<TRange>): LineChartViewModelResult<TRange> {
   const { t } = useTranslation();
   const { theme } = useTheme();
@@ -129,5 +131,6 @@ export function useLineChartViewModel<TRange extends string>({
     xAxis,
     yAxis,
     rangeSelectorTrailing,
+    plotContent,
   };
 }

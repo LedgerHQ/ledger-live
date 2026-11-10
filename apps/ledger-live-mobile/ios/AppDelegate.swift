@@ -17,6 +17,7 @@ import Expo
 import ExpoModulesCore
 import ExpoSplashScreen
 
+import SharedNativePerformance
 
 @main
 class AppDelegate: RCTAppDelegate, UNUserNotificationCenterDelegate {
@@ -29,6 +30,7 @@ class AppDelegate: RCTAppDelegate, UNUserNotificationCenterDelegate {
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
+    AppStartupModule.recordLaunch(application)
     self.moduleName = "ledgerlivemobile"
     self.dependencyProvider = RCTAppDependencyProvider()
 
@@ -70,12 +72,17 @@ class AppDelegate: RCTAppDelegate, UNUserNotificationCenterDelegate {
       pushAutoEnabled: pushAutoEnabled
     )
 
-    if !pushAutoEnabled {
-      print(
-        "iOS Push Auto disabled - Registering for push manually."
-      )
+    #if targetEnvironment(simulator)
+      // RNFB skips registerForRemoteNotifications on ARM64 simulators, so without this there is no APNs token.
       registerForPushNotifications()
-    }
+    #else
+      if !pushAutoEnabled {
+        print(
+          "iOS Push Auto disabled - Registering for push manually."
+        )
+        registerForPushNotifications()
+      }
+    #endif
 
     BrazeReactUtils
       .sharedInstance()

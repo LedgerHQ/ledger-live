@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 
 export interface AccountBannerState {
   stakeProvider: "lido" | "kiln";

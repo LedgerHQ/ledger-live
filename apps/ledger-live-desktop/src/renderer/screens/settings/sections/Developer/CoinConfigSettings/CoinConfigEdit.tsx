@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "LLD/hooks/redux";
-import { setCoinConfigOverride } from "~/renderer/reducers/coinConfigOverrides";
+import { setLiveConfigOverride } from "@shared/live-config-overrides";
 import { Button, TextInput } from "@ledgerhq/lumen-ui-react";
 import Alert from "~/renderer/components/Alert";
 
@@ -28,14 +28,14 @@ const CoinConfigEdit: React.FC<Props> = ({ configKey, resolvedValue, overrideVal
   const handleRestore = useCallback(() => {
     setError(undefined);
     setInputValue(undefined);
-    dispatch(setCoinConfigOverride({ key: configKey, value: undefined }));
+    dispatch(setLiveConfigOverride({ key: configKey, value: undefined }));
   }, [dispatch, configKey]);
 
   const handleOverride = useCallback(() => {
     setError(undefined);
     try {
       const parsed: unknown = JSON.parse(inputValue!);
-      dispatch(setCoinConfigOverride({ key: configKey, value: parsed }));
+      dispatch(setLiveConfigOverride({ key: configKey, value: parsed }));
       setInputValue(undefined);
     } catch (e) {
       setError(e);

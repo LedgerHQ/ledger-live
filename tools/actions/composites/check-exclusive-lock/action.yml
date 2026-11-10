@@ -1,0 +1,39 @@
+name: "Check the exclusive lock store"
+description: "Check that R2 takes E2E exclusive lock writes, and output the lock mode for the tests after it: remote, or local with a warning annotation when R2 fails"
+
+inputs:
+  r2_endpoint:
+    description: "R2 endpoint; the check fails the job when the R2 inputs are empty"
+    required: false
+    default: ""
+  r2_access_key:
+    description: "R2 access key ID"
+    required: false
+    default: ""
+  r2_secret_key:
+    description: "R2 secret access key"
+    required: false
+    default: ""
+outputs:
+  mode:
+    description: "E2E_EXCLUSIVE_LOCK_MODE for the tests: remote or local, empty on refs that predate the check"
+    value: ${{ steps.check.outputs.mode }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Check the exclusive lock store (R2)
+      id: check
+      shell: bash
+      env:
+        E2E_EXCLUSIVE_LOCK_ENDPOINT: ${{ inputs.r2_endpoint }}
+        E2E_EXCLUSIVE_LOCK_BUCKET: ${{ inputs.r2_endpoint && 'ledger-live-cache' || '' }}
+        E2E_EXCLUSIVE_LOCK_ACCESS_KEY_ID: ${{ inputs.r2_access_key }}
+        E2E_EXCLUSIVE_LOCK_SECRET_ACCESS_KEY: ${{ inputs.r2_secret_key }}
+      run: |
+        # Refs that predate the check lock in R2 without it.
+        if [ ! -f libs/live-e2e-shared/src/cli/checkExclusiveLock.ts ]; then
+          echo "No exclusive lock check on this ref: its tests lock in R2"
+          exit 0
+        fi
+        pnpm --dir libs/live-e2e-shared e2e-cli check-exclusive-lock

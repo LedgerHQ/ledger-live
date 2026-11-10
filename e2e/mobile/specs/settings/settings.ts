@@ -34,14 +34,17 @@ export function runUserClearApplicationCacheTest(
     tags.forEach(tag => $Tag(tag));
 
     test("Clear the application cache", async () => {
-      await app.portfolio.tapTabSelector("Accounts");
+      await app.portfolio.openCryptoAddresses();
       const countBeforeClearingCache = await app.portfolio.countAccounts();
+      app.portfolio.expectAtLeastOneAccount(countBeforeClearingCache);
+      await app.common.goToPreviousPage();
       await app.mainNavigation.navigateToSettings();
       await app.settings.navigateToHelpSettings();
       await app.settingsHelp.clickOnClearCacheRow();
       await app.settingsHelp.checkClearCacheModalIsDisplayed();
       await app.settingsHelp.clickOnClearCacheButton();
       await app.mainNavigation.waitForWallet40Ready();
+      await app.portfolio.openCryptoAddresses();
       const countAfterClearingCache = await app.portfolio.countAccounts();
       await app.portfolio.compareAccountsCount(countBeforeClearingCache, countAfterClearingCache);
     });
@@ -108,7 +111,6 @@ export function runUserCanSelectCounterValueToDisplayAmountInLedgerLive(
       await app.settingsGeneral.expectCounterValue("EUR");
       await app.mainNavigation.openPortfolioViaDeeplink();
       await app.portfolio.expectTotalBalanceCounterValue("€");
-      await app.portfolio.expectBalanceDiffToBeVisible();
       await app.portfolio.expectAssetRowCounterValue(account.currency.name, "€");
       await app.portfolio.expectOperationCounterValue("€");
     });

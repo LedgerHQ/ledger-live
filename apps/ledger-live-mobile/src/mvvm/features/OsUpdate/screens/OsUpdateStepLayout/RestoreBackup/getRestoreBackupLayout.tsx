@@ -15,7 +15,6 @@ import { UpdatesAppliedScreen } from "../../UpdatesAppliedScreen";
 import { ContinueOnDeviceContent } from "../../../sheets/ContinueOnDeviceContent";
 import { DeviceDisconnectedContent } from "../../../sheets/DeviceDisconnectedContent";
 import { DeviceLockedContent } from "../../../sheets/DeviceLockedContent";
-import { OutOfMemoryContent } from "../../../sheets/OutOfMemoryContent";
 import { SecureConnectionRefusedContent } from "../../../sheets/SecureConnectionRefusedContent";
 import { UnexpectedErrorContent } from "../../../sheets/UnexpectedErrorContent";
 
@@ -30,7 +29,6 @@ type Props = Readonly<{
   lastDisplay?: ProgressDisplay;
   onClose: () => void;
   trackClick: (button: OsUpdateButton) => void;
-  exportLogs: () => void;
 }>;
 
 function getScreen({
@@ -58,7 +56,14 @@ function getScreen({
           />
         );
       }
-      return <UpdatesAppliedScreen productName={productName} isRestoreOnly onClose={onClose} />;
+      return (
+        <UpdatesAppliedScreen
+          productName={productName}
+          isRestoreOnly
+          restoreStatus={state.restoreResult?.restoreStatus}
+          onClose={onClose}
+        />
+      );
     case RestoreBackupStateType.LOADING:
     case RestoreBackupStateType.DEVICE_LOCKED:
     case RestoreBackupStateType.AWAITING_ALLOW_SECURE_CONNECTION:
@@ -69,7 +74,6 @@ function getScreen({
     case RestoreBackupStateType.ALLOW_SECURE_CONNECTION_REFUSED:
     case RestoreBackupStateType.DEVICE_DISCONNECTED:
     case RestoreBackupStateType.CONNECTION_TIMED_OUT:
-    case RestoreBackupStateType.OUT_OF_MEMORY:
     case RestoreBackupStateType.UNEXPECTED_ERROR:
       return (
         <UpdateProgressScreen
@@ -90,7 +94,6 @@ function getSheet({
   deviceModelId,
   deviceName,
   trackClick,
-  exportLogs,
 }: Props): OsUpdateSheetSpec | undefined {
   switch (state.type) {
     case RestoreBackupStateType.LOADING:
@@ -111,37 +114,39 @@ function getSheet({
       };
     case RestoreBackupStateType.ALLOW_SECURE_CONNECTION_REFUSED: {
       const onRetry = () => {
-        trackClick(OsUpdateButton.RETRY);
+        trackClick(OsUpdateButton.RETRY_SECURE_CONNECTION);
         state.retry();
       };
       const onCancel = () => {
-        trackClick(OsUpdateButton.CANCEL);
+        trackClick(OsUpdateButton.CANCEL_SECURE_CONNECTION);
         state.cancel();
       };
       return {
         hideHeader: true,
-        content: <SecureConnectionRefusedContent onRetry={onRetry} onCancel={onCancel} />,
+        content: (
+          <SecureConnectionRefusedContent
+            deviceModelId={deviceModelId}
+            onRetry={onRetry}
+            onCancel={onCancel}
+          />
+        ),
       };
     }
     case RestoreBackupStateType.DEVICE_DISCONNECTED:
-      return { content: <DeviceDisconnectedContent /> };
-    case RestoreBackupStateType.CONNECTION_TIMED_OUT:
-      return getConnectionTimedOutSheet({ retry: state.retry, trackClick, exportLogs });
-    case RestoreBackupStateType.OUT_OF_MEMORY: {
-      const onCancel = () => {
-        trackClick(OsUpdateButton.CANCEL);
-        state.cancel();
-      };
       return {
-        content: <OutOfMemoryContent onCancel={onCancel} />,
+        content: (
+          <DeviceDisconnectedContent deviceModelId={deviceModelId} deviceName={deviceName} />
+        ),
       };
-    }
+    case RestoreBackupStateType.CONNECTION_TIMED_OUT:
+      return getConnectionTimedOutSheet({ retry: state.retry, cancel: state.cancel, trackClick });
     case RestoreBackupStateType.UNEXPECTED_ERROR: {
       const onCancel = () => {
-        trackClick(OsUpdateButton.CANCEL);
+        trackClick(OsUpdateButton.CANCEL_OS_UPDATE);
         state.cancel();
       };
       return {
+        hideHeader: true,
         content: <UnexpectedErrorContent onCancel={onCancel} />,
       };
     }
@@ -174,7 +179,6 @@ export function getRestoreBackupProgress(state: RestoreBackupState): FinishingPr
     case RestoreBackupStateType.ALLOW_SECURE_CONNECTION_REFUSED:
     case RestoreBackupStateType.DEVICE_DISCONNECTED:
     case RestoreBackupStateType.CONNECTION_TIMED_OUT:
-    case RestoreBackupStateType.OUT_OF_MEMORY:
     case RestoreBackupStateType.UNEXPECTED_ERROR:
       return { display: undefined, isDone: false };
     default: {

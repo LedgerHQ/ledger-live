@@ -1,8 +1,9 @@
 import type { AccountAnalyticsIntroductionStatus } from "../types";
 
 export function shouldShowAccountAnalyticsIntroduction({
+  isEnabled,
   hasConfirmedHistory,
   hasDismissed,
 }: AccountAnalyticsIntroductionStatus): boolean {
-  return hasConfirmedHistory && !hasDismissed;
+  return isEnabled && hasConfirmedHistory && !hasDismissed;
 }

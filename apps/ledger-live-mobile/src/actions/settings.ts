@@ -49,6 +49,7 @@ import {
   SettingsSetClosedWithdrawBannerPayload,
   SettingsSetHasSeenAnalyticsOptInPrompt,
   SettingsSetDebugOsUpdateBannerMode,
+  SettingsSetMockServerSettingsPayload,
   SettingsSetDismissedContentCardsPayload,
   SettingsClearDismissedContentCardsPayload,
   SettingsAddStarredMarketcoinsPayload,
@@ -56,7 +57,6 @@ import {
   SettingsSetFromLedgerSyncOnboardingPayload,
   SettingsSetHasBeenRedirectedToPostOnboardingPayload,
   SettingsSetMevProtectionPayload,
-  SettingsSetSelectedTabPortfolioAssetsPayload,
   SettingsSetIsRebornPayload,
   SettingsIsOnboardingFlowPayload,
   SettingsIsOnboardingFlowReceiveSuccessPayload,
@@ -247,6 +247,9 @@ export const setHasSeenAnalyticsOptInPrompt = createAction<SettingsSetHasSeenAna
 export const setDebugOsUpdateBannerMode = createAction<SettingsSetDebugOsUpdateBannerMode>(
   SettingsActionTypes.SET_DEBUG_OS_UPDATE_BANNER_MODE,
 );
+export const setMockServerSettings = createAction<SettingsSetMockServerSettingsPayload>(
+  SettingsActionTypes.SET_MOCK_SERVER_SETTINGS,
+);
 
 export const setAnalyticsConsentInfo = createAction<SettingsSetAnalyticsConsentInfoPayload>(
   SettingsActionTypes.SET_ANALYTICS_CONSENT_INFO,
@@ -274,11 +277,6 @@ export const removeStarredMarketCoins = createAction<SettingsRemoveStarredMarket
 export const setMevProtection = createAction<SettingsSetMevProtectionPayload>(
   SettingsActionTypes.SET_MEV_PROTECTION,
 );
-
-export const setSelectedTabPortfolioAssets =
-  createAction<SettingsSetSelectedTabPortfolioAssetsPayload>(
-    SettingsActionTypes.SET_SELECTED_TAB_PORTFOLIO_ASSETS,
-  );
 
 export const setHasDismissedContactsFeatureIntroduction =
   createAction<SettingsSetHasDismissedContactsFeatureIntroductionPayload>(

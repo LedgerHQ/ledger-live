@@ -117,7 +117,7 @@ jobs:
   post-build-summary:
     name: "Post build status to PR"
     needs: [build-web-tools]
-    if: ${{ always() && !cancelled() && github.event_name == 'pull_request' }}
+    if: ${{ always() && !cancelled() && github.event_name == 'pull_request' && needs.build-web-tools.result != 'skipped' }}
     runs-on: ubuntu-24.04
     permissions:
       contents: read

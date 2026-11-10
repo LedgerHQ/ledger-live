@@ -1,8 +1,9 @@
 import { track } from "@shared/analytics";
 import { TrackScreen } from "@shared/analytics-react";
-import React, { useCallback, memo, useMemo, useState } from "react";
+import React, { useCallback, memo, useEffect, useMemo, useRef, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
 import { dmkToLedgerDeviceIdMap, type DeviceConnectionResult } from "@ledgerhq/live-dmk-shared";
 import { ConnectNewDevice } from "LLM/components/ConnectNewDevice";
 import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
@@ -10,6 +11,13 @@ import { Flex, Icons, SlideIndicator } from "@ledgerhq/native-ui";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "~/context/Locale";
 import { DeviceOnboardingCloseBar } from "LLM/features/DeviceOnboarding/components/CloseBar";
+import {
+  useDeviceOnboardingHost,
+  useDeviceOnboardingSession,
+} from "LLM/features/DeviceOnboarding/hooks/DeviceOnboardingProvider";
+import { useOfferSync } from "LLM/features/DeviceOnboarding/hooks/useOfferSync";
+import { selectPairedKnownDevices } from "LLM/features/DeviceOnboarding/utils/pairedDevice";
+import { shouldRevealFunnel } from "LLM/features/DeviceOnboarding/utils/pairingHold";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { NavigatorName, ScreenName } from "~/const";
 import { ConnectDevice } from "./setupDevice/scenes";
@@ -32,6 +40,7 @@ import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/typ
 import styled from "styled-components/native";
 import SafeAreaView from "~/components/SafeAreaView";
 import Button from "~/components/PreventDoubleClickButton";
+import { knownDevicesSelector } from "~/reducers/knownDevices";
 import {
   hasCompletedOnboardingSelector,
   onboardingTypeSelector,
@@ -127,6 +136,29 @@ export default memo(function () {
   const isFundWalletNewSetup = isFundWalletEnabled && onboardingType === OnboardingType.setupNew;
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const [wasReadOnlyAtEntry] = useState(readOnlyModeEnabled);
+  const [awaitingRoute, setAwaitingRoute] = useState(false);
+  const [pairedDevice, setPairedDevice] = useState<Device>();
+  const revealed = useRef(false);
+  const dmk = useDeviceManagementKit();
+  const offerSync = useOfferSync();
+  const knownDevices = useSelector(knownDevicesSelector);
+  const pairedKnownDevices = useMemo(
+    () => selectPairedKnownDevices(knownDevices, pairedDevice?.deviceId),
+    [knownDevices, pairedDevice?.deviceId],
+  );
+  const host = useMemo(
+    () => ({
+      navigation,
+      dmk,
+      knownDevices: pairedKnownDevices,
+      offerSync,
+      wasReadOnlyAtEntry,
+    }),
+    [dmk, navigation, offerSync, pairedKnownDevices, wasReadOnlyAtEntry],
+  );
+  useDeviceOnboardingHost(host);
+  const session = useDeviceOnboardingSession();
+  const { adopt, discard } = session;
 
   const seedConfiguration = useMemo(() => {
     let config = fromAccessExistingWallet ? "" : "new_seed";
@@ -148,7 +180,7 @@ export default memo(function () {
         return;
       }
       if (opensConnectNewDevice) {
-        navigation.navigate(ScreenName.DeviceOnboardingFunnel, {
+        navigation.replace(ScreenName.DeviceOnboardingFunnel, {
           pairedDeviceId: pairedDevice?.deviceId,
           wasReadOnlyAtEntry,
           ...(unseededFunnel ? { connectUnseededDevice: true } : {}),
@@ -205,21 +237,39 @@ export default memo(function () {
     ],
   );
 
+  useEffect(() => {
+    if (!awaitingRoute || revealed.current) return;
+    if (!shouldRevealFunnel(session.state, session.error)) return;
+    revealed.current = true;
+    onFinish(pairedDevice);
+  }, [awaitingRoute, onFinish, pairedDevice, session.error, session.state]);
+
   const onNewDeviceConnected = useCallback(
     (result: DeviceConnectionResult) => {
-      onFinish({
+      const pairedDevice: Device = {
         deviceId: result.compatDeviceId,
         deviceName: result.compatDeviceName,
         modelId: dmkToLedgerDeviceIdMap[result.connectedDevice.modelId],
         wired: result.compatDeviceWired,
-      });
+      };
+      if (!opensConnectNewDevice) {
+        onFinish(pairedDevice);
+        return;
+      }
+      setPairedDevice(pairedDevice);
+      setAwaitingRoute(true);
+      adopt(result);
     },
-    [onFinish],
+    [adopt, onFinish, opensConnectNewDevice],
   );
 
   const closeNewDevice = useCallback(() => {
+    if (awaitingRoute && !revealed.current) {
+      discard();
+      setAwaitingRoute(false);
+    }
     navigation.goBack();
-  }, [navigation]);
+  }, [awaitingRoute, discard, navigation]);
 
   const openDeviceSelection = useCallback(() => {
     // The device list then helps the user set up, without a new Bluetooth pairing.
@@ -235,7 +285,7 @@ export default memo(function () {
           onPress={closeNewDevice}
         />
         <Box lx={{ flex: 1 }}>
-          {isFocused ? (
+          {isFocused || awaitingRoute ? (
             <ConnectNewDevice
               onConnected={onNewDeviceConnected}
               onClose={closeNewDevice}

@@ -1,5 +1,17 @@
 # @ledgerhq/live-dmk
 
+## 0.38.0
+
+### Minor Changes
+
+- [#24147](https://github.com/LedgerHQ/ledger-live/pull/24147) [`a49773f`](https://github.com/LedgerHQ/ledger-live/commit/a49773f51027c607adac26d1133a36a37ada456c) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Bump `@ledgerhq/dmk-ledger-wallet` to 0.8.0 and `@ledgerhq/device-signer-kit-solana` to 1.15.0, and keep the backup and show the out-of-memory screen when the OS update restore ends with an out-of-memory status
+
+## 0.38.0-next.0
+
+### Minor Changes
+
+- [#24147](https://github.com/LedgerHQ/ledger-live/pull/24147) [`a49773f`](https://github.com/LedgerHQ/ledger-live/commit/a49773f51027c607adac26d1133a36a37ada456c) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Bump `@ledgerhq/dmk-ledger-wallet` to 0.8.0 and `@ledgerhq/device-signer-kit-solana` to 1.15.0, and keep the backup and show the out-of-memory screen when the OS update restore ends with an out-of-memory status
+
 ## 0.37.0
 
 ### Minor Changes
@@ -289,31 +301,5 @@
 - [#19794](https://github.com/LedgerHQ/ledger-live/pull/19794) [`2388d41`](https://github.com/LedgerHQ/ledger-live/commit/2388d4171bd2e5caa2009e8eadcd06548d2209ef) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Handle non-onboarded devices according to the requirements of each Connect App flow
 
 - [#19681](https://github.com/LedgerHQ/ledger-live/pull/19681) [`762b5eb`](https://github.com/LedgerHQ/ledger-live/commit/762b5ebf332566879a10ab1f16ef85a3da360fe7) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Fix USB transport routing for Device Intent Executor legacy `withDevice` intents.
-
-## 0.28.0
-
-### Minor Changes
-
-- [#19226](https://github.com/LedgerHQ/ledger-live/pull/19226) [`d91f849`](https://github.com/LedgerHQ/ledger-live/commit/d91f849185c7a30514349be655bba69dd77bb8c8) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Match device deprecation configs against Ledger Live device model ids.
-
-- [#18978](https://github.com/LedgerHQ/ledger-live/pull/18978) [`0225804`](https://github.com/LedgerHQ/ledger-live/commit/0225804cd0f39b90050f52b14e1b159340f0530e) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Extract connectDevice shared core from live-dmk-mobile to live-dmk-shared
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.35.6
-
-## 0.28.0-next.0
-
-### Minor Changes
-
-- [#19226](https://github.com/LedgerHQ/ledger-live/pull/19226) [`d91f849`](https://github.com/LedgerHQ/ledger-live/commit/d91f849185c7a30514349be655bba69dd77bb8c8) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Match device deprecation configs against Ledger Live device model ids.
-
-- [#18978](https://github.com/LedgerHQ/ledger-live/pull/18978) [`0225804`](https://github.com/LedgerHQ/ledger-live/commit/0225804cd0f39b90050f52b14e1b159340f0530e) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Extract connectDevice shared core from live-dmk-mobile to live-dmk-shared
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.35.6-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

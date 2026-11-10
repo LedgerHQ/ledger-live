@@ -1,6 +1,6 @@
 import { track } from "@shared/analytics";
 import React from "react";
-import { renderWithReactQuery, withFlagOverrides } from "@tests/test-renderer";
+import { renderWithReactQuery } from "@tests/test-renderer";
 import { expectedNavigationParams } from "../const";
 import { TopBar } from "../index";
 import { NavigatorName, ScreenName } from "~/const/navigation";
@@ -66,18 +66,8 @@ describe("TopBar navigation", () => {
     });
   });
 
-  it("should not render the search icon when asset discoverability is disabled", () => {
-    const { queryByTestId } = renderWithReactQuery(<TopBar />);
-
-    expect(queryByTestId("topbar-search")).toBeNull();
-  });
-
-  it("should navigate to GlobalSearch when the search icon is pressed and asset discoverability is enabled", async () => {
-    const { user, getByTestId } = renderWithReactQuery(<TopBar />, {
-      overrideInitialState: withFlagOverrides({
-        lwmWallet40: { params: { assetDiscoverability: true } },
-      }),
-    });
+  it("should navigate to GlobalSearch when the search icon is pressed", async () => {
+    const { user, getByTestId } = renderWithReactQuery(<TopBar />);
 
     await user.press(getByTestId("topbar-search"));
 

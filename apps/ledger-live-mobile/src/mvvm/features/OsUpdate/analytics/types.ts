@@ -32,14 +32,18 @@ export enum OsUpdatePage {
 export enum OsUpdateButton {
   BACK = "Back",
   CANCEL = "Cancel",
+  CANCEL_OS_UPDATE = "Cancel OS update",
+  CANCEL_SECURE_CONNECTION = "Cancel secure connection",
   CLOSE = "Close",
   CONTINUE = "Continue",
   CREATE_NEW_BACKUP = "Create new backup",
   DELETE_BACKUP = "Delete backup",
+  FINISH = "Finish",
+  LEDGER_SUPPORT = "Ledger support",
   RELEASE_NOTES = "Release notes",
+  RESTART_OS_UPDATE = "Restart OS update",
   RESTORE = "Restore",
-  RETRY = "Retry",
-  SEND_REPORT = "Send report",
+  RETRY_SECURE_CONNECTION = "Retry secure connection",
   START = "Start",
   USE_EXISTING_BACKUP = "Use existing backup",
 }
@@ -69,13 +73,13 @@ export enum OsUpdateDeviceAction {
 
 export enum OsUpdateFailureType {
   UNEXPECTED_ERROR = "UnexpectedError",
-  OUT_OF_MEMORY = "OutOfMemory",
   INSTALL_FIRMWARE_REFUSED = "InstallFirmwareRefused",
 }
 
 export enum OsUpdateRestoreStatus {
   FULL = "full",
   PARTIAL = "partial",
+  OUT_OF_MEMORY = "outOfMemory",
   NONE = "none",
 }
 

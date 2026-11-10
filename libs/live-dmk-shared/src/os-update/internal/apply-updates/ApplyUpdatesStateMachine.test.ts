@@ -124,11 +124,6 @@ const BACKUP: Backup = {
 
 const RESTORE_RESULT = { restoredApps: [] } as unknown as RestoreBackupDAOutput;
 
-const OUT_OF_MEMORY_ERROR = {
-  _tag: "OutOfMemoryDAError",
-  message: "no room left",
-};
-
 const success = (data: unknown) => ({ status: DmkResultStatus.Success, data });
 
 type DeviceActionRun = {
@@ -1036,6 +1031,16 @@ describe("ApplyUpdatesStateMachine", () => {
       );
     });
 
+    it("should report the OS version the device runs once the updates are applied", async () => {
+      nextOsVersion(ON_OS, osVersion({ seVersion: "2.3.0" }));
+      await reachUpdateStart();
+      await completeDeviceAction(undefined);
+
+      await completeWaitForDeviceReady();
+
+      expect(sentStatesOfType(ApplyUpdatesStateType.UPDATES_APPLIED)[0].osVersion).toBe("2.3.0");
+    });
+
     it("should report no restore result when the device had no backup", async () => {
       await reachUpdateStart();
       await completeDeviceAction(undefined);
@@ -1066,35 +1071,6 @@ describe("ApplyUpdatesStateMachine", () => {
       await completeWaitForDeviceReady();
       expect(restoreChildState()).toBe("UnrecoverableError");
       expect(lastSentStateType()).toBe(ApplyUpdatesStateType.UNEXPECTED_ERROR);
-    });
-
-    it("should emit OUT_OF_MEMORY when the device runs out of room reinstalling the apps", async () => {
-      getBackup.mockResolvedValue(BACKUP);
-      await reachUpdateStart();
-      await completeDeviceAction(undefined);
-      await completeWaitForDeviceReady();
-      await failDeviceAction(OUT_OF_MEMORY_ERROR);
-
-      expect(restoreChildState()).toBe("OutOfMemory");
-      expect(lastSentStateType()).toBe(ApplyUpdatesStateType.OUT_OF_MEMORY);
-      expect(sentStatesOfType(ApplyUpdatesStateType.OUT_OF_MEMORY)[0].error).toEqual(
-        OUT_OF_MEMORY_ERROR,
-      );
-    });
-
-    it("should send STOP to the parent when cancel is called on the OUT_OF_MEMORY state", async () => {
-      getBackup.mockResolvedValue(BACKUP);
-      await reachUpdateStart();
-      await completeDeviceAction(undefined);
-      await completeWaitForDeviceReady();
-      await failDeviceAction(OUT_OF_MEMORY_ERROR);
-
-      sentStatesOfType(ApplyUpdatesStateType.OUT_OF_MEMORY)[0].cancel();
-      await settle();
-
-      expect(parentEvents).toContainEqual({
-        type: OsUpdatesOrchestratorStateMachineEventType.STOP,
-      });
     });
 
     it("should hand any other restore failure over to CheckErrorCause", async () => {

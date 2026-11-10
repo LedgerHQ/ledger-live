@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { isSegwitDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { address as btcAddress } from "bitcoinjs-lib";
 import cashaddr from "cashaddrjs";

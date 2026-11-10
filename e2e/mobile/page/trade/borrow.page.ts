@@ -79,7 +79,7 @@ export default class BorrowPage {
   @Step("Expect borrow native screen visible")
   async expectBorrowScreenVisible() {
     await waitForElementById(this.borrowScreenId);
-    await waitForElementById(app.common.walletApiWebview, undefined, { checkVisibility: false });
+    await app.common.waitForWalletApiWebview();
     await waitForWebviewContentToRender();
   }
 

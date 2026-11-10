@@ -37,7 +37,11 @@ describe("toChecksScreenState", () => {
     expect(toChecksScreenState("done", false, true)).toBe("succeeded");
   });
 
-  it("should hide the success screen when the device was not seeded", () => {
+  it("should keep the success screen when an unseeded device finishes setup", () => {
+    expect(toChecksScreenState("done", false, false)).toBe("succeeded");
+  });
+
+  it("should hide the success screen when an unseeded device leaves for sync", () => {
     expect(toChecksScreenState("syncOffer", false, false)).toBeNull();
     expect(toChecksScreenState("done", false)).toBeNull();
   });

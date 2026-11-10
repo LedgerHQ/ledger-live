@@ -1,5 +1,5 @@
 import { act } from "@testing-library/react-native";
-import { renderHook, withFlagOverrides } from "@tests/test-renderer";
+import { renderHook } from "@tests/test-renderer";
 import { NavigatorName, ScreenName } from "~/const";
 import { Asset } from "~/types/asset";
 import { CategorizedAssets } from "@ledgerhq/asset-aggregation/assetCategorization/types";
@@ -119,12 +119,8 @@ describe("usePortfolioStablecoinsSectionViewModel", () => {
       expect(readOnlyResult.current.hasMore).toBe(false);
     });
 
-    it("should navigate to Crypto screen on onPressShowAll when assetSection is enabled", () => {
-      const { result } = renderHook(() => usePortfolioStablecoinsSectionViewModel(), {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { params: { assetSection: true } },
-        }),
-      });
+    it("should navigate to Crypto screen on onPressShowAll", () => {
+      const { result } = renderHook(() => usePortfolioStablecoinsSectionViewModel());
 
       act(() => result.current.onPressShowAll());
 
@@ -140,13 +136,13 @@ describe("usePortfolioStablecoinsSectionViewModel", () => {
 
       act(() => result.current.onItemPress(result.current.assetsToDisplay[0]));
 
-      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Accounts, {
-        screen: ScreenName.Asset,
-        params: { currency: ethereum },
+      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.AssetDetail, {
+        screen: ScreenName.AssetDetail,
+        params: { currencyId: ethereum.id, source: "portfolio" },
       });
     });
 
-    it("should navigate to MarketDetail on onItemPress for placeholder assets", () => {
+    it("should open Asset Detail for a placeholder and forward its market id", () => {
       const placeholder: Asset = {
         ...createAsset(bitcoin, 0),
         isPlaceholder: true,
@@ -156,7 +152,14 @@ describe("usePortfolioStablecoinsSectionViewModel", () => {
 
       act(() => result.current.onItemPress(placeholder));
 
-      expect(mockNavigate).toHaveBeenCalledWith(ScreenName.MarketDetail, { currencyId: "bitcoin" });
+      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.AssetDetail, {
+        screen: ScreenName.AssetDetail,
+        params: {
+          currencyId: bitcoin.id,
+          source: "portfolio",
+          marketState: { id: "bitcoin", ledgerIds: [bitcoin.id] },
+        },
+      });
     });
   });
 

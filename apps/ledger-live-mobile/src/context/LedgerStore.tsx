@@ -24,6 +24,7 @@ import {
   getCryptoAssetsCacheState,
   getFeatureFlagsState,
   saveFeatureFlagsState,
+  getLiveConfigOverridesState,
   getSettings,
   getBle,
   getHistory,
@@ -58,10 +59,15 @@ import { importMarketListConfig } from "~/reducers/market";
 import { importMarketBannerState } from "~/reducers/marketBanner";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { importWalletState } from "~/reducers/wallet";
+import { restoreAccountAnalyticsIntroductionFromStorage } from "LLM/features/AccountDetail/analyticsIntroductionStorage";
 import { importLargeMoverState } from "~/actions/largeMoverLandingPage";
 import { initHistory } from "~/reducers/history";
 import { restoreTokensToCache, parsePersistedCAL } from "@domain/api-currency-token";
 import { setAllOverrides, setBannerVisible, type PartialFeatures } from "@shared/feature-flags";
+import {
+  sanitizePersistedOverrides,
+  setAllLiveConfigOverrides,
+} from "@shared/live-config-overrides";
 import { initIdentities } from "../helpers/identities";
 import { whenCachedFlagsSettled } from "./whenCachedFlagsSettled";
 import { startCountervaluesWhenReady } from "./startCountervaluesWhenReady";
@@ -119,6 +125,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         cryptoAssetsCache,
         persistedIdentities,
         persistedFeatureFlags,
+        persistedLiveConfigOverrides,
         legacyUser,
         historyState,
       ] = await Promise.all([
@@ -141,6 +148,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         retry(getCryptoAssetsCacheState, MAX_RETRIES, RETRY_DELAY),
         retry(getIdentities, MAX_RETRIES, RETRY_DELAY),
         retry(getFeatureFlagsState, MAX_RETRIES, RETRY_DELAY),
+        retry(getLiveConfigOverridesState, MAX_RETRIES, RETRY_DELAY),
         retry(getUser, MAX_RETRIES, RETRY_DELAY),
         retry(getHistory, MAX_RETRIES, RETRY_DELAY),
       ]).finally(() => {
@@ -169,6 +177,13 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       }
 
       store.dispatch(importSettings(settingsData));
+
+      const liveConfigOverrides = sanitizePersistedOverrides(
+        persistedLiveConfigOverrides?.overrides,
+      );
+      if (liveConfigOverrides) {
+        store.dispatch(setAllLiveConfigOverrides(liveConfigOverrides));
+      }
 
       // Hydrate persisted crypto assets tokens BEFORE importing accounts
       // This ensures tokens are available when decoding accounts (which now uses findTokenById)
@@ -290,6 +305,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 
       await bootstrapCardSession(store.dispatch);
       await restoreCardAuthStatus(store.dispatch, store.getState);
+      await restoreAccountAnalyticsIntroductionFromStorage(store.dispatch);
 
       setReady(true);
       onInitFinished();

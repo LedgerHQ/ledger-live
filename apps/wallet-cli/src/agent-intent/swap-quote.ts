@@ -1,4 +1,10 @@
 import {
+  canApproveSwapQuote,
+  isSwapApprovalRequired,
+  parseBaseUnits,
+  parseErc20Approval,
+} from "@ledgerhq/agent-intent-sdk";
+import {
   getQuotes,
   type Quote,
   type QuotesError,
@@ -10,36 +16,48 @@ export type AgentSwapQuote = {
   needsTokenApproval: boolean;
 };
 
-const ERC20_APPROVE_CALLDATA = /^0x095ea7b3[0-9a-f]{64}/;
-const TOKENS_THAT_REVERT_CHANGING_A_NONZERO_ALLOWANCE = new Set([
-  "0xdac17f958d2ee523a2206206994597c13d831ec7",
+const PROVIDERS_WITH_A_FRONTEND_DEX_ENDPOINT: ReadonlySet<string> = new Set([
+  "oneinch",
+  "velora",
+  "okx",
 ]);
+const PROVIDERS_ANSWERING_WITH_CALLDATA: ReadonlySet<string> = new Set(["lifi"]);
 
 function needsTokenApproval({ quoteDetails: { tokenAllowance, tags } }: Quote): boolean {
-  return (
-    tokenAllowance?.isApproved === false ||
-    (tags?.isTokenApprovalRequired === true && tokenAllowance?.isApproved !== true)
-  );
+  return isSwapApprovalRequired({
+    isApproved: tokenAllowance?.isApproved,
+    isTokenApprovalRequired: tags?.isTokenApprovalRequired,
+  });
 }
 
-/** Mirrors `canApproveQuote` in agent-intent-frontend `src/features/intents/swap/swapApproval.ts`. */
+function needsPermit(quote: Quote): boolean {
+  return Boolean(quote.quoteDetails.permitData?.typedData);
+}
+
+/** Mirrors `swapsWithCalldata` in agent-intent-frontend `src/features/intents/swap/swapProviders.ts`. */
+function swapsWithCalldata({ provider, providerDetails }: Quote): boolean {
+  return providerDetails.type === "DEX"
+    ? PROVIDERS_WITH_A_FRONTEND_DEX_ENDPOINT.has(provider)
+    : PROVIDERS_ANSWERING_WITH_CALLDATA.has(provider);
+}
+
 function frontendCanApprove(quote: Quote, soldTokenContract: string | undefined): boolean {
   const allowance = quote.quoteDetails.tokenAllowance;
-  const transaction = allowance?.approvalTransaction;
-  const approvedToken = transaction?.to?.toLowerCase();
-  if (!transaction || !soldTokenContract || approvedToken !== soldTokenContract.toLowerCase()) {
-    return false;
-  }
-  if (!ERC20_APPROVE_CALLDATA.test(transaction.calldata?.toLowerCase() ?? "")) return false;
-  const allowanceKnownToBeZero = /^0+$/.test(allowance?.approvedAmount ?? "");
-  return (
-    !TOKENS_THAT_REVERT_CHANGING_A_NONZERO_ALLOWANCE.has(approvedToken) || allowanceKnownToBeZero
+  const approval = parseErc20Approval(allowance?.approvalTransaction);
+  return canApproveSwapQuote(
+    {
+      approvalRequired: needsTokenApproval(quote),
+      permitRequired: needsPermit(quote),
+      allowanceSpender: approval?.spender,
+      allowanceToken: approval?.token,
+      allowanceAmount: parseBaseUnits(allowance?.approvedAmount),
+    },
+    { network: "ethereum", swapsWithCalldata: swapsWithCalldata(quote), soldTokenContract },
   );
 }
 
-/** `permitData` alone isn't a permit: Velora's ordinary route lives there too (`priceRoute`). */
 function isPreparable(quote: Quote, soldTokenContract: string | undefined): boolean {
-  if (quote.errors.length > 0 || quote.quoteDetails.permitData?.typedData) return false;
+  if (quote.errors.length > 0 || needsPermit(quote)) return false;
   return !needsTokenApproval(quote) || frontendCanApprove(quote, soldTokenContract);
 }
 

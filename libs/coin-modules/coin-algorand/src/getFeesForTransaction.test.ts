@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import * as buildTransactionModule from "./buildTransaction";
 import { setCoinConfig } from "./config";
 import { mockAlgorandConfig } from "./test/context";

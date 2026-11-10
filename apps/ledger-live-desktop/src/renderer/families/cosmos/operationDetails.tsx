@@ -16,7 +16,7 @@ import {
 } from "@ledgerhq/live-common/families/cosmos/types";
 import { Unit } from "@domain/entity-currency-unit";
 import { Account, Operation } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import React, { useMemo } from "react";
 import { Trans } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";

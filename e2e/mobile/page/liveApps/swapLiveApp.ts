@@ -23,16 +23,9 @@ const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\
 const quoteNetValue = (quote: { rate: number; fees: number }) => quote.rate - quote.fees;
 
 export default class SwapLiveAppPage {
-  // swap-live-app's own `ptxLumenQuoteCard` flag picks the quote card markup: compact on stg,
-  // lumen can be served on prod (PRODUCTION=true runs). Drop the unused prefix (and the lumen CTA
-  // label in checkQuoteCardCtaLabel) once the flag is settled.
-  private static readonly PROVIDER_NAME_PREFIXES = [
-    "compact-quote-card-provider-name-",
-    "lumen-quote-card-provider-name-",
-  ];
-  private static readonly PROVIDER_NAME_CSS = SwapLiveAppPage.PROVIDER_NAME_PREFIXES.map(
-    prefix => `[data-testid^='${prefix}']`,
-  ).join(", ");
+  // `ptxLumenQuoteCard` is on for everyone with `ptxLumenQuoteSameCtaCopy`: lumen card, old CTA copy.
+  private static readonly PROVIDER_NAME_PREFIX = "lumen-quote-card-provider-name-";
+  private static readonly PROVIDER_NAME_CSS = `[data-testid^='${SwapLiveAppPage.PROVIDER_NAME_PREFIX}']`;
 
   fromSelector = "from-account-coin-selector";
   fromAmount = "from-account";
@@ -58,7 +51,6 @@ export default class SwapLiveAppPage {
   swapMainContainerCssSelector = "main";
   swapMainContainerWebElement = getWebElementByCssSelector(this.swapMainContainerCssSelector);
   swapMaxToggle = "from-account-max-toggle";
-  switchButton = "to-account-switch-accounts";
   lnsUnsupportedBannerPattern =
     /Ledger Nano S[\s\S]*(not supported|unsupported|does not support|not compatible)/i;
   revokeApprovalButton = "revoke-approval-button";
@@ -170,9 +162,7 @@ export default class SwapLiveAppPage {
   // (1inch renders as `oneinchfusion` when its Fusion quote wins).
   private async tapProviderName(providerName: string) {
     const providerNameElement = getWebElementByCssSelector(
-      SwapLiveAppPage.PROVIDER_NAME_PREFIXES.map(
-        prefix => `[data-testid^='${prefix}${providerName}']`,
-      ).join(", "),
+      `[data-testid^='${SwapLiveAppPage.PROVIDER_NAME_PREFIX}${providerName}']`,
     );
     await waitWebElement(providerNameElement);
     await tapWebElementByElement(providerNameElement);
@@ -340,8 +330,7 @@ export default class SwapLiveAppPage {
     const actualButtonText =
       (await getWebElementsText(this.swapMainContainerWebElement, selector))[0] ?? "";
     const ctaVerb = approvalRequired ? "Approve spending" : "Swap";
-    const lumenCtaLabel = approvalRequired ? "Continue" : "Review";
-    jestExpect([`${ctaVerb} with ${provider}`, lumenCtaLabel]).toContain(actualButtonText);
+    jestExpect(actualButtonText).toBe(`${ctaVerb} with ${provider}`);
   }
 
   @Step('Check "Best Offer" corresponds to the best quote')
@@ -408,12 +397,6 @@ export default class SwapLiveAppPage {
     await this.expectQuotesButtonNotVisible();
   }
 
-  @Step("Verify swap cross account error message match: {{{0}}}")
-  async verifySwapCrossAccountErrorMessageIsCorrect(expectedMessage: string | RegExp) {
-    // Cross-account warnings render in the same from-account error slot as amount errors.
-    await this.verifySwapAmountErrorMessageIsCorrect(expectedMessage);
-  }
-
   @Step("Verify swap CTA banner displayed")
   async checkCtaBanner(quotesVisible: boolean) {
     const showDetailsLink = quotesVisible
@@ -464,11 +447,6 @@ export default class SwapLiveAppPage {
         )
       )[0] ?? "";
     return { amount, fiatAmount };
-  }
-
-  @Step("Tap on Switch currencies button")
-  async switchYouSendAndYouReceive() {
-    await tapWebElementByTestId(this.switchButton);
   }
 
   @Step("Check currency to swap from is {{{0}}} with amount {{{1}}}")

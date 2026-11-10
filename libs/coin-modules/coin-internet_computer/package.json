@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-internet_computer",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Ledger Internet Computer integration",
   "keywords": [
     "Ledger",
@@ -114,7 +114,6 @@
     "@types/jest": "catalog:",
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
-    "@types/semver": "catalog:",
     "@typescript/native": "catalog:",
     "typescript": "catalog:",
     "axios": "catalog:",

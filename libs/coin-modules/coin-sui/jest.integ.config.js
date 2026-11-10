@@ -1,6 +1,6 @@
 const { createLibsCoinIntegJestConfig } = require("@support/jest/libs-coin");
 
-// Exception listed in support/jest/core/preset-overrides.js.
+// Exception listed in support/jest/core/preset-overrides.cts.
 const esmPackages = ["@mysten", "@scure", "@noble"];
 
 module.exports = createLibsCoinIntegJestConfig(

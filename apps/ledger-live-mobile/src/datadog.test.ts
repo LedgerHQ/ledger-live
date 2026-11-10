@@ -16,7 +16,12 @@ import {
   transactionBroadcastLogger,
 } from "./datadog";
 
-const observabilityOn = { includeSyncPath: true, syncPathSampleRate: 0.1, maxFailuresPerKey: 5 };
+const observabilityOn = {
+  includeSyncPath: true,
+  syncPathSampleRate: 0.1,
+  preparationSampleRate: 0.1,
+  maxFailuresPerKey: 5,
+};
 
 jest.mock("@datadog/mobile-react-native", () => ({
   DdLogs: { info: jest.fn(), warn: jest.fn(), error: jest.fn() },
@@ -231,13 +236,20 @@ describe("coinModuleCallLogger", () => {
 
   it("logs a transaction-path call as info", () => {
     coinModuleCallLogger(call);
-    expect(DdLogs.info).toHaveBeenCalledWith("coin_module_call", { coinModule: call });
+    expect(DdLogs.info).toHaveBeenCalledWith("coin_module_call", {
+      coinModule: { ...call, sampleRate: 1, inSample: true },
+    });
   });
 
-  it("logs a failure as error, even on the sync path", () => {
+  it("logs a failure as error, even on the sync path, marked outside the sample", () => {
+    // The session draw is kept by the module-level transmitter: pin it outside the sample.
+    const random = jest.spyOn(Math, "random").mockReturnValue(0.99);
     const failure = { ...call, method: "getBalance", status: "failure" as const };
     coinModuleCallLogger(failure);
-    expect(DdLogs.error).toHaveBeenCalledWith("coin_module_call", { coinModule: failure });
+    expect(DdLogs.error).toHaveBeenCalledWith("coin_module_call", {
+      coinModule: { ...failure, sampleRate: observabilityOn.syncPathSampleRate, inSample: false },
+    });
+    random.mockRestore();
   });
 
   it("drops a sync-path success outside the sample", () => {

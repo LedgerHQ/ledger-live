@@ -3,7 +3,12 @@ import { getWalletApiIdFromAccountId } from "@ledgerhq/live-common/wallet-api/co
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { getCurrencyProviders, getDefiProducts, getGrow, getSolanaValidators } from "./api";
 import type { CurrencyProvider, DefiProduct, GrowItem } from "./api.types";
-import { currencyIdFromNetwork, parseV1, toV0, type Network } from "../../shared/accountDescriptor";
+import {
+  currencyIdFromNetwork,
+  parseV1,
+  toV0,
+  type NetworkId,
+} from "../../shared/accountDescriptor";
 import { normalizeSolanaValidator, type NormalizedSolanaValidator } from "./normalize";
 import { isVaultDepositable } from "./eth-vault-policy";
 import type { EarnYieldRow } from "./types";
@@ -28,7 +33,7 @@ export type EarnYieldSession = {
 
 export type ListEarnYieldRowsArgs = {
   session: EarnYieldSession;
-  network?: Network;
+  network?: NetworkId;
   limit: number;
   all?: boolean;
   accountLabel?: string;
@@ -275,7 +280,7 @@ export function selectStakeValidators(
  *   solana   -> validator vote accounts
  * Only meaningful on mainnet; the backing lists are mainnet-only.
  */
-async function depositProductRows(network: Network, limit: number): Promise<EarnYieldRow[]> {
+async function depositProductRows(network: NetworkId, limit: number): Promise<EarnYieldRow[]> {
   if (network === "solana") {
     const validators = (await getSolanaValidators()).map(normalizeSolanaValidator);
     return selectStakeValidators(validators, limit).map(v => validatorToRow(v, network));
@@ -299,15 +304,14 @@ export async function listEarnYieldRows({
   all = false,
   accountLabel,
 }: ListEarnYieldRowsArgs): Promise<EarnYieldRow[]> {
-  const grow = await getGrow({ dashboardSupported: true });
-  const parentAccountIds = parentAccountIdsByNetwork(session, accountLabel);
-
   if (network) {
+    const currencyId = currencyIdFromNetwork(network);
+    const parentAccountIds = parentAccountIdsByNetwork(session, accountLabel);
+    const grow = await getGrow({ dashboardSupported: true });
     const growRows = grow
       .filter(item => item.network === network)
       .map(item => growItemToRow(item, parentAccountIds));
 
-    const currencyId = currencyIdFromNetwork(network);
     const providers = await getCurrencyProviders(currencyId);
     const providerRows = providers.filter(p => p.active).map(p => providerToRow(p, network));
     const productRows = await depositProductRows(network, limit);
@@ -315,6 +319,8 @@ export async function listEarnYieldRows({
     return [...growRows, ...providerRows, ...productRows];
   }
 
+  const parentAccountIds = parentAccountIdsByNetwork(session, accountLabel);
+  const grow = await getGrow({ dashboardSupported: true });
   let items = grow.filter(item => SUPPORTED_EARN_NETWORKS.has(item.network));
 
   if (!all) {

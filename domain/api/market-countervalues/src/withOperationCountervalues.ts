@@ -1,8 +1,8 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { AccountDataSource } from "@domain/api-account-data";
-import { AmountStrSchema, type BalanceAssetId } from "@domain/entity-account-balance";
+import { AmountStrSchema } from "@domain/entity-account-balance";
 import type { AccountOperationsPage } from "@domain/entity-account-operation";
-import type { Currency } from "@domain/entity-currency";
+import type { CryptoOrTokenCurrencyId, Currency } from "@domain/entity-currency";
 import { findFiatCurrencyByTicker, type FiatCurrencyTicker } from "@domain/entity-currency-fiat";
 import {
   formatCounterValueHashes,
@@ -14,7 +14,9 @@ export type OperationCountervaluesHost = {
   /** The rates the app holds. */
   rates(): CounterValuesCacheView | undefined;
   /** The currency of an asset, a coin or a token; a lookup that fails leaves its rows unvalued. */
-  findCurrency(assetId: BalanceAssetId): Currency | undefined | Promise<Currency | undefined>;
+  findCurrency(
+    assetId: CryptoOrTokenCurrencyId,
+  ): Currency | undefined | Promise<Currency | undefined>;
 };
 
 /** The rate of the hour or day of `date`, never the latest one standing in for a missing history. */
@@ -35,7 +37,7 @@ export function valueOperations(
   page: AccountOperationsPage,
   ticker: FiatCurrencyTicker | undefined,
   rates: CounterValuesCacheView | undefined,
-  currencyOf: (assetId: BalanceAssetId) => Currency | undefined,
+  currencyOf: (assetId: CryptoOrTokenCurrencyId) => Currency | undefined,
 ): AccountOperationsPage {
   const to = ticker && findFiatCurrencyByTicker(ticker);
   if (!ticker || !to || !rates) return page;
@@ -62,7 +64,7 @@ export function withOperationCountervalues(
   const read = source.read?.operations;
   const readBatch = source.readBatch?.operations;
   if (!read && !readBatch) return source;
-  const findCurrency = (assetId: BalanceAssetId) =>
+  const findCurrency = (assetId: CryptoOrTokenCurrencyId) =>
     Promise.resolve()
       .then(() => host.findCurrency(assetId))
       .catch(() => undefined);

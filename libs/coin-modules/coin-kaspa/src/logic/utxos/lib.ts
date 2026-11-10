@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { KaspaUtxo } from "../../types";
 import { MASS_PER_INPUT, DEFAULT_MASS_1_OUTPUT, MAX_UTXOS_PER_TX } from "../constants";
 

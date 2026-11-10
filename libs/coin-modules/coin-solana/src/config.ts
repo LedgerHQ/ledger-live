@@ -6,7 +6,7 @@ export type SolanaCurrencyId = "solana" | "solana_devnet" | "solana_testnet";
 export type SolanaConfig = {
   token2022Enabled: boolean;
   legacyOCMSMaxVersion: string;
-  rpcUrls: Partial<Record<SolanaCurrencyId, string>>;
+  rpcUrl: string;
   validatorsUrl?: string;
   staking?: {
     validatorsSummaryUrl?: string;
@@ -49,3 +49,42 @@ export type SolanaCoinConfig = CurrencyConfig & SolanaConfig;
 
 /** The {@link Context} threaded through coin-solana (ADR-019). */
 export type SolanaContext = Context<SolanaCoinConfig>;
+
+export const solanaDefaults = {
+  solana: {
+    status: {
+      type: "active",
+      features: [
+        { id: "blockchain_txs", status: "active" },
+        { id: "staking_txs", status: "active" },
+      ],
+    },
+    name: "Solana",
+    unit: { name: "SOL", code: "SOL", magnitude: 9 },
+    token2022Enabled: true,
+    legacyOCMSMaxVersion: "1.8.0",
+    rpcUrl: "https://solana.coin.ledger.com",
+    validatorsUrl: "https://earn.api.live.ledger.com/v0/network/solana/validator-details",
+    staking: {
+      validatorsSummaryUrl: "https://earn.api.live.ledger.com/figment/solana/validators_summary",
+    },
+  },
+  solana_devnet: {
+    status: { type: "active" },
+    name: "Solana devnet",
+    unit: { name: "SOL", code: "SOL", magnitude: 9 },
+    token2022Enabled: true,
+    legacyOCMSMaxVersion: "1.8.0",
+    rpcUrl: "https://api.devnet.solana.com",
+  },
+  solana_testnet: {
+    status: { type: "active" },
+    name: "Solana testnet",
+    unit: { name: "SOL", code: "SOL", magnitude: 9 },
+    token2022Enabled: true,
+    legacyOCMSMaxVersion: "1.8.0",
+    rpcUrl: "https://api.testnet.solana.com",
+    validatorsUrl:
+      "https://validators-solana.coin.ledger.com/api/v1/validators/testnet.json?order=score&limit=1000",
+  },
+} satisfies Record<string, SolanaCoinConfig>;

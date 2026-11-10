@@ -78,13 +78,18 @@ import { aggregateData, getUniqueModelIdList } from "../logic/modelIdList";
 import { getMigrationUserProps } from "LLM/storage/utils/migrations/analytics";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { getVersionedRedirects } from "LLM/hooks/useStake/useVersionedStakePrograms";
-import { resolveStartupEvents, STARTUP_EVENTS } from "LLM/utils/resolveStartupEvents";
+import {
+  getStartupTimeBase,
+  resolveStartupEvents,
+  STARTUP_EVENTS,
+} from "LLM/utils/resolveStartupEvents";
 import { getTotalStakeableAssets } from "@ledgerhq/live-common/domain/getTotalStakeableAssets";
 import { getOnboardingCounterfeitWarningAttributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/onboardingCounterfeitWarning";
 import { getRecoverV2Attribute } from "@ledgerhq/live-common/analytics/featureFlagHelpers/recoverV2";
 import { getWallet40Attributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/wallet40";
 import { getRemoteABTestingAttributes } from "@ledgerhq/live-common/analytics/remoteABTesting/remoteABTestingAnalytics";
 import { getServicesEntryPointsAttributes } from "@features/flow-portfolio-services-entry-points";
+import { isAccountDetailAnalyticsBannerEnabled } from "@features/flow-account-detail";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
 import {
   getNotificationPermissionStatus,
@@ -509,7 +514,9 @@ const extraProperties = async (store: AppStore) => {
   const entryPointsServices = getServicesEntryPointsAttributes(
     analyticsFeatureFlagMethod?.("entryPointsServices"),
   );
-  const accountDetail = analyticsFeatureFlagMethod?.("accountDetail")?.enabled ?? false;
+  const accountDetailFeature = analyticsFeatureFlagMethod?.("accountDetail");
+  const accountDetail = accountDetailFeature?.enabled ?? false;
+  const accountDetailAnalyticsBanner = isAccountDetailAnalyticsBannerEnabled(accountDetailFeature);
   const recoverV2 = getRecoverV2Attribute(analyticsFeatureFlagMethod);
 
   return {
@@ -540,6 +547,7 @@ const extraProperties = async (store: AppStore) => {
     ContactsAttributes: contactsFeature,
     ...contactsAttributes,
     appTimeToInteractiveMilliseconds: legacyStartupTime, // WARNING: this is not accurate in practice the splash is still blocking the user at this point
+    appTimeToInteractiveBase: legacyStartupTime === undefined ? undefined : getStartupTimeBase(),
     staxDeviceUser: knownDeviceModelIds.stax,
     staxLockscreen: customImageType || "none",
     stakingProvidersEnabled: stakingProvidersCount || "flag not loaded",
@@ -570,6 +578,7 @@ const extraProperties = async (store: AppStore) => {
     ...onboardingCounterfeitWarningAttributes,
     entryPointsServices,
     accountDetail,
+    accountDetailAnalyticsBanner,
     recoverV2,
     ...remoteABTestingAttributes,
   };

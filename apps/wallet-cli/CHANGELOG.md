@@ -30,6 +30,34 @@
 
 - [#24132](https://github.com/LedgerHQ/ledger-live/pull/24132) [`b04b778`](https://github.com/LedgerHQ/ledger-live/commit/b04b77802057f880ef2f0e15d21500233a03fa5a) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): pin dependencies
 
+## 3.1.0
+
+### Minor Changes
+
+- [#23894](https://github.com/LedgerHQ/ledger-live/pull/23894) [`4be13d5`](https://github.com/LedgerHQ/ledger-live/commit/4be13d5ee940cb84794b33bed7320287647cc82e) Thanks [@thesan](https://github.com/thesan)! - `@shared/auth` replaces `authApiExtra` with `createAuthMiddleware`: the auth provider is held by a store middleware instead of the thunk `extraArgument`, and `getAuthProvider(dispatch)` reads it.
+
+- [#23789](https://github.com/LedgerHQ/ledger-live/pull/23789) [`a572634`](https://github.com/LedgerHQ/ledger-live/commit/a572634d9304f33e31e0ce69ec4df3f4b87a990f) Thanks [@mmysl-ledger-ext](https://github.com/mmysl-ledger-ext)! - Update the vendored `@ledgerhq/agent-intent-sdk`. `agent-intent enroll` takes its name and description limits from the SDK, and now rejects a blank `--name` or `--description` before creating an identity
+
+- [#23084](https://github.com/LedgerHQ/ledger-live/pull/23084) [`d3788d3`](https://github.com/LedgerHQ/ledger-live/commit/d3788d3ade2bda83c63ad857bc89b5ccc7d10c89) Thanks [@michalmisiejuk-ext-collab](https://github.com/michalmisiejuk-ext-collab)! - Replace global module mocks in wallet-cli tests with injected fakes so the tests pass in any order
+
+- [#24026](https://github.com/LedgerHQ/ledger-live/pull/24026) [`c10827f`](https://github.com/LedgerHQ/ledger-live/commit/c10827f93c49158bb6e2baa7d699643f527c22fb) Thanks [@ysitbon](https://github.com/ysitbon)! - Register the swap service api through `defineApiServices`
+
+- [#23630](https://github.com/LedgerHQ/ledger-live/pull/23630) [`279128d`](https://github.com/LedgerHQ/ledger-live/commit/279128d944f8fde67c5a9190f73b70684cd11ee0) Thanks [@mateuszmarcinkowski-ext-afk](https://github.com/mateuszmarcinkowski-ext-afk)! - Add `agent-intent enroll --detach`, which prints the enrollment link and leaves a background listener waiting for the approval, and `agent-intent wait`, which reports within a bounded time whether that enrollment completed
+
+## 3.1.0-next.0
+
+### Minor Changes
+
+- [#23894](https://github.com/LedgerHQ/ledger-live/pull/23894) [`4be13d5`](https://github.com/LedgerHQ/ledger-live/commit/4be13d5ee940cb84794b33bed7320287647cc82e) Thanks [@thesan](https://github.com/thesan)! - `@shared/auth` replaces `authApiExtra` with `createAuthMiddleware`: the auth provider is held by a store middleware instead of the thunk `extraArgument`, and `getAuthProvider(dispatch)` reads it.
+
+- [#23789](https://github.com/LedgerHQ/ledger-live/pull/23789) [`a572634`](https://github.com/LedgerHQ/ledger-live/commit/a572634d9304f33e31e0ce69ec4df3f4b87a990f) Thanks [@mmysl-ledger-ext](https://github.com/mmysl-ledger-ext)! - Update the vendored `@ledgerhq/agent-intent-sdk`. `agent-intent enroll` takes its name and description limits from the SDK, and now rejects a blank `--name` or `--description` before creating an identity
+
+- [#23084](https://github.com/LedgerHQ/ledger-live/pull/23084) [`d3788d3`](https://github.com/LedgerHQ/ledger-live/commit/d3788d3ade2bda83c63ad857bc89b5ccc7d10c89) Thanks [@michalmisiejuk-ext-collab](https://github.com/michalmisiejuk-ext-collab)! - Replace global module mocks in wallet-cli tests with injected fakes so the tests pass in any order
+
+- [#24026](https://github.com/LedgerHQ/ledger-live/pull/24026) [`c10827f`](https://github.com/LedgerHQ/ledger-live/commit/c10827f93c49158bb6e2baa7d699643f527c22fb) Thanks [@ysitbon](https://github.com/ysitbon)! - Register the swap service api through `defineApiServices`
+
+- [#23630](https://github.com/LedgerHQ/ledger-live/pull/23630) [`279128d`](https://github.com/LedgerHQ/ledger-live/commit/279128d944f8fde67c5a9190f73b70684cd11ee0) Thanks [@mateuszmarcinkowski-ext-afk](https://github.com/mateuszmarcinkowski-ext-afk)! - Add `agent-intent enroll --detach`, which prints the enrollment link and leaves a background listener waiting for the approval, and `agent-intent wait`, which reports within a bounded time whether that enrollment completed
+
 ## 3.0.0
 
 ### Major Changes

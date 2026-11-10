@@ -4,7 +4,7 @@ import { forbidRemoteRequests } from "@ledgerhq/coin-tester/localOnly";
 import { startSandbox } from "@ledgerhq/coin-tester/sandbox";
 import type { Sandbox } from "@ledgerhq/coin-tester/sandbox";
 import { Account } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { makeAccount } from "../fixtures";
 import { atlasOf, swapTokens } from "../sandboxEvm";
@@ -190,8 +190,7 @@ export const scenarioEthereum: Scenario<GenericTransaction, Account> = {
       ethers.parseUnits("20", USDC_ON_ETHEREUM.units[0].magnitude).toString(),
     );
     expect(account.nfts?.length).toBe(0);
-    // The ETH airdrop (IN), the USDC airdrop (NONE on the parent account), then the three sends: the airdrops are
-    // real transactions, where anvil funded the account in its genesis
+    // The ETH airdrop (IN), the USDC airdrop (NONE on the parent account), then the three sends
     expect(account.operations.length).toBe(5);
   },
   teardown: async () => {

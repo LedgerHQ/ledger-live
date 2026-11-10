@@ -110,7 +110,7 @@ export function useConnectionViewModel({
       ),
       dmk,
       onConnected: wrappedOnConnected,
-      mockServerTransportEnabled: getEnv("MOCK_SERVER_TRANSPORT"),
+      isMockServerEnabled: getEnv("MOCK_SERVER_TRANSPORT"),
     }).subscribe({ next: handleState });
 
     return () => {

@@ -3,7 +3,7 @@ import { hexToBn } from "@polkadot/util";
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import { TypeRegistry } from "@polkadot/types";
 import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { type PolkadotCoinConfig } from "../config";
 import {
   DEFAULT_CHAIN_CONSTANTS_CACHE_TTL_MS,

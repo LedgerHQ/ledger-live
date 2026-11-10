@@ -45,7 +45,6 @@
     "coverage": "jest --coverage"
   },
   "devDependencies": {
-    "@types/react": "catalog:",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
@@ -54,7 +53,6 @@
     "@types/node": "catalog:",
     "jest": "catalog:",
     "rimraf": "4.4.1",
-    "ts-node": "10.9.2",
     "@typescript/native": "catalog:",
     "typescript": "catalog:",
     "oxlint": "catalog:"

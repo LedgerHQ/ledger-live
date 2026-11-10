@@ -1,6 +1,9 @@
 import { selectCurrencyForMetaId } from "@features/platform-aggregated-assets";
-import type { AssetsDataWithPagination } from "@domain/api-aggregated-assets";
-import { dadaIdToMarketId } from "@ledgerhq/live-common/market/utils/index";
+import {
+  type AssetsDataWithPagination,
+  parseMarketRef,
+  toMarketId,
+} from "@domain/api-aggregated-assets";
 import { applyUsdRateToMarket } from "@ledgerhq/live-common/market/utils/applyUsdRateToMarket";
 import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
 import { buildSearchMarketCurrencyData } from "./buildSearchMarketCurrencyData";
@@ -35,7 +38,7 @@ export function mapAssetsDataToMarketCurrencies(
     return [
       applyUsdRateToMarket(
         buildSearchMarketCurrencyData({
-          id: dadaIdToMarketId(market?.id ?? meta.id),
+          id: toMarketId(parseMarketRef(market?.id ?? meta.id)),
           name: meta.name,
           ticker: meta.ticker,
           ledgerIds: [ledgerId],

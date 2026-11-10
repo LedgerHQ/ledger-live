@@ -1,6 +1,6 @@
 import { AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import React, { useCallback } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";

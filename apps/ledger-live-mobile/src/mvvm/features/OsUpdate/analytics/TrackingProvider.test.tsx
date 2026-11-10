@@ -55,7 +55,7 @@ const installFirmwareRefused: OsUpdatePageEvent = {
 const error: OsUpdatePageEvent = {
   page: OsUpdatePage.ERROR,
   step: OsUpdateFlowStep.APPLY_UPDATES,
-  failureType: OsUpdateFailureType.OUT_OF_MEMORY,
+  failureType: OsUpdateFailureType.UNEXPECTED_ERROR,
 };
 
 type Props = Partial<React.ComponentProps<typeof TrackingProvider>>;
@@ -123,13 +123,13 @@ describe("TrackingProvider", () => {
     const { trackPage, trackClick } = renderProvider();
 
     trackPage(error);
-    trackClick(OsUpdateButton.CANCEL);
+    trackClick(OsUpdateButton.CANCEL_OS_UPDATE);
 
     expect(mockedTrack).toHaveBeenLastCalledWith("button_clicked", {
-      button: OsUpdateButton.CANCEL,
+      button: OsUpdateButton.CANCEL_OS_UPDATE,
       page: OsUpdatePage.ERROR,
       step: OsUpdateFlowStep.APPLY_UPDATES,
-      failureType: OsUpdateFailureType.OUT_OF_MEMORY,
+      failureType: OsUpdateFailureType.UNEXPECTED_ERROR,
       ...shared,
       updateCount: 2,
     });
@@ -139,10 +139,26 @@ describe("TrackingProvider", () => {
     const { trackPage, trackClick } = renderProvider();
 
     trackPage(installFirmwareRefused);
-    trackClick(OsUpdateButton.RETRY);
+    trackClick(OsUpdateButton.RESTART_OS_UPDATE);
 
     expect(mockedTrack).toHaveBeenLastCalledWith("button_clicked", {
-      button: OsUpdateButton.RETRY,
+      button: OsUpdateButton.RESTART_OS_UPDATE,
+      page: OsUpdatePage.ERROR,
+      step: OsUpdateFlowStep.APPLY_UPDATES,
+      failureType: OsUpdateFailureType.INSTALL_FIRMWARE_REFUSED,
+      ...shared,
+      updateCount: 2,
+    });
+  });
+
+  it("sends the failure with a cancel of the OS update on an error page", () => {
+    const { trackPage, trackClick } = renderProvider();
+
+    trackPage(installFirmwareRefused);
+    trackClick(OsUpdateButton.CANCEL_OS_UPDATE);
+
+    expect(mockedTrack).toHaveBeenLastCalledWith("button_clicked", {
+      button: OsUpdateButton.CANCEL_OS_UPDATE,
       page: OsUpdatePage.ERROR,
       step: OsUpdateFlowStep.APPLY_UPDATES,
       failureType: OsUpdateFailureType.INSTALL_FIRMWARE_REFUSED,
@@ -155,7 +171,7 @@ describe("TrackingProvider", () => {
     const { trackPage, trackClick, unmount } = renderProvider();
 
     trackPage(installFirmwareRefused);
-    trackClick(OsUpdateButton.RETRY);
+    trackClick(OsUpdateButton.RESTART_OS_UPDATE);
     trackPage(installing(1));
     trackPage({ page: OsUpdatePage.SUCCESS, restoreStatus: OsUpdateRestoreStatus.NONE });
     unmount();
@@ -167,7 +183,7 @@ describe("TrackingProvider", () => {
     const { trackPage, trackClick, unmount } = renderProvider();
 
     trackPage(installFirmwareRefused);
-    trackClick(OsUpdateButton.RETRY);
+    trackClick(OsUpdateButton.RESTART_OS_UPDATE);
     trackPage(installing(1));
     trackPage(installFirmwareRefused);
     unmount();
@@ -187,17 +203,17 @@ describe("TrackingProvider", () => {
       page: OsUpdatePage.SECURE_CONNECTION_REFUSED,
       step: OsUpdateFlowStep.CREATE_BACKUP,
     });
-    trackClick(OsUpdateButton.RETRY);
+    trackClick(OsUpdateButton.RETRY_SECURE_CONNECTION);
     expect(mockedTrack).toHaveBeenLastCalledWith(
       "button_clicked",
       expect.objectContaining({
-        button: OsUpdateButton.RETRY,
+        button: OsUpdateButton.RETRY_SECURE_CONNECTION,
         step: OsUpdateFlowStep.CREATE_BACKUP,
       }),
     );
 
     trackPage({ page: OsUpdatePage.SUCCESS, restoreStatus: OsUpdateRestoreStatus.NONE });
-    trackClick(OsUpdateButton.CLOSE);
+    trackClick(OsUpdateButton.FINISH);
     expect(mockedTrack).toHaveBeenLastCalledWith(
       "button_clicked",
       expect.not.objectContaining({ step: expect.anything() }),
@@ -208,10 +224,10 @@ describe("TrackingProvider", () => {
     const { trackPage, trackClick } = renderProvider();
 
     trackPage({ page: OsUpdatePage.CONNECTION_TIMED_OUT, step: OsUpdateFlowStep.APPLY_UPDATES });
-    trackClick(OsUpdateButton.SEND_REPORT);
+    trackClick(OsUpdateButton.CANCEL);
 
     expect(mockedTrack).toHaveBeenLastCalledWith("button_clicked", {
-      button: OsUpdateButton.SEND_REPORT,
+      button: OsUpdateButton.CANCEL,
       page: OsUpdatePage.CONNECTION_TIMED_OUT,
       step: OsUpdateFlowStep.APPLY_UPDATES,
       ...shared,
@@ -408,7 +424,7 @@ describe("TrackingProvider", () => {
         {
           page: OsUpdatePage.ERROR,
           step: OsUpdateFlowStep.APPLY_UPDATES,
-          failureType: OsUpdateFailureType.OUT_OF_MEMORY,
+          failureType: OsUpdateFailureType.UNEXPECTED_ERROR,
           updateIndex: 1,
           ...shared,
           updateCount: 2,
@@ -452,7 +468,7 @@ describe("TrackingProvider", () => {
         {
           page: OsUpdatePage.ERROR,
           step: OsUpdateFlowStep.APPLY_UPDATES,
-          failureType: OsUpdateFailureType.OUT_OF_MEMORY,
+          failureType: OsUpdateFailureType.UNEXPECTED_ERROR,
           updateIndex: 1,
           ...shared,
           updateCount: 2,

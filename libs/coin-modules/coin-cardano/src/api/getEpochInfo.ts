@@ -1,7 +1,5 @@
 import network from "@ledgerhq/live-network/network";
 import type { CardanoCoinConfig } from "../config";
-import { CARDANO_EPOCH_PARAMS_ENDPOINT, CARDANO_TESTNET_EPOCH_PARAMS_ENDPOINT } from "../constants";
-import { isTestnet } from "../logic";
 import { APIEpochParams, EpochInfo } from "./api-types";
 
 /**
@@ -15,7 +13,7 @@ import { APIEpochParams, EpochInfo } from "./api-types";
 export async function fetchEpochInfo(config: CardanoCoinConfig): Promise<EpochInfo> {
   const { data } = await network<APIEpochParams>({
     method: "GET",
-    url: isTestnet(config) ? CARDANO_TESTNET_EPOCH_PARAMS_ENDPOINT : CARDANO_EPOCH_PARAMS_ENDPOINT,
+    url: config.epochParams.url,
   });
 
   const epoch = data?.cardano?.[0]?.currentEpoch;

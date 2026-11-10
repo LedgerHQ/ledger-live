@@ -43,8 +43,9 @@ pbpaste | WALLET_PASS=$(<keychain lookup>) pnpm --silent wallet-cli start ring d
 ```
 
 - **`--key` names the key.** 1 to 253 characters, no whitespace, free-form: project slugs (`my-oss-project`), environment tags (`openClaw-prod`), notebooks (`personal-notes`). Decrypt needs the exact name used at encrypt. `pnpm --silent wallet-cli start ring keys` lists the names this machine has used (local cache, no network).
-- **`-o` is `--out`, a file path.** `--output` is the format (`human` or `json`), and `--output json` requires `--out`, since binary data cannot go to stdout as JSON.
+- **`-o` is `--out`, a file path.** `--output` is the format (`human` or `json`), and `--output json` requires `--out`.
 - Without `-i`, the input comes from stdin, which must be piped.
+- **stdout holds the data only without `-o`.** Without `-o`, stdout carries the raw output and nothing else; spinners and status go to stderr. With `-o`, the data goes to the file and stdout carries a one-line confirmation (an NDJSON envelope with `--output json`), never the data.
 - Output files are written with mode 0600.
 
 **Decrypted output is a secret.** Route plaintext straight to its destination: a file with `-o` (written 0600) or the clipboard pipe above. To feed another program, decrypt to a file with `-o`, then run that program on the file in its own call inside the sandbox: the bypassed call holds only the `wallet-cli` line (SKILL.md, Host sandbox), and a shell variable does not survive into the next call. Leave it unread: printing it to the terminal or running `cat` on the decrypted file puts the secret into your transcript, logs and scrollback.

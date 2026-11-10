@@ -7,6 +7,7 @@ import { mockserverIdentifier } from "@ledgerhq/device-transport-kit-mockserver"
 import { speculosIdentifier } from "@ledgerhq/device-transport-kit-speculos";
 import type { ConnectedDevice, DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import {
+  buildMockServerCompatDeviceId,
   dmkToLedgerDeviceIdMap,
   type KnownDevice,
   type MatchedDevice,
@@ -33,6 +34,12 @@ export const filterMatchedDevices = (
       const matchedDevice = knownDevices.find(knownDevice => {
         if (device.transport !== knownDevice.transport) {
           return false;
+        }
+
+        const isMockServerDeviceWithStableId =
+          knownDevice.transport === mockserverIdentifier && knownDevice.id !== "";
+        if (isMockServerDeviceWithStableId) {
+          return knownDevice.id === device.id;
         }
 
         const matchesByModelOnly =
@@ -74,10 +81,12 @@ export const buildMobileCompatDeviceId = (device: ConnectedDevice): string => {
   }
 
   if (device.transport === mockserverIdentifier) {
-    return device.id;
+    return buildMockServerCompatDeviceId(device.id);
   }
 
-  if (device.type === "USB") {
+  // Only native RN HID devices use the `usb|` prefix in the legacy transport registry;
+  // HTTP proxy devices also report `type: "USB"` but already carry their `httpdebug|` id.
+  if (device.transport === rnHidTransportIdentifier) {
     return buildUsbCompatDeviceId(device.id);
   }
 

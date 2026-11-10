@@ -1,0 +1,137 @@
+// Shared jest presets for devtools/* packages: a jsdom project for *.web.test.* and a
+// react-native project for *.native.test.*.
+//
+// Paths pointing inside this package are absolute, because `<rootDir>` in a returned config is
+// substituted against the *consumer's* root, not this one. Paths that must resolve in the consumer
+// — its node_modules, its jest/ folder — deliberately keep `<rootDir>`.
+
+import type { Config } from "@jest/types";
+import { presetFactory } from "../core/index.ts";
+import { deepFreeze } from "../internals/freeze.ts";
+import { joinPresetPath } from "../internals/join-preset-path.ts";
+
+const here = (relative: string) => joinPresetPath(import.meta.dirname, relative);
+
+const swcJsc = { target: "esnext", transform: { react: { runtime: "automatic" } } };
+
+function coverageReporters(file: string): Config.CoverageReporters {
+  return ["json", ["lcov", { file, projectRoot: "../../" }], "text"];
+}
+
+function sonarReporter(outputName: string): Config.ReporterConfig {
+  return ["jest-sonar", { outputName, reportedFilePath: "absolute" }];
+}
+
+// Union of what the three devtools packages each allowed through. Naming a package a given consumer
+// does not depend on is harmless, and it removes three drifting copies of this list.
+const NATIVE_TRANSFORM_ALLOWLIST = [
+  ".pnpm",
+  "(jest-)?react-native",
+  "react-native-safe-area-context",
+  "react-native-reanimated",
+  "react-native-worklets",
+  "react-native-screens",
+  "@react-native(-community)?",
+  "@react-navigation/.*",
+  "@gorhom/bottom-sheet",
+  "@ledgerhq/lumen-.*",
+  "immer",
+];
+
+const WEB_TRANSFORM_ALLOWLIST = [
+  "@ledgerhq\\+lumen-ui-react",
+  "@ledgerhq\\+lumen-design-core",
+  "@ledgerhq\\+lumen-utils-shared",
+];
+
+// CI runs these projects with `nx --parallel=4` and two jest workers each, under coverage
+// instrumentation. userEvent interactions on lumen components exceed the 5s default there while
+// taking ~3s locally, so the timeout has to absorb runner contention rather than test cost.
+const TEST_TIMEOUT = 30_000;
+
+// The projects' mappers and setup files, which a package spreads to keep them (the override rule
+// of the `@support/jest` README).
+export const webModuleNameMapper: Record<string, string> = deepFreeze({
+  "^jest/(.*)$": "<rootDir>/jest/$1",
+  // Pin lumen to the consumer's copy. Two reasons: this package does not carry lumen's peer
+  // graph (clsx, radix, …), and a second lumen instance would give the ThemeProvider rendered
+  // here a different React context than the components under test.
+  "^@ledgerhq/lumen-ui-react$": "<rootDir>/node_modules/@ledgerhq/lumen-ui-react",
+});
+
+export const nativeModuleNameMapper: Record<string, string> = deepFreeze({
+  "^jest/(.*)$": "<rootDir>/jest/$1",
+  // resolved in the consumer: each devtools package declares lumen itself
+  "^@ledgerhq/lumen-ui-rnative$": "<rootDir>/node_modules/@ledgerhq/lumen-ui-rnative/src/index.ts",
+  "^@ledgerhq/lumen-design-core$": "<rootDir>/node_modules/@ledgerhq/lumen-design-core",
+  "^@sbaiahmed1/react-native-blur$": here("mocks/react-native-blur.tsx"),
+  "^react-native-worklets$": here("mocks/react-native-worklets.cts"),
+  "^react-native-gesture-handler$": here("mocks/react-native-gesture-handler.tsx"),
+  "^expo-haptics$": here("mocks/expo-haptics.ts"),
+});
+
+export const webSetupFilesAfterEnv: string[] = deepFreeze([
+  "@testing-library/jest-dom",
+  here("setup/web.ts"),
+]);
+
+export const nativeSetupFilesAfterEnv: string[] = deepFreeze([here("setup/native.ts")]);
+
+/**
+ * jsdom project for a devtools package's `*.web.test.*` files.
+ *
+ * @param overrides by the override rule of the `@support/jest` README
+ */
+function webJestConfig(overrides: Config.InitialOptions = {}): Config.InitialOptions {
+  return {
+    testEnvironment: "jsdom",
+    roots: ["<rootDir>/src"],
+    testTimeout: TEST_TIMEOUT,
+    transform: { "^.+\\.(t|j)sx?$": ["@swc/jest", { jsc: swcJsc }] },
+    moduleFileExtensions: ["web.tsx", "web.ts", "tsx", "ts", "js", "jsx", "json", "node"],
+    testPathIgnorePatterns: ["\\.native\\.test\\."],
+    // lets tests import the package's own `jest/…` helpers. modulePaths loses to the
+    // jest package once private hoist makes that package visible, so map the prefix.
+    modulePaths: ["<rootDir>"],
+    transformIgnorePatterns: [`node_modules/.pnpm/(?!(${WEB_TRANSFORM_ALLOWLIST.join("|")}))`],
+    setupFilesAfterEnv: [...webSetupFilesAfterEnv],
+    moduleNameMapper: { ...webModuleNameMapper },
+    coverageReporters: coverageReporters("lcov.info"),
+    reporters: ["default", sonarReporter("sonar-executionTests-report.xml")],
+    ...overrides,
+  };
+}
+
+/**
+ * react-native project for a devtools package's `*.native.test.*` files.
+ *
+ * Requires a `babel.config.js` at the consumer's root: babel resolves its config from the jest
+ * rootDir, and babel-jest needs the React Native preset to parse the Flow-typed `.js` files that
+ * ship inside react-native itself.
+ *
+ * @param overrides by the override rule of the `@support/jest` README
+ */
+function nativeJestConfig(overrides: Config.InitialOptions = {}): Config.InitialOptions {
+  return {
+    preset: "react-native",
+    roots: ["<rootDir>/src"],
+    testMatch: ["**/*.native.test.{ts,tsx}"],
+    testTimeout: TEST_TIMEOUT,
+    transform: {
+      // SWC handles our TypeScript/TSX source files
+      "^.+\\.(t)sx?$": ["@swc/jest", { jsc: swcJsc }],
+      // babel-jest handles .js files from React Native packages (they use Flow types)
+      "^.+\\.jsx?$": "babel-jest",
+    },
+    transformIgnorePatterns: [`node_modules/(?!(${NATIVE_TRANSFORM_ALLOWLIST.join("|")})/.)`],
+    modulePaths: ["<rootDir>"],
+    moduleNameMapper: { ...nativeModuleNameMapper },
+    setupFilesAfterEnv: [...nativeSetupFilesAfterEnv],
+    coverageReporters: coverageReporters("lcov.native.info"),
+    reporters: ["default", sonarReporter("sonar-executionTests-native-report.xml")],
+    ...overrides,
+  };
+}
+
+export const createWebJestConfig = presetFactory("createWebJestConfig", [], webJestConfig);
+export const createNativeJestConfig = presetFactory("createNativeJestConfig", [], nativeJestConfig);

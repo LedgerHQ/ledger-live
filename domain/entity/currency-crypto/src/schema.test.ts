@@ -1,4 +1,5 @@
-import { ExplorerViewSchema, CryptoCurrencyIdSchema, CryptoCurrencySchema } from "./schema";
+import { CryptoCurrencyIdSchema, CryptoCurrencySchema } from "./schema";
+import { ExplorerViewSchema } from "./schema.internals";
 import { mockCryptoCurrency } from "./schema.mock";
 
 describe("CryptoCurrencyIdSchema", () => {

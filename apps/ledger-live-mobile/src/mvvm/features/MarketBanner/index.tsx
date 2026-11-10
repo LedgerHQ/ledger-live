@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/index";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { selectMarketBannerRanking, setMarketBannerRanking } from "~/reducers/marketBanner";
@@ -12,7 +11,6 @@ import {
 } from "./hooks/useMarketBannerData";
 import MarketBannerView from "./components/MarketBannerView";
 import { MarketBannerProps } from "./types";
-import { DEFAULT_RANKING_WITHOUT_DISCOVERABILITY } from "./constants";
 import type { MarketBannerRanking } from "~/reducers/types";
 
 type MarketBannerSurfaceProps = MarketBannerProps & {
@@ -23,7 +21,6 @@ type MarketBannerSurfaceProps = MarketBannerProps & {
 const MarketBannerSurface = ({ items, isError, testID }: MarketBannerSurfaceProps) => {
   const {
     range,
-    showFilter,
     bannerFilter,
     moodIndexAvailable,
     onTilePress,
@@ -36,7 +33,6 @@ const MarketBannerSurface = ({ items, isError, testID }: MarketBannerSurfaceProp
       items={items}
       isError={isError}
       range={range}
-      showFilter={showFilter}
       bannerFilter={bannerFilter}
       moodIndexAvailable={moodIndexAvailable}
       onTilePress={onTilePress}
@@ -70,13 +66,8 @@ const TrendingBanner = ({ testID }: MarketBannerProps) => {
 
 const MarketBannerContent = ({ testID }: MarketBannerProps) => {
   const dispatch = useDispatch();
-  const { shouldDisplayAssetDiscoverability } = useWalletFeaturesConfig("mobile");
-  const persistedRanking = useSelector(selectMarketBannerRanking);
+  const ranking = useSelector(selectMarketBannerRanking);
   const hasStarred = useSelector(starredMarketCoinsSelector).length > 0;
-
-  const ranking = shouldDisplayAssetDiscoverability
-    ? persistedRanking
-    : DEFAULT_RANKING_WITHOUT_DISCOVERABILITY;
 
   useEffect(() => {
     if (ranking === "favorites" && !hasStarred) {

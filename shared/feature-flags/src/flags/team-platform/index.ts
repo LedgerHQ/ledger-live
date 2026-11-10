@@ -10,5 +10,7 @@ export * from "./lwdAuth";
 export * from "./lwmAuth";
 export * from "./lwdLedgerSyncOptimisation";
 export * from "./lwmLedgerSyncOptimisation";
+export * from "./lwdLedgerSyncDie";
+export * from "./lwmLedgerSyncDie";
 export * from "./mixpanelAnalytics";
 export * from "./mockFeature";

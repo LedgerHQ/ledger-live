@@ -54,23 +54,9 @@ export const overrideInitialStateWithPerpsEntryPoint =
       },
     }))(state);
 
-export const overrideInitialStateWithPerpsAndAssetSection = withFlagOverrides(
-  {
-    lwmWallet40: { params: { assetSection: true } },
-    ptxPerpsLiveAppMobile: { enabled: true },
-  },
-  state => ({
-    ...state,
-    accounts: {
-      active: [mockAccount],
-    },
-  }),
-);
-
-export function overrideInitialStateWithServicesEntryPoints(assetSection: boolean) {
+export function overrideInitialStateWithServicesEntryPoints() {
   return withFlagOverrides(
     {
-      lwmWallet40: { params: { assetSection } },
       entryPointsServices: { enabled: true, params: { services: ["borrow", "perps"] } },
       ptxPerpsLiveAppMobile: { enabled: true },
       ptxBorrowLiveApp: { enabled: true },
@@ -86,20 +72,18 @@ export function overrideInitialStateWithServicesEntryPoints(assetSection: boolea
   );
 }
 
-export const overrideInitialStateWithAssetSection =
-  (assetSection: boolean, accounts: Account[] = [mockAccount]) =>
-  (state: State): State =>
-    withFlagOverrides({ lwmWallet40: { params: { assetSection } } }, s => ({
-      ...s,
-      accounts: {
-        active: accounts,
-      },
-    }))(state);
+export const overrideInitialStateWithAccounts =
+  (accounts: Account[] = [mockAccount]) =>
+  (state: State): State => ({
+    ...state,
+    accounts: {
+      ...state.accounts,
+      active: accounts,
+    },
+  });
 
-export const overrideInitialStateWithNoAccountsAndAssetSection =
-  (assetSection: boolean) =>
-  (state: State): State =>
-    overrideInitialStateWithAssetSection(assetSection, [])(state);
+export const overrideInitialStateWithNoAccounts = (state: State): State =>
+  overrideInitialStateWithAccounts([])(state);
 
 const onboardingWidgetBaseState = (state: State): State => ({
   ...state,

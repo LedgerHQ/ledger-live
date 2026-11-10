@@ -95,6 +95,16 @@ jobs:
       - name: Check i18n keys exist in the Desktop and Mobile catalogs
         run: pnpm exec nx run-many -t lint:i18n-keys -p enforce-i18n-keys
 
+      - name: Test the skills and docs check
+        # Guard until release and hotfix have tools/skills-check/. Remove in LIVE-40621.
+        if: hashFiles('tools/skills-check/check.ts') != ''
+        run: node --test "tools/skills-check/test/*.test.ts"
+
+      - name: Check skills and docs
+        # Guard until release and hotfix have tools/skills-check/. Remove in LIVE-40621.
+        if: hashFiles('tools/skills-check/check.ts') != ''
+        run: pnpm skills:check
+
       # The knip steps skip older branches (e.g. release), which call this workflow from develop without the monorepo knip configs.
       - name: Knip (packages without platform configs)
         if: ${{ !cancelled() && steps.install.outcome == 'success' && hashFiles('support/knip/web.config.mjs') != '' }}

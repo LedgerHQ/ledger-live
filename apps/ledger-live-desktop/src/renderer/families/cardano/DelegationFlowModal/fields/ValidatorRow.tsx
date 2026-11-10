@@ -5,7 +5,7 @@ import {
   CryptoCurrency,
 } from "@domain/entity-currency-crypto";
 import { Unit } from "@domain/entity-currency-unit";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";

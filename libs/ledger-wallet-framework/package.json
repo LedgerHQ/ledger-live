@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/ledger-wallet-framework",
-  "version": "3.9.0",
+  "version": "3.10.0",
   "description": "Framework for Ledger Wallet",
   "keywords": [
     "Ledger",
@@ -129,10 +129,9 @@
     "@types/jest": "catalog:",
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
-    "@types/numeral": "2.0.5",
     "@typescript/native": "catalog:",
     "typescript": "catalog:",
-    "cross-env": "7.0.3",
+    "cross-env": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",

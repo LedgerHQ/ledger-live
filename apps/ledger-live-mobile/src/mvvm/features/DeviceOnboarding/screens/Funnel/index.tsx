@@ -1,11 +1,30 @@
 import React from "react";
-import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
+import { BottomSheetHeader, BottomSheetView, Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
+import { UnlockDevice } from "LLM/components/DeviceIntentExecutor/components/DeviceGenericStates/UnlockDevice";
+import { QuitConfirmation } from "LLM/features/DeviceOnboarding/components/QuitConfirmation";
 import { ChecksScreen } from "LLM/features/DeviceOnboarding/screens/Checks";
-import { useDeviceOnboardingFunnelViewModel } from "./useDeviceOnboardingFunnelViewModel";
+import { KaraokeScreen } from "LLM/features/DeviceOnboarding/screens/Karaoke";
+import { funnelTestIds } from "LLM/features/DeviceOnboarding/testIds";
+import {
+  useDeviceOnboardingFunnelViewModel,
+  type DeviceOnboardingFunnelModel,
+  type UnlockSheetModel,
+} from "./useDeviceOnboardingFunnelViewModel";
 
-export function DeviceOnboardingFunnel() {
-  const screen = useDeviceOnboardingFunnelViewModel();
-  if (screen.status === "checks") return <ChecksScreen {...screen.checks} />;
+function FunnelBody({ screen }: Readonly<{ screen: DeviceOnboardingFunnelModel }>) {
+  if (screen.status === "karaoke") {
+    return <KaraokeScreen onClose={screen.onClose} />;
+  }
+  if (screen.status === "checks") {
+    return (
+      <>
+        <ChecksScreen {...screen.checks} />
+        {screen.unlockSheet ? <DeviceUnlockSheet {...screen.unlockSheet} /> : null}
+      </>
+    );
+  }
 
   return (
     <Box lx={{ flex: 1, justifyContent: "center", gap: "s16", padding: "s16" }}>
@@ -21,5 +40,39 @@ export function DeviceOnboardingFunnel() {
         {screen.closeLabel}
       </Button>
     </Box>
+  );
+}
+
+export function DeviceOnboardingFunnel() {
+  const screen = useDeviceOnboardingFunnelViewModel();
+
+  return (
+    <>
+      <FunnelBody screen={screen} />
+      {screen.quitConfirmation ? <QuitConfirmation {...screen.quitConfirmation} /> : null}
+    </>
+  );
+}
+
+function DeviceUnlockSheet({ deviceModelId, deviceName }: UnlockSheetModel) {
+  const { bottom: bottomInset } = useSafeAreaInsets();
+
+  return (
+    <QueuedBottomSheet
+      isRequestingToBeOpened
+      noCloseButton
+      preventBackdropClick
+      enablePanDownToClose={false}
+      enableDynamicSizing
+      contentHasBottomSpace
+      testID={funnelTestIds.unlockSheet}
+    >
+      <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
+        <BottomSheetHeader />
+        <Box lx={{ paddingHorizontal: "s16" }}>
+          <UnlockDevice deviceModelId={deviceModelId} deviceName={deviceName} />
+        </Box>
+      </BottomSheetView>
+    </QueuedBottomSheet>
   );
 }

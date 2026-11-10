@@ -108,7 +108,7 @@ The files are committed, so a change is a reviewable diff in this repo and no CI
 learn that your feature exists.
 
 **Desktop** — `apps/ledger-live-desktop/.env.{production,staging,testing}`. `DOTENV_FILE` in
-`tools/rspack/utils.ts` picks one from `TESTING` / `STAGING` / `NODE_ENV`, and
+`apps/ledger-live-desktop/tools/rspack/utils.mts` picks one from `TESTING` / `STAGING` / `NODE_ENV`, and
 `buildDotEnvDefine()` turns every key into a `process.env.KEY` replacement on all rspack targets.
 Read it as the literal expression:
 

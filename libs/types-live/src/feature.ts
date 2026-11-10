@@ -102,7 +102,6 @@ export type CurrencyFeatures = {
   currencySecretNetwork: DefaultFeature;
   currencyDesmos: DefaultFeature;
   currencyDydx: DefaultFeature;
-  currencyStargaze: DefaultFeature;
   currencyPersistence: DefaultFeature;
   currencyInternetComputer: DefaultFeature;
   currencyInjective: DefaultFeature;
@@ -860,11 +859,6 @@ export type Feature_OnboardingIgnoredOSUpdates = Feature<{
 
 type Feature_Wallet40_Params = {
   lazyOnboarding: boolean;
-  assetSection: boolean;
-  operationsList: boolean;
-  aggregatedAssets: boolean;
-  pnl: boolean;
-  assetDiscoverability: boolean;
   // Specifics
   brazePlacement?: boolean;
   earnUpselling?: boolean;

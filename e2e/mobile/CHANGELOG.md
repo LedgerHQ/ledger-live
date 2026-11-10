@@ -1,5 +1,21 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.45.0
+
+### Minor Changes
+
+- [#24060](https://github.com/LedgerHQ/ledger-live/pull/24060) [`a63497d`](https://github.com/LedgerHQ/ledger-live/commit/a63497d0449ffb0e270f3f1d1d738e6b6ab540d3) Thanks [@valeriiboiko-ext-ops](https://github.com/valeriiboiko-ext-ops)! - Migrate the settings, help, app lock and Ledger Sync page objects to typed element handles, and add a native handle method that types text without pressing Enter.
+
+- [#23968](https://github.com/LedgerHQ/ledger-live/pull/23968) [`63e1579`](https://github.com/LedgerHQ/ledger-live/commit/63e1579694daf9e0e43f5932cf4d190d275efb23) Thanks [@valeriiboiko-ext-ops](https://github.com/valeriiboiko-ext-ops)! - Add typed element handles that wait for an element before acting, and migrate the new send flow and earn v2 dashboard page objects to them.
+
+## 0.45.0-next.0
+
+### Minor Changes
+
+- [#24060](https://github.com/LedgerHQ/ledger-live/pull/24060) [`a63497d`](https://github.com/LedgerHQ/ledger-live/commit/a63497d0449ffb0e270f3f1d1d738e6b6ab540d3) Thanks [@valeriiboiko-ext-ops](https://github.com/valeriiboiko-ext-ops)! - Migrate the settings, help, app lock and Ledger Sync page objects to typed element handles, and add a native handle method that types text without pressing Enter.
+
+- [#23968](https://github.com/LedgerHQ/ledger-live/pull/23968) [`63e1579`](https://github.com/LedgerHQ/ledger-live/commit/63e1579694daf9e0e43f5932cf4d190d275efb23) Thanks [@valeriiboiko-ext-ops](https://github.com/valeriiboiko-ext-ops)! - Add typed element handles that wait for an element before acting, and migrate the new send flow and earn v2 dashboard page objects to them.
+
 ## 0.44.0
 
 ### Minor Changes
@@ -631,17 +647,5 @@ matching ... quick-action-buy ... VISIBLE`, 3/5 nightlies.
 
 - [#19909](https://github.com/LedgerHQ/ledger-live/pull/19909) [`311e79f`](https://github.com/LedgerHQ/ledger-live/commit/311e79f15f334f2a7b0499dbbfe57fa835e8b0b2) Thanks [@henri-ly](https://github.com/henri-ly)! - add new send flow tokens test, and type the amount in crypto (the step opens in fiat) by tagging
   the amount fiat/crypto toggle with a `amount-mode-toggle` testID
-
-## 0.34.0
-
-### Minor Changes
-
-- [#20619](https://github.com/LedgerHQ/ledger-live/pull/20619) [`0175f1f`](https://github.com/LedgerHQ/ledger-live/commit/0175f1ffab7a31fe882b3538d5a87619c331bf54) Thanks [@qperrot](https://github.com/qperrot)! - Chore: add tests for memo on the new send flow
-
-## 0.34.0-next.0
-
-### Minor Changes
-
-- [#20619](https://github.com/LedgerHQ/ledger-live/pull/20619) [`0175f1f`](https://github.com/LedgerHQ/ledger-live/commit/0175f1ffab7a31fe882b3538d5a87619c331bf54) Thanks [@qperrot](https://github.com/qperrot)! - Chore: add tests for memo on the new send flow
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

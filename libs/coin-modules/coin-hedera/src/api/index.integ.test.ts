@@ -11,7 +11,6 @@ import {
 } from "@hiero-ledger/sdk";
 import type { FeeEstimation } from "@ledgerhq/coin-module-framework/api/types";
 import { NotEnoughBalance, RecipientRequired } from "@ledgerhq/ledger-wallet-framework/errors";
-import { getEnv } from "@ledgerhq/live-env";
 import invariant from "invariant";
 import { createApi } from "../api";
 import {
@@ -38,8 +37,8 @@ describe("createApi", () => {
     ...getMockedConfig(),
     useNetworkTimestamp: true,
     apiUrls: {
-      mirrorNode: getEnv("API_HEDERA_MIRROR"),
-      hgraph: getEnv("API_HEDERA_HGRAPH"),
+      mirrorNode: "https://hedera.coin.ledger.com",
+      hgraph: "https://hedera-indexer-mainnet.coin.ledger.com/v1/graphql",
     },
   };
   const api = createApi("hedera");

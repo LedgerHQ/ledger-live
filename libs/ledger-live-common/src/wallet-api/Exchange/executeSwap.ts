@@ -16,7 +16,7 @@ import {
   ExchangeType,
   SwapResult,
 } from "@ledgerhq/wallet-api-exchange-module";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import get from "lodash/get";
 import type { Transaction as EvmTransaction } from "../../families/evm/types";
 import { padHexString } from "@ledgerhq/hw-app-eth";
@@ -174,6 +174,7 @@ async function executeSwapAttempt(
         (resolve, reject) => {
           uiExchangeStart({
             exchangeParams: exchangeStartParams,
+            continuesOnDevice: true,
             onSuccess: (nonce, device, meta) => {
               exchangeAppVersion = meta?.exchangeAppVersion;
               signingAppName = meta?.signingAppName;

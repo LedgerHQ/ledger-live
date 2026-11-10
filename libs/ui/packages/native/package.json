@@ -105,7 +105,6 @@
     "@testing-library/jest-dom": "catalog:",
     "@testing-library/user-event": "14.5.2",
     "@types/color": "3.0.6",
-    "@types/hoist-non-react-statics": "3.3.5",
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
     "@types/prop-types": "15.7.12",

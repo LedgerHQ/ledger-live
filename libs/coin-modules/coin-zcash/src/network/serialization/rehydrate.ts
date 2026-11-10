@@ -14,7 +14,7 @@
  * optional field; conditional spreads are used to omit missing keys entirely.
  */
 
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type {
   DecryptedOutput,
   DecryptedOutputRaw,

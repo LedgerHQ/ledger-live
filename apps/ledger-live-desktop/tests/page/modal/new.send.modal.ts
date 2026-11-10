@@ -48,7 +48,6 @@ export class NewSendModal extends Modal {
   readonly sanctionedBanner = this.dialog.getByTestId("sanctioned-address-banner");
   readonly recipientErrorBanner = this.dialog.getByTestId("recipient-error-banner");
   readonly senderErrorBanner = this.dialog.getByTestId("sender-error-banner");
-  readonly recentHistoryWarningCard = this.dialog.getByTestId("send-recent-history-warning");
 
   // Memo
   readonly memoInput = this.dialog.getByTestId("send-memo-input");
@@ -95,7 +94,6 @@ export class NewSendModal extends Modal {
 
   // ========== COIN CONTROL STEP ==========
   readonly coinControlFooter = this.dialog.getByTestId("send-coin-control-footer");
-  readonly coinControlChangeToReturn = this.dialog.getByTestId("send-change-to-return-row");
   readonly coinControlAmountInput = this.dialog.getByLabel(/amount to send/i);
 
   // ========== CONFIRMATION STEP ==========

@@ -7,7 +7,7 @@
  * and does not depend on this module.
  */
 
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { colors, writeStdout, hyperlink } from "../shared/ui";
 import type { HumanFormatter } from "../wallet/formatter/human";
 import type {

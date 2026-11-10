@@ -10,6 +10,8 @@ import { AnalyticsEvents } from "../Analytics/enums";
 import { CONNECTION_TYPES } from "~/analytics/hooks/variables";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { TrustchainResultType } from "@ledgerhq/ledger-key-ring-protocol/types";
+import { ScreenName } from "~/const";
 
 function deferredReject<T = never>() {
   let reject!: (error: Error) => void;
@@ -36,10 +38,19 @@ jest.mock("../hooks/useDestroyTrustchain", () => ({
   }),
 }));
 
-const mockNavigate = jest.fn();
+const navigationMocks = {
+  navigate: jest.fn(),
+  goBack: jest.fn(),
+  params: undefined as { seededOffer?: boolean } | undefined,
+};
+
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
-  useNavigation: () => ({ navigate: mockNavigate }),
+  useNavigation: () => ({
+    navigate: navigationMocks.navigate,
+    getParent: () => ({ goBack: navigationMocks.goBack }),
+  }),
+  useRoute: () => ({ params: navigationMocks.params }),
 }));
 
 const INITIAL_STATE = withFlagOverrides(
@@ -88,9 +99,16 @@ function TestHarness({ device }: { device: Device }) {
   return <Text testID="scene-kind">{SceneKind[scene.kind]}</Text>;
 }
 
+const createdTrustchain = {
+  rootId: "rootId",
+  applicationPath: "applicationPath",
+  walletSyncEncryptionKey: "walletSyncEncryptionKey",
+};
+
 describe("useAddMember", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    navigationMocks.params = undefined;
   });
 
   it("should set GenericError scene when UserRefusedOnDevice is thrown", async () => {
@@ -154,5 +172,41 @@ describe("useAddMember", () => {
 
     expect(screen.getByTestId("scene-kind").props.children).toBe("KeyError");
     expect(track).not.toHaveBeenCalled();
+  });
+
+  it("should open the loading screen when the trustchain is written", async () => {
+    mockGetOrCreateTrustchain.mockResolvedValue({
+      trustchain: createdTrustchain,
+      type: TrustchainResultType.created,
+    });
+
+    render(<TestHarness device={MOCK_BLE_DEVICE} />, {
+      overrideInitialState: INITIAL_STATE,
+    });
+
+    await jest.advanceTimersByTimeAsync(0);
+
+    expect(navigationMocks.navigate).toHaveBeenCalledWith(ScreenName.WalletSyncLoading, {
+      created: true,
+    });
+    expect(navigationMocks.goBack).not.toHaveBeenCalled();
+  });
+
+  it("should pop Wallet Sync when the seeded offer trustchain is written", async () => {
+    navigationMocks.params = { seededOffer: true };
+    mockGetOrCreateTrustchain.mockResolvedValue({
+      trustchain: createdTrustchain,
+      type: TrustchainResultType.created,
+    });
+
+    const { store } = render(<TestHarness device={MOCK_BLE_DEVICE} />, {
+      overrideInitialState: INITIAL_STATE,
+    });
+
+    await jest.advanceTimersByTimeAsync(0);
+
+    expect(store.getState().trustchain.trustchain).toMatchObject(createdTrustchain);
+    expect(navigationMocks.goBack).toHaveBeenCalledTimes(1);
+    expect(navigationMocks.navigate).not.toHaveBeenCalled();
   });
 });

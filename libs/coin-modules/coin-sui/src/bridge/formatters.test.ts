@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { fromOperationExtraRaw, toOperationExtraRaw } from "./formatters";
 
 describe("formatters", () => {

@@ -9,7 +9,7 @@ import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { createFixtureCryptoCurrency } from "../../mock/fixtures/cryptoCurrencies";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 
 jest.mock("../reducer");
 jest.mock("react-redux", () => ({

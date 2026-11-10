@@ -1,34 +1,37 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router";
-import { hasConfirmedAccountHistory } from "@features/flow-account-detail-analytics-notice";
-import type { AccountAnalyticsIntroductionProps } from "@features/flow-account-detail-analytics-notice/web";
+import type { AccountAnalyticsIntroductionProps } from "@features/flow-account-detail-analytics-notice";
+import { dismissAccountAnalyticsIntroduction } from "@features/flow-account-detail-analytics-notice/state";
 import {
-  dismissAccountAnalyticsIntroduction,
-  selectAccountAnalyticsIntroductionDismissed,
-} from "@features/flow-account-detail-analytics-notice/state";
-import { isConfirmedOperation } from "@ledgerhq/ledger-wallet-framework/operation";
+  ACCOUNT_DETAIL_BUTTONS,
+  ACCOUNT_DETAIL_EVENTS,
+  accountButtonClickedProps,
+} from "@features/flow-account-detail";
+import { track } from "@shared/analytics";
 import type { Account } from "@ledgerhq/types-live";
-import { useDispatch, useSelector } from "LLD/hooks/redux";
+import { useDispatch } from "LLD/hooks/redux";
 import type { AccountAnalyticsEntryState } from "LLD/features/Analytics/accountAnalyticsEntry";
-import { confirmationsNbForCurrencySelector } from "~/renderer/reducers/settings";
 import { getAccountUrl } from "~/renderer/utils";
+import { getAccountTrackingFacts } from "../../utils/accountTracking";
+import { useAnalyticsIntroductionStatus } from "./useAnalyticsIntroductionStatus";
 
 export function useAnalyticsIntroductionViewModel(
   account: Account,
 ): AccountAnalyticsIntroductionProps {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const hasDismissed = useSelector(selectAccountAnalyticsIntroductionDismissed);
-  const confirmationsNb = useSelector(state =>
-    confirmationsNbForCurrencySelector(state, { currency: account.currency }),
-  );
-  const hasConfirmedHistory = hasConfirmedAccountHistory(account, operation =>
-    isConfirmedOperation(operation, account, confirmationsNb),
-  );
+  const status = useAnalyticsIntroductionStatus(account);
   const onDismiss = useCallback(() => {
     dispatch(dismissAccountAnalyticsIntroduction());
   }, [dispatch]);
   const onOpenAnalytics = useCallback(() => {
+    track(
+      ACCOUNT_DETAIL_EVENTS.buttonClicked,
+      accountButtonClickedProps(
+        getAccountTrackingFacts(account),
+        ACCOUNT_DETAIL_BUTTONS.analyticsBanner,
+      ),
+    );
     const state: AccountAnalyticsEntryState = {
       accountAnalytics: {
         accountId: account.id,
@@ -38,7 +41,7 @@ export function useAnalyticsIntroductionViewModel(
       },
     };
     navigate("/analytics", { state });
-  }, [navigate, account.id, account.currency.id]);
+  }, [navigate, account]);
 
-  return { hasConfirmedHistory, hasDismissed, onDismiss, onOpenAnalytics };
+  return { ...status, onDismiss, onOpenAnalytics };
 }

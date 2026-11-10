@@ -47,9 +47,7 @@ export default class BuySellPage {
     await app.common.disableSynchronization();
     try {
       await openDeeplink(page.toLowerCase());
-      await waitForElementById(app.common.walletApiWebview, TIMEOUT.xxxlarge, {
-        checkVisibility: false,
-      });
+      await app.common.waitForWalletApiWebview(TIMEOUT.xxxlarge);
     } finally {
       await app.common.enableSynchronization();
     }

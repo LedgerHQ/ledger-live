@@ -3,6 +3,7 @@ import type { DevToolsConfig } from "@devtools/shell";
 import { useDeviceOnboardingToolProps, useDeviceOnboardingToolState } from "@devtools/bindings";
 import type { OnboardingInspectionEvent } from "@features/platform-device-onboarding";
 import { useDeviceOnboarding } from "../../DeviceOnboarding/hooks/useDeviceOnboarding";
+import { useFirmwareUpdateHandover } from "../../DeviceOnboarding/hooks/useFirmwareUpdateHandover";
 import { useDeviceOnboardingFeatureFlag } from "./useDeviceOnboardingFeatureFlag";
 
 type DeviceOnboardingToolProps = Extract<
@@ -19,6 +20,14 @@ export function useDeviceOnboardingToolSession(input: UseDeviceOnboardingInput) 
   const inspectRef = useRef<(event: OnboardingInspectionEvent) => void>(() => undefined);
   const inspect = useCallback((event: OnboardingInspectionEvent) => inspectRef.current(event), []);
   const session = useDeviceOnboarding({ ...input, inspect });
+  useFirmwareUpdateHandover({
+    device: session.liveDevice,
+    isDeviceOnboarded: session.context?.isOnboarded ?? false,
+    machineState: session.state,
+    currentSessionId: session.device?.sessionId ?? null,
+    send: session.send,
+    onReconnectRequired: session.reconnectAfterUpdate,
+  });
   const toolState = useDeviceOnboardingToolState({
     snapshot: session.snapshot,
     portsRef: session.portsRef,

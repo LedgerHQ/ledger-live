@@ -10,7 +10,7 @@ import type {
   CosmosValidatorItem,
 } from "./types";
 import data from "@ledgerhq/coin-cosmos/preloadedData.mock";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveConfig } from "../../config/sharedConfig";
 import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";

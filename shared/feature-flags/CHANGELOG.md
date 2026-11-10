@@ -1,5 +1,37 @@
 # @shared/feature-flags
 
+## 0.29.0
+
+### Minor Changes
+
+- [#24024](https://github.com/LedgerHQ/ledger-live/pull/24024) [`9907890`](https://github.com/LedgerHQ/ledger-live/commit/9907890790bf8b804d7cc454a067508df0969137) Thanks [@qperrot](https://github.com/qperrot)! - Remove Blast and Blast Sepolia, whose chain shut down
+
+- [#23972](https://github.com/LedgerHQ/ledger-live/pull/23972) [`7aeab58`](https://github.com/LedgerHQ/ledger-live/commit/7aeab582f0f6c8d38cf88af0c559dd37d77b9a1c) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Always show desktop aggregated assets, drop the lwdWallet40 param, and align desktop e2e
+
+- [#24068](https://github.com/LedgerHQ/ledger-live/pull/24068) [`68196b4`](https://github.com/LedgerHQ/ledger-live/commit/68196b4642ad26ccce9b3263e45ee718572acb11) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Show desktop asset discoverability without a feature flag
+
+- [#24100](https://github.com/LedgerHQ/ledger-live/pull/24100) [`f95b426`](https://github.com/LedgerHQ/ledger-live/commit/f95b4268782b5cfd8cb4c14c9b0e5c6384cafa4d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Always show the desktop asset section and drop the lwdWallet40 assetSection param
+
+- [#24046](https://github.com/LedgerHQ/ledger-live/pull/24046) [`e275739`](https://github.com/LedgerHQ/ledger-live/commit/e27573929d3e688afbb6544c58274e025867e6e4) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Add unifiedEntryPoints param to the deviceOnboarding feature flag, off by default. Mobile DevTools › Onboarding shows its switch automatically
+
+- [#22966](https://github.com/LedgerHQ/ledger-live/pull/22966) [`77a85a3`](https://github.com/LedgerHQ/ledger-live/commit/77a85a30abe7b42e5f5b4e0478bec14fa39033cf) Thanks [@qperrot](https://github.com/qperrot)! - Remove deprecated Moonbeam and Moonriver blockchains and the `currencyMoonriver` feature flag
+
+## 0.29.0-next.0
+
+### Minor Changes
+
+- [#24024](https://github.com/LedgerHQ/ledger-live/pull/24024) [`9907890`](https://github.com/LedgerHQ/ledger-live/commit/9907890790bf8b804d7cc454a067508df0969137) Thanks [@qperrot](https://github.com/qperrot)! - Remove Blast and Blast Sepolia, whose chain shut down
+
+- [#23972](https://github.com/LedgerHQ/ledger-live/pull/23972) [`7aeab58`](https://github.com/LedgerHQ/ledger-live/commit/7aeab582f0f6c8d38cf88af0c559dd37d77b9a1c) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Always show desktop aggregated assets, drop the lwdWallet40 param, and align desktop e2e
+
+- [#24068](https://github.com/LedgerHQ/ledger-live/pull/24068) [`68196b4`](https://github.com/LedgerHQ/ledger-live/commit/68196b4642ad26ccce9b3263e45ee718572acb11) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Show desktop asset discoverability without a feature flag
+
+- [#24100](https://github.com/LedgerHQ/ledger-live/pull/24100) [`f95b426`](https://github.com/LedgerHQ/ledger-live/commit/f95b4268782b5cfd8cb4c14c9b0e5c6384cafa4d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Always show the desktop asset section and drop the lwdWallet40 assetSection param
+
+- [#24046](https://github.com/LedgerHQ/ledger-live/pull/24046) [`e275739`](https://github.com/LedgerHQ/ledger-live/commit/e27573929d3e688afbb6544c58274e025867e6e4) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Add unifiedEntryPoints param to the deviceOnboarding feature flag, off by default. Mobile DevTools › Onboarding shows its switch automatically
+
+- [#22966](https://github.com/LedgerHQ/ledger-live/pull/22966) [`77a85a3`](https://github.com/LedgerHQ/ledger-live/commit/77a85a30abe7b42e5f5b4e0478bec14fa39033cf) Thanks [@qperrot](https://github.com/qperrot)! - Remove deprecated Moonbeam and Moonriver blockchains and the `currencyMoonriver` feature flag
+
 ## 0.28.0
 
 ### Minor Changes
@@ -475,23 +507,5 @@
     within one checkpoint a sibling whose digest sorts earlier can be skipped, and a checkpoint holding
     more than one page is stepped over rather than resumed inside. Account sync is unaffected: it
     resumes from the server's own watermark cursor.
-
-## 0.19.0
-
-### Minor Changes
-
-- [#20848](https://github.com/LedgerHQ/ledger-live/pull/20848) [`e4e8d08`](https://github.com/LedgerHQ/ledger-live/commit/e4e8d086fc5672e4ce96c30c9a9af3f2022f863a) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the `lwmPasswordRevamp` feature flag, gating the User App Authentication epic on Ledger Wallet Mobile. Boolean gate with no params, disabled by default; its Remote Config key is derived as `feature_lwm_password_revamp`. Nothing reads it yet.
-
-- [#20907](https://github.com/LedgerHQ/ledger-live/pull/20907) [`da0a5ce`](https://github.com/LedgerHQ/ledger-live/commit/da0a5ceb8f889f1bace45ed2d3d4c640cdf24ca8) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add Solana TXC flag
-
-- [#20719](https://github.com/LedgerHQ/ledger-live/pull/20719) [`5b39a67`](https://github.com/LedgerHQ/ledger-live/commit/5b39a67dd93d4c541a77b0b146881073ca00ed15) Thanks [@sarneijim](https://github.com/sarneijim)! - Drive desktop LNS upsell banners from `largeScreenUpsell` and remove the legacy `lldNanoSUpsellBanners` flag (LIVE-35487).
-
-- [#20630](https://github.com/LedgerHQ/ledger-live/pull/20630) [`0807eca`](https://github.com/LedgerHQ/ledger-live/commit/0807ecacfd06057811a3d6f8845b9f4bfc6f693c) Thanks [@sarneijim](https://github.com/sarneijim)! - Enable LNS upsell portfolio banner for opted-in users (LIVE-32086).
-
-## 0.19.0-next.1
-
-### Minor Changes
-
-- [#20907](https://github.com/LedgerHQ/ledger-live/pull/20907) [`da0a5ce`](https://github.com/LedgerHQ/ledger-live/commit/da0a5ceb8f889f1bace45ed2d3d4c640cdf24ca8) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add Solana TXC flag
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

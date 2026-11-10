@@ -130,13 +130,13 @@ describe("getTransactionStatus negative cases", () => {
   });
 });
 
-describe("getTransactionStatus zero-fee chain (gonka)", () => {
+describe("getTransactionStatus fees", () => {
   it("treats a zero fee as loaded and spends the full balance with useAllAmount", async () => {
     const spendableBalance = BABY(10);
-    const account = makeAccount(spendableBalance, gonka);
+    const account = makeAccount(spendableBalance);
     const transaction = {
       mode: "send",
-      recipient: validGonkaRecipient,
+      recipient: validRecipient,
       amount: new BigNumber(0),
       fees: new BigNumber(0),
       gas: new BigNumber(80000),
@@ -148,6 +148,27 @@ describe("getTransactionStatus zero-fee chain (gonka)", () => {
     expect(status.errors.fees).toBeUndefined();
     expect(status.amount).toEqual(getMaxEstimatedBalance(account, new BigNumber(0)));
     expect(status.amount).toEqual(spendableBalance);
+  });
+
+  it("keeps gonka's gas fee out of the amount sent with useAllAmount", async () => {
+    const spendableBalance = new BigNumber(10_000_000_000);
+    const gas = new BigNumber(112284);
+    const account = makeAccount(spendableBalance, gonka);
+    const transaction = {
+      mode: "send",
+      recipient: validGonkaRecipient,
+      amount: new BigNumber(0),
+      // 1 ngonka per gas
+      fees: gas,
+      gas,
+      useAllAmount: true,
+    } as unknown as Transaction;
+
+    const status = await getTransactionStatus(account, transaction);
+
+    expect(status.errors).toEqual({});
+    expect(status.estimatedFees).toEqual(gas);
+    expect(status.amount).toEqual(spendableBalance.minus(gas));
   });
 
   it("still flags FeeNotLoaded when fees have not been computed yet", async () => {

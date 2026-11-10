@@ -63,6 +63,7 @@ type ViewModelStateParams = {
   knownDevices?: KnownDevice[];
   bleKnownDevices?: DeviceLike[];
   buyDeviceFromLiveEnabled?: boolean;
+  mockServerEnabled?: boolean;
 };
 
 function mockConnectDeviceSubscription() {
@@ -80,6 +81,7 @@ function withViewModelState({
   knownDevices = [],
   bleKnownDevices = [],
   buyDeviceFromLiveEnabled,
+  mockServerEnabled = false,
 }: ViewModelStateParams = {}) {
   const featureFlagOverrides: Parameters<typeof withFlagOverrides>[0] = {
     ...(buyDeviceFromLiveEnabled === undefined
@@ -91,6 +93,10 @@ function withViewModelState({
     overrideInitialState: withFlagOverrides(featureFlagOverrides, (state: State): State => ({
       ...state,
       knownDevices: { knownDevices },
+      settings: {
+        ...state.settings,
+        mockServer: { enabled: mockServerEnabled, url: "https://mock.example", token: "token-1" },
+      },
       ble: {
         ...state.ble,
         knownDevices: bleKnownDevices,
@@ -189,7 +195,18 @@ describe("useConnectionViewModel", () => {
       acceptedDeviceModelIds: [],
       dmk: mockDmk,
       onConnected: expect.any(Function),
+      isMockServerEnabled: false,
     });
+  });
+
+  it("should restrict the connect device flow to the mock server when it is on in settings", () => {
+    // WHEN
+    renderViewModel({}, { mockServerEnabled: true });
+
+    // THEN
+    expect(mockedConnectDevice).toHaveBeenCalledWith(
+      expect.objectContaining({ isMockServerEnabled: true }),
+    );
   });
 
   it("should pass accepted device model ids to the connect device flow", () => {

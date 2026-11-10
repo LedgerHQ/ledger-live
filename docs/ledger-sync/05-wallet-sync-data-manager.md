@@ -1,7 +1,7 @@
 # 5 · CloudSyncDataManager
 
 > Layer 4 of the [Ledger Sync stack](./README.md). Code:
-> [`shared/wallet-sync`](../../shared/wallet-sync) (aggregation core) · entity modules in [`domain/entity/`](../../domain/entity/) · accounts module in [`libs/live-wallet/src/accounts`](../../libs/live-wallet/src/accounts).
+> [`shared/cloud-sync-module`](../../shared/cloud-sync-module) (aggregation core) · entity modules in [`domain/entity/`](../../domain/entity/) · accounts module in [`libs/live-wallet/src/accounts`](../../libs/live-wallet/src/accounts).
 
 `CloudSyncDataManager` is where Ledger Wallet's world (rich `Account` objects, names, …) meets
 the wallet-sync data model (minimal descriptors stored in Cloud Sync). It owns all the

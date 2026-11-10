@@ -3,7 +3,7 @@ import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { TokenCurrency } from "@domain/entity-currency-token";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { Account, AccountLike, AccountRaw, AccountRawLike, Operation } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Result as UseBridgeTransactionResult } from "../../bridge/useBridgeTransaction";
 import { Transaction } from "../../coin-modules/transaction-types";
 import type { TransactionStatusValue } from "@ledgerhq/wallet-api-exchange-module";

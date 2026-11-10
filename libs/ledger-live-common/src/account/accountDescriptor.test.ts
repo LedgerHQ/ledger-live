@@ -1,5 +1,9 @@
 import { listCryptoCurrencies } from "@domain/entity-currency-crypto";
-import { networkFromCurrencyId, type AccountDescriptor } from "@domain/entity-account-descriptor";
+import {
+  NetworkIdSchema,
+  networkFromCurrencyId,
+  type AccountDescriptor,
+} from "@domain/entity-account-descriptor";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type { DerivationMode } from "@ledgerhq/types-live";
 import {
@@ -143,6 +147,12 @@ describe("fromLegacyAccount validation", () => {
   it("rejects an account without an address", () => {
     expect(() => fromLegacyAccount(account("ethereum", "", 0, { freshAddress: "" }))).toThrow(
       /address/,
+    );
+  });
+
+  it("rejects an empty currency id as an unknown currency", () => {
+    expect(() => fromLegacyAccount(account("", "", 0, { freshAddress: ETH_ADDR }))).toThrow(
+      new Error('currency with id "" not found'),
     );
   });
 });
@@ -312,7 +322,7 @@ describe("toLegacyAccount", () => {
       purpose: "account",
       version: "2",
       type: "address",
-      network: "ethereum",
+      network: NetworkIdSchema.parse("ethereum"),
       address: ETH_ADDR,
       path: "m/44H/60H/2H/0/0",
     });
@@ -325,7 +335,7 @@ describe("toLegacyAccount", () => {
         purpose: "account",
         version: "2",
         type: "address",
-        network: "bitcoin",
+        network: NetworkIdSchema.parse("bitcoin"),
         address: BTC_ADDR,
         path: "m/84h/0h/0h/0/0",
       }),
@@ -338,7 +348,7 @@ describe("toLegacyAccount", () => {
         purpose: "account",
         version: "2",
         type: "utxo",
-        network: "tezos",
+        network: NetworkIdSchema.parse("tezos"),
         xpub: XPUB,
         path: "m/44h/1729h/0h",
       }),
@@ -351,7 +361,7 @@ describe("toLegacyAccount", () => {
         purpose: "account",
         version: "2",
         type: "address",
-        network: "ethereum",
+        network: NetworkIdSchema.parse("ethereum"),
         address: ETH_ADDR,
         path: "m/44h/60h/0h",
       }),
@@ -367,7 +377,7 @@ describe("toLegacyAccount", () => {
         purpose: "account",
         version: "2",
         type: "utxo",
-        network: "bitcoin",
+        network: NetworkIdSchema.parse("bitcoin"),
         xpub: XPUB,
         path,
       }),
@@ -383,7 +393,7 @@ describe("toLegacyAccount", () => {
         purpose: "account",
         version: "2",
         type: "utxo",
-        network: "bitcoin",
+        network: NetworkIdSchema.parse("bitcoin"),
         xpub: XPUB,
         path,
       }),

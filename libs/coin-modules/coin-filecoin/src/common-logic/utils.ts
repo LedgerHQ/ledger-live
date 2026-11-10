@@ -6,7 +6,7 @@ import {
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { Unit } from "@ledgerhq/ledger-wallet-framework/types";
 import { Account, Operation } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import flatMap from "lodash/flatMap";
 import { fetchBalances, fetchBlockHeight, fetchTxsWithPages } from "../network/api";
 import { buildTokenAccounts } from "../erc20/tokenAccounts";

@@ -9,10 +9,66 @@ import {
   getSwapStepFromError,
   getIsSwapRetryPending,
   getIsSwapSignatureVerificationError,
+  toExchangeError,
   withSignatureRetryCode,
 } from "./error";
 
 describe("exchange/error", () => {
+  describe("toExchangeError", () => {
+    it("keeps an Error as it is", () => {
+      const error = new TransportStatusError(0x6a80);
+
+      expect(toExchangeError(error)).toBe(error);
+    });
+
+    it("names a DMK error after its tag, with the message of its original error", () => {
+      const dmkError = {
+        _tag: "DeviceDisconnectedWhileSendingError",
+        originalError: new Error("link lost"),
+      };
+
+      const error = toExchangeError(dmkError);
+
+      expect(error).toBeInstanceOf(Error);
+      expect(error.name).toBe("DeviceDisconnectedWhileSendingError");
+      expect(error.message).toBe("link lost");
+      expect(error.cause).toBe(dmkError);
+    });
+
+    it("uses the tag as the message of a DMK error that carries none", () => {
+      expect(toExchangeError({ _tag: "UnknownDeviceError" }).message).toBe("UnknownDeviceError");
+    });
+
+    it("uses the own message of a DMK error that has no original error", () => {
+      const error = toExchangeError({ _tag: "EthAppCommandError", message: "Invalid data" });
+
+      expect(error.name).toBe("EthAppCommandError");
+      expect(error.message).toBe("Invalid data");
+    });
+
+    it("keeps the name and message of a plain object", () => {
+      const rejection = { name: "ProviderUnavailable", message: "Provider is down" };
+
+      const error = toExchangeError(rejection);
+
+      expect(error).toBeInstanceOf(Error);
+      expect(error.name).toBe("ProviderUnavailable");
+      expect(error.message).toBe("Provider is down");
+      expect(error.cause).toBe(rejection);
+    });
+
+    it("keeps the status code of a plain transport error, which the steps map from", () => {
+      const error = toExchangeError({ name: "TransportStatusError", statusCode: 0x6a84 });
+
+      expect(error.name).toBe("TransportStatusError");
+      expect(error).toHaveProperty("statusCode", 0x6a84);
+    });
+
+    it("wraps any other thrown value", () => {
+      expect(toExchangeError("boom")).toEqual(new Error("boom"));
+    });
+  });
+
   describe("getErrorName", () => {
     it("should return name from error object", () => {
       const error = { name: "ValidationError" };
@@ -262,6 +318,43 @@ describe("exchange/error", () => {
       expect(result).toBeInstanceOf(CompleteExchangeError);
       expect((result as CompleteExchangeError).step).toBe("CHECK_REFUND_ADDRESS");
       // The error code should be overridden to INVALID_ADDRESS for this step
+    });
+
+    it("should keep the title and message of a mapped status code", () => {
+      const result = convertTransportError("INIT", new TransportStatusError(0x6a84));
+
+      expect(result).toMatchObject({ title: "userRefused", message: "User refused" });
+    });
+
+    it("should keep the raw status code in the message of an unmapped status code", () => {
+      const result = convertTransportError("SET_PARTNER_KEY", new TransportStatusError(0x6807));
+
+      expect(result).toBeInstanceOf(CompleteExchangeError);
+      expect(result).toMatchObject({
+        step: "SET_PARTNER_KEY",
+        title: undefined,
+        message: "Unknown device status 0x6807 (UNKNOWN_ERROR)",
+      });
+    });
+
+    it("should keep the known status text of an unmapped status code", () => {
+      const transportError = new TransportStatusError(0x6985);
+
+      const result = convertTransportError("CHECK_REFUND_ADDRESS", transportError);
+
+      expect(result).toMatchObject({
+        step: "CHECK_REFUND_ADDRESS",
+        title: undefined,
+        message: "Unknown device status 0x6985 (CONDITIONS_OF_USE_NOT_SATISFIED)",
+      });
+    });
+
+    it("should omit the status text when the error has none", () => {
+      const error = { name: "TransportStatusError", statusCode: 0x6807 };
+
+      const result = convertTransportError("SET_PARTNER_KEY", error);
+
+      expect(result).toMatchObject({ title: undefined, message: "Unknown device status 0x6807" });
     });
 
     it("should preserve error for non-TransportStatusError", () => {

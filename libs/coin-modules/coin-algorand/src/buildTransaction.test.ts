@@ -1,5 +1,5 @@
 import * as v8 from "v8";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { setCoinConfig } from "./config";
 import { mockAlgorandConfig } from "./test/context";
 import { buildTransactionPayload, encodeToSign, encodeToBroadcast } from "./buildTransaction";

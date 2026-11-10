@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { RentPayment } from "../../../bridge/generic-coin-framework/sponsored";
 import {
   SPONSORED_FAILURE_KIND,

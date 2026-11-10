@@ -3,6 +3,7 @@ import { isObservable, lastValueFrom, Observable } from "rxjs";
 import { log } from "detox";
 import { SpeculosAppType } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { getMergedFeatureFlags } from "@e2e/utils/featureFlagUtils";
+import { applyBuySellUiUrl } from "@e2e/utils/buySellUiUrl";
 import { isSpeculosRemote } from "@e2e/helpers/commonHelpers";
 import {
   deleteSpeculos,
@@ -391,6 +392,7 @@ export class InitializationManager {
     const deadline = Date.now() + SPECULOS_SETUP_BUDGET_MS;
 
     await InitializationManager.setFeatureFlags(featureFlags);
+    await applyBuySellUiUrl();
 
     const skipSpeculos =
       !!speculosForSetupOnly &&
@@ -462,6 +464,7 @@ export class InitializationManager {
     }
 
     await InitializationManager.setFeatureFlags(featureFlags);
+    await applyBuySellUiUrl();
   }
 
   private static async finalizeSetup(userdataSpeculos: string): Promise<void> {

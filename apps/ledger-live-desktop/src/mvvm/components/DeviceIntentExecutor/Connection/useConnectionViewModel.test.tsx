@@ -191,7 +191,7 @@ describe("useConnectionViewModel", () => {
       acceptedDeviceModelIds: [],
       dmk: mockDmk,
       onConnected: expect.any(Function),
-      mockServerTransportEnabled: false,
+      isMockServerEnabled: false,
     });
   });
 
@@ -201,7 +201,7 @@ describe("useConnectionViewModel", () => {
     renderViewModel();
 
     expect(mockedConnectDevice).toHaveBeenCalledWith(
-      expect.objectContaining({ mockServerTransportEnabled: true }),
+      expect.objectContaining({ isMockServerEnabled: true }),
     );
   });
 
