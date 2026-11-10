@@ -311,7 +311,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    runs-on: [test=true, xcode-26.4.1, macOS, ARM64]
+    runs-on: ledger-wallet-1cpu-aws-public-cached
     outputs:
       ios_device: ${{ steps.devices.outputs.ios_device }}
       android_device: ${{ steps.devices.outputs.android_device }}
