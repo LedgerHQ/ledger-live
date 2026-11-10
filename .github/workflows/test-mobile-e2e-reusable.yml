@@ -436,6 +436,31 @@ jobs:
       - name: Boot two emulators
         run: bash e2e/tooling/startup-perf/devices/boot-emulators.sh "$RESULTS_DIR/android"
 
+      - name: Network diagnostics (before)
+        continue-on-error: true
+        run: |
+          set +e
+          D="$RESULTS_DIR/android/network"; mkdir -p "$D"
+          { echo "== /etc/resolv.conf"; cat /etc/resolv.conf; echo "== nsswitch"; grep '^hosts' /etc/nsswitch.conf; } > "$D/runner-dns.txt" 2>&1
+          cat > "$RUNNER_TEMP/probe.sh" <<'PROBE'
+          # curl timings from the runner to the hosts of the startup's network checks, by IP family
+          for i in 1 2 3; do
+            for ip in 4 6 any; do
+              for u in https://firebaseinstallations.googleapis.com/ https://firebaseremoteconfig.googleapis.com/ https://countervalues.live.ledger.com/v3/markets https://www.google.com/; do
+                if [ "$ip" = any ]; then fam=""; else fam="-$ip"; fi
+                curl -s -o /dev/null $fam --max-time 10 -w "$(date -u +%T) ip=$ip code=%{http_code} dns=%{time_namelookup} connect=%{time_connect} tls=%{time_appconnect} ttfb=%{time_starttransfer} total=%{time_total} $u\n" "$u" || echo "$(date -u +%T) ip=$ip curl exit $? $u"
+              done
+            done
+          done
+          PROBE
+          bash "$RUNNER_TEMP/probe.sh" > "$D/runner-curl-before.txt" 2>&1
+          for s in emulator-5554 emulator-5556; do
+            adb -s "$s" logcat -G 16M
+            adb -s "$s" logcat -c
+            for tag in FirebaseRemoteConfig FirebaseInstallations; do adb -s "$s" shell setprop "log.tag.$tag" VERBOSE; done
+            adb -s "$s" shell dumpsys dnsresolver > "$D/dnsresolver-before-$s.txt" 2>&1
+          done
+
       - name: Measure
         env:
           SCENARIO: ${{ matrix.scenario }}
@@ -455,6 +480,19 @@ jobs:
             --read "$READ" \
             --accounts-userdata "$ACCOUNTS_USERDATA" \
             --out-dir "$RESULTS_DIR/android"
+
+      - name: Network diagnostics (after)
+        if: ${{ always() }}
+        continue-on-error: true
+        run: |
+          set +e
+          D="$RESULTS_DIR/android/network"; mkdir -p "$D"
+          for s in emulator-5554 emulator-5556; do
+            adb -s "$s" logcat -d -v threadtime -b main,system,events,crash > "$D/logcat-$s.txt" 2>&1
+            adb -s "$s" shell dumpsys dnsresolver > "$D/dnsresolver-after-$s.txt" 2>&1
+            adb -s "$s" shell getprop | grep -i -E 'dns|net\.' > "$D/props-$s.txt" 2>&1
+          done
+          bash "$RUNNER_TEMP/probe.sh" > "$D/runner-curl-after.txt" 2>&1
 
       - name: Analyse
         if: ${{ always() }}
