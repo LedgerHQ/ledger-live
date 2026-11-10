@@ -119,7 +119,7 @@ import { formatAddress } from "./logic/formatAddress";
 - Platform-specific types stay inside an implementation: `AddressRow.web.tsx` can use `React.CSSProperties` internally while `AddressRow.native.tsx` uses `ViewStyle`. A universal component, exported from an entry that resolves per platform, takes one props contract on both platforms instead. A component that cannot share its props goes behind a `./web` or `./native` platform entry, with its own props type per platform. See the [universal components ADR](./adr/universal-components.md).
 - TypeScript will error if a `.web` file tries to import something that only exists in a `.native` file, and vice versa.
 
-Explicit suffixes in imports (e.g. `import X from "./Foo.native"`) can still be used when a specific use case genuinely requires pinning to one platform file from shared code, but they should be removed when not strictly necessary — the tsconfig already handles the resolution.
+An import specifier never carries a platform suffix (e.g. `import X from "./Foo.native"`): the tsconfig already handles the resolution. The `suffix-imports/no-platform-suffix` lint rule reports it. The only way out is the `PLATFORM_SUFFIX_WAIVERS` list in the `@support/lint` layer presets, which holds the packages not yet cleaned up and only shrinks. See the [rule's section in the `@support/lint` README](../support/lint/README.md#suffix-importsno-platform-suffix).
 
 ---
 
