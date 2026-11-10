@@ -24,6 +24,8 @@ export const checksTestIds = {
   skipUpdate: "device-onboarding-checks-skip-update",
   declinedSheet: "device-onboarding-checks-declined-sheet",
   networkSheet: "device-onboarding-checks-network-sheet",
+  unknownSheet: "device-onboarding-checks-unknown-sheet",
+  providerSheet: "device-onboarding-checks-provider-sheet",
   notGenuineSheet: "device-onboarding-checks-not-genuine-sheet",
 } as const;
 

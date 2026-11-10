@@ -1,9 +1,12 @@
 import { useCallback, useState } from "react";
 import { Linking, Platform } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { track } from "@shared/analytics";
 import { getDeviceModel } from "@ledgerhq/devices";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
-import { useTranslation } from "~/context/Locale";
+import { useLocale, useTranslation } from "~/context/Locale";
+import { NavigatorName, ScreenName } from "~/const";
 import { urls } from "~/utils/urls";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import type {
@@ -42,6 +45,16 @@ type UnsupportedUpdateDrawerProps = Readonly<{
 
 type RecoverableErrorKind = Exclude<GenuineErrorKind, "notGenuine">;
 
+type ExperimentalSettingsNavigation = {
+  navigate: (
+    navigator: typeof NavigatorName.Base,
+    params: {
+      screen: typeof NavigatorName.Settings;
+      params: { screen: typeof ScreenName.ExperimentalSettings };
+    },
+  ) => void;
+};
+
 type ErrorDrawerProps = Readonly<{
   isOpen: boolean;
   kind: RecoverableErrorKind;
@@ -50,6 +63,7 @@ type ErrorDrawerProps = Readonly<{
   onCancel: () => void;
   onClose: () => void;
   onContactSupport: () => void;
+  onGoToSettings: () => void;
 }>;
 
 type NotGenuineDrawerProps = Readonly<{
@@ -97,6 +111,27 @@ type LayoutProps = Omit<
   | "errorDrawer"
   | "notGenuineDrawer"
 >;
+
+const recoverableErrorPage = "Error: unknown error";
+
+const providerErrorPage = "Error: Device OS version not recognized";
+const providerSettingsPage = "Error: Ledger Stax OS version not recognized";
+
+function trackRecoverableButton(button: string, page = recoverableErrorPage) {
+  track("button_clicked", { button, page });
+}
+
+function openUrl(url: string) {
+  const pending = Linking.openURL(url);
+  if (pending) pending.catch(() => undefined);
+}
+
+function contactSupportWebviewUrl(locale: string): string {
+  if (locale in urls.contactSupportWebview) {
+    return urls.contactSupportWebview[locale as keyof typeof urls.contactSupportWebview];
+  }
+  return urls.contactSupportWebview.en;
+}
 
 function recoverableKindOf(error: ChecksScreenProps["error"]): RecoverableErrorKind | null {
   if (!error || error.kind === "notGenuine") return null;
@@ -245,17 +280,42 @@ export function useChecksScreenViewModel({
   suspendSheets = false,
 }: ChecksScreenProps): ChecksViewProps {
   const { t } = useTranslation();
+  const { locale } = useLocale();
+  const navigation = useNavigation<ExperimentalSettingsNavigation>();
   const contactSupportUrl = useLocalizedUrl(urls.contact);
-  const onContactSupport = useCallback(() => {
-    Linking.openURL(contactSupportUrl);
-  }, [contactSupportUrl]);
-  const layout = checksLayout(state, update !== null);
   const recoverableKind = recoverableKindOf(error);
   const [retainedRecoverableKind, setRetainedRecoverableKind] = useState(recoverableKind);
   if (recoverableKind && recoverableKind !== retainedRecoverableKind) {
     setRetainedRecoverableKind(recoverableKind);
   }
   const errorDrawerKind = recoverableKind ?? retainedRecoverableKind ?? "unknown";
+  const retry = useCallback(() => {
+    trackRecoverableButton("Try again");
+    onRetry();
+  }, [onRetry]);
+  const cancel = useCallback(() => {
+    trackRecoverableButton(
+      "Cancel",
+      errorDrawerKind === "provider" ? providerErrorPage : recoverableErrorPage,
+    );
+    onQuit?.();
+  }, [errorDrawerKind, onQuit]);
+  const onContactSupport = useCallback(() => {
+    trackRecoverableButton("Contact Ledger Support");
+    openUrl(contactSupportUrl);
+  }, [contactSupportUrl]);
+  const onContactNotGenuineSupport = useCallback(() => {
+    track("button_clicked", { button: "Contacting support about non genuine device" });
+    openUrl(contactSupportWebviewUrl(locale));
+  }, [locale]);
+  const onGoToSettings = useCallback(() => {
+    trackRecoverableButton("Go to settings", providerSettingsPage);
+    navigation.navigate(NavigatorName.Base, {
+      screen: NavigatorName.Settings,
+      params: { screen: ScreenName.ExperimentalSettings },
+    });
+  }, [navigation]);
+  const layout = checksLayout(state, update !== null);
   const [allowClosed, setAllowClosed] = useState(false);
   if (state !== "awaitingAllow" && allowClosed) setAllowClosed(false);
   const [dismissedOfferKey, setDismissedOfferKey] = useState<string | null>(null);
@@ -313,17 +373,18 @@ export function useChecksScreenViewModel({
       isOpen: sheetOpen(recoverableKind !== null, suspendSheets),
       kind: errorDrawerKind,
       productName,
-      onRetry,
-      onCancel: () => onQuit?.(),
+      onRetry: retry,
+      onCancel: cancel,
       onClose: () => dismissRecoverableError(suspendSheets, recoverableKind, onCloseSheet),
       onContactSupport,
+      onGoToSettings,
     },
     notGenuineDrawer: {
       isOpen: sheetOpen(error?.kind === "notGenuine", suspendSheets),
       productName,
       onClose: () =>
         dismissNotGenuine(suspendSheets, error?.kind === "notGenuine", onCloseNotGenuine, onQuit),
-      onContactSupport,
+      onContactSupport: onContactNotGenuineSupport,
     },
   };
 }
