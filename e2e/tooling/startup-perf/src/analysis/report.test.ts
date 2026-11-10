@@ -86,7 +86,7 @@ describe("toMarkdown", () => {
     ];
     assert.match(
       toMarkdown(summarise(samples, options), options),
-      /\*\*android accounts: build A wrote no startup-perf log line on its warm-up \(built before #24576\?\), so both builds were read from the Debug screen\.\*\*/,
+      /\*\*android accounts: build A wrote no startup lines to the device log on its warm-up \(built before #24576\?\), so both builds were read from the Debug screen\.\*\*/,
     );
   });
 
@@ -111,22 +111,6 @@ describe("toMarkdown", () => {
       toMarkdown(summarise(samples, options), options),
       /\*\*android accounts: 1 pair\(s\) left out, as only one of their launches followed a read of the Debug screen/,
     );
-  });
-
-  it("gives the longest device log line against what the platform's log keeps", () => {
-    const report = (logLineBytes: number) =>
-      toMarkdown(
-        summarise(
-          comparison({ deltaMs: 0, a: { platform: "ios", logLineBytes }, b: { platform: "ios" } }),
-          options,
-        ),
-        options,
-      );
-    assert.match(
-      report(423),
-      /^ios accounts: the longest device log line was 423 bytes, of the 1020 the iOS log keeps\.$/m,
-    );
-    assert.match(report(900), /^\*\*ios accounts: the longest device log line was 900 bytes/m);
   });
 
   it("adds no read note when the screen was asked for", () => {

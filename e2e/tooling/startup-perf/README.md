@@ -30,8 +30,8 @@ module.
 | `src/types.ts`                      | `Sample`: a line of `samples.jsonl`, which `measure/` writes and `analysis/` reads          |
 | `src/measure/run.ts`                | The CLI that measures: installs, injects and launches A and B, writes `samples.jsonl`       |
 | `src/measure/platforms/`            | `android.ts` and `ios.ts`, the two `Platform`s, through adb or simctl                       |
-| `src/measure/startup-log.ts`        | Reads App startup time and the startup events from the app's `startup-perf` log line        |
-| `src/measure/performance-screen.ts` | Reads them on the Debug screen through Maestro: warm-ups, and launches without the line     |
+| `src/measure/startup-log.ts`        | Reads App startup time and the startup events from the app's `[startup]` log lines          |
+| `src/measure/performance-screen.ts` | Reads them on the Debug screen through Maestro: warm-ups, and launches without the lines    |
 | `src/measure/inject.ts`             | Imports a scenario's userdata through the E2E bridge, once per install                      |
 | `src/measure/bridge.ts`             | The E2E bridge protocol (`apps/ledger-live-mobile/src/e2e/bridge/client.ts`)                |
 | `src/measure/maestro.ts`, `exec.ts` | Maestro and child-process calls                                                             |
@@ -97,20 +97,19 @@ in run 42829119387).
   post-onboarding state of `e2e/mobile/userdata` through `bridge.ts`, sends the settings again
   10 s later (the store's save effect may not be mounted yet), and fails when the app reports `MOCK`
   or `DETOX`. Feature flags are not imported: they come from production Firebase.
-- **Launch** with a plain `am start -W` / `simctl launch` and the `startupPerfLog` argument, no test
-  tool attached, wait 5 s, then read the `startup-perf` line of the launched process in the device
-  log (logcat's `ReactNativeJS`, the simulator's `log show`): "App startup time" and the startup
-  events of the Debug screen, written as soon as the startup is over. The app writes it at the error
-  level, the only one iOS release builds keep, through React Native's `nativeLoggingHook`, which
-  Datadog does not see. The line is ~420 bytes (13 events); the iOS log keeps 1020 bytes of a line
-  (measured on macOS, whose unified log iOS shares) and logcat about 4 KB: the report gives the
-  longest.
+- **Launch** with a plain `am start -W` / `simctl launch`, no test tool attached, wait 5 s, then
+  read the `[startup]` lines of the launched process in the device log (logcat's `ReactNativeJS`,
+  the simulator's `log show`), which the app writes as soon as the startup is over: a line per
+  startup event of the Debug screen (`[startup] App started (x2): 1650 ms`), then the App startup
+  time (`[startup] App startup time: 1650 ms, 13 events`). The app writes them at the error level,
+  the only one iOS release builds keep, through React Native's `nativeLoggingHook`, which Datadog
+  does not see.
 - **Check it on the screen.** The warm-ups also let Maestro open the Performance screen, which must
   show the same time: a mismatch fails the run. On iOS a screen read slows the next launch by
   ~280 ms, on either simulator (run 42356679784: the first launch of round 0 by 261–301 ms, the
   second not), so the last warm-up before the rounds reads only the log, and each build is checked
-  once per scenario. A launch whose line has not come 20 s after the settle time is read on the
-  screen, and the report counts those per build. A build whose warm-up writes no line does not log
+  once per scenario. A launch whose lines have not come 20 s after the settle time is read on the
+  screen, and the report counts those per build. A build whose warm-up writes no lines does not log
   its startup (built before #24576): both builds are then read on the screen for the rest of the
   scenario, so pairs stay even, and the report says so. `--read both` (the workflow's `read` input)
   reads every launch both ways, `--read screen` the screen only. Screen reads of measured launches

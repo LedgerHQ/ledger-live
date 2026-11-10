@@ -72,7 +72,6 @@ export interface Reads {
   /** Launches, warm-ups included, read from both. */
   screenChecks: number;
   screenMismatches: number;
-  longestLogLine: number | null;
 }
 
 /** The measured launches of a round, A and B. */
@@ -96,7 +95,6 @@ function readsOf(group: Sample[]): Reads {
   const checked = ok.filter(s => s.screenAppStartupTime !== undefined);
   const fallbacks = (side: Side) =>
     measured.filter(s => s.side === side && s.readFrom === "screen-fallback").length;
-  const logLines = ok.flatMap(s => s.logLineBytes ?? []);
   const warmupFellBack = (side: Side) =>
     ok.some(s => s.warmup && s.side === side && s.readFrom === "screen-fallback");
   return {
@@ -106,7 +104,6 @@ function readsOf(group: Sample[]): Reads {
     unevenPairs: rounds(group).filter(uneven).length,
     screenChecks: checked.length,
     screenMismatches: checked.filter(s => s.screenAppStartupTime !== s.appStartupTime).length,
-    longestLogLine: logLines.length ? Math.max(...logLines) : null,
   };
 }
 
