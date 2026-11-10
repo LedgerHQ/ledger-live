@@ -178,7 +178,7 @@ for (const token of subAccountReceive) {
           token.account.parentAccount?.currency ?? token.account.currency,
         );
         if (token.shouldSelectReceiveCryptoOption) {
-          await app.receive.expectRecieveMenu();
+          await app.receive.expectReceiveMenu();
           await app.receive.clickReceive();
         }
         if (token.shouldSelectTokenOnReceiveFlow) {
@@ -327,7 +327,7 @@ for (const transaction of transactionsAddressInvalid) {
         if (transaction.transaction.accountToDebit instanceof TokenAccount) {
           await app.account.navigateToTokenInAccount(transaction.transaction.accountToDebit);
         }
-        await app.account.clickSend();
+        await app.account.clickSend(transaction.transaction.accountToDebit.currency);
         await app.newSendFlow.waitForDialog();
         await app.newSendFlow.typeAddress(transaction.recipient ?? "");
         await app.newSendFlow.expectRecipientError(transaction.expectedErrorMessage);
@@ -381,7 +381,7 @@ for (const transaction of transactionsAddressValid) {
           getParentAccountName(transaction.transaction.accountToDebit),
         );
         await app.account.navigateToTokenInAccount(transaction.transaction.accountToDebit);
-        await app.account.clickSend();
+        await app.account.clickSend(transaction.transaction.accountToDebit.currency);
         await app.newSendFlow.waitForDialog();
         await app.newSendFlow.typeAddress(Addresses.SOL_GIGA_2_ATA_ADDRESS);
         await app.newSendFlow.expectAddressMatched(Addresses.SOL_GIGA_2_ATA_ADDRESS);
@@ -470,7 +470,7 @@ for (const transaction of tokenTransactionInvalid) {
           getParentAccountName(transaction.tx.accountToDebit),
         );
         await app.account.navigateToTokenInAccount(transaction.tx.accountToDebit);
-        await app.account.clickSend();
+        await app.account.clickSend(transaction.tx.accountToDebit.currency);
         await app.newSendFlow.waitForDialog();
         const recipientAddress = transaction.tx.accountToCredit.address;
         if (!recipientAddress) {

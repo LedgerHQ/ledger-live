@@ -15,7 +15,7 @@ import {
 } from "./bridge";
 import { SolanaStakeAmountError } from "../earn/errors";
 import type { TransactionIntent } from "../intents";
-import type { AccountDescriptor } from "../models";
+import type { AccountDescriptor, Balance } from "../models";
 
 describe("applyEvmGasLimitMultiplier", () => {
   const evmIntent = (gasLimitMultiplier?: number): TransactionIntent => ({
@@ -558,5 +558,105 @@ describe("BridgeAdapter.getSolanaStakes", () => {
   it("returns [] when the account has no stakingResources", async () => {
     const adapter = adapterWithSyncedAccount({});
     await expect(adapter.getSolanaStakes(descriptor)).resolves.toEqual([]);
+  });
+});
+
+describe("BridgeAdapter.getBalances", () => {
+  const descriptor = { id: "sol-acc", currencyId: "solana" } as AccountDescriptor;
+  const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+  const usdc = {
+    type: "TokenCurrency",
+    id: "solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v",
+    ticker: "USDC",
+    name: "USD Coin",
+    contractAddress: USDC_MINT,
+    parentCurrencyId: "solana",
+    tokenType: "spl",
+    units: [{ name: "USDC", code: "USDC", magnitude: 6 }],
+  };
+  const nativeBalance: Balance = {
+    kind: "native",
+    assetId: "solana",
+    balance: BigNumberStrSchema.parse("5000000000"),
+  };
+  const usdcBalance: Balance = {
+    kind: "token",
+    assetId: usdc.id,
+    balance: BigNumberStrSchema.parse("1500000"),
+    token: {
+      id: usdc.id,
+      ticker: "USDC",
+      name: "USD Coin",
+      contractAddress: USDC_MINT,
+      parentCurrencyId: "solana",
+      tokenType: "spl",
+      decimals: 6,
+      unit: { name: "USDC", code: "USDC", magnitude: 6 },
+    },
+  };
+
+  const adapterHolding = (...tokens: Array<typeof usdc>) =>
+    adapterWithSyncedAccount({
+      currency: { id: "solana" },
+      balance: new BigNumber(5_000_000_000),
+      subAccounts: tokens.map(token => ({
+        type: "TokenAccount",
+        balance: new BigNumber(1_500_000),
+        token,
+      })),
+    });
+
+  it("carries the synced token's metadata on each token balance", async () => {
+    await expect(adapterHolding(usdc).getBalances(descriptor)).resolves.toEqual([
+      nativeBalance,
+      usdcBalance,
+    ]);
+  });
+
+  it("skips a sub-account whose token has no units and keeps the other balances", async () => {
+    const noUnits = { ...usdc, id: "solana/spl/no_units", units: [] };
+
+    await expect(adapterHolding(noUnits, usdc).getBalances(descriptor)).resolves.toEqual([
+      nativeBalance,
+      usdcBalance,
+    ]);
+  });
+});
+
+const liveOperation = (id: string, date: string) => ({
+  id,
+  hash: `0x${id}`,
+  type: "OUT",
+  value: new BigNumber(1_500_000),
+  fee: new BigNumber(21_000),
+  senders: [],
+  recipients: [],
+  blockHeight: 1,
+  accountId: "eth-acc",
+  date: new Date(date),
+});
+
+describe("BridgeAdapter.getOperations", () => {
+  const descriptor = { id: "eth-acc", currencyId: "ethereum" } as AccountDescriptor;
+  const usdtUnit = { name: "USDT", code: "USDT", magnitude: 6 };
+
+  it("puts the synced token's unit on each token operation only", async () => {
+    const adapter = adapterWithSyncedAccount({
+      currency: { id: "ethereum" },
+      operations: [liveOperation("native", "2024-01-01T00:00:00.000Z")],
+      subAccounts: [
+        {
+          type: "TokenAccount",
+          token: { id: "ethereum/erc20/usd_tether__erc20_", units: [usdtUnit] },
+          operations: [liveOperation("token", "2024-01-02T00:00:00.000Z")],
+        },
+      ],
+    });
+
+    const [tokenOp, nativeOp] = await adapter.getOperations(descriptor);
+
+    expect(tokenOp).toMatchObject({ id: "token", unit: usdtUnit });
+    expect(nativeOp).toMatchObject({ id: "native" });
+    expect(nativeOp).not.toHaveProperty("unit");
   });
 });

@@ -1,7 +1,6 @@
 import Base from "./base";
 import { InvalidAddress } from "../errors";
 import * as bjs from "bitcoinjs-lib";
-import bs58checkBase from "bs58check/base";
 import bs58check from "bs58check";
 import { blake256 as nobleBlake256 } from "@noble/hashes/blake1";
 import { ripemd160 } from "@noble/hashes/ripemd160";
@@ -34,13 +33,21 @@ class Decred extends Base {
 
   static readonly _blake256x2 = (buffer: Buffer): Buffer =>
     Decred.blake256(Decred.blake256(buffer));
-  static readonly bs58check = bs58checkBase(Decred._blake256x2);
+  static decodeBase58Check(str: string): Buffer {
+    const buffer = Buffer.from(bs58.decode(str));
+    const payload = buffer.subarray(0, -4);
+    const checksum = Decred._blake256x2(payload).subarray(0, 4);
+    if (!checksum.equals(buffer.subarray(-4))) {
+      throw new Error("Invalid checksum");
+    }
+    return payload;
+  }
 
   toOutputScript(address: string): Buffer {
     if (!this.validateAddress(address)) {
       throw new InvalidAddress();
     }
-    const decodeBase58 = Decred.bs58check.decode(address, Decred._blake256x2);
+    const decodeBase58 = Decred.decodeBase58Check(address);
     const prefix = address.toLocaleUpperCase().substring(0, 2);
     if (prefix === "DC") {
       return Buffer.from(bjs.payments.p2sh({ hash: decodeBase58.slice(2) }).output ?? []);
@@ -55,7 +62,7 @@ class Decred extends Base {
       return false;
     }
     try {
-      Decred.bs58check.decode(address, Decred._blake256x2);
+      Decred.decodeBase58Check(address);
     } catch {
       return false;
     }
@@ -71,9 +78,9 @@ class Decred extends Base {
   ): Promise<string> {
     let buffer: Buffer;
     try {
-      buffer = Decred.bs58check.decode(xpub);
+      buffer = Decred.decodeBase58Check(xpub);
     } catch {
-      buffer = bs58check.decode(xpub);
+      buffer = Buffer.from(bs58check.decode(xpub));
     }
     const depth = buffer[4];
     const i = buffer.readUInt32BE(9);

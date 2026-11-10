@@ -35,7 +35,6 @@ const PLATFORM_SUFFIX_WAIVERS = [
   "account-detail-hero",
   "fear-and-greed",
   "large-screen-upsell",
-  "market-banner",
   "pay-bank-transfer",
   "pay-card-auth",
   "pay-card-widget",

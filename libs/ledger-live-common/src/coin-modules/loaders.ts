@@ -127,7 +127,6 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     family: "cosmos",
     supportedCoins: [
       "axelar",
-      "stargaze",
       "secret_network",
       "desmos",
       "dydx",

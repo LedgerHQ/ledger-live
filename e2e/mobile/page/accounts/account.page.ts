@@ -1,215 +1,216 @@
 import invariant from "invariant";
 import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "@e2e/helpers/commonHelpers";
+import { byId, byIdAndText, byText } from "@e2e/helpers/elements/native";
 import { TIMEOUT } from "@e2e/utils/timeouts";
 import { Account, AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 
+const ACCOUNT_GRAPH_PREFIX = "account-graph-";
+const ACCOUNT_NAME_PREFIX = "account-row-name-";
+const OPERATION_ROW_REGEXP = /operation-row-.*/;
+
 export default class AccountPage {
-  baseLink = "account";
-  accountListTitleId = "accounts-list-title";
-  accountsListId = "accounts-list";
-  accountScreenScrollView = "account-screen-scrollView";
-  accountAdvancedLogsId = "account-advanced-logs";
-  earnButtonId = "account-quick-action-button-earn";
-  accountRenameTextInputId = "account-rename-text-input";
-  baseSubAccountRow = "subAccount-row-name-";
-  baseAccountRow = "account-row-";
-  baseAccountName = this.baseAccountRow + "name-";
-  accountNameRegExp = new RegExp(`${this.baseAccountName}.*`);
-  operationRowRegexp = /operation-row-.*/;
-  operationHistorySection = "operations-history-";
-  accountSettingsButtonId = "account-settings-button";
-  receiveButtonId = "account-quick-action-button-receive";
-  sendButtonId = "account-quick-action-button-send";
-  swapButtonId = "account-quick-action-button-swap";
-  buyButtonId = "account-quick-action-button-buy";
-  headerBackButtonId = "account-header-back-button";
+  private readonly baseLink = "account";
 
-  accountGraph = (accountId: string) => getElementById(this.accountGraphId(accountId));
-  accountBalance = (accountId: string) => getElementById(`account-balance-${accountId}`);
-  accountAddressId = (accountId: string) => `account-address-${accountId}`;
-  accountAddress = (accountId: string) => getElementById(this.accountAddressId(accountId));
-  accountAdvancedLogRow = () => getElementById("account-advanced-log-row");
-  accountDeleteRow = () => getElementById("account-settings-delete-row");
-  accountDeleteConfirm = () => getElementById("delete-account-confirmation-button");
-  operationHistorySectionId = (accountId: string) => this.operationHistorySection + accountId;
-
-  accountRenameRow = () => getElementById("account-settings-rename-row");
-  getSpecificOperation = (operationType: string) =>
-    getElementByIdAndText(this.operationRowRegexp, operationType, 0);
-  accountGraphId = (accountId: string) => `account-graph-${accountId}`;
-  expandTokenListId = "enabled-account-expand-token-list";
+  private readonly accountListTitle = byId("accounts-list-title");
+  private readonly accountsList = byId("accounts-list");
+  private readonly accountScreenScrollView = byId("account-screen-scrollView");
+  private readonly accountAdvancedLogs = byId("account-advanced-logs");
+  private readonly accountAdvancedLogRow = byId("account-advanced-log-row");
+  private readonly accountSettingsButton = byId("account-settings-button");
+  private readonly accountDeleteRow = byId("account-settings-delete-row");
+  private readonly accountDeleteConfirm = byId("delete-account-confirmation-button");
+  private readonly accountRenameRow = byId("account-settings-rename-row");
+  private readonly accountRenameTextInput = byId("account-rename-text-input");
+  private readonly headerBackButton = byId("account-header-back-button");
+  private readonly receiveButton = byId("account-quick-action-button-receive");
+  private readonly sendButton = byId("account-quick-action-button-send");
+  private readonly earnButton = byId("account-quick-action-button-earn");
+  private readonly swapButton = byId("account-quick-action-button-swap");
+  private readonly buyButton = byId("account-quick-action-button-buy");
+  private readonly expandTokenListButton = byId("enabled-account-expand-token-list");
+  private readonly anyOperationRow = byId(OPERATION_ROW_REGEXP);
+  // A sub-account graph id carries the parent and token ids joined by "+".
+  private readonly subAccountGraph = (index = 0) =>
+    byId(new RegExp(String.raw`^${ACCOUNT_GRAPH_PREFIX}.+\+.+`), index);
+  private readonly accountNameAt = (index: number) =>
+    byId(new RegExp(`${ACCOUNT_NAME_PREFIX}.*`), index);
+  private readonly accountNameRow = (name: string) => byId(`${ACCOUNT_NAME_PREFIX}${name}`);
+  private readonly accountRow = (id: string) => byId(`account-row-${id}`);
+  private readonly accountTitle = (name: string) => byText(name);
+  private readonly accountGraph = (accountId: string) =>
+    byId(`${ACCOUNT_GRAPH_PREFIX}${accountId}`);
+  private readonly accountBalance = (accountId: string) => byId(`account-balance-${accountId}`);
+  private readonly accountAddress = (accountId: string) => byId(`account-address-${accountId}`);
+  private readonly operationHistorySection = (accountId: string) =>
+    byId(`operations-history-${accountId}`);
+  private readonly subAccountRow = (ticker: string) => byId(`subAccount-row-name-${ticker}`);
+  private readonly operationRowWithType = (operationType: string) =>
+    byIdAndText({ id: OPERATION_ROW_REGEXP, text: operationType });
 
   @Step("Wait for account screen and verify account name {{{0}}}")
   async waitAndVerifyAccountName(accountName: string) {
-    await waitForElementById(this.accountScreenScrollView);
-    await detoxExpect(getElementByText(accountName, 0)).toBeVisible();
+    await this.accountScreenScrollView.waitVisible();
+    await this.accountTitle(accountName).expectVisible();
   }
 
   @Step("Open accounts list via deeplink")
   async openViaDeeplink() {
     await openDeeplink(this.baseLink);
-    await waitForElementById(this.accountListTitleId);
-    await detoxExpect(getElementById(this.accountListTitleId)).toBeVisible();
+    await this.accountListTitle.waitVisible();
+    await this.accountListTitle.expectVisible();
   }
 
   @Step("Go back from account detail")
   async goBackFromAccountDetail() {
-    await waitForElementById(this.headerBackButtonId);
-    await tapById(this.headerBackButtonId);
+    await this.headerBackButton.tap();
   }
 
   @Step("Check if account detail is visible")
   async isAccountDetailVisible(timeout = TIMEOUT.xxsmall) {
-    return await IsIdVisible(this.accountScreenScrollView, timeout);
+    return await this.accountScreenScrollView.isVisible(timeout);
   }
 
   @Step("Go to the account with the name {{{0}}}")
   async goToAccountByName(name: string) {
-    await scrollToId(this.baseAccountName + name, this.accountsListId);
-    await tapById(this.baseAccountName + name);
+    await this.accountNameRow(name).scrollTo(this.accountsList);
+    await this.accountNameRow(name).tap();
   }
 
   @Step("Go to the account with id {{{0}}}")
   async goToAccountById(id: string) {
-    const elementId = this.baseAccountRow + id;
-    const element = getElementById(elementId);
-    await scrollToId(elementId, this.accountsListId);
-    await waitForElement(element);
-    await detoxExpect(element).toBeVisible();
-    await tapByElement(element);
+    await this.accountRow(id).scrollTo(this.accountsList);
+    await this.accountRow(id).waitVisible();
+    await this.accountRow(id).expectVisible();
+    await this.accountRow(id).tap();
   }
 
   @Step("Expect the account name {{{0}}}")
   async expectAccountName(accountName: string, index = 0) {
-    jestExpect(await this.getAccountName(index)).toBe(accountName);
+    await this.accountNameAt(index).waitVisible();
+    await this.accountNameAt(index).expectText(accountName);
   }
 
   @Step("Get the account name at index {{{0}}}")
   async getAccountName(index = 0) {
-    return await getTextOfElement(this.accountNameRegExp, index);
+    return await this.accountNameAt(index).getText();
   }
 
   @Step("Open account settings")
   async openAccountSettings() {
-    await waitForElementById(this.accountSettingsButtonId); // Issue with RN75 : QAA-370
-    await tapById(this.accountSettingsButtonId);
+    await this.accountSettingsButton.tap(); // Issue with RN75 : QAA-370
   }
 
   @Step("Open account advanced logs")
   async openAccountAdvancedLogs() {
-    await tapByElement(this.accountAdvancedLogRow());
+    await this.accountAdvancedLogRow.tap();
   }
 
   @Step("Select account deletion")
   async selectAccountDelete() {
-    await tapByElement(this.accountDeleteRow());
+    await this.accountDeleteRow.tap();
   }
 
   @Step("Confirm account deletion")
   async confirmAccountDelete() {
-    await tapByElement(this.accountDeleteConfirm());
+    await this.accountDeleteConfirm.tap();
   }
 
   @Step("Select account edit name")
   async selectAccountRename() {
-    await tapByElement(this.accountRenameRow());
+    await this.accountRenameRow.tap();
   }
 
   @Step("Enter new account name and submit {{{0}}}")
   async enterNewAccountName(name: string) {
-    await typeTextById(this.accountRenameTextInputId, name);
+    await this.accountRenameTextInput.replaceText(name);
   }
 
   @Step("Expect operation history to be visible {{{0}}}")
   async expectOperationHistoryVisible(accountId: string) {
-    await scrollToId(this.operationRowRegexp, this.accountScreenScrollView, 250, "down");
-    await detoxExpect(getElementById(this.operationHistorySectionId(accountId))).toExist();
-    await detoxExpect(getElementById(this.operationRowRegexp, 0)).toBeVisible();
+    await this.anyOperationRow.scrollTo(this.accountScreenScrollView, 250);
+    await this.operationHistorySection(accountId).expectExist();
+    await this.anyOperationRow.expectVisible();
   }
 
   @Step("Scroll to operation history")
   async scrollToTransactions() {
-    await waitForElementById(this.accountScreenScrollView);
-    await scrollToId(this.operationRowRegexp, this.accountScreenScrollView, 300, "down");
-  }
-
-  @Step("Scroll to a Specific SubAccount Row {{{0}}}")
-  async scrollToSubAccount(subAccountId: string) {
-    await waitForElementById(this.accountScreenScrollView);
-    await scrollToId(subAccountId, this.accountScreenScrollView);
+    await this.accountScreenScrollView.waitVisible();
+    await this.anyOperationRow.scrollTo(this.accountScreenScrollView, 300);
   }
 
   @Step("Expect account balance to be visible {{{0}}}")
   async expectAccountBalanceVisible(accountId: string) {
-    await detoxExpect(this.accountGraph(accountId)).toBeVisible();
-    await detoxExpect(this.accountBalance(accountId)).toBeVisible();
+    await this.accountGraph(accountId).expectVisible();
+    await this.accountBalance(accountId).expectVisible();
   }
 
   @Step("Get visible account address label {{{0}}}")
   async getVisibleAccountAddressLabel(accountId: string) {
-    await scrollToId(this.accountAddressId(accountId), this.accountScreenScrollView);
-    await detoxExpect(this.accountAddress(accountId)).toBeVisible();
-    return await getLabelOfElement(this.accountAddressId(accountId));
+    await this.accountAddress(accountId).scrollTo(this.accountScreenScrollView);
+    await this.accountAddress(accountId).expectVisible();
+    return await this.accountAddress(accountId).getLabel();
   }
 
   @Step("Expect account receive and send actions")
   async expectReceiveAndSendActionsVisible() {
-    await scrollToId(this.receiveButtonId, this.accountScreenScrollView);
-    await detoxExpect(getElementById(this.receiveButtonId)).toBeVisible();
-    await detoxExpect(getElementById(this.sendButtonId)).toBeVisible();
+    await this.receiveButton.scrollTo(this.accountScreenScrollView);
+    await this.receiveButton.expectVisible();
+    await this.sendButton.expectVisible();
   }
 
   @Step("Expect address index {{{0}}}")
   async expectAddressIndex(indexNumber: number) {
     await this.openAccountSettings();
     await this.openAccountAdvancedLogs();
-    const advancedLogsText = await getTextOfElement(this.accountAdvancedLogsId);
+    const advancedLogsText = await this.accountAdvancedLogs.getText();
     const advancedLogsJson = advancedLogsText ? JSON.parse(advancedLogsText) : null;
     jestExpect(advancedLogsJson).toHaveProperty("index", indexNumber);
   }
 
   @Step("Tap on receive button")
   async tapReceive() {
-    await revealForTap(this.receiveButtonId, { container: this.accountScreenScrollView });
-    await tapById(this.receiveButtonId);
+    await this.receiveButton.revealForTap(this.accountScreenScrollView);
+    await this.receiveButton.tap();
   }
 
   @Step("Tap on send button")
   async tapSend() {
-    await revealForTap(this.sendButtonId, { container: this.accountScreenScrollView });
-    await tapById(this.sendButtonId);
+    await this.sendButton.revealForTap(this.accountScreenScrollView);
+    await this.sendButton.tap();
   }
 
   @Step("Tap on earn button")
   async tapEarn() {
-    await scrollToId(this.earnButtonId, this.accountScreenScrollView);
-    await tapById(this.earnButtonId);
+    await this.earnButton.scrollTo(this.accountScreenScrollView);
+    await this.earnButton.tap();
   }
 
   @Step("Tap on swap button")
   async tapSwap() {
-    await scrollToId(this.swapButtonId, this.accountScreenScrollView);
-    await tapById(this.swapButtonId);
+    await this.swapButton.scrollTo(this.accountScreenScrollView);
+    await this.swapButton.tap();
   }
 
   @Step("Tap on buy button")
   async tapBuy() {
-    await scrollToId(this.buyButtonId, this.accountScreenScrollView);
-    await tapById(this.buyButtonId);
+    await this.buyButton.scrollTo(this.accountScreenScrollView);
+    await this.buyButton.tap();
   }
 
   @Step("Navigate to token in account {{{0.accountName}}}")
   async navigateToTokenInAccount(subAccount: Account) {
-    const subAccountId = this.baseSubAccountRow + subAccount.currency.ticker;
+    const subAccountRow = this.subAccountRow(subAccount.currency.ticker);
+    await this.accountScreenScrollView.waitVisible();
     try {
-      await this.scrollToSubAccount(subAccountId);
+      await subAccountRow.scrollTo(this.accountScreenScrollView);
     } catch {
-      await revealForTap(this.expandTokenListId, { container: this.accountScreenScrollView });
-      await tapById(this.expandTokenListId);
-      await this.scrollToSubAccount(subAccountId);
+      // The token is folded away when the account holds many: expand the list first.
+      await this.expandTokenListButton.revealForTap(this.accountScreenScrollView);
+      await this.expandTokenListButton.tap();
+      await subAccountRow.scrollTo(this.accountScreenScrollView);
     }
-    await tapById(subAccountId);
+    await subAccountRow.tap();
   }
 
   @Step("Navigate to sub account {{{0.accountName}}}")
@@ -224,18 +225,15 @@ export default class AccountPage {
     await this.goToAccountByName(parentAccount.accountName);
     await this.navigateToTokenInAccount(account);
 
-    const graphIdRegexp = new RegExp(`^${this.accountGraphId("")}.+\\+.+`);
-    await waitForElementById(graphIdRegexp, undefined, { checkVisibility: false });
-    const graphCount = await countElements(getElementsById(graphIdRegexp));
+    // Several graphs can match the pattern: take the one on screen.
+    await this.subAccountGraph().waitExist();
+    const graphCount = await this.subAccountGraph().count();
     let graphId: string | undefined;
     for (let index = 0; index < graphCount; index++) {
-      const graph = getElementById(graphIdRegexp, index);
-      try {
-        await detoxExpect(graph).toBeVisible();
-        graphId = (await getIdOfElement(graph)).replace(this.accountGraphId(""), "");
+      const graph = this.subAccountGraph(index);
+      if (await graph.isVisible(TIMEOUT.xxxsmall)) {
+        graphId = (await graph.getIdentifier()).replace(ACCOUNT_GRAPH_PREFIX, "");
         break;
-      } catch {
-        continue;
       }
     }
     invariant(graphId, `no visible account graph after opening ${account.accountName}`);
@@ -250,6 +248,6 @@ export default class AccountPage {
   @Step("Scroll to history and click on last operation {{{0}}}")
   async scrollToHistoryAndClickOnLastOperation(operationType: string) {
     await this.scrollToTransactions();
-    await tapByElement(this.getSpecificOperation(operationType));
+    await this.operationRowWithType(operationType).tap();
   }
 }

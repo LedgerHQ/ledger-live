@@ -30,8 +30,8 @@ portfolio state is written and no user data is persisted here.
 
 ## Host kit
 
-The catalog rules are shared by both apps through the root entry, so a host only maps its own
-state:
+The rules above are shared by both apps through the root entry, so a host only maps its own
+state and its legacy portfolio code:
 
 - **Sources.** Pass host accounts straight in: they match `AnalyticsAccountSource` and
   `AnalyticsTokenAccountSource` structurally, and the helpers return the host's own position type.
@@ -39,6 +39,15 @@ state:
   `isConfirmed(operation, account)` check built from the host confirmation settings, and the
   DADA `product`/`version`. It selects the eligible positions, requests their asset metadata and
   returns the catalog state, the positions and a refresh callback (none when nothing is eligible).
+- **Balance.** `useAnalyticsBalancePort` builds the `loadBalance` port from the positions, the
+  countervalues, the fiat currency and a module-level `readPortfolio(positions, range, countervalues,
+  fiat)` function. It is the only host code that reads the legacy portfolio: it returns the raw
+  `balanceHistory` and `availableAccounts` with a `readVariation(currentBalance)` callback, and the
+  package maps them.
+- **Renderers.** `useAnalyticsBalanceSummary` and `useAnalyticsPnlPositions` give the statuses,
+  the current balance and the scoped positions a host renderer shows.
+- **Settings.** `toAnalyticsPeriod` maps the host range setting, and `resolveAnalyticsFiatCurrencyId`
+  falls back to USD for an unknown countervalue ticker.
 
 ## Tracking
 

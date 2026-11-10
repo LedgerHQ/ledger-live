@@ -15,7 +15,10 @@ installation-wide dismissal and the information Banner on web and native. The Ac
 
 The host provides its existing operation confirmation rule. Native or token history qualifies;
 pending-only activity or an operation count alone does not. Balance and fiat pricing do not affect
-eligibility. Rendering does not consume the introduction; close and CTA do.
+eligibility. Only close consumes the introduction; rendering and the CTA do not.
+
+The introduction shows when the host gate `isEnabled` is on (the `accountDetail` flag
+`analyticsBanner` param), the account has confirmed history and the introduction is not dismissed.
 
 Apps register the reducer and persist its projection locally. Dismissal applies to every account
 on one installation, with no synchronization between desktop and mobile. Storage integration and

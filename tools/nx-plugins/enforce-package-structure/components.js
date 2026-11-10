@@ -11,7 +11,7 @@
 // are not checked.
 //
 // Settings live in components.config.json: `extensions` mirror the bundlers
-// (apps/ledger-live-desktop/tools/rspack/rspack.renderer.ts for web,
+// (apps/ledger-live-desktop/tools/rspack/rspack.renderer.mts for web,
 // Repack.getResolveOptions(platform, { preferNativePlatform: true }) for native), `conditions`
 // pick an entry's file per platform, `platformEntries` name the platform subpaths and
 // `componentWrappers` the calls that still return a component. The `banned*` settings and

@@ -1,5 +1,4 @@
 import {
-  expandRequestedAccountIdsForHistoryScope,
   filterOperationTableItemsByAllowedAccountIds,
   filterTopLevelAccountsByAllowedAccountIds,
   parseAccountIdsSearchParam,
@@ -45,26 +44,6 @@ describe("filterTopLevelAccountsByAllowedAccountIds", () => {
         new Set([ethWithUsdcUsdcId]),
       ).map(a => a.id),
     ).toEqual([ETH_ACCOUNT_WITH_USDC.id]);
-  });
-});
-
-describe("expandRequestedAccountIdsForHistoryScope", () => {
-  it("expands a portfolio root id to all flattened descendant account ids", () => {
-    const expanded = expandRequestedAccountIdsForHistoryScope(
-      [ETH_ACCOUNT_WITH_USDC],
-      new Set([ETH_ACCOUNT_WITH_USDC.id]),
-    );
-
-    expect(expanded).toEqual(new Set([ETH_ACCOUNT_WITH_USDC.id, ethWithUsdcUsdcId]));
-  });
-
-  it("does not expand a token account id beyond that sub-account", () => {
-    const expanded = expandRequestedAccountIdsForHistoryScope(
-      [ETH_ACCOUNT_WITH_USDC],
-      new Set([ethWithUsdcUsdcId]),
-    );
-
-    expect(expanded).toEqual(new Set([ethWithUsdcUsdcId]));
   });
 });
 

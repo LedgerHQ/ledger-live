@@ -1,6 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { track } from "@shared/analytics";
-import { WALLET_CLI_USER_ID, disposeAnalytics, startAnalytics } from "./segment";
+import {
+  ANALYTICS_FLUSH_TIMEOUT_MS,
+  WALLET_CLI_USER_ID,
+  createSegmentClient,
+  disposeAnalytics,
+  startAnalytics,
+} from "./segment";
 
 const STATIC_IP = "0.0.0.0";
 
@@ -70,4 +76,62 @@ describe("wallet-cli analytics privacy", () => {
     expect(trackCalls[0].context?.ip).toBe(STATIC_IP);
     expect(Object.keys(trackCalls[0].context ?? {})).toEqual(["ip"]);
   });
+});
+
+const fakeClient = (closeAndFlush: (options?: { timeout?: number }) => Promise<void>) => () => ({
+  identify: () => {},
+  track: () => {},
+  closeAndFlush,
+});
+
+describe("disposeAnalytics", () => {
+  it("bounds Segment's own flush with the exit timeout", async () => {
+    const closeAndFlushOptions: unknown[] = [];
+    startAnalytics(
+      fakeClient(async options => {
+        closeAndFlushOptions.push(options);
+      }),
+    );
+
+    await disposeAnalytics();
+
+    expect(closeAndFlushOptions).toEqual([{ timeout: ANALYTICS_FLUSH_TIMEOUT_MS }]);
+  });
+
+  it("swallows a failed flush", async () => {
+    startAnalytics(fakeClient(() => Promise.reject(new Error("network down"))));
+
+    await expect(disposeAnalytics()).resolves.toBeUndefined();
+  });
+});
+
+describe("Segment client", () => {
+  it("aborts a request the server never answers within the flush timeout", async () => {
+    let abortedAfterMs: number | undefined;
+    const server = Bun.serve({
+      port: 0,
+      fetch: req => {
+        const receivedAt = Date.now();
+        req.signal.addEventListener("abort", () => {
+          abortedAfterMs = Date.now() - receivedAt;
+        });
+        return new Promise<Response>(() => {});
+      },
+    });
+    try {
+      startAnalytics(writeKey => createSegmentClient(writeKey, `http://127.0.0.1:${server.port}`));
+      track("wallet_cli_test_event");
+      await disposeAnalytics();
+
+      const deadline = Date.now() + ANALYTICS_FLUSH_TIMEOUT_MS + 2_000;
+      while (abortedAfterMs === undefined && Date.now() < deadline) {
+        await Bun.sleep(50);
+      }
+
+      expect(abortedAfterMs).toBeDefined();
+      expect(abortedAfterMs).toBeLessThan(ANALYTICS_FLUSH_TIMEOUT_MS + 1_000);
+    } finally {
+      await server.stop(true);
+    }
+  }, 10_000);
 });

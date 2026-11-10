@@ -2622,7 +2622,11 @@
       "description": "Keep your balance and portfolio in sync when switching phones or using a computer.",
       "learnMore": "Learn more",
       "activate": "Activate",
-      "skip": "Skip for now"
+      "skip": "Skip for now",
+      "success": {
+        "title": "Sync complete",
+        "cta": "Continue"
+      }
     },
     "connection": {
       "connecting": "Connecting to your device",
@@ -10921,6 +10925,10 @@
     "withdrawCTA": "Withdraw"
   },
   "perpsDepositSign": {
+    "genericError": {
+      "title": "Something went wrong",
+      "description": "Please try again later or select a different asset."
+    },
     "terms": "By signing this transaction, I accept <termsLink>SwapKit by NEAR Intents T&C</termsLink>"
   },
   "perpsTransactionSigned": {
@@ -10942,9 +10950,32 @@
     "selectCurrencyNoAccount": "No account",
     "review": "Review",
     "keypadDelete": "Delete last digit",
+    "learnMore": "Learn More",
     "formErrors": {
+      "offline": "Internet connection problem.",
       "amountExceedsBalance": "Insufficient balance",
+      "feeAccountEmpty": "You need more {{ticker}} for the network fees.",
+      "notEnoughFees": "You need {{fees}} {{ticker}} for the network fees.",
+      "amountTooLow": "Enter at least {{amount}} {{ticker}} and try again.",
+      "amountTooHigh": "Enter {{amount}} {{ticker}} or less and try again.",
+      "accountNotReady": "This account isn't ready to send yet. Open it in your accounts, then try again.",
+      "seiEvmUnlinked": "SEI EVM accounts must be linked before swapping",
+      "aleoPrivateBalance": "Swaps are only available for public {{ticker}}. Your funds are currently private and can't be swapped.",
+      "tezosUnrevealed": "Your Tezos account isn't activated yet. Please send a small amount of XTZ before swapping.",
+      "dotMinimumBalance": "Keep {{minValue}} DOT minimum balance after the swap.",
+      "xlmMinimumBalance": "Keep {{minValue}} XLM minimum balance after the swap.",
       "quoteUnavailable": "We can’t get a quote from {{provider}}, try with a different asset or come back later."
+    },
+    "details": {
+      "notEnoughFees": {
+        "title": "Not enough {{ticker}}",
+        "description": "Your account {{account}} doesn't have enough balance to cover the network fees."
+      },
+      "amountTooLow": {
+        "title": "Minimum required for {{ticker}}",
+        "description": "A minimum value of {{amount}} {{ticker}} is required for quotes"
+      },
+      "buy": "Buy {{ticker}}"
     }
   },
   "perpsWithdraw": {
@@ -12246,6 +12277,32 @@
     }
   },
   "predictions": {
+    "binding": {
+      "preparing": "Preparing the signature",
+      "title": "Confirm account ownership on your {{productName}}",
+      "description": "Follow the instructions displayed on your Secure Screen",
+      "settingUp": {
+        "title": "Setting up your trading account"
+      },
+      "setUp": {
+        "created": "Trading account created",
+        "found": "Trading account found",
+        "description": "Your trading account is ready to use.",
+        "continue": "Continue"
+      },
+      "mismatch": {
+        "title": "This signature doesn't match the account",
+        "description": "Connect the Ledger that holds this account, with the same passphrase if you use one, then try again."
+      },
+      "setupFailed": {
+        "title": "Your trading account couldn't be set up",
+        "failed-deploy": "MoonPay couldn't deploy your trading wallet.",
+        "failed-permission": "MoonPay couldn't set up your trading wallet's permissions.",
+        "timeout": "The setup is taking too long.",
+        "unavailable": "MoonPay couldn't be reached.",
+        "unknown": "Something went wrong while setting it up."
+      }
+    },
     "onboarding": {
       "intro": {
         "title": "Trade on future events",

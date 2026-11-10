@@ -17,7 +17,7 @@ export type PerpsDepositSignProps = Readonly<PerpsDepositReviewParams> &
     onSelectDevice: (device: Device | null | undefined) => void;
     onDone: (outcome: PerpsDepositOutcome) => void;
     onRefused: () => void;
-    onNotEnoughBalance: () => void;
+    onReturnToForm: () => void;
   }>;
 
 export type PerpsDepositSignViewModel = Readonly<{
@@ -35,15 +35,15 @@ export function usePerpsDepositSignViewModel({
   onSelectDevice,
   onDone,
   onRefused,
-  onNotEnoughBalance,
+  onReturnToForm,
   ...depositParams
 }: PerpsDepositSignProps): PerpsDepositSignViewModel {
   const isLeavingRef = useRef(false);
 
-  const handleNotEnoughBalance = useCallback(() => {
+  const handleReturnToForm = useCallback(() => {
     isLeavingRef.current = true;
-    onNotEnoughBalance();
-  }, [onNotEnoughBalance]);
+    onReturnToForm();
+  }, [onReturnToForm]);
 
   const handleDone = useCallback(
     (outcome: PerpsDepositOutcome) => {
@@ -53,16 +53,20 @@ export function usePerpsDepositSignViewModel({
     [onDone],
   );
 
-  const handleDrawerClose = useCallback(() => {
-    if (isLeavingRef.current) return;
-    onRefused();
-  }, [onRefused]);
-
   const { deviceStep, executeDeposit, retry } = usePerpsDepositExecution(depositParams, {
     onDone: handleDone,
     onRefused,
-    onNotEnoughBalance: handleNotEnoughBalance,
+    onReturnToForm: handleReturnToForm,
   });
+
+  const handleDrawerClose = useCallback(() => {
+    if (isLeavingRef.current) return;
+    if (deviceStep.kind === "error" && deviceStep.returnsToForm) {
+      handleReturnToForm();
+      return;
+    }
+    onRefused();
+  }, [deviceStep, handleReturnToForm, onRefused]);
 
   const onDeviceError = useCallback(
     (error: Error) => {

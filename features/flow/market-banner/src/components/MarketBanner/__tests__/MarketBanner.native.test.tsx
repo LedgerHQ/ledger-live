@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react-native";
-import { MarketBanner } from "../MarketBanner.native";
+import { MarketBanner } from "../MarketBanner";
 
 describe("MarketBanner (Native)", () => {
   it("should render the banner title", () => {

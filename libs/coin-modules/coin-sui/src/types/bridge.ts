@@ -143,6 +143,8 @@ export type SuiOperationExtra = {
   transferAmount?: BigNumber;
   validatorAddress?: string;
   stakedAmount?: string;
+  /** Set on a stake operation whose `value` holds only its gas and reward, not the principal. */
+  principalExcluded?: "true";
 };
 export type SuiOperationExtraRaw = Record<string, string>;
 

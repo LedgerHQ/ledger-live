@@ -2,7 +2,12 @@ import "../live-common-setup";
 import { describe, expect, it } from "bun:test";
 import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
 import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
-import { parseShortAccountDescriptor, parseAccountDescriptor, toTokenInfo } from "./models";
+import {
+  BalanceSchema,
+  parseShortAccountDescriptor,
+  parseAccountDescriptor,
+  toTokenInfo,
+} from "./models";
 import { XPUB } from "../shared/accountDescriptor/test-fixtures";
 
 const SHORT = `js:2:bitcoin:${XPUB}:native_segwit:0`;
@@ -87,8 +92,10 @@ describe("toTokenInfo", () => {
     expect(info.tokenType).toBe("erc20");
   });
 
-  it("pulls decimals from units[0].magnitude", () => {
-    expect(toTokenInfo(usdtFixture).decimals).toBe(6);
+  it("takes the unit and its magnitude as decimals from units[0]", () => {
+    const info = toTokenInfo(usdtFixture);
+    expect(info.unit).toEqual({ name: "USDT", code: "USDT", magnitude: 6 });
+    expect(info.decimals).toBe(6);
   });
 
   it("maps parentCurrencyId verbatim", () => {
@@ -106,5 +113,17 @@ describe("toTokenInfo", () => {
 
   it("throws when the token has no units", () => {
     expect(() => toTokenInfo({ ...usdtFixture, units: [] })).toThrow(/no units/);
+  });
+});
+
+describe("BalanceSchema", () => {
+  it("rejects a token balance without its token metadata", () => {
+    const result = BalanceSchema.safeParse({
+      kind: "token",
+      assetId: "ethereum/erc20/usd_tether__erc20_",
+      balance: "1500000",
+    });
+
+    expect(result.success).toBe(false);
   });
 });

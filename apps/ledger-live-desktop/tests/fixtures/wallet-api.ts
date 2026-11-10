@@ -368,15 +368,6 @@ export const expectedCurrencyList = [
   },
   {
     type: "CryptoCurrency",
-    id: "stargaze",
-    ticker: "STARS",
-    name: "Stargaze",
-    family: "cosmos",
-    color: "#e38cd4",
-    decimals: 6,
-  },
-  {
-    type: "CryptoCurrency",
     id: "secret_network",
     ticker: "SCRT",
     name: "SecretNetwork",

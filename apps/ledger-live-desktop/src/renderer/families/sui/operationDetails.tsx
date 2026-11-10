@@ -10,8 +10,10 @@ import {
 } from "~/renderer/drawers/OperationDetails/styledComponents";
 import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
-import { OperationDetailsExtraProps } from "../types";
-import { SuiAccount } from "@ledgerhq/live-common/families/sui/types";
+import { AmountCellExtraProps, OperationDetailsExtraProps } from "../types";
+import { SuiAccount, SuiOperation } from "@ledgerhq/live-common/families/sui/types";
+import FormattedVal from "~/renderer/components/FormattedVal";
+import CounterValue from "~/renderer/components/CounterValue";
 import { Operation } from "@ledgerhq/types-live";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import BigNumber from "bignumber.js";
@@ -94,6 +96,32 @@ const OperationDetailsExtra = ({
     </OpDetailsSection>
   );
 };
+// A stake operation's value is only its gas (minus the reward for an unstake); the staked
+// principal is shown beside it.
+const StakingAmountCell = ({ operation, currency, unit }: AmountCellExtraProps<SuiOperation>) => {
+  const stakedAmount = operation.extra?.stakedAmount;
+  if (!stakedAmount) return null;
+  const amount = new BigNumber(stakedAmount);
+  return (
+    <>
+      <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"neutral.c80"} />
+      <CounterValue
+        color="neutral.c70"
+        fontSize={3}
+        date={operation.date}
+        currency={currency}
+        value={amount}
+      />
+    </>
+  );
+};
+
+const amountCellExtra = {
+  DELEGATE: StakingAmountCell,
+  UNDELEGATE: StakingAmountCell,
+};
+
 export default {
   OperationDetailsExtra,
+  amountCellExtra,
 };

@@ -74,7 +74,6 @@ export * from "./currencyShape";
 export * from "./currencySomnia";
 export * from "./currencySonic";
 export * from "./currencyStacks";
-export * from "./currencyStargaze";
 export * from "./currencyStory";
 export * from "./currencySui";
 export * from "./currencySuiTestnet";

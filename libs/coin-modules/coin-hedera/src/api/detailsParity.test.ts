@@ -59,6 +59,8 @@ const TRANSACTION_ID = `${ACCOUNT.account}-1704067200-000000000`;
 
 // `listOperations` ledgerOpTypes that `getBlock` emits as an "other" operation
 const OTHER_OP_TYPES = new Set(["ASSOCIATE_TOKEN", "DELEGATE", "UNDELEGATE", "REDELEGATE"]);
+// `listOperations` ledgerOpTypes that `getBlock` puts in the transaction details
+const TX_OP_TYPES = new Set(["CONTRACT_CALL", "UPDATE_ACCOUNT"]);
 
 type Scenario = {
   name: string;
@@ -154,6 +156,29 @@ const scenarios: Scenario[] = [
     expectedTypes: ["OUT"],
   },
   {
+    name: "CONTRACT_CALL",
+    mirrorTx: baseTx({
+      name: HEDERA_TRANSACTION_NAMES.ContractCall,
+      transfers: [
+        { account: ACCOUNT.account, amount: -1000 - FEE },
+        { account: PEER, amount: 1000 },
+        { account: NODE, amount: FEE },
+      ],
+    }),
+    expectedTypes: ["CONTRACT_CALL"],
+  },
+  {
+    name: "UPDATE_ACCOUNT",
+    mirrorTx: baseTx({
+      name: HEDERA_TRANSACTION_NAMES.UpdateAccount,
+      transfers: [
+        { account: ACCOUNT.account, amount: -FEE },
+        { account: NODE, amount: FEE },
+      ],
+    }),
+    expectedTypes: ["UPDATE_ACCOUNT"],
+  },
+  {
     name: "ASSOCIATE_TOKEN",
     mirrorTx: baseTx({
       name: HEDERA_TRANSACTION_NAMES.TokenAssociate,
@@ -205,6 +230,7 @@ function historyView(op: Operation) {
     memo,
     familyExtra,
     ...(OTHER_OP_TYPES.has(String(ledgerOpType)) && { ledgerOpType, stakedAmount }),
+    ...(TX_OP_TYPES.has(String(ledgerOpType)) && { ledgerOpType }),
   };
 }
 
@@ -282,4 +308,52 @@ describe("getBlock and listOperations details parity", () => {
       }
     },
   );
+
+  // `getBlock` describes the transaction once for every account in it, so its `ledgerOpType` is the
+  // transaction's. `listOperations` is per account: a peer that someone else's contract call only
+  // credited gets an IN (`ledgerOpType: "IN"`). The block keeps what a consumer needs to apply the
+  // same rule: the peer is credited by a transfer and is not the fees payer.
+  it("keeps the transaction-level CONTRACT_CALL for a peer that listOperations reports as IN", async () => {
+    const mirrorTx = baseTx({
+      name: HEDERA_TRANSACTION_NAMES.ContractCall,
+      transfers: [
+        { account: ACCOUNT.account, amount: -1000 - FEE },
+        { account: PEER, amount: 1000 },
+        { account: NODE, amount: FEE },
+      ],
+    });
+    jest.mocked(apiClient.getAccount).mockResolvedValue({
+      ...getMockedMirrorAccount({
+        account: PEER,
+        evm_address: "0x0000000000000000000000000000000000067890",
+      }),
+      created_timestamp: "1704000000.000000000",
+    });
+    jest.mocked(apiClient.getAccountTokens).mockResolvedValue([]);
+    jest
+      .mocked(apiClient.getAccountTransactions)
+      .mockResolvedValue({ transactions: [mirrorTx], nextCursor: null });
+    jest.mocked(apiClient.getTransactionsByTimestampRange).mockResolvedValue([mirrorTx]);
+    jest.mocked(enrichERC20Transfers).mockResolvedValue([]);
+    jest.mocked(analyzeStakingOperation).mockResolvedValue(null);
+
+    const [{ items: history }, block] = await Promise.all([
+      api.listOperations(context, PEER, { minHeight: 0, order: "desc" }),
+      api.getBlock(context, height),
+    ]);
+
+    const blockTx = block.transactions.find(tx => tx.hash === mirrorTx.transaction_hash);
+    invariant(blockTx, `getBlock is missing ${mirrorTx.transaction_hash}`);
+    expect(history).toEqual([
+      expect.objectContaining({
+        type: "IN",
+        details: expect.objectContaining({ ledgerOpType: "IN" }),
+      }),
+    ]);
+    expect(blockTx.details?.ledgerOpType).toBe("CONTRACT_CALL");
+    expect(blockTx.feesPayer).toBe(ACCOUNT.account);
+    expect(blockTx.operations).toContainEqual(
+      expect.objectContaining({ type: "transfer", address: PEER, amount: 1000n }),
+    );
+  });
 });

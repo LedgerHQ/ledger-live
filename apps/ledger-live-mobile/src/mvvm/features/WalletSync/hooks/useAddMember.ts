@@ -10,7 +10,7 @@ import { NoTrustchainInitialized } from "@ledgerhq/ledger-key-ring-protocol/erro
 import { TrustchainResult, TrustchainResultType } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useCallback, useRef } from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute, type RouteProp } from "@react-navigation/native";
 import { AnalyticsEvents } from "LLM/features/WalletSync/Analytics/enums";
 import { useWalletSyncTrackingFlow } from "./useLedgerSyncAnalytics";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
@@ -29,6 +29,11 @@ export function useAddMember({ device }: { device: Device | null }): DrawerProps
   const memberCredentialsRef = useRef(memberCredentials);
   const trustchainRef = useRef(trustchain);
   const navigation = useNavigation<StackNavigatorNavigation<WalletSyncNavigatorStackParamList>>();
+  const { params } =
+    useRoute<
+      RouteProp<WalletSyncNavigatorStackParamList, ScreenName.WalletSyncActivationProcess>
+    >();
+  const seededOffer = params?.seededOffer === true;
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const onboardingType = useSelector(onboardingTypeSelector);
   const trackingFlow = useWalletSyncTrackingFlow();
@@ -37,11 +42,15 @@ export function useAddMember({ device }: { device: Device | null }): DrawerProps
     (trustchainResult: TrustchainResult) => {
       dispatch(setTrustchain(trustchainResult.trustchain));
       track(AnalyticsEvents.LedgerSyncActivated, { flow: trackingFlow });
+      if (seededOffer) {
+        navigation.getParent()?.goBack();
+        return;
+      }
       navigation.navigate(ScreenName.WalletSyncLoading, {
         created: trustchainResult.type === TrustchainResultType.created,
       });
     },
-    [dispatch, navigation, trackingFlow],
+    [dispatch, navigation, seededOffer, trackingFlow],
   );
 
   return useFollowInstructionDrawer(

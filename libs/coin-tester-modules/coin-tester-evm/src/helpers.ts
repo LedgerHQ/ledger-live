@@ -22,6 +22,7 @@ export const bnb = getCryptoCurrencyById("bsc");
 export const base = getCryptoCurrencyById("base");
 export const arc = getCryptoCurrencyById("arc");
 export const robinhood = getCryptoCurrencyById("robinhood");
+export const alpenTestnet = getCryptoCurrencyById("alpen_testnet");
 export const VITALIK = "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9";
 
 /** Asserts that an address appears in a list (case-insensitive, for EIP-55 robustness). Skips when list is missing or empty. */

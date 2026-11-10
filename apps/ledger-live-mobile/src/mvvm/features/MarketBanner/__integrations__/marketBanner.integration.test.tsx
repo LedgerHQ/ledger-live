@@ -42,6 +42,12 @@ const MOCK_RAMP_CATALOG = {
   },
 };
 
+const renderMarketBanner = () => {
+  server.use(http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)));
+
+  return renderWithReactQuery(<MarketBannerTest />);
+};
+
 describe("MarketBanner Integration Tests", () => {
   beforeEach(() => {
     mockNavigate.mockClear();
@@ -59,25 +65,8 @@ describe("MarketBanner Integration Tests", () => {
   });
 
   describe("Filter trigger", () => {
-    const renderWithAssetDiscoverability = (assetDiscoverability: boolean) => {
-      server.use(http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)));
-
-      return renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { params: { assetDiscoverability } },
-        }),
-      });
-    };
-
-    it("should not render the filter button when assetDiscoverability is disabled", async () => {
-      renderWithAssetDiscoverability(false);
-
-      expect(await screen.findByTestId("market-banner-container")).toBeVisible();
-      expect(screen.queryByTestId("market-banner-filter-button")).toBeNull();
-    });
-
     it("should render the filter button with the default 'Trending' label", async () => {
-      renderWithAssetDiscoverability(true);
+      renderMarketBanner();
 
       const filterButton = await screen.findByTestId("market-banner-filter-button");
       expect(filterButton).toBeVisible();
@@ -85,7 +74,7 @@ describe("MarketBanner Integration Tests", () => {
     });
 
     it("should track the filter button when pressed", async () => {
-      const { user } = renderWithAssetDiscoverability(true);
+      const { user } = renderMarketBanner();
 
       const filterButton = await screen.findByTestId("market-banner-filter-button");
       await user.press(filterButton);
@@ -100,7 +89,7 @@ describe("MarketBanner Integration Tests", () => {
     });
 
     it("should render the four filter options in the drawer", async () => {
-      const { user } = renderWithAssetDiscoverability(true);
+      const { user } = renderMarketBanner();
 
       await user.press(await screen.findByTestId("market-banner-filter-button"));
 
@@ -111,7 +100,7 @@ describe("MarketBanner Integration Tests", () => {
     });
 
     it("should persist the selected filter and track the change", async () => {
-      const { user, store } = renderWithAssetDiscoverability(true);
+      const { user, store } = renderMarketBanner();
 
       await user.press(await screen.findByTestId("market-banner-filter-button"));
       await user.press(await screen.findByTestId("market-banner-filter-drawer-losers"));
@@ -126,18 +115,11 @@ describe("MarketBanner Integration Tests", () => {
       server.use(http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)));
 
       const { store } = renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: state => {
-          const flagged = withFlagOverrides({
-            lwmWallet40: {
-              params: { assetDiscoverability: true },
-            },
-          })(state);
-          return {
-            ...flagged,
-            marketBanner: { ...flagged.marketBanner, ranking: "favorites" },
-            settings: { ...flagged.settings, starredMarketCoins: [] },
-          };
-        },
+        overrideInitialState: state => ({
+          ...state,
+          marketBanner: { ...state.marketBanner, ranking: "favorites" },
+          settings: { ...state.settings, starredMarketCoins: [] },
+        }),
       });
 
       await waitFor(() => {
@@ -158,51 +140,15 @@ describe("MarketBanner Integration Tests", () => {
       );
 
       renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: state => {
-          const flagged = withFlagOverrides({
-            lwmWallet40: {
-              params: { assetDiscoverability: true },
-            },
-          })(state);
-          return {
-            ...flagged,
-            marketBanner: { ...flagged.marketBanner, ranking: "favorites" },
-            settings: { ...flagged.settings, starredMarketCoins: ["bitcoin", "ethereum"] },
-          };
-        },
+        overrideInitialState: state => ({
+          ...state,
+          marketBanner: { ...state.marketBanner, ranking: "favorites" },
+          settings: { ...state.settings, starredMarketCoins: ["bitcoin", "ethereum"] },
+        }),
       });
 
       await waitFor(() => expect(favoritesPageSize).not.toBeNull());
       expect(["1", "5", "20", "50"]).toContain(favoritesPageSize);
-    });
-
-    it("ignores the persisted ranking when assetDiscoverability is off and keeps the stored preference", async () => {
-      let performersSort: string | null = null;
-      server.use(
-        http.get("*/v3/markets", ({ request }) => {
-          const sort = new URL(request.url).searchParams.get("sort");
-          if (sort?.includes("price-change")) performersSort = sort;
-          return HttpResponse.json(MOCK_MARKET_PERFORMERS);
-        }),
-      );
-
-      const { store } = renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: state => {
-          const flagged = withFlagOverrides({
-            lwmWallet40: {
-              params: { assetDiscoverability: false },
-            },
-          })(state);
-          return {
-            ...flagged,
-            marketBanner: { ...flagged.marketBanner, ranking: "losers" },
-          };
-        },
-      });
-
-      await waitFor(() => expect(performersSort).not.toBeNull());
-      expect(performersSort).toContain("positive-price-change");
-      expect(store.getState().marketBanner.ranking).toBe("losers");
     });
   });
 
@@ -298,13 +244,7 @@ describe("MarketBanner Integration Tests", () => {
         http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)),
       );
 
-      renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: {
-            params: { assetDiscoverability: true },
-          },
-        }),
-      });
+      renderWithReactQuery(<MarketBannerTest />);
 
       expect(await screen.findByTestId("market-banner-tile-0")).toBeVisible();
       expect(trendingRequested).toBe(true);
@@ -316,13 +256,7 @@ describe("MarketBanner Integration Tests", () => {
         http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)),
       );
 
-      renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: {
-            params: { assetDiscoverability: true },
-          },
-        }),
-      });
+      renderWithReactQuery(<MarketBannerTest />);
 
       expect(await screen.findByTestId("market-banner-tile-0")).toBeVisible();
       expect(screen.queryByText(/Connection failed/i)).toBeNull();

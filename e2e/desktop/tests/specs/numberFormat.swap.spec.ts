@@ -19,10 +19,7 @@ const TEST_AMOUNT = "1234.56";
 // The send-amount input always groups with plain whitespace, regardless of language.
 const SEND_INPUT_THOUSANDS = " ";
 
-const languageCases = [
-  { languageId: "en" as const, label: "English" },
-  { languageId: "fr" as const, label: "Français" },
-];
+const languageCases = [{ languageId: "en" as const, label: "English" }];
 
 test.describe("Swap - amount formatting by language", () => {
   setupEnv(true);

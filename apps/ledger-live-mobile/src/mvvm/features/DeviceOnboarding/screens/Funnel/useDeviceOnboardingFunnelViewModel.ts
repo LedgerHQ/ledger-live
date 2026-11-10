@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
   useNavigation,
   useRoute,
@@ -39,9 +40,14 @@ export type QuitConfirmationModel = {
   onLeave: () => void;
 };
 
+export type UnlockSheetModel = Readonly<{
+  deviceModelId: Device["modelId"];
+  deviceName: string;
+}>;
+
 export type DeviceOnboardingFunnelModel = (
   | { status: "karaoke"; onClose: () => void }
-  | { status: "checks"; checks: ChecksScreenProps }
+  | { status: "checks"; checks: ChecksScreenProps; unlockSheet: UnlockSheetModel | null }
   | { status: "connecting"; title: string; closeLabel: string; onQuit: () => void }
   | {
       status: "failed";
@@ -186,6 +192,78 @@ function earlyScreen(actions: ScreenActions): DeviceOnboardingFunnelModel | null
   return null;
 }
 
+function connectWhenIdle(
+  started: { current: boolean },
+  onboarding: {
+    status: string;
+    state: string | null;
+    error: string | null;
+    connect: () => void;
+  },
+) {
+  if (started.current) return;
+  started.current = true;
+  if (onboarding.status !== "idle" || onboarding.state !== null || onboarding.error) return;
+  onboarding.connect();
+}
+
+type HeldState = Readonly<{ state: string; afterLock: boolean }>;
+
+function isHoldingLockedScreen(machineState: string | null, held: HeldState | null) {
+  return (
+    machineState === "deviceLocked" || (machineState === "readingState" && held?.afterLock === true)
+  );
+}
+
+function nextHeldState(
+  held: HeldState | null,
+  machineState: string | null,
+  holding: boolean,
+  showsChecks: boolean,
+): HeldState | null {
+  if (machineState === null) return null;
+  if (holding) {
+    return held?.afterLock ? held : { state: held?.state ?? machineState, afterLock: true };
+  }
+  if (!showsChecks) return null;
+  return held?.state === machineState && !held.afterLock
+    ? held
+    : { state: machineState, afterLock: false };
+}
+
+function quitConfirmationWhileUnlocked(
+  unseeded: boolean,
+  open: boolean,
+  holdingLockedScreen: boolean,
+  stepName: string,
+  onContinue: () => void,
+  onLeave: () => void,
+): QuitConfirmationModel | null {
+  if (!unseeded) return null;
+  return {
+    isOpen: open && !holdingLockedScreen,
+    stepName,
+    onContinue: holdingLockedScreen ? () => undefined : onContinue,
+    onLeave,
+  };
+}
+
+function checksUnderUnlockSheet(
+  built: DeviceOnboardingFunnelModel,
+  holdingLockedScreen: boolean,
+  locked: boolean,
+): DeviceOnboardingFunnelModel {
+  if (!holdingLockedScreen || built.status !== "checks") return built;
+  const { device } = built.checks;
+  return {
+    ...built,
+    checks: { ...built.checks, suspendSheets: true },
+    unlockSheet: locked
+      ? { deviceModelId: device.modelId, deviceName: device.deviceName ?? "" }
+      : null,
+  };
+}
+
 function checksScreen(actions: ScreenActions): DeviceOnboardingFunnelModel {
   const device = actions.device;
   const screenState = actions.screenState;
@@ -203,6 +281,7 @@ function checksScreen(actions: ScreenActions): DeviceOnboardingFunnelModel {
   return {
     status: "checks",
     quitConfirmation: actions.quitConfirmation,
+    unlockSheet: null,
     checks: {
       device,
       state: screenState,
@@ -262,12 +341,10 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   );
   useDeviceOnboardingHost(host);
   const started = useRef(false);
+  const [heldState, setHeldState] = useState<HeldState | null>(null);
 
   useEffect(() => {
-    if (started.current) return;
-    started.current = true;
-    if (onboarding.status !== "idle" || onboarding.state !== null || onboarding.error) return;
-    onboarding.connect();
+    connectWhenIdle(started, onboarding);
   }, [onboarding]);
 
   const sessionReady = onboarding.sendableEvents.some(
@@ -381,28 +458,32 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     ],
   );
 
+  const machineState = onboarding.state;
+  const locked = machineState === "deviceLocked";
+  const holdingLockedScreen = isHoldingLockedScreen(machineState, heldState);
+  const shownState = holdingLockedScreen ? (heldState?.state ?? machineState) : machineState;
   const onboardedOnEntry = onboarding.context?.onboardedOnEntry ?? null;
-  const phase = phaseOf(onboarding.state, onboardedOnEntry);
+  const phase = phaseOf(shownState, onboardedOnEntry);
   const screenState = checksScreenForPhase(
     phase,
-    onboarding.state,
+    shownState,
     onboarding.context?.checksPaused === true,
     onboardedOnEntry === true,
   );
   const device = onboarding.liveDevice;
   const closeLabel = t("deviceOnboarding.checks.close");
-  const quitConfirmation = unseeded
-    ? {
-        isOpen: quitConfirmationOpen,
-        stepName: lastSavedStepName(onboarding.state, onboarding.context?.currentSetupStep, t),
-        onContinue: continueSetup,
-        onLeave: leaveWithoutSaving,
-      }
-    : null;
+  const quitConfirmation = quitConfirmationWhileUnlocked(
+    unseeded,
+    quitConfirmationOpen,
+    holdingLockedScreen,
+    lastSavedStepName(onboarding.state, onboarding.context?.currentSetupStep, t),
+    continueSetup,
+    leaveWithoutSaving,
+  );
   const leaveFromHeader = unseeded ? requestQuit : quitMachine;
 
   const screen = {
-    state: onboarding.state,
+    state: shownState,
     error: onboarding.error,
     device,
     screenState,
@@ -428,7 +509,16 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     firmwareUpToDate: onboarding.context?.firmwareUpToDate === true,
     genuineFailureKind: readString(onboarding.context?.genuineFailureKind),
   };
-  return earlyScreen(screen) ?? checksScreen(screen);
+  const built = earlyScreen(screen) ?? checksScreen(screen);
+  const nextHeld = nextHeldState(
+    heldState,
+    machineState,
+    holdingLockedScreen,
+    built.status === "checks",
+  );
+  if (nextHeld !== heldState) setHeldState(nextHeld);
+
+  return checksUnderUnlockSheet(built, holdingLockedScreen, locked);
 }
 
 function readString(value: unknown): string | null {
