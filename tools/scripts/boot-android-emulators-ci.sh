@@ -78,7 +78,7 @@ AVD_NAMES=("$AVD_NAME" "${AVD_NAME}_2" "${AVD_NAME}_3")
 GPU_EXPERIMENT="${EMULATOR_GPU_EXPERIMENT:-none}"
 if [[ "$GPU_EXPERIMENT" == swangle ]]; then
   AVD_OPTIONS="${AVD_OPTIONS:-}"
-  AVD_OPTIONS="${AVD_OPTIONS/-gpu swiftshader_indirect/-gpu swangle_indirect}"
+  AVD_OPTIONS="${AVD_OPTIONS/-gpu swiftshader/-gpu swangle}"
 fi
 log "🧪 GPU experiment: $GPU_EXPERIMENT, options: ${AVD_OPTIONS:-}"
 
