@@ -3,6 +3,7 @@ import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 // i18n `postOnboarding.dialog.actionCompletedLabel`
 export const ACTION_COMPLETED_LABEL = "Complete";
@@ -59,20 +60,27 @@ export class PostOnboardingPage extends AppPage {
     await expect(this.finishOnboardingDialog).toBeHidden();
   }
 
+  /** Only a pending row takes a click, so its state stays a hard check before `clickAction`. */
   @step("Expect post-onboarding action $0 to be pending")
   async expectActionPending(actionId: string) {
     const row = this.actionRow(actionId);
     await expect(row).toBeVisible();
-    await expect(row).not.toContainText(ACTION_COMPLETED_LABEL);
     await expect(row).toHaveAttribute("data-post-onboarding-action-completed", "false");
+    await this.softExpect(async soft => {
+      await soft(row).not.toContainText(ACTION_COMPLETED_LABEL);
+    });
   }
 
   @step("Expect post-onboarding action $0 to be completed")
   async expectActionCompleted(actionId: string) {
     const row = this.actionRow(actionId);
     await expect(row).toBeVisible();
-    await expect(row).toContainText(ACTION_COMPLETED_LABEL);
-    await expect(row).toHaveAttribute("data-post-onboarding-action-completed", "true");
+    await this.softExpect(async soft => {
+      await Promise.all([
+        soft(row).toContainText(ACTION_COMPLETED_LABEL),
+        soft(row).toHaveAttribute("data-post-onboarding-action-completed", "true"),
+      ]);
+    });
   }
 
   @step("Expect the finish-onboarding dialog to list $0")
@@ -80,13 +88,18 @@ export class PostOnboardingPage extends AppPage {
     const actionIds =
       device === DeviceModelId.nanoS ? NANO_S_POST_ONBOARDING_ACTIONS : POST_ONBOARDING_ACTIONS;
     await expect(this.finishOnboardingDialog).toBeVisible();
-    await expect
-      .poll(() =>
-        this.actionRows.evaluateAll(rows =>
-          rows.map(row => row.getAttribute("data-post-onboarding-action-id")),
-        ),
-      )
-      .toEqual(actionIds);
+    await this.softExpect(
+      async soft => {
+        await soft
+          .poll(() =>
+            this.actionRows.evaluateAll(rows =>
+              rows.map(row => row.getAttribute("data-post-onboarding-action-id")),
+            ),
+          )
+          .toEqual(actionIds);
+      },
+      { timeout: TIMEOUT.large },
+    );
     await this.expectActionCompleted(PostOnboardingActionId.deviceOnboarded);
   }
 

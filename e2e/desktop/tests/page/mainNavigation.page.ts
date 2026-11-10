@@ -96,7 +96,9 @@ export class MainNavigationPage extends AppPage {
   @step("Expect $0 to be disabled in main navigation")
   async expectTargetDisabled(target: SidebarTargetName) {
     const { selector } = this.getSidebarTargets()[target];
-    await expect(selector).toBeDisabled();
+    await this.softExpect(async soft => {
+      await soft(selector).toBeDisabled();
+    });
   }
 
   @step("Validate $0 target from main navigation is selected and redirect to the expected path")
