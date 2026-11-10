@@ -1,5 +1,8 @@
 import React from "react";
 import { useFeature } from "@features/platform-feature-flags";
+import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
+import { memberCredentialsSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { useSelector } from "~/context/hooks";
 import { useFollowInstructions } from "../FollowInstructions/useFollowInstructions";
 import WalletSyncActivationDeviceSelection from "../DeviceSelection";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
@@ -22,7 +25,20 @@ export function ActivationProcess(props: Props) {
   );
 }
 
+// A direct entry can arrive before the navigator created the member credentials.
 function ActivationDeviceIntentStep() {
+  const memberCredentials = useSelector(memberCredentialsSelector);
+  if (!memberCredentials) {
+    return (
+      <Flex flex={1} alignItems="center" justifyContent="center">
+        <InfiniteLoader size={50} />
+      </Flex>
+    );
+  }
+  return <ActivationDeviceIntentRun />;
+}
+
+function ActivationDeviceIntentRun() {
   return <LedgerSyncIntentStepLWM step={useActivationDeviceIntentStepViewModel()} />;
 }
 

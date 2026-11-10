@@ -1,4 +1,4 @@
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { DeviceConnectionResult, ExecutorState } from "@features/platform-device-intent";
 import type {
@@ -24,7 +24,8 @@ export type LedgerSyncIntentStep<RunIntent> = Readonly<{
   errorDrawerProps: DrawerProps;
   /** Unmounts the executor before the host leaves the screen with the result. */
   finish: () => void;
-  leave: () => void;
+  /** Closes the error drawer and leaves, only on a dismissal: not on Retry nor on a blur. */
+  onErrorDrawerClose: () => void;
   onUserCancel: () => void;
   onExecutorStateChanged: (executorState: ExecutorState) => void;
   onIntentJobStateChanged: (jobState: LedgerSyncJobState) => void;
@@ -82,12 +83,21 @@ export function useLedgerSyncIntentStep<RunIntent>({
   const connectionResultRef = useRef<DeviceConnectionResult | undefined>(undefined);
   // The sheet reports a close when its screen loses focus, which must not leave the next screen.
   const isOverRef = useRef(false);
+  // The drawer also reports a close when it unmounts (Retry, screen removed) or loses focus.
+  const isErrorDrawerOpenRef = useRef(false);
+  useEffect(
+    () => () => {
+      isErrorDrawerOpenRef.current = false;
+    },
+    [],
+  );
 
   const runIdRef = useRef(0);
   const [phase, setPhase] = useState<StepPhase<RunIntent>>(() => buildPhase(buildIntent, 0));
 
   const showScene = useCallback((scene: Scene) => {
     isOverRef.current = true;
+    isErrorDrawerOpenRef.current = true;
     setPhase({ type: "failed", scene });
   }, []);
 
@@ -105,9 +115,16 @@ export function useLedgerSyncIntentStep<RunIntent>({
     if (!isOverRef.current) leave();
   }, [leave]);
 
+  const onErrorDrawerClose = useCallback(() => {
+    if (!isErrorDrawerOpenRef.current || !navigation.isFocused()) return;
+    isErrorDrawerOpenRef.current = false;
+    leave();
+  }, [leave, navigation]);
+
   const retry = useCallback(() => {
     runIdRef.current += 1;
     const nextPhase = buildPhase(buildIntentRef.current, runIdRef.current);
+    isErrorDrawerOpenRef.current = nextPhase.type === "failed";
     isOverRef.current = nextPhase.type !== "running";
     setPhase(nextPhase);
   }, []);
@@ -156,7 +173,7 @@ export function useLedgerSyncIntentStep<RunIntent>({
     phase,
     errorDrawerProps,
     finish,
-    leave,
+    onErrorDrawerClose,
     onUserCancel,
     onExecutorStateChanged,
     onIntentJobStateChanged,

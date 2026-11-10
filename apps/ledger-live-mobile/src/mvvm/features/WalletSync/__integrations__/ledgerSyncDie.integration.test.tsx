@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Text } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { track } from "@shared/analytics";
-import { render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
+import { act, render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import type { ExecutorState } from "@features/platform-device-intent";
 import type { LedgerSyncJobState } from "@features/platform-intent-wallet-sync";
+import { setMemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/store";
 import {
   NoTrustchainInitialized,
   TrustchainAlreadyInitialized,
@@ -19,6 +21,7 @@ import {
 } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { ScreenName } from "~/const";
+import type { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { CONNECTION_TYPES } from "~/analytics/hooks/variables";
 import { OnboardingType, type State } from "~/reducers/types";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
@@ -140,6 +143,26 @@ function ActivationNavigator() {
   );
 }
 
+function OpenActivation() {
+  const navigation = useNavigation<StackNavigatorNavigation<WalletSyncNavigatorStackParamList>>();
+  useEffect(() => {
+    navigation.navigate(ScreenName.WalletSyncActivationProcess, undefined);
+  }, [navigation]);
+  return <Text>activation entry</Text>;
+}
+
+// Opens the activation over another screen, so a stray goBack shows.
+function ActivationOverEntryNavigator() {
+  return (
+    <Stack.Navigator initialRouteName={ScreenName.WalletSyncActivationInit}>
+      <Stack.Screen name={ScreenName.WalletSyncActivationInit} component={OpenActivation} />
+      <Stack.Screen name={ScreenName.WalletSyncActivationProcess} component={ActivationProcess} />
+      <Stack.Screen name={ScreenName.WalletSyncLoading} component={Reached} />
+      <Stack.Screen name={ScreenName.WalletSyncManageKeyDeleteSuccess} component={Reached} />
+    </Stack.Navigator>
+  );
+}
+
 function ManageInstancesNavigator() {
   return (
     <Stack.Navigator initialRouteName={ScreenName.WalletSyncManageInstancesProcess}>
@@ -158,11 +181,13 @@ function initialState({
   trustchain = null,
   hasCompletedOnboarding = true,
   onboardingType = OnboardingType.restore,
+  memberCredentials = MEMBER_CREDENTIALS,
 }: {
   ledgerSyncDie?: boolean;
   trustchain?: Trustchain | null;
   hasCompletedOnboarding?: boolean;
   onboardingType?: OnboardingType;
+  memberCredentials?: typeof MEMBER_CREDENTIALS | null;
 }) {
   return withFlagOverrides(
     {
@@ -177,7 +202,7 @@ function initialState({
         hasCompletedOnboarding,
         onboardingType,
       },
-      trustchain: { ...state.trustchain, trustchain, memberCredentials: MEMBER_CREDENTIALS },
+      trustchain: { ...state.trustchain, trustchain, memberCredentials },
     }),
   );
 }
@@ -322,6 +347,65 @@ describe("Ledger Sync device steps on DIE", () => {
         ),
       ).toBeVisible();
       expect(mockGetOrCreateTrustchain).toHaveBeenCalledTimes(2);
+    });
+
+    it("should stay on the activation when Retry closes the unbacked error", async () => {
+      mockGetOrCreateTrustchain
+        .mockRejectedValueOnce(namedError(NoTrustchainInitialized))
+        .mockResolvedValueOnce({ type: TrustchainResultType.created, trustchain: TRUSTCHAIN });
+
+      const { user } = render(<ActivationOverEntryNavigator />, {
+        overrideInitialState: initialState({}),
+      });
+
+      await user.press(await screen.findByText("Try again"));
+
+      expect(
+        await screen.findByText(
+          `reached ${ScreenName.WalletSyncLoading} ${JSON.stringify({ created: true })}`,
+        ),
+      ).toBeVisible();
+      expect(mockGetOrCreateTrustchain).toHaveBeenCalledTimes(2);
+    });
+
+    it("should keep the delete success screen after deleting the key from the other seed error", async () => {
+      mockGetOrCreateTrustchain.mockRejectedValue(
+        namedError(TrustchainAlreadyInitializedWithOtherSeed),
+      );
+
+      const { user } = render(<ActivationOverEntryNavigator />, {
+        overrideInitialState: initialState({}),
+      });
+
+      await user.press(await screen.findByText("Delete my encryption key"));
+      await user.press(await screen.findByTestId("delete-trustchain"));
+
+      const deleteSuccess = `reached ${ScreenName.WalletSyncManageKeyDeleteSuccess} {}`;
+      expect(await screen.findByText(deleteSuccess)).toBeVisible();
+      await act(async () => {});
+      expect(screen.getByText(deleteSuccess)).toBeVisible();
+    });
+
+    it("should start the activation once the member credentials are created", async () => {
+      mockGetOrCreateTrustchain.mockResolvedValue({
+        type: TrustchainResultType.created,
+        trustchain: TRUSTCHAIN,
+      });
+
+      const { store } = render(<ActivationNavigator />, {
+        overrideInitialState: initialState({ memberCredentials: null }),
+      });
+
+      expect(mockGetOrCreateTrustchain).not.toHaveBeenCalled();
+      act(() => {
+        store.dispatch(setMemberCredentials(MEMBER_CREDENTIALS));
+      });
+
+      expect(
+        await screen.findByText(
+          `reached ${ScreenName.WalletSyncLoading} ${JSON.stringify({ created: true })}`,
+        ),
+      ).toBeVisible();
     });
 
     it("should keep the device selection when the flag is off", async () => {

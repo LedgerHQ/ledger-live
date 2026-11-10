@@ -29,7 +29,11 @@ export function LedgerSyncIntentStepLWM<Input, Result>({
 
   if (phase.type === "failed") {
     return (
-      <GenericFollowInstructionsDrawer {...step.errorDrawerProps} isOpen handleClose={step.leave} />
+      <GenericFollowInstructionsDrawer
+        {...step.errorDrawerProps}
+        isOpen
+        handleClose={step.onErrorDrawerClose}
+      />
     );
   }
 
