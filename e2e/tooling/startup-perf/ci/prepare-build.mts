@@ -30,21 +30,26 @@ const DETOX_BRIDGE_BLOCK = [
 export const JS_START_LINE = 'logStartupEvent("Before js imports");';
 export const STARTUP_END_LINE =
   "  if (!alreadyLogged.has(eventName) && otherStartupEvents.every(e => alreadyLogged.has(e))) {";
-// How an app that logs the startup itself (logStartupForMeasurement.ts) calls it, and the launch
-// argument it waits for, which src/measure/startup-log.ts passes.
+export const STARTUP_TRY_LINE = "    try {";
+// How an app that logs the startup itself (logStartupForMeasurement.ts) calls it, the launch
+// argument it waits for, and the line src/measure/startup-log.ts parses.
 export const APP_STARTUP_LOG_CALL = "      logStartupForMeasurement(eventName);";
 const APP_STARTUP_LOG_ARGUMENT = 'export const STARTUP_PERF_LOG_ARGUMENT = "startupPerfLog";';
+const APP_STARTUP_LOG_FORMAT = [
+  /\{ t: \w+, e: \w+\.map\((\w+) => \[\1\.event, \1\.time, \1\.count\]\) \}/,
+  /`startup-perf \$\{JSON\.stringify\(\w+\)\}`/,
+];
 // The refs before it get the app's log line: React Native's hook behind console.*, at the only
 // level iOS release builds keep, and unlike console.error unseen by Datadog.
 const STARTUP_LOG_LINES = [
-  "    // startup-perf: the startup in the device log, as logStartupForMeasurement writes it",
-  "    const startupPerfEvents = resolveStartupEvents();",
-  "    const startupPerfLine = JSON.stringify({",
-  "      t: startupPerfEvents.find(e => e.event === eventName)?.time ?? 0,",
-  "      e: startupPerfEvents.map(e => [e.event, e.time, e.count]),",
-  "    });",
-  "    type StartupPerfLog = { nativeLoggingHook?: (message: string, level: number) => void };",
-  "    (globalThis as StartupPerfLog).nativeLoggingHook?.(`startup-perf ${startupPerfLine}`, 3);",
+  "      // startup-perf: the startup in the device log, as logStartupForMeasurement writes it",
+  "      const startupPerfEvents = resolveStartupEvents();",
+  "      const startupPerfLine = JSON.stringify({",
+  "        t: startupPerfEvents.find(e => e.event === eventName)?.time ?? 0,",
+  "        e: startupPerfEvents.map(e => [e.event, e.time, e.count]),",
+  "      });",
+  "      type StartupPerfLog = { nativeLoggingHook?: (message: string, level: number) => void };",
+  "      (globalThis as StartupPerfLog).nativeLoggingHook?.(`startup-perf ${startupPerfLine}`, 3);",
 ];
 const TRUSTCHAIN_LENSE = "    lense: trustchainStoreSelector,";
 const SAVE_AT_START = "    saveAtStart: true,";
@@ -62,6 +67,8 @@ const indexesOf = (lines: string[], matches: (index: number) => boolean): number
   lines.flatMap((_, index) => (matches(index) ? [index] : []));
 const savesTrustchainAtStart = (lines: string[], index: number) =>
   index > 0 && lines[index - 1] === TRUSTCHAIN_LENSE && lines[index] === SAVE_AT_START;
+const tracksStartupEnd = (lines: string[], index: number) =>
+  index > 0 && lines[index - 1] === STARTUP_END_LINE && lines[index] === STARTUP_TRY_LINE;
 
 /**
  * Starts the E2E bridge only on the launch that passes `wsPort` (the injection), `delayMs` after
@@ -154,14 +161,21 @@ export const logJsStartEpoch = (source: string): string =>
 /**
  * For the refs whose app does not log the startup itself: writes it to the device log as soon as it
  * is over, as `startup-perf {"t": app startup time, "e": [[event, time, count], ...]}`, on every
- * launch. The harness reads it there instead of opening the Debug screen.
+ * launch, first in the `try` as the app does. The harness reads it there instead of opening the
+ * Debug screen.
  */
-export const logStartupForMeasurement = (source: string): string =>
-  textOf(
-    linesOf(source).flatMap(line =>
-      line === STARTUP_END_LINE ? [line, ...STARTUP_LOG_LINES] : [line],
+export function logStartupForMeasurement(source: string): string {
+  const lines = linesOf(source);
+  return textOf(
+    lines.flatMap((line, i) =>
+      tracksStartupEnd(lines, i) ? [line, ...STARTUP_LOG_LINES] : [line],
     ),
   );
+}
+
+/** Whether the app's own line is the one src/measure/startup-log.ts parses. */
+export const logsStartupLikeHarness = (helper: string): boolean =>
+  APP_STARTUP_LOG_FORMAT.every(format => format.test(helper));
 
 /**
  * LIVE-36190: the trustchain is no longer saved at start, so its member keypair is generated again
@@ -227,8 +241,16 @@ function checkApp(files: AppFiles, regression: string): void {
   if (appLogsStartup(files)) {
     if (!existsSync(files.startupLog)) throw new StepFailure(`${files.startupLog} not found`);
     requireOne(files.startupLog, APP_STARTUP_LOG_ARGUMENT, "startup log argument");
+    if (!logsStartupLikeHarness(read(files.startupLog))) {
+      throw new StepFailure(
+        `${files.startupLog} no longer writes the startup-perf line src/measure/startup-log.ts parses`,
+      );
+    }
   } else {
-    requireOne(files.lastStartupEvents, STARTUP_END_LINE, "startup end");
+    const lines = linesOf(read(files.lastStartupEvents));
+    if (indexesOf(lines, i => tracksStartupEnd(lines, i)).length !== 1) {
+      throw new StepFailure(`startup end anchor missing in ${files.lastStartupEvents}`);
+    }
   }
   if (regression) checkLive36190(files.dbSave);
   for (const line of ["MOCK=1", "DETOX=1", "FORCE_DEBUG_VISIBLE=1"]) {
@@ -238,11 +260,6 @@ function checkApp(files: AppFiles, regression: string): void {
   }
   if (countLines(linesOf(read(files.packageJson)), isE2eBuildWithDetox) > 1) {
     throw new StepFailure(`more than one e2e:build line sets DETOX=1 in ${files.packageJson}`);
-  }
-  if (process.platform === "darwin" && existsSync("/tmp/envfile")) {
-    throw new StepFailure(
-      "/tmp/envfile exists: react-native-config would read it instead of ENVFILE",
-    );
   }
 }
 

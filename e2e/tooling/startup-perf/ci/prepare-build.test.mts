@@ -7,11 +7,13 @@ import {
   JS_START_LINE,
   logJsStartEpoch,
   logStartupForMeasurement,
+  logsStartupLikeHarness,
   prodLikeEnv,
   readdLive36190,
   realBlur,
   RSPACK_LINE,
   STARTUP_END_LINE,
+  STARTUP_TRY_LINE,
 } from "./prepare-build.mts";
 import { linesOf, textOf } from "./step.mts";
 
@@ -132,17 +134,52 @@ describe("logJsStartEpoch", () => {
 });
 
 describe("logStartupForMeasurement", () => {
-  it("logs the startup as soon as it is over, before the analytics wait", () => {
-    const lines = linesOf(logStartupForMeasurement(textOf([STARTUP_END_LINE, "    try {"])));
-    assert.equal(lines[0], STARTUP_END_LINE);
-    assert.equal(lines.at(-1), "    try {");
-    const added = lines.slice(1, -1).join("\n");
-    assert.match(added, /const startupPerfEvents = resolveStartupEvents\(\);/);
+  const TRACKING = "      DdRumReactNavigationTracking.startTrackingViews(navigationRef.current);";
+
+  it("logs the startup as soon as it is over, first in the try as the app does", () => {
+    const lines = linesOf(
+      logStartupForMeasurement(textOf([STARTUP_END_LINE, STARTUP_TRY_LINE, TRACKING])),
+    );
+    assert.deepEqual(lines.slice(0, 2), [STARTUP_END_LINE, STARTUP_TRY_LINE]);
+    assert.equal(lines.at(-1), TRACKING);
+    const added = lines.slice(2, -1);
+    assert.ok(added.every(line => line.startsWith("      ")));
+    assert.match(added.join("\n"), /const startupPerfEvents = resolveStartupEvents\(\);/);
     assert.match(
-      added,
+      added.join("\n"),
       /t: startupPerfEvents\.find\(e => e\.event === eventName\)\?\.time \?\? 0,/,
     );
-    assert.match(added, /nativeLoggingHook\?\.\(`startup-perf \$\{startupPerfLine\}`, 3\);$/);
+    assert.match(
+      added.at(-1) ?? "",
+      /nativeLoggingHook\?\.\(`startup-perf \$\{startupPerfLine\}`, 3\);$/,
+    );
+  });
+
+  it("adds nothing without the try that follows the startup end", () => {
+    const source = textOf([STARTUP_END_LINE, TRACKING]);
+    assert.equal(logStartupForMeasurement(source), source);
+  });
+});
+
+describe("logsStartupLikeHarness", () => {
+  // The app's logStartupForMeasurement.ts, from #24576 on.
+  const HELPER = textOf([
+    "  const payload = { t: appStartupTime, e: events.map(e => [e.event, e.time, e.count]) };",
+    "  const { nativeLoggingHook } = globalThis as { nativeLoggingHook?: NativeLoggingHook };",
+    "  nativeLoggingHook?.(`startup-perf ${JSON.stringify(payload)}`, NATIVE_ERROR_LEVEL);",
+  ]);
+
+  it("accepts the line the harness parses", () => {
+    assert.equal(logsStartupLikeHarness(HELPER), true);
+  });
+
+  it("rejects another marker or other event rows", () => {
+    assert.equal(logsStartupLikeHarness(HELPER.replace("startup-perf ", "startup ")), false);
+    assert.equal(
+      logsStartupLikeHarness(HELPER.replace("[e.event, e.time, e.count]", "[e.event, e.time]")),
+      false,
+    );
+    assert.equal(logsStartupLikeHarness(HELPER.replace("{ t: ", "{ time: ")), false);
   });
 });
 

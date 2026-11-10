@@ -12,6 +12,7 @@ const READ = {
     "JS start epoch 1762502400412": { count: 1, time: 4 },
     "App started": { count: 2, time: 1650 },
   },
+  logLineBytes: `startup-perf ${PAYLOAD}`.length,
 };
 
 describe("parseStartupLog", () => {
@@ -35,6 +36,11 @@ describe("parseStartupLog", () => {
       parseStartupLog(`startup-perf ${earlier}\nstartup-perf ${PAYLOAD}`)?.appStartupTime,
       1650,
     );
+  });
+
+  it("measures the line in bytes, as the device log keeps it", () => {
+    const line = `startup-perf ${PAYLOAD.replace("App started", "App lancée")}`;
+    assert.equal(parseStartupLog(`${line}\r\n`)?.logLineBytes, line.length + 1);
   });
 
   it("is null without a line", () => {

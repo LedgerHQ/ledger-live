@@ -35,6 +35,24 @@ describe("pairUp", () => {
       [{ platform: "android", scenario: "accounts", phase: 0, A: 1000, B: 1100 }],
     );
   });
+
+  it("drops a round where only one launch followed a read of the Debug screen", () => {
+    const samples = [
+      launch({ side: "A", round: 0, afterScreenRead: true, appStartupTime: 1300 }),
+      launch({ side: "B", round: 0, appStartupTime: 1000 }),
+      launch({ side: "A", round: 1, afterScreenRead: true, appStartupTime: 1300 }),
+      launch({ side: "B", round: 1, afterScreenRead: true, appStartupTime: 1300 }),
+      launch({ side: "A", round: 2, afterScreenRead: false, appStartupTime: 1000 }),
+      launch({ side: "B", round: 2, appStartupTime: 1000 }),
+    ];
+    assert.deepEqual(
+      pairUp(samples, s => s.appStartupTime).map(p => [p.A, p.B]),
+      [
+        [1300, 1300],
+        [1000, 1000],
+      ],
+    );
+  });
 });
 
 describe("failedRows", () => {
@@ -263,5 +281,43 @@ describe("summarise", () => {
       summarise(comparison({ deltaMs: 0 }), { preset: "aa-noise", thresholdMs: 100 }),
     );
     assert.equal(row.verdict, "OK: resolves about ±0 ms");
+  });
+
+  it("counts the fallbacks of each build and leaves out the pairs they make uneven", () => {
+    // B's log line never comes, so each A launch follows a read of the screen.
+    const samples = comparison({
+      deltaMs: 0,
+      a: { readFrom: "log", afterScreenRead: true },
+      b: { readFrom: "screen-fallback" },
+    });
+    const row = debugRow(summarise(samples, GATE));
+    assert.deepEqual(row.reads.fallbacks, { A: 0, B: 6 });
+    assert.equal(row.reads.unevenPairs, 6);
+    assert.equal(row.pairs, 0);
+    assert.match(row.verdict, /^Not enough pairs/);
+    assert.equal(failedRows([row]), true);
+  });
+
+  it("fails every preset and measure when the Debug screen and the device log disagree", () => {
+    const samples = comparison({ deltaMs: 0, a: { readFrom: "log", screenAppStartupTime: 1000 } });
+    const differs = samples.find(s => s.side === "A");
+    if (!differs) throw new Error("no A launch");
+    differs.screenAppStartupTime = 1040;
+    for (const preset of ["custom", "aa-noise", "known-regression"]) {
+      const rows = summarise(samples, { preset, thresholdMs: 100 });
+      assert.deepEqual(
+        rows.map(r => r.verdict),
+        Array(2).fill(
+          "FAIL: the Debug screen showed another App startup time than the device log on 1 of the 6 launches read both ways",
+        ),
+      );
+      assert.equal(failedRows(rows), true);
+    }
+  });
+
+  it("keeps the longest device log line", () => {
+    const samples = comparison({ deltaMs: 0, a: { logLineBytes: 423 }, b: { logLineBytes: 430 } });
+    assert.equal(debugRow(summarise(samples, GATE)).reads.longestLogLine, 430);
+    assert.equal(debugRow(summarise(comparison({ deltaMs: 0 }), GATE)).reads.longestLogLine, null);
   });
 });

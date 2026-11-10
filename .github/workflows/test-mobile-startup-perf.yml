@@ -48,6 +48,12 @@ on:
         required: true
         type: string
         default: "100"
+      read:
+        description: "Where each launch's startup is read: the device log (log), also the Debug screen to check they match (both, slower), or the Debug screen only (screen)"
+        required: true
+        type: choice
+        options: [log, both, screen]
+        default: log
 
 permissions:
   contents: read
@@ -421,6 +427,7 @@ jobs:
         env:
           SCENARIO: ${{ matrix.scenario }}
           PAIRS: ${{ inputs.pairs }}
+          READ: ${{ inputs.read }}
           ACCOUNTS_USERDATA: ${{ inputs.accounts_userdata }}
         run: |
           set -euo pipefail
@@ -432,6 +439,7 @@ jobs:
             --devices emulator-5554,emulator-5556 \
             --app-a "$APP_A" --app-b "$APP_B" --app-id "$APP_ID" \
             --scenarios "$SCENARIO" --pairs "$PAIRS" \
+            --read "$READ" \
             --accounts-userdata "$ACCOUNTS_USERDATA" \
             --out-dir "$RESULTS_DIR/android"
 
@@ -519,6 +527,7 @@ jobs:
         env:
           SCENARIOS: ${{ inputs.scenarios }}
           PAIRS: ${{ inputs.pairs }}
+          READ: ${{ inputs.read }}
           ACCOUNTS_USERDATA: ${{ inputs.accounts_userdata }}
         run: |
           set -euo pipefail
@@ -530,6 +539,7 @@ jobs:
             --devices "$SIM_1,$SIM_2" \
             --app-a "$APP_A" --app-b "$APP_B" --app-id "$APP_ID" \
             --scenarios "$SCENARIOS" --pairs "$PAIRS" \
+            --read "$READ" \
             --accounts-userdata "$ACCOUNTS_USERDATA" \
             --out-dir "$RESULTS_DIR/ios"
 
