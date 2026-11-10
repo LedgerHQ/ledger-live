@@ -13,6 +13,7 @@ const gateRule = (thresholdMs: number) =>
   `B fails when it is slower than A by more than ${thresholdMs} ms on either measure.`;
 const PRESET_RULES: Partial<Record<string, (thresholdMs: number) => string>> = {
   "prod-vs-release": gateRule,
+  "prod-vs-develop": gateRule,
   custom: gateRule,
   "known-regression": t =>
     `B is A with LIVE-36190 re-added: it is detected when it is slower than A by more than ${t} ms, as the gate would fail it.`,

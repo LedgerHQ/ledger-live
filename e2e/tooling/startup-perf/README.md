@@ -44,10 +44,13 @@ module.
 | Preset             | A                              | B                          | Fails when                        |
 | ------------------ | ------------------------------ | -------------------------- | --------------------------------- |
 | `prod-vs-release`  | latest `live-mobile@X.Y.Z` tag | `release` branch           | B is slower by > threshold_ms     |
+| `prod-vs-develop`  | latest `live-mobile@X.Y.Z` tag | this branch or `ref_b`     | same                              |
 | `custom`           | any branch or tag              | any branch or tag          | same                              |
 | `aa-noise`         | one build                      | the same binary            | only on `Not enough pairs`        |
 | `known-regression` | this branch or `ref_a`         | A with LIVE-36190 re-added | B is not slower by > threshold_ms |
 
+The workflow runs `prod-vs-develop` every weekday at 03:00 UTC, on develop, with the inputs'
+defaults (top-level `env` of the workflow): develop's commit against production.
 `aa-noise` reports how finely the setup resolves B − A. `known-regression` shows whether the gate
 still catches LIVE-36190 on today's code: B no longer saves the trustchain at start, so every launch
 generates its keypair again, the cost #21001 removed (its other half, a zod check of the keypair, no

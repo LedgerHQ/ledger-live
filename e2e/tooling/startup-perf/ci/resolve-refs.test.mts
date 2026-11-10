@@ -103,6 +103,30 @@ describe("planBuilds", () => {
     assert.deepEqual(plan.warnings, ["develop and develop are the same commit"]);
   });
 
+  it("defaults prod-vs-develop to the latest prod tag against the commit the run is on", () => {
+    const plan = planBuilds(
+      { ...INPUTS, preset: "prod-vs-develop", refA: "", refB: "", branchName: "develop" },
+      fakeLsRemote(),
+    );
+    assert.deepEqual([plan.sides, plan.shaA, plan.shaB], [["a", "b"], SHA(5), SHA(9)]);
+    assert.equal(plan.labelA, `live-mobile@4.27.1 (${SHA(5).slice(0, 10)})`);
+    assert.equal(plan.labelB, `develop (${SHA(9).slice(0, 10)})`);
+    assert.deepEqual(plan.warnings, []);
+  });
+
+  it("takes ref_a and ref_b in prod-vs-develop when they are set", () => {
+    const plan = planBuilds({ ...INPUTS, preset: "prod-vs-develop" }, fakeLsRemote());
+    assert.deepEqual([plan.shaA, plan.shaB], [SHA(6), SHA(1)]);
+  });
+
+  it("warns in prod-vs-develop when both sides are the same commit", () => {
+    const plan = planBuilds(
+      { ...INPUTS, preset: "prod-vs-develop", refA: "develop", refB: "", branchSha: SHA(1) },
+      fakeLsRemote(),
+    );
+    assert.deepEqual(plan.warnings, ["develop and ci/branch are the same commit"]);
+  });
+
   it("needs both refs for custom", () => {
     assert.throws(() => planBuilds({ ...INPUTS, refB: "" }, fakeLsRemote()), /custom needs both/);
   });

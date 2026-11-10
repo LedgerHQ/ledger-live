@@ -1,24 +1,27 @@
-name: "[Mobile] - Startup Performance - Manual"
+name: "[Mobile] - Startup Performance - Scheduled/Manual"
 run-name: >
-  @Mobile startup perf • ${{ inputs.preset }} • ${{ inputs.platforms }} • ${{ github.ref_name }} • ${{ github.actor }}
+  @Mobile startup perf • ${{ github.event_name == 'schedule' && 'Scheduled' || 'Manual' }} • ${{ inputs.preset || 'prod-vs-develop' }} • ${{ inputs.platforms || 'Android & iOS' }} • ${{ github.ref_name }} • ${{ github.actor }}
 
 # B2CQA-6555 (iOS) and B2CQA-6593 (Android). See e2e/tooling/startup-perf/README.md.
 
 on:
+  schedule:
+    # Weekdays, after the mobile E2E nightly: develop against the latest production tag.
+    - cron: "0 3 * * 1-5"
   workflow_dispatch:
     inputs:
       preset:
         description: "What to compare"
         required: true
         type: choice
-        options: [prod-vs-release, custom, aa-noise, known-regression]
+        options: [prod-vs-release, prod-vs-develop, custom, aa-noise, known-regression]
         default: prod-vs-release
       ref_a:
-        description: "Build A, a branch or tag of this repository (live-mobile@4.26.0 or later). Blank: the latest live-mobile@X.Y.Z tag (prod-vs-release) or this branch (aa-noise, known-regression)"
+        description: "Build A, a branch or tag of this repository (live-mobile@4.26.0 or later). Blank: the latest live-mobile@X.Y.Z tag (prod-vs-release, prod-vs-develop) or this branch (aa-noise, known-regression)"
         required: false
         type: string
       ref_b:
-        description: "Build B, a branch or tag of this repository. Blank: the release branch (prod-vs-release)"
+        description: "Build B, a branch or tag of this repository. Blank: the release branch (prod-vs-release) or this branch (prod-vs-develop)"
         required: false
         type: string
       platforms:
@@ -44,7 +47,7 @@ on:
         type: string
         default: "speculos-x-other-account,swap-history"
       threshold_ms:
-        description: "B fails (prod-vs-release, custom) or counts as detected (known-regression) when it is slower than A by more than this, on the Debug screen value (from the first JS import when A and B count from different points) or with the native start"
+        description: "B fails (prod-vs-release, prod-vs-develop, custom) or counts as detected (known-regression) when it is slower than A by more than this, on the Debug screen value (from the first JS import when A and B count from different points) or with the native start"
         required: true
         type: string
         default: "100"
@@ -58,10 +61,17 @@ env:
   MAESTRO_SHA256: 29b675e10cc12080e445e9bfb2e2b4e4dfb9c0f2e30d5884120d258b5e1cd991
   RESULTS_DIR: startup-perf-results
   PERF_AVD_CORES: "4"
+  # A scheduled run has no inputs: these are its settings.
+  PRESET: ${{ inputs.preset || 'prod-vs-develop' }}
+  PAIRS: ${{ inputs.pairs || '20' }}
+  SCENARIOS: ${{ inputs.scenarios || 'no-accounts,accounts' }}
+  ACCOUNTS_USERDATA: ${{ inputs.accounts_userdata || 'speculos-x-other-account,swap-history' }}
+  THRESHOLD: ${{ inputs.threshold_ms || '100' }}
 
 jobs:
   plan:
     name: "Resolve builds"
+    if: ${{ github.event_name != 'schedule' || github.repository == 'LedgerHQ/ledger-live' }}
     runs-on: ledger-wallet-1cpu-aws-public-cached
     outputs:
       sides: ${{ steps.plan.outputs.sides }}
@@ -85,12 +95,8 @@ jobs:
       - name: Resolve refs
         id: plan
         env:
-          PRESET: ${{ inputs.preset }}
           REF_A: ${{ inputs.ref_a }}
           REF_B: ${{ inputs.ref_b }}
-          PAIRS: ${{ inputs.pairs }}
-          THRESHOLD: ${{ inputs.threshold_ms }}
-          SCENARIOS: ${{ inputs.scenarios }}
           BRANCH_SHA: ${{ github.sha }}
           REPO_URL: ${{ github.server_url }}/${{ github.repository }}.git
         run: node e2e/tooling/startup-perf/ci/resolve-refs.mts
@@ -161,7 +167,7 @@ jobs:
 
       - name: Prepare the prod-like build
         env:
-          STARTUP_PERF_REGRESSION: ${{ inputs.preset == 'known-regression' && matrix.side == 'b' && 'LIVE-36190' || '' }}
+          STARTUP_PERF_REGRESSION: ${{ env.PRESET == 'known-regression' && matrix.side == 'b' && 'LIVE-36190' || '' }}
         run: node .startup-perf/e2e/tooling/startup-perf/ci/prepare-build.mts
 
       - name: Build detoxPreRelease APK (x86_64, JS bundled)
@@ -251,7 +257,7 @@ jobs:
 
       - name: Prepare the prod-like build
         env:
-          STARTUP_PERF_REGRESSION: ${{ inputs.preset == 'known-regression' && matrix.side == 'b' && 'LIVE-36190' || '' }}
+          STARTUP_PERF_REGRESSION: ${{ env.PRESET == 'known-regression' && matrix.side == 'b' && 'LIVE-36190' || '' }}
         run: node .startup-perf/e2e/tooling/startup-perf/ci/prepare-build.mts
 
       - name: Build Release simulator app (JS bundled)
@@ -420,8 +426,6 @@ jobs:
       - name: Measure
         env:
           SCENARIO: ${{ matrix.scenario }}
-          PAIRS: ${{ inputs.pairs }}
-          ACCOUNTS_USERDATA: ${{ inputs.accounts_userdata }}
         run: |
           set -euo pipefail
           APP_A=builds/a/signed.apk
@@ -438,8 +442,6 @@ jobs:
       - name: Analyse
         if: ${{ always() }}
         env:
-          PRESET: ${{ inputs.preset }}
-          THRESHOLD: ${{ inputs.threshold_ms }}
           LABEL_A: ${{ needs.plan.outputs.label_a }}
           LABEL_B: ${{ needs.plan.outputs.label_b }}
         run: |
@@ -516,10 +518,6 @@ jobs:
         run: bash e2e/tooling/startup-perf/devices/boot-simulators.sh
 
       - name: Measure
-        env:
-          SCENARIOS: ${{ inputs.scenarios }}
-          PAIRS: ${{ inputs.pairs }}
-          ACCOUNTS_USERDATA: ${{ inputs.accounts_userdata }}
         run: |
           set -euo pipefail
           APP_A=builds/a/ledgerlivemobile.app
@@ -536,8 +534,6 @@ jobs:
       - name: Analyse
         if: ${{ always() }}
         env:
-          PRESET: ${{ inputs.preset }}
-          THRESHOLD: ${{ inputs.threshold_ms }}
           LABEL_A: ${{ needs.plan.outputs.label_a }}
           LABEL_B: ${{ needs.plan.outputs.label_b }}
         run: |

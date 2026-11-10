@@ -102,20 +102,35 @@ function custom(inputs: PlanInputs, lsRemote: LsRemote): Builds {
   return { sides: ["a", "b"], shaA, shaB, labelA: inputs.refA, labelB: inputs.refB, warnings: [] };
 }
 
-/** One commit for both sides: ref_a, else the branch the workflow runs from. */
-function oneCommit(inputs: PlanInputs, lsRemote: LsRemote): { sha: string; label: string } {
-  if (!inputs.refA) return { sha: inputs.branchSha, label: inputs.branchName };
-  return { sha: resolveRef(inputs.refA, lsRemote), label: inputs.refA };
+/** `ref`, else the commit the workflow runs from. */
+function refOrThisBranch(
+  ref: string,
+  inputs: PlanInputs,
+  lsRemote: LsRemote,
+): { sha: string; label: string } {
+  if (!ref) return { sha: inputs.branchSha, label: inputs.branchName };
+  return { sha: resolveRef(ref, lsRemote), label: ref };
+}
+
+/** The nightly's comparison: the latest prod tag (or ref_a) against the commit it runs on (or ref_b). */
+function prodVsDevelop(inputs: PlanInputs, lsRemote: LsRemote): Builds {
+  const refA = inputs.refA || latestProdTag(lsRemote);
+  const shaA = resolveRef(refA, lsRemote);
+  const b = refOrThisBranch(inputs.refB, inputs, lsRemote);
+  const warnings = shaA === b.sha ? [`${refA} and ${b.label} are the same commit`] : [];
+  return { sides: ["a", "b"], shaA, shaB: b.sha, labelA: refA, labelB: b.label, warnings };
 }
 
 function buildsFor(inputs: PlanInputs, lsRemote: LsRemote): Builds {
   switch (inputs.preset) {
     case "prod-vs-release":
       return prodVsRelease(inputs, lsRemote);
+    case "prod-vs-develop":
+      return prodVsDevelop(inputs, lsRemote);
     case "custom":
       return custom(inputs, lsRemote);
     case "aa-noise": {
-      const { sha, label } = oneCommit(inputs, lsRemote);
+      const { sha, label } = refOrThisBranch(inputs.refA, inputs, lsRemote);
       return {
         sides: ["a"],
         shaA: sha,
@@ -127,7 +142,7 @@ function buildsFor(inputs: PlanInputs, lsRemote: LsRemote): Builds {
     }
     case "known-regression": {
       // Build B re-adds LIVE-36190 to the same commit (prepare-build.mts).
-      const { sha, label } = oneCommit(inputs, lsRemote);
+      const { sha, label } = refOrThisBranch(inputs.refA, inputs, lsRemote);
       const labelB = `${label} with LIVE-36190 re-added`;
       return { sides: ["a", "b"], shaA: sha, shaB: sha, labelA: label, labelB, warnings: [] };
     }
