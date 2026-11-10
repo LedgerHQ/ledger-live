@@ -1,4 +1,5 @@
 export * from "./session";
+export * from "./sessionWithDevice";
 export * from "./trustchainMemberId";
 export * from "./failure";
 export * from "./jobState";

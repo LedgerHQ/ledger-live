@@ -15,11 +15,28 @@ operations on the Device Intent Executor (DIE) session:
 
 The Ledger Sync SDK (`@ledgerhq/ledger-key-ring-protocol`) has no device API of its own: `getSdk`
 takes device access as an injected callback, named `withDevice`. Today the apps inject live-common's
-legacy `withDevice`. Here, each intent input carries a `createSessionSdk` that the host app builds:
-it injects a callback that runs on the DIE session through `DmkCompatTransport`, so no legacy
-`withDevice` is involved. The job calls it
-once per run, so a Retry after a refusal reuses the same SDK on the same session. The host also
-passes the SDK context and, on desktop, its trustchain lifecycle.
+legacy `withDevice`. Here, each intent input carries a `createSessionSdk` that the host app builds,
+so no legacy `withDevice` is involved. The job calls it once per run, so a Retry after a refusal
+reuses the same SDK on the same session.
+
+`sessionWithDevice(createTransport)` is the `withDevice` the host injects. It ignores the device id
+and runs each device job on a transport that `createTransport` returns when the job is subscribed,
+one per subscription. An error from the job or from `createTransport`, a device disconnection
+included, reaches the subscriber unchanged. The host creates a `DmkCompatTransport` bound to the
+session's `dmk` and `sessionId`:
+
+```ts
+getSdk(
+  setup.isMockEnv,
+  setup.context,
+  sessionWithDevice(() => new DmkCompatTransport(dmk, sessionId)),
+  setup.lifecycle,
+);
+```
+
+`setup` is the one the app's cached Ledger Sync SDK was built with, never the current flag: every
+SDK of the app then talks to the same backend as the wallet sync loop, and a member a session adds
+is one the loop knows.
 
 This package imports nothing from `libs/`: it depends on `@features/platform-device-intent` and
 takes the SDK, the Device Management Kit and RxJS as peers.
