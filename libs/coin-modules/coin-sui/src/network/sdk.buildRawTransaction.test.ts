@@ -1,11 +1,9 @@
 import type { Transaction } from "@mysten/sui/transactions";
-import { getInputObjects } from "@mysten/ledger-signer";
 import type { SuiCoinConfig } from "../config";
 import { makeSuiClientFromGraphQL } from "./graphql/sui-client-adapter";
 import { createSuiGrpcClient } from "./grpc/client";
 import { buildRawTransaction } from "./sdk";
 
-jest.mock("@mysten/ledger-signer", () => ({ getInputObjects: jest.fn() }));
 jest.mock("./graphql/client", () => ({ createSuiGraphQLClient: jest.fn(() => ({})) }));
 jest.mock("./graphql/sui-client-adapter", () => ({ makeSuiClientFromGraphQL: jest.fn() }));
 jest.mock("./grpc/client", () => ({ createSuiGrpcClient: jest.fn() }));
@@ -13,7 +11,6 @@ jest.mock("./grpc/client", () => ({ createSuiGrpcClient: jest.fn() }));
 const HBTC = "0xd30fb3f8914efdbeb7b8e85fae1d65dc584b44a1281f66737b92bb9f03a59d06::btc::BTC";
 const LONG_ZERO_TYPE = `0x${"0".repeat(61)}abc::other::OTHER`;
 const SERIALIZED = new Uint8Array([1, 2, 3]);
-const BCS_OBJECTS = [new Uint8Array([4])];
 
 const configWith = (transport: "graphql" | "grpc") =>
   ({
@@ -28,10 +25,11 @@ const owned = (objectId: string) => ({
 });
 
 /** A transaction as it looks once built: object inputs resolved, withdrawals in place. */
-const builtTransaction = (inputs: unknown[]) => {
+const builtTransaction = (inputs: unknown[], gasPayment: string[] = []) => {
   const build = jest.fn().mockResolvedValue(SERIALIZED);
+  const gasData = { payment: gasPayment.map(objectId => ({ objectId })) };
   return {
-    tx: { build, getData: () => ({ inputs }) } as unknown as Transaction,
+    tx: { build, getData: () => ({ inputs, gasData }) } as unknown as Transaction,
     build,
   };
 };
@@ -41,7 +39,6 @@ const client = { core: { getObjects, resolveTransactionPlugin: jest.fn() } };
 
 beforeEach(() => {
   jest.clearAllMocks();
-  (getInputObjects as jest.Mock).mockResolvedValue({ bcsObjects: BCS_OBJECTS });
   (createSuiGrpcClient as jest.Mock).mockReturnValue(client);
   (makeSuiClientFromGraphQL as jest.Mock).mockReturnValue(client);
 });
@@ -55,17 +52,17 @@ describe.each(["grpc", "graphql"] as const)("buildRawTransaction (%s)", transpor
     const result = await buildRawTransaction(config, tx);
 
     expect(build).toHaveBeenCalledWith({ client: expect.anything() });
-    expect(result).toEqual({ serialized: SERIALIZED, bcsObjects: BCS_OBJECTS, coinTypes: [] });
+    expect(result).toEqual({ serialized: SERIALIZED, bcsObjects: [], coinTypes: [] });
     expect(getObjects).not.toHaveBeenCalled();
   });
 
   it("collects the distinct non-SUI coin types of owned coins and address-balance withdrawals", async () => {
     getObjects.mockResolvedValue({
       objects: [
-        { type: `0x2::coin::Coin<${HBTC}>` },
-        { type: `0x2::coin::Coin<${HBTC}>` },
-        { type: "0x2::coin::Coin<0x2::sui::SUI>" },
-        { type: "0x2::kiosk::Kiosk" },
+        { type: `0x2::coin::Coin<${HBTC}>`, objectBcs: new Uint8Array([1]) },
+        { type: `0x2::coin::Coin<${HBTC}>`, objectBcs: new Uint8Array([2]) },
+        { type: "0x2::coin::Coin<0x2::sui::SUI>", objectBcs: new Uint8Array([3]) },
+        { type: "0x2::kiosk::Kiosk", objectBcs: new Uint8Array([4]) },
         new Error("object not found"),
       ],
     });
@@ -81,12 +78,50 @@ describe.each(["grpc", "graphql"] as const)("buildRawTransaction (%s)", transpor
       { $kind: "FundsWithdrawal", FundsWithdrawal: { typeArg: { Balance: "0x2::sui::SUI" } } },
     ]);
 
-    const { coinTypes } = await buildRawTransaction(config, tx);
+    const { coinTypes, bcsObjects } = await buildRawTransaction(config, tx);
 
+    expect(getObjects).toHaveBeenCalledTimes(1);
     expect(getObjects).toHaveBeenCalledWith({
       objectIds: ["0x1", "0x2", "0x3", "0x4", "0x5"],
+      include: { objectBcs: true },
     });
     expect(coinTypes.sort()).toEqual([HBTC, "0xabc::other::OTHER"].sort());
+    expect(bcsObjects).toEqual([1, 2, 3, 4].map(byte => new Uint8Array([byte])));
+  });
+
+  it("fetches gas payment objects first, in one call, and skips their SUI type", async () => {
+    getObjects.mockResolvedValue({
+      objects: [
+        { type: "0x2::coin::Coin<0x2::sui::SUI>", objectBcs: new Uint8Array([9]) },
+        { type: `0x2::coin::Coin<${HBTC}>`, objectBcs: new Uint8Array([8]) },
+      ],
+    });
+    const { tx } = builtTransaction([owned("0x1")], ["0xgas"]);
+
+    const result = await buildRawTransaction(config, tx);
+
+    expect(getObjects).toHaveBeenCalledTimes(1);
+    expect(getObjects).toHaveBeenCalledWith({
+      objectIds: ["0xgas", "0x1"],
+      include: { objectBcs: true },
+    });
+    expect(result.bcsObjects).toEqual([new Uint8Array([9]), new Uint8Array([8])]);
+    expect(result.coinTypes).toEqual([HBTC]);
+  });
+
+  it("skips objects that are not coins or have no type", async () => {
+    getObjects.mockResolvedValue({
+      objects: [
+        { type: "not a struct tag <<", objectBcs: new Uint8Array([7]) },
+        { objectBcs: new Uint8Array([6]) },
+      ],
+    });
+    const { tx } = builtTransaction([owned("0x1"), owned("0x2")]);
+
+    const result = await buildRawTransaction(config, tx);
+
+    expect(result.coinTypes).toEqual([]);
+    expect(result.bcsObjects).toEqual([new Uint8Array([7]), new Uint8Array([6])]);
   });
 
   it("propagates a build failure", async () => {

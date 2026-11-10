@@ -1693,24 +1693,39 @@ const createTransactionForOthers = (
 
 const COIN_OBJECT_TYPE = /^0x0*2::coin::Coin<(.+)>$/;
 
-/**
- * Distinct non-SUI coin types a built transaction moves: `0x2::coin::Coin<T>` object inputs and
- * `FundsWithdrawal` inputs drawn from the address balance. Types are in short struct-tag form.
- */
-async function collectCoinTypes(tx: Transaction, client: ClientWithCoreApi): Promise<string[]> {
-  const { inputs } = tx.getData();
-  const types = new Set<string>();
+/** Short struct tag of the coin a `0x2::coin::Coin<T>` object holds, or undefined for any other object. */
+function coinTypeOf(objectType: string | undefined): string | undefined {
+  return objectType ? COIN_OBJECT_TYPE.exec(toShortStructTag(objectType))?.[1] : undefined;
+}
 
-  const objectIds = inputs.flatMap(input =>
-    input.$kind === "Object" && input.Object.$kind === "ImmOrOwnedObject"
-      ? [input.Object.ImmOrOwnedObject.objectId]
-      : [],
-  );
+/**
+ * Fetches the gas and owned input objects of a built transaction once, in the order
+ * `@mysten/ledger-signer` `getInputObjects` uses, and returns their BCS (for clear signing) with
+ * the distinct non-SUI coin types the transaction moves: `0x2::coin::Coin<T>` objects and
+ * `FundsWithdrawal` inputs drawn from the address balance, in short struct-tag form.
+ */
+async function fetchInputObjects(
+  tx: Transaction,
+  client: ClientWithCoreApi,
+): Promise<{ bcsObjects: Uint8Array[]; coinTypes: string[] }> {
+  const { inputs, gasData } = tx.getData();
+  const objectIds = [
+    ...(gasData.payment?.map(object => object.objectId) ?? []),
+    ...inputs.flatMap(input =>
+      input.$kind === "Object" && input.Object.$kind === "ImmOrOwnedObject"
+        ? [input.Object.ImmOrOwnedObject.objectId]
+        : [],
+    ),
+  ];
+
+  const bcsObjects: Uint8Array[] = [];
+  const types = new Set<string>();
   if (objectIds.length > 0) {
-    const { objects } = await client.core.getObjects({ objectIds });
+    const { objects } = await client.core.getObjects({ objectIds, include: { objectBcs: true } });
     for (const object of objects) {
       if (object instanceof Error) continue;
-      const coinType = COIN_OBJECT_TYPE.exec(toShortStructTag(object.type))?.[1];
+      if (object.objectBcs) bcsObjects.push(object.objectBcs);
+      const coinType = coinTypeOf(object.type);
       if (coinType) types.add(coinType);
     }
   }
@@ -1722,21 +1737,22 @@ async function collectCoinTypes(tx: Transaction, client: ClientWithCoreApi): Pro
   }
 
   types.delete(DEFAULT_COIN_TYPE);
-  return [...types];
+  return { bcsObjects, coinTypes: [...types] };
 }
 
 /**
  * Builds a transaction that a dApp supplied, resolving only the fields it left unset (gas price,
  * budget and payment, object versions). Commands and any gas data already set are kept as is.
- * Also returns the input objects' BCS for clear signing and the non-SUI coin types it moves.
+ * Also returns the input objects' BCS for clear signing and the non-SUI coin types it moves,
+ * both from a single object fetch.
  */
 export const buildRawTransaction = (
   config: SuiCoinConfig,
   tx: Transaction,
 ): Promise<{ serialized: Uint8Array; bcsObjects: Uint8Array[]; coinTypes: string[] }> => {
   const build = async (client: ClientWithCoreApi) => {
-    const built = await finalizeBuild(tx, client, true);
-    return { ...built, coinTypes: await collectCoinTypes(tx, client) };
+    const serialized = await tx.build({ client });
+    return { serialized, ...(await fetchInputObjects(tx, client)) };
   };
   return withTransport(config, {
     graphql: api => build(makeSuiClientFromGraphQL(api)),
