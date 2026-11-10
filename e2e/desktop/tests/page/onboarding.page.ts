@@ -105,11 +105,9 @@ export class OnboardingPage extends AppPage {
 
   @step("Expect a card for each selectable device")
   async expectDeviceCards() {
-    await this.softExpect(async soft => {
-      await Promise.all(
-        SELECTABLE_DEVICES.map(device => soft(this.deviceContainer(device)).toBeVisible()),
-      );
-    });
+    await Promise.all(
+      SELECTABLE_DEVICES.map(device => expect(this.deviceContainer(device)).toBeVisible()),
+    );
   }
 
   @step("Expect the use case screen")

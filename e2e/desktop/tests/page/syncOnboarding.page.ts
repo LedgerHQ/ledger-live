@@ -183,9 +183,9 @@ export class SyncOnboardingPage extends AppPage {
 
   @step("Expect the Ledger Recovery Key backup to be complete")
   async expectRecoveryKeyBackupComplete() {
-    await expect(this.recoveryKeyStep).toBeHidden();
+    await expect(this.seedStepCompleted).toBeVisible();
     await this.softExpect(async soft => {
-      await soft(this.seedStepCompleted).toBeVisible();
+      await soft(this.recoveryKeyStep).toBeHidden();
     });
   }
 

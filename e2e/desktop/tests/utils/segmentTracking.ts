@@ -1,14 +1,12 @@
-import type { Page, Response } from "@playwright/test";
+import type { Response } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
-import { softExpect } from "tests/utils/softExpect";
+import { PageHolder } from "tests/page/abstractClasses";
 import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 const SEGMENT_TRACK_URL = "https://api.segment.io/v1/t";
 
-export class SegmentTracking {
+export class SegmentTracking extends PageHolder {
   private readonly trackResponses: Response[] = [];
-
-  constructor(private readonly page: Page) {}
 
   private readonly hasAcceptedEventWithUserId = () =>
     this.trackResponses.some(
@@ -25,16 +23,13 @@ export class SegmentTracking {
 
   @step("Expect Segment to accept an event tracked with the user id")
   async expectEventTrackedWithUserId() {
-    await softExpect(
-      {
-        page: this.page,
-        assertion: async soft => {
-          await soft
-            .poll(this.hasAcceptedEventWithUserId, {
-              message: `No ${SEGMENT_TRACK_URL} request carrying a userId got a 200`,
-            })
-            .toBe(true);
-        },
+    await this.softExpect(
+      async soft => {
+        await soft
+          .poll(this.hasAcceptedEventWithUserId, {
+            message: `No ${SEGMENT_TRACK_URL} request carrying a userId got a 200`,
+          })
+          .toBe(true);
       },
       { timeout: TIMEOUT.large },
     );

@@ -44,12 +44,7 @@ export class PostOnboardingPage extends AppPage {
 
   @step("Expect finish-onboarding widget to be hidden")
   async expectWidgetHidden() {
-    await this.softExpect(
-      async soft => {
-        await soft(this.finishOnboardingWidget).toBeHidden();
-      },
-      { timeout: TIMEOUT.large },
-    );
+    await expect(this.finishOnboardingWidget).toBeHidden();
   }
 
   @step("Open finish-onboarding dialog from widget")
@@ -65,13 +60,14 @@ export class PostOnboardingPage extends AppPage {
     await expect(this.finishOnboardingDialog).toBeHidden();
   }
 
+  /** Only a pending row takes a click, so its state stays a hard check before `clickAction`. */
   @step("Expect post-onboarding action $0 to be pending")
   async expectActionPending(actionId: string) {
     const row = this.actionRow(actionId);
     await expect(row).toBeVisible();
+    await expect(row).toHaveAttribute("data-post-onboarding-action-completed", "false");
     await this.softExpect(async soft => {
       await soft(row).not.toContainText(ACTION_COMPLETED_LABEL);
-      await soft(row).toHaveAttribute("data-post-onboarding-action-completed", "false");
     });
   }
 
@@ -79,9 +75,9 @@ export class PostOnboardingPage extends AppPage {
   async expectActionCompleted(actionId: string) {
     const row = this.actionRow(actionId);
     await expect(row).toBeVisible();
+    await expect(row).toHaveAttribute("data-post-onboarding-action-completed", "true");
     await this.softExpect(async soft => {
       await soft(row).toContainText(ACTION_COMPLETED_LABEL);
-      await soft(row).toHaveAttribute("data-post-onboarding-action-completed", "true");
     });
   }
 

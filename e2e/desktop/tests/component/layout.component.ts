@@ -65,9 +65,7 @@ export class Layout extends Component {
 
   @step("Expect no render error")
   async expectNoRenderError() {
-    await this.softExpect(async soft => {
-      await soft(this.renderError).toBeHidden();
-    });
+    await expect(this.renderError).toBeHidden();
   }
 
   @step("Wait for accounts sync to be finished")
