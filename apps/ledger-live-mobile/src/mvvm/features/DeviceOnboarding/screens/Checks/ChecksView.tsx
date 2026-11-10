@@ -2,12 +2,13 @@ import React from "react";
 import { BottomSheetHeader, BottomSheetView, Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { InfoState } from "@shared/ui-info-state";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
+import { Trans } from "~/context/Locale";
 import { Lottie, resolveLottieSource, type LottieSource } from "LLM/components/Lottie";
-import { DeviceActionContent } from "LLM/components/DeviceActionContent";
+import { ContinueOnDevice } from "LLM/components/DeviceIntentExecutor/components/DeviceGenericStates/ContinueOnDevice";
 import FirmwareUpdateAvailableDrawer from "LLM/components/FirmwareUpdateAvailableDrawer";
 import GenuineCheckErrorDrawer from "LLM/components/GenuineCheckErrorDrawer";
-import GenuineCheckNonGenuineDrawer from "LLM/components/GenuineCheckNonGenuineDrawer";
 import UnsupportedUpdateDrawer from "LLM/components/UnsupportedUpdateDrawer";
 import { DeviceOnboardingCloseBar } from "LLM/features/DeviceOnboarding/components/CloseBar";
 import { checksTestIds } from "LLM/features/DeviceOnboarding/testIds";
@@ -18,6 +19,37 @@ import darkSuccessAnimation from "./animations/dark/success.lottie";
 import lightLoadingAnimation from "./animations/light/loading.lottie";
 import lightScanAnimation from "./animations/light/security-check.lottie";
 import lightSuccessAnimation from "./animations/light/success.lottie";
+
+const legacyErrorKinds = new Set(["provider", "unknown"]);
+
+type ChecksSheetProps = Readonly<{
+  isOpen: boolean;
+  onClose?: () => void;
+  testID: string;
+  children: React.ReactNode;
+}>;
+
+function ChecksSheet({ isOpen, onClose, testID, children }: ChecksSheetProps) {
+  const { bottom: bottomInset } = useSafeAreaInsets();
+
+  return (
+    <QueuedBottomSheet
+      isRequestingToBeOpened={isOpen}
+      noCloseButton={!onClose}
+      onHeaderClosePressed={onClose}
+      preventBackdropClick
+      enablePanDownToClose={false}
+      enableDynamicSizing
+      contentHasBottomSpace
+      testID={testID}
+    >
+      <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
+        <BottomSheetHeader />
+        <Box lx={{ paddingHorizontal: "s16" }}>{children}</Box>
+      </BottomSheetView>
+    </QueuedBottomSheet>
+  );
+}
 
 const illustrationHeight = 200;
 const illustrationSize = 96;
@@ -76,6 +108,7 @@ export function ChecksView({
   notGenuineDrawer,
 }: ChecksViewProps) {
   const { bottom: bottomInset } = useSafeAreaInsets();
+  const showsLegacyError = legacyErrorKinds.has(errorDrawer.kind);
 
   return (
     <Box testID={checksTestIds.screen} lx={{ flex: 1, backgroundColor: "canvas" }}>
@@ -126,28 +159,55 @@ export function ChecksView({
         ) : null}
       </Box>
       {allowSheet ? (
-        <QueuedBottomSheet
-          isRequestingToBeOpened={allowSheet.isOpen}
-          noCloseButton={!allowSheet.onClose}
-          onHeaderClosePressed={allowSheet.onClose}
-          preventBackdropClick
-          enablePanDownToClose={false}
+        <ChecksSheet
+          isOpen={allowSheet.isOpen}
+          onClose={allowSheet.onClose}
           testID={checksTestIds.allowSheet}
-          enableDynamicSizing
-          contentHasBottomSpace
         >
-          <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
-            <BottomSheetHeader />
-            <Box lx={{ paddingHorizontal: "s16" }}>
-              <DeviceActionContent
-                action="continue"
-                deviceModelId={allowSheet.deviceModelId}
-                deviceName={allowSheet.deviceName}
-                title={allowSheet.title}
-              />
-            </Box>
-          </BottomSheetView>
-        </QueuedBottomSheet>
+          <ContinueOnDevice
+            deviceModelId={allowSheet.deviceModelId}
+            deviceName={allowSheet.deviceName}
+          />
+        </ChecksSheet>
+      ) : null}
+      {errorDrawer.kind === "declined" ? (
+        <ChecksSheet isOpen={errorDrawer.isOpen} testID={checksTestIds.declinedSheet}>
+          <InfoState
+            preset="info"
+            size="hug"
+            title={
+              <Trans i18nKey="deviceIntentExecutor.initialization.retryable.userRefused.title" />
+            }
+            primaryCta={{
+              label: <Trans i18nKey="common.close" />,
+              onPress: errorDrawer.onCancel,
+            }}
+            secondaryCta={{
+              label: <Trans i18nKey="common.retry" />,
+              onPress: errorDrawer.onRetry,
+            }}
+          />
+        </ChecksSheet>
+      ) : null}
+      {errorDrawer.kind === "network" ? (
+        <ChecksSheet isOpen={errorDrawer.isOpen} testID={checksTestIds.networkSheet}>
+          <InfoState
+            preset="error"
+            size="hug"
+            title={<Trans i18nKey="deviceOnboarding.checks.network.title" />}
+            description={<Trans i18nKey="deviceOnboarding.checks.network.description" />}
+            primaryCta={{
+              label: (
+                <Trans i18nKey="deviceIntentExecutor.initialization.cta.contactLedgerSupport" />
+              ),
+              onPress: errorDrawer.onContactSupport,
+            }}
+            secondaryCta={{
+              label: <Trans i18nKey="common.close" />,
+              onPress: errorDrawer.onCancel,
+            }}
+          />
+        </ChecksSheet>
       ) : null}
       <FirmwareUpdateAvailableDrawer {...firmwareUpdate} />
       {unsupportedUpdate.mounted ? (
@@ -158,20 +218,43 @@ export function ChecksView({
           onClose={unsupportedUpdate.onClose}
         />
       ) : null}
-      <GenuineCheckErrorDrawer
-        isOpen={errorDrawer.isOpen}
-        error={null}
-        showProviderSettings={errorDrawer.kind === "provider"}
-        productName={errorDrawer.productName}
-        onRetry={errorDrawer.onRetry}
-        onCancel={errorDrawer.onCancel}
-        onClose={errorDrawer.onClose}
-      />
-      <GenuineCheckNonGenuineDrawer
+      {showsLegacyError ? (
+        <GenuineCheckErrorDrawer
+          isOpen={errorDrawer.isOpen}
+          error={null}
+          showProviderSettings={errorDrawer.kind === "provider"}
+          productName={errorDrawer.productName}
+          onRetry={errorDrawer.onRetry}
+          onCancel={errorDrawer.onCancel}
+          onClose={errorDrawer.onClose}
+        />
+      ) : null}
+      <ChecksSheet
         isOpen={notGenuineDrawer.isOpen}
-        productName={notGenuineDrawer.productName}
         onClose={notGenuineDrawer.onClose}
-      />
+        testID={checksTestIds.notGenuineSheet}
+      >
+        <InfoState
+          preset="info"
+          size="hug"
+          title={
+            <Trans
+              i18nKey="earlySecurityCheck.genuineCheckNonGenuineDrawer.title"
+              values={{ productName: notGenuineDrawer.productName }}
+            />
+          }
+          description={
+            <Trans
+              i18nKey="earlySecurityCheck.genuineCheckNonGenuineDrawer.description"
+              values={{ productName: notGenuineDrawer.productName }}
+            />
+          }
+          primaryCta={{
+            label: <Trans i18nKey="earlySecurityCheck.genuineCheckNonGenuineDrawer.supportCta" />,
+            onPress: notGenuineDrawer.onContactSupport,
+          }}
+        />
+      </ChecksSheet>
     </Box>
   );
 }

@@ -171,7 +171,7 @@ describe("ChecksView", () => {
     expect(
       screen.getByText("Let's confirm that your Ledger device is genuine and up-to-date."),
     ).toBeVisible();
-    expect(screen.queryByText("Tap on “Allow” to start Ledger Genuine Check")).toBeNull();
+    expect(screen.queryByText("Continue on your Ledger Stax")).toBeNull();
 
     await user.press(screen.getByRole("button", { name: "Check my device" }));
 
@@ -202,7 +202,10 @@ describe("ChecksView", () => {
     const { user, onCloseSheet, onQuit, onStart } = renderChecks("awaitingAllow");
 
     expect(screen.getByText("Check your device")).toBeVisible();
-    expect(screen.getByText("Tap on “Allow” to start Ledger Genuine Check")).toBeVisible();
+    expect(screen.getByText("Continue on your Ledger Stax")).toBeVisible();
+    expect(
+      screen.getByText(/Follow the instructions displayed on your Secure.Screen/),
+    ).toBeVisible();
     expect(screen.getByText("Lily's Stax")).toBeVisible();
     expect(screen.queryByTestId(`${checksTestIds.allowSheet}-dismiss`)).toBeNull();
 
@@ -487,14 +490,42 @@ describe("ChecksView", () => {
     expect(onAcceptUpdate).not.toHaveBeenCalled();
   });
 
-  it.each<{ kind: GenuineErrorKind; title: string; showsSettings: boolean }>([
-    { kind: "declined", title: "Ledger Genuine Check error", showsSettings: false },
-    { kind: "network", title: "Ledger Genuine Check error", showsSettings: false },
-    { kind: "unknown", title: "Ledger Genuine Check error", showsSettings: false },
-    { kind: "provider", title: "Initiate Ledger Genuine Check again", showsSettings: true },
+  it.each<{
+    kind: GenuineErrorKind;
+    title: string;
+    showsSettings: boolean;
+    cancelLabel: string;
+    sheetId?: string;
+  }>([
+    {
+      kind: "declined",
+      title: "Operation rejected on Ledger device",
+      showsSettings: false,
+      cancelLabel: "Close",
+      sheetId: checksTestIds.declinedSheet,
+    },
+    {
+      kind: "network",
+      title: "Network error",
+      showsSettings: false,
+      cancelLabel: "Close",
+      sheetId: checksTestIds.networkSheet,
+    },
+    {
+      kind: "unknown",
+      title: "Ledger Genuine Check error",
+      showsSettings: false,
+      cancelLabel: "Cancel set up",
+    },
+    {
+      kind: "provider",
+      title: "Initiate Ledger Genuine Check again",
+      showsSettings: true,
+      cancelLabel: "Cancel set up",
+    },
   ])(
     "should leave onboarding when cancelling the $kind drawer",
-    async ({ kind, title, showsSettings }) => {
+    async ({ kind, title, showsSettings, cancelLabel, sheetId }) => {
       const { user, onCloseSheet, onQuit, rerender } = renderChecks("checking", {
         error: { kind },
       });
@@ -506,26 +537,47 @@ describe("ChecksView", () => {
       expect(screen.getByText(title)).toBeVisible();
       expect(screen.queryByText("Go to settings") !== null).toBe(showsSettings);
 
-      await user.press(screen.getByText("Cancel set up"));
+      const cancelButton = sheetId
+        ? within(screen.getByTestId(sheetId)).getByRole("button", { name: cancelLabel })
+        : screen.getByText(cancelLabel);
+      await user.press(cancelButton);
 
       expect(onQuit).toHaveBeenCalledTimes(1);
       expect(onCloseSheet).not.toHaveBeenCalled();
     },
   );
 
-  it("should retry the genuine check from the error drawer", async () => {
+  it("should not offer a retry on the network sheet", () => {
+    renderChecks("checking", { error: { kind: "network" } });
+
+    expect(
+      within(screen.getByTestId(checksTestIds.networkSheet)).queryByRole("button", {
+        name: "Retry",
+      }),
+    ).toBeNull();
+  });
+
+  it("should retry the genuine check from the declined sheet", async () => {
     const { user, onRetry, onCloseSheet, onQuit, rerender } = renderChecks("checking", {
-      error: { kind: "network" },
+      error: { kind: "declined" },
     });
     onRetry.mockImplementation(() => {
       rerender({ error: null });
     });
 
-    await user.press(screen.getByText("Try again"));
+    await user.press(
+      within(screen.getByTestId(checksTestIds.declinedSheet)).getByRole("button", {
+        name: "Retry",
+      }),
+    );
 
     expect(onRetry).toHaveBeenCalledTimes(1);
     expect(onCloseSheet).not.toHaveBeenCalled();
-    expect(screen.queryByText("Try again")).toBeNull();
+    expect(
+      within(screen.getByTestId(checksTestIds.declinedSheet)).queryByRole("button", {
+        name: "Retry",
+      }),
+    ).toBeNull();
     expect(onQuit).not.toHaveBeenCalled();
   });
 
@@ -538,7 +590,7 @@ describe("ChecksView", () => {
     expect(screen.getByText("This Ledger Stax failed the Ledger Genuine Check")).toBeVisible();
     expect(screen.queryByText("Go to settings")).toBeNull();
 
-    await user.press(screen.getByTestId("modal-close-button"));
+    await user.press(screen.getByTestId(`${checksTestIds.notGenuineSheet}-header-close`));
 
     expect(onQuit).toHaveBeenCalledTimes(1);
     expect(onCloseSheet).not.toHaveBeenCalled();
@@ -551,7 +603,7 @@ describe("ChecksView", () => {
       onCloseNotGenuine,
     });
 
-    await user.press(screen.getByTestId("modal-close-button"));
+    await user.press(screen.getByTestId(`${checksTestIds.notGenuineSheet}-header-close`));
 
     expect(onCloseNotGenuine).toHaveBeenCalledTimes(1);
     expect(onQuit).not.toHaveBeenCalled();

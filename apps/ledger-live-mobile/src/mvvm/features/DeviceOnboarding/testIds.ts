@@ -22,6 +22,9 @@ export const checksTestIds = {
   allowSheet: "device-onboarding-checks-allow-sheet",
   installUpdate: "device-onboarding-checks-install-update",
   skipUpdate: "device-onboarding-checks-skip-update",
+  declinedSheet: "device-onboarding-checks-declined-sheet",
+  networkSheet: "device-onboarding-checks-network-sheet",
+  notGenuineSheet: "device-onboarding-checks-not-genuine-sheet",
 } as const;
 
 export const syncOfferTestIds = {
