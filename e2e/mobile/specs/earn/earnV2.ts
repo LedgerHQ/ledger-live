@@ -4,6 +4,7 @@ import { setEnv } from "@shared/env";
 import { waitEarnReady } from "@e2e/bridge/server";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { FF_LWM_WALLET_40_Q2 } from "@e2e/utils/featureFlagUtils";
+import { stubLiveApps } from "@e2e/utils/stubLiveApps";
 
 import type { ApplicationOptions } from "@e2e/page/index";
 import type { PartialFeatures } from "@shared/feature-flags";
@@ -232,6 +233,16 @@ export function runScyStakingCTATest(
 
 // --- Partner Dapp Flows ---
 
+// QAA-1509: Lido's site crashes the Android CI emulator, so the Lido live app loads a local stub page.
+// The requested dapp URL stays in the stub page's query string.
+const STUBBED_DAPP = { liveAppId: "lido", domain: "lido.fi" };
+
+/** Returns the stub page origin the dapp now loads from, or undefined when it is not stubbed. */
+async function stubDappIfCrashing(dappUrlSubstring: string): Promise<string | undefined> {
+  if (!dappUrlSubstring.includes(STUBBED_DAPP.domain)) return undefined;
+  return stubLiveApps(({ id }) => id === STUBBED_DAPP.liveAppId);
+}
+
 export function runPartnerDappCTATest(
   account: Account,
   providerId: string,
@@ -248,6 +259,7 @@ export function runPartnerDappCTATest(
       ? { ...EARN_V2_FLAGS, ...FF_STAKE_PROGRAMS_MODAL, ...swapToEarnFlags(depositScreen) }
       : EARN_V2_FLAGS;
   describe("Earn v2", () => {
+    let dappStubOrigin: string | undefined;
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",
@@ -256,6 +268,7 @@ export function runPartnerDappCTATest(
         cliCommands: [liveDataWithAddressCommand(account)],
         speculosForSetupOnly: true,
       });
+      dappStubOrigin = await stubDappIfCrashing(dappUrlSubstring);
     });
 
     setTeamOwner(Team.EARN);
@@ -281,6 +294,7 @@ export function runPartnerDappCTATest(
         await app.earnV2Dashboard.verifyStakingFlowOpened(account.currency.ticker);
         await app.earnV2Dashboard.tapStakingProvider(providerId);
       }
+      if (dappStubOrigin) await app.earnV2Dashboard.verifyPartnerDappLoaded(dappStubOrigin);
       await app.earnV2Dashboard.verifyPartnerDappLoaded(dappUrlSubstring);
     });
   });
@@ -293,6 +307,7 @@ export function runPartnerDappPositionTest(
   tags: string[],
 ) {
   describe("Earn v2", () => {
+    let dappStubOrigin: string | undefined;
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",
@@ -301,6 +316,7 @@ export function runPartnerDappPositionTest(
         cliCommands: [liveDataWithAddressCommand(account)],
         speculosForSetupOnly: true,
       });
+      dappStubOrigin = await stubDappIfCrashing(dappUrlSubstring);
     });
 
     setTeamOwner(Team.EARN);
@@ -313,6 +329,7 @@ export function runPartnerDappPositionTest(
       await app.earnV2Dashboard.clickPositionRow(account.currency.ticker);
       await app.earnV2Dashboard.waitForManageDrawerAndVerifyOptions(["Manage", "Earn more"]);
       await app.earnV2Dashboard.tapManageDrawerOption("Manage");
+      if (dappStubOrigin) await app.earnV2Dashboard.verifyPartnerDappLoaded(dappStubOrigin);
       await app.earnV2Dashboard.verifyPartnerDappLoaded(dappUrlSubstring);
     });
   });

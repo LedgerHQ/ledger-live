@@ -16,7 +16,8 @@ const discoverApps = [
 
 export type DiscoverAppName = (typeof discoverApps)[number]["name"];
 
-const randomPoolExcludedApps = new Set<DiscoverAppName>(["1inch", "Kiln-Widget"]);
+// QAA-1509: the Lido site crashes the Android CI emulator.
+const randomPoolExcludedApps = new Set<DiscoverAppName>(["1inch", "Kiln-Widget", "Lido"]);
 
 export default class DiscoverPage {
   private readonly baseLink = "discover/";

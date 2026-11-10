@@ -1,7 +1,8 @@
 import { device, log } from "detox";
 import { BUY_SELL_UI_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { getEnvs, importLocalManifests } from "@e2e/bridge/server";
+import { importLocalManifests } from "@e2e/bridge/server";
+import { fetchLiveAppCatalog } from "@e2e/utils/liveAppCatalog";
 
 const LOOPBACK_HOSTS = new Set(["localhost", "127.0.0.1"]);
 
@@ -21,18 +22,7 @@ export async function applyBuySellUiUrl(): Promise<void> {
     await device.reverseTcpPort(Number(port) || (protocol === "https:" ? 443 : 80));
   }
 
-  const { PLATFORM_MANIFEST_API_URL, LEDGER_CLIENT_VERSION } = JSON.parse(await getEnvs());
-  const appVersion = LEDGER_CLIENT_VERSION.replace(/^llm-\w+\//, "").replace(/-dev$/, "");
-  const catalogUrl = new URL(PLATFORM_MANIFEST_API_URL);
-  catalogUrl.searchParams.set("platform", device.getPlatform());
-  catalogUrl.searchParams.set("llVersion", appVersion);
-  catalogUrl.searchParams.set("lang", "en");
-  const response = await fetch(catalogUrl);
-  if (!response.ok) {
-    throw new Error(`BUY_SELL_UI_URL: catalog request failed with HTTP ${response.status}`);
-  }
-  const catalog: LiveAppManifest[] = await response.json();
-  const manifests = catalog.filter(isBuySellUiManifest);
+  const manifests = (await fetchLiveAppCatalog()).filter(isBuySellUiManifest);
   if (!manifests.length) {
     throw new Error(`BUY_SELL_UI_URL: no "${BUY_SELL_UI_APP_ID}" manifest in the catalog`);
   }
