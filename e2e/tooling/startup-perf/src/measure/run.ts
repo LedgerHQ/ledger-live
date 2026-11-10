@@ -87,8 +87,10 @@ const readStartupLog = createStartupLogReader(P);
 const inject = createInjector({ platform: P, devices: DEVICES, port: BRIDGE_PORT });
 
 const consecutiveFailures = new Map<string, number>();
+// On iOS a read of the Debug screen slows the next launch, on either simulator (README.md).
+let screenReadSinceLaunch = false;
 
-async function sample(meta: SampleMeta): Promise<Sample> {
+async function sample(meta: SampleMeta, { checkScreen = false } = {}): Promise<Sample> {
   const record: Sample = {
     platform: PLATFORM,
     ...meta,
@@ -115,6 +117,8 @@ async function sample(meta: SampleMeta): Promise<Sample> {
       return false;
     });
     record.otherPaused = paused;
+    record.afterScreenRead = screenReadSinceLaunch;
+    screenReadSinceLaunch = false;
     const launch = await P.launch(meta.device, READ === "screen" ? {} : STARTUP_LOG_LAUNCH_ARGS);
     await sleep(SETTLE_MS);
     const processStart = await P.processStart(meta.device);
@@ -130,7 +134,12 @@ async function sample(meta: SampleMeta): Promise<Sample> {
       paused = false;
     }
     readStart = Date.now();
-    const perf = await readStartup(meta, record.pid, path.join(DEBUG_DIR, `${name}.txt`));
+    const perf = await readStartup({
+      meta,
+      pid: record.pid,
+      checkScreen: checkScreen || READ === "both",
+      debugFile: path.join(DEBUG_DIR, `${name}.txt`),
+    });
     const pidAtRead = await P.pid(meta.device);
     if (pidAtRead !== record.pid) {
       throw new Error(`the app process changed before the read (pid ${record.pid} → ${pidAtRead})`);
@@ -161,15 +170,26 @@ async function sample(meta: SampleMeta): Promise<Sample> {
 }
 
 /**
- * The startup from the device log, or from the Debug screen when the line never came. The warm-ups,
- * and every launch with --read both, read the screen too, to check it shows the same time.
+ * The startup from the device log, or from the Debug screen when the line never came. With
+ * `checkScreen` the screen is read too, to check it shows the same time.
  */
-async function readStartup(
-  meta: SampleMeta,
-  pid: number,
-  debugFile: string,
-): Promise<Pick<Sample, "appStartupTime" | "events" | "readFrom" | "screenAppStartupTime">> {
-  const readScreen = () => readPerformance(meta.device, { quick: !meta.warmup, debugFile });
+async function readStartup({
+  meta,
+  pid,
+  checkScreen,
+  debugFile,
+}: {
+  meta: SampleMeta;
+  pid: number;
+  checkScreen: boolean;
+  debugFile: string;
+}): Promise<
+  Pick<Sample, "appStartupTime" | "events" | "readFrom" | "screenAppStartupTime" | "logLineBytes">
+> {
+  const readScreen = () => {
+    screenReadSinceLaunch = true;
+    return readPerformance(meta.device, { quick: !meta.warmup, debugFile });
+  };
   if (READ === "screen") return { ...(await readScreen()), readFrom: "screen" };
   const fromLog = await readStartupLog(meta.device, pid, LOG_READ_TIMEOUT_MS).catch(
     (error: unknown) => {
@@ -183,7 +203,7 @@ async function readStartup(
     );
     return { ...(await readScreen()), readFrom: "screen-fallback" };
   }
-  if (READ === "log" && !meta.warmup) return { ...fromLog, readFrom: "log" };
+  if (!checkScreen) return { ...fromLog, readFrom: "log" };
   const onScreen = await readScreen();
   if (onScreen.appStartupTime !== fromLog.appStartupTime) {
     log(
@@ -260,7 +280,12 @@ async function measureScenario(scenario: string): Promise<void> {
       const device = placement[side];
       await installAndInject({ scenario, side, device, userdata });
       for (let w = 0; w < WARMUPS; w++) {
-        await sample({ scenario, phase, round: -1 - w, side, device, warmup: true });
+        // The last one reads only the log: on iOS a screen read would slow round 0.
+        const lastWarmup = side === order.at(-1) && w === WARMUPS - 1;
+        await sample(
+          { scenario, phase, round: -1 - w, side, device, warmup: true },
+          { checkScreen: !lastWarmup },
+        );
       }
     }
     for (let round = 0; round < PAIRS / 2; round++) {

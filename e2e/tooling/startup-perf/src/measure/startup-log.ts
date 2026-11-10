@@ -14,6 +14,7 @@ const STARTUP_LOG_LINE = /startup-perf (\{.*)$/;
 const POLL_MS = 1000;
 
 type Payload = { t: number; e: Array<[string, number, number]> };
+export type StartupLogRead = PerformanceRead & { logLineBytes: number };
 
 const isEventRow = (row: unknown): row is [string, number, number] =>
   Array.isArray(row) &&
@@ -32,7 +33,7 @@ const isPayload = (value: unknown): value is Payload =>
   value.e.every(isEventRow);
 
 /** The startup in the last startup-perf line of `log`, or null when there is none. */
-export function parseStartupLog(log: string): PerformanceRead | null {
+export function parseStartupLog(log: string): StartupLogRead | null {
   const payloads = log
     .split(/\r?\n/)
     .flatMap(line => STARTUP_LOG_LINE.exec(line)?.[1].trimEnd() ?? []);
@@ -45,6 +46,7 @@ export function parseStartupLog(log: string): PerformanceRead | null {
   return {
     appStartupTime: parsed.t,
     events: Object.fromEntries(parsed.e.map(([event, time, count]) => [event, { count, time }])),
+    logLineBytes: Buffer.byteLength(STARTUP_LOG_MARKER + payload),
   };
 }
 
@@ -54,7 +56,7 @@ export function createStartupLogReader(P: Platform) {
     device: string,
     pid: number,
     timeoutMs: number,
-  ): Promise<PerformanceRead | null> {
+  ): Promise<StartupLogRead | null> {
     const deadline = Date.now() + timeoutMs;
     for (;;) {
       const read = parseStartupLog(await P.jsLog(device, pid, STARTUP_LOG_MARKER));

@@ -7,7 +7,7 @@ import { parseArgs } from "node:util";
 import type { ResultRow } from "../../ci/slack-report.mts";
 import { insideWorkingDir, isFailingVerdict } from "../../ci/step.mts";
 import type { Sample, Side } from "../types.ts";
-import { type ReportOptions, toMarkdown } from "./report.ts";
+import { type ReportOptions, screenMismatchText, toMarkdown } from "./report.ts";
 import {
   bootstrapMean,
   closed,
@@ -65,21 +65,44 @@ export interface Row extends Difference {
 export interface Reads {
   fromLog: number;
   /** Launches read on the screen because their log line never came. */
-  fallbacks: number;
+  fallbacks: Record<Side, number>;
+  /** Pairs left out as only one of their launches followed a read of the screen. */
+  unevenPairs: number;
   /** Launches, warm-ups included, read from both. */
   screenChecks: number;
   screenMismatches: number;
+  longestLogLine: number | null;
 }
+
+/** The measured launches of a round, A and B. */
+function rounds(samples: Sample[]): Array<Record<Side, Sample>> {
+  const byKey = new Map<string, Partial<Record<Side, Sample>>>();
+  for (const s of samples) {
+    if (!s.ok || s.warmup) continue;
+    const key = `${s.platform}|${s.scenario}|${s.phase}|${s.round}`;
+    byKey.set(key, { ...byKey.get(key), [s.side]: s });
+  }
+  return [...byKey.values()].filter((r): r is Record<Side, Sample> => !!r.A && !!r.B);
+}
+
+// On iOS a read of the Debug screen slows the next launch by ~280 ms: a pair compares only launches
+// that both followed one, or both did not.
+const uneven = ({ A, B }: Record<Side, Sample>) => !!A.afterScreenRead !== !!B.afterScreenRead;
 
 function readsOf(group: Sample[]): Reads {
   const ok = group.filter(s => s.ok);
   const measured = ok.filter(s => !s.warmup);
   const checked = ok.filter(s => s.screenAppStartupTime !== undefined);
+  const fallbacks = (side: Side) =>
+    measured.filter(s => s.side === side && s.readFrom === "screen-fallback").length;
+  const logLines = ok.flatMap(s => s.logLineBytes ?? []);
   return {
     fromLog: measured.filter(s => s.readFrom === "log").length,
-    fallbacks: measured.filter(s => s.readFrom === "screen-fallback").length,
+    fallbacks: { A: fallbacks("A"), B: fallbacks("B") },
+    unevenPairs: rounds(group).filter(uneven).length,
     screenChecks: checked.length,
     screenMismatches: checked.filter(s => s.screenAppStartupTime !== s.appStartupTime).length,
+    longestLogLine: logLines.length ? Math.max(...logLines) : null,
   };
 }
 
@@ -88,18 +111,16 @@ export interface GateOptions {
   thresholdMs: number;
 }
 
+const finite = (value: number | undefined): value is number =>
+  value !== undefined && Number.isFinite(value);
+
 export function pairUp(samples: Sample[], metric: Metric): Pair[] {
-  const byKey = new Map<string, Omit<Pair, Side> & Partial<Pick<Pair, Side>>>();
-  for (const s of samples) {
-    if (!s.ok || s.warmup) continue;
-    const value = metric(s);
-    if (value === undefined || !Number.isFinite(value)) continue;
-    const key = `${s.platform}|${s.scenario}|${s.phase}|${s.round}`;
-    const entry = byKey.get(key) ?? { platform: s.platform, scenario: s.scenario, phase: s.phase };
-    entry[s.side] = value;
-    byKey.set(key, entry);
-  }
-  return [...byKey.values()].filter((p): p is Pair => Number.isFinite(p.A) && Number.isFinite(p.B));
+  return rounds(samples).flatMap(round => {
+    const [A, B] = [metric(round.A), metric(round.B)];
+    if (uneven(round) || !finite(A) || !finite(B)) return [];
+    const { platform, scenario, phase } = round.A;
+    return [{ platform, scenario, phase, A, B }];
+  });
 }
 
 export function failedRows(rows: Array<Pick<Row, "verdict">>): boolean {
@@ -222,6 +243,14 @@ export function summarise(samples: Sample[], { preset, thresholdMs }: GateOption
     const jsStart = difference(group, fromJsStart);
     const withNative = difference(group, fromProcessStart);
     const screen = startsDiffer && jsStart.pairs ? jsStart : debugValue;
+    const verdictOf = (d: Difference): string => {
+      // Both measures end at the log's App startup time, which must be the Debug screen's.
+      if (reads.screenMismatches) return `FAIL: ${screenMismatchText(reads)}`;
+      if (d.thinPhase) {
+        return `Not enough pairs: ${d.pairsPerPhase[0]} before the device swap, ${d.pairsPerPhase[1]} after (${MIN_PAIRS_PER_PHASE} needed on each side)`;
+      }
+      return verdictFor({ preset, hl: d.hl, thresholdMs });
+    };
     const row = (measure: string, d: Difference): Row => ({
       platform,
       scenario,
@@ -234,9 +263,7 @@ export function summarise(samples: Sample[], { preset, thresholdMs }: GateOption
       failed: measured.filter(s => !s.ok).length,
       launches: measured.length,
       detectable: detectableAt80(d.hl, thresholdMs),
-      verdict: d.thinPhase
-        ? `Not enough pairs: ${d.pairsPerPhase[0]} before the device swap, ${d.pairsPerPhase[1]} after (${MIN_PAIRS_PER_PHASE} needed on each side)`
-        : verdictFor({ preset, hl: d.hl, thresholdMs }),
+      verdict: verdictOf(d),
     });
     return [
       row(screen === jsStart ? "Debug screen, from JS start" : "Debug screen", screen),
@@ -282,6 +309,11 @@ async function main(): Promise<void> {
     const json = insideWorkingDir(values.json);
     await mkdir(path.dirname(json), { recursive: true });
     await writeFile(json, JSON.stringify(rows satisfies ResultRow[], null, 2));
+  }
+  for (const r of rows.filter(
+    r => r.measure.startsWith("Debug screen") && r.reads.screenMismatches,
+  )) {
+    console.error(`::error::${r.platform} ${r.scenario}: ${screenMismatchText(r.reads)}`);
   }
   if (failedRows(rows)) {
     console.error(

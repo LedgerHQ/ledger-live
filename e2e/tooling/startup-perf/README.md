@@ -109,11 +109,16 @@ straight from Maven Central, the shared runner IP can get a 429 (run 42829119387
   log (logcat's `ReactNativeJS`, the simulator's `log show`): "App startup time" and the startup
   events of the Debug screen, written as soon as the startup is over. The app writes it at the error
   level, the only one iOS release builds keep, through React Native's `nativeLoggingHook`, which
-  Datadog does not see.
-- **Check it on the screen.** Warm-ups also let Maestro open the Performance screen, which must show
-  the same time (the report says on how many launches it did), and a launch whose line has not come
-  20 s after the settle time is read on the screen (the report counts those too). `--read both`
-  reads every launch both ways, `--read screen` the screen only. Screen reads of measured launches
+  Datadog does not see. The line is ~420 bytes (13 events); the iOS log keeps 1020 bytes of a line
+  (measured on macOS, whose unified log iOS shares) and logcat about 4 KB: the report gives the
+  longest.
+- **Check it on the screen.** The warm-ups also let Maestro open the Performance screen, which must
+  show the same time: a mismatch fails the run. On iOS a screen read slows the next launch by
+  ~280 ms, on either simulator (run 42356679784: the first launch of round 0 by 261–301 ms, the
+  second not), so the last warm-up before the rounds reads only the log, and each build is checked
+  once per scenario. A launch whose line has not come 20 s after the settle time is read on the
+  screen, and the report counts those per build. `--read both` reads every launch both ways,
+  `--read screen` the screen only. Screen reads of measured launches
   use `read-performance-quick.yaml`; warm-ups and retries use the full flow, whose optional taps
   cost ~7 s when no prompt shows. The flows select by text: the Debug and Performance screens have
   no testIDs on any supported ref.
@@ -144,10 +149,11 @@ straight from Maven Central, the shared runner IP can get a 429 (run 42829119387
 
 ## The analysis
 
-Launches are paired by scenario, phase and round. B − A is the Hodges–Lehmann median of the paired
-differences, after removing the device bias (half the gap between the two phases), with a Wilcoxon
-signed-rank 95% interval. The gate is on the estimate; the mean with a bootstrap interval is what
-the manual test compares.
+Launches are paired by scenario, phase and round, and a pair is left out when only one of its
+launches followed a read of the Debug screen (after a fallback, above). B − A is the Hodges–Lehmann
+median of the paired differences, after removing the device bias (half the gap between the two
+phases), with a Wilcoxon signed-rank 95% interval. The gate is on the estimate; the mean with a
+bootstrap interval is what the manual test compares.
 
 `calibration.test.ts` checks these claims on simulated runs with a known B − A, a 150 ms device bias
 and launch outliers. The interval covers the true B − A in 94% of runs (90.5% with 3 and 9 pairs
@@ -163,7 +169,8 @@ Two measures, both ending at "App startup time":
 - **With native start**: from the process start, read by the harness on the app's clock (the
   emulator's clock was ~67 s off the runner's, run 40847012543) and joined through `JS start epoch`.
 
-`analyze.ts` exits 1 on `FAIL`, `Not detected`, `Not enough pairs` or no samples.
+`analyze.ts` exits 1 on `FAIL` (a Debug screen that disagrees with the device log included),
+`Not detected`, `Not enough pairs` or no samples.
 
 ## Checks
 
