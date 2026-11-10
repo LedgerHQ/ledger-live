@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { summarise } from "./analyze.ts";
-import { comparison, startsDifferWithFallback } from "./fake-samples.ts";
+import { comparison, launch, startsDifferWithFallback } from "./fake-samples.ts";
 import { toMarkdown } from "./report.ts";
 
 describe("toMarkdown", () => {
@@ -70,6 +70,23 @@ describe("toMarkdown", () => {
     assert.match(
       toMarkdown(summarise(samples, options), options),
       /\*\*android accounts: the Debug screen showed another App startup time than the device log on 1 of the 6 launches read both ways\.\*\*/,
+    );
+  });
+
+  it("says when a build without the log line had both builds read on the screen", () => {
+    const samples = [
+      launch({
+        side: "A",
+        round: -1,
+        warmup: true,
+        readFrom: "screen-fallback",
+        appStartupTime: 900,
+      }),
+      ...comparison({ deltaMs: 0, a: { readFrom: "screen" }, b: { readFrom: "screen" } }),
+    ];
+    assert.match(
+      toMarkdown(summarise(samples, options), options),
+      /\*\*android accounts: build A wrote no startup-perf log line on its warm-up \(built before #24576\?\), so both builds were read from the Debug screen\.\*\*/,
     );
   });
 
