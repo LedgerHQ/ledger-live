@@ -35,7 +35,6 @@ const PLATFORM_SUFFIX_WAIVERS = [
   "large-screen-upsell",
   "pay-card-auth",
   "pay-card-widget",
-  "pay-feature-tour",
   "pay-request",
 ];
 
