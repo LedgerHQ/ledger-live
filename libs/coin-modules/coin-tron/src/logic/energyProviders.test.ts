@@ -5,7 +5,7 @@ describe("energyProviders", () => {
     expect(TRONIFY_PROVIDER).toEqual({
       id: "tronify",
       name: "Tronify",
-      termsUrl: "https://www.tronify.io/#/Terms?sourceFlag=tronify",
+      termsUrl: "https://www.tronify.io/#/Terms",
     });
     expect(ENERGY_PROVIDERS).toContain(TRONIFY_PROVIDER);
   });
