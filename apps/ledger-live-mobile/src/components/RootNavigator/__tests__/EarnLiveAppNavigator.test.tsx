@@ -150,8 +150,9 @@ describe("EarnLiveAppNavigator › stake-account deeplink", () => {
     expect(mockOpenStakingDrawer).toHaveBeenCalledTimes(1);
   });
 
-  it("waits for the account to load, then opens the staking flow once", () => {
-    const account = genAccount("earn-stake-account-late");
+  it("drops the action when the account is unknown, so adding it later opens nothing", () => {
+    const account = genAccount("earn-stake-account-unknown");
+    jest.spyOn(console, "warn").mockImplementation(() => {});
 
     const { store } = render(
       <EarnWithLiveParams initialParams={{ action: "stake-account", accountId: account.id }} />,
@@ -168,11 +169,6 @@ describe("EarnLiveAppNavigator › stake-account deeplink", () => {
     act(() => {
       store.dispatch(addOneAccount(account));
     });
-    expect(mockOpenStakingDrawer).toHaveBeenCalledTimes(1);
-
-    act(() => {
-      store.dispatch(updateAccount({ id: account.id, pendingOperations: [] }));
-    });
-    expect(mockOpenStakingDrawer).toHaveBeenCalledTimes(1);
+    expect(mockOpenStakingDrawer).not.toHaveBeenCalled();
   });
 });
