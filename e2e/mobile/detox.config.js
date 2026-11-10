@@ -1,4 +1,4 @@
-const gpuMode = process.env.CI ? "swiftshader" : "host";
+const gpuMode = process.env.CI ? "swiftshader_indirect" : "host";
 const {
   iosBinaryPath,
   androidBinaryPath,
