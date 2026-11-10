@@ -1,4 +1,14 @@
-import { ETH, PORTFOLIO_ID, evm, fakeService, synced } from "./internals/fakeService.mock";
+import { computeAccountUUID } from "@domain/entity-account-descriptor";
+import {
+  BTC,
+  DOT,
+  ETH,
+  PORTFOLIO_ID,
+  evm,
+  fakeService,
+  group,
+  synced,
+} from "./internals/fakeService.mock";
 import { createPortfolioSource } from "./source";
 
 function setup(service = fakeService()) {
@@ -11,10 +21,35 @@ function setup(service = fakeService()) {
 }
 
 describe("createPortfolioSource", () => {
-  it("serves no read yet and calls nothing until asked", () => {
+  it("supports the balance of EVM accounts, from the descriptor alone", () => {
     const { handle, client } = setup();
-    expect(handle.source.readBatch).toBeUndefined();
+    const { supports } = handle.source;
+
+    expect(supports(ETH, "balance")).toBe(true);
+    expect(supports(evm(2, "ethereum_classic"), "balance")).toBe(true);
+    expect(supports(evm(2, "hypercore"), "balance")).toBe(false);
+    expect(supports(BTC, "balance")).toBe(false);
+    expect(supports(DOT, "balance")).toBe(false);
     expect(Object.values(client).every(call => call.mock.calls.length === 0)).toBe(true);
+  });
+
+  it("serves a balance read through its batch reader", async () => {
+    const { handle } = setup(fakeService({ portfolio: synced([ETH]), groups: [group(ETH)] }));
+
+    const settled = await handle.source.readBatch?.balance?.(
+      [{ accountUUID: computeAccountUUID(ETH), descriptor: ETH }],
+      undefined,
+    );
+
+    expect(settled).toEqual([
+      {
+        status: "fulfilled",
+        value: [{ assetId: "ethereum", balance: "10", spendableBalance: "10" }],
+      },
+    ]);
+    expect(handle.getSnapshot().outcomes[computeAccountUUID(ETH)]).toMatchObject({
+      status: "served",
+    });
   });
 
   it("reconciles the portfolio with the accounts", async () => {
