@@ -187,6 +187,7 @@ export default class ModularDrawer {
   async validateAssetsScreen(assets: string[]): Promise<void> {
     await waitForElement(getElementById(this.assetScreenId));
     jestExpect(await getLabelOfElement(this.basedTitleIdMAD)).toMatch(/Select asset.*/i);
+    await getElementById(this.basedTitleIdMAD).swipe("up");
     for (const asset of assets) {
       const assetItemId = this.assetItemByTicker(asset);
       await detoxExpect(getElementById(assetItemId)).toBeVisible();
