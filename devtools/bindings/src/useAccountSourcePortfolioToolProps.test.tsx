@@ -57,6 +57,7 @@ function fakeClient(): PortfolioClient {
       };
       return portfolio;
     },
+    getBalanceHistory: async () => ({ items: [] }),
     getUpdates: async () => ({ items: [] }),
     findToken: async () => undefined,
     getBalance: async () => ({

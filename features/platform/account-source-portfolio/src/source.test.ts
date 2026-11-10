@@ -7,6 +7,7 @@ import {
   evm,
   fakeService,
   group,
+  historyGroup,
   synced,
   update,
 } from "./internals/fakeService.mock";
@@ -28,6 +29,7 @@ describe("createPortfolioSource", () => {
 
     expect(supports(ETH, "balance")).toBe(true);
     expect(supports(ETH, "operations")).toBe(true);
+    expect(supports(ETH, "balanceHistory")).toBe(true);
     expect(supports(evm(2, "ethereum_classic"), "balance")).toBe(true);
     expect(supports(evm(2, "hypercore"), "balance")).toBe(false);
     expect(supports(BTC, "balance")).toBe(false);
@@ -76,6 +78,29 @@ describe("createPortfolioSource", () => {
       {
         status: "fulfilled",
         value: { operations: [expect.objectContaining({ id: "ethereum-0xabc-IN" })] },
+      },
+    ]);
+  });
+
+  it("serves a balance history read through its batch reader", async () => {
+    const { handle } = setup(
+      fakeService({ portfolio: synced([ETH]), histories: [historyGroup(ETH)] }),
+    );
+
+    const settled = await handle.source.readBatch?.balanceHistory?.(
+      [{ accountUUID: computeAccountUUID(ETH), descriptor: ETH }],
+      { range: "week" },
+    );
+
+    expect(settled).toEqual([
+      {
+        status: "fulfilled",
+        value: {
+          range: "week",
+          series: [
+            { assetId: "ethereum", points: [{ date: "2026-10-01T00:00:00.000Z", balance: "10" }] },
+          ],
+        },
       },
     ]);
   });
