@@ -1,0 +1,117 @@
+import type {
+  Portfolio,
+  PortfolioAccount,
+  PortfolioRegistration,
+  PortfolioRegistrationEntry,
+} from "@domain/api-account-portfolio";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import {
+  mockAddressAccountDescriptor,
+  mockUtxoAccountDescriptor,
+} from "@domain/entity-account-descriptor/schema.mock";
+import { PortfolioId } from "@domain/entity-client-identity";
+import type { PortfolioClient } from "../client";
+import { portfolioAccountOf } from "../registration";
+import { createPortfolioContext, type PortfolioDeps } from "./portfolio";
+
+const addressOf = (index: number) => `0x${index.toString(16).padStart(40, "0")}`;
+
+export const evm = (index: number, network = "ethereum") =>
+  mockAddressAccountDescriptor({ network, address: addressOf(index), path: "m/44h/60h/0h/0/0" });
+
+/** The service's id of an account the source serves. */
+export function serverAccountId(descriptor: AccountDescriptor): string {
+  const ref = portfolioAccountOf(descriptor);
+  if (!ref) throw new Error("Not an account the source serves");
+  return ref.serverAccountId;
+}
+
+export const ETH = evm(1);
+export const POLYGON = evm(1, "polygon");
+export const BTC = mockUtxoAccountDescriptor();
+/** An account of a network the service does not synchronize. */
+export const DOT = mockAddressAccountDescriptor({
+  network: "polkadot",
+  address: `1${"A".repeat(46)}`,
+  path: "m/44h/354h/0h/0h/0h",
+});
+
+export const serviceAccount = (
+  descriptor: AccountDescriptor,
+  status: PortfolioAccount["status"] = "synchronized",
+): PortfolioAccount => ({ id: serverAccountId(descriptor), network: descriptor.network, status });
+
+/** A registration as the service lists it: an `account` one without the id we gave it. */
+export function listed(
+  registration: PortfolioRegistration,
+  id: string,
+): PortfolioRegistrationEntry {
+  switch (registration.type) {
+    case "account":
+      return {
+        id,
+        type: registration.type,
+        network: registration.network,
+        addresses: registration.addresses,
+      };
+    case "auto_derive":
+      return {
+        id,
+        type: registration.type,
+        network: registration.network,
+        xpub: registration.xpub,
+      };
+    default:
+      return { id, type: registration.type, address: registration.address };
+  }
+}
+
+/** A portfolio registering and tracking every descriptor, synchronized. */
+export const synced = (
+  descriptors: AccountDescriptor[],
+  extra: Partial<Portfolio> = {},
+): Portfolio => ({
+  id: "p",
+  registrations: descriptors.flatMap((descriptor, index) => {
+    const ref = portfolioAccountOf(descriptor);
+    return ref ? [listed(ref.registration, `known-${index}`)] : [];
+  }),
+  accounts: descriptors.map(descriptor => serviceAccount(descriptor)),
+  ...extra,
+});
+
+/** An in-memory Portfolio service. */
+export function fakeService({ portfolio }: { portfolio?: Portfolio } = {}) {
+  const state = { portfolio };
+  let nextId = 0;
+  const current = () => state.portfolio ?? { id: "p" };
+  const save = (next: Portfolio) => {
+    state.portfolio = next;
+    return next;
+  };
+  const client = {
+    getPortfolio: jest.fn(async (_id: PortfolioId, _signal?: AbortSignal) => state.portfolio),
+    createPortfolio: jest.fn(async () => save({ id: "p", registrations: [], accounts: [] })),
+    addRegistrations: jest.fn(async (_id, registrations) =>
+      save({
+        ...current(),
+        registrations: [
+          ...(current().registrations ?? []),
+          ...registrations.map(registration => listed(registration, `reg-${nextId++}`)),
+        ],
+      }),
+    ),
+    removeRegistrations: jest.fn(async (_id, ids) =>
+      save({
+        ...current(),
+        registrations: current().registrations?.filter(each => !ids.includes(each.id)),
+      }),
+    ),
+  } satisfies PortfolioClient;
+  return { client, state };
+}
+
+export const PORTFOLIO_ID = () => PortfolioId.fromString("portfolio");
+
+export const depsOf = (client: PortfolioClient): PortfolioDeps =>
+  createPortfolioContext({ client, portfolioId: PORTFOLIO_ID });

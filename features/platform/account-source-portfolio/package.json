@@ -1,0 +1,45 @@
+{
+  "name": "@features/platform-account-source-portfolio",
+  "version": "0.0.0",
+  "private": true,
+  "description": "The Portfolio service as an account data source for the balances, balance histories and operations of EVM, Bitcoin, Cardano, Tron, Tezos, Sui, Stellar and Canton accounts, reconciling its registrations with the local accounts",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "lint": "oxlint ./src",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage"
+  },
+  "dependencies": {
+    "@domain/api-account-data": "workspace:*",
+    "@domain/api-account-portfolio": "workspace:*",
+    "@domain/entity-account-data": "workspace:*",
+    "@domain/entity-account-descriptor": "workspace:*",
+    "@domain/entity-client-identity": "workspace:*",
+    "@domain/entity-currency-crypto": "workspace:*",
+    "@reduxjs/toolkit": "catalog:"
+  },
+  "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@shared/api-services": "workspace:*",
+    "@support/jest": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "@typescript/native": "catalog:",
+    "jest": "catalog:",
+    "msw": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "typescript": "catalog:"
+  }
+}
