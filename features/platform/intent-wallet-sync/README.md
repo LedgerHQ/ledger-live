@@ -92,5 +92,6 @@ const intent = createIntent(
 );
 ```
 
-No app binds these intents yet. The rollout flags `lwmLedgerSyncDie` and `lwdLedgerSyncDie` gate them
-once they do.
+Both apps bind these intents in the Ledger Sync intents devtool. Ledger Wallet Mobile also runs
+them in its Ledger Sync screens behind the `lwmLedgerSyncDie` rollout flag. `lwdLedgerSyncDie` will gate
+the Ledger Wallet Desktop screens once they bind them.
