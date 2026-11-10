@@ -118,6 +118,35 @@ describe("SwapTransactionStatusDialog Integration", () => {
     });
   });
 
+  it("should close the dialog from Return to Perps when perps opens it", async () => {
+    const { store, user } = render(<SwapTransactionStatusDialog />);
+
+    act(() => {
+      store.dispatch(
+        openSwapTransactionStatusDialog({ swapId: "swap-1", provider: "lifi", origin: "perps" }),
+      );
+    });
+
+    await user.click(await screen.findByRole("button", { name: "Return to Perps" }));
+
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    });
+  });
+
+  it("should not offer Return to Perps when swap opens it", async () => {
+    const { store } = render(<SwapTransactionStatusDialog />);
+
+    act(() => {
+      store.dispatch(openSwapTransactionStatusDialog({ swapId: "swap-1", provider: "lifi" }));
+    });
+
+    await waitFor(() => {
+      expect(screen.getByRole("dialog")).toBeVisible();
+    });
+    expect(screen.queryByRole("button", { name: "Return to Perps" })).not.toBeInTheDocument();
+  });
+
   it("should leave the dialog untitled when swap opens it", async () => {
     const { store } = render(<SwapTransactionStatusDialog />);
 
