@@ -29,6 +29,7 @@ import {
   useAccountNameToolProps,
   useMockAccountsToolProps,
   useAccountDetailToolProps,
+  useReceiveToolProps,
   useCoinConfigToolProps,
 } from "@devtools/bindings";
 import type { DevToolsConfig } from "@devtools/shell";
@@ -122,6 +123,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
   const accountNameToolProps = useAccountNameToolProps(legacyAccounts);
   const mockAccountsToolProps = useMockAccountsToolProps(accountDataRecorder);
   const accountDetailToolProps = useAccountDetailToolProps();
+  const receiveToolProps = useReceiveToolProps();
 
   const config: DevToolsConfig = useMemo(
     () => [
@@ -142,6 +144,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       { id: "account-portfolio", config: accountPortfolioToolProps },
       { id: "mock-accounts", config: mockAccountsToolProps },
       { id: "account-detail", config: accountDetailToolProps },
+      { id: "receive", config: receiveToolProps },
     ],
     [
       featureFlagsToolProps,
@@ -161,6 +164,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       accountNameToolProps,
       mockAccountsToolProps,
       accountDetailToolProps,
+      receiveToolProps,
     ],
   );
 
