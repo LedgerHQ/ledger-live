@@ -1,4 +1,3 @@
-import { getEnv, setEnv } from "@shared/env";
 import { importState } from "@shared/feature-flags";
 import { StreamTree, crypto, device, type Device } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import type { ApduDevice } from "@ledgerhq/hw-ledger-key-ring-protocol/ApduDevice";
@@ -8,6 +7,7 @@ import {
   type MemberCredentials,
   TrustchainResultType,
 } from "@ledgerhq/ledger-key-ring-protocol/types";
+import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 import { DmkCompatTransport } from "@ledgerhq/live-dmk-shared";
 import { HttpResponse, http, server } from "tests/server";
 import { act, renderHook, withFlagOverrides } from "tests/testSetup";
@@ -20,11 +20,10 @@ jest.mock("../hooks/useInstanceName", () => ({
   useInstanceName: () => "Desktop instance",
 }));
 
-const PROD_URL = getEnv("TRUSTCHAIN_API_PROD");
-const STAGING_URL = getEnv("TRUSTCHAIN_API_STAGING");
+const PROD_URL = getWalletSyncEnvironmentParams("PROD").trustchainApiBaseUrl;
+const STAGING_URL = getWalletSyncEnvironmentParams("STAGING").trustchainApiBaseUrl;
 const APPLICATION_PATH = "m/0'/16'/0'";
 const ROOT_ID = "seed-trustchain";
-const originalMockEnv = getEnv("MOCK");
 
 type SeedDevice = Device & Pick<ApduDevice, "getSeedId">;
 
@@ -128,13 +127,14 @@ function makeJwt(): string {
 }
 
 describe("session SDK setup", () => {
+  let apdu: jest.SpiedFunction<typeof device.apdu>;
+
   beforeEach(() => {
-    setEnv("MOCK", "");
+    apdu = jest.spyOn(device, "apdu");
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
-    setEnv("MOCK", originalMockEnv);
+    apdu.mockRestore();
   });
 
   it("should add the member on the backend of the app SDK when the flag environment arrives late", async () => {
@@ -144,7 +144,7 @@ describe("session SDK setup", () => {
     const staging = fakeTrustchainBackend(STAGING_URL, seed, streams);
     server.use(...prod.handlers, ...staging.handlers);
     const transports: unknown[] = [];
-    jest.spyOn(device, "apdu").mockImplementation(transport => {
+    apdu.mockImplementation(transport => {
       transports.push(transport);
       return seed as unknown as ApduDevice;
     });
