@@ -31,17 +31,24 @@ import {
   useAccountDetailToolProps,
   useReceiveToolProps,
   useCoinConfigToolProps,
+  usePredictionsToolProps,
+  type LiveAppStore,
+  type PredictionsSetup,
 } from "@devtools/bindings";
+import { usePredictionsSetupHooks } from "@features/flow-predictions";
+import { PREDICTIONS_SETUP_FAILURE_REASONS } from "@features/platform-predictions";
 import type { DevToolsConfig } from "@devtools/shell";
 import { useDevToolsRelay } from "./useDevToolsRelay";
 import { useDeviceOnboardingTool } from "../../DeviceOnboarding/useDeviceOnboardingTool";
 import { useAccountDataRecorder } from "../../accountDataRecorder";
 import { getPortfolioServiceUrl } from "~/config/portfolioService";
+import { getStoreValue, setStoreValue } from "~/renderer/store";
 
 const APPLICATION_ID = 16;
 
 const getLiveConfigValue = (key: string): unknown => LiveConfig.getValueByKey(key);
 const getLiveConfigDefaultValue = (key: string): unknown => LiveConfig.getDefaultValueByKey(key);
+const LIVE_APP_STORE: LiveAppStore = { get: getStoreValue, set: setStoreValue };
 
 export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
   const navigate = useNavigate();
@@ -124,6 +131,12 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
   const mockAccountsToolProps = useMockAccountsToolProps(accountDataRecorder);
   const accountDetailToolProps = useAccountDetailToolProps();
   const receiveToolProps = useReceiveToolProps();
+  const predictionsSetupHooks = usePredictionsSetupHooks();
+  const predictionsSetup = useMemo<PredictionsSetup>(
+    () => ({ hooks: predictionsSetupHooks, failureReasons: PREDICTIONS_SETUP_FAILURE_REASONS }),
+    [predictionsSetupHooks],
+  );
+  const predictionsToolProps = usePredictionsToolProps(LIVE_APP_STORE, predictionsSetup);
 
   const config: DevToolsConfig = useMemo(
     () => [
@@ -145,6 +158,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       { id: "mock-accounts", config: mockAccountsToolProps },
       { id: "account-detail", config: accountDetailToolProps },
       { id: "receive", config: receiveToolProps },
+      { id: "predictions", config: predictionsToolProps },
     ],
     [
       featureFlagsToolProps,
@@ -165,6 +179,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       mockAccountsToolProps,
       accountDetailToolProps,
       receiveToolProps,
+      predictionsToolProps,
     ],
   );
 

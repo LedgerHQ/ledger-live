@@ -30,3 +30,5 @@ export { useAccountDetailToolProps } from "./useAccountDetailToolProps";
 export { useReceiveToolProps } from "./useReceiveToolProps";
 export { useCoinConfigToolProps } from "./useCoinConfigToolProps";
 export type { UseCoinConfigToolPropsInput } from "./useCoinConfigToolProps";
+export { usePredictionsToolProps } from "./usePredictionsToolProps";
+export type { LiveAppStore, PredictionsSetup } from "./usePredictionsToolProps";
