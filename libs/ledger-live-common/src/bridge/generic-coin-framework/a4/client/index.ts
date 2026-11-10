@@ -17,6 +17,10 @@ function readVersion(headers?: AxiosResponse["headers"]): string | undefined {
   return typeof v === "string" ? v : undefined;
 }
 
+function serializeBlocks(blocks: NonNullable<A4ListOperationsParams["blocks"]>): string {
+  return `[${blocks.join(",")}]`;
+}
+
 export class A4Client {
   private readonly baseUrl: string;
   private readonly timeout: number;
@@ -118,13 +122,12 @@ export class A4Client {
     const url = this.url("account", accountId, "state", "operations");
     const headers = this.versionHeader(ifVersion);
     const { blocks = [0, "latest"], ...rest } = params;
-    const serializedParams = { ...rest, blocks: JSON.stringify(blocks) };
     try {
       const { data, headers: responseHeaders } = await network<A4ListOperationsResponse>({
         method: "GET",
         url,
         headers,
-        params: serializedParams,
+        params: { ...rest, blocks: serializeBlocks(blocks) },
         timeout: this.timeout,
       });
       return { data, version: readVersion(responseHeaders) };
