@@ -7,7 +7,7 @@ import {
   resolveDepositFormError,
   type ResolveDepositFormErrorParams,
 } from "./formError";
-import type { PerpsDepositQuote } from "./quote";
+import type { PerpsDepositQuote, PerpsDepositQuoteResult } from "./quote";
 
 const MAGNITUDES: Record<string, number> = { assethub_polkadot: 10, stellar: 7 };
 
@@ -276,7 +276,7 @@ describe("coin errors in the deposit resolver", () => {
     );
 
     it("shows the amount limit before the fee estimation failure", () => {
-      const quoteResult = {
+      const quoteResult: PerpsDepositQuoteResult = {
         quote: quoteWithFee(),
         errors: [{ code: QuotesErrorCodes.AMOUNT_TOO_HIGH, maxAmount: "1000" }],
         feeEstimationFailed: true,
