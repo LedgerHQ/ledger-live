@@ -2,6 +2,7 @@ import React, { useMemo, useRef } from "react";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import {
+  Step,
   walletSyncDrawerVisibilitySelector,
   walletSyncStepSelector,
 } from "~/renderer/reducers/walletSync";
@@ -16,6 +17,12 @@ import {
 import { BackRef, WalletSyncRouter } from "LLD/features/WalletSync/screens/router";
 import { STEPS_WITH_BACK } from "LLD/features/WalletSync/hooks/useFlows";
 import { useTheme } from "styled-components";
+import { useFeature } from "@features/platform-feature-flags";
+
+const DEVICE_INTENT_STEPS: ReadonlySet<Step> = new Set([
+  Step.DeviceAction,
+  Step.DeviceActionInstance,
+]);
 
 /**
  *
@@ -41,6 +48,10 @@ const WalletSyncDrawer: React.FC<WalletSyncDrawerProps> = ({ currentPage, onClos
   const currentStep = useSelector(walletSyncStepSelector);
   const hasBack = useMemo(() => STEPS_WITH_BACK.includes(currentStep), [currentStep]);
   const hasFlowEvent = useMemo(() => !StepsOutsideFlow.includes(currentStep), [currentStep]);
+  const ledgerSyncDie = useFeature("lwdLedgerSyncDie");
+  // Escape belongs to the device intent dialog, which takes the flow back one step.
+  const isDeviceIntentStep =
+    Boolean(ledgerSyncDie?.enabled) && DEVICE_INTENT_STEPS.has(currentStep);
 
   const { onActionTrack } = useLedgerSyncAnalytics();
 
@@ -73,6 +84,7 @@ const WalletSyncDrawer: React.FC<WalletSyncDrawerProps> = ({ currentPage, onClos
       onRequestBack={hasBack ? handleBack : undefined}
       direction="left"
       forceDisableFocusTrap
+      preventBackdropClick={isDeviceIntentStep}
       style={{
         background: colors.background.card,
       }}

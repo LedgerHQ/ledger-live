@@ -23,6 +23,7 @@ import { AnalyticsPage } from "../hooks/useLedgerSyncAnalytics";
 import { useFlows } from "../hooks/useFlows";
 import WalletSyncActivation from "../screens/Activation";
 import WalletSyncManageInstances from "../screens/ManageInstances";
+import WalletSyncDrawer from "../components/Drawer";
 import OpenOrInstallTrustChainApp from "../screens/DeviceActions/openOrInstall";
 import { INSTANCES, lldWalletSyncFeatureFlag } from "./shared";
 
@@ -337,5 +338,40 @@ describe("Ledger Sync device steps on DIE", () => {
 
       expect(store.getState().walletSync.step).toBe(Step.SynchronizedInstances);
     });
+  });
+
+  describe("drawer", () => {
+    it.each([
+      [true, true],
+      [false, false],
+    ])(
+      "with the DIE flag %s, should keep the drawer open on Escape at the device step: %s",
+      async (dieEnabled, staysOpen) => {
+        const { store, user } = render(
+          <>
+            <div id="modals" />
+            <WalletSyncDrawer currentPage={AnalyticsPage.LedgerSyncSettings} onClose={jest.fn()} />
+          </>,
+          {
+            initialState: {
+              ...withFlagOverrides({
+                ...lldWalletSyncFeatureFlag,
+                lwdLedgerSyncDie: { enabled: dieEnabled },
+              }),
+              walletSync: {
+                ...initialStateWalletSync,
+                isDrawerOpen: true,
+                step: Step.DeviceAction,
+              },
+              trustchain: { trustchain: null, memberCredentials: MEMBER_CREDENTIALS },
+            },
+          },
+        );
+
+        await user.keyboard("{Escape}");
+
+        expect(store.getState().walletSync.isDrawerOpen).toBe(staysOpen);
+      },
+    );
   });
 });
