@@ -10,7 +10,7 @@ import { createInjector, loadUserdata } from "./inject.ts";
 import { createIos } from "./platforms/ios.ts";
 import { createMaestro } from "./maestro.ts";
 import { createPerformanceReader } from "./performance-screen.ts";
-import { createStartupLogReader, STARTUP_LOG_LAUNCH_ARGS } from "./startup-log.ts";
+import { createStartupLogReader } from "./startup-log.ts";
 import type { PlatformName, Sample, SampleMeta, Side } from "../types.ts";
 import type { Userdata } from "./types.ts";
 
@@ -89,6 +89,9 @@ const inject = createInjector({ platform: P, devices: DEVICES, port: BRIDGE_PORT
 const consecutiveFailures = new Map<string, number>();
 // On iOS a read of the Debug screen slows the next launch, on either simulator (README.md).
 let screenReadSinceLaunch = false;
+// Becomes "screen" for the rest of a scenario once a build's warm-up wrote no startup lines (a
+// build before #24576): both builds are then read on the screen, so every pair stays even.
+let read = READ;
 
 async function sample(meta: SampleMeta, { checkScreen = false } = {}): Promise<Sample> {
   const record: Sample = {
@@ -119,7 +122,7 @@ async function sample(meta: SampleMeta, { checkScreen = false } = {}): Promise<S
     record.otherPaused = paused;
     record.afterScreenRead = screenReadSinceLaunch;
     screenReadSinceLaunch = false;
-    const launch = await P.launch(meta.device, READ === "screen" ? {} : STARTUP_LOG_LAUNCH_ARGS);
+    const launch = await P.launch(meta.device);
     await sleep(SETTLE_MS);
     const processStart = await P.processStart(meta.device);
     record.processStartAt = processStart?.at ?? null;
@@ -183,24 +186,26 @@ async function readStartup({
   pid: number;
   checkScreen: boolean;
   debugFile: string;
-}): Promise<
-  Pick<Sample, "appStartupTime" | "events" | "readFrom" | "screenAppStartupTime" | "logLineBytes">
-> {
+}): Promise<Pick<Sample, "appStartupTime" | "events" | "readFrom" | "screenAppStartupTime">> {
   const readScreen = () => {
     screenReadSinceLaunch = true;
     return readPerformance(meta.device, { quick: !meta.warmup, debugFile });
   };
-  if (READ === "screen") return { ...(await readScreen()), readFrom: "screen" };
+  if (read === "screen") return { ...(await readScreen()), readFrom: "screen" };
   const fromLog = await readStartupLog(meta.device, pid, LOG_READ_TIMEOUT_MS).catch(
     (error: unknown) => {
-      log(`  unreadable startup-perf log line: ${errorMessage(error)}`);
+      log(`  unreadable startup lines in the device log: ${errorMessage(error)}`);
       return null;
     },
   );
   if (!fromLog) {
     log(
-      `  no startup-perf log line ${LOG_READ_TIMEOUT_MS} ms after the settle time: reading the screen`,
+      `  no startup lines in the device log ${LOG_READ_TIMEOUT_MS} ms after the settle time: reading the screen`,
     );
+    if (meta.warmup) {
+      log(`  build ${meta.side} does not log its startup: both builds are read on the screen`);
+      read = "screen";
+    }
     return { ...(await readScreen()), readFrom: "screen-fallback" };
   }
   if (!checkScreen) return { ...fromLog, readFrom: "log" };
@@ -273,6 +278,7 @@ async function measureScenario(scenario: string): Promise<void> {
     names: scenario === "accounts" ? opts["accounts-userdata"] : opts["no-accounts-userdata"],
   });
   log(`=== ${scenario}: ${userdata.accounts.length} accounts from ${userdata.names.join(", ")}`);
+  read = READ;
   for (const phase of [0, 1]) {
     // Never the same device twice in a row, warm-ups included.
     const { placement, order } = layout(phase);

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { summarise } from "./analyze.ts";
-import { comparison, startsDifferWithFallback } from "./fake-samples.ts";
+import { comparison, launch, startsDifferWithFallback } from "./fake-samples.ts";
 import { toMarkdown } from "./report.ts";
 
 describe("toMarkdown", () => {
@@ -73,6 +73,23 @@ describe("toMarkdown", () => {
     );
   });
 
+  it("says when a build without the log line had both builds read on the screen", () => {
+    const samples = [
+      launch({
+        side: "A",
+        round: -1,
+        warmup: true,
+        readFrom: "screen-fallback",
+        appStartupTime: 900,
+      }),
+      ...comparison({ deltaMs: 0, a: { readFrom: "screen" }, b: { readFrom: "screen" } }),
+    ];
+    assert.match(
+      toMarkdown(summarise(samples, options), options),
+      /\*\*android accounts: build A wrote no startup lines to the device log on its warm-up \(built before #24576\?\), so both builds were read from the Debug screen\.\*\*/,
+    );
+  });
+
   it("says when every launch fell back to the screen", () => {
     const samples = comparison({
       deltaMs: 0,
@@ -94,22 +111,6 @@ describe("toMarkdown", () => {
       toMarkdown(summarise(samples, options), options),
       /\*\*android accounts: 1 pair\(s\) left out, as only one of their launches followed a read of the Debug screen/,
     );
-  });
-
-  it("gives the longest device log line against what the platform's log keeps", () => {
-    const report = (logLineBytes: number) =>
-      toMarkdown(
-        summarise(
-          comparison({ deltaMs: 0, a: { platform: "ios", logLineBytes }, b: { platform: "ios" } }),
-          options,
-        ),
-        options,
-      );
-    assert.match(
-      report(423),
-      /^ios accounts: the longest device log line was 423 bytes, of the 1020 the iOS log keeps\.$/m,
-    );
-    assert.match(report(900), /^\*\*ios accounts: the longest device log line was 900 bytes/m);
   });
 
   it("adds no read note when the screen was asked for", () => {

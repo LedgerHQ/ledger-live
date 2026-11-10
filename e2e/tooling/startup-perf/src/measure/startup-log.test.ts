@@ -3,8 +3,12 @@ import { describe, it } from "node:test";
 import { createStartupLogReader, parseStartupLog, STARTUP_LOG_MARKER } from "./startup-log.ts";
 import type { Platform } from "./types.ts";
 
-const PAYLOAD =
-  '{"t":1650,"e":[["Before js imports",3,1],["JS start epoch 1762502400412",4,1],["App started",1650,2]]}';
+const LINES = [
+  "[startup] Before js imports (x1): 3 ms",
+  "[startup] JS start epoch 1762502400412 (x1): 4 ms",
+  "[startup] App started (x2): 1650 ms",
+  "[startup] App startup time: 1650 ms, 3 events",
+];
 const READ = {
   appStartupTime: 1650,
   events: {
@@ -12,46 +16,42 @@ const READ = {
     "JS start epoch 1762502400412": { count: 1, time: 4 },
     "App started": { count: 2, time: 1650 },
   },
-  logLineBytes: `startup-perf ${PAYLOAD}`.length,
 };
 
 describe("parseStartupLog", () => {
   it("reads logcat's raw ReactNativeJS lines", () => {
-    assert.deepEqual(parseStartupLog(`startup-perf ${PAYLOAD}\n`), READ);
-    assert.deepEqual(parseStartupLog(`startup-perf ${PAYLOAD}\r\n`), READ);
+    assert.deepEqual(parseStartupLog(LINES.join("\n")), READ);
+    assert.deepEqual(parseStartupLog(LINES.join("\r\n") + "\r\n"), READ);
   });
 
   it("reads `log show`'s compact lines and skips its header, which quotes the marker", () => {
     const log = [
-      'Filtering the log data using "processID == 4242 AND eventMessage CONTAINS "startup-perf ""',
+      'Filtering the log data using "processID == 4242 AND eventMessage CONTAINS "[startup] ""',
       "Timestamp               Ty Process[PID:TID]",
-      `2026-11-07 08:00:01.234 E  ledgerlivemobile[4242:1a2b] [com.facebook.react.log:javascript] startup-perf ${PAYLOAD}`,
+      ...LINES.map(
+        line =>
+          `2026-11-07 08:00:01.234 E  ledgerlivemobile[4242:1a2b] [com.facebook.react.log:javascript] ${line}`,
+      ),
     ].join("\n");
     assert.deepEqual(parseStartupLog(log), READ);
   });
 
-  it("takes the last line when there are several", () => {
-    const earlier = PAYLOAD.replace('"t":1650', '"t":999');
-    assert.equal(
-      parseStartupLog(`startup-perf ${earlier}\nstartup-perf ${PAYLOAD}`)?.appStartupTime,
-      1650,
-    );
-  });
-
-  it("measures the line in bytes, as the device log keeps it", () => {
-    const line = `startup-perf ${PAYLOAD.replace("App started", "App lancée")}`;
-    assert.equal(parseStartupLog(`${line}\r\n`)?.logLineBytes, line.length + 1);
-  });
-
-  it("is null without a line", () => {
+  it("waits for the App startup time line, written last", () => {
+    assert.equal(parseStartupLog(LINES.slice(0, -1).join("\n")), null);
     assert.equal(parseStartupLog(""), null);
-    assert.equal(parseStartupLog("Running main with startup-perf in the name\n"), null);
+    assert.equal(parseStartupLog("Running main with [startup] in the name\n"), null);
   });
 
-  it("fails on a line that is not the app's payload", () => {
-    assert.throws(() => parseStartupLog('startup-perf {"t":"1650","e":[]}'), /unexpected/);
-    assert.throws(() => parseStartupLog('startup-perf {"t":1650,"e":[["App started",1]]}'));
-    assert.throws(() => parseStartupLog('startup-perf {"t":1650,"e":[["App st'), SyntaxError);
+  it("takes the last set of lines when there are several", () => {
+    const earlier = LINES.map(line => line.replaceAll("1650", "999"));
+    assert.equal(parseStartupLog([...earlier, ...LINES].join("\n"))?.appStartupTime, 1650);
+  });
+
+  it("fails when an event line is missing", () => {
+    assert.throws(
+      () => parseStartupLog([LINES[0], LINES[2], LINES[3]].join("\n")),
+      /2 startup event lines before/,
+    );
   });
 });
 
@@ -67,8 +67,8 @@ describe("readStartupLog", () => {
     return { platform, asked };
   };
 
-  it("asks the platform for the process's marked lines until the line comes", async () => {
-    const { platform, asked } = platformLogging(["", `startup-perf ${PAYLOAD}`]);
+  it("asks the platform for the process's marked lines until the last one comes", async () => {
+    const { platform, asked } = platformLogging([LINES[0], LINES.join("\n")]);
     const read = await createStartupLogReader(platform)("emulator-5554", 4242, 5000);
     assert.deepEqual(read, READ);
     assert.deepEqual(asked, [
