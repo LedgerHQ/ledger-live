@@ -74,18 +74,16 @@ export function createTronifyUnavailable(): ExchangeErrorData {
   };
 }
 
-export class ExchangeError implements Error {
-  readonly name = "ExchangeError";
-  get message() {
-    return this.context.message;
-  }
-  get cause() {
-    return this.context.code;
-  }
+/**
+ * Extends `Error` so that the wallet-api serializer keeps `message` and `cause` (the code) on the
+ * wire. The live app reads the code from `cause`.
+ */
+export class ExchangeError extends Error {
+  override readonly name = "ExchangeError";
+  override readonly cause: string;
 
-  private context: ExchangeErrorData;
-
-  constructor(context: ExchangeErrorData) {
-    this.context = context;
+  constructor({ code, message }: ExchangeErrorData) {
+    super(message);
+    this.cause = code;
   }
 }

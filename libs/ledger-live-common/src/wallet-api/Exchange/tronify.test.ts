@@ -1,4 +1,5 @@
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
+import { deserializeError, serializeError } from "@ledgerhq/wallet-api-core";
 import { getSponsoredCoinApi } from "../../bridge/generic-coin-framework/sponsored";
 import { getWalletApiIdFromAccountId, setWalletApiIdForAccountId } from "../converters";
 import type { GetFeatureFn } from "../FeatureFlags/resolver";
@@ -153,6 +154,18 @@ describe("isTronifyEnergyDelivered", () => {
       check({ fromAccountId: walletId(usdtAccount), energyNeeded: "31895" }),
     ).rejects.toMatchObject({
       cause: "TRONIFY_UNAVAILABLE",
+    });
+  });
+
+  it("keeps the error code across the wallet API wire", async () => {
+    const error = await check({ fromAccountId: "x", energyNeeded: "0" }).catch(e => e);
+
+    const onTheWire = JSON.parse(JSON.stringify(serializeError(error)));
+
+    expect(deserializeError(onTheWire)).toMatchObject({
+      name: "ExchangeError",
+      message: "tronify params are not correctly set",
+      cause: "WRONG_TRONIFY_PARAMS",
     });
   });
 

@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { of, throwError } from "rxjs";
+import { NEVER, of, throwError } from "rxjs";
 import { createExchange } from "@ledgerhq/hw-app-exchange";
 import { ErrorStatus } from "@ledgerhq/hw-app-exchange/ReturnCode";
 import type Transport from "@ledgerhq/hw-transport";
@@ -13,7 +13,11 @@ import { getMainAccount } from "../../account";
 import { getCurrencyExchangeConfig } from "../";
 import { getIsSwapSignatureVerificationError } from "../error";
 import { getSwapProvider } from "../providers";
-import { confirmSwapExchange, type ConfirmSwapExchangeInput } from "./completeExchange";
+import {
+  confirmSwapExchange,
+  FEE_RESYNC_TIMEOUT_MS,
+  type ConfirmSwapExchangeInput,
+} from "./completeExchange";
 
 // `ExchangeTypes` is a const enum: tsc inlines it, but jest has to be given its values.
 jest.mock("@ledgerhq/hw-app-exchange", () => ({
@@ -222,12 +226,21 @@ describe("confirmSwapExchange", () => {
       currency: tron,
       balance: new BigNumber(0),
       spendableBalance: new BigNumber(0),
+      pendingOperations: [{ id: "unconfirmed" }],
+      subAccounts: [{ id: "usdt", pendingOperations: [{ id: "unconfirmed-usdt" }] }],
     } as unknown as Account;
+    // What a from-scratch sync returns: fresh balances, but no pending operations.
     const syncedTronAccount = {
       ...staleTronAccount,
       balance: new BigNumber(800_000),
-      spendableBalance: new BigNumber(800_000),
-      pendingOperations: [{ id: "unconfirmed" }],
+      spendableBalance: new BigNumber(700_000),
+      pendingOperations: [],
+      subAccounts: [{ id: "usdt", pendingOperations: [] }],
+    } as unknown as Account;
+    const validatedTronAccount = {
+      ...staleTronAccount,
+      balance: new BigNumber(800_000),
+      spendableBalance: new BigNumber(700_000),
     } as unknown as Account;
     const tronTransaction = { family: "tron", amount: new BigNumber(1) } as Transaction;
     const preparedOnStale = { ...tronTransaction, preparedOn: "stale" } as unknown as Transaction;
@@ -248,7 +261,7 @@ describe("confirmSwapExchange", () => {
         prepareTransaction: jest
           .fn()
           .mockImplementation(async (account: Account) =>
-            account === syncedTronAccount ? preparedOnSynced : preparedOnStale,
+            account.balance.isZero() ? preparedOnStale : preparedOnSynced,
           ),
         getTransactionStatus: jest.fn(),
         getSerializedAddressParameters: jest.fn(() => Buffer.from("03", "hex")),
@@ -269,7 +282,7 @@ describe("confirmSwapExchange", () => {
       });
     }
 
-    it("validates again on a synced account, and signs what was prepared on it", async () => {
+    it("validates again with the synced native balances, and signs what was prepared", async () => {
       const exchangeApp = createExchangeApp();
       jest.mocked(createExchange).mockReturnValue(exchangeApp as never);
       const sync = syncTo(syncedTronAccount);
@@ -280,7 +293,7 @@ describe("confirmSwapExchange", () => {
       expect(sync).toHaveBeenCalledWith(staleTronAccount, { paginationConfig: {} });
       expect(bridge.getTransactionStatus).toHaveBeenNthCalledWith(
         2,
-        syncedTronAccount,
+        validatedTronAccount,
         preparedOnSynced,
       );
       expect(exchangeApp.signCoinTransaction).toHaveBeenCalledTimes(1);
@@ -309,6 +322,27 @@ describe("confirmSwapExchange", () => {
 
       expect(bridge.getTransactionStatus).toHaveBeenCalledTimes(1);
       expect(exchangeApp.setPartnerKey).not.toHaveBeenCalled();
+    });
+
+    it("keeps the original shortfall when the sync exceeds its deadline", async () => {
+      jest.useFakeTimers();
+      try {
+        const exchangeApp = createExchangeApp();
+        jest.mocked(createExchange).mockReturnValue(exchangeApp as never);
+        const bridge = mockBridge(
+          [notEnoughGas],
+          jest.fn(() => NEVER),
+        );
+
+        const result = runTron().catch((e: unknown) => e);
+        await jest.advanceTimersByTimeAsync(FEE_RESYNC_TIMEOUT_MS);
+
+        await expect(result).resolves.toMatchObject({ message: "NotEnoughGas" });
+        expect(bridge.getTransactionStatus).toHaveBeenCalledTimes(1);
+        expect(exchangeApp.setPartnerKey).not.toHaveBeenCalled();
+      } finally {
+        jest.useRealTimers();
+      }
     });
 
     it("does not sync for an error other than a fee shortfall", async () => {
