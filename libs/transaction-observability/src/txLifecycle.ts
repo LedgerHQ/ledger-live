@@ -1,5 +1,6 @@
 import { ErrorCategory } from "./errorCategory";
 import { TransactionPathway, type LogEvent } from "./logEvent";
+import { isBorrowApp } from "./borrowApps";
 import { isEarnMonitoringApp } from "./stakingApps";
 
 export type TxLifecyclePlatform = "desktop" | "mobile";
@@ -81,7 +82,16 @@ function normalizeFamily(family: string): TxLifecyclePayload["currency_family"] 
   return CURRENCY_FAMILIES.has(candidate) ? candidate : "other";
 }
 
+/** Which product's sink and kill-switch a lifecycle belongs to. */
+export type TxLifecycleApp = "earn" | "borrow";
+
+export function lifecycleAppOf(manifestId: string | undefined): TxLifecycleApp {
+  return isBorrowApp(manifestId) ? "borrow" : "earn";
+}
+
 function resolvePath(event: LogEvent): TxLifecyclePath | undefined {
+  if (isBorrowApp(event.manifestId)) return "dapp";
+
   if (event.manifestId) {
     if (APP_OWNED_MANIFEST_IDS.has(event.manifestId) || !isEarnMonitoringApp(event.manifestId)) {
       return undefined;
@@ -165,7 +175,10 @@ function withoutTrailingSlashes(base: string): string {
   return base.slice(0, end);
 }
 
+const DEFAULT_BORROW_API_BASE_URL = "https://global.api.prd.ledger.com/borrow";
+
 let earnApiBaseUrl = DEFAULT_EARN_API_BASE_URL;
+let borrowApiBaseUrl = DEFAULT_BORROW_API_BASE_URL;
 
 /**
  * Hosts resolve public configuration through their own build systems:
@@ -173,6 +186,11 @@ let earnApiBaseUrl = DEFAULT_EARN_API_BASE_URL;
  */
 export function setTxLifecycleBaseUrl(baseUrl: string | undefined): void {
   earnApiBaseUrl = withoutTrailingSlashes(baseUrl || DEFAULT_EARN_API_BASE_URL);
+}
+
+/** Borrow has its own sink, so its base URL is configured apart from Earn's. */
+export function setBorrowTxLifecycleBaseUrl(baseUrl: string | undefined): void {
+  borrowApiBaseUrl = withoutTrailingSlashes(baseUrl || DEFAULT_BORROW_API_BASE_URL);
 }
 
 const pendingLifecycle = new Map<string, TxLifecyclePayloadBase>();
@@ -210,9 +228,10 @@ function sameLifecycleBase(left: TxLifecyclePayloadBase, right: TxLifecyclePaylo
   );
 }
 
-function postTxLifecycle(payload: TxLifecyclePayload): void {
+function postTxLifecycle(payload: TxLifecyclePayload, manifestId?: string): void {
+  const baseUrl = lifecycleAppOf(manifestId) === "borrow" ? borrowApiBaseUrl : earnApiBaseUrl;
   try {
-    void fetch(`${earnApiBaseUrl}${TX_LIFECYCLE_PATH}`, {
+    void fetch(`${baseUrl}${TX_LIFECYCLE_PATH}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -223,17 +242,35 @@ function postTxLifecycle(payload: TxLifecyclePayload): void {
   }
 }
 
-function abandonPendingLifecycle(key: string): void {
+function abandonPendingLifecycle(key: string, manifestId?: string): void {
   const pending = pendingLifecycle.get(key);
   if (!pending) return;
 
   pendingLifecycle.delete(key);
-  postTxLifecycle({
-    ...pending,
-    event: "tx_terminal",
-    outcome: "failure",
-    failure_class: "abandoned",
-  });
+  postTxLifecycle(
+    {
+      ...pending,
+      event: "tx_terminal",
+      outcome: "failure",
+      failure_class: "abandoned",
+    },
+    manifestId,
+  );
+}
+
+/**
+ * The Borrow live app owns its intent and its success/failure terminals, because only it knows
+ * the action (supply, borrow, repay, withdraw) the wire contract has no field for. The host
+ * therefore tracks Borrow attempts locally and only reports what the app cannot: an attempt
+ * that ended without any terminal (abandoned). Everything else would double count.
+ */
+function isReportedByHost(payload: TxLifecyclePayload, manifestId?: string): boolean {
+  if (lifecycleAppOf(manifestId) !== "borrow") return true;
+  return (
+    payload.event === "tx_terminal" &&
+    payload.outcome === "failure" &&
+    payload.failure_class === "abandoned"
+  );
 }
 
 export function sendTxLifecycle(payload: TxLifecyclePayload, manifestId?: string): void {
@@ -249,7 +286,7 @@ export function sendTxLifecycle(payload: TxLifecyclePayload, manifestId?: string
     if (isDappPlaceholder) {
       pendingLifecycle.set(key, next);
     } else {
-      if (pending) abandonPendingLifecycle(key);
+      if (pending) abandonPendingLifecycle(key, manifestId);
       pendingLifecycle.set(key, next);
     }
   } else {
@@ -257,14 +294,14 @@ export function sendTxLifecycle(payload: TxLifecyclePayload, manifestId?: string
     pendingLifecycle.delete(key);
   }
 
-  postTxLifecycle(payload);
+  if (isReportedByHost(payload, manifestId)) postTxLifecycle(payload, manifestId);
 }
 
 export function abandonPendingDappTxLifecycle(
   platform: TxLifecyclePlatform,
   manifestId: string,
 ): void {
-  abandonPendingLifecycle(lifecycleKey({ platform, path: "dapp" }, manifestId));
+  abandonPendingLifecycle(lifecycleKey({ platform, path: "dapp" }, manifestId), manifestId);
 }
 
 export function clearPendingDappTxLifecycle(
@@ -274,11 +311,17 @@ export function clearPendingDappTxLifecycle(
   pendingLifecycle.delete(lifecycleKey({ platform, path: "dapp" }, manifestId));
 }
 
-export function clearPendingTxLifecycle(platform: TxLifecyclePlatform): void {
-  pendingLifecycle.delete(lifecycleKey({ platform, path: "native" }));
+/** Drops the pending attempts of one product; Earn when none is named, native included. */
+export function clearPendingTxLifecycle(
+  platform: TxLifecyclePlatform,
+  app: TxLifecycleApp = "earn",
+): void {
+  if (app === "earn") pendingLifecycle.delete(lifecycleKey({ platform, path: "native" }));
   const dappPrefix = `${platform}:dapp:`;
   for (const key of pendingLifecycle.keys()) {
-    if (key.startsWith(dappPrefix)) pendingLifecycle.delete(key);
+    if (key.startsWith(dappPrefix) && lifecycleAppOf(key.slice(dappPrefix.length)) === app) {
+      pendingLifecycle.delete(key);
+    }
   }
 }
 

@@ -1,9 +1,11 @@
+import { isBorrowTxLifecycleMonitoringEnabled } from "./borrowLifecycleHost";
 import { setTransactionObserver } from "./observer";
 import { setStakeProgramAppsReader, stakeProgramAppIds } from "./stakingApps";
 import {
   abandonPendingDappTxLifecycle,
   clearPendingDappTxLifecycle,
   clearPendingTxLifecycle,
+  lifecycleAppOf,
   sendTxLifecycle,
   setTxLifecycleBaseUrl,
   startDappTxLifecycle,
@@ -34,8 +36,14 @@ export function isEarnTxLifecycleMonitoringEnabled(): boolean {
  */
 export function registerTxLifecycleObserver(platform: TxLifecyclePlatform): void {
   setTransactionObserver(event => {
-    if (!isEarnTxLifecycleMonitoringEnabled()) {
-      clearPendingTxLifecycle(platform);
+    // Each product answers to its own kill-switch; a Borrow event never consults Earn's.
+    const app = lifecycleAppOf(event.manifestId);
+    const enabled =
+      app === "borrow"
+        ? isBorrowTxLifecycleMonitoringEnabled()
+        : isEarnTxLifecycleMonitoringEnabled();
+    if (!enabled) {
+      clearPendingTxLifecycle(platform, app);
       return;
     }
 
