@@ -1,16 +1,16 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { ThemeProvider } from "styled-components";
-import * as animationModule from "./getDeviceActionAnimation.web";
-import { DeviceActionContent } from "./DeviceActionContent.web";
+import * as animationModule from "./getDeviceActionAnimation";
+import { DeviceActionContent } from "./DeviceActionContent";
 
 jest.mock("@shared/lottie/web", () => ({
   Lottie: () => <div data-testid="device-action-lottie" />,
 }));
 
-jest.mock("./getDeviceActionAnimation.web", () => {
-  const actual = jest.requireActual<typeof import("./getDeviceActionAnimation.web")>(
-    "./getDeviceActionAnimation.web",
+jest.mock("./getDeviceActionAnimation", () => {
+  const actual = jest.requireActual<typeof import("./getDeviceActionAnimation")>(
+    "./getDeviceActionAnimation",
   );
   return {
     ...actual,

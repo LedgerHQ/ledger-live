@@ -1,4 +1,4 @@
-export * from "./DeviceActionContent.web";
-export * from "./getDeviceActionAnimation.web";
+export * from "./DeviceActionContent";
+export * from "./getDeviceActionAnimation";
 export * from "./types";
 export * from "./toDeviceActionModelId";
