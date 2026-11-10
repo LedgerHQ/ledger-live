@@ -2,7 +2,7 @@ import { defineConfig } from "oxlint";
 import base from "./base.mts";
 import { platformSuffixWaivers } from "./src/suffix-imports.js";
 
-const PLATFORM_SUFFIX_WAIVERS = ["card"];
+const PLATFORM_SUFFIX_WAIVERS: string[] = [];
 
 export default defineConfig({
   extends: [base],
