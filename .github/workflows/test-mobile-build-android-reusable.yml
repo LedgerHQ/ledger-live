@@ -170,6 +170,18 @@ jobs:
             sudo chown -R $(whoami):$(id -ng) "$SDK/emulator"
           fi
 
+      - name: "ci-test: probe JFrog Maven responses"
+        run: |
+          base=https://jfrog.ledgerlabs.net/artifactory
+          for repo in virtual-maven-prod-green ossproxy-maven-proxy-central ossproxy-maven-proxy-gradleplugins; do
+            for path in com/google/code/gson/gson/2.9.1/gson-2.9.1.pom org/gradle/toolchains/foojay-resolver/0.5.0/foojay-resolver-0.5.0.pom com/facebook/react/react-android/0.81.6/react-android-0.81.6.pom; do
+              code=$(curl -sS -o body.txt -w '%{http_code}' -H "Authorization: Bearer $JFROG_TOKEN" "$base/$repo/$path")
+              echo "== $code $repo/$path"
+              [ "$code" = 200 ] || head -c 600 body.txt; echo
+            done
+          done
+          rm -f body.txt
+
       - name: "ci-test: block public Maven hosts"
         run: |
           for h in repo.maven.apache.org repo1.maven.org jcenter.bintray.com dl.google.com maven.google.com plugins.gradle.org jitpack.io www.jitpack.io; do
