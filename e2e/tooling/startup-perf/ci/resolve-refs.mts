@@ -15,6 +15,8 @@ export interface PlanInputs {
   thresholdMs: string;
   scenarios: string;
   accountsUserdata: string;
+  /** Where run.ts reads each launch: log, both or screen. */
+  read: string;
   /** The commit and the branch the workflow runs from. */
   branchSha: string;
   branchName: string;
@@ -30,6 +32,7 @@ export const NIGHTLY: Omit<PlanInputs, "branchSha" | "branchName"> = {
   thresholdMs: "100",
   scenarios: "no-accounts,accounts",
   accountsUserdata: "speculos-x-other-account,swap-history",
+  read: "log",
 };
 
 interface Builds {
@@ -44,7 +47,10 @@ interface Builds {
 export interface Plan extends Builds {
   scenarios: string[];
   /** The run's settings, which the build and measure jobs read from the plan's outputs. */
-  settings: Pick<PlanInputs, "preset" | "platforms" | "pairs" | "thresholdMs" | "accountsUserdata">;
+  settings: Pick<
+    PlanInputs,
+    "preset" | "platforms" | "pairs" | "thresholdMs" | "accountsUserdata" | "read"
+  >;
 }
 
 /** `git ls-remote <options> <this repository> <patterns>`. */
@@ -188,6 +194,7 @@ export function planBuilds(inputs: PlanInputs, lsRemote: LsRemote): Plan {
       pairs: inputs.pairs,
       thresholdMs: inputs.thresholdMs,
       accountsUserdata: inputs.accountsUserdata,
+      read: inputs.read,
     },
   };
 }
@@ -205,6 +212,7 @@ export function outputsOf(plan: Plan): string {
     pairs: plan.settings.pairs,
     threshold_ms: plan.settings.thresholdMs,
     accounts_userdata: plan.settings.accountsUserdata,
+    read: plan.settings.read,
   };
   // A line break in a free-text input would add or override outputs, such as a validated ref.
   return Object.entries(outputs)
@@ -240,6 +248,7 @@ export function inputsOf(env: NodeJS.ProcessEnv): PlanInputs {
     thresholdMs: env.THRESHOLD ?? "",
     scenarios: env.SCENARIOS ?? "",
     accountsUserdata: env.ACCOUNTS_USERDATA ?? "",
+    read: env.READ ?? "",
     ...branch,
   };
 }
