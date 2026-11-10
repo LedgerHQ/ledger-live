@@ -18,6 +18,8 @@ export interface SampleMeta {
   side: Side;
   device: string;
   warmup: boolean;
+  /** The launch after a phase's rounds that also reads the Debug screen to check the log. */
+  check?: boolean;
 }
 
 /** One launch: a line of samples.jsonl, written by run.ts and read by analyze.ts. */
@@ -44,8 +46,18 @@ export interface Sample extends SampleMeta {
    * or the screen because the line never came.
    */
   readFrom?: "log" | "screen" | "screen-fallback";
+  /** The launch wrote no startup lines to the device log. */
+  noLogLines?: boolean;
+  /**
+   * The launch wrote no startup lines before its build had been read from the device log in the
+   * scenario: from then on, both builds were read on the Debug screen. Set before the screen read
+   * that follows, so the report names the build even when that read fails.
+   */
+  switchedToScreen?: boolean;
   /** What the Debug screen showed, when it was read as well as the log: the two must match. */
   screenAppStartupTime?: number;
+  /** Why the Debug screen read of a warm-up or a check failed: the launch kept its log value. */
+  screenCheckError?: string;
   /** Maestro read the Debug screen since the previous launch, which slows this one on iOS. */
   afterScreenRead?: boolean;
   readMs?: number;
