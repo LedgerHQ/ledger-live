@@ -26,7 +26,7 @@ export function AnalyticsFilterSelect({
   onOpenChange,
   onValueChange,
 }: AnalyticsFilterSelectProps) {
-  const { testId, iconShape, showSelectedIcon } = ANALYTICS_FILTER_VARIANTS[variant];
+  const { testId, iconShape } = ANALYTICS_FILTER_VARIANTS[variant];
   const FallbackIcon = FALLBACK_ICONS[variant];
   const renderIcon = (meta: AnalyticsFilterOptionMeta) => (
     <CryptoIcon ledgerId={meta.iconId} ticker={meta.ticker} size={24} shape={iconShape} />
@@ -42,7 +42,7 @@ export function AnalyticsFilterSelect({
             aria-label={ariaLabel}
             data-testid={testId}
             leadingContentShape="rounded"
-            leadingContent={showSelectedIcon && selectedMeta ? renderIcon(selectedMeta) : undefined}
+            leadingContent={selectedMeta ? renderIcon(selectedMeta) : undefined}
           >
             {triggerLabel}
           </MediaButton>
