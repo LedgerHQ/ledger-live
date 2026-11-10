@@ -18,15 +18,19 @@ export async function buildKnownAddressDerivationsMap(
   const basePath = pathStringToArray(accountPath);
   const { xpub, crypto, derivationMode, GAP } = walletAccount.xpub;
 
-  // Stored addresses, then the next GAP addresses after the highest stored index on each chain
-  // (from index 0 when none is stored), so a PSBT that pays any fresh address within the gap
-  // limit, e.g. a change address picked by a live app, still gets its BIP32 derivation.
+  // Every address of each chain up to GAP past the highest stored index (the first GAP when none
+  // is stored), reusing the stored ones. Unused addresses below the highest used one are covered
+  // too, so a PSBT that pays any of them, e.g. a change address picked by a live app, still gets
+  // its BIP32 derivation.
   const derivationsPerChain = await Promise.all(
     [0, 1].map(async (account): Promise<Derivation[]> => {
       const stored = await walletAccount.xpub.getAccountAddresses(account);
-      const start = stored.reduce((max, addr) => Math.max(max, addr.index), -1) + 1;
-      const fresh = Array.from({ length: GAP }, (_, i) => ({ account, index: start + i }));
-      return [...stored, ...fresh];
+      const storedByIndex = new Map(stored.map(addr => [addr.index, addr]));
+      const end = stored.reduce((max, addr) => Math.max(max, addr.index), -1) + 1 + GAP;
+      return Array.from(
+        { length: end },
+        (_, index): Derivation => storedByIndex.get(index) ?? { account, index },
+      );
     }),
   );
 

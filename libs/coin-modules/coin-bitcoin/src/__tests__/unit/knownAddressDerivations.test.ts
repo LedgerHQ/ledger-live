@@ -195,14 +195,35 @@ describe("buildKnownAddressDerivationsMap", () => {
     expect(map.has(scriptHashHex(0, 23))).toBe(false);
   });
 
-  it("starts the window after the highest stored index even when stored indexes have holes", async () => {
+  it("includes the unused addresses below the highest stored index", async () => {
+    // A live app can pick an unused address below the highest used one (e.g. through
+    // bitcoin.getAddress) as change. Without a derivation, the device counts it as an external output.
     const walletAccount = makeWalletAccount([], [makeAddr(1, 0), makeAddr(1, 7)], 3);
 
     const map = await buildKnownAddressDerivationsMap(walletAccount as any, ACCOUNT_PATH);
 
-    expect(map.has(scriptHashHex(1, 8))).toBe(true);
-    expect(map.has(scriptHashHex(1, 10))).toBe(true);
+    for (let index = 0; index <= 10; index++) {
+      expect(map.get(scriptHashHex(1, index))).toEqual({
+        pubkey: makePubkey(1, index),
+        path: [...pathStringToArray(ACCOUNT_PATH), 1, index],
+      });
+    }
     expect(map.has(scriptHashHex(1, 11))).toBe(false);
+  });
+
+  it("derives only the unused addresses, reusing the stored ones", async () => {
+    const walletAccount = makeWalletAccount([], [makeAddr(1, 0), makeAddr(1, 7)], 3);
+
+    await buildKnownAddressDerivationsMap(walletAccount as any, ACCOUNT_PATH);
+
+    const changeCalls = walletAccount.xpub.crypto.getAddress.mock.calls.filter(
+      ([, , account]: [string, string, number, number]) => account === 1,
+    );
+    expect(
+      changeCalls
+        .map(([, , , index]: [string, string, number, number]) => index)
+        .sort((a: number, b: number) => a - b),
+    ).toEqual([1, 2, 3, 4, 5, 6, 8, 9, 10]);
   });
 
   it("follows the gap limit of the account", async () => {
