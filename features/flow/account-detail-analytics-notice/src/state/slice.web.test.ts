@@ -22,6 +22,7 @@ describe("accountAnalyticsIntroduction", () => {
 
     expect(
       shouldShowAccountAnalyticsIntroduction({
+        isEnabled: true,
         hasConfirmedHistory: true,
         hasDismissed: selectAccountAnalyticsIntroductionDismissed(store.getState()),
       }),
@@ -38,6 +39,7 @@ describe("accountAnalyticsIntroduction", () => {
     for (const hasConfirmedHistory of [true, false]) {
       expect(
         shouldShowAccountAnalyticsIntroduction({
+          isEnabled: true,
           hasConfirmedHistory,
           hasDismissed: selectAccountAnalyticsIntroductionDismissed(store.getState()),
         }),
@@ -64,6 +66,7 @@ describe("accountAnalyticsIntroduction", () => {
 
     expect(
       shouldShowAccountAnalyticsIntroduction({
+        isEnabled: true,
         hasConfirmedHistory: true,
         hasDismissed: selectAccountAnalyticsIntroductionDismissed(store.getState()),
       }),

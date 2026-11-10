@@ -1,3 +1,4 @@
+import { useAccountDetailAnalyticsBannerFeature } from "@features/flow-account-detail";
 import {
   hasConfirmedAccountHistory,
   type AccountAnalyticsIntroductionStatus,
@@ -11,6 +12,7 @@ import { confirmationsNbForCurrencySelector } from "~/renderer/reducers/settings
 export function useAnalyticsIntroductionStatus(
   account: Account,
 ): AccountAnalyticsIntroductionStatus {
+  const isEnabled = useAccountDetailAnalyticsBannerFeature();
   const hasDismissed = useSelector(selectAccountAnalyticsIntroductionDismissed);
   const confirmationsNb = useSelector(state =>
     confirmationsNbForCurrencySelector(state, { currency: account.currency }),
@@ -18,5 +20,5 @@ export function useAnalyticsIntroductionStatus(
   const hasConfirmedHistory = hasConfirmedAccountHistory(account, operation =>
     isConfirmedOperation(operation, account, confirmationsNb),
   );
-  return { hasConfirmedHistory, hasDismissed };
+  return { isEnabled, hasConfirmedHistory, hasDismissed };
 }

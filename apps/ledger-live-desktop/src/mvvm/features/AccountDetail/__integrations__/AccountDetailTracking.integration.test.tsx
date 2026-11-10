@@ -64,7 +64,9 @@ function renderAccount(account: Account = ethAccount) {
     {
       initialRoute: getAccountUrl(account.id),
       initialState: {
-        ...withFlagOverrides({ accountDetail: { enabled: true } }),
+        ...withFlagOverrides({
+          accountDetail: { enabled: true, params: { analyticsBanner: true } },
+        }),
         accounts: [account],
       },
     },

@@ -22,6 +22,8 @@ passed to the layout as slots.
 | `AccountDetailLayout` | Lays out the page: hero → optional Analytics notice → custom place → assets → transactions (`.web` / `.native`) |
 | `useAccountDetailFeature(currencyId)` | `true` when the `accountDetail` flag is on and the currency is not in `excludedCurrencyIds` |
 | `isAccountDetailEnabledFor(feature, currencyId)` | Pure version of the gate, for code that already holds the flag |
+| `useAccountDetailAnalyticsBannerFeature()` | `true` when the `accountDetail` flag is on and its `analyticsBanner` param is `true` |
+| `isAccountDetailAnalyticsBannerEnabled(feature)` | Pure version of the Analytics banner gate, also used for the analytics user property |
 
 The optional `analyticsNotice` slot follows the hero and precedes `customPlace`. Hosts pass the
 notice separately from asset content; omitting it adds no section or wrapper.
@@ -37,6 +39,9 @@ import { AccountDetailLayout, useAccountDetailFeature } from "@features/flow-acc
 
 const isNewPage = useAccountDetailFeature(mainAccount?.currency.id);
 ```
+
+The `analyticsBanner` param (default `false`) turns on the Analytics introduction banner of the
+page. The apps send it to analytics as `accountDetailAnalyticsBanner`, next to `accountDetail`.
 
 ## Tracking
 

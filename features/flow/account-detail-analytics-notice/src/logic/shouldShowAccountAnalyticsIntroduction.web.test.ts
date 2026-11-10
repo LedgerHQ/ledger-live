@@ -1,17 +1,20 @@
 import { shouldShowAccountAnalyticsIntroduction } from "./shouldShowAccountAnalyticsIntroduction";
 
+const visibleStatus = {
+  isEnabled: true,
+  hasConfirmedHistory: true,
+  hasDismissed: false,
+};
+
 describe("shouldShowAccountAnalyticsIntroduction", () => {
-  it.each([
-    [false, false, false],
-    [false, true, false],
-    [true, false, true],
-    [true, true, false],
-  ])(
-    "should resolve confirmed history %s and dismissal %s to visibility %s",
-    (hasConfirmedHistory, hasDismissed, expected) => {
-      expect(shouldShowAccountAnalyticsIntroduction({ hasConfirmedHistory, hasDismissed })).toBe(
-        expected,
-      );
+  it("should show the introduction when every condition is met", () => {
+    expect(shouldShowAccountAnalyticsIntroduction(visibleStatus)).toBe(true);
+  });
+
+  it.each([{ isEnabled: false }, { hasConfirmedHistory: false }, { hasDismissed: true }])(
+    "should hide the introduction with %o",
+    override => {
+      expect(shouldShowAccountAnalyticsIntroduction({ ...visibleStatus, ...override })).toBe(false);
     },
   );
 });
