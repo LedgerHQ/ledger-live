@@ -81,19 +81,22 @@ export function useLedgerSyncIntentStep<RunIntent>({
     onDeviceRejectedRef.current = onDeviceRejected;
   });
   const connectionResultRef = useRef<DeviceConnectionResult | undefined>(undefined);
-  // The sheet reports a close when its screen loses focus, which must not leave the next screen.
-  const isOverRef = useRef(false);
-  // The drawer also reports a close when it unmounts (Retry, screen removed) or loses focus.
-  const isErrorDrawerOpenRef = useRef(false);
-  useEffect(
-    () => () => {
-      isErrorDrawerOpenRef.current = false;
-    },
-    [],
-  );
 
   const runIdRef = useRef(0);
   const [phase, setPhase] = useState<StepPhase<RunIntent>>(() => buildPhase(buildIntent, 0));
+
+  // The executor sheet and the error drawer also report a close on blur and on unmount, which
+  // must not navigate: only a dismissal of the focused screen leaves it.
+  const isOverRef = useRef(phase.type !== "running");
+  const isErrorDrawerOpenRef = useRef(phase.type === "failed");
+  const isMountedRef = useRef(false);
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+  const canLeave = useCallback(() => isMountedRef.current && navigation.isFocused(), [navigation]);
 
   const showScene = useCallback((scene: Scene) => {
     isOverRef.current = true;
@@ -112,14 +115,14 @@ export function useLedgerSyncIntentStep<RunIntent>({
   }, [navigation]);
 
   const onUserCancel = useCallback(() => {
-    if (!isOverRef.current) leave();
-  }, [leave]);
+    if (!isOverRef.current && canLeave()) leave();
+  }, [canLeave, leave]);
 
   const onErrorDrawerClose = useCallback(() => {
-    if (!isErrorDrawerOpenRef.current || !navigation.isFocused()) return;
+    if (!isErrorDrawerOpenRef.current || !canLeave()) return;
     isErrorDrawerOpenRef.current = false;
     leave();
-  }, [leave, navigation]);
+  }, [canLeave, leave]);
 
   const retry = useCallback(() => {
     runIdRef.current += 1;

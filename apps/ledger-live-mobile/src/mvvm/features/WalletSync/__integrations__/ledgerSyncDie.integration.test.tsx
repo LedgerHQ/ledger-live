@@ -176,6 +176,26 @@ function ManageInstancesNavigator() {
   );
 }
 
+function OpenRemoval() {
+  const navigation = useNavigation<StackNavigatorNavigation<WalletSyncNavigatorStackParamList>>();
+  useEffect(() => {
+    navigation.navigate(ScreenName.WalletSyncManageInstancesProcess, { member: MEMBER });
+  }, [navigation]);
+  return <Text>removal entry</Text>;
+}
+
+function RemovalOverEntryNavigator() {
+  return (
+    <Stack.Navigator initialRouteName={ScreenName.WalletSyncActivationInit}>
+      <Stack.Screen name={ScreenName.WalletSyncActivationInit} component={OpenRemoval} />
+      <Stack.Screen
+        name={ScreenName.WalletSyncManageInstancesProcess}
+        component={ManageInstancesProcess}
+      />
+    </Stack.Navigator>
+  );
+}
+
 function initialState({
   ledgerSyncDie = true,
   trustchain = null,
@@ -439,6 +459,18 @@ describe("Ledger Sync device steps on DIE", () => {
         MEMBER,
         expect.any(Object),
       );
+    });
+
+    it("should leave the removal when the error of a run that could not start is dismissed", async () => {
+      const { user } = render(<RemovalOverEntryNavigator />, {
+        overrideInitialState: initialState({ trustchain: null }),
+      });
+
+      await user.press(await screen.findByTestId("modal-close-button"));
+
+      await waitFor(() => expect(screen.queryByTestId("modal-close-button")).toBeNull());
+      expect(screen.getByText("removal entry")).toBeVisible();
+      expect(mockRemoveMember).not.toHaveBeenCalled();
     });
 
     it("should show the unsecured error when the device may not remove the instance", async () => {
