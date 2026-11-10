@@ -51,6 +51,15 @@ export {
   startDappLifecycleMonitoring,
 } from "./earnLifecycleHost";
 
+export { isBorrowApp, setBorrowManifestIdReader } from "./borrowApps";
+
+export {
+  installBorrowLifecycleHost,
+  isBorrowTxLifecycleMonitoringEnabled,
+  setBorrowTxLifecycleFlagReader,
+  startBorrowLifecycleMonitoring,
+} from "./borrowLifecycleHost";
+
 export { toSegmentTrackEvent, type SegmentTrackEvent } from "./segmentEvent";
 
 export { toDatadogBroadcastLog, type DatadogBroadcastLog } from "./datadogEvent";
@@ -62,9 +71,11 @@ export {
   clearPendingDappTxLifecycle,
   clearPendingTxLifecycle,
   sendTxLifecycle,
+  setBorrowTxLifecycleBaseUrl,
   setTxLifecycleBaseUrl,
   startDappTxLifecycle,
   toTxLifecyclePayload,
+  type TxLifecycleApp,
   type TxLifecycleFailureClass,
   type TxLifecyclePath,
   type TxLifecyclePayload,

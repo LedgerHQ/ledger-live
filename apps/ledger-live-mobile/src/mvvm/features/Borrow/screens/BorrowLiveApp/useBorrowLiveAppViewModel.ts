@@ -15,6 +15,7 @@ import {
   useLiveAppWebviewInputs,
   type LiveAppWebviewInputs,
 } from "LLM/hooks/useLiveAppWebviewInputs";
+import { useBorrowLifecycleMonitoring } from "~/analytics/useBorrowLifecycleMonitoring";
 import type { RefObject } from "react";
 
 type BorrowLiveAppViewModel = {
@@ -40,6 +41,7 @@ export function useBorrowLiveAppViewModel(): BorrowLiveAppViewModel {
   const webviewRef = useRef<WebviewAPI>(null);
 
   const borrowManifestId = borrowConfig?.params?.manifest_id ?? DEFAULT_MANIFEST_ID;
+  useBorrowLifecycleMonitoring(borrowManifestId);
 
   const localManifest: LiveAppManifest | undefined = useLocalLiveAppManifest(
     borrowManifestId || undefined,

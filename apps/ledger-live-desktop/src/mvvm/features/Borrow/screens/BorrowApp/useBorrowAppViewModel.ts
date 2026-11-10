@@ -12,6 +12,7 @@ import { initialWebviewState } from "~/renderer/components/Web3AppWebview/helper
 import { WebviewAPI, WebviewState } from "~/renderer/components/Web3AppWebview/types";
 import { enablePlatformDevToolsSelector } from "~/renderer/reducers/settings";
 import { useBorrowLiveConfig } from "LLD/features/Borrow/hooks/useBorrowLiveConfig";
+import { useBorrowLifecycleMonitoring } from "~/renderer/analytics/useBorrowLifecycleMonitoring";
 import type { BorrowSwapNavigationParams } from "@ledgerhq/live-common/wallet-api/Borrow/types";
 
 type BorrowLocationState = { returnTo?: string };
@@ -24,6 +25,7 @@ const DEFAULT_MANIFEST_ID =
 export function useBorrowAppViewModel() {
   const borrowFlag = useBorrowLiveConfig();
   const manifestId = borrowFlag?.params?.manifest_id || DEFAULT_MANIFEST_ID;
+  useBorrowLifecycleMonitoring(manifestId);
 
   const localManifest = useLocalLiveAppManifest(manifestId || undefined);
   const remoteManifest = useRemoteLiveAppManifest(manifestId || undefined);
