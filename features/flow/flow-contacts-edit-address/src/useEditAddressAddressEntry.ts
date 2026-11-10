@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ContactAddress } from "@domain/entity-contact";
-import { addressesMatch, wait } from "@features/platform-contacts";
+import {
+  addressesMatch,
+  keepEnsDisclaimerWhileValidating,
+  wait,
+} from "@features/platform-contacts";
 import type {
   ContactsAddressEntryState,
   ContactsAddressInputSource,
@@ -113,7 +117,12 @@ export function useEditAddressAddressEntry({
         return;
       }
 
-      setAddressEntry(createValidatingAddressEntryState(value, inputMethod));
+      setAddressEntry(previousEntry =>
+        keepEnsDisclaimerWhileValidating(
+          previousEntry,
+          createValidatingAddressEntryState(value, inputMethod),
+        ),
+      );
 
       void (async () => {
         if (inputMethod === "manual" && manualValidationDebounceMs > 0) {
