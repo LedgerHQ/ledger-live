@@ -31,7 +31,7 @@ export const fetchNominations = async (
 
   const stashes = await api.derive.staking.stashes();
 
-  const allStashes = stashes.map(stash => stash.toString());
+  const registeredIds = new Set(stashes.map(stash => stash.toString()));
   const returnTargets = [];
   const targetIds = targets.map(t => t.toString());
 
@@ -44,7 +44,7 @@ export const fetchNominations = async (
     const exposure = exposures[targetIndex];
     targetIndex++;
     if (exposure.isNone) {
-      if (allStashes.includes(id)) {
+      if (registeredIds.has(id)) {
         status = "waiting";
       }
     } else {
@@ -67,6 +67,7 @@ export const fetchNominations = async (
       address: id,
       value,
       status,
+      isRegistered: registeredIds.has(id),
     });
   }
   return {
