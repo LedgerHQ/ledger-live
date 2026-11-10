@@ -16,6 +16,9 @@ import {
   UNSUPPORTED_V6_TRANSACTION_ERROR_CODE,
   UNSUPPORTED_V6_TRANSACTION_ERROR_TAG,
   UnsupportedV6SourceTransaction,
+  USER_ADDRESS_REFUSED_ERROR_CODE,
+  USER_ADDRESS_REFUSED_ERROR_TAG,
+  UserAddressRefusedOnDevice,
   UserRefusedOnDevice,
 } from "./errors";
 import {
@@ -95,6 +98,16 @@ export class DmkSignerZcash implements ZcashSigner {
       // otherwise report a bare "UnsupportedV6TransactionError", as opaque as the
       // "ZcashAppCommandError" this case used to end up as (LIVE-35358).
       return new UnsupportedV6SourceTransaction(
+        typeof details.message === "string" && details.message.length > 0
+          ? details.message
+          : undefined,
+      );
+    }
+    if (
+      details.errorCode === USER_ADDRESS_REFUSED_ERROR_CODE ||
+      details._tag === USER_ADDRESS_REFUSED_ERROR_TAG
+    ) {
+      return new UserAddressRefusedOnDevice(
         typeof details.message === "string" && details.message.length > 0
           ? details.message
           : undefined,
