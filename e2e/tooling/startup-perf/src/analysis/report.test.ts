@@ -45,6 +45,14 @@ describe("toMarkdown", () => {
     );
   });
 
+  it("says when no launch read from the log was checked against the screen", () => {
+    const samples = comparison({ deltaMs: 0, a: { readFrom: "log" }, b: { readFrom: "log" } });
+    assert.match(
+      toMarkdown(summarise(samples, options), options),
+      /\*\*android accounts: no warm-up could be read on the Debug screen, so the device log was not checked against it\.\*\*/,
+    );
+  });
+
   it("says which launches were read from the screen, and whether the screen matched the log", () => {
     const samples = comparison({
       deltaMs: 0,
@@ -57,7 +65,7 @@ describe("toMarkdown", () => {
     const agreed = toMarkdown(summarise(samples, options), options);
     assert.match(
       agreed,
-      /\*\*android accounts: 1 of the 12 launches read from the Debug screen, their device log line missing \(A: 1, B: 0\)\.\*\*/,
+      /\*\*android accounts: 1 of the 12 launches read from the Debug screen, their device log lines missing \(A: 1, B: 0\)\.\*\*/,
     );
     assert.match(
       agreed,
