@@ -1,7 +1,7 @@
 import React from "react";
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { DepositOptionIcon, DepositOptionListItem } from "../DepositOptionParts.web";
+import { DepositOptionIcon, DepositOptionListItem } from "../DepositOptionParts";
 
 describe("DepositOptionParts (Web)", () => {
   afterEach(() => {

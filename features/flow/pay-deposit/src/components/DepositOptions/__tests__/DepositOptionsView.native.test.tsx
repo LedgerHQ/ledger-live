@@ -1,6 +1,6 @@
 import React from "react";
 import { cleanup, render, screen, userEvent } from "@testing-library/react-native";
-import { DepositOptionsView } from "../DepositOptionsView.native";
+import { DepositOptionsView } from "../DepositOptionsView";
 
 const defaultProps: React.ComponentProps<typeof DepositOptionsView> = {
   isOpen: true,
