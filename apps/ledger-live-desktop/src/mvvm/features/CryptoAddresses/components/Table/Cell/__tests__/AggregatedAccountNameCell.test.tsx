@@ -4,32 +4,9 @@ import type { Account } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { AggregatedAccountNameCell } from "../AggregatedAccountNameCell";
 
-type TooltipProps = {
-  open: boolean;
-  onOpenChange: (value: boolean) => void;
-  children: React.ReactNode;
-};
-
-let capturedOnOpenChange: ((value: boolean) => void) | undefined;
-
-// Radix Tooltip does not handle hover in JSDOM, so we capture onOpenChange and drive it manually.
-jest.mock("@ledgerhq/lumen-ui-react", () => ({
-  ...jest.requireActual("@ledgerhq/lumen-ui-react"),
-  Tooltip: ({ open, onOpenChange, children }: TooltipProps) => {
-    capturedOnOpenChange = onOpenChange;
-    return (
-      <div data-testid="tooltip" data-open={String(open)}>
-        {children}
-      </div>
-    );
-  },
-  TooltipTrigger: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  TooltipContent: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="tooltip-content">{children}</div>
-  ),
-}));
-
 const account = { type: "Account", currency: getCryptoCurrencyById("bitcoin") } as Account;
+
+const TOOLTIP_DELAY_MS = 2000;
 
 const renderCell = (tag?: string) =>
   render(
@@ -40,23 +17,30 @@ const renderCell = (tag?: string) =>
         </tr>
       </tbody>
     </table>,
+    { userEventOptions: { advanceTimers: jest.advanceTimersByTime } },
   );
 
-function setTruncationMetrics(element: HTMLElement, scrollWidth: number, clientWidth: number) {
-  Object.defineProperty(element, "scrollWidth", { configurable: true, value: scrollWidth });
-  Object.defineProperty(element, "clientWidth", { configurable: true, value: clientWidth });
+function setLabelWidths(label: HTMLElement, scrollWidth: number, clientWidth: number) {
+  Object.defineProperty(label, "scrollWidth", { configurable: true, value: scrollWidth });
+  Object.defineProperty(label, "clientWidth", { configurable: true, value: clientWidth });
 }
+
+const isInTooltip = (element: HTMLElement) => element.closest("[role='tooltip']") !== null;
 
 describe("AggregatedAccountNameCell", () => {
   beforeEach(() => {
-    capturedOnOpenChange = undefined;
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   it("shows the address type next to the name of the account", () => {
     renderCell("Native segwit");
 
     expect(screen.getByText("BTC Gold")).toBeInTheDocument();
-    expect(screen.getAllByText("Native segwit")[0]).toBeInTheDocument();
+    expect(screen.getByText("Native segwit")).toBeInTheDocument();
   });
 
   it("shows only the name when the account has no address type", () => {
@@ -64,24 +48,32 @@ describe("AggregatedAccountNameCell", () => {
 
     expect(screen.getByText("BTC Gold")).toBeInTheDocument();
     expect(screen.queryByText("Native segwit")).toBeNull();
-    expect(screen.queryByTestId("tooltip")).toBeNull();
   });
 
-  it("shows the full address type in a tooltip only when the tag is cut", () => {
-    renderCell("Native segwit");
-    const tagLabel = screen.getAllByText("Native segwit")[0];
-    const tooltip = screen.getByTestId("tooltip");
-    expect(screen.getByTestId("tooltip-content")).toHaveTextContent("Native segwit");
+  it("shows the full address type in a tooltip when the tag is cut", async () => {
+    const { user } = renderCell("Native segwit");
+    const label = screen.getByText("Native segwit");
+    setLabelWidths(label, 80, 40);
 
-    setTruncationMetrics(tagLabel, 80, 80);
-    act(() => capturedOnOpenChange!(true));
-    expect(tooltip).toHaveAttribute("data-open", "false");
+    await user.hover(label);
+    act(() => {
+      jest.advanceTimersByTime(TOOLTIP_DELAY_MS);
+    });
 
-    setTruncationMetrics(tagLabel, 80, 40);
-    act(() => capturedOnOpenChange!(true));
-    expect(tooltip).toHaveAttribute("data-open", "true");
+    expect(screen.getAllByText("Native segwit").some(isInTooltip)).toBe(true);
+  });
 
-    act(() => capturedOnOpenChange!(false));
-    expect(tooltip).toHaveAttribute("data-open", "false");
+  it("does not show a tooltip when the tag fits", async () => {
+    const { user } = renderCell("Native segwit");
+    const label = screen.getByText("Native segwit");
+    setLabelWidths(label, 80, 80);
+
+    await user.hover(label);
+    act(() => {
+      jest.advanceTimersByTime(TOOLTIP_DELAY_MS);
+    });
+
+    expect(screen.queryByRole("tooltip")).toBeNull();
+    expect(screen.getAllByText("Native segwit").some(isInTooltip)).toBe(false);
   });
 });
