@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import BigNumber from "bignumber.js";
 import { CryptoCurrencyIdSchema, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { type TokenCurrency, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
@@ -7,7 +8,11 @@ import { FEATURE_FLAGS_DEFAULTS, FEATURE_FLAGS_INITIAL_STATE } from "@shared/fea
 import { track } from "@shared/analytics";
 import { act, renderHook } from "tests/testSetup";
 import { PERPS_DEPOSIT_DEFAULT_FUNDING_CURRENCY_ID } from "../../../constants/depositFunding";
-import { usePerpsDepositViewModel, type PerpsDepositData } from "../usePerpsDepositViewModel";
+import {
+  usePerpsDepositFormState,
+  usePerpsDepositViewModel,
+  type PerpsDepositData,
+} from "../usePerpsDepositViewModel";
 
 const mockOpenAssetAndAccount = jest.fn();
 jest.mock("@ledgerhq/live-common/wallet-api/Perps/deposit/useWalletApiSpendableBalance", () => ({
@@ -127,19 +132,26 @@ function renderViewModel(
   const tradeMaxConstant = maxConstants && {
     ptxTradeMaxConstant: { enabled: true, params: { constants: maxConstants } },
   };
-  const { result, store } = renderHook(() => usePerpsDepositViewModel(props, onClose), {
-    initialState: {
-      accounts,
-      settings: { discreetMode },
-      ...(tradeMaxConstant && {
-        featureFlags: {
-          ...FEATURE_FLAGS_INITIAL_STATE,
-          overrides: { ...FEATURE_FLAGS_INITIAL_STATE.overrides, ...tradeMaxConstant },
-          resolved: { ...FEATURE_FLAGS_DEFAULTS, ...tradeMaxConstant },
-        },
-      }),
+  const { result, store } = renderHook(
+    () => {
+      const { form, reset } = usePerpsDepositFormState();
+      useEffect(() => reset(props.draft), [reset]);
+      return usePerpsDepositViewModel(props, onClose, form);
     },
-  });
+    {
+      initialState: {
+        accounts,
+        settings: { discreetMode },
+        ...(tradeMaxConstant && {
+          featureFlags: {
+            ...FEATURE_FLAGS_INITIAL_STATE,
+            overrides: { ...FEATURE_FLAGS_INITIAL_STATE.overrides, ...tradeMaxConstant },
+            resolved: { ...FEATURE_FLAGS_DEFAULTS, ...tradeMaxConstant },
+          },
+        }),
+      },
+    },
+  );
   return { result, onClose, store };
 }
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
@@ -9,7 +9,11 @@ import {
   WithdrawLowLiquidityError,
   WithdrawMinimumAmountError,
 } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/errors";
+import { useNavigate, type NavigateFunction } from "react-router";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
+import { beginWithdrawRequest } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/request";
 import { act, render, screen } from "tests/testSetup";
+import { setDrawer } from "~/renderer/drawers/Provider";
 import PerpsWithdrawRoot, { openPerpsWithdraw } from "../PerpsWithdrawDialog";
 import type { PerpsWithdrawData } from "../usePerpsWithdrawViewModel";
 
@@ -77,6 +81,16 @@ const quote = {
 };
 
 const withdrawData: PerpsWithdrawData = { sourceAccount };
+
+const router: { navigate?: NavigateFunction } = {};
+
+function CaptureNavigate() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    router.navigate = navigate;
+  }, [navigate]);
+  return null;
+}
 
 function renderWithdraw() {
   return render(<PerpsWithdrawRoot />, {
@@ -355,6 +369,46 @@ describe("PerpsWithdraw integration", () => {
         },
       }),
     );
+    expect(screen.queryByTestId("perps-withdraw-amount-input")).not.toBeInTheDocument();
+  });
+
+  it("should step aside for the add account drawer and come back with the new account", async () => {
+    let resolvePick: ((result: { account: Account }) => void) | undefined;
+    mockOpenAssetAndAccount.mockReturnValue(
+      new Promise(resolve => {
+        resolvePick = resolve;
+      }),
+    );
+    const { user } = renderWithdraw();
+    openWithdraw();
+
+    await user.type(input(), "500");
+    await user.click(screen.getByTestId("perps-withdraw-select-currency"));
+    act(() => setDrawer(() => null, {}));
+
+    expect(screen.queryByTestId("perps-withdraw-amount-input")).not.toBeInTheDocument();
+
+    await act(async () => resolvePick?.({ account: btcAccount }));
+    act(() => setDrawer());
+
+    expect(await screen.findByText("Withdraw to BTC")).toBeVisible();
+    expect(input()).toHaveValue("500");
+  });
+
+  it("should cancel the withdraw when the app navigates away from it", async () => {
+    render(
+      <>
+        <CaptureNavigate />
+        <PerpsWithdrawRoot />
+      </>,
+      { initialState: { accounts: [sourceAccount, ethAccount, btcAccount, dogeAccount] } },
+    );
+    const pendingWithdraw = beginWithdrawRequest();
+
+    openWithdraw();
+    act(() => router.navigate?.("/account/btc-1"));
+
+    await expect(pendingWithdraw).rejects.toBeInstanceOf(UserRefusedOnDevice);
     expect(screen.queryByTestId("perps-withdraw-amount-input")).not.toBeInTheDocument();
   });
 });
