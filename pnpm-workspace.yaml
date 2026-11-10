@@ -155,8 +155,8 @@ catalog:
   "@testing-library/user-event": 14.6.1
   "@types/jest": 30.0.0
   "@types/lodash": ^4.17.21
-  "@typescript-eslint/eslint-plugin": 8.48.1
-  "@typescript-eslint/parser": 8.48.1
+  "@typescript-eslint/eslint-plugin": 8.72.1
+  "@typescript-eslint/parser": 8.72.1
   typescript: "npm:@typescript/typescript6@^6.0.2"
   "@typescript/native": "npm:typescript@^7.0.2"
   "@types/node": 24.12.0
