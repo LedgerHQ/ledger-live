@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { of } from "rxjs";
+import { of, throwError } from "rxjs";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 
 import { fetchNetworkFeeContext } from "./fetchNetworkFeeContext";
@@ -81,9 +81,33 @@ function makeBridge(overrides: Partial<MockBridge> = {}): MockBridge {
   };
 }
 
+function useBtcBridge(account: Account, overrides: Partial<MockBridge> = {}): MockBridge {
+  mockedResolveId.mockReturnValue(account.id);
+  mockedGetParent.mockReturnValue(undefined as unknown as Account);
+  mockedGetMain.mockReturnValue(account);
+  const bridge = makeBridge({ prepareTransaction: jest.fn().mockResolvedValue({}), ...overrides });
+  mockedGetBridge.mockReturnValue(bridge as unknown as ReturnType<typeof getAccountBridge>);
+  return bridge;
+}
+
+function btcArgs(account: Account) {
+  return {
+    accounts: [account as unknown as AccountLike],
+    fromAccountId: "wallet:btc:1",
+    amountFrom: "0.5",
+  };
+}
+
+const BITCOIN_SYNC_REUSE_MS = 30_000;
+
 describe("fetchNetworkFeeContext", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   it("returns null when the wallet account id cannot be resolved", async () => {
@@ -133,6 +157,47 @@ describe("fetchNetworkFeeContext", () => {
 
     expect(result).toBeNull();
     expect(onFeeEstimationFailed).toHaveBeenCalledTimes(1);
+  });
+
+  it("reports the error when bridge.getTransactionStatus throws", async () => {
+    const account = makeEvmAccount();
+    const error = new Error("status failed");
+    mockedResolveId.mockReturnValue(account.id);
+    mockedGetParent.mockReturnValue(undefined as unknown as Account);
+    mockedGetMain.mockReturnValue(account);
+    mockedGetBridge.mockReturnValue(
+      makeBridge({
+        getTransactionStatus: jest.fn().mockRejectedValue(error),
+      }) as unknown as ReturnType<typeof getAccountBridge>,
+    );
+    const onFeeEstimationFailed = jest.fn();
+
+    const result = await fetchNetworkFeeContext({
+      accounts: [account as unknown as AccountLike],
+      fromAccountId: "wallet:evm:1",
+      amountFrom: "1",
+      onFeeEstimationFailed,
+    });
+
+    expect(result).toBeNull();
+    expect(onFeeEstimationFailed).toHaveBeenCalledWith(error);
+  });
+
+  it("reports a FeeNotLoaded status error as a fee estimation failure", async () => {
+    const account = makeBtcAccount();
+    const feeNotLoaded = Object.assign(new Error("fee not loaded"), { name: "FeeNotLoaded" });
+    useBtcBridge(account, {
+      getTransactionStatus: jest.fn().mockResolvedValue({
+        estimatedFees: new BigNumber(0),
+        errors: { feePerByte: feeNotLoaded },
+      }),
+    });
+    const onFeeEstimationFailed = jest.fn();
+
+    const result = await fetchNetworkFeeContext({ ...btcArgs(account), onFeeEstimationFailed });
+
+    expect(result).toBeNull();
+    expect(onFeeEstimationFailed).toHaveBeenCalledWith(feeNotLoaded);
   });
 
   it("skips the fee estimate without a failure for a chain with no estimation recipient", async () => {
@@ -224,22 +289,74 @@ describe("fetchNetworkFeeContext", () => {
 
   it("reuses a recent bitcoin sync for the next quote of the same account", async () => {
     const account = makeBtcAccount();
-    mockedResolveId.mockReturnValue(account.id);
-    mockedGetParent.mockReturnValue(undefined as unknown as Account);
-    mockedGetMain.mockReturnValue(account);
-    const bridge = makeBridge({ prepareTransaction: jest.fn().mockResolvedValue({}) });
-    mockedGetBridge.mockReturnValue(bridge as unknown as ReturnType<typeof getAccountBridge>);
-    const args = {
-      accounts: [account as unknown as AccountLike],
-      fromAccountId: "wallet:btc:1",
-      amountFrom: "0.5",
-    };
+    const syncedAccount = makeBtcAccount({ spendableBalance: new BigNumber("50000000") });
+    const bridge = useBtcBridge(account, {
+      sync: jest.fn().mockReturnValue(of(() => syncedAccount)),
+    });
 
-    await fetchNetworkFeeContext(args);
-    await fetchNetworkFeeContext({ ...args, amountFrom: "0.6" });
+    await fetchNetworkFeeContext(btcArgs(account));
+    await fetchNetworkFeeContext({ ...btcArgs(account), amountFrom: "0.6" });
 
     expect(bridge.sync).toHaveBeenCalledTimes(1);
     expect(bridge.prepareTransaction).toHaveBeenCalledTimes(2);
+    expect(bridge.prepareTransaction.mock.calls[1][0]).toBe(syncedAccount);
+  });
+
+  it("shares a pending bitcoin sync between two quotes", async () => {
+    const account = makeBtcAccount();
+    const bridge = useBtcBridge(account);
+
+    await Promise.all([
+      fetchNetworkFeeContext(btcArgs(account)),
+      fetchNetworkFeeContext(btcArgs(account)),
+    ]);
+
+    expect(bridge.sync).toHaveBeenCalledTimes(1);
+  });
+
+  it("starts a new bitcoin sync 30s after the last sync ended", async () => {
+    const account = makeBtcAccount();
+    const bridge = useBtcBridge(account);
+
+    await fetchNetworkFeeContext(btcArgs(account));
+    jest.advanceTimersByTime(BITCOIN_SYNC_REUSE_MS - 1);
+    await fetchNetworkFeeContext(btcArgs(account));
+    expect(bridge.sync).toHaveBeenCalledTimes(1);
+
+    jest.advanceTimersByTime(1);
+    await fetchNetworkFeeContext(btcArgs(account));
+    expect(bridge.sync).toHaveBeenCalledTimes(2);
+  });
+
+  it("starts a new bitcoin sync after a failed sync", async () => {
+    const account = makeBtcAccount();
+    const bridge = useBtcBridge(account, {
+      sync: jest
+        .fn()
+        .mockReturnValueOnce(throwError(() => new Error("sync failed")))
+        .mockReturnValue(of((acc: Account) => acc)),
+    });
+
+    await fetchNetworkFeeContext(btcArgs(account));
+    await fetchNetworkFeeContext(btcArgs(account));
+
+    expect(bridge.sync).toHaveBeenCalledTimes(2);
+  });
+
+  it("starts a new bitcoin sync after a fee estimation failure, and keeps it when the old sync expires", async () => {
+    const account = makeBtcAccount();
+    const bridge = useBtcBridge(account, {
+      prepareTransaction: jest.fn().mockRejectedValueOnce(new Error("boom")).mockResolvedValue({}),
+    });
+
+    await fetchNetworkFeeContext(btcArgs(account));
+    jest.advanceTimersByTime(BITCOIN_SYNC_REUSE_MS / 2);
+    await fetchNetworkFeeContext(btcArgs(account));
+    expect(bridge.sync).toHaveBeenCalledTimes(2);
+
+    jest.advanceTimersByTime(BITCOIN_SYNC_REUSE_MS / 2);
+    await fetchNetworkFeeContext(btcArgs(account));
+    expect(bridge.sync).toHaveBeenCalledTimes(2);
   });
 
   it("caps the prepared amount on the freshly-synced bitcoin balance, not the stale one", async () => {
@@ -281,30 +398,24 @@ describe("fetchNetworkFeeContext", () => {
     expect(preparedArg.amount.toFixed()).toBe("45000000");
   });
 
-  it("recovers from a bitcoin sync failure and still produces a context", async () => {
+  it("recovers from a bitcoin sync failure without a fee estimation failure", async () => {
     const account = makeBtcAccount();
-    mockedResolveId.mockReturnValue(account.id);
-    mockedGetParent.mockReturnValue(undefined as unknown as Account);
-    mockedGetMain.mockReturnValue(account);
-    const bridge = makeBridge({
-      sync: jest.fn().mockImplementation(() => {
-        throw new Error("sync failed");
-      }),
-      prepareTransaction: jest.fn().mockResolvedValue({}),
+    useBtcBridge(account, {
+      sync: jest.fn().mockReturnValue(throwError(() => new Error("sync failed"))),
       getTransactionStatus: jest.fn().mockResolvedValue({
         estimatedFees: new BigNumber("4000"),
       }),
     });
-    mockedGetBridge.mockReturnValue(bridge as unknown as ReturnType<typeof getAccountBridge>);
+    const onFeeEstimationFailed = jest.fn();
 
     const result = await fetchNetworkFeeContext({
-      accounts: [account as unknown as AccountLike],
-      fromAccountId: "wallet:btc:1",
+      ...btcArgs(account),
       amountFrom: "0.1",
+      onFeeEstimationFailed,
     });
 
-    expect(result).not.toBeNull();
     expect(result?.estimatedFeesAtomic).toEqual(new BigNumber("4000"));
+    expect(onFeeEstimationFailed).not.toHaveBeenCalled();
   });
 
   it("falls back to 10% of spendable balance when the display amount is zero", async () => {

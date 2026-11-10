@@ -4,4 +4,4 @@
 "live-mobile": minor
 ---
 
-Show the fee estimation failure on the Perps deposit form
+Reuse a recent BTC sync for quotes and show the fee estimation failure on the Perps deposit form

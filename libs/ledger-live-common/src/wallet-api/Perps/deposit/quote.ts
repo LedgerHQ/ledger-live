@@ -68,6 +68,16 @@ function registerQuoteAccounts(
  * Quotes `amount` from `depositAccount` to `receiverAccount` against
  * `swapkit_hyperliquid` and returns the first quote with the global errors.
  */
+const BALANCE_ERROR_NAMES = new Set([
+  "NotEnoughBalance",
+  "NotEnoughGas",
+  "NotEnoughBalanceInParentAccount",
+]);
+
+function isBalanceError(error: unknown): boolean {
+  return error instanceof Error && BALANCE_ERROR_NAMES.has(error.name);
+}
+
 export async function fetchPerpsDepositQuote({
   accounts,
   depositAccount,
@@ -93,14 +103,12 @@ export async function fetchPerpsDepositQuote({
       spotPrices: {},
       locale,
       counterValueCurrency,
-      onFeeEstimationFailed: () => {
-        feeEstimationFailed = true;
+      onFeeEstimationFailed: error => {
+        feeEstimationFailed = !isBalanceError(error);
       },
     },
   );
 
   const [quote] = quotes;
-  return quote
-    ? { quote: toPerpsDepositQuote(quote), errors, feeEstimationFailed }
-    : { errors, feeEstimationFailed };
+  return { ...(quote && { quote: toPerpsDepositQuote(quote) }), errors, feeEstimationFailed };
 }

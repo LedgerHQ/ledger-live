@@ -264,6 +264,26 @@ describe("coin errors in the deposit resolver", () => {
       },
     );
 
+    it.each([["assethub_polkadot"], ["stellar"]])(
+      "shows the fee estimation failure for %s instead of no quote",
+      currencyId => {
+        const quoteResult = { quote: quoteWithFee(), errors: [], feeEstimationFailed: true };
+        expect(resolve(account(currencyId, "1"), { quoteResult })).toEqual({
+          code: "feeEstimationFailed",
+          labelKey: "perpsDeposit.formErrors.feeEstimationFailed",
+        });
+      },
+    );
+
+    it("shows the amount limit before the fee estimation failure", () => {
+      const quoteResult = {
+        quote: quoteWithFee(),
+        errors: [{ code: QuotesErrorCodes.AMOUNT_TOO_HIGH, maxAmount: "1000" }],
+        feeEstimationFailed: true,
+      };
+      expect(resolve(account("stellar", "1"), { quoteResult })?.code).toBe("amountTooHigh");
+    });
+
     it("comes before the amount limits", () => {
       expect(
         resolve(account("stellar", "107"), {
