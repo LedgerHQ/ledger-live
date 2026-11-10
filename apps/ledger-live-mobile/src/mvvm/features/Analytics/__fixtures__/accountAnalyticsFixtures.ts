@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account";
+import type { Currency } from "@domain/entity-currency";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { buildMultiCV } from "@domain/entity-market-countervalues/mock";
@@ -55,7 +56,10 @@ export function createAnalyticsToken(parent: Account, amount = 10) {
 }
 
 /** Natives are priced 200 and tokens 1, with a 401-day history. */
-export function createAnalyticsCountervalues(positions: readonly AccountLike[]) {
+export function createAnalyticsCountervalues(
+  positions: readonly AccountLike[],
+  countervalue: Currency = analyticsFiat,
+) {
   return buildMultiCV(
     positions.map(position => {
       const isToken = position.type === "TokenAccount";
@@ -66,7 +70,7 @@ export function createAnalyticsCountervalues(positions: readonly AccountLike[]) 
         ]),
       );
       return {
-        pair: { from: isToken ? position.token : position.currency, to: analyticsFiat },
+        pair: { from: isToken ? position.token : position.currency, to: countervalue },
         history,
         latest: isToken ? 1 : 200,
       };

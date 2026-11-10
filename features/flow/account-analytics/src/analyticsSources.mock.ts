@@ -1,5 +1,5 @@
 import { mockUsdcAssetsData } from "@domain/api-aggregated-assets/mock";
-import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type { CryptoOrTokenCurrency, Currency } from "@domain/entity-currency";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { buildMultiCV } from "@domain/entity-market-countervalues/mock";
@@ -56,7 +56,10 @@ export function createAnalyticsToken(parent: MockAccount, amount = 10): MockToke
 }
 
 /** Natives are priced 200 and tokens 1, with a flat 401-day history. */
-export function createAnalyticsCountervalues(positions: readonly AnalyticsPositionSource[]) {
+export function createAnalyticsCountervalues(
+  positions: readonly AnalyticsPositionSource[],
+  countervalue: Currency = analyticsFiat,
+) {
   return buildMultiCV(
     positions.map(position => {
       const isToken = position.type === "TokenAccount";
@@ -67,7 +70,7 @@ export function createAnalyticsCountervalues(positions: readonly AnalyticsPositi
         ]),
       );
       return {
-        pair: { from: getAnalyticsPositionCurrency(position), to: analyticsFiat },
+        pair: { from: getAnalyticsPositionCurrency(position), to: countervalue },
         history,
         latest: isToken ? 1 : 200,
       };
