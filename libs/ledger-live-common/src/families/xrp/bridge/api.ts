@@ -91,7 +91,7 @@ export async function buildTokenAccountShapes(
       if (!token) return [];
 
       const xrpResources: XrpTokenResources =
-        token.tokenType === "iou"
+        token.tokenType === "iou" && typeof limit === "bigint"
           ? {
               isLocked,
               isRippling,
