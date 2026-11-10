@@ -24,6 +24,7 @@ export const tools = {
   "coin-config": coinIntegration.coinConfig,
   receive: walletXp.receive,
   predictions: ptx.predictions,
+  "intent-wallet-sync": walletXp.intentWalletSync,
 } as const;
 
 /**
@@ -60,4 +61,5 @@ export type DevToolConfig =
   | { id: "account-detail"; config: walletXp.AccountDetailToolProps }
   | { id: "coin-config"; config: coinIntegration.CoinConfigToolProps }
   | { id: "receive"; config: walletXp.ReceiveToolProps }
-  | { id: "predictions"; config: ptx.PredictionsToolProps };
+  | { id: "predictions"; config: ptx.PredictionsToolProps }
+  | { id: "intent-wallet-sync"; config: walletXp.IntentWalletSyncToolProps };

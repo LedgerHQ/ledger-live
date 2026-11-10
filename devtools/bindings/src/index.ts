@@ -32,3 +32,9 @@ export { useCoinConfigToolProps } from "./useCoinConfigToolProps";
 export type { UseCoinConfigToolPropsInput } from "./useCoinConfigToolProps";
 export { usePredictionsToolProps } from "./usePredictionsToolProps";
 export type { LiveAppStore, PredictionsSetup } from "./usePredictionsToolProps";
+export { useIntentWalletSyncToolState } from "./useIntentWalletSyncToolState";
+export type {
+  IntentWalletSyncRun,
+  IntentWalletSyncToolState,
+  IntentWalletSyncToolStateParams,
+} from "./useIntentWalletSyncToolState";

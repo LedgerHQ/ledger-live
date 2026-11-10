@@ -40,6 +40,7 @@ import { PREDICTIONS_SETUP_FAILURE_REASONS } from "@features/platform-prediction
 import type { DevToolsConfig } from "@devtools/shell";
 import { useDevToolsRelay } from "./useDevToolsRelay";
 import { useDeviceOnboardingTool } from "../../DeviceOnboarding/useDeviceOnboardingTool";
+import { useIntentWalletSyncTool } from "../../IntentWalletSync/useIntentWalletSyncTool";
 import { useAccountDataRecorder } from "../../accountDataRecorder";
 import { getPortfolioServiceUrl } from "~/config/portfolioService";
 import { getStoreValue, setStoreValue } from "~/renderer/store";
@@ -137,6 +138,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
     [predictionsSetupHooks],
   );
   const predictionsToolProps = usePredictionsToolProps(LIVE_APP_STORE, predictionsSetup);
+  const intentWalletSync = useIntentWalletSyncTool();
 
   const config: DevToolsConfig = useMemo(
     () => [
@@ -159,6 +161,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       { id: "account-detail", config: accountDetailToolProps },
       { id: "receive", config: receiveToolProps },
       { id: "predictions", config: predictionsToolProps },
+      { id: "intent-wallet-sync", config: intentWalletSync.toolProps },
     ],
     [
       featureFlagsToolProps,
@@ -180,6 +183,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       accountDetailToolProps,
       receiveToolProps,
       predictionsToolProps,
+      intentWalletSync.toolProps,
     ],
   );
 
@@ -193,5 +197,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
     hubUrl: wireState.hubUrl,
     setHubUrl: wire.setHubUrl,
     role: wireState.role,
+    intentWalletSyncRun: intentWalletSync.run,
+    onIntentWalletSyncRunCancelled: intentWalletSync.onRunCancelled,
   };
 }
