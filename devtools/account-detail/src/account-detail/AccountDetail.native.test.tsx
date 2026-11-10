@@ -5,7 +5,13 @@ const renderTool = (
   hasDismissed: boolean,
   onReset = jest.fn(),
   isEligible: boolean | null = true,
-) => render(<AccountDetail analyticsIntroduction={{ hasDismissed, isEligible, onReset }} />);
+  onEligibilityChange = jest.fn(),
+) =>
+  render(
+    <AccountDetail
+      analyticsIntroduction={{ hasDismissed, isEligible, onReset, onEligibilityChange }}
+    />,
+  );
 
 describe("AccountDetail", () => {
   it("resets a dismissed Analytics card", () => {
@@ -28,12 +34,25 @@ describe("AccountDetail", () => {
   });
 
   it.each([
-    [true, /^Eligible/],
-    [false, /^Not eligible/],
+    [true, /^Eligible —/],
+    [false, /^Not eligible —/],
     [null, /^Not recorded yet/],
   ])("shows the eligibility %s", (isEligible, status) => {
     renderTool(false, jest.fn(), isEligible);
 
     expect(screen.getByText(status)).toBeOnTheScreen();
+  });
+
+  it.each([
+    ["Not eligible", true, false],
+    ["Not recorded", true, null],
+    ["Eligible", false, true],
+  ] as const)("forces the eligibility with %s", (option, isEligible, forced) => {
+    const onEligibilityChange = jest.fn();
+    renderTool(false, jest.fn(), isEligible, onEligibilityChange);
+
+    fireEvent.press(screen.getByText(option));
+
+    expect(onEligibilityChange).toHaveBeenCalledWith(forced);
   });
 });

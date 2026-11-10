@@ -3,6 +3,8 @@ export interface AnalyticsIntroductionSectionProps {
   readonly hasDismissed: boolean;
   /** Recorded once per install: `null` until the first launch that reads the stored state. */
   readonly isEligible: boolean | null;
+  /** Forces the eligibility on this install; `null` lets the next launch record it again. */
+  readonly onEligibilityChange: (isEligible: boolean | null) => void;
   readonly onReset: () => void;
 }
 

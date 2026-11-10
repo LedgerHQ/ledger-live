@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import type { DevToolsConfig } from "@devtools/registry";
 import {
   accountAnalyticsIntroductionPersistedSelector,
+  overrideAccountAnalyticsIntroductionEligibility,
   resetAccountAnalyticsIntroduction,
   selectAccountAnalyticsIntroductionDismissed,
 } from "@features/flow-account-detail-analytics-notice/state";
@@ -21,9 +22,15 @@ export function useAccountDetailToolProps(): AccountDetailToolProps {
   const onReset = useCallback(() => {
     dispatch(resetAccountAnalyticsIntroduction());
   }, [dispatch]);
+  const onEligibilityChange = useCallback(
+    (value: boolean | null) => {
+      dispatch(overrideAccountAnalyticsIntroductionEligibility(value));
+    },
+    [dispatch],
+  );
 
   return useMemo(
-    () => ({ analyticsIntroduction: { hasDismissed, isEligible, onReset } }),
-    [hasDismissed, isEligible, onReset],
+    () => ({ analyticsIntroduction: { hasDismissed, isEligible, onReset, onEligibilityChange } }),
+    [hasDismissed, isEligible, onReset, onEligibilityChange],
   );
 }

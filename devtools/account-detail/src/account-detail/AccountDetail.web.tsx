@@ -1,9 +1,16 @@
-import { Button } from "@ledgerhq/lumen-ui-react";
+import { Button, SegmentedControl, SegmentedControlButton } from "@ledgerhq/lumen-ui-react";
 import type { AccountDetailToolProps } from "../types";
-import { copy, eligibilityOf, statusOf } from "./copy";
+import {
+  copy,
+  ELIGIBILITY_OPTIONS,
+  eligibilityFromOption,
+  eligibilityOf,
+  eligibilityOptionOf,
+  statusOf,
+} from "./copy";
 
 export function AccountDetail({ analyticsIntroduction }: AccountDetailToolProps) {
-  const { hasDismissed, isEligible, onReset } = analyticsIntroduction;
+  const { hasDismissed, isEligible, onReset, onEligibilityChange } = analyticsIntroduction;
 
   return (
     <div className="flex flex-col">
@@ -15,7 +22,22 @@ export function AccountDetail({ analyticsIntroduction }: AccountDetailToolProps)
             {copy.reset}
           </Button>
         </div>
-        <span className="body-3 text-muted">{eligibilityOf(isEligible)}</span>
+        <div className="flex items-center justify-between gap-12">
+          <span className="body-3 text-muted">{eligibilityOf(isEligible)}</span>
+          <SegmentedControl
+            className="w-auto shrink-0"
+            selectedValue={eligibilityOptionOf(isEligible)}
+            onSelectedChange={value => onEligibilityChange(eligibilityFromOption(value))}
+            tabLayout="fit"
+            aria-label={copy.eligibilityControlLabel}
+          >
+            {ELIGIBILITY_OPTIONS.map(option => (
+              <SegmentedControlButton key={option.value} value={option.value}>
+                {option.label}
+              </SegmentedControlButton>
+            ))}
+          </SegmentedControl>
+        </div>
       </section>
     </div>
   );

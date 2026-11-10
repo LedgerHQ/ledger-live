@@ -37,6 +37,19 @@ describe("useAccountDetailToolProps", () => {
     expect(result.current.analyticsIntroduction.isEligible).toBe(false);
   });
 
+  it("forces a recorded eligibility, then clears it", () => {
+    const { store, result } = setup();
+    act(() => {
+      store.dispatch(recordAccountAnalyticsIntroductionEligibility(false));
+    });
+
+    act(() => result.current.analyticsIntroduction.onEligibilityChange(true));
+    expect(store.getState().accountAnalyticsIntroduction.isEligible).toBe(true);
+
+    act(() => result.current.analyticsIntroduction.onEligibilityChange(null));
+    expect(result.current.analyticsIntroduction.isEligible).toBeNull();
+  });
+
   it("resets a dismissed card so it shows again", () => {
     const { store, result } = setup();
     act(() => {

@@ -23,7 +23,9 @@ introduction is not dismissed. Eligibility is a one-time snapshot: on the first 
 the persisted state successfully, the host records whether the user had already completed
 onboarding with a device (`recordAccountAnalyticsIntroductionEligibility`), and later launches keep
 it. A user who onboards after that launch is never eligible, so the introduction targets users who
-knew the legacy account page. Reset clears the dismissal and keeps the snapshot.
+knew the legacy account page. Reset clears the dismissal and keeps the snapshot. Debug tools can
+replace the snapshot with `overrideAccountAnalyticsIntroductionEligibility`; `null` lets the next
+launch record it again. Product code never calls it.
 
 Apps register the reducer and persist its projection locally. Dismissal applies to every account
 on one installation, with no synchronization between desktop and mobile. Storage integration and

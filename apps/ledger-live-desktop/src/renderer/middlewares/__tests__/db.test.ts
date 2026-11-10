@@ -13,6 +13,7 @@ import DBMiddleware from "../db";
 import {
   accountAnalyticsIntroductionSlice,
   dismissAccountAnalyticsIntroduction,
+  overrideAccountAnalyticsIntroductionEligibility,
   recordAccountAnalyticsIntroductionEligibility,
   resetAccountAnalyticsIntroduction,
   restoreAccountAnalyticsIntroduction,
@@ -535,6 +536,28 @@ describe("DBMiddleware - Analytics introduction", () => {
     expect(mockedSetKey).toHaveBeenCalledWith("app", "accountAnalyticsIntroduction", {
       hasDismissed: false,
       isEligible: true,
+    });
+  });
+
+  it("should persist an eligibility forced from the DevTools", () => {
+    const before: FakeState = {
+      ...baseState(),
+      accountAnalyticsIntroduction: { hasDismissed: false, isEligible: true },
+    };
+    const action = overrideAccountAnalyticsIntroductionEligibility(false);
+    const after: FakeState = {
+      ...before,
+      accountAnalyticsIntroduction: accountAnalyticsIntroductionSlice.reducer(
+        before.accountAnalyticsIntroduction,
+        action,
+      ),
+    };
+
+    runMiddleware([before, after], action);
+
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "accountAnalyticsIntroduction", {
+      hasDismissed: false,
+      isEligible: false,
     });
   });
 
