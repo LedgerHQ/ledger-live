@@ -1,27 +1,37 @@
-import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
+import {
+  createAgentEnrollmentRequest,
+  createSoftwareAgentIdentity,
+  type AgentEnrollmentChannelBinding,
+  type AgentEnrollmentRequestV2,
+  type EnrollmentChannelWebSocket,
+} from "@ledgerhq/agent-intent-sdk";
+import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import { createRelayHost, relayProxyFromEnv } from "./relay";
 
-const realAgentIntentSdk = { ...(await import("@ledgerhq/agent-intent-sdk")) };
-let webSocketFactory: ((url: string) => unknown) | undefined;
-
-mock.module("@ledgerhq/agent-intent-sdk", () => ({
-  ...realAgentIntentSdk,
-  createAgentEnrollmentChannelHost: ({
-    webSocketFactory: factory,
-  }: {
-    webSocketFactory?: (url: string) => unknown;
-  }) => {
-    webSocketFactory = factory;
-    return {};
-  },
-}));
-
-const { createRelayHost, relayProxyFromEnv } = await import("./relay");
-
-const RELAY_URL = "wss://trustchain.api.live.ledger.com/v1/qr?host=test-host-public-key";
 const PROXY_URL = "http://proxy.example:8080";
 const PROXY_ENVIRONMENT_KEYS = ["HTTPS_PROXY", "https_proxy", "HTTP_PROXY", "http_proxy"] as const;
 const originalWebSocket = globalThis.WebSocket;
 let originalProxyEnvironment: Record<(typeof PROXY_ENVIRONMENT_KEYS)[number], string | undefined>;
+
+function relayRequest(channel: AgentEnrollmentChannelBinding): AgentEnrollmentRequestV2 {
+  return createAgentEnrollmentRequest(createSoftwareAgentIdentity(), {
+    name: "Relay test",
+    description: "Tests relay WebSocket configuration",
+    source: "other",
+    expiresAt: new Date(Date.now() + 60_000).toISOString(),
+    channel,
+  }) as AgentEnrollmentRequestV2;
+}
+
+function openRelay(host: ReturnType<typeof createRelayHost>): void {
+  void host
+    .waitForCompletion({
+      request: relayRequest(host.binding),
+      authenticate: async () => undefined,
+      persist: async () => undefined,
+    })
+    .catch(() => undefined);
+}
 
 describe("relayProxyFromEnv", () => {
   it.each([
@@ -67,7 +77,6 @@ describe("relayProxyFromEnv", () => {
 
 describe("createRelayHost WebSocket factory", () => {
   beforeEach(() => {
-    webSocketFactory = undefined;
     originalProxyEnvironment = Object.fromEntries(
       PROXY_ENVIRONMENT_KEYS.map(key => [key, process.env[key]]),
     ) as typeof originalProxyEnvironment;
@@ -87,26 +96,40 @@ describe("createRelayHost WebSocket factory", () => {
     const calls: unknown[][] = [];
     globalThis.WebSocket = function (...args: unknown[]) {
       calls.push(args);
+      return {
+        addEventListener: () => undefined,
+        close: () => undefined,
+        send: () => undefined,
+      } satisfies EnrollmentChannelWebSocket;
     } as unknown as typeof WebSocket;
     process.env.HTTPS_PROXY = PROXY_URL;
 
-    createRelayHost("production", 60_000);
-    expect(webSocketFactory).toBeDefined();
-    webSocketFactory!(RELAY_URL);
+    const host = createRelayHost("production", 60_000);
+    openRelay(host);
 
-    expect(calls).toEqual([[RELAY_URL, { proxy: PROXY_URL }]]);
+    expect(calls).toHaveLength(1);
+    expect(calls[0]?.[0]).toMatch(/^wss:\/\/trustchain\.api\.live\.ledger\.com\/v1\/qr\?host=/);
+    expect(calls[0]?.[1]).toEqual({ proxy: PROXY_URL });
+    host.close();
   });
 
   it("should pass the relay URL without proxy options when no proxy is configured", () => {
     const calls: unknown[][] = [];
     globalThis.WebSocket = function (...args: unknown[]) {
       calls.push(args);
+      return {
+        addEventListener: () => undefined,
+        close: () => undefined,
+        send: () => undefined,
+      } satisfies EnrollmentChannelWebSocket;
     } as unknown as typeof WebSocket;
 
-    createRelayHost("production", 60_000);
-    expect(webSocketFactory).toBeDefined();
-    webSocketFactory!(RELAY_URL);
+    const host = createRelayHost("production", 60_000);
+    openRelay(host);
 
-    expect(calls).toEqual([[RELAY_URL]]);
+    expect(calls).toHaveLength(1);
+    expect(calls[0]?.[0]).toMatch(/^wss:\/\/trustchain\.api\.live\.ledger\.com\/v1\/qr\?host=/);
+    expect(calls[0]).toHaveLength(1);
+    host.close();
   });
 });
