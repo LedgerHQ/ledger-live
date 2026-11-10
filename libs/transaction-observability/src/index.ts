@@ -46,9 +46,10 @@ export {
 export {
   installEarnLifecycleHost,
   isEarnTxLifecycleMonitoringEnabled,
-  registerTxLifecycleObserver,
   setEarnTxLifecycleFlagReader,
+  setTxLifecycleBaseUrl,
   startDappLifecycleMonitoring,
+  startDappTxLifecycle,
 } from "./earnLifecycleHost";
 
 export { isBorrowApp, setBorrowManifestIdReader } from "./borrowApps";
@@ -56,9 +57,12 @@ export { isBorrowApp, setBorrowManifestIdReader } from "./borrowApps";
 export {
   installBorrowLifecycleHost,
   isBorrowTxLifecycleMonitoringEnabled,
+  setBorrowTxLifecycleBaseUrl,
   setBorrowTxLifecycleFlagReader,
   startBorrowLifecycleMonitoring,
 } from "./borrowLifecycleHost";
+
+export { registerTxLifecycleObserver, toTxLifecyclePayload } from "./txLifecycleProducts";
 
 export { toSegmentTrackEvent, type SegmentTrackEvent } from "./segmentEvent";
 
@@ -70,12 +74,6 @@ export {
   abandonPendingDappTxLifecycle,
   clearPendingDappTxLifecycle,
   clearPendingTxLifecycle,
-  sendTxLifecycle,
-  setBorrowTxLifecycleBaseUrl,
-  setTxLifecycleBaseUrl,
-  startDappTxLifecycle,
-  toTxLifecyclePayload,
-  type TxLifecycleApp,
   type TxLifecycleFailureClass,
   type TxLifecyclePath,
   type TxLifecyclePayload,

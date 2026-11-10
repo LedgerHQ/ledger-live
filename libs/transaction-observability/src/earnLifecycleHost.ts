@@ -1,16 +1,14 @@
-import { isBorrowTxLifecycleMonitoringEnabled } from "./borrowLifecycleHost";
-import { setTransactionObserver } from "./observer";
-import { setStakeProgramAppsReader, stakeProgramAppIds } from "./stakingApps";
+import { TransactionPathway, type LogEvent } from "./logEvent";
+import { isEarnMonitoringApp, setStakeProgramAppsReader, stakeProgramAppIds } from "./stakingApps";
 import {
   abandonPendingDappTxLifecycle,
   clearPendingDappTxLifecycle,
   clearPendingTxLifecycle,
-  lifecycleAppOf,
+  normalizeTxLifecycleBaseUrl,
   sendTxLifecycle,
-  setTxLifecycleBaseUrl,
-  startDappTxLifecycle,
-  toTxLifecyclePayload,
+  type TxLifecyclePath,
   type TxLifecyclePlatform,
+  type TxLifecycleProduct,
 } from "./txLifecycle";
 
 /**
@@ -30,29 +28,67 @@ export function isEarnTxLifecycleMonitoringEnabled(): boolean {
   return readFlag?.() ?? false;
 }
 
-/**
- * Sends the consent-independent lifecycle events. Separate from the Segment observer each host
- * registers: this one answers to its own kill-switch rather than to analytics consent.
- */
-export function registerTxLifecycleObserver(platform: TxLifecyclePlatform): void {
-  setTransactionObserver(event => {
-    // Each product answers to its own kill-switch; a Borrow event never consults Earn's.
-    const app = lifecycleAppOf(event.manifestId);
-    const enabled =
-      app === "borrow"
-        ? isBorrowTxLifecycleMonitoringEnabled()
-        : isEarnTxLifecycleMonitoringEnabled();
-    if (!enabled) {
-      clearPendingTxLifecycle(platform, app);
-      return;
-    }
+/** The Earn live app reports its own lifecycle; the host only monitors partner dApps. */
+const APP_OWNED_MANIFEST_IDS = new Set(["earn", "earn-stg", "earn-prd-eks"]);
+const DEFAULT_EARN_API_BASE_URL = "https://earn.api.live.ledger.com";
 
-    const payload = toTxLifecyclePayload(event, platform);
-    if (!payload) return;
+let earnApiBaseUrl = DEFAULT_EARN_API_BASE_URL;
 
-    // The manifest stays local: it correlates the attempt here and never reaches the wire.
-    sendTxLifecycle(payload, event.manifestId);
-  });
+export function setTxLifecycleBaseUrl(baseUrl: string | undefined): void {
+  earnApiBaseUrl = normalizeTxLifecycleBaseUrl(baseUrl, DEFAULT_EARN_API_BASE_URL);
+}
+
+function isMonitoredDapp(manifestId: string): boolean {
+  return !APP_OWNED_MANIFEST_IDS.has(manifestId) && isEarnMonitoringApp(manifestId);
+}
+
+function earnPathOf(event: LogEvent): TxLifecyclePath | undefined {
+  if (event.manifestId) return isMonitoredDapp(event.manifestId) ? "dapp" : undefined;
+
+  const isNativeRoute =
+    event.pathway === TransactionPathway.Send || event.pathway === TransactionPathway.Unknown;
+  return event.earnTransactionType && isNativeRoute ? "native" : undefined;
+}
+
+export const earnLifecycleProduct: TxLifecycleProduct = {
+  id: "earn",
+  pathOf: earnPathOf,
+  isEnabled: isEarnTxLifecycleMonitoringEnabled,
+  baseUrl: () => earnApiBaseUrl,
+};
+
+declare const process: { env: Record<string, string | undefined> };
+
+// The desktop bundler rewrites `process.env`; its renderer has no global `process`.
+function readClientVersion(): string | undefined {
+  try {
+    return process.env.LEDGER_CLIENT_VERSION;
+  } catch {
+    return undefined;
+  }
+}
+
+export function startDappTxLifecycle(
+  platform: TxLifecyclePlatform,
+  manifestId: string | undefined,
+): void {
+  if (!manifestId || !isMonitoredDapp(manifestId)) return;
+
+  // Every host sets this alongside the `LEDGER_CLIENT_VERSION` env read the sign events carry, so
+  // the placeholder intent reports the same string as the terminal that closes it.
+  const appVersion = readClientVersion();
+  sendTxLifecycle(
+    earnLifecycleProduct,
+    {
+      schema_version: 1,
+      event: "tx_intent",
+      path: "dapp",
+      platform,
+      currency_family: "other",
+      ...(appVersion ? { app_version: appVersion } : {}),
+    },
+    manifestId,
+  );
 }
 
 /**
@@ -124,7 +160,7 @@ export function installEarnLifecycleHost<F extends StakeProgramsFeature>(config:
   let wasEnabled = readEnabled();
   return () => {
     const enabled = readEnabled();
-    if (wasEnabled && !enabled) clearPendingTxLifecycle(platform);
+    if (wasEnabled && !enabled) clearPendingTxLifecycle(platform, earnLifecycleProduct.id);
     wasEnabled = enabled;
   };
 }

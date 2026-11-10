@@ -1,10 +1,12 @@
-import { setBorrowManifestIdReader } from "./borrowApps";
+import { isBorrowApp, setBorrowManifestIdReader } from "./borrowApps";
 import {
   abandonPendingDappTxLifecycle,
   clearPendingDappTxLifecycle,
   clearPendingTxLifecycle,
-  setBorrowTxLifecycleBaseUrl,
+  normalizeTxLifecycleBaseUrl,
+  type TxLifecyclePayload,
   type TxLifecyclePlatform,
+  type TxLifecycleProduct,
 } from "./txLifecycle";
 
 /**
@@ -23,6 +25,37 @@ export function isBorrowTxLifecycleMonitoringEnabled(): boolean {
   return readFlag?.() ?? false;
 }
 
+const DEFAULT_BORROW_API_BASE_URL = "https://global.api.prd.ledger.com/borrow";
+
+let borrowApiBaseUrl = DEFAULT_BORROW_API_BASE_URL;
+
+/** Borrow has its own sink, so its base URL is configured apart from Earn's. */
+export function setBorrowTxLifecycleBaseUrl(baseUrl: string | undefined): void {
+  borrowApiBaseUrl = normalizeTxLifecycleBaseUrl(baseUrl, DEFAULT_BORROW_API_BASE_URL);
+}
+
+/**
+ * The Borrow live app owns its intent and its success/failure terminals, because only it knows
+ * the action (supply, borrow, repay, withdraw) the wire contract has no field for. The host
+ * therefore tracks Borrow attempts locally and only reports what the app cannot: an attempt
+ * that ended without any terminal (abandoned). Everything else would double count.
+ */
+function isAbandoned(payload: TxLifecyclePayload): boolean {
+  return (
+    payload.event === "tx_terminal" &&
+    payload.outcome === "failure" &&
+    payload.failure_class === "abandoned"
+  );
+}
+
+export const borrowLifecycleProduct: TxLifecycleProduct = {
+  id: "borrow",
+  pathOf: event => (isBorrowApp(event.manifestId) ? "dapp" : undefined),
+  isEnabled: isBorrowTxLifecycleMonitoringEnabled,
+  baseUrl: () => borrowApiBaseUrl,
+  reports: isAbandoned,
+};
+
 /**
  * Closes a Borrow attempt the user left behind: when the webview goes away with a sign still
  * pending, no terminal will ever arrive, and the live app cannot report it from a dead page.
@@ -35,10 +68,9 @@ export function startBorrowLifecycleMonitoring(
 ): (() => void) | undefined {
   if (!manifestId) return;
 
-  if (!enabled) {
-    clearPendingDappTxLifecycle(platform, manifestId);
-    return;
-  }
+  // An attempt left over from another surface or an earlier visit is not this screen's to report.
+  clearPendingDappTxLifecycle(platform, manifestId);
+  if (!enabled) return;
 
   return () => {
     if (isBorrowTxLifecycleMonitoringEnabled()) {
@@ -66,7 +98,7 @@ export function installBorrowLifecycleHost(config: {
   let wasEnabled = readEnabled();
   return () => {
     const enabled = readEnabled();
-    if (wasEnabled && !enabled) clearPendingTxLifecycle(platform, "borrow");
+    if (wasEnabled && !enabled) clearPendingTxLifecycle(platform, borrowLifecycleProduct.id);
     wasEnabled = enabled;
   };
 }

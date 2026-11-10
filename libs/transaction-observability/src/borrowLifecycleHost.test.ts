@@ -1,10 +1,12 @@
 import { setBorrowManifestIdReader, isBorrowApp } from "./borrowApps";
+import { ErrorCategory } from "./errorCategory";
 import {
   installBorrowLifecycleHost,
+  setBorrowTxLifecycleBaseUrl,
   setBorrowTxLifecycleFlagReader,
   startBorrowLifecycleMonitoring,
 } from "./borrowLifecycleHost";
-import { registerTxLifecycleObserver, setEarnTxLifecycleFlagReader } from "./earnLifecycleHost";
+import { setEarnTxLifecycleFlagReader, setTxLifecycleBaseUrl } from "./earnLifecycleHost";
 import {
   TransactionDataSource,
   TransactionPathway,
@@ -12,12 +14,8 @@ import {
   type LogEvent,
 } from "./logEvent";
 import { emitTransactionEvent, resetTransactionObservers } from "./observer";
-import {
-  clearPendingTxLifecycle,
-  setBorrowTxLifecycleBaseUrl,
-  setTxLifecycleBaseUrl,
-  toTxLifecyclePayload,
-} from "./txLifecycle";
+import { clearPendingTxLifecycle } from "./txLifecycle";
+import { registerTxLifecycleObserver, toTxLifecyclePayload } from "./txLifecycleProducts";
 
 const common = {
   appVersion: "lld/2.0.0",
@@ -90,8 +88,8 @@ describe("borrow lifecycle", () => {
   });
 
   it("reports an attempt abandoned with the webview to the Borrow sink only", () => {
-    emitTransactionEvent(intent);
     const close = startBorrowLifecycleMonitoring("desktop", "borrow", true);
+    emitTransactionEvent(intent);
     close?.();
 
     expect(calls()).toEqual([
@@ -123,15 +121,19 @@ describe("borrow lifecycle", () => {
 
   it("answers to its own kill-switch, not Earn's", () => {
     setEarnTxLifecycleFlagReader(() => false);
+    let close = startBorrowLifecycleMonitoring("desktop", "borrow", true);
     emitTransactionEvent(intent);
-    startBorrowLifecycleMonitoring("desktop", "borrow", true)?.();
-    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    close?.();
+    expect(calls()).toEqual([
+      expect.objectContaining({ url: "https://borrow.example.test/v1/tx/lifecycle" }),
+    ]);
 
     fetchSpy.mockClear();
     setBorrowTxLifecycleFlagReader(() => false);
     setEarnTxLifecycleFlagReader(() => true);
+    close = startBorrowLifecycleMonitoring("desktop", "borrow", true);
     emitTransactionEvent(intent);
-    startBorrowLifecycleMonitoring("desktop", "borrow", true)?.();
+    close?.();
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
@@ -175,6 +177,73 @@ describe("borrow lifecycle", () => {
     listener();
     enabled = true;
     startBorrowLifecycleMonitoring("desktop", "borrow-stg", true)?.();
+
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("does not report an attempt left pending before the screen mounted", () => {
+    emitTransactionEvent(intent);
+    startBorrowLifecycleMonitoring("desktop", "borrow", true)?.();
+
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("reports a sign flow abandoned mid-way once, then nothing at teardown", () => {
+    const close = startBorrowLifecycleMonitoring("desktop", "borrow", true);
+    emitTransactionEvent(intent);
+    emitTransactionEvent({
+      status: "failure",
+      stage: TransactionStage.Sign,
+      error: new Error("dismissed"),
+      errorCategory: ErrorCategory.UserModalDismissed,
+      abandoned: true,
+      ...common,
+    });
+    close?.();
+
+    expect(calls()).toEqual([
+      expect.objectContaining({
+        url: "https://borrow.example.test/v1/tx/lifecycle",
+        body: expect.objectContaining({ failure_class: "abandoned" }),
+      }),
+    ]);
+  });
+
+  it("leaves a device refusal to the live app and closes the attempt", () => {
+    const close = startBorrowLifecycleMonitoring("desktop", "borrow", true);
+    emitTransactionEvent(intent);
+    emitTransactionEvent({
+      status: "failure",
+      stage: TransactionStage.Sign,
+      error: new Error("refused"),
+      errorCategory: ErrorCategory.UserDeviceRefused,
+      ...common,
+    });
+    close?.();
+
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("reports a superseded attempt on another chain once, to the Borrow sink", () => {
+    startBorrowLifecycleMonitoring("desktop", "borrow", true);
+    emitTransactionEvent(intent);
+    emitTransactionEvent({ ...intent, currencyId: "polygon" });
+
+    expect(calls()).toEqual([
+      {
+        url: "https://borrow.example.test/v1/tx/lifecycle",
+        body: expect.objectContaining({ failure_class: "abandoned", network: "ethereum" }),
+      },
+    ]);
+  });
+
+  it("drops a manifest both products claim rather than misroute it", () => {
+    setBorrowManifestIdReader(() => "lido");
+    const lidoIntent: LogEvent = { ...intent, manifestId: "lido", earnTransactionType: "delegate" };
+
+    expect(toTxLifecyclePayload(lidoIntent, "desktop")).toBeNull();
+    emitTransactionEvent(lidoIntent);
+    emitTransactionEvent({ ...success, manifestId: "lido" });
 
     expect(fetchSpy).not.toHaveBeenCalled();
   });
