@@ -94,14 +94,11 @@ export class MyLedgerPage extends AppPage {
   );
 
   private readonly deviceNotOnboardedError = this.page.locator("#error-device-not-onboarded");
-  private readonly setUpDeviceButton = (device: DeviceModelId) => {
-    const productName = PRODUCT_NAME[device];
-    if (!productName) throw new Error(`No product name known for device model ${device}`);
-    return this.deviceNotOnboardedError.getByRole("button", {
+  private readonly setUpDeviceButton = (productName: string) =>
+    this.deviceNotOnboardedError.getByRole("button", {
       name: `Set up my ${productName}`,
       exact: true,
     });
-  };
 
   private readonly customImageButton = this.page.getByTestId("manager-custom-image-button");
 
@@ -144,7 +141,9 @@ export class MyLedgerPage extends AppPage {
 
   @step("Click the device setup button for $0")
   async startDeviceSetup(device: DeviceModelId) {
-    await this.setUpDeviceButton(device).click();
+    const productName = PRODUCT_NAME[device];
+    if (!productName) throw new Error(`No product name known for device model ${device}`);
+    await this.setUpDeviceButton(productName).click();
   }
 
   /** The submit button becomes the close button once the rename lands, so both are needed. */
