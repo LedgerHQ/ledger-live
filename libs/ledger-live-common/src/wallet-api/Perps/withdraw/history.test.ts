@@ -31,6 +31,8 @@ const entry = (destination: AccountLike = receiver) =>
 
 describe("createPerpsWithdrawSwapOperation", () => {
   it("is pending, from the HyperCore account and not anchored to an operation yet", () => {
+    jest.spyOn(Date, "now").mockReturnValueOnce(1_767_323_045_000);
+
     expect(entry()).toEqual({
       provider: PERPS_SWAPKIT_PROVIDER,
       swapId: "swap-id",
@@ -42,6 +44,7 @@ describe("createPerpsWithdrawSwapOperation", () => {
       toAmount: new BigNumber("1920889859402573"),
       feesAmount: "1000000",
       payoutFeesAmount: "400000000000000",
+      createdAt: 1_767_323_045_000,
     });
   });
 

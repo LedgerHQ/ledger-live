@@ -49,6 +49,7 @@ export function createPerpsWithdrawSwapOperation({
     ...(!payoutNetworkFees.isZero() && {
       payoutFeesAmount: toAtomic(destinationAccount, payoutNetworkFees).toFixed(),
     }),
+    createdAt: Date.now(),
   };
 }
 

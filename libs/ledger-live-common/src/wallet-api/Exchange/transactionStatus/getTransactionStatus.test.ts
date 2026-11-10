@@ -320,6 +320,7 @@ describe("getTransactionStatus", () => {
           toAmount: new BigNumber("190000"),
           feesAmount: "1000000",
           payoutFeesAmount: "3500",
+          createdAt: 1_767_323_045_000,
         },
       ],
     });
@@ -347,6 +348,7 @@ describe("getTransactionStatus", () => {
         receivedAmount: "190000",
         feesAmount: "1000000",
         payoutFeesAmount: "3500",
+        createdAt: 1_767_323_045_000,
       });
       expect(response.operationHash).toBeUndefined();
     });

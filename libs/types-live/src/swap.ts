@@ -31,6 +31,11 @@ export type SwapOperation = {
    */
   feesAmount?: string;
   payoutFeesAmount?: string;
+  /**
+   * When the swap was submitted, in ms. Set when there is no operation to take the date from yet
+   * (perps withdraw before its payout tx is synced).
+   */
+  createdAt?: number;
 };
 
 /**
@@ -49,4 +54,5 @@ export type SwapOperationRaw = {
   fromAccountId?: string;
   feesAmount?: string;
   payoutFeesAmount?: string;
+  createdAt?: number;
 };

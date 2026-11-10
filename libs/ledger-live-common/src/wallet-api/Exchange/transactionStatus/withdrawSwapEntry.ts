@@ -35,6 +35,7 @@ export function mapWithdrawSwapEntry(
     payoutFeesAmount: entry.payoutFeesAmount,
     // The payout tx, for the explorer link: anchored already, or returned by the swap status.
     operationHash: entry.operationId || remoteStatus?.txHash,
+    createdAt: entry.createdAt,
   };
 }
 
