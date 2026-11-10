@@ -1,13 +1,13 @@
 name: "[Mobile] - Startup Performance - Scheduled/Manual"
 run-name: >
-  @Mobile startup perf • ${{ github.event_name == 'schedule' && 'Scheduled' || 'Manual' }} • ${{ inputs.preset || 'prod-vs-develop' }} • ${{ inputs.platforms || 'Android & iOS' }} • ${{ github.ref_name }} • ${{ github.actor }}
+  @Mobile startup perf • ${{ github.event_name == 'schedule' && 'Nightly' || format('{0} • {1}', inputs.preset, inputs.platforms) }} • ${{ github.ref_name }} • ${{ github.actor }}
 
 # B2CQA-6555 (iOS) and B2CQA-6593 (Android). See e2e/tooling/startup-perf/README.md.
 
 on:
   schedule:
-    # Weekdays, after the mobile E2E nightly: develop against the latest production tag.
-    - cron: "0 3 * * 1-5"
+    # Weekdays, after the mobile E2E nightly: develop against production (ci/resolve-refs.mts).
+    - cron: "17 3 * * 1-5"
   workflow_dispatch:
     inputs:
       preset:
@@ -21,7 +21,7 @@ on:
         required: false
         type: string
       ref_b:
-        description: "Build B, a branch or tag of this repository. Blank: the release branch (prod-vs-release) or this branch (prod-vs-develop)"
+        description: "Build B, a branch or tag of this repository. Blank: the release branch (prod-vs-release) or develop (prod-vs-develop)"
         required: false
         type: string
       platforms:
@@ -61,12 +61,6 @@ env:
   MAESTRO_SHA256: 29b675e10cc12080e445e9bfb2e2b4e4dfb9c0f2e30d5884120d258b5e1cd991
   RESULTS_DIR: startup-perf-results
   PERF_AVD_CORES: "4"
-  # A scheduled run has no inputs: these are its settings.
-  PRESET: ${{ inputs.preset || 'prod-vs-develop' }}
-  PAIRS: ${{ inputs.pairs || '20' }}
-  SCENARIOS: ${{ inputs.scenarios || 'no-accounts,accounts' }}
-  ACCOUNTS_USERDATA: ${{ inputs.accounts_userdata || 'speculos-x-other-account,swap-history' }}
-  THRESHOLD: ${{ inputs.threshold_ms || '100' }}
 
 jobs:
   plan:
@@ -80,6 +74,11 @@ jobs:
       ref_b: ${{ steps.plan.outputs.ref_b }}
       label_a: ${{ steps.plan.outputs.label_a }}
       label_b: ${{ steps.plan.outputs.label_b }}
+      preset: ${{ steps.plan.outputs.preset }}
+      platforms: ${{ steps.plan.outputs.platforms }}
+      pairs: ${{ steps.plan.outputs.pairs }}
+      threshold_ms: ${{ steps.plan.outputs.threshold_ms }}
+      accounts_userdata: ${{ steps.plan.outputs.accounts_userdata }}
     steps:
       # This workflow's scripts only.
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -95,8 +94,14 @@ jobs:
       - name: Resolve refs
         id: plan
         env:
+          PRESET: ${{ inputs.preset }}
           REF_A: ${{ inputs.ref_a }}
           REF_B: ${{ inputs.ref_b }}
+          PLATFORMS: ${{ inputs.platforms }}
+          PAIRS: ${{ inputs.pairs }}
+          THRESHOLD: ${{ inputs.threshold_ms }}
+          SCENARIOS: ${{ inputs.scenarios }}
+          ACCOUNTS_USERDATA: ${{ inputs.accounts_userdata }}
           BRANCH_SHA: ${{ github.sha }}
           REPO_URL: ${{ github.server_url }}/${{ github.repository }}.git
         run: node e2e/tooling/startup-perf/ci/resolve-refs.mts
@@ -104,7 +109,7 @@ jobs:
   build-android:
     name: "Android build ${{ matrix.side }}"
     needs: [plan]
-    if: ${{ inputs.platforms != 'iOS Only' }}
+    if: ${{ needs.plan.outputs.platforms != 'iOS Only' }}
     permissions:
       id-token: write
       contents: read
@@ -167,7 +172,7 @@ jobs:
 
       - name: Prepare the prod-like build
         env:
-          STARTUP_PERF_REGRESSION: ${{ env.PRESET == 'known-regression' && matrix.side == 'b' && 'LIVE-36190' || '' }}
+          STARTUP_PERF_REGRESSION: ${{ needs.plan.outputs.preset == 'known-regression' && matrix.side == 'b' && 'LIVE-36190' || '' }}
         run: node .startup-perf/e2e/tooling/startup-perf/ci/prepare-build.mts
 
       - name: Build detoxPreRelease APK (x86_64, JS bundled)
@@ -199,7 +204,7 @@ jobs:
   build-ios:
     name: "iOS build ${{ matrix.side }}"
     needs: [plan]
-    if: ${{ inputs.platforms != 'Android Only' }}
+    if: ${{ needs.plan.outputs.platforms != 'Android Only' }}
     permissions:
       id-token: write
       contents: read
@@ -257,7 +262,7 @@ jobs:
 
       - name: Prepare the prod-like build
         env:
-          STARTUP_PERF_REGRESSION: ${{ env.PRESET == 'known-regression' && matrix.side == 'b' && 'LIVE-36190' || '' }}
+          STARTUP_PERF_REGRESSION: ${{ needs.plan.outputs.preset == 'known-regression' && matrix.side == 'b' && 'LIVE-36190' || '' }}
         run: node .startup-perf/e2e/tooling/startup-perf/ci/prepare-build.mts
 
       - name: Build Release simulator app (JS bundled)
@@ -287,7 +292,7 @@ jobs:
   measure-android:
     name: "Android startup (2 emulators, ${{ matrix.scenario }})"
     needs: [plan, build-android]
-    if: ${{ inputs.platforms != 'iOS Only' }}
+    if: ${{ needs.plan.outputs.platforms != 'iOS Only' }}
     strategy:
       fail-fast: false
       matrix:
@@ -426,6 +431,8 @@ jobs:
       - name: Measure
         env:
           SCENARIO: ${{ matrix.scenario }}
+          PAIRS: ${{ needs.plan.outputs.pairs }}
+          ACCOUNTS_USERDATA: ${{ needs.plan.outputs.accounts_userdata }}
         run: |
           set -euo pipefail
           APP_A=builds/a/signed.apk
@@ -442,6 +449,8 @@ jobs:
       - name: Analyse
         if: ${{ always() }}
         env:
+          PRESET: ${{ needs.plan.outputs.preset }}
+          THRESHOLD: ${{ needs.plan.outputs.threshold_ms }}
           LABEL_A: ${{ needs.plan.outputs.label_a }}
           LABEL_B: ${{ needs.plan.outputs.label_b }}
         run: |
@@ -461,7 +470,7 @@ jobs:
   measure-ios:
     name: "iOS startup (2 simulators)"
     needs: [plan, build-ios]
-    if: ${{ inputs.platforms != 'Android Only' }}
+    if: ${{ needs.plan.outputs.platforms != 'Android Only' }}
     # One iOS measurement at a time on the performance pool, so two never measure side by side;
     # queue: max keeps every waiting run instead of only the latest.
     concurrency:
@@ -518,6 +527,10 @@ jobs:
         run: bash e2e/tooling/startup-perf/devices/boot-simulators.sh
 
       - name: Measure
+        env:
+          SCENARIOS: ${{ join(fromJSON(needs.plan.outputs.scenarios), ',') }}
+          PAIRS: ${{ needs.plan.outputs.pairs }}
+          ACCOUNTS_USERDATA: ${{ needs.plan.outputs.accounts_userdata }}
         run: |
           set -euo pipefail
           APP_A=builds/a/ledgerlivemobile.app
@@ -534,6 +547,8 @@ jobs:
       - name: Analyse
         if: ${{ always() }}
         env:
+          PRESET: ${{ needs.plan.outputs.preset }}
+          THRESHOLD: ${{ needs.plan.outputs.threshold_ms }}
           LABEL_A: ${{ needs.plan.outputs.label_a }}
           LABEL_B: ${{ needs.plan.outputs.label_b }}
         run: |
@@ -549,3 +564,27 @@ jobs:
           name: startup-perf-results-ios
           path: ${{ env.RESULTS_DIR }}/ios
           retention-days: 30
+
+  report-on-slack:
+    name: "Nightly > Slack report"
+    needs: [plan, build-android, build-ios, measure-android, measure-ios]
+    if: ${{ always() && github.event_name == 'schedule' && contains(needs.*.result, 'failure') }}
+    runs-on: ledger-wallet-1cpu-aws-public-cached
+    steps:
+      - name: Post to the live-repo-health channel
+        uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
+          payload: |
+            channel: "C05FKJ7DFAP"
+            text: "[Alert] Mobile startup performance nightly failed"
+            blocks:
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "*Mobile startup performance nightly failed*: develop is slower than production by more than 100 ms, or the run could not conclude. The verdicts are in the job summaries."
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"

@@ -1,8 +1,10 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
+  inputsOf,
   latestProdTag,
   type LsRemote,
+  NIGHTLY,
   outputsOf,
   planBuilds,
   type PlanInputs,
@@ -43,9 +45,11 @@ const INPUTS: PlanInputs = {
   preset: "custom",
   refA: "live-mobile@4.27.0",
   refB: "develop",
+  platforms: "Android & iOS",
   pairs: "20",
   thresholdMs: "100",
   scenarios: "no-accounts,accounts",
+  accountsUserdata: "speculos-x-other-account,swap-history",
   branchSha: SHA(9),
   branchName: "ci/branch",
 };
@@ -103,28 +107,32 @@ describe("planBuilds", () => {
     assert.deepEqual(plan.warnings, ["develop and develop are the same commit"]);
   });
 
-  it("defaults prod-vs-develop to the latest prod tag against the commit the run is on", () => {
+  it("defaults prod-vs-develop to the latest prod tag against develop, from any branch", () => {
     const plan = planBuilds(
-      { ...INPUTS, preset: "prod-vs-develop", refA: "", refB: "", branchName: "develop" },
+      { ...INPUTS, preset: "prod-vs-develop", refA: "", refB: "" },
       fakeLsRemote(),
     );
-    assert.deepEqual([plan.sides, plan.shaA, plan.shaB], [["a", "b"], SHA(5), SHA(9)]);
+    assert.deepEqual([plan.sides, plan.shaA, plan.shaB], [["a", "b"], SHA(5), SHA(1)]);
     assert.equal(plan.labelA, `live-mobile@4.27.1 (${SHA(5).slice(0, 10)})`);
-    assert.equal(plan.labelB, `develop (${SHA(9).slice(0, 10)})`);
+    assert.equal(plan.labelB, `develop (${SHA(1).slice(0, 10)})`);
     assert.deepEqual(plan.warnings, []);
   });
 
   it("takes ref_a and ref_b in prod-vs-develop when they are set", () => {
-    const plan = planBuilds({ ...INPUTS, preset: "prod-vs-develop" }, fakeLsRemote());
-    assert.deepEqual([plan.shaA, plan.shaB], [SHA(6), SHA(1)]);
+    const plan = planBuilds(
+      { ...INPUTS, preset: "prod-vs-develop", refA: "live-mobile@4.27.0", refB: "release" },
+      fakeLsRemote(),
+    );
+    assert.deepEqual([plan.shaA, plan.shaB], [SHA(6), SHA(2)]);
+    assert.equal(plan.labelB, `release (${SHA(2).slice(0, 10)})`);
   });
 
   it("warns in prod-vs-develop when both sides are the same commit", () => {
     const plan = planBuilds(
-      { ...INPUTS, preset: "prod-vs-develop", refA: "develop", refB: "", branchSha: SHA(1) },
+      { ...INPUTS, preset: "prod-vs-develop", refA: "develop", refB: "" },
       fakeLsRemote(),
     );
-    assert.deepEqual(plan.warnings, ["develop and ci/branch are the same commit"]);
+    assert.deepEqual(plan.warnings, ["develop and develop are the same commit"]);
   });
 
   it("needs both refs for custom", () => {
@@ -160,8 +168,42 @@ describe("planBuilds", () => {
   });
 });
 
+describe("inputsOf", () => {
+  const DISPATCH = {
+    PRESET: "custom",
+    REF_A: "live-mobile@4.27.0",
+    REF_B: "develop",
+    PLATFORMS: "iOS Only",
+    PAIRS: "",
+    THRESHOLD: "100",
+    SCENARIOS: "accounts",
+    ACCOUNTS_USERDATA: "swap-history",
+    BRANCH_SHA: SHA(9),
+    GITHUB_REF_NAME: "ci/branch",
+  };
+
+  it("runs the nightly's settings on a scheduled run, which has no inputs", () => {
+    const scheduled = {
+      GITHUB_EVENT_NAME: "schedule",
+      BRANCH_SHA: SHA(1),
+      GITHUB_REF_NAME: "develop",
+    };
+    assert.deepEqual(inputsOf(scheduled), { ...NIGHTLY, branchSha: SHA(1), branchName: "develop" });
+    const plan = planBuilds(inputsOf(scheduled), fakeLsRemote());
+    assert.equal(plan.labelB, `develop (${SHA(1).slice(0, 10)})`);
+    assert.deepEqual(plan.scenarios, ["no-accounts", "accounts"]);
+  });
+
+  it("keeps a dispatch's inputs as they are, so a blank one is still refused", () => {
+    const inputs = inputsOf({ GITHUB_EVENT_NAME: "workflow_dispatch", ...DISPATCH });
+    assert.equal(inputs.platforms, "iOS Only");
+    assert.equal(inputs.pairs, "");
+    assert.throws(() => planBuilds(inputs, fakeLsRemote()), /even number ≥ 6/);
+  });
+});
+
 describe("outputsOf and summaryOf", () => {
-  it("writes the job matrices as JSON and the summary as before", () => {
+  it("writes the job matrices as JSON, the settings and the summary as before", () => {
     const plan = planBuilds(INPUTS, fakeLsRemote());
     assert.equal(
       outputsOf(plan),
@@ -172,6 +214,11 @@ describe("outputsOf and summaryOf", () => {
         `ref_b=${SHA(1)}`,
         `label_a=live-mobile@4.27.0 (${SHA(6).slice(0, 10)})`,
         `label_b=develop (${SHA(1).slice(0, 10)})`,
+        "preset=custom",
+        "platforms=Android & iOS",
+        "pairs=20",
+        "threshold_ms=100",
+        "accounts_userdata=speculos-x-other-account,swap-history",
         "",
       ].join("\n"),
     );

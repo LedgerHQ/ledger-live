@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-// The plan job: resolves the refs of builds A and B to commits, and gives the jobs their matrices.
-// Reads the workflow's inputs from the environment; writes GITHUB_OUTPUT and the job summary.
+// The plan job: resolves the refs of builds A and B to commits, and gives the jobs their matrices
+// and settings. Reads the workflow's inputs from the environment, or the nightly's settings on a
+// scheduled run; writes GITHUB_OUTPUT and the job summary.
 import { appendFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { appendSummary, runStep, StepFailure, toolOutput } from "./step.mts";
@@ -9,13 +10,27 @@ export interface PlanInputs {
   preset: string;
   refA: string;
   refB: string;
+  platforms: string;
   pairs: string;
   thresholdMs: string;
   scenarios: string;
+  accountsUserdata: string;
   /** The commit and the branch the workflow runs from. */
   branchSha: string;
   branchName: string;
 }
+
+/** What a scheduled run measures, as it has no inputs: develop against production. */
+export const NIGHTLY: Omit<PlanInputs, "branchSha" | "branchName"> = {
+  preset: "prod-vs-develop",
+  refA: "",
+  refB: "",
+  platforms: "Android & iOS",
+  pairs: "20",
+  thresholdMs: "100",
+  scenarios: "no-accounts,accounts",
+  accountsUserdata: "speculos-x-other-account,swap-history",
+};
 
 interface Builds {
   sides: Array<"a" | "b">;
@@ -28,6 +43,8 @@ interface Builds {
 
 export interface Plan extends Builds {
   scenarios: string[];
+  /** The run's settings, which the build and measure jobs read from the plan's outputs. */
+  settings: Pick<PlanInputs, "preset" | "platforms" | "pairs" | "thresholdMs" | "accountsUserdata">;
 }
 
 /** `git ls-remote <options> <this repository> <patterns>`. */
@@ -112,13 +129,14 @@ function refOrThisBranch(
   return { sha: resolveRef(ref, lsRemote), label: ref };
 }
 
-/** The nightly's comparison: the latest prod tag (or ref_a) against the commit it runs on (or ref_b). */
+/** The nightly's comparison: the latest prod tag (or ref_a) against develop (or ref_b). */
 function prodVsDevelop(inputs: PlanInputs, lsRemote: LsRemote): Builds {
   const refA = inputs.refA || latestProdTag(lsRemote);
+  const refB = inputs.refB || "develop";
   const shaA = resolveRef(refA, lsRemote);
-  const b = refOrThisBranch(inputs.refB, inputs, lsRemote);
-  const warnings = shaA === b.sha ? [`${refA} and ${b.label} are the same commit`] : [];
-  return { sides: ["a", "b"], shaA, shaB: b.sha, labelA: refA, labelB: b.label, warnings };
+  const shaB = resolveRef(refB, lsRemote);
+  const warnings = shaA === shaB ? [`${refA} and ${refB} are the same commit`] : [];
+  return { sides: ["a", "b"], shaA, shaB, labelA: refA, labelB: refB, warnings };
 }
 
 function buildsFor(inputs: PlanInputs, lsRemote: LsRemote): Builds {
@@ -164,6 +182,13 @@ export function planBuilds(inputs: PlanInputs, lsRemote: LsRemote): Plan {
     labelA: withSha(builds.labelA, builds.shaA),
     labelB: builds.sides.includes("b") ? withSha(builds.labelB, builds.shaB) : builds.labelB,
     scenarios: inputs.scenarios.split(","),
+    settings: {
+      preset: inputs.preset,
+      platforms: inputs.platforms,
+      pairs: inputs.pairs,
+      thresholdMs: inputs.thresholdMs,
+      accountsUserdata: inputs.accountsUserdata,
+    },
   };
 }
 
@@ -175,6 +200,11 @@ export function outputsOf(plan: Plan): string {
     ref_b: plan.shaB,
     label_a: plan.labelA,
     label_b: plan.labelB,
+    preset: plan.settings.preset,
+    platforms: plan.settings.platforms,
+    pairs: plan.settings.pairs,
+    threshold_ms: plan.settings.thresholdMs,
+    accounts_userdata: plan.settings.accountsUserdata,
   };
   return Object.entries(outputs)
     .map(([key, value]) => `${key}=${value}\n`)
@@ -193,18 +223,26 @@ export function summaryOf(plan: Plan, inputs: PlanInputs, avdCores: string): str
   ].join("\n");
 }
 
-function main(): void {
-  const env = process.env;
-  const inputs: PlanInputs = {
+/** The workflow's inputs; on a scheduled run, which has none, the nightly's settings. */
+export function inputsOf(env: NodeJS.ProcessEnv): PlanInputs {
+  const branch = { branchSha: env.BRANCH_SHA ?? "", branchName: env.GITHUB_REF_NAME ?? "" };
+  if (env.GITHUB_EVENT_NAME === "schedule") return { ...NIGHTLY, ...branch };
+  return {
     preset: env.PRESET ?? "",
     refA: env.REF_A ?? "",
     refB: env.REF_B ?? "",
+    platforms: env.PLATFORMS ?? "",
     pairs: env.PAIRS ?? "",
     thresholdMs: env.THRESHOLD ?? "",
     scenarios: env.SCENARIOS ?? "",
-    branchSha: env.BRANCH_SHA ?? "",
-    branchName: env.GITHUB_REF_NAME ?? "",
+    accountsUserdata: env.ACCOUNTS_USERDATA ?? "",
+    ...branch,
   };
+}
+
+function main(): void {
+  const env = process.env;
+  const inputs = inputsOf(env);
   const repository = env.REPO_URL ?? "";
   const lsRemote: LsRemote = (options, patterns) =>
     toolOutput("git", ["ls-remote", ...options, repository, ...patterns]);

@@ -44,13 +44,15 @@ module.
 | Preset             | A                              | B                          | Fails when                        |
 | ------------------ | ------------------------------ | -------------------------- | --------------------------------- |
 | `prod-vs-release`  | latest `live-mobile@X.Y.Z` tag | `release` branch           | B is slower by > threshold_ms     |
-| `prod-vs-develop`  | latest `live-mobile@X.Y.Z` tag | this branch or `ref_b`     | same                              |
+| `prod-vs-develop`  | latest `live-mobile@X.Y.Z` tag | `develop` or `ref_b`       | same                              |
 | `custom`           | any branch or tag              | any branch or tag          | same                              |
 | `aa-noise`         | one build                      | the same binary            | only on `Not enough pairs`        |
 | `known-regression` | this branch or `ref_a`         | A with LIVE-36190 re-added | B is not slower by > threshold_ms |
 
-The workflow runs `prod-vs-develop` every weekday at 03:00 UTC, on develop, with the inputs'
-defaults (top-level `env` of the workflow): develop's commit against production.
+Every weekday at 03:17 UTC the workflow runs `prod-vs-develop` with the settings of `NIGHTLY` in
+`ci/resolve-refs.mts` (both platforms and scenarios, 20 pairs, 100 ms), as a scheduled run has no
+inputs; the plan job passes the settings on to the other jobs. A failure is posted to
+#live-repo-health.
 `aa-noise` reports how finely the setup resolves B − A. `known-regression` shows whether the gate
 still catches LIVE-36190 on today's code: B no longer saves the trustchain at start, so every launch
 generates its keypair again, the cost #21001 removed (its other half, a zod check of the keypair, no
