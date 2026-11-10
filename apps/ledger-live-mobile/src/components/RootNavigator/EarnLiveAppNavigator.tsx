@@ -74,8 +74,7 @@ export const Earn = (props: NavigationProps) => {
         protocolId: undefined,
       });
 
-    /** Returns `false` only when the action has to wait for data that is not loaded yet. */
-    function deeplinkRouting(): boolean {
+    function deeplinkRouting() {
       switch (paramAction) {
         case "deposit": {
           (navigation.getParent(BASE_NAVIGATOR_ID) ?? navigation).navigate(NavigatorName.Earn, {
@@ -111,15 +110,15 @@ export const Earn = (props: NavigationProps) => {
           if (!walletId) {
             // eslint-disable-next-line no-console
             console.log("Wallet accountId required for 'stake-account' action.");
-            return true;
+            break;
           }
 
           const accountId = getAccountIdFromWalletAccountId(walletId);
           const account = accounts.find(acc => acc.id === accountId);
           if (!account) {
-            // Accounts may still be loading on a cold start: keep the action until they arrive.
+            // Accounts are loaded before any screen renders, so a missing one does not exist.
             console.warn("no matching account found for given id.");
-            return false;
+            break;
           }
           const parent = isTokenAccount(account) ? getParentAccount(account, accounts) : undefined;
           openStakingDrawerRef.current(account, parent);
@@ -161,12 +160,10 @@ export const Earn = (props: NavigationProps) => {
           console.warn(`EarnLiveAppNavigator: No route for action "${paramAction}"`);
         }
       }
-      return true;
     }
 
-    if (deeplinkRouting()) {
-      clearDeepLink();
-    }
+    deeplinkRouting();
+    clearDeepLink();
   }, [
     paramAction,
     props.route.params,
