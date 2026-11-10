@@ -133,6 +133,7 @@
     "dotenv": "16.4.7",
     "expect": "catalog:",
     "jest": "catalog:",
+    "msw": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "protobufjs-cli": "2.4.1",
