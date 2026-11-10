@@ -35,7 +35,7 @@ import { resolveQuotesInput } from "./resolveQuotesInput";
  *
  * Fields:
  *   - `accounts`: the wallet's accounts, used by downstream wallet-side
- *     steps (fee estimation via account bridges — not consumed yet).
+ *     steps (fee estimation via account bridges).
  *   - `spotPrices`: map of currencyId → counter-value spot price, keyed
  *     the same way as the resolved send / receive currency ids. Used by
  *     `normalizeQuote` to emit the
@@ -57,6 +57,11 @@ import { resolveQuotesInput } from "./resolveQuotesInput";
  *     errors can include Ledger Live version incompatibility signals.
  *   - `highValueLossThreshold`: optional ratio used to flag quotes whose
  *     receive-side fiat value is below the configured send-side threshold.
+ *   - `onFeeEstimationFailed`: optional callback that gets the error when
+ *     the account bridge fails to estimate the fee (`prepareTransaction`,
+ *     `getTransactionStatus`, or a `FeeNotLoaded` status error). An unknown
+ *     account, a chain with no estimation recipient, or a failed bitcoin
+ *     sync does not call it.
  */
 export type GetQuotesContext = {
   accounts: AccountLike[];
@@ -69,6 +74,7 @@ export type GetQuotesContext = {
     version: string | null;
   };
   highValueLossThreshold?: number;
+  onFeeEstimationFailed?: (error: unknown) => void;
 };
 
 function getParentCurrencyId(accounts: AccountLike[], walletAccountId: string): string | undefined {
@@ -167,6 +173,7 @@ export async function getQuotes(
       accounts: context.accounts,
       fromAccountId: args.data.sendAccountId,
       amountFrom: args.data.amount,
+      onFeeEstimationFailed: context.onFeeEstimationFailed,
     }),
   ]);
 

@@ -309,6 +309,14 @@ describe("resolveDepositFormError", () => {
     });
   });
 
+  describe("fee estimation failure", () => {
+    it("keeps the review of a quote without a fee estimate on a chain with no minimum balance", () => {
+      expect(
+        resolve({ quoteResult: { quote: quote(), errors: [], feeEstimationFailed: true } }),
+      ).toBeNull();
+    });
+  });
+
   describe("no quotes", () => {
     it.each([
       ["a global noQuotes", { quoteResult: { errors: [{ code: QuotesErrorCodes.NO_QUOTES }] } }],

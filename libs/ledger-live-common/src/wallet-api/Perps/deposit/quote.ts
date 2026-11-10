@@ -31,6 +31,7 @@ export type PerpsDepositQuote = {
 export type PerpsDepositQuoteResult = {
   quote?: PerpsDepositQuote;
   errors: QuotesError[];
+  feeEstimationFailed?: boolean;
 };
 
 export function findDepositParentAccount(
@@ -67,6 +68,16 @@ function registerQuoteAccounts(
  * Quotes `amount` from `depositAccount` to `receiverAccount` against
  * `swapkit_hyperliquid` and returns the first quote with the global errors.
  */
+const BALANCE_ERROR_NAMES = new Set([
+  "NotEnoughBalance",
+  "NotEnoughGas",
+  "NotEnoughBalanceInParentAccount",
+]);
+
+function isBalanceError(error: unknown): boolean {
+  return error instanceof Error && BALANCE_ERROR_NAMES.has(error.name);
+}
+
 export async function fetchPerpsDepositQuote({
   accounts,
   depositAccount,
@@ -77,6 +88,7 @@ export async function fetchPerpsDepositQuote({
 }: PerpsDepositQuoteParams): Promise<PerpsDepositQuoteResult> {
   registerQuoteAccounts(accounts, depositAccount, receiverAccount);
 
+  let feeEstimationFailed = false;
   const { quotes, errors } = await getQuotes(
     {
       providers: [PERPS_SWAPKIT_PROVIDER],
@@ -86,9 +98,17 @@ export async function fetchPerpsDepositQuote({
         receiveAccountId: getWalletApiIdFromAccountId(receiverAccount.id),
       },
     },
-    { accounts, spotPrices: {}, locale, counterValueCurrency },
+    {
+      accounts,
+      spotPrices: {},
+      locale,
+      counterValueCurrency,
+      onFeeEstimationFailed: error => {
+        feeEstimationFailed = !isBalanceError(error);
+      },
+    },
   );
 
   const [quote] = quotes;
-  return quote ? { quote: toPerpsDepositQuote(quote), errors } : { errors };
+  return { ...(quote && { quote: toPerpsDepositQuote(quote) }), errors, feeEstimationFailed };
 }

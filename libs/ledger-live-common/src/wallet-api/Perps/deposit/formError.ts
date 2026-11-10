@@ -30,6 +30,7 @@ export type DepositFormErrorCode =
   | "xlmMinimumBalance"
   | "amountTooLow"
   | "amountTooHigh"
+  | "feeEstimationFailed"
   | "noQuotes";
 
 export type DepositFormError = Readonly<{
@@ -51,6 +52,7 @@ export const DEPOSIT_FORM_ERROR_ANALYTICS_MESSAGES: Record<DepositFormErrorCode,
   xlmMinimumBalance: "xlm_prevent_deactivating",
   amountTooLow: "minAmount",
   amountTooHigh: "maxAmount",
+  feeEstimationFailed: "fee_estimation_failed",
   noQuotes: "no_result",
 };
 
@@ -66,6 +68,11 @@ const OFFLINE_ERROR: DepositFormError = {
 const INSUFFICIENT_BALANCE_ERROR: DepositFormError = {
   code: "insufficientBalance",
   labelKey: "perpsDeposit.formErrors.amountExceedsBalance",
+};
+
+const FEE_ESTIMATION_FAILED_ERROR: DepositFormError = {
+  code: "feeEstimationFailed",
+  labelKey: "perpsDeposit.formErrors.feeEstimationFailed",
 };
 
 const NO_QUOTES_ERROR: DepositFormError = {
@@ -292,6 +299,15 @@ const minimumBalanceRule: DepositFormRule = context =>
 const amountLimitsRule: DepositFormRule = ({ quoteResult, depositAccount, locale }) =>
   quoteResult ? getAmountLimitError(quoteResult, depositAccount, locale) : null;
 
+const feeEstimationFailedRule: DepositFormRule = context => {
+  if (!context.quoteResult?.feeEstimationFailed) return null;
+  if (context.maxAmount === null || !context.hasConversion) return null;
+  const quote = getUsableQuote(context);
+  return quote && needsFeeForMinimumBalance(context.depositAccount, quote)
+    ? FEE_ESTIMATION_FAILED_ERROR
+    : null;
+};
+
 const noQuotesRule: DepositFormRule = context => {
   if (context.maxAmount === null || !context.hasConversion) return NO_QUOTES_ERROR;
   if (!context.quoteResult) return null;
@@ -308,6 +324,7 @@ const DEPOSIT_FORM_RULES: readonly DepositFormRule[] = [
   feesRule,
   minimumBalanceRule,
   amountLimitsRule,
+  feeEstimationFailedRule,
   noQuotesRule,
 ];
 

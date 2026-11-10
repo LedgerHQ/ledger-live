@@ -99,7 +99,13 @@ describe("fetchPerpsDepositQuote", () => {
           receiveAccountId: getWalletApiIdFromAccountId(receiverAccount.id),
         },
       },
-      { accounts, spotPrices: {}, locale: "en-US", counterValueCurrency: "USD" },
+      {
+        accounts,
+        spotPrices: {},
+        locale: "en-US",
+        counterValueCurrency: "USD",
+        onFeeEstimationFailed: expect.any(Function),
+      },
     );
   });
 
@@ -124,6 +130,36 @@ describe("fetchPerpsDepositQuote", () => {
     ] as GetQuotesResponse["errors"];
     respondWith({ errors });
 
-    await expect(fetchPerpsDepositQuote(params)).resolves.toEqual({ errors });
+    await expect(fetchPerpsDepositQuote(params)).resolves.toEqual({
+      errors,
+      feeEstimationFailed: false,
+    });
   });
+
+  it("reports a fee estimation failure of the quote engine", async () => {
+    mockedGetQuotes.mockImplementation(async (_args, context) => {
+      context.onFeeEstimationFailed?.(new Error("timeout"));
+      return { quotes: [quote], providerErrors: [], warnings: [], errors: [] };
+    });
+
+    const result = await fetchPerpsDepositQuote(params);
+
+    expect(result.feeEstimationFailed).toBe(true);
+    expect(result.quote?.quoteId).toBe("quote-1");
+  });
+
+  it.each(["NotEnoughBalance", "NotEnoughGas", "NotEnoughBalanceInParentAccount"])(
+    "does not report a %s error as a fee estimation failure",
+    async name => {
+      const balanceError = Object.assign(new Error("balance"), { name });
+      mockedGetQuotes.mockImplementation(async (_args, context) => {
+        context.onFeeEstimationFailed?.(balanceError);
+        return { quotes: [quote], providerErrors: [], warnings: [], errors: [] };
+      });
+
+      const result = await fetchPerpsDepositQuote(params);
+
+      expect(result.feeEstimationFailed).toBe(false);
+    },
+  );
 });
