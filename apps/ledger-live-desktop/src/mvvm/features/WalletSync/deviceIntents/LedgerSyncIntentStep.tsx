@@ -3,6 +3,7 @@ import type { ExecutorState, Intent } from "@features/platform-device-intent";
 import type { LedgerSyncJobState } from "@features/platform-intent-wallet-sync";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { LedgerSyncDeviceIntentExecutorLWD } from "./LedgerSyncDeviceIntentExecutorLWD";
+import { useDeviceIntentDialogOpen } from "./DeviceIntentDialogContext";
 
 type LedgerSyncIntentRunProps<Input, Result> = Readonly<{
   /** Builds the intent of one run, once, when the run mounts. */
@@ -41,6 +42,7 @@ function LedgerSyncIntentRun<Input, Result>({
   onExecutorStateChanged,
 }: LedgerSyncIntentRunProps<Input, Result>) {
   const [intent] = useState(createRunIntent);
+  useDeviceIntentDialogOpen();
   return (
     <LedgerSyncDeviceIntentExecutorLWD
       intent={intent}

@@ -137,6 +137,26 @@ async function startRemoval() {
   return view;
 }
 
+// The drawer portals into #modals, which must exist when it first renders.
+function renderDrawerAtDeviceStep(dieEnabled: boolean) {
+  const modals = document.createElement("div");
+  modals.id = "modals";
+  document.body.appendChild(modals);
+  return render(
+    <WalletSyncDrawer currentPage={AnalyticsPage.LedgerSyncSettings} onClose={jest.fn()} />,
+    {
+      initialState: {
+        ...withFlagOverrides({
+          ...lldWalletSyncFeatureFlag,
+          lwdLedgerSyncDie: { enabled: dieEnabled },
+        }),
+        walletSync: { ...initialStateWalletSync, isDrawerOpen: true, step: Step.DeviceAction },
+        trustchain: { trustchain: null, memberCredentials: MEMBER_CREDENTIALS },
+      },
+    },
+  );
+}
+
 describe("Ledger Sync device steps on DIE", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -341,37 +361,36 @@ describe("Ledger Sync device steps on DIE", () => {
   });
 
   describe("drawer", () => {
-    it.each([
-      [true, true],
-      [false, false],
-    ])(
-      "with the DIE flag %s, should keep the drawer open on Escape at the device step: %s",
-      async (dieEnabled, staysOpen) => {
-        const { store, user } = render(
-          <>
-            <div id="modals" />
-            <WalletSyncDrawer currentPage={AnalyticsPage.LedgerSyncSettings} onClose={jest.fn()} />
-          </>,
-          {
-            initialState: {
-              ...withFlagOverrides({
-                ...lldWalletSyncFeatureFlag,
-                lwdLedgerSyncDie: { enabled: dieEnabled },
-              }),
-              walletSync: {
-                ...initialStateWalletSync,
-                isDrawerOpen: true,
-                step: Step.DeviceAction,
-              },
-              trustchain: { trustchain: null, memberCredentials: MEMBER_CREDENTIALS },
-            },
-          },
-        );
+    afterEach(() => {
+      document.getElementById("modals")?.remove();
+    });
 
-        await user.keyboard("{Escape}");
+    it("should leave Escape to the executor dialog while it is open", async () => {
+      const { store, user } = renderDrawerAtDeviceStep(true);
+      await waitFor(() => expect(LedgerSyncDeviceIntentExecutorLWD).toHaveBeenCalled());
 
-        expect(store.getState().walletSync.isDrawerOpen).toBe(staysOpen);
-      },
-    );
+      await user.keyboard("{Escape}");
+
+      expect(store.getState().walletSync.isDrawerOpen).toBe(true);
+    });
+
+    it("should close the drawer on Escape once a failure replaced the executor dialog", async () => {
+      const { store, user } = renderDrawerAtDeviceStep(true);
+      await waitFor(() => expect(LedgerSyncDeviceIntentExecutorLWD).toHaveBeenCalled());
+      emit(failed("unknown"));
+      await screen.findByRole("button", { name: /retry/i });
+
+      await user.keyboard("{Escape}");
+
+      expect(store.getState().walletSync.isDrawerOpen).toBe(false);
+    });
+
+    it("should close the drawer on Escape at the legacy device step", async () => {
+      const { store, user } = renderDrawerAtDeviceStep(false);
+
+      await user.keyboard("{Escape}");
+
+      expect(store.getState().walletSync.isDrawerOpen).toBe(false);
+    });
   });
 });
