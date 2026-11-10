@@ -260,6 +260,12 @@ export type BridgeApi = {
    */
   balanceListsEveryToken?: boolean;
   /**
+   * When true, sync matches a token on its exact (`assetOwner`, `assetReference`) pair: on XRPL
+   * `USD` and `usd` are two currencies, and so are `USD` from two issuers. Left unset, references
+   * match in any case, as Stacks needs.
+   */
+  exactAssetMatch?: boolean;
+  /**
    * For a family whose legacy bridge keyed account ids on the public key rather than the address.
    * When true, a synced account keeps the `xpubOrAddress` already in its id, and a scanned one is
    * keyed on the device's public key, so moving to the generic bridge never re-keys an account.
