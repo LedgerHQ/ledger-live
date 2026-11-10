@@ -1,4 +1,5 @@
-import { cancelledWhenAll } from "./cancellation";
+import { cancelledWhenAll, orCancelled } from "./cancellation";
+import { PortfolioReadCancelledError } from "./portfolio";
 
 describe("cancelledWhenAll", () => {
   it("aborts once every signal has", () => {
@@ -37,5 +38,31 @@ describe("cancelledWhenAll", () => {
     second.abort();
 
     expect(signal?.aborted).toBe(false);
+  });
+});
+
+describe("orCancelled", () => {
+  it("settles as the promise does while the signal holds", async () => {
+    await expect(orCancelled(Promise.resolve(1), new AbortController().signal)).resolves.toBe(1);
+  });
+
+  it("rejects as cancelled once the signal aborts, the promise still pending", async () => {
+    const cancel = new AbortController();
+    const waiting = orCancelled(new Promise(() => {}), cancel.signal);
+
+    cancel.abort();
+
+    await expect(waiting).rejects.toBeInstanceOf(PortfolioReadCancelledError);
+  });
+
+  it("handles the failure of the promise when the signal had already aborted", async () => {
+    const lookup = Promise.reject(new Error("CAL down"));
+    const handled = jest.spyOn(lookup, "catch");
+
+    await expect(orCancelled(lookup, AbortSignal.abort())).rejects.toBeInstanceOf(
+      PortfolioReadCancelledError,
+    );
+
+    expect(handled).toHaveBeenCalled();
   });
 });

@@ -12894,6 +12894,9 @@ importers:
       '@domain/api-account-portfolio':
         specifier: workspace:*
         version: link:../../../domain/api/account-portfolio
+      '@domain/api-currency-token':
+        specifier: workspace:*
+        version: link:../../../domain/api/currency-token
       '@domain/entity-account-balance':
         specifier: workspace:*
         version: link:../../../domain/entity/account-balance
@@ -12915,9 +12918,18 @@ importers:
       '@domain/entity-currency-crypto':
         specifier: workspace:*
         version: link:../../../domain/entity/currency-crypto
+      '@domain/entity-currency-fiat':
+        specifier: workspace:*
+        version: link:../../../domain/entity/currency-fiat
+      '@domain/entity-currency-token':
+        specifier: workspace:*
+        version: link:../../../domain/entity/currency-token
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+      bignumber.js:
+        specifier: 9.1.2
+        version: 9.1.2
     devDependencies:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*

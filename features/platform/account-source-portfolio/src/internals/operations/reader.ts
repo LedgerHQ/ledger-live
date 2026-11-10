@@ -13,7 +13,7 @@ import {
 } from "../portfolio";
 import { failedRead, readinessOf } from "../readiness";
 import { logActivity } from "../snapshot";
-import { limitOf, readUpdates } from "./read";
+import { fiatOf, limitOf, readUpdates, serviceAssetOf } from "./read";
 import { verdictOf, type Verdict } from "./verdict";
 
 async function readOne(
@@ -27,17 +27,22 @@ async function readOne(
     return { verdict: { status: "failed", detail: readiness.detail }, called: false };
   }
   try {
+    const filterAsset = query?.filterAsset;
+    const filter = await serviceAssetOf(client, descriptor, filterAsset, signal);
+    if (signal?.aborted) throw new PortfolioReadCancelledError();
+    if (!filter) {
+      return { verdict: { status: "served", page: { operations: [] } }, called: false };
+    }
+    const fiat = fiatOf(query);
+    const limit = limitOf(query);
     const page = await readUpdates(
       client,
       id,
       readiness.serverAccountId,
-      { limit: limitOf(query), cursor },
+      { limit, cursor, asset: filter.asset, fiat },
       signal,
     );
-    return {
-      verdict: verdictOf(descriptor, page, { filterAsset: query?.filterAsset }),
-      called: true,
-    };
+    return { verdict: verdictOf(descriptor, page, { fiat, filterAsset }), called: true };
   } catch (error) {
     return { verdict: { status: "failed", detail: describeError(error) }, called: true };
   }
@@ -80,7 +85,10 @@ async function readOperations(
   }
 }
 
-/** Waits until the batch's accounts are ready on the service, then reads one page of updates per account. */
+/**
+ * Waits until the batch's accounts are ready on the service, then reads one page of updates per
+ * account, filtered and valued by the service as the query asks.
+ */
 export const operationsReader =
   (deps: PortfolioDeps): AccountDataBatchReader<"operations"> =>
   (targets, query) =>
