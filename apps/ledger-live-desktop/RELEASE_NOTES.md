@@ -1,3 +1,7 @@
+# 4.28.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
 # 4.26.0
 
 This release includes small security improvements, UI tweaks, and minor bug fixes.
