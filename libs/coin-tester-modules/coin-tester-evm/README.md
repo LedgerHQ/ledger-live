@@ -29,7 +29,7 @@ This package contains the deterministic testing infrastructure for EVM-based coi
   reads as a `blockscout` explorer. The sequencer runs in its test mode (no orchestration layer, a private regtest bitcoind for its batches). WABTC (tWABTC in the CAL) is preloaded
   at its testnet address and the account is funded by airdrop (BTC and tWABTC): the scenario sends 1 BTC, 1 tWABTC, all its tWABTC and all its BTC, and checks that Live
   sends them as legacy transactions priced at the `minGasPrice` floor or above, as its configuration asks. No mock, and any request that leaves the machine fails
-- The Alpen scenario runs the same client and indexer on Alpen's mainnet genesis (chain id 29032). No token is preloaded (WABTC is not on mainnet) and the account
+- The Alpen scenario runs the same client and indexer on Alpen's mainnet genesis (chain id 29032), which Live reads as a `blockscout-v2` explorer, as in production. No token is preloaded (WABTC is not on mainnet) and the account
   is funded by airdrop: the scenario sends 1 BTC and all its BTC, as legacy transactions priced at the `minGasPrice` floor of mainnet or above. No mock, and any
   request that leaves the machine fails
 

@@ -85,8 +85,8 @@ export const scenarioAlpen: Scenario<GenericTransaction, Account> = {
       name: "Alpen",
       unit: { name: "BTC", code: "BTC", magnitude: 18 },
       node: { type: "external", uri: rpc },
-      // Blockscout answers the Etherscan API and the internal transactions, as production's does
-      explorer: { type: "blockscout", noCache: true, uri: `${explorer}/api` },
+      // The explorer type and API of production: Blockscout's v2 REST API
+      explorer: { type: "blockscout-v2", noCache: true, uri: `${explorer}/api/v2` },
       forceLegacyTransactions: true,
       minGasPrice: MIN_GAS_PRICE,
     };
