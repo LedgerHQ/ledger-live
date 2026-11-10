@@ -2,7 +2,6 @@ import { useCallback, useMemo } from "react";
 import {
   parseAnalyticsEntryState,
   type AccountAnalyticsProps,
-  resolveAnalyticsFiatCurrencyId,
   toAnalyticsPeriod,
 } from "@features/flow-account-analytics";
 import type { AccountLike } from "@ledgerhq/types-live";
@@ -46,7 +45,7 @@ export function useAccountAnalyticsContentViewModel({
       catalog,
       dataPort,
       initialSelection,
-      fiatCurrencyId: resolveAnalyticsFiatCurrencyId(counterValue.ticker),
+      fiatCurrencyId: counterValue.ticker,
       period: toAnalyticsPeriod(selectedTimeRange),
       onRefresh,
     },

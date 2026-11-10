@@ -3,6 +3,7 @@ import { act, render, screen, waitFor, withFlagOverrides } from "@tests/test-ren
 import { http, HttpResponse, server } from "@tests/server";
 import { mockData } from "@ledgerhq/live-common/modularDrawer/__mocks__/dada.mock";
 import type { Account } from "@ledgerhq/types-live";
+import { getCryptoCurrencyById, type CryptoCurrency } from "@domain/entity-currency-crypto";
 import { setSelectedTimeRange } from "~/actions/settings";
 import { ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
@@ -30,15 +31,23 @@ const BTC_ASSET = "asset:bitcoin";
 type Setup = Readonly<{
   enabled?: boolean;
   priced?: readonly Parameters<typeof createAnalyticsCountervalues>[0][number][];
+  countervalue?: CryptoCurrency;
 }>;
 
-function withAnalytics({ enabled = true, priced = [eth, usdc, btc] }: Setup = {}) {
+function withAnalytics({ enabled = true, priced = [eth, usdc, btc], countervalue }: Setup = {}) {
   return (state: State): State =>
     withFlagOverrides({ accountDetail: { enabled } })({
       ...state,
       accounts: { ...state.accounts, active: [ethWithUsdc, btc] },
-      settings: { ...state.settings, selectedTimeRange: "month" },
-      countervalues: { ...state.countervalues, rates: createAnalyticsCountervalues(priced) },
+      settings: {
+        ...state.settings,
+        selectedTimeRange: "month",
+        counterValue: countervalue?.id ?? state.settings.counterValue,
+      },
+      countervalues: {
+        ...state.countervalues,
+        rates: createAnalyticsCountervalues(priced, countervalue),
+      },
     });
 }
 
@@ -115,6 +124,16 @@ describe("Account Analytics (mobile)", () => {
     const [unavailable] = await screen.findAllByText("Data is not available for this selection.");
     expect(unavailable).toBeVisible();
     expect(screen.queryByText("Retry")).toBeNull();
+  });
+
+  it("should read the balance in a crypto countervalue", async () => {
+    renderAnalytics(
+      { accountAnalytics: { accountId: btc.id, currencyId: "bitcoin", metric: "balance" } },
+      { priced: [btc], countervalue: getCryptoCurrencyById("ethereum") },
+    );
+    expect(await screen.findByTestId("analytics-pnl-section")).toBeVisible();
+    expect(screen.getByTestId("analytics-balance-amount")).toBeVisible();
+    expect(screen.queryByText("Data is not available for this selection.")).toBeNull();
   });
 
   it("should retry the asset metadata after a failure", async () => {

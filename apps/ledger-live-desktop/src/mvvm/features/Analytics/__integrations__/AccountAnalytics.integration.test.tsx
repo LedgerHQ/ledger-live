@@ -2,6 +2,7 @@ import React from "react";
 import BigNumber from "bignumber.js";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { parseAnyAccountId } from "@domain/entity-account";
+import { getCryptoCurrencyById, type CryptoCurrency } from "@domain/entity-currency-crypto";
 import { CounterValuesStateRawSchema } from "@domain/entity-market-countervalues";
 import { act, render, screen, waitFor, within, withFlagOverrides } from "tests/testSetup";
 import { mockLumenChartResizeObserver } from "tests/utils/lumenChartTestUtils";
@@ -20,7 +21,19 @@ const token = createAnalyticsToken(eth);
 const parent = { ...eth, subAccounts: [token] };
 const btc = createAnalyticsAccount("analytics-integration-btc", "bitcoin");
 
-function renderAnalytics({ fromCard = false, zeroNative = false, missingTokenPrice = false } = {}) {
+type Setup = Readonly<{
+  fromCard?: boolean;
+  zeroNative?: boolean;
+  missingTokenPrice?: boolean;
+  countervalue?: CryptoCurrency;
+}>;
+
+function renderAnalytics({
+  fromCard = false,
+  zeroNative = false,
+  missingTokenPrice = false,
+  countervalue,
+}: Setup = {}) {
   const sourceParent = { ...parent, subAccounts: [token] };
   const sourceAccount = zeroNative
     ? {
@@ -30,9 +43,11 @@ function renderAnalytics({ fromCard = false, zeroNative = false, missingTokenPri
         operations: [],
       }
     : sourceParent;
-  const rates = createAnalyticsCountervalues(
-    missingTokenPrice ? [sourceAccount, btc] : [sourceAccount, token, btc],
-  );
+  const rates = countervalue
+    ? createAnalyticsCountervalues([btc], countervalue)
+    : createAnalyticsCountervalues(
+        missingTokenPrice ? [sourceAccount, btc] : [sourceAccount, token, btc],
+      );
   const initialCountervalues = CounterValuesStateRawSchema.parse({
     ...Object.fromEntries(
       Object.entries(rates.data).map(([key, map]) => [key, Object.fromEntries(map)]),
@@ -69,7 +84,11 @@ function renderAnalytics({ fromCard = false, zeroNative = false, missingTokenPri
       initialState: {
         ...withFlagOverrides({ accountDetail: { enabled: true } }),
         accounts: [sourceAccount, btc],
-        settings: { ...AFTER_ONBOARDING_STATE, counterValue: "USD", selectedTimeRange: "month" },
+        settings: {
+          ...AFTER_ONBOARDING_STATE,
+          counterValue: countervalue?.id ?? "USD",
+          selectedTimeRange: "month",
+        },
         wallet: {
           accountNames: new Map([
             [parseAnyAccountId(parent.id), "Ethereum 1"],
@@ -203,6 +222,13 @@ describe("Account Analytics desktop integration", () => {
     await waitFor(() =>
       expect(screen.getByTestId("analytics-balance-amount")).toHaveAccessibleName("$ 400.00"),
     );
+    expect(screen.queryByText("Data is not available for this selection.")).not.toBeInTheDocument();
+  });
+
+  it("should show the balance in a crypto countervalue", async () => {
+    renderAnalytics({ countervalue: getCryptoCurrencyById("ethereum") });
+    await waitFor(() => expect(screen.getByTestId("analytics-asset-filter")).toBeEnabled());
+    expect(await screen.findByTestId("analytics-balance-amount")).toBeVisible();
     expect(screen.queryByText("Data is not available for this selection.")).not.toBeInTheDocument();
   });
 

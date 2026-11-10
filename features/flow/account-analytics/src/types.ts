@@ -1,6 +1,5 @@
 import type { AssetsData } from "@domain/api-aggregated-assets";
 import type { CryptoOrTokenCurrency, Currency } from "@domain/entity-currency";
-import type { FiatCurrencyTicker } from "@domain/entity-currency-fiat";
 import type { CounterValuesCacheView } from "@domain/entity-market-countervalues";
 
 export type AnalyticsMetric = "balance" | "realised-return" | "unrealised-return" | "total-return";
@@ -54,7 +53,7 @@ export type AnalyticsInitialSelection = Readonly<{
 export type AnalyticsQueryContext = AnalyticsSelection &
   Readonly<{
     positionIds: readonly string[];
-    fiatCurrencyId: FiatCurrencyTicker;
+    fiatCurrencyId: Currency["ticker"];
     period: AnalyticsPeriod;
   }>;
 
@@ -86,7 +85,7 @@ export type AccountAnalyticsDataPort = Readonly<{
 
 export type UseAccountAnalyticsViewModelProps = Readonly<{
   catalog: AnalyticsCatalogState;
-  fiatCurrencyId: FiatCurrencyTicker;
+  fiatCurrencyId: Currency["ticker"];
   period: AnalyticsPeriod;
   initialSelection?: AnalyticsInitialSelection;
   dataPort: AccountAnalyticsDataPort;

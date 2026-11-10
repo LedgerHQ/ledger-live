@@ -1,11 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
-import {
-  parseAnalyticsEntryState,
-  resolveAnalyticsFiatCurrencyId,
-  toAnalyticsPeriod,
-} from "@features/flow-account-analytics";
+import { parseAnalyticsEntryState, toAnalyticsPeriod } from "@features/flow-account-analytics";
 import { useSelector } from "LLD/hooks/redux";
 import { useSyncSources } from "LLD/hooks/useSyncSources";
 import {
@@ -50,7 +46,7 @@ export function useAccountAnalyticsScreenViewModel() {
       catalog,
       dataPort,
       initialSelection,
-      fiatCurrencyId: resolveAnalyticsFiatCurrencyId(counterValue.ticker),
+      fiatCurrencyId: counterValue.ticker,
       period: toAnalyticsPeriod(selectedTimeRange),
       onRefresh,
     },
