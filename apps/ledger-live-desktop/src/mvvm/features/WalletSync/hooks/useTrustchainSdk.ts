@@ -1,16 +1,28 @@
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { TrustchainSDK } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { useTrustchainSdkContext } from "./useTrustchainSdkContext";
+import { type TrustchainSdkSetup, useTrustchainSdkContext } from "./useTrustchainSdkContext";
 
-let sdkInstance: TrustchainSDK | null = null;
+let cachedSdk: Readonly<{ sdk: TrustchainSDK; setup: TrustchainSdkSetup }> | null = null;
 
-export function useTrustchainSdk() {
-  const { isMockEnv, context, lifecycle } = useTrustchainSdkContext();
+function useCachedSdk() {
+  const setup = useTrustchainSdkContext();
 
-  if (sdkInstance === null) {
-    sdkInstance = getSdk(isMockEnv, context, withDevice, lifecycle);
+  if (cachedSdk === null) {
+    cachedSdk = {
+      sdk: getSdk(setup.isMockEnv, setup.context, withDevice, setup.lifecycle),
+      setup,
+    };
   }
 
-  return sdkInstance;
+  return cachedSdk;
+}
+
+export function useTrustchainSdk(): TrustchainSDK {
+  return useCachedSdk().sdk;
+}
+
+/** The setup the cached SDK was built with, not the current flag: every SDK of a session uses it. */
+export function useTrustchainSdkSetup(): TrustchainSdkSetup {
+  return useCachedSdk().setup;
 }

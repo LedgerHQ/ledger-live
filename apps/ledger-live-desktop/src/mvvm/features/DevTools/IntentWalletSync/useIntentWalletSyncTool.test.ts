@@ -1,29 +1,21 @@
 import { renderHook } from "tests/testSetup";
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
 import { useIntentWalletSyncToolState } from "@devtools/bindings";
-import { buildDeviceConnection } from "../../WalletSync/deviceIntents/__tests__/ledgerSyncIntentTestKit";
 import { useIntentWalletSyncTool } from "./useIntentWalletSyncTool";
 
-const PRODUCTION_URL = "https://trustchain.production";
-const STAGING_URL = "https://trustchain.staging";
-
-const mockSetup = {
-  current: {
-    isMockEnv: false,
-    context: { applicationId: 16, name: "Desktop instance", apiBaseUrl: PRODUCTION_URL },
-    lifecycle: { onTrustchainRotation: jest.fn() },
-  },
-};
+const mockAppSdk = { name: "app SDK" };
+const mockCreateSessionSdk = jest.fn();
 
 jest.mock("@ledgerhq/ledger-key-ring-protocol/index", () => ({
   ...jest.requireActual("@ledgerhq/ledger-key-ring-protocol/index"),
-  getSdk: jest.fn((_isMockEnv: boolean, context: { apiBaseUrl: string }) => ({
-    apiBaseUrl: context.apiBaseUrl,
-  })),
+  getSdk: jest.fn(),
 }));
 jest.mock("@devtools/bindings", () => ({ useIntentWalletSyncToolState: jest.fn(() => ({})) }));
-jest.mock("../../WalletSync/hooks/useTrustchainSdkContext", () => ({
-  useTrustchainSdkContext: () => mockSetup.current,
+jest.mock("../../WalletSync/hooks/useTrustchainSdk", () => ({
+  useTrustchainSdk: () => mockAppSdk,
+}));
+jest.mock("../../WalletSync/deviceIntents/useCreateSessionSdk", () => ({
+  useCreateSessionSdk: () => mockCreateSessionSdk,
 }));
 
 function lastToolParams() {
@@ -33,21 +25,14 @@ function lastToolParams() {
 }
 
 describe("useIntentWalletSyncTool", () => {
-  it("should list members and run intents on the same backend after the environment changes", () => {
+  it("should list members with the app SDK and run intents with the session SDK, building no SDK", () => {
     const { rerender } = renderHook(() => useIntentWalletSyncTool());
-    expect(lastToolParams().sdk).toMatchObject({ apiBaseUrl: PRODUCTION_URL });
-
-    mockSetup.current = {
-      ...mockSetup.current,
-      context: { ...mockSetup.current.context, apiBaseUrl: STAGING_URL },
-    };
     rerender({});
 
-    const { sdk, createSessionSdk } = lastToolParams();
-    expect(sdk).toMatchObject({ apiBaseUrl: STAGING_URL });
-    expect(createSessionSdk(buildDeviceConnection("session-1"))).toMatchObject({
-      apiBaseUrl: STAGING_URL,
+    expect(lastToolParams()).toMatchObject({
+      sdk: mockAppSdk,
+      createSessionSdk: mockCreateSessionSdk,
     });
-    expect(getSdk).toHaveBeenCalledTimes(3);
+    expect(getSdk).not.toHaveBeenCalled();
   });
 });
