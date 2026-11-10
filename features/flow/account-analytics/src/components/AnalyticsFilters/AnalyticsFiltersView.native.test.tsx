@@ -114,7 +114,7 @@ describe("AnalyticsFiltersView (native)", () => {
     expect(screen.getByTestId("analytics-account-filter-option-all")).toBeSelected();
   });
 
-  it("should show the selected asset icon on the asset chip only", () => {
+  it("should show the selected icon on both the asset and account chips", () => {
     render(
       <AnalyticsFiltersView
         asset={createAssetFilter()}
@@ -125,6 +125,14 @@ describe("AnalyticsFiltersView (native)", () => {
       "leadingContent",
       expect.anything(),
     );
+    expect(screen.getByTestId("analytics-account-filter")).toHaveProp(
+      "leadingContent",
+      expect.anything(),
+    );
+  });
+
+  it("should show no icon on the account chip while all accounts are selected", () => {
+    render(<AnalyticsFiltersView asset={createAssetFilter()} account={createAccountFilter()} />);
     expect(screen.getByTestId("analytics-account-filter")).toHaveProp("leadingContent", undefined);
   });
 });

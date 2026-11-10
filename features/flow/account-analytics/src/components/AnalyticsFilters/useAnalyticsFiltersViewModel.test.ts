@@ -70,6 +70,7 @@ describe("useAnalyticsFiltersViewModel", () => {
       ariaLabel: "Account filter, Savings",
       value: "tron-account",
       triggerLabel: "Savings",
+      selectedMeta: { iconId: "tron", ticker: "TRX", networkName: "Tron" },
       disabled: false,
     });
     expect(result.current.account?.items.map(item => item.meta?.networkName)).toEqual([

@@ -33,7 +33,7 @@ export function AnalyticsFilterSelectView({
   disabled,
   sheet,
 }: AnalyticsFilterSelectViewProps) {
-  const { testId, iconShape, showSelectedIcon } = ANALYTICS_FILTER_VARIANTS[variant];
+  const { testId, iconShape } = ANALYTICS_FILTER_VARIANTS[variant];
   const FallbackIcon = FALLBACK_ICONS[variant];
   const renderIcon = (meta: AnalyticsFilterOptionMeta) => (
     <CryptoIcon ledgerId={meta.iconId} ticker={meta.ticker} size={24} shape={iconShape} />
@@ -47,7 +47,7 @@ export function AnalyticsFilterSelectView({
         testID={testId}
         disabled={disabled}
         leadingContentShape="rounded"
-        leadingContent={showSelectedIcon && selectedMeta ? renderIcon(selectedMeta) : undefined}
+        leadingContent={selectedMeta ? renderIcon(selectedMeta) : undefined}
         onPress={sheet.open}
       >
         {triggerLabel}
