@@ -250,12 +250,14 @@ describe("genericGetAccountShape", () => {
       ]);
     });
 
-    function callWithSubAccountToken(): Promise<unknown> {
+    function callWithSubAccountToken(
+      subAccounts: unknown[] = [{ token: { id: "tok1" } }],
+    ): Promise<unknown> {
       const getShape = genericGetAccountShape(network, currency.id);
       return getShape(
         {
           address: "addr1",
-          initialAccount: { subAccounts: [{ token: { id: "tok1" } }], pendingOperations: [] },
+          initialAccount: { subAccounts, pendingOperations: [] },
           currency,
           derivationMode: "",
         } as any,
@@ -319,6 +321,46 @@ describe("genericGetAccountShape", () => {
         { asset: heldAsset, value: 500n },
         { asset: vanishedAsset, value: 0n },
       ]);
+    });
+
+    it.each([
+      ["only by case", { type: "iou", assetReference: "usd", assetOwner: "issuerA" }],
+      ["only by issuer", { type: "iou", assetReference: "USD", assetOwner: "issuerB" }],
+    ])(
+      "zeroes a removed token whose asset differs from a held one %s with exactAssetMatch",
+      async (_, removedAsset) => {
+        const usd = { type: "iou", assetReference: "USD", assetOwner: "issuerA" };
+        getBalanceMock.mockResolvedValue([
+          { asset: { type: "native" }, value: 100n, locked: 0n },
+          { asset: usd, value: 500n },
+        ]);
+        getBridgeApiMock.mockImplementationOnce(() => ({
+          ...defaultBridgeApi(),
+          exactAssetMatch: true,
+          getAssetFromToken: (token: { id: string }) => (token.id === "held" ? usd : removedAsset),
+        }));
+
+        await callWithSubAccountToken([{ token: { id: "held" } }, { token: { id: "removed" } }]);
+
+        expect(buildSubAccountsMock.mock.calls[0][0].allTokenAssetsBalances).toEqual([
+          { asset: usd, value: 500n },
+          { asset: removedAsset, value: 0n },
+        ]);
+      },
+    );
+
+    it("passes exactAssetMatch to buildSubAccounts", async () => {
+      getBridgeApiMock.mockImplementationOnce(() => ({
+        ...defaultBridgeApi(),
+        exactAssetMatch: true,
+      }));
+
+      await callWithSubAccountToken();
+
+      expect(buildSubAccountsMock).toHaveBeenCalledTimes(1);
+      expect(buildSubAccountsMock).toHaveBeenCalledWith(
+        expect.objectContaining({ exactAssetMatch: true }),
+      );
     });
 
     it("does not duplicate a still-held token, matching assetReference case-insensitively", async () => {
@@ -5072,6 +5114,47 @@ describe("genericGetAccountShape", () => {
         await syncWith(resumed);
 
         expect(getBalanceMock).toHaveBeenCalledTimes(1);
+      });
+
+      describe("with exactAssetMatch", () => {
+        const heldWithOwner = { ...held, asset: { ...held.asset, assetOwner: "0xabc" } };
+        const heldUpperCase = {
+          ...heldWithOwner,
+          asset: { ...heldWithOwner.asset, assetReference: "ethereum/erc20/0xAAA" },
+        };
+
+        beforeEach(() => {
+          getAssetFromTokenMock.mockImplementation((token: { id: string }) => ({
+            type: "erc20",
+            assetReference: token.id,
+            assetOwner: "0xabc",
+          }));
+          getTokenFromAssetMock.mockImplementation(async (asset: { assetReference: string }) => ({
+            id: asset.assetReference,
+          }));
+          getBridgeApiMock.mockImplementation(() => ({
+            ...defaultBridgeApi(),
+            getAssetFromToken: getAssetFromTokenMock,
+            getTokenFromAsset: getTokenFromAssetMock,
+            balanceOptions: {},
+            exactAssetMatch: true,
+          }));
+        });
+
+        it("treats a walked reference that differs only by case as another token", async () => {
+          getBalanceMock
+            .mockResolvedValueOnce([native, heldWithOwner])
+            .mockResolvedValueOnce([native, heldWithOwner, heldUpperCase]);
+          walkTransferOf("ethereum/erc20/0xAAA");
+
+          await syncWith(resumed);
+
+          expect(getBalanceMock).toHaveBeenCalledTimes(2);
+          expect(tokenBalancesHandedToSubAccounts()).toEqual([
+            "ethereum/erc20/0xaaa",
+            "ethereum/erc20/0xAAA",
+          ]);
+        });
       });
 
       it("reconciles after an unscoped read too, so the token is stored for the next, scoped sync", async () => {

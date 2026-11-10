@@ -264,6 +264,37 @@ describe("buildSubAccounts", () => {
     expect(subAccounts[0].operations.map(op => op.id)).toEqual(["accountId+usdc-tx-hash1-IN"]);
   });
 
+  it("keeps operations of references that differ only by case apart with exactAssetMatch (XRPL-shaped case)", async () => {
+    const subAccounts = await buildSubAccounts({
+      accountId: "accountId",
+      allTokenAssetsBalances: [
+        { value: 10n, asset: { type: "iou", assetReference: "USD", assetOwner: "issuer" } },
+        { value: 20n, asset: { type: "iou", assetReference: "usd", assetOwner: "issuer" } },
+      ],
+      syncConfig: { blacklistedTokenIds: [] } as unknown as SyncConfig,
+      operations: [
+        {
+          hash: "upperHash",
+          extra: { assetReference: "USD", assetOwner: "issuer", ledgerOpType: "IN" },
+        },
+        {
+          hash: "lowerHash",
+          extra: { assetReference: "usd", assetOwner: "issuer", ledgerOpType: "IN" },
+        },
+      ] as any,
+      getTokenFromAsset: async asset =>
+        "assetReference" in asset ? ({ id: asset.assetReference } as TokenCurrency) : undefined,
+      exactAssetMatch: true,
+    });
+
+    expect(subAccounts.find(sa => sa.token.id === "USD")?.operations).toMatchObject([
+      { hash: "upperHash" },
+    ]);
+    expect(subAccounts.find(sa => sa.token.id === "usd")?.operations).toMatchObject([
+      { hash: "lowerHash" },
+    ]);
+  });
+
   it("keeps operations separated by assetOwner when assetReference is otherwise identical", async () => {
     // Identifiers deliberately dash-free: encodeTokenAccountId/encodeOperationId escape "-" in
     // their inputs, which would make asserting on raw id strings fragile here.
