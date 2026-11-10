@@ -122,6 +122,23 @@ readers and returns the store listener that drops pending attempts when the kill
 `registerTxLifecycleObserver` installs the observer, and `startDappLifecycleMonitoring` is the
 body of each host's dApp effect.
 
+### Borrow
+
+Borrow reuses the Earn wire contract (`tx_intent` / `tx_terminal`, schema version 1) behind its
+own kill-switch, `borrowTxLifecycleMonitoring`, and posts to its own sink (`BORROW_API_BASE_URL`,
+default `https://global.api.prd.ledger.com/borrow`) at `/v1/tx/lifecycle`.
+
+The host deliberately reports **less** than it does for Earn. The contract has no field for the
+Borrow action (supply / borrow / repay / withdraw), and the host cannot derive it: a sign request
+only carries call data. The Borrow live app knows the action, so it owns `tx_intent` and the
+success/failure `tx_terminal`. The host tracks Borrow attempts (manifest `borrow`, or the id
+`ptxBorrowLiveApp` configures) only to emit what the app cannot: a `failure/abandoned` terminal
+when the webview is torn down, or the sign flow is abandoned, with an attempt still pending.
+There is no placeholder intent for a plain webview open, so an idle Borrow session never counts.
+`installBorrowLifecycleHost` wires the readers at boot and `startBorrowLifecycleMonitoring` is the
+body of each host's Borrow webview effect. Earn behaviour and its flag are unchanged, and the two
+products never clear each other's pending attempts.
+
 One thing to know if you ever reach for it: `track(event, props, { mandatory: true })` from
 `@shared/analytics` bypasses the consent check and uses the reduced extra properties registered with
 `setMandatoryExtraPropsFn` instead of the standard host extras; caller-supplied `props` are still
