@@ -115,7 +115,7 @@ for (const asset of assets) {
             ? asset.buySell.crypto.currency.name
             : asset.buySell.crypto.accountName,
         );
-        await app.account.clickBuy();
+        await app.account.clickBuy(asset.buySell.crypto);
         await app.buyAndSell.verifyBuySellLandingAndCryptoAssetSelector(
           asset.buySell.crypto,
           operation,
