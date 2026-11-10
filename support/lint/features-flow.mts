@@ -33,7 +33,6 @@ const CHILDREN_PROP_IN_TESTS = ["flow-contacts-delete-contact", "flow-contacts-d
 const PLATFORM_SUFFIX_WAIVERS = [
   "account-detail-hero",
   "large-screen-upsell",
-  "pay-card-auth",
   "pay-card-widget",
   "pay-feature-tour",
   "pay-request",
