@@ -15,6 +15,9 @@ const CURRENCY_IDS_WITH_ADD_ASSET_BUTTON = new Set([
   Currency.ALGO.id,
 ]);
 
+// Networks where the native asset is the only one to buy: the app selects it and opens the buy page without showing the asset selector.
+const CURRENCY_IDS_WITHOUT_BUY_ASSET_SELECTOR = new Set([Currency.BTC.id]);
+
 export type EarnOptions = SyncWaitOptions & { asset?: Currency };
 
 /** The account page shown when the `accountDetail` flag is on. */
@@ -63,7 +66,7 @@ export class AccountDetailPage extends AppPage {
   async clickBuy(asset?: AccountType) {
     await this.heroAction("buy").click();
     const currency = asset?.currency ?? this.tokenInFocus;
-    if (currency) {
+    if (currency && !CURRENCY_IDS_WITHOUT_BUY_ASSET_SELECTOR.has(currency.id)) {
       await this.modularAssetDialog.selectAssetByTicker(currency);
     }
   }
