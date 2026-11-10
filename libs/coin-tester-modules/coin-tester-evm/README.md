@@ -8,7 +8,7 @@ This package contains the deterministic testing infrastructure for EVM-based coi
 ## Features
 
 - Deterministic testing scenarios for EVM-based coins
-- Support for multiple EVM chains (Ethereum, Polygon, Scroll, Optimism, Sonic, Robinhood, Arc, Core, Alpen Testnet)
+- Support for multiple EVM chains (Ethereum, Polygon, Scroll, Optimism, Sonic, Robinhood, Arc, Core, Alpen Testnet, Alpen)
 - Local signer written in Typescript
 - The Base and Sonic scenarios ask coin-sandbox for reth 2.5.2 (Base's build, 1.5.0) and sonic 2.2.5 (the versions of production) and their `etherscan-stub` indexer: the Etherscan API of
   the chain, served from the node, which Live reads as an `etherscan` explorer (as in production) and which needs no wait for indexing. USDC (USDC.e on Sonic) is preloaded
@@ -29,6 +29,9 @@ This package contains the deterministic testing infrastructure for EVM-based coi
   reads as a `blockscout` explorer. The sequencer runs in its test mode (no orchestration layer, a private regtest bitcoind for its batches). WABTC (tWABTC in the CAL) is preloaded
   at its testnet address and the account is funded by airdrop (BTC and tWABTC): the scenario sends 1 BTC, 1 tWABTC, all its tWABTC and all its BTC, and checks that Live
   sends them as legacy transactions priced at the `minGasPrice` floor or above, as its configuration asks. No mock, and any request that leaves the machine fails
+- The Alpen scenario runs the same client and indexer on Alpen's mainnet genesis (chain id 29032), which Live reads as a `blockscout-v2` explorer, as in production. No token is preloaded (WABTC is not on mainnet) and the account
+  is funded by airdrop: the scenario sends 1 BTC and all its BTC, as legacy transactions priced at the `minGasPrice` floor of mainnet or above. No mock, and any
+  request that leaves the machine fails
 
 ## Usage
 
@@ -42,7 +45,7 @@ await executeScenario(scenarioEthereum);
 
 ## Development
 
-Run the tests with `pnpm coin:tester:evm start`. The Ethereum, Polygon, BNB, Optimism, Scroll, Base, Sonic, Robinhood, Arc, Core and Alpen Testnet scenarios need coin-sandbox's server running (`deno task
+Run the tests with `pnpm coin:tester:evm start`. The Ethereum, Polygon, BNB, Optimism, Scroll, Base, Sonic, Robinhood, Arc, Core, Alpen Testnet and Alpen scenarios need coin-sandbox's server running (`deno task
 server` in its repository, port 8000; `COIN_SANDBOX_URL` points elsewhere) and a Docker daemon, and `docker login
 jfrog.ledgerlabs.net` for the Atlas images (amd64 only, so emulated on Apple Silicon; Optimism and Scroll have none, and the node images of Scroll and Core are amd64 only too). It takes about a minute. To run one scenario:
 `pnpm coin:tester:evm start -t "scenario BNB"`.
