@@ -34,8 +34,14 @@ import {
 import BigNumber from "bignumber.js";
 import { BigNumberStrSchema, DateTimeIsoSchema } from "@shared/schema-primitives";
 import type { Unit } from "@domain/entity-currency-unit";
-import { tokenUnit, toTokenBalance } from "../models";
-import type { AccountDescriptor, Balance, Operation, SendEvent } from "../models";
+import { tokenUnit, toAccountBalances } from "../models";
+import type {
+  AccountBalances,
+  AccountDescriptor,
+  HeldToken,
+  Operation,
+  SendEvent,
+} from "../models";
 import type { EarnSolanaStake, SolanaStakeLimits } from "../earn/types";
 import { isStakeAmountError, SolanaStakeAmountError } from "../earn/errors";
 import type { TransactionIntent } from "../intents";
@@ -157,21 +163,24 @@ export class BridgeAdapter {
     });
   }
 
-  async getBalances(descriptor: AccountDescriptor): Promise<Balance[]> {
+  async getBalances(descriptor: AccountDescriptor): Promise<AccountBalances> {
     const account = await this.sync(descriptor);
-    const balances: Balance[] = [
+    const heldTokens: HeldToken[] = [];
+    for (const sub of account.subAccounts ?? []) {
+      if (sub.type !== "TokenAccount") continue;
+      heldTokens.push({
+        token: sub.token,
+        balance: BigNumberStrSchema.parse(sub.balance.toFixed()),
+      });
+    }
+    return toAccountBalances(
       {
         kind: "native",
         assetId: account.currency.id,
         balance: BigNumberStrSchema.parse(account.balance.toFixed()),
       },
-    ];
-    for (const sub of account.subAccounts ?? []) {
-      if (sub.type !== "TokenAccount") continue;
-      const balance = toTokenBalance(sub.token, BigNumberStrSchema.parse(sub.balance.toFixed()));
-      if (balance) balances.push(balance);
-    }
-    return balances;
+      heldTokens,
+    );
   }
 
   async getOperations(descriptor: AccountDescriptor): Promise<Operation[]> {

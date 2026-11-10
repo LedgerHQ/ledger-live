@@ -1,4 +1,4 @@
-import type { CommandOutput } from "../output";
+import { warnIfTokensSkipped, type CommandOutput } from "../output";
 import { errMessage } from "../shared/error-message";
 import { writeStderr } from "../shared/ui";
 import { toChecksumAddress } from "./evm";
@@ -39,11 +39,12 @@ async function heldTokens(
   out: Pick<CommandOutput, "withActivity">,
 ): Promise<TokenCandidate[]> {
   try {
-    const tokens = await out.withActivity(
+    const { tokens, skippedTokenIds } = await out.withActivity(
       `Reading the tokens account "${account.label}" holds…`,
       "Tokens read",
       () => findAccountTokens(account.descriptor),
     );
+    warnIfTokensSkipped(skippedTokenIds);
     const held = tokens.filter(token => sameTicker(token.ticker, ticker));
     return network === "solana" && held.length > 1 ? await withoutToken2022(held) : held;
   } catch (error) {

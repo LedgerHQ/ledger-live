@@ -5,7 +5,6 @@ import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAs
 import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
 import { BigNumberStrSchema } from "@shared/schema-primitives";
 import { parseV1, toV0 } from "../../shared/accountDescriptor";
-import { installOutputCapture } from "../../shared/ui";
 import { ETH_DESCRIPTOR } from "../../testing/constants";
 import { USDT_CONTRACT, USDT_TOKEN_CURRENCY, USDT_TOKEN_INFO } from "../../testing/cal-fixtures";
 import type { Balance } from "../models";
@@ -70,28 +69,25 @@ describe("CoinFrameworkAdapter.getBalances", () => {
   };
 
   it("carries the token's metadata on each token balance", async () => {
-    expect(await balancesHolding(erc20Asset(USDT_CONTRACT, 1_500_000n))).toEqual([
-      NATIVE_BALANCE,
-      USDT_BALANCE,
-    ]);
+    expect(await balancesHolding(erc20Asset(USDT_CONTRACT, 1_500_000n))).toEqual({
+      balances: [NATIVE_BALANCE, USDT_BALANCE],
+      skippedTokenIds: [],
+    });
   });
 
   it("returns no balance for a token CAL doesn't list", async () => {
-    expect(await balancesHolding(erc20Asset(UNLISTED_CONTRACT, 1n))).toEqual([NATIVE_BALANCE]);
+    expect(await balancesHolding(erc20Asset(UNLISTED_CONTRACT, 1n))).toEqual({
+      balances: [NATIVE_BALANCE],
+      skippedTokenIds: [],
+    });
   });
 
-  it("skips a token without units with a warning and keeps the other balances", async () => {
-    const stderr: string[] = [];
-    restores.push(installOutputCapture({ stderr: line => stderr.push(line) }));
-
+  it("reports a token without units as skipped and keeps the other balances", async () => {
     expect(
       await balancesHolding(
         erc20Asset(NO_UNITS_CONTRACT, 1n),
         erc20Asset(USDT_CONTRACT, 1_500_000n),
       ),
-    ).toEqual([NATIVE_BALANCE, USDT_BALANCE]);
-    expect(stderr).toEqual([
-      `⚠ Skipped token ${NO_UNITS_TOKEN.id}: the Crypto Assets List gives no unit for it.\n`,
-    ]);
+    ).toEqual({ balances: [NATIVE_BALANCE, USDT_BALANCE], skippedTokenIds: [NO_UNITS_TOKEN.id] });
   });
 });

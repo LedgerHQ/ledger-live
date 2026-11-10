@@ -12,8 +12,8 @@ import {
   adaptCoreOperationToLiveOperation,
 } from "@ledgerhq/live-common/bridge/generic-coin-framework/utils";
 import { BigNumberStrSchema, DateTimeIsoSchema } from "@shared/schema-primitives";
-import { toTokenBalance } from "../models";
-import type { AccountDescriptor, Balance, Operation } from "../models";
+import { toAccountBalances } from "../models";
+import type { AccountBalances, AccountDescriptor, HeldToken, Operation } from "../models";
 
 export type OperationsPage = {
   operations: Operation[];
@@ -23,7 +23,7 @@ export type OperationsPage = {
 type CoinFrameworkAssetEntry = { asset: { type: string }; value: bigint };
 
 export class CoinFrameworkAdapter {
-  async getBalances(descriptor: AccountDescriptor): Promise<Balance[]> {
+  async getBalances(descriptor: AccountDescriptor): Promise<AccountBalances> {
     const { xpubOrAddress: address } = decodeAccountId(descriptor.id);
     const currency = getCryptoCurrencyById(descriptor.currencyId);
     const api = createLocalEvmApi();
@@ -35,22 +35,21 @@ export class CoinFrameworkAdapter {
     const native = extractBalance(balanceRes, "native");
     const tokenAssets = balanceRes.filter(b => b.asset.type !== "native");
 
-    const tokenBalances = await Promise.all(
-      tokenAssets.map(async ({ asset, value }): Promise<Balance | null> => {
+    const heldTokens = await Promise.all(
+      tokenAssets.map(async ({ asset, value }): Promise<HeldToken[]> => {
         const token = await bridgeApi.getTokenFromAsset?.(asset);
-        if (!token) return null;
-        return toTokenBalance(token, BigNumberStrSchema.parse(String(value))) ?? null;
+        return token ? [{ token, balance: BigNumberStrSchema.parse(String(value)) }] : [];
       }),
     );
 
-    return [
+    return toAccountBalances(
       {
         kind: "native",
         assetId: currency.id,
         balance: BigNumberStrSchema.parse(String(native.value)),
       },
-      ...tokenBalances.filter((b): b is Balance => b !== null),
-    ];
+      heldTokens.flat(),
+    );
   }
 
   async getOperations(

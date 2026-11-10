@@ -16,7 +16,6 @@ import {
 import { SolanaStakeAmountError } from "../earn/errors";
 import type { TransactionIntent } from "../intents";
 import type { AccountDescriptor, Balance } from "../models";
-import { installOutputCapture } from "../../shared/ui";
 
 describe("applyEvmGasLimitMultiplier", () => {
   const evmIntent = (gasLimitMultiplier?: number): TransactionIntent => ({
@@ -608,28 +607,19 @@ describe("BridgeAdapter.getBalances", () => {
     });
 
   it("carries the synced token's metadata on each token balance", async () => {
-    await expect(adapterHolding(usdc).getBalances(descriptor)).resolves.toEqual([
-      nativeBalance,
-      usdcBalance,
-    ]);
+    await expect(adapterHolding(usdc).getBalances(descriptor)).resolves.toEqual({
+      balances: [nativeBalance, usdcBalance],
+      skippedTokenIds: [],
+    });
   });
 
-  it("skips a sub-account whose token has no units with a warning and keeps the other balances", async () => {
+  it("reports a sub-account whose token has no units as skipped and keeps the other balances", async () => {
     const noUnits = { ...usdc, id: "solana/spl/no_units", units: [] };
-    const stderr: string[] = [];
-    const restoreOutput = installOutputCapture({ stderr: line => stderr.push(line) });
 
-    try {
-      await expect(adapterHolding(noUnits, usdc).getBalances(descriptor)).resolves.toEqual([
-        nativeBalance,
-        usdcBalance,
-      ]);
-    } finally {
-      restoreOutput();
-    }
-    expect(stderr).toEqual([
-      "⚠ Skipped token solana/spl/no_units: the Crypto Assets List gives no unit for it.\n",
-    ]);
+    await expect(adapterHolding(noUnits, usdc).getBalances(descriptor)).resolves.toEqual({
+      balances: [nativeBalance, usdcBalance],
+      skippedTokenIds: ["solana/spl/no_units"],
+    });
   });
 });
 
