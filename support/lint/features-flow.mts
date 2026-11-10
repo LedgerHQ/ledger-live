@@ -31,7 +31,6 @@ const FATAL_REACT_COMPILER = [
 const CHILDREN_PROP_IN_TESTS = ["flow-contacts-delete-contact", "flow-contacts-detail"];
 
 const PLATFORM_SUFFIX_WAIVERS = [
-  "account-detail",
   "account-detail-hero",
   "large-screen-upsell",
   "pay-bank-transfer",
