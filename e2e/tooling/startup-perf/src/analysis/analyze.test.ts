@@ -11,6 +11,7 @@ import {
   type Row,
 } from "./analyze.ts";
 import { comparison, launch, startsDifferWithFallback } from "./fake-samples.ts";
+import type { Sample } from "../types.ts";
 
 const GATE = { preset: "custom", thresholdMs: 100 };
 function rowOf(rows: Row[], measure: (name: string) => boolean): Row {
@@ -319,9 +320,17 @@ describe("summarise", () => {
     }
   });
 
-  it("keeps the longest device log line", () => {
-    const samples = comparison({ deltaMs: 0, a: { logLineBytes: 423 }, b: { logLineBytes: 430 } });
-    assert.equal(debugRow(summarise(samples, GATE)).reads.longestLogLine, 430);
-    assert.equal(debugRow(summarise(comparison({ deltaMs: 0 }), GATE)).reads.longestLogLine, null);
+  it("names the builds whose warm-up wrote no log line", () => {
+    const warmup = (side: "A" | "B", readFrom: "log" | "screen-fallback") =>
+      launch({ side, round: -1, warmup: true, readFrom, appStartupTime: 1000 });
+    const samples = comparison({
+      deltaMs: 0,
+      a: { readFrom: "screen" },
+      b: { readFrom: "screen" },
+    });
+    const reads = (...warmups: Sample[]) =>
+      debugRow(summarise([...warmups, ...samples], GATE)).reads.noLogLine;
+    assert.deepEqual(reads(warmup("A", "log"), warmup("B", "screen-fallback")), ["B"]);
+    assert.deepEqual(reads(warmup("A", "log"), warmup("B", "log")), []);
   });
 });
