@@ -9,12 +9,17 @@ import {
   utimesSync,
   writeFileSync,
 } from "node:fs";
-import os, { tmpdir, uptime } from "node:os";
+import os, { tmpdir } from "node:os";
 import { join } from "node:path";
 import { readLiveLockHolderPid, withFileLock } from "./file-lock";
 
+const MOCKED_UPTIME_SECONDS = 3_600;
+
 let dir: string | undefined;
+let restoreUptime: (() => void) | undefined;
 afterEach(() => {
+  restoreUptime?.();
+  restoreUptime = undefined;
   if (dir) rmSync(dir, { recursive: true, force: true });
   dir = undefined;
 });
@@ -25,7 +30,9 @@ function lockPath(): string {
 }
 
 function backdateBeforeLastBoot(path: string): void {
-  const beforeBoot = new Date(Date.now() - uptime() * 1000 - 60_000);
+  const uptimeSpy = spyOn(os, "uptime").mockReturnValue(MOCKED_UPTIME_SECONDS);
+  restoreUptime = () => uptimeSpy.mockRestore();
+  const beforeBoot = new Date(Date.now() - MOCKED_UPTIME_SECONDS * 1000 - 60_000);
   utimesSync(path, beforeBoot, beforeBoot);
 }
 
