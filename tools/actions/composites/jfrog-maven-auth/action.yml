@@ -2,7 +2,7 @@ name: JFrog Maven auth
 description: Send Gradle's public Maven repositories (Maven Central, Google, Gradle Plugin Portal, JCenter, JitPack) to a JFrog Maven virtual repository, authenticated with the job's JFrog OIDC token.
 inputs:
   url:
-    description: JFrog Maven virtual repository URL, e.g. https://jfrog.ledgerlabs.net/artifactory/virtual-maven-prod-green. Empty leaves Gradle on the public repositories.
+    description: JFrog Maven virtual repository URL, e.g. https://jfrog.ledgerlabs.net/artifactory/ledger-live-maven-virtual-green. Empty leaves Gradle on the public repositories.
     required: false
     default: ""
 runs:
