@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Account } from "@ledgerhq/types-live";
+import { useNavigate, type NavigateFunction } from "react-router";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
+import { beginDepositRequest } from "@ledgerhq/live-common/wallet-api/Perps/deposit/request";
 import { act, render, screen } from "tests/testSetup";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import PerpsDepositRoot, { openPerpsDeposit } from "../PerpsDepositDialog";
@@ -51,6 +54,16 @@ const receiverAccount = createAccount("receiver-1", 0);
 const fundingAccount = createAccount("funding-1", 10000);
 
 /** The funding account is read back from the store, so it has to live there. */
+const router: { navigate?: NavigateFunction } = {};
+
+function CaptureNavigate() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    router.navigate = navigate;
+  }, [navigate]);
+  return null;
+}
+
 function renderDeposit() {
   return render(<PerpsDepositRoot />, { initialState: { accounts: [fundingAccount] } });
 }
@@ -251,7 +264,7 @@ describe("PerpsDeposit integration", () => {
   });
 
   it("should step aside for the add account drawer and come back with the new account", async () => {
-    let resolvePick: (result: { account: Account }) => void = () => undefined;
+    let resolvePick: ((result: { account: Account }) => void) | undefined;
     mockOpenAssetAndAccount.mockReturnValue(
       new Promise(resolve => {
         resolvePick = resolve;
@@ -267,10 +280,27 @@ describe("PerpsDeposit integration", () => {
 
     expect(screen.queryByTestId("perps-deposit-amount-input")).not.toBeInTheDocument();
 
-    await act(async () => resolvePick({ account: fundingAccount }));
+    await act(async () => resolvePick?.({ account: fundingAccount }));
     act(() => setDrawer());
 
     expect(await screen.findByTestId("perps-deposit-amount-input")).toHaveValue("20");
     expect(screen.getByTestId("perps-deposit-review-cta")).not.toBeDisabled();
+  });
+
+  it("should cancel the deposit when the app navigates away from it", async () => {
+    render(
+      <>
+        <CaptureNavigate />
+        <PerpsDepositRoot />
+      </>,
+      { initialState: { accounts: [fundingAccount] } },
+    );
+    const pendingDeposit = beginDepositRequest();
+
+    act(() => openPerpsDeposit({ receiverAccount }));
+    act(() => router.navigate?.("/account/funding-1"));
+
+    await expect(pendingDeposit).rejects.toBeInstanceOf(UserRefusedOnDevice);
+    expect(screen.queryByTestId("perps-deposit-amount-input")).not.toBeInTheDocument();
   });
 });

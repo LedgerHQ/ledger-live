@@ -4,6 +4,7 @@ import { cancelWithdrawRequest } from "@ledgerhq/live-common/wallet-api/Perps/wi
 import { PerpsWithdrawView } from "./PerpsWithdrawView";
 import type { PickedWithdrawAccount } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/useWithdrawForm";
 import { useIsDrawerOpen } from "LLD/features/Perps/hooks/useIsDrawerOpen";
+import { useOnNavigateAway } from "LLD/features/Perps/hooks/useOnNavigateAway";
 import {
   EMPTY_AMOUNT_TEXT,
   usePerpsWithdrawViewModel,
@@ -58,14 +59,19 @@ export default function PerpsWithdrawRoot() {
     [amountText, picked],
   );
 
+  const cancel = useCallback(() => {
+    cancelWithdrawRequest();
+    close();
+  }, [close]);
+
   const handleOpenChange = useCallback(
     (open: boolean) => {
-      if (open) return;
-      cancelWithdrawRequest();
-      close();
+      if (!open) cancel();
     },
-    [close],
+    [cancel],
   );
+
+  useOnNavigateAway(data !== null, cancel);
 
   return (
     // Hiding through `open` skips `onOpenChange`, so the pending withdraw request is kept.

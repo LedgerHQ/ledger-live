@@ -1,11 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  type Dispatch,
-  type SetStateAction,
-} from "react";
+import { useCallback, useMemo, useState, type Dispatch, type SetStateAction } from "react";
 import { useNavigate } from "react-router";
 import BigNumber from "bignumber.js";
 import type { AccountLike, TokenAccount } from "@ledgerhq/types-live";
@@ -73,16 +66,24 @@ export type PerpsDepositFormState = Readonly<{
   setAmountText: Dispatch<SetStateAction<string>>;
 }>;
 
-export function usePerpsDepositFormState(data: PerpsDepositData | null): PerpsDepositFormState {
-  const [depositAccountId, setDepositAccountId] = useState(data?.draft?.depositAccount.id);
-  const [amountText, setAmountText] = useState(() => toAmountText(data?.draft?.depositAmount));
+export function usePerpsDepositFormState(): Readonly<{
+  form: PerpsDepositFormState;
+  reset: (draft: PerpsDepositDraft | undefined) => void;
+}> {
+  const [depositAccountId, setDepositAccountId] = useState<string | undefined>();
+  const [amountText, setAmountText] = useState(EMPTY_AMOUNT_TEXT);
 
-  useEffect(() => {
-    setDepositAccountId(data?.draft?.depositAccount.id);
-    setAmountText(toAmountText(data?.draft?.depositAmount));
-  }, [data]);
+  const reset = useCallback((draft: PerpsDepositDraft | undefined) => {
+    setDepositAccountId(draft?.depositAccount.id);
+    setAmountText(toAmountText(draft?.depositAmount));
+  }, []);
 
-  return { depositAccountId, setDepositAccountId, amountText, setAmountText };
+  const form = useMemo(
+    () => ({ depositAccountId, setDepositAccountId, amountText, setAmountText }),
+    [amountText, depositAccountId],
+  );
+
+  return { form, reset };
 }
 
 export type PerpsDepositViewModel = Readonly<{

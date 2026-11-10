@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import BigNumber from "bignumber.js";
 import { CryptoCurrencyIdSchema, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { type TokenCurrency, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
@@ -132,7 +133,11 @@ function renderViewModel(
     ptxTradeMaxConstant: { enabled: true, params: { constants: maxConstants } },
   };
   const { result, store } = renderHook(
-    () => usePerpsDepositViewModel(props, onClose, usePerpsDepositFormState(props)),
+    () => {
+      const { form, reset } = usePerpsDepositFormState();
+      useEffect(() => reset(props.draft), [reset]);
+      return usePerpsDepositViewModel(props, onClose, form);
+    },
     {
       initialState: {
         accounts,
