@@ -33,6 +33,12 @@ export function parseA4Asset(assetPath: string, owner: string): AssetInfo {
   return { type };
 }
 
+const NFT_ASSET_TYPES: ReadonlySet<string> = new Set(["erc721", "erc1155"]);
+
+function isNftAsset(assetPath: string): boolean {
+  return NFT_ASSET_TYPES.has(assetPath.split(".")[0]);
+}
+
 function deriveType(delta: BigNumber, ledgerOpType: string | undefined): OperationType {
   if (ledgerOpType !== undefined && isOperationType(ledgerOpType)) {
     return ledgerOpType;
@@ -156,7 +162,8 @@ function buildOpsFromParts(
     if (
       normalizeAccountKey(part.address) !== accountKey ||
       part.type === "event" ||
-      part.type === "fee"
+      part.type === "fee" ||
+      isNftAsset(part.asset)
     ) {
       continue;
     }
@@ -191,6 +198,9 @@ function buildOpsFromAssets(
 ): Operation[] {
   const results: Operation[] = [];
   for (const [assetPath, deltaStr] of Object.entries(assets)) {
+    if (isNftAsset(assetPath)) {
+      continue;
+    }
     const delta = new BigNumber(deltaStr);
     const type = deriveType(delta, ledgerOpType);
     if (failed && type === "IN") {
