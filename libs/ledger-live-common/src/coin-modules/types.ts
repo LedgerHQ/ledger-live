@@ -15,6 +15,7 @@ import type {
 } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountReceive } from "@domain/entity-account-receive";
 import type { Transaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import type { CoinModuleImpl } from "@ledgerhq/coin-module-framework/api/index";
@@ -154,6 +155,8 @@ export type CoinModuleLoader<
   loadBridgeExtensions?: () => Promise<AccountBridgeExtensions<T>>;
   loadBridgeApi?: () => Promise<BridgeApi | ((currency: CryptoCurrency) => BridgeApi)>;
   loadAccountRawAssign?: () => Promise<AccountRawAssignHooks>;
+  /** Where an account receives, when not on the `freshAddress` the device shows. */
+  loadAccountReceive?: () => Promise<(account: A) => AccountReceive>;
   /**
    * Both generics are `any`: the registry is heterogeneous and cannot name one memo / `TxData`
    * instantiation for every family. Pinning `TxDataType` (its default is `TxDataNotSupported`) would
