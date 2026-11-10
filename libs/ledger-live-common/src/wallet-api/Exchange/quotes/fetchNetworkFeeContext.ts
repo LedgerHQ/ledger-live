@@ -20,8 +20,8 @@ type FeeEstimationBridge = ResolvedAccountBridge<TransactionCommon>;
 
 const recentBitcoinSyncs = new WeakMap<Account, Promise<Account>>();
 
-function forgetBitcoinSync(account: Account, synced?: Promise<Account>): void {
-  if (synced === undefined || recentBitcoinSyncs.get(account) === synced) {
+function forgetBitcoinSync(account: Account, synced: Promise<Account>): void {
+  if (recentBitcoinSyncs.get(account) === synced) {
     recentBitcoinSyncs.delete(account);
   }
 }
@@ -76,6 +76,7 @@ export async function fetchNetworkFeeContext(
     const fromParentAccount = getParentAccount(fromAccount, args.accounts);
     const storeAccount = getMainAccount(fromAccount, fromParentAccount);
     let mainAccount = storeAccount;
+    let bitcoinSync: Promise<Account> | undefined;
     const bridge = await getAccountBridge(fromAccount, fromParentAccount);
 
     // Bitcoin requires a recent sync before `prepareTransaction` can compute
@@ -83,7 +84,8 @@ export async function fetchNetworkFeeContext(
     // reused while it runs and for 30 s after it ends.
     if (mainAccount.currency.id === "bitcoin") {
       try {
-        mainAccount = await syncBitcoinAccount(bridge, mainAccount);
+        bitcoinSync = syncBitcoinAccount(bridge, mainAccount);
+        mainAccount = await bitcoinSync;
       } catch (e) {
         log("swap", "fetchNetworkFeeContext: btc sync failed", e);
       }
@@ -121,7 +123,9 @@ export async function fetchNetworkFeeContext(
       return buildContext(mainAccount, preparedTx, status);
     } catch (e) {
       log("swap", "fetchNetworkFeeContext: fee estimation failure", e);
-      forgetBitcoinSync(storeAccount);
+      if (bitcoinSync) {
+        forgetBitcoinSync(storeAccount, bitcoinSync);
+      }
       args.onFeeEstimationFailed?.(e);
       return null;
     }

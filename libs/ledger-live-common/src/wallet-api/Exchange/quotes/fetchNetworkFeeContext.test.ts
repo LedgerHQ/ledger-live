@@ -398,6 +398,32 @@ describe("fetchNetworkFeeContext", () => {
     expect(preparedArg.amount.toFixed()).toBe("45000000");
   });
 
+  it("keeps a newer bitcoin sync when a late quote of the older sync fails", async () => {
+    const account = makeBtcAccount();
+    let rejectLateQuote: (error: Error) => void = () => undefined;
+    const lateQuote = new Promise((_resolve, reject) => {
+      rejectLateQuote = reject;
+    });
+    const bridge = useBtcBridge(account, {
+      prepareTransaction: jest
+        .fn()
+        .mockRejectedValueOnce(new Error("boom"))
+        .mockReturnValueOnce(lateQuote)
+        .mockResolvedValue({}),
+    });
+
+    const firstQuote = fetchNetworkFeeContext(btcArgs(account));
+    const secondQuote = fetchNetworkFeeContext(btcArgs(account));
+    await firstQuote;
+    await fetchNetworkFeeContext(btcArgs(account));
+    expect(bridge.sync).toHaveBeenCalledTimes(2);
+
+    rejectLateQuote(new Error("late boom"));
+    await secondQuote;
+    await fetchNetworkFeeContext(btcArgs(account));
+    expect(bridge.sync).toHaveBeenCalledTimes(2);
+  });
+
   it("recovers from a bitcoin sync failure without a fee estimation failure", async () => {
     const account = makeBtcAccount();
     useBtcBridge(account, {
