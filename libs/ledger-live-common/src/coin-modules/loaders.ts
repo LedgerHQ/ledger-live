@@ -414,8 +414,6 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     accountDescriptorType: "address",
     loadSetup: () => import("../families/sui/setup"),
     loadTransaction: () => import("@ledgerhq/coin-sui/transaction").then(m => m.default),
-    loadAccountPublicKeyResolver: () =>
-      import("../families/sui/accountPublicKey").then(m => m.default),
     // No loadDeviceTxConfig: sui has no deviceTransactionConfig
   },
   {

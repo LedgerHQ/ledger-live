@@ -88,13 +88,8 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async (info, syncCon
       subAccounts: initialAccount?.subAccounts ?? [],
     })) || [];
 
-  // The Ed25519 public key (hex) comes from the device at scan; later syncs get no `rest`, so the
-  // stored one is kept.
-  const xpub = (info.rest as { publicKey?: string } | undefined)?.publicKey ?? initialAccount?.xpub;
-
   return {
     id: accountId,
-    ...(xpub ? { xpub } : {}),
     syncHash: syncHash ?? undefined,
     balance,
     spendableBalance,

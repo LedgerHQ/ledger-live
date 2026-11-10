@@ -32,8 +32,6 @@ import { getWalletAccount } from "@ledgerhq/coin-bitcoin/getWalletAccount";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { normalizePublicKeyForAddress } from "@ledgerhq/coin-tezos/logic-public";
 import { AccountPublicKeyUnavailable } from "../errors";
-import { loadAccountPublicKeyResolverForFamily } from "../coin-modules/registry";
-import type { AccountPublicKeyResolver } from "../coin-modules/types";
 
 export function translateContent(content: string | TranslatableString, locale = "en"): string {
   if (!content || typeof content === "string") return content;
@@ -358,6 +356,8 @@ export const bitcoinFamilyAccountGetPublicKeyLogic = async (
   return publicKey.toString("hex");
 };
 
+type AccountPublicKeyResolver = (account: Account) => string | null;
+
 const COMPRESSED_SECP256K1_HEX = /^0[23][0-9a-f]{64}$/i;
 
 const ACCOUNT_PUBLIC_KEY_RESOLVERS: Partial<Record<string, AccountPublicKeyResolver>> = {
@@ -401,11 +401,7 @@ export const accountGetPublicKeyLogic = async (
 
   let publicKey: string | null | undefined;
   try {
-    // A family that registers its own resolver keeps its coin-specific code out of this module.
-    const { family } = mainAccount.currency;
-    const resolver =
-      (await loadAccountPublicKeyResolverForFamily(family)) ?? ACCOUNT_PUBLIC_KEY_RESOLVERS[family];
-    publicKey = resolver?.(mainAccount);
+    publicKey = ACCOUNT_PUBLIC_KEY_RESOLVERS[mainAccount.currency.family]?.(mainAccount);
   } catch (error) {
     // A resolver may throw a typed error (e.g. tezos AccountPublicKeyUnavailable) to signal a
     // recoverable "re-add the account" state; record the failure before propagating it.
