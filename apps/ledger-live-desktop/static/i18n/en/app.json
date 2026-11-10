@@ -11508,7 +11508,8 @@
   "perpsTransactionStatus": {
     "dialogTitle": "Transaction detail",
     "title": "Fund Perpetuals",
-    "currencies": "{{sendTicker}} → {{receiveTicker}}"
+    "currencies": "{{sendTicker}} → {{receiveTicker}}",
+    "returnToPerps": "Return to Perps"
   },
   "accountAnalytics": {
     "assets": "Asset filter",

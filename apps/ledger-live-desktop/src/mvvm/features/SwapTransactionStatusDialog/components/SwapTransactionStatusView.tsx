@@ -6,9 +6,13 @@ import { StatusSection } from "./Status/StatusSection";
 import { EarnBanner } from "./EarnBanner/EarnBanner";
 import { DetailsSection } from "./Details/DetailsSection";
 import { FooterSection } from "./Footer/FooterSection";
+import type { FooterReturnAction } from "./Footer/FooterSection";
 
 type SwapTransactionStatusViewProps = Readonly<
-  SwapTransactionStatusViewModel & { origin?: SwapTransactionStatusOrigin }
+  SwapTransactionStatusViewModel & {
+    origin?: SwapTransactionStatusOrigin;
+    returnAction?: FooterReturnAction;
+  }
 >;
 
 export function SwapTransactionStatusView({
@@ -30,6 +34,7 @@ export function SwapTransactionStatusView({
   isStatusSectionLoading,
   isFooterLoading,
   origin,
+  returnAction,
 }: SwapTransactionStatusViewProps) {
   return (
     <>
@@ -66,7 +71,11 @@ export function SwapTransactionStatusView({
         swapId={swapId}
       />
 
-      <FooterSection explorerUrl={explorerUrl} isLoading={isFooterLoading} />
+      <FooterSection
+        explorerUrl={explorerUrl}
+        isLoading={isFooterLoading}
+        returnAction={returnAction}
+      />
     </>
   );
 }
