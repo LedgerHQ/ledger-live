@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import type { AccountLike, SwapOperation } from "@ledgerhq/types-live";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { flattenAccounts, getAccountCurrency } from "../../../account";
 import getCompleteSwapHistory from "../../../exchange/swap/getCompleteSwapHistory";
 import { swapProviderRequiresOperationId } from "../../../exchange/swap/providersRequiringOperationId";
@@ -18,6 +18,7 @@ import type {
   GetTransactionStatusResponse,
   TransactionStatusValue,
 } from "./types";
+import { findWithdrawSwapEntry, mapWithdrawSwapEntry } from "./withdrawSwapEntry";
 
 export type GetTransactionStatusContext = {
   accounts: AccountLike[];
@@ -32,8 +33,8 @@ export async function getTransactionStatus(
   // A perps withdraw stays out of the swap history until its payout operation is found on the
   // receiving account (hash unknown yet, or known but not synced yet): its details come from its
   // entry meanwhile, e.g. when opened right after signing.
-  const pendingEntry = swapOperation ? undefined : findWithdrawSwapEntry(accounts, args.swapId);
-  const provider = swapOperation?.provider ?? pendingEntry?.provider ?? args.provider;
+  const withdrawEntry = swapOperation ? undefined : findWithdrawSwapEntry(accounts, args.swapId);
+  const provider = swapOperation?.provider ?? withdrawEntry?.provider ?? args.provider;
 
   if (!provider) {
     return {
@@ -51,7 +52,7 @@ export async function getTransactionStatus(
   );
   const status =
     remoteStatus?.status ??
-    getTransactionStatusValue(swapOperation?.status ?? pendingEntry?.status);
+    getTransactionStatusValue(swapOperation?.status ?? withdrawEntry?.status);
   const legStatuses = getSwapTransactionLegStatusesFromAccounts({
     accounts,
     operationHash: swapOperation?.operation.hash,
@@ -63,54 +64,14 @@ export async function getTransactionStatus(
     provider,
     status,
     ...legStatuses,
-    ...(pendingEntry
-      ? mapPendingSwapEntry(pendingEntry, accounts, remoteStatus)
+    ...(withdrawEntry
+      ? mapWithdrawSwapEntry(withdrawEntry, accounts, remoteStatus)
       : {
           finalAmount:
             getMagnitudeAwareRemoteFinalAmount(remoteStatus?.finalAmount, swapOperation) ??
             getFinalAmount(swapOperation),
           ...mapSwapOperation(swapOperation),
         }),
-  };
-}
-
-/** A perps withdraw entry: held by the receiving account, with the HyperCore account as sender. */
-function findWithdrawSwapEntry(accounts: AccountLike[], swapId: string): SwapOperation | undefined {
-  for (const account of accounts) {
-    const entry = account.swapHistory?.find(e => e.swapId === swapId && e.fromAccountId);
-    if (entry) return entry;
-  }
-  return undefined;
-}
-
-function mapPendingSwapEntry(
-  entry: SwapOperation,
-  accounts: AccountLike[],
-  remoteStatus: SwapStatus | undefined,
-): Partial<GetTransactionStatusResponse> {
-  const receiver = accounts.find(account => account.id === entry.receiverAccountId);
-  // In human units: from the swap status, or the one stored when the status was last polled.
-  const humanFinalAmount =
-    remoteStatus?.finalAmount && isAmountGreaterThanZero(remoteStatus.finalAmount)
-      ? new BigNumber(remoteStatus.finalAmount)
-      : entry.finalAmount?.isGreaterThan(0)
-        ? entry.finalAmount
-        : undefined;
-  const finalAmount =
-    receiver && humanFinalAmount
-      ? humanFinalAmount.shiftedBy(getAccountCurrency(receiver).units[0].magnitude).toFixed()
-      : undefined;
-
-  return {
-    finalAmount,
-    fromAccountId: entry.fromAccountId,
-    toAccountId: entry.receiverAccountId,
-    sentAmount: entry.fromAmount.absoluteValue().toFixed(),
-    receivedAmount: finalAmount ?? entry.toAmount.toFixed(),
-    feesAmount: entry.feesAmount,
-    payoutFeesAmount: entry.payoutFeesAmount,
-    // The payout tx, for the explorer link: anchored already, or returned by the swap status.
-    operationHash: entry.operationId || remoteStatus?.txHash,
   };
 }
 
@@ -190,21 +151,26 @@ function mapSwapOperation(
     toAccountId: swapOperation.toAccount.id,
     sentAmount: swapOperation.fromAmount.absoluteValue().toFixed(),
     receivedAmount: receivedAmount.toFixed(),
-    // The fee of an operation the sender did not make (a perps withdraw payout) is not the sender's:
-    // the swap history entry carries its fees instead.
-    feesAmount: isSenderOperation(swapOperation)
-      ? swapOperation.operation.fee?.toFixed()
-      : swapOperation.feesAmount,
+    feesAmount: getFeesAmount(swapOperation),
     payoutFeesAmount: swapOperation.payoutFeesAmount,
     operationHash: swapOperation.operation.hash,
     createdAt,
   };
 }
 
-function isSenderOperation({ fromAccount, operation }: MappedSwapOperation): boolean {
-  return [...fromAccount.operations, ...fromAccount.pendingOperations].some(
-    o => o.id === operation.id,
-  );
+/**
+ * The fee of an operation the sender did not make (a perps withdraw payout) is not the sender's:
+ * the swap history entry carries its fees instead.
+ */
+function getFeesAmount({
+  fromAccount,
+  operation,
+  feesAmount,
+}: MappedSwapOperation): string | undefined {
+  const senderOperations = [...fromAccount.operations, ...fromAccount.pendingOperations];
+  const isSenderOperation = senderOperations.some(o => o.id === operation.id);
+  if (isSenderOperation) return operation.fee?.toFixed();
+  return feesAmount;
 }
 
 function getOperationCreatedAt(
