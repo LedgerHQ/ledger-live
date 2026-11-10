@@ -170,24 +170,25 @@ jobs:
             sudo chown -R $(whoami):$(id -ng) "$SDK/emulator"
           fi
 
-      - name: "ci-test: probe Maven sources"
+      - name: "ci-test: probe JFrog Maven"
         run: |
-          paths="com/google/code/gson/gson/2.9.1/gson-2.9.1.pom
-          com/facebook/react/react-android/0.81.6/react-android-0.81.6.pom
-          org/jetbrains/kotlin/kotlin-stdlib/2.1.20/kotlin-stdlib-2.1.20.pom
-          com/squareup/okhttp3/okhttp/4.12.0/okhttp-4.12.0.pom
-          org/gradle/toolchains/foojay-resolver/0.5.0/foojay-resolver-0.5.0.pom"
+          base=https://jfrog.ledgerlabs.net/artifactory
           probe() { # label url [auth]
             code=$(curl -sS -o body.txt -w '%{http_code} %{time_total}s' ${3:+-H "$3"} "$2")
             echo "== $code $1"
             case "$code" in 200*) ;; *) head -c 300 body.txt; echo ;; esac
           }
-          for path in $paths; do
+          auth="Authorization: Bearer $JFROG_TOKEN"
+          for path in com/google/code/gson/gson/2.9.1/gson-2.9.1.pom com/facebook/react/react-android/0.81.6/react-android-0.81.6.pom org/jetbrains/kotlin/kotlin-stdlib/2.1.20/kotlin-stdlib-2.1.20.pom com/squareup/okhttp3/okhttp/4.12.0/okhttp-4.12.0.pom; do
             echo "### $path"
-            probe gcs-mirror "https://maven-central.storage-download.googleapis.com/maven2/$path"
+            probe virtual "$base/virtual-maven-prod-green/$path" "$auth"
+            probe jfrog-central "$base/ossproxy-maven-proxy-central/$path" "$auth"
             probe repo1-direct "https://repo1.maven.org/maven2/$path"
-            probe jfrog-central "https://jfrog.ledgerlabs.net/artifactory/ossproxy-maven-proxy-central/$path" "Authorization: Bearer $JFROG_TOKEN"
           done
+          path=com/github/RedMadRobot/input-mask-android/6.0.0/input-mask-android-6.0.0.pom
+          echo "### $path"
+          probe virtual "$base/virtual-maven-prod-green/$path" "$auth"
+          probe jfrog-jitpack "$base/ossproxy-maven-proxy-jitpack/$path" "$auth"
           rm -f body.txt
 
       - name: "ci-test: block public Maven hosts"
