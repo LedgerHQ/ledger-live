@@ -509,7 +509,7 @@ jobs:
           ' "$raw"
 
       - name: Load AVD configuration
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@ci-test/e2e-QAA-1509-avd-lavapipe
         with:
           config_only: "true"
 
@@ -697,7 +697,7 @@ jobs:
     steps:
       # Same version determine-builds loaded the configuration from, so the AVD matches its key.
       - name: Setup Android AVDs
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@ci-test/e2e-QAA-1509-avd-lavapipe
         with:
           r2_access_key: ${{ secrets.R2_ACCESS_KEY_ID }}
           r2_secret_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
@@ -1113,7 +1113,7 @@ jobs:
           persist-credentials: false
 
       - name: Load AVD configuration
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@ci-test/e2e-QAA-1509-avd-lavapipe
         with:
           config_only: "true"
 
