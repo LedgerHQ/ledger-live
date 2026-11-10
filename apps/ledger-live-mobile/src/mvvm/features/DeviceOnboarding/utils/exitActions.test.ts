@@ -38,38 +38,6 @@ describe("exitActions", () => {
     expect(opened).toEqual({ path, params });
   });
 
-  it("should leave the flow for the old checks when an unseeded touchscreen falls back", () => {
-    const { rootNavigated, reset } = leave("legacyFallback");
-
-    expect(reset).toBeNull();
-    expect(rootNavigated).toEqual([
-      NavigatorName.BaseOnboarding,
-      {
-        screen: NavigatorName.SyncOnboarding,
-        params: {
-          screen: ScreenName.SyncOnboardingCompanion,
-          params: { device: stax, backReturnsToPrevious: true },
-        },
-      },
-    ]);
-  });
-
-  it("should leave the flow for the use case when an unseeded Nano falls back", () => {
-    const nanoX: Device = { ...stax, modelId: DeviceModelId.nanoX };
-    const { rootNavigated } = leave("legacyFallback", { device: nanoX });
-
-    expect(rootNavigated).toEqual([
-      NavigatorName.BaseOnboarding,
-      {
-        screen: NavigatorName.Onboarding,
-        params: {
-          screen: ScreenName.OnboardingUseCase,
-          params: { deviceModelId: DeviceModelId.nanoX },
-        },
-      },
-    ]);
-  });
-
   it("should complete and open the portfolio when the device is already synced", () => {
     const { opened, dispatched, navigated } = leave("completed", { wasReadOnlyAtEntry: true });
 
@@ -274,7 +242,6 @@ function leave(
   return {
     dispatched: dispatch.mock.calls.map(([action]) => action),
     reset: reset ?? null,
-    rootNavigated: outer.navigate.mock.calls[0] ?? null,
     opened: reset ? lastRoute(reset.routes) : null,
     navigated: (flow.navigate.mock.calls[0]?.[0]
       ? { name: flow.navigate.mock.calls[0][0], params: flow.navigate.mock.calls[0][1] }

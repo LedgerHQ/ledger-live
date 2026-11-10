@@ -155,21 +155,29 @@ function resetToLegacySeededChecks(navigation: NavigationProp<ParamListBase>, de
   });
 }
 
-/** Leaves the flow for the onboarding screens below it, where the old setup lives. */
+/** Leaves the flow for the onboarding screens below it, where the old setup lives. `pop` removes the flow instead of stacking a second onboarding. */
 function openLegacySetup(navigation: NavigationProp<ParamListBase>, device: Device) {
   const root = getRootNavigation(navigation);
   if (isSyncOnboardingSupported(device.modelId)) {
-    root.navigate(NavigatorName.BaseOnboarding, {
-      screen: NavigatorName.SyncOnboarding,
-      params: {
-        screen: ScreenName.SyncOnboardingCompanion,
-        params: { device, backReturnsToPrevious: true },
+    root.navigate(
+      NavigatorName.BaseOnboarding,
+      {
+        screen: NavigatorName.SyncOnboarding,
+        params: {
+          screen: ScreenName.SyncOnboardingCompanion,
+          params: { device, backReturnsToPrevious: true },
+        },
       },
-    });
+      { pop: true },
+    );
     return;
   }
-  root.navigate(NavigatorName.BaseOnboarding, {
-    screen: NavigatorName.Onboarding,
-    params: { screen: ScreenName.OnboardingUseCase, params: { deviceModelId: device.modelId } },
-  });
+  root.navigate(
+    NavigatorName.BaseOnboarding,
+    {
+      screen: NavigatorName.Onboarding,
+      params: { screen: ScreenName.OnboardingUseCase, params: { deviceModelId: device.modelId } },
+    },
+    { pop: true },
+  );
 }

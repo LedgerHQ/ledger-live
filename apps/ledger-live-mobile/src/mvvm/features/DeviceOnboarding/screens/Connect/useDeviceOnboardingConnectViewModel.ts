@@ -83,11 +83,16 @@ export function useDeviceOnboardingConnectViewModel(): DeviceOnboardingConnectMo
     navigation.goBack();
   }, [discard, navigation, pairedDevice]);
 
+  // `pop` closes the flow; a plain navigate would stack a second onboarding above it.
   const onDeviceNotFound = useCallback(() => {
-    navigation.navigate(NavigatorName.BaseOnboarding, {
-      screen: NavigatorName.Onboarding,
-      params: { screen: ScreenName.OnboardingDeviceSelection, params: { missingDevice: true } },
-    });
+    navigation.navigate(
+      NavigatorName.BaseOnboarding,
+      {
+        screen: NavigatorName.Onboarding,
+        params: { screen: ScreenName.OnboardingDeviceSelection, params: { missingDevice: true } },
+      },
+      { pop: true },
+    );
   }, [navigation]);
 
   return {

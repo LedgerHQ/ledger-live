@@ -86,6 +86,16 @@ function Portfolio() {
   );
 }
 
+/** A stand-in screen whose back arrow does what a real header back does. */
+function BackScreen({ label }: { label: string }) {
+  const navigation = useNavigation();
+  return (
+    <Pressable accessibilityLabel={`back from ${label}`} onPress={() => navigation.goBack()}>
+      <Text>{label}</Text>
+    </Pressable>
+  );
+}
+
 function OnboardingNavigator() {
   return (
     <Onboarding.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
@@ -97,11 +107,13 @@ function OnboardingNavigator() {
       <Onboarding.Screen name={ScreenName.OnboardingWelcomeBack} component={AccessExistingWallet} />
       <Onboarding.Screen name={ScreenName.OnboardingDeviceSelection}>
         {({ route }) => (
-          <Text>
-            {(route.params as { missingDevice?: boolean } | undefined)?.missingDevice
-              ? "missing device list"
-              : "device list"}
-          </Text>
+          <BackScreen
+            label={
+              (route.params as { missingDevice?: boolean } | undefined)?.missingDevice
+                ? "missing device list"
+                : "device list"
+            }
+          />
         )}
       </Onboarding.Screen>
     </Onboarding.Navigator>
@@ -113,7 +125,7 @@ function BaseOnboardingNavigator() {
     <BaseOnboarding.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
       <BaseOnboarding.Screen name={NavigatorName.Onboarding} component={OnboardingNavigator} />
       <BaseOnboarding.Screen name={NavigatorName.SyncOnboarding}>
-        {() => <Text>old touchscreen setup</Text>}
+        {() => <BackScreen label="old touchscreen setup" />}
       </BaseOnboarding.Screen>
     </BaseOnboarding.Navigator>
   );
@@ -295,6 +307,11 @@ describe("device onboarding flow navigation", () => {
     await user.press(screen.getByText("I don’t see my device"));
 
     expect(await screen.findByText("missing device list")).toBeVisible();
+    expectFlowClosed();
+
+    await user.press(screen.getByLabelText("back from missing device list"));
+    expect(await screen.findByTestId("onboarding-setupLedger")).toBeVisible();
+    expectFlowClosed();
   });
 
   it("should complete onboarding and go back to the portfolio after the checks", async () => {
@@ -343,6 +360,11 @@ describe("device onboarding flow navigation", () => {
     await user.press(screen.getByLabelText("Connect Ledger Stax"));
 
     expect(await screen.findByText("old touchscreen setup")).toBeVisible();
+    expectFlowClosed();
+
+    await user.press(screen.getByLabelText("back from old touchscreen setup"));
+    expect(await screen.findByTestId("Existing Wallet | Connect")).toBeVisible();
+    expectFlowClosed();
   });
 
   it("should open the firmware update inside the flow when the user accepts it", async () => {
@@ -360,6 +382,14 @@ describe("device onboarding flow navigation", () => {
     expect(await screen.findByText("firmware update screen")).toBeVisible();
   });
 });
+
+/** Hidden screens stay mounted, so a flow left below the next screen would still be found here. */
+function expectFlowClosed() {
+  expect(
+    screen.queryByText("Looking for your Ledger devices", { includeHiddenElements: true }),
+  ).toBeNull();
+  expect(screen.queryByTestId(checksTestIds.screen, { includeHiddenElements: true })).toBeNull();
+}
 
 function answerWelcome(device: ReturnType<typeof createScriptedTestDevice>) {
   device.answerState({
