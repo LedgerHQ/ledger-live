@@ -455,6 +455,21 @@ async function resolveUnbalancedTokenAssets(
   return assets.filter((asset): asset is AssetInfo => asset !== undefined);
 }
 
+function keepPendingAndSwapHistory(
+  rebuilt: TokenAccount[],
+  stored: TokenAccount[],
+): TokenAccount[] {
+  if (stored.length === 0) return rebuilt;
+
+  const storedByTokenId = new Map(stored.map(sa => [String(sa.token.id), sa]));
+  return rebuilt.map(sa => {
+    const match = storedByTokenId.get(String(sa.token.id));
+    return match
+      ? { ...sa, pendingOperations: match.pendingOperations, swapHistory: match.swapHistory }
+      : sa;
+  });
+}
+
 /**
  * Points each parent at the token rows `subOperationIndex` holds for its hash -- what restoring the
  * account computes from its stored sub-accounts. A parent whose links already match is returned
@@ -1124,7 +1139,8 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // the bound has to apply to the sub-accounts this sync *creates* too. `paginateOperations`
     // returns the whole page that reached the bound rather than splitting a transaction, so a walk
     // bounded at N hands back up to N plus one page -- and all of that overshoot can belong to a
-    // single token.
+    // single token. Nothing stored also keeps the stale history out; only `pendingOperations` and
+    // `swapHistory`, which the chain cannot give back, are then copied from the stored account.
     //
     // A bounded (but not from-scratch) round zeroes each sub-account's *operations* rather than
     // dropping the sub-account itself: an empty `oldSubAccounts` array takes `mergeSubAccounts`'s
@@ -1135,15 +1151,17 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // still starves `mergeOps` of the old rows that would otherwise straddle the un-walked
     // interval, while keeping every sub-account matched so that carry-over still runs. Gated on
     // `discardOld`, the same condition as the parent merge below, so both histories agree.
-    const subAccounts = mergeSubAccounts(
+    const storedSubAccounts = initialAccount?.subAccounts ?? [];
+    const mergedSubAccounts = mergeSubAccounts(
       syncFromScratch
         ? []
-        : (initialAccount?.subAccounts ?? []).map(sa =>
-            discardOld ? { ...sa, operations: [] } : sa,
-          ),
+        : storedSubAccounts.map(sa => (discardOld ? { ...sa, operations: [] } : sa)),
       newSubAccounts,
       maxOperations,
     );
+    const subAccounts = syncFromScratch
+      ? keepPendingAndSwapHistory(mergedSubAccounts, storedSubAccounts)
+      : mergedSubAccounts;
 
     // From the bounded sub-accounts, not `newSubAccounts`: a restored account recomputes each
     // parent's sub-operations from the stored (bounded) ones, so the synced shape has to as well.

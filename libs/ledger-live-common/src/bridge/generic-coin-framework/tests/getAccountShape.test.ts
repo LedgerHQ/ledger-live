@@ -3754,7 +3754,11 @@ describe("genericGetAccountShape", () => {
       getBridgeApiMock.mockImplementation(defaultBridgeApi);
     });
 
-    const syncWith = (syncVersion: string | undefined, storedSyncHash: string) => {
+    const syncWith = (
+      syncVersion: string | undefined,
+      storedSyncHash: string,
+      subAccounts?: { stored: unknown[]; rebuilt: unknown[] },
+    ) => {
       getSyncHashMock.mockReturnValue("sync-hash");
       getBridgeApiMock.mockImplementation(() => ({ ...defaultBridgeApi(), syncVersion }));
       extractBalanceMock.mockReturnValue({ value: 0n, locked: 0n });
@@ -3762,7 +3766,7 @@ describe("genericGetAccountShape", () => {
       listOperationsMock.mockResolvedValue({ items: [], next: undefined });
       lastBlockMock.mockResolvedValue({ height: 900 });
       mergeOpsMock.mockImplementation((oldOps: any[], newOps: any[]) => [...oldOps, ...newOps]);
-      buildSubAccountsMock.mockReturnValue([]);
+      buildSubAccountsMock.mockReturnValue(subAccounts?.rebuilt ?? []);
 
       return genericGetAccountShape(network, currency.id)(
         {
@@ -3774,6 +3778,7 @@ describe("genericGetAccountShape", () => {
             pendingOperations: [],
             blockHeight: 800,
             syncHash: storedSyncHash,
+            subAccounts: subAccounts?.stored,
           },
         } as any,
         { paginationConfig: {} as any },
@@ -3800,6 +3805,38 @@ describe("genericGetAccountShape", () => {
         "tz1sync",
         expect.objectContaining({ minHeight: 0 }),
       );
+    });
+
+    test("keeps only the pending operations and swap history of a stored token account", async () => {
+      const { mergeSubAccounts: realMergeSubAccounts } = jest.requireActual("../buildSubAccounts");
+      mergeSubAccountsMock.mockImplementation(realMergeSubAccounts);
+      const rebuilt = {
+        id: "tokenAccount",
+        token: { id: "usd" },
+        operations: [{ id: "rebuilt-op", hash: "h2" }],
+        pendingOperations: [],
+        swapHistory: [],
+        balanceHistoryCache: { HOUR: { balances: [], latestDate: null } },
+        creationDate: new Date("2026-01-01"),
+      };
+      const stored = {
+        ...rebuilt,
+        operations: [{ id: "stale-op", hash: "h1" }],
+        pendingOperations: [{ id: "pending-send", hash: "h3" }],
+        swapHistory: [{ swapId: "swap-1" }],
+        balanceHistoryCache: { HOUR: { balances: [1], latestDate: 0 } },
+        creationDate: new Date("2020-01-01"),
+      };
+
+      const shape = await syncWith("1", "sync-hash", { stored: [stored], rebuilt: [rebuilt] });
+
+      expect(shape.subAccounts).toEqual([
+        {
+          ...rebuilt,
+          pendingOperations: stored.pendingOperations,
+          swapHistory: stored.swapHistory,
+        },
+      ]);
     });
 
     test("keeps syncing incrementally once the account carries the versioned hash", async () => {
