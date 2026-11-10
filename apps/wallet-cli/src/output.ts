@@ -1725,8 +1725,14 @@ function sendIntentSummaryJson(summary: SendIntentSummary): Record<string, unkno
 }
 
 // ---------------------------------------------------------------------------
-// Proposal warnings (stderr, in both formats, after the result)
+// Warnings (stderr, in both formats, after the result)
 // ---------------------------------------------------------------------------
+
+export function warnIfTokensSkipped(skippedTokenIds: readonly string[]): void {
+  for (const tokenId of skippedTokenIds) {
+    writeStderr(`⚠ Skipped token ${tokenId}: the Crypto Assets List gives no unit for it.\n`);
+  }
+}
 
 function warnIfTokenApprovalNeeded(summary: SwapIntentSummary): void {
   if (!summary.needsTokenApproval) return;
