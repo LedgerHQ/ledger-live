@@ -260,7 +260,7 @@ catalog:
   "@ledgerhq/coin-module-framework": 11.0.1
   "@ledgerhq/coin-stellar": 12.1.2
   "@ledgerhq/coin-tezos": 14.2.0
-  "@ledgerhq/coin-xrp": 13.3.1
+  "@ledgerhq/coin-xrp": 13.7.0
 
 minimumReleaseAge: 3000
 minimumReleaseAgeExclude:
