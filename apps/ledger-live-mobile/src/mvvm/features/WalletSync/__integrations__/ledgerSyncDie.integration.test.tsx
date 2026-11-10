@@ -157,10 +157,12 @@ function initialState({
   ledgerSyncDie = true,
   trustchain = null,
   hasCompletedOnboarding = true,
+  onboardingType = OnboardingType.restore,
 }: {
   ledgerSyncDie?: boolean;
   trustchain?: Trustchain | null;
   hasCompletedOnboarding?: boolean;
+  onboardingType?: OnboardingType;
 }) {
   return withFlagOverrides(
     {
@@ -173,11 +175,21 @@ function initialState({
         ...state.settings,
         readOnlyModeEnabled: false,
         hasCompletedOnboarding,
-        onboardingType: OnboardingType.restore,
+        onboardingType,
       },
       trustchain: { ...state.trustchain, trustchain, memberCredentials: MEMBER_CREDENTIALS },
     }),
   );
+}
+
+// The SDK on a seed without trustchain: it reports no trustchain, then creates one.
+async function createOnSeedWithoutTrustchain(
+  _deviceId: string,
+  _memberCredentials: unknown,
+  callbacks: GetOrCreateTrustchainCallbacks,
+) {
+  callbacks.onInitialResponse?.({});
+  return { type: TrustchainResultType.created, trustchain: TRUSTCHAIN };
 }
 
 function namedError(ErrorClass: new (message?: string) => Error): Error {
@@ -257,24 +269,33 @@ describe("Ledger Sync device steps on DIE", () => {
       expect(await screen.findByText(/network down/)).toBeVisible();
     });
 
-    it("should show the unbacked error during an onboarding when the seed has no trustchain", async () => {
-      mockGetOrCreateTrustchain.mockImplementation(
-        async (
-          _deviceId: string,
-          _memberCredentials: unknown,
-          callbacks: GetOrCreateTrustchainCallbacks,
-        ) => {
-          callbacks.onInitialResponse?.({});
-          return { type: TrustchainResultType.created, trustchain: TRUSTCHAIN };
-        },
-      );
+    it("should show the unbacked error when an onboarding syncs with Ledger Sync on a seed without trustchain", async () => {
+      mockGetOrCreateTrustchain.mockImplementation(createOnSeedWithoutTrustchain);
 
       const { store } = render(<ActivationNavigator />, {
-        overrideInitialState: initialState({ hasCompletedOnboarding: false }),
+        overrideInitialState: initialState({
+          hasCompletedOnboarding: false,
+          onboardingType: OnboardingType.walletSync,
+        }),
       });
 
       expect(await screen.findByText(/Sync not detected/)).toBeVisible();
       expect(store.getState().trustchain.trustchain).toBeNull();
+    });
+
+    it("should create the trustchain on a seed without trustchain once the onboarding is completed", async () => {
+      mockGetOrCreateTrustchain.mockImplementation(createOnSeedWithoutTrustchain);
+
+      const { store } = render(<ActivationNavigator />, {
+        overrideInitialState: initialState({ onboardingType: OnboardingType.walletSync }),
+      });
+
+      expect(
+        await screen.findByText(
+          `reached ${ScreenName.WalletSyncLoading} ${JSON.stringify({ created: true })}`,
+        ),
+      ).toBeVisible();
+      expect(store.getState().trustchain.trustchain).toEqual(TRUSTCHAIN);
     });
 
     it("should track the rejection on the device, then succeed on retry", async () => {

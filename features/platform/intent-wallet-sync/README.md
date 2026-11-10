@@ -8,6 +8,8 @@ operations on the Device Intent Executor (DIE) session:
 
 - **Add member** (`addMemberIntentDefinition`): `getOrCreateTrustchain`, which creates the
   trustchain, joins an existing one, or restores it. Its result is the SDK's `TrustchainResult`.
+  The optional `onInitialResponse` input sees the seed's trustchains before anything is created or
+  joined; a throw ends the run, and `NoTrustchainInitialized` ends it as `failed` with `no-trustchain`.
 - **Remove member** (`removeMemberIntentDefinition`): `removeMember`, which rotates the trustchain
   key. Its result is the new `Trustchain`, which the app must store.
 

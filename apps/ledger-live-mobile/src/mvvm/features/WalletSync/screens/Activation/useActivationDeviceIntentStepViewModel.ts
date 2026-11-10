@@ -2,11 +2,7 @@ import { useCallback } from "react";
 import { useNavigation, useRoute, type RouteProp } from "@react-navigation/native";
 import { track } from "@shared/analytics";
 import { createIntent, type DeviceConnectionResult } from "@features/platform-device-intent";
-import type {
-  AddMemberIntent,
-  AddMemberIntentInput,
-  CreateSessionSdk,
-} from "@features/platform-intent-wallet-sync";
+import type { AddMemberIntent, AddMemberIntentInput } from "@features/platform-intent-wallet-sync";
 import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import {
   memberCredentialsSelector,
@@ -31,7 +27,6 @@ import { useWalletSyncTrackingFlow } from "../../hooks/useLedgerSyncAnalytics";
 import { addMemberIntentLWMDefinition } from "../../deviceIntents/addMemberIntent/intentLWMDefinition";
 import { useCreateSessionSdk } from "../../deviceIntents/useCreateSessionSdk";
 import { useLedgerSyncIntentStep } from "../../deviceIntents/useLedgerSyncIntentStep";
-import { withInitialResponse } from "../../deviceIntents/withInitialResponse";
 
 /** The add member step of the activation on DIE, with the outcomes of `useAddMember`. */
 export function useActivationDeviceIntentStepViewModel() {
@@ -64,11 +59,6 @@ export function useActivationDeviceIntentStepViewModel() {
       [hasCompletedOnboarding, onboardingType],
     );
 
-  const createActivationSdk: CreateSessionSdk = useCallback(
-    connection => withInitialResponse(createSessionSdk(connection), checkTrustchainsExist),
-    [createSessionSdk, checkTrustchainsExist],
-  );
-
   const onDeviceRejected = useCallback((connectionResult: DeviceConnectionResult | undefined) => {
     track(AnalyticsEvents.LedgerSyncRejectedOnDevice, {
       page: "Ledger Sync",
@@ -87,7 +77,8 @@ export function useActivationDeviceIntentStepViewModel() {
       const input: AddMemberIntentInput = {
         memberCredentials,
         currentTrustchain: trustchain ?? undefined,
-        createSessionSdk: createActivationSdk,
+        createSessionSdk,
+        onInitialResponse: checkTrustchainsExist,
       };
       return createIntent(addMemberIntentLWMDefinition, input, { onResult });
     },
