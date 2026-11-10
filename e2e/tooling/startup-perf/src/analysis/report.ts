@@ -39,9 +39,9 @@ function offBaseNote(r: Row, side: Side): string {
 function readNotes({ platform, scenario, reads }: Row): string[] {
   const where = `${platform} ${scenario}`;
   const notes: string[] = [];
-  if (reads.fromLog && reads.fromScreen) {
+  if (reads.fallbacks) {
     notes.push(
-      `${where}: ${reads.fromScreen} launch(es) read from the Debug screen, the device log line missing.`,
+      `**${where}: ${reads.fallbacks} of the ${reads.fromLog + reads.fallbacks} launches read from the Debug screen, their device log line missing.**`,
     );
   }
   if (reads.screenMismatches) {

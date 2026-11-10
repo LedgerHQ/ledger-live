@@ -105,11 +105,11 @@ in run 42829119387).
   Datadog does not see.
 - **Check it on the screen.** Warm-ups also let Maestro open the Performance screen, which must show
   the same time (the report says on how many launches it did), and a launch whose line has not come
-  20 s after the settle time is read on the screen. `--read both` reads every launch both ways,
-  `--read screen` the screen only. Screen reads of measured launches use
-  `read-performance-quick.yaml`; warm-ups and retries use the full flow, whose optional taps cost
-  ~7 s when no prompt shows. The flows select by text: the Debug and Performance screens have no
-  testIDs on any supported ref.
+  20 s after the settle time is read on the screen (the report counts those too). `--read both`
+  reads every launch both ways, `--read screen` the screen only. Screen reads of measured launches
+  use `read-performance-quick.yaml`; warm-ups and retries use the full flow, whose optional taps
+  cost ~7 s when no prompt shows. The flows select by text: the Debug and Performance screens have
+  no testIDs on any supported ref.
 - **Why the log.** Run 42352894550 read 64 launches both ways: the same time on every one. With the
   log only (run 42356679784, 20 pairs), a launch takes 8.5 s on iOS and 10–11 s on Android instead
   of 34–44 s, so the measure jobs take 33 and 22 min instead of ~65 and ~40. Measured iOS launches

@@ -181,7 +181,7 @@ async function readStartup(
     log(
       `  no startup-perf log line ${LOG_READ_TIMEOUT_MS} ms after the settle time: reading the screen`,
     );
-    return { ...(await readScreen()), readFrom: "screen" };
+    return { ...(await readScreen()), readFrom: "screen-fallback" };
   }
   if (READ === "log" && !meta.warmup) return { ...fromLog, readFrom: "log" };
   const onScreen = await readScreen();
