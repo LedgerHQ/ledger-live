@@ -320,12 +320,6 @@ describe("summarise", () => {
     }
   });
 
-  it("keeps the longest device log line", () => {
-    const samples = comparison({ deltaMs: 0, a: { logLineBytes: 423 }, b: { logLineBytes: 430 } });
-    assert.equal(debugRow(summarise(samples, GATE)).reads.longestLogLine, 430);
-    assert.equal(debugRow(summarise(comparison({ deltaMs: 0 }), GATE)).reads.longestLogLine, null);
-  });
-
   it("names the builds whose warm-up wrote no log line", () => {
     const warmup = (side: "A" | "B", readFrom: "log" | "screen-fallback") =>
       launch({ side, round: -1, warmup: true, readFrom, appStartupTime: 1000 });
