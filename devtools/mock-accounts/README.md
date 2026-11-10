@@ -30,4 +30,6 @@ It honours `filterAsset`, as FullSync does: it keeps one asset's rows before pag
 
 The generic `balanceHistory` reader replays each asset's balance back through those operations. A `countervalue` query values each point's balance at its date into `countervalues` with the same seeded prices.
 
+The `receive` kind answers an `address` descriptor's key (a mock one is an address), or a seeded address of the family for a `utxo` account (the same on every read), the device showing it at the account's path.
+
 Imports no `@devtools/*` package, as any tool ([import boundaries](../../.claude/skills/devtools-import-boundary/SKILL.md)). Its props come from `useMockAccountsToolProps` in `@devtools/bindings`.

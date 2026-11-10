@@ -28,6 +28,7 @@ import {
   useAccountSourcePortfolioToolProps,
   useAppConfigToolProps,
   useAccountNameToolProps,
+  useAccountReceiveToolProps,
   useMockAccountsToolProps,
   useAccountDetailToolProps,
   useReceiveToolProps,
@@ -136,6 +137,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
   });
   const legacyAccounts = useSelector(accountsSelector);
   const accountNameToolProps = useAccountNameToolProps(legacyAccounts);
+  const accountReceiveToolProps = useAccountReceiveToolProps();
   const mockAccountsToolProps = useMockAccountsToolProps(accountDataRecorder);
   const accountDetailToolProps = useAccountDetailToolProps();
   const receiveToolProps = useReceiveToolProps();
@@ -164,6 +166,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       { id: "account-operation", config: accountOperationToolProps },
       { id: "account-balance-history", config: accountBalanceHistoryToolProps },
       { id: "account-name", config: accountNameToolProps },
+      { id: "account-receive", config: accountReceiveToolProps },
       { id: "account-portfolio", config: accountPortfolioToolProps },
       { id: "mock-accounts", config: mockAccountsToolProps },
       { id: "account-detail", config: accountDetailToolProps },
@@ -188,6 +191,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       accountDataToolProps,
       accountSourcePortfolioToolProps,
       accountNameToolProps,
+      accountReceiveToolProps,
       mockAccountsToolProps,
       accountDetailToolProps,
       receiveToolProps,
