@@ -19,7 +19,7 @@ test.describe("My Ledger — device not set up", () => {
       await app.mainNavigation.openMyLedger();
       await app.myLedger.expectDeviceNotOnboarded();
 
-      await app.myLedger.startDeviceSetup(mockDevice.modelId);
+      await app.myLedger.startDeviceSetup(mockDevice.name!);
       await app.onboarding.expectSetupEntryScreen(mockDevice.modelId);
     },
   );
