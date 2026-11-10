@@ -1,9 +1,9 @@
 import { Button } from "@ledgerhq/lumen-ui-react";
 import type { AccountDetailToolProps } from "../types";
-import { copy, statusOf } from "./copy";
+import { copy, eligibilityOf, statusOf } from "./copy";
 
 export function AccountDetail({ analyticsIntroduction }: AccountDetailToolProps) {
-  const { hasDismissed, onReset } = analyticsIntroduction;
+  const { hasDismissed, isEligible, onReset } = analyticsIntroduction;
 
   return (
     <div className="flex flex-col">
@@ -15,6 +15,7 @@ export function AccountDetail({ analyticsIntroduction }: AccountDetailToolProps)
             {copy.reset}
           </Button>
         </div>
+        <span className="body-3 text-muted">{eligibilityOf(isEligible)}</span>
       </section>
     </div>
   );

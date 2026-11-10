@@ -5,6 +5,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import {
   accountAnalyticsIntroductionSlice,
   dismissAccountAnalyticsIntroduction,
+  recordAccountAnalyticsIntroductionEligibility,
 } from "@features/flow-account-detail-analytics-notice/state";
 import { useAccountDetailToolProps } from "./useAccountDetailToolProps";
 
@@ -23,6 +24,17 @@ describe("useAccountDetailToolProps", () => {
   it("reports a card that was never dismissed", () => {
     const { result } = setup();
     expect(result.current.analyticsIntroduction.hasDismissed).toBe(false);
+  });
+
+  it("reports an eligibility that is not recorded yet, then the recorded one", () => {
+    const { store, result } = setup();
+    expect(result.current.analyticsIntroduction.isEligible).toBeNull();
+
+    act(() => {
+      store.dispatch(recordAccountAnalyticsIntroductionEligibility(false));
+    });
+
+    expect(result.current.analyticsIntroduction.isEligible).toBe(false);
   });
 
   it("resets a dismissed card so it shows again", () => {

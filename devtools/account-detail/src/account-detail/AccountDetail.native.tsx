@@ -1,7 +1,7 @@
 import { ScrollView } from "react-native";
 import { Box, Button, Text, useTheme } from "@ledgerhq/lumen-ui-rnative";
 import type { AccountDetailToolProps } from "../types";
-import { copy, statusOf } from "./copy";
+import { copy, eligibilityOf, statusOf } from "./copy";
 
 const SECTION_LX = { gap: "s8", paddingHorizontal: "s16", paddingVertical: "s12" } as const;
 const ROW_LX = {
@@ -12,7 +12,7 @@ const ROW_LX = {
 } as const;
 
 export function AccountDetail({ analyticsIntroduction }: AccountDetailToolProps) {
-  const { hasDismissed, onReset } = analyticsIntroduction;
+  const { hasDismissed, isEligible, onReset } = analyticsIntroduction;
   const { theme } = useTheme();
 
   return (
@@ -30,6 +30,9 @@ export function AccountDetail({ analyticsIntroduction }: AccountDetailToolProps)
             {copy.reset}
           </Button>
         </Box>
+        <Text typography="body3" lx={{ color: "muted" }}>
+          {eligibilityOf(isEligible)}
+        </Text>
       </Box>
     </ScrollView>
   );

@@ -1,8 +1,11 @@
 import { fireEvent, render, screen } from "@support/jest/devtools/native";
 import { AccountDetail } from "./AccountDetail";
 
-const renderTool = (hasDismissed: boolean, onReset = jest.fn()) =>
-  render(<AccountDetail analyticsIntroduction={{ hasDismissed, onReset }} />);
+const renderTool = (
+  hasDismissed: boolean,
+  onReset = jest.fn(),
+  isEligible: boolean | null = true,
+) => render(<AccountDetail analyticsIntroduction={{ hasDismissed, isEligible, onReset }} />);
 
 describe("AccountDetail", () => {
   it("resets a dismissed Analytics card", () => {
@@ -19,8 +22,18 @@ describe("AccountDetail", () => {
     const onReset = jest.fn();
     renderTool(false, onReset);
 
-    expect(screen.getByText(/^Visible/)).toBeOnTheScreen();
+    expect(screen.getByText(/^Not dismissed/)).toBeOnTheScreen();
     fireEvent.press(screen.getByText("Reset"));
     expect(onReset).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    [true, /^Eligible/],
+    [false, /^Not eligible/],
+    [null, /^Not recorded yet/],
+  ])("shows the eligibility %s", (isEligible, status) => {
+    renderTool(false, jest.fn(), isEligible);
+
+    expect(screen.getByText(status)).toBeOnTheScreen();
   });
 });

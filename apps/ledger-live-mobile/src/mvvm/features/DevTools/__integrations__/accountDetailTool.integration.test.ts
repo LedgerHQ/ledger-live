@@ -23,7 +23,9 @@ describe("account-detail DevTools tool on mobile", () => {
       overrideInitialState: withIntroduction(false),
     });
 
-    expect(result.current.analyticsIntroduction.hasDismissed).toBe(false);
+    expect(result.current.analyticsIntroduction).toEqual(
+      expect.objectContaining({ hasDismissed: false, isEligible: null }),
+    );
   });
 
   it("makes a dismissed Analytics card available again", () => {
