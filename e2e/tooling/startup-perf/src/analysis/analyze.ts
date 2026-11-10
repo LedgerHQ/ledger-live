@@ -64,7 +64,8 @@ export interface Row extends Difference {
 /** Where the launches were read, and how often the Debug screen agreed with the device log. */
 export interface Reads {
   fromLog: number;
-  fromScreen: number;
+  /** Launches read on the screen because their log line never came. */
+  fallbacks: number;
   /** Launches, warm-ups included, read from both. */
   screenChecks: number;
   screenMismatches: number;
@@ -76,7 +77,7 @@ function readsOf(group: Sample[]): Reads {
   const checked = ok.filter(s => s.screenAppStartupTime !== undefined);
   return {
     fromLog: measured.filter(s => s.readFrom === "log").length,
-    fromScreen: measured.filter(s => s.readFrom === "screen").length,
+    fallbacks: measured.filter(s => s.readFrom === "screen-fallback").length,
     screenChecks: checked.length,
     screenMismatches: checked.filter(s => s.screenAppStartupTime !== s.appStartupTime).length,
   };

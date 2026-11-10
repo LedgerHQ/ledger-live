@@ -53,9 +53,12 @@ describe("toMarkdown", () => {
     });
     const fellBack = samples.find(s => s.side === "A");
     if (!fellBack) throw new Error("no A launch");
-    fellBack.readFrom = "screen";
+    fellBack.readFrom = "screen-fallback";
     const agreed = toMarkdown(summarise(samples, options), options);
-    assert.match(agreed, /android accounts: 1 launch\(es\) read from the Debug screen/);
+    assert.match(
+      agreed,
+      /\*\*android accounts: 1 of the 12 launches read from the Debug screen, their device log line missing\.\*\*/,
+    );
     assert.match(
       agreed,
       /showed the device log's App startup time on the 6 launches read both ways/,
@@ -67,6 +70,30 @@ describe("toMarkdown", () => {
     assert.match(
       toMarkdown(summarise(samples, options), options),
       /\*\*android accounts: the Debug screen showed another App startup time than the device log on 1 of the 6 launches read both ways\.\*\*/,
+    );
+  });
+
+  it("says when every launch fell back to the screen", () => {
+    const samples = comparison({
+      deltaMs: 0,
+      a: { readFrom: "screen-fallback" },
+      b: { readFrom: "screen-fallback" },
+    });
+    assert.match(
+      toMarkdown(summarise(samples, options), options),
+      /\*\*android accounts: 12 of the 12 launches read from the Debug screen/,
+    );
+  });
+
+  it("adds no read note when the screen was asked for", () => {
+    const samples = comparison({
+      deltaMs: 0,
+      a: { readFrom: "screen" },
+      b: { readFrom: "screen" },
+    });
+    assert.doesNotMatch(
+      toMarkdown(summarise(samples, options), options),
+      /read from the Debug screen|read both ways/,
     );
   });
 

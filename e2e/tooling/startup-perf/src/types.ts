@@ -39,8 +39,11 @@ export interface Sample extends SampleMeta {
   /** The "App startup time" of the Debug screen, read from the device log or from the screen. */
   appStartupTime?: number;
   events?: Record<string, StartupEvent>;
-  /** Where appStartupTime and events come from: the device log line, or the Debug screen. */
-  readFrom?: "log" | "screen";
+  /**
+   * Where appStartupTime and events come from: the device log line, the Debug screen (--read screen),
+   * or the screen because the line never came.
+   */
+  readFrom?: "log" | "screen" | "screen-fallback";
   /** What the Debug screen showed, when it was read as well as the log: the two must match. */
   screenAppStartupTime?: number;
   readMs?: number;
