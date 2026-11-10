@@ -18,9 +18,9 @@ export function relayProxyFromEnv(
   environment: NodeJS.ProcessEnv = process.env,
 ): string | undefined {
   return (
-    environment.HTTPS_PROXY ??
-    environment.https_proxy ??
-    environment.HTTP_PROXY ??
+    environment.HTTPS_PROXY ||
+    environment.https_proxy ||
+    environment.HTTP_PROXY ||
     environment.http_proxy
   );
 }
@@ -83,10 +83,13 @@ export function createRelayHost(
   return createAgentEnrollmentChannelHost({
     environment,
     relayBaseUrl: AGENT_INTENT_TRUSTCHAIN_URLS[environment],
-    webSocketFactory: url =>
-      new (WebSocket as unknown as {
-        new (url: string, options: Bun.WebSocketOptions): WebSocket;
-      })(url, { proxy: relayProxyFromEnv() }),
+    webSocketFactory: url => {
+      const proxy = relayProxyFromEnv();
+      const WebSocketConstructor = WebSocket as unknown as {
+        new (url: string, options?: Bun.WebSocketOptions): WebSocket;
+      };
+      return proxy ? new WebSocketConstructor(url, { proxy }) : new WebSocketConstructor(url);
+    },
     timeouts: { candidateTimeoutMs: expiresInMs, completionTimeoutMs: expiresInMs },
   });
 }
