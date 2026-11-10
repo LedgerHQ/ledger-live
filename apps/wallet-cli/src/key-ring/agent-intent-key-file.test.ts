@@ -19,6 +19,7 @@ import {
   saveAgentIntentKeyFile,
 } from "./agent-intent-key-file";
 import { installOutputCapture } from "../shared/ui";
+import { overridePlatform } from "../testing/os-keychain";
 import { cliStateDirIn, pointStateHomeAt } from "../testing/state-home";
 
 let stateHome: string;
@@ -102,7 +103,7 @@ describe("agent-intent key file", () => {
     expect(() => loadAgentIntentKeyFile("bot")).toThrow(/bot\.key is not a regular file/);
   });
 
-  it("refuses a key file owned by another user", () => {
+  it.skipIf(!isPosix)("refuses a key file owned by another user", () => {
     saveAgentIntentKeyFile("bot", "deadbeef");
     const realGetuid = process.getuid;
     process.getuid = () => statSync(agentIntentKeyFilePath("bot")).uid + 1;
@@ -112,6 +113,22 @@ describe("agent-intent key file", () => {
       );
     } finally {
       process.getuid = realGetuid;
+    }
+  });
+
+  it("refuses a key file on Windows, where its owner and permissions can't be checked", () => {
+    const restorePlatform = overridePlatform("win32");
+    try {
+      const path = agentIntentKeyFilePath("bot");
+      mkdirSync(dirname(path), { recursive: true });
+      writeFileSync(path, "deadbeef");
+
+      expect(() => loadAgentIntentKeyFile("bot")).toThrow(
+        `Agent key files aren't supported on Windows, where wallet-cli can't check the owner ` +
+          `and permissions of ${path}.`,
+      );
+    } finally {
+      restorePlatform();
     }
   });
 
