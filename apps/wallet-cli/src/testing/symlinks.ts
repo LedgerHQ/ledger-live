@@ -8,10 +8,10 @@ export const linkDirectory = (target: string, link: string): Promise<void> =>
 
 export const canSymlinkFiles = process.platform !== "win32" || probeFileSymlink();
 
-function probeFileSymlink(): boolean {
+export function probeFileSymlink(createSymlink: typeof symlinkSync = symlinkSync): boolean {
   const dir = mkdtempSync(join(tmpdir(), "wallet-cli-symlink-probe-"));
   try {
-    symlinkSync(join(dir, "target"), join(dir, "link"), "file");
+    createSymlink(join(dir, "target"), join(dir, "link"), "file");
     return true;
   } catch (e) {
     if ((e as { code?: string } | null)?.code !== "EPERM") throw e;
