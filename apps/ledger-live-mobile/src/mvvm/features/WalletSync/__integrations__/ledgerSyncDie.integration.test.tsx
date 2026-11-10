@@ -66,9 +66,9 @@ type FakeExecutorProps = Readonly<{
 // Runs the real job and renderer on a fake session, in place of the connection and the app setup.
 jest.mock("LLM/components/DeviceIntentExecutor", () => {
   const ReactActual = jest.requireActual<typeof React>("react");
-  const { buildDeviceConnection, INITIALIZATION_INPUT } = jest.requireActual(
-    "../deviceIntents/__tests__/ledgerSyncIntentTestKit",
-  );
+  const { buildDeviceConnection, EXTRACTED_CONTEXT, INITIALIZATION_INPUT } = jest.requireActual<
+    typeof import("../deviceIntents/__tests__/ledgerSyncIntentTestKit")
+  >("../deviceIntents/__tests__/ledgerSyncIntentTestKit");
 
   function FakeDeviceIntentExecutor({
     intent,
@@ -80,15 +80,16 @@ jest.mock("LLM/components/DeviceIntentExecutor", () => {
 
     ReactActual.useEffect(() => {
       const connectionResult = buildDeviceConnection("session-1");
-      onExecutorStateChanged({
+      const executorState: Extract<ExecutorState, { type: "executingIntent" }> = {
         type: "executingIntent",
         connectionResult,
-        extractedContext: {},
-      } as ExecutorState);
+        extractedContext: EXTRACTED_CONTEXT,
+      };
+      onExecutorStateChanged(executorState);
       const subscription = intent
         .job({
           deviceConnectionResult: connectionResult,
-          deviceExtractedContext: {},
+          deviceExtractedContext: EXTRACTED_CONTEXT,
           input: intent.input,
           onResult: (result: unknown) => intent.onResult?.(result),
         })
