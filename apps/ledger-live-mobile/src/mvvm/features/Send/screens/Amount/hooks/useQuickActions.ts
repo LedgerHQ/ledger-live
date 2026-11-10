@@ -67,7 +67,7 @@ export function useQuickActions({
 
   const tolerance = useMemo(() => {
     const magnitude = Math.min(Math.max(accountUnit.magnitude, 0), TOLERANCE_MAGNITUDE_CAP);
-    return new BigNumber(1).dividedBy(new BigNumber(10).pow(magnitude));
+    return new BigNumber(1).shiftedBy(-magnitude);
   }, [accountUnit.magnitude]);
 
   const quickActions = useMemo(() => {

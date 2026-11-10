@@ -463,8 +463,10 @@ function limitDisplayDecimals(rawAtomic: string, unitMagnitude: number): BigNumb
   const hiddenMagnitude = unitMagnitude - MAX_DISPLAY_DECIMALS;
   if (hiddenMagnitude <= 0) return value;
 
-  const factor = new BigNumber(10).pow(hiddenMagnitude);
-  return value.div(factor).decimalPlaces(0, BigNumber.ROUND_DOWN).times(factor);
+  return value
+    .shiftedBy(-hiddenMagnitude)
+    .decimalPlaces(0, BigNumber.ROUND_DOWN)
+    .shiftedBy(hiddenMagnitude);
 }
 
 function getCurrencyTransactionExplorerUrl(
