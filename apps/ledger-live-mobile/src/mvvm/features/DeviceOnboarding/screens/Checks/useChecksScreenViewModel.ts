@@ -58,6 +58,12 @@ type NotGenuineDrawerProps = Readonly<{
 
 export type ChecksIllustration = "loading" | "scan" | "success";
 
+type SecondaryAction = Readonly<{
+  label: string;
+  testID: string;
+  onPress: () => void;
+}>;
+
 export type ChecksViewProps = Readonly<{
   illustration?: ChecksIllustration;
   title: string;
@@ -66,6 +72,7 @@ export type ChecksViewProps = Readonly<{
   primaryTestID?: string;
   primaryLoading?: boolean;
   onPrimary?: () => void;
+  secondary?: SecondaryAction;
   onQuit?: () => void;
   closeLabel: string;
   allowSheet?: AllowSheetProps;
@@ -75,7 +82,7 @@ export type ChecksViewProps = Readonly<{
   notGenuineDrawer: NotGenuineDrawerProps;
 }>;
 
-type ChecksLayout = Exclude<ChecksScreenState, "awaitingAllow" | "updating">;
+type ChecksLayout = Exclude<ChecksScreenState, "awaitingAllow">;
 
 type LayoutProps = Omit<
   ChecksViewProps,
@@ -93,8 +100,9 @@ function recoverableKindOf(error: ChecksScreenProps["error"]): RecoverableErrorK
   return error.kind;
 }
 
-function checksLayout(state: ChecksScreenState): ChecksLayout {
-  if (state === "awaitingAllow" || state === "updating") return "checking";
+function checksLayout(state: ChecksScreenState, hasUpdate: boolean): ChecksLayout {
+  if (state === "awaitingAllow") return "checking";
+  if (state === "updating" && !hasUpdate) return "checking";
   return state;
 }
 
@@ -161,9 +169,7 @@ type FirmwareOfferClose = Readonly<{
   suppressOfferCloseFor: KeyRef;
   closedFirmwareOfferKeyRef: KeyRef;
   onCloseFirmwareOffer: ChecksScreenProps["onCloseFirmwareOffer"];
-  declinedFor: KeyRef;
   rememberClosedOffer: (updateKey: string) => void;
-  onDeclineUpdate: () => void;
 }>;
 
 function dismissFirmwareOffer({
@@ -173,21 +179,13 @@ function dismissFirmwareOffer({
   suppressOfferCloseFor,
   closedFirmwareOfferKeyRef,
   onCloseFirmwareOffer,
-  declinedFor,
   rememberClosedOffer,
-  onDeclineUpdate,
 }: FirmwareOfferClose) {
   if (suspendSheets || !firmwareOfferOpen || suppressOfferCloseFor.current === updateKey) return;
-  if (onCloseFirmwareOffer) {
-    if (closedFirmwareOfferKeyRef.current === updateKey) return;
-    closedFirmwareOfferKeyRef.current = updateKey;
-    rememberClosedOffer(updateKey);
-    onCloseFirmwareOffer();
-    return;
-  }
-  if (declinedFor.current === updateKey) return;
-  declinedFor.current = updateKey;
-  onDeclineUpdate();
+  if (closedFirmwareOfferKeyRef.current === updateKey) return;
+  closedFirmwareOfferKeyRef.current = updateKey;
+  rememberClosedOffer(updateKey);
+  onCloseFirmwareOffer?.();
 }
 
 function dismissRecoverableError(
@@ -220,6 +218,8 @@ function checksLayouts(
   firmwareUpToDate: boolean,
   onContinue: ChecksScreenProps["onContinue"],
   onStart: () => void,
+  onInstall: () => void,
+  onSkip: () => void,
 ): Record<ChecksLayout, LayoutProps> {
   return {
     synchronizing: {
@@ -240,6 +240,19 @@ function checksLayouts(
       description: translate("deviceOnboarding.checks.checking.description"),
       primaryLabel: translate("deviceOnboarding.checks.checking.cta"),
       primaryLoading: true,
+    },
+    updating: {
+      illustration: "scan",
+      title: translate("deviceOnboarding.checks.updating.title"),
+      description: translate("deviceOnboarding.checks.updating.description"),
+      primaryLabel: translate("deviceOnboarding.checks.updating.installCta"),
+      primaryTestID: checksTestIds.installUpdate,
+      onPrimary: onInstall,
+      secondary: {
+        label: translate("deviceOnboarding.checks.updating.skipCta"),
+        testID: checksTestIds.skipUpdate,
+        onPress: onSkip,
+      },
     },
     succeeded: {
       illustration: "success",
@@ -322,7 +335,7 @@ export function useChecksScreenViewModel({
   suspendSheets = false,
 }: ChecksScreenProps): ChecksViewProps {
   const { t } = useTranslation();
-  const layout = checksLayout(state);
+  const layout = checksLayout(state, update !== null);
   const recoverableKind = recoverableKindOf(error);
   const [retainedRecoverableKind, setRetainedRecoverableKind] = useState(recoverableKind);
   if (recoverableKind && recoverableKind !== retainedRecoverableKind) {
@@ -334,7 +347,6 @@ export function useChecksScreenViewModel({
   const closedFirmwareOfferKeyRef = useRef<string | null>(null);
   if (state !== "awaitingAllow" && allowClosed) setAllowClosed(false);
   const [unsupportedFor, setUnsupportedFor] = useState<string | null>(null);
-  const declinedFor = useRef<string | null>(null);
   const suppressOfferCloseFor = useRef<string | null>(null);
   const {
     updateKey,
@@ -345,13 +357,25 @@ export function useChecksScreenViewModel({
   } = checksFlags(state, update, device, closedFirmwareOfferKey, unsupportedFor);
   const productName = getDeviceModel(device.modelId).productName || device.modelId;
 
+  const acceptUpdate = () =>
+    acceptOfferedUpdate(
+      update,
+      eligibility,
+      updateKey,
+      suppressOfferCloseFor,
+      onAcceptUpdate,
+      setUnsupportedFor,
+    );
+
   useEffect(() => {
     if (suppressOfferCloseFor.current === updateKey) return;
     suppressOfferCloseFor.current = null;
   }, [updateKey]);
 
   return {
-    ...checksLayouts(t, firmwareUpToDate, onContinue, onStart)[layout],
+    ...checksLayouts(t, firmwareUpToDate, onContinue, onStart, acceptUpdate, onDeclineUpdate)[
+      layout
+    ],
     closeLabel: t("deviceOnboarding.checks.close"),
     onQuit: headerQuit(state, firmwareOfferClosed, onQuit),
     allowSheet: allowSheetFor(
@@ -374,15 +398,7 @@ export function useChecksScreenViewModel({
       ),
       firmwareVersion: update?.available ?? "",
       productName,
-      onUpdate: () =>
-        acceptOfferedUpdate(
-          update,
-          eligibility,
-          updateKey,
-          suppressOfferCloseFor,
-          onAcceptUpdate,
-          setUnsupportedFor,
-        ),
+      onUpdate: acceptUpdate,
       onClose: () =>
         dismissFirmwareOffer({
           suspendSheets,
@@ -391,9 +407,7 @@ export function useChecksScreenViewModel({
           suppressOfferCloseFor,
           closedFirmwareOfferKeyRef,
           onCloseFirmwareOffer,
-          declinedFor,
           rememberClosedOffer: setClosedFirmwareOfferKey,
-          onDeclineUpdate,
         }),
     },
     unsupportedUpdate: {

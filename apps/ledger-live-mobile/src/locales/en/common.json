@@ -2595,6 +2595,12 @@
         "description": "Confirming your Ledger signer is safe to use and up-to-date.",
         "cta": "Checking..."
       },
+      "updating": {
+        "title": "Ledger OS update available",
+        "description": "Install the latest Ledger OS now, or skip it and finish checking your device.",
+        "installCta": "Install Ledger OS update",
+        "skipCta": "Skip Ledger OS update"
+      },
       "succeeded": {
         "title": "Device genuine and up-to-date",
         "genuineTitle": "Device genuine",
