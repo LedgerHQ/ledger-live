@@ -866,6 +866,7 @@ patchedDependencies:
   '@callstack/repack@5.4.2': 5bcd139af7a700adceafa21a872421ff6f25395f4868b8fe8395afe348e55d9c
   '@changesets/get-github-info@0.6.0': e4ccd9dc35d4ccf42e8e83fdf0dcd00efc4170407493e6e0a3d15e2991e7d2b9
   '@exodus/patch-broken-hermes-typed-arrays': 7deb6c5bd39ee007fca03da7609b2e0dee99dbb9962c3c8715edfd026da0a732
+  '@gorhom/bottom-sheet@5.2.7': 56551329c871986cee0f25b036c708d368e7e93fbad18bc084dd614c2f0e5bcf
   '@taquito/http-utils': 74970a17ec07ec4fa7e3a168cec614cd9350646589f9b3dbffee742b2b15d90e
   '@testing-library/react-native@13.3.3': 4f93e75372e62b6dc0f0b2635b62a322b37a3727637bd94a38df1ed8648e2e76
   '@ton/core': 9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324
@@ -1459,7 +1460,7 @@ importers:
         version: 2.9.0(@ledgerhq/device-management-kit@1.12.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.7(57fde9b373d1bf3dc964d968d3f87c01)
+        version: 2.0.7(a17b41d4e19aaa70f3d60c4d5489469a)
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
         version: 1.12.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
@@ -2376,7 +2377,7 @@ importers:
         version: 5.2.12
       '@gorhom/bottom-sheet':
         specifier: 'catalog:'
-        version: 5.2.7(8917f75cf90cc560531853441c5dbcbf)
+        version: 5.2.7(patch_hash=56551329c871986cee0f25b036c708d368e7e93fbad18bc084dd614c2f0e5bcf)(8917f75cf90cc560531853441c5dbcbf)
       '@ledgerhq/auth':
         specifier: 'catalog:'
         version: 0.2.0
@@ -2412,7 +2413,7 @@ importers:
         version: 2.9.0(@ledgerhq/device-management-kit@1.12.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.7(57fde9b373d1bf3dc964d968d3f87c01)
+        version: 2.0.7(a17b41d4e19aaa70f3d60c4d5489469a)
       '@ledgerhq/device-core':
         specifier: workspace:^
         version: link:../../libs/device-core
@@ -2493,7 +2494,7 @@ importers:
         version: 0.1.35
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/native-ui':
         specifier: workspace:^
         version: link:../../libs/ui/packages/native
@@ -3439,7 +3440,7 @@ importers:
         version: 13.1.0
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.7(57fde9b373d1bf3dc964d968d3f87c01)
+        version: 2.0.7(a17b41d4e19aaa70f3d60c4d5489469a)
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
         version: 1.12.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
@@ -3923,7 +3924,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@react-native/babel-preset':
         specifier: 'catalog:'
         version: 0.86.3(@babel/core@7.28.5)
@@ -4106,7 +4107,7 @@ importers:
     devDependencies:
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.7(57fde9b373d1bf3dc964d968d3f87c01)
+        version: 2.0.7(a17b41d4e19aaa70f3d60c4d5489469a)
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
         version: 0.1.35
@@ -4362,7 +4363,7 @@ importers:
     devDependencies:
       '@gorhom/bottom-sheet':
         specifier: 'catalog:'
-        version: 5.2.7(8917f75cf90cc560531853441c5dbcbf)
+        version: 5.2.7(patch_hash=56551329c871986cee0f25b036c708d368e7e93fbad18bc084dd614c2f0e5bcf)(8917f75cf90cc560531853441c5dbcbf)
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
         version: 0.1.35
@@ -4371,7 +4372,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/lumen-utils-shared':
         specifier: 'catalog:'
         version: 0.1.19(react@19.2.3)
@@ -4748,7 +4749,7 @@ importers:
     devDependencies:
       '@gorhom/bottom-sheet':
         specifier: 'catalog:'
-        version: 5.2.7(8917f75cf90cc560531853441c5dbcbf)
+        version: 5.2.7(patch_hash=56551329c871986cee0f25b036c708d368e7e93fbad18bc084dd614c2f0e5bcf)(8917f75cf90cc560531853441c5dbcbf)
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
         version: 0.1.35
@@ -4757,7 +4758,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/lumen-utils-shared':
         specifier: 'catalog:'
         version: 0.1.19(react@19.2.3)
@@ -4868,7 +4869,7 @@ importers:
     devDependencies:
       '@gorhom/bottom-sheet':
         specifier: 'catalog:'
-        version: 5.2.7(8917f75cf90cc560531853441c5dbcbf)
+        version: 5.2.7(patch_hash=56551329c871986cee0f25b036c708d368e7e93fbad18bc084dd614c2f0e5bcf)(8917f75cf90cc560531853441c5dbcbf)
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
         version: 0.1.35
@@ -4877,7 +4878,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/lumen-utils-shared':
         specifier: 'catalog:'
         version: 0.1.19(react@19.2.3)
@@ -4995,7 +4996,7 @@ importers:
     devDependencies:
       '@gorhom/bottom-sheet':
         specifier: 'catalog:'
-        version: 5.2.7(8917f75cf90cc560531853441c5dbcbf)
+        version: 5.2.7(patch_hash=56551329c871986cee0f25b036c708d368e7e93fbad18bc084dd614c2f0e5bcf)(8917f75cf90cc560531853441c5dbcbf)
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
         version: 0.1.35
@@ -5004,7 +5005,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/lumen-utils-shared':
         specifier: 'catalog:'
         version: 0.1.19(react@19.2.3)
@@ -5124,7 +5125,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@radix-ui/react-dialog':
         specifier: 'catalog:'
         version: 1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -5206,7 +5207,7 @@ importers:
     devDependencies:
       '@gorhom/bottom-sheet':
         specifier: 'catalog:'
-        version: 5.2.7(8917f75cf90cc560531853441c5dbcbf)
+        version: 5.2.7(patch_hash=56551329c871986cee0f25b036c708d368e7e93fbad18bc084dd614c2f0e5bcf)(8917f75cf90cc560531853441c5dbcbf)
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
         version: 0.1.35
@@ -5215,7 +5216,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/lumen-utils-shared':
         specifier: 'catalog:'
         version: 0.1.19(react@19.2.3)
@@ -5348,7 +5349,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@react-native/babel-preset':
         specifier: 'catalog:'
         version: 0.86.3(@babel/core@7.28.5)
@@ -5514,7 +5515,7 @@ importers:
     devDependencies:
       '@gorhom/bottom-sheet':
         specifier: 'catalog:'
-        version: 5.2.7(8917f75cf90cc560531853441c5dbcbf)
+        version: 5.2.7(patch_hash=56551329c871986cee0f25b036c708d368e7e93fbad18bc084dd614c2f0e5bcf)(8917f75cf90cc560531853441c5dbcbf)
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
         version: 0.1.35
@@ -5523,7 +5524,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/lumen-utils-shared':
         specifier: 'catalog:'
         version: 0.1.19(react@19.2.3)
@@ -5643,7 +5644,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@radix-ui/react-dialog':
         specifier: 'catalog:'
         version: 1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -5758,7 +5759,7 @@ importers:
         version: 7.27.1(@babel/core@7.28.5)
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.7(57fde9b373d1bf3dc964d968d3f87c01)
+        version: 2.0.7(a17b41d4e19aaa70f3d60c4d5489469a)
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
         version: 0.1.35
@@ -5767,7 +5768,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@react-native/babel-preset':
         specifier: 'catalog:'
         version: 0.86.3(@babel/core@7.28.5)
@@ -6004,7 +6005,7 @@ importers:
     devDependencies:
       '@gorhom/bottom-sheet':
         specifier: 'catalog:'
-        version: 5.2.7(8917f75cf90cc560531853441c5dbcbf)
+        version: 5.2.7(patch_hash=56551329c871986cee0f25b036c708d368e7e93fbad18bc084dd614c2f0e5bcf)(8917f75cf90cc560531853441c5dbcbf)
       '@jest/globals':
         specifier: 'catalog:'
         version: 30.5.2
@@ -6016,7 +6017,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/lumen-utils-shared':
         specifier: 'catalog:'
         version: 0.1.19(react@19.2.3)
@@ -6173,7 +6174,7 @@ importers:
     devDependencies:
       '@gorhom/bottom-sheet':
         specifier: 'catalog:'
-        version: 5.2.7(8917f75cf90cc560531853441c5dbcbf)
+        version: 5.2.7(patch_hash=56551329c871986cee0f25b036c708d368e7e93fbad18bc084dd614c2f0e5bcf)(8917f75cf90cc560531853441c5dbcbf)
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
         version: 0.1.35
@@ -6182,7 +6183,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@radix-ui/react-dialog':
         specifier: 'catalog:'
         version: 1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -6296,7 +6297,7 @@ importers:
     devDependencies:
       '@gorhom/bottom-sheet':
         specifier: 'catalog:'
-        version: 5.2.7(8917f75cf90cc560531853441c5dbcbf)
+        version: 5.2.7(patch_hash=56551329c871986cee0f25b036c708d368e7e93fbad18bc084dd614c2f0e5bcf)(8917f75cf90cc560531853441c5dbcbf)
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
         version: 0.1.35
@@ -6305,7 +6306,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/lumen-utils-shared':
         specifier: 'catalog:'
         version: 0.1.19(react@19.2.3)
@@ -8769,7 +8770,7 @@ importers:
         version: link:../../../domain/entity/currency-crypto
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.7(57fde9b373d1bf3dc964d968d3f87c01)
+        version: 2.0.7(a17b41d4e19aaa70f3d60c4d5489469a)
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
         version: 0.1.35
@@ -8778,7 +8779,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -8872,7 +8873,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -8960,7 +8961,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -9042,7 +9043,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -9130,7 +9131,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -9211,7 +9212,7 @@ importers:
         version: link:../../platform/quick-actions
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.7(57fde9b373d1bf3dc964d968d3f87c01)
+        version: 2.0.7(a17b41d4e19aaa70f3d60c4d5489469a)
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
@@ -9227,7 +9228,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -9318,7 +9319,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -9427,7 +9428,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -9524,7 +9525,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -9758,7 +9759,7 @@ importers:
         version: 0.1.35
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -9831,7 +9832,7 @@ importers:
         version: 0.1.35
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -9898,7 +9899,7 @@ importers:
         version: 0.1.35
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -9977,7 +9978,7 @@ importers:
         version: 0.1.35
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -10047,7 +10048,7 @@ importers:
         version: 0.1.35
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -10132,7 +10133,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -10253,7 +10254,7 @@ importers:
         version: 1.12.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -10335,7 +10336,7 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -10399,7 +10400,7 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -10484,7 +10485,7 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -10587,7 +10588,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -10690,7 +10691,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -10787,7 +10788,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -10875,7 +10876,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -10957,7 +10958,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -11053,7 +11054,7 @@ importers:
         version: link:../../platform/contacts
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.7(57fde9b373d1bf3dc964d968d3f87c01)
+        version: 2.0.7(a17b41d4e19aaa70f3d60c4d5489469a)
       '@shared/clipboard':
         specifier: workspace:*
         version: link:../../../shared/clipboard
@@ -11075,7 +11076,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -11172,7 +11173,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -11260,7 +11261,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -11339,7 +11340,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -11433,7 +11434,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -11517,7 +11518,7 @@ importers:
         version: link:../../../domain/entity/currency
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.7(57fde9b373d1bf3dc964d968d3f87c01)
+        version: 2.0.7(a17b41d4e19aaa70f3d60c4d5489469a)
       '@shared/analytics':
         specifier: workspace:*
         version: link:../../../shared/analytics
@@ -11536,7 +11537,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -11684,7 +11685,7 @@ importers:
         version: 0.1.35
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -11735,7 +11736,7 @@ importers:
     devDependencies:
       '@gorhom/bottom-sheet':
         specifier: 'catalog:'
-        version: 5.2.7(8917f75cf90cc560531853441c5dbcbf)
+        version: 5.2.7(patch_hash=56551329c871986cee0f25b036c708d368e7e93fbad18bc084dd614c2f0e5bcf)(8917f75cf90cc560531853441c5dbcbf)
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
         version: 0.1.35
@@ -11744,7 +11745,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -11834,7 +11835,7 @@ importers:
         version: link:../../platform/pay-analytics
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.7(57fde9b373d1bf3dc964d968d3f87c01)
+        version: 2.0.7(a17b41d4e19aaa70f3d60c4d5489469a)
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.13.0(react-redux@9.2.0(@types/react@19.2.17)(react@19.2.3)(redux@5.0.1))(react@19.2.3)
@@ -11856,7 +11857,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -11947,7 +11948,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -12050,7 +12051,7 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -12149,7 +12150,7 @@ importers:
         version: link:../../platform/pay-analytics
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.7(57fde9b373d1bf3dc964d968d3f87c01)
+        version: 2.0.7(a17b41d4e19aaa70f3d60c4d5489469a)
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
@@ -12174,7 +12175,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -12304,10 +12305,10 @@ importers:
         version: link:../../platform/style
       '@gorhom/bottom-sheet':
         specifier: 'catalog:'
-        version: 5.2.7(8917f75cf90cc560531853441c5dbcbf)
+        version: 5.2.7(patch_hash=56551329c871986cee0f25b036c708d368e7e93fbad18bc084dd614c2f0e5bcf)(8917f75cf90cc560531853441c5dbcbf)
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.7(57fde9b373d1bf3dc964d968d3f87c01)
+        version: 2.0.7(a17b41d4e19aaa70f3d60c4d5489469a)
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
         version: 0.1.35
@@ -12316,7 +12317,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -12449,7 +12450,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -12564,7 +12565,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -12746,7 +12747,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -12833,7 +12834,7 @@ importers:
         version: link:../../platform/contacts
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.7(57fde9b373d1bf3dc964d968d3f87c01)
+        version: 2.0.7(a17b41d4e19aaa70f3d60c4d5489469a)
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
@@ -12852,7 +12853,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -12958,7 +12959,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -13058,7 +13059,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -13148,7 +13149,7 @@ importers:
         version: link:../../platform/style
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.7(57fde9b373d1bf3dc964d968d3f87c01)
+        version: 2.0.7(a17b41d4e19aaa70f3d60c4d5489469a)
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
@@ -13167,7 +13168,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -13270,7 +13271,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -13379,7 +13380,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -13497,7 +13498,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -13983,7 +13984,7 @@ importers:
         version: 0.1.35
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -14092,7 +14093,7 @@ importers:
         version: link:../market-countervalues
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.7(57fde9b373d1bf3dc964d968d3f87c01)
+        version: 2.0.7(a17b41d4e19aaa70f3d60c4d5489469a)
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
         version: 0.1.35
@@ -14323,7 +14324,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -14524,7 +14525,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -15381,7 +15382,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
     devDependencies:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
@@ -25747,7 +25748,7 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
@@ -25807,7 +25808,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
@@ -25937,7 +25938,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
@@ -26013,7 +26014,7 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
@@ -26122,7 +26123,7 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
@@ -26201,10 +26202,10 @@ importers:
     devDependencies:
       '@gorhom/bottom-sheet':
         specifier: 'catalog:'
-        version: 5.2.7(8917f75cf90cc560531853441c5dbcbf)
+        version: 5.2.7(patch_hash=56551329c871986cee0f25b036c708d368e7e93fbad18bc084dd614c2f0e5bcf)(8917f75cf90cc560531853441c5dbcbf)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
@@ -26277,7 +26278,7 @@ importers:
     devDependencies:
       '@gorhom/bottom-sheet':
         specifier: 'catalog:'
-        version: 5.2.7(8917f75cf90cc560531853441c5dbcbf)
+        version: 5.2.7(patch_hash=56551329c871986cee0f25b036c708d368e7e93fbad18bc084dd614c2f0e5bcf)(8917f75cf90cc560531853441c5dbcbf)
       '@jest/types':
         specifier: 30.5.1
         version: 30.5.1
@@ -26289,7 +26290,7 @@ importers:
         version: 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.74(6621f45436754404b0f71e93dc7552cc)
+        version: 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       '@testing-library/dom':
         specifier: 'catalog:'
         version: 10.4.1
@@ -47765,7 +47766,7 @@ snapshots:
       '@gitbeaker/core': 38.12.1
       '@gitbeaker/requester-utils': 38.12.1
 
-  '@gorhom/bottom-sheet@5.2.7(8917f75cf90cc560531853441c5dbcbf)':
+  '@gorhom/bottom-sheet@5.2.7(patch_hash=56551329c871986cee0f25b036c708d368e7e93fbad18bc084dd614c2f0e5bcf)(8917f75cf90cc560531853441c5dbcbf)':
     dependencies:
       '@gorhom/portal': 1.0.14(react-native@0.86.3(patch_hash=5b8cb5bb5aee68d1c870a74aff8dac82599e0605af066d2279f485581115416c)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@react-native/jest-preset@0.86.3(@babel/core@7.28.5)(react@19.2.3))(@types/react@19.2.17)(bufferutil@4.1.0)(react@19.2.3)(utf-8-validate@6.0.6))(react@19.2.3)
       invariant: 2.2.4
@@ -48468,13 +48469,13 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/crypto-icons@2.0.7(57fde9b373d1bf3dc964d968d3f87c01)':
+  '@ledgerhq/crypto-icons@2.0.7(a17b41d4e19aaa70f3d60c4d5489469a)':
     dependencies:
       react: 19.2.3
     optionalDependencies:
       '@ledgerhq/lumen-design-core': 0.1.35
       '@ledgerhq/lumen-ui-react': 0.1.73(@base-ui/react@1.8.0(@types/react@19.2.17)(date-fns@2.30.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@ledgerhq/lumen-design-core@0.1.35)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@radix-ui/react-slot@1.2.4(@types/react@19.2.17)(react@19.2.3))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.2.7(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(class-variance-authority@0.7.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@ledgerhq/lumen-ui-rnative': 0.1.74(6621f45436754404b0f71e93dc7552cc)
+      '@ledgerhq/lumen-ui-rnative': 0.1.74(dd3758ef9411928b5c3d0fba48cacf96)
       react-dom: 19.2.3(react@19.2.3)
       react-native: 0.86.3(patch_hash=5b8cb5bb5aee68d1c870a74aff8dac82599e0605af066d2279f485581115416c)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@react-native/jest-preset@0.86.3(@babel/core@7.28.5)(react@19.2.3))(@types/react@19.2.17)(bufferutil@4.1.0)(react@19.2.3)(utf-8-validate@6.0.6)
 
@@ -48845,9 +48846,9 @@ snapshots:
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
 
-  '@ledgerhq/lumen-ui-rnative@0.1.74(6621f45436754404b0f71e93dc7552cc)':
+  '@ledgerhq/lumen-ui-rnative@0.1.74(dd3758ef9411928b5c3d0fba48cacf96)':
     dependencies:
-      '@gorhom/bottom-sheet': 5.2.7(8917f75cf90cc560531853441c5dbcbf)
+      '@gorhom/bottom-sheet': 5.2.7(patch_hash=56551329c871986cee0f25b036c708d368e7e93fbad18bc084dd614c2f0e5bcf)(8917f75cf90cc560531853441c5dbcbf)
       '@ledgerhq/lumen-design-core': 0.1.35
       '@ledgerhq/lumen-utils-shared': 0.1.19(react@19.2.3)
       '@sbaiahmed1/react-native-blur': 4.5.5(react-native@0.86.3(patch_hash=5b8cb5bb5aee68d1c870a74aff8dac82599e0605af066d2279f485581115416c)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@react-native/jest-preset@0.86.3(@babel/core@7.28.5)(react@19.2.3))(@types/react@19.2.17)(bufferutil@4.1.0)(react@19.2.3)(utf-8-validate@6.0.6))(react@19.2.3)
