@@ -3,7 +3,8 @@ import { TileButton } from "@ledgerhq/lumen-ui-react";
 import { ArrowUp, Check, Copy, PenEdit, Share, Trash } from "@ledgerhq/lumen-ui-react/symbols";
 import { useTranslation } from "@shared/i18n";
 
-const SINGLE_LINE_LABEL_CLASS_NAME = "min-w-0 [&>span]:block [&>span]:w-full [&>span]:truncate";
+const SINGLE_LINE_LABEL_CLASS_NAME =
+  "min-w-0 px-2 [&>span]:block [&>span]:w-full [&>span]:truncate";
 
 type ContactAddressDetailActionsProps = Readonly<{
   hasCopied: boolean;
