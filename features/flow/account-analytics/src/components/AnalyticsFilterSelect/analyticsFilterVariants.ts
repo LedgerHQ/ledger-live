@@ -1,3 +1,5 @@
+import type { CryptoIconProps } from "@ledgerhq/crypto-icons";
+
 export type AnalyticsFilterVariant = "asset" | "account";
 
 /** What the asset and account filters share on both platforms; each platform adds its fallback icon. */
@@ -6,5 +8,5 @@ export const ANALYTICS_FILTER_VARIANTS = {
   account: { testId: "analytics-account-filter", iconShape: "square" },
 } as const satisfies Record<
   AnalyticsFilterVariant,
-  Readonly<{ testId: string; iconShape: "square" | undefined }>
+  Readonly<{ testId: string; iconShape: CryptoIconProps["shape"] }>
 >;
