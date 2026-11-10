@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 4.28.0-next.1
+
+### Minor Changes
+
+- [#24683](https://github.com/LedgerHQ/ledger-live/pull/24683) [`d5eefc2`](https://github.com/LedgerHQ/ledger-live/commit/d5eefc2b56c9556146a5bdb5acbae5e0d170a308) Thanks [@ben778899](https://github.com/ben778899)! - Fake update to trigger the update test cases.
+
 ## 4.28.0-next.0
 
 ### Minor Changes
