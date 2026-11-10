@@ -46,6 +46,10 @@ export interface Sample extends SampleMeta {
   readFrom?: "log" | "screen" | "screen-fallback";
   /** What the Debug screen showed, when it was read as well as the log: the two must match. */
   screenAppStartupTime?: number;
+  /** The startup-perf line's size: the iOS log keeps 1020 bytes of a line, logcat about 4 KB. */
+  logLineBytes?: number;
+  /** Maestro read the Debug screen since the previous launch, which slows this one on iOS. */
+  afterScreenRead?: boolean;
   readMs?: number;
   maestroCalls?: MaestroCall[];
 }

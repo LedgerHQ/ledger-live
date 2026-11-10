@@ -1,5 +1,5 @@
 // The job summary: B − A per platform, scenario and measure, and what the rows mean.
-import type { DebugBase, GateOptions, Row } from "./analyze.ts";
+import type { DebugBase, GateOptions, Reads, Row } from "./analyze.ts";
 import type { Side } from "../types.ts";
 
 export interface ReportOptions extends GateOptions {
@@ -36,24 +36,45 @@ function offBaseNote(r: Row, side: Side): string {
   return `**${r.platform} ${r.scenario}: ${launches} counted from another start than ${start} (e.g. the app found no process start) and ${fate}.**`;
 }
 
+export const screenMismatchText = ({ screenMismatches, screenChecks }: Reads): string =>
+  `the Debug screen showed another App startup time than the device log on ${screenMismatches} of the ${screenChecks} launches read both ways`;
+
+// What the device log keeps of a line: 1020 bytes, measured on macOS, whose unified log iOS shares;
+// a logcat entry holds 4068 with the priority and the ReactNativeJS tag.
+const LOG_LINE_LIMITS: Partial<Record<string, { bytes: number; log: string }>> = {
+  ios: { bytes: 1020, log: "the iOS log" },
+  android: { bytes: 4052, log: "logcat" },
+};
+
+function logLineNote(where: string, platform: string, longest: number | null): string[] {
+  const limit = LOG_LINE_LIMITS[platform];
+  if (longest === null || !limit) return [];
+  const text = `${where}: the longest device log line was ${longest} bytes, of the ${limit.bytes} ${limit.log} keeps.`;
+  return [longest > 0.8 * limit.bytes ? `**${text}**` : text];
+}
+
 function readNotes({ platform, scenario, reads }: Row): string[] {
   const where = `${platform} ${scenario}`;
   const notes: string[] = [];
-  if (reads.fallbacks) {
+  const fallbacks = reads.fallbacks.A + reads.fallbacks.B;
+  if (fallbacks) {
     notes.push(
-      `**${where}: ${reads.fallbacks} of the ${reads.fromLog + reads.fallbacks} launches read from the Debug screen, their device log line missing.**`,
+      `**${where}: ${fallbacks} of the ${reads.fromLog + fallbacks} launches read from the Debug screen, their device log line missing (A: ${reads.fallbacks.A}, B: ${reads.fallbacks.B}).**`,
+    );
+  }
+  if (reads.unevenPairs) {
+    notes.push(
+      `**${where}: ${reads.unevenPairs} pair(s) left out, as only one of their launches followed a read of the Debug screen (on iOS, ~280 ms slower).**`,
     );
   }
   if (reads.screenMismatches) {
-    notes.push(
-      `**${where}: the Debug screen showed another App startup time than the device log on ${reads.screenMismatches} of the ${reads.screenChecks} launches read both ways.**`,
-    );
+    notes.push(`**${where}: ${screenMismatchText(reads)}.**`);
   } else if (reads.screenChecks) {
     notes.push(
       `${where}: the Debug screen showed the device log's App startup time on the ${reads.screenChecks} launches read both ways.`,
     );
   }
-  return notes;
+  return [...notes, ...logLineNote(where, platform, reads.longestLogLine)];
 }
 
 const fmt = (v: number | null | undefined) =>
