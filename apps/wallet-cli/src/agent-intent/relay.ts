@@ -85,10 +85,9 @@ export function createRelayHost(
     relayBaseUrl: AGENT_INTENT_TRUSTCHAIN_URLS[environment],
     webSocketFactory: url => {
       const proxy = relayProxyFromEnv();
-      const WebSocketConstructor = WebSocket as unknown as {
-        new (url: string, options?: Bun.WebSocketOptions): WebSocket;
-      };
-      return proxy ? new WebSocketConstructor(url, { proxy }) : new WebSocketConstructor(url);
+      type BunWebSocketConstructor = new (url: string, options?: Bun.WebSocketOptions) => WebSocket;
+      const BunWebSocket = WebSocket as BunWebSocketConstructor;
+      return proxy ? new BunWebSocket(url, { proxy }) : new BunWebSocket(url);
     },
     timeouts: { candidateTimeoutMs: expiresInMs, completionTimeoutMs: expiresInMs },
   });
