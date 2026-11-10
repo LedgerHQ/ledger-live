@@ -1,5 +1,10 @@
 import { log } from "@ledgerhq/logs";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type {
+  Account,
+  AccountLike,
+  ResolvedAccountBridge,
+  TransactionCommon,
+} from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { firstValueFrom, reduce } from "rxjs";
 
@@ -11,7 +16,7 @@ import type { NetworkFeeContext } from "./normalizer/networkFeeEstimate";
 
 const BITCOIN_SYNC_REUSE_MS = 30_000;
 
-type AccountBridge = Awaited<ReturnType<typeof getAccountBridge>>;
+type FeeEstimationBridge = ResolvedAccountBridge<TransactionCommon>;
 
 const recentBitcoinSyncs = new WeakMap<Account, Promise<Account>>();
 
@@ -21,7 +26,7 @@ function forgetBitcoinSync(account: Account, synced?: Promise<Account>): void {
   }
 }
 
-function syncBitcoinAccount(bridge: AccountBridge, account: Account): Promise<Account> {
+function syncBitcoinAccount(bridge: FeeEstimationBridge, account: Account): Promise<Account> {
   const recentSync = recentBitcoinSyncs.get(account);
   if (recentSync) {
     return recentSync;
@@ -126,7 +131,7 @@ export async function fetchNetworkFeeContext(
   }
 }
 
-function getEstimationRecipient(bridge: AccountBridge, mainAccount: Account): string | null {
+function getEstimationRecipient(bridge: FeeEstimationBridge, mainAccount: Account): string | null {
   try {
     return bridge.getEstimationRecipient(mainAccount);
   } catch (e) {
