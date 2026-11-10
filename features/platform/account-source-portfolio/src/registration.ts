@@ -1,9 +1,10 @@
 import type { Portfolio, PortfolioRegistration } from "@domain/api-account-portfolio";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import { autoDeriveFamily } from "./autoDerive";
 import { evmFamily } from "./evm";
 import type { PortfolioAccountRef, PortfolioFamily, RegistrationLike } from "./family";
 
-const FAMILIES: readonly PortfolioFamily[] = [evmFamily];
+const FAMILIES: readonly PortfolioFamily[] = [evmFamily, autoDeriveFamily];
 
 /** How the service tracks the account; undefined for one this source does not serve. */
 export function portfolioAccountOf(descriptor: AccountDescriptor): PortfolioAccountRef | undefined {

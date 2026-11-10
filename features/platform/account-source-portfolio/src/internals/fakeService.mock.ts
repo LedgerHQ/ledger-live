@@ -31,7 +31,15 @@ export function serverAccountId(descriptor: AccountDescriptor): string {
 
 export const ETH = evm(1);
 export const POLYGON = evm(1, "polygon");
-export const BTC = mockUtxoAccountDescriptor();
+/** The BIP84 account of the BIP39 test mnemonic: a valid xpub, checksum included. */
+export const BIP84_XPUB =
+  "xpub6CatWdiZiodmUeTDp8LT5or8nmbKNcuyvz7WyksVFkKB4RHwCD3XyuvPEbvqAQY3rAPshWcMLoP2fMFMKHPJ4ZeZXYVUhLv1VMrjPC7PW6V";
+export const BTC = mockUtxoAccountDescriptor({ xpub: BIP84_XPUB });
+export const ADA = mockUtxoAccountDescriptor({
+  network: "cardano",
+  xpub: "ab".repeat(64),
+  path: "m/1852h/1815h/0h",
+});
 /** An account of a network the service does not synchronize. */
 export const DOT = mockAddressAccountDescriptor({
   network: "polkadot",

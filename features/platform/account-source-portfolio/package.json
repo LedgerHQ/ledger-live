@@ -27,6 +27,7 @@
     "@domain/entity-account-descriptor": "workspace:*",
     "@domain/entity-client-identity": "workspace:*",
     "@domain/entity-currency-crypto": "workspace:*",
+    "@noble/hashes": "catalog:",
     "@reduxjs/toolkit": "catalog:"
   },
   "devDependencies": {

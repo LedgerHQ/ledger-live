@@ -13,6 +13,8 @@ No app ranks it. Only a devtool is meant to create it with `createPortfolioSourc
 - `reconcile(descriptors)` registers what the accounts miss and removes the registrations no account needs. It refuses to run with no account, and never touches a registration shape it does not send.
 - Service writes go through a serial queue, so two calls never register the same address twice.
 - The listing, the last outcome of each account and an activity log stay in the source, read with `subscribe` / `getSnapshot` (`useSyncExternalStore`).
-- One registration shape per family ([`src/family.ts`](./src/family.ts)); the first one that takes the account wins ([`src/registration.ts`](./src/registration.ts)). Today only [`evm.ts`](./src/evm.ts): one `evm` registration per address, which the service fans out to every EVM network as `<network>:<lowercase address>`.
+- One registration shape per family ([`src/family.ts`](./src/family.ts)); the first one that takes the account wins ([`src/registration.ts`](./src/registration.ts)). 
+  - [`evm.ts`](./src/evm.ts): one `evm` registration per address; the service fans it out to every EVM network, as `<network>:<lowercase address>`.
+  - [`autoDerive.ts`](./src/autoDerive.ts): one `auto_derive` registration per xpub, the service deriving from the first address (`<path>/0/0`); the account is the SHA-256 of the xpub sent. Bitcoin and Bitcoin testnet in purposes 44 and 84 only (the service refuses 49 and 86), Cardano with our hex key sent as `acct_xvk`.
 
 The portfolio is the install's `PortfolioId`, whose raw value leaves its wrapper only in [`src/client.ts`](./src/client.ts).

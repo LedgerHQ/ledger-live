@@ -1,5 +1,7 @@
 import { computeAccountUUID } from "@domain/entity-account-descriptor";
+import { mockUtxoAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import {
+  ADA,
   BTC,
   DOT,
   ETH,
@@ -21,14 +23,16 @@ function setup(service = fakeService()) {
 }
 
 describe("createPortfolioSource", () => {
-  it("supports the balance of EVM accounts, from the descriptor alone", () => {
+  it("supports the balance of EVM, Bitcoin and Cardano accounts, from the descriptor alone", () => {
     const { handle, client } = setup();
     const { supports } = handle.source;
 
     expect(supports(ETH, "balance")).toBe(true);
     expect(supports(evm(2, "ethereum_classic"), "balance")).toBe(true);
     expect(supports(evm(2, "hypercore"), "balance")).toBe(false);
-    expect(supports(BTC, "balance")).toBe(false);
+    expect(supports(BTC, "balance")).toBe(true);
+    expect(supports(ADA, "balance")).toBe(true);
+    expect(supports(mockUtxoAccountDescriptor({ path: "m/49h/0h/0h" }), "balance")).toBe(false);
     expect(supports(DOT, "balance")).toBe(false);
     expect(Object.values(client).every(call => call.mock.calls.length === 0)).toBe(true);
   });
@@ -60,6 +64,35 @@ describe("createPortfolioSource", () => {
     expect(state.portfolio?.registrations).toEqual([
       expect.objectContaining({ type: "evm", address: ETH.address }),
     ]);
+  });
+
+  it("registers each family with its own shape, then reads its balance", async () => {
+    const descriptors = [BTC, ADA];
+    const { handle, client, state } = setup(
+      fakeService({ groups: descriptors.map(each => group(each)) }),
+    );
+    client.addRegistrations.mockImplementationOnce(async () => {
+      state.portfolio = synced(descriptors);
+      return state.portfolio;
+    });
+    const targets = descriptors.map(descriptor => ({
+      accountUUID: computeAccountUUID(descriptor),
+      descriptor,
+    }));
+
+    const balances = await handle.source.readBatch?.balance?.(targets, undefined);
+
+    expect(client.addRegistrations.mock.calls[0]?.[1].map(each => each.type)).toEqual([
+      "auto_derive",
+      "auto_derive",
+    ]);
+    expect(balances?.map(each => each.status === "fulfilled" && each.value[0])).toEqual(
+      descriptors.map(({ network }) => ({
+        assetId: network,
+        balance: "10",
+        spendableBalance: "10",
+      })),
+    );
   });
 
   it("keeps a stable snapshot between changes and notifies its listeners", async () => {
