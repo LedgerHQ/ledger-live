@@ -168,9 +168,9 @@ jobs:
             sudo chown -R $(whoami):$(id -ng) "$SDK/emulator"
           fi
 
-      - name: "ci-test: block Maven Central"
+      - name: "ci-test: block Maven Central and JitPack"
         run: |
-          for h in repo.maven.apache.org repo1.maven.org; do echo "0.0.0.0 $h" | sudo tee -a /etc/hosts; done
+          for h in repo.maven.apache.org repo1.maven.org jitpack.io www.jitpack.io; do echo "0.0.0.0 $h" | sudo tee -a /etc/hosts; done
 
       - name: Install dependencies
         run: |
