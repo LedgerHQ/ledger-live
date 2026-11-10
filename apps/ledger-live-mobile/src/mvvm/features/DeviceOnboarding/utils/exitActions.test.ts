@@ -38,106 +38,36 @@ describe("exitActions", () => {
     expect(opened).toEqual({ path, params });
   });
 
-  it("should open the old checks above the previous screen when an unseeded touchscreen falls back", () => {
-    const { reset, onboardingReset, baseOnboardingReset } = leave("legacyFallback", {}, undefined, [
-      ScreenName.OnboardingWelcome,
-      ScreenName.OnboardingPostWelcomeSelection,
-      ScreenName.OnboardingWelcomeBack,
-      ScreenName.OnboardingPairNew,
-    ]);
+  it("should leave the flow for the old checks when an unseeded touchscreen falls back", () => {
+    const { rootNavigated, reset } = leave("legacyFallback");
 
     expect(reset).toBeNull();
-    expect(onboardingReset).toBeNull();
-    expect(baseOnboardingReset).toEqual({
-      index: 1,
-      routes: [
-        {
-          name: NavigatorName.Onboarding,
-          state: {
-            index: 2,
-            routes: [
-              { name: ScreenName.OnboardingWelcome },
-              { name: ScreenName.OnboardingPostWelcomeSelection },
-              { name: ScreenName.OnboardingWelcomeBack },
-            ],
-          },
-        },
-        {
-          name: NavigatorName.SyncOnboarding,
-          state: {
-            routes: [
-              {
-                name: ScreenName.SyncOnboardingCompanion,
-                params: { device: stax, backReturnsToPrevious: true },
-              },
-            ],
-          },
-        },
-      ],
-    });
-  });
-
-  it("should open the use case above the previous screen when an unseeded Nano falls back", () => {
-    const nanoX: Device = { ...stax, modelId: DeviceModelId.nanoX };
-    const { reset, onboardingReset, baseOnboardingReset } = leave(
-      "legacyFallback",
-      { device: nanoX },
-      undefined,
-      [ScreenName.OnboardingWelcomeBack, ScreenName.OnboardingPairNew],
-    );
-
-    expect(reset).toBeNull();
-    expect(baseOnboardingReset).toBeNull();
-    expect(onboardingReset).toEqual({
-      index: 1,
-      routes: [
-        { name: ScreenName.OnboardingWelcomeBack },
-        { name: ScreenName.OnboardingUseCase, params: { deviceModelId: DeviceModelId.nanoX } },
-      ],
-    });
-  });
-
-  it("should keep the previous screen params when an unseeded touchscreen falls back", () => {
-    const { parentReset } = fallBackFrom([
+    expect(rootNavigated).toEqual([
+      NavigatorName.BaseOnboarding,
       {
-        name: ScreenName.OnboardingPostWelcomeSelection,
-        params: { userHasDevice: true },
+        screen: NavigatorName.SyncOnboarding,
+        params: {
+          screen: ScreenName.SyncOnboardingCompanion,
+          params: { device: stax, backReturnsToPrevious: true },
+        },
       },
-      { name: ScreenName.OnboardingPairNew },
     ]);
-
-    expect(parentReset?.mock.calls[0][0].routes[0].state.routes[0]).toEqual({
-      name: ScreenName.OnboardingPostWelcomeSelection,
-      params: { userHasDevice: true },
-    });
   });
 
-  it("should open the old checks without an onboarding history when pairing was the only screen", () => {
-    const { parentReset } = fallBackFrom([{ name: ScreenName.OnboardingPairNew }]);
+  it("should leave the flow for the use case when an unseeded Nano falls back", () => {
+    const nanoX: Device = { ...stax, modelId: DeviceModelId.nanoX };
+    const { rootNavigated } = leave("legacyFallback", { device: nanoX });
 
-    expect(parentReset?.mock.calls[0][0].routes[0]).toEqual({ name: NavigatorName.Onboarding });
-  });
-
-  it("should leave the stack untouched when the onboarding navigator has no parent", () => {
-    const { onboardingReset, parentReset } = fallBackFrom(
-      [{ name: ScreenName.OnboardingPairNew }],
-      false,
-    );
-
-    expect(onboardingReset).not.toHaveBeenCalled();
-    expect(parentReset).toBeNull();
-  });
-
-  it("should drop the funnel from the stack when an unseeded device falls back from it", () => {
-    const { baseOnboardingReset } = leave("legacyFallback", {}, undefined, [
-      ScreenName.OnboardingWelcomeBack,
-      ScreenName.DeviceOnboardingFunnel,
+    expect(rootNavigated).toEqual([
+      NavigatorName.BaseOnboarding,
+      {
+        screen: NavigatorName.Onboarding,
+        params: {
+          screen: ScreenName.OnboardingUseCase,
+          params: { deviceModelId: DeviceModelId.nanoX },
+        },
+      },
     ]);
-
-    expect(baseOnboardingReset?.routes[0]).toEqual({
-      name: NavigatorName.Onboarding,
-      state: { index: 0, routes: [{ name: ScreenName.OnboardingWelcomeBack }] },
-    });
   });
 
   it("should complete and open the portfolio when the device is already synced", () => {
@@ -163,6 +93,17 @@ describe("exitActions", () => {
 
     expect(opened).toBeNull();
     expect(popped).toEqual(StackActions.pop(1));
+  });
+
+  it("should close the device flow and onboarding together", () => {
+    const { opened, popped } = leave("completed", { isGenuine: true }, [
+      NavigatorName.Base,
+      NavigatorName.BaseOnboarding,
+      NavigatorName.DeviceOnboarding,
+    ]);
+
+    expect(opened).toBeNull();
+    expect(popped).toEqual(StackActions.pop(2));
   });
 
   it("should leave the post-onboarding redirect untouched when the user was not read-only", () => {
@@ -294,32 +235,10 @@ describe("exitActions", () => {
   });
 });
 
-function fallBackFrom(routes: { name: string; params?: unknown }[], withParent = true) {
-  const parentReset = jest.fn();
-  const onboardingReset = jest.fn();
-  exitActions.legacyFallback({
-    dispatch: jest.fn() as unknown as ExitDeps["dispatch"],
-    navigation: {
-      getState: () => ({ routes }),
-      reset: onboardingReset,
-      getParent: () => (withParent ? { reset: parentReset } : undefined),
-    } as unknown as ExitDeps["navigation"],
-    device: stax,
-    wasReadOnlyAtEntry: false,
-    isGenuine: false,
-    deviceWasSeeded: false,
-    firmwareNeedsLegacyFlow: false,
-    hasCompletedOnboarding: false,
-  });
-
-  return { onboardingReset, parentReset: withParent ? parentReset : null };
-}
-
 function leave(
   reason: DeviceOnboardingExitReason,
   overrides: Partial<ExitDeps> = {},
-  rootRoutes: string[] = [NavigatorName.BaseOnboarding],
-  onboardingRoutes: string[] = [ScreenName.OnboardingPairNew],
+  rootRoutes: string[] = [NavigatorName.BaseOnboarding, NavigatorName.DeviceOnboarding],
 ) {
   const dispatch = jest.fn();
   const outer = {
@@ -330,21 +249,17 @@ function leave(
     goBack: jest.fn(),
     getParent: () => undefined,
   };
-  const baseOnboarding = {
-    reset: jest.fn(),
-    getParent: () => outer,
-  };
-  const inner = {
-    getState: () => ({ routes: onboardingRoutes.map(name => ({ name })) }),
+  const flow = {
+    getState: () => ({ routes: [{ name: ScreenName.DeviceOnboardingFunnel }] }),
     reset: jest.fn(),
     navigate: jest.fn(),
     goBack: jest.fn(),
-    getParent: () => baseOnboarding,
+    getParent: () => outer,
   };
 
   exitActions[reason]({
     dispatch: dispatch as unknown as ExitDeps["dispatch"],
-    navigation: inner as unknown as ExitDeps["navigation"],
+    navigation: flow as unknown as ExitDeps["navigation"],
     device: stax,
     wasReadOnlyAtEntry: false,
     isGenuine: false,
@@ -359,13 +274,12 @@ function leave(
   return {
     dispatched: dispatch.mock.calls.map(([action]) => action),
     reset: reset ?? null,
-    baseOnboardingReset: baseOnboarding.reset.mock.calls[0]?.[0] ?? null,
-    onboardingReset: inner.reset.mock.calls[0]?.[0] ?? null,
+    rootNavigated: outer.navigate.mock.calls[0] ?? null,
     opened: reset ? lastRoute(reset.routes) : null,
-    navigated: (inner.navigate.mock.calls[0]?.[0]
-      ? { name: inner.navigate.mock.calls[0][0], params: inner.navigate.mock.calls[0][1] }
+    navigated: (flow.navigate.mock.calls[0]?.[0]
+      ? { name: flow.navigate.mock.calls[0][0], params: flow.navigate.mock.calls[0][1] }
       : null) as { name: string; params: unknown } | null,
-    wentBack: inner.goBack.mock.calls.length > 0,
+    wentBack: flow.goBack.mock.calls.length > 0,
     popped: outer.dispatch.mock.calls[0]?.[0] ?? null,
   };
 }

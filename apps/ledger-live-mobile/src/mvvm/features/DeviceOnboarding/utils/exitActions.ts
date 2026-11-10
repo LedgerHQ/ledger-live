@@ -155,48 +155,21 @@ function resetToLegacySeededChecks(navigation: NavigationProp<ParamListBase>, de
   });
 }
 
-const onboardingHostScreens = new Set<string>([
-  ScreenName.OnboardingPairNew,
-  ScreenName.DeviceOnboardingFunnel,
-]);
-
+/** Leaves the flow for the onboarding screens below it, where the old setup lives. */
 function openLegacySetup(navigation: NavigationProp<ParamListBase>, device: Device) {
-  const previousRoutes = navigation
-    .getState()
-    .routes.filter(route => !onboardingHostScreens.has(route.name))
-    .map(({ name, params }) => (params === undefined ? { name } : { name, params }));
-
+  const root = getRootNavigation(navigation);
   if (isSyncOnboardingSupported(device.modelId)) {
-    navigation.getParent()?.reset({
-      index: 1,
-      routes: [
-        {
-          name: NavigatorName.Onboarding,
-          ...(previousRoutes.length > 0
-            ? { state: { index: previousRoutes.length - 1, routes: previousRoutes } }
-            : {}),
-        },
-        {
-          name: NavigatorName.SyncOnboarding,
-          state: {
-            routes: [
-              {
-                name: ScreenName.SyncOnboardingCompanion,
-                params: { device, backReturnsToPrevious: true },
-              },
-            ],
-          },
-        },
-      ],
+    root.navigate(NavigatorName.BaseOnboarding, {
+      screen: NavigatorName.SyncOnboarding,
+      params: {
+        screen: ScreenName.SyncOnboardingCompanion,
+        params: { device, backReturnsToPrevious: true },
+      },
     });
     return;
   }
-
-  navigation.reset({
-    index: previousRoutes.length,
-    routes: [
-      ...previousRoutes,
-      { name: ScreenName.OnboardingUseCase, params: { deviceModelId: device.modelId } },
-    ],
+  root.navigate(NavigatorName.BaseOnboarding, {
+    screen: NavigatorName.Onboarding,
+    params: { screen: ScreenName.OnboardingUseCase, params: { deviceModelId: device.modelId } },
   });
 }

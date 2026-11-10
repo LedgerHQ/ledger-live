@@ -10,6 +10,7 @@ import { setOnboardingHasDevice } from "~/actions/settings";
 import { updateIdentify } from "~/analytics";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import type { RootStackParamList } from "~/components/RootNavigator/types/RootNavigator";
 import { NavigatorName, ScreenName } from "~/const";
 import { SelectionCards } from "./Cards/SelectionCard";
 import OnboardingView from "./OnboardingView";
@@ -18,7 +19,7 @@ import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { useFeature } from "@features/platform-feature-flags";
 
 type NavigationProps = StackNavigatorProps<
-  OnboardingNavigatorParamList,
+  OnboardingNavigatorParamList & RootStackParamList,
   ScreenName.OnboardingPostWelcomeSelection
 >;
 
@@ -64,9 +65,8 @@ function PostWelcomeSelection() {
   const setupLedger = () => {
     identifyUser(null);
     if (openUnseededFunnel) {
-      navigation.navigate(ScreenName.OnboardingPairNew, {
-        deviceModelId: undefined,
-        connectUnseededDevice: true,
+      navigation.navigate(NavigatorName.DeviceOnboarding, {
+        screen: ScreenName.DeviceOnboardingConnect,
       });
       return;
     }
