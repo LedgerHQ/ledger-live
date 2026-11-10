@@ -651,6 +651,7 @@ export type Feature_PtxBorrowLiveApp = Feature<{
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["ptxEarnLiveApp"]` from `@shared/feature-flags` instead. */
 export type Feature_PtxEarnLiveApp = Feature<{
   manifest_id: string;
+  homeDepositWidget?: boolean;
 }>;
 
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["fetchAdditionalCoins"]` from `@shared/feature-flags` instead. */

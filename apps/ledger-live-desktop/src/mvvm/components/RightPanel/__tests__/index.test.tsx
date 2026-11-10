@@ -25,6 +25,10 @@ jest.mock("~/renderer/screens/dashboard/components/SwapWebViewEmbedded", () => (
   ),
 }));
 
+jest.mock("../Earn", () => ({
+  Earn: () => <div data-testid="earn-deposit-widget" />,
+}));
+
 const { useLocation } = jest.requireMock("react-router");
 
 describe("RightPanel", () => {

@@ -117,6 +117,12 @@ describe("Page utils", () => {
       expect(getRightPanelVariant("/account/abc", { isAccountDetailPage: true })).toBe("swap");
     });
 
+    it("returns 'earn' on the home page only when the deposit widget is enabled", () => {
+      expect(getRightPanelVariant("/", { isEarnDepositWidgetEnabled: true })).toBe("earn");
+      expect(getRightPanelVariant("/analytics", { isEarnDepositWidgetEnabled: true })).toBe("swap");
+      expect(getRightPanelVariant("/", { isEarnDepositWidgetEnabled: false })).toBe("swap");
+    });
+
     it("returns undefined on routes without a right panel", () => {
       expect(getRightPanelVariant("/market")).toBeUndefined();
       expect(getRightPanelVariant("/accounts")).toBeUndefined();

@@ -4,6 +4,8 @@
 
 export interface IsWallet40PageOptions {
   readonly isAccountDetailPage?: boolean;
+  /** When true, the home page right panel shows the Earn deposit widget instead of Swap. */
+  readonly isEarnDepositWidgetEnabled?: boolean;
 }
 
 /**
@@ -60,7 +62,7 @@ export const isFullscreenOverlayRoute = (pathname: string): boolean =>
 // Right panel (swap sidebar / Pay card)
 // =============================================================================
 
-export type RightPanelVariant = "swap" | "card";
+export type RightPanelVariant = "swap" | "card" | "earn";
 
 interface RightPanelVariantMatcher {
   readonly variant: RightPanelVariant;
@@ -98,6 +100,10 @@ export const shouldDisplayRightPanel = (
 };
 
 const RIGHT_PANEL_VARIANT_MATCHERS: readonly RightPanelVariantMatcher[] = [
+  {
+    variant: "earn",
+    matches: (pathname, options) => pathname === "/" && !!options.isEarnDepositWidgetEnabled,
+  },
   { variant: "card", matches: pathname => CARD_RIGHT_PANEL_PAGES.has(pathname) },
   { variant: "swap", matches: (pathname, options) => shouldDisplayRightPanel(pathname, options) },
 ];

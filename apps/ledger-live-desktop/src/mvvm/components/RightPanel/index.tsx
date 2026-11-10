@@ -1,11 +1,13 @@
 import React from "react";
 import { Card } from "./Card";
+import { Earn } from "./Earn";
 import { Swap } from "./Swap";
 import type { RightPanelVariant } from "LLD/components/Page/utils";
 
 const RIGHT_PANEL_BY_VARIANT: Record<RightPanelVariant, React.ComponentType> = {
   swap: Swap,
   card: Card,
+  earn: Earn,
 };
 
 interface RightPanelProps {

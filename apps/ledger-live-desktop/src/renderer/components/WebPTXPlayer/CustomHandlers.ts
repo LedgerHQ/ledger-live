@@ -265,6 +265,10 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
           // Handle back navigation using history
           navigate(-1);
           return { success: true };
+        } else if (action === "open-earn") {
+          // Used by the Earn deposit widget's "go to dashboard" action.
+          navigate("/earn");
+          return { success: true };
         } else if (action === "redirect-provider") {
           const { currencyId, accountId, source } = request.params || {};
 

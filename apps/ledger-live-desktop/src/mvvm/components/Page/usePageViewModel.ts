@@ -9,6 +9,7 @@ import {
 } from "./utils";
 import { useSwapVisibility } from "LLD/components/RightPanel/Swap/useSwapVisibility";
 import { useSwapAvailability } from "LLD/components/RightPanel/Swap/useSwapAvailability";
+import { useEarnDepositVisibility } from "LLD/components/RightPanel/Earn/useEarnDepositVisibility";
 import { useCardVisibility } from "LLD/components/RightPanel/Card/useCardVisibility";
 import { useSwapConsoleAbtest } from "LLD/features/AssetDetail/hooks/useSwapConsoleAbtest";
 import { useIsAccountDetailPage } from "LLD/features/AccountDetail/hooks/useIsAccountDetailPage";
@@ -26,11 +27,13 @@ export const usePageViewModel = (): PageViewModelResult => {
   const isSwapEnabled = useSwapVisibility();
   const isSwapAvailableForRoute = useSwapAvailability(pathname);
   const isCardEnabled = useCardVisibility();
+  const isEarnDepositEnabled = useEarnDepositVisibility();
   const { isConsoleEnabled } = useSwapConsoleAbtest();
   const isAccountDetailPage = useIsAccountDetailPage(pathname);
 
   const variant = getRightPanelVariant(pathname, {
     isAccountDetailPage,
+    isEarnDepositWidgetEnabled: isEarnDepositEnabled,
   });
   const isSwapConsoleHidden = isAggregatedAssetDetailPath(pathname) && !isConsoleEnabled;
   const isSwapUsable = isSwapEnabled && isSwapAvailableForRoute && !isSwapConsoleHidden;
@@ -39,6 +42,7 @@ export const usePageViewModel = (): PageViewModelResult => {
   const rightPanelVariantEnabled: Record<RightPanelVariant, boolean> = {
     swap: isSwapUsable,
     card: isCardEnabled,
+    earn: isEarnDepositEnabled,
   };
 
   const shouldRenderRightPanel = variant !== undefined && rightPanelVariantEnabled[variant];
