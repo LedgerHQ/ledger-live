@@ -75,7 +75,7 @@ pnpm --silent wallet-cli start agent-intent wait --profile <id> --timeout 2s --o
 ```
 
 - `type` `"enrollment-waiting"`: the listener is running; go on.
-- `ok: false` with `error.code` `listener_exited`: the host stopped the listener when `enroll` returned. Never send that link: the human could still approve it, which adds the agent to their Ledger Sync with nothing left to receive the approval. The id is burned: pick a new one (step 3) and enroll as a background job (below).
+- `ok: false` with `error.code` `listener_exited` or `profile_not_found`: the host stopped the listener when `enroll` returned. Never send that link: the human could still approve it, which adds the agent to their Ledger Sync with nothing left to receive the approval. The id is burned: pick a new one (step 3) and enroll as a background job (below).
 - any other error: error table (step 12).
 
 Done when that check reports `enrollment-waiting` and you have the link: from the `enrollment-pending` line, or from `wait` (step 5) after an `enrollment-waiting` line. When `enroll` fails instead, match its error in the error table (step 12).
