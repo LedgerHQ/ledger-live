@@ -11,12 +11,26 @@ if (!mirrorUrl.endsWith('/')) {
 }
 
 def centralHosts = ['repo.maven.apache.org', 'repo1.maven.org'] as Set
+def pluginPortalHost = 'plugins.gradle.org'
 
+// The Plugin Portal redirects plugin dependencies (e.g. gson, kotlin-gradle-plugin-idea) to
+// Maven Central. Wherever the portal is declared, the mirror goes first so those dependencies
+// resolve from it; plugin markers and portal-only artifacts miss it and fall through to the portal.
 def mirror = { RepositoryHandler repositories ->
+    def portalFronted = false
     repositories.withType(MavenArtifactRepository).all { repo ->
-        if (centralHosts.contains(repo.url?.host)) {
+        def host = repo.url?.host
+        if (centralHosts.contains(host)) {
             logger.info("maven-central-mirror: ${repo.url} -> ${mirrorUrl}")
             repo.url = mirrorUrl
+        } else if (host == pluginPortalHost && !portalFronted) {
+            portalFronted = true
+            def front = repositories.maven {
+                name = 'MavenCentralMirror'
+                url = mirrorUrl
+            }
+            repositories.remove(front)
+            repositories.addFirst(front)
         }
     }
 }
@@ -24,9 +38,8 @@ def mirror = { RepositoryHandler repositories ->
 beforeSettings { settings ->
     logger.lifecycle("maven-central-mirror: resolving Maven Central through ${mirrorUrl} for ${settings.rootDir}")
     mirror(settings.pluginManagement.repositories)
-    // The Plugin Portal redirects plugin dependencies (e.g. gson) to Maven Central. Listing the
-    // mirror before the portal resolves them from the mirror; plugin markers fall through to the portal.
-    settings.pluginManagement.repositories.mavenCentral()
+    // With no plugin repositories declared, Gradle uses the portal without going through the
+    // handler. Declaring it explicitly lets the rule above put the mirror in front of it.
     settings.pluginManagement.repositories.gradlePluginPortal()
     mirror(settings.buildscript.repositories)
     mirror(settings.dependencyResolutionManagement.repositories)
