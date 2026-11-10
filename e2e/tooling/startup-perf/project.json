@@ -14,7 +14,7 @@
         "{workspaceRoot}/apps/ledger-live-mobile/src/index.tsx",
         "{workspaceRoot}/apps/ledger-live-mobile/src/mvvm/utils/logStartup/beforeJSImports.ts",
         "{workspaceRoot}/apps/ledger-live-mobile/src/mvvm/utils/logLastStartupEvents.ts",
-        "{workspaceRoot}/apps/ledger-live-mobile/src/mvvm/utils/logStartupForMeasurement.ts",
+        "{workspaceRoot}/apps/ledger-live-mobile/src/mvvm/utils/writeStartupToDeviceLog.ts",
         "{workspaceRoot}/apps/ledger-live-mobile/src/components/DBSave.ts",
         "{workspaceRoot}/apps/ledger-live-mobile/src/e2e/bridge/client.ts",
         "{workspaceRoot}/apps/ledger-live-mobile/src/locales/en/common.json",

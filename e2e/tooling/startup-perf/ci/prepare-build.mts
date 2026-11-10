@@ -31,25 +31,27 @@ export const JS_START_LINE = 'logStartupEvent("Before js imports");';
 export const STARTUP_END_LINE =
   "  if (!alreadyLogged.has(eventName) && otherStartupEvents.every(e => alreadyLogged.has(e))) {";
 export const STARTUP_TRY_LINE = "    try {";
-// How an app that logs the startup itself (logStartupForMeasurement.ts) calls it, the launch
-// argument it waits for, and the line src/measure/startup-log.ts parses.
-export const APP_STARTUP_LOG_CALL = "      logStartupForMeasurement(eventName);";
-const APP_STARTUP_LOG_ARGUMENT = 'export const STARTUP_PERF_LOG_ARGUMENT = "startupPerfLog";';
+// How an app that logs the startup itself (writeStartupToDeviceLog.ts) calls it, and the lines
+// src/measure/startup-log.ts parses.
+export const APP_STARTUP_LOG_CALL = "      writeStartupToDeviceLog(eventName);";
 const APP_STARTUP_LOG_FORMAT = [
-  /\{ t: \w+, e: \w+\.map\((\w+) => \[\1\.event, \1\.time, \1\.count\]\) \}/,
-  /`startup-perf \$\{JSON\.stringify\(\w+\)\}`/,
+  /export const STARTUP_LOG_PREFIX = "\[startup\]";/,
+  /`\$\{event\} \(x\$\{count\}\): \$\{time\} ms`/,
+  /`App startup time: \$\{\w+\} ms, \$\{\w+\.length\} events`/,
 ];
-// The refs before it get the app's log line: React Native's hook behind console.*, at the only
-// level iOS release builds keep, and unlike console.error unseen by Datadog.
+// The refs before it get the app's lines: React Native's hook behind console.*, at the only level
+// iOS release builds keep, and unlike console.error unseen by Datadog.
 const STARTUP_LOG_LINES = [
-  "      // startup-perf: the startup in the device log, as logStartupForMeasurement writes it",
+  "      // startup-perf: the startup in the device log, as writeStartupToDeviceLog writes it",
   "      const startupPerfEvents = resolveStartupEvents();",
-  "      const startupPerfLine = JSON.stringify({",
-  "        t: startupPerfEvents.find(e => e.event === eventName)?.time ?? 0,",
-  "        e: startupPerfEvents.map(e => [e.event, e.time, e.count]),",
-  "      });",
+  "      const startupPerfTime = startupPerfEvents.find(e => e.event === eventName)?.time ?? 0;",
   "      type StartupPerfLog = { nativeLoggingHook?: (message: string, level: number) => void };",
-  "      (globalThis as StartupPerfLog).nativeLoggingHook?.(`startup-perf ${startupPerfLine}`, 3);",
+  "      const startupPerfHook = (globalThis as StartupPerfLog).nativeLoggingHook;",
+  "      for (const e of startupPerfEvents) {",
+  "        startupPerfHook?.(`[startup] ${e.event} (x${e.count}): ${e.time} ms`, 3);",
+  "      }",
+  "      const startupPerfLast = `${startupPerfTime} ms, ${startupPerfEvents.length} events`;",
+  "      startupPerfHook?.(`[startup] App startup time: ${startupPerfLast}`, 3);",
 ];
 const TRUSTCHAIN_LENSE = "    lense: trustchainStoreSelector,";
 const SAVE_AT_START = "    saveAtStart: true,";
@@ -160,8 +162,8 @@ export const logJsStartEpoch = (source: string): string =>
 
 /**
  * For the refs whose app does not log the startup itself: writes it to the device log as soon as it
- * is over, as `startup-perf {"t": app startup time, "e": [[event, time, count], ...]}`, on every
- * launch, first in the `try` as the app does. The harness reads it there instead of opening the
+ * is over, as `[startup]` lines (a startup event each, then the App startup time), on every launch,
+ * first in the `try` as the app does. The harness reads it there instead of opening the
  * Debug screen.
  */
 export function logStartupForMeasurement(source: string): string {
@@ -173,7 +175,7 @@ export function logStartupForMeasurement(source: string): string {
   );
 }
 
-/** Whether the app's own line is the one src/measure/startup-log.ts parses. */
+/** Whether the app's own lines are the ones src/measure/startup-log.ts parses. */
 export const logsStartupLikeHarness = (helper: string): boolean =>
   APP_STARTUP_LOG_FORMAT.every(format => format.test(helper));
 
@@ -204,7 +206,7 @@ const appFiles = (app: string): AppFiles => ({
   packageJson: path.join(app, "package.json"),
   jsStart: path.join(app, "src/mvvm/utils/logStartup/beforeJSImports.ts"),
   lastStartupEvents: path.join(app, "src/mvvm/utils/logLastStartupEvents.ts"),
-  startupLog: path.join(app, "src/mvvm/utils/logStartupForMeasurement.ts"),
+  startupLog: path.join(app, "src/mvvm/utils/writeStartupToDeviceLog.ts"),
   dbSave: path.join(app, "src/components/DBSave.ts"),
 });
 
@@ -240,10 +242,9 @@ function checkApp(files: AppFiles, regression: string): void {
   requireOne(files.jsStart, JS_START_LINE, "JS start");
   if (appLogsStartup(files)) {
     if (!existsSync(files.startupLog)) throw new StepFailure(`${files.startupLog} not found`);
-    requireOne(files.startupLog, APP_STARTUP_LOG_ARGUMENT, "startup log argument");
     if (!logsStartupLikeHarness(read(files.startupLog))) {
       throw new StepFailure(
-        `${files.startupLog} no longer writes the startup-perf line src/measure/startup-log.ts parses`,
+        `${files.startupLog} no longer writes the [startup] lines src/measure/startup-log.ts parses`,
       );
     }
   } else {
@@ -319,12 +320,10 @@ function main(): void {
   summary('startup events include "JS start epoch <ms>"');
 
   if (appLogsStartup(files)) {
-    summary(
-      'the app logs the startup itself ("startup-perf {...}") when launched with startupPerfLog',
-    );
+    summary('the app writes the startup to the device log itself ("[startup] ...")');
   } else {
     rewrite(files.lastStartupEvents, logStartupForMeasurement);
-    summary('the startup is logged as "startup-perf {...}" as soon as it is over');
+    summary('the startup is written to the device log ("[startup] ...") as soon as it is over');
   }
 
   if (regression) {

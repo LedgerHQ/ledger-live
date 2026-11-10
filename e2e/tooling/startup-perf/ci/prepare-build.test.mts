@@ -147,11 +147,15 @@ describe("logStartupForMeasurement", () => {
     assert.match(added.join("\n"), /const startupPerfEvents = resolveStartupEvents\(\);/);
     assert.match(
       added.join("\n"),
-      /t: startupPerfEvents\.find\(e => e\.event === eventName\)\?\.time \?\? 0,/,
+      /startupPerfTime = startupPerfEvents\.find\(e => e\.event === eventName\)\?\.time \?\? 0;/,
+    );
+    assert.match(
+      added.join("\n"),
+      /startupPerfHook\?\.\(`\[startup\] \$\{e\.event\} \(x\$\{e\.count\}\): \$\{e\.time\} ms`, 3\);/,
     );
     assert.match(
       added.at(-1) ?? "",
-      /nativeLoggingHook\?\.\(`startup-perf \$\{startupPerfLine\}`, 3\);$/,
+      /startupPerfHook\?\.\(`\[startup\] App startup time: \$\{startupPerfLast\}`, 3\);$/,
     );
   });
 
@@ -162,24 +166,23 @@ describe("logStartupForMeasurement", () => {
 });
 
 describe("logsStartupLikeHarness", () => {
-  // The app's logStartupForMeasurement.ts, from #24576 on.
+  // The app's writeStartupToDeviceLog.ts, from #24576 on.
   const HELPER = textOf([
-    "  const payload = { t: appStartupTime, e: events.map(e => [e.event, e.time, e.count]) };",
-    "  const { nativeLoggingHook } = globalThis as { nativeLoggingHook?: NativeLoggingHook };",
-    "  nativeLoggingHook?.(`startup-perf ${JSON.stringify(payload)}`, NATIVE_ERROR_LEVEL);",
+    'export const STARTUP_LOG_PREFIX = "[startup]";',
+    "  const lines = [",
+    "    ...events.map(({ event, time, count }) => `${event} (x${count}): ${time} ms`),",
+    "    `App startup time: ${appStartupTime} ms, ${events.length} events`,",
+    "  ];",
   ]);
 
-  it("accepts the line the harness parses", () => {
+  it("accepts the lines the harness parses", () => {
     assert.equal(logsStartupLikeHarness(HELPER), true);
   });
 
-  it("rejects another marker or other event rows", () => {
-    assert.equal(logsStartupLikeHarness(HELPER.replace("startup-perf ", "startup ")), false);
-    assert.equal(
-      logsStartupLikeHarness(HELPER.replace("[e.event, e.time, e.count]", "[e.event, e.time]")),
-      false,
-    );
-    assert.equal(logsStartupLikeHarness(HELPER.replace("{ t: ", "{ time: ")), false);
+  it("rejects another prefix, event line or last line", () => {
+    assert.equal(logsStartupLikeHarness(HELPER.replace('"[startup]"', '"[boot]"')), false);
+    assert.equal(logsStartupLikeHarness(HELPER.replace(" (x${count})", "")), false);
+    assert.equal(logsStartupLikeHarness(HELPER.replace("App startup time", "Startup")), false);
   });
 });
 

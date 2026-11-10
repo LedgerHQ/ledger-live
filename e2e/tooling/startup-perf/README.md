@@ -29,8 +29,8 @@ module.
 | `src/types.ts`                      | `Sample`: a line of `samples.jsonl`, which `measure/` writes and `analysis/` reads          |
 | `src/measure/run.ts`                | The CLI that measures: installs, injects and launches A and B, writes `samples.jsonl`       |
 | `src/measure/platforms/`            | `android.ts` and `ios.ts`, the two `Platform`s, through adb or simctl                       |
-| `src/measure/startup-log.ts`        | Reads App startup time and the startup events from the app's `startup-perf` log line        |
-| `src/measure/performance-screen.ts` | Reads them on the Debug screen through Maestro: warm-ups, and launches without the line     |
+| `src/measure/startup-log.ts`        | Reads App startup time and the startup events from the app's `[startup]` log lines          |
+| `src/measure/performance-screen.ts` | Reads them on the Debug screen through Maestro: warm-ups, and launches without the lines    |
 | `src/measure/inject.ts`             | Imports a scenario's userdata through the E2E bridge, once per install                      |
 | `src/measure/bridge.ts`             | The E2E bridge protocol (`apps/ledger-live-mobile/src/e2e/bridge/client.ts`)                |
 | `src/measure/maestro.ts`, `exec.ts` | Maestro and child-process calls                                                             |
@@ -45,10 +45,15 @@ module.
 | Preset             | A                              | B                          | Fails when                        |
 | ------------------ | ------------------------------ | -------------------------- | --------------------------------- |
 | `prod-vs-release`  | latest `live-mobile@X.Y.Z` tag | `release` branch           | B is slower by > threshold_ms     |
+| `prod-vs-develop`  | latest `live-mobile@X.Y.Z` tag | `develop` or `ref_b`       | same                              |
 | `custom`           | any branch or tag              | any branch or tag          | same                              |
 | `aa-noise`         | one build                      | the same binary            | only on `Not enough pairs`        |
 | `known-regression` | this branch or `ref_a`         | A with LIVE-36190 re-added | B is not slower by > threshold_ms |
 
+Every weekday at 03:17 UTC the workflow runs `prod-vs-develop` with the settings of `NIGHTLY` in
+`ci/resolve-refs.mts` (both platforms and scenarios, 20 pairs, 100 ms), as a scheduled run has no
+inputs; the plan job passes the settings on to the other jobs. A failure is posted to
+#live-repo-health.
 `aa-noise` reports how finely the setup resolves B − A. `known-regression` shows whether the gate
 still catches LIVE-36190 on today's code: B no longer saves the trustchain at start, so every launch
 generates its keypair again, the cost #21001 removed (its other half, a zod check of the keypair, no
@@ -73,10 +78,9 @@ Android, Release simulator app on iOS, with the JS bundled in the binary. `prepa
 - bundles without `DETOX=1`, which `e2e:build` sets from ef2aed228e8 on (blur mock, and
   `collapsable={false}` on every view);
 - adds a `JS start epoch <ms>` startup event, the wall clock of the JS start;
-- writes the startup to the device log as soon as it is over, as `startup-perf {"t": App startup
-  time, "e": [[event, time, count], ...]}`, first in the `try` as the app does, unless the app does
-  it itself when launched with `startupPerfLog` (`logStartupForMeasurement.ts`, whose line format it
-  then checks);
+- writes the startup to the device log as soon as it is over, as the `[startup]` lines of
+  `writeStartupToDeviceLog.ts` (#24576), first in the `try` as the app does, unless the app writes
+  them itself, whose line format it then checks;
 - for `known-regression`'s B, drops the trustchain's `saveAtStart` (LIVE-36190, above).
 
 It checks every anchor before editing, and the edited lines carry `startup-perf`. The scripts and
@@ -89,21 +93,22 @@ write no remote Nx, pnpm, Gradle or AVD cache: they run with develop's role whil
   post-onboarding state of `e2e/mobile/userdata` through `bridge.ts`, sends the settings again
   10 s later (the store's save effect may not be mounted yet), and fails when the app reports `MOCK`
   or `DETOX`. Feature flags are not imported: they come from production Firebase.
-- **Launch** with a plain `am start -W` / `simctl launch` and the `startupPerfLog` argument, no test
-  tool attached, wait 5 s, then read the `startup-perf` line of the launched process in the device
-  log (logcat's `ReactNativeJS`, the simulator's `log show`): "App startup time" and the startup
-  events of the Debug screen, written as soon as the startup is over. The app writes it at the error
-  level, the only one iOS release builds keep, through React Native's `nativeLoggingHook`, which
-  Datadog does not see. The line is ~420 bytes (13 events); the iOS log keeps 1020 bytes of a line
-  (measured on macOS, whose unified log iOS shares) and logcat about 4 KB: the report gives the
-  longest.
+- **Launch** with a plain `am start -W` / `simctl launch`, no test tool attached, wait 5 s, then
+  read the `[startup]` lines of the launched process in the device log (logcat's `ReactNativeJS`,
+  the simulator's `log show`), which the app writes as soon as the startup is over: a line per
+  startup event of the Debug screen (`[startup] App started (x2): 1650 ms`), then the App startup
+  time (`[startup] App startup time: 1650 ms, 13 events`). The app writes them at the error level,
+  the only one iOS release builds keep, through React Native's `nativeLoggingHook`, which Datadog
+  does not see.
 - **Check it on the screen.** The warm-ups also let Maestro open the Performance screen, which must
   show the same time: a mismatch fails the run. On iOS a screen read slows the next launch by
   ~280 ms, on either simulator (run 42356679784: the first launch of round 0 by 261–301 ms, the
   second not), so the last warm-up before the rounds reads only the log, and each build is checked
-  once per scenario. A launch whose line has not come 20 s after the settle time is read on the
-  screen, and the report counts those per build. `--read both` (the workflow's `read` input) reads
-  every launch both ways, `--read screen` the screen only. Screen reads of measured launches
+  once per scenario. A launch whose lines have not come 20 s after the settle time is read on the
+  screen, and the report counts those per build. A build whose warm-up writes no lines (its startup
+  log broken) has both builds read on the screen for the rest of the scenario, so pairs stay even,
+  and the report says so. `--read both` (the workflow's `read` input) reads every launch both ways,
+  `--read screen` the screen only. Screen reads of measured launches
   use `read-performance-quick.yaml`; warm-ups and retries use the full flow, whose optional taps
   cost ~7 s when no prompt shows. The flows select by text: the Debug and Performance screens have
   no testIDs on any supported ref.

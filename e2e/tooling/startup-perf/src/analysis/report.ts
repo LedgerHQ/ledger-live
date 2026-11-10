@@ -9,14 +9,14 @@ export interface ReportOptions extends GateOptions {
 
 const SIDES: Side[] = ["A", "B"];
 
-const gateRule = (thresholdMs: number) =>
-  `B fails when it is slower than A by more than ${thresholdMs} ms on either measure.`;
+// As in analyze.ts's verdicts: every preset but these two gates B against A.
 const PRESET_RULES: Partial<Record<string, (thresholdMs: number) => string>> = {
-  "prod-vs-release": gateRule,
-  custom: gateRule,
+  "aa-noise": () => "",
   "known-regression": t =>
     `B is A with LIVE-36190 re-added: it is detected when it is slower than A by more than ${t} ms, as the gate would fail it.`,
 };
+const gateRule = (thresholdMs: number) =>
+  `B fails when it is slower than A by more than ${thresholdMs} ms on either measure.`;
 
 const BASE_TEXT: Record<DebugBase, string> = {
   js: "the first JS import",
@@ -39,23 +39,14 @@ function offBaseNote(r: Row, side: Side): string {
 export const screenMismatchText = ({ screenMismatches, screenChecks }: Reads): string =>
   `the Debug screen showed another App startup time than the device log on ${screenMismatches} of the ${screenChecks} launches read both ways`;
 
-// What the device log keeps of a line: 1020 bytes, measured on macOS, whose unified log iOS shares;
-// a logcat entry holds 4068 with the priority and the ReactNativeJS tag.
-const LOG_LINE_LIMITS: Partial<Record<string, { bytes: number; log: string }>> = {
-  ios: { bytes: 1020, log: "the iOS log" },
-  android: { bytes: 4052, log: "logcat" },
-};
-
-function logLineNote(where: string, platform: string, longest: number | null): string[] {
-  const limit = LOG_LINE_LIMITS[platform];
-  if (longest === null || !limit) return [];
-  const text = `${where}: the longest device log line was ${longest} bytes, of the ${limit.bytes} ${limit.log} keeps.`;
-  return [longest > 0.8 * limit.bytes ? `**${text}**` : text];
-}
-
 function readNotes({ platform, scenario, reads }: Row): string[] {
   const where = `${platform} ${scenario}`;
   const notes: string[] = [];
+  if (reads.noLogLine.length) {
+    notes.push(
+      `**${where}: build ${reads.noLogLine.join(" and ")} wrote no startup lines to the device log on its warm-up, so both builds were read from the Debug screen.**`,
+    );
+  }
   const fallbacks = reads.fallbacks.A + reads.fallbacks.B;
   if (fallbacks) {
     notes.push(
@@ -74,7 +65,7 @@ function readNotes({ platform, scenario, reads }: Row): string[] {
       `${where}: the Debug screen showed the device log's App startup time on the ${reads.screenChecks} launches read both ways.`,
     );
   }
-  return [...notes, ...logLineNote(where, platform, reads.longestLogLine)];
+  return notes;
 }
 
 const fmt = (v: number | null | undefined) =>
@@ -93,7 +84,7 @@ export function toMarkdown(
     `### Startup time, ${preset}: B − A`,
     "",
     `A = ${labelA} · B = ${labelB}.`,
-    PRESET_RULES[preset]?.(thresholdMs) ?? "",
+    (PRESET_RULES[preset] ?? gateRule)(thresholdMs),
     "",
     "| Platform | Scenario | Measure | Pairs | Median A (ms) | Median B (ms) | B − A (ms) | 95% interval (ms) | Mean B − A (ms) | Flags a slowdown of (ms) | Spread of B − A (ms) | Device bias (ms) | Failed launches | Verdict |",
     "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",

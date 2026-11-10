@@ -18,7 +18,7 @@ const PREPARED_FILES = [
   "src/components/DBSave.ts",
 ];
 // Only in the apps that log the startup themselves.
-const APP_STARTUP_LOG = "src/mvvm/utils/logStartupForMeasurement.ts";
+const APP_STARTUP_LOG = "src/mvvm/utils/writeStartupToDeviceLog.ts";
 const TRUSTCHAIN_SAVED_AT_START = /lense: trustchainStoreSelector,\n\s*saveAtStart: true,/;
 
 const read = (root: string, file: string) => readFileSync(path.join(root, file), "utf8");
@@ -64,7 +64,7 @@ describe("the mobile app of this checkout", () => {
       assert.match(read(app, "src/mvvm/utils/logStartup/beforeJSImports.ts"), /JS start epoch/);
       assert.match(
         read(app, "src/mvvm/utils/logLastStartupEvents.ts"),
-        /startup-perf \$\{startupPerfLine\}|logStartupForMeasurement\(eventName\)/,
+        /\[startup\] App startup time|writeStartupToDeviceLog\(eventName\)/,
       );
       assert.match(read(app, "src/components/DBSave.ts"), TRUSTCHAIN_SAVED_AT_START);
     });

@@ -1,62 +1,46 @@
-// Reads a launch's startup from the device log: launched with startupPerfLog, the app writes
-// `startup-perf {"t": app startup time, "e": [[event, time, count], ...]}` as soon as the startup is
-// over (logStartupForMeasurement.ts, or the line ci/prepare-build.mts adds to the refs before it).
+// Reads a launch's startup from the device log: as soon as the startup is over, the app writes a
+// line per startup event, then the App startup time (writeStartupToDeviceLog.ts from #24576 on, or
+// the lines ci/prepare-build.mts adds to the refs before it):
+//   [startup] App started (x2): 1650 ms
+//   [startup] App startup time: 1650 ms, 13 events
 import { sleep } from "./exec.ts";
 import type { PerformanceRead } from "./performance-screen.ts";
 import type { Platform } from "./types.ts";
 
-/** The launch argument the app waits for before it writes the line. */
-export const STARTUP_LOG_LAUNCH_ARGS = { startupPerfLog: 1 };
-export const STARTUP_LOG_MARKER = "startup-perf ";
-// The payload ends the line. In `log show`'s "Filtering the log data using ..." header, a quote
-// follows the marker.
-const STARTUP_LOG_LINE = /startup-perf (\{.*)$/;
+export const STARTUP_LOG_MARKER = "[startup] ";
+// Both end the line, which `log show`'s "Filtering the log data using ..." header does not match.
+const EVENT_LINE = /\[startup\] (.+) \(x(\d+)\): (-?\d+) ms$/;
+const LAST_LINE = /\[startup\] App startup time: (-?\d+) ms, (\d+) events$/;
 const POLL_MS = 1000;
 
-type Payload = { t: number; e: Array<[string, number, number]> };
-export type StartupLogRead = PerformanceRead & { logLineBytes: number };
-
-const isEventRow = (row: unknown): row is [string, number, number] =>
-  Array.isArray(row) &&
-  row.length === 3 &&
-  typeof row[0] === "string" &&
-  Number.isFinite(row[1]) &&
-  Number.isInteger(row[2]);
-
-const isPayload = (value: unknown): value is Payload =>
-  typeof value === "object" &&
-  value !== null &&
-  "t" in value &&
-  "e" in value &&
-  Number.isFinite(value.t) &&
-  Array.isArray(value.e) &&
-  value.e.every(isEventRow);
-
-/** The startup in the last startup-perf line of `log`, or null when there is none. */
-export function parseStartupLog(log: string): StartupLogRead | null {
-  const payloads = log
-    .split(/\r?\n/)
-    .flatMap(line => STARTUP_LOG_LINE.exec(line)?.[1].trimEnd() ?? []);
-  const payload = payloads.at(-1);
-  if (payload === undefined) return null;
-  const parsed: unknown = JSON.parse(payload);
-  if (!isPayload(parsed)) {
-    throw new Error(`unexpected startup-perf payload: ${payload.slice(0, 300)}`);
+/** The startup of the last complete set of lines in `log`, or null before its last line came. */
+export function parseStartupLog(log: string): PerformanceRead | null {
+  let events: PerformanceRead["events"] = {};
+  let read: PerformanceRead | null = null;
+  for (const line of log.split(/\r?\n/).map(l => l.trimEnd())) {
+    const last = LAST_LINE.exec(line);
+    if (last) {
+      const lines = Object.keys(events).length;
+      if (lines !== Number(last[2])) {
+        throw new Error(`${lines} startup event lines before "${line}"`);
+      }
+      read = { appStartupTime: Number(last[1]), events };
+      events = {};
+      continue;
+    }
+    const event = EVENT_LINE.exec(line);
+    if (event) events[event[1]] = { count: Number(event[2]), time: Number(event[3]) };
   }
-  return {
-    appStartupTime: parsed.t,
-    events: Object.fromEntries(parsed.e.map(([event, time, count]) => [event, { count, time }])),
-    logLineBytes: Buffer.byteLength(STARTUP_LOG_MARKER + payload),
-  };
+  return read;
 }
 
-/** Waits up to `timeoutMs` for the line of the process `pid`: null when it never came. */
+/** Waits up to `timeoutMs` for the lines of the process `pid`: null when they never came. */
 export function createStartupLogReader(P: Platform) {
   return async function readStartupLog(
     device: string,
     pid: number,
     timeoutMs: number,
-  ): Promise<StartupLogRead | null> {
+  ): Promise<PerformanceRead | null> {
     const deadline = Date.now() + timeoutMs;
     for (;;) {
       const read = parseStartupLog(await P.jsLog(device, pid, STARTUP_LOG_MARKER));
