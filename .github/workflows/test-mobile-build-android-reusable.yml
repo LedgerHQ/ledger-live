@@ -151,7 +151,7 @@ jobs:
           packages: "platform-tools"
 
       - name: Use the Maven Central mirror
-        uses: LedgerHQ/ledger-live/tools/actions/composites/gradle-maven-central-mirror@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/gradle-maven-central-mirror@ci-test/maven-central-eu-mirror
 
         # https://github.blog/changelog/2023-02-23-hardware-accelerated-android-virtualization-on-actions-windows-and-linux-larger-hosted-runners/
       - name: Enable KVM group perms
@@ -167,6 +167,10 @@ jobs:
           if [ -d "$SDK/emulator" ]; then
             sudo chown -R $(whoami):$(id -ng) "$SDK/emulator"
           fi
+
+      - name: "ci-test: block Maven Central"
+        run: |
+          for h in repo.maven.apache.org repo1.maven.org; do echo "0.0.0.0 $h" | sudo tee -a /etc/hosts; done
 
       - name: Install dependencies
         run: |
