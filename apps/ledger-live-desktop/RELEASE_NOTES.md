@@ -162,7 +162,7 @@ We fixed an issue that prevented Nano S users to send or swap USDT/stETH ERC-20 
 
 # 2.126.1
 
-We fixed an issue that prevented Nano S users to send or swap USDT/stETH ERC-20 tokens
+We fixed  an issue that prevented Nano S users to send or swap USDT/stETH ERC-20 tokens
 
 # 2.126.0
 
