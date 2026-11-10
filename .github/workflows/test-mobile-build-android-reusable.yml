@@ -170,15 +170,23 @@ jobs:
             sudo chown -R $(whoami):$(id -ng) "$SDK/emulator"
           fi
 
-      - name: "ci-test: probe JFrog Maven responses"
+      - name: "ci-test: probe Maven sources"
         run: |
-          base=https://jfrog.ledgerlabs.net/artifactory
-          for repo in virtual-maven-prod-green ossproxy-maven-proxy-central ossproxy-maven-proxy-gradleplugins; do
-            for path in com/google/code/gson/gson/2.9.1/gson-2.9.1.pom org/gradle/toolchains/foojay-resolver/0.5.0/foojay-resolver-0.5.0.pom com/facebook/react/react-android/0.81.6/react-android-0.81.6.pom; do
-              code=$(curl -sS -o body.txt -w '%{http_code}' -H "Authorization: Bearer $JFROG_TOKEN" "$base/$repo/$path")
-              echo "== $code $repo/$path"
-              [ "$code" = 200 ] || head -c 600 body.txt; echo
-            done
+          paths="com/google/code/gson/gson/2.9.1/gson-2.9.1.pom
+          com/facebook/react/react-android/0.81.6/react-android-0.81.6.pom
+          org/jetbrains/kotlin/kotlin-stdlib/2.1.20/kotlin-stdlib-2.1.20.pom
+          com/squareup/okhttp3/okhttp/4.12.0/okhttp-4.12.0.pom
+          org/gradle/toolchains/foojay-resolver/0.5.0/foojay-resolver-0.5.0.pom"
+          probe() { # label url [auth]
+            code=$(curl -sS -o body.txt -w '%{http_code} %{time_total}s' ${3:+-H "$3"} "$2")
+            echo "== $code $1"
+            case "$code" in 200*) ;; *) head -c 300 body.txt; echo ;; esac
+          }
+          for path in $paths; do
+            echo "### $path"
+            probe gcs-mirror "https://maven-central.storage-download.googleapis.com/maven2/$path"
+            probe repo1-direct "https://repo1.maven.org/maven2/$path"
+            probe jfrog-central "https://jfrog.ledgerlabs.net/artifactory/ossproxy-maven-proxy-central/$path" "Authorization: Bearer $JFROG_TOKEN"
           done
           rm -f body.txt
 
