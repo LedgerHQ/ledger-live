@@ -1,4 +1,4 @@
-import { copyToClipboard, readClipboard } from "./clipboard.web";
+import { copyToClipboard, readClipboard } from "./clipboard";
 
 const writeText = jest.fn();
 const readText = jest.fn();
