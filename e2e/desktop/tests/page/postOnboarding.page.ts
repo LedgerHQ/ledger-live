@@ -75,9 +75,9 @@ export class PostOnboardingPage extends AppPage {
   async expectActionCompleted(actionId: string) {
     const row = this.actionRow(actionId);
     await expect(row).toBeVisible();
-    await expect(row).toHaveAttribute("data-post-onboarding-action-completed", "true");
     await this.softExpect(async soft => {
       await soft(row).toContainText(ACTION_COMPLETED_LABEL);
+      await soft(row).toHaveAttribute("data-post-onboarding-action-completed", "true");
     });
   }
 
