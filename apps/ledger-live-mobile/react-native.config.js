@@ -5,6 +5,10 @@ module.exports = {
     "react-native-get-random-values": {
       platforms: { ios: null, android: null },
     },
+    // node-libs-react-native still installs it; the crypto fallback is crypto-browserify (LIVE-21311)
+    "react-native-randombytes": {
+      platforms: { ios: null, android: null },
+    },
   },
   assets: [
     "./assets/fonts/",

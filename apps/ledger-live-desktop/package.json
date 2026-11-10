@@ -250,7 +250,7 @@
     "chart.js": "2.9.4",
     "class-variance-authority": "catalog:",
     "color": "4.2.3",
-    "crypto-browserify": "^3.12.1",
+    "crypto-browserify": "catalog:",
     "dotenv": "16.4.7",
     "electron-context-menu": "4.1.1",
     "electron-store": "8.2.0",
