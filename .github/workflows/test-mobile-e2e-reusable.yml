@@ -640,7 +640,7 @@ jobs:
       contents: read
     with:
       ref: ${{ inputs.ref || github.sha }}
-      macos-specificity-runner-label: ${{ inputs.macos_runner_label || 'general-pool' }}
+      macos-specificity-runner-label: ${{ inputs.macos_runner_label || 'test=true' }}
       disable-nx-cache: false
       build-ios-js: ${{ needs.determine-builds.outputs.ios_js_exists == 'false' }}
       build-ios-native: ${{ needs.determine-builds.outputs.ios_native_exists == 'false' }}
@@ -768,7 +768,7 @@ jobs:
       contents: read
     needs: [build-ios, determine-builds]
     if: ${{ always() && !cancelled() && contains(fromJSON('["success","skipped"]'), needs.build-ios.result) && needs.determine-builds.result == 'success' && inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
-    runs-on: ${{ fromJSON(inputs.macos_runner_label && format('["{0}","macOS","ARM64"]', inputs.macos_runner_label) || '["qaa","macOS","ARM64","performance-pool"]') }}
+    runs-on: ${{ fromJSON(inputs.macos_runner_label && format('["{0}","macOS","ARM64"]', inputs.macos_runner_label) || '["test=true","xcode-26.4.1","macOS","ARM64"]') }}
     env:
       NODE_OPTIONS: "--max-old-space-size=8192"
       LANG: en_US.UTF-8
