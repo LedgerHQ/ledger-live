@@ -165,14 +165,9 @@ const isDetoxBuild = process.env.DETOX === "1" || (process.env.ENVFILE || "").in
 const appVersion = JSON.parse(readFileSync(path.join(__dirname, "package.json"), "utf8")).version;
 
 // Detox reuses cached native builds and only swaps the JS bundle, so the native version can be stale
-const getDetoxDefinePlugins = platform => {
-  if (!isDetoxBuild) return [];
-  const fastlaneVersion = platform === "ios" ? appVersion.split(/[+-]/)[0] : appVersion;
-  return [
-    new rspack.DefinePlugin({
-      "process.env.DETOX_APP_VERSION": JSON.stringify(fastlaneVersion),
-    }),
-  ];
+const defineDetoxAppVersion = platform => {
+  if (!isDetoxBuild) return "undefined";
+  return JSON.stringify(platform === "ios" ? appVersion.split(/[+-]/)[0] : appVersion);
 };
 
 const detoxAliases = isDetoxBuild
@@ -356,7 +351,9 @@ export default withRozeniteUrlFix(
             TextDecoder: ["text-encoding-polyfill", "TextDecoder"],
           }),
           ...getRsdoctorPlugin(),
-          ...getDetoxDefinePlugins(platform),
+          new rspack.DefinePlugin({
+            "process.env.DETOX_APP_VERSION": defineDetoxAppVersion(platform),
+          }),
         ],
         stats: "errors-warnings",
         infrastructureLogging: { level: "warn" },
