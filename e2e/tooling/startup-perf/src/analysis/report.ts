@@ -56,6 +56,11 @@ function logLineNote(where: string, platform: string, longest: number | null): s
 function readNotes({ platform, scenario, reads }: Row): string[] {
   const where = `${platform} ${scenario}`;
   const notes: string[] = [];
+  if (reads.noLogLine.length) {
+    notes.push(
+      `**${where}: build ${reads.noLogLine.join(" and ")} wrote no startup-perf log line on its warm-up (built before #24576?), so both builds were read from the Debug screen.**`,
+    );
+  }
   const fallbacks = reads.fallbacks.A + reads.fallbacks.B;
   if (fallbacks) {
     notes.push(

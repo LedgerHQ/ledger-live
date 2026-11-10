@@ -64,6 +64,8 @@ export interface Row extends Difference {
 /** Where the launches were read, and how often the Debug screen agreed with the device log. */
 export interface Reads {
   fromLog: number;
+  /** Builds whose warm-up wrote no log line, so that both were read on the screen (run.ts). */
+  noLogLine: Side[];
   /** Launches read on the screen because their log line never came. */
   fallbacks: Record<Side, number>;
   /** Pairs left out as only one of their launches followed a read of the screen. */
@@ -96,8 +98,11 @@ function readsOf(group: Sample[]): Reads {
   const fallbacks = (side: Side) =>
     measured.filter(s => s.side === side && s.readFrom === "screen-fallback").length;
   const logLines = ok.flatMap(s => s.logLineBytes ?? []);
+  const warmupFellBack = (side: Side) =>
+    ok.some(s => s.warmup && s.side === side && s.readFrom === "screen-fallback");
   return {
     fromLog: measured.filter(s => s.readFrom === "log").length,
+    noLogLine: (["A", "B"] as const).filter(warmupFellBack),
     fallbacks: { A: fallbacks("A"), B: fallbacks("B") },
     unevenPairs: rounds(group).filter(uneven).length,
     screenChecks: checked.length,
