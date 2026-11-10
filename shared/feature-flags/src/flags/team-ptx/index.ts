@@ -1,6 +1,7 @@
 export * from "./buySellLoader";
 export * from "./buySellShortcut";
 export * from "./buySellUi";
+export * from "./earnApiGravitee";
 export * from "./earnTxLifecycleMonitoring";
 export * from "./earnWithdrawV2";
 export * from "./ethStakingModalWithFilters";
@@ -29,8 +30,8 @@ export * from "./ptxSwapExodusProvider";
 export * from "./ptxSwapLiveApp";
 export * from "./ptxSwapLiveAppKycWarning";
 export * from "./ptxSwapLiveAppMobile";
-export * from "./ptxSwapLiveAppOnPortfolio";
 export * from "./ptxSwapLiveAppOnAsset";
+export * from "./ptxSwapLiveAppOnPortfolio";
 export * from "./ptxSwapMoonpayProvider";
 export * from "./ptxSwapReceiveTRC20WithoutTrx";
 export * from "./ptxTradeMaxConstant";
