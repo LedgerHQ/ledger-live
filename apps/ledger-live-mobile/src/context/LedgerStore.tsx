@@ -306,8 +306,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 
       await bootstrapCardSession(store.dispatch);
       await restoreCardAuthStatus(store.dispatch, store.getState);
-      await restoreAccountAnalyticsIntroductionFromStorage(
-        store,
+      await restoreAccountAnalyticsIntroductionFromStorage(store, () =>
         hasOnboardedWithDeviceSelector(store.getState()),
       );
 

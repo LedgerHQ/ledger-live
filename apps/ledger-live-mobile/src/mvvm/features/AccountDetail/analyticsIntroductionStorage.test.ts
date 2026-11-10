@@ -36,7 +36,7 @@ describe("analyticsIntroductionStorage", () => {
       mockGet.mockResolvedValueOnce({ hasDismissed: true });
       const store = createStore();
 
-      await restoreAccountAnalyticsIntroductionFromStorage(store, true);
+      await restoreAccountAnalyticsIntroductionFromStorage(store, () => true);
 
       expect(store.getState().accountAnalyticsIntroduction.hasDismissed).toBe(true);
       expect(mockSave).toHaveBeenCalledWith({ hasDismissed: true, isEligible: true });
@@ -49,7 +49,7 @@ describe("analyticsIntroductionStorage", () => {
         mockGet.mockResolvedValueOnce(undefined);
         const store = createStore();
 
-        await restoreAccountAnalyticsIntroductionFromStorage(store, hasOnboardedWithDevice);
+        await restoreAccountAnalyticsIntroductionFromStorage(store, () => hasOnboardedWithDevice);
 
         expect(store.getState().accountAnalyticsIntroduction).toEqual({
           hasDismissed: false,
@@ -66,7 +66,7 @@ describe("analyticsIntroductionStorage", () => {
       mockGet.mockResolvedValueOnce({ hasDismissed: false, isEligible: false });
       const store = createStore();
 
-      await restoreAccountAnalyticsIntroductionFromStorage(store, true);
+      await restoreAccountAnalyticsIntroductionFromStorage(store, () => true);
 
       expect(store.getState().accountAnalyticsIntroduction.isEligible).toBe(false);
       expect(mockSave).not.toHaveBeenCalled();
@@ -77,11 +77,28 @@ describe("analyticsIntroductionStorage", () => {
       const store = createStore();
 
       await expect(
-        restoreAccountAnalyticsIntroductionFromStorage(store, true),
+        restoreAccountAnalyticsIntroductionFromStorage(store, () => true),
       ).resolves.toBeUndefined();
 
       expect(store.getState().accountAnalyticsIntroduction).toEqual({
         hasDismissed: false,
+        isEligible: null,
+      });
+      expect(mockSave).not.toHaveBeenCalled();
+      expect(warn).toHaveBeenCalledTimes(1);
+    });
+    it("records no snapshot and warns when the device history cannot be read", async () => {
+      mockGet.mockResolvedValueOnce({ hasDismissed: true });
+      const store = createStore();
+
+      await expect(
+        restoreAccountAnalyticsIntroductionFromStorage(store, () => {
+          throw new Error("settings unavailable");
+        }),
+      ).resolves.toBeUndefined();
+
+      expect(store.getState().accountAnalyticsIntroduction).toEqual({
+        hasDismissed: true,
         isEligible: null,
       });
       expect(mockSave).not.toHaveBeenCalled();

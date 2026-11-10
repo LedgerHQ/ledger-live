@@ -14,17 +14,18 @@ type AccountAnalyticsIntroductionStore = Readonly<{
 
 export async function restoreAccountAnalyticsIntroductionFromStorage(
   { dispatch, getState }: AccountAnalyticsIntroductionStore,
-  hasOnboardedWithDevice: boolean,
+  hasOnboardedWithDevice: () => boolean,
 ): Promise<void> {
+  let hasRecordedNewSnapshot: boolean;
   try {
     dispatch(restoreAccountAnalyticsIntroduction(await getAccountAnalyticsIntroductionState()));
+    const restoredState = getState().accountAnalyticsIntroduction;
+    dispatch(recordAccountAnalyticsIntroductionEligibility(hasOnboardedWithDevice()));
+    hasRecordedNewSnapshot = getState().accountAnalyticsIntroduction !== restoredState;
   } catch (error) {
-    console.warn("Unable to restore the Analytics introduction dismissal", error);
+    console.warn("Unable to restore the Analytics introduction state", error);
     return;
   }
-  const restoredState = getState().accountAnalyticsIntroduction;
-  dispatch(recordAccountAnalyticsIntroductionEligibility(hasOnboardedWithDevice));
-  const hasRecordedNewSnapshot = getState().accountAnalyticsIntroduction !== restoredState;
   if (hasRecordedNewSnapshot) {
     await saveAccountAnalyticsIntroductionSafely(
       accountAnalyticsIntroductionPersistedSelector(getState()),
