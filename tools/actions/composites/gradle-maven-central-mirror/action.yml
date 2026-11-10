@@ -1,0 +1,21 @@
+name: Gradle Maven Central mirror
+description: Point Gradle's Maven Central repositories at Google's Maven Central mirror, so builds do not hit Maven Central's rate limit from shared runner IPs.
+inputs:
+  url:
+    description: Maven Central mirror URL. Empty leaves Gradle on Maven Central.
+    required: false
+    default: "https://maven-central-eu.storage-download.googleapis.com/maven2/"
+runs:
+  using: composite
+  steps:
+    # Gradle runs every script in init.d for every build, including included builds such as
+    # @react-native/gradle-plugin.
+    - if: ${{ inputs.url != '' }}
+      shell: bash
+      env:
+        MIRROR_URL: ${{ inputs.url }}
+      run: | # zizmor: ignore[github-env]
+        init_dir="${GRADLE_USER_HOME:-$HOME/.gradle}/init.d"
+        mkdir -p "$init_dir"
+        cp "$GITHUB_ACTION_PATH/maven-central-mirror.gradle" "$init_dir/maven-central-mirror.gradle"
+        echo "GRADLE_MAVEN_CENTRAL_MIRROR=$MIRROR_URL" >> "$GITHUB_ENV"

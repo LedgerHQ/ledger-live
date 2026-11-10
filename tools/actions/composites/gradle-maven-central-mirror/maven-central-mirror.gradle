@@ -1,0 +1,38 @@
+// Gradle init script installed on CI by tools/actions/composites/gradle-maven-central-mirror.
+// Maven Central rate-limits the shared runner egress IPs (HTTP 429), so every Maven Central
+// repository is pointed at Google's mirror of it instead. Other repositories are left alone.
+
+def mirrorUrl = System.getenv('GRADLE_MAVEN_CENTRAL_MIRROR')
+if (!mirrorUrl) {
+    return
+}
+if (!mirrorUrl.endsWith('/')) {
+    mirrorUrl += '/'
+}
+
+def centralHosts = ['repo.maven.apache.org', 'repo1.maven.org'] as Set
+
+def mirror = { RepositoryHandler repositories ->
+    repositories.withType(MavenArtifactRepository).all { repo ->
+        if (centralHosts.contains(repo.url?.host)) {
+            logger.info("maven-central-mirror: ${repo.url} -> ${mirrorUrl}")
+            repo.url = mirrorUrl
+        }
+    }
+}
+
+beforeSettings { settings ->
+    logger.lifecycle("maven-central-mirror: resolving Maven Central through ${mirrorUrl} for ${settings.rootDir}")
+    mirror(settings.pluginManagement.repositories)
+    // The Plugin Portal redirects plugin dependencies (e.g. gson) to Maven Central. Listing the
+    // mirror before the portal resolves them from the mirror; plugin markers fall through to the portal.
+    settings.pluginManagement.repositories.mavenCentral()
+    settings.pluginManagement.repositories.gradlePluginPortal()
+    mirror(settings.buildscript.repositories)
+    mirror(settings.dependencyResolutionManagement.repositories)
+}
+
+beforeProject { project ->
+    mirror(project.buildscript.repositories)
+    mirror(project.repositories)
+}
