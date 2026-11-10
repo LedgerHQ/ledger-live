@@ -252,6 +252,7 @@ features/flow/fear-and-greed/                            @ledgerhq/wallet-xp
 ### ... portfolio service => @ledgerhq/wallet-xp ... ###
 domain/api/account-portfolio/                            @ledgerhq/wallet-xp
 features/platform/account-source-portfolio/              @ledgerhq/wallet-xp
+devtools/account-source-portfolio/                       @ledgerhq/wallet-xp
 /shared/api-services/src/services/portfolio/             @ledgerhq/wallet-xp
 
 libs/ethereum-provider/                                  @ledgerhq/coin-integration
