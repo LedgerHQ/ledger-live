@@ -90,7 +90,12 @@ const WalletSyncActivation = forwardRef<BackRef, Props>(({ sourcePage }, ref) =>
           />
         );
       case Step.DeviceAction:
-        return <DeviceActionStep goNext={goToActivationOrSynchroWithTrustchain} />;
+        return (
+          <DeviceActionStep
+            goNext={goToActivationOrSynchroWithTrustchain}
+            sourcePage={sourcePage}
+          />
+        );
       case Step.CreateOrSynchronizeTrustChain:
         return <ActivationOrSynchroWithTrustchain device={device} sourcePage={sourcePage} />;
       case Step.ActivationLoading:

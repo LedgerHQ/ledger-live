@@ -50,7 +50,12 @@ const WalletSyncManageInstances = forwardRef<BackRef, BackProps>((_props, ref) =
       case Step.SynchronizedInstances:
         return <ManageInstancesStep goToDeleteInstance={goToDeleteInstance} />;
       case Step.DeviceActionInstance:
-        return <DeviceActionInstanceStep goNext={goToDeleteInstanceWithTrustchain} />;
+        return (
+          <DeviceActionInstanceStep
+            goNext={goToDeleteInstanceWithTrustchain}
+            instance={selectedInstance}
+          />
+        );
       case Step.DeleteInstanceWithTrustChain:
         return <DeleteInstanceWithTrustchain instance={selectedInstance} device={device} />;
       case Step.InstanceSuccesfullyDeleted:
