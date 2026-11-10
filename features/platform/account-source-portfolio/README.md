@@ -16,5 +16,7 @@ No app ranks it. Only a devtool is meant to create it with `createPortfolioSourc
 - One registration shape per family ([`src/family.ts`](./src/family.ts)); the first one that takes the account wins ([`src/registration.ts`](./src/registration.ts)). 
   - [`evm.ts`](./src/evm.ts): one `evm` registration per address; the service fans it out to every EVM network, as `<network>:<lowercase address>`.
   - [`autoDerive.ts`](./src/autoDerive.ts): one `auto_derive` registration per xpub, the service deriving from the first address (`<path>/0/0`); the account is the SHA-256 of the xpub sent. Bitcoin and Bitcoin testnet in purposes 44 and 84 only (the service refuses 49 and 86), Cardano with our hex key sent as `acct_xvk`.
+  - [`addressAccount.ts`](./src/addressAccount.ts): one `account` registration per address, under our id `<service network>:<address>`, for the networks the service synchronizes: Tron, Tezos, Sui, Stellar, Canton.
+  - A family or network the service does not synchronize is not supported: the router keeps it on its other sources. A new one adds a network to a table, or a `PortfolioFamily` to the list.
 
 The portfolio is the install's `PortfolioId`, whose raw value leaves its wrapper only in [`src/client.ts`](./src/client.ts).

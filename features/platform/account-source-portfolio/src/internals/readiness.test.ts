@@ -1,5 +1,14 @@
 import type { Portfolio } from "@domain/api-account-portfolio";
-import { BTC, DOT, ETH, evm, serverAccountId, serviceAccount, synced } from "./fakeService.mock";
+import {
+  BTC,
+  DOT,
+  ETH,
+  TRX,
+  evm,
+  serverAccountId,
+  serviceAccount,
+  synced,
+} from "./fakeService.mock";
 import { readinessOf } from "./readiness";
 
 describe("readinessOf", () => {
@@ -36,12 +45,15 @@ describe("readinessOf", () => {
     });
   });
 
-  it("finds a Bitcoin account under its own service id", () => {
-    expect(readinessOf(BTC, synced([BTC]))).toEqual({
+  it.each([
+    ["Bitcoin", BTC],
+    ["Tron", TRX],
+  ])("finds a %s account under its own service id", (_, descriptor) => {
+    expect(readinessOf(descriptor, synced([descriptor]))).toEqual({
       state: "ready",
-      serverAccountId: serverAccountId(BTC),
+      serverAccountId: serverAccountId(descriptor),
     });
-    expect(readinessOf(BTC, synced([]))).toEqual({
+    expect(readinessOf(descriptor, synced([]))).toEqual({
       state: "pending",
       detail: "Service account not created yet",
     });

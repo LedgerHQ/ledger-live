@@ -40,6 +40,11 @@ export const ADA = mockUtxoAccountDescriptor({
   xpub: "ab".repeat(64),
   path: "m/1852h/1815h/0h",
 });
+export const TRX = mockAddressAccountDescriptor({
+  network: "tron",
+  address: `T${"A".repeat(33)}`,
+  path: "m/44h/195h/0h/0/0",
+});
 /** An account of a network the service does not synchronize. */
 export const DOT = mockAddressAccountDescriptor({
   network: "polkadot",

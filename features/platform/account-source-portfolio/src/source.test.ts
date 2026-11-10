@@ -6,6 +6,7 @@ import {
   DOT,
   ETH,
   PORTFOLIO_ID,
+  TRX,
   evm,
   fakeService,
   group,
@@ -23,7 +24,7 @@ function setup(service = fakeService()) {
 }
 
 describe("createPortfolioSource", () => {
-  it("supports the balance of EVM, Bitcoin and Cardano accounts, from the descriptor alone", () => {
+  it("supports the families the service synchronizes, from the descriptor alone", () => {
     const { handle, client } = setup();
     const { supports } = handle.source;
 
@@ -32,6 +33,7 @@ describe("createPortfolioSource", () => {
     expect(supports(evm(2, "hypercore"), "balance")).toBe(false);
     expect(supports(BTC, "balance")).toBe(true);
     expect(supports(ADA, "balance")).toBe(true);
+    expect(supports(TRX, "balance")).toBe(true);
     expect(supports(mockUtxoAccountDescriptor({ path: "m/49h/0h/0h" }), "balance")).toBe(false);
     expect(supports(DOT, "balance")).toBe(false);
     expect(Object.values(client).every(call => call.mock.calls.length === 0)).toBe(true);
@@ -67,7 +69,7 @@ describe("createPortfolioSource", () => {
   });
 
   it("registers each family with its own shape, then reads its balance", async () => {
-    const descriptors = [BTC, ADA];
+    const descriptors = [BTC, ADA, TRX];
     const { handle, client, state } = setup(
       fakeService({ groups: descriptors.map(each => group(each)) }),
     );
@@ -85,6 +87,7 @@ describe("createPortfolioSource", () => {
     expect(client.addRegistrations.mock.calls[0]?.[1].map(each => each.type)).toEqual([
       "auto_derive",
       "auto_derive",
+      "account",
     ]);
     expect(balances?.map(each => each.status === "fulfilled" && each.value[0])).toEqual(
       descriptors.map(({ network }) => ({

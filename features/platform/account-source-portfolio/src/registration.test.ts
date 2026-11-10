@@ -9,6 +9,7 @@ import {
   DOT,
   ETH,
   POLYGON,
+  TRX,
   evm,
   listed,
   synced,
@@ -94,6 +95,18 @@ describe("portfolioAccountOf", () => {
     });
   });
 
+  it("registers an address of a synchronized network under an id of ours", () => {
+    expect(portfolioAccountOf(TRX)).toEqual({
+      registration: {
+        type: "account",
+        accountId: `tron:${TRX.address}`,
+        network: "tron",
+        addresses: [TRX.address],
+      },
+      serverAccountId: `tron:${TRX.address}`,
+    });
+  });
+
   it("serves no network the service leaves unsynchronized, nor HyperCore despite its coin type 60", () => {
     expect(portfolioAccountOf(DOT)).toBeUndefined();
     expect(portfolioAccountOf(evm(1, "hypercore"))).toBeUndefined();
@@ -101,12 +114,15 @@ describe("portfolioAccountOf", () => {
 });
 
 describe("registrationKey", () => {
-  it.each([ETH, BTC, ADA])("matches the registration sent with the one listed: %#", descriptor => {
-    const registration = portfolioAccountOf(descriptor)?.registration;
-    expect(registration).toBeDefined();
-    if (!registration) return;
-    expect(registrationKey(listed(registration, "id"))).toBe(registrationKey(registration));
-  });
+  it.each([ETH, BTC, ADA, TRX])(
+    "matches the registration sent with the one listed: %#",
+    descriptor => {
+      const registration = portfolioAccountOf(descriptor)?.registration;
+      expect(registration).toBeDefined();
+      if (!registration) return;
+      expect(registrationKey(listed(registration, "id"))).toBe(registrationKey(registration));
+    },
+  );
 
   it("has no key for a shape the source never sends", () => {
     expect(registrationKey({ type: "solana", address: "9x" })).toBeUndefined();
@@ -120,19 +136,22 @@ describe("registrationKey", () => {
 });
 
 describe("missingRegistrations and unneededRegistrations", () => {
-  it("registers what the accounts miss and removes only what this source would send", () => {
-    const portfolio = synced([ETH], {
+  it("registers what each family misses and removes only what this source would send", () => {
+    const portfolio = synced([ETH, BTC], {
       registrations: [
-        ...(synced([ETH]).registrations ?? []),
-        { id: "old-evm", type: "evm", address: evm(9).address },
+        ...(synced([ETH, BTC]).registrations ?? []),
+        { id: "old-tron", type: "account", network: "tron", addresses: ["Told"] },
         { id: "dot", type: "account", network: "polkadot", addresses: ["1a"] },
       ],
     });
-    const descriptors = [ETH, POLYGON, evm(2)];
+    const descriptors = [ETH, BTC, TRX, ADA];
 
-    expect(missingRegistrations(portfolio, descriptors)).toEqual([
-      { type: "evm", address: evm(2).address },
+    expect(missingRegistrations(portfolio, descriptors).map(each => each.type)).toEqual([
+      "account",
+      "auto_derive",
     ]);
-    expect(unneededRegistrations(portfolio, descriptors).map(each => each.id)).toEqual(["old-evm"]);
+    expect(unneededRegistrations(portfolio, descriptors).map(each => each.id)).toEqual([
+      "old-tron",
+    ]);
   });
 });
