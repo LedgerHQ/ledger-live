@@ -12903,9 +12903,15 @@ importers:
       '@domain/entity-account-descriptor':
         specifier: workspace:*
         version: link:../../../domain/entity/account-descriptor
+      '@domain/entity-account-operation':
+        specifier: workspace:*
+        version: link:../../../domain/entity/account-operation
       '@domain/entity-client-identity':
         specifier: workspace:*
         version: link:../../../domain/entity/client-identity
+      '@domain/entity-currency':
+        specifier: workspace:*
+        version: link:../../../domain/entity/currency
       '@domain/entity-currency-crypto':
         specifier: workspace:*
         version: link:../../../domain/entity/currency-crypto
@@ -12919,6 +12925,9 @@ importers:
       '@shared/api-services':
         specifier: workspace:*
         version: link:../../../shared/api-services
+      '@shared/schema-primitives':
+        specifier: workspace:*
+        version: link:../../../shared/schema-primitives
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest

@@ -8,6 +8,7 @@ import {
   fakeService,
   group,
   synced,
+  update,
 } from "./internals/fakeService.mock";
 import { createPortfolioSource } from "./source";
 
@@ -21,11 +22,12 @@ function setup(service = fakeService()) {
 }
 
 describe("createPortfolioSource", () => {
-  it("supports the balance of EVM accounts, from the descriptor alone", () => {
+  it("supports the balance and operations of EVM accounts, from the descriptor alone", () => {
     const { handle, client } = setup();
     const { supports } = handle.source;
 
     expect(supports(ETH, "balance")).toBe(true);
+    expect(supports(ETH, "operations")).toBe(true);
     expect(supports(evm(2, "ethereum_classic"), "balance")).toBe(true);
     expect(supports(evm(2, "hypercore"), "balance")).toBe(false);
     expect(supports(BTC, "balance")).toBe(false);
@@ -59,6 +61,22 @@ describe("createPortfolioSource", () => {
 
     expect(state.portfolio?.registrations).toEqual([
       expect.objectContaining({ type: "evm", address: ETH.address }),
+    ]);
+  });
+
+  it("serves an operations read through its batch reader", async () => {
+    const { handle } = setup(fakeService({ portfolio: synced([ETH]), updates: [update(ETH)] }));
+
+    const settled = await handle.source.readBatch?.operations?.(
+      [{ accountUUID: computeAccountUUID(ETH), descriptor: ETH }],
+      { limit: 10 },
+    );
+
+    expect(settled).toEqual([
+      {
+        status: "fulfilled",
+        value: { operations: [expect.objectContaining({ id: "ethereum-0xabc-IN" })] },
+      },
     ]);
   });
 

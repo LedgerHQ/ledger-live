@@ -5,6 +5,7 @@ import type {
   PortfolioAccount,
   PortfolioRegistration,
   PortfolioRegistrationEntry,
+  UpdateView,
 } from "@domain/api-account-portfolio";
 import type { AccountTarget } from "@domain/api-account-data";
 import { computeAccountUUID, type AccountDescriptor } from "@domain/entity-account-descriptor";
@@ -13,6 +14,7 @@ import {
   mockUtxoAccountDescriptor,
 } from "@domain/entity-account-descriptor/schema.mock";
 import { PortfolioId } from "@domain/entity-client-identity";
+import { DateTimeIsoSchema } from "@shared/schema-primitives";
 import type { PortfolioClient } from "../client";
 import { portfolioAccountOf } from "../registration";
 import { createPortfolioContext, type PortfolioDeps } from "./portfolio";
@@ -76,6 +78,21 @@ export const group = (
   items,
 });
 
+export const update = (
+  descriptor: AccountDescriptor,
+  overrides: Partial<UpdateView> = {},
+): UpdateView => ({
+  network: descriptor.network,
+  account_id: serverAccountId(descriptor),
+  time: DateTimeIsoSchema.parse("2026-10-01T00:00:00Z"),
+  block: { hash: "0xb100", height: 100, time: DateTimeIsoSchema.parse("2026-10-01T00:00:00Z") },
+  tx: { hash: "0xabc" },
+  failed: false,
+  deltas: [{ asset: "native", amount: "10" }],
+  fee: { asset: "native", amount: "1" },
+  ...overrides,
+});
+
 /** A registration as the service lists it: an `account` one without the id we gave it. */
 export function listed(
   registration: PortfolioRegistration,
@@ -115,12 +132,18 @@ export const synced = (
   ...extra,
 });
 
-/** An in-memory Portfolio service; a scan pages through `groups`, `pageSize` at a time. */
+/** An in-memory Portfolio service; a scan pages through `groups`, `pageSize` at a time, updates `size` at a time. */
 export function fakeService({
   portfolio,
   groups = [],
+  updates = [],
   pageSize = 100,
-}: { portfolio?: Portfolio; groups?: BalanceGroup[]; pageSize?: number } = {}) {
+}: {
+  portfolio?: Portfolio;
+  groups?: BalanceGroup[];
+  updates?: UpdateView[];
+  pageSize?: number;
+} = {}) {
   const state = { portfolio };
   let nextId = 0;
   const current = () => state.portfolio ?? { id: "p" };
@@ -150,6 +173,15 @@ export function fakeService({
       const items = account ? groups.filter(each => each.account_id === account) : groups;
       const start = token ? Number(token) : 0;
       const end = start + pageSize;
+      return {
+        items: items.slice(start, end),
+        nextToken: end < items.length ? String(end) : undefined,
+      };
+    }),
+    getUpdates: jest.fn(async (_id, { account, size, token }, _signal?: AbortSignal) => {
+      const items = updates.filter(each => each.account_id === account);
+      const start = token ? Number(token) : 0;
+      const end = start + size;
       return {
         items: items.slice(start, end),
         nextToken: end < items.length ? String(end) : undefined,
