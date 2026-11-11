@@ -18,6 +18,7 @@ describe("createApi", () => {
     expect(isNotSupportedStub(api.estimateFees)).toBe(false);
     expect(isNotSupportedStub(api.combine)).toBe(false);
     expect(isNotSupportedStub(api.broadcast)).toBe(false);
+    expect(isNotSupportedStub(api.validateIntent)).toBe(false);
     expect(isNotSupportedStub(api.validateAddress)).toBe(false);
     expect(isNotSupportedStub(api.craftTransactionData)).toBe(false);
     expect(isNotSupportedStub(api.getNextSequence)).toBe(false);
@@ -26,7 +27,6 @@ describe("createApi", () => {
   it("stubs the rest of the contract", () => {
     expect(isNotSupportedStub(api.craftRawTransaction)).toBe(true);
     expect(isNotSupportedStub(api.getStakes)).toBe(true);
-    expect(isNotSupportedStub(api.validateIntent)).toBe(true);
   });
 
   it("rejects balance options, since the gateway always returns every holding", async () => {

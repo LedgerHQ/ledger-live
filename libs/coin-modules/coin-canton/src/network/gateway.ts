@@ -1,6 +1,6 @@
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
-import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
+import { hours, makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import type { LiveNetworkRequest, LiveNetworkResponse } from "@ledgerhq/live-network/network";
 import type { CantonCoinConfig } from "../config";
 import { TopologyChangeError, TransferOfferExpiredError } from "../types/errors";
@@ -102,6 +102,13 @@ const gatewayNetwork = async <T, U = unknown>(
 export async function getPartyById(config: CantonCoinConfig, partyId: string): Promise<Party> {
   return await getParty(config, partyId, "party-id");
 }
+
+export const getPartyByIdCached = makeLRUCache(
+  getPartyById,
+  (config: CantonCoinConfig, partyId: string) =>
+    `${getGatewayUrl(config)}_${getNodeId(config)}_${partyId}`,
+  hours(1),
+);
 
 export async function getPartyByPubKey(config: CantonCoinConfig, pubKey: string): Promise<Party> {
   return await getParty(config, pubKey, "public-key");

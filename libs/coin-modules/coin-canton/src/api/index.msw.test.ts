@@ -6,8 +6,11 @@ import {
   createMockCantonSigner,
   createMockCoinConfigValue,
   createMockContext,
+  createMockInstrumentBalances,
+  createMockOnboardingPrepareResponse,
   createMockPrepareTransferResponse,
 } from "../test/fixtures";
+import { TooManyUtxosWarning, TopologyChangeError } from "../types/errors";
 import type { CantonMemo } from "../types/transaction";
 import { createApi } from ".";
 
@@ -46,7 +49,34 @@ const transfer = (asset: AssetInfo) =>
     asset,
   }) as TransactionIntent<CantonMemo>;
 
-describe("createApi write path", () => {
+const unknownRequest = () => HttpResponse.json({ message: "unexpected request" }, { status: 400 });
+
+// Each case uses its own party, so the gateway's party and topology caches cannot leak between them.
+// The gateway answers only for that party and its key, so a request for anyone else fails the case.
+function gatewayFor(party: string, topologyChangeRequired: boolean) {
+  const publicKey = `${party}-key`;
+  server.use(
+    http.get(`${partyUrl}/balance`, ({ params }) =>
+      params.party === party
+        ? HttpResponse.json(createMockInstrumentBalances(1, { utxo_count: 11 }))
+        : unknownRequest(),
+    ),
+    http.get(partyUrl, ({ params }) =>
+      params.party === party
+        ? HttpResponse.json({ party_id: party, public_key: publicKey })
+        : unknownRequest(),
+    ),
+    http.post(`${config.gatewayUrl}/v1/node/:node/onboarding/prepare`, async ({ request }) => {
+      const { public_key } = (await request.json()) as { public_key: string };
+      if (public_key !== publicKey) return unknownRequest();
+      return topologyChangeRequired
+        ? HttpResponse.json(createMockOnboardingPrepareResponse())
+        : HttpResponse.json({ message: "party already exists" }, { status: 409 });
+    }),
+  );
+}
+
+describe("createApi against the gateway", () => {
   const api = createApi();
   const signer = createFrameworkSigner(createMockCantonSigner());
 
@@ -119,5 +149,57 @@ describe("createApi write path", () => {
     await expect(
       api.estimateFees(createMockContext({ ...config, fee: 2 }), transfer({ type: "native" })),
     ).resolves.toEqual({ value: 2n * MAGNITUDE });
+  });
+
+  describe("validateIntent", () => {
+    const balances = [{ asset: { type: "native" as const }, value: 1000n, locked: 0n }];
+
+    it("should read the utxo count from the gateway and pass the custom fee through", async () => {
+      const sender = "carol::1220";
+      gatewayFor(sender, false);
+
+      await expect(
+        api.validateIntent(context, { ...transfer({ type: "native" }), sender }, balances, {
+          customFees: { value: 7n },
+        }),
+      ).resolves.toEqual({
+        errors: {},
+        warnings: { tooManyUtxos: expect.any(TooManyUtxosWarning) },
+        estimatedFees: 7n,
+        amount: 100n,
+        totalSpent: 107n,
+      });
+    });
+
+    it("should report a topology change the gateway requires for the party's key", async () => {
+      const sender = "dave::1220";
+      gatewayFor(sender, true);
+
+      const { errors } = await api.validateIntent(
+        context,
+        { ...transfer({ type: "native" }), sender },
+        balances,
+        { customFees: { value: 0n } },
+      );
+
+      expect(errors.topologyChange).toBeInstanceOf(TopologyChangeError);
+    });
+
+    it("should keep checking the topology with the party's cached key when the lookup later fails", async () => {
+      const sender = "erin::1220";
+      gatewayFor(sender, true);
+      const validate = () =>
+        api.validateIntent(context, { ...transfer({ type: "native" }), sender }, balances, {
+          customFees: { value: 0n },
+        });
+      await validate();
+      server.use(
+        http.get(partyUrl, () => HttpResponse.json({ message: "unavailable" }, { status: 400 })),
+      );
+
+      const { errors } = await validate();
+
+      expect(errors.topologyChange).toBeInstanceOf(TopologyChangeError);
+    });
   });
 });
