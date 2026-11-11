@@ -52,7 +52,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
           error: e,
           state: state,
         });
-        await incrementNumberOfErrors(state, e);
+        incrementNumberOfErrors(state, e);
         return rejectWithError({ e, extraData: { op: "get", key } });
       }
     },
@@ -67,7 +67,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
           error: e,
           state: state,
         });
-        await incrementNumberOfErrors(state, e);
+        incrementNumberOfErrors(state, e);
         return rejectWithError({ e, extraData: { op: "getString", key } });
       }
     },
@@ -224,7 +224,7 @@ export function initStorageState(state: StorageState): void {
   }
 }
 
-async function incrementNumberOfErrors(state: StorageState, error: unknown): Promise<void> {
+function incrementNumberOfErrors(state: StorageState, error: unknown): void {
   if (!(error instanceof SyntaxError)) return;
 
   track("StorageError", {

@@ -26,9 +26,9 @@ export function DebugStorageMigration() {
     setStorageState({ ...storage.getState() });
   }
 
-  async function handleTriggerErrorBtnPress() {
+  function handleTriggerErrorBtnPress() {
     const usedError = new Error("Debug Storage Error");
-    await storage.incrementNumberOfErrorsDebug(usedError);
+    storage.incrementNumberOfErrorsDebug(usedError);
     setStorageState({ ...storage.getState() });
     return rejectWithError({ e: usedError, extraData: { itsforTesting: "test" } });
   }
