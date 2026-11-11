@@ -193,7 +193,7 @@ jobs:
 
       - name: "ci-test: block public Maven hosts"
         run: |
-          for h in repo.maven.apache.org repo1.maven.org jcenter.bintray.com dl.google.com maven.google.com plugins.gradle.org jitpack.io www.jitpack.io; do
+          for h in repo.maven.apache.org repo1.maven.org jcenter.bintray.com maven.google.com plugins.gradle.org jitpack.io www.jitpack.io; do
             echo "0.0.0.0 $h" | sudo tee -a /etc/hosts
           done
 
