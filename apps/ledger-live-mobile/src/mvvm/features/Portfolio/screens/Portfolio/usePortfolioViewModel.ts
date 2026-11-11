@@ -50,7 +50,7 @@ const usePortfolioViewModel = (navigation: {
   const { backgroundColor } = useWallet40Theme();
 
   useEffect(() => {
-    storage.handleMigration();
+    void storage.handleMigration();
   }, []);
 
   const onBackFromUpdate = useCallback(() => {
