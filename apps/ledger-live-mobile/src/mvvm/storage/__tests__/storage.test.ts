@@ -3,11 +3,7 @@ import { STORAGE_TYPE } from "../constants";
 import type { StorageInitializer } from "../types";
 import asyncStorageWrapper from "../asyncStorageWrapper";
 import mmkvStorageWrapper from "../mmkvStorageWrapper";
-import {
-  MIGRATION_STATUS,
-  MIGRATION_STATUS_KEY,
-  ROLLBACK_STATUS,
-} from "../utils/migrations/constants";
+import { MIGRATION_STATUS, MIGRATION_STATUS_KEY } from "../utils/migrations/constants";
 
 beforeEach(() => {
   jest.spyOn(console, "error").mockImplementation(() => {});
@@ -33,7 +29,6 @@ describe("storage", () => {
       expect(createTestStorage().getState()).toEqual({
         storageType: STORAGE_TYPE.ASYNC_STORAGE,
         migrationStatus: MIGRATION_STATUS.NOT_STARTED,
-        rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
         numberOfReadErrors: 0,
       });
     });
@@ -125,7 +120,6 @@ describe("storage", () => {
           state: {
             migrationStatus: MIGRATION_STATUS.NOT_STARTED,
             numberOfReadErrors: 0,
-            rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
             storageType: STORAGE_TYPE.ASYNC_STORAGE,
           },
         });
@@ -221,7 +215,6 @@ describe("storage", () => {
           state: {
             migrationStatus: MIGRATION_STATUS.NOT_STARTED,
             numberOfReadErrors: 0,
-            rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
             storageType: STORAGE_TYPE.ASYNC_STORAGE,
           },
         });
@@ -311,7 +304,6 @@ describe("storage", () => {
           state: {
             migrationStatus: MIGRATION_STATUS.NOT_STARTED,
             numberOfReadErrors: 0,
-            rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
             storageType: STORAGE_TYPE.ASYNC_STORAGE,
           },
         });
@@ -403,7 +395,6 @@ describe("storage", () => {
           state: {
             migrationStatus: MIGRATION_STATUS.NOT_STARTED,
             numberOfReadErrors: 0,
-            rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
             storageType: STORAGE_TYPE.ASYNC_STORAGE,
           },
         });
@@ -493,7 +484,6 @@ describe("storage", () => {
           state: {
             migrationStatus: MIGRATION_STATUS.NOT_STARTED,
             numberOfReadErrors: 0,
-            rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
             storageType: STORAGE_TYPE.ASYNC_STORAGE,
           },
         });
@@ -583,7 +573,6 @@ describe("storage", () => {
           state: {
             migrationStatus: MIGRATION_STATUS.NOT_STARTED,
             numberOfReadErrors: 0,
-            rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
             storageType: STORAGE_TYPE.ASYNC_STORAGE,
           },
         });
@@ -668,7 +657,6 @@ describe("storage", () => {
           state: {
             migrationStatus: MIGRATION_STATUS.NOT_STARTED,
             numberOfReadErrors: 0,
-            rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
             storageType: STORAGE_TYPE.ASYNC_STORAGE,
           },
         });
@@ -762,7 +750,6 @@ describe("storage", () => {
           state: {
             migrationStatus: MIGRATION_STATUS.NOT_STARTED,
             numberOfReadErrors: 0,
-            rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
             storageType: STORAGE_TYPE.ASYNC_STORAGE,
           },
         });
@@ -785,7 +772,6 @@ describe("storage", () => {
       const state = {
         storageType: STORAGE_TYPE.ASYNC_STORAGE,
         migrationStatus: MIGRATION_STATUS.NOT_STARTED,
-        rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
         numberOfReadErrors: 0,
       };
 
@@ -806,7 +792,6 @@ describe("storage", () => {
       const state = {
         storageType: STORAGE_TYPE.ASYNC_STORAGE,
         migrationStatus: MIGRATION_STATUS.NOT_STARTED,
-        rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
         numberOfReadErrors: 0,
       };
 
@@ -815,23 +800,6 @@ describe("storage", () => {
 
       // Assert
       expect(state.storageType).toBe(STORAGE_TYPE.ASYNC_STORAGE);
-    });
-
-    it("should set the migration status to rolled back if rollback status is completed", () => {
-      // Arrange
-      mmkvStorageWrapper.getString = jest.fn().mockReturnValue(ROLLBACK_STATUS.COMPLETED);
-      const state = {
-        storageType: STORAGE_TYPE.ASYNC_STORAGE,
-        migrationStatus: MIGRATION_STATUS.NOT_STARTED,
-        rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
-        numberOfReadErrors: 0,
-      };
-
-      // Act
-      initStorageState(state);
-
-      // Assert
-      expect(state.migrationStatus).toBe(MIGRATION_STATUS.ROLLED_BACK);
     });
   });
 });

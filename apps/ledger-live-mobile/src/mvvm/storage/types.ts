@@ -1,5 +1,4 @@
-import type { Features } from "@shared/feature-flags";
-import type { MigrationStatus, RollbackStatus } from "./utils/migrations/types";
+import type { MigrationStatus } from "./utils/migrations/types";
 
 /** Application storage interface used to store data in the application. */
 export interface Storage {
@@ -99,11 +98,8 @@ export interface Storage {
   /** Fully reset the migration state to be able migrate again. */
   resetMigration(): Promise<void> | void;
 
-  /** Rollback the migration to AsyncStorage. */
-  rollbackMigration(): Promise<void> | void;
-
   /** Automatically handle the migration process. */
-  handleMigration(featureFlag: Features["llmMmkvMigration"]): Promise<void> | void;
+  handleMigration(): Promise<void> | void;
 }
 
 /** Internal state of the {@link Storage}. */
@@ -112,8 +108,6 @@ export interface StorageState {
   storageType: StorageType;
   /** Indicates the current migration status, if any */
   migrationStatus: MigrationStatus;
-  /** Indicates the current rollback status, if any */
-  rollbackStatus: RollbackStatus;
   /** Number of reading errors triggered during the use */
   numberOfReadErrors: number;
   /** Last Error to have been triggered (for analytics purpose) */

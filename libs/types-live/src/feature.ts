@@ -244,7 +244,6 @@ export type Features = CurrencyFeatures & {
   lwdLedgerSyncOptimisation: DefaultFeature;
   lwdProductTour: DefaultFeature;
   lwdBackupHub: DefaultFeature;
-  llmMmkvMigration: Feature_LlmMmkvMigration;
   lldModularDrawer: Feature_ModularDrawer;
   lwdDeeplinkOpenHardening: DefaultFeature;
   lwmDeeplinkOpenHardening: DefaultFeature;
@@ -724,11 +723,6 @@ export type Feature_LlNftEntryPoint = Feature<{
 export type Feature_LlCounterValueGranularitiesRates = Feature<{
   daily: number;
   hourly: number;
-}>;
-
-/** @deprecated Moved to `@shared/feature-flags`. Use `Features["llmMmkvMigration"]` from `@shared/feature-flags` instead. */
-export type Feature_LlmMmkvMigration = Feature<{
-  shouldRollback: boolean | null;
 }>;
 
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["llmModularDrawer"]` from `@shared/feature-flags` instead. */

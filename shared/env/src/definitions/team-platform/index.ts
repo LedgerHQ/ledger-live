@@ -67,11 +67,6 @@ const teamPlatform = {
     parser: boolParser,
     desc: "Show a performance overlay on the app UI",
   },
-  STORAGE_PERFORMANCE_OVERLAY: {
-    def: false,
-    parser: boolParser,
-    desc: "Show a performance overlay on the app storage",
-  },
   JS_THREAD_MONITOR: {
     def: false,
     parser: boolParser,
