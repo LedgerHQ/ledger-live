@@ -162,6 +162,14 @@ const withRozeniteUrlFix = rozeniteConfig => {
 
 const isDetoxBuild = process.env.DETOX === "1" || (process.env.ENVFILE || "").includes("mock");
 
+const appVersion = JSON.parse(readFileSync(path.join(__dirname, "package.json"), "utf8")).version;
+
+// Detox reuses cached native builds and only swaps the JS bundle, so the native version can be stale
+const defineDetoxAppVersion = platform => {
+  if (!isDetoxBuild) return "undefined";
+  return JSON.stringify(platform === "ios" ? appVersion.split(/[+-]/)[0] : appVersion);
+};
+
 const detoxAliases = isDetoxBuild
   ? {
       "@sbaiahmed1/react-native-blur": path.resolve(__dirname, "e2e/mocks/react-native-blur.js"),
@@ -345,6 +353,9 @@ export default withRozeniteUrlFix(
             TextDecoder: ["text-encoding-polyfill", "TextDecoder"],
           }),
           ...getRsdoctorPlugin(),
+          new rspack.DefinePlugin({
+            "process.env.DETOX_APP_VERSION": defineDetoxAppVersion(platform),
+          }),
         ],
         stats: "errors-warnings",
         infrastructureLogging: { level: "warn" },
