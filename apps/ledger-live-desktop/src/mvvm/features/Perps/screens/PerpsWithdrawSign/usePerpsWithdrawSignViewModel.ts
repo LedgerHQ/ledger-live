@@ -12,6 +12,7 @@ import {
   getWithdrawRequestId,
 } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/request";
 import { PERPS_WITHDRAW_SIGNING_APP_NAME } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/sign";
+import { track } from "@shared/analytics";
 import useConnectAppAction from "~/renderer/hooks/useConnectAppAction";
 import { isUserRefusal } from "LLD/features/Perps/utils/isUserRefusal";
 import { openPerpsTransactionSigned } from "../PerpsTransactionSigned/PerpsTransactionSignedDialog";
@@ -79,6 +80,8 @@ export function usePerpsWithdrawSignViewModel(
             amountTo: quote.amountTo.toFixed(),
             toCurrencyId: getAccountCurrency(destinationAccount).id,
           },
+          targetCurrency: getAccountCurrency(destinationAccount).ticker,
+          track,
           onSigned: () => {
             if (!closedRef.current) setStep({ kind: "submitting" });
           },

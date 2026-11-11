@@ -6,6 +6,7 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import type { PerpsWithdrawExecutionParams } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/execute";
 import { WithdrawSubmitUnknownOutcomeError } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/errors";
+import { track } from "@shared/analytics";
 import { act, renderHook, waitFor } from "tests/testSetup";
 import {
   usePerpsWithdrawSignViewModel,
@@ -101,6 +102,8 @@ describe("usePerpsWithdrawSignViewModel", () => {
         sourceAccount,
         quote,
         result: { amountFrom: "10", amountTo: "0.3", toCurrencyId: "ethereum" },
+        targetCurrency: "ETH",
+        track,
       }),
     );
     expect(mockOpenPerpsTransactionSigned).toHaveBeenCalledWith({
