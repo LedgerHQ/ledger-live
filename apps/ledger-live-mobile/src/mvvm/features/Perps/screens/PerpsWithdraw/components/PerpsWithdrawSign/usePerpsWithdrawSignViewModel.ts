@@ -9,6 +9,7 @@ import {
 } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/execute";
 import { getWithdrawRequestId } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/request";
 import { PERPS_WITHDRAW_SIGNING_APP_NAME } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/sign";
+import { track } from "@shared/analytics";
 import type { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import { useAppDeviceAction } from "~/hooks/deviceActions";
 import { isUserRefusal } from "LLM/features/Perps/utils/isUserRefusal";
@@ -96,6 +97,8 @@ export function usePerpsWithdrawSignViewModel({
             amountTo: quote.amountTo.toFixed(),
             toCurrencyId: getAccountCurrency(destinationAccount).id,
           },
+          targetCurrency: getAccountCurrency(destinationAccount).ticker,
+          track,
           onSigned: () => {
             if (!isLeavingRef.current) setStep({ kind: "submitting" });
           },
