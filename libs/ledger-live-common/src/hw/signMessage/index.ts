@@ -16,6 +16,7 @@ import { decodeAccountId } from "../../account";
 export const prepareMessageToSign = async (
   account: Account,
   message: string,
+  path?: string,
 ): Promise<AnyMessage> => {
   const utf8Message = Buffer.from(message, "hex").toString();
   const setup = await loadSetupForFamily(account.currency.family);
@@ -29,7 +30,7 @@ export const prepareMessageToSign = async (
   }
 
   // Default implementation
-  return { message: utf8Message };
+  return path ? { message: utf8Message, path } : { message: utf8Message };
 };
 
 const signMessage: SignMessage = async (transport, account, opts) => {

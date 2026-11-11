@@ -222,11 +222,28 @@ export async function broadcastTransactionLogic(
   return uiNavigation(signerAccount, parentAccount, signedOperation);
 }
 
+function getBitcoinAccountAddressPath(account: Account, path: string): string {
+  if (account.currency.family !== "bitcoin") {
+    throw new Error("path is only supported for bitcoin family accounts");
+  }
+  const { path: rootPath, index: accountIndex } = getWalletAccount(account).params;
+  const accountPath = `${rootPath}/${accountIndex}'/`;
+  const addressPath = path.startsWith("m/") ? path.slice(2) : path;
+  if (
+    !addressPath.startsWith(accountPath) ||
+    !/^[01]\/\d+$/.test(addressPath.slice(accountPath.length))
+  ) {
+    throw new Error("path does not belong to the account");
+  }
+  return addressPath;
+}
+
 export async function signMessageLogic(
   { manifest, accounts, tracking }: WalletAPIContext,
   walletAccountId: string,
   message: string,
   uiNavigation: (account: AccountLike, message: AnyMessage) => Promise<Buffer>,
+  path?: string,
 ): Promise<Buffer> {
   return withLiveAppContext(manifest, async () => {
     tracking.signMessageRequested(manifest);
@@ -246,7 +263,11 @@ export async function signMessageLogic(
     let formattedMessage: AnyMessage;
     try {
       if (isAccount(account)) {
-        formattedMessage = await prepareMessageToSign(account, message);
+        formattedMessage = await prepareMessageToSign(
+          account,
+          message,
+          path === undefined ? undefined : getBitcoinAccountAddressPath(account, path),
+        );
       } else {
         throw new Error("account provided should be the main one");
       }
