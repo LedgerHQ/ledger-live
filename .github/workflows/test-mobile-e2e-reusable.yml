@@ -456,17 +456,28 @@ jobs:
           bash "$RUNNER_TEMP/probe.sh" > "$D/runner-curl-before.txt" 2>&1
           { echo "== resolvectl status"; resolvectl status; } >> "$D/runner-dns.txt" 2>&1
           cat > "$RUNNER_TEMP/emu-probe.sh" <<'EMU'
-          # Timed DNS lookups (toybox host) and DNS + TCP connects through Android's resolver (toybox nc),
-          # from inside the emulator; times from /proc/uptime (10 ms).
+          # From inside the emulator: DNS + TCP connect through Android's resolver (nc -z, as apps resolve),
+          # by IP family, then connect only to the resolved IPv4 address; times from /proc/uptime (10 ms).
           now() { cut -d' ' -f1 /proc/uptime; }
+          hosts="firebaseinstallations.googleapis.com firebaseremoteconfig.googleapis.com countervalues.live.ledger.com www.google.com"
           echo "toybox: $(toybox --version 2>&1)"
-          for c in host nc ping awk; do echo "$c: $(command -v $c 2>&1 || echo missing)"; done
+          echo "== addresses"; ip addr 2>&1 | grep -E 'inet6? '
+          echo "== ipv6 routes"; ip -6 route 2>&1 | head -5
+          echo "== dns"; dumpsys connectivity 2>/dev/null | grep -o -E 'DnsAddresses: \[[^]]*\]' | sort -u
           for i in 1 2 3 4 5; do
-            for h in firebaseinstallations.googleapis.com firebaseremoteconfig.googleapis.com countervalues.live.ledger.com www.google.com; do
-              t0=$(now); out=$(toybox host "$h" 2>&1 | tr '\n' ' ' | cut -c1-160); t1=$(now)
-              echo "$i host $h $t0 $t1 :: $out"
-              t0=$(now); toybox nc -q 0 -w 5 "$h" 443 < /dev/null > /dev/null 2>&1; rc=$?; t1=$(now)
-              echo "$i nc443 $h $t0 $t1 rc=$rc"
+            for h in $hosts; do
+              for fam in 4 6 any; do
+                if [ "$fam" = any ]; then opt=""; else opt="-$fam"; fi
+                t0=$(now); out=$(nc $opt -z -w 5 "$h" 443 < /dev/null 2>&1); rc=$?; t1=$(now); err=$(echo "$out" | tr "\n" " " | cut -c1-80)
+                echo "$i nc$fam $h $t0 $t1 rc=$rc $err"
+              done
+            done
+          done
+          for h in $hosts; do
+            ip=$(ping -c 1 -W 1 "$h" 2>/dev/null | sed -n '1s/[^(]*(\([0-9.]*\)).*/\1/p')
+            for i in 1 2 3; do
+              t0=$(now); out=$(nc -n -z -w 5 "$ip" 443 < /dev/null 2>&1); rc=$?; t1=$(now); err=$(echo "$out" | tr "\n" " " | cut -c1-80)
+              echo "$i ip443 $h=$ip $t0 $t1 rc=$rc $err"
             done
           done
           EMU
