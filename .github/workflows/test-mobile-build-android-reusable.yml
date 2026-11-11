@@ -189,7 +189,7 @@ jobs:
           CARD_OAUTH_REDIRECT_URI: ${{ secrets.CARD_OAUTH_REDIRECT_URI }}
         with:
           command: GITHUB_STEP_SUMMARY=/dev/null pnpm exec nx run live-mobile:e2e:ci -- -p android -b $([[ "$PRODUCTION" == "true" ]] && printf %s '--production')
-          disable_cache: ${{ inputs.disable-nx-cache || false }}
+          disable_cache: true # ci-test: force a real Gradle build
 
       - name: Upload Detox Native Build
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
