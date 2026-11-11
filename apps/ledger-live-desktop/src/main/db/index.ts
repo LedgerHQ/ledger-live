@@ -48,7 +48,17 @@ let memoryNamespaces: Record<string, Record<string, unknown> | null | undefined>
 let encryptionKeys: Record<string, Record<string, string> | null | undefined> = {};
 const DEBOUNCE_MS =
   process.env.NODE_ENV === "test" || getEnv("PLAYWRIGHT_RUN") || getEnv("MOCK") ? 16 : 500;
-const save = debounce(saveToDisk, DEBOUNCE_MS);
+const createSaver = () => debounce(saveToDisk, DEBOUNCE_MS);
+const saversByNamespace = new Map<string, ReturnType<typeof createSaver>>();
+
+function save(ns: string) {
+  let saveNamespace = saversByNamespace.get(ns);
+  if (!saveNamespace) {
+    saveNamespace = createSaver();
+    saversByNamespace.set(ns, saveNamespace);
+  }
+  return saveNamespace(ns);
+}
 
 // Track which keyPaths triggered saves for each namespace
 const saveTriggers: Map<string, Set<string>> = new Map();
