@@ -55,12 +55,13 @@ export default class ModularDrawer {
   }
 
   @Step("Perform search on modular drawer by ticker {{{0}}}")
-  async performSearchByTicker(ticker: string, closeKeyboard = true) {
-    if (closeKeyboard) {
-      await this.searchBar.replaceText(ticker);
-    } else {
-      await this.searchBar.replaceTextKeepKeyboard(ticker);
-    }
+  async performSearchByTicker(ticker: string) {
+    await this.searchBar.replaceText(ticker);
+  }
+
+  @Step("Perform search on modular drawer by ticker {{{0}}}, keeping the keyboard open")
+  async performSearchByTickerKeepKeyboard(ticker: string) {
+    await this.searchBar.replaceTextKeepKeyboard(ticker);
   }
 
   @Step("Select currency in receive list by ticker {{{0}}}")

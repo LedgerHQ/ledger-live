@@ -36,7 +36,11 @@ export default class AssetDetailPage {
   private readonly operationDetailsTitle = byId("operationDetails-title");
   private readonly operationsListItem = (index = 0) => byId(OPERATIONS_LIST_ITEM_ID, index);
   private readonly operationByTicker = (ticker: string) =>
-    byIdWithDescendantText({ id: OPERATIONS_LIST_ITEM_ID, text: ticker });
+    byIdWithDescendantText({
+      id: OPERATIONS_LIST_ITEM_ID,
+      // The ticker sits inside a formatted amount such as "+1 DAI".
+      text: new RegExp(String.raw`.*${ticker}.*`, "i"),
+    });
   private readonly addressItemNameAt = (index: number) =>
     byId(/asset-detail-address-item-name-.*/, index);
   private readonly addressItemName = (accountId: string) =>
@@ -187,12 +191,15 @@ export default class AssetDetailPage {
   async getVisibleTransactionCountForTicker(ticker: string) {
     await this.scrollToTransactions();
     await this.operationsListItem().scrollTo(await this.scrollView());
-    const visibleOperationsCount = await this.operationsListItem().count();
-    jestExpect(visibleOperationsCount).toBeGreaterThan(0);
-
-    for (let index = 0; index < visibleOperationsCount; index++) {
-      await this.operationsListItem(index).expectLabel(ticker, { containing: true });
+    // Counts the rows on screen, from the first one: later rows stay mounted off screen.
+    let visibleOperationsCount = 0;
+    while (await this.operationsListItem(visibleOperationsCount).isVisibleNow()) {
+      await this.operationsListItem(visibleOperationsCount).expectLabel(ticker, {
+        containing: true,
+      });
+      visibleOperationsCount++;
     }
+    jestExpect(visibleOperationsCount).toBeGreaterThan(0);
 
     return visibleOperationsCount;
   }

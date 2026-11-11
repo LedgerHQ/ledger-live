@@ -19,7 +19,7 @@ type AssetRowOptions = {
 export default class PortfolioPage {
   private readonly baseLink = "portfolio";
 
-  // TODO: Remove the regex when legacyWallet is removed from source code.
+  // The regex also matches the legacy wallet screen, until legacyWallet leaves the source code.
   private readonly portfolioList = byId(/portfolio-screen|PortfolioReadOnlyItems/);
   private readonly readOnlyItems = byId("PortfolioReadOnlyItems");
   private readonly accountsList = byId("PortfolioAccountsList");
