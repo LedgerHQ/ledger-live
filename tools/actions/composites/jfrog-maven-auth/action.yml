@@ -1,0 +1,25 @@
+name: JFrog Maven auth
+description: Send Gradle's public Maven repositories (Maven Central, Google, Gradle Plugin Portal, JCenter) to their JFrog remote repositories, authenticated with the job's JFrog OIDC token.
+inputs:
+  url:
+    description: Artifactory base URL, e.g. https://jfrog.ledgerlabs.net/artifactory/. Each public host goes to its ossproxy-maven-proxy-* remote under it. Empty leaves Gradle on the public repositories.
+    required: false
+    default: ""
+runs:
+  using: composite
+  steps:
+    # jfrog-npm-auth already logs in and exports JFROG_TOKEN; only log in when it has not run.
+    - id: jfrog-login
+      if: ${{ inputs.url != '' && env.JFROG_TOKEN == '' }}
+      uses: LedgerHQ/actions-security/actions/jfrog-login@b9e0f8af18a3db56e133a46ccf83499c8279508e
+    # Gradle runs every script in init.d for every build, including included builds such as
+    # @react-native/gradle-plugin. The script reads the token from the environment, never from disk.
+    - if: ${{ inputs.url != '' }}
+      shell: bash
+      env:
+        MAVEN_URL: ${{ inputs.url }}
+      run: | # zizmor: ignore[github-env]
+        init_dir="${GRADLE_USER_HOME:-$HOME/.gradle}/init.d"
+        mkdir -p "$init_dir"
+        cp "$GITHUB_ACTION_PATH/jfrog-maven.gradle" "$init_dir/jfrog-maven.gradle"
+        echo "JFROG_MAVEN_URL=$MAVEN_URL" >> "$GITHUB_ENV"
