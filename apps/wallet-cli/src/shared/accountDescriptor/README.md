@@ -39,7 +39,7 @@ Version 1 (`account:1:<type>:<network_name>:<network_env>:…`) is still read an
 
 | Field             | Values                                             |
 | ----------------- | -------------------------------------------------- |
-| `type`            | `utxo` (Bitcoin family) or `address` (EVM, Solana) |
+| `type`            | `utxo` (Bitcoin family) or `address` (EVM, Solana, XRP) |
 | `network_id`      | CAL network id: `bitcoin`, `bitcoin_testnet`, `ethereum_sepolia`, … |
 | `xpub_or_address` | xpub/ypub/zpub (UTXO) or derived address (ACCOUNT) |
 | `path`            | BIP32 derivation path (see below)                  |
@@ -67,6 +67,7 @@ The non-hardened change/address suffix (`/0/0`) is intentionally omitted. The xp
 | -------- | ------------------------ | ------------------ |
 | EVM      | `m/44'/60'/{index}'/0/0` | `m/44'/60'/0'/0/0` |
 | Solana   | `m/44'/501'/{index}'/0'` | `m/44'/501'/0'/0'` |
+| XRP      | `m/44'/144'/{index}'/0/0` | `m/44'/144'/0'/0/0` |
 
 ### Full examples
 
@@ -75,6 +76,7 @@ account:2:utxo:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5W
 account:2:utxo:bitcoin_testnet:tpubD8Lg2gUVPCHWXFnFnqiKdPHZBVjGoMkL2YobGcqEUiE3K72TPFAG6Gjs1TK7d4yKnBqEhqawGXBpNxKzAYtSiRPBwwqvpyiNi4X6MHXTfHe:m/84'/1'/0'
 account:2:address:ethereum:0x71C7656EC7ab88b098defB751B7401B5f6d8976F:m/44'/60'/0'/0/0
 account:2:address:solana:7xCU4XQfL8589X6vVt8q5F7J3Z9T1z6W6X6X6X6X6X:m/44'/501'/0'/0'
+account:2:address:ripple:rN7n7otQDd6FczFgLdSqtcsAUxDkw6fzRH:m/44'/144'/0'/0/0
 ```
 
 ---
@@ -102,4 +104,4 @@ Serialize a structured V1 object to its string form, or parse a V1 string back t
 ## Limitations
 
 - **`freshAddress` round-trip**: V1 does not store the fresh address. `toV0()` always returns `freshAddress: ""`.
-- **Unsupported families**: Only `bitcoin`, `ethereum`, `solana` (and their known testnets) are mapped. Other currencies throw `UnsupportedFamilyError`.
+- **Unsupported families**: Only `bitcoin`, `ethereum`, `solana`, and `ripple` (and their known testnets) are mapped. Other currencies throw `UnsupportedFamilyError`.
