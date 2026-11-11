@@ -46,7 +46,7 @@ export default class PortfolioPage {
   private readonly cryptoAddressesAddAccountCta = byId("crypto-addresses-add-account-cta");
   private readonly cryptoAddressesButton = byId("crypto-addresses-button");
   private readonly cryptoAddressesList = byId("CryptoAddressesList");
-  private readonly accountItemName = byId(/account-item-.*-name/);
+  private readonly accountItemName = (index = 0) => byId(/account-item-.*-name/, index);
   private readonly marketBannerList = byId("market-banner-list");
   private readonly marketBannerViewAll = byId("market-banner-view-all");
   private readonly marketBannerTitle = byId("market-banner-title");
@@ -186,8 +186,13 @@ export default class PortfolioPage {
 
   @Step("Count Accounts")
   async countAccounts() {
-    await this.accountItemName.scrollTo(this.cryptoAddressesList);
-    return await this.accountItemName.count();
+    await this.accountItemName().scrollTo(this.cryptoAddressesList);
+    // Counts the rows on screen, from the first one: later rows stay mounted off screen.
+    let visibleAccounts = 0;
+    while (await this.accountItemName(visibleAccounts).isVisibleNow()) {
+      visibleAccounts++;
+    }
+    return visibleAccounts;
   }
 
   @Step("Expect at least one account")

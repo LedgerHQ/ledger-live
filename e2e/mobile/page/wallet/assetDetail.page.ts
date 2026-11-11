@@ -39,7 +39,7 @@ export default class AssetDetailPage {
     byIdWithDescendantText({
       id: OPERATIONS_LIST_ITEM_ID,
       // The ticker sits inside a formatted amount such as "+1 DAI".
-      text: new RegExp(String.raw`.*${ticker}.*`, "i"),
+      text: new RegExp(`.*${ticker}.*`, "i"),
     });
   private readonly addressItemNameAt = (index: number) =>
     byId(/asset-detail-address-item-name-.*/, index);
@@ -226,7 +226,9 @@ export default class AssetDetailPage {
 
   @Step("Get address item name at index {{{0}}}")
   async getAddressItemName(index = 0) {
-    return await this.addressItemNameAt(index).getText();
+    const addressItemName = this.addressItemNameAt(index);
+    await addressItemName.scrollTo(await this.scrollView());
+    return await addressItemName.getText();
   }
 
   @Step("Add asset to favorites from Asset Detail")
