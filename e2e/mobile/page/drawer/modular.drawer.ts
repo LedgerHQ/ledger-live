@@ -51,7 +51,7 @@ export default class ModularDrawer {
 
   @Step("Validate account(s) present on account list {{{0}}}")
   async validateNumberOfAccounts(expectedCount: number) {
-    jestExpect(await this.accountItem.count()).toBe(expectedCount);
+    await this.accountItem.expectCount(expectedCount);
   }
 
   @Step("Perform search on modular drawer by ticker {{{0}}}")

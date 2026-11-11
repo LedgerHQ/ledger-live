@@ -269,6 +269,11 @@ export class NativeHandle implements ElementHandle {
     }
   }
 
+  /** Asserts how many elements match now, e.g. the rows of a list. Like {@link count}, it does not wait. */
+  async expectCount(expected: number): Promise<void> {
+    jestExpect(await this.count()).toBe(expected);
+  }
+
   /** Returns whether the element is in the view hierarchy within `timeout`. A hung app still throws. */
   private async exists(timeout: number): Promise<boolean> {
     try {
@@ -404,7 +409,7 @@ export class NativeHandle implements ElementHandle {
   async expectAmount(expected: number, options: ExpectAmountOptions = {}): Promise<void> {
     const { tolerance = 0 } = options;
     const amount = Number.parseFloat((await this.getText()).replaceAll(/[^\d.-]/g, ""));
-    expectWithinTolerance(amount, { expected, tolerance });
+    expectWithinTolerance({ actual: amount, expected, tolerance });
   }
 
   /** Waits for visibility, then asserts the element's text contains `text`. */

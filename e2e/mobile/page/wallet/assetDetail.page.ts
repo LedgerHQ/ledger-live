@@ -177,7 +177,7 @@ export default class AssetDetailPage {
       tolerance += displayRoundingTolerance(balanceText);
     }
 
-    expectWithinTolerance(holdingBalance, { expected: totalBalance, tolerance });
+    expectWithinTolerance({ actual: holdingBalance, expected: totalBalance, tolerance });
     return { holdingBalance, totalBalance };
   }
 

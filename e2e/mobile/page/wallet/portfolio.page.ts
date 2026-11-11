@@ -440,11 +440,11 @@ export default class PortfolioPage {
 
   @Step("Check total asset item count on page {{{0}}}")
   async checkTotalAssetItemCount(expected: number) {
-    jestExpect(await this.anyAssetItem().count()).toBe(expected);
+    await this.anyAssetItem().expectCount(expected);
   }
 
   private async checkSectionAssetItemCount(sectionId: string, expected: number) {
-    jestExpect(await this.sectionAssetItems(sectionId).count()).toBe(expected);
+    await this.sectionAssetItems(sectionId).expectCount(expected);
   }
 
   @Step("Check cryptos section asset item count {{{0}}}")

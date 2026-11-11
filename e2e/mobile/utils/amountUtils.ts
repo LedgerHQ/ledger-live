@@ -30,15 +30,16 @@ export function expectFormattedAmount(
   }
 }
 
-type ToleranceOptions = {
+type ExpectWithinToleranceOptions = {
+  actual: number;
   expected: number;
   /** How far `actual` may be from `expected`, either way. */
   tolerance: number;
 };
 
 /** Asserts `actual` is within `tolerance` of `expected`, e.g. amounts that differ by display rounding. */
-export function expectWithinTolerance(actual: number, options: ToleranceOptions): void {
-  const { expected, tolerance } = options;
+export function expectWithinTolerance(options: ExpectWithinToleranceOptions): void {
+  const { actual, expected, tolerance } = options;
   jestExpect(actual).toBeGreaterThanOrEqual(expected - tolerance);
   jestExpect(actual).toBeLessThanOrEqual(expected + tolerance);
 }

@@ -351,7 +351,8 @@ export default class SwapLiveAppPage {
 
       const firstQuote = quotes[0];
       const bestNetValue = Math.max(...quotes.map(quoteNetValue));
-      expectWithinTolerance(quoteNetValue(firstQuote), {
+      expectWithinTolerance({
+        actual: quoteNetValue(firstQuote),
         expected: bestNetValue,
         tolerance: NET_ROUNDING_TOLERANCE,
       });
