@@ -2,8 +2,9 @@
 const path = require("path");
 const { flipFuses, FuseVersion, FuseV1Options } = require("@electron/fuses");
 const { default: checkZcashBinaries } = require("./checkZcashBinaries");
+const { default: writeAppUpdateConfig } = require("./writeAppUpdateConfig");
 
-exports.default = function (context) {
+exports.default = async function (context) {
   const { appOutDir, electronPlatformName, packager } = context;
 
   // The MAS target is only valid with the per-channel overrides tools/dist injects;
@@ -16,6 +17,7 @@ exports.default = function (context) {
   }
 
   checkZcashBinaries(context);
+  await writeAppUpdateConfig(context);
 
   const ext = {
     darwin: ".app",
