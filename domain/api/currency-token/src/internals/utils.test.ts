@@ -78,11 +78,6 @@ describe("transformApiTokenToTokenCurrency", () => {
     });
   });
 
-  it("should forward an empty categories array", () => {
-    transformApiTokenToTokenCurrency({ ...mockApiTokenResponse, categories: [] });
-    expect(convertApiToken).toHaveBeenCalledWith(expect.objectContaining({ categories: [] }));
-  });
-
   it("should return undefined when convertApiToken returns undefined", () => {
     mockConvert.mockReturnValue(undefined);
     expect(transformApiTokenToTokenCurrency(mockApiTokenResponse)).toBeUndefined();
@@ -96,11 +91,12 @@ describe("validateAndTransformSingleTokenResponse", () => {
     );
   });
 
-  it("should forward categories to the converter", () => {
-    validateAndTransformSingleTokenResponse([{ ...mockApiTokenResponse, categories: ["stocks"] }]);
-    expect(convertApiToken).toHaveBeenCalledWith(
-      expect.objectContaining({ categories: ["stocks"] }),
-    );
+  it("should keep an empty categories array through the real converter", () => {
+    mockConvert.mockImplementation(jest.requireActual("../converter").convertApiToken);
+    const token = validateAndTransformSingleTokenResponse([
+      { ...mockApiTokenResponse, categories: [] },
+    ]);
+    expect(token?.categories).toEqual([]);
   });
 
   it("should return undefined when the response is null", () => {
