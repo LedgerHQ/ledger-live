@@ -53,8 +53,6 @@ jobs:
         uses: android-actions/setup-android@40fd30fb8d7440372e1316f5d1809ec01dcd3699 # v4.0.1
         with:
           packages: "platform-tools"
-      - name: Use the Maven Central mirror
-        uses: LedgerHQ/ledger-live/tools/actions/composites/gradle-maven-central-mirror@develop
       - name: install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
       - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
