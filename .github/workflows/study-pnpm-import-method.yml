@@ -1,0 +1,61 @@
+# Study only (branch study/pnpm-linking, never merge): pnpm packageImportMethod speed on the macOS pools.
+name: "[Study] pnpm import method on macOS"
+
+on:
+  push:
+    branches: [study/pnpm-linking]
+    paths:
+      - .github/workflows/study-pnpm-import-method.yml
+      - tools/scripts/study-pnpm-import-bench.sh
+
+permissions: {}
+
+concurrency:
+  group: study-pnpm-import-method
+  cancel-in-progress: true
+
+jobs:
+  bench:
+    name: "pnpm import (${{ matrix.pool }})"
+    permissions:
+      id-token: write
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        pool: [performance-pool]
+    runs-on: ["${{ matrix.pool }}", macOS, ARM64]
+    timeout-minutes: 90
+    env:
+      LANG: en_US.UTF-8
+      LC_ALL: en_US.UTF-8
+      REPS: "3"
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+
+      # Same set-up as the iOS E2E jobs: tools from mise, no S3 pnpm store restore.
+      - name: setup caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          skip-pod-cache: "true"
+          skip-pnpm-cache: "true"
+          skip-nx-cache: "true"
+          use-mise: "true"
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
+
+      - name: Benchmark import methods
+        run: bash tools/scripts/study-pnpm-import-bench.sh
+
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        if: always()
+        with:
+          name: pnpm-import-bench-${{ matrix.pool }}
+          path: bench-results/
