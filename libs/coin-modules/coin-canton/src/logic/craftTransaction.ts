@@ -4,25 +4,13 @@ import type { CantonContext } from "../config";
 import { prepareTransferRequest } from "../network/gateway";
 import type { PrepareTransferRequest } from "../types/gateway";
 import type { CantonCraftedEnvelope, CantonMemo } from "../types/transaction";
+import { instrumentOf } from "./asset";
 
 const DEFAULT_EXPIRATION_SECONDS = 24 * 60 * 60;
 // "Payment" is the generic adapter's intent type for a transaction without a `mode`.
 const TRANSFER_INTENT_TYPES = new Set(["send", "Payment"]);
 
 type CantonIntent = TransactionIntent<CantonMemo>;
-
-function instrumentOf(
-  { asset }: CantonIntent,
-  nativeInstrumentId: string,
-): { instrumentId: string; instrumentAdmin?: string } {
-  if (asset.type === "native") return { instrumentId: nativeInstrumentId };
-  const assetReference = "assetReference" in asset ? asset.assetReference : undefined;
-  if (asset.type === "template" || !assetReference) {
-    throw new InvalidParameterError(`canton: cannot transfer asset ${JSON.stringify(asset)}`);
-  }
-  const assetOwner = "assetOwner" in asset ? asset.assetOwner : undefined;
-  return { instrumentId: assetReference, ...(assetOwner ? { instrumentAdmin: assetOwner } : {}) };
-}
 
 function reasonOf(intent: CantonIntent): string | undefined {
   // Typed as the reason memo, but the generic adapter also sends `{ type: "none" }`.
@@ -49,7 +37,7 @@ export async function craftTransaction(
   }
   const reason = reasonOf(intent);
   const config = await context.config();
-  const { instrumentId, instrumentAdmin } = instrumentOf(intent, config.nativeInstrumentId);
+  const { instrumentId, instrumentAdmin } = instrumentOf(intent.asset, config.nativeInstrumentId);
 
   const params: PrepareTransferRequest = {
     type: "token-transfer-request",

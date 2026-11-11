@@ -21,6 +21,7 @@ import {
   getLedgerEnd,
   getOperations,
   getPartyById,
+  getPartyByIdCached,
   getPartyByPubKey,
   getPendingTransferProposals,
   getTransferPreApproval,
@@ -319,6 +320,35 @@ describe("isTopologyChangeRequiredCached", () => {
 
     await isTopologyChangeRequiredCached(mockConfig, pubKey);
     expect(mockNetwork).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe("getPartyByIdCached", () => {
+  const mockNetwork = network as jest.MockedFunction<typeof network>;
+  const party = { party_id: "cached-party", public_key: "pk" };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockNetwork.mockResolvedValue({ data: party, status: 200 });
+  });
+
+  it("caches the party per gateway, node and party id", async () => {
+    const config = { ...createTestNodeConfig(), gatewayUrl: "https://gateway-a.example.com" };
+
+    await expect(getPartyByIdCached(config, "cached-party")).resolves.toEqual(party);
+    await expect(getPartyByIdCached(config, "cached-party")).resolves.toEqual(party);
+    expect(mockNetwork).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not reuse a party cached for another gateway with the same node id", async () => {
+    const config = createTestNodeConfig();
+    await getPartyByIdCached({ ...config, gatewayUrl: "https://gateway-b.example.com" }, "p");
+    await getPartyByIdCached({ ...config, gatewayUrl: "https://gateway-c.example.com" }, "p");
+
+    expect(mockNetwork).toHaveBeenCalledTimes(2);
+    expect(mockNetwork).toHaveBeenLastCalledWith(
+      expect.objectContaining({ url: expect.stringContaining("https://gateway-c.example.com") }),
+    );
   });
 });
 
