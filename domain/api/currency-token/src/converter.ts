@@ -64,7 +64,7 @@ export function convertApiToken(apiToken: ApiTokenData): TokenCurrency | undefin
     })),
     ...(ledgerSignature ? { ledgerSignature } : {}),
     ...(tokenIdentifier ? { tokenIdentifier } : {}),
-    ...(categories !== undefined ? { categories } : {}),
+    ...(Array.isArray(categories) ? { categories } : {}),
   };
 
   return tokenCurrency;

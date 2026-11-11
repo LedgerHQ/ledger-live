@@ -67,8 +67,10 @@ describe("convertApiToken", () => {
       expect(result?.categories).toEqual(categories);
     });
 
-    it("omits categories when absent", () => {
-      const result = convertApiToken(buildApiTokenData());
+    it.each([undefined, null])("omits categories when the value is %p", categories => {
+      const result = convertApiToken(
+        buildApiTokenData({ categories: categories as string[] | undefined }),
+      );
 
       expect(result).not.toHaveProperty("categories");
     });
