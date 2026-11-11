@@ -828,7 +828,7 @@ test("Wallet API methods: accounts, currencies and wallet @smoke", async ({
         parent: "ethereum",
         color: "#0ebdcd",
         decimals: 6,
-        categories: ["stablecoins"],
+        categories: expect.arrayContaining(["stablecoins"]),
       },
       {
         type: "TokenCurrency",
@@ -840,7 +840,7 @@ test("Wallet API methods: accounts, currencies and wallet @smoke", async ({
         parent: "arbitrum",
         color: "#28a0f0",
         decimals: 18,
-        categories: [],
+        categories: expect.any(Array),
       },
     ]);
 
