@@ -38,6 +38,8 @@ Before adding or changing a `runs-on` in `.github/workflows/`, read the [ci-runn
 
 Reusable workflows and composite actions are called `@develop`, even from release and hotfix branches whose code is older. Before changing one, read the [ci-workflow-refs](./.agents/skills/ci-workflow-refs/SKILL.md) skill. It also shows how to test such a change before merge.
 
+CI pulls npm and Maven packages through JFrog. Before adding a package install or Gradle build to a CI job, or a Maven repository to an Android build, read [ci-jfrog](./docs/contributing/ci-jfrog.md).
+
 Runner images bake the mise toolchain and the Android AVD. Before changing a version in `mise.toml` or the AVD configuration, read the [runner-images](./.agents/skills/runner-images/SKILL.md) skill.
 
 ## Accounts
