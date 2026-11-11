@@ -96,6 +96,7 @@ export function currencyToWalletAPICurrency(
       parent: currency.parentCurrencyId,
       color: getCryptoCurrencyById(currency.parentCurrencyId).color,
       decimals: currency.units[0].magnitude,
+      ...(currency.categories !== undefined ? { categories: currency.categories } : {}),
     };
   }
 

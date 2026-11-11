@@ -13,6 +13,7 @@ export interface ApiTokenData {
   disableCountervalue?: boolean;
   tokenIdentifier?: string;
   ledgerSignature?: string;
+  categories?: string[];
 }
 
 /**
@@ -36,6 +37,7 @@ export function convertApiToken(apiToken: ApiTokenData): TokenCurrency | undefin
     delisted = false,
     tokenIdentifier,
     ledgerSignature,
+    categories,
   } = apiToken;
 
   const parentCurrencyId = id.split("/")[0];
@@ -62,6 +64,7 @@ export function convertApiToken(apiToken: ApiTokenData): TokenCurrency | undefin
     })),
     ...(ledgerSignature ? { ledgerSignature } : {}),
     ...(tokenIdentifier ? { tokenIdentifier } : {}),
+    ...(categories !== undefined ? { categories } : {}),
   };
 
   return tokenCurrency;
