@@ -163,11 +163,7 @@ export default class SendPage {
 
   @Step("Expect max amount is within range in summary {{{0}}}")
   async expectSummaryMaxAmount(amount: string, tolerance = 0.00005) {
-    const text = await this.summaryAmount.getText();
-    const summaryAmount = Number.parseFloat(text.replaceAll(/[^\d.-]/g, ""));
-    const expected = Number.parseFloat(amount);
-    jestExpect(summaryAmount).toBeGreaterThanOrEqual(expected - tolerance);
-    jestExpect(summaryAmount).toBeLessThanOrEqual(expected + tolerance);
+    await this.summaryAmount.expectAmount(Number.parseFloat(amount), { tolerance });
   }
 
   @Step("Expect recipient in summary {{{0}}}")

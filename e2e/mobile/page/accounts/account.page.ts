@@ -128,7 +128,7 @@ export default class AccountPage {
 
   @Step("Expect operation history to be visible {{{0}}}")
   async expectOperationHistoryVisible(accountId: string) {
-    await this.anyOperationRow.scrollTo(this.accountScreenScrollView, 250);
+    await this.anyOperationRow.scrollTo(this.accountScreenScrollView, { pixels: 250 });
     await this.operationHistorySection(accountId).expectExist();
     await this.anyOperationRow.expectVisible();
   }
@@ -136,7 +136,7 @@ export default class AccountPage {
   @Step("Scroll to operation history")
   async scrollToTransactions() {
     await this.accountScreenScrollView.waitVisible();
-    await this.anyOperationRow.scrollTo(this.accountScreenScrollView, 300);
+    await this.anyOperationRow.scrollTo(this.accountScreenScrollView, { pixels: 300 });
   }
 
   @Step("Expect account balance to be visible {{{0}}}")
@@ -231,7 +231,7 @@ export default class AccountPage {
     let graphId: string | undefined;
     for (let index = 0; index < graphCount; index++) {
       const graph = this.subAccountGraph(index);
-      if (await graph.isVisible(TIMEOUT.xxxsmall)) {
+      if (await graph.isVisibleNow()) {
         graphId = (await graph.getIdentifier()).replace(ACCOUNT_GRAPH_PREFIX, "");
         break;
       }

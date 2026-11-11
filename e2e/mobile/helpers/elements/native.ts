@@ -7,6 +7,7 @@ import type {
   NativeMatcher,
 } from "detox/detox";
 import { PageScroller } from "@e2e/helpers/pageScroller";
+import { expectWithinTolerance } from "@e2e/utils/amountUtils";
 import { retryUntilTimeout } from "@e2e/utils/retry";
 import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
 import type { ElementHandle } from "./elementHandle";
@@ -29,16 +30,42 @@ type WaitUnlessErrorOptions = {
   state: "visible" | "present";
 };
 
+type ScrollOptions = {
+  /** Scroll step, 300 by default. */
+  pixels?: number;
+  /** Where the content moves into view from: "down" (the default) reveals what is below. */
+  direction?: Direction;
+};
+
 type ExpectTextOptions = {
   /** Any run of whitespace, non-breaking spaces included, counts as one space; zero-width spaces and edges are dropped. */
   normaliseWhitespace?: boolean;
   /** The element's text contains `text` instead of being equal to it. */
   containing?: boolean;
+  /** Letter case is ignored, e.g. a checksummed EVM address against a lowercase fixture. */
+  ignoreCase?: boolean;
+};
+
+type CountOptions = {
+  /**
+   * Counts only the matches visible once the app is idle, from the first until one is hidden:
+   * rows further down a list stay mounted off screen.
+   */
+  visibleOnly?: boolean;
+};
+
+type ExpectAmountOptions = {
+  /** How far the amount may be from the expected one, either way. 0 by default: equal. */
+  tolerance?: number;
 };
 
 /** Applies the options that change the text itself, to the actual and the expected text alike. */
-const prepareText = (value: string, { normaliseWhitespace }: ExpectTextOptions) =>
-  normaliseWhitespace ? value.replaceAll(/\s+/g, " ").replaceAll("\u200B", "").trim() : value;
+const prepareText = (value: string, { normaliseWhitespace, ignoreCase }: ExpectTextOptions) => {
+  const preppedValue = normaliseWhitespace
+    ? value.replaceAll(/\s+/g, " ").replaceAll("\u200B", "").trim()
+    : value;
+  return ignoreCase ? preppedValue.toLowerCase() : preppedValue;
+};
 
 /** Compares an element's text as the options say: equal by default, or containing. */
 const compareText = (actual: string, expected: string, options: ExpectTextOptions) => {
@@ -222,10 +249,32 @@ export class NativeHandle implements ElementHandle {
   }
 
   /**
+   * Returns whether the element is visible once the app is idle, like {@link expectVisible} but
+   * without throwing: to pick the on-screen match among several. Unlike {@link isVisible}, a screen
+   * still settling is waited for, not reported as hidden. A hung app still throws.
+   */
+  async isVisibleNow(): Promise<boolean> {
+    try {
+      await this.expectVisible();
+      return true;
+    } catch (error) {
+      if (isHardTimeout(error)) throw error;
+      return false;
+    }
+  }
+
+  /**
    * Returns how many elements match, 0 when none, e.g. the rows of a list. It ignores the handle's
    * index and does not wait. A hung app still throws.
    */
-  async count(): Promise<number> {
+  async count(options: CountOptions = {}): Promise<number> {
+    if (options.visibleOnly) {
+      let visibleCount = 0;
+      while (await this.atIndex(visibleCount).isVisibleNow()) {
+        visibleCount++;
+      }
+      return visibleCount;
+    }
     try {
       const attributes = await withHardTimeout(element(this.createMatcher()).getAttributes());
       return "elements" in attributes ? attributes.elements.length : 1;
@@ -233,6 +282,20 @@ export class NativeHandle implements ElementHandle {
       if (isHardTimeout(error)) throw error;
       return 0;
     }
+  }
+
+  /** The same match strategy at another match index. */
+  private atIndex(index: number): NativeHandle {
+    return new NativeHandle({
+      createMatcher: this.createMatcher,
+      description: `${this.description}[${index}]`,
+      index,
+    });
+  }
+
+  /** Asserts how many elements match now, e.g. the rows of a list. Like {@link count}, it does not wait. */
+  async expectCount(expected: number): Promise<void> {
+    jestExpect(await this.count()).toBe(expected);
   }
 
   /** Returns whether the element is in the view hierarchy within `timeout`. A hung app still throws. */
@@ -250,12 +313,19 @@ export class NativeHandle implements ElementHandle {
   }
 
   /**
-   * Scrolls `container` (default: the first scroll view on screen) by `pixels` per step until the
-   * element is visible. Both resolve to the same match index as every other method of their handle.
+   * Scrolls `container` (default: the first scroll view on screen) until the element is visible,
+   * starting in `direction` and turning back at the end. Both resolve to the same match index as
+   * every other method of their handle.
    */
-  async scrollTo(container?: NativeHandle, pixels?: number): Promise<void> {
+  async scrollTo(container?: NativeHandle, options: ScrollOptions = {}): Promise<void> {
+    const { pixels, direction } = options;
     try {
-      await scroller.performScroll(() => this.raw, container && (() => container.raw), pixels);
+      await scroller.performScroll(
+        () => this.raw,
+        container && (() => container.raw),
+        pixels,
+        direction,
+      );
     } catch (error) {
       const details = error instanceof Error ? error.message : String(error);
       const scrollView = container?.description ?? "the first scroll view";
@@ -271,9 +341,17 @@ export class NativeHandle implements ElementHandle {
    * footer can still take the tap (Android reports it visible anyway). Use before a tap; `scrollTo`
    * stays right for assertions.
    */
-  async revealForTap(container?: NativeHandle): Promise<void> {
-    await this.scrollTo(container);
-    await scroller.scrollByPixels(container && (() => container.raw), EDGE_CLEARANCE_PIXELS);
+  async revealForTap(
+    container?: NativeHandle,
+    options: Pick<ScrollOptions, "direction"> = {},
+  ): Promise<void> {
+    const { direction = "down" } = options;
+    await this.scrollTo(container, { direction });
+    await scroller.scrollByPixels(
+      container && (() => container.raw),
+      EDGE_CLEARANCE_PIXELS,
+      direction,
+    );
   }
 
   /** Waits for visibility, then swipes on the element, e.g. down on a bottom sheet to close it. */
@@ -338,9 +416,24 @@ export class NativeHandle implements ElementHandle {
     compareText(String(accessibilityValue ?? ""), text, options);
   }
 
-  /** Waits for visibility, then asserts the element's text contains `text`. */
-  async expectTextContaining(text: string, timeout = TIMEOUT.xxlarge): Promise<void> {
-    jestExpect(await this.getText(timeout)).toContain(text);
+  /**
+   * Waits for visibility, then asserts the accessibility label, for an element whose value is only
+   * in its label (e.g. a balance hidden behind discreet mode). Compares like {@link expectText} with
+   * options.
+   */
+  async expectLabel(text: string, options: ExpectTextOptions = {}): Promise<void> {
+    compareText(await this.getLabel(), text, options);
+  }
+
+  /**
+   * Waits for visibility, reads the number in the element's text (a ticker or grouping commas are
+   * dropped), then asserts it is within `tolerance` of `expected`, e.g. a max amount whose fee can
+   * move between two steps.
+   */
+  async expectAmount(expected: number, options: ExpectAmountOptions = {}): Promise<void> {
+    const { tolerance = 0 } = options;
+    const amount = Number.parseFloat((await this.getText()).replaceAll(/[^\d.-]/g, ""));
+    expectWithinTolerance({ actual: amount, expected, tolerance });
   }
 
   /** Waits for visibility, then asserts the element's text matches `pattern`. */

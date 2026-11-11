@@ -3,6 +3,7 @@ import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { getMinimumSwapAmount } from "@ledgerhq/live-e2e-shared/swap";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { retryUntilTimeout } from "@e2e/utils/retry";
+import { expectWithinTolerance } from "@e2e/utils/amountUtils";
 import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
 import { floatNumberRegex } from "@ledgerhq/live-e2e-shared/data/regexes";
 import {
@@ -350,9 +351,11 @@ export default class SwapLiveAppPage {
 
       const firstQuote = quotes[0];
       const bestNetValue = Math.max(...quotes.map(quoteNetValue));
-      jestExpect(bestNetValue - quoteNetValue(firstQuote)).toBeLessThanOrEqual(
-        NET_ROUNDING_TOLERANCE,
-      );
+      expectWithinTolerance({
+        actual: quoteNetValue(firstQuote),
+        expected: bestNetValue,
+        tolerance: NET_ROUNDING_TOLERANCE,
+      });
     });
   }
 
