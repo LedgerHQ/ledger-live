@@ -1,6 +1,8 @@
 import { Step } from "jest-allure2-reporter/api";
-import { delay, normalizeText, parseTickerAmount } from "@e2e/helpers/commonHelpers";
-import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
+import { parseTickerAmount } from "@e2e/helpers/commonHelpers";
+import { byId, byIdWithDescendantText, type NativeHandle } from "@e2e/helpers/elements/native";
+import { TIMEOUT } from "@e2e/utils/timeouts";
+import { expectWithinTolerance } from "@e2e/utils/amountUtils";
 
 type HoldingAddressExpectation = {
   accountId: string;
@@ -14,215 +16,182 @@ const displayRoundingTolerance = (text: string) => {
   return 0.5 * 10 ** -decimals;
 };
 
-const OPERATION_DETAILS_OPEN_TIMEOUT = TIMEOUT.small;
+const OPERATIONS_LIST_ITEM_ID = "operations-list-item";
 
 export default class AssetDetailPage {
-  screenId = "asset-detail-screen";
-  coinCapsuleId = "asset-detail-coin-capsule";
-  coinCapsuleIconId = (ticker: string) => `asset-detail-coin-capsule-icon-${ticker}`;
-  scrollViewId = /^asset-detail-scroll-view-.*/;
-  marketPriceId = "asset-detail-market-price";
-  marketVariationId = "asset-detail-market-variation";
-  totalBalanceId = "asset-detail-total-balance";
-  totalBalanceCryptoId = "asset-detail-total-balance-crypto";
-  addAccountId = "asset-detail-add-account";
-  coinOptionsTrailingId = "asset-detail-coin-options-trailing";
-  coinOptionsFavouriteRowId = "asset-detail-coin-options-favourite-row";
-  coinOptionsAddFavouriteRowId = "asset-detail-coin-options-favourite-row-add";
-  addressesId = "asset-detail-addresses";
-  addressesHeaderId = "asset-detail-addresses-header";
-  transactionsId = "asset-detail-transactions";
-  operationsListItemId = "operations-list-item";
-  transactionsHeaderId = "asset-detail-transactions-header";
-  operationDetailsTitleId = "operationDetails-title";
+  // The testID ends with the currency id (`asset-detail-scroll-view-<currencyId>`).
+  private readonly anyScrollView = byId(/^asset-detail-scroll-view-.*/);
+  private readonly coinCapsuleIcon = (ticker: string) =>
+    byId(`asset-detail-coin-capsule-icon-${ticker}`);
+  private readonly marketPrice = byId("asset-detail-market-price");
+  private readonly marketVariation = byId("asset-detail-market-variation");
+  private readonly totalBalance = byId("asset-detail-total-balance");
+  private readonly totalBalanceCrypto = byId("asset-detail-total-balance-crypto");
+  private readonly addAccount = byId("asset-detail-add-account");
+  private readonly coinOptionsTrailing = byId("asset-detail-coin-options-trailing");
+  private readonly coinOptionsFavouriteRow = byId("asset-detail-coin-options-favourite-row");
+  private readonly coinOptionsAddFavouriteRow = byId("asset-detail-coin-options-favourite-row-add");
+  private readonly addressesHeader = byId("asset-detail-addresses-header");
+  private readonly transactionsHeader = byId("asset-detail-transactions-header");
+  private readonly operationDetailsTitle = byId("operationDetails-title");
+  private readonly operationsListItem = (index = 0) => byId(OPERATIONS_LIST_ITEM_ID, index);
+  private readonly operationByTicker = (ticker: string) =>
+    byIdWithDescendantText({ id: OPERATIONS_LIST_ITEM_ID, text: ticker });
+  private readonly addressItemNameAt = (index: number) =>
+    byId(/asset-detail-address-item-name-.*/, index);
+  private readonly addressItemName = (accountId: string) =>
+    byId(`asset-detail-address-item-name-${accountId}`);
+  private readonly addressItemAddress = (accountId: string) =>
+    byId(`asset-detail-address-item-address-${accountId}`);
+  private readonly addressItemCounterValue = (accountId: string) =>
+    byId(`asset-detail-address-item-countervalue-${accountId}`);
+  private readonly addressItemBalance = (accountId: string) =>
+    byId(`asset-detail-address-item-balance-${accountId}`);
 
-  addressItemNameId = (accountId: string) => `asset-detail-address-item-name-${accountId}`;
-  addressItemAddressId = (accountId: string) => `asset-detail-address-item-address-${accountId}`;
-  addressItemCounterValueId = (accountId: string) =>
-    `asset-detail-address-item-countervalue-${accountId}`;
-  addressItemBalanceId = (accountId: string) => `asset-detail-address-item-balance-${accountId}`;
-  operationByTicker = (ticker: string) =>
-    getElementByIdWithDescendantTexts(this.operationsListItemId, ticker);
-
-  // The Asset Detail ScrollView testID is dynamic (`asset-detail-scroll-view-<currencyId>`).
-  // A regex matcher works for visibility waits but not as a scroll container for Detox
-  // scroll actions, so resolve the concrete id before every scroll.
-  private async getScrollViewId(): Promise<string> {
-    await waitForElementById(this.scrollViewId);
-    return getIdByRegexp(this.scrollViewId);
+  /** Detox cannot scroll a container matched by a regex, so resolve its full testID first. */
+  private async scrollView(): Promise<NativeHandle> {
+    return byId(await this.anyScrollView.getIdentifier());
   }
 
   private async scrollToTransactions() {
-    const scrollViewId = await this.getScrollViewId();
-    await scrollToId(this.transactionsHeaderId, scrollViewId, 500, "down");
+    await this.transactionsHeader.scrollTo(await this.scrollView(), { pixels: 500 });
   }
 
+  /**
+   * Scrolls until the header is 75% visible, the same threshold as the assertion, so it settles
+   * clear of the sticky Buy/Swap footer without overshooting into the top nav.
+   */
   private async scrollToAddressesSection() {
-    const scrollViewId = await this.getScrollViewId();
-    // Scroll until the header is at least 75% visible, matching the assertion below.
-    // Using the default visibility threshold (instead of a lenient locate + fixed slack)
-    // lets performScroll settle the header clear of the sticky Buy/Swap footer
-    // (absolutely positioned, ~CTAS_HEIGHT tall) without overshooting into the top nav.
-    await scrollToId(this.addressesHeaderId, scrollViewId, 300, "down");
-    await detoxExpect(getElementById(this.addressesHeaderId)).toBeVisible();
-  }
-
-  private async tapTransactionUntilOperationDetailsOpen() {
-    for (let attempt = 0; attempt < 3; attempt++) {
-      await tapById(this.operationsListItemId, 0);
-      if (await IsIdVisible(this.operationDetailsTitleId, OPERATION_DETAILS_OPEN_TIMEOUT)) return;
-      await delay(INTERVAL.short);
-    }
-    throw new Error("Operation details did not open after tapping the transaction");
+    await this.addressesHeader.scrollTo(await this.scrollView());
+    await this.addressesHeader.expectVisible();
   }
 
   private async scrollToAddressItem(accountId: string) {
     await this.scrollToAddressesSection();
-    const scrollViewId = await this.getScrollViewId();
-    await scrollToId(this.addressItemNameId(accountId), scrollViewId);
-    await detoxExpect(getElementById(this.addressItemNameId(accountId))).toBeVisible();
+    await this.addressItemName(accountId).scrollTo(await this.scrollView());
+    await this.addressItemName(accountId).expectVisible();
   }
 
   private async openCoinOptions() {
-    if (await IsIdVisible(this.coinOptionsFavouriteRowId, TIMEOUT.xxxsmall)) {
+    if (await this.coinOptionsFavouriteRow.isVisible(TIMEOUT.xxxsmall)) {
       return;
     }
-
-    await waitForElementById(this.coinOptionsTrailingId);
-    await tapById(this.coinOptionsTrailingId);
-    await detoxExpect(getElementById(this.coinOptionsFavouriteRowId)).toBeVisible();
+    await this.coinOptionsTrailing.tap();
+    await this.coinOptionsFavouriteRow.expectVisible();
   }
 
-  private async tapFavouriteRow(expectedStateId: string) {
-    await detoxExpect(getElementById(expectedStateId)).toBeVisible();
-    await tapByIdAndExpectToDisappear(this.coinOptionsFavouriteRowId);
+  private async tapFavouriteRow(expectedState: NativeHandle) {
+    await expectedState.expectVisible();
+    await this.coinOptionsFavouriteRow.tap();
+    await this.coinOptionsFavouriteRow.waitNotVisible();
   }
 
   @Step("Expect Asset Detail page for ticker {{{0}}}")
   async expectAssetDetailPageForTicker(ticker: string) {
-    const scrollViewId = await this.getScrollViewId();
-    await scrollToId(this.marketPriceId, scrollViewId, undefined, "up");
-    await waitForElementById(this.marketPriceId);
-    await waitForElementById(this.coinOptionsTrailingId);
-    await detoxExpect(getElementById(this.coinCapsuleIconId(ticker))).toBeVisible();
+    await this.marketPrice.scrollTo(await this.scrollView(), { direction: "up" });
+    await this.coinOptionsTrailing.waitVisible();
+    await this.coinCapsuleIcon(ticker).expectVisible();
   }
 
   @Step("Expect Asset Detail page")
   async expectAssetDetailPageVisible() {
-    await waitForElementById(this.scrollViewId);
-    await waitForElementById(this.marketPriceId);
-    await waitForElementById(this.coinOptionsTrailingId);
-    await detoxExpect(getElementById(this.scrollViewId)).toBeVisible();
+    await this.anyScrollView.waitVisible();
+    await this.marketPrice.waitVisible();
+    await this.coinOptionsTrailing.waitVisible();
+    await this.anyScrollView.expectVisible();
   }
 
   @Step("Check if Asset Detail page is visible")
   async isAssetDetailPageVisible(timeout = TIMEOUT.xxsmall) {
-    return await IsIdVisible(this.scrollViewId, timeout);
+    return await this.anyScrollView.isVisible(timeout);
   }
 
   @Step("Check if Asset Detail page for ticker is visible {{{0}}}")
   async isAssetDetailPageForTickerVisible(ticker: string, timeout = TIMEOUT.xxsmall) {
     return (
-      (await IsIdVisible(this.scrollViewId, timeout)) &&
-      (await IsIdVisible(this.coinCapsuleIconId(ticker), timeout))
+      (await this.anyScrollView.isVisible(timeout)) &&
+      (await this.coinCapsuleIcon(ticker).isVisible(timeout))
     );
   }
 
   @Step("Expect Asset Detail market data")
   async expectMarketDataVisible() {
-    const scrollViewId = await this.getScrollViewId();
-    await scrollToId(this.marketPriceId, scrollViewId, undefined, "up");
-    await waitForElementById(this.marketPriceId);
-    await detoxExpect(getElementById(this.marketPriceId)).toBeVisible();
-    await detoxExpect(getElementById(this.marketVariationId)).toBeVisible();
+    await this.marketPrice.scrollTo(await this.scrollView(), { direction: "up" });
+    await this.marketPrice.expectVisible();
+    await this.marketVariation.expectVisible();
   }
 
   @Step("Expect Asset Detail total crypto balance for ticker {{{0}}}")
   async expectTotalBalanceCryptoForTicker(ticker: string) {
-    const scrollViewId = await this.getScrollViewId();
-    await scrollToId(this.totalBalanceId, scrollViewId);
-    await detoxExpect(getElementById(this.totalBalanceCryptoId)).toBeVisible();
-    jestExpect(
-      parseTickerAmount(await getTextOfElement(this.totalBalanceCryptoId), ticker),
-    ).toBeGreaterThan(0);
+    await this.totalBalance.scrollTo(await this.scrollView());
+    await this.totalBalanceCrypto.expectVisible();
+    jestExpect(parseTickerAmount(await this.totalBalanceCrypto.getText(), ticker)).toBeGreaterThan(
+      0,
+    );
   }
 
   @Step("Expect Asset Detail balance, addresses and transaction sections")
   async expectPortfolioSectionsVisible() {
-    const scrollViewId = await this.getScrollViewId();
-    await scrollToId(this.totalBalanceId, scrollViewId);
-    await detoxExpect(getElementById(this.totalBalanceId)).toBeVisible();
+    await this.totalBalance.scrollTo(await this.scrollView());
+    await this.totalBalance.expectVisible();
     await this.scrollToAddressesSection();
-    await detoxExpect(getElementById(this.addAccountId)).toBeVisible();
+    await this.addAccount.expectVisible();
     await this.scrollToTransactions();
-    await detoxExpect(getElementById(this.transactionsHeaderId)).toBeVisible();
+    await this.transactionsHeader.expectVisible();
   }
 
   @Step("Expect holding address details for {{{0.length}}} addresses")
   async expectHoldingAddressDetails(expectedAddresses: HoldingAddressExpectation[]) {
-    for (const expectedAddress of expectedAddresses) {
-      await this.scrollToAddressItem(expectedAddress.accountId);
-      jestExpect(await getTextOfElement(this.addressItemNameId(expectedAddress.accountId))).toBe(
-        expectedAddress.name,
-      );
-      if (expectedAddress.addressFragment) {
-        const addressLabel = await getTextOfElement(
-          this.addressItemAddressId(expectedAddress.accountId),
-        );
-        jestExpect(addressLabel.toLowerCase()).toContain(
-          expectedAddress.addressFragment.toLowerCase(),
-        );
+    for (const { accountId, name, addressFragment } of expectedAddresses) {
+      await this.scrollToAddressItem(accountId);
+      await this.addressItemName(accountId).expectText(name);
+      if (addressFragment) {
+        await this.addressItemAddress(accountId).expectText(addressFragment, {
+          containing: true,
+          ignoreCase: true,
+        });
       }
-      const counterValue = normalizeText(
-        await getTextOfElement(this.addressItemCounterValueId(expectedAddress.accountId)),
-      );
-      jestExpect(counterValue).toMatch(/\d/);
-      await detoxExpect(
-        getElementById(this.addressItemBalanceId(expectedAddress.accountId)),
-      ).toBeVisible();
+      await this.addressItemCounterValue(accountId).expectTextMatching(/\d/);
+      await this.addressItemBalance(accountId).expectVisible();
     }
   }
 
   @Step("Expect holding address balances to add up to total {{{1}}}")
   async expectHoldingAddressBalancesSumToTotal(accountIds: string[], ticker: string) {
-    const scrollViewId = await this.getScrollViewId();
-    await scrollToId(this.totalBalanceId, scrollViewId);
-    const totalText = await getTextOfElement(this.totalBalanceCryptoId);
+    await this.totalBalance.scrollTo(await this.scrollView());
+    const totalText = await this.totalBalanceCrypto.getText();
     const totalBalance = parseTickerAmount(totalText, ticker);
 
     let holdingBalance = 0;
     let tolerance = displayRoundingTolerance(totalText);
     for (const accountId of accountIds) {
       await this.scrollToAddressItem(accountId);
-      const balanceText = await getTextOfElement(this.addressItemBalanceId(accountId));
+      const balanceText = await this.addressItemBalance(accountId).getText();
       const accountBalance = parseTickerAmount(balanceText, ticker);
       jestExpect(accountBalance).toBeGreaterThan(0);
       holdingBalance += accountBalance;
       tolerance += displayRoundingTolerance(balanceText);
     }
 
-    jestExpect(Math.abs(holdingBalance - totalBalance)).toBeLessThanOrEqual(tolerance);
+    expectWithinTolerance(holdingBalance, { expected: totalBalance, tolerance });
     return { holdingBalance, totalBalance };
   }
 
   @Step("Open holding address {{{0}}}")
   async openHoldingAddress(accountId: string) {
-    const scrollViewId = await this.getScrollViewId();
-    await revealForTap(this.addressItemNameId(accountId), { container: scrollViewId });
-    await tapById(this.addressItemNameId(accountId));
+    await this.addressItemName(accountId).revealForTap(await this.scrollView());
+    await this.addressItemName(accountId).tap();
   }
 
   @Step("Get visible Asset Detail transaction count for ticker {{{0}}}")
   async getVisibleTransactionCountForTicker(ticker: string) {
     await this.scrollToTransactions();
-    const scrollViewId = await this.getScrollViewId();
-    await scrollToId(this.operationsListItemId, scrollViewId, 300, "down");
-    const visibleOperationsCount = await countElementsById(this.operationsListItemId);
+    await this.operationsListItem().scrollTo(await this.scrollView());
+    const visibleOperationsCount = await this.operationsListItem().count();
     jestExpect(visibleOperationsCount).toBeGreaterThan(0);
 
     for (let index = 0; index < visibleOperationsCount; index++) {
-      const operationLabel = await getLabelOfElement(this.operationsListItemId, index);
-      jestExpect(operationLabel).toContain(ticker);
+      await this.operationsListItem(index).expectLabel(ticker, { containing: true });
     }
 
     return visibleOperationsCount;
@@ -231,17 +200,16 @@ export default class AssetDetailPage {
   @Step("Open first Asset Detail transaction {{{0}}}")
   async openFirstTransaction(ticker: string) {
     await this.scrollToTransactions();
-    const scrollViewId = await this.getScrollViewId();
-    await revealForTap(this.operationsListItemId, { container: scrollViewId });
-    await detoxExpect(this.operationByTicker(ticker).atIndex(0)).toBeVisible();
-    await this.tapTransactionUntilOperationDetailsOpen();
+    await this.operationsListItem().revealForTap(await this.scrollView());
+    await this.operationByTicker(ticker).expectVisible();
+    await this.operationsListItem().tap();
+    await this.operationDetailsTitle.waitVisible();
   }
 
   @Step("Open Asset Detail transactions history")
   async openTransactionsHistory() {
-    const scrollViewId = await this.getScrollViewId();
-    await revealForTap(this.transactionsHeaderId, { container: scrollViewId });
-    await tapById(this.transactionsHeaderId);
+    await this.transactionsHeader.revealForTap(await this.scrollView());
+    await this.transactionsHeader.tap();
   }
 
   @Step("Scroll to addresses section header")
@@ -251,12 +219,12 @@ export default class AssetDetailPage {
 
   @Step("Get address item name at index {{{0}}}")
   async getAddressItemName(index = 0) {
-    return await getTextOfElement(/asset-detail-address-item-name-.*/, index);
+    return await this.addressItemNameAt(index).getText();
   }
 
   @Step("Add asset to favorites from Asset Detail")
   async addToFavorites() {
     await this.openCoinOptions();
-    await this.tapFavouriteRow(this.coinOptionsAddFavouriteRowId);
+    await this.tapFavouriteRow(this.coinOptionsAddFavouriteRow);
   }
 }
