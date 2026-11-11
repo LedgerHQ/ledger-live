@@ -454,6 +454,26 @@ jobs:
           done
           PROBE
           bash "$RUNNER_TEMP/probe.sh" > "$D/runner-curl-before.txt" 2>&1
+          { echo "== resolvectl status"; resolvectl status; } >> "$D/runner-dns.txt" 2>&1
+          cat > "$RUNNER_TEMP/emu-probe.sh" <<'EMU'
+          # Timed DNS lookups (toybox host) and DNS + TCP connects through Android's resolver (toybox nc),
+          # from inside the emulator; times from /proc/uptime (10 ms).
+          now() { cut -d' ' -f1 /proc/uptime; }
+          echo "toybox: $(toybox --version 2>&1)"
+          for c in host nc ping awk; do echo "$c: $(command -v $c 2>&1 || echo missing)"; done
+          for i in 1 2 3 4 5; do
+            for h in firebaseinstallations.googleapis.com firebaseremoteconfig.googleapis.com countervalues.live.ledger.com www.google.com; do
+              t0=$(now); out=$(toybox host "$h" 2>&1 | tr '\n' ' ' | cut -c1-160); t1=$(now)
+              echo "$i host $h $t0 $t1 :: $out"
+              t0=$(now); toybox nc -q 0 -w 5 "$h" 443 < /dev/null > /dev/null 2>&1; rc=$?; t1=$(now)
+              echo "$i nc443 $h $t0 $t1 rc=$rc"
+            done
+          done
+          EMU
+          for s in emulator-5554 emulator-5556; do
+            adb -s "$s" push "$RUNNER_TEMP/emu-probe.sh" /data/local/tmp/emu-probe.sh > /dev/null
+            adb -s "$s" shell sh /data/local/tmp/emu-probe.sh > "$D/emu-probe-before-$s.txt" 2>&1
+          done
           for s in emulator-5554 emulator-5556; do
             adb -s "$s" logcat -G 16M
             adb -s "$s" logcat -c
@@ -491,6 +511,9 @@ jobs:
             adb -s "$s" logcat -d -v threadtime -b main,system,events,crash > "$D/logcat-$s.txt" 2>&1
             adb -s "$s" shell dumpsys dnsresolver > "$D/dnsresolver-after-$s.txt" 2>&1
             adb -s "$s" shell getprop | grep -i -E 'dns|net\.' > "$D/props-$s.txt" 2>&1
+          done
+          for s in emulator-5554 emulator-5556; do
+            adb -s "$s" shell sh /data/local/tmp/emu-probe.sh > "$D/emu-probe-after-$s.txt" 2>&1
           done
           bash "$RUNNER_TEMP/probe.sh" > "$D/runner-curl-after.txt" 2>&1
 
