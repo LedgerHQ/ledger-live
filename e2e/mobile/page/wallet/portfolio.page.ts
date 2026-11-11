@@ -46,7 +46,7 @@ export default class PortfolioPage {
   private readonly cryptoAddressesAddAccountCta = byId("crypto-addresses-add-account-cta");
   private readonly cryptoAddressesButton = byId("crypto-addresses-button");
   private readonly cryptoAddressesList = byId("CryptoAddressesList");
-  private readonly accountItemName = (index = 0) => byId(/account-item-.*-name/, index);
+  private readonly accountItemName = byId(/account-item-.*-name/);
   private readonly marketBannerList = byId("market-banner-list");
   private readonly marketBannerViewAll = byId("market-banner-view-all");
   private readonly marketBannerTitle = byId("market-banner-title");
@@ -186,13 +186,8 @@ export default class PortfolioPage {
 
   @Step("Count Accounts")
   async countAccounts() {
-    await this.accountItemName().scrollTo(this.cryptoAddressesList);
-    // Counts the rows on screen, from the first one: later rows stay mounted off screen.
-    let visibleAccounts = 0;
-    while (await this.accountItemName(visibleAccounts).isVisibleNow()) {
-      visibleAccounts++;
-    }
-    return visibleAccounts;
+    await this.accountItemName.scrollTo(this.cryptoAddressesList);
+    return await this.accountItemName.count({ visibleOnly: true });
   }
 
   @Step("Expect at least one account")
@@ -267,19 +262,19 @@ export default class PortfolioPage {
   @Step("Check quick action transfer button visibility")
   async checkQuickActionTransferButtonVisibility() {
     await this.ensureHeroVisible(this.quickActionTransferButton);
-    await this.quickActionTransferButton.waitVisible();
+    await this.quickActionTransferButton.expectVisible();
   }
 
   @Step("Check quick action swap button visibility")
   async checkQuickActionSwapButtonVisibility() {
     await this.ensureHeroVisible(this.quickActionSwapButton);
-    await this.quickActionSwapButton.waitVisible();
+    await this.quickActionSwapButton.expectVisible();
   }
 
   @Step("Check quick action buy button visibility")
   async checkQuickActionBuyButtonVisibility() {
     await this.ensureHeroVisible(this.quickActionBuyButton);
-    await this.quickActionBuyButton.waitVisible();
+    await this.quickActionBuyButton.expectVisible();
   }
 
   private async waitForQuickActionsSettled() {
@@ -322,12 +317,12 @@ export default class PortfolioPage {
 
   @Step("Expect the Connect quick action to be visible")
   async expectConnectQuickActionVisible() {
-    await this.connectButton.waitVisible();
+    await this.connectButton.expectVisible();
   }
 
   @Step("Expect the Buy a Ledger quick action to be visible")
   async expectBuyLedgerQuickActionVisible() {
-    await this.quickActionBuyLedgerButton.waitVisible();
+    await this.quickActionBuyLedgerButton.expectVisible();
   }
 
   @Step("Expect the Transfer, Send, Swap and Buy quick actions not to be visible")
@@ -346,19 +341,19 @@ export default class PortfolioPage {
   @Step("Check no balance title visibility")
   async checkNoBalanceTitleVisibility() {
     await this.ensureHeroVisible(this.balanceNoAccount);
-    await this.balanceNoAccount.waitVisible();
+    await this.balanceNoAccount.expectVisible();
   }
 
   @Step("Check normal balance title visibility")
   async checkNormalBalanceTitleVisibility() {
     await this.ensureHeroVisible(this.balanceNormal);
-    await this.balanceNormal.waitVisible();
+    await this.balanceNormal.expectVisible();
   }
 
   @Step("Check portfolio balance analytics pill visibility")
   async checkPortfolioBalanceAnalyticsPillVisibility() {
     await this.ensureHeroVisible(this.balanceAnalyticsPill);
-    await this.balanceAnalyticsPill.waitVisible();
+    await this.balanceAnalyticsPill.expectVisible();
   }
 
   @Step("Tap on portfolio balance analytics pill")
@@ -471,15 +466,11 @@ export default class PortfolioPage {
     await this.assetItem(currencyName).expectExist();
   }
 
-  private async scrollToAssetRow(currencyName: string, options: AssetRowOptions) {
+  @Step("Check aggregated asset row {{{0}}} is visible")
+  async checkAggregatedAssetRowVisible(currencyName: string, options: AssetRowOptions = {}) {
     if (options.inStablecoinList) {
       await this.assetItem(currencyName).scrollTo(this.stablecoinList);
     }
-  }
-
-  @Step("Check aggregated asset row {{{0}}} is visible")
-  async checkAggregatedAssetRowVisible(currencyName: string, options: AssetRowOptions = {}) {
-    await this.scrollToAssetRow(currencyName, options);
     await this.assetItem(currencyName).expectVisible();
   }
 
@@ -488,15 +479,19 @@ export default class PortfolioPage {
     return await this.assetItemExact(currencyName).count();
   }
 
-  @Step("Check asset countervalue {{{0}}} is visible")
+  @Step("Check asset counter value {{{0}}} is visible")
   async checkAssetCountervalueVisible(currencyName: string, options: AssetRowOptions = {}) {
-    await this.scrollToAssetRow(currencyName, options);
+    if (options.inStablecoinList) {
+      await this.assetItem(currencyName).scrollTo(this.stablecoinList);
+    }
     await this.assetItemCountervalue(currencyName).expectVisible();
   }
 
   @Step("Open Wallet 4.0 asset detail {{{0}}}")
   async openAssetDetailW40(currencyName: string, options: AssetRowOptions = {}) {
-    await this.scrollToAssetRow(currencyName, options);
+    if (options.inStablecoinList) {
+      await this.assetItem(currencyName).scrollTo(this.stablecoinList);
+    }
     await this.assetItem(currencyName).expectVisible();
     await this.assetItem(currencyName).tap();
   }

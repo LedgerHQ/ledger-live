@@ -46,6 +46,14 @@ type ExpectTextOptions = {
   ignoreCase?: boolean;
 };
 
+type CountOptions = {
+  /**
+   * Counts only the matches visible once the app is idle, from the first until one is hidden:
+   * rows further down a list stay mounted off screen.
+   */
+  visibleOnly?: boolean;
+};
+
 type ExpectAmountOptions = {
   /** How far the amount may be from the expected one, either way. 0 by default: equal. */
   tolerance?: number;
@@ -53,10 +61,10 @@ type ExpectAmountOptions = {
 
 /** Applies the options that change the text itself, to the actual and the expected text alike. */
 const prepareText = (value: string, { normaliseWhitespace, ignoreCase }: ExpectTextOptions) => {
-  const spaced = normaliseWhitespace
+  const preppedValue = normaliseWhitespace
     ? value.replaceAll(/\s+/g, " ").replaceAll("\u200B", "").trim()
     : value;
-  return ignoreCase ? spaced.toLowerCase() : spaced;
+  return ignoreCase ? preppedValue.toLowerCase() : preppedValue;
 };
 
 /** Compares an element's text as the options say: equal by default, or containing. */
@@ -259,7 +267,14 @@ export class NativeHandle implements ElementHandle {
    * Returns how many elements match, 0 when none, e.g. the rows of a list. It ignores the handle's
    * index and does not wait. A hung app still throws.
    */
-  async count(): Promise<number> {
+  async count(options: CountOptions = {}): Promise<number> {
+    if (options.visibleOnly) {
+      let visibleCount = 0;
+      while (await this.atIndex(visibleCount).isVisibleNow()) {
+        visibleCount++;
+      }
+      return visibleCount;
+    }
     try {
       const attributes = await withHardTimeout(element(this.createMatcher()).getAttributes());
       return "elements" in attributes ? attributes.elements.length : 1;
@@ -267,6 +282,15 @@ export class NativeHandle implements ElementHandle {
       if (isHardTimeout(error)) throw error;
       return 0;
     }
+  }
+
+  /** The same match strategy at another match index. */
+  private atIndex(index: number): NativeHandle {
+    return new NativeHandle({
+      createMatcher: this.createMatcher,
+      description: `${this.description}[${index}]`,
+      index,
+    });
   }
 
   /** Asserts how many elements match now, e.g. the rows of a list. Like {@link count}, it does not wait. */

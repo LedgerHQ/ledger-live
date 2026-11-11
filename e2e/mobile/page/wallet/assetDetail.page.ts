@@ -191,15 +191,11 @@ export default class AssetDetailPage {
   async getVisibleTransactionCountForTicker(ticker: string) {
     await this.scrollToTransactions();
     await this.operationsListItem().scrollTo(await this.scrollView());
-    // Counts the rows on screen, from the first one: later rows stay mounted off screen.
-    let visibleOperationsCount = 0;
-    while (await this.operationsListItem(visibleOperationsCount).isVisibleNow()) {
-      await this.operationsListItem(visibleOperationsCount).expectLabel(ticker, {
-        containing: true,
-      });
-      visibleOperationsCount++;
-    }
+    const visibleOperationsCount = await this.operationsListItem().count({ visibleOnly: true });
     jestExpect(visibleOperationsCount).toBeGreaterThan(0);
+    for (let index = 0; index < visibleOperationsCount; index++) {
+      await this.operationsListItem(index).expectLabel(ticker, { containing: true });
+    }
 
     return visibleOperationsCount;
   }
