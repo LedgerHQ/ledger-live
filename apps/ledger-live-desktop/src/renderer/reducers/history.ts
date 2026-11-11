@@ -1,5 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { createSelector } from "reselect";
+import { selectDustFilteringEnabled } from "@features/platform-feature-flags";
 import { selectFeature } from "@shared/feature-flags";
 import {
   getAddressPoisoningFamiliesForFilter,
@@ -46,7 +47,7 @@ export const lastSeenOperationDateSelector = (state: Pick<State, "history">): st
   state.history.lastSeenOperationDate;
 
 export const historyDustFilteringFeatureEnabledSelector = (state: State) =>
-  selectFeature(state, "lwdDustFiltering")?.enabled === true;
+  selectDustFilteringEnabled(state, "desktop");
 
 export const hideSmallValueTokenOperationsEffectiveSelector = createSelector(
   historyDustFilteringFeatureEnabledSelector,
