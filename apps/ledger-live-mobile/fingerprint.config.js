@@ -49,8 +49,8 @@ const e2eBuildScripts = JSON.stringify(
 
 /** @type {import('@expo/fingerprint').Config} */
 module.exports = {
-  // The app version stays in the key: syncAppVersion.js writes it into the native projects.
-  sourceSkips: ["PackageJsonScriptsAll"],
+  // Detox builds read the app version from the JS bundle (DETOX_APP_VERSION), so a version bump keeps the binary.
+  sourceSkips: ["PackageJsonScriptsAll", "ExpoConfigVersions"],
   ignorePaths: [
     "../../shared/native-performance/node_modules/**",
     // Only TypeScript today: a TurboModule codegen spec added here would need to be hashed.
@@ -68,7 +68,6 @@ module.exports = {
     e2eBuildFile("scripts/native-fingerprint.mjs"),
     e2eBuildFile("scripts/e2e-build.mjs"),
     e2eBuildFile("scripts/e2e-binaries.cjs"),
-    e2eBuildFile("scripts/syncAppVersion.js"),
     e2eBuildFile("../../e2e/mobile/detox.config.js"),
     { type: "dir", filePath: PATCHES_DIR, reasons: ["e2eNativeBuild"] },
     { type: "contents", id: "detoxVersion", contents: detoxVersion, reasons: ["e2eNativeBuild"] },
