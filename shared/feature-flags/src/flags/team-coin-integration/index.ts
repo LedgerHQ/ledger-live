@@ -4,6 +4,7 @@ export * from "./concordiumIdAppLinks";
 export * from "./currencyAdi";
 export * from "./currencyAleo";
 export * from "./currencyAleoTestnet";
+export * from "./currencyAlpen";
 export * from "./currencyAlpenTestnet";
 export * from "./currencyAptos";
 export * from "./currencyAptosTestnet";

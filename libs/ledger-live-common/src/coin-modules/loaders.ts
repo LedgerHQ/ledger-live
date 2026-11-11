@@ -221,6 +221,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       "zero_gravity",
       "unichain",
       "unichain_sepolia",
+      "alpen",
       "alpen_testnet",
     ],
     accountDescriptorType: "address",
