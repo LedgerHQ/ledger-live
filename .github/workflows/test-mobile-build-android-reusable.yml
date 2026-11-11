@@ -139,7 +139,7 @@ jobs:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: JFrog Maven auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-maven-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-maven-auth@ci-test/jfrog-maven-remotes
         with:
           url: ${{ vars.ARTIFACTORY_MAVEN_URL }}
 
@@ -148,7 +148,7 @@ jobs:
         with:
           distribution: "zulu"
           java-version: "17"
-          cache: "gradle"
+          cache: "" # ci-test: cold Gradle cache
 
       - name: setup Android SDK
         uses: android-actions/setup-android@40fd30fb8d7440372e1316f5d1809ec01dcd3699 # v4.0.1
@@ -169,6 +169,10 @@ jobs:
           if [ -d "$SDK/emulator" ]; then
             sudo chown -R $(whoami):$(id -ng) "$SDK/emulator"
           fi
+
+      - name: "ci-test: block public Maven hosts"
+        run: |
+          for h in repo.maven.apache.org repo1.maven.org jcenter.bintray.com maven.google.com plugins.gradle.org jitpack.io www.jitpack.io; do echo "0.0.0.0 $h" | sudo tee -a /etc/hosts; done
 
       - name: Install dependencies
         run: |
