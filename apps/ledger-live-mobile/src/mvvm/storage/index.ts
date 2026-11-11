@@ -60,7 +60,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
     async getString(key) {
       try {
         return state.storageType === STORAGE_TYPE.MMKV
-          ? await mmkvStorageWrapper.getString(key)
+          ? mmkvStorageWrapper.getString(key)
           : await asyncStorageWrapper.getString(key);
       } catch (e) {
         console.error("Error getting key from storage", {
@@ -75,7 +75,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
     async save(key, value) {
       try {
         return state.storageType === STORAGE_TYPE.MMKV
-          ? await mmkvStorageWrapper.save(key, value)
+          ? mmkvStorageWrapper.save(key, value)
           : await asyncStorageWrapper.save(key, value);
       } catch (e) {
         console.error("Error saving key to storage", {
@@ -89,7 +89,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
     async saveString(key, value) {
       try {
         return state.storageType === STORAGE_TYPE.MMKV
-          ? await mmkvStorageWrapper.saveString(key, value)
+          ? mmkvStorageWrapper.saveString(key, value)
           : await asyncStorageWrapper.saveString(key, value);
       } catch (e) {
         console.error("Error saving key to storage", {
@@ -103,7 +103,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
     async update(key, value) {
       try {
         return state.storageType === STORAGE_TYPE.MMKV
-          ? await mmkvStorageWrapper.update(key, value)
+          ? mmkvStorageWrapper.update(key, value)
           : await asyncStorageWrapper.update(key, value);
       } catch (e) {
         console.error("Error updating key in storage", {
@@ -145,7 +145,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
     async push(key, value) {
       try {
         return state.storageType === STORAGE_TYPE.MMKV
-          ? await mmkvStorageWrapper.push(key, value)
+          ? mmkvStorageWrapper.push(key, value)
           : await asyncStorageWrapper.push(key, value);
       } catch (e) {
         console.error("Error pushing value to storage", {
@@ -159,7 +159,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
     async stringify() {
       try {
         return state.storageType === STORAGE_TYPE.MMKV
-          ? await mmkvStorageWrapper.stringify()
+          ? mmkvStorageWrapper.stringify()
           : await asyncStorageWrapper.stringify();
       } catch (e) {
         console.error("Error stringifying storage", {
