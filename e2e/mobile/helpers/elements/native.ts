@@ -412,11 +412,6 @@ export class NativeHandle implements ElementHandle {
     expectWithinTolerance({ actual: amount, expected, tolerance });
   }
 
-  /** Waits for visibility, then asserts the element's text contains `text`. */
-  async expectTextContaining(text: string, timeout = TIMEOUT.xxlarge): Promise<void> {
-    jestExpect(await this.getText(timeout)).toContain(text);
-  }
-
   /** Waits for visibility, then asserts the element's text matches `pattern`. */
   async expectTextMatching(pattern: RegExp, timeout = TIMEOUT.xxlarge): Promise<void> {
     jestExpect(await this.getText(timeout)).toMatch(pattern);
