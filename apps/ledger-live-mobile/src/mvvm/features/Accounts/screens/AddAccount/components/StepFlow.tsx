@@ -28,6 +28,8 @@ type Props = {
   navigateToChooseSyncMethod: () => void;
   navigateToQrCodeMethod: () => void;
   onCreateKey: () => void;
+  /** Set when the device step opens in place of the activation screen. */
+  onConnectWithLedger?: () => void;
   onQrCodeScanned: () => void;
   qrProcess: {
     url: string | null;
@@ -48,6 +50,7 @@ const StepFlow = ({
   onQrCodeScanned,
   qrProcess,
   onCreateKey,
+  onConnectWithLedger,
   onCloseAddAccountDrawer,
 }: Props) => {
   const { currentStep, setCurrentStep } = useCurrentStep();
@@ -85,7 +88,10 @@ const StepFlow = ({
         return (
           <>
             <TrackScreen category={AnalyticsPage.ChooseSyncMethod} type="drawer" />
-            <ChooseSyncMethod onScanMethodPress={navigateToQrCodeMethod} />
+            <ChooseSyncMethod
+              onScanMethodPress={navigateToQrCodeMethod}
+              onConnectWithLedgerPress={onConnectWithLedger}
+            />
           </>
         );
       case Steps.QrCodeMethod:

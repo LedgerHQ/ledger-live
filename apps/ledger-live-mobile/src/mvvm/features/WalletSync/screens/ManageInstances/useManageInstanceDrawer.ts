@@ -1,5 +1,6 @@
 import { track } from "@shared/analytics";
 import { useState, useCallback } from "react";
+import type React from "react";
 import { logDrawer } from "LLM/components/QueuedDrawer/utils/logDrawer";
 import { useGetMembers } from "../../hooks/useGetMembers";
 import { UseQueryResult } from "@tanstack/react-query";
@@ -11,6 +12,7 @@ import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpe
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { ScreenName } from "~/const";
 import { AnalyticsButton, AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
+import { useManageInstancesDeviceIntentStep } from "./useManageInstancesDeviceIntentStep";
 
 const messageLog = "Follow Steps on device";
 
@@ -31,6 +33,8 @@ export type HookResult = {
   scene: Scene;
   memberCredentials: MemberCredentials | null;
   checkInstances: () => void;
+  /** Rendered by the screen outside the drawer: the step outlives it. */
+  deviceIntentStepElement: React.ReactElement | null;
 };
 
 export const useManageInstancesDrawer = (): HookResult => {
@@ -42,6 +46,7 @@ export const useManageInstancesDrawer = (): HookResult => {
   const [isDrawerVisible, setIsDrawerInstructionsVisible] = useState(false);
 
   const navigation = useNavigation<StackNavigatorNavigation<WalletSyncNavigatorStackParamList>>();
+  const deviceIntentStep = useManageInstancesDeviceIntentStep();
 
   const openDrawer = useCallback(() => {
     setIsDrawerInstructionsVisible(true);
@@ -63,6 +68,11 @@ export const useManageInstancesDrawer = (): HookResult => {
       button: AnalyticsButton.RemoveInstance,
       page: AnalyticsPage.ManageSyncInstances,
     });
+    if (deviceIntentStep.isEnabled) {
+      setIsDrawerInstructionsVisible(false);
+      deviceIntentStep.start({ member: instance });
+      return;
+    }
     navigation.navigate(ScreenName.WalletSyncManageInstancesProcess, {
       member: instance,
     });
@@ -89,5 +99,6 @@ export const useManageInstancesDrawer = (): HookResult => {
     scene,
     memberCredentials,
     checkInstances,
+    deviceIntentStepElement: deviceIntentStep.element,
   };
 };

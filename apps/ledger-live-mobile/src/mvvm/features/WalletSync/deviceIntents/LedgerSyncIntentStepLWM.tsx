@@ -9,7 +9,7 @@ type LedgerSyncIntentStepLWMProps<Input, Result> = Readonly<{
   step: LedgerSyncIntentStep<Intent<LedgerSyncJobState, Input, undefined, Result>>;
 }>;
 
-/** The executor while a run is on, then the existing error drawer if it failed. */
+/** The executor sheet while a run is on, then the existing error drawer if it failed. */
 export function LedgerSyncIntentStepLWM<Input, Result>({
   step,
 }: LedgerSyncIntentStepLWMProps<Input, Result>) {

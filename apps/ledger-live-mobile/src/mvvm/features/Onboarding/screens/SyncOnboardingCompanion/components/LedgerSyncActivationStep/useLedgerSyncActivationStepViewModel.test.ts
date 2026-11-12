@@ -1,5 +1,5 @@
 import * as sharedAnalytics from "@shared/analytics";
-import { act, renderHook } from "@tests/test-renderer";
+import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useLedgerSyncActivationStepViewModel } from "./useLedgerSyncActivationStepViewModel";
 import { NavigatorName, ScreenName } from "~/const";
@@ -75,6 +75,20 @@ describe("useLedgerSyncActivationStepViewModel", () => {
       seedConfiguration: "new_seed",
       flow: "onboarding",
     });
+  });
+
+  it("should open the Ledger Sync device step in place when DIE runs it", () => {
+    const { result } = renderHook(() => useLedgerSyncActivationStepViewModel(defaultProps()), {
+      overrideInitialState: withFlagOverrides({ lwmLedgerSyncDie: { enabled: true } }),
+    });
+
+    act(() => {
+      result.current.handleSyncContinue();
+    });
+
+    expect(dispatchRedux).toHaveBeenCalledWith(setFromLedgerSyncOnboarding(true));
+    expect(dispatchRedux).toHaveBeenCalledWith(setOnboardingType(OnboardingType.setupNew));
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 
   it("should open drawer when skip CTA is pressed", () => {

@@ -1,8 +1,8 @@
 import { Linking } from "react-native";
-import { act, renderHook } from "@tests/test-renderer";
+import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { NavigatorName, ScreenName } from "~/const";
-import { OnboardingType, type State } from "~/reducers/types";
+import { OnboardingType } from "~/reducers/types";
 import { syncOfferSettleDelay, useSyncOfferRouteViewModel } from "./useSyncOfferRouteViewModel";
 
 const mockWalletSyncState = { visualPending: false };
@@ -55,22 +55,25 @@ jest.mock("@react-navigation/native", () => ({
   }),
 }));
 
-function renderOffer(hasTrustchain: boolean, language?: string) {
+function renderOffer(hasTrustchain: boolean, language?: string, ledgerSyncDie = false) {
   return renderHook(() => useSyncOfferRouteViewModel(), {
-    overrideInitialState: (state: State) => ({
-      ...state,
-      settings: {
-        ...state.settings,
-        ...(language ? { language } : {}),
-        readOnlyModeEnabled: true,
-        hasCompletedOnboarding: false,
-        hasBeenRedirectedToPostOnboarding: true,
-      },
-      trustchain: {
-        ...state.trustchain,
-        trustchain: hasTrustchain ? trustchain : null,
-      },
-    }),
+    overrideInitialState: withFlagOverrides(
+      { lwmLedgerSyncDie: { enabled: ledgerSyncDie } },
+      state => ({
+        ...state,
+        settings: {
+          ...state.settings,
+          ...(language ? { language } : {}),
+          readOnlyModeEnabled: true,
+          hasCompletedOnboarding: false,
+          hasBeenRedirectedToPostOnboarding: true,
+        },
+        trustchain: {
+          ...state.trustchain,
+          trustchain: hasTrustchain ? trustchain : null,
+        },
+      }),
+    ),
   });
 }
 
@@ -100,6 +103,16 @@ describe("useSyncOfferRouteViewModel", () => {
     expect(store.getState().settings.onboardingType).toBe(OnboardingType.setupNew);
     expect(reset).not.toHaveBeenCalled();
     expect(mockNotifyFlowCompleted).not.toHaveBeenCalled();
+  });
+
+  it("should open the Ledger Sync device step over the offer when DIE runs it", () => {
+    const { result, store } = renderOffer(false, undefined, true);
+
+    act(() => result.current.onActivate());
+
+    expect(navigate).not.toHaveBeenCalled();
+    expect(result.current.phase).toBe("offer");
+    expect(store.getState().settings.onboardingType).toBe(OnboardingType.setupNew);
   });
 
   it("should show synchronizing until the first sync round settles", () => {

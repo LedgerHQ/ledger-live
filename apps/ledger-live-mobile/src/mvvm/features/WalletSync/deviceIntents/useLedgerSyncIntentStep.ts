@@ -1,39 +1,52 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { BackHandler } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { DeviceConnectionResult, ExecutorState } from "@features/platform-device-intent";
 import type {
   LedgerSyncFailureReason,
   LedgerSyncJobState,
 } from "@features/platform-intent-wallet-sync";
-import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
+import { useSelector } from "~/context/hooks";
+import { isModalLockedSelector } from "~/reducers/appstate";
 import { useDestroyTrustchain } from "../hooks/useDestroyTrustchain";
 import { type DrawerProps, SceneKind } from "../hooks/useFollowInstructionDrawer";
 
 type Scene = DrawerProps["scene"];
 
+export type LedgerSyncStepNavigation = BaseComposite<
+  StackNavigatorProps<WalletSyncNavigatorStackParamList>
+>["navigation"];
+
 type StepPhase<RunIntent> =
+  | { type: "pending" }
   | { type: "running"; runId: number; intent: RunIntent }
-  | { type: "failed"; scene: Scene }
-  | { type: "done" };
+  | { type: "failed"; scene: Scene };
 
 export type LedgerSyncIntentStep<RunIntent> = Readonly<{
   phase: StepPhase<RunIntent>;
   /** Props of the existing error drawer, shown once a run failed. */
   errorDrawerProps: DrawerProps;
-  /** Unmounts the executor before the host leaves the screen with the result. */
+  /** Closes the step after a success, before the entry navigates with the result. */
   finish: () => void;
-  /** Closes the error drawer and leaves, only on a dismissal: not on Retry nor on a blur. */
+  /** Closes the error drawer, only on a dismissal: not on Retry nor on an unmount. */
   onErrorDrawerClose: () => void;
   onUserCancel: () => void;
   onExecutorStateChanged: (executorState: ExecutorState) => void;
   onIntentJobStateChanged: (jobState: LedgerSyncJobState) => void;
 }>;
 
-type Params<RunIntent> = Readonly<{
+type Params<RunIntent, StartInput> = Readonly<{
+  /** What the entry started the step with; Retry reuses it. */
+  input: StartInput;
+  /** Unmounts the step: the user stays on the entry screen. */
+  onClose: () => void;
   /** Builds the intent of one run; a throw shows the generic error. */
-  buildIntent: () => RunIntent;
+  buildIntent: (input: StartInput) => RunIntent;
+  /** False while a run cannot be built yet: the step waits, then starts. */
+  isReady?: boolean;
   onDeviceRejected?: (connectionResult: DeviceConnectionResult | undefined) => void;
 }>;
 
@@ -56,81 +69,102 @@ function toError(error: unknown): Error {
   return error instanceof Error ? error : new Error(String(error));
 }
 
-function buildPhase<RunIntent>(buildIntent: () => RunIntent, runId: number): StepPhase<RunIntent> {
+function buildPhase<RunIntent, StartInput>(
+  buildIntent: (input: StartInput) => RunIntent,
+  input: StartInput,
+  runId: number,
+): StepPhase<RunIntent> {
   try {
-    return { type: "running", runId, intent: buildIntent() };
+    return { type: "running", runId, intent: buildIntent(input) };
   } catch (error) {
     return { type: "failed", scene: { kind: SceneKind.GenericError, error: toError(error) } };
   }
 }
 
 /**
- * Drives one Ledger Sync device step on DIE: one executor per run, then the existing
- * error scenes when a run fails. Retry starts a new run with a fresh intent.
+ * Drives one Ledger Sync device step on DIE over the screen the user started from: one
+ * executor per run, then the existing error scenes when a run fails. Retry starts a new
+ * run with a fresh intent. Closing only closes the step: the user stays on that screen.
  */
-export function useLedgerSyncIntentStep<RunIntent>({
+export function useLedgerSyncIntentStep<RunIntent, StartInput>({
+  input,
+  onClose,
   buildIntent,
+  isReady = true,
   onDeviceRejected,
-}: Params<RunIntent>): LedgerSyncIntentStep<RunIntent> {
-  const navigation = useNavigation<StackNavigatorNavigation<WalletSyncNavigatorStackParamList>>();
+}: Params<RunIntent, StartInput>): LedgerSyncIntentStep<RunIntent> {
+  const navigation = useNavigation<LedgerSyncStepNavigation>();
   const { deleteMutation } = useDestroyTrustchain();
+  const isLocked = useSelector(isModalLockedSelector);
   const buildIntentRef = useRef(buildIntent);
   const onDeviceRejectedRef = useRef(onDeviceRejected);
+  const onCloseRef = useRef(onClose);
   useLayoutEffect(() => {
     buildIntentRef.current = buildIntent;
     onDeviceRejectedRef.current = onDeviceRejected;
+    onCloseRef.current = onClose;
   });
   const connectionResultRef = useRef<DeviceConnectionResult | undefined>(undefined);
 
   const runIdRef = useRef(0);
-  const [phase, setPhase] = useState<StepPhase<RunIntent>>(() => buildPhase(buildIntent, 0));
+  const [phase, setPhase] = useState<StepPhase<RunIntent>>(() =>
+    isReady ? buildPhase(buildIntent, input, 0) : { type: "pending" },
+  );
 
-  // The executor sheet and the error drawer also report a close on blur and on unmount, which
-  // must not navigate: only a dismissal of the focused screen leaves it.
-  const isOverRef = useRef(phase.type !== "running");
+  // The executor sheet and the error drawer also report a close on unmount and when the other
+  // one takes over, which must not close the step: only a dismissal of the open one does.
+  const isRunningRef = useRef(phase.type !== "failed");
   const isErrorDrawerOpenRef = useRef(phase.type === "failed");
-  const isMountedRef = useRef(false);
-  useEffect(() => {
-    isMountedRef.current = true;
-    return () => {
-      isMountedRef.current = false;
-    };
-  }, []);
-  const canLeave = useCallback(() => isMountedRef.current && navigation.isFocused(), [navigation]);
 
-  const showScene = useCallback((scene: Scene) => {
-    isOverRef.current = true;
-    isErrorDrawerOpenRef.current = true;
-    setPhase({ type: "failed", scene });
-  }, []);
-
-  const finish = useCallback(() => {
-    isOverRef.current = true;
-    setPhase({ type: "done" });
-  }, []);
-
-  const leave = useCallback(() => {
-    isOverRef.current = true;
-    navigation.goBack();
-  }, [navigation]);
-
-  const onUserCancel = useCallback(() => {
-    if (!isOverRef.current && canLeave()) leave();
-  }, [canLeave, leave]);
-
-  const onErrorDrawerClose = useCallback(() => {
-    if (!isErrorDrawerOpenRef.current || !canLeave()) return;
-    isErrorDrawerOpenRef.current = false;
-    leave();
-  }, [canLeave, leave]);
-
-  const retry = useCallback(() => {
-    runIdRef.current += 1;
-    const nextPhase = buildPhase(buildIntentRef.current, runIdRef.current);
+  const applyPhase = useCallback((nextPhase: StepPhase<RunIntent>) => {
+    isRunningRef.current = nextPhase.type === "running" || nextPhase.type === "pending";
     isErrorDrawerOpenRef.current = nextPhase.type === "failed";
-    isOverRef.current = nextPhase.type !== "running";
     setPhase(nextPhase);
   }, []);
+
+  const startRun = useCallback(() => {
+    runIdRef.current += 1;
+    applyPhase(buildPhase(buildIntentRef.current, input, runIdRef.current));
+  }, [applyPhase, input]);
+
+  useEffect(() => {
+    if (phase.type === "pending" && isReady) startRun();
+  }, [isReady, phase.type, startRun]);
+
+  const close = useCallback(() => {
+    isRunningRef.current = false;
+    isErrorDrawerOpenRef.current = false;
+    onCloseRef.current();
+  }, []);
+
+  const finish = close;
+
+  const onUserCancel = useCallback(() => {
+    if (isRunningRef.current) close();
+  }, [close]);
+
+  const onErrorDrawerClose = useCallback(() => {
+    if (isErrorDrawerOpenRef.current) close();
+  }, [close]);
+
+  const isSheetOpen = phase.type === "running" || phase.type === "pending";
+  // Lumen's sheet leaves the hardware Back to the screen behind it; the error drawer's modal
+  // handles it on its own.
+  useEffect(() => {
+    if (!isSheetOpen) return;
+    const subscription = BackHandler.addEventListener("hardwareBackPress", () => {
+      if (!isLocked) onUserCancel();
+      return true;
+    });
+    return () => subscription.remove();
+  }, [isLocked, isSheetOpen, onUserCancel]);
+
+  const retry = startRun;
+
+  const showScene = useCallback(
+    (scene: Scene) => applyPhase({ type: "failed", scene }),
+    [applyPhase],
+  );
 
   const onExecutorStateChanged = useCallback((executorState: ExecutorState) => {
     if ("connectionResult" in executorState) {
@@ -161,8 +195,11 @@ export function useLedgerSyncIntentStep<RunIntent>({
 
   const confirmDeleteKey = useCallback(async () => {
     await deleteMutation.mutateAsync();
-    navigation.navigate(ScreenName.WalletSyncManageKeyDeleteSuccess);
-  }, [deleteMutation, navigation]);
+    close();
+    navigation.navigate(NavigatorName.WalletSync, {
+      screen: ScreenName.WalletSyncManageKeyDeleteSuccess,
+    });
+  }, [close, deleteMutation, navigation]);
 
   const errorDrawerProps: DrawerProps = {
     scene: phase.type === "failed" ? phase.scene : { kind: SceneKind.Loader },
