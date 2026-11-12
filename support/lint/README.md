@@ -45,11 +45,18 @@ an override in a root one. `ignorePatterns`, `globals` and `settings` do not sur
 either, so a preset that needs them declares them itself. Globs in `overrides` and `ignorePatterns`
 anchor to the directory of the layer config that re-exports the preset.
 
+The `no-restricted-imports` entries that several configs share live in `restricted-imports.mts`,
+which the presets and the `.mts` configs import and which writes the JSON fragments in
+`restricted-imports/` that the JSON configs extend.
+
 ## Conformance
 
 `lint:tool-config` rejects an oxlint config anywhere but the layer roots (the workspace root
 included), a missing or edited layer config, a `-c` on an oxlint call, and a rule flag outside the
-allowlist or on another script than `lint`. Subtrees that keep their own config for now (the apps, the e2e
+allowlist or on another script than `lint`. It also requires `"@support/lint": "workspace:*"` in a
+package whose preset imports an npm package other than `oxlint`, directly or through a relative
+import, as `features-flow` imports `@ledgerhq/lumen-lint-plugin`: Nx hashes that package in
+`lint`, and marks the package affected when it changes, only through that edge. Subtrees that keep their own config for now (the apps, the e2e
 suites, a few legacy `libs/` trees) are listed in the plugin's `exclusions.mjs`.
 
 ## Rules

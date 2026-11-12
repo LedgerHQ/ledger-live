@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-account-source-coin-module",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "The account data source that reads coin modules directly, without the generic coin framework layer",
   "main": "src/index.ts",
@@ -17,8 +17,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/account-source-coin-module"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@domain/api-account-data": "workspace:*",
@@ -29,12 +28,14 @@
     "@ledgerhq/coin-module-framework": "catalog:"
   },
   "devDependencies": {
+    "@domain/entity-currency": "workspace:*",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",

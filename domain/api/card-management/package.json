@@ -1,6 +1,6 @@
 {
   "name": "@domain/api-card-management",
-  "version": "0.8.4",
+  "version": "0.9.0",
   "private": true,
   "description": "Domain API client for Card Management: RTK Query endpoints injected into the shared cardApi service",
   "main": "src/index.ts",
@@ -19,11 +19,12 @@
   "sideEffects": false,
   "scripts": {
     "lint": "oxlint ./src",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W domain/api/card-management"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@domain/entity-card-asset-mapping": "workspace:*",
@@ -43,8 +44,11 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "msw": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "react": "catalog:",
     "react-redux": "catalog:",
     "typescript": "catalog:"

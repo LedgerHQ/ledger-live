@@ -1,8 +1,11 @@
 import { act, renderHook, waitFor } from "@testing-library/react-native";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
+import { copyToClipboard } from "@shared/clipboard";
 import { createContactDetailAddressRowIntent } from "../../model/viewModel";
-import { useContactAddressDetailDialogViewModel } from "./useContactAddressDetailDialogViewModel.native";
+import { useContactAddressDetailDialogViewModel } from "./useContactAddressDetailDialogViewModel";
+
+jest.mock("@shared/clipboard");
 
 function createSelection() {
   const contact = mockContact({
@@ -30,7 +33,9 @@ function createSelection() {
 
 describe("useContactAddressDetailDialogViewModel", () => {
   beforeEach(() => {
+    jest.clearAllMocks();
     jest.useFakeTimers();
+    jest.mocked(copyToClipboard).mockResolvedValue(true);
   });
 
   afterEach(() => {
@@ -53,13 +58,11 @@ describe("useContactAddressDetailDialogViewModel", () => {
 
   it("should copy the address and show copied feedback", async () => {
     const { row, network } = createSelection();
-    const onCopyAddress = jest.fn().mockResolvedValue(true);
     const { result } = renderHook(() =>
       useContactAddressDetailDialogViewModel({
         isOpen: true,
         row,
         network,
-        onCopyAddress,
       }),
     );
 
@@ -67,7 +70,7 @@ describe("useContactAddressDetailDialogViewModel", () => {
       await result.current.onCopy();
     });
 
-    expect(onCopyAddress).toHaveBeenCalledWith("0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034");
+    expect(copyToClipboard).toHaveBeenCalledWith("0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034");
     expect(result.current.hasCopied).toBe(true);
 
     act(() => {
@@ -80,14 +83,13 @@ describe("useContactAddressDetailDialogViewModel", () => {
   });
 
   it("should not show copied feedback when the copy failed", async () => {
+    jest.mocked(copyToClipboard).mockResolvedValue(false);
     const { row, network } = createSelection();
-    const onCopyAddress = jest.fn().mockResolvedValue(false);
     const { result } = renderHook(() =>
       useContactAddressDetailDialogViewModel({
         isOpen: true,
         row,
         network,
-        onCopyAddress,
       }),
     );
 
@@ -95,16 +97,16 @@ describe("useContactAddressDetailDialogViewModel", () => {
       await result.current.onCopy();
     });
 
-    expect(onCopyAddress).toHaveBeenCalledTimes(1);
+    expect(copyToClipboard).toHaveBeenCalledTimes(1);
     expect(result.current.hasCopied).toBe(false);
   });
 
-  it("should not show copied feedback when no copy handler is provided", async () => {
-    const { row, network } = createSelection();
+  it("should not copy when no address is selected", async () => {
+    const { network } = createSelection();
     const { result } = renderHook(() =>
       useContactAddressDetailDialogViewModel({
         isOpen: true,
-        row,
+        row: undefined,
         network,
       }),
     );
@@ -113,19 +115,18 @@ describe("useContactAddressDetailDialogViewModel", () => {
       await result.current.onCopy();
     });
 
+    expect(copyToClipboard).not.toHaveBeenCalled();
     expect(result.current.hasCopied).toBe(false);
   });
 
   it("should reset copied feedback when the dialog closes", async () => {
     const { row, network } = createSelection();
-    const onCopyAddress = jest.fn().mockResolvedValue(true);
     const { result, rerender } = renderHook(
       ({ isOpen }: { isOpen: boolean }) =>
         useContactAddressDetailDialogViewModel({
           isOpen,
           row,
           network,
-          onCopyAddress,
         }),
       { initialProps: { isOpen: true } },
     );

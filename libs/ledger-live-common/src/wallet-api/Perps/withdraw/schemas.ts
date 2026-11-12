@@ -12,13 +12,20 @@ const TypesSchema = z.record(
   z.array(z.looseObject({ name: z.string(), type: z.string() })),
 );
 const RecordSchema = z.record(z.string(), z.unknown());
+const DomainSchema = z.looseObject({
+  name: z.string().optional(),
+  version: z.string().optional(),
+  chainId: z.number().optional(),
+  verifyingContract: z.string().optional(),
+  salt: z.string().optional(),
+});
 
 // NEAR route: a Hyperliquid action and its standard EIP-712 typed data.
 const NearPayloadSchema = z.object({
   swapId: z.string(),
   hyperCoreAction: z.looseObject({
     typedData: z.looseObject({
-      domain: RecordSchema,
+      domain: DomainSchema,
       types: TypesSchema,
       primaryType: z.string(),
       message: RecordSchema,

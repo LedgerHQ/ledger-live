@@ -1,24 +1,12 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useMemo } from "react";
 import type { IconButtonProps } from "@ledgerhq/lumen-ui-rnative";
 import { DotIndicator } from "@ledgerhq/lumen-ui-rnative";
-import {
-  Compass,
-  Bell,
-  Settings,
-  Warning,
-  Clock,
-  Search,
-} from "@ledgerhq/lumen-ui-rnative/symbols";
-import {
-  CustomTopBar,
-  type TopBarActionIcon,
-  useMyLedgerTopBarAction,
-} from "LLM/components/CustomTopBar";
+import { Compass, Warning, Clock, Search } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { CustomTopBar, type TopBarActionIcon } from "LLM/components/CustomTopBar";
 import { ICON_SIZE } from "LLM/components/TopBar/const";
 import { SyncErrorBottomSheet } from "../components/SyncErrorBottomSheet";
 import { useTopBarViewModel } from "../useTopBarViewModel";
 import { MyWalletTopBarAction } from "../components/MyWalletTopBarAction";
-import { BellNotificationIcon } from "../components/BellNotificationIcon";
 
 const syncIcon: IconButtonProps["icon"] = ({ size, style }) => (
   <Warning size={size ?? ICON_SIZE} style={style} color="base" />
@@ -30,15 +18,9 @@ const filterIcons = (icons: (TopBarActionIcon | false)[]): TopBarActionIcon[] =>
 type TopBarViewProps = ReturnType<typeof useTopBarViewModel>;
 
 export function TopBarView({
-  onMyLedgerPress,
   onMyWalletPress,
-  shouldDisplayMyWallet,
-  shouldDisplayOperationsList,
-  shouldDisplayAssetDiscoverability,
   onSearchPress,
   onDiscoverPress,
-  onNotificationsPress,
-  onSettingsPress,
   onTransactionHistoryPress,
   hasUnreadNotifications,
   hasUnreadOperations,
@@ -52,18 +34,8 @@ export function TopBarView({
   closeSyncDrawer,
   onTryRefresh,
 }: Readonly<TopBarViewProps>) {
-  const myLedgerAction = useMyLedgerTopBarAction(onMyLedgerPress);
-
-  const leadingElement = shouldDisplayMyWallet ? (
+  const leadingElement = (
     <MyWalletTopBarAction onPress={onMyWalletPress} showNotification={hasUnreadNotifications} />
-  ) : undefined;
-
-  const notificationIcon = useCallback<IconButtonProps["icon"]>(
-    ({ size, style }) => {
-      const Icon = hasUnreadNotifications ? BellNotificationIcon : Bell;
-      return <Icon size={size ?? ICON_SIZE} style={style} color="base" />;
-    },
-    [hasUnreadNotifications],
   );
 
   const discoverIcon: TopBarActionIcon = {
@@ -80,14 +52,6 @@ export function TopBarView({
     callback: onSearchPress,
     testID: "topbar-search",
     accessibilityLabel: "Search",
-  };
-
-  const notificationsIcon: TopBarActionIcon = {
-    id: "notifications",
-    icon: notificationIcon,
-    callback: onNotificationsPress,
-    testID: "topbar-notifications",
-    accessibilityLabel: "Notifications",
   };
 
   const unreadWrapper = useMemo(
@@ -111,14 +75,6 @@ export function TopBarView({
     wrapper: unreadWrapper,
   };
 
-  const settingsIcon: TopBarActionIcon = {
-    id: "settings",
-    icon: Settings,
-    callback: onSettingsPress,
-    testID: "topbar-settings",
-    accessibilityLabel: "Settings",
-  };
-
   const syncStatusIcon: TopBarActionIcon = {
     id: "sync",
     icon: syncIcon,
@@ -128,30 +84,12 @@ export function TopBarView({
     loading: isSyncPending,
   };
 
-  const displayMyLedgerIconLeading = !shouldDisplayMyWallet;
-  const displayDiscoverIconLeading = shouldDisplayOperationsList;
-
-  const getLeadingIcons = (): TopBarActionIcon[] =>
-    filterIcons([
-      displayMyLedgerIconLeading && myLedgerAction,
-      displayDiscoverIconLeading && discoverIcon,
-      shouldDisplayAssetDiscoverability && searchIcon,
-    ]);
+  const getLeadingIcons = (): TopBarActionIcon[] => [discoverIcon, searchIcon];
 
   const displaySyncStatusIcon = hasAccounts && isSyncError;
-  const displayDiscoverIcon = !shouldDisplayOperationsList;
-  const displayNotificationsIcon = !shouldDisplayMyWallet;
-  const displayTransactionHistoryIcon = shouldDisplayOperationsList;
-  const displaySettingsIcon = !shouldDisplayMyWallet;
 
   const getTrailingIcons = (): TopBarActionIcon[] =>
-    filterIcons([
-      displaySyncStatusIcon && syncStatusIcon,
-      displayDiscoverIcon && discoverIcon,
-      displayNotificationsIcon && notificationsIcon,
-      displayTransactionHistoryIcon && transactionHistoryIcon,
-      displaySettingsIcon && settingsIcon,
-    ]);
+    filterIcons([displaySyncStatusIcon && syncStatusIcon, transactionHistoryIcon]);
 
   return (
     <>

@@ -1,7 +1,12 @@
 import { z } from "zod";
 import { DateTimeIsoSchema } from "@shared/schema-primitives";
 import { AccountUUIDSchema } from "@domain/entity-account-descriptor";
-import { AmountStrSchema, BalanceAssetIdSchema } from "@domain/entity-account-balance";
+import { FiatCurrencyTickerSchema, type FiatCurrencyTicker } from "@domain/entity-currency-fiat";
+import { AmountStrSchema } from "@domain/entity-account-balance";
+import {
+  CryptoOrTokenCurrencyIdSchema,
+  type CryptoOrTokenCurrencyId,
+} from "@domain/entity-currency";
 
 export const OperationIdSchema = z.string().min(1).brand<"OperationId">();
 export const TransactionHashSchema = z.string().min(1).brand<"TransactionHash">();
@@ -71,13 +76,18 @@ export const OPERATION_TYPES = [
 
 export const OperationTypeSchema = z.enum(OPERATION_TYPES);
 
+export const OperationCountervaluesSchema = z.partialRecord(
+  FiatCurrencyTickerSchema,
+  AmountStrSchema,
+);
+
 /** One operation of an account. A token, sub or internal operation is its own row, pointing at its parent. */
 export const AccountOperationSchema = z.object({
   id: OperationIdSchema,
   hash: TransactionHashSchema,
   type: OperationTypeSchema,
   /** The asset `value` and `fee` are expressed in. */
-  assetId: BalanceAssetIdSchema,
+  assetId: CryptoOrTokenCurrencyIdSchema,
   value: AmountStrSchema,
   fee: AmountStrSchema,
   senders: z.array(AddressSchema),
@@ -87,18 +97,29 @@ export const AccountOperationSchema = z.object({
   date: DateTimeIsoSchema,
   hasFailed: z.boolean().optional(),
   parentId: OperationIdSchema.optional(),
+  /** What `value` was worth at `date`, in the fiat's smallest unit, for the fiat the read asked for. */
+  countervalues: OperationCountervaluesSchema.optional(),
 });
+
+/** A row as stored once for every query: what it is worth depends on the query, so it lives with the window. */
+export const StoredAccountOperationSchema = AccountOperationSchema.omit({ countervalues: true });
 
 export type OperationId = z.infer<typeof OperationIdSchema>;
 export type TransactionHash = z.infer<typeof TransactionHashSchema>;
 export type Address = z.infer<typeof AddressSchema>;
 export type OperationType = z.infer<typeof OperationTypeSchema>;
 export type AccountOperation = z.infer<typeof AccountOperationSchema>;
+export type StoredAccountOperation = z.infer<typeof StoredAccountOperationSchema>;
+export type OperationCountervalues = z.infer<typeof OperationCountervaluesSchema>;
 
 /** What a read asks for; the cursor is not part of it, the framework carries it. Each query has its own window. */
 export type AccountOperationsQuery = {
+  /** The fiat each operation is valued in, at its date, into `countervalues`. */
+  countervalue?: FiatCurrencyTicker;
   /** Rows wished per page; a source may return more or fewer, only `nextCursor` says more exist. */
   limit?: number;
+  /** Only the operations of this asset of the account, e.g. one of its tokens. */
+  filterAsset?: CryptoOrTokenCurrencyId;
 };
 
 export type AccountOperationsPage = {
@@ -110,9 +131,14 @@ export type AccountOperationsPage = {
 /** The operations of one account: each row once, and the loaded window of each query. */
 export const AccountOperationsEntrySchema = z.object({
   /** Every row a window lists, whatever query read it. */
-  byId: z.partialRecord(OperationIdSchema, AccountOperationSchema),
+  byId: z.partialRecord(OperationIdSchema, StoredAccountOperationSchema),
   /** By query, as `accountDataQueryKey` writes it: its loaded window, newest first. */
   windows: z.partialRecord(z.string(), z.array(OperationIdSchema)),
+  /** By query, the countervalues its read returned for each row of its window. */
+  countervalues: z.partialRecord(
+    z.string(),
+    z.partialRecord(OperationIdSchema, OperationCountervaluesSchema),
+  ),
   /** The `revision` of the answer each row of `byId` comes from: an older answer of another query never overwrites it. */
   revisionById: z.partialRecord(OperationIdSchema, z.number()),
 });

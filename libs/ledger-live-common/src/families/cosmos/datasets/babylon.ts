@@ -1,15 +1,10 @@
 import { CurrenciesData } from "@ledgerhq/types-live";
 import type { Transaction } from "../types";
 import { fromTransactionRaw } from "@ledgerhq/coin-cosmos/transaction";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 
 const dataset: CurrenciesData<Transaction> = {
-  FIXME_ignoreAccountFields: [
-    "cosmosResources",
-    "stakingResources",
-    "operationsCount",
-    "operations",
-  ],
+  FIXME_ignoreAccountFields: ["sequence", "stakingResources", "operationsCount", "operations"],
   FIXME_ignorePreloadFields: ["validators"], // the APY of validators changes over time
   scanAccounts: [
     {

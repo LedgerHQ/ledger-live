@@ -186,6 +186,24 @@ describe("knownDevices reducer", () => {
       expect(nextState.knownDevices).toEqual([updatedDevice]);
     });
 
+    it("GIVEN two mock-server devices of the same model WHEN one connects THEN it updates only the entry with its id", () => {
+      const firstStax = {
+        id: "session-device-1",
+        name: "Stax 1",
+        deviceModelId: DeviceModelId.stax,
+        transport: mockserverIdentifier,
+      };
+      const secondStax = { ...firstStax, id: "session-device-2", name: "Stax 2" };
+      const renamedSecondStax = { ...secondStax, name: "Stax 2 renamed" };
+
+      const nextState = reducer(
+        { knownDevices: [firstStax, secondStax] },
+        updateKnownDevice(renamedSecondStax),
+      );
+
+      expect(nextState.knownDevices).toEqual([firstStax, renamedSecondStax]);
+    });
+
     it("GIVEN an existing Speculos known device WHEN a connection reports its fixed id THEN it updates that entry instead of adding one", () => {
       const state = { knownDevices: [flex, speculos] };
       const updatedDevice = {
@@ -443,6 +461,22 @@ describe("knownDevices reducer", () => {
         ...flex,
         transport: "rnhid",
       });
+    });
+
+    it("GIVEN a mock server known device WHEN persisting and hydrating it THEN it keeps the mock server transport", () => {
+      const device = {
+        id: "session-device-1",
+        name: "Ledger Stax",
+        deviceModelId: DeviceModelId.stax,
+        transport: mockserverIdentifier,
+      };
+
+      const persistedDevice = mapKnownDeviceToPersistedKnownDevice(device);
+
+      expect(persistedDevice).toEqual({ ...device, transport: "mockserver" });
+      expect(persistedDevice && mapPersistedKnownDeviceToKnownDevice(persistedDevice)).toEqual(
+        device,
+      );
     });
 
     it("GIVEN an unsupported transport known device WHEN persisting it THEN it returns null", () => {

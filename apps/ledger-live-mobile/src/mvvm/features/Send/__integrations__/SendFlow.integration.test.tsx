@@ -1,8 +1,7 @@
 import * as React from "react";
-import { TextInput as RNTextInput } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { setEnv } from "@shared/env";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
@@ -207,20 +206,6 @@ describe("Send flow integration tests", () => {
     }
     await user.press(await screen.findByText(/^Send to /));
     await screen.findByText("Review");
-  }
-
-  function findInputByLabel(labelText: string | RegExp) {
-    const labelNode = screen.getByText(labelText);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let node: any = labelNode;
-    for (let i = 0; i < 6; i++) {
-      node = node?.parent;
-      if (!node) break;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const input = node.children?.find?.((c: any) => c?.type === RNTextInput);
-      if (input) return input;
-    }
-    throw new Error(`No TextInput found near label "${String(labelText)}"`);
   }
 
   it("should prefill and validate the recipient from the initial parameters", async () => {
@@ -771,7 +756,7 @@ describe("Send flow integration tests", () => {
 
       await openCustomFees(user);
 
-      const feeInput = findInputByLabel(/Fees amount \(sat\/vbyte\)/);
+      const feeInput = screen.getByLabelText(/Fees amount \(sat\/vbyte\)/);
       fireEvent.changeText(feeInput, "10");
 
       await user.press(screen.getByText("Confirm"));
@@ -784,7 +769,7 @@ describe("Send flow integration tests", () => {
 
       await openCustomFees(user);
 
-      const feeInput = findInputByLabel(/Fees amount \(sat\/vbyte\)/);
+      const feeInput = screen.getByLabelText(/Fees amount \(sat\/vbyte\)/);
       fireEvent.changeText(feeInput, "0");
 
       expect(await screen.findByText("Enter a valid number")).toBeOnTheScreen();
@@ -803,8 +788,8 @@ describe("Send flow integration tests", () => {
 
       await openCustomFees(user);
 
-      const maxFee = findInputByLabel(/Max fee \(Gwei\)/);
-      const maxPriorityFee = findInputByLabel(/Max priority fee \(Gwei\)/);
+      const maxFee = screen.getByLabelText(/Max fee \(Gwei\)/);
+      const maxPriorityFee = screen.getByLabelText(/Max priority fee \(Gwei\)/);
       fireEvent.changeText(maxFee, "20");
       fireEvent.changeText(maxPriorityFee, "1");
 
@@ -819,7 +804,7 @@ describe("Send flow integration tests", () => {
 
       await openCustomFees(user);
 
-      const maxFee = findInputByLabel(/Max fee \(Gwei\)/);
+      const maxFee = screen.getByLabelText(/Max fee \(Gwei\)/);
       fireEvent.changeText(maxFee, "0");
 
       expect(await screen.findByText("Enter a valid number")).toBeOnTheScreen();

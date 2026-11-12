@@ -1,5 +1,6 @@
 {
   "$schema": "../../../node_modules/oxlint/configuration_schema.json",
+  "extends": ["../../../support/lint/restricted-imports/bignumber.json"],
   "env": {
     "node": true,
     "es2022": true

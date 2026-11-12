@@ -2,7 +2,7 @@ import * as React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { setEnv } from "@shared/env";
 import { track } from "@shared/analytics";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type {
@@ -14,6 +14,11 @@ import {
   USDT_FEE_ASSET,
   USDT_RENT_PAYMENT,
 } from "@ledgerhq/live-common/flows/send/sponsored/fixtures/usdt";
+import {
+  recordPendingRent,
+  resetPendingRentsForTests,
+} from "@ledgerhq/live-common/flows/send/sponsored/pendingRents";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { act, renderWithReactQuery, screen, within, withFlagOverrides } from "@tests/test-renderer";
 import type { Account, Operation, SignedOperation, TokenAccount } from "@ledgerhq/types-live";
 import type { State } from "~/reducers/types";
@@ -57,6 +62,7 @@ type ExecutorKind = "rent" | "transfer";
 type ExecutorProps = Readonly<{
   enabled: boolean;
   intent: { input: { transaction: unknown } };
+  intentComponentExtraProps: unknown;
   onIntentJobStateChanged: (jobState: { type: "signed"; signedOperation: SignedOperation }) => void;
   onIntentJobError: (error: unknown) => void;
   onUserCancel: () => void;
@@ -205,6 +211,7 @@ function makeSeam(payer: Account): SponsoredCoinApi {
   return {
     feeOptionId: SPONSORED_FEE_OPTION_ID,
     providerName: "Tronify",
+    providerTermsUrl: "https://tronify.example/terms",
     waivesErrorKeys: [],
     waivesWarningKeys: [],
     reservationDedupKey: jest.fn().mockReturnValue("1.5"),
@@ -296,6 +303,10 @@ describe("Sponsored send flow integration tests", () => {
     jest.mocked(track).mockClear();
   });
 
+  afterEach(() => {
+    resetPendingRentsForTests();
+  });
+
   beforeAll(() => {
     setEnv("MOCK", "1");
   });
@@ -326,10 +337,14 @@ describe("Sponsored send flow integration tests", () => {
     );
   }
 
-  function renderSponsoredSend(usdtBalance: number) {
+  function renderSponsoredSend(
+    usdtBalance: number,
+    { beforeRender }: Readonly<{ beforeRender?: (account: Account) => void }> = {},
+  ) {
     account = makeTronAccount(`sponsored-sender-${usdtBalance}`, usdtBalance);
     seam = makeSeam(account);
     mockSeam = seam;
+    beforeRender?.(account);
     const [usdt] = account.subAccounts as TokenAccount[];
 
     const withAccount = (state: State): State => ({
@@ -381,6 +396,11 @@ describe("Sponsored send flow integration tests", () => {
     const { user } = renderSponsoredSend(100 * ONE_USDT);
 
     await reviewHalfTheBalance(user);
+    await screen.findByTestId("device-intent-executor-rent");
+    expect(executor("rent").intentComponentExtraProps).toMatchObject({
+      providerName: "Tronify",
+      termsUrl: "https://tronify.example/terms",
+    });
     await signRent();
 
     expect(await screen.findByTestId("send-sponsored-polling")).toBeOnTheScreen();
@@ -396,6 +416,7 @@ describe("Sponsored send flow integration tests", () => {
 
     await deliverEnergy();
     await screen.findByTestId("device-intent-executor-transfer");
+    expect(executor("transfer").intentComponentExtraProps).toEqual({ sponsoredTransfer: true });
     await act(async () => {
       executor("transfer").onIntentJobStateChanged({
         type: "signed",
@@ -546,12 +567,49 @@ describe("Sponsored send flow integration tests", () => {
     expect(seam.buildEnergyRentRequest).toHaveBeenLastCalledWith(expect.anything(), 3_500_000n);
   });
 
+  it("should hold back the Tronify offer while a paid rent is arriving, then re-estimate the fee once it lands", async () => {
+    const recordRentPaidByEarlierSend = (payer: Account) =>
+      recordPendingRent(
+        {
+          mainAccountId: payer.id,
+          orderId: "order-0",
+          payerAddress: payer.freshAddress,
+          paymentTxId: "txA-0",
+          receiverAddress: payer.freshAddress,
+          energyNeeded: 65_000n,
+        },
+        Date.now() + PAYMENT_VALIDITY_MS,
+      );
+    const { user } = renderSponsoredSend(100 * ONE_USDT, {
+      beforeRender: recordRentPaidByEarlierSend,
+    });
+
+    await user.press(await screen.findByText("50%"));
+    await flushTimers();
+
+    expect(await screen.findByTestId("send-sponsored-rent-arriving")).toHaveTextContent(
+      "Your energy rental is still on its way. Network fees will update once it arrives.",
+    );
+    expect(seam.awaitEnergyDelivery).toHaveBeenCalledTimes(1);
+    expect(screen.queryByTestId("send-sponsored-fee-nudge")).not.toBeOnTheScreen();
+    expect(screen.queryByTestId("send-fee-payment-entry")).not.toBeOnTheScreen();
+
+    const prepareTransaction = jest.spyOn(await getAccountBridge(account), "prepareTransaction");
+    await deliverEnergy();
+
+    expect(await screen.findByTestId("send-sponsored-fee-nudge")).toBeOnTheScreen();
+    expect(screen.queryByTestId("send-sponsored-rent-arriving")).not.toBeOnTheScreen();
+    expect(prepareTransaction).toHaveBeenCalled();
+    prepareTransaction.mockRestore();
+  });
+
   it("should send with the standard fee while the sponsored fee isn't picked", async () => {
     const { user } = renderSponsoredSend(100 * ONE_USDT);
 
     await reviewHalfTheBalance(user, { sponsored: false });
 
     expect(await screen.findByTestId("device-intent-executor-transfer")).toBeOnTheScreen();
+    expect(executor("transfer").intentComponentExtraProps).toEqual({ sponsoredTransfer: false });
     expect(screen.queryByTestId("device-intent-executor-rent")).not.toBeOnTheScreen();
     expect(seam.craftEnergyRentTransaction).not.toHaveBeenCalled();
   });

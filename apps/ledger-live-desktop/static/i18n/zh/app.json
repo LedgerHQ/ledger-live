@@ -121,7 +121,7 @@
     "addressCopied" : "地址已复制",
     "addressCopiedSuspicious" : "复制的地址和剪贴板中的地址不匹配。",
     "experimentalFeature" : "实验性功能",
-    "featureFlags" : "功能标志",
+    "devTools" : "开发工具",
     "ldmkEnabled" : "LDMK 传输",
     "information" : "信息",
     "search" : "搜索...",
@@ -2128,6 +2128,14 @@
       "link" : "详细了解 Stellar（恒星）资产",
       "seeTokens" : "显示资产 ({{tokenCount}})",
       "hideTokens" : "隐藏资产 ({{tokenCount}})"
+    },
+    "xrp" : {
+      "title" : "代币",
+      "cta" : "添加代币",
+      "placeholder" : "您可以向您的 {{currencyName}} 账户添加代币。",
+      "link" : "详细了解 XRP Ledger 代币",
+      "seeTokens" : "显示代币 ({{tokenCount}})",
+      "hideTokens" : "隐藏代币 ({{tokenCount}})"
     }
   },
   "subAccounts" : {
@@ -3019,18 +3027,19 @@
       "insufficientFunds" : "您没有足够的 {{feeCurrency}} 来支付数额和 {{provider}} 能量租赁费用。"
     },
     "sponsoredRentSignature" : {
-      "title" : "第 1 步，共 2 步",
+      "title" : "批准网络费用赞助",
       "strategy" : "能量租赁 - {{provider}}",
       "crafting" : "正在准备能量租赁…",
       "submitting" : "正在提交能量租赁付款…",
-      "feeLabel" : "租赁费用"
+      "feeLabel" : "租赁费用",
+      "terms" : "签署此交易，即表示您同意 <0>{{provider}} 的条款与条件</0>。"
     },
     "sponsoredTransferSignature" : {
-      "title" : "第 2 步，共 2 步"
+      "title" : "确认转账"
     },
     "sponsoredPolling" : {
-      "title" : "正在等待能量交付",
-      "waiting" : "{{provider}} 正在交付租用的能量。此过程可能需要片刻。",
+      "title" : "您的能量正在交付中",
+      "waiting" : "这通常最多需要 30 秒。",
       "elapsed" : "已用时间：{{time}}"
     },
     "sponsoredFailure" : {
@@ -3081,12 +3090,6 @@
         "subtitle" : "隐蔽",
         "pendingNoticeTitle" : "资金到期中",
         "pendingNotice" : "部分隐蔽资金尚未成熟，暂时可能无法支出。"
-      },
-      "aleoPublic" : {
-        "title" : "公开余额"
-      },
-      "aleoPrivate" : {
-        "title" : "私密余额"
       },
       "zeroBalance" : {
         "warning" : "无可用余额"
@@ -4274,6 +4277,70 @@
           "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
         }
       }
+    }
+  },
+  "xrp" : {
+    "addToken" : {
+      "title" : "添加代币",
+      "steps" : {
+        "token" : {
+          "title" : "代币",
+          "selectLabel" : "选择代币",
+          "allAdded" : "您已将所有可用的代币添加至此账户。",
+          "loadError" : "无法加载代币列表。",
+          "info" : "添加代币将发送一笔交易以支付网络费用，并在您持有该代币期间保留瑞波币 (XRP)。此交易将出现在您的交易记录中。"
+        },
+        "settings" : {
+          "title" : "设置",
+          "limit" : "信任上限",
+          "max" : "最高",
+          "limitInfo" : "信任上限是您的账户所能接受持有的最大 {{token}} 数量。"
+        },
+        "review" : {
+          "title" : "核对",
+          "token" : "代币",
+          "issuer" : "发行方"
+        },
+        "connectDevice" : {
+          "title" : "设备"
+        },
+        "confirmation" : {
+          "title" : "确认",
+          "success" : {
+            "title" : "已成功添加 {{token}} 代币",
+            "text" : "您现在可以在您的瑞波币 (XRP) 账户上接收 <0>{{token}}</0> 了。",
+            "cta" : "查看详情"
+          },
+          "broadcastError" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
+        }
+      }
+    },
+    "tokenSettings" : {
+      "title" : "代币设置",
+      "steps" : {
+        "confirmation" : {
+          "success" : {
+            "title" : "{{token}} 信任额度已更新",
+            "text" : "您的瑞波币 (XRP) 账户现在可接收 <0>{{token}}</0>，最高达新限额。"
+          }
+        }
+      }
+    },
+    "tokenAccount" : {
+      "editSettings" : "编辑设置",
+      "trustLimit" : "信任上限",
+      "trustLimitTooltip" : "您的账户可持有的该代币的最大数量。"
+    },
+    "rippling" : {
+      "label" : "余额流转",
+      "on" : "开启",
+      "off" : "关闭",
+      "warning" : "开启此功能将允许其他用户的付款在具有相同货币代码的代币之间转移您的余额。仅在充分了解其作用和风险时开启此功能。"
+    },
+    "receive" : {
+      "addToken" : "添加代币",
+      "addTokenFirst" : "若要接收 XRP Ledger 代币，请先将其添加到您的账户中。",
+      "tokenNotHeld" : "您的账户不再持有 {{token}}。请在接收前重新将其添加。"
     }
   },
   "stellar" : {
@@ -7223,6 +7290,9 @@
       "title" : "此账户有一个待处理的操作",
       "description" : "请等待操作完成。"
     },
+    "TokenNonTransferable" : {
+      "title" : "此代币无法发送。其智能合约不允许转账。"
+    },
     "AccountNameRequired" : {
       "title" : "需要一个账户名",
       "description" : "请输入账户名称"
@@ -7725,6 +7795,14 @@
       "title" : "网络错误",
       "description" : "确保您已连接到互联网，然后重试。"
     },
+    "WithdrawApiError" : {
+      "title" : "您的提取未能发送",
+      "description" : "您的永续合约 (Perps) 余额未扣除任何资金。关闭并使用新报价重试。"
+    },
+    "WithdrawSubmitUnknownOutcomeError" : {
+      "title" : "我们无法确认您的提取",
+      "description" : "该提取可能仍会通过。请在您重试前查看互换历史记录。"
+    },
     "WrongDeviceForAccount" : {
       "title" : "出错了",
       "description" : "请检查您的 Ledger 设备是否设置了与所选账户关联的恢复短语或密码短语。"
@@ -7892,6 +7970,9 @@
     "TezosStakeAmountTooSmall" : {
       "title" : "此数额过小，无法质押"
     },
+    "TezosDelegateRefusesStaking" : {
+      "title" : "您的验证者不接受质押。更改验证者以进行质押。"
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "请先清空所有子账户"
     },
@@ -7995,6 +8076,44 @@
     },
     "XrpDestinationTagRequired" : {
       "title" : "此接收方需要填写目标标签"
+    },
+    "XrpTokenStandardNotEnabled" : {
+      "title" : "暂不支持该代币类型"
+    },
+    "XrpAmountPrecisionExceeded" : {
+      "title" : "数额的位数过多",
+      "description" : "XRP Ledger 代币最多接受 16 位有效数字。"
+    },
+    "XrpTrustLimitZero" : {
+      "title" : "额度必须大于 0",
+      "description" : "如要停止持有该代币，请改为将其移除。"
+    },
+    "XrpTokenFrozen" : {
+      "title" : "您无法向此接收者发送此代币",
+      "description" : "该代币的发行方已将其冻结，或者尚未批准您的账户持有该代币。被冻结的代币仍可退回到其发行方。"
+    },
+    "XrpTokenCannotReceive" : {
+      "title" : "此接收者无法接收 {{assetCode}}",
+      "description" : "接收者可能需要先添加该代币，或者发行方不允许此项转账。"
+    },
+    "XrpTokenAmountNotDeliverable" : {
+      "title" : "无法交付此数额",
+      "description" : "接收者的限额或发行方的转账费用不允许进行该交易。请尝试较小的金额。"
+    },
+    "XrpTokenOptInRefused" : {
+      "title" : "发行方拒绝了此请求",
+      "description" : "发行方不接受该代币的新持有者，或者该代币不存在。"
+    },
+    "XrpTransactionWouldFail" : {
+      "title" : "此交易将会失败",
+      "description" : "XRP Ledger 因 {{code}} 拒绝了该交易。"
+    },
+    "XrpUnsupportedIntent" : {
+      "title" : "不支持此交易"
+    },
+    "XrpReserveIncrease" : {
+      "title" : "在添加此代币时，您的账户中的 {{amount}} 将被锁定。",
+      "description" : "您将在移除该代币时将其取回。"
     },
     "InvalidExplorerResponse" : {
       "title" : "{{currencyName}} 浏览器的响应无效"
@@ -9625,6 +9744,74 @@
     "description" : "此账户与永续合约交易相关。此账户不支持交易操作",
     "cta" : "打开永续合约 (Perps)"
   },
+  "predictions" : {
+    "binding" : {
+      "preparing" : "正在准备签署",
+      "title" : "在您的 {{productName}} 上确认账户所有权",
+      "description" : "按照安全屏幕上的说明进行操作。",
+      "settingUp" : {
+        "title" : "设置您的交易账户"
+      },
+      "setUp" : {
+        "created" : "交易账户已创建",
+        "found" : "已找到交易账户",
+        "description" : "您的交易账户已准备就绪，可以开始使用。",
+        "continue" : "继续"
+      },
+      "mismatch" : {
+        "title" : "此签署与该账户不一致",
+        "description" : "请连接持有此账户的 Ledger，若您使用了密码短语，请使用相同的密码短语，然后重试。"
+      },
+      "setupFailed" : {
+        "title" : "无法设置您的交易账户",
+        "failed-deploy" : "MoonPay 无法部署您的交易钱包。",
+        "failed-permission" : "MoonPay 无法设置您的交易钱包权限。",
+        "timeout" : "设置用时过长。",
+        "unavailable" : "无法连接至 MoonPay。",
+        "unknown" : "进行设置时出现错误。"
+      }
+    },
+    "onboarding" : {
+      "intro" : {
+        "title" : "Trade on future events",
+        "subtitle" : "Now you can access the world's largest prediction market, where you can trade on event outcomes. Provided by MoonPay.",
+        "items" : {
+          "polymarket" : {
+            "title" : "Access Polymarket in Ledger Wallet",
+            "subtitle" : "Now available in Ledger Wallet"
+          },
+          "markets" : {
+            "title" : "Sports, Tech, Crypto, Weather, Politics",
+            "subtitle" : "And more, discover all markets"
+          },
+          "clearSign" : {
+            "title" : "Clear sign all",
+            "subtitle" : "You define and clear sign the amount to trade"
+          }
+        },
+        "discover" : "Discover predictions",
+        "learnMore" : "Learn more"
+      },
+      "terms" : {
+        "title" : "Terms & Conditions",
+        "body" : "Prediction markets are speculative, carry substantial risk, and may not be appropriate for all users. Trading in these markets involves significant risks, including: total loss of funds (a position can lose its entire value); market and resolution risk (outcomes are settled under each market's rules, which may differ from your expectations); liquidity risk (you may not be able to sell a position at the price you want, or at all); and smart contract risk (code vulnerabilities). Carefully assess these risks and understand how each market works before proceeding. Refer to the <termsLink>Terms of Use</termsLink> for more information.",
+        "checkbox" : "You acknowledge that you have read and understand the above disclaimer and accept the risks of trading on prediction markets.",
+        "cta" : "Agree and Continue"
+      },
+      "consent" : {
+        "title" : "Clear signed trade on Polymarket via MoonPay",
+        "description" : "Select a Ledger Wallet address to sign your trades and to withdraw your Predictions balance.",
+        "bullets" : {
+          "dedicatedWallet" : "Dedicated trading wallet: MoonPay Trade creates a wallet specifically for your Polymarket activity. Deposit only what you plan to trade. Direct logins on Polymarket are not supported.",
+          "secureSigning" : "Secure signing: Every trade instruction is clear signed using your selected Ledger Wallet address.",
+          "withdraw" : "Withdraw anytime: Transfer your trading balance back to your Ledger Wallet whenever you choose."
+        },
+        "checkbox" : "By continuing, you agree to create a MoonPay Trade wallet address and authorize the selected Ledger Wallet address to sign trade instructions and to receive your funds when you withdraw.",
+        "cta" : "Continue",
+        "footer" : "Crypto transaction services are provided by third-party provider MoonPay. Ledger provides no advice or recommendations."
+      }
+    }
+  },
   "portfolio" : {
     "title" : "首页",
     "today" : "今天",
@@ -9655,6 +9842,10 @@
     "borrow" : {
       "title" : "贷款",
       "description" : "借入稳定币"
+    },
+    "predictions" : {
+      "title" : "预测",
+      "description" : "布局未来"
     }
   },
   "marketBanner" : {
@@ -10112,8 +10303,8 @@
       },
       "amount" : {
         "signingTime" : {
-          "label" : "签署时间",
-          "description" : "您的 Ledger 签署设备批准该交易使用的每条记录。从您的私密余额中发送更多资金可能会使用更多记录，并需要更长时间。"
+          "label" : "预估时间",
+          "description" : "从您的私密余额中发送更多资金可能会使用更多记录，并且每条记录都会增加处理时间。较大的数额需要更长的确认时间。"
         }
       },
       "mandatoryPrivateSync" : {
@@ -10546,6 +10737,7 @@
       "copied" : "已复制",
       "edit" : "编辑",
       "delete" : "删除",
+      "share" : "分享",
       "networkTag" : "{{name}} 网络"
     },
     "detailActions" : {
@@ -10655,11 +10847,18 @@
     }
   },
   "accountDetail" : {
+    "analyticsIntroduction" : {
+      "title" : "在寻找您的账户表现吗？",
+      "description" : "您的所有表现数据现在都位于“数据分析”页面。",
+      "cta" : "前往“数据分析”",
+      "dismiss" : "忽略“数据分析”介绍"
+    },
     "header" : {
       "settings" : "账户设置"
     },
     "assets" : {
-      "title" : "资产"
+      "title" : "资产",
+      "add" : "添加"
     }
   },
   "assetDetails" : {
@@ -11186,7 +11385,14 @@
     "depositDetailTitle" : "充值详情",
     "depositAmountLabel" : "存入数额",
     "depositReceiveLabel" : "接收账户",
-    "depositCTA" : "存款"
+    "depositCTA" : "存款",
+    "withdrawTitle" : "通过 SwapKit 提取",
+    "withdrawSubtitle" : "我们的服务提供商 SwapKit 在单笔交易中管理您的互换和提取——全部由您的 Ledger 设备保障安全。",
+    "withdrawDetailTitle" : "提取详情",
+    "withdrawReceiveLabel" : "接收账户",
+    "networkFeesLabel" : "网络费用",
+    "totalDebitedLabel" : "扣款总额",
+    "withdrawCTA" : "提取"
   },
   "perpsDeposit" : {
     "title" : "存款",
@@ -11222,6 +11428,9 @@
       "currenciesUnavailable" : "我们无法加载可供您提取至的资产。请稍后重试。"
     }
   },
+  "perpsWithdrawSign" : {
+    "a11yTitle" : "提取签署"
+  },
   "perpsDepositSign" : {
     "a11yTitle" : "存款签署",
     "terms" : "通过签署此交易，我接受 <termsLink>SwapKit by NEAR Intents 条款与条件</termsLink>"
@@ -11235,5 +11444,13 @@
     "dialogTitle" : "交易详情",
     "title" : "为永续合约提供资金",
     "currencies" : "{{sendTicker}} → {{receiveTicker}}"
+  },
+  "accountAnalytics" : {
+    "assets" : "资产筛选",
+    "accounts" : "账户筛选",
+    "allAssets" : "所有资产",
+    "allAccounts" : "所有账户",
+    "error" : "无法加载分析数据。请重试。",
+    "unavailable" : "该选择无可用数据。"
   }
 }

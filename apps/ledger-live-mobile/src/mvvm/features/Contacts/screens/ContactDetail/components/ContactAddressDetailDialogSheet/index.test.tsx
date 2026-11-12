@@ -1,6 +1,6 @@
 import React from "react";
 import { render } from "@tests/test-renderer";
-import type { ContactAddressDetailDialogNativeProps } from "@features/flow-contacts-detail";
+import type { ContactAddressDetailDialogProps } from "@features/flow-contacts-detail";
 import { ContactAddressDetailDialogSheet } from ".";
 
 const queuedBottomSheetProps = jest.fn();
@@ -16,7 +16,7 @@ jest.mock("@shared/ui-queued-bottom-sheet", () => ({
 const dialogProps = {
   contactName: "Ben",
   onClose: () => undefined,
-} as unknown as ContactAddressDetailDialogNativeProps;
+} as unknown as ContactAddressDetailDialogProps;
 
 describe("ContactAddressDetailDialogSheet", () => {
   beforeEach(() => {

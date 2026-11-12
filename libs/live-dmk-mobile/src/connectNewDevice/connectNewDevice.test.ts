@@ -4,6 +4,7 @@ import {
   type DiscoveredDevice,
   type TransportIdentifier,
 } from "@ledgerhq/device-management-kit";
+import { mockserverIdentifier } from "@ledgerhq/device-transport-kit-mockserver";
 import { rnBleTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-ble";
 import { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-hid";
 import { speculosIdentifier } from "@ledgerhq/device-transport-kit-speculos";
@@ -16,6 +17,7 @@ import { NEVER, startWith } from "rxjs";
 
 import { connectNewDevice, type ConnectNewDeviceInput } from "./connectNewDevice";
 import { ConnectNewDeviceUIStateTypes, type MobileConnectNewDeviceUIState } from "./types";
+import { MockServerDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/MockServerDeviceDiscoverySource";
 import { RnBleDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/RnBleDeviceDiscoverySource";
 import { RnHidDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/RnHidDeviceDiscoverySource";
 import { SpeculosDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/SpeculosDeviceDiscoverySource";
@@ -48,12 +50,22 @@ jest.mock("../deviceConnectivity/discoveryService/sources/RnHidDeviceDiscoverySo
   })),
 }));
 
+jest.mock("../deviceConnectivity/discoveryService/sources/MockServerDeviceDiscoverySource", () => ({
+  MockServerDeviceDiscoverySource: jest.fn().mockImplementation(() => ({
+    listen: () => jest.requireActual("rxjs").NEVER,
+    transportId: jest.requireActual("@ledgerhq/device-transport-kit-mockserver")
+      .mockserverIdentifier,
+  })),
+}));
+
 jest.mock("../deviceConnectivity/discoveryService/sources/SpeculosDeviceDiscoverySource", () => ({
   SpeculosDeviceDiscoverySource: jest.fn().mockImplementation(() => ({
     listen: () => jest.requireActual("rxjs").NEVER,
     transportId: jest.requireActual("@ledgerhq/device-transport-kit-speculos").speculosIdentifier,
   })),
 }));
+
+const NEVER_RESOLVED = new Promise<never>(() => {});
 
 const mockedSharedConnectNewDeviceUseCase = jest.mocked(sharedConnectNewDeviceUseCase);
 
@@ -62,7 +74,10 @@ const setPlatformOS = (platformOS: typeof Platform.OS) => {
 };
 
 const discoverOn = (
-  source: typeof RnBleDeviceDiscoverySource | typeof RnHidDeviceDiscoverySource,
+  source:
+    | typeof RnBleDeviceDiscoverySource
+    | typeof RnHidDeviceDiscoverySource
+    | typeof MockServerDeviceDiscoverySource,
   transport: TransportIdentifier,
   id: string,
 ) => {
@@ -78,15 +93,23 @@ const discoverOn = (
       ({
         transportId: transport,
         listen: () => NEVER.pipe(startWith({ type: "devices", devices: [discoveredDevice] })),
-      }) as unknown as RnBleDeviceDiscoverySource & RnHidDeviceDiscoverySource,
+      }) as unknown as RnBleDeviceDiscoverySource &
+        RnHidDeviceDiscoverySource &
+        MockServerDeviceDiscoverySource,
   );
+
+  return discoveredDevice;
 };
 
-const setupTest = () => {
+const setupTest = ({
+  dmk = {} as DeviceManagementKit,
+  isMockServerEnabled = false,
+}: { dmk?: DeviceManagementKit; isMockServerEnabled?: boolean } = {}) => {
   const input: ConnectNewDeviceInput = {
-    dmk: {} as DeviceManagementKit,
+    dmk,
     onConnected: jest.fn(),
     onClose: jest.fn(),
+    isMockServerEnabled,
   };
   const states: Array<MobileConnectNewDeviceUIState> = [];
   const subscription = connectNewDevice(input).subscribe(state => states.push(state));
@@ -150,6 +173,7 @@ describe("mobile connectNewDevice", () => {
       dmk: {} as DeviceManagementKit,
       onConnected: jest.fn(),
       onClose: jest.fn(),
+      isMockServerEnabled: false,
       deviceNotFoundDelay: 3_000,
       successDelay: 500,
     };
@@ -200,6 +224,59 @@ describe("mobile connectNewDevice", () => {
         ],
       }),
     );
+
+    subscription.unsubscribe();
+  });
+
+  it.each(["ios", "android"] as const)(
+    "should scan only the mock server, and start no RN_BLE, RN_HID nor Speculos discovery, on %s when the mock server is on",
+    platformOS => {
+      // GIVEN
+      setPlatformOS(platformOS);
+
+      // WHEN
+      const { input, states, subscription } = setupTest({ isMockServerEnabled: true });
+
+      // THEN
+      expect(MockServerDeviceDiscoverySource).toHaveBeenCalledWith(input.dmk);
+      expect(RnBleDeviceDiscoverySource).not.toHaveBeenCalled();
+      expect(RnHidDeviceDiscoverySource).not.toHaveBeenCalled();
+      expect(SpeculosDeviceDiscoverySource).not.toHaveBeenCalled();
+      expect(states[states.length - 1]).toEqual(
+        expect.objectContaining({
+          type: ConnectNewDeviceUIStateTypes.Discovering,
+          scanningTransports: [mockserverIdentifier],
+        }),
+      );
+
+      subscription.unsubscribe();
+    },
+  );
+
+  it("should connect to a discovered mock device when it is selected", () => {
+    // GIVEN
+    setPlatformOS("ios");
+    const discoveredDevice = discoverOn(
+      MockServerDeviceDiscoverySource,
+      mockserverIdentifier,
+      "mock-id",
+    );
+    const dmk = { connect: jest.fn(() => NEVER_RESOLVED) } as unknown as DeviceManagementKit;
+    const { states, subscription } = setupTest({ dmk, isMockServerEnabled: true });
+    const discoveringState = states[states.length - 1];
+    if (discoveringState?.type !== ConnectNewDeviceUIStateTypes.Discovering) {
+      throw new Error(`Expected the discovering state, got ${discoveringState?.type}`);
+    }
+    const [listedDevice] = discoveringState.devices;
+    if (!listedDevice?.isAvailable) throw new Error("Expected an available mock device");
+
+    // WHEN
+    listedDevice.onSelect();
+
+    // THEN
+    expect(listedDevice.device.id).toBe("mock-id");
+    expect(states[states.length - 1]?.type).toBe(ConnectNewDeviceUIStateTypes.Connecting);
+    expect(dmk.connect).toHaveBeenCalledWith(expect.objectContaining({ device: discoveredDevice }));
 
     subscription.unsubscribe();
   });

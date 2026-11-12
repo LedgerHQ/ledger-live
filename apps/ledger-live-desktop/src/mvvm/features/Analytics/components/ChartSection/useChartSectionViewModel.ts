@@ -31,18 +31,24 @@ import {
   lineChartRangeToPortfolioRange,
   portfolioRangeToLineChartRange,
 } from "../../utils/portfolioRangeMapping";
-import type { ChartSectionViewModelResult, ScrubSelection } from "./types";
+import type { ChartSectionViewModelResult, ChartVariationStatus, ScrubSelection } from "./types";
 
 type UseChartSectionViewModelProps = Readonly<{
   balanceInfo: PortfolioBalanceInfo;
-  portfolio: Portfolio;
+  portfolio: Pick<Portfolio, "balanceHistory">;
   isLoading: boolean;
+  contextKey?: string;
+  isChartLoading?: boolean;
+  variationStatus?: ChartVariationStatus;
 }>;
 
 export function useChartSectionViewModel({
   balanceInfo,
   portfolio,
   isLoading,
+  isChartLoading,
+  variationStatus,
+  contextKey,
 }: UseChartSectionViewModelProps): ChartSectionViewModelResult {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -52,7 +58,11 @@ export function useChartSectionViewModel({
   const discreet = useSelector(discreetModeSelector);
   const selectedRange = portfolioRangeToLineChartRange(selectedTimeRange);
   const fiatUnit = counterValue.units[0];
-  const [scrubSelection, setScrubSelection] = useState<ScrubSelection | undefined>(undefined);
+  const [scrub, setScrub] = useState<{ key?: string; selection?: ScrubSelection }>({
+    key: contextKey,
+  });
+  const scrubSelection = scrub.key === contextKey ? scrub.selection : undefined;
+  if (scrub.key !== contextKey) setScrub({ key: contextKey });
 
   const { prices, timestamps } = useMemo(() => {
     const history = portfolio.balanceHistory;
@@ -98,27 +108,29 @@ export function useChartSectionViewModel({
   const onScrubberPositionChange = useCallback<LineChartScrubberPositionChange>(
     index => {
       if (index == null) {
-        setScrubSelection(undefined);
+        setScrub({ key: contextKey });
         return;
       }
       const value = prices[index];
       const timestamp = timestamps[index];
-      setScrubSelection(
-        Number.isFinite(value) && timestamp != null ? { balance: value, timestamp } : undefined,
-      );
+      setScrub({
+        key: contextKey,
+        selection:
+          Number.isFinite(value) && timestamp != null ? { balance: value, timestamp } : undefined,
+      });
     },
-    [prices, timestamps],
+    [prices, timestamps, contextKey],
   );
 
   const onRangeChange = useCallback(
     (range: LineChartRange) => {
       const portfolioRange = lineChartRangeToPortfolioRange(range);
       if (!portfolioRange || portfolioRange === selectedTimeRange) return;
-      setScrubSelection(undefined);
+      setScrub({ key: contextKey });
       dispatch(setSelectedTimeRange(portfolioRange));
       track("timeframe_clicked", { timeframe: portfolioRange });
     },
-    [dispatch, selectedTimeRange],
+    [dispatch, selectedTimeRange, contextKey],
   );
 
   const chart = useMemo(
@@ -127,7 +139,7 @@ export function useChartSectionViewModel({
       selectedRange,
       onRangeChange,
       color: resolveLineChartColorFromPercentChange(rangePercentageValue),
-      isLoading: !balanceInfo.isAvailable,
+      isLoading: isChartLoading ?? !balanceInfo.isAvailable,
       height: DEFAULT_LINE_CHART_HEIGHT,
       formatValue,
       onScrubberPositionChange,
@@ -145,6 +157,7 @@ export function useChartSectionViewModel({
       onRangeChange,
       rangePercentageValue,
       balanceInfo.isAvailable,
+      isChartLoading,
       formatValue,
       onScrubberPositionChange,
       xAxis,
@@ -159,6 +172,7 @@ export function useChartSectionViewModel({
       scrubSelection,
       chartPrices: prices,
       isLoading,
+      variationStatus,
     },
     chart,
   };

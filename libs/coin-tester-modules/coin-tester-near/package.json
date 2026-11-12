@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-near",
-  "version": "0.4.3",
+  "version": "0.5.0",
   "private": true,
   "description": "Ledger NEAR Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -53,8 +53,7 @@
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand --forceExit",
-    "unimported": "pnpm knip --directory ../../.. -W libs/coin-tester-modules/coin-tester-near"
+    "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand --forceExit"
   },
   "dependencies": {
     "@ledgerhq/coin-near": "workspace:^",
@@ -66,7 +65,7 @@
     "bignumber.js": "^9",
     "msw": "catalog:",
     "near-api-js": "^7.3.1",
-    "near-sandbox": "^0.3.2"
+    "near-sandbox": "^0.3.4"
   },
   "devDependencies": {
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
@@ -74,10 +73,11 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "rimraf": "^5",
+    "rimraf": "5.0.10",
     "typescript": "catalog:"
   }
 }

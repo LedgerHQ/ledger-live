@@ -1,6 +1,6 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { Account } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { formatTransaction, fromTransactionRaw, toTransactionRaw } from "./transaction";
 import type { Transaction, TransactionRaw } from "./types";
 
@@ -79,7 +79,13 @@ describe("fromTransactionRaw", () => {
   });
 
   it("ignores validator fields on a send transaction", () => {
-    const result = fromTransactionRaw({ ...baseRaw, valAddress: SOURCE, sourceValidator: SOURCE });
+    const result = fromTransactionRaw({
+      ...baseRaw,
+      valAddress: SOURCE,
+      dstValAddress: DESTINATION,
+      sourceValidator: SOURCE,
+      validators: [{ address: DESTINATION, amount: "100" }],
+    });
     expect(result).not.toHaveProperty("valAddress");
     expect(result).not.toHaveProperty("dstValAddress");
     expect(result).not.toHaveProperty("validators");
@@ -271,19 +277,6 @@ describe("toTransactionRaw", () => {
     });
     expect(result.valAddress).toBe(SOURCE);
     expect(result.dstValAddress).toBe(DESTINATION);
-    expect(result).not.toHaveProperty("validators");
-    expect(result).not.toHaveProperty("sourceValidator");
-  });
-
-  it("normalizes a legacy live redelegation into the mode-specific fields", () => {
-    const result = toTransactionRaw({
-      ...baseTransaction,
-      amount: new BigNumber(0),
-      mode: "redelegate",
-      sourceValidator: SOURCE,
-      validators: [{ address: DESTINATION, amount: new BigNumber(100) }],
-    });
-    expect(result).toMatchObject({ amount: "100", valAddress: SOURCE, dstValAddress: DESTINATION });
     expect(result).not.toHaveProperty("validators");
     expect(result).not.toHaveProperty("sourceValidator");
   });

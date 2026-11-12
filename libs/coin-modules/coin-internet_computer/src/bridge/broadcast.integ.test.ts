@@ -1,7 +1,7 @@
 import { Cbor, requestIdOf } from "@icp-sdk/core/agent";
 import { Secp256k1KeyIdentity } from "@icp-sdk/core/identity/secp256k1";
 import { concatBytes } from "@noble/hashes/utils";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { ICP_FEES, ICP_NETWORK_URL } from "../consts";
 import { createUnsignedSendTransaction } from "../logic/buildTransaction";
 import { deriveAddressFromPubkey, pubkeyToDer } from "../logic/crypto";

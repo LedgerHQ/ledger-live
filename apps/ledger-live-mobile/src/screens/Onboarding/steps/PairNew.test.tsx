@@ -17,6 +17,7 @@ import type { DeviceConnectionResult } from "@ledgerhq/live-dmk-shared";
 import { NavigatorName, ScreenName } from "~/const";
 import type { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import type { State } from "~/reducers/types";
+import { DeviceOnboardingProvider } from "LLM/features/DeviceOnboarding/hooks/DeviceOnboardingProvider";
 import PairNew from "./PairNew";
 
 jest.mock("LLM/features/NotificationsPrompt", () => ({
@@ -65,6 +66,50 @@ jest.mock("@ledgerhq/live-dmk-mobile", () => {
     ...actual,
     connectNewDevice: jest.fn(),
     useDeviceManagementKit: jest.fn(),
+  };
+});
+
+jest.mock("LLM/features/DeviceOnboarding/hooks/useDeviceOnboarding", () => {
+  const React = require("react") as typeof import("react");
+  const machine = {
+    state: "awaitingStart" as string | null,
+    error: null as string | null,
+    adopt: jest.fn(),
+    discard: jest.fn(),
+    bump: () => {},
+  };
+
+  return {
+    machine,
+    useDeviceOnboarding: () => {
+      const [, setTick] = React.useState(0);
+      React.useEffect(() => {
+        machine.bump = () => setTick(value => value + 1);
+        return () => {
+          machine.bump = () => {};
+        };
+      }, []);
+      return {
+        status: "running",
+        device: null,
+        liveDevice: null,
+        state: machine.state,
+        context: null,
+        snapshot: null,
+        exit: null,
+        sendableEvents: [],
+        error: machine.error,
+        connect: jest.fn(),
+        adopt: machine.adopt,
+        discard: machine.discard,
+        send: jest.fn(),
+        reset: jest.fn(),
+        reconnectAfterUpdate: jest.fn(),
+        abortFirmwareReconnect: jest.fn(),
+        actorRef: { current: null },
+        portsRef: { current: null },
+      };
+    },
   };
 });
 
@@ -131,6 +176,17 @@ type TestStackParamList = OnboardingNavigatorParamList & {
 const Stack = createNativeStackNavigator<TestStackParamList>();
 
 const mockedConnectNewDevice = jest.mocked(connectNewDevice);
+const { machine: holdMachine } = jest.requireMock(
+  "LLM/features/DeviceOnboarding/hooks/useDeviceOnboarding",
+) as {
+  machine: {
+    state: string | null;
+    error: string | null;
+    adopt: jest.Mock;
+    discard: jest.Mock;
+    bump: () => void;
+  };
+};
 const mockDmk = { id: "dmk" } as unknown as NonNullable<ReturnType<typeof useDeviceManagementKit>>;
 
 let emitState: ((state: ConnectNewDeviceUIState) => void) | undefined;
@@ -170,43 +226,47 @@ function renderPairNew(
   deviceOnboardingEnabled: boolean,
   readOnlyModeEnabled = false,
   fromWelcome = false,
+  connectUnseededDevice?: boolean,
 ) {
   return render(
-    <Stack.Navigator
-      initialRouteName={
-        fromWelcome ? ScreenName.OnboardingWelcomeBack : ScreenName.OnboardingPairNew
-      }
-      screenOptions={{ headerShown: false, animation: "none" }}
-    >
-      <Stack.Screen name={ScreenName.OnboardingWelcomeBack} component={WelcomeBack} />
-      <Stack.Screen
-        name={ScreenName.OnboardingPairNew}
-        component={PairNew}
-        initialParams={
-          fromWelcome
-            ? undefined
-            : {
-                deviceModelId: DeviceModelId.stax,
-                fromAccessExistingWallet: true,
-                connectSeededDevice,
-              }
+    <DeviceOnboardingProvider>
+      <Stack.Navigator
+        initialRouteName={
+          fromWelcome ? ScreenName.OnboardingWelcomeBack : ScreenName.OnboardingPairNew
         }
-      />
-      <Stack.Screen name={ScreenName.DeviceOnboardingFunnel}>
-        {({ route }) => (
-          <Placeholder
-            label={`seeded funnel ${route.params.pairedDeviceId} ${String(route.params.wasReadOnlyAtEntry)}`}
-          />
-        )}
-      </Stack.Screen>
-      <Stack.Screen name={ScreenName.OnboardingBluetoothInformation}>
-        {() => <Placeholder label="bluetooth" />}
-      </Stack.Screen>
-      <Stack.Screen name={ScreenName.OnboardingDeviceSelection} component={DeviceSelection} />
-      <Stack.Screen name={NavigatorName.Base}>
-        {() => <Placeholder label="portfolio" />}
-      </Stack.Screen>
-    </Stack.Navigator>,
+        screenOptions={{ headerShown: false, animation: "none" }}
+      >
+        <Stack.Screen name={ScreenName.OnboardingWelcomeBack} component={WelcomeBack} />
+        <Stack.Screen
+          name={ScreenName.OnboardingPairNew}
+          component={PairNew}
+          initialParams={
+            fromWelcome
+              ? undefined
+              : {
+                  deviceModelId: DeviceModelId.stax,
+                  fromAccessExistingWallet: true,
+                  connectSeededDevice,
+                  connectUnseededDevice,
+                }
+          }
+        />
+        <Stack.Screen name={ScreenName.DeviceOnboardingFunnel}>
+          {({ route }) => (
+            <Placeholder
+              label={`funnel ${route.params.pairedDeviceId} ${String(route.params.wasReadOnlyAtEntry)} ${String(Boolean(route.params.connectUnseededDevice))}`}
+            />
+          )}
+        </Stack.Screen>
+        <Stack.Screen name={ScreenName.OnboardingBluetoothInformation}>
+          {() => <Placeholder label="bluetooth" />}
+        </Stack.Screen>
+        <Stack.Screen name={ScreenName.OnboardingDeviceSelection} component={DeviceSelection} />
+        <Stack.Screen name={NavigatorName.Base}>
+          {() => <Placeholder label="portfolio" />}
+        </Stack.Screen>
+      </Stack.Navigator>
+    </DeviceOnboardingProvider>,
     {
       overrideInitialState: withFlagOverrides(
         {
@@ -226,6 +286,10 @@ function renderPairNew(
 
 describe("PairNew", () => {
   beforeEach(() => {
+    holdMachine.state = "awaitingStart";
+    holdMachine.error = null;
+    holdMachine.adopt.mockClear();
+    holdMachine.discard.mockClear();
     jest.mocked(useDeviceManagementKit).mockReturnValue(mockDmk);
     emitState = undefined;
     unsubscribe = jest.fn();
@@ -247,7 +311,7 @@ describe("PairNew", () => {
     await pair(user);
 
     expect(await screen.findByText("portfolio")).toBeVisible();
-    expect(screen.queryByText(/seeded funnel/)).toBeNull();
+    expect(screen.queryByText(/funnel /)).toBeNull();
     expect(store.getState().settings.hasCompletedOnboarding).toBe(true);
   });
 
@@ -307,9 +371,107 @@ describe("PairNew", () => {
     });
     await user.press(screen.getByLabelText("Connect Ledger Stax"));
 
-    expect(await screen.findByText("seeded funnel paired-id true")).toBeVisible();
+    expect(await screen.findByText("funnel paired-id true false")).toBeVisible();
+    expect(holdMachine.adopt).toHaveBeenCalledWith(result);
     expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
     expect(store.getState().settings.readOnlyModeEnabled).toBe(true);
+  });
+
+  it("should keep the pairing success until the machine knows where to go", async () => {
+    holdMachine.state = "readingState";
+    const { user } = renderPairNew(true, true, true);
+    const result = connectionResult();
+
+    expect(await screen.findByText("Looking for your Ledger devices")).toBeVisible();
+    emit({
+      type: ConnectNewDeviceUIStateTypes.Discovering,
+      devices: [
+        {
+          key: pairedDevice.id,
+          device: pairedDevice,
+          isAvailable: true,
+          onSelect: () => undefined,
+        },
+      ],
+      scanningTransports: [rnBleTransportIdentifier],
+      showDeviceNotFound: false,
+    });
+    await user.press(screen.getByLabelText("Connect Ledger Stax"));
+    emit({ type: ConnectNewDeviceUIStateTypes.Connected, device: pairedDevice });
+    act(() => {
+      mockedConnectNewDevice.mock.calls.at(-1)?.[0].onConnected(result);
+    });
+
+    expect(screen.getByText("Your device is paired")).toBeVisible();
+    expect(screen.queryByText(/funnel /)).toBeNull();
+    expect(holdMachine.adopt).toHaveBeenCalledWith(result);
+
+    holdMachine.state = "awaitingStart";
+    act(() => holdMachine.bump());
+
+    expect(await screen.findByText("funnel paired-id true false")).toBeVisible();
+  });
+
+  it.each([
+    ["the flag is off", false, true],
+    ["connectUnseededDevice is off", true, false],
+  ] as const)(
+    "should complete onboarding from setup when %s",
+    async (_, flagEnabled, connectUnseededDevice) => {
+      const { user, store } = renderPairNew(
+        undefined,
+        flagEnabled,
+        false,
+        false,
+        connectUnseededDevice,
+      );
+
+      await pair(user);
+
+      expect(await screen.findByText("portfolio")).toBeVisible();
+      expect(screen.queryByText(/funnel /)).toBeNull();
+      expect(store.getState().settings.hasCompletedOnboarding).toBe(true);
+    },
+  );
+
+  it("should open the funnel without completing onboarding when setup connects", async () => {
+    const { user, store } = renderPairNew(undefined, true, true, false, true);
+    const result = connectionResult();
+
+    expect(await screen.findByText("Looking for your Ledger devices")).toBeVisible();
+    emit({
+      type: ConnectNewDeviceUIStateTypes.Discovering,
+      devices: [
+        {
+          key: pairedDevice.id,
+          device: pairedDevice,
+          isAvailable: true,
+          onSelect: () => mockedConnectNewDevice.mock.calls.at(-1)?.[0].onConnected(result),
+        },
+      ],
+      scanningTransports: [rnBleTransportIdentifier],
+      showDeviceNotFound: false,
+    });
+    await user.press(screen.getByLabelText("Connect Ledger Stax"));
+
+    expect(await screen.findByText("funnel paired-id true true")).toBeVisible();
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
+  });
+
+  it("should open device selection when setup cannot find a device", async () => {
+    const { user } = renderPairNew(undefined, true, false, false, true);
+
+    expect(await screen.findByText("Looking for your Ledger devices")).toBeVisible();
+    emit({
+      type: ConnectNewDeviceUIStateTypes.Discovering,
+      devices: [],
+      scanningTransports: [rnBleTransportIdentifier],
+      showDeviceNotFound: true,
+    });
+
+    await user.press(screen.getByText("I don’t see my device"));
+
+    expect(await screen.findByText("Select the Ledger you want to set up:")).toBeVisible();
   });
 
   it("should let pairing clear read-only mode when the funnel is off", async () => {

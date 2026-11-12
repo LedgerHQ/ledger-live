@@ -47,7 +47,7 @@ A test takes the suffix of the file it tests: `ContactsButton.web.test.tsx` next
 
 Lumen is replaced by passthrough stubs that render their children: assert on your view and view
 model wiring, not on Lumen's behaviour. Run one project with
-`pnpm --filter <package-name> test --selectProjects native`.
+`pnpm nx run <package-name>:test --selectProjects native`.
 
 ## Where tests sit
 
@@ -71,6 +71,8 @@ the failure variants, `listenToCardApi()`, which starts a server with
 `onUnhandledRequest: "error"` and resets it after each test, and the thunk extra argument
 `mockCardApiExtraArgument()`.
 
+The test answers each route with a `jest.fn()` endpoint, as in [msw-endpoints.md](msw-endpoints.md):
+
 ```ts
 import { http, HttpResponse } from "msw";
 import {
@@ -80,12 +82,15 @@ import {
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
 
 const server = listenToCardApi();
+const endpoints = { transactions: jest.fn<Response, [{ request: Request }]>() };
 
 beforeEach(() => {
-  server.use(http.get(CARD_TRANSACTIONS_URL, () => HttpResponse.json(mockPayCardTransactions())));
+  endpoints.transactions
+    .mockReset()
+    .mockImplementation(() => HttpResponse.json(mockPayCardTransactions()));
+  server.use(http.get(CARD_TRANSACTIONS_URL, endpoints.transactions));
 });
 ```
 
 The package lists `msw` in its `devDependencies`. App integration tests reuse the same fixtures
-with the app server (`tests/server`). The `jest.fn()` endpoint recipe of
-[msw-endpoints.md](msw-endpoints.md) applies inside packages too.
+with the app server (`tests/server`).

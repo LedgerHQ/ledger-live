@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-analytics-consent",
-  "version": "0.2.12",
+  "version": "0.2.13",
   "private": true,
   "description": "Analytics consent decision engine: policy version major/minor semantics",
   "main": "src/index.ts",
@@ -13,11 +13,12 @@
   "sideEffects": false,
   "scripts": {
     "lint": "oxlint src",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/flow/analytics-consent"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@domain/entity-analytics-consent": "workspace:*",
@@ -28,11 +29,15 @@
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/lint": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "react": "catalog:",
     "typescript": "catalog:"
   }

@@ -1,6 +1,9 @@
+import type { AccountSettingsEventHandler } from "../../logic/accountSettingsEvent";
+
 export type RemoveAccountContentProps = Readonly<{
   onConfirm: () => void;
   onCancel: () => void;
+  onEvent?: AccountSettingsEventHandler;
 }>;
 
 export type RemoveAccountContentLabels = Readonly<{
@@ -10,5 +13,8 @@ export type RemoveAccountContentLabels = Readonly<{
   cancel: string;
 }>;
 
-export type RemoveAccountContentViewProps = RemoveAccountContentProps &
+export type RemoveAccountContentViewProps = Pick<
+  RemoveAccountContentProps,
+  "onConfirm" | "onCancel"
+> &
   Readonly<{ labels: RemoveAccountContentLabels }>;

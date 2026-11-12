@@ -1,5 +1,5 @@
 import shuffle from "lodash/shuffle";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Account, AccountLike, TransactionStatusCommon } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";

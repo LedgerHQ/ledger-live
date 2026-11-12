@@ -8,6 +8,7 @@ import DebugConfiguration from "~/screens/Settings/Debug/Configuration";
 import DebugConnectivity, {
   connectivityHeaderOptions,
 } from "~/screens/Settings/Debug/Connectivity";
+import { MockServerSettingsScreen } from "LLM/features/MockServer";
 import DebugCrash from "~/screens/Settings/Debug/Debugging/Crashes";
 import DebugCustomImageGraphics from "~/screens/Settings/Debug/Features/CustomImageGraphics";
 import DebugDebugging from "~/screens/Settings/Debug/Debugging";
@@ -16,6 +17,8 @@ import DebugEnv from "~/screens/Settings/Debug/Configuration/DebugEnv";
 import DeviceSimulationDevToolScreen from "~/screens/Settings/Debug/Configuration/DeviceSimulationDevTool";
 import DebugLargeScreenUpsell from "LLM/features/LargeScreenUpsell/Debug";
 import DebugOsUpdateOrchestrator from "LLM/features/OsUpdate/Debug";
+import DebugOsUpdates from "LLM/features/OsUpdate/Debug/OsUpdatesDebugHub";
+import DebugOsUpdateGallery from "LLM/features/OsUpdate/Debug/Gallery";
 import DebugFeatureFlags from "~/screens/FeatureFlagsSettings";
 import DebugFeatures from "~/screens/Settings/Debug/Features";
 import DebugStartTour from "~/screens/Settings/Debug/Features/StartTour";
@@ -312,6 +315,13 @@ export default function SettingsNavigator() {
         options={connectivityHeaderOptions}
       />
       <Stack.Screen
+        name={ScreenName.DebugMockServer}
+        component={MockServerSettingsScreen}
+        options={{
+          title: "Mock server",
+        }}
+      />
+      <Stack.Screen
         name={ScreenName.DebugFeatures}
         component={DebugFeatures}
         options={{
@@ -410,10 +420,24 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
+        name={ScreenName.DebugOsUpdates}
+        component={DebugOsUpdates}
+        options={{
+          title: "OS Updates",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugOsUpdateGallery}
+        component={DebugOsUpdateGallery}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
         name={ScreenName.DebugOsUpdateOrchestrator}
         component={DebugOsUpdateOrchestrator}
         options={{
-          title: "OS Update orchestrator",
+          title: "Live flow",
         }}
       />
       <Stack.Screen

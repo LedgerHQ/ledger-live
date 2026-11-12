@@ -230,7 +230,11 @@ export const deviceOnboardingMachine = setup({
           },
         },
 
-        notGenuineSupport: {},
+        notGenuineSupport: {
+          on: {
+            CLOSE: { target: "checksIdle", actions: "pauseChecks" },
+          },
+        },
 
         firmwareCheck: {
           invoke: {
@@ -332,7 +336,7 @@ export const deviceOnboardingMachine = setup({
     },
 
     setupExit: {
-      always: [{ guard: "offerSync", target: "syncOffer" }, { target: "done" }],
+      always: { target: "done" },
     },
 
     deviceSetup: {

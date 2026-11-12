@@ -3,6 +3,7 @@ import { Provider } from "react-redux";
 import { Store } from "redux";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import { restoreLargeScreenUpsellModalState } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
+import { restorePredictionsState } from "@domain/entity-predictions";
 import { restorePayCardBalanceFilter } from "@features/flow-pay-balance/state";
 import { restorePayCardFeatureTour } from "@features/flow-pay-feature-tour/state";
 import { restoreReceiveVerifyHint } from "@features/flow-pay-request/state";
@@ -23,11 +24,13 @@ import {
   getCryptoAssetsCacheState,
   getFeatureFlagsState,
   saveFeatureFlagsState,
+  getLiveConfigOverridesState,
   getSettings,
   getBle,
   getHistory,
   getKnownDevices,
   getLargeScreenUpsellModalState,
+  getPredictionsState,
   getPostOnboardingState,
   getProtect,
   getMarketState,
@@ -56,10 +59,15 @@ import { importMarketListConfig } from "~/reducers/market";
 import { importMarketBannerState } from "~/reducers/marketBanner";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { importWalletState } from "~/reducers/wallet";
+import { restoreAccountAnalyticsIntroductionFromStorage } from "LLM/features/AccountDetail/analyticsIntroductionStorage";
 import { importLargeMoverState } from "~/actions/largeMoverLandingPage";
 import { initHistory } from "~/reducers/history";
 import { restoreTokensToCache, parsePersistedCAL } from "@domain/api-currency-token";
 import { setAllOverrides, setBannerVisible, type PartialFeatures } from "@shared/feature-flags";
+import {
+  sanitizePersistedOverrides,
+  setAllLiveConfigOverrides,
+} from "@shared/live-config-overrides";
 import { initIdentities } from "../helpers/identities";
 import { whenCachedFlagsSettled } from "./whenCachedFlagsSettled";
 import { startCountervaluesWhenReady } from "./startCountervaluesWhenReady";
@@ -104,6 +112,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         accountsData,
         postOnboardingState,
         largeScreenUpsellModalState,
+        predictionsState,
         marketState,
         marketListConfigState,
         marketBannerState,
@@ -116,6 +125,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         cryptoAssetsCache,
         persistedIdentities,
         persistedFeatureFlags,
+        persistedLiveConfigOverrides,
         legacyUser,
         historyState,
       ] = await Promise.all([
@@ -125,6 +135,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         retry(getAccounts, MAX_RETRIES, RETRY_DELAY),
         retry(getPostOnboardingState, MAX_RETRIES, RETRY_DELAY),
         retry(getLargeScreenUpsellModalState, MAX_RETRIES, RETRY_DELAY),
+        retry(getPredictionsState, MAX_RETRIES, RETRY_DELAY),
         retry(getMarketState, MAX_RETRIES, RETRY_DELAY),
         retry(getMarketListConfig, MAX_RETRIES, RETRY_DELAY),
         retry(getMarketBannerState, MAX_RETRIES, RETRY_DELAY),
@@ -137,6 +148,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         retry(getCryptoAssetsCacheState, MAX_RETRIES, RETRY_DELAY),
         retry(getIdentities, MAX_RETRIES, RETRY_DELAY),
         retry(getFeatureFlagsState, MAX_RETRIES, RETRY_DELAY),
+        retry(getLiveConfigOverridesState, MAX_RETRIES, RETRY_DELAY),
         retry(getUser, MAX_RETRIES, RETRY_DELAY),
         retry(getHistory, MAX_RETRIES, RETRY_DELAY),
       ]).finally(() => {
@@ -166,6 +178,13 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 
       store.dispatch(importSettings(settingsData));
 
+      const liveConfigOverrides = sanitizePersistedOverrides(
+        persistedLiveConfigOverrides?.overrides,
+      );
+      if (liveConfigOverrides) {
+        store.dispatch(setAllLiveConfigOverrides(liveConfigOverrides));
+      }
+
       // Hydrate persisted crypto assets tokens BEFORE importing accounts
       // This ensures tokens are available when decoding accounts (which now uses findTokenById)
       // Cross-caching is automatic: tokens are cached under both ID and address lookups
@@ -193,6 +212,10 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 
       if (largeScreenUpsellModalState) {
         store.dispatch(restoreLargeScreenUpsellModalState(largeScreenUpsellModalState));
+      }
+
+      if (predictionsState) {
+        store.dispatch(restorePredictionsState(predictionsState));
       }
 
       if (marketState) {
@@ -282,6 +305,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 
       await bootstrapCardSession(store.dispatch);
       await restoreCardAuthStatus(store.dispatch, store.getState);
+      await restoreAccountAnalyticsIntroductionFromStorage(store.dispatch);
 
       setReady(true);
       onInitFinished();

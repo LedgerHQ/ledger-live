@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-cli",
-  "version": "26.8.0",
+  "version": "26.9.0",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -42,6 +42,7 @@
     "@shared/env": "workspace:*",
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
+    "@ledgerhq/zcash-utils": "catalog:",
     "@reduxjs/toolkit": "catalog:",
     "bigint-buffer": "*",
     "bignumber.js": "9.1.2",
@@ -57,11 +58,13 @@
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
     "axios": "catalog:",
-    "ts-node": "10.9.2",
     "@rslib/core": "catalog:",
     "yaml": "2.8.1",
     "oxfmt": "catalog:",
-    "oxlint": "catalog:"
+    "oxlint": "catalog:",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
+    "zx": "catalog:"
   },
   "publishConfig": {
     "directory": "dist"

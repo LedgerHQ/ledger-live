@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-dmk-shared",
-  "version": "0.38.0",
+  "version": "0.39.0",
   "description": "Ledger Device Management Kit shared module",
   "private": true,
   "license": "Apache-2.0",
@@ -36,6 +36,7 @@
   "dependencies": {
     "@domain/entity-client-identity": "workspace:*",
     "@ledgerhq/context-module": "catalog:",
+    "@ledgerhq/device-transport-kit-mockserver": "catalog:",
     "@ledgerhq/device-transport-kit-speculos": "catalog:",
     "@ledgerhq/dmk-ledger-wallet": "catalog:",
     "@ledgerhq/hw-transport": "catalog:",
@@ -64,7 +65,11 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "rxjs": "catalog:",
-    "ws": "catalog:"
+    "ws": "catalog:",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
+    "rimraf": "catalog:",
+    "oxlint": "catalog:"
   },
   "peerDependencies": {
     "@ledgerhq/device-management-kit": "catalog:",

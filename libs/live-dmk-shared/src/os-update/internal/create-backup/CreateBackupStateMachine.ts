@@ -104,7 +104,10 @@ export const createBackupStateMachine = setup({
     [DeviceSituationEventType.DEVICE_SITUATION_UPDATE]: {
       actions: {
         type: "sendStateUpdate",
-        params: ({ event }) => toCreateBackupState(event.situation),
+        params: ({ context, event }) =>
+          toCreateBackupState(event, () =>
+            context.send({ type: CreateBackupStateMachineEventType.CANCEL }),
+          ),
       },
     },
   },
@@ -147,6 +150,7 @@ export const createBackupStateMachine = setup({
         type: "sendStateUpdate",
         params: ({ context }) => ({
           type: CreateBackupStateType.AWAITING_BACKUP_SELECTION,
+          backupCreatedAt: context.existingBackup!.createdAt,
           useExistingBackup: () =>
             context.send({ type: CreateBackupStateMachineEventType.USE_EXISTING_BACKUP }),
           createNewBackup: () =>
@@ -257,6 +261,9 @@ export const createBackupStateMachine = setup({
     },
     CheckErrorCause: {
       entry: { type: "logError", params: "CheckErrorCause" },
+      on: {
+        [CreateBackupStateMachineEventType.CANCEL]: "Canceled",
+      },
       invoke: {
         src: "checkErrorCause",
         input: ({ context, self }) => ({

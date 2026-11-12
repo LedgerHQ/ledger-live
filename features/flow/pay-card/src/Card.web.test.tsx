@@ -64,7 +64,6 @@ jest.mock("@features/flow-pay-card-auth", () => ({
 
 jest.mock("@features/flow-pay-card-details", () => ({
   CardArtwork: () => <div data-testid="card-artwork" />,
-  CardVisual: () => <div data-testid="card-visual" />,
   CardLoadingVisual: () => <div data-testid="card-loading-visual" />,
   CardDetails: ({
     cardVisual,
@@ -87,6 +86,9 @@ jest.mock("@features/flow-pay-card-details", () => ({
       />
     );
   },
+}));
+
+jest.mock("@features/flow-pay-card-details/web", () => ({
   CardPrimaryActionButton: ({ label, onPress }: { label: string; onPress: () => void }) => (
     <button type="button" data-testid="card-primary-action" onClick={onPress}>
       {label}

@@ -279,11 +279,11 @@ export enum SettingsActionTypes {
   SET_CLOSED_WITHDRAW_BANNER = "SET_CLOSED_WITHDRAW_BANNER",
   SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT = "SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT",
   SET_DEBUG_OS_UPDATE_BANNER_MODE = "SET_DEBUG_OS_UPDATE_BANNER_MODE",
+  SET_MOCK_SERVER_SETTINGS = "SET_MOCK_SERVER_SETTINGS",
   SET_DISMISSED_CONTENT_CARD = "SET_DISMISSED_CONTENT_CARD",
   CLEAR_DISMISSED_CONTENT_CARDS = "CLEAR_DISMISSED_CONTENT_CARDS",
   SET_LEDGER_SYNC_ONBOARDING = "SET_LEDGER_SYNC_ONBOARDING",
   SET_MEV_PROTECTION = "SET_MEV_PROTECTION",
-  SET_SELECTED_TAB_PORTFOLIO_ASSETS = "SET_SELECTED_TAB_PORTFOLIO_ASSETS",
 
   ADD_STARRED_MARKET_COINS = "ADD_STARRED_MARKET_COINS",
   REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
@@ -297,7 +297,7 @@ export enum SettingsActionTypes {
   SET_HAS_CLICKED_RECOVER = "SET_HAS_CLICKED_RECOVER",
 }
 
-export type SettingsImportPayload = Partial<SettingsState>;
+export type SettingsImportPayload = Partial<SettingsState> | null | undefined;
 export type SettingsUpdateCurrencyPayload = {
   ticker: string;
   patch: Partial<CurrencySettings>;
@@ -340,7 +340,7 @@ export type SettingsLastSeenDevicePayload = NonNullable<
 export type SettingsLastSeenDeviceInfoPayload = DeviceModelInfo;
 export type SettingsLastSeenDeviceLanguagePayload = DeviceInfo["languageId"];
 export type SettingsSetKnownDeviceModelIdsPayload = { [key in DeviceModelId]?: boolean };
-export type SettingsSetLastConnectedDevicePayload = Device;
+export type SettingsSetLastConnectedDevicePayload = Device | null;
 export type SettingsSetCustomImageTypePayload = Pick<SettingsState, "customLockScreenType">;
 export type SettingsSetHasOrderedNanoPayload = SettingsState["hasOrderedNano"];
 export type SettingsSetSensitiveAnalyticsPayload = SettingsState["sensitiveAnalytics"];
@@ -373,6 +373,7 @@ export type SettingsIsPostOnboardingFlowPayload = void | SettingsState["isPostOn
 export type SettingsSetGeneralTermsVersionAccepted = SettingsState["generalTermsVersionAccepted"];
 export type SettingsSetHasSeenAnalyticsOptInPrompt = SettingsState["hasSeenAnalyticsOptInPrompt"];
 export type SettingsSetDebugOsUpdateBannerMode = SettingsState["debugOsUpdateBannerMode"];
+export type SettingsSetMockServerSettingsPayload = SettingsState["mockServer"];
 export type SettingsSetAnalyticsConsentInfoPayload = SettingsState["analyticsConsentInfo"];
 export type SettingsSetHasDismissedContactsFeatureIntroductionPayload =
   SettingsState["hasDismissedContactsFeatureIntroduction"];
@@ -387,8 +388,6 @@ export type SettingsSetMevProtectionPayload = boolean;
 
 export type SettingsAddStarredMarketcoinsPayload = Unpacked<SettingsState["starredMarketCoins"]>;
 export type SettingsRemoveStarredMarketcoinsPayload = Unpacked<SettingsState["starredMarketCoins"]>;
-export type SettingsSetSelectedTabPortfolioAssetsPayload =
-  SettingsState["selectedTabPortfolioAssets"];
 export type SettingsSetHasClickedRecoverPayload = SettingsState["hasClickedRecover"];
 
 export type SettingsPayload =
@@ -438,12 +437,12 @@ export type SettingsPayload =
   | SettingsSetOnboardingTypePayload
   | SettingsSetHasSeenAnalyticsOptInPrompt
   | SettingsSetDebugOsUpdateBannerMode
+  | SettingsSetMockServerSettingsPayload
   | SettingsSetAnalyticsConsentInfoPayload
   | SettingsSetDismissedContentCardsPayload
   | SettingsClearDismissedContentCardsPayload
   | SettingsSetFromLedgerSyncOnboardingPayload
   | SettingsSetMevProtectionPayload
-  | SettingsSetSelectedTabPortfolioAssetsPayload
   | SettingsAddStarredMarketcoinsPayload
   | SettingsRemoveStarredMarketcoinsPayload
   | SettingsSetHasDismissedContactsFeatureIntroductionPayload
@@ -520,27 +519,15 @@ export type ProtectPayload = ProtectDataPayload | ProtectStatusPayload;
 
 // === MARKET ACTIONS ===
 export enum MarketStateActionTypes {
-  SET_MARKET_REQUEST_PARAMS = "SET_MARKET_REQUEST_PARAMS",
-  SET_MARKET_FILTER_BY_STARRED_CURRENCIES = "SET_MARKET_FILTER_BY_STARRED_CURRENCIES",
-  MARKET_SET_CURRENT_PAGE = "MARKET_SET_CURRENT_PAGE",
   MARKET_SET_HIDE_TRANSACTIONS_ON_CHART = "MARKET_SET_HIDE_TRANSACTIONS_ON_CHART",
   MARKET_IMPORT = "MARKET_IMPORT",
 }
 
-export type MarketSetMarketFilterByStarredCurrenciesPayload =
-  MarketState["marketFilterByStarredCurrencies"];
-export type MarketSetCurrentPagePayload = MarketState["marketCurrentPage"];
-export type MarketSetMarketRequestParamsPayload = MarketState["marketParams"];
 export type MarketSetHideTransactionsOnChartPayload = MarketState["hideTransactionsOnChart"];
 
 export type MarketImportPayload = Partial<MarketState>;
 
-export type MarketPayload =
-  | MarketSetMarketFilterByStarredCurrenciesPayload
-  | MarketSetMarketRequestParamsPayload
-  | MarketSetCurrentPagePayload
-  | MarketSetHideTransactionsOnChartPayload
-  | MarketImportPayload;
+export type MarketPayload = MarketSetHideTransactionsOnChartPayload | MarketImportPayload;
 
 // === LARGE MOVER ACTIONS ===
 export enum LargeMoverActionTypes {

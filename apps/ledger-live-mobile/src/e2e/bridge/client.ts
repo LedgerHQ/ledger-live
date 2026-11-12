@@ -2,7 +2,7 @@ import { Platform, DeviceEventEmitter } from "react-native";
 import invariant from "invariant";
 import { Subject } from "rxjs";
 import { store } from "~/state-manager/configureStore";
-import { importSettings, setLastConnectedDevice } from "~/actions/settings";
+import { importSettings, setLastConnectedDevice, setMockServerSettings } from "~/actions/settings";
 import {
   setOverride,
   setAllOverrides,
@@ -34,16 +34,15 @@ import { webviewLogStore } from "~/e2e/webviewLogStore";
 import { ptxHandoffStore } from "~/e2e/ptxHandoffStore";
 import { MessageData, ServerData, mockDeviceEventSubject } from "./types";
 import { getAllEnvs, setEnv } from "@shared/env";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import Config from "react-native-config";
 import type { FeatureId, Feature, PartialFeatures } from "@shared/feature-flags";
 import { bleDevicesSelector } from "~/reducers/ble";
 import { addKnownDevice, knownDevicesSelector, removeKnownDevices } from "~/reducers/knownDevices";
+import { mockServerSettingsSelector } from "~/reducers/settings";
 import {
   buildSpeculosLegacyDeviceId,
-  configureMockServerTransport,
-  DEFAULT_MOCK_SERVER_TRANSPORT_URL,
   getDeviceManagementKit,
-  getMockScriptRunnerBaseUrl,
   isSpeculosLegacyDeviceId,
   mockserverIdentifier,
   speculosIdentifier,
@@ -104,24 +103,29 @@ function overrideLedgerSyncEnvironment() {
   );
 }
 
+const isNonEmptyString = (value: unknown): value is string =>
+  typeof value === "string" && value !== "";
+
 function applyMockServerLaunchArgs() {
   const args = LaunchArguments.value();
+  const url = args["mockServerUrl"];
   const token = args["mockServerToken"];
   const model = args["mockServerModel"];
-  if (typeof token !== "string" || !token || typeof model !== "string" || !model) return;
+  if (!isNonEmptyString(url) || !isNonEmptyString(token) || !isNonEmptyString(model)) return;
 
   const provider = readLaunchForceProvider(args["forceProvider"]);
   if (provider !== undefined) {
     setEnv("FORCE_PROVIDER", provider);
   }
-  const launchUrl = args["mockServerUrl"];
-  const url =
-    typeof launchUrl === "string" && launchUrl ? launchUrl : DEFAULT_MOCK_SERVER_TRANSPORT_URL;
-  configureMockServerTransport({ url, token });
-  const scriptRunnerUrl = getMockScriptRunnerBaseUrl(url, token);
-  if (scriptRunnerUrl) {
-    setEnv("BASE_SOCKET_URL", scriptRunnerUrl);
+  const previousSettings = mockServerSettingsSelector(store.getState());
+  const isNewSession = previousSettings.url !== url || previousSettings.token !== token;
+  if (isNewSession) {
+    const mockDeviceIds = knownDevicesSelector(store.getState())
+      .filter(device => device.transport === mockserverIdentifier)
+      .map(device => device.id);
+    store.dispatch(removeKnownDevices(mockDeviceIds));
   }
+  store.dispatch(setMockServerSettings({ enabled: true, url, token }));
 
   seedMockServerKnownDevice(model as DeviceModelId);
 }
@@ -266,6 +270,10 @@ async function onMessage(event: WebSocketMessageEvent) {
         store.dispatch(setOverride({ key: id, value }));
         break;
       }
+      case "overrideLiveConfig": {
+        LiveConfig.setAllOverrides(msg.payload);
+        break;
+      }
       case "navigate":
         navigate(msg.payload, {});
         break;
@@ -406,6 +414,14 @@ export function sendFile(payload: { fileName: string; fileContent: string }) {
   postMessage({
     type: "appFile",
     payload: JSON.stringify(payload),
+  });
+}
+
+export function sendLocalManifestsImported(id: string, manifestIds: string[]) {
+  postMessage({
+    type: "localManifestsImported",
+    id,
+    payload: JSON.stringify(manifestIds),
   });
 }
 

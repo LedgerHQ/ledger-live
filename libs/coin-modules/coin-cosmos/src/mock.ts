@@ -9,7 +9,7 @@ import {
   type StakingResources,
   type StakingUnbonding,
 } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import Prando from "prando";
 import preloadedData from "./preloadedData.mock";
 import { isCosmosAccount, type CosmosAccount, type CosmosOperation } from "./types";

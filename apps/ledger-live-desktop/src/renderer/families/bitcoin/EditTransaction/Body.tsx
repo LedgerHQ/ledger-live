@@ -13,7 +13,7 @@ import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useState } from "react";
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 import { Trans, withTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import { compose } from "redux";
@@ -302,8 +302,8 @@ const Body = ({
   const pendingOperation = mainAccount.pendingOperations.find(
     pendingOp => pendingOp.hash === params.transactionHash,
   );
-  const isOldestEditableOperation = pendingOperation?.date
-    ? isOldestBitcoinPendingOperation(mainAccount, pendingOperation.date)
+  const isOldestEditableOperation = pendingOperation
+    ? isOldestBitcoinPendingOperation(mainAccount, pendingOperation)
     : false;
 
   const derivedEditType: StepProps["editType"] =

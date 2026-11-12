@@ -43,6 +43,8 @@ import {
 } from "../shared/utils/isRefusedByUserError";
 import {
   MCU_FLASH_TARGET,
+  RESTORE_WEIGHT,
+  UPDATES_WEIGHT,
   WAIT_READY_TIMEOUT_AFTER_FLASH_MS,
   WAIT_READY_TIMEOUT_MS,
 } from "./constants";
@@ -130,6 +132,14 @@ const phasePatch = (
       return unhandled;
     }
   }
+};
+
+/** The phase a resumed action starts over, so the bar goes back to where it starts. */
+const restartedPhase: Partial<Record<ApplyUpdatesStateMachineLastAction, UpdatePhase>> = {
+  [ApplyUpdatesStateMachineLastAction.InstallOsu]: UpdatePhase.Osu,
+  [ApplyUpdatesStateMachineLastAction.InstallFinalFirmware]: UpdatePhase.Final,
+  [ApplyUpdatesStateMachineLastAction.FlashMcu]: UpdatePhase.Flash,
+  [ApplyUpdatesStateMachineLastAction.FlashMcuRecovery]: UpdatePhase.Flash,
 };
 
 const updatingState = (context: ApplyUpdatesStateMachineContext): ApplyUpdatesState => {
@@ -246,8 +256,9 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
     /** The restore reports on its own scale, and only this machine knows what it is worth here. */
     forwardRestoreState: enqueueActions(({ context, enqueue }, state: RestoreBackupState) => {
       const isRestoring = state.type === RestoreBackupStateType.RESTORING;
+      // The restore only runs once the updates are done, even when there were none to apply.
       const progress = isRestoring
-        ? overallProgress({ ...context, restoreProgress: state.progress })
+        ? Math.min(1, UPDATES_WEIGHT + RESTORE_WEIGHT * state.progress)
         : context.lastProgress;
 
       const forwarded = fromRestoreBackupState(state, progress);
@@ -312,7 +323,10 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
     [DeviceSituationEventType.DEVICE_SITUATION_UPDATE]: {
       actions: {
         type: "sendStateUpdate",
-        params: ({ event }) => toApplyUpdatesState(event.situation),
+        params: ({ context, event }) =>
+          toApplyUpdatesState(event, () =>
+            context.send({ type: ApplyUpdatesStateMachineEventType.CANCEL }),
+          ),
       },
     },
   },
@@ -1077,22 +1091,26 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
         [ApplyUpdatesStateMachineEventType.CANCEL]: "Canceled",
       },
     },
-    // Refusing the install aborts it, so there is nothing to retry.
     AllowInstallFirmwareRefused: {
       entry: {
         type: "sendStateUpdate",
         params: ({ context }) => ({
           type: ApplyUpdatesStateType.ALLOW_INSTALL_FIRMWARE_REFUSED,
           error: context.error,
+          retry: () => context.send({ type: ApplyUpdatesStateMachineEventType.RETRY }),
           cancel: () => context.send({ type: ApplyUpdatesStateMachineEventType.CANCEL }),
         }),
       },
       on: {
+        [ApplyUpdatesStateMachineEventType.RETRY]: "ResumeLastAction",
         [ApplyUpdatesStateMachineEventType.CANCEL]: "Canceled",
       },
     },
     CheckErrorCause: {
       entry: { type: "logError", params: "CheckErrorCause" },
+      on: {
+        [ApplyUpdatesStateMachineEventType.CANCEL]: "Canceled",
+      },
       invoke: {
         src: "checkErrorCause",
         input: ({ context, self }) => ({
@@ -1128,7 +1146,17 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
             data: { lastAction: context.lastAction },
           }),
         },
-        { type: "sendStateUpdate", params: { type: ApplyUpdatesStateType.LOADING } },
+        enqueueActions(({ context, enqueue }) => {
+          const phase =
+            context.lastAction === null ? undefined : restartedPhase[context.lastAction];
+          if (phase === undefined) {
+            enqueueStateUpdate(enqueue, context, { type: ApplyUpdatesStateType.LOADING });
+            return;
+          }
+          const rewound = { ...context, ...phasePatch(phase, 0), lastProgress: 0 };
+          enqueue.assign({ ...phasePatch(phase, 0), lastProgress: overallProgress(rewound) });
+          enqueueStateUpdate(enqueue, context, updatingState(rewound));
+        }),
       ],
       always: Object.entries(resumeTarget).map(([lastAction, target]) => ({
         guard: ({ context }: { context: ApplyUpdatesStateMachineContext }) =>
@@ -1160,6 +1188,7 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
         type: "sendStateUpdate",
         params: ({ context }) => ({
           type: ApplyUpdatesStateType.UPDATES_APPLIED,
+          osVersion: context.osVersion!.seVersion,
           restoreResult: context.restoreResult,
         }),
       },

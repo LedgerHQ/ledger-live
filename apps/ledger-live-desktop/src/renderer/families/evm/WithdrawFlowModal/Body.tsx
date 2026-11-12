@@ -26,7 +26,7 @@ import type { StakingAccount } from "@ledgerhq/live-common/families/evm/staking/
 import { isStakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
 import type { Transaction as EvmTransaction } from "@ledgerhq/live-common/families/evm/types";
 import { useStakingContractAddress } from "@ledgerhq/live-common/families/evm/staking/react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 
 export type Data = {
   account: StakingAccount;

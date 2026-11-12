@@ -1,37 +1,4 @@
-import { TezosCoinConfig } from "@ledgerhq/coin-tezos/config";
-import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
-import { getEnv } from "@shared/env";
+import { tezosDefaults } from "@ledgerhq/coin-tezos/config";
+import { currencyDefaultsToLiveConfig } from "../../config";
 
-export const tezosConfig: Record<string, ConfigInfo> = {
-  config_currency_tezos: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [
-          { id: "blockchain_txs", status: "active" },
-          { id: "staking_txs", status: "active" },
-        ],
-      },
-      name: "Tezos",
-      unit: { name: "XTZ", code: "XTZ", magnitude: 6 },
-      baker: {
-        url: getEnv("API_TEZOS_BAKER"),
-      },
-      explorer: {
-        url: getEnv("API_TEZOS_TZKT_API"),
-        maxTxQuery: getEnv("TEZOS_MAX_TX_QUERIES"),
-      },
-      node: {
-        url: getEnv("API_TEZOS_NODE"),
-      },
-      fees: {
-        minGasLimit: 600,
-        minRevealGasLimit: 300,
-        minStorageLimit: 0,
-        minFees: 300,
-        minEstimatedFees: 300,
-      },
-    } satisfies TezosCoinConfig,
-  },
-};
+export const tezosConfig = currencyDefaultsToLiveConfig(tezosDefaults);

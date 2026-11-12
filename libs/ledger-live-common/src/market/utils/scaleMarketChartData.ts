@@ -3,10 +3,9 @@ import type { MarketCoinDataChart } from "./types";
 /**
  * Multiply every chart value by `rate`, keeping timestamps and shape intact.
  *
- * Used to rescale a USD-denominated chart into a crypto countervalue: the
- * markets chart endpoint only supports fiat `to`, so for a crypto countervalue
- * we fetch in USD and apply the USD→crypto spot rate here. No-op when
- * `rate === 1` or there is no data.
+ * Used when the chart allowlist does not include the user's counter value:
+ * the chart is fetched in USD and each point is multiplied by the USD rate.
+ * No-op when `rate === 1` or there is no data.
  */
 export function scaleMarketChartData(
   chartData: MarketCoinDataChart | undefined,

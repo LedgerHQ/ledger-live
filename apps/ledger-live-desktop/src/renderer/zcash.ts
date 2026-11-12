@@ -26,7 +26,7 @@ const ipcRenderer: IpcRendererLike = {
 };
 
 /**
- * The renderer bundle aliases `@ledgerhq/coin-zcash/network/ZCash` here (see `rspack.renderer.ts`),
+ * The renderer bundle aliases `@ledgerhq/coin-zcash/network/ZCash` here (see `rspack.renderer.mts`),
  * so the IPC client loads with ZCash's lazy chunk instead of at startup.
  */
 export function createZCashClient(args: ZCashIPCClientArgs): ZCashClient {

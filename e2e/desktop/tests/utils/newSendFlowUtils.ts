@@ -3,6 +3,7 @@ import { coinTeamOwner } from "@ledgerhq/live-e2e-shared/data/coinTeamOwner";
 import { SendScenario, sendFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
 import {
   Account,
+  type AccountType,
   TokenAccount,
   getParentAccountName,
 } from "@ledgerhq/live-e2e-shared/enum/Account";
@@ -17,6 +18,7 @@ import {
   FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
 } from "tests/utils/featureFlagUtils";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
+import { StellarMemoType } from "@ledgerhq/live-e2e-shared/enum/MemoType";
 import type { Application } from "tests/page";
 import { buildTags, shouldSkipLNSTag } from "tests/utils/tagsUtils";
 import { exclusiveLockFor } from "tests/utils/exclusiveLock";
@@ -67,6 +69,8 @@ export type NewSendFlowEntry = {
   disableBroadcast?: boolean;
   balanceType?: BalanceType;
   postSeedHook?: LiveDataCommandOptions["postSeedHook"];
+  /** Runs on the recipient step once the address is typed, before the memo is filled. */
+  recipientStepHook?: (app: Application, tx: Transaction) => Promise<void>;
 };
 
 function currencyRequiresMemoStep(currencyId: string): boolean {
@@ -74,15 +78,17 @@ function currencyRequiresMemoStep(currencyId: string): boolean {
   return family ? MEMO_STEP_FAMILIES.has(family) : false;
 }
 
-export function requireRecipientAddress(tx: Transaction): string {
-  const recipientAddress = tx.accountToCredit.address;
-  if (!recipientAddress) {
+export function requireAccountAddress(account: AccountType): string {
+  if (!account.address) {
     throw new Error(
-      `Missing recipient address for ${tx.accountToCredit.accountName}. ` +
-        `Ensure the CLI setup populates the address.`,
+      `Missing address for ${account.accountName}. Ensure the CLI setup populates the address.`,
     );
   }
-  return recipientAddress;
+  return account.address;
+}
+
+export function requireRecipientAddress(tx: Transaction): string {
+  return requireAccountAddress(tx.accountToCredit);
 }
 
 export async function openNewSendFromAccount(
@@ -95,7 +101,7 @@ export async function openNewSendFromAccount(
   if (tx.accountToDebit instanceof TokenAccount) {
     await app.account.navigateToTokenInAccount(tx.accountToDebit);
   }
-  await app.account.clickSend();
+  await app.account.clickSend(tx.accountToDebit.currency);
   await app.newSendFlow.waitForDialog();
   if (balanceType) {
     await app.newSendFlow.selectBalanceType(balanceType);
@@ -108,18 +114,26 @@ export async function reachAmountStep(
   balanceType?: BalanceType,
 ) {
   await openNewSendFromAccount(app, tx, balanceType);
-  await passRecipientStep(app, tx);
+  await passRecipientStep({ app, tx });
 }
 
 /** Reaches the Amount step from the account page the app is already on. */
 export async function reachAmountStepFromCurrentAccount(app: Application, tx: Transaction) {
-  await app.account.clickSend();
+  await app.account.clickSend(tx.accountToDebit.currency);
   await app.newSendFlow.waitForDialog();
-  await passRecipientStep(app, tx);
+  await passRecipientStep({ app, tx });
 }
 
-async function passRecipientStep(app: Application, tx: Transaction) {
+type PassRecipientStepOptions = {
+  app: Application;
+  tx: Transaction;
+  recipientStepHook?: NewSendFlowEntry["recipientStepHook"];
+};
+
+async function passRecipientStep(options: PassRecipientStepOptions) {
+  const { app, tx, recipientStepHook } = options;
   await app.newSendFlow.typeAddress(requireRecipientAddress(tx));
+  await recipientStepHook?.(app, tx);
 
   const validMemoTag = tx.memoTag !== "noTag" ? tx.memoTag : undefined;
   const requiresMemoStep = currencyRequiresMemoStep(tx.accountToDebit.currency.id);
@@ -139,6 +153,25 @@ const ADDRESS_TYPE_QUALIFIERS = new Map([
   ["taproot", "taproot"],
   ["cashaddr", "cashaddr"],
 ]);
+
+export async function checkStellarMemoTypes(app: Application, tx: Transaction) {
+  await app.newSendFlow.clickOnSendToButton(tx.accountToCredit);
+  await app.newSendFlow.cancelSkipMemo();
+  await app.newSendFlow.expectBackOnRecipientStepWithMemo();
+
+  await app.newSendFlow.expectMemoType(StellarMemoType.MEMO_TEXT);
+  await app.newSendFlow.openMemoTypes();
+  await app.newSendFlow.expectMemoTypeOptions(Object.values(StellarMemoType));
+  await app.newSendFlow.selectMemoType(StellarMemoType.NO_MEMO);
+  await app.newSendFlow.expectMemoType(StellarMemoType.NO_MEMO);
+  await app.newSendFlow.clickOnSendToButton(tx.accountToCredit);
+  await app.newSendFlow.expectAmountStepVisible();
+  await app.newSendFlow.goBack();
+
+  await app.newSendFlow.openMemoTypes();
+  await app.newSendFlow.selectMemoType(StellarMemoType.MEMO_TEXT);
+  await app.newSendFlow.expectMemoType(StellarMemoType.MEMO_TEXT);
+}
 
 export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
   for (const entry of entries) {
@@ -194,7 +227,8 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
           ],
         },
         async ({ app }) => {
-          await reachAmountStep(app, tx, entry.balanceType);
+          await openNewSendFromAccount(app, tx, entry.balanceType);
+          await passRecipientStep({ app, tx, recipientStepHook: entry.recipientStepHook });
 
           await app.newSendFlow.fillCryptoAmount(tx.amount);
           if (entry.verifyAmountPrecision) {

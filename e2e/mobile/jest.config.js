@@ -151,6 +151,7 @@ const jestAllure2ReporterOptions = {
   environment: async ({ $ }) => ({
     SPECULOS_DEVICE: process.env.SPECULOS_DEVICE,
     SPECULOS_FIRMWARE_VERSION: process.env.SPECULOS_FIRMWARE_VERSION,
+    SPECULOS_APP_PROVIDER: process.env.SPECULOS_APP_PROVIDER,
     MOBILE_DEVICE: process.env.DEVICE_INFO || "Unknown device",
     E2E_MOBILE_FEATURE_FLAGS: process.env.E2E_MOBILE_FEATURE_FLAGS,
     E2E_FEATURE_FLAGS_JSON: JSON.stringify(

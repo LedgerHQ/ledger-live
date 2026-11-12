@@ -25,6 +25,7 @@ import { createOsVersionResponse, type OsVersionResponseOptions } from "./tests/
 import {
   OnboardingStep,
   RecoveryKeyStatus,
+  SeedPath,
   type AvailableFirmwareUpdate,
   type DeviceOnboardingContext,
   type DeviceOnboardingState,
@@ -90,6 +91,7 @@ describe("routing", () => {
     const { actor, fake } = await start({ osVersion: [os(seeded)], ...passingChecks });
 
     expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+    expect(actor.getSnapshot().context.seedPath).toBeNull();
     expect(fake.earlyCheckToggles()).toEqual([]);
   });
 
@@ -332,6 +334,21 @@ describe("the genuine check", () => {
     expect(actor.getSnapshot().context.lastGenuineFailure).toMatchObject({
       kind: "DEVICE_NOT_GENUINE",
     });
+  });
+
+  it("returns to the genuine check when the support sheet is closed", async () => {
+    const { actor, fake } = await start({
+      osVersion: [os(unseeded)],
+      genuineCheck: [notGenuine, genuine],
+      firmwareCheck: [upToDate],
+    });
+
+    actor.send({ type: "CLOSE" });
+    await settle();
+
+    expect(stateOf(actor)).toBe("checksIdle");
+    expect(actor.getSnapshot().context.checksPaused).toBe(true);
+    expect(fake.genuineCheckRuns()).toBe(1);
   });
 
   it("holds a counterfeit device on the support screen across a lock it triggered itself", async () => {
@@ -914,6 +931,18 @@ describe("entering the flow", () => {
     actor.stop();
   });
 
+  it("should open the unlock wait when the device is locked as the checks start", async () => {
+    const { actor } = await launch({
+      osVersion: [os(unseeded), lockedDevice],
+      genuineCheck: [{ prompts: UserInteractionRequired.UnlockDevice }],
+    });
+
+    actor.send({ type: "CONTINUE" });
+    await settle();
+
+    expect(stateOf(actor)).toBe("deviceLocked");
+  });
+
   it("asks again when the device was locked before the user started", async () => {
     const { actor } = await launch({ osVersion: [os(unseeded)], ...passingChecks });
 
@@ -1212,6 +1241,7 @@ describe("device setup", () => {
     );
 
     expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+    expect(actor.getSnapshot().context.seedPath).toBe(SeedPath.NewSeed);
   });
 
   it.each([RecoveryKeyStatus.Choice, RecoveryKeyStatus.Running, RecoveryKeyStatus.Naming])(
@@ -1349,7 +1379,7 @@ describe("device setup", () => {
     expect(exitOf(actor)).toMatchObject({ reason: "completed" });
   });
 
-  it("follows a new seed on a touchscreen, then offers Ledger Sync", async () => {
+  it("follows a new seed on a touchscreen straight to done", async () => {
     const { actor } = await enterSetup({ offerSync: true });
 
     await follow(actor, [
@@ -1360,9 +1390,12 @@ describe("device setup", () => {
       OnboardingStep.NewDeviceConfirming,
     ]);
 
+    expect(actor.getSnapshot().context.seedPath).toBe(SeedPath.NewSeed);
+
     actor.send(stepChanged(OnboardingStep.Ready));
 
-    expect(exitOf(actor)).toMatchObject({ reason: "offerLedgerSync" });
+    expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+    expect(actor.getSnapshot().context.seedPath).toBe(SeedPath.NewSeed);
   });
 
   it("skips naming on a nano and still reaches done", async () => {
@@ -1372,6 +1405,7 @@ describe("device setup", () => {
     actor.send(stepChanged(OnboardingStep.Ready));
 
     expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+    expect(actor.getSnapshot().context.seedPath).toBe(SeedPath.NewSeed);
   });
 
   it("advances the word index while restoring a recovery phrase", async () => {
@@ -1391,6 +1425,7 @@ describe("device setup", () => {
     actor.send(stepChanged(OnboardingStep.Ready));
 
     expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+    expect(actor.getSnapshot().context.seedPath).toBe(SeedPath.RestorePhrase);
   });
 
   it("follows a Recover restore to done", async () => {
@@ -1405,6 +1440,7 @@ describe("device setup", () => {
     actor.send(stepChanged(OnboardingStep.Ready));
 
     expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+    expect(actor.getSnapshot().context.seedPath).toBe(SeedPath.Recover);
   });
 
   it("follows a Recovery Key restore to done", async () => {
@@ -1419,6 +1455,25 @@ describe("device setup", () => {
     actor.send(stepChanged(OnboardingStep.Ready));
 
     expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+    expect(actor.getSnapshot().context.seedPath).toBe(SeedPath.RecoveryKey);
+  });
+
+  it("clears the seed path when the device restarts and records the next one", async () => {
+    const { actor } = await enterSetup();
+
+    actor.send(stepChanged(OnboardingStep.NewDevice));
+    expect(actor.getSnapshot().context.seedPath).toBe(SeedPath.NewSeed);
+
+    actor.send(stepChanged(OnboardingStep.WelcomeScreen1));
+    await settle();
+
+    expect(actor.getSnapshot().context.seedPath).toBeNull();
+    await expectChecksPassed(actor);
+
+    actor.send(stepChanged(OnboardingStep.RestoreSeed));
+
+    expect(actor.getSnapshot().context.seedPath).toBe(SeedPath.RestorePhrase);
+    actor.stop();
   });
 
   it("returns to routing when the device goes back to welcome after setup has started", async () => {
@@ -1446,13 +1501,13 @@ describe("device setup", () => {
     expect(exitOf(actor)).toMatchObject({ reason: "completed" });
   });
 
-  it("offers Ledger Sync when a device was just set up", async () => {
+  it("finishes a device that was just set up without offering Ledger Sync", async () => {
     const { actor } = await enterSetup({ offerSync: true });
 
     actor.send(stepChanged(OnboardingStep.Pin));
     actor.send(stepChanged(OnboardingStep.Ready));
 
-    expect(exitOf(actor)).toMatchObject({ reason: "offerLedgerSync" });
+    expect(exitOf(actor)).toMatchObject({ reason: "completed" });
   });
 
   it("still treats a device as unseeded after a seed appears mid-setup", async () => {

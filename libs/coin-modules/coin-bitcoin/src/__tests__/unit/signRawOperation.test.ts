@@ -1,5 +1,5 @@
 import { TEST_LOGGER } from "../fixtures/coinConfig";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { firstValueFrom, skip, toArray } from "rxjs";
 import buildSignRawOperation from "../../signRawOperation";
 import { extractHashFromScriptPubKey } from "@ledgerhq/psbtv2";

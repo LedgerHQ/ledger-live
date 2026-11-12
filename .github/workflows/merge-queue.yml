@@ -47,7 +47,6 @@ jobs:
       CARD_OAUTH_REDIRECT_URI: ${{ secrets.CARD_OAUTH_REDIRECT_URI }}
       NX_KEY: ${{ secrets.NX_KEY }}
     with:
-      linux-only: true
       skip-artifact-upload: true
 
   codecheck-desktop:
@@ -196,7 +195,7 @@ jobs:
       skip-coverage: true
 
   enforce-boundaries:
-    name: "Enforce Module Boundaries"
+    name: "Monorepo Checks"
     permissions:
       id-token: write
       contents: read

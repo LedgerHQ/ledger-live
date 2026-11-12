@@ -105,6 +105,20 @@ describe("db (app namespace allow list + keepLegacy)", () => {
     await expect(db.setKey("app", "knownDevices", { knownDevices: [] })).resolves.toBeUndefined();
   });
 
+  it("should preserve Analytics introduction dismissal after saving and reloading the database", async () => {
+    readFileMock.mockResolvedValueOnce(appJson({}));
+    const dismissal = { hasDismissed: true };
+
+    await db.setKey("app", "accountAnalyticsIntroduction", dismissal);
+
+    const persisted = getWrittenData();
+    expect(persisted.accountAnalyticsIntroduction).toEqual(dismissal);
+    readFileMock.mockResolvedValueOnce(appJson(persisted));
+    db.init(testDir);
+
+    expect(await db.getKey("app", "accountAnalyticsIntroduction", undefined)).toEqual(dismissal);
+  });
+
   it("preserves allowed and keepLegacy keys on load", async () => {
     readFileMock.mockResolvedValueOnce(
       appJson({

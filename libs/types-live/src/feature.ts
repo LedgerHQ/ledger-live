@@ -102,7 +102,6 @@ export type CurrencyFeatures = {
   currencySecretNetwork: DefaultFeature;
   currencyDesmos: DefaultFeature;
   currencyDydx: DefaultFeature;
-  currencyStargaze: DefaultFeature;
   currencyPersistence: DefaultFeature;
   currencyInternetComputer: DefaultFeature;
   currencyInjective: DefaultFeature;
@@ -297,7 +296,6 @@ export type Features = CurrencyFeatures & {
   };
   llmNanoSDeprecation: DefaultFeature;
   onboardingIgnoredOsUpdates: Feature_OnboardingIgnoredOSUpdates;
-  supportDeviceApex: DefaultFeature;
   onboardingWidget: DefaultFeature;
   noah: Feature_Noah;
   newSendFlow: Feature_NewSendFlow;
@@ -836,9 +834,6 @@ export type Feature_LlmTransferButtonCopyVariant = Feature<{
   rowCashToStableDescription?: string;
 }>;
 
-/** @deprecated Moved to `@shared/feature-flags`. Use `Features["supportDeviceApex"]` from `@shared/feature-flags` instead. */
-export type Feature_SupportDeviceApex = DefaultFeature;
-
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["lldOnboardingEnableSync"]` from `@shared/feature-flags` instead. */
 export type Feature_OnboardingEnableSync = Feature<{
   nanos: boolean;
@@ -864,12 +859,6 @@ export type Feature_OnboardingIgnoredOSUpdates = Feature<{
 
 type Feature_Wallet40_Params = {
   lazyOnboarding: boolean;
-  assetSection: boolean;
-  operationsList: boolean;
-  aggregatedAssets: boolean;
-  myWallet: boolean;
-  pnl: boolean;
-  assetDiscoverability: boolean;
   // Specifics
   brazePlacement?: boolean;
   earnUpselling?: boolean;

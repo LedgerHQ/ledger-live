@@ -1,21 +1,15 @@
 import { parseExtraFeatureFlags } from "@ledgerhq/live-e2e-shared/featureFlagsJsonUtils";
-import { getFlags } from "@e2e/bridge/server";
 
-import type { PartialFeatures, Features } from "@shared/feature-flags";
+import type { PartialFeatures } from "@shared/feature-flags";
 
 const FF_LWM_WALLET_40_Q1 = {
   lwmWallet40: {
     enabled: true,
     params: {
       lazyOnboarding: true,
-      assetSection: false,
       brazePlacement: true,
-      operationsList: false,
-      aggregatedAssets: false,
-      myWallet: false,
       earnUpselling: false,
       earnSimulator: false,
-      assetDiscoverability: false,
     },
   },
 } satisfies PartialFeatures;
@@ -25,14 +19,9 @@ export const FF_LWM_WALLET_40_Q2 = {
     enabled: true,
     params: {
       lazyOnboarding: true,
-      assetSection: true,
       brazePlacement: true,
-      operationsList: true,
-      aggregatedAssets: true,
-      myWallet: true,
       earnUpselling: true,
       earnSimulator: true,
-      assetDiscoverability: true,
     },
   },
 } satisfies PartialFeatures;
@@ -192,50 +181,4 @@ export const getMergedFeatureFlags = ({
     ...jsonOverrideFlags,
     ...testFlags,
   };
-};
-
-const getLwmWallet40StaticFlag = (): Features["lwmWallet40"] | undefined =>
-  getMergedFeatureFlags().lwmWallet40;
-
-export const isQ2WithAggregatedAssets = (): boolean => {
-  const lwmWallet40 = getLwmWallet40StaticFlag();
-  return lwmWallet40?.enabled === true && lwmWallet40?.params?.aggregatedAssets === true;
-};
-
-export const isQ2WithOperationsList = (): boolean => {
-  const lwmWallet40 = getLwmWallet40StaticFlag();
-  return lwmWallet40?.enabled === true && lwmWallet40?.params?.operationsList === true;
-};
-
-const getLwmFlag = async (): Promise<Features["lwmWallet40"] | undefined> => {
-  const flags = await getFlags();
-  const parsed = parseExtraFeatureFlags<PartialFeatures>(flags);
-  return parsed.lwmWallet40;
-};
-
-export const isAssetDiscoverabilityEnabled = async (): Promise<boolean> => {
-  const lwmFlag = await getLwmFlag();
-  return Boolean(lwmFlag?.enabled && lwmFlag?.params?.assetDiscoverability);
-};
-
-// Distinct from `assetDiscoverability`: gates the new MVVM AssetDetail (with
-// coin-options) vs the legacy MarketDetail screen (see useAssetDetailNavigation).
-export const isAssetSectionEnabled = async (): Promise<boolean> => {
-  const lwmFlag = await getLwmFlag();
-  return Boolean(lwmFlag?.enabled && lwmFlag?.params?.assetSection);
-};
-
-export const isMyWalletEnabled = async (): Promise<boolean> => {
-  const lwmFlag = await getLwmFlag();
-  return Boolean(lwmFlag?.enabled && lwmFlag?.params?.myWallet);
-};
-
-export const isOperationsListEnabled = async (): Promise<boolean> => {
-  const lwmFlag = await getLwmFlag();
-  return Boolean(lwmFlag?.enabled && lwmFlag?.params?.operationsList);
-};
-
-export const isAggregatedAssetsEnabled = async (): Promise<boolean> => {
-  const lwmFlag = await getLwmFlag();
-  return Boolean(lwmFlag?.enabled && lwmFlag?.params?.aggregatedAssets);
 };

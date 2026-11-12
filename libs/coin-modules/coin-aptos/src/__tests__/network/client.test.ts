@@ -1,4 +1,3 @@
-import { ApolloClient } from "@apollo/client";
 import {
   AccountAddress,
   Aptos,
@@ -20,9 +19,7 @@ import { AptosAPI } from "../../network";
 import { AptosBalance, AptosTransaction } from "../../types";
 
 jest.mock("@aptos-labs/ts-sdk");
-jest.mock("@apollo/client");
 let mockedAptos: jest.Mocked<any>;
-let mockedApolloClient: jest.Mocked<any>;
 let mockedPost = jest.fn();
 let mockedHex: jest.Mocked<any>;
 
@@ -33,7 +30,6 @@ describe("Aptos API", () => {
   beforeEach(() => {
     mockedAptos = jest.mocked(Aptos);
     mockedHex = jest.mocked(Hex);
-    mockedApolloClient = jest.mocked(ApolloClient);
     mockedPost = jest.mocked(postAptosFullNode);
   });
 
@@ -86,6 +82,9 @@ describe("Aptos API", () => {
   describe("getAccountInfo", () => {
     it("calls getCoinBalance, fetchTransactions and getHeight", async () => {
       mockedAptos.mockImplementation(() => ({
+        queryIndexer: jest
+          .fn()
+          .mockResolvedValue({ account_transactions: [{ transaction_version: 1 }] }),
         view: jest.fn().mockReturnValue(["123"]),
         getTransactionByVersion: jest.fn().mockReturnValue({
           type: "user_transaction",
@@ -127,16 +126,6 @@ describe("Aptos API", () => {
         }),
       );
 
-      mockedApolloClient.mockImplementation(() => ({
-        query: async () => ({
-          data: {
-            account_transactions: [{ transaction_version: 1 }],
-          },
-          loading: false,
-          networkStatus: 7,
-        }),
-      }));
-
       const api = new AptosAPI("aptos");
       const accountInfo = await api.getAccountInfo("APTOS_1_ADDRESS", "1");
 
@@ -156,6 +145,9 @@ describe("Aptos API", () => {
 
     it("return balance = 0 if it fails to fetch balance", async () => {
       mockedAptos.mockImplementation(() => ({
+        queryIndexer: jest
+          .fn()
+          .mockResolvedValue({ account_transactions: [{ transaction_version: 1 }] }),
         view: jest.fn().mockImplementation(() => {
           throw new Error("error");
         }),
@@ -193,16 +185,6 @@ describe("Aptos API", () => {
         }),
       );
 
-      mockedApolloClient.mockImplementation(() => ({
-        query: async () => ({
-          data: {
-            account_transactions: [{ transaction_version: 1 }],
-          },
-          loading: false,
-          networkStatus: 7,
-        }),
-      }));
-
       const api = new AptosAPI("aptos");
       const accountInfo = await api.getAccountInfo("APTOS_1_ADDRESS", "1");
 
@@ -222,6 +204,9 @@ describe("Aptos API", () => {
 
     it("returns no transactions if it the address is empty", async () => {
       mockedAptos.mockImplementation(() => ({
+        queryIndexer: jest
+          .fn()
+          .mockResolvedValue({ account_transactions: [{ transaction_version: 1 }] }),
         view: jest.fn().mockReturnValue(["123"]),
         getTransactionByVersion: jest.fn().mockReturnValue({
           type: "user_transaction",
@@ -263,16 +248,6 @@ describe("Aptos API", () => {
         }),
       );
 
-      mockedApolloClient.mockImplementation(() => ({
-        query: async () => ({
-          data: {
-            account_transactions: [{ transaction_version: 1 }],
-          },
-          loading: false,
-          networkStatus: 7,
-        }),
-      }));
-
       const api = new AptosAPI("aptos");
       const accountInfo = await api.getAccountInfo("", "1");
 
@@ -283,6 +258,9 @@ describe("Aptos API", () => {
 
     it("returns transaction with amount equals to zero when no account found", async () => {
       mockedAptos.mockImplementation(() => ({
+        queryIndexer: jest
+          .fn()
+          .mockResolvedValue({ account_transactions: [{ transaction_version: 1 }] }),
         view: jest.fn().mockReturnValue(["123"]),
         getTransactionByVersion: jest.fn().mockReturnValue({
           type: "user_transaction",
@@ -319,16 +297,6 @@ describe("Aptos API", () => {
         }),
       );
 
-      mockedApolloClient.mockImplementation(() => ({
-        query: async () => ({
-          data: {
-            account_transactions: [{ transaction_version: 1 }],
-          },
-          loading: false,
-          networkStatus: 7,
-        }),
-      }));
-
       const api = new AptosAPI("aptos");
       const accountInfo = await api.getAccountInfo("", "1");
 
@@ -339,6 +307,9 @@ describe("Aptos API", () => {
 
     it("returns a null transaction if it fails to getTransactionByVersion", async () => {
       mockedAptos.mockImplementation(() => ({
+        queryIndexer: jest
+          .fn()
+          .mockResolvedValue({ account_transactions: [{ transaction_version: 1 }] }),
         view: jest.fn().mockReturnValue(["123"]),
         getTransactionByVersion: jest.fn().mockImplementation(() => {
           throw new Error("error");
@@ -379,16 +350,6 @@ describe("Aptos API", () => {
         }),
       );
 
-      mockedApolloClient.mockImplementation(() => ({
-        query: async () => ({
-          data: {
-            account_transactions: [{ transaction_version: 1 }],
-          },
-          loading: false,
-          networkStatus: 7,
-        }),
-      }));
-
       const api = new AptosAPI("aptos");
       const accountInfo = await api.getAccountInfo(APTOS_ASSET_ID, "1");
       expect(accountInfo.balance).toEqual(new BigNumber(123));
@@ -405,6 +366,9 @@ describe("Aptos API", () => {
       async type => {
         const getBlockByVersion = jest.fn();
         mockedAptos.mockImplementation(() => ({
+          queryIndexer: jest
+            .fn()
+            .mockResolvedValue({ account_transactions: [{ transaction_version: 1 }] }),
           view: jest.fn().mockReturnValue(["123"]),
           getTransactionByVersion: jest.fn().mockReturnValue({ type, version: "1" }),
           getBlockByVersion,
@@ -425,16 +389,6 @@ describe("Aptos API", () => {
             headers: {} as any,
           },
         });
-
-        mockedApolloClient.mockImplementation(() => ({
-          query: async () => ({
-            data: {
-              account_transactions: [{ transaction_version: 1 }],
-            },
-            loading: false,
-            networkStatus: 7,
-          }),
-        }));
 
         const api = new AptosAPI("aptos");
         const accountInfo = await api.getAccountInfo(APTOS_ASSET_ID, "1");

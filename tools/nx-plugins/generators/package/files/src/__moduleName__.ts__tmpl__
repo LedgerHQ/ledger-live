@@ -1,0 +1,5 @@
+import { PACKAGE_NAME } from "./internals";
+
+export function <%= functionName %>(): string {
+  return PACKAGE_NAME;
+}

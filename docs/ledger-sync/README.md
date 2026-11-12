@@ -113,7 +113,7 @@ flowchart TB
 | Trustchain API | [trustchain-backend](https://github.com/LedgerHQ/trustchain-backend) | CRUD-like API for Trustchain operations + authentication. |
 | live-wallet / cloudsync | [`shared/cloud-sync`](../../shared/cloud-sync) | `CloudSyncSDK`: atomic pull / push / delete of the encrypted wallet-sync data. |
 | Cloud Sync API | [cloud-sync-backend](https://github.com/LedgerHQ/cloud-sync-backend) | Stores encrypted data, authenticated via the Trustchain API. |
-| live-wallet / walletsync | [`shared/wallet-sync`](../../shared/wallet-sync) + [`features/platform/wallet-sync`](../../features/platform/wallet-sync) | `CloudSyncDataManager` aggregation + watch-loop lifecycle. |
+| live-wallet / walletsync | [`shared/cloud-sync-module`](../../shared/cloud-sync-module) + [`features/platform/wallet-sync`](../../features/platform/wallet-sync) | `CloudSyncDataManager` aggregation + watch-loop lifecycle. |
 | live-wallet / accounts module | [`libs/live-wallet/src/accounts`](../../libs/live-wallet/src/accounts) | Accounts sync module (interim — pending `@domain/entity-account`). |
 | domain entity modules | [`domain/entity/account-name`](../../domain/entity/account-name), [`domain/entity/recent-addresses`](../../domain/entity/recent-addresses), [`domain/entity/wallet-sync`](../../domain/entity/wallet-sync) | RTK slices + per-type `cloudSyncModule.ts` implementations. |
 | web-tools | [`apps/web-tools/src/trustchain`](../../apps/web-tools/src/trustchain) · [live.ledger.tools/trustchain](https://live.ledger.tools/trustchain) | Dev/QA tools to debug Trustchain, Cloud Sync and test synchronization across simulated instances. |

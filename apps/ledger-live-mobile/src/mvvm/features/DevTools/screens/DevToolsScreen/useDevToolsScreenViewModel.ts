@@ -6,12 +6,15 @@ import type {
   NativeStackNavigationProp,
 } from "@react-navigation/native-stack";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { getStackNavigationConfigV4 } from "LLM/components/Navigation";
 import {
   useFeatureFlagsToolProps,
   usePayCardToolProps,
   useEnvDevToolProps,
   useAppConfigToolProps,
+  useCoinConfigToolProps,
+  useAccountDetailToolProps,
 } from "@devtools/bindings";
 import type { DevToolsConfig } from "@devtools/shell";
 import { openHostedUrlInSecureBrowser } from "@features/flow-pay-card-auth";
@@ -24,7 +27,7 @@ import { useSelector } from "~/context/hooks";
 import { knownDevicesSelector } from "~/reducers/knownDevices";
 import { navigateToPayTab } from "LLM/features/PayTab/utils/navigateToPayTab";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
-import { useDeviceOnboarding } from "../../../DeviceOnboarding/hooks/useDeviceOnboarding";
+import { useDeviceOnboardingTool } from "../../DeviceOnboarding/useDeviceOnboardingTool";
 import { useOfferSync } from "../../../DeviceOnboarding/hooks/useOfferSync";
 import { useDevToolsRelay } from "./useDevToolsRelay";
 
@@ -33,6 +36,9 @@ type BaseNavigation = NativeStackNavigationProp<
   keyof BaseNavigatorStackParamList,
   typeof BASE_NAVIGATOR_ID
 >;
+
+const getLiveConfigValue = (key: string): unknown => LiveConfig.getValueByKey(key);
+const getLiveConfigDefaultValue = (key: string): unknown => LiveConfig.getDefaultValueByKey(key);
 
 export function useDevToolsScreenViewModel() {
   const navigation = useNavigation<BaseNavigation>();
@@ -100,10 +106,17 @@ export function useDevToolsScreenViewModel() {
   );
   const envToolProps = useEnvDevToolProps();
   const appConfigToolProps = useAppConfigToolProps();
+  const liveConfigKeys = useMemo(() => Object.keys(LiveConfig.instance.config), []);
+  const coinConfigToolProps = useCoinConfigToolProps({
+    keys: liveConfigKeys,
+    getValueByKey: getLiveConfigValue,
+    getDefaultValueByKey: getLiveConfigDefaultValue,
+  });
+  const accountDetailToolProps = useAccountDetailToolProps();
   const dmk = useDeviceManagementKit();
   const knownDevices = useSelector(knownDevicesSelector);
   const offerSync = useOfferSync();
-  const deviceOnboardingProps = useDeviceOnboarding({
+  const deviceOnboardingProps = useDeviceOnboardingTool({
     dmk,
     knownDevices,
     offerSync,
@@ -118,10 +131,20 @@ export function useDevToolsScreenViewModel() {
       { id: "feature-flags", config: featureFlagsProps },
       { id: "env", config: envToolProps },
       { id: "app-config", config: appConfigToolProps },
+      { id: "coin-config", config: coinConfigToolProps },
       { id: "pay-card", config: payCardToolProps },
       { id: "device-onboarding", config: deviceOnboardingProps },
+      { id: "account-detail", config: accountDetailToolProps },
     ],
-    [featureFlagsProps, envToolProps, appConfigToolProps, payCardToolProps, deviceOnboardingProps],
+    [
+      featureFlagsProps,
+      envToolProps,
+      appConfigToolProps,
+      coinConfigToolProps,
+      payCardToolProps,
+      deviceOnboardingProps,
+      accountDetailToolProps,
+    ],
   );
 
   const screenOptions: NativeStackNavigationOptions = useMemo(() => {

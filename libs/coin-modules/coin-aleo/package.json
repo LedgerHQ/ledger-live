@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-aleo",
-  "version": "2.9.1",
+  "version": "2.10.0",
   "description": "Ledger Aleo Coin integration",
   "license": "Apache-2.0",
   "keywords": [
@@ -129,11 +129,14 @@
     "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
-    "@types/invariant": "^2.2.2",
+    "@types/invariant": "2.2.37",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
-    "oxlint": "catalog:"
+    "oxlint": "catalog:",
+    "rimraf": "catalog:"
   }
 }

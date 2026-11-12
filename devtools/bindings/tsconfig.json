@@ -1,10 +1,10 @@
 {
-  "extends": "@support/tsconfig/web",
+  "extends": "@support/tsconfig/dual",
   "compilerOptions": {
     "paths": {
       "*": ["./*"]
     },
-    "types": ["jest", "@testing-library/jest-dom"]
+    "types": []
   },
-  "exclude": ["node_modules", "lib"]
+  "references": [{ "path": "./tsconfig.web.json" }, { "path": "./tsconfig.native.json" }]
 }

@@ -1,6 +1,6 @@
 import React from "react";
 import { Text } from "react-native";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { maticEth, usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
@@ -78,7 +78,7 @@ function renderAccount(
       overrideInitialState: (state: State): State => {
         const withFlag = withFlagOverrides({
           accountDetail: { enabled: true },
-          lwmWallet40: { enabled: true, params: { aggregatedAssets: true } },
+          lwmWallet40: { enabled: true },
         })(state);
         return {
           ...withFlag,
@@ -134,7 +134,7 @@ describe("AccountDetail assets", () => {
     await user.press(await screen.findByTestId("assetItem-Ethereum"));
 
     expect(await screen.findByTestId("asset-detail-target")).toHaveTextContent(
-      `${ScreenName.AssetDetail}|ethereum|account_detail`,
+      `${ScreenName.AssetDetail}|ethereum|Account`,
     );
   });
 
@@ -144,7 +144,7 @@ describe("AccountDetail assets", () => {
     await user.press(await screen.findByTestId("assetItem-USD Coin"));
 
     expect(await screen.findByTestId("asset-detail-target")).toHaveTextContent(
-      `${ScreenName.AssetDetail}|${usdcToken.id}|account_detail`,
+      `${ScreenName.AssetDetail}|${usdcToken.id}|Account`,
     );
   });
 

@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-contacts",
-  "version": "0.12.1",
+  "version": "0.12.2",
   "private": true,
   "description": "Contacts domain selectors for flow packages",
   "main": "src/index.ts",
@@ -22,8 +22,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -c features/platform/contacts/knip.web.config.mjs -W features/platform/contacts --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/platform/contacts/knip.native.config.mjs -W features/platform/contacts --tsConfig tsconfig.native.json"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@domain/entity-contact": "workspace:*",
@@ -63,6 +62,7 @@
     }
   },
   "devDependencies": {
+    "@domain/entity-currency": "workspace:*",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
     "@ledgerhq/coin-module-framework": "catalog:",
@@ -79,6 +79,7 @@
     "@testing-library/jest-dom": "catalog:",
     "@testing-library/react": "catalog:",
     "@testing-library/react-native": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",
@@ -88,7 +89,6 @@
     "react-native": "catalog:",
     "react-redux": "catalog:",
     "react-test-renderer": "catalog:",
-    "typescript": "catalog:",
-    "@types/bs58": "catalog:"
+    "typescript": "catalog:"
   }
 }

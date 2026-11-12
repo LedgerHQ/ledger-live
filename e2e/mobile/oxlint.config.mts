@@ -1,0 +1,42 @@
+import { defineConfig } from "oxlint";
+import { BIGNUMBER_NAMED_IMPORT, RELATIVE_IMPORTS } from "@support/lint/restricted-imports";
+
+export default defineConfig({
+  env: { browser: true, node: true },
+  globals: { Atomics: "readonly", SharedArrayBuffer: "readonly" },
+  categories: { correctness: "error", suspicious: "warn", pedantic: "off" },
+  plugins: ["eslint", "import", "oxc", "unicorn", "typescript"],
+  ignorePatterns: ["node_modules", "artifacts/**", "**/*.json"],
+  rules: {
+    "eslint/no-unused-vars": "warn",
+    "eslint/no-empty-pattern": "warn",
+    "eslint/no-console": "off",
+    "import/no-duplicates": "error",
+    "import/no-named-as-default": "off",
+    "typescript/no-explicit-any": "warn",
+    "typescript/no-deprecated": "error",
+    "typescript/consistent-type-assertions": ["warn", { assertionStyle: "never" }],
+    "unicorn/no-useless-fallback-in-spread": "off",
+    "unicorn/no-useless-spread": "off",
+    "eslint/no-restricted-imports": [
+      "error",
+      {
+        paths: [BIGNUMBER_NAMED_IMPORT],
+        patterns: [
+          RELATIVE_IMPORTS,
+          {
+            group: ["~", "~/*", "~/**", "LLM", "LLM/*", "LLM/**"],
+            message:
+              "E2E tests must stay independent and not import Ledger Wallet Mobile app source through the '~' or 'LLM' aliases.",
+          },
+        ],
+      },
+    ],
+  },
+  overrides: [
+    {
+      files: ["scripts/**"],
+      rules: { "eslint/no-restricted-imports": ["error", { paths: [BIGNUMBER_NAMED_IMPORT] }] },
+    },
+  ],
+});

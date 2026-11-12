@@ -11,4 +11,4 @@ The `balanceHistory` kind: the balance of each asset of an account over a range,
 - Stored by `AccountUUID`, then by range, as `{ revision, series }`: a read replaces the series of its range and keeps the others, unless an answer started later already stored that range (a read without a query and `{ range: DEFAULT_BALANCE_HISTORY_RANGE }` answer the same range). The result names its range, so equivalent queries land on it.
 - `selectAccountBalanceHistory`, `selectAccountAssetBalanceHistory`. Apps mount the slice at `accountBalanceHistories`.
 
-Pending, the last error and the source stay in `accountData`, one status per query, as `accountDataQueryKey` writes it. See [the account data layer](../../../docs/account-data-layer.md).
+Pending, the last error and the source stay in `accountData`, one status per query, as `accountDataQueryKey` writes it. See [the account data layer](../../../docs/account-models/data-layer.md).

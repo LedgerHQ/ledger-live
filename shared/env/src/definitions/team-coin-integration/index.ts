@@ -32,11 +32,6 @@ const teamCoinIntegration = {
     parser: floatParser,
     desc: "Cosmos gas estimate multiplier",
   },
-  API_POLKADOT_SIDECAR_CREDENTIALS: {
-    parser: stringParser,
-    def: "",
-    desc: "Polkadot Sidecar API credentials",
-  },
   MULTIVERSX_API_ENDPOINT: {
     parser: stringParser,
     def: "https://elrond.coin.ledger.com",
@@ -46,26 +41,6 @@ const teamCoinIntegration = {
     parser: stringParser,
     def: "https://delegations-elrond.coin.ledger.com",
     desc: "MultiversX DELEGATION API url",
-  },
-  API_STELLAR_HORIZON: {
-    parser: stringParser,
-    def: "https://stellar.coin.ledger.com",
-    desc: "Stellar Horizon API url",
-  },
-  API_STELLAR_HORIZON_FETCH_LIMIT: {
-    parser: intParser,
-    def: 100,
-    desc: "Limit of operation that Horizon will fetch per page",
-  },
-  API_STELLAR_HORIZON_STATIC_FEE: {
-    def: false,
-    parser: boolParser,
-    desc: "Static fee for Stellar account",
-  },
-  API_TRONGRID_PROXY: {
-    parser: stringParser,
-    def: "https://tron.coin.ledger.com",
-    desc: "proxy url for trongrid API",
   },
   ICON_NODE_ENDPOINT: {
     parser: stringParser,

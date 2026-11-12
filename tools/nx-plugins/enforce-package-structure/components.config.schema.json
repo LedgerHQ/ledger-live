@@ -79,7 +79,7 @@
       "required": ["web", "native"],
       "properties": {
         "web": {
-          "description": "Desktop order, from `resolve.extensions` in apps/ledger-live-desktop/tools/rspack/rspack.renderer.ts: `.web` files first, then unsuffixed ones.",
+          "description": "Desktop order, from `resolve.extensions` in apps/ledger-live-desktop/tools/rspack/rspack.renderer.mts: `.web` files first, then unsuffixed ones.",
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,

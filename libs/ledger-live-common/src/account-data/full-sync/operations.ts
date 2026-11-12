@@ -3,6 +3,7 @@ import {
   AccountOperationSchema,
   type AccountOperation,
   type AccountOperationsPage,
+  type AccountOperationsQuery,
   type OperationId,
 } from "@domain/entity-account-operation";
 import { toAmount } from "./balance";
@@ -58,8 +59,11 @@ const newestFirst = (a: string, b: string) => {
 const byPendingThenNewest = (a: Group, b: Group) =>
   Number(b.pending) - Number(a.pending) || newestFirst(a.date, b.date);
 
-/** The `operations` kind of a synced account in one page, token, sub and internal operations included. */
-export function toAccountOperations(account: Account): AccountOperationsPage {
+/** The `operations` kind of a synced account in one page, token, sub and internal operations included, filtered in memory. */
+export function toAccountOperations(
+  account: Account,
+  query?: AccountOperationsQuery,
+): AccountOperationsPage {
   const nativeId = account.currency.id;
   const assetIdOf = new Map<string, string>([[account.id, nativeId]]);
   for (const token of account.subAccounts ?? []) assetIdOf.set(token.id, token.token.id);
@@ -120,5 +124,9 @@ export function toAccountOperations(account: Account): AccountOperationsPage {
   }
 
   groups.sort(byPendingThenNewest);
-  return { operations: groups.flatMap(group => group.rows) };
+  const rows = groups.flatMap(group => group.rows);
+  const { filterAsset } = query ?? {};
+  return {
+    operations: filterAsset === undefined ? rows : rows.filter(row => row.assetId === filterAsset),
+  };
 }

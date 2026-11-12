@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-signer-concordium",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "description": "Ledger Hardware Wallet Concordium Signer",
   "keywords": [
     "Ledger",
@@ -48,9 +48,11 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
     "jest": "catalog:",
-    "rimraf": "^4.4.1",
-    "ts-node": "^10.4.0"
+    "rimraf": "4.4.1",
+    "oxlint": "catalog:"
   },
   "exports": {
     ".": {

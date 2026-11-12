@@ -3,7 +3,7 @@ import { Linking } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { ParamListBase } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import {
   MIN_TRANSACTION_AMOUNT,
   formatVotes,
@@ -14,7 +14,10 @@ import type { TronAccount } from "@ledgerhq/live-common/families/tron/types";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { getAddressExplorer, getDefaultExplorerView } from "@domain/entity-currency-crypto";
+import { ACCOUNT_DETAIL_PAGES } from "@features/flow-account-detail";
 import type { AccountDelegationsProps } from "@features/flow-account-detail-delegations";
+import { useOpenStakeDrawer } from "LLM/features/Stake";
+import { useStake } from "LLM/hooks/useStake/useStake";
 import { ScreenName } from "~/const";
 import { useTranslation } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
@@ -92,6 +95,10 @@ export const useTronDelegationsViewModel = (
   const localManifest = useLocalLiveAppManifest("stakekit");
   const remoteManifest = useRemoteLiveAppManifest("stakekit");
   const manifest = remoteManifest || localManifest;
+  const { getCanStakeCurrency } = useStake();
+  const { openStakeForAccount } = useOpenStakeDrawer({
+    sourceScreenName: ACCOUNT_DETAIL_PAGES.account,
+  });
   const explorerView = getDefaultExplorerView(account.currency);
 
   const { spendableBalance, tronResources } = account;
@@ -104,6 +111,7 @@ export const useTronDelegationsViewModel = (
   const canFreeze = spendableBalance?.gt(MIN_TRANSACTION_AMOUNT);
   const showVotes = tronPower > 0 && formattedVotes.length > 0;
   const percentVotesUsed = totalVotesUsed / tronPower;
+  const canEarn = getCanStakeCurrency(account.currency.id) && spendableBalance.gt(0);
 
   const managePosition = useCallback(
     (pendingaction: PendingAction) => {
@@ -123,6 +131,10 @@ export const useTronDelegationsViewModel = (
     (actionId: string) => managePosition(actionId === "claim" ? "CLAIM_REWARDS" : "REVOTE"),
     [managePosition],
   );
+
+  const onStartDelegating = useCallback(() => {
+    void openStakeForAccount(account);
+  }, [account, openStakeForAccount]);
 
   const onOpenValidator = useCallback(
     (address: string) => {
@@ -151,7 +163,7 @@ export const useTronDelegationsViewModel = (
       ),
       learnMoreLabel: t("tron.voting.howItWorks"),
       actionLabel: t(tronPower > 0 ? "tron.voting.votes.cta" : "account.delegation.info.cta"),
-      actionDisabled: true,
+      actionDisabled: !canEarn,
     },
     footer:
       showVotes && percentVotesUsed < 1
@@ -166,7 +178,7 @@ export const useTronDelegationsViewModel = (
     onOpenValidator,
     onSelectRowAction: () => undefined,
     onSelectHeaderAction,
-    onStartDelegating: () => undefined,
+    onStartDelegating,
     onLearnMore: () => Linking.openURL(urls.tronStaking),
     testID: "account-detail-tron-votes",
   };

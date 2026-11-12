@@ -8,6 +8,7 @@ import os from "node:os";
 import {
   createNanoAppJsonFile,
   getDeviceFirmwareVersion,
+  getNanoAppProvider,
   getSpeculosModel,
 } from "@ledgerhq/live-e2e-shared/speculosAppVersion";
 import path from "path";
@@ -42,6 +43,7 @@ export default async function globalSetup(_config: FullConfig) {
       `OS=${os.type()} ${os.release()} (${process.platform}-${process.arch})`,
       `SPECULOS_DEVICE=${SPECULOS_DEVICE}`,
       `SPECULOS_FIRMWARE_VERSION=${SPECULOS_FIRMWARE_VERSION}`,
+      `SPECULOS_APP_PROVIDER=${getNanoAppProvider()}`,
       `E2E_DESKTOP_FEATURE_FLAGS=${process.env.E2E_DESKTOP_FEATURE_FLAGS}`,
       `E2E_FEATURE_FLAGS_JSON=${JSON.stringify(parseExtraFeatureFlags(process.env.E2E_FEATURE_FLAGS_JSON))}`,
       "",

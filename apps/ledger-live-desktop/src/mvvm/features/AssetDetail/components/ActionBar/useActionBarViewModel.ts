@@ -227,8 +227,8 @@ export function useActionBarViewModel({
       page: ASSET_DETAIL_TRACKING_PAGE_NAME,
     });
     setTrackingSource(ASSET_DETAIL_TRACKING_PAGE_NAME);
-    navigateToSwap(ledgerCurrency, { source: ASSET_DETAIL_TRACKING_PAGE_NAME });
-  }, [ledgerCurrency, navigateToSwap, trackingCurrencyId]);
+    void navigateToSwap(ledgerCurrency, { source: ASSET_DETAIL_TRACKING_PAGE_NAME, ledgerIds });
+  }, [ledgerCurrency, ledgerIds, navigateToSwap, trackingCurrencyId]);
 
   const actions = useMemo(() => {
     const candidates: Array<ActionBarAction | false> = [

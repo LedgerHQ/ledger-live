@@ -41,7 +41,9 @@ export class HttpError extends Error {
 }
 ```
 
-Group a family under a per-package base class so callers can catch the whole set:
+Group a family under a per-package base class so callers can catch the whole set. An excerpt of
+[`domain/entity/contact/src/errors.ts`](../../../domain/entity/contact/src/errors.ts), which holds
+the full family:
 
 ```ts
 export class ContactError extends Error {
@@ -54,8 +56,6 @@ export class InvalidContactNameError extends ContactError {
   }
 }
 ```
-
-See `domain/entity/contact/src/errors.ts` for a full reference.
 
 ### `cause`
 
@@ -98,7 +98,7 @@ Use `instanceof` only when you are certain the error has not crossed a boundary
 
 - Logic in one package → that package's `src/errors.ts`.
 - Used only by an app → that app's errors file, such as
-  `apps/ledger-live-desktop/src/errors.ts`. Mobile has no app-level errors file yet: add one at the
+  [`apps/ledger-live-desktop/src/errors.ts`](../../../apps/ledger-live-desktop/src/errors.ts). Mobile has no app-level errors file yet: add one at the
   same place the first time it needs one.
-- Shared by several coin modules → `libs/ledger-wallet-framework/src/errors.ts`
+- Shared by several coin modules → [`libs/ledger-wallet-framework/src/errors.ts`](../../../libs/ledger-wallet-framework/src/errors.ts)
   (`@ledgerhq/ledger-wallet-framework/errors`), the shared home below the coin layer.

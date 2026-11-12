@@ -8,7 +8,7 @@ import {
   type StakingUnbonding,
 } from "@ledgerhq/types-live";
 import * as bech32 from "bech32";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import cryptoFactory from "./chain/chain";
 import type {

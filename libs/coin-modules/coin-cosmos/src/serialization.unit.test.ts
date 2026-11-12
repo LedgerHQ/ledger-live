@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import {
   createEmptyStakingResources,
   type StakingResources,
@@ -101,7 +101,7 @@ describe("assignToAccountRaw", () => {
       xpub: address,
       cosmosResources: { ...makeResources(), sequence: 4, publicKey: "02abc" },
       stakingResources: makeResources(),
-    } as CosmosAccount & StakingAccount;
+    } as unknown as CosmosAccount & StakingAccount;
     const accountRaw = { xpub: address } as CosmosAccountRaw;
 
     assignToAccountRaw(account, accountRaw);

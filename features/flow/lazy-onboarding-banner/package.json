@@ -20,8 +20,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -c features/flow/lazy-onboarding-banner/knip.web.config.mjs -W features/flow/lazy-onboarding-banner --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/lazy-onboarding-banner/knip.native.config.mjs -W features/flow/lazy-onboarding-banner --tsConfig tsconfig.native.json"
+    "coverage": "jest --coverage"
   },
   "peerDependencies": {
     "@ledgerhq/lumen-design-core": "catalog:",
@@ -48,11 +47,13 @@
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/lint": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",

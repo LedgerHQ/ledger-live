@@ -174,6 +174,7 @@ describe("genuine-check command on Speculos", () => {
       ok: false,
       error: {
         command: "genuine-check",
+        code: "GenuineCheckOnSpeculosError",
         message:
           "genuine-check needs a physical Ledger: Speculos has no attestation keys. " +
           "Unset SPECULOS_API_PORT to check a USB device.",

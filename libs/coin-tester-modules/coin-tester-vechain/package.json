@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-vechain",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "private": true,
   "description": "Ledger VeChain Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -53,8 +53,7 @@
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand",
-    "unimported": "pnpm knip --directory ../../.. -W libs/coin-tester-modules/coin-tester-vechain"
+    "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand"
   },
   "dependencies": {
     "@ledgerhq/coin-tester": "workspace:^",
@@ -65,7 +64,7 @@
     "@ledgerhq/types-live": "workspace:^",
     "@vechain/sdk-core": "2.0.0",
     "bignumber.js": "^9",
-    "chalk": "^4.1.2",
+    "chalk": "catalog:",
     "docker-compose": "^1",
     "msw": "catalog:"
   },
@@ -75,10 +74,11 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "rimraf": "^5",
+    "rimraf": "5.0.10",
     "typescript": "catalog:"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@domain/api-aggregated-assets",
-  "version": "0.6.3",
+  "version": "0.7.0",
   "private": true,
   "description": "Domain API client for DADA (Dynamic Assets Data Aggregator): wire contract, RTK Query endpoints and response transforms",
   "main": "src/index.ts",
@@ -15,11 +15,12 @@
   "sideEffects": false,
   "scripts": {
     "lint": "oxlint ./src",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W domain/api/aggregated-assets"
+    "coverage": "jest --coverage"
   },
   "devDependencies": {
     "@types/react": "catalog:",
@@ -29,7 +30,10 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "react": "catalog:",
     "react-redux": "catalog:",
     "typescript": "catalog:"
@@ -43,7 +47,8 @@
     "@domain/entity-interest-rate": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "@shared/api-services": "workspace:*",
-    "@shared/env": "workspace:*"
+    "@shared/env": "workspace:*",
+    "zod": "catalog:"
   },
   "peerDependencies": {
     "react": ">=19.0.0",

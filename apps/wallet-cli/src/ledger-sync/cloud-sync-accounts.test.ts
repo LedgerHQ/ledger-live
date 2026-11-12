@@ -1,13 +1,17 @@
 import "../live-common-setup";
-import { describe, expect, it } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { Session } from "../session/session-store";
-import type { MemberCredentials, Trustchain, TrustchainSDK } from "@shared/cloud-sync";
+import type { JWT, MemberCredentials, Trustchain, TrustchainSDK } from "@shared/cloud-sync";
 import {
+  importSupport,
+  ledgerSyncSupport,
   mergeSyncedAccounts,
   pullSyncedAccounts,
+  supportFingerprint,
   type CreateCloudSyncSdk,
 } from "./cloud-sync-accounts";
-import { parseV1 } from "../shared/accountDescriptor";
+import { walletCliLoaders } from "../coin-module-loaders";
+import { NetworkIdSchema, parseV1 } from "../shared/accountDescriptor";
 import { XPUB, ETH_ADDR, SOL_ADDR } from "../shared/accountDescriptor/test-fixtures";
 
 const BTC_RAW = {
@@ -49,6 +53,17 @@ const UNSUPPORTED_FAMILY_RAW = {
   freshAddress: "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty",
   seedIdentifier: "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty",
   derivationMode: "polkadotbip44",
+  index: 0,
+};
+
+// A known currency of a supported family (evm) on a network wallet-cli does not support: it
+// converts to V1, but toV0() rejects the network, which must be classified as "skipped".
+const UNSUPPORTED_NETWORK_RAW = {
+  id: `js:2:base:${ETH_ADDR}:`,
+  currencyId: "base",
+  freshAddress: ETH_ADDR,
+  seedIdentifier: ETH_ADDR,
+  derivationMode: "",
   index: 0,
 };
 
@@ -116,6 +131,22 @@ describe("mergeSyncedAccounts", () => {
     expect(session.accounts).toHaveLength(1);
   });
 
+  it("reports an empty currencyId as skipped, not invalid", () => {
+    const session = Session.from([]);
+    const empty = {
+      ...BTC_RAW,
+      id: `js:2::${XPUB}:native_segwit`,
+      currencyId: "",
+    };
+    const report = mergeSyncedAccounts(session, [empty, ETH_RAW]);
+
+    expect(report.skipped).toEqual([
+      expect.objectContaining({ status: "skipped", id: empty.id, reason: 'Unknown network ""' }),
+    ]);
+    expect(report.invalid).toEqual([]);
+    expect(session.accounts).toHaveLength(1);
+  });
+
   it("reports a resolvable but wallet-cli-unsupported currency family as skipped, before toV1()", () => {
     const session = Session.from([]);
     const report = mergeSyncedAccounts(session, [UNSUPPORTED_FAMILY_RAW, ETH_RAW]);
@@ -124,6 +155,19 @@ describe("mergeSyncedAccounts", () => {
       expect.objectContaining({ status: "skipped", id: UNSUPPORTED_FAMILY_RAW.id }),
     ]);
     expect(report.skipped[0]?.reason).toContain("polkadot");
+    expect(report.invalid).toEqual([]);
+    expect(report.imported).toEqual([expect.objectContaining({ status: "imported" })]);
+    expect(session.accounts).toHaveLength(1);
+  });
+
+  it("reports a supported family on an unsupported network as skipped, not invalid", () => {
+    const session = Session.from([]);
+    const report = mergeSyncedAccounts(session, [UNSUPPORTED_NETWORK_RAW, ETH_RAW]);
+
+    expect(report.skipped).toEqual([
+      expect.objectContaining({ status: "skipped", id: UNSUPPORTED_NETWORK_RAW.id }),
+    ]);
+    expect(report.skipped[0]?.reason).toContain('Network "base" is not supported by wallet-cli');
     expect(report.invalid).toEqual([]);
     expect(report.imported).toEqual([expect.objectContaining({ status: "imported" })]);
     expect(session.accounts).toHaveLength(1);
@@ -271,7 +315,7 @@ describe("mergeSyncedAccounts", () => {
     ]);
     expect(report.imported).toEqual([expect.objectContaining({ network: "bitcoin" })]);
     expect(session.accounts.map(({ descriptor }) => parseV1(descriptor).network)).toEqual([
-      "bitcoin",
+      NetworkIdSchema.parse("bitcoin"),
     ]);
   });
 
@@ -332,6 +376,62 @@ function namedError(name: string): Error {
   err.name = name;
   return err;
 }
+
+describe("supportFingerprint", () => {
+  const support = {
+    families: ["evm", "bitcoin"],
+    currencies: ["ethereum", "bitcoin"],
+    derivationModes: ["", "segwit"],
+  };
+
+  it("ignores the order of each list", () => {
+    const reordered = {
+      families: ["bitcoin", "evm"],
+      currencies: ["bitcoin", "ethereum"],
+      derivationModes: ["segwit", ""],
+    };
+
+    expect(supportFingerprint(reordered)).toBe(supportFingerprint(support));
+  });
+
+  it.each([
+    ["family", { families: [...support.families, "solana"] }],
+    ["currency", { currencies: [...support.currencies, "base"] }],
+    ["derivation mode", { derivationModes: [...support.derivationModes, "taproot"] }],
+  ])("changes when a %s is added", (_kind, added) => {
+    expect(supportFingerprint({ ...support, ...added })).not.toBe(supportFingerprint(support));
+  });
+});
+
+describe("importSupport", () => {
+  it("includes testnet currencies and every derivation mode, but no unsupported family's currency", () => {
+    const { currencies, derivationModes } = importSupport();
+
+    expect([...currencies]).toContain("ethereum_sepolia");
+    expect([...currencies]).not.toContain("cardano");
+    expect([...derivationModes]).toContain("taproot");
+  });
+
+  it("leaves out a supported family's currency on a network wallet-cli does not support", () => {
+    expect([...importSupport().currencies]).not.toContain("base");
+  });
+});
+
+describe("ledgerSyncSupport", () => {
+  it("changes when a coin-module loader starts supporting a network", () => {
+    const evmLoader = walletCliLoaders.find(loader => loader.family === "evm");
+    if (!evmLoader) throw new Error("wallet-cli has no evm loader");
+    const evmCoins = evmLoader.supportedCoins;
+    const before = ledgerSyncSupport();
+
+    evmLoader.supportedCoins = [...evmCoins, "base"];
+    try {
+      expect(ledgerSyncSupport()).not.toBe(before);
+    } finally {
+      evmLoader.supportedCoins = evmCoins;
+    }
+  });
+});
 
 describe("pullSyncedAccounts", () => {
   const trustchain = { rootId: "root-abc" } as unknown as Trustchain;
@@ -502,5 +602,61 @@ describe("pullSyncedAccounts", () => {
     expect(created[0]?.getCurrentVersion()).toBe(42);
     expect(created[0]?.slug).toBe("live");
     expect(created[0]?.trustchainSdk).toBe(trustchainSdk);
+  });
+
+  describe("with the real CloudSyncSDK and a deleted document", () => {
+    const realFetch = globalThis.fetch;
+    const authorizedTrustchainSdk = {
+      withAuth: <T>(
+        _trustchain: Trustchain,
+        _credentials: MemberCredentials,
+        job: (jwt: JWT) => Promise<T>,
+      ) => job({ accessToken: "jwt" }),
+    } as unknown as TrustchainSDK;
+    let requestedVersions: (string | null)[];
+
+    beforeEach(() => {
+      requestedVersions = [];
+      globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+        const url = new URL(String(input));
+        const isLiveDocumentPull =
+          (init?.method ?? "GET") === "GET" &&
+          url.pathname === "/atomic/v1/live" &&
+          url.searchParams.get("id") === trustchain.rootId;
+        if (!isLiveDocumentPull) return new Response(null, { status: 404 });
+        requestedVersions.push(url.searchParams.get("version"));
+        return Response.json({ status: "no-data" });
+      }) as typeof fetch;
+    });
+
+    afterEach(() => {
+      globalThis.fetch = realFetch;
+    });
+
+    it("reads it as up-to-date when pulled without a version, so agent-intent sync detects the deletion itself", async () => {
+      const result = await pullSyncedAccounts(
+        trustchain,
+        memberCredentials,
+        authorizedTrustchainSdk,
+        "production",
+        () => undefined,
+      );
+
+      expect(requestedVersions).toEqual([null]);
+      expect(result).toEqual({ status: "up-to-date" });
+    });
+
+    it("reports it as deleted when pulled from a cached version", async () => {
+      const result = await pullSyncedAccounts(
+        trustchain,
+        memberCredentials,
+        authorizedTrustchainSdk,
+        "production",
+        () => 4,
+      );
+
+      expect(requestedVersions).toEqual(["4"]);
+      expect(result).toEqual({ status: "deleted" });
+    });
   });
 });

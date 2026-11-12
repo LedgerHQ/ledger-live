@@ -1,0 +1,170 @@
+import { defineConfig } from "oxlint";
+import {
+  ACCOUNT_DATA_SETUP_FILES,
+  ACCOUNT_DATA_SOURCES,
+  BIGNUMBER_NAMED_IMPORT,
+  EXPO_CLIPBOARD,
+  LIVE_COMMON_CURRENCY_ACCESSORS,
+  LIVE_COMMON_FEATURE_FLAGS,
+  LIVE_COMMON_LIB,
+  LODASH,
+  NAVIGATOR_CLIPBOARD,
+  WALLET_FRAMEWORK_CURRENCY_TYPES,
+} from "@support/lint/restricted-imports";
+
+const MVVM_ALIAS = {
+  group: ["~/mvvm", "~/mvvm/*", "~/mvvm/**"],
+  message: "Use 'LLM' alias instead of '~/mvvm'. Replace '~/mvvm' with 'LLM' in your imports.",
+};
+
+const RESTRICTED_PATHS = [
+  LODASH,
+  BIGNUMBER_NAMED_IMPORT,
+  EXPO_CLIPBOARD,
+  ...WALLET_FRAMEWORK_CURRENCY_TYPES,
+];
+
+// Test and debug files may import these directly.
+const APP_INSTANCE_PATHS = [
+  {
+    name: "react-redux",
+    importNames: ["useSelector", "useDispatch", "useStore"],
+    message:
+      "Import typed hooks from '~/context/hooks' instead of 'react-redux' to ensure proper TypeScript typing.",
+  },
+  {
+    name: "reselect",
+    importNames: ["createStructuredSelector", "createSelector"],
+    message:
+      "Import typed hooks from '~/context/selectors' instead of 'reselect' to ensure proper TypeScript typing.",
+  },
+  {
+    name: "react-i18next",
+    importNames: ["useTranslation", "Trans"],
+    message:
+      "Use the locale hooks from '~/context/Locale' instead of 'react-i18next' to ensure correct injection of the i18n instance.",
+  },
+  {
+    name: "i18next",
+    importNames: ["default", "t", "i18n"],
+    message:
+      "The app no longer initialises the i18next global singleton. Import the app instance from '~/i18n/instance' (or the hooks from '~/context/Locale').",
+  },
+];
+
+const RESTRICTED_PATTERNS = [
+  LIVE_COMMON_LIB,
+  MVVM_ALIAS,
+  LIVE_COMMON_FEATURE_FLAGS,
+  LIVE_COMMON_CURRENCY_ACCESSORS,
+  ACCOUNT_DATA_SOURCES,
+];
+
+export default defineConfig({
+  env: { browser: true, es6: true, node: true },
+  globals: { __DEV__: "readonly", __REDUX_DEVTOOLS_EXTENSION__: "readonly" },
+  categories: { correctness: "error", suspicious: "warn", pedantic: "off" },
+  plugins: ["eslint", "import", "oxc", "unicorn", "typescript", "react", "jest", "jsx-a11y"],
+  ignorePatterns: [
+    "*.min.js",
+    "node_modules",
+    "src/locales",
+    "generated",
+    "scripts",
+    "e2e/bridge",
+    "index.d.ts",
+  ],
+  rules: {
+    "eslint/no-unused-vars": "warn",
+    "eslint/no-empty-pattern": "warn",
+    "eslint/no-constant-binary-expression": "warn",
+    "eslint/no-shadow": "off",
+    "eslint/no-unused-expressions": "warn",
+    "react/globals": "warn",
+    "react/immutability": "warn",
+    "react/preserve-manual-memoization": "warn",
+    "react/purity": "warn",
+    "react/refs": "warn",
+    "react/set-state-in-effect": "warn",
+    "react/set-state-in-render": "warn",
+    "react/static-components": "warn",
+    "react/use-memo": "warn",
+    "import/namespace": "warn",
+    "eslint/no-unsafe-optional-chaining": "off",
+    "eslint/no-useless-rename": "warn",
+    "eslint/no-console": ["error", { allow: ["warn", "error"] }],
+    "eslint/no-restricted-imports": [
+      "error",
+      { paths: [...RESTRICTED_PATHS, ...APP_INSTANCE_PATHS], patterns: RESTRICTED_PATTERNS },
+    ],
+    "eslint/no-restricted-properties": ["error", NAVIGATOR_CLIPBOARD],
+    "import/no-duplicates": "error",
+    "import/no-named-as-default": "off",
+    "typescript/no-explicit-any": "error",
+    "typescript/no-non-null-assertion": "off",
+    "typescript/no-deprecated": "error",
+    "react/no-did-mount-set-state": "warn",
+    "react/jsx-key": "warn",
+    "react/display-name": "off",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": [
+      "error",
+      { additionalHooks: "(useInViewContext|useAnimatedStyle|useDerivedValue|useAnimatedProps)" },
+    ],
+    "unicorn/no-useless-fallback-in-spread": "off",
+    "unicorn/no-useless-spread": "off",
+    "unicorn/no-new-array": "off",
+    "unicorn/no-array-reverse": "off",
+    "unicorn/no-array-sort": "off",
+    "jest/no-conditional-expect": "warn",
+    "jest/expect-expect": "warn",
+    "jest/require-to-throw-message": "warn",
+    "jest/valid-title": "warn",
+    "jest/no-disabled-tests": "warn",
+    "oxc/const-comparisons": "warn",
+    "jsx-a11y/no-autofocus": "off",
+    "jsx-a11y/prefer-tag-over-role": "off",
+    "jsx-a11y/anchor-is-valid": ["error", { components: [] }],
+  },
+  overrides: [
+    {
+      files: ["**/*.test.{ts,tsx}", "**/__tests__/**", "e2e/**/*.{ts,tsx}"],
+      env: { jest: true },
+      plugins: ["jest"],
+      rules: { "typescript/no-explicit-any": "warn" },
+    },
+    {
+      files: [
+        "src/**/*.test.{ts,tsx}",
+        "src/screens/Settings/Debug/**/*",
+        "src/screens/FeatureFlagsSettings/**/*",
+        "src/components/AnalyticsConsole/**/*",
+        "src/screens/Settings/Experimental/**/*",
+        "src/components/PerformanceConsole/**/*",
+        "src/components/CustomImage/TestImage.tsx",
+        "**/*Mock*",
+        "__tests__/**/*",
+      ],
+      rules: {
+        "eslint/no-console": "off",
+        "eslint/no-restricted-imports": [
+          "error",
+          { paths: RESTRICTED_PATHS, patterns: RESTRICTED_PATTERNS },
+        ],
+      },
+    },
+    {
+      files: ["**/jest.config.js", "**/jest-setup.js", "**/e2e/**"],
+      env: { jest: true },
+      rules: { "typescript/no-var-requires": "off" },
+    },
+    {
+      files: ["src/mvvm/features/WalletSync/hooks/useFollowInstructionDrawer.ts"],
+      rules: { "react-hooks/exhaustive-deps": "off" },
+    },
+    {
+      files: ACCOUNT_DATA_SETUP_FILES,
+      rules: { "eslint/no-restricted-imports": ["error", { paths: [BIGNUMBER_NAMED_IMPORT] }] },
+    },
+  ],
+});

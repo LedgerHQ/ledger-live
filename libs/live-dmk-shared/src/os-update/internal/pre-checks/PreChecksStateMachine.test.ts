@@ -22,7 +22,11 @@ import {
   type OsUpdatesOrchestratorStateMachineActorRef,
   type OsUpdatesOrchestratorStateMachineEvent,
 } from "../orchestrator/types";
-import { POLL_INTERVAL_MS, SESSION_SETTLE_TIMEOUT_MS } from "../shared/constants";
+import {
+  CONNECTION_TIMEOUT_MS,
+  POLL_INTERVAL_MS,
+  SESSION_SETTLE_TIMEOUT_MS,
+} from "../shared/constants";
 import { preChecksStateMachine } from "./PreChecksStateMachine";
 import { PreChecksNextAction, type PreChecksStateMachineInput } from "./types";
 
@@ -561,6 +565,39 @@ describe("PreChecksStateMachine", () => {
 
       expect(actor.getSnapshot().value).toBe("GetOsVersion");
       expect(lastSentStateType()).toBe(PreChecksStateType.LOADING);
+    });
+
+    it("should emit CONNECTION_TIMED_OUT and resume at GetOsVersion once restarted with the device back", async () => {
+      await start();
+      await failDeviceAction(new DeviceDisconnectedWhileSendingError());
+      await jest.advanceTimersByTimeAsync(CONNECTION_TIMEOUT_MS);
+      await settle();
+      expect(lastSentStateType()).toBe(PreChecksStateType.CONNECTION_TIMED_OUT);
+
+      stallNextOsVersion();
+      await deviceComesBack();
+      expect(actor.getSnapshot().value).toBe("CheckErrorCause");
+
+      sentStatesOfType(PreChecksStateType.CONNECTION_TIMED_OUT)[0].retry();
+      await settle();
+
+      expect(actor.getSnapshot().value).toBe("GetOsVersion");
+      expect(lastSentStateType()).toBe(PreChecksStateType.LOADING);
+    });
+
+    it("should stop the OS update when it is canceled after the connection timed out", async () => {
+      await start();
+      await failDeviceAction(new DeviceDisconnectedWhileSendingError());
+      await jest.advanceTimersByTimeAsync(CONNECTION_TIMEOUT_MS);
+      await settle();
+
+      sentStatesOfType(PreChecksStateType.CONNECTION_TIMED_OUT)[0].cancel();
+      await settle();
+
+      expect(parentEvents).toContainEqual({
+        type: OsUpdatesOrchestratorStateMachineEventType.STOP,
+      });
+      expect(actor.getSnapshot().value).toBe("Canceled");
     });
 
     it("should keep the original session id after reconnecting", async () => {

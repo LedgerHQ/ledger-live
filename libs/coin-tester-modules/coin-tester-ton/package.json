@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-ton",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "sideEffects": false,
   "description": "Ledger TON Coin Tester",
@@ -34,7 +34,6 @@
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "knip-check": "pnpm knip --directory ../../.. -W libs/coin-tester-modules/coin-tester-ton",
     "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand"
   },
   "dependencies": {
@@ -48,7 +47,7 @@
     "@ton/crypto": "^3.3.0",
     "@ton/ton": "^15.4.0",
     "bignumber.js": "^9.1.2",
-    "chalk": "^4.1.2",
+    "chalk": "catalog:",
     "docker-compose": "^1.1.0",
     "rxjs": "catalog:"
   },
@@ -58,10 +57,11 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "rimraf": "^5.0.5",
+    "rimraf": "5.0.10",
     "typescript": "catalog:"
   }
 }

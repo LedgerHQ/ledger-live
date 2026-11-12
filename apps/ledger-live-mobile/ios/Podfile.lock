@@ -36,7 +36,7 @@ PODS:
     - BrazeKit (= 13.3.0)
   - BrazeUI (13.3.0):
     - BrazeKit (= 13.3.0)
-  - callstack-repack (5.2.5):
+  - callstack-repack (5.4.2):
     - boost
     - DoubleConversion
     - fast_float
@@ -220,48 +220,48 @@ PODS:
     - ExpoModulesCore
   - fast_float (8.0.0)
   - FBLazyVector (0.81.6)
-  - Firebase/CoreOnly (11.12.0):
-    - FirebaseCore (~> 11.12.0)
-  - Firebase/Messaging (11.12.0):
+  - Firebase/CoreOnly (12.19.3):
+    - FirebaseCore (~> 12.19.3)
+  - Firebase/Messaging (12.19.3):
     - Firebase/CoreOnly
-    - FirebaseMessaging (~> 11.12.0)
-  - Firebase/RemoteConfig (11.12.0):
+    - FirebaseMessaging (~> 12.19.0)
+  - Firebase/RemoteConfig (12.19.3):
     - Firebase/CoreOnly
-    - FirebaseRemoteConfig (~> 11.12.0)
-  - FirebaseABTesting (11.12.0):
-    - FirebaseCore (~> 11.12.0)
-  - FirebaseCore (11.12.0):
-    - FirebaseCoreInternal (~> 11.12.0)
-    - GoogleUtilities/Environment (~> 8.0)
-    - GoogleUtilities/Logger (~> 8.0)
-  - FirebaseCoreExtension (11.12.0):
-    - FirebaseCore (~> 11.12.0)
-  - FirebaseCoreInternal (11.12.0):
-    - "GoogleUtilities/NSData+zlib (~> 8.0)"
-  - FirebaseInstallations (11.12.0):
-    - FirebaseCore (~> 11.12.0)
-    - GoogleUtilities/Environment (~> 8.0)
-    - GoogleUtilities/UserDefaults (~> 8.0)
+    - FirebaseRemoteConfig (~> 12.19.0)
+  - FirebaseABTesting (12.19.0):
+    - FirebaseCore (~> 12.19.0)
+  - FirebaseCore (12.19.3):
+    - FirebaseCoreInternal (~> 12.19.0)
+    - GoogleUtilities/Environment (~> 8.1)
+    - GoogleUtilities/Logger (~> 8.1)
+  - FirebaseCoreExtension (12.19.0):
+    - FirebaseCore (~> 12.19.0)
+  - FirebaseCoreInternal (12.19.0):
+    - "GoogleUtilities/NSData+zlib (~> 8.1)"
+  - FirebaseInstallations (12.19.0):
+    - FirebaseCore (~> 12.19.0)
+    - GoogleUtilities/Environment (~> 8.1)
+    - GoogleUtilities/UserDefaults (~> 8.1)
     - PromisesObjC (~> 2.4)
-  - FirebaseMessaging (11.12.0):
-    - FirebaseCore (~> 11.12.0)
-    - FirebaseInstallations (~> 11.0)
-    - GoogleDataTransport (~> 10.0)
-    - GoogleUtilities/AppDelegateSwizzler (~> 8.0)
-    - GoogleUtilities/Environment (~> 8.0)
-    - GoogleUtilities/Reachability (~> 8.0)
-    - GoogleUtilities/UserDefaults (~> 8.0)
+  - FirebaseMessaging (12.19.0):
+    - FirebaseCore (~> 12.19.0)
+    - FirebaseInstallations (~> 12.19.0)
+    - GoogleDataTransport (~> 10.1)
+    - GoogleUtilities/AppDelegateSwizzler (~> 8.1)
+    - GoogleUtilities/Environment (~> 8.1)
+    - GoogleUtilities/Reachability (~> 8.1)
+    - GoogleUtilities/UserDefaults (~> 8.1)
     - nanopb (~> 3.30910.0)
-  - FirebaseRemoteConfig (11.12.0):
-    - FirebaseABTesting (~> 11.0)
-    - FirebaseCore (~> 11.12.0)
-    - FirebaseInstallations (~> 11.0)
-    - FirebaseRemoteConfigInterop (~> 11.0)
-    - FirebaseSharedSwift (~> 11.0)
-    - GoogleUtilities/Environment (~> 8.0)
-    - "GoogleUtilities/NSData+zlib (~> 8.0)"
-  - FirebaseRemoteConfigInterop (11.15.0)
-  - FirebaseSharedSwift (11.15.0)
+  - FirebaseRemoteConfig (12.19.0):
+    - FirebaseABTesting (~> 12.19.0)
+    - FirebaseCore (~> 12.19.0)
+    - FirebaseInstallations (~> 12.19.0)
+    - FirebaseRemoteConfigInterop (~> 12.19.0)
+    - FirebaseSharedSwift (~> 12.19.0)
+    - GoogleUtilities/Environment (~> 8.1)
+    - "GoogleUtilities/NSData+zlib (~> 8.1)"
+  - FirebaseRemoteConfigInterop (12.19.0)
+  - FirebaseSharedSwift (12.19.0)
   - fmt (11.0.2)
   - glog (0.3.5)
   - GoogleDataTransport (10.1.1):
@@ -2405,7 +2405,7 @@ PODS:
     - CocoaAsyncSocket
     - React-Core
   - react-native-vector-icons-material-design-icons (13.1.4)
-  - react-native-video (6.16.1):
+  - react-native-video (6.19.3):
     - boost
     - DoubleConversion
     - fast_float
@@ -2423,7 +2423,7 @@ PODS:
     - React-graphics
     - React-ImageManager
     - React-jsi
-    - react-native-video/Video (= 6.16.1)
+    - react-native-video/Video (= 6.19.3)
     - React-NativeModulesApple
     - React-RCTFabric
     - React-renderercss
@@ -2434,7 +2434,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - react-native-video/Fabric (6.16.1):
+  - react-native-video/Fabric (6.19.3):
     - boost
     - DoubleConversion
     - fast_float
@@ -2462,7 +2462,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - react-native-video/Video (6.16.1):
+  - react-native-video/Video (6.19.3):
     - boost
     - DoubleConversion
     - fast_float
@@ -3140,18 +3140,96 @@ PODS:
     - React-Core
     - SDWebImage (~> 5.11.1)
     - SDWebImageWebPCoder (~> 0.8.4)
-  - RNFBApp (22.2.0):
-    - Firebase/CoreOnly (= 11.12.0)
+  - RNFBApp (26.4.1):
+    - boost
+    - DoubleConversion
+    - fast_float
+    - Firebase/CoreOnly (~> 12.19.0)
+    - fmt
+    - glog
+    - hermes-engine
+    - RCT-Folly
+    - RCT-Folly/Fabric
+    - RCTRequired
+    - RCTTypeSafety
     - React-Core
-  - RNFBMessaging (22.2.0):
-    - Firebase/Messaging (= 11.12.0)
-    - FirebaseCoreExtension
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - SocketRocket
+    - Yoga
+  - RNFBMessaging (26.4.1):
+    - boost
+    - DoubleConversion
+    - fast_float
+    - Firebase/Messaging (~> 12.19.0)
+    - FirebaseCoreExtension (~> 12.19.0)
+    - fmt
+    - glog
+    - hermes-engine
+    - RCT-Folly
+    - RCT-Folly/Fabric
+    - RCTRequired
+    - RCTTypeSafety
     - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
     - RNFBApp
-  - RNFBRemoteConfig (22.2.0):
-    - Firebase/RemoteConfig (= 11.12.0)
+    - SocketRocket
+    - Yoga
+  - RNFBRemoteConfig (26.4.1):
+    - boost
+    - DoubleConversion
+    - fast_float
+    - Firebase/RemoteConfig (~> 12.19.0)
+    - fmt
+    - glog
+    - hermes-engine
+    - RCT-Folly
+    - RCT-Folly/Fabric
+    - RCTRequired
+    - RCTTypeSafety
     - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
     - RNFBApp
+    - SocketRocket
+    - Yoga
   - RNGestureHandler (2.28.0):
     - boost
     - DoubleConversion
@@ -3545,6 +3623,8 @@ PODS:
   - segment-analytics-react-native (2.24.2):
     - React-Core
     - sovran-react-native
+  - SharedNativePerformance (0.0.0):
+    - React-Core
   - SocketRocket (0.7.1)
   - sovran-react-native (1.1.4):
     - React-Core
@@ -3563,7 +3643,7 @@ PODS:
 DEPENDENCIES:
   - "boost (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_9f9367c5ec0023717aa72ae7066b0e6b/node_modules/react-native/third-party-podspecs/boost.podspec`)"
   - "braze-react-native-sdk (from `../../../node_modules/.pnpm/@braze+react-native-sdk@18.0.0/node_modules/@braze/react-native-sdk`)"
-  - "callstack-repack (from `../../../node_modules/.pnpm/@callstack+repack@5.2.5_patch_hash=8d7db4e65c89_75863445f1d9f84246a1fad3574c02e8/node_modules/@callstack/repack`)"
+  - "callstack-repack (from `../../../node_modules/.pnpm/@callstack+repack@5.4.2_patch_hash=5bcd139af7a7_7f66561bc200f87ba40e69b68ef66f84/node_modules/@callstack/repack`)"
   - "DatadogSDKReactNative (from `../../../node_modules/.pnpm/@datadog+mobile-react-native@3.7.0_react-native_7a7a1f27b9ac3f989423fe198c72f787/node_modules/@datadog/mobile-react-native`)"
   - "DoubleConversion (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_9f9367c5ec0023717aa72ae7066b0e6b/node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)"
   - "EXApplication (from `../../../node_modules/.pnpm/expo-application@7.0.8_expo@54.0.33_@babel+core_abeb84298ea9ca84ee1055406bccf067/node_modules/expo-application/ios`)"
@@ -3640,7 +3720,7 @@ DEPENDENCIES:
   - "react-native-slider (from `../../../node_modules/.pnpm/@react-native-community+slider@5.2.0/node_modules/@react-native-community/slider`)"
   - "react-native-tcp-socket (from `../../../node_modules/.pnpm/react-native-tcp-socket@6.4.2_react-native@0.81_2af7e0ae46a2d40e67603fa9cf2f990d/node_modules/react-native-tcp-socket`)"
   - "react-native-vector-icons-material-design-icons (from `../../../node_modules/.pnpm/@react-native-vector-icons+material-design-icon_0e2ef47ceb4fd84e97e85bab985e6c4f/node_modules/@react-native-vector-icons/material-design-icons`)"
-  - "react-native-video (from `../../../node_modules/.pnpm/react-native-video@6.16.1_react-native@0.81.6_p_0e012bc8fc6aaa0efdf7f8dbe9f226ea/node_modules/react-native-video`)"
+  - "react-native-video (from `../../../node_modules/.pnpm/react-native-video@6.19.3_react-native@0.81.6_p_24d493d7478d4474de07246f66b25323/node_modules/react-native-video`)"
   - "react-native-view-shot (from `../../../node_modules/.pnpm/react-native-view-shot@6.2.1_react-native@0.81._2323c8b98e0bf1ef10430f524e1bbc74/node_modules/react-native-view-shot`)"
   - "react-native-webview (from `../../../node_modules/.pnpm/react-native-webview@13.16.1_patch_hash=a146323_597b567ffb91daedeaee972e2bcb44a2/node_modules/react-native-webview`)"
   - "React-NativeModulesApple (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_9f9367c5ec0023717aa72ae7066b0e6b/node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)"
@@ -3677,9 +3757,9 @@ DEPENDENCIES:
   - "RNCAsyncStorage (from `../../../node_modules/.pnpm/@react-native-async-storage+async-storage@2.2.0_872a6de74bbc5726a2be3104345d3b06/node_modules/@react-native-async-storage/async-storage`)"
   - "RNCMaskedView (from `../../../node_modules/.pnpm/@react-native-masked-view+masked-view@0.3.2_rea_f3a921073dbd7d10a94aa20cba037263/node_modules/@react-native-masked-view/masked-view`)"
   - "RNFastImage (from `../../../node_modules/.pnpm/react-native-fast-image@8.6.3_react-native@0.81_829934f903352ef3c8879bbff021a036/node_modules/react-native-fast-image`)"
-  - "RNFBApp (from `../../../node_modules/.pnpm/@react-native-firebase+app@22.2.0_ad8cab2de0afcaf36fbaac4194936152/node_modules/@react-native-firebase/app`)"
-  - "RNFBMessaging (from `../../../node_modules/.pnpm/@react-native-firebase+messaging@22.2.0_@react-_395e807dafe924caf86c0b5d31be4541/node_modules/@react-native-firebase/messaging`)"
-  - "RNFBRemoteConfig (from `../../../node_modules/.pnpm/@react-native-firebase+remote-config@22.2.0_@re_8dbb93c9f68e6676bac4e3a09a201821/node_modules/@react-native-firebase/remote-config`)"
+  - "RNFBApp (from `../../../node_modules/.pnpm/@react-native-firebase+app@26.4.1_ad8cab2de0afcaf36fbaac4194936152/node_modules/@react-native-firebase/app`)"
+  - "RNFBMessaging (from `../../../node_modules/.pnpm/@react-native-firebase+messaging@26.4.1_@react-_707561fa817a1eb17b6786d393f69a3c/node_modules/@react-native-firebase/messaging`)"
+  - "RNFBRemoteConfig (from `../../../node_modules/.pnpm/@react-native-firebase+remote-config@26.4.1_@re_5f8299eb2defba5f221179c886f03521/node_modules/@react-native-firebase/remote-config`)"
   - "RNGestureHandler (from `../../../node_modules/.pnpm/react-native-gesture-handler@2.28.0_react-nativ_3a775044d093838ec0d4ddaff956f920/node_modules/react-native-gesture-handler`)"
   - "RNKeychain (from `../../../node_modules/.pnpm/react-native-keychain@10.0.0/node_modules/react-native-keychain`)"
   - "RNLocalize (from `../../../node_modules/.pnpm/react-native-localize@2.2.6_react-native@0.81.6_7dfbc808ef379a0b1049b6516b6b0ca8/node_modules/react-native-localize`)"
@@ -3689,6 +3769,7 @@ DEPENDENCIES:
   - "RNSVG (from `../../../node_modules/.pnpm/react-native-svg@15.15.4_react-native@0.81.6_pa_c81e2e988885c3bea45db55cd5611860/node_modules/react-native-svg`)"
   - "RNWorklets (from `../../../node_modules/.pnpm/react-native-worklets@0.8.1_patch_hash=8e8345e8_37d2ad1df67c39bba0bc009c33cc6d1f/node_modules/react-native-worklets`)"
   - "segment-analytics-react-native (from `../../../node_modules/.pnpm/@segment+analytics-react-native@2.24.2_bd1d19cd2883c3dc337815e1feaba81f/node_modules/@segment/analytics-react-native`)"
+  - SharedNativePerformance (from `../../../shared/native-performance`)
   - SocketRocket (~> 0.7.1)
   - "sovran-react-native (from `../../../node_modules/.pnpm/@segment+sovran-react-native@1.1.4_8ba131662a4359217af98865be4aa4b3/node_modules/@segment/sovran-react-native`)"
   - "VisionCamera (from `../../../node_modules/.pnpm/react-native-vision-camera@4.7.3_ab37e4eee70b54dccc0d0b2c265a1e0f/node_modules/react-native-vision-camera`)"
@@ -3741,7 +3822,7 @@ EXTERNAL SOURCES:
   braze-react-native-sdk:
     :path: "../../../node_modules/.pnpm/@braze+react-native-sdk@18.0.0/node_modules/@braze/react-native-sdk"
   callstack-repack:
-    :path: "../../../node_modules/.pnpm/@callstack+repack@5.2.5_patch_hash=8d7db4e65c89_75863445f1d9f84246a1fad3574c02e8/node_modules/@callstack/repack"
+    :path: "../../../node_modules/.pnpm/@callstack+repack@5.4.2_patch_hash=5bcd139af7a7_7f66561bc200f87ba40e69b68ef66f84/node_modules/@callstack/repack"
   DatadogSDKReactNative:
     :path: "../../../node_modules/.pnpm/@datadog+mobile-react-native@3.7.0_react-native_7a7a1f27b9ac3f989423fe198c72f787/node_modules/@datadog/mobile-react-native"
   DoubleConversion:
@@ -3894,7 +3975,7 @@ EXTERNAL SOURCES:
   react-native-vector-icons-material-design-icons:
     :path: "../../../node_modules/.pnpm/@react-native-vector-icons+material-design-icon_0e2ef47ceb4fd84e97e85bab985e6c4f/node_modules/@react-native-vector-icons/material-design-icons"
   react-native-video:
-    :path: "../../../node_modules/.pnpm/react-native-video@6.16.1_react-native@0.81.6_p_0e012bc8fc6aaa0efdf7f8dbe9f226ea/node_modules/react-native-video"
+    :path: "../../../node_modules/.pnpm/react-native-video@6.19.3_react-native@0.81.6_p_24d493d7478d4474de07246f66b25323/node_modules/react-native-video"
   react-native-view-shot:
     :path: "../../../node_modules/.pnpm/react-native-view-shot@6.2.1_react-native@0.81._2323c8b98e0bf1ef10430f524e1bbc74/node_modules/react-native-view-shot"
   react-native-webview:
@@ -3968,11 +4049,11 @@ EXTERNAL SOURCES:
   RNFastImage:
     :path: "../../../node_modules/.pnpm/react-native-fast-image@8.6.3_react-native@0.81_829934f903352ef3c8879bbff021a036/node_modules/react-native-fast-image"
   RNFBApp:
-    :path: "../../../node_modules/.pnpm/@react-native-firebase+app@22.2.0_ad8cab2de0afcaf36fbaac4194936152/node_modules/@react-native-firebase/app"
+    :path: "../../../node_modules/.pnpm/@react-native-firebase+app@26.4.1_ad8cab2de0afcaf36fbaac4194936152/node_modules/@react-native-firebase/app"
   RNFBMessaging:
-    :path: "../../../node_modules/.pnpm/@react-native-firebase+messaging@22.2.0_@react-_395e807dafe924caf86c0b5d31be4541/node_modules/@react-native-firebase/messaging"
+    :path: "../../../node_modules/.pnpm/@react-native-firebase+messaging@26.4.1_@react-_707561fa817a1eb17b6786d393f69a3c/node_modules/@react-native-firebase/messaging"
   RNFBRemoteConfig:
-    :path: "../../../node_modules/.pnpm/@react-native-firebase+remote-config@22.2.0_@re_8dbb93c9f68e6676bac4e3a09a201821/node_modules/@react-native-firebase/remote-config"
+    :path: "../../../node_modules/.pnpm/@react-native-firebase+remote-config@26.4.1_@re_5f8299eb2defba5f221179c886f03521/node_modules/@react-native-firebase/remote-config"
   RNGestureHandler:
     :path: "../../../node_modules/.pnpm/react-native-gesture-handler@2.28.0_react-nativ_3a775044d093838ec0d4ddaff956f920/node_modules/react-native-gesture-handler"
   RNKeychain:
@@ -3991,6 +4072,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/react-native-worklets@0.8.1_patch_hash=8e8345e8_37d2ad1df67c39bba0bc009c33cc6d1f/node_modules/react-native-worklets"
   segment-analytics-react-native:
     :path: "../../../node_modules/.pnpm/@segment+analytics-react-native@2.24.2_bd1d19cd2883c3dc337815e1feaba81f/node_modules/@segment/analytics-react-native"
+  SharedNativePerformance:
+    :path: "../../../shared/native-performance"
   sovran-react-native:
     :path: "../../../node_modules/.pnpm/@segment+sovran-react-native@1.1.4_8ba131662a4359217af98865be4aa4b3/node_modules/@segment/sovran-react-native"
   VisionCamera:
@@ -4004,7 +4087,7 @@ SPEC CHECKSUMS:
   BrazeKit: 53ac2d77c7d5ab54ab73df75c9058ae89236fc54
   BrazeLocation: 47cde4ac51568718b76d4677475c926ea840633b
   BrazeUI: 4de47810a95f225e0199cf6ddc9756f9dab662eb
-  callstack-repack: 6de6a4d5a87bdf8f6b75e51fd32e557c9be85110
+  callstack-repack: 4b006eeafeda87a9c2ea8785f578e6a24fdb44bb
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   DatadogCore: 7eed8fbaaa1575503c389f343c230858343c8baf
   DatadogCrashReporting: 04f3c3a5bfd9921aef4d44b4ab80accb39c84ddb
@@ -4037,16 +4120,16 @@ SPEC CHECKSUMS:
   ExpoWebBrowser: 17b064c621789e41d4816c95c93f429b84971f52
   fast_float: b32c788ed9c6a8c584d114d0047beda9664e7cc6
   FBLazyVector: 812782f0506ba4c4a1b9f4b793e6de1bfdfc4c25
-  Firebase: 735108d2d0b67827cd929bfe8254983907c4479f
-  FirebaseABTesting: 01b54808f64fda9d96adc2653bc393e88e21f0da
-  FirebaseCore: 9d7a0caf39ec7317fbe13b3c7864c8c2acc60da8
-  FirebaseCoreExtension: 5e42645fd3f7c2c59ea5ed7641dd58f02bc565d1
-  FirebaseCoreInternal: 480d23e21f699cc7bcbc3d8eaa301f15d1e3ffaf
-  FirebaseInstallations: 41189d8b11007152d9e46ec844019f38a0a4282a
-  FirebaseMessaging: 3a5de79d8dce82b70815123c05dfb8825111f15d
-  FirebaseRemoteConfig: f0321eeb86f5463769c413bf626cece893a0a8ef
-  FirebaseRemoteConfigInterop: 1c6135e8a094cc6368949f5faeeca7ee8948b8aa
-  FirebaseSharedSwift: e17c654ef1f1a616b0b33054e663ad1035c8fd40
+  Firebase: e3c5ab38229ae085490d02398d97b9f5374bbe6e
+  FirebaseABTesting: 3f0f330ed5e19323fe512006d62a38399a7de7c1
+  FirebaseCore: ab948de5d99e69aeed3cd6f5ace263ce795b2559
+  FirebaseCoreExtension: 201c78d7491a273d61d8afbf491214276a951e6d
+  FirebaseCoreInternal: 656b1c2fd5a1c5976183dc54b73deda78fb26ee3
+  FirebaseInstallations: f70a49eed611f5602f373e40974b3b01556ac217
+  FirebaseMessaging: c15f48126adbe8b4d3238a5e1fa24bab3ad3e472
+  FirebaseRemoteConfig: 93d0b4712662842bbea714375ec92f0411d567f6
+  FirebaseRemoteConfigInterop: 90659b3cac8f6de884f2d930fbdbeb711533e142
+  FirebaseSharedSwift: c91f36aeaa566e12b682caacc40d34c8303c3124
   fmt: ef0a98103bd75695e5734efe6b9016b2675ffcd5
   glog: 5683914934d5b6e4240e497e0f4a3b42d1854183
   GoogleDataTransport: a24e58982ab3ba2f64d79613e027fe7f57e88539
@@ -4110,7 +4193,7 @@ SPEC CHECKSUMS:
   react-native-slider: 205c30f4f19af8469c1c24bd4e3ec74038576a67
   react-native-tcp-socket: 83a30b5da1deed4c720ee25595737ee851c23339
   react-native-vector-icons-material-design-icons: 9e98e87947156bfe95135fb523b62821486044e3
-  react-native-video: 6ed94120c73e29c8fbea89ec4e3cedf3528751d6
+  react-native-video: 558711646609a96027f16a724c89556d9b149806
   react-native-view-shot: 0757362ef66df80d63ce4ddd35b89bce59c908b9
   react-native-webview: 83c663c5bdf1357d3e7c00986260cb888ea0e328
   React-NativeModulesApple: 76d9e54adf2b333d0939bbd18102c62bdfebb934
@@ -4147,9 +4230,9 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: fd44f4b03e007e642e98df6726737bc66e9ba609
   RNCMaskedView: d707a83784c67099b54b37d056ababb2767ce15e
   RNFastImage: 462a183c4b0b6b26fdfd639e1ed6ba37536c3b87
-  RNFBApp: 6e738f1d86520e65e7dc4d5a6e7422ff0c908e6a
-  RNFBMessaging: 0033d4bd56649e3bbf7553d3eb1cd7f2cdcd070d
-  RNFBRemoteConfig: a8fe6caf8f5ae1c09b2d369ca6b8800115f360cd
+  RNFBApp: 5c6a44428dd4909fa63dfaed47fa38bc17ef0408
+  RNFBMessaging: a15976ccf79192d392a4aea535957c685a338bdc
+  RNFBRemoteConfig: f0131d05043d271b3b87fa4d97a14440c5e966b6
   RNGestureHandler: b8d2e75c2e88fc2a1f6be3b3beeeed80b88fa37d
   RNKeychain: 76d042fc1dfba47f3945920bc82e0bce9ad1ff55
   RNLocalize: 8bf466de4c92d4721b254aabe1ff0a1456e7b9f4
@@ -4161,6 +4244,7 @@ SPEC CHECKSUMS:
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
   segment-analytics-react-native: 556a3bdd0a28ed4c6110a6c17322cf641d4ef704
+  SharedNativePerformance: ca26343c7cd7d0cc316fdcaa45d54b6b1a1484f4
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   sovran-react-native: 803ccf23b24c8c5da99f249d4a0e317d62fa35e7
   SwiftyRSA: 8c6dd1ea7db1b8dc4fb517a202f88bb1354bc2c6
@@ -4168,6 +4252,6 @@ SPEC CHECKSUMS:
   VisionCamera: b51af005669c6642dd1b4fca434eda4c1778de87
   Yoga: ff16d80456ce825ffc9400eeccc645a0dfcccdf5
 
-PODFILE CHECKSUM: f4327303accb145f3c186f5f32596462bbbffcf4
+PODFILE CHECKSUM: c5180b31ddf07ae6d1a7474a4e16853db8369d79
 
 COCOAPODS: 1.14.3

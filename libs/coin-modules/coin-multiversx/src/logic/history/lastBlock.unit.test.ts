@@ -1,34 +1,18 @@
 import { lastBlock } from "./lastBlock";
 import type { MultiversXNetworkApi } from "../../network/api";
 
-function makeApi(blockHeight = 12345678): MultiversXNetworkApi {
+function makeApi(round: Record<string, number>): MultiversXNetworkApi {
   return {
-    getBlockchainBlockHeight: jest.fn().mockResolvedValue(blockHeight),
+    getLatestRound: jest.fn().mockResolvedValue(round),
   } as unknown as MultiversXNetworkApi;
 }
 
 describe("lastBlock", () => {
-  it("returns block height as number", async () => {
-    const api = makeApi(9999999);
+  it("returns the latest metachain round as height and hash, timed like getBlockInfo", async () => {
+    const api = makeApi({ round: 9999999, timestamp: 1793796475, timestampMs: 1793796475800 });
+
     const block = await lastBlock(api);
 
-    expect(block.height).toBe(9999999);
-  });
-
-  it("returns hash derived from height", async () => {
-    const api = makeApi(42);
-    const block = await lastBlock(api);
-
-    expect(block.hash).toBe("42");
-  });
-
-  it("returns a time close to now", async () => {
-    const before = Date.now();
-    const api = makeApi(1);
-    const block = await lastBlock(api);
-    const after = Date.now();
-
-    expect(block.time.getTime()).toBeGreaterThanOrEqual(before);
-    expect(block.time.getTime()).toBeLessThanOrEqual(after + 5);
+    expect(block).toEqual({ height: 9999999, hash: "9999999", time: new Date(1793796475800) });
   });
 });

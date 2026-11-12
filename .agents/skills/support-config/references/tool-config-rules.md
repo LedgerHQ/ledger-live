@@ -3,7 +3,8 @@
 The check lives in [`tools/nx-plugins/enforce-tool-config`](../../../../tools/nx-plugins/enforce-tool-config),
 one module per rule under `rules/`. Each violation prints as `[rule] file: message`. Find the start of
 the message in the section of its rule; the linked rule file holds the exact wording and the logic.
-The fix is always to move the setting into its preset, never to keep it in the package.
+For a tool rule, the fix is always to move the setting into its preset, never to keep it in the
+package.
 
 ## `[fmt]`
 
@@ -29,6 +30,7 @@ per-package rule flags.
 | `script "<name>" passes a config to oxlint` | Drop the flag: `oxlint src`. |
 | `script "<name>" sets` (any script but `lint`) | Move the flag to the `lint` script. |
 | `script "lint" sets` | Set the rule in the layer's preset. Add the flag to the allowlist only for a rule one package alone needs, with the reason. |
+| `the <preset> lint preset loads <packages>` | Add `"@support/lint": "workspace:*"` to the package's `devDependencies` and run `pnpm install`. |
 
 ## `[jest]`
 
@@ -71,6 +73,46 @@ The list only shrinks.
 | `compilerOptions.<key> may only relax the preset` | Delete the option, or set it to the relaxed value the message prints if the list names it. |
 | `tools/nx-plugins/enforce-tool-config/rules/tsconfig-debt.mjs lists compilerOptions.<key>` | Delete the entry: the package is clean. |
 | `lists <file>, which does not exist` | Delete the entry. |
+
+## `[hygiene]`
+
+Messages from [`rules/hygiene.mjs`](../../../../tools/nx-plugins/enforce-tool-config/rules/hygiene.mjs),
+on the packages of `shared/`, `domain/` and `features/`. Each violation message starts with the
+string for its check in [`CHECKS`](../../../../tools/nx-plugins/enforce-tool-config/rules/hygiene.mjs),
+then names what the package does instead and the fix; the fix it prints is the one to apply.
+
+| Check (`CHECKS` key) | Fix |
+| --- | --- |
+| `manifest` | Fix the JSON syntax, or restore the file. |
+| `readme` | Write one: what the package is, in a line or two, and its [status marker](../../../../docs/new-library.md#readme-status-marker). |
+| `status-marker` | Add the callout with a `> **Status: STABLE**`, `UNSTABLE` or `DEPRECATED` line. |
+| `side-effects` | Set it to `false`, and turn code that runs on import into a function its consumers call. |
+| `lint-script` | Make it `"lint": "oxlint src"`. |
+| `format-check-script` | Make it `"format:check": "oxfmt src --check"`, next to `"format": "oxfmt src"`. |
+
+### The `hygiene-debt` list
+
+[`rules/hygiene-debt.mjs`](../../../../tools/nx-plugins/enforce-tool-config/rules/hygiene-debt.mjs)
+silences named checks for one package, each entry with its reason and exit condition. The list
+only shrinks.
+
+| Message starts with | Fix |
+| --- | --- |
+| `lists "<check>" for <package>, which the package now passes` | Delete the check from the entry, and the entry once it is empty. |
+
+## `[tool-dependency]`
+
+Messages from [`rules/tool-dependency.mjs`](../../../../tools/nx-plugins/enforce-tool-config/rules/tool-dependency.mjs),
+on every workspace package. A script runs a root tool, an executable that one of the workspace
+root's dependencies installs, and the package does not declare that dependency: the script works
+only through the root's `node_modules/.bin`, and the tool is not in the package's Nx project graph.
+Every script counts, so a tool a hook or a `pnpm run` target runs is reported under that script.
+
+| Message | Fix |
+| --- | --- |
+| `script "<name>" runs <tool>, which only the workspace root declares` | Add the dependency the message names to `devDependencies`, at the version it prints, which is the root's. |
+| `script "<name>" runs <tool>, and the layers take its version from the catalog` | In `shared/`, `domain/` and `features/`, move it to `devDependencies` and make it `"catalog:"`. |
+| `lists <tool> for <package>, which the package now passes` | Delete the tool from its entry in [`rules/tool-dependency-debt.mjs`](../../../../tools/nx-plugins/enforce-tool-config/rules/tool-dependency-debt.mjs), and the entry once it is empty. |
 
 ## Exclusions
 

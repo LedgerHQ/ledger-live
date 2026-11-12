@@ -29,6 +29,7 @@ import onboarding, { OnboardingState } from "./onboarding";
 import { lldRTKApiReducers, LLDRTKApiState } from "./rtkQueryApi";
 import { accountAliasSlice, type AccountAliasState } from "@domain/entity-account-alias";
 import { identitiesSlice, type IdentitiesState } from "@domain/entity-client-identity";
+import { predictionsSlice, type PredictionsState } from "@domain/entity-predictions";
 import { supportedFiatsSlice, type SupportedFiatsState } from "@domain/entity-currency-fiat";
 import { contactsSlice, type ContactsState } from "@domain/entity-contact";
 import { accountDataSlice, type AccountDataState } from "@domain/entity-account-data";
@@ -47,6 +48,10 @@ import {
   type LargeScreenUpsellModalState,
 } from "@features/flow-large-screen-upsell";
 import { payCardBalanceSlice, type PayCardBalanceState } from "@features/flow-pay-balance/state";
+import {
+  accountAnalyticsIntroductionSlice,
+  type AccountAnalyticsIntroductionState,
+} from "@features/flow-account-detail-analytics-notice/state";
 import {
   payCardFeatureTourSlice,
   type PayCardFeatureTourState,
@@ -83,7 +88,10 @@ import { recoverStateReducer, RecoverStateSliceState } from "./recoverState";
 import genericAwarenessModal, {
   GenericAwarenessModalSliceState,
 } from "./genericAwarenessModalSlice";
-import coinConfigOverrides, { CoinConfigOverridesState } from "./coinConfigOverrides";
+import {
+  liveConfigOverridesReducer as liveConfigOverrides,
+  type LiveConfigOverridesState,
+} from "@shared/live-config-overrides";
 import knownDevices, { KnownDevicesState } from "./knownDevices";
 
 export type State = LLDRTKApiState & {
@@ -104,6 +112,7 @@ export type State = LLDRTKApiState & {
   sendFlow: SendFlowState;
   onboarding: OnboardingState;
   postOnboarding: PostOnboardingState;
+  predictions: PredictionsState;
   settings: SettingsState;
   trustchain: TrustchainStore;
   UI: UIState;
@@ -120,7 +129,7 @@ export type State = LLDRTKApiState & {
   countervaluesExtraTracking: CountervaluesExtraTrackingState;
   recoverState: RecoverStateSliceState;
   genericAwarenessModal: GenericAwarenessModalSliceState;
-  coinConfigOverrides: CoinConfigOverridesState;
+  liveConfigOverrides: LiveConfigOverridesState;
   knownDevices: KnownDevicesState;
   supportedFiats: SupportedFiatsState;
   contacts: ContactsState;
@@ -131,6 +140,7 @@ export type State = LLDRTKApiState & {
   accountEntries: AccountEntriesState;
   largeScreenUpsellModal: LargeScreenUpsellModalState;
   payCardBalance: PayCardBalanceState;
+  accountAnalyticsIntroduction: AccountAnalyticsIntroductionState;
   payCardFeatureTour: PayCardFeatureTourState;
   payRequestVerifyHint: PayRequestVerifyHintState;
   payCardOnboardingWidget: PayCardOnboardingWidgetState;
@@ -156,6 +166,7 @@ const appReducer = combineReducers({
   UI,
   onboarding,
   postOnboarding,
+  predictions: predictionsSlice.reducer,
   market,
   marketBanner,
   wallet,
@@ -172,7 +183,7 @@ const appReducer = combineReducers({
   countervaluesExtraTracking,
   recoverState: recoverStateReducer,
   genericAwarenessModal,
-  coinConfigOverrides,
+  liveConfigOverrides,
   knownDevices,
   supportedFiats: supportedFiatsSlice.reducer,
   contacts: contactsSlice.reducer,
@@ -183,6 +194,7 @@ const appReducer = combineReducers({
   accountEntries: accountsSlice.reducer,
   largeScreenUpsellModal: largeScreenUpsellModalSlice.reducer,
   payCardBalance: payCardBalanceSlice.reducer,
+  accountAnalyticsIntroduction: accountAnalyticsIntroductionSlice.reducer,
   payCardFeatureTour: payCardFeatureTourSlice.reducer,
   payRequestVerifyHint: payRequestVerifyHintSlice.reducer,
   payCardOnboardingWidget: payCardOnboardingWidgetSlice.reducer,

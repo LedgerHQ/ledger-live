@@ -18,6 +18,8 @@ export const QUEUED_BOTTOM_SHEET_MOCK_TEST_ID = "queued-bottom-sheet";
  * - `<testID>-header-close` → `onHeaderClosePressed`
  * - `<testID>-backdrop` → `onBackdropPress`
  * - `<testID>-back` → `onBack`
+ * - `<testID>-hidden` → `onModalHide` (present while closed too, since the real sheet fires it
+ *   after the close animation)
  *
  * `onOpened` fires when the sheet becomes open. Sheets that pass no `testID` fall back to
  * {@link QUEUED_BOTTOM_SHEET_MOCK_TEST_ID}.
@@ -34,6 +36,7 @@ export function QueuedBottomSheetMock({
   onBackdropPress,
   onBack,
   onOpened,
+  onModalHide,
   footer,
   testID = QUEUED_BOTTOM_SHEET_MOCK_TEST_ID,
 }: QueuedBottomSheetProps) {
@@ -56,6 +59,7 @@ export function QueuedBottomSheetMock({
         <Pressable testID={`${testID}-backdrop`} onPress={onBackdropPress} />
       ) : null}
       {isOpen && onBack ? <Pressable testID={`${testID}-back`} onPress={onBack} /> : null}
+      {onModalHide ? <Pressable testID={`${testID}-hidden`} onPress={onModalHide} /> : null}
       <BottomSheetInstanceContext.Provider value={testID}>
         {children}
       </BottomSheetInstanceContext.Provider>

@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-pay-card-wallets",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "private": true,
   "description": "Card-linked custodial wallets for Ledger Wallet: joins Baanx linked wallets with their balances and totals them",
   "main": "src/index.ts",
@@ -23,8 +23,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/flow/pay-card-wallets"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@domain/api-card-management": "workspace:^",
@@ -33,6 +32,7 @@
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
+    "@support/lint": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",
@@ -41,6 +41,7 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",

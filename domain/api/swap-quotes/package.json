@@ -1,6 +1,6 @@
 {
   "name": "@domain/api-swap-quotes",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "private": true,
   "description": "Domain API client for the swap quotes aggregator: RTK Query endpoint for the /quote request",
   "main": "src/index.ts",
@@ -13,11 +13,12 @@
   "sideEffects": false,
   "scripts": {
     "lint": "oxlint ./src",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W domain/api/swap-quotes"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@reduxjs/toolkit": "catalog:",
@@ -32,8 +33,11 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "msw": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "typescript": "catalog:"
   }
 }

@@ -189,6 +189,7 @@ function fakeSponsoredSeam(overrides: Partial<SponsoredCoinApi> = {}): Sponsored
   return {
     feeOptionId: "tronify",
     providerName: "Tronify",
+    providerTermsUrl: "https://tronify.example/terms",
     waivesErrorKeys: ["gasLimit"],
     waivesWarningKeys: ["amount"],
     reservationDedupKey: jest.fn().mockReturnValue("1.5"),

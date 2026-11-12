@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-stacks",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "private": true,
   "description": "Ledger Stacks Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -53,8 +53,7 @@
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand",
-    "unimported": "pnpm knip --directory ../../.. -W libs/coin-tester-modules/coin-tester-stacks"
+    "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand"
   },
   "dependencies": {
     "@ledgerhq/coin-stacks": "workspace:^",
@@ -65,7 +64,7 @@
     "@ledgerhq/types-live": "workspace:^",
     "@stacks/transactions": "catalog:",
     "bignumber.js": "^9",
-    "chalk": "^4.1.2",
+    "chalk": "catalog:",
     "msw": "catalog:"
   },
   "devDependencies": {
@@ -74,10 +73,11 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "rimraf": "^5",
+    "rimraf": "5.0.10",
     "typescript": "catalog:"
   }
 }

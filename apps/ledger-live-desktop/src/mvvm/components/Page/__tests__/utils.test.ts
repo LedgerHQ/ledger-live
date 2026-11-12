@@ -36,6 +36,7 @@ describe("Page utils", () => {
       expect(isWallet40Page("/earn")).toBe(true);
       expect(isWallet40Page("/perps")).toBe(true);
       expect(isWallet40Page("/borrow")).toBe(true);
+      expect(isWallet40Page("/predictions")).toBe(true);
       expect(isWallet40Page("/history")).toBe(true);
     });
 

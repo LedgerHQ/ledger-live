@@ -95,10 +95,6 @@ jobs:
       - name: Run lint (i18n)
         run: pnpm exec nx run live-mobile:lint:i18n
 
-      - name: check for dead code
-        run: pnpm mobile knip-check
-        shell: bash
-
       - name: Run code checkers
         run: pnpm exec nx run live-mobile:typecheck
 

@@ -104,8 +104,8 @@ The machine output also carries the session id, the device and the reason.
 
 | Reason | Meaning |
 |---|---|
-| `completed` | The setup is done, or the device was already set up, and the app did not pass `offerSync`. |
-| `offerLedgerSync` | The device is set up (just now or before), and the app passed `offerSync`. |
+| `completed` | The setup is done. A device that was already set up also ends here when the app did not pass `offerSync`. |
+| `offerLedgerSync` | The device was already set up, and the app passed `offerSync`. A device that was just set up never takes this exit. |
 | `legacyFallback` | The device needs the old onboarding flow. |
 | `resumeFirmwareUpdate` | The device is in bootloader or OSU mode: a firmware update was interrupted. |
 | `userQuit` | The user quit. |

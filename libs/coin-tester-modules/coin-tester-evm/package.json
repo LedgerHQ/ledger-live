@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-evm",
-  "version": "1.38.0",
+  "version": "1.39.0",
   "private": true,
   "description": "Ledger EVM Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -68,7 +68,6 @@
     "@ledgerhq/types-live": "workspace:^",
     "bignumber.js": "^9.1.2",
     "bip39": "catalog:",
-    "docker-compose": "^1.1.0",
     "ethers": "catalog:",
     "msw": "catalog:"
   },
@@ -78,11 +77,12 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "axios": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "rimraf": "^5.0.5",
+    "rimraf": "5.0.10",
     "typescript": "catalog:"
   }
 }

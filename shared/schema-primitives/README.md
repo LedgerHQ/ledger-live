@@ -15,7 +15,6 @@ Branded Zod value objects shared across the `domain/` layer. Provides common typ
 | ----------------------- | ----------------- | ------------------------------------------------------- |
 | `CryptoCurrencyIdSchema`      | `CryptoCurrencyId`      | Non-empty string                                        |
 | `TokenCurrencyIdSchema`         | `TokenCurrencyId`         | Non-empty string                                        |
-| `FiatCurrencyIdSchema`          | `FiatCurrencyId`          | Non-empty string                                        |
 | `BigNumberStrSchema`    | `BigNumberStr`    | Decimal number string (e.g. `"123"`, `"-1.5"`)          |
 | `NonEmptyStringSchema`  | `NonEmptyString`  | Trimmed string with length ≥ 1                          |
 | `DateTimeIsoSchema`     | `DateTimeIso`     | RFC 3339 datetime with UTC offset (e.g. `"2024-01-31T12:00:00Z"`) |

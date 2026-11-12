@@ -10,12 +10,8 @@ import {
 } from "@features/flow-pay-balance";
 import { BankTransferIntro, type BankTransferIntroProps } from "@features/flow-pay-bank-transfer";
 import { DepositOptions, type DepositOptionsProps } from "@features/flow-pay-deposit";
-import {
-  ContactAddressPicker,
-  Contacts,
-  type ContactAddressPickerProps,
-  type ContactsNativeProps,
-} from "@features/flow-pay-contact";
+import { ContactAddressPicker, type ContactAddressPickerProps } from "@features/flow-pay-contact";
+import { Contacts, type ContactsNativeProps } from "@features/flow-pay-contact/native";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { Wallet40Background, useScrollOffset } from "LLM/components/Wallet40Background";
 import { ScreenHeroSectionView } from "LLM/components/ScreenHeroSection/ScreenHeroSectionView";

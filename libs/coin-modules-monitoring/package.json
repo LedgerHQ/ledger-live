@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-modules-monitoring",
-  "version": "2.27.1",
+  "version": "2.28.0",
   "private": true,
   "description": "Push monitoring metrics to Datadog",
   "license": "Apache-2.0",
@@ -21,7 +21,8 @@
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "catalog:",
     "@ledgerhq/live-network": "catalog:",
-    "command-line-args": "6.0.1",
+    "@ledgerhq/zcash-utils": "catalog:",
+    "command-line-args": "6.0.2",
     "rxjs": "catalog:"
   },
   "devDependencies": {
@@ -36,11 +37,14 @@
     "@types/command-line-args": "5.2.3",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "axios": "catalog:",
-    "bignumber.js": "^9.1.2",
+    "bignumber.js": "9.1.2",
     "jest": "catalog:",
     "nock": "14.0.3",
-    "tsx": "^4.7.1",
+    "oxlint": "catalog:",
+    "rimraf": "catalog:",
+    "tsx": "4.20.6",
     "typescript": "catalog:"
   },
   "typesVersions": {

@@ -11,7 +11,7 @@ import {
   assignStakingResourcesFromAccountRaw,
   assignStakingResourcesToAccountRaw,
 } from "@ledgerhq/ledger-wallet-framework/serialization";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import {
   CosmosOperationExtra,
   CosmosOperationExtraRaw,
@@ -19,7 +19,14 @@ import {
   type CosmosAccount,
   type CosmosAccountRaw,
   type CosmosResourcesRaw,
+  type LegacyCosmosResourcesFields,
 } from "./types";
+
+/** The classic sync still keeps the sequence and public key inside the account resources. */
+type LegacyCosmosAccount = CosmosAccount & {
+  stakingResources?: LegacyCosmosResourcesFields;
+  cosmosResources?: LegacyCosmosResourcesFields;
+};
 
 function parseLegacyCosmosResourcesRaw(r: CosmosResourcesRaw): StakingResources {
   return {
@@ -50,7 +57,7 @@ function parseLegacyCosmosResourcesRaw(r: CosmosResourcesRaw): StakingResources 
 
 export function assignToAccountRaw(account: Account, accountRaw: AccountRaw) {
   assignStakingResourcesToAccountRaw(account, accountRaw);
-  const cosmosAccount = account as CosmosAccount;
+  const cosmosAccount = account as LegacyCosmosAccount;
   const sequence =
     cosmosAccount.sequence ??
     cosmosAccount.stakingResources?.sequence ??

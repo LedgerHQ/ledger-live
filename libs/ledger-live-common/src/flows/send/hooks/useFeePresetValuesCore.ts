@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Account, AccountBridge, AccountLike } from "@ledgerhq/types-live";
 import type { Unit } from "@domain/entity-currency-unit";
 import type { Currency } from "@domain/entity-currency";

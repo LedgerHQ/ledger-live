@@ -3,6 +3,7 @@ import { shouldShowAccountAnalyticsIntroduction } from "../logic/shouldShowAccou
 import {
   accountAnalyticsIntroductionSlice,
   dismissAccountAnalyticsIntroduction,
+  resetAccountAnalyticsIntroduction,
   restoreAccountAnalyticsIntroduction,
 } from "./slice";
 import {
@@ -54,6 +55,27 @@ describe("accountAnalyticsIntroduction", () => {
     store.dispatch(dismissAccountAnalyticsIntroduction());
 
     expect(store.getState()).toBe(dismissedState);
+  });
+
+  it("should show the introduction again after a reset", () => {
+    const store = createStore();
+    store.dispatch(dismissAccountAnalyticsIntroduction());
+    store.dispatch(resetAccountAnalyticsIntroduction());
+
+    expect(
+      shouldShowAccountAnalyticsIntroduction({
+        hasConfirmedHistory: true,
+        hasDismissed: selectAccountAnalyticsIntroductionDismissed(store.getState()),
+      }),
+    ).toBe(true);
+  });
+
+  it("should keep the same state when resetting an introduction that was never dismissed", () => {
+    const store = createStore();
+    const initialState = store.getState();
+    store.dispatch(resetAccountAnalyticsIntroduction());
+
+    expect(store.getState()).toBe(initialState);
   });
 
   it("should preserve dismissal after a persistence round trip into a new store", () => {

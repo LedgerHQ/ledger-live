@@ -8,11 +8,19 @@ import {
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { I18nTestProvider } from "@shared/i18n/testing";
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
+import { copyToClipboard } from "@shared/clipboard";
 import { createContactDetailAddressRowIntent } from "../../model/viewModel";
-import { ContactAddressDetailDialog } from "./ContactAddressDetailDialog.native";
-import type { ContactAddressDetailDialogNativeProps } from "./types";
+import { ContactAddressDetailDialog } from "./ContactAddressDetailDialog";
+import type { ContactAddressDetailDialogProps } from "./ContactAddressDetailDialog.types";
 
-jest.mock("./ContactAddressDetailQrCode.native", () => ({
+const mockBottomInset = jest.fn(() => 0);
+
+jest.mock("@shared/clipboard");
+jest.mock("@shared/ui-queued-bottom-sheet", () => ({
+  ...jest.requireActual<Record<string, unknown>>("@shared/ui-queued-bottom-sheet"),
+  useBottomSheetBottomInset: () => mockBottomInset(),
+}));
+jest.mock("./ContactAddressDetailQrCode", () => ({
   ContactAddressDetailQrCode: () => {
     const React = require("react");
     const { Text } = require("react-native");
@@ -24,8 +32,8 @@ jest.mock("./ContactAddressDetailQrCode.native", () => ({
 const render = (ui: React.ReactElement) => renderWithoutI18n(ui, { wrapper: I18nTestProvider });
 
 function createProps(
-  overrides: Partial<ContactAddressDetailDialogNativeProps> = {},
-): ContactAddressDetailDialogNativeProps {
+  overrides: Partial<ContactAddressDetailDialogProps> = {},
+): ContactAddressDetailDialogProps {
   const contact = mockContact({
     id: "contact-ben",
     name: "Ben",
@@ -52,14 +60,16 @@ function createProps(
     row,
     network,
     onClose: jest.fn(),
-    onCopyAddress: jest.fn().mockResolvedValue(true),
     ...overrides,
   };
 }
 
 describe("ContactAddressDetailDialog", () => {
   beforeEach(() => {
+    jest.clearAllMocks();
     jest.useFakeTimers();
+    jest.mocked(copyToClipboard).mockResolvedValue(true);
+    mockBottomInset.mockReturnValue(0);
   });
 
   afterEach(() => {
@@ -83,13 +93,20 @@ describe("ContactAddressDetailDialog", () => {
     expect(screen.getByTestId("contacts-address-detail-qr-code")).toBeVisible();
   });
 
+  it("should clear the sheet's bottom inset below the content", () => {
+    mockBottomInset.mockReturnValue(8);
+
+    const { toJSON } = render(<ContactAddressDetailDialog {...createProps()} />);
+
+    expect(toJSON()).toMatchObject({ props: { style: { paddingBottom: 32 } } });
+  });
+
   it("should copy the address and show copied feedback", async () => {
-    const onCopyAddress = jest.fn().mockResolvedValue(true);
-    render(<ContactAddressDetailDialog {...createProps({ onCopyAddress })} />);
+    render(<ContactAddressDetailDialog {...createProps()} />);
 
     fireEvent.press(screen.getByTestId("contacts-address-detail-copy"));
 
-    expect(onCopyAddress).toHaveBeenCalledWith("0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034");
+    expect(copyToClipboard).toHaveBeenCalledWith("0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034");
 
     await waitFor(() => {
       expect(screen.getByTestId("contacts-address-detail-copy")).toHaveTextContent(
@@ -113,6 +130,20 @@ describe("ContactAddressDetailDialog", () => {
     fireEvent.press(screen.getByTestId("contacts-address-detail-share"));
 
     expect(onShareAddress).toHaveBeenCalledWith("0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034");
+  });
+
+  it("should not show copied feedback when the copy failed", async () => {
+    jest.mocked(copyToClipboard).mockResolvedValue(false);
+    render(<ContactAddressDetailDialog {...createProps()} />);
+
+    fireEvent.press(screen.getByTestId("contacts-address-detail-copy"));
+
+    await waitFor(() => {
+      expect(copyToClipboard).toHaveBeenCalledTimes(1);
+    });
+    expect(screen.getByTestId("contacts-address-detail-copy")).toHaveTextContent(
+      "contacts.addressDetail.copyAddress",
+    );
   });
 
   it("should render nothing when row or network is missing", () => {

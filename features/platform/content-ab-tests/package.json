@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-content-ab-tests",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "private": true,
   "description": "English copy overrides from Remote Config content experiments",
   "main": "src/index.ts",
@@ -17,8 +17,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/content-ab-tests"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@features/platform-feature-flags-firebase": "workspace:^",
@@ -29,6 +28,7 @@
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
+    "@typescript/native": "catalog:",
     "i18next": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",

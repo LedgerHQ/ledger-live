@@ -1,15 +1,13 @@
 import React, { useCallback } from "react";
-import { copyToClipboard } from "@shared/clipboard";
 import {
   ContactAddressDetailDialog,
-  type ContactAddressDetailDialogNativeProps,
+  type ContactAddressDetailDialogProps,
 } from "@features/flow-contacts-detail";
 import { Share } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { leaveAppFor } from "LLM/features/AppLock/adapters/appVisibility";
 
-type ContactAddressDetailDialogSheetProps = ContactAddressDetailDialogNativeProps &
+type ContactAddressDetailDialogSheetProps = ContactAddressDetailDialogProps &
   Readonly<{ isActionSheetOpen: boolean }>;
 
 export function ContactAddressDetailDialogSheet({
@@ -18,8 +16,6 @@ export function ContactAddressDetailDialogSheet({
   onClose,
   ...dialogProps
 }: ContactAddressDetailDialogSheetProps): React.JSX.Element {
-  const { bottom: bottomInset } = useSafeAreaInsets();
-  const onCopyAddress = useCallback((address: string) => copyToClipboard(address), []);
   const onShareAddress = useCallback((address: string) => {
     void leaveAppFor(() => Share.share({ message: address })).catch(() => undefined);
   }, []);
@@ -38,8 +34,6 @@ export function ContactAddressDetailDialogSheet({
         {...dialogProps}
         isOpen={isOpen}
         onClose={onClose}
-        bottomInset={bottomInset}
-        onCopyAddress={onCopyAddress}
         onShareAddress={onShareAddress}
       />
     </QueuedBottomSheet>

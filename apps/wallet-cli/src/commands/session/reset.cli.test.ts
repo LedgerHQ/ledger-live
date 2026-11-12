@@ -173,3 +173,49 @@ describe("session reset — corrupt file recovery", () => {
     expect(session).toEqual({ accounts: [], trustchain, passwordSalt: "0".repeat(32) });
   });
 });
+
+async function resetWithProfiles(agentIntentProfiles: unknown[]): Promise<unknown> {
+  const fixture = makeSessionDir(SAMPLE_ENTRIES);
+  cleanup = fixture.cleanup;
+  writeFileSync(
+    join(fixture.env.XDG_STATE_HOME, "ledger-wallet-cli", "session.yaml"),
+    YAML.stringify({ accounts: SAMPLE_ENTRIES, agentIntentProfiles }),
+  );
+  const { exitCode } = await runCli(["session", "reset"], fixture.env);
+  expect(exitCode).toBe(0);
+  return readSessionFile(fixture.env.XDG_STATE_HOME);
+}
+
+describe("session reset — Agent Intent profiles", () => {
+  const profile = {
+    profileId: "trading-bot",
+    displayName: "Trading Bot",
+    description: "Proposes EVM payments for review.",
+    source: "openclaw",
+    environment: "staging",
+    bffBaseUrl: "https://global.api.stg.ledger-test.com/agent-intent",
+    publicKey: `02${"0".repeat(64)}`,
+    keyStore: "os-keychain",
+    trustchainId: "trustchain-1",
+    accountAccess: {
+      mode: "direct-app16-key-reader",
+      environment: "staging",
+      trustchainId: "trustchain-1",
+      applicationPath: "m/0'/16'/0'",
+    },
+    enrollmentExpiresAt: "2026-06-01T00:00:00.000Z",
+    createdAt: "2026-01-01T00:00:00.000Z",
+  };
+  const ledgerSyncCache = { ledgerSyncVersion: 7, ledgerSyncSupport: "3f2a9c41d07be815" };
+
+  it("keeps them enrolled without their cached Ledger Sync version, so the next sync pulls every account", async () => {
+    const session = await resetWithProfiles([{ ...profile, ...ledgerSyncCache }]);
+    expect(session).toEqual({ accounts: [], agentIntentProfiles: [profile] });
+  });
+
+  it("drops the cached version from a profile that fails validation too, so the sync after fixing it pulls every account", async () => {
+    const unreadable = { ...profile, publicKey: "not-a-key" };
+    const session = await resetWithProfiles([{ ...unreadable, ...ledgerSyncCache }]);
+    expect(session).toEqual({ accounts: [], agentIntentProfiles: [unreadable] });
+  });
+});

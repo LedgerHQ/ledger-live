@@ -20,8 +20,7 @@
     "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -c features/flow/flow-contacts-introduction/knip.web.config.mjs -W features/flow/flow-contacts-introduction --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/flow-contacts-introduction/knip.native.config.mjs -W features/flow/flow-contacts-introduction --tsConfig tsconfig.native.json"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@shared/i18n": "workspace:*",
@@ -47,6 +46,7 @@
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
+    "@support/lint": "workspace:*",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@swc/core": "catalog:",
@@ -59,6 +59,7 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",

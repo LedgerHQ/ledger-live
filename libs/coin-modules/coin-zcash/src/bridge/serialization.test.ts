@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import { assignToAccountRaw, makeAssignFromAccountRaw } from "./serialization";
 import type { ZcashAccount, ZcashAccountRaw } from "../types/bridge";

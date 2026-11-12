@@ -32,7 +32,6 @@ import {
   assertSdkAcceptsIntent,
   proposalOptions,
   submitAgentIntent,
-  warnIfReviewLinkUnusable,
 } from "../../agent-intent/propose-intent";
 import { createCommandOutput, type CommandOutput } from "../../output";
 import { mainnetOf } from "../../shared/accountDescriptor";
@@ -311,7 +310,6 @@ export default defineCommand({
 
       const submitted = await submitAgentIntent(profile, client => client.createSendIntent(intent));
       out.agentIntentSend({ ...summary, ...submitted });
-      warnIfReviewLinkUnusable(submitted);
     });
   },
 });

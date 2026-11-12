@@ -1,5 +1,6 @@
 import { Step } from "jest-allure2-reporter/api";
-import { normalizeText, isIos } from "@e2e/helpers/commonHelpers";
+import { isIos } from "@e2e/helpers/commonHelpers";
+import { byId } from "@e2e/helpers/elements/native";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { TIMEOUT } from "@e2e/utils/timeouts";
 
@@ -14,19 +15,19 @@ export type SwapTransactionStatusDetails = {
 };
 
 export default class SwapTransactionStatusDrawer {
-  scrollViewId = "swap-transaction-status-scroll-view";
-  titleId = "swap-transaction-title";
-  dateId = "swap-transaction-date";
-  sendRowId = "swap-transaction-status-send-row";
-  receiveRowId = "swap-transaction-status-receive-row";
-  sentAmountId = "swap-transaction-status-send-amount";
-  receivedAmountId = "swap-transaction-status-receive-amount";
-  networkFeesId = "swap-transaction-details-network-fees";
-  receiveAccountId = "swap-transaction-details-receive-account";
-  providerId = "swap-transaction-details-provider";
-  providerLinkId = "swap-transaction-details-provider-link";
-  swapIdId = "swap-transaction-details-swap-id";
-  viewInExplorerButtonId = "swap-transaction-view-explorer-btn";
+  private readonly scrollView = byId("swap-transaction-status-scroll-view");
+  private readonly title = byId("swap-transaction-title");
+  private readonly date = byId("swap-transaction-date");
+  private readonly sendRow = byId("swap-transaction-status-send-row");
+  private readonly receiveRow = byId("swap-transaction-status-receive-row");
+  private readonly sentAmount = byId("swap-transaction-status-send-amount");
+  private readonly receivedAmount = byId("swap-transaction-status-receive-amount");
+  private readonly networkFees = byId("swap-transaction-details-network-fees");
+  private readonly receiveAccount = byId("swap-transaction-details-receive-account");
+  private readonly provider = byId("swap-transaction-details-provider");
+  private readonly providerLink = byId("swap-transaction-details-provider-link");
+  private readonly swapId = byId("swap-transaction-details-swap-id");
+  private readonly viewInExplorerButton = byId("swap-transaction-view-explorer-btn");
 
   @Step("Verify swap transaction status drawer information {{{0}}}")
   async expectSwapTransactionStatusDrawerInfos(
@@ -35,55 +36,46 @@ export default class SwapTransactionStatusDrawer {
     details: SwapTransactionStatusDetails,
   ) {
     // Every value here only mounts its testID once resolved (a Skeleton renders otherwise), so
-    // getTextOfElement's built-in retry-until-exists already guarantees the text is final once found.
-    await waitForElementById(this.titleId);
-    jestExpect(normalizeText(await getTextOfElement(this.dateId))).toContain(
-      normalizeText(details.date),
-    );
+    // the wait inside getText already guarantees the text is final once found.
+    await this.title.waitVisible();
+    await this.date.expectText(details.date, { normaliseWhitespace: true, containing: true });
 
-    await detoxExpect(getElementById(this.sendRowId)).toBeVisible();
-    jestExpect(normalizeText(await getTextOfElement(this.sentAmountId))).toEqual(
-      normalizeText(details.sentAmount),
-    );
+    await this.sendRow.expectVisible();
+    await this.sentAmount.expectText(details.sentAmount, { normaliseWhitespace: true });
 
-    await detoxExpect(getElementById(this.receiveRowId)).toBeVisible();
+    await this.receiveRow.expectVisible();
     if (details.receivedAmount) {
-      jestExpect(normalizeText(await getTextOfElement(this.receivedAmountId))).toEqual(
-        normalizeText(details.receivedAmount),
-      );
+      await this.receivedAmount.expectText(details.receivedAmount, { normaliseWhitespace: true });
     } else {
-      await detoxExpect(getElementById(this.receivedAmountId)).toBeVisible();
+      await this.receivedAmount.expectVisible();
     }
 
-    await waitForElementById(this.networkFeesId, TIMEOUT.xxlarge, { checkVisibility: false });
-    await scrollToId(this.networkFeesId, this.scrollViewId);
-    jestExpect(normalizeText(await getTextOfElement(this.networkFeesId))).toEqual(
-      normalizeText(details.networkFees),
-    );
-    jestExpect(normalizeText(await getTextOfElement(this.receiveAccountId))).toContain(
-      normalizeText(details.receiveAccount),
-    );
-    jestExpect(normalizeText(await getTextOfElement(this.providerId))).toEqual(
-      normalizeText(provider.uiName),
-    );
-    if (details.providerUrl) {
-      await scrollToId(this.providerLinkId, this.scrollViewId);
-      await detoxExpect(getElementById(this.providerLinkId)).toBeVisible();
-      const { value, label } = await getAttributesOfElement(this.providerLinkId);
-      if (isIos()) {
-        jestExpect(value).toContain(details.providerUrl);
-      } else {
-        jestExpect(label).toContain(details.providerUrl);
-      }
-    } else {
-      await detoxExpect(getElementById(this.providerLinkId)).not.toExist();
-    }
-    jestExpect(normalizeText(await getTextOfElement(this.swapIdId))).toContain(swapIdPrefix);
-
-    await waitForElementById(this.viewInExplorerButtonId, TIMEOUT.xxlarge, {
-      checkVisibility: false,
+    await this.networkFees.waitExist(TIMEOUT.xxlarge);
+    await this.networkFees.scrollTo(this.scrollView);
+    await this.networkFees.expectText(details.networkFees, { normaliseWhitespace: true });
+    // Reading the text waits for visibility, so each detail row is scrolled to first.
+    await this.receiveAccount.scrollTo(this.scrollView);
+    await this.receiveAccount.expectText(details.receiveAccount, {
+      normaliseWhitespace: true,
+      containing: true,
     });
-    await scrollToId(this.viewInExplorerButtonId, this.scrollViewId);
-    await detoxExpect(getElementById(this.viewInExplorerButtonId)).toBeVisible();
+    await this.provider.scrollTo(this.scrollView);
+    await this.provider.expectText(provider.uiName, { normaliseWhitespace: true });
+    if (details.providerUrl) {
+      await this.providerLink.scrollTo(this.scrollView);
+      await this.providerLink.expectVisible();
+      const attributes = await this.providerLink.getAttributes();
+      // iOS exposes the link URL as the accessibility value, Android as the label.
+      const linkText = isIos() && "value" in attributes ? attributes.value : attributes.label;
+      jestExpect(linkText).toContain(details.providerUrl);
+    } else {
+      await this.providerLink.expectNotExist();
+    }
+    await this.swapId.scrollTo(this.scrollView);
+    await this.swapId.expectText(swapIdPrefix, { normaliseWhitespace: true, containing: true });
+
+    await this.viewInExplorerButton.waitExist(TIMEOUT.xxlarge);
+    await this.viewInExplorerButton.scrollTo(this.scrollView);
+    await this.viewInExplorerButton.expectVisible();
   }
 }

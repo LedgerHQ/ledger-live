@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-aggregated-assets",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "private": true,
   "description": "App-facing assets-data runtime: hooks over the DADA API, cache selectors, asset discovery and currency selection",
   "main": "src/index.ts",
@@ -12,11 +12,12 @@
   "sideEffects": false,
   "scripts": {
     "lint": "oxlint src",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit",
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage --passWithNoTests",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/aggregated-assets"
+    "coverage": "jest --coverage --passWithNoTests"
   },
   "dependencies": {
     "@domain/api-aggregated-assets": "workspace:*",
@@ -42,8 +43,11 @@
     "@types/jest": "catalog:",
     "@types/lodash": "catalog:",
     "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-redux": "catalog:",

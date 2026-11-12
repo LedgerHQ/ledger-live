@@ -1,5 +1,5 @@
 import type { ContactsDeleteContactDialogProps } from "@features/flow-contacts-delete-contact";
-import type { ContactsEditSignerMismatchDialogProps } from "../components/ContactsEditSignerMismatchDialog/types";
+import type { ContactsEditSignerMismatchDialogProps } from "../components/ContactsEditSignerMismatchDialog/ContactsEditSignerMismatchDialog.types";
 import type {
   ContactsRenameContactDialogProps,
   RenameContactDialogViewModel,

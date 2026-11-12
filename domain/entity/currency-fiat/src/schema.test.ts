@@ -1,12 +1,13 @@
-import { FiatCurrencyIdSchema, FiatCurrencySchema } from "./schema";
+import { FiatCurrencySchema, FiatCurrencyTickerSchema } from "./schema";
 import { mockFiatCurrency } from "./schema.mock";
 
-describe("FiatCurrencyIdSchema", () => {
-  it("accepts a non-empty string", () => {
-    expect(FiatCurrencyIdSchema.parse("usd")).toBe("usd");
+describe("FiatCurrencyTickerSchema", () => {
+  it("accepts three uppercase letters", () => {
+    expect(FiatCurrencyTickerSchema.parse("USD")).toBe("USD");
   });
-  it("rejects an empty string", () => {
-    expect(() => FiatCurrencyIdSchema.parse("")).toThrow();
+
+  it.each(["usd", "US", "USDT", "XXX_UNKNOWN", ""])("rejects %p", ticker => {
+    expect(() => FiatCurrencyTickerSchema.parse(ticker)).toThrow();
   });
 });
 
@@ -24,6 +25,10 @@ describe("FiatCurrencySchema", () => {
   it("rejects missing required fields", () => {
     const { ticker: _, ...withoutTicker } = mockFiatCurrency();
     expect(() => FiatCurrencySchema.parse(withoutTicker)).toThrow();
+  });
+
+  it.each(["usd", "US", "XXX_UNKNOWN"])("rejects the ticker %p", ticker => {
+    expect(() => FiatCurrencySchema.parse({ ...mockFiatCurrency(), ticker })).toThrow();
   });
 
   it("rejects wrong type discriminant", () => {

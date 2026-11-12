@@ -4,7 +4,7 @@ import { bitcoinPickingStrategy } from "@ledgerhq/live-common/families/bitcoin/t
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { Account } from "@ledgerhq/types-live";
 import { act, renderHook } from "@tests/test-renderer";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { createMockAccount } from "../../../Recipient/hooks/__tests__/accounts";
 import { useCoinControlScreenViewModel } from "../useCoinControlScreenViewModel";
 import { createBitcoinTransaction, createTransactionStatus, isAccount } from "./helpers";

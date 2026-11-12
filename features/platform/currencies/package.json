@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-currencies",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "private": true,
   "description": "App-facing currency runtime: crypto-assets store builder, currency/token hooks, supported-set feature-flag gating",
   "main": "src/index.ts",
@@ -16,6 +16,8 @@
   "sideEffects": false,
   "scripts": {
     "lint": "oxlint src",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -43,8 +45,11 @@
     "@testing-library/react": "catalog:",
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-redux": "catalog:",

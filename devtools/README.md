@@ -44,6 +44,17 @@ host app ──config──▶ <DevTools /> (shell) ──looks up id──▶ @
 
 The `import()` lives in the registry, not the host or shell — the bundler resolves each tool package against the registry's own dependency graph, and tool packages stay completely decoupled.
 
+### Import boundaries
+
+`pnpm lint:boundaries` enforces these rules from the tables of [`tools/nx-plugins/enforce-boundaries/constraints.js`](../tools/nx-plugins/enforce-boundaries/constraints.js). The [devtools-import-boundary](../.agents/skills/devtools-import-boundary/SKILL.md) skill explains them.
+
+- `DEVTOOLS_ALLOWED_IMPORTS` and `DEVTOOLS_TYPE_ONLY_IMPORTS` set which `@devtools/*` package may import which.
+- `DEVTOOLS_LAZY_IMPORTS`: the registry reaches tools only through type imports and `import()`. A value import or `require()` of a tool in `@devtools/registry` fails, because the shell loads the registry eagerly.
+- `DEVTOOLS_HOST_APPS`, app rule: in Desktop and Mobile, only files under `src/mvvm/features/DevTools/` may import `@devtools/*`, type imports included.
+- `DEVTOOLS_HOST_APPS`, folder rule: a file outside `src/mvvm/features/DevTools/` may statically import only the folder's declared `entries`. Any other file of the folder is reachable only through `import()` or `lazy(() => import(...))`. Test files are exempt.
+
+Lint cannot catch debug work written on a product path without a `@devtools/*` import, nor debug controls such as `setOverride`, which many legitimate debug screens use. Review catches those.
+
 # How to add a new tool
 
 A tool is a standalone React component packaged as `@devtools/<id>`. The shell never imports it directly: it looks the tool up in `@devtools/registry`, where each tool is declared by a metadata object plus a lazy `loader: () => import("@devtools/<id>")`. The host opts in by listing the tool's id (and its props) in the `DevToolsConfig` array passed to `<DevTools />`.
@@ -64,8 +75,7 @@ A tool is a standalone React component packaged as `@devtools/<id>`. The shell n
 >
 > **Registry (rewritten on every generator run — do not edit manually):**
 > - `devtools/registry/src/registry.ts`
-> - `devtools/registry/src/metadata/<team>/index.ts` *(all team barrel files)*
-> - `devtools/registry/src/metadata/index.ts`
+> - `devtools/registry/src/metadata/<team>/index.ts` *(team barrel; registry imports these directly)*
 > - `devtools/registry/package.json`
 
 > [!NOTE]
@@ -178,14 +188,13 @@ export default MyTool;
 1. Add `"@devtools/my-tool": "workspace:*"` to `devtools/registry/package.json` dependencies.
 2. Create `devtools/registry/src/metadata/<team>/my-tool.ts` (see the Wiring section above for the shape).
 3. Re-export it from `devtools/registry/src/metadata/<team>/index.ts`.
-4. Re-export the team barrel from `devtools/registry/src/metadata/index.ts` if the team folder is new.
-5. In `devtools/registry/src/registry.ts`, add the import, add the entry to `tools`, and add the branch to `DevToolConfig`.
+4. In `devtools/registry/src/registry.ts`, add the import, add the entry to `tools`, and add the branch to `DevToolConfig`.
 
 </details>
 
 ## Use the tool in a host app
 
-The host imports `DevTools` and `DevToolsConfig` from the shell and builds a typed config array:
+The host imports `DevTools` and `DevToolsConfig` from the shell and builds a typed config array. In Desktop and Mobile this file lives under `src/mvvm/features/DevTools/`, the only folder allowed to import `@devtools/*` (see [Import boundaries](#import-boundaries)):
 
 ```tsx
 import { DevTools, type DevToolsConfig } from "@devtools/shell";

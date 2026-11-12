@@ -1,11 +1,11 @@
 import { type ContactId } from "@domain/entity-contact";
 import {
   useContactDetailEditDeleteAnalytics,
-  useContactsMeContact,
   useContactsEditDeletePorts,
 } from "@features/flow-contacts";
+import { useContactsMeContact } from "@features/platform-contacts";
 import {
-  type ContactsEditSignerMismatchDrawerProps,
+  type ContactsEditSignerMismatchDialogProps,
   createContactDetailEditDeleteUiState,
   useContactDetailEditDeleteFlowBindings,
 } from "@features/flow-contacts-detail";
@@ -23,9 +23,9 @@ export type ContactDetailEditDeleteFlowProps = Readonly<{
     onDelete: () => void;
     onClose: () => void;
   }>;
-  renameDrawer: ContactsRenameContactDialogProps;
-  deleteDrawer: ContactsDeleteContactDialogProps;
-  signerMismatchSheet: ContactsEditSignerMismatchDrawerProps;
+  renameSheet: ContactsRenameContactDialogProps;
+  deleteSheet: ContactsDeleteContactDialogProps;
+  signerMismatchSheet: ContactsEditSignerMismatchDialogProps;
   onOpenActionsMenu: () => void;
 }>;
 
@@ -67,14 +67,14 @@ export function useContactDetailEditDeleteAdapter(
       onDelete,
       onClose: flow.onCloseActionsMenu,
     },
-    renameDrawer: {
+    renameSheet: {
       ...uiState.rename,
       onConfirm: async () => {
         onValidateEdit();
         await uiState.rename.onConfirm();
       },
     },
-    deleteDrawer: { ...uiState.delete, onConfirm: onConfirmDelete },
+    deleteSheet: { ...uiState.delete, onConfirm: onConfirmDelete },
     signerMismatchSheet: uiState.signerMismatch,
   };
 }

@@ -20,7 +20,7 @@ User-facing feature packages shared across desktop and mobile apps. Each subdire
 - **MVVM is the flow convention**: each screen is a `useXViewModel.ts` plus `XView.web.tsx` / `XView.native.tsx`, and the View renders its props only (no store, navigation or query hook). The rules are in the [mvvm-architecture skill](../../.agents/skills/mvvm-architecture/SKILL.md)
 - One flow package per user-facing feature
 - Package name: `@features/flow-<name>`
-- Directory name: `features/flow/<name>/`
+- Directory name: `features/flow/<name>/`. The `features/flow/flow-contacts-*` folders, which the flow-package skill cites, repeat the prefix: a [known deviation](../../.agents/skills/structure-flow/references/layers.md#naming), not to copy
 - `package.json` must have `"private": true`
 - May depend on sibling flows (`type:feature-flow`), `type:feature-platform`, `scope:domain`, and `scope:shared`
 - A flow may orchestrate sub-flows: depending on another `@features/flow-*` package is allowed, so a parent flow can compose smaller ones
@@ -40,7 +40,7 @@ Test shared UI, hooks, and feature-flag logic in the `@features/flow-*` package 
 
 ### In app integration tests
 
-Mobile Jest maps `@features/flow-contacts` to a logic-only stub (`src/jest.native.ts`). App `__integrations__` tests spread `jest.requireActual("@features/flow-contacts")` and overlay lightweight UI stubs for Lumen RN components.
+App `__integrations__` tests render flow components through the package export map and mock only app-owned external wiring when required.
 
 Mobile Jest is also configured to:
 
@@ -52,18 +52,4 @@ Integration tests should cover app-owned wiring only: navigation, feature-flag g
 
 ## File Structure
 
-A flow with one screen keeps a flat `src/`; a flow with several screens puts each in `src/screens/<Screen>/`. Each view is a `useXViewModel.ts` plus `XView.web.tsx` / `XView.native.tsx`. The [flow-package skill](../../.agents/skills/flow-package/SKILL.md) is the canonical layout, with an example package for each rule.
-
-```
-screens/<Screen>/    # one folder per screen, when the flow has several (optional)
-components/          # UI pieces of the views (.web.tsx / .native.tsx)
-copy/                # hooks turning i18n keys into labels (optional)
-logic/               # pure business rules, no React (optional)
-model/               # framework-free lifecycle model: state constructors, controller and ports (optional)
-state/               # flow state: slice and selectors, or a React reducer (optional)
-hooks/               # shared React hooks (optional)
-types.ts             # types shared across the package (optional)
-exports.ts           # platform-agnostic public API (optional)
-index.ts             # web barrel (required)
-index.native.ts      # native barrel (when the package renders native UI)
-```
+The package layout of a flow is in the [flow-package skill](../../.agents/skills/flow-package/SKILL.md).

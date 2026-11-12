@@ -95,7 +95,7 @@ export function runNavigateToBuyFromMarketPageTest(
     test(`[${buySell.crypto.currency.testLabel}] - Buy entry point from market page`, async () => {
       await app.portfolio.tapMarketBannerTitle();
       await app.market.searchAsset(buySell.crypto.currency.ticker);
-      await app.market.expectMarketRowTitle(buySell.crypto.currency);
+      await app.market.expectMarketRowVisible(buySell.crypto.currency);
       await app.market.openAssetPage(buySell.crypto.currency);
       await app.market.tapOnMarketQuickActionButton("buy");
       await app.modularDrawer.selectNetworkIfAsked(

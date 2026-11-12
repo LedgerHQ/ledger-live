@@ -9,8 +9,8 @@ import {
   TableHeaderRow,
   TableRoot,
 } from "@ledgerhq/lumen-ui-react";
-import { ContactTile } from "../ContactTile/ContactTile.web";
-import type { ContactsViewProps } from "../../types";
+import { ContactTile } from "../ContactTile/ContactTile";
+import type { ContactsViewProps } from "../Contacts/ContactsView";
 
 type ContactsTableProps = Pick<
   ContactsViewProps,

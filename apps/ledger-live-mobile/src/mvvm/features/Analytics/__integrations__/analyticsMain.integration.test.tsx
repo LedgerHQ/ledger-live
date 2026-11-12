@@ -45,9 +45,6 @@ describe("AnalyticsMain Integration Tests", () => {
 
     return withFlagOverrides({
       ptxServiceCtaExchangeDrawer: { enabled: isExchangeEnabled },
-      lwmWallet40: {
-        params: { aggregatedAssets: false },
-      },
     })({
       ...state,
       accounts: {
@@ -105,7 +102,7 @@ describe("AnalyticsMain Integration Tests", () => {
       overrideInitialState: mockState,
     });
 
-    await user.press(screen.getByText(/BTC/i));
+    await user.press(await screen.findByText(/BTC/i));
 
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "Detailed Allocation",

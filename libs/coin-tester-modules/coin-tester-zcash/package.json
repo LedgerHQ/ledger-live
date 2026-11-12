@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-zcash",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "private": true,
   "sideEffects": false,
   "description": "Ledger Zcash Coin Tester",
@@ -50,7 +50,6 @@
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "knip-check": "pnpm knip --directory ../../.. -W libs/coin-tester-modules/coin-tester-zcash",
     "test": "jest --selectProjects unit",
     "coverage": "jest --coverage --selectProjects unit",
     "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand"
@@ -61,7 +60,6 @@
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "catalog:",
-    "@ledgerhq/live-network": "catalog:",
     "@ledgerhq/live-signer-zcash": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@ledgerhq/wallet-btc": "workspace:^",
@@ -71,7 +69,7 @@
     "bignumber.js": "^9.1.2",
     "bip39": "catalog:",
     "bs58": "catalog:",
-    "chalk": "^4.1.2",
+    "chalk": "catalog:",
     "docker-compose": "^1.1.0",
     "msw": "catalog:"
   },
@@ -79,14 +77,15 @@
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
-    "@types/bs58": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "axios": "catalog:",
-    "bs58check": "^4.0.0",
+    "bs58check": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
+    "rimraf": "catalog:",
     "typescript": "catalog:"
   }
 }

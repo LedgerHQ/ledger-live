@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import styled from "styled-components";
 import type { StakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
 import type { TransactionStatusCommon } from "@ledgerhq/types-live";

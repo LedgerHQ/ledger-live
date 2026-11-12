@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, mock, spyOn } from "bun:test";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
 import type { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 import type { Unit } from "@domain/entity-currency-unit";
@@ -210,6 +210,23 @@ describe("runFullSwapPipeline session lifecycle", () => {
 
     expect(events).toEqual(["session:open", "startExchange", "session:close"]);
     expect(setBroadcastTransactionMock).not.toHaveBeenCalled();
+    expect(postSwapCancelledMock).not.toHaveBeenCalled();
+  });
+
+  it("turns an HTTP rejection from the swap API into a SwapBackendError", async () => {
+    retrieveSwapPayloadMock.mockImplementationOnce(async () => {
+      throw Object.assign(new Error("Request failed with status code 401"), {
+        name: "AxiosError",
+        response: { status: 401, data: {} },
+      });
+    });
+
+    await expect(runPipeline()).rejects.toMatchObject({
+      name: "SwapBackendError",
+      httpStatus: 401,
+      message: "The swap provider rejected the request.",
+    });
+    expect(events).toEqual(["session:open", "startExchange", "session:close"]);
     expect(postSwapCancelledMock).not.toHaveBeenCalled();
   });
 

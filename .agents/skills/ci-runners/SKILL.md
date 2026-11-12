@@ -18,6 +18,8 @@ Do not add new usages of these labels. When touching a job that already uses one
 
 **Exception: Android emulator jobs.** The emulator needs `/dev/kvm`, which the runners below don't have (see Gotchas). Android E2E jobs in `test-mobile-e2e-reusable.yml` run on `ledger-wallet-8cpu-github-public-cached`, a GitHub larger runner on the `ledger-wallet-android-e2e` custom image (built in LedgerHQ/ledger-wallet-runners), which holds the toolchain and the E2E AVD. Use it only for jobs that run the emulator.
 
+**Exception: Windows desktop E2E.** The Windows leg of `e2e-tests-extra-os` in `test-ui-e2e-only-desktop.yml` runs on `ledger-live-windows-e2e-32CPU-128RAM`, a Windows runner Platform Engineering provisioned for LWD E2E. Its egress IP is allow-listed on Speculinho, which other GitHub-hosted runners can't reach. It is not deprecated despite the `ledger-live-` prefix. Use it only for Windows desktop E2E.
+
 ## ✅ Allowed runners
 
 | Size   | Cached (default)                         | Uncached (release)                   |
@@ -28,7 +30,7 @@ Do not add new usages of these labels. When touching a job that already uses one
 | 8 CPU  | `ledger-wallet-8cpu-aws-public-cached`   | `ledger-wallet-8cpu-aws-public`      |
 | 16 CPU | `ledger-wallet-16cpu-aws-public-cached`  | `ledger-wallet-16cpu-aws-public`     |
 
-`ledger-wallet-4cpu-aws-public-docker` is the 4 CPU runner for jobs that need a Docker daemon.
+For jobs that need a Docker daemon, use the 4 CPU Docker runner: `ledger-wallet-4cpu-aws-public-docker-cached` by default, or `ledger-wallet-4cpu-aws-public-docker` for the release process.
 
 Memory is 4 GiB per CPU (e.g. 4cpu = 16 GiB, 8cpu = 32 GiB).
 

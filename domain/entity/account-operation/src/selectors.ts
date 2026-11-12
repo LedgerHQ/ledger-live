@@ -6,6 +6,7 @@ import type {
   AccountOperationsQuery,
   AccountOperationsState,
   OperationId,
+  StoredAccountOperation,
 } from "./schema";
 
 export type WithAccountOperations = { accountOperations: AccountOperationsState };
@@ -16,6 +17,12 @@ const selectWindow = (
   query?: AccountOperationsQuery,
 ) => state.accountOperations[accountUUID]?.windows[accountDataQueryKey(query)];
 
+const selectWindowCountervalues = (
+  state: WithAccountOperations,
+  accountUUID: AccountUUID,
+  query?: AccountOperationsQuery,
+) => state.accountOperations[accountUUID]?.countervalues[accountDataQueryKey(query)];
+
 const selectById = (state: WithAccountOperations, accountUUID: AccountUUID) =>
   state.accountOperations[accountUUID]?.byId;
 
@@ -25,13 +32,21 @@ export const selectAccountOperations: (
   accountUUID: AccountUUID,
   query?: AccountOperationsQuery,
 ) => AccountOperation[] | undefined = createSelector(
-  [selectWindow, selectById],
-  (window, byId) => window && byId && window.flatMap(id => byId[id] ?? []),
+  [selectWindow, selectById, selectWindowCountervalues],
+  (window, byId, countervaluesById) =>
+    window &&
+    byId &&
+    window.flatMap(id => {
+      const row = byId[id];
+      if (!row) return [];
+      const countervalues = countervaluesById?.[id];
+      return countervalues ? { ...row, countervalues } : row;
+    }),
 );
 
-/** One row, whatever query read it. */
+/** One row, whatever query read it, without countervalues: those belong to the query that asked them. */
 export const selectAccountOperation = (
   state: WithAccountOperations,
   accountUUID: AccountUUID,
   operationId: OperationId,
-): AccountOperation | undefined => state.accountOperations[accountUUID]?.byId[operationId];
+): StoredAccountOperation | undefined => state.accountOperations[accountUUID]?.byId[operationId];

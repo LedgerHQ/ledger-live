@@ -18,11 +18,22 @@ with List and Introduction. Mobile mounts `ContactDetailView` from the Contact D
 
 ## Public API
 
-Import `@features/flow-contacts-detail` from both platforms. The package root resolves the Web or
-React Native implementation. `ContactDetailView` is the screen; dialogs, drawers, and view models
-are exported beside it. The package resolves its own copy with `@shared/i18n`.
+- `@features/flow-contacts-detail`: the view models, ports and three universal components, each
+  with one contract in its `*.types.ts`:
+  - `ContactDetailView`, the screen. Its `detailActions` are shown in the Web header; Mobile shows
+    them in its navigation header instead.
+  - `ContactAddressDetailDialog`, the selected address with its quick actions. The Share action
+    shows only when the host sets `onShareAddress`.
+  - `ContactsEditSignerMismatchDialog`.
 
-Consumers must not import files under `src/`.
+  Web renders dialogs; Native renders the content of a bottom sheet the app mounts in its own
+  `QueuedBottomSheet`, and reads the sheet's bottom inset itself.
+- `@features/flow-contacts-detail/native`: `ContactDetailActionsMenu`, the edit and delete menu.
+  It is native sheet content that the Mobile host mounts in its own `QueuedBottomSheet`. Web
+  shows the same actions inline in the `ContactDetailView` header.
+
+The package resolves its own copy with `@shared/i18n`. Consumers must not import files under
+`src/`.
 
 For the complete Contacts aggregate, use `ContactsView` from `@features/flow-contacts`. That
 package keeps cross-journey orchestration, including the ports and analytics that connect Contact

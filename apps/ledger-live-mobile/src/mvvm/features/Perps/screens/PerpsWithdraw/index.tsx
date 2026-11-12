@@ -8,6 +8,8 @@ import { useTranslation } from "~/context/Locale";
 import { AmountKeypad } from "LLM/components/AmountKeypad";
 import { RatioPicker } from "LLM/components/RatioPicker";
 import { PerpsAccountSelector } from "../../components/PerpsAccountSelector";
+import { PerpsWithdrawSign } from "./components/PerpsWithdrawSign";
+import { PerpsWithdrawSummary } from "./components/PerpsWithdrawSummary";
 import type { PerpsWithdrawViewModel } from "./usePerpsWithdrawViewModel";
 
 const TEST_ID_PREFIX = "perps-withdraw";
@@ -103,6 +105,17 @@ export function PerpsWithdrawView({
   exceedsBalance,
   canReview,
   handleReview,
+  isSummaryOpen,
+  summaryKey,
+  summaryParams,
+  closeSummary,
+  signParams,
+  signingDevice,
+  selectSigningDevice,
+  handOverToDevice,
+  returnToSummary,
+  endSigning,
+  leaveWithdraw,
 }: Readonly<PerpsWithdrawViewModel>) {
   const { t } = useTranslation();
   const styles = useStyleSheet(
@@ -171,6 +184,27 @@ export function PerpsWithdrawView({
           {t("perpsWithdraw.review")}
         </Button>
       </Box>
+
+      {summaryParams ? (
+        <PerpsWithdrawSummary
+          key={summaryKey}
+          {...summaryParams}
+          isOpen={isSummaryOpen}
+          onClose={closeSummary}
+          onConfirm={handOverToDevice}
+        />
+      ) : null}
+
+      {signParams ? (
+        <PerpsWithdrawSign
+          {...signParams}
+          selectedDevice={signingDevice}
+          onSelectDevice={selectSigningDevice}
+          onDone={endSigning}
+          onRefused={returnToSummary}
+          onLeave={leaveWithdraw}
+        />
+      ) : null}
     </SafeAreaView>
   );
 }

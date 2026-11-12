@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Account } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/xrp/types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";

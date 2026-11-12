@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "axios": "catalog:",
-    "chalk": "^4.1.2",
+    "chalk": "catalog:",
     "lodash": "catalog:",
     "msw": "catalog:",
     "rxjs": "catalog:"
@@ -28,9 +28,11 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
+    "rimraf": "catalog:",
     "typescript": "catalog:"
   },
   "typesVersions": {

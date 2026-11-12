@@ -1,5 +1,5 @@
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { setCoinConfig } from "../config";
 import getEstimatedFees from "../getFeesForTransaction";
 import { getAccount } from "../network";

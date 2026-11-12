@@ -91,27 +91,27 @@ export function useCardDetailsViewModel({
     goTo({ name: "transaction", transaction });
   };
 
-  const onAssetPress = (asset: CardAssetRow) => {
-    assetsViewModel.onAssetPress(asset);
+  const onOpenAsset = (asset: CardAssetRow) => {
+    assetsViewModel.onOpenAsset(asset);
     goTo({ name: "assetDetails" });
   };
 
-  const onManageAssetsPress = () => {
-    assetsViewModel.onManagePress();
+  const onManageAssets = () => {
+    assetsViewModel.onManageAssets();
     goTo({ name: "assetsManage" });
   };
 
-  const onAssetWithdrawPress = () => {
-    assetsViewModel.onWithdrawPress();
+  const onOpenWithdraw = () => {
+    assetsViewModel.onOpenWithdraw();
     goTo({ name: "assetWithdraw" });
   };
 
-  const onAssetTransactionPress = (transaction: CardTransactionItem) => {
+  const onOpenAssetTransaction = (transaction: CardTransactionItem) => {
     goTo({ name: "assetTransaction", transaction });
   };
 
-  const onAssetHistoryPress = () => {
-    assetsViewModel.onShowHistoryPress();
+  const onShowHistory = () => {
+    assetsViewModel.onShowHistory();
     goBack();
   };
 
@@ -120,9 +120,9 @@ export function useCardDetailsViewModel({
     goBack();
   };
 
-  const onAssetTopUpPress = () => {
+  const onTopUpAsset = () => {
     closeSheet();
-    assetsViewModel.onTopUpPress();
+    assetsViewModel.onTopUpAsset();
   };
 
   const onAddToWalletPress = () => {
@@ -167,11 +167,11 @@ export function useCardDetailsViewModel({
 
   const assetSceneViewModel = {
     ...assetsViewModel,
-    onAssetPress,
-    onManagePress: onManageAssetsPress,
-    onTopUpPress: onAssetTopUpPress,
-    onWithdrawPress: onAssetWithdrawPress,
-    onShowHistoryPress: onAssetHistoryPress,
+    onOpenAsset,
+    onManageAssets,
+    onTopUpAsset,
+    onOpenWithdraw,
+    onShowHistory,
     onWithdrawContinue: onAssetWithdrawContinue,
   };
 
@@ -212,7 +212,7 @@ export function useCardDetailsViewModel({
       route.name === "assetDetails"
         ? {
             viewModel: assetSceneViewModel,
-            onTransactionPress: onAssetTransactionPress,
+            onOpenTransaction: onOpenAssetTransaction,
           }
         : null,
     assetWithdraw: route.name === "assetWithdraw" ? assetSceneViewModel : null,

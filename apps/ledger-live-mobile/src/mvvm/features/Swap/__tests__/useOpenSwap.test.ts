@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { act, renderHook } from "@tests/test-renderer";
 import { useOpenSwap } from "../index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
@@ -7,6 +7,8 @@ import { makeEmptyTokenAccount } from "@ledgerhq/ledger-wallet-framework/account
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import type { Account } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "~/const";
+import { server, http, HttpResponse } from "@tests/server";
+import { mockData } from "@ledgerhq/live-common/modularDrawer/__mocks__/dada.mock";
 
 const SOURCE_SCREEN = "Market";
 
@@ -105,6 +107,71 @@ describe("useOpenSwap (Market / QuickActions origin)", () => {
       expect(mockOpenDrawer).not.toHaveBeenCalled();
     });
 
+    test("should open the drawer when the only swappable network is not the currency", () => {
+      const { result } = renderHook(
+        () =>
+          useOpenSwap({
+            currency: ethereum,
+            currencyIds: ["base"],
+            sourceScreenName: SOURCE_SCREEN,
+          }),
+        {
+          overrideInitialState: state => ({
+            ...state,
+            accounts: { ...state.accounts, active: [] },
+          }),
+        },
+      );
+
+      act(() => {
+        result.current.handleOpenSwap();
+      });
+
+      expect(mockOpenDrawer).toHaveBeenCalledWith(
+        expect.objectContaining({ currencies: ["base"], flow: "swap" }),
+      );
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
+
+    test("should open the drawer on the swappable networks of a multi-network asset", async () => {
+      const usdcOnArbitrum = "arbitrum/erc20/usd__coin";
+      const requests: URL[] = [];
+      server.use(
+        http.get("https://dada.api.ledger.com/v1/assets", ({ request }) => {
+          requests.push(new URL(request.url));
+          return HttpResponse.json({
+            ...mockData,
+            cryptoAssets: {
+              usdc: {
+                id: "usdc",
+                ticker: "USDC",
+                name: "USDC",
+                assetsIds: { ethereum: usdcToken.id, arbitrum: usdcOnArbitrum },
+              },
+            },
+            currenciesOrder: { ...mockData.currenciesOrder, metaCurrencyIds: ["usdc"] },
+          });
+        }),
+      );
+      const { result } = renderHook(() =>
+        useOpenSwap({
+          currency: usdcToken,
+          currencyIds: [usdcToken.id, usdcOnArbitrum, "arc"],
+          sourceScreenName: SOURCE_SCREEN,
+        }),
+      );
+
+      await act(async () => {
+        await result.current.handleOpenSwap();
+      });
+
+      expect(requests[0].searchParams.get("transaction")).toBe("swap");
+      expect(mockOpenDrawer).toHaveBeenCalledWith(
+        expect.objectContaining({ currencies: [usdcToken.id, usdcOnArbitrum], flow: "swap" }),
+      );
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
+
     test("should navigate via Main → Swap with toTokenId when no account for token", () => {
       const { result } = renderHook(
         () => useOpenSwap({ currency: usdcToken, sourceScreenName: SOURCE_SCREEN }),
@@ -139,7 +206,7 @@ describe("useOpenSwap (Market / QuickActions origin)", () => {
     });
 
     describe("account picked in the drawer for a token the user doesn't hold", () => {
-      const openDrawerAndSelect = (
+      const openDrawerAndSelect = async (
         select: (params: { onAccountSelected: (a: unknown, p?: unknown) => void }) => void,
         accounts: Account[],
       ) => {
@@ -158,19 +225,19 @@ describe("useOpenSwap (Market / QuickActions origin)", () => {
           },
         );
 
-        act(() => {
-          result.current.handleOpenSwap();
+        await act(async () => {
+          await result.current.handleOpenSwap();
         });
 
         expect(mockOpenDrawer).toHaveBeenCalledTimes(1);
         select(mockOpenDrawer.mock.calls[0][0]);
       };
 
-      test("should hand the parent account and the token to Swap for an empty token account", () => {
+      test("should hand the parent account and the token to Swap for an empty token account", async () => {
         const parent = { ...genAccount("eth-1", { currency: ethereum }), id: "js:2:ethereum:0x1:" };
         const emptyTokenAccount = makeEmptyTokenAccount(parent, usdcToken);
 
-        openDrawerAndSelect(
+        await openDrawerAndSelect(
           params => act(() => params.onAccountSelected(emptyTokenAccount, parent)),
           [parent],
         );
@@ -181,11 +248,11 @@ describe("useOpenSwap (Market / QuickActions origin)", () => {
         expect(swapParams.fromPath).toBe(SOURCE_SCREEN);
       });
 
-      test("should resolve the parent from the store when the drawer doesn't provide it", () => {
+      test("should resolve the parent from the store when the drawer doesn't provide it", async () => {
         const parent = { ...genAccount("eth-2", { currency: ethereum }), id: "js:2:ethereum:0x2:" };
         const emptyTokenAccount = makeEmptyTokenAccount(parent, usdcToken);
 
-        openDrawerAndSelect(
+        await openDrawerAndSelect(
           params => act(() => params.onAccountSelected(emptyTokenAccount)),
           [parent],
         );
@@ -195,11 +262,14 @@ describe("useOpenSwap (Market / QuickActions origin)", () => {
         expect(swapParams.defaultCurrency).toBe(usdcToken);
       });
 
-      test("should fall back to toTokenId when the parent account can't be resolved", () => {
+      test("should fall back to toTokenId when the parent account can't be resolved", async () => {
         const parent = { ...genAccount("eth-3", { currency: ethereum }), id: "js:2:ethereum:0x3:" };
         const emptyTokenAccount = makeEmptyTokenAccount(parent, usdcToken);
 
-        openDrawerAndSelect(params => act(() => params.onAccountSelected(emptyTokenAccount)), []);
+        await openDrawerAndSelect(
+          params => act(() => params.onAccountSelected(emptyTokenAccount)),
+          [],
+        );
 
         const swapParams = mockNavigate.mock.calls[0][1].params.params;
         expect(swapParams.defaultAccount).toBeUndefined();

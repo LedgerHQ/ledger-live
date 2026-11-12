@@ -6,8 +6,10 @@ import {
 } from "./schema";
 import { ETH_ADDR, XPUB } from "./test-fixtures";
 
+type MockOverrides<T> = Partial<Omit<T, "network">> & { network?: string };
+
 export function mockUtxoAccountDescriptor(
-  overrides?: Partial<UtxoAccountDescriptor>,
+  overrides?: MockOverrides<UtxoAccountDescriptor>,
 ): UtxoAccountDescriptor {
   return UtxoAccountDescriptorSchema.parse({
     purpose: "account",
@@ -21,7 +23,7 @@ export function mockUtxoAccountDescriptor(
 }
 
 export function mockAddressAccountDescriptor(
-  overrides?: Partial<AddressAccountDescriptor>,
+  overrides?: MockOverrides<AddressAccountDescriptor>,
 ): AddressAccountDescriptor {
   return AddressAccountDescriptorSchema.parse({
     purpose: "account",

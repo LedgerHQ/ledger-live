@@ -1,12 +1,10 @@
-import { track } from "@shared/analytics";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { shallowEqual } from "react-redux";
 import { useSelector } from "~/context/hooks";
-import { useFocusEffect, useIsFocused } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import useEnv from "@features/platform-env";
-import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useFeature } from "@features/platform-feature-flags";
 import { useServicesEntryPointsFeature } from "@features/flow-portfolio-services-entry-points";
-import { useSharedValue } from "react-native-reanimated";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import type { Features } from "@shared/feature-flags";
 
@@ -32,22 +30,12 @@ import { buildFeatureFlagTags } from "~/utils/datadogUtils";
 import { ScreenName } from "~/const";
 
 interface UsePortfolioViewModelResult {
-  hideEmptyTokenAccount: boolean;
   isAWalletCardDisplayed: boolean;
-  isAccountListUIEnabled: boolean;
-  shouldDisplayAssetDiscoverability: boolean;
-  shouldDisplayAssetSection: boolean;
-  shouldDisplayOperationsList: boolean;
   shouldDisplayPerpsEntryPoint: boolean;
   showAssets: boolean;
   isLNUpsellBannerShown: boolean;
-  isAddModalOpened: boolean;
   backgroundColor: string;
   isSyncError: boolean;
-  shouldAddBottomPaddingForLegacyAssets: boolean;
-  openAddModal: () => void;
-  closeAddModal: () => void;
-  handleHeightChange: (newHeight: number) => void;
   onBackFromUpdate: () => void;
 }
 
@@ -56,19 +44,10 @@ const usePortfolioViewModel = (navigation: {
   navigate: (screen: ScreenName) => void;
 }): UsePortfolioViewModelResult => {
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
-  const [isAddModalOpened, setAddModalOpened] = useState(false);
   const { isAWalletCardDisplayed } = useDynamicContent();
-  const accountListFF = useFeature("llmAccountListUI");
-  const {
-    shouldDisplayAssetSection,
-    shouldDisplayOperationsList,
-    shouldDisplayAssetDiscoverability,
-  } = useWalletFeaturesConfig("mobile");
-  const isAccountListUIEnabled = accountListFF?.enabled ?? false;
   const { isEnabled: shouldDisplayServicesEntryPoints } = useServicesEntryPointsFeature();
   const llmDatadog = useFeature("llmDatadog");
   const allAccounts = useSelector(flattenAccountsSelector, shallowEqual);
-  const isFocused = useIsFocused();
   const { backgroundColor } = useWallet40Theme();
 
   const mmkvMigrationFF = useFeature("llmMmkvMigration");
@@ -92,15 +71,6 @@ const usePortfolioViewModel = (navigation: {
 
   const refreshAccountsOrdering = useRefreshAccountsOrderingAfterInteractions();
   useFocusEffect(refreshAccountsOrdering);
-
-  const openAddModal = useCallback(() => {
-    track("button_clicked", {
-      button: "Add Account",
-    });
-    setAddModalOpened(true);
-  }, []);
-
-  const closeAddModal = useCallback(() => setAddModalOpened(false), []);
 
   useEffect(() => {
     if (!llmDatadog?.enabled) return;
@@ -129,41 +99,18 @@ const usePortfolioViewModel = (navigation: {
     hasTokenAccountsWithPositiveBalance ||
     (!hideEmptyTokenAccount && hasTokenAccounts);
 
-  const animatedHeight = useSharedValue(0);
-
-  const handleHeightChange = useCallback(
-    (newHeight: number) => {
-      if (newHeight === 0 || !isFocused) return;
-      animatedHeight.value = newHeight;
-    },
-    [animatedHeight, isFocused],
-  );
-
   const isLNUpsellBannerShown = useLNUpsellBannerState("wallet").isShown;
 
   const { syncPhase } = usePortfolioBalance();
   const isSyncError = syncPhase === "failed";
 
-  const shouldAddBottomPaddingForLegacyAssets =
-    !isAWalletCardDisplayed && shouldDisplayOperationsList;
-
   return {
-    hideEmptyTokenAccount,
     isAWalletCardDisplayed,
-    isAccountListUIEnabled,
-    shouldDisplayAssetDiscoverability,
-    shouldDisplayAssetSection,
-    shouldDisplayOperationsList,
     shouldDisplayPerpsEntryPoint: !shouldDisplayServicesEntryPoints,
     showAssets,
     isLNUpsellBannerShown,
-    isAddModalOpened,
     backgroundColor,
     isSyncError,
-    shouldAddBottomPaddingForLegacyAssets,
-    openAddModal,
-    closeAddModal,
-    handleHeightChange,
     onBackFromUpdate,
   };
 };

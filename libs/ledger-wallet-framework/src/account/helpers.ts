@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { getEnv } from "@ledgerhq/live-env";
 import { encodeTokenAccountId } from "./accountId";

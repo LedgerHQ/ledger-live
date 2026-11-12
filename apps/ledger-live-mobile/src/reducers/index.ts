@@ -5,6 +5,7 @@ import { combineReducers, type Store } from "redux";
 import { llmRTKApiReducers } from "~/context/rtkQueryApi";
 import featureFlags from "@shared/feature-flags";
 import { appConfigReducer } from "@shared/app-config";
+import { liveConfigOverridesReducer } from "@shared/live-config-overrides";
 import accounts from "./accounts";
 import appstate from "./appstate";
 import auth from "./auth";
@@ -47,12 +48,15 @@ import portfolioBalanceDisplay from "./portfolioBalanceDisplay";
 import recoverState from "./recoverState";
 import liveAppModal from "./liveAppModal";
 import { identitiesSlice } from "@domain/entity-client-identity";
+import { predictionsSlice } from "@domain/entity-predictions";
 import { supportedFiatsSlice } from "@domain/entity-currency-fiat";
 import { payCardBalanceSlice } from "@features/flow-pay-balance/state";
 import { payCardFeatureTourSlice } from "@features/flow-pay-feature-tour/state";
 import { payRequestVerifyHintSlice } from "@features/flow-pay-request/state";
 import { payCardAuthSlice, payCardLoginIntroSlice } from "@features/flow-pay-card-auth/state";
 import { payCardOnboardingWidgetSlice } from "@features/flow-pay-card-widget/state";
+import { accountAnalyticsIntroductionSlice } from "@features/flow-account-detail-analytics-notice/state";
+import { mockServerOverlaySlice } from "@features/flow-device-mock-server/state";
 import { contactsSlice } from "@domain/entity-contact";
 import { accountDataSlice } from "@domain/entity-account-data";
 import { accountBalancesSlice } from "@domain/entity-account-balance";
@@ -85,6 +89,7 @@ const appReducer = combineReducers({
   inView,
   knownDevices,
   largeMover,
+  liveConfigOverrides: liveConfigOverridesReducer,
   market,
   marketListConfig: marketListConfigReducer,
   marketBanner: marketBannerReducer,
@@ -99,6 +104,7 @@ const appReducer = combineReducers({
   largeScreenUpsellModal: largeScreenUpsellModalReducer,
   postOnboarding,
   postOnboardingHubDrawer,
+  predictions: predictionsSlice.reducer,
   protect,
   ratings,
   settings,
@@ -107,8 +113,10 @@ const appReducer = combineReducers({
   payCardFeatureTour: payCardFeatureTourSlice.reducer,
   payRequestVerifyHint: payRequestVerifyHintSlice.reducer,
   payCardOnboardingWidget: payCardOnboardingWidgetSlice.reducer,
+  mockServerOverlay: mockServerOverlaySlice.reducer,
   payCardAuth: payCardAuthSlice.reducer,
   payCardLoginIntro: payCardLoginIntroSlice.reducer,
+  accountAnalyticsIntroduction: accountAnalyticsIntroductionSlice.reducer,
   toasts,
   trustchain,
   wallet,

@@ -26,18 +26,11 @@ export function useWalletFeaturesConfig(platform: WalletPlatform): WalletFeature
     return {
       isEnabled,
       shouldUseLazyOnboarding: isEnabled && Boolean(params?.lazyOnboarding),
-      shouldDisplayAssetSection:
-        platform === "desktop" ? true : isEnabled && Boolean(params?.assetSection),
       shouldDisplayBrazePlacement: isEnabled && Boolean(params?.brazePlacement),
-      shouldDisplayOperationsList: isEnabled && Boolean(params?.operationsList),
-      shouldDisplayAggregatedAssets:
-        platform === "desktop" ? true : isEnabled && Boolean(params?.aggregatedAssets),
-      shouldDisplayMyWallet: platform === "desktop" ? true : isEnabled && Boolean(params?.myWallet),
-      shouldDisplayAssetDiscoverability: isEnabled && Boolean(params?.assetDiscoverability),
       shouldDisplayEarnUpselling: isEnabled && Boolean(params?.earnUpselling),
       shouldDisplayEarnSimulator: isEnabled && Boolean(params?.earnSimulator),
     };
-  }, [platform, walletFeatureFlag]);
+  }, [walletFeatureFlag]);
 }
 
 /** Keys for the wallet feature flags */
@@ -64,18 +57,8 @@ export interface WalletFeaturesConfig {
   readonly isEnabled: boolean;
   /** Whether onboarding should skip device setup and open portfolio in read-only mode */
   readonly shouldUseLazyOnboarding: boolean;
-  /** Whether to show the asset section */
-  readonly shouldDisplayAssetSection: boolean;
   /** Whether to show Braze content cards as ContentBanner (e.g. action cards on portfolio, mobile only) */
   readonly shouldDisplayBrazePlacement: boolean;
-  /** Whether to show the TX History section */
-  readonly shouldDisplayOperationsList: boolean;
-  /** Whether to show the aggregated assets */
-  readonly shouldDisplayAggregatedAssets: boolean;
-  /** Whether to show the My Wallet component */
-  readonly shouldDisplayMyWallet: boolean;
-  /** Whether to show the Asset Discoverability feature */
-  readonly shouldDisplayAssetDiscoverability: boolean;
   /** Whether to show the Earn Upselling component */
   readonly shouldDisplayEarnUpselling: boolean;
   /** Whether to show the Earn Simulator component */

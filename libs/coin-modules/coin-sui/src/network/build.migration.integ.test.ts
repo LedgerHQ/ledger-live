@@ -18,7 +18,6 @@
  * What we do NOT compare: per-object IDs, gas budget, gas price, gas-payment
  * coin-object refs. Those are resolver-determined and drift legitimately.
  */
-import { getEnv } from "@ledgerhq/live-env";
 import { parseTransactionBcs } from "@mysten/sui/client";
 import BigNumber from "bignumber.js";
 import coinConfig from "../config";
@@ -32,8 +31,8 @@ const GRAPHQL_ID = "sui-graphql-build-mig";
 beforeAll(() => {
   coinConfig.setCoinConfig(id => {
     const node = {
-      graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
-      grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
+      graphqlUrl: "https://sui.coin.ledger.com/graphql",
+      grpcUrl: "https://sui.coin.ledger.com",
     };
     const name = "Sui";
     const unit = { name: "Sui", code: "SUI", magnitude: 9 };

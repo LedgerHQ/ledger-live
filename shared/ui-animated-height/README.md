@@ -32,3 +32,4 @@ A `ResizeObserver` and a `MutationObserver` watch the content. `animatedHeightLa
 ## Used by
 
 - The desktop Send flow (`apps/ledger-live-desktop/src/mvvm/features/Send`)
+- The Predictions onboarding sheet (`features/flow/predictions`)

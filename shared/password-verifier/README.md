@@ -100,5 +100,6 @@ Android. Since the parameters travel with each verifier, raising them later lock
 ```sh
 pnpm test
 pnpm typecheck
-pnpm unimported
 ```
+
+Knip runs from the repo root: `pnpm knip:all`.

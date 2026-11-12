@@ -1,10 +1,11 @@
-import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { createEmptyStakingResources } from "@ledgerhq/types-live";
 import network from "@ledgerhq/live-network/network";
 import { CryptoCurrencyId } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { messageParamsFromTransaction } from "./buildTransaction";
-import cosmosCoinConfig, { cosmosConfig } from "./config";
-import { calculateFees, getEstimatedFees } from "./prepareTransaction";
+import cosmosCoinConfig, { cosmosDefaults } from "./config";
+import { cosmosDefaultsFor } from "./test/cosmosDefaults";
+import { calculateFees, getEstimatedFees, prepareTransaction } from "./prepareTransaction";
 import { CosmosAccount, Transaction } from "./types";
 
 jest.mock("@ledgerhq/live-network/network");
@@ -28,10 +29,7 @@ const transaction = {
 
 describe("getEstimatedFees", () => {
   beforeAll(() => {
-    LiveConfig.setConfig(cosmosConfig);
-    cosmosCoinConfig.setCoinConfig(
-      currencyId => LiveConfig.getValueByKey(`config_currency_${currencyId}`) ?? {},
-    );
+    cosmosCoinConfig.setCoinConfig(cosmosDefaultsFor);
   });
 
   it("should return gas higher than estimate", async () => {
@@ -71,10 +69,7 @@ describe("getEstimatedFees", () => {
 
 describe("calculateFees", () => {
   beforeAll(() => {
-    LiveConfig.setConfig(cosmosConfig);
-    cosmosCoinConfig.setCoinConfig(
-      currencyId => LiveConfig.getValueByKey(`config_currency_${currencyId}`) ?? {},
-    );
+    cosmosCoinConfig.setCoinConfig(cosmosDefaultsFor);
   });
   // Create fresh copies for each test to avoid cross-test pollution
   const createAccount = () =>
@@ -174,33 +169,28 @@ describe("calculateFees", () => {
     const tx = createTransaction();
     await calculateFees({ account: acc, transaction: tx });
     const callsAfterFirst = networkMock.mock.calls.length;
-    tx.mode = "delegate";
-    tx.validators = [{ address: "toto", amount: new BigNumber(1) }];
-    await calculateFees({ account: acc, transaction: tx });
+    await calculateFees({
+      account: acc,
+      transaction: { ...tx, mode: "delegate", valAddress: "toto" },
+    });
     expect(networkMock.mock.calls.length).toBeGreaterThan(callsAfterFirst);
   });
 
   it("should estimate fees again if transaction validator address changed", async () => {
     const acc = createAccount();
-    const tx = createTransaction();
-    tx.mode = "delegate";
-    tx.validators = [{ address: "toto", amount: new BigNumber(1) }];
+    const tx: Transaction = { ...createTransaction(), mode: "delegate", valAddress: "toto" };
     await calculateFees({ account: acc, transaction: tx });
     const callsAfterFirst = networkMock.mock.calls.length;
-    tx.validators = [{ address: "totoleretour", amount: new BigNumber(1) }];
-    await calculateFees({ account: acc, transaction: tx });
+    await calculateFees({ account: acc, transaction: { ...tx, valAddress: "totoleretour" } });
     expect(networkMock.mock.calls.length).toBeGreaterThan(callsAfterFirst);
   });
 
-  it("should estimate fees again if transaction validator amount changed", async () => {
+  it("should estimate fees again if transaction amount changed on a staking transaction", async () => {
     const acc = createAccount();
-    const tx = createTransaction();
-    tx.mode = "delegate";
-    tx.validators = [{ address: "toto", amount: new BigNumber(1) }];
+    const tx: Transaction = { ...createTransaction(), mode: "delegate", valAddress: "toto" };
     await calculateFees({ account: acc, transaction: tx });
     const callsAfterFirst = networkMock.mock.calls.length;
-    tx.validators = [{ address: "toto", amount: new BigNumber(2) }];
-    await calculateFees({ account: acc, transaction: tx });
+    await calculateFees({ account: acc, transaction: { ...tx, amount: new BigNumber(2) } });
     expect(networkMock.mock.calls.length).toBeGreaterThan(callsAfterFirst);
   });
 
@@ -209,8 +199,7 @@ describe("calculateFees", () => {
     const tx = createTransaction();
     await calculateFees({ account: acc, transaction: tx });
     const callsAfterFirst = networkMock.mock.calls.length;
-    tx.memo = "yikes";
-    await calculateFees({ account: acc, transaction: tx });
+    await calculateFees({ account: acc, transaction: { ...tx, memo: "yikes" } });
     expect(networkMock.mock.calls.length).toBeGreaterThan(callsAfterFirst);
   });
 
@@ -228,12 +217,22 @@ describe("calculateFees", () => {
     expect(networkMock.mock.calls.length).toBeGreaterThan(callsAfterFirst);
   });
 
+  it("should estimate fees again if redelegation destination validator changed", async () => {
+    const acc = createAccount();
+    const tx: Transaction = {
+      ...createTransaction(),
+      mode: "redelegate",
+      valAddress: "source",
+      dstValAddress: "destination",
+    };
+    await calculateFees({ account: acc, transaction: tx });
+    const callsAfterFirst = networkMock.mock.calls.length;
+    await calculateFees({ account: acc, transaction: { ...tx, dstValAddress: "other" } });
+    expect(networkMock.mock.calls.length).toBeGreaterThan(callsAfterFirst);
+  });
+
   it("should estimate croeseid fees with the crypto_org config", async () => {
-    cosmosCoinConfig.setCoinConfig(currencyId => {
-      const value = LiveConfig.getValueByKey(`config_currency_${currencyId}`);
-      if (!value) throw new Error(`No currency configuration available for ${currencyId}`);
-      return value;
-    });
+    cosmosCoinConfig.setCoinConfig(cosmosDefaultsFor);
     const acc = createAccount();
     acc.currency.id = "crypto_org_croeseid" as CryptoCurrencyId;
 
@@ -241,10 +240,145 @@ describe("calculateFees", () => {
 
     expect(networkMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        url: expect.stringContaining(
-          (cosmosConfig.config_currency_crypto_org.default as { lcd: string }).lcd,
-        ),
+        url: expect.stringContaining(cosmosDefaults.crypto_org.lcd),
       }),
     );
+  });
+});
+
+describe("prepareTransaction", () => {
+  const stakingAccount = () =>
+    ({
+      id: "accountId",
+      freshAddress: "cosmos1testaddress",
+      currency: { id: "cosmos", units: [{}, { code: "atom" }] },
+      balance: new BigNumber("1000000000"),
+      spendableBalance: new BigNumber("500000000"),
+      seedIdentifier: "seedIdentifier",
+      stakingResources: {
+        ...createEmptyStakingResources(),
+        delegatedBalance: new BigNumber("400000000"),
+        unbondingBalance: new BigNumber("100000000"),
+      },
+    }) as unknown as CosmosAccount;
+
+  const sendTransaction = (patch: Record<string, unknown> = {}) =>
+    ({
+      mode: "send",
+      recipient: "cosmosrecipientaddress",
+      amount: new BigNumber("1000000"),
+      memo: "test memo",
+      useAllAmount: false,
+      ...patch,
+    }) as unknown as Transaction;
+
+  beforeAll(() => {
+    cosmosCoinConfig.setCoinConfig(cosmosDefaultsFor);
+  });
+
+  beforeEach(() => {
+    networkMock.mockReset();
+    networkMock.mockResolvedValue({ data: { gas_info: { gas_used: 42000 } } });
+    calculateFees.reset();
+  });
+
+  it("fills in the estimated fees and gas", async () => {
+    const prepared = await prepareTransaction(stakingAccount(), sendTransaction());
+
+    expect(prepared.fees?.gt(0)).toBe(true);
+    expect(prepared.gas?.gt(0)).toBe(true);
+    expect(prepared.amount).toEqual(new BigNumber("1000000"));
+  });
+
+  it("defaults the memo of a staking transaction to Ledger Live", async () => {
+    const prepared = await prepareTransaction(
+      stakingAccount(),
+      sendTransaction({ mode: "delegate", memo: undefined }),
+    );
+
+    expect(prepared.memo).toBe("Ledger Live");
+  });
+
+  it("keeps the memo the user typed on a staking transaction", async () => {
+    const prepared = await prepareTransaction(
+      stakingAccount(),
+      sendTransaction({ mode: "delegate", memo: "my memo" }),
+    );
+
+    expect(prepared.memo).toBe("my memo");
+  });
+
+  it("does not invent a memo for a send", async () => {
+    const prepared = await prepareTransaction(
+      stakingAccount(),
+      sendTransaction({ memo: undefined }),
+    );
+
+    expect(prepared.memo).toBeUndefined();
+  });
+
+  it("sends the whole balance minus fees, staked and unbonding principal", async () => {
+    const prepared = await prepareTransaction(
+      stakingAccount(),
+      sendTransaction({ useAllAmount: true }),
+    );
+
+    expect(prepared.amount).toEqual(
+      new BigNumber("1000000000").minus(prepared.fees!).minus("500000000"),
+    );
+  });
+
+  it("fills in the gas of a transaction that already carries the estimated fees", async () => {
+    const account = stakingAccount();
+    const prepared = await prepareTransaction(account, sendTransaction());
+    const { gas, ...withoutGas } = prepared;
+
+    const result = await prepareTransaction(account, withoutGas as Transaction);
+
+    expect(result).not.toBe(withoutGas);
+    expect(result.gas).toEqual(gas);
+  });
+
+  it("prices a gonka send at 1 ngonka per gas", async () => {
+    const gonkaAccount = {
+      ...stakingAccount(),
+      freshAddress: "gonka1testaddress",
+      currency: { id: "gonka", units: [{}, { code: "ngonka" }] },
+    } as unknown as CosmosAccount;
+
+    const prepared = await prepareTransaction(
+      gonkaAccount,
+      sendTransaction({ recipient: "gonka1recipientaddress" }),
+    );
+
+    expect(prepared.gas?.gt(42000)).toBe(true);
+    expect(prepared.fees).toEqual(prepared.gas);
+  });
+
+  it("returns the same transaction when nothing needs updating", async () => {
+    const account = stakingAccount();
+    const prepared = await prepareTransaction(account, sendTransaction());
+
+    expect(await prepareTransaction(account, prepared)).toBe(prepared);
+  });
+});
+
+describe("getEstimatedFees when the simulation fails", () => {
+  beforeAll(() => {
+    cosmosCoinConfig.setCoinConfig(cosmosDefaultsFor);
+  });
+
+  it("falls back to the chain's default gas, amplified like a simulated one", async () => {
+    // @ts-expect-error method is mocked
+    network.mockResolvedValue({ data: { gas_info: { gas_used: 0 } } });
+
+    const { gasWanted, gasWantedFees } = await getEstimatedFees(
+      cosmosCoinConfig.getCoinConfig("cosmos"),
+      messageParamsFromTransaction(account, transaction),
+    );
+
+    // gasWanted = ceil(defaultGas(100000) * COSMOS_GAS_AMPLIFIER(1.3))
+    expect(gasWanted).toEqual(new BigNumber(130000));
+    expect(gasWantedFees.gt(0)).toBe(true);
   });
 });

@@ -7,7 +7,7 @@ import {
 import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/constants";
 import { NearValidatorItem } from "@ledgerhq/live-common/families/near/types";
 import { Unit } from "@domain/entity-currency-unit";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";

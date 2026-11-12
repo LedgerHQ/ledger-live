@@ -29,6 +29,8 @@ jest.mock("@shared/ui-queued-bottom-sheet", () => {
 const isSheetRequested = () =>
   jest.mocked(QueuedBottomSheet).mock.lastCall?.[0].isRequestingToBeOpened;
 
+const hasCloseButton = () => !jest.mocked(QueuedBottomSheet).mock.lastCall?.[0].noCloseButton;
+
 describe("PreChecks step", () => {
   it("shows the preparing screen without a sheet while pre-checks run", () => {
     renderView({ type: PreChecksStateType.LOADING });
@@ -40,6 +42,8 @@ describe("PreChecks step", () => {
   it("asks to unlock the device when it is locked", () => {
     renderView({ type: PreChecksStateType.DEVICE_LOCKED });
 
+    expect(hasCloseButton()).toBe(true);
+
     expect(screen.getByTestId("os-update-device-locked")).toBeVisible();
   });
 
@@ -50,7 +54,26 @@ describe("PreChecks step", () => {
     expect(screen.queryByText("Cancel")).toBeNull();
   });
 
-  it("shows the battery percentage and cancels on press", async () => {
+  it("restarts or cancels the update from the connection timeout", async () => {
+    const retry = jest.fn();
+    const cancel = jest.fn();
+    const { user } = renderView({ type: PreChecksStateType.CONNECTION_TIMED_OUT, retry, cancel });
+
+    expect(screen.getByTestId("os-update-connection-timed-out")).toBeVisible();
+    expect(hasCloseButton()).toBe(false);
+
+    await user.press(screen.getByText("Restart OS update"));
+
+    expect(retry).toHaveBeenCalledTimes(1);
+    expect(cancel).not.toHaveBeenCalled();
+
+    await user.press(screen.getByText("Cancel OS update"));
+
+    expect(cancel).toHaveBeenCalledTimes(1);
+    expect(retry).toHaveBeenCalledTimes(1);
+  });
+
+  it("asks to plug the device in, shows its battery level and cancels on press", async () => {
     const cancel = jest.fn();
     const { user } = renderView({
       type: PreChecksStateType.BATTERY_TOO_LOW,
@@ -58,8 +81,11 @@ describe("PreChecks step", () => {
       cancel,
     });
 
-    expect(screen.getByText(/12%/)).toBeVisible();
-    await user.press(screen.getByText("Cancel"));
+    expect(hasCloseButton()).toBe(false);
+
+    expect(screen.getByText("Plug in your Ledger Stax to continue")).toBeVisible();
+    expect(screen.getByText("Battery level: 12%")).toBeVisible();
+    await user.press(screen.getByText("Cancel OS update"));
 
     expect(cancel).toHaveBeenCalledTimes(1);
   });
@@ -72,7 +98,8 @@ describe("PreChecks step", () => {
       cancel,
     });
 
-    await user.press(screen.getByText("Cancel"));
+    expect(hasCloseButton()).toBe(false);
+    await user.press(screen.getByText("Cancel OS update"));
 
     expect(cancel).toHaveBeenCalledTimes(1);
   });

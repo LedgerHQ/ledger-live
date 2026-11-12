@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-starred-account",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "private": true,
   "description": "StarredAccount entity: starred account IDs state, action creators, and selectors",
   "main": "src/index.ts",
@@ -9,16 +9,15 @@
     ".": "./src/index.ts",
     "./package.json": "./package.json"
   },
-  "sideEffects": [
-    "./src/slice.ts"
-  ],
+  "sideEffects": false,
   "scripts": {
     "lint": "oxlint ./src",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W domain/entity/starred-account"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@domain/entity-account": "workspace:^",
@@ -30,7 +29,10 @@
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "typescript": "catalog:"
   }
 }

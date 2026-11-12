@@ -30,9 +30,9 @@ permissions:
 
 jobs:
   enforce-boundaries:
-    name: Enforce Module Boundaries
+    name: Monorepo Checks
     runs-on: ledger-wallet-4cpu-aws-public-cached
-    timeout-minutes: 10
+    timeout-minutes: 15
     env:
       NODE_OPTIONS: "--max-old-space-size=4096"
       CI_OS: ubuntu-22.04
@@ -60,8 +60,9 @@ jobs:
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
-      - name: Install dev dependencies for root workspace
-        run: pnpm i --frozen-lockfile -D -F "ledger-live" --ignore-scripts
+      - name: Install dependencies
+        id: install
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Enforce module boundaries
         run: pnpm exec nx run enforce-boundaries:lint:boundaries
@@ -69,6 +70,10 @@ jobs:
       - name: Test the module-boundary rules
         # run-many is a no-op when the target is absent: older branches (e.g. release) call this workflow from develop.
         run: pnpm exec nx run-many -t test -p enforce-boundaries
+
+      - name: Test the module-boundary inputs against the workspace graph
+        # run-many is a no-op when the target is absent: older branches (e.g. release) call this workflow from develop.
+        run: pnpm exec nx run-many -t test:workspace -p enforce-boundaries
 
       - name: Test the package-structure rules
         run: pnpm exec nx run enforce-package-structure:test
@@ -89,3 +94,32 @@ jobs:
 
       - name: Check i18n keys exist in the Desktop and Mobile catalogs
         run: pnpm exec nx run-many -t lint:i18n-keys -p enforce-i18n-keys
+
+      - name: Test the skills and docs check
+        # Guard until release and hotfix have tools/skills-check/. Remove in LIVE-40621.
+        if: hashFiles('tools/skills-check/check.ts') != ''
+        run: node --test "tools/skills-check/test/*.test.ts"
+
+      - name: Check skills and docs
+        # Guard until release and hotfix have tools/skills-check/. Remove in LIVE-40621.
+        if: hashFiles('tools/skills-check/check.ts') != ''
+        run: pnpm skills:check
+
+      # The knip steps skip older branches (e.g. release), which call this workflow from develop without the monorepo knip configs.
+      - name: Knip (packages without platform configs)
+        if: ${{ !cancelled() && steps.install.outcome == 'success' && hashFiles('support/knip/web.config.mjs') != '' }}
+        run: pnpm exec knip -c support/knip/root.config.mjs
+        env:
+          NODE_OPTIONS: "--max-old-space-size=6144"
+
+      - name: Knip (packages with platform configs, web)
+        if: ${{ !cancelled() && steps.install.outcome == 'success' && hashFiles('support/knip/web.config.mjs') != '' }}
+        run: pnpm exec knip -c support/knip/web.config.mjs --tsConfig tsconfig.web.json
+        env:
+          NODE_OPTIONS: "--max-old-space-size=6144"
+
+      - name: Knip (packages with platform configs, native)
+        if: ${{ !cancelled() && steps.install.outcome == 'success' && hashFiles('support/knip/web.config.mjs') != '' }}
+        run: pnpm exec knip -c support/knip/native.config.mjs --tsConfig tsconfig.native.json
+        env:
+          NODE_OPTIONS: "--max-old-space-size=6144"

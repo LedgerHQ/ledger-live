@@ -33,6 +33,8 @@ jest.mock("@shared/ui-queued-bottom-sheet", () => {
 const isSheetRequested = () =>
   jest.mocked(QueuedBottomSheet).mock.lastCall?.[0].isRequestingToBeOpened;
 
+const hasCloseButton = () => !jest.mocked(QueuedBottomSheet).mock.lastCall?.[0].noCloseButton;
+
 describe("CreateBackup step", () => {
   it("shows the preparing screen without a sheet while loading", () => {
     renderView({ type: CreateBackupStateType.LOADING });
@@ -46,9 +48,15 @@ describe("CreateBackup step", () => {
     const createNewBackup = jest.fn();
     const { user } = renderView({
       type: CreateBackupStateType.AWAITING_BACKUP_SELECTION,
+      backupCreatedAt: new Date(2026, 8, 12, 0, 30),
       useExistingBackup,
       createNewBackup,
     });
+
+    expect(hasCloseButton()).toBe(false);
+    expect(screen.getByTestId("os-update-backup-selection-last-save")).toHaveTextContent(
+      "Last saveSeptember 12, 12:30AM",
+    );
 
     await user.press(screen.getByTestId("os-update-use-existing-backup"));
     await user.press(screen.getByTestId("os-update-create-new-backup"));
@@ -72,8 +80,10 @@ describe("CreateBackup step", () => {
       cancel,
     });
 
-    await user.press(screen.getByText("Retry"));
-    await user.press(screen.getByText("Cancel"));
+    expect(hasCloseButton()).toBe(false);
+
+    await user.press(screen.getByText("Retry secure connection"));
+    await user.press(screen.getByText("Cancel secure connection"));
 
     expect(retry).toHaveBeenCalledTimes(1);
     expect(cancel).toHaveBeenCalledTimes(1);
@@ -88,6 +98,29 @@ describe("CreateBackup step", () => {
     expect(screen.getByTestId(testID)).toBeVisible();
   });
 
+  it("restarts or cancels the update from the connection timeout", async () => {
+    const retry = jest.fn();
+    const cancel = jest.fn();
+    const { user } = renderView({
+      type: CreateBackupStateType.CONNECTION_TIMED_OUT,
+      retry,
+      cancel,
+    });
+
+    expect(screen.getByTestId("os-update-connection-timed-out")).toBeVisible();
+    expect(hasCloseButton()).toBe(false);
+
+    await user.press(screen.getByText("Restart OS update"));
+
+    expect(retry).toHaveBeenCalledTimes(1);
+    expect(cancel).not.toHaveBeenCalled();
+
+    await user.press(screen.getByText("Cancel OS update"));
+
+    expect(cancel).toHaveBeenCalledTimes(1);
+    expect(retry).toHaveBeenCalledTimes(1);
+  });
+
   it("cancels from the unexpected error state", async () => {
     const cancel = jest.fn();
     const { user } = renderView({
@@ -96,7 +129,8 @@ describe("CreateBackup step", () => {
       cancel,
     });
 
-    await user.press(screen.getByText("Cancel"));
+    expect(hasCloseButton()).toBe(false);
+    await user.press(screen.getByText("Cancel OS update"));
 
     expect(cancel).toHaveBeenCalledTimes(1);
   });
@@ -113,6 +147,8 @@ describe("CreateBackup step", () => {
 
     it("requests its sheet while the close confirmation is closed", () => {
       renderView({ type: CreateBackupStateType.DEVICE_LOCKED });
+
+      expect(hasCloseButton()).toBe(true);
 
       expect(isSheetRequested()).toBe(true);
     });

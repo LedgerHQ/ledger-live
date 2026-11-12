@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-signer-polkadot",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "private": true,
   "sideEffects": false,
   "description": "Ledger Hardware Wallet Polkadot Application API",
@@ -47,12 +47,10 @@
     "test": "jest",
     "coverage": "jest --coverage",
     "typecheck": "tsc --noEmit",
-    "knip-check": "pnpm knip --directory ../.. -W libs/live-signer-polkadot",
     "format": "oxfmt src tests",
     "format:check": "oxfmt --check src tests"
   },
   "devDependencies": {
-    "@types/react": "catalog:",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/types-live": "workspace:^",
@@ -62,8 +60,10 @@
     "@types/node": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
-    "rimraf": "^4.4.1",
-    "ts-node": "^10.4.0"
+    "rimraf": "4.4.1",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
+    "oxlint": "catalog:"
   },
   "exports": {
     ".": {

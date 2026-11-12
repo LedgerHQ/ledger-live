@@ -1,10 +1,11 @@
 import React from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Route, Routes } from "react-router";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Account, Operation } from "@ledgerhq/types-live";
-import { render, screen, withFlagOverrides } from "tests/testSetup";
+import { act, render, screen, withFlagOverrides } from "tests/testSetup";
+import { updateAccount } from "~/renderer/actions/accounts";
 import { getAccountUrl } from "~/renderer/utils";
 import AccountDetailRoute from "../AccountDetailRoute";
 
@@ -82,6 +83,25 @@ describe("AccountDetail empty state", () => {
   it("leaves the empty state once a first transaction is pending", async () => {
     const [pending]: Operation[] = usedAccount.operations;
     renderAccount({ ...neverUsedAccount, pendingOperations: [pending] });
+
+    expect(await screen.findByTestId(ASSETS)).toBeVisible();
+    expect(screen.queryByTestId(EMPTY_STATE)).toBeNull();
+  });
+
+  it("leaves the empty state when a receive updates the balance before any operation", async () => {
+    const { store } = renderAccount(neverUsedAccount);
+
+    expect(await screen.findByTestId(EMPTY_STATE)).toBeVisible();
+
+    await act(() => {
+      store.dispatch(
+        updateAccount({
+          id: neverUsedAccount.id,
+          balance: new BigNumber(1),
+          spendableBalance: new BigNumber(1),
+        }),
+      );
+    });
 
     expect(await screen.findByTestId(ASSETS)).toBeVisible();
     expect(screen.queryByTestId(EMPTY_STATE)).toBeNull();

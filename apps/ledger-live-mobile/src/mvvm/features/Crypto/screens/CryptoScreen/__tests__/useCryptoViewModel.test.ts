@@ -147,7 +147,7 @@ describe("useCryptoViewModel", () => {
   });
 
   describe("onItemPress", () => {
-    it("should navigate to Asset screen", () => {
+    it("routes to Asset Detail", () => {
       const btcItem = makeCategorizedItem("Bitcoin", "bitcoin");
 
       mockCategorizedAssets.mockReturnValue({
@@ -163,9 +163,9 @@ describe("useCryptoViewModel", () => {
         result.current.onItemPress(result.current.assetsToDisplay[0]);
       });
 
-      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Accounts, {
-        screen: ScreenName.Asset,
-        params: { currency: btcItem.currency },
+      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.AssetDetail, {
+        screen: ScreenName.AssetDetail,
+        params: { currencyId: "bitcoin", source: "crypto_crypto_list" },
       });
     });
 

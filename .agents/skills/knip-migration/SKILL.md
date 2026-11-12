@@ -2,16 +2,17 @@
 name: knip-migration
 description: |
   Dead-code / unused-dependency detection uses `knip`, which requires each package to expose an
-  explicit, minimal `package.json#exports` (no `./*` wildcard). Read this when adding a new package or migrating an existing one to knip.
+  explicit, minimal `package.json#exports` (no `./*` wildcard). Read when adding a new package or migrating an existing one to knip.
 ---
 
 # Dead-code detection: explicit exports + knip
 
 Dead-code / unused-dependency detection runs on **`knip`**. The legacy `unimported` tool is gone
-and the dependency checks deny it; legacy `libs/*` packages that never migrated have no
-dead-code tooling. The root [`knip.json`](../../../knip.json) holds only
-the shared rules — a package needs no `workspaces` entry there, since knip derives its entry files
-from `package.json` (`main`, `bin`, `exports`) and its own defaults
+and the dependency checks deny it. CI (the Monorepo Checks job, `pnpm knip:all` locally)
+checks **every** workspace except the legacy packages listed in
+[`support/knip/knip.json`](../../../support/knip/knip.json)`#ignoreWorkspaces`. That list only shrinks: a migrated package
+leaves it, and a new package never joins it. A package needs no `workspaces` entry either, since
+knip derives its entry files from `package.json` (`main`, `bin`, `exports`) and its own defaults
 ([entry files](https://knip.dev/explanations/entry-files)).
 
 ## Why this isn't just "swap the tool"
@@ -51,10 +52,10 @@ A new package has no consumers, so it should start in the target state:
      "./package.json": "./package.json"
    }
    ```
-2. **Use knip** — add a script that runs knip scoped to the workspace:
-   `pnpm knip --directory <relative-hop-to-root> -W <workspace-path>`
-   (`--directory` is the hop back to the repo root — `../..` for `libs/<x>`,
-   `../../..` for `libs/coin-modules/<x>`; `-W` is the workspace path from root).
+2. **Nothing to register** — CI checks it from the first PR. To run knip on the package alone,
+   use `pnpm knip --directory <relative-hop-to-root> -W <workspace-path>` (`../..` for
+   `libs/<x>`, `../../..` for `libs/coin-modules/<x>`). Do not add a package script for it:
+   `pnpm knip:all` at the root runs what CI runs.
 
 ## Dual-platform packages run knip once per platform
 
@@ -65,7 +66,11 @@ that may do so, but not under `devtools/`, where `suffix-imports/no-platform-suf
 suffixed specifier a lint error.
 
 So a package with platform twins gets two passes, through the shared helper
-[`knip.config.base.mjs`](../../../knip.config.base.mjs):
+`@support/knip`, re-exported at the root as `knip.config.base.mjs` while package configs import it
+by path. [`support/knip`](../../../support/knip)'s `web.config.mjs` and `native.config.mjs` merge
+every per-package config into one run per platform, and its `root.config.mjs` skips any package
+that has one. A native-only package adds only the
+native config.
 
 ```js
 // <pkg>/knip.web.config.mjs — and the `native` mirror
@@ -78,10 +83,8 @@ export default createDualPlatformKnipConfig({
 });
 ```
 
-```jsonc
-// <pkg>/package.json — the hop in `--directory` is the depth back to the repo root
-"unimported": "pnpm knip --directory ../.. -c devtools/shell/knip.web.config.mjs -W devtools/shell --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c devtools/shell/knip.native.config.mjs -W devtools/shell --tsConfig tsconfig.native.json"
-```
+To run one platform for the package alone:
+`pnpm knip --directory ../.. -c devtools/shell/knip.web.config.mjs -W devtools/shell --tsConfig tsconfig.web.json`.
 
 Name the file `knip.<platform>.config.mjs`. The root `ignore` list matches `**/*.config.*`, so that
 name keeps knip from reporting its own config as unused. A `.ts` config does not match and needs a
@@ -135,7 +138,7 @@ For a **new** package, flag this and point here:
 - a **`./*` wildcard** in `package.json#exports` — new packages must enumerate explicit exports
   so knip can detect zombie files.
 
-## The `workspaces` block in `knip.json` is a temporary workaround
+## The `workspaces` block in `support/knip/knip.json` is a temporary workaround
 
 Everything must work without touching `knip.json`. The `workspaces` entries that remain are
 band-aids for packages that don't declare their surface properly yet — deep imports behind a `./*`

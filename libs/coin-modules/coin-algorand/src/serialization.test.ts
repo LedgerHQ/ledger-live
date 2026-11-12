@@ -1,5 +1,5 @@
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import {
   assignToAccountRaw,
   assignFromAccountRaw,

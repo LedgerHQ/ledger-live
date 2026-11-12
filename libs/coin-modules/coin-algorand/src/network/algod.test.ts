@@ -1,7 +1,13 @@
 import network from "@ledgerhq/live-network";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { AlgorandCoinConfig } from "../config";
-import { getAccount, getTransactionParams, broadcastTransaction } from "./algod";
+import {
+  getAccount,
+  getTransactionParams,
+  broadcastTransaction,
+  getBlock,
+  getBlockHash,
+} from "./algod";
 
 jest.mock("@ledgerhq/live-network");
 
@@ -192,6 +198,33 @@ describe("algod", () => {
       const payload = Buffer.from("bad_tx");
 
       await expect(broadcastTransaction(config, payload)).rejects.toThrow("Broadcast failed");
+    });
+  });
+
+  describe("getBlock", () => {
+    it("should fetch the block header only", async () => {
+      const block = { block: { rnd: 100, ts: 1700000000, gh: "GENESIS", prev: "blk-PARENT" } };
+      mockNetwork.mockResolvedValue({ data: block } as never);
+
+      const result = await getBlock(config, 100);
+
+      expect(result).toEqual(block);
+      expect(mockNetwork).toHaveBeenCalledWith({
+        url: "https://algorand-node.example.com/blocks/100?header-only=true",
+      });
+    });
+  });
+
+  describe("getBlockHash", () => {
+    it("should fetch the block hash", async () => {
+      mockNetwork.mockResolvedValue({ data: { blockHash: "BLOCKHASH" } } as never);
+
+      const result = await getBlockHash(config, 100);
+
+      expect(result).toBe("BLOCKHASH");
+      expect(mockNetwork).toHaveBeenCalledWith({
+        url: "https://algorand-node.example.com/blocks/100/hash",
+      });
     });
   });
 });

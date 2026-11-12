@@ -1,7 +1,7 @@
 /* eslint-disable consistent-return */
 import startCase from "lodash/startCase";
 import React, { useMemo } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Currency } from "@domain/entity-currency";
 import { OperationType } from "@ledgerhq/types-live";
 import { getDefaultExplorerView, getAddressExplorer } from "@domain/entity-currency-crypto";

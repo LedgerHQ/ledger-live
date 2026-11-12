@@ -1,0 +1,7 @@
+import { <%= functionName %> } from "./<%= moduleName %>";
+
+describe("<%= functionName %>", () => {
+  it("returns the package name", () => {
+    expect(<%= functionName %>()).toBe("<%= packageName %>");
+  });
+});

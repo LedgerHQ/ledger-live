@@ -19,7 +19,7 @@ Runs the complete test suite for a given coin/bridge family in one shot. For a f
 | Coin module                 | `@ledgerhq/coin-evm` (jest)                                                                |
 | Signer                      | `@ledgerhq/live-signer-evm` (jest)                                                         |
 | Tools                       | `@ledgerhq/evm-tools` (jest)                                                               |
-| Integration tester          | `@ledgerhq/coin-tester-evm` (jest via `start`, needs Docker/Anvil)                         |
+| Integration tester          | `@ledgerhq/coin-tester-evm` (jest via `start`, needs Docker + coin-sandbox)                |
 | Bridge logic in live-common | `src/bridge/generic-coin-framework/families/evm/`                                            |
 | Family logic in live-common | `src/families/evm/bridge.integration.test.ts`, `signer.test.ts`, …                         |
 | Family UI in live-common    | `src/families/evm/react.test.ts`, `platformAdapter.test.ts`, `walletApiAdapter.test.ts`, … |
@@ -82,13 +82,11 @@ All test output is streamed live to the terminal. At the end a summary is printe
 
 ### coin-tester-* packages
 
-`coin-tester-*` packages run deterministic integration scenarios that require Docker infrastructure (Anvil for EVM, Agave for Solana, Atlas for Bitcoin, Chopsticks for Polkadot…). Make sure the relevant `docker-compose` is running before calling `test:family`, otherwise the tests will hang waiting for the network.
+`coin-tester-*` packages run deterministic integration scenarios that require Docker infrastructure, mostly served by coin-sandbox (EVM, Solana, Bitcoin, Polkadot, Tron, Cosmos…). Make sure the relevant infrastructure (coin-sandbox server, Docker) is running before calling `test:family`, otherwise the tests will hang waiting for the network.
+
+For EVM, start coin-sandbox's server first (see the [Development section](../libs/coin-tester-modules/coin-tester-evm/README.md#development) of the EVM tester), then run from the repository root:
 
 ```bash
-# Example for EVM
-cd libs/coin-tester-modules/coin-tester-evm
-docker-compose up -d
-cd ../../..
 pnpm test:family evm
 ```
 

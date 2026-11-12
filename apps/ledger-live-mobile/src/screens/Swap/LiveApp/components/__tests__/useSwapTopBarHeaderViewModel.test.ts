@@ -15,7 +15,6 @@ jest.mock("LLM/components/TopBar/useTopBarViewModel", () => ({
 }));
 
 const mockNavigate = jest.fn();
-const mockOnMyLedgerPress = jest.fn();
 const mockOnMyWalletPress = jest.fn();
 const noop = jest.fn();
 
@@ -28,47 +27,9 @@ describe("useSwapTopBarHeaderViewModel", () => {
     jest.clearAllMocks();
     mockedUseNavigation.mockImplementation(() => ({ navigate: mockNavigate }));
     mockedUseTopBarViewModel.mockImplementation(() => ({
-      onMyLedgerPress: mockOnMyLedgerPress,
       onMyWalletPress: mockOnMyWalletPress,
-      shouldDisplayAssetDiscoverability: false,
       onSearchPress: noop,
-      shouldDisplayMyWallet: false,
-      shouldDisplayOperationsList: false,
       onDiscoverPress: noop,
-      onNotificationsPress: noop,
-      onSettingsPress: noop,
-      onTransactionHistoryPress: noop,
-      hasUnreadNotifications: false,
-      hasUnreadOperations: false,
-      hasAccounts: false,
-      isSyncError: false,
-      isSyncPending: false,
-      listOfErrorAccountNames: "",
-      syncAccessibilityLabel: "Synchronize",
-      isSyncDrawerOpen: false,
-      openSyncDrawer: noop,
-      closeSyncDrawer: noop,
-      onTryRefresh: noop,
-    }));
-  });
-
-  it("should expose onMyLedgerPress from top bar view model", () => {
-    const { result } = renderHook(() => useSwapTopBarHeaderViewModel());
-
-    expect(result.current.onMyLedgerPress).toBe(mockOnMyLedgerPress);
-  });
-
-  it("should forward My Wallet fields from top bar view model", () => {
-    mockedUseTopBarViewModel.mockImplementation(() => ({
-      onMyLedgerPress: mockOnMyLedgerPress,
-      onMyWalletPress: mockOnMyWalletPress,
-      shouldDisplayAssetDiscoverability: false,
-      onSearchPress: noop,
-      shouldDisplayMyWallet: true,
-      shouldDisplayOperationsList: false,
-      onDiscoverPress: noop,
-      onNotificationsPress: noop,
-      onSettingsPress: noop,
       onTransactionHistoryPress: noop,
       hasUnreadNotifications: true,
       hasUnreadOperations: false,
@@ -82,11 +43,12 @@ describe("useSwapTopBarHeaderViewModel", () => {
       closeSyncDrawer: noop,
       onTryRefresh: noop,
     }));
+  });
 
+  it("should forward My Wallet fields from top bar view model", () => {
     const { result } = renderHook(() => useSwapTopBarHeaderViewModel());
 
     expect(result.current.onMyWalletPress).toBe(mockOnMyWalletPress);
-    expect(result.current.shouldDisplayMyWallet).toBe(true);
     expect(result.current.hasUnreadNotifications).toBe(true);
   });
 

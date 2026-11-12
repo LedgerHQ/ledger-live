@@ -15,7 +15,7 @@ export enum ApplyUpdatesStateType {
   AWAITING_CONFIRM_LOAD_IMAGE = "AWAITING_CONFIRM_LOAD_IMAGE",
   AWAITING_CONFIRM_COMMIT_IMAGE = "AWAITING_CONFIRM_COMMIT_IMAGE",
   DEVICE_DISCONNECTED = "DEVICE_DISCONNECTED",
-  OUT_OF_MEMORY = "OUT_OF_MEMORY",
+  CONNECTION_TIMED_OUT = "CONNECTION_TIMED_OUT",
   UPDATES_APPLIED = "UPDATES_APPLIED",
   UNEXPECTED_ERROR = "UNEXPECTED_ERROR",
 }
@@ -54,6 +54,7 @@ export type ApplyUpdatesState =
   | {
       type: ApplyUpdatesStateType.ALLOW_INSTALL_FIRMWARE_REFUSED;
       error: unknown;
+      retry: () => void;
       cancel: () => void;
     }
   | {
@@ -72,12 +73,14 @@ export type ApplyUpdatesState =
       type: ApplyUpdatesStateType.DEVICE_DISCONNECTED;
     }
   | {
-      type: ApplyUpdatesStateType.OUT_OF_MEMORY;
-      error: unknown;
+      type: ApplyUpdatesStateType.CONNECTION_TIMED_OUT;
+      retry: () => void;
       cancel: () => void;
     }
   | {
       type: ApplyUpdatesStateType.UPDATES_APPLIED;
+      /** The version the device runs once every update is installed. */
+      osVersion: string;
       restoreResult: RestoreBackupDAOutput | undefined;
     }
   | {

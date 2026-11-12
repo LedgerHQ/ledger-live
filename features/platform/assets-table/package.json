@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-assets-table",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Desktop assets table (name, price, balance, value, trend) shared by Portfolio, Crypto addresses and Account Detail",
   "main": "src/index.ts",
@@ -18,8 +18,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/assets-table"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@domain/entity-currency": "workspace:*",
@@ -49,8 +48,11 @@
     "@testing-library/react": "catalog:",
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "typescript": "catalog:"

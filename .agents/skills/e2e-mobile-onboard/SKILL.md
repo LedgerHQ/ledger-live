@@ -258,8 +258,7 @@ pnpm exec nx run ledger-live-mobile-e2e-tests:build-e2e-deps
 **iOS** (if selected in Phase 0) -- uses **debug** build:
 
 ```bash
-pnpm mobile pod
-pnpm mobile e2e:build -c ios.sim.debug
+pnpm e2e:mobile build:ios:debug
 ```
 
 **Android** (if selected in Phase 0) -- uses **release** build:
@@ -267,13 +266,13 @@ pnpm mobile e2e:build -c ios.sim.debug
 On Apple Silicon (`arm64`), explicitly clear `CI` to ensure the correct ABI:
 
 ```bash
-CI= pnpm mobile e2e:build -c android.emu.release
+CI= pnpm e2e:mobile build:android
 ```
 
 On Intel (`x86_64`), set `CI=1`:
 
 ```bash
-CI=1 pnpm mobile e2e:build -c android.emu.release
+CI=1 pnpm e2e:mobile build:android
 ```
 
 > **Why release for Android?** Android debug builds are broken locally due to a known Detox/Espresso reflection bug (`NoSuchFieldException: eventInjector`). This is a project-level debug dependency issue, not a machine setup problem. Only release builds work. Release bundles JS into the APK, so no Metro bundler is needed for Android.
@@ -364,7 +363,7 @@ Print a final checklist summarizing everything. Only include rows for checks tha
 | Java                   | ✅ / ❌ / skipped |
 | Android SDK            | ✅ / ❌ / skipped |
 | Docker                 | ✅ / ❌           |
-| Mise / Node / pnpm    | ✅ / ❌           |
+| Mise / Node / pnpm     | ✅ / ❌           |
 | Environment variables  | ✅ / ❌           |
 | iOS Simulator          | ✅ / ❌ / skipped |
 | Android Emulator       | ✅ / ❌ / skipped |

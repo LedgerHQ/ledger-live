@@ -34,7 +34,9 @@ runs:
         # (e2e/tooling/filter/resolve.mjs). Used only for the playwright (--grep)
         # pattern: detox now selects specs by literal substring (selectSpecs.mjs),
         # so escaping a spec basename there would stop it from matching its own path.
-        JQ_ESC='def esc: gsub("(?<c>[.^$*+?()\\[\\]{}|,\\\\/-])"; "\\" + .c);'
+        # Spaces become `\s`: with a single failed test the pattern has no '|', so both the
+        # resolver and run-e2e-playwright-tests would split a literal space into OR alternatives.
+        JQ_ESC='def esc: gsub("(?<c>[.^$*+?()\\[\\]{}|,\\\\/-])"; "\\" + .c) | gsub(" "; "\\s");'
 
         case "$RUNNER" in
           detox)
@@ -104,7 +106,7 @@ runs:
 
         if [ "$RUNNER" = "playwright" ]; then
           # Playwright --grep is a regex, so escape metachars and anchor to the leaf title.
-          MAP_TO_PATTERN='map(esc + "(?! [^@])")'
+          MAP_TO_PATTERN='map(esc + "(?!\\s[^@])")'
         else
           # Detox matches spec basenames literally (selectSpecs.mjs uses String.includes),
           # so emit them raw — escaping would insert backslashes the literal match can't find.

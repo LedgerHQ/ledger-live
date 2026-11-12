@@ -1,5 +1,5 @@
 import { TFunction } from "i18next";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";

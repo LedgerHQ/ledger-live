@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { useEffect, useReducer, useCallback, useRef } from "react";
 import { from, switchMap } from "rxjs";
 import { log } from "@ledgerhq/logs";

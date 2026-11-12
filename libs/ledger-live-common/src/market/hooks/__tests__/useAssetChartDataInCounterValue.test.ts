@@ -5,7 +5,7 @@ import { renderHook } from "@testing-library/react";
 import { useAssetChartDataInCounterValue } from "../useAssetChartDataInCounterValue";
 import { useAssetChartData } from "../useAssetChartData";
 import { useUsdToFiatRate } from "@features/platform-market-countervalues";
-import { useSupportedCounterCurrencies } from "../../../cg-client/hooks/useCoingeckoDataProvider";
+import { useGetSupportedChartCounterCurrenciesQuery } from "../../state-manager/api";
 import type { MarketCoinDataChart } from "../../utils/types";
 
 jest.mock("../useAssetChartData", () => ({ useAssetChartData: jest.fn() }));
@@ -13,17 +13,18 @@ jest.mock("@features/platform-market-countervalues", () => ({
   ...jest.requireActual("@features/platform-market-countervalues"),
   useUsdToFiatRate: jest.fn(),
 }));
-jest.mock("../../../cg-client/hooks/useCoingeckoDataProvider", () => ({
-  useSupportedCounterCurrencies: jest.fn(),
+jest.mock("../../state-manager/api", () => ({
+  useGetSupportedChartCounterCurrenciesQuery: jest.fn(),
 }));
 
 const mockUseAssetChartData = jest.mocked(useAssetChartData);
 const mockUseUsdToFiatRate = jest.mocked(useUsdToFiatRate);
-const mockUseSupportedCounterCurrencies = jest.mocked(useSupportedCounterCurrencies);
+const mockUseGetSupportedChartCounterCurrenciesQuery = jest.mocked(
+  useGetSupportedChartCounterCurrenciesQuery,
+);
 
-// CoinGecko's supported_vs_currencies: includes crypto (btc/eth) and common fiats
-// (usd/eur/vnd) but NOT exotic fiats like cop.
-const SUPPORTED = ["usd", "eur", "vnd", "btc", "eth", "sats"];
+// Chart allowlist: fiat tickers and coin ids. Crypto tickers such as btc are absent.
+const SUPPORTED = ["usd", "eur", "vnd", "bitcoin", "ethereum", "solana"];
 
 const CHART: MarketCoinDataChart = {
   "1d": [
@@ -43,9 +44,10 @@ const mockChart = (over: Partial<ReturnType<typeof useAssetChartData>> = {}) =>
 // Use rest args (not a default param) so callers can model the still-loading
 // state with an explicit `mockSupported(undefined)` — a default would override it.
 const mockSupported = (...args: [] | [string[] | undefined]) =>
-  mockUseSupportedCounterCurrencies.mockReturnValue({
+  mockUseGetSupportedChartCounterCurrenciesQuery.mockReturnValue({
     data: args.length === 0 ? SUPPORTED : args[0],
-  } as unknown as ReturnType<typeof useSupportedCounterCurrencies>);
+    isError: false,
+  } as unknown as ReturnType<typeof useGetSupportedChartCounterCurrenciesQuery>);
 
 describe("useAssetChartDataInCounterValue", () => {
   beforeEach(() => {
@@ -93,9 +95,6 @@ describe("useAssetChartDataInCounterValue", () => {
     });
   });
 
-  // Two reasons the chart endpoint can't serve a countervalue natively:
-  //  - the fiat is outside CoinGecko's supported_vs_currencies (e.g. COP), or
-  //  - it is a crypto (BTC/ETH) which CoinGecko lists but the chart endpoint 422s.
   describe("countervalue requiring a USD fallback", () => {
     it("rescales by the USD->fiat rate for an unsupported fiat (COP)", () => {
       mockUseUsdToFiatRate.mockReturnValue({ status: "ready", rate: 0.5 });
@@ -166,9 +165,8 @@ describe("useAssetChartDataInCounterValue", () => {
       expect(mockUseUsdToFiatRate).toHaveBeenCalledWith("eth", { skip: false });
     });
 
-    it("treats crypto as a fallback even before the supported list has loaded", () => {
+    it("requests USD immediately for a crypto counter value without waiting for the allowlist", () => {
       mockSupported(undefined);
-      mockUseUsdToFiatRate.mockReturnValue({ status: "ready", rate: 0.5 });
 
       renderHook(() =>
         useAssetChartDataInCounterValue({

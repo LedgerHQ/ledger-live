@@ -122,7 +122,7 @@ export function describeOptimisticOperation(
 async function buildTokenAccountShapes(currency: CryptoCurrency, address: string) {
   try {
     const config = getCurrencyConfiguration<SolanaCoinConfig>(currency.id);
-    const api = getChainAPI(chainConfigFrom(config, currency.id));
+    const api = getChainAPI(chainConfigFrom(config));
     return await getTokenAccountShapes(api, address);
   } catch (error) {
     // Recoverable: the sync goes on without the frozen state and Token-2022 extensions.
@@ -213,7 +213,6 @@ export function getDeviceSignOptions(
 
   const chainConfig = chainConfigFrom(
     getCurrencyConfiguration<SolanaCoinConfig>(account.currency.id),
-    account.currency.id,
   );
   const endpoint = chainConfig.endpoint;
 

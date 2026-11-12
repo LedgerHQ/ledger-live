@@ -40,13 +40,7 @@ import type {
   TransactionModel,
   TransferFeeCalculated,
 } from "../types";
-import {
-  DUMMY_SIGNATURE,
-  defaultLedgerValidatorOf,
-  feesOf,
-  ZERO_FILLED_DUMMY_SIGNATURE,
-  assertUnreachable,
-} from "../utils";
+import { defaultLedgerValidatorOf, feesOf, refreshesBlockhash, assertUnreachable } from "../utils";
 
 const BASE_TRANSACTION: Transaction = {
   family: "solana",
@@ -79,11 +73,7 @@ export async function estimateFees(
 
     const { message } = transaction;
     // The framework reuses this value as `customFees`, so it must price what crafting will sign.
-    const unsigned = transaction.signatures.every(sig => {
-      const buf = Buffer.from(sig);
-      return buf.equals(DUMMY_SIGNATURE) || buf.equals(ZERO_FILLED_DUMMY_SIGNATURE);
-    });
-    if (unsigned) {
+    if (refreshesBlockhash(transaction)) {
       message.recentBlockhash = (await api.getLatestBlockhash()).blockhash;
     }
 

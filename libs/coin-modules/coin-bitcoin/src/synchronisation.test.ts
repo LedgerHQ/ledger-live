@@ -3,7 +3,7 @@ jest.mock("./explorer", () => ({
   bindExplorer: jest.fn((walletAccount: unknown) => walletAccount),
 }));
 jest.mock("@ledgerhq/wallet-btc/index", () => {
-  const { BigNumber } = require("bignumber.js");
+  const BigNumber = require("bignumber.js").default;
   const mock = {
     generateAccount: jest.fn(),
     syncAccount: jest.fn(),
@@ -668,12 +668,21 @@ describe("postSync", () => {
     }) as unknown as BitcoinAccount;
 
   it("drops an optimistic operation once its transaction is confirmed", () => {
-    const confirmed = makeOperation("932c99c7837d", "OUT");
+    const confirmed = { ...makeOperation("932c99c7837d", "OUT"), blockHeight: 3_425_862 };
     const pending = makeOperation("932c99c7837d", "OUT");
 
     const result = postSync(makeAccount([], [pending]), makeAccount([confirmed], [pending]));
 
     expect(result.pendingOperations).toEqual([]);
+  });
+
+  it("keeps an optimistic operation the explorer reports from the mempool", () => {
+    const inMempool = makeOperation("932c99c7837d", "OUT");
+    const pending = makeOperation("932c99c7837d", "OUT");
+
+    const result = postSync(makeAccount([], [pending]), makeAccount([inMempool], [pending]));
+
+    expect(result.pendingOperations).toEqual([pending]);
   });
 
   it("keeps an optimistic operation while its transaction is still unconfirmed", () => {

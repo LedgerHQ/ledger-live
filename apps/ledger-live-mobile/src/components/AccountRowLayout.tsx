@@ -5,7 +5,7 @@ import { Unit } from "@domain/entity-currency-unit";
 import { ValueChange } from "@ledgerhq/types-live";
 import { Flex, Text, Tag, IconsLegacy } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
 

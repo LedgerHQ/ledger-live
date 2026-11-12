@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-portfolio-services-entry-points",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Portfolio services entry points (Perps, Borrow) shared across Ledger Wallet desktop and mobile",
   "main": "src/index.ts",
@@ -23,8 +23,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -c features/flow/portfolio-services-entry-points/knip.web.config.mjs -W features/flow/portfolio-services-entry-points --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/portfolio-services-entry-points/knip.native.config.mjs -W features/flow/portfolio-services-entry-points --tsConfig tsconfig.native.json"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@features/platform-feature-flags": "workspace:*",
@@ -40,6 +39,7 @@
     "@ledgerhq/test-quarantine": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "@support/jest": "workspace:*",
+    "@support/lint": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",
@@ -50,6 +50,7 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",

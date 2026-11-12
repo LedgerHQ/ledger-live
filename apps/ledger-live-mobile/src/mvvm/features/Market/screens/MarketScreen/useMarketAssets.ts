@@ -1,9 +1,8 @@
 import { useCallback, useMemo } from "react";
 import { useMarketData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
+import { useMarketCounterValueRate } from "@ledgerhq/live-common/market/hooks/useMarketCounterValueRate";
 import { resolveMarketListRefreshRate } from "@ledgerhq/live-common/market/utils/timers";
 import { useFeature } from "@features/platform-feature-flags";
-import { useUsdToFiatRate } from "@features/platform-market-countervalues";
-import { useResolveMarketCounterCurrency } from "@ledgerhq/live-common/market/hooks/useResolveMarketCounterCurrency";
 import { useLocale, useTranslation } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
 import { counterValueCurrencySelector } from "~/reducers/settings";
@@ -58,16 +57,6 @@ export function useMarketAssets({
   const { t } = useTranslation();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const settingsCounterValue = counterValueCurrency.ticker.toLowerCase();
-  const {
-    requestCounterCurrency,
-    displayCounterCurrency = settingsCounterValue,
-    needsUsdFallback,
-    isResolutionLoading,
-  } = useResolveMarketCounterCurrency({
-    counterCurrency: settingsCounterValue,
-    fallbackForCryptoCountervalues: true,
-    isCryptoCountervalue: counterValueCurrency.type === "CryptoCurrency",
-  });
   const counterValueUnit = counterValueCurrency.units[0];
   const normalizedSearch = search.trim();
   const {
@@ -78,17 +67,24 @@ export function useMarketAssets({
     hasFavoriteIds,
     shouldFetchAssets,
   } = useMarketAssetCategoryState({ category, normalizedSearch, starredMarketCoins });
+  const {
+    requestCounterCurrency,
+    rate,
+    isResolutionLoading,
+    isLoading: isCounterValueLoading,
+    isError: isCounterValueError,
+  } = useMarketCounterValueRate({
+    counterCurrency: settingsCounterValue,
+    fallbackForCryptoCountervalues: true,
+    isCryptoCountervalue: counterValueCurrency.type === "CryptoCurrency",
+    skip: !shouldFetchAssets,
+  });
   const requestRange = getMarketListRequestRange(timeframe);
   const displayRange = getMarketListDisplayRange(timeframe);
   const order = getMarketListOrder(sorting);
-  const shouldFetchMarketData = shouldFetchAssets && !isResolutionLoading;
-  const { rate: usdToCounterValueRate, status: rateStatus } = useUsdToFiatRate(
-    needsUsdFallback ? displayCounterCurrency : "usd",
-    { skip: !shouldFetchAssets || isResolutionLoading },
-  );
-  const rate = needsUsdFallback ? usdToCounterValueRate : 1;
   const refreshMarketData = useFeature("llmRefreshMarketData");
   const refreshRate = resolveMarketListRefreshRate(refreshMarketData?.params?.refreshTime);
+  const shouldFetchMarketData = shouldFetchAssets && !isResolutionLoading;
 
   const result = useMarketData(
     {
@@ -123,11 +119,9 @@ export function useMarketAssets({
 
   const hasData = assets.length > 0;
   const canLoadMore = shouldFetchAssets && result.hasNextPage;
-  const isRateLoading = needsUsdFallback && rateStatus === "loading";
-  const isRateError = needsUsdFallback && rateStatus === "error";
   const loading =
     shouldFetchAssets &&
-    (isResolutionLoading || result.isLoading || result.isPending || isRateLoading) &&
+    (isCounterValueLoading || result.isLoading || result.isPending) &&
     !hasData;
   const isFetchingNextPage = shouldFetchAssets && result.isFetchingNextPage;
 
@@ -138,7 +132,7 @@ export function useMarketAssets({
         canLoadMore,
         loading,
         isFetchingNextPage,
-        isError: result.isError || isRateError,
+        isError: result.isError || isCounterValueError,
       })
     ) {
       return;
@@ -148,8 +142,8 @@ export function useMarketAssets({
   }, [
     canLoadMore,
     fetchNextPage,
+    isCounterValueError,
     isFetchingNextPage,
-    isRateError,
     loading,
     result.isError,
     shouldFetchAssets,
@@ -159,7 +153,7 @@ export function useMarketAssets({
     assets,
     loading,
     isFetchingNextPage,
-    isError: shouldFetchAssets && (result.isError || isRateError),
+    isError: shouldFetchAssets && (result.isError || isCounterValueError),
     emptyState: getEmptyState({ isFavoritesCategory, hasFavoriteIds, isStocksCategory }),
     onEndReached,
     resetToFirstPage,

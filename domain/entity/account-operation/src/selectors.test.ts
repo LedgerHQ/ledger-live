@@ -43,6 +43,7 @@ describe("account operations selectors", () => {
             ...mockAccountOperationsEntry([eth, usdt]).windows,
             ...mockAccountOperationsEntry([eth], pageQuery).windows,
           },
+          countervalues: {},
           revisionById: {},
         },
       },

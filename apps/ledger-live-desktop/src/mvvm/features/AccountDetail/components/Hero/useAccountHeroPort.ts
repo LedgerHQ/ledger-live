@@ -1,11 +1,12 @@
 import { useCallback } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import { canReceive, isSendDisabledForFamily } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
 import {
   useAccountCountervalue,
   useAccountHeroStatus,
+  type AccountAssetPickerProps,
   type AccountHeroPort,
 } from "@features/flow-account-detail-hero";
 import { useSelector } from "LLD/hooks/redux";
@@ -17,7 +18,7 @@ import {
 } from "~/renderer/reducers/settings";
 import { useCalculateCountervalueCallback } from "~/renderer/actions/general";
 import { useAccountHeroActions } from "./useAccountHeroActions";
-import { usePickAccountAsset, type AccountAssetPicker } from "./usePickAccountAsset";
+import { usePickAccountAsset } from "./usePickAccountAsset";
 import { useAccountHeroAssets } from "./useAccountHeroAssets";
 import { useAssetsByAction } from "./useAssetsByAction";
 
@@ -36,7 +37,7 @@ function useBalanceFormatter(): AccountHeroPort["balance"]["formatter"] {
 
 export type AccountHeroPortResult = Readonly<{
   port: AccountHeroPort;
-  assetPicker: AccountAssetPicker["pickerProps"];
+  assetPicker: AccountAssetPickerProps;
 }>;
 
 export function useAccountHeroPort(account: Account): AccountHeroPortResult {

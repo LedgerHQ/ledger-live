@@ -102,7 +102,7 @@ describe("AccountHero (Native)", () => {
 
     await user.press(screen.getByTestId(`${TEST_ID}-actions-transfer`));
 
-    expect(port.onAction).toHaveBeenCalledWith("transfer");
+    expect(port.onAction).toHaveBeenCalledWith("transfer", "quick_action");
   });
 
   it("opens the More sheet, then closes it and forwards the picked action", async () => {
@@ -118,6 +118,6 @@ describe("AccountHero (Native)", () => {
     await user.press(screen.getByTestId(`${TEST_ID}-more-sheet-earn`));
 
     expect(moreSheet()).toBeCollapsed();
-    expect(port.onAction).toHaveBeenCalledWith("earn");
+    expect(port.onAction).toHaveBeenCalledWith("earn", "more");
   });
 });

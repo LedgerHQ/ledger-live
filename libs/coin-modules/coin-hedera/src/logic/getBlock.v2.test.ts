@@ -1,5 +1,5 @@
 import type { BlockInfo } from "@ledgerhq/coin-module-framework/api/types";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { HEDERA_TRANSACTION_NAMES, FINALITY_MS, STAKING_REWARD_ACCOUNT_ID } from "../constants";
 import { apiClient } from "../network/api";
 import { hgraphClient } from "../network/hgraph";
@@ -570,6 +570,8 @@ describe("getBlockV2", () => {
         stakedAmount: "100",
       },
     });
+    // the staking "other" operation already carries the Ledger operation type
+    expect(result.transactions[0].details).not.toHaveProperty("ledgerOpType");
   });
 
   it("should handle UNDELEGATE staking operation", async () => {
@@ -841,6 +843,101 @@ describe("getBlockV2", () => {
     });
   });
 
+  it("exposes CONTRACT_CALL as details.ledgerOpType for a CONTRACTCALL transaction", async () => {
+    const mockTx = getMockedMirrorTransaction({
+      transaction_id: "0.0.999-1704067210-123456789",
+      transaction_hash: "hash_contract_call",
+      name: HEDERA_TRANSACTION_NAMES.ContractCall,
+      result: "SUCCESS",
+      charged_tx_fee: 300000,
+      consensus_timestamp: "1704067210.123456789",
+      staking_reward_transfers: [],
+      transfers: [{ account: "0.0.999", amount: -300000 }],
+      token_transfers: [],
+    });
+
+    (hgraphClient.getERC20TransfersByTimestampRange as jest.Mock).mockResolvedValue([]);
+    (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValue([mockTx]);
+
+    const result = await getBlockV2({ configOrCurrencyId, height: 100 });
+
+    expect(result.transactions[0].operations).toEqual([
+      {
+        type: "transfer",
+        address: "0.0.999",
+        asset: { type: "native" },
+        amount: BigInt(0),
+      },
+    ]);
+    expect(result.transactions[0].details).toEqual({
+      ledgerOpType: "CONTRACT_CALL",
+      familyExtra: {
+        pagingToken: mockTx.consensus_timestamp,
+        consensusTimestamp: mockTx.consensus_timestamp,
+        transactionId: mockTx.transaction_id,
+        feesPayer: "0.0.999",
+      },
+    });
+  });
+
+  it("does not expose details.ledgerOpType for a CONTRACTCALL moving HTS tokens", async () => {
+    const mockTx = getMockedMirrorTransaction({
+      transaction_id: "0.0.999-1704067210-123456789",
+      transaction_hash: "hash_contract_call_hts",
+      name: HEDERA_TRANSACTION_NAMES.ContractCall,
+      result: "SUCCESS",
+      charged_tx_fee: 300000,
+      consensus_timestamp: "1704067210.123456789",
+      staking_reward_transfers: [],
+      transfers: [{ account: "0.0.999", amount: -300000 }],
+      token_transfers: [
+        { token_id: "0.0.5022567", account: "0.0.999", amount: -5 },
+        { token_id: "0.0.5022567", account: "0.0.1000", amount: 5 },
+      ],
+    });
+
+    (hgraphClient.getERC20TransfersByTimestampRange as jest.Mock).mockResolvedValue([]);
+    (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValue([mockTx]);
+
+    const result = await getBlockV2({ configOrCurrencyId, height: 100 });
+
+    // `listOperations` types it from its token transfers, as it does for an ERC20 transfer
+    expect(result.transactions[0].details).not.toHaveProperty("ledgerOpType");
+  });
+
+  it("does not expose details.ledgerOpType for a plain CRYPTOTRANSFER transaction", async () => {
+    const mockTx = getMockedMirrorTransaction({
+      transaction_id: "0.0.999-1704067210-123456789",
+      transaction_hash: "hash_transfer",
+      name: "CRYPTOTRANSFER",
+      result: "SUCCESS",
+      charged_tx_fee: 1000,
+      consensus_timestamp: "1704067210.123456789",
+      staking_reward_transfers: [],
+      transfers: [
+        { account: "0.0.999", amount: -6000 },
+        { account: "0.0.1000", amount: 5000 },
+        { account: "0.0.3", amount: 1000 },
+      ],
+      token_transfers: [],
+    });
+
+    (hgraphClient.getERC20TransfersByTimestampRange as jest.Mock).mockResolvedValue([]);
+    (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValue([mockTx]);
+
+    const result = await getBlockV2({ configOrCurrencyId, height: 100 });
+
+    expect(result.transactions[0].details).not.toHaveProperty("ledgerOpType");
+    expect(result.transactions[0].details).toEqual({
+      familyExtra: {
+        pagingToken: mockTx.consensus_timestamp,
+        consensusTimestamp: mockTx.consensus_timestamp,
+        transactionId: mockTx.transaction_id,
+        feesPayer: "0.0.999",
+      },
+    });
+  });
+
   it("should handle CRYPTOUPDATEACCOUNT if it's not related to staking", async () => {
     const mockTx = getMockedMirrorTransaction({
       transaction_id: "0.0.999-1234567890-000000000",
@@ -883,6 +980,15 @@ describe("getBlockV2", () => {
         amount: BigInt(1000),
       },
     ]);
+    expect(result.transactions[0].details).toEqual({
+      ledgerOpType: "UPDATE_ACCOUNT",
+      familyExtra: {
+        pagingToken: mockTx.consensus_timestamp,
+        consensusTimestamp: mockTx.consensus_timestamp,
+        transactionId: mockTx.transaction_id,
+        feesPayer: "0.0.999",
+      },
+    });
   });
 
   it("should throw error when querying a block in the future", async () => {

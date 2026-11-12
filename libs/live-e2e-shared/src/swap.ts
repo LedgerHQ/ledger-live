@@ -4,15 +4,29 @@ import axios, { AxiosRequestConfig } from "axios";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { SwapProvider } from "./enum/Provider";
 import { getAmountFromUSD } from "./currencyUtils";
+import { getSwapAPIEnv } from "@ledgerhq/live-common/exchange/swap/index";
 
 // Target a sensible USD amount that works for most pairs
 const FALLBACK_TARGET_USD = 50;
 
-const SWAP_QUOTE_URL = "https://global.api.stg.ledger-test.com/swap/v5/quote";
+const DEFAULT_SWAP_API_BASE = "https://global.api.stg.ledger-test.com/swap/v5";
+
+/** Same source as the app under test: CI exports SWAP_API_BASE; STG when unset. */
+const SWAP_API_BASE = (process.env.SWAP_API_BASE || DEFAULT_SWAP_API_BASE).replace(/\/$/, "");
+
+const SWAP_QUOTE_URL = `${SWAP_API_BASE}/quote`;
+
+const IS_PRD_SWAP_API = getSwapAPIEnv(SWAP_API_BASE) === "prd";
 
 /** Smallest amount sent to the quote API to discover minimum thresholds. */
 const PROBE_AMOUNT = 0.0001;
 const PROBE_NETWORK_FEES = 0.001;
+
+const MIN_AMOUNT_MARGIN = 1.2;
+/** Fewest decimals any swappable asset supports (e.g. USDT, USDC). */
+const AMOUNT_DECIMALS = 6;
+const BUMP_FACTOR = 1.5;
+const MAX_QUOTE_ATTEMPTS = 3;
 
 const PROVIDERS_WHITELIST =
   "changelly_v2,exodus,thorswap,uniswap,cic_v2,nearintents,swapsxyz,moonpay_trade";
@@ -50,7 +64,104 @@ export const needsTokenAllowance = (
 
 export type TokenAllowanceProvider = SwapProvider & { readonly contractAddress: string };
 
+function extractMinimumAmounts(items: unknown[]): number[] {
+  return items
+    .filter(isQuoteErrorItem)
+    .filter(item => item.parameter?.minAmount !== undefined)
+    .map(item => Number.parseFloat(item.parameter!.minAmount!))
+    .filter((amount: number) => !Number.isNaN(amount) && amount > 0);
+}
+
+/** Rounds up so the margin holds and the app shows the exact amount. */
+function roundUpAmount(amount: number): number {
+  const scale = 10 ** AMOUNT_DECIMALS;
+  return Math.ceil(amount * scale) / scale;
+}
+
+/** Quotes the amount and bumps it until a provider returns a usable quote. */
+async function findQuotableAmount(
+  initialAmount: number,
+  fetchQuotes: (amount: number) => Promise<unknown[] | null>,
+): Promise<number> {
+  let amount = initialAmount;
+  for (let attempt = 1; attempt <= MAX_QUOTE_ATTEMPTS; attempt++) {
+    const items = await fetchQuotes(amount);
+    if (items === null || items.some(item => isUsableQuote(item as SwapQuoteItem))) {
+      return amount;
+    }
+    const newMinimum = Math.max(0, ...extractMinimumAmounts(items)) * MIN_AMOUNT_MARGIN;
+    amount = roundUpAmount(newMinimum > amount ? newMinimum : amount * BUMP_FACTOR);
+    console.warn(
+      `No usable quote (attempt ${attempt}/${MAX_QUOTE_ATTEMPTS}), retrying with ${amount}`,
+    );
+  }
+  return amount;
+}
+
 export async function getMinimumSwapAmount(
+  accountFrom: Account,
+  accountTo: Account,
+  providersWhitelist?: string[],
+): Promise<number | null> {
+  const minimum = await discoverMinimumSwapAmount(accountFrom, accountTo, providersWhitelist);
+  if (minimum === null || IS_PRD_SWAP_API) {
+    return minimum;
+  }
+  const addressFrom = accountFrom.address || accountFrom.parentAccount?.address;
+  const marginAmount = roundUpAmount(minimum * MIN_AMOUNT_MARGIN);
+  if (!addressFrom) {
+    return marginAmount;
+  }
+  return findQuotableAmount(marginAmount, async amount => {
+    try {
+      const data = await requestQuotes(
+        accountFrom,
+        accountTo,
+        addressFrom,
+        amount,
+        providersWhitelist?.join(",") ?? PROVIDERS_WHITELIST,
+      );
+      return Array.isArray(data) ? data : null;
+    } catch (error: unknown) {
+      console.warn("Error validating swap amount:", sanitizeError(error));
+      return null;
+    }
+  });
+}
+
+async function requestQuotes(
+  accountFrom: Account,
+  accountTo: Account,
+  addressFrom: string,
+  amountFrom: number,
+  providersWhitelist: string,
+): Promise<unknown> {
+  const requestConfig: AxiosRequestConfig = {
+    method: "GET",
+    url: SWAP_QUOTE_URL,
+    timeout: 10_000,
+    params: {
+      from: accountFrom.currency.id,
+      to: accountTo.currency.id,
+      amountFrom,
+      addressFrom,
+      fiatForCounterValue: "USD",
+      slippage: 1,
+      networkFees: PROBE_NETWORK_FEES,
+      networkFeesCurrency: accountTo.currency.speculosApp.name.toLowerCase(),
+      displayLanguage: "en",
+      theme: "light",
+      "providers-whitelist": providersWhitelist,
+      tradeType: "INPUT",
+      uniswapOrderType: "uniswapxv1",
+    },
+    headers: { accept: "application/json" },
+  };
+  const { data } = await axios(requestConfig);
+  return data;
+}
+
+async function discoverMinimumSwapAmount(
   accountFrom: Account,
   accountTo: Account,
   providersWhitelist?: string[],
@@ -62,29 +173,13 @@ export async function getMinimumSwapAmount(
       throw new Error("No address available from accounts when requesting minimum swap amount.");
     }
 
-    const requestConfig: AxiosRequestConfig = {
-      method: "GET",
-      url: SWAP_QUOTE_URL,
-      timeout: 10_000,
-      params: {
-        from: accountFrom.currency.id,
-        to: accountTo.currency.id,
-        amountFrom: PROBE_AMOUNT,
-        addressFrom,
-        fiatForCounterValue: "USD",
-        slippage: 1,
-        networkFees: PROBE_NETWORK_FEES,
-        networkFeesCurrency: accountTo.currency.speculosApp.name.toLowerCase(),
-        displayLanguage: "en",
-        theme: "light",
-        "providers-whitelist": providersWhitelist?.join(",") ?? PROVIDERS_WHITELIST,
-        tradeType: "INPUT",
-        uniswapOrderType: "uniswapxv1",
-      },
-      headers: { accept: "application/json" },
-    };
-
-    const { data } = await axios(requestConfig);
+    const data = await requestQuotes(
+      accountFrom,
+      accountTo,
+      addressFrom,
+      PROBE_AMOUNT,
+      providersWhitelist?.join(",") ?? PROVIDERS_WHITELIST,
+    );
 
     if (!Array.isArray(data)) {
       console.warn("Unexpected quote API response, falling back to countervalues");
@@ -92,11 +187,7 @@ export async function getMinimumSwapAmount(
     }
 
     // Try to extract minAmount from AMOUNT_OFF_LIMITS errors
-    const minimumAmounts = data
-      .filter(isQuoteErrorItem)
-      .filter(item => item.parameter?.minAmount !== undefined)
-      .map(item => Number.parseFloat(item.parameter!.minAmount!))
-      .filter((amount: number) => !Number.isNaN(amount) && amount > 0);
+    const minimumAmounts = extractMinimumAmounts(data);
 
     if (minimumAmounts.length > 0) {
       return Math.max(...minimumAmounts);

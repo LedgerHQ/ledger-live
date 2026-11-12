@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-dmk-mobile",
-  "version": "0.33.1",
+  "version": "0.34.0",
   "description": "Ledger Device Management Kit transport module for LLD",
   "private": true,
   "license": "Apache-2.0",
@@ -25,13 +25,13 @@
     "lint": "oxlint ./src",
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "pnpm knip --directory ../.. -W libs/live-dmk-mobile",
     "coverage": "jest --coverage",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage"
   },
   "dependencies": {
+    "@features/platform-device-mock-server": "workspace:*",
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/device-transport-kit-mockserver": "catalog:",
     "@ledgerhq/device-transport-kit-react-native-ble": "catalog:",
@@ -63,7 +63,10 @@
     "react-native-ble-plx": "3.5.1",
     "rxjs": "catalog:",
     "typescript": "catalog:",
-    "ws": "catalog:"
+    "ws": "catalog:",
+    "@typescript/native": "catalog:",
+    "rimraf": "catalog:",
+    "oxlint": "catalog:"
   },
   "peerDependencies": {
     "react": "catalog:",

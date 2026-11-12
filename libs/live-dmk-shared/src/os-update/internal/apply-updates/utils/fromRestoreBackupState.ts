@@ -42,10 +42,10 @@ export const fromRestoreBackupState = (
       return { type: ApplyUpdatesStateType.AWAITING_CONFIRM_COMMIT_IMAGE };
     case RestoreBackupStateType.DEVICE_DISCONNECTED:
       return { type: ApplyUpdatesStateType.DEVICE_DISCONNECTED };
-    case RestoreBackupStateType.OUT_OF_MEMORY:
+    case RestoreBackupStateType.CONNECTION_TIMED_OUT:
       return {
-        type: ApplyUpdatesStateType.OUT_OF_MEMORY,
-        error: state.error,
+        type: ApplyUpdatesStateType.CONNECTION_TIMED_OUT,
+        retry: state.retry,
         cancel: state.cancel,
       };
     case RestoreBackupStateType.UNEXPECTED_ERROR:

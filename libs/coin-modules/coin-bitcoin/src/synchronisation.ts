@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { toWalletBtcCurrency } from "./walletBtcCurrency";
@@ -385,8 +385,12 @@ function reconcileConfirmedPendingOperations(account: BitcoinAccount): BitcoinAc
   });
 
   // Only the optimistic operations that now have a confirmed counterpart are
-  // resolved; the rest are still in flight.
-  const confirmedHashes = new Set(account.operations.map(op => op.hash));
+  // resolved; the rest are still in flight. The explorer also returns mempool
+  // operations: dropping the optimistic one for those would make the
+  // transaction lose its speed-up and its pending inputs while it is unconfirmed.
+  const confirmedHashes = new Set(
+    account.operations.filter(op => typeof op.blockHeight === "number").map(op => op.hash),
+  );
   const pendingOperations = account.pendingOperations.filter(op => !confirmedHashes.has(op.hash));
 
   return { ...account, operations, pendingOperations };

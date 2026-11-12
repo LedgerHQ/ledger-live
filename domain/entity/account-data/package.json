@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-account-data",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "description": "Account data registry, the open map of what an account can be asked for, and the status of its reads",
   "main": "src/index.ts",
@@ -17,8 +17,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W domain/entity/account-data"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@domain/entity-account-descriptor": "workspace:*",
@@ -30,6 +29,7 @@
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",

@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { act, renderHook } from "@testing-library/react";
 import { useCoinControlAmountInput } from "../useCoinControlAmountInput";
 import type { Transaction, TransactionStatus } from "../../../../../coin-modules/transaction-types";

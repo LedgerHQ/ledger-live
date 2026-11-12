@@ -1,3 +1,4 @@
+import type { AccountSettingsEventHandler } from "../../logic/accountSettingsEvent";
 import type { AdvancedLogsContentProps } from "../AdvancedLogsContent/types";
 
 export type AccountSettingsDialogStep = "menu" | "changeName" | "advancedLogs" | "remove";
@@ -13,6 +14,7 @@ export type AccountSettingsDialogProps = Readonly<{
   onConfirmName: (name: string) => void;
   onConfirmRemove: () => void;
   explorerUrl?: string;
+  onEvent?: AccountSettingsEventHandler;
   testID?: string;
 }>;
 

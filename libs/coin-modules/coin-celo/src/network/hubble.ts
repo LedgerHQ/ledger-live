@@ -1,7 +1,7 @@
 import { electionABI } from "@celo/abis";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { isDefaultValidatorGroup } from "../logic";
 import { CeloValidatorGroup } from "../types/types";
 import { getCeloClient } from "./client";

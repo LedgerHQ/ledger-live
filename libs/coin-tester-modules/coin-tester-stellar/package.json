@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-stellar",
-  "version": "1.8.2",
+  "version": "1.9.0",
   "private": true,
   "description": "Ledger Stellar Coin Tester",
   "keywords": [
@@ -53,8 +53,7 @@
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand --forceExit",
-    "unimported": "pnpm knip --directory ../../.. -W libs/coin-tester-modules/coin-tester-stellar"
+    "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand --forceExit"
   },
   "dependencies": {
     "@ledgerhq/coin-tester": "workspace:^",
@@ -66,7 +65,7 @@
     "@noble/hashes": "catalog:",
     "@stellar/stellar-sdk": "^14.0.0",
     "bignumber.js": "^9.1.2",
-    "chalk": "^4.1.2",
+    "chalk": "catalog:",
     "docker-compose": "^1.1.0",
     "msw": "catalog:"
   },
@@ -76,11 +75,12 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "axios": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "rimraf": "^5.0.5",
+    "rimraf": "5.0.10",
     "typescript": "catalog:"
   }
 }

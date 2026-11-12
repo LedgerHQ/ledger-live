@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-contacts-add-contact",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "private": true,
   "description": "Shared Add contact flow for Desktop and Mobile",
   "main": "src/index.ts",
@@ -19,8 +19,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -c features/flow/flow-contacts-add-contact/knip.web.config.mjs -W features/flow/flow-contacts-add-contact --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/flow-contacts-add-contact/knip.native.config.mjs -W features/flow/flow-contacts-add-contact --tsConfig tsconfig.native.json"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@domain/entity-contact": "workspace:*",
@@ -52,6 +51,7 @@
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
+    "@support/lint": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
@@ -63,6 +63,7 @@
     "@testing-library/react-native": "catalog:",
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
     "class-variance-authority": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",

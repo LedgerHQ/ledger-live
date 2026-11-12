@@ -3,13 +3,9 @@ import { useCallback, useMemo, useState } from "react";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { NavigatorName, ScreenName } from "~/const";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
-import { setOriginFlow } from "~/analytics/originFlow";
-import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
+import { useFeature } from "@features/platform-feature-flags";
 import { useSelector } from "~/context/hooks";
 import { hasUnreadOperationsSelector } from "~/reducers/history";
-import { readOnlyModeEnabledSelector } from "~/reducers/settings";
-import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
-import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
 import { useSyncIndicator } from "./hooks/useSyncIndicator";
 import { usePortfolioBalance } from "LLM/hooks/usePortfolioBalance";
 
@@ -21,11 +17,7 @@ export function useTopBarViewModel(
 ) {
   const { notificationCards } = useDynamicContent();
   const web3hub = useFeature("web3hub");
-  const { shouldDisplayOperationsList, shouldDisplayMyWallet, shouldDisplayAssetDiscoverability } =
-    useWalletFeaturesConfig("mobile");
   const page = screenName ?? ScreenName.Portfolio;
-  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
-  const { navigateToRebornFlow } = useRebornFlow();
   const {
     hasAccounts,
     isError,
@@ -62,23 +54,6 @@ export function useTopBarViewModel(
 
   const hasUnreadOperations = useSelector(hasUnreadOperationsSelector);
 
-  const onMyLedgerPress = useCallback(() => {
-    track(BUTTON_CLICKED_EVENT, { button: "MyLedger", page });
-    if (readOnlyModeEnabled) {
-      setOriginFlow(HOOKS_TRACKING_LOCATIONS.myLedger);
-      navigateToRebornFlow();
-    } else {
-      navigation.navigate(NavigatorName.MyLedger, {
-        screen: ScreenName.MyLedgerChooseDevice,
-        params: {
-          tab: undefined,
-          searchQuery: undefined,
-          updateModalOpened: undefined,
-        },
-      });
-    }
-  }, [navigation, page, readOnlyModeEnabled, navigateToRebornFlow]);
-
   const onMyWalletPress = useCallback(() => {
     track(BUTTON_CLICKED_EVENT, { button: "My Wallet", page });
     navigation.navigate(NavigatorName.MyWallet, {
@@ -99,18 +74,6 @@ export function useTopBarViewModel(
     }
   }, [navigation, page, web3hub?.enabled]);
 
-  const onNotificationsPress = useCallback(() => {
-    track(BUTTON_CLICKED_EVENT, { button: "Notifications", page });
-    navigation.navigate(NavigatorName.NotificationCenter, {
-      screen: ScreenName.NotificationCenter,
-    });
-  }, [navigation, page]);
-
-  const onSettingsPress = useCallback(() => {
-    track(BUTTON_CLICKED_EVENT, { button: "Settings", page });
-    navigation.navigate(NavigatorName.Settings);
-  }, [navigation, page]);
-
   const onTransactionHistoryPress = useCallback(() => {
     track(BUTTON_CLICKED_EVENT, { button: "operation_list", page });
     navigation.navigate(NavigatorName.OperationsHistory, {
@@ -127,15 +90,9 @@ export function useTopBarViewModel(
   }, [navigation, page]);
 
   return {
-    shouldDisplayAssetDiscoverability,
     onSearchPress,
-    onMyLedgerPress,
     onMyWalletPress,
-    shouldDisplayMyWallet,
-    shouldDisplayOperationsList,
     onDiscoverPress,
-    onNotificationsPress,
-    onSettingsPress,
     onTransactionHistoryPress,
     hasUnreadNotifications,
     hasUnreadOperations,

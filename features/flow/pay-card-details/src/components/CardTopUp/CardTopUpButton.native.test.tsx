@@ -1,7 +1,7 @@
 import React from "react";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react-native";
 import { CARD_COPY, I18nWrapper } from "../../__tests__/i18nWrapper";
-import { CardTopUpButton } from "./CardTopUpButton.native";
+import { CardTopUpButton } from "./CardTopUpButton";
 
 describe("CardTopUpButton (native)", () => {
   afterEach(cleanup);

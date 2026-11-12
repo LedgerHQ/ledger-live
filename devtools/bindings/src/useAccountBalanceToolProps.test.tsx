@@ -35,6 +35,7 @@ function deferred() {
 
 function setup() {
   const reads: { accountUUID: string; call: ReturnType<typeof deferred> }[] = [];
+  const operationQueries: unknown[] = [];
   const store = configureStore({
     reducer: {
       accountEntries: accountsSlice.reducer,
@@ -54,6 +55,10 @@ function setup() {
                   reads.push({ accountUUID, call });
                   return call.promise;
                 },
+                operations: async (_target, query) => {
+                  operationQueries.push(query);
+                  return { operations: [] };
+                },
               },
             },
           ]),
@@ -70,7 +75,7 @@ function setup() {
     <Provider store={store}>{children}</Provider>
   );
   const { result } = renderHook(() => useAccountBalanceToolProps(), { wrapper });
-  return { result, reads };
+  return { result, reads, operationQueries };
 }
 
 describe("useAccountBalanceToolProps", () => {
@@ -157,5 +162,12 @@ describe("useAccountBalanceToolProps", () => {
     act(() => result.current.onReadAll());
     await waitFor(() => expect(reads).toHaveLength(2));
     expect(reads.map(r => r.accountUUID).sort()).toEqual([ethereumUUID, bitcoinUUID].sort());
+  });
+
+  it("reads an asset's operations", async () => {
+    const { result, operationQueries } = setup();
+    act(() => result.current.onReadOperations(ethereumUUID, "ethereum/erc20/usd__coin"));
+    await waitFor(() => expect(operationQueries).toHaveLength(1));
+    expect(operationQueries[0]).toEqual({ filterAsset: "ethereum/erc20/usd__coin" });
   });
 });

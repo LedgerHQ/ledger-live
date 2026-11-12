@@ -22,5 +22,4 @@ export * from "./model/sortContactAddressesByNetwork";
 export * from "./model/mapContactAddressDetailActionsUiState";
 export * from "./model/ports";
 export * from "./types";
-export * from "./components/ContactAddressDetailDialog/types";
 export * from "./platform/contactSignerValidationPort";

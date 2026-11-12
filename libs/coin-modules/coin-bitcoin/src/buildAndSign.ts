@@ -1,7 +1,7 @@
 // Build & sign for Bitcoin-family UTXO transactions. Extracted from wallet-btc so the
 // wallet engine stays a lean read/accounting layer (scan + coin-selection + storage); the
 // device signer (BitcoinSigner) and RBF fee logic live in coin-bitcoin.
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/wallet-btc/account";
 import type { TransactionInfo } from "@ledgerhq/wallet-btc/types";
 import type { Address } from "@ledgerhq/wallet-btc/storage/types";

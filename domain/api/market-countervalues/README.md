@@ -56,6 +56,30 @@ state, no dispatch and no store reference.
 
 Apps build one at composition time and hand it over; nothing here reaches for a store.
 
+## `withOperationCountervalues`
+
+An account data source reads operations, but few can value them in a fiat. The apps wrap each
+source that cannot with this decorator: when a query asks for a `countervalue`, it values every row
+the source left unvalued, at the row's date, from the rates the app holds. A source that values its
+own rows is ranked as is, without the decorator.
+
+```ts
+const countervalues: OperationCountervaluesHost = {
+  rates: () => countervaluesStateSelector(getState()),
+  findCurrency: assetId =>
+    findCryptoCurrencyById(assetId) ?? getCryptoAssetsStore().findTokenById(assetId),
+};
+
+return [
+  withOperationCountervalues(createCoinModuleSource(coinModuleHost), countervalues),
+  withOperationCountervalues(createFullSyncSource(fullSyncHost), countervalues),
+];
+```
+
+A failed currency lookup leaves its rows unvalued without failing the read.
+A row is valued at its hour's or day's rate only; with no such rate it stays unvalued, rather than
+taking the latest one.
+
 ## Error handling
 
 Failures reject as `RateFetchError`, carrying RTK Query's `status` **verbatim**. Three behaviours

@@ -71,6 +71,7 @@ jest.mock("@ledgerhq/live-common/flows/send/sponsored/usePendingRentDelivery", (
 const mockSeam = {
   feeOptionId: "sponsored-fixture",
   providerName: "Provider",
+  providerTermsUrl: "https://provider.example/terms",
   waivesErrorKeys: ["gasLimit"],
   waivesWarningKeys: ["amount"],
   reservationDedupKey: jest.fn(),
@@ -259,6 +260,7 @@ describe("SponsoredSendContext", () => {
     expect(mockGetSponsoredCoinApi).toHaveBeenCalledWith("tron", "local");
     expect(result.current.sponsoredFeeOptionId).toBe("sponsored-fixture");
     expect(result.current.providerName).toBe("Provider");
+    expect(result.current.providerTermsUrl).toBe("https://provider.example/terms");
     expect(result.current.waivesErrorKeys).toEqual(["gasLimit"]);
     expect(result.current.waivesWarningKeys).toEqual(["amount"]);
     expect(mockUseSponsoredFeeQuote).toHaveBeenLastCalledWith(

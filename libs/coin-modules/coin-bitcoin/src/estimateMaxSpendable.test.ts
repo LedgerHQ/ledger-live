@@ -1,5 +1,5 @@
 // libs/coin-modules/coin-bitcoin/src/estimateMaxSpendable.test.ts
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 
 // ---------- Mocks (paths must match imports inside estimateMaxSpendable.ts) ----------
 const estimateAccountMaxSpendable = jest.fn().mockResolvedValue(new BigNumber(123456));
@@ -46,8 +46,8 @@ const setExplorer = (exp: any) => {
   currentExplorer = exp;
 };
 
-function makeAccount(currencyId = "bitcoin") {
-  return { id: "acc_1", currency: { id: currencyId } } as any;
+function makeAccount(currencyId = "bitcoin", pendingOperations: any[] = []) {
+  return { id: "acc_1", currency: { id: currencyId }, pendingOperations } as any;
 }
 
 function makeTx(feePerByte?: BigNumber.Value, overrides: Partial<Transaction> = {}) {
@@ -148,4 +148,21 @@ test("returns 0 when wallet estimator returns negative", async () => {
   });
 
   expect(res.isEqualTo(0)).toBe(true);
+});
+
+test("excludes the UTXOs spent by pending operations, on top of the transaction's", async () => {
+  const account = makeAccount("litecoin", [
+    { hash: "pending1", extra: { inputRefs: [{ hash: "utxoA", outputIndex: 1, address: "a" }] } },
+  ]);
+  const tx = makeTx(2, {
+    utxoStrategy: { strategy: 2, excludeUTXOs: [{ hash: "userExcluded", outputIndex: 0 }] },
+  });
+
+  await estimateMaxSpendable(jest.fn(), { account, parentAccount: undefined, transaction: tx });
+
+  const excludeArg = estimateAccountMaxSpendable.mock.calls[0][3];
+  expect(excludeArg).toEqual([
+    { hash: "userExcluded", outputIndex: 0 },
+    { hash: "utxoA", outputIndex: 1 },
+  ]);
 });

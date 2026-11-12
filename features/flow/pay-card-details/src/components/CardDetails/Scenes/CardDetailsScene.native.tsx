@@ -42,10 +42,10 @@ export function CardDetailsScene({
           formatBalance={assetDetails.viewModel.formatBalance}
           formatters={assetDetails.viewModel.formatters}
           discreet={assetDetails.viewModel.discreet}
-          onTopUp={assetDetails.viewModel.onTopUpPress}
-          onWithdraw={assetDetails.viewModel.onWithdrawPress}
-          onShowHistory={assetDetails.viewModel.onShowHistoryPress}
-          onTransactionPress={assetDetails.onTransactionPress}
+          onTopUp={assetDetails.viewModel.onTopUpAsset}
+          onWithdraw={assetDetails.viewModel.onOpenWithdraw}
+          onShowHistory={assetDetails.viewModel.onShowHistory}
+          onOpenTransaction={assetDetails.onOpenTransaction}
         />
       ) : null;
     case "assetWithdraw":
@@ -59,7 +59,7 @@ export function CardDetailsScene({
       return assetsManage ? (
         <CardAssetsManageDrawer
           rows={assetsManage.viewModel.rows}
-          onAddAsset={assetsManage.viewModel.onAddAssetPress}
+          onAddAsset={assetsManage.viewModel.onAddAsset}
           onMoveAsset={assetsManage.viewModel.onMoveAsset}
           reorderingAssetIds={assetsManage.viewModel.reorderingAssetIds}
         />

@@ -1,23 +1,4 @@
-import type { StellarCoinConfig } from "@ledgerhq/coin-stellar/config";
-import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
-import { getEnv } from "@shared/env";
+import { stellarDefaults } from "@ledgerhq/coin-stellar/config";
+import { currencyDefaultsToLiveConfig } from "../../config";
 
-export const stellarConfig: Record<string, ConfigInfo> = {
-  config_currency_stellar: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      name: "Stellar",
-      unit: { name: "Lumen", code: "XLM", magnitude: 7 },
-      explorer: {
-        url: getEnv("API_STELLAR_HORIZON"),
-        fetchLimit: getEnv("API_STELLAR_HORIZON_FETCH_LIMIT"),
-      },
-      useStaticFees: getEnv("API_STELLAR_HORIZON_STATIC_FEE"),
-      enableNetworkLogs: getEnv("ENABLE_NETWORK_LOGS"),
-    } satisfies StellarCoinConfig,
-  },
-};
+export const stellarConfig = currencyDefaultsToLiveConfig(stellarDefaults);

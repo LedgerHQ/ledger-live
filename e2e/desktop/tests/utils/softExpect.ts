@@ -11,7 +11,7 @@ export type SoftExpectOptions = {
 
 type SoftExpectParams = {
   page: Page;
-  assertion: (soft: SoftExpectMatcher) => Promise<void>;
+  assertion: (soft: SoftExpectMatcher) => Promise<void> | void;
 };
 
 /**

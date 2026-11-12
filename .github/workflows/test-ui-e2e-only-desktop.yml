@@ -69,13 +69,21 @@ on:
           - nanoGen5
           - nanoSP and stax
         default: nanoSP
-      remote_speculos:
-        description: "Run on Speculinho instead of Docker"
+      app_provider:
+        description: "Nano app provider (4 = pre-release apps, falling back to 1 for apps it doesn't publish)"
+        required: false
+        type: choice
+        options:
+          - "1"
+          - "4"
+        default: "1"
+      run_on_macos:
+        description: "⚠️ QA and release runs only: also run on macOS (shared Mac runner, Speculinho)"
         required: false
         type: boolean
         default: false
-      run_on_macos:
-        description: "⚠️ QA and release runs only: also run on macOS (shared Mac runner, Speculinho)"
+      run_on_windows:
+        description: "⚠️ QA and release runs only: also run on Windows (Windows runner, Speculinho)"
         required: false
         type: boolean
         default: false
@@ -91,6 +99,7 @@ on:
         options:
           - defaults
           - wallet40-q1
+          - account-detail
         default: defaults
       feature_flags_json:
         description: "JSON to override feature flags (takes precedence if set)"
@@ -101,19 +110,6 @@ on:
         description: "Repeat each test N times (optional)"
         required: false
         type: number
-      lock_deferral_passes:
-        description: "Passes that move a test whose exclusive lock is busy to the next one (default 2)"
-        required: false
-        type: string
-        default: ""
-      exclusive_lock:
-        description: "Exclusive lock: remote (R2), or local if R2 is down"
-        required: false
-        type: choice
-        options:
-          - remote
-          - local
-        default: remote
 
   workflow_call:
     inputs:
@@ -153,13 +149,18 @@ on:
         description: "Device to be used"
         required: true
         type: string
-      remote_speculos:
-        description: "Run on Speculinho instead of Docker"
+      app_provider:
+        description: "Nano app provider (4 = pre-release apps, falling back to 1 for apps it doesn't publish)"
+        required: false
+        type: string
+        default: "1"
+      run_on_macos:
+        description: "⚠️ QA and release runs only: also run on macOS (shared Mac runner, Speculinho)"
         required: false
         type: boolean
         default: false
-      run_on_macos:
-        description: "⚠️ QA and release runs only: also run on macOS (shared Mac runner, Speculinho)"
+      run_on_windows:
+        description: "⚠️ QA and release runs only: also run on Windows (Windows runner, Speculinho)"
         required: false
         type: boolean
         default: false
@@ -189,6 +190,7 @@ permissions:
 env:
   E2E_DESKTOP_FEATURE_FLAGS: ${{ inputs.feature_flags || 'defaults' }}
   E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
+  SPECULOS_APP_PROVIDER: ${{ inputs.app_provider || '1' }}
   # Broadcast on explicit request, or on the Monday nightly (see the schedule above).
   E2E_BROADCAST_ENABLED: ${{ inputs.enable_broadcast || github.event.schedule == '0 1 * * 1' }}
 
@@ -201,6 +203,9 @@ jobs:
       device_2: ${{ steps.parse.outputs.device_2 }}
       is_dual: ${{ steps.parse.outputs.is_dual }}
       e2e_matrix: ${{ steps.parse.outputs.e2e_matrix }}
+      shard_total: ${{ steps.parse.outputs.shard_total }}
+      runner_filter: ${{ steps.test-filter.outputs.runner_filter }}
+      extra_os_matrix: ${{ steps.extra-os.outputs.extra_os_matrix }}
     steps:
       - name: Parse speculos device input
         id: parse
@@ -220,6 +225,20 @@ jobs:
             [4]=stax                # Thursday   - Stax
             [5]=nanoS               # Friday     - LNS
           )
+          SHARD_TOTAL=4
+          echo "shard_total=$SHARD_TOTAL" >> "$GITHUB_OUTPUT"
+          # Prints e2e_matrix with one entry per shard of each "<device>:<is_primary>:<artifact_suffix>".
+          e2e_matrix() {
+            local entries=() spec device is_primary artifact_suffix shard
+            for spec in "$@"; do
+              IFS=: read -r device is_primary artifact_suffix <<< "$spec"
+              for shard in $(seq 1 "$SHARD_TOTAL"); do
+                entries+=("$(printf '{"device":"%s","is_primary":%s,"artifact_suffix":"%s","shard":%d,"shard_total":%d}' \
+                  "$device" "$is_primary" "$artifact_suffix" "$shard" "$SHARD_TOTAL")")
+              done
+            done
+            (IFS=,; echo "e2e_matrix={\"include\":[${entries[*]}]}")
+          }
           if [ "$EVENT_NAME" = "schedule" ]; then
             DOW=$(date -u +%u)
             DEVICE="${WEEKDAY_DEVICE[$DOW]:-nanoSP}"
@@ -227,14 +246,14 @@ jobs:
               echo "device_1=$DEVICE"
               echo "device_2=skipped"
               echo "is_dual=false"
-              printf 'e2e_matrix={"include":[{"device":"%s","is_primary":true,"artifact_suffix":""}]}\n' "$DEVICE"
+              e2e_matrix "$DEVICE:true:"
             } >> "$GITHUB_OUTPUT"
           elif [ "$SPECULOS_DEVICE_INPUT" = "nanoSP and stax" ]; then
             {
               echo "device_1=nanoSP"
               echo "device_2=stax"
               echo "is_dual=true"
-              echo 'e2e_matrix={"include":[{"device":"nanoSP","is_primary":true,"artifact_suffix":""},{"device":"stax","is_primary":false,"artifact_suffix":"-stax"}]}'
+              e2e_matrix "nanoSP:true:" "stax:false:-stax"
             } >> "$GITHUB_OUTPUT"
           else
             DEVICE="$SPECULOS_DEVICE_INPUT"
@@ -242,87 +261,36 @@ jobs:
               echo "device_1=$DEVICE"
               echo "device_2=skipped"
               echo "is_dual=false"
-              printf 'e2e_matrix={"include":[{"device":"%s","is_primary":true,"artifact_suffix":""}]}\n' "$DEVICE"
+              e2e_matrix "$DEVICE:true:"
             } >> "$GITHUB_OUTPUT"
           fi
         shell: bash
 
-  e2e-tests:
-    name: "Desktop E2E (${{ matrix.device }})"
-    needs: [prepare-devices]
-    runs-on: [ledger-live-linux-e2e-speculos-32CPU-128RAM]
-    permissions:
-      id-token: write
-      contents: read
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.prepare-devices.outputs.e2e_matrix) }}
-    timeout-minutes: 90
-    env:
-      NODE_OPTIONS: "--max-old-space-size=14336"
-      INSTRUMENT_BUILD: true
-      FORCE_COLOR: 3
-      CI_OS: "ubuntu-latest"
-      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-      npm_config_loglevel: warn
-      pnpm_config_loglevel: warn
-      DO_NOT_TRACK: 1
-      SPECULOS_DEVICE: ${{ matrix.device }}
-      REMOTE_SPECULOS: ${{ inputs.remote_speculos }}
-      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ matrix.device != 'nanoS' && 'latest' || (inputs.remote_speculos && 'speculos-38ccc68068db-coinapps-85c7e5c' || '1be65b91a8e0691866f880fd437ac05fce78af9d') }}
-      COINAPPS: ${{ github.workspace }}/coin-apps
-      E2E_PRIMARY_DEVICE: ${{ matrix.is_primary }}
-      cache-bucket: ll-nx-cache
-      USERDATA_CACHE_ENABLED: ${{ inputs.build_type != 'js' }}
-      E2E_GENERATED_USERDATA_DIR: ${{ inputs.build_type != 'js' && format('{0}/e2e/userdata/generated', github.workspace) || '' }}
-    outputs:
-      test_passed: ${{ steps.run-playwright.outputs.passed }}
-      test_failed: ${{ steps.run-playwright.outputs.failed }}
-      test_total: ${{ steps.run-playwright.outputs.total }}
-      test_exit_code: ${{ steps.run-playwright.outputs.exit_code }}
-    steps:
-      - name: Generate GitHub App token
-        id: generate-token
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
-        with:
-          client-id: ${{ secrets.GH_BOT_CLIENT_ID }}
-          private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-          repositories: |
-            ledger-live
-            coin-apps
-          permission-contents: read
+      - name: Pick the macOS and Windows legs
+        id: extra-os
+        env:
+          RUN_ON_MACOS: ${{ inputs.run_on_macos || false }}
+          RUN_ON_WINDOWS: ${{ inputs.run_on_windows || false }}
+        run: |
+          # One leg of e2e-tests-extra-os and report-to-allure-extra-os per run_on_* input that is on.
+          jq -rn --argjson macos "$RUN_ON_MACOS" --argjson windows "$RUN_ON_WINDOWS" '{include: [
+            if $macos then {os: "macos", label: "macOS", runner: ["macOS", "ARM64", "general-pool"], heap_mb: 7168, workers: "6"} else empty end,
+            if $windows then {os: "windows", label: "Windows", runner: ["ledger-live-windows-e2e-32CPU-128RAM"], heap_mb: 14336, workers: "16"} else empty end
+          ]} | "extra_os_matrix=\(tojson)"' >> "$GITHUB_OUTPUT"
+        shell: bash
 
-      - name: Checkout ledger-live monorepo (shallow clone)
+      # Everything e2e/tooling/filter reads: the specs and their imports, the generic coin framework
+      # families (resolve.mjs) and the currency definitions (generatedTags.mjs, silent when missing).
+      - name: Checkout E2E specs and filter tooling
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref || github.sha }}
-          repository: LedgerHQ/ledger-live
-          token: ${{ steps.generate-token.outputs.token }}
           fetch-depth: 1
-
-      - name: Checkout coin-apps (device firmware binaries)
-        if: ${{ env.REMOTE_SPECULOS != 'true' }}
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-        with:
-          repository: LedgerHQ/coin-apps
-          ref: master
-          token: ${{ steps.generate-token.outputs.token }}
-          path: coin-apps
-          fetch-depth: 1
+          sparse-checkout: |
+            e2e
+            libs/ledger-live-common/src/bridge/generic-coin-framework
+            domain/entity/currency-crypto/src/currencies
           persist-credentials: false
-
-      - name: Setup caches
-        id: caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
-        with:
-          use-mise: true
-          gh-token: ${{ secrets.GITHUB_TOKEN }}
-          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
-          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
-          nx-key: ${{ secrets.NX_KEY }}
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Build Playwright grep filter from inputs
         id: test-filter
@@ -342,39 +310,6 @@ jobs:
             --runner playwright \
             --github-output >> "$GITHUB_OUTPUT"
 
-      - name: Pull Speculos docker image
-        if: ${{ env.REMOTE_SPECULOS != 'true' }}
-        run: docker pull "$SPECULOS_IMAGE_TAG"
-        shell: bash
-
-      - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
-        with:
-          registry: ${{ vars.ARTIFACTORY_URL }}
-
-      - name: Install dependencies and build LLD
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-test-desktop@develop
-        id: setup-test-desktop
-        with:
-          build_type: ${{ inputs.build_type || 'testing' }}
-
-      - name: Verify Speculos Docker image is ready
-        if: ${{ env.REMOTE_SPECULOS != 'true' }}
-        run: |
-          while ! docker image inspect "$SPECULOS_IMAGE_TAG" > /dev/null 2>&1; do
-            echo "Waiting for Speculos image pull to complete..."
-            sleep 2
-          done
-          echo "Speculos image ready: $SPECULOS_IMAGE_TAG"
-          docker image inspect "$SPECULOS_IMAGE_TAG" --format '{{.Size}}' | numfmt --to=iec
-        shell: bash
-
-      - name: Configure test environment (API endpoints, broadcast settings)
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
-        with:
-          enable_broadcast: ${{ env.E2E_BROADCAST_ENABLED }}
-          build_type: ${{ inputs.build_type }}
-
       - name: Write workflow context to GitHub Summary
         env:
           FILTER_PATTERN: ${{ steps.test-filter.outputs.filter }}
@@ -386,10 +321,11 @@ jobs:
           COMMIT_SHA: ${{ github.sha }}
           FEATURE_FLAGS: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
           TEAM_INPUT: ${{ inputs.team || 'all' }}
-          SPECULOS_MODE: ${{ env.REMOTE_SPECULOS == 'true' && 'Speculinho (remote)' || 'Docker' }}
-          EXCLUSIVE_LOCK: ${{ inputs.exclusive_lock || 'remote' }}
+          DEVICES: ${{ steps.parse.outputs.is_dual == 'true' && format('{0} + {1}', steps.parse.outputs.device_1, steps.parse.outputs.device_2) || steps.parse.outputs.device_1 }}
+          SHARD_TOTAL: ${{ steps.parse.outputs.shard_total }}
+          RUN_ON_MACOS: ${{ inputs.run_on_macos || false }}
+          RUN_ON_WINDOWS: ${{ inputs.run_on_windows || false }}
         run: |
-          DEVICE="$SPECULOS_DEVICE"
           EXTRA_FEATURE_FLAGS="$E2E_FEATURE_FLAGS_JSON"
 
           if [ -z "$EXTRA_FEATURE_FLAGS" ]; then
@@ -406,17 +342,115 @@ jobs:
             echo "- **Workflow source branch:** $WORKFLOW_REF"
             echo "- **Triggered branch:** $TRIGGERED_BRANCH"
             echo "- **Commit SHA:** $COMMIT_SHA"
-            echo "- **Device selected:** $DEVICE"
-            echo "- **Speculos:** $SPECULOS_MODE"
+            echo "- **Device selected:** $DEVICES"
+            echo "- **Shards per device:** $SHARD_TOTAL"
+            echo "- **Also on macOS:** $RUN_ON_MACOS"
+            echo "- **Also on Windows:** $RUN_ON_WINDOWS"
+            echo "- **Speculos:** Speculinho (remote)"
             echo "- **Team:** $TEAM_INPUT"
             echo "$FILTER_SUMMARY"
             echo "- **Firebase env to target:** $BUILD_TYPE"
             echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
-            echo "- **Exclusive lock:** $EXCLUSIVE_LOCK"
             echo "- **Feature Flags:** $FEATURE_FLAGS"
             echo "- **JSON override feature flags:** $EXTRA_FEATURE_FLAGS"
             echo "- **Repeat each:** $REPEAT_EACH"
           } >> "$GITHUB_STEP_SUMMARY"
+        shell: bash
+
+  e2e-tests:
+    name: "Desktop E2E (${{ matrix.device }}, shard ${{ matrix.shard }}/${{ matrix.shard_total }})"
+    needs: [prepare-devices]
+    runs-on: [ledger-wallet-8cpu-aws-public-cached]
+    permissions:
+      id-token: write
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare-devices.outputs.e2e_matrix) }}
+    timeout-minutes: 90
+    env:
+      NODE_OPTIONS: "--max-old-space-size=14336"
+      INSTRUMENT_BUILD: true
+      FORCE_COLOR: 3
+      CI_OS: "ubuntu-latest"
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+      npm_config_loglevel: warn
+      pnpm_config_loglevel: warn
+      DO_NOT_TRACK: 1
+      SPECULOS_DEVICE: ${{ matrix.device }}
+      # The runner has no Docker daemon, so Speculos runs remotely on Speculinho.
+      REMOTE_SPECULOS: "true"
+      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ matrix.device != 'nanoS' && 'latest' || 'speculos-38ccc68068db-coinapps-85c7e5c' }}
+      # Pods report the host CPU count, so set workers explicitly rather than as a percentage.
+      E2E_WORKERS: 8
+      E2E_PRIMARY_DEVICE: ${{ matrix.is_primary }}
+      cache-bucket: ll-nx-cache
+      USERDATA_CACHE_ENABLED: ${{ inputs.build_type != 'js' }}
+      E2E_GENERATED_USERDATA_DIR: ${{ inputs.build_type != 'js' && format('{0}/e2e/userdata/generated', github.workspace) || '' }}
+    outputs:
+      test_passed: ${{ steps.run-playwright.outputs.passed }}
+      test_failed: ${{ steps.run-playwright.outputs.failed }}
+      test_total: ${{ steps.run-playwright.outputs.total }}
+      test_exit_code: ${{ steps.run-playwright.outputs.exit_code }}
+      # Each shard's Playwright outcome, for aggregate-shard-results. One per shard of SHARD_TOTAL.
+      status_1: ${{ steps.set-output.outputs.status_1 }}
+      status_2: ${{ steps.set-output.outputs.status_2 }}
+      status_3: ${{ steps.set-output.outputs.status_3 }}
+      status_4: ${{ steps.set-output.outputs.status_4 }}
+      device2_status_1: ${{ steps.set-output.outputs.device2_status_1 }}
+      device2_status_2: ${{ steps.set-output.outputs.device2_status_2 }}
+      device2_status_3: ${{ steps.set-output.outputs.device2_status_3 }}
+      device2_status_4: ${{ steps.set-output.outputs.device2_status_4 }}
+    steps:
+      - name: Generate GitHub App token
+        id: generate-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ secrets.GH_BOT_CLIENT_ID }}
+          private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+          repositories: ledger-live
+          permission-contents: read
+
+      - name: Checkout ledger-live monorepo (shallow clone)
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          repository: LedgerHQ/ledger-live
+          token: ${{ steps.generate-token.outputs.token }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Setup caches
+        id: caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
+
+      - name: Install dependencies and build LLD
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-test-desktop@develop
+        id: setup-test-desktop
+        with:
+          build_type: ${{ inputs.build_type || 'testing' }}
+          # The Nx run report goes to the e2e-logs artifact; the shard diagnostics sum it up.
+          step_summary: false
+
+      - name: Configure test environment (API endpoints, broadcast settings)
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
+        with:
+          enable_broadcast: ${{ env.E2E_BROADCAST_ENABLED }}
+          build_type: ${{ inputs.build_type }}
 
       - name: Validate feature flags JSON input
         shell: bash
@@ -461,11 +495,20 @@ jobs:
       # Every app launch fetches Firebase Remote Config, and overlapping runs share a 60 fetches/min
       # quota per IP. The proxy makes one fetch per run and replays it to every launch.
       # Refs dispatched from develop that predate the addon run without it.
+      # The Shard diagnostics job reports its stats from the uploaded logs, so it skips this job's summary.
       - name: Start Remote Config capture proxy
         if: ${{ hashFiles('.mise/tasks/mitmproxy/firebase_capture.py') != '' }}
         continue-on-error: true
-        run: mise run mitmproxy:capture-start
+        run: GITHUB_STEP_SUMMARY=/dev/null mise run mitmproxy:capture-start
         shell: bash
+
+      - name: Check the exclusive lock store (R2)
+        id: exclusive-lock
+        uses: LedgerHQ/ledger-live/tools/actions/composites/check-exclusive-lock@develop
+        with:
+          r2_endpoint: ${{ secrets.R2_ENDPOINT }}
+          r2_access_key: ${{ secrets.R2_ACCESS_KEY_ID }}
+          r2_secret_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
 
       - name: Run Playwright E2E tests
         id: run-playwright
@@ -475,10 +518,15 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop
         with:
           speculos_device: ${{ env.SPECULOS_DEVICE }}
-          test_filter: ${{ steps.test-filter.outputs.runner_filter }}
+          test_filter: ${{ needs.prepare-devices.outputs.runner_filter }}
           invert_filter: ${{ inputs.invert_filter || false }}
           repeat_each: ${{ inputs.repeat_each }}
           feature_flags: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
+          shard_index: ${{ matrix.shard }}
+          shard_total: ${{ matrix.shard_total }}
+          # A --workers flag also caps refs whose Playwright config predates E2E_WORKERS.
+          workers: ${{ env.E2E_WORKERS }}
+          step_summary: false
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
@@ -492,15 +540,14 @@ jobs:
           E2E_EXCLUSIVE_LOCK_BUCKET: ${{ secrets.R2_ENDPOINT && 'ledger-live-cache' || '' }}
           E2E_EXCLUSIVE_LOCK_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           E2E_EXCLUSIVE_LOCK_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          E2E_EXCLUSIVE_LOCK_DEFERRAL_PASSES: ${{ inputs.lock_deferral_passes }}
-          E2E_EXCLUSIVE_LOCK_MODE: ${{ inputs.exclusive_lock }}
+          E2E_EXCLUSIVE_LOCK_MODE: ${{ steps.exclusive-lock.outputs.mode }}
           E2E_EXCLUSIVE_LOCK_PRIORITY: ${{ contains(fromJSON('["release","hotfix"]'), inputs.ref || github.ref_name) && 'high' || 'normal' }}
 
       - name: Stop Remote Config capture proxy
         id: capture-proxy
         if: ${{ !cancelled() && hashFiles('.mise/tasks/mitmproxy/firebase_capture.py') != '' }}
         continue-on-error: true
-        run: mise run mitmproxy:capture-stop
+        run: GITHUB_STEP_SUMMARY=/dev/null mise run mitmproxy:capture-stop
         shell: bash
 
       - name: Add workflow inputs to Allure environment
@@ -512,9 +559,9 @@ jobs:
           context: |
             ref=${{ inputs.ref || github.ref_name }}
             broadcast=${{ env.E2E_BROADCAST_ENABLED }}
-            exclusive_lock=${{ inputs.exclusive_lock || 'remote' }}
+            exclusive_lock=${{ steps.exclusive-lock.outputs.mode || 'remote' }}
             firebase_env=${{ inputs.build_type || 'testing' }}
-            speculos=${{ env.REMOTE_SPECULOS == 'true' && 'Speculinho (remote)' || 'Docker' }}
+            speculos=Speculinho (remote)
             team=${{ inputs.team || 'all' }}
             test_filter=${{ inputs.test_filter }}
             invert_filter=${{ inputs.invert_filter || false }}
@@ -524,37 +571,70 @@ jobs:
             remote_config_templates=${{ steps.capture-proxy.outputs.templates }}
 
       - name: Upload Allure test results artifact
+        id: upload-allure
         if: ${{ !cancelled() || steps.run-playwright.outcome == 'cancelled' }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
-          name: allure-results${{ matrix.artifact_suffix }}
+          name: allure-results${{ matrix.artifact_suffix }}-shard-${{ matrix.shard }}
           path: "e2e/desktop/allure-results"
 
       - name: Upload Remote Config capture proxy logs
         if: ${{ !cancelled() && steps.capture-proxy.outputs.status == 'on' }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
-          name: firebase-capture-logs${{ matrix.artifact_suffix }}
+          name: firebase-capture-logs${{ matrix.artifact_suffix }}-shard-${{ matrix.shard }}
           path: ${{ runner.temp }}/firebase-capture*
           retention-days: 7
 
-  e2e-tests-macos:
-    name: "Desktop E2E (${{ needs.prepare-devices.outputs.device_1 }}, macOS)"
+      - name: Upload Playwright and Nx logs for the shard diagnostics
+        if: ${{ !cancelled() || steps.run-playwright.outcome == 'cancelled' }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: e2e-logs${{ matrix.artifact_suffix }}-shard-${{ matrix.shard }}
+          path: |
+            ${{ runner.temp }}/playwright-output.log
+            ${{ runner.temp }}/nx-run-report.md
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Set job output based on Playwright result
+        id: set-output
+        if: ${{ !cancelled() }}
+        env:
+          STATUS_KEY: ${{ !matrix.is_primary && 'device2_' || '' }}status_${{ matrix.shard }}
+          RUN_OUTCOME: ${{ steps.exclusive-lock.outcome == 'failure' && 'failure' || (steps.upload-allure.outcome == 'success' && steps.run-playwright.outcome || 'skipped') }}
+        run: echo "${STATUS_KEY}=${RUN_OUTCOME}" >> "$GITHUB_OUTPUT"
+        shell: bash
+
+  e2e-tests-extra-os:
+    name: "Desktop E2E (${{ needs.prepare-devices.outputs.device_1 }}, ${{ matrix.label }})"
     needs: [prepare-devices]
-    if: ${{ inputs.run_on_macos }}
-    runs-on: [macOS, ARM64, general-pool]
+    if: ${{ inputs.run_on_macos || inputs.run_on_windows }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.prepare-devices.outputs.extra_os_matrix) }}
     permissions:
       id-token: write
       contents: read
     timeout-minutes: 90
+    outputs:
+      # Each leg's own result for its report: the job's result fails every row when one leg fails.
+      status_macos: ${{ steps.complete.outputs.status_macos }}
+      status_windows: ${{ steps.complete.outputs.status_windows }}
     env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
+      NODE_OPTIONS: "--max-old-space-size=${{ matrix.heap_mb }}"
       INSTRUMENT_BUILD: true
       FORCE_COLOR: 3
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       npm_config_loglevel: warn
       pnpm_config_loglevel: warn
       DO_NOT_TRACK: 1
+      # Nx cache writes hit EMFILE on Windows.
+      NX_POWERPACK_CACHE_MODE: ${{ matrix.os == 'windows' && 'read-only' || '' }}
+      # The Windows frame and menu bar eat into the default 1024x768 window.
+      LEDGER_DEFAULT_WINDOW_WIDTH: ${{ matrix.os == 'windows' && '1280' || '' }}
+      LEDGER_DEFAULT_WINDOW_HEIGHT: ${{ matrix.os == 'windows' && '960' || '' }}
       SPECULOS_DEVICE: ${{ needs.prepare-devices.outputs.device_1 }}
       REMOTE_SPECULOS: true
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ needs.prepare-devices.outputs.device_1 != 'nanoS' && 'latest' || 'speculos-38ccc68068db-coinapps-85c7e5c' }}
@@ -572,6 +652,13 @@ jobs:
           private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
           repositories: ledger-live
           permission-contents: read
+
+      - name: Check out with LF line endings
+        if: ${{ matrix.os == 'windows' }}
+        shell: bash
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
 
       - name: Checkout ledger-live monorepo (shallow clone)
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -594,25 +681,8 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
 
-      - name: Build Playwright grep filter from inputs
-        id: test-filter
-        shell: bash
-        env:
-          TEST_FILTER_INPUT: ${{ inputs.test_filter }}
-          SMOKE_TESTS_INPUT: ${{ inputs.smoke_tests }}
-          TEAM_INPUT: ${{ inputs.team || 'all' }}
-          INVERT_FILTER_INPUT: ${{ inputs.invert_filter || false }}
-        run: |
-          node e2e/tooling/filter/resolve.mjs \
-            --input "$TEST_FILTER_INPUT" \
-            --smoke-tests "$SMOKE_TESTS_INPUT" \
-            --team "$TEAM_INPUT" \
-            --invert-filter "$INVERT_FILTER_INPUT" \
-            --check-dir "e2e/desktop/tests" \
-            --runner playwright \
-            --github-output >> "$GITHUB_OUTPUT"
-
       - name: JFrog npm auth
+        if: ${{ matrix.os == 'macos' }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
@@ -622,55 +692,13 @@ jobs:
         id: setup-test-desktop
         with:
           build_type: ${{ inputs.build_type || 'testing' }}
+          step_summary: false
 
       - name: Configure test environment (API endpoints, broadcast settings)
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
         with:
           enable_broadcast: ${{ env.E2E_BROADCAST_ENABLED }}
           build_type: ${{ inputs.build_type }}
-
-      - name: Write workflow context to GitHub Summary
-        env:
-          FILTER_PATTERN: ${{ steps.test-filter.outputs.filter }}
-          BUILD_TYPE: ${{ inputs.build_type || 'testing' }}
-          BROADCAST_ENABLED: ${{ env.E2E_BROADCAST_ENABLED }}
-          REPEAT_EACH: ${{ inputs.repeat_each }}
-          WORKFLOW_REF: ${{ github.workflow_ref }}
-          TRIGGERED_BRANCH: ${{ inputs.ref || github.ref_name }}
-          COMMIT_SHA: ${{ github.sha }}
-          FEATURE_FLAGS: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
-          TEAM_INPUT: ${{ inputs.team || 'all' }}
-          EXCLUSIVE_LOCK: ${{ inputs.exclusive_lock || 'remote' }}
-        run: |
-          DEVICE="$SPECULOS_DEVICE"
-          EXTRA_FEATURE_FLAGS="$E2E_FEATURE_FLAGS_JSON"
-
-          if [ -z "$EXTRA_FEATURE_FLAGS" ]; then
-            EXTRA_FEATURE_FLAGS="(none)"
-          fi
-          if [ -z "$REPEAT_EACH" ]; then
-            REPEAT_EACH="(none)"
-          fi
-
-          FILTER_SUMMARY="$(node e2e/tooling/filter/format-summary.mjs "$FILTER_PATTERN")"
-          {
-            echo "## Workflow Context"
-            echo ""
-            echo "- **Workflow source branch:** $WORKFLOW_REF"
-            echo "- **Triggered branch:** $TRIGGERED_BRANCH"
-            echo "- **Commit SHA:** $COMMIT_SHA"
-            echo "- **OS:** macOS"
-            echo "- **Device selected:** $DEVICE"
-            echo "- **Speculos:** Speculinho (remote)"
-            echo "- **Team:** $TEAM_INPUT"
-            echo "$FILTER_SUMMARY"
-            echo "- **Firebase env to target:** $BUILD_TYPE"
-            echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
-            echo "- **Exclusive lock:** $EXCLUSIVE_LOCK"
-            echo "- **Feature Flags:** $FEATURE_FLAGS"
-            echo "- **JSON override feature flags:** $EXTRA_FEATURE_FLAGS"
-            echo "- **Repeat each:** $REPEAT_EACH"
-          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Validate feature flags JSON input
         shell: bash
@@ -712,17 +740,32 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
 
+      - name: Set display resolution
+        if: ${{ matrix.os == 'windows' }}
+        continue-on-error: true
+        shell: pwsh
+        run: Set-DisplayResolution -Width 1920 -Height 1080 -Force
+
+      - name: Check the exclusive lock store (R2)
+        id: exclusive-lock
+        uses: LedgerHQ/ledger-live/tools/actions/composites/check-exclusive-lock@develop
+        with:
+          r2_endpoint: ${{ secrets.R2_ENDPOINT }}
+          r2_access_key: ${{ secrets.R2_ACCESS_KEY_ID }}
+          r2_secret_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+
       - name: Run Playwright E2E tests
         id: run-playwright
         timeout-minutes: 70
         uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop
         with:
           speculos_device: ${{ env.SPECULOS_DEVICE }}
-          test_filter: ${{ steps.test-filter.outputs.runner_filter }}
+          test_filter: ${{ needs.prepare-devices.outputs.runner_filter }}
           invert_filter: ${{ inputs.invert_filter || false }}
           repeat_each: ${{ inputs.repeat_each }}
           feature_flags: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
-          workers: "6"
+          workers: ${{ matrix.workers }}
+          step_summary: false
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
@@ -736,8 +779,7 @@ jobs:
           E2E_EXCLUSIVE_LOCK_BUCKET: ${{ secrets.R2_ENDPOINT && 'ledger-live-cache' || '' }}
           E2E_EXCLUSIVE_LOCK_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           E2E_EXCLUSIVE_LOCK_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          E2E_EXCLUSIVE_LOCK_DEFERRAL_PASSES: ${{ inputs.lock_deferral_passes }}
-          E2E_EXCLUSIVE_LOCK_MODE: ${{ inputs.exclusive_lock }}
+          E2E_EXCLUSIVE_LOCK_MODE: ${{ steps.exclusive-lock.outputs.mode }}
           E2E_EXCLUSIVE_LOCK_PRIORITY: ${{ contains(fromJSON('["release","hotfix"]'), inputs.ref || github.ref_name) && 'high' || 'normal' }}
 
       - name: Add workflow inputs to Allure environment
@@ -749,7 +791,7 @@ jobs:
           context: |
             ref=${{ inputs.ref || github.ref_name }}
             broadcast=${{ env.E2E_BROADCAST_ENABLED }}
-            exclusive_lock=${{ inputs.exclusive_lock || 'remote' }}
+            exclusive_lock=${{ steps.exclusive-lock.outputs.mode || 'remote' }}
             firebase_env=${{ inputs.build_type || 'testing' }}
             speculos=Speculinho (remote)
             team=${{ inputs.team || 'all' }}
@@ -762,17 +804,36 @@ jobs:
         if: ${{ !cancelled() || steps.run-playwright.outcome == 'cancelled' }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
-          name: allure-results-macos
+          name: allure-results-${{ matrix.os }}
           path: "e2e/desktop/allure-results"
+
+      - name: Upload Playwright and Nx logs for the shard diagnostics
+        if: ${{ !cancelled() || steps.run-playwright.outcome == 'cancelled' }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: e2e-logs-${{ matrix.os }}
+          path: |
+            ${{ runner.temp }}/playwright-output.log
+            ${{ runner.temp }}/nx-run-report.md
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Mark the ${{ matrix.label }} leg as passed
+        id: complete
+        shell: bash
+        run: echo "status_${{ matrix.os }}=success" >> "$GITHUB_OUTPUT"
 
   report-to-allure:
     name: "Create Allure Report - ${{ needs.prepare-devices.outputs.device_1 }}"
     runs-on: [ledger-wallet-1cpu-aws-public-cached]
     needs: [prepare-devices, e2e-tests]
     outputs:
-      status: ${{ steps.summary.outputs.status }}
+      # Unlike mobile, a shard without results fails the device: part of its suite never ran.
+      finalStatus: ${{ steps.aggregate.outputs.missingShards != '' && 'failure' || steps.aggregate.outputs.finalStatus }}
+      missingShards: ${{ steps.aggregate.outputs.missingShards }}
       summary_message: ${{ steps.summary.outputs.summary_message }}
       report-url: ${{ steps.allure-server.outputs.report-url }}
+      qaa-report-url: ${{ steps.qaa-allure-upload.outputs.report_url }}
     if: ${{ !cancelled() }}
     env:
       ALLURE_RESULTS: "allure-results"
@@ -780,8 +841,14 @@ jobs:
       - name: Download Allure results from test job
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: allure-results
+          pattern: allure-results-shard-*
+          merge-multiple: true
           path: ${{ env.ALLURE_RESULTS }}
+
+      # The Allure steps below generate a report and recompress screenshots inside the results directory.
+      - name: Keep the raw results for qaa-allure
+        run: cp -R "$ALLURE_RESULTS" "$ALLURE_RESULTS-qaa"
+        shell: bash
 
       - name: Extract test summary for Slack notification
         if: ${{ !cancelled() }}
@@ -790,6 +857,17 @@ jobs:
         with:
           allure-results-path: ${{ env.ALLURE_RESULTS }}
           platform: ${{ needs.prepare-devices.outputs.is_dual == 'true' && format('linux-{0}', needs.prepare-devices.outputs.device_1) || 'linux' }}
+
+      - name: Aggregate shard results
+        if: ${{ !cancelled() }}
+        id: aggregate
+        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@develop
+        with:
+          total_shards: ${{ needs.prepare-devices.outputs.shard_total }}
+          status_1: ${{ needs.e2e-tests.outputs.status_1 }}
+          status_2: ${{ needs.e2e-tests.outputs.status_2 }}
+          status_3: ${{ needs.e2e-tests.outputs.status_3 }}
+          status_4: ${{ needs.e2e-tests.outputs.status_4 }}
 
       - name: Publish report to Allure Server
         id: allure-server
@@ -800,7 +878,38 @@ jobs:
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: ${{ env.ALLURE_RESULTS }}
-          summary_message: ${{ steps.summary.outputs.summary_message }}
+          step_summary: false
+
+      - name: Upload to qaa-allure (Experimental)
+        id: qaa-allure-upload
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        timeout-minutes: 15
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
+        with:
+          api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
+          path: ${{ env.ALLURE_RESULTS }}-qaa
+          name: "desktop-e2e-${{ needs.prepare-devices.outputs.device_1 }}-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
+          tags: ${{ format('["desktop","speculos",{0},{1}]', toJSON(needs.prepare-devices.outputs.device_1), toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual'))) }}
+          branch: ${{ inputs.ref || github.ref_name }}
+          history_key: "desktop-e2e-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
+          step_summary: false
+
+      - name: Write the totals and report links
+        if: ${{ !cancelled() }}
+        env:
+          SUMMARY_MESSAGE: ${{ steps.summary.outputs.summary_message }}
+          MISSING_SHARDS: ${{ steps.aggregate.outputs.missingShards }}
+          QAA_REPORT_URL: ${{ steps.qaa-allure-upload.outputs.report_url }}
+          LEGACY_REPORT_URL: ${{ steps.allure-server.outputs.report-url }}
+        run: |
+          {
+            if [ -n "$SUMMARY_MESSAGE" ]; then printf '%s\n\n' "$SUMMARY_MESSAGE"; fi
+            if [ -n "$MISSING_SHARDS" ]; then printf '⚠️ Missing results for shard(s): %s.\n\n' "$MISSING_SHARDS"; fi
+            if [ -n "$QAA_REPORT_URL" ]; then printf '[🆕 New QAA Allure report](%s)\n\n' "$QAA_REPORT_URL"; fi
+            if [ -n "$LEGACY_REPORT_URL" ]; then printf '[Legacy Allure](%s)\n' "$LEGACY_REPORT_URL"; fi
+          } >> "$GITHUB_STEP_SUMMARY"
+        shell: bash
 
       - name: Write failed tests summary
         if: ${{ !cancelled() }}
@@ -809,23 +918,38 @@ jobs:
           results-path: ${{ env.ALLURE_RESULTS }}
           runner: playwright
 
+      - name: Write shard diagnostics
+        if: ${{ !cancelled() }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/e2e-shard-diagnostics@develop
+        with:
+          legs: "-shard-*"
+
   report-to-allure-device2:
-    name: "Create Allure Report - device 2"
+    name: "Create Allure Report - ${{ needs.prepare-devices.outputs.is_dual == 'true' && needs.prepare-devices.outputs.device_2 || 'device 2' }}"
     runs-on: [ledger-wallet-1cpu-aws-public-cached]
     needs: [prepare-devices, e2e-tests]
     if: ${{ !cancelled() && needs.prepare-devices.outputs.is_dual == 'true' }}
     outputs:
-      status: ${{ steps.summary.outputs.status }}
+      # Unlike mobile, a shard without results fails the device: part of its suite never ran.
+      finalStatus: ${{ steps.aggregate.outputs.missingShards != '' && 'failure' || steps.aggregate.outputs.finalStatus }}
+      missingShards: ${{ steps.aggregate.outputs.missingShards }}
       summary_message: ${{ steps.summary.outputs.summary_message }}
       report-url: ${{ steps.allure-server.outputs.report-url }}
+      qaa-report-url: ${{ steps.qaa-allure-upload.outputs.report_url }}
     env:
       ALLURE_RESULTS: "allure-results-device2"
     steps:
       - name: Download Allure results from device2 test job
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: allure-results-${{ needs.prepare-devices.outputs.device_2 }}
+          pattern: allure-results-${{ needs.prepare-devices.outputs.device_2 }}-shard-*
+          merge-multiple: true
           path: ${{ env.ALLURE_RESULTS }}
+
+      # The Allure steps below generate a report and recompress screenshots inside the results directory.
+      - name: Keep the raw results for qaa-allure
+        run: cp -R "$ALLURE_RESULTS" "$ALLURE_RESULTS-qaa"
+        shell: bash
 
       - name: Extract test summary for Slack notification
         if: ${{ !cancelled() }}
@@ -834,6 +958,17 @@ jobs:
         with:
           allure-results-path: ${{ env.ALLURE_RESULTS }}
           platform: linux-${{ needs.prepare-devices.outputs.device_2 }}
+
+      - name: Aggregate shard results
+        if: ${{ !cancelled() }}
+        id: aggregate
+        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@develop
+        with:
+          total_shards: ${{ needs.prepare-devices.outputs.shard_total }}
+          status_1: ${{ needs.e2e-tests.outputs.device2_status_1 }}
+          status_2: ${{ needs.e2e-tests.outputs.device2_status_2 }}
+          status_3: ${{ needs.e2e-tests.outputs.device2_status_3 }}
+          status_4: ${{ needs.e2e-tests.outputs.device2_status_4 }}
 
       - name: Publish report to Allure Server
         id: allure-server
@@ -844,7 +979,38 @@ jobs:
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: ${{ env.ALLURE_RESULTS }}
-          summary_message: ${{ steps.summary.outputs.summary_message }}
+          step_summary: false
+
+      - name: Upload to qaa-allure (Experimental)
+        id: qaa-allure-upload
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        timeout-minutes: 15
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
+        with:
+          api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
+          path: ${{ env.ALLURE_RESULTS }}-qaa
+          name: "desktop-e2e-${{ needs.prepare-devices.outputs.device_2 }}-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
+          tags: ${{ format('["desktop","speculos",{0},{1}]', toJSON(needs.prepare-devices.outputs.device_2), toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual'))) }}
+          branch: ${{ inputs.ref || github.ref_name }}
+          history_key: "desktop-e2e-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
+          step_summary: false
+
+      - name: Write the totals and report links
+        if: ${{ !cancelled() }}
+        env:
+          SUMMARY_MESSAGE: ${{ steps.summary.outputs.summary_message }}
+          MISSING_SHARDS: ${{ steps.aggregate.outputs.missingShards }}
+          QAA_REPORT_URL: ${{ steps.qaa-allure-upload.outputs.report_url }}
+          LEGACY_REPORT_URL: ${{ steps.allure-server.outputs.report-url }}
+        run: |
+          {
+            if [ -n "$SUMMARY_MESSAGE" ]; then printf '%s\n\n' "$SUMMARY_MESSAGE"; fi
+            if [ -n "$MISSING_SHARDS" ]; then printf '⚠️ Missing results for shard(s): %s.\n\n' "$MISSING_SHARDS"; fi
+            if [ -n "$QAA_REPORT_URL" ]; then printf '[🆕 New QAA Allure report](%s)\n\n' "$QAA_REPORT_URL"; fi
+            if [ -n "$LEGACY_REPORT_URL" ]; then printf '[Legacy Allure](%s)\n' "$LEGACY_REPORT_URL"; fi
+          } >> "$GITHUB_STEP_SUMMARY"
+        shell: bash
 
       - name: Write failed tests summary
         if: ${{ !cancelled() }}
@@ -853,23 +1019,43 @@ jobs:
           results-path: ${{ env.ALLURE_RESULTS }}
           runner: playwright
 
-  report-to-allure-macos:
-    name: "Create Allure Report - macOS"
+      - name: Write shard diagnostics
+        if: ${{ !cancelled() }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/e2e-shard-diagnostics@develop
+        with:
+          legs: "-${{ needs.prepare-devices.outputs.device_2 }}-shard-*"
+
+  report-to-allure-extra-os:
+    name: "Create Allure Report - ${{ matrix.label }}"
     runs-on: [ledger-wallet-1cpu-aws-public-cached]
-    needs: [e2e-tests-macos]
-    if: ${{ !cancelled() && inputs.run_on_macos }}
+    needs: [prepare-devices, e2e-tests-extra-os]
+    if: ${{ !cancelled() && needs.prepare-devices.result == 'success' && (inputs.run_on_macos || inputs.run_on_windows) }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.prepare-devices.outputs.extra_os_matrix) }}
     outputs:
-      status: ${{ steps.summary.outputs.status }}
-      summary_message: ${{ steps.summary.outputs.summary_message }}
-      report-url: ${{ steps.allure-server.outputs.report-url }}
+      # Each leg's Slack row under its OS name: a matrix job keeps one value per output.
+      status_macos: ${{ steps.row.outputs.status_macos }}
+      summary_message_macos: ${{ steps.row.outputs.summary_message_macos }}
+      report_url_macos: ${{ steps.row.outputs.report_url_macos }}
+      qaa_report_url_macos: ${{ steps.row.outputs.qaa_report_url_macos }}
+      status_windows: ${{ steps.row.outputs.status_windows }}
+      summary_message_windows: ${{ steps.row.outputs.summary_message_windows }}
+      report_url_windows: ${{ steps.row.outputs.report_url_windows }}
+      qaa_report_url_windows: ${{ steps.row.outputs.qaa_report_url_windows }}
     env:
-      ALLURE_RESULTS: "allure-results-macos"
+      ALLURE_RESULTS: "allure-results-${{ matrix.os }}"
     steps:
-      - name: Download Allure results from macOS test job
+      - name: Download Allure results from ${{ matrix.label }} test job
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: allure-results-macos
+          name: allure-results-${{ matrix.os }}
           path: ${{ env.ALLURE_RESULTS }}
+
+      # The Allure steps below generate a report and recompress screenshots inside the results directory.
+      - name: Keep the raw results for qaa-allure
+        run: cp -R "$ALLURE_RESULTS" "$ALLURE_RESULTS-qaa"
+        shell: bash
 
       - name: Extract test summary for Slack notification
         if: ${{ !cancelled() }}
@@ -877,18 +1063,47 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
         with:
           allure-results-path: ${{ env.ALLURE_RESULTS }}
-          platform: macos
+          platform: ${{ matrix.os }}
 
       - name: Publish report to Allure Server
         id: allure-server
         if: ${{ !cancelled() }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
         with:
-          platform: ${{ inputs.smoke_tests && 'macos-speculos-smoke' || 'macos-speculos' }}
+          platform: ${{ matrix.os }}-speculos${{ inputs.smoke_tests && '-smoke' || '' }}
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: ${{ env.ALLURE_RESULTS }}
-          summary_message: ${{ steps.summary.outputs.summary_message }}
+          step_summary: false
+
+      - name: Upload to qaa-allure (Experimental)
+        id: qaa-allure-upload
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        timeout-minutes: 15
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
+        with:
+          api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
+          path: ${{ env.ALLURE_RESULTS }}-qaa
+          name: "desktop-e2e-${{ matrix.os }}-${{ needs.prepare-devices.outputs.device_1 }}-${{ inputs.smoke_tests && 'smoke' || 'manual' }}"
+          tags: ${{ format('["desktop","speculos",{0},{1},{2}]', toJSON(matrix.os), toJSON(needs.prepare-devices.outputs.device_1), toJSON(inputs.smoke_tests && 'smoke' || 'manual')) }}
+          branch: ${{ inputs.ref || github.ref_name }}
+          history_key: "desktop-e2e-${{ matrix.os }}-${{ inputs.smoke_tests && 'smoke' || 'manual' }}"
+          step_summary: false
+
+      - name: Write the totals and report links
+        if: ${{ !cancelled() }}
+        env:
+          SUMMARY_MESSAGE: ${{ steps.summary.outputs.summary_message }}
+          QAA_REPORT_URL: ${{ steps.qaa-allure-upload.outputs.report_url }}
+          LEGACY_REPORT_URL: ${{ steps.allure-server.outputs.report-url }}
+        run: |
+          {
+            if [ -n "$SUMMARY_MESSAGE" ]; then printf '%s\n\n' "$SUMMARY_MESSAGE"; fi
+            if [ -n "$QAA_REPORT_URL" ]; then printf '[🆕 New QAA Allure report](%s)\n\n' "$QAA_REPORT_URL"; fi
+            if [ -n "$LEGACY_REPORT_URL" ]; then printf '[Legacy Allure](%s)\n' "$LEGACY_REPORT_URL"; fi
+          } >> "$GITHUB_STEP_SUMMARY"
+        shell: bash
 
       - name: Write failed tests summary
         if: ${{ !cancelled() }}
@@ -897,97 +1112,35 @@ jobs:
           results-path: ${{ env.ALLURE_RESULTS }}
           runner: playwright
 
-  qaa-allure-upload:
-    name: "QAA Allure Upload - ${{ needs.prepare-devices.outputs.device_1 }} (Experimental)"
-    runs-on: [ledger-wallet-1cpu-aws-public-cached]
-    needs: [prepare-devices, e2e-tests]
-    if: ${{ !cancelled() }}
-    continue-on-error: true
-    timeout-minutes: 15
-    outputs:
-      report_url: ${{ steps.qaa-allure-upload.outputs.report_url }}
-    env:
-      ALLURE_RESULTS: "allure-results"
-    steps:
-      - name: Download Allure results from test job
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      - name: Write shard diagnostics
+        if: ${{ !cancelled() }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/e2e-shard-diagnostics@develop
         with:
-          name: allure-results
-          path: ${{ env.ALLURE_RESULTS }}
+          legs: "-${{ matrix.os }}"
 
-      - name: Upload to qaa-allure (sandbox)
-        id: qaa-allure-upload
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
-        with:
-          api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
-          path: ${{ env.ALLURE_RESULTS }}
-          name: "desktop-e2e-${{ needs.prepare-devices.outputs.device_1 }}-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
-          tags: ${{ format('["desktop","speculos",{0},{1}]', toJSON(needs.prepare-devices.outputs.device_1), toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual'))) }}
-          branch: ${{ inputs.ref || github.ref_name }}
-          history_key: "desktop-e2e-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
-
-  qaa-allure-upload-device2:
-    name: "QAA Allure Upload - device 2 (Experimental)"
-    runs-on: [ledger-wallet-1cpu-aws-public-cached]
-    needs: [prepare-devices, e2e-tests]
-    if: ${{ !cancelled() && needs.prepare-devices.outputs.is_dual == 'true' }}
-    continue-on-error: true
-    timeout-minutes: 15
-    outputs:
-      report_url: ${{ steps.qaa-allure-upload.outputs.report_url }}
-    env:
-      ALLURE_RESULTS: "allure-results-device2"
-    steps:
-      - name: Download Allure results from device2 test job
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          name: allure-results-${{ needs.prepare-devices.outputs.device_2 }}
-          path: ${{ env.ALLURE_RESULTS }}
-
-      - name: Upload to qaa-allure (sandbox)
-        id: qaa-allure-upload
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
-        with:
-          api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
-          path: ${{ env.ALLURE_RESULTS }}
-          name: "desktop-e2e-${{ needs.prepare-devices.outputs.device_2 }}-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
-          tags: ${{ format('["desktop","speculos",{0},{1}]', toJSON(needs.prepare-devices.outputs.device_2), toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual'))) }}
-          branch: ${{ inputs.ref || github.ref_name }}
-          history_key: "desktop-e2e-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
-
-  qaa-allure-upload-macos:
-    name: "QAA Allure Upload - macOS (Experimental)"
-    runs-on: [ledger-wallet-1cpu-aws-public-cached]
-    needs: [prepare-devices, e2e-tests-macos]
-    if: ${{ !cancelled() && inputs.run_on_macos }}
-    continue-on-error: true
-    timeout-minutes: 15
-    outputs:
-      report_url: ${{ steps.qaa-allure-upload.outputs.report_url }}
-    env:
-      ALLURE_RESULTS: "allure-results-macos"
-    steps:
-      - name: Download Allure results from macOS test job
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          name: allure-results-macos
-          path: ${{ env.ALLURE_RESULTS }}
-
-      - name: Upload to qaa-allure (sandbox)
-        id: qaa-allure-upload
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
-        with:
-          api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
-          path: ${{ env.ALLURE_RESULTS }}
-          name: "desktop-e2e-macos-${{ needs.prepare-devices.outputs.device_1 }}-${{ inputs.smoke_tests && 'smoke' || 'manual' }}"
-          tags: ${{ format('["desktop","speculos","macos",{0},{1}]', toJSON(needs.prepare-devices.outputs.device_1), toJSON(inputs.smoke_tests && 'smoke' || 'manual')) }}
-          branch: ${{ inputs.ref || github.ref_name }}
-          history_key: "desktop-e2e-macos-${{ inputs.smoke_tests && 'smoke' || 'manual' }}"
+      - name: Set the ${{ matrix.label }} Slack row
+        id: row
+        if: ${{ !cancelled() }}
+        env:
+          OS: ${{ matrix.os }}
+          # A test leg that crashed or timed out fails the row even if the results it left all passed.
+          STATUS: ${{ needs.e2e-tests-extra-os.outputs[format('status_{0}', matrix.os)] != 'success' && 'failure' || steps.summary.outputs.status }}
+          SUMMARY_MESSAGE: ${{ steps.summary.outputs.summary_message }}
+          REPORT_URL: ${{ steps.allure-server.outputs.report-url }}
+          QAA_REPORT_URL: ${{ steps.qaa-allure-upload.outputs.report_url }}
+        run: |
+          {
+            echo "status_${OS}=$STATUS"
+            echo "summary_message_${OS}=$SUMMARY_MESSAGE"
+            echo "report_url_${OS}=$REPORT_URL"
+            echo "qaa_report_url_${OS}=$QAA_REPORT_URL"
+          } >> "$GITHUB_OUTPUT"
+        shell: bash
 
   notify-to-slack:
     name: "Notify to Slack"
     runs-on: [ledger-wallet-1cpu-aws-public-cached]
-    needs: [prepare-devices, report-to-allure, report-to-allure-device2, report-to-allure-macos, qaa-allure-upload, qaa-allure-upload-device2, qaa-allure-upload-macos]
+    needs: [prepare-devices, report-to-allure, report-to-allure-device2, report-to-allure-extra-os]
     if: ${{ always() && (inputs.slack_notif || github.event_name == 'schedule') }}
     env:
       IS_DUAL: ${{ needs.prepare-devices.outputs.is_dual }}
@@ -1012,21 +1165,31 @@ jobs:
           row1_flags: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
           row1_summary: ${{ needs.report-to-allure.outputs.summary_message }}
           row1_report_url: ${{ needs.report-to-allure.outputs.report-url }}
-          row1_status: ${{ needs.report-to-allure.outputs.status }}
-          row1_qaa_url: ${{ needs.qaa-allure-upload.outputs.report_url }}
+          row1_status: ${{ needs.report-to-allure.outputs.finalStatus }}
+          row1_missing_shards: ${{ needs.report-to-allure.outputs.missingShards }}
+          row1_qaa_url: ${{ needs.report-to-allure.outputs.qaa-report-url }}
           # Row 2 only renders on dual-device runs (empty label = dropped).
           row2_emoji: "🐧"
           row2_label: ${{ env.IS_DUAL == 'true' && format('linux ({0})', env.DEVICE_2) || '' }}
           row2_flags: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
           row2_summary: ${{ needs.report-to-allure-device2.outputs.summary_message }}
           row2_report_url: ${{ needs.report-to-allure-device2.outputs.report-url }}
-          row2_status: ${{ needs.report-to-allure-device2.outputs.status }}
-          row2_qaa_url: ${{ needs.qaa-allure-upload-device2.outputs.report_url }}
+          row2_status: ${{ needs.report-to-allure-device2.outputs.finalStatus }}
+          row2_missing_shards: ${{ needs.report-to-allure-device2.outputs.missingShards }}
+          row2_qaa_url: ${{ needs.report-to-allure-device2.outputs.qaa-report-url }}
           # Row 3 only renders when the run also ran on macOS.
           row3_emoji: "🍎"
           row3_label: ${{ inputs.run_on_macos && 'macos' || '' }}
           row3_flags: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
-          row3_summary: ${{ needs.report-to-allure-macos.outputs.summary_message }}
-          row3_report_url: ${{ needs.report-to-allure-macos.outputs.report-url }}
-          row3_status: ${{ needs.report-to-allure-macos.outputs.status }}
-          row3_qaa_url: ${{ needs.qaa-allure-upload-macos.outputs.report_url }}
+          row3_summary: ${{ needs.report-to-allure-extra-os.outputs.summary_message_macos }}
+          row3_report_url: ${{ needs.report-to-allure-extra-os.outputs.report_url_macos }}
+          row3_status: ${{ needs.report-to-allure-extra-os.outputs.status_macos }}
+          row3_qaa_url: ${{ needs.report-to-allure-extra-os.outputs.qaa_report_url_macos }}
+          # Row 4 only renders when the run also ran on Windows.
+          row4_emoji: "🪟"
+          row4_label: ${{ inputs.run_on_windows && 'windows' || '' }}
+          row4_flags: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
+          row4_summary: ${{ needs.report-to-allure-extra-os.outputs.summary_message_windows }}
+          row4_report_url: ${{ needs.report-to-allure-extra-os.outputs.report_url_windows }}
+          row4_status: ${{ needs.report-to-allure-extra-os.outputs.status_windows }}
+          row4_qaa_url: ${{ needs.report-to-allure-extra-os.outputs.qaa_report_url_windows }}

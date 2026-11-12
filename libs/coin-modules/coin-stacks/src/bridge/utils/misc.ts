@@ -7,7 +7,7 @@ import {
 import { log } from "@ledgerhq/logs";
 import { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import { deserializeCV, cvToJSON } from "@stacks/transactions";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import {
   fetchFullMempoolTxs,
   fetchNonce,

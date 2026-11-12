@@ -1,10 +1,14 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback } from "react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { sortAssetsByValue } from "@features/platform-quick-actions";
-import type {
-  AccountAssetPickerProps,
-  AccountAssetPickerRow,
+import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
+import { ACCOUNT_DETAIL_PAGES } from "@features/flow-account-detail";
+import {
+  usePickAccountAssets,
+  type AccountAssetPickerProps,
 } from "@features/flow-account-detail-hero";
+import { track, trackPage } from "@shared/analytics";
+import { EVENTS_NAME } from "LLD/features/ModularDialog/analytics/modularDialog.types";
+import { formatAssetsConfig } from "LLD/features/ModularDialog/analytics/utils";
 import { useSelector } from "LLD/hooks/redux";
 import { useCalculateCountervalueCallback } from "~/renderer/actions/general";
 import {
@@ -14,80 +18,66 @@ import {
 } from "~/renderer/reducers/settings";
 import type { AccountAsset } from "./types";
 
+/** `flow` is the action the picker serves (send, sell, earn...), like the flow of the MAD. */
 export type PickAccountAsset = (
   assets: readonly AccountAsset[],
   onPicked: (asset: AccountAsset) => void,
+  flow: string,
 ) => void;
 
-type Pending = Readonly<{
-  assets: readonly AccountAsset[];
-  onPicked: (asset: AccountAsset) => void;
-}>;
+const PICKER_TEST_ID = "account-detail-asset-picker";
 
-export type AccountAssetPicker = Readonly<{
+// The picker lists the balance of each asset: tracked as the MAD does for that configuration.
+const ASSETS_CONFIG: EnhancedModularDrawerConfiguration["assets"] = { rightElement: "balance" };
+
+export function usePickAccountAsset(): Readonly<{
   pickAsset: PickAccountAsset;
   pickerProps: AccountAssetPickerProps;
-}>;
-
-function useAssetRows(assets: readonly AccountAsset[]): readonly AccountAssetPickerRow[] {
+}> {
   const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);
   const counterValueUnit = useSelector(counterValueCurrencySelector).units[0];
   const calculateCountervalue = useCalculateCountervalueCallback();
 
-  return useMemo(() => {
-    const options = { locale, discreet, showCode: true };
-    const rows = assets.map(({ currency, account }) => {
-      const countervalue = calculateCountervalue(currency, account.balance);
-      return {
-        value: countervalue?.toNumber() ?? 0,
-        row: {
-          id: currency.id,
-          ledgerId: currency.id,
-          name: currency.name,
-          ticker: currency.ticker,
-          cryptoAmount: formatCurrencyUnit(currency.units[0], account.balance, options),
-          countervalue: countervalue
-            ? formatCurrencyUnit(counterValueUnit, countervalue, options)
-            : undefined,
-        },
-      };
-    });
-    return sortAssetsByValue(rows, ({ value }) => value).map(({ row }) => row);
-  }, [assets, calculateCountervalue, counterValueUnit, discreet, locale]);
-}
+  const { pickAsset: pickFromPicker, pickerProps } = usePickAccountAssets<AccountAsset>({
+    locale,
+    discreet,
+    counterValueUnit,
+    calculateCountervalue,
+    formatAmount: formatCurrencyUnit,
+    testID: PICKER_TEST_ID,
+  });
 
-export function usePickAccountAsset(): AccountAssetPicker {
-  const [pending, setPending] = useState<Pending>();
-  const rows = useAssetRows(pending?.assets ?? []);
-
-  const pickAsset = useCallback<PickAccountAsset>((assets, onPicked) => {
-    if (assets.length === 1) {
-      onPicked(assets[0]);
-      return;
-    }
-    if (assets.length > 1) setPending({ assets, onPicked });
-  }, []);
-
-  const onClose = useCallback(() => setPending(undefined), []);
-
-  const onSelect = useCallback(
-    (id: string) => {
-      const picked = pending?.assets.find(({ currency }) => currency.id === id);
-      setPending(undefined);
-      if (picked) pending?.onPicked(picked);
+  const pickAsset = useCallback<PickAccountAsset>(
+    (assets, onPicked, flow) => {
+      if (assets.length > 1) {
+        trackPage(
+          {
+            category: EVENTS_NAME.MODULAR_ASSET_SELECTION,
+            props: {
+              source: ACCOUNT_DETAIL_PAGES.account,
+              flow,
+              asset_component_features: formatAssetsConfig(ASSETS_CONFIG),
+            },
+          },
+          { updateRoutes: false },
+        );
+      }
+      pickFromPicker(assets, asset => {
+        if (assets.length > 1) {
+          track(EVENTS_NAME.ASSET_CLICKED, {
+            asset: asset.currency.name,
+            page: EVENTS_NAME.MODULAR_ASSET_SELECTION,
+            asset_component_features: formatAssetsConfig(ASSETS_CONFIG),
+            flow,
+            source: ACCOUNT_DETAIL_PAGES.account,
+          });
+        }
+        onPicked(asset);
+      });
     },
-    [pending],
+    [pickFromPicker],
   );
 
-  return {
-    pickAsset,
-    pickerProps: {
-      open: pending !== undefined,
-      rows,
-      onSelect,
-      onClose,
-      testID: "account-detail-asset-picker",
-    },
-  };
+  return { pickAsset, pickerProps };
 }

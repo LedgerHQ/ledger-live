@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useSelector } from "LLD/hooks/redux";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useCalculate } from "@features/platform-market-countervalues";

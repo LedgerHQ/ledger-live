@@ -1,12 +1,9 @@
 import React, { useCallback } from "react";
-import {
-  ContactDetailActionsMenu,
-  ContactsEditSignerMismatchDialog,
-} from "@features/flow-contacts-detail";
+import { ContactsEditSignerMismatchDialog } from "@features/flow-contacts-detail";
+import { ContactDetailActionsMenu } from "@features/flow-contacts-detail/native";
 import { ContactsDeleteContactDialog } from "@features/flow-contacts-delete-contact";
 import { ContactsRenameContactDialog } from "@features/flow-contacts-edit-contact";
 import { ContactsRenameContactFooter } from "@features/flow-contacts-edit-contact/native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import type { ContactDetailEditDeleteFlowProps } from "../../hooks/useContactDetailEditDeleteAdapter";
 
@@ -15,19 +12,18 @@ type ContactDetailEditDeleteSheetsProps = ContactDetailEditDeleteFlowProps &
 
 export function ContactDetailEditDeleteSheets({
   actionsMenu,
-  renameDrawer,
-  deleteDrawer,
+  renameSheet,
+  deleteSheet,
   signerMismatchSheet,
   onDeleteSheetDismissed,
 }: ContactDetailEditDeleteSheetsProps): React.JSX.Element {
-  const { bottom: bottomInset } = useSafeAreaInsets();
   const { onClose: onCloseActionsMenuFromMenu, ...actionsMenuProps } = actionsMenu;
   const onCloseActionsMenu = useCallback(() => {
     onCloseActionsMenuFromMenu();
   }, [onCloseActionsMenuFromMenu]);
   const onCloseDelete = useCallback(() => {
-    deleteDrawer.onCancel();
-  }, [deleteDrawer]);
+    deleteSheet.onCancel();
+  }, [deleteSheet]);
   const onCloseSignerMismatch = useCallback(() => {
     signerMismatchSheet.onCancel();
   }, [signerMismatchSheet]);
@@ -40,29 +36,29 @@ export function ContactDetailEditDeleteSheets({
         testID="contacts-detail-actions-sheet"
         enableDynamicSizing
       >
-        <ContactDetailActionsMenu {...actionsMenuProps} bottomInset={bottomInset} />
+        <ContactDetailActionsMenu {...actionsMenuProps} />
       </QueuedBottomSheet>
       <QueuedBottomSheet
-        isRequestingToBeOpened={renameDrawer.isOpen}
-        isForcingToBeOpened={renameDrawer.isOpen}
-        onClose={renameDrawer.onClose}
+        isRequestingToBeOpened={renameSheet.isOpen}
+        isForcingToBeOpened={renameSheet.isOpen}
+        onClose={renameSheet.onClose}
         testID="contacts-rename-contact-sheet"
         // Fixed height, so raising the keyboard over the name field cannot re-snap the sheet
         // mid-animation. The two then animate up together.
         snapPoints="fullWithOffset"
-        footer={renameDrawer.isOpen ? <ContactsRenameContactFooter {...renameDrawer} /> : null}
+        footer={renameSheet.isOpen ? <ContactsRenameContactFooter {...renameSheet} /> : null}
       >
-        <ContactsRenameContactDialog {...renameDrawer} autoFocus />
+        <ContactsRenameContactDialog {...renameSheet} autoFocus />
       </QueuedBottomSheet>
       <QueuedBottomSheet
-        isRequestingToBeOpened={deleteDrawer.isOpen}
-        isForcingToBeOpened={deleteDrawer.isOpen}
+        isRequestingToBeOpened={deleteSheet.isOpen}
+        isForcingToBeOpened={deleteSheet.isOpen}
         onClose={onCloseDelete}
         onModalHide={onDeleteSheetDismissed}
         testID="contacts-delete-contact-sheet"
         enableDynamicSizing
       >
-        <ContactsDeleteContactDialog {...deleteDrawer} />
+        <ContactsDeleteContactDialog {...deleteSheet} />
       </QueuedBottomSheet>
       <QueuedBottomSheet
         isRequestingToBeOpened={signerMismatchSheet.isOpen}
@@ -71,7 +67,7 @@ export function ContactDetailEditDeleteSheets({
         testID="contacts-edit-signer-mismatch-sheet"
         enableDynamicSizing
       >
-        <ContactsEditSignerMismatchDialog {...signerMismatchSheet} bottomInset={bottomInset} />
+        <ContactsEditSignerMismatchDialog {...signerMismatchSheet} />
       </QueuedBottomSheet>
     </>
   );

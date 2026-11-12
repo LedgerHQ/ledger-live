@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { BigNumber } from "bignumber.js";
+import type BigNumber from "bignumber.js";
 import type { Unit } from "@domain/entity-currency-unit";
 import { formatCurrencyUnit } from "@ledgerhq/live-currency-format";
 import type { SponsoredFeeQuote } from "../../../bridge/generic-coin-framework/sponsored";

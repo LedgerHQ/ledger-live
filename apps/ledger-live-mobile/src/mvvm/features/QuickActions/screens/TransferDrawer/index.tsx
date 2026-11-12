@@ -1,6 +1,6 @@
 import React from "react";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
-import { AccountAssetPickerSheet } from "LLM/components/AccountAssetPickerSheet";
+import { AccountAssetPicker } from "@features/flow-account-detail-hero/native";
 import { TransferDrawerView } from "./TransferDrawerView";
 import { useTransferDrawerViewModel } from "./useTransferDrawerViewModel";
 import { QUICK_ACTIONS_TEST_IDS } from "../../testIds";
@@ -21,7 +21,7 @@ export const TransferDrawer = () => {
       <QueuedBottomSheet isForcingToBeOpened={isOpen} enableDynamicSizing onClose={handleClose}>
         <TransferDrawerView actions={actions} title={title} bottomInset={bottomInset} />
       </QueuedBottomSheet>
-      <AccountAssetPickerSheet
+      <AccountAssetPicker
         {...assetPicker}
         testID={QUICK_ACTIONS_TEST_IDS.transferDrawer.assetPicker}
       />

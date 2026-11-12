@@ -1,5 +1,5 @@
 import React from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Account } from "@ledgerhq/types-live";
@@ -34,17 +34,26 @@ const btcAccount: Account = {
   spendableBalance: new BigNumber(100000),
 };
 
-function renderAccountPage({ isAccountDetailEnabled = true } = {}) {
+function renderAccountPage({
+  isAccountDetailEnabled = true,
+  initialRoute = getAccountUrl(btcAccount.id),
+  lwdSwapConsoleAbtest,
+}: {
+  isAccountDetailEnabled?: boolean;
+  initialRoute?: string;
+  lwdSwapConsoleAbtest?: { enabled: boolean; params: { console: boolean; quickAction: boolean } };
+} = {}) {
   return render(
     <Page>
       <div />
     </Page>,
     {
-      initialRoute: getAccountUrl(btcAccount.id),
+      initialRoute,
       initialState: {
         ...withFlagOverrides({
           accountDetail: { enabled: isAccountDetailEnabled },
           ptxSwapLiveAppOnPortfolio: { enabled: true },
+          ...(lwdSwapConsoleAbtest ? { lwdSwapConsoleAbtest } : {}),
         }),
         accounts: [btcAccount],
       },
@@ -98,4 +107,34 @@ describe("AccountDetail swap console", () => {
 
     expect(await screen.findByTestId(SWAP_CONSOLE)).toBeInTheDocument();
   });
+
+  it.each(["/", "/analytics", "/asset/bitcoin"])(
+    "keeps the swap console on %s when account detail is on",
+    async route => {
+      renderAccountPage({ initialRoute: route });
+
+      expect(await screen.findByTestId(SWAP_CONSOLE)).toBeVisible();
+    },
+  );
+
+  it("hides the asset page swap console when the A/B test turns it off", () => {
+    renderAccountPage({
+      initialRoute: "/asset/bitcoin",
+      lwdSwapConsoleAbtest: { enabled: true, params: { console: false, quickAction: true } },
+    });
+
+    expect(screen.queryByTestId(SWAP_CONSOLE)).toBeNull();
+  });
+
+  it.each(["/", "/analytics"])(
+    "keeps the swap console on %s when the asset page A/B test turns the console off",
+    async route => {
+      renderAccountPage({
+        initialRoute: route,
+        lwdSwapConsoleAbtest: { enabled: true, params: { console: false, quickAction: true } },
+      });
+
+      expect(await screen.findByTestId(SWAP_CONSOLE)).toBeVisible();
+    },
+  );
 });

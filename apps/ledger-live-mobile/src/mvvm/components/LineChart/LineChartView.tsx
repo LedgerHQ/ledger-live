@@ -33,6 +33,7 @@ export function LineChartView<TRange extends string>({
   xAxis,
   yAxis,
   rangeSelectorTrailing,
+  plotContent,
 }: Props<TRange>) {
   const segmentedControl = (
     <SegmentedControl
@@ -50,32 +51,38 @@ export function LineChartView<TRange extends string>({
 
   return (
     <Box lx={containerStyle} testID={testID}>
-      <LumenLineChart
-        series={chartSeries}
-        loading={isLoading}
-        emptyLabel={emptyLabel}
-        height={height}
-        showArea={showArea}
-        enableScrubbing={enableScrubber}
-        onScrubberPositionChange={onScrubberPositionChange}
-        showXAxis={showXAxis}
-        showYAxis={showYAxis}
-        xAxis={xAxis}
-        yAxis={yAxis}
-      >
-        <LineChartPoints points={points} formatValue={formatValue} />
-        {enableScrubber && (
-          <LineChartScrubber
-            series={chartSeries}
-            formatValue={formatValue}
-            tooltipTitle={tooltipTitle}
-            showTooltip={showScrubberTooltip}
-            showBeacons={showScrubberBeacons}
-            pointTooltips={pointTooltips}
-            pointTooltipsOnly={pointTooltipsOnly}
-          />
-        )}
-      </LumenLineChart>
+      {plotContent ? (
+        <Box lx={plotContentStyle} style={{ minHeight: height }}>
+          {plotContent}
+        </Box>
+      ) : (
+        <LumenLineChart
+          series={chartSeries}
+          loading={isLoading}
+          emptyLabel={emptyLabel}
+          height={height}
+          showArea={showArea}
+          enableScrubbing={enableScrubber}
+          onScrubberPositionChange={onScrubberPositionChange}
+          showXAxis={showXAxis}
+          showYAxis={showYAxis}
+          xAxis={xAxis}
+          yAxis={yAxis}
+        >
+          <LineChartPoints points={points} formatValue={formatValue} />
+          {enableScrubber && (
+            <LineChartScrubber
+              series={chartSeries}
+              formatValue={formatValue}
+              tooltipTitle={tooltipTitle}
+              showTooltip={showScrubberTooltip}
+              showBeacons={showScrubberBeacons}
+              pointTooltips={pointTooltips}
+              pointTooltipsOnly={pointTooltipsOnly}
+            />
+          )}
+        </LumenLineChart>
+      )}
 
       {rangeSelectorTrailing ? (
         <Box lx={rangeSelectorRowStyle}>
@@ -91,6 +98,10 @@ export function LineChartView<TRange extends string>({
 
 const containerStyle: LumenViewStyle = {
   gap: "s24",
+};
+
+const plotContentStyle: LumenViewStyle = {
+  justifyContent: "center",
 };
 
 const rangeSelectorRowStyle: LumenViewStyle = {

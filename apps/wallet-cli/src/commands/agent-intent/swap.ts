@@ -1,7 +1,7 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { createNonce, encodeSwapIntentTlv } from "@ledgerhq/agent-intent-sdk";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { Session } from "../../session/session-store";
 import { requireEnrolledProfile } from "../../agent-intent/enrolled-profile";
 import { resolveOutputFormat } from "../inputs";
@@ -12,7 +12,6 @@ import {
   quotedReceiveAmount,
   resolveAgentSwapProvider,
   toSdkSwapIntent,
-  warnIfTokenApprovalNeeded,
   type SwapIntentSummary,
 } from "../../agent-intent/swap-intent";
 import { fetchAgentSwapQuote, type AgentSwapQuote } from "../../agent-intent/swap-quote";
@@ -26,7 +25,6 @@ import {
   assertSdkAcceptsIntent,
   proposalOptions,
   submitAgentIntent,
-  warnIfReviewLinkUnusable,
 } from "../../agent-intent/propose-intent";
 import { createCommandOutput, type CommandOutput } from "../../output";
 import { writeStderr } from "../../shared/ui";
@@ -192,14 +190,11 @@ export default defineCommand({
 
       if (flags["dry-run"]) {
         out.agentIntentSwapDryRun(summary);
-        warnIfTokenApprovalNeeded(summary);
         return;
       }
 
       const submitted = await submitAgentIntent(profile, client => client.createSwapIntent(intent));
       out.agentIntentSwap({ ...summary, ...submitted });
-      warnIfTokenApprovalNeeded(summary);
-      warnIfReviewLinkUnusable(submitted);
     });
   },
 });

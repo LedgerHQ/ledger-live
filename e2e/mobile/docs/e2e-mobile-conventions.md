@@ -213,6 +213,7 @@ A testID MUST be preferred over text matching. Add:
 - One id per label you assert, not just per row: `contacts-me-name`, `contacts-me-address-count`.
 - The runtime id for per-entity rows: `contacts-saved-contact-${contactId}-name`. An id MUST NOT be able to match twice.
 - A `testIDPrefix` prop on shared components, so each host namespaces its instance and existing callers keep their default.
+- A `testID` on a `BaseButton` (`~/components/Button`) renders as `enabled-<id>` or `disabled-<id>`. Match `enabled-<id>` so a tap waits until the button is enabled.
 - A content anchor per sheet, rendered only while it is open (see [A sheet wait MUST use that sheet's content anchor at 100% visibility](#a-sheet-wait-must-use-that-sheets-content-anchor-at-100-visibility)).
 
 The identifier MUST be grepped across all test files before finishing. A shared component's testID is often asserted by desktop tests too.

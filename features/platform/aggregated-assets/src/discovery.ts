@@ -1,7 +1,8 @@
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import {
   type PartialMarketItemResponse,
-  dadaIdToMarketId,
+  parseMarketRef,
+  toMarketId,
   type AssetsDataWithPagination,
 } from "@domain/api-aggregated-assets";
 import type { CryptoAssetMeta } from "@domain/entity-aggregated-asset";
@@ -61,7 +62,7 @@ export function selectTopStocks(data: AssetsDataWithPagination, limit: number): 
       id: meta.id,
       name: meta.name,
       ticker: meta.ticker,
-      navigationId: dadaIdToMarketId(market?.id ?? meta.id),
+      navigationId: toMarketId(parseMarketRef(market?.id ?? meta.id)),
       ledgerId,
     });
   }

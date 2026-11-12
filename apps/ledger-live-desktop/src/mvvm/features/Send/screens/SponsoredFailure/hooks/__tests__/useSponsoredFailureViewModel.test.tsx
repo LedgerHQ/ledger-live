@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { RentOrderRejection } from "@ledgerhq/live-common/bridge/generic-coin-framework/sponsored";
 import { act, renderHook } from "tests/testSetup";

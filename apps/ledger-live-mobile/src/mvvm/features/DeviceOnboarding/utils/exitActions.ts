@@ -1,6 +1,7 @@
 import { StackActions, type NavigationProp, type ParamListBase } from "@react-navigation/native";
 import type { DeviceOnboardingExitReason } from "@features/platform-device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 import { NavigatorName, ScreenName } from "~/const";
 import type { useDispatch } from "~/context/hooks";
 import { completeSeededOnboarding } from "../hooks/useCompleteSeededOnboarding";
@@ -9,7 +10,6 @@ type ExitDeps = {
   dispatch: ReturnType<typeof useDispatch>;
   navigation: NavigationProp<ParamListBase>;
   device: Device;
-  shouldDisplayMyWallet: boolean;
   wasReadOnlyAtEntry: boolean;
   isGenuine: boolean;
   deviceWasSeeded: boolean;
@@ -28,8 +28,7 @@ export const exitActions: Record<DeviceOnboardingExitReason, (deps: ExitDeps) =>
       wasReadOnlyAtEntry,
     });
   },
-  resumeFirmwareUpdate: ({ navigation, device, shouldDisplayMyWallet }) =>
-    resetToMyLedger(navigation, device, shouldDisplayMyWallet),
+  resumeFirmwareUpdate: ({ navigation, device }) => resetToMyLedger(navigation, device),
   legacyFallback: ({
     navigation,
     device,
@@ -41,7 +40,7 @@ export const exitActions: Record<DeviceOnboardingExitReason, (deps: ExitDeps) =>
     hasCompletedOnboarding,
   }) => {
     if (!deviceWasSeeded) {
-      resetToLegacyOnboarding(navigation, device);
+      openLegacySetup(navigation, device);
       return;
     }
     if (!isGenuine) {
@@ -74,7 +73,7 @@ export function closeOnboarding(navigation: NavigationProp<ParamListBase>) {
   else resetToPortfolio(navigation);
 }
 
-function resetToPortfolio(navigation: NavigationProp<ParamListBase>) {
+export function resetToPortfolio(navigation: NavigationProp<ParamListBase>) {
   getRootNavigation(navigation).reset({
     index: 0,
     routes: [
@@ -100,35 +99,7 @@ function getRootNavigation(
   return current;
 }
 
-function resetToMyLedger(
-  navigation: NavigationProp<ParamListBase>,
-  device: Device,
-  shouldDisplayMyWallet: boolean,
-) {
-  const managerRoute = shouldDisplayMyWallet
-    ? {
-        name: NavigatorName.MyWallet,
-        state: {
-          routes: [
-            {
-              name: ScreenName.MyWallet,
-              params: { device, firmwareUpdate: device.wired },
-            },
-          ],
-        },
-      }
-    : {
-        name: NavigatorName.MyLedger,
-        state: {
-          routes: [
-            {
-              name: ScreenName.MyLedgerChooseDevice,
-              params: { device, firmwareUpdate: device.wired },
-            },
-          ],
-        },
-      };
-
+function resetToMyLedger(navigation: NavigationProp<ParamListBase>, device: Device) {
   getRootNavigation(navigation).reset({
     index: 0,
     routes: [
@@ -136,7 +107,20 @@ function resetToMyLedger(
         name: NavigatorName.Base,
         state: {
           index: 1,
-          routes: [{ name: NavigatorName.Main }, managerRoute],
+          routes: [
+            { name: NavigatorName.Main },
+            {
+              name: NavigatorName.MyWallet,
+              state: {
+                routes: [
+                  {
+                    name: ScreenName.MyWallet,
+                    params: { device, firmwareUpdate: device.wired },
+                  },
+                ],
+              },
+            },
+          ],
         },
       },
     ],
@@ -171,28 +155,48 @@ function resetToLegacySeededChecks(navigation: NavigationProp<ParamListBase>, de
   });
 }
 
-function resetToLegacyOnboarding(navigation: NavigationProp<ParamListBase>, device: Device) {
-  getRootNavigation(navigation).reset({
-    index: 0,
-    routes: [
-      {
-        name: NavigatorName.BaseOnboarding,
-        state: {
-          routes: [
-            {
-              name: NavigatorName.Onboarding,
-              state: {
-                routes: [
-                  {
-                    name: ScreenName.OnboardingUseCase,
-                    params: { deviceModelId: device.modelId },
-                  },
-                ],
-              },
-            },
-          ],
+const onboardingHostScreens = new Set<string>([
+  ScreenName.OnboardingPairNew,
+  ScreenName.DeviceOnboardingFunnel,
+]);
+
+function openLegacySetup(navigation: NavigationProp<ParamListBase>, device: Device) {
+  const previousRoutes = navigation
+    .getState()
+    .routes.filter(route => !onboardingHostScreens.has(route.name))
+    .map(({ name, params }) => (params === undefined ? { name } : { name, params }));
+
+  if (isSyncOnboardingSupported(device.modelId)) {
+    navigation.getParent()?.reset({
+      index: 1,
+      routes: [
+        {
+          name: NavigatorName.Onboarding,
+          ...(previousRoutes.length > 0
+            ? { state: { index: previousRoutes.length - 1, routes: previousRoutes } }
+            : {}),
         },
-      },
+        {
+          name: NavigatorName.SyncOnboarding,
+          state: {
+            routes: [
+              {
+                name: ScreenName.SyncOnboardingCompanion,
+                params: { device, backReturnsToPrevious: true },
+              },
+            ],
+          },
+        },
+      ],
+    });
+    return;
+  }
+
+  navigation.reset({
+    index: previousRoutes.length,
+    routes: [
+      ...previousRoutes,
+      { name: ScreenName.OnboardingUseCase, params: { deviceModelId: device.modelId } },
     ],
   });
 }

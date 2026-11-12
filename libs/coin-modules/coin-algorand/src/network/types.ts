@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 
 // Algod v2 types
 export interface AlgoAccount {
@@ -97,16 +97,25 @@ export type ExplorerBlock = {
     rnd: number;
     ts: number;
     gh: string;
+    // "blk-" followed by the parent block hash, absent on the genesis block
+    prev?: string;
   };
 };
 
-export type ExplorerTransactions = {
-  "current-round": number;
-  "next-token": string;
-  transactions: ExplorerTransaction[];
+export type ExplorerBlockHash = {
+  blockHash: string;
 };
 
-export type ExplorerTransaction = {
+export type ExplorerTransactions<Amount extends ExplorerAmount = number> = {
+  "current-round": number;
+  "next-token": string;
+  transactions: ExplorerTransaction<Amount>[];
+};
+
+// An amount read losslessly is a bigint when it exceeds Number.MAX_SAFE_INTEGER
+export type ExplorerAmount = number | bigint;
+
+export type ExplorerTransaction<Amount extends ExplorerAmount = number> = {
   "application-transaction"?: {
     accounts: string[];
     "application-args": string[];
@@ -124,16 +133,18 @@ export type ExplorerTransaction = {
     "on-completion": string;
   };
   "asset-transfer-transaction"?: {
-    amount: number;
+    amount: Amount;
     "asset-id": number;
-    "close-amount": number;
+    "close-amount"?: Amount;
     "close-to"?: string;
     receiver: string;
+    // The clawed back account, when the asset manager revokes assets
+    sender?: string;
   };
-  "close-rewards": number;
-  "closing-amount": number;
+  "close-rewards": Amount;
+  "closing-amount": Amount;
   "confirmed-round": number;
-  fee: number;
+  fee: Amount;
   "first-valid": number;
   "genesis-hash": string;
   "genesis-id": string;
@@ -146,6 +157,7 @@ export type ExplorerTransaction = {
     };
   }[];
   id: string;
+  "inner-txns"?: ExplorerInnerTransaction<Amount>[];
   "intra-round-offset": number;
   "last-valid": number;
   "local-state-delta": {
@@ -160,17 +172,23 @@ export type ExplorerTransaction = {
   }[];
   note: string;
   "payment-transaction"?: {
-    amount: number;
-    "close-amount": number;
+    amount: Amount;
+    "close-amount"?: Amount;
     "close-remainder-to"?: string;
     receiver: string;
   };
-  "receiver-rewards": number;
+  "receiver-rewards": Amount;
   "round-time": number;
   sender: string;
-  "sender-rewards": number;
+  "sender-rewards": Amount;
   signature: {
     sig: string;
   };
   "tx-type": string;
 };
+
+// Inner transactions have no id of their own: they belong to the top-level transaction
+export type ExplorerInnerTransaction<Amount extends ExplorerAmount = number> = Omit<
+  ExplorerTransaction<Amount>,
+  "id"
+>;

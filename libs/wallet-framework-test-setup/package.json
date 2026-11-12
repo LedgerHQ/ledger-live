@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/wallet-framework-test-setup",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "private": true,
   "description": "Jest setup for wallet-framework tests — wires CurrenciesResolver and CryptoAssetsStore stubs for all coin-module and shared-lib test environments",
   "keywords": [
@@ -11,6 +11,9 @@
     "@domain/entity-currency-crypto": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@shared/env": "workspace:*"
+  },
+  "devDependencies": {
+    "oxlint": "catalog:"
   },
   "exports": {
     ".": "./src/index.js",

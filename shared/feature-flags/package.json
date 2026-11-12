@@ -1,6 +1,6 @@
 {
   "name": "@shared/feature-flags",
-  "version": "0.29.0",
+  "version": "0.30.0",
   "private": true,
   "description": "Shared feature flags: Zod-first flag registry, RTK slice, selectors",
   "main": "src/index.ts",
@@ -15,7 +15,6 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../.. -W shared/feature-flags",
     "format": "oxfmt src",
     "format:check": "oxfmt --check src",
     "lint": "oxlint ./src"
@@ -33,8 +32,10 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/semver": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "typescript": "catalog:"
   }
 }

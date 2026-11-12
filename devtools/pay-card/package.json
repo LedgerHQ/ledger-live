@@ -1,6 +1,6 @@
 {
   "name": "@devtools/pay-card",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "private": true,
   "description": "Ledger Live Card / Pay debug Devtool",
   "main": "src/index.ts",
@@ -18,8 +18,7 @@
     "coverage": "pnpm run coverage:web && pnpm run coverage:native && bash -c 'cat coverage/lcov.native.info >> coverage/lcov.info' --",
     "coverage:web": "jest --config jest.config.js --coverage",
     "coverage:native": "jest --config jest.native.config.js --coverage",
-    "lint": "oxlint src",
-    "unimported": "pnpm knip --directory ../.. -c devtools/pay-card/knip.web.config.mjs -W devtools/pay-card --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c devtools/pay-card/knip.native.config.mjs -W devtools/pay-card --tsConfig tsconfig.native.json"
+    "lint": "oxlint src"
   },
   "devDependencies": {
     "@support/jest": "workspace:*",
@@ -40,7 +39,6 @@
     "@swc/core": "catalog:",
     "babel-jest": "catalog:",
     "@react-native/babel-preset": "catalog:",
-    "@babel/plugin-transform-export-namespace-from": "7.27.1",
     "jest-environment-jsdom": "catalog:",
     "jest-sonar": "0.2.16",
     "@gorhom/bottom-sheet": "catalog:",
@@ -59,7 +57,10 @@
     "@radix-ui/react-tooltip": "catalog:",
     "@tanstack/react-table": "catalog:",
     "class-variance-authority": "catalog:",
-    "react-test-renderer": "catalog:"
+    "react-test-renderer": "catalog:",
+    "@typescript/native": "catalog:",
+    "oxlint": "catalog:",
+    "oxfmt": "catalog:"
   },
   "peerDependencies": {
     "react": ">=19",

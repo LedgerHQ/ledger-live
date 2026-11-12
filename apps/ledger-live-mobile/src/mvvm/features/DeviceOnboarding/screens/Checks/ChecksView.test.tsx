@@ -26,6 +26,11 @@ jest.mock("~/components/QueuedDrawer", () => {
   }) {
     const onCloseRef = React.useRef(onClose);
     onCloseRef.current = onClose;
+    const requestingRef = React.useRef(isRequestingToBeOpened);
+    React.useEffect(() => {
+      if (requestingRef.current && !isRequestingToBeOpened) onCloseRef.current?.();
+      requestingRef.current = isRequestingToBeOpened;
+    }, [isRequestingToBeOpened]);
     React.useEffect(() => {
       return () => {
         onCloseRef.current?.();
@@ -61,11 +66,38 @@ jest.mock("@ledgerhq/lumen-ui-rnative", () => {
   };
 });
 
-jest.mock("@shared/ui-queued-bottom-sheet", () => ({
-  ...jest.requireActual("@shared/ui-queued-bottom-sheet"),
-  QueuedBottomSheet: jest.requireActual("@shared/ui-queued-bottom-sheet/testing/module-mock")
-    .QueuedBottomSheet,
-}));
+jest.mock("@shared/ui-queued-bottom-sheet", () => {
+  const React = jest.requireActual<typeof import("react")>("react");
+  const { QueuedBottomSheet: QueuedBottomSheetMock } = jest.requireActual(
+    "@shared/ui-queued-bottom-sheet/testing/module-mock",
+  );
+
+  function QueuedBottomSheet(props: React.ComponentProps<typeof QueuedBottomSheetMock>) {
+    const onCloseRef = React.useRef(props.onClose);
+    const requestingRef = React.useRef(props.isRequestingToBeOpened);
+
+    React.useEffect(() => {
+      onCloseRef.current = props.onClose;
+      requestingRef.current = props.isRequestingToBeOpened;
+    }, [props.onClose, props.isRequestingToBeOpened]);
+    React.useEffect(
+      () => () => {
+        if (requestingRef.current) onCloseRef.current?.();
+      },
+      [],
+    );
+
+    const isOpen = Boolean(props.isRequestingToBeOpened || props.isForcingToBeOpened);
+    return (
+      <QueuedBottomSheetMock {...props}>{isOpen ? props.children : null}</QueuedBottomSheetMock>
+    );
+  }
+
+  return {
+    ...jest.requireActual("@shared/ui-queued-bottom-sheet"),
+    QueuedBottomSheet,
+  };
+});
 
 const device = {
   deviceId: "device-id",
@@ -233,6 +265,50 @@ describe("ChecksView", () => {
     expect(screen.queryByRole("button", { name: "Close" })).toBeNull();
   });
 
+  it("should hide the firmware offer while sheets are suspended and still decline it afterwards", async () => {
+    const { user, onDeclineUpdate, rerender } = renderChecks("updating", {
+      update: { current: "1.0.0", available: "1.1.0" },
+    });
+
+    rerender({ suspendSheets: true });
+
+    expect(onDeclineUpdate).not.toHaveBeenCalled();
+    expect(screen.queryByText(/Version 1\.1\.0/)).toBeNull();
+
+    rerender({ suspendSheets: false });
+    await user.press(screen.getByTestId("modal-close-button"));
+
+    expect(onDeclineUpdate).toHaveBeenCalledTimes(1);
+  });
+
+  it("should keep the allow sheet mounted and closed while sheets are suspended", () => {
+    const { onQuit, rerender } = renderChecks("awaitingAllow");
+
+    rerender({ suspendSheets: true });
+
+    expect(screen.getByTestId(checksTestIds.allowSheet)).toHaveProp("accessibilityState", {
+      expanded: false,
+    });
+    expect(screen.queryByTestId(`${checksTestIds.allowSheet}-header-close`)).toBeNull();
+    expect(onQuit).not.toHaveBeenCalled();
+  });
+
+  it("should still decline the offer after it was hidden while the device was locked", async () => {
+    const { user, onDeclineUpdate, rerender } = renderChecks("updating", {
+      update: { current: "1.0.0", available: "1.1.0" },
+    });
+
+    rerender({ state: "synchronizing", update: null });
+
+    expect(onDeclineUpdate).not.toHaveBeenCalled();
+    expect(screen.queryByText(/Version 1\.1\.0/)).toBeNull();
+
+    rerender({ state: "updating", update: { current: "1.0.0", available: "1.1.0" } });
+    await user.press(screen.getByTestId("modal-close-button"));
+
+    expect(onDeclineUpdate).toHaveBeenCalledTimes(1);
+  });
+
   it("should decline the update once when the offer is closed", async () => {
     const { user, onDeclineUpdate, onCloseSheet, onQuit, onAcceptUpdate } = renderChecks(
       "updating",
@@ -324,6 +400,34 @@ describe("ChecksView", () => {
     expect(screen.queryByText("See what's in the update")).toBeNull();
   });
 
+  it("should keep the unsupported update drawer when sheets are suspended", async () => {
+    const platform = jest.replaceProperty(Platform, "OS", "android");
+
+    try {
+      const { onAcceptUpdate, onDeclineUpdate, rerender, user } = renderChecks("updating", {
+        device: nanoX,
+        update: { current: "2.3.0", available: "2.5.0" },
+      });
+
+      await user.press(screen.getByText("Update now"));
+      expect(screen.getByText("USB cable needed")).toBeVisible();
+
+      rerender({ suspendSheets: true });
+
+      expect(screen.queryByText("USB cable needed")).toBeNull();
+      expect(onAcceptUpdate).not.toHaveBeenCalled();
+      expect(onDeclineUpdate).not.toHaveBeenCalled();
+
+      rerender({ suspendSheets: false });
+
+      expect(screen.getByText("USB cable needed")).toBeVisible();
+      expect(screen.queryByText("Update now")).toBeNull();
+      expect(onDeclineUpdate).not.toHaveBeenCalled();
+    } finally {
+      platform.restore();
+    }
+  });
+
   it("should still decline the offer after the unsupported update drawer is closed", async () => {
     const { user, onDeclineUpdate, onAcceptUpdate, onQuit } = renderChecks("updating", {
       device: nanoX,
@@ -349,7 +453,7 @@ describe("ChecksView", () => {
     { kind: "unknown", title: "Ledger Genuine Check error", showsSettings: false },
     { kind: "provider", title: "Initiate Ledger Genuine Check again", showsSettings: true },
   ])(
-    "should open the $kind drawer over the current check",
+    "should leave onboarding when cancelling the $kind drawer",
     async ({ kind, title, showsSettings }) => {
       const { user, onCloseSheet, onQuit, rerender } = renderChecks("checking", {
         error: { kind },
@@ -364,8 +468,8 @@ describe("ChecksView", () => {
 
       await user.press(screen.getByText("Cancel set up"));
 
-      expect(onCloseSheet).toHaveBeenCalledTimes(1);
-      expect(onQuit).not.toHaveBeenCalled();
+      expect(onQuit).toHaveBeenCalledTimes(1);
+      expect(onCloseSheet).not.toHaveBeenCalled();
     },
   );
 
@@ -385,6 +489,21 @@ describe("ChecksView", () => {
     expect(onQuit).not.toHaveBeenCalled();
   });
 
+  it("should close the firmware offer without declining it when that close is separate", async () => {
+    const onCloseFirmwareOffer = jest.fn();
+    const { user, onDeclineUpdate, onQuit } = renderChecks("updating", {
+      update: { current: "1.0.0", available: "1.1.0" },
+      onCloseFirmwareOffer,
+    });
+
+    await user.press(screen.getByTestId("modal-close-button"));
+
+    expect(onCloseFirmwareOffer).toHaveBeenCalledTimes(1);
+    expect(onDeclineUpdate).not.toHaveBeenCalled();
+    expect(screen.getByRole("button", { name: "Close" })).toBeVisible();
+    expect(onQuit).not.toHaveBeenCalled();
+  });
+
   it("should leave onboarding when closing the non genuine drawer", async () => {
     const { user, onCloseSheet, onQuit } = renderChecks("checking", {
       error: { kind: "notGenuine" },
@@ -397,6 +516,20 @@ describe("ChecksView", () => {
     await user.press(screen.getByTestId("modal-close-button"));
 
     expect(onQuit).toHaveBeenCalledTimes(1);
+    expect(onCloseSheet).not.toHaveBeenCalled();
+  });
+
+  it("should stay on the check when the non genuine close is separate", async () => {
+    const onCloseNotGenuine = jest.fn();
+    const { user, onQuit, onCloseSheet } = renderChecks("checking", {
+      error: { kind: "notGenuine" },
+      onCloseNotGenuine,
+    });
+
+    await user.press(screen.getByTestId("modal-close-button"));
+
+    expect(onCloseNotGenuine).toHaveBeenCalledTimes(1);
+    expect(onQuit).not.toHaveBeenCalled();
     expect(onCloseSheet).not.toHaveBeenCalled();
   });
 });

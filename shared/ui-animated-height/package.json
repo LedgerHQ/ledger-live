@@ -1,6 +1,6 @@
 {
   "name": "@shared/ui-animated-height",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Web wrapper that animates a dialog's height to its content and caps it at the dialog's max height",
   "main": "src/index.ts",
@@ -17,8 +17,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../.. -W shared/ui-animated-height"
+    "coverage": "jest --coverage"
   },
   "peerDependencies": {
     "react": ">=19.0.0"
@@ -34,6 +33,7 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",

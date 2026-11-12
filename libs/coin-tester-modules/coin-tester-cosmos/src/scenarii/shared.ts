@@ -14,8 +14,6 @@ import { getBridges } from "../helpers";
 
 type CosmosScenarioTransaction = ScenarioTransaction<GenericTransaction, Account>;
 
-const LOCAL_LCD = "http://127.0.0.1:1317";
-
 // Query the local node for the first bonded validator. The validator's operator
 // address is dynamic per devnet run (the entrypoint's gentx mints fresh keys),
 // so scenarios resolve it at runtime rather than hardcoding it.
@@ -59,8 +57,11 @@ export type CosmosScenarioOptions = CosmosScenarioStaking & {
   hrp: string;
   /** The chain's minimum gas price, fed into the per-scenario coin config. */
   minGasPrice: number;
-  /** Bring the devnet up / tear it down. */
-  spawn: () => Promise<void>;
+  /**
+   * Bring the chain up, funding the dev account / tear it down. `spawn` resolves to the LCD of the node
+   * (coin-sandbox gives it).
+   */
+  spawn: (devAddress: string) => Promise<string>;
   kill: () => Promise<void>;
   /**
    * Retry budget for the LCD to reflect a broadcast. Babylon's delegate is
@@ -89,23 +90,24 @@ export function makeCosmosScenario(
   // is 1200 (enforced by the chain).
   const coinType = currency.coinType;
 
-  // Override coin-cosmos's default config: point sync + broadcast at the local
-  // node. Runtime shape is flat (CosmosCurrencyConfig + status/name/unit); the declared
-  // CosmosCoinConfig type wraps everything in ConfigInfo, which is what LiveConfig
+  // Override coin-cosmos's default config: point sync + broadcast at the node (its URL is
+  // known once the chain is up). Runtime shape is flat (CosmosCurrencyConfig + status/name/unit);
+  // the declared CosmosCoinConfig type wraps everything in ConfigInfo, which is what LiveConfig
   // stores but NOT what `() => config` returns (chain.ts spreads coinConfig as
   // flat fields).
-  const coinConfig = {
-    lcd: LOCAL_LCD,
-    minGasPrice,
-    denom: currency.units[1].code,
-    status: { type: "active" as const },
-    name: currency.name,
-    unit,
-  } satisfies CosmosCurrencyConfig & {
-    status: { type: "active" };
-    name: string;
-    unit: typeof unit;
-  };
+  const makeCoinConfig = (lcd: string) =>
+    ({
+      lcd,
+      minGasPrice,
+      denom: currency.units[1].code,
+      status: { type: "active" as const },
+      name: currency.name,
+      unit,
+    }) satisfies CosmosCurrencyConfig & {
+      status: { type: "active" };
+      name: string;
+      unit: typeof unit;
+    };
 
   const mockServer = setupServer();
   // Populated in setup() before getTransactions() runs. Closure-scoped per
@@ -157,8 +159,6 @@ export function makeCosmosScenario(
         name: options.delegateLabel,
         family: "cosmos",
         mode: "delegate",
-        // Delegate reads transaction.amount (unlike undelegate/redelegate, which read
-        // validators[].amount); genericToCosmosTransaction sets both — see bridges.ts.
         valAddress: validatorAddress,
         amount: parseCurrencyUnit(unit, "100"),
         expect: (previousAccount, currentAccount) => {
@@ -223,6 +223,17 @@ export function makeCosmosScenario(
     setup: async strategy => {
       const signer = await buildSigner();
 
+      // Derive the dev account from the (random) seed BEFORE the chain boots, then
+      // hand its address to the chain so that it funds exactly that account.
+      const { bech32_address: address } = await signer.getAddressAndPubKey(
+        [44, coinType, 0, 0, 0],
+        hrp,
+      );
+
+      // The coin config needs the node's URL, so the chain comes up before the bridges are made
+      const lcd = await spawn(address);
+      const coinConfig = makeCoinConfig(lcd);
+
       // generic-adapter reads its config from LiveConfig; harmless for the legacy
       // arm (which gets coinConfig directly via getBridges below).
       // Merge into the existing schema instead of replacing it: sibling scenarii (Babylon/Cosmos)
@@ -232,23 +243,7 @@ export function makeCosmosScenario(
         [`config_currency_${currency.id}`]: { type: "object" as const, default: coinConfig },
       });
 
-      const { accountBridge, currencyBridge, getAddress } = await getBridges(
-        strategy,
-        signer,
-        coinConfig,
-      );
-
-      // Derive the dev account from the (random) seed BEFORE the chain boots, then
-      // hand its address to the devnet so genesis pre-funds exactly that account.
-      // entrypoint.sh reads DEV_ADDRESS from the environment via docker-compose.
-      const { address } = await getAddress("", {
-        path: `44'/${coinType}'/0'/0/0`,
-        currency,
-        derivationMode: "",
-      });
-      process.env.DEV_ADDRESS = address;
-
-      await spawn();
+      const { accountBridge, currencyBridge } = await getBridges(strategy, signer, coinConfig);
 
       // Recipient = alt-account-index derivation. Address validation only checks
       // the hrp prefix, so any well-formed bech32 with it works.
@@ -259,7 +254,7 @@ export function makeCosmosScenario(
       // validator the entrypoint bootstrapped. Skipped for chains whose staking
       // module doesn't accept delegation (e.g. Gonka's PoC validator set).
       if (options.staking) {
-        validatorAddress = await getBondedValidator(LOCAL_LCD);
+        validatorAddress = await getBondedValidator(lcd);
       }
 
       const account = makeAccount(address, currency);

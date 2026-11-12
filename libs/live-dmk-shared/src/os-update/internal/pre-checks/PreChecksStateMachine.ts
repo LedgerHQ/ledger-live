@@ -173,7 +173,10 @@ export const preChecksStateMachine = setup({
     [DeviceSituationEventType.DEVICE_SITUATION_UPDATE]: {
       actions: {
         type: "sendStateUpdate",
-        params: ({ event }) => toPreChecksState(event.situation),
+        params: ({ context, event }) =>
+          toPreChecksState(event, () =>
+            context.send({ type: PreChecksStateMachineEventType.CANCEL }),
+          ),
       },
     },
   },
@@ -388,6 +391,9 @@ export const preChecksStateMachine = setup({
     },
     CheckErrorCause: {
       entry: { type: "logError", params: "CheckErrorCause" },
+      on: {
+        [PreChecksStateMachineEventType.CANCEL]: "Canceled",
+      },
       invoke: {
         src: "checkErrorCause",
         input: ({ context, self }) => ({

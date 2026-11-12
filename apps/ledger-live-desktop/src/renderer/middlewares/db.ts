@@ -33,8 +33,14 @@ import {
 } from "@features/flow-large-screen-upsell";
 import { knownDevicesStoreSelector } from "../reducers/knownDevices";
 import { exportIdentitiesForPersistence } from "@domain/entity-client-identity";
+import { predictionsSlice } from "@domain/entity-predictions";
 import { accountsPersistedStateChanged } from "@ledgerhq/live-common/account/index";
 import { isPayAction, persistPayCard } from "./payPersistence";
+import {
+  accountAnalyticsIntroductionPersistedSelector,
+  dismissAccountAnalyticsIntroduction,
+  resetAccountAnalyticsIntroduction,
+} from "@features/flow-account-detail-analytics-notice/state";
 
 let DB_MIDDLEWARE_ENABLED = true;
 
@@ -128,6 +134,18 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
     return res;
   }
 
+  if (action.type.startsWith(`${predictionsSlice.name}/`)) {
+    const oldState = store.getState();
+    const res = next(action);
+    const newState = store.getState();
+
+    if (oldState.predictions !== newState.predictions) {
+      setKey("app", "predictions", newState.predictions);
+    }
+
+    return res;
+  }
+
   if (action.type.startsWith(`${LARGE_SCREEN_UPSELL_MODAL}/`)) {
     const res = next(action);
     const state = store.getState();
@@ -151,6 +169,18 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
   const oldState = store.getState();
   const res = next(action);
   const newState = store.getState();
+
+  if (
+    (dismissAccountAnalyticsIntroduction.match(action) ||
+      resetAccountAnalyticsIntroduction.match(action)) &&
+    oldState.accountAnalyticsIntroduction !== newState.accountAnalyticsIntroduction
+  ) {
+    setKey(
+      "app",
+      "accountAnalyticsIntroduction",
+      accountAnalyticsIntroductionPersistedSelector(newState),
+    );
+  }
 
   // NB Prevent write attempts when the app is locked.
   if (!oldState.application.isLocked || action.type === "APPLICATION_SET_DATA") {
@@ -190,9 +220,9 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
     });
   }
 
-  if (oldState.coinConfigOverrides.overrides !== newState.coinConfigOverrides.overrides) {
+  if (oldState.liveConfigOverrides.overrides !== newState.liveConfigOverrides.overrides) {
     setKey("app", "coinConfigOverrides", {
-      overrides: newState.coinConfigOverrides.overrides,
+      overrides: newState.liveConfigOverrides.overrides,
     });
   }
 

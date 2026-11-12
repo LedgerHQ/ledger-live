@@ -39,6 +39,7 @@ import {
   submitExtrinsicDryRun as sidecarSubmitExtrinsicDryRun,
   verifyValidatorAddresses as sidecarVerifyValidatorAddresses,
   getMetadata as sidecarGetMetadata,
+  getBlock,
   getLastBlock,
 } from "./sidecar";
 
@@ -212,6 +213,7 @@ export default {
     currencyId?: string,
   ): Promise<PolkadotAPIBalanceInfo> => sidecardGetBalances(config, address, currencyId),
   getOperations: bisonGetOperations,
+  getBlock,
   getLastBlock,
   getMinimumBondBalance,
   getRegistry,

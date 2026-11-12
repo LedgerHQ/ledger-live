@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-pay-balance",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "private": true,
   "description": "Shared Pay balance hero (empty and funded states) for Ledger Wallet",
   "main": "src/index.ts",
@@ -20,8 +20,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -c features/flow/pay-balance/knip.web.config.mjs -W features/flow/pay-balance --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/pay-balance/knip.native.config.mjs -W features/flow/pay-balance --tsConfig tsconfig.native.json"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@domain/entity-currency-unit": "workspace:^",
@@ -34,6 +33,7 @@
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
+    "@support/lint": "workspace:*",
     "@features/platform-style": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
@@ -47,6 +47,7 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",

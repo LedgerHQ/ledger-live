@@ -1,6 +1,6 @@
 import type { Unit } from "@domain/entity-currency-unit";
 import { useTimeRemaining } from "@ledgerhq/live-common/families/canton/react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { useCallback } from "react";
 import type { ProcessedProposal, TransferProposalAction } from "../types";
 

@@ -7,6 +7,7 @@ import type {
   ProgressDisplay,
 } from "../../../hooks/useFinishingProgress";
 import type { OsUpdateSheetSpec, OsUpdateStepLayoutSpec } from "..";
+import { getConnectionTimedOutSheet } from "../getConnectionTimedOutSheet";
 import { OsUpdateButton } from "../../../analytics/types";
 import { FINISHING_ANIMATION_MS } from "../../UpdateProgressScreen/ProgressBar";
 import { UpdateProgressScreen } from "../../UpdateProgressScreen";
@@ -15,7 +16,6 @@ import { ContinueOnDeviceContent } from "../../../sheets/ContinueOnDeviceContent
 import { DeviceDisconnectedContent } from "../../../sheets/DeviceDisconnectedContent";
 import { DeviceLockedContent } from "../../../sheets/DeviceLockedContent";
 import { InstallFirmwareRefusedContent } from "../../../sheets/InstallFirmwareRefusedContent";
-import { OutOfMemoryContent } from "../../../sheets/OutOfMemoryContent";
 import { SecureConnectionRefusedContent } from "../../../sheets/SecureConnectionRefusedContent";
 import { UnexpectedErrorContent } from "../../../sheets/UnexpectedErrorContent";
 
@@ -66,7 +66,13 @@ function getScreen({
         );
       }
       return (
-        <UpdatesAppliedScreen productName={productName} isRestoreOnly={false} onClose={onClose} />
+        <UpdatesAppliedScreen
+          productName={productName}
+          isRestoreOnly={false}
+          osVersion={state.osVersion}
+          restoreStatus={state.restoreResult?.restoreStatus}
+          onClose={onClose}
+        />
       );
     case ApplyUpdatesStateType.LOADING:
     case ApplyUpdatesStateType.DEVICE_LOCKED:
@@ -80,7 +86,7 @@ function getScreen({
     case ApplyUpdatesStateType.ALLOW_SECURE_CONNECTION_REFUSED:
     case ApplyUpdatesStateType.ALLOW_INSTALL_FIRMWARE_REFUSED:
     case ApplyUpdatesStateType.DEVICE_DISCONNECTED:
-    case ApplyUpdatesStateType.OUT_OF_MEMORY:
+    case ApplyUpdatesStateType.CONNECTION_TIMED_OUT:
     case ApplyUpdatesStateType.UNEXPECTED_ERROR:
       return (
         <UpdateProgressScreen
@@ -101,6 +107,7 @@ function getSheet({
   state,
   deviceModelId,
   deviceName,
+  productName,
   trackClick,
 }: Props): OsUpdateSheetSpec | undefined {
   const continueOnDevice = {
@@ -127,43 +134,59 @@ function getSheet({
       return continueOnDevice;
     case ApplyUpdatesStateType.ALLOW_SECURE_CONNECTION_REFUSED: {
       const onRetry = () => {
-        trackClick(OsUpdateButton.RETRY);
+        trackClick(OsUpdateButton.RETRY_SECURE_CONNECTION);
         state.retry();
       };
       const onCancel = () => {
-        trackClick(OsUpdateButton.CANCEL);
+        trackClick(OsUpdateButton.CANCEL_SECURE_CONNECTION);
         state.cancel();
       };
       return {
-        content: <SecureConnectionRefusedContent onRetry={onRetry} onCancel={onCancel} />,
+        hideHeader: true,
+        content: (
+          <SecureConnectionRefusedContent
+            deviceModelId={deviceModelId}
+            onRetry={onRetry}
+            onCancel={onCancel}
+          />
+        ),
       };
     }
     case ApplyUpdatesStateType.ALLOW_INSTALL_FIRMWARE_REFUSED: {
+      const onRetry = () => {
+        trackClick(OsUpdateButton.RESTART_OS_UPDATE);
+        state.retry();
+      };
       const onCancel = () => {
-        trackClick(OsUpdateButton.CANCEL);
+        trackClick(OsUpdateButton.CANCEL_OS_UPDATE);
         state.cancel();
       };
       return {
-        content: <InstallFirmwareRefusedContent onCancel={onCancel} />,
+        hideHeader: true,
+        content: (
+          <InstallFirmwareRefusedContent
+            productName={productName}
+            onRetry={onRetry}
+            onCancel={onCancel}
+          />
+        ),
       };
     }
     case ApplyUpdatesStateType.DEVICE_DISCONNECTED:
-      return { content: <DeviceDisconnectedContent /> };
-    case ApplyUpdatesStateType.OUT_OF_MEMORY: {
-      const onCancel = () => {
-        trackClick(OsUpdateButton.CANCEL);
-        state.cancel();
-      };
       return {
-        content: <OutOfMemoryContent onCancel={onCancel} />,
+        content: (
+          <DeviceDisconnectedContent deviceModelId={deviceModelId} deviceName={deviceName} />
+        ),
       };
-    }
+    case ApplyUpdatesStateType.CONNECTION_TIMED_OUT:
+      return getConnectionTimedOutSheet({ retry: state.retry, cancel: state.cancel, trackClick });
     case ApplyUpdatesStateType.UNEXPECTED_ERROR: {
       const onCancel = () => {
-        trackClick(OsUpdateButton.CANCEL);
+        trackClick(OsUpdateButton.CANCEL_OS_UPDATE);
         state.cancel();
       };
       return {
+        hideHeader: true,
         content: <UnexpectedErrorContent onCancel={onCancel} />,
       };
     }
@@ -205,7 +228,7 @@ export function getApplyUpdatesProgress(state: ApplyUpdatesState): FinishingProg
     case ApplyUpdatesStateType.ALLOW_SECURE_CONNECTION_REFUSED:
     case ApplyUpdatesStateType.ALLOW_INSTALL_FIRMWARE_REFUSED:
     case ApplyUpdatesStateType.DEVICE_DISCONNECTED:
-    case ApplyUpdatesStateType.OUT_OF_MEMORY:
+    case ApplyUpdatesStateType.CONNECTION_TIMED_OUT:
     case ApplyUpdatesStateType.UNEXPECTED_ERROR:
       return { display: undefined, isDone: false };
     default: {

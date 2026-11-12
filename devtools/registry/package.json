@@ -1,6 +1,6 @@
 {
   "name": "@devtools/registry",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "private": true,
   "description": "Static registry of lazy-loaded DevTools modules",
   "main": "src/index.ts",
@@ -13,8 +13,7 @@
     "reformat": "nx g @ledgerhq/generators:reformat-devtool-registry && oxfmt src",
     "typecheck": "tsc --noEmit",
     "coverage": "echo \"no tests in @devtools/registry\"",
-    "lint": "oxlint src",
-    "unimported": "pnpm knip --directory ../.. -W devtools/registry"
+    "lint": "oxlint src"
   },
   "dependencies": {
     "zod": "catalog:",
@@ -32,15 +31,20 @@
     "@devtools/account-data": "workspace:*",
     "@devtools/app-config": "workspace:*",
     "@devtools/account-name": "workspace:*",
-    "@devtools/mock-accounts": "workspace:*"
+    "@devtools/mock-accounts": "workspace:*",
+    "@devtools/account-detail": "workspace:*",
+    "@devtools/coin-config": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=19"
   },
   "devDependencies": {
     "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
+    "nx": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "react": "catalog:",
-    "typescript": "catalog:",
-    "@ledgerhq/generators": "workspace:*"
+    "typescript": "catalog:"
   }
 }

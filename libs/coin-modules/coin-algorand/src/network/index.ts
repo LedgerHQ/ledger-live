@@ -1,8 +1,14 @@
 // Algod v2 API
-export { getAccount, getTransactionParams, broadcastTransaction, getBlock } from "./algod";
+export {
+  getAccount,
+  getTransactionParams,
+  broadcastTransaction,
+  getBlock,
+  getBlockHash,
+} from "./algod";
 
 // Indexer API
-export { getAccountTransactions, getAllAccountTransactions } from "./indexer";
+export { getAccountTransactions, getAllAccountTransactions, getBlockTransactions } from "./indexer";
 export type { GetTransactionsOptions } from "./indexer";
 
 // Types

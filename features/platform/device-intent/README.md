@@ -308,14 +308,14 @@ implementation guide for adding a new intent.
    [Orchestrating a multi-intent flow](#orchestrating-a-multi-intent-flow).
 
 2. **Decide where the intent lives.**
-   Keep reusable contracts and execution logic in a shared package, then bind
-   them to platform-specific renderers in LWM and LWD. This keeps orchestration
-   hooks testable because they can depend on typed contracts and injected
-   platform definitions rather than concrete app implementations. An intent
-   owned by a `features/` package keeps everything in one directory instead.
+   Keep the whole intent, renderers included, in one directory of the
+   `features/` package that owns it. Move the renderers into the apps only when
+   they need `@ledgerhq/live-common` or components that still live in the apps.
+   Either way, orchestration hooks take the platform definitions they run as
+   injected params, so their tests can inject mock intents.
    Read more:
    [Recommended file organization](#recommended-file-organization),
-   [Intents living in a `features/` package](#intents-living-in-a-features-package),
+   [Splitting the intent from its renderers](#splitting-the-intent-from-its-renderers),
    [`IntentDefinition`](#1-intentdefinition----shared-cross-platform-logic),
    [`IntentPlatformDefinition`](#2-intentplatformdefinition----platform-specific-ui).
 
@@ -428,11 +428,12 @@ function MyFlowScreen({ enabled, onDone }: Props) {
       onIntentJobError={error => {
         /* handle error */
       }}
-      cancelIntentRequestId={undefined}
     />
   );
 }
 ```
+
+`onExecutorStateChanged` and `cancelIntentRequestId` are optional.
 
 ### Custom headers from intent components
 
@@ -646,16 +647,12 @@ function SignTransactionStep({
       deviceInitializationInput={deviceInitializationInput}
       intent={intent}
       intentComponentExtraProps={{}}
-      onExecutorStateChanged={state => {
-        /* track lifecycle if needed */
-      }}
       onIntentJobStateChanged={state => {
         /* optional UI / debug reaction — not for flow results */
       }}
       onIntentJobComplete={() => onSigned()}
       onIntentJobError={onError}
       onUserCancel={onClose}
-      cancelIntentRequestId={undefined}
     />
   );
 }
@@ -848,77 +845,12 @@ sees no change and will not re-execute.
 
 #### Recommended file organization
 
-When an intent is intended to be reusable across platforms, keep the shared
-contract and execution logic in a shared lib, then bind it to a platform in
-the app or package that owns the renderer.
-
-We recommend this split so the intent interfaces stay separate from the
-concrete definitions and renderers. In practice, an orchestration hook should
-be able to depend on typed intent contracts and injected
-`IntentPlatformDefinition`s rather than importing a specific production intent
-implementation directly. That makes the orchestration logic much easier to unit
-test: tests can inject small mock intents with deterministic jobs and trivial
-components, then assert only the phase transitions, callback ordering, and
-prop wiring they care about.
+Keep the whole intent in one directory of the `features/` package that owns it:
+contract, job, platform definition and both renderers. Platform extension
+resolution picks the right component per app:
 
 ```text
-libs/my-shared-intents/src/signTransactionDemoIntent/
-├── types.ts
-├── job.ts
-└── intentDefinition.ts
-
-apps/ledger-live-mobile/src/.../signTransactionDemoIntent/
-├── componentLWM.tsx
-└── intentLWMDefinition.ts
-
-apps/ledger-live-desktop/src/.../signTransactionDemoIntent/
-├── componentLWD.tsx
-└── intentLWDDefinition.ts
-```
-
-Recommended responsibilities:
-
-- `types.ts` -- exports the intent's `JobState`, `Input`, `Result`, and
-  `ExtraProps` types, plus the precomposed aliases for `MyIntentDefinition`,
-  `MyIntentPlatformDefinition`, and runtime `MyIntent`.
-- `job.ts` -- exports the `Job` implementation and any non-React helpers or
-  constants used by that job.
-- `intentDefinition.ts` -- exports the shared `IntentDefinition` object
-  (`label`, execution flags, `job`) with no platform UI dependency.
-- `componentLWM.tsx` / `componentLWD.tsx` -- exports the platform-specific React
-  renderer receiving `jobState` and `extraProps`.
-- `intentLWMDefinition.ts` / `intentLWDDefinition.ts` -- exports the
-  `IntentPlatformDefinition` built by combining the shared definition with the
-  platform component.
-
-`ExtraProps` nuance: even though `ExtraProps` live on
-`IntentPlatformDefinition` rather than `IntentDefinition`, they should still be
-declared in the shared `types.ts` when an orchestrator needs a stable typed
-contract to inject platform-specific data into the renderer. In practice,
-`Input` is the job input, while `ExtraProps` is the orchestrator-to-platform
-injection surface.
-
-If an intent is not shared yet, it is fine to keep the same five-file structure
-inside a single platform package or app first, then move `types.ts`, `job.ts`,
-and `intentDefinition.ts` into a shared lib later without changing the platform
-file naming.
-
-#### Intents living in a `features/` package
-
-> [!WARNING]
-> **Not ready yet — do not follow this layout.** It only holds for an intent whose
-> renderer needs nothing the app still owns, and today that excludes user-facing
-> copy: no `features/` package can resolve translations. Until Platform closes
-> that gap, use the [app/lib split](#recommended-file-organization) above, even
-> for an intent owned by a `features/` package. Soon you should be able to keep a
-> whole intent in one directory, as described below.
-
-An intent owned by a `features/` package would not need the app/lib split at all.
-Contract, job, platform definition and both renderers would live in one directory,
-because platform extension resolution picks the right component per app:
-
-```text
-features/platform/contacts/src/device/intents/registerExternalAddressIntent/
+features/<layer>/<package>/src/intents/myIntent/
 ├── types.ts
 ├── job.ts
 ├── intentDefinition.ts
@@ -931,27 +863,81 @@ features/platform/contacts/src/device/intents/registerExternalAddressIntent/
 single `IntentPlatformDefinition` covers both platforms: no base-versus-platform
 definition split, and no `.native` twin of the barrel exporting it.
 
-This will be the recommended layout for intents whose job relies purely on the
-Device Management Kit and the signer kits, once a `features/` package can own
-user-facing copy. [`@features/platform-contacts`](../contacts/README.md) used to
-be the live example; it moved its renderers into the apps and now demonstrates
-the app/lib split instead.
+Recommended responsibilities:
 
-The suffix-less import needs the package's dead-code check to run once per
-platform, otherwise knip flags every `component.web.tsx` and
-`component.native.tsx` as unused. Give the package a `knip.web.config.mjs` and a
-`knip.native.config.mjs` that narrow `project` to one platform, and run knip
-twice with the matching `--tsConfig`, the same way
-[`@features/platform-contacts`](../contacts/package.json) does.
+- `types.ts` -- exports the intent's `JobState`, `Input`, `Result`, and
+  `ExtraProps` types, plus the precomposed aliases for `MyIntentDefinition`,
+  `MyIntentPlatformDefinition`, and runtime `MyIntent`.
+- `job.ts` -- exports the `Job` implementation and any non-React helpers or
+  constants used by that job.
+- `intentDefinition.ts` -- exports the `IntentPlatformDefinition` (`label`,
+  execution flags, `job`, `component`).
+- `component.web.tsx` / `component.native.tsx` -- export the LWD and LWM React
+  renderers receiving `jobState` and `extraProps`.
 
-Keep the app/lib split instead when:
+The suffix-less import makes knip report both `component.web.tsx` and
+`component.native.tsx` as unused, so the package needs one knip pass per
+platform: add a `knip.web.config.mjs` and a `knip.native.config.mjs` as the
+[knip-migration](../../../.agents/skills/knip-migration/SKILL.md) skill
+describes.
 
-- **the intent's UI shows any translated copy** — this is every production
-  renderer today, and it is why the layout above is not ready;
-- **the intent depends on `@ledgerhq/live-common`** or another legacy library a
-  `features/` package must not import;
-- **the intent's UI leans heavily on components that still live in the app** and
-  are too costly to migrate.
+An orchestration hook takes the `IntentPlatformDefinition`s it runs as injected
+params instead of importing the production intents. Its tests can then inject
+small mock intents with deterministic jobs and trivial components, and assert
+only the phase transitions, callback ordering, and prop wiring they care about.
+
+#### Splitting the intent from its renderers
+
+Move the renderers into the apps when they need something only the apps have:
+
+- **`@ledgerhq/live-common`** or another legacy library a `features/` package
+  must not import;
+- **components that still live in the app** and are too costly to migrate.
+
+A job that needs legacy code takes it through its `Input`, built by the app, so
+the job stays in the package either way. The contract and job then live in a
+`features/platform/intent-<name>` package, and each app binds them to its own
+renderer.
+[`@features/platform-intent-verify-address`](../intent-verify-address/README.md)
+uses this layout: its job gets `startAddressVerification` from the app, and
+PayTab binds it to a renderer in each app.
+
+```text
+features/platform/intent-my-intent/src/
+├── types.ts
+├── job.ts
+└── intentDefinition.ts
+
+apps/ledger-live-mobile/src/.../myIntent/
+├── componentLWM.tsx
+└── intentLWMDefinition.ts
+
+apps/ledger-live-desktop/src/.../myIntent/
+├── componentLWD.tsx
+└── intentLWDDefinition.ts
+```
+
+`types.ts` and `job.ts` hold the same as above. The other files:
+
+- `intentDefinition.ts` -- exports the shared `IntentDefinition` object
+  (`label`, execution flags, `job`) with no platform UI dependency.
+- `componentLWM.tsx` / `componentLWD.tsx` -- export the platform-specific React
+  renderer receiving `jobState` and `extraProps`.
+- `intentLWMDefinition.ts` / `intentLWDDefinition.ts` -- export the
+  `IntentPlatformDefinition` built by combining the shared definition with the
+  platform component.
+
+`ExtraProps` nuance: even though `ExtraProps` live on
+`IntentPlatformDefinition` rather than `IntentDefinition`, they should still be
+declared in the shared `types.ts` when an orchestrator needs a stable typed
+contract to inject platform-specific data into the renderer. In practice,
+`Input` is the job input, while `ExtraProps` is the orchestrator-to-platform
+injection surface.
+
+If an intent is not shared yet, it is fine to keep the same five-file structure
+inside a single app first, then move `types.ts`, `job.ts`, and
+`intentDefinition.ts` into an intent package later without changing the
+platform file naming.
 
 ### Structuring intents (single vs. multiple)
 
@@ -1218,12 +1204,12 @@ There are two levels of callbacks for job lifecycle events:
 
 The executor reports progress and lifecycle changes through callback props:
 
-| Callback                            | Fires when                                                                                                                                                |
-| ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `onExecutorStateChanged(state)`     | The executor transitions between lifecycle phases (`connectingDevice`, `initializingDeviceContext`, `executingIntent`, `idle`, and their error variants). |
-| `onIntentJobStateChanged(jobState)` | Optional. The running job's observable emits a new `JobState` value (UI / observability only).                                                            |
-| `onIntentJobComplete()`             | Optional. The job observable completes (no more emissions). The executor transitions to `idle`.                                                           |
-| `onIntentJobError(error)`           | Optional. The job observable errors. The executor transitions to `executingIntentError`.                                                                  |
+| Callback                            | Fires when                                                                                                                                                          |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `onExecutorStateChanged(state)`     | Optional. The executor transitions between lifecycle phases (`connectingDevice`, `initializingDeviceContext`, `executingIntent`, `idle`, and their error variants). |
+| `onIntentJobStateChanged(jobState)` | Optional. The running job's observable emits a new `JobState` value (UI / observability only).                                                                      |
+| `onIntentJobComplete()`             | Optional. The job observable completes (no more emissions). The executor transitions to `idle`.                                                                     |
+| `onIntentJobError(error)`           | Optional. The job observable errors. The executor transitions to `executingIntentError`.                                                                            |
 
 All callbacks use refs internally, so the executor always calls the **latest**
 version of each callback without needing to be recreated when the callback
@@ -1273,7 +1259,7 @@ cross-cutting concerns (updating global state, logging, debug UI).
 To cancel the currently running job, set `cancelIntentRequestId` to a new
 value (typically a UUID). The executor stops the job observable, transitions to
 idle, and the `lastIntentSnapshot` preserves the job state at the time of
-cancellation.
+cancellation. A caller that never cancels the job leaves the prop out.
 
 ```typescript
 const [cancelId, setCancelId] = useState<string | undefined>(undefined);

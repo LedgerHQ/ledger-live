@@ -1,6 +1,6 @@
 {
   "name": "@shared/api-services",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "private": true,
   "description": "One endpoint-less RTK Query api per backend service: base query, cache tags and extraArgument contract. Use-case packages inject their endpoints into these.",
   "main": "src/index.ts",
@@ -12,11 +12,12 @@
   "sideEffects": false,
   "scripts": {
     "lint": "oxlint ./src",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../.. -W shared/api-services"
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@reduxjs/toolkit": "catalog:",
@@ -35,8 +36,11 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "msw": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "react": "catalog:",
     "react-redux": "catalog:",
     "typescript": "catalog:",

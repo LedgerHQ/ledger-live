@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { DistributionItem } from "@ledgerhq/types-live";
 import { useAssetGroupPnL } from "@ledgerhq/wallet-pnl/hooks";
 import { act, renderHook, withFlagOverrides } from "tests/testSetup";

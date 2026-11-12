@@ -2,7 +2,7 @@ import React, { Fragment, useCallback, useMemo, useState, useEffect } from "reac
 import { useDispatch } from "LLD/hooks/redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { useMultiversXRandomizedValidators } from "@ledgerhq/live-common/families/multiversx/react";
 import {
   denominate,

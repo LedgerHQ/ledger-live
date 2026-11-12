@@ -1148,7 +1148,10 @@ describe("Send Flow Integration", () => {
 
       await navigateToRentSignature(user);
       expect(mockSponsoredOrchestrationActions.craftRent).toHaveBeenCalledTimes(1);
-      expect(screen.getAllByText("Step 1 of 2")).toHaveLength(2);
+      expect(screen.getAllByText("Approve network fees sponsoring")).toHaveLength(2);
+      expect(screen.getByTestId("send-sponsored-rent-signature-terms")).toHaveTextContent(
+        "By signing this transaction, you agree to Tronify's Terms and Conditions.",
+      );
 
       // TX-A: DeviceAction reads the mocked result on mount, so set it before pushing the order.
       setMockDeviceActionResult({

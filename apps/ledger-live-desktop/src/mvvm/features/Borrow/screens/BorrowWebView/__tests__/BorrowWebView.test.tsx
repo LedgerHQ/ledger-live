@@ -3,7 +3,7 @@ import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { render, screen } from "tests/testSetup";
 import { useDeeplinkCustomHandlers } from "~/renderer/components/WebPlatformPlayer/CustomHandlers";
 import { BorrowWebView } from "../BorrowWebView";
-import type { BorrowWebviewInputs } from "../../BorrowApp/useBorrowAppViewModel";
+import type { LiveAppWebviewInputs } from "LLD/hooks/useLiveAppWebviewInputs";
 
 jest.mock("~/renderer/components/WebPlatformPlayer/TopBar", () => ({
   TopBar: () => <div data-testid="borrow-top-bar" />,
@@ -38,7 +38,7 @@ const inputs = {
   OS: "web",
   platform: "LLD",
   discreetMode: "false",
-} as BorrowWebviewInputs;
+} as LiveAppWebviewInputs;
 
 const defaultProps = {
   manifest,

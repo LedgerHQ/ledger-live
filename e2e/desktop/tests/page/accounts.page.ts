@@ -3,6 +3,7 @@ import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
+import { isAccountDetailEnabled } from "tests/utils/featureFlagUtils";
 
 const CRYPTO_ACCOUNT_ROW_PREFIX = "crypto-account-row-";
 
@@ -25,8 +26,15 @@ export class AccountsPage extends AppPage {
     );
   }
 
-  private readonly tokenRow = (childCurrency: Currency) =>
-    this.page.getByTestId(`token-row-${childCurrency.ticker}`);
+  // With the `accountDetail` flag on, a token row reads "Tether USD USDT 0 USDT $0.00".
+  private async tokenRow(childCurrency: Currency) {
+    if (await isAccountDetailEnabled(this.page)) {
+      return this.page.getByTestId("account-detail-assets").getByRole("button", {
+        name: new RegExp(String.raw`\b${childCurrency.ticker} \d`),
+      });
+    }
+    return this.page.getByTestId(`token-row-${childCurrency.ticker}`);
+  }
 
   private syncAccountButton = (accountName: string) =>
     this.getAccountRow(accountName).getByTestId("sync-button").locator("div").first();
@@ -65,20 +73,18 @@ export class AccountsPage extends AppPage {
 
   @step("Verify token visibility")
   async verifyTokenVisibility(childCurrency: Currency) {
-    await expect(this.tokenRow(childCurrency)).toBeVisible();
+    await expect(await this.tokenRow(childCurrency)).toBeVisible();
   }
 
   @step("Verify token is not visible in parent account")
   private async verifyTokenNotVisible(childCurrency: Currency) {
-    await expect(this.tokenRow(childCurrency)).not.toBeVisible();
+    await expect(await this.tokenRow(childCurrency)).not.toBeVisible();
   }
 
   @step("Expect token balance to be null")
   async expectTokenBalanceToBeNull(childCurrency: Currency) {
     await expect(
-      this.page
-        .getByTestId(`token-row-${childCurrency.ticker}`)
-        .getByText(`0 ${childCurrency.ticker}`),
+      (await this.tokenRow(childCurrency)).getByText(`0 ${childCurrency.ticker}`),
     ).toBeVisible();
   }
 

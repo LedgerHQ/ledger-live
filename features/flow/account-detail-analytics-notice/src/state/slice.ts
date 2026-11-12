@@ -12,6 +12,9 @@ export const accountAnalyticsIntroductionSlice = createSlice({
     dismissAccountAnalyticsIntroduction: state => {
       state.hasDismissed = true;
     },
+    resetAccountAnalyticsIntroduction: state => {
+      state.hasDismissed = false;
+    },
     restoreAccountAnalyticsIntroduction: (state, { payload }: PayloadAction<unknown>) => {
       if (
         typeof payload !== "object" ||
@@ -28,5 +31,8 @@ export const accountAnalyticsIntroductionSlice = createSlice({
   },
 });
 
-export const { dismissAccountAnalyticsIntroduction, restoreAccountAnalyticsIntroduction } =
-  accountAnalyticsIntroductionSlice.actions;
+export const {
+  dismissAccountAnalyticsIntroduction,
+  resetAccountAnalyticsIntroduction,
+  restoreAccountAnalyticsIntroduction,
+} = accountAnalyticsIntroductionSlice.actions;

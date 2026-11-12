@@ -9,7 +9,6 @@ import CheckLanguageAvailability from "~/components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "~/components/CheckTermOfUseUpdate";
 import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
 import globalSyncRefreshControl from "~/components/globalSyncRefreshControl";
-import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
 import { renderItem } from "LLM/utils/renderItem";
 import { ScreenName } from "~/const";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -31,12 +30,10 @@ import { LargeScreenUpsellModalPortfolioMount } from "LLM/features/LargeScreenUp
 import { LazyOnboardingTourPortfolioMount } from "LLM/features/LazyOnboardingBanner";
 
 import {
-  PortfolioAssetsSection,
   WalletAssetsView,
   PortfolioCarouselSection,
   PortfolioEmptySection,
   PortfolioHeaderSection,
-  PortfolioOperationsSection,
   PortfolioBannersSection,
   PortfolioPerpsEntryPoint,
 } from "../../components";
@@ -54,22 +51,13 @@ const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(Collapsibl
 
 export const PortfolioScreen = ({ navigation }: NavigationProps) => {
   const {
-    hideEmptyTokenAccount,
     isAWalletCardDisplayed,
-    isAccountListUIEnabled,
-    shouldDisplayAssetSection,
     showAssets,
     isLNUpsellBannerShown,
-    isAddModalOpened,
     backgroundColor,
     isSyncError,
-    openAddModal,
-    closeAddModal,
-    handleHeightChange,
     onBackFromUpdate,
-    shouldDisplayOperationsList,
     shouldDisplayPerpsEntryPoint,
-    shouldAddBottomPaddingForLegacyAssets,
   } = usePortfolioViewModel(navigation);
 
   const progressViewOffset = getProgressViewOffset(Platform.OS);
@@ -141,44 +129,20 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       sections.push(<PortfolioPerpsEntryPoint key="perpsEntryPoint" />);
     }
 
-    if (shouldDisplayAssetSection) {
-      sections.push(<WalletAssetsView key="categorizedAssets" />);
-    } else {
-      sections.push(
-        <PortfolioAssetsSection
-          key="assets"
-          isAccountListUIEnabled={isAccountListUIEnabled}
-          hideEmptyTokenAccount={hideEmptyTokenAccount}
-          openAddModal={openAddModal}
-          onHeightChange={handleHeightChange}
-          shouldAddBottomPadding={shouldAddBottomPaddingForLegacyAssets}
-        />,
-      );
-    }
+    sections.push(<WalletAssetsView key="categorizedAssets" />);
 
     if (isAWalletCardDisplayed) {
       sections.push(<PortfolioCarouselSection key="carousel" backgroundColor={backgroundColor} />);
     }
 
-    if (!shouldDisplayOperationsList) {
-      sections.push(<PortfolioOperationsSection key="operations" />);
-    }
-
     return sections;
   }, [
     showAssets,
-    shouldDisplayAssetSection,
     onBackFromUpdate,
     isLNUpsellBannerShown,
-    isAccountListUIEnabled,
-    hideEmptyTokenAccount,
-    openAddModal,
-    handleHeightChange,
     isAWalletCardDisplayed,
     backgroundColor,
-    shouldDisplayOperationsList,
     shouldDisplayPerpsEntryPoint,
-    shouldAddBottomPaddingForLegacyAssets,
   ]);
 
   return (
@@ -196,11 +160,6 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
           useSafeArea={false}
           overrideRefreshControlProps={{ progressViewOffset }}
           isError={isSyncError}
-        />
-        <AddAccountDrawer
-          isOpened={isAddModalOpened}
-          onClose={closeAddModal}
-          doesNotHaveAccount={!showAssets}
         />
       </Animated.View>
       <Q2WalletV4TourDrawer

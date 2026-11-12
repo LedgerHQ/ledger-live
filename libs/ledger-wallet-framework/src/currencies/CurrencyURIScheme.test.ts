@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { CryptoCurrency } from "../types";
 import { decodeURIScheme, encodeURIScheme } from "./CurrencyURIScheme";
 import { type CurrenciesResolver, setCurrenciesResolver } from "./resolver";

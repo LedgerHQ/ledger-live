@@ -85,12 +85,16 @@ function optimisticOpForStake(
     ...commons,
     id: encodeOperationId(account.id, "", "DELEGATE"),
     type: "DELEGATE",
-    value: new BigNumber(transaction.amount).plus(commandDescriptor.fee),
+    // Staking keeps the SUI in the account balance: only the gas leaves it.
+    value: new BigNumber(commandDescriptor.fee),
     senders: [account.freshAddress],
     recipients: [],
     accountId: account.id,
     date: new Date(),
-    extra: {},
+    extra: {
+      validatorAddress: transaction.recipient,
+      stakedAmount: new BigNumber(transaction.amount).toFixed(),
+    },
   };
 }
 
@@ -100,16 +104,29 @@ function optimisticOpForUnstake(
   commandDescriptor: CommandDescriptor,
 ): SuiOperation {
   const commons = optimisticOpcommons(commandDescriptor);
+  const pool = account.suiResources?.stakes?.find(({ stakes }) =>
+    stakes.some(s => s.stakedSuiId === transaction.stakedSuiId),
+  );
+  const stake = pool?.stakes.find(s => s.stakedSuiId === transaction.stakedSuiId);
+  const principal =
+    transaction.useAllAmount && stake
+      ? stake.principal
+      : new BigNumber(transaction.amount).toFixed();
 
   return {
     ...commons,
     id: encodeOperationId(account.id, "", "UNDELEGATE"),
     type: "UNDELEGATE",
-    value: new BigNumber(transaction.amount),
+    // Unstaking keeps the SUI in the account balance: only the gas leaves it.
+    value: new BigNumber(commandDescriptor.fee),
     senders: [account.freshAddress],
     recipients: [transaction.recipient].filter(Boolean),
     accountId: account.id,
     date: new Date(),
+    extra: {
+      ...(pool ? { validatorAddress: pool.validatorAddress } : {}),
+      stakedAmount: principal,
+    },
   };
 }
 

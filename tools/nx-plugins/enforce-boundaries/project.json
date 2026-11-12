@@ -2,28 +2,57 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "name": "enforce-boundaries",
   "projectType": "library",
+  "namedInputs": {
+    "boundariesTool": ["{workspaceRoot}/tools/nx-plugins/enforce-boundaries/**/*"],
+    "workspaceGraph": [
+      "{workspaceRoot}/tools/nx-plugins/project-tags/plugin.js",
+      "{workspaceRoot}/**/package.json",
+      "{workspaceRoot}/**/project.json",
+      "{workspaceRoot}/pnpm-workspace.yaml",
+      "{workspaceRoot}/nx.json"
+    ],
+    "hostTsconfigs": [
+      "{workspaceRoot}/apps/{ledger-live-desktop,ledger-live-mobile}/tsconfig.json",
+      "{workspaceRoot}/tsconfig.base.json",
+      "{workspaceRoot}/support/tsconfig/base.json"
+    ]
+  },
   "targets": {
     "test": {
       "executor": "nx:run-commands",
       "cache": true,
-      "inputs": ["{workspaceRoot}/tools/nx-plugins/enforce-boundaries/**/*"],
+      "inputs": ["boundariesTool", "hostTsconfigs"],
       "options": {
         "cwd": "{workspaceRoot}",
         "command": "node --test tools/nx-plugins/enforce-boundaries/validate.test.js"
+      }
+    },
+    "test:workspace": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "boundariesTool",
+        "workspaceGraph",
+        { "externalDependencies": ["@nx/devkit"] }
+      ],
+      "options": {
+        "cwd": "{workspaceRoot}",
+        "command": "node --test tools/nx-plugins/enforce-boundaries/validate.workspace.test.js"
       }
     },
     "lint:boundaries": {
       "executor": "nx:run-commands",
       "cache": true,
       "inputs": [
-        "{workspaceRoot}/tools/nx-plugins/enforce-boundaries/**/*",
-        "{workspaceRoot}/tools/nx-plugins/project-tags/plugin.js",
-        "{workspaceRoot}/{domain,shared,features,support,devtools}/**/package.json",
+        "boundariesTool",
+        "workspaceGraph",
         "{workspaceRoot}/{domain,shared,features,support,devtools}/**/*.@(ts|tsx|js|jsx|mjs|cjs)",
-        "!{workspaceRoot}/{domain,shared,features,support,devtools}/**/@(node_modules|dist|lib|build|.turbo|.cache)/**",
-        "{workspaceRoot}/{apps,libs}/**/package.json",
-        "{workspaceRoot}/pnpm-workspace.yaml",
-        "{workspaceRoot}/nx.cache-config.json"
+        "!{workspaceRoot}/{domain,shared,features,support,devtools}/**/@(node_modules|dist|lib|lib-es|build|.webpack|coverage|.turbo|.cache)/**",
+        "{workspaceRoot}/apps/{ledger-live-desktop,ledger-live-mobile}/**/*.@(ts|tsx|js|jsx|mjs|cjs)",
+        "!{workspaceRoot}/apps/{ledger-live-desktop,ledger-live-mobile}/**/@(node_modules|dist|lib|lib-es|build|.webpack|coverage|.turbo|.cache)/**",
+        "hostTsconfigs",
+        "{workspaceRoot}/nx.cache-config.json",
+        { "externalDependencies": ["@nx/devkit", "typescript"] }
       ],
       "options": {
         "cwd": "{workspaceRoot}",

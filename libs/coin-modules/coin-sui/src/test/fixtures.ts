@@ -5,10 +5,8 @@
 
 /**
  * Holds `StakedSui` in active validators' pools (9 stakes in 9 pools, oldest from epoch 0), so
- * `delegate` and `estimatedReward` resolve. Its last transaction must stay within the GraphQL
- * arm's ~90-day history retention, or the sync-migration `operationsCount` check reads 0 there.
- * Not a validator: stake reads list the objects an address owns, and a validator's own address
- * holds none unless its operator self-stakes.
+ * `delegate` and `estimatedReward` resolve. Not a validator: stake reads list the objects an
+ * address owns, and a validator's own address holds none unless its operator self-stakes.
  */
 export const STAKE_DELEGATOR = "0x571bad7fd728af0fb5589888e8124214467ae3ba7947cff39dea9d0638e5979a";
 

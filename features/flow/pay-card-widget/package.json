@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-pay-card-widget",
-  "version": "0.6.2",
+  "version": "0.7.0",
   "private": true,
   "description": "Card widget flow for Pay tab in Ledger Wallet",
   "main": "src/index.ts",
@@ -35,12 +35,12 @@
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -c features/flow/pay-card-widget/knip.web.config.mjs -W features/flow/pay-card-widget --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/pay-card-widget/knip.native.config.mjs -W features/flow/pay-card-widget --tsConfig tsconfig.native.json"
+    "coverage": "jest --coverage"
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
+    "@support/lint": "workspace:*",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@swc/core": "catalog:",
@@ -53,6 +53,7 @@
     "@types/react-dom": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",

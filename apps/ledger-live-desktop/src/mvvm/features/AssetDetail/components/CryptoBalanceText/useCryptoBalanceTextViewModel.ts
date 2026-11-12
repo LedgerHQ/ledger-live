@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
 import type { Unit } from "@domain/entity-currency-unit";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { useSelector } from "LLD/hooks/redux";
 import { parseCurrencyUnitFragment } from "LLD/features/AssetDetail/utils/parseCurrencyUnitFragment";
 import { discreetModeSelector, localeSelector } from "~/renderer/reducers/settings";

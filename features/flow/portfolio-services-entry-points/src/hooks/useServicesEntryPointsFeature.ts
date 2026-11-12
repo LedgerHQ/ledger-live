@@ -12,16 +12,16 @@ export type ServicesEntryPointsFeature = Readonly<{
 
 export function useServicesEntryPointsFeature(): ServicesEntryPointsFeature {
   const feature = useFeature("entryPointsServices");
-  const { availability, isAssetSectionDisplayed } = usePlatformServicesConfig();
-  const isEnabled = (feature?.enabled ?? false) && isAssetSectionDisplayed;
+  const { availability } = usePlatformServicesConfig();
+  const isEnabled = feature?.enabled ?? false;
   const order = getServicesOrder(feature);
-  const { perps, borrow } = availability;
+  const { perps, borrow, predictions } = availability;
 
   const services = useMemo(
     function resolveEnabledServices() {
-      return isEnabled ? resolveServices(order, { perps, borrow }) : [];
+      return isEnabled ? resolveServices(order, { perps, borrow, predictions }) : [];
     },
-    [isEnabled, order, perps, borrow],
+    [isEnabled, order, perps, borrow, predictions],
   );
 
   return { isEnabled, services };

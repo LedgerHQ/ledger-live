@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
+import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { useNavigate } from "react-router";
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
 import {
@@ -10,6 +11,7 @@ import {
 } from "@ledgerhq/ledger-key-ring-protocol/store";
 import type { Trustchain, MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import {
   useFeatureFlagsToolProps,
   usePayCardToolProps,
@@ -26,14 +28,19 @@ import {
   useAppConfigToolProps,
   useAccountNameToolProps,
   useMockAccountsToolProps,
+  useAccountDetailToolProps,
+  useCoinConfigToolProps,
 } from "@devtools/bindings";
 import type { DevToolsConfig } from "@devtools/shell";
 import { useDevToolsRelay } from "./useDevToolsRelay";
-import { useDeviceOnboarding } from "../../../DeviceOnboarding/hooks/useDeviceOnboarding";
+import { useDeviceOnboardingTool } from "../../DeviceOnboarding/useDeviceOnboardingTool";
 import { useAccountDataRecorder } from "../../accountDataRecorder";
 import { getPortfolioServiceUrl } from "~/config/portfolioService";
 
 const APPLICATION_ID = 16;
+
+const getLiveConfigValue = (key: string): unknown => LiveConfig.getValueByKey(key);
+const getLiveConfigDefaultValue = (key: string): unknown => LiveConfig.getDefaultValueByKey(key);
 
 export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
   const navigate = useNavigate();
@@ -42,6 +49,12 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
   const payCardToolProps = usePayCardToolProps();
   const envToolProps = useEnvDevToolProps();
   const appConfigToolProps = useAppConfigToolProps();
+  const liveConfigKeys = useMemo(() => Object.keys(LiveConfig.instance.config), []);
+  const coinConfigToolProps = useCoinConfigToolProps({
+    keys: liveConfigKeys,
+    getValueByKey: getLiveConfigValue,
+    getDefaultValueByKey: getLiveConfigDefaultValue,
+  });
   const prodToggle = useProdToggle();
   const { wire, wireState } = useDevToolsRelay();
 
@@ -94,10 +107,11 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
     prodToggle.cloudSyncApiBaseUrl,
     prodToggle.trustchainApiBaseUrl,
   );
-  const deviceOnboardingProps = useDeviceOnboarding();
+  const deviceOnboardingProps = useDeviceOnboardingTool();
   const accountDescriptorToolProps = useAccountDescriptorToolProps();
   const accountBalanceToolProps = useAccountBalanceToolProps();
-  const accountOperationToolProps = useAccountOperationToolProps();
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const accountOperationToolProps = useAccountOperationToolProps(counterValueCurrency.ticker);
   const accountBalanceHistoryToolProps = useAccountBalanceHistoryToolProps();
   const accountPortfolioToolProps = useAccountPortfolioToolProps({
     serviceUrl: getPortfolioServiceUrl(),
@@ -107,12 +121,14 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
   const legacyAccounts = useSelector(accountsSelector);
   const accountNameToolProps = useAccountNameToolProps(legacyAccounts);
   const mockAccountsToolProps = useMockAccountsToolProps(accountDataRecorder);
+  const accountDetailToolProps = useAccountDetailToolProps();
 
   const config: DevToolsConfig = useMemo(
     () => [
       { id: "feature-flags", config: featureFlagsToolProps },
       { id: "env", config: envToolProps },
       { id: "app-config", config: appConfigToolProps },
+      { id: "coin-config", config: coinConfigToolProps },
       { id: "pay-card", config: payCardToolProps },
       { id: "trustchain", config: trustchainToolProps },
       { id: "cloud-sync", config: cloudSyncToolProps },
@@ -125,11 +141,13 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       { id: "account-name", config: accountNameToolProps },
       { id: "account-portfolio", config: accountPortfolioToolProps },
       { id: "mock-accounts", config: mockAccountsToolProps },
+      { id: "account-detail", config: accountDetailToolProps },
     ],
     [
       featureFlagsToolProps,
       envToolProps,
       appConfigToolProps,
+      coinConfigToolProps,
       payCardToolProps,
       trustchainToolProps,
       cloudSyncToolProps,
@@ -142,6 +160,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       accountDataToolProps,
       accountNameToolProps,
       mockAccountsToolProps,
+      accountDetailToolProps,
     ],
   );
 

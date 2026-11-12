@@ -6,7 +6,7 @@ import {
 } from "@ledgerhq/live-common/families/solana/logic";
 import { SolanaStakeWithMeta } from "@ledgerhq/live-common/families/solana/types";
 import { Account } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";

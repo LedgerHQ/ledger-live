@@ -2,6 +2,7 @@ import React from "react";
 import { PreChecksStateType, type PreChecksState } from "@ledgerhq/live-dmk-shared";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type { OsUpdateSheetSpec, OsUpdateStepLayoutSpec } from "..";
+import { getConnectionTimedOutSheet } from "../getConnectionTimedOutSheet";
 import { OsUpdateButton } from "../../../analytics/types";
 import { PreparingScreen } from "../../PreparingScreen";
 import { BatteryTooLowContent } from "../../../sheets/BatteryTooLowContent";
@@ -32,15 +33,23 @@ function getSheet({
         content: <DeviceLockedContent deviceModelId={deviceModelId} deviceName={deviceName} />,
       };
     case PreChecksStateType.DEVICE_DISCONNECTED:
-      return { content: <DeviceDisconnectedContent /> };
+      return {
+        content: (
+          <DeviceDisconnectedContent deviceModelId={deviceModelId} deviceName={deviceName} />
+        ),
+      };
+    case PreChecksStateType.CONNECTION_TIMED_OUT:
+      return getConnectionTimedOutSheet({ retry: state.retry, cancel: state.cancel, trackClick });
     case PreChecksStateType.BATTERY_TOO_LOW: {
       const onCancel = () => {
-        trackClick(OsUpdateButton.CANCEL);
+        trackClick(OsUpdateButton.CANCEL_OS_UPDATE);
         state.cancel();
       };
       return {
+        hideHeader: true,
         content: (
           <BatteryTooLowContent
+            deviceModelId={deviceModelId}
             productName={productName}
             percentage={state.currentPercentage}
             onCancel={onCancel}
@@ -50,10 +59,11 @@ function getSheet({
     }
     case PreChecksStateType.UNEXPECTED_ERROR: {
       const onCancel = () => {
-        trackClick(OsUpdateButton.CANCEL);
+        trackClick(OsUpdateButton.CANCEL_OS_UPDATE);
         state.cancel();
       };
       return {
+        hideHeader: true,
         content: <UnexpectedErrorContent onCancel={onCancel} />,
       };
     }

@@ -6,6 +6,7 @@ import type {
   HostToolEvent,
   HostToolEventDetail,
   HostToolPayload,
+  SendableOnboardingEvent,
   WatchedOnboardingContext,
 } from "@features/platform-device-onboarding";
 
@@ -34,13 +35,6 @@ export type DeviceOnboardingToolPayload = HostToolPayload;
 export type DeviceOnboardingToolEvent = HostToolEvent;
 export type DeviceOnboardingLogRow = HostLogRow;
 export type DeviceOnboardingNextState = HostNextState;
-
-/** Whole rather than by type: `snapshot.can` needs the payload, and the machine dereferences it. */
-export interface SendableOnboardingEvent {
-  /** The host adds the session id to SESSION_READY: only it knows the live session. */
-  readonly event: HostOnboardingEvent;
-  readonly label?: string;
-}
 
 export interface DeviceOnboardingToolProps {
   readonly status: DeviceOnboardingStatus;

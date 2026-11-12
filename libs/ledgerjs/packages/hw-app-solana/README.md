@@ -29,7 +29,7 @@ For a smooth and quick integration:
 To run `speculos-smoke` test make sure [Speculos](https://github.com/LedgerHQ/speculos) running (apdu port 9999 and api rest endpoint <http://0.0.0.0:5000>) with [Solana app](https://github.com/LedgerHQ/app-solana) installed on it. Then run the command from root workspace:
 
 ```bash
-$ yarn run ts-node packages/hw-app-solana/tests/speculos-smoke.ts
+$ npx tsx libs/ledgerjs/packages/hw-app-solana/tests/speculos-smoke.ts
 ```
 
 ## Troubleshooting

@@ -1,11 +1,12 @@
 import React from "react";
 import { TileButton } from "@ledgerhq/lumen-ui-react";
-import { ArrowUp, Check, Copy, PenEdit, Trash } from "@ledgerhq/lumen-ui-react/symbols";
+import { ArrowUp, Check, Copy, PenEdit, Share, Trash } from "@ledgerhq/lumen-ui-react/symbols";
 import { useTranslation } from "@shared/i18n";
 
 type ContactAddressDetailActionsProps = Readonly<{
   hasCopied: boolean;
   onCopy: () => void;
+  onShare?: () => void;
   onSend?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
@@ -17,6 +18,7 @@ type ContactAddressDetailActionsProps = Readonly<{
 export function ContactAddressDetailActions({
   hasCopied,
   onCopy,
+  onShare,
   onSend,
   onEdit,
   onDelete,
@@ -27,7 +29,7 @@ export function ContactAddressDetailActions({
   const { t } = useTranslation();
 
   return (
-    <div className="grid w-full grid-cols-4 gap-8">
+    <div className={`grid w-full gap-8 ${onShare ? "grid-cols-5" : "grid-cols-4"}`}>
       <TileButton
         icon={ArrowUp}
         isFull
@@ -54,6 +56,16 @@ export function ContactAddressDetailActions({
       >
         {t("contacts.addressDetail.edit")}
       </TileButton>
+      {onShare ? (
+        <TileButton
+          icon={Share}
+          isFull
+          onClick={onShare}
+          data-testid="contacts-address-detail-share"
+        >
+          {t("contacts.addressDetail.share")}
+        </TileButton>
+      ) : null}
       <TileButton
         icon={Trash}
         appearance="red"

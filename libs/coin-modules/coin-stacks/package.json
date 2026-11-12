@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-stacks",
-  "version": "0.35.1",
+  "version": "0.36.0",
   "description": "Ledger Stacks Coin integration",
   "keywords": [
     "Ledger",
@@ -124,15 +124,17 @@
     "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
-    "@types/invariant": "^2.2.37",
+    "@types/invariant": "2.2.37",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
-    "dotenv": "^16.4.5",
+    "@typescript/native": "catalog:",
+    "dotenv": "16.4.7",
     "jest": "catalog:",
     "msw": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "ripple-keypairs": "^2.0.0",
+    "rimraf": "catalog:",
+    "ripple-keypairs": "2.0.0",
     "typescript": "catalog:"
   },
   "files": [

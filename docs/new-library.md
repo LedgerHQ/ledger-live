@@ -5,8 +5,11 @@ This document covers the requirements and conventions for any new internal packa
 ## Where to add new code
 
 New code goes in `shared/`, `domain/entity/`, `domain/api/`, `features/platform/` or
-`features/flow/` — whichever is the lowest layer that can own the concern. `support/` for
+`features/flow/`, whichever is the lowest layer that can own the concern. `support/` holds
 development-only tooling.
+
+Ask the first-yes-wins decision tree in
+[structure-flow](../.agents/skills/structure-flow/SKILL.md) when the layer is not obvious.
 
 `libs/` is [legacy](./monorepo-architecture.md#legacy-libs). Three exceptions still land there:
 a new coin module or its coin-tester; a package published to npm (`shared/`, `domain/` and
@@ -14,27 +17,41 @@ a new coin module or its coin-tester; a package published to npm (`shared/`, `do
 `libs/ui/` and `libs/ledgerjs/` are frozen. `libs/ledger-live-common` takes no new features, and
 code extracted from it goes to the layers above, not to a new `libs/*` package.
 
+## Creating a package
+
+Run the generator, then finish README, CODEOWNERS and knip as in
+[new-package](../.agents/skills/new-package/SKILL.md) (command, options and `pnpm i` there).
+
+The generator names the package from its folder, rejects a platform the layer does not allow, and
+writes a package that passes the checklist below: a placeholder module, its test and an
+`internals.ts` you replace with your code.
+
 ## Package checklist
+
+Use it to review an existing package. `pnpm lint:tool-config` checks the items of this list that [`rules/hygiene.mjs`](../tools/nx-plugins/enforce-tool-config/rules/hygiene.mjs) and [`rules/tool-dependency.mjs`](../tools/nx-plugins/enforce-tool-config/rules/tool-dependency.mjs) name.
 
 **`package.json` fields**
 - [ ] `"private": true`
 - [ ] `"sideEffects": false` — enables bundler tree-shaking
 - [ ] `"main"`, `"types"`, `"exports"` — source-only packages (domain/, features/, shared/) point directly to `src/index.ts` and expose `"./package.json"`; built/published libs/ packages use the `@ledgerhq/source` condition + `lib/`/`lib-es/` entries — copy from a neighbouring package of the same type
-- [ ] `devDependencies` via `catalog:` entries — `typescript`, `jest`, `@swc/core`, `@swc/jest`, `@types/jest`, `oxfmt`, `oxlint` (never pin versions directly)
+- [ ] `devDependencies` via `catalog:` entries (never pin versions directly): `typescript`, `jest`, `@swc/core`, `@swc/jest`, `@types/jest`, `@typescript/native` (for `tsc`), and `rimraf`, `zx` or `nx` when a script runs them; `@support/jest` with `workspace:*` when the package has tests (see [ADR-0003](https://github.com/LedgerHQ/architecture-as-code/pull/553) and [`rules/tool-dependency.mjs`](../tools/nx-plugins/enforce-tool-config/rules/tool-dependency.mjs))
 - [ ] `scripts.typecheck: "tsc --noEmit"` — required for the Nx `typecheck` target
 - [ ] `scripts.test` and `scripts.coverage` — `jest` / `jest --coverage`
-- [ ] `scripts.format: "oxfmt src"` — required for the Nx `format` target; add `tests` if the package keeps tests outside `src/` (e.g. `"oxfmt src tests"`)
+- [ ] `scripts.format: "oxfmt src"` (required for the Nx `format` target; add `tests` if the package keeps tests outside `src/` (e.g. `"oxfmt src tests"`); path lists and presets in [support-config](../.agents/skills/support-config/SKILL.md))
 - [ ] `scripts.format:check: "oxfmt --check src"` — CI dry-run counterpart; mirror the same paths as `scripts.format`
-- [ ] `scripts.lint: "oxlint src"`: required for the Nx `lint` target; oxlint finds the layer config (`<layer>/oxlint.config.mts`) by walking up, so no `-c` and no config file in the package (see [`@support/lint`](../support/lint/README.md))
+- [ ] `scripts.lint: "oxlint src"`: required for the Nx `lint` target; oxlint finds the layer config (`<layer>/oxlint.config.mts`) by walking up, so no `-c` and no config file in the package (see [support-config](../.agents/skills/support-config/SKILL.md))
 
 **Additional files**
 - [ ] `README.md` — scope, problem solved, main exports (a few paragraphs); **must include a status marker** (see [README status marker](#readme-status-marker) below)
-- [ ] `tsconfig.json` — use the template below
-- [ ] `jest.config.js` — `@swc/jest` transformer, `testEnvironment: "node"` (or `"jsdom"` for React), sonar reporter; copy from a neighbouring package
+- [ ] `tsconfig.json` (and platform configs when dual): pick the archetype in [support-config](../.agents/skills/support-config/SKILL.md)
+- [ ] `jest.config.js`: one line calling the layer's `@support/jest` factory (see [support-config](../.agents/skills/support-config/SKILL.md))
 - [ ] `project.json` — minimum `{ "targets": { "build": { "executor": "nx:noop" } } }` for source-only packages; required for Nx task graph
 - [ ] `src/errors.ts` — if the package throws custom errors, define them here as plain `class extends Error`
 
 ## TypeScript configuration
+
+Pick the tsconfig archetype from [support-config](../.agents/skills/support-config/SKILL.md). A logic
+package with no DOM often looks like:
 
 ```json
 {
@@ -45,21 +62,17 @@ code extracted from it goes to the layers above, not to a new `libs/*` package.
 }
 ```
 
-`logic` fits a package consumed as source with no DOM. Pick another archetype from
-[`support/tsconfig`](../support/tsconfig/README.md) when the package needs the DOM, JSX, a platform
-split or a build.
-
 The presets target `ES2022`, not `ESNext`: our app runtimes (Electron, React Native) only guarantee ES2022. Apps can use `esnext` because their bundler controls the final output; packages do not have that safety net.
 
 ## Naming
 
 | Layer | npm scope | Example |
 |---|---|---|
-| `shared/` | `@shared/<name>` | `@shared/feature-flags` |
-| `domain/entity/` | `@domain/entity-<name>` | `@domain/entity-crypto-asset` |
-| `domain/api/` | `@domain/api-<name>` | `@domain/api-crypto-asset` |
+| `shared/` | `@shared/<name>` | `@shared/schema-primitives` |
+| `domain/entity/` | `@domain/entity-<name>` | `@domain/entity-contact` |
+| `domain/api/` | `@domain/api-<name>` | `@domain/api-push-devices` |
 | `features/platform/` | `@features/platform-<name>` | `@features/platform-feature-flags` |
-| `features/flow/` | `@features/flow-<name>` | `@features/flow-wallet` |
+| `features/flow/` | `@features/flow-<name>` | `@features/flow-contacts` |
 | `support/` | `@support/<name>` | `@support/jest` |
 | `libs/` (legacy) | `@ledgerhq/<name>` | `@ledgerhq/coin-evm` |
 

@@ -19,6 +19,8 @@ import {
   saveKnownDevices,
   saveLargeMoverState,
   saveLargeScreenUpsellModalState,
+  saveLiveConfigOverridesState,
+  savePredictionsState,
   saveMarketState,
   saveMarketListConfig,
   saveMarketBannerState,
@@ -40,6 +42,8 @@ import { payCardFeatureTourPersistedSelector } from "@features/flow-pay-feature-
 import { payRequestVerifyHintPersistedSelector } from "@features/flow-pay-request/state";
 import { payCardLoginIntroPersistedSelector } from "@features/flow-pay-card-auth/state";
 import { payCardOnboardingWidgetPersistedSelector } from "@features/flow-pay-card-widget/state";
+import { accountAnalyticsIntroductionPersistedSelector } from "@features/flow-account-detail-analytics-notice/state";
+import { saveAccountAnalyticsIntroductionSafely } from "LLM/features/AccountDetail/analyticsIntroductionStorage";
 import { settingsStoreSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
 import { Maybe } from "../types/helpers";
@@ -184,6 +188,8 @@ const getPostOnboardingStateChanged = (a: State, b: State) =>
 const getLargeScreenUpsellModalStateChanged = (a: State, b: State) =>
   !isEqual(a.largeScreenUpsellModal, b.largeScreenUpsellModal);
 
+const predictionsNotEquals = (a: State, b: State) => a.predictions !== b.predictions;
+
 const marketNotEquals = (a: State, b: State) => a.market !== b.market;
 const marketListConfigNotEquals = (a: State, b: State) => a.marketListConfig !== b.marketListConfig;
 const marketBannerNotEquals = (a: State, b: State) => a.marketBanner !== b.marketBanner;
@@ -218,6 +224,8 @@ export const payCardDbSaveSliceSelector = createSelector(
 );
 const payCardPersistedNotEquals = (a: State, b: State) =>
   !isEqual(payCardPersistedSelector(a), payCardPersistedSelector(b));
+const accountAnalyticsIntroductionNotEquals = (a: State, b: State) =>
+  a.accountAnalyticsIntroduction !== b.accountAnalyticsIntroduction;
 const trustchainNotEquals = (a: State, b: State) => a.trustchain !== b.trustchain;
 const largeMoverNotEquals = (a: State, b: State) => a.largeMover !== b.largeMover;
 
@@ -230,6 +238,8 @@ export const featureFlagsLense = (state: State) => ({
   overrides: state.featureFlags.overrides,
   bannerVisible: state.featureFlags.bannerVisible,
 });
+const liveConfigOverridesNotEquals = (a: State, b: State) =>
+  a.liveConfigOverrides.overrides !== b.liveConfigOverrides.overrides;
 const historyNotEquals = (a: State, b: State) => a.history !== b.history;
 const identitiesNotEquals = (a: State, b: State) => a.identities !== b.identities;
 
@@ -299,6 +309,13 @@ export const ConfigureDBSaveEffects = () => {
     getChangesStats: getLargeScreenUpsellModalStateChanged,
     lense: largeScreenUpsellModalSelector,
   });
+  useDBSaveEffect({
+    stateSelector: (state: State) => state.predictions,
+    save: savePredictionsState,
+    throttle: 500,
+    getChangesStats: predictionsNotEquals,
+    lense: (state: State) => state.predictions,
+  });
 
   useDBSaveEffect({
     stateSelector: (state: State) => state.market,
@@ -330,6 +347,14 @@ export const ConfigureDBSaveEffects = () => {
     throttle: 500,
     getChangesStats: payCardPersistedNotEquals,
     lense: payCardPersistedSelector,
+  });
+
+  useDBSaveEffect({
+    stateSelector: (state: State) => state.accountAnalyticsIntroduction,
+    save: saveAccountAnalyticsIntroductionSafely,
+    throttle: 500,
+    getChangesStats: accountAnalyticsIntroductionNotEquals,
+    lense: accountAnalyticsIntroductionPersistedSelector,
   });
 
   useDBSaveEffect({
@@ -389,6 +414,14 @@ export const ConfigureDBSaveEffects = () => {
     throttle: 400,
     getChangesStats: featureFlagsNotEquals,
     lense: featureFlagsLense,
+  });
+
+  useDBSaveEffect({
+    stateSelector: (state: State) => state.liveConfigOverrides,
+    save: saveLiveConfigOverridesState,
+    throttle: 400,
+    getChangesStats: liveConfigOverridesNotEquals,
+    lense: (state: State) => state.liveConfigOverrides,
   });
 
   return null;

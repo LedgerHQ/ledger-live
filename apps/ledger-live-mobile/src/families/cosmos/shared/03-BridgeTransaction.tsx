@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import invariant from "invariant";
 import { Flex } from "@ledgerhq/native-ui";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";

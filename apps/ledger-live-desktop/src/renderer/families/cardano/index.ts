@@ -1,4 +1,6 @@
 import AccountBodyHeader from "./AccountBodyHeader";
+import AccountDetailDelegations from "./AccountDetailDelegations";
+import AccountDetailBalanceSummary from "./AccountDetailBalanceSummary";
 import sendRecipientFields from "./SendRecipientFields";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 import accountHeaderManageActions from "./AccountHeaderManageActions";
@@ -6,6 +8,8 @@ import { CardanoFamily } from "./types";
 
 const family: CardanoFamily = {
   AccountBodyHeader,
+  AccountDetailDelegations,
+  AccountDetailBalanceSummary,
   sendRecipientFields,
   AccountBalanceSummaryFooter,
   accountHeaderManageActions,

@@ -36,9 +36,13 @@ Before completing or pushing code changes, run the [validate-changes](./.agents/
 
 Before adding or changing a `runs-on` in `.github/workflows/`, read the [ci-runners](./.agents/skills/ci-runners/SKILL.md) skill. Several `ledger-live-*` runners are deprecated.
 
-Reusable workflows and composite actions are called `@develop`, even from release and hotfix branches whose code is older. Before changing one, read the [ci-workflow-refs](./.agents/skills/ci-workflow-refs/SKILL.md) skill.
+Reusable workflows and composite actions are called `@develop`, even from release and hotfix branches whose code is older. Before changing one, read the [ci-workflow-refs](./.agents/skills/ci-workflow-refs/SKILL.md) skill. It also shows how to test such a change before merge.
 
 Runner images bake the mise toolchain and the Android AVD. Before changing a version in `mise.toml` or the AVD configuration, read the [runner-images](./.agents/skills/runner-images/SKILL.md) skill.
+
+## Accounts
+
+The legacy `Account` type is being retired. Before reading or showing account data, read [/docs/account-models](/docs/account-models/README.md).
 
 ## Configuration and environment variables
 

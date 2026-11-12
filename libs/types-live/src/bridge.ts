@@ -3,7 +3,7 @@
 // a WalletBridge is implemented on renderer side.
 // this is an abstraction on top of underlying blockchains api (libcore / ethereumjs / ripple js / ...)
 // that would directly be called from UI needs.
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { Observable } from "rxjs";
 import type { CryptoCurrency, Unit } from "./currency";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
@@ -134,9 +134,6 @@ export interface CurrencyBridge {
   // Scan all available accounts with a device
   scanAccounts(info: ScanInfo): Observable<ScanAccountEvent>;
   getPreloadStrategy?: (currency: CryptoCurrency) => PreloadStrategy;
-  // Get the UI descriptor for this currency (defines structure for transaction flows)
-  // Returns descriptor with inputs, fees configuration, etc.
-  getDescriptor?: (currency: CryptoCurrency) => Record<string, unknown>;
   nftResolvers?: {
     nftMetadata: (arg: {
       contract: string;
