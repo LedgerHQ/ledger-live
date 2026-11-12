@@ -3,11 +3,13 @@ import type { TokenCurrency } from "@domain/entity-currency-token";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { getCoinModuleApi } from "../../../bridge/generic-coin-framework/api";
 import { getXrpEnabledTokenStandards } from "../config";
+import type { XrpTokenAccount } from "../types";
 import BigNumber from "bignumber.js";
 import type { Account, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import { buildSubAccounts } from "../../../bridge/generic-coin-framework/buildSubAccounts";
 import { buildOptimisticOperation } from "../../../bridge/generic-coin-framework/utils";
 import xrpBridgeApi, {
+  buildIntentData,
   buildTokenAccountShapes,
   describeOptimisticOperation,
   getAssetFromToken,
@@ -248,6 +250,24 @@ describe("buildTokenAccountShapes", () => {
   });
 });
 
+describe("buildIntentData", () => {
+  it("lets rippling through a changeTrust only when noRipple is false", () => {
+    const intentData = buildIntentData({ mode: "changeTrust", noRipple: false });
+
+    expect(intentData).toEqual({ type: "changeTrust", noRipple: false });
+  });
+
+  it.each([true, undefined])("blocks rippling on a changeTrust when noRipple is %s", noRipple => {
+    const intentData = buildIntentData({ mode: "changeTrust", noRipple });
+
+    expect(intentData).toEqual({ type: "changeTrust", noRipple: true });
+  });
+
+  it.each([undefined, "send", "optOut"])("carries no data for the mode %s", mode => {
+    expect(buildIntentData({ mode, noRipple: false })).toEqual({ type: "none" });
+  });
+});
+
 describe("xrpBridgeApi", () => {
   it("sets no syncVersion while no standard is enabled", () => {
     getXrpEnabledTokenStandardsMock.mockReturnValue([]);
@@ -282,7 +302,11 @@ describe("xrpBridgeApi", () => {
 
 describe("describeOptimisticOperation", () => {
   const usd = { tokenIdentifier: "USD", contractAddress: ISSUER } as TokenCurrency;
-  const usdAccount = { id: "usdAccount", token: usd } as TokenAccount;
+  const usdAccount = {
+    id: "usdAccount",
+    token: usd,
+    xrpResources: { isLocked: false, isRippling: false, limit: new BigNumber(1000) },
+  } as XrpTokenAccount;
   const account = {
     id: "xrpAccount",
     freshAddress: "rSender",
@@ -323,6 +347,17 @@ describe("describeOptimisticOperation", () => {
     const transaction = { ...makeTrustSet("USD"), assetOwner: "rOtherIssuer" };
 
     expect(describeOptimisticOperation("changeTrust", account, transaction)?.type).toBe("OPT_IN");
+  });
+
+  it("records a re-add of a removed token as OPT_IN", () => {
+    const removedAccount = {
+      ...account,
+      subAccounts: [{ id: "usdAccount", token: usd }],
+    } as Account;
+
+    expect(
+      describeOptimisticOperation("changeTrust", removedAccount, makeTrustSet("USD"))?.type,
+    ).toBe("OPT_IN");
   });
 
   it("keeps the generic description of a send", () => {

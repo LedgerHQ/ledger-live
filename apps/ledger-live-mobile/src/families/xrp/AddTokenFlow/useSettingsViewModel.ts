@@ -5,7 +5,7 @@ import type { Unit } from "@domain/entity-currency-unit";
 import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { getMaxTrustLimitForToken } from "@ledgerhq/live-common/families/xrp/logicPublic";
+import { MAX_TRUST_LIMIT_VALUE } from "@ledgerhq/live-common/families/xrp/logicPublic";
 import type { Transaction } from "@ledgerhq/live-common/families/xrp/types";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -35,10 +35,9 @@ export function useSettingsViewModel({ navigation, route }: Props) {
       transaction: makeChangeTrustTransaction(bridge, account, token, new BigNumber(0)),
     }));
 
-  const maxLimit = getMaxTrustLimitForToken();
+  const maxLimit = MAX_TRUST_LIMIT_VALUE;
   const [isMaximum, setIsMaximum] = useState(false);
   const [limitText, setLimitText] = useState("");
-  // UI only: the transaction has no rippling field until coin-xrp supports it (LIVE-40797)
   const [isRippling, setIsRippling] = useState(false);
   const [isMaxLimitInfoOpen, setIsMaxLimitInfoOpen] = useState(false);
 

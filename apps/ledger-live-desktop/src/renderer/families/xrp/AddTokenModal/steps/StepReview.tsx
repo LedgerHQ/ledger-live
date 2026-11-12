@@ -1,13 +1,24 @@
 import invariant from "invariant";
 import React from "react";
 import { Trans } from "react-i18next";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@ledgerhq/lumen-ui-react";
+import { Information } from "@ledgerhq/lumen-ui-react/symbols";
+import type { Account } from "@ledgerhq/types-live";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { isMaxTrustLimitValue } from "@ledgerhq/live-common/families/xrp/logicPublic";
+import { useGetIssuerFeeQuery } from "@ledgerhq/live-common/families/xrp/state-manager/api";
 import { TrackScreen } from "@shared/analytics-react";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+import { openModal } from "~/renderer/actions/modals";
 import Box from "~/renderer/components/Box";
+import BuyButton from "~/renderer/components/BuyButton";
 import Button from "~/renderer/components/Button";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Text from "~/renderer/components/Text";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
+import { localeSelector } from "~/renderer/reducers/settings";
+import { formatIssuerFee, formatLongTrustLimit } from "../../utils";
 import type { StepProps } from "../types";
 
 function Row({ label, children }: Readonly<{ label: React.ReactNode; children: React.ReactNode }>) {
@@ -23,11 +34,63 @@ function Row({ label, children }: Readonly<{ label: React.ReactNode; children: R
   );
 }
 
-export default function StepReview({ transaction, status, token, error, isRippling }: StepProps) {
-  invariant(transaction && token, "xrp: transaction and token required");
+function LabelWithInfo(props: Readonly<{ label: React.ReactNode; info: React.ReactNode }>) {
+  return (
+    <span className="flex items-center gap-4">
+      {props.label}
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span className="inline-flex cursor-help">
+            <Information size={12} />
+          </span>
+        </TooltipTrigger>
+        <TooltipContent>{props.info}</TooltipContent>
+      </Tooltip>
+    </span>
+  );
+}
+
+function ActivationActions(props: Readonly<{ account: Account; onClose: () => void }>) {
+  const dispatch = useDispatch();
+
+  const onReceive = () => {
+    props.onClose();
+    dispatch(openModal("MODAL_RECEIVE", { account: props.account }));
+  };
+
+  return (
+    <Box horizontal justifyContent="flex-end" mb={4}>
+      <BuyButton currency={props.account.currency} account={props.account} />
+      <Button secondary onClick={onReceive}>
+        <Trans i18nKey="xrp.addToken.steps.review.receive" />
+      </Button>
+    </Box>
+  );
+}
+
+export default function StepReview({
+  t,
+  account,
+  parentAccount,
+  onClose,
+  transaction,
+  status,
+  token,
+  error,
+  isRippling,
+}: StepProps) {
+  invariant(account && transaction && token, "xrp: account, transaction and token required");
+
+  const locale = useSelector(localeSelector);
+  const issuerFee = useGetIssuerFeeQuery(token);
+  const unit = token.units[0];
+  const limitText = isMaxTrustLimitValue(transaction.amount)
+    ? t("xrp.addToken.steps.settings.maximum")
+    : formatLongTrustLimit(transaction.amount, unit, locale);
 
   const errors = Object.values(status.errors);
   const warnings = Object.values(status.warnings);
+  const isNotActivated = status.errors.amount?.name === "XrpAccountNotActivated";
 
   return (
     <Box flow={1}>
@@ -36,6 +99,9 @@ export default function StepReview({ transaction, status, token, error, isRippli
       {errors.map(statusError => (
         <ErrorBanner key={statusError.name} error={statusError} />
       ))}
+      {isNotActivated ? (
+        <ActivationActions account={getMainAccount(account, parentAccount)} onClose={onClose} />
+      ) : null}
       {warnings.map(warning => (
         <ErrorBanner key={warning.name} error={warning} warning />
       ))}
@@ -49,17 +115,48 @@ export default function StepReview({ transaction, status, token, error, isRippli
           {token.contractAddress}
         </Text>
       </Row>
+      {issuerFee.isLoading ? null : (
+        <Row
+          label={
+            <LabelWithInfo
+              label={<Trans i18nKey="xrp.addToken.steps.review.issuerFee" />}
+              info={<Trans i18nKey="xrp.addToken.steps.review.issuerFeeTooltip" />}
+            />
+          }
+        >
+          <Text ff="Inter|SemiBold" fontSize={4} color="neutral.c100">
+            {issuerFee.isError ? (
+              <Trans i18nKey="xrp.addToken.steps.review.issuerFeeUnavailable" />
+            ) : (
+              formatIssuerFee(issuerFee.data, locale)
+            )}
+          </Text>
+        </Row>
+      )}
       {token.tokenType === "iou" ? (
         <>
-          <Row label={<Trans i18nKey="xrp.addToken.steps.settings.limit" />}>
-            <FormattedVal
-              val={transaction.amount}
-              unit={token.units[0]}
-              showCode
-              alwaysShowValue
-              color="neutral.c100"
-              fontSize={4}
-            />
+          <Row
+            label={
+              <LabelWithInfo
+                label={<Trans i18nKey="xrp.addToken.steps.settings.limit" />}
+                info={<Trans i18nKey="xrp.tokenAccount.trustLimitTooltip" />}
+              />
+            }
+          >
+            {limitText ? (
+              <Text ff="Inter|SemiBold" fontSize={4} color="neutral.c100">
+                {limitText}
+              </Text>
+            ) : (
+              <FormattedVal
+                val={transaction.amount}
+                unit={unit}
+                showCode
+                alwaysShowValue
+                color="neutral.c100"
+                fontSize={4}
+              />
+            )}
           </Row>
           <Row label={<Trans i18nKey="xrp.rippling.label" />}>
             <Text ff="Inter|SemiBold" fontSize={4} color="neutral.c100">

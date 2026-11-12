@@ -91,9 +91,15 @@ async function getDeviceTransactionConfig({
   const assetFields = getIouAssetFields(iou.assetReference, iou.assetOwner);
 
   if (transaction.mode === "changeTrust") {
+    const flags = transaction.noRipple === false ? "Clear No Ripple" : "Set No Ripple";
     const limit = toDeviceIouAmount(transaction.amount, iou.assetReference);
 
-    return [{ type: "text", label: "Limit Amount", value: limit }, ...assetFields, ...feesFields];
+    return [
+      { type: "text", label: "Flags", value: flags },
+      { type: "text", label: "Limit Amount", value: limit },
+      ...assetFields,
+      ...feesFields,
+    ];
   }
 
   const sendMaxFields: CommonDeviceTransactionField[] =

@@ -1,162 +1,257 @@
 import React from "react";
 import BigNumber from "bignumber.js";
-import type { TokenAccount } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/xrp/types";
-import { XrpTrustLimitZero } from "@ledgerhq/live-common/families/xrp/types";
-import { fireEvent, render, screen } from "tests/testSetup";
+import { render, screen } from "tests/testSetup";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { NotEnoughSpendableBalance } from "@ledgerhq/ledger-wallet-framework/errors";
+import { MAX_TRUST_LIMIT_VALUE } from "@ledgerhq/live-common/families/xrp/logicPublic";
+import {
+  XrpAccountNotActivated,
+  XrpTrustLimitTooHigh,
+  XrpTrustLimitZero,
+  type Transaction,
+} from "@ledgerhq/live-common/families/xrp/types";
+import { XRP_ACCOUNT, makeXrpTokenAccount } from "../../__mocks__/account.mock";
+import { XRP_TOKEN } from "../../__mocks__/currency.mock";
+import { makeStepProps } from "../../__mocks__/stepProps.mock";
+import { makeStatus, optIn } from "../../__mocks__/transaction.mock";
 import type { StepProps } from "../types";
 import StepSettings, { StepSettingsFooter } from "./StepSettings";
-import { makeStepProps } from "../../__mocks__/stepProps.mock";
 
-jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
-  useAccountBridge: () => ({
-    updateTransaction: (transaction: object, patch: object) => ({ ...transaction, ...patch }),
-  }),
-}));
+const RIPPLING_WARNING = /Turning this on allows other users' payments to move your balance/;
+const BALANCE_WARNING = /Your balance .* is above this limit/;
+const ZERO_LIMIT_MESSAGE = "Your limit is 0: you can't receive this token.";
 
-function renderStepSettings(overrides: Partial<StepProps> = {}) {
-  const onUpdateTransaction = jest.fn();
-  const onChangeRippling = jest.fn();
-  const transitionTo = jest.fn();
-  const props = makeStepProps({
-    onUpdateTransaction,
-    onChangeRippling,
-    transitionTo,
-    transaction: { amount: new BigNumber(1000) } as Transaction,
-    maxLimit: new BigNumber(5000),
-    ...overrides,
-  });
+function toBaseUnits(value: number): BigNumber {
+  return new BigNumber(value).shiftedBy(XRP_TOKEN.units[0].magnitude);
+}
 
-  render(
+function applyLastUpdate(props: StepProps, transaction: Transaction): Transaction {
+  const [update] = jest.mocked(props.onUpdateTransaction).mock.lastCall!;
+
+  return update(transaction);
+}
+
+function renderWithFooter(props: StepProps) {
+  return render(
     <>
       <StepSettings {...props} />
       <StepSettingsFooter {...props} />
     </>,
   );
-
-  const getUpdatedAmount = () => {
-    const updater = onUpdateTransaction.mock.lastCall?.[0];
-    return updater?.({ amount: new BigNumber(0) }).amount.toFixed();
-  };
-
-  return { getUpdatedAmount, transitionTo, onChangeRippling };
 }
 
-function makeHeldTokenAccount(limit: number) {
-  return {
-    type: "TokenAccount",
-    balance: new BigNumber(0),
-    xrpResources: {
-      isLocked: false,
-      isRippling: false,
-      limit: new BigNumber(limit),
-    },
-  } as unknown as TokenAccount;
-}
+// The step suspends until its account bridge loads
+beforeAll(async () => {
+  await getAccountBridge(XRP_ACCOUNT);
+});
 
 describe("StepSettings", () => {
   it("shows the limit the transaction holds", () => {
-    renderStepSettings();
+    render(
+      <StepSettings {...makeStepProps({ transaction: { ...optIn, amount: toBaseUnits(1000) } })} />,
+    );
 
     expect(screen.getByRole("textbox")).toHaveValue("1,000");
   });
 
-  it("puts Max back in the transaction", () => {
-    const { getUpdatedAmount } = renderStepSettings();
+  it("sends a typed limit to the transaction", async () => {
+    const props = makeStepProps();
+    const { user } = render(<StepSettings {...props} />);
+    const input = screen.getByRole("textbox");
 
-    fireEvent.click(screen.getByText("Max"));
+    await user.clear(input);
+    await user.type(input, "250");
 
-    expect(getUpdatedAmount()).toBe("5000");
+    expect(applyLastUpdate(props, optIn).amount).toEqual(toBaseUnits(250));
   });
 
-  it("sends a typed limit to the transaction", () => {
-    const { getUpdatedAmount } = renderStepSettings();
+  it("refuses a limit of 0", async () => {
+    const props = makeStepProps({ status: makeStatus({ amount: new XrpTrustLimitZero() }) });
+    const { user } = renderWithFooter(props);
 
-    fireEvent.change(screen.getByRole("textbox"), { target: { value: "250" } });
+    await user.click(screen.getByText("Continue"));
 
-    expect(getUpdatedAmount()).toBe("250");
+    expect(props.transitionTo).not.toHaveBeenCalled();
   });
 
-  it("refuses a limit of 0", () => {
-    const { transitionTo } = renderStepSettings({
-      transaction: { amount: new BigNumber(0) } as Transaction,
-      status: {
-        errors: { amount: new XrpTrustLimitZero() },
-        warnings: {},
-      } as unknown as TransactionStatus,
+  it("shows Maximum in a disabled input when the limit is the protocol maximum", () => {
+    render(
+      <StepSettings
+        {...makeStepProps({ transaction: { ...optIn, amount: MAX_TRUST_LIMIT_VALUE } })}
+      />,
+    );
+
+    expect(screen.getByDisplayValue("Maximum")).toBeDisabled();
+    expect(screen.queryByTestId("xrp-trust-limit-input")).not.toBeInTheDocument();
+  });
+
+  it("resets the limit to 0 when the user turns Max off", async () => {
+    const transaction = { ...optIn, amount: MAX_TRUST_LIMIT_VALUE };
+    const props = makeStepProps({ transaction });
+    const { user } = render(<StepSettings {...props} />);
+
+    await user.click(screen.getByTestId("xrp-trust-limit-max-switch"));
+
+    const amount = applyLastUpdate(props, transaction).amount;
+
+    expect(props.onUpdateTransaction).toHaveBeenCalledTimes(1);
+    expect(amount).toEqual(new BigNumber(0));
+  });
+
+  it("sets the protocol maximum when the user turns Max on", async () => {
+    const props = makeStepProps();
+    const { user } = render(<StepSettings {...props} />);
+
+    await user.click(screen.getByTestId("xrp-trust-limit-max-switch"));
+
+    const amount = applyLastUpdate(props, optIn).amount;
+
+    expect(props.onUpdateTransaction).toHaveBeenCalledTimes(1);
+    expect(amount).toEqual(MAX_TRUST_LIMIT_VALUE);
+  });
+
+  it("shows an amount error while Max is on", () => {
+    const error = new NotEnoughSpendableBalance("", { minimumAmount: "1.2 XRP" });
+    const props = makeStepProps({
+      transaction: { ...optIn, amount: MAX_TRUST_LIMIT_VALUE },
+      status: makeStatus({ amount: error }),
     });
 
-    expect(screen.getByText("The limit must be above 0")).toBeVisible();
-    fireEvent.click(screen.getByText("Continue"));
-    expect(transitionTo).not.toHaveBeenCalled();
+    render(<StepSettings {...props} />);
+
+    expect(screen.getByText("Balance cannot be below 1.2 XRP")).toBeVisible();
   });
 
-  it("warns when the limit is below the balance, and still continues to the review", () => {
-    const { transitionTo } = renderStepSettings({
-      tokenAccount: { balance: new BigNumber(2000) } as TokenAccount,
-    });
+  it("leaves an unactivated account to the review step", async () => {
+    const status = makeStatus({ amount: new XrpAccountNotActivated("", { amount: "1.2 XRP" }) });
+    const props = makeStepProps({ status });
+    const { user } = renderWithFooter(props);
 
-    expect(screen.getByText(/Your balance .* is above this limit/)).toBeVisible();
-    fireEvent.click(screen.getByText("Continue"));
-    expect(transitionTo).toHaveBeenCalledWith("review");
+    await user.click(screen.getByText("Continue"));
+
+    expect(screen.queryByText("Your account isn't activated yet")).not.toBeInTheDocument();
+    expect(props.transitionTo).toHaveBeenCalledTimes(1);
+    expect(props.transitionTo).toHaveBeenCalledWith("review");
+  });
+
+  it("warns when the limit is below the balance, and still continues to the review", async () => {
+    const props = makeStepProps({
+      transaction: { ...optIn, amount: toBaseUnits(1000) },
+      tokenAccount: { ...makeXrpTokenAccount(), balance: toBaseUnits(2000) },
+    });
+    const { user } = renderWithFooter(props);
+
+    expect(screen.getByText(BALANCE_WARNING)).toBeVisible();
+
+    await user.click(screen.getByText("Continue"));
+
+    expect(props.transitionTo).toHaveBeenCalledTimes(1);
+    expect(props.transitionTo).toHaveBeenCalledWith("review");
   });
 
   it("shows no balance warning when the limit is at or above the balance", () => {
-    renderStepSettings({
-      tokenAccount: { balance: new BigNumber(1000) } as TokenAccount,
+    const props = makeStepProps({
+      transaction: { ...optIn, amount: toBaseUnits(1000) },
+      tokenAccount: { ...makeXrpTokenAccount(), balance: toBaseUnits(1000) },
     });
 
-    expect(screen.queryByText(/Your balance .* is above this limit/)).toBeNull();
+    render(<StepSettings {...props} />);
+
+    expect(screen.queryByText(BALANCE_WARNING)).not.toBeInTheDocument();
+  });
+
+  it("hides the zero limit error when the user has not typed a limit", () => {
+    render(
+      <StepSettings
+        {...makeStepProps({ status: makeStatus({ amount: new XrpTrustLimitZero() }) })}
+      />,
+    );
+
+    expect(screen.queryByText(/The limit must be above 0/)).not.toBeInTheDocument();
+  });
+
+  it("shows the zero limit error once the user types a limit", async () => {
+    const props = makeStepProps({ status: makeStatus({ amount: new XrpTrustLimitZero() }) });
+    const { user } = render(<StepSettings {...props} />);
+
+    await user.type(screen.getByRole("textbox"), "5");
+
+    expect(screen.getByText(/The limit must be above 0/)).toBeVisible();
+  });
+
+  it("shows a limit above the maximum as an error", () => {
+    render(
+      <StepSettings
+        {...makeStepProps({ status: makeStatus({ amount: new XrpTrustLimitTooHigh() }) })}
+      />,
+    );
+
+    expect(screen.getByText("The limit is above the maximum")).toBeVisible();
+  });
+
+  it("turns rippling on when the user clicks the rippling switch", async () => {
+    const props = makeStepProps();
+    const { user } = render(<StepSettings {...props} />);
+
+    await user.click(screen.getByTestId("xrp-rippling-switch"));
+
+    expect(props.onChangeRippling).toHaveBeenCalledTimes(1);
+    expect(props.onChangeRippling).toHaveBeenCalledWith(true);
+  });
+
+  it("turns rippling off when the user clicks the rippling switch again", async () => {
+    const props = makeStepProps({ isRippling: true });
+    const { user } = render(<StepSettings {...props} />);
+
+    await user.click(screen.getByTestId("xrp-rippling-switch"));
+
+    expect(props.onChangeRippling).toHaveBeenCalledTimes(1);
+    expect(props.onChangeRippling).toHaveBeenCalledWith(false);
+  });
+
+  it("warns about rippling while rippling is on", () => {
+    render(<StepSettings {...makeStepProps({ isRippling: true })} />);
+
+    expect(screen.getByText(RIPPLING_WARNING)).toBeVisible();
+  });
+
+  it("leaves the rippling warning out while rippling is off", () => {
+    render(<StepSettings {...makeStepProps()} />);
+
+    expect(screen.queryByText(RIPPLING_WARNING)).not.toBeInTheDocument();
   });
 
   it("shows a transaction preparation error", () => {
-    renderStepSettings({ error: new Error("prepare failed") });
+    render(<StepSettings {...makeStepProps({ error: new Error("prepare failed") })} />);
 
     expect(screen.getByText(/prepare failed/)).toBeVisible();
-  });
-
-  it("keeps rippling off by default, with no warning", () => {
-    renderStepSettings();
-
-    expect(screen.getByRole("checkbox", { hidden: true })).not.toBeChecked();
-    expect(screen.queryByText(/Only turn it on/)).toBeNull();
-  });
-
-  it("turns rippling on", () => {
-    const { onChangeRippling } = renderStepSettings();
-
-    fireEvent.click(screen.getByTestId("xrp-rippling-switch"));
-
-    expect(onChangeRippling).toHaveBeenCalledWith(true);
-  });
-
-  it("warns when rippling is on", () => {
-    renderStepSettings({ isRippling: true });
-
-    expect(screen.getByText(/Only turn it on if you know what you're doing/)).toBeVisible();
   });
 });
 
 describe("StepSettings, editing a held token", () => {
-  it("says a current limit of 0 lets no token in, instead of the limit error", () => {
-    const { transitionTo } = renderStepSettings({
-      tokenAccount: makeHeldTokenAccount(0),
-      transaction: { amount: new BigNumber(0) } as Transaction,
-      status: {
-        errors: { amount: new XrpTrustLimitZero() },
-        warnings: {},
-      } as unknown as TransactionStatus,
+  it("says a current limit of 0 lets no token in, instead of the limit error", async () => {
+    const props = makeStepProps({
+      tokenAccount: makeXrpTokenAccount({ limit: new BigNumber(0) }),
+      status: makeStatus({ amount: new XrpTrustLimitZero() }),
     });
+    const { user } = renderWithFooter(props);
 
-    expect(screen.getByText("Your limit is 0: you can't receive this token.")).toBeVisible();
-    expect(screen.queryByText("The limit must be above 0")).toBeNull();
-    fireEvent.click(screen.getByText("Continue"));
-    expect(transitionTo).not.toHaveBeenCalled();
+    expect(screen.getByText(ZERO_LIMIT_MESSAGE)).toBeVisible();
+    expect(screen.queryByText("The limit must be above 0")).not.toBeInTheDocument();
+
+    await user.click(screen.getByText("Continue"));
+
+    expect(props.transitionTo).not.toHaveBeenCalled();
   });
 
   it("shows no limit 0 message when the new limit is above 0", () => {
-    renderStepSettings({ tokenAccount: makeHeldTokenAccount(0) });
+    const props = makeStepProps({
+      tokenAccount: makeXrpTokenAccount({ limit: new BigNumber(0) }),
+      transaction: { ...optIn, amount: toBaseUnits(1000) },
+    });
 
-    expect(screen.queryByText("Your limit is 0: you can't receive this token.")).toBeNull();
+    render(<StepSettings {...props} />);
+
+    expect(screen.queryByText(ZERO_LIMIT_MESSAGE)).not.toBeInTheDocument();
   });
 });

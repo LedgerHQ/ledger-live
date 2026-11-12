@@ -1,8 +1,8 @@
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
-import type { XrpTokenAccount } from "@ledgerhq/live-common/families/xrp/types";
+import type { XrpTokenAccount, XrpTokenResources } from "@ledgerhq/live-common/families/xrp/types";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { xrpIouToken, xrpMptToken, xrpTestnetCurrency } from "./currency.mock";
+import { XRP_TOKEN, xrpIouToken, xrpMptToken, xrpTestnetCurrency } from "./currency.mock";
 
 export const XRP_ACCOUNT: Account = {
   ...genAccount("xrp-1", { currency: xrpTestnetCurrency }),
@@ -24,3 +24,10 @@ export const XRP_REMOVED_TOKEN_ACCOUNT: XrpTokenAccount = genTokenAccount(
   XRP_ACCOUNT,
   xrpIouToken,
 );
+
+export function makeXrpTokenAccount(resources: Partial<XrpTokenResources> = {}): XrpTokenAccount {
+  return {
+    ...genTokenAccount(0, XRP_ACCOUNT, XRP_TOKEN),
+    xrpResources: { isLocked: false, ...resources },
+  };
+}

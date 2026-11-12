@@ -26,3 +26,12 @@ export const xrpMptToken: TokenCurrency = {
   ticker: "TMPT",
   units: [{ name: "Test MPT", code: "TMPT", magnitude: 0 }],
 };
+
+// An IOU amount is 16 digits and an exponent: its base unit is 10^-38. The issuer is a valid account,
+// as the review step asks the network for its fee.
+export const XRP_TOKEN: TokenCurrency = {
+  ...xrpIouToken,
+  contractAddress: "r9fnpoGUNqCWMppMStPEQY9R4UEbpCek4",
+  tokenIdentifier: "524C555344000000000000000000000000000000",
+  units: [{ ...xrpIouToken.units[0], magnitude: 38 }],
+};

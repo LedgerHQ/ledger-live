@@ -8,7 +8,7 @@ import type {
   OptimisticOperationDescriptor,
 } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import type { XrpAccountInfo } from "@ledgerhq/coin-xrp/types";
+import type { XrpAccountInfo, XrpTxData } from "@ledgerhq/coin-xrp/types";
 import { getCoinModuleApi } from "../../../bridge/generic-coin-framework/api";
 import { buildContext } from "../../../bridge/generic-coin-framework/api/context";
 import { getXrpEnabledTokenStandards } from "../config";
@@ -119,11 +119,22 @@ export function describeOptimisticOperation(
   if (mode !== "changeTrust") return undefined;
 
   const { assetReference, assetOwner } = transaction;
-  const isHeld = account.subAccounts?.some(sub =>
-    isTokenOfAsset(sub.token, assetReference, assetOwner),
-  );
+  // A removed token keeps its token account, for its history, but loses its resources
+  const heldTokenAccounts = (account.subAccounts ?? []).filter(sub => {
+    return "xrpResources" in sub && !!sub.xrpResources;
+  });
+  const isHeld = heldTokenAccounts.some(sub => {
+    return isTokenOfAsset(sub.token, assetReference, assetOwner);
+  });
 
   return { type: isHeld ? "OPT_EDIT" : "OPT_IN", value: new BigNumber(0) };
+}
+
+// A TrustSet blocks rippling unless the transaction asks for it: a missing choice keeps it blocked
+export function buildIntentData(transaction: Record<string, unknown>): XrpTxData {
+  if (transaction.mode !== "changeTrust") return { type: "none" };
+
+  return { type: "changeTrust", noRipple: transaction.noRipple !== false };
 }
 
 export default function xrpBridgeApi(currency: CryptoCurrency): BridgeApi {
@@ -131,6 +142,7 @@ export default function xrpBridgeApi(currency: CryptoCurrency): BridgeApi {
 
   return {
     getAssetFromToken,
+    buildIntentData,
     describeOptimisticOperation,
     balanceListsEveryToken: true,
     exactAssetMatch: true,

@@ -4314,12 +4314,17 @@
           "title": "Settings",
           "limit": "Trust limit",
           "max": "Max",
-          "limitInfo": "The trust limit is the most {{token}} your account accepts to hold."
+          "limitInfo": "The trust limit is the most {{token}} your account accepts to hold. Turn on Max to use the highest limit the XRP Ledger allows.",
+          "maximum": "Maximum"
         },
         "review": {
           "title": "Review",
           "token": "Token",
-          "issuer": "Issuer"
+          "issuer": "Issuer",
+          "issuerFee": "Issuer fee",
+          "issuerFeeTooltip": "The share of each transfer between holders that the issuer takes.",
+          "issuerFeeUnavailable": "Not available",
+          "receive": "Receive"
         },
         "connectDevice": {
           "title": "Device"
@@ -8156,6 +8161,14 @@
     "XrpReserveIncrease": {
       "title": "{{amount}} will be locked on your account while this token is added.",
       "description": "You'll get it back when you remove the token."
+    },
+    "XrpAccountNotActivated": {
+      "title": "Your account isn't activated yet",
+      "description": "Receive at least {{amount}} to activate it and add this token. This covers the account activation and the XRP locked for the token."
+    },
+    "XrpTrustLimitTooHigh": {
+      "title": "The limit is above the maximum",
+      "description": "Use Max to set the highest limit."
     },
     "InvalidExplorerResponse": {
       "title": "Invalid response from {{currencyName}} explorer"
