@@ -8365,11 +8365,25 @@
         "text": "It appears in your account with a balance of 0 after the next sync."
       }
     },
+    "manageToken": {
+      "cta": "Manage token",
+      "title": "Manage token",
+      "tokenSettings": "Token settings",
+      "removeToken": "Remove token"
+    },
     "tokenSettings": {
+      "title": "Token settings",
       "limit": "Trust limit",
       "maxLimit": "Max trust limit",
       "maxLimitInfo": "The trust limit is the most {{token}} your account accepts to hold. The maximum permitted trust limit is <amount/>.",
-      "maximum": "Maximum"
+      "maximum": "Maximum",
+      "currentLimitZero": "Your limit is 0: you can't receive this token.",
+      "limitBelowBalance": "Your balance ({{balance}}) is above this limit. You won't be able to receive this token until your balance is below this limit.",
+      "review": "Review",
+      "success": {
+        "title": "Token settings updated",
+        "text": "Trust limit: {{limit}}."
+      }
     },
     "rippling": {
       "label": "Rippling",

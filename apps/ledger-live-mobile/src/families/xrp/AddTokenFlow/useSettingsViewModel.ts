@@ -1,8 +1,6 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import type { Unit } from "@domain/entity-currency-unit";
-import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { getMaxTrustLimitForToken } from "@ledgerhq/live-common/families/xrp/logicPublic";
@@ -11,16 +9,12 @@ import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
 import { makeChangeTrustTransaction } from "../utils";
+import { useTrustLimitInput } from "../useTrustLimitInput";
 import type { XrpAddTokenFlowParamList } from "./types";
 
 export type Props = BaseComposite<
   StackNavigatorProps<XrpAddTokenFlowParamList, ScreenName.XrpAddTokenSettings>
 >;
-
-// AmountInput groups thousands with spaces, which parseCurrencyUnit reads as NaN
-function parseLimit(unit: Unit, text: string) {
-  return parseCurrencyUnit(unit, text.replaceAll(" ", ""));
-}
 
 export function useSettingsViewModel({ navigation, route }: Props) {
   const { account } = useAccountScreen(route);
@@ -29,46 +23,28 @@ export function useSettingsViewModel({ navigation, route }: Props) {
   const { token } = route.params;
 
   const bridge = useAccountBridge<Transaction>(account);
-  const { transaction, updateTransaction, status, bridgePending } =
-    useBridgeTransaction<Transaction>(bridge, () => ({
+  const bridgeTransaction = useBridgeTransaction<Transaction>(bridge, () => {
+    return {
       account,
       transaction: makeChangeTrustTransaction(bridge, account, token, new BigNumber(0)),
-    }));
+    };
+  });
+  const { transaction, updateTransaction, status, bridgePending, bridgeError } = bridgeTransaction;
 
   const maxLimit = getMaxTrustLimitForToken();
-  const [isMaximum, setIsMaximum] = useState(false);
-  const [limitText, setLimitText] = useState("");
-  // UI only: the transaction has no rippling field until coin-xrp supports it (LIVE-40797)
-  const [isRippling, setIsRippling] = useState(false);
-  const [isMaxLimitInfoOpen, setIsMaxLimitInfoOpen] = useState(false);
 
   const updateLimit = useCallback(
     (limit: BigNumber) => updateTransaction(tx => bridge.updateTransaction(tx, { amount: limit })),
     [bridge, updateTransaction],
   );
 
-  const unit = token.units[0];
-
-  const onChangeUseMax = useCallback(
-    (useMax: boolean) => {
-      setIsMaximum(useMax);
-      if (useMax) {
-        updateLimit(maxLimit);
-        return;
-      }
-
-      updateLimit(parseLimit(unit, limitText));
-    },
-    [limitText, maxLimit, unit, updateLimit],
-  );
-
-  const onChangeLimitText = useCallback(
-    (text: string) => {
-      setLimitText(text);
-      updateLimit(parseLimit(unit, text));
-    },
-    [unit, updateLimit],
-  );
+  const trustLimit = useTrustLimitInput({
+    unit: token.units[0],
+    maxLimit,
+    initial: { isMaximum: false, limitText: "", isRippling: false },
+    onLimitChange: updateLimit,
+  });
+  const { isMaximum, isRippling, hasTypedLimit } = trustLimit;
 
   const onContinue = useCallback(() => {
     if (!transaction) return;
@@ -83,19 +59,12 @@ export function useSettingsViewModel({ navigation, route }: Props) {
   const hasLimitZero = Object.values(status.errors).some(e => e.name === "XrpTrustLimitZero");
 
   return {
+    ...trustLimit,
     token,
     maxLimit,
-    isMaximum,
-    limitText: isMaximum ? maxLimit.shiftedBy(-unit.magnitude).toFixed() : limitText,
-    isRippling,
-    onChangeUseMax,
-    onChangeLimitText,
+    bridgeError,
     onContinue,
-    onChangeRippling: setIsRippling,
-    isMaxLimitInfoOpen,
-    onOpenMaxLimitInfo: () => setIsMaxLimitInfoOpen(true),
-    onCloseMaxLimitInfo: () => setIsMaxLimitInfoOpen(false),
-    isLimitErrorVisible: hasLimitZero && limitText !== "",
+    isLimitErrorVisible: hasLimitZero && hasTypedLimit,
     isContinueDisabled: bridgePending || hasLimitZero,
     isContinueLoading: bridgePending,
   };

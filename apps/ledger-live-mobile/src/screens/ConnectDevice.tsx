@@ -45,6 +45,7 @@ import type { NearUnstakingFlowParamList } from "~/families/near/UnstakingFlow/t
 import type { NearWithdrawingFlowParamList } from "~/families/near/WithdrawingFlow/types";
 import type { HederaAssociateTokenFlowParamList } from "~/families/hedera/AssociateTokenFlow/types";
 import type { XrpAddTokenFlowParamList } from "~/families/xrp/AddTokenFlow/types";
+import type { XrpManageTokenFlowParamList } from "~/families/xrp/ManageTokenFlow/types";
 import type { HederaDelegationFlowParamList } from "~/families/hedera/DelegationFlow/types";
 import type { HederaUndelegationFlowParamList } from "~/families/hedera/UndelegationFlow/types";
 import type { HederaRedelegationFlowParamList } from "~/families/hedera/RedelegationFlow/types";
@@ -135,6 +136,7 @@ type Props =
       ScreenName.HederaAssociateTokenConnectDevice
     >
   | StackNavigatorProps<XrpAddTokenFlowParamList, ScreenName.XrpAddTokenConnectDevice>
+  | StackNavigatorProps<XrpManageTokenFlowParamList, ScreenName.XrpManageTokenConnectDevice>
   | StackNavigatorProps<HederaDelegationFlowParamList, ScreenName.HederaDelegationConnectDevice>
   | StackNavigatorProps<HederaUndelegationFlowParamList, ScreenName.HederaUndelegationConnectDevice>
   | StackNavigatorProps<HederaRedelegationFlowParamList, ScreenName.HederaRedelegationConnectDevice>

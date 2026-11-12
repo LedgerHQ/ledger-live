@@ -11,7 +11,7 @@ import type { ParamListBase } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { NavigatorName, ScreenName } from "~/const";
 
-function getXrpResources(account: AccountLike): XrpTokenResources | undefined {
+export function getXrpResources(account: AccountLike): XrpTokenResources | undefined {
   if (account.type !== "TokenAccount") return undefined;
 
   return (account as XrpTokenAccount).xrpResources;
