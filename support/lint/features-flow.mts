@@ -34,7 +34,6 @@ const PLATFORM_SUFFIX_WAIVERS = [
   "account-detail-hero",
   "large-screen-upsell",
   "pay-card-widget",
-  "pay-request",
 ];
 
 const PLATFORM_STYLE = new URL("../../features/platform/style/", import.meta.url);

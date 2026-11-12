@@ -1,6 +1,6 @@
 import React from "react";
 import { cleanup, render, screen, userEvent } from "@testing-library/react-native";
-import { VerifyAddressSuccessView } from "../VerifyAddressSuccessView.native";
+import { VerifyAddressSuccessView } from "../VerifyAddressSuccessView";
 
 const defaultProps: React.ComponentProps<typeof VerifyAddressSuccessView> = {
   isOpen: true,
