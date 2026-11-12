@@ -11,6 +11,7 @@ import {
   NAVIGATOR_CLIPBOARD,
   WALLET_FRAMEWORK_CURRENCY_TYPES,
 } from "@support/lint/restricted-imports";
+import { PRESENCE_ASSERTION_DEBT } from "./oxlint.presence-assertion-debt.mts";
 
 const MVVM_ALIAS = {
   group: ["~/mvvm", "~/mvvm/*", "~/mvvm/**"],
@@ -131,7 +132,16 @@ export default defineConfig({
       files: ["**/*.test.{ts,tsx}", "**/__tests__/**", "e2e/**/*.{ts,tsx}"],
       env: { jest: true },
       plugins: ["jest"],
-      rules: { "typescript/no-explicit-any": "warn" },
+      rules: {
+        "typescript/no-explicit-any": "warn",
+        "jest/no-restricted-matchers": [
+          "error",
+          {
+            toBeOnTheScreen:
+              "Assert presence with toBeVisible(); not.toBeOnTheScreen() is fine for absence. See the testing skill.",
+          },
+        ],
+      },
     },
     {
       files: [
@@ -165,6 +175,10 @@ export default defineConfig({
     {
       files: ACCOUNT_DATA_SETUP_FILES,
       rules: { "eslint/no-restricted-imports": ["error", { paths: [BIGNUMBER_NAMED_IMPORT] }] },
+    },
+    {
+      files: PRESENCE_ASSERTION_DEBT,
+      rules: { "jest/no-restricted-matchers": "off" },
     },
   ],
 });
