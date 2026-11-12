@@ -1,11 +1,19 @@
-export { signTransactionIntentJob } from "./job";
-export { createSignOperationJob, createTerminalSignOperationJob } from "./createSignOperationJob";
+export { signTransactionIntentJob, signTransactionIntentJobWithResult } from "./job";
+export {
+  createSignOperationJob,
+  createSignOperationJobWithResult,
+  createTerminalSignOperationJob,
+} from "./createSignOperationJob";
 export type {
+  CreateSignOperationJobParams,
   SignOperationRequest,
   TerminalSignOperationResult,
   TerminalSignOperationState,
 } from "./createSignOperationJob";
-export { signTransactionIntentDefinition } from "./intentDefinition";
+export {
+  signTransactionIntentDefinition,
+  signTransactionIntentWithResultDefinition,
+} from "./intentDefinition";
 export type {
   SignOperationProgressState,
   SignTransactionIntent,
@@ -13,4 +21,7 @@ export type {
   SignTransactionIntentInput,
   SignTransactionIntentJobState,
   SignTransactionIntentPlatformDefinition,
+  SignTransactionIntentWithResultDefinition,
+  SignTransactionIntentWithResultJobState,
+  SignTransactionIntentWithResultPlatformDefinition,
 } from "./types";

@@ -102,6 +102,7 @@ export * from "./lldMemoTag";
 export * from "./lldTezosStaking";
 export * from "./lldWebviewManifestDomainCheck";
 export * from "./lwdDeeplinkOpenHardening";
+export * from "./lwdNewSendFlowDeviceIntent";
 export * from "./lwmDeeplinkOpenHardening";
 export * from "./llmIcpStaking";
 export * from "./llmMemoTag";
