@@ -3209,7 +3209,7 @@ describe("selectPrivateRecordsForAmount", () => {
 
     const result = selectPrivateRecordsForAmount({ unspentRecords: records, targetAmount: null });
     const expectedMicrocredits = [...records]
-      .sort((a, b) => new BigNumber(b.microcredits).comparedTo(new BigNumber(a.microcredits)))
+      .sort((a, b) => new BigNumber(b.microcredits).comparedTo(new BigNumber(a.microcredits)) ?? 0)
       .slice(0, MAX_PRIVATE_RECORDS_PER_TRANSACTION)
       .map(r => r.microcredits);
 

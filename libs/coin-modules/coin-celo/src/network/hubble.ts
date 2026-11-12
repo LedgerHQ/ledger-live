@@ -2,6 +2,7 @@ import { electionABI } from "@celo/abis";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import { isDefaultValidatorGroup } from "../logic";
 import { CeloValidatorGroup } from "../types/types";
 import { getCeloClient } from "./client";
@@ -69,13 +70,13 @@ export const getValidatorGroups = async (): Promise<CeloValidatorGroup[]> => {
       (validatorGroup: {
         address: string;
         name: string;
-        active_votes: BigNumber.Value;
-        pending_votes: BigNumber.Value;
+        active_votes: unknown;
+        pending_votes: unknown;
       }) => ({
         address: validatorGroup.address,
         name: validatorGroup.name || validatorGroup.address,
-        votes: new BigNumber(validatorGroup.active_votes).plus(
-          new BigNumber(validatorGroup.pending_votes),
+        votes: (parseFiniteBigNumber(validatorGroup.active_votes) ?? new BigNumber(0)).plus(
+          parseFiniteBigNumber(validatorGroup.pending_votes) ?? 0,
         ),
       }),
     );
@@ -86,4 +87,4 @@ export const getValidatorGroups = async (): Promise<CeloValidatorGroup[]> => {
 const customValidatorGroupsOrder = (validatorGroups: CeloValidatorGroup[]): CeloValidatorGroup[] =>
   [...validatorGroups]
     .filter(group => !isDefaultValidatorGroup(group)) // Excludes the deprecated "Ledger by Figment"
-    .sort((a, b) => b.votes.comparedTo(a.votes));
+    .sort((a, b) => b.votes.comparedTo(a.votes) ?? 0);

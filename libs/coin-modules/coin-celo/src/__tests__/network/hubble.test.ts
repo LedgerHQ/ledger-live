@@ -133,4 +133,26 @@ describe("network/hubble - getValidatorGroups", () => {
 
     expect(result.map(g => g.name)).toEqual(["Alpha"]);
   });
+
+  it("counts missing or unreadable votes from the indexer as 0", async () => {
+    setup([
+      { address: "0xaaa", name: "Alpha", cap: 1000n, total: 100n, eligible: true },
+      { address: "0xbbb", name: "Beta", cap: 1000n, total: 300n, eligible: true },
+    ]);
+    networkMock.mockResolvedValue({
+      data: {
+        items: [
+          { address: "0xaaa", name: "Alpha", active_votes: "100", pending_votes: undefined },
+          { address: "0xbbb", name: "Beta", active_votes: "abc", pending_votes: "" },
+        ],
+      },
+    });
+
+    const result = await getValidatorGroups();
+
+    expect(result.map(g => [g.name, g.votes.toString()])).toEqual([
+      ["Alpha", "100"],
+      ["Beta", "0"],
+    ]);
+  });
 });
