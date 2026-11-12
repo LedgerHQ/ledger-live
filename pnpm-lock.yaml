@@ -12937,6 +12937,9 @@ importers:
       '@domain/api-account-portfolio':
         specifier: workspace:*
         version: link:../../../domain/api/account-portfolio
+      '@domain/entity-account-balance':
+        specifier: workspace:*
+        version: link:../../../domain/entity/account-balance
       '@domain/entity-account-data':
         specifier: workspace:*
         version: link:../../../domain/entity/account-data

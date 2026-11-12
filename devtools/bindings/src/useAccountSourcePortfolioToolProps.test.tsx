@@ -57,6 +57,29 @@ function fakeClient(): PortfolioClient {
       };
       return portfolio;
     },
+    getBalance: async () => ({
+      items: [
+        {
+          type: "success",
+          network: "ethereum",
+          account_id: ACCOUNT_ID,
+          items: [
+            {
+              network: "ethereum",
+              account_id: ACCOUNT_ID,
+              asset: "native",
+              name: "Ether",
+              ticker: "ETH",
+              decimals: 18,
+              amount: "42",
+              estimated: false,
+              status: "confirmed",
+              locked: false,
+            },
+          ],
+        },
+      ],
+    }),
   };
 }
 
@@ -136,13 +159,14 @@ describe("useAccountSourcePortfolioToolProps", () => {
     await waitFor(() => expect(result.current.extraRegistrations).toEqual([]));
   });
 
-  it("injects the source while on, which serves no read yet, and removes it when off", async () => {
+  it("injects the source first in the router while on, and removes it when off", async () => {
     const { result, readEthereum } = setup();
+    expect(await readEthereum()).toBe("app");
 
     act(() => result.current.onToggleEnabled(true));
     expect(result.current.enabled).toBe(true);
-    expect(await readEthereum()).toBe("app");
-    expect(result.current.accounts[0].outcome).toBeUndefined();
+    expect(await readEthereum()).toBe("portfolio");
+    expect(result.current.accounts[0].outcome).toMatchObject({ status: "served", rows: 1 });
 
     act(() => result.current.onToggleEnabled(false));
     expect(result.current.enabled).toBe(false);

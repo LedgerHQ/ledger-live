@@ -1,6 +1,13 @@
 import { DUMMY_PORTFOLIO_ID, PortfolioId } from "@domain/entity-client-identity";
 import { ETH, POLYGON, PORTFOLIO_ID, depsOf, evm, fakeService, synced } from "./fakeService.mock";
-import { listPortfolio, reconcile, refresh } from "./portfolio";
+import {
+  PortfolioReadCancelledError,
+  listPortfolio,
+  reconcile,
+  refresh,
+  registerMissing,
+  whenReady,
+} from "./portfolio";
 
 describe("listPortfolio", () => {
   it("creates the portfolio when the service does not know it", async () => {
@@ -72,6 +79,141 @@ describe("the portfolio id", () => {
       call => call.mock.calls[0]?.[0].equals(PORTFOLIO_ID()),
     );
     expect(used).toEqual([true, true, true]);
+  });
+});
+
+describe("registerMissing", () => {
+  it("registers an address shared by two networks once", async () => {
+    const { client } = fakeService();
+
+    await registerMissing(depsOf(client), [ETH, POLYGON]);
+
+    expect(client.addRegistrations.mock.calls.map(([, registrations]) => registrations)).toEqual([
+      [{ type: "evm", address: ETH.address }],
+    ]);
+  });
+
+  it("registers once when two batches run at once", async () => {
+    const { client } = fakeService();
+    const deps = depsOf(client);
+
+    await Promise.all([registerMissing(deps, [ETH]), registerMissing(deps, [evm(2), ETH])]);
+
+    expect(client.addRegistrations.mock.calls.map(([, registrations]) => registrations)).toEqual([
+      [{ type: "evm", address: ETH.address }],
+      [{ type: "evm", address: evm(2).address }],
+    ]);
+  });
+});
+
+describe("whenReady", () => {
+  it("stops waiting, with its listing in flight, once its signal aborts", async () => {
+    const { client } = fakeService({ portfolio: synced([]) });
+    const deps = depsOf(client);
+    const cancel = new AbortController();
+    const listings: (AbortSignal | undefined)[] = [];
+    client.getPortfolio.mockResolvedValueOnce(synced([])).mockImplementation((_id, signal) => {
+      listings.push(signal);
+      const listing = new Promise<never>((_resolve, reject) => {
+        signal?.addEventListener("abort", () => reject(new Error("aborted")));
+      });
+      cancel.abort();
+      return listing;
+    });
+
+    await expect(whenReady(deps, [ETH], cancel.signal)).rejects.toBeInstanceOf(
+      PortfolioReadCancelledError,
+    );
+
+    expect(client.getPortfolio).toHaveBeenCalledTimes(2);
+    expect(listings.map(signal => signal?.aborted)).toEqual([true]);
+    expect(deps.now()).toBe(3_000);
+    expect(deps.store.get().busy).toBe(false);
+  });
+
+  it("stops when cancelled during its first listing, registering nothing", async () => {
+    const { client } = fakeService({ portfolio: synced([]) });
+    const cancel = new AbortController();
+    client.getPortfolio.mockImplementation((_id, signal) => {
+      const listing = new Promise<never>((_resolve, reject) => {
+        signal?.addEventListener("abort", () => reject(new Error("aborted")));
+      });
+      cancel.abort();
+      return listing;
+    });
+
+    await expect(whenReady(depsOf(client), [ETH], cancel.signal)).rejects.toBeInstanceOf(
+      PortfolioReadCancelledError,
+    );
+
+    expect(client.addRegistrations).not.toHaveBeenCalled();
+  });
+
+  it("stops when cancelled during a registration that leaves every account ready", async () => {
+    const { client, state } = fakeService({ portfolio: synced([]) });
+    const cancel = new AbortController();
+    client.addRegistrations.mockImplementationOnce(async () => {
+      cancel.abort();
+      state.portfolio = synced([ETH]);
+      return state.portfolio;
+    });
+
+    await expect(whenReady(depsOf(client), [ETH], cancel.signal)).rejects.toBeInstanceOf(
+      PortfolioReadCancelledError,
+    );
+
+    expect(client.addRegistrations).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not start once its signal has aborted", async () => {
+    const { client } = fakeService({ portfolio: synced([]) });
+
+    await expect(whenReady(depsOf(client), [ETH], AbortSignal.abort())).rejects.toBeInstanceOf(
+      PortfolioReadCancelledError,
+    );
+
+    expect(client.getPortfolio).not.toHaveBeenCalled();
+  });
+
+  it("stays busy while it waits, and aborts a listing past its deadline", async () => {
+    const { client } = fakeService({ portfolio: synced([]) });
+    const base = depsOf(client);
+    const deps = { ...base, timeout: base.sleep };
+    const busyWhileListing: boolean[] = [];
+    const signals: (AbortSignal | undefined)[] = [];
+    client.getPortfolio.mockResolvedValueOnce(synced([])).mockImplementation((_id, signal) => {
+      busyWhileListing.push(deps.store.get().busy);
+      signals.push(signal);
+      return new Promise(() => {});
+    });
+
+    const { portfolio } = await whenReady(deps, [ETH]);
+
+    expect(portfolio.accounts).toEqual([]);
+    expect(client.getPortfolio).toHaveBeenCalledTimes(2);
+    expect(busyWhileListing).toEqual([true]);
+    expect(signals.map(signal => signal?.aborted)).toEqual([true]);
+    expect(deps.now()).toBe(120_000);
+    expect(deps.store.get().busy).toBe(false);
+  });
+
+  it("returns as soon as every account is synchronized", async () => {
+    const { client } = fakeService({ portfolio: synced([]) });
+    client.getPortfolio.mockResolvedValueOnce(synced([])).mockResolvedValue(synced([ETH]));
+    const timers: AbortSignal[] = [];
+    const deps = {
+      ...depsOf(client),
+      timeout: (_ms: number, signal: AbortSignal) => {
+        timers.push(signal);
+        return new Promise<void>(() => {});
+      },
+    };
+
+    await whenReady(deps, [ETH]);
+
+    expect(client.getPortfolio).toHaveBeenCalledTimes(2);
+    expect(deps.now()).toBe(3_000);
+    expect(timers.map(signal => signal.aborted)).toEqual([true]);
   });
 });
 

@@ -1,10 +1,13 @@
 import type {
+  BalanceEntry,
+  BalanceGroup,
   Portfolio,
   PortfolioAccount,
   PortfolioRegistration,
   PortfolioRegistrationEntry,
 } from "@domain/api-account-portfolio";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountTarget } from "@domain/api-account-data";
+import { computeAccountUUID, type AccountDescriptor } from "@domain/entity-account-descriptor";
 import {
   mockAddressAccountDescriptor,
   mockUtxoAccountDescriptor,
@@ -36,10 +39,42 @@ export const DOT = mockAddressAccountDescriptor({
   path: "m/44h/354h/0h/0h/0h",
 });
 
+export const targetOf = (descriptor: AccountDescriptor): AccountTarget => ({
+  accountUUID: computeAccountUUID(descriptor),
+  descriptor,
+});
+
 export const serviceAccount = (
   descriptor: AccountDescriptor,
   status: PortfolioAccount["status"] = "synchronized",
 ): PortfolioAccount => ({ id: serverAccountId(descriptor), network: descriptor.network, status });
+
+export const entry = (
+  descriptor: AccountDescriptor,
+  overrides: Partial<BalanceEntry> = {},
+): BalanceEntry => ({
+  network: descriptor.network,
+  account_id: serverAccountId(descriptor),
+  asset: "native",
+  name: "Ether",
+  ticker: "ETH",
+  decimals: 18,
+  amount: "10",
+  estimated: false,
+  status: "confirmed",
+  locked: false,
+  ...overrides,
+});
+
+export const group = (
+  descriptor: AccountDescriptor,
+  items: BalanceEntry[] = [entry(descriptor)],
+): BalanceGroup => ({
+  type: "success",
+  network: descriptor.network,
+  account_id: serverAccountId(descriptor),
+  items,
+});
 
 /** A registration as the service lists it: an `account` one without the id we gave it. */
 export function listed(
@@ -80,8 +115,12 @@ export const synced = (
   ...extra,
 });
 
-/** An in-memory Portfolio service. */
-export function fakeService({ portfolio }: { portfolio?: Portfolio } = {}) {
+/** An in-memory Portfolio service; a scan pages through `groups`, `pageSize` at a time. */
+export function fakeService({
+  portfolio,
+  groups = [],
+  pageSize = 100,
+}: { portfolio?: Portfolio; groups?: BalanceGroup[]; pageSize?: number } = {}) {
   const state = { portfolio };
   let nextId = 0;
   const current = () => state.portfolio ?? { id: "p" };
@@ -107,11 +146,34 @@ export function fakeService({ portfolio }: { portfolio?: Portfolio } = {}) {
         registrations: current().registrations?.filter(each => !ids.includes(each.id)),
       }),
     ),
+    getBalance: jest.fn(async (_id, { account, token }, _signal?: AbortSignal) => {
+      const items = account ? groups.filter(each => each.account_id === account) : groups;
+      const start = token ? Number(token) : 0;
+      const end = start + pageSize;
+      return {
+        items: items.slice(start, end),
+        nextToken: end < items.length ? String(end) : undefined,
+      };
+    }),
   } satisfies PortfolioClient;
   return { client, state };
 }
 
 export const PORTFOLIO_ID = () => PortfolioId.fromString("portfolio");
 
-export const depsOf = (client: PortfolioClient): PortfolioDeps =>
-  createPortfolioContext({ client, portfolioId: PORTFOLIO_ID });
+/** A clock that only moves when the source sleeps. */
+export function depsOf(client: PortfolioClient): PortfolioDeps {
+  let time = 0;
+  return createPortfolioContext({
+    client,
+    portfolioId: PORTFOLIO_ID,
+    sleep: async ms => {
+      time += ms;
+    },
+    timeout: () => new Promise(() => {}),
+    now: () => time,
+  });
+}
+
+export const reasonOf = (settled: PromiseSettledResult<unknown>) =>
+  settled.status === "rejected" ? settled.reason : undefined;
