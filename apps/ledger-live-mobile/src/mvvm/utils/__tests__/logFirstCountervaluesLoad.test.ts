@@ -6,7 +6,7 @@ import {
   countervaluesLoadSucceeded,
   countervaluesReducer,
 } from "@features/platform-market-countervalues";
-import { logFirstCountervaluesLoad } from "../logFirstCountervaluesLoad";
+import { FIRST_LOAD_LISTEN_MS, logFirstCountervaluesLoad } from "../logFirstCountervaluesLoad";
 import { startupEvents } from "../logStartupTime";
 
 function createStore() {
@@ -18,6 +18,33 @@ const loggedEvents = () => startupEvents.map(e => e.event);
 describe("logFirstCountervaluesLoad", () => {
   beforeEach(() => {
     startupEvents.splice(0);
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it("stops listening when no load has ended in time", () => {
+    jest.useFakeTimers();
+    const store = createStore();
+    logFirstCountervaluesLoad(store);
+
+    jest.advanceTimersByTime(FIRST_LOAD_LISTEN_MS);
+    store.dispatch(countervaluesLoadStarted());
+    store.dispatch(countervaluesLoadSucceeded());
+
+    expect(loggedEvents()).toEqual([]);
+  });
+
+  it("drops its time limit once the first load ends", () => {
+    jest.useFakeTimers();
+    const store = createStore();
+    logFirstCountervaluesLoad(store);
+
+    store.dispatch(countervaluesLoadStarted());
+    store.dispatch(countervaluesLoadSucceeded());
+
+    expect(jest.getTimerCount()).toBe(0);
   });
 
   it("logs when the first load ends", () => {
