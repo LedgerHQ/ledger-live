@@ -20,7 +20,7 @@ export function useAnalyticsIntroductionViewModel(
 ): AccountAnalyticsIntroductionProps {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { hasConfirmedHistory, hasDismissed } = useAnalyticsIntroductionStatus(account);
+  const status = useAnalyticsIntroductionStatus(account);
   const onDismiss = useCallback(() => {
     dispatch(dismissAccountAnalyticsIntroduction());
   }, [dispatch]);
@@ -43,5 +43,5 @@ export function useAnalyticsIntroductionViewModel(
     navigate("/analytics", { state });
   }, [navigate, account]);
 
-  return { hasConfirmedHistory, hasDismissed, onDismiss, onOpenAnalytics };
+  return { ...status, onDismiss, onOpenAnalytics };
 }

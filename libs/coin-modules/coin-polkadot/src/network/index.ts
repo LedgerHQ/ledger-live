@@ -170,11 +170,18 @@ const isElectionClosed = makeConfigurableLRUCache(
   config => config.sidecar.electionStatusCacheTtlMs ?? DEFAULT_ELECTION_STATUS_CACHE_TTL_MS,
 );
 
+const sortedKey = (values: string[]): string =>
+  [...values].sort((a, b) => a.localeCompare(b)).join(",");
+
 const verifyValidatorAddresses = makeConfigurableLRUCache(
-  (config: PolkadotCoinConfig, validators: string[], _currencyId: string | undefined) =>
-    sidecarVerifyValidatorAddresses(config, validators),
-  (_config, validators, currencyId) =>
-    `${currencyId || "polkadot"}_${[...validators].sort().join(",")}`,
+  (
+    config: PolkadotCoinConfig,
+    validators: string[],
+    _currencyId: string | undefined,
+    currentNominations: string[] | undefined,
+  ) => sidecarVerifyValidatorAddresses(config, validators, currentNominations),
+  (_config, validators, currencyId, currentNominations) =>
+    `${currencyId || "polkadot"}_${sortedKey(validators)}_${sortedKey(currentNominations ?? [])}`,
   config => config.validators?.addressesCacheTtlMs ?? DEFAULT_VALIDATORS_ADDRESSES_CACHE_TTL_MS,
 );
 const isNewAccount = makeConfigurableLRUCache(

@@ -1,5 +1,6 @@
-import { linkSync, readFileSync, renameSync, unlinkSync, writeFileSync } from "node:fs";
+import { linkSync, readFileSync, renameSync, statSync, unlinkSync, writeFileSync } from "node:fs";
 import { randomBytes } from "node:crypto";
+import os from "node:os";
 import { setInterval } from "node:timers/promises";
 
 const DEFAULT_ACQUIRE_TIMEOUT_MS = 10_000;
@@ -16,15 +17,17 @@ function isTransientWindowsContention(e: unknown): boolean {
   return code === "EPERM" || code === "EBUSY";
 }
 
-/** Whether a process with this pid is still alive. Any error other than "no such process" (e.g. a
- * live process we lack permission to signal) must NOT read as dead, or a live lock gets stolen. */
-function isHolderAlive(pid: number): boolean {
-  if (!Number.isInteger(pid) || pid <= 0) return false;
+type HolderLiveness = "alive" | "unsignalable" | "dead";
+
+/** Any error other than "no such process" (e.g. a live process we lack permission to signal) must
+ * NOT read as dead, or a live lock gets stolen. */
+function holderLiveness(pid: number): HolderLiveness {
+  if (!Number.isInteger(pid) || pid <= 0) return "dead";
   try {
     process.kill(pid, 0);
-    return true;
+    return "alive";
   } catch (e) {
-    return errorCode(e) !== "ESRCH";
+    return errorCode(e) === "ESRCH" ? "dead" : "unsignalable";
   }
 }
 
@@ -53,16 +56,33 @@ function parsePid(token: string | undefined): number | undefined {
 /** A lock file that names no live process is abandoned — its holder crashed or was killed without
  * releasing it. A missing/malformed token can't be attributed to a live process either way, so it
  * counts as abandoned too: a corrupt lock file must never wedge every future command forever. */
-function isAbandoned(token: string | undefined): boolean {
+function isAbandoned(lockPath: string, token: string | undefined): boolean {
   const pid = parsePid(token);
-  return pid === undefined || !isHolderAlive(pid);
+  return pid === undefined || !isLiveHolder(lockPath, pid);
+}
+
+/** Only EPERM pids get the reboot check, so a clock correction never frees a lock we can signal. */
+function isLiveHolder(lockPath: string, pid: number): boolean {
+  const liveness = holderLiveness(pid);
+  return liveness === "alive" || (liveness === "unsignalable" && !predatesLastBoot(lockPath));
+}
+
+function predatesLastBoot(lockPath: string): boolean {
+  try {
+    const secondsSinceBoot = os.uptime();
+    return (
+      secondsSinceBoot > 0 && statSync(lockPath).mtimeMs < Date.now() - secondsSinceBoot * 1000
+    );
+  } catch {
+    return false;
+  }
 }
 
 /** The pid of the live process holding `lockPath`, or `undefined` when the lock is free or
  * abandoned. Read-only: unlike `withFileLock`, it never reclaims an abandoned lock. */
 export function readLiveLockHolderPid(lockPath: string): number | undefined {
   const pid = parsePid(readToken(lockPath));
-  return pid !== undefined && isHolderAlive(pid) ? pid : undefined;
+  return pid !== undefined && isLiveHolder(lockPath, pid) ? pid : undefined;
 }
 
 /** Tries to publish `token` at `lockPath` via a private per-attempt temp file (see the module doc
@@ -155,7 +175,7 @@ function attemptAcquire(lockPath: string, tmpPath: string, token: string): Attem
   }
 
   const current = readToken(lockPath);
-  if (!isAbandoned(current)) return { kind: "wait" }; // a live holder — just wait our turn
+  if (!isAbandoned(lockPath, current)) return { kind: "wait" }; // a live holder — just wait our turn
 
   try {
     reclaimAbandonedLock(lockPath, current, token);
@@ -186,8 +206,9 @@ function tryAcquire(lockPath: string, tmpPath: string, token: string, deadline: 
 /**
  * Serializes access to a resource across wallet-cli processes via an exclusive lock file at
  * `lockPath`. The lock file's content is `<pid>:<nonce>` — this process's own token — so:
- *  - staleness is judged by whether that pid is still alive, not by the lock's age, so `fn` can run
- *    as long as it needs to without a live holder ever being mistaken for dead;
+ *  - staleness is judged by whether that pid is still alive (and, for a pid we can't signal,
+ *    whether the lock postdates the last boot), not by the lock's age, so `fn` can run as long as
+ *    it needs to without a live holder ever being mistaken for dead;
  *  - the lock is never observable half-written: the token is written to a private per-attempt temp
  *    file first, and `linkSync(tmp, lockPath)` publishes it — a hard link either creates `lockPath`
  *    with its content already in place or fails with `EEXIST`, unlike create-then-write, which

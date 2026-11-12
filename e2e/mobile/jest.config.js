@@ -113,6 +113,8 @@ const jestAllure2ReporterOptions = {
       },
     },
     status: ({ value }) => (value === "broken" ? "failed" : value),
+    // Allure 3 keys a test on md5(fullName), and historyId (Allure 2) derives from it.
+    fullName: ({ value, filePath }) => `${filePath.join("/")}#${value}`,
     historyId: ({ value }) => `${value}:${platform}`,
     // On a Detox retry, jest.environment.ts marks the tests we are not retrying as skipped rather
     // than deleting them, because deleting desynchronises jest's result list from jest-metadata's

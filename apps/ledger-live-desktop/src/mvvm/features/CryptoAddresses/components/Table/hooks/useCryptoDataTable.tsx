@@ -76,6 +76,7 @@ export function useCryptoDataTable({
           ),
         header: t("cryptoAddresses.table.columns.name"),
         cell: NameCell,
+        meta: { className: "w-[30%]" },
       },
       {
         id: "address",
@@ -111,7 +112,7 @@ export function useCryptoDataTable({
         header: "",
         enableSorting: false,
         cell: ActionCell,
-        meta: { align: "end" },
+        meta: { align: "end", className: "w-64" },
       },
     ],
     [t, walletState, lookupParentAccount, getSortCountervalue],

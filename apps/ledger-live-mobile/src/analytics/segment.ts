@@ -89,6 +89,7 @@ import { getRecoverV2Attribute } from "@ledgerhq/live-common/analytics/featureFl
 import { getWallet40Attributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/wallet40";
 import { getRemoteABTestingAttributes } from "@ledgerhq/live-common/analytics/remoteABTesting/remoteABTestingAnalytics";
 import { getServicesEntryPointsAttributes } from "@features/flow-portfolio-services-entry-points";
+import { isAccountDetailAnalyticsBannerEnabled } from "@features/flow-account-detail";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
 import {
   getNotificationPermissionStatus,
@@ -513,7 +514,9 @@ const extraProperties = async (store: AppStore) => {
   const entryPointsServices = getServicesEntryPointsAttributes(
     analyticsFeatureFlagMethod?.("entryPointsServices"),
   );
-  const accountDetail = analyticsFeatureFlagMethod?.("accountDetail")?.enabled ?? false;
+  const accountDetailFeature = analyticsFeatureFlagMethod?.("accountDetail");
+  const accountDetail = accountDetailFeature?.enabled ?? false;
+  const accountDetailAnalyticsBanner = isAccountDetailAnalyticsBannerEnabled(accountDetailFeature);
   const recoverV2 = getRecoverV2Attribute(analyticsFeatureFlagMethod);
 
   return {
@@ -575,6 +578,7 @@ const extraProperties = async (store: AppStore) => {
     ...onboardingCounterfeitWarningAttributes,
     entryPointsServices,
     accountDetail,
+    accountDetailAnalyticsBanner,
     recoverV2,
     ...remoteABTestingAttributes,
   };

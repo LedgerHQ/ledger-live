@@ -1,13 +1,24 @@
-import React from "react";
+import React, { useEffect } from "react";
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Account } from "@ledgerhq/types-live";
+import { useNavigate, type NavigateFunction } from "react-router";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
+import { beginDepositRequest } from "@ledgerhq/live-common/wallet-api/Perps/deposit/request";
 import { act, render, screen } from "tests/testSetup";
+import { setDrawer } from "~/renderer/drawers/Provider";
 import PerpsDepositRoot, { openPerpsDeposit } from "../PerpsDepositDialog";
 import PerpsReviewRoot from "../../PerpsReview/PerpsReviewDialog";
 
 const mockOpenAssetAndAccount = jest.fn();
+jest.mock("@ledgerhq/live-common/wallet-api/Perps/deposit/useWalletApiSpendableBalance", () => ({
+  useWalletApiSpendableBalance: (account?: { spendableBalance: unknown }) => ({
+    balance: account?.spendableBalance,
+    isRefreshing: false,
+  }),
+}));
+
 jest.mock("LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer", () => ({
   useOpenAssetAndAccount: () => ({
     openAssetAndAccountPromise: (params: unknown) => mockOpenAssetAndAccount(params),
@@ -21,8 +32,13 @@ jest.mock("@features/platform-market-countervalues", () => ({
   useCalculateCountervalueCallback: () => (_currency: unknown, value: BigNumber) => value,
 }));
 
+jest.mock("@domain/entity-market-countervalues", () => ({
+  ...jest.requireActual("@domain/entity-market-countervalues"),
+  calculate: () => 1e16,
+}));
+
 const mockUsePerpsDepositQuote = jest.fn();
-jest.mock("../usePerpsDepositQuote", () => ({
+jest.mock("@ledgerhq/live-common/wallet-api/Perps/deposit/useDepositQuote", () => ({
   usePerpsDepositQuote: () => mockUsePerpsDepositQuote(),
 }));
 
@@ -38,6 +54,16 @@ const receiverAccount = createAccount("receiver-1", 0);
 const fundingAccount = createAccount("funding-1", 10000);
 
 /** The funding account is read back from the store, so it has to live there. */
+const router: { navigate?: NavigateFunction } = {};
+
+function CaptureNavigate() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    router.navigate = navigate;
+  }, [navigate]);
+  return null;
+}
+
 function renderDeposit() {
   return render(<PerpsDepositRoot />, { initialState: { accounts: [fundingAccount] } });
 }
@@ -47,9 +73,8 @@ describe("PerpsDeposit integration", () => {
     jest.clearAllMocks();
     mockOpenAssetAndAccount.mockResolvedValue({ account: fundingAccount });
     mockUsePerpsDepositQuote.mockReturnValue({
-      quote: { amountTo: new BigNumber(42) },
+      result: { quote: { amountTo: new BigNumber(42), errors: [] }, errors: [] },
       isLoading: false,
-      isUnavailable: false,
     });
   });
 
@@ -122,9 +147,8 @@ describe("PerpsDeposit integration", () => {
 
   it("should tell the user when the provider has no quote for the pair", async () => {
     mockUsePerpsDepositQuote.mockReturnValue({
-      quote: undefined,
+      result: { errors: [{ code: "noQuotes" }] },
       isLoading: false,
-      isUnavailable: true,
     });
     const { user } = renderDeposit();
 
@@ -143,12 +167,53 @@ describe("PerpsDeposit integration", () => {
     expect(screen.getByTestId("perps-deposit-review-cta")).toBeDisabled();
   });
 
-  it("should shimmer the quoted amount and keep the CTA disabled while quoting", async () => {
+  it("should explain a minimum amount in the same dialog, and come back to the form", async () => {
     mockUsePerpsDepositQuote.mockReturnValue({
-      quote: undefined,
-      isLoading: true,
-      isUnavailable: false,
+      result: { errors: [{ code: "amountTooLow", minAmount: "0.004" }] },
+      isLoading: false,
     });
+    const { user } = renderDeposit();
+
+    act(() => openPerpsDeposit({ receiverAccount }));
+    await user.click(screen.getByTestId("perps-deposit-select-currency"));
+    await user.click(screen.getByTestId("perps-deposit-ratio-MAX"));
+
+    expect(screen.getByTestId("perps-deposit-form-error")).toHaveTextContent(
+      "Enter at least 0.004 ETH and try again.",
+    );
+
+    await user.click(screen.getByTestId("perps-deposit-learn-more"));
+
+    expect(screen.getByRole("dialog", { name: "Minimum required for ETH" })).toBeVisible();
+    expect(screen.getByText("A minimum value of 0.004 ETH is required for quotes")).toBeVisible();
+    expect(screen.getByTestId("perps-deposit-details-buy")).toHaveTextContent("Buy ETH");
+    expect(screen.queryByTestId("perps-deposit-amount-input")).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: /back/i }));
+
+    expect(screen.getByTestId("perps-deposit-amount-input")).toBeVisible();
+  });
+
+  it("should start a new request on the form, not on the details of the previous one", async () => {
+    mockUsePerpsDepositQuote.mockReturnValue({
+      result: { errors: [{ code: "amountTooLow", minAmount: "0.004" }] },
+      isLoading: false,
+    });
+    const { user } = renderDeposit();
+
+    act(() => openPerpsDeposit({ receiverAccount }));
+    await user.click(screen.getByTestId("perps-deposit-select-currency"));
+    await user.click(screen.getByTestId("perps-deposit-ratio-MAX"));
+    await user.click(screen.getByTestId("perps-deposit-learn-more"));
+
+    act(() => openPerpsDeposit({ receiverAccount }));
+
+    expect(screen.getByTestId("perps-deposit-amount-input")).toBeVisible();
+    expect(screen.queryByTestId("perps-deposit-details")).not.toBeInTheDocument();
+  });
+
+  it("should shimmer the quoted amount and keep the CTA disabled while quoting", async () => {
+    mockUsePerpsDepositQuote.mockReturnValue({ result: undefined, isLoading: true });
     const { user } = renderDeposit();
 
     act(() => openPerpsDeposit({ receiverAccount }));
@@ -195,6 +260,47 @@ describe("PerpsDeposit integration", () => {
     // The deposit form gives way to the review, which knows what is being sent.
     expect(await screen.findByTestId("perps-deposit-cta")).toBeVisible();
     expect(screen.getByTestId("perps-deposit-amount-sent")).toBeVisible();
+    expect(screen.queryByTestId("perps-deposit-amount-input")).not.toBeInTheDocument();
+  });
+
+  it("should step aside for the add account drawer and come back with the new account", async () => {
+    let resolvePick: ((result: { account: Account }) => void) | undefined;
+    mockOpenAssetAndAccount.mockReturnValue(
+      new Promise(resolve => {
+        resolvePick = resolve;
+      }),
+    );
+    const { user } = renderDeposit();
+
+    act(() => openPerpsDeposit({ receiverAccount }));
+
+    await user.type(screen.getByTestId("perps-deposit-amount-input"), "20");
+    await user.click(screen.getByTestId("perps-deposit-select-currency"));
+    act(() => setDrawer(() => null, {}));
+
+    expect(screen.queryByTestId("perps-deposit-amount-input")).not.toBeInTheDocument();
+
+    await act(async () => resolvePick?.({ account: fundingAccount }));
+    act(() => setDrawer());
+
+    expect(await screen.findByTestId("perps-deposit-amount-input")).toHaveValue("20");
+    expect(screen.getByTestId("perps-deposit-review-cta")).not.toBeDisabled();
+  });
+
+  it("should cancel the deposit when the app navigates away from it", async () => {
+    render(
+      <>
+        <CaptureNavigate />
+        <PerpsDepositRoot />
+      </>,
+      { initialState: { accounts: [fundingAccount] } },
+    );
+    const pendingDeposit = beginDepositRequest();
+
+    act(() => openPerpsDeposit({ receiverAccount }));
+    act(() => router.navigate?.("/account/funding-1"));
+
+    await expect(pendingDeposit).rejects.toBeInstanceOf(UserRefusedOnDevice);
     expect(screen.queryByTestId("perps-deposit-amount-input")).not.toBeInTheDocument();
   });
 });

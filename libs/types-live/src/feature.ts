@@ -237,7 +237,6 @@ export type Features = CurrencyFeatures & {
   llmMemoTag: Feature_MemoTag;
   lldMemoTag: Feature_MemoTag;
   llCounterValueGranularitiesRates: Feature_LlCounterValueGranularitiesRates;
-  llmAccountListUI: DefaultFeature;
   llmLedgerSyncEntryPoints: Feature_LlmLedgerSyncEntryPoints;
   lldLedgerSyncEntryPoints: Feature_LldLedgerSyncEntryPoints;
   lwmLedgerSyncOptimisation: DefaultFeature;

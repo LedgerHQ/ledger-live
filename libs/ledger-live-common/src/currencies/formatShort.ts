@@ -9,7 +9,7 @@ import type { Unit } from "@domain/entity-currency-unit";
  */
 export function formatShort(unit: Unit, value: BigNumber): string {
   const { magnitude } = unit;
-  const floatValue = value.div(new BigNumber(10).pow(magnitude));
+  const floatValue = value.shiftedBy(-magnitude);
 
   if (floatValue.isZero()) {
     return "0";

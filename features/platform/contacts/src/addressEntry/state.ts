@@ -18,7 +18,32 @@ export function createValidatingAddressEntryState(
     value,
     resolvedAddress: null,
     inputMethod,
+    keepsEnsDisclaimer: false,
   };
+}
+
+export function hasEnsDisclaimer(addressEntry: ContactsAddressEntryState): boolean {
+  switch (addressEntry.status) {
+    case "validating":
+      return addressEntry.keepsEnsDisclaimer;
+    case "valid":
+    case "invalid":
+      return addressEntry.inputMethod === "ens";
+    case "empty":
+    case "unavailable":
+      return false;
+  }
+}
+
+export function keepEnsDisclaimerWhileValidating(
+  previousEntry: ContactsAddressEntryState,
+  nextEntry: ContactsAddressEntryState,
+): ContactsAddressEntryState {
+  if (nextEntry.status !== "validating") {
+    return nextEntry;
+  }
+
+  return { ...nextEntry, keepsEnsDisclaimer: hasEnsDisclaimer(previousEntry) };
 }
 
 export function resolveAddressEntryState(

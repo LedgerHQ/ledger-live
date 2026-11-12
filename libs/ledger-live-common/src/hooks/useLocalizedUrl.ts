@@ -39,7 +39,7 @@ export const getLocalizedUrl = (
   return `${baseUrl}${languagePart && `/${languagePart}`}${suffixPart}`;
 };
 
-export const useLocalizedUrl = (
+export const getLocalizedLedgerUrl = (
   url: string,
   { languages, defaultLanguage, currentLanguage }: Config,
 ) => {
@@ -81,3 +81,5 @@ export const useLocalizedUrl = (
 
   return transformedUrl;
 };
+
+export const useLocalizedUrl = getLocalizedLedgerUrl;

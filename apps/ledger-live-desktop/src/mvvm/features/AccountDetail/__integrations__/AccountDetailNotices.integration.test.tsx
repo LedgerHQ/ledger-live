@@ -44,8 +44,12 @@ const renderAccount = (account: Account, flags: Record<string, { enabled: boolea
     {
       initialRoute: getAccountUrl(account.id),
       initialState: {
-        ...withFlagOverrides({ accountDetail: { enabled: true }, ...flags }),
+        ...withFlagOverrides({
+          accountDetail: { enabled: true, params: { analyticsBanner: true } },
+          ...flags,
+        }),
         accounts: [account],
+        accountAnalyticsIntroduction: { hasDismissed: false, isEligible: true },
       },
     },
   );

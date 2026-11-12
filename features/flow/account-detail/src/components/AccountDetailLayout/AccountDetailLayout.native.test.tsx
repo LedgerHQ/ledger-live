@@ -1,7 +1,7 @@
 import React from "react";
 import { View } from "react-native";
 import { render, screen } from "@testing-library/react-native";
-import { AccountDetailLayout } from "./AccountDetailLayout.native";
+import { AccountDetailLayout } from "./AccountDetailLayout";
 
 type LayoutChild = ReturnType<typeof screen.getByTestId> | string;
 

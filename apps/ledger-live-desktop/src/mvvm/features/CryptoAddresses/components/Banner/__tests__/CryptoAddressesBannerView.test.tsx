@@ -2,6 +2,15 @@ import React from "react";
 import { render, screen } from "tests/testSetup";
 import { CryptoAddressesBannerView } from "../CryptoAddressesBannerView";
 import { Wallet } from "@ledgerhq/lumen-ui-react/symbols";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+
+jest.mock("@ledgerhq/crypto-icons", () => ({
+  CryptoIcon: ({ ledgerId, ticker }: { ledgerId: string; ticker: string }) => (
+    <div data-testid={`crypto-icon-${ledgerId}`}>{ticker}</div>
+  ),
+}));
+
+const bitcoin = { type: "CryptoCurrency", id: "bitcoin", ticker: "BTC" } as CryptoCurrency;
 
 const defaultProps = {
   title: "Add account",
@@ -23,6 +32,13 @@ describe("CryptoAddressesBannerView", () => {
 
     expect(screen.getByText("Add account")).toBeVisible();
     expect(screen.getByText("You have no accounts")).toBeVisible();
+  });
+
+  it("should render a squared icon for each banner currency", () => {
+    render(<CryptoAddressesBannerView {...defaultProps} firstThreeCurrencies={[bitcoin]} />);
+
+    expect(screen.getByTestId("crypto-icon-bitcoin")).toBeVisible();
+    expect(screen.getByText("BTC")).toBeVisible();
   });
 
   it("should render the crypto addresses banner with test id", () => {

@@ -15,6 +15,7 @@ import type { CryptoCurrency, ExplorerView } from "@domain/entity-currency-crypt
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import type { TransactionStatusValue } from "@ledgerhq/wallet-api-exchange-module";
+import { HYPERCORE_CURRENCY_ID, PERPS_SWAPKIT_PROVIDER } from "../../../wallet-api/Perps/constants";
 
 const MAX_DISPLAY_DECIMALS = 8;
 const SWAPS_XYZ_SCAN_URL = "https://scan.swaps.xyz/transactions";
@@ -64,6 +65,8 @@ export type SwapTransactionStatusDisplayViewModel = {
   providerData?: AdditionalProviderConfig;
   swapId: string;
   explorerUrl?: string;
+  /** A perps withdraw, titled as such rather than as a swap. */
+  isPerpsWithdraw: boolean;
   isStatusSectionLoading: boolean;
   isFooterLoading: boolean;
 };
@@ -139,6 +142,26 @@ export function findSwapSendOperation(
   return undefined;
 }
 
+const hasOperationWithHash = (account: AccountLike, hash: string): boolean =>
+  Boolean(
+    account.operations?.some(op => op.hash === hash) ||
+    account.pendingOperations?.some(op => op.hash === hash),
+  );
+
+/**
+ * Whether the swap operation was made on the receiving account and not by the sender, as the
+ * payout of a perps withdraw.
+ */
+export function isSwapPayoutOperation(
+  sendResolved: ResolvedSwapTransactionStatusAccountLike | undefined,
+  receiveResolved: ResolvedSwapTransactionStatusAccountLike | undefined,
+  operationHash: string | undefined,
+): boolean {
+  if (!operationHash || !receiveResolved) return false;
+  if (sendResolved && hasOperationWithHash(sendResolved.account, operationHash)) return false;
+  return hasOperationWithHash(receiveResolved.account, operationHash);
+}
+
 export function resolveSwapTransactionStatusAccountLike(
   accounts: AccountLike[],
   accountId: string | undefined,
@@ -176,6 +199,26 @@ export function formatSwapTransactionStatusFeesAmount(
   if (!resolved || !rawAtomic) return undefined;
   const mainAccount = getMainAccount(resolved.account, resolved.parentAccount);
   return formatSwapTransactionStatusAmount(mainAccount.currency, rawAtomic, locale);
+}
+
+/**
+ * A perps withdraw: a swap through the perps SwapKit integration sent from HyperCore. A deposit goes
+ * through the same provider the other way, and a swap from HyperCore through another provider is not
+ * a withdraw.
+ */
+export function isPerpsWithdrawSwap(
+  provider: string | undefined,
+  sendCurrency: CryptoOrTokenCurrency | undefined,
+): boolean {
+  return provider === PERPS_SWAPKIT_PROVIDER && sendCurrency?.id === HYPERCORE_CURRENCY_ID;
+}
+
+/** Fees in different currencies, shown as one line. */
+export function joinSwapTransactionStatusFees(
+  fees: ReadonlyArray<string | undefined>,
+): string | undefined {
+  const shown = fees.filter((fee): fee is string => Boolean(fee));
+  return shown.length ? shown.join(" + ") : undefined;
 }
 
 export function getSwapTransactionStatusExplorerUrl({
@@ -398,22 +441,29 @@ export function useSwapTransactionStatusDisplayViewModel({
 
   const sendCurrency = sendResolved ? getAccountCurrency(sendResolved.account) : undefined;
   const receiveCurrency = receiveResolved ? getAccountCurrency(receiveResolved.account) : undefined;
-  const sendMainCurrency =
-    sendCurrency?.type === "TokenCurrency"
-      ? getCryptoCurrencyById(sendCurrency.parentCurrencyId)
+  // A perps withdraw is anchored to its payout, made on the receiving account: its explorer is
+  // the receiving currency one, also before the payout operation is synced.
+  const explorerCurrency =
+    isPerpsWithdrawSwap(provider, sendCurrency) ||
+    isSwapPayoutOperation(sendResolved, receiveResolved, details?.operationHash)
+      ? receiveCurrency
       : sendCurrency;
-  const getTransactionExplorer = useTransactionExplorerBuilder(sendMainCurrency);
+  const explorerMainCurrency =
+    explorerCurrency?.type === "TokenCurrency"
+      ? getCryptoCurrencyById(explorerCurrency.parentCurrencyId)
+      : explorerCurrency;
+  const getTransactionExplorer = useTransactionExplorerBuilder(explorerMainCurrency);
   const sentAmount = formatSwapTransactionStatusAmount(sendCurrency, details?.sentAmount, locale);
   const receivedAmount = formatSwapTransactionStatusAmount(
     receiveCurrency,
     details?.finalAmount ?? details?.receivedAmount,
     locale,
   );
-  const feesAmount = formatSwapTransactionStatusFeesAmount(
-    sendResolved,
-    details?.feesAmount,
-    locale,
-  );
+  // Payout fees come first, as on the perps withdraw summary: "0.0004 ETH + 1 USDC".
+  const feesAmount = joinSwapTransactionStatusFees([
+    formatSwapTransactionStatusAmount(receiveCurrency, details?.payoutFeesAmount, locale),
+    formatSwapTransactionStatusFeesAmount(sendResolved, details?.feesAmount, locale),
+  ]);
   const currentStatus: TransactionStatusValue =
     transactionStatus.latestStatus?.status ?? details?.status ?? "pending";
   const sendStatus = details?.sendStatus ?? currentStatus;
@@ -431,7 +481,7 @@ export function useSwapTransactionStatusDisplayViewModel({
     swapId: params.swapId,
     operationHash: details?.operationHash,
     operation: sendOperation,
-    fromCurrency: sendCurrency,
+    fromCurrency: explorerCurrency,
     getTransactionExplorer,
   });
   const isStatusSectionLoading =
@@ -453,6 +503,7 @@ export function useSwapTransactionStatusDisplayViewModel({
     providerData,
     swapId: params.swapId,
     explorerUrl,
+    isPerpsWithdraw: isPerpsWithdrawSwap(provider, sendCurrency),
     isStatusSectionLoading,
     isFooterLoading: transactionStatus.isInitialLoading,
   };
@@ -463,8 +514,10 @@ function limitDisplayDecimals(rawAtomic: string, unitMagnitude: number): BigNumb
   const hiddenMagnitude = unitMagnitude - MAX_DISPLAY_DECIMALS;
   if (hiddenMagnitude <= 0) return value;
 
-  const factor = new BigNumber(10).pow(hiddenMagnitude);
-  return value.div(factor).decimalPlaces(0, BigNumber.ROUND_DOWN).times(factor);
+  return value
+    .shiftedBy(-hiddenMagnitude)
+    .decimalPlaces(0, BigNumber.ROUND_DOWN)
+    .shiftedBy(hiddenMagnitude);
 }
 
 function getCurrencyTransactionExplorerUrl(

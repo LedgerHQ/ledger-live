@@ -42,9 +42,12 @@ jest.mock("@devtools/bindings", () => ({
   useAccountBalanceHistoryToolProps: () => ({ marker: "account-balance-history-props" }),
   useAccountPortfolioToolProps: () => ({ marker: "account-portfolio-props" }),
   useAccountDataToolProps: () => ({ marker: "account-data-props" }),
+  useAccountSourcePortfolioToolProps: () => ({ marker: "account-source-portfolio-props" }),
   useAccountNameToolProps: () => ({ marker: "account-name-props" }),
   useMockAccountsToolProps: () => ({ marker: "mock-accounts-props" }),
   useAccountDetailToolProps: () => ({ marker: "account-detail-props" }),
+  useReceiveToolProps: () => ({ marker: "receive-props" }),
+  usePredictionsToolProps: () => ({ marker: "predictions-props" }),
   createAccountDataRecorder: () => ({
     instrument: (sources: unknown) => sources,
     middleware: () => (next: (action: unknown) => unknown) => (action: unknown) => {
@@ -58,6 +61,14 @@ jest.mock("@devtools/bindings", () => ({
 
 jest.mock("../DeviceOnboarding/useDeviceOnboardingTool", () => ({
   useDeviceOnboardingTool: () => ({ marker: "device-onboarding-props" }),
+}));
+
+jest.mock("../IntentWalletSync/useIntentWalletSyncTool", () => ({
+  useIntentWalletSyncTool: () => ({
+    toolProps: { marker: "intent-wallet-sync-props" },
+    run: null,
+    onRunCancelled: jest.fn(),
+  }),
 }));
 
 jest.mock("@devtools/wire", () => {
@@ -95,6 +106,10 @@ describe("DevToolsScreen", () => {
           { id: "cloud-sync", config: { marker: "cloud-sync-props" } },
           { id: "device-onboarding", config: { marker: "device-onboarding-props" } },
           { id: "account-data", config: { marker: "account-data-props" } },
+          {
+            id: "account-source-portfolio",
+            config: { marker: "account-source-portfolio-props" },
+          },
           { id: "account-descriptor", config: { marker: "account-descriptor-props" } },
           { id: "account-balance", config: { marker: "account-balance-props" } },
           { id: "account-operation", config: { marker: "account-operation-props" } },
@@ -103,6 +118,9 @@ describe("DevToolsScreen", () => {
           { id: "account-portfolio", config: { marker: "account-portfolio-props" } },
           { id: "mock-accounts", config: { marker: "mock-accounts-props" } },
           { id: "account-detail", config: { marker: "account-detail-props" } },
+          { id: "receive", config: { marker: "receive-props" } },
+          { id: "predictions", config: { marker: "predictions-props" } },
+          { id: "intent-wallet-sync", config: { marker: "intent-wallet-sync-props" } },
         ],
       }),
     );

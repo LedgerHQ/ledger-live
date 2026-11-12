@@ -101,3 +101,23 @@ describe("alpen_testnet registration", () => {
     expect(getCryptoCurrencyById("alpen_testnet").family).toBe("evm");
   });
 });
+
+describe("alpen registration", () => {
+  it("registers alpen as a supported evm currency", () => {
+    const evmLoader = coinModuleLoaders.find(loader => loader.family === "evm");
+
+    expect(evmLoader?.supportedCoins).toContain("alpen");
+  });
+
+  it("is a supported currency once all coins are registered", () => {
+    registerAllCoins();
+
+    expect(isCurrencySupported(getCryptoCurrencyById("alpen"))).toBe(true);
+  });
+
+  it("resolves to the evm family", () => {
+    registerAllCoins();
+
+    expect(getCryptoCurrencyById("alpen").family).toBe("evm");
+  });
+});

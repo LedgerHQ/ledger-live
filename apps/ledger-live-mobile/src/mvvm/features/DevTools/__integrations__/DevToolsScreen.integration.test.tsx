@@ -24,6 +24,8 @@ jest.mock(
     useAppConfigToolProps: () => ({ marker: "app-config-props" }),
     useCoinConfigToolProps: () => ({ marker: "coin-config-props" }),
     useAccountDetailToolProps: () => ({ marker: "account-detail-props" }),
+    useReceiveToolProps: () => ({ marker: "receive-props" }),
+    usePredictionsToolProps: () => ({ marker: "predictions-props" }),
     useDeviceOnboardingToolState: () => ({
       log: [],
       machineContext: null,
@@ -38,6 +40,14 @@ jest.mock(
   }),
   { virtual: true },
 );
+jest.mock("../IntentWalletSync/useIntentWalletSyncTool", () => ({
+  useIntentWalletSyncTool: () => ({
+    toolProps: { marker: "intent-wallet-sync-props" },
+    run: null,
+    onRunCancelled: jest.fn(),
+  }),
+}));
+
 jest.mock("@features/platform-currencies", () => ({
   ...jest.requireActual("@features/platform-currencies"),
   useCurrenciesByIds: () => new Map(),
@@ -113,6 +123,9 @@ describe("DevToolsScreen", () => {
         }),
       },
       { id: "account-detail", config: { marker: "account-detail-props" } },
+      { id: "receive", config: { marker: "receive-props" } },
+      { id: "predictions", config: { marker: "predictions-props" } },
+      { id: "intent-wallet-sync", config: { marker: "intent-wallet-sync-props" } },
     ]);
     expect(props.screenOptions.contentStyle).toEqual([expect.anything(), { paddingBottom: 34 }]);
   });

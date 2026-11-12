@@ -91,7 +91,7 @@ export async function buildTokenAccountShapes(
       if (!token) return [];
 
       const xrpResources: XrpTokenResources =
-        token.tokenType === "iou"
+        token.tokenType === "iou" && typeof limit === "bigint"
           ? {
               isLocked,
               isRippling,
@@ -125,6 +125,7 @@ export default function xrpBridgeApi(currency: CryptoCurrency): BridgeApi {
     getAssetFromToken,
     describeOptimisticOperation,
     balanceListsEveryToken: true,
+    exactAssetMatch: true,
     getTokenFromAsset: asset => getTokenFromAsset(currency, asset),
     buildTokenAccountShapes: address => buildTokenAccountShapes(currency, address),
     // Turning a standard on or off resyncs from scratch, to build its token accounts' history

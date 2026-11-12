@@ -263,13 +263,28 @@ describe("Perps handlers", () => {
 
   describe("custom.perps.deposit", () => {
     const depositParams: PerpsDepositParams = {
-      receiverAccountId: WALLET_ACCOUNT_ID,
+      receiverAccountId: HYPERCORE_WALLET_ACCOUNT_ID,
     };
+
+    beforeEach(() => {
+      jest
+        .mocked(getAccountIdFromWalletAccountId)
+        .mockImplementation(id =>
+          id === HYPERCORE_WALLET_ACCOUNT_ID ? mockHyperCoreAccount.id : ACCOUNT_ID,
+        );
+    });
 
     it("should call deposit.execute with the resolved receiver account", async () => {
       await serverHandlers["custom.perps.deposit"](depositParams);
 
-      expect(mockUiDepositExecute).toHaveBeenCalledWith({ receiverAccount: mockAccount });
+      expect(mockUiDepositExecute).toHaveBeenCalledWith({ receiverAccount: mockHyperCoreAccount });
+    });
+
+    it("should refuse a receiver that is not a main HyperCore account, before the UI opens", async () => {
+      await expect(
+        serverHandlers["custom.perps.deposit"]({ receiverAccountId: WALLET_ACCOUNT_ID }),
+      ).rejects.toThrow("ServerError");
+      expect(mockUiDepositExecute).not.toHaveBeenCalled();
     });
 
     it("should resolve with the outcome the deposit flow settles with", async () => {
@@ -303,7 +318,7 @@ describe("Perps handlers", () => {
 
     it("should throw a ServerError when the client does not implement the deposit hook", async () => {
       const handlersWithoutDeposit = handlers({
-        accounts: [mockAccount],
+        accounts: [mockAccount, mockHyperCoreAccount],
         uiHooks: { "signing.execute": mockUiSigningExecute },
       }) as unknown as MockedHandlers;
 

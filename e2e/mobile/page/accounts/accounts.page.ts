@@ -6,10 +6,7 @@ import CommonPage from "@e2e/page/common.page";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 
 export default class AccountsPage extends CommonPage {
-  private readonly cryptoAddressesList = byId("CryptoAddressesList");
   private readonly cryptoAddressesEmptyState = byId("crypto-addresses-empty-state");
-  private readonly accountRowName = (accountId: string) =>
-    byId(`${this.accountItemId}${accountId}-name`);
 
   @Step("Open accounts list via deeplink")
   async openViaDeeplink() {
@@ -37,7 +34,7 @@ export default class AccountsPage extends CommonPage {
 
     let foundAccounts = 0;
     for (const accountId of expectedAccountIds) {
-      await this.accountRowName(accountId).waitVisible();
+      await this.accountItemName(accountId).waitVisible();
       foundAccounts++;
     }
     jestExpect(foundAccounts).toBe(expectedAccountCount);
@@ -45,7 +42,7 @@ export default class AccountsPage extends CommonPage {
 
   @Step("Expect account {{{0}}} to be absent from the list")
   async expectAccountAbsence(accountId: string) {
-    await this.accountRowName(accountId).waitNotVisible();
+    await this.accountItemName(accountId).waitNotVisible();
   }
 
   @Step("Expect no accounts screen")

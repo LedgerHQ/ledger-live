@@ -284,12 +284,6 @@ async function startDetachedEnroll(
   flags: { profile: string; [flag: string]: unknown },
   out: CommandOutput,
 ): Promise<void> {
-  if (process.platform === "win32") {
-    throw new Error(
-      "--detach is not supported on Windows. Run `wallet-cli agent-intent enroll` without " +
-        "--detach, as a background job of your shell or agent host.",
-    );
-  }
   const profileId = flags.profile;
   const { logPath } = enrollListenerPaths(profileId);
   const args = listenerArgs(flags);
@@ -411,7 +405,7 @@ const enrollCommand = defineCommand({
     detach: option(z.boolean().default(false), {
       description:
         "Run the approval wait as a background listener: print the enrollment link and exit, then " +
-        "check on it with `agent-intent wait` (Linux and macOS).",
+        "check on it with `agent-intent wait`.",
       argumentKind: "flag",
     }),
     output: outputOption,

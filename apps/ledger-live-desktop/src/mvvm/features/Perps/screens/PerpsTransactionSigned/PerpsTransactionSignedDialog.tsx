@@ -46,7 +46,7 @@ function PerpsTransactionSignedInnerDialog({
     <Dialog open={isOpen} onOpenChange={handleOpenChange} height="fit">
       <DialogContent
         aria-describedby={undefined}
-        className="w-[400px] bg-base p-0"
+        className="w-[400px] p-0"
         onInteractOutside={e => e.preventDefault()}
       >
         {data ? <PerpsTransactionSignedBody data={data} onClose={onClose} /> : null}

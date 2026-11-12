@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import type { Operation, OperationType } from "@ledgerhq/types-live";
+import type { Operation, OperationExtra, OperationType } from "@ledgerhq/types-live";
 
 export type BNLike = BigNumber | number | string;
 
@@ -24,6 +24,8 @@ export type OpOverrides = {
   senders?: string[];
   recipients?: string[];
   accountId?: string;
+  extra?: OperationExtra;
+  internalOperations?: Operation[];
 };
 
 let _counter = 0;
@@ -59,7 +61,8 @@ export function makeOp(overrides: OpOverrides = {}): Operation {
     accountId: overrides.accountId ?? "acc",
     date: toDate(overrides.date),
     hasFailed: overrides.hasFailed ?? false,
-    extra: {},
+    extra: overrides.extra ?? {},
+    ...(overrides.internalOperations ? { internalOperations: overrides.internalOperations } : {}),
   };
 }
 

@@ -1,5 +1,10 @@
 import { log } from "@ledgerhq/logs";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type {
+  Account,
+  AccountLike,
+  ResolvedAccountBridge,
+  TransactionCommon,
+} from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { firstValueFrom, reduce } from "rxjs";
 
@@ -9,10 +14,41 @@ import { getAccountBridge } from "../../../bridge";
 import { getAccountIdFromWalletAccountId } from "../../converters";
 import type { NetworkFeeContext } from "./normalizer/networkFeeEstimate";
 
+const BITCOIN_SYNC_REUSE_MS = 30_000;
+
+type FeeEstimationBridge = ResolvedAccountBridge<TransactionCommon>;
+
+const recentBitcoinSyncs = new WeakMap<Account, Promise<Account>>();
+
+function forgetBitcoinSync(account: Account, synced: Promise<Account>): void {
+  if (recentBitcoinSyncs.get(account) === synced) {
+    recentBitcoinSyncs.delete(account);
+  }
+}
+
+function syncBitcoinAccount(bridge: FeeEstimationBridge, account: Account): Promise<Account> {
+  const recentSync = recentBitcoinSyncs.get(account);
+  if (recentSync) {
+    return recentSync;
+  }
+  const synced = firstValueFrom(
+    bridge
+      .sync(account, { paginationConfig: {} })
+      .pipe(reduce((a: Account, f: (acc: Account) => Account) => f(a), account)),
+  );
+  recentBitcoinSyncs.set(account, synced);
+  synced.then(
+    () => setTimeout(() => forgetBitcoinSync(account, synced), BITCOIN_SYNC_REUSE_MS),
+    () => forgetBitcoinSync(account, synced),
+  );
+  return synced;
+}
+
 export type FetchNetworkFeeContextArgs = {
   accounts: AccountLike[];
   fromAccountId: string;
   amountFrom: string;
+  onFeeEstimationFailed?: (error: unknown) => void;
 };
 
 /**
@@ -20,6 +56,8 @@ export type FetchNetworkFeeContextArgs = {
  * the fee-paying account's bridge. Returns `null` on any failure
  * (account not found, bridge error, unsupported chain) so downstream
  * quotes simply skip fee fields and the `notEnoughBalanceForFees` check.
+ * A failed `prepareTransaction` / `getTransactionStatus`, or a `FeeNotLoaded`
+ * status error, also calls `onFeeEstimationFailed` with the error.
  */
 export async function fetchNetworkFeeContext(
   args: FetchNetworkFeeContextArgs,
@@ -36,18 +74,18 @@ export async function fetchNetworkFeeContext(
     }
 
     const fromParentAccount = getParentAccount(fromAccount, args.accounts);
-    let mainAccount = getMainAccount(fromAccount, fromParentAccount);
+    const storeAccount = getMainAccount(fromAccount, fromParentAccount);
+    let mainAccount = storeAccount;
+    let bitcoinSync: Promise<Account> | undefined;
     const bridge = await getAccountBridge(fromAccount, fromParentAccount);
 
-    // Bitcoin requires a fresh sync before `prepareTransaction` can compute
-    // fees because UTXO selection depends on confirmed inputs.
+    // Bitcoin requires a recent sync before `prepareTransaction` can compute
+    // fees because UTXO selection depends on confirmed inputs. A sync is
+    // reused while it runs and for 30 s after it ends.
     if (mainAccount.currency.id === "bitcoin") {
       try {
-        mainAccount = await firstValueFrom(
-          bridge
-            .sync(mainAccount, { paginationConfig: {} })
-            .pipe(reduce((a: Account, f: (acc: Account) => Account) => f(a), mainAccount)),
-        );
+        bitcoinSync = syncBitcoinAccount(bridge, mainAccount);
+        mainAccount = await bitcoinSync;
       } catch (e) {
         log("swap", "fetchNetworkFeeContext: btc sync failed", e);
       }
@@ -60,21 +98,48 @@ export async function fetchNetworkFeeContext(
     });
 
     const subAccountId = fromAccount.type !== "Account" ? fromAccount.id : undefined;
-    const recipient = bridge.getEstimationRecipient(mainAccount);
+    const recipient = getEstimationRecipient(bridge, mainAccount);
+    if (recipient === null) {
+      return null;
+    }
 
-    const preparedTx = await bridge.prepareTransaction(mainAccount, {
-      ...bridge.createTransaction(mainAccount),
-      subAccountId,
-      recipient,
-      amount: amountInAtomicUnits,
-      feesStrategy: "medium",
-    } as Parameters<typeof bridge.prepareTransaction>[1]);
+    try {
+      const preparedTx = await bridge.prepareTransaction(mainAccount, {
+        ...bridge.createTransaction(mainAccount),
+        subAccountId,
+        recipient,
+        amount: amountInAtomicUnits,
+        feesStrategy: "medium",
+      } as Parameters<typeof bridge.prepareTransaction>[1]);
 
-    const status = await bridge.getTransactionStatus(mainAccount, preparedTx);
+      const status = await bridge.getTransactionStatus(mainAccount, preparedTx);
+      const feeNotLoaded = Object.values(status.errors ?? {}).find(
+        error => error?.name === "FeeNotLoaded",
+      );
+      if (feeNotLoaded) {
+        throw feeNotLoaded;
+      }
 
-    return buildContext(mainAccount, preparedTx, status);
+      return buildContext(mainAccount, preparedTx, status);
+    } catch (e) {
+      log("swap", "fetchNetworkFeeContext: fee estimation failure", e);
+      if (bitcoinSync) {
+        forgetBitcoinSync(storeAccount, bitcoinSync);
+      }
+      args.onFeeEstimationFailed?.(e);
+      return null;
+    }
   } catch (e) {
     log("swap", "fetchNetworkFeeContext: bridge failure", e);
+    return null;
+  }
+}
+
+function getEstimationRecipient(bridge: FeeEstimationBridge, mainAccount: Account): string | null {
+  try {
+    return bridge.getEstimationRecipient(mainAccount);
+  } catch (e) {
+    log("swap", "fetchNetworkFeeContext: no estimation recipient", e);
     return null;
   }
 }

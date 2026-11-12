@@ -93,7 +93,7 @@ async function handleTokenAssociateTransaction(
 
   if (isAssociationFlow) {
     const config = resolveConfig(account.currency.id);
-    const hbarBalance = account.balance.dividedBy(10 ** account.currency.units[0].magnitude);
+    const hbarBalance = account.balance.shiftedBy(-account.currency.units[0].magnitude);
     const currentWorthInUSD = usdRate ? hbarBalance.multipliedBy(usdRate) : new BigNumber(0);
     const requiredWorthInUSD = config.tokenAssociationMinUsd;
 

@@ -64,7 +64,6 @@ jobs:
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
-          skip-pnpm-cache: "false"
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
           nx-key: ${{ secrets.NX_KEY }}
@@ -199,7 +198,6 @@ jobs:
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
-          skip-pnpm-cache: "false"
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
           nx-key: ${{ secrets.NX_KEY }}

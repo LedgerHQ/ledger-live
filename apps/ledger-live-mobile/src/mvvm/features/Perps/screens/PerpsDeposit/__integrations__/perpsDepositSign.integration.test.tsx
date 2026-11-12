@@ -9,6 +9,13 @@ import { ScreenName } from "~/const";
 import PerpsDepositScreen from "../PerpsDepositScreen";
 
 const mockOpenDrawer = jest.fn();
+jest.mock("@ledgerhq/live-common/wallet-api/Perps/deposit/useWalletApiSpendableBalance", () => ({
+  useWalletApiSpendableBalance: (account?: { spendableBalance: unknown }) => ({
+    balance: account?.spendableBalance,
+    isRefreshing: false,
+  }),
+}));
+
 jest.mock("LLM/features/ModularDrawer", () => ({
   useModularDrawerController: () => ({ openDrawer: mockOpenDrawer }),
 }));
@@ -25,7 +32,7 @@ jest.mock("@domain/entity-market-countervalues", () => ({
 }));
 
 const mockUsePerpsDepositQuote = jest.fn();
-jest.mock("../usePerpsDepositQuote", () => ({
+jest.mock("@ledgerhq/live-common/wallet-api/Perps/deposit/useDepositQuote", () => ({
   usePerpsDepositQuote: () => mockUsePerpsDepositQuote(),
 }));
 
@@ -109,9 +116,8 @@ describe("PerpsDepositSign integration", () => {
     capturedCallbacks = undefined;
     mockDeviceStep = { kind: "processing" };
     mockUsePerpsDepositQuote.mockReturnValue({
-      quote: { amountTo: new BigNumber(42) },
+      result: { quote: { amountTo: new BigNumber(42), errors: [] }, errors: [] },
       isLoading: false,
-      isUnavailable: false,
     });
   });
 
@@ -174,7 +180,12 @@ describe("PerpsDepositSign integration", () => {
     const { user } = renderDeposit();
 
     await user.press(await fillFormAndReview(user));
-    mockDeviceStep = { kind: "error", error: new Error("Device disconnected") };
+    mockDeviceStep = {
+      kind: "error",
+      error: new Error("Device disconnected"),
+      isGeneric: false,
+      returnsToForm: false,
+    };
     await user.press(await screen.findByTestId("select-device"));
 
     expect(await screen.findByTestId("perps-deposit-sign-error")).toBeOnTheScreen();
@@ -183,6 +194,25 @@ describe("PerpsDepositSign integration", () => {
     await user.press(screen.getByTestId("perps-deposit-sign-retry"));
 
     expect(mockRetry).toHaveBeenCalledTimes(1);
+  });
+
+  it("hides the cause of a generic failure behind the generic copy", async () => {
+    const { user } = renderDeposit();
+
+    await user.press(await fillFormAndReview(user));
+    mockDeviceStep = {
+      kind: "error",
+      error: new Error("swap api 500"),
+      isGeneric: true,
+      returnsToForm: true,
+    };
+    await user.press(await screen.findByTestId("select-device"));
+
+    expect(await screen.findByText("Something went wrong")).toBeOnTheScreen();
+    expect(
+      screen.getByText("Please try again later or select a different asset."),
+    ).toBeOnTheScreen();
+    expect(screen.queryByText(/swap api 500/)).not.toBeOnTheScreen();
   });
 
   it("drops the device step once the deposit lands", async () => {

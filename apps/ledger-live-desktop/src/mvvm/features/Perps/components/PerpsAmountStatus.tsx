@@ -1,4 +1,4 @@
-import React from "react";
+import React, { type ReactNode } from "react";
 import { Skeleton } from "@ledgerhq/lumen-ui-react";
 
 type PerpsAmountStatusProps = Readonly<{
@@ -6,6 +6,7 @@ type PerpsAmountStatusProps = Readonly<{
   isQuoteLoading: boolean;
   notice: string | null;
   errorMessage: string | null;
+  errorAction?: ReactNode;
   testIdPrefix: string;
 }>;
 
@@ -30,12 +31,16 @@ export function PerpsAmountStatus({
   isQuoteLoading,
   notice,
   errorMessage,
+  errorAction,
   testIdPrefix,
 }: PerpsAmountStatusProps) {
   const error = errorMessage ? (
-    <p className="body-3 text-error" data-testid={`${testIdPrefix}-form-error`}>
-      {errorMessage}
-    </p>
+    <div className="flex flex-col items-center gap-4">
+      <p className="body-3 text-error" data-testid={`${testIdPrefix}-form-error`}>
+        {errorMessage}
+      </p>
+      {errorAction}
+    </div>
   ) : null;
 
   const noticeText = notice ? <p className="body-2 text-base">{notice}</p> : null;

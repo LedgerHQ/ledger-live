@@ -1,4 +1,4 @@
-import { cardSession, getCardSessionToken, readCardSession } from "./cardSession.web";
+import { cardSession, getCardSessionToken, readCardSession } from "./cardSession";
 
 const session = { accessToken: "at_token", refreshToken: "rt_token" };
 

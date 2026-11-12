@@ -264,6 +264,10 @@ describe("xrpBridgeApi", () => {
     expect(getXrpEnabledTokenStandardsMock).toHaveBeenCalledTimes(1);
     expect(getXrpEnabledTokenStandardsMock).toHaveBeenCalledWith("ripple");
   });
+
+  it("matches tokens on their exact currency code", () => {
+    expect(xrpBridgeApi(ripple).exactAssetMatch).toBe(true);
+  });
 });
 
 describe("describeOptimisticOperation", () => {

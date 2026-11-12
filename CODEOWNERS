@@ -11,6 +11,7 @@
 .github/workflows/generate-e2e-userdata.yml             @ledgerhq/platform  @ledgerhq/qaa
 .github/workflows/test-ui-e2e-only-desktop.yml          @ledgerhq/platform  @ledgerhq/qaa
 .github/workflows/test-mobile-e2e-reusable.yml          @ledgerhq/platform  @ledgerhq/qaa
+.github/workflows/test-mobile-startup-perf.yml          @ledgerhq/platform  @ledgerhq/qaa
 /.mise/tasks/mitmproxy/                                 @ledgerhq/platform  @ledgerhq/qaa
 .github/workflows/test-design-system-reusable.yml       @ledgerhq/platform  @ledgerhq/wallet-xp
 /tools/                                                 @ledgerhq/platform
@@ -171,11 +172,14 @@ domain/api/ofac/                                         @ledgerhq/wallet-xp
 /shared/ui-info-state/                                   @ledgerhq/wallet-xp
 /shared/ui-queued-bottom-sheet/                          @ledgerhq/wallet-xp
 /shared/ui-app-unavailable/                              @ledgerhq/wallet-xp
+/shared/trend/                                           @ledgerhq/wallet-xp
 
 # Wallet — devtools
 devtools/pay-card/                                       @ledgerhq/wallet-xp
 devtools/account-portfolio/                              @ledgerhq/wallet-xp
 devtools/account-detail/                                 @ledgerhq/wallet-xp
+devtools/receive/                                        @ledgerhq/wallet-xp
+devtools/intent-wallet-sync/                             @ledgerhq/wallet-xp
 
 # Platform — desktop mvvm overrides (override WXP mvvm catch-all)
 apps/ledger-live-desktop/src/mvvm/features/AppBlockers/  @ledgerhq/platform
@@ -249,6 +253,8 @@ features/flow/fear-and-greed/                            @ledgerhq/wallet-xp
 
 ### ... portfolio service => @ledgerhq/wallet-xp ... ###
 domain/api/account-portfolio/                            @ledgerhq/wallet-xp
+features/platform/account-source-portfolio/              @ledgerhq/wallet-xp
+devtools/account-source-portfolio/                       @ledgerhq/wallet-xp
 /shared/api-services/src/services/portfolio/             @ledgerhq/wallet-xp
 
 libs/ethereum-provider/                                  @ledgerhq/coin-integration
@@ -307,6 +313,7 @@ features/flow/predictions/                                               @ledger
 features/platform/card/                                                  @ledgerhq/ptx
 features/platform/predictions/                                           @ledgerhq/ptx
 domain/entity/predictions/                                               @ledgerhq/ptx
+devtools/predictions/                                                    @ledgerhq/ptx
 domain/api/card-management/                                              @ledgerhq/ptx
 /shared/api-services/src/services/card/                                  @ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/components/ProviderIcon/       					@ledgerhq/ptx
@@ -442,6 +449,8 @@ features/platform/device-intent/                                   @ledgerhq/liv
 features/platform/device-action-content/                           @ledgerhq/live-devices
 features/platform/device-mock-server/                              @ledgerhq/live-devices
 features/flow/device-mock-server/                                  @ledgerhq/live-devices
+features/platform/device-kit/                                      @ledgerhq/live-devices
+domain/entity/device-os-update/                                    @ledgerhq/live-devices
 features/platform/contacts/src/device/                             @ledgerhq/live-devices
 libs/device-react/                                                 @ledgerhq/live-devices
 libs/speculos-transport/                                           @ledgerhq/live-devices @ledgerhq/qaa

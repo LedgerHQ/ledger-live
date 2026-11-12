@@ -9,6 +9,7 @@ import { getDefaultExplorerView, getAddressExplorer } from "@domain/entity-curre
 import {
   MAX_NOMINATIONS,
   hasMinimumBondBalance,
+  isNominationKeepable,
 } from "@ledgerhq/live-common/families/polkadot/logic";
 import {
   usePolkadotPreloadData,
@@ -133,7 +134,7 @@ const ValidatorField = ({
 
   // Addresses that are no longer validators
   const nonValidators = nominations
-    .filter(nomination => !nomination.status)
+    .filter(nomination => !isNominationKeepable(nomination))
     .map(nomination => nomination.address);
   const validatorsSelected = validators.length;
   const onUpdateNomination = useCallback(

@@ -66,7 +66,7 @@ export default class OnboardingStepsPage {
     ];
     for (const device of devices) {
       if (device.id === "nanoS" || device.id === "nanoSP") {
-        await this.deviceCard(device.id).scrollTo(this.scrollListContainer, 100);
+        await this.deviceCard(device.id).scrollTo(this.scrollListContainer, { pixels: 100 });
       }
       await this.deviceCard(device.id).expectVisible();
       await this.deviceCardPart(device.id, "header").expectText("Ledger");

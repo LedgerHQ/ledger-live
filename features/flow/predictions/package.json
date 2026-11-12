@@ -11,6 +11,7 @@
       "react-native": "./src/index.native.ts",
       "default": "./src/index.ts"
     },
+    "./state": "./src/predictionsSetupStore.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,

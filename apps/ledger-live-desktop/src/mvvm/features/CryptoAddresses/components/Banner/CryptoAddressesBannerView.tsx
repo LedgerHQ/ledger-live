@@ -9,9 +9,12 @@ import {
   CardTrailing,
   Spot,
   Button,
+  MediaImageGroup,
 } from "@ledgerhq/lumen-ui-react";
+import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
 import type { CryptoAddressesBannerViewModelResult } from "./hooks/useCryptoAddressesBannerViewModel";
-import { IconsList } from "./components/IconsList";
+
+const BANNER_CURRENCY_ICON_SIZE = 16;
 
 export const CryptoAddressesBannerView = memo(function CryptoAddressesBannerView({
   title,
@@ -39,7 +42,22 @@ export const CryptoAddressesBannerView = memo(function CryptoAddressesBannerView
             <CardContentTitle>{title}</CardContentTitle>
             <div className="flex items-center gap-4">
               <CardContentDescription>{description}</CardContentDescription>
-              <IconsList currencies={firstThreeCurrencies} />
+              <MediaImageGroup
+                data={firstThreeCurrencies}
+                size={BANNER_CURRENCY_ICON_SIZE}
+                shape="square"
+                maxVisible={3}
+                renderItem={(currency, { size }) => (
+                  <SquaredCryptoIcon
+                    size={size}
+                    ledgerId={currency.id}
+                    ticker={currency.ticker}
+                    {...(currency.type === "TokenCurrency" && {
+                      network: currency.parentCurrencyId,
+                    })}
+                  />
+                )}
+              />
             </div>
           </CardContent>
         </CardLeading>

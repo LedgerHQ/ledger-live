@@ -25,22 +25,32 @@ import {
   useAccountPortfolioToolProps,
   useAccountDescriptorToolProps,
   useAccountDataToolProps,
+  useAccountSourcePortfolioToolProps,
   useAppConfigToolProps,
   useAccountNameToolProps,
   useMockAccountsToolProps,
   useAccountDetailToolProps,
+  useReceiveToolProps,
   useCoinConfigToolProps,
+  usePredictionsToolProps,
+  type LiveAppStore,
+  type PredictionsSetup,
 } from "@devtools/bindings";
+import { usePredictionsSetupHooks } from "@features/flow-predictions";
+import { PREDICTIONS_SETUP_FAILURE_REASONS } from "@features/platform-predictions";
 import type { DevToolsConfig } from "@devtools/shell";
 import { useDevToolsRelay } from "./useDevToolsRelay";
 import { useDeviceOnboardingTool } from "../../DeviceOnboarding/useDeviceOnboardingTool";
+import { useIntentWalletSyncTool } from "../../IntentWalletSync/useIntentWalletSyncTool";
 import { useAccountDataRecorder } from "../../accountDataRecorder";
 import { getPortfolioServiceUrl } from "~/config/portfolioService";
+import { getStoreValue, setStoreValue } from "~/renderer/store";
 
 const APPLICATION_ID = 16;
 
 const getLiveConfigValue = (key: string): unknown => LiveConfig.getValueByKey(key);
 const getLiveConfigDefaultValue = (key: string): unknown => LiveConfig.getDefaultValueByKey(key);
+const LIVE_APP_STORE: LiveAppStore = { get: getStoreValue, set: setStoreValue };
 
 export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
   const navigate = useNavigate();
@@ -118,10 +128,22 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
   });
   const accountDataRecorder = useAccountDataRecorder();
   const accountDataToolProps = useAccountDataToolProps(accountDataRecorder);
+  const accountSourcePortfolioToolProps = useAccountSourcePortfolioToolProps({
+    serviceUrl: getPortfolioServiceUrl(),
+    recorder: accountDataRecorder,
+  });
   const legacyAccounts = useSelector(accountsSelector);
   const accountNameToolProps = useAccountNameToolProps(legacyAccounts);
   const mockAccountsToolProps = useMockAccountsToolProps(accountDataRecorder);
   const accountDetailToolProps = useAccountDetailToolProps();
+  const receiveToolProps = useReceiveToolProps();
+  const predictionsSetupHooks = usePredictionsSetupHooks();
+  const predictionsSetup = useMemo<PredictionsSetup>(
+    () => ({ hooks: predictionsSetupHooks, failureReasons: PREDICTIONS_SETUP_FAILURE_REASONS }),
+    [predictionsSetupHooks],
+  );
+  const predictionsToolProps = usePredictionsToolProps(LIVE_APP_STORE, predictionsSetup);
+  const intentWalletSync = useIntentWalletSyncTool();
 
   const config: DevToolsConfig = useMemo(
     () => [
@@ -134,6 +156,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       { id: "cloud-sync", config: cloudSyncToolProps },
       { id: "device-onboarding", config: deviceOnboardingProps },
       { id: "account-data", config: accountDataToolProps },
+      { id: "account-source-portfolio", config: accountSourcePortfolioToolProps },
       { id: "account-descriptor", config: accountDescriptorToolProps },
       { id: "account-balance", config: accountBalanceToolProps },
       { id: "account-operation", config: accountOperationToolProps },
@@ -142,6 +165,9 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       { id: "account-portfolio", config: accountPortfolioToolProps },
       { id: "mock-accounts", config: mockAccountsToolProps },
       { id: "account-detail", config: accountDetailToolProps },
+      { id: "receive", config: receiveToolProps },
+      { id: "predictions", config: predictionsToolProps },
+      { id: "intent-wallet-sync", config: intentWalletSync.toolProps },
     ],
     [
       featureFlagsToolProps,
@@ -158,9 +184,13 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       accountBalanceHistoryToolProps,
       accountPortfolioToolProps,
       accountDataToolProps,
+      accountSourcePortfolioToolProps,
       accountNameToolProps,
       mockAccountsToolProps,
       accountDetailToolProps,
+      receiveToolProps,
+      predictionsToolProps,
+      intentWalletSync.toolProps,
     ],
   );
 
@@ -174,5 +204,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
     hubUrl: wireState.hubUrl,
     setHubUrl: wire.setHubUrl,
     role: wireState.role,
+    intentWalletSyncRun: intentWalletSync.run,
+    onIntentWalletSyncRunCancelled: intentWalletSync.onRunCancelled,
   };
 }

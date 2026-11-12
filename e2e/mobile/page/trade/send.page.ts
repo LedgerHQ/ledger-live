@@ -1,37 +1,35 @@
 import { Step } from "jest-allure2-reporter/api";
 import { currencyParam, openDeeplink } from "@e2e/helpers/commonHelpers";
+import { byId, byText } from "@e2e/helpers/elements/native";
 
 export default class SendPage {
-  baseLink = "send";
-  summaryAmountId = "send-summary-amount";
-  summaryMemoTagId = "summary-memo-tag";
-  recipientContinueEnabledButtonId = "enabled-recipient-continue-button";
-  recipientContinueDisabledButtonId = "disabled-recipient-continue-button";
-  amountContinueEnabledButtonId = "enabled-amount-continue-button";
-  amountContinueDisabledButtonId = "disabled-amount-continue-button";
-  summaryContinueEnabledButtonId = "enabled-summary-continue-button";
-  summaryContinueDisabledButtonId = "disabled-summary-continue-button";
-  recipientInputId = "recipient-input";
-  recipientErrorId = "send-recipient-error";
-  memoTagInputId = "memo-tag-input";
-  memoTagDrawerTitleId = "memo-tag-drawer-title";
-  memoTagIgnoreButtonId = "enabled-memo-tag-ignore-button";
-  amountInputId = "amount-input";
-  amountErrorId = "send-amount-error";
-  summaryErrorId = "insufficient-fee-error";
-  highFeeConfirmButtonID = "enabled-confirmation-modal-confirm-button";
+  private readonly baseLink = "send";
 
-  private readonly validationEnsId = "device-validation-domain";
-
-  summaryRecipient = () => getElementById("send-summary-recipient");
-  summaryRecipientEns = () => getElementById("send-summary-recipient-ens");
-  summaryMemoTag = () => getElementById(this.summaryMemoTagId);
-  getStep1HeaderTitle = () => getElementById("send-header-step1-title");
-  amountMaxSwitch = () => getElementById("send-amount-max-switch");
-  amountContinueButton = () => getElementById(this.amountContinueEnabledButtonId);
-  summaryWarning = () => getElementById("send-summary-warning");
-  summaryContinueButton = () => getElementById(this.summaryContinueEnabledButtonId);
-  feeStrategy = (fee: string) => getElementByText(fee);
+  private readonly step1HeaderTitle = byId("send-header-step1-title");
+  private readonly recipientInput = byId("recipient-input");
+  private readonly recipientError = byId("send-recipient-error");
+  private readonly recipientContinueEnabledButton = byId("enabled-recipient-continue-button");
+  private readonly recipientContinueDisabledButton = byId("disabled-recipient-continue-button");
+  private readonly memoTagInput = byId("memo-tag-input");
+  private readonly memoTagDrawerTitle = byId("memo-tag-drawer-title");
+  private readonly memoTagIgnoreButton = byId("enabled-memo-tag-ignore-button");
+  private readonly amountInput = byId("amount-input");
+  private readonly amountMaxSwitch = byId("send-amount-max-switch");
+  private readonly amountError = byId("send-amount-error");
+  private readonly amountContinueEnabledButton = byId("enabled-amount-continue-button");
+  private readonly amountContinueDisabledButton = byId("disabled-amount-continue-button");
+  private readonly summaryAmount = byId("send-summary-amount");
+  private readonly summaryRecipient = byId("send-summary-recipient");
+  private readonly summaryRecipientEns = byId("send-summary-recipient-ens");
+  private readonly summaryMemoTag = byId("summary-memo-tag");
+  private readonly summaryWarning = byId("send-summary-warning");
+  private readonly summaryError = byId("insufficient-fee-error");
+  private readonly summaryContinueEnabledButton = byId("enabled-summary-continue-button");
+  private readonly summaryContinueDisabledButton = byId("disabled-summary-continue-button");
+  private readonly highFeeConfirmButton = byId("enabled-confirmation-modal-confirm-button");
+  private readonly validationEns = byId("device-validation-domain");
+  // The fee strategy rows have no testID.
+  private readonly feeStrategy = (fee: string) => byText(fee);
 
   @Step("Navigate to send screen {{{0}}}")
   async navigateToSendScreen(accountName: string) {
@@ -53,27 +51,24 @@ export default class SendPage {
 
   @Step("Expect first step")
   async expectFirstStep() {
-    const header = this.getStep1HeaderTitle();
-    await detoxExpect(header).toBeVisible();
+    await this.step1HeaderTitle.expectVisible();
   }
 
   @Step("Set recipient {{{0}}} and memo tag {{{1}}}")
   async setRecipient(address: string, memoTag?: string) {
-    await waitForElementById(this.recipientInputId); // Issue with RN75 : QAA-370
-    await typeTextById(this.recipientInputId, address);
+    await this.recipientInput.replaceText(address); // Issue with RN75 : QAA-370
     if (memoTag && memoTag !== "noTag") {
-      await typeTextById(this.memoTagInputId, memoTag);
+      await this.memoTagInput.replaceText(memoTag);
     }
   }
 
   @Step("Continue to next step and skip memo tag if needed {{{0}}}")
   async recipientContinue(memoTag?: string) {
-    await waitForElementById(this.recipientContinueEnabledButtonId);
-    await tapById(this.recipientContinueEnabledButtonId);
+    await this.recipientContinueEnabledButton.tap();
 
     if (memoTag === "noTag") {
-      await waitForElementById(this.memoTagDrawerTitleId);
-      await tapById(this.memoTagIgnoreButtonId);
+      await this.memoTagDrawerTitle.waitVisible();
+      await this.memoTagIgnoreButton.tap();
     }
   }
 
@@ -88,33 +83,28 @@ export default class SendPage {
   }
 
   private async expectRecipientMessage(message: string | null, continueButtonVisible = false) {
-    const errElem = getElementById(this.recipientErrorId);
     if (message) {
-      await detoxExpect(errElem).toHaveText(message);
+      await this.recipientError.expectText(message);
     } else {
-      await detoxExpect(errElem).not.toBeVisible();
+      await this.recipientError.expectNotVisible();
     }
 
-    const enabledBtn = getElementById(this.recipientContinueEnabledButtonId);
-    const disabledBtn = getElementById(this.recipientContinueDisabledButtonId);
     if (continueButtonVisible) {
-      await detoxExpect(enabledBtn).toBeVisible();
+      await this.recipientContinueEnabledButton.expectVisible();
     } else {
-      await detoxExpect(enabledBtn).not.toBeVisible();
-      await detoxExpect(disabledBtn).toBeVisible();
+      await this.recipientContinueEnabledButton.expectNotVisible();
+      await this.recipientContinueDisabledButton.expectVisible();
     }
   }
 
   @Step("Expect recipient step success {{{0}}}")
   async expectSendRecipientSuccess(expectedWarningMessage?: string) {
-    const errElem = getElementById(this.recipientErrorId);
-    if (!expectedWarningMessage) {
-      await detoxExpect(errElem).not.toBeVisible();
+    if (expectedWarningMessage) {
+      await this.recipientError.expectText(expectedWarningMessage);
     } else {
-      await detoxExpect(errElem).toHaveText(expectedWarningMessage);
+      await this.recipientError.expectNotVisible();
     }
-    const contBtn = getElementById(this.recipientContinueEnabledButtonId);
-    await detoxExpect(contBtn).toBeVisible();
+    await this.recipientContinueEnabledButton.expectVisible();
   }
 
   @Step("Set recipient {{{0}}} and continue")
@@ -129,38 +119,30 @@ export default class SendPage {
   @Step("Set the amount and return the value {{{0}}}")
   async setAmount(amount: string): Promise<string> {
     if (amount === "max") {
-      const switchEl = this.amountMaxSwitch();
-      await tapByElement(switchEl);
+      await this.amountMaxSwitch.tap();
     } else {
-      const input = getElementById(this.amountInputId);
-      await input.replaceText(amount);
-      await input.tapReturnKey();
+      await this.amountInput.replaceText(amount);
     }
 
-    return await getTextOfElement(this.amountInputId);
+    return await this.amountInput.getText();
   }
 
+  @Step("Continue from the amount step")
   async amountContinue() {
-    const btn = this.amountContinueButton();
-    await tapByElement(btn);
+    await this.amountContinueEnabledButton.tap();
   }
 
   @Step("Expect amount step success")
   async expectSendAmountSuccess() {
-    const errElem = getElementById(this.amountErrorId);
-    await detoxExpect(errElem).toHaveText("");
-    const contBtn = this.amountContinueButton();
-    await detoxExpect(contBtn).toBeVisible();
+    await this.amountError.expectText("");
+    await this.amountContinueEnabledButton.expectVisible();
   }
 
   @Step("Expect amount error message {{{0}}}")
   async expectSendAmountError(errorMessage: string) {
-    const errElem = getElementById(this.amountErrorId);
-    await detoxExpect(errElem).toHaveText(errorMessage);
-    const enabledBtn = this.amountContinueButton();
-    const disabledBtn = getElementById(this.amountContinueDisabledButtonId);
-    await detoxExpect(enabledBtn).not.toBeVisible();
-    await detoxExpect(disabledBtn).toBeVisible();
+    await this.amountError.expectText(errorMessage);
+    await this.amountContinueEnabledButton.expectNotVisible();
+    await this.amountContinueDisabledButton.expectVisible();
   }
 
   @Step("Set amount and continue {{{0}}}")
@@ -171,23 +153,17 @@ export default class SendPage {
 
   @Step("Summary continue")
   async summaryContinue() {
-    const btn = this.summaryContinueButton();
-    await tapByElement(btn);
+    await this.summaryContinueEnabledButton.tap();
   }
 
   @Step("Expect amount in summary {{{0}}}")
   async expectSummaryAmount(amount: string) {
-    const amt = getElementById(this.summaryAmountId);
-    await detoxExpect(amt).toHaveText(amount);
+    await this.summaryAmount.expectText(amount);
   }
 
   @Step("Expect max amount is within range in summary {{{0}}}")
   async expectSummaryMaxAmount(amount: string, tolerance = 0.00005) {
-    const text = await getTextOfElement(this.summaryAmountId);
-    const summaryAmount = parseFloat(text.replace(/[^\d.-]/g, ""));
-    const expected = parseFloat(amount);
-    jestExpect(summaryAmount).toBeGreaterThanOrEqual(expected - tolerance);
-    jestExpect(summaryAmount).toBeLessThanOrEqual(expected + tolerance);
+    await this.summaryAmount.expectAmount(Number.parseFloat(amount), { tolerance });
   }
 
   @Step("Expect recipient in summary {{{0}}}")
@@ -195,62 +171,52 @@ export default class SendPage {
     if (!recipient) {
       throw new Error("Recipient address is not set");
     }
-    const rec = this.summaryRecipient();
-    await detoxExpect(rec).toHaveText(recipient);
+    await this.summaryRecipient.expectText(recipient);
   }
 
   @Step("Expect error in summary {{{0}}}")
   async expectSendSummaryError(errorMessage: RegExp) {
-    const err = await getTextOfElement(this.summaryErrorId);
-    jestExpect(err).toMatch(errorMessage);
-    const enabledBtn = this.summaryContinueButton();
-    const disabledBtn = getElementById(this.summaryContinueDisabledButtonId);
-    await detoxExpect(enabledBtn).not.toBeVisible();
-    await detoxExpect(disabledBtn).toBeVisible();
+    await this.summaryError.expectTextMatching(errorMessage);
+    await this.summaryContinueEnabledButton.expectNotVisible();
+    await this.summaryContinueDisabledButton.expectVisible();
   }
 
   @Step("Expect warning in summary {{{0}}}")
   async expectSummaryWarning(warningMessage: string) {
-    const warn = this.summaryWarning();
-    await detoxExpect(warn).toHaveText(warningMessage);
+    await this.summaryWarning.expectText(warningMessage);
   }
 
   @Step("Expect recipient ENS in summary {{{0}}}")
   async expectSummaryRecipientEns(ensName: string) {
-    const ens = this.summaryRecipientEns();
-    await detoxExpect(ens).toHaveText(ensName);
+    await this.summaryRecipientEns.expectText(ensName);
   }
 
   @Step("Expect validation ENS name {{{0}}}")
   async expectValidationEnsName(ensName: string) {
-    const elem = getElementById(this.validationEnsId);
-    await detoxExpect(elem).toHaveText(ensName);
+    await this.validationEns.expectText(ensName);
   }
 
   @Step("Expect memo tag in summary {{{0}}}")
   async expectSummaryMemoTag(memoTag?: string) {
     if (memoTag && memoTag !== "noTag") {
-      const memoEl = this.summaryMemoTag();
-      await detoxExpect(memoEl).toHaveText(memoTag);
-    } else if (await IsIdVisible(this.summaryMemoTagId)) {
-      const memoEl = this.summaryMemoTag();
-      await detoxExpect(memoEl).toHaveText("");
+      await this.summaryMemoTag.expectText(memoTag);
+    } else if (await this.summaryMemoTag.isVisible()) {
+      await this.summaryMemoTag.expectText("");
     }
   }
 
   @Step("Dismiss high fee modal if visible")
   async dismissHighFeeModal() {
-    if (await IsIdVisible(this.highFeeConfirmButtonID)) {
-      await tapById(this.highFeeConfirmButtonID);
+    if (await this.highFeeConfirmButton.isVisible()) {
+      await this.highFeeConfirmButton.tap();
     }
   }
 
   @Step("Choose fee strategy {{{0}}}")
   async chooseFeeStrategy(fee?: string) {
     if (fee) {
-      await scrollToText(fee);
-      const feeBtn = this.feeStrategy(fee);
-      await tapByElement(feeBtn);
+      await this.feeStrategy(fee).scrollTo();
+      await this.feeStrategy(fee).tap();
     }
   }
 }

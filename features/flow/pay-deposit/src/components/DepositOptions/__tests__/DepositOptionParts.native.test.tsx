@@ -1,6 +1,6 @@
 import React from "react";
 import { cleanup, render, screen, userEvent } from "@testing-library/react-native";
-import { DepositOptionIcon, DepositOptionListItem } from "../DepositOptionParts.native";
+import { DepositOptionIcon, DepositOptionListItem } from "../DepositOptionParts";
 
 describe("DepositOptionParts (Native)", () => {
   afterEach(() => {

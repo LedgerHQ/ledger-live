@@ -3,7 +3,7 @@ import { TrackScreen } from "@shared/analytics-react";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import GenericStepConnectDevice from "./GenericStepConnectDevice";
 import { StepProps } from "../types";
-import { dependenciesToAppRequests } from "@ledgerhq/live-common/hw/actions/app";
+import { getConnectAppDependencies } from "./connectAppDependencies";
 
 export default function StepConnectDevice({
   account,
@@ -19,15 +19,15 @@ export default function StepConnectDevice({
   manifestName,
   location,
 }: StepProps) {
-  const connectDependencies = useMemo(() => {
-    const appRequests = dependenciesToAppRequests(dependencies);
-
-    if (account) {
-      // Nb setting the mainAccount as a dependency will ensure latest versions of plugins.
-      return [{ currency: getMainAccount(account, parentAccount).currency }, ...appRequests];
-    }
-    return appRequests;
-  }, [account, dependencies, parentAccount]);
+  const connectDependencies = useMemo(
+    () =>
+      getConnectAppDependencies(
+        account ? getMainAccount(account, parentAccount).currency : undefined,
+        useApp,
+        dependencies,
+      ),
+    [account, useApp, dependencies, parentAccount],
+  );
 
   return (
     <>
