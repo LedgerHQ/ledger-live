@@ -65,6 +65,7 @@ When the diff touches **`apps/*/src/mvvm/`**, apply `mvvm-architecture` and the 
 - **Translations**: Only edit `apps/ledger-live-desktop/static/i18n/en/app.json` (desktop) or `apps/ledger-live-mobile/src/locales/en/common.json` (mobile). No other locale files.
 - **New code goes in the monorepo layers**, not `libs/` — flag it unless it matches one of the exceptions in `docs/new-library.md`. `libs/ui/` and `libs/ledgerjs/` are frozen; `libs/ledger-live-common/` takes no new features.
 - **`domain/` packages**: no `@ledgerhq/` scope, every `package.json` must have `"private": true`, no subdirectories other than `entity/` and `api/`. For the full conventions, also read `domain/entity/README.md` and `domain/api/README.md`.
+- **Slice selectors**: flag a new selector that reads one slice outside `createSlice({ selectors })` (a `selectors.ts` with a hand-written root type), a `getSelectors` call that is not at module scope, and any renamed slice `name` or `reducerPath` that differs from `name`. See `.agents/skills/slice-selectors/SKILL.md`.
 - **`shared/` packages**: no `@ledgerhq/` scope, `"private": true`, no dependencies on `domain/` packages. For the full conventions, also read `shared/README.md`.
 - Sonar issues: complexity, duplication, security hotspots
 - Missing integration tests for new features under `src/mvvm/` (required by the mvvm-architecture skill)

@@ -35,14 +35,14 @@ actions.test.ts    # Actions tests (required if actions exist)
 schema.ts          # Zod schemas + branded value objects (required)
 schema.test.ts     # Schema validation tests (required)
 schema.mock.ts     # Schema-valid mock factories with overrides (required)
-slice.ts           # RTK createSlice, initial state, default-exported reducer (optional)
-slice.test.ts      # Slice reducer tests (required if slice exists)
+slice.ts           # RTK createSlice with its selectors, initial state, default-exported reducer (optional)
+slice.test.ts      # Slice reducer and selector tests (required if slice exists)
 slice.mock.ts      # Mock slice state built from schema mocks (required if slice exists)
-selectors.ts       # Selectors for reading state (optional)
-selectors.test.ts  # Selector tests (required if selectors exist)
 index.ts           # Barrel exports (required)
 ```
 
+Selectors that read the slice live in `createSlice({ selectors })`, not in a `selectors.ts` with a hand-written root type: see the [`slice-selectors`](../../.agents/skills/slice-selectors/SKILL.md) skill.
+
 **The schema is always required** — it is the canonical data model and the primary reason the package exists.
 
-**Slice, selectors, and actions are optional** because some entity packages are data-model-only. For example, an entity package may only define Zod schemas and value objects that are consumed by other packages.
+**Slice and actions are optional** because some entity packages are data-model-only. For example, an entity package may only define Zod schemas and value objects that are consumed by other packages.
