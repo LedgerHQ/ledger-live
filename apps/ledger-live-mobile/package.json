@@ -268,6 +268,7 @@
     "@shared/network-status": "workspace:*",
     "@shared/system-bars": "workspace:*",
     "@shared/ui-info-state": "workspace:*",
+    "@shared/ui-karaoke": "workspace:*",
     "@shared/ui-queued-bottom-sheet": "workspace:*",
     "@shopify/flash-list": "2.2.0",
     "@tanstack/react-query": "5.28.9",
