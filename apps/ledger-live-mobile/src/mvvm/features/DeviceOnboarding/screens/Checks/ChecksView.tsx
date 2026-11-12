@@ -66,6 +66,7 @@ export function ChecksView({
   primaryTestID,
   primaryLoading,
   onPrimary,
+  secondary,
   onQuit,
   closeLabel,
   allowSheet,
@@ -93,15 +94,34 @@ export function ChecksView({
         </Box>
         {primaryLabel ? (
           <Box lx={{ paddingHorizontal: "s16" }} style={{ paddingBottom: bottomInset }}>
-            {primaryLoading ? (
-              <Button appearance="transparent" size="lg" isFull loading>
-                {primaryLabel}
-              </Button>
-            ) : (
-              <Button appearance="base" size="lg" isFull testID={primaryTestID} onPress={onPrimary}>
-                {primaryLabel}
-              </Button>
-            )}
+            <Box lx={{ gap: "s16" }}>
+              {primaryLoading ? (
+                <Button appearance="transparent" size="lg" isFull loading>
+                  {primaryLabel}
+                </Button>
+              ) : (
+                <Button
+                  appearance="base"
+                  size="lg"
+                  isFull
+                  testID={primaryTestID}
+                  onPress={onPrimary}
+                >
+                  {primaryLabel}
+                </Button>
+              )}
+              {secondary ? (
+                <Button
+                  appearance="transparent"
+                  size="lg"
+                  isFull
+                  testID={secondary.testID}
+                  onPress={secondary.onPress}
+                >
+                  {secondary.label}
+                </Button>
+              ) : null}
+            </Box>
           </Box>
         ) : null}
       </Box>
