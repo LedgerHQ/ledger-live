@@ -12,7 +12,7 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 describe("lastBlock via MSW", () => {
-  it("maps the virtual-chain blue score to height and the sink (chain tip) to hash", async () => {
+  it("maps the sink's blue score to height and the sink (chain tip) to hash", async () => {
     server.use(
       http.get(BLUE_SCORE_URL, () => HttpResponse.json({ blueScore: 480818084 })),
       http.get(BLOCKDAG_URL, () =>
@@ -27,13 +27,13 @@ describe("lastBlock via MSW", () => {
     expect(info.time).toBeInstanceOf(Date);
   });
 
-  it("falls back to an empty hash when the sink is absent", async () => {
+  it("throws when the sink is absent", async () => {
     server.use(
       http.get(BLUE_SCORE_URL, () => HttpResponse.json({ blueScore: 1 })),
       http.get(BLOCKDAG_URL, () => HttpResponse.json({})),
     );
 
-    expect((await lastBlock()).hash).toBe("");
+    await expect(lastBlock()).rejects.toThrow("missing sink hash");
   });
 
   it("throws when the blue score is not a positive integer", async () => {

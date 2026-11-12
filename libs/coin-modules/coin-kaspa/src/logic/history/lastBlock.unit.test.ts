@@ -13,7 +13,7 @@ describe("lastBlock", () => {
     jest.clearAllMocks();
   });
 
-  it("returns the chain tip (sink) with the virtual chain blue score, not the pruning point or daaScore", async () => {
+  it("returns the chain tip (sink) with its blue score, not the pruning point or daaScore", async () => {
     mockGetVirtualChainBlueScore.mockResolvedValue(191726843);
     mockGetBlockDagInfo.mockResolvedValue({
       sink: "tip123",
@@ -35,12 +35,13 @@ describe("lastBlock", () => {
     await expect(lastBlock()).rejects.toThrow("invalid blue score");
   });
 
-  it("falls back to an empty hash when the sink is absent", async () => {
+  it.each([
+    ["absent", {}],
+    ["empty", { sink: "" }],
+  ])("throws when the sink is %s", async (_label, blockDagInfo) => {
     mockGetVirtualChainBlueScore.mockResolvedValue(42);
-    mockGetBlockDagInfo.mockResolvedValue({});
+    mockGetBlockDagInfo.mockResolvedValue(blockDagInfo);
 
-    const result = await lastBlock();
-
-    expect(result.hash).toBe("");
+    await expect(lastBlock()).rejects.toThrow("missing sink hash");
   });
 });
