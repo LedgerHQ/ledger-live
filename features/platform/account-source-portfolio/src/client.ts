@@ -4,12 +4,15 @@ import {
   type BalancePage,
   type Portfolio,
   type PortfolioRegistration,
+  type UpdatesPage,
 } from "@domain/api-account-portfolio";
 import type { PortfolioId } from "@domain/entity-client-identity";
 
 export type PortfolioDispatch = ThunkDispatch<unknown, unknown, UnknownAction>;
 
 export type BalanceReadParams = { account?: string; size: number; token?: string };
+
+export type UpdatesReadParams = { account: string; size: number; token?: string };
 
 /** The Portfolio service calls, each a real call, never served from the RTK Query cache. */
 export type PortfolioClient = {
@@ -27,6 +30,12 @@ export type PortfolioClient = {
     params: BalanceReadParams,
     signal?: AbortSignal,
   ): Promise<BalancePage>;
+  /** Newest first. An abort cancels the request. */
+  getUpdates(
+    portfolioId: PortfolioId,
+    params: UpdatesReadParams,
+    signal?: AbortSignal,
+  ): Promise<UpdatesPage>;
 };
 
 /** A failed service call: its HTTP status only, never the body, which may hold addresses. */
@@ -120,6 +129,18 @@ export function portfolioClientOf(dispatch: PortfolioDispatch): PortfolioClient 
         untilAborted(
           dispatch(
             endpoints.getBalance.initiate({ portfolioId: idOf(portfolioId), ...params }, QUERY),
+          ),
+          signal,
+        ),
+      ),
+    getUpdates: (portfolioId, params, signal) =>
+      called(() =>
+        untilAborted(
+          dispatch(
+            endpoints.getUpdates.initiate(
+              { portfolioId: idOf(portfolioId), order: "DESC", ...params },
+              QUERY,
+            ),
           ),
           signal,
         ),

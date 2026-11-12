@@ -71,4 +71,62 @@ describe("portfolioClientOf", () => {
 
     await expect(read).rejects.toThrow("Portfolio service call failed");
   });
+
+  describe("getUpdates", () => {
+    const UPDATES_URL = `${PORTFOLIO_URL}/updates`;
+    const params = { account: "ethereum:0xa", size: 5, token: "t1" };
+
+    it("reads newest first, forwarding the account, the page size and the token", async () => {
+      let url: URL | undefined;
+      server.use(
+        http.get(UPDATES_URL, ({ request }) => {
+          url = new URL(request.url);
+          return HttpResponse.json({ items: [], nextToken: null });
+        }),
+      );
+
+      await portfolioClientOf(makeStore().dispatch).getUpdates(PORTFOLIO_ID(), params);
+
+      expect(Object.fromEntries(url?.searchParams ?? [])).toEqual({
+        order: "DESC",
+        account: "ethereum:0xa",
+        size: "5",
+        token: "t1",
+      });
+    });
+
+    it("cancels the request when its signal aborts", async () => {
+      server.use(
+        http.get(
+          UPDATES_URL,
+          ({ request }) =>
+            new Promise<Response>(resolve => {
+              request.signal.addEventListener("abort", () => resolve(HttpResponse.error()));
+            }),
+        ),
+      );
+      const reading = new AbortController();
+
+      const read = portfolioClientOf(makeStore().dispatch).getUpdates(
+        PORTFOLIO_ID(),
+        params,
+        reading.signal,
+      );
+      reading.abort();
+
+      await expect(read).rejects.toThrow("Portfolio service call failed");
+    });
+
+    it("does not read with a signal already aborted", async () => {
+      server.use(http.get(UPDATES_URL, () => HttpResponse.json({ items: [], nextToken: null })));
+
+      const read = portfolioClientOf(makeStore().dispatch).getUpdates(
+        PORTFOLIO_ID(),
+        params,
+        AbortSignal.abort(),
+      );
+
+      await expect(read).rejects.toThrow("Portfolio service call failed");
+    });
+  });
 });

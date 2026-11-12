@@ -25,13 +25,16 @@
     "@domain/entity-account-balance": "workspace:*",
     "@domain/entity-account-data": "workspace:*",
     "@domain/entity-account-descriptor": "workspace:*",
+    "@domain/entity-account-operation": "workspace:*",
     "@domain/entity-client-identity": "workspace:*",
+    "@domain/entity-currency": "workspace:*",
     "@domain/entity-currency-crypto": "workspace:*",
     "@reduxjs/toolkit": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
     "@shared/api-services": "workspace:*",
+    "@shared/schema-primitives": "workspace:*",
     "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
