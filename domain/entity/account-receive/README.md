@@ -16,7 +16,7 @@ The `receive` kind: on which address an account receives, and how the device con
   - absent: the device cannot confirm it (Hedera without its public key). An account with no readable device path fails the read with `ReceivePathUnknownError`.
   Network specifics (chain id, address format, curve) are not data: the device action reads them from the descriptor's network and path, as each family's `getAddress` does.
 - `shielded`: a second address whose received funds stay private (Zcash), with its own `shieldedAddress` verification.
-- `memo`: on an address a sender can attach a memo or tag to, its `type` (`text`, `tag`, `typed`) as the coin's send contract declares it. Exchanges and custodians tell their users apart by it. Absent where the coin carries none, or not to this address (a Zcash transparent address).
+- `memo`: on an address a sender can attach a memo or tag to, what the coin's send contract declares for it: `text` up to `maxLength` characters, `tag` (a number, XRP destination tag) up to `maxValue` in decimal, or `typed` with its `options` and `defaultOption` (Stellar). Exchanges and custodians tell their users apart by it. Absent where the coin carries none, or not to this address (a Zcash transparent address).
 - `selectAccountReceive(state, accountUUID)`. Apps mount the slice at `accountReceives`.
 
 Pending, the last error and the source stay in `accountData`. See [the account data layer](../../../docs/account-data-layer.md).

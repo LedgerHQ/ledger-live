@@ -14,7 +14,13 @@ function withMemo<T extends ReceiveAddress>(account: Account, address: T): T {
   const input = getSendDescriptor(account.currency)?.inputs.memo;
   if (!input || !(input.appliesToRecipient?.(address.address) ?? true)) return address;
   // A `number` input is no memo kind a sender is told about.
-  const memo = ReceiveMemoSchema.safeParse({ type: input.type });
+  const memo = ReceiveMemoSchema.safeParse({
+    type: input.type,
+    maxLength: input.maxLength,
+    maxValue: input.maxValue?.toString(),
+    options: input.options,
+    defaultOption: input.defaultOption,
+  });
   return memo.success ? { ...address, memo: memo.data } : address;
 }
 
