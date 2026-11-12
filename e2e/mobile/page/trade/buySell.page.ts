@@ -172,11 +172,7 @@ export default class BuySellPage {
   @Step("Get available providers")
   async getAvailableProviders(): Promise<string[]> {
     await this.providersList.waitVisible();
-    const expandButton = await waitWebElementByTestId(this.expandButtonId, {
-      timeout: TIMEOUT.xsmall,
-      throwOnTimeout: false,
-    });
-    if (expandButton) {
+    if (await this.expandButton.isVisible(TIMEOUT.xsmall)) {
       await this.expandButton.tap();
     }
     const providerNames = await getWebElementsText(
@@ -204,11 +200,7 @@ export default class BuySellPage {
   @Step("Select provider {{{0}}}")
   async selectProvider(provider: string) {
     await this.providersList.waitVisible();
-    const expandButton = await waitWebElementByTestId(this.expandButtonId, {
-      timeout: TIMEOUT.xsmall,
-      throwOnTimeout: false,
-    });
-    if (expandButton) {
+    if (await this.expandButton.isVisible(TIMEOUT.xsmall)) {
       await this.expandButton.tap();
     }
     await scrollToWebElement(getWebElementByTestId(this.provider(provider)));

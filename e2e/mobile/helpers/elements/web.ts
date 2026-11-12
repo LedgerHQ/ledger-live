@@ -4,7 +4,7 @@ import { retryUntilTimeout } from "@e2e/utils/retry";
 import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
 import { compareText, type ExpectTextOptions } from "./compareText";
 import type { ElementHandle } from "./elementHandle";
-import { waitHardTimeout, withHardTimeout } from "./hardTimeout";
+import { isHardTimeout, waitHardTimeout, withHardTimeout } from "./hardTimeout";
 
 /** Reads a `runScript` result as text: Android returns some results wrapped as `{ result }`. */
 const scriptText = (value: unknown): string =>
@@ -126,6 +126,17 @@ export class WebHandle implements ElementHandle {
   /** Asserts the element exists in the webview now. A Detox expect: it does not wait. */
   async expectExist(): Promise<void> {
     await withHardTimeout(detoxExpect(this.raw).toExist());
+  }
+
+  /** Returns whether the element appears within `timeout`, for one that may not show (an optional button). A hung app still throws. */
+  async isVisible(timeout = TIMEOUT.xxsmall): Promise<boolean> {
+    try {
+      await this.waitVisible(timeout);
+      return true;
+    } catch (error) {
+      if (isHardTimeout(error)) throw error;
+      return false;
+    }
   }
 
   private async isEnabled(): Promise<boolean> {
