@@ -149,10 +149,13 @@ jobs:
           java-version: "17"
           cache: "gradle"
 
+      # Installs what Gradle would otherwise download mid-build, after a silent wait of up
+      # to ~30 min. Keep in sync with apps/ledger-live-mobile/android/build.gradle; 35 is
+      # what React Native libraries still compile against.
       - name: setup Android SDK
         uses: android-actions/setup-android@40fd30fb8d7440372e1316f5d1809ec01dcd3699 # v4.0.1
         with:
-          packages: "platform-tools"
+          packages: "platform-tools platforms;android-36 platforms;android-35 build-tools;36.0.0 build-tools;35.0.0 ndk;28.0.12674087 cmake;3.22.1"
 
         # https://github.blog/changelog/2023-02-23-hardware-accelerated-android-virtualization-on-actions-windows-and-linux-larger-hosted-runners/
       - name: Enable KVM group perms
