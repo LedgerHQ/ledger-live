@@ -5300,7 +5300,6 @@
       "description": "Connect your wallet to dapps"
     }
   },
-  "receiveAddress": {},
   "signMessage": {
     "eip712": {
       "showFullMessage": "Show full message",
