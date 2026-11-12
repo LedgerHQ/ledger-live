@@ -1,3 +1,4 @@
+import validateChangesets from "./validation/changesets.ts";
 import validateCommits from "./validation/commits.ts";
 import validateDependencyChecks from "./validation/dependency-checks.ts";
 import validateLegacyScore from "./validation/legacy-score.ts";
@@ -9,3 +10,4 @@ schedule(validateCommits);
 schedule(validateNodeModulesSize);
 schedule(validateDependencyChecks);
 schedule(validateLegacyScore);
+schedule(validateChangesets);
