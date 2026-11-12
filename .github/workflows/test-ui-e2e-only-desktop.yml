@@ -319,7 +319,6 @@ jobs:
           REPEAT_EACH: ${{ inputs.repeat_each }}
           WORKFLOW_REF: ${{ github.workflow_ref }}
           TRIGGERED_BRANCH: ${{ inputs.ref || github.ref_name }}
-          COMMIT_SHA: ${{ github.sha }}
           FEATURE_FLAGS: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
           TEAM_INPUT: ${{ inputs.team || 'all' }}
           DEVICES: ${{ steps.parse.outputs.is_dual == 'true' && format('{0} + {1}', steps.parse.outputs.device_1, steps.parse.outputs.device_2) || steps.parse.outputs.device_1 }}
@@ -327,6 +326,7 @@ jobs:
           RUN_ON_MACOS: ${{ inputs.run_on_macos || false }}
           RUN_ON_WINDOWS: ${{ inputs.run_on_windows || false }}
         run: |
+          COMMIT_SHA="$(git rev-parse HEAD)"
           EXTRA_FEATURE_FLAGS="$E2E_FEATURE_FLAGS_JSON"
 
           if [ -z "$EXTRA_FEATURE_FLAGS" ]; then
@@ -835,7 +835,7 @@ jobs:
       summary_message: ${{ steps.summary.outputs.summary_message }}
       report-url: ${{ steps.allure-server.outputs.report-url }}
       qaa-report-url: ${{ steps.qaa-allure-upload.outputs.report_url }}
-    if: ${{ !cancelled() }}
+    if: ${{ !cancelled() && needs.prepare-devices.result == 'success' }}
     env:
       ALLURE_RESULTS: "allure-results"
     steps:
@@ -929,7 +929,7 @@ jobs:
     name: "Create Allure Report - ${{ needs.prepare-devices.outputs.is_dual == 'true' && needs.prepare-devices.outputs.device_2 || 'device 2' }}"
     runs-on: [ledger-wallet-1cpu-aws-public-cached]
     needs: [prepare-devices, e2e-tests]
-    if: ${{ !cancelled() && needs.prepare-devices.outputs.is_dual == 'true' }}
+    if: ${{ !cancelled() && needs.prepare-devices.result == 'success' && needs.prepare-devices.outputs.is_dual == 'true' }}
     outputs:
       # Unlike mobile, a shard without results fails the device: part of its suite never ran.
       finalStatus: ${{ steps.aggregate.outputs.missingShards != '' && 'failure' || steps.aggregate.outputs.finalStatus }}
