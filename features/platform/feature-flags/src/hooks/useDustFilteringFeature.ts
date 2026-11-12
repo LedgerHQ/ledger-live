@@ -1,4 +1,5 @@
-import { useFeature } from "./useFeature";
+import { useSelector } from "react-redux";
+import { selectFeature, type WithFeatureFlags } from "@shared/feature-flags";
 import type { WalletPlatform } from "./useWalletFeaturesConfig";
 
 export const DUST_FILTERING_FEATURE_FLAG_KEYS = {
@@ -10,10 +11,17 @@ export type DustFilteringFeatureConfig = Readonly<{
   isEnabled: boolean;
 }>;
 
-export function useDustFilteringFeature(platform: WalletPlatform): DustFilteringFeatureConfig {
-  const feature = useFeature(DUST_FILTERING_FEATURE_FLAG_KEYS[platform]);
+export function selectDustFilteringEnabled(
+  state: WithFeatureFlags,
+  platform: WalletPlatform,
+): boolean {
+  return selectFeature(state, DUST_FILTERING_FEATURE_FLAG_KEYS[platform])?.enabled === true;
+}
 
-  return {
-    isEnabled: feature?.enabled === true,
-  };
+export function useDustFilteringFeature(platform: WalletPlatform): DustFilteringFeatureConfig {
+  const isEnabled = useSelector((state: WithFeatureFlags) =>
+    selectDustFilteringEnabled(state, platform),
+  );
+
+  return { isEnabled };
 }
