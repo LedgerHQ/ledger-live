@@ -1,0 +1,46 @@
+import React from "react";
+import {
+  Card,
+  CardContent,
+  CardContentDescription,
+  CardContentTitle,
+  CardHeader,
+  CardLeading,
+  CardTrailing,
+  Spot,
+  Tag,
+} from "@ledgerhq/lumen-ui-rnative";
+import { Robot } from "@ledgerhq/lumen-ui-rnative/symbols";
+import type { ManageAgentsCardViewProps } from "./ManageAgentsCardView.types";
+
+export function ManageAgentsCardView({
+  title,
+  description,
+  newBadgeLabel,
+  onPress,
+  testID,
+}: ManageAgentsCardViewProps) {
+  return (
+    <Card type="interactive" onPress={onPress} testID={testID}>
+      <CardHeader>
+        <CardLeading>
+          <Spot icon={Robot} size={48} />
+          <CardContent>
+            <CardContentTitle>{title}</CardContentTitle>
+            <CardContentDescription>{description}</CardContentDescription>
+          </CardContent>
+        </CardLeading>
+        {newBadgeLabel ? (
+          <CardTrailing>
+            <Tag
+              label={newBadgeLabel}
+              appearance="accent"
+              size="md"
+              testID={`${testID}-new-badge`}
+            />
+          </CardTrailing>
+        ) : null}
+      </CardHeader>
+    </Card>
+  );
+}

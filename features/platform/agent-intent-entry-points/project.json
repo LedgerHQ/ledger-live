@@ -1,0 +1,8 @@
+{
+  "name": "@features/platform-agent-intent-entry-points",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

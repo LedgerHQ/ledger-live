@@ -1,0 +1,84 @@
+{
+  "name": "@features/platform-agent-intent-entry-points",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Agent Intent entry points: flag reading, analytics attributes and the Manage your agents card",
+  "main": "src/index.ts",
+  "react-native": "src/index.native.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "react-native": "./src/index.native.ts",
+      "default": "./src/index.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "lint": "oxlint src",
+    "lint:ci": "oxlint src --quiet",
+    "lint:fix": "oxfmt src && oxlint src --fix --quiet",
+    "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage"
+  },
+  "devDependencies": {
+    "@ledgerhq/lumen-design-core": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@reduxjs/toolkit": "catalog:",
+    "@support/jest": "workspace:*",
+    "@support/lint": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@testing-library/react-native": "catalog:",
+    "@testing-library/user-event": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
+    "jest": "catalog:",
+    "jest-environment-jsdom": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-native": "catalog:",
+    "react-redux": "catalog:",
+    "react-test-renderer": "catalog:",
+    "typescript": "catalog:"
+  },
+  "dependencies": {
+    "@features/platform-feature-flags": "workspace:*",
+    "@shared/analytics": "workspace:*",
+    "@shared/feature-flags": "workspace:^"
+  },
+  "peerDependencies": {
+    "@ledgerhq/lumen-design-core": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "react": "catalog:",
+    "react-native": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "react-native": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-ui-react": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-ui-rnative": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-design-core": {
+      "optional": true
+    }
+  }
+}
