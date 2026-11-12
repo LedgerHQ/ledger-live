@@ -1,10 +1,12 @@
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
 import { Subject } from "rxjs";
+import { getAddressVerification } from "../getAddressVerification";
 import { verifyAddressIntentJob } from "../job";
 import type {
   VerifyAddressDeviceAction,
   VerifyAddressDeviceState,
   VerifyAddressIntentJobState,
+  StartAddressVerification,
 } from "../types";
 
 const EXPECTED_ADDRESS = "0xAbC0000000000000000000000000000000000001";
@@ -16,13 +18,10 @@ const VERIFYING: VerifyAddressIntentJobState = {
 };
 const ADDRESS_DISPLAYED: VerifyAddressIntentJobState = { type: "addressDisplayed" };
 
-function startJob(expectedAddress = EXPECTED_ADDRESS) {
-  const subject = new Subject<VerifyAddressDeviceState>();
-  const cancel = jest.fn();
-  const startAddressVerification = jest.fn((): VerifyAddressDeviceAction => ({
-    observable: subject.asObservable(),
-    cancel,
-  }));
+function subscribeJob(
+  startAddressVerification: StartAddressVerification,
+  expectedAddress = EXPECTED_ADDRESS,
+) {
   const states: VerifyAddressIntentJobState[] = [];
   let error: unknown;
   let completed = false;
@@ -51,15 +50,56 @@ function startJob(expectedAddress = EXPECTED_ADDRESS) {
 
   return {
     states,
-    cancel,
-    startAddressVerification,
     subscription,
-    emit: (state: VerifyAddressDeviceState) => subject.next(state),
-    fail: (err: Error) => subject.error(err),
     isCompleted: () => completed,
     getError: () => error,
   };
 }
+
+function startJob(expectedAddress = EXPECTED_ADDRESS) {
+  const subject = new Subject<VerifyAddressDeviceState>();
+  const cancel = jest.fn();
+  const startAddressVerification = jest.fn((): VerifyAddressDeviceAction => ({
+    observable: subject.asObservable(),
+    cancel,
+  }));
+  const job = subscribeJob(startAddressVerification, expectedAddress);
+
+  return {
+    ...job,
+    cancel,
+    startAddressVerification,
+    emit: (state: VerifyAddressDeviceState) => subject.next(state),
+    fail: (err: Error) => subject.error(err),
+  };
+}
+
+function startJobWithAdapter() {
+  const pending: {
+    onDeviceRequest?: () => void;
+    resolve?: (result: { address: string }) => void;
+    reject?: (error: Error) => void;
+  } = {};
+  const job = subscribeJob(() =>
+    getAddressVerification(
+      onDeviceRequest =>
+        new Promise((resolve, reject) => {
+          pending.onDeviceRequest = onDeviceRequest;
+          pending.resolve = resolve;
+          pending.reject = reject;
+        }),
+    ),
+  );
+
+  return {
+    ...job,
+    startDeviceRequest: () => pending.onDeviceRequest?.(),
+    confirm: (address: string) => pending.resolve?.({ address }),
+    reject: (error: Error) => pending.reject?.(error),
+  };
+}
+
+const flushPromises = () => new Promise(resolve => setImmediate(resolve));
 
 describe("verifyAddressIntentJob", () => {
   it.each([
@@ -177,5 +217,43 @@ describe("verifyAddressIntentJob", () => {
     const { cancel, subscription } = startJob();
     subscription.unsubscribe();
     expect(cancel).toHaveBeenCalled();
+  });
+});
+
+describe("verifyAddressIntentJob with getAddressVerification", () => {
+  it("does not emit addressDisplayed when the request has only started", () => {
+    const { states, subscription } = startJobWithAdapter();
+
+    expect(states).toEqual([VERIFYING]);
+    subscription.unsubscribe();
+  });
+
+  it("emits addressDisplayed once the device request is in flight, then verified", async () => {
+    const { states, startDeviceRequest, confirm, isCompleted } = startJobWithAdapter();
+
+    startDeviceRequest();
+    expect(states).toEqual([VERIFYING, ADDRESS_DISPLAYED]);
+
+    confirm(EXPECTED_ADDRESS);
+    await flushPromises();
+    expect(states).toEqual([
+      VERIFYING,
+      ADDRESS_DISPLAYED,
+      { type: "verified", address: EXPECTED_ADDRESS },
+    ]);
+    expect(isCompleted()).toBe(true);
+  });
+
+  it("reports unsupported without addressDisplayed when it fails before any device request", async () => {
+    const error = Object.assign(new Error("not supported"), {
+      name: "DeviceAppVerifyNotSupported",
+    });
+    const { states, reject, isCompleted } = startJobWithAdapter();
+
+    reject(error);
+    await flushPromises();
+
+    expect(states).toEqual([VERIFYING, { type: "unsupported", error }]);
+    expect(isCompleted()).toBe(true);
   });
 });

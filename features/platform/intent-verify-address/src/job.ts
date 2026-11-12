@@ -39,7 +39,7 @@ function addressesMatch(expected: string, reported: string): boolean {
  * stays signer-agnostic.
  *
  * Outcomes:
- * - device shows the address → `addressDisplayed` (non-terminal, once per attempt).
+ * - device request in flight → `addressDisplayed` (non-terminal, once per attempt).
  * - device output matches the expected address → `verified` (terminal).
  * - device output differs → `mismatch` (terminal), so the host can warn the user.
  * - user refuses on device → `cancelled` with a `retry` handler (non-terminal).

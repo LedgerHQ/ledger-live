@@ -4,4 +4,4 @@
 "live-mobile": minor
 ---
 
-Emit an `addressDisplayed` verify-address intent state as soon as the address is on the device Secure Screen
+Emit an `addressDisplayed` verify-address intent state once the address request is sent to the device
