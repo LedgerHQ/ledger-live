@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import {
   getAccountCurrency,
   getFeesCurrency,
@@ -120,7 +121,7 @@ function hasForeignFeeCurrency(quote: PerpsDepositQuote, feeAccount: Account): b
 }
 
 function toAtomic(fee: QuoteEstimatedNetworkFee | undefined): BigNumber {
-  return new BigNumber(fee?.amount ?? 0);
+  return parseFiniteBigNumber(fee?.amount) ?? new BigNumber(0);
 }
 
 function notEnoughFeesError(
@@ -192,32 +193,26 @@ function getAmountLimitError(
   const { ticker, units } = getAccountCurrency(depositAccount);
   const decimals = units[0].magnitude;
   for (const error of result.errors) {
-    if (error.code === QuotesErrorCodes.AMOUNT_TOO_LOW) {
+    const minAmount =
+      error.code === QuotesErrorCodes.AMOUNT_TOO_LOW && parseFiniteBigNumber(error.minAmount);
+    if (minAmount) {
       return {
         code: "amountTooLow",
         labelKey: "perpsDeposit.formErrors.amountTooLow",
         values: {
-          amount: formatDisplayAmount(
-            new BigNumber(error.minAmount),
-            decimals,
-            BigNumber.ROUND_UP,
-            locale,
-          ),
+          amount: formatDisplayAmount(minAmount, decimals, BigNumber.ROUND_UP, locale),
           ticker,
         },
       };
     }
-    if (error.code === QuotesErrorCodes.AMOUNT_TOO_HIGH) {
+    const maxAmount =
+      error.code === QuotesErrorCodes.AMOUNT_TOO_HIGH && parseFiniteBigNumber(error.maxAmount);
+    if (maxAmount) {
       return {
         code: "amountTooHigh",
         labelKey: "perpsDeposit.formErrors.amountTooHigh",
         values: {
-          amount: formatDisplayAmount(
-            new BigNumber(error.maxAmount),
-            decimals,
-            BigNumber.ROUND_DOWN,
-            locale,
-          ),
+          amount: formatDisplayAmount(maxAmount, decimals, BigNumber.ROUND_DOWN, locale),
           ticker,
         },
       };

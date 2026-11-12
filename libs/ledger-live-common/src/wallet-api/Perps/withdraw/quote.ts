@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import { DEFAULT_SWAP_RATES_INTERVAL_MS } from "../../../exchange/swap/const/timeout";
 import { getWalletApiIdFromAccountId, setWalletApiIdForAccountId } from "../../converters";
 import { resolveQuoteId } from "../../Exchange/quotes/normalizer/quoteHelpers";
@@ -59,11 +60,13 @@ export async function fetchPerpsWithdrawQuote({
 
   const [quote] = rawQuotes;
   if (quote) {
+    const amountTo = parseFiniteBigNumber(quote.amountTo);
+    if (!amountTo) throw new WithdrawApiError("Withdraw quote has an unreadable amount");
     const payload = WithdrawPayloadSchema.safeParse(quote.customFields);
     return {
       quoteId: resolveQuoteId(quote),
-      amountTo: new BigNumber(quote.amountTo),
-      payoutNetworkFees: new BigNumber(quote.payoutNetworkFees?.value ?? 0),
+      amountTo,
+      payoutNetworkFees: parseFiniteBigNumber(quote.payoutNetworkFees?.value) ?? new BigNumber(0),
       expiry: Date.now() + PERPS_WITHDRAW_QUOTE_TTL_MS,
       ...(payload.success ? { payload: payload.data } : {}),
     };

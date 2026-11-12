@@ -188,6 +188,19 @@ describe("resolveDepositFormError", () => {
       });
     });
 
+    it.each(["", "abc"])("ignores an amount limit of %p instead of throwing", amount => {
+      expect(
+        resolve({
+          quoteResult: {
+            errors: [
+              { code: QuotesErrorCodes.AMOUNT_TOO_LOW, minAmount: amount },
+              { code: QuotesErrorCodes.AMOUNT_TOO_HIGH, maxAmount: amount },
+            ],
+          },
+        })?.code,
+      ).not.toMatch(/^amountToo/);
+    });
+
     it("shows the minimum amount in the funding asset", () => {
       expect(
         resolve({

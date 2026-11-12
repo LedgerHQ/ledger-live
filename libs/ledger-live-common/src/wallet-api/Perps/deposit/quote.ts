@@ -1,5 +1,6 @@
-import BigNumber from "bignumber.js";
+import type BigNumber from "bignumber.js";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import type {
   Quote,
   QuoteApprovalNetworkFee,
@@ -43,9 +44,12 @@ export function findDepositParentAccount(
   return parentAccount?.type === "Account" ? parentAccount : undefined;
 }
 
-function toPerpsDepositQuote({ id, quoteDetails, errors }: Quote): PerpsDepositQuote {
+/** A quote with an unreadable receive amount is dropped, so the form shows no quote. */
+function toPerpsDepositQuote({ id, quoteDetails, errors }: Quote): PerpsDepositQuote | undefined {
+  const amountTo = parseFiniteBigNumber(quoteDetails.receiveAmount);
+  if (!amountTo) return undefined;
   return {
-    amountTo: new BigNumber(quoteDetails.receiveAmount),
+    amountTo,
     quoteId: id,
     estimatedNetworkFee: quoteDetails.estimatedNetworkFee,
     approvalNetworkFee: quoteDetails.approvalNetworkFee,
@@ -109,6 +113,6 @@ export async function fetchPerpsDepositQuote({
     },
   );
 
-  const [quote] = quotes;
-  return { ...(quote && { quote: toPerpsDepositQuote(quote) }), errors, feeEstimationFailed };
+  const quote = quotes[0] && toPerpsDepositQuote(quotes[0]);
+  return { ...(quote && { quote }), errors, feeEstimationFailed };
 }

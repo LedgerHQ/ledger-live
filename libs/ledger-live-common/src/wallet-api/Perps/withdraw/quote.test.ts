@@ -106,6 +106,34 @@ describe("fetchPerpsWithdrawQuote", () => {
     expect(quote.payoutNetworkFees).toEqual(new BigNumber(0));
   });
 
+  it.each([undefined, null, "", "abc"])(
+    "rejects a quote whose amount is %p with a withdraw API error",
+    async amountTo => {
+      mockedFetchQuotes.mockResolvedValue({
+        rawQuotes: [{ ...rawQuote, amountTo } as unknown as RawQuote],
+        providerErrors: [],
+      });
+
+      await expect(fetchPerpsWithdrawQuote(request)).rejects.toBeInstanceOf(WithdrawApiError);
+    },
+  );
+
+  it("treats unreadable payout network fees as zero", async () => {
+    mockedFetchQuotes.mockResolvedValue({
+      rawQuotes: [
+        {
+          ...rawQuote,
+          payoutNetworkFees: { value: "abc", currency: "ethereum" },
+        } as unknown as RawQuote,
+      ],
+      providerErrors: [],
+    });
+
+    const quote = await fetchPerpsWithdrawQuote(request);
+
+    expect(quote.payoutNetworkFees).toEqual(new BigNumber(0));
+  });
+
   it.each([
     ["amount_off_limits", { minAmount: "5" }],
     ["amount_off_limits", { minAmount: "5", maxAmount: "100" }],
