@@ -221,6 +221,17 @@ describe("buildTokenAccountShapes", () => {
     expect(shapes).toEqual({ [`ripple/mpt/${MPT_ID}`]: { xrpResources: { isLocked: false } } });
   });
 
+  it("stores an IOU entry whose limit is unknown without one", async () => {
+    getAccountInfoMock.mockResolvedValue({
+      type: "xrp",
+      tokens: [{ asset: usdAsset, value: 5n, isLocked: true }],
+    });
+
+    const shapes = await buildTokenAccountShapes(ripple, "rAddress");
+
+    expect(shapes).toEqual({ "ripple/iou/USD": { xrpResources: { isLocked: true } } });
+  });
+
   it("drops an entry with no CAL token or of a standard that is not enabled", async () => {
     getXrpEnabledTokenStandardsMock.mockReturnValue(["iou"]);
     getAccountInfoMock.mockResolvedValue({
@@ -307,6 +318,28 @@ describe("describeOptimisticOperation", () => {
     expect(operation.type).toBe("OPT_IN");
     expect(operation.value.toFixed()).toBe("0");
     expect(operation.subOperations).toBeUndefined();
+  });
+
+  it("records an opt-out as OPT_OUT on the XRP account with a 0 value and no token sub-operation", () => {
+    const operation = buildOptimisticOperation(
+      account,
+      {
+        ...makeTrustSet("USD"),
+        mode: "optOut",
+        amount: new BigNumber(0),
+      },
+      undefined,
+      describeOptimisticOperation,
+    );
+
+    expect(operation).toMatchObject({ type: "OPT_OUT", accountId: "xrpAccount" });
+    expect(operation.value.toFixed()).toBe("0");
+    expect(operation.subOperations).toBeUndefined();
+    expect(operation.transactionRaw).toMatchObject({ assetReference: "USD", assetOwner: ISSUER });
+  });
+
+  it("drops a stored token missing from the balance read", () => {
+    expect(xrpBridgeApi({ id: "ripple" } as CryptoCurrency).dropsMissingTokens).toBe(true);
   });
 
   it("keeps the generic description of a send", () => {

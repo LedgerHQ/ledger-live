@@ -827,21 +827,22 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // scenario, which never converges because the lone token's balance is never seen as "gone".
     // A family's balance hook throwing/degrading already rejects the `Promise.all` above and
     // aborts the whole sync, rather than silently reaching this point with a partial result.
-    const vanishedTokenBalances: Balance[] = getAssetFromToken
-      ? (initialAccount?.subAccounts ?? []).flatMap(subAccount => {
-          // A throwing family implementation must not fail the whole sync over one sub-account.
-          let asset: ReturnType<typeof getAssetFromToken>;
-          try {
-            asset = getAssetFromToken(subAccount.token, address);
-          } catch {
-            return [];
-          }
-          if (!asset) return [];
-          const key = assetKey(asset, bridgeApi.exactAssetMatch);
-          if (!key || freshAssetKeys.has(key)) return [];
-          return [{ value: 0n, asset }];
-        })
-      : [];
+    const vanishedTokenBalances: Balance[] =
+      getAssetFromToken && !bridgeApi.dropsMissingTokens
+        ? (initialAccount?.subAccounts ?? []).flatMap(subAccount => {
+            // A throwing family implementation must not fail the whole sync over one sub-account.
+            let asset: ReturnType<typeof getAssetFromToken>;
+            try {
+              asset = getAssetFromToken(subAccount.token, address);
+            } catch {
+              return [];
+            }
+            if (!asset) return [];
+            const key = assetKey(asset, bridgeApi.exactAssetMatch);
+            if (!key || freshAssetKeys.has(key)) return [];
+            return [{ value: 0n, asset }];
+          })
+        : [];
     const allTokenAssetsBalances = [...freshTokenAssetsBalances, ...vanishedTokenBalances];
 
     if (tokenListChangeOnly) {

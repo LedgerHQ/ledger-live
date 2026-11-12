@@ -31,12 +31,13 @@ export type XrpTokenAccount = TokenAccount & { xrpResources?: XrpTokenResources 
 export type XrpTokenAccountRaw = TokenAccountRaw & { xrpResources?: XrpTokenResourcesRaw };
 
 /**
- * `changeTrust` opts in to a token or edits its trust limit, the `amount`. `assetReference` and
- * `assetOwner` name the token, never a `subAccountId`: it adds a pending token sub-operation worth
- * the limit, which locks the token balance until the next sync.
+ * `changeTrust` opts in to a token or edits its trust limit, the `amount`. `optOut` removes a
+ * token: no recipient, amount 0. `assetReference` and `assetOwner` name the token, never a
+ * `subAccountId`: it adds a pending token sub-operation worth the limit, which locks the token
+ * balance until the next sync.
  */
 type XrpTokenFields = {
-  mode?: "send" | "changeTrust";
+  mode?: "send" | "changeTrust" | "optOut";
   assetReference?: string;
   assetOwner?: string;
 };

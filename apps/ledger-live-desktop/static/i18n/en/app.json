@@ -8149,6 +8149,25 @@
       "title": "{{amount}} will be locked on your account while this token is added.",
       "description": "You'll get it back when you remove the token."
     },
+    "XrpOptOutBalanceNotZero": {
+      "title": "You still hold this token",
+      "description": "Send or swap its full balance, then remove it."
+    },
+    "XrpOptOutTokenInEscrow": {
+      "title": "This token is held in escrow",
+      "description": "Wait for the escrow to end, then remove the token."
+    },
+    "XrpOptOutTokenFrozen": {
+      "title": "This token is frozen on your account",
+      "description": "A frozen token can't be removed."
+    },
+    "XrpOptOutIncomplete": {
+      "title": "This transaction would not remove the token",
+      "description": "Nothing was sent. Try again later."
+    },
+    "XrpReserveRelease": {
+      "title": "{{amount}} will be released on your account once this token is removed."
+    },
     "InvalidExplorerResponse": {
       "title": "Invalid response from {{currencyName}} explorer"
     },

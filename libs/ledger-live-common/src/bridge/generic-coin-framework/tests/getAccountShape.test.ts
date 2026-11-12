@@ -363,6 +363,20 @@ describe("genericGetAccountShape", () => {
       );
     });
 
+    it("drops a token missing from the fresh balance response when the family says it lists every held token", async () => {
+      getBridgeApiMock.mockImplementationOnce(() => ({
+        ...defaultBridgeApi(),
+        dropsMissingTokens: true,
+        getAssetFromToken: () => ({ ...heldAsset, assetReference: "0xvanished" }),
+      }));
+
+      await callWithSubAccountToken();
+
+      expect(buildSubAccountsMock.mock.calls[0][0].allTokenAssetsBalances).toEqual([
+        { asset: heldAsset, value: 500n },
+      ]);
+    });
+
     it("does not duplicate a still-held token, matching assetReference case-insensitively", async () => {
       getBridgeApiMock.mockImplementationOnce(() => ({
         ...defaultBridgeApi(),

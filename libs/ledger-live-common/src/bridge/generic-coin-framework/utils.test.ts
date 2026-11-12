@@ -273,6 +273,17 @@ describe("coin-framework utils", () => {
       ],
       [
         "coin",
+        "optOut",
+        {},
+        {
+          parentType: "OPT_OUT",
+          subType: undefined,
+          parentValue: new BigNumber(50),
+          parentRecipient: "recipient-address",
+        },
+      ],
+      [
+        "coin",
         "tokenAssociate",
         {},
         {
@@ -771,6 +782,40 @@ describe("coin-framework utils", () => {
       });
     });
 
+    describe("opt-out", () => {
+      const account = {
+        freshAddress: "rHolder",
+        currency: { name: "XRP", units: [{ name: "XRP", code: "XRP", magnitude: 6 }] },
+        subAccounts: [],
+      } as unknown as Account;
+
+      it("hands a token to the coin module as an optOut, without recipient or amount", () => {
+        const craftTransactionData = jest.fn().mockReturnValue({});
+
+        const intent = transactionToIntent(
+          account,
+          {
+            mode: "optOut",
+            assetReference: "USD",
+            assetOwner: "rIssuer",
+            amount: new BigNumber(0),
+            recipient: "",
+          } as GenericTransaction,
+          undefined,
+          craftTransactionData,
+        );
+
+        expect(intent).toMatchObject({
+          type: "optOut",
+          sender: "rHolder",
+          amount: 0n,
+          asset: { type: "token", assetReference: "USD", assetOwner: "rIssuer" },
+        });
+        expect(craftTransactionData).toHaveBeenCalledTimes(1);
+        expect(craftTransactionData).toHaveBeenCalledWith(intent);
+      });
+    });
+
     describe("type", () => {
       it("fallbacks to 'Payment' without a transaction mode", () => {
         expect(
@@ -785,6 +830,7 @@ describe("coin-framework utils", () => {
 
       it.each([
         ["changeTrust", "changeTrust"],
+        ["optOut", "optOut"],
         ["send", "send"],
         ["send-legacy", "send-legacy"],
         ["send-eip1559", "send-eip1559"],

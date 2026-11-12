@@ -266,6 +266,11 @@ export type BridgeApi = {
    */
   exactAssetMatch?: boolean;
   /**
+   * When true, a stored token missing from the balance read is dropped at the next sync instead of
+   * being kept at 0: the balance lists every token that is held, so a missing one was removed.
+   */
+  dropsMissingTokens?: boolean;
+  /**
    * For a family whose legacy bridge keyed account ids on the public key rather than the address.
    * When true, a synced account keeps the `xpubOrAddress` already in its id, and a scanned one is
    * keyed on the device's public key, so moving to the generic bridge never re-keys an account.

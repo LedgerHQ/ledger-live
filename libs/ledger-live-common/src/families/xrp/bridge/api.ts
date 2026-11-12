@@ -11,17 +11,8 @@ import type { XrpAccountInfo } from "@ledgerhq/coin-xrp/types";
 import { getCoinModuleApi } from "../../../bridge/generic-coin-framework/api";
 import { buildContext } from "../../../bridge/generic-coin-framework/api/context";
 import { getXrpEnabledTokenStandards } from "../config";
+import { getStandardFromReference } from "../tokenReference";
 import type { XrpTokenResources } from "../types";
-
-const IOU_HEX_CODE = /^[0-9A-F]{40}$/;
-const MPT_ISSUANCE_ID = /^[0-9A-F]{48}$/;
-
-function getStandardFromReference(assetReference: string): string | undefined {
-  if (assetReference.length === 3 || IOU_HEX_CODE.test(assetReference)) return "iou";
-  if (MPT_ISSUANCE_ID.test(assetReference)) return "mpt";
-
-  return undefined;
-}
 
 // Typed with the domain token: the one on `TokenAccount` lacks `tokenIdentifier`
 function isTokenOfAsset(token: TokenCurrency, assetReference: unknown, assetOwner: unknown) {
@@ -113,9 +104,12 @@ export async function buildTokenAccountShapes(
 export function describeOptimisticOperation(
   mode: string,
 ): OptimisticOperationDescriptor | undefined {
-  if (mode !== "changeTrust") return undefined;
+  const value = new BigNumber(0);
 
-  return { type: "OPT_IN", value: new BigNumber(0) };
+  if (mode === "changeTrust") return { type: "OPT_IN", value };
+  if (mode === "optOut") return { type: "OPT_OUT", value };
+
+  return undefined;
 }
 
 export default function xrpBridgeApi(currency: CryptoCurrency): BridgeApi {
@@ -126,6 +120,7 @@ export default function xrpBridgeApi(currency: CryptoCurrency): BridgeApi {
     describeOptimisticOperation,
     balanceListsEveryToken: true,
     exactAssetMatch: true,
+    dropsMissingTokens: true,
     getTokenFromAsset: asset => getTokenFromAsset(currency, asset),
     buildTokenAccountShapes: address => buildTokenAccountShapes(currency, address),
     // Turning a standard on or off resyncs from scratch, to build its token accounts' history
