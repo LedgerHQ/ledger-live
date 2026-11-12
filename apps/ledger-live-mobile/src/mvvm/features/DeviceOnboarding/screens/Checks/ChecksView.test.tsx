@@ -235,6 +235,32 @@ describe("ChecksView", () => {
     expect(onStart).not.toHaveBeenCalled();
   });
 
+  it("should hide the allow sheet when it is closed and leaving is not confirmed", async () => {
+    const { user, onQuit } = renderChecks("awaitingAllow");
+
+    await user.press(screen.getByTestId(`${checksTestIds.allowSheet}-header-close`));
+
+    expect(onQuit).toHaveBeenCalledTimes(1);
+    expect(screen.queryByTestId(checksTestIds.allowSheet)).toBeNull();
+  });
+
+  it("should bring the allow sheet back when a confirmation suspends it", async () => {
+    const { user, rerender } = renderChecks("awaitingAllow");
+
+    await user.press(screen.getByTestId(`${checksTestIds.allowSheet}-header-close`));
+    rerender({ suspendSheets: true });
+
+    expect(screen.getByTestId(checksTestIds.allowSheet)).toHaveProp("accessibilityState", {
+      expanded: false,
+    });
+
+    rerender({ suspendSheets: false });
+
+    expect(screen.getByTestId(checksTestIds.allowSheet)).toHaveProp("accessibilityState", {
+      expanded: true,
+    });
+  });
+
   it("should keep continue waiting while the success screen cannot be left yet", () => {
     renderChecks("succeeded");
     const continueButton = screen.getByRole("button", { name: "Continue" });
@@ -771,20 +797,6 @@ describe("ChecksView", () => {
     await user.press(screen.getByTestId(`${checksTestIds.notGenuineSheet}-dismiss`));
 
     expect(onQuit).toHaveBeenCalledTimes(1);
-    expect(onCloseSheet).not.toHaveBeenCalled();
-  });
-
-  it("should stay on the check when the non genuine close is separate", async () => {
-    const onCloseNotGenuine = jest.fn();
-    const { user, onQuit, onCloseSheet } = renderChecks("checking", {
-      error: { kind: "notGenuine" },
-      onCloseNotGenuine,
-    });
-
-    await user.press(screen.getByTestId(`${checksTestIds.notGenuineSheet}-dismiss`));
-
-    expect(onCloseNotGenuine).toHaveBeenCalledTimes(1);
-    expect(onQuit).not.toHaveBeenCalled();
     expect(onCloseSheet).not.toHaveBeenCalled();
   });
 });

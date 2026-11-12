@@ -175,14 +175,9 @@ function dismissRecoverableError(
 function dismissNotGenuine(
   suspendSheets: boolean,
   isNotGenuine: boolean,
-  onCloseNotGenuine: ChecksScreenProps["onCloseNotGenuine"],
   onQuit: ChecksScreenProps["onQuit"],
 ) {
   if (suspendSheets || !isNotGenuine) return;
-  if (onCloseNotGenuine) {
-    onCloseNotGenuine();
-    return;
-  }
   onQuit?.();
 }
 
@@ -272,7 +267,6 @@ export function useChecksScreenViewModel({
   onStart,
   onRetry,
   onCloseSheet,
-  onCloseNotGenuine,
   onContinue,
   onQuit,
   onAcceptUpdate,
@@ -317,7 +311,7 @@ export function useChecksScreenViewModel({
   }, [navigation]);
   const layout = checksLayout(state, update !== null);
   const [allowClosed, setAllowClosed] = useState(false);
-  if (state !== "awaitingAllow" && allowClosed) setAllowClosed(false);
+  if ((state !== "awaitingAllow" || suspendSheets) && allowClosed) setAllowClosed(false);
   const [dismissedOfferKey, setDismissedOfferKey] = useState<string | null>(null);
   const [unsupportedFor, setUnsupportedFor] = useState<string | null>(null);
 
@@ -382,8 +376,7 @@ export function useChecksScreenViewModel({
     notGenuineDrawer: {
       isOpen: sheetOpen(error?.kind === "notGenuine", suspendSheets),
       productName,
-      onClose: () =>
-        dismissNotGenuine(suspendSheets, error?.kind === "notGenuine", onCloseNotGenuine, onQuit),
+      onClose: () => dismissNotGenuine(suspendSheets, error?.kind === "notGenuine", onQuit),
       onContactSupport: onContactNotGenuineSupport,
     },
   };
