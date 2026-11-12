@@ -51,6 +51,13 @@ export const accountsSlice = createSlice({
     /** The account behind a legacy account id, for the boundary with legacy screens. */
     selectAccountUUIDByLegacyId: (state, legacyId: AccountId): AccountUUID | undefined =>
       state.byLegacyId[legacyId],
+    /** The entry behind a legacy account id, for the boundary with legacy screens. */
+    selectAccountEntryByLegacyId: (state, legacyId: AccountId): AccountEntry | undefined => {
+      const accountUUID = state.byLegacyId[legacyId];
+      return accountUUID === undefined
+        ? undefined
+        : adapterSelectors.selectById(state, accountUUID);
+    },
   },
 });
 

@@ -13,6 +13,7 @@ const { reducer } = accountsSlice;
 const {
   selectAccountEntries,
   selectAccountEntry,
+  selectAccountEntryByLegacyId,
   selectAccountUUIDByLegacyId,
   selectAccountUUIDs,
 } = accountsSlice.getSelectors();
@@ -45,6 +46,7 @@ describe("accountsSlice", () => {
     expect(selectAccountUUIDs(state)).toEqual([btc.accountUUID, eth.accountUUID]);
     expect(selectAccountEntry(state, eth.accountUUID)).toEqual(eth);
     expect(selectAccountUUIDByLegacyId(state, btcId)).toBe(btc.accountUUID);
+    expect(selectAccountEntryByLegacyId(state, btcId)).toEqual(btc);
   });
 
   it("drops a removed legacy account from the entities and the index", () => {
@@ -54,6 +56,7 @@ describe("accountsSlice", () => {
     );
     expect(selectAccountEntries(state)).toEqual([btc]);
     expect(selectAccountUUIDByLegacyId(state, ethId)).toBeUndefined();
+    expect(selectAccountEntryByLegacyId(state, ethId)).toBeUndefined();
   });
 
   it("keeps a remote-only account after the legacy ones", () => {
