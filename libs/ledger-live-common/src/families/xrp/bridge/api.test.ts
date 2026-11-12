@@ -268,6 +268,10 @@ describe("xrpBridgeApi", () => {
   it("matches tokens on their exact currency code", () => {
     expect(xrpBridgeApi(ripple).exactAssetMatch).toBe(true);
   });
+
+  it("gives a synced opt-in, opt-out or edit its own parent row", () => {
+    expect(xrpBridgeApi(ripple).tokenOptParentRow).toBe(true);
+  });
 });
 
 describe("describeOptimisticOperation", () => {
