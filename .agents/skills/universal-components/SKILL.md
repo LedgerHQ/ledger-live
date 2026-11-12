@@ -1,11 +1,6 @@
 ---
 name: universal-components
-description: |
-  Give each public React component of a dual-platform package one shape (logic only, universal
-  or platform entry) and a universal one a single props contract `X.types.ts`, as
-  `lint:structure` checks with rules R1 to R5. Use when writing or reviewing `*.web.tsx`,
-  `*.native.tsx` or `*.types.ts` under `shared/`, `domain/` or `features/`, when adding a `./web`
-  or `./native` subpath, or when `lint:structure` reports R1 to R5 or a stale waiver.
+description: Give each public React component of a dual-platform package one shape (logic only, universal or platform entry) and a universal one a single `X.types.ts` props contract, as `lint:structure` R1 to R5 check. Use when writing or reviewing `*.web.tsx`, `*.native.tsx` or `*.types.ts` in the layers, adding a `./web` or `./native` subpath, or when `lint:structure` reports R1 to R5 or a stale waiver.
 ---
 
 # Universal components

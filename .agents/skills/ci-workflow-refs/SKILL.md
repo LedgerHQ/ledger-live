@@ -1,6 +1,6 @@
 ---
 name: ci-workflow-refs
-description: Root workflows run at the triggering commit but call reusable workflows and composite actions pinned `@develop`, so on release/hotfix/main the child YAML is newer than the code it checks out. Read before changing any reusable workflow (`*-reusable.yml`, `workflow_call`) or composite action under `tools/actions/`, or before adding a CI step that runs a pnpm script, Nx target or repo file. Also read before writing how a CI change was tested, or before saying a CI change cannot be tested before merge.
+description: Reusable workflows and composite actions run from `@develop`, so on release, hotfix and main their YAML is newer than the code it checks out. Read before changing a reusable workflow or a composite action under `tools/actions/`, before adding a CI step that runs a pnpm script, Nx target or repo file, or before writing how a CI change was tested or saying it cannot be tested before merge.
 ---
 
 # CI Workflow Refs (split brain)

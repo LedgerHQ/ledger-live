@@ -1,6 +1,6 @@
 ---
 name: client-ids
-description: Handle device, user and Datadog identifiers through the redacted `DeviceId`, `UserId` and `DatadogId` classes of `@domain/entity-client-identity`, reading a raw value only through an export method allowlisted in `export-rules.json`. Use when reading, storing or sending a device id, user id or Datadog id, adding an `export*For*()` method or a new id class, editing `domain/entity/client-identity/**`, or when the `check-export-rules` CI target fails.
+description: Handle device, user and Datadog ids through the redacted `DeviceId`, `UserId` and `DatadogId` classes of `@domain/entity-client-identity`, reading a raw value only through an allowlisted export method. Use when reading, storing or sending one of these ids, adding an `export*For*()` method or an id class, editing `domain/entity/client-identity/**`, or when `check-export-rules` fails.
 ---
 
 # Client Identity Domain (`@domain/entity-client-identity`)

@@ -1,6 +1,6 @@
 ---
 name: legacy-migration
-description: Move code out of `libs/` or `apps/*/src` into the layers (`shared/`, `domain/`, `features/`) in three steps, addition, deprecation and deletion, and give a new-architecture package what only legacy code provides through injection (ports, thunk `extraArgument`) instead of an import. Use when moving, extracting or porting code out of `libs/` or `apps/*/src`, replacing a legacy module with a new package, deprecating or deleting legacy code, or when a new package seems to need a `libs/` import.
+description: Move code out of `libs/` or `apps/*/src` into the layers in three steps (addition, deprecation, deletion), and give a new package what only legacy code provides through injection instead of an import. Use when moving, extracting or porting legacy code, replacing a legacy module with a new package, deprecating or deleting legacy code, or when a new package seems to need a `libs/` import.
 ---
 
 # Legacy migration

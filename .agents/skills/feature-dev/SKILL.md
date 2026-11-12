@@ -110,10 +110,10 @@ If the user says "whatever you think is best", provide your recommendation and g
 
 **Actions**:
 1. Wait for explicit user approval
-2. Read all relevant files identified in previous phases
+2. Read all relevant files identified in previous phases, and load the skills `AGENTS.md` lists under "Before the first edit" for them
 3. Implement following chosen architecture
 4. Follow codebase conventions strictly (see References)
-5. Write clean, well-documented code
+5. Write clean code without explanatory comments (see the [comments](../comments/SKILL.md) skill)
 6. Update todos as you progress
 
 ---

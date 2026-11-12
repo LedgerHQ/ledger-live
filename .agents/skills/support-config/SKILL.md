@@ -1,6 +1,6 @@
 ---
 name: support-config
-description: Give a package its TypeScript, jest, lint and format config from the `support/` presets (`@support/tsconfig`, `@support/jest`, `@support/lint`, `@support/fmt`), pick its tsconfig archetype, declare the tools its scripts run, and fix what `pnpm lint:tool-config` reports. Use when creating a package, when creating or editing a `tsconfig*.json`, a `jest.config.*` or `jest.*.config.*`, an oxlint config (`oxlint.config.*`, `.oxlintrc.*`) or an oxfmt config (`oxfmt.config.*`, `.oxfmtrc.*`) in a package, when adding a tool (`tsc`, `oxlint`, `oxfmt`, `rimraf`, `zx`, `nx`) to a package's scripts or dependencies, or when `lint:tool-config` fails.
+description: Give a package its TypeScript, jest, lint and format config from the `support/` presets, and fix what `pnpm lint:tool-config` reports. Use when creating a package, when creating or editing a `tsconfig*.json`, a jest config, an oxlint config or an oxfmt config in a package, when adding `tsc`, `oxlint`, `oxfmt`, `rimraf`, `zx` or `nx` to its scripts or dependencies, or when `lint:tool-config` fails.
 ---
 
 # Support config: a package carries only what its tool cannot inherit

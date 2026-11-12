@@ -1,6 +1,6 @@
 ---
 name: structure-flow
-description: Decide where Ledger Wallet code goes in the monorepo layers (`support/`, `shared/`, `domain/`, `features/`, `apps/`, plus `devtools/`) with a first-yes-wins decision tree, and apply the placement rules behind it - entity versus flow state, one flow per journey, namespace-first naming, each package owning its view of an entity. Use when creating, moving or reviewing code or a package in any layer, deciding which layer owns a concern, splitting a flow, naming a package, or checking dependency boundaries.
+description: Decide which monorepo layer and package own a piece of code (`support/`, `shared/`, `domain/`, `features/`, `apps/`, `devtools/`) with a first-yes-wins decision tree and its placement rules. Use when creating, moving or reviewing code or a package in any layer, deciding which layer owns a concern, splitting a flow, naming a package, or checking dependency boundaries.
 ---
 
 # Structure and flow

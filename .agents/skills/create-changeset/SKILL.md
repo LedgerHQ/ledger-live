@@ -1,6 +1,6 @@
 ---
 name: create-changeset
-description: Create changesets for the ledger-live monorepo using @changesets/cli. Use when the user asks to add a changeset, prepare a release, or document package changes for a PR.
+description: Write a `.changeset/*.md` with the exact package names and level `minor`, or `patch` only in a pull request to a hotfix branch. Use when adding or editing a changeset, whether or not the user asked for one.
 ---
 
 # Create Changeset
@@ -14,6 +14,14 @@ Create a `.changeset/<adjective-noun-verb>.md` file (human-readable random ident
 
 Short description of the change
 ```
+
+## Level
+
+| Level | When to use |
+|-------|-------------|
+| `minor` | The minimum: new features, bug fixes, internal changes |
+| `major` | Breaking changes (rare, requires discussion) |
+| `patch` | Only in a PR based on a `hotfix` branch, never on `develop` |
 
 ## Package Names
 
@@ -33,14 +41,6 @@ Package names **must match exactly** what's in each `package.json`:
 - **Layer packages are private.** Every package under `shared/`, `domain/`, `features/`, `devtools/` and `support/` has `"private": true` and is never published to npm. [`.changeset/config.json`](../../../.changeset/config.json) sets `privatePackages.version: true` and `tag: false`: a changeset still bumps a private package's version and writes its `CHANGELOG.md`, but publishes and tags nothing. Name the changed layer packages in the changeset like any other package, together with the app (`ledger-live-desktop`, `live-mobile`) whose users see the change.
 - **No changeset for development-only changes.** A change that only touches `support/` presets or `devDependencies` needs none, and neither do docs and skills.
 - **Published packages** are the `@ledgerhq/*` packages without `"private": true` in their `package.json`, almost all under `libs/`. Their changeset becomes an npm release.
-
-## Impact Levels
-
-| Level | When to use |
-|-------|-------------|
-| `minor` | The minimum: new features, bug fixes, internal changes |
-| `major` | Breaking changes (rare, requires discussion) |
-| `patch` | Only in a PR based on a `hotfix` branch, never on `develop` |
 
 ## Description
 
