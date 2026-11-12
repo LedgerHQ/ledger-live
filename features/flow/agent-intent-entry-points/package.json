@@ -1,5 +1,5 @@
 {
-  "name": "@features/platform-agent-intent-entry-points",
+  "name": "@features/flow-agent-intent-entry-points",
   "version": "0.1.0",
   "private": true,
   "description": "Agent Intent entry points: flag reading, analytics attributes and the Manage your agents card",

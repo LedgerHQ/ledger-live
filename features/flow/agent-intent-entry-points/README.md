@@ -1,4 +1,4 @@
-# @features/platform-agent-intent-entry-points
+# @features/flow-agent-intent-entry-points
 
 > [!CAUTION]
 > **Status: UNSTABLE**. New package, in active development.

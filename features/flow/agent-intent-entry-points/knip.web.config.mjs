@@ -1,8 +1,7 @@
 import { createDualPlatformKnipConfig } from "../../../knip.config.base.mjs";
 
 export default createDualPlatformKnipConfig({
-  packagePath: "features/platform/agent-intent-entry-points",
-  platform: "native",
+  packagePath: "features/flow/agent-intent-entry-points",
+  platform: "web",
   entry: [],
-  additionalProjectExcludes: ["src/index.ts"],
 });
