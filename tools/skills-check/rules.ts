@@ -15,6 +15,8 @@ const REFERENCE_LINK = /^\s{0,3}\[[^\]]+\]:\s*<?([^\s>]+)>?/;
 const URL_SCHEME = /^[a-z][a-z\d+.-]*:/i;
 const PLAIN_PATH = /^[\w.@+-]+(?:\/[\w.@+-]+)*\/?$/;
 const MIN_WHAT_WORDS = 3;
+const MAX_SKILL_LINES = 500;
+const MAX_AGENTS_LINES = 100;
 
 export const DESCRIPTION_TRIGGER_CLAUSES = [
   "Use when",
@@ -46,6 +48,7 @@ export const CHECK_CODES = {
   description: "skill description says what it does and names when to use it",
   "dead-link": "relative Markdown links resolve",
   "dead-path": "backticked repo paths under a top-level folder exist",
+  length: `a \`SKILL.md\` has at most ${MAX_SKILL_LINES} lines and \`AGENTS.md\` at most ${MAX_AGENTS_LINES}`,
   waiver: "waivers.json entry is complete",
   "stale-waiver": "waivers.json entry still matches a finding",
   "waiver-list": "waivers.json must be a JSON array at the root",
@@ -245,6 +248,18 @@ const checkFrontmatter = (file: string, text: string, report: ReportFinding): vo
   }
 };
 
+const lineLimit = (file: string): number | null => {
+  if (file === "AGENTS.md") return MAX_AGENTS_LINES;
+  return frontmatterKind(file)?.kind === "skill" ? MAX_SKILL_LINES : null;
+};
+
+const checkLength = (file: string, text: string, report: ReportFinding): void => {
+  const limit = lineLimit(file);
+  const lines = text.split(/\r?\n/).length - (text.endsWith("\n") ? 1 : 0);
+  if (limit && lines > limit)
+    report(limit + 1, "length", `has ${lines} lines, over the ${limit}-line limit`);
+};
+
 const proseLines = (text: string): ProseLine[] => {
   const out: ProseLine[] = [];
   let fence: string | null = null;
@@ -401,6 +416,7 @@ export const checkRepo = (
       findings.push({ file, line, code, message, ...(path && { path }) });
     };
     checkFrontmatter(file, text, report);
+    checkLength(file, text, report);
     checkReferences(root, file, text, topLevel, report);
   }
   return applyWaivers(findings, waivers, waiversFile).sort(
