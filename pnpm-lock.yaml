@@ -12967,6 +12967,9 @@ importers:
       '@domain/entity-currency-token':
         specifier: workspace:*
         version: link:../../../domain/entity/currency-token
+      '@noble/hashes':
+        specifier: 'catalog:'
+        version: 1.8.0
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)

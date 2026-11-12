@@ -1,5 +1,14 @@
 import type { Portfolio } from "@domain/api-account-portfolio";
-import { DOT, ETH, evm, serverAccountId, serviceAccount, synced } from "./fakeService.mock";
+import {
+  BITCOIN,
+  DOT,
+  ETH,
+  TRX,
+  evm,
+  serverAccountId,
+  serviceAccount,
+  synced,
+} from "./fakeService.mock";
 import { readinessOf } from "./readiness";
 
 describe("readinessOf", () => {
@@ -33,6 +42,20 @@ describe("readinessOf", () => {
     expect(readinessOf(DOT, synced([]))).toEqual({
       state: "failed",
       detail: "Not an account the Portfolio service serves",
+    });
+  });
+
+  it.each([
+    ["Bitcoin", BITCOIN],
+    ["Tron", TRX],
+  ])("finds a %s account under its own service id", (_, descriptor) => {
+    expect(readinessOf(descriptor, synced([descriptor]))).toEqual({
+      state: "ready",
+      serverAccountId: serverAccountId(descriptor),
+    });
+    expect(readinessOf(descriptor, synced([]))).toEqual({
+      state: "pending",
+      detail: "Service account not created yet",
     });
   });
 });
