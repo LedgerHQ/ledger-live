@@ -1,5 +1,19 @@
 # @features/flow-account-detail-hero
 
+## 0.4.0
+
+### Minor Changes
+
+- [#24235](https://github.com/LedgerHQ/ledger-live/pull/24235) [`0ebe8ea`](https://github.com/LedgerHQ/ledger-live/commit/0ebe8ea274936993a9dff1c36bf7b036d531e1f5) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Hide the account detail empty state when a receive updates the balance before operations
+
+- [#24354](https://github.com/LedgerHQ/ledger-live/pull/24354) [`2c728a2`](https://github.com/LedgerHQ/ledger-live/commit/2c728a22e6acce91ec50f07bb676114850389d4a) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Shrink the account asset picker dialog to its content when few assets are listed
+
+- [#24134](https://github.com/LedgerHQ/ledger-live/pull/24134) [`b582a36`](https://github.com/LedgerHQ/ledger-live/commit/b582a360738037ab8393a554f304d9e942892287) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @ledgerhq/crypto-icons to v2.0.7
+
+  - Updated `@ledgerhq/crypto-icons` to `2.0.7`
+
+- [#24157](https://github.com/LedgerHQ/ledger-live/pull/24157) [`d528ea0`](https://github.com/LedgerHQ/ledger-live/commit/d528ea06fe6571e7c990936f2f22831e754b0178) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Share the account asset picker across desktop and mobile
+
 ## 0.4.0-next.0
 
 ### Minor Changes

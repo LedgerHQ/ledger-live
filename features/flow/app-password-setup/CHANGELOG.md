@@ -1,5 +1,12 @@
 # @features/flow-app-password-setup
 
+## 0.2.1
+
+### Patch Changes
+
+- Updated dependencies [[`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f)]:
+  - @features/platform-app-lock@0.8.0
+
 ## 0.2.1-next.0
 
 ### Patch Changes

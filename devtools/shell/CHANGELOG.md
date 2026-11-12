@@ -1,5 +1,16 @@
 # @devtools/shell
 
+## 0.14.0
+
+### Minor Changes
+
+- [#24320](https://github.com/LedgerHQ/ledger-live/pull/24320) [`d02425e`](https://github.com/LedgerHQ/ledger-live/commit/d02425e29efe55595b51556e598fde0f9c34574f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Align the native devtools with Lumen and the desktop: tiles for the categories, kind and owner tags, one icon per tool, Lumen inputs, one horizontal gutter
+
+### Patch Changes
+
+- Updated dependencies [[`be81b1c`](https://github.com/LedgerHQ/ledger-live/commit/be81b1c79213926d7963e730fc8ccf4323e58db4), [`4db45b9`](https://github.com/LedgerHQ/ledger-live/commit/4db45b933feabde39ce1bc98796e118eae10f47d)]:
+  - @devtools/registry@0.8.0
+
 ## 0.14.0-next.0
 
 ### Minor Changes

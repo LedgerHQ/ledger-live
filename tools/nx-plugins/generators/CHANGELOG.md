@@ -1,5 +1,11 @@
 # @ledgerhq/generators
 
+## 0.3.0
+
+### Minor Changes
+
+- [#24466](https://github.com/LedgerHQ/ledger-live/pull/24466) [`b0ced35`](https://github.com/LedgerHQ/ledger-live/commit/b0ced352853a2ecb19e505bbcbf1ddb05899c6dc) Thanks [@ysitbon](https://github.com/ysitbon)! - Reuse enforce-package-structure helpers in the universal-component generator
+
 ## 0.3.0-next.0
 
 ### Minor Changes

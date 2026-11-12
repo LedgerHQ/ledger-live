@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-predictions",
-  "version": "0.2.0-next.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Predictions onboarding sheet (intro, terms and consent steps) and trading wallet setup Ledger Wallet shows over the Predictions live app",
   "main": "src/index.ts",

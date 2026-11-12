@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-device-mock-server",
-  "version": "0.1.0-next.0",
+  "version": "0.1.0",
   "private": true,
   "description": "Device mock server client, URLs and settings shared by Ledger Wallet Desktop, Ledger Wallet Mobile and the DMK libs",
   "main": "src/index.ts",

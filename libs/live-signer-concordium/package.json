@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-signer-concordium",
-  "version": "0.9.6-next.0",
+  "version": "0.9.6",
   "description": "Ledger Hardware Wallet Concordium Signer",
   "keywords": [
     "Ledger",

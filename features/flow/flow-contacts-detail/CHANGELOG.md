@@ -1,5 +1,26 @@
 # @features/flow-contacts-detail
 
+## 0.4.0
+
+### Minor Changes
+
+- [#24217](https://github.com/LedgerHQ/ledger-live/pull/24217) [`298bf8d`](https://github.com/LedgerHQ/ledger-live/commit/298bf8de83301f558607d4611643ec8e54277a7e) Thanks [@ysitbon](https://github.com/ysitbon)! - `ContactDetailActionsMenu` moves to the native platform entry `@features/flow-contacts-detail/native` and reads its bottom inset from the sheet context; `ContactDetailActions` becomes internal. The universal entry is one unconditioned `src/index.ts`, `ContactAddressDetailDialog` and `ContactsEditSignerMismatchDialog` each have one props contract, `ContactDetailView` takes `onOpenLedgerWalletAccounts` and `onOpenAddressDetail`, and the web address detail dialog shows a Share tile when `onShareAddress` is set.
+
+- [#24134](https://github.com/LedgerHQ/ledger-live/pull/24134) [`b582a36`](https://github.com/LedgerHQ/ledger-live/commit/b582a360738037ab8393a554f304d9e942892287) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @ledgerhq/crypto-icons to v2.0.7
+
+  - Updated `@ledgerhq/crypto-icons` to `2.0.7`
+
+### Patch Changes
+
+- Updated dependencies [[`a95a6bc`](https://github.com/LedgerHQ/ledger-live/commit/a95a6bcb630289fde6782430fb511b9c48c9ffcc), [`360d6c9`](https://github.com/LedgerHQ/ledger-live/commit/360d6c9c4e4c37284397ee3118224767bc49076b), [`cea0076`](https://github.com/LedgerHQ/ledger-live/commit/cea0076fb3fd7c19d0e73b99ac76507278e390a4), [`31f7eba`](https://github.com/LedgerHQ/ledger-live/commit/31f7ebace98301cb3e46185a91621aa3ef59bb3b), [`7324065`](https://github.com/LedgerHQ/ledger-live/commit/732406590c11eca310f977f401429e4e1270c4b4), [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f), [`e7b21f8`](https://github.com/LedgerHQ/ledger-live/commit/e7b21f816021dbbe7314ff51bf32cc4d87291b98)]:
+  - @domain/entity-currency-crypto@0.19.0
+  - @domain/entity-contact@0.13.0
+  - @features/platform-contacts@0.12.2
+  - @features/flow-contacts-delete-address@0.4.1
+  - @features/flow-contacts-delete-contact@0.5.1
+  - @features/flow-contacts-edit-address@0.7.1
+  - @features/flow-contacts-edit-contact@0.9.1
+
 ## 0.4.0-next.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @devtools/pay-card
 
+## 0.12.0
+
+### Minor Changes
+
+- [#24320](https://github.com/LedgerHQ/ledger-live/pull/24320) [`d02425e`](https://github.com/LedgerHQ/ledger-live/commit/d02425e29efe55595b51556e598fde0f9c34574f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Align the native devtools with Lumen and the desktop: tiles for the categories, kind and owner tags, one icon per tool, Lumen inputs, one horizontal gutter
+
 ## 0.12.0-next.0
 
 ### Minor Changes

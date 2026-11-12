@@ -1,6 +1,6 @@
 {
   "name": "@shared/ui-animated-height",
-  "version": "0.3.0-next.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Web wrapper that animates a dialog's height to its content and caps it at the dialog's max height",
   "main": "src/index.ts",

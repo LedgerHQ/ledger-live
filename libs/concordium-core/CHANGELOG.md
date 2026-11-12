@@ -1,5 +1,11 @@
 # @ledgerhq/concordium-core
 
+## 0.10.0
+
+### Minor Changes
+
+- [#24488](https://github.com/LedgerHQ/ledger-live/pull/24488) [`3835bab`](https://github.com/LedgerHQ/ledger-live/commit/3835babeb6da9775f5750a2219f480a5422269ab) Thanks [@gre-ledger](https://github.com/gre-ledger)! - chore: upgrade bs58 to 6.0.0 and bs58check to 4.0.0, drop @types/bs58 and @types/bs58check
+
 ## 0.10.0-next.0
 
 ### Minor Changes

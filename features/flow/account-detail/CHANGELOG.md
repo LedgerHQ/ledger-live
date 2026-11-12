@@ -1,5 +1,23 @@
 # @features/flow-account-detail
 
+## 0.4.0
+
+### Minor Changes
+
+- [#24443](https://github.com/LedgerHQ/ledger-live/pull/24443) [`c842892`](https://github.com/LedgerHQ/ledger-live/commit/c8428923a5cf0ed556ff7a48a6e373c740cdb6a1) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Send `network` instead of `currency` and drop `isTokenAccount` on the account detail page events
+
+- [#24196](https://github.com/LedgerHQ/ledger-live/pull/24196) [`77e21f9`](https://github.com/LedgerHQ/ledger-live/commit/77e21f9395f93b4ede8e70b68f3f74139622a25a) Thanks [@deepyjr](https://github.com/deepyjr)! - Add the Account Detail Analytics introduction in a dedicated layout slot above the custom place, with dismissal persisted across desktop restarts and account entry context.
+
+- [#24462](https://github.com/LedgerHQ/ledger-live/pull/24462) [`73bd4ee`](https://github.com/LedgerHQ/ledger-live/commit/73bd4ee5567f188c79b70a3f2bd2507e81d2ba85) Thanks [@deepyjr](https://github.com/deepyjr)! - Track the Analytics filters, the Analytics banner click and its visibility on the account page.
+
+### Patch Changes
+
+- Updated dependencies [[`39cb975`](https://github.com/LedgerHQ/ledger-live/commit/39cb9752fe05ea8510059b5302f1e44575641b78), [`0ebe8ea`](https://github.com/LedgerHQ/ledger-live/commit/0ebe8ea274936993a9dff1c36bf7b036d531e1f5), [`2c728a2`](https://github.com/LedgerHQ/ledger-live/commit/2c728a22e6acce91ec50f07bb676114850389d4a), [`59280f5`](https://github.com/LedgerHQ/ledger-live/commit/59280f54cb1b4cf679f926dfeac4848103b0ac42), [`d36ed0a`](https://github.com/LedgerHQ/ledger-live/commit/d36ed0a5b624f1842e2ad3a857d502621dfb5fb9), [`498cbdd`](https://github.com/LedgerHQ/ledger-live/commit/498cbdd918b0117959e9e0ff9db6adb31191b138), [`62bdc34`](https://github.com/LedgerHQ/ledger-live/commit/62bdc344261d600a3d7d2b78a8cdb9e7b3c97c25), [`3a0d8aa`](https://github.com/LedgerHQ/ledger-live/commit/3a0d8aa1d4904fa0ccc53528ec092bc32a63dcd4), [`96fac1e`](https://github.com/LedgerHQ/ledger-live/commit/96fac1eb64856beb33cc68594e98c25e8b308898), [`0d83181`](https://github.com/LedgerHQ/ledger-live/commit/0d83181e9a96f55811f2ce5532527739bdb7e62a), [`e186896`](https://github.com/LedgerHQ/ledger-live/commit/e186896213df32feb1e6a80e38f45cf189655866), [`1c210e4`](https://github.com/LedgerHQ/ledger-live/commit/1c210e4b18a75779af04c6a9448c5e3e2dd02b24), [`b582a36`](https://github.com/LedgerHQ/ledger-live/commit/b582a360738037ab8393a554f304d9e942892287), [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f), [`d528ea0`](https://github.com/LedgerHQ/ledger-live/commit/d528ea06fe6571e7c990936f2f22831e754b0178), [`e7b21f8`](https://github.com/LedgerHQ/ledger-live/commit/e7b21f816021dbbe7314ff51bf32cc4d87291b98), [`0d2268d`](https://github.com/LedgerHQ/ledger-live/commit/0d2268d099e6ad7adac33bcb1e4456a28712a2ec)]:
+  - @shared/feature-flags@0.30.0
+  - @features/flow-account-detail-hero@0.4.0
+  - @features/platform-feature-flags@0.12.0
+  - @features/flow-account-detail-settings@0.3.1
+
 ## 0.4.0-next.0
 
 ### Minor Changes

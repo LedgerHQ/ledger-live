@@ -1,5 +1,37 @@
 # @shared/feature-flags
 
+## 0.30.0
+
+### Minor Changes
+
+- [#24412](https://github.com/LedgerHQ/ledger-live/pull/24412) [`39cb975`](https://github.com/LedgerHQ/ledger-live/commit/39cb9752fe05ea8510059b5302f1e44575641b78) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Sample `estimateFees` and `validateIntent` successes in `coin_module_call` with a new `preparationSampleRate` param of the `coinObservability` flag (default 0.1): the bridge calls them on every edit of a transaction, so sending each call made them most of the volume. Their failures are still always sent, and `craftTransaction`, `craftRawTransaction`, `craftTransactionData`, `combine` and `broadcast` stay unsampled. Each `coin_module_call` now carries its tier's `sampleRate` and an `inSample` flag, so dashboards can compute unbiased failure rates and estimate volumes from the sample.
+
+- [#24599](https://github.com/LedgerHQ/ledger-live/pull/24599) [`59280f5`](https://github.com/LedgerHQ/ledger-live/commit/59280f54cb1b4cf679f926dfeac4848103b0ac42) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the newReceiveFlow feature flag, off by default, with the families kept on the legacy receive flow
+
+- [#24350](https://github.com/LedgerHQ/ledger-live/pull/24350) [`d36ed0a`](https://github.com/LedgerHQ/ledger-live/commit/d36ed0a5b624f1842e2ad3a857d502621dfb5fb9) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Remove the supportDeviceApex feature flag: Apex is always listed in onboarding device selection and BLE pairing
+
+- [#24298](https://github.com/LedgerHQ/ledger-live/pull/24298) [`498cbdd`](https://github.com/LedgerHQ/ledger-live/commit/498cbdd918b0117959e9e0ff9db6adb31191b138) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Always show mobile transaction history and drop the lwmWallet40 operationsList param
+
+- [#24527](https://github.com/LedgerHQ/ledger-live/pull/24527) [`62bdc34`](https://github.com/LedgerHQ/ledger-live/commit/62bdc344261d600a3d7d2b78a8cdb9e7b3c97c25) Thanks [@ysitbon](https://github.com/ysitbon)! - Add the Ledger Sync add member and remove member Device Intents, which run the Ledger Sync SDK on the Device Intent Executor session, a `ledger_sync` source flow, and the `lwmLedgerSyncDie` and `lwdLedgerSyncDie` flags, off by default
+
+- [#24406](https://github.com/LedgerHQ/ledger-live/pull/24406) [`3a0d8aa`](https://github.com/LedgerHQ/ledger-live/commit/3a0d8aa1d4904fa0ccc53528ec092bc32a63dcd4) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Always show aggregated assets and drop the lwmWallet40 aggregatedAssets param
+
+- [#24448](https://github.com/LedgerHQ/ledger-live/pull/24448) [`96fac1e`](https://github.com/LedgerHQ/ledger-live/commit/96fac1eb64856beb33cc68594e98c25e8b308898) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Always show asset discoverability and drop the lwmWallet40 assetDiscoverability param
+
+- [#24347](https://github.com/LedgerHQ/ledger-live/pull/24347) [`0d83181`](https://github.com/LedgerHQ/ledger-live/commit/0d83181e9a96f55811f2ce5532527739bdb7e62a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Always show the mobile asset section and drop the lwmWallet40 assetSection param
+
+- [#24202](https://github.com/LedgerHQ/ledger-live/pull/24202) [`e186896`](https://github.com/LedgerHQ/ledger-live/commit/e186896213df32feb1e6a80e38f45cf189655866) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Always show mobile My Wallet and drop the lwmWallet40 myWallet param
+
+- [#24149](https://github.com/LedgerHQ/ledger-live/pull/24149) [`1c210e4`](https://github.com/LedgerHQ/ledger-live/commit/1c210e4b18a75779af04c6a9448c5e3e2dd02b24) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Add a Predictions card to the portfolio services entry points and a Predictions screen that opens the live app, behind the `ptxPredictionsLiveAppDesktop` and `ptxPredictionsLiveAppMobile` flags
+
+- [#24392](https://github.com/LedgerHQ/ledger-live/pull/24392) [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @reduxjs/toolkit to v2.13.0
+
+  - Updated `@reduxjs/toolkit` to `2.13.0`
+
+- [#24568](https://github.com/LedgerHQ/ledger-live/pull/24568) [`e7b21f8`](https://github.com/LedgerHQ/ledger-live/commit/e7b21f816021dbbe7314ff51bf32cc4d87291b98) Thanks [@qperrot](https://github.com/qperrot)! - Remove Stargaze from Ledger Wallet
+
+- [#23599](https://github.com/LedgerHQ/ledger-live/pull/23599) [`0d2268d`](https://github.com/LedgerHQ/ledger-live/commit/0d2268d099e6ad7adac33bcb1e4456a28712a2ec) Thanks [@CremaFR](https://github.com/CremaFR)! - Run the custom.exchange device steps (nonce, Exchange app confirmation, signature) and their errors of wallet-api live apps in the Device Intent Executor drawer, behind the llmWalletApiDeviceIntentExchange flag, and send its A/B assignment to analytics and the swap live app. Keep the httpdebug compat device id of HTTP proxy devices instead of prefixing it with usb|
+
 ## 0.30.0-next.0
 
 ### Minor Changes

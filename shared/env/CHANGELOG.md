@@ -1,5 +1,15 @@
 # @shared/env
 
+## 0.13.0
+
+### Minor Changes
+
+- [#24457](https://github.com/LedgerHQ/ledger-live/pull/24457) [`420409b`](https://github.com/LedgerHQ/ledger-live/commit/420409ba20ed5eca81813b15b7dcb85a92de1b5b) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Read the Cardano API and epoch-params endpoints from the coin config (`api.url`, `epochParams.url`) instead of the `CARDANO_*_ENDPOINT` env variables, which are removed
+
+  **Breaking change**: `CardanoConfig` gains the required `api: { url: string }` and `epochParams: { url: string }`, and `CARDANO_API_ENDPOINT`, `CARDANO_TESTNET_API_ENDPOINT`, `CARDANO_EPOCH_PARAMS_ENDPOINT` and `CARDANO_TESTNET_EPOCH_PARAMS_ENDPOINT` are no longer exported from `src/constants`. Each currency config carries its own endpoints, so a consumer that builds its own config (such as the coin-service) passes them there; `cardanoDefaults` holds the Ledger defaults.
+
+- [#24271](https://github.com/LedgerHQ/ledger-live/pull/24271) [`ef95b2e`](https://github.com/LedgerHQ/ledger-live/commit/ef95b2e00e490f024b81bfbf35cb582b5fed8783) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Drop the CoinGecko market client and keep the USD chart fallback
+
 ## 0.13.0-next.0
 
 ### Minor Changes

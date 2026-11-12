@@ -1,5 +1,24 @@
 # @features/flow-pay-card-assets
 
+## 0.7.0
+
+### Minor Changes
+
+- [#24216](https://github.com/LedgerHQ/ledger-live/pull/24216) [`cc6d736`](https://github.com/LedgerHQ/ledger-live/commit/cc6d736fba670fcf5795123eb89f664f01807cff) Thanks [@ysitbon](https://github.com/ysitbon)! - Name the card assets view model callbacks after their intent: `onAssetPress` becomes `onOpenAsset`, `onTopUpPress` becomes `onTopUpAsset`, `onWithdrawPress` becomes `onOpenWithdraw`, `onShowHistoryPress` becomes `onShowHistory`, `onManagePress` becomes `onManageAssets`, `onRetryPress` becomes `onRetry` and `onAddAssetPress` becomes `onAddAsset`. `CardAssetDetailsDrawer` takes `onOpenTransaction` instead of `onTransactionPress`.
+
+- [#24134](https://github.com/LedgerHQ/ledger-live/pull/24134) [`b582a36`](https://github.com/LedgerHQ/ledger-live/commit/b582a360738037ab8393a554f304d9e942892287) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @ledgerhq/crypto-icons to v2.0.7
+
+  - Updated `@ledgerhq/crypto-icons` to `2.0.7`
+
+### Patch Changes
+
+- Updated dependencies [[`cea0076`](https://github.com/LedgerHQ/ledger-live/commit/cea0076fb3fd7c19d0e73b99ac76507278e390a4), [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f)]:
+  - @domain/entity-currency@0.5.0
+  - @domain/api-card-management@0.9.0
+  - @features/flow-pay-card-auth@0.12.0
+  - @features/flow-pay-card-wallets@0.6.4
+  - @features/flow-pay-card-transactions@0.7.2
+
 ## 0.7.0-next.0
 
 ### Minor Changes

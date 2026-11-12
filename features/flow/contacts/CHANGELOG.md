@@ -1,5 +1,21 @@
 # @features/flow-contacts
 
+## 0.18.0
+
+### Minor Changes
+
+- [#24297](https://github.com/LedgerHQ/ledger-live/pull/24297) [`6464950`](https://github.com/LedgerHQ/ledger-live/commit/6464950833e7e27eb44da0171772f3ba5be8c116) Thanks [@ysitbon](https://github.com/ysitbon)! - `@features/flow-contacts` exposes `ContactsView` and `ContactsButton` from a single `.` entry with shared `ContactsViewProps` and `ContactsButtonProps` contracts. List logic and platform contact hooks are imported from `@features/flow-contacts-list` and `@features/platform-contacts`. Desktop and mobile hosts mount feature and Ledger Sync introduction UI outside `ContactsView`.
+
+### Patch Changes
+
+- Updated dependencies [[`360d6c9`](https://github.com/LedgerHQ/ledger-live/commit/360d6c9c4e4c37284397ee3118224767bc49076b), [`298bf8d`](https://github.com/LedgerHQ/ledger-live/commit/298bf8de83301f558607d4611643ec8e54277a7e), [`cea0076`](https://github.com/LedgerHQ/ledger-live/commit/cea0076fb3fd7c19d0e73b99ac76507278e390a4), [`b582a36`](https://github.com/LedgerHQ/ledger-live/commit/b582a360738037ab8393a554f304d9e942892287), [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f)]:
+  - @domain/entity-contact@0.13.0
+  - @features/flow-contacts-detail@0.4.0
+  - @features/platform-contacts@0.12.2
+  - @features/flow-contacts-add-contact@0.10.1
+  - @features/flow-contacts-delete-contact@0.5.1
+  - @features/flow-contacts-list@0.12.1
+
 ## 0.18.0-next.0
 
 ### Minor Changes

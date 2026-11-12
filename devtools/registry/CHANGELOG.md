@@ -1,5 +1,29 @@
 # @devtools/registry
 
+## 0.8.0
+
+### Minor Changes
+
+- [#24325](https://github.com/LedgerHQ/ledger-live/pull/24325) [`be81b1c`](https://github.com/LedgerHQ/ledger-live/commit/be81b1c79213926d7963e730fc8ccf4323e58db4) Thanks [@deepyjr](https://github.com/deepyjr)! - Add an account-detail DevTools tool to reset the Account Detail card that redirects to Analytics
+
+- [#24415](https://github.com/LedgerHQ/ledger-live/pull/24415) [`4db45b9`](https://github.com/LedgerHQ/ledger-live/commit/4db45b933feabde39ce1bc98796e118eae10f47d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the coin-config DevTool on desktop and mobile to override LiveConfig values. The overrides slice moves to the new @shared/live-config-overrides package, and mobile now keeps the overrides across restarts
+
+### Patch Changes
+
+- Updated dependencies [[`7185de6`](https://github.com/LedgerHQ/ledger-live/commit/7185de6c3886010f3eac7cee2128eb883230e872), [`522d62b`](https://github.com/LedgerHQ/ledger-live/commit/522d62b80064e808746ad88be9c79d8477b1bf44), [`be81b1c`](https://github.com/LedgerHQ/ledger-live/commit/be81b1c79213926d7963e730fc8ccf4323e58db4), [`ac116ba`](https://github.com/LedgerHQ/ledger-live/commit/ac116baae8763f331fd21885be36474933b52dff), [`842a9a5`](https://github.com/LedgerHQ/ledger-live/commit/842a9a547be2224eec86295c57c288f0c51f8fbd), [`d02425e`](https://github.com/LedgerHQ/ledger-live/commit/d02425e29efe55595b51556e598fde0f9c34574f), [`4db45b9`](https://github.com/LedgerHQ/ledger-live/commit/4db45b933feabde39ce1bc98796e118eae10f47d), [`e8ca231`](https://github.com/LedgerHQ/ledger-live/commit/e8ca231d007f43839987343437507ea02d0dad0d), [`43d4d30`](https://github.com/LedgerHQ/ledger-live/commit/43d4d308546a4013f2e230a42235015377eaa694)]:
+  - @devtools/account-operation@0.3.0
+  - @devtools/mock-accounts@0.3.0
+  - @devtools/account-balance@0.3.0
+  - @devtools/account-detail@0.2.0
+  - @devtools/env@0.3.0
+  - @devtools/cloud-sync@0.4.0
+  - @devtools/trustchain@0.4.0
+  - @devtools/feature-flags@0.12.0
+  - @devtools/app-config@0.3.0
+  - @devtools/device-onboarding@0.6.0
+  - @devtools/pay-card@0.12.0
+  - @devtools/coin-config@0.2.0
+
 ## 0.8.0-next.0
 
 ### Minor Changes
