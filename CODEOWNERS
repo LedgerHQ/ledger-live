@@ -452,6 +452,7 @@ features/platform/device-intent/                                   @ledgerhq/liv
 features/platform/device-action-content/                           @ledgerhq/live-devices
 features/platform/device-mock-server/                              @ledgerhq/live-devices
 features/flow/device-mock-server/                                  @ledgerhq/live-devices
+features/flow/device-os-update/                                    @ledgerhq/live-devices
 features/platform/device-kit/                                      @ledgerhq/live-devices
 features/platform/device-os-update/                                @ledgerhq/live-devices
 domain/entity/device-os-update/                                    @ledgerhq/live-devices
