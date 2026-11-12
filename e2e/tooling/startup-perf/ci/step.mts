@@ -58,5 +58,9 @@ export function linesOf(text: string): string[] {
 /** Lines back to text, each ending with a newline. */
 export const textOf = (lines: string[]): string => lines.map(line => `${line}\n`).join("");
 
+/** A verdict of src/analysis/analyze.ts that fails the measure job. */
+export const isFailingVerdict = (verdict: string): boolean =>
+  /^(FAIL|Not detected|Not enough pairs)/.test(verdict);
+
 export const countLines = (lines: string[], matches: (line: string) => boolean): number =>
   lines.filter(line => matches(line)).length;

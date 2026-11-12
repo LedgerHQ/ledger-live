@@ -8,10 +8,10 @@ jobs check out `ci/` alone, so the measured ref's Nx never sees a second copy of
 measure jobs check out this folder, `e2e/mobile/userdata` and, on Android, `tools/scripts` and the
 signing keystore.
 
-`ci/` holds what the plan and build jobs run, from a checkout of `ci/` alone and, in the build
-jobs, with the measured ref's Node (24.14 or later from `live-mobile@4.26.0` on): it never imports
-from `src/` (`src/` may import from `ci/`), and its scripts are `.mts` so Node runs them as ES
-modules without the `package.json`. `devices/` holds the shell the measure jobs run to get the
+`ci/` holds what the plan, build and Slack jobs run, from a checkout of `ci/` alone and, in the
+build jobs, with the measured ref's Node (24.14 or later from `live-mobile@4.26.0` on): it never
+imports from `src/` (`src/` may import from `ci/`), and its scripts are `.mts` so Node runs them as
+ES modules without the `package.json`. `devices/` holds the shell the measure jobs run to get the
 emulators or simulators and Maestro ready, `src/` the two programs (`measure/` writes
 `samples.jsonl`, `analysis/` reads it), and `flows/` the Maestro flows. Each test sits next to its
 module.
@@ -21,7 +21,8 @@ module.
 | `ci/resolve-refs.mts`               | The plan job: resolves refs A and B to commits, branches and tags only                      |
 | `ci/prepare-build.mts`              | Makes the checked-out ref's E2E prerelease build prod-like, before `e2e:build`              |
 | `ci/verify-build.mts`               | Checks the built binary: no `MOCK`/`DETOX`, `FORCE_DEBUG_VISIBLE=1`, real blur              |
-| `ci/step.mts`                       | What those three share: workspace paths, error annotations, job summary                     |
+| `ci/slack-report.mts`               | The Slack job: the run's result from the jobs and each `summary.json`                       |
+| `ci/step.mts`                       | What those share: workspace paths, error annotations, job summary, failing verdicts         |
 | `devices/boot-emulators.sh`         | Boots the two Android emulators: 4 cores, animations on, cellular, idle                     |
 | `devices/boot-simulators.sh`        | Creates and boots the two simulators, then waits for an idle host                           |
 | `devices/install-maestro.sh`        | Installs the pinned Maestro, checked against its SHA-256                                    |
@@ -56,7 +57,10 @@ longer exists).
 
 Every weekday at 03:17 UTC the workflow runs `prod-vs-develop` with the settings of `NIGHTLY` in
 `ci/resolve-refs.mts` (both platforms and scenarios, 20 pairs, 100 ms), as a scheduled run has no
-inputs; the plan job passes the settings on to the other jobs.
+inputs; the plan job passes the settings on to the other jobs. Its result is posted to
+#live-repo-health, passed or failed: each platform and scenario's verdict and B − A, or why it has
+none (a build that did not finish, a measurement that timed out). A dispatch posts there too when
+`slack_notif` is ticked. A run cancelled by hand posts nothing.
 
 Refs are branches or tags only: a raw SHA could be a fork's commit, run with the workflow's secrets.
 They start at `live-mobile@4.26.0`: `prepare-build.mts` rejects older ones, which still count the
