@@ -24,6 +24,14 @@ jest.mock("../../ModularDrawer", () => ({
   }),
 }));
 
+// Flag off: every entry point keeps the legacy confirmation screen.
+jest.mock("../hooks/useReceiveScreen", () => ({
+  useReceiveScreen: () => (params: Record<string, unknown>) => ({
+    screen: "ReceiveConfirmation",
+    params,
+  }),
+}));
+
 jest.mock("../useReceiveOptionsDrawerController", () => ({
   useReceiveOptionsDrawerController: () => ({
     openDrawer: mockOpenReceiveOptionsDrawer,

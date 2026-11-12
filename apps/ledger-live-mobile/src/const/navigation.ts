@@ -164,6 +164,7 @@ export enum ScreenName {
   ProviderList = "ProviderList",
   PurchaseDevice = "PurchaseDevice",
   ReceiveConfirmation = "ReceiveConfirmation",
+  ReceiveAddress = "ReceiveAddress",
   ReceiveConnectDevice = "ReceiveConnectDevice",
   ReceiveVerifyAddress = "ReceiveVerifyAddress",
   ReceiveProvider = "ReceiveProvider",

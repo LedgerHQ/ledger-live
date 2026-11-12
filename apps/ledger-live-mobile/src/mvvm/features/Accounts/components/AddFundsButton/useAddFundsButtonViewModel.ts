@@ -10,6 +10,7 @@ import { useNavigation } from "@react-navigation/core";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { NavigatorName, ScreenName } from "~/const";
+import { useReceiveScreen } from "LLM/features/Receive/hooks/useReceiveScreen";
 
 export type Props = {
   accounts: Account[];
@@ -31,6 +32,7 @@ export default function useAddFundsButtonViewModel({
   const { analyticsMetadata } = useAnalytics(AnalyticContexts.AddAccounts);
 
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
+  const receiveScreen = useReceiveScreen();
 
   const openFundOrAccountListDrawer = useCallback(() => {
     let clickMetadata;
@@ -39,16 +41,16 @@ export default function useAddFundsButtonViewModel({
     if (parentNavigationState?.routeNames[0] === NavigatorName.Onboarding && selectedAccount?.id) {
       clickMetadata = analyticsMetadata.AddFunds?.onQuickActionOpen;
       track(clickMetadata.eventName, { ...clickMetadata.payload, flow: "onboarding" });
-      navigation.navigate(NavigatorName.ReceiveFunds, {
-        screen: ScreenName.ReceiveConfirmation,
-        params: {
+      navigation.navigate(
+        NavigatorName.ReceiveFunds,
+        receiveScreen({
           currency:
             currency.type === "TokenCurrency"
               ? getCryptoCurrencyById(currency.parentCurrencyId)
               : currency,
           accountId: selectedAccount?.id,
-        },
-      });
+        }),
+      );
     } else {
       if (accounts.length === 1) {
         clickMetadata = analyticsMetadata.AddFunds?.onQuickActionOpen;
@@ -66,6 +68,7 @@ export default function useAddFundsButtonViewModel({
     navigation,
     currency,
     selectedAccount?.id,
+    receiveScreen,
   ]);
 
   const closeAccountListDrawer = useCallback(() => {

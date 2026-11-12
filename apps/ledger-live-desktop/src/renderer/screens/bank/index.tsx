@@ -7,7 +7,7 @@ import { useManifestWithSessionId } from "@ledgerhq/live-common/hooks/useManifes
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { getNoahGoToURL, type NoahAuthPath } from "@features/flow-pay-bank-transfer";
-import { openModal } from "~/renderer/actions/modals";
+import { openReceiveFlow } from "LLD/features/Receive/openReceiveFlow";
 import { RECEIVE_SOURCE_PAGE } from "LLD/features/Receive/types";
 import Card from "~/renderer/components/Box/Card";
 import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
@@ -51,7 +51,7 @@ const Bank = () => {
   function handleClose() {
     navigate(-1);
     if (!noahAuth) {
-      dispatch(openModal("MODAL_RECEIVE", { sourcePage: RECEIVE_SOURCE_PAGE.BANK }));
+      dispatch(openReceiveFlow({ sourcePage: RECEIVE_SOURCE_PAGE.BANK }));
     }
   }
 

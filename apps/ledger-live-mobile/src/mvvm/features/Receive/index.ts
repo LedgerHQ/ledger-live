@@ -11,6 +11,7 @@ import { setOriginFlow } from "~/analytics/originFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { useReceiveNoahEntry } from "../Noah/useNoahEntryPoint";
 import { useReceiveOptionsDrawerController } from "./useReceiveOptionsDrawerController";
+import { useReceiveScreen } from "./hooks/useReceiveScreen";
 
 type Props = {
   currency?: CryptoOrTokenCurrency;
@@ -43,6 +44,7 @@ export function useOpenReceiveDrawer({
   const defaultNavigation = useNavigation();
   const { openDrawer } = useModularDrawerController();
   const { openDrawer: openReceiveOptionsDrawer } = useReceiveOptionsDrawerController();
+  const receiveScreen = useReceiveScreen();
 
   const { showNoahMenu } = useReceiveNoahEntry({
     currency: currency,
@@ -59,28 +61,22 @@ export function useOpenReceiveDrawer({
         accountId: (account.type !== "Account" && account?.parentId) || account.id,
       };
 
-      // Navigate to ReceiveFunds > ReceiveConfirmation
+      // Navigate to ReceiveFunds > receive screen (new or legacy, see getReceiveScreen)
       // If navigationOverride is provided (e.g., from onboarding), it can navigate to BaseOnboarding > ReceiveFunds
       // Otherwise, use the default navigation context
       if (navigationOverride) {
         navigationOverride.navigate(NavigatorName.BaseOnboarding, {
           screen: NavigatorName.ReceiveFunds,
-          params: {
-            screen: ScreenName.ReceiveConfirmation,
-            params: confirmationParams,
-          },
+          params: receiveScreen(confirmationParams),
         });
       } else {
-        defaultNavigation.navigate(NavigatorName.ReceiveFunds, {
-          screen: ScreenName.ReceiveConfirmation,
-          params: {
-            ...confirmationParams,
-            hideBackButton: hideBackButton ?? true,
-          },
-        });
+        defaultNavigation.navigate(
+          NavigatorName.ReceiveFunds,
+          receiveScreen({ ...confirmationParams, hideBackButton: hideBackButton ?? true }),
+        );
       }
     },
-    [defaultNavigation, navigationOverride, hideBackButton],
+    [defaultNavigation, navigationOverride, hideBackButton, receiveScreen],
   );
 
   const handleOnclick = useCallback(

@@ -68,6 +68,10 @@ export const urls = {
   // Support home until product publishes the gas sponsorship article.
   gasSponsorship: "https://support.ledger.com/",
   recipientAddressInfo: "https://support.ledger.com/article/4404389453841-zd",
+  receiveFlow: {
+    receiveFromExchange: "https://support.ledger.com/article/13108505155485-zd",
+    receiveSecurely: "https://support.ledger.com/article/4404389453841-zd",
+  },
   managerAppLearnMore: "https://support.ledger.com/",
   privacyPolicy:
     "https://shop.ledger.com/pages/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",

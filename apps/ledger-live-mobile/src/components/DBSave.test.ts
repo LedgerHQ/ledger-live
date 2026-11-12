@@ -25,7 +25,7 @@ describe("payCardPersistedSelector (mobile persistence lens)", () => {
   it("composes the pay card flow slices into one persisted blob", () => {
     const state = {
       payCardFeatureTour: { hasSeenFeatureTour: true },
-      payRequestVerifyHint: { hasSeenReceiveVerifyHint: true },
+      receiveVerifyHint: { hasSeenReceiveVerifyHint: true },
       payCardBalance: { balanceFilter: "ethereum/erc20/usd__coin" },
       payCardLoginIntro: { hasSeenLoginIntro: true },
       payCardOnboardingWidget: {
@@ -54,7 +54,7 @@ describe("payCardPersistedSelector (mobile persistence lens)", () => {
 describe("payCardDbSaveSliceSelector (mobile save trigger)", () => {
   const base = {
     payCardFeatureTour: { hasSeenFeatureTour: false },
-    payRequestVerifyHint: { hasSeenReceiveVerifyHint: false },
+    receiveVerifyHint: { hasSeenReceiveVerifyHint: false },
     payCardBalance: { balanceFilter: "all" },
     payCardLoginIntro: { hasSeenLoginIntro: false },
     payCardOnboardingWidget: { hasCompletedOnboarding: false },
@@ -66,7 +66,7 @@ describe("payCardDbSaveSliceSelector (mobile save trigger)", () => {
 
   it.each([
     "payCardFeatureTour",
-    "payRequestVerifyHint",
+    "receiveVerifyHint",
     "payCardBalance",
     "payCardLoginIntro",
     "payCardOnboardingWidget",

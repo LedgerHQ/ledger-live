@@ -6,7 +6,7 @@ import { restoreLargeScreenUpsellModalState } from "@ledgerhq/live-engagement/la
 import { restorePredictionsState } from "@domain/entity-predictions";
 import { restorePayCardBalanceFilter } from "@features/flow-pay-balance/state";
 import { restorePayCardFeatureTour } from "@features/flow-pay-feature-tour/state";
-import { restoreReceiveVerifyHint } from "@features/flow-pay-request/state";
+import { restoreReceiveVerifyHint } from "@features/flow-receive/state";
 import {
   restoreCardAuthStatus,
   restorePayCardLoginIntro,

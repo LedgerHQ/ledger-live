@@ -3,11 +3,22 @@ import { act, renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import featureFlagsReducer, { createFeatureFlagsMiddleware } from "@shared/feature-flags";
+import { receiveVerifyHintSlice } from "@features/flow-receive/state";
 import { useReceiveToolProps } from "./useReceiveToolProps";
+
+const TRIGGER = {
+  assets: [],
+  onReceive: jest.fn(),
+  onPickAsset: jest.fn(),
+  onOpenDeeplink: jest.fn(),
+};
 
 function buildStore() {
   return configureStore({
-    reducer: { featureFlags: featureFlagsReducer },
+    reducer: {
+      featureFlags: featureFlagsReducer,
+      receiveVerifyHint: receiveVerifyHintSlice.reducer,
+    },
     middleware: gdm => gdm().concat(createFeatureFlagsMiddleware({ resolutionConfig: {} })),
   });
 }
@@ -17,7 +28,7 @@ function renderTool() {
   const wrapper = ({ children }: PropsWithChildren) => (
     <Provider store={store}>{children}</Provider>
   );
-  const { result } = renderHook(() => useReceiveToolProps(), { wrapper });
+  const { result } = renderHook(() => useReceiveToolProps(TRIGGER), { wrapper });
   return { store, result };
 }
 

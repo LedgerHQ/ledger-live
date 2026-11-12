@@ -16,6 +16,7 @@ import { setOriginFlow } from "~/renderer/analytics/originFlow";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { ReceiveOptionsDialog } from "LLD/features/Receive";
+import { openReceiveFlow } from "LLD/features/Receive/openReceiveFlow";
 import { GlobalModalData } from "../types";
 import {
   onboardingReceiveFlowSelector,
@@ -49,6 +50,7 @@ function getInitialState(
 
 const ReceiveModal = (props: GlobalModalData["MODAL_RECEIVE"]) => {
   const noahFeature = useFeature("noah");
+  const isNewReceiveFlow = useFeature("newReceiveFlow")?.enabled === true;
   const isOnboardingReceiveFlow = useSelector(onboardingReceiveFlowSelector);
   const isNoahActive = noahFeature?.enabled === true && props?.shouldUseReceiveOptions !== false;
   const initialState = getInitialState(
@@ -147,7 +149,15 @@ const ReceiveModal = (props: GlobalModalData["MODAL_RECEIVE"]) => {
     return (
       <ReceiveOptionsDialog
         onClose={() => handleClose(false)}
-        onGoToAccount={() => setStepId("account")}
+        onGoToAccount={() => {
+          if (!isNewReceiveFlow) {
+            setStepId("account");
+            return;
+          }
+          // The new flow takes over after Noah's "crypto address" choice.
+          dispatch(closeModal("MODAL_RECEIVE"));
+          dispatch(openReceiveFlow({ ...props, shouldUseReceiveOptions: false }));
+        }}
         sourcePage={props?.sourcePage}
       />
     );

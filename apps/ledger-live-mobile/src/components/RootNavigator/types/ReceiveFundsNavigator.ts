@@ -1,4 +1,9 @@
-import { Currency } from "@domain/entity-currency";
+import {
+  Currency,
+  CryptoOrTokenCurrency,
+  type CryptoOrTokenCurrencyId,
+} from "@domain/entity-currency";
+import type { AccountUUID } from "@domain/entity-account-descriptor";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import { AccountLike } from "@ledgerhq/types-live";
 import { NavigatorScreenParams } from "@react-navigation/native";
@@ -32,6 +37,13 @@ export type ReceiveFundsStackParamList = {
     createTokenAccount?: boolean;
     onSuccess?: (address?: string) => void;
     onError?: () => void;
+  };
+  [ScreenName.ReceiveAddress]: {
+    accountUUID: AccountUUID;
+    /** What the user receives: the account's coin, or a token of its network. */
+    assetId: CryptoOrTokenCurrencyId;
+    /** Where the screen sends the user when the account cannot receive here yet. */
+    legacyParams: ReceiveFundsStackParamList[ScreenName.ReceiveConfirmation];
   };
   [ScreenName.ReceiveConfirmation]: {
     account?: AccountLike;

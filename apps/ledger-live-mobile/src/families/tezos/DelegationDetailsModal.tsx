@@ -29,6 +29,7 @@ import BakerImage from "./BakerImage";
 import DelegatingContainer from "./DelegatingContainer";
 import { useAccountName } from "~/reducers/wallet";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
+import { useReceiveScreen } from "LLM/features/Receive/hooks/useReceiveScreen";
 
 type Props = {
   isOpened: boolean;
@@ -149,6 +150,7 @@ export default function DelegationDetailsModal({
 }: Props) {
   const { colors } = useTheme();
   const navigation = useNavigation();
+  const receiveScreen = useReceiveScreen();
   const currency = getAccountCurrency(account);
   const unit = useAccountUnit(account);
   const mainAccount = getMainAccount(account, parentAccount);
@@ -168,15 +170,15 @@ export default function DelegationDetailsModal({
     if (txURL) Linking.openURL(txURL);
   }, [txURL]);
   const onReceive = useCallback(() => {
-    navigation.navigate(NavigatorName.ReceiveFunds, {
-      screen: ScreenName.ReceiveConfirmation,
-      params: {
+    navigation.navigate(
+      NavigatorName.ReceiveFunds,
+      receiveScreen({
         accountId,
         parentId,
-      },
-    });
+      }),
+    );
     onClose();
-  }, [accountId, parentId, navigation, onClose]);
+  }, [accountId, parentId, navigation, onClose, receiveScreen]);
   const onChangeValidator = useCallback(() => {
     // FIXME how to get rid of Started step in nav stack?
     navigation.navigate(NavigatorName.TezosDelegationFlow, {

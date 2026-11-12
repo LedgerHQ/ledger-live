@@ -83,6 +83,7 @@
     "@domain/entity-account-alias": "workspace:^",
     "@domain/entity-account-balance": "workspace:*",
     "@domain/entity-account-data": "workspace:*",
+    "@domain/entity-account-descriptor": "workspace:*",
     "@domain/entity-account-name": "workspace:^",
     "@domain/entity-account-operation": "workspace:*",
     "@domain/entity-account-status": "workspace:*",
@@ -141,6 +142,7 @@
     "@features/flow-pay-request": "workspace:^",
     "@features/flow-portfolio-services-entry-points": "workspace:^",
     "@features/flow-predictions": "workspace:^",
+    "@features/flow-receive": "workspace:^",
     "@features/platform-account-analytics": "workspace:^",
     "@features/platform-account-source-coin-module": "workspace:^",
     "@features/platform-aggregated-assets": "workspace:*",
@@ -311,7 +313,6 @@
     "@ledgerhq/zcash-utils-win32-x64-msvc": "catalog:"
   },
   "devDependencies": {
-    "@domain/entity-account-descriptor": "workspace:*",
     "@electron/notarize": "3.1.2",
     "@jest/globals": "catalog:",
     "@ledgerhq/hw-transport-mocker": "catalog:",

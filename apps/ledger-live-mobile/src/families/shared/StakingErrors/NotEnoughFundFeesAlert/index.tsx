@@ -16,6 +16,7 @@ import { AccountLike } from "@ledgerhq/types-live";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { EntryOf } from "~/types/helpers";
 import { navigateToSwapTab } from "~/screens/Swap/navigation/navigateToSwapTab";
+import { useReceiveScreen } from "LLM/features/Receive/hooks/useReceiveScreen";
 
 type Props = {
   account: AccountLike;
@@ -28,6 +29,7 @@ const NotEnoughFundFeesAlert: React.FC<Props> = ({ account }) => {
   const { t } = useTranslation();
   const { locale } = useSettings();
   const navigation = useNavigation<Navigation>();
+  const receiveScreen = useReceiveScreen();
   const accounts = useSelector(shallowAccountsSelector);
 
   const unit = useAccountUnit(account);
@@ -129,14 +131,11 @@ const NotEnoughFundFeesAlert: React.FC<Props> = ({ account }) => {
       label: t("errors.NotEnoughBalanceForUnstaking.ctas.deposit"),
       component: renderLink([
         NavigatorName.ReceiveFunds,
-        {
-          screen: ScreenName.ReceiveConfirmation,
-          params: {
-            accountId: account.id,
-            parentId: parentAccount.id,
-            currency,
-          },
-        },
+        receiveScreen({
+          accountId: account.id,
+          parentId: parentAccount.id,
+          currency,
+        }),
       ]),
     });
     return ctas;
@@ -150,6 +149,7 @@ const NotEnoughFundFeesAlert: React.FC<Props> = ({ account }) => {
     renderTextLink,
     goToSwap,
     t,
+    receiveScreen,
   ]);
 
   const ctasKey =

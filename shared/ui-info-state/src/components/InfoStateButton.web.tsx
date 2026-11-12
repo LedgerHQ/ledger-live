@@ -14,6 +14,7 @@ export function InfoStateButton({
       appearance={appearance}
       size="lg"
       isFull
+      icon={cta.icon}
       onClick={cta.onPress}
       disabled={cta.disabled}
       loading={cta.loading}

@@ -4,6 +4,8 @@ import { compose } from "redux";
 import { withTranslation, Trans } from "react-i18next";
 import { TFunction } from "i18next";
 import { openModal } from "~/renderer/actions/modals";
+import { useDispatch } from "LLD/hooks/redux";
+import { openReceiveFlow } from "LLD/features/Receive/openReceiveFlow";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { canReceive, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
@@ -32,10 +34,11 @@ type Props = OwnProps & {
   t: TFunction;
   openModal: (name: string, data: Record<string, unknown>) => void;
 };
-function EmptyStateAccount({ t, account, parentAccount, openModal }: Props) {
+function EmptyStateAccount({ t, account, parentAccount }: Props) {
   const mainAccount = getMainAccount(account, parentAccount);
   const currency = getAccountCurrency(account);
   const { isCurrencyAvailable } = useRampCatalog();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const availableOnBuy = !!currency && isCurrencyAvailable(currency.id, "onRamp");
@@ -118,11 +121,13 @@ function EmptyStateAccount({ t, account, parentAccount, openModal }: Props) {
               mt={5}
               primary
               onClick={() =>
-                openModal("MODAL_RECEIVE", {
-                  account,
-                  parentAccount,
-                  sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT_PAGE,
-                })
+                dispatch(
+                  openReceiveFlow({
+                    account,
+                    parentAccount,
+                    sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT_PAGE,
+                  }),
+                )
               }
             >
               <Box horizontal flow={1} alignItems="center">

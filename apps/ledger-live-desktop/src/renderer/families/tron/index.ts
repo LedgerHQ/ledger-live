@@ -13,8 +13,10 @@ import AccountDetailDelegations from "./AccountDetailDelegations";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 import AccountDetailBalanceSummary from "./AccountDetailBalanceSummary";
 import StepReceiveFundsPostAlert from "./StepReceiveFundsPostAlert";
+import receiveAddressConfig from "./receiveAddressConfig";
 
 const family: LLDCoinFamily<TronAccount, Transaction, TransactionStatus, TronOperation> = {
+  receiveAddressConfig,
   operationDetails,
   accountHeaderManageActions,
   transactionConfirmFields,

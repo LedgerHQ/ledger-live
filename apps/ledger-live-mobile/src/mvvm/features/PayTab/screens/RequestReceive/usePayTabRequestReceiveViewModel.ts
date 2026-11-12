@@ -10,7 +10,7 @@ import { trackButtonClicked, trackEvent } from "@features/platform-pay-analytics
 import {
   markReceiveVerifyHintSeen,
   selectHasSeenReceiveVerifyHint,
-} from "@features/flow-pay-request/state";
+} from "@features/flow-receive/state";
 import { useHideTabBar } from "LLM/hooks/useTabBarVisibility";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { deriveRequestReceiveData } from "LLM/features/PayTab/hooks/deriveRequestReceiveData";

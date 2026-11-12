@@ -3,10 +3,9 @@ import { Flex, Icons, Text } from "@ledgerhq/react-ui";
 import { Account } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "LLD/hooks/redux";
 import { useLocation, useNavigate } from "react-router";
 import styled from "styled-components";
-import { openModal } from "~/renderer/actions/modals";
+import { useOpenReceiveFlow } from "LLD/features/Receive/hooks/useOpenReceiveFlow";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import {
   ADD_ACCOUNT_EVENTS_NAME,
@@ -46,7 +45,7 @@ const ActionsContainer = ({ account, currencyId }: Props) => {
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const { openReceiveFlow } = useOpenReceiveFlow();
   const { isCurrencyAvailable } = useRampCatalog();
   const { trackAddAccountEvent } = useAddAccountAnalytics();
   const accountsPath = ACCOUNTS_SIDEBAR_PATH;
@@ -58,10 +57,8 @@ const ActionsContainer = ({ account, currencyId }: Props) => {
     });
     setDrawer();
     if (location.pathname === "/manager") navigate(accountsPath);
-    dispatch(
-      openModal("MODAL_RECEIVE", { account, sourcePage: ADD_ACCOUNT_PAGE_NAME.FUNDING_ACTIONS }),
-    );
-  }, [account, accountsPath, dispatch, location.pathname, navigate, trackAddAccountEvent]);
+    openReceiveFlow({ account, source: ADD_ACCOUNT_PAGE_NAME.FUNDING_ACTIONS });
+  }, [account, accountsPath, openReceiveFlow, location.pathname, navigate, trackAddAccountEvent]);
 
   const handleBuy = useCallback(() => {
     trackAddAccountEvent(ADD_ACCOUNT_EVENTS_NAME.ADD_ACCOUNT_BUTTON_CLICKED, {

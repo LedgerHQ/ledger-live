@@ -1,35 +1,39 @@
 import { getStateFromPath } from "@react-navigation/native";
-import { Dispatch } from "redux";
+import type { Dispatch, UnknownAction } from "redux";
+import type { ThunkAction } from "@reduxjs/toolkit";
+import type { State } from "~/reducers/types";
+import { getReceiveScreen } from "LLM/features/Receive/utils/getReceiveScreen";
 import { findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto";
 import { openModularDrawer } from "~/reducers/modularDrawer";
 import { callbackRegistry } from "LLM/features/ModularDrawer/hooks/useCallbackRegistry/registries";
 import { generateCallbackId } from "LLM/features/ModularDrawer/utils/callbackIdGenerator";
 import { navigationRef } from "~/rootnavigation";
-import { NavigatorName, ScreenName } from "~/const";
+import { NavigatorName } from "~/const";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { AccountLike } from "@ledgerhq/types-live";
 
 // Receive Case
-const onAccountSelected = (account: AccountLike, parentAccount?: AccountLike) => {
-  const accountCurrency = getAccountCurrency(account);
+const createOnAccountSelected =
+  (dispatch: Dispatch) => (account: AccountLike, parentAccount?: AccountLike) => {
+    const confirmationParams = {
+      parentId: parentAccount?.id,
+      currency: getAccountCurrency(account),
+      accountId: (account.type !== "Account" && account?.parentId) || account.id,
+      hideBackButton: true,
+    };
 
-  const confirmationParams = {
-    parentId: parentAccount?.id,
-    currency: accountCurrency,
-    accountId: (account.type !== "Account" && account?.parentId) || account.id,
+    // The receive screen (new or legacy) depends on the store: resolve it from a thunk.
+    const navigateToReceive: ThunkAction<void, State, unknown, UnknownAction> = (
+      _dispatch,
+      getState,
+    ) => {
+      navigationRef.current?.navigate(
+        NavigatorName.ReceiveFunds,
+        getReceiveScreen(confirmationParams, getState()),
+      );
+    };
+    dispatch(navigateToReceive as unknown as UnknownAction);
   };
-
-  // Navigate to ReceiveFunds > ReceiveConfirmation
-  if (navigationRef.current) {
-    navigationRef.current.navigate(NavigatorName.ReceiveFunds, {
-      screen: ScreenName.ReceiveConfirmation,
-      params: {
-        ...confirmationParams,
-        hideBackButton: true,
-      },
-    });
-  }
-};
 
 /**
  * Handles modular drawer deeplinks (receive & add-account)
@@ -61,7 +65,7 @@ export function handleModularDrawerDeeplink(
 
   if (hostname === "receive") {
     const callbackId = generateCallbackId();
-    callbackRegistry.register(callbackId, onAccountSelected);
+    callbackRegistry.register(callbackId, createOnAccountSelected(dispatch));
 
     dispatch(
       openModularDrawer({

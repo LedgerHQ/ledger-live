@@ -7,9 +7,8 @@ import {
   quickActionClickedProps,
 } from "@features/flow-account-detail";
 import { track } from "@shared/analytics";
-import { useDispatch } from "LLD/hooks/redux";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
-import { openModal } from "~/renderer/actions/modals";
+import { useOpenReceiveFlow } from "LLD/features/Receive/hooks/useOpenReceiveFlow";
 import { getAccountTrackingFacts } from "../../utils/accountTracking";
 import type { AccountAsset, AccountAssetsByAction } from "./types";
 import { useInvestActions } from "./useInvestActions";
@@ -21,7 +20,7 @@ export function useAccountHeroActions(
   byAction: AccountAssetsByAction,
   pickAsset: PickAccountAsset,
 ): (id: AccountHeroActionId) => void {
-  const dispatch = useDispatch();
+  const { openReceiveFlow } = useOpenReceiveFlow();
   const openSendFlow = useOpenSendFlow();
   const onInvest = useInvestActions({ account, byAction, pickAsset });
 
@@ -43,9 +42,7 @@ export function useAccountHeroActions(
       );
       switch (id) {
         case "receive":
-          dispatch(
-            openModal("MODAL_RECEIVE", { account, sourcePage: ACCOUNT_DETAIL_PAGES.account }),
-          );
+          openReceiveFlow({ account, source: ACCOUNT_DETAIL_PAGES.account });
           return;
         case "send":
           pickAsset(assets, openSend, id);
@@ -59,6 +56,6 @@ export function useAccountHeroActions(
           return;
       }
     },
-    [account, assets, dispatch, onInvest, openSend, pickAsset],
+    [account, assets, openReceiveFlow, onInvest, openSend, pickAsset],
   );
 }

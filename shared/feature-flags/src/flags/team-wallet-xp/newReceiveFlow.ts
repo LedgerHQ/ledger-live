@@ -1,5 +1,5 @@
-import { z } from "zod";
 import { flagWith } from "../../define";
+import { z } from "zod";
 
 export const newReceiveFlow = flagWith(
   {
@@ -7,6 +7,8 @@ export const newReceiveFlow = flagWith(
   },
   {
     enabled: false,
-    params: { excludedFamilies: [] },
+    params: {
+      excludedFamilies: [],
+    },
   },
 );

@@ -214,6 +214,7 @@ export const urls = {
   },
   chooseNetwork: "https://support.ledger.com/article/7782669175581-zd",
   withdrawCrypto: "https://support.ledger.com/article/13108505155485-zd",
+  receiveSecurely: "https://support.ledger.com/article/4404389453841-zd",
   approvedOperation: "https://support.ledger.com/article/360020849134-zd",
   recoveryPhraseInfo:
     "https://www.ledger.com/academy/crypto/what-is-a-recovery-phrase?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=onboarding",

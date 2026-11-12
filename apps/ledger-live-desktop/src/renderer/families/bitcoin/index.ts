@@ -18,8 +18,10 @@ import { BitcoinFamily } from "./types";
 import type { ZcashAccount } from "@ledgerhq/coin-zcash/types";
 import type { ZcashPrivateInfo } from "@ledgerhq/coin-zcash/network/types";
 import { isZcashCurrencyId } from "@ledgerhq/live-common/bridge/zcashRouting";
+import receiveAddressConfig from "./receiveAddressConfig";
 
 const family: BitcoinFamily = {
+  receiveAddressConfig,
   sendAmountFields,
   sendRecipientFields,
   StepReceiveFundsPostAlert,

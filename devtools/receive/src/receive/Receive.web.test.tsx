@@ -4,7 +4,14 @@ import { Receive } from "./Receive";
 
 const renderTool = (enabled = false, excludedFamilies: readonly string[] = []) => {
   const flag = { enabled, excludedFamilies, setEnabled: jest.fn(), setExcludedFamilies: jest.fn() };
-  render(<Receive flag={flag} />);
+  const verifyHint = { hasSeen: false, setHasSeen: jest.fn() };
+  const trigger = {
+    assets: [],
+    onReceive: jest.fn(),
+    onPickAsset: jest.fn(),
+    onOpenDeeplink: jest.fn(),
+  };
+  render(<Receive flag={flag} verifyHint={verifyHint} trigger={trigger} />);
   return flag;
 };
 

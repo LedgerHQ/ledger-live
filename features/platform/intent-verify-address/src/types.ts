@@ -36,6 +36,7 @@ export type VerifyAddressIntentInput = {
  */
 export type VerifyAddressIntentJobState =
   | { type: "verifying"; deviceModelId: DeviceModelId; deviceName: string }
+  | { type: "addressDisplayed" }
   | { type: "verified"; address: string }
   | { type: "cancelled"; retry: () => void }
   | { type: "mismatch"; expectedAddress: string; reportedAddress: string }

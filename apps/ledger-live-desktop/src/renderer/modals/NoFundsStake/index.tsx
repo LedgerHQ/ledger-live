@@ -7,7 +7,8 @@ import { Icon, Text } from "@ledgerhq/react-ui";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { closeModal, openModal } from "~/renderer/actions/modals";
+import { closeModal } from "~/renderer/actions/modals";
+import { openReceiveFlow } from "LLD/features/Receive/openReceiveFlow";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
 import Box from "~/renderer/components/Box";
 import EntryButton from "~/renderer/components/EntryButton/EntryButton";
@@ -142,7 +143,7 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
     dispatch(closeModal(modalName));
 
     dispatch(
-      openModal("MODAL_RECEIVE", {
+      openReceiveFlow({
         parentAccount,
         account,
         sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT_PAGE,

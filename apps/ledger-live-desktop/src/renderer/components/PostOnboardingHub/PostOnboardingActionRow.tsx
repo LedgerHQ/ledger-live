@@ -8,12 +8,12 @@ import { track } from "@shared/analytics";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
+import { openReceiveFlow } from "LLD/features/Receive/openReceiveFlow";
 import { AllModalNames } from "~/renderer/modals/types";
 import { useNavigate } from "react-router";
 import { useCompleteActionCallback } from "./logic/useCompleteAction";
 import { isPostOnboardingHubActionFulfilled } from "./logic/postOnboardingHubCompletion";
 import { useFeature } from "@features/platform-feature-flags";
-import { Dispatch } from "redux";
 import useLedgerSyncEntryPointViewModel from "LLD/features/LedgerSyncEntryPoints/useLedgerSyncEntryPointViewModel";
 import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
 import { productTourCompletedSelector } from "~/renderer/reducers/settings";
@@ -46,7 +46,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     accounts,
   } = props;
   const { t } = useTranslation();
-  const dispatch: Dispatch = useDispatch();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const recoverServices = useFeature("protectServicesDesktop");
   const protectId = recoverServices?.params?.protectId ?? "protect-prod";
@@ -84,6 +84,10 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
   const handleStartAction = useCallback(() => {
     const openModalCallback = (modalName: AllModalNames) => {
       // isFromPostOnboardingEntryPoint param can be used to e.g. hide staking step in the receive ETH flow modals.
+      if (modalName === "MODAL_RECEIVE") {
+        dispatch(openReceiveFlow({ isFromPostOnboardingEntryPoint: true }));
+        return;
+      }
       dispatch(openModal(modalName, { isFromPostOnboardingEntryPoint: true }));
     };
     const navigationCallback = (location: Record<string, unknown> | string) => {

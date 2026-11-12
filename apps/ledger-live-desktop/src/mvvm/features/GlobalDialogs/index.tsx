@@ -35,6 +35,7 @@ const PredictionsDialogRoot = lazy(() =>
 const PredictionsSetupRoot = lazy(() =>
   import("@features/flow-predictions").then(module => ({ default: module.PredictionsSetupSheet })),
 );
+const ReceiveAddressDialogRoot = lazy(() => import("LLD/features/Receive/screens/ReceiveAddress"));
 const ReleaseNotes = lazy(() => import("LLD/features/ReleaseNotes"));
 const BuyDevice = lazy(() => import("LLD/features/BuyDevice"));
 const FinishOnboardingDialog = lazy(
@@ -57,6 +58,9 @@ const GlobalDialogs = () => (
     <ModularDialogRoot />
     <Suspense fallback={null}>
       <SendFlowRoot />
+    </Suspense>
+    <Suspense fallback={null}>
+      <ReceiveAddressDialogRoot />
     </Suspense>
     <Suspense fallback={null}>
       <PerpsSignRoot />

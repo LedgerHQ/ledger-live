@@ -8,6 +8,7 @@ import {
   isSendDisabledForFamily,
 } from "@ledgerhq/live-common/account/index";
 import { openModal } from "~/renderer/actions/modals";
+import { openReceiveFlow } from "LLD/features/Receive/openReceiveFlow";
 import IconReceive from "~/renderer/icons/Receive";
 import IconSend from "~/renderer/icons/Send";
 import IconStar from "~/renderer/icons/Star";
@@ -83,7 +84,7 @@ export default function AccountContextMenu({
         Icon: IconReceive,
         callback: () =>
           dispatch(
-            openModal("MODAL_RECEIVE", {
+            openReceiveFlow({
               account,
               parentAccount,
               sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT_PAGE,

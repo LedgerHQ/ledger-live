@@ -5,8 +5,10 @@ import sendRecipientFields from "./SendRecipientFields";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 import accountHeaderManageActions from "./AccountHeaderManageActions";
 import { CardanoFamily } from "./types";
+import receiveAddressConfig from "./receiveAddressConfig";
 
 const family: CardanoFamily = {
+  receiveAddressConfig,
   AccountBodyHeader,
   AccountDetailDelegations,
   AccountDetailBalanceSummary,

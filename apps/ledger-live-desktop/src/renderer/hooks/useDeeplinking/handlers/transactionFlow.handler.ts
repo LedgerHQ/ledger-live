@@ -3,6 +3,7 @@ import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { openModal } from "~/renderer/actions/modals";
+import { openReceiveFlow } from "LLD/features/Receive/openReceiveFlow";
 import { DeeplinkHandler, DeeplinkHandlerContext } from "../types";
 import { getAccountsOrSubAccountsByCurrency } from "../utils";
 
@@ -61,12 +62,10 @@ async function handleTransactionFlow(
         recipient: sendRecipient,
         amount: sendAmount,
       });
+    } else if (flowType === "receive") {
+      dispatch(openReceiveFlow({ shouldUseReceiveOptions: false }));
     } else {
-      dispatch(
-        openModal(modal, {
-          ...(flowType === "receive" ? { shouldUseReceiveOptions: false } : {}),
-        }),
-      );
+      dispatch(openModal(modal, {}));
     }
     return;
   }
@@ -92,10 +91,13 @@ async function handleTransactionFlow(
       });
       return;
     }
+    if (flowType === "receive") {
+      dispatch(openReceiveFlow({ shouldUseReceiveOptions: false, account, parentAccount }));
+      return;
+    }
 
     dispatch(
       openModal(modal, {
-        ...(flowType === "receive" ? { shouldUseReceiveOptions: false } : {}),
         recipient,
         account,
         parentAccount,

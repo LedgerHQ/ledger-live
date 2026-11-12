@@ -12,7 +12,8 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { TFunction } from "i18next";
 import { withTranslation } from "react-i18next";
 import { connect } from "react-redux";
-import { useSelector } from "LLD/hooks/redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+import { openReceiveFlow } from "LLD/features/Receive/openReceiveFlow";
 import { useNavigate, useLocation } from "react-router";
 import { compose } from "redux";
 import styled from "styled-components";
@@ -187,7 +188,8 @@ const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModa
 
 const pageName = "Page Account";
 
-const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
+const AccountHeaderActions = ({ account, parentAccount }: Props) => {
+  const dispatch = useDispatch();
   const { data: currenciesAll } = useFetchCurrencyAll();
   const bridge = useAccountBridge(account, parentAccount);
   const mainAccount = getMainAccount(account, parentAccount);
@@ -352,12 +354,14 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
       button: "receive",
       ...buttonSharedTrackingFields,
     });
-    openModal("MODAL_RECEIVE", {
-      parentAccount,
-      account,
-      sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT_PAGE,
-    });
-  }, [openModal, parentAccount, account, buttonSharedTrackingFields]);
+    dispatch(
+      openReceiveFlow({
+        parentAccount,
+        account,
+        sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT_PAGE,
+      }),
+    );
+  }, [dispatch, parentAccount, account, buttonSharedTrackingFields]);
 
   const manageActions: RenderActionParams[] = manageList
     .filter(item => (canOnlyStakeUsingLedgerLive && item.key === "Stake") || item.key !== "Stake")

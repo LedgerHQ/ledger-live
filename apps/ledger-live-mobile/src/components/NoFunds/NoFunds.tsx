@@ -28,6 +28,7 @@ import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigato
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useSelector } from "~/context/hooks";
 import { flattenAccountsSelector } from "~/reducers/accounts";
+import { useReceiveScreen } from "LLM/features/Receive/hooks/useReceiveScreen";
 
 const useText = (
   entryPoint: "noFunds" | "getFunds",
@@ -81,6 +82,7 @@ export default function NoFunds({ route }: Readonly<Props>) {
   const { data: currenciesAll } = useFetchCurrencyAll();
   const { account, parentAccount, entryPoint } = route.params;
   const navigation = useNavigation();
+  const receiveScreen = useReceiveScreen();
   const currency = getAccountCurrency(account);
 
   const { isCurrencyAvailable } = useRampCatalog();
@@ -127,17 +129,17 @@ export default function NoFunds({ route }: Readonly<Props>) {
       account.type === "TokenAccount" &&
       !parentAccount?.subAccounts?.some(subAccount => subAccount.id === account.id);
 
-    onNavigate(NavigatorName.ReceiveFunds, {
-      screen: ScreenName.ReceiveConfirmation,
-      params: {
+    onNavigate(
+      NavigatorName.ReceiveFunds,
+      receiveScreen({
         account,
         accountId: account.id,
         parentId: parentAccount?.id,
         currency,
         createTokenAccount: shouldCreateTokenAccount,
-      },
-    });
-  }, [account, currency, onNavigate, page, parentAccount]);
+      }),
+    );
+  }, [account, currency, onNavigate, page, parentAccount, receiveScreen]);
 
   const onSwap = useCallback(() => {
     track("button_clicked", {
