@@ -1,10 +1,14 @@
 import { trackPage, track } from "@shared/analytics";
 import React, { useEffect } from "react";
 import { Linking, View } from "react-native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { initPostOnboarding } from "@ledgerhq/live-common/postOnboarding/actions";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { act, fireEvent, render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
-import { useDispatch } from "~/context/hooks";
+import { useDispatch, useSelector } from "~/context/hooks";
+import { useShouldRedirect } from "~/hooks/useAutoRedirectToPostOnboarding/useShouldRedirect";
+import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { openBackupHubFeatureIntro } from "~/reducers/backupHubFeatureIntro";
 import { handleProductTourDeeplink } from "~/navigation/deeplinks/handleProductTourDeeplink";
 import type { State } from "~/reducers/types";
@@ -477,6 +481,110 @@ describe("LargeScreenUpsellModal on Portfolio (integration)", () => {
 
     await waitFor(() => {
       expect(screen.getByTestId("large-screen-upsell-modal-drawer")).toBeVisible();
+    });
+  });
+
+  describe("at the end of a Nano onboarding", () => {
+    const POST_ONBOARDING_HUB_TEST_ID = "large-screen-upsell-integration-post-onboarding-hub";
+
+    function RedirectToPostOnboardingHub() {
+      const dispatch = useDispatch();
+      const navigation = useNavigation<{ navigate: (route: string) => void }>();
+      const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
+      const { shouldRedirectToPostOnboarding } = useShouldRedirect();
+
+      useFocusEffect(
+        React.useCallback(() => {
+          if (!shouldRedirectToPostOnboarding || !lastConnectedDevice) return;
+          Promise.resolve().then(() => {
+            dispatch(
+              initPostOnboarding({ deviceModelId: lastConnectedDevice.modelId, actionsIds: [] }),
+            );
+            navigation.navigate("PostOnboardingHub");
+          });
+        }, [dispatch, lastConnectedDevice, navigation, shouldRedirectToPostOnboarding]),
+      );
+
+      return null;
+    }
+
+    function PortfolioScreenRedirectingToPostOnboarding() {
+      return (
+        <View style={{ flex: 1 }} testID="large-screen-upsell-integration-portfolio">
+          <RedirectToPostOnboardingHub />
+          <LargeScreenUpsellModalPortfolioMount />
+        </View>
+      );
+    }
+
+    function PostOnboardingHubScreen() {
+      return <View testID={POST_ONBOARDING_HUB_TEST_ID} />;
+    }
+
+    function IntegrationNavigatorWithPostOnboardingRedirect() {
+      return (
+        <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Portfolio">
+          <Stack.Screen name="Portfolio" component={PortfolioScreenRedirectingToPostOnboarding} />
+          <Stack.Screen name="PostOnboardingHub" component={PostOnboardingHubScreen} />
+        </Stack.Navigator>
+      );
+    }
+
+    const justOnboardedNanoS = (state: State): State => {
+      const withNanoS = withKnownDeviceModels([DeviceModelId.nanoS], {
+        hasCompletedOnboarding: true,
+        hasBeenRedirectedToPostOnboarding: false,
+        hasBeenUpsoldProtect: true,
+        lastConnectedDevice: {
+          deviceId: "nanoS-device-id",
+          modelId: DeviceModelId.nanoS,
+          wired: true,
+        },
+      })(state);
+
+      return {
+        ...withNanoS,
+        postOnboarding: { ...withNanoS.postOnboarding, onboardingDate: null },
+      };
+    };
+
+    it("should not auto-open the upsell modal when the post onboarding redirect is pending", async () => {
+      const overrideInitialState = withFlagOverrides(
+        {
+          largeScreenUpsell: {
+            enabled: true,
+            params: {
+              opted_out: {
+                enabled: true,
+                link: "https://shop.ledger.com/pages/ledger-nano-upgrade-program",
+              },
+            },
+          },
+          lwmProductTour: { enabled: false },
+          lwmGenericAwarenessModal: { enabled: false },
+          analyticsOptIn: { enabled: false },
+          recoverUpsellPostOnboarding: { enabled: false },
+        },
+        justOnboardedNanoS,
+      );
+
+      const { store } = render(<IntegrationNavigatorWithPostOnboardingRedirect />, {
+        overrideInitialState,
+      });
+
+      expect(await screen.findByTestId(POST_ONBOARDING_HUB_TEST_ID)).toBeVisible();
+      await act(async () => {
+        jest.runOnlyPendingTimers();
+      });
+
+      expect(store.getState().postOnboarding.onboardingDate).not.toBeNull();
+      expect(jest.mocked(trackPage)).not.toHaveBeenCalledWith(
+        expect.objectContaining({ category: "Modal - Upgrade" }),
+      );
+      expect(
+        jest.mocked(track).mock.calls.filter(([event]) => event === "modal_dismissed"),
+      ).toHaveLength(0);
+      expect(store.getState().largeScreenUpsellModal.retries).toBe(0);
     });
   });
 });
