@@ -3,9 +3,18 @@ import BigNumber from "bignumber.js";
 import type { NearAccount, NearAccountRaw, NearResources, NearResourcesRaw } from "./types";
 
 export function toNearResourcesRaw(r: NearResources): NearResourcesRaw {
-  const { stakedBalance, pendingBalance, availableBalance, storageUsageBalance, stakingPositions } =
-    r;
+  const {
+    stakedBalance,
+    pendingBalance,
+    availableBalance,
+    storageUsageBalance,
+    stakingPositions,
+    accountStateFingerprint,
+    historyRecheckPending,
+  } = r;
   return {
+    ...(accountStateFingerprint !== undefined && { accountStateFingerprint }),
+    ...(historyRecheckPending && { historyRecheckPending }),
     stakedBalance: stakedBalance.toString(),
     pendingBalance: pendingBalance.toString(),
     availableBalance: availableBalance.toString(),
@@ -26,8 +35,12 @@ export function fromNearResourcesRaw(r: NearResourcesRaw): NearResources {
     availableBalance,
     storageUsageBalance,
     stakingPositions = [],
+    accountStateFingerprint,
+    historyRecheckPending,
   } = r;
   return {
+    ...(accountStateFingerprint !== undefined && { accountStateFingerprint }),
+    ...(historyRecheckPending && { historyRecheckPending }),
     stakedBalance: new BigNumber(stakedBalance),
     pendingBalance: new BigNumber(pendingBalance),
     availableBalance: new BigNumber(availableBalance),

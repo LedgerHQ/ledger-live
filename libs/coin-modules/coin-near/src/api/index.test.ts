@@ -93,15 +93,15 @@ describe("createApi", () => {
       expect(getValidators).toHaveBeenCalledWith(context, "cursor");
     });
 
-    it("forwards getBalance and rejects unsupported balance options", async () => {
+    it("forwards getBalance with its options", async () => {
       (getBalance as jest.Mock).mockResolvedValue([]);
 
       await api.getBalance(context, "sender.near");
-      expect(getBalance).toHaveBeenCalledWith(context, "sender.near");
+      expect(getBalance).toHaveBeenCalledWith(context, "sender.near", undefined);
 
-      await expect(
-        api.getBalance(context, "sender.near", { includeAssets: async () => true }),
-      ).rejects.toThrow("getBalance does not support the options parameter");
+      const options = { knownValidatorIds: ["pool.poolv1.near"], listValidators: false };
+      await api.getBalance(context, "sender.near", options);
+      expect(getBalance).toHaveBeenCalledWith(context, "sender.near", options);
     });
 
     it("forwards the transaction lifecycle methods", async () => {

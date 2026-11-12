@@ -4,6 +4,8 @@ export type NearAccountDetails = {
   amount: string;
   storage_usage: number;
   block_height: number;
+  locked?: string;
+  code_hash?: string;
 };
 
 export type NearV3Response<T> = {

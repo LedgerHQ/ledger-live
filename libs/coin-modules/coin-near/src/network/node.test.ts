@@ -3,6 +3,8 @@ import * as nearAPI from "near-api-js";
 import { setCoinConfig } from "../config";
 import { mockNearConfig } from "../test/context";
 import {
+  accountStateFingerprint,
+  fetchAccountKeyNonce,
   broadcastTransaction,
   getAccount,
   getGasPrice,
@@ -230,74 +232,59 @@ describe("node api (indexer-backed calls)", () => {
   });
 
   describe("getGasPrice", () => {
-    it("reads the gas price from the v3 stats envelope", async () => {
-      let requestedPath: string | undefined;
+    const nodeError = () =>
       mockServer.use(
-        http.get(`${NEAR_BASE_URL_MOCKED}/v3/stats`, ({ request }) => {
-          requestedPath = new URL(request.url).pathname;
+        http.post(NEAR_BASE_URL_MOCKED, () =>
+          HttpResponse.json({ jsonrpc: "2.0", id: "id", error: { message: "node unavailable" } }),
+        ),
+      );
+
+    it("reads the gas price from the node without calling the indexer", async () => {
+      let statsCalls = 0;
+      mockServer.use(
+        http.get(`${NEAR_BASE_URL_MOCKED}/v3/stats`, () => {
+          statsCalls++;
           return HttpResponse.json({ data: { gas_price: "100000000" } });
         }),
       );
+      mockRpc();
 
       const gasPrice = await getGasPrice(mockNearConfig);
 
-      expect(requestedPath).toBe("/v3/stats");
+      expect(gasPrice).toBe(RPC_GAS_PRICE);
+      expect(statsCalls).toBe(0);
+    });
+
+    it("falls back to the indexer stats when the node returns no gas price", async () => {
+      nodeError();
+      mockStats({ gas_price: "100000000" });
+
+      const gasPrice = await getGasPrice(mockNearConfig);
+
       expect(gasPrice).toBe("100000000");
     });
 
-    it("falls back to the node RPC when the indexer gas price is null", async () => {
+    it("reports the indexer error when neither source has a gas price", async () => {
+      nodeError();
       mockStats({ gas_price: null });
-      mockRpc();
 
-      const gasPrice = await getGasPrice(mockNearConfig);
-
-      expect(gasPrice).toBe(RPC_GAS_PRICE);
-    });
-
-    it("falls back to the node RPC when the envelope data is null", async () => {
-      mockStats(null);
-      mockRpc();
-
-      const gasPrice = await getGasPrice(mockNearConfig);
-
-      expect(gasPrice).toBe(RPC_GAS_PRICE);
-    });
-
-    it("falls back to the node RPC when the indexer reports an empty gas price", async () => {
-      mockStats({ gas_price: "" });
-      mockRpc();
-
-      const gasPrice = await getGasPrice(mockNearConfig);
-
-      expect(gasPrice).toBe(RPC_GAS_PRICE);
-    });
-
-    it("falls back to the node RPC when the indexer rate-limits with a 429", async () => {
-      mockServer.use(
-        http.get(`${NEAR_BASE_URL_MOCKED}/v3/stats`, () =>
-          HttpResponse.json({ message: "Too Many Requests" }, { status: 429 }),
-        ),
+      await expect(getGasPrice(mockNearConfig)).rejects.toThrow(
+        "the indexer returned no gas price",
       );
-      mockRpc();
-
-      const gasPrice = await getGasPrice(mockNearConfig);
-
-      expect(gasPrice).toBe(RPC_GAS_PRICE);
     });
 
-    it("reports the node error when the fallback cannot read a gas price either", async () => {
-      mockStats(null);
+    it("does not retry a rate-limited indexer fallback", async () => {
+      nodeError();
+      let statsCalls = 0;
       mockServer.use(
-        http.post(NEAR_BASE_URL_MOCKED, () =>
-          HttpResponse.json({
-            jsonrpc: "2.0",
-            id: "id",
-            error: { message: "node unavailable" },
-          }),
-        ),
+        http.get(`${NEAR_BASE_URL_MOCKED}/v3/stats`, () => {
+          statsCalls++;
+          return HttpResponse.json({ message: "Too Many Requests" }, { status: 429 });
+        }),
       );
 
-      await expect(getGasPrice(mockNearConfig)).rejects.toThrow("node unavailable");
+      await expect(getGasPrice(mockNearConfig)).rejects.toThrow();
+      expect(statsCalls).toBe(1);
     });
   });
 
@@ -368,6 +355,98 @@ describe("node api (indexer-backed calls)", () => {
       expect(totalStaked.toFixed()).toBe("1000000000000000000000000");
       expect(stakingPositions).toHaveLength(1);
       expect(stakingPositions[0].validatorId).toBe(VALIDATOR_ID);
+    });
+
+    describe("with pools the caller already knows", () => {
+      const OTHER_POOL = "other.poolv1.near";
+      const STAKED = "1000000000000000000000000";
+      const listing = (respond: () => Response) => {
+        let calls = 0;
+        mockServer.use(
+          http.get(`${NEAR_BASE_URL_MOCKED}/v3/kitwallet/staking-deposits/:address`, () => {
+            calls++;
+            return respond();
+          }),
+        );
+        return () => calls;
+      };
+      // Every pool answers a staked position, except the ones listed in `failing`.
+      const poolsRpc = (failing: string[] = []) =>
+        mockServer.use(
+          http.post(NEAR_BASE_URL_MOCKED, async ({ request }) => {
+            const body = (await request.json()) as {
+              params: { request_type?: string; method_name?: string; account_id?: string };
+            };
+            if (body.params?.request_type !== "call_function") {
+              return HttpResponse.json({ jsonrpc: "2.0", id: "id", result: {} });
+            }
+            if (failing.includes(body.params.account_id ?? "")) {
+              return HttpResponse.json({ jsonrpc: "2.0", id: "id", error: { message: "boom" } });
+            }
+            const views: Record<string, unknown> = {
+              get_account_staked_balance: STAKED,
+              get_account_unstaked_balance: "0",
+              is_account_unstaked_balance_available: false,
+            };
+            return HttpResponse.json(viewResult(views[body.params.method_name as string]));
+          }),
+        );
+
+      it("reads the known pools from the node when the listing is rate-limited, without retrying it", async () => {
+        const calls = listing(() => HttpResponse.json({ message: "limit" }, { status: 429 }));
+        poolsRpc();
+
+        const { stakingPositions } = await getStakingPositions(mockNearConfig, ADDRESS, {
+          knownValidatorIds: [VALIDATOR_ID],
+        });
+
+        expect(calls()).toBe(1);
+        expect(stakingPositions.map(p => p.validatorId)).toEqual([VALIDATOR_ID]);
+      });
+
+      it("does not call the listing when discovery is off", async () => {
+        const calls = listing(() => HttpResponse.json([]));
+        poolsRpc();
+
+        const { stakingPositions } = await getStakingPositions(mockNearConfig, ADDRESS, {
+          knownValidatorIds: [VALIDATOR_ID],
+          discover: false,
+        });
+
+        expect(calls()).toBe(0);
+        expect(stakingPositions.map(p => p.validatorId)).toEqual([VALIDATOR_ID]);
+      });
+
+      it("reads the union of the listing and the known pools", async () => {
+        listing(() => HttpResponse.json([{ deposit: STAKED, validator_id: OTHER_POOL }]));
+        poolsRpc();
+
+        const { stakingPositions } = await getStakingPositions(mockNearConfig, ADDRESS, {
+          knownValidatorIds: [VALIDATOR_ID],
+        });
+
+        expect(stakingPositions.map(p => p.validatorId).sort()).toEqual(
+          [OTHER_POOL, VALIDATOR_ID].sort(),
+        );
+      });
+
+      it("skips a known pool whose node read fails", async () => {
+        listing(() => HttpResponse.json([]));
+        poolsRpc([OTHER_POOL]);
+
+        const { stakingPositions } = await getStakingPositions(mockNearConfig, ADDRESS, {
+          knownValidatorIds: [VALIDATOR_ID, OTHER_POOL],
+        });
+
+        expect(stakingPositions.map(p => p.validatorId)).toEqual([VALIDATOR_ID]);
+      });
+
+      it("still fails on a listing error when no pool is known", async () => {
+        listing(() => HttpResponse.json({ message: "limit" }, { status: 429 }));
+        poolsRpc();
+
+        await expect(getStakingPositions(mockNearConfig, ADDRESS)).rejects.toThrow("limit");
+      });
     });
 
     it("handles an account with no deposits", async () => {
@@ -1031,5 +1110,67 @@ describe("node api (indexer-backed calls)", () => {
       expect(requestedLimits).toEqual(["20"]);
       expect(validators).toHaveLength(20);
     });
+  });
+});
+
+describe("accountStateFingerprint", () => {
+  const details = {
+    amount: "10",
+    locked: "0",
+    storage_usage: 182,
+    block_height: 1,
+    code_hash: "11",
+  };
+
+  it("changes with the balance, the storage, the contract and the key nonce", () => {
+    const base = accountStateFingerprint(details, "7");
+    expect(accountStateFingerprint({ ...details, amount: "11" }, "7")).not.toBe(base);
+    expect(accountStateFingerprint({ ...details, storage_usage: 183 }, "7")).not.toBe(base);
+    expect(accountStateFingerprint({ ...details, code_hash: "22" }, "7")).not.toBe(base);
+    expect(accountStateFingerprint(details, "8")).not.toBe(base);
+  });
+
+  it("ignores the block the state was read at", () => {
+    expect(accountStateFingerprint({ ...details, block_height: 2 }, "7")).toBe(
+      accountStateFingerprint(details, "7"),
+    );
+  });
+});
+
+describe("fetchAccountKeyNonce", () => {
+  beforeAll(() => mockServer.listen({ onUnhandledRequest: "error" }));
+  afterEach(() => mockServer.resetHandlers());
+  afterAll(() => mockServer.close());
+
+  it("reads the nonce of an implicit account's own key", async () => {
+    let requested: { public_key?: string } | undefined;
+    mockServer.use(
+      http.post(NEAR_BASE_URL_MOCKED, async ({ request }) => {
+        requested = ((await request.json()) as { params: { public_key?: string } }).params;
+        return HttpResponse.json({
+          jsonrpc: "2.0",
+          id: "id",
+          result: { nonce: 42, block_hash: "h" },
+        });
+      }),
+    );
+
+    const nonce = await fetchAccountKeyNonce(mockNearConfig, "00".repeat(31) + "01");
+
+    expect(nonce).toBe("42");
+    expect(requested?.public_key).toMatch(/^ed25519:/);
+  });
+
+  it("returns nothing for a named account, whose key cannot be derived", async () => {
+    expect(await fetchAccountKeyNonce(mockNearConfig, "named.near")).toBe("");
+  });
+
+  it("returns nothing when the key is unknown to the node", async () => {
+    mockServer.use(
+      http.post(NEAR_BASE_URL_MOCKED, () =>
+        HttpResponse.json({ jsonrpc: "2.0", id: "id", error: { message: "unknown key" } }),
+      ),
+    );
+    expect(await fetchAccountKeyNonce(mockNearConfig, "ab".repeat(32))).toBe("");
   });
 });

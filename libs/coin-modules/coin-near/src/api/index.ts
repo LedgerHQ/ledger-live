@@ -1,4 +1,3 @@
-import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import type {
   AddressValidationCurrencyParameters,
   Balance,
@@ -62,7 +61,7 @@ export function createApi() {
       context: NearContext,
       address: string,
       options?: BalanceOptions,
-    ): Promise<Balance[]> => rejectBalanceOptions(() => getBalance(context, address), options),
+    ): Promise<Balance[]> => getBalance(context, address, options),
     listOperations: (
       context: NearContext,
       address: string,

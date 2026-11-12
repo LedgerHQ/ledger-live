@@ -54,6 +54,10 @@ export type NearResources = {
   pendingBalance: BigNumber;
   storageUsageBalance: BigNumber;
   stakingPositions: NearStakingPosition[];
+  /** Node account state at the last sync whose history fetch succeeded. */
+  accountStateFingerprint?: string | undefined;
+  /** The state changed with no new operation found: the next sync reads the history once more. */
+  historyRecheckPending?: boolean | undefined;
 };
 
 export type NearResourcesRaw = {
@@ -67,6 +71,8 @@ export type NearResourcesRaw = {
     pending: string;
     validatorId: string;
   }[];
+  accountStateFingerprint?: string;
+  historyRecheckPending?: boolean;
 };
 
 export type NearAccount = Account & { nearResources: NearResources };

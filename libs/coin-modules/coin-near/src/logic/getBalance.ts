@@ -1,4 +1,5 @@
-import type { AssetInfo, Balance } from "@ledgerhq/coin-module-framework/api/index";
+import type { AssetInfo, Balance, BalanceOptions } from "@ledgerhq/coin-module-framework/api/index";
+import { InvalidParameterError } from "@ledgerhq/coin-module-framework/errors";
 import type { NearContext } from "../config";
 import { getAccount } from "../network";
 import { toStakes } from "./getStakes";
@@ -18,9 +19,26 @@ export const NATIVE_ASSET: AssetInfo = { type: "native" };
  * reproduces the account bridge's spendable balance, which floors at zero. This mirrors
  * coin-tezos, which likewise reports the total as `value` and the frozen part as `locked`.
  */
-export async function getBalance(context: NearContext, address: string): Promise<Balance[]> {
+export async function getBalance(
+  context: NearContext,
+  address: string,
+  options?: BalanceOptions,
+): Promise<Balance[]> {
+  // NEAR has one native asset: only the staking-pool options apply.
+  if (
+    options?.includeAssets ||
+    options?.knownAssets ||
+    options?.scanAssetsMinHeight !== undefined
+  ) {
+    throw new InvalidParameterError("getBalance only supports the validator options");
+  }
   const config = await context.config();
-  const { balance, nearResources } = await getAccount(config, address);
+  const { balance, nearResources } = await getAccount(config, address, {
+    ...(options?.knownValidatorIds && {
+      knownValidatorIds: options.knownValidatorIds,
+      discover: options.listValidators !== false,
+    }),
+  });
 
   const nonSpendable = nearResources.stakedBalance
     .plus(nearResources.availableBalance)

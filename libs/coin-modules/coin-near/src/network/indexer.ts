@@ -3,6 +3,7 @@ import liveNetwork from "@ledgerhq/live-network";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { type NearConfig } from "../config";
+import { NEARBLOCKS_RETRY } from "./nearblocks";
 import { NearTransaction, NearV3Response } from "./sdk.types";
 
 /**
@@ -26,6 +27,7 @@ export const fetchTransactionsPage = async (
   const query = params.toString();
 
   const response = await liveNetwork<NearV3Response<NearTransaction[]>>({
+    retry: NEARBLOCKS_RETRY,
     url: `${currencyConfig.infra.API_NEARBLOCKS_INDEXER}/v3/accounts/${address}/txns${
       query ? `?${query}` : ""
     }`,
@@ -47,6 +49,26 @@ const fetchTransactions = async (
 
   return transactions;
 };
+
+// Every staking-pool method that can open or move a position, in any action of the transaction.
+const STAKING_POOL_METHODS = new Set([
+  "deposit_and_stake",
+  "deposit",
+  "stake",
+  "stake_all",
+  "unstake",
+  "unstake_all",
+  "withdraw",
+  "withdraw_all",
+]);
+
+/** The staking pool a transaction signed by the account calls, if any. */
+export function stakingPoolOf(transaction: NearTransaction, address: string): string | undefined {
+  const callsPool = transaction.actions?.some(
+    ({ method }) => method !== null && STAKING_POOL_METHODS.has(method),
+  );
+  return callsPool && isSender(transaction, address) ? transaction.receiver_account_id : undefined;
+}
 
 function isSender(transaction: NearTransaction, address: string): boolean {
   return transaction.signer_account_id === address;
@@ -97,7 +119,10 @@ async function transactionToOperation(
         ? Number(transaction.block.block_height)
         : undefined,
     date: new Date(parseFloat(transaction.block_timestamp) / 1000000),
-    extra: {},
+    extra: (() => {
+      const stakingPool = stakingPoolOf(transaction, address);
+      return stakingPool ? { stakingPool } : {};
+    })(),
     senders: transaction.signer_account_id ? [transaction.signer_account_id] : [],
     recipients: transaction.receiver_account_id ? [transaction.receiver_account_id] : [],
     hasFailed: transaction.outcomes?.status === false,

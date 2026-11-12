@@ -13,6 +13,7 @@ import {
   encodeTransaction,
 } from "near-api-js";
 import { type NearConfig } from "../config";
+import { NEARBLOCKS_RETRY } from "./nearblocks";
 import { MIN_ACCOUNT_BALANCE_BUFFER } from "../constants";
 import { canUnstake, canWithdraw, getYoctoThreshold } from "../logic";
 import { NearAccount } from "../types";
@@ -48,13 +49,57 @@ export const fetchAccountDetails = async (
   return data.result;
 };
 
+/**
+ * Changes whenever a transaction touches the account: balance, lock, storage or contract, and the
+ * nonce of the account's own key, which a relayed (meta) transaction moves without the account
+ * paying anything.
+ */
+export const accountStateFingerprint = (
+  details: NearAccountDetails | undefined,
+  keyNonce = "",
+): string =>
+  details
+    ? [
+        details.amount,
+        details.locked ?? "",
+        details.storage_usage,
+        details.code_hash ?? "",
+        keyNonce,
+      ].join(":")
+    : "absent";
+
+const IMPLICIT_ACCOUNT = /^[0-9a-f]{64}$/;
+
+/** Nonce of an implicit account's own key; empty for a named account, whose key is not derivable. */
+export const fetchAccountKeyNonce = async (
+  config: NearConfig,
+  address: string,
+): Promise<string> => {
+  if (!IMPLICIT_ACCOUNT.test(address)) return "";
+  const publicKey = `ed25519:${baseEncode(Buffer.from(address, "hex"))}`;
+  const key = await getAccessKey(config, { address, publicKey });
+  return key?.nonce !== undefined ? String(key.nonce) : "";
+};
+
+export type StakingPoolsOptions = {
+  /**
+   * Pools the caller already holds a position in. When the indexer listing fails they are read
+   * from the node instead, and a stored pool whose node read fails is skipped.
+   */
+  knownValidatorIds?: string[] | undefined;
+  /** List the account's pools from the indexer (default). `false` reads the known pools only. */
+  discover?: boolean | undefined;
+};
+
 export const getAccount = async (
   config: NearConfig,
   address: string,
+  options: StakingPoolsOptions & { details?: NearAccountDetails } = {},
 ): Promise<Pick<NearAccount, "blockHeight" | "balance" | "spendableBalance" | "nearResources">> => {
   let accountDetails: NearAccountDetails;
 
-  accountDetails = await fetchAccountDetails(config, address);
+  accountDetails = options.details ?? (await fetchAccountDetails(config, address));
+  const fingerprint = accountStateFingerprint(accountDetails);
 
   if (!accountDetails) {
     accountDetails = {
@@ -67,6 +112,7 @@ export const getAccount = async (
   const { stakingPositions, totalStaked, totalAvailable, totalPending } = await getStakingPositions(
     config,
     address,
+    options,
   );
 
   // Read directly from the protocol config rather than the preload cache: a CoinModuleApi caller
@@ -93,6 +139,7 @@ export const getAccount = async (
       pendingBalance: totalPending,
       storageUsageBalance: storageUsage.plus(minBalanceBuffer),
       stakingPositions,
+      accountStateFingerprint: fingerprint,
     },
   };
 };
@@ -125,24 +172,27 @@ const getGasPriceFromRpc = async (config: NearConfig): Promise<string> => {
   return data.result.gas_price;
 };
 
-export const getGasPrice = async (config: NearConfig): Promise<string> => {
-  const currencyConfig = config;
-
-  try {
-    const response = await liveNetwork<NearV3Response<NearStats>>({
-      url: `${currencyConfig.infra.API_NEARBLOCKS_INDEXER}/v3/stats`,
-    });
-
-    const gasPrice = response.data.data?.gas_price;
-    if (gasPrice) {
-      return gasPrice;
-    }
-  } catch (error) {
-    // The indexer rate-limits (429) under load; the node RPC is the source of truth for gas price.
-    log("Near", "getGasPrice indexer request failed, falling back to node RPC", error);
+const getGasPriceFromIndexer = async (config: NearConfig): Promise<string> => {
+  const response = await liveNetwork<NearV3Response<NearStats>>({
+    retry: NEARBLOCKS_RETRY,
+    url: `${config.infra.API_NEARBLOCKS_INDEXER}/v3/stats`,
+  });
+  const gasPrice = response.data.data?.gas_price;
+  if (!gasPrice) {
+    throw new Error("Near: the indexer returned no gas price");
   }
+  return gasPrice;
+};
 
-  return getGasPriceFromRpc(config);
+// The node is the source of truth for gas price and has no shared quota; the indexer is only a
+// fallback when the node fails.
+export const getGasPrice = async (config: NearConfig): Promise<string> => {
+  try {
+    return await getGasPriceFromRpc(config);
+  } catch (error) {
+    log("Near", "getGasPrice node request failed, falling back to the indexer", error);
+    return getGasPriceFromIndexer(config);
+  }
 };
 
 export const getAccessKey = async (
@@ -376,9 +426,35 @@ export const broadcastTransaction = async (
   }
 };
 
+const listStakingPools = async (config: NearConfig, address: string): Promise<string[]> => {
+  const { data } = await liveNetwork<{ deposit: string; validator_id: string }[]>({
+    retry: NEARBLOCKS_RETRY,
+    url: `${config.infra.API_NEARBLOCKS_INDEXER}/v3/kitwallet/staking-deposits/${address}`,
+  });
+  return data.map(({ validator_id }) => validator_id);
+};
+
+const stakingPoolIds = async (
+  config: NearConfig,
+  address: string,
+  { knownValidatorIds, discover = true }: StakingPoolsOptions,
+): Promise<string[]> => {
+  let listed: string[] = [];
+  if (discover) {
+    try {
+      listed = await listStakingPools(config, address);
+    } catch (error) {
+      if (!knownValidatorIds) throw error;
+      log("Near", "staking pool listing failed, reading the known pools from the node", error);
+    }
+  }
+  return [...new Set([...listed, ...(knownValidatorIds ?? [])])];
+};
+
 export const getStakingPositions = async (
   config: NearConfig,
   address: string,
+  options: StakingPoolsOptions = {},
 ): Promise<{
   stakingPositions: NearStakingPosition[];
   totalStaked: BigNumber;
@@ -393,12 +469,11 @@ export const getStakingPositions = async (
   let totalPending = new BigNumber(0);
   const stakingThreshold = getYoctoThreshold();
 
-  const delegatedValidators = await liveNetwork<{ deposit: string; validator_id: string }[]>({
-    url: `${currencyConfig.infra.API_NEARBLOCKS_INDEXER}/v3/kitwallet/staking-deposits/${address}`,
-  });
+  const poolIds = await stakingPoolIds(config, address, options);
+  const tolerant = options.knownValidatorIds !== undefined;
 
-  const stakingPositions = await Promise.all(
-    delegatedValidators.data.map(async ({ validator_id: validatorId }) => {
+  const read = await Promise.all(
+    poolIds.map(async validatorId => {
       const view = <T extends string | boolean>(method: string) =>
         provider.callFunction<T>({
           contractId: validatorId,
@@ -406,11 +481,21 @@ export const getStakingPositions = async (
           args: { account_id: address },
         });
 
-      const [rawStaked, rawUnstaked, isAvailable] = await Promise.all([
-        view<string>("get_account_staked_balance"),
-        view<string>("get_account_unstaked_balance"),
-        view<boolean>("is_account_unstaked_balance_available"),
-      ]);
+      let rawStaked: string | undefined;
+      let rawUnstaked: string | undefined;
+      let isAvailable: boolean | undefined;
+      try {
+        [rawStaked, rawUnstaked, isAvailable] = await Promise.all([
+          view<string>("get_account_staked_balance"),
+          view<string>("get_account_unstaked_balance"),
+          view<boolean>("is_account_unstaked_balance_available"),
+        ]);
+      } catch (error) {
+        // One unreadable pool must not cost the whole balance when the caller tolerates it.
+        if (!tolerant) throw error;
+        log("Near", `skipping staking pool ${validatorId}: node read failed`, error);
+        return null;
+      }
 
       const unstaked = new BigNumber(rawUnstaked ?? 0);
 
@@ -443,6 +528,8 @@ export const getStakingPositions = async (
       };
     }),
   );
+
+  const stakingPositions = read.filter(<T>(p: T | null): p is T => p !== null);
 
   return {
     stakingPositions: stakingPositions.filter(
@@ -482,6 +569,7 @@ async function fetchValidators({ total, config }: FetchValidatorsParams): Promis
     const limit = Math.min(VALIDATORS_PAGE_SIZE, total - collected.length);
     const cursor = next ? `&next=${encodeURIComponent(next)}` : "";
     const response = await liveNetwork<NearV3Response<NearIndexerValidator[]>>({
+      retry: NEARBLOCKS_RETRY,
       url: `${currencyConfig.infra.API_NEARBLOCKS_INDEXER}/v3/validators?limit=${limit}${cursor}`,
     });
 
@@ -506,6 +594,8 @@ async function fetchValidators({ total, config }: FetchValidatorsParams): Promis
     }));
 }
 
+// The validator set, its stake ranking and commissions move at epoch pace (~12 h); a 6 h cache
+// keeps the list fresh enough for the delegation flow while the 30 min preload reuses it.
 export const getValidators = makeLRUCache(fetchValidators, ({ total }) => String(total), {
-  ttl: 30 * 60 * 1000,
+  ttl: 6 * 60 * 60 * 1000,
 });

@@ -71,15 +71,22 @@ export const preload = async (): Promise<NearPreloadedData> => {
   const config = getCoinConfig();
   const [actionCosts, rawValidators, gasPrice] = await Promise.all([
     getActionCosts.force(config),
-    getValidators({ total: VALIDATORS_COUNT, config }),
+    // The validator list only feeds the staking screens: when the indexer cannot serve it, keep the
+    // last list instead of failing the preload, which would fail every NEAR account sync.
+    getValidators({ total: VALIDATORS_COUNT, config }).catch(error => {
+      log("near/preload", "validators unavailable, keeping the previous list", error);
+      return null;
+    }),
     getGasPrice(config),
   ]);
 
-  const validators = rawValidators.map(({ account_id: validatorAddress, stake, commission }) => ({
-    validatorAddress,
-    tokens: stake,
-    commission,
-  }));
+  const validators = rawValidators
+    ? rawValidators.map(({ account_id: validatorAddress, stake, commission }) => ({
+        validatorAddress,
+        tokens: stake,
+        commission,
+      }))
+    : getCurrentNearPreloadData().validators;
 
   return {
     ...actionCosts,

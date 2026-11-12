@@ -137,3 +137,42 @@ describe("getBalance", () => {
     expect(balances.filter(b => b.stake !== undefined)).toHaveLength(3);
   });
 });
+
+describe("getBalance validator options", () => {
+  beforeEach(() => {
+    (getAccount as jest.Mock).mockResolvedValue(accountShape({ amount: ONE_NEAR }));
+  });
+
+  it("forwards the known validators and turns the listing off", async () => {
+    await getBalance(mockNearContext, ADDRESS, {
+      knownValidatorIds: [VALIDATOR],
+      listValidators: false,
+    });
+
+    expect(getAccount).toHaveBeenCalledWith(expect.anything(), ADDRESS, {
+      knownValidatorIds: [VALIDATOR],
+      discover: false,
+    });
+  });
+
+  it("keeps the listing on by default", async () => {
+    await getBalance(mockNearContext, ADDRESS, { knownValidatorIds: [VALIDATOR] });
+
+    expect(getAccount).toHaveBeenCalledWith(expect.anything(), ADDRESS, {
+      knownValidatorIds: [VALIDATOR],
+      discover: true,
+    });
+  });
+
+  it("reads like before without options", async () => {
+    await getBalance(mockNearContext, ADDRESS);
+
+    expect(getAccount).toHaveBeenCalledWith(expect.anything(), ADDRESS, {});
+  });
+
+  it("rejects asset options, which a single-asset chain cannot honour", async () => {
+    await expect(getBalance(mockNearContext, ADDRESS, { scanAssetsMinHeight: 1 })).rejects.toThrow(
+      "validator options",
+    );
+  });
+});
