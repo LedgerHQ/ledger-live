@@ -15,7 +15,9 @@ import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLi
 import { useFeature } from "@features/platform-feature-flags";
 import Braze from "@braze/react-native-sdk";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { accountsSelector } from "~/reducers/accounts";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
+import { store } from "~/state-manager/configureStore";
 import { navigationRef, isReadyRef } from "../rootnavigation";
 import { ScreenName, NavigatorName } from "~/const";
 import { CONTACTS_DEEP_LINK_PATH } from "./deeplinks/contactsDeepLink";
@@ -49,6 +51,7 @@ import {
 import { handleWallet40Deeplink } from "./deeplinks/handleWallet40Deeplink";
 import { resolveMarketOrAssetDeeplinkIntent } from "./deeplinks/resolveMarketOrAssetDeeplinkIntent";
 import { handleMarketBannerDeeplink } from "./deeplinks/handleMarketBannerDeeplink";
+import { handleAccountDeeplink } from "./deeplinks/handleAccountDeeplink";
 import { handleAssetDetailDeeplink } from "./deeplinks/handleAssetDetailDeeplink";
 import { handleGenericAwarenessModalDeeplink } from "./deeplinks/handleGenericAwarenessModalDeeplink";
 import { handleProductTourDeeplink } from "./deeplinks/handleProductTourDeeplink";
@@ -538,13 +541,6 @@ export const DeeplinksProvider = ({
                            */
                           [ScreenName.AccountsList]: "accounts",
                           /**
-                           * @params ?currency: string
-                           * @params ?address: string
-                           * ie: "ledgerlive://account?currency=ethereum&address={{eth_account_address}} will open that account's assets screen.
-                           * Currency param alone e.g. "ledgerlive://account?currency=tezos" will open the Tezos Assets screen.
-                           */
-                          [ScreenName.Accounts]: "account",
-                          /**
                            * @params currencyId: string (path parameter)
                            * ie: "ledgerlive://asset/bitcoin" will open the Bitcoin Asset screen.
                            */
@@ -664,6 +660,16 @@ export const DeeplinksProvider = ({
               return handleMarketBannerDeeplink();
             }
             return getStateFromPath(url.href?.split("://")[1], config);
+          }
+
+          if (hostname === "account") {
+            const accountState = handleAccountDeeplink({
+              currency: searchParams.get("currency"),
+              address: searchParams.get("address"),
+              accounts: accountsSelector(store.getState()),
+              hasCompletedOnboarding,
+            });
+            if (accountState) return accountState;
           }
 
           // Handle market & asset deeplinks - resolve the target before navigation.

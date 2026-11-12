@@ -5807,7 +5807,6 @@
     }
   },
   "addAccounts": {
-    "addNew": "Add new",
     "seeAllAccounts": "See all accounts",
     "addNewOrExisting": "Add new or existing account",
     "supportLinks": {

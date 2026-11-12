@@ -6,14 +6,14 @@ import { TIMEOUT } from "@e2e/utils/timeouts";
 import { Account, AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 
 const ACCOUNT_GRAPH_PREFIX = "account-graph-";
-const ACCOUNT_NAME_PREFIX = "account-row-name-";
+const ACCOUNT_ITEM_NAME = /account-item-.*-name/;
 const OPERATION_ROW_REGEXP = /operation-row-.*/;
 
 export default class AccountPage {
   private readonly baseLink = "account";
 
   private readonly accountListTitle = byId("accounts-list-title");
-  private readonly accountsList = byId("accounts-list");
+  private readonly accountsList = byId("AccountsList");
   private readonly accountScreenScrollView = byId("account-screen-scrollView");
   private readonly accountAdvancedLogs = byId("account-advanced-logs");
   private readonly accountAdvancedLogRow = byId("account-advanced-log-row");
@@ -33,10 +33,8 @@ export default class AccountPage {
   // A sub-account graph id carries the parent and token ids joined by "+".
   private readonly subAccountGraph = (index = 0) =>
     byId(new RegExp(String.raw`^${ACCOUNT_GRAPH_PREFIX}.+\+.+`), index);
-  private readonly accountNameAt = (index: number) =>
-    byId(new RegExp(`${ACCOUNT_NAME_PREFIX}.*`), index);
-  private readonly accountNameRow = (name: string) => byId(`${ACCOUNT_NAME_PREFIX}${name}`);
-  private readonly accountRow = (id: string) => byId(`account-row-${id}`);
+  private readonly accountNameAt = (index: number) => byId(ACCOUNT_ITEM_NAME, index);
+  private readonly accountItem = (id: string) => byId(`account-item-${id}`);
   private readonly accountTitle = (name: string) => byText(name);
   private readonly accountGraph = (accountId: string) =>
     byId(`${ACCOUNT_GRAPH_PREFIX}${accountId}`);
@@ -73,22 +71,25 @@ export default class AccountPage {
 
   @Step("Go to the account with the name {{{0}}}")
   async goToAccountByName(name: string) {
-    await this.accountNameRow(name).scrollTo(this.accountsList);
-    await this.accountNameRow(name).tap();
+    const nameElement = this.accountTitle(name);
+    await nameElement.scrollTo(this.accountsList);
+    const rowId = (await nameElement.getIdentifier()).replace("-name", "");
+    await byId(rowId).tap();
   }
 
   @Step("Go to the account with id {{{0}}}")
   async goToAccountById(id: string) {
-    await this.accountRow(id).scrollTo(this.accountsList);
-    await this.accountRow(id).waitVisible();
-    await this.accountRow(id).expectVisible();
-    await this.accountRow(id).tap();
+    await this.accountItem(id).scrollTo(this.accountsList);
+    await this.accountItem(id).waitVisible();
+    await this.accountItem(id).expectVisible();
+    await this.accountItem(id).tap();
   }
 
   @Step("Expect the account name {{{0}}}")
-  async expectAccountName(accountName: string, index = 0) {
-    await this.accountNameAt(index).waitVisible();
-    await this.accountNameAt(index).expectText(accountName);
+  async expectAccountName(accountName: string) {
+    const nameElement = this.accountTitle(accountName);
+    await nameElement.scrollTo(this.accountsList);
+    await nameElement.expectText(accountName);
   }
 
   @Step("Get the account name at index {{{0}}}")

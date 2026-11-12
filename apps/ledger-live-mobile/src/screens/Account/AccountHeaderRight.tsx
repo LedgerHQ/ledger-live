@@ -40,7 +40,9 @@ export default function AccountHeaderRight() {
 
   useEffect(() => {
     if (!account) {
-      navigation.navigate(ScreenName.Accounts);
+      navigation.navigate(ScreenName.AccountsList, {
+        sourceScreenName: ScreenName.Account,
+      });
     }
   }, [account, navigation]);
 

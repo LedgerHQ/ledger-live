@@ -9,11 +9,9 @@ import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useSelector } from "~/context/hooks";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { ScreenName } from "~/const";
-import Accounts from "~/screens/Accounts";
 import Account from "LLM/features/AccountDetail/AccountScreen";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { getStackNavigationConfigV4 } from "LLM/components/Navigation/getStackNavigationConfigV4";
-import ReadOnlyAccounts from "~/screens/Accounts/ReadOnly/ReadOnlyAccounts";
 import ReadOnlyAssets from "~/screens/Portfolio/ReadOnlyAssets";
 
 import Asset from "~/screens/WalletCentricAsset";
@@ -128,15 +126,7 @@ export default function AccountsNavigator() {
   );
 
   return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name={ScreenName.Accounts}
-        component={readOnlyModeEnabled ? ReadOnlyAccounts : Accounts}
-        options={{
-          ...stackNavConfig,
-          headerShown: false,
-        }}
-      />
+    <Stack.Navigator initialRouteName={ScreenName.AccountsList}>
       <Stack.Screen
         name={ScreenName.Account}
         component={readOnlyModeEnabled ? ReadOnlyAccount : Account}
