@@ -194,7 +194,7 @@ describe("operationsReader", () => {
   it("fails only the account whose call failed, keeping the body out", async () => {
     const service = fakeService({ portfolio: synced([ETH, evm(2)]), updates: hashes(1) });
     service.client.getUpdates.mockImplementation(async (_id, { account }) => {
-      if (account.endsWith(evm(2).address)) throw new Error(`500 for ${evm(2).address}`);
+      if (account.endsWith(evm(2).key)) throw new Error(`500 for ${evm(2).key}`);
       return { items: hashes(1), nextToken: undefined };
     });
     const { read } = setup(service);
@@ -204,7 +204,7 @@ describe("operationsReader", () => {
     expect(eth.status).toBe("fulfilled");
     expect(reasonOf(failed)).toBeInstanceOf(PortfolioReadError);
     expect(String(reasonOf(failed))).toContain("Unexpected error");
-    expect(String(reasonOf(failed))).not.toContain(evm(2).address);
+    expect(String(reasonOf(failed))).not.toContain(evm(2).key);
   });
 
   it("serves no account when listing the portfolio fails", async () => {

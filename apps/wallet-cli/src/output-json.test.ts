@@ -6,6 +6,8 @@ import { USDT_TOKEN_INFO, USDT_TOKEN_JSON } from "./testing/cal-fixtures";
 import { SwapBackendError } from "./commands/swap/swap-backend-error";
 import { NetworkIdSchema } from "./shared/accountDescriptor";
 
+const XPUB = "xpub6BosfCnifzxcA";
+
 const { createCommandOutput } = await import("./output");
 
 describe("JsonCommandOutput", () => {
@@ -605,7 +607,7 @@ describe("JsonCommandOutput", () => {
       version: "2",
       type: "utxo",
       network: NetworkIdSchema.parse("bitcoin"),
-      xpub: "xpub6BosfCnifzxcA",
+      key: XPUB,
       path: "m/84h/0h/0h",
     } as const;
     const out = createCommandOutput("json", {

@@ -62,7 +62,7 @@ describe("createPortfolioSource", () => {
     await handle.reconcile([ETH]);
 
     expect(state.portfolio?.registrations).toEqual([
-      expect.objectContaining({ type: "evm", address: ETH.address }),
+      expect.objectContaining({ type: "evm", address: ETH.key }),
     ]);
   });
 

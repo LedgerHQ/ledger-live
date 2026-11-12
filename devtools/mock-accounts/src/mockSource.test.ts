@@ -210,7 +210,7 @@ describe("mockSource", () => {
       const own = await allOperationsOf(account);
       for (const op of own) {
         expect(op.type === "IN" ? op.recipients : op.senders).toEqual([
-          account.type === "address" ? account.address : "",
+          account.type === "address" ? account.key : "",
         ]);
       }
       operations.push(...own);

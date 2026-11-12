@@ -1,4 +1,6 @@
 import { ETH_ADDR, SOL_ADDR, XPUB } from "./test-fixtures";
+
+const TON_PUBKEY = "86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060";
 import { AccountUUIDSchema, accountDescriptorKey, computeAccountUUID } from "./key";
 import { mockAddressAccountDescriptor } from "./schema.mock";
 import type { AccountDescriptor } from "./schema";
@@ -9,7 +11,7 @@ const utxo = (path: string, network = "bitcoin"): AccountDescriptor => ({
   version: "2",
   type: "utxo",
   network: NetworkIdSchema.parse(network),
-  xpub: XPUB,
+  key: XPUB,
   path,
 });
 
@@ -18,8 +20,13 @@ const address = (addr: string, network = "ethereum"): AccountDescriptor => ({
   version: "2",
   type: "address",
   network: NetworkIdSchema.parse(network),
-  address: addr,
+  key: addr,
   path: "m/44h/60h/0h/0/0",
+});
+
+const ton = (key: string): AccountDescriptor => ({
+  ...address(key, "ton"),
+  path: "m/44h/607h/0h/0h/0h/0h",
 });
 
 describe("accountDescriptorKey", () => {
@@ -45,6 +52,12 @@ describe("accountDescriptorKey", () => {
     const solana = "solana";
     expect(accountDescriptorKey(address(SOL_ADDR, solana))).not.toBe(
       accountDescriptorKey(address(SOL_ADDR.toLowerCase(), solana)),
+    );
+  });
+
+  it("collapses the case of a hex public key", () => {
+    expect(accountDescriptorKey(ton(TON_PUBKEY.toUpperCase()))).toBe(
+      accountDescriptorKey(ton(TON_PUBKEY)),
     );
   });
 
@@ -92,7 +105,7 @@ describe("computeAccountUUID", () => {
     expect(computeAccountUUID(descriptor)).toBe(uuid);
   });
 
-  it("carries neither xpub nor address", () => {
+  it("carries no account key", () => {
     expect(computeAccountUUID(address(ETH_ADDR))).not.toContain(
       ETH_ADDR.slice(2, 10).toLowerCase(),
     );

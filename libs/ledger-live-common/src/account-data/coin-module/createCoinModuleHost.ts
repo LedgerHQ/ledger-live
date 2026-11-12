@@ -23,6 +23,7 @@ import {
   loadBridgeApiForFamily,
   loadLocalApiForFamily,
 } from "../../coin-modules/registry";
+import { addressFromKey } from "../../account/accountDescriptor";
 
 // A currency with no configuration (MultiversX is configured as `multiversx`, not `elrond`) is left to the next source.
 function configurationOf(currencyId: string): Promise<CurrencyConfig> {
@@ -89,6 +90,7 @@ export function createCoinModuleHost({
         return false;
       }
     },
+    addressOf: addressFromKey,
     async getApi(currencyId) {
       const currency = getCryptoCurrencyById(currencyId);
       const { createLocalApi, bridgeApi } = await loadApis(currency);

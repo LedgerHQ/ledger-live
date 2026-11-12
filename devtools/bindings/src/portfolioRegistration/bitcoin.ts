@@ -12,11 +12,11 @@ const FIRST_ADDRESS_SUFFIX = "/0/0";
 export const bitcoinRegistration: PortfolioRegistrationStrategy = {
   register(descriptor) {
     if (descriptor.type !== "utxo" || descriptor.network !== BITCOIN) return undefined;
-    if (!SERVICE_XPUB.test(descriptor.xpub)) return undefined;
+    if (!SERVICE_XPUB.test(descriptor.key)) return undefined;
     return {
       type: "auto_derive",
       network: "bitcoin",
-      xpub: descriptor.xpub,
+      xpub: descriptor.key,
       derivationPath: `${descriptor.path}${FIRST_ADDRESS_SUFFIX}`,
     };
   },

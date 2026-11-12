@@ -2,7 +2,6 @@ import type { PortfolioFamily } from "./family";
 
 /** Our network to the service's, only where staging synchronizes an `account` registration. */
 const ACCOUNT_NETWORKS: ReadonlyMap<string, string> = new Map([
-  ["canton_network", "canton_network"],
   ["stellar", "stellar"],
   ["sui", "sui"],
   ["tezos", "tezos"],
@@ -16,9 +15,9 @@ export const addressAccountFamily: PortfolioFamily = {
   accountOf(descriptor) {
     const network = ACCOUNT_NETWORKS.get(descriptor.network);
     if (descriptor.type !== "address" || network === undefined) return undefined;
-    const accountId = `${network}:${descriptor.address}`;
+    const accountId = `${network}:${descriptor.key}`;
     return {
-      registration: { type: "account", accountId, network, addresses: [descriptor.address] },
+      registration: { type: "account", accountId, network, addresses: [descriptor.key] },
       serverAccountId: accountId,
     };
   },

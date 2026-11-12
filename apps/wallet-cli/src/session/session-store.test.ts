@@ -15,12 +15,17 @@ import { generateLabel, getSessionPath, Session, withSessionLock } from "./sessi
 import { NetworkIdSchema, type AccountDescriptorV1 } from "../shared/accountDescriptor";
 import { pointStateHomeAt } from "../testing/state-home";
 
+const XPUB_A = "xpub6BosfCnifzxcA";
+const XPUB_B = "xpub6BosfCnifzxcB";
+const XPUB_C = "xpub6BosfCnifzxcC";
+const ETH_ADDRESS = "0x71C7656EC7ab88b098defB751B7401B5f6d8976F";
+
 const btcNative: AccountDescriptorV1 = {
   purpose: "account",
   version: "2",
   type: "utxo",
   network: NetworkIdSchema.parse("bitcoin"),
-  xpub: "xpub6BosfCnifzxcA",
+  key: XPUB_A,
   path: "m/84h/0h/0h",
 };
 
@@ -29,7 +34,7 @@ const btcNative2: AccountDescriptorV1 = {
   version: "2",
   type: "utxo",
   network: NetworkIdSchema.parse("bitcoin"),
-  xpub: "xpub6BosfCnifzxcB",
+  key: XPUB_B,
   path: "m/84h/0h/1h",
 };
 
@@ -38,7 +43,7 @@ const btcLegacy: AccountDescriptorV1 = {
   version: "2",
   type: "utxo",
   network: NetworkIdSchema.parse("bitcoin"),
-  xpub: "xpub6BosfCnifzxcC",
+  key: XPUB_C,
   path: "m/44h/0h/0h",
 };
 
@@ -47,7 +52,7 @@ const btcSegwit: AccountDescriptorV1 = {
   version: "2",
   type: "utxo",
   network: NetworkIdSchema.parse("bitcoin"),
-  xpub: "xpubSEGWIT",
+  key: "xpubSEGWIT",
   path: "m/49h/0h/0h",
 };
 
@@ -56,7 +61,7 @@ const btcTaproot: AccountDescriptorV1 = {
   version: "2",
   type: "utxo",
   network: NetworkIdSchema.parse("bitcoin"),
-  xpub: "xpubTAPROOT",
+  key: "xpubTAPROOT",
   path: "m/86h/0h/0h",
 };
 
@@ -65,7 +70,7 @@ const btcTestnet: AccountDescriptorV1 = {
   version: "2",
   type: "utxo",
   network: NetworkIdSchema.parse("bitcoin_testnet"),
-  xpub: "tpub1234",
+  key: "tpub1234",
   path: "m/84h/1h/0h",
 };
 
@@ -74,7 +79,7 @@ const ethMain: AccountDescriptorV1 = {
   version: "2",
   type: "address",
   network: NetworkIdSchema.parse("ethereum"),
-  address: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
+  key: ETH_ADDRESS,
   path: "m/44h/60h/0h/0/0",
 };
 
@@ -83,7 +88,7 @@ const ethGoerli: AccountDescriptorV1 = {
   version: "2",
   type: "address",
   network: NetworkIdSchema.parse("ethereum_goerli"),
-  address: "0xabc",
+  key: "0xabc",
   path: "m/44h/60h/0h/0/0",
 };
 

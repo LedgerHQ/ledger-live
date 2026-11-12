@@ -11,9 +11,9 @@ const EVM_ADDRESS = /^0x[0-9a-fA-F]{40}$/;
 export const evmRegistration: PortfolioRegistrationStrategy = {
   register(descriptor) {
     if (descriptor.type !== "address") return undefined;
-    if (!EVM_COIN_TYPE_PATH.test(descriptor.path) || !EVM_ADDRESS.test(descriptor.address)) {
+    if (!EVM_COIN_TYPE_PATH.test(descriptor.path) || !EVM_ADDRESS.test(descriptor.key)) {
       return undefined;
     }
-    return { type: "evm", address: descriptor.address };
+    return { type: "evm", address: descriptor.key };
   },
 };

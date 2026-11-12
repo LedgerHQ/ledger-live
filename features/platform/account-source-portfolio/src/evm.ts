@@ -25,7 +25,7 @@ export function isEvmAccount(
   return (
     descriptor.type === "address" &&
     EVM_PATH.test(descriptor.path) &&
-    EVM_ADDRESS.test(descriptor.address) &&
+    EVM_ADDRESS.test(descriptor.key) &&
     isEvmNetwork(descriptor.network)
   );
 }
@@ -35,8 +35,8 @@ export const evmFamily: PortfolioFamily = {
   accountOf: descriptor =>
     isEvmAccount(descriptor)
       ? {
-          registration: { type: "evm", address: descriptor.address },
-          serverAccountId: `${descriptor.network}:${descriptor.address.toLowerCase()}`,
+          registration: { type: "evm", address: descriptor.key },
+          serverAccountId: `${descriptor.network}:${descriptor.key.toLowerCase()}`,
         }
       : undefined,
   keyOf: ({ type, address }) =>

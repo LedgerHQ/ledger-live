@@ -37,7 +37,5 @@ export function senderFromAccount(
         `${MAINNET_ACCOUNT[network]}.`,
     );
   }
-  return network === "ethereum"
-    ? parseEvmAddress(descriptor.address, "account")
-    : descriptor.address;
+  return network === "ethereum" ? parseEvmAddress(descriptor.key, "account") : descriptor.key;
 }
