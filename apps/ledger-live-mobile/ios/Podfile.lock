@@ -4067,7 +4067,7 @@ DEPENDENCIES:
   - "RNGestureHandler (from `../../../node_modules/.pnpm/react-native-gesture-handler@2.32.0_react-nativ_e3e0b1258d5e8ef6e35a4351fd388dfc/node_modules/react-native-gesture-handler`)"
   - "RNKeychain (from `../../../node_modules/.pnpm/react-native-keychain@10.0.0/node_modules/react-native-keychain`)"
   - "RNLocalize (from `../../../node_modules/.pnpm/react-native-localize@2.2.6_react-native@0.86.3_53b2f01b945a078ec4c6cf63abeabb8e/node_modules/react-native-localize`)"
-  - "RNReanimated (from `../../../node_modules/.pnpm/react-native-reanimated@4.5.1_react-native-work_511e3fe7f584f0f01fd736c635e68464/node_modules/react-native-reanimated`)"
+  - "RNReanimated (from `../../../node_modules/.pnpm/react-native-reanimated@4.5.1_patch_hash=a16018_6ce97098408263ffdeb22a8116b7c99f/node_modules/react-native-reanimated`)"
   - "RNScreens (from `../../../node_modules/.pnpm/react-native-screens@4.26.2_react-native@0.86.3_eb95c740da8e5ade05a59ec4a3aa68b2/node_modules/react-native-screens`)"
   - "RNShare (from `../../../node_modules/.pnpm/react-native-share@12.2.0/node_modules/react-native-share`)"
   - "RNSVG (from `../../../node_modules/.pnpm/react-native-svg@15.15.4_react-native@0.86.3_pa_7518fcde1706d5574462a64e9e30776a/node_modules/react-native-svg`)"
@@ -4076,7 +4076,7 @@ DEPENDENCIES:
   - SharedNativePerformance (from `../../../shared/native-performance`)
   - SocketRocket (~> 0.7.1)
   - "sovran-react-native (from `../../../node_modules/.pnpm/@segment+sovran-react-native@1.1.4_222eea170822c23b01e7c464f52582ae/node_modules/@segment/sovran-react-native`)"
-  - "VisionCamera (from `../../../node_modules/.pnpm/react-native-vision-camera@4.7.3_16d68af6fcefac0c77c12da7c321882d/node_modules/react-native-vision-camera`)"
+  - "VisionCamera (from `../../../node_modules/.pnpm/react-native-vision-camera@4.7.3_b315a00bf24f95bc903a34fcc9ca8f16/node_modules/react-native-vision-camera`)"
   - "Yoga (from `../../../node_modules/.pnpm/react-native@0.86.3_patch_hash=938a67fa2a9dbeb9_d6ed38327e04167b05cb4bf05144252b/node_modules/react-native/ReactCommon/yoga`)"
 
 SPEC REPOS:
@@ -4387,7 +4387,7 @@ EXTERNAL SOURCES:
   RNLocalize:
     :path: "../../../node_modules/.pnpm/react-native-localize@2.2.6_react-native@0.86.3_53b2f01b945a078ec4c6cf63abeabb8e/node_modules/react-native-localize"
   RNReanimated:
-    :path: "../../../node_modules/.pnpm/react-native-reanimated@4.5.1_react-native-work_511e3fe7f584f0f01fd736c635e68464/node_modules/react-native-reanimated"
+    :path: "../../../node_modules/.pnpm/react-native-reanimated@4.5.1_patch_hash=a16018_6ce97098408263ffdeb22a8116b7c99f/node_modules/react-native-reanimated"
   RNScreens:
     :path: "../../../node_modules/.pnpm/react-native-screens@4.26.2_react-native@0.86.3_eb95c740da8e5ade05a59ec4a3aa68b2/node_modules/react-native-screens"
   RNShare:
@@ -4403,7 +4403,7 @@ EXTERNAL SOURCES:
   sovran-react-native:
     :path: "../../../node_modules/.pnpm/@segment+sovran-react-native@1.1.4_222eea170822c23b01e7c464f52582ae/node_modules/@segment/sovran-react-native"
   VisionCamera:
-    :path: "../../../node_modules/.pnpm/react-native-vision-camera@4.7.3_16d68af6fcefac0c77c12da7c321882d/node_modules/react-native-vision-camera"
+    :path: "../../../node_modules/.pnpm/react-native-vision-camera@4.7.3_b315a00bf24f95bc903a34fcc9ca8f16/node_modules/react-native-vision-camera"
   Yoga:
     :path: "../../../node_modules/.pnpm/react-native@0.86.3_patch_hash=938a67fa2a9dbeb9_d6ed38327e04167b05cb4bf05144252b/node_modules/react-native/ReactCommon/yoga"
 
