@@ -203,6 +203,7 @@ describe("getTransactionStatus", () => {
       spendableBalance: BigNumber(1),
     } as Account;
     const transaction = {
+      amount: BigNumber(0),
       fees: { accountCreationFee: BigNumber(0), fee: BigNumber(1) },
       memo: "random memo for unit test",
     } as Transaction;
@@ -220,6 +221,7 @@ describe("getTransactionStatus", () => {
       spendableBalance: BigNumber(1),
     } as Account;
     const transaction = {
+      amount: BigNumber(0),
       fees: { accountCreationFee: BigNumber(0), fee: BigNumber(1) },
       memo: "random memo for unit test",
     } as Transaction;
