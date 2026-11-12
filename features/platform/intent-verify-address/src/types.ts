@@ -32,10 +32,12 @@ export type VerifyAddressIntentInput = {
 
 /**
  * `verified` / `mismatch` / `unsupported` complete the observable.
+ * `addressDisplayed` (address on the Secure Screen, waiting for the user) is non-terminal.
  * `cancelled` stays open and exposes `retry`. Other failures are observable errors.
  */
 export type VerifyAddressIntentJobState =
   | { type: "verifying"; deviceModelId: DeviceModelId; deviceName: string }
+  | { type: "addressDisplayed" }
   | { type: "verified"; address: string }
   | { type: "cancelled"; retry: () => void }
   | { type: "mismatch"; expectedAddress: string; reportedAddress: string }

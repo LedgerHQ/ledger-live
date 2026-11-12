@@ -11,13 +11,17 @@ receive address on the device Secure Screen.
 The job hands the live DMK session to a **host-injected** device operation and
 maps its device-action stream to a small, UI-friendly state union:
 
-| `JobState`    | Meaning                                                       | Terminal |
-| ------------- | ------------------------------------------------------------- | -------- |
-| `verifying`   | Address is being displayed on the device, awaiting the user.  | no       |
-| `verified`    | Device address matches the expected one.                      | yes      |
-| `mismatch`    | Device address differs from the expected one.                 | yes      |
-| `cancelled`   | User refused on device. Carries a `retry()` handler.          | no       |
-| `unsupported` | Device app cannot display the address.                        | yes      |
+| `JobState`         | Meaning                                                       | Terminal |
+| ------------------ | ------------------------------------------------------------- | -------- |
+| `verifying`        | App is open, the address is being requested from the device.  | no       |
+| `addressDisplayed` | Address is on the device Secure Screen, awaiting the user.    | no       |
+| `verified`         | Device address matches the expected one.                      | yes      |
+| `mismatch`         | Device address differs from the expected one.                 | yes      |
+| `cancelled`        | User refused on device. Carries a `retry()` handler.          | no       |
+| `unsupported`      | Device app cannot display the address.                        | yes      |
+
+Each attempt emits `verifying` then `addressDisplayed` once; a retry after
+`cancelled` starts the sequence again.
 
 Any other device failure escapes as an observable error, so the executor renders
 its shared intent-error screen.
