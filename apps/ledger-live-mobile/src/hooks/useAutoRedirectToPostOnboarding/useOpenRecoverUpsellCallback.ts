@@ -44,8 +44,12 @@ export function useOpenRecoverUpsellCallback() {
     const internetConnected = await internetReachable();
     if (!internetConnected || !recoverFeature?.enabled) return false;
 
-    const redirect = (url: string) => {
-      Linking.openURL(url);
+    const redirect = async (url: string) => {
+      try {
+        await Linking.openURL(url);
+      } catch {
+        return false;
+      }
       setRedirectionStarted(true);
       return true;
     };
