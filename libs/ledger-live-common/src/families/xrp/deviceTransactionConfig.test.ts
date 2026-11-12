@@ -37,7 +37,7 @@ function makeTokenAccount(tokenType: string, tokenIdentifier: string, code: stri
   } as unknown as TokenAccount;
 }
 
-function makeChangeTrust(assetReference: string, limit: BigNumber) {
+function makeChangeTrustInput(assetReference: string, limit: BigNumber) {
   return {
     account: { type: "Account" } as never,
     parentAccount: null,
@@ -110,13 +110,15 @@ describe("getDeviceTransactionConfig", () => {
 
 describe("getDeviceTransactionConfig for an IOU send", () => {
   it("lists Amount, Issuer, Tag and Fees for a 3-character code, without Send Max at no issuer fee", async () => {
+    const amount = toIouAmount("10");
+
     const fields = await getDeviceTransactionConfig({
       account: makeTokenAccount("iou", "USD", "USD"),
       parentAccount: null,
       transaction: { family: "xrp", tag: 7 } as Transaction,
       status: {
-        amount: toIouAmount("10"),
-        totalSpent: toIouAmount("10"),
+        amount,
+        totalSpent: amount,
         estimatedFees: FEES,
       } as TransactionStatus,
     });
@@ -171,7 +173,9 @@ describe("getDeviceTransactionConfig for an IOU send", () => {
 
 describe("getDeviceTransactionConfig for an opt-in or an edit", () => {
   it("lists Limit Amount with the code first, Issuer and Fees", async () => {
-    const fields = await getDeviceTransactionConfig(makeChangeTrust("USD", toIouAmount("1000")));
+    const fields = await getDeviceTransactionConfig(
+      makeChangeTrustInput("USD", toIouAmount("1000")),
+    );
 
     expect(fields).toEqual([
       { type: "text", label: "Limit Amount", value: "USD 1000" },
@@ -182,7 +186,7 @@ describe("getDeviceTransactionConfig for an opt-in or an edit", () => {
 
   it("shows only the digits of a 40-hex code's limit, its code in Currency", async () => {
     const fields = await getDeviceTransactionConfig(
-      makeChangeTrust(RLUSD_CODE, toIouAmount("1234.5")),
+      makeChangeTrustInput(RLUSD_CODE, toIouAmount("1234.5")),
     );
 
     expect(fields).toEqual([
@@ -195,18 +199,18 @@ describe("getDeviceTransactionConfig for an opt-in or an edit", () => {
 
   it("lists only Fees for an MPT opt-in, which sets no limit", async () => {
     const fields = await getDeviceTransactionConfig(
-      makeChangeTrust("0".repeat(47) + "A", new BigNumber(0)),
+      makeChangeTrustInput("0".repeat(47) + "A", new BigNumber(0)),
     );
 
     expect(fields).toEqual([{ type: "fees", label: "Fees" }]);
   });
 
   it("shows the maximum limit as 96 digits, without grouping", async () => {
-    const [limit] = await getDeviceTransactionConfig(
-      makeChangeTrust(RLUSD_CODE, getMaxTrustLimitForToken()),
+    const fields = await getDeviceTransactionConfig(
+      makeChangeTrustInput(RLUSD_CODE, getMaxTrustLimitForToken()),
     );
 
-    expect(limit).toMatchObject({
+    expect(fields[0]).toMatchObject({
       label: "Limit Amount",
       value: expect.stringMatching(/^\d{96}$/),
     });

@@ -7,7 +7,6 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { Transaction } from "@ledgerhq/live-common/families/xrp/types";
 import { TrackScreen } from "@shared/analytics-react";
 import { useSelector } from "LLD/hooks/redux";
-import { localeSelector } from "~/renderer/reducers/settings";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -16,6 +15,7 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import Label from "~/renderer/components/Label";
 import Switch from "~/renderer/components/Switch";
+import { localeSelector } from "~/renderer/reducers/settings";
 import { getXrpResources } from "../../utils";
 import type { StepProps } from "../types";
 
@@ -38,8 +38,8 @@ export default function StepSettings({
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
 
-  const isCurrentLimitZero =
-    !!getXrpResources(tokenAccount)?.limit?.isZero() && transaction.amount.isZero();
+  const isCurrentLimitZero = !!getXrpResources(tokenAccount)?.limit?.isZero();
+  const isLimitStillZero = isCurrentLimitZero && transaction.amount.isZero();
 
   const balance = tokenAccount?.balance;
   const isLimitBelowBalance = transaction.amount.gt(0) && transaction.amount.lt(balance ?? 0);
@@ -67,7 +67,7 @@ export default function StepSettings({
         defaultUnit={token.units[0]}
         value={transaction.amount}
         onChange={onChangeLimit}
-        error={isCurrentLimitZero ? undefined : status.errors.amount}
+        error={isLimitStillZero ? undefined : status.errors.amount}
         allowZero
         renderRight={
           maxLimit?.gt(0) ? (
@@ -79,7 +79,7 @@ export default function StepSettings({
         id="xrp-trust-limit-input"
         data-testid="xrp-trust-limit-input"
       />
-      {isCurrentLimitZero ? (
+      {isLimitStillZero ? (
         <Alert type="warning" mt={2}>
           <Trans i18nKey="xrp.tokenSettings.currentLimitZero" />
         </Alert>

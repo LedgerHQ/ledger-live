@@ -272,6 +272,12 @@ describe("xrpBridgeApi", () => {
   it("gives a synced opt-in, opt-out or edit its own parent row", () => {
     expect(xrpBridgeApi(ripple).tokenOptParentRow).toBe(true);
   });
+
+  it("keeps opt-ins as fee rows while no standard is enabled", () => {
+    getXrpEnabledTokenStandardsMock.mockReturnValue([]);
+
+    expect(xrpBridgeApi(ripple).tokenOptParentRow).toBe(false);
+  });
 });
 
 describe("describeOptimisticOperation", () => {

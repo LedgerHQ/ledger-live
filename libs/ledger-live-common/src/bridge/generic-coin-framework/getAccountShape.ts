@@ -238,7 +238,7 @@ function parentOpsFromNativeOps(
   return out;
 }
 
-const TOKEN_OPT_TYPES: OperationType[] = ["OPT_IN", "OPT_OUT", "OPT_EDIT"];
+const TOKEN_OPT_TYPES = new Set<OperationType>(["OPT_IN", "OPT_OUT", "OPT_EDIT"]);
 
 /** One synthetic FEES or NONE parent when the tx has no native ops (e.g. token-only). */
 function syntheticParentForTokenOnlyTx(
@@ -256,7 +256,7 @@ function syntheticParentForTokenOnlyTx(
   const feePayer = getFeePayer(referenceOp);
   const isFeePayer = feePayer !== undefined && isSameAddress(address, feePayer);
   const paysFee = isFeePayer && !referenceOp.fee?.isZero();
-  const keepsOptType = tokenOptParentRow && TOKEN_OPT_TYPES.includes(referenceOp.type);
+  const keepsOptType = tokenOptParentRow && TOKEN_OPT_TYPES.has(referenceOp.type);
   const feeType = paysFee ? "FEES" : "NONE";
   const parentType = keepsOptType ? referenceOp.type : feeType;
   const parentValue = paysFee ? referenceOp.fee : new BigNumber(0);

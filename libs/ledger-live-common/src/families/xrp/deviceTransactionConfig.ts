@@ -13,14 +13,15 @@ const IOU_MAGNITUDE = 38;
  */
 export function toDeviceCurrency(code: string): string {
   const bytes = Buffer.from(code, "hex");
+  const hex = code.toLowerCase();
 
   const text = bytes.toString("latin1").replace(/\0+$/, "");
   const endsWithZero = bytes.at(-1) === 0;
   const isPrintable = /^[\x20-\x7e]+$/.test(text);
   const hasXrp = text.includes("XRP");
-  if (!endsWithZero || hasXrp) return code.toLowerCase();
+  if (!endsWithZero || hasXrp) return hex;
 
-  return isPrintable ? text : code.toLowerCase();
+  return isPrintable ? text : hex;
 }
 
 // As app-xrp prints an IOU amount: no grouping, and a 3-character code first
@@ -42,7 +43,10 @@ function getIouAsset(account: AccountLike, transaction: Transaction) {
   if (transaction.mode === "changeTrust") {
     return toIouAsset(transaction.assetReference, transaction.assetOwner);
   }
-  if (account.type !== "TokenAccount") return undefined;
+
+  if (account.type !== "TokenAccount") {
+    return undefined;
+  }
 
   const asset = getAssetFromToken(account.token);
   if (!asset || !("assetReference" in asset)) return undefined;
@@ -51,11 +55,11 @@ function getIouAsset(account: AccountLike, transaction: Transaction) {
 }
 
 function getIouAssetFields(code: string, issuer: string): CommonDeviceTransactionField[] {
-  const currency: CommonDeviceTransactionField[] = IOU_HEX_CODE.test(code)
+  const currencyFields: CommonDeviceTransactionField[] = IOU_HEX_CODE.test(code)
     ? [{ type: "text", label: "Currency", value: toDeviceCurrency(code) }]
     : [];
 
-  return [...currency, { type: "address", label: "Issuer", address: issuer }];
+  return [...currencyFields, { type: "address", label: "Issuer", address: issuer }];
 }
 
 async function getDeviceTransactionConfig({
@@ -68,31 +72,31 @@ async function getDeviceTransactionConfig({
   transaction: Transaction;
   status: TransactionStatus;
 }): Promise<Array<CommonDeviceTransactionField>> {
-  const amountField: CommonDeviceTransactionField[] = status.amount.isZero()
+  const amountFields: CommonDeviceTransactionField[] = status.amount.isZero()
     ? []
     : [{ type: "amount", label: "Amount" }];
 
-  const fees: CommonDeviceTransactionField[] = status.estimatedFees.isZero()
+  const feesFields: CommonDeviceTransactionField[] = status.estimatedFees.isZero()
     ? []
     : [{ type: "fees", label: "Fees" }];
 
-  const tag: CommonDeviceTransactionField[] =
+  const tagFields: CommonDeviceTransactionField[] =
     typeof transaction.tag === "number"
       ? [{ type: "text", label: "Tag", value: String(transaction.tag) }]
       : [];
 
   const iou = getIouAsset(account, transaction);
-  if (!iou) return [...amountField, ...fees, ...tag];
+  if (!iou) return [...amountFields, ...feesFields, ...tagFields];
 
   const assetFields = getIouAssetFields(iou.assetReference, iou.assetOwner);
 
   if (transaction.mode === "changeTrust") {
     const limit = toDeviceIouAmount(transaction.amount, iou.assetReference);
 
-    return [{ type: "text", label: "Limit Amount", value: limit }, ...assetFields, ...fees];
+    return [{ type: "text", label: "Limit Amount", value: limit }, ...assetFields, ...feesFields];
   }
 
-  const sendMax: CommonDeviceTransactionField[] =
+  const sendMaxFields: CommonDeviceTransactionField[] =
     account.type === "TokenAccount" && !status.totalSpent.eq(status.amount)
       ? [
           {
@@ -106,7 +110,7 @@ async function getDeviceTransactionConfig({
         ]
       : [];
 
-  return [...amountField, ...assetFields, ...sendMax, ...tag, ...fees];
+  return [...amountFields, ...assetFields, ...sendMaxFields, ...tagFields, ...feesFields];
 }
 
 export default getDeviceTransactionConfig;
