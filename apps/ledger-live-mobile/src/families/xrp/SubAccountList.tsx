@@ -9,7 +9,7 @@ import { getXrpEnabledTokenStandards } from "@ledgerhq/live-common/families/xrp/
 import { useTranslation } from "~/context/Locale";
 import { navigateToAddToken } from "./utils";
 
-function AddTokenButton({ accountId }: { accountId: string }) {
+function AddTokenButton({ accountId }: Readonly<{ accountId: string }>) {
   const { t } = useTranslation();
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
 
@@ -28,7 +28,7 @@ function AddTokenButton({ accountId }: { accountId: string }) {
   );
 }
 
-function Placeholder({ accountId }: { accountId: string }) {
+function Placeholder({ accountId }: Readonly<{ accountId: string }>) {
   const { t } = useTranslation();
 
   return (

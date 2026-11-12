@@ -22,6 +22,9 @@ const options = {
   headerShown: false,
 };
 
+const renderBackButton = () => <NavigationHeaderBackButton />;
+const renderCloseButton = () => <NavigationHeaderCloseButtonAdvanced />;
+
 function AddTokenFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -39,27 +42,27 @@ function AddTokenFlow() {
         name={ScreenName.XrpAddTokenSelectToken}
         component={SelectToken}
         options={{
-          headerLeft: () => <NavigationHeaderBackButton />,
+          headerLeft: renderBackButton,
           headerTitle: t("xrp.addToken.steps.token.title"),
-          headerRight: () => <NavigationHeaderCloseButtonAdvanced />,
+          headerRight: renderCloseButton,
         }}
       />
       <Stack.Screen
         name={ScreenName.XrpAddTokenSettings}
         component={Settings}
         options={{
-          headerLeft: () => <NavigationHeaderBackButton />,
+          headerLeft: renderBackButton,
           headerTitle: t("xrp.addToken.steps.settings.title"),
-          headerRight: () => <NavigationHeaderCloseButtonAdvanced />,
+          headerRight: renderCloseButton,
         }}
       />
       <Stack.Screen
         name={ScreenName.XrpAddTokenReview}
         component={Review}
         options={{
-          headerLeft: () => <NavigationHeaderBackButton />,
+          headerLeft: renderBackButton,
           headerTitle: t("xrp.addToken.steps.review.title"),
-          headerRight: () => <NavigationHeaderCloseButtonAdvanced />,
+          headerRight: renderCloseButton,
         }}
       />
       <Stack.Screen

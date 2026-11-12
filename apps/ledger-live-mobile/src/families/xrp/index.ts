@@ -1,4 +1,2 @@
-import * as XrpEditTag from "./ScreenEditTag";
-import * as XrpAddTokenFlow from "./AddTokenFlow";
-
-export { XrpEditTag, XrpAddTokenFlow };
+export * as XrpEditTag from "./ScreenEditTag";
+export * as XrpAddTokenFlow from "./AddTokenFlow";
