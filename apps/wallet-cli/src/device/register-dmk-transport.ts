@@ -15,7 +15,7 @@ import {
 } from "./interrupt-scope";
 import { createTestSeam } from "../shared/test-seam";
 import { restoreTerminalCursor } from "../shared/ui";
-import { resetUsbAccessDiagnostics } from "./usb-access-diagnostics";
+import { DeviceConnectionFailedError, DeviceDiscoveryFailedError } from "./usb-session-open-error";
 
 /** Device id passed to live-common `withDevice` / bridge methods for the first USB Ledger (DMK node WebUSB). */
 export const WALLET_CLI_DMK_DEVICE_ID = "wallet-cli-dmk";
@@ -33,7 +33,6 @@ const DISPOSE_DISCONNECT_TIMEOUT_MS = 1_000;
 const DISPOSE_DESTROY_TIMEOUT_MS = 1_000;
 
 const MODULE_ID = "wallet-cli-dmk-webusb";
-const NO_LEDGER_DEVICE_FOUND_MESSAGE = "No Ledger device found. Unlock the device and try again.";
 const INITIAL_SESSION_BUSY_MESSAGE =
   "[wallet-cli] The Ledger device did not respond to the initial ping. " +
   "Please run the command again — the retry usually succeeds.";
@@ -50,47 +49,10 @@ let persistentDmk: Promise<WalletCliDmk> | null = null;
 let pendingTransport: Promise<WalletCliDmkTransport> | null = null;
 let exitHooksRegistered = false;
 
-export class InitialSessionBusyError extends Error {
+class InitialSessionBusyError extends Error {
   constructor() {
     super(INITIAL_SESSION_BUSY_MESSAGE);
-    this.name = "InitialSessionBusyError";
   }
-}
-
-/** Discovery produced no usable device, named so `classifyDeviceError` can attach a USB diagnosis. */
-export class DeviceDiscoveryFailedError extends Error {
-  constructor(cause?: unknown) {
-    super(NO_LEDGER_DEVICE_FOUND_MESSAGE, cause === undefined ? undefined : { cause });
-    this.name = "DeviceDiscoveryFailedError";
-  }
-}
-
-/**
- * Opening the session failed after a device had already been discovered. Named here rather than
- * matched on DMK's `ConnectionOpeningError`, which `NodeWebUsbApduSender` also raises for ordinary
- * mid-session APDU transfers and so cannot tell "we never got the device open" from "the link broke
- * mid-command" (LIVE-31394). The underlying message is kept: this wrapper exists to give the
- * failure a name the classifier can match, not to replace what the device stack said.
- */
-export class DeviceConnectionFailedError extends Error {
-  constructor(cause?: unknown) {
-    super(
-      underlyingMessageOf(cause) ?? "Could not open a session with the Ledger.",
-      cause === undefined ? undefined : { cause },
-    );
-    this.name = "DeviceConnectionFailedError";
-  }
-}
-
-/**
- * `dmk.connect()` rejects with a `GeneralDmkError`, which is not an `Error` and carries no
- * `message` — the device stack's own wording sits on `originalError`.
- */
-function underlyingMessageOf(cause: unknown): string | undefined {
-  if (cause instanceof Error) return cause.message;
-  const { originalError } = (cause ?? {}) as { originalError?: unknown };
-  if (originalError instanceof Error) return originalError.message;
-  return undefined;
 }
 
 const testTransport = createTestSeam<WalletCliDmkTransport | null>(null, () => {
@@ -259,18 +221,19 @@ function describeCause(error: unknown): string | undefined {
   return cause ? `${tag}: ${cause}` : tag;
 }
 
-async function connectFirstUsbDevice(dmk: DeviceManagementKit): Promise<string> {
+async function connectFirstUsbDevice(kit: WalletCliDmk): Promise<string> {
+  const { dmk } = kit;
   const discovered = await firstValueFrom(
     dmk.listenToAvailableDevices({}).pipe(
       filter((list: DiscoveredDevice[]) => list.length > 0),
       timeout(CONNECT_TIMEOUT_MS),
     ),
   ).catch((cause: unknown) => {
-    throw new DeviceDiscoveryFailedError(cause);
+    throw new DeviceDiscoveryFailedError({ cause, usbAccess: kit.getUsbAccessSnapshot() });
   });
   const device = discovered[0];
   if (!device) {
-    throw new DeviceDiscoveryFailedError();
+    throw new DeviceDiscoveryFailedError({ usbAccess: kit.getUsbAccessSnapshot() });
   }
   const connecting = dmk.connect({
     device,
@@ -280,7 +243,7 @@ async function connectFirstUsbDevice(dmk: DeviceManagementKit): Promise<string> 
   const sessionId = speculos
     ? await connectSpeculos(connecting, speculos)
     : await connecting.catch((cause: unknown) => {
-        throw new DeviceConnectionFailedError(cause);
+        throw new DeviceConnectionFailedError({ cause, usbAccess: kit.getUsbAccessSnapshot() });
       });
 
   const sessionState = await firstValueFrom(dmk.getDeviceSessionState({ sessionId })).catch(
@@ -305,10 +268,9 @@ async function resetPersistentDmkAfterFailedOpen(kit: WalletCliDmk): Promise<voi
 }
 
 async function createWalletCliDmkTransport(): Promise<WalletCliDmkTransport> {
-  resetUsbAccessDiagnostics();
   const kit = await getOrCreatePersistentDmk();
   try {
-    const sessionId = await connectFirstUsbDevice(kit.dmk);
+    const sessionId = await connectFirstUsbDevice(kit);
     const transport = new WalletCliDmkTransport(kit.dmk, sessionId);
     singleton = { dmk: kit.dmk, transport, destroyTransport: kit.destroyTransport };
     return transport;

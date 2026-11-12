@@ -44,16 +44,9 @@ The host machine cannot be trusted: malware can swap a clipboard, intercept the 
 
 The Claude Code sandbox blocks USB syscalls by default, so any wallet-cli command that needs the device hardware can't reach it from inside the sandbox - that's why device-touching commands require `dangerouslyDisableSandbox: true`. Commands that only hit Ledger's backend don't need USB and don't need the bypass.
 
-**How the CLI diagnoses it.** wallet-cli cannot detect "I am sandboxed" - there is no syscall for that. It infers it from one signal: the OS refused to open a Ledger it had enumerated. On Linux, libusb enumerates by reading sysfs, which the Claude Code sandbox leaves readable, and only needs the `/dev/bus/usb` node to *open* the device, which the sandbox's minimal `/dev` lacks. The open fails with `LIBUSB_ERROR_NO_DEVICE`, and libusb then drops the device from its list, so every later scan comes back empty: the CLI keeps the refusal until a device opens again rather than reading the empty scan as an unplugged Ledger.
+wallet-cli cannot tell that it runs inside a sandbox, but it reports how opening the Ledger failed. On Linux the Claude Code sandbox leaves sysfs readable and has no `/dev/bus/usb`, so libusb lists the Ledger and then fails to open it with `LIBUSB_ERROR_NO_DEVICE`. Discovery then ends with `No Ledger device found.` and `usb_access_error: "LIBUSB_ERROR_NO_DEVICE"`. A sandbox can also refuse with `LIBUSB_ERROR_ACCESS`, which outside a sandbox means missing udev rules or permissions. `LIBUSB_ERROR_BUSY` means another process holds the device, and the bypass does not help with it. A sandbox that hides the Ledger from the listing leaves no error to report, so a missing `usb_access_error` does not rule the sandbox out.
 
-That refusal is reported as `likely_cause: "sandbox_blocking_usb"` only when an AI agent environment is detected (`CLAUDECODE`, `CURSOR_AGENT`, `CODEX_ENABLED` and the other variables `detectAgent()` reads). Outside one, the same refusal is `likely_cause: "unknown"`, because a missing udev rule on Linux or another process holding the device gives the same error with no sandbox involved; `user_hint` then names those checks.
-
-Consequences worth knowing:
-
-- The diagnosis is additive: `error.code` and the exit code are the same as without it. `likely_cause`, `user_hint` and `docs` appear on `timeout` (exit 6), on `disconnected` (exit 3), and on the `unknown` (exit 1) of a failed discovery or connection ("No Ledger device found."). `agent_hint` appears on `sandbox_blocking_usb`, and on `device_not_present` under an agent.
-- `device_not_present` with an `agent_hint` covers a sandbox that hides the Ledger from enumeration altogether (possible on macOS): ask the human whether the Ledger is plugged in and unlocked before you bypass the sandbox.
-- A **busy** device (`LIBUSB_ERROR_BUSY`, e.g. Ledger Live holding the interface, or a session that opens but stays busy) is never reported as `sandbox_blocking_usb`. It falls back to `unknown`, because "disable your sandbox" is bad advice when the fix is to quit Ledger Live.
-- The discovery wait is 60 s and is **not** shortened by `--device-timeout`, which bounds the unlock/confirm wait only.
+The discovery wait is 60 s and `--device-timeout` does not shorten it: that flag bounds the unlock and confirm wait only.
 
 ---
 

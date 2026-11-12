@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import { afterEach, describe, expect, it } from "bun:test";
 import {
   DeviceDisconnectedBeforeSendingApdu,
   NoAccessibleDeviceError,
@@ -18,14 +18,6 @@ import { Right } from "purify-ts";
 import { firstValueFrom, type Subscription } from "rxjs";
 import { NodeWebUsbTransport, nodeWebUsbTransportFactory } from "./NodeWebUsbTransport";
 import type { NodeWebUsbApduSenderDependencies } from "./NodeWebUsbApduSender";
-import { readUsbAccessDiagnostics, resetUsbAccessDiagnostics } from "../usb-access-diagnostics";
-import { resolveUsbLikelyCause } from "../classify-device-error";
-import { setAgentEnvironment } from "../../testing/agent-env";
-import {
-  LINUX_SANDBOX_LEDGER_NATIVE,
-  LINUX_SANDBOX_LEDGERS_PER_SCAN,
-  LINUX_SANDBOX_OPEN_ERROR_MESSAGE,
-} from "../../testing/usb-sandbox-fixtures";
 
 function flushTasks(): Promise<void> {
   return new Promise(resolve => queueMicrotask(resolve));
@@ -87,6 +79,8 @@ function createStubApduSender() {
 let subscriptions: Subscription[] = [];
 
 type NativeLedgerDevice = {
+  busNumber: number;
+  deviceAddress: number;
   deviceDescriptor: {
     idVendor: number;
     idProduct: number;
@@ -108,8 +102,10 @@ type WebUsbLedgerDevice = {
 type TestPlatformBindings = NonNullable<ConstructorParameters<typeof NodeWebUsbTransport>[6]>;
 type HotplugListenerProbe = { startListeningToConnectionEvents: () => void };
 
-function createNativeLedgerDevice(): NativeLedgerDevice {
+function createNativeLedgerDevice(deviceAddress = 2): NativeLedgerDevice {
   return {
+    busNumber: 1,
+    deviceAddress,
     deviceDescriptor: {
       idVendor: 0x2c97,
       idProduct: 0x5011,
@@ -2514,13 +2510,13 @@ describe("NodeWebUsbTransport", () => {
       undefined,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [nativeDevice] as never[],
-        createWebUsbDevice: async () => {
+        getDeviceList: () => {
           if (shouldThrow) {
             throw new Error("USB scan failed");
           }
-          return webUsbDevice as never;
+          return [nativeDevice] as never[];
         },
+        createWebUsbDevice: async () => webUsbDevice as never,
       }),
     );
 
@@ -3018,18 +3014,72 @@ describe("NodeWebUsbTransport", () => {
   });
 });
 
-describe("USB access diagnostics recording (LIVE-31394)", () => {
-  beforeEach(() => {
-    resetUsbAccessDiagnostics();
-  });
+/**
+ * Recorded on Linux under bubblewrap with the Claude Code sandbox's device layout
+ * (`--ro-bind / / --dev /dev`): sysfs lists the Ledger, `/dev/bus/usb` is missing, and libusb
+ * drops the device it could not open and fires a detach for it.
+ */
+const LINUX_SANDBOX_OPEN_ERROR = "initialize error: Error: LIBUSB_ERROR_NO_DEVICE";
 
+describe("USB access snapshot (LIVE-31394)", () => {
   afterEach(() => {
     subscriptions.forEach(subscription => subscription.unsubscribe());
     subscriptions = [];
-    resetUsbAccessDiagnostics();
   });
 
-  it("records the reason a scan failed instead of only reporting no devices", async () => {
+  it("records the error of a Ledger it could not open, by bus and address", async () => {
+    const openError = new Error("initialize error: Error: LIBUSB_ERROR_ACCESS");
+    const transport = createTestTransport(
+      undefined,
+      undefined,
+      createPlatformBindings({
+        platform: "linux",
+        getDeviceList: () => [createNativeLedgerDevice(4)] as never[],
+        createWebUsbDevice: async () => {
+          throw openError;
+        },
+      }),
+    );
+
+    const emissions = collectDeviceEmissions(transport);
+    await waitFor(() => {
+      expect(transport.getAccessSnapshot().openFailures.get("1-4")).toEqual({
+        error: openError,
+        detached: false,
+      });
+    });
+    expect(emissions.at(-1) ?? []).toEqual([]);
+
+    await transport.destroy();
+  });
+
+  it("keeps discovering, and keeps the failure, when another Ledger opens", async () => {
+    const transport = createTestTransport(
+      undefined,
+      undefined,
+      createPlatformBindings({
+        platform: "linux",
+        getDeviceList: () => [createNativeLedgerDevice(2), createNativeLedgerDevice(3)] as never[],
+        createWebUsbDevice: async native => {
+          if ((native as unknown as NativeLedgerDevice).deviceAddress === 2) {
+            throw new Error("LIBUSB_ERROR_ACCESS");
+          }
+          return createWebUsbLedgerDevice("ledger-2") as never;
+        },
+      }),
+    );
+
+    const emissions = collectDeviceEmissions(transport);
+    await waitFor(() => {
+      expect(emissions.at(-1)).toHaveLength(1);
+    });
+    expect([...transport.getAccessSnapshot().openFailures.keys()]).toEqual(["1-2"]);
+
+    await transport.destroy();
+  });
+
+  it("clears a failure once that device opens, without changing an earlier snapshot", async () => {
+    let failOpen = true;
     const transport = createTestTransport(
       undefined,
       undefined,
@@ -3037,109 +3087,57 @@ describe("USB access diagnostics recording (LIVE-31394)", () => {
         platform: "linux",
         getDeviceList: () => [createNativeLedgerDevice()] as never[],
         createWebUsbDevice: async () => {
-          throw new Error("initialize error: Error: LIBUSB_ERROR_ACCESS");
+          if (failOpen) throw new Error("LIBUSB_ERROR_ACCESS");
+          return createWebUsbLedgerDevice() as never;
         },
-      }),
-    );
-
-    const emissions = collectDeviceEmissions(transport);
-
-    await waitFor(() => {
-      const diagnostics = readUsbAccessDiagnostics();
-      expect(diagnostics.scanCompleted).toBe(true);
-      expect(diagnostics.ledgerVendorSeen).toBe(true);
-      expect(diagnostics.failure?.kind).toBe("access_denied");
-    });
-
-    expect(emissions.at(-1) ?? []).toEqual([]);
-
-    await transport.destroy();
-  });
-
-  it("forgets a Ledger that was unplugged between scans", async () => {
-    let devices: unknown[] = [createNativeLedgerDevice()];
-    const webUsbDevice = createWebUsbLedgerDevice();
-    const transport = createTestTransport(
-      undefined,
-      undefined,
-      createPlatformBindings({
-        platform: "linux",
-        getDeviceList: () => devices as never[],
-        createWebUsbDevice: async () => webUsbDevice as never,
       }),
     );
 
     collectDeviceEmissions(transport);
     await waitFor(() => {
-      expect(readUsbAccessDiagnostics().ledgerVendorSeen).toBe(true);
+      expect(transport.getAccessSnapshot().openFailures.size).toBe(1);
     });
+    const beforeOpen = transport.getAccessSnapshot();
 
-    devices = [];
+    failOpen = false;
     await transport.updateTransportDiscoveredDevices();
 
-    const diagnostics = readUsbAccessDiagnostics();
-    expect(diagnostics.scanCompleted).toBe(true);
-    expect(diagnostics.ledgerVendorSeen).toBe(false);
-    expect(diagnostics.failure).toBeUndefined();
+    expect(transport.getAccessSnapshot().openFailures.size).toBe(0);
+    expect(beforeOpen.openFailures.size).toBe(1);
 
     await transport.destroy();
   });
 
-  async function replayLinuxSandboxRecording(): Promise<NodeWebUsbTransport> {
+  it("marks a failure detached instead of dropping it, as libusb detaches what it could not open", async () => {
+    const sandboxedLedger = createNativeLedgerDevice(4);
     let scans = 0;
     const transport = createTestTransport(
       undefined,
       undefined,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => {
-          const index = Math.min(scans++, LINUX_SANDBOX_LEDGERS_PER_SCAN.length - 1);
-          const ledgers = LINUX_SANDBOX_LEDGERS_PER_SCAN[index];
-          return (ledgers > 0 ? [LINUX_SANDBOX_LEDGER_NATIVE] : []) as never[];
-        },
+        getDeviceList: () => (scans++ === 0 ? [sandboxedLedger] : []) as never[],
         createWebUsbDevice: async () => {
-          throw new Error(LINUX_SANDBOX_OPEN_ERROR_MESSAGE);
+          throw new Error(LINUX_SANDBOX_OPEN_ERROR);
         },
       }),
     );
 
     collectDeviceEmissions(transport);
     await waitFor(() => {
-      expect(readUsbAccessDiagnostics().failure?.kind).toBe("device_unreachable");
+      expect(transport.getAccessSnapshot().openFailures.size).toBe(1);
     });
-    await transport.handleDeviceDisconnection(LINUX_SANDBOX_LEDGER_NATIVE as never);
-    await waitFor(() => {
-      expect(readUsbAccessDiagnostics()).toMatchObject({
-        scanCompleted: true,
-        ledgerVendorSeen: false,
-      });
-    });
-    return transport;
-  }
+    await transport.handleDeviceDisconnection(sandboxedLedger as never);
+    await transport.updateTransportDiscoveredDevices();
 
-  it("keeps blaming the sandbox once libusb drops the Ledger it could not open", async () => {
-    const restoreAgentEnvironment = setAgentEnvironment("claude");
-    try {
-      const transport = await replayLinuxSandboxRecording();
-      expect(resolveUsbLikelyCause()).toBe("sandbox_blocking_usb");
-      await transport.destroy();
-    } finally {
-      restoreAgentEnvironment();
-    }
+    const failure = transport.getAccessSnapshot().openFailures.get("1-4");
+    expect(failure?.detached).toBe(true);
+    expect((failure?.error as Error).message).toBe(LINUX_SANDBOX_OPEN_ERROR);
+
+    await transport.destroy();
   });
 
-  it("reports the same refusal outside an agent as unknown, not as an absent Ledger", async () => {
-    const restoreAgentEnvironment = setAgentEnvironment("none");
-    try {
-      const transport = await replayLinuxSandboxRecording();
-      expect(resolveUsbLikelyCause()).toBe("unknown");
-      await transport.destroy();
-    } finally {
-      restoreAgentEnvironment();
-    }
-  });
-
-  it("records the refusal when a Ledger plugged in after the scan cannot be opened", async () => {
+  it("records the failure of a Ledger plugged in after the scan", async () => {
     const transport = createTestTransport(
       undefined,
       undefined,
@@ -3152,24 +3150,16 @@ describe("USB access diagnostics recording (LIVE-31394)", () => {
       }),
     );
 
-    collectDeviceEmissions(transport);
-    await waitFor(() => {
-      expect(readUsbAccessDiagnostics().scanCompleted).toBe(true);
-    });
+    await transport.handleDeviceConnection(createNativeLedgerDevice(5) as never);
 
-    await transport.handleDeviceConnection(createNativeLedgerDevice() as never);
-
-    const diagnostics = readUsbAccessDiagnostics();
-    expect(diagnostics.ledgerVendorSeen).toBe(true);
-    expect(diagnostics.failure?.kind).toBe("access_denied");
+    expect([...transport.getAccessSnapshot().openFailures.keys()]).toEqual(["1-5"]);
 
     await transport.destroy();
   });
 
-  it("records a failed reconnection and clears it once a later reconnection succeeds", async () => {
-    const nativeDevice = createNativeLedgerDevice();
+  it("records a failed connect and clears it once a reconnection succeeds", async () => {
     const webUsbDevice = createWebUsbLedgerDevice();
-    let failSetup = false;
+    let failSetup = true;
     let dependencies: NodeWebUsbApduSenderDependencies = {
       device: webUsbDevice as never,
       interfaceNumber: 1,
@@ -3180,7 +3170,7 @@ describe("USB access diagnostics recording (LIVE-31394)", () => {
       params => {
         machine = {
           setupConnection: async () => {
-            if (failSetup) throw new Error("LIBUSB_ERROR_ACCESS");
+            if (failSetup) throw new Error("claimInterface error: Error: LIBUSB_ERROR_BUSY");
           },
           sendApdu: async () => Right({ data: new Uint8Array(), statusCode: new Uint8Array() }),
           getDeviceId: () => params.deviceId,
@@ -3197,46 +3187,21 @@ describe("USB access diagnostics recording (LIVE-31394)", () => {
       () => createStubApduSender() as never,
       createPlatformBindings({
         platform: "linux",
-        getDeviceList: () => [nativeDevice] as never[],
+        getDeviceList: () => [createNativeLedgerDevice()] as never[],
         createWebUsbDevice: async () => webUsbDevice as never,
       }),
     );
 
     const deviceId = await waitForFirstDeviceId(collectDeviceEmissions(transport));
-    unwrapConnectedDevice(await transport.connect({ deviceId: deviceId!, onDisconnect: () => {} }));
+    const connected = await transport.connect({ deviceId, onDisconnect: () => {} });
 
-    failSetup = true;
-    await transport.handleDeviceReconnection(machine!, webUsbDevice as never, 1);
-    expect(readUsbAccessDiagnostics().failure?.kind).toBe("access_denied");
+    expect(connected.isLeft()).toBe(true);
+    expect([...transport.getAccessSnapshot().openFailures.keys()]).toEqual(["1-2"]);
 
     failSetup = false;
     await transport.handleDeviceReconnection(machine!, webUsbDevice as never, 1);
-    expect(readUsbAccessDiagnostics().failure).toBeUndefined();
 
-    await transport.destroy();
-  });
-
-  it("records a completed scan that saw no Ledger, without inventing a failure", async () => {
-    const transport = createTestTransport(
-      undefined,
-      undefined,
-      createPlatformBindings({
-        platform: "linux",
-        getDeviceList: () => [] as never[],
-        createWebUsbDevice: async () => {
-          throw new Error("should not be called");
-        },
-      }),
-    );
-
-    collectDeviceEmissions(transport);
-
-    await waitFor(() => {
-      expect(readUsbAccessDiagnostics().scanCompleted).toBe(true);
-    });
-    const diagnostics = readUsbAccessDiagnostics();
-    expect(diagnostics.ledgerVendorSeen).toBe(false);
-    expect(diagnostics.failure).toBeUndefined();
+    expect(transport.getAccessSnapshot().openFailures.size).toBe(0);
 
     await transport.destroy();
   });

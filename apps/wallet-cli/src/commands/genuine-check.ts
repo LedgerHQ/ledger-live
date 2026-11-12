@@ -6,7 +6,6 @@ import { TimeoutError, timeout } from "rxjs";
 import { createCommandOutput } from "../output";
 import { WALLET_CLI_DMK_DEVICE_ID } from "../device/register-dmk-transport";
 import { getActiveSpeculosTarget } from "../device/speculos-target";
-import { isUsbTimeoutError, usbTimeoutState } from "../device/classify-device-error";
 import { WalletCliDeviceError } from "../device/wallet-cli-device-error";
 import { createTestSeam } from "../shared/test-seam";
 import { withDmkDeviceSession } from "../session/bridge-device-session";
@@ -39,8 +38,8 @@ class GenuineCheckOnSpeculosError extends Error {
 }
 
 function mapGenuineCheckError(error: unknown): unknown {
-  if (error instanceof TimeoutError || isUsbTimeoutError(error)) {
-    return new WalletCliDeviceError(usbTimeoutState(), { cause: error });
+  if (error instanceof TimeoutError) {
+    return new WalletCliDeviceError({ code: "timeout" }, { cause: error });
   }
   if (isCounterfeitError(error)) {
     return new NonGenuineDeviceError();

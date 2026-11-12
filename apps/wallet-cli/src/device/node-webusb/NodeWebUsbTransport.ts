@@ -38,13 +38,6 @@ import {
   RECONNECT_DEVICE_TIMEOUT_MS,
   WINDOWS_WEBUSB_DISCOVERY_POLL_INTERVAL_MS,
 } from "./node-webusb-constants";
-import {
-  recordLedgerVendorSeen,
-  recordScanCompleted,
-  recordScanStarted,
-  recordUsbAccessFailure,
-  recordUsbAccessSuccess,
-} from "../usb-access-diagnostics";
 
 export const nodeWebUsbIdentifier: TransportIdentifier = "NODE-WEBUSB";
 
@@ -67,6 +60,24 @@ function getVendorInterfaceNumber(device: WebUSBDevice): number | null {
 }
 
 type ScannedWebUsbDevice = { device: WebUSBDevice; interfaceNumber: number };
+
+/** `bus-address`: stable while the device stays plugged in, and known before it is opened. */
+type UsbDeviceKey = string;
+
+function usbDeviceKey(native: NativeUsbDevice): UsbDeviceKey {
+  return `${native.busNumber}-${native.deviceAddress}`;
+}
+
+export type NodeWebUsbOpenFailure = {
+  error: unknown;
+  /** A detach event arrived for the device after the failure. */
+  detached: boolean;
+};
+
+export type NodeWebUsbAccessSnapshot = {
+  /** The last failed open of each device, by `bus-address`, oldest first. */
+  openFailures: ReadonlyMap<UsbDeviceKey, NodeWebUsbOpenFailure>;
+};
 
 type NodeWebUsbBindings = Pick<typeof usbBindings, "on" | "removeListener" | "unrefHotplugEvents">;
 
@@ -182,6 +193,8 @@ export class NodeWebUsbTransport implements Transport {
   // NoAccessibleDeviceError when a refresh is already in progress.
   private _refreshDiscoveredDevicesInFlight: Promise<ScannedWebUsbDevice[]> | null = null;
   private _refreshDiscoveredDevicesQueued: Promise<ScannedWebUsbDevice[]> | null = null;
+  private readonly _openFailures = new Map<UsbDeviceKey, NodeWebUsbOpenFailure>();
+  private readonly _usbDeviceKeysByWebUsbDevice = new WeakMap<WebUSBDevice, UsbDeviceKey>();
 
   constructor(
     deviceModelDataSource: DeviceModelDataSource,
@@ -293,12 +306,10 @@ export class NodeWebUsbTransport implements Transport {
   }): TransportConnectedDevice {
     const deviceId = row.id;
 
-    const sendApduToMachine: TransportConnectedDevice["sendApdu"] = (...args) => {
+    const sendApduToMachine: TransportConnectedDevice["sendApdu"] = async (...args) => {
       if (!this.isConnectionMachineRoutable(machine)) {
-        return Promise.resolve(
-          Left(
-            new DeviceDisconnectedBeforeSendingApdu(`${deviceId} is no longer active or pending`),
-          ),
+        return Left(
+          new DeviceDisconnectedBeforeSendingApdu(`${deviceId} is no longer active or pending`),
         );
       }
       return machine.sendApdu(...args);
@@ -386,36 +397,57 @@ export class NodeWebUsbTransport implements Transport {
   }
 
   private async scanLedgerWebUsbDevices(): Promise<ScannedWebUsbDevice[]> {
+    const ledgers = this._platformBindings
+      .getDeviceList()
+      .filter(native => native.deviceDescriptor.idVendor === LEDGER_VENDOR_ID);
+    const opened = await Promise.allSettled(ledgers.map(native => this.openWebUsbDevice(native)));
     const collected: ScannedWebUsbDevice[] = [];
-    recordScanStarted();
-    let natives: ReturnType<NodeWebUsbTransportPlatform["getDeviceList"]>;
-    try {
-      natives = this._platformBindings.getDeviceList();
-    } catch (e) {
-      recordUsbAccessFailure(e);
-      throw e;
-    }
-    recordScanCompleted();
-    for (const native of natives) {
-      if (native.deviceDescriptor.idVendor !== LEDGER_VENDOR_ID) {
+    for (const result of opened) {
+      if (result.status === "rejected") {
+        this._logger.error("Error while opening a Ledger WebUSB device", {
+          data: { error: result.reason },
+        });
         continue;
       }
-      recordLedgerVendorSeen();
-      let device: WebUSBDevice;
-      try {
-        device = await this._platformBindings.createWebUsbDevice(native);
-      } catch (e) {
-        recordUsbAccessFailure(e);
-        throw e;
-      }
-      recordUsbAccessSuccess();
-      const interfaceNumber = getVendorInterfaceNumber(device);
+      const interfaceNumber = getVendorInterfaceNumber(result.value);
       if (interfaceNumber === null) {
         continue;
       }
-      collected.push({ device, interfaceNumber });
+      collected.push({ device: result.value, interfaceNumber });
     }
     return dedupeLedgerWebUsbDevices(collected);
+  }
+
+  private async openWebUsbDevice(native: NativeUsbDevice): Promise<WebUSBDevice> {
+    const key = usbDeviceKey(native);
+    const device = await this.trackOpen(key, () =>
+      this._platformBindings.createWebUsbDevice(native),
+    );
+    this._usbDeviceKeysByWebUsbDevice.set(device, key);
+    return device;
+  }
+
+  /** Records the outcome of opening a device: a failure replaces its last one, a success clears it. */
+  private async trackOpen<T>(key: UsbDeviceKey | undefined, open: () => Promise<T>): Promise<T> {
+    try {
+      const opened = await open();
+      if (key !== undefined) this._openFailures.delete(key);
+      return opened;
+    } catch (error) {
+      if (key !== undefined) {
+        this._openFailures.delete(key);
+        this._openFailures.set(key, { error, detached: false });
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * What happened when this transport last tried to open each Ledger, for the caller to explain a
+   * failed connection. The errors are kept as thrown.
+   */
+  getAccessSnapshot(): NodeWebUsbAccessSnapshot {
+    return { openFailures: new Map(this._openFailures) };
   }
 
   private mapWebUsbToDiscovered(
@@ -660,7 +692,9 @@ export class NodeWebUsbTransport implements Transport {
     this._deviceApduSendersByConnectionMachine.set(machine, apduSender);
 
     const setupConnection = (async () => {
-      await machine.setupConnection();
+      await this.trackOpen(this._usbDeviceKeysByWebUsbDevice.get(row.webUsbDevice), () =>
+        machine.setupConnection(),
+      );
       this.setActiveConnection(row.webUsbDevice, machine);
       return machine;
     })();
@@ -668,10 +702,8 @@ export class NodeWebUsbTransport implements Transport {
 
     try {
       await setupConnection;
-      recordUsbAccessSuccess();
     } catch (e) {
       this._deviceApduSendersByConnectionMachine.delete(machine);
-      recordUsbAccessFailure(e);
       this._logger.error("Error while setting up device connection", { data: { error: e } });
       return Left(new OpeningConnectionError(e));
     } finally {
@@ -709,6 +741,7 @@ export class NodeWebUsbTransport implements Transport {
     if (idVendor !== LEDGER_VENDOR_ID) {
       return;
     }
+    this.markOpenFailureDetached(usbDeviceKey(native));
     if (this._explicitConnectionClosesInFlight > 0) {
       this._logger.debug("[handleDeviceDisconnection] Ignoring detach during explicit close", {
         data: { vendorId: idVendor, productId: idProduct },
@@ -740,6 +773,18 @@ export class NodeWebUsbTransport implements Transport {
     }
   }
 
+  /**
+   * Kept rather than cleared: on Linux, libusb fires this detach itself when an open fails with
+   * `LIBUSB_ERROR_NO_DEVICE` (as under a sandbox without `/dev/bus/usb`), so a detach alone does not
+   * mean the Ledger was unplugged. The caller decides which failures still apply.
+   */
+  private markOpenFailureDetached(key: UsbDeviceKey): void {
+    const failure = this._openFailures.get(key);
+    if (failure) {
+      this._openFailures.set(key, { ...failure, detached: true });
+    }
+  }
+
   async handleDeviceReconnection(
     machine: DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies>,
     web: WebUSBDevice,
@@ -749,11 +794,9 @@ export class NodeWebUsbTransport implements Transport {
     try {
       this._deviceConnectionsPendingReconnection.delete(machine);
       machine.setDependencies({ device: web, interfaceNumber });
-      await machine.setupConnection().catch((e: unknown) => {
-        recordUsbAccessFailure(e);
-        throw e;
-      });
-      recordUsbAccessSuccess();
+      await this.trackOpen(this._usbDeviceKeysByWebUsbDevice.get(web), () =>
+        machine.setupConnection(),
+      );
       this.setActiveConnection(web, machine);
       machine.eventDeviceConnected();
     } catch (e) {
@@ -783,24 +826,15 @@ export class NodeWebUsbTransport implements Transport {
       data: { vendorId: idVendor, productId: idProduct },
     });
 
-    recordLedgerVendorSeen();
-    let web: WebUSBDevice;
     try {
-      web = await this._platformBindings.createWebUsbDevice(native);
-    } catch (e) {
-      recordUsbAccessFailure(e);
-      this._logger.error("Error while handling WebUSB connection event", { data: { error: e } });
-      return;
-    }
+      const web = await this.openWebUsbDevice(native);
+      if (getVendorInterfaceNumber(web) === null) {
+        this._logger.debug("[handleDeviceConnection] No Ledger WebUSB interface", {
+          data: { vendorId: idVendor, productId: idProduct },
+        });
+        return;
+      }
 
-    if (getVendorInterfaceNumber(web) === null) {
-      this._logger.debug("[handleDeviceConnection] No Ledger WebUSB interface", {
-        data: { vendorId: idVendor, productId: idProduct },
-      });
-      return;
-    }
-
-    try {
       // Reconnection of any pending machines happens inside the rescan via
       // reconnectPendingMachines(), so the rescan is the single source of truth.
       await this.updateTransportDiscoveredDevices();

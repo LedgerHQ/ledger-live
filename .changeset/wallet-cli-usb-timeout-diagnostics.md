@@ -2,4 +2,4 @@
 "@ledgerhq/wallet-cli": minor
 ---
 
-feat(wallet-cli): attribute USB failures with likely_cause and agent_hint
+feat(wallet-cli): name the USB error when a Ledger cannot be opened

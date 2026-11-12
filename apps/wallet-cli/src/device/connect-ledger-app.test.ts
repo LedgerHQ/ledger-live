@@ -9,11 +9,6 @@ import { Observable } from "rxjs";
 import { connectLedgerApp } from "./connect-ledger-app";
 import type { DeviceState } from "./device-state";
 import { WalletCliDeviceError } from "./wallet-cli-device-error";
-import {
-  recordLedgerVendorSeen,
-  recordScanCompleted,
-  resetUsbAccessDiagnostics,
-} from "./usb-access-diagnostics";
 
 function makeDmk(
   executeDeviceAction: () => { observable: Observable<unknown>; cancel: () => void },
@@ -730,108 +725,6 @@ describe("connectLedgerApp", () => {
 
       expect(calls).toBe(6);
       expect(retryDelays).toEqual([3_000, 3_000, 3_000, 3_000, 3_000]);
-    });
-  });
-});
-
-describe("connectLedgerApp timeout attribution (LIVE-31394)", () => {
-  const openAppPrompt = {
-    status: DeviceActionStatus.Pending,
-    intermediateValue: { requiredUserInteraction: UserInteractionRequired.ConfirmOpenApp },
-  };
-  const promptAnswered = {
-    status: DeviceActionStatus.Pending,
-    intermediateValue: { requiredUserInteraction: UserInteractionRequired.None },
-  };
-
-  beforeEach(() => {
-    resetUsbAccessDiagnostics();
-    recordScanCompleted();
-    recordLedgerVendorSeen();
-  });
-
-  afterEach(() => {
-    resetUsbAccessDiagnostics();
-  });
-
-  async function stateAfterSilenceTimeout(states: unknown[]): Promise<DeviceState> {
-    const timers = installControlledTimers();
-    try {
-      const dmk = makeDmk(() => ({
-        observable: new Observable(observer => {
-          for (const state of states) observer.next(state);
-        }),
-        cancel: () => {},
-      }));
-      const promise = connectLedgerApp(dmk as never, "sess-1", "Ethereum", { deviceTimeoutMs: 1 });
-      timers.scheduled[0].run();
-      const error = await promise.then(
-        () => undefined,
-        (e: unknown) => e,
-      );
-      expect(error).toBeInstanceOf(WalletCliDeviceError);
-      return (error as WalletCliDeviceError).state;
-    } finally {
-      timers.restore();
-    }
-  }
-
-  it("blames the unopened app for a timeout while the open-app prompt is on screen", async () => {
-    expect(await stateAfterSilenceTimeout([openAppPrompt])).toEqual({
-      code: "timeout",
-      likelyCause: "app_not_open",
-    });
-  });
-
-  it("does not blame the app for a timeout after the open-app prompt was answered", async () => {
-    expect(await stateAfterSilenceTimeout([openAppPrompt, promptAnswered])).toEqual({
-      code: "timeout",
-    });
-  });
-
-  it("does not blame the app for a timeout the device action reports after the prompt", async () => {
-    const dmk = makeDmk(() => ({
-      observable: new Observable(observer => {
-        observer.next(openAppPrompt);
-        observer.next(promptAnswered);
-        observer.next({
-          status: DeviceActionStatus.Error,
-          error: { _tag: "SendApduTimeoutError" },
-        });
-        observer.complete();
-      }),
-      cancel: () => {},
-    }));
-
-    const error = await connectLedgerApp(dmk as never, "sess-1", "Ethereum").then(
-      () => undefined,
-      (e: unknown) => e,
-    );
-
-    expect((error as WalletCliDeviceError).state).toEqual({ code: "timeout" });
-  });
-
-  it("names the open-app prompt in a rejection on it", async () => {
-    const dmk = makeDmk(() => ({
-      observable: new Observable(observer => {
-        observer.next(openAppPrompt);
-        observer.next({
-          status: DeviceActionStatus.Error,
-          error: { _tag: "RefusedByUserDAError" },
-        });
-        observer.complete();
-      }),
-      cancel: () => {},
-    }));
-
-    const error = await connectLedgerApp(dmk as never, "sess-1", "Ethereum").then(
-      () => undefined,
-      (e: unknown) => e,
-    );
-
-    expect((error as WalletCliDeviceError).state).toEqual({
-      code: "rejected",
-      context: "open_app",
     });
   });
 });

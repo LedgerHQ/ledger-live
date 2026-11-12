@@ -14,7 +14,6 @@ import {
 import { EmptyError, lastValueFrom } from "rxjs";
 import { tap } from "rxjs/operators";
 import { walletCliDebug } from "../shared/log";
-import type { ClassifyContext } from "./classify-device-error";
 import type { DeviceState } from "./device-state";
 import { speculosTarget } from "./speculos-target";
 import { WalletCliDeviceError } from "./wallet-cli-device-error";
@@ -25,9 +24,7 @@ type ConnectAppState = DeviceActionState<
   ConnectAppDAIntermediateValue
 >;
 
-type ConnectAppOnceResult =
-  | { status: "success" }
-  | { status: "error"; error: ConnectAppDAError; awaitingAppOpen: boolean };
+type ConnectAppOnceResult = { status: "success" } | { status: "error"; error: ConnectAppDAError };
 
 /**
  * Default unlock timeout: how long ConnectApp waits for the user to unlock the device
@@ -65,12 +62,6 @@ function summarizeConnectAppError(error: ConnectAppDAError): Record<string, unkn
     return summary;
   }
   return { value: String(error) };
-}
-
-function appOpenClassifyContext(managerAppName: string, awaitingAppOpen: boolean): ClassifyContext {
-  return awaitingAppOpen
-    ? { expectedApp: managerAppName, rejectedContext: "open_app" }
-    : { expectedApp: managerAppName };
 }
 
 function isTransportFramingError(error: ConnectAppDAError): boolean {
@@ -128,10 +119,7 @@ export async function connectLedgerApp(
       continue;
     }
 
-    throw WalletCliDeviceError.fromUnknown(
-      result.error,
-      appOpenClassifyContext(managerAppName, result.awaitingAppOpen),
-    );
+    throw WalletCliDeviceError.fromUnknown(result.error, { expectedApp: managerAppName });
   }
 }
 
@@ -181,11 +169,9 @@ async function connectLedgerAppOnce(
   });
 
   let lastRequiredInteraction: ConnectAppDARequiredInteraction | undefined;
-  let awaitingAppOpen = false;
   const onIntermediateState = (state: ConnectAppState) => {
     if (state.status !== DeviceActionStatus.Pending) return;
     const r = state.intermediateValue?.requiredUserInteraction;
-    awaitingAppOpen = r === UserInteractionRequired.ConfirmOpenApp;
     if (r == null || r === UserInteractionRequired.None || r === lastRequiredInteraction) {
       return;
     }
@@ -207,10 +193,7 @@ async function connectLedgerAppOnce(
     if (e instanceof EmptyError) {
       throw new WalletCliDeviceError({ code: "disconnected", ...speculosTarget() }, { cause: e });
     }
-    throw WalletCliDeviceError.fromUnknown(
-      e,
-      appOpenClassifyContext(managerAppName, awaitingAppOpen),
-    );
+    throw WalletCliDeviceError.fromUnknown(e, { expectedApp: managerAppName });
   } finally {
     if (stallTimer !== undefined) {
       globalThis.clearTimeout(stallTimer);
@@ -221,7 +204,7 @@ async function connectLedgerAppOnce(
 
   if (finalState.status === DeviceActionStatus.Error) {
     walletCliDebug("ConnectApp error detail: %o", summarizeConnectAppError(finalState.error));
-    return { status: "error", error: finalState.error, awaitingAppOpen };
+    return { status: "error", error: finalState.error };
   }
 
   if (finalState.status === DeviceActionStatus.Completed && finalState.output) {
