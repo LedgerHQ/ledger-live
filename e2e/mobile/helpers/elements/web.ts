@@ -2,6 +2,7 @@ import { by, expect as detoxExpect, web } from "detox";
 import type { WebElement, WebMatcher } from "detox/detox";
 import { retryUntilTimeout } from "@e2e/utils/retry";
 import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
+import { compareText, type ExpectTextOptions } from "./compareText";
 import type { ElementHandle } from "./elementHandle";
 import { waitHardTimeout, withHardTimeout } from "./hardTimeout";
 
@@ -108,6 +109,12 @@ export class WebHandle implements ElementHandle {
       TIMEOUT.medium,
     );
     return scriptText(value);
+  }
+
+  /** Waits for the element, reads its text, then compares it as the options say: equal by default. */
+  async expectText(text: string, options: ExpectTextOptions = {}): Promise<void> {
+    const actualText = await this.getText();
+    compareText(actualText, text, options);
   }
 
   /** Asserts the element exists in the webview now. A Detox expect: it does not wait. */

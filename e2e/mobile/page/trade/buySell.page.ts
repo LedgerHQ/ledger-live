@@ -100,8 +100,8 @@ export default class BuySellPage {
   async chooseAssetIfNotSelected(account: AccountType) {
     await this.cryptoCurrencySelector.tap();
     await app.modularDrawer.selectAsset(account);
-    jestExpect(await getWebElementText(this.cryptoCurrencySelector)).toBe(account.currency.ticker);
-    jestExpect(await getWebElementText(this.cryptoAccountSelector)).toBe(
+    await this.cryptoCurrencySelector.expectText(account.currency.ticker);
+    await this.cryptoAccountSelector.expectText(
       `${getParentAccountName(account)}${account.tokenType ? ` (${account.currency.ticker})` : ""}`,
     );
   }
@@ -116,7 +116,7 @@ export default class BuySellPage {
     await this.fiatDrawerInput.replaceText(fiat.currencyTicker);
     await this.currencyListSelector(fiat.currencyTicker).tap();
     await this.saveRegionFiatOptionsSelector.tap();
-    jestExpect(await getWebElementText(this.fiatAmountOptionButtonId)).toBe(fiat.currencyTicker);
+    await this.fiatAmountOptionButton.expectText(fiat.currencyTicker);
   }
 
   @Step("Verify quick amount buttons functionality")
@@ -147,16 +147,14 @@ export default class BuySellPage {
   @Step("Tap see quotes cta")
   async tapSeeQuotes() {
     await this.formCta.waitEnabled();
-    const text = await getWebElementText(this.formCta);
-    jestExpect(normalizeText(text).toLowerCase()).toBe("see quotes");
+    await this.formCta.expectText("see quotes", { normaliseWhitespace: true, ignoreCase: true });
     await this.formCta.tap();
   }
 
   @Step("Tap {{{1}}} cta for {{{0}}}")
   async tapBuySellWithCta(provider: string, page: "Buy" | "Sell") {
     await this.formCta.waitEnabled();
-    const text = await getWebElementText(this.formCta);
-    jestExpect(normalizeText(text)).toBe(`${page} with ${provider}`);
+    await this.formCta.expectText(`${page} with ${provider}`, { normaliseWhitespace: true });
     await this.formCta.tap();
   }
 
@@ -165,8 +163,11 @@ export default class BuySellPage {
     await this.paymentSelector.tap();
     await this.paymentOptions.expectExist();
     await this.paymentMethodOption(paymentMethod).tap();
-    const currentPaymentMethod = await getWebElementText(this.paymentSelector);
-    jestExpect(normalizeText(currentPaymentMethod).toLowerCase()).toContain(paymentMethod);
+    await this.paymentSelector.expectText(paymentMethod, {
+      normaliseWhitespace: true,
+      ignoreCase: true,
+      containing: true,
+    });
   }
 
   @Step("Get available providers")
