@@ -4,7 +4,13 @@
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
-import { insideWorkingDir, isFailingVerdict, runStep, StepFailure } from "./step.mts";
+import {
+  insideWorkingDir,
+  isFailingVerdict,
+  isInconclusiveVerdict,
+  runStep,
+  StepFailure,
+} from "./step.mts";
 
 /** What the message shows of a line of summary.json (src/analysis/analyze.ts's Row). */
 export interface ResultRow {
@@ -54,27 +60,54 @@ function differenceOf(hl: ResultRow["hl"]): string {
   return `${signed(hl.estimate)} ms${interval}`;
 }
 
+type Mark = "✅" | "⚠️" | "❌";
+
 interface Line {
-  ok: boolean;
+  mark: Mark;
+  /** A verdict that fails the measure job, so the job's failure needs no other line. */
+  failing: boolean;
   text: string;
 }
+
+const markOf = (verdict: string): Mark => {
+  if (isInconclusiveVerdict(verdict)) return "⚠️";
+  return isFailingVerdict(verdict) ? "❌" : "✅";
+};
+
+const worstOf = (marks: Mark[]): Mark =>
+  (["❌", "⚠️"] as const).find(mark => marks.includes(mark)) ?? "✅";
+
+/** The verdict, or which side of the threshold B − A probably is when its interval holds it. */
+function headlineOf(verdict: string, thresholdMs: string): string {
+  if (!isInconclusiveVerdict(verdict)) return verdict;
+  return isFailingVerdict(verdict)
+    ? `Probably slower by more than ${thresholdMs} ms`
+    : `Probably within ${thresholdMs} ms`;
+}
+
+// The value the manual check reads; the other measure shows only when its verdict differs.
+const SHOWN_MEASURE = "Debug screen";
 
 function scenarioLine(
   platform: (typeof PLATFORMS)[number],
   scenario: string,
   rows: ResultRow[],
+  thresholdMs: string,
 ): Line {
-  const failed = rows.some(row => isFailingVerdict(row.verdict));
-  const verdicts = new Set(rows.map(row => row.verdict));
-  const verdict =
-    verdicts.size === 1
-      ? rows[0].verdict
-      : rows.map(row => `${row.measure}: ${row.verdict}`).join("; ");
-  const differences = rows.map(row => `${row.measure} ${differenceOf(row.hl)}`).join(", ");
+  const kindOf = (row: ResultRow) =>
+    `${markOf(row.verdict)} ${headlineOf(row.verdict, thresholdMs).split(":")[0]}`;
+  const resultOf = (row: ResultRow) =>
+    `${markOf(row.verdict)} ${escaped(headlineOf(row.verdict, thresholdMs))} · B − A ${differenceOf(row.hl)}`;
+  const shown = rows.find(row => row.measure.startsWith(SHOWN_MEASURE)) ?? rows[0];
+  const shownMeasure = shown.measure === SHOWN_MEASURE ? "" : ` (${escaped(shown.measure)})`;
+  const others = rows
+    .filter(row => row !== shown && kindOf(row) !== kindOf(shown))
+    .map(row => ` · ${escaped(row.measure)}: ${resultOf(row)}`);
   const label = `${platform.emoji} ${platform.name} · ${escaped(scenario)}`;
   return {
-    ok: !failed,
-    text: `${label} : ${failed ? "❌" : "✅"} ${escaped(verdict)} · B − A ${differences}`,
+    mark: worstOf(rows.map(row => markOf(row.verdict))),
+    failing: rows.some(row => isFailingVerdict(row.verdict)),
+    text: `${label} : ${resultOf(shown)}${shownMeasure}${others.join("")}`,
   };
 }
 
@@ -85,45 +118,46 @@ const UNMEASURED: Record<string, string> = {
 
 function platformLines(report: RunReport, platform: (typeof PLATFORMS)[number]): Line[] {
   const jobs = report.jobs[platform.key];
+  const failure = (text: string): Line => ({ mark: "❌", failing: true, text });
   if (UNFINISHED.has(jobs.build)) {
-    const text = `${platform.emoji} ${platform.name} : ❌ the build did not finish, so nothing was measured`;
-    return [{ ok: false, text }];
+    return [
+      failure(
+        `${platform.emoji} ${platform.name} : ❌ the build did not finish, so nothing was measured`,
+      ),
+    ];
   }
   if (jobs.build !== "success") return [];
   const unmeasured =
     UNMEASURED[jobs.measure] ?? "the measurement stopped before its analysis, see the job log";
   const scenarioLines = report.scenarios.map(scenario => {
     const rows = report.rows.filter(r => r.platform === platform.key && r.scenario === scenario);
-    if (rows.length) return scenarioLine(platform, scenario, rows);
+    if (rows.length) return scenarioLine(platform, scenario, rows, report.thresholdMs);
     const label = `${platform.emoji} ${platform.name} · ${escaped(scenario)}`;
-    return { ok: false, text: `${label} : ❌ no result, ${unmeasured}` };
+    return failure(`${label} : ❌ no result, ${unmeasured}`);
   });
-  // The analysis runs even when the measurement stops early, so its rows can all pass.
-  const unexplained = UNFINISHED.has(jobs.measure) && scenarioLines.every(line => line.ok);
+  // The analysis runs even when the measurement stops early, so none of its rows may fail.
+  const unexplained = UNFINISHED.has(jobs.measure) && !scenarioLines.some(line => line.failing);
   if (!unexplained) return scenarioLines;
   const why =
     jobs.measure === "cancelled"
       ? "the measurement timed out or was cancelled after enough pairs"
       : "the measurement job failed after enough pairs, see its log";
-  return [...scenarioLines, { ok: false, text: `${platform.emoji} ${platform.name} : ❌ ${why}` }];
+  return [...scenarioLines, failure(`${platform.emoji} ${platform.name} : ❌ ${why}`)];
 }
 
 function linesOf(report: RunReport): Line[] {
   return report.jobs.plan === "success"
     ? PLATFORMS.flatMap(platform => platformLines(report, platform))
-    : [{ ok: false, text: "❌ The plan job could not resolve the builds" }];
+    : [{ mark: "❌", failing: true, text: "❌ The plan job could not resolve the builds" }];
 }
 
-/** Every job that ran succeeded, at least one platform was measured, and every line is green. */
-export function passed(report: RunReport): boolean {
-  const { jobs } = report;
-  const platformJobs = PLATFORMS.flatMap(({ key }) => [jobs[key].build, jobs[key].measure]);
-  return (
-    jobs.plan === "success" &&
-    platformJobs.every(result => result === "success" || result === "skipped") &&
-    PLATFORMS.some(({ key }) => jobs[key].measure === "success") &&
-    linesOf(report).every(line => line.ok)
-  );
+export type Outcome = "passed" | "inconclusive" | "failed";
+
+/** Failed when nothing was measured or a line is ❌, else inconclusive when a line is ⚠️. */
+export function outcomeOf(report: RunReport): Outcome {
+  const marks = linesOf(report).map(line => line.mark);
+  if (!marks.length || marks.includes("❌")) return "failed";
+  return marks.includes("⚠️") ? "inconclusive" : "passed";
 }
 
 /** When a preset's run fails, as in the README's preset table. */
@@ -140,7 +174,7 @@ const HEADER_MAX = 150;
 
 /** The message in the layout of the E2E reports (tools/actions/composites/e2e-slack-report). */
 export function messageOf(report: RunReport): {
-  passed: boolean;
+  outcome: Outcome;
   header: string;
   lines: string[];
   footer: string;
@@ -154,23 +188,27 @@ export function messageOf(report: RunReport): {
     ? `:ledger-logo: ${run} results on ${report.labelB} - vs ${report.labelA}`
     : `:ledger-logo: ${run} results`;
   const runLink = `<${report.runUrl}|⚙️ Workflow run>`;
+  const gate = gateOf(report.preset, report.thresholdMs);
   return {
-    passed: passed(report),
+    outcome: outcomeOf(report),
     header: header.length > HEADER_MAX ? `${header.slice(0, HEADER_MAX - 1)}…` : header,
     lines: linesOf(report).map(line => line.text),
     footer: planned
-      ? `${escaped(report.preset)} · ${gateOf(report.preset, report.thresholdMs)}   ·   ${runLink}`
+      ? `${escaped(report.preset)} · ${gate} · ${SHOWN_MEASURE} B − A [95% interval]   ·   ${runLink}`
       : runLink,
   };
 }
 
-const GREEN = "#33FF39";
-const RED = "#FF333C";
+const COLORS: Record<Outcome, string> = {
+  passed: "#33FF39",
+  inconclusive: "#FFCC33",
+  failed: "#FF333C",
+};
 
 export function payloadOf(report: RunReport, channel: string): object {
-  const { passed: ok, header, lines, footer } = messageOf(report);
+  const { outcome, header, lines, footer } = messageOf(report);
   const fallback = [
-    `${header.replace(":ledger-logo: ", "")}: ${ok ? "passed" : "failed"}`,
+    `${header.replace(":ledger-logo: ", "")}: ${outcome}`,
     ...lines,
     report.runUrl,
   ].join("\n");
@@ -180,7 +218,7 @@ export function payloadOf(report: RunReport, channel: string): object {
     text: " ",
     attachments: [
       {
-        color: ok ? GREEN : RED,
+        color: COLORS[outcome],
         fallback,
         blocks: [
           { type: "header", text: { type: "plain_text", text: header, emoji: true } },

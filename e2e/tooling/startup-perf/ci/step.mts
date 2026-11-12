@@ -62,5 +62,9 @@ export const textOf = (lines: string[]): string => lines.map(line => `${line}\n`
 export const isFailingVerdict = (verdict: string): boolean =>
   /^(FAIL|Not detected|Not enough pairs)/.test(verdict);
 
+/** A PASS or FAIL of src/analysis/analyze.ts whose 95% interval contains the threshold. */
+export const isInconclusiveVerdict = (verdict: string): boolean =>
+  /^(PASS|FAIL)\b.*\(inconclusive: /.test(verdict);
+
 export const countLines = (lines: string[], matches: (line: string) => boolean): number =>
   lines.filter(line => matches(line)).length;
