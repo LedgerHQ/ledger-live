@@ -142,6 +142,8 @@ type StakingPositionOnAccount = Omit<Stake, "amount" | "amountDeposited" | "amou
   amountRewarded?: BigNumber;
 };
 
+const HISTORY_PENDING_MARKER = "+history-pending";
+
 function toStakingPositionOnAccount(stake: Stake): StakingPositionOnAccount {
   const { amount, amountDeposited, amountRewarded, ...rest } = stake;
   return {
@@ -715,15 +717,22 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // A token list change alone is settled once the balance is read, for a family whose balance
     // lists every token (see `balanceListsEveryToken`): the sync resumes from its watermark unless
     // a held token became newly listed. Any other change still resyncs from scratch.
+    // A family that skips unchanged history marks a failed history read in the stored hash, so
+    // the next sync reads it again without resyncing from scratch.
+    const followsState = bridgeApi.syncsHistoryOnStateChange === true;
+    const historyPending =
+      followsState && !!initialAccount?.syncHash?.endsWith(HISTORY_PENDING_MARKER);
+    const storedSyncHash = historyPending
+      ? initialAccount?.syncHash?.slice(0, -HISTORY_PENDING_MARKER.length)
+      : initialAccount?.syncHash;
     const tokenListChangeOnly =
       bridgeApi.balanceListsEveryToken === true &&
       !bridgeApi.balanceOptions &&
       !!initialAccount?.blockHeight &&
-      initialAccount.syncHash !== syncHash &&
-      isTokenListChangeOnly(initialAccount.syncHash, bridgeApi.syncVersion);
+      storedSyncHash !== syncHash &&
+      isTokenListChangeOnly(storedSyncHash, bridgeApi.syncVersion);
     let syncFromScratch =
-      !initialAccount?.blockHeight ||
-      (initialAccount?.syncHash !== syncHash && !tokenListChangeOnly);
+      !initialAccount?.blockHeight || (storedSyncHash !== syncHash && !tokenListChangeOnly);
     // Resume position across syncs: `minHeight` alone, derived from the newest stored operation.
     // It is non-volatile by construction and already persisted, unlike a module cursor (coin-hypercore
     // documents its own as volatile). Only the cursor varies from page to page below.
@@ -785,9 +794,31 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         }
         throw new UnexpectedGetBalanceError("", err);
       });
+    // Stored stakes' validators are read directly, so the module's validator listing (an indexer
+    // call) is needed only when the account state changed, and an indexer outage no longer costs
+    // the balance.
+    const knownValidatorIds =
+      followsState && !syncFromScratch
+        ? [
+            ...new Set(
+              (
+                (initialAccount as { stakingPositions?: StakingPositionOnAccount[] } | undefined)
+                  ?.stakingPositions ?? []
+              )
+                .map(position => position.delegate)
+                .filter((delegate): delegate is string => !!delegate),
+            ),
+          ]
+        : undefined;
+    if (knownValidatorIds) {
+      const scoped: BalanceOptions = { ...balanceOptions };
+      scoped.knownValidatorIds = knownValidatorIds;
+      scoped.listValidators = false;
+      balanceOptions = scoped;
+    }
     const balancePromise = readBalance(balanceOptions);
 
-    const [blockInfo, balanceRes, validators, readiness, chainSpecificShape, sequence] =
+    const [blockInfo, firstBalanceRes, validators, readiness, chainSpecificShape, sequence] =
       await Promise.all([
         coinModuleApi.lastBlock(context),
         balancePromise,
@@ -796,6 +827,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         chainSpecificShapePromise,
         sequencePromise,
       ]);
+    let balanceRes = firstBalanceRes;
 
     const nativeAsset = bridgeApi.partitionsNativeBalance
       ? sumBalance(balanceRes, "native")
@@ -863,9 +895,31 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
 
     const usesStakingPositions = bridgeApi.usesStakingPositions === true;
 
-    const nativeBalance = nativeAsset?.value ?? 0n;
-    const nativeLocked = nativeAsset?.locked ?? 0n;
-    const spendableBalance = nativeBalance - nativeLocked;
+    let nativeBalance = nativeAsset?.value ?? 0n;
+    let nativeLocked = nativeAsset?.locked ?? 0n;
+    let spendableBalance = nativeBalance - nativeLocked;
+
+    // Every operation that concerns such an account moves its spendable balance, so an unchanged
+    // spendable balance means the history has nothing new.
+    const historyMayHaveChanged =
+      !followsState ||
+      syncFromScratch ||
+      historyPending ||
+      (initialAccount?.pendingOperations?.length ?? 0) > 0 ||
+      spendableBalance === 0n ||
+      initialAccount?.spendableBalance?.toFixed(0) !== spendableBalance.toString();
+    if (knownValidatorIds && historyMayHaveChanged) {
+      // The state changed: a stake with a new validator may be why. Read again with the listing.
+      const listed: BalanceOptions = { ...balanceOptions };
+      listed.listValidators = true;
+      balanceRes = await readBalance(listed);
+      const relisted = bridgeApi.partitionsNativeBalance
+        ? sumBalance(balanceRes, "native")
+        : extractBalance(balanceRes, "native");
+      nativeBalance = relisted?.value ?? 0n;
+      nativeLocked = relisted?.locked ?? 0n;
+      spendableBalance = nativeBalance - nativeLocked;
+    }
 
     let stakingResources: StakingResources | undefined;
     let stakingPositions: StakingPositionOnAccount[] = [];
@@ -1015,6 +1069,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // so a bounded round is treated the same way a from-scratch sync already is: nothing older is
     // carried over, only what this round actually saw.
     let newOpsBounded = false;
+    let historyReadFailed = false;
 
     if (a4Network && a4ChainConfig?.read) {
       try {
@@ -1065,11 +1120,42 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
           "A4 read is off for this chain, delegate is used",
         );
       }
-      ({ operations: newOps, bounded: newOpsBounded } = await delegateNewOps());
+      if (!historyMayHaveChanged) {
+        ({ operations: newOps, bounded: newOpsBounded } = { operations: [], bounded: false });
+      } else if (followsState && !syncFromScratch) {
+        try {
+          ({ operations: newOps, bounded: newOpsBounded } = await delegateNewOps());
+        } catch (e) {
+          // The balance is already read from the node: keep the stored operations and read the
+          // history again on the next sync.
+          log("generic-coin-framework", "history read failed, keeping the stored operations", {
+            currency: currency.id,
+            error: e instanceof Error ? e.message : String(e),
+          });
+          ({ operations: newOps, bounded: newOpsBounded } = { operations: [], bounded: false });
+          historyReadFailed = true;
+        }
+      } else {
+        ({ operations: newOps, bounded: newOpsBounded } = await delegateNewOps());
+      }
     }
 
     if (bridgeApi.adaptOperations) {
       newOps = bridgeApi.adaptOperations(address, newOps) as OperationCommon[];
+    }
+
+    // The state changed but the history returned nothing new: the indexer may not have the
+    // transaction yet. Read it once more on the next sync; the second time, accept the change.
+    if (
+      followsState &&
+      !syncFromScratch &&
+      historyMayHaveChanged &&
+      !historyReadFailed &&
+      !historyPending &&
+      (initialAccount?.pendingOperations?.length ?? 0) === 0 &&
+      !newOps.some(op => !oldOps.some(old => old.hash === op.hash))
+    ) {
+      historyReadFailed = true;
     }
 
     // A bounded round is treated the same way a from-scratch sync already is for both merges
@@ -1259,7 +1345,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       // different meaning is being decided on `account-data`'s own bridge (draft PRs #21560 and
       // #21566) and is out of scope here.
       operationsCount: operations.length,
-      syncHash,
+      syncHash: historyReadFailed ? `${syncHash}${HISTORY_PENDING_MARKER}` : syncHash,
       // key omitted rather than set to undefined: jsHelpers merges `{ ...a, ...shape }`, so a failed
       // readiness lookup retains the last persisted value instead of clearing it.
       ...(readiness !== undefined ? { readiness } : {}),

@@ -46,6 +46,7 @@ export function describeOptimisticOperation(
 export default {
   stakingSupported: true,
   usesStakingPositions: true,
+  syncsHistoryOnStateChange: true,
   computeIntentType,
   describeOptimisticOperation,
 } satisfies BridgeApi;

@@ -191,6 +191,16 @@ export type BridgeApi = {
    */
   usesStakingPositions?: boolean;
   /**
+   * When true, a sync reads the history only when the account state may have changed: a first
+   * sync, a pending operation, a previous history read that failed, or a spendable balance that
+   * differs from the stored one (or is zero, where the floor hides changes). It also reads the
+   * stored stakes' validators directly (`knownValidatorIds`) and calls the module's validator
+   * listing only on a state change. Opt-in: only for a chain where every operation that concerns
+   * the account moves its spendable balance (NEAR: deposits, and the fees of what it signs).
+   * A failed history read keeps the stored operations instead of failing the sync.
+   */
+  syncsHistoryOnStateChange?: boolean;
+  /**
    * When true, the account balance and locked amount sum all native `getBalance` entries (Tezos,
    * Solana). The entries are disjoint parts of the account, so each unit of funds sits in exactly
    * one of them; their order and what each carries (stake metadata, `locked`) is the family's.

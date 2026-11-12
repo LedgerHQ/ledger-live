@@ -3780,6 +3780,142 @@ describe("genericGetAccountShape", () => {
     });
   });
 
+  describe("syncsHistoryOnStateChange", () => {
+    const network = "mainnet";
+    const currency = { id: "near", name: "NEAR" };
+    const stored = {
+      id: "accId-h1-OUT",
+      accountId: "accId",
+      hash: "h1",
+      type: "OUT",
+      blockHeight: 500,
+      extra: {},
+    };
+    const newOp = {
+      id: "accId-h2-OUT",
+      accountId: "accId",
+      hash: "h2",
+      type: "OUT",
+      blockHeight: 600,
+      extra: {},
+    };
+
+    afterEach(() => {
+      getBridgeApiMock.mockImplementation(defaultBridgeApi);
+    });
+
+    const syncWith = ({
+      storedSpendable = "100",
+      freshSpendable = 100n,
+      storedSyncHash = "sync-hash",
+      history = { items: [] as unknown[], next: undefined as string | undefined },
+      historyFails = false,
+      flag = true,
+    } = {}) => {
+      getSyncHashMock.mockReturnValue("sync-hash");
+      getBridgeApiMock.mockImplementation(() => ({
+        ...defaultBridgeApi(),
+        usesStakingPositions: true,
+        ...(flag && { syncsHistoryOnStateChange: true }),
+      }));
+      extractBalanceMock.mockReturnValue({ value: freshSpendable, locked: 0n });
+      getBalanceMock.mockResolvedValue([
+        { asset: { type: "native" }, value: freshSpendable, locked: 0n },
+      ]);
+      if (historyFails) listOperationsMock.mockRejectedValue(new Error("nearblocks 429"));
+      else listOperationsMock.mockResolvedValue(history);
+      adaptCoreOperationToLiveOperationMock.mockImplementation((_id: string, op: any) => op);
+      lastBlockMock.mockResolvedValue({ height: 900 });
+      mergeOpsMock.mockImplementation((oldOps: any[], newOps: any[]) => [...newOps, ...oldOps]);
+      buildSubAccountsMock.mockReturnValue([]);
+
+      return genericGetAccountShape(network, currency.id)(
+        {
+          address: "near-address",
+          currency,
+          derivationMode: "",
+          initialAccount: {
+            operations: [stored],
+            pendingOperations: [],
+            blockHeight: 800,
+            syncHash: storedSyncHash,
+            spendableBalance: new BigNumber(storedSpendable),
+            stakingPositions: [{ delegate: "pool.poolv1.near" }],
+          },
+        } as any,
+        { paginationConfig: {} as any },
+      );
+    };
+
+    test("reads the stored validators only and skips history when the spendable balance is unchanged", async () => {
+      const shape = await syncWith();
+
+      expect(getBalanceMock).toHaveBeenCalledTimes(1);
+      expect(getBalanceMock).toHaveBeenCalledWith(expect.anything(), "near-address", {
+        knownValidatorIds: ["pool.poolv1.near"],
+        listValidators: false,
+      });
+      expect(listOperationsMock).not.toHaveBeenCalled();
+      expect(shape.syncHash).toBe("sync-hash");
+    });
+
+    test("lists validators again and reads history when the spendable balance changed", async () => {
+      await syncWith({ freshSpendable: 90n, history: { items: [newOp], next: undefined } });
+
+      expect(getBalanceMock).toHaveBeenCalledTimes(2);
+      expect(getBalanceMock).toHaveBeenLastCalledWith(
+        expect.anything(),
+        "near-address",
+        expect.objectContaining({ listValidators: true }),
+      );
+      expect(listOperationsMock).toHaveBeenCalledWith(
+        expect.anything(),
+        "near-address",
+        expect.objectContaining({ minHeight: 501 }),
+      );
+    });
+
+    test("keeps the stored operations and marks the history pending when the history read fails", async () => {
+      const shape = await syncWith({ freshSpendable: 90n, historyFails: true });
+
+      expect(shape.operations).toEqual([stored]);
+      expect(shape.syncHash).toBe("sync-hash+history-pending");
+    });
+
+    test("reads a pending history again on the next sync without resyncing from scratch", async () => {
+      const shape = await syncWith({
+        storedSyncHash: "sync-hash+history-pending",
+        history: { items: [newOp], next: undefined },
+      });
+
+      expect(listOperationsMock).toHaveBeenCalledWith(
+        expect.anything(),
+        "near-address",
+        expect.objectContaining({ minHeight: 501 }),
+      );
+      expect(shape.syncHash).toBe("sync-hash");
+    });
+
+    test("rechecks once when the state changed but nothing new came back", async () => {
+      const first = await syncWith({ freshSpendable: 90n });
+      expect(first.syncHash).toBe("sync-hash+history-pending");
+
+      const second = await syncWith({
+        freshSpendable: 90n,
+        storedSpendable: "90",
+        storedSyncHash: first.syncHash as string,
+      });
+      expect(second.syncHash).toBe("sync-hash");
+    });
+
+    test("leaves a family without the flag on today's path", async () => {
+      await syncWith({ flag: false });
+
+      expect(getBalanceMock).toHaveBeenCalledWith(expect.anything(), "near-address", undefined);
+      expect(listOperationsMock).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe("syncVersion", () => {
     const network = "mainnet";
     const currency = { id: "tezos", name: "Tezos" };
