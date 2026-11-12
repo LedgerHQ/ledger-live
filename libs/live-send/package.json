@@ -23,7 +23,7 @@
     "@ledgerhq/ledger-wallet-framework": "workspace:*",
     "@ledgerhq/live-common": "workspace:*",
     "@ledgerhq/types-live": "workspace:*",
-    "bignumber.js": "^9.1.2"
+    "bignumber.js": "^11.1.5"
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",

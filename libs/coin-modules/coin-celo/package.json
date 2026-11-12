@@ -120,7 +120,7 @@
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "axios": "catalog:",
-    "bignumber.js": "^9.1.2",
+    "bignumber.js": "^11.1.5",
     "eip55": "^2.1.1",
     "imurmurhash": "^0.1.4",
     "invariant": "^2.2.4",

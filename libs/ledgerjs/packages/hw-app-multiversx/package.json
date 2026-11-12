@@ -30,7 +30,7 @@
     "@ledgerhq/hw-transport": "catalog:",
     "@multiversx/sdk-core": "^13.7.0",
     "axios": "catalog:",
-    "bignumber.js": "^9.0.1",
+    "bignumber.js": "^11.1.5",
     "bip32-path": "^0.4.2",
     "protobufjs": "^8.4.1"
   },

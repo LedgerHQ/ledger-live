@@ -63,7 +63,7 @@
     "@ledgerhq/live-env": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "@stacks/transactions": "catalog:",
-    "bignumber.js": "^9",
+    "bignumber.js": "^11.1.5",
     "chalk": "catalog:",
     "msw": "catalog:"
   },

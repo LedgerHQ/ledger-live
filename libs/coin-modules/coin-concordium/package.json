@@ -190,7 +190,7 @@
     "@walletconnect/sign-client": "2.26.0",
     "@walletconnect/types": "2.26.0",
     "axios": "catalog:",
-    "bignumber.js": "^9.1.2",
+    "bignumber.js": "^11.1.5",
     "invariant": "^2.2.4",
     "rxjs": "catalog:"
   },

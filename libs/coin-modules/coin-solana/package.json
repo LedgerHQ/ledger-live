@@ -70,7 +70,7 @@
     "@solana/spl-token": "catalog:",
     "@solana/web3.js": "catalog:",
     "axios": "catalog:",
-    "bignumber.js": "^9.1.2",
+    "bignumber.js": "^11.1.5",
     "bs58": "catalog:",
     "invariant": "^2.2.2",
     "ky": "1.7.5",

@@ -52,7 +52,7 @@
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "axios": "catalog:",
-    "bignumber.js": "^9.1.2",
+    "bignumber.js": "^11.1.5",
     "icon-sdk-js": "1.5.2",
     "prando": "^6.0.1",
     "rxjs": "catalog:"

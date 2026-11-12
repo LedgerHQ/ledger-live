@@ -170,7 +170,7 @@
     "@mysten/sui": "2.23.1",
     "@protobuf-ts/grpcweb-transport": "2.11.1",
     "axios": "catalog:",
-    "bignumber.js": "^9.1.2",
+    "bignumber.js": "^11.1.5",
     "gql.tada": "^1.9.2",
     "rxjs": "catalog:"
   },

@@ -52,7 +52,7 @@
     "@ledgerhq/types-live": "workspace:^",
     "@noble/hashes": "catalog:",
     "axios": "catalog:",
-    "bignumber.js": "^9.1.2",
+    "bignumber.js": "^11.1.5",
     "near-api-js": "^7.3.1",
     "rxjs": "catalog:"
   },

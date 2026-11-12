@@ -39,7 +39,7 @@
     "@types/node": "catalog:",
     "@typescript/native": "catalog:",
     "axios": "catalog:",
-    "bignumber.js": "9.1.2",
+    "bignumber.js": "11.1.5",
     "jest": "catalog:",
     "nock": "14.0.3",
     "oxlint": "catalog:",

@@ -45,7 +45,7 @@
     "@ledgerhq/zcash-utils": "catalog:",
     "@reduxjs/toolkit": "catalog:",
     "bigint-buffer": "*",
-    "bignumber.js": "9.1.2",
+    "bignumber.js": "11.1.5",
     "command-line-args": "5.2.1",
     "lodash": "catalog:",
     "readable-stream": "^4.7.0",

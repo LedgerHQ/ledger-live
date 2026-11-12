@@ -59,7 +59,7 @@
     "@ledgerhq/wallet-btc": "workspace:^",
     "@noble/hashes": "catalog:",
     "axios": "catalog:",
-    "bignumber.js": "^9.1.2",
+    "bignumber.js": "^11.1.5",
     "bitcoinjs-lib": "catalog:",
     "bs58": "catalog:",
     "cashaddrjs": "^0.4.4",

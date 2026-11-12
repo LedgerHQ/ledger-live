@@ -34,7 +34,7 @@ export function computePortfolioBreakdown(
     rows.push(toAssetRow(account, pnl, namesById));
   }
 
-  rows.sort((a, b) => b.pnl.totalPnL.abs().comparedTo(a.pnl.totalPnL.abs()));
+  rows.sort((a, b) => b.pnl.totalPnL.abs().comparedTo(a.pnl.totalPnL.abs()) ?? 0);
 
   return { totals, rows, unsupported };
 }

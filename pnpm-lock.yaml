@@ -836,7 +836,7 @@ overrides:
   use-isomorphic-layout-effect: ^1.2.1
   use-sync-external-store: ^1.6.0
   ethers: 6.15.0
-  bignumber.js: 9.1.2
+  bignumber.js: 11.1.5
   '@radix-ui/react-slot': ^1.2.4
   '@ledgerhq/device-signer-kit-aleo>@ledgerhq/signer-utils': 1.1.3
   '@ton/ton>zod': 4.6.7
@@ -1018,8 +1018,8 @@ importers:
         specifier: '*'
         version: 1.1.5(patch_hash=8b68e3a6ff85b08428e730e15c185b6ef716497a858ca1f30f6e628828bac536)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       command-line-args:
         specifier: 5.2.1
         version: 5.2.1
@@ -1641,8 +1641,8 @@ importers:
         specifier: ^2.1.0
         version: 2.1.0
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       buffer:
         specifier: 'catalog:'
         version: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
@@ -2615,8 +2615,8 @@ importers:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       buffer:
         specifier: 'catalog:'
         version: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
@@ -3270,8 +3270,8 @@ importers:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       bun-types:
         specifier: 1.4.2
         version: 1.4.2
@@ -3507,8 +3507,8 @@ importers:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       bufferutil:
         specifier: ^4.1.0
         version: 4.1.0
@@ -4484,8 +4484,8 @@ importers:
         specifier: workspace:*
         version: link:../../shared/live-config-overrides
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
     devDependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
@@ -6626,8 +6626,8 @@ importers:
         specifier: workspace:*
         version: link:../../../shared/api-services
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       prando:
         specifier: '6'
         version: 6.0.1
@@ -8195,8 +8195,8 @@ importers:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       dotenv:
         specifier: ^16.4.7
         version: 16.4.7
@@ -8350,8 +8350,8 @@ importers:
         specifier: 'catalog:'
         version: typescript@7.0.2
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       body-parser:
         specifier: 2.4.0
         version: 2.4.0
@@ -13092,8 +13092,8 @@ importers:
         specifier: 'catalog:'
         version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
     devDependencies:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
@@ -13369,8 +13369,8 @@ importers:
         specifier: workspace:*
         version: link:../../../shared/trend
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
     devDependencies:
       '@domain/entity-currency-crypto':
         specifier: workspace:*
@@ -14329,8 +14329,8 @@ importers:
         specifier: 'catalog:'
         version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
     devDependencies:
       '@domain/entity-currency-crypto':
         specifier: workspace:*
@@ -14649,8 +14649,8 @@ importers:
         specifier: workspace:*
         version: link:../types-live
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       zod:
         specifier: 'catalog:'
         version: 4.6.7
@@ -14835,8 +14835,8 @@ importers:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       jest:
         specifier: 'catalog:'
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
@@ -14883,8 +14883,8 @@ importers:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -14968,8 +14968,8 @@ importers:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -15065,8 +15065,8 @@ importers:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       got:
         specifier: 11.8.5
         version: 11.8.5
@@ -15165,8 +15165,8 @@ importers:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       bitcoinjs-lib:
         specifier: 'catalog:'
         version: 7.0.5(@typescript/typescript6@6.0.2)
@@ -15301,8 +15301,8 @@ importers:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       invariant:
         specifier: ^2.2.4
         version: 2.2.4
@@ -15401,8 +15401,8 @@ importers:
         specifier: ^1.1.3
         version: 1.1.4
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -15486,8 +15486,8 @@ importers:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       casper-js-sdk:
         specifier: 5.1.1
         version: 5.1.1(debug@4.4.3)
@@ -15586,8 +15586,8 @@ importers:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       eip55:
         specifier: ^2.1.1
         version: 2.1.1
@@ -15698,8 +15698,8 @@ importers:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       invariant:
         specifier: ^2.2.4
         version: 2.2.4
@@ -15798,8 +15798,8 @@ importers:
         specifier: ^1.1.3
         version: 1.1.4
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       cosmjs-types:
         specifier: ^0.10.1
         version: 0.10.1
@@ -15898,8 +15898,8 @@ importers:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       ethers:
         specifier: 6.15.0
         version: 6.15.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
@@ -15995,8 +15995,8 @@ importers:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -16089,8 +16089,8 @@ importers:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       icon-sdk-js:
         specifier: 1.5.2
         version: 1.5.2
@@ -16165,8 +16165,8 @@ importers:
         specifier: 'catalog:'
         version: 1.8.0
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       cbor:
         specifier: 10.0.11
         version: 10.0.11
@@ -16262,8 +16262,8 @@ importers:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       bip32:
         specifier: 4.0.0
         version: 4.0.0
@@ -16371,8 +16371,8 @@ importers:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       bs58check:
         specifier: 'catalog:'
         version: 4.0.0
@@ -16459,8 +16459,8 @@ importers:
         specifier: workspace:^
         version: link:../../types-live
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       invariant:
         specifier: ^2.2.4
         version: 2.2.4
@@ -16548,7 +16548,7 @@ importers:
         version: link:../../types-live
       '@multiversx/sdk-core':
         specifier: ^13.7.0
-        version: 13.17.1(bignumber.js@9.1.2)(debug@4.4.3)(protobufjs@8.4.1)
+        version: 13.17.1(bignumber.js@11.1.5)(debug@4.4.3)(protobufjs@8.4.1)
       axios:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
@@ -16556,8 +16556,8 @@ importers:
         specifier: ^1.1.3
         version: 1.1.4
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       expect:
         specifier: 30.5.2
         version: 30.5.2
@@ -16650,8 +16650,8 @@ importers:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       near-api-js:
         specifier: ^7.3.1
         version: 7.3.1
@@ -16744,8 +16744,8 @@ importers:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -16847,8 +16847,8 @@ importers:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       bs58:
         specifier: 'catalog:'
         version: 6.0.0
@@ -16959,8 +16959,8 @@ importers:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       c32check:
         specifier: 1.1.3
         version: 1.1.3
@@ -17071,8 +17071,8 @@ importers:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       gql.tada:
         specifier: ^1.9.2
         version: 1.11.3(@typescript/typescript6@6.0.2)(graphql@16.14.2)
@@ -17168,8 +17168,8 @@ importers:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       lodash:
         specifier: 4.18.1
         version: 4.18.1
@@ -17241,8 +17241,8 @@ importers:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       bs58check:
         specifier: 'catalog:'
         version: 4.0.0
@@ -17326,8 +17326,8 @@ importers:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       eip55:
         specifier: ^2.1.1
         version: 2.1.1
@@ -17435,8 +17435,8 @@ importers:
         specifier: 'catalog:'
         version: 1.8.0
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       bs58:
         specifier: 'catalog:'
         version: 6.0.0
@@ -17566,8 +17566,8 @@ importers:
         specifier: 0.10.2
         version: 0.10.2
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       chalk:
         specifier: 'catalog:'
         version: 4.1.2
@@ -17651,8 +17651,8 @@ importers:
         specifier: 'catalog:'
         version: 2.4.0
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       bip32:
         specifier: ^4.0.0
         version: 4.0.0
@@ -17739,8 +17739,8 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       bip39:
         specifier: 'catalog:'
         version: 3.1.2
@@ -17806,8 +17806,8 @@ importers:
         specifier: workspace:^
         version: link:../../types-live
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       casper-js-sdk:
         specifier: 5.1.1
         version: 5.1.1(debug@4.4.3)
@@ -17894,8 +17894,8 @@ importers:
         specifier: workspace:^
         version: link:../../types-live
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       msw:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
@@ -17964,8 +17964,8 @@ importers:
         specifier: workspace:^
         version: link:../../types-live
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       bip39:
         specifier: 'catalog:'
         version: 3.1.2
@@ -18031,8 +18031,8 @@ importers:
         specifier: workspace:^
         version: link:../../types-live
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       chalk:
         specifier: 'catalog:'
         version: 4.1.2
@@ -18107,8 +18107,8 @@ importers:
         specifier: workspace:*
         version: link:../../../shared/env
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       bip32:
         specifier: ^4.0.0
         version: 4.0.0
@@ -18178,10 +18178,10 @@ importers:
         version: link:../../types-live
       '@multiversx/sdk-core':
         specifier: ^13.7.0
-        version: 13.17.1(bignumber.js@9.1.2)(debug@4.4.3)(protobufjs@7.5.4)
+        version: 13.17.1(bignumber.js@11.1.5)(debug@4.4.3)(protobufjs@7.5.4)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       bip39:
         specifier: 'catalog:'
         version: 3.1.2
@@ -18250,8 +18250,8 @@ importers:
         specifier: workspace:^
         version: link:../../types-live
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       msw:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
@@ -18320,8 +18320,8 @@ importers:
         specifier: 'catalog:'
         version: 14.0.3(@polkadot/util@14.0.3)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       expect:
         specifier: 30.5.2
         version: 30.5.2
@@ -18390,8 +18390,8 @@ importers:
         specifier: 'catalog:'
         version: 1.99.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@6.0.6)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       bip39:
         specifier: 'catalog:'
         version: 3.1.2
@@ -18460,8 +18460,8 @@ importers:
         specifier: 'catalog:'
         version: 7.6.0(encoding@0.1.13)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       chalk:
         specifier: 'catalog:'
         version: 4.1.2
@@ -18530,8 +18530,8 @@ importers:
         specifier: ^14.0.0
         version: 14.0.0(debug@4.4.3)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       chalk:
         specifier: 'catalog:'
         version: 4.1.2
@@ -18606,8 +18606,8 @@ importers:
         specifier: workspace:*
         version: link:../../../shared/env
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       bip39:
         specifier: 'catalog:'
         version: 3.1.2
@@ -18688,8 +18688,8 @@ importers:
         specifier: ^15.4.0
         version: 15.4.0(@ton/core@0.62.0(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)(debug@4.4.3)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       chalk:
         specifier: 'catalog:'
         version: 4.1.2
@@ -18761,8 +18761,8 @@ importers:
         specifier: 'catalog:'
         version: 1.8.0
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       bs58:
         specifier: 'catalog:'
         version: 6.0.0
@@ -18831,8 +18831,8 @@ importers:
         specifier: 2.0.0
         version: 2.0.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6)(zod@4.6.7)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       chalk:
         specifier: 'catalog:'
         version: 4.1.2
@@ -18895,8 +18895,8 @@ importers:
         specifier: workspace:^
         version: link:../../types-live
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       chalk:
         specifier: 'catalog:'
         version: 4.1.2
@@ -18986,8 +18986,8 @@ importers:
         specifier: 'catalog:'
         version: 1.8.0
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       bip39:
         specifier: 'catalog:'
         version: 3.1.2
@@ -19346,8 +19346,8 @@ importers:
         specifier: 'catalog:'
         version: 2.2.0(@ton/crypto@3.3.0)(encoding@0.1.13)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -19877,8 +19877,8 @@ importers:
         specifier: ^1.1.3
         version: 1.1.4
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       bip32:
         specifier: ^4.0.0
         version: 4.0.0
@@ -20258,8 +20258,8 @@ importers:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       bip32-path:
         specifier: ^0.4.2
         version: 0.4.2
@@ -20776,8 +20776,8 @@ importers:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       semver:
         specifier: 'catalog:'
         version: 7.8.5
@@ -20849,8 +20849,8 @@ importers:
         specifier: 6.37.0
         version: 6.37.0
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -21017,8 +21017,8 @@ importers:
         specifier: 6.37.0
         version: 6.37.0
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       bip32-path:
         specifier: ^0.4.2
         version: 0.4.2
@@ -21067,13 +21067,13 @@ importers:
         version: 6.37.0
       '@multiversx/sdk-core':
         specifier: ^13.7.0
-        version: 13.17.1(bignumber.js@9.1.2)(debug@4.4.3)(protobufjs@8.4.1)
+        version: 13.17.1(bignumber.js@11.1.5)(debug@4.4.3)(protobufjs@8.4.1)
       axios:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       bip32-path:
         specifier: ^0.4.2
         version: 0.4.2
@@ -22196,8 +22196,8 @@ importers:
         specifier: workspace:*
         version: link:../types-live
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
     devDependencies:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
@@ -23035,8 +23035,8 @@ importers:
         specifier: workspace:*
         version: link:../../shared/cloud-sync-module
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -23246,8 +23246,8 @@ importers:
   libs/types-live:
     dependencies:
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -23742,8 +23742,8 @@ importers:
         specifier: 'catalog:'
         version: typescript@7.0.2
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       jest:
         specifier: 'catalog:'
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
@@ -23784,8 +23784,8 @@ importers:
         specifier: ^1.1.3
         version: 1.1.4
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       bitcoinjs-lib:
         specifier: 'catalog:'
         version: 7.0.5(@typescript/typescript6@6.0.2)
@@ -23924,8 +23924,8 @@ importers:
         specifier: workspace:*
         version: link:../types-live
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
     devDependencies:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
@@ -25564,8 +25564,8 @@ importers:
         specifier: 'catalog:'
         version: 1.99.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@6.0.6)
       bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
+        specifier: 11.1.5
+        version: 11.1.5
       buffer:
         specifier: ^6.0.3
         version: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
@@ -28980,7 +28980,7 @@ packages:
   '@multiversx/sdk-core@13.17.1':
     resolution: {integrity: sha512-ZqT/uhKBRM5XWZBLodpcLypCE5L6vjXENFnVl4PurTQNkOo8X6sFhKGdHzMeKUIDrMkXuRAQXlCRp1Us9qk4Lg==}
     peerDependencies:
-      bignumber.js: 9.1.2
+      bignumber.js: 11.1.5
       protobufjs: ^7.2.6
 
   '@multiversx/sdk-transaction-decoder@1.0.2':
@@ -34634,8 +34634,8 @@ packages:
     resolution: {integrity: sha512-pX/cYW3dCa87Jrzv6DAr8ivbbJRzEX5yGhdt8IutnX/PCIXfpx+mabWNK/M8qqh+zQ0J3thftUBHW0ByuUlG0w==}
     engines: {node: '>=10.4.0'}
 
-  bignumber.js@9.1.2:
-    resolution: {integrity: sha512-2/mKyZH9K85bzOEfhXDBFZTGd1CTs+5IHpeFQo9luiBG7hghdC851Pj2WAhb6E3R6b9tZj/XKhbg4fum+Kepug==}
+  bignumber.js@11.1.5:
+    resolution: {integrity: sha512-6WmzCNtUnfKpbozq+hOgWaZMMzORmYBwF1xZScyoIX3QRYWeKTtxxwDOW5tIz7C9BdjkIYHGTcelCLkXg0mndw==}
 
   bindings@1.5.0:
     resolution: {integrity: sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==}
@@ -46685,7 +46685,7 @@ snapshots:
       '@scure/base': 2.2.0
       '@scure/bip32': 2.2.0
       asn1js: 3.0.6
-      bignumber.js: 9.1.2
+      bignumber.js: 11.1.5
       forge-light: 1.1.4
 
   '@hiero-ledger/proto@2.32.0(protobufjs@8.6.6)':
@@ -46698,7 +46698,7 @@ snapshots:
       '@grpc/grpc-js': 1.13.6
       '@hiero-ledger/cryptography': 1.23.0
       '@hiero-ledger/proto': 2.32.0(protobufjs@8.6.6)
-      bignumber.js: 9.1.2
+      bignumber.js: 11.1.5
       crypto-js: 4.2.0
       ethers: 6.15.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       js-base64: 3.7.4
@@ -47253,7 +47253,7 @@ snapshots:
       '@ledgerhq/coin-module-framework': 11.0.1
       '@ledgerhq/live-network': 3.3.0(axios@1.20.0(debug@4.4.3))
       axios: 1.20.0(debug@4.4.3)
-      bignumber.js: 9.1.2
+      bignumber.js: 11.1.5
       eip55: 2.1.1
       ethers: 6.15.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       react-native-get-random-values: 1.11.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))
@@ -47270,7 +47270,7 @@ snapshots:
 
   '@ledgerhq/coin-module-framework@11.0.1':
     dependencies:
-      bignumber.js: 9.1.2
+      bignumber.js: 11.1.5
 
   '@ledgerhq/coin-stellar@12.1.2(@ledgerhq/live-network@3.3.0(axios@1.20.0(debug@4.4.3)))(debug@4.4.3)':
     dependencies:
@@ -47278,7 +47278,7 @@ snapshots:
       '@ledgerhq/coin-module-framework': 11.0.1
       '@ledgerhq/live-network': 3.3.0(axios@1.20.0(debug@4.4.3))
       '@stellar/stellar-sdk': 14.0.0(debug@4.4.3)
-      bignumber.js: 9.1.2
+      bignumber.js: 11.1.5
     transitivePeerDependencies:
       - debug
 
@@ -47297,7 +47297,7 @@ snapshots:
     dependencies:
       '@ledgerhq/coin-module-framework': 11.0.1
       '@ledgerhq/live-network': 3.3.0(axios@1.20.0(debug@4.4.3))
-      bignumber.js: 9.1.2
+      bignumber.js: 11.1.5
       invariant: 2.2.4
       ripple-address-codec: 5.0.1(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       ripple-binary-codec: 2.11.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
@@ -47631,7 +47631,7 @@ snapshots:
 
   '@ledgerhq/live-app-sdk@0.8.2':
     dependencies:
-      bignumber.js: 9.1.2
+      bignumber.js: 11.1.5
       json-rpc-2.0: 1.7.0
 
   '@ledgerhq/live-config@3.10.0':
@@ -47640,7 +47640,7 @@ snapshots:
 
   '@ledgerhq/live-currency-format@0.17.0':
     dependencies:
-      bignumber.js: 9.1.2
+      bignumber.js: 11.1.5
 
   '@ledgerhq/live-env@4.2.0': {}
 
@@ -47760,7 +47760,7 @@ snapshots:
     dependencies:
       '@ledgerhq/hw-transport': 6.37.0
       '@ledgerhq/wallet-api-core': 2.2.0(@ton/crypto@3.3.0)(encoding@0.1.13)
-      bignumber.js: 9.1.2
+      bignumber.js: 11.1.5
     transitivePeerDependencies:
       - '@ton/crypto'
       - encoding
@@ -47769,7 +47769,7 @@ snapshots:
     dependencies:
       '@stacks/transactions': 6.17.0(encoding@0.1.13)
       '@ton/core': 0.62.0(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0)
-      bignumber.js: 9.1.2
+      bignumber.js: 11.1.5
       zod: 4.6.7
     transitivePeerDependencies:
       - '@ton/crypto'
@@ -47778,7 +47778,7 @@ snapshots:
   '@ledgerhq/wallet-api-server@3.6.0(@ton/crypto@3.3.0)(encoding@0.1.13)':
     dependencies:
       '@ledgerhq/wallet-api-core': 2.2.0(@ton/crypto@3.3.0)(encoding@0.1.13)
-      bignumber.js: 9.1.2
+      bignumber.js: 11.1.5
       picomatch: 4.0.5
     transitivePeerDependencies:
       - '@ton/crypto'
@@ -47912,13 +47912,13 @@ snapshots:
   '@multiversx/sdk-bls-wasm@0.3.5':
     optional: true
 
-  '@multiversx/sdk-core@13.17.1(bignumber.js@9.1.2)(debug@4.4.3)(protobufjs@7.5.4)':
+  '@multiversx/sdk-core@13.17.1(bignumber.js@11.1.5)(debug@4.4.3)(protobufjs@7.5.4)':
     dependencies:
       '@multiversx/sdk-transaction-decoder': 1.0.2
       '@noble/ed25519': 1.7.3
       '@noble/hashes': 1.3.0
       bech32: 1.1.4
-      bignumber.js: 9.1.2
+      bignumber.js: 11.1.5
       blake2b: 2.1.3
       buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
       ed25519-hd-key: 1.1.2
@@ -47936,13 +47936,13 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  '@multiversx/sdk-core@13.17.1(bignumber.js@9.1.2)(debug@4.4.3)(protobufjs@8.4.1)':
+  '@multiversx/sdk-core@13.17.1(bignumber.js@11.1.5)(debug@4.4.3)(protobufjs@8.4.1)':
     dependencies:
       '@multiversx/sdk-transaction-decoder': 1.0.2
       '@noble/ed25519': 1.7.3
       '@noble/hashes': 1.3.0
       bech32: 1.1.4
-      bignumber.js: 9.1.2
+      bignumber.js: 11.1.5
       blake2b: 2.1.3
       buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
       ed25519-hd-key: 1.1.2
@@ -51232,7 +51232,7 @@ snapshots:
       '@solana/buffer-layout': 4.0.1
       '@solana/web3.js': 1.99.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@6.0.6)
       bigint-buffer: 1.1.5(patch_hash=8b68e3a6ff85b08428e730e15c185b6ef716497a858ca1f30f6e628828bac536)
-      bignumber.js: 9.1.2
+      bignumber.js: 11.1.5
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -52127,7 +52127,7 @@ snapshots:
       '@noble/curves': 1.9.7
       '@stellar/js-xdr': 3.1.2
       base32.js: 0.1.0
-      bignumber.js: 9.1.2
+      bignumber.js: 11.1.5
       buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
       sha.js: 2.4.12
 
@@ -52135,7 +52135,7 @@ snapshots:
     dependencies:
       '@stellar/stellar-base': 14.0.0
       axios: 1.20.0(debug@4.4.3)
-      bignumber.js: 9.1.2
+      bignumber.js: 11.1.5
       eventsource: 2.0.2
       feaxios: 0.0.23
       randombytes: 2.1.0
@@ -52156,14 +52156,14 @@ snapshots:
 
   '@stricahq/cbors@1.0.2':
     dependencies:
-      bignumber.js: 9.1.2
+      bignumber.js: 11.1.5
       buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
 
   '@stricahq/typhonjs@3.0.0':
     dependencies:
       '@stricahq/cbors': 1.0.2
       bech32: 2.0.0
-      bignumber.js: 9.1.2
+      bignumber.js: 11.1.5
       blakejs: 1.2.1
       bs58: 5.0.0
       buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
@@ -52560,7 +52560,7 @@ snapshots:
     dependencies:
       '@taquito/core': 23.1.0
       '@taquito/utils': 23.0.1
-      bignumber.js: 9.1.2
+      bignumber.js: 11.1.5
 
   '@taquito/michel-codec@23.0.1':
     dependencies:
@@ -52571,7 +52571,7 @@ snapshots:
       '@taquito/core': 23.1.0
       '@taquito/rpc': 23.0.1(encoding@0.1.13)
       '@taquito/utils': 23.0.1
-      bignumber.js: 9.1.2
+      bignumber.js: 11.1.5
       elliptic: 6.6.1
       fast-json-stable-stringify: 2.1.0
     transitivePeerDependencies:
@@ -52582,7 +52582,7 @@ snapshots:
       '@taquito/core': 23.1.0
       '@taquito/http-utils': 23.1.0(patch_hash=74970a17ec07ec4fa7e3a168cec614cd9350646589f9b3dbffee742b2b15d90e)(encoding@0.1.13)
       '@taquito/utils': 23.0.1
-      bignumber.js: 9.1.2
+      bignumber.js: 11.1.5
     transitivePeerDependencies:
       - encoding
 
@@ -52595,7 +52595,7 @@ snapshots:
       '@taquito/michelson-encoder': 23.0.1(encoding@0.1.13)
       '@taquito/rpc': 23.0.1(encoding@0.1.13)
       '@taquito/utils': 23.0.1
-      bignumber.js: 9.1.2
+      bignumber.js: 11.1.5
       rxjs: 7.8.2
     transitivePeerDependencies:
       - encoding
@@ -52607,7 +52607,7 @@ snapshots:
       '@stablelib/ed25519': 1.0.3
       '@taquito/core': 23.1.0
       '@types/bs58check': 2.1.2
-      bignumber.js: 9.1.2
+      bignumber.js: 11.1.5
       blakejs: 1.2.1
       bs58check: 3.0.1
       buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
@@ -54397,7 +54397,7 @@ snapshots:
 
   bigint-mod-arith@3.3.1: {}
 
-  bignumber.js@9.1.2: {}
+  bignumber.js@11.1.5: {}
 
   bindings@1.5.0:
     dependencies:
@@ -57485,7 +57485,7 @@ snapshots:
   icon-sdk-js@1.5.2:
     dependencies:
       '@babel/runtime-corejs3': 7.24.8
-      bignumber.js: 9.1.2
+      bignumber.js: 11.1.5
       bip66: 1.1.5
       buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
       bufferutil: 4.1.0
@@ -57774,7 +57774,7 @@ snapshots:
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
       abitype: 1.2.4(@typescript/typescript6@6.0.2)(zod@4.6.7)
-      bignumber.js: 9.1.2
+      bignumber.js: 11.1.5
       iso-base: 4.4.0
       iso-kv: 3.2.0
       iso-web: 1.4.3
@@ -58470,7 +58470,7 @@ snapshots:
 
   json-bigint@1.0.0:
     dependencies:
-      bignumber.js: 9.1.2
+      bignumber.js: 11.1.5
 
   json-buffer@3.0.1: {}
 
@@ -61875,7 +61875,7 @@ snapshots:
   ripple-binary-codec@2.11.0(bufferutil@4.1.0)(utf-8-validate@6.0.6):
     dependencies:
       '@xrplf/isomorphic': 1.0.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      bignumber.js: 9.1.2
+      bignumber.js: 11.1.5
       ripple-address-codec: 5.0.1(bufferutil@4.1.0)(utf-8-validate@6.0.6)
     transitivePeerDependencies:
       - bufferutil
@@ -62998,7 +62998,7 @@ snapshots:
   tronweb@6.5.1(bufferutil@4.1.0)(debug@4.4.3)(utf-8-validate@6.0.6):
     dependencies:
       axios: 1.18.0(debug@4.4.3)
-      bignumber.js: 9.1.2
+      bignumber.js: 11.1.5
       ethereum-cryptography: 2.2.1
       ethers: 6.15.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       eventemitter3: 5.0.1

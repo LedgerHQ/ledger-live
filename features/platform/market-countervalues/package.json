@@ -25,7 +25,7 @@
     "@domain/entity-currency-unit": "workspace:*",
     "@domain/entity-market-countervalues": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
-    "bignumber.js": "9"
+    "bignumber.js": "^11.1.5"
   },
   "peerDependencies": {
     "react": ">=19.0.0",

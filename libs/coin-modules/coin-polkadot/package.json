@@ -154,7 +154,7 @@
     "@polkadot/util": "catalog:",
     "@polkadot/util-crypto": "catalog:",
     "axios": "catalog:",
-    "bignumber.js": "^9.1.2",
+    "bignumber.js": "^11.1.5",
     "invariant": "^2.2.2",
     "rxjs": "catalog:"
   },

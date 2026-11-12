@@ -38,7 +38,7 @@
   "dependencies": {
     "@ledgerhq/wallet-api-client": "catalog:",
     "@ledgerhq/wallet-api-core": "catalog:",
-    "bignumber.js": "9.1.2"
+    "bignumber.js": "11.1.5"
   },
   "devDependencies": {
     "@types/node": "catalog:",

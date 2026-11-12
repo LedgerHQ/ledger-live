@@ -11,7 +11,7 @@
     "@ledgerhq/wallet-api-deeplink-module": "workspace:*",
     "@ledgerhq/wallet-api-simulator": "catalog:",
     "@solana/web3.js": "catalog:",
-    "bignumber.js": "^9.1.2",
+    "bignumber.js": "^11.1.5",
     "buffer": "^6.0.3",
     "react": "catalog:",
     "react-dom": "catalog:"

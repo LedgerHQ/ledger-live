@@ -106,7 +106,7 @@
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "axios": "catalog:",
-    "bignumber.js": "^9.1.2",
+    "bignumber.js": "^11.1.5",
     "bip32-path": "^0.4.2",
     "eip55": "^2.1.0",
     "expect": "catalog:",

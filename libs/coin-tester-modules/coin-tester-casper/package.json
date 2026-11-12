@@ -62,7 +62,7 @@
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-config": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
-    "bignumber.js": "^9.1.2",
+    "bignumber.js": "^11.1.5",
     "casper-js-sdk": "5.1.1",
     "chalk": "catalog:",
     "docker-compose": "^1.1.0",

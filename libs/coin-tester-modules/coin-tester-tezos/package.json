@@ -64,7 +64,7 @@
     "@noble/curves": "catalog:",
     "@noble/hashes": "catalog:",
     "@shared/env": "workspace:*",
-    "bignumber.js": "^9.1.2",
+    "bignumber.js": "^11.1.5",
     "bip39": "catalog:",
     "bs58": "catalog:",
     "chalk": "catalog:",

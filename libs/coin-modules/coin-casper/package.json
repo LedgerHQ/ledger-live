@@ -100,7 +100,7 @@
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "axios": "catalog:",
-    "bignumber.js": "^9.1.2",
+    "bignumber.js": "^11.1.5",
     "casper-js-sdk": "5.1.1",
     "invariant": "^2.2.2",
     "lodash": "catalog:",

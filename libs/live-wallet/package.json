@@ -27,7 +27,7 @@
     "@ledgerhq/live-promise": "catalog:",
     "@ledgerhq/types-live": "workspace:*",
     "@shared/cloud-sync-module": "workspace:*",
-    "bignumber.js": "9",
+    "bignumber.js": "^11.1.5",
     "rxjs": "catalog:",
     "zod": "catalog:"
   },

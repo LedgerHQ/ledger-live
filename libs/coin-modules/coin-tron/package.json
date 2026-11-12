@@ -57,7 +57,7 @@
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-network": "catalog:",
     "axios": "catalog:",
-    "bignumber.js": "^9.1.2",
+    "bignumber.js": "^11.1.5",
     "bs58check": "catalog:",
     "lodash": "catalog:",
     "tronweb": "6.5.1"

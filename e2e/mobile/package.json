@@ -60,7 +60,7 @@
     "@types/jest": "catalog:",
     "@types/lodash": "catalog:",
     "@types/ws": "8.5.10",
-    "bignumber.js": "9.1.2",
+    "bignumber.js": "11.1.5",
     "body-parser": "2.4.0",
     "cors": "2.8.5",
     "detox": "catalog:",
