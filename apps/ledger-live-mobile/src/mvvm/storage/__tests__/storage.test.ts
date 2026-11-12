@@ -3,11 +3,8 @@ import { STORAGE_TYPE } from "../constants";
 import type { StorageInitializer } from "../types";
 import asyncStorageWrapper from "../asyncStorageWrapper";
 import mmkvStorageWrapper from "../mmkvStorageWrapper";
-import {
-  MIGRATION_STATUS,
-  MIGRATION_STATUS_KEY,
-  ROLLBACK_STATUS,
-} from "../utils/migrations/constants";
+import { MIGRATION_STATUS, MIGRATION_STATUS_KEY } from "../utils/migrations/constants";
+import { migrator } from "../utils/migrations/asyncStorageToMMKV";
 
 beforeEach(() => {
   jest.spyOn(console, "error").mockImplementation(() => {});
@@ -33,7 +30,6 @@ describe("storage", () => {
       expect(createTestStorage().getState()).toEqual({
         storageType: STORAGE_TYPE.ASYNC_STORAGE,
         migrationStatus: MIGRATION_STATUS.NOT_STARTED,
-        rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
         numberOfReadErrors: 0,
       });
     });
@@ -125,7 +121,6 @@ describe("storage", () => {
           state: {
             migrationStatus: MIGRATION_STATUS.NOT_STARTED,
             numberOfReadErrors: 0,
-            rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
             storageType: STORAGE_TYPE.ASYNC_STORAGE,
           },
         });
@@ -221,7 +216,80 @@ describe("storage", () => {
           state: {
             migrationStatus: MIGRATION_STATUS.NOT_STARTED,
             numberOfReadErrors: 0,
-            rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
+            storageType: STORAGE_TYPE.ASYNC_STORAGE,
+          },
+        });
+      });
+    });
+
+    describe("read errors with MMKV", () => {
+      const readCount = 6;
+      let lastSyntaxError: SyntaxError;
+      let storage: ReturnType<typeof createTestStorage>;
+
+      beforeEach(async () => {
+        // Arrange
+        mockInitStorageState = jest.fn().mockImplementation(state => {
+          state.storageType = STORAGE_TYPE.MMKV;
+        });
+        jest.spyOn(mmkvStorageWrapper, "get").mockImplementation(() => {
+          lastSyntaxError = new SyntaxError("Unexpected token");
+          throw lastSyntaxError;
+        });
+        storage = createTestStorage();
+
+        // Act
+        for (let i = 0; i < readCount; i++) {
+          await storage.get("key").catch(noop);
+        }
+      });
+
+      it("should keep the MMKV storage type", () => {
+        expect(storage.getState().storageType).toBe(STORAGE_TYPE.MMKV);
+      });
+
+      it("should count each read error", () => {
+        expect(storage.getState().numberOfReadErrors).toBe(readCount);
+      });
+
+      it("should keep the stack trace of the last error", () => {
+        expect(storage.getState().lastError?.stackTrace).toBe(lastSyntaxError.stack);
+      });
+    });
+  });
+
+  describe("getString", () => {
+    describe("handles error", () => {
+      let result: unknown;
+
+      beforeEach(async () => {
+        // Arrange
+        mockInitStorageState = jest.fn().mockImplementation(state => {
+          state.storageType = STORAGE_TYPE.ASYNC_STORAGE;
+        });
+        jest.spyOn(asyncStorageWrapper, "getString").mockImplementation(() => {
+          throw error;
+        });
+        const storage = createTestStorage();
+
+        // Act
+        try {
+          result = await storage.getString("key");
+        } catch (e) {
+          result = e;
+        }
+      });
+
+      it("should reject with the error", () => {
+        expect(result).toEqual(error);
+      });
+
+      it("should log the #getString error", () => {
+        expect(console.error).toHaveBeenCalledWith("Error getting key from storage", {
+          error: error,
+          state: {
+            migrationStatus: MIGRATION_STATUS.NOT_STARTED,
+            numberOfReadErrors: 0,
             storageType: STORAGE_TYPE.ASYNC_STORAGE,
           },
         });
@@ -311,7 +379,6 @@ describe("storage", () => {
           state: {
             migrationStatus: MIGRATION_STATUS.NOT_STARTED,
             numberOfReadErrors: 0,
-            rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
             storageType: STORAGE_TYPE.ASYNC_STORAGE,
           },
         });
@@ -403,7 +470,6 @@ describe("storage", () => {
           state: {
             migrationStatus: MIGRATION_STATUS.NOT_STARTED,
             numberOfReadErrors: 0,
-            rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
             storageType: STORAGE_TYPE.ASYNC_STORAGE,
           },
         });
@@ -493,7 +559,6 @@ describe("storage", () => {
           state: {
             migrationStatus: MIGRATION_STATUS.NOT_STARTED,
             numberOfReadErrors: 0,
-            rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
             storageType: STORAGE_TYPE.ASYNC_STORAGE,
           },
         });
@@ -583,7 +648,6 @@ describe("storage", () => {
           state: {
             migrationStatus: MIGRATION_STATUS.NOT_STARTED,
             numberOfReadErrors: 0,
-            rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
             storageType: STORAGE_TYPE.ASYNC_STORAGE,
           },
         });
@@ -668,7 +732,6 @@ describe("storage", () => {
           state: {
             migrationStatus: MIGRATION_STATUS.NOT_STARTED,
             numberOfReadErrors: 0,
-            rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
             storageType: STORAGE_TYPE.ASYNC_STORAGE,
           },
         });
@@ -762,7 +825,41 @@ describe("storage", () => {
           state: {
             migrationStatus: MIGRATION_STATUS.NOT_STARTED,
             numberOfReadErrors: 0,
-            rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
+            storageType: STORAGE_TYPE.ASYNC_STORAGE,
+          },
+        });
+      });
+    });
+  });
+
+  describe("handleMigration", () => {
+    describe("handles error", () => {
+      let result: unknown;
+
+      beforeEach(async () => {
+        // Arrange
+        mockInitStorageState = jest.fn();
+        jest.spyOn(migrator, "handleMigration").mockRejectedValue(error);
+        const storage = createTestStorage();
+
+        // Act
+        try {
+          result = await storage.handleMigration();
+        } catch (e) {
+          result = e;
+        }
+      });
+
+      it("should reject with the error", () => {
+        expect(result).toEqual(error);
+      });
+
+      it("should log the #handleMigration error", () => {
+        expect(console.error).toHaveBeenCalledWith("Error handling migration", {
+          error: error,
+          state: {
+            migrationStatus: MIGRATION_STATUS.NOT_STARTED,
+            numberOfReadErrors: 0,
             storageType: STORAGE_TYPE.ASYNC_STORAGE,
           },
         });
@@ -785,7 +882,6 @@ describe("storage", () => {
       const state = {
         storageType: STORAGE_TYPE.ASYNC_STORAGE,
         migrationStatus: MIGRATION_STATUS.NOT_STARTED,
-        rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
         numberOfReadErrors: 0,
       };
 
@@ -806,7 +902,6 @@ describe("storage", () => {
       const state = {
         storageType: STORAGE_TYPE.ASYNC_STORAGE,
         migrationStatus: MIGRATION_STATUS.NOT_STARTED,
-        rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
         numberOfReadErrors: 0,
       };
 
@@ -815,23 +910,6 @@ describe("storage", () => {
 
       // Assert
       expect(state.storageType).toBe(STORAGE_TYPE.ASYNC_STORAGE);
-    });
-
-    it("should set the migration status to rolled back if rollback status is completed", () => {
-      // Arrange
-      mmkvStorageWrapper.getString = jest.fn().mockReturnValue(ROLLBACK_STATUS.COMPLETED);
-      const state = {
-        storageType: STORAGE_TYPE.ASYNC_STORAGE,
-        migrationStatus: MIGRATION_STATUS.NOT_STARTED,
-        rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
-        numberOfReadErrors: 0,
-      };
-
-      // Act
-      initStorageState(state);
-
-      // Assert
-      expect(state.migrationStatus).toBe(MIGRATION_STATUS.ROLLED_BACK);
     });
   });
 });
