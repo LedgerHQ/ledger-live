@@ -86,6 +86,9 @@ Android, Release simulator app on iOS, with the JS bundled in the binary. `prepa
 It checks every anchor before editing, and the edited lines carry `startup-perf`. The scripts and
 userdata come from the workflow's ref, so released tags are measured with today's harness. The jobs
 write no remote Nx, pnpm, Gradle or AVD cache: they run with develop's role while building any ref.
+Gradle downloads its dependencies through JFrog (`jfrog-maven-auth`), like develop's Android builds:
+straight from Maven Central, the shared runner IP gets rate-limited (a 429, or 81 min instead of 15
+in run 42829119387).
 
 ## A launch
 
