@@ -119,8 +119,22 @@ as a manifest allow-list.
 Desktop and mobile differ only in the flag slice they read and the version resolver they own, so
 the wiring lives here rather than twice in the hosts: `installEarnLifecycleHost` takes those
 readers and returns the store listener that drops pending attempts when the kill-switch goes off,
-`registerTxLifecycleObserver` installs the observer, and `startDappLifecycleMonitoring` is the
-body of each host's dApp effect.
+and `startDappLifecycleMonitoring` is the body of each host's dApp effect.
+
+### Lifecycle products
+
+The lifecycle core (`txLifecycle.ts`) names no product. It tracks pending attempts, keys them,
+and posts them. Each product is a `TxLifecycleProduct` that says which events are its own
+(`pathOf`), which kill-switch it answers to (`isEnabled`), where it posts (`baseUrl`) and,
+optionally, which payloads the host reports (`reports`). Earn's lives in `earnLifecycleHost.ts`
+and Borrow's in `borrowLifecycleHost.ts`, and neither imports the other.
+
+`txLifecycleProducts.ts` is the only module that lists both. `registerTxLifecycleObserver`
+installs one observer that hands each event to the single product that claims it. A manifest
+two products claim goes to neither, so a misconfigured id loses data rather than landing in the
+wrong sink. A pending attempt remembers the product that opened it, so clearing, abandoning and
+picking the sink never re-resolve ownership. To add a product, write its descriptor in its own
+host module and add it to that list.
 
 ### Borrow
 
@@ -135,9 +149,10 @@ success/failure `tx_terminal`. The host tracks Borrow attempts (manifest `borrow
 `ptxBorrowLiveApp` configures) only to emit what the app cannot: a `failure/abandoned` terminal
 when the webview is torn down, or the sign flow is abandoned, with an attempt still pending.
 There is no placeholder intent for a plain webview open, so an idle Borrow session never counts.
-`installBorrowLifecycleHost` wires the readers at boot and `startBorrowLifecycleMonitoring` is the
-body of each host's Borrow webview effect. Earn behaviour and its flag are unchanged, and the two
-products never clear each other's pending attempts.
+Mounting the Borrow screen drops any attempt left pending before it, so a teardown only reports
+attempts that screen started. `installBorrowLifecycleHost` wires the readers at boot and
+`startBorrowLifecycleMonitoring` is the body of each host's Borrow webview effect. Earn behaviour
+and its flag are unchanged, and the two products never clear each other's pending attempts.
 
 One thing to know if you ever reach for it: `track(event, props, { mandatory: true })` from
 `@shared/analytics` bypasses the consent check and uses the reduced extra properties registered with
