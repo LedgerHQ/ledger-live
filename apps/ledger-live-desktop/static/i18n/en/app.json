@@ -2752,6 +2752,7 @@
       "description": "You might need a <0>Tag/Memo</0> for receiving this asset from an exchange. You can use any combination of numbers like 1234."
     }
   },
+  "receiveAddress": {},
   "newReceive": {
     "steps": {
       "options": {
