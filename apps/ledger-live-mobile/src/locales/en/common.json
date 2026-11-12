@@ -1620,11 +1620,15 @@
       "description": "To stop holding this token, remove it instead."
     },
     "XrpTokenFrozen": {
-      "title": "You can't send this token to this recipient",
-      "description": "Its issuer froze it, or hasn't approved your account to hold it. A frozen token can still go back to its issuer."
+      "title": "You can't send this token",
+      "description": "Its issuer froze it."
+    },
+    "XrpTokenNotAuthorized": {
+      "title": "You can't send this token",
+      "description": "Its issuer hasn't approved your account to hold it."
     },
     "XrpTokenCannotReceive": {
-      "title": "This recipient can't receive {{assetCode}}",
+      "title": "This recipient can't receive this token",
       "description": "The recipient may need to add this token first, or the issuer doesn't allow this transfer."
     },
     "XrpTokenAmountNotDeliverable": {
@@ -3818,6 +3822,7 @@
       "TRANSFER_WITHDRAWN": "Transfer withdrawn",
       "OPT_IN": "Opt in",
       "OPT_OUT": "Opt out",
+      "OPT_EDIT": "Token updated",
       "CLOSE_ACCOUNT": "Close account",
       "APPROVE": "Enabled",
       "BOND": "Bond",

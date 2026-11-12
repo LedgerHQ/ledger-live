@@ -55,6 +55,7 @@ export function useQuickActions({
     [account, parentAccount],
   );
   const accountCurrency = useMemo(() => getAccountCurrency(mainAccount), [mainAccount]);
+  const amountCurrency = useMemo(() => getAccountCurrency(account), [account]);
   const accountUnit = useMaybeAccountUnit(mainAccount) ?? accountCurrency.units[0];
 
   const tolerance = useMemo(() => {
@@ -69,9 +70,10 @@ export function useQuickActions({
     const currentAmount = transaction.amount ?? new BigNumber(0);
 
     const actions = QUICK_ACTIONS_CONFIG.map(config => {
-      const targetAmount = availableBalance
-        .multipliedBy(config.ratio)
-        .integerValue(BigNumber.ROUND_DOWN);
+      const targetAmount = sendFeatures.roundAmount(
+        amountCurrency,
+        availableBalance.multipliedBy(config.ratio).integerValue(BigNumber.ROUND_DOWN),
+      );
 
       // A button is active only if:
       // 1. We're not in "useAllAmount" mode (Max is selected)
@@ -125,6 +127,7 @@ export function useQuickActions({
     transaction.useAllAmount,
     tolerance,
     accountCurrency,
+    amountCurrency,
   ]);
 
   return quickActions;

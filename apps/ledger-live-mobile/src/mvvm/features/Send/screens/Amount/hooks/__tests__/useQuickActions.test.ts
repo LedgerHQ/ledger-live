@@ -66,6 +66,7 @@ describe("useQuickActions", () => {
       .mocked(getAccountCurrency)
       .mockReturnValue(mockCurrency as ReturnType<typeof getAccountCurrency>);
     jest.mocked(sendFeatures.canSendMax).mockReturnValue(true);
+    jest.mocked(sendFeatures.roundAmount).mockImplementation((_currency, amount) => amount);
   });
 
   describe("structure", () => {
@@ -235,6 +236,20 @@ describe("useQuickActions", () => {
 
       const expected = availableBalance.multipliedBy(0.75).integerValue(BigNumber.ROUND_DOWN);
       expect(onSetAmountFromRatio).toHaveBeenCalledWith(expected);
+    });
+
+    it("passes a ratio amount through the currency's rounding", () => {
+      const rounded = new BigNumber(22_000_000);
+      jest.mocked(sendFeatures.roundAmount).mockReturnValue(rounded);
+      const { result } = renderHook(() => useQuickActions(defaultParams));
+
+      act(() => {
+        result.current.find(a => a.id === "quarter")?.onPress();
+      });
+
+      const quarter = availableBalance.multipliedBy(0.25).integerValue(BigNumber.ROUND_DOWN);
+      expect(sendFeatures.roundAmount).toHaveBeenCalledWith(mockCurrency, quarter);
+      expect(onSetAmountFromRatio).toHaveBeenCalledWith(rounded);
     });
 
     it("calls onSelectMax when max pressed", () => {

@@ -1044,6 +1044,99 @@ describe("genericGetAccountShape", () => {
       expect(topOp?.subOperations?.[0]?.value?.toFixed()).toBe("8000000");
     });
 
+    describe("tokenOptParentRow", () => {
+      const address = `${currency.id}_addr_opt`;
+
+      async function syncTokenOnlyTx(
+        type: string,
+        {
+          tokenOptParentRow,
+          hasFailed = false,
+        }: { tokenOptParentRow?: boolean; hasFailed?: boolean },
+      ) {
+        getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 1000n, locked: 0n }]);
+        extractBalanceMock.mockReturnValue({ value: 1000n, locked: 0n });
+        listOperationsMock.mockResolvedValue({
+          items: [{ hash: "opt-hash", type, height: 20, tx: { failed: hasFailed } }],
+        });
+        lastBlockMock.mockResolvedValue({ height: 100 });
+        adaptCoreOperationToLiveOperationMock.mockImplementation((_accId, op) => ({
+          hash: op.hash,
+          type: op.type,
+          blockHeight: op.height,
+          blockHash: "0xblock",
+          fee: new BigNumber(12),
+          value: new BigNumber(0),
+          senders: [address],
+          recipients: ["rIssuer"],
+          date: new Date("2024-01-15"),
+          hasFailed,
+          extra: { assetReference: "USD", assetOwner: "rIssuer", feePayer: address },
+        }));
+        buildSubAccountsMock.mockReturnValue([]);
+        inferSubOperationsMock.mockReturnValue([]);
+        cleanedOperationMock.mockImplementation((op: any) => op);
+        mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps);
+        getBridgeApiMock.mockImplementationOnce(() => ({
+          ...defaultBridgeApi(),
+          tokenOptParentRow,
+        }));
+
+        const getShape = genericGetAccountShape(network, currency.id);
+        const result = await getShape(
+          { address, initialAccount: undefined, currency, derivationMode: "" } as any,
+          { paginationConfig: {} as any },
+        );
+
+        return result.operations ?? [];
+      }
+
+      it.each(["OPT_IN", "OPT_OUT", "OPT_EDIT"])(
+        "gives a token-only %s its own type on the parent row, worth the fee",
+        async type => {
+          const [parent, ...rest] = await syncTokenOnlyTx(type, { tokenOptParentRow: true });
+
+          expect(rest).toHaveLength(0);
+          expect(parent).toMatchObject({ type, id: `accId-opt-hash-${type}` });
+          expect(parent.value?.toFixed()).toBe("12");
+        },
+      );
+
+      it("keeps a failed opt-in a failed OPT_IN", async () => {
+        const [parent] = await syncTokenOnlyTx("OPT_IN", {
+          tokenOptParentRow: true,
+          hasFailed: true,
+        });
+
+        expect(parent).toMatchObject({ type: "OPT_IN", hasFailed: true });
+        expect(parent.value?.toFixed()).toBe("12");
+      });
+
+      it("keeps a FEES parent row for a family that does not opt in, as a Stellar trust-line change", async () => {
+        const [parent] = await syncTokenOnlyTx("OPT_IN", {});
+
+        expect(parent.type).toBe("FEES");
+        expect(parent.value?.toFixed()).toBe("12");
+      });
+
+      it("keeps a FEES parent row for a token send", async () => {
+        const [parent] = await syncTokenOnlyTx("OUT", { tokenOptParentRow: true });
+
+        expect(parent.type).toBe("FEES");
+      });
+
+      it("puts an OPT_EDIT on its token account, but not an OPT_IN or OPT_OUT", async () => {
+        const tokenAccountTypes = async (type: string) => {
+          await syncTokenOnlyTx(type, { tokenOptParentRow: true });
+          return buildSubAccountsMock.mock.lastCall?.[0].operations.map((op: any) => op.type);
+        };
+
+        expect(await tokenAccountTypes("OPT_EDIT")).toEqual(["OPT_EDIT"]);
+        expect(await tokenAccountTypes("OPT_IN")).toEqual([]);
+        expect(await tokenAccountTypes("OPT_OUT")).toEqual([]);
+      });
+    });
+
     test("buildOneParentOpPerHash: native op with same hash as token uses native as parent with subOperations", async () => {
       const txHash = "native-and-token-hash";
       const nativeOpFromList = { hash: txHash, type: "OUT", height: 18, tx: { failed: false } };
