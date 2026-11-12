@@ -4,6 +4,7 @@ import { installOutputCapture } from "./shared/ui";
 import { CliProcessExitError } from "./cli-process-exit-error";
 import { USDT_TOKEN_INFO, USDT_TOKEN_JSON } from "./testing/cal-fixtures";
 import { SwapBackendError } from "./commands/swap/swap-backend-error";
+import { AddressSchema } from "@domain/entity-account-descriptor";
 import { NetworkIdSchema } from "./shared/accountDescriptor";
 
 const XPUB = "xpub6BosfCnifzxcA";
@@ -52,7 +53,7 @@ describe("JsonCommandOutput", () => {
     });
 
     out.deviceState({ code: "awaiting_approval", reason: "unlock" });
-    out.address("0xabc", true);
+    out.address(AddressSchema.parse("0xabc"), true);
 
     const lines = parseLines();
     expect(lines).toHaveLength(2);
@@ -82,7 +83,7 @@ describe("JsonCommandOutput", () => {
       account: "js:2:ethereum:0x123",
     });
 
-    out.preVerifyAddress("0xabc");
+    out.preVerifyAddress(AddressSchema.parse("0xabc"));
 
     const lines = parseLines();
     expect(lines).toHaveLength(1);

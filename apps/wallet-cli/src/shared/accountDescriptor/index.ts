@@ -26,3 +26,4 @@ export {
 } from "./network";
 
 export { toV0, toV1, UnsupportedFamilyError } from "./adapters";
+export { addressOfV1 } from "./address";

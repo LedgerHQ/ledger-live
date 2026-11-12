@@ -1,5 +1,6 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
+import type { Address } from "@domain/entity-account-descriptor";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { getQuotes, type QuotesError } from "@ledgerhq/live-common/wallet-api/Exchange/index";
 import {
@@ -9,6 +10,7 @@ import {
 import { createCommandOutput } from "../../output";
 import { walletCliDebug } from "../../shared/log";
 import { WalletAdapter } from "../../wallet";
+import { addressOfV1 } from "../../shared/accountDescriptor";
 import {
   outputOption,
   resolveAccountDescriptor,
@@ -50,10 +52,10 @@ async function assertWalletCliSwapCurrencyId(id: string, role: "from" | "to"): P
 async function resolveSwapAccountAddress(
   wallet: WalletAdapter,
   accountInput: string,
-): Promise<string> {
+): Promise<Address> {
   const v1 = await resolveAccountDescriptorV1(accountInput);
   if (v1.type === "address") {
-    return v1.key;
+    return addressOfV1(v1);
   }
 
   const descriptor = await resolveAccountDescriptor(accountInput);
