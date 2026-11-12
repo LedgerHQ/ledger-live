@@ -1,13 +1,7 @@
 import { Button, SegmentedControl, SegmentedControlButton } from "@ledgerhq/lumen-ui-react";
 import type { AccountDetailToolProps } from "../types";
-import {
-  copy,
-  ELIGIBILITY_OPTIONS,
-  eligibilityFromOption,
-  eligibilityOf,
-  eligibilityOptionOf,
-  statusOf,
-} from "./copy";
+import { copy, ELIGIBILITY_OPTIONS, eligibilityOf, statusOf } from "./copy";
+import { eligibilityOptionOf, selectEligibilityOption } from "./eligibility";
 
 export function AccountDetail({ analyticsIntroduction }: AccountDetailToolProps) {
   const { hasDismissed, isEligible, onReset, onEligibilityChange } = analyticsIntroduction;
@@ -27,7 +21,7 @@ export function AccountDetail({ analyticsIntroduction }: AccountDetailToolProps)
           <SegmentedControl
             className="w-auto shrink-0"
             selectedValue={eligibilityOptionOf(isEligible)}
-            onSelectedChange={value => onEligibilityChange(eligibilityFromOption(value))}
+            onSelectedChange={value => selectEligibilityOption(value, onEligibilityChange)}
             tabLayout="fit"
             aria-label={copy.eligibilityControlLabel}
           >

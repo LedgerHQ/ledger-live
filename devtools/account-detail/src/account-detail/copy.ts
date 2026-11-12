@@ -1,3 +1,5 @@
+import type { EligibilityOption } from "./eligibility";
+
 export const copy = {
   analyticsIntroductionTitle: "Analytics card",
   dismissedStatus: "Dismissed — the card no longer shows on Account Detail.",
@@ -10,24 +12,11 @@ export const copy = {
   eligibilityControlLabel: "Eligibility",
 } as const;
 
-export type EligibilityOption = "eligible" | "notEligible" | "unrecorded";
-
 export const ELIGIBILITY_OPTIONS: ReadonlyArray<{ value: EligibilityOption; label: string }> = [
   { value: "eligible", label: "Eligible" },
   { value: "notEligible", label: "Not eligible" },
   { value: "unrecorded", label: "Not recorded" },
 ];
-
-export function eligibilityOptionOf(isEligible: boolean | null): EligibilityOption {
-  if (isEligible === null) return "unrecorded";
-  return isEligible ? "eligible" : "notEligible";
-}
-
-export function eligibilityFromOption(option: string): boolean | null {
-  if (option === "eligible") return true;
-  if (option === "notEligible") return false;
-  return null;
-}
 
 export const statusOf = (hasDismissed: boolean) =>
   hasDismissed ? copy.dismissedStatus : copy.visibleStatus;

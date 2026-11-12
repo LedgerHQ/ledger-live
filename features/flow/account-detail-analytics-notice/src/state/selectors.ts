@@ -16,6 +16,12 @@ export function selectAccountAnalyticsIntroductionEligible(
   return state.accountAnalyticsIntroduction.isEligible === true;
 }
 
+export function selectAccountAnalyticsIntroductionEligibility(
+  state: AccountAnalyticsIntroductionRoot,
+): boolean | null {
+  return state.accountAnalyticsIntroduction.isEligible;
+}
+
 export function accountAnalyticsIntroductionPersistedSelector(
   state: AccountAnalyticsIntroductionRoot,
 ): AccountAnalyticsIntroductionState {

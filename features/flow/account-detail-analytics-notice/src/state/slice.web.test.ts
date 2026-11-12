@@ -11,6 +11,7 @@ import {
 import {
   accountAnalyticsIntroductionPersistedSelector,
   selectAccountAnalyticsIntroductionDismissed,
+  selectAccountAnalyticsIntroductionEligibility,
   selectAccountAnalyticsIntroductionEligible,
 } from "./selectors";
 
@@ -119,6 +120,15 @@ describe("accountAnalyticsIntroduction", () => {
       });
     },
   );
+
+  it("should report the raw eligibility, null until it is recorded", () => {
+    const store = createStore();
+    expect(selectAccountAnalyticsIntroductionEligibility(store.getState())).toBeNull();
+
+    store.dispatch(recordAccountAnalyticsIntroductionEligibility(false));
+
+    expect(selectAccountAnalyticsIntroductionEligibility(store.getState())).toBe(false);
+  });
 
   it("should record the eligibility again after debug tools clear it", () => {
     const store = createEligibleStore();

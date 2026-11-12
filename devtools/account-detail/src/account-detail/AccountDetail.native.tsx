@@ -8,14 +8,8 @@ import {
   useTheme,
 } from "@ledgerhq/lumen-ui-rnative";
 import type { AccountDetailToolProps } from "../types";
-import {
-  copy,
-  ELIGIBILITY_OPTIONS,
-  eligibilityFromOption,
-  eligibilityOf,
-  eligibilityOptionOf,
-  statusOf,
-} from "./copy";
+import { copy, ELIGIBILITY_OPTIONS, eligibilityOf, statusOf } from "./copy";
+import { eligibilityOptionOf, selectEligibilityOption } from "./eligibility";
 
 const SECTION_LX = { gap: "s8", paddingHorizontal: "s16", paddingVertical: "s12" } as const;
 const ROW_LX = {
@@ -50,7 +44,7 @@ export function AccountDetail({ analyticsIntroduction }: AccountDetailToolProps)
           </Text>
           <SegmentedControl
             selectedValue={eligibilityOptionOf(isEligible)}
-            onSelectedChange={value => onEligibilityChange(eligibilityFromOption(value))}
+            onSelectedChange={value => selectEligibilityOption(value, onEligibilityChange)}
           >
             {ELIGIBILITY_OPTIONS.map(option => (
               <SegmentedControlButton key={option.value} value={option.value}>
