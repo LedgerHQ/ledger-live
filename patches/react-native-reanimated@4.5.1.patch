@@ -1,0 +1,37 @@
+Skip Reanimated synchronous Android prop updates for view tags that are no longer mounted.
+On React Native 0.86 Reanimated 4.5.1 calls MountingManager.updatePropsSynchronously by reflection; for an unmounted tag it throws and the full stack trace is logged on the UI thread
+(about 2,400 warnings in 30 s of normal navigation on a Pixel 8; upstream reports an ANR cluster from it: https://github.com/software-mansion/react-native-reanimated/issues/10280).
+Same change as upstream https://github.com/software-mansion/react-native-reanimated/pull/10435, released in 4.7.1.
+Not bumped yet: 4.6/4.7 bring many other changes, and the RN 0.86 bump PR stays as small as possible.
+Remove when react-native-reanimated is bumped to >=4.7.1 (LIVE-41251).
+
+diff --git a/android/src/main/java/com/swmansion/reanimated/NativeProxy.kt b/android/src/main/java/com/swmansion/reanimated/NativeProxy.kt
+index 48e37714232d5ccf74d99d61cb2fac56314087aa..450cd8e644835ed0e537ddad665e7a5a402195af 100644
+--- a/android/src/main/java/com/swmansion/reanimated/NativeProxy.kt
++++ b/android/src/main/java/com/swmansion/reanimated/NativeProxy.kt
+@@ -245,6 +245,11 @@ open class NativeProxy {
+             }.apply { isAccessible = true }
+     }
+ 
++    // Ledger patch (LIVE-41251): skip unmounted tags, upstream fix https://github.com/software-mansion/react-native-reanimated/pull/10435 (4.7.1). Remove with the bump to >=4.7.1.
++    private val getViewExistsMethod by lazy {
++        runCatching { mountingManager.javaClass.getMethod("getViewExists", Int::class.javaPrimitiveType) }.getOrNull()
++    }
++
+     @DoNotStrip
+     fun synchronouslyUpdateUIProps(
+         intBuffer: IntArray,
+@@ -253,9 +258,12 @@ open class NativeProxy {
+         SynchronousPropsBufferParser.parse(intBuffer, doubleBuffer) { viewTag, props ->
+             if (BuildConfig.IS_REACT_NATIVE_86_OR_NEWER) {
+                 try {
++                    if (getViewExistsMethod?.invoke(mountingManager, viewTag) == false) {
++                        return@parse
++                    }
+                     updatePropsSynchronouslyMethod.invoke(mountingManager, viewTag, props)
+                 } catch (e: Exception) {
+-                    Log.w("Reanimated", "synchronouslyUpdateUIProps failed for tag $viewTag", e)
++                    Log.w("Reanimated", "synchronouslyUpdateUIProps failed for tag $viewTag: ${e.cause ?: e}")
+                 }
+             } else {
+                 mFabricUIManager.synchronouslyUpdateViewOnUIThread(viewTag, props)
