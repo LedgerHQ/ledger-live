@@ -1,7 +1,7 @@
 import React from "react";
 import { Navigate } from "react-router";
 import { useTranslation } from "react-i18next";
-import { useAgentIntentEntryPoints } from "@features/platform-agent-intent-entry-points";
+import { useAgentIntentEntryPoints } from "@features/flow-agent-intent-entry-points";
 import { AgentIntentPlaceholderView } from "./AgentIntentPlaceholderView";
 
 export function AgentIntentPlaceholderScreen() {

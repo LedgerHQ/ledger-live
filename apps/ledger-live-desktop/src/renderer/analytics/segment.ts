@@ -28,7 +28,7 @@ import { buildContactsGlobalProperties } from "@features/platform-contacts";
 import { getPayAttributes } from "./getPayAttributes";
 import { getSwapConsoleAbtestAttributes } from "./getSwapConsoleAbtestAttributes";
 import { getServicesEntryPointsAttributes } from "@features/flow-portfolio-services-entry-points";
-import { getAgentIntentAttributes } from "@features/platform-agent-intent-entry-points";
+import { getAgentIntentAttributes } from "@features/flow-agent-intent-entry-points";
 import { isAccountDetailAnalyticsBannerEnabled } from "@features/flow-account-detail";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { idsToLanguage } from "@ledgerhq/types-live";

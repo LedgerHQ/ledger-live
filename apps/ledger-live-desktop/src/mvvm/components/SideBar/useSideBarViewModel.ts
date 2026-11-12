@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router";
 import { useSelector } from "LLD/hooks/redux";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useFeature } from "@features/platform-feature-flags";
-import { useAgentIntentEntryPoints } from "@features/platform-agent-intent-entry-points";
+import { useAgentIntentEntryPoints } from "@features/flow-agent-intent-entry-points";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { sidebarCollapsedSelector } from "~/renderer/reducers/settings";
 import { setTrackingSource, track } from "@shared/analytics";
@@ -54,12 +54,14 @@ export function useSideBarViewModel(): SideBarViewModel {
 
   const push = useCallback(
     (path: string) => {
-      const [pathname] = path.split("?");
-      if (location.pathname === pathname) return;
+      const currentPath = path.includes("?")
+        ? `${location.pathname}${location.search}`
+        : location.pathname;
+      if (currentPath === path) return;
       setTrackingSource("sidebar");
       navigate(path);
     },
-    [navigate, location.pathname],
+    [navigate, location.pathname, location.search],
   );
 
   const trackEntry = useCallback(

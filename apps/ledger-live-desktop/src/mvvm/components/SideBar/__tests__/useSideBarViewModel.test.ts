@@ -134,6 +134,30 @@ describe("useSideBarViewModel", () => {
       trackSpy.mockRestore();
     });
 
+    it("should open Agent Intent from the nav bar when it was opened from the profile", () => {
+      const { result } = renderHook(() => useSideBarViewModel(), {
+        initialState: defaultInitialState,
+        minimal: false,
+        initialRoute: "/agent-intent?source=profile",
+      });
+
+      act(() => result.current.handleActiveChange("agents"));
+
+      expect(mockNavigate).toHaveBeenCalledWith("/agent-intent?source=nav_bar");
+    });
+
+    it("should not navigate again when Agent Intent is already open from the nav bar", () => {
+      const { result } = renderHook(() => useSideBarViewModel(), {
+        initialState: defaultInitialState,
+        minimal: false,
+        initialRoute: "/agent-intent?source=nav_bar",
+      });
+
+      act(() => result.current.handleActiveChange("agents"));
+
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
+
     it("should ignore unknown values", () => {
       const { result } = renderViewModel();
 
