@@ -44,6 +44,11 @@ allprojects {
                     project.logger.lifecycle "Repository ${repo.url} replaced by $REPOSITORY_URL."
                     remove repo
                 }
+                // React Native 0.81 adds this snapshots repository for nightlies; we use releases only.
+                if (repo.url.host == 'central.sonatype.com') {
+                    project.logger.lifecycle "Repository ${repo.url} excluded from resolution."
+                    repo.content { excludeGroupByRegex '.*' }
+                }
             }
         }
         maven {
