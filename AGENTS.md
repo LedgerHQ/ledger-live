@@ -12,6 +12,24 @@ New code goes in the [monorepo layers](./docs/monorepo-architecture.md) — `sha
 
 When creating a new package, follow [docs/new-library.md](./docs/new-library.md) guidelines.
 
+## Before the first edit
+
+The skills hold the conventions, and validation does not check them. Load the skills that match what you are about to do before you write code:
+
+| Before you | Load |
+| --- | --- |
+| create a file or a package, or move code | [structure-flow](./.agents/skills/structure-flow/SKILL.md) |
+| write or edit code | [comments](./.agents/skills/comments/SKILL.md), [typescript](./.agents/skills/typescript/SKILL.md), and [react-general](./.agents/skills/react-general/SKILL.md) for React |
+| write or change a test | [testing](./.agents/skills/testing/SKILL.md) |
+| touch `apps/*/src/mvvm/**` | [mvvm-architecture](./.agents/skills/mvvm-architecture/SKILL.md) |
+| write a `.changeset/*.md` | [create-changeset](./.agents/skills/create-changeset/SKILL.md) |
+
+Every change follows these rules:
+
+- No explanatory comments: rename or extract instead.
+- Tests assert presence with `toBeVisible()`, not `toBeOnTheScreen()` or `toBeInTheDocument()`.
+- Changesets bump `minor`. `patch` is only for a pull request to a hotfix branch.
+
 ## Third-party libraries
 
 New runtime third-party libraries are not added to apps directly (framework singletons, the design system and tooling excepted). The lowest valid package of the [monorepo layers](./docs/monorepo-architecture.md) (`shared/`, `domain/`, `features/`) owns each one and exposes our own API. Before adding a dependency to `apps/*/package.json`, read the [wrap-third-party-libs](./.agents/skills/wrap-third-party-libs/SKILL.md) skill.
@@ -30,7 +48,7 @@ When a task involves GitHub — pull requests, issues, CI checks, or releases �
 
 ## Validate Before Finishing
 
-Before completing or pushing code changes, run the [validate-changes](./.agents/skills/validate-changes/SKILL.md) skill.
+Before completing or pushing code changes, run the [validate-changes](./.agents/skills/validate-changes/SKILL.md) skill. Its checks do not cover the conventions, so also check your diff against the rules in [Before the first edit](#before-the-first-edit).
 
 ## CI runners
 

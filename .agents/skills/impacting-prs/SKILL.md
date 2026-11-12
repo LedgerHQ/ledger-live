@@ -1,6 +1,6 @@
 ---
 name: impacting-prs
-description: Find which open PRs are impacted by a migration/sunset/refactor and notify their authors — blocking review when the old path is already gone from develop, heads-up comment when it is only deprecated or its removal is still in review, silent study report only when the replacement does not exist yet. Use when asked to check/flag/notify/block open PRs about a breaking change, deprecation or migration they need to follow.
+description: Find the open PRs a migration, sunset or refactor impacts and notify their authors, with a blocking review when the old path is gone from develop, a heads-up comment when it is only deprecated, and a silent report when the replacement does not exist yet. Use when asked to check, flag, notify or block open PRs about a breaking change, deprecation or migration.
 ---
 
 # Notify open PRs impacted by an ongoing migration

@@ -27,7 +27,9 @@ Also pay special attention to:
 - `.agents/skills/mvvm-architecture/SKILL.md`: MVVM compliance is a key review concern for code in `apps/*/src/mvvm/`
 - `.agents/skills/ldls-web/SKILL.md` — Lumen UI for desktop (`src/mvvm/`)
 - `.agents/skills/ldls-native/SKILL.md` — Lumen UI for mobile (`src/mvvm/`)
-- `.agents/skills/testing/SKILL.md` — Jest mock patterns for test files (avoids flaky tests and mock conflicts)
+- `.agents/skills/testing/SKILL.md`: Assertions (`toBeVisible()` for presence) and Jest mock patterns for test files
+- `.agents/skills/comments/SKILL.md`: No explanatory comments; flag a new comment that paraphrases the code or that a better name would remove
+- `.agents/skills/create-changeset/SKILL.md`: Changeset package names and level
 - `.agents/skills/coin-modules/SKILL.md` — Module layout, Coin Module API path, and import rules for `libs/coin-modules/`
 - `.agents/skills/client-ids/SKILL.md` — Privacy rules for sensitive identifiers (DeviceId, UserId, DatadogId)
 - `.agents/skills/detect-data-leaks/SKILL.md` — Data leak detection: third-party sinks, risky patterns, and scoring
@@ -59,7 +61,7 @@ When the diff touches **`apps/*/src/mvvm/`**, apply `mvvm-architecture` and the 
 
 ## Additional Checks
 
-- **Changeset**: Flag PRs that add features or fix bugs without a changeset (`pnpm changeset`). Required for user-facing behavior and library API changes.
+- **Changeset**: Flag PRs that add features or fix bugs without a changeset (`pnpm changeset`). Required for user-facing behavior and library API changes. On a PR to `develop`, also flag a `patch` level: `minor` is the minimum there.
 - **New dependency in `package.json`**: must not duplicate an existing capability; peer compatibility must be verified; link to [bundlephobia](https://bundlephobia.com) with size impact.
 - **`pnpm-lock.yaml` diff**: Flag unrelated version bumps, mass reformatting, or entries not explained by the PR's `package.json` changes. The lockfile diff should be entirely explainable by the stated dependency changes.
 - **Translations**: Only edit `apps/ledger-live-desktop/static/i18n/en/app.json` (desktop) or `apps/ledger-live-mobile/src/locales/en/common.json` (mobile). No other locale files.

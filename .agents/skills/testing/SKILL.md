@@ -1,12 +1,6 @@
 ---
 name: testing
-description: |
-  Write unit and integration tests for the Ledger Wallet apps and for packages in the layers
-  (`shared/`, `domain/`, `features/`, `devtools/`): Jest with React Testing Library, `@support/jest`
-  presets, MSW handlers and testing best practices.
-  Integration tests fake HTTP with MSW `jest.fn()` endpoint mocks instead of `jest.mock`-ing modules.
-  Use when writing or reviewing "*.test.*", "*.spec.*", "**/tests/**", "**/__tests__/**",
-  "**/__integrations__/**", "**/jest-setup*" or a package's `jest.config.js`.
+description: Write Jest unit and integration tests for the apps and the layer packages with React Testing Library, `@support/jest` presets and MSW endpoint mocks instead of `jest.mock`, asserting presence with `toBeVisible()`. Use when writing or reviewing `*.test.*`, `*.spec.*`, `tests/`, `__tests__/`, `__integrations__/`, `jest-setup*` or a package's `jest.config.js`.
 ---
 
 # Ledger Wallet Testing Skill
@@ -17,7 +11,7 @@ description: |
 
 ## Golden Rules
 
-1. **`toBeVisible()` over `toBeInTheDocument()`** — Always. `toBeInTheDocument` only checks DOM presence; elements can be hidden. Use `toBeInTheDocument` only when testing explicitly hidden elements.
+1. **Presence with `toBeVisible()`**: never `toBeInTheDocument()` (web) or `toBeOnTheScreen()` (mobile), which pass on hidden elements. For absence, `not.toBeInTheDocument()` and `not.toBeOnTheScreen()` are fine.
 2. **Search before you create** — Before writing any mock, fixture, or helper, `rg` the codebase. If it exists, import it. If your new mock is reusable (2+ files), put it in a shared location.
 3. **Fake the network, not modules** — Integration tests run the real store, API clients and SDKs, and intercept HTTP with MSW [endpoint mocks](references/msw-endpoints.md). `jest.mock` only what cannot run under Jest (native modules, device transport). Never mock child components.
 4. **Network requests via MSW, never `fetch`** — New test code must not mock `fetch`; use Mock Service Worker handlers instead.

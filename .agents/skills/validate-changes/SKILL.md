@@ -1,6 +1,6 @@
 ---
 name: validate-changes
-description: Run the checks a change must pass before it is pushed, in order - format with oxfmt, `nx affected` lint, typecheck and test, then `pnpm lint:arch` (CI's required module-boundaries job) - and fix each architecture lint code with its usual fix. Use before committing or pushing, when asked to validate, clean up or test the current changes, or when `lint:boundaries`, `lint:structure` or `lint:tool-config` fails.
+description: Run the checks a change must pass before it is pushed, in order (oxfmt, `nx affected` lint, typecheck and test, `pnpm lint:arch`, then a review against the conventions), and fix what each reports. Use before committing or pushing, when asked to validate, clean up or test the current changes, or when `lint:boundaries`, `lint:structure` or `lint:tool-config` fails.
 ---
 
 # Validate Changes
@@ -104,6 +104,12 @@ pnpm skills:check
 
 Follow the `docs-update-or-create` skill for the content itself.
 
+## 7. Conventions
+
+The steps above do not check the conventions. Check the diff against the rules in
+[AGENTS.md](../../../AGENTS.md#before-the-first-edit) and against each skill you loaded for the
+change: no explanatory comments, `toBeVisible()` for presence, a `minor` changeset.
+
 ## Commit and report
 
 Commit the fixes with the `git-conventions` skill. Report each step as passed, fixed (with what
@@ -115,6 +121,7 @@ changed) or failing (with the first error), for example:
 - Typecheck: passed
 - Test: passed (12 suites)
 - lint:arch: fixed (`cross-package-reexport` in `@features/flow-contacts`)
+- Conventions: fixed (2 explanatory comments removed)
 ```
 
 See [repo-commands](../../../docs/repo-commands.md) for the general commands and Nx notes.

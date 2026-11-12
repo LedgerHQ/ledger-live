@@ -1,6 +1,6 @@
 ---
 name: domain-data
-description: Build the data layer of one entity in `domain/`. The `domain/entity` package holds Zod schemas, inferred types, branded ids, the slice, mocks and selectors. The `domain/api` package injects RTK Query endpoints into an `@shared/api-services` base. Use when creating or reviewing a package under `domain/entity/` or `domain/api/`, a Zod schema, a `createSlice`, a selector, a mock factory or an RTK Query endpoint.
+description: Build the data layer of one entity in `domain/`, with Zod schemas, types, branded ids, the slice, mocks and selectors in the entity package and RTK Query endpoints in the api package. Use when creating or reviewing a package under `domain/entity/` or `domain/api/`, a Zod schema, a `createSlice`, a selector, a mock factory or an RTK Query endpoint.
 ---
 
 # Domain data: one entity, one api
