@@ -56,7 +56,7 @@
     "@ledgerhq/types-live": "workspace:^",
     "axios": "catalog:",
     "bech32": "^1.1.3",
-    "bignumber.js": "^9.1.2",
+    "bignumber.js": "^11.1.5",
     "cosmjs-types": "^0.10.1",
     "invariant": "^2.2.2",
     "prando": "^6.0.1",

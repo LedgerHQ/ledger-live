@@ -27,7 +27,7 @@
   "dependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/hw-transport": "catalog:",
-    "bignumber.js": "^9.1.2",
+    "bignumber.js": "^11.1.5",
     "invariant": "^2.2.2",
     "protobufjs": "8.4.1",
     "protobufjs-cli": "2.4.1"

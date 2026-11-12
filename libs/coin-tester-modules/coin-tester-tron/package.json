@@ -64,7 +64,7 @@
     "@ledgerhq/types-live": "workspace:^",
     "@noble/curves": "catalog:",
     "@noble/hashes": "catalog:",
-    "bignumber.js": "^9",
+    "bignumber.js": "^11.1.5",
     "bs58": "catalog:",
     "chalk": "catalog:",
     "tronweb": "6.5.1"

@@ -58,7 +58,7 @@
     "@ledgerhq/live-config": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "@multiversx/sdk-core": "^13.7.0",
-    "bignumber.js": "^9",
+    "bignumber.js": "^11.1.5",
     "bip39": "catalog:",
     "chalk": "catalog:",
     "docker-compose": "^1",

@@ -34,7 +34,7 @@
     "@types/node": "catalog:",
     "@typescript/native": "catalog:",
     "typescript": "catalog:",
-    "bignumber.js": "9.1.2",
+    "bignumber.js": "11.1.5",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",

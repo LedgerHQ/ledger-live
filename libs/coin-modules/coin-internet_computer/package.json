@@ -98,7 +98,7 @@
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "@noble/hashes": "catalog:",
-    "bignumber.js": "^9.1.2",
+    "bignumber.js": "^11.1.5",
     "cbor": "10.0.11",
     "invariant": "^2.2.2",
     "lodash": "catalog:",

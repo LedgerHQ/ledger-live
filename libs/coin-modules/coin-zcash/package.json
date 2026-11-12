@@ -121,7 +121,7 @@
     "@ledgerhq/types-live": "workspace:^",
     "@ledgerhq/wallet-btc": "workspace:^",
     "@ledgerhq/zcash-utils": "catalog:",
-    "bignumber.js": "^9.1.2",
+    "bignumber.js": "^11.1.5",
     "@noble/hashes": "catalog:",
     "bs58": "catalog:",
     "invariant": "^2.2.4",

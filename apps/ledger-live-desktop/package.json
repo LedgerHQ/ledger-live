@@ -247,7 +247,7 @@
     "@types/semver": "catalog:",
     "@xstate/react": "catalog:",
     "assert": "^2.1.0",
-    "bignumber.js": "9.1.2",
+    "bignumber.js": "11.1.5",
     "buffer": "catalog:",
     "chart.js": "2.9.4",
     "class-variance-authority": "catalog:",

@@ -122,7 +122,7 @@
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "axios": "catalog:",
-    "bignumber.js": "^9.1.2",
+    "bignumber.js": "^11.1.5",
     "bs58check": "catalog:",
     "invariant": "^2.2.2",
     "lodash": "catalog:",

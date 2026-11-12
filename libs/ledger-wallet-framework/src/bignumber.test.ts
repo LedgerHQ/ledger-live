@@ -1,6 +1,13 @@
 import BigNumber from "bignumber.js";
 import { fromRawBigNumber, parseFiniteBigNumber } from "./bignumber";
 
+describe("bignumber.js", () => {
+  it("runs in STRICT mode", () => {
+    expect(BigNumber.config({}).STRICT).toBe(true);
+    expect(() => new BigNumber("")).toThrow();
+  });
+});
+
 describe("parseFiniteBigNumber", () => {
   it.each([
     ["12.5", "12.5"],

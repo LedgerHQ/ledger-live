@@ -80,7 +80,7 @@
     "@tanstack/react-virtual": "catalog:",
     "@uiw/react-codemirror": "^4.25.4",
     "axios": "catalog:",
-    "bignumber.js": "^9.3.1",
+    "bignumber.js": "^11.1.5",
     "bufferutil": "^4.1.0",
     "class-variance-authority": "catalog:",
     "encoding": "^0.1.13",

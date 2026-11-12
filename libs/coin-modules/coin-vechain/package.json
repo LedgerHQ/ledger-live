@@ -114,7 +114,7 @@
     "@vechain/sdk-core": "2.0.0",
     "@vechain/sdk-network": "2.0.0",
     "axios": "catalog:",
-    "bignumber.js": "^9.1.2",
+    "bignumber.js": "^11.1.5",
     "eip55": "^2.1.1",
     "invariant": "^2.2.2",
     "lodash": "catalog:",

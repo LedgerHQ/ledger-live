@@ -61,7 +61,7 @@
     "@ledgerhq/types-live": "workspace:^",
     "@polkadot/api": "catalog:",
     "@polkadot/util-crypto": "catalog:",
-    "bignumber.js": "^9.1.2",
+    "bignumber.js": "^11.1.5",
     "expect": "catalog:"
   },
   "devDependencies": {

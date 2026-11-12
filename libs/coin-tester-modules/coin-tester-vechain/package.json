@@ -63,7 +63,7 @@
     "@ledgerhq/live-config": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "@vechain/sdk-core": "2.0.0",
-    "bignumber.js": "^9",
+    "bignumber.js": "^11.1.5",
     "chalk": "catalog:",
     "docker-compose": "^1",
     "msw": "catalog:"
