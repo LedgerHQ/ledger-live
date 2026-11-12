@@ -116,7 +116,7 @@ import type { WalletSyncNavigatorStackParamList } from "./WalletSyncNavigator";
 import { SignRawTransactionNavigatorParamList } from "./SignRawTransactionNavigator";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
 import type { BackupHubNavigatorParamList } from "LLM/features/BackupHub/types";
-import type { OsUpdateFlowMode } from "@ledgerhq/live-common/os-update/types";
+import type { OsUpdateFlowMode } from "@features/flow-device-os-update";
 
 export type CommonAddAccountNavigatorParamsList = {
   currency?: CryptoCurrency | TokenCurrency | null;

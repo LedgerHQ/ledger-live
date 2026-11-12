@@ -41,7 +41,7 @@ import trustchain from "./trustchain";
 import type { State } from "./types";
 import wallet from "./wallet";
 import walletconnect from "./walletconnect";
-import osUpdate from "LLM/features/OsUpdate/state/osUpdateSlice";
+import deviceOsUpdate from "@domain/entity-device-os-update";
 import walletSync from "./walletSync";
 import portfolioRefresh from "./portfolioRefresh";
 import portfolioBalanceDisplay from "./portfolioBalanceDisplay";
@@ -98,7 +98,7 @@ const appReducer = combineReducers({
   receiveOptionsDrawer,
   rebornBuyDeviceDrawer,
   transferDrawer,
-  osUpdate,
+  deviceOsUpdate,
   swapTransactionStatusDrawer,
   currencyRegionRestrictedDrawer,
   notifications,
