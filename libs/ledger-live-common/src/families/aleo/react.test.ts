@@ -1332,6 +1332,23 @@ describe("useAleoQuickAmountSelector", () => {
     expect(result.current.totalSpendableBalance.toString()).toBe("18900000");
   });
 
+  it.each(["", "abc", "1_000"])(
+    "ignores a record with unreadable microcredits %p",
+    microcredits => {
+      const account = makeAccountWithRecords([...sixRecords, makeRecord(microcredits)]);
+
+      const { result } = renderHook(() =>
+        useAleoQuickAmountSelector({
+          account,
+          transaction: makePrivateTransaction(),
+          updateTransaction: jest.fn(),
+        }),
+      );
+
+      expect(result.current.totalSpendableBalance.toString()).toBe("2100000");
+    },
+  );
+
   it("disables tiers past the available record count and marks the last reachable tier as send-max", () => {
     const account = makeAccountWithRecords(sixRecords);
     const transaction = makePrivateTransaction();

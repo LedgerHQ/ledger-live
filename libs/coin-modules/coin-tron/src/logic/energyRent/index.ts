@@ -1,5 +1,6 @@
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import { delay } from "@ledgerhq/coin-module-framework/promises";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import BigNumber from "bignumber.js";
 import type { TronCoinConfig } from "../../config";
 import {
@@ -15,7 +16,7 @@ import {
   ENERGY_RENT_POLL_MAX_CONSECUTIVE_ERRORS,
   ENERGY_RENT_POLL_TIMEOUT_MS,
   TRONIFY_PAY_ASSET,
-  payAssetBaseUnits,
+  toPayAssetBaseUnits,
 } from "../constants";
 import { getTronifyConfig } from "../../network/tronify";
 import { decode58Check } from "../../network/format";
@@ -75,8 +76,8 @@ function approvedCost({ maxPayCoinAmt, maxPayCoinCode }: EnergyRentRequest): App
   if (maxPayCoinAmt === undefined || maxPayCoinCode === undefined) {
     throw rejected("ceiling", "Energy-rent request carries no approved cost ceiling and coin code");
   }
-  const amount = new BigNumber(maxPayCoinAmt);
-  if (!amount.isFinite()) {
+  const amount = parseFiniteBigNumber(maxPayCoinAmt);
+  if (!amount) {
     throw rejected("ceiling", `Energy-rent cost ceiling "${maxPayCoinAmt}" is not a number`);
   }
   return { amount, code: maxPayCoinCode };
@@ -96,16 +97,16 @@ function assertOrderWithinApprovedCost(
     );
   }
 
-  const charged = new BigNumber(order.payCoinAmt);
+  const charged = parseFiniteBigNumber(order.payCoinAmt);
   // Unparseable/negative payCoinAmt must fail, not silently compare false.
-  if (!charged.isFinite() || charged.isNegative()) {
+  if (!charged || charged.isNegative()) {
     throw rejected(
       "ceiling",
       `Cannot verify energy-rent cost: order returned "${order.payCoinAmt}"`,
     );
   }
   if (charged.isGreaterThan(approved.amount)) {
-    const withinCap = payAssetBaseUnits(order.payCoinAmt).isLessThanOrEqualTo(cap);
+    const withinCap = toPayAssetBaseUnits(charged).isLessThanOrEqualTo(cap);
     throw rejected(
       "ceiling",
       `Energy-rent order costs ${order.payCoinAmt}, above the approved ${approved.amount.toFixed()}`,
@@ -177,20 +178,21 @@ function assertTransferAmount(
   order: EnergyRentOrder,
   cap: BigNumber,
 ): void {
-  const approved = payAssetBaseUnits(order.payCoinAmt);
-  if (!approved.isFinite() || !approved.isGreaterThan(0)) {
+  const payCoinAmt = parseFiniteBigNumber(order.payCoinAmt);
+  if (!payCoinAmt?.isGreaterThan(0)) {
     throw rejected(
       "amount",
       `Cannot verify energy-rent payment amount: approved "${order.payCoinAmt}"`,
     );
   }
+  const approved = toPayAssetBaseUnits(payCoinAmt);
   if (transfer.amount.isGreaterThan(approved)) {
     throw rejected(
       "amount",
       `Energy-rent payment moves ${transfer.amount.toFixed()} USDT base units, above the approved ${approved.toFixed()}`,
     );
   }
-  const approvedFloor = new BigNumber(order.payCoinAmt)
+  const approvedFloor = payCoinAmt
     .shiftedBy(TRONIFY_PAY_ASSET.unit.magnitude)
     .integerValue(BigNumber.ROUND_FLOOR);
   if (!transfer.amount.isGreaterThan(0) || transfer.amount.isLessThan(approvedFloor)) {

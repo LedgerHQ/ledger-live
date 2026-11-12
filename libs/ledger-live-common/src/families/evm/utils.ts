@@ -2,6 +2,8 @@ import { getEIP712FieldsDisplayedOnNano } from "@ledgerhq/evm-tools/message/EIP7
 import { getEnv } from "@shared/env";
 import type { AnyMessage, MessageProperties } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { DEFAULT_GAS_LIMIT } from "@ledgerhq/coin-evm/logic-public";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { Unit } from "@domain/entity-currency-unit";
 import type { Transaction } from "./types";
@@ -10,6 +12,15 @@ export const getDefaultFeeUnit = (currency: CryptoCurrency): Unit =>
   currency.units.length > 1 ? currency.units[1] : currency.units[0];
 
 export const getGasLimit = (tx: Transaction): BigNumber => tx.customGasLimit ?? tx.gasLimit;
+
+/** A gas limit typed by the user, decimal or hex: empty is 0, anything but a non-negative integer is the default. */
+export const parseGasLimitInput = (input: string): BigNumber => {
+  const gasLimit = parseFiniteBigNumber(input || 0, { allowHex: true });
+  return gasLimit && isValidGasLimit(gasLimit) ? gasLimit : DEFAULT_GAS_LIMIT;
+};
+
+export const isValidGasLimit = (gasLimit: BigNumber): boolean =>
+  gasLimit.isInteger() && !gasLimit.isNegative();
 
 export const getEstimatedFees = (tx: Transaction): BigNumber => {
   const gasLimit = getGasLimit(tx);

@@ -1,6 +1,7 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import React, { useMemo } from "react";
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { rgba } from "@ledgerhq/react-ui/styles/helpers";
@@ -115,11 +116,13 @@ const AleoStepRecordPicker = ({ account, transaction, status, updateTransaction 
         ? account.unspentPrivateRecords
         : account.aleoResources?.unspentPrivateRecords) ?? [];
 
+    const allUnspentRecords = accountRecords.filter(r =>
+      parseFiniteBigNumber(r.microcredits)?.isGreaterThan(0),
+    );
     return {
-      allUnspentRecords: accountRecords.filter(r => new BigNumber(r.microcredits).isGreaterThan(0)),
-      unspentRecords: accountRecords
-        .filter(r => new BigNumber(r.microcredits).isGreaterThan(0))
-        .sort((a, b) => new BigNumber(b.microcredits).comparedTo(new BigNumber(a.microcredits)))
+      allUnspentRecords,
+      unspentRecords: [...allUnspentRecords]
+        .sort((a, b) => new BigNumber(b.microcredits).comparedTo(a.microcredits) ?? 0)
         .slice(0, MAX_RECORDS_DISPLAYED),
     };
   }, [account]);

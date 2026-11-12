@@ -40,8 +40,8 @@ const usdcSubAccount: TokenAccount = {
     ticker: "USDC",
     units: [{ name: "USDC", code: "USDC", magnitude: 6 }],
   } as never,
-  balance: { toNumber: () => 100 } as never,
-  spendableBalance: { toNumber: () => 100 } as never,
+  balance: new BigNumber(100),
+  spendableBalance: new BigNumber(100),
   creationDate: new Date(),
   operationsCount: 0,
   operations: [],
@@ -54,11 +54,11 @@ const usdcSubAccount: TokenAccount = {
   swapHistory: [],
 };
 
-// Sub-account with a real BigNumber balance so it passes the `new BigNumber(balance).gt(0)` filter
+// Sub-account with a real BigNumber balance
 const usdcSubAccountWithBalance: TokenAccount = {
   ...usdcSubAccount,
-  balance: new BigNumber(100) as never,
-  spendableBalance: new BigNumber(100) as never,
+  balance: new BigNumber(100),
+  spendableBalance: new BigNumber(100),
 };
 
 // Sub-account whose contract address is NOT in FEE_CURRENCY_BY_CONTRACT
@@ -71,8 +71,8 @@ const unknownTokenSubAccount: TokenAccount = {
     name: "Unknown Token",
     ticker: "UNK",
   } as never,
-  balance: new BigNumber(100) as never,
-  spendableBalance: new BigNumber(100) as never,
+  balance: new BigNumber(100),
+  spendableBalance: new BigNumber(100),
 };
 
 const mockCeloAccount: CeloAccount = {
@@ -84,8 +84,8 @@ const mockCeloAccount: CeloAccount = {
   freshAddress: "0xabc",
   freshAddressPath: "44'/52752'/0'/0/0",
   used: true,
-  balance: { toNumber: () => 1000 } as never,
-  spendableBalance: { toNumber: () => 1000 } as never,
+  balance: new BigNumber(1000),
+  spendableBalance: new BigNumber(1000),
   creationDate: new Date(),
   blockHeight: 100000,
   currency: { id: "celo", family: "celo" } as never,
@@ -102,19 +102,19 @@ const mockCeloAccount: CeloAccount = {
   subAccounts: [usdcSubAccount],
   celoResources: {
     registrationStatus: false,
-    lockedBalance: { toNumber: () => 0 } as never,
-    nonvotingLockedBalance: { toNumber: () => 0 } as never,
+    lockedBalance: new BigNumber(0),
+    nonvotingLockedBalance: new BigNumber(0),
     pendingWithdrawals: null,
     votes: null,
     electionAddress: null,
     lockedGoldAddress: null,
-    maxNumGroupsVotedFor: { toNumber: () => 0 } as never,
+    maxNumGroupsVotedFor: new BigNumber(0),
   },
 };
 
 const baseTransaction = {
   family: "celo" as const,
-  amount: { toNumber: () => 0 } as never,
+  amount: new BigNumber(0),
   recipient: "",
   useAllAmount: false,
   mode: "send" as const,
@@ -272,8 +272,8 @@ describe("SendRecipientFields", () => {
   it("filters out sub-accounts with zero balance from token options in drawer", async () => {
     const zeroBalanceSubAccount: TokenAccount = {
       ...usdcSubAccount,
-      balance: new BigNumber(0) as never,
-      spendableBalance: new BigNumber(0) as never,
+      balance: new BigNumber(0),
+      spendableBalance: new BigNumber(0),
     };
     const accountWithZeroBalance: CeloAccount = {
       ...mockCeloAccount,

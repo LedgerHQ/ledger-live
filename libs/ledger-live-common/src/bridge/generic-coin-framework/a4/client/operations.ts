@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import {
   encodeOperationId,
   encodeSubOperationId,
@@ -57,15 +58,14 @@ function parseStake(raw: unknown): { address: string; amount: BigNumber } | unde
     return undefined;
   }
   const address = "address" in raw && typeof raw.address === "string" ? raw.address : "";
-  const rawAmount =
+  const amount =
     "amount" in raw &&
     (typeof raw.amount === "number" ||
       typeof raw.amount === "bigint" ||
       typeof raw.amount === "string")
-      ? String(raw.amount)
-      : "0";
-  const amount = new BigNumber(rawAmount);
-  return { address, amount: amount.isNaN() ? new BigNumber(0) : amount };
+      ? parseFiniteBigNumber(raw.amount)
+      : undefined;
+  return { address, amount: amount ?? new BigNumber(0) };
 }
 
 function parseAssetRefExtra(

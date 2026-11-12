@@ -291,7 +291,7 @@ describe("buildOptimisticOperation", () => {
       },
       pendingOperations: [
         {
-          transactionSequenceNumber: new BigNumber("random string"),
+          transactionSequenceNumber: new BigNumber(NaN),
         },
       ] as unknown as Operation[],
     } as PolkadotAccount;

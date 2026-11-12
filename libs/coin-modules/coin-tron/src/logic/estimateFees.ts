@@ -477,7 +477,7 @@ async function quoteTronifyRent(
     }),
   ]);
 
-  const value = payAssetBaseUnits(parseUsdtQuote(quote));
+  const value = parseUsdtQuote(quote);
   // Withdraws the option on Review rather than offering a rent the craft would refuse.
   const cap = maxRentBaseUnits(logger, config);
   if (value.isGreaterThan(cap)) {
@@ -603,7 +603,7 @@ export async function buildEnergyRentRequest(
 }
 
 // Only USDT-denominated rent is supported (see TRONIFY_PAY_ASSET); fails clearly rather than
-// opaquely downstream (ADR-050 Option 3).
+// opaquely downstream (ADR-050 Option 3). Returns the rent in USDT base units.
 function parseUsdtQuote(quote: { payCoinCode?: unknown; payCoinAmt?: unknown }): BigNumber {
   const { payCoinCode } = quote;
   if (
@@ -614,8 +614,8 @@ function parseUsdtQuote(quote: { payCoinCode?: unknown; payCoinAmt?: unknown }):
       `Tronify returned unsupported payCoinCode: ${String(payCoinCode)}; only USDT is supported`,
     );
   }
-  const payCoinAmt = new BigNumber(String(quote.payCoinAmt));
-  if (!payCoinAmt.isFinite() || !payCoinAmt.isGreaterThan(0)) {
+  const payCoinAmt = payAssetBaseUnits(quote.payCoinAmt);
+  if (!payCoinAmt?.isGreaterThan(0)) {
     throw new TronifyApiError(
       `Tronify returned an invalid payCoinAmt: ${String(quote.payCoinAmt)}`,
     );

@@ -14,7 +14,7 @@ import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/typ
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import { ScreenName } from "~/const";
-import { DEFAULT_GAS_LIMIT } from "@ledgerhq/coin-evm/logic-public";
+import { parseGasLimitInput } from "@ledgerhq/live-common/families/evm/utils";
 
 const options = {
   title: i18next.t("send.summary.gasLimit"),
@@ -41,11 +41,7 @@ function EvmEditGasLimit({ navigation, route }: NavigationProps) {
   }, [setGasLimit, ownGasLimit, navigation]);
 
   const onChangeText = useCallback((v: string) => {
-    let n = new BigNumber(v || 0);
-    if (!n.isFinite()) {
-      n = DEFAULT_GAS_LIMIT;
-    }
-    setOwnGasLimit(n);
+    setOwnGasLimit(parseGasLimitInput(v));
   }, []);
   return (
     <SafeAreaView

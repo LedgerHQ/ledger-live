@@ -43,7 +43,7 @@ jest.mock("@ledgerhq/live-common/bridge/useBridgeTransaction", () => ({
       transaction: {
         mode: "delegate",
         poolId: "00000000000000000000000000000000000000000000000000000001",
-        protocolParams: account.cardanoResources.protocolParams,
+        protocolParams: { ...account.cardanoResources.protocolParams, stakeKeyDeposit: "2000000" },
       },
       setTransaction: jest.fn(),
       updateTransaction: jest.fn(),

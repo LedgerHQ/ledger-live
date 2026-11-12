@@ -1,5 +1,6 @@
 import { EnergyRentInsufficientBalance, TronifyApiError } from "../../types/errors";
-import { tronifyPayAsset } from "../constants";
+import BigNumber from "bignumber.js";
+import { payAssetBaseUnits, tronifyPayAsset } from "../constants";
 import { classifyRentOrderError } from "./rejection";
 
 describe("classifyRentOrderError", () => {
@@ -30,6 +31,10 @@ describe("classifyRentOrderError", () => {
       "a ceiling rejection with an unusable price",
       new TronifyApiError("x", { rule: "ceiling", payCoinAmt: "NaN" }),
     ],
+    [
+      "a ceiling rejection with a non-numeric price",
+      new TronifyApiError("x", { rule: "ceiling", payCoinAmt: "abc" }),
+    ],
     ["another rule", new TronifyApiError("x", { rule: "payee", payCoinAmt: "3.5" })],
     ["a failed Tronify call", new TronifyApiError("x", { resCode: 500 })],
     [
@@ -40,4 +45,17 @@ describe("classifyRentOrderError", () => {
   ])("leaves %s to the generic failure", (_label, error) => {
     expect(classifyRentOrderError(error)).toBeNull();
   });
+});
+
+describe("payAssetBaseUnits", () => {
+  it("converts a decimal USDT amount to base units, rounded up", () => {
+    expect(payAssetBaseUnits("3.5000001")).toEqual(new BigNumber(3_500_001));
+  });
+
+  it.each([["abc"], [""], ["NaN"], ["Infinity"], [undefined]])(
+    "returns undefined for %p",
+    amount => {
+      expect(payAssetBaseUnits(amount)).toBeUndefined();
+    },
+  );
 });

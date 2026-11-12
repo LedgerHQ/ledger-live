@@ -1,3 +1,4 @@
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import BigNumber from "bignumber.js";
 import type { Transaction } from "../../../../coin-modules/transaction-types";
 import type { CustomFeeInputDescriptor } from "../../../../bridge/descriptor/types";
@@ -7,10 +8,8 @@ export function normalizeDecimalSeparator(value: string): string {
 }
 
 export function isValidNumberForInput(inputKey: string, value: string): boolean {
-  if (!value.trim()) return false;
-
-  const num = new BigNumber(value);
-  if (num.isNaN() || !num.isFinite() || num.isNegative()) return false;
+  const num = parseFiniteBigNumber(value);
+  if (!num || num.isNegative()) return false;
 
   // EVM max priority fee can be 0.
   if (inputKey === "maxPriorityFeePerGas") {

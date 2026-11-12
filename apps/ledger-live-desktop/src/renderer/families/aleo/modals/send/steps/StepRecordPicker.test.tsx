@@ -586,6 +586,23 @@ describe("StepRecordPicker", () => {
     expect(screen.queryByText("0 ALEO")).not.toBeInTheDocument();
   });
 
+  it.each(["", "abc", "1_000"])("should exclude records with unreadable value %p", microcredits => {
+    const badRecord = makeUnspentRecord("commitment-bad", microcredits, mockDecryptedData1);
+    const account: AleoAccount = {
+      ...mockAleoAccount,
+      aleoResources: {
+        ...mockAleoAccount.aleoResources!,
+        unspentPrivateRecords: [record1, badRecord],
+      },
+    };
+
+    render(
+      <StepRecordPicker {...defaultProps} account={account} transaction={privateTransaction} />,
+    );
+
+    expect(screen.getAllByRole("button")).toHaveLength(1);
+  });
+
   it("should exclude zero-value records from the label count", () => {
     const zeroRecord = makeUnspentRecord("commitment-zero", "0", mockDecryptedData1);
     const accountWithZeroRecord: AleoAccount = {

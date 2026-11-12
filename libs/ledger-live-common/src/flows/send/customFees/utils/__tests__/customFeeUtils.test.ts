@@ -19,6 +19,10 @@ describe("isValidNumberForInput", () => {
     expect(isValidNumberForInput("fees", value)).toBe(false);
   });
 
+  it.each(["", " ", "abc", "1_000", "0x10", "1.2.3"])("rejects non-numeric input %p", value => {
+    expect(isValidNumberForInput("fees", value)).toBe(false);
+  });
+
   it("accepts positive finite values", () => {
     expect(isValidNumberForInput("fees", "1.5")).toBe(true);
   });

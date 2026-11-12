@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import type { CoinDescriptor, NetworkFeesInfo } from "../../../bridge/descriptor/types";
 
 type TronFeeStatus = {
@@ -17,9 +18,7 @@ type TronResourceBreakdown = {
 };
 
 function toFiniteAmount(value: string | undefined): string | undefined {
-  if (value === undefined) return undefined;
-  const parsed = new BigNumber(value);
-  return parsed.isFinite() ? parsed.toFixed() : undefined;
+  return parseFiniteBigNumber(value)?.toFixed();
 }
 
 // Variant keys off `estimatedFees` (the amount the fee row shows), never a resource comparison, so

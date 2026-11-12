@@ -1,6 +1,7 @@
 import * as EIP712 from "@ledgerhq/evm-tools/message/EIP712/index";
 import BigNumber from "bignumber.js";
-import { getEstimatedFees, getGasLimit, getMessageProperties } from "./utils";
+import { DEFAULT_GAS_LIMIT } from "@ledgerhq/coin-evm/logic-public";
+import { getEstimatedFees, getGasLimit, getMessageProperties, parseGasLimitInput } from "./utils";
 
 jest.mock("@ledgerhq/evm-tools/message/EIP712/index");
 jest.mock("@shared/env", () => ({
@@ -8,6 +9,23 @@ jest.mock("@shared/env", () => ({
 }));
 
 const mockGetEIP712Fields = jest.mocked(EIP712.getEIP712FieldsDisplayedOnNano);
+
+describe("parseGasLimitInput", () => {
+  it.each([
+    ["21000", new BigNumber(21000)],
+    ["0x5208", new BigNumber(21000)],
+    ["", new BigNumber(0)],
+  ])("reads %p", (input, expected) => {
+    expect(parseGasLimitInput(input)).toEqual(expected);
+  });
+
+  it.each(["abc", "1_000", "-5", "21000.5", "Infinity"])(
+    "falls back to the default gas limit for %p",
+    input => {
+      expect(parseGasLimitInput(input)).toEqual(DEFAULT_GAS_LIMIT);
+    },
+  );
+});
 
 describe("getGasLimit", () => {
   it("returns gasLimit when customGasLimit is not provided", () => {
