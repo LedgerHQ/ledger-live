@@ -44,6 +44,7 @@ module.
 | Preset             | A                              | B                          | Fails when                        |
 | ------------------ | ------------------------------ | -------------------------- | --------------------------------- |
 | `prod-vs-release`  | latest `live-mobile@X.Y.Z` tag | `release` branch           | B is slower by > threshold_ms     |
+| `prod-vs-develop`  | latest `live-mobile@X.Y.Z` tag | `develop` or `ref_b`       | same                              |
 | `custom`           | any branch or tag              | any branch or tag          | same                              |
 | `aa-noise`         | one build                      | the same binary            | only on `Not enough pairs`        |
 | `known-regression` | this branch or `ref_a`         | A with LIVE-36190 re-added | B is not slower by > threshold_ms |
@@ -52,6 +53,10 @@ module.
 still catches LIVE-36190 on today's code: B no longer saves the trustchain at start, so every launch
 generates its keypair again, the cost #21001 removed (its other half, a zod check of the keypair, no
 longer exists).
+
+Every weekday at 03:17 UTC the workflow runs `prod-vs-develop` with the settings of `NIGHTLY` in
+`ci/resolve-refs.mts` (both platforms and scenarios, 20 pairs, 100 ms), as a scheduled run has no
+inputs; the plan job passes the settings on to the other jobs.
 
 Refs are branches or tags only: a raw SHA could be a fork's commit, run with the workflow's secrets.
 They start at `live-mobile@4.26.0`: `prepare-build.mts` rejects older ones, which still count the

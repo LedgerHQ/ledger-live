@@ -29,6 +29,14 @@ describe("toMarkdown", () => {
     assert.doesNotMatch(markdown, /B fails when/);
   });
 
+  for (const preset of ["prod-vs-release", "prod-vs-develop", "custom"]) {
+    it(`states the gate for ${preset}`, () => {
+      const gated = { ...options, preset };
+      const markdown = toMarkdown(summarise(comparison({ deltaMs: 0 }), gated), gated);
+      assert.match(markdown, /^B fails when it is slower than A by more than 100 ms/m);
+    });
+  }
+
   it("says a launch that fell back is kept in the row from the first JS import", () => {
     const markdown = toMarkdown(summarise(startsDifferWithFallback(), options), options);
     assert.match(
