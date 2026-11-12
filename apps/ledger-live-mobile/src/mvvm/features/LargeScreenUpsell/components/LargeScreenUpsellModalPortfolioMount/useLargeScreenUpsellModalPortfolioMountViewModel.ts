@@ -7,6 +7,7 @@ import {
   recordUpsellModalDisplay,
   resetUpsellModalRetries,
 } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
+import type { PostOnboardingRedirectStatus } from "~/hooks/useAutoRedirectToPostOnboarding";
 import type { FeatureIntroViewModel } from "LLM/components/FeatureIntroLayout/types";
 import { useTranslation } from "~/context/Locale";
 import { useDispatch, useSelector } from "~/context/hooks";
@@ -44,7 +45,9 @@ type LargeScreenUpsellModalPortfolioMountViewModel = Readonly<{
   bottomInset: number;
 }>;
 
-export function useLargeScreenUpsellModalPortfolioMountViewModel(): LargeScreenUpsellModalPortfolioMountViewModel | null {
+export function useLargeScreenUpsellModalPortfolioMountViewModel(
+  postOnboardingRedirectStatus: PostOnboardingRedirectStatus,
+): LargeScreenUpsellModalPortfolioMountViewModel | null {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { bottom } = useSafeAreaInsets();
@@ -61,7 +64,7 @@ export function useLargeScreenUpsellModalPortfolioMountViewModel(): LargeScreenU
   const hasHandledCurrentModalInteractionRef = useRef(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  if (hasCompetingAppStartModal) {
+  if (hasCompetingAppStartModal || postOnboardingRedirectStatus === "redirected") {
     hasSeenCompetingAppStartModalRef.current = true;
   }
 
@@ -90,7 +93,10 @@ export function useLargeScreenUpsellModalPortfolioMountViewModel(): LargeScreenU
     hasEnabledFeature && params && eligibility.isEligible && params.modal.enabled && !isThrottled,
   );
   const shouldAttemptAutoOpen =
-    isEligible && !hasSeenCompetingAppStartModalRef.current && !hasAutoOpenedThisSession;
+    isEligible &&
+    postOnboardingRedirectStatus !== "pending" &&
+    !hasSeenCompetingAppStartModalRef.current &&
+    !hasAutoOpenedThisSession;
 
   const sharedAnalyticsProps: LargeScreenUpsellSharedAnalyticsProps | null = useMemo(() => {
     if (!("deviceModelId" in eligibility)) {

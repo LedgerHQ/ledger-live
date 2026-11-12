@@ -58,6 +58,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     isSyncError,
     onBackFromUpdate,
     shouldDisplayPerpsEntryPoint,
+    postOnboardingRedirectStatus,
   } = usePortfolioViewModel(navigation);
 
   const progressViewOffset = getProgressViewOffset(Platform.OS);
@@ -181,7 +182,9 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       <AnalyticsConsentDrawer />
       <GenericAwarenessModalDrawer />
       <RecoverIntroPortfolioMount />
-      <LargeScreenUpsellModalPortfolioMount />
+      <LargeScreenUpsellModalPortfolioMount
+        postOnboardingRedirectStatus={postOnboardingRedirectStatus}
+      />
       <LazyOnboardingTourPortfolioMount />
     </>
   );

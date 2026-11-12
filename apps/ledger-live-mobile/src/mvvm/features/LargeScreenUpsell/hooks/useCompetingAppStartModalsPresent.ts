@@ -2,7 +2,6 @@ import { useAnalyticsConsentDecision } from "@features/flow-analytics-consent";
 import { isGenericAwarenessModalContentCardReady } from "@ledgerhq/live-common/genericAwarenessModal";
 import { useFeature } from "@features/platform-feature-flags";
 import { useSelector } from "~/context/hooks";
-import { useIsPostOnboardingRedirectPending } from "~/hooks/useAutoRedirectToPostOnboarding/useIsPostOnboardingRedirectPending";
 import { selectIsBackupHubFeatureIntroOpen } from "~/reducers/backupHubFeatureIntro";
 import { selectIsProductTourDrawerOpen } from "~/reducers/productTourDrawer";
 import { selectGenericAwarenessModalContentCards } from "~/reducers/genericAwarenessModal";
@@ -19,7 +18,6 @@ export function useCompetingAppStartModalsPresent(): boolean {
   const isProductTourDrawerOpen = useSelector(selectIsProductTourDrawerOpen);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const analyticsConsentInfo = useSelector(analyticsConsentInfoSelector);
-  const isPostOnboardingRedirectPending = useIsPostOnboardingRedirectPending();
 
   const genericAwarenessModalFlag = useFeature("lwmGenericAwarenessModal");
   const { isFeatureEnabled: isAnalyticsOptInEnabled, decision: analyticsConsentDecision } =
@@ -39,7 +37,6 @@ export function useCompetingAppStartModalsPresent(): boolean {
   return (
     isBackupHubFeatureIntroOpen ||
     isProductTourDrawerOpen ||
-    isPostOnboardingRedirectPending ||
     hasGenericAwarenessCompeting ||
     hasAnalyticsConsentCompeting
   );
