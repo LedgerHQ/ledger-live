@@ -111,7 +111,7 @@ jobs:
       contents: read
     runs-on: ledger-wallet-8cpu-aws-public-cached
     if: ${{ inputs.build-android-native == true }}
-    timeout-minutes: 40
+    timeout-minutes: 75
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -173,6 +173,26 @@ jobs:
         run: |
           pnpm i --frozen-lockfile --filter="live-mobile..." --filter="ledger-live" --filter="live-cli*..." --unsafe-perm
 
+      - name: Sample Java threads and sockets every minute
+        run: |
+          out="$RUNNER_TEMP/gradle-samples"
+          mkdir -p "$out"
+          nohup bash -c '
+            while true; do
+              sleep 60
+              ts=$(date -u +%H%M%S)
+              "$JAVA_HOME/bin/jps" -l > "$1/$ts-jps.txt" 2>&1
+              for pid in $("$JAVA_HOME/bin/jps" -q); do
+                "$JAVA_HOME/bin/jcmd" "$pid" Thread.print > "$1/$ts-threads-$pid.txt" 2>&1
+              done
+              if command -v ss >/dev/null; then
+                ss -tnpo > "$1/$ts-sockets.txt" 2>&1
+              else
+                cat /proc/net/tcp /proc/net/tcp6 > "$1/$ts-sockets.txt" 2>&1
+              fi
+            done' _ "$out" > "$out/sampler.log" 2>&1 &
+          disown
+
       - name: Build Android app for Detox test run
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
         env:
@@ -185,6 +205,13 @@ jobs:
         with:
           command: GITHUB_STEP_SUMMARY=/dev/null pnpm exec nx run live-mobile:e2e:ci -- -p android -b $([[ "$PRODUCTION" == "true" ]] && printf %s '--production')
           disable_cache: ${{ inputs.disable-nx-cache || false }}
+
+      - name: Upload Java thread and socket samples
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: gradle-samples
+          path: ${{ runner.temp }}/gradle-samples
 
       - name: Upload Detox Native Build
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
