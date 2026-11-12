@@ -222,6 +222,29 @@ describe("useOpenSendFlow", () => {
     expect(store.getState().modularDialog.dialogParams?.uiUseCase).toBeUndefined();
   });
 
+  it.each([
+    ["1.5", "1.5"],
+    ["abc", undefined],
+    ["", undefined],
+    [".", undefined],
+  ])("opens the legacy send modal with the amount %p as %p", (amount, expected) => {
+    const account = genAccount("send-legacy-amount", {
+      currency: getCryptoCurrencyById("ethereum"),
+    });
+
+    const { result, store } = renderHook(() => useOpenSendFlow(), {
+      initialState: {
+        ...withFlagOverrides({ newSendFlow: { enabled: false } }),
+        accounts: [account],
+      },
+    });
+
+    result.current({ account, amount });
+
+    const modal = store.getState().modals.MODAL_SEND;
+    expect(modal?.isOpened && modal.data?.amount?.toString()).toBe(expected);
+  });
+
   describe("balance-type routing override", () => {
     const previousShieldedEnabled = isZcashShieldedEnabled();
 

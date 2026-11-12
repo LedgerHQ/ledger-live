@@ -1,6 +1,7 @@
 import { findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto";
 import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { openModal } from "~/renderer/actions/modals";
 import { DeeplinkHandler, DeeplinkHandlerContext } from "../types";
@@ -53,7 +54,8 @@ async function handleTransactionFlow(
   const modal = modalMap[flowType];
 
   const sendRecipient = typeof recipient === "string" ? recipient : undefined;
-  const sendAmount = typeof amount === "string" ? amount : undefined;
+  const sendAmount =
+    typeof amount === "string" && parseFiniteBigNumber(amount) ? amount : undefined;
 
   if (!currency) {
     if (flowType === "send") {
@@ -100,8 +102,8 @@ async function handleTransactionFlow(
         account,
         parentAccount,
         amount:
-          amount && typeof amount === "string" && foundCurrency
-            ? parseCurrencyUnit(foundCurrency.units[0], amount)
+          sendAmount && foundCurrency
+            ? parseCurrencyUnit(foundCurrency.units[0], sendAmount)
             : undefined,
       }),
     );

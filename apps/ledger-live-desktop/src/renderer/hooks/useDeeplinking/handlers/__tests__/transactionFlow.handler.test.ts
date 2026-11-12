@@ -81,6 +81,14 @@ describe("transactionFlow.handler", () => {
       });
     });
 
+    it.each(["abc", "", " ", ".", "1,5"])("ignores the invalid amount %p", async amount => {
+      const context = createMockContext();
+
+      await sendHandler({ type: "send", recipient: "0x123", amount }, context);
+
+      expect(context.openSendFlow).toHaveBeenCalledWith({ recipient: "0x123", amount: undefined });
+    });
+
     it("opens asset flow when currency is not found", async () => {
       mockFindCryptoCurrencyByKeyword.mockReturnValue(undefined);
       const context = createMockContext();
@@ -155,6 +163,20 @@ describe("transactionFlow.handler", () => {
           parentAccount: undefined,
           amount: undefined,
         }),
+      );
+    });
+    it("ignores an invalid amount without parsing it", async () => {
+      const mockCurrency = getCryptoCurrencyById("bitcoin");
+      const mockAccount = createMockAccount("bitcoin");
+      mockFindCryptoCurrencyByKeyword.mockReturnValue(mockCurrency);
+      mockGetAccountsOrSubAccountsByCurrency.mockReturnValue([mockAccount]);
+      const context = createMockContext({ accounts: [mockAccount] });
+
+      await receiveHandler({ type: "receive", currency: "bitcoin", amount: "abc" }, context);
+
+      expect(mockOpenModal).toHaveBeenCalledWith(
+        "MODAL_RECEIVE",
+        expect.objectContaining({ amount: undefined }),
       );
     });
   });
