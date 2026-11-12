@@ -652,7 +652,7 @@ function findDevtoolsHostViolations(workspaceRoot, hostApps) {
       const rel = path.relative(realRoot, file);
       const isTest = TEST_FILE.test(path.relative(appRoot, file).split(path.sep).join("/"));
 
-      for (const { specifier, kind, line } of moduleReferences(sourceFiles.parse(file))) {
+      for (const { specifier, line } of moduleReferences(sourceFiles.parse(file))) {
         if (specifier.startsWith("@devtools/")) {
           violations.push({ file: rel, line, specifier, rule: "DEVTOOLS_HOST_APP_RULE" });
           continue;
@@ -660,12 +660,7 @@ function findDevtoolsHostViolations(workspaceRoot, hostApps) {
         const { target, resolved } = load(file, specifier);
         if (isUnder(target, devtoolsRoot)) {
           violations.push({ file: rel, line, specifier, rule: "DEVTOOLS_HOST_APP_RULE" });
-        } else if (
-          !isTest &&
-          kind !== "dynamic" &&
-          isUnder(target, folder) &&
-          !(resolved && entryFiles.has(target))
-        ) {
+        } else if (!isTest && isUnder(target, folder) && !(resolved && entryFiles.has(target))) {
           violations.push({ file: rel, line, specifier, rule: "DEVTOOLS_HOST_FOLDER_RULE" });
         }
       }
