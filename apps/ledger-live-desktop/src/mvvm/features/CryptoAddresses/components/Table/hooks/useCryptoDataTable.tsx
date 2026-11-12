@@ -102,7 +102,8 @@ export function useCryptoDataTable({
         id: "balance",
         accessorKey: "balance",
         sortingFn: (rowA, rowB) =>
-          getSortCountervalue(rowA.original.id).comparedTo(getSortCountervalue(rowB.original.id)),
+          getSortCountervalue(rowA.original.id).comparedTo(getSortCountervalue(rowB.original.id)) ??
+          0,
         header: t("cryptoAddresses.table.columns.value"),
         cell: BalanceCell,
         meta: { align: "end" },
