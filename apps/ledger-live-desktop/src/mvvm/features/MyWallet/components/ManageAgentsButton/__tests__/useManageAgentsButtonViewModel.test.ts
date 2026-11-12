@@ -1,3 +1,4 @@
+import * as analytics from "@shared/analytics";
 import { renderHook, withFlagOverrides } from "tests/testSetup";
 import { useManageAgentsButtonViewModel } from "../hooks/useManageAgentsButtonViewModel";
 
@@ -28,7 +29,7 @@ describe("useManageAgentsButtonViewModel", () => {
     expect(result.current.isEnabled).toBe(false);
   });
 
-  it("should expose the card wording with the new badge on the My Wallet page", () => {
+  it("should expose the card wording with the new badge", () => {
     const { result } = renderHook(() => useManageAgentsButtonViewModel(), {
       initialState: withFlagOverrides({
         agentIntent: { enabled: true, params: { navBar: false, profile: true } },
@@ -40,11 +41,11 @@ describe("useManageAgentsButtonViewModel", () => {
       title: "Manage your agents",
       description: "Let AI agents manage your assets.",
       newBadgeLabel: "New",
-      page: "My Wallet",
     });
   });
 
-  it("should open Agent Intent with the profile source and close the menu", () => {
+  it("should track the click, open Agent Intent with the profile source and close the menu", () => {
+    const trackSpy = jest.spyOn(analytics, "track");
     const { result } = renderHook(() => useManageAgentsButtonViewModel(), {
       initialState: withFlagOverrides({
         agentIntent: { enabled: true, params: { navBar: false, profile: true } },
@@ -53,7 +54,15 @@ describe("useManageAgentsButtonViewModel", () => {
 
     result.current.openAgentIntent();
 
+    expect(trackSpy).toHaveBeenCalledWith("button_clicked", {
+      button: "agent_intent",
+      entry: "agent_intent",
+      source: "profile",
+      page: "My Wallet",
+    });
     expect(mockNavigate).toHaveBeenCalledWith("/agent-intent?source=profile");
     expect(mockClose).toHaveBeenCalled();
+
+    trackSpy.mockRestore();
   });
 });

@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import {
   AGENT_INTENT_SOURCE,
+  trackManageAgentsClick,
   useAgentIntentEntryPoints,
 } from "@features/platform-agent-intent-entry-points";
 import { getAgentIntentPath } from "LLD/features/AgentIntent/getAgentIntentPath";
@@ -14,7 +15,6 @@ type ManageAgentsButtonViewModel = Readonly<{
   title: string;
   description: string;
   newBadgeLabel: string;
-  page: string;
   openAgentIntent: () => void;
 }>;
 
@@ -25,6 +25,7 @@ export function useManageAgentsButtonViewModel(): ManageAgentsButtonViewModel {
   const { isProfileEnabled } = useAgentIntentEntryPoints();
 
   const openAgentIntent = useCallback(() => {
+    trackManageAgentsClick(MY_WALLET_TRACKING_PAGE_NAME);
     navigate(getAgentIntentPath(AGENT_INTENT_SOURCE.profile));
     close();
   }, [close, navigate]);
@@ -34,7 +35,6 @@ export function useManageAgentsButtonViewModel(): ManageAgentsButtonViewModel {
     title: t("myWallet.agentIntent.title"),
     description: t("myWallet.agentIntent.description"),
     newBadgeLabel: t("common.new"),
-    page: MY_WALLET_TRACKING_PAGE_NAME,
     openAgentIntent,
   };
 }
