@@ -1604,6 +1604,9 @@ importers:
       '@shared/network-status':
         specifier: workspace:*
         version: link:../../shared/network-status
+      '@shared/trend':
+        specifier: workspace:*
+        version: link:../../shared/trend
       '@shared/ui-animated-height':
         specifier: workspace:*
         version: link:../../shared/ui-animated-height
@@ -13177,6 +13180,9 @@ importers:
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
+      '@shared/trend':
+        specifier: workspace:*
+        version: link:../../../shared/trend
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2

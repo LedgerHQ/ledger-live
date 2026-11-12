@@ -27,6 +27,7 @@
     "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@shared/i18n": "workspace:*",
+    "@shared/trend": "workspace:*",
     "bignumber.js": "catalog:"
   },
   "peerDependencies": {
