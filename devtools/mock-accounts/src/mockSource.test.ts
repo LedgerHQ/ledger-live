@@ -3,7 +3,7 @@ import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import type { BalanceHistoryRange } from "@domain/entity-account-balance-history";
 import type { AccountOperation, AccountOperationsPage } from "@domain/entity-account-operation";
 import { FiatCurrencyTickerSchema, type FiatCurrencyTicker } from "@domain/entity-currency-fiat";
-import { MockCursorError } from "./errors";
+import { MockAssetStatusQueryError, MockCursorError } from "./errors";
 import { mockDescriptors } from "./generate";
 import { mockSource } from "./mockSource";
 import { setOperationCount } from "./operationCounts";
@@ -445,5 +445,33 @@ describe("mockSource balanceHistory countervalues", () => {
     for (const point of history.series.flatMap(series => series.points)) {
       expect(point.countervalues).toBeUndefined();
     }
+  });
+});
+
+const readStatus = (descriptor: AccountDescriptor) => {
+  const read = mockSource.read?.accountStatus;
+  if (!read) throw new Error("no accountStatus reader");
+  return read({ accountUUID: computeAccountUUID(descriptor), descriptor }, undefined);
+};
+
+describe("mockSource status", () => {
+  it("answers an account used once it has an operation, never gated", async () => {
+    for (const account of mockDescriptors("ethereum", 10, [])) {
+      const hasOperations = (await allOperationsOf(account)).length > 0;
+      await expect(readStatus(account)).resolves.toEqual({ used: hasOperations, gate: null });
+    }
+  });
+
+  it("answers no gate for an asset, and fails without one", async () => {
+    const [account] = mockDescriptors("ethereum", 1, []);
+    const read = mockSource.read?.assetStatus;
+    if (!read) throw new Error("no assetStatus reader");
+    const target = { accountUUID: computeAccountUUID(account), descriptor: account };
+    const assetId = CryptoOrTokenCurrencyIdSchema.parse("ethereum/erc20/usd__coin");
+    await expect(read(target, { assetId })).resolves.toEqual({
+      assetId,
+      status: { gate: null },
+    });
+    await expect(read(target, undefined)).rejects.toThrow(MockAssetStatusQueryError);
   });
 });
