@@ -2,10 +2,19 @@ import { electionABI } from "@celo/abis";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import { isDefaultValidatorGroup } from "../logic";
 import { CeloValidatorGroup } from "../types/types";
 import { getCeloClient } from "./client";
 import { getRegistryAddressFor } from "./registry";
+
+// Celo votes are wei (u256): anything wider is a malformed indexer response.
+const MAX_VOTES = new BigNumber(2).pow(256);
+
+const parseVotes = (value: unknown): BigNumber | undefined => {
+  const parsed = parseFiniteBigNumber(value);
+  return parsed?.isInteger() && !parsed.isNegative() && parsed.lt(MAX_VOTES) ? parsed : undefined;
+};
 
 const getUrl = (route: string): string => `${getEnv("API_CELO_INDEXER")}${route || ""}`;
 
@@ -69,13 +78,13 @@ export const getValidatorGroups = async (): Promise<CeloValidatorGroup[]> => {
       (validatorGroup: {
         address: string;
         name: string;
-        active_votes: BigNumber.Value;
-        pending_votes: BigNumber.Value;
+        active_votes: unknown;
+        pending_votes: unknown;
       }) => ({
         address: validatorGroup.address,
         name: validatorGroup.name || validatorGroup.address,
-        votes: new BigNumber(validatorGroup.active_votes).plus(
-          new BigNumber(validatorGroup.pending_votes),
+        votes: (parseVotes(validatorGroup.active_votes) ?? new BigNumber(0)).plus(
+          parseVotes(validatorGroup.pending_votes) ?? 0,
         ),
       }),
     );
@@ -86,4 +95,4 @@ export const getValidatorGroups = async (): Promise<CeloValidatorGroup[]> => {
 const customValidatorGroupsOrder = (validatorGroups: CeloValidatorGroup[]): CeloValidatorGroup[] =>
   [...validatorGroups]
     .filter(group => !isDefaultValidatorGroup(group)) // Excludes the deprecated "Ledger by Figment"
-    .sort((a, b) => b.votes.comparedTo(a.votes));
+    .sort((a, b) => b.votes.comparedTo(a.votes) ?? 0);

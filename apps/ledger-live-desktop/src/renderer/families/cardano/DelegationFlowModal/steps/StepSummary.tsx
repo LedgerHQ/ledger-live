@@ -10,7 +10,7 @@ import Text from "~/renderer/components/Text";
 import CounterValue from "~/renderer/components/CounterValue";
 import { StepProps } from "../types";
 import CardanoLedgerPoolIcon from "../LedgerPoolIcon";
-import BigNumber from "bignumber.js";
+import { parseAtomicAmount } from "@ledgerhq/live-common/families/cardano/logic";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import IconExclamationCircle from "~/renderer/icons/ExclamationCircle";
 import TranslatedError from "~/renderer/components/TranslatedError";
@@ -33,7 +33,8 @@ function StepSummary(props: StepProps) {
   const { feeTooHigh } = warnings;
   const feesCurrency = getAccountCurrency(account);
   const showDeposit = !account.cardanoResources?.delegation?.status;
-  const stakeKeyDeposit = transaction.protocolParams.stakeKeyDeposit;
+  const stakeKeyDeposit = parseAtomicAmount(transaction.protocolParams.stakeKeyDeposit);
+  const poolCost = parseAtomicAmount(selectedPool.cost);
   return (
     <Box flow={4} mx={40}>
       <FromToWrapper>
@@ -60,23 +61,25 @@ function StepSummary(props: StepProps) {
             </Box>
           </Box>
         </Box>
-        <Box horizontal justifyContent="space-between" mt={1}>
-          <Text ff="Inter|Medium" color="neutral.c60" fontSize={4}>
-            <Trans i18nKey="cardano.delegation.cost" />
-          </Text>
-          <Box>
-            <FormattedVal
-              color={"neutral.c80"}
-              disableRounding
-              unit={feesUnit}
-              alwaysShowValue
-              val={new BigNumber(selectedPool.cost)}
-              fontSize={4}
-              inline
-              showCode
-            />
+        {poolCost ? (
+          <Box horizontal justifyContent="space-between" mt={1}>
+            <Text ff="Inter|Medium" color="neutral.c60" fontSize={4}>
+              <Trans i18nKey="cardano.delegation.cost" />
+            </Text>
+            <Box>
+              <FormattedVal
+                color={"neutral.c80"}
+                disableRounding
+                unit={feesUnit}
+                alwaysShowValue
+                val={poolCost}
+                fontSize={4}
+                inline
+                showCode
+              />
+            </Box>
           </Box>
-        </Box>
+        ) : null}
         <Box horizontal justifyContent="space-between" mt={1}>
           <Text ff="Inter|Medium" color="neutral.c60" fontSize={4}>
             <Trans i18nKey="cardano.delegation.commission" />
@@ -88,7 +91,7 @@ function StepSummary(props: StepProps) {
           </Box>
         </Box>
         <Separator />
-        {showDeposit ? (
+        {showDeposit && stakeKeyDeposit ? (
           <Box horizontal justifyContent="space-between">
             <Text ff="Inter|Medium" color="neutral.c60" fontSize={4}>
               <Trans i18nKey="cardano.delegation.stakeKeyRegistrationDeposit" />
@@ -99,7 +102,7 @@ function StepSummary(props: StepProps) {
                 disableRounding
                 unit={feesUnit}
                 alwaysShowValue
-                val={new BigNumber(stakeKeyDeposit)}
+                val={stakeKeyDeposit}
                 fontSize={4}
                 inline
                 showCode

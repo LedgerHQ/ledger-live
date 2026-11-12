@@ -209,9 +209,17 @@ export function createZCashIPCClient(
           const evt = payload as StreamEvent;
           if (!evt || evt.requestId !== requestId) return;
           switch (evt.kind) {
-            case "chunk":
-              subscriber.next(deps.rehydrateSyncResult(evt.result));
+            case "chunk": {
+              let chunk: ShieldedSyncResult;
+              try {
+                chunk = deps.rehydrateSyncResult(evt.result);
+              } catch (err) {
+                subscriber.error(err);
+                return;
+              }
+              subscriber.next(chunk);
               return;
+            }
             case "complete":
               subscriber.complete();
               return;

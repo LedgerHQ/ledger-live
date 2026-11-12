@@ -10,6 +10,7 @@ import BigNumber from "bignumber.js";
 import { APINetworkInfo, APITransaction } from "./api/api-types";
 import { getDelegationInfo } from "./api/getDelegationInfo";
 import { fetchNetworkInfo } from "./api/getNetworkInfo";
+import { CardanoInvalidProtoParams } from "./errors";
 import { getTransactions } from "./api/getTransactions";
 import { buildSubAccounts } from "./buildSubAccounts";
 import { CardanoSigner } from "./signer";
@@ -92,6 +93,20 @@ describe("makeGetAccountShape", () => {
       });
       const result = await shape(accountShapeInfo, { paginationConfig: {} });
       expect(result.balance).toEqual(new BigNumber(0));
+    });
+
+    it("rejects a network info response without protocol params", async () => {
+      getTransactionsMock.mockResolvedValue({
+        transactions: [],
+        externalCredentials: [{ path: { index: 0 } as BipPath, isUsed: false, key: "" }],
+        internalCredentials: [],
+        blockHeight: 0,
+      });
+      jest.mocked(fetchNetworkInfo).mockResolvedValue({} as APINetworkInfo);
+
+      await expect(shape(accountShapeInfo, { paginationConfig: {} })).rejects.toBeInstanceOf(
+        CardanoInvalidProtoParams,
+      );
     });
 
     it("should return the sum of utxos with delegation reward value", async () => {
@@ -377,5 +392,95 @@ describe("mapTxToAccountOperation", () => {
         },
       });
     });
+
+    const stakingTx = (
+      certificate: Partial<APITransaction["certificate"]>,
+      withdrawals: APITransaction["withdrawals"] = [],
+    ): APITransaction => ({
+      fees: (1e6).toString(),
+      hash: "txHash",
+      inputs: [],
+      outputs: [
+        {
+          address: accountAddress.getHex(),
+          value: (5e6).toString(),
+          tokens: [],
+          paymentKey: paymentCredKey,
+        },
+      ],
+      timestamp: "2024-01-01T00:00:00.000Z",
+      blockHeight: 0,
+      certificate: {
+        stakeRegistrations: [],
+        stakeDeRegistrations: [],
+        stakeDelegations: [],
+        ...certificate,
+      },
+      withdrawals,
+    });
+
+    const mapStakingTx = (tx: APITransaction) =>
+      mapTxToAccountOperation(
+        tx,
+        "accountId",
+        accountCredentialMap,
+        { key: stakeCredKey } as any,
+        [],
+        accountShapeInfo,
+        { stakeKeyDeposit: "abc" } as any,
+      );
+
+    it("should leave out an unreadable informational deposit", () => {
+      const op = mapStakingTx(
+        stakingTx({ stakeRegsConway: [{ deposit: "abc", index: 0, stakeHex: stakeCredHex }] }),
+      );
+
+      expect(op.value).toEqual(new BigNumber(5e6));
+      expect(op.extra).not.toHaveProperty("deposit");
+    });
+
+    it.each(["", undefined, "1.5", "-2000000"])(
+      "should reject a %p refund rather than store a wrong operation value",
+      deposit => {
+        const tx = stakingTx({
+          stakeDeRegsConway: [{ deposit: deposit as string, index: 0, stakeHex: stakeCredHex }],
+        });
+
+        expect(() => mapStakingTx(tx)).toThrow("unreadable refund amount");
+      },
+    );
+
+    it("should reject a pre-Conway deregistration when the protocol deposit is missing", () => {
+      const tx = stakingTx({
+        stakeDeRegistrations: [{ index: 0, stakeCredential: { key: stakeCredKey, type: 0 } }],
+      });
+
+      expect(() =>
+        mapTxToAccountOperation(
+          tx,
+          "accountId",
+          accountCredentialMap,
+          { key: stakeCredKey } as any,
+          [],
+          accountShapeInfo,
+          {} as any,
+        ),
+      ).toThrow("unreadable refund amount");
+    });
+
+    it.each(["abc", undefined, "1.5", "-1", "1e1000000"])(
+      "should reject a %p withdrawal rather than store a wrong operation value",
+      amount => {
+        const tx = stakingTx({}, [
+          {
+            stakeCredential: { key: stakeCredKey, type: 0 },
+            amount: amount as string,
+            stakeHex: stakeCredHex,
+          },
+        ]);
+
+        expect(() => mapStakingTx(tx)).toThrow("unreadable withdrawal amount");
+      },
+    );
   });
 });

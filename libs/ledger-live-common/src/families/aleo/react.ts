@@ -37,6 +37,7 @@ import {
   isPrivateTransaction,
   isUnbondingCountingDown,
   patchAccountWithViewKey,
+  readRecordAmount,
   sumPrivateRecords,
 } from "./utils";
 import type {
@@ -104,8 +105,12 @@ export function useAleoQuickAmountSelector({
   const sortedRecords = useMemo(() => {
     if (!isAleoAccount(account)) return [];
     return getUnspentPrivateRecords(account)
-      .filter(r => new BigNumber(r.microcredits).isGreaterThan(0))
-      .sort((a, b) => new BigNumber(b.microcredits).comparedTo(a.microcredits));
+      .flatMap(record => {
+        const value = readRecordAmount(record.microcredits);
+        return value?.isGreaterThan(0) ? [{ record, value }] : [];
+      })
+      .sort((a, b) => b.value.comparedTo(a.value) ?? 0)
+      .map(({ record }) => record);
   }, [account]);
 
   const strategyConfig = useMemo(

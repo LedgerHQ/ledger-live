@@ -562,6 +562,13 @@ const makeRawOp = (over: Partial<RawOperation> = {}): RawOperation => ({
 });
 
 describe("buildParentOperation", () => {
+  it.each(["abc", "1e1000000"])("records an unreadable %p fee as zero", fee => {
+    const op = buildParentOperation(makeRawOp({ fee }), ACCOUNT_ID);
+
+    expect(op.fee).toEqual(new BigNumber(0));
+    expect(op.type).toBe("NONE");
+  });
+
   it("charges an outgoing transfer's fee to the CCD account", () => {
     const op = buildParentOperation(makeRawOp(), ACCOUNT_ID);
 
@@ -710,6 +717,20 @@ describe("token operations on sub-accounts", () => {
 
     expect(result).not.toHaveProperty("unattributedOperations");
   });
+
+  it.each(["1.5", "18446744073709551616"])(
+    "asks for a re-read when a token balance of %p cannot be read",
+    async balance => {
+      useStore({ [TOKEN_ID]: makeToken(TOKEN_ID) });
+
+      const result = await resolve({
+        accountTokens: [makeEntry({ balance })],
+        pltOperations: [makeRawOp()],
+      });
+
+      expect(result).toHaveProperty("unattributedOperations", true);
+    },
+  );
 
   it("asks for a re-read when an entry is too malformed to name its token", async () => {
     const result = await resolve({

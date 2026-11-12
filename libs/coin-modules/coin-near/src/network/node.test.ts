@@ -288,9 +288,30 @@ describe("node api (indexer-backed calls)", () => {
       expect(gasPrice).toBe("100000000");
     });
 
+    it.each(["abc", "0.5", "1e8", "100000000.0", "340282366920938463463374607431768211456"])(
+      "falls back to the indexer when the node returns the gas price %s",
+      async rpcGasPrice => {
+        mockServer.use(
+          http.post(NEAR_BASE_URL_MOCKED, () =>
+            HttpResponse.json({ jsonrpc: "2.0", id: "id", result: { gas_price: rpcGasPrice } }),
+          ),
+        );
+        mockStats({ gas_price: "100000000" });
+
+        await expect(getGasPrice(mockNearConfig)).resolves.toBe("100000000");
+      },
+    );
+
     it.each([
       ["a null gas price", { gas_price: null }],
       ["an empty gas price", { gas_price: "" }],
+      ["an unreadable gas price", { gas_price: "abc" }],
+      ["a fractional gas price", { gas_price: "0.5" }],
+      ["an exponent gas price", { gas_price: "1e8" }],
+      [
+        "a gas price above the u128 range",
+        { gas_price: "340282366920938463463374607431768211456" },
+      ],
       ["a null envelope data", null],
     ])("rejects when the node fails and the indexer reports %s", async (_label, data) => {
       mockNodeWithoutGasPrice();

@@ -189,6 +189,24 @@ describe("getPrivateBalance", () => {
     expect(unspentRecords).toEqual([cachedUnspentRecord]);
   });
 
+  it.each(["", "abc"])(
+    "should re-decrypt a cached record whose microcredits are %p",
+    async microcredits => {
+      const record = { ...testnetPrivateRecord, spent: false };
+
+      const { balance, unspentRecords } = await getPrivateBalance({
+        config: mockConfig,
+        viewKey: mockViewKey,
+        privateRecords: [record],
+        oldUnspentRecords: [{ ...record, microcredits, decryptedData: mockDecryptedRecord }],
+      });
+
+      expect(sdkClient.decryptRecord).toHaveBeenCalledTimes(1);
+      expect(balance).toEqual(new BigNumber(500000));
+      expect(unspentRecords[0].microcredits).toBe("500000");
+    },
+  );
+
   it("should decrypt only records not present in oldUnspentRecords", async () => {
     const cachedRecord = { ...testnetPrivateRecord, commitment: "cached-commitment" };
     const newRecord = {

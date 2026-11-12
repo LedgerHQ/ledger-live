@@ -162,6 +162,7 @@ describe("estimateFees", () => {
       ["negative", -1],
       ["fractional", 1.5],
       ["not a number", "abc"],
+      ["above the u128 range", "1e1000000"],
       ["absent", undefined],
     ])("falls back to the live gas price when the override is %s", async (_label, gasPrice) => {
       await estimateFees(mockNearContext, intent(), { gasPrice });

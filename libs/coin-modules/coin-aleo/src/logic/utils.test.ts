@@ -82,6 +82,10 @@ import {
   estimateNetRate,
   parseTotalSupply,
   parseMicrocredits,
+  readMicrocredits,
+  readRecordAmount,
+  hasReadableAmount,
+  resolveTransactionAmount,
   parseAmount,
   normalizeAleoPlaintext,
   isAleoAddressPlaintext,
@@ -174,6 +178,56 @@ const supportedPrivateTransactionModes = [
   TRANSACTION_TYPE.TRANSFER_PRIVATE,
   TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
 ] as const;
+
+describe("readMicrocredits", () => {
+  it("reads a u64 amount", () => {
+    expect(readMicrocredits("18446744073709551615")?.toFixed()).toBe("18446744073709551615");
+  });
+
+  it.each(["abc", "", "-1", "1.5", "18446744073709551616", "1e1000000", undefined])(
+    "rejects %p",
+    value => {
+      expect(readMicrocredits(value)).toBeUndefined();
+    },
+  );
+});
+
+describe("resolveTransactionAmount", () => {
+  it.each(["abc", "1e1000000", "-1", undefined])(
+    "reads an unreadable %p amount as undefined",
+    amount => {
+      const rawTx = { transaction_id: "at1", amount } as unknown as Parameters<
+        typeof resolveTransactionAmount
+      >[0];
+
+      expect(resolveTransactionAmount(rawTx)).toBeUndefined();
+    },
+  );
+
+  it("lets a transfer with an unreadable amount be skipped", () => {
+    const rawTx = {
+      transaction_id: "at1",
+      amount: "1e1000000",
+      function_id: "transfer_public",
+      program_id: "credits.aleo",
+    } as unknown as Parameters<typeof hasReadableAmount>[0];
+
+    expect(hasReadableAmount(rawTx)).toBe(false);
+  });
+});
+
+describe("readRecordAmount", () => {
+  it("reads a token amount above the u64 range", () => {
+    expect(readRecordAmount("18446744073709551616")?.toFixed()).toBe("18446744073709551616");
+  });
+
+  it.each(["340282366920938463463374607431768211456", "1e1000000", "-1", "1.5"])(
+    "rejects %p",
+    value => {
+      expect(readRecordAmount(value)).toBeUndefined();
+    },
+  );
+});
 
 describe("parseMicrocredits", () => {
   it.each([
@@ -1284,6 +1338,34 @@ describe("calculateAmount", () => {
       amount: expectedAmount,
       totalSpent: expectedAmount.plus(estimatedFees),
     });
+  });
+
+  it("should skip a selected amount record with an unreadable amount on send-max", () => {
+    const estimatedFees = new BigNumber(5000);
+    const unreadableRecord = { ...mockUnspentRecord2, microcredits: "abc" };
+    const mockTransaction = getMockedTransaction({
+      amount: new BigNumber(0),
+      useAllAmount: true,
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      properties: {
+        amountRecordCommitments: [mockUnspentRecord1.commitment, unreadableRecord.commitment],
+        feeRecordCommitment: null,
+      },
+    });
+    const mockAccount = getMockedAccount({
+      aleoResources: {
+        ...mockAleoResources,
+        unspentPrivateRecords: [mockUnspentRecord1, unreadableRecord],
+      },
+    });
+
+    const result = calculateAmount({
+      account: mockAccount,
+      transaction: mockTransaction,
+      estimatedFees,
+    });
+
+    expect(result.amount).toEqual(new BigNumber(mockUnspentRecord1.microcredits));
   });
 
   it("should return zero for private transactions with useAllAmount when the amount record is missing", () => {
@@ -3179,6 +3261,15 @@ describe("findBestRecordForFee", () => {
     expect(result).toBeNull();
   });
 
+  it("should skip records with an unreadable amount", () => {
+    const result = findBestRecordForFee({
+      unspentRecords: [{ ...mockUnspentRecord2, microcredits: "abc" }, mockUnspentRecord1],
+      targetFee: new BigNumber(500000),
+      selectedAmountRecordCommitments: [],
+    });
+    expect(result).toBe(mockUnspentRecord1);
+  });
+
   it("should return null for an empty records array", () => {
     const result = findBestRecordForFee({
       unspentRecords: [],
@@ -3209,11 +3300,22 @@ describe("selectPrivateRecordsForAmount", () => {
 
     const result = selectPrivateRecordsForAmount({ unspentRecords: records, targetAmount: null });
     const expectedMicrocredits = [...records]
-      .sort((a, b) => new BigNumber(b.microcredits).comparedTo(new BigNumber(a.microcredits)))
+      .sort((a, b) => new BigNumber(b.microcredits).comparedTo(new BigNumber(a.microcredits)) ?? 0)
       .slice(0, MAX_PRIVATE_RECORDS_PER_TRANSACTION)
       .map(r => r.microcredits);
 
     expect(result.map(r => r.microcredits)).toEqual(expectedMicrocredits);
+  });
+
+  it("should skip records with an unreadable amount", () => {
+    const unspentRecords = [
+      { ...mockUnspentRecord1, microcredits: "abc" },
+      { ...mockUnspentRecord2, microcredits: "5" },
+    ];
+
+    const result = selectPrivateRecordsForAmount({ unspentRecords, targetAmount: null });
+
+    expect(result.map(r => r.microcredits)).toEqual(["5"]);
   });
 
   it("should return empty array when targetAmount is null and input is empty", () => {
@@ -3507,6 +3609,15 @@ describe("sumPrivateRecords", () => {
       { ...mockUnspentRecord1, microcredits: "300" },
     ];
     expect(sumPrivateRecords(records).isEqualTo(new BigNumber(600))).toBe(true);
+  });
+
+  it("ignores records with an unreadable amount", () => {
+    const records = [
+      { ...mockUnspentRecord1, microcredits: "abc" },
+      { ...mockUnspentRecord1, microcredits: "" },
+      { ...mockUnspentRecord1, microcredits: "7" },
+    ];
+    expect(sumPrivateRecords(records).isEqualTo(new BigNumber(7))).toBe(true);
   });
 
   it("handles large microcredit values without precision loss", () => {

@@ -1,6 +1,15 @@
 import BigNumber from "bignumber.js";
 import bs58 from "bs58";
-import { firstValueFrom, lastValueFrom, Observable, of, Subject, throwError, toArray } from "rxjs";
+import {
+  firstValueFrom,
+  lastValueFrom,
+  Observable,
+  of,
+  ReplaySubject,
+  Subject,
+  throwError,
+  toArray,
+} from "rxjs";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { SYNC_TYPE_SHIELDED, SYNC_TYPE_TRANSPARENT } from "@ledgerhq/types-live";
 import type { SyncConfig } from "@ledgerhq/types-live";
@@ -20,6 +29,7 @@ import type { ShieldedSyncResult, ShieldedTransaction } from "../network/types";
 import { TEST_CONFIG, TEST_ZAINO_ENDPOINT, testContext } from "../test/coinConfig";
 import { ZCASH_SHIELDED_BATCH_SIZE, ZCASH_SHIELDED_CHUNK_TIMEOUT_MS } from "../constants";
 import { bindExplorer } from "./explorer";
+import { ZcashUnreadableAmount } from "../errors";
 
 const generateAccount = jest.fn((..._args: unknown[]): unknown => undefined);
 const syncAccount = jest.fn(async (..._args: unknown[]) => undefined);
@@ -61,9 +71,14 @@ const walletAccount = () => ({
     xpub: XPUB,
     freshAddress: OWN,
     freshAddressIndex: 4,
+    syncedBlockHeight: 3_425_900,
     explorer: { getCurrentBlock: jest.fn(async () => ({ height: 3_425_900 })) },
     getXpubAddresses: jest.fn(async () => [{ address: OWN }, { address: CHANGE }]),
-    storage: { getUniquesAddresses: jest.fn(() => [{ address: CHANGE }]) },
+    storage: {
+      getUniquesAddresses: jest.fn(() => [{ address: CHANGE, account: 1, index: 0 }]),
+      exportSync: jest.fn(() => ({ txs: [], addressCache: { "1-0": CHANGE } })),
+      loadSync: jest.fn(),
+    },
   },
 });
 
@@ -236,11 +251,91 @@ describe("fromWalletUtxo", () => {
       rbf: false,
       isChange: true,
     });
-    expect(fromWalletUtxo(output(), new Set([CHANGE])).isChange).toBe(false);
+    expect(fromWalletUtxo(output(), new Set([CHANGE]))?.isChange).toBe(false);
+  });
+
+  it.each(["", "abc", undefined])("rejects a coin whose explorer value is %p", value => {
+    expect(() => fromWalletUtxo(output({ value } as Partial<WalletOutput>), new Set())).toThrow(
+      ZcashUnreadableAmount,
+    );
   });
 });
 
 describe("performTransparentSync", () => {
+  it("rejects the sync rather than leave out a coin the explorer returns unreadable", async () => {
+    getAccountTransactions.mockResolvedValue({ txs: [incomingTx()] });
+    getAccountUnspentUtxos.mockResolvedValue([
+      output(),
+      output({ output_hash: "bb".repeat(32), value: "abc" } as Partial<WalletOutput>),
+    ]);
+
+    const cached = walletAccount();
+    const syncInfo = info({
+      initialAccount: {
+        id: "js:2:zcash:xpub6DZ:",
+        operations: [],
+        bitcoinResources: { utxos: [], walletAccount: cached },
+      },
+    });
+
+    await expect(performTransparentSync(syncInfo, signerContext, testContext)).rejects.toThrow(
+      ZcashUnreadableAmount,
+    );
+    // Evicted, so the next sync fetches the rejected transactions again.
+    expect(cached.xpub.storage.loadSync).toHaveBeenCalledWith(expect.anything(), {
+      txs: [],
+      addressCache: { "1-0": CHANGE },
+    });
+    expect(cached.xpub.syncedBlockHeight).toBe(-1);
+
+    // The retry on the same wallet account scans from the start once the explorer answers again.
+    getAccountUnspentUtxos.mockResolvedValue([output()]);
+    let heightAtRetry: number | undefined;
+    syncAccount.mockImplementationOnce(async (...args: unknown[]) => {
+      heightAtRetry = (args[1] as typeof cached).xpub.syncedBlockHeight;
+      return undefined;
+    });
+    const retried = await performTransparentSync(syncInfo, signerContext, testContext);
+    expect(heightAtRetry).toBe(-1);
+    expect(retried.balance).toEqual(new BigNumber(70_000));
+  });
+
+  it("rejects the sync rather than store a wrong value when an owned output is unreadable", async () => {
+    const unreadable = output({ value: "abc" } as Partial<WalletOutput>);
+    getAccountTransactions.mockResolvedValue({
+      txs: [{ ...incomingTx(), outputs: [unreadable] } as unknown as TX],
+    });
+    getAccountUnspentUtxos.mockResolvedValue([unreadable]);
+
+    const cached = walletAccount();
+    const syncInfo = info({
+      initialAccount: {
+        id: "js:2:zcash:xpub6DZ:",
+        operations: [],
+        bitcoinResources: { utxos: [], walletAccount: cached },
+      },
+    });
+
+    await expect(performTransparentSync(syncInfo, signerContext, testContext)).rejects.toThrow(
+      "zcash: unreadable amount on an account input or output",
+    );
+    expect(cached.xpub.storage.loadSync).toHaveBeenCalled();
+  });
+
+  it.each(["abc", "", undefined])(
+    "rejects the sync rather than store a wrong spend when an owned input value is %p",
+    async value => {
+      const tx = outgoingTx();
+      getAccountTransactions.mockResolvedValue({
+        txs: [{ ...tx, inputs: [{ ...tx.inputs[0], value }] } as unknown as TX],
+      });
+
+      await expect(performTransparentSync(info(), signerContext, testContext)).rejects.toThrow(
+        "zcash: unreadable amount on an account input or output",
+      );
+    },
+  );
+
   it("reports the account shape the explorer describes", async () => {
     getAccountTransactions.mockResolvedValue({ txs: [incomingTx()] });
     getAccountUnspentUtxos.mockResolvedValue([output()]);
@@ -944,6 +1039,47 @@ describe("buildExtraSyncObservable", () => {
     expect(emissions[0].privateInfo).toMatchObject({ syncState: "stopped" });
   });
 
+  it("keeps what a valid chunk reached when a later chunk carries an unreadable note", async () => {
+    getZCashClient.mockResolvedValue({
+      syncShielded: () =>
+        new Observable<ShieldedSyncResult>(subscriber => {
+          subscriber.next({
+            transactions: [incomingShieldedTx("shielded-1")],
+            processedBlocks: 5,
+            remainingBlocks: 5,
+            lastProcessedBlock: 100,
+          } as ShieldedSyncResult);
+          subscriber.error(new ZcashUnreadableAmount("unreadable note"));
+        }),
+      findBlockHeight: jest.fn(),
+    });
+    const observable = buildExtraSyncObservable(
+      info({
+        initialAccount: {
+          id: "js:2:zcash:xpub6DZ:",
+          operations: [],
+          privateInfo: privateInfo({ syncState: "ready", lastProcessedBlock: 1 }),
+        },
+      }),
+      { syncType: SYNC_TYPE_SHIELDED } as SyncConfig,
+      testContext,
+    );
+
+    const [reached, stopped] = await lastValueFrom(observable!.pipe(toArray()));
+
+    // The balance the valid chunk emitted stands, unless the transparent leg reported a newer one.
+    expect(stopped).not.toHaveProperty("balance");
+    expect(stopped).not.toHaveProperty("spendableBalance");
+    expect(stopped.operations).toEqual(reached.operations);
+    expect(stopped.operations).toHaveLength(1);
+    expect(stopped.privateInfo).toMatchObject({
+      syncState: "stopped",
+      lastSyncError: "ZcashUnreadableAmount: unreadable note",
+      lastProcessedBlock: 100,
+      transactions: reached.privateInfo?.transactions,
+    });
+  });
+
   it.each([
     ["the coin config's", 42, 42],
     ["the module default", undefined, ZCASH_SHIELDED_BATCH_SIZE],
@@ -1032,6 +1168,32 @@ describe("buildExtraSyncObservable", () => {
 });
 
 describe("buildSyncObservables", () => {
+  it("leaves the balance and the operation count to the other leg when the shielded leg errors", async () => {
+    getZCashClient.mockResolvedValue({
+      syncShielded: () => throwError(() => new Error("engine down")),
+      findBlockHeight: jest.fn(),
+    });
+    const { syncs } = buildSyncObservables(
+      info({
+        initialAccount: {
+          id: "js:2:zcash:xpub6DZ:",
+          operations: [],
+          bitcoinResources: { utxos: [], walletAccount: walletAccount() },
+          privateInfo: privateInfo({ lastProcessedBlock: 1 }),
+        },
+      }),
+      { syncType: SYNC_TYPE_SHIELDED } as SyncConfig,
+      signerContext,
+      testContext,
+    );
+
+    const emission = await firstValueFrom(syncs[0]);
+
+    expect(emission.privateInfo).toMatchObject({ syncState: "stopped" });
+    expect(emission).not.toHaveProperty("balance");
+    expect(emission).not.toHaveProperty("operationsCount");
+  });
+
   it("runs the transparent leg by default", async () => {
     getAccountUnspentUtxos.mockResolvedValue([output()]);
 
@@ -1102,6 +1264,61 @@ describe("buildSyncObservables", () => {
     expect(await firstValueFrom(syncs[0])).toMatchObject({ balance: new BigNumber(70_000) });
     expect(getZCashClient).not.toHaveBeenCalled();
     expect(isShieldedEnabled).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps the transparent leg.s total of coins and kept notes when the scan fails after it", async () => {
+    getAccountUnspentUtxos.mockResolvedValue([output()]);
+    const transparentDone = new ReplaySubject<void>(1);
+    const ironwoodChunk = {
+      transactions: [
+        {
+          ...incomingShieldedTx("shielded-1"),
+          decryptedData: {
+            orchard_outputs: [],
+            sapling_outputs: [],
+            ironwood_outputs: [
+              { amount: new BigNumber(5_000), memo: "", transfer_type: "incoming", isSpent: false },
+            ],
+          },
+        },
+      ],
+      processedBlocks: 5,
+      remainingBlocks: 5,
+      lastProcessedBlock: 100,
+    } as unknown as ShieldedSyncResult;
+    getZCashClient.mockResolvedValue({
+      syncShielded: () =>
+        new Observable<ShieldedSyncResult>(subscriber => {
+          subscriber.next(ironwoodChunk);
+          const sub = transparentDone.subscribe(() => subscriber.error(new Error("engine down")));
+          return () => sub.unsubscribe();
+        }),
+      findBlockHeight: jest.fn(),
+    });
+    const eligible = info({
+      initialAccount: {
+        id: "js:2:zcash:xpub6DZ:",
+        operations: [],
+        bitcoinResources: { utxos: [], walletAccount: walletAccount() },
+        privateInfo: privateInfo({ lastProcessedBlock: 1 }),
+      },
+    });
+
+    const { syncs } = buildSyncObservables(
+      eligible,
+      { syncType: SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED } as SyncConfig,
+      signerContext,
+      testContext,
+    );
+    const [transparent, shielded] = syncs;
+    const shieldedUpdates = lastValueFrom(shielded.pipe(toArray()));
+    const transparentShape = await firstValueFrom(transparent);
+    transparentDone.next();
+    const stopped = (await shieldedUpdates).at(-1);
+
+    expect(transparentShape.balance).toEqual(new BigNumber(75_000));
+    expect(stopped?.privateInfo).toMatchObject({ syncState: "stopped" });
+    expect(stopped).not.toHaveProperty("balance");
   });
 
   it("keeps the transparent leg intact when the shielded leg fails", async () => {

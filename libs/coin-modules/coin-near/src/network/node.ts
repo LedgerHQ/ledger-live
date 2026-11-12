@@ -12,6 +12,7 @@ import {
   encodeTransaction,
 } from "near-api-js";
 import { AccountDoesNotExistError, ContractExecutionError } from "near-api-js/rpc-errors";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import { type NearConfig } from "../config";
 import { MIN_ACCOUNT_BALANCE_BUFFER, VALIDATORS_CACHE_TTL_MS } from "../constants";
 import { canUnstake, canWithdraw, getYoctoThreshold } from "../logic";
@@ -139,7 +140,7 @@ export const getAccount = async (
   // never runs the account bridge's preload step, so the cache would still hold its zeroed default.
   const { storageCost } = await getActionCosts(config);
 
-  const balance = new BigNumber(accountDetails.amount);
+  const balance = readYocto("account balance", accountDetails.amount);
   const storageUsage = storageCost.multipliedBy(accountDetails.storage_usage);
   const minBalanceBuffer = new BigNumber(MIN_ACCOUNT_BALANCE_BUFFER);
 
@@ -165,6 +166,20 @@ export const getAccount = async (
   };
 };
 
+const POSITIVE_INTEGER = /^[1-9]\d*$/;
+const MAX_U128 = new BigNumber(2).pow(128);
+
+const readYocto = (label: string, value: unknown): BigNumber => {
+  const parsed = parseFiniteBigNumber(value);
+  if (!parsed?.isInteger() || parsed.isNegative() || parsed.gte(MAX_U128)) {
+    throw new Error(`near: unreadable ${label}`);
+  }
+  return parsed;
+};
+
+const isUsableGasPrice = (value: string | null | undefined): value is string =>
+  typeof value === "string" && POSITIVE_INTEGER.test(value) && new BigNumber(value).lt(MAX_U128);
+
 type NearStats = {
   gas_price: string | null;
 };
@@ -185,7 +200,7 @@ const getGasPriceFromRpc = async (config: NearConfig): Promise<string> => {
     },
   });
 
-  if (!data.result?.gas_price) {
+  if (!isUsableGasPrice(data.result?.gas_price)) {
     log("Near", "getGasPrice node returned no gas price", data.error);
     throw new Error(data.error?.message || "Near: the node returned no gas price");
   }
@@ -204,7 +219,7 @@ export const getGasPrice = async (config: NearConfig): Promise<string> => {
   const body = await fetchNearblocks<NearV3Response<NearStats>>(config, "/v3/stats");
 
   const gasPrice = body.data?.gas_price;
-  if (!gasPrice) {
+  if (!isUsableGasPrice(gasPrice)) {
     throw new Error("Near: no gas price from the node or the indexer");
   }
 
@@ -513,9 +528,9 @@ const readStakingPosition = async (
     view<boolean>("is_account_unstaked_balance_available"),
   ]);
 
-  const unstaked = new BigNumber(rawUnstaked ?? 0);
+  const unstaked = readYocto("unstaked balance", rawUnstaked ?? 0);
   return {
-    staked: new BigNumber(rawStaked ?? 0),
+    staked: readYocto("staked balance", rawStaked ?? 0),
     available: isAvailable ? unstaked : new BigNumber(0),
     pending: isAvailable ? new BigNumber(0) : unstaked,
     validatorId,

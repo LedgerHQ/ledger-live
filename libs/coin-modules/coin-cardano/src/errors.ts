@@ -66,6 +66,13 @@ export class CardanoInvalidProtoParams extends Error {
   }
 }
 
+export class CardanoUnreadableStakeKeyDeposit extends Error {
+  override name = "CardanoUnreadableStakeKeyDeposit";
+  constructor(message?: string) {
+    super(message || "Unreadable stake key deposit");
+  }
+}
+
 export class CardanoMemoExceededSizeError extends Error {
   override name = "CardanoMemoExceededSizeError";
   constructor(message?: string, fields?: Record<string, unknown>) {

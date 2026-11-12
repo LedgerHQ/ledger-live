@@ -1,5 +1,15 @@
 import BigNumber from "bignumber.js";
-import { canStake, computeAdaBalance, isAlreadyStaking, isValidNumString } from "./logic";
+import { CardanoInvalidProtoParams } from "./errors";
+import { getProtocolParamsFixture } from "./fixtures/protocolParams";
+import {
+  calculateMinAdaForTokens,
+  canStake,
+  computeAdaBalance,
+  isAlreadyStaking,
+  isValidNumString,
+  readExplorerAmount,
+  toTyphonProtocolParams,
+} from "./logic";
 import { CardanoAccount } from "./types";
 
 describe("canStake", () => {
@@ -41,6 +51,8 @@ describe("isAlreadyStaking", () => {
 describe("isValidNumString", () => {
   it("should return false for invalid number", () => {
     expect(isValidNumString("")).toEqual(false);
+    expect(isValidNumString(" ")).toEqual(false);
+    expect(isValidNumString("abc")).toEqual(false);
     expect(isValidNumString(undefined)).toEqual(false);
     expect(isValidNumString(null)).toEqual(false);
     expect(isValidNumString({})).toEqual(false);
@@ -52,6 +64,39 @@ describe("isValidNumString", () => {
     expect(isValidNumString(123.321)).toEqual(true);
     expect(isValidNumString("123")).toEqual(true);
     expect(isValidNumString("123.321")).toEqual(true);
+  });
+});
+
+describe("toTyphonProtocolParams", () => {
+  it("converts valid protocol params", () => {
+    expect(toTyphonProtocolParams(getProtocolParamsFixture()).stakeKeyDeposit).toEqual(
+      new BigNumber(2000000),
+    );
+  });
+
+  it.each(["stakeKeyDeposit", "minFeeRefScriptCostPerByte"] as const)(
+    "throws CardanoInvalidProtoParams on an unreadable %s",
+    field => {
+      expect(() =>
+        toTyphonProtocolParams({ ...getProtocolParamsFixture(), [field]: "abc" }),
+      ).toThrow(CardanoInvalidProtoParams);
+    },
+  );
+
+  it.each([
+    ["utxoCostPerByte", "-1"],
+    ["utxoCostPerByte", "1.5"],
+    ["utxoCostPerByte", "1e1000000"],
+    ["stakeKeyDeposit", "-1"],
+    ["stakeKeyDeposit", "1.5"],
+  ] as const)("throws CardanoInvalidProtoParams on a %s of %p", (field, value) => {
+    expect(() => toTyphonProtocolParams({ ...getProtocolParamsFixture(), [field]: value })).toThrow(
+      CardanoInvalidProtoParams,
+    );
+  });
+
+  it("throws CardanoInvalidProtoParams when the network omits the protocol params", () => {
+    expect(() => toTyphonProtocolParams(undefined)).toThrow(CardanoInvalidProtoParams);
   });
 });
 
@@ -96,5 +141,30 @@ describe("computeAdaBalance", () => {
     });
     expect(total.toFixed()).toBe("1800000");
     expect(spendable.toFixed()).toBe("0");
+  });
+});
+
+describe("calculateMinAdaForTokens", () => {
+  it.each(["abc", "", undefined, "1e1000000"])(
+    "throws CardanoInvalidProtoParams on a %p utxoCostPerByte",
+    utxoCostPerByte => {
+      const tokens = [{ policyId: "a".repeat(56), assetName: "", amount: new BigNumber(1) }];
+
+      expect(() => calculateMinAdaForTokens("addr_test1qz", tokens, utxoCostPerByte)).toThrow(
+        CardanoInvalidProtoParams,
+      );
+    },
+  );
+});
+
+describe("readExplorerAmount", () => {
+  it("reads a lovelace amount", () => {
+    expect(readExplorerAmount("fee", "170000").toFixed()).toBe("170000");
+  });
+
+  it.each(["abc", "", "-1", "1.5", "1e1000000", undefined])("rejects a %p fee", fees => {
+    expect(() => readExplorerAmount("fee", fees)).toThrow(
+      "Cardano: unreadable fee amount from the explorer",
+    );
   });
 });

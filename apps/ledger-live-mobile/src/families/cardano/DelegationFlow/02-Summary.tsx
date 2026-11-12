@@ -2,6 +2,7 @@ import { TrackScreen } from "@shared/analytics-react";
 import { useTheme } from "@react-navigation/native";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
+import { parseAtomicAmount } from "@ledgerhq/live-common/families/cardano/logic";
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { Trans, useTranslation } from "~/context/Locale";
 import { Animated, StyleSheet, View } from "react-native";
@@ -375,6 +376,7 @@ function SummaryWords({
     alwaysShowSign: false,
     showCode: true,
   };
+  const stakeKeyDeposit = parseAtomicAmount(transaction.protocolParams?.stakeKeyDeposit);
 
   const toDelegationPoolData = useMemo(() => {
     return chosenPool
@@ -555,16 +557,12 @@ function SummaryWords({
             </LText>
           }
         />
-        {!(currentDelegation && currentDelegation.poolId) ? (
+        {!currentDelegation?.poolId && stakeKeyDeposit ? (
           <DataField
             label={t("cardano.delegation.stakeKeyRegistrationDeposit")}
             Component={
               <LText numberOfLines={1} semiBold ellipsizeMode="middle" style={[styles.valueText]}>
-                {formatCurrencyUnit(
-                  unit,
-                  new BigNumber(transaction.protocolParams?.stakeKeyDeposit ?? "0"),
-                  formatConfig,
-                )}
+                {formatCurrencyUnit(unit, stakeKeyDeposit, formatConfig)}
               </LText>
             }
           />

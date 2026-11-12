@@ -6,7 +6,13 @@ import { APITransaction } from "../api/api-types";
 import { getAllTransactionsByKeys } from "../api/fetchTransactions";
 import { getDelegationInfo } from "../api/getDelegationInfo";
 import { fetchNetworkInfo } from "../api/getNetworkInfo";
-import { calculateMinAdaForTokens, computeAdaBalance, deriveUtxos, mergeTokens } from "../logic";
+import {
+  calculateMinAdaForTokens,
+  computeAdaBalance,
+  countUnreadableUtxos,
+  deriveUtxos,
+  mergeTokens,
+} from "../logic";
 import {
   EMPTY_CREDENTIAL_KEY,
   extractPaymentKeyFromAddress,
@@ -21,7 +27,7 @@ async function computeMinAdaForTokens(
   tokens: TyphonTypes.Token[],
 ): Promise<BigNumber> {
   const { protocolParams } = await fetchNetworkInfo(config);
-  return calculateMinAdaForTokens(address, tokens, protocolParams.utxoCostPerByte);
+  return calculateMinAdaForTokens(address, tokens, protocolParams?.utxoCostPerByte);
 }
 
 /**
@@ -55,6 +61,10 @@ export async function getBalance(config: CardanoCoinConfig, address: string): Pr
     stakeKey ? getDelegationInfo(config, stakeKey) : Promise.resolve(undefined),
   ]);
 
+  const unreadable = countUnreadableUtxos(transactions, paymentKey);
+  if (unreadable > 0) {
+    throw new Error(`Cardano: ${unreadable} UTXO(s) with an unreadable amount from the explorer`);
+  }
   const utxos = deriveUtxos(transactions, paymentKey);
   const utxosSum = utxos.reduce((sum, u) => sum.plus(u.amount), new BigNumber(0));
   const tokens = mergeTokens(utxos.flatMap(u => u.tokens)).filter(t => t.amount.gt(0));

@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { parseU64Amount } from "./u64Amount";
 import { emptyHistoryCache, encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
@@ -172,7 +173,7 @@ function buildTokenAccount(
  * belongs to the transfer, which is the sub-account's row.
  */
 export function buildParentOperation(op: RawOperation, accountId: string): ConcordiumOperation {
-  const fee = new BigNumber(op.fee);
+  const fee = parseU64Amount(op.fee) ?? new BigNumber(0);
   const paysFee = fee.isGreaterThan(0);
 
   const parent = baseOperation(
@@ -181,6 +182,7 @@ export function buildParentOperation(op: RawOperation, accountId: string): Conco
     paysFee ? "FEES" : "NONE",
     // `FEES` is an outgoing type, so this value is what gets debited from CCD.
     paysFee ? fee : new BigNumber(0),
+    fee,
   );
 
   return op.rejectCode === undefined
@@ -283,7 +285,7 @@ export function mergeSubAccounts(
 
 type ResolvedEntry =
   | { entry: PltAccountToken; token: TokenCurrency; tokenId: string; balance: BigNumber }
-  | { untrusted: string; tokenId: string }
+  | { untrusted: string; tokenId: string; unreadableBalance?: true }
   | undefined;
 
 /**
@@ -381,13 +383,17 @@ function resolveEntries({
       // An absent or non-numeric balance would otherwise reach BigNumber and
       // produce a NaN sub-account, which renders as a broken amount rather than
       // as an error.
-      const balance = new BigNumber(entry.tokenAccountState?.balance?.value);
-      if (!balance.isFinite()) {
+      const balance = parseU64Amount(entry.tokenAccountState?.balance?.value);
+      if (!balance) {
         log(
           "concordium-sync",
           `PLT ${tokenId} has an unusable balance, keeping the previous sub-account`,
         );
-        return { untrusted: encodeTokenAccountId(accountId, token), tokenId };
+        return {
+          untrusted: encodeTokenAccountId(accountId, token),
+          tokenId,
+          unreadableBalance: true,
+        };
       }
 
       return { entry, token, tokenId, balance };
@@ -544,7 +550,9 @@ export async function resolveTokenSubAccounts({
   // are already covered by the CAL and blacklist inputs to `getSyncHash`, so
   // treating them as unattributed would re-read the whole history every sync
   // for as long as the account holds one.
-  const unreadableEntry = accountTokens.some(entry => !isUsableEntry(entry));
+  const unreadableEntry =
+    accountTokens.some(entry => !isUsableEntry(entry)) ||
+    resolved.some(item => !!item && "unreadableBalance" in item);
 
   return {
     kind: "resolved",

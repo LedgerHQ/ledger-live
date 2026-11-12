@@ -10,8 +10,10 @@ import {
 import ShelleyTypeAddress from "@stricahq/typhonjs/dist/address/ShelleyTypeAddress";
 import bech32 from "bech32";
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import groupBy from "lodash/groupBy";
 import { APITransaction, HashType } from "./api/api-types";
+import { CardanoInvalidProtoParams } from "./errors";
 import {
   CARDANO_COIN_TYPE,
   CARDANO_MAX_SUPPLY,
@@ -255,6 +257,18 @@ export type DerivedUtxo = {
  * from the xpub), but the single-address CoinModule path covers just the passed credential.
  */
 export function deriveUtxos(transactions: APITransaction[], paymentKey: string): DerivedUtxo[] {
+  return readUnspentOutputs(transactions, paymentKey).flatMap(utxo => utxo ?? []);
+}
+
+/** Counts the unspent outputs of the credential that {@link deriveUtxos} leaves out as unreadable. */
+export function countUnreadableUtxos(transactions: APITransaction[], paymentKey: string): number {
+  return readUnspentOutputs(transactions, paymentKey).filter(utxo => !utxo).length;
+}
+
+function readUnspentOutputs(
+  transactions: APITransaction[],
+  paymentKey: string,
+): (DerivedUtxo | undefined)[] {
   const spent = new Set<string>();
   for (const tx of transactions) {
     for (const input of tx.inputs) {
@@ -262,24 +276,21 @@ export function deriveUtxos(transactions: APITransaction[], paymentKey: string):
     }
   }
 
-  const utxos: DerivedUtxo[] = [];
-  for (const tx of transactions) {
-    tx.outputs.forEach((output, index) => {
-      if (output.paymentKey !== paymentKey) return;
-      if (spent.has(`${tx.hash}#${index}`)) return;
-      utxos.push({
-        txId: tx.hash,
-        index,
-        amount: new BigNumber(output.value),
-        tokens: output.tokens.map(t => ({
-          policyId: t.policyId,
-          assetName: t.assetName,
-          amount: new BigNumber(t.value),
-        })),
-      });
-    });
-  }
-  return utxos;
+  return transactions.flatMap(tx =>
+    tx.outputs.flatMap((output, index) => {
+      if (output.paymentKey !== paymentKey) return [];
+      if (spent.has(`${tx.hash}#${index}`)) return [];
+      const amount = parseAtomicAmount(output.value);
+      const tokens: TyphonTypes.Token[] = [];
+      for (const t of output.tokens) {
+        const tokenAmount = parseAtomicAmount(t.value, MAX_TOKEN_QUANTITY);
+        if (!tokenAmount) break;
+        tokens.push({ policyId: t.policyId, assetName: t.assetName, amount: tokenAmount });
+      }
+      if (!amount || tokens.length !== output.tokens.length) return [undefined];
+      return [{ txId: tx.hash, index, amount, tokens }];
+    }),
+  );
 }
 
 /**
@@ -409,15 +420,30 @@ export function getBech32PoolId(poolId: string, networkName: string): string {
   return encoded;
 }
 
+const MAX_LOVELACE = new BigNumber(CARDANO_MAX_SUPPLY).times(1_000_000);
+export const MAX_TOKEN_QUANTITY = new BigNumber(2).pow(64).minus(1);
+
+/** A lovelace (or, with its own `max`, token) amount: a non-negative integer up to `max`. */
+export function parseAtomicAmount(value: unknown, max = MAX_LOVELACE): BigNumber | undefined {
+  const parsed = parseFiniteBigNumber(value);
+  return parsed?.isInteger() && !parsed.isNegative() && parsed.lte(max) ? parsed : undefined;
+}
+
+/** Reads an amount the explorer reported, rejecting one it left unreadable. */
+export function readExplorerAmount(label: string, value: unknown, max = MAX_LOVELACE): BigNumber {
+  const parsed = parseAtomicAmount(value, max);
+  if (!parsed) throw new Error(`Cardano: unreadable ${label} amount from the explorer`);
+  return parsed;
+}
+
 export function isValidNumString(value: unknown): boolean {
   if (typeof value !== "string" && typeof value !== "number") return false;
-  if (isNaN(Number(value))) return false;
-  if (new BigNumber(value).isNaN()) return false;
-  return true;
+  return !!parseFiniteBigNumber(value)?.abs().lte(MAX_LOVELACE);
 }
 
 /** Convert the Strica `/v1/*` ProtocolParams (string-encoded) into Typhon's BigNumber/number shape. */
-export function toTyphonProtocolParams(pp: ProtocolParams): TyphonTypes.ProtocolParams {
+export function toTyphonProtocolParams(pp: ProtocolParams | undefined): TyphonTypes.ProtocolParams {
+  if (!isProtocolParamsValid(pp)) throw new CardanoInvalidProtoParams();
   return {
     minFeeA: new BigNumber(pp.minFeeA),
     minFeeB: new BigNumber(pp.minFeeB),
@@ -434,7 +460,8 @@ export function toTyphonProtocolParams(pp: ProtocolParams): TyphonTypes.Protocol
   };
 }
 
-export function isProtocolParamsValid(pp: ProtocolParams): boolean {
+export function isProtocolParamsValid(pp: ProtocolParams | undefined): pp is ProtocolParams {
+  if (!pp) return false;
   const paramsRequiredCheck = [
     pp.minFeeA,
     pp.minFeeB,
@@ -446,8 +473,13 @@ export function isProtocolParamsValid(pp: ProtocolParams): boolean {
     pp.maxTxSize,
     pp.maxValueSize,
     pp.utxoCostPerByte,
+    pp.minFeeRefScriptCostPerByte,
   ];
-  return paramsRequiredCheck.every(isValidNumString);
+  return (
+    paramsRequiredCheck.every(isValidNumString) &&
+    !!parseAtomicAmount(pp.utxoCostPerByte) &&
+    !!parseAtomicAmount(pp.stakeKeyDeposit)
+  );
 }
 
 export function getRewardAddress(stakeKey: string, networkId: number): TyphonAddress.RewardAddress {
@@ -472,7 +504,7 @@ export function findStakeRegistration(
       c => c.stakeCredential.type === HashType.ADDRESS && c.stakeCredential.key === stakeKey,
     );
     if (match) {
-      return stakeKeyDeposit;
+      return stakeKeyDeposit ?? "";
     }
   }
 
@@ -501,7 +533,7 @@ export function findStakeDeRegistration(
       c => c.stakeCredential.type === HashType.ADDRESS && c.stakeCredential.key === stakeKey,
     );
     if (match) {
-      return stakeKeyDeposit;
+      return stakeKeyDeposit ?? "";
     }
   }
 
@@ -510,11 +542,24 @@ export function findStakeDeRegistration(
     const stakeAddress = getRewardAddress(stakeKey, networkId);
     const match = tx.certificate.stakeDeRegsConway.find(w => stakeAddress.getHex() === w.stakeHex);
     if (match) {
-      return match.deposit;
+      return match.deposit ?? "";
     }
   }
 
   return undefined;
+}
+
+/** Reads a refund or withdrawal found on a transaction, rejecting one the explorer left unreadable. */
+export function parseValueAdjustment(
+  label: string,
+  value: string | undefined,
+): BigNumber | undefined {
+  if (value === undefined) return undefined;
+  const parsed = parseAtomicAmount(value);
+  if (!parsed) {
+    throw new Error(`Cardano: unreadable ${label} amount from the explorer`);
+  }
+  return parsed;
 }
 
 export function findWithdrawal(tx: APITransaction, stakeKey: string): string | undefined {
@@ -526,7 +571,7 @@ export function findWithdrawal(tx: APITransaction, stakeKey: string): string | u
     w => w.stakeCredential.type === HashType.ADDRESS && w.stakeCredential.key === stakeKey,
   );
 
-  return match?.amount;
+  return match ? (match.amount ?? "") : undefined;
 }
 
 /**
@@ -538,16 +583,18 @@ export function findWithdrawal(tx: APITransaction, stakeKey: string): string | u
 export function calculateMinAdaForTokens(
   address: string,
   tokens: TyphonTypes.Token[],
-  utxoCostPerByte: string | number,
+  utxoCostPerByte: string | number | undefined,
 ): BigNumber {
   if (!tokens.length) return new BigNumber(0);
+  const costPerByte = parseAtomicAmount(utxoCostPerByte);
+  if (!costPerByte) throw new CardanoInvalidProtoParams();
   return TyphonUtils.calculateMinUtxoAmountBabbage(
     {
       address: TyphonUtils.getAddressFromString(address),
       amount: new BigNumber(CARDANO_MAX_SUPPLY),
       tokens,
     },
-    new BigNumber(utxoCostPerByte),
+    costPerByte,
   );
 }
 

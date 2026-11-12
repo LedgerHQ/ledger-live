@@ -57,11 +57,14 @@ describe("getValidators", () => {
     expect(v.balance).toBe(1000000000000000000n); // parsed from totalActiveStake, not hardcoded 0
   });
 
-  it("falls back to 0 balance for an unparseable totalActiveStake", async () => {
-    const api = makeApi([makeProvider({ totalActiveStake: "not-a-number" })]);
-    const result = await getValidators(api);
-    expect(result.items[0].balance).toBe(0n);
-  });
+  it.each(["not-a-number", "1e1000000", "-1", "1.5"])(
+    "falls back to 0 balance for a %p totalActiveStake",
+    async totalActiveStake => {
+      const api = makeApi([makeProvider({ totalActiveStake })]);
+      const result = await getValidators(api);
+      expect(result.items[0].balance).toBe(0n);
+    },
+  );
 
   it("filters out disabled validators", async () => {
     const api = makeApi([

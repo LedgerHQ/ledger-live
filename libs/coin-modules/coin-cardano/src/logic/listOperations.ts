@@ -21,6 +21,7 @@ import {
   findStakeDeRegistration,
   findWithdrawal,
   getOperationType,
+  parseValueAdjustment,
 } from "../logic";
 import { getNetworkParameters } from "../networks";
 import {
@@ -194,16 +195,16 @@ function toNativeOperation(
       networkParams.networkId,
       stakeKeyDeposit,
     );
-    if (deRegistration) {
-      const refundAmount = safeBigInt(deRegistration);
-      operationValue = operationValue - refundAmount;
+    const refundAmount = parseValueAdjustment("refund", deRegistration);
+    if (refundAmount) {
+      operationValue = operationValue - BigInt(refundAmount.toFixed(0));
       details.refund = deRegistration;
     }
 
     const withdrawal = findWithdrawal(tx, stakeKey);
-    if (withdrawal) {
-      const withdrawalAmount = safeBigInt(withdrawal);
-      operationValue = operationValue - withdrawalAmount;
+    const withdrawalAmount = parseValueAdjustment("withdrawal", withdrawal);
+    if (withdrawalAmount) {
+      operationValue = operationValue - BigInt(withdrawalAmount.toFixed(0));
       details.rewards = withdrawal;
     }
   }

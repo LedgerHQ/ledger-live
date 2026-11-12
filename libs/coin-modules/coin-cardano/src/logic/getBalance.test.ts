@@ -91,6 +91,31 @@ describe("getBalance", () => {
     expect(native.value).toBe(3000000n);
   });
 
+  it.each([
+    ["an unreadable ADA amount", output(PAYMENT_KEY, "abc")],
+    ["an ADA amount above the supply", output(PAYMENT_KEY, "1e1000000")],
+    [
+      "a token amount above the u64 range",
+      output(PAYMENT_KEY, "5000000", [{ policyId: "a".repeat(56), assetName: "", value: "1e30" }]),
+    ],
+    ["a fractional ADA amount", output(PAYMENT_KEY, "1.5")],
+    ["a negative ADA amount", output(PAYMENT_KEY, "-1")],
+    [
+      "a fractional token amount",
+      output(PAYMENT_KEY, "5000000", [{ policyId: "a".repeat(56), assetName: "", value: "0.5" }]),
+    ],
+    [
+      "an unreadable token amount",
+      output(PAYMENT_KEY, "5000000", [{ policyId: "a".repeat(56), assetName: "", value: "" }]),
+    ],
+  ])("rejects instead of reporting a partial balance for %s", async (_label, badOutput) => {
+    mockFetchTxs.mockResolvedValue(
+      paged([makeTx({ hash: "a", outputs: [output(PAYMENT_KEY, "5000000"), badOutput] })]),
+    );
+
+    await expect(getBalance(config, ADDRESS)).rejects.toThrow("unreadable amount");
+  });
+
   it("returns a token balance per held asset", async () => {
     mockFetchNetworkInfo.mockResolvedValue({
       protocolParams: { utxoCostPerByte: "4310" },

@@ -7,6 +7,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import {
   getMaxPrivateRecordsForAccount,
   isAleoAccount,
+  readRecordAmount,
   selectPrivateRecordsForAmount,
   sumPrivateRecords,
 } from "@ledgerhq/live-common/families/aleo/utils";
@@ -60,7 +61,7 @@ function getRecordLimitedAmount(account: AleoAccount | AleoTokenAccount): BigNum
       : account.aleoResources?.unspentPrivateRecords) ?? [];
   const maxRecords = getMaxPrivateRecordsForAccount(account);
   const spendableRecordCount = unspentRecords.filter(record =>
-    new BigNumber(record.microcredits).isGreaterThan(0),
+    readRecordAmount(record.microcredits)?.isGreaterThan(0),
   ).length;
   if (spendableRecordCount <= maxRecords) return null;
 

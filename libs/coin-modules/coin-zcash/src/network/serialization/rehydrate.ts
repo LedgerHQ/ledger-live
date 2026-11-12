@@ -15,6 +15,8 @@
  */
 
 import BigNumber from "bignumber.js";
+import { ZcashUnreadableAmount } from "../../errors";
+import { parseZatoshis } from "../../logic/zatoshis";
 import type {
   DecryptedOutput,
   DecryptedOutputRaw,
@@ -24,11 +26,13 @@ import type {
   ShieldedTransactionRaw,
 } from "../types";
 
-export function rehydrateOutput(raw: DecryptedOutputRaw): DecryptedOutput {
+function parseOutput(raw: DecryptedOutputRaw): DecryptedOutput | undefined {
+  const amount = parseZatoshis(raw.amount);
+  if (!amount) return undefined;
   return {
     memo: raw.memo,
     transfer_type: raw.transfer_type,
-    amount: new BigNumber(raw.amount),
+    amount,
     // pass-through, no BigNumber conversion needed
     ...(raw.nullifier !== undefined && { nullifier: raw.nullifier }),
     ...(raw.rho !== undefined && { rho: raw.rho }),
@@ -40,6 +44,36 @@ export function rehydrateOutput(raw: DecryptedOutputRaw): DecryptedOutput {
   };
 }
 
+export function rehydrateOutput(raw: DecryptedOutputRaw): DecryptedOutput {
+  const output = parseOutput(raw);
+  if (!output) throw new ZcashUnreadableAmount("zcash: unreadable note amount");
+  return output;
+}
+
+export function rehydrateOutputs(raws: DecryptedOutputRaw[]): DecryptedOutput[] {
+  return raws.flatMap(raw => parseOutput(raw) ?? []);
+}
+
+function rehydrateScannedOutputs(txId: string, raws: DecryptedOutputRaw[]): DecryptedOutput[] {
+  return raws.map(raw => {
+    const output = parseOutput(raw);
+    if (!output) {
+      throw new ZcashUnreadableAmount(
+        `zcash: unreadable note amount in scanned transaction ${txId}`,
+      );
+    }
+    return output;
+  });
+}
+
+function readScannedZatoshis(txId: string, value: string): BigNumber {
+  const parsed = parseZatoshis(value);
+  if (!parsed) {
+    throw new ZcashUnreadableAmount(`zcash: unreadable amount in scanned transaction ${txId}`);
+  }
+  return parsed;
+}
+
 export function rehydrateTransaction(raw: ShieldedTransactionRaw): ShieldedTransaction {
   return {
     id: raw.id,
@@ -47,22 +81,22 @@ export function rehydrateTransaction(raw: ShieldedTransactionRaw): ShieldedTrans
     blockHeight: raw.blockHeight,
     blockHash: raw.blockHash,
     timestamp: raw.timestamp,
-    fee: new BigNumber(raw.fee),
+    fee: readScannedZatoshis(raw.id, raw.fee),
     // Absent on accounts persisted before the scanner reported the transparent
     // bundle. Kept absent rather than read as zero, which would be a claim
     // about the transaction rather than about what we know of it.
     ...(raw.transparentOut !== undefined && {
-      transparentOut: new BigNumber(raw.transparentOut),
+      transparentOut: readScannedZatoshis(raw.id, raw.transparentOut),
     }),
     ...(raw.hasTransparentInputs !== undefined && {
       hasTransparentInputs: raw.hasTransparentInputs,
     }),
     ...(raw.decryptedData && {
       decryptedData: {
-        orchard_outputs: raw.decryptedData.orchard_outputs.map(rehydrateOutput),
-        sapling_outputs: raw.decryptedData.sapling_outputs.map(rehydrateOutput),
+        orchard_outputs: rehydrateScannedOutputs(raw.id, raw.decryptedData.orchard_outputs),
+        sapling_outputs: rehydrateScannedOutputs(raw.id, raw.decryptedData.sapling_outputs),
         ...(raw.decryptedData.ironwood_outputs && {
-          ironwood_outputs: raw.decryptedData.ironwood_outputs.map(rehydrateOutput),
+          ironwood_outputs: rehydrateScannedOutputs(raw.id, raw.decryptedData.ironwood_outputs),
         }),
       },
     }),

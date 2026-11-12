@@ -2,6 +2,7 @@ import { TrackScreen } from "@shared/analytics-react";
 import { useTheme } from "@react-navigation/native";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
+import { parseAtomicAmount } from "@ledgerhq/live-common/families/cardano/logic";
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { Trans, useTranslation } from "~/context/Locale";
 import { StyleSheet, View } from "react-native";
@@ -266,8 +267,8 @@ function SummaryWords({
   const { colors } = useTheme();
 
   invariant((account as CardanoAccount).cardanoResources.delegation, "delegation must be defined");
-  const depositRefundAmount = new BigNumber(
-    (account as CardanoAccount).cardanoResources.delegation!.deposit,
+  const depositRefundAmount = parseAtomicAmount(
+    (account as CardanoAccount).cardanoResources.delegation?.deposit,
   );
 
   const formatConfig = {
@@ -301,14 +302,16 @@ function SummaryWords({
           }
         />
 
-        <DataField
-          label={t("cardano.delegation.stakeKeyRegistrationDepositRefund")}
-          Component={
-            <LText numberOfLines={1} semiBold ellipsizeMode="middle" style={[styles.valueText]}>
-              {formatCurrencyUnit(unit, depositRefundAmount, formatConfig)}
-            </LText>
-          }
-        />
+        {depositRefundAmount ? (
+          <DataField
+            label={t("cardano.delegation.stakeKeyRegistrationDepositRefund")}
+            Component={
+              <LText numberOfLines={1} semiBold ellipsizeMode="middle" style={[styles.valueText]}>
+                {formatCurrencyUnit(unit, depositRefundAmount, formatConfig)}
+              </LText>
+            }
+          />
+        ) : null}
       </View>
     </>
   );

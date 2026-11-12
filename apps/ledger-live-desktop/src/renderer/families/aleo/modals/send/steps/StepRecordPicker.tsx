@@ -14,7 +14,7 @@ import type {
   AleoUnspentRecord,
   Transaction as AleoTransaction,
 } from "@ledgerhq/live-common/families/aleo/types";
-import { isPublicTransaction } from "@ledgerhq/live-common/families/aleo/utils";
+import { isPublicTransaction, readRecordAmount } from "@ledgerhq/live-common/families/aleo/utils";
 import { useSelector } from "LLD/hooks/redux";
 import Label from "~/renderer/components/Label";
 import type { StepProps } from "~/renderer/modals/Send/types";
@@ -115,12 +115,17 @@ const AleoStepRecordPicker = ({ account, transaction, status, updateTransaction 
         ? account.unspentPrivateRecords
         : account.aleoResources?.unspentPrivateRecords) ?? [];
 
+    const readableRecords = accountRecords
+      .flatMap(record => {
+        const value = readRecordAmount(record.microcredits);
+        return value?.isGreaterThan(0) ? [{ record, value }] : [];
+      })
+      .sort((a, b) => b.value.comparedTo(a.value) ?? 0)
+      .map(({ record }) => record);
+
     return {
-      allUnspentRecords: accountRecords.filter(r => new BigNumber(r.microcredits).isGreaterThan(0)),
-      unspentRecords: accountRecords
-        .filter(r => new BigNumber(r.microcredits).isGreaterThan(0))
-        .sort((a, b) => new BigNumber(b.microcredits).comparedTo(new BigNumber(a.microcredits)))
-        .slice(0, MAX_RECORDS_DISPLAYED),
+      allUnspentRecords: readableRecords,
+      unspentRecords: readableRecords.slice(0, MAX_RECORDS_DISPLAYED),
     };
   }, [account]);
 

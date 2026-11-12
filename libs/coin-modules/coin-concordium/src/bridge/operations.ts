@@ -3,6 +3,7 @@ import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization/index";
 import type { Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import type { ConcordiumOperation, ConcordiumOperationExtra, RawOperation } from "../types";
+import { parseU64Amount } from "./u64Amount";
 
 /**
  * Spread conditionally rather than assigned: `exactOptionalPropertyTypes` is on,
@@ -25,6 +26,7 @@ export function baseOperation(
   accountId: string,
   type: OperationType,
   value: BigNumber,
+  fee: BigNumber = parseU64Amount(op.fee) ?? new BigNumber(0),
 ): ConcordiumOperation {
   return {
     id: encodeOperationId(accountId, op.hash, type),
@@ -32,7 +34,7 @@ export function baseOperation(
     accountId,
     type,
     value,
-    fee: new BigNumber(op.fee),
+    fee,
     blockHash: op.blockHash,
     blockHeight: op.blockHeight,
     senders: [op.sender],

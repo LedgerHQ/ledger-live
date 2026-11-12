@@ -14,6 +14,7 @@ import {
   getAccountStakeCredential,
   getBech32PoolId,
   getBipPathString,
+  parseAtomicAmount,
 } from "./logic";
 import { CardanoAccount, Transaction, TransactionStatus } from "./types";
 
@@ -58,27 +59,32 @@ async function getDeviceTransactionConfig({
         },
       ];
 
-      const recipient = TyphonUtils.getAddressFromString(transaction.recipient);
-      const requiredMinAdaForTokens = TyphonUtils.calculateMinUtxoAmountBabbage(
-        {
-          address: recipient,
-          amount: new BigNumber(CARDANO_MAX_SUPPLY),
-          tokens: tokensToSend,
-        },
-        new BigNumber(cardanoResources.protocolParams.utxoCostPerByte),
+      const utxoCostPerByte = parseAtomicAmount(
+        (transaction.protocolParams ?? cardanoResources.protocolParams).utxoCostPerByte,
       );
-      fields.push({
-        type: "text",
-        label: "ADA",
-        value: formatCurrencyUnit(
-          getAccountCurrency(mainAccount).units[0],
-          requiredMinAdaForTokens,
+      if (utxoCostPerByte) {
+        const recipient = TyphonUtils.getAddressFromString(transaction.recipient);
+        const requiredMinAdaForTokens = TyphonUtils.calculateMinUtxoAmountBabbage(
           {
-            showCode: true,
-            disableRounding: true,
+            address: recipient,
+            amount: new BigNumber(CARDANO_MAX_SUPPLY),
+            tokens: tokensToSend,
           },
-        ),
-      });
+          utxoCostPerByte,
+        );
+        fields.push({
+          type: "text",
+          label: "ADA",
+          value: formatCurrencyUnit(
+            getAccountCurrency(mainAccount).units[0],
+            requiredMinAdaForTokens,
+            {
+              showCode: true,
+              disableRounding: true,
+            },
+          ),
+        });
+      }
       fields.push({
         type: "text",
         label: "Token Name",

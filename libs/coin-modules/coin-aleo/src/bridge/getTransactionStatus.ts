@@ -30,6 +30,8 @@ import {
   isTokenTransaction,
   getAleoSubAccount,
   sumPrivateRecords,
+  readMicrocredits,
+  readRecordAmount,
 } from "../logic/utils";
 import aleoCoinConfig from "../config";
 import {
@@ -86,6 +88,7 @@ function resolveAmountRecords(account: AleoAccount, transaction: TransactionPriv
     .filter((record): record is AleoUnspentRecord => record !== null);
 
   const totalValue = sumPrivateRecords(records);
+  const hasUnreadableRecord = records.some(record => !readRecordAmount(record.microcredits));
 
   const privateBalance = isTokenTx
     ? (tokenAccount?.privateBalance ?? new BigNumber(0))
@@ -94,6 +97,7 @@ function resolveAmountRecords(account: AleoAccount, transaction: TransactionPriv
   return {
     records,
     totalValue,
+    hasUnreadableRecord,
     privateBalance,
     maxRecords,
   };
@@ -135,12 +139,10 @@ function validatePrivateTransaction({
   config: AleoCoinConfig;
 }): Errors {
   const errors: Errors = {};
-  const { records, totalValue, privateBalance, maxRecords } = resolveAmountRecords(
-    account,
-    transaction,
-  );
+  const { records, totalValue, hasUnreadableRecord, privateBalance, maxRecords } =
+    resolveAmountRecords(account, transaction);
 
-  if (config.recordPickingStrategy === "manual" && records.length === 0) {
+  if ((config.recordPickingStrategy === "manual" && records.length === 0) || hasUnreadableRecord) {
     errors.amountRecord = new AleoAmountRecordRequired();
   } else if (config.recordPickingStrategy === "auto" && records.length === 0) {
     errors.amount = resolveAutoPickingAmountError(amount, privateBalance);
@@ -179,7 +181,7 @@ function validatePrivateFeeRecord({
     ? getRecordByCommitment({ account, commitment: feeRecordCommitment })
     : null;
   const availableNativeRecords = (account.aleoResources?.unspentPrivateRecords ?? []).filter(
-    record => new BigNumber(record.microcredits).isGreaterThan(0),
+    record => readMicrocredits(record.microcredits)?.isGreaterThan(0),
   );
 
   // Token transactions only need 1 native record for the fee (amount records come from the token pool).
@@ -198,7 +200,8 @@ function validatePrivateFeeRecord({
     return errors;
   }
 
-  if (estimatedFees.gt(new BigNumber(feeRecord.microcredits))) {
+  const feeRecordAmount = readMicrocredits(feeRecord.microcredits);
+  if (!feeRecordAmount || estimatedFees.gt(feeRecordAmount)) {
     errors.feeRecord = new AleoFeeRecordInsufficientBalance();
   }
 

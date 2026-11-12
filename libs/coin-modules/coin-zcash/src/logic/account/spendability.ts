@@ -80,7 +80,7 @@ function collectAllSelectableIronwoodNotes(
   return collectIronwoodNotesWithMaturity(account)
     .filter(({ note, mature }) => mature && !reserved.has(note.nullifier))
     .map(({ note }) => note)
-    .sort((a, b) => b.amount.comparedTo(a.amount));
+    .sort((a, b) => b.amount.comparedTo(a.amount) ?? 0);
 }
 
 /**

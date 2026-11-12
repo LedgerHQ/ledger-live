@@ -10,7 +10,7 @@ import CounterValue from "~/renderer/components/CounterValue";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import { StepProps } from "../types";
-import BigNumber from "bignumber.js";
+import { parseAtomicAmount } from "@ledgerhq/live-common/families/cardano/logic";
 import Alert from "~/renderer/components/Alert";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import IconExclamationCircle from "~/renderer/icons/ExclamationCircle";
@@ -35,7 +35,7 @@ function StepSummary(props: StepProps) {
   if (!account || !transaction || !account.cardanoResources.delegation) return null;
 
   const feesCurrency = getAccountCurrency(account);
-  const stakeKeyDeposit = account.cardanoResources.delegation.deposit;
+  const stakeKeyDeposit = parseAtomicAmount(account.cardanoResources.delegation.deposit);
 
   return (
     <Box flow={4} mx={40}>
@@ -53,24 +53,28 @@ function StepSummary(props: StepProps) {
         </Box>
         <Separator />
 
-        <Box horizontal justifyContent="space-between" mt={1}>
-          <Text ff="Inter|Medium" color="neutral.c60" fontSize={4}>
-            <Trans i18nKey="cardano.unDelegation.refund" />
-          </Text>
-          <Box>
-            <FormattedVal
-              color={"neutral.c80"}
-              disableRounding
-              unit={accountUnit}
-              alwaysShowValue
-              val={new BigNumber(stakeKeyDeposit)}
-              fontSize={4}
-              inline
-              showCode
-            />
-          </Box>
-        </Box>
-        <Separator />
+        {stakeKeyDeposit ? (
+          <>
+            <Box horizontal justifyContent="space-between" mt={1}>
+              <Text ff="Inter|Medium" color="neutral.c60" fontSize={4}>
+                <Trans i18nKey="cardano.unDelegation.refund" />
+              </Text>
+              <Box>
+                <FormattedVal
+                  color={"neutral.c80"}
+                  disableRounding
+                  unit={accountUnit}
+                  alwaysShowValue
+                  val={stakeKeyDeposit}
+                  fontSize={4}
+                  inline
+                  showCode
+                />
+              </Box>
+            </Box>
+            <Separator />
+          </>
+        ) : null}
         <Box horizontal justifyContent="space-between">
           <Text
             ff="Inter|Medium"

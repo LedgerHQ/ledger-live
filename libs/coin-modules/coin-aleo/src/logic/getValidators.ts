@@ -10,6 +10,7 @@ import {
   isRecord,
   isValidatorBondable,
   parseTotalSupply,
+  readMicrocredits,
 } from "./utils";
 import type {
   AleoCommitteeMember,
@@ -76,10 +77,8 @@ export const getValidators = makeLRUCache(
     const totalSupplyCredits = parseTotalSupply(totalSupply);
     // A zero or unparseable total is treated as absent rather than divided by: it would make
     // every validator's stake share infinite, flagging the whole list as non-earning.
-    const parsedTotalStake =
-      committee.total_stake === undefined ? null : new BigNumber(committee.total_stake);
-    const totalStakeMicrocredits =
-      parsedTotalStake?.isFinite() && parsedTotalStake.isGreaterThan(0) ? parsedTotalStake : null;
+    const parsedTotalStake = readMicrocredits(committee.total_stake);
+    const totalStakeMicrocredits = parsedTotalStake?.isGreaterThan(0) ? parsedTotalStake : null;
 
     if (totalSupplyCredits === null || totalStakeMicrocredits === null) {
       log("aleo/getValidators", "no estimated rate: missing total supply or total stake", {

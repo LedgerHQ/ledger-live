@@ -285,7 +285,7 @@ export function selectNotes(
   marginalFee: number,
 ): CoinSelectionResult | undefined {
   // Sort largest-first to minimize action count
-  const sorted = [...spendableNotes].sort((a, b) => b.amount.comparedTo(a.amount));
+  const sorted = [...spendableNotes].sort((a, b) => b.amount.comparedTo(a.amount) ?? 0);
 
   // Iterative fee resolution (converges in <= 3 rounds for practical sizes)
   let fee = new BigNumber(zip317MinimumFee(marginalFee)); // initial estimate: 2-action minimum

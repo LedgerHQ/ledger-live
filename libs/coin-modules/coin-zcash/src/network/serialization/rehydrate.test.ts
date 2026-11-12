@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
-import { rehydrateTransaction, rehydrateSyncResult } from "./rehydrate";
+import { rehydrateOutput, rehydrateTransaction, rehydrateSyncResult } from "./rehydrate";
 import type { ShieldedTransactionRaw, ShieldedSyncResultRaw } from "../types";
+import { ZcashUnreadableAmount } from "../../errors";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -22,7 +23,29 @@ function makeRawTx(overrides: Partial<ShieldedTransactionRaw> = {}): ShieldedTra
 // rehydrateTransaction
 // ---------------------------------------------------------------------------
 
+describe("rehydrateOutput", () => {
+  it("converts the amount to BigNumber", () => {
+    const result = rehydrateOutput({ amount: "500000", memo: "", transfer_type: "incoming" });
+
+    expect(result.amount.toFixed()).toBe("500000");
+  });
+
+  it("throws on an unreadable amount", () => {
+    expect(() => rehydrateOutput({ amount: "abc", memo: "", transfer_type: "incoming" })).toThrow(
+      "unreadable note amount",
+    );
+  });
+});
+
 describe("rehydrateTransaction", () => {
+  it.each([
+    ["fee", { fee: "abc" }],
+    ["fee", { fee: "1e1000000" }],
+    ["transparent output", { transparentOut: "" }],
+  ])("rejects a scanned transaction with an unreadable %s", (_label, overrides) => {
+    expect(() => rehydrateTransaction(makeRawTx(overrides))).toThrow(ZcashUnreadableAmount);
+  });
+
   it("converts scalar fields and fee to BigNumber", () => {
     const raw = makeRawTx();
     const result = rehydrateTransaction(raw);
@@ -66,6 +89,24 @@ describe("rehydrateTransaction", () => {
       ],
     });
   });
+
+  it.each(["orchard_outputs", "sapling_outputs", "ironwood_outputs"] as const)(
+    "rejects a scanned chunk whose %s carry an unreadable amount, so its cursor is not committed",
+    pool => {
+      const raw = makeRawTx({
+        decryptedData: {
+          orchard_outputs: [],
+          sapling_outputs: [],
+          ironwood_outputs: [],
+          [pool]: [{ amount: "abc", memo: "", transfer_type: "incoming" }],
+        },
+      });
+
+      expect(() => rehydrateTransaction(raw)).toThrow(
+        "zcash: unreadable note amount in scanned transaction txid-abc",
+      );
+    },
+  );
 
   it("handles empty orchard and sapling arrays in decryptedData", () => {
     const raw = makeRawTx({

@@ -63,6 +63,7 @@ describe("getTransactionStatus", () => {
     const transaction = {
       type: "send",
       amount: BigNumber(0),
+      fees: BigNumber(ICP_FEES),
       memo: "random memo for unit test",
     } as Transaction;
     const status = await getTransactionStatus(account, transaction);
@@ -78,6 +79,7 @@ describe("getTransactionStatus", () => {
     const transaction = {
       type: "send",
       amount: BigNumber(0),
+      fees: BigNumber(ICP_FEES),
       memo: "random memo for unit test",
     } as Transaction;
     const status = await getTransactionStatus(account, transaction);

@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import { getProtocolParamsFixture } from "../fixtures/protocolParams";
 import { getCardanoAccountFixture } from "../fixtures/accounts";
 import { buildTransaction } from "../buildTransaction";
-import { CardanoMinAmountError } from "../errors";
+import { CardanoInvalidProtoParams, CardanoMinAmountError } from "../errors";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
 import type { Transaction } from "../types";
 import { getSendTransactionStatus } from "./send";
@@ -105,6 +105,65 @@ describe("getSendTransactionStatus", () => {
     });
 
     expect(status.errors.amount).toBeUndefined();
+  });
+
+  it("reports invalid protocol params as an amount error when the build rejects them", async () => {
+    mockedBuildTransaction.mockRejectedValueOnce(new CardanoInvalidProtoParams());
+
+    const status = await getSendTransactionStatus(account, buildTransactionInput());
+
+    expect(status.errors.amount).toBeInstanceOf(CardanoInvalidProtoParams);
+  });
+
+  it("reports invalid protocol params instead of throwing on an unreadable utxoCostPerByte", async () => {
+    const status = await getSendTransactionStatus(account, {
+      ...buildTransactionInput(),
+      protocolParams: { ...getProtocolParamsFixture(), utxoCostPerByte: "abc" },
+    });
+
+    expect(status.errors.amount).toBeInstanceOf(CardanoInvalidProtoParams);
+    expect(mockedBuildTransaction).not.toHaveBeenCalled();
+  });
+
+  it("reads the transaction's fresh protocol params over the cached ones", async () => {
+    mockedBuildTransaction.mockResolvedValueOnce({} as never);
+    account.cardanoResources.protocolParams = {
+      ...getProtocolParamsFixture(),
+      utxoCostPerByte: "abc",
+    };
+
+    const status = await getSendTransactionStatus(account, buildTransactionInput());
+
+    expect(status.errors.amount).toBeUndefined();
+  });
+
+  it("reports invalid protocol params on a Send Max the real estimator reads as zero", async () => {
+    const { estimateMaxSpendable: realEstimateMaxSpendable } = jest.requireActual<{
+      estimateMaxSpendable: typeof estimateMaxSpendable;
+    }>("../estimateMaxSpendable");
+    mockedEstimateMaxSpendable.mockImplementationOnce(realEstimateMaxSpendable);
+    mockedBuildTransaction.mockRejectedValue(new CardanoInvalidProtoParams());
+
+    const status = await getSendTransactionStatus(account, {
+      ...buildTransactionInput(),
+      useAllAmount: true,
+      protocolParams: { ...getProtocolParamsFixture(), minFeeRefScriptCostPerByte: "abc" },
+    });
+
+    expect(status.amount).toEqual(new BigNumber(0));
+    expect(status.errors.amount).toBeInstanceOf(CardanoInvalidProtoParams);
+  });
+
+  it("reports invalid protocol params on a Send Max whose fresh response omitted them", async () => {
+    mockedEstimateMaxSpendable.mockResolvedValueOnce(new BigNumber(0));
+
+    const status = await getSendTransactionStatus(account, {
+      ...buildTransactionInput(),
+      useAllAmount: true,
+      protocolParams: undefined,
+    });
+
+    expect(status.errors.amount).toBeInstanceOf(CardanoInvalidProtoParams);
   });
 
   it("re-throws unexpected build errors", async () => {

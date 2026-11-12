@@ -15,6 +15,7 @@ import uniqBy from "lodash/uniqBy";
 import { APITransaction } from "./api/api-types";
 import { getDelegationInfo } from "./api/getDelegationInfo";
 import { fetchNetworkInfo } from "./api/getNetworkInfo";
+import { CardanoInvalidProtoParams } from "./errors";
 import { getTransactions } from "./api/getTransactions";
 import { buildSubAccounts } from "./buildSubAccounts";
 import {
@@ -31,6 +32,10 @@ import {
   getOperationType,
   isHexString,
   mergeTokens,
+  MAX_TOKEN_QUANTITY,
+  parseAtomicAmount,
+  parseValueAdjustment,
+  readExplorerAmount,
 } from "./logic";
 import { getNetworkParameters } from "./networks";
 import { CardanoSigner } from "./signer";
@@ -150,6 +155,7 @@ export const makeGetAccountShape =
         }).getBech32(),
       }));
     const cardanoNetworkInfo = await fetchNetworkInfo(config);
+    if (!cardanoNetworkInfo.protocolParams) throw new CardanoInvalidProtoParams();
     const delegationInfo = await getDelegationInfo(config, stakeCredential.key);
 
     const minAdaForTokens = calculateMinAdaForTokens(
@@ -225,37 +231,42 @@ export function mapTxToAccountOperation(
   // certificates and return the raw lovelace amount. The bridge formats it for
   // display and adjusts the operation value (deposit is informational; refund and
   // rewards reduce the spendable change).
-  const deposit = findStakeRegistration(
-    tx,
-    stakeCredential.key,
-    networkParams.networkId,
-    protocolParams.stakeKeyDeposit,
+  const deposit = parseAtomicAmount(
+    findStakeRegistration(
+      tx,
+      stakeCredential.key,
+      networkParams.networkId,
+      protocolParams.stakeKeyDeposit,
+    ),
   );
   if (deposit) {
-    extra.deposit = formatCurrencyUnit(accountShapeInfo.currency.units[0], new BigNumber(deposit), {
+    extra.deposit = formatCurrencyUnit(accountShapeInfo.currency.units[0], deposit, {
       showCode: true,
       disableRounding: true,
     });
   }
 
-  const refund = findStakeDeRegistration(
-    tx,
-    stakeCredential.key,
-    networkParams.networkId,
-    protocolParams.stakeKeyDeposit,
+  const refund = parseValueAdjustment(
+    "refund",
+    findStakeDeRegistration(
+      tx,
+      stakeCredential.key,
+      networkParams.networkId,
+      protocolParams.stakeKeyDeposit,
+    ),
   );
   if (refund) {
     operationValue = operationValue.minus(refund);
-    extra.refund = formatCurrencyUnit(accountShapeInfo.currency.units[0], new BigNumber(refund), {
+    extra.refund = formatCurrencyUnit(accountShapeInfo.currency.units[0], refund, {
       showCode: true,
       disableRounding: true,
     });
   }
 
-  const rewards = findWithdrawal(tx, stakeCredential.key);
+  const rewards = parseValueAdjustment("withdrawal", findWithdrawal(tx, stakeCredential.key));
   if (rewards) {
     operationValue = operationValue.minus(rewards);
-    extra.rewards = formatCurrencyUnit(accountShapeInfo.currency.units[0], new BigNumber(rewards), {
+    extra.rewards = formatCurrencyUnit(accountShapeInfo.currency.units[0], rewards, {
       showCode: true,
       disableRounding: true,
     });
@@ -272,7 +283,7 @@ export function mapTxToAccountOperation(
   } else {
     mainOperationType = getOperationType({
       valueChange: operationValue,
-      fees: new BigNumber(tx.fees),
+      fees: readExplorerAmount("fee", tx.fees),
     });
   }
 
@@ -281,7 +292,7 @@ export function mapTxToAccountOperation(
     id: encodeOperationId(accountId, tx.hash, mainOperationType),
     hash: tx.hash,
     type: mainOperationType,
-    fee: new BigNumber(tx.fees),
+    fee: readExplorerAmount("fee", tx.fees),
     value: operationValue.absoluteValue(),
     senders: tx.inputs.map(i =>
       isHexString(i.address)
@@ -323,11 +334,11 @@ function prepareUtxos(
           hash: t.hash,
           index: outputIndex,
           address: o.address,
-          amount: new BigNumber(o.value),
+          amount: readExplorerAmount("output", o.value),
           tokens: o.tokens.map(token => ({
             assetName: token.assetName,
             policyId: token.policyId,
-            amount: new BigNumber(token.value),
+            amount: readExplorerAmount("token", token.value, MAX_TOKEN_QUANTITY),
           })),
           paymentCredential: {
             key: o.paymentKey,

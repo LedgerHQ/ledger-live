@@ -1,6 +1,10 @@
 import BigNumber from "bignumber.js";
 import { buildTransaction } from "../buildTransaction";
-import { CardanoNotEnoughFunds } from "../errors";
+import {
+  CardanoInvalidProtoParams,
+  CardanoNotEnoughFunds,
+  CardanoUnreadableStakeKeyDeposit,
+} from "../errors";
 import type { CardanoAccount, CardanoResources, Transaction, TransactionStatus } from "../types";
 import { isRecoverableBuildError } from "./buildErrors";
 
@@ -28,6 +32,11 @@ export async function getUndelegateTransactionStatus(
   } catch (e: unknown) {
     if (isRecoverableBuildError(e)) {
       errors.amount = new CardanoNotEnoughFunds();
+    } else if (
+      e instanceof CardanoInvalidProtoParams ||
+      e instanceof CardanoUnreadableStakeKeyDeposit
+    ) {
+      errors.amount = e;
     } else {
       throw e;
     }

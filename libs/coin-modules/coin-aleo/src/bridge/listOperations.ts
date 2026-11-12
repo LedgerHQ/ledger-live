@@ -4,7 +4,7 @@ import type { ListOperationsOptions } from "@ledgerhq/coin-module-framework/api/
 import type { AleoOperation } from "../types/bridge";
 import type { AleoPublicTransaction } from "../types/api";
 import { fetchAccountTransactionsFromHeight, resolveBondArguments } from "../network/utils";
-import { resolveStakingOperationType } from "../logic/utils";
+import { hasReadableAmount, resolveStakingOperationType } from "../logic/utils";
 import { getCalTokens, toBridgeOperation } from "./utils";
 import type { AleoCoinConfig } from "../types";
 
@@ -65,6 +65,7 @@ export async function listOperations({
       : new Map<string, { validator: string; amount: BigNumber }>();
 
   for (const rawTx of transactions) {
+    if (!hasReadableAmount(rawTx)) continue;
     const isTokenTx = calTokens.has(rawTx.program_id);
     const op = toBridgeOperation(
       ledgerAccountId,

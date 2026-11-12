@@ -14,6 +14,7 @@ import {
   getMockedTransactionDetails,
 } from "../__tests__/fixtures/api.fixture";
 import { PROGRAM_ID, TRANSACTION_TYPE } from "../constants";
+import { hasReadableAmount } from "../logic/utils";
 import type { AleoPublicTransaction } from "../types";
 import {
   getCalTokens,
@@ -133,7 +134,8 @@ describe("toBridgeOperation", () => {
       `Invalid raw transaction details for ${recipientAddress}`,
       rawTx,
     );
-    expect(result.value).toEqual(new BigNumber(rawTx.amount));
+    expect(result.value.isNaN()).toBe(false);
+    expect(hasReadableAmount(rawTx)).toBe(false);
   });
 
   it("should log a zero amount apart from invalid details for transfer functions", () => {

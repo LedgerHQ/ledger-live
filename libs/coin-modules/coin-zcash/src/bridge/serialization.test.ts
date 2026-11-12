@@ -1,5 +1,8 @@
 import BigNumber from "bignumber.js";
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
+import { fromAccountRaw } from "@ledgerhq/ledger-wallet-framework/serialization";
+import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/balanceHistoryCache";
+import wallet from "@ledgerhq/wallet-btc/index";
 import { assignToAccountRaw, makeAssignFromAccountRaw } from "./serialization";
 import type { ZcashAccount, ZcashAccountRaw } from "../types/bridge";
 
@@ -38,9 +41,37 @@ function makeBitcoinShapedAccountRaw(): AccountRaw {
 const assignFromAccountRaw = makeAssignFromAccountRaw(jest.fn());
 
 describe("bridge/serialization", () => {
+  it("drops a persisted UTXO with an unreadable value", () => {
+    const raw = makeBitcoinShapedAccountRaw() as ZcashAccountRaw;
+    raw.bitcoinResources = {
+      utxos: [
+        ["abcd1234", 0, 99, "t1XVXWCvpMgBvUaed4XDqWtgQgJSu1Ghz7F", "100000", 0, 0],
+        ["dead0000", 1, 99, "t1XVXWCvpMgBvUaed4XDqWtgQgJSu1Ghz7F", "1e1000000", 0, 0],
+      ],
+    } as ZcashAccountRaw["bitcoinResources"];
+    const account = {
+      id: raw.id,
+      currency: { id: "zcash" },
+      operations: [],
+      operationsCount: 0,
+    } as unknown as Account;
+
+    assignFromAccountRaw(raw, account);
+
+    const zcashAccount = account as unknown as ZcashAccount;
+    expect(zcashAccount.bitcoinResources.utxos.map(u => u.hash)).toEqual(["abcd1234"]);
+    expect(zcashAccount.balance).toEqual(new BigNumber(100_000));
+    expect(zcashAccount.spendableBalance).toEqual(new BigNumber(100_000));
+  });
+
   it("round-trips bitcoinResources.utxos from a bitcoin-shaped zcash AccountRaw", () => {
     const raw = makeBitcoinShapedAccountRaw();
-    const account = { id: raw.id, currency: { id: "zcash" } } as unknown as Account;
+    const account = {
+      id: raw.id,
+      currency: { id: "zcash" },
+      operations: [],
+      operationsCount: 0,
+    } as unknown as Account;
 
     assignFromAccountRaw(raw, account);
 
@@ -82,7 +113,12 @@ describe("bridge/serialization", () => {
       transactions: [],
     };
 
-    const account = { id: raw.id, currency: { id: "zcash" } } as unknown as Account;
+    const account = {
+      id: raw.id,
+      currency: { id: "zcash" },
+      operations: [],
+      operationsCount: 0,
+    } as unknown as Account;
     assignFromAccountRaw(raw, account);
 
     const zcashAccount = account as unknown as ZcashAccount;
@@ -130,7 +166,12 @@ describe("bridge/serialization", () => {
       const raw = withTransactions([
         { ...rawTransaction, transparentOut: "500000", hasTransparentInputs: false },
       ]);
-      const account = { id: raw.id, currency: { id: "zcash" } } as unknown as Account;
+      const account = {
+        id: raw.id,
+        currency: { id: "zcash" },
+        operations: [],
+        operationsCount: 0,
+      } as unknown as Account;
 
       assignFromAccountRaw(raw, account);
 
@@ -147,13 +188,291 @@ describe("bridge/serialization", () => {
       expect(out.hasTransparentInputs).toBe(false);
     });
 
+    it.each([
+      [
+        "a note",
+        (raw: ZcashAccountRaw) => {
+          const [tx] = raw.privateInfo?.transactions ?? [];
+          tx.decryptedData?.orchard_outputs.push({
+            amount: "NaN",
+            memo: "",
+            transfer_type: "incoming",
+          });
+        },
+      ],
+      [
+        "a pool balance",
+        (raw: ZcashAccountRaw) => {
+          if (raw.privateInfo) raw.privateInfo.ironwoodBalance = "NaN";
+        },
+      ],
+      [
+        "no Ironwood balance next to Ironwood notes",
+        (raw: ZcashAccountRaw) => {
+          const [tx] = raw.privateInfo?.transactions ?? [];
+          if (tx.decryptedData) {
+            tx.decryptedData.ironwood_outputs = [
+              { amount: "5000", memo: "", transfer_type: "incoming" },
+            ];
+          }
+          delete (raw.privateInfo as Partial<NonNullable<ZcashAccountRaw["privateInfo"]>>)
+            .ironwoodBalance;
+        },
+      ],
+      [
+        "a null Ironwood balance",
+        (raw: ZcashAccountRaw) => {
+          if (raw.privateInfo) raw.privateInfo.ironwoodBalance = null as unknown as string;
+        },
+      ],
+    ])(
+      "resets the shielded state for a full rescan when %s was persisted unreadable",
+      (_label, poison) => {
+        const raw = withTransactions([
+          {
+            ...rawTransaction,
+            decryptedData: {
+              orchard_outputs: [{ amount: "5000", memo: "", transfer_type: "incoming" }],
+              sapling_outputs: [],
+            },
+          },
+        ]);
+        poison(raw);
+        const account = {
+          id: raw.id,
+          currency: { id: "zcash" },
+          operations: [],
+          operationsCount: 0,
+        } as unknown as Account;
+
+        assignFromAccountRaw(raw, account);
+
+        expect((account as unknown as ZcashAccount).privateInfo).toMatchObject({
+          orchardBalance: new BigNumber(0),
+          ironwoodBalance: new BigNumber(0),
+          lastProcessedBlock: null,
+          transactions: [],
+          ufvk: "ufvk1abc",
+          syncState: "ready",
+          progress: 0,
+        });
+        expect(account.balance).toEqual(new BigNumber(100_000));
+        expect(account.spendableBalance).toEqual(new BigNumber(100_000));
+      },
+    );
+
+    it("reads a zero Ironwood balance on an account persisted before Ironwood support", () => {
+      const raw = withTransactions([
+        {
+          ...rawTransaction,
+          decryptedData: {
+            orchard_outputs: [{ amount: "5000", memo: "", transfer_type: "incoming" }],
+            sapling_outputs: [],
+          },
+        },
+      ]);
+      delete (raw.privateInfo as Partial<NonNullable<ZcashAccountRaw["privateInfo"]>>)
+        .ironwoodBalance;
+      const account = {
+        id: raw.id,
+        currency: { id: "zcash" },
+        operations: [],
+        operationsCount: 0,
+      } as unknown as Account;
+
+      assignFromAccountRaw(raw, account);
+
+      expect((account as unknown as ZcashAccount).privateInfo).toMatchObject({
+        ironwoodBalance: new BigNumber(0),
+        lastProcessedBlock: 1000,
+      });
+    });
+
+    it("drops the whole history so both legs reload it in full", () => {
+      const raw = withTransactions([]);
+      if (raw.privateInfo) raw.privateInfo.orchardBalance = "NaN";
+      const account = {
+        id: raw.id,
+        currency: { id: "zcash" },
+        operations: [
+          { hash: "t-in", type: "IN" },
+          { hash: "s-internal", type: "NONE" },
+          { hash: "s-in", type: "SHIELDED_TX_IRONWOOD_IN" },
+        ],
+        operationsCount: 5,
+      } as unknown as Account;
+
+      assignFromAccountRaw(raw, account);
+
+      expect(account.operations).toEqual([]);
+      expect(account.operationsCount).toBe(0);
+    });
+
+    it.each([
+      ["a stopped scan that failed is rescanned", "stopped", "engine down", "ready"],
+      ["a scan the user paused stays paused", "stopped", null, "stopped"],
+      ["a disabled shielded sync stays disabled", "disabled", null, "disabled"],
+      ["a running scan is rescanned", "running", null, "ready"],
+    ])("on reset, %s", (_label, syncState, lastSyncError, expected) => {
+      const raw = withTransactions([]);
+      if (raw.privateInfo) {
+        raw.privateInfo.orchardBalance = "NaN";
+        raw.privateInfo.syncState = syncState;
+        raw.privateInfo.lastSyncError = lastSyncError;
+      }
+      const account = {
+        id: raw.id,
+        currency: { id: "zcash" },
+        operations: [],
+        operationsCount: 0,
+      } as unknown as Account;
+
+      assignFromAccountRaw(raw, account);
+
+      expect((account as unknown as ZcashAccount).privateInfo).toMatchObject({
+        syncState: expected,
+        progress: 0,
+        lastSyncError: null,
+      });
+    });
+
+    it("repairs the account totals the shared deserialization read from a persisted unreadable note", async () => {
+      const raw = withTransactions([
+        {
+          ...rawTransaction,
+          decryptedData: {
+            orchard_outputs: [],
+            sapling_outputs: [],
+            ironwood_outputs: [{ amount: "NaN", memo: "", transfer_type: "incoming" }],
+          },
+        },
+      ]);
+      raw.balance = "NaN";
+      raw.spendableBalance = "NaN";
+      raw.balances = [
+        { value: "100000", pool: "transparent" },
+        { value: "NaN", pool: "ironwood", private: true },
+      ];
+
+      const account = (await fromAccountRaw(raw, { assignFromAccountRaw })) as ZcashAccount;
+
+      expect(account.balance).toEqual(new BigNumber(100_000));
+      expect(account.spendableBalance).toEqual(new BigNumber(100_000));
+      expect(account.balances).toEqual([
+        { value: new BigNumber(100_000), locked: new BigNumber(0), pool: "transparent" },
+      ]);
+      expect(account.balanceHistoryCache).toEqual(emptyHistoryCache);
+      expect(account.privateInfo).toMatchObject({
+        ironwoodBalance: new BigNumber(0),
+        lastProcessedBlock: null,
+        transactions: [],
+        syncState: "ready",
+      });
+    });
+
+    it("forgets the cached transparent history on reset so the next sync reloads all of it", () => {
+      const raw = withTransactions([]);
+      if (raw.privateInfo) raw.privateInfo.orchardBalance = "NaN";
+      (raw.bitcoinResources as { walletAccount?: unknown }).walletAccount = {
+        params: { currency: "zcash" },
+      };
+      const loadSync = jest.fn();
+      const cached = {
+        xpub: {
+          syncedBlockHeight: 100,
+          storage: { exportSync: () => ({ txs: [{}], addressCache: { k: "addr" } }), loadSync },
+        },
+      };
+      jest.spyOn(wallet, "importFromSerializedAccountSync").mockReturnValueOnce(cached as never);
+      const account = {
+        id: raw.id,
+        currency: { id: "zcash" },
+        operations: [],
+        operationsCount: 0,
+      } as unknown as Account;
+
+      assignFromAccountRaw(raw, account);
+
+      expect(loadSync).toHaveBeenCalledWith(expect.anything(), {
+        txs: [],
+        addressCache: { k: "addr" },
+      });
+      expect(cached.xpub.syncedBlockHeight).toBe(-1);
+    });
+
+    it("keeps the pending-spend lock on the transparent row of a reset account", () => {
+      const raw = withTransactions([]);
+      if (raw.privateInfo) raw.privateInfo.orchardBalance = "NaN";
+      const account = {
+        id: raw.id,
+        currency: { id: "zcash" },
+        operations: [],
+        operationsCount: 0,
+        pendingOperations: [{ extra: { inputRefs: [{ hash: "abcd1234", outputIndex: 0 }] } }],
+      } as unknown as Account;
+
+      assignFromAccountRaw(raw, account);
+
+      expect(account.balances).toEqual([
+        { value: new BigNumber(100_000), locked: new BigNumber(100_000), pool: "transparent" },
+      ]);
+    });
+
+    it.each([
+      ["fee", { fee: "abc" }],
+      ["transparent output", { transparentOut: "" }],
+    ])("rescans instead of throwing on a persisted unreadable %s", (_label, overrides) => {
+      const raw = withTransactions([{ ...rawTransaction, ...overrides }]);
+      const account = {
+        id: raw.id,
+        currency: { id: "zcash" },
+        operations: [],
+        operationsCount: 0,
+      } as unknown as Account;
+
+      assignFromAccountRaw(raw, account);
+
+      expect((account as unknown as ZcashAccount).privateInfo).toMatchObject({
+        lastProcessedBlock: null,
+        transactions: [],
+      });
+    });
+
+    it("loads a persisted transaction whose decrypted data lacks a pool array", () => {
+      const raw = withTransactions([
+        {
+          ...rawTransaction,
+          decryptedData: {
+            orchard_outputs: [{ amount: "5000", memo: "", transfer_type: "incoming" }],
+          },
+        },
+      ]);
+      const account = {
+        id: raw.id,
+        currency: { id: "zcash" },
+        operations: [],
+        operationsCount: 0,
+      } as unknown as Account;
+
+      assignFromAccountRaw(raw, account);
+
+      const info = (account as unknown as ZcashAccount).privateInfo;
+      expect(info?.lastProcessedBlock).toBe(1000);
+      expect(info?.transactions[0].decryptedData?.sapling_outputs).toEqual([]);
+    });
+
     // An account persisted before the scanner reported the transparent bundle says
     // nothing about it, and must keep saying nothing: read back as zero it would
     // claim the transaction moved no transparent value, which classifies a
     // shielded→transparent send as a self-transfer.
     it("stays absent when it was never persisted", () => {
       const raw = withTransactions([rawTransaction]);
-      const account = { id: raw.id, currency: { id: "zcash" } } as unknown as Account;
+      const account = {
+        id: raw.id,
+        currency: { id: "zcash" },
+        operations: [],
+        operationsCount: 0,
+      } as unknown as Account;
 
       assignFromAccountRaw(raw, account);
 
@@ -172,7 +491,12 @@ describe("bridge/serialization", () => {
 
   it("does not throw and leaves privateInfo undefined when the account has no shielded data yet", () => {
     const raw = makeBitcoinShapedAccountRaw();
-    const account = { id: raw.id, currency: { id: "zcash" } } as unknown as Account;
+    const account = {
+      id: raw.id,
+      currency: { id: "zcash" },
+      operations: [],
+      operationsCount: 0,
+    } as unknown as Account;
 
     assignFromAccountRaw(raw, account);
 
@@ -197,7 +521,12 @@ describe("bridge/serialization", () => {
         transactions: [],
       };
 
-      const account = { id: raw.id, currency: { id: "zcash" } } as unknown as Account;
+      const account = {
+        id: raw.id,
+        currency: { id: "zcash" },
+        operations: [],
+        operationsCount: 0,
+      } as unknown as Account;
       assignFromAccountRaw(raw, account);
       const rawOut = { id: raw.id } as AccountRaw;
       assignToAccountRaw(account, rawOut);
@@ -224,7 +553,12 @@ describe("bridge/serialization", () => {
       };
       raw.privateInfo = legacyPrivateInfo as unknown as NonNullable<ZcashAccountRaw["privateInfo"]>;
 
-      const account = { id: raw.id, currency: { id: "zcash" } } as unknown as Account;
+      const account = {
+        id: raw.id,
+        currency: { id: "zcash" },
+        operations: [],
+        operationsCount: 0,
+      } as unknown as Account;
       assignFromAccountRaw(raw, account);
 
       expect((account as unknown as ZcashAccount).privateInfo?.shieldedAddress).toBeNull();

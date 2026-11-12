@@ -8,7 +8,11 @@ import {
 import BigNumber from "bignumber.js";
 import { decodeTokenAssetId, decodeTokenCurrencyId, getTokenAssetId } from "./buildSubAccounts";
 import { CARDANO_MAX_SUPPLY } from "./constants";
-import { CardanoInvalidProtoParams, CardanoMinAmountError } from "./errors";
+import {
+  CardanoInvalidProtoParams,
+  CardanoMinAmountError,
+  CardanoUnreadableStakeKeyDeposit,
+} from "./errors";
 import {
   getAccountStakeCredential,
   getBaseAddress,
@@ -16,6 +20,7 @@ import {
   mergeTokens,
   isProtocolParamsValid,
   isTestnet,
+  parseAtomicAmount,
   toTyphonProtocolParams,
 } from "./logic";
 import { getNetworkParameters } from "./networks";
@@ -24,6 +29,7 @@ import {
   CardanoOutput,
   CardanoResources,
   PaymentCredential,
+  ProtocolParams,
   Token,
   Transaction,
 } from "./types";
@@ -84,6 +90,7 @@ const buildSendTokenTransaction = async ({
   account,
   transaction,
   tokenAccount,
+  protocolParams,
   typhonTx,
   receiverAddress,
   changeAddress,
@@ -91,6 +98,7 @@ const buildSendTokenTransaction = async ({
   account: CardanoAccount;
   transaction: Transaction;
   tokenAccount: TokenAccount;
+  protocolParams: ProtocolParams;
   typhonTx: TyphonTransaction;
   receiverAddress: TyphonTypes.CardanoAddress;
   changeAddress: TyphonTypes.CardanoAddress;
@@ -133,7 +141,7 @@ const buildSendTokenTransaction = async ({
       amount: new BigNumber(CARDANO_MAX_SUPPLY),
       tokens: tokensToSend,
     },
-    new BigNumber(cardanoResources.protocolParams.utxoCostPerByte),
+    new BigNumber(protocolParams.utxoCostPerByte),
   );
   // Add enough utxo to cover token amount
   for (let i = 0; i < sortedTokenUtxo.length; i++) {
@@ -169,18 +177,19 @@ const buildSendTokenTransaction = async ({
 const buildSendAdaTransaction = async ({
   account,
   transaction,
+  protocolParams,
   typhonTx,
   receiverAddress,
   changeAddress,
 }: {
   account: CardanoAccount;
   transaction: Transaction;
+  protocolParams: ProtocolParams;
   typhonTx: TyphonTransaction;
   receiverAddress: TyphonTypes.CardanoAddress;
   changeAddress: TyphonTypes.CardanoAddress;
 }): Promise<TyphonTransaction> => {
   const cardanoResources = account.cardanoResources as CardanoResources;
-  const protocolParams = cardanoResources.protocolParams;
 
   if (transaction.useAllAmount) {
     // add all utxo as input
@@ -386,6 +395,8 @@ const buildUndelegateTransaction = async ({
   if (!cardanoResources.delegation || !cardanoResources.delegation.status) {
     throw new Error("StakeKey is not registered");
   }
+  const stakeKeyDeposit = parseAtomicAmount(cardanoResources.delegation.deposit);
+  if (!stakeKeyDeposit) throw new CardanoUnreadableStakeKeyDeposit();
 
   const rewardsWithdrawalCertificate = getRewardWithdrawalCertificate(account);
   if (rewardsWithdrawalCertificate) typhonTx.addWithdrawal(rewardsWithdrawalCertificate);
@@ -394,7 +405,7 @@ const buildUndelegateTransaction = async ({
     type: TyphonTypes.CertificateType.STAKE_KEY_DE_REGISTRATION,
     cert: {
       stakeCredential: stakeKeyHashCredential,
-      deposit: new BigNumber(cardanoResources.delegation.deposit),
+      deposit: stakeKeyDeposit,
     },
   };
   typhonTx.addCertificate(stakeKeyDeRegistrationCertificate);
@@ -432,7 +443,7 @@ export const buildTransaction = async (
   const cardanoResources = account.cardanoResources as CardanoResources;
   const { protocolParams } = transaction;
 
-  if (!protocolParams || !isProtocolParamsValid(protocolParams)) {
+  if (!isProtocolParamsValid(protocolParams)) {
     throw new CardanoInvalidProtoParams();
   }
 
@@ -511,6 +522,7 @@ export const buildTransaction = async (
       return buildSendTokenTransaction({
         account,
         transaction,
+        protocolParams,
         tokenAccount,
         typhonTx,
         receiverAddress,
@@ -521,6 +533,7 @@ export const buildTransaction = async (
     return buildSendAdaTransaction({
       account,
       transaction,
+      protocolParams,
       typhonTx,
       receiverAddress,
       changeAddress,

@@ -368,6 +368,40 @@ describe("getTransactionStatus", () => {
       expect(result.errors.amount).toBeUndefined();
     });
 
+    it.each([
+      ["an ordinary", false],
+      ["a send-max", true],
+    ])(
+      "adds error instead of throwing for %s transfer whose selected amount record is unreadable",
+      async (_label, useAllAmount) => {
+        mockCalculateAmount.mockReturnValue({ amount: new BigNumber(0), totalSpent: mockFees });
+        const unreadableRecord = {
+          ...mockUnspentRecord1,
+          commitment: "unreadable-amount-record",
+          microcredits: "abc",
+        };
+        const account = getMockedAccount({
+          aleoResources: {
+            ...mockAleoResources,
+            privateBalance: new BigNumber(2000000),
+            unspentPrivateRecords: [unreadableRecord, mockUnspentRecord2],
+          },
+        });
+        const transaction: Transaction = {
+          ...privateTransaction,
+          useAllAmount,
+          properties: {
+            ...privateTransaction.properties,
+            amountRecordCommitments: [unreadableRecord.commitment],
+          },
+        };
+
+        const result = await getTransactionStatus(account, transaction);
+
+        expect(result.errors.amountRecord).toBeInstanceOf(AleoAmountRecordRequired);
+      },
+    );
+
     it("adds error when private amount record cannot be resolved", async () => {
       const transaction: Transaction = {
         ...privateTransaction,
@@ -657,6 +691,35 @@ describe("getTransactionStatus", () => {
       };
 
       const result = await getTransactionStatus(limitedAccount, transaction);
+
+      expect(result.errors.feeRecord).toBeInstanceOf(AleoFeeRecordInsufficientBalance);
+    });
+
+    it("adds an insufficient-balance fee-record error when the selected fee record amount is unreadable", async () => {
+      mockAleoConfig.getCoinConfig.mockReturnValue({ ...mockConfig, isFeeSponsored: false });
+
+      const unreadableFeeRecord = {
+        ...mockUnspentRecord2,
+        commitment: "unreadable-fee-record",
+        microcredits: "abc",
+      };
+
+      const account = getMockedAccount({
+        aleoResources: {
+          ...mockAleoResources,
+          unspentPrivateRecords: [mockUnspentRecord1, mockUnspentRecord2, unreadableFeeRecord],
+        },
+      });
+
+      const transaction: Transaction = {
+        ...privateTransaction,
+        properties: {
+          amountRecordCommitments: [mockUnspentRecord1.commitment],
+          feeRecordCommitment: unreadableFeeRecord.commitment,
+        },
+      };
+
+      const result = await getTransactionStatus(account, transaction);
 
       expect(result.errors.feeRecord).toBeInstanceOf(AleoFeeRecordInsufficientBalance);
     });

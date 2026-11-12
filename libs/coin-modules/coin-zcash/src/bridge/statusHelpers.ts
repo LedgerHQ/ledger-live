@@ -38,7 +38,7 @@ export const isTransparentInputTransfer = (transferType: Transaction["transferTy
  */
 export function boundTransparentUtxos(utxos: BitcoinOutput[]): BitcoinOutput[] {
   return [...utxos]
-    .sort((a, b) => b.value.comparedTo(a.value))
+    .sort((a, b) => b.value.comparedTo(a.value) ?? 0)
     .slice(0, ZCASH_MAX_TRANSPARENT_INPUTS);
 }
 

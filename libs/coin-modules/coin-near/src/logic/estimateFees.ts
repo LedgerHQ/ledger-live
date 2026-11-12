@@ -1,10 +1,13 @@
 import type { FeeEstimation } from "@ledgerhq/coin-module-framework/api/index";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import BigNumber from "bignumber.js";
 import type { NearContext } from "../config";
 import { getActionCosts, getGasPrice } from "../network";
 import { computeFees } from "./fees";
 import { pooledAmount } from "./pooledAmount";
 import { resolveTarget, type NearIntent } from "./craftTransaction";
+
+const MAX_U128 = new BigNumber(2).pow(128);
 
 /** A caller-supplied gas price, if it is a usable positive integer. */
 function overriddenGasPrice(parameters: FeeEstimation["parameters"]): string | undefined {
@@ -14,9 +17,11 @@ function overriddenGasPrice(parameters: FeeEstimation["parameters"]): string | u
     return undefined;
   }
 
-  const gasPrice = new BigNumber(value.toString());
+  const gasPrice = parseFiniteBigNumber(value);
 
-  return gasPrice.isInteger() && gasPrice.gt(0) ? gasPrice.toFixed() : undefined;
+  return gasPrice?.isInteger() && gasPrice.gt(0) && gasPrice.lt(MAX_U128)
+    ? gasPrice.toFixed()
+    : undefined;
 }
 
 // Fee for an intent, in yoctoNEAR, sourced from the protocol config since nothing preloads on this

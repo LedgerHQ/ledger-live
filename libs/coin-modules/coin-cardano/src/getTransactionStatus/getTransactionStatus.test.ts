@@ -145,7 +145,7 @@ describe("getTransactionStatus", () => {
       },
     } as unknown as CardanoAccount;
 
-    const transaction = {} as unknown as Transaction;
+    const transaction = { amount: BigNumber(0) } as unknown as Transaction;
 
     const status = await getTransactionStatus(account, transaction);
     expect(status.errors).toEqual({

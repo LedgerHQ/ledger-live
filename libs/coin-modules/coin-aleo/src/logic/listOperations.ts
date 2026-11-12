@@ -34,6 +34,7 @@ import {
   stripBatcherSuffix,
   toPrivateFeeOperation,
   toPrivateOperation,
+  hasReadableAmount,
   toPublicOperation,
 } from "./utils";
 
@@ -381,19 +382,21 @@ export async function listOperations({
     ownedRecordTxIds,
   });
 
-  const operations = transactionsWithDetails.map(({ rawTx, details }) => {
-    const resolvedRecipient = shieldRecipients.get(rawTx.transaction_id);
+  const operations = transactionsWithDetails
+    .filter(({ rawTx }) => hasReadableAmount(rawTx))
+    .map(({ rawTx, details }) => {
+      const resolvedRecipient = shieldRecipients.get(rawTx.transaction_id);
 
-    return toPublicOperation({
-      rawTx,
-      details,
-      address,
-      hasOwnedRecord: ownedRecordTxIds.has(rawTx.transaction_id),
-      hasOwnedFeeRecord: ownedFeeRecordTxIds.has(rawTx.transaction_id),
-      tokenTypeByProgramName,
-      ...(resolvedRecipient && { resolvedRecipient }),
+      return toPublicOperation({
+        rawTx,
+        details,
+        address,
+        hasOwnedRecord: ownedRecordTxIds.has(rawTx.transaction_id),
+        hasOwnedFeeRecord: ownedFeeRecordTxIds.has(rawTx.transaction_id),
+        tokenTypeByProgramName,
+        ...(resolvedRecipient && { resolvedRecipient }),
+      });
     });
-  });
   operations.push(...privateOperations);
 
   const direction = order === "asc" ? 1 : -1;

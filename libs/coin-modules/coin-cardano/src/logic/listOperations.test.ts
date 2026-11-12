@@ -501,6 +501,47 @@ describe("listOperations", () => {
     expect(items[0].value).toBe(200000n);
   });
 
+  it.each(["abc", "", "1.5", "-2000000", "1e1000000"])(
+    "rejects a de-registration whose protocol-level refund is %p rather than value it without it",
+    async stakeKeyDeposit => {
+      mockResponse(
+        [
+          makeTx({
+            certificate: {
+              ...emptyCertificate,
+              stakeDeRegistrations: [
+                { index: 0, stakeCredential: { type: HashType.ADDRESS, key: STAKE_HASH } },
+              ],
+            },
+          }),
+        ],
+        { stakeKeyDeposit },
+      );
+
+      await expect(listOperations(config, "cardano", ADDRESS, options)).rejects.toThrow(
+        "Cardano: unreadable refund amount from the explorer",
+      );
+    },
+  );
+
+  it("rejects a reward withdrawal whose amount is unreadable", async () => {
+    mockResponse([
+      makeTx({
+        withdrawals: [
+          {
+            stakeCredential: { type: HashType.ADDRESS, key: STAKE_HASH },
+            stakeHex: "deadbeef",
+            amount: "abc",
+          },
+        ],
+      }),
+    ]);
+
+    await expect(listOperations(config, "cardano", ADDRESS, options)).rejects.toThrow(
+      "Cardano: unreadable withdrawal amount from the explorer",
+    );
+  });
+
   it("does not attribute another account's de-registration to this operation", async () => {
     const FOREIGN_STAKE_HASH = "99".repeat(28);
     mockResponse([

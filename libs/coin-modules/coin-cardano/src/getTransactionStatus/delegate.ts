@@ -3,10 +3,11 @@ import BigNumber from "bignumber.js";
 import { buildTransaction } from "../buildTransaction";
 import {
   CardanoInvalidPoolId,
+  CardanoInvalidProtoParams,
   CardanoNotEnoughFunds,
   CardanoStakeKeyDepositError,
 } from "../errors";
-import { isHexString } from "../logic";
+import { isHexString, parseAtomicAmount } from "../logic";
 import type { CardanoAccount, Transaction, TransactionStatus } from "../types";
 import { isRecoverableBuildError } from "./buildErrors";
 
@@ -31,16 +32,21 @@ export async function getDelegateTransactionStatus(
     } catch (e: unknown) {
       if (isRecoverableBuildError(e)) {
         errors.amount = new CardanoNotEnoughFunds();
+      } else if (e instanceof CardanoInvalidProtoParams) {
+        errors.amount = e;
       } else {
         throw e;
       }
     }
   }
 
-  const stakeKeyRegisterDeposit = new BigNumber(
-    account.cardanoResources.protocolParams.stakeKeyDeposit,
+  const stakeKeyRegisterDeposit = parseAtomicAmount(
+    (transaction.protocolParams ?? account.cardanoResources.protocolParams).stakeKeyDeposit,
   );
-  if (
+  if (!stakeKeyRegisterDeposit) {
+    errors.amount = new CardanoInvalidProtoParams();
+  } else if (
+    !(errors.amount instanceof CardanoInvalidProtoParams) &&
     !account.cardanoResources.delegation?.status &&
     account.spendableBalance.isLessThan(stakeKeyRegisterDeposit)
   ) {

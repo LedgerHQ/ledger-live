@@ -31,13 +31,13 @@ export const toBridgeOperation = (
     address,
   );
   const stakingType = resolveStakingOperationType(rawTx);
-  const value = stakingType ? new BigNumber(fee) : amount;
 
-  if (amount.isNaN() || amount.isNegative()) {
+  if (!stakingType && !amount) {
     log("aleo/toBridgeOperation", `Invalid raw transaction details for ${address}`, rawTx);
   }
+  const value = stakingType ? new BigNumber(fee) : (amount ?? new BigNumber(0));
 
-  if (amount.isZero() && rawTx.function_id.includes("transfer")) {
+  if (amount?.isZero() && rawTx.function_id.includes("transfer")) {
     log("aleo/toBridgeOperation", `Zero value transaction for ${address}`, rawTx);
   }
 
@@ -63,7 +63,7 @@ export const toBridgeOperation = (
         stakedAmount: bondArguments.amount,
       }),
       // unbond_public is the one staking call whose amount the indexer publishes.
-      ...(stakingType === "UNBOND" && { stakedAmount: amount }),
+      ...(stakingType === "UNBOND" && amount && { stakedAmount: amount }),
     },
   };
 };

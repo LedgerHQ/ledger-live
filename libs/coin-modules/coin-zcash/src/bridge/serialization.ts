@@ -1,4 +1,6 @@
 import BigNumber from "bignumber.js";
+import { defaultAccountBalances } from "@ledgerhq/ledger-wallet-framework/account/balances";
+import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/balanceHistoryCache";
 import wallet from "@ledgerhq/wallet-btc/index";
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import type {
@@ -15,7 +17,11 @@ import type {
   ZcashPrivateInfo,
   ZcashPrivateInfoRaw,
 } from "../network/types";
-import { rehydrateOutput } from "../network/serialization/rehydrate";
+import { rehydrateOutputs } from "../network/serialization/rehydrate";
+import { computeZcashBalance, getTransparentBalance } from "../logic/account/balance";
+import { parseZatoshis } from "../logic/zatoshis";
+import { makeZcashAccountBalances } from "./accountBalances";
+import { forgetSyncedHistory } from "./walletHistory";
 import { walletBtcCurrencyById, type ExplorerConfig } from "../walletBtcCurrency";
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
 
@@ -73,7 +79,8 @@ const UNBOUND_EXPLORER: ExplorerConfig = { explorer: { url: "" } };
 
 export function fromBitcoinResourcesRaw(logger: Logger, r: BitcoinResourcesRaw): BitcoinResources {
   return {
-    utxos: r.utxos.map(fromBitcoinOutputRaw),
+    // An unreadable persisted UTXO is dropped: the next transparent sync lists it again.
+    utxos: r.utxos.filter(([, , , , value]) => parseZatoshis(value)).map(fromBitcoinOutputRaw),
     ...(r.walletAccount && {
       walletAccount: wallet.importFromSerializedAccountSync(
         logger,
@@ -136,12 +143,71 @@ export function toZcashPrivateInfoRaw(info: ZcashPrivateInfo): ZcashPrivateInfoR
   };
 }
 
-export function fromZcashPrivateInfoRaw(info: ZcashPrivateInfoRaw): ZcashPrivateInfo {
+/**
+ * Where a reset shielded state resumes from: a full rescan the automatic sync picks up, unless
+ * shielded sync is off or the user paused it, which stays theirs to restart.
+ */
+function rescanState({
+  syncState,
+  lastSyncError,
+}: Pick<ZcashPrivateInfo, "syncState" | "lastSyncError">): Pick<
+  ZcashPrivateInfo,
+  "syncState" | "progress" | "lastSyncError"
+> {
+  const isUserPaused = syncState === "stopped" && !lastSyncError;
   return {
-    saplingBalance: new BigNumber(info.saplingBalance),
-    orchardBalance: new BigNumber(info.orchardBalance),
-    // Guard accounts persisted before Ironwood support was added.
-    ironwoodBalance: new BigNumber(info.ironwoodBalance ?? "0"),
+    syncState: syncState === "disabled" || isUserPaused ? syncState : "ready",
+    progress: 0,
+    lastSyncError: null,
+  };
+}
+
+/** Zero only on an account persisted before Ironwood support, which holds no Ironwood note either. */
+function readIronwoodBalance(info: ZcashPrivateInfoRaw): BigNumber | undefined {
+  if (info.ironwoodBalance !== undefined) return parseZatoshis(info.ironwoodBalance);
+  const holdsIronwoodNotes = info.transactions.some(
+    ({ decryptedData }) => (decryptedData?.ironwood_outputs?.length ?? 0) > 0,
+  );
+  return holdsIronwoodNotes ? undefined : new BigNumber(0);
+}
+
+function readZcashPrivateInfoRaw(info: ZcashPrivateInfoRaw): {
+  privateInfo: ZcashPrivateInfo;
+  isReset: boolean;
+} {
+  const saplingBalance = parseZatoshis(info.saplingBalance);
+  const orchardBalance = parseZatoshis(info.orchardBalance);
+  const ironwoodBalance = readIronwoodBalance(info);
+  let hasUnreadableScalar = false;
+  const readScalar = (value: string): BigNumber => {
+    const parsed = parseZatoshis(value);
+    if (!parsed) hasUnreadableScalar = true;
+    return parsed ?? new BigNumber(0);
+  };
+  const transactions = info.transactions.map(({ fee, transparentOut, decryptedData, ...tx }) => ({
+    ...tx,
+    fee: readScalar(fee),
+    // Read back only what was written: an account persisted before the
+    // scanner reported the transparent bundle states nothing about it, and
+    // zero would state something.
+    ...(transparentOut !== undefined && { transparentOut: readScalar(transparentOut) }),
+    decryptedData: {
+      orchard_outputs: rehydrateOutputs(decryptedData?.orchard_outputs ?? []),
+      sapling_outputs: rehydrateOutputs(decryptedData?.sapling_outputs ?? []),
+      ...(decryptedData?.ironwood_outputs && {
+        ironwood_outputs: rehydrateOutputs(decryptedData.ironwood_outputs),
+      }),
+    },
+  }));
+  const persistedNoteCount = info.transactions.reduce(
+    (count, { decryptedData }) => count + countOutputs(decryptedData),
+    0,
+  );
+  const readableNoteCount = transactions.reduce(
+    (count, { decryptedData }) => count + countOutputs(decryptedData),
+    0,
+  );
+  const persisted = {
     lastSyncTimestamp: info.lastSyncTimestamp,
     ufvk: info.ufvk,
     shieldedAddress: info.shieldedAddress ?? null,
@@ -149,26 +215,56 @@ export function fromZcashPrivateInfoRaw(info: ZcashPrivateInfoRaw): ZcashPrivate
     progress: info.progress,
     estimatedTimeRemaining: info.estimatedTimeRemaining,
     birthday: info.birthday,
-    lastProcessedBlock: info.lastProcessedBlock,
     // Guard accounts persisted before this field was added.
     lastSyncError: info.lastSyncError ?? null,
-    transactions: info.transactions.map(({ fee, transparentOut, decryptedData, ...tx }) => ({
-      ...tx,
-      fee: new BigNumber(fee),
-      // Read back only what was written: an account persisted before the
-      // scanner reported the transparent bundle states nothing about it, and
-      // zero would state something.
-      ...(transparentOut !== undefined && { transparentOut: new BigNumber(transparentOut) }),
-      decryptedData: {
-        orchard_outputs: (decryptedData?.orchard_outputs ?? []).map(rehydrateOutput),
-        sapling_outputs: (decryptedData?.sapling_outputs ?? []).map(rehydrateOutput),
-        ...(decryptedData?.ironwood_outputs && {
-          ironwood_outputs: decryptedData.ironwood_outputs.map(rehydrateOutput),
-        }),
+  };
+
+  if (
+    !saplingBalance ||
+    !orchardBalance ||
+    !ironwoodBalance ||
+    hasUnreadableScalar ||
+    readableNoteCount !== persistedNoteCount
+  ) {
+    return {
+      isReset: true,
+      privateInfo: {
+        ...persisted,
+        ...rescanState(persisted),
+        saplingBalance: new BigNumber(0),
+        orchardBalance: new BigNumber(0),
+        ironwoodBalance: new BigNumber(0),
+        lastProcessedBlock: null,
+        transactions: [],
       },
-    })),
+    };
+  }
+
+  return {
+    isReset: false,
+    privateInfo: {
+      ...persisted,
+      saplingBalance,
+      orchardBalance,
+      ironwoodBalance,
+      lastProcessedBlock: info.lastProcessedBlock,
+      transactions,
+    },
   };
 }
+
+export function fromZcashPrivateInfoRaw(info: ZcashPrivateInfoRaw): ZcashPrivateInfo {
+  return readZcashPrivateInfoRaw(info).privateInfo;
+}
+
+const countOutputs = (decryptedData?: {
+  orchard_outputs?: unknown[];
+  sapling_outputs?: unknown[];
+  ironwood_outputs?: unknown[];
+}): number =>
+  (decryptedData?.orchard_outputs?.length ?? 0) +
+  (decryptedData?.sapling_outputs?.length ?? 0) +
+  (decryptedData?.ironwood_outputs?.length ?? 0);
 
 // ── AccountBridge hooks ──────────────────────────────────────────────────
 
@@ -188,13 +284,52 @@ export const makeAssignFromAccountRaw =
   (logger: Logger) =>
   (accountRaw: AccountRaw, account: Account): void => {
     const zcashAccountRaw = accountRaw as ZcashAccountRaw;
+    const zcashAccount = account as ZcashAccount;
+    let droppedUtxo = false;
     if (zcashAccountRaw.bitcoinResources) {
-      (account as ZcashAccount).bitcoinResources = fromBitcoinResourcesRaw(
+      zcashAccount.bitcoinResources = fromBitcoinResourcesRaw(
         logger,
         zcashAccountRaw.bitcoinResources,
       );
+      droppedUtxo =
+        zcashAccount.bitcoinResources.utxos.length < zcashAccountRaw.bitcoinResources.utxos.length;
     }
+    let isReset = false;
     if (zcashAccountRaw.privateInfo) {
-      (account as ZcashAccount).privateInfo = fromZcashPrivateInfoRaw(zcashAccountRaw.privateInfo);
+      const read = readZcashPrivateInfoRaw(zcashAccountRaw.privateInfo);
+      zcashAccount.privateInfo = read.privateInfo;
+      isReset = read.isReset;
     }
+    if (isReset) keepTransparentState(logger, zcashAccount);
+    else if (droppedUtxo) recountWithoutDroppedUtxo(logger, zcashAccount);
   };
+
+/** A dropped UTXO no longer counts: totals are rebuilt from what was kept and the transparent history refetched. */
+function recountWithoutDroppedUtxo(logger: Logger, account: ZcashAccount): void {
+  const balance = computeZcashBalance(
+    getTransparentBalance(account.bitcoinResources?.utxos),
+    account.privateInfo,
+  );
+  account.balance = balance;
+  account.spendableBalance = balance;
+  account.balances =
+    makeZcashAccountBalances(() => !!account.privateInfo)(account).account ??
+    defaultAccountBalances(account);
+  account.balanceHistoryCache = emptyHistoryCache;
+  const walletAccount = account.bitcoinResources?.walletAccount;
+  if (walletAccount) forgetSyncedHistory(logger, walletAccount);
+}
+
+/** A reset shielded state keeps the transparent funds and drops the history, which both legs then reload in full. */
+function keepTransparentState(logger: Logger, account: ZcashAccount): void {
+  const balance = getTransparentBalance(account.bitcoinResources?.utxos);
+  account.balance = balance;
+  account.spendableBalance = balance;
+  account.balances =
+    makeZcashAccountBalances(() => false)(account).account ?? defaultAccountBalances(account);
+  account.balanceHistoryCache = emptyHistoryCache;
+  account.operations = [];
+  account.operationsCount = 0;
+  const walletAccount = account.bitcoinResources?.walletAccount;
+  if (walletAccount) forgetSyncedHistory(logger, walletAccount);
+}

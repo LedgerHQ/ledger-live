@@ -1,7 +1,7 @@
 import { types as TyphonTypes } from "@stricahq/typhonjs";
 import BigNumber from "bignumber.js";
 import { buildTransaction } from "./buildTransaction";
-import { CardanoMinAmountError } from "./errors";
+import { CardanoMinAmountError, CardanoUnreadableStakeKeyDeposit } from "./errors";
 import { getCardanoAccountFixture } from "./fixtures/accounts";
 import { getProtocolParamsFixture } from "./fixtures/protocolParams";
 import { Transaction } from "./types";
@@ -149,6 +149,55 @@ describe("buildTransaction", () => {
     });
   });
 
+  describe("protocol params", () => {
+    const policyId = "a".repeat(56);
+    const assetName = "74657374";
+
+    const accountWithStaleParams = () => {
+      const baseUtxos = getCardanoAccountFixture({ delegation: undefined }).cardanoResources.utxos;
+      const account = getCardanoAccountFixture({
+        delegation: undefined,
+        utxos: baseUtxos.map(u => ({
+          ...u,
+          tokens: [{ policyId, assetName, amount: new BigNumber(1000) }],
+        })),
+      });
+      account.cardanoResources.protocolParams = {
+        ...getProtocolParamsFixture(),
+        utxoCostPerByte: "abc",
+      };
+      account.subAccounts = [
+        {
+          type: "TokenAccount",
+          id: "token-account-1",
+          token: { id: `cardano/native/${policyId}${assetName}` },
+          balance: new BigNumber(1000),
+        } as any,
+      ];
+      return account;
+    };
+
+    it("builds a token send from the transaction's params over unreadable cached ones", async () => {
+      await expect(
+        buildTransaction(accountWithStaleParams(), {
+          ...txPayload,
+          subAccountId: "token-account-1",
+          amount: new BigNumber(500),
+        }),
+      ).resolves.toBeDefined();
+    });
+
+    it("builds an ADA Send Max with token change from the transaction's params over unreadable cached ones", async () => {
+      await expect(
+        buildTransaction(accountWithStaleParams(), {
+          ...txPayload,
+          amount: new BigNumber(0),
+          useAllAmount: true,
+        }),
+      ).resolves.toBeDefined();
+    });
+  });
+
   describe("send all (useAllAmount)", () => {
     const sendAllPayload: Transaction = {
       ...txPayload,
@@ -218,6 +267,24 @@ describe("buildTransaction", () => {
         account.cardanoResources.delegation?.deposit,
       );
     });
+
+    it.each(["abc", undefined, "1.5", "-1"])(
+      "rejects with CardanoUnreadableStakeKeyDeposit on a %p deposit",
+      async deposit => {
+        const account = getCardanoAccountFixture({
+          delegation: { status: true, deposit, rewards: new BigNumber(0) },
+        });
+
+        await expect(
+          buildTransaction(account, {
+            ...txPayload,
+            recipient: "",
+            amount: new BigNumber(0),
+            mode: "undelegate",
+          }),
+        ).rejects.toBeInstanceOf(CardanoUnreadableStakeKeyDeposit);
+      },
+    );
 
     // Deregistering a stake key requires the account's rewards to be withdrawn in the same
     // transaction, so undelegate still sweeps them.

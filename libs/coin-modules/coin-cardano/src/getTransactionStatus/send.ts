@@ -11,9 +11,14 @@ import BigNumber from "bignumber.js";
 import { decodeTokenAssetId, decodeTokenCurrencyId } from "../buildSubAccounts";
 import { buildTransaction } from "../buildTransaction";
 import { CARDANO_MAX_SUPPLY } from "../constants";
-import { CardanoMinAmountError, CardanoNotEnoughFunds } from "../errors";
+import { CardanoInvalidProtoParams, CardanoMinAmountError, CardanoNotEnoughFunds } from "../errors";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
-import { getPaymentCredentialKeyHash, isValidAddress } from "../logic";
+import {
+  getPaymentCredentialKeyHash,
+  isProtocolParamsValid,
+  isValidAddress,
+  parseAtomicAmount,
+} from "../logic";
 import { getNetworkParameters } from "../networks";
 import type { CardanoAccount, Token, Transaction, TransactionStatus } from "../types";
 import { isRecoverableBuildError } from "./buildErrors";
@@ -67,6 +72,13 @@ export async function getSendTransactionStatus(
   }
 
   let minTransactionAmount = new BigNumber(0);
+  const protocolParams = transaction.protocolParams ?? cardanoResources.protocolParams;
+  // Send Max estimates a zero amount when the builder rejects the transaction's own params: report them first.
+  const isAdaSendMax = useAllAmount && !isTokenTx;
+  const checkedProtocolParams = isAdaSendMax ? transaction.protocolParams : protocolParams;
+  const protoParamsError = isProtocolParamsValid(checkedProtocolParams)
+    ? undefined
+    : new CardanoInvalidProtoParams();
 
   if (!transaction.fees) {
     errors.fees = new FeeNotLoaded();
@@ -95,14 +107,17 @@ export async function getSendTransactionStatus(
 
     // minTransactionAmount can only be calculated with valid recipient
     const recipient = TyphonUtils.getAddressFromString(transaction.recipient);
-    minTransactionAmount = TyphonUtils.calculateMinUtxoAmountBabbage(
-      {
-        address: recipient,
-        amount: new BigNumber(CARDANO_MAX_SUPPLY),
-        tokens: tokensToSend,
-      },
-      new BigNumber(cardanoResources.protocolParams.utxoCostPerByte),
-    );
+    const utxoCostPerByte = parseAtomicAmount(protocolParams.utxoCostPerByte);
+    if (utxoCostPerByte) {
+      minTransactionAmount = TyphonUtils.calculateMinUtxoAmountBabbage(
+        {
+          address: recipient,
+          amount: new BigNumber(CARDANO_MAX_SUPPLY),
+          tokens: tokensToSend,
+        },
+        utxoCostPerByte,
+      );
+    }
   }
 
   const amountBoundedByBuilder = useAllAmount;
@@ -110,7 +125,9 @@ export async function getSendTransactionStatus(
     ? totalSpent.gt(tokenAccount.balance)
     : !amountBoundedByBuilder && totalSpent.gt(account.spendableBalance);
 
-  if (!amount.gt(0)) {
+  if (protoParamsError) {
+    errors.amount = protoParamsError;
+  } else if (!amount.gt(0)) {
     errors.amount = useAllAmount ? new CardanoNotEnoughFunds() : new AmountRequired();
   } else if (!isTokenTx && amount.lt(minTransactionAmount)) {
     errors.amount = new CardanoMinAmountError("", {
@@ -124,6 +141,8 @@ export async function getSendTransactionStatus(
     } catch (e: unknown) {
       if (isRecoverableBuildError(e)) {
         errors.amount = new CardanoNotEnoughFunds();
+      } else if (e instanceof CardanoInvalidProtoParams) {
+        errors.amount = e;
       } else {
         throw e;
       }

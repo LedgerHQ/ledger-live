@@ -18,14 +18,16 @@ import { getAllTransactionsByKeys } from "../api/fetchTransactions";
 import { getDelegationInfo } from "../api/getDelegationInfo";
 import { fetchNetworkInfo } from "../api/getNetworkInfo";
 import { CARDANO_MAX_SUPPLY, MEMO_LABEL } from "../constants";
-import { CardanoMinAmountError } from "../errors";
+import { CardanoMinAmountError, CardanoUnreadableStakeKeyDeposit } from "../errors";
 import {
   type DerivedUtxo,
+  countUnreadableUtxos,
   deriveUtxos,
   getTTL,
   isTestnet,
   isTokenAsset,
   mergeTokens,
+  parseAtomicAmount,
   toTyphonProtocolParams,
 } from "../logic";
 import { CardanoDelegation, ProtocolParams } from "../types";
@@ -153,12 +155,11 @@ function addStakingCertificates(
     if (!delegation?.status) {
       throw new Error("Stake key is not registered");
     }
+    const deposit = parseAtomicAmount(delegation.deposit);
+    if (!deposit) throw new CardanoUnreadableStakeKeyDeposit();
     typhonTx.addCertificate({
       type: TyphonTypes.CertificateType.STAKE_KEY_DE_REGISTRATION,
-      cert: {
-        stakeCredential,
-        deposit: new BigNumber(delegation.deposit || 0),
-      },
+      cert: { stakeCredential, deposit },
     });
     return;
   }
@@ -327,7 +328,11 @@ export async function buildUnsignedTransaction(
   // Derived from confirmed history only — with just an address (no pending-operation state) two
   // craft calls before the first broadcast confirms may select the same UTXO. Same single-address
   // constraint as getBalance/listOperations.
-  const inputs = deriveUtxos(transactions, paymentKey).map(u => toTyphonInput(u, senderAddress));
+  if (intent.useAllAmount && countUnreadableUtxos(transactions, paymentKey) > 0) {
+    throw new Error("Cannot send the whole balance: some UTXOs have an unreadable amount");
+  }
+  const utxos = deriveUtxos(transactions, paymentKey);
+  const inputs = utxos.map(u => toTyphonInput(u, senderAddress));
   if (!inputs.length) {
     throw new Error("No spendable UTXOs for sender address");
   }
@@ -359,7 +364,7 @@ export async function buildUnsignedTransaction(
 
   // Spend the largest UTXOs first so Typhon's coin selection covers the outputs with the fewest
   // inputs (smaller tx, lower fee) — mirrors the legacy builder's largest-first ordering.
-  inputs.sort((a, b) => b.amount.comparedTo(a.amount));
+  inputs.sort((a, b) => b.amount.comparedTo(a.amount) ?? 0);
 
   const sweepAll = intent.intentType === "transaction" && !isTokenTransfer && !!intent.useAllAmount;
   const baseOutputCount = typhonTx.getOutputs().length;

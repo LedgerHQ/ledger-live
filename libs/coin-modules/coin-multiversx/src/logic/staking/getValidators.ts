@@ -1,14 +1,16 @@
 import type { Cursor, Page, Validator } from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import type { MultiversXNetworkApi } from "../../network/api";
 import type { MultiversXProvider } from "../../types";
 
 // Parse a numeric string (atomic-unit stake) to bigint, falling back to 0 on any
 // unparseable value so a single malformed provider can't break the list.
+const MAX_STAKE = new BigNumber(10).pow(30);
+
 function safeStakeToBigInt(value: string | undefined): bigint {
-  if (!value) return 0n;
-  const n = new BigNumber(value);
-  return n.isFinite() ? BigInt(n.toFixed(0)) : 0n;
+  const n = parseFiniteBigNumber(value);
+  return n?.isInteger() && !n.isNegative() && n.lt(MAX_STAKE) ? BigInt(n.toFixed(0)) : 0n;
 }
 
 function providerToValidator(provider: MultiversXProvider): Validator {

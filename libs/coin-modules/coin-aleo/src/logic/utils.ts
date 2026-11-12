@@ -21,6 +21,7 @@ import {
   encodeAccountId,
   encodeTokenAccountId,
 } from "@ledgerhq/ledger-wallet-framework/account/accountId";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import { decodeOperationId, encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import aleoConfig from "../config";
 import {
@@ -274,8 +275,18 @@ export const determineTransactionType = (
   return "public";
 };
 
-export function resolveTransactionAmount(rawTx: AleoPublicTransaction): BigNumber {
-  return new BigNumber(rawTx.amount_u128 ?? rawTx.amount);
+/** The transferred amount, `undefined` when the explorer reported one that cannot be read. */
+export function resolveTransactionAmount(rawTx: AleoPublicTransaction): BigNumber | undefined {
+  return readRecordAmount(rawTx.amount_u128 ?? rawTx.amount);
+}
+
+/** Whether an operation can be built: false, and logged, when it needs an amount the explorer left unreadable. */
+export function hasReadableAmount(rawTx: AleoPublicTransaction): boolean {
+  const stakingType = resolveStakingOperationType(rawTx);
+  const amountNeeded = !stakingType || stakingType === "UNBOND";
+  if (!amountNeeded || resolveTransactionAmount(rawTx)) return true;
+  log("aleo/listOperations", `skipping ${rawTx.transaction_id}: unreadable amount`, rawTx);
+  return false;
 }
 
 export function getInputValue(input: AleoTransitionValue | undefined): string | null {
@@ -334,7 +345,9 @@ export function getFees({
   }
 
   log("aleo/listOperations", `unreadable fee transition in ${details.id}`);
-  return { fees: BigInt(new BigNumber(details.fee_value).toFixed(0)) };
+  const fee = readMicrocredits(details.fee_value);
+  if (!fee) throw new Error(`aleo: unreadable fee on transaction ${details.id}`);
+  return { fees: BigInt(fee.toFixed(0)) };
 }
 
 // A staking call may be wrapped by another program, so the credits.aleo transition is matched by
@@ -429,9 +442,10 @@ function getStakeDetails(
   rawTx: AleoPublicTransaction,
   details: AleoPublicTransactionDetailsResponse,
   stakingType: OperationType,
+  amount: BigNumber,
 ): { address?: string; amount: bigint } | undefined {
   if (stakingType === "UNBOND") {
-    return { amount: BigInt(resolveTransactionAmount(rawTx).toFixed(0)) };
+    return { amount: BigInt(amount.toFixed(0)) };
   }
 
   if (stakingType !== "BOND") {
@@ -503,8 +517,9 @@ export const toPublicOperation = ({
       ? "OUT"
       : resolveOperationType(rawTx, address, sender, recipient));
   const stakingValue = fee.feesPayer === address ? fee.fees : 0n;
-  const value = stakingType ? stakingValue : BigInt(resolveTransactionAmount(rawTx).toFixed(0));
-  const stake = stakingType ? getStakeDetails(rawTx, details, stakingType) : undefined;
+  const amount = resolveTransactionAmount(rawTx) ?? new BigNumber(0);
+  const value = stakingType ? stakingValue : BigInt(amount.toFixed(0));
+  const stake = stakingType ? getStakeDetails(rawTx, details, stakingType, amount) : undefined;
 
   return {
     id: hash,
@@ -688,7 +703,7 @@ function getAmountToSpend({
         ...(isTokenTx && tokenAccount && { tokenAccount }),
       });
 
-      return record ? sum.plus(record.microcredits) : sum;
+      return sum.plus(readRecordAmount(record?.microcredits) ?? 0);
     }, new BigNumber(0));
   }
 
@@ -896,11 +911,11 @@ export function findBestRecordForFee({
   targetFee: BigNumber;
   selectedAmountRecordCommitments: string[];
 }): AleoUnspentRecord | null {
-  const recordsSufficientForFee = unspentRecords.filter(
-    r =>
-      !selectedAmountRecordCommitments.includes(r.commitment) &&
-      new BigNumber(r.microcredits).gte(targetFee),
-  );
+  const recordsSufficientForFee = unspentRecords.flatMap(record => {
+    if (selectedAmountRecordCommitments.includes(record.commitment)) return [];
+    const value = readMicrocredits(record.microcredits);
+    return value?.gte(targetFee) ? [{ record, value }] : [];
+  });
 
   if (recordsSufficientForFee.length === 0) {
     return null;
@@ -908,12 +923,11 @@ export function findBestRecordForFee({
 
   // find the smallest record that can cover the fee
   const bestFeeRecord = recordsSufficientForFee.reduce(
-    (min, current) =>
-      new BigNumber(current.microcredits).lt(new BigNumber(min.microcredits)) ? current : min,
+    (min, current) => (current.value.lt(min.value) ? current : min),
     recordsSufficientForFee[0],
   );
 
-  return bestFeeRecord;
+  return bestFeeRecord.record;
 }
 
 function isPrivateOperation(operation: Operation): boolean {
@@ -1526,9 +1540,27 @@ export function getRecordByCommitment({
   return records.find(record => record.commitment === commitment) ?? null;
 }
 
+const MAX_U64 = new BigNumber(2).pow(64).minus(1);
+const MAX_U128 = new BigNumber(2).pow(128).minus(1);
+
+function readUnsignedInteger(value: unknown, max: BigNumber): BigNumber | undefined {
+  const parsed = parseFiniteBigNumber(value);
+  return parsed?.isInteger() && !parsed.isNegative() && parsed.lte(max) ? parsed : undefined;
+}
+
+/** Native credits are a non-negative u64; anything else is unreadable. */
+export function readMicrocredits(value: unknown): BigNumber | undefined {
+  return readUnsignedInteger(value, MAX_U64);
+}
+
+/** A record amount, native (u64) or token (u128), read with the wider token bound. */
+export function readRecordAmount(value: unknown): BigNumber | undefined {
+  return readUnsignedInteger(value, MAX_U128);
+}
+
 export function sumPrivateRecords(records: AleoUnspentRecord[]): BigNumber {
   return records.reduce(
-    (sum, record) => sum.plus(new BigNumber(record.microcredits)),
+    (sum, record) => sum.plus(readRecordAmount(record.microcredits) ?? 0),
     new BigNumber(0),
   );
 }
@@ -1630,9 +1662,11 @@ export function selectPrivateRecordsForAmount({
   maxRecords?: number;
 }): AleoUnspentRecord[] {
   const rankedRecords = unspentRecords
-    .map(record => ({ record, value: new BigNumber(record.microcredits) }))
-    .filter(({ value }) => value.isGreaterThan(0))
-    .sort((a, b) => b.value.comparedTo(a.value));
+    .flatMap(record => {
+      const value = readRecordAmount(record.microcredits);
+      return value?.isGreaterThan(0) ? [{ record, value }] : [];
+    })
+    .sort((a, b) => b.value.comparedTo(a.value) ?? 0);
 
   if (rankedRecords.length === 0) {
     return [];
@@ -1773,9 +1807,9 @@ export function findTransferArguments(plaintexts: (string | null)[]): {
 /** `latest/totalSupply` is untrusted JSON: a bare scalar, in **credits**. */
 export function parseTotalSupply(value: unknown): BigNumber | null {
   if (typeof value !== "number" && typeof value !== "string") return null;
-  const parsed = new BigNumber(value);
+  const parsed = parseFiniteBigNumber(value);
 
-  return parsed.isFinite() && parsed.isGreaterThan(0) ? parsed : null;
+  return parsed?.isGreaterThan(0) && parsed.lte(MAX_U64) ? parsed : null;
 }
 
 /**

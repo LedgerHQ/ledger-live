@@ -3,7 +3,7 @@ import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import { PROGRAM_ID } from "../constants";
 import { sdkClient } from "../network/sdk";
 import type { AleoCoinConfig, AleoPrivateRecord, AleoUnspentRecord } from "../types";
-import { parseMicrocredits } from "./utils";
+import { parseMicrocredits, readMicrocredits } from "./utils";
 
 export async function getPrivateBalance({
   config,
@@ -34,7 +34,7 @@ export async function getPrivateBalance({
     const cachedRecord = recordByCiphertext.get(record.record_ciphertext);
 
     let result: { microcredits: string; unspentRecord: AleoUnspentRecord };
-    if (cachedRecord) {
+    if (cachedRecord && readMicrocredits(cachedRecord.microcredits)) {
       result = {
         microcredits: cachedRecord.microcredits,
         unspentRecord: cachedRecord,

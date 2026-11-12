@@ -12,7 +12,7 @@ import { getDelegationInfo } from "../api/getDelegationInfo";
 import { fetchNetworkInfo } from "../api/getNetworkInfo";
 import { getProtocolParamsFixture } from "../fixtures/protocolParams";
 import { extractPaymentKeyFromAddress } from "../utils";
-import { CardanoMinAmountError } from "../errors";
+import { CardanoInvalidProtoParams, CardanoMinAmountError } from "../errors";
 import { buildUnsignedTransaction, craftTransaction } from "./craftTransaction";
 
 jest.mock("../api/fetchTransactions");
@@ -231,6 +231,33 @@ describe("buildUnsignedTransaction — native ADA", () => {
       "No spendable UTXOs for sender address",
     );
   });
+
+  describe("with UTXOs whose explorer amount is unreadable", () => {
+    beforeEach(() => {
+      mockFetchTxs.mockResolvedValue(
+        paged([
+          makeTx({ hash: "a", outputs: [output("10000000")] }),
+          makeTx({ hash: "b", outputs: [output("abc")] }),
+          makeTx({
+            hash: "c",
+            outputs: [output("3000000", [{ policyId: POLICY_ID, assetName: "", value: "" }])],
+          }),
+        ]),
+      );
+    });
+
+    it("spends only the readable ones on a fixed-amount send", async () => {
+      const tx = await buildUnsignedTransaction(config, "cardano", sendIntent());
+
+      expect(tx.getInputs().map(i => i.txId)).toEqual(["a"]);
+    });
+
+    it("rejects a send-all, which would leave the unreadable ones behind", async () => {
+      await expect(
+        buildUnsignedTransaction(config, "cardano", sendIntent({ useAllAmount: true })),
+      ).rejects.toThrow("Cannot send the whole balance");
+    });
+  });
 });
 
 describe("buildUnsignedTransaction — token", () => {
@@ -398,6 +425,31 @@ describe("buildUnsignedTransaction — staking", () => {
       ),
     ).rejects.toThrow("Unsupported staking mode");
   });
+
+  it("rejects an unreadable protocol stake key deposit with CardanoInvalidProtoParams", async () => {
+    mockFetchNetworkInfo.mockResolvedValue({
+      protocolParams: { ...getProtocolParamsFixture(), stakeKeyDeposit: "abc" },
+    });
+
+    await expect(buildUnsignedTransaction(config, "cardano", stakeIntent())).rejects.toThrow(
+      CardanoInvalidProtoParams,
+    );
+  });
+
+  it.each(["abc", "", undefined, "1.5", "-1"])(
+    "rejects undelegate when the registered deposit is %p",
+    async deposit => {
+      mockGetDelegation.mockResolvedValue(registeredDelegation({ deposit }));
+
+      await expect(
+        buildUnsignedTransaction(
+          config,
+          "cardano",
+          stakeIntent({ type: "undelegate", mode: "undelegate" }),
+        ),
+      ).rejects.toThrow("Unreadable stake key deposit");
+    },
+  );
 
   it("rejects delegation without a pool id", async () => {
     await expect(
