@@ -11,12 +11,10 @@ import { estimateFees } from "../logic/estimateFees";
 import { getBalance } from "../logic/getBalance";
 import { lastBlock } from "../logic/lastBlock";
 import { listOperations } from "../logic/listOperations";
+import { validateIntent } from "../logic/validateIntent";
 import type { CantonMemo } from "../types/transaction";
 
 // The caller builds the {@link CantonContext} (config + logger) and passes it to each method (ADR-019).
-//
-// Not wired yet:
-// - validateIntent: LIVE-36965.
 //
 // Not supported by design:
 // - getBlock, getBlockInfo: the ledger exposes offsets, not blocks.
@@ -38,6 +36,8 @@ export function createApi(): CoinModuleApi<CantonCoinConfig, CantonMemo> {
     }),
     combine: (_context, tx, signature, _options?) => combine(tx, signature),
     broadcast: (context, tx, _options?) => broadcast(context, tx),
+    validateIntent: (context, intent, balances, options?) =>
+      validateIntent(context, intent, balances, options?.customFees),
     validateAddress: (_context, address, parameters) => validateAddress(address, parameters),
     craftTransactionData: (_context, intent) => craftTransactionData(intent),
     // Canton has no account nonce; the generic signOperation calls this when the transaction has none, so it must not throw.
