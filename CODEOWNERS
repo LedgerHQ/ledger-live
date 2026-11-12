@@ -446,6 +446,7 @@ features/platform/device-intent/                                   @ledgerhq/liv
 features/platform/device-action-content/                           @ledgerhq/live-devices
 features/platform/device-mock-server/                              @ledgerhq/live-devices
 features/flow/device-mock-server/                                  @ledgerhq/live-devices
+domain/entity/device-os-update/                                    @ledgerhq/live-devices
 features/platform/contacts/src/device/                             @ledgerhq/live-devices
 libs/device-react/                                                 @ledgerhq/live-devices
 libs/speculos-transport/                                           @ledgerhq/live-devices @ledgerhq/qaa
