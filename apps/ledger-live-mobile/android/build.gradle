@@ -51,8 +51,15 @@ allprojects {
         }
         mavenLocal()
         google()
-        maven {
-            url "$rootDir/../node_modules/detox/Detox-android"
+        exclusiveContent {
+            forRepository {
+                maven {
+                    url "$rootDir/../node_modules/detox/Detox-android"
+                }
+            }
+            filter {
+                includeModule("com.wix", "detox")
+            }
         }
     }
     configurations.all {
