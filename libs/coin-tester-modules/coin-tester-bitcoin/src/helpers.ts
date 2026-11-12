@@ -355,3 +355,61 @@ export const getRawMempool = async () => {
   # dustTransaction <address>                   - Create a dust transaction
   # multisig <address>                          - Test a multisig transaction`;
 */
+
+/** A transaction as the node decodes it (`getrawtransaction` / `getblock` verbosity 2), values in BTC. */
+export type NodeTransaction = {
+  txid: string;
+  vin: { txid: string; vout: number }[];
+  vout: { value: number; n: number; scriptPubKey: { address?: string } }[];
+};
+
+export const toSatoshis = (btc: number): bigint => BigInt(Math.round(btc * 1e8));
+
+/** "txid:vout" of every output the transaction spends: the ids `listHoldings` uses. */
+export const spentOutpoints = (tx: NodeTransaction): string[] =>
+  tx.vin.map(input => `${input.txid}:${input.vout}`);
+
+/**
+ * A transaction by id, from the node's mempool or, once mined, from the blocks (the node keeps
+ * no transaction index, so a mined transaction is found by reading the chain from its tip).
+ */
+export async function getNodeTransaction(txid: string): Promise<NodeTransaction> {
+  try {
+    return await client.command("getrawtransaction", txid, true);
+  } catch {
+    // Not in the mempool: read the blocks, newest first.
+    for (let height = await getCurrentBlock(); height >= 0; height--) {
+      const hash = await client.command("getblockhash", height);
+      const block = await client.command("getblock", hash, 2);
+      const found = block.tx.find((tx: NodeTransaction) => tx.txid === txid);
+      if (found) return found;
+    }
+  }
+  throw new Error(`transaction ${txid} is neither in the mempool nor in a block`);
+}
+
+/** Every transaction id of the chain, coinbases included. */
+export async function getMinedTxids(): Promise<Set<string>> {
+  const txids = new Set<string>();
+  for (let height = await getCurrentBlock(); height >= 0; height--) {
+    const hash = await client.command("getblockhash", height);
+    const block = await client.command("getblock", hash, 1);
+    for (const txid of block.tx) txids.add(txid);
+  }
+  return txids;
+}
+
+/**
+ * Keeps a mempool transaction out of every block the node mines, the coin-sandbox's own blocks
+ * included: the node selects it as if it paid 1 BTC less, below the minimum block fee rate. The fee
+ * it pays is unchanged, and a replacement evicts it as usual.
+ */
+export async function keepOutOfBlocks(txid: string): Promise<void> {
+  await client.command("prioritisetransaction", txid, 0, -1_0000_0000);
+}
+
+/** Fee (satoshis) and virtual size of a transaction waiting in the mempool. */
+export async function getMempoolFee(txid: string): Promise<{ fee: bigint; vsize: number }> {
+  const entry = await client.command("getmempoolentry", txid);
+  return { fee: toSatoshis(entry.fees.base), vsize: entry.vsize };
+}
