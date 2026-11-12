@@ -117,9 +117,10 @@ export class WebHandle implements ElementHandle {
     compareText(actualText, text, options);
   }
 
+  /** Waits for the input, reads its `value`, then compares it as the options say: equal by default. */
   async expectValue(text: string, options: ExpectTextOptions = {}): Promise<void> {
-    const actualText = await this.getValue();
-    compareText(actualText, text, options);
+    const actualValue = await this.getValue();
+    compareText(actualValue, text, options);
   }
 
   /** Asserts the element exists in the webview now. A Detox expect: it does not wait. */

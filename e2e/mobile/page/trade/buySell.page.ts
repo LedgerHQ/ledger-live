@@ -129,7 +129,7 @@ export default class BuySellPage {
 
     for (const { button, expected } of amountTests) {
       await this.buyQuickAmountButton(button).tap();
-      await this.amountInputSection.expectValue(expected, {normaliseWhitespace: true});
+      await this.amountInputSection.expectValue(expected, { normaliseWhitespace: true });
     }
   }
 
