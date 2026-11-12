@@ -1,6 +1,7 @@
 import React from "react";
 import { useTheme } from "styled-components/native";
 import { useFeature } from "@features/platform-feature-flags";
+import { useAgentIntentEntryPoints } from "@features/platform-agent-intent-entry-points";
 import { useSelector } from "~/context/hooks";
 import { isMainNavigatorVisibleSelector } from "~/reducers/appstate";
 import { useTabBar } from "./useTabBar";
@@ -11,6 +12,7 @@ export default function MainNavigator() {
   const { colors } = useTheme();
   const isMainNavigatorVisible = useSelector(isMainNavigatorVisibleSelector);
   const isPayTabEnabled = !!useFeature("lwmPayTab")?.enabled;
+  const { isNavBarEnabled: isAgentIntentTabEnabled } = useAgentIntentEntryPoints();
 
   const tabBar = useTabBar({
     isMainNavigatorVisible,
@@ -25,6 +27,7 @@ export default function MainNavigator() {
       tabBar={tabBar}
       screenOptions={screenOptions}
       isPayTabEnabled={isPayTabEnabled}
+      isAgentIntentTabEnabled={isAgentIntentTabEnabled}
     />
   );
 }

@@ -11448,7 +11448,11 @@
     "earn": "Earn",
     "yield": "Yield",
     "card": "Card",
-    "paytab": "Pay"
+    "paytab": "Pay",
+    "agents": "Agents"
+  },
+  "agentIntent": {
+    "title": "Agents"
   },
   "payTab": {
     "disclaimer": "Provided by Monavate Onchain",
@@ -11905,6 +11909,10 @@
     "contacts": {
       "title": "Contacts",
       "description": "Manage your contacts."
+    },
+    "agentIntent": {
+      "title": "Manage your agents",
+      "description": "Let AI agents manage your assets."
     },
     "backupHub": {
       "title": "Backups of your Secret Recovery Phrase",

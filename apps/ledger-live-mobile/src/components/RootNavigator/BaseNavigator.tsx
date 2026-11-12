@@ -99,6 +99,7 @@ import Web3HubTabNavigator from "LLM/features/Web3Hub/TabNavigator";
 import { useFeature } from "@features/platform-feature-flags";
 import MyLedgerNavigator from "./MyLedgerNavigator";
 import MyWalletNavigator from "LLM/features/MyWallet/Navigator";
+import { AgentIntentNavigator } from "LLM/features/AgentIntent";
 import BackupHubNavigator from "LLM/features/BackupHub/Navigator";
 import DiscoverNavigator from "./DiscoverNavigator";
 import AddAccountsV2Navigator from "LLM/features/Accounts/Navigator";
@@ -212,6 +213,11 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.MyWallet}
           component={MyWalletNavigator}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={NavigatorName.AgentIntent}
+          component={AgentIntentNavigator}
           options={{ headerShown: false }}
         />
 

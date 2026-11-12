@@ -5,6 +5,7 @@ import SwapNavigator from "../SwapNavigator";
 import EarnLiveAppNavigator from "../EarnLiveAppNavigator";
 import CardLandingNavigator from "LLM/features/Card";
 import PayTabNavigator, { getPayTabScreenOptions } from "LLM/features/PayTab";
+import { AgentIntentTabNavigator } from "LLM/features/AgentIntent";
 import { Tab } from "./tabNavigator";
 import type { Wallet40TabNavigatorProps } from "./types";
 import { SwapWallet40Header } from "~/screens/Swap/LiveApp/components/SwapWallet40Header";
@@ -18,6 +19,7 @@ export function Wallet40TabNavigator({
   tabBar,
   screenOptions,
   isPayTabEnabled,
+  isAgentIntentTabEnabled,
 }: Readonly<Wallet40TabNavigatorProps>): React.JSX.Element {
   return (
     <Tab.Navigator tabBar={tabBar} screenOptions={screenOptions}>
@@ -43,6 +45,9 @@ export function Wallet40TabNavigator({
       ) : (
         <Tab.Screen name={NavigatorName.CardTab} component={CardLandingNavigator} />
       )}
+      {isAgentIntentTabEnabled ? (
+        <Tab.Screen name={NavigatorName.AgentIntentTab} component={AgentIntentTabNavigator} />
+      ) : null}
     </Tab.Navigator>
   );
 }

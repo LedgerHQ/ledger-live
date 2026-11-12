@@ -161,6 +161,7 @@
     "@features/flow-predictions": "workspace:^",
     "@features/platform-account-analytics": "workspace:^",
     "@features/platform-account-source-coin-module": "workspace:^",
+    "@features/platform-agent-intent-entry-points": "workspace:^",
     "@features/platform-aggregated-assets": "workspace:*",
     "@features/platform-app-lock": "workspace:*",
     "@features/platform-card": "workspace:*",
