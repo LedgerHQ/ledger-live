@@ -13,11 +13,12 @@ import { openDeeplink, normalizeText, isAndroid } from "@e2e/helpers/commonHelpe
 import { getPtxHandoff } from "@e2e/bridge/server";
 import { retryUntilTimeout } from "@e2e/utils/retry";
 import { byId } from "@e2e/helpers/elements/native";
-import { webById, webByXPath } from "@e2e/helpers/elements/web";
+import { webByCss, webById, webByXPath } from "@e2e/helpers/elements/web";
 
 export default class BuySellPage {
-  appContainerCssSelector = "#app-container";
-  providerTitleCssSelector = "[data-testid^='provider_title_'][data-testid$='_title_container']";
+  private readonly appContainer = webByCss("#app-container");
+  private readonly providerTitleCssSelector =
+    "[data-testid^='provider_title_'][data-testid$='_title_container']";
 
   private readonly closeButton = webById("icon_button_close");
   private readonly amountInputSection = webById("amount-input-section-input");
@@ -175,11 +176,8 @@ export default class BuySellPage {
     if (await this.expandButton.isVisible(TIMEOUT.xsmall)) {
       await this.expandButton.tap();
     }
-    const providerNames = await getWebElementsText(
-      getWebElementByCssSelector(this.appContainerCssSelector),
-      this.providerTitleCssSelector,
-    );
-    return providerNames;
+
+    return await this.appContainer.getChildTexts(this.providerTitleCssSelector);
   }
 
   @Step("Select rotating provider")

@@ -118,6 +118,25 @@ export class WebHandle implements ElementHandle {
     return scriptText(text);
   }
 
+  /** Waits for the element, then returns the trimmed, non-empty texts of its descendants matching `cssSelector`. */
+  async getChildTexts(cssSelector: string, timeout = TIMEOUT.xxlarge): Promise<string[]> {
+    await this.waitVisible(timeout);
+    const raw = await withHardTimeout(
+      this.raw.runScript(
+        (el: HTMLElement, selector: string) =>
+          JSON.stringify(
+            Array.from(el.querySelectorAll<HTMLElement>(selector)).map(node =>
+              (node.innerText || node.textContent || "").trim(),
+            ),
+          ),
+        [cssSelector],
+      ),
+      TIMEOUT.medium,
+    );
+    const texts: string[] = JSON.parse(scriptText(raw));
+    return texts.filter(Boolean);
+  }
+
   /** Waits for the input, then returns its `value`. */
   async getValue(timeout = TIMEOUT.xxlarge): Promise<string> {
     await this.waitVisible(timeout);
@@ -172,6 +191,10 @@ export const webById = (id: string): WebHandle =>
 /** Matches a webview element by XPath, for elements without a usable `data-testid`. */
 export const webByXPath = (xpath: string): WebHandle =>
   new WebHandle(() => by.web.xpath(xpath), `xpath ${xpath}`);
+
+/** Matches a webview element by CSS selector, for one without a `data-testid`. */
+export const webByCss = (selector: string): WebHandle =>
+  new WebHandle(() => by.web.cssSelector(selector), `css "${selector}"`);
 
 const readUrl = (tag: string) => web.element(by.web.tag(tag)).runScript(() => window.location.href);
 
