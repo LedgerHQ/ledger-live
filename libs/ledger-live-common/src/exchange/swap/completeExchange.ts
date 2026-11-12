@@ -17,7 +17,7 @@ import { getDefaultAccountName } from "@domain/entity-account-name";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import { Observable } from "rxjs";
+import { firstValueFrom, Observable, reduce, timeout } from "rxjs";
 import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { getCurrencyExchangeConfig } from "../";
 import { getAccountCurrency, getMainAccount } from "../../account";
@@ -233,6 +233,49 @@ function readTotalFees(status: object, estimatedFees: BigNumber): BigNumber {
 }
 
 /**
+ * How long the swap waits for the refund account sync, which can hold the device on the legacy
+ * path. It bounds the wait only: a sync past the deadline can still finish its requests unobserved.
+ */
+export const FEE_RESYNC_TIMEOUT_MS = 10_000;
+
+/**
+ * A Tronify energy rental sends its TRX top-up to the refund account right before the swap, so
+ * the in-memory balance can be short of a fee the chain can already pay. Only a TRON fee shortfall
+ * is re-checked against fresh native balances, and a real shortfall still aborts.
+ */
+function needsResyncBeforeFeeCheck(
+  family: string,
+  errors: Record<string, Error | undefined>,
+): boolean {
+  return family === "tron" && errors.gasLimit !== undefined;
+}
+
+/**
+ * Native balances read by a sync of `account` that is not written to the store. `undefined` when
+ * the sync fails or exceeds {@link FEE_RESYNC_TIMEOUT_MS}.
+ *
+ * The caller keeps `account` and copies only these two fields: this sync has no hidden token list,
+ * so it can restart from scratch and drop the sub-accounts' pending operations.
+ */
+async function readFreshNativeBalances(
+  bridge: Awaited<ReturnType<typeof getAccountBridge>>,
+  account: Account,
+): Promise<Pick<Account, "balance" | "spendableBalance"> | undefined> {
+  try {
+    const synced = await firstValueFrom(
+      bridge.sync(account, { paginationConfig: {} }).pipe(
+        reduce((acc: Account, update: (a: Account) => Account) => update(acc), account),
+        timeout({ first: FEE_RESYNC_TIMEOUT_MS }),
+      ),
+    );
+    return { balance: synced.balance, spendableBalance: synced.spendableBalance };
+  } catch (error) {
+    log(COMPLETE_EXCHANGE_LOG, "refund account sync before the fee check failed", error);
+    return undefined;
+  }
+}
+
+/**
  * Device stays the source of truth: only once it rejects the payload with a generic
  * DESERIALIZATION_FAILED (0x6a81) do we decode it locally to name the field that exceeds
  * its limit. We keep the device error's title (a translation key, so the user-facing copy
@@ -414,9 +457,25 @@ export function createSwapConfirmSequence(
       transaction = await accountBridge.prepareTransaction(refundAccount, transactionFixed);
     }
 
-    const status = await accountBridge.getTransactionStatus(refundAccount, transaction);
-    const { errors, estimatedFees } = status;
+    let validatedAccount = refundAccount;
+    let status = await accountBridge.getTransactionStatus(refundAccount, transaction);
     if (isCancelled()) return;
+
+    if (needsResyncBeforeFeeCheck(mainRefundCurrency.family, status.errors)) {
+      const freshBalances = await readFreshNativeBalances(accountBridge, refundAccount);
+      if (isCancelled()) return;
+      if (freshBalances) {
+        const synced = { ...refundAccount, ...freshBalances };
+        const resyncedTransaction = await accountBridge.prepareTransaction(synced, transaction);
+        if (isCancelled()) return;
+        status = await accountBridge.getTransactionStatus(synced, resyncedTransaction);
+        if (isCancelled()) return;
+        transaction = resyncedTransaction;
+        validatedAccount = synced;
+      }
+    }
+
+    const { errors, estimatedFees } = status;
 
     const errorsKeys = Object.keys(errors);
 
@@ -426,7 +485,7 @@ export function createSwapConfirmSequence(
         throw enrichNotEnoughBalanceError(
           enrichEvmNotEnoughGasError(firstError, {
             family: transaction.family,
-            nativeBalance: refundAccount.balance,
+            nativeBalance: validatedAccount.balance,
             nativeCurrency: mainRefundCurrency.ticker,
             totalFees: readTotalFees(status, estimatedFees),
             gasLimit:
