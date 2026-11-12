@@ -1608,6 +1608,44 @@
     "XrpDestinationTagRequired": {
       "title": "A destination tag is required for this recipient"
     },
+    "XrpTokenStandardNotEnabled": {
+      "title": "This token type isn't supported yet"
+    },
+    "XrpAmountPrecisionExceeded": {
+      "title": "The amount has too many digits",
+      "description": "XRP Ledger tokens accept at most 16 significant digits."
+    },
+    "XrpTrustLimitZero": {
+      "title": "The limit must be above 0",
+      "description": "To stop holding this token, remove it instead."
+    },
+    "XrpTokenFrozen": {
+      "title": "You can't send this token to this recipient",
+      "description": "Its issuer froze it, or hasn't approved your account to hold it. A frozen token can still go back to its issuer."
+    },
+    "XrpTokenCannotReceive": {
+      "title": "This recipient can't receive {{assetCode}}",
+      "description": "The recipient may need to add this token first, or the issuer doesn't allow this transfer."
+    },
+    "XrpTokenAmountNotDeliverable": {
+      "title": "This amount can't be delivered",
+      "description": "The recipient's limit or the issuer's transfer fee doesn't allow it. Try a smaller amount."
+    },
+    "XrpTokenOptInRefused": {
+      "title": "The issuer refused this request",
+      "description": "The issuer doesn't accept new holders for this token, or the token doesn't exist."
+    },
+    "XrpTransactionWouldFail": {
+      "title": "This transaction would fail",
+      "description": "The XRP Ledger rejected it with {{code}}."
+    },
+    "XrpUnsupportedIntent": {
+      "title": "This transaction is not supported"
+    },
+    "XrpReserveIncrease": {
+      "title": "{{amount}} will be locked on your account while this token is added.",
+      "description": "You'll get it back when you remove the token."
+    },
     "HederaMemoExceededSizeError": {
       "title": "Invalid memo size, maximum allowed is 100 characters"
     },
@@ -3951,6 +3989,11 @@
         "addTokens": "Add assets",
         "howTo": "You can add assets to your Stellar account.",
         "addAsset": "Add asset"
+      },
+      "xrp": {
+        "seeMore": "See more tokens",
+        "seeLess": "See fewer tokens",
+        "howTo": "You can add tokens to your XRP account."
       }
     },
     "subaccounts": {
@@ -8262,6 +8305,66 @@
     },
     "receive": {
       "newAddressTRC20": "You first need to send at least 0.1 TRX to this address to activate it."
+    }
+  },
+  "xrp": {
+    "token": "Tokens",
+    "addToken": {
+      "cta": "Add token",
+      "title": "Add token",
+      "receiveAlert": "Add this token to your account before you receive it.",
+      "receive": "Receive",
+      "steps": {
+        "token": {
+          "title": "Choose a token",
+          "alreadyAddedTag": "Already added",
+          "alreadyAdded": "You've already added this token. Open its page to see or edit its settings.",
+          "openTokenPage": "Open token page",
+          "empty": "No token is available for this account.",
+          "loadError": "The token list couldn't load."
+        },
+        "settings": {
+          "title": "Settings",
+          "limitInfo": "The trust limit is the most {{token}} your account accepts to hold."
+        },
+        "review": {
+          "title": "Review",
+          "tokenType": "Token type",
+          "tokenTypeIou": "Trust Line (IOU)",
+          "tokenTypeMpt": "Multi purpose token",
+          "account": "Account address",
+          "tokenName": "Token name",
+          "issuer": "Issuer",
+          "networkFees": "Network fees"
+        },
+        "selectDevice": {
+          "title": "Select device"
+        },
+        "connectDevice": {
+          "title": "Connect device"
+        }
+      },
+      "errors": {
+        "notEnoughXrp": "You need at least {{minimumAmount}} available to add this token.",
+        "notEnoughXrpLocked": "{{amount}} will be locked on your account.",
+        "limitZero": "The trust limit must be above 0."
+      },
+      "success": {
+        "title": "{{token}} added",
+        "text": "It appears in your account with a balance of 0 after the next sync."
+      }
+    },
+    "tokenSettings": {
+      "limit": "Trust limit",
+      "maxLimit": "Max trust limit",
+      "maxLimitInfo": "The trust limit is the most {{token}} your account accepts to hold. The maximum permitted trust limit is <amount/>.",
+      "maximum": "Maximum"
+    },
+    "rippling": {
+      "label": "Rippling",
+      "on": "On",
+      "off": "Off",
+      "warning": "Turning this on allows other users' payments to move your balance between tokens with the same currency code. Only turn it on if you know what you're doing."
     }
   },
   "stellar": {
