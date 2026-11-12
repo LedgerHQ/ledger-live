@@ -29,6 +29,17 @@ describe("skill retrieve — human", () => {
     );
   });
 
+  it("documents XRP hardware flows separately from Agent Intent", async () => {
+    const { stdout, exitCode } = await runCli(["skill", "retrieve", SKILL_NAME]);
+    expect(exitCode).toBe(0);
+    expect(stdout).toContain("ripple:testnet");
+    expect(stdout).toContain("ripple_testnet-1");
+    expect(stdout).toContain("--destination-tag 123");
+    expect(stdout).toContain("approve the transaction on device");
+    expect(stdout).toContain("separate from Agent Intent");
+    expect(stdout).toContain("Ethereum and Solana payments");
+  });
+
   it("leaves no monorepo-only run instruction anywhere in the embedded skill", async () => {
     const { stdout, exitCode } = await runCli(["skill", "retrieve", SKILL_NAME]);
     expect(exitCode).toBe(0);

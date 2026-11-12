@@ -1,11 +1,11 @@
 ---
 name: ledger-wallet-cli
-description: "Official Ledger wallet-cli. Send, pay or transfer crypto from the user's Ledger hardware wallet: ETH, USDC, USDT and other ERC-20 tokens, BTC and SOL to an address. Works without the device on this machine too (cloud agent, VPS, container): Agent Intent proposes Ethereum and Solana payments (ETH, ERC-20, SOL, SPL) and Ethereum swaps for approval on their Ledger, and checks or cancels a proposal. Also covers balances, receive addresses, history, swap, staking, genuine check, Ledger Key Ring encryption (ring) and Ledger Sync accounts, all through Ledger's wallet-cli. Use when running any wallet-cli command and for requests like 'send 0.01 ETH to 0x…', 'pay 20 USDC to this address', 'is my Ledger genuine', 'enroll this agent' or 'is my payment approved'."
+description: "Official Ledger wallet-cli. Use a Ledger hardware wallet for account discovery, balances, receive addresses and sends on Bitcoin, Ethereum, Solana and native XRP Mainnet/Testnet, including XRP destination tags and dry runs. Works without the device on this machine too (cloud agent, VPS, container): Agent Intent separately proposes Ethereum and Solana payments (ETH, ERC-20, SOL, SPL) and Ethereum swaps for approval on their Ledger, and checks or cancels a proposal. Also covers history, staking, genuine check, Ledger Key Ring encryption (ring) and Ledger Sync accounts, all through Ledger's wallet-cli. Use when running any wallet-cli command and for requests like 'send 0.01 ETH to 0x…', 'send 1 XRP with destination tag 123', 'is my Ledger genuine', 'enroll this agent' or 'is my payment approved'."
 ---
 
 # wallet-cli
 
-Networks: **bitcoin**, **ethereum**, **solana** (mainnets and testnets).
+Networks: **bitcoin**, **ethereum**, **solana** (mainnets and testnets), and native **XRP** (Mainnet + Testnet).
 
 Run from repo root: `pnpm --silent wallet-cli start <command> [flags]`
 
@@ -17,10 +17,10 @@ When this skill disagrees with `pnpm --silent wallet-cli start <command> --help`
 |---|---|---|---|---|
 | `session view` | no | no | no | no |
 | `session reset` | no | yes (writes the state dir, may check the ring credential) | no | no |
-| `account discover` | yes | no | yes | approve app on device |
+| `account discover` | yes | no | yes, including XRP Mainnet/Testnet | approve the network app on device |
 | `receive` | yes (no with `--no-verify`) | no | yes | compare address on device |
-| `balances`, `operations` | no | no | yes | no |
-| `send` | yes (no with `--dry-run`) | no | yes | approve on device |
+| `balances`, `operations` | no | no | yes, including XRP Mainnet/Testnet | no |
+| `send` | yes (no with `--dry-run`) | no | yes, including XRP Mainnet/Testnet | approve the transaction on device |
 | `genuine-check` | yes | no | yes | device on dashboard |
 | `swap quote` | no | optional (API auth key) | yes | no |
 | `swap status` | no | no | yes | no |
@@ -42,6 +42,17 @@ When this skill disagrees with `pnpm --silent wallet-cli start <command> --help`
 A `plaintext-file` profile has `keyStore` `"plaintext-file"` in `agent-intent show`: its agent key is in a file, not the OS keychain (agent-intent.md, step 2).
 
 **API auth key.** Every command that fetches swap quotes (`swap quote`, `swap execute`, `agent-intent swap`, dry run included) reads Ledger's API auth key from the OS keychain. Without a usable keychain it still quotes, unauthenticated, and prints a `Ledger API auth key` warning on stderr; on macOS the keychain may show an access prompt. Optional means it runs inside the host sandbox too.
+
+**XRP Wallet CLI flow.** Native XRP discovery, balance lookup and sends are Wallet CLI hardware flows, available on Mainnet and Testnet. Testnet discovery uses `ripple:testnet` and saves the account under a label such as `ripple_testnet-1`. Use `balances ripple_testnet-1` for the saved account, then run a dry run before a real send:
+
+```bash
+pnpm --silent wallet-cli start account discover ripple:testnet
+pnpm --silent wallet-cli start balances ripple_testnet-1 --output json
+pnpm --silent wallet-cli start send ripple_testnet-1 --to <testnet-address> --amount '1 XRP' --destination-tag 123 --dry-run --output json
+pnpm --silent wallet-cli start send ripple_testnet-1 --to <testnet-address> --amount '1 XRP' --destination-tag 123 --output json
+```
+
+The dry run validates the recipient, amount and optional unsigned 32-bit destination tag without signing or broadcasting. For the real send, open the XRP app and approve the transaction on the connected Ledger only after checking the device screen. This Wallet CLI XRP flow is separate from Agent Intent: Agent Intent proposes its documented Ethereum and Solana payments for review and does not replace the direct XRP hardware flow.
 
 ## Safety rules
 
@@ -107,7 +118,7 @@ When asked for any of these, tell the human wallet-cli does not support it yet:
 
 - NFTs (mint, transfer, view).
 - OpenPGP-compatible output, key sharing or multi-recipient encryption (`ring` encrypts with a per-user Ledger Key Ring).
-- `send`, `receive`, `operations` or `swap execute` on testnets and layer 2s (e.g. Base).
+- `send`, `receive`, `operations` or `swap execute` on unsupported testnets and layer 2s (e.g. Base). Native XRP supports Mainnet and Testnet.
 - Chains outside the Networks line above.
 
 ## Core commands
@@ -116,17 +127,18 @@ Exact flags: `pnpm --silent wallet-cli start <command> --help`. Add `--output js
 
 ```bash
 pnpm --silent wallet-cli start session view
-pnpm --silent wallet-cli start account discover ethereum      # also bitcoin, solana, ethereum_sepolia, bitcoin_testnet, solana_devnet
+pnpm --silent wallet-cli start account discover ethereum      # also bitcoin, solana, ripple and ripple:testnet, ethereum_sepolia, bitcoin_testnet, solana_devnet
 pnpm --silent wallet-cli start receive ethereum-1             # --no-verify skips the device check
 pnpm --silent wallet-cli start balances ethereum-1 --output json
 pnpm --silent wallet-cli start operations ethereum-1 --limit 20 --cursor <cursor>
 pnpm --silent wallet-cli start send ethereum-1 --to 0xDEF... --amount '0.5 ETH' --dry-run
+pnpm --silent wallet-cli start send ripple-1 --to rHsMGQEkVNJmpGWs8XUBoTBiAAbwxZN5v3 --amount '1 XRP' --destination-tag 123 --dry-run
 ```
 
 - **receive:** when the address on the device differs from the terminal, keep the address unused and unshared; have the human disconnect the device and run `genuine-check` before retrying.
 - **assets:** `assets token <network> <contract>` when you have the contract address, `assets token-by-id <id>` when you have the id; non-EVM chains take `--identifier`. Both exit non-zero when the token is unknown, and the printed `id` is the currency id that `swap` takes in `--from` and `--to`.
 - **operations:** the next page cursor arrives on stderr (human output) or as `nextCursor` (JSON).
-- **send:** the ticker in `--amount` is mandatory and selects the asset, so a token transfer is just `--amount '100 USDT'`. Bitcoin: `--fee-per-byte <sats>`, `--rbf`. Solana: `--mode send|stake.createAccount|stake.delegate|stake.undelegate|stake.withdraw`, `--validator`, `--stake-account`, `--memo`.
+- **send:** the ticker in `--amount` is mandatory and selects the asset, so a token transfer is just `--amount '100 USDT'`. Bitcoin: `--fee-per-byte <sats>`, `--rbf`. Solana: `--mode send|stake.createAccount|stake.delegate|stake.undelegate|stake.withdraw`, `--validator`, `--stake-account`, `--memo`. XRP: `--destination-tag <unsigned 32-bit integer>` for Mainnet and Testnet.
 - **send `--data`** (EVM calldata, `0x` hex with an even digit count) covers contract calls with no dedicated command. Canonical pattern, WETH: wrap with `--data 0xd0e30db0` and the ETH value in `--amount`; unwrap with `--amount '0 ETH' --data 0x2e1a7d4d<amount in wei as hex, left-padded to 32 bytes>`. wallet-cli cannot check what hand-written calldata means, so every `--data` call takes the dry run ([Safety rules](#safety-rules)). What the device shows decides:
   - **Decoded:** the device shows the call field by field, from an ERC-7730 descriptor in Ledger's [registry](https://github.com/LedgerHQ/clear-signing-erc7730-registry) (WETH's covers `deposit` and `withdraw`), token metadata or a plugin; the human reads those fields before approving.
   - **Not decoded:** the Ethereum app refuses the call, or, when Blind signing is already on, shows a blind-signing warning instead of decoded fields: the human rejects it on the device. Stop there: tell the human this call cannot be clear-signed on their Ledger, and never suggest turning on Blind signing.

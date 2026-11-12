@@ -92,7 +92,7 @@ describe("account discover — session persistence", () => {
     );
     expect(exitCode, `stderr: ${stderr}`).toBe(0);
 
-    const sessionPath = join(fixture.env.XDG_STATE_HOME, "ledger-wallet-cli", "session.yaml");
+    const sessionPath = fixture.sessionPath;
     const session = YAML.parse(await Bun.file(sessionPath).text()) as {
       accounts: Array<{ label: string; descriptor: string }>;
     };
@@ -113,7 +113,7 @@ describe("account discover — session persistence", () => {
     const { exitCode, stderr } = await runCli(args, env);
     expect(exitCode, `stderr: ${stderr}`).toBe(0);
 
-    const sessionPath = join(fixture.env.XDG_STATE_HOME, "ledger-wallet-cli", "session.yaml");
+    const sessionPath = fixture.sessionPath;
     const session = YAML.parse(await Bun.file(sessionPath).text()) as { accounts: unknown[] };
     expect(session.accounts.length).toBe(1); // no duplicate
   });

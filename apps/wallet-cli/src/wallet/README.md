@@ -16,7 +16,7 @@ Clean, serializable wallet interface for the CLI. Sits between the legacy live-c
 wallet/
   models.ts          ← serializable types + Zod schemas
   index.ts           ← WalletAdapter (routing)
-  intents/           ← TransactionIntent schemas (bitcoin, evm, solana)
+  intents/           ← TransactionIntent schemas (bitcoin, evm, solana, xrp)
   formatter/         ← HumanFormatter and JsonFormatter
   compatibility/
     bridge.ts        ← BridgeAdapter (full sync via live-common bridge)
