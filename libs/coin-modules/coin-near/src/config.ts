@@ -9,7 +9,21 @@ export type NearConfig = CurrencyConfig & {
     API_NEAR_INDEXER: string;
     API_NEARBLOCKS_INDEXER: string;
   };
+  /** Legacy account sync tuning. Absent means every default below applies. */
+  sync?: {
+    /**
+     * Read the nearblocks history and list the staking pools only when the account state on the
+     * node changed. `false` reads both on every sync, as the legacy sync did before.
+     * @default true
+     */
+    stateDriven?: boolean;
+  };
 };
+
+export const DEFAULT_SYNC_STATE_DRIVEN = true;
+
+export const isStateDrivenSync = (config: NearConfig): boolean =>
+  config.sync?.stateDriven ?? DEFAULT_SYNC_STATE_DRIVEN;
 
 /**
  * Legacy config accessor kept for the classic bridge path and the getCoinConfig() singleton that the

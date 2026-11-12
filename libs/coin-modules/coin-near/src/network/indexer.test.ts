@@ -1,6 +1,6 @@
 import { http, HttpResponse } from "msw";
 import { setCoinConfig } from "../config";
-import { fetchTransactionsPage, getOperations } from "./indexer";
+import { fetchLegacyHistory, fetchTransactionsPage, getOperations } from "./indexer";
 import { mockNearConfig } from "../test/context";
 import { mockServer, NEAR_BASE_URL_MOCKED } from "./node.mock";
 import { NearTransaction } from "./sdk.types";
@@ -405,6 +405,83 @@ describe("getOperations", () => {
         status: 429,
       });
       expect(requests).toBe(2);
+    });
+  });
+
+  describe("fetchLegacyHistory", () => {
+    const stakingTxn = (overrides: Partial<NearTransaction> = {}): NearTransaction =>
+      txn({
+        transaction_hash: "stake-hash",
+        receiver_account_id: "pool.poolv1.near",
+        actions: [{ action: "FUNCTION_CALL", method: "deposit_and_stake" }],
+        ...overrides,
+      });
+
+    it("maps a staking call to the pool it was sent to", async () => {
+      respondWith([stakingTxn()]);
+
+      const { stakingPoolsCalled } = await fetchLegacyHistory(mockNearConfig, ACCOUNT_ID, ADDRESS);
+
+      expect(stakingPoolsCalled).toEqual(new Map([["stake-hash", "pool.poolv1.near"]]));
+    });
+
+    it("detects a staking method in a later action", async () => {
+      respondWith([
+        stakingTxn({
+          actions: [
+            { action: "TRANSFER", method: null },
+            { action: "FUNCTION_CALL", method: "unstake_all" },
+          ],
+        }),
+      ]);
+
+      const { stakingPoolsCalled, operations } = await fetchLegacyHistory(
+        mockNearConfig,
+        ACCOUNT_ID,
+        ADDRESS,
+      );
+
+      expect(stakingPoolsCalled.get("stake-hash")).toBe("pool.poolv1.near");
+      expect(operations[0].type).toBe("OUT");
+    });
+
+    it("ignores a staking call signed by another account", async () => {
+      respondWith([stakingTxn({ signer_account_id: "someone-else.near" })]);
+
+      const { stakingPoolsCalled } = await fetchLegacyHistory(mockNearConfig, ACCOUNT_ID, ADDRESS);
+
+      expect(stakingPoolsCalled.size).toBe(0);
+    });
+
+    it("ignores a function call that is not a staking-pool method", async () => {
+      respondWith([stakingTxn({ actions: [{ action: "FUNCTION_CALL", method: "ft_transfer" }] })]);
+
+      const { stakingPoolsCalled } = await fetchLegacyHistory(mockNearConfig, ACCOUNT_ID, ADDRESS);
+
+      expect(stakingPoolsCalled.size).toBe(0);
+    });
+
+    it("ignores a transaction without actions", async () => {
+      const { actions: _actions, ...withoutActions } = stakingTxn();
+      respondWith([withoutActions]);
+
+      const { stakingPoolsCalled } = await fetchLegacyHistory(mockNearConfig, ACCOUNT_ID, ADDRESS);
+
+      expect(stakingPoolsCalled.size).toBe(0);
+    });
+
+    it.each([
+      [24, false],
+      [25, true],
+    ])("reports a page of %i transactions as full: %s", async (count, isFullPage) => {
+      respondWith(
+        Array.from({ length: count }, (_, index) => txn({ transaction_hash: `hash-${index}` })),
+      );
+
+      const history = await fetchLegacyHistory(mockNearConfig, ACCOUNT_ID, ADDRESS);
+
+      expect(history.isFullPage).toBe(isFullPage);
+      expect(history.operations).toHaveLength(count);
     });
   });
 });
