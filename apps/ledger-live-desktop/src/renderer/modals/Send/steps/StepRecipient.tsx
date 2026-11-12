@@ -340,7 +340,8 @@ export const StepRecipientFooter = ({
       MEMO_TAG_COINS.includes(transaction.family) &&
       alwaysShowMemoTagInfo
     ) {
-      const memoTagValue = getMemoTagValueByTransactionFamily(transaction);
+      const memoTagValue =
+        specific?.getMemoValue?.(transaction) ?? getMemoTagValueByTransactionFamily(transaction);
       if (!memoTagValue) {
         dispatch(
           setMemoTagInfoBoxDisplay({

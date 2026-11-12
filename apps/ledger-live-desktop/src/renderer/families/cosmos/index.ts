@@ -1,6 +1,7 @@
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 import AccountBodyHeader from "./AccountBodyHeader";
 import accountHeaderManageActions from "./AccountHeaderManageActions";
+import getMemoValue from "./getMemoValue";
 import sendRecipientFields from "./SendRecipientFields";
 import transactionConfirmFields from "./TransactionConfirmFields";
 import operationDetails from "./operationDetails";
@@ -13,6 +14,7 @@ const family: CosmosFamily = {
   AccountBodyHeader,
   sendRecipientFields,
   AccountBalanceSummaryFooter,
+  getMemoValue,
   modalsToPreload: [
     "MODAL_COSMOS_DELEGATE",
     "MODAL_COSMOS_REWARDS_INFO",
