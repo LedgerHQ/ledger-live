@@ -17,9 +17,9 @@ import {
   payCardOnboardingWidgetSlice,
   selectDigitalWalletProvisioningStartedAt,
 } from "../../state";
-import { AddToWalletCtaWithBottomSheet } from "../AddToWalletCtaWithBottomSheet/AddToWalletCtaWithBottomSheet.native";
+import { AddToWalletCtaWithBottomSheet } from "../AddToWalletCtaWithBottomSheet/AddToWalletCtaWithBottomSheet";
 import { openWalletApp } from "../AddToWalletInstructions/openWalletApp";
-import { AddToWalletCta } from "./AddToWalletCta.native";
+import { AddToWalletCta } from "./AddToWalletCta";
 
 /** `undefined` is a tenant that does not answer for the flag, which still offers the CTA. */
 function setCardAddedToDigitalWallet(cardAddedToDigitalWallet?: boolean) {

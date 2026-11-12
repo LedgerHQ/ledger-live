@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, userEvent } from "@testing-library/react-native";
-import { AddToWalletInstructionsView } from "./AddToWalletInstructionsView.native";
+import { AddToWalletInstructionsView } from "./AddToWalletInstructionsView";
 
 jest.mock("@shared/ui-queued-bottom-sheet", () => ({
   useBottomSheetBackgroundTone: jest.fn(),

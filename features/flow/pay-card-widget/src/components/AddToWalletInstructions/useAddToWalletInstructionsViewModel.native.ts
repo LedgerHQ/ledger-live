@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { useTranslation } from "@shared/i18n";
 import { Android, Apple } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { startDigitalWalletProvisioning } from "../../state";
-import { getWalletPlatform } from "../getWalletPlatform.native";
+import { getWalletPlatform } from "../getWalletPlatform";
 import { openGoogleWalletStore, openWalletApp } from "./openWalletApp";
 
 type WalletPlatformIcon = typeof Apple;
