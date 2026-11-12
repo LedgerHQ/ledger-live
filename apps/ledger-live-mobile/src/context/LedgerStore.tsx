@@ -16,7 +16,7 @@ import { backfillOnboardingDate } from "~/logic/postOnboarding/backfillOnboardin
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import mmkvStorageWrapper from "LLM/storage/mmkvStorageWrapper";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
-import { logFirstCountervaluesLoad } from "LLM/utils/logFirstCountervaluesLoad";
+import { logFirstCountervaluesLoad } from "LLM/utils/logStartup/logFirstCountervaluesLoad";
 import type { StorageCurrencyData, StoreStorageData } from "LLM/utils/logLastStartupEvents";
 import { STARTUP_EVENTS } from "LLM/utils/resolveStartupEvents";
 import {

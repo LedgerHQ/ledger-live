@@ -7,7 +7,7 @@ import {
   countervaluesReducer,
 } from "@features/platform-market-countervalues";
 import { FIRST_LOAD_LISTEN_MS, logFirstCountervaluesLoad } from "../logFirstCountervaluesLoad";
-import { startupEvents } from "../logStartupTime";
+import { startupEvents } from "../../logStartupTime";
 
 function createStore() {
   return configureStore({ reducer: { countervalues: countervaluesReducer } });

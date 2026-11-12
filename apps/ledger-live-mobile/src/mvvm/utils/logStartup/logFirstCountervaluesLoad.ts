@@ -3,7 +3,7 @@ import {
   countervaluesSyncErrorSelector,
   countervaluesSyncPendingSelector,
 } from "@features/platform-market-countervalues";
-import { logStartupEvent } from "./logStartupTime";
+import { logStartupEvent } from "../logStartupTime";
 
 type CountervaluesRootState = Parameters<typeof countervaluesSyncPendingSelector>[0];
 
