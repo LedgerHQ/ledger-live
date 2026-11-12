@@ -129,8 +129,7 @@ export default class BuySellPage {
 
     for (const { button, expected } of amountTests) {
       await this.buyQuickAmountButton(button).tap();
-      const value = await getValueByWebTestId(this.amountInputSectionId());
-      jestExpect(normalizeText(value)).toBe(expected);
+      await this.amountInputSection.expectValue(expected, {normaliseWhitespace: true});
     }
   }
 

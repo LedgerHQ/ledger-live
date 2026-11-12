@@ -117,6 +117,11 @@ export class WebHandle implements ElementHandle {
     compareText(actualText, text, options);
   }
 
+  async expectValue(text: string, options: ExpectTextOptions = {}): Promise<void> {
+    const actualText = await this.getValue();
+    compareText(actualText, text, options);
+  }
+
   /** Asserts the element exists in the webview now. A Detox expect: it does not wait. */
   async expectExist(): Promise<void> {
     await withHardTimeout(detoxExpect(this.raw).toExist());
