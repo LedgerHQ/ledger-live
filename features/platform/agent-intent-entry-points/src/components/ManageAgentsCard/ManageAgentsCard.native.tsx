@@ -9,38 +9,37 @@ import {
   CardTrailing,
   Spot,
   Tag,
-} from "@ledgerhq/lumen-ui-react";
-import { ChevronRight, Robot } from "@ledgerhq/lumen-ui-react/symbols";
-import type { ManageAgentsCardViewProps } from "./ManageAgentsCardView.types";
+} from "@ledgerhq/lumen-ui-rnative";
+import { Robot } from "@ledgerhq/lumen-ui-rnative/symbols";
+import type { ManageAgentsCardProps } from "./ManageAgentsCard.types";
 
-export function ManageAgentsCardView({
+export function ManageAgentsCard({
   title,
   description,
   newBadgeLabel,
-  onPress,
-  testID,
-}: ManageAgentsCardViewProps) {
+  onOpen,
+  testID = "manage-agents-card",
+}: ManageAgentsCardProps) {
   return (
-    <Card type="interactive" onClick={onPress} data-testid={testID}>
+    <Card type="interactive" onPress={onOpen} testID={testID}>
       <CardHeader>
         <CardLeading>
-          <Spot icon={Robot} />
+          <Spot icon={Robot} size={48} />
           <CardContent>
             <CardContentTitle>{title}</CardContentTitle>
             <CardContentDescription>{description}</CardContentDescription>
           </CardContent>
         </CardLeading>
-        <CardTrailing>
-          {newBadgeLabel ? (
+        {newBadgeLabel ? (
+          <CardTrailing>
             <Tag
               label={newBadgeLabel}
               appearance="accent"
               size="md"
-              data-testid={`${testID}-new-badge`}
+              testID={`${testID}-new-badge`}
             />
-          ) : null}
-          <ChevronRight size={24} />
-        </CardTrailing>
+          </CardTrailing>
+        ) : null}
       </CardHeader>
     </Card>
   );

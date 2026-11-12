@@ -1,4 +1,4 @@
-import { getAgentIntentAttributes } from "./getAgentIntentAttributes";
+import { getAgentIntentAttributes } from "../getAgentIntentAttributes";
 
 describe("getAgentIntentAttributes", () => {
   it("should report both entry points when the A/B test runs them together", () => {

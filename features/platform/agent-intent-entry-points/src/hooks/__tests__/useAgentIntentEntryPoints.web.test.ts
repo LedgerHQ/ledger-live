@@ -1,7 +1,7 @@
 import { renderHook } from "@testing-library/react";
 import type { PartialFeatures } from "@shared/feature-flags";
-import { createTestWrapper } from "../testing/createTestWrapper";
-import { useAgentIntentEntryPoints } from "./useAgentIntentEntryPoints";
+import { createTestWrapper } from "../../testing/createTestWrapper";
+import { useAgentIntentEntryPoints } from "../useAgentIntentEntryPoints";
 
 function renderEntryPoints(flags: PartialFeatures) {
   return renderHook(useAgentIntentEntryPoints, { wrapper: createTestWrapper(flags) });

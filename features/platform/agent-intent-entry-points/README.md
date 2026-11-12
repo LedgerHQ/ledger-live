@@ -9,7 +9,8 @@ Entry points from Ledger Wallet to Agent Intent, shared by desktop and mobile. T
 
 - `useAgentIntentEntryPoints()` reads the `agentIntent` flag and returns `{ isNavBarEnabled, isProfileEnabled }`. Both entry points can be on at the same time for A/B testing.
 - `getAgentIntentAttributes(flag)` returns `{ isEnabled, entryPoints }` for the app analytics `extraProperties` (identify traits and event properties).
-- `ManageAgentsCard` is the "Manage your agents" card of My Wallet. It tracks `button_clicked` with `source: "profile"`, then calls `onOpen`. The app passes the labels and the navigation.
+- `ManageAgentsCard` is the "Manage your agents" card of My Wallet. The app passes the labels and `onOpen`.
+- `trackManageAgentsClick(page)` tracks the card click as `button_clicked` with `source: "profile"`.
 - `AGENT_INTENT_TRACKING_ENTRY` and `AGENT_INTENT_SOURCE` are the tracking values the apps reuse for the nav bar entry point.
 
 ## Source contract

@@ -1,12 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { track } from "@shared/analytics";
-import { ManageAgentsCard } from "./ManageAgentsCard";
-
-jest.mock("@shared/analytics", () => ({ track: jest.fn() }));
-
-const mockTrack = jest.mocked(track);
+import { ManageAgentsCard } from "../ManageAgentsCard";
 
 function renderCard(newBadgeLabel?: string) {
   const onOpen = jest.fn();
@@ -15,7 +10,6 @@ function renderCard(newBadgeLabel?: string) {
       title="Manage your agents"
       description="Let AI agents manage your assets."
       newBadgeLabel={newBadgeLabel}
-      page="My Wallet"
       onOpen={onOpen}
     />,
   );
@@ -23,10 +17,6 @@ function renderCard(newBadgeLabel?: string) {
 }
 
 describe("ManageAgentsCard (Web)", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   it("should render the title, the description and the new badge", () => {
     renderCard("New");
 
@@ -41,17 +31,11 @@ describe("ManageAgentsCard (Web)", () => {
     expect(screen.queryByTestId("manage-agents-card-new-badge")).not.toBeInTheDocument();
   });
 
-  it("should track the click and open Agent Intent", async () => {
+  it("should open Agent Intent", async () => {
     const { onOpen, user } = renderCard();
 
     await user.click(screen.getByText("Manage your agents"));
 
-    expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
-      button: "agent_intent",
-      entry: "agent_intent",
-      source: "profile",
-      page: "My Wallet",
-    });
     expect(onOpen).toHaveBeenCalledTimes(1);
   });
 });

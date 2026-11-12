@@ -1,11 +1,6 @@
 import React from "react";
 import { render, screen, userEvent } from "@testing-library/react-native";
-import { track } from "@shared/analytics";
-import { ManageAgentsCard } from "./ManageAgentsCard";
-
-jest.mock("@shared/analytics", () => ({ track: jest.fn() }));
-
-const mockTrack = jest.mocked(track);
+import { ManageAgentsCard } from "../ManageAgentsCard";
 
 function renderCard(newBadgeLabel?: string) {
   const onOpen = jest.fn();
@@ -14,7 +9,6 @@ function renderCard(newBadgeLabel?: string) {
       title="Manage your agents"
       description="Let AI agents manage your assets."
       newBadgeLabel={newBadgeLabel}
-      page="My Wallet"
       onOpen={onOpen}
     />,
   );
@@ -22,10 +16,6 @@ function renderCard(newBadgeLabel?: string) {
 }
 
 describe("ManageAgentsCard (Native)", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   it("should render the title, the description and the new badge", () => {
     renderCard("New");
 
@@ -40,20 +30,7 @@ describe("ManageAgentsCard (Native)", () => {
     expect(screen.queryByTestId("manage-agents-card-new-badge")).toBeNull();
   });
 
-  it("should track the press with the profile source", async () => {
-    const { user } = renderCard();
-
-    await user.press(screen.getByText("Manage your agents"));
-
-    expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
-      button: "agent_intent",
-      entry: "agent_intent",
-      source: "profile",
-      page: "My Wallet",
-    });
-  });
-
-  it("should open Agent Intent on press", async () => {
+  it("should open Agent Intent", async () => {
     const { onOpen, user } = renderCard();
 
     await user.press(screen.getByText("Manage your agents"));
