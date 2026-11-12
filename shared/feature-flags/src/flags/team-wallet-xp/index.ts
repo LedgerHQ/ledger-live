@@ -26,3 +26,4 @@ export * from "./lwdPayTab";
 export * from "./lwmPayTab";
 export * from "./lwdSwapConsoleAbtest";
 export * from "./entryPointsServices";
+export * from "./agentIntent";
