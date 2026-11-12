@@ -218,9 +218,6 @@ catalogs:
     '@ledgerhq/coin-hypercore':
       specifier: 4.0.3
       version: 4.0.3
-    '@ledgerhq/coin-module-framework':
-      specifier: 11.0.1
-      version: 11.0.1
     '@ledgerhq/coin-stellar':
       specifier: 12.1.2
       version: 12.1.2
@@ -320,9 +317,6 @@ catalogs:
     '@ledgerhq/live-env':
       specifier: 4.2.0
       version: 4.2.0
-    '@ledgerhq/live-network':
-      specifier: 3.3.0
-      version: 3.3.0
     '@ledgerhq/live-promise':
       specifier: 0.5.0
       version: 0.5.0
@@ -805,6 +799,8 @@ catalogs:
       version: 8.8.5
 
 overrides:
+  '@ledgerhq/live-network': file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+  '@ledgerhq/coin-module-framework': file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
   debug>supports-color: '-'
   '@hiero-ledger/cryptography>expo-crypto': '-'
   '@hiero-ledger/sdk>expo-crypto': '-'
@@ -1420,13 +1416,13 @@ importers:
         version: link:../../libs/coin-modules/coin-concordium
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 16.4.2(@ledgerhq/live-network@3.3.0(axios@1.20.0(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(utf-8-validate@6.0.6)
+        version: 16.4.2(@ledgerhq/live-network@file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(utf-8-validate@6.0.6)
       '@ledgerhq/coin-filecoin':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-filecoin
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/coin-stacks':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-stacks
@@ -1491,8 +1487,8 @@ importers:
         specifier: workspace:^
         version: link:../../libs/live-dmk-speculos
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/live-send':
         specifier: workspace:^
         version: link:../../libs/live-send
@@ -2358,13 +2354,13 @@ importers:
         version: link:../../libs/coin-modules/coin-concordium
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 16.4.2(@ledgerhq/live-network@3.3.0(axios@1.20.0(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(utf-8-validate@6.0.6)
+        version: 16.4.2(@ledgerhq/live-network@file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(utf-8-validate@6.0.6)
       '@ledgerhq/coin-filecoin':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-filecoin
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/coin-multiversx':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-multiversx
@@ -2435,8 +2431,8 @@ importers:
         specifier: workspace:^
         version: link:../../libs/live-engagement
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/live-send':
         specifier: workspace:^
         version: link:../../libs/live-send
@@ -3159,8 +3155,8 @@ importers:
         specifier: 'catalog:'
         version: 16.4.2(@ledgerhq/live-network@3.3.0(axios@1.20.0(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(utf-8-validate@6.0.6)
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/coin-solana':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-solana
@@ -3393,8 +3389,8 @@ importers:
         specifier: workspace:^
         version: link:../../features/platform/wallet-sync
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
         version: 2.0.7(ac2036a65cc0ac7c6e25271c22c4573e)
@@ -4379,8 +4375,8 @@ importers:
         specifier: workspace:*
         version: link:../../features/platform/predictions
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
@@ -12716,8 +12712,8 @@ importers:
         specifier: workspace:*
         version: link:../../../domain/entity/account-operation
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
     devDependencies:
       '@domain/entity-currency':
         specifier: workspace:*
@@ -13188,8 +13184,8 @@ importers:
         specifier: workspace:*
         version: link:../../../domain/entity/currency
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
         version: 1.11.1(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
@@ -14346,8 +14342,8 @@ importers:
         specifier: 'catalog:'
         version: 3.10.0
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/zcash-utils':
         specifier: 'catalog:'
         version: 2.9.0
@@ -14359,8 +14355,8 @@ importers:
         version: 7.8.2
     devDependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../disable-network-setup
@@ -14422,8 +14418,8 @@ importers:
   libs/coin-modules/coin-aleo:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/devices':
         specifier: 8.19.0
         version: 8.19.0
@@ -14434,8 +14430,8 @@ importers:
         specifier: 'catalog:'
         version: 4.2.0
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.20.0
@@ -14510,8 +14506,8 @@ importers:
   libs/coin-modules/coin-algorand:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -14519,8 +14515,8 @@ importers:
         specifier: 'catalog:'
         version: 4.2.0
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -14601,8 +14597,8 @@ importers:
         specifier: ^3.1.3
         version: 3.1.3(got@11.8.5)
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/devices':
         specifier: 8.19.0
         version: 8.19.0
@@ -14613,8 +14609,8 @@ importers:
         specifier: 'catalog:'
         version: 4.2.0
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.20.0
@@ -14701,8 +14697,8 @@ importers:
   libs/coin-modules/coin-bitcoin:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -14710,8 +14706,8 @@ importers:
         specifier: 'catalog:'
         version: 4.2.0
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/psbtv2':
         specifier: 'catalog:'
         version: 0.7.0(@typescript/typescript6@6.0.2)
@@ -14837,8 +14833,8 @@ importers:
   libs/coin-modules/coin-canton:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/devices':
         specifier: 8.19.0
         version: 8.19.0
@@ -14852,8 +14848,8 @@ importers:
         specifier: 'catalog:'
         version: 4.2.0
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.20.0
@@ -14931,8 +14927,8 @@ importers:
   libs/coin-modules/coin-cardano:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -14940,8 +14936,8 @@ importers:
         specifier: 'catalog:'
         version: 4.2.0
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.20.0
@@ -15031,14 +15027,14 @@ importers:
   libs/coin-modules/coin-casper:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.20.0
@@ -15120,10 +15116,10 @@ importers:
         version: 14.0.1
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 16.4.2(@ledgerhq/live-network@3.3.0(axios@1.20.0(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(utf-8-validate@6.0.6)
+        version: 16.4.2(@ledgerhq/live-network@file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(utf-8-validate@6.0.6)
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/devices':
         specifier: 8.19.0
         version: 8.19.0
@@ -15137,8 +15133,8 @@ importers:
         specifier: 'catalog:'
         version: 4.2.0
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.20.0
@@ -15231,8 +15227,8 @@ importers:
   libs/coin-modules/coin-concordium:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/concordium-core':
         specifier: workspace:^
         version: link:../../concordium-core
@@ -15243,8 +15239,8 @@ importers:
         specifier: 'catalog:'
         version: 4.2.0
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.20.0
@@ -15337,8 +15333,8 @@ importers:
         specifier: ^0.37.0
         version: 0.37.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -15346,8 +15342,8 @@ importers:
         specifier: 'catalog:'
         version: 4.2.0
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.20.0
@@ -15434,8 +15430,8 @@ importers:
   libs/coin-modules/coin-filecoin:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/devices':
         specifier: 8.19.0
         version: 8.19.0
@@ -15446,8 +15442,8 @@ importers:
         specifier: 'catalog:'
         version: 4.2.0
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.20.0
@@ -15534,8 +15530,8 @@ importers:
         specifier: 2.90.1
         version: 2.90.1(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/devices':
         specifier: 8.19.0
         version: 8.19.0
@@ -15546,8 +15542,8 @@ importers:
         specifier: 'catalog:'
         version: 4.2.0
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.20.0
@@ -15631,8 +15627,8 @@ importers:
   libs/coin-modules/coin-icon:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -15640,8 +15636,8 @@ importers:
         specifier: 'catalog:'
         version: 4.2.0
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.20.0
@@ -15713,8 +15709,8 @@ importers:
         specifier: 6.1.1
         version: 6.1.1
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -15801,8 +15797,8 @@ importers:
         specifier: 'catalog:'
         version: 2.0.0
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/devices':
         specifier: 8.19.0
         version: 8.19.0
@@ -15813,8 +15809,8 @@ importers:
         specifier: 'catalog:'
         version: 4.2.0
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.20.0
@@ -15916,14 +15912,14 @@ importers:
   libs/coin-modules/coin-mina:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.20.0
@@ -16007,8 +16003,8 @@ importers:
   libs/coin-modules/coin-module-boilerplate:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/devices':
         specifier: 8.19.0
         version: 8.19.0
@@ -16016,8 +16012,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -16089,8 +16085,8 @@ importers:
   libs/coin-modules/coin-multiversx:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/devices':
         specifier: 8.19.0
         version: 8.19.0
@@ -16101,8 +16097,8 @@ importers:
         specifier: 'catalog:'
         version: 4.2.0
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.20.0
@@ -16192,14 +16188,14 @@ importers:
   libs/coin-modules/coin-near:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.20.0
@@ -16271,14 +16267,14 @@ importers:
   libs/coin-modules/coin-polkadot:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -16380,8 +16376,8 @@ importers:
   libs/coin-modules/coin-solana:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/devices':
         specifier: 8.19.0
         version: 8.19.0
@@ -16392,8 +16388,8 @@ importers:
         specifier: 'catalog:'
         version: 4.2.0
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.20.0
@@ -16492,8 +16488,8 @@ importers:
   libs/coin-modules/coin-stacks:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -16501,8 +16497,8 @@ importers:
         specifier: 'catalog:'
         version: 4.2.0
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.20.0
@@ -16601,8 +16597,8 @@ importers:
         specifier: ^1.0.11
         version: 1.3.3(graphql@16.14.2)
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/hw-app-sui':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/hw-app-sui
@@ -16613,8 +16609,8 @@ importers:
         specifier: 'catalog:'
         version: 4.2.0
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.20.0
@@ -16698,8 +16694,8 @@ importers:
   libs/coin-modules/coin-ton:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -16707,8 +16703,8 @@ importers:
         specifier: 'catalog:'
         version: 4.2.0
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.20.0
@@ -16792,11 +16788,11 @@ importers:
   libs/coin-modules/coin-tron:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       axios:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
@@ -16865,8 +16861,8 @@ importers:
   libs/coin-modules/coin-vechain:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/devices':
         specifier: 8.19.0
         version: 8.19.0
@@ -16874,8 +16870,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@vechain/sdk-core':
         specifier: 2.0.0
         version: 2.0.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6)(zod@3.25.76)
@@ -16962,8 +16958,8 @@ importers:
   libs/coin-modules/coin-zcash:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/devices':
         specifier: 8.19.0
         version: 8.19.0
@@ -17199,8 +17195,8 @@ importers:
         specifier: 'catalog:'
         version: 3.10.0
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/psbtv2':
         specifier: 'catalog:'
         version: 0.7.0(@typescript/typescript6@6.0.2)
@@ -17385,8 +17381,8 @@ importers:
         version: 7.8.2
     devDependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
         version: link:../../wallet-framework-test-setup
@@ -17436,8 +17432,8 @@ importers:
         specifier: workspace:^
         version: link:../../coin-modules/coin-cosmos
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/coin-tester':
         specifier: workspace:^
         version: link:../../coin-tester
@@ -17501,7 +17497,7 @@ importers:
         version: link:../../../features/platform/currencies
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 16.4.2(@ledgerhq/live-network@3.3.0(axios@1.20.0(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(utf-8-validate@6.0.6)
+        version: 16.4.2(@ledgerhq/live-network@file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(utf-8-validate@6.0.6)
       '@ledgerhq/coin-tester':
         specifier: workspace:^
         version: link:../../coin-tester
@@ -17515,8 +17511,8 @@ importers:
         specifier: 'catalog:'
         version: 3.10.0
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/live-signer-evm':
         specifier: workspace:^
         version: link:../../live-signer-evm
@@ -17859,8 +17855,8 @@ importers:
   libs/coin-tester-modules/coin-tester-polkadot:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/coin-polkadot':
         specifier: workspace:^
         version: link:../../coin-modules/coin-polkadot
@@ -18681,8 +18677,8 @@ importers:
         specifier: 6.37.0
         version: 6.37.0
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.20.0
@@ -19132,7 +19128,7 @@ importers:
         version: link:../coin-modules/coin-cosmos
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 16.4.2(@ledgerhq/live-network@3.3.0(axios@1.20.0(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(utf-8-validate@6.0.6)
+        version: 16.4.2(@ledgerhq/live-network@file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(utf-8-validate@6.0.6)
       '@ledgerhq/coin-filecoin':
         specifier: workspace:^
         version: link:../coin-modules/coin-filecoin
@@ -19141,7 +19137,7 @@ importers:
         version: link:../coin-modules/coin-hedera
       '@ledgerhq/coin-hypercore':
         specifier: 'catalog:'
-        version: 4.0.3(@ledgerhq/live-network@3.3.0(axios@1.20.0(debug@4.4.3)))
+        version: 4.0.3(@ledgerhq/live-network@file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3)))
       '@ledgerhq/coin-icon':
         specifier: workspace:^
         version: link:../coin-modules/coin-icon
@@ -19155,8 +19151,8 @@ importers:
         specifier: workspace:^
         version: link:../coin-modules/coin-mina
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/coin-multiversx':
         specifier: workspace:^
         version: link:../coin-modules/coin-multiversx
@@ -19174,13 +19170,13 @@ importers:
         version: link:../coin-modules/coin-stacks
       '@ledgerhq/coin-stellar':
         specifier: 'catalog:'
-        version: 12.1.2(@ledgerhq/live-network@3.3.0(axios@1.20.0(debug@4.4.3)))(debug@4.4.3)
+        version: 12.1.2(@ledgerhq/live-network@file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3)))(debug@4.4.3)
       '@ledgerhq/coin-sui':
         specifier: workspace:^
         version: link:../coin-modules/coin-sui
       '@ledgerhq/coin-tezos':
         specifier: 'catalog:'
-        version: 14.2.0(@ledgerhq/live-network@3.3.0(axios@1.20.0(debug@4.4.3)))(encoding@0.1.13)
+        version: 14.2.0(@ledgerhq/live-network@file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3)))(encoding@0.1.13)
       '@ledgerhq/coin-ton':
         specifier: workspace:^
         version: link:../coin-modules/coin-ton
@@ -19192,7 +19188,7 @@ importers:
         version: link:../coin-modules/coin-vechain
       '@ledgerhq/coin-xrp':
         specifier: 'catalog:'
-        version: 13.3.1(@ledgerhq/live-network@3.3.0(axios@1.20.0(debug@4.4.3)))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 13.3.1(@ledgerhq/live-network@file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3)))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@ledgerhq/coin-zcash':
         specifier: workspace:^
         version: link:../coin-modules/coin-zcash
@@ -19302,8 +19298,8 @@ importers:
         specifier: 'catalog:'
         version: 4.2.0
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/live-promise':
         specifier: 'catalog:'
         version: 0.5.0
@@ -19675,8 +19671,8 @@ importers:
   libs/ledger-services/cal:
     dependencies:
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@shared/env':
         specifier: workspace:*
         version: link:../../../shared/env
@@ -19730,8 +19726,8 @@ importers:
   libs/ledger-services/trust:
     dependencies:
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@shared/env':
         specifier: workspace:*
         version: link:../../../shared/env
@@ -19785,8 +19781,8 @@ importers:
   libs/ledger-wallet-framework:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/devices':
         specifier: 8.19.0
         version: 8.19.0
@@ -19803,8 +19799,8 @@ importers:
         specifier: 'catalog:'
         version: 4.2.0
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.20.0
@@ -22725,8 +22721,8 @@ importers:
         version: link:../../shared/env
     devDependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
@@ -23320,11 +23316,11 @@ importers:
   libs/wallet-btc:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 11.0.1
+        specifier: file:../../../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+        version: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.3.0(axios@1.20.0(debug@4.4.3))
+        specifier: file:../../../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz
+        version: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@noble/curves':
         specifier: 'catalog:'
         version: 2.4.0
@@ -28065,29 +28061,35 @@ packages:
 
   '@ledgerhq/coin-evm@16.4.2':
     resolution: {integrity: sha512-xwVtDhIVM7XgTg0hFdfWnGj6qEbPcoIj0zc22Yw9AE9Ov37KnJKNlyKmABkeVPEPR++Eq7jKkL3ZNaBH06Zlxg==}
+    version: 16.4.2
     peerDependencies:
       '@ledgerhq/live-network': ^3.1.0
 
   '@ledgerhq/coin-hypercore@4.0.3':
     resolution: {integrity: sha512-4CxnmMQ2EPZiAE/l53CCU8E2i/Orol322Uy9FA7DFDTv82i3zKbAZShh1cdaju0EVDztytvD7Yq69216EBMmJw==}
+    version: 4.0.3
     peerDependencies:
       '@ledgerhq/live-network': ^3.1.0
 
-  '@ledgerhq/coin-module-framework@11.0.1':
-    resolution: {integrity: sha512-4yGzZioLhkCiEBqUDYj8DgYxqNZx8qw79Q9rUOP+pLwEY4yJmMZr8+xQJQ7GF8UVc5nUlpxszeOUrs7UvhnphQ==}
+  '@ledgerhq/coin-module-framework@file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz':
+    resolution: {integrity: sha512-aLXO30eU/xHkth6oI8YP2W29qec2X1ZV5KM6YtpepULPHNFHT79g0K/nKPL1OZs2g6yfIx8V75ZNMF++h8CT/Q==, tarball: file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz}
+    version: 11.0.1
 
   '@ledgerhq/coin-stellar@12.1.2':
     resolution: {integrity: sha512-akOiP7s4fB8juQLcazx0xW7iDYRrK+MzFKzd2cU7GWs0GWJwH3auYBBSkgVLIujTynuFTzx/SjuNPX3xOyDrXQ==}
+    version: 12.1.2
     peerDependencies:
       '@ledgerhq/live-network': ^3.1.0
 
   '@ledgerhq/coin-tezos@14.2.0':
     resolution: {integrity: sha512-Y9Ve1vJP3Q4w1EMjqxPwz7t0Q/TNoHxzLlTiQ5gGrmXu06mvFejlcRnY2EfJ4dndgYY737TW3/A1eKlA0ERpXA==}
+    version: 14.2.0
     peerDependencies:
       '@ledgerhq/live-network': ^3.1.0
 
   '@ledgerhq/coin-xrp@13.3.1':
     resolution: {integrity: sha512-izcPt8JvP4Yw1SICt0TjGMBrNwXpIn93dfI77OAZmca3GQZ/BC5nXM+Yu2uMX7KO0MRVGkfxIogFA1eFEpf4XA==}
+    version: 13.3.1
     peerDependencies:
       '@ledgerhq/live-network': ^3.1.0
 
@@ -28291,6 +28293,12 @@ packages:
 
   '@ledgerhq/live-network@3.3.0':
     resolution: {integrity: sha512-fDYl/CIxmQxRL/NLzOTY7y/HYYhT2YTQvXzWndcJI3OfTyJY5Eo4SSkqnBMOOWD2ftz/xdqDgDBHOeeL5gKY1w==}
+    peerDependencies:
+      axios: 1.20.0
+
+  '@ledgerhq/live-network@file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz':
+    resolution: {integrity: sha512-2u7J4nf6mHI9yiY0JQwMqKU/GTCIuLe4N13iwpatTFrxag/vKRB9A7TXpcjpE+rO+bBzWJBRyxe2G3N/J0ZmpQ==, tarball: file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz}
+    version: 3.3.0
     peerDependencies:
       axios: 1.20.0
 
@@ -46774,7 +46782,7 @@ snapshots:
   '@ledgerhq/coin-evm@16.4.2(@ledgerhq/live-network@3.3.0(axios@1.20.0(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(utf-8-validate@6.0.6)':
     dependencies:
       '@ethersproject/shims': 5.7.0
-      '@ledgerhq/coin-module-framework': 11.0.1
+      '@ledgerhq/coin-module-framework': file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
       '@ledgerhq/live-network': 3.3.0(axios@1.20.0(debug@4.4.3))
       axios: 1.20.0(debug@4.4.3)
       bignumber.js: 9.1.2
@@ -46787,29 +46795,45 @@ snapshots:
       - react-native
       - utf-8-validate
 
-  '@ledgerhq/coin-hypercore@4.0.3(@ledgerhq/live-network@3.3.0(axios@1.20.0(debug@4.4.3)))':
+  '@ledgerhq/coin-evm@16.4.2(@ledgerhq/live-network@file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(utf-8-validate@6.0.6)':
     dependencies:
-      '@ledgerhq/coin-module-framework': 11.0.1
-      '@ledgerhq/live-network': 3.3.0(axios@1.20.0(debug@4.4.3))
+      '@ethersproject/shims': 5.7.0
+      '@ledgerhq/coin-module-framework': file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+      '@ledgerhq/live-network': file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
+      axios: 1.20.0(debug@4.4.3)
+      bignumber.js: 9.1.2
+      eip55: 2.1.1
+      ethers: 6.15.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      react-native-get-random-values: 1.11.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))
+    transitivePeerDependencies:
+      - bufferutil
+      - debug
+      - react-native
+      - utf-8-validate
 
-  '@ledgerhq/coin-module-framework@11.0.1':
+  '@ledgerhq/coin-hypercore@4.0.3(@ledgerhq/live-network@file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3)))':
+    dependencies:
+      '@ledgerhq/coin-module-framework': file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+      '@ledgerhq/live-network': file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
+
+  '@ledgerhq/coin-module-framework@file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz':
     dependencies:
       bignumber.js: 9.1.2
 
-  '@ledgerhq/coin-stellar@12.1.2(@ledgerhq/live-network@3.3.0(axios@1.20.0(debug@4.4.3)))(debug@4.4.3)':
+  '@ledgerhq/coin-stellar@12.1.2(@ledgerhq/live-network@file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3)))(debug@4.4.3)':
     dependencies:
       '@exodus/patch-broken-hermes-typed-arrays': 1.0.0-alpha.1(patch_hash=7deb6c5bd39ee007fca03da7609b2e0dee99dbb9962c3c8715edfd026da0a732)
-      '@ledgerhq/coin-module-framework': 11.0.1
-      '@ledgerhq/live-network': 3.3.0(axios@1.20.0(debug@4.4.3))
+      '@ledgerhq/coin-module-framework': file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+      '@ledgerhq/live-network': file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@stellar/stellar-sdk': 14.0.0(debug@4.4.3)
       bignumber.js: 9.1.2
     transitivePeerDependencies:
       - debug
 
-  '@ledgerhq/coin-tezos@14.2.0(@ledgerhq/live-network@3.3.0(axios@1.20.0(debug@4.4.3)))(encoding@0.1.13)':
+  '@ledgerhq/coin-tezos@14.2.0(@ledgerhq/live-network@file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3)))(encoding@0.1.13)':
     dependencies:
-      '@ledgerhq/coin-module-framework': 11.0.1
-      '@ledgerhq/live-network': 3.3.0(axios@1.20.0(debug@4.4.3))
+      '@ledgerhq/coin-module-framework': file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+      '@ledgerhq/live-network': file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@taquito/ledger-signer': 23.0.1(encoding@0.1.13)
       '@taquito/rpc': 23.0.1(encoding@0.1.13)
       '@taquito/taquito': 23.0.1(encoding@0.1.13)
@@ -46817,10 +46841,10 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@ledgerhq/coin-xrp@13.3.1(@ledgerhq/live-network@3.3.0(axios@1.20.0(debug@4.4.3)))(bufferutil@4.1.0)(utf-8-validate@6.0.6)':
+  '@ledgerhq/coin-xrp@13.3.1(@ledgerhq/live-network@file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3)))(bufferutil@4.1.0)(utf-8-validate@6.0.6)':
     dependencies:
-      '@ledgerhq/coin-module-framework': 11.0.1
-      '@ledgerhq/live-network': 3.3.0(axios@1.20.0(debug@4.4.3))
+      '@ledgerhq/coin-module-framework': file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz
+      '@ledgerhq/live-network': file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       bignumber.js: 9.1.2
       invariant: 2.2.4
       ripple-address-codec: 5.0.1(bufferutil@4.1.0)(utf-8-validate@6.0.6)
@@ -47140,7 +47164,7 @@ snapshots:
       '@ledgerhq/auth': 0.2.0
       '@ledgerhq/hw-ledger-key-ring-protocol': 1.1.0(@typescript/typescript6@6.0.2)
       '@ledgerhq/hw-transport': 6.37.0
-      '@ledgerhq/live-network': 3.3.0(axios@1.20.0(debug@4.4.3))
+      '@ledgerhq/live-network': file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs': 6.20.0
       base64-js: 1.5.1
       isomorphic-ws: 5.0.0(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))
@@ -47169,6 +47193,13 @@ snapshots:
   '@ledgerhq/live-env@4.2.0': {}
 
   '@ledgerhq/live-network@3.3.0(axios@1.20.0(debug@4.4.3))':
+    dependencies:
+      '@ledgerhq/live-promise': 0.5.0
+      '@ledgerhq/logs': 6.20.0
+      axios: 1.20.0(debug@4.4.3)
+      lru-cache: 7.18.3
+
+  '@ledgerhq/live-network@file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz(axios@1.20.0(debug@4.4.3))':
     dependencies:
       '@ledgerhq/live-promise': 0.5.0
       '@ledgerhq/logs': 6.20.0

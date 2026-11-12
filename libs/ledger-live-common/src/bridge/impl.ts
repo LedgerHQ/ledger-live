@@ -66,6 +66,10 @@ const genericBridgeConfigKeys: Record<string, string> = {
 function shouldUseGenericCoinFrameworkBridge(family: string) {
   if (!isGenericCoinFrameworkFamily(family)) return false;
   const configKey = genericBridgeConfigKeys[family];
+  // PROTOTYPE-STAND-IN: pick the NEAR bridge for a measured walk of the app.
+  if (family === "near" && process.env.NEAR_POC_GENERIC_BRIDGE !== undefined) {
+    return process.env.NEAR_POC_GENERIC_BRIDGE === "1";
+  }
   return !configKey || Boolean(LiveConfig.getValueByKey(configKey));
 }
 

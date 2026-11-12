@@ -286,6 +286,10 @@ ignoredOptionalDependencies:
   - "@substrate/connect"
 
 overrides:
+  # PROTOTYPE-STAND-IN: local builds of the live-network retry option and the framework's validator
+  # balance options, until both are released.
+  "@ledgerhq/live-network": "file:../../../ts-libs/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-live-network-3.3.0.tgz"
+  "@ledgerhq/coin-module-framework": "file:../../../../backend/coin-modules/.worktrees/nearblocks-poc/poc-artifacts/ledgerhq-coin-module-framework-11.0.1.tgz"
   # pnpm 11 re-resolution picks undeclared optional peers from elsewhere in the graph and splits their dependents
   "debug>supports-color": "-"
   "@hiero-ledger/cryptography>expo-crypto": "-"

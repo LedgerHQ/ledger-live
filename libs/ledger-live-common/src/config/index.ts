@@ -11,6 +11,20 @@ const getCurrencyConfiguration = <T extends CurrencyConfig>(
     throw new Error(`No currency configuration available for ${currencyId}`);
   }
 
+  // PROTOTYPE-STAND-IN: route NEAR to a local counting proxy for a measured walk of the app.
+  const pocProxy = process.env.NEAR_POC_PROXY;
+  if (currencyId === "near" && pocProxy) {
+    return {
+      ...currencyData,
+      infra: {
+        API_NEAR_PRIVATE_NODE: `${pocProxy}/node`,
+        API_NEAR_PUBLIC_NODE: `${pocProxy}/node`,
+        API_NEAR_INDEXER: `${pocProxy}/legacy-indexer`,
+        API_NEARBLOCKS_INDEXER: `${pocProxy}/nb`,
+      },
+    };
+  }
+
   return currencyData;
 };
 
