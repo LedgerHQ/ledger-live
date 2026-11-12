@@ -30,9 +30,6 @@ type FunnelRoute = RouteProp<OnboardingNavigatorParamList, ScreenName.DeviceOnbo
 const firmwareUpdateDelegatedState = "checks.firmwareUpdateDelegated";
 const awaitingSessionAfterFirmwareUpdateState = "awaitingSessionAfterFirmwareUpdate";
 
-/** Back must not quit here: a quit would skip the update and complete onboarding. */
-const firmwareUpdateOfferState = "checks.firmwareUpdateOffered";
-
 export type QuitConfirmationModel = {
   isOpen: boolean;
   stepName: string;
@@ -88,7 +85,7 @@ function blockBack(event: BackEvent, actions: LeaveActions) {
   if (actions.status === "running" && actions.state) {
     if (actions.state === firmwareUpdateDelegatedState) actions.closeFirmwareHandover();
     else if (actions.unseeded) actions.requestQuit();
-    else if (actions.state !== firmwareUpdateOfferState) actions.quitMachine();
+    else actions.quitMachine();
     return;
   }
   actions.leave();
@@ -295,7 +292,6 @@ function checksScreen(actions: ScreenActions): DeviceOnboardingFunnelModel {
       onRetry: () => actions.send({ type: "RETRY" }),
       onCloseSheet: () => actions.send({ type: "CLOSE" }),
       onCloseNotGenuine: actions.unseeded ? () => actions.send({ type: "CLOSE" }) : undefined,
-      onCloseFirmwareOffer: actions.unseeded ? () => actions.send({ type: "CLOSE" }) : undefined,
       onAcceptUpdate: () => actions.send({ type: "USER_ACCEPT" }),
       onDeclineUpdate: () => actions.send({ type: "USER_DECLINE" }),
       onContinue:

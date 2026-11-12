@@ -298,7 +298,7 @@ describe("ChecksView", () => {
     expect(onQuit).not.toHaveBeenCalled();
   });
 
-  it("should install the update from the install action after the drawer is closed", async () => {
+  it("should reopen the firmware offer when install is pressed after the drawer is closed", async () => {
     const { user, onAcceptUpdate, onDeclineUpdate } = renderChecks("updating", {
       update: { current: "1.0.0", available: "1.1.0" },
     });
@@ -306,7 +306,10 @@ describe("ChecksView", () => {
     await user.press(screen.getByTestId("modal-close-button"));
     await user.press(screen.getByRole("button", { name: "Install Ledger OS update" }));
 
-    expect(onAcceptUpdate).toHaveBeenCalledTimes(1);
+    expect(screen.getByText(/Version 1\.1\.0/)).toBeVisible();
+    expect(screen.getByText(/Ledger\s+Stax OS update available/)).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Close" })).toBeNull();
+    expect(onAcceptUpdate).not.toHaveBeenCalled();
     expect(onDeclineUpdate).not.toHaveBeenCalled();
   });
 
@@ -430,6 +433,18 @@ describe("ChecksView", () => {
     expect(screen.queryByText("See what's in the update")).toBeNull();
   });
 
+  it("should not show the firmware offer again once the update is being installed", async () => {
+    const { user, rerender } = renderChecks("updating", {
+      device: nanoX,
+      update: { current: "2.4.0", available: "2.5.0" },
+    });
+
+    await user.press(screen.getByText("Update now"));
+    rerender({ state: "checking" });
+
+    expect(screen.queryByText(/Version 2\.5\.0/)).toBeNull();
+  });
+
   it("should keep the unsupported update drawer when sheets are suspended", async () => {
     const platform = jest.replaceProperty(Platform, "OS", "android");
 
@@ -511,21 +526,6 @@ describe("ChecksView", () => {
     expect(onRetry).toHaveBeenCalledTimes(1);
     expect(onCloseSheet).not.toHaveBeenCalled();
     expect(screen.queryByText("Try again")).toBeNull();
-    expect(onQuit).not.toHaveBeenCalled();
-  });
-
-  it("should notify the funnel when the offer drawer is closed", async () => {
-    const onCloseFirmwareOffer = jest.fn();
-    const { user, onDeclineUpdate, onQuit } = renderChecks("updating", {
-      update: { current: "1.0.0", available: "1.1.0" },
-      onCloseFirmwareOffer,
-    });
-
-    await user.press(screen.getByTestId("modal-close-button"));
-
-    expect(onCloseFirmwareOffer).toHaveBeenCalledTimes(1);
-    expect(onDeclineUpdate).not.toHaveBeenCalled();
-    expect(screen.getByRole("button", { name: "Close" })).toBeVisible();
     expect(onQuit).not.toHaveBeenCalled();
   });
 

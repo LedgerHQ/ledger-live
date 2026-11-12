@@ -209,7 +209,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(goBack).not.toHaveBeenCalled();
   });
 
-  it("should block Android back without quitting while the update is offered", () => {
+  it("should quit the machine when Android back leaves the firmware offer", () => {
     useSession.mockReturnValue(session({ state: "checks.firmwareUpdateOffered" }));
     renderHook(() => useDeviceOnboardingFunnelViewModel());
     const preventDefault = jest.fn();
@@ -217,15 +217,14 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
       listeners.get("beforeRemove")?.({ preventDefault, data: { action: { type: "GO_BACK" } } });
 
     back();
-    back();
 
-    expect(preventDefault).toHaveBeenCalledTimes(2);
-    expect(send).not.toHaveBeenCalled();
+    expect(preventDefault).toHaveBeenCalledTimes(1);
+    expect(send).toHaveBeenCalledWith({ type: "QUIT" });
     expect(goBack).not.toHaveBeenCalled();
 
     recorded.host?.onLeave?.();
     back();
-    expect(preventDefault).toHaveBeenCalledTimes(2);
+    expect(preventDefault).toHaveBeenCalledTimes(1);
   });
 
   it("should close the firmware handover when Android back happens while it opens", () => {
@@ -947,26 +946,5 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     checksOf(result.current).onCloseNotGenuine?.();
 
     expect(send).toHaveBeenCalledWith({ type: "CLOSE" });
-  });
-
-  it("should close a firmware offer with CLOSE on an unseeded device", () => {
-    useSession.mockReturnValue(
-      session({
-        state: "checks.firmwareUpdateOffered",
-        context: {
-          onboardedOnEntry: false,
-          firmwareVersion: "1.0.0",
-          availableFirmwareVersion: "1.1.0",
-          checksPaused: false,
-        } as DeviceOnboardingSession["context"],
-      }),
-    );
-
-    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
-
-    checksOf(result.current).onCloseFirmwareOffer?.();
-
-    expect(send).toHaveBeenCalledWith({ type: "CLOSE" });
-    expect(send).not.toHaveBeenCalledWith({ type: "USER_DECLINE" });
   });
 });
