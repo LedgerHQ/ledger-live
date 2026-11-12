@@ -1,27 +1,16 @@
-import type { NodeWebUsbAccessSnapshot } from "./node-webusb";
-
 const NO_LEDGER_DEVICE_FOUND_MESSAGE = "No Ledger device found. Unlock the device and try again.";
 
-type UsbSessionOpenErrorInput = {
-  cause?: unknown;
-  /** Read when the open failed: the transport is torn down before the error is reported. */
-  usbAccess?: NodeWebUsbAccessSnapshot;
-};
-
-/** Opening the USB session failed. Carries what the transport saw while opening the Ledger. */
+/** Opening the USB session failed. The `cause` is the device stack's error, when there is one. */
 export abstract class UsbSessionOpenError extends Error {
-  readonly usbAccess: NodeWebUsbAccessSnapshot | undefined;
-
-  protected constructor(message: string, { cause, usbAccess }: UsbSessionOpenErrorInput) {
+  protected constructor(message: string, cause: unknown) {
     super(message, cause === undefined ? undefined : { cause });
-    this.usbAccess = usbAccess;
   }
 }
 
 /** Discovery produced no usable device. */
 export class DeviceDiscoveryFailedError extends UsbSessionOpenError {
-  constructor(input: UsbSessionOpenErrorInput = {}) {
-    super(NO_LEDGER_DEVICE_FOUND_MESSAGE, input);
+  constructor(cause?: unknown) {
+    super(NO_LEDGER_DEVICE_FOUND_MESSAGE, cause);
     this.name = "DeviceDiscoveryFailedError";
   }
 }
@@ -31,8 +20,8 @@ export class DeviceDiscoveryFailedError extends UsbSessionOpenError {
  * kept, since `dmk.connect()` rejects with a `GeneralDmkError` that has none of its own.
  */
 export class DeviceConnectionFailedError extends UsbSessionOpenError {
-  constructor(input: UsbSessionOpenErrorInput = {}) {
-    super(underlyingMessageOf(input.cause) ?? "Could not open a session with the Ledger.", input);
+  constructor(cause?: unknown) {
+    super(underlyingMessageOf(cause) ?? "Could not open a session with the Ledger.", cause);
     this.name = "DeviceConnectionFailedError";
   }
 }

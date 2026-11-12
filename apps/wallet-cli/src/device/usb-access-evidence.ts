@@ -1,29 +1,35 @@
-import type { NodeWebUsbAccessSnapshot } from "./node-webusb";
-
 export type UsbAccessFailureKind = "access_denied" | "device_unreachable" | "busy" | "other";
 
 /** The failed USB open behind a failed connection, reported as `usb_access_error` plus a hint. */
 export type UsbAccessEvidence = {
-  /** The libusb or OS error name, e.g. `LIBUSB_ERROR_ACCESS`; the error message when it has none. */
+  /** The libusb or OS error name, e.g. `LIBUSB_ERROR_ACCESS`. */
   error: string;
   kind: UsbAccessFailureKind;
 };
 
-const USB_ERROR_NAME =
-  /\b(LIBUSB_ERROR_[A-Z_]+|EACCES|EPERM|EBUSY|ENOENT|ENODEV|ERROR_ACCESS_DENIED|NotAllowedError|SecurityError|NotFoundError)\b/;
+/** In priority order: the first kind whose error appears anywhere in the chain wins. */
+const USB_ERROR_NAMES_BY_KIND: ReadonlyArray<readonly [UsbAccessFailureKind, RegExp]> = [
+  [
+    "access_denied",
+    /\b(LIBUSB_ERROR_ACCESS|EACCES|EPERM|ERROR_ACCESS_DENIED|NotAllowedError|SecurityError)\b/,
+  ],
+  ["busy", /\b(LIBUSB_ERROR_BUSY|EBUSY)\b/],
+  [
+    "device_unreachable",
+    /\b(LIBUSB_ERROR_NO_DEVICE|LIBUSB_ERROR_NOT_FOUND|ENOENT|ENODEV|NotFoundError)\b/,
+  ],
+  ["other", /\b(LIBUSB_ERROR_[A-Z_]+)\b/],
+];
 const ERROR_CHAIN_MAX_DEPTH = 4;
 
-/**
- * The latest failed open that still applies. A failure followed by a detach means the Ledger was
- * unplugged, except when the open failed with "no device": on Linux libusb fires that detach itself.
- */
-export function usbAccessEvidence(
-  snapshot: NodeWebUsbAccessSnapshot,
-): UsbAccessEvidence | undefined {
-  const latest = [...snapshot.openFailures.values()]
-    .map(failure => ({ failure, kind: classifyUsbAccessFailure(failure.error) }))
-    .findLast(({ failure, kind }) => !failure.detached || kind === "device_unreachable");
-  return latest && { error: usbErrorName(latest.failure.error), kind: latest.kind };
+/** The libusb or OS error a failed USB open carries, if the error chain names one. */
+export function usbAccessEvidence(error: unknown): UsbAccessEvidence | undefined {
+  const text = errorChainStrings(error, 0).join(" ");
+  for (const [kind, pattern] of USB_ERROR_NAMES_BY_KIND) {
+    const name = pattern.exec(text)?.[1];
+    if (name) return { error: name, kind };
+  }
+  return undefined;
 }
 
 export function usbAccessHint(kind: UsbAccessFailureKind): string | undefined {
@@ -39,44 +45,18 @@ export function usbAccessHint(kind: UsbAccessFailureKind): string | undefined {
   }
 }
 
-export function classifyUsbAccessFailure(error: unknown): UsbAccessFailureKind {
-  const text = errorChainStrings(error).join(" ");
-  if (
-    /LIBUSB_ERROR_ACCESS|EACCES|EPERM|NotAllowedError|SecurityError|ERROR_ACCESS_DENIED/i.test(text)
-  ) {
-    return "access_denied";
-  }
-  if (/LIBUSB_ERROR_BUSY|EBUSY/i.test(text)) {
-    return "busy";
-  }
-  if (/LIBUSB_ERROR_NO_DEVICE|LIBUSB_ERROR_NOT_FOUND|ENOENT|ENODEV|NotFoundError/i.test(text)) {
-    return "device_unreachable";
-  }
-  return "other";
-}
-
-function usbErrorName(error: unknown): string {
-  const strings = errorChainStrings(error);
-  return USB_ERROR_NAME.exec(strings.join(" "))?.[1] ?? strings[0] ?? "unknown error";
-}
-
 /**
  * Messages, names and tags down the error chain. node-usb nests through `cause`, DMK's
- * `GeneralDmkError` through `originalError`.
+ * `GeneralDmkError` through `originalError`, and an error can carry both.
  */
-function errorChainStrings(error: unknown): string[] {
-  const strings: string[] = [];
-  let node = error;
-  for (let depth = 0; node != null && depth < ERROR_CHAIN_MAX_DEPTH; depth++) {
-    if (typeof node !== "object") {
-      if (typeof node === "string") strings.push(node);
-      break;
-    }
-    const { message, name, code, _tag, cause, originalError } = node as Record<string, unknown>;
-    strings.push(
-      ...[message, name, code, _tag].filter((v): v is string => typeof v === "string" && v !== ""),
-    );
-    node = cause ?? originalError;
-  }
-  return strings;
+function errorChainStrings(node: unknown, depth: number): string[] {
+  if (node == null || depth >= ERROR_CHAIN_MAX_DEPTH) return [];
+  if (typeof node === "string") return [node];
+  if (typeof node !== "object") return [];
+  const { message, name, code, _tag, cause, originalError } = node as Record<string, unknown>;
+  return [
+    ...[message, name, code, _tag].filter((v): v is string => typeof v === "string" && v !== ""),
+    ...errorChainStrings(cause, depth + 1),
+    ...errorChainStrings(originalError, depth + 1),
+  ];
 }

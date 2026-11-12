@@ -221,19 +221,18 @@ function describeCause(error: unknown): string | undefined {
   return cause ? `${tag}: ${cause}` : tag;
 }
 
-async function connectFirstUsbDevice(kit: WalletCliDmk): Promise<string> {
-  const { dmk } = kit;
+async function connectFirstUsbDevice(dmk: DeviceManagementKit): Promise<string> {
   const discovered = await firstValueFrom(
     dmk.listenToAvailableDevices({}).pipe(
       filter((list: DiscoveredDevice[]) => list.length > 0),
       timeout(CONNECT_TIMEOUT_MS),
     ),
   ).catch((cause: unknown) => {
-    throw new DeviceDiscoveryFailedError({ cause, usbAccess: kit.getUsbAccessSnapshot() });
+    throw new DeviceDiscoveryFailedError(cause);
   });
   const device = discovered[0];
   if (!device) {
-    throw new DeviceDiscoveryFailedError({ usbAccess: kit.getUsbAccessSnapshot() });
+    throw new DeviceDiscoveryFailedError();
   }
   const connecting = dmk.connect({
     device,
@@ -243,7 +242,7 @@ async function connectFirstUsbDevice(kit: WalletCliDmk): Promise<string> {
   const sessionId = speculos
     ? await connectSpeculos(connecting, speculos)
     : await connecting.catch((cause: unknown) => {
-        throw new DeviceConnectionFailedError({ cause, usbAccess: kit.getUsbAccessSnapshot() });
+        throw new DeviceConnectionFailedError(cause);
       });
 
   const sessionState = await firstValueFrom(dmk.getDeviceSessionState({ sessionId })).catch(
@@ -270,7 +269,7 @@ async function resetPersistentDmkAfterFailedOpen(kit: WalletCliDmk): Promise<voi
 async function createWalletCliDmkTransport(): Promise<WalletCliDmkTransport> {
   const kit = await getOrCreatePersistentDmk();
   try {
-    const sessionId = await connectFirstUsbDevice(kit);
+    const sessionId = await connectFirstUsbDevice(kit.dmk);
     const transport = new WalletCliDmkTransport(kit.dmk, sessionId);
     singleton = { dmk: kit.dmk, transport, destroyTransport: kit.destroyTransport };
     return transport;

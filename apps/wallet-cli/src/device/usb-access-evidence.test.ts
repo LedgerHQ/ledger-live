@@ -1,83 +1,51 @@
 import { describe, expect, it } from "bun:test";
-import { OpeningConnectionError } from "@ledgerhq/device-management-kit";
-import type { NodeWebUsbAccessSnapshot, NodeWebUsbOpenFailure } from "./node-webusb";
-import {
-  classifyUsbAccessFailure,
-  usbAccessEvidence,
-  usbAccessHint,
-  type UsbAccessFailureKind,
-} from "./usb-access-evidence";
+import { NoAccessibleDeviceError, OpeningConnectionError } from "@ledgerhq/device-management-kit";
+import { usbAccessEvidence, usbAccessHint, type UsbAccessFailureKind } from "./usb-access-evidence";
 
-function snapshotOf(...failures: Array<[string, NodeWebUsbOpenFailure]>): NodeWebUsbAccessSnapshot {
-  return { openFailures: new Map(failures) };
-}
-
-describe("classifyUsbAccessFailure", () => {
+describe("usbAccessEvidence", () => {
   it.each([
-    ["initialize error: Error: LIBUSB_ERROR_ACCESS", "access_denied"],
-    ["EACCES: permission denied", "access_denied"],
-    ["claimInterface error: Error: LIBUSB_ERROR_BUSY", "busy"],
-    ["initialize error: Error: LIBUSB_ERROR_NO_DEVICE", "device_unreachable"],
-    ["LIBUSB_ERROR_NOT_SUPPORTED", "other"],
-  ] as const)("%s → %s", (message, kind) => {
-    expect(classifyUsbAccessFailure(new Error(message))).toBe(kind);
+    ["initialize error: Error: LIBUSB_ERROR_ACCESS", "LIBUSB_ERROR_ACCESS", "access_denied"],
+    ["EACCES: permission denied", "EACCES", "access_denied"],
+    ["claimInterface error: Error: LIBUSB_ERROR_BUSY", "LIBUSB_ERROR_BUSY", "busy"],
+    [
+      "initialize error: Error: LIBUSB_ERROR_NO_DEVICE",
+      "LIBUSB_ERROR_NO_DEVICE",
+      "device_unreachable",
+    ],
+    ["LIBUSB_ERROR_NOT_SUPPORTED", "LIBUSB_ERROR_NOT_SUPPORTED", "other"],
+  ] as const)("%s → %s (%s)", (message, error, kind) => {
+    expect(usbAccessEvidence(new Error(message))).toEqual({ error, kind });
   });
 
   it("follows cause and a DMK originalError down to the libusb error", () => {
     expect(
-      classifyUsbAccessFailure(new Error("open failed", { cause: new Error("LIBUSB_ERROR_BUSY") })),
-    ).toBe("busy");
-    expect(
-      classifyUsbAccessFailure(new OpeningConnectionError(new Error("LIBUSB_ERROR_ACCESS"))),
-    ).toBe("access_denied");
+      usbAccessEvidence(new Error("open failed", { cause: new Error("LIBUSB_ERROR_BUSY") })),
+    ).toEqual({ error: "LIBUSB_ERROR_BUSY", kind: "busy" });
+    expect(usbAccessEvidence(new OpeningConnectionError(new Error("LIBUSB_ERROR_ACCESS")))).toEqual(
+      { error: "LIBUSB_ERROR_ACCESS", kind: "access_denied" },
+    );
   });
-});
 
-describe("usbAccessEvidence", () => {
-  it("reports the libusb error name of the latest failure", () => {
-    const evidence = usbAccessEvidence(
-      snapshotOf(
-        ["1-2", { error: new Error("LIBUSB_ERROR_BUSY"), detached: false }],
-        ["1-3", { error: new Error("open error: Error: LIBUSB_ERROR_ACCESS"), detached: false }],
-      ),
+  it("reads originalError when cause is set too", () => {
+    const transportError = Object.assign(
+      new NoAccessibleDeviceError(new Error("LIBUSB_ERROR_BUSY")),
+      {
+        cause: new Error("discovery failed"),
+      },
     );
 
-    expect(evidence).toEqual({ error: "LIBUSB_ERROR_ACCESS", kind: "access_denied" });
+    expect(usbAccessEvidence(transportError)).toEqual({ error: "LIBUSB_ERROR_BUSY", kind: "busy" });
   });
 
-  it("keeps a no-device failure after its detach, which libusb fires itself", () => {
-    const evidence = usbAccessEvidence(
-      snapshotOf([
-        "3-4",
-        { error: new Error("initialize error: Error: LIBUSB_ERROR_NO_DEVICE"), detached: true },
-      ]),
-    );
+  it("names the error that decided the kind, wherever it sits in the chain", () => {
+    const error = new Error("LIBUSB_ERROR_IO", { cause: new Error("EACCES: permission denied") });
 
-    expect(evidence).toEqual({ error: "LIBUSB_ERROR_NO_DEVICE", kind: "device_unreachable" });
+    expect(usbAccessEvidence(error)).toEqual({ error: "EACCES", kind: "access_denied" });
   });
 
-  it("drops any other failure once its device was detached", () => {
-    const snapshot = snapshotOf(
-      ["1-2", { error: new Error("LIBUSB_ERROR_BUSY"), detached: false }],
-      ["1-3", { error: new Error("LIBUSB_ERROR_ACCESS"), detached: true }],
-    );
-
-    expect(usbAccessEvidence(snapshot)).toEqual({ error: "LIBUSB_ERROR_BUSY", kind: "busy" });
-    expect(
-      usbAccessEvidence(snapshotOf(["1-3", { error: new Error("EPERM"), detached: true }])),
-    ).toBeUndefined();
-  });
-
-  it("falls back to the error message when it names no libusb or OS error", () => {
-    const evidence = usbAccessEvidence(
-      snapshotOf(["1-2", { error: new Error("libusb init failed"), detached: false }]),
-    );
-
-    expect(evidence).toEqual({ error: "libusb init failed", kind: "other" });
-  });
-
-  it("reports nothing without a failure", () => {
-    expect(usbAccessEvidence(snapshotOf())).toBeUndefined();
+  it("reports nothing when the chain names no libusb or OS error", () => {
+    expect(usbAccessEvidence(new Error("Timeout has occurred"))).toBeUndefined();
+    expect(usbAccessEvidence(undefined)).toBeUndefined();
   });
 });
 

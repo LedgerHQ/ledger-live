@@ -154,7 +154,7 @@ export function classifyDeviceError(error: unknown, ctx: ClassifyContext = {}): 
 }
 
 function usbSessionOpenErrorState(error: UsbSessionOpenError): DeviceState {
-  const usbAccess = error.usbAccess && usbAccessEvidence(error.usbAccess);
+  const usbAccess = usbAccessEvidence(error.cause);
   return usbAccess
     ? { code: "unknown", cause: error, usbAccess }
     : { code: "unknown", cause: error };

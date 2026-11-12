@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
 import {
   DeviceModelId as DmkDeviceModelId,
   DeviceStatus,
+  NoAccessibleDeviceError,
   OpeningConnectionError,
   type DeviceManagementKit,
 } from "@ledgerhq/device-management-kit";
@@ -11,7 +12,7 @@ import {
 } from "@ledgerhq/live-common/hw/index";
 import type { SpeculosTarget } from "@ledgerhq/live-dmk-shared/transport/speculosTarget";
 import { DeviceModelId as LedgerDeviceModelId } from "@ledgerhq/types-devices";
-import { of } from "rxjs";
+import { type Observable, of, throwError } from "rxjs";
 import {
   WALLET_CLI_DMK_DEVICE_ID,
   _setTestDmk,
@@ -23,7 +24,6 @@ import {
   resetWalletCliDmkSession,
 } from "./register-dmk-transport";
 import { getActiveSpeculosTarget } from "./speculos-target";
-import type { NodeWebUsbAccessSnapshot } from "./node-webusb";
 import { DeviceConnectionFailedError, DeviceDiscoveryFailedError } from "./usb-session-open-error";
 import { resetTestSeams } from "../shared/test-seam";
 
@@ -63,7 +63,7 @@ function makeDmk({
   destroyTransport = async () => {},
   disconnect = async () => {},
   getSessionState = () => ({}),
-  getUsbAccessSnapshot = () => undefined,
+  listenToAvailableDevices = () => of(availableDevices),
 }: {
   availableDevices?: { id: string }[];
   close?: () => void;
@@ -71,11 +71,11 @@ function makeDmk({
   destroyTransport?: () => Promise<void>;
   disconnect?: (input: unknown) => Promise<void>;
   getSessionState?: () => unknown;
-  getUsbAccessSnapshot?: () => NodeWebUsbAccessSnapshot | undefined;
+  listenToAvailableDevices?: () => Observable<{ id: string }[]>;
 } = {}) {
   let nextSessionIndex = 0;
   const dmk = {
-    listenToAvailableDevices: () => of(availableDevices),
+    listenToAvailableDevices,
     connect:
       connect ??
       (async () => {
@@ -92,7 +92,6 @@ function makeDmk({
     kit: {
       dmk,
       destroyTransport,
-      getUsbAccessSnapshot,
     },
   };
 }
@@ -319,35 +318,22 @@ describe("ensureWalletCliDmkTransport", () => {
 });
 
 describe("failed USB session open (LIVE-31394)", () => {
-  const usbAccess: NodeWebUsbAccessSnapshot = {
-    openFailures: new Map([["1-2", { error: new Error("LIBUSB_ERROR_ACCESS"), detached: false }]]),
-  };
-
-  function makeDmkTornDownOnFailure(options: Parameters<typeof makeDmk>[0]) {
-    let destroyed = false;
-    return makeDmk({
-      ...options,
-      destroyTransport: async () => {
-        destroyed = true;
-      },
-      getUsbAccessSnapshot: () => (destroyed ? undefined : usbAccess),
-    });
-  }
-
-  it("hands a failed discovery the USB access snapshot read before the transport is destroyed", async () => {
-    const fake = makeDmkTornDownOnFailure({ availableDevices: [] });
+  it("keeps the error that ended discovery as the cause", async () => {
+    const transportError = new NoAccessibleDeviceError(new Error("LIBUSB_ERROR_ACCESS"));
+    const fake = makeDmk({ listenToAvailableDevices: () => throwError(() => transportError) });
     _setTestDmk(async () => fake.kit);
 
     const error = await ensureWalletCliDmkTransport().catch((e: unknown) => e);
 
     expect(error).toBeInstanceOf(DeviceDiscoveryFailedError);
-    expect((error as DeviceDiscoveryFailedError).usbAccess).toBe(usbAccess);
+    expect((error as DeviceDiscoveryFailedError).cause).toBe(transportError);
   });
 
-  it("hands a failed connect the USB access snapshot and keeps the device stack's message", async () => {
-    const fake = makeDmkTornDownOnFailure({
+  it("keeps the connect error as the cause, and the device stack's message", async () => {
+    const connectError = new OpeningConnectionError(new Error("LIBUSB_ERROR_ACCESS"));
+    const fake = makeDmk({
       connect: async () => {
-        throw new OpeningConnectionError(new Error("LIBUSB_ERROR_ACCESS"));
+        throw connectError;
       },
     });
     _setTestDmk(async () => fake.kit);
@@ -356,7 +342,7 @@ describe("failed USB session open (LIVE-31394)", () => {
 
     expect(error).toBeInstanceOf(DeviceConnectionFailedError);
     expect((error as DeviceConnectionFailedError).message).toBe("LIBUSB_ERROR_ACCESS");
-    expect((error as DeviceConnectionFailedError).usbAccess).toBe(usbAccess);
+    expect((error as DeviceConnectionFailedError).cause).toBe(connectError);
   });
 });
 

@@ -4,11 +4,7 @@ import {
   LogLevel,
   type TransportFactory,
 } from "@ledgerhq/device-management-kit";
-import {
-  nodeWebUsbTransportFactory,
-  type NodeWebUsbAccessSnapshot,
-  type NodeWebUsbTransport,
-} from "./node-webusb";
+import { nodeWebUsbTransportFactory, type NodeWebUsbTransport } from "./node-webusb";
 import { LedgerLiveLogger } from "@ledgerhq/live-dmk-shared/services/LedgerLiveLogger";
 import { UserHashService } from "@ledgerhq/live-dmk-shared/services/UserHashService";
 import {
@@ -25,8 +21,6 @@ export type WalletCliDmk = {
    * `destroyTransport` rather than overwriting a shared module-level ref.
    */
   destroyTransport: () => Promise<void>;
-  /** What the USB transport saw while opening Ledgers; `undefined` on Speculos. */
-  getUsbAccessSnapshot: () => NodeWebUsbAccessSnapshot | undefined;
 };
 
 /** Builds the kit on the given Speculos target, or on the first USB Ledger when it is `null`. */
@@ -54,6 +48,5 @@ export function createDeviceManagementKit(speculos: SpeculosTarget | null): Wall
       nodeWebUsbTransport = null;
       await transport?.destroy();
     },
-    getUsbAccessSnapshot: () => nodeWebUsbTransport?.getAccessSnapshot(),
   };
 }

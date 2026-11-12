@@ -1,5 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { OpeningConnectionError, SendApduTimeoutError } from "@ledgerhq/device-management-kit";
+import {
+  NoAccessibleDeviceError,
+  OpeningConnectionError,
+  SendApduTimeoutError,
+} from "@ledgerhq/device-management-kit";
 import {
   DisconnectedDevice,
   DisconnectedDeviceDuringOperation,
@@ -7,9 +11,8 @@ import {
 } from "@ledgerhq/hw-transport/errors";
 import { ManagerDeviceLockedError } from "@ledgerhq/live-common/errors";
 import { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
-import { EmptyError } from "rxjs";
+import { EmptyError, TimeoutError } from "rxjs";
 import { classifyDeviceError } from "./classify-device-error";
-import type { NodeWebUsbAccessSnapshot } from "./node-webusb";
 import { DeviceConnectionFailedError, DeviceDiscoveryFailedError } from "./usb-session-open-error";
 
 describe("classifyDeviceError", () => {
@@ -146,15 +149,11 @@ describe("classifyDeviceError on Speculos", () => {
   });
 });
 
-function snapshot(error: unknown, detached = false): NodeWebUsbAccessSnapshot {
-  return { openFailures: new Map([["3-4", { error, detached }]]) };
-}
-
 describe("classifyDeviceError on a failed USB session open (LIVE-31394)", () => {
-  it("keeps a discovery failure unknown and adds the failed open behind it", () => {
-    const error = new DeviceDiscoveryFailedError({
-      usbAccess: snapshot(new Error("initialize error: Error: LIBUSB_ERROR_NO_DEVICE"), true),
-    });
+  it("keeps a discovery failure unknown and adds the open error the transport reported", () => {
+    const error = new DeviceDiscoveryFailedError(
+      new NoAccessibleDeviceError(new Error("initialize error: Error: LIBUSB_ERROR_NO_DEVICE")),
+    );
 
     expect(classifyDeviceError(error)).toEqual({
       code: "unknown",
@@ -164,26 +163,23 @@ describe("classifyDeviceError on a failed USB session open (LIVE-31394)", () => 
   });
 
   it("reads the libusb error a DMK connection error carries on originalError", () => {
-    const error = new DeviceConnectionFailedError({
-      cause: new OpeningConnectionError(new Error("claimInterface error: LIBUSB_ERROR_BUSY")),
-      usbAccess: snapshot(new OpeningConnectionError(new Error("LIBUSB_ERROR_ACCESS"))),
-    });
+    const error = new DeviceConnectionFailedError(
+      new OpeningConnectionError(new Error("claimInterface error: LIBUSB_ERROR_BUSY")),
+    );
 
     expect(classifyDeviceError(error)).toEqual({
       code: "unknown",
       cause: error,
-      usbAccess: { error: "LIBUSB_ERROR_ACCESS", kind: "access_denied" },
+      usbAccess: { error: "LIBUSB_ERROR_BUSY", kind: "busy" },
     });
   });
 
-  it("adds nothing when no open failed or the failed device was unplugged", () => {
-    const noFailure = new DeviceDiscoveryFailedError({ usbAccess: { openFailures: new Map() } });
-    const unplugged = new DeviceDiscoveryFailedError({
-      usbAccess: snapshot(new Error("LIBUSB_ERROR_ACCESS"), true),
-    });
-    const onSpeculos = new DeviceDiscoveryFailedError();
+  it("adds nothing when discovery timed out or no device stack error names a USB error", () => {
+    const timedOut = new DeviceDiscoveryFailedError(new TimeoutError());
+    const noCause = new DeviceDiscoveryFailedError();
+    const sessionFailed = new DeviceConnectionFailedError(new Error("Session init failed"));
 
-    for (const error of [noFailure, unplugged, onSpeculos]) {
+    for (const error of [timedOut, noCause, sessionFailed]) {
       expect(classifyDeviceError(error)).toEqual({ code: "unknown", cause: error });
     }
   });

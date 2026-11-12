@@ -27,8 +27,8 @@ import {
 } from "usb";
 import { Left, Maybe, Right } from "purify-ts";
 import { randomUUID } from "node:crypto";
-import { BehaviorSubject, from } from "rxjs";
-import { map, switchMap } from "rxjs/operators";
+import { BehaviorSubject, from, merge, Subject, throwError } from "rxjs";
+import { map, mergeMap, switchMap } from "rxjs/operators";
 import {
   NodeWebUsbApduSender,
   type NodeWebUsbApduSenderConstructorArgs,
@@ -61,21 +61,7 @@ function getVendorInterfaceNumber(device: WebUSBDevice): number | null {
 
 type ScannedWebUsbDevice = { device: WebUSBDevice; interfaceNumber: number };
 
-/** `bus-address`: stable while the device stays plugged in, and known before it is opened. */
-function usbDeviceKey(native: NativeUsbDevice): string {
-  return `${native.busNumber}-${native.deviceAddress}`;
-}
-
-export type NodeWebUsbOpenFailure = {
-  error: unknown;
-  /** A detach event arrived for the device after the failure. */
-  detached: boolean;
-};
-
-export type NodeWebUsbAccessSnapshot = {
-  /** The last failed open of each device, by `bus-address`, oldest first. */
-  openFailures: ReadonlyMap<string, NodeWebUsbOpenFailure>;
-};
+type LedgerScan = { opened: ScannedWebUsbDevice[]; openFailures: unknown[] };
 
 type NodeWebUsbBindings = Pick<typeof usbBindings, "on" | "removeListener" | "unrefHotplugEvents">;
 
@@ -191,8 +177,7 @@ export class NodeWebUsbTransport implements Transport {
   // NoAccessibleDeviceError when a refresh is already in progress.
   private _refreshDiscoveredDevicesInFlight: Promise<ScannedWebUsbDevice[]> | null = null;
   private _refreshDiscoveredDevicesQueued: Promise<ScannedWebUsbDevice[]> | null = null;
-  private readonly _openFailures = new Map<string, NodeWebUsbOpenFailure>();
-  private readonly _usbDeviceKeysByWebUsbDevice = new WeakMap<WebUSBDevice, string>();
+  private readonly _ledgerOpenFailures = new Subject<NoAccessibleDeviceError>();
 
   constructor(
     deviceModelDataSource: DeviceModelDataSource,
@@ -396,17 +381,21 @@ export class NodeWebUsbTransport implements Transport {
     }
   }
 
-  private async scanLedgerWebUsbDevices(): Promise<ScannedWebUsbDevice[]> {
+  private async scanLedgerWebUsbDevices(): Promise<LedgerScan> {
     const ledgers = this._platformBindings
       .getDeviceList()
       .filter(native => native.deviceDescriptor.idVendor === LEDGER_VENDOR_ID);
-    const opened = await Promise.allSettled(ledgers.map(native => this.openWebUsbDevice(native)));
+    const results = await Promise.allSettled(
+      ledgers.map(native => this._platformBindings.createWebUsbDevice(native)),
+    );
     const collected: ScannedWebUsbDevice[] = [];
-    for (const result of opened) {
+    const openFailures: unknown[] = [];
+    for (const result of results) {
       if (result.status === "rejected") {
         this._logger.error("Error while opening a Ledger WebUSB device", {
           data: { error: result.reason },
         });
+        openFailures.push(result.reason);
         continue;
       }
       const interfaceNumber = getVendorInterfaceNumber(result.value);
@@ -415,39 +404,14 @@ export class NodeWebUsbTransport implements Transport {
       }
       collected.push({ device: result.value, interfaceNumber });
     }
-    return dedupeLedgerWebUsbDevices(collected);
+    return { opened: dedupeLedgerWebUsbDevices(collected), openFailures };
   }
 
-  private async openWebUsbDevice(native: NativeUsbDevice): Promise<WebUSBDevice> {
-    const key = usbDeviceKey(native);
-    const device = await this.trackOpen(key, () =>
-      this._platformBindings.createWebUsbDevice(native),
-    );
-    this._usbDeviceKeysByWebUsbDevice.set(device, key);
-    return device;
-  }
-
-  /** Records the outcome of opening a device: a failure replaces its last one, a success clears it. */
-  private async trackOpen<T>(key: string | undefined, open: () => Promise<T>): Promise<T> {
-    try {
-      const opened = await open();
-      if (key !== undefined) this._openFailures.delete(key);
-      return opened;
-    } catch (error) {
-      if (key !== undefined) {
-        this._openFailures.delete(key);
-        this._openFailures.set(key, { error, detached: false });
-      }
-      throw error;
+  /** Fails the device stream with the open error when it leaves no Ledger to offer. */
+  private reportLedgerOpenFailure(error: unknown): void {
+    if (this._transportDiscoveredDevices.getValue().length === 0) {
+      this._ledgerOpenFailures.next(new NoAccessibleDeviceError(error));
     }
-  }
-
-  /**
-   * What happened when this transport last tried to open each Ledger, for the caller to explain a
-   * failed connection. The errors are kept as thrown.
-   */
-  getAccessSnapshot(): NodeWebUsbAccessSnapshot {
-    return { openFailures: new Map(this._openFailures) };
   }
 
   private mapWebUsbToDiscovered(
@@ -488,8 +452,11 @@ export class NodeWebUsbTransport implements Transport {
 
   listenToAvailableDevices() {
     void this.updateTransportDiscoveredDevices();
-    return this._transportDiscoveredDevices.pipe(
-      map(list => list.map(({ webUsbDevice: _w, interfaceNumber: _i, ...rest }) => rest)),
+    return merge(
+      this._transportDiscoveredDevices.pipe(
+        map(list => list.map(({ webUsbDevice: _w, interfaceNumber: _i, ...rest }) => rest)),
+      ),
+      this._ledgerOpenFailures.pipe(mergeMap(error => throwError(() => error))),
     );
   }
 
@@ -527,12 +494,12 @@ export class NodeWebUsbTransport implements Transport {
 
   private async scanAndPublishDiscoveredDevices(): Promise<ScannedWebUsbDevice[]> {
     try {
-      const scanned = await this.scanLedgerWebUsbDevices();
-      await this.reconnectPendingMachines(scanned);
-      const next: WebUsbDiscoveredInternal[] = [];
-      for (const { device, interfaceNumber } of scanned) {
+      const { opened, openFailures } = await this.scanLedgerWebUsbDevices();
+      await this.reconnectPendingMachines(opened);
+      const found: WebUsbDiscoveredInternal[] = [];
+      for (const { device, interfaceNumber } of opened) {
         try {
-          next.push(this.mapWebUsbToDiscovered(device, interfaceNumber));
+          found.push(this.mapWebUsbToDiscovered(device, interfaceNumber));
         } catch (e) {
           if (e instanceof DeviceNotRecognizedError) {
             continue;
@@ -541,17 +508,26 @@ export class NodeWebUsbTransport implements Transport {
         }
       }
 
-      if (next.length > 0) {
+      if (found.length > 0) {
         this.stopWindowsDiscoveryPolling();
       } else {
         this.startWindowsDiscoveryPolling();
       }
 
-      if (!areSameDiscoveredDevices(this._transportDiscoveredDevices.getValue(), next)) {
+      const previous = this._transportDiscoveredDevices.getValue();
+      // A failed open does not say which listed Ledger it was, so all of them stay listed.
+      const next =
+        openFailures.length === 0
+          ? found
+          : [...found, ...previous.filter(row => !found.some(f => f.id === row.id))];
+      if (!areSameDiscoveredDevices(previous, next)) {
         this._transportDiscoveredDevices.next(next);
       }
+      if (openFailures.length > 0) {
+        this.reportLedgerOpenFailure(openFailures[0]);
+      }
 
-      return scanned;
+      return opened;
     } catch (e) {
       this._logger.error("Error while scanning Ledger WebUSB devices", { data: { error: e } });
       return [];
@@ -692,9 +668,7 @@ export class NodeWebUsbTransport implements Transport {
     this._deviceApduSendersByConnectionMachine.set(machine, apduSender);
 
     const setupConnection = (async () => {
-      await this.trackOpen(this._usbDeviceKeysByWebUsbDevice.get(row.webUsbDevice), () =>
-        machine.setupConnection(),
-      );
+      await machine.setupConnection();
       this.setActiveConnection(row.webUsbDevice, machine);
       return machine;
     })();
@@ -741,7 +715,6 @@ export class NodeWebUsbTransport implements Transport {
     if (idVendor !== LEDGER_VENDOR_ID) {
       return;
     }
-    this.markOpenFailureDetached(usbDeviceKey(native));
     if (this._explicitConnectionClosesInFlight > 0) {
       this._logger.debug("[handleDeviceDisconnection] Ignoring detach during explicit close", {
         data: { vendorId: idVendor, productId: idProduct },
@@ -773,18 +746,6 @@ export class NodeWebUsbTransport implements Transport {
     }
   }
 
-  /**
-   * Kept rather than cleared: on Linux, libusb fires this detach itself when an open fails with
-   * `LIBUSB_ERROR_NO_DEVICE` (as under a sandbox without `/dev/bus/usb`), so a detach alone does not
-   * mean the Ledger was unplugged. The caller decides which failures still apply.
-   */
-  private markOpenFailureDetached(key: string): void {
-    const failure = this._openFailures.get(key);
-    if (failure) {
-      this._openFailures.set(key, { ...failure, detached: true });
-    }
-  }
-
   async handleDeviceReconnection(
     machine: DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies>,
     web: WebUSBDevice,
@@ -794,9 +755,7 @@ export class NodeWebUsbTransport implements Transport {
     try {
       this._deviceConnectionsPendingReconnection.delete(machine);
       machine.setDependencies({ device: web, interfaceNumber });
-      await this.trackOpen(this._usbDeviceKeysByWebUsbDevice.get(web), () =>
-        machine.setupConnection(),
-      );
+      await machine.setupConnection();
       this.setActiveConnection(web, machine);
       machine.eventDeviceConnected();
     } catch (e) {
@@ -827,7 +786,7 @@ export class NodeWebUsbTransport implements Transport {
     });
 
     try {
-      const web = await this.openWebUsbDevice(native);
+      const web = await this._platformBindings.createWebUsbDevice(native);
       if (getVendorInterfaceNumber(web) === null) {
         this._logger.debug("[handleDeviceConnection] No Ledger WebUSB interface", {
           data: { vendorId: idVendor, productId: idProduct },
@@ -840,6 +799,7 @@ export class NodeWebUsbTransport implements Transport {
       await this.updateTransportDiscoveredDevices();
     } catch (e) {
       this._logger.error("Error while handling WebUSB connection event", { data: { error: e } });
+      this.reportLedgerOpenFailure(e);
     }
   }
 
