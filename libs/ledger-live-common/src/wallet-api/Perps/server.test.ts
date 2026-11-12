@@ -245,8 +245,8 @@ describe("Perps handlers", () => {
       mockUiSigningExecute.mockImplementation(({ onCancel }) => onCancel());
 
       // WHEN & THEN
-      await expect(serverHandlers["custom.perps.signActions"](baseParams)).rejects.toThrow(
-        "User cancelled signing",
+      await expect(serverHandlers["custom.perps.signActions"](baseParams)).rejects.toBeInstanceOf(
+        UserRefusedOnDevice,
       );
     });
 
