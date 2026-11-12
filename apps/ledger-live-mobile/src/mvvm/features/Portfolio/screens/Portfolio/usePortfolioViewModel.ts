@@ -19,7 +19,10 @@ import {
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePortfolioAnalyticsOptInPrompt";
 import { useLNUpsellBannerState } from "LLM/features/LNUpsell";
-import { useAutoRedirectToPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding";
+import {
+  useAutoRedirectToPostOnboarding,
+  type PostOnboardingRedirectStatus,
+} from "~/hooks/useAutoRedirectToPostOnboarding";
 import { usePostOnboardingCompletionTracking } from "~/logic/postOnboarding/usePostOnboardingCompletionTracking";
 import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
 import storage from "LLM/storage";
@@ -37,6 +40,7 @@ interface UsePortfolioViewModelResult {
   backgroundColor: string;
   isSyncError: boolean;
   onBackFromUpdate: () => void;
+  postOnboardingRedirectStatus: PostOnboardingRedirectStatus;
 }
 
 const usePortfolioViewModel = (navigation: {
@@ -63,7 +67,7 @@ const usePortfolioViewModel = (navigation: {
     navigation.goBack();
   }, [navigation]);
 
-  useAutoRedirectToPostOnboarding();
+  const postOnboardingRedirectStatus = useAutoRedirectToPostOnboarding();
 
   usePostOnboardingCompletionTracking();
 
@@ -112,6 +116,7 @@ const usePortfolioViewModel = (navigation: {
     backgroundColor,
     isSyncError,
     onBackFromUpdate,
+    postOnboardingRedirectStatus,
   };
 };
 
