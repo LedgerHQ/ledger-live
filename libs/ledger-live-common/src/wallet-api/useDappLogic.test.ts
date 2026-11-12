@@ -638,4 +638,59 @@ describe("useDappLogic — requests of a closed bridge session", () => {
 
     expect(broadcast).toHaveBeenCalledTimes(1);
   });
+
+  it.each([
+    ["value", "0x"],
+    ["value", "0xzz"],
+    ["value", 1],
+    ["gasPrice", ""],
+    ["gas", "xyz"],
+  ])("eth_sendTransaction: replies InvalidParams when %s is %p", async (field, fieldValue) => {
+    const sign = jest.fn();
+    const { result, postMessage } = await renderWithAccount({ "transaction.sign": sign });
+
+    await act(async () => {
+      await result.current.onDappMessage({
+        ...sendTransaction,
+        params: [{ ...sendTransaction.params[0], [field]: fieldValue }],
+      });
+    });
+
+    expect(sign).not.toHaveBeenCalled();
+    expect(postMessage).toHaveBeenCalledWith(
+      JSON.stringify({
+        id: 1,
+        jsonrpc: "2.0",
+        error: {
+          code: -32602,
+          message: "Invalid transaction quantity",
+          data: { code: -32602, message: "Invalid transaction quantity" },
+        },
+      }),
+    );
+  });
+
+  it("eth_sendTransaction: parses hex quantities with or without prefix", async () => {
+    const { getWalletAPITransactionSignFlowInfos } = jest.requireMock("./converters");
+    const { result } = await renderWithAccount({
+      "transaction.sign": jest.fn(({ onError }) => onError(new Error("user rejected"))),
+    });
+
+    await act(async () => {
+      await result.current.onDappMessage({
+        ...sendTransaction,
+        params: [{ ...sendTransaction.params[0], value: "0x10", gasPrice: "a", gas: "0x5208" }],
+      });
+    });
+
+    expect(getWalletAPITransactionSignFlowInfos).toHaveBeenCalledWith(
+      expect.objectContaining({
+        walletApiTransaction: expect.objectContaining({
+          amount: new BigNumber(16),
+          gasPrice: new BigNumber(10),
+          gasLimit: new BigNumber(21000),
+        }),
+      }),
+    );
+  });
 });

@@ -13,6 +13,7 @@ import { prepareMessageToSign } from "../hw/signMessage/index";
 import { UiHook, SetCurrentAccountHistDb } from "./react";
 import type { BridgeSession } from "./bridgeSession";
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/logic-public";
 import { SmartWebsocket } from "./SmartWebsocket";
 import { stripHexPrefix } from "./helpers";
@@ -57,21 +58,30 @@ const rejectedError = (code: number, message: string, data: object = {}) => ({
   },
 });
 
+const parseHexQuantity = (value: unknown): BigNumber | undefined =>
+  typeof value === "string"
+    ? parseFiniteBigNumber(value.startsWith("0x") ? value : `0x${value}`, { allowHex: true })
+    : undefined;
+
 // TODO remove any usage
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function convertEthToLiveTX(ethTX: any): WalletAPITransaction {
+function convertEthToLiveTX(ethTX: any): WalletAPITransaction | undefined {
+  const amount = ethTX.value !== undefined ? parseHexQuantity(ethTX.value) : new BigNumber(0);
+  const gasPrice = ethTX.gasPrice !== undefined ? parseHexQuantity(ethTX.gasPrice) : undefined;
+  const gasLimit = ethTX.gas !== undefined ? parseHexQuantity(ethTX.gas) : undefined;
+  if (
+    !amount ||
+    (ethTX.gasPrice !== undefined && !gasPrice) ||
+    (ethTX.gas !== undefined && !gasLimit)
+  ) {
+    return undefined;
+  }
   return {
     family: "ethereum",
-    amount:
-      ethTX.value !== undefined
-        ? new BigNumber(ethTX.value.replace("0x", ""), 16)
-        : new BigNumber(0),
+    amount,
     recipient: safeEncodeEIP55(ethTX.to, contextLogger),
-    gasPrice:
-      ethTX.gasPrice !== undefined
-        ? new BigNumber(ethTX.gasPrice.replace("0x", ""), 16)
-        : undefined,
-    gasLimit: ethTX.gas !== undefined ? new BigNumber(ethTX.gas.replace("0x", ""), 16) : undefined,
+    gasPrice,
+    gasLimit,
     data: ethTX.data ? Buffer.from(ethTX.data.replace("0x", ""), "hex") : undefined,
   };
 }
@@ -492,6 +502,16 @@ export function useDappLogic({
         case "eth_sendTransaction": {
           const ethTX = data.params[0];
           const tx = convertEthToLiveTX(ethTX);
+          if (!tx) {
+            postMessage(
+              JSON.stringify({
+                id: data.id,
+                jsonrpc: "2.0",
+                error: rejectedError(errors.InvalidParams, "Invalid transaction quantity"),
+              }),
+            );
+            break;
+          }
           const address =
             currentAccount.type === "Account"
               ? currentAccount.freshAddress

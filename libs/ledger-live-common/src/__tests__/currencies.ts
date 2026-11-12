@@ -178,6 +178,19 @@ test("parseCurrencyUnit", () => {
   ).toBe(0);*/
   expect(parseCurrencyUnit(getCryptoCurrencyById("bitcoin").units[0], "NOPE").toNumber()).toBe(0);
 });
+test.each(["", " ", ".", "abc", "1.2.3", "1,000.5", "0x1", "Infinity", "NaN"])(
+  "parseCurrencyUnit returns 0 for the unreadable %p without throwing",
+  value => {
+    const result = parseCurrencyUnit(getCryptoCurrencyById("bitcoin").units[0], value);
+    expect(result.isNaN()).toBe(false);
+    expect(result.toNumber()).toBe(0);
+  },
+);
+test("parseCurrencyUnit keeps accepting a comma as decimal separator", () => {
+  expect(parseCurrencyUnit(getCryptoCurrencyById("bitcoin").units[0], "1,5").toNumber()).toBe(
+    150000000,
+  );
+});
 test("formatter works with fiats", () => {
   expect(
     formatCurrencyUnit(getFiatCurrencyByTicker("EUR").units[0], new BigNumber(12345), {

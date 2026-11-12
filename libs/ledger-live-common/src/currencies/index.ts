@@ -3,13 +3,13 @@ export { isCurrencySupported, listSupportedCurrencies } from "../coin-modules/re
 export {
   formatCurrencyUnit,
   formatCurrencyUnitFragment,
-  parseCurrencyUnit,
   sanitizeValueString,
   toLocaleString,
   type formatCurrencyUnitOptions,
   type FormatterValue,
 } from "@ledgerhq/live-currency-format";
 
+export { parseCurrencyUnit } from "./parseCurrencyUnit";
 export { getCurrencyColor, type ColorableCurrency } from "./color";
 export { formatShort } from "./formatShort";
 export * from "./helpers";
