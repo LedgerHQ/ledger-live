@@ -1,10 +1,11 @@
-// Combines signature with raw transaction
-export function combine(serialized: string, signature: string[]): string {
+import type { CantonSignedEnvelope } from "../types/transaction";
+import { decodeCrafted } from "./envelope";
+
+export function combine(transaction: string, signature: string[]): string {
   if (signature.length !== 1) {
     throw new Error(`Canton combine expects exactly one signature, got ${signature.length}`);
   }
-  return JSON.stringify({
-    serialized,
-    signature: signature[0],
-  });
+  const { party, serialized } = decodeCrafted(transaction);
+  const signed: CantonSignedEnvelope = { party, serialized, signature: signature[0] };
+  return JSON.stringify(signed);
 }
