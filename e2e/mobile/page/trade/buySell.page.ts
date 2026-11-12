@@ -48,6 +48,10 @@ export default class BuySellPage {
   private readonly paymentMethodOption = (paymentMethod: string) => webById(paymentMethod);
   private readonly provider = (name: string) => webById(`provider_${name.toLowerCase()}`);
 
+  // App-side CAL lookup for the Buy screen's currencies (700+ ids) measures 60-90s;
+  // 60s flakes on that alone. Latency is tracked separately, not fixed here.
+  private readonly cryptoCurrencySelectorTimeout = TIMEOUT.xxxlarge;
+
   @Step("Open page via deeplink {{{0}}}")
   async openViaDeeplink(page: "Buy" | "Sell") {
     // The deeplink into the live app keeps the network busy, so with synchronization on Detox
@@ -60,10 +64,6 @@ export default class BuySellPage {
       await app.common.enableSynchronization();
     }
   }
-
-  // App-side CAL lookup for the Buy screen's currencies (700+ ids) measures 60-90s;
-  // 60s flakes on that alone. Latency is tracked separately, not fixed here.
-  cryptoCurrencySelectorTimeout = TIMEOUT.xxxlarge;
 
   @Step("Close the Buy screen")
   async closeBuyScreen() {
@@ -170,14 +170,18 @@ export default class BuySellPage {
     });
   }
 
-  @Step("Get available providers")
-  async getAvailableProviders(): Promise<string[]> {
+  /** The list shows a few providers and an expand button only when there are more. */
+  private async showAllProviders() {
     await this.providersList.waitVisible();
     if (await this.expandButton.isVisible(TIMEOUT.xsmall)) {
       await this.expandButton.tap();
     }
+  }
 
-    return await this.appContainer.getChildTexts(this.providerTitleCssSelector);
+  @Step("Get available providers")
+  async getAvailableProviders(): Promise<string[]> {
+    await this.showAllProviders();
+    return this.appContainer.getChildTexts(this.providerTitleCssSelector);
   }
 
   @Step("Select rotating provider")
@@ -196,10 +200,7 @@ export default class BuySellPage {
 
   @Step("Select provider {{{0}}}")
   async selectProvider(provider: string) {
-    await this.providersList.waitVisible();
-    if (await this.expandButton.isVisible(TIMEOUT.xsmall)) {
-      await this.expandButton.tap();
-    }
+    await this.showAllProviders();
     await this.provider(provider).scrollTo();
     await this.provider(provider).tap();
   }
