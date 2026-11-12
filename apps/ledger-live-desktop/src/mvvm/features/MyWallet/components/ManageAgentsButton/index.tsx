@@ -3,7 +3,7 @@ import { ManageAgentsCard } from "@features/platform-agent-intent-entry-points";
 import { useManageAgentsButtonViewModel } from "./hooks/useManageAgentsButtonViewModel";
 
 export function ManageAgentsButton() {
-  const { isEnabled, title, description, newBadgeLabel, page, openAgentIntent } =
+  const { isEnabled, title, description, newBadgeLabel, openAgentIntent } =
     useManageAgentsButtonViewModel();
 
   if (!isEnabled) {
@@ -15,7 +15,6 @@ export function ManageAgentsButton() {
       title={title}
       description={description}
       newBadgeLabel={newBadgeLabel}
-      page={page}
       onOpen={openAgentIntent}
     />
   );
