@@ -85,7 +85,8 @@ export const isAnyAccountDataReceived = (
 ): action is ReturnType<typeof accountDataReceived<AccountDataKind>> =>
   action.type === RECEIVED && hasKind(action.payload);
 
-const isPrototypeKey = (key: string) => key === "__proto__" || key === "constructor";
+/** A key that writes into a prototype instead of a record entry: slices keyed by action payloads skip it. */
+export const isPrototypeKey = (key: string) => key === "__proto__" || key === "constructor";
 
 function statusOf(state: AccountDataState, { kind, accountUUID, queryKey }: Target) {
   // Keys come from actions: one naming a prototype key writes into a status nobody reads.
