@@ -165,7 +165,7 @@ describe("listHoldings", () => {
     expect(ids(await list({ cursor: "1" }))).toEqual(["d:0"]);
   });
 
-  it("rejects when the explorer answers with the cursor it was given", async () => {
+  it("ends the stream, keeping the page, when the explorer answers with the cursor it was given", async () => {
     server.use(
       utxosHandler(ME, [
         { data: [output("a", "100")], token: "1" },
@@ -173,7 +173,9 @@ describe("listHoldings", () => {
       ]),
       pendingUtxosHandler(ME),
     );
-    await expect(list({ cursor: "1" })).rejects.toThrow("explorer repeated a UTXO page cursor");
+    const page = await list({ cursor: "1" });
+    expect(page.items.map(holding => holding.id)).toEqual([`${"b".repeat(64)}:0`]);
+    expect(page.next).toBeUndefined();
   });
 
   it("fails loudly on a UTXO without an outpoint", async () => {

@@ -65,9 +65,8 @@ export async function listHoldings(
   for (const utxo of ownChange) add(utxo, null);
   const items = Array.from(holdings.values());
 
-  // A cursor handed back unchanged would page forever: the explorer is misbehaving.
-  if (page.token && page.token === cursor) {
-    throw new Error("explorer repeated a UTXO page cursor");
-  }
-  return page.token ? { items, next: page.token } : { items };
+  // A cursor handed back unchanged cannot advance: the framework's `Page` contract ends the stream
+  // with a falsy `next` rather than repeating it, so the caller keeps this page's holdings.
+  if (!page.token || page.token === cursor) return { items };
+  return { items, next: page.token };
 }

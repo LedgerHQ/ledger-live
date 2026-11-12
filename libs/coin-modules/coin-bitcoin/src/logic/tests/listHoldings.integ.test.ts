@@ -4,10 +4,10 @@ import { listHoldings } from "../listHoldings";
 import { EMPTIED_P2WPKH, FUNDED_P2WPKH } from "./helpers/fixtures";
 
 const liveContext: BitcoinContext = {
-  config: async currencyId => ({
+  config: async () => ({
     status: { type: "active" },
-    name: currencyId ?? "bitcoin",
-    unit: { name: "unit", code: "UNIT", magnitude: 8 },
+    name: "Bitcoin",
+    unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
     explorer: { url: "https://explorers.api.live.ledger.com" },
     explorerId: "btc",
   }),
