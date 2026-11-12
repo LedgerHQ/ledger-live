@@ -10,6 +10,7 @@ import { getPub } from "./crypto.mts";
 const lldRoot = path.resolve(import.meta.dirname, "..", "..");
 const pkgPath = path.join(lldRoot, "package.json");
 const feedDir = path.join(lldRoot, "dist", "feed");
+const installDir = path.join(lldRoot, "dist", "installed");
 const macArch = process.arch === "x64" ? "x64" : "arm64";
 const releaseTypes: ReadonlySet<string> = new Set(semver.RELEASE_TYPES);
 
@@ -22,6 +23,9 @@ type BuildResult = { buildDir: string; version: string; unpackedApp: string };
 
 type PlatformBuild = {
   unpackedApp: string;
+  installedApp: string;
+  feedBinary: (version: string) => string;
+  install: (binaryPath: string) => Promise<void> | void;
   executable: (app: string) => string;
 };
 
@@ -43,7 +47,7 @@ export async function build(
 
   await withPackageVersion(version, () => bundle(privKey && getPub(privKey)));
 
-  process.env.CSC_IDENTITY_AUTO_DISCOVERY = "false";
+  process.env.CSC_IDENTITY_AUTO_DISCOVERY = "true";
 
   await electronBuild({
     projectDir: lldRoot,
@@ -53,7 +57,7 @@ export async function build(
       extends: "electron-builder-nosign.yml",
       extraMetadata: { version },
       directories: { output: buildDir },
-      mac: { target: { target: "dmg", arch: macArch } },
+      mac: { target: { target: "zip", arch: macArch } },
     },
   });
 
@@ -62,9 +66,22 @@ export async function build(
   return { buildDir, version, unpackedApp };
 }
 
-export function openApp(appPath: string) {
+export async function installFromFeed(version: string) {
+  const { feedBinary, installedApp, install } = platformBuild();
+  const binaryPath = feedBinary(version);
+  fs.mkdirSync(installDir, { recursive: true });
+  await install(binaryPath);
+  console.log(`Installed ${path.basename(binaryPath)} as ${installedApp}`);
+  return installedApp;
+}
+
+export function openApp(appPath: string, env: Record<string, string> = {}) {
   if (!fs.existsSync(appPath)) throw new Error(`No app at ${appPath}`);
-  const app = spawn(platformBuild().executable(appPath), { detached: true, stdio: "ignore" });
+  const app = spawn(platformBuild().executable(appPath), {
+    detached: true,
+    stdio: "ignore",
+    env: { ...process.env, ...env },
+  });
   app.unref();
   return app;
 }
@@ -80,27 +97,70 @@ function isReleaseType(value: string): value is ReleaseType {
 
 function platformBuild(): PlatformBuild {
   switch (process.platform) {
-    case "darwin":
+    case "darwin": {
+      const installedApp = path.join(installDir, `${pkg.productName}.app`);
       return {
         unpackedApp: path.join(
           macArch === "x64" ? "mac" : `mac-${macArch}`,
           `${pkg.productName}.app`,
         ),
+        installedApp,
+        feedBinary: version => path.join(feedDir, `${pkg.name}-${version}-mac.zip`),
+        install: zip => unzipApp(zip, installedApp),
         executable: app => path.join(app, "Contents", "MacOS", pkg.productName),
       };
-    case "linux":
+    }
+    case "linux": {
+      // Without a version in its name, the updater replaces the AppImage in place.
+      const installedApp = path.join(installDir, `${pkg.productName}.AppImage`);
       return {
         unpackedApp: path.join("linux-unpacked", pkg.name),
+        installedApp,
+        feedBinary: version => path.join(feedDir, `${pkg.name}-${version}-linux-x86_64.AppImage`),
+        install: appImage => replaceFile(appImage, installedApp),
         executable: app => app,
       };
+    }
     case "win32":
       return {
         unpackedApp: path.join("win-unpacked", `${pkg.productName}.exe`),
+        installedApp: path.join(installDir, `${pkg.productName}.exe`),
+        feedBinary: version => path.join(feedDir, `${pkg.name}-${version}-win-x64.exe`),
+        install: runInstaller,
         executable: app => app,
       };
     default:
       throw new Error(`Local builds are not supported on ${process.platform}`);
   }
+}
+
+async function unzipApp(zip: string, app: string) {
+  fs.rmSync(app, { recursive: true, force: true });
+  await execa("ditto", ["-x", "-k", zip, path.dirname(app)]);
+}
+
+function replaceFile(source: string, destination: string) {
+  fs.rmSync(destination, { force: true });
+  fs.copyFileSync(source, destination);
+}
+
+// The per-machine installer requires admin rights, which only a RunAs launch can request.
+async function runInstaller(installer: string) {
+  console.log(`Installing into ${installDir}, this replaces any installed Ledger Wallet`);
+  await execa(
+    "powershell.exe",
+    [
+      "-NoProfile",
+      "-NonInteractive",
+      "-Command",
+      [
+        "$ErrorActionPreference = 'Stop'",
+        '$installer = Start-Process -FilePath $env:INSTALLER -ArgumentList "/S /D=$env:INSTALL_DIR" -Verb RunAs -Wait -PassThru',
+        "exit $installer.ExitCode",
+      ].join("; "),
+    ],
+    { env: { INSTALLER: installer, INSTALL_DIR: installDir }, stdio: "inherit" },
+  );
 }
 
 function copyToFeed(buildDir: string, version: string) {
