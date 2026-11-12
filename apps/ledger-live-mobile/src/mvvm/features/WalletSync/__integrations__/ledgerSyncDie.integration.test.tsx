@@ -22,6 +22,8 @@ import {
 } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
+import { useLedgerSyncActivationStepViewModel } from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/components/LedgerSyncActivationStep/useLedgerSyncActivationStepViewModel";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { NavigatorName, ScreenName } from "~/const";
 import { CONNECTION_TYPES } from "~/analytics/hooks/variables";
 import { OnboardingType, type State } from "~/reducers/types";
@@ -268,6 +270,31 @@ const ManageInstancesEntry = withLedgerSyncSettingsEntry(function ManageInstance
   );
 });
 
+// The onboarding companion step: it marks the activation as coming from the onboarding.
+const CompanionEntry = withEntry(function CompanionEntryScreen() {
+  const companion = useLedgerSyncActivationStepViewModel({
+    handleContinue: jest.fn(),
+    isLedgerSyncActive: false,
+    device: { deviceId: "device-1" } as Device,
+    analyticsSeedConfiguration: { current: "new_seed" },
+  });
+  return (
+    <View>
+      <Text>entry screen</Text>
+      <Text onPress={companion.handleSyncContinue}>sync with ledger sync</Text>
+      {companion.deviceIntentStepElement}
+    </View>
+  );
+});
+
+async function activateFromCompanion(): Promise<RenderResult> {
+  const result = render(<CompanionEntry />, {
+    overrideInitialState: initialState({ hasCompletedOnboarding: false }),
+  });
+  await result.user.press(await screen.findByText("sync with ledger sync"));
+  return result;
+}
+
 function initialState({
   ledgerSyncDie = true,
   trustchain = null,
@@ -509,6 +536,29 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
       await user.press(await screen.findByTestId("wallet-sync-add-member-close"));
 
       expect(await waitForEntryScreen()).toBeVisible();
+    });
+
+    it("should drop the onboarding marker when the companion step is closed without activating", async () => {
+      mockGetOrCreateTrustchain.mockRejectedValue(new UserRefusedOnDevice());
+
+      const { store, user } = await activateFromCompanion();
+      expect(store.getState().settings.fromLedgerSyncOnboarding).toBe(true);
+      await user.press(await screen.findByTestId("wallet-sync-add-member-close"));
+
+      expect(await waitForEntryScreen()).toBeVisible();
+      expect(store.getState().settings.fromLedgerSyncOnboarding).toBe(false);
+    });
+
+    it("should keep the onboarding marker when the companion step activates", async () => {
+      mockGetOrCreateTrustchain.mockResolvedValue({
+        type: TrustchainResultType.created,
+        trustchain: TRUSTCHAIN,
+      });
+
+      const { store } = await activateFromCompanion();
+
+      expect(await screen.findByText(loadingScreen(true))).toBeVisible();
+      expect(store.getState().settings.fromLedgerSyncOnboarding).toBe(true);
     });
 
     it("should run again when Retry closes the unbacked error", async () => {

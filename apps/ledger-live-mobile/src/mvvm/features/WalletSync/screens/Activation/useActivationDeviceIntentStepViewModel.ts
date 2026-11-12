@@ -34,10 +34,15 @@ export type ActivationStepInput = Readonly<{
   seededOffer?: boolean;
 }>;
 
-type Props = Readonly<{ input: ActivationStepInput; onClose: () => void }>;
+type Props = Readonly<{
+  input: ActivationStepInput;
+  onClose: () => void;
+  /** Called before `onClose` when the activation succeeded. */
+  onActivated: () => void;
+}>;
 
 /** The add member step of the activation on DIE, with the outcomes of `useAddMember`. */
-export function useActivationDeviceIntentStepViewModel({ input, onClose }: Props) {
+export function useActivationDeviceIntentStepViewModel({ input, onClose, onActivated }: Props) {
   const dispatch = useDispatch();
   const navigation = useNavigation<LedgerSyncStepNavigation>();
   const trustchain = useSelector(trustchainSelector);
@@ -96,6 +101,7 @@ export function useActivationDeviceIntentStepViewModel({ input, onClose }: Props
   function onResult(trustchainResult: TrustchainResult, seededOffer: boolean) {
     dispatch(setTrustchain(trustchainResult.trustchain));
     track(AnalyticsEvents.LedgerSyncActivated, { flow: trackingFlow });
+    onActivated();
     step.finish();
     if (seededOffer) return;
     navigation.navigate(NavigatorName.WalletSync, {

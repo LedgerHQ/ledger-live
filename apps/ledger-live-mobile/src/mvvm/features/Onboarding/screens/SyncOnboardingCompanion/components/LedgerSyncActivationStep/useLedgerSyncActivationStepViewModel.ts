@@ -23,7 +23,14 @@ export const useLedgerSyncActivationStepViewModel = ({
   const dispatch = useDispatch();
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
-  const deviceIntentStep = useActivationDeviceIntentStep();
+  // The marker routes the activation success back to the companion: drop it if none follows.
+  const clearLedgerSyncOnboardingMarker = useCallback(
+    () => dispatch(setFromLedgerSyncOnboarding(false)),
+    [dispatch],
+  );
+  const deviceIntentStep = useActivationDeviceIntentStep({
+    onCancel: clearLedgerSyncOnboardingMarker,
+  });
   const { isEnabled: isDeviceIntentStepEnabled, start: startDeviceIntentStep } = deviceIntentStep;
 
   const handleSyncActivation = useCallback(() => {

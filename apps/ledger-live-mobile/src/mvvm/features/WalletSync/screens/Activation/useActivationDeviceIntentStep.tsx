@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useFeature } from "@features/platform-feature-flags";
 import { useInitMemberCredentials } from "../../hooks/useInitMemberCredentials";
 import { LedgerSyncIntentStepLWM } from "../../deviceIntents/LedgerSyncIntentStepLWM";
@@ -15,6 +15,11 @@ export type ActivationDeviceIntentStep = Readonly<{
   element: React.ReactElement | null;
 }>;
 
+type ActivationDeviceIntentStepOptions = Readonly<{
+  /** The step closed without an activation: cancelled, or an error dismissed. */
+  onCancel?: () => void;
+}>;
+
 function MemberCredentialsInitializer() {
   useInitMemberCredentials();
   return null;
@@ -23,10 +28,15 @@ function MemberCredentialsInitializer() {
 type ActivationDeviceIntentStepHostProps = Readonly<{
   input: ActivationStepInput;
   onClose: () => void;
+  onActivated: () => void;
 }>;
 
-function ActivationDeviceIntentStepHost({ input, onClose }: ActivationDeviceIntentStepHostProps) {
-  const step = useActivationDeviceIntentStepViewModel({ input, onClose });
+function ActivationDeviceIntentStepHost({
+  input,
+  onClose,
+  onActivated,
+}: ActivationDeviceIntentStepHostProps) {
+  const step = useActivationDeviceIntentStepViewModel({ input, onClose, onActivated });
   return (
     <>
       {step.phase.type === "pending" ? <MemberCredentialsInitializer /> : null}
@@ -36,15 +46,34 @@ function ActivationDeviceIntentStepHost({ input, onClose }: ActivationDeviceInte
 }
 
 /** The activation device step on DIE, opened over the entry screen. */
-export function useActivationDeviceIntentStep(): ActivationDeviceIntentStep {
+export function useActivationDeviceIntentStep({
+  onCancel,
+}: ActivationDeviceIntentStepOptions = {}): ActivationDeviceIntentStep {
   const isEnabled = useFeature("lwmLedgerSyncDie")?.enabled === true;
   const [input, setInput] = useState<ActivationStepInput | null>(null);
-  const start = useCallback((nextInput: ActivationStepInput = {}) => setInput(nextInput), []);
-  const close = useCallback(() => setInput(null), []);
+  const activatedRef = useRef(false);
+  const onCancelRef = useRef(onCancel);
+  useEffect(() => {
+    onCancelRef.current = onCancel;
+  }, [onCancel]);
+
+  const start = useCallback((nextInput: ActivationStepInput = {}) => {
+    activatedRef.current = false;
+    setInput(nextInput);
+  }, []);
+  const close = useCallback(() => {
+    if (!activatedRef.current) onCancelRef.current?.();
+    setInput(null);
+  }, []);
+  const onActivated = useCallback(() => {
+    activatedRef.current = true;
+  }, []);
 
   return {
     isEnabled,
     start,
-    element: input ? <ActivationDeviceIntentStepHost input={input} onClose={close} /> : null,
+    element: input ? (
+      <ActivationDeviceIntentStepHost input={input} onClose={close} onActivated={onActivated} />
+    ) : null,
   };
 }
