@@ -3,6 +3,7 @@ import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { SignOperationEvent } from "@ledgerhq/types-live";
 import { LedgerSigner } from "@mysten/ledger-signer";
 import { bcs } from "@mysten/sui/bcs";
+import { SuiGraphQLRequestError } from "@mysten/sui/graphql";
 import { Transaction as SuiTransaction } from "@mysten/sui/transactions";
 import { fromBase64, fromHex, toBase64 } from "@mysten/sui/utils";
 import { lastValueFrom, toArray } from "rxjs";
@@ -15,7 +16,7 @@ import {
   SuiSponsoredTransactionBroadcastUnsupported,
 } from "../errors";
 import { buildRawTransaction } from "../network/sdk";
-import { HBTC_COIN_TYPE, HBTC_TOKEN } from "../test/fixtures";
+import { HASHI_WITHDRAWAL, HBTC_COIN_TYPE, HBTC_TOKEN } from "../test/fixtures";
 import type { SuiAccount, SuiSigner } from "../types";
 import { toLongStructTag } from "../utils";
 import { buildSignRawOperation } from "./signRawOperation";
@@ -201,6 +202,37 @@ describe("buildSignRawOperation", () => {
       expect(gasData.payment).toEqual([SPONSOR_GAS_COIN]);
     });
 
+    it("signs the Hashi withdrawal request that ran on mainnet, unchanged, with the hBTC descriptor", async () => {
+      const bytes = fromBase64(HASHI_WITHDRAWAL.transactionBcs);
+      const withdrawer = {
+        ...account,
+        id: `js:2:sui:${HASHI_WITHDRAWAL.sender}:sui`,
+        freshAddress: HASHI_WITHDRAWAL.sender,
+      } as SuiAccount;
+      // Already built: as the real build does, keep it as is and report the hBTC it withdraws.
+      mockBuildRawTransaction.mockImplementationOnce(async (_config, tx) => ({
+        serialized: await tx.build(),
+        bcsObjects: [],
+        coinTypes: [HBTC_COIN_TYPE],
+      }));
+      findTokenByAddressInCurrency.mockResolvedValue(HBTC_TOKEN);
+
+      const events = await run(HASHI_WITHDRAWAL.transactionBcs, { account: withdrawer });
+
+      expect(Array.from(bytesSentToDevice())).toEqual(Array.from(bytes));
+      const { gasData, commands } = SuiTransaction.from(bytesSentToDevice()).getData();
+      expect(gasData.owner).toBe(HASHI_WITHDRAWAL.sponsor);
+      expect(commands.map(c => c.MoveCall?.function)).toEqual([
+        "redeem_funds",
+        "request_withdrawal",
+      ]);
+      expect(mockSignTransaction.mock.calls[0][2]).toMatchObject({
+        tokenId: HBTC_TOKEN.id,
+        tokenAddress: HBTC_COIN_TYPE,
+      });
+      expect(events.at(-1)?.type).toBe("signed");
+    });
+
     it.each([
       ["JSON that does not parse", "{ not json"],
       ["JSON that is not a transaction", '{"version": 2, "inputs": "nope"}'],
@@ -265,7 +297,7 @@ describe("buildSignRawOperation", () => {
   });
 
   describe("resolution failures", () => {
-    it("wraps a network build failure with its cause", async () => {
+    it("wraps a resolution failure with its cause", async () => {
       const cause = new Error("object not found");
       mockBuildRawTransaction.mockRejectedValue(cause);
 
@@ -273,6 +305,25 @@ describe("buildSignRawOperation", () => {
 
       expect(error).toBeInstanceOf(SuiRawTransactionResolutionFailed);
       expect(error.cause).toBe(cause);
+      expect(signerContext).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("network failures", () => {
+    const abort = Object.assign(new Error("The operation was aborted"), { name: "AbortError" });
+    const rpc = Object.assign(new Error("upstream unavailable"), { name: "RpcError" });
+
+    it.each([
+      ["a fetch failure", new TypeError("Failed to fetch")],
+      ["a timeout", abort],
+      ["a GraphQL HTTP error", new SuiGraphQLRequestError("GraphQL request failed: (429)")],
+      ["a gRPC error", rpc],
+    ])("passes %s through unchanged", async (_name, cause) => {
+      mockBuildRawTransaction.mockRejectedValue(cause);
+
+      const error = await run(await hashiDepositTransaction().toJSON()).catch(e => e);
+
+      expect(error).toBe(cause);
       expect(signerContext).not.toHaveBeenCalled();
     });
   });

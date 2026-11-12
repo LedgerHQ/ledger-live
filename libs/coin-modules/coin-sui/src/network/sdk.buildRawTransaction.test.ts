@@ -1,5 +1,7 @@
-import type { Transaction } from "@mysten/sui/transactions";
+import { Transaction } from "@mysten/sui/transactions";
+import { fromBase64 } from "@mysten/sui/utils";
 import type { SuiCoinConfig } from "../config";
+import { HASHI_WITHDRAWAL } from "../test/fixtures";
 import { makeSuiClientFromGraphQL } from "./graphql/sui-client-adapter";
 import { createSuiGrpcClient } from "./grpc/client";
 import { buildRawTransaction } from "./sdk";
@@ -122,6 +124,17 @@ describe.each(["grpc", "graphql"] as const)("buildRawTransaction (%s)", transpor
 
     expect(result.coinTypes).toEqual([]);
     expect(result.bcsObjects).toEqual([new Uint8Array([7]), new Uint8Array([6])]);
+  });
+
+  it("keeps a Hashi withdrawal as built and reads hBTC from its address-balance withdrawal", async () => {
+    const bytes = fromBase64(HASHI_WITHDRAWAL.transactionBcs);
+
+    const result = await buildRawTransaction(config, Transaction.from(bytes));
+
+    expect(Array.from(result.serialized)).toEqual(Array.from(bytes));
+    expect(result.coinTypes).toEqual([HBTC]);
+    expect(result.bcsObjects).toEqual([]);
+    expect(getObjects).not.toHaveBeenCalled();
   });
 
   it("propagates a build failure", async () => {

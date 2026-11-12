@@ -4,6 +4,7 @@ import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge, Operation, SignOperationEvent } from "@ledgerhq/types-live";
 import { bcs } from "@mysten/sui/bcs";
+import { SuiGraphQLRequestError } from "@mysten/sui/graphql";
 import { Transaction as SuiTransaction } from "@mysten/sui/transactions";
 import { fromBase64, normalizeSuiAddress, toBase64, toHex } from "@mysten/sui/utils";
 import BigNumber from "bignumber.js";
@@ -72,6 +73,18 @@ async function resolveToken(
   };
 }
 
+/**
+ * The node could not be reached or answered with an error (offline, timeout, HTTP or gRPC
+ * failure), as opposed to the transaction itself failing to resolve.
+ */
+function isTransportError(error: unknown): boolean {
+  return (
+    error instanceof TypeError ||
+    error instanceof SuiGraphQLRequestError ||
+    (error instanceof Error && (error.name === "AbortError" || error.name === "RpcError"))
+  );
+}
+
 /** The dApp knows the intent of a raw transaction and Ledger Live does not, so the operation is a placeholder. */
 function placeholderOperation(account: SuiAccount): Operation {
   const hash = "";
@@ -127,7 +140,9 @@ async function performSignRawOperation(
 
   const built = await buildRawTransaction(suiConfig.getCoinConfig(account.currency.id), tx).catch(
     cause => {
-      throw new SuiRawTransactionResolutionFailed(undefined, { cause });
+      throw isTransportError(cause)
+        ? cause
+        : new SuiRawTransactionResolutionFailed(undefined, { cause });
     },
   );
   const unsigned = built.serialized;

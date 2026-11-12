@@ -114,6 +114,7 @@ export class SuiRawTransactionSenderMismatch extends Error {
 /*
  * The fields the dApp left unset (gas price, gas budget, gas payment, object versions) could not be
  * resolved against the network, for instance because an object no longer exists or the dry run aborted.
+ * A failure to reach the node is not wrapped in this error: it keeps its own name.
  */
 export class SuiRawTransactionResolutionFailed extends Error {
   override name = "SuiRawTransactionResolutionFailed";

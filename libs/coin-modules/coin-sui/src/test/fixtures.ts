@@ -55,3 +55,23 @@ export const HBTC_TOKEN: TokenCurrency = {
   ticker: "hBTC",
   units: [{ name: "hBTC", code: "hBTC", magnitude: 8 }],
 };
+
+/**
+ * A Hashi withdrawal request as the Hashi dApp built it and mainnet executed it (transaction
+ * 9uu2akG3jJYuAFqS5YKoQz28cpF23x7BAfeqH1dyuRd1): BCS `TransactionData` that takes 30000 hBTC from
+ * the sender's address balance (`balance::redeem_funds`) and calls `withdraw::request_withdrawal`.
+ * Hashi sponsors the gas: the gas owner is {@link HASHI_WITHDRAWAL.sponsor}, with no gas coin.
+ */
+export const HASHI_WITHDRAWAL = {
+  sender: "0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58",
+  sponsor: "0xcd497288dd06eb0b9e080f072034295c24f0b40e1e236f0ded4e8d43effef4d8",
+  transactionBcs:
+    "AAAEAQGNEQZC2bUTO9ZhzaSHPt8TWra5H/aRhgEBWICHS5UOXUYw4TYAAAAAAQEBAAAAAAAAAAAAAAAAAAAAAAAAAA" +
+    "AAAAAAAAAAAAAAAAYBAAAAAAAAAAAAFRRN1n5J3+wN0W6chTS0nvrSBh2eaQIAMHUAAAAAAAAAB9MPs/iRTv2+t7jo" +
+    "X64dZdxYS0ShKB9mc3uSu58DpZ0GA2J0YwNCVEMAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIHYm" +
+    "FsYW5jZQxyZWRlZW1fZnVuZHMBB9MPs/iRTv2+t7joX64dZdxYS0ShKB9mc3uSu58DpZ0GA2J0YwNCVEMAAQEDAADT" +
+    "D7P4kU79vre46F+uHWXcWEtEoSgfZnN7krufA6WdBgh3aXRoZHJhdxJyZXF1ZXN0X3dpdGhkcmF3YWwABAEAAAEBAA" +
+    "MAAAAAAQIAYfWtlm/3mOjn6cEkF4Wo7I283prmHj2s791pK2ALK1gAzUlyiN0G6wueCA8HIDQpXCTwtA4eI28N7U6N" +
+    "Q+/+9NhkAAAAAAAAAMDh5AAAAAAAAgEcBQAAAAAAAAEdBQAAAAAAAAAAIDWDSorBfKSPsUrI+ZwXyYdH6V3QcpSuQa" +
+    "RrOCJGpEmb2N5f4w==",
+};
