@@ -1,4 +1,5 @@
 import { log } from "@ledgerhq/logs";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import BigNumber from "bignumber.js";
 import { VALIDATORS_COUNT } from "./constants";
 import { getGasPrice, getValidators } from "./network/node";
@@ -15,42 +16,29 @@ function fromHydratePreloadData(data: any): NearPreloadedData {
   const hydratedData = Object.assign({}, getCurrentNearPreloadData());
 
   if (typeof data === "object" && data) {
-    if (data.storageCost) {
-      hydratedData.storageCost = new BigNumber(data.storageCost);
-    }
-    if (data.gasPrice) {
-      hydratedData.gasPrice = new BigNumber(data.gasPrice);
-    }
-    if (data.createAccountCostSend) {
-      hydratedData.createAccountCostSend = new BigNumber(data.createAccountCostSend);
-    }
-    if (data.createAccountCostExecution) {
-      hydratedData.createAccountCostExecution = new BigNumber(data.createAccountCostExecution);
-    }
-    if (data.transferCostSend) {
-      hydratedData.transferCostSend = new BigNumber(data.transferCostSend);
-    }
-    if (data.transferCostExecution) {
-      hydratedData.transferCostExecution = new BigNumber(data.transferCostExecution);
-    }
-    if (data.addKeyCostSend) {
-      hydratedData.addKeyCostSend = new BigNumber(data.addKeyCostSend);
-    }
-    if (data.addKeyCostExecution) {
-      hydratedData.addKeyCostExecution = new BigNumber(data.addKeyCostExecution);
-    }
-    if (data.receiptCreationSend) {
-      hydratedData.receiptCreationSend = new BigNumber(data.receiptCreationSend);
-    }
-    if (data.receiptCreationExecution) {
-      hydratedData.receiptCreationExecution = new BigNumber(data.receiptCreationExecution);
-    }
-    if (data.minGasPurchasePrice) {
-      hydratedData.minGasPurchasePrice = new BigNumber(data.minGasPurchasePrice);
-    }
-    if (data.accountCreationCharge) {
-      hydratedData.accountCreationCharge = new BigNumber(data.accountCreationCharge);
-    }
+    hydratedData.storageCost = parseFiniteBigNumber(data.storageCost) ?? hydratedData.storageCost;
+    hydratedData.gasPrice = parseFiniteBigNumber(data.gasPrice) ?? hydratedData.gasPrice;
+    hydratedData.createAccountCostSend =
+      parseFiniteBigNumber(data.createAccountCostSend) ?? hydratedData.createAccountCostSend;
+    hydratedData.createAccountCostExecution =
+      parseFiniteBigNumber(data.createAccountCostExecution) ??
+      hydratedData.createAccountCostExecution;
+    hydratedData.transferCostSend =
+      parseFiniteBigNumber(data.transferCostSend) ?? hydratedData.transferCostSend;
+    hydratedData.transferCostExecution =
+      parseFiniteBigNumber(data.transferCostExecution) ?? hydratedData.transferCostExecution;
+    hydratedData.addKeyCostSend =
+      parseFiniteBigNumber(data.addKeyCostSend) ?? hydratedData.addKeyCostSend;
+    hydratedData.addKeyCostExecution =
+      parseFiniteBigNumber(data.addKeyCostExecution) ?? hydratedData.addKeyCostExecution;
+    hydratedData.receiptCreationSend =
+      parseFiniteBigNumber(data.receiptCreationSend) ?? hydratedData.receiptCreationSend;
+    hydratedData.receiptCreationExecution =
+      parseFiniteBigNumber(data.receiptCreationExecution) ?? hydratedData.receiptCreationExecution;
+    hydratedData.minGasPurchasePrice =
+      parseFiniteBigNumber(data.minGasPurchasePrice) ?? hydratedData.minGasPurchasePrice;
+    hydratedData.accountCreationCharge =
+      parseFiniteBigNumber(data.accountCreationCharge) ?? hydratedData.accountCreationCharge;
     if (Array.isArray(data.validators) && data.validators.length) {
       hydratedData.validators = data.validators;
     }

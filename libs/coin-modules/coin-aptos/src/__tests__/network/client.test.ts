@@ -829,6 +829,23 @@ describe("Aptos API", () => {
       expect(balance).toEqual([expectedAptosBalace]);
     });
 
+    it("keeps the other assets and defaults a missing amount to 0", async () => {
+      const assets = [
+        { asset_type: APTOS_ASSET_ID, amount: 200 },
+        { asset_type: "0x42", amount: null },
+      ];
+      mockedAptos.mockImplementation(() => ({
+        getCurrentFungibleAssetBalances: jest.fn().mockResolvedValue(assets),
+      }));
+
+      const balances = await new AptosAPI("aptos").getBalances("0x42");
+
+      expect(balances).toEqual([
+        { contractAddress: APTOS_ASSET_ID, amount: BigNumber(200) },
+        { contractAddress: "0x42", amount: BigNumber(0) },
+      ]);
+    });
+
     it("return 0 balace if could not retrieve proper balance of fungible assets", async () => {
       const expectedBalance = new BigNumber(0);
       mockedAptos.mockImplementation(() => ({

@@ -139,4 +139,32 @@ describe("MultiversXBuildESDTTokenAccounts", () => {
       "USDC-c76f1f",
     );
   });
+
+  it("defaults a missing ESDT balance to 0", async () => {
+    const defaultImpl = (network as jest.Mock).getMockImplementation();
+    (network as jest.Mock).mockImplementation(async (req: { url: string }) => {
+      const u = new URL(req.url);
+      return u.pathname.endsWith("/tokens") && u.searchParams.has("from")
+        ? { data: [{ identifier: "USDC-c76f1f", name: "USDC" }] }
+        : defaultImpl?.(req);
+    });
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
+      findTokenByAddressInCurrency: jest.fn().mockResolvedValue({
+        id: `elrond/esdt/${Buffer.from("USDC-c76f1f").toString("hex")}`,
+        ticker: "USDC",
+      } as TokenCurrency),
+      getTokensSyncHash: async () => "",
+    });
+
+    const result = await MultiversXBuildESDTTokenAccounts({
+      currency: { id: "elrond" } as CryptoCurrency,
+      accountId: "",
+      accountAddress: "erd1spyavw0956vq68xj8y4tenjpq2wd5a9p2c6j8gsz7ztyrnpxrruqzu66jx",
+      existingAccount: undefined,
+      syncConfig: { paginationConfig: {}, blacklistedTokenIds: [] },
+    });
+
+    expect(result).toEqual([expect.objectContaining({ balance: new BigNumber(0) })]);
+  });
 });

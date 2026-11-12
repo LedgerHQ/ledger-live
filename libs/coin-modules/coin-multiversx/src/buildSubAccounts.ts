@@ -7,6 +7,7 @@ import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { Account, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import { ESDT_CONTRACT_ADDRESS_HEX } from "@multiversx/sdk-core/out/constants";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import BigNumber from "bignumber.js";
 import { getESDTOperations, getAccountESDTTokens } from "./network";
 import { extractTokenId } from "./logic";
@@ -137,7 +138,7 @@ async function processESDT({
   }
 
   const existingTokenAccount = existingAccountByTicker[token.ticker];
-  const balance = new BigNumber(esdt.balance);
+  const balance = parseFiniteBigNumber(esdt.balance) ?? new BigNumber(0);
 
   let tokenAccount: TokenAccount;
 

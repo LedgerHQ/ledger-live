@@ -161,17 +161,17 @@ export const formatTrongridTxResponse = async (
         case "FreezeBalanceContract":
         case "FreezeBalanceV2Contract":
           return {
-            frozenAmount: new BigNumber(frozen_balance!),
+            frozenAmount: parseFiniteBigNumber(frozen_balance) ?? new BigNumber(0),
           };
 
         case "UnfreezeBalanceV2Contract":
           return {
-            unfreezeAmount: new BigNumber(unfreeze_balance!),
+            unfreezeAmount: parseFiniteBigNumber(unfreeze_balance) ?? new BigNumber(0),
           };
 
         case "UnDelegateResourceContract":
           return {
-            unDelegatedAmount: new BigNumber(balance!),
+            unDelegatedAmount: parseFiniteBigNumber(balance) ?? new BigNumber(0),
             receiverAddress: encode58Check(receiver_address!),
           };
 

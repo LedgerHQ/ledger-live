@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import { DEFAULT_MAX_TX_QUERY } from "../constants";
 import { polkadotMainnetConfigValue } from "../test/config.fixture";
 import { getOperations } from "./bisontrails";
@@ -86,5 +87,40 @@ describe("getOperations", () => {
       "polkadot/api",
       "Unknown operation type foo.bar - fallback to FEES",
     );
+  });
+
+  it("defaults missing indexer amounts, fees and nonce instead of throwing", async () => {
+    const {
+      amount: _amount,
+      partialFee: _fee,
+      nonce: _nonce,
+      ...bare
+    } = extrinsic("balances", "transferKeepAlive", 1);
+    mockNetwork.mockResolvedValue({
+      data: {
+        extrinsics: [bare, { ...bare, hash: "0xbond", method: "bond", amount: "n/a" }],
+        rewards: [{ extrinsicHash: "0xreward", index: 2, accountId: address }],
+        slashes: [{ blockNumber: 3, index: 3, accountId: address }],
+      },
+    });
+
+    const operations = await getOperations(
+      logger,
+      polkadotMainnetConfigValue,
+      "accountId",
+      address,
+    );
+
+    expect(operations.map(op => [op.type, op.value, op.fee])).toEqual(
+      expect.arrayContaining([
+        ["OUT", new BigNumber(0), new BigNumber(0)],
+        ["BOND", new BigNumber(0), new BigNumber(0)],
+        ["REWARD_PAYOUT", new BigNumber(0), new BigNumber(0)],
+        ["SLASH", new BigNumber(0), new BigNumber(0)],
+      ]),
+    );
+    const out = operations.find(op => op.type === "OUT");
+    expect(out?.transactionSequenceNumber).toBeUndefined();
+    expect(out?.extra.transferAmount).toBeUndefined();
   });
 });

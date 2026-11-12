@@ -28,6 +28,7 @@ import {
   Page,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
 import { log } from "@ledgerhq/logs";
@@ -431,7 +432,7 @@ export class AptosAPI {
 
       return response.map(x => ({
         contractAddress: x.asset_type ?? "",
-        amount: BigNumber(x.amount),
+        amount: parseFiniteBigNumber(x.amount) ?? BigNumber(0),
       }));
     } catch (error) {
       log("error", "getCoinBalance", {

@@ -1,4 +1,5 @@
 import type { Principal } from "@icp-sdk/core/principal";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -75,7 +76,7 @@ export const reassignOperationType = (
   const retyped = operations.map(op => {
     if (op.type !== "OUT") return op;
     if (!neuronAddressSet.has(op.recipients[0]) && !isOwnStakeTransfer(op, controller)) return op;
-    const type: OperationType = new BigNumber(op.extra?.memo ?? "0").gt(0)
+    const type: OperationType = parseFiniteBigNumber(op.extra?.memo)?.gt(0)
       ? "STAKE_NEURON"
       : "TOP_UP_NEURON";
     return { ...op, id: encodeOperationId(op.accountId, op.hash, type), type };

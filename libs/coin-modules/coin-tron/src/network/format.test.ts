@@ -412,6 +412,22 @@ describe("formatTrongridTxResponse", () => {
     expect(result?.value).toEqual(new BigNumber(777));
   });
 
+  it.each([
+    ["FreezeBalanceV2Contract", "frozenAmount"],
+    ["UnfreezeBalanceV2Contract", "unfreezeAmount"],
+    ["UnDelegateResourceContract", "unDelegatedAmount"],
+  ] as const)("defaults %s %s to 0 when TronGrid omits the amount", async (type, field) => {
+    const tx = baseTransactionTronApi({
+      type,
+      parameter: {
+        type_url: "",
+        value: { owner_address: ownerHex, receiver_address: toHex },
+      },
+    });
+    const result = await formatTrongridTxResponse(mockLogger, tx, () => Promise.resolve(null));
+    expect(result?.extra).toMatchObject({ [field]: new BigNumber(0) });
+  });
+
   it("should attach vote extra info using getValidatorName", async () => {
     const voteAddressHex = "41b183301d6301fae224c6ab9b28b19b6d1625bf23";
     const getValidatorName = jest

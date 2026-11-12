@@ -338,6 +338,24 @@ describe("getTronResources", () => {
       },
     },
     {
+      name: "frozen Legacy - missing frozen_balance",
+      account: {
+        frozen: [{ expire_time: 10 }],
+        account_resource: { frozen_balance_for_energy: { expire_time: 10 } },
+      },
+      expected: {
+        delegatedFrozen: { bandwidth: undefined, energy: undefined },
+        frozen: { bandwidth: undefined, energy: undefined },
+        lastWithdrawnRewardDate: undefined,
+        legacyFrozen: {
+          bandwidth: { amount: new BigNumber(0), expiredAt: new Date(10) },
+          energy: { amount: new BigNumber(0), expiredAt: new Date(10) },
+        },
+        tronPower: 0,
+        unFrozen: { bandwidth: [], energy: [] },
+      },
+    },
+    {
       name: "UnfrozenV2",
       account: {
         unfrozenV2: [
@@ -371,6 +389,23 @@ describe("getTronResources", () => {
               expireTime: new Date("1970-01-01T00:00:00.010Z"),
             },
           ],
+        },
+      },
+    },
+    {
+      name: "UnfrozenV2 - missing unfreeze_amount",
+      account: {
+        unfrozenV2: [{ type: "ENERGY", unfreeze_expire_time: 10 }, { unfreeze_expire_time: 20 }],
+      },
+      expected: {
+        delegatedFrozen: { bandwidth: undefined, energy: undefined },
+        frozen: { bandwidth: undefined, energy: undefined },
+        lastWithdrawnRewardDate: undefined,
+        legacyFrozen: { bandwidth: undefined, energy: undefined },
+        tronPower: 0,
+        unFrozen: {
+          bandwidth: [{ amount: new BigNumber(0), expireTime: new Date(20) }],
+          energy: [{ amount: new BigNumber(0), expireTime: new Date(10) }],
         },
       },
     },
