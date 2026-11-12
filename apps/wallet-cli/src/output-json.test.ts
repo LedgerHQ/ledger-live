@@ -453,7 +453,7 @@ describe("JsonCommandOutput", () => {
       kind: "access_denied" as const,
       fields: {
         usb_access_error: "LIBUSB_ERROR_ACCESS",
-        hint: "The host refused USB access to the Ledger (sandbox, udev rules or permissions).",
+        hint: "The host refused USB access to the Ledger (sandbox, udev rules or permissions), or another process holds it (Ledger Live, or a browser tab using WebUSB).",
       },
     },
     { kind: "other" as const, fields: { usb_access_error: "LIBUSB_ERROR_ACCESS" } },

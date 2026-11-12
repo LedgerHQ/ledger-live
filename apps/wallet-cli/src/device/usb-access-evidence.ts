@@ -35,7 +35,7 @@ export function usbAccessEvidence(error: unknown): UsbAccessEvidence | undefined
 export function usbAccessHint(kind: UsbAccessFailureKind): string | undefined {
   switch (kind) {
     case "access_denied":
-      return "The host refused USB access to the Ledger (sandbox, udev rules or permissions).";
+      return "The host refused USB access to the Ledger (sandbox, udev rules or permissions), or another process holds it (Ledger Live, or a browser tab using WebUSB).";
     case "device_unreachable":
       return "The Ledger was listed but could not be opened: a sandbox without /dev/bus/usb, or the Ledger was unplugged.";
     case "busy":

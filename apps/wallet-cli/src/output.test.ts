@@ -958,7 +958,7 @@ describe("human device error with a failed USB open (LIVE-31394)", () => {
 
     expect(stderr).toContain("No Ledger device found. Unlock the device and try again.");
     expect(stderr).toContain(
-      "USB access failed with LIBUSB_ERROR_ACCESS. The host refused USB access to the Ledger (sandbox, udev rules or permissions).",
+      "USB access failed with LIBUSB_ERROR_ACCESS. The host refused USB access to the Ledger (sandbox, udev rules or permissions), or another process holds it (Ledger Live, or a browser tab using WebUSB).",
     );
   });
 

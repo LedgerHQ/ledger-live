@@ -52,6 +52,7 @@ describe("usbAccessEvidence", () => {
 describe("usbAccessHint", () => {
   it.each([
     ["access_denied", "sandbox, udev rules or permissions"],
+    ["access_denied", "another process holds it"],
     ["device_unreachable", "/dev/bus/usb"],
     ["busy", "Ledger Live"],
   ] as const)("%s names its likely fixes", (kind, expected) => {
