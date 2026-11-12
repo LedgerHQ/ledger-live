@@ -344,7 +344,11 @@
     "agents": "Agents"
   },
   "agentIntent": {
-    "title": "Agents"
+    "title": "Agents",
+    "manageAgents": {
+      "title": "Manage your agents",
+      "description": "Let AI agents manage your assets."
+    }
   },
   "stars": {
     "tooltip": "Star account"
@@ -10668,10 +10672,6 @@
     "contacts": {
       "title": "Contacts",
       "description": "Manage your contacts"
-    },
-    "agentIntent": {
-      "title": "Manage your agents",
-      "description": "Let AI agents manage your assets."
     },
     "explore": "Explore all Ledger devices"
   },

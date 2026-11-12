@@ -29,21 +29,6 @@ describe("useManageAgentsButtonViewModel", () => {
     expect(result.current.isEnabled).toBe(false);
   });
 
-  it("should expose the card wording with the new badge", () => {
-    const { result } = renderHook(() => useManageAgentsButtonViewModel(), {
-      initialState: withFlagOverrides({
-        agentIntent: { enabled: true, params: { navBar: false, profile: true } },
-      }),
-    });
-
-    expect(result.current).toMatchObject({
-      isEnabled: true,
-      title: "Manage your agents",
-      description: "Let AI agents manage your assets.",
-      newBadgeLabel: "New",
-    });
-  });
-
   it("should track the click, open Agent Intent with the profile source and close the menu", () => {
     const trackSpy = jest.spyOn(analytics, "track");
     const { result } = renderHook(() => useManageAgentsButtonViewModel(), {

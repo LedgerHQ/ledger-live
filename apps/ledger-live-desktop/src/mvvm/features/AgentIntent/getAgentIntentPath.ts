@@ -1,4 +1,4 @@
-import type { AgentIntentSource } from "@features/platform-agent-intent-entry-points";
+import type { AgentIntentSource } from "@features/flow-agent-intent-entry-points";
 import { AGENT_INTENT_PATH } from "./constants";
 
 export function getAgentIntentPath(source: AgentIntentSource): string {
