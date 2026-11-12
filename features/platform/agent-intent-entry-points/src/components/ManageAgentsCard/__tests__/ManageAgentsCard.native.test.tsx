@@ -1,33 +1,39 @@
 import React from "react";
 import { render, screen, userEvent } from "@testing-library/react-native";
+import { I18nTestProvider } from "@shared/i18n/testing";
 import { ManageAgentsCard } from "../ManageAgentsCard";
 
-function renderCard(newBadgeLabel?: string) {
+const RESOURCES = {
+  en: {
+    translation: {
+      agentIntent: {
+        manageAgents: {
+          title: "Manage your agents",
+          description: "Let AI agents manage your assets.",
+        },
+      },
+      common: { new: "New" },
+    },
+  },
+};
+
+function renderCard() {
   const onOpen = jest.fn();
-  render(
-    <ManageAgentsCard
-      title="Manage your agents"
-      description="Let AI agents manage your assets."
-      newBadgeLabel={newBadgeLabel}
-      onOpen={onOpen}
-    />,
-  );
+  render(<ManageAgentsCard onOpen={onOpen} />, {
+    wrapper: ({ children }) => (
+      <I18nTestProvider resources={RESOURCES}>{children}</I18nTestProvider>
+    ),
+  });
   return { onOpen, user: userEvent.setup() };
 }
 
 describe("ManageAgentsCard (Native)", () => {
   it("should render the title, the description and the new badge", () => {
-    renderCard("New");
+    renderCard();
 
     expect(screen.getByText("Manage your agents")).toBeVisible();
     expect(screen.getByText("Let AI agents manage your assets.")).toBeVisible();
-    expect(screen.getByTestId("manage-agents-card-new-badge")).toBeVisible();
-  });
-
-  it("should hide the new badge without a label", () => {
-    renderCard();
-
-    expect(screen.queryByTestId("manage-agents-card-new-badge")).toBeNull();
+    expect(screen.getByText("New")).toBeVisible();
   });
 
   it("should open Agent Intent", async () => {

@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "@shared/i18n";
 import {
   Card,
   CardContent,
@@ -13,33 +14,29 @@ import {
 import { Robot } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { ManageAgentsCardProps } from "./ManageAgentsCard.types";
 
-export function ManageAgentsCard({
-  title,
-  description,
-  newBadgeLabel,
-  onOpen,
-  testID = "manage-agents-card",
-}: ManageAgentsCardProps) {
+export function ManageAgentsCard({ onOpen, testID = "manage-agents-card" }: ManageAgentsCardProps) {
+  const { t } = useTranslation();
+
   return (
     <Card type="interactive" onPress={onOpen} testID={testID}>
       <CardHeader>
         <CardLeading>
           <Spot icon={Robot} size={48} />
           <CardContent>
-            <CardContentTitle>{title}</CardContentTitle>
-            <CardContentDescription>{description}</CardContentDescription>
+            <CardContentTitle>{t("agentIntent.manageAgents.title")}</CardContentTitle>
+            <CardContentDescription>
+              {t("agentIntent.manageAgents.description")}
+            </CardContentDescription>
           </CardContent>
         </CardLeading>
-        {newBadgeLabel ? (
-          <CardTrailing>
-            <Tag
-              label={newBadgeLabel}
-              appearance="accent"
-              size="md"
-              testID={`${testID}-new-badge`}
-            />
-          </CardTrailing>
-        ) : null}
+        <CardTrailing>
+          <Tag
+            label={t("common.new")}
+            appearance="accent"
+            size="md"
+            testID={`${testID}-new-badge`}
+          />
+        </CardTrailing>
       </CardHeader>
     </Card>
   );
