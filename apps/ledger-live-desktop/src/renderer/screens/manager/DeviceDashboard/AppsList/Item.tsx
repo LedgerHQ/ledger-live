@@ -15,6 +15,7 @@ import IconCheckFull from "~/renderer/icons/CheckFull";
 import IconInfoCircleFull from "~/renderer/icons/InfoCircleFull";
 import AppActions from "./AppActions";
 import AppIcon from "./AppIcon";
+import AppDeveloper from "./AppDeveloper";
 import { useFeature, useFeatureFlags } from "@features/platform-feature-flags";
 import ToolTip from "~/renderer/components/Tooltip";
 
@@ -91,7 +92,7 @@ const Item = ({
   setAppUninstallDep,
   addAccount,
 }: Props) => {
-  const { name, authorName } = app;
+  const { name } = app;
   const { deviceModel, deviceInfo } = state;
   const notEnoughMemoryToInstall = useNotEnoughMemoryToInstall(optimisticState, name);
   const currency = useMemo(
@@ -133,12 +134,6 @@ const Item = ({
         }}
       />
       {appInfoSeparatorString}
-      {authorName && displayAppDeveloperName ? (
-        <>
-          {authorName}
-          {appInfoSeparatorString}
-        </>
-      ) : null}
       <ByteSize value={bytes} deviceModel={deviceModel} firmwareVersion={deviceInfo.version} />
     </>
   );
@@ -162,6 +157,11 @@ const Item = ({
           </AppTitleAndSubtitleContainer>
         </ToolTip>
       </Box>
+      {displayAppDeveloperName ? (
+        <Box flex="0.5" horizontal alignItems="center" ml={5} overflow="hidden">
+          <AppDeveloper app={app} />
+        </Box>
+      ) : null}
       <Box flex="0.7" noShrink horizontal alignContent="center" justifyContent="flex-start" ml={5}>
         {isLiveSupported ? (
           <>

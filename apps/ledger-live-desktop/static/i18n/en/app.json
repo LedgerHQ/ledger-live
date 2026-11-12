@@ -2402,6 +2402,7 @@
         "updateAllOutOfMemory": "Not enough storage. Please uninstall some apps",
         "install": "Install",
         "installed": "Installed",
+        "communityApp": "Community app",
         "updated": "Updated",
         "uninstall": "Uninstall",
         "notEnoughSpace": "Not enough storage",

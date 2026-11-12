@@ -6580,7 +6580,8 @@
       "noResultsFound": "No results found",
       "noResultsDesc": "Please verify the spelling and try again",
       "versionNew": "(NEW{{newVersion}})",
-      "searchApps": "Search"
+      "searchApps": "Search",
+      "communityApp": "Community app"
     },
     "uninstall": {
       "title": "Uninstall",
