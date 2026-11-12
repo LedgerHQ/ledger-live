@@ -6,13 +6,23 @@ import {
   type PortfolioRegistration,
   type UpdatesPage,
 } from "@domain/api-account-portfolio";
+import { cryptoAssetsApi } from "@domain/api-currency-token";
 import type { PortfolioId } from "@domain/entity-client-identity";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 
 export type PortfolioDispatch = ThunkDispatch<unknown, unknown, UnknownAction>;
 
 export type BalanceReadParams = { account?: string; size: number; token?: string };
 
-export type UpdatesReadParams = { account: string; size: number; token?: string };
+export type UpdatesReadParams = {
+  account: string;
+  size: number;
+  token?: string;
+  /** The service's asset: `native`, or a token as `<standard>.<contract>`. */
+  asset?: string;
+  /** The fiat each change's `currency_value` is in, an ISO 4217 code; USD when absent. */
+  currency?: string;
+};
 
 /** The Portfolio service calls, each a real call, never served from the RTK Query cache. */
 export type PortfolioClient = {
@@ -36,6 +46,8 @@ export type PortfolioClient = {
     params: UpdatesReadParams,
     signal?: AbortSignal,
   ): Promise<UpdatesPage>;
+  /** The CAL token of an id, undefined when CAL does not list it; served from the shared CAL cache. */
+  findToken(id: string): Promise<TokenCurrency | undefined>;
 };
 
 /** A failed service call: its HTTP status only, never the body, which may hold addresses. */
@@ -144,6 +156,12 @@ export function portfolioClientOf(dispatch: PortfolioDispatch): PortfolioClient 
           ),
           signal,
         ),
+      ),
+    findToken: id =>
+      called(() =>
+        dispatch(
+          cryptoAssetsApi.endpoints.findTokenById.initiate({ id }, { subscribe: false }),
+        ).unwrap(),
       ),
   };
 }

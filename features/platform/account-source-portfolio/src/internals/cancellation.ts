@@ -1,3 +1,5 @@
+import { PortfolioReadCancelledError } from "./portfolio";
+
 /** A batch's signal, and how to stop listening to the targets' signals once the batch settles. */
 export type BatchSignal = { readonly signal: AbortSignal | undefined; release(): void };
 
@@ -23,4 +25,18 @@ export function cancelledWhenAll(signals: readonly (AbortSignal | undefined)[]):
   distinct.forEach(signal => signal.addEventListener("abort", abortIfAll));
   abortIfAll();
   return { signal: controller.signal, release };
+}
+
+/** The promise, or a cancellation as soon as `signal` aborts; the promise itself runs on for its other callers. */
+export function orCancelled<T>(promise: Promise<T>, signal: AbortSignal | undefined): Promise<T> {
+  if (!signal) return promise;
+  if (signal.aborted) {
+    promise.catch(noop);
+    return Promise.reject(new PortfolioReadCancelledError());
+  }
+  return new Promise<T>((resolve, reject) => {
+    const cancel = () => reject(new PortfolioReadCancelledError());
+    signal.addEventListener("abort", cancel, { once: true });
+    promise.then(resolve, reject).finally(() => signal.removeEventListener("abort", cancel));
+  });
 }

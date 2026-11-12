@@ -1,6 +1,9 @@
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
+import { FiatCurrencyTickerSchema } from "@domain/entity-currency-fiat";
 import { ETH, update } from "../fakeService.mock";
 import { toAccountOperations } from "./map";
+
+const fiat = { ticker: FiatCurrencyTickerSchema.parse("USD"), currency: "USD", magnitude: 2 };
 
 const USDT = "ethereum/erc20/usdt";
 
@@ -101,6 +104,43 @@ describe("toAccountOperations", () => {
         update(ETH, { tx: { hash: "0x2" } }),
       ]),
     ).toMatchObject({ rows: [{ hash: "0x2" }], unreadable: 1 });
+  });
+
+  it("values each row with its changes' worth in the fiat's smallest unit, half up", () => {
+    const { rows } = toAccountOperations(
+      ETH,
+      [
+        update(ETH, {
+          deltas: [
+            { asset: "native", amount: "-4", currency_value: -1.005 },
+            { asset: "token", cal_id: USDT, amount: "-3", currency_value: -2.5 },
+            { asset: "token", cal_id: USDT, amount: "-2", currency_value: -0.25 },
+          ],
+        }),
+      ],
+      { fiat },
+    );
+    expect(rows.map(row => row.countervalues)).toEqual([{ USD: "101" }, { USD: "275" }]);
+  });
+
+  it("values a row with no change at zero and leaves unvalued an asset with a change of no worth", () => {
+    const { rows } = toAccountOperations(
+      ETH,
+      [
+        update(ETH, {
+          deltas: [{ asset: "token", cal_id: USDT, amount: "9", currency_value: null }],
+        }),
+      ],
+      { fiat },
+    );
+    expect(rows.map(row => row.countervalues)).toEqual([{ USD: "0" }, undefined]);
+  });
+
+  it("values no row when no fiat is asked", () => {
+    const { rows } = toAccountOperations(ETH, [
+      update(ETH, { deltas: [{ asset: "native", amount: "4", currency_value: 1 }] }),
+    ]);
+    expect(rows[0]).not.toHaveProperty("countervalues");
   });
 
   it("keeps only the rows of the filtered asset, the coin's fee rows included", () => {

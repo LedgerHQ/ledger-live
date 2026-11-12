@@ -15,6 +15,7 @@ import {
 } from "@domain/entity-account-descriptor/schema.mock";
 import { PortfolioId } from "@domain/entity-client-identity";
 import { DateTimeIsoSchema } from "@shared/schema-primitives";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { PortfolioClient } from "../client";
 import { portfolioAccountOf } from "../registration";
 import { createPortfolioContext, type PortfolioDeps } from "./portfolio";
@@ -137,11 +138,13 @@ export function fakeService({
   portfolio,
   groups = [],
   updates = [],
+  tokens = [],
   pageSize = 100,
 }: {
   portfolio?: Portfolio;
   groups?: BalanceGroup[];
   updates?: UpdateView[];
+  tokens?: TokenCurrency[];
   pageSize?: number;
 } = {}) {
   const state = { portfolio };
@@ -178,8 +181,12 @@ export function fakeService({
         nextToken: end < items.length ? String(end) : undefined,
       };
     }),
-    getUpdates: jest.fn(async (_id, { account, size, token }, _signal?: AbortSignal) => {
-      const items = updates.filter(each => each.account_id === account);
+    getUpdates: jest.fn(async (_id, { account, size, token, asset }, _signal?: AbortSignal) => {
+      const items = updates.filter(
+        each =>
+          each.account_id === account &&
+          (asset === undefined || (each.deltas ?? []).some(delta => delta.asset === asset)),
+      );
       const start = token ? Number(token) : 0;
       const end = start + size;
       return {
@@ -187,6 +194,7 @@ export function fakeService({
         nextToken: end < items.length ? String(end) : undefined,
       };
     }),
+    findToken: jest.fn(async (id: string) => tokens.find(each => each.id === id)),
   } satisfies PortfolioClient;
   return { client, state };
 }
