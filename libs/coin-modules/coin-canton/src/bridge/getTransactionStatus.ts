@@ -18,7 +18,7 @@ import {
   TO_MANY_UTXOS_WARNING_COUNT,
 } from "../constants";
 import { isRecipientValid } from "../logic/utils";
-import { isTopologyChangeRequiredCached } from "../network/gateway";
+import { getKey, isTopologyChangeRequiredCached } from "../network/gateway";
 import {
   Transaction,
   TransactionStatus,
@@ -150,7 +150,7 @@ function validateUtxoCount(account: CantonAccount, transaction: Transaction): Er
 
   const { instrumentUtxoCounts } = account.cantonResources;
   const instrumentKey = transaction.instrumentAdmin
-    ? `${transaction.tokenId}-${transaction.instrumentAdmin}`
+    ? getKey(transaction.tokenId, transaction.instrumentAdmin)
     : transaction.tokenId;
   const instrumentUtxoCount = instrumentUtxoCounts[instrumentKey] || 0;
 
