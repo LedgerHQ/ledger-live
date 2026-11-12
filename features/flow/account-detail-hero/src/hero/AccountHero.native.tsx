@@ -1,8 +1,8 @@
 import React from "react";
 import { Box, Tag } from "@ledgerhq/lumen-ui-rnative";
-import { AccountActions } from "../components/AccountActions/AccountActions.native";
-import { AccountBalance } from "../components/AccountBalance/AccountBalance.native";
-import { InvestSheet } from "../components/InvestSheet/InvestSheet.native";
+import { AccountActions } from "../components/AccountActions/AccountActions";
+import { AccountBalance } from "../components/AccountBalance/AccountBalance";
+import { InvestSheet } from "../components/InvestSheet/InvestSheet";
 import type { AccountHeroPort } from "./types";
 import { useAccountHeroViewModel } from "./useAccountHeroViewModel";
 

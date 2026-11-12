@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen } from "@testing-library/react-native";
 import { I18nWrapper } from "../../__tests__/i18nWrapper";
 import type { FundingAction } from "../../logic/resolveEmptyState";
-import { AccountEmptyState } from "./AccountEmptyState.native";
+import { AccountEmptyState } from "./AccountEmptyState";
 
 const TEST_ID = "empty-state";
 

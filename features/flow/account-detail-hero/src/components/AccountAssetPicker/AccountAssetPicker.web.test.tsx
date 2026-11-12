@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { I18nWrapper } from "../../__tests__/i18nWrapper";
-import { AccountAssetPicker } from "./AccountAssetPicker.web";
+import { AccountAssetPicker } from "./AccountAssetPicker";
 import type { AccountAssetPickerProps, AccountAssetPickerRow } from "./AccountAssetPicker.types";
 
 const TEST_ID = "asset-picker";
