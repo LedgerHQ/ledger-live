@@ -261,6 +261,7 @@ export const buildGetTransactionStatus =
             config,
             transaction.validators || [],
             account.currency.id,
+            account.polkadotResources?.nominations?.map(nomination => nomination.address) ?? [],
           );
 
           if (notValidators.length) {
