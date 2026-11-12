@@ -1,5 +1,6 @@
 import type { AccountRaw, Account, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { fromRawBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import type {
   HederaAccount,
   HederaAccountRaw,
@@ -29,8 +30,8 @@ export function fromHederaResourcesRaw(rawResources: HederaResourcesRaw): Hedera
   const delegation = rawResources.delegation
     ? {
         nodeId: rawResources.delegation.nodeId,
-        delegated: new BigNumber(rawResources.delegation.delegated),
-        pendingReward: new BigNumber(rawResources.delegation.pendingReward),
+        delegated: fromRawBigNumber(rawResources.delegation.delegated),
+        pendingReward: fromRawBigNumber(rawResources.delegation.pendingReward),
       }
     : null;
 
@@ -71,6 +72,6 @@ export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): OperationExt
   const { stakedAmount, ...rest } = extraRaw as Record<string, unknown>;
 
   return typeof stakedAmount === "string"
-    ? { ...rest, stakedAmount: new BigNumber(stakedAmount) }
+    ? { ...rest, stakedAmount: fromRawBigNumber(stakedAmount) }
     : (extraRaw as OperationExtra);
 }

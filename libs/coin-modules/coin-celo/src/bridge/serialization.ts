@@ -1,5 +1,5 @@
 import { Account, AccountRaw, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
+import { fromRawBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import {
   isCeloOperationExtra,
   isCeloOperationExtraRaw,
@@ -48,16 +48,16 @@ export function toCeloResourcesRaw(r: CeloResources): CeloResourcesRaw {
 export function fromCeloResourcesRaw(r: CeloResourcesRaw): CeloResources {
   return {
     registrationStatus: r.registrationStatus,
-    lockedBalance: new BigNumber(r.lockedBalance),
-    nonvotingLockedBalance: new BigNumber(r.nonvotingLockedBalance),
+    lockedBalance: fromRawBigNumber(r.lockedBalance),
+    nonvotingLockedBalance: fromRawBigNumber(r.nonvotingLockedBalance),
     pendingWithdrawals: r.pendingWithdrawals?.map(u => ({
-      value: new BigNumber(u.value),
-      time: new BigNumber(u.time),
+      value: fromRawBigNumber(u.value),
+      time: fromRawBigNumber(u.time),
       index: Number(u.index),
     })),
     votes: r.votes?.map(vote => ({
       validatorGroup: vote.validatorGroup,
-      amount: new BigNumber(vote.amount),
+      amount: fromRawBigNumber(vote.amount),
       activatable: vote.activatable,
       revokable: vote.revokable,
       type: vote.type,
@@ -65,7 +65,7 @@ export function fromCeloResourcesRaw(r: CeloResourcesRaw): CeloResources {
     })),
     electionAddress: r.electionAddress,
     lockedGoldAddress: r.lockedGoldAddress,
-    maxNumGroupsVotedFor: new BigNumber(r.maxNumGroupsVotedFor),
+    maxNumGroupsVotedFor: fromRawBigNumber(r.maxNumGroupsVotedFor),
   };
 }
 
@@ -89,7 +89,7 @@ export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): OperationExt
   }
 
   if (extraRaw.celoOperationValue) {
-    extra.celoOperationValue = BigNumber(extraRaw.celoOperationValue);
+    extra.celoOperationValue = fromRawBigNumber(extraRaw.celoOperationValue);
   }
 
   if (extraRaw.celoSourceValidator) {

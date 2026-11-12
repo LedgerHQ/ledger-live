@@ -1,6 +1,6 @@
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
-import BigNumber from "bignumber.js";
+import { fromRawBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import type { StakingPosition, StakingPositionRaw, TezosAccount, TezosAccountRaw } from "./types";
 
 function safeISOString(d: Date, uid: string): string | undefined {
@@ -36,7 +36,7 @@ function fromStakingPositionRaw(r: StakingPositionRaw): StakingPosition {
     ...(r.delegate && { delegate: r.delegate }),
     state: r.state,
     asset: { type: "native" },
-    amount: new BigNumber(r.amount),
+    amount: fromRawBigNumber(r.amount),
     actions: [],
     ...(createdAt && { createdAt }),
   };

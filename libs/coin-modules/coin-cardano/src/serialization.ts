@@ -1,5 +1,5 @@
 import { Account, AccountRaw } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
+import { fromRawBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import type {
   BipPath,
   BipPathRaw,
@@ -31,7 +31,7 @@ function fromTokenRaw({ assetName, policyId, amount }: TokenRaw): Token {
   return {
     assetName,
     policyId,
-    amount: new BigNumber(amount),
+    amount: fromRawBigNumber(amount),
   };
 }
 
@@ -101,7 +101,7 @@ function fromCardanoOutputRaw({
     hash,
     index,
     address,
-    amount: new BigNumber(amount),
+    amount: fromRawBigNumber(amount),
     tokens: tokens.map(fromTokenRaw),
     paymentCredential,
   };
@@ -203,7 +203,7 @@ function fromDelegationRaw({
     ticker,
     name,
     dRepHex,
-    rewards: new BigNumber(rewards),
+    rewards: fromRawBigNumber(rewards),
   };
 }
 

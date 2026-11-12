@@ -1,5 +1,5 @@
 import { Account, AccountRaw } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
+import { fromRawBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import type { NearAccount, NearAccountRaw, NearResources, NearResourcesRaw } from "./types";
 
 export function toNearResourcesRaw(r: NearResources): NearResourcesRaw {
@@ -28,14 +28,14 @@ export function fromNearResourcesRaw(r: NearResourcesRaw): NearResources {
     stakingPositions = [],
   } = r;
   return {
-    stakedBalance: new BigNumber(stakedBalance),
-    pendingBalance: new BigNumber(pendingBalance),
-    availableBalance: new BigNumber(availableBalance),
-    storageUsageBalance: new BigNumber(storageUsageBalance),
+    stakedBalance: fromRawBigNumber(stakedBalance),
+    pendingBalance: fromRawBigNumber(pendingBalance),
+    availableBalance: fromRawBigNumber(availableBalance),
+    storageUsageBalance: fromRawBigNumber(storageUsageBalance),
     stakingPositions: stakingPositions.map(({ staked, validatorId, available, pending }) => ({
-      staked: new BigNumber(staked),
-      available: new BigNumber(available),
-      pending: new BigNumber(pending),
+      staked: fromRawBigNumber(staked),
+      available: fromRawBigNumber(available),
+      pending: fromRawBigNumber(pending),
       validatorId,
     })),
   };

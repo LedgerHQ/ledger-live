@@ -226,6 +226,24 @@ describe("assignFromAccountRaw", () => {
       expect(account).not.toHaveProperty("cosmosResources");
     });
 
+    it("revives missing legacy balances as 0 instead of throwing", () => {
+      const cosmosResources = {
+        ...makeRawResources(),
+        delegatedBalance: undefined,
+        pendingRewardsBalance: null,
+        unbondingBalance: "",
+      } as unknown as CosmosResourcesRaw;
+      const account = {} as CosmosAccount & StakingAccount;
+
+      assignFromAccountRaw({ cosmosResources } as CosmosAccountRaw, account);
+
+      expect(account.stakingResources).toMatchObject({
+        delegatedBalance: BigNumber(0),
+        pendingRewardsBalance: BigNumber(0),
+        unbondingBalance: BigNumber(0),
+      });
+    });
+
     it("keeps the raw stakingResources over the legacy cosmosResources when both are present", () => {
       const accountRaw = {
         cosmosResources: makeRawResources({ delegatedBalance: "1" }),

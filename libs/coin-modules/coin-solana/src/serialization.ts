@@ -13,6 +13,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/serialization";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
+import { fromRawBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import {
   SolanaOperationExtra,
   SolanaOperationExtraRaw,
@@ -97,7 +98,7 @@ export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): OperationExt
   if (solanaExtraRaw.stake) {
     extra.stake = {
       address: solanaExtraRaw.stake.address,
-      amount: new BigNumber(solanaExtraRaw.stake.amount),
+      amount: fromRawBigNumber(solanaExtraRaw.stake.amount),
     };
   }
 
