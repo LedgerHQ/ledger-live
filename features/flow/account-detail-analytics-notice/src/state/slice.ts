@@ -24,6 +24,12 @@ export const accountAnalyticsIntroductionSlice = createSlice({
       if (state.isEligible !== null) return;
       state.isEligible = payload;
     },
+    overrideAccountAnalyticsIntroductionEligibility: (
+      state,
+      { payload }: PayloadAction<boolean | null>,
+    ) => {
+      state.isEligible = payload;
+    },
     restoreAccountAnalyticsIntroduction: (state, { payload }: PayloadAction<unknown>) => {
       if (!isRecord(payload)) return;
       if (typeof payload.hasDismissed === "boolean") {
@@ -40,5 +46,6 @@ export const {
   dismissAccountAnalyticsIntroduction,
   resetAccountAnalyticsIntroduction,
   recordAccountAnalyticsIntroductionEligibility,
+  overrideAccountAnalyticsIntroductionEligibility,
   restoreAccountAnalyticsIntroduction,
 } = accountAnalyticsIntroductionSlice.actions;

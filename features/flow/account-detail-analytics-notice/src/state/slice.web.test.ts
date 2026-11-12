@@ -3,6 +3,7 @@ import { shouldShowAccountAnalyticsIntroduction } from "../logic/shouldShowAccou
 import {
   accountAnalyticsIntroductionSlice,
   dismissAccountAnalyticsIntroduction,
+  overrideAccountAnalyticsIntroductionEligibility,
   recordAccountAnalyticsIntroductionEligibility,
   resetAccountAnalyticsIntroduction,
   restoreAccountAnalyticsIntroduction,
@@ -10,6 +11,7 @@ import {
 import {
   accountAnalyticsIntroductionPersistedSelector,
   selectAccountAnalyticsIntroductionDismissed,
+  selectAccountAnalyticsIntroductionEligibility,
   selectAccountAnalyticsIntroductionEligible,
 } from "./selectors";
 
@@ -102,6 +104,39 @@ describe("accountAnalyticsIntroduction", () => {
 
     expect(store.getState()).toBe(recordedState);
     expect(selectAccountAnalyticsIntroductionEligible(store.getState())).toBe(isEligible);
+  });
+
+  it.each([false, null])(
+    "should let debug tools replace a recorded eligibility snapshot with %s",
+    isEligible => {
+      const store = createEligibleStore();
+      store.dispatch(dismissAccountAnalyticsIntroduction());
+
+      store.dispatch(overrideAccountAnalyticsIntroductionEligibility(isEligible));
+
+      expect(accountAnalyticsIntroductionPersistedSelector(store.getState())).toEqual({
+        hasDismissed: true,
+        isEligible,
+      });
+    },
+  );
+
+  it("should report the raw eligibility, null until it is recorded", () => {
+    const store = createStore();
+    expect(selectAccountAnalyticsIntroductionEligibility(store.getState())).toBeNull();
+
+    store.dispatch(recordAccountAnalyticsIntroductionEligibility(false));
+
+    expect(selectAccountAnalyticsIntroductionEligibility(store.getState())).toBe(false);
+  });
+
+  it("should record the eligibility again after debug tools clear it", () => {
+    const store = createEligibleStore();
+    store.dispatch(overrideAccountAnalyticsIntroductionEligibility(null));
+
+    store.dispatch(recordAccountAnalyticsIntroductionEligibility(false));
+
+    expect(selectAccountAnalyticsIntroductionEligible(store.getState())).toBe(false);
   });
 
   it("should keep a restored eligibility snapshot instead of recording a new one", () => {
