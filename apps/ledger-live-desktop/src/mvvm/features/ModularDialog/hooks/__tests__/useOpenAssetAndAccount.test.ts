@@ -1,6 +1,6 @@
 import { renderHook } from "tests/testSetup";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { useOpenAssetAndAccount } from "../AssetAndAccountDrawer";
+import { useOpenAssetAndAccount } from "../useOpenAssetAndAccount";
 import { createModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/utils";
 
 const mockAccount = { id: "account1" } as AccountLike;

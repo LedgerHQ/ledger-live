@@ -33,7 +33,7 @@ import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappL
 import { AccountLike } from "@ledgerhq/types-live";
 import { useDispatch } from "LLD/hooks/redux";
 import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDialog";
-import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
+import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/hooks/useOpenAssetAndAccount";
 import { getTrackingRouteLiveAppSource } from "./analytics";
 
 export const initialWebviewState: WebviewState = {

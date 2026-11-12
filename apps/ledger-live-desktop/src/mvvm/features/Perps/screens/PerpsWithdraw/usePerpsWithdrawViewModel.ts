@@ -9,7 +9,7 @@ import {
   type WithdrawFormError,
 } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/useWithdrawForm";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
+import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/hooks/useOpenAssetAndAccount";
 import { applyRatio } from "LLD/features/Perps/utils/applyRatio";
 import { openPerpsWithdrawSummary } from "../PerpsWithdrawSummary/PerpsWithdrawSummaryDialog";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";

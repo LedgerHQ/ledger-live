@@ -33,7 +33,7 @@ import {
   localeSelector,
 } from "~/renderer/reducers/settings";
 import { accountNameWithDefaultSelector, walletSelector } from "~/renderer/reducers/wallet";
-import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
+import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/hooks/useOpenAssetAndAccount";
 import {
   PERPS_DEPOSIT_DEFAULT_FUNDING_CURRENCY_ID,
   PERPS_DEPOSIT_DEFAULT_FUNDING_TICKER,

@@ -8,7 +8,7 @@ import {
   isTokenAccount,
 } from "@ledgerhq/live-common/account/index";
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
+import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/hooks/useOpenAssetAndAccount";
 import { buildBuyNavigationState, type BuyNavigationOnRampState } from "../utils/buyNavigation";
 import { buildSellNavigationState, type SellNavigationOffRampState } from "../utils/sellNavigation";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
