@@ -191,8 +191,7 @@ export default class BuySellPage {
         ? availableProviders.filter(uiName => uiName !== BuySellProvider.BANXA.uiName)
         : availableProviders,
     );
-
-    await scrollToWebElement(getWebElementByTestId(this.provider(selected.name)));
+    await this.provider(selected.name).scrollTo();
     await this.provider(selected.name).tap();
     return selected;
   }
@@ -203,7 +202,7 @@ export default class BuySellPage {
     if (await this.expandButton.isVisible(TIMEOUT.xsmall)) {
       await this.expandButton.tap();
     }
-    await scrollToWebElement(getWebElementByTestId(this.provider(provider)));
+    await this.provider(provider).scrollTo();
     await this.provider(provider).tap();
   }
 

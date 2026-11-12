@@ -65,6 +65,23 @@ export class WebHandle implements ElementHandle {
     );
   }
 
+  /** Scrolls the webview until the element is in view. */
+  async scrollTo(timeout = TIMEOUT.xxlarge): Promise<void> {
+    await withHardTimeout(
+      retryUntilTimeout(
+        () =>
+          this.raw.runScript((el: HTMLElement | null) => {
+            if (!el?.isConnected) throw new Error("element not ready");
+            el.scrollIntoView({ behavior: "smooth" });
+          }),
+        timeout,
+        INTERVAL.long,
+        { messageOnError: `Failed to scroll to ${this.description}` },
+      ),
+      waitHardTimeout(timeout),
+    );
+  }
+
   /** Waits for the element, then taps it. */
   async tap(timeout = TIMEOUT.xxlarge): Promise<void> {
     await this.waitVisible(timeout);
