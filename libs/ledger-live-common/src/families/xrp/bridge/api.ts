@@ -14,10 +14,10 @@ import { buildContext } from "../../../bridge/generic-coin-framework/api/context
 import { getXrpEnabledTokenStandards } from "../config";
 import type { XrpTokenResources } from "../types";
 
-const IOU_HEX_CODE = /^[0-9A-F]{40}$/;
+export const IOU_HEX_CODE = /^[0-9A-F]{40}$/;
 const MPT_ISSUANCE_ID = /^[0-9A-F]{48}$/;
 
-function getStandardFromReference(assetReference: string): string | undefined {
+export function getStandardFromReference(assetReference: string): string | undefined {
   if (assetReference.length === 3 || IOU_HEX_CODE.test(assetReference)) return "iou";
   if (MPT_ISSUANCE_ID.test(assetReference)) return "mpt";
 
