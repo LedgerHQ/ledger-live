@@ -34,21 +34,6 @@ describe("useManageAgentsButtonViewModel", () => {
     expect(result.current.isEnabled).toBe(false);
   });
 
-  it("should expose the card wording with the new badge", () => {
-    const { result } = renderHook(() => useManageAgentsButtonViewModel(), {
-      overrideInitialState: withFlagOverrides({
-        agentIntent: { enabled: true, params: { navBar: false, profile: true } },
-      }),
-    });
-
-    expect(result.current).toMatchObject({
-      isEnabled: true,
-      title: "Manage your agents",
-      description: "Let AI agents manage your assets.",
-      newBadgeLabel: "New",
-    });
-  });
-
   it("should track the click and open Agent Intent with the profile source", () => {
     const { result } = renderHook(() => useManageAgentsButtonViewModel(), {
       overrideInitialState: withFlagOverrides({

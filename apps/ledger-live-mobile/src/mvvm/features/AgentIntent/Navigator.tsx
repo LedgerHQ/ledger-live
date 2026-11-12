@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
-import { AGENT_INTENT_SOURCE } from "@features/platform-agent-intent-entry-points";
+import { AGENT_INTENT_SOURCE } from "@features/flow-agent-intent-entry-points";
 import { ScreenName } from "~/const";
 import {
   createLumenNativeStackNavigator,

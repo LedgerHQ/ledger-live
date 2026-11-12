@@ -1,4 +1,4 @@
-import type { AgentIntentSource } from "@features/platform-agent-intent-entry-points";
+import type { AgentIntentSource } from "@features/flow-agent-intent-entry-points";
 import { ScreenName } from "~/const";
 
 export type AgentIntentNavigatorParamList = {

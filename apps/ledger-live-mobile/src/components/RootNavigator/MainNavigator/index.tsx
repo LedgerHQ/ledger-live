@@ -1,7 +1,7 @@
 import React from "react";
 import { useTheme } from "styled-components/native";
 import { useFeature } from "@features/platform-feature-flags";
-import { useAgentIntentEntryPoints } from "@features/platform-agent-intent-entry-points";
+import { useAgentIntentEntryPoints } from "@features/flow-agent-intent-entry-points";
 import { useSelector } from "~/context/hooks";
 import { isMainNavigatorVisibleSelector } from "~/reducers/appstate";
 import { useTabBar } from "./useTabBar";

@@ -11452,7 +11452,11 @@
     "agents": "Agents"
   },
   "agentIntent": {
-    "title": "Agents"
+    "title": "Agents",
+    "manageAgents": {
+      "title": "Manage your agents",
+      "description": "Let AI agents manage your assets."
+    }
   },
   "payTab": {
     "disclaimer": "Provided by Monavate Onchain",
@@ -11909,10 +11913,6 @@
     "contacts": {
       "title": "Contacts",
       "description": "Manage your contacts."
-    },
-    "agentIntent": {
-      "title": "Manage your agents",
-      "description": "Let AI agents manage your assets."
     },
     "backupHub": {
       "title": "Backups of your Secret Recovery Phrase",

@@ -1,7 +1,7 @@
 import {
   AGENT_INTENT_SOURCE,
   AGENT_INTENT_TRACKING_ENTRY,
-} from "@features/platform-agent-intent-entry-points";
+} from "@features/flow-agent-intent-entry-points";
 import { NavigatorName } from "~/const";
 import { getEarnOrYieldSuffix } from "~/helpers/getStakeLabelLocaleBased";
 

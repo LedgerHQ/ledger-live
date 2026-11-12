@@ -2170,6 +2170,9 @@ importers:
       '@features/flow-account-detail-settings':
         specifier: workspace:^
         version: link:../../features/flow/account-detail-settings
+      '@features/flow-agent-intent-entry-points':
+        specifier: workspace:^
+        version: link:../../features/flow/agent-intent-entry-points
       '@features/flow-analytics-consent':
         specifier: workspace:*
         version: link:../../features/flow/analytics-consent
@@ -2281,9 +2284,6 @@ importers:
       '@features/platform-account-source-coin-module':
         specifier: workspace:^
         version: link:../../features/platform/account-source-coin-module
-      '@features/platform-agent-intent-entry-points':
-        specifier: workspace:^
-        version: link:../../features/platform/agent-intent-entry-points
       '@features/platform-aggregated-assets':
         specifier: workspace:*
         version: link:../../features/platform/aggregated-assets
