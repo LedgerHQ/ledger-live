@@ -18,7 +18,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { setOnboardingType } from "~/actions/settings";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { OnboardingType } from "~/reducers/types";
-import type { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
+import type { DeviceOnboardingNavigatorParamList } from "LLM/features/DeviceOnboarding/navigation/types";
 import type { SyncOfferPhase, SyncOfferScreenProps } from "./useSyncOfferScreenViewModel";
 
 const DEFAULT_WATCH_INITIAL_TIMEOUT_MS = 1000;
@@ -32,7 +32,10 @@ export function syncOfferSettleDelay(initialTimeout: number): number {
 const LEDGER_SYNC_LEARN_MORE_URL =
   "https://www.ledger.com/academy/topics/ledgersolutions/ledger-sync-effortlessly-sync-your-accounts-in-ledger-live-safely-securely-and-with-complete-privacy";
 
-type OfferRoute = RouteProp<OnboardingNavigatorParamList, ScreenName.DeviceOnboardingSyncOffer>;
+type OfferRoute = RouteProp<
+  DeviceOnboardingNavigatorParamList,
+  ScreenName.DeviceOnboardingSyncOffer
+>;
 
 export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
@@ -87,7 +90,7 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
     setHandoverStarted(true);
     // Ledger Sync only creates a trustchain for a new setup or a completed onboarding.
     dispatch(setOnboardingType(OnboardingType.setupNew));
-    navigation.getParent()?.navigate(NavigatorName.WalletSync, {
+    navigation.navigate(NavigatorName.WalletSync, {
       screen: ScreenName.WalletSyncActivationProcess,
       params: { device, seededOffer: true },
     });
