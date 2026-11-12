@@ -3,6 +3,7 @@ import type {
   BalanceHistoryRange,
 } from "@domain/entity-account-balance-history";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { Fiat } from "../fiat";
 import { toAssetHistories } from "./map";
 import type { HistoryRead } from "./read";
 
@@ -21,6 +22,7 @@ export function verdictOf(
   descriptor: AccountDescriptor,
   range: BalanceHistoryRange,
   { groups, truncated }: Pick<HistoryRead, "groups" | "truncated">,
+  fiat?: Fiat,
 ): Verdict {
   if (truncated) return { status: "failed", detail: "The history read stopped before its end" };
   const points = [];
@@ -31,7 +33,7 @@ export function verdictOf(
     }
     points.push(...group.items);
   }
-  const { series, unmapped, unreadable } = toAssetHistories(descriptor, points);
+  const { series, unmapped, unreadable } = toAssetHistories(descriptor, points, fiat);
   if (unreadable > 0) {
     return { status: "failed", detail: `${unreadable} assets with an unreadable point` };
   }

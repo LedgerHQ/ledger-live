@@ -3,10 +3,10 @@ import type { CryptoOrTokenCurrencyId } from "@domain/entity-currency";
 import type { AccountOperationsQuery } from "@domain/entity-account-operation";
 import { currencyIdFromNetwork, type AccountDescriptor } from "@domain/entity-account-descriptor";
 import type { PortfolioId } from "@domain/entity-client-identity";
-import { findFiatCurrencyByTicker, type FiatCurrencyTicker } from "@domain/entity-currency-fiat";
 import type { PortfolioClient } from "../../client";
 import { isEvmAccount } from "../../evm";
 import { orCancelled } from "../cancellation";
+import type { Fiat } from "../fiat";
 
 const DEFAULT_LIMIT = 20;
 
@@ -14,26 +14,6 @@ const DEFAULT_LIMIT = 20;
 export function limitOf(query: AccountOperationsQuery | undefined): number {
   const requested = query?.limit ?? DEFAULT_LIMIT;
   return Number.isInteger(requested) && requested > 0 ? requested : DEFAULT_LIMIT;
-}
-
-/** The countervalue currency, how the service names it, and how many decimals its smallest unit has. */
-export type Fiat = { ticker: FiatCurrencyTicker; currency: string; magnitude: number };
-
-/** The countervalues that are not ISO 4217 codes, by the CAL id the service takes for them. */
-const CRYPTO_COUNTERVALUES: Readonly<Record<string, string>> = { BTC: "bitcoin", XBT: "bitcoin" };
-
-/**
- * Undefined when the query asks for no countervalue, or for an unknown one. The service takes an
- * ISO 4217 code or a CAL currency id: BTC or XBT goes as `bitcoin`, a fiat such as MNT stays as is.
- */
-export function fiatOf(query: AccountOperationsQuery | undefined): Fiat | undefined {
-  const ticker = query?.countervalue;
-  const unit = ticker && findFiatCurrencyByTicker(ticker)?.units[0];
-  if (!ticker || !unit) return undefined;
-  const currency = Object.hasOwn(CRYPTO_COUNTERVALUES, ticker)
-    ? CRYPTO_COUNTERVALUES[ticker]
-    : ticker;
-  return { ticker, currency, magnitude: unit.magnitude };
 }
 
 /**

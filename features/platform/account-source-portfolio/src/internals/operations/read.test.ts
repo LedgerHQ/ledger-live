@@ -10,7 +10,7 @@ import {
   serverAccountId,
   update,
 } from "../fakeService.mock";
-import { fiatOf, limitOf, readUpdates, serviceAssetOf } from "./read";
+import { limitOf, readUpdates, serviceAssetOf } from "./read";
 
 const USD = FiatCurrencyTickerSchema.parse("USD");
 const USDT = mockTokenCurrency();
@@ -25,45 +25,6 @@ describe("limitOf", () => {
     [{ limit: 2.5 }, 20],
   ])("reads %j as %i", (query, limit) => {
     expect(limitOf(query)).toBe(limit);
-  });
-});
-
-describe("fiatOf", () => {
-  it("reads a known fiat with its smallest unit's magnitude", () => {
-    expect(fiatOf({ countervalue: USD })).toEqual({ ticker: "USD", currency: "USD", magnitude: 2 });
-    expect(fiatOf({ countervalue: FiatCurrencyTickerSchema.parse("JPY") })).toEqual({
-      ticker: "JPY",
-      currency: "JPY",
-      magnitude: 0,
-    });
-  });
-
-  it("keeps a fiat ticker a crypto shares, as Mantle does the tögrög's MNT", () => {
-    expect(fiatOf({ countervalue: FiatCurrencyTickerSchema.parse("MNT") })).toMatchObject({
-      ticker: "MNT",
-      currency: "MNT",
-    });
-  });
-
-  it("names a crypto countervalue by its CAL id, as the service takes it", () => {
-    expect(fiatOf({ countervalue: FiatCurrencyTickerSchema.parse("BTC") })).toEqual({
-      ticker: "BTC",
-      currency: "bitcoin",
-      magnitude: 8,
-    });
-  });
-
-  it("names XBT, the other Bitcoin ticker, by the same CAL id", () => {
-    expect(fiatOf({ countervalue: FiatCurrencyTickerSchema.parse("XBT") })).toEqual({
-      ticker: "XBT",
-      currency: "bitcoin",
-      magnitude: 2,
-    });
-  });
-
-  it("reads no fiat when none or an unknown one is asked", () => {
-    expect(fiatOf(undefined)).toBeUndefined();
-    expect(fiatOf({ countervalue: FiatCurrencyTickerSchema.parse("XYZ") })).toBeUndefined();
   });
 });
 

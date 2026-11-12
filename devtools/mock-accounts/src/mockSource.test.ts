@@ -380,3 +380,42 @@ describe("mockSource countervalues", () => {
     for (const op of operations) expect(op.countervalues).toBeUndefined();
   });
 });
+
+const readValuedHistory = (descriptor: AccountDescriptor, countervalue: FiatCurrencyTicker) => {
+  const read = mockSource.read?.balanceHistory;
+  if (!read) throw new Error("no balance history reader");
+  const target = { accountUUID: computeAccountUUID(descriptor), descriptor };
+  return read(target, { range: "week", countervalue });
+};
+
+describe("mockSource balanceHistory countervalues", () => {
+  const usd = FiatCurrencyTickerSchema.parse("USD");
+  let nowSpy: jest.SpyInstance<number, []>;
+
+  beforeEach(() => {
+    nowSpy = jest.spyOn(Date, "now").mockReturnValue(Date.UTC(2026, 9, 20));
+  });
+  afterEach(() => nowSpy.mockRestore());
+
+  it("values each point's balance in the fiat asked, at its date", async () => {
+    const [account] = mockDescriptors("ethereum", 1, []);
+    const plain = await readBalanceHistory(account, "week");
+    const valued = await readValuedHistory(account, usd);
+    const stripped = valued.series.map(({ assetId, points }) => ({
+      assetId,
+      points: points.map(({ date, balance }) => ({ date, balance })),
+    }));
+    expect(stripped).toEqual(plain.series);
+    for (const point of valued.series.flatMap(series => series.points)) {
+      expect(point.countervalues?.[usd]).toMatch(/^\d+$/);
+    }
+  });
+
+  it("leaves the countervalues out for an unknown fiat", async () => {
+    const [account] = mockDescriptors("ethereum", 1, []);
+    const history = await readValuedHistory(account, FiatCurrencyTickerSchema.parse("XXX"));
+    for (const point of history.series.flatMap(series => series.points)) {
+      expect(point.countervalues).toBeUndefined();
+    }
+  });
+});

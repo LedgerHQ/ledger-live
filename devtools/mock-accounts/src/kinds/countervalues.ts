@@ -1,6 +1,7 @@
 import { AmountStrSchema } from "@domain/entity-account-balance";
 import type { OperationCountervalues } from "@domain/entity-account-operation";
 import { findFiatCurrencyByTicker, type FiatCurrencyTicker } from "@domain/entity-currency-fiat";
+import type { MockContext } from "../families/types";
 import { seededRandom } from "../random";
 
 const DAY = 86_400_000;
@@ -16,7 +17,13 @@ function priceAt(assetId: string, ticker: FiatCurrencyTicker, fiatMagnitude: num
   return BigInt(Math.round(base * swing * 10 ** fiatMagnitude));
 }
 
-/** Values an operation in `ticker` at its date, as FullSync does; none for an unknown fiat, or an asset without a known magnitude. */
+/** The magnitude of the account's native coin, or of a token its family knows. */
+export const accountMagnitudeOf =
+  ({ currency, family }: Pick<MockContext, "currency" | "family">) =>
+  (assetId: string) =>
+    assetId === currency.id ? currency.units[0].magnitude : family.tokenMagnitude?.(assetId);
+
+/** Values an amount in `ticker` at its date, as FullSync does; none for an unknown fiat, or an asset without a known magnitude. */
 export function mockCountervalueOf(
   ticker: FiatCurrencyTicker,
   magnitudeOf: (assetId: string) => number | undefined,

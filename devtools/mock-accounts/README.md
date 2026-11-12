@@ -22,10 +22,12 @@ A family only overrides the kinds where it differs, so adding a family or a kind
 - `evm`: EIP-55 addresses on the Ledger Live path; balance up to 5 coins, and USDC / USDT on ethereum.
 - any other family: a base58 address, and the generic readers (`balance`: the native coin, up to 100 coins).
 
-Every family uses the generic `operations` reader: receives and sends adding up to each asset's balance (an empty asset has none), fees in the native coin only, one account in ten with its newest operation pending. Dates count back from a fixed day, so the operations stay seeded. A `countervalue` query values each row at its date into `countervalues` itself, so the apps' `withOperationCountervalues` decorator leaves it as is, from a seeded price per asset and fiat that swings over a 90-day cycle (no row is valued for an unknown fiat, or a token whose magnitude the family does not give through `tokenMagnitude`).
+Every family uses the generic `operations` reader: receives and sends adding up to each asset's balance (an empty asset has none), fees in the native coin only, one account in ten with its newest operation pending. Dates count back from a fixed day, so the operations stay seeded. A `countervalue` query values each row at its date into `countervalues` itself, so the apps' `withCountervalues` decorator leaves it as is, from a seeded price per asset and fiat that swings over a 90-day cycle (no row is valued for an unknown fiat, or a token whose magnitude the family does not give through `tokenMagnitude`).
 
 It is paginated, to test the next pages: `limit` rows per page (20 when the query has none), pending first then newest first. By default most accounts have a few operations and one in five has a long history (50 to 200 per asset) spanning several pages. To control it, fill "Operations per account" before Generate (up to 10 000): each generated account gets that many operations, split evenly across its funded assets (at least one per funded asset). The count lives in memory with the tool, like the accounts. `nextCursor` is the id of the page's last row, absent on the last page; a cursor naming no row of the account fails the read with `MockCursorError`.
 
 It honours `filterAsset`, as FullSync does: it keeps one asset's rows before paging, so each filter pages on its own.
+
+The generic `balanceHistory` reader replays each asset's balance back through those operations. A `countervalue` query values each point's balance at its date into `countervalues` with the same seeded prices.
 
 Imports no `@devtools/*` package, as any tool ([import boundaries](../../.claude/skills/devtools-import-boundary/SKILL.md)). Its props come from `useMockAccountsToolProps` in `@devtools/bindings`.

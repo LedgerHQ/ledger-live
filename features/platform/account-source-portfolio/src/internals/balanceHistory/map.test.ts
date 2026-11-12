@@ -1,4 +1,6 @@
 import { DateTimeIsoSchema } from "@shared/schema-primitives";
+import { FiatCurrencyTickerSchema } from "@domain/entity-currency-fiat";
+import { fiatOf } from "../fiat";
 import { ETH, point } from "../fakeService.mock";
 import { toAssetHistories } from "./map";
 
@@ -41,5 +43,37 @@ describe("toAssetHistories", () => {
     ]);
 
     expect(mapped).toEqual({ series: [], unmapped: 1, unreadable: 2 });
+  });
+
+  it("values each point from its currency_value in the fiat's smallest unit, half up", () => {
+    const fiat = fiatOf({ countervalue: FiatCurrencyTickerSchema.parse("EUR") });
+    const mapped = toAssetHistories(
+      ETH,
+      [
+        point(ETH, {
+          time: DateTimeIsoSchema.parse("2026-10-01T00:00:00Z"),
+          value: "10",
+          currency_value: 12.345,
+        }),
+        point(ETH, {
+          time: DateTimeIsoSchema.parse("2026-10-02T00:00:00Z"),
+          value: "12",
+          currency_value: null,
+        }),
+      ],
+      fiat,
+    );
+    expect(mapped.series[0]?.points).toEqual([
+      { date: "2026-10-01T00:00:00.000Z", balance: "10", countervalues: { EUR: "1235" } },
+      { date: "2026-10-02T00:00:00.000Z", balance: "12" },
+    ]);
+  });
+
+  it("leaves the currency_value out when the read asked for no fiat", () => {
+    const mapped = toAssetHistories(ETH, [point(ETH, { currency_value: 3 })]);
+    expect(mapped.series[0]?.points[0]).toEqual({
+      date: "2026-10-01T00:00:00.000Z",
+      balance: "10",
+    });
   });
 });
