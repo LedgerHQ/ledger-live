@@ -8,6 +8,7 @@ const { values } = parseArgs({
   options: {
     "from-feed": { type: "boolean", default: false },
     "update-from-feed": { type: "boolean", default: false },
+    "wrong-key": { type: "boolean", default: false },
   },
 });
 const fromFeed = values["from-feed"];
@@ -24,6 +25,6 @@ const installedApp = await installFromFeed(base.version);
 openApp(installedApp, {
   UPDATE_FEED_URL: feedUrl,
   UPDATE_CHECK_FEED: feedUrl,
-  UPDATE_CHECK_PUBKEY: getPub(privateKey),
+  ...(!values["wrong-key"] && { UPDATE_CHECK_PUBKEY: getPub(privateKey) }),
 });
 console.log("Press Ctrl+C to stop serving the feed");
