@@ -2886,6 +2886,9 @@ importers:
       '@babel/plugin-transform-optional-chaining':
         specifier: 7.28.5
         version: 7.28.5(@babel/core@7.28.5)
+      '@babel/plugin-transform-parameters':
+        specifier: 7.27.7
+        version: 7.27.7(@babel/core@7.28.5)
       '@babel/plugin-transform-private-methods':
         specifier: 7.27.1
         version: 7.27.1(@babel/core@7.28.5)
@@ -44957,7 +44960,7 @@ snapshots:
   '@babel/plugin-transform-parameters@7.27.7(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
-      '@babel/helper-plugin-utils': 7.27.1
+      '@babel/helper-plugin-utils': 7.29.7
 
   '@babel/plugin-transform-private-methods@7.27.1(@babel/core@7.28.5)':
     dependencies:

@@ -20,6 +20,8 @@ module.exports = {
     "@babel/plugin-transform-class-static-block",
     "@babel/plugin-transform-flow-strip-types",
     ["@babel/plugin-transform-private-methods", { loose: true }],
+    // RN 0.86 preset dropped it; inversify reads constructor.length (LIVE-39331)
+    "@babel/plugin-transform-parameters",
     // Transform template literals for Hermes compatibility (ajv uses tagged templates)
     "@babel/plugin-transform-template-literals",
     [
