@@ -41,13 +41,13 @@ test.describe("Staking - Tezos", owner, () => {
       await app.accounts.navigateToAccountByName(account.account.accountName);
 
       // Delegate branch: chooser -> delegate modal -> close (nothing signed; account stays undelegated).
-      await app.account.startStakingFlowFromMainStakeButton();
+      await app.account.startStakingFlowFromMainStakeButton({ asset: account.account.currency });
       await app.tezosEarningChoice.chooseDelegate();
       await app.delegate.verifyDelegationStarter();
       await app.delegate.close();
 
       // Stake branch: chooser -> 5-step stake modal -> sign the delegation step.
-      await app.account.startStakingFlowFromMainStakeButton();
+      await app.account.startStakingFlowFromMainStakeButton({ asset: account.account.currency });
       await app.tezosEarningChoice.chooseStake();
       await app.tezosStake.verifyValidatorStep();
       await app.tezosStake.continueFromValidator();
@@ -76,7 +76,7 @@ test.describe("Staking - Tezos", { lock: stakeLock.names, ...owner }, () => {
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(account.account.accountName);
       // Already delegated => opens MODAL_TEZOS_STAKE directly at the amount step.
-      await app.account.startStakingFlowFromMainStakeButton();
+      await app.account.startStakingFlowFromMainStakeButton({ asset: account.account.currency });
       await app.tezosStake.fillAmount(account.amount);
       await app.tezosStake.continueFromAmount();
       // Tezos signs the stake op via the same on-device review-and-sign flow as delegation.
