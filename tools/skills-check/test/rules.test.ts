@@ -143,6 +143,35 @@ describe("description", () => {
   });
 });
 
+describe("length", () => {
+  const lines = (count: number): string => "line\n".repeat(count);
+  const skillOf = (bodyLines: number): string =>
+    skill(`name: fmt\n${GOOD_DESCRIPTION}`, lines(bodyLines));
+
+  it("accepts a SKILL.md of 500 lines and an AGENTS.md of 100", () => {
+    const root = repo({ ".agents/skills/fmt/SKILL.md": skillOf(495), "AGENTS.md": lines(100) });
+    assert.deepEqual(codes(root), []);
+  });
+
+  it("reports a SKILL.md over 500 lines at its first extra line", () => {
+    const root = repo({ ".agents/skills/fmt/SKILL.md": skillOf(496) });
+    assert.deepEqual(codes(root), [".agents/skills/fmt/SKILL.md:501:length"]);
+  });
+
+  it("reports an AGENTS.md over 100 lines", () => {
+    const root = repo({ "AGENTS.md": lines(101) });
+    assert.deepEqual(codes(root), ["AGENTS.md:101:length"]);
+  });
+
+  it("leaves skill references and other docs alone", () => {
+    const root = repo({
+      ".agents/skills/fmt/references/long.md": lines(800),
+      "docs/long.md": lines(800),
+    });
+    assert.deepEqual(codes(root), []);
+  });
+});
+
 describe("dead-link", () => {
   it("reports relative and root links that do not resolve", () => {
     const root = repo({
