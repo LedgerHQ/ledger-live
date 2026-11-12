@@ -340,7 +340,11 @@
     "home": "Home",
     "refer": "Refer a friend",
     "catalog": "Discover",
-    "recover": "[L] Recover"
+    "recover": "[L] Recover",
+    "agents": "Agents"
+  },
+  "agentIntent": {
+    "title": "Agents"
   },
   "stars": {
     "tooltip": "Star account"
@@ -10664,6 +10668,10 @@
     "contacts": {
       "title": "Contacts",
       "description": "Manage your contacts"
+    },
+    "agentIntent": {
+      "title": "Manage your agents",
+      "description": "Let AI agents manage your assets."
     },
     "explore": "Explore all Ledger devices"
   },
