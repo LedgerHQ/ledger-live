@@ -72,6 +72,16 @@ describe("computeUnrealisticQuote", () => {
     ).toEqual({ code: QuoteWarningCodes.UNREALISTIC_QUOTE, gainPercent: 100 });
   });
 
+  it.each([
+    ["amountFrom", "abc"],
+    ["amountTo", undefined],
+    ["amountTo", null],
+    ["amountTo", ""],
+  ])("returns null when %s is %p", (field, value) => {
+    const quote: RawQuote = JSON.parse(JSON.stringify({ ...makeRawQuote(), [field]: value }));
+    expect(computeUnrealisticQuote(quote, ethToBtcDoubledFiat)).toBeNull();
+  });
+
   it("returns null when the gain percentage overflows to a non-finite number", () => {
     // Extreme spot-price ratio pushes gainPercent past Number.MAX_VALUE so
     // BigNumber.toNumber() yields Infinity. Returning null keeps the numeric

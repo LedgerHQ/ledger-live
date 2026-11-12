@@ -490,6 +490,23 @@ describe("normalizeQuote", () => {
       expect(quote.warnings).toEqual([]);
     });
 
+    it.each([undefined, null, "", "abc"])(
+      "does not emit value warnings when amountTo is %p",
+      amountTo => {
+        const rawQuote: RawQuote = JSON.parse(
+          JSON.stringify({ ...makeRawQuote({ amountFrom: 1 }), amountTo }),
+        );
+        const quote = normalizeQuote(rawQuote, emptyProviderData, {
+          sendCurrencyId: "bitcoin",
+          receiveCurrencyId: "ethereum",
+          spotPrices: { bitcoin: 1000, ethereum: 80 },
+          highValueLossThreshold: 0.9,
+        });
+
+        expect(quote.warnings).toEqual([]);
+      },
+    );
+
     it("does not emit `highValueLoss` when the threshold is missing", () => {
       const quote = normalizeQuote(
         makeRawQuote({ amountFrom: 1, amountTo: 10 }),

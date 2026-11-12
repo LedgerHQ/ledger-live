@@ -1,4 +1,4 @@
-import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 
 import type { RawQuote } from "../service/types";
 import { QuoteWarningCodes, type QuoteWarning } from "../types";
@@ -13,14 +13,15 @@ export function computeUnrealisticQuote(
 ): QuoteWarning | null {
   const fromSpot = context.spotPrices[context.sendCurrencyId];
   const toSpot = context.spotPrices[context.receiveCurrencyId];
-  const amountFrom = quote.amountFrom;
+  const amountFrom = parseFiniteBigNumber(quote.amountFrom);
+  const amountTo = parseFiniteBigNumber(quote.amountTo);
 
-  if (amountFrom == null || amountFrom === 0 || !fromSpot || !toSpot) {
+  if (!amountFrom || amountFrom.isZero() || !amountTo || !fromSpot || !toSpot) {
     return null;
   }
 
-  const amountFromFiat = BigNumber(amountFrom).multipliedBy(fromSpot);
-  const amountToFiat = BigNumber(quote.amountTo).multipliedBy(toSpot);
+  const amountFromFiat = amountFrom.multipliedBy(fromSpot);
+  const amountToFiat = amountTo.multipliedBy(toSpot);
 
   if (amountFromFiat.isZero() || amountFromFiat.isNaN()) {
     return null;

@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 
 import type { RawQuote } from "../service/types";
 import { QuoteWarningCodes, type QuoteWarning } from "../types";
@@ -45,8 +46,13 @@ function addHighValueLossWarning(
     return;
   }
 
-  const amountFromCounterValue = new BigNumber(quote.amountFrom).multipliedBy(fromSpotPrice);
-  const amountToCounterValue = new BigNumber(quote.amountTo).multipliedBy(toSpotPrice);
+  const amountFrom = parseFiniteBigNumber(quote.amountFrom);
+  const amountTo = parseFiniteBigNumber(quote.amountTo);
+  if (!amountFrom || !amountTo) {
+    return;
+  }
+  const amountFromCounterValue = amountFrom.multipliedBy(fromSpotPrice);
+  const amountToCounterValue = amountTo.multipliedBy(toSpotPrice);
 
   if (amountFromCounterValue.isZero() || amountFromCounterValue.isNaN()) {
     return;

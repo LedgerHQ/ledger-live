@@ -67,6 +67,32 @@ describe("updateAccountSwapStatus", () => {
     expect(mockedGetMultipleStatus).not.toHaveBeenCalled();
   });
 
+  it.each(["", "abc"])("updates the status but ignores a final amount of %p", async finalAmount => {
+    mockedGetMultipleStatus.mockResolvedValue([
+      { provider: "swapkit_hyperliquid", swapId: SWAP_ID, status: "finished", finalAmount },
+    ]);
+    const entry = withdrawEntry({ operationId: TX_HASH, finalAmount: new BigNumber(2) });
+
+    const updated = await updateAccountSwapStatus(accountWith(entry));
+
+    expect(updated?.swapHistory[0]).toMatchObject({
+      status: "finished",
+      finalAmount: new BigNumber(2),
+    });
+  });
+
+  it("stores a readable final amount", async () => {
+    mockedGetMultipleStatus.mockResolvedValue([
+      { provider: "swapkit_hyperliquid", swapId: SWAP_ID, status: "finished", finalAmount: "1.5" },
+    ]);
+
+    const updated = await updateAccountSwapStatus(
+      accountWith(withdrawEntry({ operationId: TX_HASH })),
+    );
+
+    expect(updated?.swapHistory[0].finalAmount).toEqual(new BigNumber("1.5"));
+  });
+
   it("keeps the operation id of an anchored entry", async () => {
     mockedGetMultipleStatus.mockResolvedValue([
       { provider: "swapkit_hyperliquid", swapId: SWAP_ID, status: "finished", txHash: "0xother" },

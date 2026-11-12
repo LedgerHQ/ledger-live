@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import { useEffect, useMemo, useState } from "react";
 import { getAccountCurrency, getMainAccount } from "../../../account/index";
 import {
@@ -182,9 +183,10 @@ export function formatSwapTransactionStatusAmount(
   rawAtomic: string | undefined,
   locale: string,
 ): string | undefined {
-  if (!currency || !rawAtomic) return undefined;
+  const value = parseFiniteBigNumber(rawAtomic);
+  if (!currency || !value) return undefined;
   const unit = currency.units[0];
-  return formatCurrencyUnit(unit, limitDisplayDecimals(rawAtomic, unit.magnitude), {
+  return formatCurrencyUnit(unit, limitDisplayDecimals(value, unit.magnitude), {
     showCode: true,
     locale,
     disableRounding: true,
@@ -509,8 +511,7 @@ export function useSwapTransactionStatusDisplayViewModel({
   };
 }
 
-function limitDisplayDecimals(rawAtomic: string, unitMagnitude: number): BigNumber {
-  const value = new BigNumber(rawAtomic);
+function limitDisplayDecimals(value: BigNumber, unitMagnitude: number): BigNumber {
   const hiddenMagnitude = unitMagnitude - MAX_DISPLAY_DECIMALS;
   if (hiddenMagnitude <= 0) return value;
 

@@ -1,9 +1,10 @@
-import BigNumber from "bignumber.js";
 import type { EIP712Message } from "@ledgerhq/types-live";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import { isDexExecutionProvider, type DexBuildContext } from "../dex";
 import { toEIP712Message } from "../intents/signPermit2Evm/permit2";
 import { toRfqEIP712Message, type RfqProvider } from "../intents/signRfqOrderEvm/rfqTypedData";
 import type { Quote, QuoteApprovalTransaction } from "../quotes/types";
+import { parseSwapNumericParam } from "../swapParams";
 import type { PlanSwapFlowInput, SwapFlowPlan } from "./types";
 
 /**
@@ -185,14 +186,14 @@ function needsUsdtRevoke(
   const tokenAllowance = quote.quoteDetails.tokenAllowance;
   if (!tokenAllowance) return false;
   if (tokenAllowance.isApproved) return false;
-  const approvedAmount = new BigNumber(tokenAllowance.approvedAmount ?? 0);
-  if (approvedAmount.isZero()) return false;
+  const approvedAmount = parseFiniteBigNumber(tokenAllowance.approvedAmount ?? 0);
+  if (!approvedAmount || approvedAmount.isZero()) return false;
 
   // `sendAmount` is in display units (e.g. `350` USDT); atomise it
   // before comparing against the on-chain allowance (atomic units).
-  const sendAmountAtomic = new BigNumber(quote.quoteDetails.sendAmount).shiftedBy(USDT_DECIMALS);
+  const sendAmount = parseFiniteBigNumber(quote.quoteDetails.sendAmount);
 
-  return sendAmountAtomic.gt(approvedAmount);
+  return !!sendAmount && sendAmount.shiftedBy(USDT_DECIMALS).gt(approvedAmount);
 }
 
 /**
@@ -207,8 +208,9 @@ function needsUsdtRevoke(
  * - `swap`          → `buildSwap` + `signSwap` + `broadcastSwap`
  * - RFQ `swap`      → `signRfqOrder` + `submitRfqOrder`
  *
- * Throws if the planner-side EIP-712 normalisation fails (caller wraps
- * in try/catch and rejects the live-app `customSwap` promise).
+ * Throws if the planner-side EIP-712 normalisation fails or a DEX quote
+ * has an unreadable `sendAmount` (caller wraps in try/catch and rejects
+ * the live-app `customSwap` promise).
  */
 export function planSwapFlow(input: PlanSwapFlowInput): SwapFlowPlan {
   const { quote } = input;
@@ -245,7 +247,7 @@ export function planSwapFlow(input: PlanSwapFlowInput): SwapFlowPlan {
       fromCurrencyId: input.fromCurrencyId,
       toCurrencyId: input.toCurrencyId,
       fromAccountAddress: input.fromAccountAddress,
-      amountFrom: new BigNumber(quote.quoteDetails.sendAmount),
+      amountFrom: parseSwapNumericParam("sendAmount", quote.quoteDetails.sendAmount),
       slippage: quote.quoteDetails.slippage,
       gasLimitMultiplier: input.gasLimitMultiplier,
       defaultGasLimit: input.defaultGasLimit,

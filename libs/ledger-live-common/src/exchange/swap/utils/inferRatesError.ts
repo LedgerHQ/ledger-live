@@ -1,4 +1,4 @@
-import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import { getSwapAPIError } from "..";
 import {
   SwapExchangeRateAmountTooHigh,
@@ -32,32 +32,28 @@ export function inferError(response: ExchangeRateErrors, unitFrom: Unit): Error 
   }
 
   if (isAMinMaxError) {
-    const isTooSmall = BigNumber(response.amountRequested).lt(response.minAmountFrom);
+    const requested = parseFiniteBigNumber(response.amountRequested);
+    const min = parseFiniteBigNumber(response.minAmountFrom);
+    const max = parseFiniteBigNumber(response.maxAmountFrom);
+    const isTooSmall = !!requested && !!min && requested.lt(min);
+    const minOrMax = isTooSmall
+      ? { error: SwapExchangeRateAmountTooLow, amount: min, key: "minAmountFromFormatted" }
+      : { error: SwapExchangeRateAmountTooHigh, amount: max, key: "maxAmountFromFormatted" };
 
-    const minOrMaxError = isTooSmall
-      ? {
-          error: SwapExchangeRateAmountTooLow,
-          amount: response.minAmountFrom,
-          key: "minAmountFromFormatted",
-        }
-      : {
-          error: SwapExchangeRateAmountTooHigh,
-          amount: response.maxAmountFrom!,
-          key: "maxAmountFromFormatted",
-        };
-
-    return new minOrMaxError.error(undefined, {
-      [minOrMaxError.key]: formatCurrencyUnit(
-        unitFrom,
-        new BigNumber(minOrMaxError?.amount).times(BigNumber(10).pow(unitFrom.magnitude)),
-        {
-          alwaysShowSign: false,
-          disableRounding: true,
-          showCode: true,
-        },
-      ),
-      amount: new BigNumber(minOrMaxError.amount),
-    });
+    if (minOrMax.amount) {
+      return new minOrMax.error(undefined, {
+        [minOrMax.key]: formatCurrencyUnit(
+          unitFrom,
+          minOrMax.amount.shiftedBy(unitFrom.magnitude),
+          {
+            alwaysShowSign: false,
+            disableRounding: true,
+            showCode: true,
+          },
+        ),
+        amount: minOrMax.amount,
+      });
+    }
   }
 
   if (isAnErrorCodeMessageError) {

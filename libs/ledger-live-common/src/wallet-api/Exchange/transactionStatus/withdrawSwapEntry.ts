@@ -1,4 +1,5 @@
-import BigNumber from "bignumber.js";
+import type BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import type { AccountLike, SwapOperation } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "../../../account";
 import type { SwapStatus } from "../../../exchange/swap/types";
@@ -56,10 +57,8 @@ function getDecimalFinalAmount(
   entry: SwapOperation,
   remoteStatus: SwapStatus | undefined,
 ): BigNumber | undefined {
-  if (remoteStatus?.finalAmount) {
-    const remoteAmount = new BigNumber(remoteStatus.finalAmount);
-    if (remoteAmount.isGreaterThan(0)) return remoteAmount;
-  }
+  const remoteAmount = parseFiniteBigNumber(remoteStatus?.finalAmount);
+  if (remoteAmount?.isGreaterThan(0)) return remoteAmount;
   if (entry.finalAmount?.isGreaterThan(0)) return entry.finalAmount;
   return undefined;
 }

@@ -177,6 +177,7 @@ describe("amount formatting", () => {
   it("should return undefined when amount inputs are missing", () => {
     expect(formatSwapTransactionStatusAmount(undefined, "123", "en-US")).toBeUndefined();
     expect(formatSwapTransactionStatusAmount(bitcoin, undefined, "en-US")).toBeUndefined();
+    expect(formatSwapTransactionStatusAmount(bitcoin, "abc", "en-US")).toBeUndefined();
     expect(formatSwapTransactionStatusFeesAmount(undefined, "123", "en-US")).toBeUndefined();
   });
 

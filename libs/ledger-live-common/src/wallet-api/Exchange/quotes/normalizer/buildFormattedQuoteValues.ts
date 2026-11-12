@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 
 import type { FormattedQuoteValues } from "@ledgerhq/wallet-api-exchange-module";
 
@@ -25,11 +26,11 @@ function estimatedNetworkFeeAsDisplay(
   feeEstimate: FeeEstimate | undefined,
   feeCurrencyDecimals: number | undefined,
 ): BigNumber {
-  const atomic = feeEstimate?.estimatedNetworkFee?.amount;
+  const atomic = parseFiniteBigNumber(feeEstimate?.estimatedNetworkFee?.amount);
   if (!atomic || feeCurrencyDecimals === undefined) {
     return new BigNumber(0);
   }
-  return new BigNumber(atomic).shiftedBy(-feeCurrencyDecimals);
+  return atomic.shiftedBy(-feeCurrencyDecimals);
 }
 
 /**
