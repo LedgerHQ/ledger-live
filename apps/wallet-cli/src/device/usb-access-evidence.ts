@@ -22,8 +22,7 @@ export function usbAccessEvidence(
 ): UsbAccessEvidence | undefined {
   const latest = [...snapshot.openFailures.values()]
     .map(failure => ({ failure, kind: classifyUsbAccessFailure(failure.error) }))
-    .filter(({ failure, kind }) => !failure.detached || kind === "device_unreachable")
-    .at(-1);
+    .findLast(({ failure, kind }) => !failure.detached || kind === "device_unreachable");
   return latest && { error: usbErrorName(latest.failure.error), kind: latest.kind };
 }
 
@@ -58,7 +57,7 @@ export function classifyUsbAccessFailure(error: unknown): UsbAccessFailureKind {
 
 function usbErrorName(error: unknown): string {
   const strings = errorChainStrings(error);
-  return USB_ERROR_NAME.exec(strings.join(" "))?.[1] ?? strings[0] ?? String(error);
+  return USB_ERROR_NAME.exec(strings.join(" "))?.[1] ?? strings[0] ?? "unknown error";
 }
 
 /**
@@ -70,7 +69,7 @@ function errorChainStrings(error: unknown): string[] {
   let node = error;
   for (let depth = 0; node != null && depth < ERROR_CHAIN_MAX_DEPTH; depth++) {
     if (typeof node !== "object") {
-      strings.push(String(node));
+      if (typeof node === "string") strings.push(node);
       break;
     }
     const { message, name, code, _tag, cause, originalError } = node as Record<string, unknown>;

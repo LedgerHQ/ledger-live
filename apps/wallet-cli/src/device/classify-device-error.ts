@@ -147,11 +147,15 @@ export function classifyDeviceError(error: unknown, ctx: ClassifyContext = {}): 
   }
 
   if (error instanceof UsbSessionOpenError) {
-    const usbAccess = error.usbAccess && usbAccessEvidence(error.usbAccess);
-    return usbAccess
-      ? { code: "unknown", cause: error, usbAccess }
-      : { code: "unknown", cause: error };
+    return usbSessionOpenErrorState(error);
   }
 
   return { code: "unknown", cause: error };
+}
+
+function usbSessionOpenErrorState(error: UsbSessionOpenError): DeviceState {
+  const usbAccess = error.usbAccess && usbAccessEvidence(error.usbAccess);
+  return usbAccess
+    ? { code: "unknown", cause: error, usbAccess }
+    : { code: "unknown", cause: error };
 }

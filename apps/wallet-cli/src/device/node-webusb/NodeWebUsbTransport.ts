@@ -62,9 +62,7 @@ function getVendorInterfaceNumber(device: WebUSBDevice): number | null {
 type ScannedWebUsbDevice = { device: WebUSBDevice; interfaceNumber: number };
 
 /** `bus-address`: stable while the device stays plugged in, and known before it is opened. */
-type UsbDeviceKey = string;
-
-function usbDeviceKey(native: NativeUsbDevice): UsbDeviceKey {
+function usbDeviceKey(native: NativeUsbDevice): string {
   return `${native.busNumber}-${native.deviceAddress}`;
 }
 
@@ -76,7 +74,7 @@ export type NodeWebUsbOpenFailure = {
 
 export type NodeWebUsbAccessSnapshot = {
   /** The last failed open of each device, by `bus-address`, oldest first. */
-  openFailures: ReadonlyMap<UsbDeviceKey, NodeWebUsbOpenFailure>;
+  openFailures: ReadonlyMap<string, NodeWebUsbOpenFailure>;
 };
 
 type NodeWebUsbBindings = Pick<typeof usbBindings, "on" | "removeListener" | "unrefHotplugEvents">;
@@ -193,8 +191,8 @@ export class NodeWebUsbTransport implements Transport {
   // NoAccessibleDeviceError when a refresh is already in progress.
   private _refreshDiscoveredDevicesInFlight: Promise<ScannedWebUsbDevice[]> | null = null;
   private _refreshDiscoveredDevicesQueued: Promise<ScannedWebUsbDevice[]> | null = null;
-  private readonly _openFailures = new Map<UsbDeviceKey, NodeWebUsbOpenFailure>();
-  private readonly _usbDeviceKeysByWebUsbDevice = new WeakMap<WebUSBDevice, UsbDeviceKey>();
+  private readonly _openFailures = new Map<string, NodeWebUsbOpenFailure>();
+  private readonly _usbDeviceKeysByWebUsbDevice = new WeakMap<WebUSBDevice, string>();
 
   constructor(
     deviceModelDataSource: DeviceModelDataSource,
@@ -306,10 +304,12 @@ export class NodeWebUsbTransport implements Transport {
   }): TransportConnectedDevice {
     const deviceId = row.id;
 
-    const sendApduToMachine: TransportConnectedDevice["sendApdu"] = async (...args) => {
+    const sendApduToMachine: TransportConnectedDevice["sendApdu"] = (...args) => {
       if (!this.isConnectionMachineRoutable(machine)) {
-        return Left(
-          new DeviceDisconnectedBeforeSendingApdu(`${deviceId} is no longer active or pending`),
+        return Promise.resolve(
+          Left(
+            new DeviceDisconnectedBeforeSendingApdu(`${deviceId} is no longer active or pending`),
+          ),
         );
       }
       return machine.sendApdu(...args);
@@ -428,7 +428,7 @@ export class NodeWebUsbTransport implements Transport {
   }
 
   /** Records the outcome of opening a device: a failure replaces its last one, a success clears it. */
-  private async trackOpen<T>(key: UsbDeviceKey | undefined, open: () => Promise<T>): Promise<T> {
+  private async trackOpen<T>(key: string | undefined, open: () => Promise<T>): Promise<T> {
     try {
       const opened = await open();
       if (key !== undefined) this._openFailures.delete(key);
@@ -778,7 +778,7 @@ export class NodeWebUsbTransport implements Transport {
    * `LIBUSB_ERROR_NO_DEVICE` (as under a sandbox without `/dev/bus/usb`), so a detach alone does not
    * mean the Ledger was unplugged. The caller decides which failures still apply.
    */
-  private markOpenFailureDetached(key: UsbDeviceKey): void {
+  private markOpenFailureDetached(key: string): void {
     const failure = this._openFailures.get(key);
     if (failure) {
       this._openFailures.set(key, { ...failure, detached: true });
