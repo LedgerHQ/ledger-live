@@ -12958,6 +12958,9 @@ importers:
       '@domain/entity-account-balance':
         specifier: workspace:*
         version: link:../../../domain/entity/account-balance
+      '@domain/entity-account-balance-history':
+        specifier: workspace:*
+        version: link:../../../domain/entity/account-balance-history
       '@domain/entity-account-data':
         specifier: workspace:*
         version: link:../../../domain/entity/account-data

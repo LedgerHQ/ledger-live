@@ -1,6 +1,8 @@
 import type {
   BalanceEntry,
   BalanceGroup,
+  BalanceHistoryGroup,
+  BalanceHistoryPoint,
   Portfolio,
   PortfolioAccount,
   PortfolioRegistration,
@@ -79,6 +81,28 @@ export const group = (
   items,
 });
 
+export const point = (
+  descriptor: AccountDescriptor,
+  overrides: Partial<BalanceHistoryPoint> = {},
+): BalanceHistoryPoint => ({
+  network: descriptor.network,
+  account_id: serverAccountId(descriptor),
+  asset: "native",
+  time: DateTimeIsoSchema.parse("2026-10-01T00:00:00Z"),
+  value: "10",
+  ...overrides,
+});
+
+export const historyGroup = (
+  descriptor: AccountDescriptor,
+  items: BalanceHistoryPoint[] = [point(descriptor)],
+): BalanceHistoryGroup => ({
+  type: "success",
+  network: descriptor.network,
+  account_id: serverAccountId(descriptor),
+  items,
+});
+
 export const update = (
   descriptor: AccountDescriptor,
   overrides: Partial<UpdateView> = {},
@@ -138,12 +162,14 @@ export function fakeService({
   portfolio,
   groups = [],
   updates = [],
+  histories = [],
   tokens = [],
   pageSize = 100,
 }: {
   portfolio?: Portfolio;
   groups?: BalanceGroup[];
   updates?: UpdateView[];
+  histories?: BalanceHistoryGroup[];
   tokens?: TokenCurrency[];
   pageSize?: number;
 } = {}) {
@@ -176,6 +202,15 @@ export function fakeService({
       const items = account ? groups.filter(each => each.account_id === account) : groups;
       const start = token ? Number(token) : 0;
       const end = start + pageSize;
+      return {
+        items: items.slice(start, end),
+        nextToken: end < items.length ? String(end) : undefined,
+      };
+    }),
+    getBalanceHistory: jest.fn(async (_id, { account, size, token }, _signal?: AbortSignal) => {
+      const items = histories.filter(each => each.account_id === account);
+      const start = token ? Number(token) : 0;
+      const end = start + size;
       return {
         items: items.slice(start, end),
         nextToken: end < items.length ? String(end) : undefined,

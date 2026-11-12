@@ -1,7 +1,9 @@
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import {
   accountPortfolioApi,
+  type BalanceHistoryPage,
   type BalancePage,
+  type BalanceRange,
   type Portfolio,
   type PortfolioRegistration,
   type UpdatesPage,
@@ -13,6 +15,13 @@ import type { TokenCurrency } from "@domain/entity-currency-token";
 export type PortfolioDispatch = ThunkDispatch<unknown, unknown, UnknownAction>;
 
 export type BalanceReadParams = { account?: string; size: number; token?: string };
+
+export type BalanceHistoryReadParams = {
+  account: string;
+  range: BalanceRange;
+  size: number;
+  token?: string;
+};
 
 export type UpdatesReadParams = {
   account: string;
@@ -40,6 +49,12 @@ export type PortfolioClient = {
     params: BalanceReadParams,
     signal?: AbortSignal,
   ): Promise<BalancePage>;
+  /** Oldest first. An abort cancels the request. */
+  getBalanceHistory(
+    portfolioId: PortfolioId,
+    params: BalanceHistoryReadParams,
+    signal?: AbortSignal,
+  ): Promise<BalanceHistoryPage>;
   /** Newest first. An abort cancels the request. */
   getUpdates(
     portfolioId: PortfolioId,
@@ -141,6 +156,18 @@ export function portfolioClientOf(dispatch: PortfolioDispatch): PortfolioClient 
         untilAborted(
           dispatch(
             endpoints.getBalance.initiate({ portfolioId: idOf(portfolioId), ...params }, QUERY),
+          ),
+          signal,
+        ),
+      ),
+    getBalanceHistory: (portfolioId, params, signal) =>
+      called(() =>
+        untilAborted(
+          dispatch(
+            endpoints.getBalanceHistory.initiate(
+              { portfolioId: idOf(portfolioId), order: "ASC", ...params },
+              QUERY,
+            ),
           ),
           signal,
         ),
