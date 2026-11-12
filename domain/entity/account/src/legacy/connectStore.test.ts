@@ -123,6 +123,31 @@ describe("connectAccountsStore", () => {
     expect(onError).toHaveBeenCalledWith(expect.any(Error), unsupported);
   });
 
+  it("adds an account left out once a change lets it convert, as a backfilled key", () => {
+    const pending = { id: "js:2:canton_network:party:canton" };
+    const { store, toDescriptor, onError } = setup([pending, ethAccount]);
+    store.dispatch(replaceAccounts([{ ...pending, balance: 1 }, ethAccount]));
+    expect(selectAccountEntries(store.getState())).toHaveLength(1);
+    expect(onError).toHaveBeenCalledTimes(1);
+
+    const backfilled = { ...pending, descriptor: btc };
+    store.dispatch(replaceAccounts([backfilled, ethAccount]));
+    expect(selectAccountUUIDByLegacyId(store.getState(), AccountIdSchema.parse(pending.id))).toBe(
+      computeAccountUUID(btc),
+    );
+
+    store.dispatch(replaceAccounts([{ ...backfilled, balance: 2 }, ethAccount]));
+    expect(toDescriptor).toHaveBeenCalledTimes(4);
+  });
+
+  it("does not sync again when an account that still fails changes", () => {
+    const pending = { id: "js:2:canton_network:party:canton" };
+    const { store } = setup([pending, ethAccount]);
+    const before = store.getState().accountEntries;
+    store.dispatch(replaceAccounts([{ ...pending, balance: 1 }, ethAccount]));
+    expect(store.getState().accountEntries).toBe(before);
+  });
+
   it("leaves out a token account id", () => {
     const { store, onError } = setup([{ ...ethAccount, id: "js:2:ethereum:0x71:+usdc" }]);
     expect(selectAccountEntries(store.getState())).toEqual([]);
@@ -135,7 +160,7 @@ describe("connectAccountsStore", () => {
     store.dispatch(replaceAccounts([]));
     connectAccountsStore(store, {
       selectLegacyAccounts: state => state.accounts,
-      toDescriptor: account => mockAddressAccountDescriptor({ address: account.id }),
+      toDescriptor: account => mockAddressAccountDescriptor({ key: account.id }),
     });
     expect(selectAccountEntries(store.getState())).toEqual([]);
   });

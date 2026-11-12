@@ -79,7 +79,7 @@ describe("balanceHistoryReader", () => {
   it("fails only the account whose call failed, keeping the body out", async () => {
     const service = fakeService({ portfolio: synced([ETH, evm(2)]) });
     service.client.getBalanceHistory.mockImplementation(async (_id, { account }) => {
-      if (account.endsWith(evm(2).address)) throw new Error(`500 for ${evm(2).address}`);
+      if (account.endsWith(evm(2).key)) throw new Error(`500 for ${evm(2).key}`);
       return { items: [historyGroup(ETH)], nextToken: undefined };
     });
     const { read } = setup(service);
@@ -88,7 +88,7 @@ describe("balanceHistoryReader", () => {
 
     expect(eth.status).toBe("fulfilled");
     expect(reasonOf(failed)).toBeInstanceOf(PortfolioReadError);
-    expect(String(reasonOf(failed))).not.toContain(evm(2).address);
+    expect(String(reasonOf(failed))).not.toContain(evm(2).key);
   });
 
   it("cancels the calls of an account whose read is cancelled, and frees the source", async () => {

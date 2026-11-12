@@ -49,7 +49,7 @@ export default defineCommand({
       const managerAppName = getManagerAppNameForCurrencyId(currencyId);
       const address =
         v1.type === "address"
-          ? v1.address
+          ? v1.key
           : await out.withActivity(
               `Scanning ${v1.network} blockchain for fresh address…`,
               "Fresh address resolved",

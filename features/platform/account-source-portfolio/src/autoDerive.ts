@@ -42,7 +42,7 @@ function autoDeriveOf(descriptor: AccountDescriptor) {
   if (descriptor.type !== "utxo") return undefined;
   const network = XPUB_NETWORKS.get(descriptor.network);
   if (!network?.path.test(descriptor.path)) return undefined;
-  const xpub = network.xpubOf(descriptor.xpub);
+  const xpub = network.xpubOf(descriptor.key);
   return xpub === undefined ? undefined : { xpub, derivationPath: descriptor.path + FIRST_ADDRESS };
 }
 

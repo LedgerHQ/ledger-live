@@ -123,6 +123,10 @@ export const loadAccountReceiveForFamily = makeLoaderCache(family =>
   loaders.get(family)?.loadAccountReceive?.(),
 );
 
+export const loadAddressFromKeyForFamily = makeLoaderCache(family =>
+  loaders.get(family)?.loadAddressFromKey?.(),
+);
+
 export const loadWalletApiAdapterForFamily = makeLoaderCache(family =>
   loaders.get(family)?.loadWalletApiAdapter?.(),
 );

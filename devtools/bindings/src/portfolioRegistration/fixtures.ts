@@ -5,7 +5,7 @@ export const address = (network: string, addr: string, path: string): AccountDes
   version: "2",
   type: "address",
   network: NetworkIdSchema.parse(network),
-  address: addr,
+  key: addr,
   path,
 });
 
@@ -14,7 +14,7 @@ export const utxo = (xpub: string, network = "bitcoin"): AccountDescriptor => ({
   version: "2",
   type: "utxo",
   network: NetworkIdSchema.parse(network),
-  xpub,
+  key: xpub,
   path: "m/84h/0h/0h",
 });
 

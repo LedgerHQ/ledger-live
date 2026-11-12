@@ -35,16 +35,16 @@ describe("portfolioAccountOf", () => {
   it("registers an EVM address once for the fan-out, read as <network>:<lowercase address>", () => {
     const polygon = mockAddressAccountDescriptor({
       network: "polygon",
-      address: "0xABcdef0000000000000000000000000000000001",
+      key: "0xABcdef0000000000000000000000000000000001",
     });
     expect(portfolioAccountOf(polygon)).toEqual({
-      registration: { type: "evm", address: polygon.address },
+      registration: { type: "evm", address: polygon.key },
       serverAccountId: "polygon:0xabcdef0000000000000000000000000000000001",
     });
   });
 
   it("registers a Bitcoin xpub to derive from its first address, read by the SHA-256 of the xpub", () => {
-    const descriptor = mockUtxoAccountDescriptor({ xpub: BIP84_XPUB, path: "m/84h/0h/0h" });
+    const descriptor = mockUtxoAccountDescriptor({ key: BIP84_XPUB, path: "m/84h/0h/0h" });
     expect(portfolioAccountOf(descriptor)).toEqual({
       registration: {
         type: "auto_derive",
@@ -65,23 +65,23 @@ describe("portfolioAccountOf", () => {
     ["of a network the service does not derive", "litecoin", "m/84h/2h/0h", false],
   ])("serves a %s Bitcoin account: %s %s", (_, network, path, served) => {
     expect(
-      portfolioAccountOf(mockUtxoAccountDescriptor({ network, path, xpub: BIP84_XPUB })) !==
+      portfolioAccountOf(mockUtxoAccountDescriptor({ network, path, key: BIP84_XPUB })) !==
         undefined,
     ).toBe(served);
   });
 
   it("leaves out an xpub the service would refuse, which would fail the whole registration call", () => {
-    expect(portfolioAccountOf(mockUtxoAccountDescriptor({ xpub: "xpub-short" }))).toBeUndefined();
+    expect(portfolioAccountOf(mockUtxoAccountDescriptor({ key: "xpub-short" }))).toBeUndefined();
     const corrupted = `${BIP84_XPUB.slice(0, -1)}W`;
     expect(
-      portfolioAccountOf(mockUtxoAccountDescriptor({ xpub: corrupted, path: "m/84h/0h/0h" })),
+      portfolioAccountOf(mockUtxoAccountDescriptor({ key: corrupted, path: "m/84h/0h/0h" })),
     ).toBe(undefined);
   });
 
   it("registers a Cardano account key as acct_xvk, read by the SHA-256 of it", () => {
     const descriptor = mockUtxoAccountDescriptor({
       network: "cardano",
-      xpub: CARDANO_HEX,
+      key: CARDANO_HEX,
       path: "m/1852h/1815h/0h",
     });
     expect(portfolioAccountOf(descriptor)).toEqual({
@@ -99,17 +99,32 @@ describe("portfolioAccountOf", () => {
     expect(portfolioAccountOf(TRX)).toEqual({
       registration: {
         type: "account",
-        accountId: `tron:${TRX.address}`,
+        accountId: `tron:${TRX.key}`,
         network: "tron",
-        addresses: [TRX.address],
+        addresses: [TRX.key],
       },
-      serverAccountId: `tron:${TRX.address}`,
+      serverAccountId: `tron:${TRX.key}`,
     });
   });
 
   it("serves no network the service leaves unsynchronized, nor HyperCore despite its coin type 60", () => {
     expect(portfolioAccountOf(DOT)).toBeUndefined();
     expect(portfolioAccountOf(evm(1, "hypercore"))).toBeUndefined();
+  });
+
+  it("serves no Canton account, keyed on a public key the service would read as an address", () => {
+    const canton = mockAddressAccountDescriptor({
+      network: "canton_network",
+      key: "ab".repeat(32),
+    });
+    expect(portfolioAccountOf(canton)).toBeUndefined();
+    expect(
+      registrationKey({
+        type: "account",
+        network: "canton_network",
+        addresses: ["old"],
+      }),
+    ).toBeUndefined();
   });
 });
 

@@ -19,6 +19,7 @@ import {
   createFullSyncSource,
   type FullSyncHost,
 } from "@ledgerhq/live-common/account-data/full-sync/createFullSyncSource";
+import logger from "~/renderer/logger";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { prepareCurrency } from "~/renderer/bridge/cache";
 import { accountsSelector, type AccountsState } from "~/renderer/reducers/accounts";
@@ -108,6 +109,6 @@ export function connectAccounts(store: AccountsReduxStore<{ accounts: AccountsSt
   return connectAccountsStore(store, {
     selectLegacyAccounts: accountsSelector,
     toDescriptor: fromLegacyAccount,
-    onError: error => console.warn("Account left out of the accounts slice", error),
+    onError: error => logger.critical(error, "Account left out of the accounts slice"),
   });
 }
