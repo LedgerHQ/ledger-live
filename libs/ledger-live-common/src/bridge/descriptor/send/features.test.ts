@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { isZcashShieldedEnabled, setZcashShieldedEnabled } from "../../zcashRouting";
@@ -107,5 +108,27 @@ describe("sendFeatures.rentChangesFee", () => {
 
   it("returns false for an undefined currency", () => {
     expect(sendFeatures.rentChangesFee(undefined)).toBe(false);
+  });
+});
+
+describe("sendFeatures.roundAmount", () => {
+  const amount = new BigNumber("12345678901234567890").shiftedBy(20);
+  const xrpIou = { type: "TokenCurrency", tokenType: "iou", parentCurrencyId: "ripple" };
+  const xrpMpt = { type: "TokenCurrency", tokenType: "mpt", parentCurrencyId: "ripple" };
+
+  it("rounds an XRP IOU amount down to 16 significant digits", () => {
+    const rounded = sendFeatures.roundAmount(xrpIou as TokenCurrency, amount);
+
+    expect(rounded.toFixed()).toBe(new BigNumber("1234567890123456").shiftedBy(24).toFixed());
+  });
+
+  it("keeps an XRP MPT or native amount", () => {
+    expect(sendFeatures.roundAmount(xrpMpt as TokenCurrency, amount)).toBe(amount);
+    expect(sendFeatures.roundAmount(getCryptoCurrencyById("ripple"), amount)).toBe(amount);
+  });
+
+  it("keeps the amount of a family that declares no rounding", () => {
+    expect(sendFeatures.roundAmount(ethereum, amount)).toBe(amount);
+    expect(sendFeatures.roundAmount(undefined, amount)).toBe(amount);
   });
 });
