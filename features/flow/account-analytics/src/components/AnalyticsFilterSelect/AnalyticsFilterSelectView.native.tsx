@@ -63,7 +63,7 @@ export function AnalyticsFilterSelectView({
           <BottomSheetHeader />
           <SelectList items={items} value={value} onValueChange={sheet.selectOption}>
             <SelectListContent
-              lx={{ paddingHorizontal: "s8", paddingBottom: "s24" }}
+              lx={{ paddingRight: "s8", paddingBottom: "s24" }}
               renderItem={item => {
                 const meta = items.find(option => option.value === item.value)?.meta;
                 return (
