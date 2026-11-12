@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import invariant from "invariant";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
@@ -104,8 +105,8 @@ export function useAleoQuickAmountSelector({
   const sortedRecords = useMemo(() => {
     if (!isAleoAccount(account)) return [];
     return getUnspentPrivateRecords(account)
-      .filter(r => new BigNumber(r.microcredits).isGreaterThan(0))
-      .sort((a, b) => new BigNumber(b.microcredits).comparedTo(a.microcredits));
+      .filter(r => parseFiniteBigNumber(r.microcredits)?.isGreaterThan(0))
+      .sort((a, b) => new BigNumber(b.microcredits).comparedTo(a.microcredits) ?? 0);
   }, [account]);
 
   const strategyConfig = useMemo(

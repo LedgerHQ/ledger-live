@@ -120,7 +120,7 @@ describe("getAccountShape", () => {
   it("should sum up delegations to balance", async () => {
     mockAccountInfo({
       balances: new BigNumber(1),
-      delegations: [{ amount: new BigNumber(2) }],
+      delegations: [{ amount: new BigNumber(2), pendingRewards: new BigNumber(0) }],
     });
     const account = await getAccountShape(infoMock, syncConfig);
     expect(account.balance).toEqual(new BigNumber(3));
@@ -128,7 +128,10 @@ describe("getAccountShape", () => {
 
   it("should sum up delegation balances and assign it in stakingResources delegatedBalance", async () => {
     mockAccountInfo({
-      delegations: [{ amount: new BigNumber(1) }, { amount: new BigNumber(2) }],
+      delegations: [
+        { amount: new BigNumber(1), pendingRewards: new BigNumber(0) },
+        { amount: new BigNumber(2), pendingRewards: new BigNumber(0) },
+      ],
     });
     const account = await getAccountShape(infoMock, syncConfig);
     expect((account as StakingAccount).stakingResources.delegatedBalance).toEqual(new BigNumber(3));
@@ -148,7 +151,7 @@ describe("getAccountShape", () => {
     mockAccountInfo({
       balances: new BigNumber(100),
       unbondings: [{ amount: new BigNumber(1) }],
-      delegations: [{ amount: new BigNumber(2) }],
+      delegations: [{ amount: new BigNumber(2), pendingRewards: new BigNumber(0) }],
     });
     const account = await getAccountShape(infoMock, syncConfig);
     expect(account.spendableBalance).toEqual(new BigNumber(100));
@@ -166,9 +169,11 @@ describe("getAccountShape", () => {
     mockAccountInfo({
       delegations: [
         {
+          amount: new BigNumber(0),
           pendingRewards: new BigNumber(1),
         },
         {
+          amount: new BigNumber(0),
           pendingRewards: new BigNumber(2),
         },
       ],
@@ -228,6 +233,20 @@ describe("getAccountShape", () => {
     expect(mergeOpsSpy.mock.calls[0][1]).toEqual([
       expect.objectContaining({ hash: "2", type: "REWARD" }),
     ]);
+  });
+
+  it("falls back to a 0 transactionSequenceNumber when the explorer sequence is not a number", async () => {
+    mockAccountInfo({ txs: [mockCosmosTx({})] });
+    await getAccountShape(infoMock, syncConfig);
+    expect(mergeOpsSpy.mock.calls[0][1][0].transactionSequenceNumber).toEqual(new BigNumber(0));
+  });
+
+  it("parses a numeric explorer sequence into transactionSequenceNumber", async () => {
+    const tx = mockCosmosTx({});
+    tx.tx.auth_info.signer_infos[0].sequence = "42";
+    mockAccountInfo({ txs: [tx] });
+    await getAccountShape(infoMock, syncConfig);
+    expect(mergeOpsSpy.mock.calls[0][1][0].transactionSequenceNumber).toEqual(new BigNumber(42));
   });
 
   it("persists the device-scanned publicKey in xpub, taking precedence over a persisted one", async () => {

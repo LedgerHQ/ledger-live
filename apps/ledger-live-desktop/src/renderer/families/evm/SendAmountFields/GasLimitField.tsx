@@ -1,9 +1,7 @@
-import { DEFAULT_GAS_LIMIT } from "@ledgerhq/coin-evm/logic-public";
-import { getGasLimit } from "@ledgerhq/live-common/families/evm/utils";
+import { getGasLimit, parseGasLimitInput } from "@ledgerhq/live-common/families/evm/utils";
 import { Transaction } from "@ledgerhq/live-common/families/evm/types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Button } from "@ledgerhq/react-ui";
-import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import React, { memo, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -27,10 +25,7 @@ const AdvancedOptions: NonNullable<EvmFamily["sendAmountFields"]>["component"] =
 
   const onGasLimitChange = useCallback(
     (str: string) => {
-      let gasLimit = new BigNumber(str || 0);
-      if (!gasLimit.isFinite()) {
-        gasLimit = DEFAULT_GAS_LIMIT;
-      }
+      const gasLimit = parseGasLimitInput(str);
       updateTransaction((transaction: Transaction) =>
         bridge.updateTransaction(transaction, { customGasLimit: gasLimit }),
       );

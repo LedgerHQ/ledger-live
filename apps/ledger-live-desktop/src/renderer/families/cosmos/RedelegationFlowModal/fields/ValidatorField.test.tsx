@@ -8,8 +8,8 @@ jest.mock("~/renderer/hooks/useAccountUnit", () => ({
   useAccountUnit: () => ({ code: "ATOM", name: "Cosmos", magnitude: 6 }),
 }));
 
-const VALIDATOR_A = { validatorAddress: "validatorA", name: "Validator A" };
-const VALIDATOR_B = { validatorAddress: "validatorB", name: "Validator B" };
+const VALIDATOR_A = { validatorAddress: "validatorA", name: "Validator A", tokens: "1000000" };
+const VALIDATOR_B = { validatorAddress: "validatorB", name: "Validator B", tokens: "2000000" };
 
 jest.mock("@ledgerhq/live-common/families/cosmos/react", () => ({
   useLedgerFirstShuffledValidatorsCosmosFamily: () => [VALIDATOR_A, VALIDATOR_B],

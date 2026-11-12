@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import { useState, useMemo, useEffect } from "react";
 import {
   getCurrentMultiversXPreloadData,
@@ -44,18 +45,19 @@ export function useSearchValidators(validators: MultiversXProvider[], search: st
     const disable = (validator: MultiversXProvider): EnhancedValidator => {
       const [alpha, beta] = [validator.maxDelegationCap, validator.totalActiveStake];
       const delegative = alpha !== "0" && validator.withDelegationCap;
-      const difference = new BigNumber(alpha).minus(beta);
+      const [cap, stake] = [parseFiniteBigNumber(alpha), parseFiniteBigNumber(beta)];
+      // An unreadable cap or stake disables a capped validator.
+      const full = !cap || !stake || cap.minus(stake).isLessThan(MIN_DELEGATION_AMOUNT);
 
-      return Object.assign(validator, {
-        disabled: delegative && difference.isLessThan(MIN_DELEGATION_AMOUNT),
-      });
+      return Object.assign(validator, { disabled: delegative && full });
     };
+
+    const stakeOf = (validator: MultiversXProvider) =>
+      parseFiniteBigNumber(validator.totalActiveStake) ?? new BigNumber(0);
 
     // Sort by total active stake (highest first).
     const items = [...validators]
-      .sort((a, b) =>
-        new BigNumber(b.totalActiveStake).comparedTo(new BigNumber(a.totalActiveStake)),
-      )
+      .sort((a, b) => stakeOf(b).comparedTo(stakeOf(a)) ?? 0)
       .map(disable);
 
     return search ? items.filter(filter) : items;
