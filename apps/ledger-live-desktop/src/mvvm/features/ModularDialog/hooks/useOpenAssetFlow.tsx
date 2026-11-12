@@ -6,6 +6,7 @@ import { Account, AccountLike } from "@ledgerhq/types-live";
 import { ModularDrawerVisibleParams } from "@ledgerhq/live-common/modularDrawer/types/visibility";
 import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
+import { openReceiveFlow } from "LLD/features/Receive/openReceiveFlow";
 import { getCurrentTrackingPage } from "@shared/analytics";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { GlobalModalData, ModalData } from "~/renderer/modals/types";
@@ -81,6 +82,10 @@ export function useOpenAssetFlow<Name extends keyof GlobalModalData = keyof Glob
 
       const onFlowFinishedWithModalReopen = (account: AccountLike, parentAccount?: Account) => {
         setDrawer();
+        if (modalNameToReopen === "MODAL_RECEIVE") {
+          dispatch(openReceiveFlow({ ...extraModalData, account, parentAccount }));
+          return;
+        }
         if (modalNameToReopen) {
           // openModal's payload creator collapses ModalData[Name] to `never` for a generic
           // Name, so we assert the merged payload back to the modal's data type.

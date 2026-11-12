@@ -39,6 +39,7 @@ function addressesMatch(expected: string, reported: string): boolean {
  * stays signer-agnostic.
  *
  * Outcomes:
+ * - address on the device Secure Screen, awaiting the user → `addressDisplayed` (non-terminal).
  * - device output matches the expected address → `verified` (terminal).
  * - device output differs → `mismatch` (terminal), so the host can warn the user.
  * - user refuses on device → `cancelled` with a `retry` handler (non-terminal).
@@ -59,6 +60,7 @@ export const verifyAddressIntentJob: Job<VerifyAddressIntentJobState, VerifyAddr
 
     const run = () => {
       const currentRunToken = ++runToken;
+      let isAddressDisplayed = false;
       innerSubscription?.unsubscribe();
       cancelDeviceAction?.();
 
@@ -77,6 +79,10 @@ export const verifyAddressIntentJob: Job<VerifyAddressIntentJobState, VerifyAddr
 
           switch (state.type) {
             case "awaiting-confirmation":
+              if (!isAddressDisplayed) {
+                isAddressDisplayed = true;
+                subscriber.next({ type: "addressDisplayed" });
+              }
               return;
             case "confirmed": {
               const reportedAddress = state.address;

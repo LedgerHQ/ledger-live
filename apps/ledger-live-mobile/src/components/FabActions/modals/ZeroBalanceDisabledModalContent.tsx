@@ -21,6 +21,7 @@ import { readOnlyModeEnabledSelector, hasOrderedNanoSelector } from "~/reducers/
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
 import { Currency } from "@domain/entity-currency";
+import { useReceiveScreen } from "LLM/features/Receive/hooks/useReceiveScreen";
 
 function ZeroBalanceDisabledModalContent({
   account,
@@ -33,6 +34,7 @@ function ZeroBalanceDisabledModalContent({
   const { t } = useTranslation();
   const navigation =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
+  const receiveScreen = useReceiveScreen();
   const { navigateToRebornFlow } = useRebornFlow();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
@@ -77,15 +79,15 @@ function ZeroBalanceDisabledModalContent({
       return;
     }
     if (account) {
-      navigation.navigate(NavigatorName.ReceiveFunds, {
-        screen: ScreenName.ReceiveConfirmation,
-        params: {
+      navigation.navigate(
+        NavigatorName.ReceiveFunds,
+        receiveScreen({
           currency: actionCurrency,
           accountId: account?.id || "",
           parentId:
             parentAccount?.id || (account?.type === "TokenAccount" ? account?.parentId : undefined),
-        },
-      });
+        }),
+      );
     } else {
       handleOpenReceiveDrawer();
     }
@@ -100,6 +102,7 @@ function ZeroBalanceDisabledModalContent({
     parentAccount?.id,
     handleOpenReceiveDrawer,
     shouldUseLegacyRebornFlow,
+    receiveScreen,
   ]);
 
   return (

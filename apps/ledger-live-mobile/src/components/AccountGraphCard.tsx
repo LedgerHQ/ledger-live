@@ -34,6 +34,7 @@ import { tokensWithUnsupportedGraph } from "./Graph/tokensWithUnsupportedGraph";
 import { useAccountName, useMaybeAccountName } from "~/reducers/wallet";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { getFreshAccountAddress } from "~/utils/address";
+import { useReceiveScreen } from "LLM/features/Receive/hooks/useReceiveScreen";
 
 const { width } = getWindowDimensions();
 
@@ -243,17 +244,18 @@ const GraphCardHeader = ({
   const isToken = parentAccount && parentAccount.type === "Account";
 
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
+  const receiveScreen = useReceiveScreen();
 
   const openReceive = useCallback(() => {
-    navigation.navigate(NavigatorName.ReceiveFunds, {
-      screen: ScreenName.ReceiveConfirmation,
-      params: {
+    navigation.navigate(
+      NavigatorName.ReceiveFunds,
+      receiveScreen({
         accountId: account.id,
         parentId: parentAccount?.id,
         currency,
-      },
-    });
-  }, [account.id, currency, navigation, parentAccount?.id]);
+      }),
+    );
+  }, [account.id, currency, navigation, parentAccount?.id, receiveScreen]);
 
   const accountName = useAccountName(account);
   const parentAccountName = useMaybeAccountName(parentAccount);

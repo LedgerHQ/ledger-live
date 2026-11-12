@@ -101,7 +101,7 @@ function renderRequestReceiveFromPayTab(payRequestVerifyHint?: {
         ...withUsdcHoldings(state),
         payCardFeatureTour: { ...state.payCardFeatureTour, hasSeenFeatureTour: true },
         ...(payRequestVerifyHint
-          ? { payRequestVerifyHint: { ...state.payRequestVerifyHint, ...payRequestVerifyHint } }
+          ? { receiveVerifyHint: { ...state.receiveVerifyHint, ...payRequestVerifyHint } }
           : {}),
       }),
       navigationInitialState: {
@@ -219,7 +219,7 @@ describe("PayTab RequestReceive integration", () => {
 
     await user.press(await screen.findByRole("button", { name: VERIFY }));
 
-    expect(store.getState().payRequestVerifyHint.hasSeenReceiveVerifyHint).toBe(true);
+    expect(store.getState().receiveVerifyHint.hasSeenReceiveVerifyHint).toBe(true);
   });
 
   it("should copy the address when Copy is pressed", async () => {

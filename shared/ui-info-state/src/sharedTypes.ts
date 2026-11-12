@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ComponentType, ReactNode } from "react";
 
 /** Preset that controls the visual rendered above the title and description. */
 export type InfoStatePreset = "illustration" | "spot" | "success" | "error" | "info" | "text";
@@ -10,6 +10,9 @@ export type InfoStateCta = Readonly<{
 
   /** Called when the button is pressed. */
   onPress: () => void;
+
+  /** Optional leading icon: a Lumen symbol of the caller's platform. */
+  icon?: ComponentType;
 
   /** Optional test identifier forwarded to the button. */
   testID?: string;

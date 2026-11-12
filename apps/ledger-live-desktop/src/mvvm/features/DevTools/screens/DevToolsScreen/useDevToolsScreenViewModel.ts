@@ -40,6 +40,7 @@ import { usePredictionsSetupHooks } from "@features/flow-predictions";
 import { PREDICTIONS_SETUP_FAILURE_REASONS } from "@features/platform-predictions";
 import type { DevToolsConfig } from "@devtools/shell";
 import { useDevToolsRelay } from "./useDevToolsRelay";
+import { useReceiveDevToolTrigger } from "./useReceiveDevToolTrigger";
 import { useDeviceOnboardingTool } from "../../DeviceOnboarding/useDeviceOnboardingTool";
 import { useIntentWalletSyncTool } from "../../IntentWalletSync/useIntentWalletSyncTool";
 import { useAccountDataRecorder } from "../../accountDataRecorder";
@@ -136,7 +137,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
   const accountNameToolProps = useAccountNameToolProps(legacyAccounts);
   const mockAccountsToolProps = useMockAccountsToolProps(accountDataRecorder);
   const accountDetailToolProps = useAccountDetailToolProps();
-  const receiveToolProps = useReceiveToolProps();
+  const receiveToolProps = useReceiveToolProps(useReceiveDevToolTrigger());
   const predictionsSetupHooks = usePredictionsSetupHooks();
   const predictionsSetup = useMemo<PredictionsSetup>(
     () => ({ hooks: predictionsSetupHooks, failureReasons: PREDICTIONS_SETUP_FAILURE_REASONS }),

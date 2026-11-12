@@ -3,7 +3,7 @@ import React from "react";
 import { TFunction } from "i18next";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
-import { Currency } from "@domain/entity-currency";
+import { Currency, type CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { CryptoCurrency, ExplorerView } from "@domain/entity-currency-crypto";
 import { TokenCurrency } from "@domain/entity-currency-token";
 import { Unit } from "@domain/entity-currency-unit";
@@ -26,6 +26,8 @@ import { StepProps as SendStepProps } from "../modals/Send/types";
 import { StepProps as ReceiveStepProps } from "../modals/Receive/Body";
 import { ModularDrawerAddAccountFlowManagerProps } from "LLD/features/AddAccountDrawer/ModularDrawerAddAccountFlowManager";
 import type { Features } from "@shared/feature-flags";
+import type { ReceiveFamilyTraits } from "@features/flow-receive";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import type { SplitAddressProps } from "../components/OperationsList/AddressCellShared";
 import type { Step } from "~/renderer/components/Stepper";
 import type { CoinModalKey } from "./modals-loaders";
@@ -514,9 +516,10 @@ export type LLDCoinFamily<
   /**
    * For a coin where an asset must be added to the account before it can be received (Algorand
    * opt-in, Stellar add asset, Hedera association): opens that flow. The new Account Detail page
-   * shows its "Add asset" action only for a family that defines it.
+   * shows its "Add asset" action only for a family that defines it. The receive flow passes the
+   * token to activate; a family whose flow cannot preselect it ignores it.
    */
-  addAssetAction?: (args: { account: A; dispatch: AppDispatch }) => void;
+  addAssetAction?: (args: { account: A; dispatch: AppDispatch; token?: TokenCurrency }) => void;
 
   /** Overrides `currency.tokenTypes`. Read it through `useTokenTypes` */
   getTokenTypes?: (currency: CryptoCurrency) => string[];
@@ -569,6 +572,13 @@ export type LLDCoinFamily<
   StepReceiveFundsDeviceAnimation?: React.ComponentType<
     ReceiveStepProps & { fallback: React.ReactNode }
   >;
+
+  /**
+   * Receive flow revamp (`newReceiveFlow`): what the family adds to the new receive address screen.
+   * The address and its verification come from the `receive` account data. Pure, evaluated during
+   * render. Omitted fields keep the defaults of `@features/flow-receive`.
+   */
+  receiveAddressConfig?: (input: ReceiveAddressConfigInput<A>) => Partial<ReceiveFamilyTraits>;
 
   /**
    * Replace Network fees row on Summary Step
@@ -696,3 +706,12 @@ export type ManageAction = {
   tooltip?: string;
   accountActionsTestId?: string;
 };
+
+export type ReceiveAddressConfigInput<A> = Readonly<{
+  descriptor: AccountDescriptor;
+  /** What the user receives: the coin, or a token. */
+  asset: CryptoOrTokenCurrency;
+  featureFlags: Features;
+  /** Legacy account state no entity holds yet (operation count, delegation, Zcash balances). */
+  legacyAccount?: A;
+}>;

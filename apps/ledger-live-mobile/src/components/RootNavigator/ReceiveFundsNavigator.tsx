@@ -11,6 +11,7 @@ import ReceiveConnectDevice, {
   connectDeviceHeaderOptions,
 } from "~/screens/ReceiveFunds/03a-ConnectDevice";
 import ReceiveVerifyAddress from "~/screens/ReceiveFunds/03b-VerifyAddress";
+import ReceiveAddressScreen from "LLM/features/Receive/screens/ReceiveAddress";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 import { NavigationHeaderCloseButtonAdvanced } from "../NavigationHeaderCloseButton";
@@ -121,6 +122,17 @@ export default function ReceiveFundsNavigator() {
           headerTitle: "",
           headerLeft: () => null,
         }}
+      />
+      {/* Receive flow revamp (newReceiveFlow): new receive address screen */}
+      <Stack.Screen
+        name={ScreenName.ReceiveAddress}
+        component={ReceiveAddressScreen}
+        options={{ headerShown: false }}
+        listeners={() => ({
+          beforeRemove: () => {
+            notifyFlowCompleted("receive");
+          },
+        })}
       />
       {/* Add account(s) automatically */}
       {/* Receive Address */}

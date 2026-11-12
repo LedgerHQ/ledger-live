@@ -12,6 +12,7 @@ import { useFeature } from "@features/platform-feature-flags";
 import { StyleProp, ViewStyle } from "react-native";
 import { AnalyticButtons, AnalyticEvents } from "LLM/hooks/useAnalytics/enums";
 import { NavigatorName, ScreenName } from "~/const";
+import { useReceiveScreen } from "LLM/features/Receive/hooks/useReceiveScreen";
 
 type ActionItem = {
   title: string;
@@ -38,6 +39,7 @@ export default function useAccountQuickActionDrawerViewModel({
     quickActionsList: { RECEIVE, BUY },
   } = useQuickActions({ currency, accounts: [account] });
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
+  const receiveScreen = useReceiveScreen();
   const { t } = useTranslation();
   const noah = useFeature("noah");
 
@@ -52,12 +54,12 @@ export default function useAccountQuickActionDrawerViewModel({
         ? t("transfer.receive.description_v2")
         : t("transfer.receive.description"),
       onPress: () =>
-        navigation.navigate<keyof BaseNavigatorStackParamList>(NavigatorName.ReceiveFunds, {
-          screen: ScreenName.ReceiveConfirmation,
-          params: {
+        navigation.navigate<keyof BaseNavigatorStackParamList>(
+          NavigatorName.ReceiveFunds,
+          receiveScreen({
             accountId: (account.type !== "Account" && account?.parentId) || account.id,
-          },
-        }),
+          }),
+        ),
       Icon: RECEIVE.icon,
       disabled: RECEIVE.disabled,
       testID: "action-drawer-receive-button",

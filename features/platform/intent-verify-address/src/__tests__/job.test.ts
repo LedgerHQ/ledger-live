@@ -84,10 +84,23 @@ describe("verifyAddressIntentJob", () => {
     expect(isCompleted()).toBe(true);
   });
 
-  it("ignores awaiting-confirmation", () => {
+  it("emits addressDisplayed once when the address reaches the Secure Screen", () => {
+    const { states, emit, isCompleted } = startJob();
+    emit({ type: "awaiting-confirmation" });
+    emit({ type: "awaiting-confirmation" });
+    expect(states).toEqual([VERIFYING, { type: "addressDisplayed" }]);
+    expect(isCompleted()).toBe(false);
+  });
+
+  it("emits verified after addressDisplayed once the user confirms", () => {
     const { states, emit } = startJob();
     emit({ type: "awaiting-confirmation" });
-    expect(states).toEqual([VERIFYING]);
+    emit({ type: "confirmed", address: EXPECTED_ADDRESS });
+    expect(states).toEqual([
+      VERIFYING,
+      { type: "addressDisplayed" },
+      { type: "verified", address: EXPECTED_ADDRESS },
+    ]);
   });
 
   it("emits cancelled with a working retry when refused", () => {

@@ -28,6 +28,7 @@ import { walletSelector } from "~/reducers/wallet";
 import { useStake } from "LLM/hooks/useStake/useStake";
 import { useOpenSwap } from "LLM/features/Swap";
 import { getSendFlowTrackingProperties } from "LLM/features/Send/utils/tracking";
+import { useReceiveScreen } from "LLM/features/Receive/hooks/useReceiveScreen";
 
 type Props = {
   account: AccountLike;
@@ -46,6 +47,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const route = useRoute();
   const { t } = useTranslation();
+  const receiveScreen = useReceiveScreen();
   const walletState = useSelector(walletSelector);
 
   const ptxServiceCtaScreens = useFeature("ptxServiceCtaScreens");
@@ -227,20 +229,17 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
       id: "receive",
       navigationParams: [
         NavigatorName.ReceiveFunds,
-        {
-          screen: ScreenName.ReceiveConfirmation,
-          params: {
-            accountId: account.id,
-            currency,
-          },
-        },
+        receiveScreen({
+          accountId: account.id,
+          currency,
+        }),
       ],
       label: t("account.receive"),
       event: "AccountReceive",
       Icon: IconsLegacy.ArrowBottomMedium,
       ...extraReceiveActionParams,
     }),
-    [extraReceiveActionParams, t, account.id, currency],
+    [extraReceiveActionParams, t, account.id, currency, receiveScreen],
   );
 
   const platformStakeRoute = useMemo(

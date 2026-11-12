@@ -7,6 +7,7 @@ import { useNavigation } from "@react-navigation/core";
 import { useCallback } from "react";
 import { AddAccountContexts } from "../AddAccount/enums";
 import useAnalytics from "LLM/hooks/useAnalytics";
+import { useReceiveScreen } from "LLM/features/Receive/hooks/useReceiveScreen";
 
 export type Props = BaseComposite<
   StackNavigatorProps<NetworkBasedAddAccountNavigator, ScreenName.AddAccountsWarning>
@@ -17,6 +18,7 @@ export default function useAddAccountWarningViewModel({ route }: Props) {
     route.params || {};
   const { colors, space } = useTheme();
   const navigation = useNavigation();
+  const receiveScreen = useReceiveScreen();
   const { analyticsMetadata } = useAnalytics(context);
 
   const statusColor = colors.warning.c70;
@@ -28,19 +30,19 @@ export default function useAddAccountWarningViewModel({ route }: Props) {
           accountId,
         });
       } else {
-        navigation.navigate(NavigatorName.ReceiveFunds, {
-          screen: ScreenName.ReceiveConfirmation,
-          params: {
+        navigation.navigate(
+          NavigatorName.ReceiveFunds,
+          receiveScreen({
             ...route.params,
             accountId,
-          },
-        });
+          }),
+        );
       }
 
       const clickMetadata = analyticsMetadata[ScreenName.AddAccountsWarning]?.onSelectAccount;
       if (clickMetadata) track(clickMetadata.eventName, clickMetadata.payload);
     },
-    [navigation, route.params, context, analyticsMetadata],
+    [navigation, route.params, context, analyticsMetadata, receiveScreen],
   );
 
   const handleOnCloseWarningScreen = useCallback(() => {

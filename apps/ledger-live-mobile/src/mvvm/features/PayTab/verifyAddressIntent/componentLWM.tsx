@@ -84,7 +84,11 @@ export function VerifyAddressIntentComponentLWM({
   const { t } = useTranslation();
 
   if (!jobState) return null;
-  if (jobState.type === "verifying" || jobState.type === "verified") {
+  if (
+    jobState.type === "verifying" ||
+    jobState.type === "addressDisplayed" ||
+    jobState.type === "verified"
+  ) {
     return <NextStepsScreen onGotIt={onClose} />;
   }
 

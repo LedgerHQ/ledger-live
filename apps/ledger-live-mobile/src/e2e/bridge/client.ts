@@ -15,7 +15,7 @@ import { setContacts } from "@domain/entity-contact";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import { restorePayCardBalanceFilter } from "@features/flow-pay-balance/state";
 import { restorePayCardFeatureTour } from "@features/flow-pay-feature-tour/state";
-import { restoreReceiveVerifyHint } from "@features/flow-pay-request/state";
+import { restoreReceiveVerifyHint } from "@features/flow-receive/state";
 import { restorePayCardLoginIntro } from "@features/flow-pay-card-auth/state";
 import { restorePayCardOnboardingWidget } from "@features/flow-pay-card-widget/state";
 import { exportSelector as accountsExportSelector } from "~/reducers/accounts";

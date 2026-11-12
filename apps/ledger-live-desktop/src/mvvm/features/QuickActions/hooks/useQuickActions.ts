@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
-import { openModal } from "~/renderer/actions/modals";
-import { useDispatch, useSelector } from "LLD/hooks/redux";
+import { useOpenReceiveFlow } from "LLD/features/Receive/hooks/useOpenReceiveFlow";
+import { useSelector } from "LLD/hooks/redux";
 import { useLocation, useNavigate } from "react-router";
 import {
   ArrowDown,
@@ -23,7 +23,7 @@ import { ACCOUNTS_SIDEBAR_PATH } from "LLD/components/SideBar/utils";
 
 export const useQuickActions = (trackingPageName: string): { actionsList: QuickAction[] } => {
   const openSendFlow = useOpenSendFlow();
-  const dispatch = useDispatch();
+  const { openReceiveFlow, isRevampEnabled: isReceiveRevampEnabled } = useOpenReceiveFlow();
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
@@ -68,13 +68,21 @@ export const useQuickActions = (trackingPageName: string): { actionsList: QuickA
     });
     maybeRedirectToAccounts();
 
-    if (!hasAccount) {
+    // The revamped flow adds accounts inline in the Modular Dialog.
+    if (!hasAccount && !isReceiveRevampEnabled) {
       openAssetFlow();
       return;
     }
 
-    dispatch(openModal("MODAL_RECEIVE", { sourcePage: trackingPageName }));
-  }, [maybeRedirectToAccounts, hasAccount, dispatch, openAssetFlow, trackingPageName]);
+    openReceiveFlow({ source: trackingPageName });
+  }, [
+    maybeRedirectToAccounts,
+    hasAccount,
+    isReceiveRevampEnabled,
+    openAssetFlow,
+    openReceiveFlow,
+    trackingPageName,
+  ]);
 
   const onBuy = useCallback(() => {
     track("button_clicked", {

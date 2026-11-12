@@ -9,7 +9,7 @@ import type { HederaAccount, HederaOperation } from "@ledgerhq/live-common/famil
 import { Link } from "@ledgerhq/react-ui";
 import { urls } from "~/config/urls";
 import { useDispatch } from "LLD/hooks/redux";
-import { openModal } from "~/renderer/actions/modals";
+import { openReceiveFlow } from "LLD/features/Receive/openReceiveFlow";
 import { RECEIVE_SOURCE_PAGE } from "LLD/features/Receive/types";
 import type {
   AddressCellProps,
@@ -110,8 +110,7 @@ const OperationDetailsPostAlert = ({
     );
 
     dispatch(
-      openModal(
-        "MODAL_RECEIVE",
+      openReceiveFlow(
         tokenAccount
           ? {
               account: tokenAccount,

@@ -24,6 +24,8 @@ export type AssetAndAccountResult = {
 type DrawerParams = {
   currencies?: string[];
   categories?: readonly AssetCategory[];
+  /** Restricts the dialog to assets on these networks. */
+  networkIds?: readonly string[];
   drawerConfiguration?: ModularDrawerConfiguration | EnhancedModularDrawerConfiguration;
   useCase?: string;
   uiUseCase?: string;
@@ -34,10 +36,11 @@ type DrawerParams = {
   onCancel?: () => void;
 };
 
-function openAssetAndAccountDialog(params: DrawerParams, dispatch: Dispatch) {
+export function openAssetAndAccountDialog(params: DrawerParams, dispatch: Dispatch) {
   const {
     currencies,
     categories,
+    networkIds,
     drawerConfiguration,
     useCase,
     uiUseCase,
@@ -69,6 +72,7 @@ function openAssetAndAccountDialog(params: DrawerParams, dispatch: Dispatch) {
     openDialog({
       currencies: currencies ?? [],
       categories,
+      networkIds,
       onAccountSelected: (account, parentAccount) => {
         handleSuccess({ account, parentAccount });
       },

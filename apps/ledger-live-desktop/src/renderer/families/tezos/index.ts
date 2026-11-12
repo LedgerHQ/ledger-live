@@ -7,8 +7,10 @@ import transactionConfirmFields from "./TransactionConfirmFields";
 import accountActions from "./accountActions";
 import operationDetails from "./operationDetails";
 import { TezosFamily } from "./types";
+import receiveAddressConfig from "./receiveAddressConfig";
 
 const family: TezosFamily = {
+  receiveAddressConfig,
   operationDetails,
   accountActions,
   accountHeaderManageActions,

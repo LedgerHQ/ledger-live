@@ -11853,6 +11853,93 @@
       }
     }
   },
+  "receiveAddress": {
+    "addressDisplayed": {
+      "title": "Address securely displayed",
+      "description": "Verify that the address once pasted or shared matches the one on your Ledger Device.",
+      "gotItCta": "Got it"
+    },
+    "title": "Receive {{asset}}",
+    "networkLabel": "On the {{network}} network",
+    "actions": {
+      "share": "Share",
+      "copy": "Copy",
+      "copied": "Copied",
+      "verify": "Verify"
+    },
+    "verifyHint": {
+      "message": "Verify your address on\nyour Ledger device\nbefore sharing",
+      "gotIt": "Got it"
+    },
+    "verificationUnavailable": "Your Ledger device can't display this address. Check it on the explorer before sharing it.",
+    "notices": {
+      "utxo": "For privacy reasons, a new address is generated after each transaction",
+      "taproot": "Make sure the sender supports Taproot addresses before sending",
+      "dashStaking": "Do not use this address to receive staking rewards",
+      "tronInactiveAccount": "This account can't receive TRC20 tokens until it holds TRX",
+      "tezosDelegation": "Funds received won't be delegated until the next delegation cycle",
+      "zcashPrivateNotEnabled": "Private (shielded) receiving isn't enabled on this account yet. Enable it from the account page to get a shielded address."
+    },
+    "selectAddress": {
+      "title": "Select address"
+    },
+    "addressOptions": {
+      "transparent": "Public address",
+      "shielded": "Private address"
+    },
+    "useLegacyFlow": "Continue",
+          "retry": "Try again",
+    "blocked": {
+      "sanctioned": {
+        "title": "This address can't be used",
+        "description": "This address is flagged by international sanctions lists, so Ledger Wallet can't show it for receiving."
+      },
+      "receiveUnavailable": {
+        "title": "Receiving isn't available",
+        "description": "You can't receive on this network from Ledger Wallet yet."
+      },
+      "readFailed": {
+        "title": "Your address couldn't be loaded",
+        "description": "Check your connection and try again."
+      },
+      "onboardingRequired": {
+        "title": "This account can't receive yet",
+        "description": "It needs to be set up on its network first. The classic receive flow walks you through it."
+      },
+      "assetActivationRequired": {
+        "title": "Activate {{asset}} on {{network}}",
+        "description": "Your account must enable this token before receiving it. The classic receive flow walks you through it."
+      },
+      "assetActivationPending": {
+        "title": "Activation in progress",
+        "description": "The network hasn't confirmed the activation yet. It can take a few seconds: try again in a moment."
+      },
+      "assetActivationUnknown": {
+        "title": "Check {{asset}} on {{network}}",
+        "description": "Ledger Wallet can't tell yet whether your account accepts this token. Try again, or use the classic receive flow."
+      }
+    },
+    "assetActivation": {
+      "activate": "Activate",
+      "association": "Hedera accounts must associate a token before receiving it. It's a small network transaction you approve on your Ledger.",
+      "optIn": "Algorand accounts must opt in to an asset before receiving it. It's a small network transaction you approve on your Ledger.",
+      "trustline": "Your account must add a trustline for this asset before receiving it. It's a small network transaction you approve on your Ledger.",
+      "authorize": "Your account must authorize this token before receiving it. It's a small network transaction you approve on your Ledger."
+    },
+    "memoTag": {
+      "cardTitle": "Need a Tag/Memo?",
+      "title": "Need a Tag/Memo?",
+      "description": "You might need a Tag/Memo for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
+      "learnMore": "Learn more",
+      "gotIt": "Got it"
+    },
+    "help": {
+      "cardTitle": "Need support? Get help",
+      "title": "Get help",
+      "receiveFromExchange": "How to receive from exchanges?",
+      "receiveSecurely": "How to receive securely?"
+    }
+  },
   "syncIndicator": {
     "accessibilityLabel": {
       "error": "Sync error",

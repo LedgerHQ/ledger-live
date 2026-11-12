@@ -17,6 +17,7 @@ import perFamilySubAccountList from "../../generated/SubAccountList";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import Button from "~/components/Button";
 import { blacklistedTokenIdsSelector } from "~/reducers/settings";
+import { useReceiveScreen } from "LLM/features/Receive/hooks/useReceiveScreen";
 
 const keyExtractor = (item: TokenAccount): string => item.id;
 
@@ -57,6 +58,7 @@ export default function SubAccountsList({
 
   const { colors } = useTheme();
   const navigation = useNavigation();
+  const receiveScreen = useReceiveScreen();
   const [account, setAccount] = useState<TokenAccount | typeof undefined>();
   const [isCollapsed, setIsCollapsed] = useState(true);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
@@ -82,13 +84,13 @@ export default function SubAccountsList({
   }, [getTokenTypes, parentAccount]);
 
   const navigateToReceiveConnectDevice = useCallback(() => {
-    navigation.navigate(NavigatorName.ReceiveFunds, {
-      screen: ScreenName.ReceiveConfirmation,
-      params: {
+    navigation.navigate(
+      NavigatorName.ReceiveFunds,
+      receiveScreen({
         accountId,
-      },
-    });
-  }, [accountId, navigation]);
+      }),
+    );
+  }, [accountId, navigation, receiveScreen]);
 
   const renderHeader = useCallback(
     () => (
