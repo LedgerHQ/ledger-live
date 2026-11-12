@@ -122,10 +122,9 @@ function parseCliFlag(command: string, flag: string): string | undefined {
  */
 export function isRetryableError(message: string): boolean {
   const retryablePatterns = [
-    /503/i,
-    /502/i,
-    /504/i,
+    /\b50[234]\b/,
     /GeneralDmkError/i,
+    /DeviceSessionNotFound/i,
     /ECONNREFUSED/i,
     /ETIMEDOUT/i,
     /ECONNRESET/i,
