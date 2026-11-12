@@ -1,3 +1,9 @@
+import {
+  AGENT_INTENT_SOURCE,
+  AGENT_INTENT_TRACKING_ENTRY,
+} from "@features/platform-agent-intent-entry-points";
+import { getAgentIntentPath } from "LLD/features/AgentIntent/getAgentIntentPath";
+
 /**
  * Mapping from sidebar item value (for Wallet 4.0 SideBar) to route path.
  */
@@ -10,6 +16,7 @@ export const SIDEBAR_VALUE_TO_PATH = {
   discover: "/platform",
   card: "/card-new-wallet",
   paytab: "/paytab",
+  agents: getAgentIntentPath(AGENT_INTENT_SOURCE.navBar),
 } as const;
 
 /** Sidebar "Accounts" entry opens the Cryptos page. */
@@ -31,4 +38,12 @@ export const SIDEBAR_VALUE_TO_TRACK_ENTRY: Record<SideBarNavValue, string> = {
   discover: "platform",
   card: "card",
   paytab: "paytab",
+  agents: AGENT_INTENT_TRACKING_ENTRY,
 } as const;
+
+/** Extra `menuentry_clicked` properties of the sidebar items that need them. */
+export const SIDEBAR_VALUE_TO_TRACK_EXTRA_PROPS: Partial<
+  Record<SideBarNavValue, Readonly<Record<string, string>>>
+> = {
+  agents: { source: AGENT_INTENT_SOURCE.navBar },
+};

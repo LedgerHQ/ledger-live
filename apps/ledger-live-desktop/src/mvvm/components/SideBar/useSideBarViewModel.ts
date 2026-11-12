@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router";
 import { useSelector } from "LLD/hooks/redux";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useFeature } from "@features/platform-feature-flags";
+import { useAgentIntentEntryPoints } from "@features/platform-agent-intent-entry-points";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { sidebarCollapsedSelector } from "~/renderer/reducers/settings";
 import { setTrackingSource, track } from "@shared/analytics";
@@ -13,10 +14,12 @@ import {
   pathnameToActive,
   SIDEBAR_VALUE_TO_PATH,
   SIDEBAR_VALUE_TO_TRACK_ENTRY,
+  SIDEBAR_VALUE_TO_TRACK_EXTRA_PROPS,
   isSideBarNavValue,
   ACCOUNTS_SIDEBAR_PATH,
 } from "./utils";
 import { SCROLL_TO_TOP_EVENT } from "LLD/components/Page/constants";
+import type { SideBarNavValue } from "./utils";
 import type { SideBarViewModel } from "./types";
 
 export function useSideBarViewModel(): SideBarViewModel {
@@ -32,6 +35,7 @@ export function useSideBarViewModel(): SideBarViewModel {
 
   const payTabFeature = useFeature("lwdPayTab");
   const isPayTabEnabled = !!payTabFeature?.enabled;
+  const { isNavBarEnabled: isAgentsEnabled } = useAgentIntentEntryPoints();
 
   const navRef = useRef<HTMLElement>(null);
   const handleCollapsedChange = useSideBarAutoCollapse(collapsed);
@@ -49,20 +53,22 @@ export function useSideBarViewModel(): SideBarViewModel {
   }, []);
 
   const push = useCallback(
-    (pathname: string) => {
+    (path: string) => {
+      const [pathname] = path.split("?");
       if (location.pathname === pathname) return;
       setTrackingSource("sidebar");
-      navigate(pathname);
+      navigate(path);
     },
     [navigate, location.pathname],
   );
 
   const trackEntry = useCallback(
-    (entry: string) => {
+    (value: SideBarNavValue) => {
       track("menuentry_clicked", {
-        entry,
+        entry: SIDEBAR_VALUE_TO_TRACK_ENTRY[value],
         page: location.pathname,
         flagged: false,
+        ...SIDEBAR_VALUE_TO_TRACK_EXTRA_PROPS[value],
       });
     },
     [location.pathname],
@@ -86,7 +92,7 @@ export function useSideBarViewModel(): SideBarViewModel {
       }
       const path = value === "accounts" ? ACCOUNTS_SIDEBAR_PATH : SIDEBAR_VALUE_TO_PATH[value];
       push(path);
-      trackEntry(SIDEBAR_VALUE_TO_TRACK_ENTRY[value]);
+      trackEntry(value);
     },
     [handleScrollToTop, push, trackEntry, location.pathname],
   );
@@ -97,6 +103,7 @@ export function useSideBarViewModel(): SideBarViewModel {
     earnLabel,
     isCardDisabled,
     isPayTabEnabled,
+    isAgentsEnabled,
     isAccountsDisabled: noAccounts,
     handleCollapsedChange,
     active,

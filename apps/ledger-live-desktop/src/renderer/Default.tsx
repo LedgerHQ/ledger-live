@@ -95,6 +95,11 @@ const Swap2 = lazy(() => import("~/renderer/screens/exchange/Swap2"));
 const Perps = lazy(() => import("LLD/features/Perps"));
 const Borrow = lazy(() => import("LLD/features/Borrow"));
 const Predictions = lazy(() => import("LLD/features/Predictions"));
+const AgentIntent = lazy(() =>
+  import("LLD/features/AgentIntent").then(module => ({
+    default: module.AgentIntentPlaceholderScreen,
+  })),
+);
 const Market = lazy(() => import("LLD/features/Market"));
 
 const WelcomeScreenSettings = lazy(
@@ -238,6 +243,7 @@ function MainAppContent() {
               <Route path="/analytics" element={withSuspense(Analytics)({})} />
               <Route path="/history" element={withSuspense(History)({})} />
               <Route path="/contacts" element={withSuspense(Contacts)({})} />
+              <Route path="/agent-intent" element={withSuspense(AgentIntent)({})} />
             </Routes>
           </Page>
           <Drawer />

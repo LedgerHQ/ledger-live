@@ -26,7 +26,7 @@ function renderViewModel(initialState = defaultInitialState) {
 
 const ACTIVE_CHANGE_NAV_CASES = Object.keys(SIDEBAR_VALUE_TO_PATH)
   .filter(isSideBarNavValue)
-  .filter(value => value !== "home" && value !== "accounts")
+  .filter(value => value !== "home" && value !== "accounts" && value !== "agents")
   .map(value => ({
     value,
     path: SIDEBAR_VALUE_TO_PATH[value],
@@ -58,6 +58,19 @@ describe("useSideBarViewModel", () => {
       active: "home",
     });
   });
+
+  it.each([
+    { agentIntent: { enabled: true, params: { navBar: true, profile: false } }, expected: true },
+    { agentIntent: { enabled: true, params: { navBar: false, profile: true } }, expected: false },
+    { agentIntent: { enabled: false, params: { navBar: true, profile: true } }, expected: false },
+  ])(
+    "should show the Agents item only with the nav bar entry point",
+    ({ agentIntent, expected }) => {
+      const { result } = renderViewModel(withFeatureFlags({ agentIntent }));
+
+      expect(result.current.isAgentsEnabled).toBe(expected);
+    },
+  );
 
   describe("collapse", () => {
     it("should set collapsed explicitly via handleCollapsedChange", () => {
@@ -103,6 +116,23 @@ describe("useSideBarViewModel", () => {
         trackSpy.mockRestore();
       },
     );
+
+    it("should open Agent Intent with the nav bar source and track it", () => {
+      const trackSpy = jest.spyOn(analytics, "track");
+      const { result } = renderViewModel();
+
+      act(() => result.current.handleActiveChange("agents"));
+
+      expect(mockNavigate).toHaveBeenCalledWith("/agent-intent?source=nav_bar");
+      expect(trackSpy).toHaveBeenCalledWith("menuentry_clicked", {
+        entry: "agent_intent",
+        page: "/",
+        flagged: false,
+        source: "nav_bar",
+      });
+
+      trackSpy.mockRestore();
+    });
 
     it("should ignore unknown values", () => {
       const { result } = renderViewModel();
