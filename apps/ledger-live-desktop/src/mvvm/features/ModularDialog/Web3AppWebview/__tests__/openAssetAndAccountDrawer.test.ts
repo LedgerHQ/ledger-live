@@ -45,6 +45,32 @@ describe("useOpenAssetAndAccount - openAssetAndAccount", () => {
     expect(store.getState().modularDialog.source).toBe("");
   });
 
+  it("should restrict the dialog to the given networks when networkIds is provided", () => {
+    const { result, store } = renderHook(() => useOpenAssetAndAccount());
+
+    result.current.openAssetAndAccount({
+      drawerConfiguration: config,
+      currencies: ["ethereum/erc20/usd__coin"],
+      networkIds: ["ethereum", "polygon"],
+    });
+
+    expect(store.getState().modularDialog.dialogParams).toMatchObject({
+      currencies: ["ethereum/erc20/usd__coin"],
+      networkIds: ["ethereum", "polygon"],
+    });
+  });
+
+  it("should not filter networks when networkIds is not provided", () => {
+    const { result, store } = renderHook(() => useOpenAssetAndAccount());
+
+    result.current.openAssetAndAccount({
+      drawerConfiguration: config,
+      currencies: ["ethereum/erc20/usd__coin"],
+    });
+
+    expect(store.getState().modularDialog.dialogParams?.networkIds).toBeUndefined();
+  });
+
   it("should handle callback mode success", () => {
     const onSuccess = jest.fn();
 
