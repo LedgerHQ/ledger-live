@@ -1,4 +1,5 @@
 import type { AssetInfo, Unit } from "@ledgerhq/coin-module-framework/api/index";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import BigNumber from "bignumber.js";
 
 export const SUN_PER_TRX = 1_000_000;
@@ -71,10 +72,13 @@ export function tronifyPayAsset(): SponsoredFeeAsset {
   return { ...TRONIFY_PAY_ASSET, unit: { ...TRONIFY_PAY_ASSET.unit } };
 }
 
-/** A decimal USDT amount in USDT base units, rounded up so a sub-unit amount never under-states
- * the rent. NaN when `amount` does not parse. */
-export function payAssetBaseUnits(amount: BigNumber.Value): BigNumber {
-  return new BigNumber(amount)
-    .shiftedBy(TRONIFY_PAY_ASSET.unit.magnitude)
-    .integerValue(BigNumber.ROUND_CEIL);
+/** A USDT amount in USDT base units, rounded up so a sub-unit amount never under-states the rent. */
+export function toPayAssetBaseUnits(amount: BigNumber): BigNumber {
+  return amount.shiftedBy(TRONIFY_PAY_ASSET.unit.magnitude).integerValue(BigNumber.ROUND_CEIL);
+}
+
+/** {@link toPayAssetBaseUnits} of a decimal; undefined when `amount` is not a finite decimal. */
+export function payAssetBaseUnits(amount: unknown): BigNumber | undefined {
+  const parsed = parseFiniteBigNumber(amount);
+  return parsed && toPayAssetBaseUnits(parsed);
 }

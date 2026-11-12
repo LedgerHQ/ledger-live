@@ -1,5 +1,6 @@
 import React, { useCallback } from "react";
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import { Account } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/xrp/types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
@@ -16,14 +17,10 @@ const TagField = ({ onChange, account, transaction, status, autoFocus }: Props) 
   const bridge = useAccountBridge<Transaction>(account);
   const onChangeTag = useCallback(
     (str: string) => {
-      const tag = BigNumber(str.replace(/[^0-9]/g, ""));
+      const tag = parseFiniteBigNumber(str.replace(/\D/g, ""));
       const patch = {
         tag:
-          !tag.isNaN() &&
-          tag.isFinite() &&
-          tag.isInteger() &&
-          tag.isPositive() &&
-          tag.lt(uint32maxPlus1)
+          tag?.isInteger() && tag.isPositive() && tag.lt(uint32maxPlus1)
             ? tag.toNumber()
             : str === ""
               ? undefined

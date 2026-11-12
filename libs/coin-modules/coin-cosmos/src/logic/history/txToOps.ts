@@ -1,3 +1,4 @@
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import BigNumber from "bignumber.js";
 import { getMainMessage } from "../../helpers";
@@ -256,7 +257,8 @@ const getBlankOperation = (tx: CosmosTx, fees: BigNumber): CosmosParsedOperation
     recipients: [] as string[],
     date: new Date(tx.timestamp),
     extra: {},
-    transactionSequenceNumber: new BigNumber(tx?.tx?.auth_info?.signer_infos?.[0]?.sequence || "0"),
+    transactionSequenceNumber:
+      parseFiniteBigNumber(tx?.tx?.auth_info?.signer_infos?.[0]?.sequence) ?? new BigNumber(0),
     hasFailed: false,
   };
 };

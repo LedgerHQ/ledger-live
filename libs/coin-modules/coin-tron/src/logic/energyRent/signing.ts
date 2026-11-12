@@ -48,8 +48,7 @@ export function rentPayment(order: EnergyRentOrder): { asset: SponsoredFeeAsset;
   const amount = payAssetBaseUnits(order.payCoinAmt);
   if (
     String(order.payCoinCode).toUpperCase() !== TRONIFY_PAY_ASSET.unit.code ||
-    !amount.isFinite() ||
-    !amount.isGreaterThan(0)
+    !amount?.isGreaterThan(0)
   ) {
     throw new TronifyApiError(
       `Cannot reserve an energy-rent payment of ${order.payCoinAmt} ${String(order.payCoinCode)}`,

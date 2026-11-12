@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import type { Operation } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 
@@ -23,8 +24,8 @@ export function buildRentReservationOperation({
   if (rent.lte(0)) return null;
 
   // addPendingOperation dedups by sequence, so this must not collide with TX-C's optimistic op.
-  const sequence = new BigNumber(reservationSequence);
-  if (!sequence.isFinite()) return null;
+  const sequence = parseFiniteBigNumber(reservationSequence);
+  if (!sequence) return null;
 
   return {
     id: encodeOperationId(tokenAccountId, paymentTxId, "OUT"),
