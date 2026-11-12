@@ -88,3 +88,16 @@ test("does not retry because a 503 appears inside a UUID of the command", () => 
 
   assert.equal(isRetryableError(message), false);
 });
+
+test("does not retry a CLI failure because the command holds a 503", () => {
+  const message = cliFailure(
+    "tokenApproval+--currency+Ethereum+--approveAmount+12.503",
+    "insufficient funds",
+  );
+
+  assert.equal(isRetryableError(message), false);
+});
+
+test("retries a message that does not come from the CLI when it reports a 503", () => {
+  assert.equal(isRetryableError("Request failed with status code 503"), true);
+});
