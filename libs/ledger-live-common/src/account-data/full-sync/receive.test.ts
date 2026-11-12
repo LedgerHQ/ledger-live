@@ -133,7 +133,7 @@ describe("toAccountReceive", () => {
     });
     await expect(toAccountReceive(hedera)).resolves.toEqual({
       address: "0.0.1234",
-      memo: { type: "text", maxLength: 100 },
+      memo: { type: "text" },
     });
   });
 
@@ -146,23 +146,13 @@ describe("toAccountReceive", () => {
     await expect(toAccountReceive(hedera)).resolves.toEqual({
       address: "0.0.1234",
       verification: { type: "publicKey", path: "m/44h/3030h/0h/0h/0h", publicKey: "302a" },
-      memo: { type: "text", maxLength: 100 },
+      memo: { type: "text" },
     });
   });
 
   it("tells the senders of a coin whose transfers carry a tag to attach one", async () => {
     await expect(toAccountReceive(accountOf("ripple"))).resolves.toMatchObject({
-      memo: { type: "tag", maxValue: "4294967295" },
-    });
-  });
-
-  it("tells the senders of Stellar which memo kinds they can pick", async () => {
-    await expect(toAccountReceive(accountOf("stellar"))).resolves.toMatchObject({
-      memo: {
-        type: "typed",
-        options: ["NO_MEMO", "MEMO_TEXT", "MEMO_ID", "MEMO_HASH", "MEMO_RETURN"],
-        defaultOption: "MEMO_TEXT",
-      },
+      memo: { type: "tag" },
     });
   });
 
@@ -213,7 +203,7 @@ describe("toAccountReceive on Zcash", () => {
       shielded: {
         address: ORCHARD_ADDRESS,
         verification: { type: "shieldedAddress", path: "m/32h/133h/0h", address: ORCHARD_ADDRESS },
-        memo: { type: "text", maxLength: 512 },
+        memo: { type: "text" },
       },
     });
   });

@@ -26,34 +26,12 @@ export const ReceiveVerificationSchema = z.discriminatedUnion("type", [
 
 export type ReceiveVerification = z.infer<typeof ReceiveVerificationSchema>;
 
-/** Free text, up to `maxLength` characters. */
-const TextMemoSchema = z.object({
-  type: z.literal("text"),
-  maxLength: z.number().int().positive().optional(),
-});
-
-/** A number (XRP destination tag), up to `maxValue`: in decimal, as it can exceed 2^53. */
-const TagMemoSchema = z.object({
-  type: z.literal("tag"),
-  maxValue: z.string().regex(/^\d+$/).optional(),
-});
-
-/** One of several memo kinds (Stellar), `defaultOption` preselected. */
-const TypedMemoSchema = z.object({
-  type: z.literal("typed"),
-  options: z.array(z.string().min(1)).nonempty(),
-  defaultOption: z.string().min(1).optional(),
-});
-
 /**
  * The memo or tag a sender can attach next to the address, as the coin's send contract declares
  * it: exchanges and custodians receive on shared addresses and tell their users apart by it.
+ * `tag`: a number (XRP destination tag). `typed`: one of several kinds (Stellar).
  */
-export const ReceiveMemoSchema = z.discriminatedUnion("type", [
-  TextMemoSchema,
-  TagMemoSchema,
-  TypedMemoSchema,
-]);
+export const ReceiveMemoSchema = z.object({ type: z.enum(["text", "tag", "typed"]) });
 
 export type ReceiveMemo = z.infer<typeof ReceiveMemoSchema>;
 

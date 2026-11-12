@@ -89,19 +89,6 @@ describe("AccountReceiveSchema", () => {
     ).toBe(false);
   });
 
-  it("should keep the limits a sender's memo must fit", () => {
-    expect(
-      mockAccountReceive({ address: "r1", memo: { type: "tag", maxValue: "4294967295" } }).memo,
-    ).toEqual({ type: "tag", maxValue: "4294967295" });
-  });
-
-  it.each([
-    ["a tag limit that is not a whole number", { type: "tag", maxValue: "1.5" }],
-    ["a typed memo without kinds", { type: "typed", options: [] }],
-  ])("should reject %s", (_, memo) => {
-    expect(AccountReceiveSchema.safeParse({ address: "r1", memo }).success).toBe(false);
-  });
-
   it("should accept an address the device cannot confirm", () => {
     expect(mockAccountReceive({ address: "0x1", verification: undefined })).toEqual({
       address: "0x1",
