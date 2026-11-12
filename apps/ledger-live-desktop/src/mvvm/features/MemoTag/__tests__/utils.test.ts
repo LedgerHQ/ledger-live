@@ -49,8 +49,18 @@ describe("getMemoTagValueByTransactionFamily", () => {
     expect(getMemoTagValueByTransactionFamily(transaction)).toBe("Solana memo");
   });
 
+  it("should return memoValue for cosmos family", () => {
+    const transaction = { family: "cosmos", memoValue: "Cosmos memo" } as Transaction;
+    expect(getMemoTagValueByTransactionFamily(transaction)).toBe("Cosmos memo");
+  });
+
+  it("should return undefined for cosmos family when memoValue is null", () => {
+    const transaction = { family: "cosmos", memoValue: null } as Transaction;
+    expect(getMemoTagValueByTransactionFamily(transaction)).toBeUndefined();
+  });
+
   it("should return memo for default case", () => {
-    const transaction: Transaction = { family: "cosmos", memo: "Default memo" } as Transaction & {
+    const transaction: Transaction = { family: "stacks", memo: "Default memo" } as Transaction & {
       memo: string;
     };
     expect(getMemoTagValueByTransactionFamily(transaction)).toBe("Default memo");

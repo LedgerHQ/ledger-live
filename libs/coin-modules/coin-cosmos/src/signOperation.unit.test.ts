@@ -81,7 +81,7 @@ function makeTransaction(recipient: string): Transaction {
     amount: new BigNumber(1000),
     fees: new BigNumber(500),
     gas: new BigNumber(200000),
-    memo: "",
+    memoValue: "",
     networkInfo: null,
     useAllAmount: false,
   } as unknown as Transaction;
@@ -108,7 +108,7 @@ function expectedSignDocBytes(account: CosmosAccount, transaction: Transaction):
     aminoMsgs,
     feeToEncode,
     CHAIN_ID,
-    transaction.memo || "",
+    transaction.memoValue || "",
     ACCOUNT_NUMBER,
     SEQUENCE,
   );

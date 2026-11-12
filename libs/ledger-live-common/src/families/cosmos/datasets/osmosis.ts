@@ -86,7 +86,6 @@ const dataset: CurrenciesData<Transaction> = {
             networkInfo: null,
             fees: null,
             gas: null,
-            memo: null,
             mode: "send",
           }) as Transaction,
           expectedStatus: account => {
@@ -112,13 +111,14 @@ const dataset: CurrenciesData<Transaction> = {
             networkInfo: null,
             fees: null,
             gas: null,
-            memo: "test",
+            memoType: "text",
+            memoValue: "test",
             mode: "send",
           }) as Transaction,
           expectedStatus: (account, t) => {
             if (!isStakingAccount(account)) throw new Error("Should exist because it's osmosis");
             const { stakingResources } = account;
-            invariant(t.memo === "test", "Should have a memo");
+            invariant(t.memoValue === "test", "Should have a memo");
             const totalSpent = account.balance.minus(
               stakingResources.unbondingBalance.plus(stakingResources.delegatedBalance),
             );

@@ -36,7 +36,6 @@ const baseTransaction = {
   },
   fees: new BigNumber("0.123456"),
   gas: new BigNumber("7890"),
-  memo: "test memo",
   memoType: "text",
   memoValue: "test memo",
   amount: new BigNumber("1000000"),
@@ -64,7 +63,6 @@ describe("fromTransactionRaw", () => {
       },
       fees: new BigNumber("0.123456"),
       gas: new BigNumber("7890"),
-      memo: "test memo",
       memoType: "text",
       memoValue: "test memo",
       amount: new BigNumber("1000000"),
@@ -182,7 +180,9 @@ describe("fromTransactionRaw", () => {
   });
 
   it("omits memoType and memoValue when absent", () => {
-    const result = fromTransactionRaw({ ...baseRaw, memo: undefined });
+    const raw = { ...baseRaw };
+    delete raw.memo;
+    const result = fromTransactionRaw(raw);
     expect(result).not.toHaveProperty("memoType");
     expect(result).not.toHaveProperty("memoValue");
   });
@@ -191,6 +191,10 @@ describe("fromTransactionRaw", () => {
     const result = fromTransactionRaw(baseRaw);
     expect(result.memoType).toEqual("text");
     expect(result.memoValue).toEqual("test memo");
+  });
+
+  it("does not expose the legacy memo on the transaction", () => {
+    expect(fromTransactionRaw(baseRaw)).not.toHaveProperty("memo");
   });
 
   it("falls back to the legacy memo when memoValue and memoType are null", () => {
@@ -246,7 +250,6 @@ describe("toTransactionRaw", () => {
       },
       fees: "0.123456",
       gas: "7890",
-      memo: "test memo",
       memoType: "text",
       memoValue: "test memo",
       amount: "1000000",
@@ -291,6 +294,10 @@ describe("toTransactionRaw", () => {
     expect(result.memoValue).toBe("test memo");
   });
 
+  it("does not write the legacy memo", () => {
+    expect(toTransactionRaw(baseTransaction)).not.toHaveProperty("memo");
+  });
+
   it("omits memoType and memoValue when absent", () => {
     const transaction = { ...baseTransaction };
     delete transaction.memoType;
@@ -327,7 +334,7 @@ describe("formatTransaction", () => {
 
   it("prints ? when fees are unknown and omits an empty memo", () => {
     const formatted = formatTransaction(
-      { ...baseTransaction, fees: null, memo: undefined },
+      { ...baseTransaction, fees: null, memoValue: null },
       account,
     );
     expect(formatted).toContain("with fees=?");
@@ -401,7 +408,8 @@ describe("transaction raw round trip", () => {
     gas: null,
     useAllAmount: false,
     networkInfo: null,
-    memo: null,
+    memoType: null,
+    memoValue: null,
   } as unknown as Transaction;
 
   it("gives back an empty transaction made by the generic bridge", () => {

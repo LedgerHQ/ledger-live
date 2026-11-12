@@ -324,7 +324,7 @@ export function messageParamsFromTransaction(
     denom: account.currency.units[1].code,
     recipient: transaction.recipient,
     amount: transaction.amount,
-    memo: transaction.memo || "",
+    memo: transaction.memoValue || "",
     validators: resolveTransactionValidators(transaction),
     ...(sourceValidator ? { sourceValidator } : {}),
   };

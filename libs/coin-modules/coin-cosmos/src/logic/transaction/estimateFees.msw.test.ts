@@ -16,6 +16,17 @@ const sendIntent = {
   asset: { type: "native" },
 } as unknown as TransactionIntent;
 
+const delegateIntent = {
+  intentType: "staking",
+  type: "delegate",
+  mode: "delegate",
+  sender: SENDER,
+  recipient: "",
+  valAddress: "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
+  amount: 1_000_000n,
+  asset: { type: "native" },
+} as unknown as TransactionIntent;
+
 const ACCOUNT_RESPONSE = {
   account: {
     "@type": "/cosmos.auth.v1beta1.BaseAccount",
@@ -47,6 +58,22 @@ describe("estimateFees via MSW", () => {
     // value = ceil(gasWanted(104000) * minGasPrice(0.025)) = 2600
     expect(fees.parameters?.gasLimit).toBe("104000");
     expect(fees.value).toBe(2600n);
+    expect(fees.parameters).not.toHaveProperty("memoValue");
+  });
+
+  it("returns the default staking memo as memoType and memoValue for a delegation without memo", async () => {
+    const config = makeTestConfig("cosmos", TEST_COSMOS_ENDPOINT);
+    makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
+    server.use(
+      http.get(ACCOUNTS, () => HttpResponse.json(ACCOUNT_RESPONSE)),
+      http.post(SIMULATE, () => HttpResponse.json({ gas_info: { gas_used: "80000" } })),
+    );
+
+    const fees = await estimateFees(config, "cosmos", delegateIntent);
+
+    expect(fees.parameters).toEqual(
+      expect.objectContaining({ memoType: "text", memoValue: "Ledger Live" }),
+    );
   });
 
   // getEstimatedFees wraps cosmosAPI.simulate in its own try/catch that only logs and falls back to

@@ -634,9 +634,9 @@ describe("sendFeatures", () => {
         expect(result).toEqual({ transferId: "12345", memoType: "transferId", memoValue: "12345" });
       });
 
-      it("should apply memo/memoType/memoValue for cosmos", () => {
+      it("should apply memoType/memoValue for cosmos", () => {
         const result = applyMemoToTransaction("cosmos", "test memo");
-        expect(result).toEqual({ memo: "test memo", memoType: "text", memoValue: "test memo" });
+        expect(result).toEqual({ memoType: "text", memoValue: "test memo" });
       });
 
       it("should apply the generic memo fields for hedera", () => {

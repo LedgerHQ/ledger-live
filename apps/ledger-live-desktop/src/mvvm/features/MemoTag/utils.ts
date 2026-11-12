@@ -20,6 +20,8 @@ export const getMemoTagValueByTransactionFamily = (transaction: Transaction) => 
       return transaction?.comment?.text;
     case "stellar":
       return (transaction as StellarTransaction)?.memoValue;
+    case "cosmos":
+      return transaction?.memoValue ?? undefined;
     case "hedera":
       return (transaction as HederaGenericTransaction)?.memoValue ?? undefined;
     case "solana":

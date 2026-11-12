@@ -33,7 +33,8 @@ const field = { type: "cosmos.validatorName", label: "Validator" };
 const baseTx = {
   family: "cosmos",
   recipient: "",
-  memo: null,
+  memoType: null,
+  memoValue: null,
   fees: null,
   gas: null,
   networkInfo: null,

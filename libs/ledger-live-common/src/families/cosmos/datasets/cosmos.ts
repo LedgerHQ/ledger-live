@@ -97,7 +97,6 @@ const dataset: CurrenciesData<Transaction> = {
             networkInfo: null,
             fees: null,
             gas: null,
-            memo: null,
             mode: "send",
           }),
           expectedStatus: (account, t) => {
@@ -140,7 +139,7 @@ const dataset: CurrenciesData<Transaction> = {
           expectedStatus: (account, t) => {
             if (!isStakingAccount(account)) throw new Error("Should exist because it's cosmos");
             const { stakingResources } = account;
-            invariant(t.memo === "test", "Should have a memo");
+            invariant(t.memoValue === "test", "Should have a memo");
             const estimatedFees = t.fees || new BigNumber(0);
             const spendableBalance = account.balance.minus(
               stakingResources.unbondingBalance.plus(stakingResources.delegatedBalance),
@@ -186,7 +185,7 @@ const dataset: CurrenciesData<Transaction> = {
             mode: "redelegate",
           }),
           expectedStatus: (a, t) => {
-            invariant(t.memo === "Ledger Live", "Should have a memo");
+            invariant(t.memoValue === "Ledger Live", "Should have a memo");
             const errors: Record<string, Error> = {};
             if (
               isStakingAccount(a) &&

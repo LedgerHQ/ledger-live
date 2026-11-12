@@ -192,7 +192,6 @@ type CosmosLikeTransactionBase = TransactionCommon & {
   networkInfo: CosmosLikeNetworkInfo | null | undefined;
   fees: BigNumber | null | undefined;
   gas: BigNumber | null | undefined;
-  memo: string | null | undefined;
   memoType?: string | null;
   memoValue?: string | null;
 };
@@ -230,7 +229,7 @@ export type CosmosLikeTransactionRaw = TransactionCommonRaw & {
   networkInfo: CosmosLikeNetworkInfoRaw | null | undefined;
   fees: string | null | undefined;
   gas: string | null | undefined;
-  memo: string | null | undefined;
+  memo?: string | null;
   memoType?: string | null;
   memoValue?: string | null;
   valAddress?: string;

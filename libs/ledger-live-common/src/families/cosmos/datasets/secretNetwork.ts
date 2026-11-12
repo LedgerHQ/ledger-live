@@ -60,7 +60,7 @@ const dataset: CurrenciesData<Transaction> = {
             fees: "8744",
             gas: "87440",
             validators: [],
-            memo: "",
+            memoValue: "",
             sourceValidator: "",
           }),
           expectedStatus: () => ({

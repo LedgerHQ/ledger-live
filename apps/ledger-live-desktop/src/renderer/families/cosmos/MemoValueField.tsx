@@ -37,7 +37,7 @@ const MemoValueField = ({
     <MemoTagField
       warning={status.warnings.transaction}
       error={status.errors.transaction}
-      value={transaction.memo ?? ""}
+      value={transaction.memoValue ?? ""}
       onChange={onMemoValueChange}
       autoFocus={autoFocus}
     />

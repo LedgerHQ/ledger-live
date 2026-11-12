@@ -10,7 +10,8 @@ const delegation = {
   useAllAmount: false,
   fees: new BigNumber(10),
   gas: new BigNumber(20),
-  memo: null,
+  memoType: null,
+  memoValue: null,
   networkInfo: null,
   valAddress: "validator",
 } as Transaction;
