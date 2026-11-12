@@ -162,10 +162,8 @@ export async function isTopologyChangeRequired(config: CantonCoinConfig, pubKey:
   }
 }
 
-const getIsTopologyChangeRequiredCacheKey = (config: CantonCoinConfig, pubKey: string): string => {
-  const nodeId = getNodeId(config);
-  return `${pubKey}_${nodeId}`;
-};
+const getIsTopologyChangeRequiredCacheKey = (config: CantonCoinConfig, pubKey: string): string =>
+  `${getGatewayUrl(config)}_${getNodeId(config)}_${pubKey}`;
 
 export const isTopologyChangeRequiredCached = makeLRUCache(
   isTopologyChangeRequired,
@@ -199,10 +197,8 @@ export async function getEnabledInstruments(config: CantonCoinConfig): Promise<S
   }
 }
 
-const getEnabledInstrumentsCacheKey = (config: CantonCoinConfig): string => {
-  const nodeId = getNodeId(config);
-  return `instruments_${nodeId}`;
-};
+const getEnabledInstrumentsCacheKey = (config: CantonCoinConfig): string =>
+  `instruments_${getGatewayUrl(config)}_${getNodeId(config)}`;
 
 export const getEnabledInstrumentsCached = makeLRUCache(
   getEnabledInstruments,
