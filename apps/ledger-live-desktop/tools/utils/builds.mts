@@ -1,6 +1,9 @@
-import { spawn } from "child_process";
+import { type ChildProcess, spawn } from "child_process";
+import { once } from "events";
 import fs from "fs";
+import os from "os";
 import path from "path";
+import { fileURLToPath } from "url";
 import { build as electronBuild } from "electron-builder";
 import { execa } from "execa";
 import semver, { type ReleaseType } from "semver";
@@ -12,6 +15,8 @@ const pkgPath = path.join(lldRoot, "package.json");
 const feedDir = path.join(lldRoot, "dist", "feed");
 const installDir = path.join(lldRoot, "dist", "installed");
 const macArch = process.arch === "x64" ? "x64" : "arm64";
+const macBundleId = "com.ledger.live";
+const quitTimeout = 30_000;
 const releaseTypes: ReadonlySet<string> = new Set(semver.RELEASE_TYPES);
 
 type BuildOptions = {
@@ -30,6 +35,9 @@ type PlatformBuild = {
   feedBinary: (version: string) => string;
   install: (binaryPath: string) => Promise<void> | void;
   executable: (app: string) => string;
+  isInstalled: (version: string) => Promise<boolean> | boolean;
+  // Squirrel.Mac stages a downloaded update before it can install it, the other updaters don't.
+  isUpdateStaged: (since: number) => boolean;
 };
 
 export async function build(
@@ -98,6 +106,39 @@ export function openApp(appPath: string, env: Record<string, string> = {}) {
   return app;
 }
 
+// The updater only installs a downloaded update when the app quits with exit code 0.
+export async function quitApp(app: ChildProcess) {
+  if (hasExited(app)) return;
+  const exited = once(app, "exit", { signal: AbortSignal.timeout(quitTimeout) });
+  if (process.platform === "win32") {
+    // Without /F, taskkill asks the app windows to close, and the app quits once they are closed.
+    await execa("taskkill", ["/PID", String(app.pid)]);
+  } else {
+    app.kill("SIGTERM");
+  }
+  await exited;
+}
+
+export function hasExited(app: ChildProcess) {
+  return app.exitCode !== null || app.signalCode !== null;
+}
+
+export async function isInstalled(version: string) {
+  try {
+    return await platformBuild().isInstalled(version);
+  } catch {
+    return false;
+  }
+}
+
+export function isUpdateStaged(since: number) {
+  try {
+    return platformBuild().isUpdateStaged(since);
+  } catch {
+    return false;
+  }
+}
+
 export function parseBump(value: string | undefined) {
   if (value === undefined || isReleaseType(value)) return value;
   throw new Error(`Unknown bump "${value}", use one of: ${[...releaseTypes].join(", ")}`);
@@ -148,18 +189,24 @@ function platformBuild(): PlatformBuild {
         feedBinary: version => path.join(feedDir, `${pkg.name}-${version}-mac.zip`),
         install: zip => unzipApp(zip, installedApp),
         executable: app => path.join(app, "Contents", "MacOS", pkg.productName),
+        isInstalled: version => bundleVersion(installedApp) === version,
+        isUpdateStaged: since => isStagedByShipIt(installedApp, since),
       };
     }
     case "linux": {
       // Without a version in its name, the updater replaces the AppImage in place.
       const installedApp = path.join(installDir, `${pkg.productName}.AppImage`);
+      const feedBinary = (version: string) =>
+        path.join(feedDir, `${pkg.name}-${version}-linux-x86_64.AppImage`);
       return {
         unpackedApp: path.join("linux-unpacked", pkg.name),
         installedApp,
         latestYml: path.join(feedDir, "latest-linux.yml"),
-        feedBinary: version => path.join(feedDir, `${pkg.name}-${version}-linux-x86_64.AppImage`),
+        feedBinary,
         install: appImage => replaceFile(appImage, installedApp),
         executable: app => app,
+        isInstalled: version => sha512(installedApp, "hex") === sha512(feedBinary(version), "hex"),
+        isUpdateStaged: () => true,
       };
     }
     case "win32":
@@ -170,6 +217,8 @@ function platformBuild(): PlatformBuild {
         feedBinary: version => path.join(feedDir, `${pkg.name}-${version}-win-x64.exe`),
         install: runInstaller,
         executable: app => app,
+        isInstalled: async version => (await registeredVersion()) === version,
+        isUpdateStaged: () => true,
       };
     default:
       throw new Error(`Local builds are not supported on ${process.platform}`);
@@ -203,6 +252,37 @@ async function runInstaller(installer: string) {
     ],
     { env: { INSTALLER: installer, INSTALL_DIR: installDir }, stdio: "inherit" },
   );
+}
+
+function bundleVersion(app: string) {
+  const plist = fs.readFileSync(path.join(app, "Contents", "Info.plist"), "utf8");
+  return /<key>CFBundleShortVersionString<\/key>\s*<string>([^<]*)<\/string>/.exec(plist)?.[1];
+}
+
+// ShipIt records the update it staged for an app, and installs it once that app quits.
+function isStagedByShipIt(app: string, since: number) {
+  const shipItDir = path.join(os.homedir(), "Library", "Caches", `${macBundleId}.ShipIt`);
+  const statePath = path.join(shipItDir, "ShipItState.plist");
+  const stats = fs.statSync(statePath, { throwIfNoEntry: false });
+  if (!stats || stats.mtimeMs < since) return false;
+  const { targetBundleURL } = JSON.parse(fs.readFileSync(statePath, "utf8"));
+  return path.resolve(fileURLToPath(targetBundleURL)) === app;
+}
+
+// The installer records the installed version in the uninstall entry pointing at installDir.
+async function registeredVersion() {
+  const uninstallEntries = "HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*";
+  const { stdout } = await execa(
+    "powershell.exe",
+    [
+      "-NoProfile",
+      "-NonInteractive",
+      "-Command",
+      `(Get-ItemProperty '${uninstallEntries}' | Where-Object { "$($_.UninstallString)".Contains($env:INSTALL_DIR) }).DisplayVersion`,
+    ],
+    { env: { INSTALL_DIR: installDir } },
+  );
+  return stdout.trim().split(/\r?\n/)[0];
 }
 
 // electron-builder writes the top-level path and sha512 as copies of files[0].
