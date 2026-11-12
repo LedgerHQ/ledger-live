@@ -110,6 +110,11 @@ export class WebHandle implements ElementHandle {
     return scriptText(value);
   }
 
+  /** Asserts the element exists in the webview now. A Detox expect: it does not wait. */
+  async expectExist(): Promise<void> {
+    await withHardTimeout(detoxExpect(this.raw).toExist());
+  }
+
   private async isEnabled(): Promise<boolean> {
     // Returned as a string: the same check and result type on both platforms.
     const disabled = await this.raw.runScript((el: HTMLButtonElement | HTMLInputElement) =>
