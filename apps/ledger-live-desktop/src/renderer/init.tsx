@@ -211,7 +211,8 @@ async function init() {
       readEnabled: () =>
         selectFeature(store.getState(), "borrowTxLifecycleMonitoring")?.enabled ?? false,
       readManifestId: () =>
-        selectFeature(store.getState(), "ptxBorrowLiveApp")?.params?.manifest_id,
+        selectFeature(store.getState(), "ptxBorrowLiveApp")?.params?.manifest_id ||
+        process.env.DEFAULT_BORROW_MANIFEST_ID,
       apiBaseUrl: process.env.BORROW_API_BASE_URL,
     }),
   );
