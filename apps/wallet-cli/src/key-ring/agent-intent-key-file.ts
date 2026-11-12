@@ -51,6 +51,12 @@ export function loadAgentIntentKeyFile(profileId: string): string | null {
   try {
     const stat = fstatSync(fd);
     if (!stat.isFile()) throw new Error(`${path} is not a regular file.`);
+    if (process.platform === "win32") {
+      throw new Error(
+        `Agent key files aren't supported on Windows, where wallet-cli can't check the owner ` +
+          `and permissions of ${path}.`,
+      );
+    }
     if (stat.uid !== process.getuid?.()) {
       throw new Error(`${path} is not owned by the current user.`);
     }
