@@ -365,6 +365,7 @@ patchedDependencies:
   "usb@2.17.0": "patches/usb@2.17.0.patch"
   "expo@57.0.31": "patches/expo@57.0.31.patch"
   "@gorhom/bottom-sheet@5.2.7": "patches/@gorhom__bottom-sheet@5.2.7.patch"
+  "react-native-reanimated@4.5.1": "patches/react-native-reanimated@4.5.1.patch"
 
 allowBuilds:
   "@apollo/protobufjs": true
