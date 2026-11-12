@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import BigNumber from "bignumber.js";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -9,6 +10,9 @@ import {
 } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/execute";
 import { getWithdrawRequestId } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/request";
 import { PERPS_WITHDRAW_SIGNING_APP_NAME } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/sign";
+import { getPerpsWithdrawHistoryUpdate } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/history";
+import { updateAccountWithUpdater } from "~/actions/accounts";
+import { useDispatch } from "~/context/hooks";
 import { track } from "@shared/analytics";
 import type { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import { useAppDeviceAction } from "~/hooks/deviceActions";
@@ -63,6 +67,7 @@ export function usePerpsWithdrawSignViewModel({
 }: PerpsWithdrawSignProps): PerpsWithdrawSignViewModel {
   const [step, setStep] = useState<PerpsWithdrawSignStep>({ kind: "connect" });
   const [attempt, setAttempt] = useState(0);
+  const dispatch = useDispatch();
   const action = useAppDeviceAction();
   const request = useMemo(() => ({ appName: PERPS_WITHDRAW_SIGNING_APP_NAME }), []);
 
@@ -103,6 +108,21 @@ export function usePerpsWithdrawSignViewModel({
             if (!isLeavingRef.current) setStep({ kind: "submitting" });
           },
         });
+        // Recorded even when the sheet was closed meanwhile: the withdraw went through.
+        if (result.swapId) {
+          dispatch(
+            updateAccountWithUpdater(
+              getPerpsWithdrawHistoryUpdate({
+                swapId: result.swapId,
+                sourceAccount,
+                destinationAccount,
+                amountFrom: new BigNumber(quoteParams.amount),
+                amountTo: quote.amountTo,
+                payoutNetworkFees: quote.payoutNetworkFees,
+              }),
+            ),
+          );
+        }
         leave(() => onDone(result));
       } catch (e) {
         if (isLeavingRef.current) return;
@@ -114,7 +134,16 @@ export function usePerpsWithdrawSignViewModel({
         setStep({ kind: "error", error, canRetry: isPerpsWithdrawRetryable(error) });
       }
     },
-    [destinationAccount, leave, onDone, onRefused, quote, quoteParams.amount, sourceAccount],
+    [
+      destinationAccount,
+      dispatch,
+      leave,
+      onDone,
+      onRefused,
+      quote,
+      quoteParams.amount,
+      sourceAccount,
+    ],
   );
 
   const handleDeviceError = useCallback(

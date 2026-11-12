@@ -21,7 +21,7 @@ const DomainSchema = z.looseObject({
 });
 
 // NEAR route: a Hyperliquid action and its standard EIP-712 typed data.
-const NearPayloadSchema = z.object({
+const NearPayloadSchema = z.looseObject({
   swapId: z.string(),
   hyperCoreAction: z.looseObject({
     typedData: z.looseObject({
@@ -34,13 +34,19 @@ const NearPayloadSchema = z.object({
 });
 
 // Mayan route: ethers' signTypedData(domain, types, value), so no primaryType.
-const MayanPayloadSchema = z.object({
+const MayanPayloadSchema = z.looseObject({
   swapId: z.string(),
   typedData: z.looseObject({ domain: RecordSchema, types: TypesSchema, value: RecordSchema }),
 });
 
+// Loose: /submit needs the payload back unmodified, including fields we don't read (e.g. `@type`).
 export const WithdrawPayloadSchema = z.union([NearPayloadSchema, MayanPayloadSchema]);
 export type WithdrawPayload = z.infer<typeof WithdrawPayloadSchema>;
+export type NearWithdrawPayload = z.infer<typeof NearPayloadSchema>;
+
+export function isNearWithdrawPayload(payload: WithdrawPayload): payload is NearWithdrawPayload {
+  return NearPayloadSchema.safeParse(payload).success;
+}
 
 export const WithdrawSubmitResultSchema = z.object({
   swapId: z.string(),
