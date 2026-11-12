@@ -42,6 +42,10 @@ describe("formatLongTrustLimit", () => {
   it("returns null for a limit of 16 integer digits", () => {
     expect(formatLongTrustLimit(toBaseUnits("9999999999999999"), unit, "en-US")).toBeNull();
   });
+
+  it("formats a limit of 17 integer digits", () => {
+    expect(formatLongTrustLimit(toBaseUnits("1e16"), unit, "en-US")).toBe(`1e16 ${unit.code}`);
+  });
 });
 
 describe("formatIssuerFee", () => {

@@ -34,15 +34,19 @@ function Row({ label, children }: Readonly<{ label: React.ReactNode; children: R
   );
 }
 
-function LabelWithInfo(props: Readonly<{ label: React.ReactNode; info: React.ReactNode }>) {
+function LabelWithInfo(props: Readonly<{ label: string; info: React.ReactNode }>) {
   return (
     <span className="flex items-center gap-4">
       {props.label}
       <Tooltip>
         <TooltipTrigger asChild>
-          <span className="inline-flex cursor-help">
-            <Information size={12} />
-          </span>
+          <button
+            type="button"
+            aria-label={props.label}
+            className="inline-flex cursor-help border-0 bg-transparent p-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+          >
+            <Information size={12} aria-hidden="true" />
+          </button>
         </TooltipTrigger>
         <TooltipContent>{props.info}</TooltipContent>
       </Tooltip>
@@ -61,7 +65,7 @@ function ActivationActions(props: Readonly<{ account: Account; onClose: () => vo
   return (
     <Box horizontal justifyContent="flex-end" mb={4}>
       <BuyButton currency={props.account.currency} account={props.account} />
-      <Button secondary onClick={onReceive}>
+      <Button outline onClick={onReceive}>
         <Trans i18nKey="xrp.addToken.steps.review.receive" />
       </Button>
     </Box>
@@ -119,16 +123,16 @@ export default function StepReview({
         <Row
           label={
             <LabelWithInfo
-              label={<Trans i18nKey="xrp.addToken.steps.review.issuerFee" />}
+              label={t("xrp.addToken.steps.review.issuerFee")}
               info={<Trans i18nKey="xrp.addToken.steps.review.issuerFeeTooltip" />}
             />
           }
         >
           <Text ff="Inter|SemiBold" fontSize={4} color="neutral.c100">
-            {issuerFee.isError ? (
-              <Trans i18nKey="xrp.addToken.steps.review.issuerFeeUnavailable" />
-            ) : (
+            {typeof issuerFee.data === "string" ? (
               formatIssuerFee(issuerFee.data, locale)
+            ) : (
+              <Trans i18nKey="xrp.addToken.steps.review.issuerFeeUnavailable" />
             )}
           </Text>
         </Row>
@@ -138,7 +142,7 @@ export default function StepReview({
           <Row
             label={
               <LabelWithInfo
-                label={<Trans i18nKey="xrp.addToken.steps.settings.limit" />}
+                label={t("xrp.addToken.steps.settings.limit")}
                 info={<Trans i18nKey="xrp.tokenAccount.trustLimitTooltip" />}
               />
             }

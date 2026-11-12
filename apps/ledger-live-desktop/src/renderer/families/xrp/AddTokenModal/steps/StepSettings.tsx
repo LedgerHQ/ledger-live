@@ -82,6 +82,11 @@ export default function StepSettings({
     [onChangeLimit],
   );
 
+  const onChangeLimitFocus = useCallback((isFocused: boolean) => {
+    if (isFocused) return;
+    setIsLimitTyped(true);
+  }, []);
+
   const onChangeMax = useCallback(
     (isChecked: boolean) => {
       setIsLimitTyped(false);
@@ -133,6 +138,7 @@ export default function StepSettings({
           defaultUnit={unit}
           value={transaction.amount}
           onChange={onTypeLimit}
+          onChangeFocus={onChangeLimitFocus}
           error={isLimitErrorHidden ? undefined : limitError}
           allowZero
           id="xrp-trust-limit-input"

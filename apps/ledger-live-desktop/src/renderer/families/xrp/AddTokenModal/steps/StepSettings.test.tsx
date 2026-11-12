@@ -179,6 +179,16 @@ describe("StepSettings", () => {
     expect(screen.getByText(/The limit must be above 0/)).toBeVisible();
   });
 
+  it("shows the zero limit error once the user types 0 and leaves the limit", async () => {
+    const props = makeStepProps({ status: makeStatus({ amount: new XrpTrustLimitZero() }) });
+    const { user } = render(<StepSettings {...props} />);
+
+    await user.type(screen.getByRole("textbox"), "0");
+    await user.tab();
+
+    expect(screen.getByText(/The limit must be above 0/)).toBeVisible();
+  });
+
   it("shows a limit above the maximum as an error", () => {
     render(
       <StepSettings
