@@ -1,4 +1,4 @@
-import BigNumber from "bignumber.js";
+import { fromRawBigNumber } from "../bignumber";
 import type {
   Account,
   AccountBridge,
@@ -144,8 +144,8 @@ export async function fromAccountRaw(
     freshAddressPath,
     blockHeight,
     creationDate: new Date(creationDate || Date.now()),
-    balance: new BigNumber(balance),
-    spendableBalance: new BigNumber(spendableBalance || balance),
+    balance: fromRawBigNumber(balance),
+    spendableBalance: fromRawBigNumber(spendableBalance || balance),
     // If a token lookup failed, set operations to empty to gracefully degrade
     operations: hasTokenLookupFailure ? [] : (operations || []).map(convertOperation),
     operationsCount: operationsCount || (operations && operations.length) || 0,
@@ -331,8 +331,8 @@ async function fromTokenAccountRaw(
     id,
     parentId,
     token,
-    balance: new BigNumber(balance),
-    spendableBalance: spendableBalance ? new BigNumber(spendableBalance) : new BigNumber(balance),
+    balance: fromRawBigNumber(balance),
+    spendableBalance: fromRawBigNumber(spendableBalance || balance),
     creationDate: new Date(creationDate || Date.now()),
     operationsCount: raw.operationsCount || (operations && operations.length) || 0,
     operations: operations.map(convertOperation),

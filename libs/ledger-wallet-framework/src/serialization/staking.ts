@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { fromRawBigNumber } from "../bignumber";
 import type {
   Account,
   AccountRaw,
@@ -39,7 +40,7 @@ function toAmountRaw(value: BigNumber | undefined): string | undefined {
 }
 
 function fromAmountRaw(value: string | undefined): BigNumber | undefined {
-  return typeof value === "string" ? new BigNumber(value) : undefined;
+  return typeof value === "string" ? fromRawBigNumber(value) : undefined;
 }
 
 function asString(value: string | undefined): string | undefined {
@@ -104,8 +105,8 @@ function fromStakingDelegationRaw(d: StakingDelegationRaw): StakingDelegation {
       shares: fromAmountRaw(d.shares),
     }),
     validatorAddress: d.validatorAddress,
-    amount: new BigNumber(d.amount),
-    pendingRewards: new BigNumber(d.pendingRewards),
+    amount: fromRawBigNumber(d.amount),
+    pendingRewards: fromRawBigNumber(d.pendingRewards),
     status: d.status,
   };
 }
@@ -123,7 +124,7 @@ function fromStakingRedelegationRaw(r: StakingRedelegationRaw): StakingRedelegat
   return {
     validatorSrcAddress: r.validatorSrcAddress,
     validatorDstAddress: r.validatorDstAddress,
-    amount: new BigNumber(r.amount),
+    amount: fromRawBigNumber(r.amount),
     completionDate: new Date(r.completionDate),
   };
 }
@@ -153,7 +154,7 @@ function fromStakingUnbondingRaw(u: StakingUnbondingRaw): StakingUnbonding {
       status: u.status,
     }),
     validatorAddress: u.validatorAddress,
-    amount: new BigNumber(u.amount),
+    amount: fromRawBigNumber(u.amount),
     completionDate: new Date(u.completionDate),
   };
 }
@@ -182,9 +183,9 @@ export function fromStakingResourcesRaw(r: StakingResourcesRaw): StakingResource
     delegations: (r.delegations ?? []).map(fromStakingDelegationRaw),
     redelegations: (r.redelegations ?? []).map(fromStakingRedelegationRaw),
     unbondings: (r.unbondings ?? []).map(fromStakingUnbondingRaw),
-    delegatedBalance: new BigNumber(r.delegatedBalance ?? "0"),
-    pendingRewardsBalance: new BigNumber(r.pendingRewardsBalance ?? "0"),
-    unbondingBalance: new BigNumber(r.unbondingBalance ?? "0"),
+    delegatedBalance: fromRawBigNumber(r.delegatedBalance),
+    pendingRewardsBalance: fromRawBigNumber(r.pendingRewardsBalance),
+    unbondingBalance: fromRawBigNumber(r.unbondingBalance),
   };
 }
 

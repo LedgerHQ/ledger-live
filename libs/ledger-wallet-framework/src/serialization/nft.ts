@@ -1,4 +1,4 @@
-import BigNumber from "bignumber.js";
+import { fromRawBigNumber } from "../bignumber";
 import { ProtoNFT, ProtoNFTRaw } from "@ledgerhq/types-live";
 
 export function toNFTRaw({
@@ -32,7 +32,7 @@ export function fromNFTRaw({
   return {
     id,
     tokenId,
-    amount: new BigNumber(amount),
+    amount: fromRawBigNumber(amount),
     contract,
     standard,
     currencyId,

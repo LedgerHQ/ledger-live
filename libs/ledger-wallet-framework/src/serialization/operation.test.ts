@@ -7,6 +7,7 @@ import { genAccount, genOperation } from "../mocks/account";
 import {
   buildSubOperationIndex,
   fromOperationRaw,
+  fromSwapOperationRaw,
   inferSubOperations,
   toOperationRaw,
 } from "./operation";
@@ -234,5 +235,16 @@ describe("Operation.ts", () => {
         "sub1-op-h1",
       ]);
     });
+  });
+});
+
+describe("fromSwapOperationRaw", () => {
+  it("revives missing amounts as 0 and keeps a persisted NaN", () => {
+    const raw = { fromAmount: undefined, toAmount: "NaN" } as unknown as Parameters<
+      typeof fromSwapOperationRaw
+    >[0];
+    const swap = fromSwapOperationRaw(raw);
+    expect(swap.fromAmount).toEqual(new BigNumber(0));
+    expect(swap.toAmount.isNaN()).toBe(true);
   });
 });

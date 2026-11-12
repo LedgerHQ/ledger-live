@@ -21,3 +21,19 @@ export function parseFiniteBigNumber(
   const bn = new BigNumber(input);
   return bn.isFinite() ? bn : undefined;
 }
+
+const NAN_OR_INFINITY = /^[+-]?(NaN|Infinity)$/;
+
+/** Rehydrates a persisted BigNumber string without throwing (bignumber.js STRICT mode): returns `fallback` for missing or non-numeric values, keeps "NaN" / "Infinity". */
+export function fromRawBigNumber(raw: unknown, fallback: BigNumber.Value = 0): BigNumber {
+  if (BigNumber.isBigNumber(raw)) return new BigNumber(raw);
+  const input =
+    typeof raw === "string" ? raw.trim() : typeof raw === "number" ? String(raw) : undefined;
+  if (
+    input !== undefined &&
+    (DECIMAL.test(input) || HEX.test(input) || NAN_OR_INFINITY.test(input))
+  ) {
+    return new BigNumber(input);
+  }
+  return new BigNumber(fallback);
+}
