@@ -105,6 +105,10 @@ Use `pnpm commit` to create a valid commit message, using tab-completion for typ
 
 Use `pnpm commitlint --from <target-branch>` to check every commit on the branch.
 
+### When the commit hook cannot run
+
+The commit-msg hook ([hk.pkl](../../hk.pkl)) runs `pnpm commitlint`. In a fresh worktree it fails when mise cannot trust the worktree's `mise.toml` (for example inside an agent sandbox) or when `node_modules` is not installed. Fix the cause: trust the config or install dependencies. If that is not possible, say so, check the message with another checkout's `node_modules/.bin/commitlint` run from this worktree, and mention the skipped hook in the pull request.
+
 ## Pull request titles
 
 e.g. `feat(ui): add dark mode toggle (LIVE-1234)`
