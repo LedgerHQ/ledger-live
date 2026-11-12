@@ -6,7 +6,7 @@ import { useRecoverBannerState } from "../useRecoverBannerState";
 
 jest.mock("~/renderer/store", () => ({
   getStoreValue: jest.fn(),
-  setStoreValue: jest.fn(),
+  setStoreValue: jest.fn().mockResolvedValue(undefined),
   resetStore: jest.fn(),
 }));
 
@@ -86,6 +86,19 @@ describe("useRecoverBannerState", () => {
     expect(store.getState().recoverState.protectIdState[PROTECT_ID]?.displayBanner).toBe(false);
     expect(result.current.data.displayBanner).toBe(false);
     expect(mockSetStoreValue).toHaveBeenCalledWith("DISPLAY_BANNER", "false", PROTECT_ID);
+  });
+
+  it("should keep the banner dismissed when persisting the dismissal fails", async () => {
+    mockSetStoreValue.mockRejectedValueOnce(new Error("EACCES"));
+    const { result } = renderHook(() => useRecoverBannerState(PROTECT_ID), {
+      initialState: withRecoverState(LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE),
+    });
+
+    await act(async () => {
+      result.current.dismissBanner();
+    });
+
+    expect(result.current.data.displayBanner).toBe(false);
   });
 
   it("should reflect Redux subscription state changes reactively", () => {
