@@ -341,7 +341,15 @@
     "home": "Home",
     "refer": "Refer a friend",
     "catalog": "Discover",
-    "recover": "[L] Recover"
+    "recover": "[L] Recover",
+    "agents": "Agents"
+  },
+  "agentIntent": {
+    "title": "Agents",
+    "manageAgents": {
+      "title": "Manage your agents",
+      "description": "Let AI agents manage your assets."
+    }
   },
   "stars": {
     "tooltip": "Star account"
