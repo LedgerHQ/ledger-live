@@ -10,7 +10,7 @@ type Props = {
   sourcePage?: AnalyticsPage;
 };
 
-export default function DeviceActionStep({ goNext, sourcePage }: Props) {
+export default function DeviceActionStep({ goNext, sourcePage }: Readonly<Props>) {
   const ledgerSyncDie = useFeature("lwdLedgerSyncDie");
 
   if (ledgerSyncDie?.enabled) return <AddMemberIntentStep sourcePage={sourcePage} />;

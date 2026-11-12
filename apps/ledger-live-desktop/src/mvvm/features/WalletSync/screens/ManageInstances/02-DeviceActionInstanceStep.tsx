@@ -9,7 +9,7 @@ type Props = {
   instance: TrustchainMember | null;
 };
 
-export default function DeviceActionInstanceStep({ goNext, instance }: Props) {
+export default function DeviceActionInstanceStep({ goNext, instance }: Readonly<Props>) {
   const ledgerSyncDie = useFeature("lwdLedgerSyncDie");
 
   if (ledgerSyncDie?.enabled) return <RemoveMemberIntentStep member={instance} />;
