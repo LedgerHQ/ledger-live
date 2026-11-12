@@ -33,6 +33,7 @@
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-fiat": "workspace:*",
     "@domain/entity-currency-token": "workspace:*",
+    "@noble/hashes": "catalog:",
     "@reduxjs/toolkit": "catalog:",
     "bignumber.js": "catalog:"
   },

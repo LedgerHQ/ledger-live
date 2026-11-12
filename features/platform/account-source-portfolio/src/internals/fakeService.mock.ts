@@ -44,6 +44,22 @@ export const DOT = mockAddressAccountDescriptor({
   path: "m/44h/354h/0h/0h/0h",
 });
 
+/** The BIP84 account of the BIP39 test mnemonic: a valid xpub, checksum included. */
+export const BIP84_XPUB =
+  "xpub6CatWdiZiodmUeTDp8LT5or8nmbKNcuyvz7WyksVFkKB4RHwCD3XyuvPEbvqAQY3rAPshWcMLoP2fMFMKHPJ4ZeZXYVUhLv1VMrjPC7PW6V";
+/** A Bitcoin account the service derives; `BTC` keeps a fixture xpub whose checksum is wrong. */
+export const BITCOIN = mockUtxoAccountDescriptor({ xpub: BIP84_XPUB, path: "m/84h/0h/0h" });
+export const ADA = mockUtxoAccountDescriptor({
+  network: "cardano",
+  xpub: "ab".repeat(64),
+  path: "m/1852h/1815h/0h",
+});
+export const TRX = mockAddressAccountDescriptor({
+  network: "tron",
+  address: `T${"A".repeat(33)}`,
+  path: "m/44h/195h/0h/0/0",
+});
+
 export const targetOf = (descriptor: AccountDescriptor): AccountTarget => ({
   accountUUID: computeAccountUUID(descriptor),
   descriptor,
