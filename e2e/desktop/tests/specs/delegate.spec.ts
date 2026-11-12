@@ -191,7 +191,7 @@ for (const scenario of delegateScenarios) {
           await app.speculos.activateExpertMode();
         }
 
-        await app.account.startStakingFlowFromMainStakeButton({ asset: delegate.account.currency });
+        await app.account.startStakingFlowFromMainStakeButton({ asset: currency });
         if (scenario.hasIntroStep) {
           await app.delegate.continue();
         }
@@ -235,7 +235,7 @@ test.describe("Delegate", delegateFolder(Account.ADA_1.currency), () => {
     },
     async ({ app }) => {
       await openAccount(app, delegation.account);
-      await app.account.startStakingFlowFromMainStakeButton({ asset: delegation.account.currency });
+      await app.account.startStakingFlowFromMainStakeButton({ asset: currency });
 
       await app.delegate.continue();
       await app.delegate.openSearchProviderModal();
@@ -289,9 +289,7 @@ test.describe("Delegate", seiDetails, () => {
 
       await openAccount(app, seiDelegation.account);
 
-      await app.account.startStakingFlowFromMainStakeButton({
-        asset: seiDelegation.account.currency,
-      });
+      await app.account.startStakingFlowFromMainStakeButton({ asset: currency });
       await app.evmDelegate.continueFromRewardsInfoIfPresent();
       await app.evmDelegate.expectValidatorListVisible();
       await app.evmDelegate.selectFirstValidator();
@@ -335,9 +333,7 @@ test.describe("Lock and vote - CELO", celoDetails, () => {
     },
     async ({ app }) => {
       await openAccount(app, celoStaking.account);
-      await app.account.startStakingFlowFromMainStakeButton({
-        asset: celoStaking.account.currency,
-      });
+      await app.account.startStakingFlowFromMainStakeButton({ asset: currency });
       await app.delegate.checkCeloManageAssetModal();
       await app.delegate.clickCeloLockButton();
       await app.delegate.fillAmount(celoStaking.amount);
@@ -362,9 +358,7 @@ test.describe("Lock and vote - CELO", celoDetails, () => {
     },
     async ({ app }) => {
       await openAccount(app, celoStaking.account);
-      await app.account.startStakingFlowFromMainStakeButton({
-        asset: celoStaking.account.currency,
-      });
+      await app.account.startStakingFlowFromMainStakeButton({ asset: currency });
       await app.delegate.checkCeloManageAssetModal();
       await app.delegate.clickCeloVoteButton();
       const validatorGroup = await app.delegate.selectProviderOnRow(1);
@@ -507,7 +501,7 @@ for (const scenario of validatorSelectionScenarios) {
       async ({ app }) => {
         await openAccount(app, delegate.account);
 
-        await app.account.startStakingFlowFromMainStakeButton({ asset: delegate.account.currency });
+        await app.account.startStakingFlowFromMainStakeButton({ asset: currency });
         await app.delegate.continue();
 
         await selectValidator(app, delegate, scenario.selection);
