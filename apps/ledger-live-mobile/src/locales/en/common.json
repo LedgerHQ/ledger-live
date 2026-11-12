@@ -3812,6 +3812,7 @@
       "TRANSFER_WITHDRAWN": "Transfer withdrawn",
       "OPT_IN": "Opt in",
       "OPT_OUT": "Opt out",
+      "OPT_EDIT": "Token updated",
       "CLOSE_ACCOUNT": "Close account",
       "APPROVE": "Enabled",
       "BOND": "Bond",

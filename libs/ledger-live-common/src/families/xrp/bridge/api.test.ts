@@ -296,7 +296,7 @@ describe("describeOptimisticOperation", () => {
     });
   });
 
-  it("records an edit limit of a held token as OPT_IN with a 0 value, as sync does", () => {
+  it("records an edit of a held token as OPT_EDIT with a 0 value", () => {
     const operation = buildOptimisticOperation(
       account,
       makeTrustSet("USD"),
@@ -304,13 +304,19 @@ describe("describeOptimisticOperation", () => {
       describeOptimisticOperation,
     );
 
-    expect(operation.type).toBe("OPT_IN");
+    expect(operation).toMatchObject({ type: "OPT_EDIT", accountId: "xrpAccount" });
     expect(operation.value.toFixed()).toBe("0");
     expect(operation.subOperations).toBeUndefined();
   });
 
+  it("records an opt-in to the held code of another issuer as OPT_IN", () => {
+    const transaction = { ...makeTrustSet("USD"), assetOwner: "rOtherIssuer" };
+
+    expect(describeOptimisticOperation("changeTrust", account, transaction)?.type).toBe("OPT_IN");
+  });
+
   it("keeps the generic description of a send", () => {
-    expect(describeOptimisticOperation("send")).toBeUndefined();
+    expect(describeOptimisticOperation("send", account, makeTrustSet("USD"))).toBeUndefined();
   });
 });
 

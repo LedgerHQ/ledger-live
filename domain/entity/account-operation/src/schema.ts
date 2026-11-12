@@ -41,6 +41,7 @@ export const OPERATION_TYPES = [
   "APPROVE",
   "OPT_IN",
   "OPT_OUT",
+  "OPT_EDIT",
   "LOCK",
   "UNLOCK",
   "WITHDRAW",
