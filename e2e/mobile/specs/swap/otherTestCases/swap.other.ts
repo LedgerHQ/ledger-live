@@ -182,7 +182,9 @@ export function runSwapLandingPageTest(
       await app.swapLiveApp.checkAssetToMatchesAccount(toAccount);
     });
 
+    setTeamOwner(Team.SWAP);
     $TmsLink("B2CQA-4014");
+    tags.filter(tag => tag !== "@LNS").forEach(tag => $Tag(tag));
     it("Swap amounts are formatted correctly for language: Français", async () => {
       await app.mainNavigation.openPortfolioViaDeeplink();
       await app.mainNavigation.navigateToSettings();
