@@ -1,4 +1,4 @@
-import { openHostedLoginInBrowser } from "../openHostedLogin.web";
+import { openHostedLoginInBrowser } from "../openHostedLogin";
 
 const loginUrl =
   "https://card.example.com/login?request=opaque%2Bvalue&redirect_uri=ledgerlive%3A%2F%2Fpaytab";
