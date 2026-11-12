@@ -6,6 +6,7 @@ import type {
   TransactionCommon,
 } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import { firstValueFrom, reduce } from "rxjs";
 
 import { getMainAccount, getParentAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
@@ -163,14 +164,14 @@ function resolveFeeEstimationAmount(input: {
   mainAccount: Account;
   displayAmount: string;
 }): BigNumber {
-  const displayAmount = new BigNumber(input.displayAmount);
+  const displayAmount = parseFiniteBigNumber(input.displayAmount);
   const magnitude = magnitudeOf(input.fromAccount);
   const balanceForCap =
     input.fromAccount.type === "TokenAccount"
       ? input.fromAccount.spendableBalance
       : input.mainAccount.spendableBalance;
 
-  if (displayAmount.isNaN() || displayAmount.isZero()) {
+  if (!displayAmount || displayAmount.isZero()) {
     return balanceForCap.multipliedBy(0.1).integerValue(BigNumber.ROUND_DOWN);
   }
 
@@ -211,13 +212,7 @@ function buildContext(
 }
 
 function coerceBigNumber(v: unknown): BigNumber | undefined {
-  if (v == null) return undefined;
-  if (BigNumber.isBigNumber(v)) return v;
-  if (typeof v === "string" || typeof v === "number") {
-    const bn = new BigNumber(v);
-    return bn.isNaN() ? undefined : bn;
-  }
-  return undefined;
+  return parseFiniteBigNumber(v, { allowHex: true });
 }
 
 function coerceString(v: unknown): string | undefined {

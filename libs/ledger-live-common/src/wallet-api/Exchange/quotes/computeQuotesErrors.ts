@@ -1,4 +1,4 @@
-import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 
 import type { RawQuoteError } from "./service/types";
 import { ProviderErrorCodes, QuotesErrorCodes, type QuotesError } from "./types";
@@ -43,16 +43,21 @@ export function computeQuotesErrors(args: ComputeQuotesErrorsArgs): QuotesError[
 
   const errors: QuotesError[] = [{ code: QuotesErrorCodes.NO_QUOTES }];
 
-  const amountFromBn = new BigNumber(args.amountFrom);
+  const amountFromBn = parseFiniteBigNumber(args.amountFrom);
+  if (!amountFromBn) {
+    return errors;
+  }
   const amountOffLimits = args.providerErrors.filter(
     row => row.code === ProviderErrorCodes.AMOUNT_OFF_LIMITS,
   );
 
   const tooLowCandidates = amountOffLimits
-    .map(row => ({ minAmount: row.parameter?.minAmount }))
-    .filter((entry): entry is { minAmount: string } => entry.minAmount != null)
-    .filter(entry => new BigNumber(entry.minAmount).gte(amountFromBn))
-    .sort((a, b) => new BigNumber(a.minAmount).comparedTo(new BigNumber(b.minAmount)) ?? 0);
+    .flatMap(row => {
+      const minAmount = row.parameter?.minAmount;
+      const value = parseFiniteBigNumber(minAmount);
+      return minAmount != null && value?.gte(amountFromBn) ? [{ minAmount, value }] : [];
+    })
+    .sort((a, b) => a.value.comparedTo(b.value) ?? 0);
 
   const lowest = tooLowCandidates[0];
   if (lowest) {
@@ -60,10 +65,12 @@ export function computeQuotesErrors(args: ComputeQuotesErrorsArgs): QuotesError[
   }
 
   const tooHighCandidates = amountOffLimits
-    .map(row => ({ maxAmount: row.parameter?.maxAmount }))
-    .filter((entry): entry is { maxAmount: string } => entry.maxAmount != null)
-    .filter(entry => new BigNumber(entry.maxAmount).lte(amountFromBn))
-    .sort((a, b) => new BigNumber(b.maxAmount).comparedTo(new BigNumber(a.maxAmount)) ?? 0);
+    .flatMap(row => {
+      const maxAmount = row.parameter?.maxAmount;
+      const value = parseFiniteBigNumber(maxAmount);
+      return maxAmount != null && value?.lte(amountFromBn) ? [{ maxAmount, value }] : [];
+    })
+    .sort((a, b) => b.value.comparedTo(a.value) ?? 0);
 
   const highest = tooHighCandidates[0];
   if (highest) {

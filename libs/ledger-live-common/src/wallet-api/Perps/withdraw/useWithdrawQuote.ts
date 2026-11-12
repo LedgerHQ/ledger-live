@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { fetchPerpsWithdrawQuote, type WithdrawQuote } from "./quote";
 
@@ -28,7 +28,7 @@ function requestKeyOf({
   destinationAccount,
   counterValueCurrency,
 }: PerpsWithdrawQuoteParams) {
-  if (!destinationAccount || !new BigNumber(amount).isGreaterThan(0)) return null;
+  if (!destinationAccount || !parseFiniteBigNumber(amount)?.isGreaterThan(0)) return null;
   return [amount, sourceAccount.id, destinationAccount.id, counterValueCurrency].join("|");
 }
 

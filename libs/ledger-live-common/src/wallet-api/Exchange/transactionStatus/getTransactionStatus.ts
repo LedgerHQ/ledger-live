@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { flattenAccounts, getAccountCurrency } from "../../../account";
 import getCompleteSwapHistory from "../../../exchange/swap/getCompleteSwapHistory";
@@ -81,19 +82,16 @@ function getFinalAmount(swapOperation: MappedSwapOperation | undefined): string 
     : undefined;
 }
 
-function isAmountGreaterThanZero(amount: string): boolean {
-  return new BigNumber(amount).isGreaterThan(0);
-}
-
 function getMagnitudeAwareRemoteFinalAmount(
   finalAmount: string | undefined,
   swapOperation: MappedSwapOperation | undefined,
 ): string | undefined {
-  if (!finalAmount || !isAmountGreaterThanZero(finalAmount) || !swapOperation) return undefined;
+  const amount = parseFiniteBigNumber(finalAmount);
+  if (!amount?.isGreaterThan(0) || !swapOperation) return undefined;
 
   const toCurrency = getAccountCurrency(swapOperation.toAccount);
   const toMagnitude = toCurrency.units[0].magnitude;
-  return new BigNumber(finalAmount).times(new BigNumber(10).pow(toMagnitude)).toFixed();
+  return amount.times(new BigNumber(10).pow(toMagnitude)).toFixed();
 }
 
 function getTransactionStatusValue(status: string | undefined): TransactionStatusValue | undefined {

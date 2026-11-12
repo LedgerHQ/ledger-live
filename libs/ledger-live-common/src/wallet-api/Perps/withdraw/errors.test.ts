@@ -40,6 +40,16 @@ describe("toWithdrawError", () => {
     expect(error).toMatchObject({ minAmount: undefined });
   });
 
+  it("does not map amount_off_limits to the minimum error when the requested amount is unparseable", () => {
+    const error = toWithdrawError({
+      status: 400,
+      body: errorBody("amount_off_limits", { minAmount: "5" }),
+      requestedAmount: "",
+    });
+
+    expect(error).not.toBeInstanceOf(WithdrawMinimumAmountError);
+  });
+
   it("maps SWAP_QUOTE_LOW_LIQUIDITY", () => {
     expect(
       toWithdrawError({ status: 400, body: errorBody("SWAP_QUOTE_LOW_LIQUIDITY") }),

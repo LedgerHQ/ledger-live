@@ -43,7 +43,7 @@ export type SwapOperationDetails = Omit<MappedSwapOperation, "fromAccount" | "to
 };
 
 export type SwapPendingOperation = {
-  swapOperation: SwapOperation;
+  swapOperation: Omit<SwapOperation, "toAmount"> & Partial<Pick<SwapOperation, "toAmount">>;
   isEmbeddedSwap?: boolean;
   sponsored?: boolean;
 };

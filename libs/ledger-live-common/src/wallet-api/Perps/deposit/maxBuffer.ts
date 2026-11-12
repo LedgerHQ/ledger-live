@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { parseCurrencyUnit } from "../../../currencies";
 
@@ -10,7 +11,7 @@ export function getDepositMaxBuffer(
   if (account.type !== "Account") return new BigNumber(0);
 
   const constant = constants?.[account.currency.id];
-  if (!constant) return new BigNumber(0);
+  if (!constant || !parseFiniteBigNumber(constant)) return new BigNumber(0);
 
   const buffer = parseCurrencyUnit(account.currency.units[0], constant);
   return buffer.isFinite() && buffer.gt(0) ? buffer : new BigNumber(0);

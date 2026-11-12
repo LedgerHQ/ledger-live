@@ -202,6 +202,12 @@ describe("formatQuote", () => {
       expect(out.sendAmountCountervalue).toEqual(EMPTY);
     });
 
+    it("collapses the receive countervalue to EMPTY when the receive amount is unreadable", () => {
+      const input = makeInput();
+      const out = formatQuote({ ...input, quote: { ...input.quote, receiveAmount: "abc" } });
+      expect(out.receiveAmountCountervalue).toEqual(EMPTY);
+    });
+
     it("collapses the receive countervalue to EMPTY when the receive currency is missing", () => {
       const out = formatQuote(makeInput({ receiveCurrency: undefined }));
       expect(out.receiveAmountCountervalue).toEqual(EMPTY);

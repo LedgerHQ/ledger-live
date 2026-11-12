@@ -221,30 +221,33 @@ describe("getTransactionStatus", () => {
     });
   });
 
-  it("ignores zero remote final amount so history receive amount remains visible", async () => {
-    mockedGetCompleteSwapHistory.mockResolvedValueOnce([
-      {
-        day: new Date("2026-01-02"),
-        data: [
-          makeSwapOperation({ finalAmount: new BigNumber(0), toAmount: new BigNumber("200000") }),
-        ],
-      },
-    ]);
-    mockedFetchTransactionSwapStatus.mockResolvedValueOnce({
-      provider: "lifi",
-      swapId: "swap-1",
-      status: "finished",
-      finalAmount: "0",
-    });
+  it.each(["0", "not-a-number"])(
+    "ignores remote final amount %p so history receive amount remains visible",
+    async remoteFinalAmount => {
+      mockedGetCompleteSwapHistory.mockResolvedValueOnce([
+        {
+          day: new Date("2026-01-02"),
+          data: [
+            makeSwapOperation({ finalAmount: new BigNumber(0), toAmount: new BigNumber("200000") }),
+          ],
+        },
+      ]);
+      mockedFetchTransactionSwapStatus.mockResolvedValueOnce({
+        provider: "lifi",
+        swapId: "swap-1",
+        status: "finished",
+        finalAmount: remoteFinalAmount,
+      });
 
-    await expect(
-      getTransactionStatus({ swapId: "swap-1" }, { accounts: [makeAccount("from")] }),
-    ).resolves.toMatchObject({
-      status: "finished",
-      finalAmount: undefined,
-      receivedAmount: "200000",
-    });
-  });
+      await expect(
+        getTransactionStatus({ swapId: "swap-1" }, { accounts: [makeAccount("from")] }),
+      ).resolves.toMatchObject({
+        status: "finished",
+        finalAmount: undefined,
+        receivedAmount: "200000",
+      });
+    },
+  );
 
   it("keeps backend status but exposes failed local send status for row rendering", async () => {
     const failedOperation = makeOperation({ blockHeight: 123, hasFailed: true });

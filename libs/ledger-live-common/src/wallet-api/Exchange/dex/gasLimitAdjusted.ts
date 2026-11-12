@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 
 /**
  * Apply a safety multiplier to a provider-reported gas limit, with a
@@ -15,8 +16,8 @@ export const getAdjustedGasLimit = (
     return defaultGasLimit;
   }
 
-  const baseGasLimit = new BigNumber(gasLimit);
-  if (baseGasLimit.isNaN() || baseGasLimit.isZero()) {
+  const baseGasLimit = parseFiniteBigNumber(gasLimit, { allowHex: true });
+  if (!baseGasLimit || baseGasLimit.isZero()) {
     return defaultGasLimit;
   }
 

@@ -258,6 +258,31 @@ describe("fetchNetworkFeeContext", () => {
     expect(preparedArg.amount.toFixed()).toBe("900000000000000000");
   });
 
+  it.each([
+    ["a hex string", "0x4a817c800", new BigNumber("20000000000")],
+    ["a BigNumber", new BigNumber("20000000000"), new BigNumber("20000000000")],
+    ["a non-numeric string", "abc", undefined],
+    ["an empty string", "", undefined],
+    ["NaN", NaN, undefined],
+  ])("reads a prepared gas price given as %s", async (_case, gasPrice, expected) => {
+    const account = makeEvmAccount();
+    mockedResolveId.mockReturnValue(account.id);
+    mockedGetParent.mockReturnValue(undefined as unknown as Account);
+    mockedGetMain.mockReturnValue(account);
+    const bridge = makeBridge({
+      prepareTransaction: jest.fn().mockResolvedValue({ maxFeePerGas: gasPrice, gasPrice }),
+    });
+    mockedGetBridge.mockReturnValue(bridge as unknown as ReturnType<typeof getAccountBridge>);
+
+    const result = await fetchNetworkFeeContext({
+      accounts: [account as unknown as AccountLike],
+      fromAccountId: "wallet:evm:1",
+      amountFrom: "1",
+    });
+
+    expect(result).toMatchObject({ maxFeePerGas: expected, gasPrice: expected });
+  });
+
   it("syncs bitcoin accounts before preparing the fee transaction", async () => {
     const account = makeBtcAccount();
     mockedResolveId.mockReturnValue(account.id);
@@ -444,26 +469,29 @@ describe("fetchNetworkFeeContext", () => {
     expect(onFeeEstimationFailed).not.toHaveBeenCalled();
   });
 
-  it("falls back to 10% of spendable balance when the display amount is zero", async () => {
-    const account = makeEvmAccount({
-      spendableBalance: new BigNumber("5000000000000000000"),
-    } as Partial<Account>);
-    mockedResolveId.mockReturnValue(account.id);
-    mockedGetParent.mockReturnValue(undefined as unknown as Account);
-    mockedGetMain.mockReturnValue(account);
-    const bridge = makeBridge();
-    mockedGetBridge.mockReturnValue(bridge as unknown as ReturnType<typeof getAccountBridge>);
+  it.each(["0", "not-a-number"])(
+    "falls back to 10% of spendable balance when the display amount is %p",
+    async amountFrom => {
+      const account = makeEvmAccount({
+        spendableBalance: new BigNumber("5000000000000000000"),
+      } as Partial<Account>);
+      mockedResolveId.mockReturnValue(account.id);
+      mockedGetParent.mockReturnValue(undefined as unknown as Account);
+      mockedGetMain.mockReturnValue(account);
+      const bridge = makeBridge();
+      mockedGetBridge.mockReturnValue(bridge as unknown as ReturnType<typeof getAccountBridge>);
 
-    await fetchNetworkFeeContext({
-      accounts: [account as unknown as AccountLike],
-      fromAccountId: "wallet:evm:1",
-      amountFrom: "0",
-    });
+      await fetchNetworkFeeContext({
+        accounts: [account as unknown as AccountLike],
+        fromAccountId: "wallet:evm:1",
+        amountFrom,
+      });
 
-    const [, preparedArg] = bridge.prepareTransaction.mock.calls[0];
-    // 10% of 5 ETH in wei.
-    expect(preparedArg.amount.toFixed()).toBe("500000000000000000");
-  });
+      const [, preparedArg] = bridge.prepareTransaction.mock.calls[0];
+      // 10% of 5 ETH in wei.
+      expect(preparedArg.amount.toFixed()).toBe("500000000000000000");
+    },
+  );
 
   it("uses fromAccount.id as subAccountId for token sub-accounts", async () => {
     const tokenAccount = {

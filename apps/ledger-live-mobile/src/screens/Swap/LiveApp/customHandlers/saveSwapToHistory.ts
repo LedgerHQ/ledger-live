@@ -1,7 +1,7 @@
 import { getParentAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { AccountLike, TokenAccount, SwapOperation } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
+import { parseSwapHistoryAmounts } from "@ledgerhq/live-common/wallet-api/Exchange/swapParams";
 import { Dispatch } from "redux";
 import { updateAccountWithUpdater } from "~/actions/accounts";
 import { convertToAtomicUnit } from "../utils";
@@ -42,6 +42,10 @@ export function saveSwapToHistory(accounts: AccountLike[], dispatch: Dispatch) {
     ) {
       return Promise.reject("Cannot save swap missing params");
     }
+    const { fromAmount, toAmount } = parseSwapHistoryAmounts({
+      fromAmount: swap.fromAmount,
+      toAmount: swap.toAmount,
+    });
     const fromId = getAccountIdFromWalletAccountId(swap.fromAccountId);
     const toId = getAccountIdFromWalletAccountId(swap.toAccountId);
     if (!fromId || !toId) return Promise.reject("Accounts not found");
@@ -61,11 +65,11 @@ export function saveSwapToHistory(accounts: AccountLike[], dispatch: Dispatch) {
       receiverAccountId: toId,
       tokenId: toId,
       fromAmount: convertToAtomicUnit({
-        amount: new BigNumber(swap.fromAmount),
+        amount: fromAmount,
         account: fromAccount,
       })!,
       toAmount: convertToAtomicUnit({
-        amount: new BigNumber(swap.toAmount),
+        amount: toAmount,
         account: toAccount,
       })!,
     };
