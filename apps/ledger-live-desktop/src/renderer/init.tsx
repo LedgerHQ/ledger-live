@@ -12,6 +12,7 @@ import {
   restoreLargeScreenUpsellModalState,
 } from "@features/flow-large-screen-upsell";
 import { restorePayCardBalanceFilter } from "@features/flow-pay-balance/state";
+import { hasOnboardedWithDeviceSelector } from "LLD/features/AccountDetail/utils/hasOnboardedWithDevice";
 import { restoreAccountAnalyticsIntroductionFromStorage } from "./restoreAccountAnalyticsIntroduction";
 import { restorePayCardFeatureTour } from "@features/flow-pay-feature-tour/state";
 import { restoreReceiveVerifyHint } from "@features/flow-pay-request/state";
@@ -396,7 +397,10 @@ async function init() {
     store.dispatch(restoreLargeScreenUpsellModalState(largeScreenUpsellModalState));
   }
 
-  await restoreAccountAnalyticsIntroductionFromStorage(store.dispatch);
+  await restoreAccountAnalyticsIntroductionFromStorage(
+    store.dispatch,
+    hasOnboardedWithDeviceSelector(store.getState()),
+  );
   const payCardState = await getKey("app", "payCard");
   if (payCardState !== undefined) {
     store.dispatch(restorePayCardFeatureTour(payCardState));

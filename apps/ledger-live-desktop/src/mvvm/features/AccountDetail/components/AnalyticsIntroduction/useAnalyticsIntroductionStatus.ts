@@ -3,7 +3,10 @@ import {
   hasConfirmedAccountHistory,
   type AccountAnalyticsIntroductionStatus,
 } from "@features/flow-account-detail-analytics-notice";
-import { selectAccountAnalyticsIntroductionDismissed } from "@features/flow-account-detail-analytics-notice/state";
+import {
+  selectAccountAnalyticsIntroductionDismissed,
+  selectAccountAnalyticsIntroductionEligible,
+} from "@features/flow-account-detail-analytics-notice/state";
 import { isConfirmedOperation } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { Account } from "@ledgerhq/types-live";
 import { useSelector } from "LLD/hooks/redux";
@@ -13,6 +16,7 @@ export function useAnalyticsIntroductionStatus(
   account: Account,
 ): AccountAnalyticsIntroductionStatus {
   const isEnabled = useAccountDetailAnalyticsBannerFeature();
+  const isEligible = useSelector(selectAccountAnalyticsIntroductionEligible);
   const hasDismissed = useSelector(selectAccountAnalyticsIntroductionDismissed);
   const confirmationsNb = useSelector(state =>
     confirmationsNbForCurrencySelector(state, { currency: account.currency }),
@@ -20,5 +24,5 @@ export function useAnalyticsIntroductionStatus(
   const hasConfirmedHistory = hasConfirmedAccountHistory(account, operation =>
     isConfirmedOperation(operation, account, confirmationsNb),
   );
-  return { isEnabled, hasConfirmedHistory, hasDismissed };
+  return { isEnabled, isEligible, hasConfirmedHistory, hasDismissed };
 }
