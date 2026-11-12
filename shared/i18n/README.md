@@ -1,8 +1,7 @@
 # @shared/i18n
 
-> [!CAUTION]
-> **Status: UNSTABLE** — New package; the contract is still being validated against the first
-> `features/*` migrations.
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
 
 A thin i18n **context bridge**. Each app mounts one `<I18nProvider>` at its root with its own
 i18next instance; `features/*`, `domain/*` and `shared/*` components then call `useTranslation()`
