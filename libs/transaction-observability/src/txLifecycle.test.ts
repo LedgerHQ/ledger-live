@@ -433,14 +433,15 @@ describe("lifecycle products", () => {
     fetchSpy.mockRestore();
   });
 
-  it("gives a manifest two products claim to neither", () => {
+  it("gives a manifest two products claim to the first one listed", () => {
     const event = { status: "intent", stage: TransactionStage.Sign, ...common } as LogEvent;
     const claims = product({ id: "a", pathOf: () => "dapp" });
+    const alsoClaims = product({ id: "b", pathOf: () => "dapp" });
 
     expect(resolveTxLifecycleProduct([claims, product({ id: "b" })], event)?.product).toBe(claims);
-    expect(
-      resolveTxLifecycleProduct([claims, product({ id: "b", pathOf: () => "dapp" })], event),
-    ).toBeUndefined();
+    expect(resolveTxLifecycleProduct([claims, alsoClaims], event)?.product).toBe(claims);
+    expect(resolveTxLifecycleProduct([alsoClaims, claims], event)?.product).toBe(alsoClaims);
+    expect(resolveTxLifecycleProduct([product({ id: "c" })], event)).toBeUndefined();
   });
 
   it("clears one product's attempts and keeps the other's", () => {

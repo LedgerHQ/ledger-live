@@ -43,6 +43,12 @@ export type TxLifecyclePayload = TxLifecyclePayloadBase &
   );
 
 /**
+ * Where a payload comes from: a transaction event the observer received, an attempt a new intent
+ * replaced before any terminal arrived, or an attempt the screen hosting it left behind.
+ */
+export type TxLifecycleSource = "event" | "superseded" | "teardown";
+
+/**
  * A product the lifecycle is monitored for. The core tracks attempts and posts them; each
  * product says which events are its own, which kill-switch it answers to and where it posts.
  */
@@ -53,24 +59,24 @@ export type TxLifecycleProduct = {
   isEnabled(): boolean;
   baseUrl(): string;
   /** The payloads the host posts; the others only move the pending state. All when omitted. */
-  reports?(payload: TxLifecyclePayload): boolean;
+  reports?(payload: TxLifecyclePayload, source: TxLifecycleSource): boolean;
 };
 
 type TxLifecycleClaim = { product: TxLifecycleProduct; path: TxLifecyclePath };
 
-/** Exactly one product owns an event: a manifest two products claim belongs to neither. */
+/**
+ * Exactly one product owns an event: the first in `products` that claims it. The list order is
+ * the priority, so a manifest two products claim goes to the earlier one instead of being lost.
+ */
 export function resolveTxLifecycleProduct(
   products: readonly TxLifecycleProduct[],
   event: LogEvent,
 ): TxLifecycleClaim | undefined {
-  let claim: TxLifecycleClaim | undefined;
   for (const product of products) {
     const path = product.pathOf(event);
-    if (!path) continue;
-    if (claim) return undefined;
-    claim = { product, path };
+    if (path) return { product, path };
   }
-  return claim;
+  return undefined;
 }
 const CURRENCY_FAMILIES = new Set<TxLifecyclePayload["currency_family"]>([
   "solana",
@@ -208,9 +214,13 @@ function sameLifecycleBase(left: TxLifecyclePayloadBase, right: TxLifecyclePaylo
   );
 }
 
-function postTxLifecycle(product: TxLifecycleProduct, payload: TxLifecyclePayload): void {
+function postTxLifecycle(
+  product: TxLifecycleProduct,
+  payload: TxLifecyclePayload,
+  source: TxLifecycleSource,
+): void {
   try {
-    if (product.reports && !product.reports(payload)) return;
+    if (product.reports && !product.reports(payload, source)) return;
     void fetch(`${product.baseUrl()}${TX_LIFECYCLE_PATH}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -222,17 +232,21 @@ function postTxLifecycle(product: TxLifecycleProduct, payload: TxLifecyclePayloa
   }
 }
 
-function abandonPendingLifecycle(key: string): void {
+function abandonPendingLifecycle(key: string, source: Exclude<TxLifecycleSource, "event">): void {
   const pending = pendingLifecycle.get(key);
   if (!pending) return;
 
   pendingLifecycle.delete(key);
-  postTxLifecycle(pending.product, {
-    ...pending.base,
-    event: "tx_terminal",
-    outcome: "failure",
-    failure_class: "abandoned",
-  });
+  postTxLifecycle(
+    pending.product,
+    {
+      ...pending.base,
+      event: "tx_terminal",
+      outcome: "failure",
+      failure_class: "abandoned",
+    },
+    source,
+  );
 }
 
 export function sendTxLifecycle(
@@ -249,21 +263,21 @@ export function sendTxLifecycle(
     // A dApp sign observable may resubscribe without representing another user attempt.
     if (pending?.path === "dapp" && sameLifecycleBase(pending, next)) return;
 
-    if (pending && !isDappPlaceholder) abandonPendingLifecycle(key);
+    if (pending && !isDappPlaceholder) abandonPendingLifecycle(key, "superseded");
     pendingLifecycle.set(key, { product, base: next });
   } else {
     if (!pendingLifecycle.has(key)) return;
     pendingLifecycle.delete(key);
   }
 
-  postTxLifecycle(product, payload);
+  postTxLifecycle(product, payload, "event");
 }
 
 export function abandonPendingDappTxLifecycle(
   platform: TxLifecyclePlatform,
   manifestId: string,
 ): void {
-  abandonPendingLifecycle(lifecycleKey({ platform, path: "dapp" }, manifestId));
+  abandonPendingLifecycle(lifecycleKey({ platform, path: "dapp" }, manifestId), "teardown");
 }
 
 export function clearPendingDappTxLifecycle(
@@ -292,11 +306,16 @@ export function observeTxLifecycle(
   products: readonly TxLifecycleProduct[],
 ): () => void {
   return setTransactionObserver(event => {
-    const disabled = products.filter(product => !product.isEnabled());
-    for (const product of disabled) clearPendingTxLifecycle(platform, product.id);
+    const enabled: TxLifecycleProduct[] = [];
+    for (const product of products) {
+      if (product.isEnabled()) enabled.push(product);
+      else clearPendingTxLifecycle(platform, product.id);
+    }
 
-    const claim = resolveTxLifecycleProduct(products, event);
-    if (!claim || disabled.includes(claim.product)) return;
+    // Only enabled products compete for an event: a product switched off must not take a
+    // manifest away from one that is monitoring it.
+    const claim = resolveTxLifecycleProduct(enabled, event);
+    if (!claim) return;
 
     // The manifest stays local: it correlates the attempt here and never reaches the wire.
     sendTxLifecycle(
