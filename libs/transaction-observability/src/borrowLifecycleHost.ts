@@ -7,6 +7,7 @@ import {
   type TxLifecyclePayload,
   type TxLifecyclePlatform,
   type TxLifecycleProduct,
+  type TxLifecycleSource,
 } from "./txLifecycle";
 
 /**
@@ -25,7 +26,12 @@ export function isBorrowTxLifecycleMonitoringEnabled(): boolean {
   return readFlag?.() ?? false;
 }
 
-const DEFAULT_BORROW_API_BASE_URL = "https://global.api.prd.ledger.com/borrow";
+/**
+ * Used when a build sets no `BORROW_API_BASE_URL`. Every release env file sets the prod sink
+ * explicitly, so the fallback only catches dev and ad-hoc builds: it points at staging to keep
+ * them out of production counters.
+ */
+const DEFAULT_BORROW_API_BASE_URL = "https://global.api.stg.ledger-test.com/borrow";
 
 let borrowApiBaseUrl = DEFAULT_BORROW_API_BASE_URL;
 
@@ -35,13 +41,15 @@ export function setBorrowTxLifecycleBaseUrl(baseUrl: string | undefined): void {
 }
 
 /**
- * The Borrow live app owns its intent and its success/failure terminals, because only it knows
- * the action (supply, borrow, repay, withdraw) the wire contract has no field for. The host
- * therefore tracks Borrow attempts locally and only reports what the app cannot: an attempt
- * that ended without any terminal (abandoned). Everything else would double count.
+ * The Borrow live app owns its intent and its terminals, because only it knows the action and
+ * step. A sign modal the user closes rejects the app's request too, so the app already reports
+ * it (as a cancel). The host therefore tracks Borrow attempts locally and only reports what the
+ * app cannot see: an attempt still pending when the Borrow screen went away (teardown).
+ * Everything else, including modal-close and superseded abandons, would double count.
  */
-function isAbandoned(payload: TxLifecyclePayload): boolean {
+function isTeardownAbandon(payload: TxLifecyclePayload, source: TxLifecycleSource): boolean {
   return (
+    source === "teardown" &&
     payload.event === "tx_terminal" &&
     payload.outcome === "failure" &&
     payload.failure_class === "abandoned"
@@ -53,7 +61,7 @@ export const borrowLifecycleProduct: TxLifecycleProduct = {
   pathOf: event => (isBorrowApp(event.manifestId) ? "dapp" : undefined),
   isEnabled: isBorrowTxLifecycleMonitoringEnabled,
   baseUrl: () => borrowApiBaseUrl,
-  reports: isAbandoned,
+  reports: isTeardownAbandon,
 };
 
 /**

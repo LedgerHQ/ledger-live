@@ -130,9 +130,10 @@ optionally, which payloads the host reports (`reports`). Earn's lives in `earnLi
 and Borrow's in `borrowLifecycleHost.ts`, and neither imports the other.
 
 `txLifecycleProducts.ts` is the only module that lists both. `registerTxLifecycleObserver`
-installs one observer that hands each event to the single product that claims it. A manifest
-two products claim goes to neither, so a misconfigured id loses data rather than landing in the
-wrong sink. A pending attempt remembers the product that opened it, so clearing, abandoning and
+installs one observer that hands each event to the single **enabled** product that claims it.
+When two enabled products claim a manifest, the one listed first wins (Earn before Borrow), so a
+misconfigured Borrow manifest id can never take events away from Earn, and a product whose
+kill-switch is off never competes for a manifest at all. A pending attempt remembers the product that opened it, so clearing, abandoning and
 picking the sink never re-resolve ownership. To add a product, write its descriptor in its own
 host module and add it to that list.
 
@@ -140,14 +141,19 @@ host module and add it to that list.
 
 Borrow reuses the Earn wire contract (`tx_intent` / `tx_terminal`, schema version 1) behind its
 own kill-switch, `borrowTxLifecycleMonitoring`, and posts to its own sink (`BORROW_API_BASE_URL`,
-default `https://global.api.prd.ledger.com/borrow`) at `/v1/tx/lifecycle`.
+default `https://global.api.stg.ledger-test.com/borrow`, so dev builds without the variable stay
+out of production counters; every release env file sets the prod URL) at `/v1/tx/lifecycle`.
 
 The host deliberately reports **less** than it does for Earn. The contract has no field for the
 Borrow action (supply / borrow / repay / withdraw), and the host cannot derive it: a sign request
 only carries call data. The Borrow live app knows the action, so it owns `tx_intent` and the
 success/failure `tx_terminal`. The host tracks Borrow attempts (manifest `borrow`, or the id
-`ptxBorrowLiveApp` configures) only to emit what the app cannot: a `failure/abandoned` terminal
-when the webview is torn down, or the sign flow is abandoned, with an attempt still pending.
+`ptxBorrowLiveApp` configures) only to emit what the app cannot see: a `failure/abandoned`
+terminal when the Borrow screen is torn down with an attempt still pending. A sign modal the user
+closes also rejects the app's Wallet API request, so the app reports it (as a cancel) and the
+host only closes its pending attempt. An attempt superseded by a new intent is likewise closed
+without a post. `TxLifecycleProduct.reports` receives the payload's source (`event`,
+`superseded`, `teardown`) for that decision.
 There is no placeholder intent for a plain webview open, so an idle Borrow session never counts.
 Mounting the Borrow screen drops any attempt left pending before it, so a teardown only reports
 attempts that screen started. `installBorrowLifecycleHost` wires the readers at boot and
