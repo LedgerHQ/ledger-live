@@ -3,15 +3,20 @@ import type BigNumber from "bignumber.js";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { Transaction } from "@ledgerhq/live-common/families/xrp/types";
 import { TrackScreen } from "@shared/analytics-react";
+import { useSelector } from "LLD/hooks/redux";
+import { localeSelector } from "~/renderer/reducers/settings";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
+import { useDiscreetMode } from "~/renderer/components/Discreet";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import Label from "~/renderer/components/Label";
 import Switch from "~/renderer/components/Switch";
+import { getXrpResources } from "../../utils";
 import type { StepProps } from "../types";
 
 export default function StepSettings({
@@ -23,12 +28,23 @@ export default function StepSettings({
   token,
   maxLimit,
   isRippling,
+  tokenAccount,
   onChangeRippling,
   onUpdateTransaction,
 }: StepProps) {
   invariant(account && transaction && token, "xrp: account, transaction and token required");
 
   const bridge = useAccountBridge<Transaction>(account, parentAccount);
+  const discreet = useDiscreetMode();
+  const locale = useSelector(localeSelector);
+
+  const isCurrentLimitZero =
+    !!getXrpResources(tokenAccount)?.limit?.isZero() && transaction.amount.isZero();
+
+  const balance = tokenAccount?.balance;
+  const isLimitBelowBalance = transaction.amount.gt(0) && transaction.amount.lt(balance ?? 0);
+  const formattedBalance =
+    balance && formatCurrencyUnit(token.units[0], balance, { showCode: true, discreet, locale });
 
   const onChangeLimit = useCallback(
     (limit: BigNumber) => {
@@ -51,7 +67,7 @@ export default function StepSettings({
         defaultUnit={token.units[0]}
         value={transaction.amount}
         onChange={onChangeLimit}
-        error={status.errors.amount}
+        error={isCurrentLimitZero ? undefined : status.errors.amount}
         allowZero
         renderRight={
           maxLimit?.gt(0) ? (
@@ -63,6 +79,19 @@ export default function StepSettings({
         id="xrp-trust-limit-input"
         data-testid="xrp-trust-limit-input"
       />
+      {isCurrentLimitZero ? (
+        <Alert type="warning" mt={2}>
+          <Trans i18nKey="xrp.tokenSettings.currentLimitZero" />
+        </Alert>
+      ) : null}
+      {isLimitBelowBalance ? (
+        <Alert type="warning" mt={2}>
+          <Trans
+            i18nKey="xrp.tokenSettings.limitBelowBalance"
+            values={{ balance: formattedBalance }}
+          />
+        </Alert>
+      ) : null}
       <Box horizontal alignItems="center" justifyContent="space-between" mt={4}>
         <Label>
           <Trans i18nKey="xrp.rippling.label" />

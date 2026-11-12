@@ -4337,6 +4337,8 @@
     },
     "tokenSettings": {
       "title": "Token settings",
+      "currentLimitZero": "Your limit is 0: you can't receive this token.",
+      "limitBelowBalance": "Your balance ({{balance}}) is above this limit. You won't be able to receive this token until your balance is below this limit.",
       "steps": {
         "confirmation": {
           "success": {
