@@ -107,6 +107,7 @@ describe("ContactsAddAddressEntry", () => {
         value: "0xabc",
         resolvedAddress: null,
         inputMethod: "manual",
+        keepsEnsDisclaimer: false,
       });
 
       fireEvent.changeText(screen.getByTestId("contacts-add-address-input"), value);
@@ -121,6 +122,7 @@ describe("ContactsAddAddressEntry", () => {
       value: VALID_ADDRESS,
       resolvedAddress: null,
       inputMethod: "manual",
+      keepsEnsDisclaimer: false,
     });
 
     expect(screen.getByTestId("contacts-add-address-input").props.helperText).toBe(
