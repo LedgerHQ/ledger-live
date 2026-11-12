@@ -5,6 +5,7 @@ import { build as electronBuild } from "electron-builder";
 import { execa } from "execa";
 import semver, { type ReleaseType } from "semver";
 import pkg from "../../package.json" with { type: "json" };
+import { getPub } from "./crypto.mts";
 
 const lldRoot = path.resolve(import.meta.dirname, "..", "..");
 const pkgPath = path.join(lldRoot, "package.json");
@@ -14,6 +15,7 @@ const releaseTypes: ReadonlySet<string> = new Set(semver.RELEASE_TYPES);
 
 type BuildOptions = {
   dir?: boolean;
+  privateKey?: string;
 };
 
 type BuildResult = { buildDir: string; version: string; unpackedApp: string };
@@ -25,7 +27,7 @@ type PlatformBuild = {
 
 export async function build(
   bump?: ReleaseType,
-  { dir = false }: BuildOptions = {},
+  { dir = false, privateKey: privKey }: BuildOptions = {},
 ): Promise<BuildResult> {
   const version = bump ? semver.inc(pkg.version, bump) : pkg.version;
   if (!version) throw new Error(`Cannot apply a ${bump} bump to ${pkg.version}`);
@@ -39,7 +41,7 @@ export async function build(
   fs.rmSync(path.join(lldRoot, ".webpack"), { recursive: true, force: true });
   fs.rmSync(buildDir, { recursive: true, force: true });
 
-  await withPackageVersion(version, () => bundle());
+  await withPackageVersion(version, () => bundle(privKey && getPub(privKey)));
 
   process.env.CSC_IDENTITY_AUTO_DISCOVERY = "false";
 
@@ -126,9 +128,10 @@ async function withPackageVersion(bumpedVersion: string, run: () => Promise<unkn
   }
 }
 
-function bundle() {
+function bundle(pubKey: string | undefined) {
+  if (pubKey) console.log(`Using the app update public key:\n${pubKey}`);
   return execa(process.execPath, ["./tools/main-rspack.mts", "build"], {
-    env: { NODE_ENV: "production", STAGING: "1" },
+    env: { NODE_ENV: "production", STAGING: "1", ...(pubKey && { UPDATE_CHECK_PUBKEY: pubKey }) },
     stdio: "inherit",
   });
 }

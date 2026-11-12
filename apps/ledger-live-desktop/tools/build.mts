@@ -8,5 +8,8 @@ const { values } = parseArgs({
   },
 });
 
-const { unpackedApp } = await build(parseBump(values.bump), { dir: values.dir });
+const { unpackedApp } = await build(parseBump(values.bump), {
+  dir: values.dir,
+  privateKey: process.env.EC_PRIV,
+});
 openApp(unpackedApp);
