@@ -1,6 +1,5 @@
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
 import semver from "semver";
-import type { FirmwareCheck } from "./types";
 
 export type FirmwareVersionInput = {
   currentVersion: string;
@@ -45,30 +44,4 @@ export function updateWaitsForSeed({
   return (
     semver.gte(version, bounds.oldestDriven) && semver.lte(version, bounds.lastUpdateAfterSetup)
   );
-}
-
-const touchscreenModels = new Set<DeviceModelId>([
-  DeviceModelId.STAX,
-  DeviceModelId.FLEX,
-  DeviceModelId.APEX,
-]);
-
-export function isTouchscreen(deviceModelId: DeviceModelId): boolean {
-  return touchscreenModels.has(deviceModelId);
-}
-
-type SettledFirmware = Extract<
-  FirmwareCheck,
-  { kind: "upToDate" | "declined" | "skipped" | "deferred" }
->;
-
-const settledFirmwareKinds = new Set<FirmwareCheck["kind"]>([
-  "upToDate",
-  "declined",
-  "skipped",
-  "deferred",
-]);
-
-export function firmwareSettled(firmware: FirmwareCheck | null): firmware is SettledFirmware {
-  return firmware !== null && settledFirmwareKinds.has(firmware.kind);
 }

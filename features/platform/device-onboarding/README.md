@@ -115,12 +115,19 @@ The session stays open after the exit, so the app can keep using it.
 
 ## Key exports / concepts
 
-- `deviceOnboardingMachine` — the flow. `machine.ts` is the graph, `context.ts` the bookkeeping
+- `deviceOnboardingMachine` — the flow. `machine.ts` is the graph, `contextActions.ts` the
+  bookkeeping
 - `stampSession` — adds the live session id to the session events. The app calls it, not the machine
 - `OnboardingEvent`, `DeviceOnboardingInput`, `DeviceOnboardingContext`, `DeviceOnboardingOutput` —
   the language the machine and the screens speak
-- `rules.ts` — the pure decisions the transitions ask. Every model takes the flow on any firmware
-  version that can be read
+- `firmwareRules.ts` — the pure decisions the transitions ask from model, firmware and seeded state:
+  which devices leave for the legacy flow (`requiresLegacyFlow`) and which hold their firmware
+  update until they are seeded (`updateWaitsForSeed`)
+- `deviceModel.ts`, `firmwareCheckState.ts` — `isTouchscreen`, and `firmwareSettled` for the
+  firmware check
+- `host/` — what the apps and the devtool use around the machine: the session events
+  (`stampSession`), the deprecated flat context, the devtool payloads, the event log and the next
+  states
 - `actors/` — the only code that talks to the device: `readDeviceState`, `genuineCheck`,
   `firmwareCheck`, `toggleEarlyCheck`, `seedPolling`, `unlockPolling`. Each gets the session id as
   input and reports through events only
