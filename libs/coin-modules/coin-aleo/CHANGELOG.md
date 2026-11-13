@@ -1,5 +1,13 @@
 # @ledgerhq/coin-aleo
 
+## 2.10.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`4aa3244`](https://github.com/LedgerHQ/ledger-live/commit/4aa32442c63cd17bd2894d63ad0721d51e0ca41a), [`49de732`](https://github.com/LedgerHQ/ledger-live/commit/49de7327915d876c4a98826d561705171c41d2d2), [`5a9de42`](https://github.com/LedgerHQ/ledger-live/commit/5a9de42cd3a598f1f8954d58b9536280f5fd2927), [`120891d`](https://github.com/LedgerHQ/ledger-live/commit/120891d4dbd9e9bba22dbf552f1bbe0ab34685cc), [`51ce5a0`](https://github.com/LedgerHQ/ledger-live/commit/51ce5a05e95dc02ce0eccc5f9d043d556ba43bbf), [`0cf44d5`](https://github.com/LedgerHQ/ledger-live/commit/0cf44d56a449fb0f4448cd6f8e02c880fc47adb2)]:
+  - @ledgerhq/types-live@6.132.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.12.0-next.0
+
 ## 2.10.0
 
 ### Minor Changes
@@ -379,55 +387,5 @@
   - @ledgerhq/types-live@6.122.0
   - @ledgerhq/ledger-wallet-framework@3.2.0
   - @ledgerhq/live-env@3.2.0
-
-## 2.2.0-next.0
-
-### Minor Changes
-
-- [#21168](https://github.com/LedgerHQ/ledger-live/pull/21168) [`fc154ae`](https://github.com/LedgerHQ/ledger-live/commit/fc154ae37fb665625c206b479101ed43389c012a) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Adopt the coin-module authoring type, dropping the hand-written "not supported" stubs.
-
-  `createApi` now returns its object with `satisfies CoinModuleImpl<AleoCoinConfig, MemoNotSupported, AleoTransactionIntentData>` — which keeps the precise shape, so a caller sees exactly which methods exist — declaring the eleven the module implements: `broadcast`, `combine`, `craftTransaction`, `craftTransactionData`, `estimateFees`, `getAccountInfo`, `getBalance`, `lastBlock`, `listOperations`, `register` and `validateAddress`.
-
-  The nine capabilities Aleo has none of — `call`, `craftRawTransaction`, `getBlock`, `getBlockInfo`, `getStakes`, `getRewards`, `getValidators`, `validateIntent` and `getNextSequence` — are omitted instead of each carrying a `throw new Error("… is not supported")`.
-
-  The three optional capabilities the module keeps are the ones that carry Aleo's privacy model, and the declared shape is now what says so: `register` enrolls a view key with the Provable record scanner, `getAccountInfo` reports that scanner's progress — which is what bounds a private balance and history — and `validateAddress` is a real offline check. Their absence and their presence used to look the same from the outside; now `supports()` separates them.
-
-  `listOperations` keeps its `throw`: it rejects an `order` other than `desc` and then does its work, which is argument validation on an implemented method rather than an unimplemented capability. Likewise `combine` and `craftTransaction` throw when the context carries no view key.
-
-  Consumers see no change. They reach the module through a resolver that applies the framework's `withDefaults`, which supplies every omitted capability, so the same call still raises the same `"<method> is not supported"` error.
-
-  The authored type also keeps the contract's trailing optional parameters, or a caller reaching the module through it could no longer pass them: `broadcast`, `combine`, `estimateFees` accept and ignore theirs. TypeScript does not hold a function's shorter parameter list against a target declaring more, so the `satisfies` passed either way and nothing flagged the narrowing.
-
-  The api test asserts the whole capability surface with the framework's `capabilityReport()` rather than one test per unimplemented capability: one expectation covers that each is absent, that reaching it raises `"<name> is not supported"`, and that `supports()` agrees. Being an exact comparison it is exhaustive, so implementing or dropping a capability changes the list instead of leaving a test that passes while covering less.
-
-- [#21153](https://github.com/LedgerHQ/ledger-live/pull/21153) [`150a151`](https://github.com/LedgerHQ/ledger-live/commit/150a151169e4ef40aa197300a115f17db1aa20c0) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - aleo: expose the validator committee with an estimated staking rate through a shared hook
-
-- [#21210](https://github.com/LedgerHQ/ledger-live/pull/21210) [`b26a2c3`](https://github.com/LedgerHQ/ledger-live/commit/b26a2c3942fb13dd4c8849ebda9402e732479432) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - aleo: read staking positions from the credits.aleo bonded, unbonding and withdraw mappings
-
-### Patch Changes
-
-- Updated dependencies [[`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682), [`e21305a`](https://github.com/LedgerHQ/ledger-live/commit/e21305abce18f0a9408bf6c0e2bb47d5c992e06a)]:
-  - @ledgerhq/types-live@6.122.0-next.0
-  - @ledgerhq/ledger-wallet-framework@3.2.0-next.0
-  - @ledgerhq/live-env@3.2.0-next.0
-
-## 2.1.0
-
-### Minor Changes
-
-- [#20883](https://github.com/LedgerHQ/ledger-live/pull/20883) [`328dd6f`](https://github.com/LedgerHQ/ledger-live/commit/328dd6f802c87d7248c9bfd95fea5b843aec162a) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - aleo private list ops cleanup before extending framework
-
-- [#20835](https://github.com/LedgerHQ/ledger-live/pull/20835) [`e5f61ca`](https://github.com/LedgerHQ/ledger-live/commit/e5f61ca5eae1df9e9ce6abcaa7715db206a71cdf) Thanks [@vtaranushenko-ext-ledger](https://github.com/vtaranushenko-ext-ledger)! - Add the `register` method to the coin-aleo framework API: it seals the account view key to the Provable record scanner and returns the `{ type: "aleo", provableId }` handle, sharing the seal-and-enroll sequence with the bridge's `accessProvableApi`.
-
-- [#20846](https://github.com/LedgerHQ/ledger-live/pull/20846) [`fc4f6e1`](https://github.com/LedgerHQ/ledger-live/commit/fc4f6e16a4fbf1f5f5a900c6c178635fb55e46fc) Thanks [@vtaranushenko-ext-ledger](https://github.com/vtaranushenko-ext-ledger)! - Implement the `combine` method and wire `broadcast` in the coin-aleo framework API: `combine` validates the ordered signature list (root first, then nested calls), reads the view key off the `Context`, and returns the hex-encoded SDK authorization.
-
-- [#20941](https://github.com/LedgerHQ/ledger-live/pull/20941) [`7cb7f9f`](https://github.com/LedgerHQ/ledger-live/commit/7cb7f9fcde70585663639e0c8f8fb1c950489d3c) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - aleo private list ops framework
-
-### Patch Changes
-
-- Updated dependencies [[`aa39333`](https://github.com/LedgerHQ/ledger-live/commit/aa393339789242783b168398cb5122a7f1e3f620), [`6c425e0`](https://github.com/LedgerHQ/ledger-live/commit/6c425e0e869c6feed4bd4c87ee0fef5443617708), [`585d8d7`](https://github.com/LedgerHQ/ledger-live/commit/585d8d78d5e153186c39ee2abfcdb7dc4a5d06e0), [`8161bac`](https://github.com/LedgerHQ/ledger-live/commit/8161bac542474212dfefc8519e714da345b03f71), [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e), [`39a676d`](https://github.com/LedgerHQ/ledger-live/commit/39a676d2f861d04913264e61100205b4f6044cf9)]:
-  - @ledgerhq/types-live@6.121.0
-  - @ledgerhq/ledger-wallet-framework@3.1.0
-  - @ledgerhq/live-env@3.1.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

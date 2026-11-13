@@ -1,5 +1,29 @@
 # @ledgerhq/live-e2e-shared
 
+## 0.19.0-next.0
+
+### Minor Changes
+
+- [#24483](https://github.com/LedgerHQ/ledger-live/pull/24483) [`c5b9753`](https://github.com/LedgerHQ/ledger-live/commit/c5b9753c0f384cfe385cf8add602226401da960f) Thanks [@abdurrahman-ledger](https://github.com/abdurrahman-ledger)! - Wait for a Speculinho slot when it is at capacity instead of failing the test, send the origin of each acquire, and release a desktop Speculos that never became ready
+
+- [#24724](https://github.com/LedgerHQ/ledger-live/pull/24724) [`88c94ff`](https://github.com/LedgerHQ/ledger-live/commit/88c94ffe78402e1789ee70aa8cf1d0cbfeef1aef) Thanks [@ypolishchuk-ledger](https://github.com/ypolishchuk-ledger)! - Print DMK errors from the CLI as their tag and cause instead of "[object Object]", retry Speculos 503s and timeouts from the fetch-based DMK network client, and retry E2E CLI commands that lose their DMK session without matching status codes inside UUIDs
+
+### Patch Changes
+
+- Updated dependencies [[`4aa3244`](https://github.com/LedgerHQ/ledger-live/commit/4aa32442c63cd17bd2894d63ad0721d51e0ca41a), [`332d615`](https://github.com/LedgerHQ/ledger-live/commit/332d6152b6c11aa923d5fc7f5e16606b5d61a252), [`1d97ca7`](https://github.com/LedgerHQ/ledger-live/commit/1d97ca78b8e326c5bdd1af98199dd9e9aa06b4c5), [`eabafba`](https://github.com/LedgerHQ/ledger-live/commit/eabafbae5a75c22547965eb80f507ab35cd95452), [`180de5b`](https://github.com/LedgerHQ/ledger-live/commit/180de5baca4b9e6abf44dce3991ea511ea84836a), [`ea45007`](https://github.com/LedgerHQ/ledger-live/commit/ea45007b1a8f6f7afbb1f29df2bc93d77766d69a), [`5895784`](https://github.com/LedgerHQ/ledger-live/commit/5895784ef0da900092abf361b3647eba1eb1547f), [`5020021`](https://github.com/LedgerHQ/ledger-live/commit/5020021654f743e0e868cb9c8d011adc97f4ed9a), [`8064394`](https://github.com/LedgerHQ/ledger-live/commit/806439433d2c57b13db5a513688db52195bfc163), [`de62f18`](https://github.com/LedgerHQ/ledger-live/commit/de62f18c8fdfa5d07228396410040d9d5f92459d), [`de28165`](https://github.com/LedgerHQ/ledger-live/commit/de28165849281e54355fcb1894bf904c2125b2eb), [`d1e1f5f`](https://github.com/LedgerHQ/ledger-live/commit/d1e1f5f156ff95ae5fd7ebdeaec3b5d628d671b7), [`49de732`](https://github.com/LedgerHQ/ledger-live/commit/49de7327915d876c4a98826d561705171c41d2d2), [`d5d2516`](https://github.com/LedgerHQ/ledger-live/commit/d5d2516e82d0ee1984fcff0357cc0406eca91c48), [`d593a3d`](https://github.com/LedgerHQ/ledger-live/commit/d593a3d4a21bcdc6e28a193521b949c1323a4a5b), [`bc460b0`](https://github.com/LedgerHQ/ledger-live/commit/bc460b08ac220010875e9d245577360918bf94ac), [`5a9de42`](https://github.com/LedgerHQ/ledger-live/commit/5a9de42cd3a598f1f8954d58b9536280f5fd2927), [`a40069c`](https://github.com/LedgerHQ/ledger-live/commit/a40069cca2db75a7cd2fcc11beed61977f53c655), [`5dff2e5`](https://github.com/LedgerHQ/ledger-live/commit/5dff2e54adbff5b6bc5ad2e57bbd6c5e6f85271a), [`39b8762`](https://github.com/LedgerHQ/ledger-live/commit/39b87620fce0f123406907372d8250713b0e9416), [`7133d63`](https://github.com/LedgerHQ/ledger-live/commit/7133d632892e8781260212f90e0a2cb4ed5bc885), [`393695d`](https://github.com/LedgerHQ/ledger-live/commit/393695db90c73639ddf7e8d38dc2cf88dad19064), [`120891d`](https://github.com/LedgerHQ/ledger-live/commit/120891d4dbd9e9bba22dbf552f1bbe0ab34685cc), [`b0866af`](https://github.com/LedgerHQ/ledger-live/commit/b0866afc6240ac2097ff1a266d76d783d98a498a), [`4ef7618`](https://github.com/LedgerHQ/ledger-live/commit/4ef7618524bd8e8dcdb940c2cd852ff9e666bc6b), [`36434e9`](https://github.com/LedgerHQ/ledger-live/commit/36434e9206d26b18895fd2b4f777d60aaf581b08), [`88c94ff`](https://github.com/LedgerHQ/ledger-live/commit/88c94ffe78402e1789ee70aa8cf1d0cbfeef1aef), [`3a6ddb3`](https://github.com/LedgerHQ/ledger-live/commit/3a6ddb3fbd9d18c8005b9aef84597c8dc92dcfab), [`c72e5c3`](https://github.com/LedgerHQ/ledger-live/commit/c72e5c334206fcb1e83fea43c68cc5b359ba70f6), [`427d4d3`](https://github.com/LedgerHQ/ledger-live/commit/427d4d3c3d80263f5026cd0b8fbe83ce881a1953), [`51ce5a0`](https://github.com/LedgerHQ/ledger-live/commit/51ce5a05e95dc02ce0eccc5f9d043d556ba43bbf), [`a9ac0c9`](https://github.com/LedgerHQ/ledger-live/commit/a9ac0c99eef6b267bdee5f52708ef3d34cab7b8c), [`e3f44dc`](https://github.com/LedgerHQ/ledger-live/commit/e3f44dc9b07da59bacf25f69fda0c0d3e7e37f37), [`0cf44d5`](https://github.com/LedgerHQ/ledger-live/commit/0cf44d56a449fb0f4448cd6f8e02c880fc47adb2)]:
+  - @shared/feature-flags@0.31.0-next.0
+  - @ledgerhq/types-live@6.132.0-next.0
+  - @ledgerhq/live-common@38.8.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.12.0-next.0
+  - @shared/env@0.14.0-next.0
+  - @ledgerhq/live-dmk-speculos@0.13.0-next.0
+  - @ledgerhq/coin-zcash@1.2.1-next.0
+  - @ledgerhq/device-core@0.11.24-next.0
+  - @ledgerhq/live-signer-aleo@0.19.19-next.0
+  - @ledgerhq/live-signer-evm@0.24.6-next.0
+  - @ledgerhq/live-wallet@1.2.1-next.0
+  - @ledgerhq/speculos-transport@0.13.1-next.0
+
 ## 0.18.0
 
 ### Minor Changes
@@ -425,118 +449,5 @@
   - @ledgerhq/live-wallet@1.1.4
   - @ledgerhq/live-signer-evm@0.23.3
   - @ledgerhq/device-core@0.11.17
-
-## 0.13.0-next.0
-
-### Minor Changes
-
-- [#22079](https://github.com/LedgerHQ/ledger-live/pull/22079) [`7396e53`](https://github.com/LedgerHQ/ledger-live/commit/7396e5378ba6692318de27ebdcb9b1a37aecac4c) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Add desktop and mobile E2E coverage for browsing and searching contacts (B2CQA-6240).
-
-### Patch Changes
-
-- Updated dependencies [[`40d296b`](https://github.com/LedgerHQ/ledger-live/commit/40d296b822381cc5d05616acafa1bca61e500dce), [`724f029`](https://github.com/LedgerHQ/ledger-live/commit/724f02932ccdf8ba5b8f8f0ccc10b9edbe7547cd), [`353ed46`](https://github.com/LedgerHQ/ledger-live/commit/353ed46035b09d33eff6b5b76fe7ad3d19510e38), [`b5338ec`](https://github.com/LedgerHQ/ledger-live/commit/b5338ec9173a08073a4b8524fe095428bb710a99), [`49b535f`](https://github.com/LedgerHQ/ledger-live/commit/49b535fa6cab495b0b8659c042c743b8f65c2ce2), [`926952b`](https://github.com/LedgerHQ/ledger-live/commit/926952ba724cb42860718c4af553be725d1265a9), [`24865c8`](https://github.com/LedgerHQ/ledger-live/commit/24865c8558cb9f228e18ff5fbe5ef263e41e736f), [`98e3038`](https://github.com/LedgerHQ/ledger-live/commit/98e303872684da47feca343c0db7d83fcce857b2), [`31ec33f`](https://github.com/LedgerHQ/ledger-live/commit/31ec33f649209bd2b6971afc173e2e41f53c313f), [`35c9b91`](https://github.com/LedgerHQ/ledger-live/commit/35c9b91735fb3fd0f2d1dc63a2288c9c7b7ad0ab), [`387619d`](https://github.com/LedgerHQ/ledger-live/commit/387619d7be17b3d7cd86031430769c6bb6638a68), [`a62ad28`](https://github.com/LedgerHQ/ledger-live/commit/a62ad28e4900a887567fb61fb8f197af4fa5a23b), [`5d2f40f`](https://github.com/LedgerHQ/ledger-live/commit/5d2f40f470f859960e43a2a08755a962796f6beb), [`a1108d3`](https://github.com/LedgerHQ/ledger-live/commit/a1108d3f604027d2589fdc31cf90dfb06a4d75ab), [`791c54a`](https://github.com/LedgerHQ/ledger-live/commit/791c54ae44ef1c8301f76e82e427f6f8c04176f1), [`214d382`](https://github.com/LedgerHQ/ledger-live/commit/214d38269add0b4f04c42002e1a42b1e75dc3c6d), [`5df5893`](https://github.com/LedgerHQ/ledger-live/commit/5df5893134ac2db18f758519bb15af8f532e95b4), [`a0ae584`](https://github.com/LedgerHQ/ledger-live/commit/a0ae584c9c6592f6c5139ad20e6b1c8e42452972), [`54a71f6`](https://github.com/LedgerHQ/ledger-live/commit/54a71f63dae4df25bafba99db5562ca2462c9cd7), [`727cd08`](https://github.com/LedgerHQ/ledger-live/commit/727cd089d9b2a112fd297502417567777dd51871), [`29ce771`](https://github.com/LedgerHQ/ledger-live/commit/29ce7712ce93cd27afa97eda2d14a0ff066551fb), [`c48d6d7`](https://github.com/LedgerHQ/ledger-live/commit/c48d6d71b7ec0318cfec3277c119284a88d652f7), [`2a5d4e9`](https://github.com/LedgerHQ/ledger-live/commit/2a5d4e9582655518968f3c60579d6fa5a7d6c0a7), [`d1d0d90`](https://github.com/LedgerHQ/ledger-live/commit/d1d0d90e75648ae1127b5682a6244b8e8268550a), [`d59d123`](https://github.com/LedgerHQ/ledger-live/commit/d59d123a2ba037b44507b1f5424e31f05309ec26), [`f44101e`](https://github.com/LedgerHQ/ledger-live/commit/f44101efbe2e3325fb001fcd4a762a619a7cfc77), [`40251b4`](https://github.com/LedgerHQ/ledger-live/commit/40251b41a62b2381c5c79410073a5f0b3c1fe629), [`470bca7`](https://github.com/LedgerHQ/ledger-live/commit/470bca79315b3bb8242d01dd33e26b2b0da460ba), [`bb3e182`](https://github.com/LedgerHQ/ledger-live/commit/bb3e1822bfc2cb9ff00089082782d9e2bd229b67), [`1603611`](https://github.com/LedgerHQ/ledger-live/commit/1603611179046f098fba526aafb9633466448e05), [`7f40a5a`](https://github.com/LedgerHQ/ledger-live/commit/7f40a5a1cc84b733ad3a3584b5a14f9fc21c95c8), [`d750b9f`](https://github.com/LedgerHQ/ledger-live/commit/d750b9f8e7353d09d171f1c1f3cd44ab805e6f56), [`61362d0`](https://github.com/LedgerHQ/ledger-live/commit/61362d0e482a62c6fe663080c8ce2f4a25ffdb00), [`e2134f5`](https://github.com/LedgerHQ/ledger-live/commit/e2134f5cffe4669ff5896e2b52904fe22218461b)]:
-  - @shared/env@0.8.0-next.0
-  - @ledgerhq/live-common@38.1.0-next.0
-  - @domain/entity-currency-crypto@0.13.0-next.0
-  - @ledgerhq/coin-zcash@0.9.0-next.0
-  - @ledgerhq/ledger-wallet-framework@3.5.0-next.0
-  - @ledgerhq/speculos-transport@0.12.0-next.0
-  - @ledgerhq/types-devices@7.1.0-next.0
-  - @ledgerhq/types-live@6.125.0-next.0
-  - @ledgerhq/ledger-key-ring-protocol@0.23.0-next.0
-  - @shared/feature-flags@0.24.0-next.0
-  - @ledgerhq/live-signer-aleo@0.19.12-next.0
-  - @ledgerhq/live-wallet@1.1.4-next.0
-  - @ledgerhq/live-signer-evm@0.23.3-next.0
-  - @ledgerhq/device-core@0.11.17-next.0
-
-## 0.12.0
-
-### Minor Changes
-
-- [#21894](https://github.com/LedgerHQ/ledger-live/pull/21894) [`ca6dd3a`](https://github.com/LedgerHQ/ledger-live/commit/ca6dd3a81b3453808e22794ad416a10658c5e3d4) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Fix the nightly mobile borrow e2e run.
-
-  `BorrowPage.expectStepDone` reached for detox's `device` global, which a page object is not
-  loaded with, so the first signed step threw `ReferenceError: device is not defined` after its
-  transaction had already gone out — and every retry then found the approval step complete and
-  failed on its "not yet done" precondition. Granting Morpho access is account state rather than
-  per-loan state, so that step now passes through when it is already granted.
-
-  The Speculos driver gained the Ethereum app's blind-signing setting, without which Morpho
-  calldata is answered with `6a80` and no review is ever drawn, plus the risk warning that
-  enabling it puts in front of the review. Transaction Check now stops waiting as soon as that
-  warning appears instead of spending its whole budget on it.
-
-  The borrow driver also floors the keyless RPC's priority-fee suggestion so its broadcasts get
-  mined, keeps the fee cap proportional to the base fee so the node's up-front reservation stays
-  within the account balance, retries reads the RPC's archive-restricted backends reject, polls
-  for the receipt rather than watching whole blocks for a replacement, waits for a remote
-  Speculos to be ready so its address is published, and reports the partner's reason for a
-  rejected action instead of only the status line.
-
-- [#21661](https://github.com/LedgerHQ/ledger-live/pull/21661) [`da3d09d`](https://github.com/LedgerHQ/ledger-live/commit/da3d09d75d7dcae659611cd371c48d75c03f7ae4) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Converge on a single Speculos transport and stop resolving Speculos config through the env singleton
-
-  `@ledgerhq/hw-transport-node-speculos-http` and `@ledgerhq/hw-transport-node-speculos` are removed.
-  The former was a duplicate of `@ledgerhq/live-dmk-speculos` — same class, same `SpeculosHttpTransportOpts`,
-  same `SpeculosButton` enum, but without the DMK session cache, reconnect-on-APDU-failure and transient
-  HTTP retries — and had a single consumer left. The latter implemented the websocket/TCP mode gated on
-  `SPECULOS_USE_WEBSOCKET`, which defaulted to `false` and was never enabled anywhere; that definition is
-  removed too. `@ledgerhq/live-dmk-speculos` is now the only Speculos transport, and it additionally
-  exports `SpeculosButton`.
-
-  `@ledgerhq/speculos-transport` loses the websocket branch, so `getPorts` has one shape,
-  `SpeculosDeviceInternal` is no longer a union and `SpeculosTransport` is a single type. It no longer
-  reads `@shared/env`: the Speculos PKI flag (`-p`) moves from `getEnv("PLAYWRIGHT_RUN") || getEnv("DETOX")`
-  to an explicit `pki` field on `DeviceParams`, which `live-e2e-shared`'s `startSpeculos` sets — aligning
-  the local Docker provider with the Speculinho provider, which already passed `-p` unconditionally.
-  `@ledgerhq/live-dmk-speculos` resolves `SPECULOS_API_PORT` from `process.env` at the point of use
-  instead of the env registry, so neither package depends on `@shared/env` any more.
-
-  `@ledgerhq/live-cli` drops the `SPECULOS_APDU_PORT` / `SPECULOS_BUTTON_PORT` / `SPECULOS_HOST`
-  websocket branch; use `SPECULOS_API_PORT`. The Canton integration test, the Solana smoke script and the
-  disabled BTC integration test move to `@ledgerhq/live-dmk-speculos`, and the dead
-  `hw-transport-node-speculos` devDependency is dropped from `coin-kaspa`, `hw-app-kaspa`, `hw-app-icon`
-  and `ledger-wallet-framework`.
-
-  `@ledgerhq/ledger-key-ring-protocol` declared `@ledgerhq/speculos-transport` and
-  `@ledgerhq/hw-transport-mocker` as runtime `dependencies` even though both are only reachable from
-  `tests/` and `src/__tests__/`, which `tsconfig.build.json` excludes from the published build. They
-  move to `devDependencies`, so the Docker/Speculos harness is no longer part of the package's runtime
-  dependency closure.
-
-  Two further dead Speculos definitions leave `@shared/env`: `SPECULOS_PID_OFFSET`, which had no
-  reference anywhere in the repo, and `SPECULOS_FIRMWARE_VERSION`, whose registry entry was unused
-  because every reader (`live-common/src/load/speculos.ts`, `live-e2e-shared/src/speculosAppVersion.ts`,
-  the CI workflows) already goes through `process.env`.
-
-- [#21702](https://github.com/LedgerHQ/ledger-live/pull/21702) [`654199a`](https://github.com/LedgerHQ/ledger-live/commit/654199ad52f8dce63fc46cd826d11f90c533b804) Thanks [@jeportie](https://github.com/jeportie)! - Surface the swap-init root cause on mobile E2E failures
-
-  When the device stalls on "Exchange app is ready", `waitForReviewTransaction` appends a hint telling
-  the reader to open the "⚠️ Swap-init error" attachment. That hint lives in shared code and is
-  emitted on both platforms, but the attachment was produced by the desktop harness only, so on
-  mobile it pointed at something that never existed.
-
-  The extraction now lives in `@ledgerhq/live-e2e-shared/swapInitError` and both harnesses use it.
-  Mobile attaches the result first, scanning the app logs and the webview console together, because
-  the failure can surface on either side of the wallet-api call. Desktop delegates to the shared
-  function and keeps its previous output.
-
-### Patch Changes
-
-- Updated dependencies [[`e09211c`](https://github.com/LedgerHQ/ledger-live/commit/e09211c3477dc91530c2670a0b34b29fb8d3d943), [`16a454f`](https://github.com/LedgerHQ/ledger-live/commit/16a454fa79be46df6aec3c50ad40407f36dfdea9), [`96a1ca9`](https://github.com/LedgerHQ/ledger-live/commit/96a1ca9fef1b0acc8113708c148890054dea143d), [`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36), [`da3d09d`](https://github.com/LedgerHQ/ledger-live/commit/da3d09d75d7dcae659611cd371c48d75c03f7ae4), [`cdb273b`](https://github.com/LedgerHQ/ledger-live/commit/cdb273b068df78cd5a0dbd4281fb79f22e0a7506), [`9e37f58`](https://github.com/LedgerHQ/ledger-live/commit/9e37f58a84f7ee9585142c0a8ac767da58b6d06f), [`06b5db9`](https://github.com/LedgerHQ/ledger-live/commit/06b5db9dd2b49bbbf256e9376d67f9c64b3a1a4d), [`7e44af4`](https://github.com/LedgerHQ/ledger-live/commit/7e44af495eccab1fac4b0808d6729a595b610c69), [`7050652`](https://github.com/LedgerHQ/ledger-live/commit/70506520dafbccca4e014ac30d75647a5b7fe7d0), [`7bfbb69`](https://github.com/LedgerHQ/ledger-live/commit/7bfbb69b29d66d1b908cddd4b7cad893f77a8ebc), [`60655cd`](https://github.com/LedgerHQ/ledger-live/commit/60655cdf828eebdddd515d52c8fc5876ea50baf8), [`8146728`](https://github.com/LedgerHQ/ledger-live/commit/814672815a08dd57160d3aa4c28e92c3f508807e), [`b30a8cd`](https://github.com/LedgerHQ/ledger-live/commit/b30a8cd8acfeabb444cd7e2acb1ac5eaa959b221), [`a62261e`](https://github.com/LedgerHQ/ledger-live/commit/a62261e2e63218affcd3690a70b5a42f355a48a4), [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb), [`354486c`](https://github.com/LedgerHQ/ledger-live/commit/354486ca79badb49b9c902b1724a36379c278358), [`73eb9bc`](https://github.com/LedgerHQ/ledger-live/commit/73eb9bc68ed87f07142a1fdf54e4cd68af3a36d4), [`d1a8cb2`](https://github.com/LedgerHQ/ledger-live/commit/d1a8cb2403bbe6771dfee3e43fbc4c4df61d4c7c), [`903c180`](https://github.com/LedgerHQ/ledger-live/commit/903c1802ea5d4cc3fe1bfe5609b8cf3871152cf0), [`a6a7a94`](https://github.com/LedgerHQ/ledger-live/commit/a6a7a946b1c1dbdda1cfa2c049f536f7235ddde2), [`5ddb9ab`](https://github.com/LedgerHQ/ledger-live/commit/5ddb9ab2874a6715d706042701e8b2242b1c14b9), [`c72a646`](https://github.com/LedgerHQ/ledger-live/commit/c72a646d28a4a5d144808f4a99e80d7788895603), [`c6a569d`](https://github.com/LedgerHQ/ledger-live/commit/c6a569d5848e6c0fd7973cb5ab7241b39d47f77b), [`a9f0a51`](https://github.com/LedgerHQ/ledger-live/commit/a9f0a51f20cf3e7b038cc6e5762557e93760a37e), [`a17ef12`](https://github.com/LedgerHQ/ledger-live/commit/a17ef128d44c9ca9bc85c3c8b8d691981c5e638f), [`2eb6f5c`](https://github.com/LedgerHQ/ledger-live/commit/2eb6f5c7b3a7694a028bfe62279102188aeac028), [`d1d26de`](https://github.com/LedgerHQ/ledger-live/commit/d1d26def09d28102238b31b684d1745c4f1ad8cc)]:
-  - @ledgerhq/live-common@38.0.0
-  - @shared/feature-flags@0.23.0
-  - @ledgerhq/types-live@6.124.0
-  - @ledgerhq/live-dmk-speculos@0.11.0
-  - @ledgerhq/speculos-transport@0.11.0
-  - @shared/env@0.7.0
-  - @ledgerhq/ledger-key-ring-protocol@0.22.0
-  - @ledgerhq/ledger-wallet-framework@3.4.0
-  - @ledgerhq/live-signer-aleo@0.19.11
-  - @ledgerhq/device-core@0.11.16
-  - @ledgerhq/live-signer-evm@0.23.2
-  - @ledgerhq/live-wallet@1.1.3
-  - @shared/cloud-sync@0.3.0
-  - @shared/cloud-sync-module@0.4.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

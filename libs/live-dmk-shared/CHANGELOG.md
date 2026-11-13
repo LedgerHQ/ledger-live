@@ -1,5 +1,20 @@
 # @ledgerhq/live-dmk
 
+## 0.40.0-next.0
+
+### Minor Changes
+
+- [#24832](https://github.com/LedgerHQ/ledger-live/pull/24832) [`3374abb`](https://github.com/LedgerHQ/ledger-live/commit/3374abbb9491f94fb98417b696b4e30c1bced021) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add `isRunning` and `ignoredTransportIds` to `DeviceDiscoveryService`, and make the connect device and connect new device state machines read the discovery state from the service, so that two state machines can share one service
+
+- [#24811](https://github.com/LedgerHQ/ledger-live/pull/24811) [`13a6d68`](https://github.com/LedgerHQ/ledger-live/commit/13a6d687f486e1fcb3001a15f437a84b26ea5609) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Emit the unknown error when a connection state machine fails while it runs, instead of freezing the UI
+
+- [#24827](https://github.com/LedgerHQ/ledger-live/pull/24827) [`c24caff`](https://github.com/LedgerHQ/ledger-live/commit/c24cafffbc8b6fd0f05c6ec13e70d70fd4557697) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Match devices with one findMatchingDevice for connectDevice and the known devices, a BLE match by id before a match by name
+
+### Patch Changes
+
+- Updated dependencies [[`6baeada`](https://github.com/LedgerHQ/ledger-live/commit/6baeadaca277a70109580c0d939278ebf729922b)]:
+  - @domain/entity-client-identity@0.6.0-next.0
+
 ## 0.39.0
 
 ### Minor Changes
@@ -321,19 +336,5 @@
 
 - Updated dependencies [[`1e9db75`](https://github.com/LedgerHQ/ledger-live/commit/1e9db750a4882f9db7f95278e33c00262487b37b)]:
   - @ledgerhq/types-devices@6.32.0-next.0
-
-## 0.29.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.35.7
-
-## 0.29.1-next.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.35.7-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

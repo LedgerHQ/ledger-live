@@ -1,5 +1,16 @@
 # @features/platform-device-action-content
 
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#24664](https://github.com/LedgerHQ/ledger-live/pull/24664) [`e0cae47`](https://github.com/LedgerHQ/ledger-live/commit/e0cae4765262eb5e58de7b20d348907a4f5a5ccc) Thanks [@ysitbon](https://github.com/ysitbon)! - Import the device action content modules by their platform-neutral specifiers, in the barrels and in tests, and drop the package's platform suffix waiver.
+
+### Patch Changes
+
+- Updated dependencies [[`f03b96e`](https://github.com/LedgerHQ/ledger-live/commit/f03b96ed3d72e7404eebe2b8b12e42833cf55a1b)]:
+  - @shared/lottie@0.2.0-next.0
+
 ## 0.4.1
 
 ### Patch Changes

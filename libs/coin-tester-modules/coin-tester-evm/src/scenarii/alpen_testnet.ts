@@ -5,6 +5,7 @@ import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { forbidRemoteRequests } from "@ledgerhq/coin-tester/localOnly";
 import { startSandbox } from "@ledgerhq/coin-tester/sandbox";
 import type { Sandbox } from "@ledgerhq/coin-tester/sandbox";
+import { sandboxVersions } from "@ledgerhq/coin-tester/versions";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
@@ -128,10 +129,7 @@ export const scenarioAlpenTestnet: Scenario<GenericTransaction, Account> = {
     const signer = await buildSigner();
     sandbox = await startSandbox(
       { family: "evm", network: "alpen_testnet" },
-      {
-        node: { implementation: "alpen-client", version: "0.4.0" },
-        indexer: { implementation: "blockscout", version: "12.0.3" },
-      },
+      sandboxVersions("alpen_testnet"),
     );
     const { node: rpc, indexer: explorer } = sandbox.endpoints;
     if (rpc === undefined || explorer === undefined) {

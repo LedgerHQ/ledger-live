@@ -1,5 +1,14 @@
 # @ledgerhq/live-signer-evm
 
+## 0.24.6-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`49de732`](https://github.com/LedgerHQ/ledger-live/commit/49de7327915d876c4a98826d561705171c41d2d2), [`3374abb`](https://github.com/LedgerHQ/ledger-live/commit/3374abbb9491f94fb98417b696b4e30c1bced021), [`13a6d68`](https://github.com/LedgerHQ/ledger-live/commit/13a6d687f486e1fcb3001a15f437a84b26ea5609), [`c24caff`](https://github.com/LedgerHQ/ledger-live/commit/c24cafffbc8b6fd0f05c6ec13e70d70fd4557697), [`51ce5a0`](https://github.com/LedgerHQ/ledger-live/commit/51ce5a05e95dc02ce0eccc5f9d043d556ba43bbf), [`0cf44d5`](https://github.com/LedgerHQ/ledger-live/commit/0cf44d56a449fb0f4448cd6f8e02c880fc47adb2)]:
+  - @ledgerhq/ledger-wallet-framework@3.12.0-next.0
+  - @ledgerhq/live-dmk-shared@0.40.0-next.0
+  - @ledgerhq/hw-app-eth@7.13.1-next.0
+
 ## 0.24.5
 
 ### Patch Changes
@@ -202,32 +211,5 @@
   - @ledgerhq/live-dmk-shared@0.32.0
   - @ledgerhq/live-env@3.2.0
   - @ledgerhq/hw-app-eth@7.8.17
-
-## 0.23.0-next.0
-
-### Minor Changes
-
-- [#21245](https://github.com/LedgerHQ/ledger-live/pull/21245) [`45ea28b`](https://github.com/LedgerHQ/ledger-live/commit/45ea28b19d1e950bf4e705388a06181a9a7543aa) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Provide the EVM address book to the DMK Ethereum signer, so registered contacts can be clear-signed.
-
-  `toEvmAddressBook` maps the Contacts state to an `EvmAddressBook` snapshot, keeping EVM-family addresses only. Each app registers it on `evmAddressBookProvider` at its composition root, and `DmkSignerEth` reads it once per instance, so the recipient and the signing account are matched against the same snapshot. Records whose proof material does not decode are dropped, and signing is left untouched when no contact is usable.
-
-  Ledger account contacts are not provided yet: the snapshot always carries an empty `ledgerAccounts`.
-
-### Patch Changes
-
-- Updated dependencies [[`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682), [`6cef6b5`](https://github.com/LedgerHQ/ledger-live/commit/6cef6b5341c30850aa74159bdbdea0a18f89de4c), [`e21305a`](https://github.com/LedgerHQ/ledger-live/commit/e21305abce18f0a9408bf6c0e2bb47d5c992e06a), [`5b9df59`](https://github.com/LedgerHQ/ledger-live/commit/5b9df5970cb628dbfe592227231b66ff498f480c)]:
-  - @ledgerhq/ledger-wallet-framework@3.2.0-next.0
-  - @ledgerhq/live-dmk-shared@0.32.0-next.0
-  - @ledgerhq/live-env@3.2.0-next.0
-  - @ledgerhq/hw-app-eth@7.8.17-next.0
-
-## 0.22.4
-
-### Patch Changes
-
-- Updated dependencies [[`585d8d7`](https://github.com/LedgerHQ/ledger-live/commit/585d8d78d5e153186c39ee2abfcdb7dc4a5d06e0), [`8161bac`](https://github.com/LedgerHQ/ledger-live/commit/8161bac542474212dfefc8519e714da345b03f71), [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e), [`39a676d`](https://github.com/LedgerHQ/ledger-live/commit/39a676d2f861d04913264e61100205b4f6044cf9)]:
-  - @ledgerhq/ledger-wallet-framework@3.1.0
-  - @ledgerhq/live-env@3.1.0
-  - @ledgerhq/hw-app-eth@7.8.16
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

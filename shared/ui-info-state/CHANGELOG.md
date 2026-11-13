@@ -1,5 +1,11 @@
 # @shared/ui-info-state
 
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#24770](https://github.com/LedgerHQ/ledger-live/pull/24770) [`429170c`](https://github.com/LedgerHQ/ledger-live/commit/429170c6f969a90517696f2d750fc853be91e378) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add an optional leading icon to InfoState CTAs
+
 ## 0.7.0
 
 ### Minor Changes

@@ -1,30 +1,11 @@
 import { broadcast } from "./broadcast";
-import coinConfig from "../config";
+import coinConfig, { aleoDefaults } from "../config";
 import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
-import { mockFeeByTransactionType } from "../__tests__/fixtures/config.fixture";
 
 describe("Broadcast", () => {
   beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      status: { type: "active" },
-      name: "Aleo",
-      unit: { name: "Aleo", code: "ALEO", magnitude: 6 },
-      networkType: "mainnet",
-      apiUrls: {
-        node: "https://aleo.coin.ledger.com",
-        sdk: "https://aleo-backend.api.live.ledger.com/network/mainnet",
-      },
-      feeByTransactionType: mockFeeByTransactionType,
-      feeSafetyMultiplier: 1.0,
-      isFeeSponsored: false,
-      enableTokens: false,
-      enableStaking: false,
-      useEncryptedProve: true,
-      recordPickingStrategy: "manual",
-      liveBlockHeightPollMs: 10_000,
-      maxUnbondingSyncAttempts: 3,
-    }));
+    coinConfig.setCoinConfig(() => aleoDefaults.aleo);
   });
 
   it("creates an offline transfer_public signature and fails to broadcast with zero balance", async () => {

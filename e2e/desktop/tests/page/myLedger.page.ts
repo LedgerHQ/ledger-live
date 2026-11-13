@@ -82,6 +82,13 @@ export class MyLedgerPage extends AppPage {
     "close-language-installation-button",
   );
 
+  private readonly deviceNotOnboardedError = this.page.locator("#error-device-not-onboarded");
+  private readonly setUpDeviceButton = (deviceName: string) =>
+    this.deviceNotOnboardedError.getByRole("button", {
+      name: `Set up my ${deviceName}`,
+      exact: true,
+    });
+
   private readonly customImageButton = this.page.getByTestId("manager-custom-image-button");
 
   private readonly appRow = (app: AppInfos) =>
@@ -113,6 +120,17 @@ export class MyLedgerPage extends AppPage {
   async waitForDashboard() {
     await expect(this.storageCard).toBeVisible();
     await expect(this.deviceOptions).toBeAttached();
+  }
+
+  @step("Expect My Ledger to report the device as not set up")
+  async expectDeviceNotOnboarded() {
+    await expect(this.deviceNotOnboardedError).toBeVisible();
+    await expect(this.storageCard).toBeHidden();
+  }
+
+  @step("Click the device setup button for $0")
+  async startDeviceSetup(deviceName: string) {
+    await this.setUpDeviceButton(deviceName).click();
   }
 
   /** The submit button becomes the close button once the rename lands, so both are needed. */

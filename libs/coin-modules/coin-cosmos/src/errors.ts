@@ -101,3 +101,43 @@ export class RedelegateDstValAddressRequired extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+export class TransactionResultNotFound extends Error {
+  override name = "TransactionResultNotFound";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "TransactionResultNotFound");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class BlockTransactionsMismatch extends Error {
+  override name = "BlockTransactionsMismatch";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "BlockTransactionsMismatch");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class InvalidBlockMessage extends Error {
+  override name = "InvalidBlockMessage";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "InvalidBlockMessage");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class GetBlockError extends Error {
+  override name = "GetBlockError";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "GetBlockError");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class GetBlockInfoError extends Error {
+  override name = "GetBlockInfoError";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "GetBlockInfoError");
+    if (fields) Object.assign(this, fields);
+  }
+}

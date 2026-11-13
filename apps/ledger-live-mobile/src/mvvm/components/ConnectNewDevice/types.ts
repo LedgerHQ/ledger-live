@@ -3,6 +3,7 @@ import type {
   ConnectNewDeviceUIStateTypes,
 } from "@ledgerhq/live-dmk-mobile";
 import type { DeviceConnectionResult } from "@ledgerhq/live-dmk-shared";
+import type { AppPlatform } from "@ledgerhq/live-common/platform/types";
 
 export type ConnectNewDeviceDelays = {
   /** Time before the "I don't see my device" button shows, in ms. */
@@ -39,3 +40,13 @@ export type ConnectNewDeviceNonErrorUIState = Exclude<
   ConnectNewDeviceUIState,
   ConnectNewDeviceErrorUIState
 >;
+
+export type ConnectNewDeviceViewProps = {
+  state: ConnectNewDeviceUIState;
+  /** Shown under the error bottom sheet. */
+  lastNonErrorState: ConnectNewDeviceNonErrorUIState;
+  platform: Exclude<AppPlatform, "desktop">;
+  onDeviceNotFound?: () => void;
+  /** Called on every close of the error sheet, also when `state` leaves an error. */
+  onCloseErrorSheet: () => void;
+};

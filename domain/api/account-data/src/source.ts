@@ -15,6 +15,8 @@ export type AccountTarget = {
   readonly descriptor: AccountDescriptor;
   /** On a next page: the `nextCursor` this source put in the previous page. */
   readonly cursor?: string;
+  /** Aborts once no read waits for this account any more; absent when one of them cannot be cancelled. */
+  readonly signal?: AbortSignal;
 };
 
 export type AccountDataReader<K extends AccountDataKind> = (

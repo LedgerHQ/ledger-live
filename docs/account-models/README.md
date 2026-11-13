@@ -13,7 +13,7 @@ How Ledger Wallet represents an account in the new architecture, and how we get 
 
 ## The paradigms
 
-**1. One universal identity.** An account is an [`AccountDescriptor`](../../domain/entity/account-descriptor): its type (`utxo` with an xpub, or `address`), CAL network, xpub or address, and derivation path. That is all any source needs to read it. Its `AccountUUID`, a uuid v5 of the canonical key, keys the `accounts` list and every account data kind: the same on every device, and it holds no xpub and no address, unlike the legacy `account.id` (`js:2:ethereum:0x…`).
+**1. One universal identity.** An account is an [`AccountDescriptor`](../../domain/entity/account-descriptor): its type (`utxo` with an xpub, or `address`), CAL network, key (xpub, address or public key), and derivation path. That is all any source needs to read it. Its `AccountUUID`, a uuid v5 of the canonical key, keys the `accounts` list and every account data kind: the same on every device, and it holds no account key, unlike the legacy `account.id` (`js:2:ethereum:0x…`).
 
 ```text
 account:2:utxo:bitcoin:xpub6Bosf…NzH:m/84h/0h/0h
@@ -56,7 +56,7 @@ This list is not complete: more entities are needed before no screen reads `Acco
 | `balance` | [`@domain/entity-account-balance`](../../domain/entity/account-balance) | merged |
 | `operations` | [`@domain/entity-account-operation`](../../domain/entity/account-operation) | merged: pages, `filterAsset`, `countervalue` |
 | `balanceHistory` | [`@domain/entity-account-balance-history`](../../domain/entity/account-balance-history) | merged; valued in a fiat in [#24309](https://github.com/LedgerHQ/ledger-live/pull/24309) |
-| `receive` | `@domain/entity-account-receive` | discovery [LIVE-40837](https://ledgerhq.atlassian.net/browse/LIVE-40837), PoC [#24410](https://github.com/LedgerHQ/ledger-live/pull/24410) |
+| `receive` | [`@domain/entity-account-receive`](../../domain/entity/account-receive) | address and device verification in [#24674](https://github.com/LedgerHQ/ledger-live/pull/24674); discovery [LIVE-40837](https://ledgerhq.atlassian.net/browse/LIVE-40837) |
 | `existence` | `@domain/entity-account-existence` | discovery [LIVE-40835](https://ledgerhq.atlassian.net/browse/LIVE-40835), closed PoC [#23602](https://github.com/LedgerHQ/ledger-live/pull/23602) |
 | `send` capability, not a kind | none yet | discovery [LIVE-40836](https://ledgerhq.atlassian.net/browse/LIVE-40836) |
 | staking, locked balances, family kinds | none yet | to explore |

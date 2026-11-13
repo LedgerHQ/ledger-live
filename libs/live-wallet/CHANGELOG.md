@@ -1,5 +1,14 @@
 # @ledgerhq/live-wallet
 
+## 1.2.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`4aa3244`](https://github.com/LedgerHQ/ledger-live/commit/4aa32442c63cd17bd2894d63ad0721d51e0ca41a), [`49de732`](https://github.com/LedgerHQ/ledger-live/commit/49de7327915d876c4a98826d561705171c41d2d2), [`5a9de42`](https://github.com/LedgerHQ/ledger-live/commit/5a9de42cd3a598f1f8954d58b9536280f5fd2927), [`120891d`](https://github.com/LedgerHQ/ledger-live/commit/120891d4dbd9e9bba22dbf552f1bbe0ab34685cc), [`51ce5a0`](https://github.com/LedgerHQ/ledger-live/commit/51ce5a05e95dc02ce0eccc5f9d043d556ba43bbf), [`0cf44d5`](https://github.com/LedgerHQ/ledger-live/commit/0cf44d56a449fb0f4448cd6f8e02c880fc47adb2)]:
+  - @ledgerhq/types-live@6.132.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.12.0-next.0
+  - @domain/entity-account-name@0.4.1-next.0
+
 ## 1.2.0
 
 ### Minor Changes
@@ -225,31 +234,5 @@
   - @ledgerhq/ledger-wallet-framework@3.3.0-next.0
   - @domain/entity-contact@0.8.2-next.0
   - @shared/cloud-sync-module@0.4.0
-
-## 1.1.1
-
-### Patch Changes
-
-- Updated dependencies [[`e6d6ed6`](https://github.com/LedgerHQ/ledger-live/commit/e6d6ed6eda460eb614680b31a42ba8067cc28d2a), [`a8c34d0`](https://github.com/LedgerHQ/ledger-live/commit/a8c34d0d9469b4e11339edfbef53445e58194fd8), [`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682)]:
-  - @domain/entity-currency-crypto@0.11.0
-  - @shared/cloud-sync-module@0.4.0
-  - @ledgerhq/types-live@6.122.0
-  - @ledgerhq/ledger-wallet-framework@3.2.0
-  - @domain/entity-contact@0.8.1
-  - @domain/entity-account-name@0.2.2
-  - @domain/entity-recent-addresses@0.2.1
-
-## 1.1.1-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`e6d6ed6`](https://github.com/LedgerHQ/ledger-live/commit/e6d6ed6eda460eb614680b31a42ba8067cc28d2a), [`a8c34d0`](https://github.com/LedgerHQ/ledger-live/commit/a8c34d0d9469b4e11339edfbef53445e58194fd8), [`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682)]:
-  - @domain/entity-currency-crypto@0.11.0-next.0
-  - @shared/cloud-sync-module@0.4.0-next.0
-  - @ledgerhq/types-live@6.122.0-next.0
-  - @ledgerhq/ledger-wallet-framework@3.2.0-next.0
-  - @domain/entity-contact@0.8.1-next.0
-  - @domain/entity-account-name@0.2.2-next.0
-  - @domain/entity-recent-addresses@0.2.1-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

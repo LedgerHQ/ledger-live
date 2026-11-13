@@ -1,5 +1,7 @@
-import { cardanoCoinConfig as config } from "../fixtures/config";
+import { cardanoDefaults } from "../config";
 import { lastBlock } from "./lastBlock";
+
+const config = cardanoDefaults.cardano;
 
 describe("lastBlock (integration)", () => {
   it("fetches the current tip height from the Cardano API", async () => {

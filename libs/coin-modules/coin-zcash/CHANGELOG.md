@@ -1,5 +1,16 @@
 # @ledgerhq/coin-zcash
 
+## 1.2.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`4aa3244`](https://github.com/LedgerHQ/ledger-live/commit/4aa32442c63cd17bd2894d63ad0721d51e0ca41a), [`332d615`](https://github.com/LedgerHQ/ledger-live/commit/332d6152b6c11aa923d5fc7f5e16606b5d61a252), [`49de732`](https://github.com/LedgerHQ/ledger-live/commit/49de7327915d876c4a98826d561705171c41d2d2), [`5a9de42`](https://github.com/LedgerHQ/ledger-live/commit/5a9de42cd3a598f1f8954d58b9536280f5fd2927), [`120891d`](https://github.com/LedgerHQ/ledger-live/commit/120891d4dbd9e9bba22dbf552f1bbe0ab34685cc), [`51ce5a0`](https://github.com/LedgerHQ/ledger-live/commit/51ce5a05e95dc02ce0eccc5f9d043d556ba43bbf), [`0cf44d5`](https://github.com/LedgerHQ/ledger-live/commit/0cf44d56a449fb0f4448cd6f8e02c880fc47adb2)]:
+  - @ledgerhq/types-live@6.132.0-next.0
+  - @ledgerhq/hw-app-btc@12.3.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.12.0-next.0
+  - @ledgerhq/live-signer-zcash@0.12.0
+  - @ledgerhq/wallet-btc@1.2.0
+
 ## 1.2.0
 
 ### Minor Changes
@@ -427,56 +438,6 @@
   - @ledgerhq/ledger-wallet-framework@3.3.0-next.0
   - @ledgerhq/live-env@4.0.0-next.0
   - @ledgerhq/wallet-btc@0.4.0-next.0
-  - @ledgerhq/live-signer-zcash@0.10.0
-
-## 0.6.0
-
-### Minor Changes
-
-- [#21045](https://github.com/LedgerHQ/ledger-live/pull/21045) [`4342943`](https://github.com/LedgerHQ/ledger-live/commit/43429435e5411592f61099f1d40712f055578b0c) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Fix missing memo in Zcash shielded operation details. After a shielded send with a memo, the memo is now persisted in the operation extra and displayed in Transaction details.
-
-- [#21032](https://github.com/LedgerHQ/ledger-live/pull/21032) [`f9f6b71`](https://github.com/LedgerHQ/ledger-live/commit/f9f6b71d91c051b8e611a44f5b564cf5062cedb8) Thanks [@pawell24](https://github.com/pawell24)! - Default the Zcash shielded-balance birthday to Ironwood (NU6.3) mainnet activation
-  instead of Orchard/NU5 activation, and reject a birthday dated in the future.
-
-- [#21136](https://github.com/LedgerHQ/ledger-live/pull/21136) [`bf22729`](https://github.com/LedgerHQ/ledger-live/commit/bf22729942b9dc114644dd3dc32962c08012c1cc) Thanks [@vladyslavchupovskiy-ext-art](https://github.com/vladyslavchupovskiy-ext-art)! - Fix flaky note-reservation boundary test by using fake timers
-
-- [#21179](https://github.com/LedgerHQ/ledger-live/pull/21179) [`46ed356`](https://github.com/LedgerHQ/ledger-live/commit/46ed356e325028c4e8e461b72f7dce631c7362e3) Thanks [@pawell24](https://github.com/pawell24)! - Fix the Zcash shielded-balance "Stop sync" action, which previously did nothing when the
-  running sync was started automatically by the standard wallet sync rather than by the
-  manual start button, and could resume on its own shortly after a manual stop otherwise
-  succeeded.
-
-### Patch Changes
-
-- Updated dependencies [[`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682), [`e21305a`](https://github.com/LedgerHQ/ledger-live/commit/e21305abce18f0a9408bf6c0e2bb47d5c992e06a)]:
-  - @ledgerhq/types-live@6.122.0
-  - @ledgerhq/ledger-wallet-framework@3.2.0
-  - @ledgerhq/live-env@3.2.0
-  - @ledgerhq/wallet-btc@0.3.0
-  - @ledgerhq/live-signer-zcash@0.10.0
-
-## 0.6.0-next.0
-
-### Minor Changes
-
-- [#21045](https://github.com/LedgerHQ/ledger-live/pull/21045) [`4342943`](https://github.com/LedgerHQ/ledger-live/commit/43429435e5411592f61099f1d40712f055578b0c) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Fix missing memo in Zcash shielded operation details. After a shielded send with a memo, the memo is now persisted in the operation extra and displayed in Transaction details.
-
-- [#21032](https://github.com/LedgerHQ/ledger-live/pull/21032) [`f9f6b71`](https://github.com/LedgerHQ/ledger-live/commit/f9f6b71d91c051b8e611a44f5b564cf5062cedb8) Thanks [@pawell24](https://github.com/pawell24)! - Default the Zcash shielded-balance birthday to Ironwood (NU6.3) mainnet activation
-  instead of Orchard/NU5 activation, and reject a birthday dated in the future.
-
-- [#21136](https://github.com/LedgerHQ/ledger-live/pull/21136) [`bf22729`](https://github.com/LedgerHQ/ledger-live/commit/bf22729942b9dc114644dd3dc32962c08012c1cc) Thanks [@vladyslavchupovskiy-ext-art](https://github.com/vladyslavchupovskiy-ext-art)! - Fix flaky note-reservation boundary test by using fake timers
-
-- [#21179](https://github.com/LedgerHQ/ledger-live/pull/21179) [`46ed356`](https://github.com/LedgerHQ/ledger-live/commit/46ed356e325028c4e8e461b72f7dce631c7362e3) Thanks [@pawell24](https://github.com/pawell24)! - Fix the Zcash shielded-balance "Stop sync" action, which previously did nothing when the
-  running sync was started automatically by the standard wallet sync rather than by the
-  manual start button, and could resume on its own shortly after a manual stop otherwise
-  succeeded.
-
-### Patch Changes
-
-- Updated dependencies [[`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682), [`e21305a`](https://github.com/LedgerHQ/ledger-live/commit/e21305abce18f0a9408bf6c0e2bb47d5c992e06a)]:
-  - @ledgerhq/types-live@6.122.0-next.0
-  - @ledgerhq/ledger-wallet-framework@3.2.0-next.0
-  - @ledgerhq/live-env@3.2.0-next.0
-  - @ledgerhq/wallet-btc@0.3.0
   - @ledgerhq/live-signer-zcash@0.10.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

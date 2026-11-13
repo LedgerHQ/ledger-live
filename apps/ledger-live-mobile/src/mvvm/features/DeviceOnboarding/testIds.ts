@@ -1,6 +1,7 @@
-export const karaokeTestIds = {
+export const unseededIntroKaraokeTestIds = {
   screen: "device-onboarding-karaoke",
   close: "device-onboarding-karaoke-close",
+  action: "device-onboarding-karaoke-action",
 } as const;
 
 export const quitConfirmationTestIds = {
@@ -19,6 +20,13 @@ export const checksTestIds = {
   continue: "device-onboarding-checks-continue",
   quit: "device-onboarding-checks-quit",
   allowSheet: "device-onboarding-checks-allow-sheet",
+  installUpdate: "device-onboarding-checks-install-update",
+  skipUpdate: "device-onboarding-checks-skip-update",
+  declinedSheet: "device-onboarding-checks-declined-sheet",
+  networkSheet: "device-onboarding-checks-network-sheet",
+  unknownSheet: "device-onboarding-checks-unknown-sheet",
+  providerSheet: "device-onboarding-checks-provider-sheet",
+  notGenuineSheet: "device-onboarding-checks-not-genuine-sheet",
 } as const;
 
 export const syncOfferTestIds = {

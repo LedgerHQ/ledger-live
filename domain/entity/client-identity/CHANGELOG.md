@@ -1,5 +1,11 @@
 # @domain/entity-client-identity
 
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#24656](https://github.com/LedgerHQ/ledger-live/pull/24656) [`6baeada`](https://github.com/LedgerHQ/ledger-live/commit/6baeadaca277a70109580c0d939278ebf729922b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Let the Portfolio account data source send the install's `PortfolioId` to the Portfolio service
+
 ## 0.5.0
 
 ### Minor Changes

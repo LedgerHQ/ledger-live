@@ -1,5 +1,5 @@
 import * as Crypto from "expo-crypto";
-import { createRandomBase64Url, sha256Base64Url } from "../crypto.native";
+import { createRandomBase64Url, sha256Base64Url } from "../crypto";
 
 jest.mock("expo-crypto", () => ({
   getRandomBytesAsync: jest.fn(),

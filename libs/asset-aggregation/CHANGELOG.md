@@ -1,5 +1,14 @@
 # @ledgerhq/asset-aggregation
 
+## 0.19.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`4aa3244`](https://github.com/LedgerHQ/ledger-live/commit/4aa32442c63cd17bd2894d63ad0721d51e0ca41a), [`49de732`](https://github.com/LedgerHQ/ledger-live/commit/49de7327915d876c4a98826d561705171c41d2d2), [`5a9de42`](https://github.com/LedgerHQ/ledger-live/commit/5a9de42cd3a598f1f8954d58b9536280f5fd2927), [`120891d`](https://github.com/LedgerHQ/ledger-live/commit/120891d4dbd9e9bba22dbf552f1bbe0ab34685cc), [`51ce5a0`](https://github.com/LedgerHQ/ledger-live/commit/51ce5a05e95dc02ce0eccc5f9d043d556ba43bbf), [`0cf44d5`](https://github.com/LedgerHQ/ledger-live/commit/0cf44d56a449fb0f4448cd6f8e02c880fc47adb2)]:
+  - @ledgerhq/types-live@6.132.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.12.0-next.0
+  - @domain/api-aggregated-assets@0.7.1-next.0
+
 ## 0.19.0
 
 ### Minor Changes
@@ -318,23 +327,5 @@
   - @domain/entity-currency@0.4.2
   - @domain/entity-currency-token@0.5.1
   - @ledgerhq/live-countervalues@0.24.5
-
-## 0.14.0-next.1
-
-### Minor Changes
-
-- [#21394](https://github.com/LedgerHQ/ledger-live/pull/21394) [`6046b34`](https://github.com/LedgerHQ/ledger-live/commit/6046b34802da0365fd027b83e48627afd64845ab) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix MarketBanner/Market list navigation so clicking Arbitrum opens the ARB asset detail instead of the Ethereum one, by passing the market ledger ids in the navigation state and preventing a bare market id from colliding with a same-named chain id
-
-## 0.13.3-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`e6d6ed6`](https://github.com/LedgerHQ/ledger-live/commit/e6d6ed6eda460eb614680b31a42ba8067cc28d2a), [`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682)]:
-  - @domain/entity-currency-crypto@0.11.0-next.0
-  - @ledgerhq/types-live@6.122.0-next.0
-  - @domain/api-aggregated-assets@0.4.2-next.0
-  - @domain/entity-currency@0.4.2-next.0
-  - @domain/entity-currency-token@0.5.1-next.0
-  - @ledgerhq/live-countervalues@0.24.5-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

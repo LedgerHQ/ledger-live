@@ -28,6 +28,14 @@ Discovery, connection and unknown errors show in a bottom sheet, over the last v
 - Closing a connection error takes the user back to the device list.
 - Closing the unknown error calls `onClose`.
 
+## Show a state from a parent
+
+`ConnectNewDeviceView` shows a UI state that it gets from a parent, without the view model. The parent gives `state`, `platform` and these props:
+
+- `lastNonErrorState`: the view under the error sheet. Use `isErrorState` to keep it up to date.
+- `onCloseErrorSheet`: called when the user closes the error sheet, and also when `state` leaves an error.
+- `onDeviceNotFound` (optional): as in the props above.
+
 ## Try it
 
 Settings > Debug > Features > Device Intent Executor > Connect New Device renders the component and logs each callback call.

@@ -1,0 +1,143 @@
+import { renderHook } from "tests/testSetup";
+import { Account, AccountLike } from "@ledgerhq/types-live";
+import { useOpenAssetAndAccount } from "../useOpenAssetAndAccount";
+import { createModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/utils";
+
+const mockAccount = { id: "account1" } as AccountLike;
+const mockParentAccount = { id: "parent1" } as Account;
+
+const config = createModularDrawerConfiguration({});
+
+describe("useOpenAssetAndAccount - openAssetAndAccount", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should set isOpen on openAssetAndAccount", () => {
+    const { result, store } = renderHook(() => useOpenAssetAndAccount());
+
+    expect(store.getState().modularDialog.isOpen).toBe(false);
+
+    result.current.openAssetAndAccount({ drawerConfiguration: config });
+
+    expect(store.getState().modularDialog.isOpen).toBe(true);
+  });
+
+  it("should set flow and source in the store when provided", () => {
+    const { result, store } = renderHook(() => useOpenAssetAndAccount());
+
+    result.current.openAssetAndAccount({
+      drawerConfiguration: config,
+      flow: "swap",
+      source: "Asset",
+    });
+
+    expect(store.getState().modularDialog.flow).toBe("swap");
+    expect(store.getState().modularDialog.source).toBe("Asset");
+  });
+
+  it("should leave flow and source untouched when not provided", () => {
+    const { result, store } = renderHook(() => useOpenAssetAndAccount());
+
+    result.current.openAssetAndAccount({ drawerConfiguration: config });
+
+    expect(store.getState().modularDialog.flow).toBe("");
+    expect(store.getState().modularDialog.source).toBe("");
+  });
+
+  it("should restrict the dialog to the given networks when networkIds is provided", () => {
+    const { result, store } = renderHook(() => useOpenAssetAndAccount());
+
+    result.current.openAssetAndAccount({
+      drawerConfiguration: config,
+      currencies: ["ethereum/erc20/usd__coin"],
+      networkIds: ["ethereum", "polygon"],
+    });
+
+    expect(store.getState().modularDialog.dialogParams).toMatchObject({
+      currencies: ["ethereum/erc20/usd__coin"],
+      networkIds: ["ethereum", "polygon"],
+    });
+  });
+
+  it("should not filter networks when networkIds is not provided", () => {
+    const { result, store } = renderHook(() => useOpenAssetAndAccount());
+
+    result.current.openAssetAndAccount({
+      drawerConfiguration: config,
+      currencies: ["ethereum/erc20/usd__coin"],
+    });
+
+    expect(store.getState().modularDialog.dialogParams?.networkIds).toBeUndefined();
+  });
+
+  it("should handle callback mode success", () => {
+    const onSuccess = jest.fn();
+
+    const { result, store } = renderHook(() => useOpenAssetAndAccount());
+
+    result.current.openAssetAndAccount({
+      onSuccess,
+      drawerConfiguration: config,
+    });
+
+    store
+      .getState()
+      .modularDialog.dialogParams?.onAccountSelected?.(mockAccount, mockParentAccount);
+
+    expect(onSuccess).toHaveBeenCalledWith(mockAccount, mockParentAccount);
+    expect(store.getState().modularDialog.isOpen).toBe(false);
+  });
+
+  it("should handle callback mode cancel", () => {
+    const onCancel = jest.fn();
+
+    const { result, store } = renderHook(() => useOpenAssetAndAccount());
+
+    result.current.openAssetAndAccount({
+      onCancel,
+      drawerConfiguration: config,
+    });
+
+    store.getState().modularDialog.dialogParams?.onClose?.();
+
+    expect(onCancel).toHaveBeenCalled();
+    expect(store.getState().modularDialog.isOpen).toBe(false);
+  });
+});
+
+describe("useOpenAssetAndAccount - openAssetAndAccountPromise", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should resolve with account and parentAccount on success", async () => {
+    const { result, store } = renderHook(() => useOpenAssetAndAccount());
+
+    const resultPromise = result.current.openAssetAndAccountPromise({
+      drawerConfiguration: config,
+    });
+
+    store
+      .getState()
+      .modularDialog.dialogParams?.onAccountSelected?.(mockAccount, mockParentAccount);
+
+    const resultValue = await resultPromise;
+
+    expect(resultValue).toEqual({ account: mockAccount, parentAccount: mockParentAccount });
+    expect(store.getState().modularDialog.isOpen).toBe(false);
+  });
+
+  it("should reject with an error on cancel", async () => {
+    const { result, store } = renderHook(() => useOpenAssetAndAccount());
+
+    const resultPromise = result.current.openAssetAndAccountPromise({
+      drawerConfiguration: config,
+    });
+
+    store.getState().modularDialog.dialogParams?.onClose?.();
+
+    await expect(resultPromise).rejects.toThrow("Canceled by user");
+    expect(store.getState().modularDialog.isOpen).toBe(false);
+  });
+});

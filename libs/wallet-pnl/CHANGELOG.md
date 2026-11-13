@@ -1,5 +1,17 @@
 # @ledgerhq/wallet-pnl
 
+## 0.10.0-next.0
+
+### Minor Changes
+
+- [#24582](https://github.com/LedgerHQ/ledger-live/pull/24582) [`4df88de`](https://github.com/LedgerHQ/ledger-live/commit/4df88de76e0d58b391bb376783edc552b44dcf24) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Count internal native receives in asset cost basis
+
+### Patch Changes
+
+- Updated dependencies [[`4aa3244`](https://github.com/LedgerHQ/ledger-live/commit/4aa32442c63cd17bd2894d63ad0721d51e0ca41a), [`49de732`](https://github.com/LedgerHQ/ledger-live/commit/49de7327915d876c4a98826d561705171c41d2d2), [`5a9de42`](https://github.com/LedgerHQ/ledger-live/commit/5a9de42cd3a598f1f8954d58b9536280f5fd2927), [`120891d`](https://github.com/LedgerHQ/ledger-live/commit/120891d4dbd9e9bba22dbf552f1bbe0ab34685cc), [`51ce5a0`](https://github.com/LedgerHQ/ledger-live/commit/51ce5a05e95dc02ce0eccc5f9d043d556ba43bbf), [`0cf44d5`](https://github.com/LedgerHQ/ledger-live/commit/0cf44d56a449fb0f4448cd6f8e02c880fc47adb2)]:
+  - @ledgerhq/types-live@6.132.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.12.0-next.0
+
 ## 0.9.0
 
 ### Minor Changes
@@ -304,26 +316,5 @@
   - @domain/entity-currency@0.4.2
   - @domain/entity-currency-token@0.5.1
   - @ledgerhq/live-countervalues@0.24.5
-
-## 0.7.9-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`e6d6ed6`](https://github.com/LedgerHQ/ledger-live/commit/e6d6ed6eda460eb614680b31a42ba8067cc28d2a), [`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682)]:
-  - @domain/entity-currency-crypto@0.11.0-next.0
-  - @ledgerhq/types-live@6.122.0-next.0
-  - @ledgerhq/ledger-wallet-framework@3.2.0-next.0
-  - @domain/entity-currency@0.4.2-next.0
-  - @domain/entity-currency-token@0.5.1-next.0
-  - @ledgerhq/live-countervalues@0.24.5-next.0
-
-## 0.7.8
-
-### Patch Changes
-
-- Updated dependencies [[`aa39333`](https://github.com/LedgerHQ/ledger-live/commit/aa393339789242783b168398cb5122a7f1e3f620), [`6c425e0`](https://github.com/LedgerHQ/ledger-live/commit/6c425e0e869c6feed4bd4c87ee0fef5443617708), [`585d8d7`](https://github.com/LedgerHQ/ledger-live/commit/585d8d78d5e153186c39ee2abfcdb7dc4a5d06e0), [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e)]:
-  - @ledgerhq/types-live@6.121.0
-  - @ledgerhq/ledger-wallet-framework@3.1.0
-  - @ledgerhq/live-countervalues@0.24.4
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

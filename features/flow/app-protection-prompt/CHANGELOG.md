@@ -1,5 +1,12 @@
 # @features/flow-app-protection-prompt
 
+## 0.1.4-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`429170c`](https://github.com/LedgerHQ/ledger-live/commit/429170c6f969a90517696f2d750fc853be91e378)]:
+  - @shared/ui-info-state@0.8.0-next.0
+
 ## 0.1.3
 
 ### Patch Changes

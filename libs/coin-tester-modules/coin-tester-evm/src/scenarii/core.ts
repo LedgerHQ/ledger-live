@@ -9,6 +9,7 @@ import { ethers } from "ethers";
 import { forbidRemoteRequests } from "@ledgerhq/coin-tester/localOnly";
 import { startSandbox } from "@ledgerhq/coin-tester/sandbox";
 import type { Sandbox } from "@ledgerhq/coin-tester/sandbox";
+import { sandboxVersions } from "@ledgerhq/coin-tester/versions";
 import { VITALIK, core, expectAddressInList, getBridges } from "../helpers";
 import { swapTokens } from "../sandboxEvm";
 import { STCORE_ON_CORE } from "../tokenFixtures";
@@ -94,10 +95,7 @@ export const scenarioCore: Scenario<GenericTransaction, Account> = {
   setup: async () => {
     const signer = await buildSigner();
     // The node alone: Live has no explorer for Core
-    sandbox = await startSandbox(
-      { family: "evm", network: "core" },
-      { node: { implementation: "geth", version: "1.0.27" } },
-    );
+    sandbox = await startSandbox({ family: "evm", network: "core" }, sandboxVersions("core"));
     const { node: rpc } = sandbox.endpoints;
     if (rpc === undefined) {
       throw new Error("the sandbox instance has no node endpoint");

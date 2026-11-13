@@ -1,12 +1,12 @@
 import BigNumber from "bignumber.js";
-import { casperMainnetResolvedConfig } from "../__tests__/fixtures/config.fixture";
+import { casperDefaults } from "../config";
 import { fetchAccountStateInfo, fetchBalance, fetchLastBlock, fetchTxs, fetchTxsPage } from "./api";
 import { BUSY_MAINNET_PUBLIC_KEY } from "../__tests__/fixtures/addresses.fixture";
 import { CASPER_DUMMY_ADDRESS } from "../constants";
 
 const pubkey = "0202664e3958608cd8dc2b80d4c73f18f76ef197f1cccca2f4f817c70bb050b248bd";
 const pubkeyAbandon = CASPER_DUMMY_ADDRESS;
-const config = casperMainnetResolvedConfig;
+const config = casperDefaults.casper;
 
 describe("Casper API", () => {
   it("should be able to fetch the network status", async () => {

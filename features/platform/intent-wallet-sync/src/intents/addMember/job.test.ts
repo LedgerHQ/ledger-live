@@ -29,6 +29,7 @@ import {
   recordJob,
 } from "../../internals/ledgerSyncJobTestKit";
 import { addMemberIntentJob } from "./job";
+import type { AddMemberIntentInput } from "./types";
 
 type GetOrCreateTrustchain = TrustchainSDK["getOrCreateTrustchain"];
 
@@ -79,20 +80,39 @@ function deviceCall(
   );
 }
 
-function createJob(getOrCreateTrustchain: GetOrCreateTrustchain, currentTrustchain?: Trustchain) {
+type OnInitialResponse = AddMemberIntentInput["onInitialResponse"];
+
+function createJob(
+  getOrCreateTrustchain: GetOrCreateTrustchain,
+  currentTrustchain?: Trustchain,
+  onInitialResponse?: OnInitialResponse,
+) {
   const createSessionSdk = jest.fn(() => fakeTrustchainSdk({ getOrCreateTrustchain }));
   const onResult = jest.fn();
   const job$ = addMemberIntentJob({
     deviceConnectionResult: CONNECTION,
     deviceExtractedContext: {} as never,
-    input: { memberCredentials: MEMBER_CREDENTIALS, currentTrustchain, createSessionSdk },
+    input: {
+      memberCredentials: MEMBER_CREDENTIALS,
+      currentTrustchain,
+      createSessionSdk,
+      ...(onInitialResponse && { onInitialResponse }),
+    },
     onResult,
   });
   return { job$, onResult, createSessionSdk };
 }
 
-function startJob(getOrCreateTrustchain: GetOrCreateTrustchain, currentTrustchain?: Trustchain) {
-  const { job$, onResult, createSessionSdk } = createJob(getOrCreateTrustchain, currentTrustchain);
+function startJob(
+  getOrCreateTrustchain: GetOrCreateTrustchain,
+  currentTrustchain?: Trustchain,
+  onInitialResponse?: OnInitialResponse,
+) {
+  const { job$, onResult, createSessionSdk } = createJob(
+    getOrCreateTrustchain,
+    currentTrustchain,
+    onInitialResponse,
+  );
   return { ...recordJob(job$), onResult, createSessionSdk };
 }
 
@@ -155,6 +175,50 @@ describe("addMemberIntentJob", () => {
     subscription.unsubscribe();
     rejected.retry();
     expect(getOrCreateTrustchain).toHaveBeenCalledTimes(2);
+  });
+
+  it("should pass onInitialResponse to the SDK with the device callbacks", async () => {
+    const onInitialResponse = jest.fn();
+    const getOrCreateTrustchain = deviceCall(() => Promise.resolve(RESULT));
+    const { ended } = startJob(getOrCreateTrustchain, undefined, onInitialResponse);
+
+    expect(await ended()).toEqual([PENDING, AWAITING, PROCESSING, COMPLETED]);
+    expect(getOrCreateTrustchain).toHaveBeenCalledWith(
+      "compat-1",
+      MEMBER_CREDENTIALS,
+      {
+        onStartRequestUserInteraction: expect.any(Function),
+        onEndRequestUserInteraction: expect.any(Function),
+        onInitialResponse,
+      },
+      undefined,
+      undefined,
+    );
+  });
+
+  it("should end as failed with no-trustchain when onInitialResponse throws NoTrustchainInitialized", async () => {
+    const error = new NoTrustchainInitialized();
+    const getOrCreateTrustchain = jest.fn<
+      ReturnType<GetOrCreateTrustchain>,
+      Parameters<GetOrCreateTrustchain>
+    >(async (_deviceId, _credentials, callbacks) => {
+      callbacks?.onInitialResponse?.({});
+      return RESULT;
+    });
+    const { ended, onResult } = startJob(getOrCreateTrustchain, undefined, () => {
+      throw error;
+    });
+
+    expect(await ended()).toEqual([PENDING, failedState("no-trustchain", error)]);
+    expect(onResult).not.toHaveBeenCalled();
+  });
+
+  it("should pass the device callbacks only when onInitialResponse is not given", async () => {
+    const getOrCreateTrustchain = deviceCall(() => Promise.resolve(RESULT));
+    const { ended } = startJob(getOrCreateTrustchain);
+
+    await ended();
+    expect(getOrCreateTrustchain.mock.calls[0][2]).not.toHaveProperty("onInitialResponse");
   });
 
   it.each([

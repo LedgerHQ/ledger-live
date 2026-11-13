@@ -5,7 +5,8 @@ import type { AddMemberIntentInput, AddMemberJobState } from "./types";
 
 /**
  * Runs `getOrCreateTrustchain` on the DIE session: creates the trustchain of the device seed,
- * joins it, or restores it, with the device signing this instance in.
+ * joins it, or restores it, with the device signing this instance in. `onInitialResponse`, when
+ * given, sees the seed's trustchains first and can end the run by throwing.
  *
  * Emits `pending`, then `awaiting-device-confirmation` and `processing` for each confirmation,
  * then `completed` after `onResult`. A refusal emits `device-rejected`, any other SDK error
@@ -17,7 +18,9 @@ export const addMemberIntentJob: Job<AddMemberJobState, AddMemberIntentInput, Tr
       sdk.getOrCreateTrustchain(
         deviceId,
         input.memberCredentials,
-        callbacks,
+        input.onInitialResponse
+          ? { ...callbacks, onInitialResponse: input.onInitialResponse }
+          : callbacks,
         undefined,
         input.currentTrustchain,
       ),

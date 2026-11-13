@@ -12,33 +12,45 @@ import {
 import { openDeeplink, normalizeText, isAndroid } from "@e2e/helpers/commonHelpers";
 import { getPtxHandoff } from "@e2e/bridge/server";
 import { retryUntilTimeout } from "@e2e/utils/retry";
+import { byId } from "@e2e/helpers/elements/native";
+import { webByCss, webById, webByXPath } from "@e2e/helpers/elements/web";
+
+// App-side CAL lookup for the Buy screen's currencies (700+ ids) measures 60-90s;
+// 60s flakes on that alone. Latency is tracked separately, not fixed here.
+const CRYPTO_CURRENCY_SELECTOR_TIMEOUT = TIMEOUT.xxxlarge;
 
 export default class BuySellPage {
-  appContainerCssSelector = "#app-container";
-  closeButtonId = "icon_button_close";
-  amountInputSectionBaseId = "amount-input-section";
-  countryDrawerSearchInput = "countries-drawer-search-input";
-  cryptoAccountSelector = "account-details";
-  cryptoCurrencySelector = "crypto-amount-option-button";
-  expandButtonId = "expand-button";
-  fiatAmountOptionButtonId = "fiat-amount-option-button";
-  fiatDrawer = "open-fiat-drawer";
-  fiatDrawerInput = "fiat-drawer-search-input";
-  formCta = "form-cta";
-  openCountryDrawerButtonId = "open-country-drawer";
-  paymentOptions = "payment-options";
-  paymentSelector = "payment_selector";
-  providersList = "providers_list";
-  saveRegionFiatOptionsSelector = "save-region-and-fiat-options";
-  providerTitleCssSelector = "[data-testid^='provider_title_'][data-testid$='_title_container']";
+  private readonly appContainer = webByCss("#app-container");
+  private readonly providerTitleCssSelector =
+    "[data-testid^='provider_title_'][data-testid$='_title_container']";
 
-  currencyRow = (currencyId: string) => `currency-row-${currencyId}`;
-  buyQuickAmountButtonId = (amount: "400" | "800" | "1600") => `buy-amount-button-${amount}`;
-  sellPercentageButtonId = (pct: "25%" | "50%" | "75%" | "max") => pct;
-  amountInputSectionId = () => `${this.amountInputSectionBaseId}-input`;
-  countryListSelector = (locale: string) => `country-option-${locale.split("-")[1].toLowerCase()}`;
-  currencyListSelector = (curr: string) => `fiat-option-${curr}`;
-  provider = (name: string) => `provider_${name.toLowerCase()}`;
+  private readonly closeButton = webById("icon_button_close");
+  private readonly amountInputSection = webById("amount-input-section-input");
+  private readonly countryDrawerSearchInput = webById("countries-drawer-search-input");
+  private readonly cryptoAccountSelector = webById("account-details");
+  private readonly cryptoCurrencySelector = webById("crypto-amount-option-button");
+  private readonly expandButton = webById("expand-button");
+  private readonly fiatAmountOptionButton = webById("fiat-amount-option-button");
+  private readonly fiatDrawer = webById("open-fiat-drawer");
+  private readonly fiatDrawerInput = webById("fiat-drawer-search-input");
+  private readonly formCta = webById("form-cta");
+  private readonly openCountryDrawerButton = webById("open-country-drawer");
+  private readonly paymentOptions = webById("payment-options");
+  private readonly paymentSelector = webById("payment_selector");
+  private readonly providersList = webById("providers_list");
+  private readonly saveRegionFiatOptionsSelector = webById("save-region-and-fiat-options");
+  private readonly youWillPayText = webByXPath(`//span[text()="You will pay"]`);
+  private readonly youWillSellText = webByXPath(`//span[text()="You will sell"]`);
+
+  private readonly currencyRow = (currencyId: string) => byId(`currency-row-${currencyId}`);
+  private readonly buyQuickAmountButton = (amount: "400" | "800" | "1600") =>
+    webById(`buy-amount-button-${amount}`);
+  private readonly sellPercentageButton = (pct: "25%" | "50%" | "75%" | "max") => webById(pct);
+  private readonly countryListSelector = (locale: string) =>
+    webById(`country-option-${locale.split("-")[1].toLowerCase()}`);
+  private readonly currencyListSelector = (curr: string) => webById(`fiat-option-${curr}`);
+  private readonly paymentMethodOption = (paymentMethod: string) => webById(paymentMethod);
+  private readonly provider = (name: string) => webById(`provider_${name.toLowerCase()}`);
 
   @Step("Open page via deeplink {{{0}}}")
   async openViaDeeplink(page: "Buy" | "Sell") {
@@ -47,77 +59,65 @@ export default class BuySellPage {
     await app.common.disableSynchronization();
     try {
       await openDeeplink(page.toLowerCase());
-      await waitForElementById(app.common.walletApiWebview, TIMEOUT.xxxlarge, {
-        checkVisibility: false,
-      });
+      await app.common.waitForWalletApiWebview(TIMEOUT.xxxlarge);
     } finally {
       await app.common.enableSynchronization();
     }
   }
 
-  // App-side CAL lookup for the Buy screen's currencies (700+ ids) measures 60-90s;
-  // 60s flakes on that alone. Latency is tracked separately, not fixed here.
-  cryptoCurrencySelectorTimeout = TIMEOUT.xxxlarge;
-
   @Step("Close the Buy screen")
   async closeBuyScreen() {
-    await tapWebElementByTestId(this.closeButtonId);
+    await this.closeButton.tap();
   }
 
   @Step("Expect Buy screen to be visible")
   async expectBuyScreenToBeVisible() {
-    await waitWebElementByTestId(this.cryptoCurrencySelector, {
-      timeout: this.cryptoCurrencySelectorTimeout,
-    });
-    await detoxExpect(getWebElementsByIdAndText("", "You will pay")).toExist();
-    await detoxExpect(getWebElementByTestId(this.amountInputSectionId())).toExist();
-    await detoxExpect(getWebElementByTestId(this.buyQuickAmountButtonId("400"))).toExist();
-    await detoxExpect(getWebElementByTestId(this.buyQuickAmountButtonId("800"))).toExist();
-    await detoxExpect(getWebElementByTestId(this.buyQuickAmountButtonId("1600"))).toExist();
-    await detoxExpect(getWebElementByTestId(this.fiatAmountOptionButtonId)).toExist();
+    await this.cryptoCurrencySelector.waitVisible(CRYPTO_CURRENCY_SELECTOR_TIMEOUT);
+    await this.youWillPayText.expectExist();
+    await this.amountInputSection.expectExist();
+    await this.buyQuickAmountButton("400").expectExist();
+    await this.buyQuickAmountButton("800").expectExist();
+    await this.buyQuickAmountButton("1600").expectExist();
+    await this.fiatAmountOptionButton.expectExist();
   }
 
   @Step("Expect Sell screen to be visible")
   async expectSellScreenToBeVisible() {
-    await waitWebElementByTestId(this.cryptoCurrencySelector, {
-      timeout: this.cryptoCurrencySelectorTimeout,
-    });
-    await detoxExpect(getWebElementsByIdAndText("", "You will sell")).toExist();
-    await detoxExpect(getWebElementByTestId(this.amountInputSectionId())).toExist();
-    await detoxExpect(getWebElementByTestId(this.sellPercentageButtonId("25%"))).toExist();
-    await detoxExpect(getWebElementByTestId(this.sellPercentageButtonId("50%"))).toExist();
-    await detoxExpect(getWebElementByTestId(this.sellPercentageButtonId("75%"))).toExist();
-    await detoxExpect(getWebElementByTestId(this.sellPercentageButtonId("max"))).toExist();
+    await this.cryptoCurrencySelector.waitVisible(CRYPTO_CURRENCY_SELECTOR_TIMEOUT);
+    await this.youWillSellText.expectExist();
+    await this.amountInputSection.expectExist();
+    await this.sellPercentageButton("25%").expectExist();
+    await this.sellPercentageButton("50%").expectExist();
+    await this.sellPercentageButton("75%").expectExist();
+    await this.sellPercentageButton("max").expectExist();
   }
 
   @Step("Select currency {{{0}}}")
   async selectCurrency(currencyId: string) {
-    const id = this.currencyRow(currencyId);
-    await waitForElementById(id);
-    await tapById(id);
+    await this.currencyRow(currencyId).tap();
   }
 
   @Step("Choose crypto asset if not selected {{{0.accountName}}}")
   async chooseAssetIfNotSelected(account: AccountType) {
-    await tapWebElementByTestId(this.cryptoCurrencySelector);
+    await this.cryptoCurrencySelector.tap();
     await app.modularDrawer.selectAsset(account);
-    jestExpect(await getWebElementText(this.cryptoCurrencySelector)).toBe(account.currency.ticker);
-    jestExpect(await getWebElementText(this.cryptoAccountSelector)).toBe(
+    await this.cryptoCurrencySelector.expectText(account.currency.ticker);
+    await this.cryptoAccountSelector.expectText(
       `${getParentAccountName(account)}${account.tokenType ? ` (${account.currency.ticker})` : ""}`,
     );
   }
 
   @Step("Choose country if not selected {{{0.locale}}}")
   async chooseCountryIfNotSelected(fiat: Fiat) {
-    await tapWebElementByTestId(this.fiatAmountOptionButtonId);
-    await tapWebElementByTestId(this.openCountryDrawerButtonId);
-    await typeTextByWebTestId(this.countryDrawerSearchInput, fiat.locale.split("-")[1]);
-    await tapWebElementByTestId(this.countryListSelector(fiat.locale));
-    await tapWebElementByTestId(this.fiatDrawer);
-    await typeTextByWebTestId(this.fiatDrawerInput, fiat.currencyTicker);
-    await tapWebElementByTestId(this.currencyListSelector(fiat.currencyTicker));
-    await tapWebElementByTestId(this.saveRegionFiatOptionsSelector);
-    jestExpect(await getWebElementText(this.fiatAmountOptionButtonId)).toBe(fiat.currencyTicker);
+    await this.fiatAmountOptionButton.tap();
+    await this.openCountryDrawerButton.tap();
+    await this.countryDrawerSearchInput.replaceText(fiat.locale.split("-")[1]);
+    await this.countryListSelector(fiat.locale).tap();
+    await this.fiatDrawer.tap();
+    await this.fiatDrawerInput.replaceText(fiat.currencyTicker);
+    await this.currencyListSelector(fiat.currencyTicker).tap();
+    await this.saveRegionFiatOptionsSelector.tap();
+    await this.fiatAmountOptionButton.expectText(fiat.currencyTicker);
   }
 
   @Step("Verify quick amount buttons functionality")
@@ -129,62 +129,59 @@ export default class BuySellPage {
     ] as const;
 
     for (const { button, expected } of amountTests) {
-      await tapWebElementByTestId(this.buyQuickAmountButtonId(button));
-      const value = await getValueByWebTestId(this.amountInputSectionId());
-      jestExpect(normalizeText(value)).toBe(expected);
+      await this.buyQuickAmountButton(button).tap();
+      await this.amountInputSection.expectValue(expected, { normaliseWhitespace: true });
     }
   }
 
   @Step("Tap sell percentage button {{{0}}}")
   async tapSellPercentageButton(percentage: "25%" | "50%" | "75%" | "max") {
-    await tapWebElementByTestId(this.sellPercentageButtonId(percentage));
+    await this.sellPercentageButton(percentage).tap();
   }
 
   @Step("Set amount to pay {{{0}}}")
   async setAmountToPay(amount: string) {
-    await typeTextByWebTestId(this.amountInputSectionId(), amount);
+    await this.amountInputSection.replaceText(amount);
   }
 
   @Step("Tap see quotes cta")
   async tapSeeQuotes() {
-    await waitForWebElementToBeEnabled(this.formCta);
-    const text = await getWebElementText(this.formCta);
-    jestExpect(normalizeText(text).toLowerCase()).toBe("see quotes");
-    await tapWebElementByTestId(this.formCta);
+    await this.formCta.waitEnabled();
+    await this.formCta.expectText("see quotes", { normaliseWhitespace: true, ignoreCase: true });
+    await this.formCta.tap();
   }
 
   @Step("Tap {{{1}}} cta for {{{0}}}")
   async tapBuySellWithCta(provider: string, page: "Buy" | "Sell") {
-    await waitForWebElementToBeEnabled(this.formCta);
-    const text = await getWebElementText(this.formCta);
-    jestExpect(normalizeText(text)).toBe(`${page} with ${provider}`);
-    await tapWebElementByTestId(this.formCta);
+    await this.formCta.waitEnabled();
+    await this.formCta.expectText(`${page} with ${provider}`, { normaliseWhitespace: true });
+    await this.formCta.tap();
   }
 
   @Step("Select payment method {{{0}}}")
   async selectPaymentMethod(paymentMethod: string) {
-    await tapWebElementByTestId(this.paymentSelector);
-    await detoxExpect(getWebElementByTestId(this.paymentOptions)).toExist();
-    await tapWebElementByTestId(paymentMethod);
-    const currentPaymentMethod = await getWebElementText(this.paymentSelector);
-    jestExpect(normalizeText(currentPaymentMethod).toLowerCase()).toContain(paymentMethod);
+    await this.paymentSelector.tap();
+    await this.paymentOptions.expectExist();
+    await this.paymentMethodOption(paymentMethod).tap();
+    await this.paymentSelector.expectText(paymentMethod, {
+      normaliseWhitespace: true,
+      ignoreCase: true,
+      containing: true,
+    });
+  }
+
+  /** The list shows a few providers and an expand button only when there are more. */
+  private async showAllProviders() {
+    await this.providersList.waitVisible();
+    if (await this.expandButton.isVisible(TIMEOUT.xsmall)) {
+      await this.expandButton.tap();
+    }
   }
 
   @Step("Get available providers")
   async getAvailableProviders(): Promise<string[]> {
-    await waitWebElementByTestId(this.providersList);
-    const expandButton = await waitWebElementByTestId(this.expandButtonId, {
-      timeout: TIMEOUT.xsmall,
-      throwOnTimeout: false,
-    });
-    if (expandButton) {
-      await tapWebElementByTestId(this.expandButtonId);
-    }
-    const providerNames = await getWebElementsText(
-      getWebElementByCssSelector(this.appContainerCssSelector),
-      this.providerTitleCssSelector,
-    );
-    return providerNames;
+    await this.showAllProviders();
+    return await this.appContainer.getChildTexts(this.providerTitleCssSelector);
   }
 
   @Step("Select rotating provider")
@@ -196,24 +193,16 @@ export default class BuySellPage {
         ? availableProviders.filter(uiName => uiName !== BuySellProvider.BANXA.uiName)
         : availableProviders,
     );
-
-    await scrollToWebElement(getWebElementByTestId(this.provider(selected.name)));
-    await tapWebElementByTestId(this.provider(selected.name));
+    await this.provider(selected.name).scrollTo();
+    await this.provider(selected.name).tap();
     return selected;
   }
 
   @Step("Select provider {{{0}}}")
   async selectProvider(provider: string) {
-    await waitWebElementByTestId(this.providersList);
-    const expandButton = await waitWebElementByTestId(this.expandButtonId, {
-      timeout: TIMEOUT.xsmall,
-      throwOnTimeout: false,
-    });
-    if (expandButton) {
-      await tapWebElementByTestId(this.expandButtonId);
-    }
-    await scrollToWebElement(getWebElementByTestId(this.provider(provider)));
-    await tapWebElementByTestId(this.provider(provider));
+    await this.showAllProviders();
+    await this.provider(provider).scrollTo();
+    await this.provider(provider).tap();
   }
 
   /**
@@ -282,7 +271,7 @@ export default class BuySellPage {
     await this.chooseAssetIfNotSelected(buySell.crypto);
     await this.tapSellPercentageButton("75%");
     await this.chooseCountryIfNotSelected(buySell.fiat);
-    const selectedAmount = normalizeText(await getValueByWebTestId(this.amountInputSectionId()));
+    const selectedAmount = normalizeText(await this.amountInputSection.getValue());
     await this.tapSeeQuotes();
     await this.selectPaymentMethod(paymentMethod);
     await this.selectProvider(provider.name);

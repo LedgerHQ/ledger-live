@@ -17,9 +17,40 @@ permissions:
 
 env:
   COIN_TESTER_CURRENCIES: "evm polkadot solana bitcoin tezos tron xrp stellar multiversx cosmos cardano casper vechain near stacks kaspa zcash aleo ton internet_computer"
-  # The coin testers that run against coin-sandbox, and the coin-sandbox networks whose images each one pulls
-  # from GHCR. Bitcoin runs Ledger's images (JFrog), pulled on `up`, so it has none to pull here
-  COIN_SANDBOX_NETWORKS: '{"solana": ["solana"], "tron": ["tron"], "polkadot": ["polkadot"], "evm": ["ethereum", "polygon", "bsc", "optimism", "scroll", "base", "sonic", "robinhood", "arc", "core", "alpen_testnet"], "bitcoin": ["bitcoin_regtest"], "cosmos": ["cosmos", "babylon", "gonka"]}'
+  # The coin testers that run against coin-sandbox: for each, the coin-sandbox networks it runs and the versions it asks
+  # for, as the flags of coin-sandbox's `up` and `pull`. This is the only place the versions are written: the tester
+  # reads them from COIN_SANDBOX_<NETWORK> (`libs/coin-tester/src/versions.ts`) and only these images are pulled from
+  # GHCR, a runner's disk being small. A version the network does not list makes `pull` fail.
+  # An indexer coin-sandbox does not publish (Atlas, from JFrog) is accepted by `pull` and pulled on `up`. XRP runs the
+  # official xrpld image from Docker Hub, which coin-sandbox does not republish (`pull` refuses it): `"pull": false`
+  # gives it a version for the tester and no pull.
+  COIN_SANDBOX_NETWORKS: |
+    {
+      "solana": { "solana": { "flags": "--node agave@4.3.0" } },
+      "tron": { "tron": { "flags": "--node java-tron@4.7.2 --indexer trongrid-stub" } },
+      "polkadot": { "polkadot": { "flags": "--node parity@1.25.0 --indexer atlas@2.9.5" } },
+      "evm": {
+        "ethereum": { "flags": "--node geth@1.17.9 --indexer atlas@2.38.16" },
+        "polygon": { "flags": "--node bor@2.10.2 --indexer atlas@2.38.16" },
+        "bsc": { "flags": "--node geth@1.8.2 --indexer atlas@2.38.26" },
+        "optimism": { "flags": "--node op-reth@2.6.1 --indexer blockscout@12.0.3" },
+        "scroll": { "flags": "--node geth@5.10.2 --indexer blockscout@12.0.3" },
+        "base": { "flags": "--node reth@2.5.2 --indexer etherscan-stub" },
+        "sonic": { "flags": "--node sonic@2.2.5 --indexer etherscan-stub" },
+        "robinhood": { "flags": "--node nitro@3.12.2 --indexer blockscout@12.0.3" },
+        "arc": { "flags": "--node arc-node@0.8.1 --indexer blockscout@12.0.3" },
+        "core": { "flags": "--node geth@1.0.27" },
+        "alpen_testnet": { "flags": "--node alpen-client@0.4.0 --indexer blockscout@12.0.3" },
+        "alpen": { "flags": "--node alpen-client@0.4.0 --indexer blockscout@12.0.3" }
+      },
+      "bitcoin": { "bitcoin_regtest": { "flags": "--node bitcoin-core@31.1 --indexer atlas@2.38.24" } },
+      "cosmos": {
+        "cosmos": { "flags": "--node gaia@29.0.1" },
+        "babylon": { "flags": "--node babylon@4.6.0" },
+        "gonka": { "flags": "--node inference-chain@0.2.16" }
+      },
+      "xrp": { "ripple": { "flags": "--node xrpld@3.4.1", "pull": false } }
+    }
 
 jobs:
   is-affected:
@@ -179,16 +210,29 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Export the coin-sandbox versions
+        if: fromJSON(env.COIN_SANDBOX_NETWORKS)[matrix.chain] != null
+        env:
+          CHAIN: ${{ matrix.chain }}
+        run: |
+          jq -r --arg chain "$CHAIN" '.[$chain] | to_entries[] | "COIN_SANDBOX_\(.key | ascii_upcase)=\(.value.flags)"' \
+            <<<"$COIN_SANDBOX_NETWORKS" >> "$GITHUB_ENV"
+
       - name: Pull the coin-sandbox images
         if: fromJSON(env.COIN_SANDBOX_NETWORKS)[matrix.chain] != null
         working-directory: coin-sandbox
         env:
           COIN_SANDBOX_REGISTRY: ghcr.io/ledgerhq/
-          NETWORKS: ${{ join(fromJSON(env.COIN_SANDBOX_NETWORKS)[matrix.chain], ' ') }}
+          CHAIN: ${{ matrix.chain }}
         run: |
-          for network in $NETWORKS; do
-            deno task pull "$network"
-          done
+          pulls=$(jq -r --arg chain "$CHAIN" \
+            '.[$chain] | to_entries[] | select(.value.pull != false) | "\(.key) \(.value.flags)"' \
+            <<<"$COIN_SANDBOX_NETWORKS")
+          # No line when nothing is to be pulled (XRP): a here-string of "" would still give the loop one empty line
+          while read -r network flags; do
+            [ -n "$network" ] || continue
+            deno task pull "$network" $flags
+          done <<<"$pulls"
 
       - name: Start coin-sandbox
         if: fromJSON(env.COIN_SANDBOX_NETWORKS)[matrix.chain] != null

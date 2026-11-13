@@ -1,7 +1,7 @@
 # @domain/entity-interest-rate
 
-> [!CAUTION]
-> **Status: UNSTABLE** — Being migrated out of `live-common`; the API is still being assembled.
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
 
 Domain entity for asset interest rates. Owns the canonical rate shape and the set of rate types the
 apps understand:

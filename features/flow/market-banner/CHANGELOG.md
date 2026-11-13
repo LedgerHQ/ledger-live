@@ -1,5 +1,11 @@
 # @features/market-banner
 
+## 0.13.0-next.0
+
+### Minor Changes
+
+- [#24618](https://github.com/LedgerHQ/ledger-live/pull/24618) [`902a75d`](https://github.com/LedgerHQ/ledger-live/commit/902a75df349ee9efaf21e8dd1908b1f6a4da76b0) Thanks [@ysitbon](https://github.com/ysitbon)! - Import the market banner tests through the platform-resolved entry instead of suffixed paths.
+
 ## 0.12.0
 
 ### Minor Changes

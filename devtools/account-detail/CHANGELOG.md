@@ -1,5 +1,11 @@
 # @devtools/account-detail
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#24667](https://github.com/LedgerHQ/ledger-live/pull/24667) [`17a6fe5`](https://github.com/LedgerHQ/ledger-live/commit/17a6fe50223648ab962217e1388633d1d67c63a7) Thanks [@deepyjr](https://github.com/deepyjr)! - Show and force in the account-detail DevTools tool whether the install is eligible for the Analytics banner
+
 ## 0.2.0
 
 ### Minor Changes

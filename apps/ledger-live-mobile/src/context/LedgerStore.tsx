@@ -6,7 +6,7 @@ import { restoreLargeScreenUpsellModalState } from "@ledgerhq/live-engagement/la
 import { restorePredictionsState } from "@domain/entity-predictions";
 import { restorePayCardBalanceFilter } from "@features/flow-pay-balance/state";
 import { restorePayCardFeatureTour } from "@features/flow-pay-feature-tour/state";
-import { restoreReceiveVerifyHint } from "@features/flow-pay-request/state";
+import { restoreReceiveVerifyHint } from "@features/flow-receive/state";
 import {
   restoreCardAuthStatus,
   restorePayCardLoginIntro,
@@ -16,6 +16,7 @@ import { backfillOnboardingDate } from "~/logic/postOnboarding/backfillOnboardin
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import mmkvStorageWrapper from "LLM/storage/mmkvStorageWrapper";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
+import { logFirstCountervaluesLoad } from "LLM/utils/logStartup/logFirstCountervaluesLoad";
 import type { StorageCurrencyData, StoreStorageData } from "LLM/utils/logLastStartupEvents";
 import { STARTUP_EVENTS } from "LLM/utils/resolveStartupEvents";
 import {
@@ -60,6 +61,7 @@ import { importMarketBannerState } from "~/reducers/marketBanner";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { importWalletState } from "~/reducers/wallet";
 import { restoreAccountAnalyticsIntroductionFromStorage } from "LLM/features/AccountDetail/analyticsIntroductionStorage";
+import { hasOnboardedWithDeviceSelector } from "LLM/features/AccountDetail/utils/hasOnboardedWithDevice";
 import { importLargeMoverState } from "~/actions/largeMoverLandingPage";
 import { initHistory } from "~/reducers/history";
 import { restoreTokensToCache, parsePersistedCAL } from "@domain/api-currency-token";
@@ -305,13 +307,17 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 
       await bootstrapCardSession(store.dispatch);
       await restoreCardAuthStatus(store.dispatch, store.getState);
-      await restoreAccountAnalyticsIntroductionFromStorage(store.dispatch);
+      await restoreAccountAnalyticsIntroductionFromStorage(store, () =>
+        hasOnboardedWithDeviceSelector(store.getState()),
+      );
 
+      logStartupEvent("Store ready");
       setReady(true);
       onInitFinished();
 
       const currenciesHydrated = hydrateCurrencies().finally(() => setCurrencyInitialized(true)); // Don't block the App rendering for this
       void startCountervaluesWhenReady(store, initialCountervalues, currenciesHydrated);
+      logFirstCountervaluesLoad(store);
       await currenciesHydrated;
     } catch (error) {
       console.error(

@@ -1,5 +1,14 @@
 # @features/flow-account-detail-settings
 
+## 0.3.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`429170c`](https://github.com/LedgerHQ/ledger-live/commit/429170c6f969a90517696f2d750fc853be91e378), [`c3dcfd8`](https://github.com/LedgerHQ/ledger-live/commit/c3dcfd821153bf18896eb4a63bb2ed40c55e310b)]:
+  - @shared/ui-info-state@0.8.0-next.0
+  - @shared/clipboard@0.2.0-next.0
+  - @domain/entity-account-name@0.4.1-next.0
+
 ## 0.3.1
 
 ### Patch Changes

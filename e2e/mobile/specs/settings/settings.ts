@@ -197,7 +197,7 @@ export function runRevampedPasswordUnlockTest(tmsLinks: string[], tags: string[]
     });
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
-    it(`[${Account.ETH_1.currency.testLabel}] - Unlock the app with the correct password`, async () => {
+    it(`[${Account.ETH_1.currency.testLabel}] - Unlock the app with the correct password (revamped lock)`, async () => {
       await app.settingsGeneral.setupRevampedPasswordAndLock(CORRECT_PASSWORD);
       await app.appLock.expectLock();
       await app.appLock.enterUnlockPassword(CORRECT_PASSWORD);
@@ -225,7 +225,7 @@ export function runRevampedPasswordIncorrectTest(tmsLinks: string[], tags: strin
     setTeamOwner(Team.WALLET_XP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it("App stays locked with an incorrect password", async () => {
+    it("App stays locked with an incorrect password (revamped lock)", async () => {
       await app.appLock.enterUnlockPassword("INCORRECT_PASSWORD");
       await app.appLock.unlock();
       await app.appLock.expectLock();

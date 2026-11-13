@@ -50,7 +50,7 @@ describe("a kind added from outside the framework packages", () => {
       version: "2",
       type: "address",
       network: NetworkIdSchema.parse("cosmos"),
-      address: "cosmos1abc",
+      key: "cosmos1abc",
       path: "m/44h/118h/0h/0/0",
     };
     const store = configureStore({

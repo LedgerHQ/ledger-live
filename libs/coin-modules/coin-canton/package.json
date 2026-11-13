@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-canton",
-  "version": "1.7.0",
+  "version": "2.0.0-next.0",
   "description": "Canton coin integration",
   "keywords": [
     "Ledger",
@@ -33,9 +33,6 @@
       "deviceTransactionConfig": [
         "lib/bridge/deviceTransactionConfig"
       ],
-      "common-logic": [
-        "lib/common-logic/index"
-      ],
       "specs": [
         "lib/test/bot-specs"
       ],
@@ -48,7 +45,7 @@
       "*": [
         "lib/*",
         "lib/bridge/*",
-        "lib/common-logic/*",
+        "lib/logic/*",
         "lib/signer/*",
         "lib/test/*",
         "lib/types/*"
@@ -75,10 +72,6 @@
       "@ledgerhq/source": "./src/bridge/deviceTransactionConfig.ts",
       "require": "./lib/bridge/deviceTransactionConfig.js",
       "default": "./lib-es/bridge/deviceTransactionConfig.js"
-    },
-    "./logic": {
-      "require": "./lib/logic/index.js",
-      "default": "./lib-es/logic/index.js"
     },
     "./signer": {
       "@ledgerhq/source": "./src/signer/index.ts",
@@ -120,7 +113,6 @@
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "catalog:",
     "@ledgerhq/live-network": "catalog:",
-    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "axios": "catalog:",
     "bignumber.js": "^9.1.2",

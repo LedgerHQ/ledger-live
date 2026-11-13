@@ -89,9 +89,7 @@ function renderRequestReceive(
   );
 }
 
-function renderRequestReceiveFromPayTab(payRequestVerifyHint?: {
-  hasSeenReceiveVerifyHint: boolean;
-}) {
+function renderRequestReceiveFromPayTab(receiveVerifyHint?: { hasSeenReceiveVerifyHint: boolean }) {
   return render(
     <PayTabStack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
       <PayTabStack.Screen name="PayTabTest" component={PayTabNavigator} />
@@ -100,8 +98,8 @@ function renderRequestReceiveFromPayTab(payRequestVerifyHint?: {
       overrideInitialState: state => ({
         ...withUsdcHoldings(state),
         payCardFeatureTour: { ...state.payCardFeatureTour, hasSeenFeatureTour: true },
-        ...(payRequestVerifyHint
-          ? { payRequestVerifyHint: { ...state.payRequestVerifyHint, ...payRequestVerifyHint } }
+        ...(receiveVerifyHint
+          ? { receiveVerifyHint: { ...state.receiveVerifyHint, ...receiveVerifyHint } }
           : {}),
       }),
       navigationInitialState: {
@@ -219,7 +217,7 @@ describe("PayTab RequestReceive integration", () => {
 
     await user.press(await screen.findByRole("button", { name: VERIFY }));
 
-    expect(store.getState().payRequestVerifyHint.hasSeenReceiveVerifyHint).toBe(true);
+    expect(store.getState().receiveVerifyHint.hasSeenReceiveVerifyHint).toBe(true);
   });
 
   it("should copy the address when Copy is pressed", async () => {

@@ -23,9 +23,9 @@ import {
   BaseConnectionErrorTypes,
   BaseDiscoveryErrorTypes,
   type BaseConnectionError,
-  type DeviceDiscoveryService,
   type UnknownDiscoveryError,
 } from "../deviceConnectivity/types";
+import { createFakeDeviceDiscoveryService } from "../deviceConnectivity/discoveryService/__test-utils__/createFakeDeviceDiscoveryService";
 
 const bleTransport = "RN_BLE" as TransportIdentifier;
 const usbTransport = "RN_HID" as TransportIdentifier;
@@ -124,13 +124,12 @@ const setupTest = ({
     complete: jest.fn(),
   };
 
-  const deviceDiscoveryService: DeviceDiscoveryService = {
-    start: jest.fn(),
-    stop: jest.fn(() => discoveredDevices.next([])),
+  const deviceDiscoveryService = createFakeDeviceDiscoveryService({
     transportIds,
     discoveredDevices,
     errors,
-  };
+    onStop: () => discoveredDevices.next([]),
+  });
 
   const machine = new DefaultConnectNewDeviceStateMachine({
     dmk,

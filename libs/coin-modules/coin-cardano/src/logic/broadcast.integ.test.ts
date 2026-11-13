@@ -5,9 +5,11 @@ import {
   address as TyphonAddress,
   types as TyphonTypes,
 } from "@stricahq/typhonjs";
-import { cardanoTestnetCoinConfig as config } from "../fixtures/config";
+import { cardanoDefaults } from "../config";
 import BigNumber from "bignumber.js";
 import { broadcast } from "./broadcast";
+
+const config = cardanoDefaults.cardano_testnet;
 
 // Real-backend submit against Cardano preprod (the testnet `api.url`). We build and
 // software-sign a well-formed transaction that spends a nonexistent UTXO, then submit it through

@@ -1,5 +1,12 @@
 # @domain/api-aggregated-assets
 
+## 0.7.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`5a9de42`](https://github.com/LedgerHQ/ledger-live/commit/5a9de42cd3a598f1f8954d58b9536280f5fd2927)]:
+  - @shared/env@0.14.0-next.0
+
 ## 0.7.0
 
 ### Minor Changes
@@ -269,23 +276,5 @@
   - @domain/api-currency-token@0.6.0-next.0
   - @domain/entity-currency@0.4.2-next.0
   - @domain/entity-currency-token@0.5.1-next.0
-
-## 0.4.1
-
-### Patch Changes
-
-- Updated dependencies [[`f64ceec`](https://github.com/LedgerHQ/ledger-live/commit/f64ceecbdaccec2c56ace4cc459d670db5920b68), [`d5ea888`](https://github.com/LedgerHQ/ledger-live/commit/d5ea888d3a154feeb29b452841749d358629b8c1), [`cad4f63`](https://github.com/LedgerHQ/ledger-live/commit/cad4f63be4a3b16880ab490195af1f17921e03c2), [`8161bac`](https://github.com/LedgerHQ/ledger-live/commit/8161bac542474212dfefc8519e714da345b03f71), [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e), [`39a676d`](https://github.com/LedgerHQ/ledger-live/commit/39a676d2f861d04913264e61100205b4f6044cf9)]:
-  - @shared/api-services@0.5.0
-  - @shared/env@0.4.0
-  - @domain/api-currency-token@0.5.1
-
-## 0.4.1-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`f64ceec`](https://github.com/LedgerHQ/ledger-live/commit/f64ceecbdaccec2c56ace4cc459d670db5920b68), [`d5ea888`](https://github.com/LedgerHQ/ledger-live/commit/d5ea888d3a154feeb29b452841749d358629b8c1), [`cad4f63`](https://github.com/LedgerHQ/ledger-live/commit/cad4f63be4a3b16880ab490195af1f17921e03c2), [`8161bac`](https://github.com/LedgerHQ/ledger-live/commit/8161bac542474212dfefc8519e714da345b03f71), [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e), [`39a676d`](https://github.com/LedgerHQ/ledger-live/commit/39a676d2f861d04913264e61100205b4f6044cf9)]:
-  - @shared/api-services@0.5.0-next.0
-  - @shared/env@0.4.0-next.0
-  - @domain/api-currency-token@0.5.1-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

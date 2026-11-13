@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "38.7.0",
+  "version": "38.8.0-next.0",
   "private": true,
   "repository": {
     "type": "git",
@@ -287,6 +287,7 @@
     "@domain/entity-account-descriptor": "workspace:^",
     "@domain/entity-account-name": "workspace:^",
     "@domain/entity-account-operation": "workspace:^",
+    "@domain/entity-account-receive": "workspace:^",
     "@domain/entity-client-identity": "workspace:^",
     "@domain/entity-currency": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:^",

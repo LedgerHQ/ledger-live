@@ -1,7 +1,7 @@
 import React from "react";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react-native";
 import { trackedPages } from "@features/platform-pay-analytics/testing/module-mock";
-import { FeatureTourView } from "../FeatureTourView.native";
+import { FeatureTourView } from "../FeatureTourView";
 
 jest.mock("@features/platform-pay-analytics", () =>
   jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),

@@ -2,6 +2,8 @@ import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currenc
 import {
   currencyIdFromNetwork,
   AccountDescriptorSchema,
+  AddressSchema,
+  type Address,
   networkFromCurrencyId,
   type AccountDescriptor,
 } from "@domain/entity-account-descriptor";
@@ -16,13 +18,26 @@ import {
   runAccountDerivationScheme,
   runDerivationScheme,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
-import { getAccountDescriptorType } from "../coin-modules/registry";
+import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
+import { getAccountDescriptorType, loadAddressFromKeyForFamily } from "../coin-modules/registry";
 import { resolveFamily } from "../bridge/zcashRouting";
 
+/** Families keyed on their public key: their address cannot give back what reading the account needs. */
+const PUBLIC_KEY_FAMILIES = new Set([
+  "aptos",
+  "canton",
+  "concordium",
+  "internet_computer",
+  "stacks",
+  "ton",
+]);
+
 /** The fields of a legacy `Account` that a descriptor can express. */
-export type LegacyAccountIdentity = Pick<Account, "derivationMode" | "index" | "xpub"> & {
+export type LegacyAccountIdentity = Pick<Account, "id" | "derivationMode" | "index" | "xpub"> & {
   currency: Pick<Account["currency"], "id">;
   freshAddress: string;
+  /** Canton keeps its public key here: its legacy id holds the party id. */
+  cantonResources?: { publicKey?: string };
 };
 
 export type LegacyAccountFields = {
@@ -31,6 +46,8 @@ export type LegacyAccountFields = {
   index: number;
   xpub?: string;
   freshAddress?: string;
+  /** The key of a family keyed on its public key, in place of `freshAddress`: see `addressFromKey`. */
+  publicKey?: string;
 };
 
 export class UnsupportedDescriptorPathError extends Error {
@@ -41,7 +58,58 @@ export class MissingAccountXpubError extends Error {
   override name = "MissingAccountXpubError";
 }
 
-const toDescriptorPath = (schemePath: string) => `m/${schemePath.replaceAll("'", "h")}`;
+export class MissingAccountPublicKeyError extends Error {
+  override name = "MissingAccountPublicKeyError";
+}
+
+/** A descriptor key that is not what its family is keyed on, as a public-key family's key written as an address. */
+export class InvalidAccountKeyError extends Error {
+  override name = "InvalidAccountKeyError";
+}
+
+const HEX_PUBLIC_KEY = /^([0-9a-f]{2})+$/i;
+
+function assertPublicKey(key: string, currencyId: string): void {
+  if (!HEX_PUBLIC_KEY.test(key)) {
+    throw new InvalidAccountKeyError(`${currencyId} accounts are keyed on a hex public key`);
+  }
+}
+
+/** The public key of the account, lowercase hex: its legacy id holds it, or an address, then `xpub` keeps it (Aptos). */
+function publicKeyOf(account: LegacyAccountIdentity, family: string, currencyId: string): string {
+  const candidates =
+    family === "canton"
+      ? [account.cantonResources?.publicKey]
+      : [decodeAccountId(account.id).xpubOrAddress, account.xpub];
+  const key = candidates.find(candidate => candidate && HEX_PUBLIC_KEY.test(candidate));
+  if (!key) {
+    throw new MissingAccountPublicKeyError(
+      `${currencyId} account has no public key to identify it`,
+    );
+  }
+  return key.toLowerCase();
+}
+
+/** A public-key family whose address is not computed from its key, but looked up on chain or held as state (Concordium, Canton). */
+export class UnsupportedAddressFromKeyError extends Error {
+  override name = "UnsupportedAddressFromKeyError";
+}
+
+/** The address an account is read at: its key, or the address its family computes from its public key. */
+export async function addressFromKey(currencyId: string, key: string): Promise<Address> {
+  const family = resolveFamily(getCryptoCurrencyById(currencyId));
+  if (!PUBLIC_KEY_FAMILIES.has(family)) return AddressSchema.parse(key);
+  assertPublicKey(key, currencyId);
+  const derive = await loadAddressFromKeyForFamily(family);
+  if (!derive) {
+    throw new UnsupportedAddressFromKeyError(`${currencyId} computes no address from its key`);
+  }
+  return AddressSchema.parse(derive(key));
+}
+
+/** A legacy derivation path ("44'/60'/0'/0/0", with or without "m/") as a descriptor path. */
+export const toDescriptorPath = (path: string) =>
+  `m/${path.replace(/^m\//, "").replaceAll("'", "h")}`;
 const fromDescriptorPath = (path: string) => (path.startsWith("m/") ? path.slice(2) : path);
 
 const stripHardened = (segment: string) => (segment.endsWith("h") ? segment.slice(0, -1) : segment);
@@ -86,8 +154,9 @@ function buildDescriptor(account: LegacyAccountIdentity): AccountDescriptor {
   const network = networkFromCurrencyId(CryptoCurrencyIdSchema.parse(account.currency.id));
   const derivationMode = asDerivationMode(account.derivationMode);
   const scheme = getDerivationScheme({ derivationMode, currency });
+  const family = resolveFamily(currency);
 
-  if (getAccountDescriptorType(resolveFamily(currency)) === "utxo") {
+  if (getAccountDescriptorType(family) === "utxo") {
     if (!account.xpub) {
       throw new MissingAccountXpubError(`${currency.id} account has no xpub to identify it`);
     }
@@ -96,7 +165,7 @@ function buildDescriptor(account: LegacyAccountIdentity): AccountDescriptor {
       version: "2",
       type: "utxo",
       network,
-      xpub: account.xpub,
+      key: account.xpub,
       path: toDescriptorPath(
         runAccountDerivationScheme(scheme, currency, { account: account.index }),
       ),
@@ -107,24 +176,29 @@ function buildDescriptor(account: LegacyAccountIdentity): AccountDescriptor {
     version: "2",
     type: "address",
     network,
-    address: account.freshAddress,
+    key: PUBLIC_KEY_FAMILIES.has(family)
+      ? publicKeyOf(account, family, currency.id)
+      : account.freshAddress,
     path: toDescriptorPath(
       runDerivationScheme(scheme, { coinType: currency.coinType }, { account: account.index }),
     ),
   };
 }
 
-/** Lossy for address descriptors: the path is account-level, so `freshAddressPath` is not restored until the next sync. */
+/** Lossy for address descriptors: the path is account-level, so `freshAddressPath` is not restored until the next sync. A public-key family gets its key, not its address. */
 export function toLegacyAccount(input: AccountDescriptor): LegacyAccountFields {
   const descriptor = AccountDescriptorSchema.parse(input);
   const currencyId = currencyIdFromNetwork(descriptor.network);
   const currency = getCryptoCurrencyById(currencyId);
-  const expectedType = getAccountDescriptorType(resolveFamily(currency));
+  const family = resolveFamily(currency);
+  const expectedType = getAccountDescriptorType(family);
   if (descriptor.type !== expectedType) {
     throw new UnsupportedDescriptorPathError(
       `${currencyId} accounts use ${expectedType} descriptors, got ${descriptor.type}`,
     );
   }
+  const keyedOnPublicKey = PUBLIC_KEY_FAMILIES.has(family);
+  if (keyedOnPublicKey) assertPublicKey(descriptor.key, currencyId);
   const path = fromDescriptorPath(descriptor.path);
 
   for (const derivationMode of getDerivationModesForCurrency(currency)) {
@@ -132,9 +206,11 @@ export function toLegacyAccount(input: AccountDescriptor): LegacyAccountFields {
     const index = matchSchemeToPath(scheme, currency.coinType, path, descriptor.type === "utxo");
     if (index === null || !derivationModeSupportsIndex(derivationMode, index)) continue;
     if (index < getDerivationModeStartsAt(derivationMode)) continue;
-    return descriptor.type === "utxo"
-      ? { currencyId, derivationMode, index, xpub: descriptor.xpub }
-      : { currencyId, derivationMode, index, freshAddress: descriptor.address };
+    if (descriptor.type === "utxo")
+      return { currencyId, derivationMode, index, xpub: descriptor.key };
+    return keyedOnPublicKey
+      ? { currencyId, derivationMode, index, publicKey: descriptor.key }
+      : { currencyId, derivationMode, index, freshAddress: descriptor.key };
   }
   throw new UnsupportedDescriptorPathError(
     `No derivation mode of ${currencyId} matches path "${descriptor.path}"`,

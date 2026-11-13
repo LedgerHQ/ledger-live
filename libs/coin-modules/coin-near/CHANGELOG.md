@@ -1,5 +1,19 @@
 # @ledgerhq/coin-near
 
+## 1.7.0-next.0
+
+### Minor Changes
+
+- [#24804](https://github.com/LedgerHQ/ledger-live/pull/24804) [`4fbc858`](https://github.com/LedgerHQ/ledger-live/commit/4fbc8581a7a81d629e850a37063c147507a29235) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Do not retry nearblocks requests refused with HTTP 429
+
+- [#24736](https://github.com/LedgerHQ/ledger-live/pull/24736) [`a40069c`](https://github.com/LedgerHQ/ledger-live/commit/a40069cca2db75a7cd2fcc11beed61977f53c655) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Stop preloading the NEAR validator list, so a refused validator fetch no longer fails NEAR account syncs; the staking screens and the stake banner load it when shown. Cache the validator list for 6 hours and read the gas price from the node first.
+
+### Patch Changes
+
+- Updated dependencies [[`4aa3244`](https://github.com/LedgerHQ/ledger-live/commit/4aa32442c63cd17bd2894d63ad0721d51e0ca41a), [`49de732`](https://github.com/LedgerHQ/ledger-live/commit/49de7327915d876c4a98826d561705171c41d2d2), [`5a9de42`](https://github.com/LedgerHQ/ledger-live/commit/5a9de42cd3a598f1f8954d58b9536280f5fd2927), [`120891d`](https://github.com/LedgerHQ/ledger-live/commit/120891d4dbd9e9bba22dbf552f1bbe0ab34685cc), [`51ce5a0`](https://github.com/LedgerHQ/ledger-live/commit/51ce5a05e95dc02ce0eccc5f9d043d556ba43bbf), [`0cf44d5`](https://github.com/LedgerHQ/ledger-live/commit/0cf44d56a449fb0f4448cd6f8e02c880fc47adb2)]:
+  - @ledgerhq/types-live@6.132.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.12.0-next.0
+
 ## 1.6.0
 
 ### Minor Changes
@@ -282,35 +296,5 @@
 - Updated dependencies [[`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682)]:
   - @ledgerhq/types-live@6.122.0
   - @ledgerhq/ledger-wallet-framework@3.2.0
-
-## 1.1.0-next.0
-
-### Minor Changes
-
-- [#21168](https://github.com/LedgerHQ/ledger-live/pull/21168) [`3867cda`](https://github.com/LedgerHQ/ledger-live/commit/3867cda913620a89e0a0e28c3ab670c2b5b48908) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Adopt the coin-module authoring type, dropping the hand-written "not supported" stubs.
-
-  `createApi` now returns its object with `satisfies CoinModuleImpl<NearConfig>` — which keeps the precise shape, so a caller sees exactly which methods exist — and omits the six capabilities NEAR has none of, `getBlock`, `getRewards`, `getNextSequence`, `craftRawTransaction`, `call` and `register`, instead of giving each a `throw new Error("… is not supported")`.
-
-  Why each is absent is recorded above the factory rather than lost with the stub it used to sit on. Two of them are genuine chain facts worth keeping: NEAR's nonce belongs to an access key rather than to an account, so there is no account-level sequence to return, and a staking pool compounds rewards into the staked balance instead of emitting distribution events, so `getStakes` already reports what `getRewards` would have listed. The staking reads NEAR does implement — `getStakes` and `getValidators`, backed by real pool-contract delegation — are untouched.
-
-  The parameters an implementation declares now matter: `satisfies` infers the signature from the function itself, so the trailing `options` argument of `craftTransaction`, `estimateFees` and `validateIntent` carries an explicit `?` rather than relying on the contract to make it optional.
-
-  Consumers see no change. They reach the module through a resolver that applies the framework's `withDefaults`, which supplies every omitted capability, so the same call still raises the same `"<method> is not supported"` error — and `supports(method)` now reports which capabilities are real.
-
-  The api test asserts the whole capability surface with the framework's `capabilityReport()` rather than one test per unimplemented capability: one expectation covers that each is absent, that reaching it raises `"<name> is not supported"`, and that `supports()` agrees. Being an exact comparison it is exhaustive, so implementing or dropping a capability changes the list instead of leaving a test that passes while covering less.
-
-### Patch Changes
-
-- Updated dependencies [[`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682)]:
-  - @ledgerhq/types-live@6.122.0-next.0
-  - @ledgerhq/ledger-wallet-framework@3.2.0-next.0
-
-## 1.0.1
-
-### Patch Changes
-
-- Updated dependencies [[`aa39333`](https://github.com/LedgerHQ/ledger-live/commit/aa393339789242783b168398cb5122a7f1e3f620), [`6c425e0`](https://github.com/LedgerHQ/ledger-live/commit/6c425e0e869c6feed4bd4c87ee0fef5443617708), [`585d8d7`](https://github.com/LedgerHQ/ledger-live/commit/585d8d78d5e153186c39ee2abfcdb7dc4a5d06e0), [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e)]:
-  - @ledgerhq/types-live@6.121.0
-  - @ledgerhq/ledger-wallet-framework@3.1.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

@@ -57,15 +57,18 @@ describe("evmConfig", () => {
     expect(config).not.toHaveProperty("eip1559BaseFeeMultiplier");
   });
 
-  it("should configure alpen testnet with an external node and a blockscout explorer", () => {
+  it("should configure alpen testnet on the ledger node and blockscout explorer", () => {
     const config = getCurrencyConfiguration("alpen_testnet");
 
     expect(config).toMatchObject({
       chainId: 20310,
       name: "Alpen Testnet",
       unit: { name: "BTC", code: "BTC", magnitude: 18 },
-      node: { type: "external", uri: "https://alpen.testnet.alpen.org" },
-      explorer: { type: "blockscout", uri: "https://explorer.testnet.alpen.org/api" },
+      node: { type: "external", uri: "https://alpen-testnet.coin.ledger.com" },
+      explorer: {
+        type: "blockscout-v2",
+        uri: "https://alpen-testnet-explorer.api.ledger.com/api/v2",
+      },
       forceLegacyTransactions: true,
       minGasPrice: "2000000",
       status: { type: "active", features: [{ id: "blockchain_txs", status: "active" }] },
@@ -73,6 +76,23 @@ describe("evmConfig", () => {
     expect(config).not.toMatchObject({ explorer: { type: "none" } });
     expect(config).not.toHaveProperty("finalizationLevel");
     expect(isLedgerBased(evmConfig.config_currency_alpen_testnet)).toBe(false);
+    expect(config).not.toHaveProperty("ledgerExplorerUri");
+  });
+
+  it("should configure alpen mainnet on the ledger node and blockscout explorer", () => {
+    const config = getCurrencyConfiguration("alpen");
+
+    expect(config).toMatchObject({
+      chainId: 29032,
+      name: "Alpen",
+      unit: { name: "BTC", code: "BTC", magnitude: 18 },
+      node: { type: "external", uri: "https://alpen.coin.ledger.com" },
+      explorer: { type: "blockscout-v2", uri: "https://alpen-explorer.api.ledger.com/api/v2" },
+      forceLegacyTransactions: true,
+      minGasPrice: "500000",
+      status: { type: "active", features: [{ id: "blockchain_txs", status: "active" }] },
+    });
+    expect(isLedgerBased(evmConfig.config_currency_alpen)).toBe(false);
     expect(config).not.toHaveProperty("ledgerExplorerUri");
   });
 

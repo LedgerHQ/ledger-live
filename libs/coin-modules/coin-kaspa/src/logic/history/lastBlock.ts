@@ -2,18 +2,22 @@ import type { BlockInfo } from "@ledgerhq/coin-module-framework/api/index";
 import { getBlockDagInfo, getVirtualChainBlueScore } from "../../network";
 
 /**
- * Latest confirmed block on the Kaspa BlockDAG. `height` is the virtual-chain blue score — the
- * confirmed selected-chain height (already used as `blockHeight` by the legacy bridge sync, see
- * bridge/synchronization.ts), as opposed to `virtualDaaScore` which tracks the unstable DAG tip.
+ * Latest block of the Kaspa selected chain, from two cheap info endpoints (no per-block lookup).
+ * Both describe the `sink` (the virtual selected parent), i.e. the chain tip:
+ * - `height` is the sink's blue score (`/info/virtual-chain-blue-score` serves the node's
+ *   `getSinkBlueScore`), the same scale as the `accepting_block_blue_score` that `listOperations`
+ *   reports as a transaction's height. It is not `virtualDaaScore`, a different counter.
+ * - `hash` is the sink hash from `/info/blockdag`.
+ * - `time` is approximated as `now`: Kaspa produces about 10 blocks per second, so the tip is at most
+ *   a block interval old.
  *
- * Kept cheap and self-contained (no per-block lookup), mirroring the UTXO reference coin-cardano's
- * `lastBlock`:
- * - `time` is approximated as `now`. Kaspa produces blocks ~every second, so the tip was minted
- *   within the last block interval — a fine approximation *for the tip only*. Accurate per-block
- *   timestamps come from `getBlockInfo`/`getBlock`, which fetch the actual block.
- * - `hash` uses the pruning-point hash (the most recent guaranteed-finalized block). We do NOT
- *   resolve the tip block by blue score here: that endpoint can lag behind the just-produced tip,
- *   which would make `lastBlock` throw — cardano avoids the same second lookup for this reason.
+ * The two calls are separate snapshots of a tip that moves about 10 times per second, so `height` and
+ * `hash` are not guaranteed to identify the same block: `height` can be a few to a few tens of blue
+ * score units off the blue score of the block named by `hash`, in either direction. Callers must not
+ * expect `getBlockInfo(height).hash` to equal `hash`.
+ *
+ * The tip block itself is not fetched: the indexer only serves `/blocks/{hash}` 10–15 s after a block
+ * becomes the tip (HTTP 404 until then), which would make `lastBlock` fail most of the time.
  */
 export async function lastBlock(): Promise<BlockInfo> {
   const [height, blockDagInfo] = await Promise.all([getVirtualChainBlueScore(), getBlockDagInfo()]);
@@ -22,9 +26,14 @@ export async function lastBlock(): Promise<BlockInfo> {
     throw new Error(`kaspa: lastBlock: invalid blue score from API: ${height}`);
   }
 
+  const hash = blockDagInfo.sink;
+  if (typeof hash !== "string" || hash.length === 0) {
+    throw new Error(`kaspa: lastBlock: missing sink hash from API: ${String(hash)}`);
+  }
+
   return {
     height,
-    hash: blockDagInfo.pruningPointHash ?? "",
+    hash,
     time: new Date(),
   };
 }

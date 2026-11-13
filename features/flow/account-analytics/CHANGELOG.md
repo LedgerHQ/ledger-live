@@ -1,5 +1,25 @@
 # @features/flow-account-analytics
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#24558](https://github.com/LedgerHQ/ledger-live/pull/24558) [`dc295d0`](https://github.com/LedgerHQ/ledger-live/commit/dc295d0bf733a21897b23c810b9b9c1f44343f4d) Thanks [@deepyjr](https://github.com/deepyjr)! - Filter the mobile Analytics balance, chart and PnL by asset and account behind the account detail flag. The native filter sheet scrolls when it lists many options, and the chart range pill starts on the selected range.
+
+- [#24646](https://github.com/LedgerHQ/ledger-live/pull/24646) [`ee50575`](https://github.com/LedgerHQ/ledger-live/commit/ee505757f39b870767bb5ee776dd8bd0f19c768f) Thanks [@deepyjr](https://github.com/deepyjr)! - Show the Analytics balance and chart when the countervalue is a crypto
+
+- [#24763](https://github.com/LedgerHQ/ledger-live/pull/24763) [`2734bf4`](https://github.com/LedgerHQ/ledger-live/commit/2734bf48a141d35b8df665e6112bb01c2fc203ec) Thanks [@deepyjr](https://github.com/deepyjr)! - Keep the analytics filter sheet header pinned and stop the list from bouncing
+
+- [#24769](https://github.com/LedgerHQ/ledger-live/pull/24769) [`94bb3b3`](https://github.com/LedgerHQ/ledger-live/commit/94bb3b36d114163b9907dc574344e8bb66945eb5) Thanks [@deepyjr](https://github.com/deepyjr)! - Add a search field to the analytics asset filter on mobile and desktop, and fix the spacing between the filters and the chart on mobile
+
+- [#24636](https://github.com/LedgerHQ/ledger-live/pull/24636) [`1f907a7`](https://github.com/LedgerHQ/ledger-live/commit/1f907a7d358d3778339fedf84e2ba679d214f9c9) Thanks [@deepyjr](https://github.com/deepyjr)! - Show the selected account icon on the analytics account filter
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/api-aggregated-assets@0.7.1-next.0
+  - @features/platform-aggregated-assets@0.7.1-next.0
+
 ## 0.2.0
 
 ### Minor Changes

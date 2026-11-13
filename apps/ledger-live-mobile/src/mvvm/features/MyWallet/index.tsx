@@ -6,6 +6,7 @@ import { QuickActionsRow } from "./views/QuickActionsRow";
 import { BackupsButton } from "./views/BackupsButton";
 import { ContactsButton } from "LLM/features/Contacts";
 import { MyLedgerSection } from "./views/MyLedgerSection";
+import { ManageAgentsButton } from "./views/ManageAgentsButton";
 
 export function MyWalletScreen() {
   const [isPairing, setIsPairing] = useState(false);
@@ -23,6 +24,7 @@ export function MyWalletScreen() {
           </Box>
           <BackupsButton />
           <ContactsButton />
+          <ManageAgentsButton />
         </Box>
       )}
       <Box lx={{ paddingTop: "s24" }} style={{ flex: 1 }}>

@@ -8,7 +8,10 @@ const STORAGE_KEY = "accountAnalyticsIntroduction";
 
 const withIntroduction =
   (hasDismissed: boolean) =>
-  (state: State): State => ({ ...state, accountAnalyticsIntroduction: { hasDismissed } });
+  (state: State): State => ({
+    ...state,
+    accountAnalyticsIntroduction: { hasDismissed, isEligible: null },
+  });
 
 describe("account-detail DevTools tool on mobile", () => {
   beforeEach(async () => {
@@ -20,7 +23,9 @@ describe("account-detail DevTools tool on mobile", () => {
       overrideInitialState: withIntroduction(false),
     });
 
-    expect(result.current.analyticsIntroduction.hasDismissed).toBe(false);
+    expect(result.current.analyticsIntroduction).toEqual(
+      expect.objectContaining({ hasDismissed: false, isEligible: null }),
+    );
   });
 
   it("makes a dismissed Analytics card available again", () => {
@@ -47,7 +52,23 @@ describe("account-detail DevTools tool on mobile", () => {
     act(() => result.current.analyticsIntroduction.onReset());
 
     await waitFor(async () =>
-      expect(await storage.get(STORAGE_KEY)).toEqual({ hasDismissed: false }),
+      expect(await storage.get(STORAGE_KEY)).toEqual({ hasDismissed: false, isEligible: null }),
+    );
+  });
+
+  it("persists a forced eligibility so it survives a restart", async () => {
+    const { result } = renderHook(
+      () => {
+        ConfigureDBSaveEffects();
+        return useAccountDetailToolProps();
+      },
+      { overrideInitialState: withIntroduction(false) },
+    );
+
+    act(() => result.current.analyticsIntroduction.onEligibilityChange(false));
+
+    await waitFor(async () =>
+      expect(await storage.get(STORAGE_KEY)).toEqual({ hasDismissed: false, isEligible: false }),
     );
   });
 });

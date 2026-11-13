@@ -1,5 +1,27 @@
 # @ledgerhq/wallet-cli
 
+## 3.5.0-next.0
+
+### Minor Changes
+
+- [#24776](https://github.com/LedgerHQ/ledger-live/pull/24776) [`427d4d3`](https://github.com/LedgerHQ/ledger-live/commit/427d4d3c3d80263f5026cd0b8fbe83ce881a1953) Thanks [@gre-ledger](https://github.com/gre-ledger)! - `addressFromKey` returns a branded `Address`; wallet-cli requires it wherever an address is expected, so a descriptor key can no longer be used as one
+
+## 3.4.0
+
+### Minor Changes
+
+- [#24380](https://github.com/LedgerHQ/ledger-live/pull/24380) [`eeb7e7e`](https://github.com/LedgerHQ/ledger-live/commit/eeb7e7e7038ec432f8f6c0bb159ee869a916af8a) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `agent-intent enroll --detach` works on Windows, and a lock left behind by a reboot no longer counts as held once another user's process reuses its pid
+
+- [#24387](https://github.com/LedgerHQ/ledger-live/pull/24387) [`abdcb44`](https://github.com/LedgerHQ/ledger-live/commit/abdcb441ad633fe6e7aca092bed6194302814a2d) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - On Windows, an agent key file is now refused with a clear error instead of one saying another user owns it.
+
+- [#24495](https://github.com/LedgerHQ/ledger-live/pull/24495) [`3467ad1`](https://github.com/LedgerHQ/ledger-live/commit/3467ad1ed7633b293ee4ad307c8db5562af2adf9) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - Connect Agent Intent enrollment and recovery relay WebSockets through standard proxy environment variables.
+
+- [#24602](https://github.com/LedgerHQ/ledger-live/pull/24602) [`245f178`](https://github.com/LedgerHQ/ledger-live/commit/245f17847ed941d08c18bfbc2fef35fc8c14299e) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - wallet-cli warns on stderr when it skips a held token whose Crypto Assets List entry has no unit
+
+### Patch Changes
+
+- [#24745](https://github.com/LedgerHQ/ledger-live/pull/24745) [`5020021`](https://github.com/LedgerHQ/ledger-live/commit/5020021654f743e0e868cb9c8d011adc97f4ed9a) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Account descriptor: one `key` field for both types; Canton, Concordium, Internet Computer, TON, Aptos and Stacks accounts are keyed on their public key, their address computed through the coin module loaders; a legacy account left out is mirrored again once it converts
+
 ## 3.3.0
 
 ### Minor Changes
@@ -395,35 +417,5 @@
 ### Minor Changes
 
 - [#21841](https://github.com/LedgerHQ/ledger-live/pull/21841) [`d59d123`](https://github.com/LedgerHQ/ledger-live/commit/d59d123a2ba037b44507b1f5424e31f05309ec26) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - feat(cosmos): migrate account resources to shared staking aggregate
-
-## 2.7.0-next.0
-
-### Minor Changes
-
-- [#21841](https://github.com/LedgerHQ/ledger-live/pull/21841) [`d59d123`](https://github.com/LedgerHQ/ledger-live/commit/d59d123a2ba037b44507b1f5424e31f05309ec26) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - feat(cosmos): migrate account resources to shared staking aggregate
-
-## 2.6.0
-
-### Minor Changes
-
-- [#21182](https://github.com/LedgerHQ/ledger-live/pull/21182) [`7d7c26e`](https://github.com/LedgerHQ/ledger-live/commit/7d7c26e546e470ada7e061bf2d3845c45b428b83) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - Fix the embedded agent skill diverging from the copy published to `agent-skills`, and make the two artifacts share one transform.
-
-  - `wallet-cli skill retrieve` no longer returns stale examples prefixed with `pnpm --silent wallet-cli start`. The canonical `SKILL.md` is authored for monorepo contributors; the standalone rewrite to plain `wallet-cli <command>` (already applied when syncing to `agent-skills`) was missing from the codegen that inlines the skill into the binary.
-  - The embedded skill is now consistently named `wallet-cli-usage` — the name the published copy already used — across `skill list`, the manifest, `skill retrieve`, install directories and the `.wallet-cli-skill.json` sidecar, instead of the monorepo source's directory name.
-  - `ledger-wallet-cli` keeps working as a lookup alias in `skill retrieve` and `skill install`, so previously documented commands don't break. It resolves to the canonical skill and never installs a second copy under the old name; `skill list` shows only `wallet-cli-usage`. `skill doctor` now reports a pre-rename install directory as superseded rather than ignoring it (it never deletes it).
-  - The transform is implemented once in `scripts/standalone-skill-transform.mjs` and used by both the binary codegen and the `agent-skills` sync workflow, which previously duplicated it as a `sed` pipeline. It now asserts its own output — expected input markers present, nothing monorepo-only surviving — so a reworded source fails the build instead of silently shipping instructions a standalone user cannot follow.
-  - Skill collection now refuses any symlink resolving outside the skills tree, in both the binary codegen and the `agent-skills` export, so a symlink committed inside a skill directory cannot pull unrelated repo content into a published artifact.
-
-## 2.6.0-next.0
-
-### Minor Changes
-
-- [#21182](https://github.com/LedgerHQ/ledger-live/pull/21182) [`7d7c26e`](https://github.com/LedgerHQ/ledger-live/commit/7d7c26e546e470ada7e061bf2d3845c45b428b83) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - Fix the embedded agent skill diverging from the copy published to `agent-skills`, and make the two artifacts share one transform.
-
-  - `wallet-cli skill retrieve` no longer returns stale examples prefixed with `pnpm --silent wallet-cli start`. The canonical `SKILL.md` is authored for monorepo contributors; the standalone rewrite to plain `wallet-cli <command>` (already applied when syncing to `agent-skills`) was missing from the codegen that inlines the skill into the binary.
-  - The embedded skill is now consistently named `wallet-cli-usage` — the name the published copy already used — across `skill list`, the manifest, `skill retrieve`, install directories and the `.wallet-cli-skill.json` sidecar, instead of the monorepo source's directory name.
-  - `ledger-wallet-cli` keeps working as a lookup alias in `skill retrieve` and `skill install`, so previously documented commands don't break. It resolves to the canonical skill and never installs a second copy under the old name; `skill list` shows only `wallet-cli-usage`. `skill doctor` now reports a pre-rename install directory as superseded rather than ignoring it (it never deletes it).
-  - The transform is implemented once in `scripts/standalone-skill-transform.mjs` and used by both the binary codegen and the `agent-skills` sync workflow, which previously duplicated it as a `sed` pipeline. It now asserts its own output — expected input markers present, nothing monorepo-only surviving — so a reworded source fails the build instead of silently shipping instructions a standalone user cannot follow.
-  - Skill collection now refuses any symlink resolving outside the skills tree, in both the binary codegen and the `agent-skills` export, so a symlink committed inside a skill directory cannot pull unrelated repo content into a published artifact.
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

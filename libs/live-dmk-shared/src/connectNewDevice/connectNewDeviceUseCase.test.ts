@@ -20,9 +20,9 @@ import {
 import {
   BaseConnectionErrorTypes,
   BaseDiscoveryErrorTypes,
-  type DeviceDiscoveryService,
   type UnknownDiscoveryError,
 } from "../deviceConnectivity/types";
+import { createFakeDeviceDiscoveryService } from "../deviceConnectivity/discoveryService/__test-utils__/createFakeDeviceDiscoveryService";
 
 // Test helpers
 const bleTransport = "RN_BLE" as TransportIdentifier;
@@ -48,13 +48,11 @@ const SUCCESS_DELAY = 1_000;
 const setupTest = () => {
   const discoveredDevices = new Subject<Array<DiscoveredDevice>>();
   const errors = new Subject<UnknownDiscoveryError>();
-  const deviceDiscoveryService: DeviceDiscoveryService = {
-    start: jest.fn(),
-    stop: jest.fn(),
+  const deviceDiscoveryService = createFakeDeviceDiscoveryService({
     transportIds: [bleTransport],
     discoveredDevices,
     errors,
-  };
+  });
 
   const input: ConnectNewDeviceUseCaseInput = {
     dmk: {
@@ -211,6 +209,69 @@ describe("connectNewDeviceUseCase", () => {
     expect(states).toEqual([{ type: ConnectNewDeviceUIStateTypes.UnknownError, error: thrown }]);
     expect(errorHandler).not.toHaveBeenCalled();
     expect(completeHandler).toHaveBeenCalledTimes(1);
+
+    subscription.unsubscribe();
+  });
+
+  it("should stop discovery and emit UnknownError when getDiscoveredDeviceKey throws", () => {
+    // Arrange
+    const { deviceDiscoveryService, discoverDevices, input, lastState, states } = setupTest();
+    const error = new Error("getDiscoveredDeviceKey failed");
+    input.getDiscoveredDeviceKey = () => {
+      throw error;
+    };
+    const subscription = connectNewDeviceUseCase(input).subscribe(state => states.push(state));
+
+    // Act
+    discoverDevices([nanoX]);
+    // XState throws an unhandled error from a timer.
+    jest.runOnlyPendingTimers();
+
+    // Assert
+    expect(lastState(ConnectNewDeviceUIStateTypes.UnknownError).error).toBe(error);
+    expect(deviceDiscoveryService.stop).toHaveBeenCalledTimes(1);
+
+    subscription.unsubscribe();
+  });
+
+  it("should emit UnknownError when discovery fails to start", () => {
+    // Arrange
+    const { deviceDiscoveryService, input, lastState, states } = setupTest();
+    const error = new Error("start failed");
+    deviceDiscoveryService.start.mockImplementation(() => {
+      throw error;
+    });
+
+    // Act
+    const subscription = connectNewDeviceUseCase(input).subscribe(state => states.push(state));
+    // XState throws an unhandled error from a timer.
+    jest.runOnlyPendingTimers();
+
+    // Assert
+    expect(lastState(ConnectNewDeviceUIStateTypes.UnknownError).error).toBe(error);
+
+    subscription.unsubscribe();
+  });
+
+  it("should emit UnknownError when discovery fails to stop after getDiscoveredDeviceKey throws", () => {
+    // Arrange
+    const { deviceDiscoveryService, discoverDevices, input, lastState, states } = setupTest();
+    const error = new Error("getDiscoveredDeviceKey failed");
+    input.getDiscoveredDeviceKey = () => {
+      throw error;
+    };
+    deviceDiscoveryService.stop.mockImplementation(() => {
+      throw new Error("stop failed");
+    });
+    const subscription = connectNewDeviceUseCase(input).subscribe(state => states.push(state));
+
+    // Act
+    discoverDevices([nanoX]);
+    // XState throws an unhandled error from a timer.
+    jest.runOnlyPendingTimers();
+
+    // Assert
+    expect(lastState(ConnectNewDeviceUIStateTypes.UnknownError).error).toBe(error);
 
     subscription.unsubscribe();
   });

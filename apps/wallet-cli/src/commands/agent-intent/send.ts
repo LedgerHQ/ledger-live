@@ -1,5 +1,6 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
+import { AddressSchema, type Address } from "@domain/entity-account-descriptor";
 import { createNonce, encodeSendIntentTlv, type FeeStrategy } from "@ledgerhq/agent-intent-sdk";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { Session } from "../../session/session-store";
@@ -104,24 +105,30 @@ function withNetworkFields(
 }
 
 type SendParties = {
-  sender: string;
+  sender: Address;
   recipient: string;
   /** How the sender was given, to name it when the SDK refuses its address. */
   senderField: string;
 };
 
 /** Solana addresses are checked by the SDK later: canonical base58, 32 bytes. */
-function resolveParties(network: IntentNetwork, senderInput: SenderInput, to: string): SendParties {
+async function resolveParties(
+  network: IntentNetwork,
+  senderInput: SenderInput,
+  to: string,
+): Promise<SendParties> {
   const recipient = network === "ethereum" ? parseEvmAddress(to, "to") : to;
   if ("account" in senderInput) {
     return {
-      sender: senderFromAccount(senderInput.account, "send", network),
+      sender: await senderFromAccount(senderInput.account, "send", network),
       recipient,
       senderField: `account "${senderInput.account.label}"`,
     };
   }
   const sender =
-    network === "ethereum" ? parseEvmAddress(senderInput.address, "from") : senderInput.address;
+    network === "ethereum"
+      ? parseEvmAddress(senderInput.address, "from")
+      : AddressSchema.parse(senderInput.address);
   return { sender, recipient, senderField: "--from" };
 }
 
@@ -275,7 +282,11 @@ export default defineCommand({
       ctx.network = network;
       assertNetworkFlags(network, flags);
       const profile = requireEnrolledProfile(await Session.read(), flags.profile);
-      const { sender, recipient, senderField } = resolveParties(network, senderInput, flags.to);
+      const { sender, recipient, senderField } = await resolveParties(
+        network,
+        senderInput,
+        flags.to,
+      );
       const networkAsset = await resolveNetworkAsset(
         network,
         ticker,

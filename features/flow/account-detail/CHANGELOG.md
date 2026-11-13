@@ -1,5 +1,21 @@
 # @features/flow-account-detail
 
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#24617](https://github.com/LedgerHQ/ledger-live/pull/24617) [`45f0819`](https://github.com/LedgerHQ/ledger-live/commit/45f081972c38225dfed314c9d8313cd510629a85) Thanks [@ysitbon](https://github.com/ysitbon)! - AccountDetailLayout tests import the component without a platform suffix.
+
+- [#24593](https://github.com/LedgerHQ/ledger-live/pull/24593) [`5dff2e5`](https://github.com/LedgerHQ/ledger-live/commit/5dff2e54adbff5b6bc5ad2e57bbd6c5e6f85271a) Thanks [@deepyjr](https://github.com/deepyjr)! - Gate the Account Detail Analytics banner with the `accountDetail` `analyticsBanner` param, send it to analytics and keep the banner until it is closed
+
+### Patch Changes
+
+- Updated dependencies [[`4aa3244`](https://github.com/LedgerHQ/ledger-live/commit/4aa32442c63cd17bd2894d63ad0721d51e0ca41a), [`79fbc3e`](https://github.com/LedgerHQ/ledger-live/commit/79fbc3e91945f78c42bc69c79ca4daf8df331a99), [`1d97ca7`](https://github.com/LedgerHQ/ledger-live/commit/1d97ca78b8e326c5bdd1af98199dd9e9aa06b4c5), [`d1e1f5f`](https://github.com/LedgerHQ/ledger-live/commit/d1e1f5f156ff95ae5fd7ebdeaec3b5d628d671b7), [`d593a3d`](https://github.com/LedgerHQ/ledger-live/commit/d593a3d4a21bcdc6e28a193521b949c1323a4a5b), [`5a9de42`](https://github.com/LedgerHQ/ledger-live/commit/5a9de42cd3a598f1f8954d58b9536280f5fd2927), [`5dff2e5`](https://github.com/LedgerHQ/ledger-live/commit/5dff2e54adbff5b6bc5ad2e57bbd6c5e6f85271a), [`3a6ddb3`](https://github.com/LedgerHQ/ledger-live/commit/3a6ddb3fbd9d18c8005b9aef84597c8dc92dcfab)]:
+  - @shared/feature-flags@0.31.0-next.0
+  - @features/platform-feature-flags@0.13.0-next.0
+  - @features/flow-account-detail-settings@0.3.2-next.0
+  - @features/flow-account-detail-hero@0.4.0
+
 ## 0.4.0
 
 ### Minor Changes

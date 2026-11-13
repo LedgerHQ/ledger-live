@@ -405,6 +405,116 @@ describe("estimateFees", () => {
     });
   });
 
+  // Energy delegated in (Stake 2.0) raises `EnergyLimit` on `/wallet/getaccountresource`, so a
+  // delivered rental shows up as pool, not as a lower simulation. `value` still carries every
+  // non-energy cost: only the breakdown says whether the energy is covered.
+  describe("trc20 send after a rented energy delivery", () => {
+    const ENERGY_NEEDED = 31_895;
+    const TRC20_SIZE = 350;
+
+    beforeEach(() => {
+      mockFetchTronAccount.mockResolvedValue(activeRecipientWithToken);
+      mockTriggerConstantContract.mockResolvedValue({ energy_used: ENERGY_NEEDED });
+    });
+
+    it("reports no energy burn and a zero fee when free bandwidth covers the transfer", async () => {
+      mockGetTronAccountNetwork.mockResolvedValue(
+        buildNetworkInfo({
+          freeNetLimit: new BigNumber(600),
+          energyLimit: new BigNumber(ENERGY_NEEDED),
+        }),
+      );
+
+      const result = await estimateFees(mockLogger, mockConfig, sendTrc20);
+
+      expect(result.value).toBe(0n);
+      expect(breakdownOf(result)).toMatchObject({
+        energyRequired: String(ENERGY_NEEDED),
+        energyAvailable: String(ENERGY_NEEDED),
+        energyEstimated: true,
+      });
+    });
+
+    it("still charges the whole bandwidth burn when the free pool no longer fits the transfer", async () => {
+      // 600 free bandwidth with 350 already used: the 250 left cannot hold a 350-byte transfer.
+      mockGetTronAccountNetwork.mockResolvedValue(
+        buildNetworkInfo({
+          freeNetLimit: new BigNumber(600),
+          freeNetUsed: new BigNumber(350),
+          energyLimit: new BigNumber(ENERGY_NEEDED),
+        }),
+      );
+
+      const result = await estimateFees(mockLogger, mockConfig, sendTrc20);
+
+      expect(result.value).toBe(BigInt(TRC20_SIZE * chainParams.transactionFee));
+      const breakdown = breakdownOf(result);
+      expect(BigInt(breakdown.energyRequired)).toBeLessThanOrEqual(
+        BigInt(breakdown.energyAvailable),
+      );
+    });
+
+    it("reports a zero fee when staked bandwidth covers the transfer the free pool cannot", async () => {
+      mockGetTronAccountNetwork.mockResolvedValue(
+        buildNetworkInfo({
+          freeNetLimit: new BigNumber(600),
+          freeNetUsed: new BigNumber(350),
+          netLimit: new BigNumber(TRC20_SIZE),
+          energyLimit: new BigNumber(ENERGY_NEEDED),
+        }),
+      );
+
+      const result = await estimateFees(mockLogger, mockConfig, sendTrc20);
+
+      expect(result.value).toBe(0n);
+    });
+
+    it("burns the shortfall when the transfer now needs more energy than was delegated", async () => {
+      mockGetTronAccountNetwork.mockResolvedValue(
+        buildNetworkInfo({
+          freeNetLimit: new BigNumber(600),
+          energyLimit: new BigNumber(ENERGY_NEEDED),
+        }),
+      );
+      mockTriggerConstantContract.mockResolvedValue({ energy_used: ENERGY_NEEDED + 105 });
+
+      const result = await estimateFees(mockLogger, mockConfig, sendTrc20);
+
+      expect(result.value).toBe(BigInt(105 * chainParams.energyFee));
+      const breakdown = breakdownOf(result);
+      expect(BigInt(breakdown.energyRequired)).toBeGreaterThan(BigInt(breakdown.energyAvailable));
+    });
+
+    it("charges the flat TRC-20 fee when the simulation fails, even with the energy delivered", async () => {
+      mockGetTronAccountNetwork.mockResolvedValue(
+        buildNetworkInfo({
+          freeNetLimit: new BigNumber(600),
+          energyLimit: new BigNumber(ENERGY_NEEDED),
+        }),
+      );
+      mockTriggerConstantContract.mockResolvedValue(revertedTransferSimulation);
+
+      const result = await estimateFees(mockLogger, mockConfig, sendTrc20);
+
+      expect(result.value).toBe(BigInt(STANDARD_FEES_TRC_20.toString()));
+      expect(breakdownOf(result).energyEstimated).toBe(false);
+    });
+
+    it("counts energy already spent from the delegated pool", async () => {
+      mockGetTronAccountNetwork.mockResolvedValue(
+        buildNetworkInfo({
+          freeNetLimit: new BigNumber(600),
+          energyLimit: new BigNumber(ENERGY_NEEDED),
+          energyUsed: new BigNumber(1_000),
+        }),
+      );
+
+      const result = await estimateFees(mockLogger, mockConfig, sendTrc20);
+
+      expect(result.value).toBe(BigInt(1_000 * chainParams.energyFee));
+    });
+  });
+
   describe("estimatedTxSize (exported helper)", () => {
     it("returns the TransferAssetContract size for a trc10 send", () => {
       expect(estimatedTxSize(sendTrc10)).toBe(285);

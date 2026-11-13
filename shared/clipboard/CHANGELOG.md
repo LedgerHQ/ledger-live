@@ -1,5 +1,11 @@
 # @shared/clipboard
 
+## 0.2.0-next.0
+
+### Minor Changes
+
+- [#24661](https://github.com/LedgerHQ/ledger-live/pull/24661) [`c3dcfd8`](https://github.com/LedgerHQ/ledger-live/commit/c3dcfd821153bf18896eb4a63bb2ed40c55e310b) Thanks [@ysitbon](https://github.com/ysitbon)! - Import the clipboard implementation without a platform suffix; the bundler picks the web or native file.
+
 ## 0.1.0
 
 ### Minor Changes

@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, type Dispatch, type SetStateAction } from "react";
+import { useNavigate } from "react-router";
 import BigNumber from "bignumber.js";
 import type { AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
@@ -12,6 +13,16 @@ import { formatCurrencyUnit, valueFromUnit } from "@ledgerhq/live-common/currenc
 import type { PerpsDepositUiParams } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import { getDepositMaxBuffer } from "@ledgerhq/live-common/wallet-api/Perps/deposit/maxBuffer";
 import { useFeature } from "@features/platform-feature-flags";
+import { track } from "@shared/analytics";
+import { useNetworkState } from "@shared/network-status";
+import type { DepositBuyTarget } from "@ledgerhq/live-common/wallet-api/Perps/deposit/formError";
+import {
+  toConvertedDepositAmount,
+  usePerpsDepositForm,
+  type DepositFormErrors,
+} from "@ledgerhq/live-common/wallet-api/Perps/deposit/usePerpsDepositForm";
+import { useUrlLocalizer } from "~/renderer/hooks/useLocalizedUrls";
+import { openURL } from "~/renderer/linking";
 import { PERPS_UI_USE_CASE } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
@@ -22,16 +33,14 @@ import {
   localeSelector,
 } from "~/renderer/reducers/settings";
 import { accountNameWithDefaultSelector, walletSelector } from "~/renderer/reducers/wallet";
-import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
+import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/hooks/useOpenAssetAndAccount";
 import {
   PERPS_DEPOSIT_DEFAULT_FUNDING_CURRENCY_ID,
   PERPS_DEPOSIT_DEFAULT_FUNDING_TICKER,
 } from "../../constants/depositFunding";
 import { openPerpsReview } from "../PerpsReview/PerpsReviewDialog";
-import { usePerpsDepositQuote } from "./usePerpsDepositQuote";
 import { applyRatio } from "LLD/features/Perps/utils/applyRatio";
-import { toAmountValue } from "LLD/features/Perps/utils/toAmountValue";
-import { validateDepositFlow, type DepositFormError } from "./utils/validateDepositFlow";
+import { buildBuyNavigationState } from "LLD/features/Market/utils/buyNavigation";
 
 /** Snapshot of the amount-entry form, used to restore it when re-opened. */
 export type PerpsDepositDraft = Readonly<{
@@ -45,13 +54,36 @@ export type PerpsDepositData = PerpsDepositUiParams & {
 
 const EMPTY_AMOUNT_TEXT = "0";
 
-const QUOTE_UNAVAILABLE_ERROR: DepositFormError = {
-  labelKey: "perpsDeposit.formErrors.quoteUnavailable",
-};
-
 /** Serializes a computed amount (ratio, max, draft) as input text. */
 function toAmountText(amount: number | undefined): string {
   return amount ? new BigNumber(amount).toFixed() : EMPTY_AMOUNT_TEXT;
+}
+
+export type PerpsDepositFormState = Readonly<{
+  depositAccountId: string | undefined;
+  setDepositAccountId: Dispatch<SetStateAction<string | undefined>>;
+  amountText: string;
+  setAmountText: Dispatch<SetStateAction<string>>;
+}>;
+
+export function usePerpsDepositFormState(): Readonly<{
+  form: PerpsDepositFormState;
+  reset: (draft: PerpsDepositDraft | undefined) => void;
+}> {
+  const [depositAccountId, setDepositAccountId] = useState<string | undefined>();
+  const [amountText, setAmountText] = useState(EMPTY_AMOUNT_TEXT);
+
+  const reset = useCallback((draft: PerpsDepositDraft | undefined) => {
+    setDepositAccountId(draft?.depositAccount.id);
+    setAmountText(toAmountText(draft?.depositAmount));
+  }, []);
+
+  const form = useMemo(
+    () => ({ depositAccountId, setDepositAccountId, amountText, setAmountText }),
+    [amountText, depositAccountId],
+  );
+
+  return { form, reset };
 }
 
 export type PerpsDepositViewModel = Readonly<{
@@ -71,17 +103,16 @@ export type PerpsDepositViewModel = Readonly<{
   maxAmount: number;
   maxBuffer: number;
   selectMax: () => void;
-  statusError: DepositFormError | null;
-  canReview: boolean;
-  exceedsBalance: boolean;
   missingAccount: boolean;
   pickDepositAccount: () => void;
   handleReview: () => void;
-}>;
+}> &
+  DepositFormErrors;
 
 export function usePerpsDepositViewModel(
   data: PerpsDepositData,
   onClose: () => void,
+  { depositAccountId, setDepositAccountId, amountText, setAmountText }: PerpsDepositFormState,
 ): PerpsDepositViewModel {
   const walletState = useSelector(walletSelector);
   const accounts = useSelector(flattenAccountsSelector);
@@ -89,15 +120,10 @@ export function usePerpsDepositViewModel(
   const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);
   const { openAssetAndAccountPromise } = useOpenAssetAndAccount();
-
-  const [depositAccountId, setDepositAccountId] = useState(data.draft?.depositAccount.id);
-  const [amountText, setAmountText] = useState(() => toAmountText(data.draft?.depositAmount));
+  const navigate = useNavigate();
+  const { isConnected, isInternetReachable } = useNetworkState();
+  const isOffline = isConnected === false || isInternetReachable === false;
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    setDepositAccountId(data.draft?.depositAccount.id);
-    setAmountText(toAmountText(data.draft?.depositAmount));
-  }, [data]);
 
   /** The input owns the text it displays; the number is derived for quoting and validation. */
   const depositAmount = useMemo(() => {
@@ -108,7 +134,7 @@ export function usePerpsDepositViewModel(
   /** Fills the input with the amount a ratio pill resolved to. */
   const selectAmountRatio = useCallback(
     (amount: number) => setAmountText(toAmountText(amount)),
-    [],
+    [setAmountText],
   );
 
   /** The USDC funding account with the highest spendable balance, used as the default. */
@@ -149,14 +175,14 @@ export function usePerpsDepositViewModel(
   /** Prices the typed amount back into `currency`, in its smallest unit. */
   const toCurrencyAmount = useCallback(
     (currency: CryptoOrTokenCurrency) =>
-      new BigNumber(
+      toConvertedDepositAmount(
         calculate(countervaluesState, {
           from: currency,
           to: counterValueCurrency,
           value: new BigNumber(depositAmount).shiftedBy(counterValueUnit.magnitude).toNumber(),
           reverse: true,
           disableRounding: true,
-        }) ?? 0,
+        }),
       ),
     [counterValueCurrency, counterValueUnit.magnitude, countervaluesState, depositAmount],
   );
@@ -183,24 +209,12 @@ export function usePerpsDepositViewModel(
     receiverCurrency,
   ]);
 
-  const depositAccountBalanceCounterValue = useMemo(() => {
-    if (!depositAccount || !depositCurrency) return null;
-    return calculateCountervalue(depositCurrency, depositAccount.spendableBalance) ?? null;
-  }, [calculateCountervalue, depositAccount, depositCurrency]);
-
-  const depositAccountCounterValue = useMemo(() => {
-    if (!depositAccountBalanceCounterValue) return null;
-    return formatCurrencyUnit(counterValueUnit, depositAccountBalanceCounterValue, {
-      showCode: true,
-      discreet,
-      locale,
-    });
-  }, [counterValueUnit, depositAccountBalanceCounterValue, discreet, locale]);
-
-  const maxAmount = useMemo(
-    () =>
-      depositAccountBalanceCounterValue?.shiftedBy(-counterValueUnit.magnitude).toNumber() ?? null,
-    [counterValueUnit.magnitude, depositAccountBalanceCounterValue],
+  const toFiatAmount = useCallback(
+    (currency: CryptoOrTokenCurrency, atomicAmount: BigNumber) =>
+      calculateCountervalue(currency, atomicAmount)
+        ?.shiftedBy(-counterValueUnit.magnitude)
+        .toNumber() ?? null,
+    [calculateCountervalue, counterValueUnit.magnitude],
   );
 
   const tradeMaxConstant = useFeature("ptxTradeMaxConstant");
@@ -221,50 +235,64 @@ export function usePerpsDepositViewModel(
     tradeMaxConstant,
   ]);
 
+  const missingAccount = !depositAccount && depositAmount > 0;
+
+  const getAccountName = useCallback(
+    (account: AccountLike) => accountNameWithDefaultSelector(walletState, account),
+    [walletState],
+  );
+
+  const openBuy = useCallback(
+    ({ account, parentAccount: buyParentAccount }: DepositBuyTarget) => {
+      navigate("/exchange", {
+        state: buildBuyNavigationState({
+          ledgerCurrency: getAccountCurrency(account),
+          account,
+          parentAccount: buyParentAccount,
+        }),
+      });
+      onClose();
+    },
+    [navigate, onClose],
+  );
+
+  const localizeUrl = useUrlLocalizer();
+  const openSupportUrl = useCallback((url: string) => openURL(localizeUrl(url)), [localizeUrl]);
+
+  const { sentAmount, quote, isQuoteLoading, maxAmount, ...formErrors } = usePerpsDepositForm({
+    accounts,
+    receiverAccount,
+    depositAccount,
+    depositAmount,
+    toCurrencyAmount,
+    toFiatAmount,
+    isOffline,
+    counterValueCurrency: counterValueCurrency.ticker,
+    locale,
+    sourceCurrency: depositCurrency?.ticker ?? PERPS_DEPOSIT_DEFAULT_FUNDING_TICKER,
+    getAccountName,
+    track,
+    openBuy,
+    openSupportUrl,
+  });
+  const { canReview } = formErrors;
+
+  const depositAccountCounterValue = useMemo(
+    () =>
+      maxAmount === null
+        ? null
+        : formatCurrencyUnit(
+            counterValueUnit,
+            new BigNumber(maxAmount).shiftedBy(counterValueUnit.magnitude).integerValue(),
+            { showCode: true, discreet, locale },
+          ),
+    [counterValueUnit, discreet, locale, maxAmount],
+  );
+
   const selectMax = useCallback(() => {
     if (maxAmount === null) return;
     setAmountText(toAmountText(applyRatio(maxAmount, 1, maxDecimalLength, maxBuffer)));
-  }, [maxAmount, maxBuffer, maxDecimalLength]);
-
-  const submitError = useMemo(
-    () =>
-      validateDepositFlow({
-        amount: depositAmount,
-        maxAmount,
-        hasFundingAccount: Boolean(depositAccount),
-      }),
-    [depositAccount, depositAmount, maxAmount],
-  );
-
-  const exceedsBalance = submitError !== null;
-  const missingAccount = !depositAccount && depositAmount > 0;
-
-  const isFormComplete =
-    depositAmount > 0 && Boolean(depositAccount) && submitError === null && maxAmount !== null;
-
-  const sentAmount = useMemo(() => {
-    if (!isFormComplete || !depositAccount || !depositCurrency) return "";
-    const atomicAmount = BigNumber.min(
-      toCurrencyAmount(depositCurrency),
-      depositAccount.spendableBalance,
-    ).integerValue(BigNumber.ROUND_FLOOR);
-    return toAmountValue(atomicAmount, depositCurrency.units[0].magnitude);
-  }, [isFormComplete, depositAccount, depositCurrency, toCurrencyAmount]);
-
-  const {
-    quote,
-    isLoading: isQuoteLoading,
-    isUnavailable: isQuoteUnavailable,
-  } = usePerpsDepositQuote({
-    depositAccount,
-    receiverAccount,
-    amount: sentAmount,
-  });
-
-  const canReview = isFormComplete && quote !== undefined;
-
-  /** What the user typed comes first; a missing quote only matters once it is valid. */
-  const statusError = submitError ?? (isQuoteUnavailable ? QUOTE_UNAVAILABLE_ERROR : null);
+  }, [maxAmount, maxBuffer, maxDecimalLength, setAmountText]);
 
   const receiverUnit = receiverCurrency.units[0];
 
@@ -279,9 +307,12 @@ export function usePerpsDepositViewModel(
     [locale, quote, receiverUnit],
   );
 
-  const changeDepositAmount = useCallback((formattedValue: string) => {
-    setAmountText(formattedValue === "" ? EMPTY_AMOUNT_TEXT : formattedValue);
-  }, []);
+  const changeDepositAmount = useCallback(
+    (formattedValue: string) => {
+      setAmountText(formattedValue === "" ? EMPTY_AMOUNT_TEXT : formattedValue);
+    },
+    [setAmountText],
+  );
 
   const pickDepositAccount = useCallback(() => {
     dispatch(setFlowValue(PERPS_UI_USE_CASE.fund));
@@ -293,7 +324,7 @@ export function usePerpsDepositViewModel(
         setDepositAccountId(account.id);
       })
       .catch(() => undefined);
-  }, [dispatch, openAssetAndAccountPromise]);
+  }, [dispatch, openAssetAndAccountPromise, setDepositAccountId]);
 
   const handleReview = useCallback(() => {
     if (!canReview || !depositAccount || !depositCurrency || !quote) return;
@@ -339,9 +370,7 @@ export function usePerpsDepositViewModel(
     maxAmount: maxAmount ?? 0,
     maxBuffer,
     selectMax,
-    statusError,
-    canReview,
-    exceedsBalance,
+    ...formErrors,
     missingAccount,
     pickDepositAccount,
     handleReview,

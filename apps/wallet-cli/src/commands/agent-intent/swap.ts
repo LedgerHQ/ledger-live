@@ -1,5 +1,6 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
+import type { Address } from "@domain/entity-account-descriptor";
 import { createNonce, encodeSwapIntentTlv } from "@ledgerhq/agent-intent-sdk";
 import BigNumber from "bignumber.js";
 import { Session } from "../../session/session-store";
@@ -70,7 +71,7 @@ async function expectedReceive(input: {
   from: SwapAsset;
   to: SwapAsset;
   fromAmount: string;
-  sender: string;
+  sender: Address;
   out: Pick<CommandOutput, "spin">;
 }): Promise<{
   toAmount: string;
@@ -159,7 +160,11 @@ export default defineCommand({
       const sender =
         "address" in senderInput
           ? parseEvmAddress(senderInput.address, "sender")
-          : senderFromAccount(await resolveSenderAccount(senderInput.account), "swap", "ethereum");
+          : await senderFromAccount(
+              await resolveSenderAccount(senderInput.account),
+              "swap",
+              "ethereum",
+            );
       const from = await resolveSwapAsset(flags.from, "from");
       const to = await resolveSwapAsset(flags.to, "to");
       if (from.id === to.id) throw new Error("--from and --to are the same asset.");

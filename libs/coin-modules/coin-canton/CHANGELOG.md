@@ -1,5 +1,18 @@
 # @ledgerhq/coin-canton
 
+## 2.0.0-next.0
+
+### Major Changes
+
+- [#24232](https://github.com/LedgerHQ/ledger-live/pull/24232) [`5c70ad0`](https://github.com/LedgerHQ/ledger-live/commit/5c70ad082840b169ae8a22d196fcc765b779575b) Thanks [@amaslakov](https://github.com/amaslakov)! - Pass the CoinModuleApi context to the Canton logic and the resolved config to its network layer, move `common-logic` to a flat `logic` folder, and return 0 from `getNextSequence`. `createBridges` now takes a `Context` instead of seeding a module-level coin config, and the bridge logs through `context.logger`.
+
+### Patch Changes
+
+- Updated dependencies [[`4aa3244`](https://github.com/LedgerHQ/ledger-live/commit/4aa32442c63cd17bd2894d63ad0721d51e0ca41a), [`49de732`](https://github.com/LedgerHQ/ledger-live/commit/49de7327915d876c4a98826d561705171c41d2d2), [`5a9de42`](https://github.com/LedgerHQ/ledger-live/commit/5a9de42cd3a598f1f8954d58b9536280f5fd2927), [`120891d`](https://github.com/LedgerHQ/ledger-live/commit/120891d4dbd9e9bba22dbf552f1bbe0ab34685cc), [`51ce5a0`](https://github.com/LedgerHQ/ledger-live/commit/51ce5a05e95dc02ce0eccc5f9d043d556ba43bbf), [`0cf44d5`](https://github.com/LedgerHQ/ledger-live/commit/0cf44d56a449fb0f4448cd6f8e02c880fc47adb2)]:
+  - @ledgerhq/types-live@6.132.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.12.0-next.0
+  - @ledgerhq/hw-app-canton@0.16.0
+
 ## 1.7.0
 
 ### Minor Changes
@@ -265,51 +278,5 @@
   - @ledgerhq/types-live@6.122.0
   - @ledgerhq/ledger-wallet-framework@3.2.0
   - @ledgerhq/live-env@3.2.0
-
-## 1.1.0-next.0
-
-### Minor Changes
-
-- [#21168](https://github.com/LedgerHQ/ledger-live/pull/21168) [`9a1a1df`](https://github.com/LedgerHQ/ledger-live/commit/9a1a1df2da9b612bd8d5533fba23b0ebc8b1a58f) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Build the api from the framework's `notSupportedApi()` instead of hand-writing seventeen
-  methods whose only body was `throw new Error("… is not supported")`. `createApi` spreads the
-  framework value and overrides the three methods Canton wires today — `combine`,
-  `validateAddress` and `craftTransactionData` — taking the file from 112 lines to 21.
-
-  Canton could not adopt the `CoinModuleImpl` authoring type: it does not implement six of the
-  eight methods that type requires, so the capabilities it lacks cannot be expressed by
-  omission. Spreading a fully-stubbed api satisfies the contract statically instead, and makes
-  what the module actually does readable at a glance — which for a module still being built is
-  the useful part.
-
-  That also makes the mislabelling below structurally impossible: the error message follows the
-  method name, so it can no longer disagree with the method it stands for. And `getAccountInfo`
-  resolves the ADR-045 `{ type: "none" }` sentinel from the module itself rather than being
-  backfilled by the resolver's `withDefaults` — the same value a consumer already received.
-
-  One behavioural nuance: `call` and `register` were `async` functions that threw, returning a
-  rejected promise. The framework stubs throw synchronously — same error, one tick earlier,
-  which a caller using `.catch()` rather than `try`/`catch` would notice.
-
-  Report the right method name when `lastBlock` is called.
-
-  `lastBlock` raised `"listOperations is not supported"`, so a caller hitting the unimplemented block layer was pointed at the wrong method.
-
-  The authored type also keeps the contract's trailing optional parameter, or a caller reaching the module through it could no longer pass it: `combine` accepts and ignores its own. TypeScript does not hold a function's shorter parameter list against a target declaring more, so the `satisfies` passed either way and nothing flagged the narrowing.
-
-### Patch Changes
-
-- Updated dependencies [[`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682), [`e21305a`](https://github.com/LedgerHQ/ledger-live/commit/e21305abce18f0a9408bf6c0e2bb47d5c992e06a)]:
-  - @ledgerhq/types-live@6.122.0-next.0
-  - @ledgerhq/ledger-wallet-framework@3.2.0-next.0
-  - @ledgerhq/live-env@3.2.0-next.0
-
-## 1.0.1
-
-### Patch Changes
-
-- Updated dependencies [[`aa39333`](https://github.com/LedgerHQ/ledger-live/commit/aa393339789242783b168398cb5122a7f1e3f620), [`6c425e0`](https://github.com/LedgerHQ/ledger-live/commit/6c425e0e869c6feed4bd4c87ee0fef5443617708), [`585d8d7`](https://github.com/LedgerHQ/ledger-live/commit/585d8d78d5e153186c39ee2abfcdb7dc4a5d06e0), [`8161bac`](https://github.com/LedgerHQ/ledger-live/commit/8161bac542474212dfefc8519e714da345b03f71), [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e), [`39a676d`](https://github.com/LedgerHQ/ledger-live/commit/39a676d2f861d04913264e61100205b4f6044cf9)]:
-  - @ledgerhq/types-live@6.121.0
-  - @ledgerhq/ledger-wallet-framework@3.1.0
-  - @ledgerhq/live-env@3.1.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

@@ -1,11 +1,10 @@
 import React from "react";
-import { Box, Spinner, Text } from "@ledgerhq/lumen-ui-rnative";
 import {
   ConnectDeviceUIStateTypes,
   rnHidTransportIdentifier,
   type ConnectDeviceUIState,
 } from "@ledgerhq/live-dmk-mobile";
-import { useTranslation } from "~/context/Locale";
+import { ConnectingState as ConnectingStateView } from "LLM/components/DeviceConnection";
 import { TrackDIEScreen } from "../../components/TrackDIEScreen";
 import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
 
@@ -14,25 +13,19 @@ type ConnectingStateProps = {
 };
 
 export function ConnectingState({ state }: Readonly<ConnectingStateProps>): React.ReactNode {
-  const { t } = useTranslation();
   const modelId = state.device.deviceModelId;
   const transport: "ble" | "usb" =
     state.device.transport === rnHidTransportIdentifier ? "usb" : "ble";
 
   return (
-    <Box lx={{ width: "full", alignItems: "center", paddingTop: "s32", paddingBottom: "s32" }}>
+    <>
       <TrackDIEScreen
         category={PAGE_CONNECT_DEVICE.Connecting}
         modelId={modelId}
         transport={transport}
         refreshSource
       />
-      <Box lx={{ width: "full", alignItems: "center", gap: "s16" }}>
-        <Spinner size={32} color="base" />
-        <Text typography="heading4SemiBold" lx={{ color: "base", textAlign: "center" }}>
-          {t("deviceIntentExecutor.connectDevice.states.connecting.title")}
-        </Text>
-      </Box>
-    </Box>
+      <ConnectingStateView />
+    </>
   );
 }

@@ -1,5 +1,16 @@
 # @ledgerhq/coin-evm
 
+## 4.6.0-next.0
+
+### Minor Changes
+
+- [#24605](https://github.com/LedgerHQ/ledger-live/pull/24605) [`0990a44`](https://github.com/LedgerHQ/ledger-live/commit/0990a44e70cf7798925fae0ffd49316ce0acbd84) Thanks [@gre-ledger](https://github.com/gre-ledger)! - fix(coin-vechain): `isAccountEmpty` no longer throws on an account with an empty `subAccounts`
+
+### Patch Changes
+
+- Updated dependencies [[`49de732`](https://github.com/LedgerHQ/ledger-live/commit/49de7327915d876c4a98826d561705171c41d2d2), [`51ce5a0`](https://github.com/LedgerHQ/ledger-live/commit/51ce5a05e95dc02ce0eccc5f9d043d556ba43bbf), [`0cf44d5`](https://github.com/LedgerHQ/ledger-live/commit/0cf44d56a449fb0f4448cd6f8e02c880fc47adb2)]:
+  - @ledgerhq/ledger-wallet-framework@3.12.0-next.0
+
 ## 4.5.0
 
 ### Minor Changes
@@ -270,40 +281,5 @@
 
 - Updated dependencies [[`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682)]:
   - @ledgerhq/ledger-wallet-framework@3.2.0
-
-## 4.1.0-next.0
-
-### Minor Changes
-
-- [#21168](https://github.com/LedgerHQ/ledger-live/pull/21168) [`204125f`](https://github.com/LedgerHQ/ledger-live/commit/204125f561426415069a9b94f3d921b2837622b0) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Adopt the coin-module authoring type, dropping the hand-written "not supported" stubs.
-
-  `createApi` no longer declares `CoinModuleApi` as its return type: it returns the object it actually
-  builds, checked with `satisfies CoinModuleImpl<VechainCurrencyConfig>`. The seven capability methods
-  that only threw are omitted instead of stubbed — `call`, `register`, `craftRawTransaction`, the three
-  staking reads (`getStakes`, `getRewards`, `getValidators`), and `getNextSequence`, which has no
-  meaning for VeChain: `craftTransaction` gets its replay protection from the transaction's `blockRef`
-  and a generated `nonce`, not from a per-account sequence. The VET + VTHO surface the module really
-  serves is unchanged (balances, operations, the block API, crafting, fee estimation, combine,
-  broadcast, intent and address validation).
-
-  Consumers see no behavioural change: the resolver applies the framework's `withDefaults`, which
-  backfills each omitted method with the same `"<name> is not supported"` throw. Two details shift for
-  anyone asserting on the module directly — `getNextSequence` now reports "not supported" instead of
-  "not applicable for Vechain", and `register` throws synchronously (the framework default) where the
-  removed stub returned a rejected promise.
-
-  The api test asserts the whole capability surface with the framework's `capabilityReport()` rather than one test per unimplemented capability: one expectation covers that each is absent, that reaching it raises `"<name> is not supported"`, and that `supports()` agrees. Being an exact comparison it is exhaustive, so implementing or dropping a capability changes the list instead of leaving a test that passes while covering less.
-
-### Patch Changes
-
-- Updated dependencies [[`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682)]:
-  - @ledgerhq/ledger-wallet-framework@3.2.0-next.0
-
-## 4.0.1
-
-### Patch Changes
-
-- Updated dependencies [[`585d8d7`](https://github.com/LedgerHQ/ledger-live/commit/585d8d78d5e153186c39ee2abfcdb7dc4a5d06e0)]:
-  - @ledgerhq/ledger-wallet-framework@3.1.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

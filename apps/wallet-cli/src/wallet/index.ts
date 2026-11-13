@@ -6,7 +6,7 @@ import { Observable, from } from "rxjs";
 import { map, switchMap } from "rxjs/operators";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
-import type { AccountDescriptor, Balance, SendEvent, DiscoveredAccountRaw } from "./models";
+import type { AccountBalances, AccountDescriptor, SendEvent, DiscoveredAccountRaw } from "./models";
 // BridgeAdapter and CoinFrameworkAdapter are loaded lazily via dynamic import() inside getters
 // to avoid pulling in live-common/bridge/index (~328ms) and coinframework/local/evm (~105ms)
 // at module load time for every subprocess regardless of which command is invoked.
@@ -16,6 +16,7 @@ import type { EarnSolanaStake } from "./earn/types";
 import type { TransactionIntent } from "./intents";
 import type { NetworkId } from "../shared/accountDescriptor";
 import { currencyIdFromNetwork, toV1 } from "../shared/accountDescriptor";
+import { AddressSchema, type Address } from "@domain/entity-account-descriptor";
 
 export class WalletAdapter {
   private static readonly coinFrameworkFamilies = new Set(["evm"]);
@@ -59,7 +60,7 @@ export class WalletAdapter {
    * Return all balances (native + tokens) for the given account descriptor.
    * Uses coin-framework for supported families (fast direct API); falls back to full bridge sync.
    */
-  async getAccountBalances(descriptor: AccountDescriptor): Promise<Balance[]> {
+  async getAccountBalances(descriptor: AccountDescriptor): Promise<AccountBalances> {
     const { family } = getCryptoCurrencyById(descriptor.currencyId);
     if (WalletAdapter.coinFrameworkFamilies.has(family))
       return (await this.getCoinFramework()).getBalances(descriptor);
@@ -92,8 +93,8 @@ export class WalletAdapter {
    * Return the current receive address for the account.
    * Always uses bridge sync to ensure the freshest unused address.
    */
-  async getFreshAddress(descriptor: AccountDescriptor): Promise<string> {
-    return (await this.getBridge()).getFreshAddress(descriptor);
+  async getFreshAddress(descriptor: AccountDescriptor): Promise<Address> {
+    return AddressSchema.parse(await (await this.getBridge()).getFreshAddress(descriptor));
   }
 
   async verifyAddress(descriptor: AccountDescriptor, deviceId: string): Promise<string> {

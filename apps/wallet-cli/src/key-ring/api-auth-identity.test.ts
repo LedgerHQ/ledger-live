@@ -1,4 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from "bun:test";
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { APP_NAME } from "../session/session-store";
 import { InMemoryKeychain } from "../testing/in-memory-keychain";
@@ -12,8 +15,10 @@ import { _setTestKeychain, _setTestKeychainProbe } from "./keychain-entry";
 import { installOutputCapture } from "../shared/ui";
 import { failingKeychainProbe, overridePlatform } from "../testing/os-keychain";
 import { resetTestSeams } from "../shared/test-seam";
+import { pointStateHomeAt } from "../testing/state-home";
 
-const origStateHome = process.env.XDG_STATE_HOME;
+let profilesRoot: string;
+const restoreStateHomes: (() => void)[] = [];
 let keychain: InMemoryKeychain;
 let stderr: string[];
 let restoreOutput: () => void;
@@ -29,7 +34,7 @@ function loadCredentials(): MemberCredentials {
 }
 
 function useProfile(name: string): void {
-  process.env.XDG_STATE_HOME = `/tmp/wallet-cli-api-auth-test/${name}`;
+  restoreStateHomes.push(pointStateHomeAt(join(profilesRoot, name)));
 }
 
 beforeEach(() => {
@@ -38,14 +43,15 @@ beforeEach(() => {
   restoreOutput = installOutputCapture({ stderr: chunk => stderr.push(chunk) });
   _setTestKeychain(keychain.open);
   _resetApiAuthIdentity();
+  profilesRoot = mkdtempSync(join(tmpdir(), "wallet-cli-api-auth-test-"));
   useProfile("a");
 });
 
 afterEach(() => {
   restoreOutput();
   resetTestSeams();
-  if (origStateHome === undefined) delete process.env.XDG_STATE_HOME;
-  else process.env.XDG_STATE_HOME = origStateHome;
+  for (const restore of restoreStateHomes.splice(0).reverse()) restore();
+  rmSync(profilesRoot, { recursive: true, force: true });
 });
 
 describe("loadApiAuthIdentity", () => {

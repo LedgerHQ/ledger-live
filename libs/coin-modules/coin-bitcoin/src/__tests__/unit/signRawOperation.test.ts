@@ -191,18 +191,22 @@ describe("signRawOperation (PSBT path)", () => {
       0, 0, 0,
     ]);
 
-    // Override wallet account for this test so getNewAddress returns our fixture.
+    // Override wallet account for this test: nothing stored, so every address within the gap
+    // limit is fresh, and crypto.getAddress derives our fixture at chain=1, index=1.
     (jest.requireMock("../../getWalletAccount") as any).getWalletAccount.mockReturnValueOnce({
       params: { path: "m/84'/0'/0'", index: 0 },
       xpub: {
         xpub: "xpub_test",
+        derivationMode: "native_segwit",
+        GAP: 20,
         getAccountAddresses: jest.fn().mockResolvedValue([]),
-        getNewAddress: jest.fn().mockImplementation(async (account: number, gap: number) => ({
-          address: `bc1q_fresh_a${account}_g${gap}`,
-          account,
-          index: gap,
-        })),
         crypto: {
+          getAddress: jest
+            .fn()
+            .mockImplementation(
+              async (_derivationMode: string, _xpub: string, account: number, index: number) =>
+                `bc1q_fresh_a${account}_i${index}`,
+            ),
           getPubkeyAt: jest
             .fn()
             .mockImplementation(async (_xpub: string, account: number, index: number) => {
@@ -210,7 +214,7 @@ describe("signRawOperation (PSBT path)", () => {
               return Buffer.alloc(33, 0x02);
             }),
           toOutputScript: jest.fn().mockImplementation((address: string) => {
-            if (address === "bc1q_fresh_a1_g1") return freshChangeScript;
+            if (address === "bc1q_fresh_a1_i1") return freshChangeScript;
             // Other fresh addresses return a dummy but valid P2WPKH script
             return Buffer.concat([Buffer.from("0014", "hex"), Buffer.alloc(20, 0)]);
           }),

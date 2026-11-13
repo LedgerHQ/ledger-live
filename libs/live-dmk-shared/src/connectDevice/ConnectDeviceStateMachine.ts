@@ -1,4 +1,4 @@
-import { Subscription } from "rxjs";
+import type { Unsubscribable } from "rxjs";
 import { assign, createActor, fromPromise, setup } from "xstate";
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import {
@@ -150,35 +150,28 @@ const createConnectDeviceStateMachine = <
         selectedKnownDevice: () => null,
         selectedMatchedDevice: () => null,
       }),
-      ignoreDiscoveryError: assign({
-        skipTransportIds: ({ context }) => {
-          const transportId = context.discoveryError!.transportId;
-          if (!transportId || context.skipTransportIds.includes(transportId)) {
-            return context.skipTransportIds;
-          }
-          return [...context.skipTransportIds, transportId];
-        },
-      }),
-      startDiscovery: assign({
-        isDiscovering: ({ context }) => {
-          if (!context.isDiscovering) {
-            context.deviceDiscoveryService.start({
-              ignoreTransportIdentifiers: context.skipTransportIds,
-            });
-          }
-
-          return true;
-        },
-      }),
-      stopDiscovery: assign({
-        isDiscovering: ({ context }) => {
-          if (context.isDiscovering) {
-            context.deviceDiscoveryService.stop();
-          }
-
-          return false;
-        },
-      }),
+      ignoreDiscoveryError: ({ context }) => {
+        const { ignoredTransportIds } = context.deviceDiscoveryService;
+        const transportId = context.discoveryError!.transportId;
+        context.deviceDiscoveryService.start({
+          ignoreTransportIdentifiers:
+            !transportId || ignoredTransportIds.includes(transportId)
+              ? ignoredTransportIds
+              : [...ignoredTransportIds, transportId],
+        });
+      },
+      startDiscovery: ({ context }) => {
+        if (!context.deviceDiscoveryService.isRunning) {
+          context.deviceDiscoveryService.start({
+            ignoreTransportIdentifiers: context.deviceDiscoveryService.ignoredTransportIds,
+          });
+        }
+      },
+      stopDiscovery: ({ context }) => {
+        if (context.deviceDiscoveryService.isRunning) {
+          context.deviceDiscoveryService.stop();
+        }
+      },
       emitNoKnownDevice: ({ context }) => {
         context.observer.next({ type: ConnectDeviceUIStateTypes.NoKnownDevice });
       },
@@ -249,10 +242,8 @@ const createConnectDeviceStateMachine = <
       matchedDevices: [],
       selectedKnownDevice: null,
       selectedMatchedDevice: null,
-      isDiscovering: false,
       discoveryError: null,
       connectionError: null,
-      skipTransportIds: [],
     }),
     states: {
       Startup: {
@@ -465,7 +456,12 @@ export class DefaultConnectDeviceStateMachine<
     TConnectionError
   >["matchDiscoveredDevices"];
 
-  private subscriptions: Array<Subscription> = [];
+  private readonly observer: ConnectDeviceStateMachineInput<
+    ConnectDeviceStateMachineDiscoveryError<TDiscoveryError>,
+    TConnectionError
+  >["observer"];
+
+  private subscriptions: Array<Unsubscribable> = [];
 
   constructor(
     input: ConnectDeviceStateMachineInput<
@@ -473,6 +469,7 @@ export class DefaultConnectDeviceStateMachine<
       TConnectionError
     >,
   ) {
+    this.observer = input.observer;
     this.deviceDiscoveryService = input.deviceDiscoveryService;
     this.knownDevices = input.knownDevices;
     this.matchDiscoveredDevices = input.matchDiscoveredDevices;
@@ -504,14 +501,20 @@ export class DefaultConnectDeviceStateMachine<
     const errorsSubscription = this.deviceDiscoveryService.errors.subscribe(error => {
       this.actor.send({ type: ConnectDeviceStateMachineEventTypes.DiscoveryError, error });
     });
+    // Without an error observer, XState rethrows the error outside the use case.
+    const actorErrorsSubscription = this.actor.subscribe({
+      error: error => this.observer.error(error),
+    });
+    this.subscriptions.push(
+      discoveredDevicesSubscription,
+      errorsSubscription,
+      actorErrorsSubscription,
+    );
     this.actor.start();
-    this.subscriptions.push(discoveredDevicesSubscription, errorsSubscription);
   }
 
   stop(): void {
-    const snapshot = this.actor.getSnapshot();
-
-    if (snapshot.context.isDiscovering) {
+    if (this.deviceDiscoveryService.isRunning) {
       this.deviceDiscoveryService.stop();
     }
     this.actor.stop();

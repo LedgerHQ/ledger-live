@@ -1,5 +1,14 @@
 # @features/platform-account-data
 
+## 0.4.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`9f10baf`](https://github.com/LedgerHQ/ledger-live/commit/9f10bafef466914b2536c7e509ff7c3c2c49b5c8), [`0fc43ab`](https://github.com/LedgerHQ/ledger-live/commit/0fc43ab03928e17d2da761f747ec0c449228d4aa), [`5020021`](https://github.com/LedgerHQ/ledger-live/commit/5020021654f743e0e868cb9c8d011adc97f4ed9a), [`8064394`](https://github.com/LedgerHQ/ledger-live/commit/806439433d2c57b13db5a513688db52195bfc163)]:
+  - @domain/api-account-data@0.6.0-next.0
+  - @domain/entity-account-descriptor@0.6.0-next.0
+  - @domain/entity-account-data@0.6.0-next.0
+
 ## 0.4.0
 
 ### Minor Changes

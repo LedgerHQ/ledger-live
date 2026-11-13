@@ -1,5 +1,29 @@
 # @devtools/registry
 
+## 0.9.0-next.0
+
+### Minor Changes
+
+- [#24604](https://github.com/LedgerHQ/ledger-live/pull/24604) [`6ae0717`](https://github.com/LedgerHQ/ledger-live/commit/6ae07170880c92bf6944ff42449eeb25991d1edf) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add a Receive DevTools tool to toggle the newReceiveFlow feature flag and its excluded families
+
+- [#24691](https://github.com/LedgerHQ/ledger-live/pull/24691) [`81d566b`](https://github.com/LedgerHQ/ledger-live/commit/81d566bd4b2fc0b72f4317aee917975601cd97b2) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add the account-receive DevTools tool, reading the `receive` kind per account, and the `receive` kind to the mock source
+
+- [#24592](https://github.com/LedgerHQ/ledger-live/pull/24592) [`b04379b`](https://github.com/LedgerHQ/ledger-live/commit/b04379bbbb8fcbebcfd7fe49e2ad8226ffa6d806) Thanks [@ysitbon](https://github.com/ysitbon)! - Add the Ledger Sync intents DevTool, which runs the add member and remove member intents on the Device Intent Executor of each app and logs every job state, with the app renderers, executor wrappers and session SDK it needs
+
+- [#24473](https://github.com/LedgerHQ/ledger-live/pull/24473) [`c5d0d84`](https://github.com/LedgerHQ/ledger-live/commit/c5d0d8489518b9c5635ed8aa415eb7187f4124d9) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Add the Predictions DevTool on desktop and mobile to inspect and reset what the Predictions onboarding stored, and preview the trading wallet setup. `@domain/entity-predictions` gets `resetPredictionsIntroSeen`
+
+### Patch Changes
+
+- Updated dependencies [[`6ae0717`](https://github.com/LedgerHQ/ledger-live/commit/6ae07170880c92bf6944ff42449eeb25991d1edf), [`5020021`](https://github.com/LedgerHQ/ledger-live/commit/5020021654f743e0e868cb9c8d011adc97f4ed9a), [`17a6fe5`](https://github.com/LedgerHQ/ledger-live/commit/17a6fe50223648ab962217e1388633d1d67c63a7), [`81d566b`](https://github.com/LedgerHQ/ledger-live/commit/81d566bd4b2fc0b72f4317aee917975601cd97b2), [`b04379b`](https://github.com/LedgerHQ/ledger-live/commit/b04379bbbb8fcbebcfd7fe49e2ad8226ffa6d806), [`c5d0d84`](https://github.com/LedgerHQ/ledger-live/commit/c5d0d8489518b9c5635ed8aa415eb7187f4124d9), [`8b743fb`](https://github.com/LedgerHQ/ledger-live/commit/8b743fb4d98b915eac60d3b7a991dbe6a03f2b03)]:
+  - @devtools/receive@0.2.0-next.0
+  - @devtools/mock-accounts@0.4.0-next.0
+  - @devtools/account-detail@0.3.0-next.0
+  - @devtools/account-receive@0.1.0-next.0
+  - @devtools/intent-wallet-sync@0.2.0-next.0
+  - @devtools/predictions@0.2.0-next.0
+  - @devtools/feature-flags@0.12.1-next.0
+  - @devtools/device-onboarding@0.6.1-next.0
+
 ## 0.8.0
 
 ### Minor Changes
@@ -308,21 +332,5 @@
 - Updated dependencies [[`81aa729`](https://github.com/LedgerHQ/ledger-live/commit/81aa7294c94ef114e6e82ec4c277f0a6c0038c92), [`60ee73c`](https://github.com/LedgerHQ/ledger-live/commit/60ee73c7b89b101dde708a04ded260341ef86d44), [`ef29f07`](https://github.com/LedgerHQ/ledger-live/commit/ef29f0711ecec104e4dd9c9d86d4e4d41c4ddee3), [`d6b290b`](https://github.com/LedgerHQ/ledger-live/commit/d6b290b37b8ad6f677ab382bef53bf05cd394ca2), [`0a02a32`](https://github.com/LedgerHQ/ledger-live/commit/0a02a325f99033c086864b0778a8f81c3b4178ae), [`66c7569`](https://github.com/LedgerHQ/ledger-live/commit/66c7569dcfae90739b369ffb3a92cee75dd2e9cd), [`543b17d`](https://github.com/LedgerHQ/ledger-live/commit/543b17d7a6b49728001c0311c184c665e8c9bbb2), [`c3de11c`](https://github.com/LedgerHQ/ledger-live/commit/c3de11cdf58c4feac701435548bbb96819ae09f6), [`760dab2`](https://github.com/LedgerHQ/ledger-live/commit/760dab246a27d62f0feaa349122164e1c48aa6e4)]:
   - @devtools/pay-card@0.5.0-next.0
   - @devtools/feature-flags@0.9.1-next.0
-
-## 0.4.1
-
-### Patch Changes
-
-- Updated dependencies [[`1190ce1`](https://github.com/LedgerHQ/ledger-live/commit/1190ce10656496de8af6aa893b6cafca6c8a36d8)]:
-  - @devtools/feature-flags@0.9.0
-  - @devtools/cloud-sync@0.1.1
-
-## 0.4.1-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`1190ce1`](https://github.com/LedgerHQ/ledger-live/commit/1190ce10656496de8af6aa893b6cafca6c8a36d8)]:
-  - @devtools/feature-flags@0.9.0-next.0
-  - @devtools/cloud-sync@0.1.1-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

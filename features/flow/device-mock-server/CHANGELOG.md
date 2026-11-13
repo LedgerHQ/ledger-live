@@ -1,5 +1,12 @@
 # @features/flow-device-mock-server
 
+## 0.1.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`c3dcfd8`](https://github.com/LedgerHQ/ledger-live/commit/c3dcfd821153bf18896eb4a63bb2ed40c55e310b)]:
+  - @shared/clipboard@0.2.0-next.0
+
 ## 0.1.0
 
 ### Minor Changes

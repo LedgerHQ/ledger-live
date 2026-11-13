@@ -1,4 +1,6 @@
-import { describe, it, expect, beforeAll, afterAll, afterEach } from "bun:test";
+import { describe, it, expect, beforeAll, afterAll, afterEach, spyOn } from "bun:test";
+import { WalletAdapter } from "../wallet";
+import { BalanceSchema } from "../wallet/models";
 import { MockServer } from "../testing/mock-server";
 import { runCli } from "../testing/cli-runner";
 import { makeSessionDir } from "../testing/session-fixture";
@@ -44,6 +46,32 @@ describe("balances command", () => {
     expect(exitCode, `stderr: ${stderr}`).toBe(0);
     expect(stdout).toMatch(/ETH/i);
     expect(stdout).toMatch(/1\.5/);
+  });
+
+  it("human output: warns on stderr about a skipped token once the balances are fetched", async () => {
+    const fixture = makeSessionDir([{ label: "ethereum-1", descriptor: ETH_DESCRIPTOR }]);
+    sessionCleanup = fixture.cleanup;
+    const getBalances = spyOn(WalletAdapter.prototype, "getAccountBalances").mockResolvedValue({
+      balances: [
+        BalanceSchema.parse({ kind: "native", assetId: "ethereum", balance: ETH_BALANCE_WEI }),
+      ],
+      skippedTokenIds: ["ethereum/erc20/no_units"],
+    });
+
+    try {
+      const { stdout, exitCode, stderr } = await runCli(["balances", "--account", "ethereum-1"], {
+        WALLET_CLI_MOCK_PORT: String(server.port),
+        ...fixture.env,
+      });
+      expect(exitCode, `stderr: ${stderr}`).toBe(0);
+      expect(stdout).toMatch(/1\.5/);
+      expect(stderr).toEndWith(
+        "Fetching balances for ethereum…\n" +
+          "⚠ Skipped token ethereum/erc20/no_units: the Crypto Assets List gives no unit for it.",
+      );
+    } finally {
+      getBalances.mockRestore();
+    }
   });
 
   it("json output: returns a valid balances envelope", async () => {

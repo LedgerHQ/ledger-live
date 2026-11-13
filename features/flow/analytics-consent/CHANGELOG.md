@@ -1,5 +1,12 @@
 # @features/flow-analytics-consent
 
+## 0.2.14-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`79fbc3e`](https://github.com/LedgerHQ/ledger-live/commit/79fbc3e91945f78c42bc69c79ca4daf8df331a99)]:
+  - @features/platform-feature-flags@0.13.0-next.0
+
 ## 0.2.13
 
 ### Patch Changes
@@ -141,21 +148,5 @@
 
 - Updated dependencies []:
   - @features/platform-feature-flags@0.6.9-next.0
-
-## 0.2.4
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @features/platform-feature-flags@0.6.8
-  - @domain/entity-analytics-consent@0.2.2
-
-## 0.2.4-next.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @features/platform-feature-flags@0.6.8-next.0
-  - @domain/entity-analytics-consent@0.2.2-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

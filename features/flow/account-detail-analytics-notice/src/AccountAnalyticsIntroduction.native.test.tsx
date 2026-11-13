@@ -9,6 +9,8 @@ function renderIntroduction(
   overrides: Partial<React.ComponentProps<typeof AccountAnalyticsIntroduction>> = {},
 ) {
   const props = {
+    isEnabled: true,
+    isEligible: true,
     hasConfirmedHistory: true,
     hasDismissed: false,
     onDismiss: jest.fn(),
@@ -31,10 +33,12 @@ describe("AccountAnalyticsIntroduction (native)", () => {
   });
 
   it.each([
-    { hasConfirmedHistory: false, hasDismissed: false },
-    { hasConfirmedHistory: true, hasDismissed: true },
-  ])("should hide the introduction when ineligible with %o", status => {
-    renderIntroduction(status);
+    { isEnabled: false },
+    { isEligible: false },
+    { hasConfirmedHistory: false },
+    { hasDismissed: true },
+  ])("should hide the introduction with %o", override => {
+    renderIntroduction(override);
 
     expect(screen.queryByTestId(TEST_ID)).toBeNull();
   });
@@ -50,13 +54,12 @@ describe("AccountAnalyticsIntroduction (native)", () => {
     expect(onOpenAnalytics).not.toHaveBeenCalled();
   });
 
-  it("should consume the introduction before opening Analytics when the CTA is pressed", () => {
-    const onDismiss = jest.fn();
-    const onOpenAnalytics = jest.fn(() => expect(onDismiss).toHaveBeenCalledTimes(1));
-    renderIntroduction({ onDismiss, onOpenAnalytics });
+  it("should open Analytics without consuming the introduction when the CTA is pressed", () => {
+    const { onDismiss, onOpenAnalytics } = renderIntroduction();
 
     fireEvent.press(screen.getByText("accountDetail.analyticsIntroduction.cta"));
 
     expect(onOpenAnalytics).toHaveBeenCalledTimes(1);
+    expect(onDismiss).not.toHaveBeenCalled();
   });
 });

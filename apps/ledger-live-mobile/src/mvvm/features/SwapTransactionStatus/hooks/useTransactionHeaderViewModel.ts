@@ -9,6 +9,7 @@ type UseTransactionHeaderViewModelProps = Readonly<{
   createdAt?: number;
   locale: string;
   origin?: SwapTransactionStatusOrigin;
+  customTitle?: string;
 }>;
 
 export function useTransactionHeaderViewModel({
@@ -17,6 +18,7 @@ export function useTransactionHeaderViewModel({
   createdAt,
   locale,
   origin,
+  customTitle,
 }: UseTransactionHeaderViewModelProps) {
   const { t } = useTranslation();
   const hasCurrencies = sendCurrency !== undefined && receiveCurrency !== undefined;
@@ -25,13 +27,16 @@ export function useTransactionHeaderViewModel({
     : undefined;
 
   const isPerps = origin === "perps";
-  const title = isPerps
+  const defaultTitle = isPerps
     ? t("perpsTransactionStatus.title")
     : tickers
       ? t("transfer.swap2.modals.transactionStatus.title", tickers)
       : undefined;
+  const title = customTitle ?? defaultTitle;
+  // The perps and custom titles don't name the pair, so it gets its own line.
+  const showsPairLine = isPerps || customTitle !== undefined;
   const currencies =
-    tickers && isPerps ? t("perpsTransactionStatus.currencies", tickers) : undefined;
+    tickers && showsPairLine ? t("perpsTransactionStatus.currencies", tickers) : undefined;
 
   const formattedDate = createdAt
     ? formatSwapTransactionStatusCreatedAt(createdAt, locale)

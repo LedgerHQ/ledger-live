@@ -74,7 +74,11 @@ export interface DeviceDiscoveryService<
 > {
   start(args?: DeviceDiscoveryStartArgs): void;
   stop(): void;
+  /** True between `start()` and `stop()`. */
+  readonly isRunning: boolean;
   transportIds: Array<TransportIdentifier>;
+  /** The transports that the last `start()` ignored. */
+  readonly ignoredTransportIds: Array<TransportIdentifier>;
   discoveredDevices: Observable<DiscoveredDevice[]>;
   errors: Observable<TDiscoveryError>;
 }

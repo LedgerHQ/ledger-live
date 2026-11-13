@@ -39,6 +39,7 @@ function addressesMatch(expected: string, reported: string): boolean {
  * stays signer-agnostic.
  *
  * Outcomes:
+ * - device request in flight → `addressDisplayed` (non-terminal, once per attempt).
  * - device output matches the expected address → `verified` (terminal).
  * - device output differs → `mismatch` (terminal), so the host can warn the user.
  * - user refuses on device → `cancelled` with a `retry` handler (non-terminal).
@@ -70,6 +71,7 @@ export const verifyAddressIntentJob: Job<VerifyAddressIntentJobState, VerifyAddr
 
       const { observable, cancel } = startAddressVerification(deviceConnectionResult);
       cancelDeviceAction = cancel;
+      let hasDisplayedAddress = false;
 
       innerSubscription = observable.subscribe({
         next: state => {
@@ -77,6 +79,9 @@ export const verifyAddressIntentJob: Job<VerifyAddressIntentJobState, VerifyAddr
 
           switch (state.type) {
             case "awaiting-confirmation":
+              if (hasDisplayedAddress) return;
+              hasDisplayedAddress = true;
+              subscriber.next({ type: "addressDisplayed" });
               return;
             case "confirmed": {
               const reportedAddress = state.address;

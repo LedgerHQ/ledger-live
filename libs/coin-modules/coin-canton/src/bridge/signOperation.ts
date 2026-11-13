@@ -5,12 +5,18 @@ import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { AccountBridge, Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
-import { combine, craftTransaction } from "../common-logic";
-import { signTransaction } from "../common-logic/transaction/sign";
+import { combine } from "../logic/combine";
+import { craftTransaction } from "../logic/craftTransaction";
+import { signTransaction } from "./sign";
+import type { CantonContext } from "../config";
 import { CantonSigner, Transaction } from "../types";
+import { getCurrencyContext } from "./context";
 
 export const buildSignOperation =
-  (signerContext: SignerContext<CantonSigner>): AccountBridge<Transaction>["signOperation"] =>
+  (
+    signerContext: SignerContext<CantonSigner>,
+    context: CantonContext,
+  ): AccountBridge<Transaction>["signOperation"] =>
   ({ account, deviceId, transaction }) =>
     new Observable(o => {
       async function main() {
@@ -48,7 +54,7 @@ export const buildSignOperation =
             }
 
             const { nativeTransaction, serializedTransaction, hash } = await craftTransaction(
-              account.currency,
+              getCurrencyContext(context, account.currency),
               {
                 address,
               },

@@ -8,6 +8,7 @@
 ## What it does
 
 - Classifies every account operation (buy, sell, receive, send, swap, …) into cost-basis events.
+- Counts native internal receives (coins a contract call sends to the account) once per transaction, right after their parent operation. Token transfers, internal outflows and NFT operations are left out.
 - Maintains a **cost basis cache** and reconciles it against live on-chain data to keep PnL consistent across syncs.
 - Computes **per-asset PnL** (`computeAssetPnL`), **asset-group PnL** (`computeAssetGroupPnL`), and **portfolio-level PnL** (`computePortfolioPnL`).
 - Calculates percentage return and trend direction for display in the UI.

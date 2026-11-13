@@ -1,5 +1,18 @@
 # @ledgerhq/coin-celo
 
+## 4.1.0-next.0
+
+### Minor Changes
+
+- [#24589](https://github.com/LedgerHQ/ledger-live/pull/24589) [`49de732`](https://github.com/LedgerHQ/ledger-live/commit/49de7327915d876c4a98826d561705171c41d2d2) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Scale BigNumber amounts down by a power of ten with `shiftedBy` instead of `div`, so the result no longer depends on the global `DECIMAL_PLACES`
+
+### Patch Changes
+
+- Updated dependencies [[`4aa3244`](https://github.com/LedgerHQ/ledger-live/commit/4aa32442c63cd17bd2894d63ad0721d51e0ca41a), [`49de732`](https://github.com/LedgerHQ/ledger-live/commit/49de7327915d876c4a98826d561705171c41d2d2), [`5a9de42`](https://github.com/LedgerHQ/ledger-live/commit/5a9de42cd3a598f1f8954d58b9536280f5fd2927), [`120891d`](https://github.com/LedgerHQ/ledger-live/commit/120891d4dbd9e9bba22dbf552f1bbe0ab34685cc), [`51ce5a0`](https://github.com/LedgerHQ/ledger-live/commit/51ce5a05e95dc02ce0eccc5f9d043d556ba43bbf), [`0cf44d5`](https://github.com/LedgerHQ/ledger-live/commit/0cf44d56a449fb0f4448cd6f8e02c880fc47adb2)]:
+  - @ledgerhq/types-live@6.132.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.12.0-next.0
+  - @ledgerhq/hw-app-eth@7.13.1-next.0
+
 ## 4.0.0
 
 ### Major Changes
@@ -283,43 +296,5 @@
   - @ledgerhq/ledger-wallet-framework@3.2.0
   - @ledgerhq/live-env@3.2.0
   - @ledgerhq/hw-app-eth@7.8.17
-
-## 3.1.0-next.0
-
-### Minor Changes
-
-- [#20117](https://github.com/LedgerHQ/ledger-live/pull/20117) [`6780db0`](https://github.com/LedgerHQ/ledger-live/commit/6780db014288dd297ed2d6b9e2133a5d91debc8a) Thanks [@shazzzam](https://github.com/shazzzam)! - Celo: show a clear "temporarily unavailable" message when voting is blocked during on-chain epoch processing, instead of a generic "RPC request failed" error
-
-- [#21168](https://github.com/LedgerHQ/ledger-live/pull/21168) [`937c4f8`](https://github.com/LedgerHQ/ledger-live/commit/937c4f853cfc514a3fdc685bd6b264fd70ff7e13) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Adopt the coin-module authoring type, dropping the hand-written "not supported" stub.
-
-  This module composes the EVM api and overrides the parts Celo implements itself, so its shape follows coin-evm's. `createApi` now returns its object with `satisfies`, which keeps `stakingSupported` — a member outside the API surface — visible in the type, and drops the `register` stub in favour of the framework default.
-
-  `craftRawTransaction` is the one capability neither this module nor the EVM api it composes provides, so it is simply absent. That matters here more than elsewhere: the composed api arrives through an `as unknown as` cast, which would have let a method that no longer exists keep claiming it does, and a caller would have met `undefined is not a function` rather than a "not supported" error. The cast now names the authoring type, and spells out `validateIntent` as required since every non-staking intent is delegated to it — so dropping it upstream breaks the build instead of the runtime.
-
-  Consumers see no change: the resolver applies `withDefaults`, which supplies the absent capabilities.
-
-  The authored type also keeps the contract's trailing optional parameter, or a caller reaching the module through it could no longer pass it: `combine` accepts and ignores its own. TypeScript does not hold a function's shorter parameter list against a target declaring more, so the `satisfies` passed either way and nothing flagged the narrowing.
-
-- [#21208](https://github.com/LedgerHQ/ledger-live/pull/21208) [`1b789dc`](https://github.com/LedgerHQ/ledger-live/commit/1b789dc76939a2791e34fefb512652bac71ae4df) Thanks [@amaslakov](https://github.com/amaslakov)! - Celo: add USAT (Tether America USD) to the fee currencies that can be selected to pay gas
-
-### Patch Changes
-
-- Updated dependencies [[`83b019e`](https://github.com/LedgerHQ/ledger-live/commit/83b019e128b59a289a28184e58c33b108cd3f188), [`41faac4`](https://github.com/LedgerHQ/ledger-live/commit/41faac432e8c17e3718d90cc26ce6ae650800681), [`2c70999`](https://github.com/LedgerHQ/ledger-live/commit/2c709990d3569bc50504822ce90c9e9024210312), [`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682), [`e21305a`](https://github.com/LedgerHQ/ledger-live/commit/e21305abce18f0a9408bf6c0e2bb47d5c992e06a), [`1cf5583`](https://github.com/LedgerHQ/ledger-live/commit/1cf55832f785fc57881169092f1190fa7ddfecf9)]:
-  - @ledgerhq/coin-evm@5.2.0-next.0
-  - @ledgerhq/types-live@6.122.0-next.0
-  - @ledgerhq/ledger-wallet-framework@3.2.0-next.0
-  - @ledgerhq/live-env@3.2.0-next.0
-  - @ledgerhq/hw-app-eth@7.8.17-next.0
-
-## 3.0.1
-
-### Patch Changes
-
-- Updated dependencies [[`26d8617`](https://github.com/LedgerHQ/ledger-live/commit/26d86172869e47608dd0f0e26dfbc905dafa3588), [`aa39333`](https://github.com/LedgerHQ/ledger-live/commit/aa393339789242783b168398cb5122a7f1e3f620), [`6c425e0`](https://github.com/LedgerHQ/ledger-live/commit/6c425e0e869c6feed4bd4c87ee0fef5443617708), [`585d8d7`](https://github.com/LedgerHQ/ledger-live/commit/585d8d78d5e153186c39ee2abfcdb7dc4a5d06e0), [`306a681`](https://github.com/LedgerHQ/ledger-live/commit/306a6813eaabfd67dc575bb7bdfc2b52892037df), [`8161bac`](https://github.com/LedgerHQ/ledger-live/commit/8161bac542474212dfefc8519e714da345b03f71), [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e), [`39a676d`](https://github.com/LedgerHQ/ledger-live/commit/39a676d2f861d04913264e61100205b4f6044cf9)]:
-  - @ledgerhq/coin-evm@5.1.0
-  - @ledgerhq/types-live@6.121.0
-  - @ledgerhq/ledger-wallet-framework@3.1.0
-  - @ledgerhq/live-env@3.1.0
-  - @ledgerhq/hw-app-eth@7.8.16
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

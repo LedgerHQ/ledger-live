@@ -5,7 +5,6 @@ import { StyleSheet } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
-import { dependenciesToAppRequests } from "@ledgerhq/live-common/hw/actions/app";
 import { isSwapDisableAppsInstall } from "@ledgerhq/live-common/exchange/swap/utils/isIntegrationTestEnv";
 import { useTheme } from "@react-navigation/native";
 import { TransactionResult } from "@ledgerhq/live-common/hw/actions/transaction";
@@ -20,6 +19,7 @@ import { useRawTransactionDeviceAction } from "~/hooks/deviceActions";
 import logger from "~/logger";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
+import { getConnectAppDependencies } from "./connectAppDependencies";
 
 export type SignRawTransactionConnectDeviceProps = StackNavigatorProps<
   SignRawTransactionNavigatorParamList,
@@ -66,8 +66,8 @@ function ConnectDevice({ navigation, route }: SignRawTransactionConnectDevicePro
     () =>
       swapSpeculosBypass
         ? NO_CONNECT_APP_DEPENDENCIES
-        : [{ currency: mainAccount.currency }, ...dependenciesToAppRequests(dependencies)],
-    [swapSpeculosBypass, mainAccount.currency, dependencies],
+        : getConnectAppDependencies(mainAccount.currency, appName, dependencies),
+    [swapSpeculosBypass, mainAccount.currency, appName, dependencies],
   );
 
   const request = useMemo(

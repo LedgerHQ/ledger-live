@@ -1,5 +1,13 @@
 # @features/platform-device-onboarding
 
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#24738](https://github.com/LedgerHQ/ledger-live/pull/24738) [`0e964a8`](https://github.com/LedgerHQ/ledger-live/commit/0e964a897b6d740d172a55060b8aba960800b2cc) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Show the intro karaoke to a new (unseeded) device before the checks. Each tap shows the next phrase. On a Nano S, Nano S Plus or Nano X with the counterfeit flag on, the last button opens the counterfeit warning first.
+
+  `send` from `useDeviceOnboardingActor` now returns whether the machine took the event, so a caller can let the user retry (for example after a device lock).
+
 ## 0.5.0
 
 ### Minor Changes

@@ -1,5 +1,13 @@
 # @ledgerhq/live-signer-canton
 
+## 0.9.28-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`5c70ad0`](https://github.com/LedgerHQ/ledger-live/commit/5c70ad082840b169ae8a22d196fcc765b779575b)]:
+  - @ledgerhq/coin-canton@2.0.0-next.0
+  - @ledgerhq/hw-app-canton@0.16.0
+
 ## 0.9.27
 
 ### Patch Changes
@@ -149,19 +157,5 @@
 
 - Updated dependencies [[`9a1a1df`](https://github.com/LedgerHQ/ledger-live/commit/9a1a1df2da9b612bd8d5533fba23b0ebc8b1a58f)]:
   - @ledgerhq/coin-canton@1.1.0
-
-## 0.9.18-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`9a1a1df`](https://github.com/LedgerHQ/ledger-live/commit/9a1a1df2da9b612bd8d5533fba23b0ebc8b1a58f)]:
-  - @ledgerhq/coin-canton@1.1.0-next.0
-
-## 0.9.17
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/coin-canton@1.0.1
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

@@ -83,6 +83,14 @@ describe("smallValueOperationsThreshold", () => {
       expect(convertThresholdMinorUnitToMajor(new BigNumber(46), EUR).toString()).toBe("0.46");
     });
 
+    it("should keep a single minor unit when magnitude exceeds DECIMAL_PLACES", () => {
+      const BigNumber20 = BigNumber.clone({ DECIMAL_PLACES: 20 });
+      const currency = { ...EUR, units: [{ ...EUR.units[0], magnitude: 24 }] };
+      expect(convertThresholdMinorUnitToMajor(new BigNumber20(1), currency).toString()).toBe(
+        "1e-24",
+      );
+    });
+
     it("should format the input value without forcing trailing zeros", () => {
       expect(formatThresholdMinorUnitForInput(new BigNumber(50), USD)).toBe("0.5");
     });

@@ -1,5 +1,11 @@
 # @domain/api-account-portfolio
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#24655](https://github.com/LedgerHQ/ledger-live/pull/24655) [`797f57b`](https://github.com/LedgerHQ/ledger-live/commit/797f57b5789439d03259a434cfab6dcaddb84126) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Read the block, senders and recipients of Portfolio updates, and the addresses of a registration
+
 ## 0.2.0
 
 ### Minor Changes

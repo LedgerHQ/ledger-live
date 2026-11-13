@@ -53,7 +53,7 @@ export default class StakePage {
 
   @Step("Expect provider {{{1}}} in summary")
   async expectProvider(currencyId: string, provider: string) {
-    await this.summaryValidator(currencyId).expectTextContaining(provider);
+    await this.summaryValidator(currencyId).expectText(provider, { containing: true });
   }
 
   @Step("Select new provider {{{1}}}")

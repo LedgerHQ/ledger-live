@@ -17,6 +17,7 @@ export function InfoStateButton({
       onClick={cta.onPress}
       disabled={cta.disabled}
       loading={cta.loading}
+      icon={cta.icon}
       data-testid={cta.testID}
     >
       {cta.label}

@@ -1,5 +1,12 @@
 # @features/platform-market-countervalues
 
+## 0.5.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`8b743fb`](https://github.com/LedgerHQ/ledger-live/commit/8b743fb4d98b915eac60d3b7a991dbe6a03f2b03)]:
+  - @domain/api-market-countervalues@0.4.0-next.0
+
 ## 0.5.0
 
 ### Minor Changes

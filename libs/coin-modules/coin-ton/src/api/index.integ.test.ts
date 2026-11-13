@@ -3,7 +3,7 @@ import { Address, Cell } from "@ton/core";
 import { keyPairFromSeed, sign } from "@ton/crypto";
 import { WalletContractV4 } from "@ton/ton";
 import { randomBytes } from "crypto";
-import { createMockTonContext, mockTonConfig } from "../test/context";
+import { createMockTonContext } from "../test/context";
 import {
   NOT_MASTER,
   OWNER,
@@ -15,6 +15,7 @@ import {
 } from "../test/history.fixtures";
 import { decodeTransferBody } from "../test/transferBody";
 import type { TonMemo } from "../types";
+import { tonDefaults } from "../config";
 import { createApi } from "./index";
 
 const sendIntent = (
@@ -41,10 +42,7 @@ jest.retryTimes(2, { logErrorsBeforeRetry: true });
 
 describe("TON api (mainnet)", () => {
   const api = createApi();
-  const context = createMockTonContext({
-    ...mockTonConfig,
-    infra: { API_TON_ENDPOINT: "https://ton.coin.ledger.com/api/v3", KNOWN_JETTONS: [] },
-  });
+  const context = createMockTonContext(tonDefaults.ton);
 
   const walk = async (
     address: string,

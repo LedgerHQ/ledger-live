@@ -6,7 +6,6 @@ import useEnv from "@features/platform-env";
 import { useFeature } from "@features/platform-feature-flags";
 import { useServicesEntryPointsFeature } from "@features/flow-portfolio-services-entry-points";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import type { Features } from "@shared/feature-flags";
 
 import { useRefreshAccountsOrderingAfterInteractions } from "~/actions/general";
 import { usePortfolioBalance } from "LLM/hooks/usePortfolioBalance";
@@ -50,14 +49,9 @@ const usePortfolioViewModel = (navigation: {
   const allAccounts = useSelector(flattenAccountsSelector, shallowEqual);
   const { backgroundColor } = useWallet40Theme();
 
-  const mmkvMigrationFF = useFeature("llmMmkvMigration");
-
   useEffect(() => {
-    async function handleMigration() {
-      await storage.handleMigration(mmkvMigrationFF as Features["llmMmkvMigration"]);
-    }
-    handleMigration();
-  }, [mmkvMigrationFF]);
+    void storage.handleMigration();
+  }, []);
 
   const onBackFromUpdate = useCallback(() => {
     navigation.goBack();

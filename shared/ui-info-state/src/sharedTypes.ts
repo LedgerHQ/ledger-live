@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ComponentType, ReactNode } from "react";
 
 /** Preset that controls the visual rendered above the title and description. */
 export type InfoStatePreset = "illustration" | "spot" | "success" | "error" | "info" | "text";
@@ -19,6 +19,9 @@ export type InfoStateCta = Readonly<{
 
   /** Shows the button's spinner while its action runs. */
   loading?: boolean;
+
+  /** Lumen symbol of the caller's platform, rendered before the label. */
+  icon?: ComponentType;
 }>;
 
 /** Lumen banner displayed between content and actions. */

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { drawStyledQrCode } from "./qrCanvas.web";
+import { drawStyledQrCode } from "./qrCanvas";
 import type { QrCodeProps } from "./types";
 
 const DEFAULT_QR_CODE_SIZE = 200;

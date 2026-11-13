@@ -1,5 +1,6 @@
 import React from "react";
 import { render, screen, userEvent } from "@testing-library/react-native";
+import { I18nTestProvider } from "@shared/i18n/testing";
 import { AnalyticsFiltersView } from "./AnalyticsFiltersView";
 import type { AnalyticsFilterViewProps } from "./AnalyticsFiltersView.types";
 
@@ -18,9 +19,28 @@ jest.mock("@ledgerhq/lumen-ui-rnative", () => {
     SelectList: mocks.MockSelectList,
     SelectListContent: mocks.MockSelectListContent,
     SelectListItem: mocks.MockSelectListItem,
+    SelectListSearch: mocks.MockSelectListSearch,
+    SelectListEmptyState: mocks.MockSelectListEmptyState,
   };
   return new Proxy(actual, { get: (target, prop: string) => overrides[prop] ?? target[prop] });
 });
+
+const resources = {
+  en: {
+    translation: {
+      common: { search: "Search" },
+      accountAnalytics: { noResults: "No results" },
+    },
+  },
+};
+
+function renderFilters(ui: React.ReactElement) {
+  return render(ui, {
+    wrapper: ({ children }) => (
+      <I18nTestProvider resources={resources}>{children}</I18nTestProvider>
+    ),
+  });
+}
 
 function createAssetFilter(
   overrides: Partial<AnalyticsFilterViewProps> = {},
@@ -63,13 +83,15 @@ function createAccountFilter(): AnalyticsFilterViewProps {
 
 describe("AnalyticsFiltersView (native)", () => {
   it("should show only the asset filter until an asset is selected", () => {
-    render(<AnalyticsFiltersView asset={createAssetFilter()} account={null} />);
+    renderFilters(<AnalyticsFiltersView asset={createAssetFilter()} account={null} />);
     expect(screen.getByTestId("analytics-asset-filter")).toBeVisible();
     expect(screen.queryByTestId("analytics-account-filter")).toBeNull();
   });
 
   it("should label each chip with its filter and selected value", () => {
-    render(<AnalyticsFiltersView asset={createAssetFilter()} account={createAccountFilter()} />);
+    renderFilters(
+      <AnalyticsFiltersView asset={createAssetFilter()} account={createAccountFilter()} />,
+    );
     expect(screen.getByTestId("analytics-asset-filter")).toHaveProp(
       "accessibilityLabel",
       "Asset filter, USD Coin",
@@ -82,7 +104,7 @@ describe("AnalyticsFiltersView (native)", () => {
 
   it("should open the sheet and report the opening when a chip is pressed", async () => {
     const asset = createAssetFilter();
-    render(<AnalyticsFiltersView asset={asset} account={null} />);
+    renderFilters(<AnalyticsFiltersView asset={asset} account={null} />);
     expect(screen.getByTestId("analytics-asset-filter-sheet")).not.toBeExpanded();
 
     await userEvent.press(screen.getByTestId("analytics-asset-filter"));
@@ -93,7 +115,7 @@ describe("AnalyticsFiltersView (native)", () => {
 
   it("should select an option, then close the sheet", async () => {
     const asset = createAssetFilter({ value: "" });
-    render(<AnalyticsFiltersView asset={asset} account={null} />);
+    renderFilters(<AnalyticsFiltersView asset={asset} account={null} />);
     await userEvent.press(screen.getByTestId("analytics-asset-filter"));
 
     await userEvent.press(screen.getByTestId("analytics-asset-filter-option-usdc"));
@@ -104,7 +126,9 @@ describe("AnalyticsFiltersView (native)", () => {
   });
 
   it("should render each option with its icon, or the fallback for the All option", () => {
-    render(<AnalyticsFiltersView asset={createAssetFilter()} account={createAccountFilter()} />);
+    renderFilters(
+      <AnalyticsFiltersView asset={createAssetFilter()} account={createAccountFilter()} />,
+    );
     expect(screen.getByTestId("analytics-asset-filter-option-all")).toBeVisible();
     expect(screen.getAllByTestId("crypto-icon-ethereum/erc20/usdc")).not.toHaveLength(0);
     expect(screen.getByTestId("analytics-account-filter-option-eth-account")).toHaveProp(
@@ -114,8 +138,8 @@ describe("AnalyticsFiltersView (native)", () => {
     expect(screen.getByTestId("analytics-account-filter-option-all")).toBeSelected();
   });
 
-  it("should show the selected asset icon on the asset chip only", () => {
-    render(
+  it("should show the selected icon on both the asset and account chips", () => {
+    renderFilters(
       <AnalyticsFiltersView
         asset={createAssetFilter()}
         account={{ ...createAccountFilter(), selectedMeta: { iconId: "ethereum", ticker: "ETH" } }}
@@ -125,6 +149,57 @@ describe("AnalyticsFiltersView (native)", () => {
       "leadingContent",
       expect.anything(),
     );
+    expect(screen.getByTestId("analytics-account-filter")).toHaveProp(
+      "leadingContent",
+      expect.anything(),
+    );
+  });
+
+  it("should show no icon on the account chip while all accounts are selected", () => {
+    renderFilters(
+      <AnalyticsFiltersView asset={createAssetFilter()} account={createAccountFilter()} />,
+    );
     expect(screen.getByTestId("analytics-account-filter")).toHaveProp("leadingContent", undefined);
+  });
+
+  it("should offer a search in the asset sheet only", () => {
+    renderFilters(
+      <AnalyticsFiltersView asset={createAssetFilter()} account={createAccountFilter()} />,
+    );
+    expect(screen.getByTestId("analytics-asset-filter-search")).toHaveProp("placeholder", "Search");
+    expect(screen.queryByTestId("analytics-account-filter-search")).toBeNull();
+  });
+
+  it("should narrow the asset options to the ones matching the search", async () => {
+    renderFilters(<AnalyticsFiltersView asset={createAssetFilter()} account={null} />);
+    await userEvent.press(screen.getByTestId("analytics-asset-filter"));
+
+    await userEvent.type(screen.getByTestId("analytics-asset-filter-search"), "usdc");
+
+    expect(screen.getByTestId("analytics-asset-filter-option-usdc")).toBeVisible();
+    expect(screen.queryByTestId("analytics-asset-filter-option-all")).toBeNull();
+    expect(screen.queryByTestId("analytics-asset-filter-no-results")).toBeNull();
+  });
+
+  it("should tell when no asset matches the search", async () => {
+    renderFilters(<AnalyticsFiltersView asset={createAssetFilter()} account={null} />);
+    await userEvent.press(screen.getByTestId("analytics-asset-filter"));
+
+    await userEvent.type(screen.getByTestId("analytics-asset-filter-search"), "bitcoin");
+
+    expect(screen.queryByTestId("analytics-asset-filter-option-usdc")).toBeNull();
+    expect(screen.getByTestId("analytics-asset-filter-no-results")).toHaveTextContent("No results");
+  });
+
+  it("should open the asset sheet with an empty search after picking an option", async () => {
+    renderFilters(<AnalyticsFiltersView asset={createAssetFilter({ value: "" })} account={null} />);
+    await userEvent.press(screen.getByTestId("analytics-asset-filter"));
+    await userEvent.type(screen.getByTestId("analytics-asset-filter-search"), "usd");
+    await userEvent.press(screen.getByTestId("analytics-asset-filter-option-usdc"));
+
+    await userEvent.press(screen.getByTestId("analytics-asset-filter"));
+
+    expect(screen.getByTestId("analytics-asset-filter-search")).toHaveProp("value", "");
+    expect(screen.getByTestId("analytics-asset-filter-option-all")).toBeVisible();
   });
 });

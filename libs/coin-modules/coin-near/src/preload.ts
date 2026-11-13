@@ -1,7 +1,6 @@
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
-import { VALIDATORS_COUNT } from "./constants";
-import { getGasPrice, getValidators } from "./network/node";
+import { getGasPrice } from "./network/node";
 import { getActionCosts } from "./network/protocolConfig";
 import { getCurrentNearPreloadData, setNearPreloadData } from "./preload-data";
 import { getCoinConfig } from "./config";
@@ -51,9 +50,6 @@ function fromHydratePreloadData(data: any): NearPreloadedData {
     if (data.accountCreationCharge) {
       hydratedData.accountCreationCharge = new BigNumber(data.accountCreationCharge);
     }
-    if (Array.isArray(data.validators) && data.validators.length) {
-      hydratedData.validators = data.validators;
-    }
   }
 
   return hydratedData;
@@ -68,23 +64,16 @@ export const preload = async (): Promise<NearPreloadedData> => {
 
   // `force` so a preload always refreshes the protocol config, as it did before the derivation
   // moved behind a cache; it also refills that cache for callers outside a bridge sync.
+  // Validators are not preloaded: the staking screens and the banner load them when shown.
   const config = getCoinConfig();
-  const [actionCosts, rawValidators, gasPrice] = await Promise.all([
+  const [actionCosts, gasPrice] = await Promise.all([
     getActionCosts.force(config),
-    getValidators({ total: VALIDATORS_COUNT, config }),
     getGasPrice(config),
   ]);
-
-  const validators = rawValidators.map(({ account_id: validatorAddress, stake, commission }) => ({
-    validatorAddress,
-    tokens: stake,
-    commission,
-  }));
 
   return {
     ...actionCosts,
     gasPrice: new BigNumber(gasPrice),
-    validators,
   };
 };
 

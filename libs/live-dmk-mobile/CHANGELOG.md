@@ -1,5 +1,19 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.35.0-next.0
+
+### Minor Changes
+
+- [#24827](https://github.com/LedgerHQ/ledger-live/pull/24827) [`c24caff`](https://github.com/LedgerHQ/ledger-live/commit/c24cafffbc8b6fd0f05c6ec13e70d70fd4557697) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Match devices with one findMatchingDevice for connectDevice and the known devices, a BLE match by id before a match by name
+
+- [#24833](https://github.com/LedgerHQ/ledger-live/pull/24833) [`c0ec0d4`](https://github.com/LedgerHQ/ledger-live/commit/c0ec0d42b96eb3f7885d594403161435a702c973) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Export the connectNewDevice mobile dependencies and let a parent render ConnectNewDeviceView
+
+### Patch Changes
+
+- Updated dependencies [[`3374abb`](https://github.com/LedgerHQ/ledger-live/commit/3374abbb9491f94fb98417b696b4e30c1bced021), [`13a6d68`](https://github.com/LedgerHQ/ledger-live/commit/13a6d687f486e1fcb3001a15f437a84b26ea5609), [`5a9de42`](https://github.com/LedgerHQ/ledger-live/commit/5a9de42cd3a598f1f8954d58b9536280f5fd2927), [`c24caff`](https://github.com/LedgerHQ/ledger-live/commit/c24cafffbc8b6fd0f05c6ec13e70d70fd4557697)]:
+  - @ledgerhq/live-dmk-shared@0.40.0-next.0
+  - @shared/env@0.14.0-next.0
+
 ## 0.34.0
 
 ### Minor Changes
@@ -257,19 +271,5 @@
 - Updated dependencies [[`5e45fdd`](https://github.com/LedgerHQ/ledger-live/commit/5e45fddee9f3483ac3daa7b93f58b01e725e6d4b), [`a8c34d0`](https://github.com/LedgerHQ/ledger-live/commit/a8c34d0d9469b4e11339edfbef53445e58194fd8), [`6cef6b5`](https://github.com/LedgerHQ/ledger-live/commit/6cef6b5341c30850aa74159bdbdea0a18f89de4c), [`5b9df59`](https://github.com/LedgerHQ/ledger-live/commit/5b9df5970cb628dbfe592227231b66ff498f480c)]:
   - @shared/env@0.5.0-next.0
   - @ledgerhq/live-dmk-shared@0.32.0-next.0
-
-## 0.29.5
-
-### Patch Changes
-
-- Updated dependencies [[`d5ea888`](https://github.com/LedgerHQ/ledger-live/commit/d5ea888d3a154feeb29b452841749d358629b8c1), [`cad4f63`](https://github.com/LedgerHQ/ledger-live/commit/cad4f63be4a3b16880ab490195af1f17921e03c2), [`8161bac`](https://github.com/LedgerHQ/ledger-live/commit/8161bac542474212dfefc8519e714da345b03f71), [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e), [`39a676d`](https://github.com/LedgerHQ/ledger-live/commit/39a676d2f861d04913264e61100205b4f6044cf9)]:
-  - @shared/env@0.4.0
-
-## 0.29.5-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`d5ea888`](https://github.com/LedgerHQ/ledger-live/commit/d5ea888d3a154feeb29b452841749d358629b8c1), [`cad4f63`](https://github.com/LedgerHQ/ledger-live/commit/cad4f63be4a3b16880ab490195af1f17921e03c2), [`8161bac`](https://github.com/LedgerHQ/ledger-live/commit/8161bac542474212dfefc8519e714da345b03f71), [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e), [`39a676d`](https://github.com/LedgerHQ/ledger-live/commit/39a676d2f861d04913264e61100205b4f6044cf9)]:
-  - @shared/env@0.4.0-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

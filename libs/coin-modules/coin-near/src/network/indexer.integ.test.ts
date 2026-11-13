@@ -1,21 +1,11 @@
-import { setCoinConfig, type NearConfig } from "../config";
+import { nearDefaults, setCoinConfig, type NearConfig } from "../config";
 import { getOperations } from "./indexer";
 import { getGasPrice, getStakingPositions, getValidators } from "./node";
 
 const ACCOUNT_WITH_HISTORY = "nearkat.near";
 const DELEGATOR = "81afe80a9d91c82f66122c35ef400da709bde01eada5aae8d7a63bbf68f42040";
 
-const integConfig: NearConfig = {
-  status: { type: "active" },
-  name: "NEAR",
-  unit: { name: "NEAR", code: "NEAR", magnitude: 24 },
-  infra: {
-    API_NEAR_PRIVATE_NODE: "https://near.coin.ledger.com/node",
-    API_NEAR_PUBLIC_NODE: "https://rpc.mainnet.near.org",
-    API_NEAR_INDEXER: "https://near.coin.ledger.com/indexer",
-    API_NEARBLOCKS_INDEXER: "https://near-indexer.coin.ledger.com",
-  },
-};
+const integConfig: NearConfig = nearDefaults.near;
 
 describe("NearBlocks indexer (integration)", () => {
   beforeAll(() => {

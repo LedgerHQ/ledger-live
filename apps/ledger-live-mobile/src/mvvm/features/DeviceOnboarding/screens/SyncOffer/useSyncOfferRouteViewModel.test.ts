@@ -1,8 +1,8 @@
 import { Linking } from "react-native";
-import { act, renderHook } from "@tests/test-renderer";
+import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { NavigatorName, ScreenName } from "~/const";
-import { OnboardingType, type State } from "~/reducers/types";
+import { OnboardingType } from "~/reducers/types";
 import { syncOfferSettleDelay, useSyncOfferRouteViewModel } from "./useSyncOfferRouteViewModel";
 
 const mockWalletSyncState = { visualPending: false };
@@ -25,7 +25,7 @@ const trustchain = {
 };
 
 const reset = jest.fn();
-const parentNavigate = jest.fn();
+const navigate = jest.fn();
 const mockNotifyFlowCompleted = jest.fn();
 
 jest.mock("LLM/features/NotificationsPrompt", () => ({
@@ -36,12 +36,12 @@ const listeners = new Map<string, (event: { preventDefault: () => void }) => voi
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual<typeof import("@react-navigation/native")>("@react-navigation/native"),
   useNavigation: () => ({
+    navigate,
     addListener: (event: string, handler: (event: { preventDefault: () => void }) => void) => {
       listeners.set(event, handler);
       return jest.fn();
     },
     getParent: () => ({
-      navigate: parentNavigate,
       reset,
       getState: () => ({ routes: [{ name: "BaseOnboarding" }] }),
       getParent: () => undefined,
@@ -55,22 +55,25 @@ jest.mock("@react-navigation/native", () => ({
   }),
 }));
 
-function renderOffer(hasTrustchain: boolean, language?: string) {
+function renderOffer(hasTrustchain: boolean, language?: string, ledgerSyncDie = false) {
   return renderHook(() => useSyncOfferRouteViewModel(), {
-    overrideInitialState: (state: State) => ({
-      ...state,
-      settings: {
-        ...state.settings,
-        ...(language ? { language } : {}),
-        readOnlyModeEnabled: true,
-        hasCompletedOnboarding: false,
-        hasBeenRedirectedToPostOnboarding: true,
-      },
-      trustchain: {
-        ...state.trustchain,
-        trustchain: hasTrustchain ? trustchain : null,
-      },
-    }),
+    overrideInitialState: withFlagOverrides(
+      { lwmLedgerSyncDie: { enabled: ledgerSyncDie } },
+      state => ({
+        ...state,
+        settings: {
+          ...state.settings,
+          ...(language ? { language } : {}),
+          readOnlyModeEnabled: true,
+          hasCompletedOnboarding: false,
+          hasBeenRedirectedToPostOnboarding: true,
+        },
+        trustchain: {
+          ...state.trustchain,
+          trustchain: hasTrustchain ? trustchain : null,
+        },
+      }),
+    ),
   });
 }
 
@@ -91,7 +94,7 @@ describe("useSyncOfferRouteViewModel", () => {
 
     act(() => result.current.onActivate());
 
-    expect(parentNavigate).toHaveBeenCalledWith(NavigatorName.WalletSync, {
+    expect(navigate).toHaveBeenCalledWith(NavigatorName.WalletSync, {
       screen: ScreenName.WalletSyncActivationProcess,
       params: { device, seededOffer: true },
     });
@@ -100,6 +103,16 @@ describe("useSyncOfferRouteViewModel", () => {
     expect(store.getState().settings.onboardingType).toBe(OnboardingType.setupNew);
     expect(reset).not.toHaveBeenCalled();
     expect(mockNotifyFlowCompleted).not.toHaveBeenCalled();
+  });
+
+  it("should open the Ledger Sync device step over the offer when DIE runs it", () => {
+    const { result, store } = renderOffer(false, undefined, true);
+
+    act(() => result.current.onActivate());
+
+    expect(navigate).not.toHaveBeenCalled();
+    expect(result.current.phase).toBe("offer");
+    expect(store.getState().settings.onboardingType).toBe(OnboardingType.setupNew);
   });
 
   it("should show synchronizing until the first sync round settles", () => {
@@ -209,7 +222,7 @@ describe("useSyncOfferRouteViewModel", () => {
     expect(store.getState().settings.hasCompletedOnboarding).toBe(true);
     expect(store.getState().settings.readOnlyModeEnabled).toBe(false);
     expect(reset).toHaveBeenCalledTimes(1);
-    expect(parentNavigate).not.toHaveBeenCalled();
+    expect(navigate).not.toHaveBeenCalled();
     expect(mockNotifyFlowCompleted).toHaveBeenCalledWith("onboarding");
   });
 
@@ -222,7 +235,7 @@ describe("useSyncOfferRouteViewModel", () => {
     expect(store.getState().settings.hasCompletedOnboarding).toBe(true);
     expect(store.getState().settings.readOnlyModeEnabled).toBe(false);
     expect(reset).toHaveBeenCalledTimes(1);
-    expect(parentNavigate).not.toHaveBeenCalled();
+    expect(navigate).not.toHaveBeenCalled();
     expect(mockNotifyFlowCompleted).toHaveBeenCalledWith("onboarding");
   });
 

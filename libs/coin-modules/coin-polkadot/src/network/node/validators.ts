@@ -43,7 +43,8 @@ export const fetchValidators = async (
 
   let selected: string[] = [];
   const allIds = allStashes.map(s => s.toString());
-  const electedIds = elected.map(s => s.toString());
+  const registeredIds = new Set(allIds);
+  const electedIds = elected.map(s => s.toString()).filter(id => registeredIds.has(id));
 
   switch (status) {
     case "elected":
@@ -70,16 +71,17 @@ export const fetchValidators = async (
       .filter(address => selected.includes(address.toString()));
   }
 
-  const validatorsCommissions = await getValidatorCommissions(api, selected);
+  const validatorsPreferences = await getValidatorPreferences(api, selected);
   const validatorsExposure = await getValidatorsExposure(api, activeEra, selected);
   const maxNominatorRewardedPerValidator = api.consts?.staking?.maxExposurePageSize.toNumber();
   return selected.map(validator => {
-    const commission = validatorsCommissions[validator] || "";
+    const { commission, isBlocked } = validatorsPreferences[validator];
     const exposure = validatorsExposure[validator] || null;
     return formatValidator(
       validator,
       electedIds,
       commission,
+      isBlocked,
       exposure,
       maxNominatorRewardedPerValidator,
     );
@@ -90,6 +92,7 @@ const formatValidator = (
   validator: string,
   electedIds: string[],
   commission: string,
+  isBlocked: boolean,
   exposure: SpStakingPagedExposureMetadata | null,
   maxNominatorRewardedPerValidator: number,
 ): IValidator => {
@@ -104,21 +107,24 @@ const formatValidator = (
     rewardsPoints: null,
     isElected: electedIds.includes(validator),
     isOversubscribed: nominatorsCount > maxNominatorRewardedPerValidator,
+    isBlocked,
   };
 };
 
-async function getValidatorCommissions(
+async function getValidatorPreferences(
   api: ApiPromise,
-  electedIds: string[],
-): Promise<{ [key: string]: string }> {
-  const validatorInfos = await api.query.staking.validators.multi(electedIds);
-  const commissions: { [key: string]: string } = {};
-  electedIds.forEach((address, index) => {
+  validatorIds: string[],
+): Promise<{ [key: string]: { commission: string; isBlocked: boolean } }> {
+  const validatorInfos = await api.query.staking.validators.multi(validatorIds);
+  const preferences: { [key: string]: { commission: string; isBlocked: boolean } } = {};
+  validatorIds.forEach((address, index) => {
     const validatorInfo = validatorInfos[index];
-    const commission = validatorInfo.commission.toString();
-    commissions[address] = commission;
+    preferences[address] = {
+      commission: validatorInfo.commission.toString(),
+      isBlocked: validatorInfo.blocked.isTrue,
+    };
   });
-  return commissions;
+  return preferences;
 }
 
 async function getValidatorsExposure(

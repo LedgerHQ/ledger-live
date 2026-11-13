@@ -17,6 +17,7 @@ const TAB_ROUTE_NAMES = [
   NavigatorName.Swap,
   NavigatorName.Earn,
   NavigatorName.CardTab,
+  NavigatorName.AgentIntentTab,
 ];
 
 function createState(activeIndex: number) {
@@ -29,6 +30,14 @@ function createNavigation() {
     emit: () => ({ defaultPrevented: false }),
     navigate: jest.fn(),
   };
+}
+
+function renderOnTab(activeIndex: number) {
+  const state = createState(activeIndex);
+  const navigation = createNavigation();
+  return renderHook(() =>
+    useMainTabBarViewModel({ state: state as never, navigation: navigation as never }),
+  );
 }
 
 describe("useMainTabBarViewModel", () => {
@@ -113,6 +122,41 @@ describe("useMainTabBarViewModel", () => {
       expect(onScrollToTop).not.toHaveBeenCalled();
       expect(track).toHaveBeenCalled();
       unsubscribe();
+    });
+  });
+
+  describe("agent intent tab", () => {
+    it("should show the Agents label and test id", () => {
+      const { result } = renderOnTab(0);
+
+      const agentsTab = result.current.tabItems.find(
+        item => item.value === NavigatorName.AgentIntentTab,
+      );
+      expect(agentsTab).toMatchObject({ label: "Agents", testID: "w40-tab-agents" });
+    });
+
+    it("should track the nav bar source when opening the Agents tab", () => {
+      const { result } = renderOnTab(0);
+
+      act(() => {
+        result.current.onTabPress(NavigatorName.AgentIntentTab);
+      });
+
+      expect(track).toHaveBeenCalledWith("menuentry_clicked", {
+        entry: "agent_intent",
+        page: "Wallet",
+        source: "nav_bar",
+      });
+    });
+
+    it("should not add a source when opening another tab", () => {
+      const { result } = renderOnTab(0);
+
+      act(() => {
+        result.current.onTabPress(NavigatorName.Swap);
+      });
+
+      expect(track).toHaveBeenCalledWith("menuentry_clicked", { entry: "Swap", page: "Wallet" });
     });
   });
 });

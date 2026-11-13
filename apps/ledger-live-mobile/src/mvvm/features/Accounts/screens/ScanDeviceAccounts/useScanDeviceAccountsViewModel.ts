@@ -354,7 +354,6 @@ export default function useScanDeviceAccountsViewModel({
   );
   // We don't show already imported accounts in the UI
   const sanitizedSections = sections.filter(s => s.id !== "imported");
-  const hasImportableAccounts = sections.find(s => s.id === "importable" && s.data.length > 0);
 
   const CustomNoAssociatedAccounts = getCustomNoAssociatedAccounts(currency);
   useEffect(() => {
@@ -401,10 +400,11 @@ export default function useScanDeviceAccountsViewModel({
   ]);
 
   useEffect(() => {
-    const hasScannedAccounts = scannedAccounts.length > 0 || !!latestScannedAccount;
+    const hasProcessedLatestScannedAccount =
+      !latestScannedAccount || scannedAccounts.some(({ id }) => id === latestScannedAccount.id);
 
-    if (!isAddingAccounts && !scanning) {
-      if (alreadyEmptyAccount && !hasImportableAccounts) {
+    if (!isAddingAccounts && !scanning && hasProcessedLatestScannedAccount) {
+      if (alreadyEmptyAccount && noImportableAccounts) {
         navigation.replace(ScreenName.AddAccountsWarning, {
           emptyAccount: alreadyEmptyAccount,
           emptyAccountName: alreadyEmptyAccountName,
@@ -412,7 +412,7 @@ export default function useScanDeviceAccountsViewModel({
           context,
           onCloseNavigation,
         });
-      } else if (!hasScannedAccounts && CustomNoAssociatedAccounts) {
+      } else if (noImportableAccounts && CustomNoAssociatedAccounts) {
         navigation.replace(ScreenName.NoAssociatedAccounts, {
           CustomNoAssociatedAccounts,
           onCloseNavigation,
@@ -420,7 +420,6 @@ export default function useScanDeviceAccountsViewModel({
       }
     }
   }, [
-    hasImportableAccounts,
     isAddingAccounts,
     alreadyEmptyAccount,
     alreadyEmptyAccountName,
@@ -430,8 +429,9 @@ export default function useScanDeviceAccountsViewModel({
     CustomNoAssociatedAccounts,
     context,
     onCloseNavigation,
-    scannedAccounts.length,
     latestScannedAccount,
+    noImportableAccounts,
+    scannedAccounts,
   ]);
 
   const scanDeviceAccountsBack = customFlow?.onScanDeviceAccountsBack

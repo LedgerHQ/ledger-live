@@ -26,6 +26,7 @@ const iconsComponent = {
   FEES: IconsLegacy.FeesMedium,
   OPT_IN: IconsLegacy.PlusMedium,
   OPT_OUT: IconsLegacy.TrashMedium,
+  OPT_EDIT: IconsLegacy.PlusMedium,
   CLOSE_ACCOUNT: IconsLegacy.TrashMedium,
   APPROVE: IconsLegacy.PlusMedium,
   BOND: IconsLegacy.LinkMedium,

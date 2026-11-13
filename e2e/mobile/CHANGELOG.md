@@ -1,5 +1,13 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.47.0-next.0
+
+### Minor Changes
+
+- [#24805](https://github.com/LedgerHQ/ledger-live/pull/24805) [`67678ff`](https://github.com/LedgerHQ/ledger-live/commit/67678ffe12a079fefc5d65489da11e59267284ad) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add an `account-detail` feature flag preset to run the e2e on demand with the accountDetail flag on, the account page object follows the flag
+
+- [#24483](https://github.com/LedgerHQ/ledger-live/pull/24483) [`c5b9753`](https://github.com/LedgerHQ/ledger-live/commit/c5b9753c0f384cfe385cf8add602226401da960f) Thanks [@abdurrahman-ledger](https://github.com/abdurrahman-ledger)! - Wait for a Speculinho slot when it is at capacity instead of failing the test, send the origin of each acquire, and release a desktop Speculos that never became ready
+
 ## 0.46.0
 
 ### Minor Changes
@@ -581,65 +589,5 @@ matching ... quick-action-buy ... VISIBLE`, 3/5 nightlies.
   discovered: it tapped "deselect all" only for multiple accounts but tapped the account row
   unconditionally, and a lone account arrives already selected, so Confirm was disabled and account
   discovery timed out.
-
-## 0.36.0
-
-### Minor Changes
-
-- [#20991](https://github.com/LedgerHQ/ledger-live/pull/20991) [`3bea41d`](https://github.com/LedgerHQ/ledger-live/commit/3bea41dcb6a5ef8d26547be31dee94bc42448e46) Thanks [@jeportie](https://github.com/jeportie)! - Assert the mobile Buy/Sell handoff instead of the partner's checkout page, matching what
-  `e2e/desktop` already does. The app records the `WebPTXPlayer` handoff URL in a
-  `Config.DETOX`-guarded store and exposes it over the e2e bridge as `getPtxHandoff`, so the
-  specs verify the provider and query parameters without ever loading Transak's or MoonPay's
-  site — removing a dependency on a third party's uptime, and the ~70s per test spent waiting
-  on it. Parsing lives in `libs/live-e2e-shared/src/buySellHandoff.ts` and handles the
-  double-encoded URL that made `new URL()` throw, plus provider aliases such as Mercuryo's
-  `mrcr`. Also fixes the sell flow asserting a minimum amount the flow never types, since it
-  taps the 75% button, and makes the "Buy and sell query parameters" test actually assert
-  query parameters.
-
-- [#20964](https://github.com/LedgerHQ/ledger-live/pull/20964) [`183706d`](https://github.com/LedgerHQ/ledger-live/commit/183706d1664336ef9798e3bebc06551803fe00bd) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Disable the large-screen upsell modal in E2E defaults so "Spot scams before signing" cannot cover Wallet 4.0 navigation.
-
-- [#20992](https://github.com/LedgerHQ/ledger-live/pull/20992) [`4fc5ef0`](https://github.com/LedgerHQ/ledger-live/commit/4fc5ef09554a541cbf6a497f227df4373bb06470) Thanks [@jeportie](https://github.com/jeportie)! - Record `fetch` traffic in the e2e network log alongside axios, so RTK Query — and therefore
-  every CAL token lookup — is no longer invisible in CI artifacts, and attach a per-host
-  summary with peak concurrency so a fan-out is legible without reading several hundred
-  entries. Query strings, fragments and any `user:pass@` userinfo are stripped before a URL is
-  recorded, and no bodies or headers are captured.
-
-- [#20959](https://github.com/LedgerHQ/ledger-live/pull/20959) [`6bbb468`](https://github.com/LedgerHQ/ledger-live/commit/6bbb4682ec313ea2d4b8fba2261a05e84386ba7d) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Add the Borrow cold-start E2E test to the Ledger Wallet Mobile suite (B2CQA-6062): the portfolio
-  entry point opens the Borrow live app and shows the "Introducing Crypto Loan" modal. Broadcasts
-  nothing and runs on an isolated seed, so it needs no device and is safe to run in parallel.
-  Verified on Android and iOS. The portfolio entry point taps the card that was scrolled into view
-  rather than the CTA nested inside it — both share the same `onPress`, but only the card is
-  guaranteed on screen after the scroll.
-
-## 0.36.0-next.0
-
-### Minor Changes
-
-- [#20991](https://github.com/LedgerHQ/ledger-live/pull/20991) [`3bea41d`](https://github.com/LedgerHQ/ledger-live/commit/3bea41dcb6a5ef8d26547be31dee94bc42448e46) Thanks [@jeportie](https://github.com/jeportie)! - Assert the mobile Buy/Sell handoff instead of the partner's checkout page, matching what
-  `e2e/desktop` already does. The app records the `WebPTXPlayer` handoff URL in a
-  `Config.DETOX`-guarded store and exposes it over the e2e bridge as `getPtxHandoff`, so the
-  specs verify the provider and query parameters without ever loading Transak's or MoonPay's
-  site — removing a dependency on a third party's uptime, and the ~70s per test spent waiting
-  on it. Parsing lives in `libs/live-e2e-shared/src/buySellHandoff.ts` and handles the
-  double-encoded URL that made `new URL()` throw, plus provider aliases such as Mercuryo's
-  `mrcr`. Also fixes the sell flow asserting a minimum amount the flow never types, since it
-  taps the 75% button, and makes the "Buy and sell query parameters" test actually assert
-  query parameters.
-
-- [#20964](https://github.com/LedgerHQ/ledger-live/pull/20964) [`183706d`](https://github.com/LedgerHQ/ledger-live/commit/183706d1664336ef9798e3bebc06551803fe00bd) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Disable the large-screen upsell modal in E2E defaults so "Spot scams before signing" cannot cover Wallet 4.0 navigation.
-
-- [#20992](https://github.com/LedgerHQ/ledger-live/pull/20992) [`4fc5ef0`](https://github.com/LedgerHQ/ledger-live/commit/4fc5ef09554a541cbf6a497f227df4373bb06470) Thanks [@jeportie](https://github.com/jeportie)! - Record `fetch` traffic in the e2e network log alongside axios, so RTK Query — and therefore
-  every CAL token lookup — is no longer invisible in CI artifacts, and attach a per-host
-  summary with peak concurrency so a fan-out is legible without reading several hundred
-  entries. Query strings, fragments and any `user:pass@` userinfo are stripped before a URL is
-  recorded, and no bodies or headers are captured.
-
-- [#20959](https://github.com/LedgerHQ/ledger-live/pull/20959) [`6bbb468`](https://github.com/LedgerHQ/ledger-live/commit/6bbb4682ec313ea2d4b8fba2261a05e84386ba7d) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Add the Borrow cold-start E2E test to the Ledger Wallet Mobile suite (B2CQA-6062): the portfolio
-  entry point opens the Borrow live app and shows the "Introducing Crypto Loan" modal. Broadcasts
-  nothing and runs on an isolated seed, so it needs no device and is safe to run in parallel.
-  Verified on Android and iOS. The portfolio entry point taps the card that was scrolled into view
-  rather than the CTA nested inside it — both share the same `onPress`, but only the card is
-  guaranteed on screen after the scroll.
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->
