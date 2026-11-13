@@ -212,7 +212,10 @@ export class ExchangeModule extends CustomModule {
    * Fetch swap quotes from the Ledger swap backend (via Wallet API host).
    */
   async getQuotes(params: GetQuotesWireArgs): Promise<GetQuotesResponse> {
-    return this.request<GetQuotesWireArgs, GetQuotesResponse>("custom.exchange.getQuotes", params);
+    return await this.request<GetQuotesWireArgs, GetQuotesResponse>(
+      "custom.exchange.getQuotes",
+      params,
+    );
   }
 
   /**
@@ -221,7 +224,7 @@ export class ExchangeModule extends CustomModule {
    * Result fields are additive; see {@link CustomSwapResult}.
    */
   async customSwap(params: CustomSwapParams): Promise<CustomSwapResult> {
-    return this.request<CustomSwapParams, CustomSwapResult>("custom.swap", params);
+    return await this.request<CustomSwapParams, CustomSwapResult>("custom.swap", params);
   }
 
   /**
@@ -230,7 +233,7 @@ export class ExchangeModule extends CustomModule {
   async getTransactionStatus(
     params: GetTransactionStatusWireArgs,
   ): Promise<GetTransactionStatusResponse> {
-    return this.request<GetTransactionStatusWireArgs, GetTransactionStatusResponse>(
+    return await this.request<GetTransactionStatusWireArgs, GetTransactionStatusResponse>(
       "custom.exchange.getTransactionStatus",
       params,
     );
