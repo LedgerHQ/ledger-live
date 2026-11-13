@@ -1,3 +1,4 @@
+import { cantonDefaults } from "../../config";
 import { createMockContext } from "../../test/fixtures";
 import { broadcast } from "../broadcast";
 
@@ -8,8 +9,8 @@ describe("Broadcast", () => {
       signature: "garbage-sig__PARTY__fake-party-id",
     });
 
-    await expect(broadcast(createMockContext(), signedTx)).rejects.toThrow(
-      /Invalid value for: path parameter party_id/,
-    );
+    await expect(
+      broadcast(createMockContext(cantonDefaults.canton_network_devnet), signedTx),
+    ).rejects.toThrow(/Invalid value for: path parameter party_id/);
   });
 });

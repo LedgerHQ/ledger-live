@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import type { CantonCoinConfig } from "../config";
+import { cantonDefaults } from "../config";
 import * as gateway from "../network/gateway";
 import { generateMockKeyPair, createMockSigner } from "../test/cantonTestUtils";
 import { createMockContext } from "../test/fixtures";
@@ -16,7 +16,7 @@ import { makeGetAccountShape } from "./sync";
 
 const TEST_ADDRESS =
   "b6400f93ea1c74aea86be39b0ccc846fc5de01f12b2ad0d7c31848d6fb6eb6d9::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec";
-const currency = getCryptoCurrencyById("canton_network");
+const currency = getCryptoCurrencyById("canton_network_devnet");
 const derivationMode = getDerivationModesForCurrency(currency)[0];
 const derivationPath = runDerivationScheme(
   getDerivationScheme({ derivationMode, currency }),
@@ -37,17 +37,7 @@ const ACCOUNT_SHAPE_INFO: AccountShapeInfo<CantonAccount> = {
   } as CantonAccount,
 };
 const TIMEOUT = 30000;
-const devnetConfig: CantonCoinConfig = {
-  gatewayUrl: "https://canton-gateway-devnet.api.live.ledger-test.com",
-  useGateway: true,
-  networkType: "devnet",
-  nativeInstrumentId: "Amulet",
-  status: {
-    type: "active",
-  },
-  name: "Canton Network (Devnet)",
-  unit: { name: "cc", code: "CC", magnitude: 38 },
-};
+const devnetConfig = cantonDefaults.canton_network_devnet;
 const devnetContext = createMockContext(devnetConfig);
 
 // Mock signer context for testing

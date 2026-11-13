@@ -11,11 +11,7 @@ import coinConfig, { cardanoDefaults } from "./config";
 
 describe("Broadcast", () => {
   beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      ...cardanoDefaults.cardano,
-      maxFeesWarning: 0,
-      maxFeesError: 0,
-    }));
+    coinConfig.setCoinConfig(() => cardanoDefaults.cardano);
   });
   it("throws when broadcasting a transaction spending nonexistent inputs", async () => {
     const privKey = await Bip32PrivateKey.fromEntropy(randomBytes(64));

@@ -1,8 +1,8 @@
-import { createFixtureConfig } from "../../test/fixtures";
+import { concordiumDefaults } from "../../config";
 import { estimateFees } from "./estimateFees";
 
 describe("estimateFees", () => {
-  const config = createFixtureConfig();
+  const config = concordiumDefaults.concordium_testnet;
 
   describe("Simple transfer", () => {
     it("should return fee estimation for simple transfer", async () => {
@@ -74,7 +74,10 @@ describe("estimateFees", () => {
   describe("Error handling", () => {
     it("should return fallback values on network error", async () => {
       // Use a distinct currencyId to avoid hitting the cached proxyClient
-      const invalidConfig = createFixtureConfig({ proxyUrl: "https://invalid-proxy.invalid" });
+      const invalidConfig = {
+        ...concordiumDefaults.concordium_testnet,
+        proxyUrl: "https://invalid-proxy.invalid",
+      };
 
       const result = await estimateFees(invalidConfig, "concordium_testnet_invalid");
 

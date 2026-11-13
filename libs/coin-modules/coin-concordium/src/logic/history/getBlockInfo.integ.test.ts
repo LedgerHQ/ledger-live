@@ -1,8 +1,8 @@
-import { createFixtureConfig } from "../../test/fixtures";
+import { concordiumDefaults } from "../../config";
 import { getBlockInfo } from "./getBlockInfo";
 
 describe("getBlockInfo", () => {
-  const config = createFixtureConfig();
+  const config = concordiumDefaults.concordium_testnet;
 
   it("returns block info for a given height", async () => {
     const result = await getBlockInfo(config, 1000, "concordium_testnet");

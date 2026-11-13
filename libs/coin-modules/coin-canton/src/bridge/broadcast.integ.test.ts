@@ -1,3 +1,4 @@
+import { cantonDefaults } from "../config";
 import { createMockCantonAccount, createMockContext } from "../test/fixtures";
 import { broadcast } from "./broadcast";
 
@@ -10,7 +11,7 @@ describe("Broadcast", () => {
     });
 
     await expect(
-      broadcast(createMockContext(), {
+      broadcast(createMockContext(cantonDefaults.canton_network_devnet), {
         account,
         signedOperation: {
           signature: signedTx,
