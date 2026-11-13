@@ -4,29 +4,7 @@ import {
   DEFAULT_SYNC_PATH_SAMPLE_RATE,
   type CoinModuleCallTransmissionConfig,
 } from "./config";
-
-/**
- * Methods on the transaction path: called once per transaction the user sends, so every call is
- * worth sending.
- */
-const TRANSACTION_PATH_METHODS = new Set([
-  "craftTransaction",
-  "craftRawTransaction",
-  "craftTransactionData",
-  "combine",
-  "broadcast",
-]);
-
-/**
- * Methods that prepare a transaction: the bridge calls them again on every edit of the
- * transaction and to compute the max spendable amount, often without a send at the end, so they
- * are sampled with their own rate. Everything else runs on the sync path — per account, per sync
- * cycle — and is sampled too.
- */
-const PREPARATION_METHODS = new Set(["estimateFees", "validateIntent"]);
-
-const isSyncPath = (method: string): boolean =>
-  !TRANSACTION_PATH_METHODS.has(method) && !PREPARATION_METHODS.has(method);
+import { tierFor, type CoinModuleCallTier, type MethodTiers } from "./tiers";
 
 const FAILURE_WINDOW_MS = 60 * 60 * 1000;
 
@@ -35,35 +13,52 @@ const FAILURE_WINDOW_MS = 60 * 60 * 1000;
 const defaultRandom = (): number => Math.random();
 const defaultClock = (): number => Date.now();
 
-type SampleRates = { syncPathSampleRate?: number; preparationSampleRate?: number };
+type TierRates = {
+  syncPathSampleRate?: number;
+  preparationSampleRate?: number;
+  methodTiers?: MethodTiers;
+};
 
-/**
- * Share of app sessions whose successes of `method` are sent: 1 on the transaction path, the
- * preparation rate for `estimateFees` and `validateIntent`, the sync-path rate for everything else.
- */
-export function sampleRateFor(
-  method: string,
+const rateOfTier = (
+  tier: CoinModuleCallTier,
   {
     syncPathSampleRate = DEFAULT_SYNC_PATH_SAMPLE_RATE,
     preparationSampleRate = DEFAULT_PREPARATION_SAMPLE_RATE,
-  }: SampleRates = {},
-): number {
-  if (TRANSACTION_PATH_METHODS.has(method)) return 1;
-  if (PREPARATION_METHODS.has(method)) return preparationSampleRate;
-  return syncPathSampleRate;
+  }: TierRates,
+): number => {
+  switch (tier) {
+    case "transaction":
+      return 1;
+    case "preparation":
+      return preparationSampleRate;
+    case "sync":
+      return syncPathSampleRate;
+    case "off":
+      return 0;
+  }
+};
+
+/**
+ * Share of app sessions whose successes of `method` are sent, from the method's tier: 1 for
+ * `transaction`, the preparation rate, the sync-path rate, or 0 for `off`.
+ */
+export function sampleRateFor(method: string, rates: TierRates = {}): number {
+  return rateOfTier(tierFor(method, rates.methodTiers), rates);
 }
 
 /**
  * Default transmission policy for a sink that leaves the process: every failure and every
- * transaction-path call, and a sample of the preparation and sync-path successes. The volume and
- * latency of sampled methods are estimated from the sample.
+ * transaction-tier call, a sample of the preparation and sync successes, and nothing of an `off`
+ * method. The volume and latency of sampled methods are estimated from the sample.
  */
 export function shouldTransmitCoinModuleCall(
   event: CoinModuleCallEvent,
-  { random = defaultRandom, ...rates }: SampleRates & { random?: () => number } = {},
+  { random = defaultRandom, ...rates }: TierRates & { random?: () => number } = {},
 ): boolean {
+  const tier = tierFor(event.method, rates.methodTiers);
+  if (tier === "off") return false;
   if (event.status === "failure") return true;
-  const sampleRate = sampleRateFor(event.method, rates);
+  const sampleRate = rateOfTier(tier, rates);
   return sampleRate >= 1 || random() < sampleRate;
 }
 
@@ -75,7 +70,9 @@ export function shouldTransmitCoinModuleCall(
  * unbiased rate, and dividing a count of successes by `sampleRate` estimates the real volume.
  */
 export type CoinModuleCallSampling = {
-  /** Share of app sessions that send this method's successes; 1 on the transaction path. */
+  /** The method's tier, after the flag's `methodTiers` overrides. */
+  tier: CoinModuleCallTier;
+  /** Share of app sessions that send this method's successes; 1 for the transaction tier. */
   sampleRate: number;
   /** Whether this session is in the sample for this method. Always true for a sent success. */
   inSample: boolean;
@@ -94,8 +91,8 @@ export type CoinModuleCallSampling = {
  * per hour for a given method, currency and error, which still shows the outage and how wide it
  * is. Past the cap the failure rate is therefore a lower bound, not an exact count.
  *
- * `readConfig` is read on every event, so a remote flag change applies at once. Returning `null`
- * disables transmission entirely.
+ * `readConfig` is read on every event, so a remote flag change, `methodTiers` included, applies at
+ * once. Returning `null` disables transmission entirely.
  *
  * Returns the sampling attributes to send with the call, or `null` when the call is dropped.
  */
@@ -111,10 +108,16 @@ export function createCoinModuleCallTransmitter(
   return event => {
     const config = readConfig();
     if (!config) return null;
-    if (!config.includeSyncPath && isSyncPath(event.method)) return null;
+    const tier = tierFor(event.method, config.methodTiers);
+    if (tier === "off") return null;
+    if (!config.includeSyncPath && tier === "sync") return null;
 
-    const sampleRate = sampleRateFor(event.method, config);
-    const sampling = { sampleRate, inSample: sampleRate >= 1 || sessionRandom() < sampleRate };
+    const sampleRate = rateOfTier(tier, config);
+    const sampling = {
+      tier,
+      sampleRate,
+      inSample: sampleRate >= 1 || sessionRandom() < sampleRate,
+    };
     if (event.status !== "failure") return sampling.inSample ? sampling : null;
 
     const key = `${event.network}/${event.method}/${event.errorName ?? ""}`;
