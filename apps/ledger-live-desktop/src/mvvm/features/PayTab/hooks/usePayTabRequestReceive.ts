@@ -10,7 +10,7 @@ import {
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDialog";
 import { useCopyToClipboard } from "../../../hooks/useCopyToClipboard";
-import { useOpenAssetAndAccount } from "../../ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
+import { useOpenAssetAndAccount } from "../../ModularDialog/hooks/useOpenAssetAndAccount";
 import { deriveRequestReceiveData } from "./deriveRequestReceiveData";
 import { useSaveRequestReceive } from "./useSaveRequestReceive";
 import type { PayVerifySelection } from "./usePayTabVerifyAddress";

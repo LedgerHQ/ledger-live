@@ -1,6 +1,6 @@
 import { renderHook } from "tests/testSetup";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { useOpenAssetAndAccount } from "../AssetAndAccountDrawer";
+import { useOpenAssetAndAccount } from "../useOpenAssetAndAccount";
 import { createModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/utils";
 
 const mockAccount = { id: "account1" } as AccountLike;
@@ -43,6 +43,32 @@ describe("useOpenAssetAndAccount - openAssetAndAccount", () => {
 
     expect(store.getState().modularDialog.flow).toBe("");
     expect(store.getState().modularDialog.source).toBe("");
+  });
+
+  it("should restrict the dialog to the given networks when networkIds is provided", () => {
+    const { result, store } = renderHook(() => useOpenAssetAndAccount());
+
+    result.current.openAssetAndAccount({
+      drawerConfiguration: config,
+      currencies: ["ethereum/erc20/usd__coin"],
+      networkIds: ["ethereum", "polygon"],
+    });
+
+    expect(store.getState().modularDialog.dialogParams).toMatchObject({
+      currencies: ["ethereum/erc20/usd__coin"],
+      networkIds: ["ethereum", "polygon"],
+    });
+  });
+
+  it("should not filter networks when networkIds is not provided", () => {
+    const { result, store } = renderHook(() => useOpenAssetAndAccount());
+
+    result.current.openAssetAndAccount({
+      drawerConfiguration: config,
+      currencies: ["ethereum/erc20/usd__coin"],
+    });
+
+    expect(store.getState().modularDialog.dialogParams?.networkIds).toBeUndefined();
   });
 
   it("should handle callback mode success", () => {

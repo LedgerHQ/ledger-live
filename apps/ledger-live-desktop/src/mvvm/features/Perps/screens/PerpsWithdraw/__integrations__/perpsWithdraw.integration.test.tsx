@@ -18,7 +18,7 @@ import PerpsWithdrawRoot, { openPerpsWithdraw } from "../PerpsWithdrawDialog";
 import type { PerpsWithdrawData } from "../usePerpsWithdrawViewModel";
 
 const mockOpenAssetAndAccount = jest.fn();
-jest.mock("LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer", () => ({
+jest.mock("LLD/features/ModularDialog/hooks/useOpenAssetAndAccount", () => ({
   useOpenAssetAndAccount: () => ({
     openAssetAndAccountPromise: (params: unknown) => mockOpenAssetAndAccount(params),
   }),

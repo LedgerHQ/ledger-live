@@ -22,7 +22,7 @@ jest.mock("@ledgerhq/live-common/wallet-api/Perps/deposit/useWalletApiSpendableB
   }),
 }));
 
-jest.mock("LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer", () => ({
+jest.mock("LLD/features/ModularDialog/hooks/useOpenAssetAndAccount", () => ({
   useOpenAssetAndAccount: () => ({
     openAssetAndAccountPromise: (params: unknown) => mockOpenAssetAndAccount(params),
   }),
