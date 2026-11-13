@@ -17,13 +17,15 @@ stateDiagram-v2
   Discovering --> DiscoveryError: DiscoveryError
 
   DiscoveryError --> Discovering: Ignore, skipping failed transport
+  DiscoveryError --> Discovering: Close in shared mode, same as ignore
   DiscoveryError --> RetryDiscovery: Retry, when retry is available
-  DiscoveryError --> Terminated: Close
+  DiscoveryError --> Terminated: Close in standalone mode
 
   RetryDiscovery --> Discovering: retry succeeds
   RetryDiscovery --> Discovering: Ignore, skipping failed transport
+  RetryDiscovery --> Discovering: Close in shared mode, same as ignore
   RetryDiscovery --> DiscoveryError: retry returns or throws an error
-  RetryDiscovery --> Terminated: Close, dropping the retry
+  RetryDiscovery --> Terminated: Close in standalone mode, dropping the retry
 
   Connecting --> Connected: DMK connect succeeds
   Connecting --> ConnectionError: DMK connect fails
@@ -68,8 +70,8 @@ stateDiagram-v2
   the error `transportId`. A successful retry starts discovery again. A failed retry emits
   the returned error, or an unknown discovery error if the retry throws.
 - The discovery error state has a `close` action for when the user closes its
-  sheet. It moves to `Terminated`, also while a retry runs: the retry result is
-  then dropped.
+  sheet. In standalone mode, it moves to `Terminated`, also while a retry runs:
+  the retry result is then dropped. In shared mode, it does the same as ignore.
 - `Connecting` stops discovery, then calls `dmk.connect` with the selected
   discovered device and the DMK session refresher disabled.
 - A connection failure is mapped with `mapConnectionError` (for example BLE
@@ -94,3 +96,29 @@ stateDiagram-v2
   case then emits the unknown error. A failure of this cleanup is logged, and
   the error is still sent.
 - Both delays can be injected with `deviceNotFoundDelay` and `successDelay`.
+
+## Shared mode
+
+![Standalone and shared mode](./standalone-and-shared-mode.svg)
+
+The diagram is an export of the "Standalone and shared mode" section of the
+[connectNewDevice page in Lucid](https://lucid.app/lucidchart/2536447a-30cc-48ca-8607-643edd84d1f4/edit?page=n02LR2vHe3XN).
+
+With `ownsDiscoveryService: false`, a parent machine gives its discovery
+service, already scanning, and ends the flow itself. The default,
+`ownsDiscoveryService: true`, is the standalone mode that the notes above
+describe. In shared mode:
+
+- `Discovering` does not start the discovery service again while it runs.
+- Closing a discovery error does the same as ignore. The machine never goes to
+  `Terminated` and never calls `onClose`: only the parent ends the flow.
+- `Connecting` stops discovery, as in standalone mode. The parent starts it
+  again.
+- `stop()` does not stop the discovery service. It does not disconnect a
+  session that is still opening or that waits for the success delay:
+  `onConnected` is just never called, and the parent lists the session as a
+  connected device.
+- When an action fails, the machine sends the error to `observer.error`, and
+  stops neither the discovery service nor the session.
+- A parent shows the `EmbeddedConnectNewDeviceUIState` states: all the UI
+  states without `Done`, `Terminated` and `UnknownError`.

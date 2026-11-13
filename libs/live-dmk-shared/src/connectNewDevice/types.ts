@@ -58,6 +58,11 @@ export type ConnectNewDeviceStateMachineInput<
   buildCompatDeviceId?: (device: ConnectedDevice) => string;
   deviceNotFoundDelay?: number;
   successDelay?: number;
+  /**
+   * `false` (shared mode) when a parent machine gives its discovery service, already scanning, and
+   * ends the flow itself. Defaults to `true`.
+   */
+  ownsDiscoveryService?: boolean;
 };
 
 export type ConnectNewDeviceStateMachineContext<
@@ -66,6 +71,7 @@ export type ConnectNewDeviceStateMachineContext<
 > = ConnectNewDeviceStateMachineInput<TDiscoveryError, TConnectionError> & {
   deviceNotFoundDelay: number;
   successDelay: number;
+  ownsDiscoveryService: boolean;
   listedDevices: Array<ListedDevice>;
   selectedDevice: DiscoveredDevice | null;
   sessionId: string | null;
@@ -164,3 +170,21 @@ export type ConnectNewDeviceUIState<
   | (DiscoveryErrorUIState<TDiscoveryError> & { close: () => void })
   | (ConnectionErrorUIState<TConnectionError> & { close: () => void })
   | UnknownErrorUIState;
+
+/**
+ * The UI states that a parent machine shows for a machine in shared mode. The parent leaves the flow
+ * on `Done`, a machine in shared mode never goes to `Terminated`, and only the use case emits
+ * `UnknownError`.
+ */
+export type EmbeddedConnectNewDeviceUIState<
+  TDiscoveryError extends BaseDiscoveryError = BaseDiscoveryError,
+  TConnectionError extends BaseConnectionError = BaseConnectionError,
+> = Exclude<
+  ConnectNewDeviceUIState<TDiscoveryError, TConnectionError>,
+  {
+    type:
+      | typeof ConnectNewDeviceUIStateTypes.Done
+      | typeof ConnectNewDeviceUIStateTypes.Terminated
+      | typeof ConnectNewDeviceUIStateTypes.UnknownError;
+  }
+>;

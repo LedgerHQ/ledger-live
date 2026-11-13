@@ -92,6 +92,7 @@ type SetupTestOptions = {
   readonly buildCompatDeviceId?: (device: ConnectedDevice) => string;
   readonly deviceNotFoundDelay?: number;
   readonly successDelay?: number;
+  readonly ownsDiscoveryService?: boolean;
 };
 
 const startedMachines: Array<DefaultConnectNewDeviceStateMachine> = [];
@@ -106,6 +107,7 @@ const setupTest = ({
   buildCompatDeviceId,
   deviceNotFoundDelay,
   successDelay,
+  ownsDiscoveryService,
 }: SetupTestOptions = {}) => {
   const discoveredDevices = new Subject<Array<DiscoveredDevice>>();
   const errors = new Subject<UnknownDiscoveryError>();
@@ -143,6 +145,7 @@ const setupTest = ({
     ...(buildCompatDeviceId ? { buildCompatDeviceId } : {}),
     ...(deviceNotFoundDelay === undefined ? {} : { deviceNotFoundDelay }),
     ...(successDelay === undefined ? {} : { successDelay }),
+    ...(ownsDiscoveryService === undefined ? {} : { ownsDiscoveryService }),
   });
   startedMachines.push(machine);
 
@@ -1105,6 +1108,127 @@ describe("ConnectNewDeviceStateMachine", () => {
       discoverDevices([nanoX]);
 
       expect(states).toHaveLength(statesCountAtStop);
+    });
+  });
+
+  describe("Shared mode", () => {
+    const setupSharedTest = (options: Omit<SetupTestOptions, "ownsDiscoveryService"> = {}) =>
+      setupTest({ ...options, ownsDiscoveryService: false });
+
+    it("should not stop the discovery service when the machine is stopped while discovering", () => {
+      const { deviceDiscoveryService, machine } = setupSharedTest();
+
+      machine.start();
+      machine.stop();
+
+      expect(deviceDiscoveryService.stop).not.toHaveBeenCalled();
+      expect(deviceDiscoveryService.isRunning).toBe(true);
+    });
+
+    it("should restart discovery without the error transport when a DiscoveryError is closed", () => {
+      const { deviceDiscoveryService, emitDiscoveryError, lastState, machine } = setupSharedTest();
+
+      machine.start();
+      emitDiscoveryError(makeDiscoveryError({ transportId: bleTransport }));
+      lastState(ConnectNewDeviceUIStateTypes.DiscoveryError).close();
+
+      expect(deviceDiscoveryService.start).toHaveBeenLastCalledWith({
+        ignoreTransportIdentifiers: [bleTransport],
+      });
+      expect(lastState(ConnectNewDeviceUIStateTypes.Discovering).scanningTransports).toEqual([
+        usbTransport,
+      ]);
+    });
+
+    it("should neither emit Terminated nor call onClose when a DiscoveryError is closed", () => {
+      const { emitDiscoveryError, lastState, machine, onClose, states } = setupSharedTest();
+
+      machine.start();
+      emitDiscoveryError(makeDiscoveryError());
+      lastState(ConnectNewDeviceUIStateTypes.DiscoveryError).close();
+
+      expect(states.map(state => state.type)).not.toContain(
+        ConnectNewDeviceUIStateTypes.Terminated,
+      );
+      expect(onClose).not.toHaveBeenCalled();
+    });
+
+    it("should restart discovery without the error transport when a DiscoveryError is closed during a retry", () => {
+      const retry = jest.fn(() => new Promise<true>(() => {}));
+      const { deviceDiscoveryService, emitDiscoveryError, lastState, machine, onClose } =
+        setupSharedTest();
+
+      machine.start();
+      emitDiscoveryError(
+        makeDiscoveryError({ transportId: bleTransport, resolution: { type: "prompt", retry } }),
+      );
+      const discoveryErrorState = lastState(ConnectNewDeviceUIStateTypes.DiscoveryError);
+      discoveryErrorState.retry!();
+      discoveryErrorState.close();
+
+      expect(deviceDiscoveryService.start).toHaveBeenLastCalledWith({
+        ignoreTransportIdentifiers: [bleTransport],
+      });
+      lastState(ConnectNewDeviceUIStateTypes.Discovering);
+      expect(onClose).not.toHaveBeenCalled();
+    });
+
+    it("should stop discovery when a device is selected", () => {
+      const { deviceDiscoveryService, discoverDevices, lastState, machine } = setupSharedTest();
+
+      machine.start();
+      discoverDevices([nanoX]);
+      select(lastState(ConnectNewDeviceUIStateTypes.Discovering).devices[0]);
+
+      expect(deviceDiscoveryService.stop).toHaveBeenCalledTimes(1);
+      lastState(ConnectNewDeviceUIStateTypes.Connecting);
+    });
+
+    it("should neither disconnect the session nor call onConnected when the connection succeeds after the machine is stopped", async () => {
+      let resolveConnect: (sessionId: string) => void = () => {};
+      const connect = jest.fn(
+        () =>
+          new Promise<string>(resolve => {
+            resolveConnect = resolve;
+          }),
+      );
+      const setup = setupSharedTest({ connect });
+
+      await connectToNanoX(setup);
+      setup.machine.stop();
+      resolveConnect("late-session-id");
+      await flushPromises();
+      jest.advanceTimersByTime(DEFAULT_SUCCESS_DELAY);
+
+      expect(setup.dmk.disconnect).not.toHaveBeenCalled();
+      expect(setup.onConnected).not.toHaveBeenCalled();
+    });
+
+    it("should neither disconnect the session nor call onConnected when the machine is stopped during the success delay", async () => {
+      const setup = setupSharedTest();
+
+      await connectToNanoX(setup);
+      setup.machine.stop();
+      jest.advanceTimersByTime(DEFAULT_SUCCESS_DELAY);
+
+      expect(setup.dmk.disconnect).not.toHaveBeenCalled();
+      expect(setup.onConnected).not.toHaveBeenCalled();
+    });
+
+    it("should not stop the discovery service when an action fails", () => {
+      const error = new Error("getDiscoveredDeviceKey failed");
+      const { deviceDiscoveryService, discoverDevices, machine } = setupSharedTest({
+        getDiscoveredDeviceKey: () => {
+          throw error;
+        },
+      });
+
+      machine.start();
+      discoverDevices([nanoX]);
+      // XState throws an unhandled error from a timer.
+      jest.runOnlyPendingTimers();
+
+      expect(deviceDiscoveryService.stop).not.toHaveBeenCalled();
     });
   });
 });
