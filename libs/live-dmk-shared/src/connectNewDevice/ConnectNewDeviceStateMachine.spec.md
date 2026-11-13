@@ -99,6 +99,11 @@ stateDiagram-v2
 
 ## Shared mode
 
+![Standalone and shared mode](./standalone-and-shared-mode.svg)
+
+The diagram is an export of the "Standalone and shared mode" section of the
+[connectNewDevice page in Lucid](https://lucid.app/lucidchart/2536447a-30cc-48ca-8607-643edd84d1f4/edit?page=n02LR2vHe3XN).
+
 With `ownsDiscoveryService: false`, a parent machine gives its discovery
 service, already scanning, and ends the flow itself. The default,
 `ownsDiscoveryService: true`, is the standalone mode that the notes above
