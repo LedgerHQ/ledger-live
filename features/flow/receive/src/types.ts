@@ -1,7 +1,7 @@
 import type { DeviceModelId } from "@ledgerhq/device-management-kit";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
-import type { AccountReceive } from "@domain/entity-account-receive";
-import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type { AccountDescriptor, AccountUUID } from "@domain/entity-account-descriptor";
+import type { AccountReceive, ReceiveVerification } from "@domain/entity-account-receive";
+import type { CryptoOrTokenCurrency, CryptoOrTokenCurrencyId } from "@domain/entity-currency";
 import type { PartialFeatures } from "@shared/feature-flags";
 
 export type ReceiveNoticeId =
@@ -38,3 +38,25 @@ export type ReceiveFamilyConfigInput<A = unknown> = Readonly<{
 export type GetReceiveFamilyConfig<A = unknown> = (
   input: ReceiveFamilyConfigInput<A>,
 ) => Partial<ReceiveFamilyConfig>;
+
+/** The address to verify: `receive.verification`, or `receive.shielded.verification`. */
+export type VerifyAddressSelection = Readonly<{
+  accountUUID: AccountUUID;
+  assetId: CryptoOrTokenCurrencyId;
+  verification: ReceiveVerification;
+}>;
+
+/** How the device verification ended. `mismatch` closes the receive flow. */
+export type VerifyAddressOutcome =
+  | "verified"
+  | "cancelled"
+  | "mismatch"
+  | "unsupported"
+  | "dismissed"
+  | "initFailed";
+
+/** The asset and network the verification events are sent with. */
+export type VerifyAddressTracking = Readonly<{
+  asset: string;
+  network: string;
+}>;

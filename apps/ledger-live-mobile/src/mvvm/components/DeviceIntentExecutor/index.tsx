@@ -27,6 +27,7 @@ export {
   type BuildDeviceInitializationInputParams,
 } from "./ContextInitializer/utils/buildDeviceInitializationInput";
 export type { InitializationInput } from "./types";
+export { ContinueOnDevice } from "./components/DeviceGenericStates/ContinueOnDevice";
 export type {
   DeviceIntentTrackingProperties,
   SourceFlow,

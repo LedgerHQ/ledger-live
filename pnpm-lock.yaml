@@ -13096,6 +13096,9 @@ importers:
       '@domain/entity-currency':
         specifier: workspace:*
         version: link:../../../domain/entity/currency
+      '@features/platform-intent-verify-address':
+        specifier: workspace:*
+        version: link:../../platform/intent-verify-address
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
