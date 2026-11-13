@@ -19588,12 +19588,24 @@ importers:
         specifier: 9.1.2
         version: 9.1.2
     devDependencies:
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
         version: 0.75.0
