@@ -21,6 +21,11 @@ export default class AccountDetailPage {
   private readonly editNameScreen = byId("account-detail-edit-name-screen");
   private readonly heroBalance = byId("account-detail-hero-balance");
   private readonly heroAction = (action: string) => byId(`account-detail-hero-actions-${action}`);
+  private readonly transferDrawer = byId("transfer-drawer");
+  private readonly transferDrawerAction = (action: string) => byId(`transfer-action-${action}`);
+  private readonly sendAssetPicker = byId("transfer-asset-picker-list");
+  private readonly sendAssetPickerRow = (currencyId: string) =>
+    byId(`transfer-asset-picker-${currencyId}`);
   private readonly transactions = byId("account-detail-transactions");
   private readonly anyOperationRow = byId(OPERATION_ROW_ID);
   private readonly operationRowWithType = (operationType: string) =>
@@ -53,9 +58,43 @@ export default class AccountDetailPage {
     return await this.navBarAddress.getLabel();
   }
 
-  @Step("Expect account transfer action to be visible")
-  async expectTransferActionVisible() {
-    await this.heroAction("transfer").expectVisible();
+  @Step("Expect account receive and send actions")
+  async expectReceiveAndSendActionsVisible() {
+    await this.openTransferDrawer();
+    await this.transferDrawerAction("receive").expectVisible();
+    await this.transferDrawerAction("send").expectVisible();
+    await this.transferDrawer.swipe("down");
+    await this.transferDrawer.waitNotVisible();
+  }
+
+  @Step("Tap on receive")
+  async tapReceive() {
+    // A currency that can't send gets a Receive tile instead of Transfer.
+    if (await this.heroAction("receive").isVisible(TIMEOUT.xxsmall)) {
+      await this.heroAction("receive").tap();
+      return;
+    }
+    await this.openTransferDrawer();
+    await this.transferDrawerAction("receive").tap();
+  }
+
+  @Step("Tap on send {{{0}}}")
+  async tapSend(currencyId?: string) {
+    await this.openTransferDrawer();
+    await this.transferDrawerAction("send").tap();
+    // An account holding several assets asks which one to send first.
+    if (currencyId && (await this.sendAssetPicker.isVisible(TIMEOUT.small))) {
+      await this.sendAssetPicker.waitFullyVisible();
+      // The rows are sorted by value: the asset can sit below the visible ones.
+      await this.sendAssetPickerRow(currencyId).scrollTo(this.sendAssetPicker);
+      await this.sendAssetPickerRow(currencyId).tap();
+    }
+  }
+
+  private async openTransferDrawer() {
+    await this.heroAction("transfer").tap();
+    // Anchor on the container: the actions are matchable while the sheet still slides.
+    await this.transferDrawer.waitFullyVisible();
   }
 
   @Step("Expect operation history to be visible")
