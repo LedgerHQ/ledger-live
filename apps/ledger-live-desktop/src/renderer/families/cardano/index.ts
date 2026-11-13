@@ -4,6 +4,7 @@ import AccountDetailBalanceSummary from "./AccountDetailBalanceSummary";
 import sendRecipientFields from "./SendRecipientFields";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 import accountHeaderManageActions from "./AccountHeaderManageActions";
+import { receiveAddressConfig } from "./receiveAddressConfig";
 import { CardanoFamily } from "./types";
 
 const family: CardanoFamily = {
@@ -13,6 +14,7 @@ const family: CardanoFamily = {
   sendRecipientFields,
   AccountBalanceSummaryFooter,
   accountHeaderManageActions,
+  receiveAddressConfig,
   modalsToPreload: [
     "MODAL_CARDANO_DELEGATE",
     "MODAL_CARDANO_UNDELEGATE",

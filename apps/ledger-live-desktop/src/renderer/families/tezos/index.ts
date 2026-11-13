@@ -2,6 +2,7 @@ import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 import AccountBodyHeader from "./AccountBodyHeader";
 import accountHeaderManageActions from "./AccountHeaderManageActions";
 import receiveWarning from "./ReceiveWarning";
+import { receiveAddressConfig } from "./receiveAddressConfig";
 import sendWarning from "./SendWarning";
 import transactionConfirmFields from "./TransactionConfirmFields";
 import accountActions from "./accountActions";
@@ -15,6 +16,7 @@ const family: TezosFamily = {
   transactionConfirmFields,
   sendWarning,
   receiveWarning,
+  receiveAddressConfig,
   AccountBodyHeader,
   AccountBalanceSummaryFooter,
   modalsToPreload: [

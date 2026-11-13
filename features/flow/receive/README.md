@@ -34,7 +34,11 @@ Each screen follows MVVM: `useXViewModel.ts` plus `XView.web.tsx` and `XView.nat
 ## Public API
 
 - `@features/flow-receive`: the main entry, resolved per platform through the `react-native`
-  condition.
+  condition. It holds the receive family contract: each app's coin family implements
+  `GetReceiveFamilyConfig` only where it differs from the defaults (notices, support, device models
+  that cannot verify), and `resolveReceiveFamilyConfig` merges it and applies the
+  `newReceiveFlow` excluded families.
+- `@features/flow-receive/types.mock`: `mockReceiveFamilyConfigInput`, for the families' tests.
 - `@features/flow-receive/state`: the `receiveVerifyHint` slice, whether the user has already
   seen the hint pointing at **Verify**. The apps register its reducer under `receiveVerifyHint`
   and persist `hasSeenReceiveVerifyHint` in the `payCard` storage blob, restored with
