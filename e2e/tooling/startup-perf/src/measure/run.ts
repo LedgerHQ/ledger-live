@@ -221,6 +221,7 @@ async function readStartup({
     return { ...(await readScreen()), readFrom: "screen-fallback" };
   }
   readFromLog.add(meta.side);
+  if (fromLog.appStartupTime <= 0) throw new Error(`App startup time ${fromLog.appStartupTime} ms`);
   if (!checkScreen) return { ...fromLog, readFrom: "log" };
   // A measured launch (--read both) fails on it; a warm-up or a check keeps its log value.
   const onScreen = await readScreen().catch((error: unknown) => {

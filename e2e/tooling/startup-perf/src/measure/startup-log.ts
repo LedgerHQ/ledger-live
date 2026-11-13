@@ -33,7 +33,11 @@ export function parseStartupLog(log: string): PerformanceRead | null {
   return read;
 }
 
-/** Waits up to `timeoutMs` for the lines of the process `pid`: null when they never came. */
+/**
+ * Waits up to `timeoutMs` for the app to write the lines of the process `pid`: null when it never
+ * did. A query still running then may finish, so lines written in time are not lost; the platform
+ * bounds a hung one.
+ */
 export function createStartupLogReader(P: Platform) {
   return async function readStartupLog(
     device: string,
@@ -43,8 +47,9 @@ export function createStartupLogReader(P: Platform) {
     const deadline = Date.now() + timeoutMs;
     for (;;) {
       const read = parseStartupLog(await P.jsLog(device, pid, STARTUP_LOG_MARKER));
-      if (read || Date.now() >= deadline) return read;
-      await sleep(POLL_MS);
+      const left = deadline - Date.now();
+      if (read || left <= 0) return read;
+      await sleep(Math.min(POLL_MS, left));
     }
   };
 }
