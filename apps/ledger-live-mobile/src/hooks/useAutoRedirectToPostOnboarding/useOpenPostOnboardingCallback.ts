@@ -24,7 +24,7 @@ const checkCanShow = async (protectId: string) => {
 };
 
 /**
- * Returns a callback to open the post onboarding screen
+ * Returns a callback to open the post onboarding screen, resolving to whether it navigated
  * */
 export function useOpenPostOnboardingCallback() {
   const startPostOnboarding = useStartPostOnboardingCallback();
@@ -32,13 +32,18 @@ export function useOpenPostOnboardingCallback() {
   const protectId = recoverServices?.params?.protectId ?? "protect-prod";
 
   return useCallback(
-    async (deviceModelId: DeviceModelId) => {
+    async (deviceModelId: DeviceModelId): Promise<boolean> => {
       const canShowRecover = await checkCanShow(protectId);
+      let hasNavigated = true;
       startPostOnboarding({
         deviceModelId: deviceModelId,
         resetNavigationStack: false,
         canShowRecover,
+        fallbackIfNoAction: () => {
+          hasNavigated = false;
+        },
       });
+      return hasNavigated;
     },
     [startPostOnboarding, protectId],
   );
