@@ -8,7 +8,7 @@ let api: CoinModuleApi<CantonCoinConfig>;
 
 describe.skip("devnet", () => {
   beforeAll(() => {
-    api = createApi();
+    api = createApi("canton_network_devnet");
   });
 
   describe("lastBlock", () => {

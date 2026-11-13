@@ -1,10 +1,12 @@
 import {
+  abortReason,
   AccountDataNotServedError,
   type AccountDataReader,
   type AccountDataSource,
 } from "@domain/api-account-data";
 import { AccountDataSourceIdSchema, type AccountDataKind } from "@domain/entity-account-data";
 import { currencyIdFromNetwork, type AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountStatus } from "@domain/entity-account-status";
 import type { CoinModuleHost } from "./host";
 import { toAccountBalances } from "./internals/toAccountBalances";
 import { readOperationsPage } from "./internals/readOperationsPage";
@@ -58,9 +60,26 @@ export function createCoinModuleSource(host: CoinModuleHost): AccountDataSource 
     });
   };
 
+  // A module without `getAccountStatus` hands the account to the next source, the full sync.
+  const readAccountStatus: AccountDataReader<"accountStatus"> = async ({
+    descriptor,
+    signal,
+  }): Promise<AccountStatus> => {
+    const currencyId = currencyIdFromNetwork(descriptor.network);
+    const api = await host.getAccountStatusApi?.(currencyId);
+    if (signal?.aborted) throw abortReason(signal);
+    if (!api) {
+      throw new AccountDataNotServedError(`No account status in the ${currencyId} coin module`);
+    }
+    // Keyed on the descriptor key: an account to onboard has a public key but no address yet.
+    const { used, isOnboarded } = await api.getAccountStatus(descriptor.key, signal);
+    if (signal?.aborted) throw abortReason(signal);
+    return { used, gate: isOnboarded === false ? { type: "onboarding" } : null };
+  };
+
   return {
     id: AccountDataSourceIdSchema.parse("coin-module"),
     supports,
-    read: { balance: readBalance, operations: readOperations },
+    read: { balance: readBalance, operations: readOperations, accountStatus: readAccountStatus },
   };
 }

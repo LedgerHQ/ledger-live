@@ -50,6 +50,20 @@ export type CoinModuleOperationsApi = CoinModuleTokenResolver & {
   ): Promise<CoinModuleOperationsPage>;
 };
 
+/** What a coin module knows of an account (coin-modules ADR-079): facts, the wallet makes the gate of them. */
+export type CoinModuleAccountStatus = {
+  /** Ever used: a transaction or a balance of any asset. */
+  used: boolean;
+  /** Only on a chain where an account must be onboarded before it transacts (Canton, Concordium). */
+  isOnboarded?: boolean;
+};
+
+/** What the source needs of one currency's coin module to answer `accountStatus`. */
+export type CoinModuleAccountStatusApi = {
+  /** The status of the account of a descriptor key (an address, or the public key of a family keyed on it), with no device; stops its work once `signal` aborts. */
+  getAccountStatus(key: string, signal?: AbortSignal): Promise<CoinModuleAccountStatus>;
+};
+
 /** What the source takes from the coin modules, implemented by the app on top of its registry. */
 export type CoinModuleHost = {
   /** Synchronous: whether a coin module is registered for the currency, loaded or not. */
@@ -64,5 +78,7 @@ export type CoinModuleHost = {
   paginatesOperations?(currencyId: string): boolean;
   /** The coin module of the currency, loaded on first use; `undefined` when it does not implement the operations read. */
   getOperationsApi?(currencyId: string): Promise<CoinModuleOperationsApi | undefined>;
+  /** The coin module of the currency, loaded on first use; `undefined` when it does not implement `getAccountStatus`. */
+  getAccountStatusApi?(currencyId: string): Promise<CoinModuleAccountStatusApi | undefined>;
   blacklistedTokenIds?(): readonly string[];
 };
