@@ -259,6 +259,16 @@ export async function waitForWebviewUrl(
   );
 }
 
+/** Removes `keys` from the webview's `localStorage`, e.g. a Live App's saved selection between tests. */
+export async function removeWebviewStorageItems(keys: string[]): Promise<void> {
+  await withHardTimeout(
+    web.element(by.web.tag("body")).runScript((_el: HTMLElement, ...storageKeys: string[]) => {
+      storageKeys.forEach(key => localStorage.removeItem(key));
+    }, keys),
+    TIMEOUT.medium,
+  );
+}
+
 type WebviewContent = { height: number; textLength: number; contentElements: number };
 
 /**

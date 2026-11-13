@@ -3,7 +3,7 @@ import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { getMinimumSwapAmount } from "@ledgerhq/live-e2e-shared/swap";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { byId } from "@e2e/helpers/elements/native";
-import { webByCss, webById } from "@e2e/helpers/elements/web";
+import { removeWebviewStorageItems, webByCss, webById } from "@e2e/helpers/elements/web";
 import { retryUntilTimeout } from "@e2e/utils/retry";
 import { expectWithinTolerance } from "@e2e/utils/amountUtils";
 import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
@@ -465,10 +465,7 @@ export default class SwapLiveAppPage {
 
   @Step("Clear swap account selection from localStorage")
   async clearSwapState() {
-    await getWebElementByCssSelector("main").runScript(() => {
-      localStorage.removeItem("from-account");
-      localStorage.removeItem("to-account");
-    });
+    await removeWebviewStorageItems(["from-account", "to-account"]);
   }
 
   @Step("Check Ledger Nano S not supported banner for {{{0}}}")
