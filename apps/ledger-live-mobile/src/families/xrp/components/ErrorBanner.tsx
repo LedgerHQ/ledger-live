@@ -1,6 +1,6 @@
 import React from "react";
-import { Banner } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "~/context/Locale";
+import { FullTextBanner } from "./FullTextBanner";
 
 export function ErrorBanner({ error, warning }: Readonly<{ error: Error; warning?: boolean }>) {
   const { t, i18n } = useTranslation();
@@ -9,7 +9,7 @@ export function ErrorBanner({ error, warning }: Readonly<{ error: Error; warning
   const descriptionKey = `errors.${error.name}.description`;
 
   return (
-    <Banner
+    <FullTextBanner
       appearance={warning ? "warning" : "error"}
       title={t(i18n.exists(titleKey) ? titleKey : "errors.generic.title", values)}
       description={i18n.exists(descriptionKey) ? t(descriptionKey, values) : undefined}

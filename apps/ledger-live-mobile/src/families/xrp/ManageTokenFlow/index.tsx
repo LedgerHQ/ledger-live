@@ -9,6 +9,7 @@ import { useTranslation } from "~/context/Locale";
 import { bridgeSuspenseScreenLayout, getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import ConnectDevice from "~/screens/ConnectDevice";
 import SelectDevice from "~/screens/SelectDevice";
+import BalanceLimit from "./BalanceLimit";
 import ManageToken from "./ManageToken";
 import Review from "./Review";
 import TokenSettings from "./TokenSettings";
@@ -58,6 +59,15 @@ function ManageTokenFlow() {
         options={{
           headerLeft: renderBackButton,
           headerTitle: t("xrp.tokenSettings.title"),
+          headerRight: renderCloseButton,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.XrpManageTokenBalanceLimit}
+        component={BalanceLimit}
+        options={{
+          headerLeft: renderBackButton,
+          headerTitle: t("xrp.tokenSettings.balanceLimit"),
           headerRight: renderCloseButton,
         }}
       />

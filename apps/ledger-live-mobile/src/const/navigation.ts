@@ -609,6 +609,7 @@ export enum ScreenName {
   XrpAddTokenValidationSuccess = "XrpAddTokenValidationSuccess",
   XrpManageTokenManage = "XrpManageTokenManage",
   XrpManageTokenSettings = "XrpManageTokenSettings",
+  XrpManageTokenBalanceLimit = "XrpManageTokenBalanceLimit",
   XrpManageTokenReview = "XrpManageTokenReview",
   XrpManageTokenSelectDevice = "XrpManageTokenSelectDevice",
   XrpManageTokenConnectDevice = "XrpManageTokenConnectDevice",

@@ -1,91 +1,120 @@
 import React from "react";
 import { ScrollView } from "react-native";
-import { Banner, Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
+import {
+  Box,
+  Button,
+  InteractiveIcon,
+  ListItem,
+  ListItemContent,
+  ListItemLeading,
+  ListItemTitle,
+  ListItemTrailing,
+  Text,
+} from "@ledgerhq/lumen-ui-rnative";
+import { ChevronRight, Information } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { TrackScreen } from "@shared/analytics-react";
-import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useTranslation } from "~/context/Locale";
 import { ErrorBanner } from "../components/ErrorBanner";
-import {
-  MaxLimitInfoModal,
-  SwitchRow,
-  TrustLimitControls,
-  TrustLimitInput,
-} from "../components/TrustLimitSettings";
+import { FullTextBanner } from "../components/FullTextBanner";
+import { RipplingInfoModal } from "../components/TrustLimitSettings";
+import { RipplingSheet } from "./RipplingSheet";
 import { type Props, useTokenSettingsViewModel } from "./useTokenSettingsViewModel";
+
+function ValueTrailing({ value, testID }: Readonly<{ value: string; testID: string }>) {
+  return (
+    <ListItemTrailing lx={{ flexDirection: "row", alignItems: "center", gap: "s8" }}>
+      <Text typography="body2SemiBold" lx={{ color: "base" }} testID={testID}>
+        {value}
+      </Text>
+      <ChevronRight size={16} color="muted" />
+    </ListItemTrailing>
+  );
+}
 
 export default function TokenSettings(props: Props) {
   const { t } = useTranslation();
   const viewModel = useTokenSettingsViewModel(props);
+  const ripplingLabel = t("xrp.rippling.label");
 
   return (
     <SafeAreaView edges={["left", "right", "bottom"]} isFlex>
       <TrackScreen category="XrpManageTokenFlow" name="TokenSettings" />
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1, padding: 16, gap: 16 }}
-        keyboardShouldPersistTaps="handled"
-      >
+      <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 16, gap: 16 }}>
         {viewModel.isCurrentLimitZero ? (
-          <Banner
+          <FullTextBanner
             appearance="warning"
             title={t("xrp.tokenSettings.currentLimitZero")}
             testID="xrp-current-limit-zero-warning"
           />
         ) : null}
-        <TrustLimitInput
-          token={viewModel.token}
-          limitText={viewModel.limitText}
-          isMaximum={viewModel.isMaximum}
-          isInvalid={viewModel.isLimitErrorVisible}
-          onChangeLimitText={viewModel.onChangeLimitText}
-        />
+        <Box>
+          <ListItem onPress={viewModel.onEditLimit} testID="xrp-settings-limit-row">
+            <ListItemLeading>
+              <ListItemContent>
+                <ListItemTitle>{t("xrp.tokenSettings.balanceLimit")}</ListItemTitle>
+              </ListItemContent>
+            </ListItemLeading>
+            <ValueTrailing value={viewModel.limitText} testID="xrp-settings-limit-value" />
+          </ListItem>
+          <ListItem onPress={viewModel.onOpenRipplingSheet} testID="xrp-settings-rippling-row">
+            <ListItemLeading>
+              <ListItemContent>
+                <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s4" }}>
+                  <ListItemTitle>{ripplingLabel}</ListItemTitle>
+                  <InteractiveIcon
+                    icon={Information}
+                    size={16}
+                    iconType="stroked"
+                    accessibilityLabel={ripplingLabel}
+                    onPress={viewModel.onOpenRipplingInfo}
+                    testID="xrp-rippling-info"
+                  />
+                </Box>
+              </ListItemContent>
+            </ListItemLeading>
+            <ValueTrailing value={viewModel.ripplingText} testID="xrp-settings-rippling-value" />
+          </ListItem>
+        </Box>
+        {viewModel.isRippling ? (
+          <FullTextBanner
+            appearance="warning"
+            description={t("xrp.rippling.warning")}
+            testID="xrp-rippling-warning"
+          />
+        ) : null}
         {viewModel.bridgeError ? <ErrorBanner error={viewModel.bridgeError} /> : null}
         {viewModel.isLimitBelowBalance ? (
-          <Banner
+          <FullTextBanner
             appearance="warning"
-            title={t("xrp.tokenSettings.limitBelowBalance", { balance: viewModel.balanceText })}
+            description={t("xrp.tokenSettings.limitBelowBalance", {
+              balance: viewModel.balanceText,
+            })}
             testID="xrp-limit-below-balance-warning"
           />
         ) : null}
-        <Box lx={{ flex: 1 }} />
-        <TrustLimitControls
-          isMaximum={viewModel.isMaximum}
-          isRippling={viewModel.isRippling}
-          onChangeUseMax={viewModel.onChangeUseMax}
-          onChangeRippling={viewModel.onChangeRippling}
-          onOpenMaxLimitInfo={viewModel.onOpenMaxLimitInfo}
-        >
-          <SwitchRow>
-            <Text typography="body2" lx={{ color: "muted" }}>
-              {t("xrp.addToken.steps.review.networkFees")}
-            </Text>
-            <Text typography="body2SemiBold" lx={{ color: "base" }} testID="xrp-settings-fees">
-              <CurrencyUnitValue
-                unit={viewModel.accountUnit}
-                value={viewModel.estimatedFees}
-                showCode
-              />
-            </Text>
-          </SwitchRow>
-        </TrustLimitControls>
       </ScrollView>
-      <MaxLimitInfoModal
-        token={viewModel.token}
-        maxLimit={viewModel.maxLimit}
-        isOpened={viewModel.isMaxLimitInfoOpen}
-        onClose={viewModel.onCloseMaxLimitInfo}
+      <RipplingSheet
+        isOpen={viewModel.isRipplingSheetOpen}
+        isRippling={viewModel.isRippling}
+        onSelect={viewModel.onChangeRippling}
+        onClose={viewModel.onCloseRipplingSheet}
+      />
+      <RipplingInfoModal
+        isOpened={viewModel.isRipplingInfoOpen}
+        onClose={viewModel.onCloseRipplingInfo}
       />
       <Box lx={{ padding: "s16" }}>
         <Button
           appearance="base"
           size="lg"
           isFull
-          disabled={viewModel.isReviewDisabled}
-          loading={viewModel.isReviewLoading}
-          onPress={viewModel.onReview}
-          testID="xrp-settings-review"
+          disabled={viewModel.isContinueDisabled}
+          loading={viewModel.isContinueLoading}
+          onPress={viewModel.onContinue}
+          testID="xrp-settings-continue"
         >
-          {t("xrp.tokenSettings.review")}
+          {t("common.continue")}
         </Button>
       </Box>
     </SafeAreaView>

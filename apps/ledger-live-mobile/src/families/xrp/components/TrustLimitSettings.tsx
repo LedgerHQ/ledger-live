@@ -2,7 +2,6 @@ import React from "react";
 import type BigNumber from "bignumber.js";
 import {
   AmountInput,
-  Banner,
   Box,
   Divider,
   InteractiveIcon,
@@ -14,13 +13,14 @@ import { Information } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import { Trans, useTranslation } from "~/context/Locale";
+import { FullTextBanner } from "./FullTextBanner";
 import InfoModal from "~/modals/Info";
 
 function InfoIcon() {
   return <IconBox Icon={IconsLegacy.InfoMedium} color="primary.c80" boxSize={64} iconSize={24} />;
 }
 
-export function SwitchRow({ children }: Readonly<{ children: React.ReactNode }>) {
+function SwitchRow({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <Box lx={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
       {children}
@@ -123,14 +123,32 @@ export function TrustLimitControls({
         />
       </SwitchRow>
       {isRippling ? (
-        <Banner
+        <FullTextBanner
           appearance="warning"
-          title={t("xrp.rippling.warning")}
+          description={t("xrp.rippling.warning")}
           testID="xrp-rippling-warning"
         />
       ) : null}
       {children}
     </Box>
+  );
+}
+
+export function RipplingInfoModal(modal: Readonly<{ isOpened: boolean; onClose: () => void }>) {
+  const { t } = useTranslation();
+
+  return (
+    <InfoModal
+      isOpened={modal.isOpened}
+      onClose={modal.onClose}
+      data={[
+        {
+          Icon: InfoIcon,
+          title: t("xrp.rippling.label"),
+          description: t("xrp.rippling.warning"),
+        },
+      ]}
+    />
   );
 }
 

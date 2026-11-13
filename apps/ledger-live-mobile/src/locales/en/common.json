@@ -1930,6 +1930,7 @@
     "title": "Account settings",
     "menu": {
       "changeName": "Change name",
+      "manageAssets": "Manage assets",
       "viewAdvancedLogs": "View advanced logs",
       "viewExplorer": "View in explorer",
       "removeAccount": "Remove account from portfolio"
@@ -8366,27 +8367,33 @@
       }
     },
     "manageToken": {
-      "cta": "Manage token",
-      "title": "Manage token",
-      "tokenSettings": "Token settings",
-      "removeToken": "Remove token"
+      "title": "Manage assets",
+      "empty": "No token to manage on this account.",
+      "tokenType": "Token type",
+      "issuer": "Issuer",
+      "edit": "Edit",
+      "delete": "Delete"
     },
     "tokenSettings": {
-      "title": "Token settings",
+      "title": "Edit details",
       "limit": "Trust limit",
+      "balanceLimit": "Balance limit",
       "maxLimit": "Max trust limit",
       "maxLimitInfo": "The trust limit is the most {{token}} your account accepts to hold. The maximum permitted trust limit is <amount/>.",
+      "setToMaximum": "Set to maximum",
       "maximum": "Maximum",
+      "confirm": "Confirm",
       "currentLimitZero": "Your limit is 0: you can't receive this token.",
       "limitBelowBalance": "Your balance ({{balance}}) is above this limit. You won't be able to receive this token until your balance is below this limit.",
-      "review": "Review",
       "success": {
         "title": "Token settings updated",
-        "text": "Trust limit: {{limit}}."
+        "text": "Balance limit: {{limit}}."
       }
     },
     "rippling": {
       "label": "Rippling",
+      "activated": "Activated",
+      "deactivated": "Deactivated",
       "on": "On",
       "off": "Off",
       "warning": "Turning this on allows other users' payments to move your balance between tokens with the same currency code. Only turn it on if you know what you're doing."

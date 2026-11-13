@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
@@ -9,15 +9,16 @@ import type { Transaction } from "@ledgerhq/live-common/families/xrp/types";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
+import { useTranslation } from "~/context/Locale";
 import { getXrpResources, makeChangeTrustTransaction } from "../utils";
-import { useTrustLimitInput } from "../useTrustLimitInput";
-import type { XrpManageTokenFlowParamList } from "./types";
+import type { BalanceLimit, XrpManageTokenFlowParamList } from "./types";
 
 export type Props = BaseComposite<
   StackNavigatorProps<XrpManageTokenFlowParamList, ScreenName.XrpManageTokenSettings>
 >;
 
 export function useTokenSettingsViewModel({ navigation, route }: Props) {
+  const { t } = useTranslation();
   const { account: tokenAccount, parentAccount } = useAccountScreen(route);
   invariant(tokenAccount?.type === "TokenAccount" && parentAccount, "xrp: token account required");
 
@@ -45,27 +46,41 @@ export function useTokenSettingsViewModel({ navigation, route }: Props) {
   });
   const { updateTransaction, status, bridgePending, bridgeError } = bridgeTransaction;
 
-  const updateLimit = useCallback(
-    (newLimit: BigNumber) => {
-      updateTransaction(tx => bridge.updateTransaction(tx, { amount: newLimit }));
-    },
-    [bridge, updateTransaction],
+  const storedBalanceLimit = useMemo<BalanceLimit>(
+    () => ({ limit: storedLimit ?? new BigNumber(0), isMaximum: storedIsMaximum }),
+    [storedIsMaximum, storedLimit],
   );
+  // Balance limit hands its confirmed value back through the route params
+  const balanceLimit = route.params.balanceLimit ?? storedBalanceLimit;
 
-  const trustLimit = useTrustLimitInput({
-    unit,
-    maxLimit,
-    initial: {
-      isMaximum: storedIsMaximum,
-      limitText:
-        storedLimit && !storedIsMaximum ? storedLimit.shiftedBy(-unit.magnitude).toFixed() : "",
-      isRippling: storedIsRippling,
-    },
-    onLimitChange: updateLimit,
-  });
-  const { limit, isMaximum, isRippling, hasTypedLimit } = trustLimit;
+  const [isRippling, setIsRippling] = useState(storedIsRippling);
+  const [isRipplingSheetOpen, setIsRipplingSheetOpen] = useState(false);
+  const [isRipplingInfoOpen, setIsRipplingInfoOpen] = useState(false);
 
-  const onReview = useCallback(() => {
+  const { limit, isMaximum } = balanceLimit;
+  useEffect(() => {
+    updateTransaction(tx => bridge.updateTransaction(tx, { amount: limit }));
+  }, [bridge, limit, updateTransaction]);
+
+  const onEditLimit = useCallback(() => {
+    navigation.navigate(ScreenName.XrpManageTokenBalanceLimit, {
+      balanceLimit,
+      accountId: tokenAccount.id,
+      parentId: parentAccount.id,
+    });
+  }, [balanceLimit, navigation, parentAccount.id, tokenAccount.id]);
+
+  const onChangeRippling = useCallback((value: boolean) => {
+    setIsRippling(value);
+    setIsRipplingSheetOpen(false);
+  }, []);
+
+  const onOpenRipplingSheet = useCallback(() => setIsRipplingSheetOpen(true), []);
+  const onCloseRipplingSheet = useCallback(() => setIsRipplingSheetOpen(false), []);
+  const onOpenRipplingInfo = useCallback(() => setIsRipplingInfoOpen(true), []);
+  const onCloseRipplingInfo = useCallback(() => setIsRipplingInfoOpen(false), []);
+
+  const onContinue = useCallback(() => {
     navigation.navigate(ScreenName.XrpManageTokenReview, {
       accountId: tokenAccount.id,
       parentId: parentAccount.id,
@@ -77,30 +92,33 @@ export function useTokenSettingsViewModel({ navigation, route }: Props) {
   const isRipplingChanged = isRippling !== storedIsRippling;
   const hasChanged = isLimitChanged || isRipplingChanged;
 
-  const isLimitZero = limit.isZero();
   const hasStatusError = Object.keys(status.errors).length > 0;
-  const hasLimitZero = Object.values(status.errors).some(e => e.name === "XrpTrustLimitZero");
-
-  const isCustomLimit = !isMaximum && limit.gt(0);
-  const isLimitBelowBalance = isCustomLimit && limit.lt(tokenAccount.balance);
-
+  const hasBlockingError = limit.isZero() || hasStatusError;
   // A failing bridge call keeps bridgePending true, so it needs no term here
-  const hasBlockingError = isLimitZero || hasStatusError;
   const isNotReady = bridgePending || !hasChanged;
 
+  const isCustomLimit = !isMaximum && limit.gt(0);
+
   return {
-    ...trustLimit,
-    token,
-    maxLimit,
-    onReview,
+    isRippling,
+    isRipplingSheetOpen,
+    isRipplingInfoOpen,
+    onEditLimit,
+    onChangeRippling,
+    onOpenRipplingSheet,
+    onCloseRipplingSheet,
+    onOpenRipplingInfo,
+    onCloseRipplingInfo,
+    onContinue,
     bridgeError,
-    isLimitBelowBalance,
-    estimatedFees: status.estimatedFees,
-    accountUnit: parentAccount.currency.units[0],
-    isLimitErrorVisible: hasLimitZero && hasTypedLimit,
+    isLimitBelowBalance: isCustomLimit && limit.lt(tokenAccount.balance),
+    ripplingText: t(isRippling ? "xrp.rippling.activated" : "xrp.rippling.deactivated"),
     isCurrentLimitZero: !!storedLimit?.isZero(),
     balanceText: formatCurrencyUnit(unit, tokenAccount.balance, { showCode: true }),
-    isReviewDisabled: isNotReady || hasBlockingError,
-    isReviewLoading: bridgePending,
+    isContinueDisabled: isNotReady || hasBlockingError,
+    isContinueLoading: bridgePending,
+    limitText: isMaximum
+      ? t("xrp.tokenSettings.maximum")
+      : formatCurrencyUnit(unit, limit, { showCode: true }),
   };
 }

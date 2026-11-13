@@ -23,7 +23,7 @@ export default function Review(props: Props) {
         <ReviewRow label={t("xrp.addToken.steps.review.issuer")}>
           <ReviewValue>{viewModel.token.contractAddress}</ReviewValue>
         </ReviewRow>
-        <ReviewRow label={t("xrp.tokenSettings.limit")}>
+        <ReviewRow label={t("xrp.tokenSettings.balanceLimit")}>
           <ReviewValue>
             {viewModel.settings.isMaximum ? (
               t("xrp.tokenSettings.maximum")
@@ -38,7 +38,9 @@ export default function Review(props: Props) {
         </ReviewRow>
         <ReviewRow label={t("xrp.rippling.label")}>
           <ReviewValue>
-            {t(viewModel.settings.isRippling ? "xrp.rippling.on" : "xrp.rippling.off")}
+            {t(
+              viewModel.settings.isRippling ? "xrp.rippling.activated" : "xrp.rippling.deactivated",
+            )}
           </ReviewValue>
         </ReviewRow>
         <ReviewRow label={t("xrp.addToken.steps.review.networkFees")}>

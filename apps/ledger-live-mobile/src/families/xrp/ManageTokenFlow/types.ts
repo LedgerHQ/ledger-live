@@ -10,9 +10,16 @@ type TokenAccountParams = {
   parentId: string;
 };
 
+export type BalanceLimit = Pick<TokenSettings, "limit" | "isMaximum">;
+
 export type XrpManageTokenFlowParamList = {
-  [ScreenName.XrpManageTokenManage]: TokenAccountParams;
-  [ScreenName.XrpManageTokenSettings]: TokenAccountParams;
+  [ScreenName.XrpManageTokenManage]: { accountId: string };
+  [ScreenName.XrpManageTokenSettings]: TokenAccountParams & {
+    balanceLimit?: BalanceLimit;
+  };
+  [ScreenName.XrpManageTokenBalanceLimit]: TokenAccountParams & {
+    balanceLimit: BalanceLimit;
+  };
   [ScreenName.XrpManageTokenReview]: TokenAccountParams & {
     settings: TokenSettings;
   };

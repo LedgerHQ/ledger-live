@@ -2,6 +2,7 @@ import type { TokenCurrency } from "@domain/entity-currency-token";
 import type BigNumber from "bignumber.js";
 import type { Account, AccountBridge, AccountLike } from "@ledgerhq/types-live";
 import { getAssetFromToken } from "@ledgerhq/live-common/families/xrp/bridge/api";
+import { getXrpEnabledTokenStandards } from "@ledgerhq/live-common/families/xrp/config";
 import type {
   Transaction,
   XrpTokenAccount,
@@ -21,6 +22,14 @@ export function getXrpResources(account: AccountLike): XrpTokenResources | undef
 export function findHeldTokenAccount(account: Account, token: TokenCurrency) {
   return (account.subAccounts ?? []).find(subAccount => {
     return subAccount.token.id === token.id && !!getXrpResources(subAccount);
+  });
+}
+
+export function getManagedTokenAccounts(account: Account) {
+  const enabledStandards: readonly string[] = getXrpEnabledTokenStandards(account.currency.id);
+
+  return (account.subAccounts ?? []).filter(subAccount => {
+    return !!getXrpResources(subAccount) && enabledStandards.includes(subAccount.token.tokenType);
   });
 }
 

@@ -16,7 +16,7 @@ a platform entry (`./web`, `./native`), while Redux and navigation stay in the a
 | `.` | `RemoveAccountContent` | Error spot · "Remove account?" · "Yes, remove" / "Keep" |
 | `.` | `buildAdvancedLogs(input, locale)` | Pure: picks `{ xpub, index, freshAddressPath, id, blockHeight }` as pretty JSON and formats the sync date |
 | `./web` | `AccountSettings` | LWD settings `Dialog` for one account: menu, change name, advanced logs and remove steps, driven by an `AccountSettingsAdapter` |
-| `./native` | `AccountSettingsSheet` | LWM settings bottom sheet: menu and remove steps; change name and advanced logs are app screens opened through `onChangeName` / `onViewAdvancedLogs` |
+| `./native` | `AccountSettingsSheet` | LWM settings bottom sheet: menu and remove steps; change name and advanced logs are app screens opened through `onChangeName` / `onViewAdvancedLogs`; an optional `onManageAssets` adds a "Manage assets" row, with no event |
 
 `.` works on both platforms. Import `./web` only from web code and `./native` only from native code.
 
