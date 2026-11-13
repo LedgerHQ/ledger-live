@@ -3,8 +3,19 @@ import BigNumber from "bignumber.js";
 import type { NearAccount, NearAccountRaw, NearResources, NearResourcesRaw } from "./types";
 
 export function toNearResourcesRaw(r: NearResources): NearResourcesRaw {
-  const { stakedBalance, pendingBalance, availableBalance, storageUsageBalance, stakingPositions } =
-    r;
+  const {
+    stakedBalance,
+    pendingBalance,
+    availableBalance,
+    storageUsageBalance,
+    stakingPositions,
+    accountStateFingerprint,
+    historyRecheckSince,
+    historyRecheckFingerprint,
+    historyConfirmPending,
+    poolListingPending,
+    pendingCandidatePools,
+  } = r;
   return {
     stakedBalance: stakedBalance.toString(),
     pendingBalance: pendingBalance.toString(),
@@ -16,6 +27,14 @@ export function toNearResourcesRaw(r: NearResources): NearResourcesRaw {
       pending: pending.toString(),
       validatorId,
     })),
+    ...(accountStateFingerprint !== undefined && { accountStateFingerprint }),
+    ...(historyRecheckSince !== undefined && { historyRecheckSince }),
+    ...(historyRecheckFingerprint !== undefined && { historyRecheckFingerprint }),
+    ...(historyConfirmPending !== undefined && { historyConfirmPending }),
+    ...(poolListingPending !== undefined && { poolListingPending }),
+    ...(pendingCandidatePools !== undefined && {
+      pendingCandidatePools: [...pendingCandidatePools],
+    }),
   };
 }
 
@@ -26,6 +45,12 @@ export function fromNearResourcesRaw(r: NearResourcesRaw): NearResources {
     availableBalance,
     storageUsageBalance,
     stakingPositions = [],
+    accountStateFingerprint,
+    historyRecheckSince,
+    historyRecheckFingerprint,
+    historyConfirmPending,
+    poolListingPending,
+    pendingCandidatePools,
   } = r;
   return {
     stakedBalance: new BigNumber(stakedBalance),
@@ -38,6 +63,14 @@ export function fromNearResourcesRaw(r: NearResourcesRaw): NearResources {
       pending: new BigNumber(pending),
       validatorId,
     })),
+    ...(accountStateFingerprint !== undefined && { accountStateFingerprint }),
+    ...(historyRecheckSince !== undefined && { historyRecheckSince }),
+    ...(historyRecheckFingerprint !== undefined && { historyRecheckFingerprint }),
+    ...(historyConfirmPending !== undefined && { historyConfirmPending }),
+    ...(poolListingPending !== undefined && { poolListingPending }),
+    ...(pendingCandidatePools !== undefined && {
+      pendingCandidatePools: [...pendingCandidatePools],
+    }),
   };
 }
 

@@ -53,6 +53,27 @@ export type NearResources = {
   pendingBalance: BigNumber;
   storageUsageBalance: BigNumber;
   stakingPositions: NearStakingPosition[];
+  /** Account state on the node at the last accepted sync; decides whether the history is re-read. */
+  accountStateFingerprint?: string;
+  /**
+   * Time (ms) of the first history read that showed nothing new after a state change. The history is
+   * read again until something new comes back or the recheck window has passed.
+   */
+  historyRecheckSince?: number;
+  /**
+   * Account state seen by the last recheck. A different state restarts the recheck window: the
+   * transactions behind it are newer than the window.
+   */
+  historyRecheckFingerprint?: string;
+  /**
+   * A state change was accepted on new operations; the next sync reads the history once more, since
+   * the indexer may have indexed only part of the transactions behind the change.
+   */
+  historyConfirmPending?: boolean;
+  /** A needed staking pool listing failed; the next syncs list the pools until one succeeds. */
+  poolListingPending?: boolean;
+  /** Pools named by a staking call whose node read failed; read again on the next syncs. */
+  pendingCandidatePools?: string[];
 };
 
 export type NearResourcesRaw = {
@@ -66,6 +87,12 @@ export type NearResourcesRaw = {
     pending: string;
     validatorId: string;
   }[];
+  accountStateFingerprint?: string;
+  historyRecheckSince?: number;
+  historyRecheckFingerprint?: string;
+  historyConfirmPending?: boolean;
+  poolListingPending?: boolean;
+  pendingCandidatePools?: string[];
 };
 
 export type NearAccount = Account & { nearResources: NearResources };

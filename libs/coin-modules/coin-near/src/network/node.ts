@@ -11,6 +11,7 @@ import {
   decodeSignedTransaction,
   encodeTransaction,
 } from "near-api-js";
+import { AccountDoesNotExistError, ContractExecutionError } from "near-api-js/rpc-errors";
 import { type NearConfig } from "../config";
 import { MIN_ACCOUNT_BALANCE_BUFFER, VALIDATORS_CACHE_TTL_MS } from "../constants";
 import { canUnstake, canWithdraw, getYoctoThreshold } from "../logic";
@@ -48,13 +49,74 @@ export const fetchAccountDetails = async (
   return data.result;
 };
 
+const IMPLICIT_ACCOUNT = /^[0-9a-f]{64}$/;
+
+/**
+ * Changes whenever a transaction concerns the account: balance, lock, storage or contract, and the
+ * nonce of the account's own key, which a relayed transaction moves without the account paying.
+ * A named account has no derivable key, so its nonce segment stays empty; so does a key read that
+ * fails, because the fingerprint must never be the reason a sync fails.
+ */
+export const getAccountStateFingerprint = async (
+  config: NearConfig,
+  address: string,
+  accountDetails: NearAccountDetails | undefined,
+): Promise<string> => {
+  let nonce = "";
+
+  if (IMPLICIT_ACCOUNT.test(address)) {
+    try {
+      const key = await getAccessKey(config, {
+        address,
+        publicKey: `ed25519:${baseEncode(Buffer.from(address, "hex"))}`,
+      });
+      if (key?.nonce !== undefined) nonce = String(key.nonce);
+    } catch (error) {
+      log("Near", "account key nonce read failed, fingerprinting without it", error);
+    }
+  }
+
+  return [
+    accountDetails?.amount ?? "",
+    accountDetails?.locked ?? "",
+    accountDetails?.storage_usage ?? "",
+    accountDetails?.code_hash ?? "",
+    nonce,
+  ].join("|");
+};
+
+export type StakingPositionsOptions = {
+  /**
+   * Pools the caller already holds a position in. With them, a failed indexer listing falls back to
+   * reading these pools from the node. A pool whose node read fails still fails the call: dropping
+   * it would show a lower balance and forget the pool.
+   */
+  knownValidatorIds?: string[];
+  /** Ask the indexer for the account's pools (default). `false` reads the known pools only. */
+  listValidators?: boolean;
+  /**
+   * Pools the account may have just funded (named by staking calls the caller has not seen yet).
+   * Read from the node when the listing does not return them, including when it succeeds: the
+   * listing may lag behind the history. A candidate the node shows is not a pool (no account, no
+   * contract, the contract fails the view) is dropped; any other failed read is reported in
+   * `failedCandidates`, so the caller can try it again.
+   */
+  candidateValidatorIds?: string[];
+};
+
 export const getAccount = async (
   config: NearConfig,
   address: string,
-): Promise<Pick<NearAccount, "blockHeight" | "balance" | "spendableBalance" | "nearResources">> => {
+  options?: StakingPositionsOptions & { accountDetails?: NearAccountDetails },
+): Promise<
+  Pick<NearAccount, "blockHeight" | "balance" | "spendableBalance" | "nearResources"> & {
+    poolListingFailed: boolean;
+    failedCandidates: string[];
+  }
+> => {
   let accountDetails: NearAccountDetails;
 
-  accountDetails = await fetchAccountDetails(config, address);
+  accountDetails = options?.accountDetails ?? (await fetchAccountDetails(config, address));
 
   if (!accountDetails) {
     accountDetails = {
@@ -64,10 +126,14 @@ export const getAccount = async (
     };
   }
 
-  const { stakingPositions, totalStaked, totalAvailable, totalPending } = await getStakingPositions(
-    config,
-    address,
-  );
+  const {
+    stakingPositions,
+    totalStaked,
+    totalAvailable,
+    totalPending,
+    poolListingFailed,
+    failedCandidates,
+  } = await getStakingPositions(config, address, options);
 
   // Read directly from the protocol config rather than the preload cache: a CoinModuleApi caller
   // never runs the account bridge's preload step, so the cache would still hold its zeroed default.
@@ -94,6 +160,8 @@ export const getAccount = async (
       storageUsageBalance: storageUsage.plus(minBalanceBuffer),
       stakingPositions,
     },
+    poolListingFailed,
+    failedCandidates,
   };
 };
 
@@ -374,82 +442,144 @@ export const broadcastTransaction = async (
   }
 };
 
+const listStakingPools = async (config: NearConfig, address: string): Promise<string[]> => {
+  const data = await fetchNearblocks<{ deposit: string; validator_id: string }[]>(
+    config,
+    `/v3/kitwallet/staking-deposits/${address}`,
+  );
+  return data.map(({ validator_id: validatorId }) => validatorId);
+};
+
+type ResolvedPools = {
+  /** Pools that must be read: a failed read fails the call. */
+  required: string[];
+  /** Pools read when possible: a failed read skips the pool. */
+  candidates: string[];
+  listingFailed: boolean;
+};
+
+const resolveStakingPools = async (
+  config: NearConfig,
+  address: string,
+  options: StakingPositionsOptions | undefined,
+): Promise<ResolvedPools> => {
+  if (!options) {
+    return {
+      required: await listStakingPools(config, address),
+      candidates: [],
+      listingFailed: false,
+    };
+  }
+
+  const known = options.knownValidatorIds;
+  let listed: string[] | undefined;
+  let listingFailed = false;
+  if (options.listValidators !== false) {
+    try {
+      listed = await listStakingPools(config, address);
+    } catch (error) {
+      if (!known) throw error;
+      log("Near", "staking pool listing failed, reading the known pools from the node", error);
+      listingFailed = true;
+    }
+  }
+
+  const required = [...new Set([...(listed ?? []), ...(known ?? [])])];
+  const candidates = [...new Set(options.candidateValidatorIds ?? [])].filter(
+    id => !required.includes(id),
+  );
+  return { required, candidates, listingFailed };
+};
+
+/** The node answered that the account holds no contract, or a contract that fails the pool views. */
+const isNotAStakingPool = (error: unknown): boolean =>
+  error instanceof AccountDoesNotExistError || error instanceof ContractExecutionError;
+
+const readStakingPosition = async (
+  provider: JsonRpcProvider,
+  address: string,
+  validatorId: string,
+): Promise<NearStakingPosition> => {
+  const view = <T extends string | boolean>(method: string) =>
+    provider.callFunction<T>({
+      contractId: validatorId,
+      method,
+      args: { account_id: address },
+    });
+
+  const [rawStaked, rawUnstaked, isAvailable] = await Promise.all([
+    view<string>("get_account_staked_balance"),
+    view<string>("get_account_unstaked_balance"),
+    view<boolean>("is_account_unstaked_balance_available"),
+  ]);
+
+  const unstaked = new BigNumber(rawUnstaked ?? 0);
+  return {
+    staked: new BigNumber(rawStaked ?? 0),
+    available: isAvailable ? unstaked : new BigNumber(0),
+    pending: isAvailable ? new BigNumber(0) : unstaked,
+    validatorId,
+  };
+};
+
 export const getStakingPositions = async (
   config: NearConfig,
   address: string,
+  options?: StakingPositionsOptions,
 ): Promise<{
   stakingPositions: NearStakingPosition[];
   totalStaked: BigNumber;
   totalAvailable: BigNumber;
   totalPending: BigNumber;
+  /** The listing was asked for and failed; the positions come from the known and candidate pools. */
+  poolListingFailed: boolean;
+  /** Candidate pools whose node read failed for a reason other than not being a pool. */
+  failedCandidates: string[];
 }> => {
-  const currencyConfig = config;
-  const provider = new JsonRpcProvider({ url: currencyConfig.infra.API_NEAR_PRIVATE_NODE });
-
-  let totalStaked = new BigNumber(0);
-  let totalAvailable = new BigNumber(0);
-  let totalPending = new BigNumber(0);
+  const provider = new JsonRpcProvider({ url: config.infra.API_NEAR_PRIVATE_NODE });
   const stakingThreshold = getYoctoThreshold();
 
-  const delegatedValidators = await fetchNearblocks<{ deposit: string; validator_id: string }[]>(
+  const { required, candidates, listingFailed } = await resolveStakingPools(
     config,
-    `/v3/kitwallet/staking-deposits/${address}`,
+    address,
+    options,
   );
 
-  const stakingPositions = await Promise.all(
-    delegatedValidators.map(async ({ validator_id: validatorId }) => {
-      const view = <T extends string | boolean>(method: string) =>
-        provider.callFunction<T>({
-          contractId: validatorId,
-          method,
-          args: { account_id: address },
-        });
+  const failedCandidates: string[] = [];
+  const [requiredPositions, candidatePositions] = await Promise.all([
+    Promise.all(required.map(validatorId => readStakingPosition(provider, address, validatorId))),
+    Promise.all(
+      candidates.map(validatorId =>
+        readStakingPosition(provider, address, validatorId).catch(error => {
+          if (isNotAStakingPool(error)) {
+            log("Near", "candidate is not a staking pool, dropping it", { validatorId, error });
+          } else {
+            log("Near", "candidate staking pool read failed", { validatorId, error });
+            failedCandidates.push(validatorId);
+          }
+          return undefined;
+        }),
+      ),
+    ),
+  ]);
+  const positions = [
+    ...requiredPositions,
+    ...candidatePositions.filter((p): p is NearStakingPosition => p !== undefined),
+  ];
 
-      const [rawStaked, rawUnstaked, isAvailable] = await Promise.all([
-        view<string>("get_account_staked_balance"),
-        view<string>("get_account_unstaked_balance"),
-        view<boolean>("is_account_unstaked_balance_available"),
-      ]);
-
-      const unstaked = new BigNumber(rawUnstaked ?? 0);
-
-      let available = new BigNumber(0);
-      let pending = unstaked;
-      if (isAvailable) {
-        available = unstaked;
-        pending = new BigNumber(0);
-      }
-
-      const staked = new BigNumber(rawStaked ?? 0);
-      available = new BigNumber(available);
-      pending = new BigNumber(pending);
-
-      if (staked.gte(stakingThreshold)) {
-        totalStaked = totalStaked.plus(staked);
-      }
-      if (available.gte(stakingThreshold)) {
-        totalAvailable = totalAvailable.plus(available);
-      }
-      if (pending.gte(stakingThreshold)) {
-        totalPending = totalPending.plus(pending);
-      }
-
-      return {
-        staked,
-        available,
-        pending,
-        validatorId,
-      };
-    }),
-  );
+  const sumAbove = (pick: (p: NearStakingPosition) => BigNumber) =>
+    positions.reduce(
+      (total, p) => (pick(p).gte(stakingThreshold) ? total.plus(pick(p)) : total),
+      new BigNumber(0),
+    );
 
   return {
-    stakingPositions: stakingPositions.filter(
-      sp => canUnstake(sp) || canWithdraw(sp) || sp.pending.gt(0),
-    ),
-    totalStaked,
-    totalAvailable,
-    totalPending,
+    stakingPositions: positions.filter(sp => canUnstake(sp) || canWithdraw(sp) || sp.pending.gt(0)),
+    totalStaked: sumAbove(p => p.staked),
+    totalAvailable: sumAbove(p => p.available),
+    totalPending: sumAbove(p => p.pending),
+    poolListingFailed: listingFailed,
+    failedCandidates,
   };
 };
 

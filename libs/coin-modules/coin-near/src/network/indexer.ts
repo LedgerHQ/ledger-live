@@ -2,6 +2,7 @@ import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { type NearConfig } from "../config";
+import { LEGACY_HISTORY_PAGE_SIZE, STAKING_POOL_METHODS } from "../constants";
 import { fetchNearblocks } from "./nearblocks";
 import { NearTransaction, NearV3Response } from "./sdk.types";
 
@@ -101,14 +102,50 @@ async function transactionToOperation(
   };
 }
 
+const isStakingPoolMethod = (method: string | null): boolean =>
+  (STAKING_POOL_METHODS as readonly (string | null)[]).includes(method);
+
+export type LegacyHistory = {
+  operations: Operation[];
+  /** Pool called by each transaction the account signed that has a staking-pool action. */
+  stakingPoolsCalled: Map<string, string>;
+  /** The page came back full, so older transactions may exist that this read did not see. */
+  isFullPage: boolean;
+};
+
+/**
+ * The history the legacy sync reads, plus what the sync needs to decide whether the staking pools
+ * must be listed again. The operation type shown to users still follows the first action only,
+ * whereas a staking call can sit in any action of a transaction.
+ */
+export const fetchLegacyHistory = async (
+  config: NearConfig,
+  accountId: string,
+  address: string,
+): Promise<LegacyHistory> => {
+  const rawTransactions = await fetchTransactions(config, address);
+
+  const stakingPoolsCalled = new Map<string, string>();
+  for (const transaction of rawTransactions) {
+    if (
+      isSender(transaction, address) &&
+      transaction.actions?.some(action => isStakingPoolMethod(action.method))
+    ) {
+      stakingPoolsCalled.set(transaction.transaction_hash, transaction.receiver_account_id);
+    }
+  }
+
+  return {
+    operations: await Promise.all(
+      rawTransactions.map(transaction => transactionToOperation(accountId, address, transaction)),
+    ),
+    stakingPoolsCalled,
+    isFullPage: rawTransactions.length >= LEGACY_HISTORY_PAGE_SIZE,
+  };
+};
+
 export const getOperations = async (
   config: NearConfig,
   accountId: string,
   address: string,
-): Promise<Operation[]> => {
-  const rawTransactions = await fetchTransactions(config, address);
-
-  return await Promise.all(
-    rawTransactions.map(transaction => transactionToOperation(accountId, address, transaction)),
-  );
-};
+): Promise<Operation[]> => (await fetchLegacyHistory(config, accountId, address)).operations;
