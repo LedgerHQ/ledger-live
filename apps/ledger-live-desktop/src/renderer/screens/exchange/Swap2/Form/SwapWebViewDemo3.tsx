@@ -354,7 +354,7 @@ const SwapWebView = ({
             hash: string;
             blockHeight: number | undefined;
             blockHash: string | undefined;
-            nonce: number;
+            nonce?: number;
             gasUsed: string;
             gasPrice: string;
             value: string;

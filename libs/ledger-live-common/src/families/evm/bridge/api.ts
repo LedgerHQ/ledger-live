@@ -134,10 +134,12 @@ async function getOperationStatus(
     const { timestamp } = await nodeApi.getBlockByHeight(blockHeight);
     const date = new Date(timestamp);
     const fee = new BigNumber(gasPrice).multipliedBy(gasUsed);
+    const transactionSequenceNumber =
+      nonce === undefined ? op.transactionSequenceNumber : new BigNumber(nonce);
 
     return {
       ...op,
-      transactionSequenceNumber: new BigNumber(nonce),
+      transactionSequenceNumber,
       blockHash,
       blockHeight,
       date,
@@ -145,7 +147,7 @@ async function getOperationStatus(
       value: new BigNumber(value.toString()).plus(fee),
       subOperations: op.subOperations?.map(subOp => ({
         ...subOp,
-        transactionSequenceNumber: new BigNumber(nonce),
+        transactionSequenceNumber,
         blockHash,
         blockHeight,
         date,
@@ -221,6 +223,15 @@ export async function validateTransaction(
   return { error: undefined };
 }
 
+function collectsFeeInContract(currency: CryptoCurrency): boolean {
+  try {
+    const collectors = getCurrencyConfiguration<EvmConfigInfo>(currency.id).feeCollectorContracts;
+    return (collectors?.length ?? 0) > 0;
+  } catch {
+    return false;
+  }
+}
+
 export default function evmBridge(currency: CryptoCurrency): BridgeApi {
   return {
     getTokenFromAsset: async (asset: AssetInfo) => getTokenFromAsset(currency, asset),
@@ -238,6 +249,10 @@ export default function evmBridge(currency: CryptoCurrency): BridgeApi {
     // for explorer-less chains (e.g. core) — explorer-backed chains rely on the explorer's results.
     // Extra-safe: wrap throwing method in try / catch block
     // TODO: rely on `getTransactions` once https://ledgerhq.atlassian.net/browse/BACK-11373 is done
+    // Bumped whenever the stored operations of a network that collects its fee in a contract (zkSync)
+    // go stale, so they are rebuilt from scratch:
+    // 1: a native send leaves out the fee another account, such as a paymaster, paid.
+    ...(collectsFeeInContract(currency) ? { syncVersion: "1" } : {}),
     ...(() => {
       try {
         return getCurrencyConfiguration<EvmConfigInfo>(currency.id).explorer?.type === "none"

@@ -1697,6 +1697,44 @@ describe("coin-framework utils", () => {
       },
     );
 
+    describe("fee payer", () => {
+      const accountAddress = "0xABC";
+      const lenient = { accountAddress, unsetMeansPaidByOthers: false };
+      const strict = { accountAddress, unsetMeansPaidByOthers: true };
+      const paidBy = (feesPayer: string | undefined, failed = false): CoreOperation => ({
+        ...baseOp,
+        tx: { ...baseOp.tx, failed, ...(feesPayer === undefined ? {} : { feesPayer }) },
+      });
+      const valueOf = (op: CoreOperation, rule?: typeof strict) =>
+        adaptCoreOperationToLiveOperation(accountId, op, undefined, rule).value.toFixed();
+
+      it.each([
+        ["the account", "0xAbC", lenient],
+        ["the account in another case", "0xabc", strict],
+        ["nobody known, payer not always named", undefined, lenient],
+      ])("should include fees in a native OUT value when paid by %s", (_payer, feesPayer, rule) => {
+        expect(valueOf(paidBy(feesPayer), rule)).toBe("110");
+      });
+
+      it.each([
+        ["another account", "0xPaymaster", lenient],
+        ["nobody named, payer always named", undefined, strict],
+      ])(
+        "should exclude fees from a native OUT value when paid by %s",
+        (_payer, feesPayer, rule) => {
+          expect(valueOf(paidBy(feesPayer), rule)).toBe("100");
+        },
+      );
+
+      it("should give a zero value to a failed operation another account paid for", () => {
+        expect(valueOf(paidBy(undefined, true), strict)).toBe("0");
+      });
+
+      it("should include fees when no rule is given", () => {
+        expect(valueOf(paidBy("0xPaymaster"))).toBe("110");
+      });
+    });
+
     it("handles non-FEES/OUT operation where value = value only", () => {
       const op = {
         ...baseOp,

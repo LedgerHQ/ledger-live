@@ -1,3 +1,6 @@
+import BigNumber from "bignumber.js";
+import { http, HttpResponse } from "msw";
+import { setupServer } from "msw/node";
 import { getCryptoCurrencyById, CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
@@ -7,6 +10,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
+import type { Operation } from "@ledgerhq/types-live";
 import { CHAIN_ID } from "@ledgerhq/coin-evm/config";
 import { isSeiAccountUnassociated } from "@ledgerhq/coin-evm/staking";
 import evmBridge, {
@@ -298,9 +302,185 @@ describe("evm bridge", () => {
       expect(evmBridge(ethereum).refreshOperations).toEqual(expect.any(Function));
     });
 
+    it("declares a syncVersion only for networks that collect their fee in a contract", () => {
+      LiveConfig.setConfig({
+        config_currency_ethereum: {
+          type: "object",
+          default: { feeCollectorContracts: ["0x0000000000000000000000000000000000008001"] },
+        },
+      } as never);
+      expect(evmBridge(ethereum).syncVersion).toBe("1");
+
+      LiveConfig.setConfig({
+        config_currency_ethereum: { type: "object", default: { feeCollectorContracts: [] } },
+      } as never);
+      expect(evmBridge(ethereum)).not.toHaveProperty("syncVersion");
+    });
+
     it("exposes getAccountReadiness only for sei_evm", () => {
       expect(evmBridge(ethereum)).not.toHaveProperty("getAccountReadiness");
       expect(evmBridge(seiEvm).getAccountReadiness).toEqual(expect.any(Function));
+    });
+  });
+
+  describe("refreshOperations", () => {
+    const rpcUri = "https://evm-rpc.test";
+    const txHash = "0x" + "ab".repeat(32);
+    const blockHash = "0x" + "cd".repeat(32);
+    const sender = "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3";
+    const recipient = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
+    const blockHeight = 100;
+    const server = setupServer();
+
+    const rpcTransaction = (nonce: number | undefined) => ({
+      hash: txHash,
+      blockHash,
+      blockNumber: "0x64",
+      transactionIndex: "0x0",
+      type: "0x0",
+      from: sender,
+      to: recipient,
+      gas: "0x5208",
+      gasPrice: "0x1",
+      input: "0x",
+      value: "0x0",
+      chainId: "0x1",
+      v: "0x25",
+      r: "0x" + "11".repeat(32),
+      s: "0x" + "22".repeat(32),
+      ...(nonce === undefined ? {} : { nonce: "0x" + nonce.toString(16) }),
+    });
+
+    const rpcReceipt = {
+      transactionHash: txHash,
+      blockHash,
+      blockNumber: "0x64",
+      transactionIndex: "0x0",
+      from: sender,
+      to: recipient,
+      gasUsed: "0x5208",
+      cumulativeGasUsed: "0x5208",
+      effectiveGasPrice: "0x1",
+      status: "0x1",
+      type: "0x0",
+      logs: [],
+      logsBloom: "0x" + "00".repeat(256),
+      contractAddress: null,
+    };
+
+    const rpcBlock = {
+      hash: blockHash,
+      parentHash: "0x" + "ef".repeat(32),
+      number: "0x64",
+      timestamp: "0x6553f100",
+      nonce: "0x0000000000000000",
+      difficulty: "0x0",
+      gasLimit: "0x1c9c380",
+      gasUsed: "0x5208",
+      miner: recipient,
+      extraData: "0x",
+      baseFeePerGas: "0x1",
+      transactions: [txHash],
+    };
+
+    const serveNodeWithNonce = (nonce: number | undefined) => {
+      const results: Record<string, unknown> = {
+        eth_chainId: "0x1",
+        eth_getTransactionByHash: rpcTransaction(nonce),
+        eth_getTransactionReceipt: rpcReceipt,
+        eth_getBlockByNumber: rpcBlock,
+      };
+      const answer = ({ id, method }: { id: number; method: string }) =>
+        method in results
+          ? { jsonrpc: "2.0", id, result: results[method] }
+          : { jsonrpc: "2.0", id, error: { code: -32601, message: `Unexpected ${method}` } };
+
+      server.use(
+        http.post(rpcUri, async ({ request }) => {
+          const body = await request.json();
+          return HttpResponse.json(Array.isArray(body) ? body.map(answer) : answer(body as never));
+        }),
+      );
+    };
+
+    const operationWithSequence = (transactionSequenceNumber?: BigNumber): Operation => {
+      const base = {
+        hash: txHash,
+        type: "OUT" as const,
+        value: new BigNumber(0),
+        fee: new BigNumber(0),
+        senders: [sender],
+        recipients: [recipient],
+        blockHash: null,
+        blockHeight: null,
+        accountId: "js:2:ethereum:0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3:",
+        date: new Date(0),
+        extra: {},
+        transactionSequenceNumber,
+      };
+      return {
+        ...base,
+        id: "parent-op",
+        subOperations: [{ ...base, id: "sub-op", type: "FEES" as const }],
+      };
+    };
+
+    const refreshSequences = async (existing?: BigNumber) => {
+      const [refreshed, ...rest] = await evmBridge(ethereum).refreshOperations!([
+        operationWithSequence(existing),
+      ]);
+      expect(rest).toHaveLength(0);
+      expect(refreshed).toMatchObject({ blockHeight, blockHash });
+      return {
+        parent: refreshed.transactionSequenceNumber?.toFixed(),
+        subOperations: refreshed.subOperations?.map(op => op.transactionSequenceNumber?.toFixed()),
+      };
+    };
+
+    beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+
+    beforeEach(() => {
+      LiveConfig.setConfig({
+        config_currency_ethereum: {
+          type: "object",
+          default: {
+            chainId: CHAIN_ID.ETHEREUM,
+            node: { type: "external", uri: rpcUri },
+            explorer: { type: "none" },
+          },
+        },
+      } as never);
+    });
+
+    afterEach(() => server.resetHandlers());
+
+    afterAll(() => server.close());
+
+    it("should keep the existing sequence when the node returns no nonce", async () => {
+      serveNodeWithNonce(undefined);
+
+      await expect(refreshSequences(new BigNumber(7))).resolves.toEqual({
+        parent: "7",
+        subOperations: ["7"],
+      });
+    });
+
+    it("should leave the sequence unset when the node returns no nonce and none is known", async () => {
+      serveNodeWithNonce(undefined);
+
+      await expect(refreshSequences()).resolves.toEqual({
+        parent: undefined,
+        subOperations: [undefined],
+      });
+    });
+
+    it.each([42, 0])("should use the node nonce %i over the existing sequence", async nonce => {
+      serveNodeWithNonce(nonce);
+
+      await expect(refreshSequences(new BigNumber(7))).resolves.toEqual({
+        parent: String(nonce),
+        subOperations: [String(nonce)],
+      });
     });
   });
 
