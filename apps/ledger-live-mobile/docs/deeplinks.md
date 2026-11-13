@@ -28,9 +28,11 @@ When working on deeplinks, please update the **Wiki** accordingly.
 
 - **_account?currency_** 🠒 Account Page
 
-  `ledgerlive://account` will redirect to accounts page
+  `ledgerlive://account` opens the accounts list
 
-  `ledgerlive://account?currency=ethereum&address={{eth_account_address}}` will open a given account if found, will fallback to the currency page found, and if not to the list of accounts
+  If onboarding is not finished, the link is ignored.
+
+  `ledgerlive://account?currency=ethereum&address={{eth_account_address}}` opens that account when the address matches. A known currency with no matching account opens the currency page. An unknown currency opens the accounts list.
 
   `?currency` param can be name or ticker of the currency targeted
   `?address` param requires currency to work, address of the account to select

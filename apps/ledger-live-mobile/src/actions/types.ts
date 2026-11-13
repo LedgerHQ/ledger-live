@@ -234,7 +234,6 @@ export enum SettingsActionTypes {
   SETTINGS_SET_ANALYTICS = "SETTINGS_SET_ANALYTICS",
   SETTINGS_SET_PERSONALIZED_RECOMMENDATIONS = "SETTINGS_SET_PERSONALIZED_RECOMMENDATIONS",
   SETTINGS_SET_COUNTERVALUE = "SETTINGS_SET_COUNTERVALUE",
-  SETTINGS_SET_ORDER_ACCOUNTS = "SETTINGS_SET_ORDER_ACCOUNTS",
   SETTINGS_SET_PAIRS = "SETTINGS_SET_PAIRS",
   SETTINGS_SET_SELECTED_TIME_RANGE = "SETTINGS_SET_SELECTED_TIME_RANGE",
   SETTINGS_COMPLETE_ONBOARDING = "SETTINGS_COMPLETE_ONBOARDING",
@@ -309,7 +308,6 @@ export type SettingsSetAnalyticsPayload = SettingsState["analyticsEnabled"];
 export type SettingsSetPersonalizedRecommendationsPayload =
   SettingsState["personalizedRecommendationsEnabled"];
 export type SettingsSetCountervaluePayload = SettingsState["counterValue"];
-export type SettingsSetOrderAccountsPayload = SettingsState["orderAccounts"];
 export type SettingsSetPairsPayload = { pairs: Array<Pair> };
 export type SettingsSetSelectedTimeRangePayload = SettingsState["selectedTimeRange"];
 export type SettingsSetHasInstalledAnyAppPayload = SettingsState["hasInstalledAnyApp"];
@@ -399,7 +397,6 @@ export type SettingsPayload =
   | SettingsSetAnalyticsPayload
   | SettingsSetPersonalizedRecommendationsPayload
   | SettingsSetCountervaluePayload
-  | SettingsSetOrderAccountsPayload
   | SettingsSetPairsPayload
   | SettingsSetSelectedTimeRangePayload
   | SettingsSetHasInstalledAnyAppPayload

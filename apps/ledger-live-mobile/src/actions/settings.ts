@@ -22,7 +22,6 @@ import {
   SettingsSetLanguagePayload,
   SettingsSetLastConnectedDevicePayload,
   SettingsSetNotificationsPayload,
-  SettingsSetOrderAccountsPayload,
   SettingsSetOsThemePayload,
   SettingsSetPrivacyBiometricsPayload,
   SettingsSetPrivacyPayload,
@@ -97,9 +96,6 @@ export const setPersonalizedRecommendations =
   );
 export const setReadOnlyMode = createAction<SettingsSetReadOnlyModePayload>(
   SettingsActionTypes.SETTINGS_SET_READONLY_MODE,
-);
-export const setOrderAccounts = createAction<SettingsSetOrderAccountsPayload>(
-  SettingsActionTypes.SETTINGS_SET_ORDER_ACCOUNTS,
 );
 export const setSelectedTimeRange = createAction<SettingsSetSelectedTimeRangePayload>(
   SettingsActionTypes.SETTINGS_SET_SELECTED_TIME_RANGE,

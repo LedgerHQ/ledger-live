@@ -85,26 +85,6 @@ export function useRefreshAccountsOrderingAfterInteractions() {
     };
   }, [refreshAccountsOrdering]);
 }
-export function useRefreshAccountsOrderingEffect({
-  onMount = false,
-  onUnmount = false,
-}: {
-  onMount?: boolean;
-  onUnmount?: boolean;
-}) {
-  const refreshAccountsOrdering = useRefreshAccountsOrdering();
-  useEffect(() => {
-    if (onMount) {
-      refreshAccountsOrdering();
-    }
-
-    return () => {
-      if (onUnmount) {
-        refreshAccountsOrdering();
-      }
-    };
-  }, [onMount, onUnmount, refreshAccountsOrdering]);
-}
 export function useCleanCache() {
   const dispatch = useDispatch();
   const accounts = useSelector(accountsSelector);
