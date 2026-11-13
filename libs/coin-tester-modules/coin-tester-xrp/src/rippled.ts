@@ -1,22 +1,15 @@
-import path from "path";
-import chalk from "chalk";
-import * as compose from "docker-compose";
-import { encode } from "ripple-binary-codec";
-import { deriveAddress, deriveKeypair, sign } from "ripple-keypairs";
-import { XRP_LOCAL_RPC, GENESIS_SEED } from "./fixtures";
+// The RPC of the coin-sandbox instance, known once it is up
+let rpcUrl: string | undefined;
 
-const PACKAGE_ROOT = path.resolve(__dirname, "..");
-
-const composeOpts = () => ({
-  cwd: PACKAGE_ROOT,
-  log: Boolean(process.env.DEBUG),
-  env: process.env,
-});
+export function setXrpRpc(url: string): void {
+  rpcUrl = url;
+}
 
 type RpcResponse<T> = { result: T & { status?: string; error?: string; error_message?: string } };
 
 async function rpcCall<T>(method: string, params: Record<string, unknown> = {}): Promise<T> {
-  const res = await fetch(XRP_LOCAL_RPC, {
+  if (rpcUrl === undefined) throw new Error("the XRP RPC is not set: is the sandbox up?");
+  const res = await fetch(rpcUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ method, params: [params] }),
@@ -29,77 +22,9 @@ async function rpcCall<T>(method: string, params: Record<string, unknown> = {}):
   return body.result;
 }
 
-export async function spawnRippled(): Promise<void> {
-  console.log("Starting rippled (standalone)…");
-  // The container's healthcheck (see docker-compose.yml) only reports
-  // healthy once `server_state` is one of the ready states, so by the
-  // time `--wait` returns rippled is fully primed.
-  await compose.upOne("rippled", { ...composeOpts(), commandOptions: ["--wait"] });
-  console.log(chalk.bgBlueBright(" -  RIPPLED READY ✅  - "));
-}
-
-export async function killRippled(): Promise<void> {
-  console.log("Stopping rippled…");
-  await compose.down({ ...composeOpts(), commandOptions: ["--remove-orphans", "--volumes"] });
-}
-
 export async function closeLedger(): Promise<number> {
   const res = await rpcCall<{ ledger_current_index: number }>("ledger_accept");
   return res.ledger_current_index;
-}
-
-export async function getCurrentLedgerIndex(): Promise<number> {
-  const res = await rpcCall<{ ledger_current_index: number }>("ledger_current");
-  return res.ledger_current_index;
-}
-
-async function getNextSequence(address: string): Promise<number> {
-  const res = await rpcCall<{ account_data: { Sequence: number } }>("account_info", {
-    account: address,
-    ledger_index: "current",
-  });
-  return res.account_data.Sequence;
-}
-
-/**
- * Funds `address` with `xrpAmount` XRP by sending a Payment from the genesis
- * "masterpassphrase" account, then closes the ledger so the recipient is
- * spendable in subsequent ledger queries.
- */
-export async function fundAccount(address: string, xrpAmount: number): Promise<string> {
-  const { publicKey, privateKey } = deriveKeypair(GENESIS_SEED);
-  const senderAddress = deriveAddress(publicKey);
-  const sequence = await getNextSequence(senderAddress);
-  const currentLedger = await getCurrentLedgerIndex();
-
-  const tx = {
-    TransactionType: "Payment" as const,
-    Account: senderAddress,
-    Destination: address,
-    Amount: String(Math.trunc(xrpAmount * 1_000_000)),
-    Fee: "10",
-    Flags: 2147483648,
-    Sequence: sequence,
-    LastLedgerSequence: currentLedger + 20,
-    SigningPubKey: publicKey,
-  };
-
-  const encoded = encode(tx);
-  const signature = sign("53545800" + encoded, privateKey);
-  const signedBlob = encode({ ...tx, TxnSignature: signature });
-
-  const submit = await rpcCall<{
-    engine_result: string;
-    engine_result_message: string;
-    tx_json: { hash: string };
-  }>("submit", { tx_blob: signedBlob });
-
-  if (submit.engine_result !== "tesSUCCESS" && submit.engine_result !== "terQUEUED") {
-    throw new Error(`Funding payment rejected: ${submit.engine_result_message}`);
-  }
-
-  await waitForOperationInclusion(submit.tx_json.hash);
-  return submit.tx_json.hash;
 }
 
 /**
