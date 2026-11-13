@@ -157,6 +157,7 @@ features/platform/assets-table/                          @ledgerhq/wallet-xp
 features/flow/agent-intent-entry-points/                 @ledgerhq/wallet-xp
 
 # Wallet — Intents
+features/platform/intent-scan-accounts/                  @ledgerhq/wallet-xp
 features/platform/intent-verify-address/                 @ledgerhq/wallet-xp
 features/platform/intent-wallet-sync/                    @ledgerhq/wallet-xp
 
