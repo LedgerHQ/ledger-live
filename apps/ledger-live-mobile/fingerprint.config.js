@@ -11,16 +11,35 @@ const path = require("node:path");
 const PNPM_STORE_DIR = /\.pnpm\/([^/"`'\s]+)\/node_modules(\/(?:@[^/"`'\s]+\/)?[^/"`'\s]+)?/g;
 const NAME_VERSION_PATCH = /^(?:@[^+]+\+)?[^@]+@[^_]+(?:_patch_hash=[0-9a-f]+)?/;
 // pnpm cuts a long dir name to a prefix and a hash of the full name, peers included. The version comes from the
-// package instead, and the patch from PATCHES_DIR.
+// package instead, and the patch from appliedPatches.
 const TRUNCATED_STORE_DIR = /_[0-9a-f]{32}$/;
 const PNPM_STORE = path.resolve(__dirname, "../../node_modules/.pnpm");
-const storeDirKey = (dir, packageName) => {
-  if (!TRUNCATED_STORE_DIR.test(dir)) return NAME_VERSION_PATCH.exec(dir)?.[0] ?? dir;
+let storeDirs;
+const installedNameVersion = (dir, packageName) => {
   const manifest = path.join(PNPM_STORE, dir, "node_modules", packageName, "package.json");
-  // Unresolvable: keep the dir name, which can only cause an extra rebuild.
-  if (!packageName || !fs.existsSync(manifest)) return dir;
+  if (!fs.existsSync(manifest)) return null;
   const { name, version } = JSON.parse(fs.readFileSync(manifest, "utf8"));
   return `${name.replace("/", "+")}@${version}`;
+};
+const storeDirKey = (dir, packageName) => {
+  if (!TRUNCATED_STORE_DIR.test(dir)) return NAME_VERSION_PATCH.exec(dir)?.[0] ?? dir;
+  // Unresolvable: keep the dir name, which can only cause an extra rebuild.
+  if (!packageName) return dir;
+  const installed = installedNameVersion(dir, packageName);
+  if (installed) return installed;
+  // A committed Podfile.lock can name a peer variant that is no longer installed. Use the installed variants with
+  // the same prefix when they agree on one version.
+  const prefix = dir.replace(TRUNCATED_STORE_DIR, "");
+  storeDirs ??= fs.existsSync(PNPM_STORE) ? fs.readdirSync(PNPM_STORE) : [];
+  const variants = new Set(
+    storeDirs
+      .filter(
+        other =>
+          TRUNCATED_STORE_DIR.test(other) && other.replace(TRUNCATED_STORE_DIR, "") === prefix,
+      )
+      .map(other => installedNameVersion(other, packageName)),
+  );
+  return variants.size === 1 && !variants.has(null) ? [...variants][0] : dir;
 };
 const dropPeerSuffix = text =>
   text.replace(
@@ -35,6 +54,19 @@ const e2eBuildFile = filePath => ({ type: "file", filePath, reasons: ["e2eNative
 
 // pnpm truncates long store dir names, patch hash included, so hash the patches themselves.
 const PATCHES_DIR = "../../patches";
+
+// Which patches pnpm applies (package and patch hash): removing a mapping can leave patches/ unchanged.
+const lockfileLines = fs
+  .readFileSync(path.resolve(__dirname, "../../pnpm-lock.yaml"), "utf8")
+  .split("\n");
+const patchedStart = lockfileLines.indexOf("patchedDependencies:");
+const patchedEnd = lockfileLines.findIndex(
+  (line, i) => i > patchedStart && line !== "" && !line.startsWith(" "),
+);
+const appliedPatches =
+  patchedStart === -1
+    ? ""
+    : lockfileLines.slice(patchedStart, patchedEnd === -1 ? undefined : patchedEnd).join("\n");
 
 // The Android test APK is built against node_modules/detox, which is not autolinked.
 const detoxVersion = require(require.resolve("detox/package.json", { paths: [__dirname] })).version;
@@ -71,6 +103,12 @@ module.exports = {
     e2eBuildFile("../../e2e/mobile/detox.config.js"),
     { type: "dir", filePath: PATCHES_DIR, reasons: ["e2eNativeBuild"] },
     { type: "contents", id: "detoxVersion", contents: detoxVersion, reasons: ["e2eNativeBuild"] },
+    {
+      type: "contents",
+      id: "appliedPatches",
+      contents: appliedPatches,
+      reasons: ["e2eNativeBuild"],
+    },
     {
       type: "contents",
       id: "e2eBuildScripts",
