@@ -1,5 +1,5 @@
 import { TrackScreen } from "@shared/analytics-react";
-import React, { useMemo, useEffect, useCallback } from "react";
+import React, { useMemo, useEffect, useCallback, useRef } from "react";
 import { Image, View, Animated } from "react-native";
 import { useChangeValidatorRotateAnim } from "~/families/shared/useChangeValidatorRotateAnim";
 import { useTheme } from "@react-navigation/native";
@@ -77,6 +77,15 @@ const SetDelegation = (props: SetDelegationPropsType) => {
       };
     },
   );
+
+  // TEMP egld-debug
+  const renderCount = useRef(0);
+  renderCount.current += 1;
+  log("egld-debug", "Summary render", {
+    key: route.key,
+    n: renderCount.current,
+    hookTx: { amount: String(transaction?.amount), recipient: transaction?.recipient },
+  });
 
   /*
    * Use the transaction recipient to find the chosen validator and access more data about it..
@@ -163,7 +172,7 @@ const SetDelegation = (props: SetDelegationPropsType) => {
     if (returnedTransaction) {
       updateTransaction(() => returnedTransaction as MultiversXTransaction);
     }
-  }, [route.params.transaction, updateTransaction]);
+  }, [route.params.transaction, route.key, updateTransaction]);
 
   /*
    * Parse the transaction amount as a denominated value.
