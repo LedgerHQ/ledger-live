@@ -91,6 +91,7 @@ type CapturedExecutor = {
   sourceFlow: string;
   intent: { input: { expectedAddress: string } };
   onIntentJobStateChanged: (jobState: VerifyAddressIntentJobState) => void;
+  onIntentJobComplete: () => void;
 };
 
 let capturedExecutor: CapturedExecutor | undefined;
@@ -421,6 +422,7 @@ describe("PayTab integration", () => {
         type: "verified",
         address: ETH_ACCOUNT_WITH_USDC.freshAddress,
       });
+      capturedExecutor!.onIntentJobComplete();
     });
 
     expect(await screen.findByTestId("pay-request-receive")).toBeVisible();
