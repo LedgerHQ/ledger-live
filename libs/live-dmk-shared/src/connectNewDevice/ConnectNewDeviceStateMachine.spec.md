@@ -86,4 +86,8 @@ stateDiagram-v2
   `onClose`. If a connection succeeds after `stop()`, or if `stop()` runs during
   the success delay, the machine disconnects that session, because no caller
   received it.
+- When an action fails, the machine stops discovery, disconnects a session that
+  waits for the success delay, and sends the error to `observer.error`. The use
+  case then emits the unknown error. A failure of this cleanup is logged, and
+  the error is still sent.
 - Both delays can be injected with `deviceNotFoundDelay` and `successDelay`.

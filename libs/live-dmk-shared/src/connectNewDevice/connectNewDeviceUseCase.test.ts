@@ -214,4 +214,67 @@ describe("connectNewDeviceUseCase", () => {
 
     subscription.unsubscribe();
   });
+
+  it("should stop discovery and emit UnknownError when getDiscoveredDeviceKey throws", () => {
+    // Arrange
+    const { deviceDiscoveryService, discoverDevices, input, lastState, states } = setupTest();
+    const error = new Error("getDiscoveredDeviceKey failed");
+    input.getDiscoveredDeviceKey = () => {
+      throw error;
+    };
+    const subscription = connectNewDeviceUseCase(input).subscribe(state => states.push(state));
+
+    // Act
+    discoverDevices([nanoX]);
+    // XState throws an unhandled error from a timer.
+    jest.runOnlyPendingTimers();
+
+    // Assert
+    expect(lastState(ConnectNewDeviceUIStateTypes.UnknownError).error).toBe(error);
+    expect(deviceDiscoveryService.stop).toHaveBeenCalledTimes(1);
+
+    subscription.unsubscribe();
+  });
+
+  it("should emit UnknownError when discovery fails to start", () => {
+    // Arrange
+    const { deviceDiscoveryService, input, lastState, states } = setupTest();
+    const error = new Error("start failed");
+    deviceDiscoveryService.start = () => {
+      throw error;
+    };
+
+    // Act
+    const subscription = connectNewDeviceUseCase(input).subscribe(state => states.push(state));
+    // XState throws an unhandled error from a timer.
+    jest.runOnlyPendingTimers();
+
+    // Assert
+    expect(lastState(ConnectNewDeviceUIStateTypes.UnknownError).error).toBe(error);
+
+    subscription.unsubscribe();
+  });
+
+  it("should emit UnknownError when discovery fails to stop after getDiscoveredDeviceKey throws", () => {
+    // Arrange
+    const { deviceDiscoveryService, discoverDevices, input, lastState, states } = setupTest();
+    const error = new Error("getDiscoveredDeviceKey failed");
+    input.getDiscoveredDeviceKey = () => {
+      throw error;
+    };
+    deviceDiscoveryService.stop = () => {
+      throw new Error("stop failed");
+    };
+    const subscription = connectNewDeviceUseCase(input).subscribe(state => states.push(state));
+
+    // Act
+    discoverDevices([nanoX]);
+    // XState throws an unhandled error from a timer.
+    jest.runOnlyPendingTimers();
+
+    // Assert
+    expect(lastState(ConnectNewDeviceUIStateTypes.UnknownError).error).toBe(error);
+
+    subscription.unsubscribe();
+  });
 });
