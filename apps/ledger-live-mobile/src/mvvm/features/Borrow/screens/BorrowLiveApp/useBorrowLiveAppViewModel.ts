@@ -41,7 +41,6 @@ export function useBorrowLiveAppViewModel(): BorrowLiveAppViewModel {
   const webviewRef = useRef<WebviewAPI>(null);
 
   const borrowManifestId = borrowConfig?.params?.manifest_id ?? DEFAULT_MANIFEST_ID;
-  useBorrowLifecycleMonitoring(borrowManifestId);
 
   const localManifest: LiveAppManifest | undefined = useLocalLiveAppManifest(
     borrowManifestId || undefined,
@@ -73,6 +72,9 @@ export function useBorrowLiveAppViewModel(): BorrowLiveAppViewModel {
 
     return null;
   }, [manifest, isConnected, t]);
+
+  // The view only renders the webview without an error, so monitoring follows its lifetime.
+  useBorrowLifecycleMonitoring(manifest && !error ? borrowManifestId : undefined);
 
   return {
     manifest,

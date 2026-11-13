@@ -25,11 +25,12 @@ const DEFAULT_MANIFEST_ID =
 export function useBorrowAppViewModel() {
   const borrowFlag = useBorrowLiveConfig();
   const manifestId = borrowFlag?.params?.manifest_id || DEFAULT_MANIFEST_ID;
-  useBorrowLifecycleMonitoring(manifestId);
 
   const localManifest = useLocalLiveAppManifest(manifestId || undefined);
   const remoteManifest = useRemoteLiveAppManifest(manifestId || undefined);
   const manifest = localManifest || remoteManifest;
+  // The view only renders the webview with a manifest, so monitoring follows its lifetime.
+  useBorrowLifecycleMonitoring(manifest ? manifestId : undefined);
 
   const { updateManifests } = useRemoteLiveAppContext();
 

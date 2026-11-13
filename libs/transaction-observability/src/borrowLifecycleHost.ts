@@ -77,12 +77,13 @@ export function startBorrowLifecycleMonitoring(
   if (!manifestId) return;
 
   // An attempt left over from another surface or an earlier visit is not this screen's to report.
-  clearPendingDappTxLifecycle(platform, manifestId);
+  // One Earn owns is not Borrow's to touch at all, even on a manifest both products claim.
+  clearPendingDappTxLifecycle(platform, manifestId, borrowLifecycleProduct.id);
   if (!enabled) return;
 
   return () => {
     if (isBorrowTxLifecycleMonitoringEnabled()) {
-      abandonPendingDappTxLifecycle(platform, manifestId);
+      abandonPendingDappTxLifecycle(platform, manifestId, borrowLifecycleProduct.id);
     }
   };
 }

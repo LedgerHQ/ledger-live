@@ -33,6 +33,12 @@ jest.mock("./intentDefinition", () => ({
   signTransactionIntentPlatformDefinition: { label: "Sign transaction" },
 }));
 
+const mockEmitTransactionEvent = jest.fn();
+jest.mock("@ledgerhq/transaction-observability", () => ({
+  ...jest.requireActual("@ledgerhq/transaction-observability"),
+  buildSignCommonEvent: jest.fn(() => ({ manifestId: "swap-live-app", currencyId: "ethereum" })),
+  emitTransactionEvent: (...args: unknown[]) => mockEmitTransactionEvent(...args),
+}));
 const mockedBuildInput = jest.mocked(buildDeviceInitializationInput);
 const mockedCreateIntent = jest.mocked(createIntent);
 
@@ -127,6 +133,57 @@ describe("useTransactionSignatureDrawerViewModel", () => {
     });
 
     expect(onError).not.toHaveBeenCalled();
+  });
+
+  it("reports a sign dismissed after the job started as abandoned", async () => {
+    const { result } = setup();
+    await waitFor(() => expect(result.current.deviceInitializationInput).not.toBeNull());
+
+    act(() => {
+      result.current.onIntentJobStateChanged({ type: "pending", deviceModelId: "stax" } as never);
+      result.current.onIntentJobStateChanged({
+        type: "device-signature-requested",
+        deviceModelId: "stax",
+      } as never);
+    });
+    act(() => {
+      result.current.onUserCancel();
+    });
+
+    expect(mockEmitTransactionEvent).toHaveBeenCalledTimes(1);
+    expect(mockEmitTransactionEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        status: "failure",
+        abandoned: true,
+        operationalOnly: false,
+        manifestId: "swap-live-app",
+      }),
+    );
+  });
+
+  it("does not report an abandon once the sign settled", async () => {
+    const { result, unmount } = setup();
+    await waitFor(() => expect(result.current.deviceInitializationInput).not.toBeNull());
+
+    act(() => {
+      result.current.onIntentJobStateChanged({ type: "pending", deviceModelId: "stax" } as never);
+      result.current.onIntentJobStateChanged({ type: "signed", signedOperation });
+    });
+    unmount();
+
+    expect(mockEmitTransactionEvent).not.toHaveBeenCalled();
+  });
+
+  it("does not report an abandon when dismissed before the job started", async () => {
+    const { result, unmount } = setup();
+    await waitFor(() => expect(result.current.deviceInitializationInput).not.toBeNull());
+
+    act(() => {
+      result.current.onUserCancel();
+    });
+    unmount();
+
+    expect(mockEmitTransactionEvent).not.toHaveBeenCalled();
   });
 
   it("rejects and closes when building the device initialization input fails", async () => {

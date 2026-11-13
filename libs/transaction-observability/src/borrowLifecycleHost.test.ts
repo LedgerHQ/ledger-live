@@ -112,9 +112,10 @@ describe("borrow lifecycle", () => {
   });
 
   it("does not report an attempt that already ended", () => {
+    const close = startBorrowLifecycleMonitoring("desktop", "borrow", true);
     emitTransactionEvent(intent);
     emitTransactionEvent(success);
-    startBorrowLifecycleMonitoring("desktop", "borrow", true)?.();
+    close?.();
 
     expect(fetchSpy).not.toHaveBeenCalled();
   });
@@ -171,12 +172,13 @@ describe("borrow lifecycle", () => {
       readManifestId: () => "borrow-stg",
       apiBaseUrl: "https://borrow.example.test",
     });
+    const close = startBorrowLifecycleMonitoring("desktop", "borrow-stg", true);
     emitTransactionEvent({ ...intent, manifestId: "borrow-stg" });
 
     enabled = false;
     listener();
     enabled = true;
-    startBorrowLifecycleMonitoring("desktop", "borrow-stg", true)?.();
+    close?.();
 
     expect(fetchSpy).not.toHaveBeenCalled();
   });
@@ -262,9 +264,9 @@ describe("borrow lifecycle", () => {
     emitTransactionEvent(lidoIntent);
     emitTransactionEvent({ ...success, manifestId: "lido" });
 
-    const urls = calls().map(call => call.url);
-    expect(urls.length).toBeGreaterThan(0);
-    expect(urls.every(url => url.startsWith("https://earn.example.test"))).toBe(true);
+    const origins = calls().map(call => new URL(call.url).origin);
+    expect(origins.length).toBeGreaterThan(0);
+    expect(origins.every(origin => origin === "https://earn.example.test")).toBe(true);
   });
 
   it("keeps Earn's events for a doubly claimed manifest when Borrow monitoring is off", () => {
@@ -275,26 +277,44 @@ describe("borrow lifecycle", () => {
     emitTransactionEvent(lidoIntent);
     emitTransactionEvent({ ...success, manifestId: "lido" });
 
-    const urls = calls().map(call => call.url);
-    expect(urls.length).toBeGreaterThan(0);
-    expect(urls.every(url => url.startsWith("https://earn.example.test"))).toBe(true);
+    const origins = calls().map(call => new URL(call.url).origin);
+    expect(origins.length).toBeGreaterThan(0);
+    expect(origins.every(origin => origin === "https://earn.example.test")).toBe(true);
   });
 
-  it("closes Earn's attempt on a doubly claimed manifest at Borrow teardown, on Earn's sink", () => {
+  it("leaves Earn's attempt on a doubly claimed manifest to Earn at Borrow mount and teardown", () => {
+    setBorrowManifestIdReader(() => "lido");
+    const lidoIntent: LogEvent = { ...intent, manifestId: "lido", earnTransactionType: "delegate" };
+
+    emitTransactionEvent(lidoIntent);
+    const close = startBorrowLifecycleMonitoring("desktop", "lido", true);
+    fetchSpy.mockClear();
+    close?.();
+    expect(fetchSpy).not.toHaveBeenCalled();
+
+    emitTransactionEvent({ ...success, manifestId: "lido" });
+    expect(calls()).toEqual([
+      {
+        url: "https://earn.example.test/v1/tx/lifecycle",
+        body: expect.objectContaining({ event: "tx_terminal", outcome: "success" }),
+      },
+    ]);
+  });
+
+  it("sends a terminal to the product that opened the attempt after the claim moved", () => {
+    setEarnTxLifecycleFlagReader(() => false);
     setBorrowManifestIdReader(() => "lido");
     const lidoIntent: LogEvent = { ...intent, manifestId: "lido", earnTransactionType: "delegate" };
 
     const close = startBorrowLifecycleMonitoring("desktop", "lido", true);
     emitTransactionEvent(lidoIntent);
-    fetchSpy.mockClear();
-    close?.();
+    setEarnTxLifecycleFlagReader(() => true);
+    emitTransactionEvent({ ...success, manifestId: "lido" });
 
-    expect(calls()).toEqual([
-      {
-        url: "https://earn.example.test/v1/tx/lifecycle",
-        body: expect.objectContaining({ failure_class: "abandoned" }),
-      },
-    ]);
+    // Borrow opened it, so its `reports` filter drops the success and nothing reaches Earn.
+    expect(fetchSpy).not.toHaveBeenCalled();
+    close?.();
+    expect(fetchSpy).not.toHaveBeenCalled();
   });
 
   it("lets Borrow claim a doubly claimed manifest when Earn monitoring is off", () => {

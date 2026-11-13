@@ -176,7 +176,10 @@ export function normalizeTxLifecycleBaseUrl(baseUrl: string | undefined, fallbac
   return withoutTrailingSlashes(baseUrl || fallback);
 }
 
-/** An attempt keeps the product that opened it, so a later config change cannot reroute it. */
+/**
+ * An attempt keeps the product that opened it, so a later config change cannot reroute it: its
+ * terminal and its abandon both go to that product.
+ */
 type PendingAttempt = { product: TxLifecycleProduct; base: TxLifecyclePayloadBase };
 
 const pendingLifecycle = new Map<string, PendingAttempt>();
@@ -265,26 +268,39 @@ export function sendTxLifecycle(
 
     if (pending && !isDappPlaceholder) abandonPendingLifecycle(key, "superseded");
     pendingLifecycle.set(key, { product, base: next });
-  } else {
-    if (!pendingLifecycle.has(key)) return;
-    pendingLifecycle.delete(key);
+    postTxLifecycle(product, payload, "event");
+    return;
   }
 
-  postTxLifecycle(product, payload, "event");
+  const pending = pendingLifecycle.get(key);
+  if (!pending) return;
+  pendingLifecycle.delete(key);
+  postTxLifecycle(pending.product, payload, "event");
 }
 
+function ownsPendingDapp(key: string, productId: string | undefined): boolean {
+  const pending = pendingLifecycle.get(key);
+  return !!pending && (productId === undefined || pending.product.id === productId);
+}
+
+/** Closes the pending dApp attempt, only when `productId` owns it if one is named. */
 export function abandonPendingDappTxLifecycle(
   platform: TxLifecyclePlatform,
   manifestId: string,
+  productId?: string,
 ): void {
-  abandonPendingLifecycle(lifecycleKey({ platform, path: "dapp" }, manifestId), "teardown");
+  const key = lifecycleKey({ platform, path: "dapp" }, manifestId);
+  if (ownsPendingDapp(key, productId)) abandonPendingLifecycle(key, "teardown");
 }
 
+/** Drops the pending dApp attempt, only when `productId` owns it if one is named. */
 export function clearPendingDappTxLifecycle(
   platform: TxLifecyclePlatform,
   manifestId: string,
+  productId?: string,
 ): void {
-  pendingLifecycle.delete(lifecycleKey({ platform, path: "dapp" }, manifestId));
+  const key = lifecycleKey({ platform, path: "dapp" }, manifestId);
+  if (ownsPendingDapp(key, productId)) pendingLifecycle.delete(key);
 }
 
 /** Drops one product's pending attempts, or every product's when none is named. */
