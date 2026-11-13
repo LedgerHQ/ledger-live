@@ -1,5 +1,13 @@
 import { Step } from "jest-allure2-reporter/api";
 import { readAccountNonces } from "@ledgerhq/live-e2e-shared/borrow/borrowSetup";
+import { byId } from "@e2e/helpers/elements/native";
+import {
+  waitForWebviewUrl,
+  webByCss,
+  webById,
+  webByXPath,
+  type WebHandle,
+} from "@e2e/helpers/elements/web";
 import { retryUntilTimeout } from "@e2e/utils/retry";
 import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
 
@@ -16,55 +24,69 @@ const MAINNET_FUNDING_HINT =
 const anyTestId = (ids: string[]): string => ids.map(id => `[data-testid="${id}"]`).join(", ");
 
 export default class BorrowPage {
-  private readonly borrowScreenId = "borrow-screen";
+  /** Ids that also build CSS selectors: the step outcome and the screens after Back to my loans. */
   private readonly introModalId = "borrow-intro-modal";
-  private readonly introModalTitleId = "borrow-intro-modal-title";
-  private readonly simulateMyLoanButtonId = "borrow-simulate-my-loan-button";
-  private readonly simulateLoanScreenId = "borrow-simulate-loan-screen";
-  private readonly loanAmountInputId = "borrow-loan-amount-input";
-  private readonly simulateContinueButtonId = "borrow-simulate-continue-button";
-  private readonly loanExecutionScreenId = "borrow-loan-execution-screen";
   private readonly giveApprovalButtonId = "give-approval-button";
-  private readonly authorizeDepositingButtonId = "borrow-authorize-depositing-button";
-  private readonly authorizeBorrowingButtonId = "borrow-authorize-borrowing-button";
   private readonly step1AccessApprovedId = "borrow-step-1-access-approved";
   private readonly step2DepositDoneId = "borrow-step-2-deposit-done";
   private readonly step3BorrowDoneId = "borrow-step-3-borrow-done";
   private readonly loanCompletionCardId = "borrow-loan-completion-card";
   private readonly viewMyLoanButtonId = "borrow-view-my-loan-button";
   private readonly getNewLoanButtonId = "borrow-get-new-loan-button";
-  private readonly yourLoansTitleId = "borrow-your-loans-title";
   private readonly loansDashboardId = "borrow-loans-dashboard";
-  private readonly loanDashboardRowId = "borrow-loan-dashboard-row";
-
-  private readonly repayButtonId = "borrow-repay-button";
-  private readonly repayModalId = "borrow-repay-modal";
-  private readonly repayInFullButtonId = "borrow-repay-in-full-button";
-  private readonly repayContinueButtonId = "borrow-repay-continue-button";
-  private readonly repayExecutionScreenId = "borrow-repay-execution-screen";
-  private readonly authorizeRepayButtonId = "borrow-authorize-repay-button";
   private readonly repayStep1ApprovedId = "borrow-repay-step-1-access-approved";
   private readonly repayStep2DoneId = "borrow-repay-step-2-repay-done";
   private readonly repayCompletionCardId = "borrow-repay-completion-card";
-
-  private readonly withdrawOverviewScreenId = "borrow-withdraw-overview-screen";
-  private readonly withdrawCollateralButtonId = "borrow-withdraw-collateral-button";
-  private readonly withdrawExecutionScreenId = "borrow-withdraw-execution-screen";
-  private readonly authorizeWithdrawButtonId = "borrow-authorize-withdraw-button";
   private readonly withdrawStepDoneId = "borrow-withdraw-step-done";
-  private readonly deauthorizeBorrowingButtonId = "borrow-deauthorize-borrowing-button";
   private readonly deauthorizeBorrowingStepDoneId = "borrow-deauthorize-borrowing-step-done";
   private readonly withdrawCompletionCardId = "borrow-withdraw-completion-card";
   private readonly backToMyLoansButtonId = "borrow-back-to-my-loans-button";
+
+  private readonly borrowScreen = byId("borrow-screen");
+  private readonly body = webByCss("body");
+  private readonly introModal = webById(this.introModalId);
+  private readonly introModalTitle = webById("borrow-intro-modal-title");
+  private readonly simulateMyLoanButton = webById("borrow-simulate-my-loan-button");
+  private readonly simulateLoanScreen = webById("borrow-simulate-loan-screen");
+  private readonly loanAmountInput = webById("borrow-loan-amount-input");
+  private readonly simulateContinueButton = webById("borrow-simulate-continue-button");
+  private readonly loanExecutionScreen = webById("borrow-loan-execution-screen");
+  private readonly giveApprovalButton = webById(this.giveApprovalButtonId);
+  private readonly authorizeDepositingButton = webById("borrow-authorize-depositing-button");
+  private readonly authorizeBorrowingButton = webById("borrow-authorize-borrowing-button");
+  private readonly viewMyLoanButton = webById(this.viewMyLoanButtonId);
+  private readonly yourLoansTitle = webById("borrow-your-loans-title");
+  private readonly loansDashboard = webById(this.loansDashboardId);
+  private readonly loanDashboardRow = webById("borrow-loan-dashboard-row");
+  /** Withdrawing the last loan empties the dashboard, so the no-loans screens count too. */
+  private readonly loansLandingScreen = webByCss(
+    anyTestId([this.loansDashboardId, this.getNewLoanButtonId, this.introModalId]),
+  );
+
+  private readonly repayButton = webById("borrow-repay-button");
+  private readonly repayModal = webById("borrow-repay-modal");
+  private readonly repayInFullButton = webById("borrow-repay-in-full-button");
+  private readonly repayContinueButton = webById("borrow-repay-continue-button");
+  private readonly repayExecutionScreen = webById("borrow-repay-execution-screen");
+  private readonly authorizeRepayButton = webById("borrow-authorize-repay-button");
+  private readonly repayCompletionCard = webById(this.repayCompletionCardId);
+
+  private readonly withdrawOverviewScreen = webById("borrow-withdraw-overview-screen");
+  private readonly withdrawCollateralButton = webById("borrow-withdraw-collateral-button");
+  private readonly withdrawExecutionScreen = webById("borrow-withdraw-execution-screen");
+  private readonly authorizeWithdrawButton = webById("borrow-authorize-withdraw-button");
+  private readonly deauthorizeBorrowingButton = webById("borrow-deauthorize-borrowing-button");
+  private readonly withdrawCompletionCard = webById(this.withdrawCompletionCardId);
+  private readonly backToMyLoansButton = webById(this.backToMyLoansButtonId);
 
   private readonly executionErrorLocator =
     '[data-testid="borrow-execution-error"], [data-testid="borrow-on-chain-failed-message"]';
 
   /** The collateral row carries no test id, so it is matched on its symbol. */
-  private readonly symbolButtonXpath = (symbol: string) =>
-    `//*[(self::button or @role='button') and normalize-space(.)='${symbol}']`;
+  private readonly collateralButton = (symbol: string) =>
+    webByXPath(`//*[(self::button or @role='button') and normalize-space(.)='${symbol}']`);
 
-  private readonly keypadDigitTestId = (digit: string) => `custom-keyboard-key-${digit}`;
+  private readonly keypadDigit = (digit: string) => webById(`custom-keyboard-key-${digit}`);
 
   private chainAccount?: string;
 
@@ -78,7 +100,7 @@ export default class BorrowPage {
 
   @Step("Expect borrow native screen visible")
   async expectBorrowScreenVisible() {
-    await waitForElementById(this.borrowScreenId);
+    await this.borrowScreen.waitVisible();
     await app.common.waitForWalletApiWebview();
     await waitForWebviewContentToRender();
   }
@@ -92,48 +114,43 @@ export default class BorrowPage {
 
   @Step("Expect the Introducing Crypto Loan modal")
   async expectIntroModal() {
-    await waitWebElementByTestId(this.introModalId);
-    await waitWebElementByTestId(this.introModalTitleId);
+    await this.introModal.waitVisible();
+    await this.introModalTitle.waitVisible();
   }
 
   @Step("Click Simulate my loan on the intro modal")
   async clickSimulateMyLoan() {
-    await this.revealAndTap(this.simulateMyLoanButtonId);
-    await retryUntilTimeout(
-      () => expectWebElementNotVisible(this.introModalId),
-      MODAL_DISMISS_TIMEOUT_MS,
-    );
+    await this.revealAndTap(this.simulateMyLoanButton);
+    await retryUntilTimeout(() => this.introModal.expectNotExist(), MODAL_DISMISS_TIMEOUT_MS);
   }
 
   @Step("Expect the simulate-loan screen")
   async expectSimulateLoanScreen() {
-    await waitForCurrentWebviewUrlToContain("/loan/simulate-loan");
-    await waitWebElementByTestId(this.simulateLoanScreenId);
-    await waitWebElementByTestId(this.loanAmountInputId);
+    await waitForWebviewUrl("/loan/simulate-loan");
+    await this.simulateLoanScreen.waitVisible();
+    await this.loanAmountInput.waitVisible();
   }
 
   /** The amount input is read-only; the value is driven by the keypad. */
   @Step("Type loan amount")
   async typeLoanAmount(amount: string) {
-    await waitWebElementByTestId(this.simulateLoanScreenId);
+    await this.simulateLoanScreen.waitVisible();
     for (const digit of amount) {
-      await this.revealAndTap(this.keypadDigitTestId(digit));
+      await this.revealAndTap(this.keypadDigit(digit));
     }
-    await waitForWebElementToBeEnabled(this.simulateContinueButtonId, CONTINUE_READY_TIMEOUT_MS);
+    await this.simulateContinueButton.waitEnabled(CONTINUE_READY_TIMEOUT_MS);
   }
 
   @Step("Expect the required collateral")
   async expectCollateral(symbol: string) {
-    await waitWebElement(getWebElementByXpath(this.symbolButtonXpath(symbol)));
+    await this.collateralButton(symbol).waitVisible();
   }
 
   /** The LTV row carries no test id, so it is read off the rendered simulate-loan text. */
   @Step("Expect the loan to value")
   async expectLoanToValue(percentage: string) {
-    await waitWebElementByTestId(this.simulateLoanScreenId);
-    const screenText = String(
-      await getWebElementByTag("body").runScript((el: HTMLElement) => el.innerText),
-    );
+    await this.simulateLoanScreen.waitVisible();
+    const screenText = await this.body.getText();
     if (!new RegExp(String.raw`Loan to Value[^\d]*${percentage}`).test(screenText)) {
       throw new Error(
         `Expected a loan to value of ${percentage} but the simulate-loan screen showed: ${screenText.replace(/\n+/g, " | ")}`,
@@ -143,13 +160,13 @@ export default class BorrowPage {
 
   @Step("Click Continue on the simulate-loan screen")
   async clickContinue() {
-    await this.revealAndTap(this.simulateContinueButtonId, CONTINUE_READY_TIMEOUT_MS);
+    await this.revealAndTap(this.simulateContinueButton, CONTINUE_READY_TIMEOUT_MS);
   }
 
   @Step("Expect the loan execution screen")
   async expectExecutionScreen() {
-    await waitForCurrentWebviewUrlToContain("/loan/loan-execution");
-    await waitWebElementByTestId(this.loanExecutionScreenId);
+    await waitForWebviewUrl("/loan/loan-execution");
+    await this.loanExecutionScreen.waitVisible();
   }
 
   /**
@@ -159,7 +176,7 @@ export default class BorrowPage {
    */
   @Step("Give approval and sign on device")
   async completeApprovalStep() {
-    await waitWebElementByTestId(this.loanExecutionScreenId);
+    await this.loanExecutionScreen.waitVisible();
     if (
       await this.isStepAlreadyDoneOnceRendered(
         this.step1AccessApprovedId,
@@ -167,14 +184,14 @@ export default class BorrowPage {
       )
     )
       return;
-    await this.authorizeStep(this.giveApprovalButtonId, this.step1AccessApprovedId, () =>
+    await this.authorizeStep(this.giveApprovalButton, this.step1AccessApprovedId, () =>
       this.signContractTransaction(),
     );
   }
 
   @Step("Authorize depositing and sign on device")
   async authorizeDeposit() {
-    await this.authorizeStep(this.authorizeDepositingButtonId, this.step2DepositDoneId, () =>
+    await this.authorizeStep(this.authorizeDepositingButton, this.step2DepositDoneId, () =>
       this.signContractTransaction(),
     );
   }
@@ -183,108 +200,108 @@ export default class BorrowPage {
   @Step("Authorize borrowing and sign on device")
   async authorizeBorrow() {
     await this.authorizeStep(
-      this.authorizeBorrowingButtonId,
+      this.authorizeBorrowingButton,
       [this.step3BorrowDoneId, this.loanCompletionCardId, this.viewMyLoanButtonId],
       () => this.signContractTransaction(),
     );
-    await waitWebElementByTestId(this.viewMyLoanButtonId);
+    await this.viewMyLoanButton.waitVisible();
   }
 
   @Step("Click View my loan")
   async clickViewMyLoan() {
-    await this.revealAndTap(this.viewMyLoanButtonId);
+    await this.revealAndTap(this.viewMyLoanButton);
   }
 
   @Step("Expect loans dashboard visible")
   async expectLoansDashboard() {
-    await waitWebElementByTestId(this.yourLoansTitleId);
-    await waitWebElementByTestId(this.loansDashboardId);
+    await this.yourLoansTitle.waitVisible();
+    await this.loansDashboard.waitVisible();
   }
 
   @Step("Expect at least one loan row on the dashboard")
   async expectLoanDashboardRow() {
-    await waitWebElementByTestId(this.loanDashboardRowId);
+    await this.loanDashboardRow.waitVisible();
   }
 
   /** With a loan already open the live app skips the introduction and lists the position. */
   @Step("Expect the borrow app to open on the loans dashboard")
   async expectHotStartDashboard() {
-    await waitWebElementByTestId(this.loansDashboardId, { timeout: DASHBOARD_READY_TIMEOUT_MS });
-    await waitWebElementByTestId(this.yourLoansTitleId);
-    await waitWebElementByTestId(this.loanDashboardRowId);
+    await this.loansDashboard.waitVisible(DASHBOARD_READY_TIMEOUT_MS);
+    await this.yourLoansTitle.waitVisible();
+    await this.loanDashboardRow.waitVisible();
   }
 
   /** Anchored on the Repay CTA: `borrow-loan-overview-screen` is web-only in the live app. */
   @Step("Open the loan with debt from the dashboard")
   async openActiveLoan() {
-    await this.revealAndTap(this.loanDashboardRowId);
-    await waitForCurrentWebviewUrlToContain("/loanoverview/");
-    await waitForWebElementToBeEnabled(this.repayButtonId, SCREEN_READY_TIMEOUT_MS);
+    await this.revealAndTap(this.loanDashboardRow);
+    await waitForWebviewUrl("/loanoverview/");
+    await this.repayButton.waitEnabled(SCREEN_READY_TIMEOUT_MS);
   }
 
   @Step("Click Repay on the loan overview")
   async clickRepay() {
-    await this.revealAndTap(this.repayButtonId);
-    await waitWebElementByTestId(this.repayModalId);
+    await this.revealAndTap(this.repayButton);
+    await this.repayModal.waitVisible();
   }
 
   @Step("Select Repay in full and continue to execution")
   async submitRepayInFull() {
-    await this.revealAndTap(this.repayInFullButtonId);
-    await this.revealAndTap(this.repayContinueButtonId);
-    await waitForCurrentWebviewUrlToContain("/forms/repay/");
-    await waitWebElementByTestId(this.repayExecutionScreenId);
+    await this.revealAndTap(this.repayInFullButton);
+    await this.revealAndTap(this.repayContinueButton);
+    await waitForWebviewUrl("/forms/repay/");
+    await this.repayExecutionScreen.waitVisible();
   }
 
   /** The spec zeroes the debt-token allowance beforehand, so this step is always required. */
   @Step("Give repay approval and sign on device")
   async completeRepayApprovalStep() {
     await this.authorizeStep(
-      this.giveApprovalButtonId,
+      this.giveApprovalButton,
       this.repayStep1ApprovedId,
       () => this.signContractTransaction(),
-      this.repayExecutionScreenId,
+      this.repayExecutionScreen,
     );
   }
 
   @Step("Authorize repay and sign on device")
   async authorizeRepay() {
     await this.authorizeStep(
-      this.authorizeRepayButtonId,
+      this.authorizeRepayButton,
       [this.repayStep2DoneId, this.repayCompletionCardId, this.viewMyLoanButtonId],
       () => this.signContractTransaction(),
-      this.repayExecutionScreenId,
+      this.repayExecutionScreen,
     );
   }
 
   @Step("Expect the repay completion card")
   async expectRepaySuccess() {
-    await waitWebElementByTestId(this.repayCompletionCardId);
-    await waitWebElementByTestId(this.viewMyLoanButtonId);
+    await this.repayCompletionCard.waitVisible();
+    await this.viewMyLoanButton.waitVisible();
   }
 
   /** A loan with no debt left routes straight to withdraw instead of the loan overview. */
   @Step("Open the repaid loan from the dashboard")
   async openRepaidLoan() {
-    await this.revealAndTap(this.loanDashboardRowId);
-    await waitForCurrentWebviewUrlToContain("/withdrawoverview/");
-    await waitWebElementByTestId(this.withdrawOverviewScreenId);
+    await this.revealAndTap(this.loanDashboardRow);
+    await waitForWebviewUrl("/withdrawoverview/");
+    await this.withdrawOverviewScreen.waitVisible();
   }
 
   @Step("Click Withdraw collateral")
   async clickWithdrawCollateral() {
-    await this.revealAndTap(this.withdrawCollateralButtonId);
-    await waitForCurrentWebviewUrlToContain("/forms/withdraw/");
-    await waitWebElementByTestId(this.withdrawExecutionScreenId);
+    await this.revealAndTap(this.withdrawCollateralButton);
+    await waitForWebviewUrl("/forms/withdraw/");
+    await this.withdrawExecutionScreen.waitVisible();
   }
 
   @Step("Authorize withdraw and sign on device")
   async authorizeWithdraw() {
     await this.authorizeStep(
-      this.authorizeWithdrawButtonId,
+      this.authorizeWithdrawButton,
       this.withdrawStepDoneId,
       () => this.signContractTransaction(),
-      this.withdrawExecutionScreenId,
+      this.withdrawExecutionScreen,
     );
   }
 
@@ -292,46 +309,40 @@ export default class BorrowPage {
   @Step("Deauthorize borrowing and sign on device")
   async deauthorizeBorrowing() {
     await this.authorizeStep(
-      this.deauthorizeBorrowingButtonId,
+      this.deauthorizeBorrowingButton,
       [
         this.deauthorizeBorrowingStepDoneId,
         this.withdrawCompletionCardId,
         this.backToMyLoansButtonId,
       ],
       () => this.signContractTransaction(),
-      this.withdrawExecutionScreenId,
+      this.withdrawExecutionScreen,
     );
   }
 
   @Step("Expect the withdraw completion card")
   async expectWithdrawSuccess() {
-    await waitWebElementByTestId(this.withdrawCompletionCardId);
-    await waitWebElementByTestId(this.backToMyLoansButtonId);
+    await this.withdrawCompletionCard.waitVisible();
+    await this.backToMyLoansButton.waitVisible();
   }
 
-  /** Withdrawing the last loan empties the dashboard, so the no-loans screens count too. */
   @Step("Click Back to my loans")
   async clickBackToMyLoans() {
-    await this.revealAndTap(this.backToMyLoansButtonId);
-    await waitWebElement(
-      getWebElementByCssSelector(
-        anyTestId([this.loansDashboardId, this.getNewLoanButtonId, this.introModalId]),
-      ),
-      SCREEN_READY_TIMEOUT_MS,
-    );
+    await this.revealAndTap(this.backToMyLoansButton);
+    await this.loansLandingScreen.waitVisible(SCREEN_READY_TIMEOUT_MS);
   }
 
   /** Asserting the marker is absent first makes the wait afterwards proof that the step ran. */
   private async authorizeStep(
-    buttonId: string,
+    button: WebHandle,
     doneIds: string | string[],
     sign: () => Promise<void>,
-    screenId = this.loanExecutionScreenId,
+    screen = this.loanExecutionScreen,
   ) {
     const markers = Array.isArray(doneIds) ? doneIds : [doneIds];
-    await waitWebElementByTestId(screenId);
-    await expectWebElementNotVisible(markers[0]);
-    await this.revealAndTap(buttonId, EXECUTION_STEP_TIMEOUT_MS);
+    await screen.waitVisible();
+    await webById(markers[0]).expectNotExist();
+    await this.revealAndTap(button, EXECUTION_STEP_TIMEOUT_MS);
     await app.walletApiSignatureDrawer.expectVisible();
     await sign();
     await this.expectStepDone(markers);
@@ -344,10 +355,10 @@ export default class BorrowPage {
     await app.speculos.signEvmContractTransaction();
   }
 
-  private async revealAndTap(testId: string, timeout?: number) {
-    await waitForWebElementToBeEnabled(testId, timeout);
-    await scrollToWebElement(getWebElementByTestId(testId));
-    await tapWebElementByTestId(testId);
+  private async revealAndTap(element: WebHandle, timeout?: number) {
+    await element.waitEnabled(timeout);
+    await element.scrollTo();
+    await element.tap();
   }
 
   private async expectStepDone(doneIds: string[]) {

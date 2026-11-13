@@ -9,5 +9,6 @@ export interface ElementHandle {
   getText(timeout?: number): Promise<string>;
   isVisible(timeout?: number): Promise<boolean>;
   expectExist(): Promise<void>;
+  expectNotExist(): Promise<void>;
   expectText(text: string, options?: ExpectTextOptions): Promise<void>;
 }

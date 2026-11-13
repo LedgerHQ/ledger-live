@@ -164,6 +164,11 @@ export class WebHandle implements ElementHandle {
     await withHardTimeout(detoxExpect(this.raw).toExist());
   }
 
+  /** Asserts the element is not in the webview now. A Detox expect: it does not wait. */
+  async expectNotExist(): Promise<void> {
+    await withHardTimeout(detoxExpect(this.raw).not.toExist());
+  }
+
   /** Returns whether the element appears within `timeout`, for one that may not show (an optional button). A hung app still throws. */
   async isVisible(timeout = TIMEOUT.xxsmall): Promise<boolean> {
     try {
