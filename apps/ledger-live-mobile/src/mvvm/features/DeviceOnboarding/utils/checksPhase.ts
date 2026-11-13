@@ -12,10 +12,29 @@ export function toGenuineError(kind: string | null): { kind: GenuineErrorKind } 
   return { kind: genuineErrorKinds[kind as keyof typeof genuineErrorKinds] };
 }
 
+const postSetupFirmwarePrefix = "postSetupFirmware.";
+
+export const firmwareUpdateDelegatedState = "checks.firmwareUpdateDelegated";
+
+/** The firmware check a Nano held back until it was seeded shows as the pre-setup one. */
+export function asChecksState(machineState: string | null): string | null {
+  if (!machineState?.startsWith(postSetupFirmwarePrefix)) return machineState;
+  return `checks.${machineState.slice(postSetupFirmwarePrefix.length)}`;
+}
+
+export function isPostSetupFirmware(machineState: string | null): boolean {
+  return machineState?.startsWith(postSetupFirmwarePrefix) === true;
+}
+
+export function isFirmwareUpdateDelegated(machineState: string | null): boolean {
+  return asChecksState(machineState) === firmwareUpdateDelegatedState;
+}
+
 export function toChecksError(
-  machineState: string | null,
+  rawMachineState: string | null,
   genuineFailureKind: string | null,
 ): { kind: GenuineErrorKind } | null {
+  const machineState = asChecksState(rawMachineState);
   if (machineState === "checks.firmwareCheckFailed") return { kind: "unknown" };
   if (machineState === "checks.genuineFailed" || machineState === "checks.notGenuineSupport") {
     return toGenuineError(genuineFailureKind);
@@ -26,10 +45,11 @@ export function toChecksError(
 const successExitStates = new Set(["syncOffer", "done"]);
 
 export function toChecksScreenState(
-  machineState: string | null,
+  rawMachineState: string | null,
   checksPaused: boolean,
   onboardedOnEntry: boolean | null = null,
 ): ChecksScreenState | null {
+  const machineState = asChecksState(rawMachineState);
   if (machineState === "awaitingStart") return "idle";
   if (machineState === "done" && onboardedOnEntry === false) return "succeeded";
   if (onboardedOnEntry === true && machineState !== null && successExitStates.has(machineState)) {

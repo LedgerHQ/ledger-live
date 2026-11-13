@@ -6,8 +6,7 @@ import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/deviceSDK/h
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { BASE_NAVIGATOR_ID, ScreenName } from "~/const";
-
-const delegatedState = "checks.firmwareUpdateDelegated";
+import { isFirmwareUpdateDelegated } from "LLM/features/DeviceOnboarding/utils/checksPhase";
 
 type UseFirmwareUpdateHandoverInput = {
   device: Device | null;
@@ -34,7 +33,7 @@ export function useFirmwareUpdateHandover({
 }: UseFirmwareUpdateHandoverInput) {
   const navigation = useNavigation<BaseNavigation>();
   const baseNavigation = navigation.getParent<BaseNavigation>(BASE_NAVIGATOR_ID) ?? navigation;
-  const delegated = machineState === delegatedState;
+  const delegated = isFirmwareUpdateDelegated(machineState);
   const pushedRef = useRef(false);
   const awaitingReturnRef = useRef(false);
   const closedRef = useRef(false);

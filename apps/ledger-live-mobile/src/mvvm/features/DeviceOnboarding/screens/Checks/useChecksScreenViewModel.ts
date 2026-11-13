@@ -123,6 +123,7 @@ export function useChecksScreenViewModel({
   screensFor,
   seededDeviceType,
   suspendSheets = false,
+  updateAfterSetup = false,
 }: ChecksScreenProps): ChecksViewProps {
   const { t } = useTranslation();
   const quit = () => onQuit?.();
@@ -145,6 +146,7 @@ export function useChecksScreenViewModel({
     onUpdateSheetClosed,
     seededDeviceType,
     suspendSheets,
+    updateAfterSetup,
   });
   const installUpdate = () => {
     onInstallUpdate?.();

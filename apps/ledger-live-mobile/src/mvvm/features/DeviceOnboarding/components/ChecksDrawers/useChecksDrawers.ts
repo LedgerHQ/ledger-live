@@ -113,6 +113,11 @@ type FirmwareUpdateRequestInput = Readonly<{
   /** Runs when the user closes the unsupported-update sheet, not when code hides it. */
   onUnsupportedClosePressed?: () => void;
   suspendSheets?: boolean;
+  /**
+   * The update an unseeded Nano held back until it was seeded. Asking for a USB cable would break
+   * the setup the user just finished, so Bluetooth that cannot update says it is not possible.
+   */
+  updateAfterSetup?: boolean;
 }>;
 
 type ChecksDrawerInput = ChecksErrorDrawersInput &
@@ -121,6 +126,7 @@ type ChecksDrawerInput = ChecksErrorDrawersInput &
     onAcceptUpdate: () => void;
     onUpdatePressed?: () => void;
     onUpdateSheetClosed?: () => void;
+    updateAfterSetup?: boolean;
   }>;
 
 const recoverableErrorPage = "Error: unknown error";
@@ -213,14 +219,15 @@ function deviceModelInfo(device: Device, version: string): DeviceModelInfo {
   } as unknown as DeviceModelInfo;
 }
 
-function firmwareEligibility(device: Device, current: string) {
+function firmwareEligibility(device: Device, current: string, updateAfterSetup: boolean) {
   const info = deviceModelInfo(device, current);
   const newUxSupported = isNewFirmwareUpdateUxSupported(device, info);
   const bleSupported = isBleUpdateSupported(device, info);
 
   return {
     canUpdate: newUxSupported && (device.wired || bleSupported),
-    isUsbRequired: Platform.OS === "android" && newUxSupported && !bleSupported,
+    isUsbRequired:
+      Platform.OS === "android" && newUxSupported && !bleSupported && !updateAfterSetup,
   };
 }
 
@@ -252,13 +259,14 @@ export function useFirmwareUpdateRequest({
   onUpdatePressed,
   onUnsupportedClosePressed,
   suspendSheets = false,
+  updateAfterSetup = false,
 }: FirmwareUpdateRequestInput): Readonly<{
   requestUpdate: () => void;
   unsupportedUpdate: UnsupportedUpdateDrawerProps;
 }> {
   const [unsupportedFor, setUnsupportedFor] = useState<string | null>(null);
   const updateKey = updateKeyOf(update);
-  const eligibility = update ? firmwareEligibility(device, update.current) : null;
+  const eligibility = update ? firmwareEligibility(device, update.current, updateAfterSetup) : null;
   const isUnsupportedUpdateOpen = unsupportedFor === updateKey && updateKey !== "";
 
   return {
@@ -402,6 +410,7 @@ export function useChecksDrawers({
   onAcceptUpdate,
   onUpdatePressed,
   onUpdateSheetClosed,
+  updateAfterSetup = false,
   ...input
 }: ChecksDrawerInput): ChecksDrawerProps & {
   headerQuitHidden: boolean;
@@ -417,6 +426,7 @@ export function useChecksDrawers({
     onUpdatePressed,
     onUnsupportedClosePressed: onUpdateSheetClosed,
     suspendSheets,
+    updateAfterSetup,
   });
   const [dismissedOfferKey, setDismissedOfferKey] = useState<string | null>(null);
   const updateKey = updateKeyOf(update);

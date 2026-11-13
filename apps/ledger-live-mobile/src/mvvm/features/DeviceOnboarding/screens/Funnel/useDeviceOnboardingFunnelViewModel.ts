@@ -55,7 +55,12 @@ import type { RecoverRestoreScreenProps } from "LLM/features/DeviceOnboarding/sc
 import type { SuccessKaraokeScreenProps } from "LLM/features/DeviceOnboarding/screens/SuccessKaraoke";
 import { completeSeededOnboarding } from "LLM/features/DeviceOnboarding/hooks/useCompleteSeededOnboarding";
 import { resetToPortfolio } from "LLM/features/DeviceOnboarding/utils/exitActions";
-import { toChecksError, toFirmwareUpdate } from "LLM/features/DeviceOnboarding/utils/checksPhase";
+import {
+  isFirmwareUpdateDelegated,
+  isPostSetupFirmware,
+  toChecksError,
+  toFirmwareUpdate,
+} from "LLM/features/DeviceOnboarding/utils/checksPhase";
 import {
   canRetryWithoutUser,
   giveUpAfterPowerOnMs,
@@ -76,7 +81,6 @@ const defaultProtectId = "protect-prod";
 
 type FunnelRoute = RouteProp<DeviceOnboardingNavigatorParamList, ScreenName.DeviceOnboardingFunnel>;
 
-const firmwareUpdateDelegatedState = "checks.firmwareUpdateDelegated";
 const awaitingSessionAfterFirmwareUpdateState = "awaitingSessionAfterFirmwareUpdate";
 
 export type QuitConfirmationModel = {
@@ -180,7 +184,7 @@ function blockBack(event: BackEvent, actions: LeaveActions) {
   }
   if (isRunning(actions) && actions.state) {
     if (actions.confirmsQuit && actions.quitConfirmationOpen) actions.continueSetup();
-    else if (actions.state === firmwareUpdateDelegatedState) actions.closeFirmwareHandover();
+    else if (isFirmwareUpdateDelegated(actions.state)) actions.closeFirmwareHandover();
     else if (actions.confirmsQuit) actions.requestQuit();
     else actions.quitMachine();
     return;
@@ -365,7 +369,7 @@ function checksQuit(actions: ScreenActions): () => void {
   if (actions.liveState === awaitingSessionAfterFirmwareUpdateState) {
     return actions.leaveFirmwareReconnect;
   }
-  if (actions.state === firmwareUpdateDelegatedState) return actions.closeFirmwareHandover;
+  if (isFirmwareUpdateDelegated(actions.state)) return actions.closeFirmwareHandover;
   return actions.leaveFromHeader;
 }
 
@@ -482,6 +486,7 @@ function checksScreen(actions: ScreenActions): DeviceOnboardingFunnelModel {
     checks: {
       device,
       suspendSheets: actions.suspendSheets,
+      updateAfterSetup: isPostSetupFirmware(actions.state),
       state: screenState,
       error: toChecksError(actions.state, actions.genuineFailureKind),
       update:
@@ -696,7 +701,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       resetToPortfolio(navigation);
       return;
     }
-    if (onboarding.state === firmwareUpdateDelegatedState) closeFirmwareHandover();
+    if (isFirmwareUpdateDelegated(onboarding.state)) closeFirmwareHandover();
     send({ type: "QUIT" });
   }, [closeFirmwareHandover, navigation, onboarding.state, send]);
 

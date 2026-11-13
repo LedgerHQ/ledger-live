@@ -37,6 +37,10 @@ describe("phaseOf", () => {
     expect(phaseOf("deviceSetup.pin")).toBe("synchronizing");
   });
 
+  it("should show the firmware update held back until setup on the checks screen", () => {
+    expect(phaseOf("postSetupFirmware.firmwareUpdateOffered", false)).toBe("checks");
+  });
+
   it("should keep a seeded sync exit on the checks screen", () => {
     expect(phaseOf("syncOffer", true)).toBe("checks");
     expect(phaseOf("done", true)).toBe("checks");
