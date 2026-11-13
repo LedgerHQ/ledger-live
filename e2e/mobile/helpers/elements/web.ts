@@ -163,6 +163,11 @@ export class WebHandle implements ElementHandle {
     compareText(actualText, text, options);
   }
 
+  /** Waits for the element, reads its text, then asserts it matches `pattern`. */
+  async expectTextMatching(pattern: RegExp, timeout = TIMEOUT.xxlarge): Promise<void> {
+    jestExpect(await this.getText(timeout)).toMatch(pattern);
+  }
+
   /** Waits for the input, reads its `value`, then compares it as the options say: equal by default. */
   async expectValue(text: string, options: ExpectTextOptions = {}): Promise<void> {
     const actualValue = await this.getValue();
