@@ -140,6 +140,7 @@ export function runSwapLandingPageTest(
   tmsLinks: { landingPage: string[]; formatting: string[] },
   tags: string[],
 ) {
+  setTeamOwner(Team.SWAP);
   describe("Swap - landing page", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(fromAccount, toAccount);
@@ -159,7 +160,6 @@ export function runSwapLandingPageTest(
       });
     });
 
-    setTeamOwner(Team.SWAP);
     tmsLinks.landingPage.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap landing page and best offer`, async () => {
@@ -182,9 +182,8 @@ export function runSwapLandingPageTest(
       await app.swapLiveApp.checkAssetToMatchesAccount(toAccount);
     });
 
-    setTeamOwner(Team.SWAP);
     tmsLinks.formatting.forEach(tmsLink => $TmsLink(tmsLink));
-    tags.filter(tag => tag !== "@LNS").forEach(tag => $Tag(tag));
+    tags.forEach(tag => $Tag(tag));
     it("Swap amounts are formatted correctly for language: Français", async () => {
       await app.mainNavigation.openPortfolioViaDeeplink();
       await app.mainNavigation.navigateToSettings();
