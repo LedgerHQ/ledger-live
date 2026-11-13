@@ -11,6 +11,7 @@ export default class AccountDetailPage {
   private readonly navBarTitle = byId("account-detail-nav-bar-title");
   private readonly navBarAddress = byId("account-detail-nav-bar-address");
   private readonly settingsButton = byId("account-detail-settings-button");
+  private readonly settingsMenu = byId("account-settings-menu");
   private readonly changeNameRow = byId("account-settings-change-name");
   private readonly advancedLogsRow = byId("account-settings-advanced-logs");
   private readonly advancedLogsJson = byId("account-settings-advanced-logs-json");
@@ -78,6 +79,7 @@ export default class AccountDetailPage {
   @Step("Open account settings")
   async openSettings() {
     await this.settingsButton.tap();
+    await this.settingsMenu.waitFullyVisible();
   }
 
   @Step("Open account advanced logs")
