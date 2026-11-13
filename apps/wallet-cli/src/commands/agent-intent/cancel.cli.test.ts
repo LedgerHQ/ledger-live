@@ -10,6 +10,7 @@ import {
   type ServiceReply,
 } from "../../testing/agent-intent-service";
 import { KEYCLOAK_TOKEN } from "../../testing/auth-routes";
+import { useFreshCalCache } from "../../testing/cal-cache";
 import { runCli } from "../../testing/cli-runner";
 import { FakeConfirmPrompt } from "../../testing/fake-confirm-prompt";
 import { MockServer } from "../../testing/mock-server";
@@ -21,6 +22,7 @@ const service = new FakeAgentIntentService();
 const server = new MockServer([...service.routes, CAL_KNOWS_NO_TOKENS]);
 let fixture: EnrolledProfile;
 let env: Record<string, string>;
+let restoreCalCache: () => void;
 
 beforeAll(async () => {
   server.start();
@@ -31,8 +33,12 @@ afterAll(() => {
   fixture.cleanup();
   server.stop();
 });
-beforeEach(() => service.reset());
+beforeEach(() => {
+  restoreCalCache = useFreshCalCache();
+  service.reset();
+});
 afterEach(() => {
+  restoreCalCache();
   _setTestConfirmPrompt(null);
   fixture.keychain.readError = undefined;
 });

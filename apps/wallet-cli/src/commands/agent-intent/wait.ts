@@ -19,12 +19,18 @@ import {
   readLogJsonLines,
 } from "../../agent-intent/detach";
 import { readLiveLockHolderPid } from "../../shared/file-lock";
+import { createTestSeam } from "../../shared/test-seam";
 import { CodedCommandError, createCommandOutput, type CommandOutput } from "../../output";
 
 const POLL_INTERVAL_MS = 2_000;
 /** The SDK fails the relay at the link's expiry, so a pid still in the lock this long after it is
  * one an unclean exit (SIGKILL, SIGHUP) left behind, which the OS may have reused. */
 const LISTENER_EXPIRY_GRACE_MS = 60_000;
+
+const pollSleep = createTestSeam<(ms: number) => Promise<unknown>>(sleep);
+
+/** @internal Test seam — waits between polls, e.g. on a fake clock; `null` restores the real sleep. */
+export const _setTestPollSleep = pollSleep.set;
 
 /** The pending line of the profile's current enrollment, if `line` is it. Matched on the expiry
  * too: a plain `enroll` of a reused profile id leaves an earlier enrollment's log. */
@@ -188,13 +194,12 @@ function checkProfile(
 
 /** Polls local state until the enrollment of `profileId` is enrolled, failed, or still pending at
  * `timeoutMs` (or once its link appears, if it had none at the first poll), and reports that on
- * `out`. `intervalMs` is injectable so tests need not sleep. */
-export async function pollEnrollment(
+ * `out`. */
+async function pollEnrollment(
   out: CommandOutput,
   profileId: string,
-  opts: { timeoutMs: number; intervalMs?: number },
+  timeoutMs: number,
 ): Promise<void> {
-  const { timeoutMs, intervalMs = POLL_INTERVAL_MS } = opts;
   const deadline = Date.now() + timeoutMs;
   const { logPath, lockPath } = enrollListenerPaths(profileId);
   let startedWithLink: boolean | undefined;
@@ -212,7 +217,7 @@ export async function pollEnrollment(
       ? checkProfile(out, profile, listenerPid, linkDeadline, logPath, enrollmentUrl)
       : checkMissingProfile(out, profileId, listenerPid, deadline);
     if (waitMs === undefined) return;
-    await sleep(Math.min(intervalMs, waitMs));
+    await pollSleep.get()(Math.min(POLL_INTERVAL_MS, waitMs));
   }
 }
 
@@ -238,9 +243,7 @@ export default defineCommand({
       network: "all",
     });
     await out.run(() =>
-      pollEnrollment(out, flags.profile, {
-        timeoutMs: parseDurationMs(flags.timeout, "timeout"),
-      }),
+      pollEnrollment(out, flags.profile, parseDurationMs(flags.timeout, "timeout")),
     );
   },
 });

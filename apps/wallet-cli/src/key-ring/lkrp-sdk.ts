@@ -36,9 +36,10 @@ export const refuseAgentDevice: WithDevice = () => () => {
   throw new Error("Ledger Sync unexpectedly requested a device in software-only agent mode.");
 };
 
-/** Software-only Ledger Sync (App-16) SDK authenticating as an Agent Intent agent key. */
-export function createAgentLedgerSyncSdk(environment: AgentIntentEnvironment) {
-  return getSdk(
+type CreateAgentLedgerSyncSdk = (environment: AgentIntentEnvironment) => TrustchainSDK;
+
+const createRealAgentLedgerSyncSdk: CreateAgentLedgerSyncSdk = environment =>
+  getSdk(
     false,
     {
       applicationId: LEDGER_SYNC_APPLICATION_ID,
@@ -47,4 +48,13 @@ export function createAgentLedgerSyncSdk(environment: AgentIntentEnvironment) {
     },
     refuseAgentDevice,
   );
+
+const createAgentSdk = createTestSeam(createRealAgentLedgerSyncSdk);
+
+/** @internal Test seam — makes `createAgentLedgerSyncSdk` return a fake SDK; `null` restores the real one. */
+export const _setTestAgentLedgerSyncSdk = createAgentSdk.set;
+
+/** Software-only Ledger Sync (App-16) SDK authenticating as an Agent Intent agent key. */
+export function createAgentLedgerSyncSdk(environment: AgentIntentEnvironment): TrustchainSDK {
+  return createAgentSdk.get()(environment);
 }
