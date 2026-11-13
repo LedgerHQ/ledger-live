@@ -238,9 +238,9 @@ export default class AccountPage {
   }
 
   @Step("Tap on send button")
-  async tapSend() {
+  async tapSend(currencyId?: string) {
     if (isAccountDetailEnabled()) {
-      await this.accountDetail.tapSend();
+      await this.accountDetail.tapSend(currencyId);
       return;
     }
     await this.sendButton.revealForTap(this.accountScreenScrollView);
