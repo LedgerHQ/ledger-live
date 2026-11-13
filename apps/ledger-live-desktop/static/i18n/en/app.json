@@ -3048,7 +3048,7 @@
     },
     "sponsoredPolling": {
       "title": "Your energy is being delivered",
-      "waiting": "This usually takes up to 30 seconds.",
+      "waiting": "This may take up to 2 minutes.",
       "elapsed": "Elapsed: {{time}}"
     },
     "sponsoredFailure": {
