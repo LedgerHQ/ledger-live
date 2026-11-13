@@ -1,14 +1,8 @@
-import type { BitcoinContext } from "../../config";
+import { bitcoinDefaults, type BitcoinContext } from "../../config";
 import { lastBlock } from "../lastBlock";
 
 const liveContext: BitcoinContext = {
-  config: async () => ({
-    status: { type: "active" },
-    name: "Bitcoin",
-    unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
-    explorer: { url: "https://explorers.api.live.ledger.com" },
-    explorerId: "btc",
-  }),
+  config: async () => bitcoinDefaults.bitcoin,
   logger: () => {},
 };
 

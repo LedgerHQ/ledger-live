@@ -3,11 +3,10 @@ import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
 import { LedgerAPI5xx } from "@ledgerhq/live-network";
 import { buildTransaction } from "../buildTransaction";
 import { CosmosAPI } from "./Cosmos";
+import { cosmosDefaults } from "../config";
 
 describe("fetchTransactions", () => {
-  const cosmosApi = new CosmosAPI("cosmos", {
-    endpoint: "https://cosmoshub4.coin.ledger.com",
-  } as any);
+  const cosmosApi = new CosmosAPI("cosmos", undefined, cosmosDefaults.cosmos);
 
   it("respects the limit", async () => {
     const result = await cosmosApi["fetchTransactions"](
@@ -44,9 +43,7 @@ describe("fetchTransactions", () => {
 // Injective runs cosmos-sdk v0.50.x: the modern `query`/`page`/`limit` path, the one that 500s
 // when asked for a page past the last.
 describe("transaction paging past the last page (injective)", () => {
-  const injectiveApi = new CosmosAPI("injective", {
-    endpoint: "https://injective.coin.ledger.com",
-  } as any);
+  const injectiveApi = new CosmosAPI("injective", undefined, cosmosDefaults.injective);
   // No indexed history: `total` is 0, so page 1 is the only page that exists.
   const EMPTY_ADDRESS = "inj1jr2m8ul650xkr77h30cuu0wmyyq0f0aj336pyu";
   const query = (page: string) =>
@@ -98,9 +95,7 @@ describe("transaction paging past the last page (injective)", () => {
     // This mainnet address holds a tx from the removed liquidity module: page 9 of its history
     // 500s with "unable to resolve type URL ... tx parse error", permanently. Before the fix that
     // one page emptied the whole account.
-    const hubApi = new CosmosAPI("cosmos", {
-      endpoint: "https://cosmoshub4.coin.ledger.com",
-    } as any);
+    const hubApi = new CosmosAPI("cosmos", undefined, cosmosDefaults.cosmos);
 
     const txs = await hubApi["fetchAllTransactions"](
       "cosmos1w2q5xd8nhylu4vj28vpzfgag7msfxf0vx88wfq",
@@ -123,9 +118,7 @@ describe("transaction paging past the last page (injective)", () => {
 
 describe("Broadcast", () => {
   it("throws on uninitialized account", async () => {
-    const cosmosApi = new CosmosAPI("cosmos", {
-      endpoint: "https://cosmoshub4.coin.ledger.com",
-    } as any);
+    const cosmosApi = new CosmosAPI("cosmos", undefined, cosmosDefaults.cosmos);
     const wallet = await Secp256k1HdWallet.generate(24, { prefix: "cosmos" });
     const [account] = await wallet.getAccounts();
     const { accountNumber, sequence, pubKeyType } = await cosmosApi.getAccount(account.address);
