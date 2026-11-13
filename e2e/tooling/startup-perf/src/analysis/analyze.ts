@@ -90,8 +90,8 @@ function rounds(samples: Sample[]): Array<Record<Side, Sample>> {
   return [...byKey.values()].filter((r): r is Record<Side, Sample> => !!r.A && !!r.B);
 }
 
-// On iOS a read of the Debug screen slows the next launch by ~280 ms: a pair compares only launches
-// that both followed one, or both did not.
+// On iOS a read of the Debug screen slows the next launch by ~280 ms. On both platforms, as a
+// precaution, a pair compares only launches that both followed one, or both did not.
 const uneven = ({ A, B }: Record<Side, Sample>) => !!A.afterScreenRead !== !!B.afterScreenRead;
 
 function readsOf(group: Sample[]): Reads {

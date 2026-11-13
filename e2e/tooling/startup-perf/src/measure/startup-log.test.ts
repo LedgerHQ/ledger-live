@@ -82,4 +82,22 @@ describe("readStartupLog", () => {
     assert.equal(await createStartupLogReader(platform)("emulator-5554", 4242, 0), null);
     assert.equal(asked.length, 1);
   });
+
+  it("waits no longer than the time left, then reads once more", async () => {
+    const { platform, asked } = platformLogging([]);
+    const startedAt = Date.now();
+    assert.equal(await createStartupLogReader(platform)("emulator-5554", 4242, 200), null);
+    assert.ok(Date.now() - startedAt < 800, "slept a whole poll past the time left");
+    assert.equal(asked.length, 2);
+  });
+
+  it("keeps the lines of a query that ends after the time is over", async () => {
+    const slowPlatform = {
+      async jsLog() {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        return LINES.join("\n");
+      },
+    } as unknown as Platform;
+    assert.deepEqual(await createStartupLogReader(slowPlatform)("emulator-5554", 4242, 10), READ);
+  });
 });

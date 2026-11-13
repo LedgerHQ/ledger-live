@@ -122,10 +122,11 @@ straight from Maven Central, the shared runner IP can get a 429 (run 42829119387
   42356679784: the first launch of round 0 by 261–301 ms, the second not): the launch after the
   check is the next injection. A check that cannot read the screen keeps its log value, and the
   report names the build left unchecked. A launch whose lines have not come 20 s after the settle
-  time is read on the screen, and the report counts those per build. When a build not yet read from
-  the log in a scenario writes no lines (built before #24576), warm-up or not, both builds are read
-  on the screen for the rest of the scenario, so pairs stay even, and the report says so, even when
-  that launch's screen read fails; a build already read from the log falls back on that launch only.
+  time is read on the screen, and the report counts those per build; one whose lines give a time of
+  0 or less fails, as the Debug screen would show the same. When a build not yet read from the log
+  in a scenario writes no lines (built before #24576), warm-up or not, both builds are read on the
+  screen for the rest of the scenario, so pairs stay even, and the report says so, even when that
+  launch's screen read fails; a build already read from the log falls back on that launch only.
   Until a release with #24576 is in production, `prod-vs-release` and `prod-vs-develop` (the
   nightly) are read on the screen this way. `--read both` (the workflow's `read` input) reads every
   launch both ways, `--read screen` the screen only. Screen reads of measured launches use
@@ -160,10 +161,11 @@ straight from Maven Central, the shared runner IP can get a 429 (run 42829119387
 ## The analysis
 
 Launches are paired by scenario, phase and round, and a pair is left out when only one of its
-launches followed a read of the Debug screen (after a fallback, above). B − A is the Hodges–Lehmann
-median of the paired differences, after removing the device bias (half the gap between the two
-phases), with a Wilcoxon signed-rank 95% interval. The gate is on the estimate; the mean with a
-bootstrap interval is what the manual test compares.
+launches followed a read of the Debug screen (after a fallback, above), on both platforms as a
+precaution, though the slowdown was measured on iOS only. B − A is the Hodges–Lehmann median of the
+paired differences, after removing the device bias (half the gap between the two phases), with a
+Wilcoxon signed-rank 95% interval. The gate is on the estimate; the mean with a bootstrap interval
+is what the manual test compares.
 
 `calibration.test.ts` checks these claims on simulated runs with a known B − A, a 150 ms device bias
 and launch outliers. The interval covers the true B − A in 94% of runs (90.5% with 3 and 9 pairs
