@@ -3,6 +3,7 @@ import {
   TokenCurrencyIdSchema,
   CryptoCurrencyIdSchema,
 } from "@ledgerhq/ledger-wallet-framework/types";
+import { createEmptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { TransferProposal } from "../network/gateway";
@@ -121,5 +122,40 @@ describe("buildSubAccounts", () => {
 
     expect(sub.cantonResources.pendingTransferProposals).toHaveLength(1);
     expect(sub.cantonResources.pendingTransferProposals[0].contract_id).toBe("token-proposal");
+  });
+
+  it("keeps the CAL admin's saved history and drops another admin's from same-ticker sub-accounts", () => {
+    const token = makeTokenCurrency();
+    const calTokens = new Map([[token.id, "TOKEN_A"]]);
+    const savedUnder = (adminId: string, hash: string): CantonTokenAccount => ({
+      ...buildSubAccounts({
+        accountId,
+        tokenBalances: [{ adminId, totalBalance: 1n, spendableBalance: 1n, token }],
+        existingSubAccounts: [],
+        allOperations: [
+          makeOperation({ hash, extra: { instrumentId: "TOKEN_A", instrumentAdmin: adminId } }),
+        ],
+        pendingTransferProposals: [],
+        calTokens,
+      })[0],
+      balanceHistoryCache: createEmptyHistoryCache(),
+    });
+    const savedOwn = savedUnder("admin-TOKEN_A", "own-old-op");
+    const savedForeign = savedUnder("impostor-admin", "foreign-op");
+
+    const [sub] = buildSubAccounts({
+      accountId,
+      tokenBalances: [
+        { adminId: "admin-TOKEN_A", totalBalance: 500n, spendableBalance: 500n, token },
+      ],
+      existingSubAccounts: [savedOwn, savedForeign],
+      allOperations: [],
+      pendingTransferProposals: [],
+      calTokens,
+    });
+
+    expect(sub.operations.map(op => op.hash)).toEqual(["own-old-op"]);
+    // recalculateAccountBalanceHistories regenerates the chart only for the first saved cache.
+    expect(sub.balanceHistoryCache).toBe(savedOwn.balanceHistoryCache);
   });
 });
