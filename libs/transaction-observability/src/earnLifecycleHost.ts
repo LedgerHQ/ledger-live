@@ -105,14 +105,14 @@ export function startDappLifecycleMonitoring(
   if (!manifestId || !isStakeRedirect) return;
 
   if (!enabled) {
-    clearPendingDappTxLifecycle(platform, manifestId);
+    clearPendingDappTxLifecycle(platform, manifestId, earnLifecycleProduct.id);
     return;
   }
 
   startDappTxLifecycle(platform, manifestId);
   return () => {
     if (isEarnTxLifecycleMonitoringEnabled()) {
-      abandonPendingDappTxLifecycle(platform, manifestId);
+      abandonPendingDappTxLifecycle(platform, manifestId, earnLifecycleProduct.id);
     }
   };
 }

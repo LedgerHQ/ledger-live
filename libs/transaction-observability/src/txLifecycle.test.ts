@@ -482,4 +482,31 @@ describe("lifecycle products", () => {
       currency_family: "tezos",
     });
   });
+
+  it("posts a terminal through the product that opened the attempt, not the latest claimant", () => {
+    const quiet = product({ id: "quiet", reports: () => false });
+    sendForProduct(product({ id: "a" }), payload, "app");
+    sendForProduct(product({ id: "b" }), { ...payload, event: "tx_terminal", outcome: "success" }, "app");
+    sendForProduct(quiet, payload, "other");
+    sendForProduct(product({ id: "b" }), { ...payload, event: "tx_terminal", outcome: "success" }, "other");
+
+    expect(fetchSpy.mock.calls.map(call => call[0])).toEqual([
+      "https://a.example.test/v1/tx/lifecycle",
+      "https://a.example.test/v1/tx/lifecycle",
+    ]);
+  });
+
+  it("only clears or abandons a dApp attempt the named product owns", () => {
+    sendForProduct(product({ id: "a" }), payload, "app");
+    fetchSpy.mockClear();
+
+    clearPendingDappTxLifecycle("desktop", "app", "b");
+    abandonPendingDappTxLifecycle("desktop", "app", "b");
+    expect(fetchSpy).not.toHaveBeenCalled();
+
+    abandonPendingDappTxLifecycle("desktop", "app", "a");
+    expect(fetchSpy.mock.calls.map(call => call[0])).toEqual([
+      "https://a.example.test/v1/tx/lifecycle",
+    ]);
+  });
 });
