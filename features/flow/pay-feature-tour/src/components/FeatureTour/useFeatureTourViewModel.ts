@@ -22,11 +22,11 @@ export const FEATURE_TOUR_PAGE = featureIntroPageName(FEATURE_TOUR_FLOW);
 
 const KEY_PREFIX = "payTab.featureTour";
 
-const ROWS: readonly { icon: FeatureTourRowIcon; key: string; requiresCard?: boolean }[] = [
-  { icon: "Contact", key: "global" },
-  { icon: "Link", key: "volatility" },
+const ROWS = [
+  { icon: "Contact", key: "global", requiresCard: false },
+  { icon: "Link", key: "volatility", requiresCard: false },
   { icon: "CreditCard", key: "card", requiresCard: true },
-];
+] as const satisfies readonly { icon: FeatureTourRowIcon; key: string; requiresCard: boolean }[];
 
 export function useFeatureTourViewModel(): FeatureTourViewModel {
   const { t } = useTranslation();
