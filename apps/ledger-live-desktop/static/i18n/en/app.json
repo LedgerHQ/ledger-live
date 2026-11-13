@@ -2433,6 +2433,10 @@
       }
     },
     "apps": {
+      "communityInstall": {
+        "title": "Community app",
+        "confirm": "Install app"
+      },
       "dependencyInstall": {
         "title": "{{dependency}} app is required",
         "description": "The {{dependency}} app will also be installed because the {{app}} app needs it.",

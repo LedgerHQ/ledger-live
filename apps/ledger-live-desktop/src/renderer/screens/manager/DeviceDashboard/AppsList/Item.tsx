@@ -74,6 +74,8 @@ type Props = {
   showActions?: boolean;
   dispatch: (a: Action) => void;
   setAppInstallDep?: (a: { app: App; dependencies: App[] }) => void;
+  /** Installs the app, through the community app disclaimer when needed. */
+  installApp?: (app: App) => void;
   setAppUninstallDep?: (a: { dependents: App[]; app: App }) => void;
   addAccount?: (a: CryptoCurrency) => void;
 };
@@ -89,6 +91,7 @@ const Item = ({
   showActions = true,
   dispatch,
   setAppInstallDep,
+  installApp,
   setAppUninstallDep,
   addAccount,
 }: Props) => {
@@ -195,6 +198,7 @@ const Item = ({
         showActions={showActions}
         notEnoughMemoryToInstall={notEnoughMemoryToInstall}
         setAppInstallDep={setAppInstallDep}
+        installApp={installApp}
         setAppUninstallDep={setAppUninstallDep}
         isLiveSupported={isLiveSupported}
         addAccount={onAddAccount}

@@ -69,6 +69,8 @@ type Props = {
   dispatch: (a: Action) => void;
   isIncomplete: boolean;
   setAppInstallDep?: (a: { app: App; dependencies: App[] }) => void;
+  /** Installs the app, through the community app disclaimer when needed. */
+  installApp?: (app: App) => void;
   setAppUninstallDep?: (a: { dependents: App[]; app: App }) => void;
   t: TFunction;
 };
@@ -80,6 +82,7 @@ const AppsList = ({
   isIncomplete,
   setAppInstallDep,
   setAppUninstallDep,
+  installApp,
   t,
 }: Props) => {
   const navigate = useNavigate();
@@ -152,6 +155,7 @@ const AppsList = ({
           onlyUpdate={onlyUpdate}
           showActions={showActions}
           setAppInstallDep={setAppInstallDep}
+          installApp={installApp}
           setAppUninstallDep={setAppUninstallDep}
           addAccount={addAccount}
         />
@@ -164,6 +168,7 @@ const AppsList = ({
       isIncomplete,
       setAppInstallDep,
       setAppUninstallDep,
+      installApp,
       addAccount,
     ],
   );

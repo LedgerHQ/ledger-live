@@ -60,6 +60,8 @@ type Props = {
   notEnoughMemoryToInstall: boolean;
   showActions?: boolean;
   setAppInstallDep?: (a: { app: App; dependencies: App[] }) => void;
+  /** Installs the app, through the community app disclaimer when needed. */
+  installApp?: (app: App) => void;
   setAppUninstallDep?: (a: { dependents: App[]; app: App }) => void;
   isLiveSupported: boolean;
   addAccount?: () => void;
@@ -78,6 +80,7 @@ const AppActions = React.memo(
     notEnoughMemoryToInstall,
     showActions = true,
     setAppInstallDep,
+    installApp,
     setAppUninstallDep,
     isLiveSupported,
     addAccount,
@@ -92,12 +95,13 @@ const AppActions = React.memo(
     const needsUninstallDeps = useAppUninstallNeedsDeps(state, app);
     const onInstall = useCallback(() => {
       if (needsInstallDeps && setAppInstallDep) setAppInstallDep(needsInstallDeps);
+      else if (installApp) installApp(app);
       else
         dispatch({
           type: "install",
           name,
         });
-    }, [dispatch, name, needsInstallDeps, setAppInstallDep]);
+    }, [app, dispatch, installApp, name, needsInstallDeps, setAppInstallDep]);
     const onUninstall = useCallback(() => {
       if (needsUninstallDeps && setAppUninstallDep) setAppUninstallDep(needsUninstallDeps);
       else

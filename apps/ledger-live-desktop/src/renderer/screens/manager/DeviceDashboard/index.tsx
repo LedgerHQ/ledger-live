@@ -17,6 +17,9 @@ import AppList from "./AppsList";
 import DeviceInformationSummary from "./DeviceInformationSummary";
 import ProviderWarning from "./ProviderWarning";
 import AppDepsInstallModal from "./AppDepsInstallModal";
+import CommunityAppInstallModal from "./CommunityAppInstallModal";
+import { isCommunityApp } from "@ledgerhq/live-common/apps/developer";
+import { useFeature } from "@features/platform-feature-flags";
 import AppDepsUnInstallModal from "./AppDepsUnInstallModal";
 import ErrorModal from "~/renderer/modals/ErrorModal/index";
 import {
@@ -95,6 +98,10 @@ const DeviceDashboard = ({
     undefined,
   );
 
+  /** community app waiting for the user to accept the disclaimer before installing */
+  const [communityAppToInstall, setCommunityAppToInstall] = useState<App | undefined>(undefined);
+  const { enabled: isDeveloperInfoEnabled } = useFeature("myLedgerDisplayAppDeveloperName") || {};
+
   const [appUninstallDep, setAppUninstallDep] = useState<
     { dependents: App[]; app: App } | undefined
   >(undefined);
@@ -129,6 +136,20 @@ const DeviceDashboard = ({
       : state;
     return distribute(newState);
   }, [state, installQueue]);
+
+  /** Installs an app; a community app first shows the disclaimer, which is always the last step. */
+  const installApp = useCallback(
+    (app: App) => {
+      if (isDeveloperInfoEnabled && isCommunityApp(app)) setCommunityAppToInstall(app);
+      else dispatch({ type: "install", name: app.name });
+    },
+    [dispatch, isDeveloperInfoEnabled],
+  );
+
+  const onCloseCommunityAppInstallModal = useCallback(
+    () => setCommunityAppToInstall(undefined),
+    [],
+  );
 
   const onCloseDepsInstallModal = useCallback(
     () => setAppInstallDep(undefined),
@@ -251,13 +272,20 @@ const DeviceDashboard = ({
           isIncomplete={isIncomplete}
           setAppInstallDep={setAppInstallDep}
           setAppUninstallDep={setAppUninstallDep}
+          installApp={installApp}
           t={t}
         />
         <AppDepsInstallModal
           app={appInstallDep && appInstallDep.app}
           dependencies={appInstallDep && appInstallDep.dependencies}
           dispatch={dispatch}
+          installApp={installApp}
           onClose={onCloseDepsInstallModal}
+        />
+        <CommunityAppInstallModal
+          app={communityAppToInstall}
+          dispatch={dispatch}
+          onClose={onCloseCommunityAppInstallModal}
         />
         <AppDepsUnInstallModal
           app={appUninstallDep && appUninstallDep.app}

@@ -39,17 +39,21 @@ type Props = {
   app?: App;
   dependencies?: App[];
   dispatch: (a: Action) => void;
+  /** Installs the app, through the community app disclaimer when needed. */
+  installApp?: (app: App) => void;
   onClose: () => void;
 };
-const AppDepsInstallModal = ({ app, dependencies, dispatch, onClose }: Props) => {
+const AppDepsInstallModal = ({ app, dependencies, dispatch, installApp, onClose }: Props) => {
   const onConfirm = useCallback(() => {
-    if (app && app.name)
+    onClose();
+    if (!app || !app.name) return;
+    if (installApp) installApp(app);
+    else
       dispatch({
         type: "install",
         name: app.name,
       });
-    onClose();
-  }, [app, dispatch, onClose]);
+  }, [app, dispatch, installApp, onClose]);
 
   /** if no app with dependencies was triggered to be installed we dont show anything */
   if (!app || !dependencies || !dependencies.length) return null;
