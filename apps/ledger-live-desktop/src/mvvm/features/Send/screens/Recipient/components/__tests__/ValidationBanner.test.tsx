@@ -46,4 +46,17 @@ describe("ValidationBanner", () => {
     expect(screen.getByTestId("recipient-error-banner")).toBeVisible();
     expect(screen.queryByRole("button", { name: "Learn more" })).not.toBeInTheDocument();
   });
+
+  it("shows no Learn more for an error, even one with a support article", () => {
+    render(
+      <ValidationBanner
+        type="error"
+        error={makeError("AddressesSanctionedError")}
+        variant="sender"
+      />,
+    );
+
+    expect(screen.getByTestId("sender-error-banner")).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Learn more" })).not.toBeInTheDocument();
+  });
 });

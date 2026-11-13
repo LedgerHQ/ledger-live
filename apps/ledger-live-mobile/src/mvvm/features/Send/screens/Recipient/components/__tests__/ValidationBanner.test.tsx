@@ -43,4 +43,17 @@ describe("ValidationBanner", () => {
     expect(screen.getByText("This account isn't activated")).toBeVisible();
     expect(screen.queryByText("Learn more")).toBeNull();
   });
+
+  it("shows no Learn more for an error, even one with a support article", () => {
+    render(
+      <ValidationBanner
+        type="error"
+        error={makeError("AddressesSanctionedError")}
+        variant="sender"
+      />,
+    );
+
+    expect(screen.getByText("Keeping you safe")).toBeVisible();
+    expect(screen.queryByText("Learn more")).toBeNull();
+  });
 });

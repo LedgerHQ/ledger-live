@@ -57,7 +57,7 @@ export function ValidationBanner(props: ValidationBannerProps) {
   if (!translatedError) return null;
 
   const dataTestId = `${variant}-${type}-banner`;
-  const learnMoreUrl: string | undefined = urls.errors[error.name];
+  const learnMoreUrl: string | undefined = type === "warning" ? urls.errors[error.name] : undefined;
 
   return (
     <Banner
