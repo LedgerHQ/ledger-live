@@ -1,21 +1,35 @@
-import { Platform } from "react-native";
-import * as ExpoNavigationBar from "expo-navigation-bar";
+import { Platform, processColor } from "react-native";
+import { NavigationBar } from "expo-navigation-bar";
+
+export type NavigationBarBackgroundPainter = (argbColor: number) => void;
 
 export type NavigationBarTheme = {
-  backgroundColor: string;
   isDark: boolean;
+  backgroundColor: string;
+  paintBackground?: NavigationBarBackgroundPainter;
 };
 
-/**
- * Paints the Android navigation bar and picks button colors that stay readable on it.
- * Does nothing on iOS, which has no navigation bar.
- */
-export async function applyNavigationBarTheme({
-  backgroundColor,
+/** Android only: style "light" = light buttons; the bar is painted only if `paintBackground` is given. */
+export function applyNavigationBarTheme({
   isDark,
-}: NavigationBarTheme): Promise<void> {
+  backgroundColor,
+  paintBackground,
+}: NavigationBarTheme): void {
   if (Platform.OS !== "android") return;
 
-  await ExpoNavigationBar.setButtonStyleAsync(isDark ? "light" : "dark");
-  await ExpoNavigationBar.setBackgroundColorAsync(backgroundColor);
+  NavigationBar.setStyle(isDark ? "light" : "dark");
+  if (paintBackground) paintNavigationBar(backgroundColor, paintBackground);
+}
+
+function paintNavigationBar(
+  backgroundColor: string,
+  paintBackground: NavigationBarBackgroundPainter,
+): void {
+  const argbColor = processColor(backgroundColor);
+  if (typeof argbColor !== "number") {
+    console.warn(`Navigation bar not painted: invalid color "${backgroundColor}"`);
+    return;
+  }
+
+  paintBackground(argbColor);
 }

@@ -1,0 +1,211 @@
+Replace StyleSheet.absoluteFillObject with StyleSheet.absoluteFill (src, lib/module, lib/commonjs).
+React Native 0.86 removed absoluteFillObject; spreading undefined gives the sheet host container no size, so every sheet opens below the screen (LIVE-41010).
+Same change as upstream https://github.com/gorhom/react-native-bottom-sheet/pull/2637, released in 5.2.9.
+Not bumped yet: 5.2.9 changes its generic type defaults and @ledgerhq/lumen-ui-rnative 0.1.72 types derive from them (mobile typecheck fails).
+Remove when @gorhom/bottom-sheet is bumped to >=5.2.9 (LIVE-41015).
+
+diff --git a/lib/commonjs/components/bottomSheet/BottomSheet.js b/lib/commonjs/components/bottomSheet/BottomSheet.js
+index 40725c071f23498d5a3053c0b307ab3f17566e18..df4af822d15ffe5a207ffbc848a82297e8400fb6 100644
+--- a/lib/commonjs/components/bottomSheet/BottomSheet.js
++++ b/lib/commonjs/components/bottomSheet/BottomSheet.js
+@@ -1,5 +1,6 @@
+ "use strict";
+ 
++// Ledger patch (LIVE-41015): RN 0.86 removed StyleSheet.absoluteFillObject. Upstream fix https://github.com/gorhom/react-native-bottom-sheet/pull/2637 (5.2.9). Remove with the bump to >=5.2.9.
+ Object.defineProperty(exports, "__esModule", {
+   value: true
+ });
+@@ -1251,7 +1252,7 @@ const BottomSheetComponent = /*#__PURE__*/(0, _react.forwardRef)(function Bottom
+         children: [BackdropComponent ? /*#__PURE__*/(0, _jsxRuntime.jsx)(BackdropComponent, {
+           animatedIndex: animatedIndex,
+           animatedPosition: animatedPosition,
+-          style: _reactNative.StyleSheet.absoluteFillObject
++          style: _reactNative.StyleSheet.absoluteFill
+         }) : null, /*#__PURE__*/(0, _jsxRuntime.jsx)(_bottomSheetHostingContainer.BottomSheetHostingContainer, {
+           shouldCalculateHeight: !$modal,
+           layoutState: animatedLayoutState,
+diff --git a/lib/commonjs/components/bottomSheetBackdrop/styles.js b/lib/commonjs/components/bottomSheetBackdrop/styles.js
+index c1f62f66ab1932bd06a2937871f21db130a6d82a..6e9473df219354b7ae4b85854ea127d0762e39fc 100644
+--- a/lib/commonjs/components/bottomSheetBackdrop/styles.js
++++ b/lib/commonjs/components/bottomSheetBackdrop/styles.js
+@@ -1,5 +1,6 @@
+ "use strict";
+ 
++// Ledger patch (LIVE-41015): RN 0.86 removed StyleSheet.absoluteFillObject. Upstream fix https://github.com/gorhom/react-native-bottom-sheet/pull/2637 (5.2.9). Remove with the bump to >=5.2.9.
+ Object.defineProperty(exports, "__esModule", {
+   value: true
+ });
+@@ -7,7 +8,7 @@ exports.styles = void 0;
+ var _reactNative = require("react-native");
+ const styles = exports.styles = _reactNative.StyleSheet.create({
+   backdrop: {
+-    ..._reactNative.StyleSheet.absoluteFillObject,
++    ..._reactNative.StyleSheet.absoluteFill,
+     backgroundColor: 'black'
+   }
+ });
+diff --git a/lib/commonjs/components/bottomSheetBackground/styles.js b/lib/commonjs/components/bottomSheetBackground/styles.js
+index 4e4fb38373692772256f0f8fd52417d76d17aba5..1fa905a7fe780731fdc43a1eff08f98a2ddb8bd2 100644
+--- a/lib/commonjs/components/bottomSheetBackground/styles.js
++++ b/lib/commonjs/components/bottomSheetBackground/styles.js
+@@ -1,12 +1,13 @@
+ "use strict";
+ 
++// Ledger patch (LIVE-41015): RN 0.86 removed StyleSheet.absoluteFillObject. Upstream fix https://github.com/gorhom/react-native-bottom-sheet/pull/2637 (5.2.9). Remove with the bump to >=5.2.9.
+ Object.defineProperty(exports, "__esModule", {
+   value: true
+ });
+ exports.styles = void 0;
+ var _reactNative = require("react-native");
+ const styles = exports.styles = _reactNative.StyleSheet.create({
+-  container: _reactNative.StyleSheet.absoluteFillObject,
++  container: _reactNative.StyleSheet.absoluteFill,
+   background: {
+     backgroundColor: 'white',
+     borderRadius: 15
+diff --git a/lib/commonjs/components/bottomSheetHostingContainer/styles.js b/lib/commonjs/components/bottomSheetHostingContainer/styles.js
+index c563e174c156a9b653a25224954b1d7a8e88418c..4bccaf68766b15e473223b213072bd4da2fdedcc 100644
+--- a/lib/commonjs/components/bottomSheetHostingContainer/styles.js
++++ b/lib/commonjs/components/bottomSheetHostingContainer/styles.js
+@@ -1,5 +1,6 @@
+ "use strict";
+ 
++// Ledger patch (LIVE-41015): RN 0.86 removed StyleSheet.absoluteFillObject. Upstream fix https://github.com/gorhom/react-native-bottom-sheet/pull/2637 (5.2.9). Remove with the bump to >=5.2.9.
+ Object.defineProperty(exports, "__esModule", {
+   value: true
+ });
+@@ -7,7 +8,7 @@ exports.styles = void 0;
+ var _reactNative = require("react-native");
+ const styles = exports.styles = _reactNative.StyleSheet.create({
+   container: {
+-    ..._reactNative.StyleSheet.absoluteFillObject,
++    ..._reactNative.StyleSheet.absoluteFill,
+     pointerEvents: 'box-none'
+   }
+ });
+diff --git a/lib/module/components/bottomSheet/BottomSheet.js b/lib/module/components/bottomSheet/BottomSheet.js
+index 561ad524ac6ed22e9e2284097b964923751ee9aa..61d1e9839bd8673a2e5d056cf2aad53085787f7d 100644
+--- a/lib/module/components/bottomSheet/BottomSheet.js
++++ b/lib/module/components/bottomSheet/BottomSheet.js
+@@ -1,5 +1,6 @@
+ "use strict";
+ 
++// Ledger patch (LIVE-41015): RN 0.86 removed StyleSheet.absoluteFillObject. Upstream fix https://github.com/gorhom/react-native-bottom-sheet/pull/2637 (5.2.9). Remove with the bump to >=5.2.9.
+ import invariant from 'invariant';
+ import React, { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo } from 'react';
+ import { Platform, StyleSheet } from 'react-native';
+@@ -1244,7 +1245,7 @@ const BottomSheetComponent = /*#__PURE__*/forwardRef(function BottomSheet(props,
+         children: [BackdropComponent ? /*#__PURE__*/_jsx(BackdropComponent, {
+           animatedIndex: animatedIndex,
+           animatedPosition: animatedPosition,
+-          style: StyleSheet.absoluteFillObject
++          style: StyleSheet.absoluteFill
+         }) : null, /*#__PURE__*/_jsx(BottomSheetHostingContainer, {
+           shouldCalculateHeight: !$modal,
+           layoutState: animatedLayoutState,
+diff --git a/lib/module/components/bottomSheetBackdrop/styles.js b/lib/module/components/bottomSheetBackdrop/styles.js
+index 4bf1c1b2eaacac963c4601fe6f5eed7d324f4cd2..32bcdfaf07944df3a4d9b45b653ea8c88fd10038 100644
+--- a/lib/module/components/bottomSheetBackdrop/styles.js
++++ b/lib/module/components/bottomSheetBackdrop/styles.js
+@@ -1,9 +1,10 @@
+ "use strict";
+ 
++// Ledger patch (LIVE-41015): RN 0.86 removed StyleSheet.absoluteFillObject. Upstream fix https://github.com/gorhom/react-native-bottom-sheet/pull/2637 (5.2.9). Remove with the bump to >=5.2.9.
+ import { StyleSheet } from 'react-native';
+ export const styles = StyleSheet.create({
+   backdrop: {
+-    ...StyleSheet.absoluteFillObject,
++    ...StyleSheet.absoluteFill,
+     backgroundColor: 'black'
+   }
+ });
+diff --git a/lib/module/components/bottomSheetBackground/styles.js b/lib/module/components/bottomSheetBackground/styles.js
+index 863e5d6328fb097259de67a10cdccf8225f697ca..e0e17229a1cddbc1898140ea5cd05ad15bb919a4 100644
+--- a/lib/module/components/bottomSheetBackground/styles.js
++++ b/lib/module/components/bottomSheetBackground/styles.js
+@@ -1,8 +1,9 @@
+ "use strict";
+ 
++// Ledger patch (LIVE-41015): RN 0.86 removed StyleSheet.absoluteFillObject. Upstream fix https://github.com/gorhom/react-native-bottom-sheet/pull/2637 (5.2.9). Remove with the bump to >=5.2.9.
+ import { StyleSheet } from 'react-native';
+ export const styles = StyleSheet.create({
+-  container: StyleSheet.absoluteFillObject,
++  container: StyleSheet.absoluteFill,
+   background: {
+     backgroundColor: 'white',
+     borderRadius: 15
+diff --git a/lib/module/components/bottomSheetHostingContainer/styles.js b/lib/module/components/bottomSheetHostingContainer/styles.js
+index 49412c39fae418bc07d457ea29005c150ee0d94d..f29f847a694aa10e3176d80a12ebb3b64b42b3bd 100644
+--- a/lib/module/components/bottomSheetHostingContainer/styles.js
++++ b/lib/module/components/bottomSheetHostingContainer/styles.js
+@@ -1,9 +1,10 @@
+ "use strict";
+ 
++// Ledger patch (LIVE-41015): RN 0.86 removed StyleSheet.absoluteFillObject. Upstream fix https://github.com/gorhom/react-native-bottom-sheet/pull/2637 (5.2.9). Remove with the bump to >=5.2.9.
+ import { StyleSheet } from 'react-native';
+ export const styles = StyleSheet.create({
+   container: {
+-    ...StyleSheet.absoluteFillObject,
++    ...StyleSheet.absoluteFill,
+     pointerEvents: 'box-none'
+   }
+ });
+diff --git a/src/components/bottomSheet/BottomSheet.tsx b/src/components/bottomSheet/BottomSheet.tsx
+index 6748c93cac1a29c745480fe2282b8d8f6b36226f..bcc2a6be2f7ae4a707055e84f52dc9a6181509ae 100644
+--- a/src/components/bottomSheet/BottomSheet.tsx
++++ b/src/components/bottomSheet/BottomSheet.tsx
+@@ -1,3 +1,4 @@
++// Ledger patch (LIVE-41015): RN 0.86 removed StyleSheet.absoluteFillObject. Upstream fix https://github.com/gorhom/react-native-bottom-sheet/pull/2637 (5.2.9). Remove with the bump to >=5.2.9.
+ import invariant from 'invariant';
+ import React, {
+   forwardRef,
+@@ -1785,7 +1786,7 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
+               <BackdropComponent
+                 animatedIndex={animatedIndex}
+                 animatedPosition={animatedPosition}
+-                style={StyleSheet.absoluteFillObject}
++                style={StyleSheet.absoluteFill}
+               />
+             ) : null}
+             <BottomSheetHostingContainer
+diff --git a/src/components/bottomSheetBackdrop/styles.ts b/src/components/bottomSheetBackdrop/styles.ts
+index 6151fe8920af469884c2bfad20594b54f17e7b99..85c186d5f4cdf5be8e9a810402d9aa23c7d1e177 100644
+--- a/src/components/bottomSheetBackdrop/styles.ts
++++ b/src/components/bottomSheetBackdrop/styles.ts
+@@ -1,8 +1,9 @@
++// Ledger patch (LIVE-41015): RN 0.86 removed StyleSheet.absoluteFillObject. Upstream fix https://github.com/gorhom/react-native-bottom-sheet/pull/2637 (5.2.9). Remove with the bump to >=5.2.9.
+ import { StyleSheet } from 'react-native';
+ 
+ export const styles = StyleSheet.create({
+   backdrop: {
+-    ...StyleSheet.absoluteFillObject,
++    ...StyleSheet.absoluteFill,
+     backgroundColor: 'black',
+   },
+ });
+diff --git a/src/components/bottomSheetBackground/styles.ts b/src/components/bottomSheetBackground/styles.ts
+index 45d8dfaa3c25bf9b2e9bbd8066b9024109d7b4f7..45c8f08906708255c2209d20894bb04e28edc6ac 100644
+--- a/src/components/bottomSheetBackground/styles.ts
++++ b/src/components/bottomSheetBackground/styles.ts
+@@ -1,7 +1,8 @@
++// Ledger patch (LIVE-41015): RN 0.86 removed StyleSheet.absoluteFillObject. Upstream fix https://github.com/gorhom/react-native-bottom-sheet/pull/2637 (5.2.9). Remove with the bump to >=5.2.9.
+ import { StyleSheet } from 'react-native';
+ 
+ export const styles = StyleSheet.create({
+-  container: StyleSheet.absoluteFillObject,
++  container: StyleSheet.absoluteFill,
+   background: {
+     backgroundColor: 'white',
+     borderRadius: 15,
+diff --git a/src/components/bottomSheetHostingContainer/styles.ts b/src/components/bottomSheetHostingContainer/styles.ts
+index 95826d9ccd46f05432d38414306086d66a33d12f..1e560862b8e2147821f8794074bcb0417056edfa 100644
+--- a/src/components/bottomSheetHostingContainer/styles.ts
++++ b/src/components/bottomSheetHostingContainer/styles.ts
+@@ -1,5 +1,6 @@
++// Ledger patch (LIVE-41015): RN 0.86 removed StyleSheet.absoluteFillObject. Upstream fix https://github.com/gorhom/react-native-bottom-sheet/pull/2637 (5.2.9). Remove with the bump to >=5.2.9.
+ import { StyleSheet } from 'react-native';
+ 
+ export const styles = StyleSheet.create({
+-  container: { ...StyleSheet.absoluteFillObject, pointerEvents: 'box-none' },
++  container: { ...StyleSheet.absoluteFill, pointerEvents: 'box-none' },
+ });

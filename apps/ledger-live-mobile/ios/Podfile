@@ -6,6 +6,10 @@ require 'json'
 podfile_properties = JSON.parse(File.read(File.join(__dir__, 'Podfile.properties.json'))) rescue {}
 
 ENV['RCT_NEW_ARCH_ENABLED'] = '1'
+# Build React Native and its dependencies (folly, glog, fmt...) from source.
+# The prebuilt core is the default since RN 0.84; moving to it is LIVE-39340.
+ENV['RCT_USE_PREBUILT_RNCORE'] ||= '0'
+ENV['RCT_USE_RN_DEP'] ||= '0'
 ENV['EX_DEV_CLIENT_NETWORK_INSPECTOR'] = podfile_properties['EX_DEV_CLIENT_NETWORK_INSPECTOR']
 
 # Disable location services for the app because it's not used in the app
@@ -51,7 +55,6 @@ target 'ledgerlivemobile' do
   )
 
   post_install do |installer|
-    # https://github.com/ledger/live/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
     react_native_post_install(
       installer,
       config[:reactNativePath],

@@ -299,6 +299,7 @@ DEPENDENCIES
   fastlane (~> 2.228.0)
   fastlane-plugin-load_json
   fastlane-plugin-versioning_android
+  nkf
   semver2 (~> 3.4, >= 3.4.2)
   xcodeproj (< 1.26.0)
 

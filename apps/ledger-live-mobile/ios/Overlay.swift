@@ -10,14 +10,13 @@ import UIKit
 
 extension AppDelegate {
   func showOverlay() {
-    guard overlayBlurView == nil else { return }
+    guard overlayBlurView == nil, let window else { return }
 
     let blurEffect = UIBlurEffect(style: .regular)
     let blurEffectView = UIVisualEffectView(effect: blurEffect)
     let logoView = UIImageView(image: UIImage(named: "Blurry_nocache1"))
     logoView.contentMode = .scaleAspectFit
 
-    let window = self.window
     blurEffectView.frame = window.bounds
     blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
     window.addSubview(blurEffectView)
