@@ -23,7 +23,6 @@ import { Text, Flex } from "@ledgerhq/native-ui";
 
 import { Trans } from "~/context/Locale";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
-import { rnBleTransportIdentifier, rnHidTransportIdentifier } from "@ledgerhq/live-dmk-mobile";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppType, SortOptions } from "@ledgerhq/live-common/apps/filtering";
 import { useLatestFirmware } from "@ledgerhq/live-common/device/hooks/useLatestFirmware";
@@ -44,7 +43,7 @@ import AppUpdateAll from "./AppsList/AppUpdateAll";
 import Search from "~/components/Search";
 import FirmwareUpdateBanner from "LLM/features/FirmwareUpdate/components/UpdateBanner";
 import { BackupBanner } from "LLM/features/OsUpdate/components/BackupBanner";
-import { hasBackupSelector, hasOsUpdatesSelector } from "LLM/features/OsUpdate/state/osUpdateSlice";
+import { selectHasBackup, selectHasOsUpdates } from "@domain/entity-device-os-update";
 import { useFeature } from "@features/platform-feature-flags";
 import { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/shared";
 import { lastSeenDeviceSelector } from "~/reducers/settings";
@@ -172,9 +171,9 @@ const AppsScreen = ({
 
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
   const isOsUpdatesEnabled = useFeature("ldmkOsUpdates")?.enabled ?? false;
-  const hasOsUpdates = useSelector(hasOsUpdatesSelector);
+  const hasOsUpdates = useSelector(selectHasOsUpdates);
   const latestFirmware = useLatestFirmware(isOsUpdatesEnabled ? null : lastSeenDevice?.deviceInfo);
-  const hasBackup = useSelector(hasBackupSelector);
+  const hasBackup = useSelector(selectHasBackup);
   const showBackupBanner = isOsUpdatesEnabled && hasBackup;
   const showFwUpdateBanner = isOsUpdatesEnabled ? hasOsUpdates : Boolean(latestFirmware);
 
@@ -226,14 +225,7 @@ const AppsScreen = ({
         ) : null}
         {showBackupBanner ? (
           <Flex pb={16} testID="backup-banner-container">
-            <BackupBanner
-              device={{
-                id: device.deviceId,
-                name: device.deviceName ?? null,
-                deviceModelId: device.modelId,
-                transport: device.wired ? rnHidTransportIdentifier : rnBleTransportIdentifier,
-              }}
-            />
+            <BackupBanner device={device} />
           </Flex>
         ) : null}
         <DeviceCard
