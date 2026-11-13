@@ -543,16 +543,17 @@ describe("useBalanceGraphViewModel", () => {
       expect(result.current.xAxis.ticks).toEqual([0, 1, 2, 3]);
     });
 
-    it("pads the y-axis domain asymmetrically (more headroom at the bottom)", () => {
+    it("pads the y-axis domain below the min and 24px above the max for its label", () => {
       const { result } = renderVM();
 
       const domain = result.current.yAxis.domain;
       expect(typeof domain).toBe("function");
       // @ts-expect-error domain is the function form here.
       const padded = domain({ min: 0, max: 100 });
-      expect(padded.min).toBeLessThan(0);
-      expect(padded.max).toBeGreaterThan(100);
-      expect(Math.abs(padded.min)).toBeGreaterThan(padded.max - 100);
+      const valuePerPx = (padded.max - padded.min) / 208;
+
+      expect(padded.min).toBeCloseTo(-12);
+      expect((padded.max - 100) / valuePerPx).toBeCloseTo(24);
     });
   });
 

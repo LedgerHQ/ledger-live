@@ -1,24 +1,20 @@
 import React from "react";
-import { G } from "react-native-svg";
 import { render } from "@tests/test-renderer";
 import { LineChartPoints } from "../LineChartPoints";
 import type { LineChartPointMarker } from "../types";
 
 let points: Array<Record<string, unknown>>;
-let scrubberPosition: number | undefined;
 
 jest.mock("@ledgerhq/lumen-ui-rnative/visualization", () => ({
   Point: (props: Record<string, unknown>) => {
     points.push(props);
     return null;
   },
-  useScrubberContext: () => ({ scrubberPosition }),
 }));
 
-const renderPoints = (markers: LineChartPointMarker[], scrubbedIndex?: number) => {
+const renderPoints = (markers: LineChartPointMarker[]) => {
   points = [];
-  scrubberPosition = scrubbedIndex;
-  return render(<LineChartPoints points={markers} formatValue={v => `$${v}`} lastIndex={10} />);
+  return render(<LineChartPoints points={markers} formatValue={v => `$${v}`} />);
 };
 
 describe("LineChartPoints", () => {
@@ -52,30 +48,5 @@ describe("LineChartPoints", () => {
   it("omits the label when hideLabel is set, even if a label is provided", () => {
     renderPoints([{ index: 1, value: 99, label: "Peak", hideLabel: true }]);
     expect(points[0].label).toBeUndefined();
-  });
-
-  it("dims only the top labels right of the scrubbed index, which the overlay misses", () => {
-    const { UNSAFE_getAllByType } = renderPoints(
-      [
-        { index: 1, value: 1 },
-        { index: 3, value: 3 },
-        { index: 4, value: 4, labelPosition: "bottom" },
-        { index: 5, value: 5, hideLabel: true },
-      ],
-      2,
-    );
-
-    expect(UNSAFE_getAllByType(G).map(group => group.props.opacity)).toEqual([
-      undefined,
-      0.2,
-      undefined,
-      undefined,
-    ]);
-  });
-
-  it("dims the max label when the scrubber is on its index", () => {
-    const { UNSAFE_getAllByType } = renderPoints([{ index: 0, value: 9 }], 0);
-
-    expect(UNSAFE_getAllByType(G)[0].props.opacity).toBe(0.2);
   });
 });

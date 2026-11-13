@@ -70,11 +70,7 @@ export function LineChartPlotContent({
         xAxis={xAxis}
         yAxis={yAxis}
       >
-        <LineChartPoints
-          points={points}
-          formatValue={formatValue}
-          lastIndex={(chartSeries[0]?.data?.length ?? 0) - 1}
-        />
+        <LineChartPoints points={points} formatValue={formatValue} />
         {enableScrubber && (
           <LineChartScrubber
             series={chartSeries}

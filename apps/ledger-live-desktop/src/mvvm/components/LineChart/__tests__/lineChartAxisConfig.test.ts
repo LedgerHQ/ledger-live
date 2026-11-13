@@ -1,6 +1,6 @@
 import { getEvenlySpacedTicks } from "../utils/getEvenlySpacedTicks";
 import {
-  buildLineChartBottomPaddedYAxisConfig,
+  buildLineChartPaddedYAxisConfig,
   buildLineChartXAxisConfig,
 } from "../utils/lineChartAxisConfig";
 
@@ -37,16 +37,28 @@ describe("buildLineChartXAxisConfig", () => {
   });
 });
 
-describe("buildLineChartBottomPaddedYAxisConfig", () => {
-  it("extends the min domain below the data range", () => {
-    const config = buildLineChartBottomPaddedYAxisConfig(240, 50);
-    const domainFn = config.domain;
-    if (typeof domainFn !== "function") {
-      throw new Error("Expected y-axis domain to be a function");
-    }
-    const domain = domainFn({ min: 100, max: 200 });
+function domainOf(min: number, max: number) {
+  const domainFn = buildLineChartPaddedYAxisConfig({
+    chartBaseHeight: 240,
+    drawingHeight: 210,
+    bottomOffsetPx: 50,
+    topOffsetPx: 24,
+  }).domain;
+  if (typeof domainFn !== "function") {
+    throw new Error("Expected y-axis domain to be a function");
+  }
+  return domainFn({ min, max });
+}
 
-    expect(domain.max).toBe(200);
-    expect(domain.min).toBeCloseTo(79.16666666666667);
+describe("buildLineChartPaddedYAxisConfig", () => {
+  it("extends the min domain below the data range", () => {
+    expect(domainOf(100, 200).min).toBeCloseTo(79.16666666666667);
+  });
+
+  it("leaves 24px above the max so its label stays under the scrubber overlay", () => {
+    const domain = domainOf(100, 200);
+    const valuePerPx = (domain.max - domain.min) / 210;
+
+    expect((domain.max - 200) / valuePerPx).toBeCloseTo(24);
   });
 });
