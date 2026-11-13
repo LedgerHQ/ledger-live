@@ -157,6 +157,11 @@ jobs:
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
+      - name: JFrog Maven auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-maven-auth@develop
+        with:
+          url: ${{ vars.ARTIFACTORY_MAVEN_URL }}
+
       - name: setup JDK 17
         uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
         with:
@@ -173,7 +178,8 @@ jobs:
           pnpm i --frozen-lockfile --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --unsafe-perm
 
       - name: Build mobile dependencies
-        run: pnpm build:llm:deps
+        # Nx adds its run report to the job summary, with no setting to turn it off.
+        run: GITHUB_STEP_SUMMARY=/dev/null pnpm build:llm:deps
 
       - name: Prepare the prod-like build
         env:
@@ -263,7 +269,8 @@ jobs:
           new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --frozen-lockfile --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --unsafe-perm
 
       - name: Build mobile dependencies
-        run: pnpm build:llm:deps
+        # Nx adds its run report to the job summary, with no setting to turn it off.
+        run: GITHUB_STEP_SUMMARY=/dev/null pnpm build:llm:deps
 
       - name: Prepare the prod-like build
         env:
