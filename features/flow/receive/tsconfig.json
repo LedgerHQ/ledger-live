@@ -2,7 +2,8 @@
   "extends": "@support/tsconfig/dual",
   "compilerOptions": {
     "types": [
-      "jest"
+      "jest",
+      "@testing-library/jest-dom"
     ]
   },
   "references": [
