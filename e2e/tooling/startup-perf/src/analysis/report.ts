@@ -9,14 +9,14 @@ export interface ReportOptions extends GateOptions {
 
 const SIDES: Side[] = ["A", "B"];
 
-const gateRule = (thresholdMs: number) =>
-  `B fails when it is slower than A by more than ${thresholdMs} ms on either measure.`;
+// As in analyze.ts's verdicts: every preset but these two gates B against A.
 const PRESET_RULES: Partial<Record<string, (thresholdMs: number) => string>> = {
-  "prod-vs-release": gateRule,
-  custom: gateRule,
+  "aa-noise": () => "",
   "known-regression": t =>
     `B is A with LIVE-36190 re-added: it is detected when it is slower than A by more than ${t} ms, as the gate would fail it.`,
 };
+const gateRule = (thresholdMs: number) =>
+  `B fails when it is slower than A by more than ${thresholdMs} ms on either measure.`;
 
 const BASE_TEXT: Record<DebugBase, string> = {
   js: "the first JS import",
@@ -52,7 +52,7 @@ export function toMarkdown(
     `### Startup time, ${preset}: B − A`,
     "",
     `A = ${labelA} · B = ${labelB}.`,
-    PRESET_RULES[preset]?.(thresholdMs) ?? "",
+    (PRESET_RULES[preset] ?? gateRule)(thresholdMs),
     "",
     "| Platform | Scenario | Measure | Pairs | Median A (ms) | Median B (ms) | B − A (ms) | 95% interval (ms) | Mean B − A (ms) | Flags a slowdown of (ms) | Spread of B − A (ms) | Device bias (ms) | Failed launches | Verdict |",
     "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",

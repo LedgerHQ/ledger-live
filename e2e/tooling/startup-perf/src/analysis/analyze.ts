@@ -4,7 +4,8 @@ import { appendFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
-import { insideWorkingDir } from "../../ci/step.mts";
+import type { ResultRow } from "../../ci/slack-report.mts";
+import { insideWorkingDir, isFailingVerdict } from "../../ci/step.mts";
 import type { Sample, Side } from "../types.ts";
 import { type ReportOptions, toMarkdown } from "./report.ts";
 import {
@@ -79,7 +80,7 @@ export function pairUp(samples: Sample[], metric: Metric): Pair[] {
 }
 
 export function failedRows(rows: Array<Pick<Row, "verdict">>): boolean {
-  return !rows.length || rows.some(r => /^(FAIL|Not detected|Not enough pairs)/.test(r.verdict));
+  return !rows.length || rows.some(r => isFailingVerdict(r.verdict));
 }
 
 function verdictFor({ preset, hl, thresholdMs }: GateOptions & { hl: Interval | null }): string {
@@ -255,7 +256,7 @@ async function main(): Promise<void> {
   if (values.json) {
     const json = insideWorkingDir(values.json);
     await mkdir(path.dirname(json), { recursive: true });
-    await writeFile(json, JSON.stringify(rows, null, 2));
+    await writeFile(json, JSON.stringify(rows satisfies ResultRow[], null, 2));
   }
   if (failedRows(rows)) {
     console.error(
