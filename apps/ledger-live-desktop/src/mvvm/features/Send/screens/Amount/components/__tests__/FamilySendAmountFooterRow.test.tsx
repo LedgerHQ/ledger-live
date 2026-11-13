@@ -25,6 +25,7 @@ function mockState(overrides: {
   account?: unknown;
   parentAccount?: unknown;
   transaction?: unknown;
+  status?: unknown;
 }) {
   mockedUseSendFlowData.mockReturnValue({
     state: {
@@ -34,6 +35,7 @@ function mockState(overrides: {
       },
       transaction: {
         transaction: "transaction" in overrides ? overrides.transaction : transaction,
+        status: overrides.status,
       },
     },
   } as never);
@@ -63,6 +65,18 @@ describe("FamilySendAmountFooterRow", () => {
 
     expect(mockedUseLLDCoinFamily).toHaveBeenCalledWith("aleo");
     expect(SendAmountFooterRow).toHaveBeenCalledWith({ account, transaction }, undefined);
+  });
+
+  it("passes the transaction status", () => {
+    const status = { errors: {}, warnings: {} };
+    mockState({ status });
+    const SendAmountFooterRow = jest.fn(() => <div data-testid="send-amount-footer-row" />);
+    mockedUseLLDCoinFamily.mockReturnValue({ SendAmountFooterRow } as never);
+
+    render(<FamilySendAmountFooterRow />);
+
+    expect(SendAmountFooterRow).toHaveBeenCalledTimes(1);
+    expect(SendAmountFooterRow).toHaveBeenCalledWith({ account, transaction, status }, undefined);
   });
 
   it("renders nothing when the family declares no SendAmountFooterRow", () => {

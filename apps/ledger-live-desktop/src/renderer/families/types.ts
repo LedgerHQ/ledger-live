@@ -461,7 +461,7 @@ export type LLDCoinFamily<
   }>;
 
   /** Extra row rendered in the Amount step footer, right under the network fees. */
-  SendAmountFooterRow?: React.ComponentType<{ account: A; transaction: T }>;
+  SendAmountFooterRow?: React.ComponentType<{ account: A; transaction: T; status?: TS }>;
 
   /**
    *  One time modal that is trigger only one time on a account that never send

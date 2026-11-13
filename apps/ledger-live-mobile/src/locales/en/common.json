@@ -1663,16 +1663,20 @@
       "description": "Change the limit or rippling to update this token."
     },
     "XrpRecipientNotActivated": {
-      "title": "This account isn't activated and can't receive tokens."
+      "title": "This account isn't activated",
+      "description": "It can't receive tokens."
     },
     "XrpRecipientTokenNotAdded": {
-      "title": "This recipient can't receive this token yet. Ask them to add it first."
+      "title": "This recipient can't receive this token yet",
+      "description": "Ask them to add it first."
     },
     "XrpRecipientLimitTooLow": {
-      "title": "This recipient can only receive up to {{maxAmount}} of this token."
+      "title": "This recipient's limit is too low",
+      "description": "They can only receive up to {{maxAmount}} of this token."
     },
     "XrpSendToIssuer": {
-      "title": "You're sending this token to its issuer. These tokens will be destroyed and won't be credited to anyone."
+      "title": "Sending to the token's issuer",
+      "description": "These tokens will be destroyed and won't be credited to anyone."
     },
     "XrpOptOutBalanceNotZero": {
       "title": "Your balance of this token must be 0",
@@ -8428,6 +8432,9 @@
       "maxLimit": "Max trust limit",
       "maxLimitInfo": "The trust limit is the most {{token}} your account accepts to hold. The maximum permitted trust limit is <amount/>.",
       "maximum": "Maximum"
+    },
+    "send": {
+      "issuerFee": "Issuer fee"
     },
     "rippling": {
       "label": "Rippling",
