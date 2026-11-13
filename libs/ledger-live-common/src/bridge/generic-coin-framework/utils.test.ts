@@ -1697,6 +1697,41 @@ describe("coin-framework utils", () => {
       },
     );
 
+    describe("fee payer", () => {
+      const rule = { accountAddress: "0xABC" };
+      const paidBy = (feesPayer: string | undefined, failed = false): CoreOperation => ({
+        ...baseOp,
+        tx: { ...baseOp.tx, failed, ...(feesPayer === undefined ? {} : { feesPayer }) },
+      });
+      const valueOf = (op: CoreOperation, feesPayerRule?: typeof rule) =>
+        adaptCoreOperationToLiveOperation(accountId, op, undefined, feesPayerRule).value.toFixed();
+
+      it.each([
+        ["the account", "0xAbC"],
+        ["the account in another case", "0xabc"],
+      ])("should include fees in a native OUT value when paid by %s", (_payer, feesPayer) => {
+        expect(valueOf(paidBy(feesPayer), rule)).toBe("110");
+      });
+
+      it.each([
+        ["another account", "0xPaymaster"],
+        ["nobody named", undefined],
+      ])("should exclude fees from a native OUT value when paid by %s", (_payer, feesPayer) => {
+        expect(valueOf(paidBy(feesPayer), rule)).toBe("100");
+      });
+
+      it("should give a zero value to a failed operation another account paid for", () => {
+        expect(valueOf(paidBy("0xPaymaster", true), rule)).toBe("0");
+      });
+
+      it.each([
+        ["another account", "0xPaymaster"],
+        ["nobody named", undefined],
+      ])("should include fees paid by %s when the family does not opt in", (_payer, feesPayer) => {
+        expect(valueOf(paidBy(feesPayer))).toBe("110");
+      });
+    });
+
     it("handles non-FEES/OUT operation where value = value only", () => {
       const op = {
         ...baseOp,

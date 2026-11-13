@@ -878,6 +878,7 @@ describe("genericGetAccountShape", () => {
         expect.any(String),
         expect.objectContaining({ hash: "tx-revive" }),
         fromOperationExtraRaw,
+        undefined,
       );
     });
 
@@ -2859,6 +2860,56 @@ describe("genericGetAccountShape", () => {
             fee: new BigNumber(1),
           },
         ],
+      });
+    });
+
+    describe("excludesFeesPaidByOthers", () => {
+      const sendPaidBy = (feesPayer: string | undefined, value = 2) =>
+        toCoreOp({
+          type: "OUT",
+          senders: ["address1"],
+          recipients: ["address2"],
+          value,
+          fee: 1,
+          ...(feesPayer === undefined ? {} : { feesPayer }),
+        });
+
+      const sync = async (operation: ReturnType<typeof toCoreOp>, optIn: boolean) => {
+        setupSpecTest();
+        getBridgeApiMock.mockImplementation(() => ({
+          ...defaultBridgeApi(),
+          ...(optIn ? { excludesFeesPaidByOthers: true } : {}),
+        }));
+        listOperationsMock.mockResolvedValue({ items: [operation], next: undefined });
+        mockNoSubAccounts();
+        mockNoInferSubOps();
+        return runGetShape("address1");
+      };
+
+      afterEach(() => getBridgeApiMock.mockImplementation(defaultBridgeApi));
+
+      test.each([
+        ["a paymaster", "paymaster"],
+        ["nobody named", undefined],
+      ])(
+        "should not charge a fee paid by %s when the family opts in",
+        async (_payer, feesPayer) => {
+          await expect(sync(sendPaidBy(feesPayer), true)).resolves.toMatchObject({
+            operations: [{ type: "OUT", value: new BigNumber(2), fee: new BigNumber(1) }],
+          });
+        },
+      );
+
+      test("should keep as a send a sponsored transfer whose amount equals the fee", async () => {
+        await expect(sync(sendPaidBy("paymaster", 1), true)).resolves.toMatchObject({
+          operations: [{ type: "OUT", value: new BigNumber(1), fee: new BigNumber(1) }],
+        });
+      });
+
+      test("should charge a fee another account paid when the family does not opt in", async () => {
+        await expect(sync(sendPaidBy("paymaster"), false)).resolves.toMatchObject({
+          operations: [{ type: "OUT", value: new BigNumber(3), fee: new BigNumber(1) }],
+        });
       });
     });
 
