@@ -971,7 +971,8 @@ describe("human device error with a failed USB open (LIVE-31394)", () => {
   });
 });
 
-describe("output command handling", () => {
+// Concurrent: each test only waits on its own process.
+describe.concurrent("output command handling", () => {
   const ROOT = path.resolve(import.meta.dir, "..");
   const HUMAN_DEVICE_ERROR_EXIT = path.resolve(
     import.meta.dir,

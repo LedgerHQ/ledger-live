@@ -158,7 +158,7 @@ describe("withFileLock", () => {
     const restoreUptime = mockUnreadableUptime();
     const restoreKill = mockKillEperm();
     try {
-      await expect(withFileLock(path, () => "stolen", 300)).rejects.toThrow(
+      await expect(withFileLock(path, () => "stolen", 150)).rejects.toThrow(
         /Timed out waiting for a lock/,
       );
     } finally {
@@ -172,7 +172,7 @@ describe("withFileLock", () => {
 
     await withFileLock(path, async () => {
       backdateBeforeLastBoot(path);
-      await expect(withFileLock(path, () => "stolen", 300)).rejects.toThrow(
+      await expect(withFileLock(path, () => "stolen", 150)).rejects.toThrow(
         /Timed out waiting for a lock/,
       );
     });
@@ -189,7 +189,7 @@ describe("withFileLock", () => {
     try {
       // Short acquire timeout — this test is about the "give up and report" path, not about
       // proving it waits the full production default.
-      await expect(withFileLock(path, () => "should not run", 300)).rejects.toThrow(
+      await expect(withFileLock(path, () => "should not run", 150)).rejects.toThrow(
         /Timed out waiting for a lock/,
       );
     } finally {

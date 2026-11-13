@@ -211,7 +211,7 @@ describe("quote command — API auth key", () => {
 
   it("does not count the time the keychain dialog waits for the user against the auth timeout", async () => {
     // Generous for a slow runner: the rest of the token fetch must fit in it.
-    _setTestAuthRequestTimeoutMs(500);
+    _setTestAuthRequestTimeoutMs(250);
     // The macOS keychain dialog blocks the read until the user answers.
     const keychain = new InMemoryKeychain();
     const previousKeychain = _setTestKeychain((service, account) => {
@@ -219,7 +219,7 @@ describe("quote command — API auth key", () => {
       return {
         ...entry,
         getPassword: () => {
-          Bun.sleepSync(1_000);
+          Bun.sleepSync(500);
           return entry.getPassword();
         },
       };
