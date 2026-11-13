@@ -21,7 +21,12 @@ import type { DeviceOnboardingSession } from "LLM/features/DeviceOnboarding/hook
 import { useOfferSync } from "LLM/features/DeviceOnboarding/hooks/useOfferSync";
 import type { ChecksScreenProps } from "LLM/features/DeviceOnboarding/types";
 import type { UnseededIntroKaraokeScreenProps } from "LLM/features/DeviceOnboarding/screens/UnseededIntroKaraoke";
-import { toChecksError, toFirmwareUpdate } from "LLM/features/DeviceOnboarding/utils/checksPhase";
+import {
+  isFirmwareUpdateDelegated,
+  isPostSetupFirmware,
+  toChecksError,
+  toFirmwareUpdate,
+} from "LLM/features/DeviceOnboarding/utils/checksPhase";
 import { checksScreenForPhase, phaseOf } from "LLM/features/DeviceOnboarding/utils/funnelPhase";
 import { selectPairedKnownDevices } from "LLM/features/DeviceOnboarding/utils/pairedDevice";
 import { useFirmwareUpdateHandover } from "LLM/features/DeviceOnboarding/hooks/useFirmwareUpdateHandover";
@@ -29,7 +34,6 @@ import { lastSavedStepName } from "../../components/QuitConfirmation/lastSavedSt
 
 type FunnelRoute = RouteProp<DeviceOnboardingNavigatorParamList, ScreenName.DeviceOnboardingFunnel>;
 
-const firmwareUpdateDelegatedState = "checks.firmwareUpdateDelegated";
 const awaitingSessionAfterFirmwareUpdateState = "awaitingSessionAfterFirmwareUpdate";
 
 export type QuitConfirmationModel = {
@@ -89,7 +93,7 @@ function blockBack(event: BackEvent, actions: LeaveActions) {
     return;
   }
   if (actions.status === "running" && actions.state) {
-    if (actions.state === firmwareUpdateDelegatedState) actions.closeFirmwareHandover();
+    if (isFirmwareUpdateDelegated(actions.state)) actions.closeFirmwareHandover();
     else if (actions.confirmsQuit) actions.requestQuit();
     else actions.quitMachine();
     return;
@@ -307,6 +311,7 @@ function checksScreen(actions: ScreenActions): DeviceOnboardingFunnelModel {
     checks: {
       device,
       suspendSheets: actions.suspendSheets,
+      updateAfterSetup: isPostSetupFirmware(actions.state),
       state: screenState,
       error: toChecksError(actions.state, actions.genuineFailureKind),
       update:
@@ -323,10 +328,9 @@ function checksScreen(actions: ScreenActions): DeviceOnboardingFunnelModel {
         actions.state === "checks.checksSucceeded"
           ? () => actions.send({ type: "CONTINUE" })
           : undefined,
-      onQuit:
-        actions.state === firmwareUpdateDelegatedState
-          ? actions.closeFirmwareHandover
-          : actions.leaveFromHeader,
+      onQuit: isFirmwareUpdateDelegated(actions.state)
+        ? actions.closeFirmwareHandover
+        : actions.leaveFromHeader,
     },
   };
 }

@@ -449,6 +449,38 @@ describe("ChecksView", () => {
     }
   });
 
+  it("should say the update is not possible, without a USB cable, for that Nano X after setup on Android", async () => {
+    const platform = jest.replaceProperty(Platform, "OS", "android");
+
+    try {
+      const { user, onAcceptUpdate } = renderChecks("updating", {
+        device: nanoX,
+        update: { current: "2.3.0", available: "2.5.0" },
+        updateAfterSetup: true,
+      });
+
+      await user.press(screen.getByText("Update now"));
+
+      expect(screen.getByText("Firmware Update")).toBeVisible();
+      expect(screen.queryByText("USB cable needed")).toBeNull();
+      expect(onAcceptUpdate).not.toHaveBeenCalled();
+    } finally {
+      platform.restore();
+    }
+  });
+
+  it("should run the update of that Nano X after setup over USB", async () => {
+    const { user, onAcceptUpdate } = renderChecks("updating", {
+      device: { ...nanoX, wired: true },
+      update: { current: "2.3.0", available: "2.5.0" },
+      updateAfterSetup: true,
+    });
+
+    await user.press(screen.getByText("Update now"));
+
+    expect(onAcceptUpdate).toHaveBeenCalledTimes(1);
+  });
+
   it("should accept the update from the primary action on a Nano X at 2.4.0", async () => {
     const { user, onAcceptUpdate, onDeclineUpdate, rerender } = renderChecks("updating", {
       device: nanoX,
