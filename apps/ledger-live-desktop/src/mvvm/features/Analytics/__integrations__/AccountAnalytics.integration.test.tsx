@@ -137,7 +137,6 @@ describe("Account Analytics desktop integration", () => {
       expect(screen.getByTestId("analytics-asset-filter")).toHaveTextContent("Ethereum"),
     );
     await user.click(screen.getByTestId("analytics-asset-filter"));
-    expect(screen.queryByPlaceholderText("Search assets")).not.toBeInTheDocument();
     expect(await screen.findByRole("option", { name: "Bitcoin" })).toBeVisible();
     await user.keyboard("{Home}{ArrowDown}{Enter}");
     await waitFor(() =>
@@ -147,15 +146,39 @@ describe("Account Analytics desktop integration", () => {
     expect(store.getState().settings.selectedTimeRange).toBe("month");
     await user.click(screen.getByTestId("analytics-account-filter"));
     expect(await screen.findByRole("option", { name: "Bitcoin 1 (Bitcoin)" })).toBeVisible();
-    expect(screen.queryByPlaceholderText("Search accounts")).not.toBeInTheDocument();
+    expect(screen.queryByPlaceholderText("Search")).not.toBeInTheDocument();
     expect(screen.queryByRole("option", { name: /Ethereum 1/ })).not.toBeInTheDocument();
     await user.keyboard("{Escape}");
     await user.click(screen.getByTestId("analytics-asset-filter"));
-    await waitFor(() => expect(screen.getByRole("listbox")).toHaveFocus());
+    await waitFor(() => expect(screen.getByPlaceholderText("Search")).toHaveFocus());
     await user.keyboard("{Home}{Enter}");
     await waitFor(() =>
       expect(screen.queryByTestId("analytics-account-filter")).not.toBeInTheDocument(),
     );
+  });
+
+  it("should narrow the asset list to the search and reopen it unfiltered", async () => {
+    const { user } = renderAnalytics({ fromCard: true });
+    await waitFor(() =>
+      expect(screen.getByTestId("analytics-asset-filter")).toHaveTextContent("Ethereum"),
+    );
+    await user.click(screen.getByTestId("analytics-asset-filter"));
+    const search = await screen.findByPlaceholderText("Search");
+    await waitFor(() => expect(search).toHaveFocus());
+
+    await user.type(search, "usdc");
+    expect(await screen.findByRole("option", { name: "USD Coin" })).toBeVisible();
+    expect(screen.queryByRole("option", { name: "Bitcoin" })).not.toBeInTheDocument();
+
+    await user.clear(search);
+    await user.type(search, "zzz");
+    expect(await screen.findByText("No results")).toBeVisible();
+    expect(screen.queryByRole("option")).not.toBeInTheDocument();
+
+    await user.keyboard("{Escape}");
+    await user.click(screen.getByTestId("analytics-asset-filter"));
+    expect(await screen.findByPlaceholderText("Search")).toHaveValue("");
+    expect(await screen.findByRole("option", { name: "Bitcoin" })).toBeVisible();
   });
 
   it("should change only the selected holding while retaining every asset in the asset list", async () => {

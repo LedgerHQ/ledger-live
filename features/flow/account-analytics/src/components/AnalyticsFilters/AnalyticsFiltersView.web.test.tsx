@@ -1,8 +1,19 @@
 import React from "react";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { I18nTestProvider } from "@shared/i18n/testing";
 import { AnalyticsFiltersView } from "./AnalyticsFiltersView";
 import type { AnalyticsFilterViewProps } from "./AnalyticsFiltersView.types";
+
+const resources = { en: { translation: { accountAnalytics: { noResults: "No results" } } } };
+
+function renderFilters(ui: React.ReactElement) {
+  return render(ui, {
+    wrapper: ({ children }) => (
+      <I18nTestProvider resources={resources}>{children}</I18nTestProvider>
+    ),
+  });
+}
 
 function createAssetFilter(): AnalyticsFilterViewProps {
   return {
@@ -46,7 +57,7 @@ function createAccountFilter(): AnalyticsFilterViewProps {
 
 describe("AnalyticsFiltersView (Web)", () => {
   it("should render only the asset filter when no account filter is offered", () => {
-    render(<AnalyticsFiltersView asset={createAssetFilter()} account={null} />);
+    renderFilters(<AnalyticsFiltersView asset={createAssetFilter()} account={null} />);
     expect(screen.getByTestId("analytics-asset-filter")).toHaveTextContent("USD Coin");
     expect(screen.queryByTestId("analytics-account-filter")).not.toBeInTheDocument();
   });
@@ -54,7 +65,7 @@ describe("AnalyticsFiltersView (Web)", () => {
   it("should report the asset picked from its options", async () => {
     const user = userEvent.setup();
     const asset = createAssetFilter();
-    render(<AnalyticsFiltersView asset={asset} account={null} />);
+    renderFilters(<AnalyticsFiltersView asset={asset} account={null} />);
     expect(screen.getAllByRole("option").map(option => option.textContent)).toEqual([
       "All assets",
       "USD Coin",
@@ -66,7 +77,7 @@ describe("AnalyticsFiltersView (Web)", () => {
   it("should tell same-named accounts apart by their network", async () => {
     const user = userEvent.setup();
     const account = createAccountFilter();
-    render(<AnalyticsFiltersView asset={createAssetFilter()} account={account} />);
+    renderFilters(<AnalyticsFiltersView asset={createAssetFilter()} account={account} />);
     expect(screen.getByTestId("analytics-account-filter")).toHaveTextContent("Savings");
     expect(screen.getByTestId("analytics-account-filter")).toHaveAccessibleName(
       "Account filter, Savings",
