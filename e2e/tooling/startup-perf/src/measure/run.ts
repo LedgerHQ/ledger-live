@@ -8,6 +8,7 @@ import { createAndroid } from "./platforms/android.ts";
 import { errorMessage, insideWorkingDir, log, sleep } from "./exec.ts";
 import { createInjector, loadUserdata } from "./inject.ts";
 import { createIos } from "./platforms/ios.ts";
+import { createLoadWatcher, describeLoad } from "./load.ts";
 import { createMaestro } from "./maestro.ts";
 import { createPerformanceReader } from "./performance-screen.ts";
 import { createStartupLogReader } from "./startup-log.ts";
@@ -85,6 +86,7 @@ const P =
 const readPerformance = createPerformanceReader({ platform: P, maestro });
 const readStartupLog = createStartupLogReader(P);
 const inject = createInjector({ platform: P, devices: DEVICES, port: BRIDGE_PORT });
+const watchLoad = createLoadWatcher(P);
 
 const consecutiveFailures = new Map<string, number>();
 // On iOS a read of the Debug screen slows the next launch, on either simulator (README.md).
@@ -114,16 +116,21 @@ async function sample(meta: SampleMeta, { checkScreen = false } = {}): Promise<S
       await sleep(DIALOG_RECOVERY_MS);
     }
     record.screen = await P.ensureScreenOn(meta.device);
+    const load = await watchLoad(meta.device);
     await sleep(IDLE_MS);
+    const pauseStart = Date.now();
     paused = await P.pause(other).catch((error: unknown) => {
       log(`  could not pause ${other}, launching with it running: ${errorMessage(error)}`);
       return false;
     });
+    record.pauseMs = Date.now() - pauseStart;
     record.otherPaused = paused;
     record.afterScreenRead = screenReadSinceLaunch;
     screenReadSinceLaunch = false;
+    await load.launching();
     const launch = await P.launch(meta.device);
     await sleep(SETTLE_MS);
+    Object.assign(record, await load.settled());
     const processStart = await P.processStart(meta.device);
     record.processStartAt = processStart?.at ?? null;
     record.processStartAppClockAt = processStart?.appClockAt ?? null;
@@ -165,6 +172,7 @@ async function sample(meta: SampleMeta, { checkScreen = false } = {}): Promise<S
     ? `${record.appStartupTime} ms`
     : `FAILED: ${record.error?.split("\n")[0]}`;
   log(`${meta.warmup ? "warm-up " : ""}${name} on ${meta.device}: ${what}`);
+  for (const line of describeLoad(record)) log(line);
   if ((consecutiveFailures.get(meta.device) ?? 0) >= MAX_CONSECUTIVE_FAILURES) {
     throw new Error(
       `${MAX_CONSECUTIVE_FAILURES} launches in a row failed on ${meta.device}; stopping (see ${DEBUG_DIR})`,

@@ -53,8 +53,31 @@ export interface Sample extends SampleMeta {
   screenAppStartupTime?: number;
   /** Maestro read the Debug screen since the previous launch, which slows this one on iOS. */
   afterScreenRead?: boolean;
+  /** How long the other device took to pause before the launch. */
+  pauseMs?: number;
+  /** The runner, from just before the launch to the end of the settle time. */
+  hostLoad?: CpuLoad;
+  /** CPU ms of the measured emulator's threads on the runner over the same time, by thread name. */
+  emulatorThreads?: Array<[string, number]>;
+  /** The measured device, from before the idle time to the end of the settle time. Android only. */
+  deviceLoad?: CpuLoad;
   readMs?: number;
   maestroCalls?: MaestroCall[];
+}
+
+/** What used a machine's CPU during a launch: what sets a slow launch apart from the others. */
+export interface CpuLoad {
+  ms: number;
+  /** Shares of the machine's CPU time, 0 to 1; null where the machine does not count them. */
+  busy: number | null;
+  iowait: number | null;
+  steal: number | null;
+  /** The 1-minute load average at the end. */
+  load1: number | null;
+  /** MemAvailable at the start. */
+  memAvailableMb: number | null;
+  /** The busiest processes, busiest first: name, pid and CPU ms. */
+  top: Array<[string, number, number]>;
 }
 
 export interface MaestroCall {

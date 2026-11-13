@@ -162,6 +162,7 @@ describe("createPerformanceReader", () => {
         top = Math.min(lastTop, endStop);
       },
       diagnostics: unused,
+      load: unused,
     };
     const read = createPerformanceReader({ platform, maestro });
     return {

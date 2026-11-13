@@ -143,5 +143,7 @@ export function createIos({ appId, maestro }: { appId: string; maestro: Maestro 
       );
       await writeFile(file, stdout);
     },
+    // A simulator's processes run on the runner: the runner's load has them.
+    load: async () => null,
   };
 }

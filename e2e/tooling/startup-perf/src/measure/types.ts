@@ -18,6 +18,29 @@ export interface Maestro {
   }): Promise<RunResult>;
 }
 
+/** A machine's cumulative CPU time, in any unit: only shares of it are reported. */
+export interface CpuTimes {
+  busy: number;
+  idle: number;
+  iowait: number | null;
+  steal: number | null;
+}
+
+export interface ProcessTime {
+  name: string;
+  cpuMs: number;
+}
+
+/** A machine's counters at one instant: two of them make a CpuLoad. */
+export interface LoadSnapshot {
+  at: number;
+  cpu: CpuTimes | null;
+  load1: number | null;
+  memAvailableMb: number | null;
+  /** The CPU time each process has used so far, by pid. */
+  processes: Map<number, ProcessTime>;
+}
+
 export interface ProcessStart {
   /** Epoch ms on the runner's clock. */
   at: number;
@@ -50,6 +73,8 @@ export interface Platform {
   scrollDown(device: string): Promise<void>;
   scrollToEnd(device: string): Promise<void>;
   diagnostics(device: string, file: string): Promise<void>;
+  /** The device's own CPU counters and processes; null where they are the runner's. */
+  load(device: string): Promise<LoadSnapshot | null>;
 }
 
 /** The userdata files of a scenario, merged. */

@@ -1,5 +1,6 @@
 import { writeFile } from "node:fs/promises";
 import { DEVICE_QUERY_TIMEOUT_MS, INSTALL_TIMEOUT_MS, log, run, sleep } from "../exec.ts";
+import { parseLoadSnapshot } from "../load.ts";
 import type { Platform } from "../types.ts";
 
 const EMULATOR_PAUSE_TIMEOUT_MS = 30_000;
@@ -246,6 +247,20 @@ export function createAndroid({ appId }: { appId: string }): Platform {
         allowFail: true,
       });
       await writeFile(file, stdout);
+    },
+    async load(device) {
+      const { stdout } = await run(
+        "adb",
+        [
+          "-s",
+          device,
+          "shell",
+          "head -1 /proc/stat; cat /proc/loadavg; grep MemAvailable /proc/meminfo; cat /proc/[0-9]*/stat 2>/dev/null; true",
+        ],
+        { allowFail: true, timeoutMs: DEVICE_QUERY_TIMEOUT_MS },
+      );
+      const snapshot = parseLoadSnapshot(stdout, Date.now());
+      return snapshot.cpu ? snapshot : null;
     },
   };
 }

@@ -131,6 +131,13 @@ in run 42829119387).
   `clearedDialogs`), a failed read is retried once with the full flow, and 4 failures in a row on
   one device stop the run. Maestro runs with `--no-reinstall-driver` (~50 s per read otherwise, run
   40006507791) and, on iOS, one driver port per simulator.
+- **Record the load** around each launch, to tell what slowed a slow one (`load.ts`). The runner,
+  from just before the launch to the end of the settle time: its busy, iowait and steal shares, its
+  load average and its 6 busiest processes, an emulator named by its serial (`hostLoad`). The
+  measured emulator's threads on the runner, by name (`emulatorThreads`: `llvmpipe-#` is lavapipe
+  rendering). On Android, the device from before the idle time, from its `/proc` (`deviceLoad`).
+  Also how long the other device took to pause (`pauseMs`). The measure log prints them under each
+  launch; the analysis does not read them.
 
 ## The devices
 
