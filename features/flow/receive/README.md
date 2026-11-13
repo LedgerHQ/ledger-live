@@ -12,7 +12,8 @@ callbacks.
 
 ## Layout
 
-The verify hint state is in place; the screens land in follow-up tickets. Target layout, per the
+The verify hint state and `screens/AddressDisplayed/` are in place; the other screens land in
+follow-up tickets. Target layout, per the
 [flow-package skill](../../../.agents/skills/flow-package/SKILL.md):
 
 ```text

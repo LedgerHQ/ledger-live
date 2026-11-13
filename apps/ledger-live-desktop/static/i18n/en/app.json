@@ -2773,6 +2773,13 @@
       }
     }
   },
+  "receiveAddress": {
+    "addressDisplayed": {
+      "title": "Address securely displayed",
+      "description": "Verify that the address once pasted or shared matches the one on your Ledger Device.",
+      "gotItCta": "Got it"
+    }
+  },
   "send": {
     "title": "Send",
     "totalSpent": "Total to debit",
