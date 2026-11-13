@@ -45,6 +45,8 @@ let witnessAddress = "";
 /** TRX airdropped to each account, whole units: the node starts with no account. */
 const FUNDER_TRX = 100_000;
 const RECIPIENT_TRX = 1_000;
+/** TIP-387's memo fee on the sandbox, as on mainnet: 1 TRX, in SUN. */
+const MEMO_FEE_SUN = 1_000_000;
 /** The mainnet tokens the sandbox preloads, whole supply on Zion (the sandbox's genesis witness). */
 const ZION = "TMVQGm1qAQYVdetCeGRRkTWYYrLXuHK2HC";
 const BTTOLD: Trc10Asset = {
@@ -122,10 +124,11 @@ function makeTransactions(): Tx[] {
       // `StringMemo`, `craftSend` writes it into `raw_data.data`, and sync decodes it back onto `extra.memo`.
       const extra = latestOp.extra as { memo?: string };
       expect(extra.memo).toBe("ledger-e2e");
-      // TIP-387's memo fee is a chain parameter left at its 0 default on the devnet, and a native send
-      // fits the free bandwidth quota — so the memo costs nothing here, and `estimateFees` reads the
-      // same 0 from the chain, keeping estimate and actual in agreement.
-      expect(latestOp.fee).toStrictEqual(new BigNumber(0));
+      // TIP-387's memo fee is a chain parameter (`getMemoFee`), 1 TRX on mainnet and on the sandbox. A
+      // native send fits the free bandwidth quota, so the memo fee is the whole fee, and the indexer
+      // serves it in `ret[0].fee` as TronGrid does. `estimateFees` reads the same parameter from the
+      // chain, keeping estimate and actual in agreement.
+      expect(latestOp.fee).toStrictEqual(new BigNumber(MEMO_FEE_SUN));
     },
   };
 
