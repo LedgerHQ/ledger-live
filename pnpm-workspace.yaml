@@ -80,11 +80,11 @@ catalog:
   "@ledgerhq/lumen-ui-rnative": 0.1.72
   "@ledgerhq/lumen-utils-shared": 0.1.19
   # Wallet API
-  "@ledgerhq/wallet-api-client": 1.17.0
-  "@ledgerhq/wallet-api-client-react": 1.4.36
-  "@ledgerhq/wallet-api-core": 2.2.0
-  "@ledgerhq/wallet-api-server": 3.6.0
-  "@ledgerhq/wallet-api-simulator": 2.4.1
+  "@ledgerhq/wallet-api-client": 1.17.1
+  "@ledgerhq/wallet-api-client-react": 1.4.37
+  "@ledgerhq/wallet-api-core": 2.3.0
+  "@ledgerhq/wallet-api-server": 3.6.1
+  "@ledgerhq/wallet-api-simulator": 2.4.2
   "@ledgerhq/zcash-utils": 2.9.0
   "@ledgerhq/zcash-utils-darwin-arm64": 2.9.0
   "@ledgerhq/zcash-utils-darwin-x64": 2.9.0
