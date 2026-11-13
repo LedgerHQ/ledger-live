@@ -8,12 +8,14 @@ type ErrorBottomSheetProps = {
   /** Called on every close, also when `isOpen` becomes false. */
   onClose: () => void;
   children: React.ReactNode;
+  testID: string;
 };
 
 export function ErrorBottomSheet({
   isOpen,
   onClose,
   children,
+  testID,
 }: Readonly<ErrorBottomSheetProps>): React.JSX.Element {
   const { bottom: bottomInset } = useSafeAreaInsets();
 
@@ -22,7 +24,7 @@ export function ErrorBottomSheet({
       isRequestingToBeOpened={isOpen}
       onClose={onClose}
       enableDynamicSizing
-      testID="connect-new-device-error-sheet"
+      testID={testID}
     >
       <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
         <BottomSheetHeader />
