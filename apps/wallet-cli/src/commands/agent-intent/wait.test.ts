@@ -318,7 +318,7 @@ describe("agent-intent wait", () => {
 
   it("tells a human how to keep waiting at timeout", async () => {
     await withEnrollListenerLock("test-agent", async () => {
-      await runWait({ timeout: "1s" });
+      await pollWait(20, "human");
     });
 
     const text = stdout.join("");

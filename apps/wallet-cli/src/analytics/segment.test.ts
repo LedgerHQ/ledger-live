@@ -106,7 +106,8 @@ describe("disposeAnalytics", () => {
 });
 
 describe("Segment client", () => {
-  it("aborts a request the server never answers within the flush timeout", async () => {
+  it("aborts a request the server never answers within the request timeout", async () => {
+    const requestTimeoutMs = 100;
     let abortedAfterMs: number | undefined;
     const server = Bun.serve({
       port: 0,
@@ -119,19 +120,23 @@ describe("Segment client", () => {
       },
     });
     try {
-      startAnalytics(writeKey => createSegmentClient(writeKey, `http://127.0.0.1:${server.port}`));
-      track("wallet_cli_test_event");
-      await disposeAnalytics();
+      const client = createSegmentClient("test-write-key", {
+        host: `http://127.0.0.1:${server.port}`,
+        requestTimeoutMs,
+      });
+      client.track({ userId: WALLET_CLI_USER_ID, event: "wallet_cli_test_event" });
+      // Segment retries the aborted request until the flush gives up.
+      await client.closeAndFlush({ timeout: 3 * requestTimeoutMs });
 
-      const deadline = Date.now() + ANALYTICS_FLUSH_TIMEOUT_MS + 2_000;
+      const deadline = Date.now() + 10 * requestTimeoutMs;
       while (abortedAfterMs === undefined && Date.now() < deadline) {
-        await Bun.sleep(50);
+        await Bun.sleep(10);
       }
 
       expect(abortedAfterMs).toBeDefined();
-      expect(abortedAfterMs).toBeLessThan(ANALYTICS_FLUSH_TIMEOUT_MS + 1_000);
+      expect(abortedAfterMs).toBeLessThan(5 * requestTimeoutMs);
     } finally {
       await server.stop(true);
     }
-  }, 10_000);
+  });
 });

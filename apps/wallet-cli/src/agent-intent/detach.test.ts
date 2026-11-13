@@ -278,7 +278,7 @@ describe("spawnDetached + readFirstLogJsonLine", () => {
     const { logPath } = enrollListenerPaths("my-agent");
     const child = startChild("setInterval(() => {}, 1000);", logPath);
 
-    expect(await readFirstLogJsonLine(child, logPath, 300)).toBeUndefined();
+    expect(await readFirstLogJsonLine(child, logPath, 100)).toBeUndefined();
     await Bun.sleep(100); // room for a stop signal to land
     expect(child.killed).toBe(false);
     expect(child.exitCode).toBeNull();

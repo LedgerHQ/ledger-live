@@ -932,7 +932,8 @@ describe.each(["human", "json"] as const)("%s proposal warnings", format => {
   });
 });
 
-describe("output command handling", () => {
+// Concurrent: each test only waits on its own process.
+describe.concurrent("output command handling", () => {
   const ROOT = path.resolve(import.meta.dir, "..");
   const HUMAN_DEVICE_ERROR_EXIT = path.resolve(
     import.meta.dir,
