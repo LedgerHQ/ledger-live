@@ -158,7 +158,19 @@ There is no placeholder intent for a plain webview open, so an idle Borrow sessi
 Mounting the Borrow screen drops any attempt left pending before it, so a teardown only reports
 attempts that screen started. `installBorrowLifecycleHost` wires the readers at boot and
 `startBorrowLifecycleMonitoring` is the body of each host's Borrow webview effect. Earn behaviour
-and its flag are unchanged, and the two products never clear each other's pending attempts.
+and its flag are unchanged.
+
+A kill-switch going off only drops the attempts of its own product. A dApp attempt is keyed by
+platform and manifest, not by product, so the products only touch each other's attempts on a
+manifest both claim, which Earn owns. There the Borrow screen drops Earn's pending attempt when it
+mounts, and closes it as `failure/abandoned` when it goes away. That abandon follows the attempt
+and posts to Earn's sink, never to Borrow's.
+
+One known gap: the host gets no event when signing completes, only the broadcast outcome. On
+desktop the sign modal lives outside the Borrow route, so a user who leaves Borrow after signing
+but before the broadcast returns gets a `failure/abandoned` terminal, and the broadcast success
+that follows is dropped as unpaired. The window is narrow and desktop only. Closing it needs a
+sign-completed event from the bridge seam, so the teardown can skip attempts already signed.
 
 One thing to know if you ever reach for it: `track(event, props, { mandatory: true })` from
 `@shared/analytics` bypasses the consent check and uses the reduced extra properties registered with
