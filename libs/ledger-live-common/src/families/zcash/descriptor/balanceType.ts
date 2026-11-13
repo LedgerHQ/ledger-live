@@ -15,7 +15,6 @@ import type {
   BalanceTypeSelfTransferTarget,
   TransactionPatch,
 } from "../../../bridge/descriptor/types";
-import { isZcashCurrencyId } from "../../../bridge/zcashRouting";
 
 /** The pool a spend draws from, as recorded on the transaction's `sender`. */
 type ZcashSender = NonNullable<ZcashTransaction["sender"]>;
@@ -29,7 +28,7 @@ function isZcashSender(optionId: string): optionId is ZcashSender {
 }
 
 function isZcashMainAccount(account: AccountLike): account is ZcashAccount {
-  return account.type === "Account" && isZcashCurrencyId(account.currency.id);
+  return account.type === "Account" && account.currency.family === "zcash";
 }
 
 function hasShieldedViewingKey(account: ZcashAccount): boolean {

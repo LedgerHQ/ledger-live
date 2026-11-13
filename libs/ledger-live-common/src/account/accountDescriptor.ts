@@ -20,7 +20,6 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { getAccountDescriptorType, loadAddressFromKeyForFamily } from "../coin-modules/registry";
-import { resolveFamily } from "../bridge/zcashRouting";
 
 /** Families keyed on their public key: their address cannot give back what reading the account needs. */
 const PUBLIC_KEY_FAMILIES = new Set([
@@ -97,7 +96,7 @@ export class UnsupportedAddressFromKeyError extends Error {
 
 /** The address an account is read at: its key, or the address its family computes from its public key. */
 export async function addressFromKey(currencyId: string, key: string): Promise<Address> {
-  const family = resolveFamily(getCryptoCurrencyById(currencyId));
+  const family = getCryptoCurrencyById(currencyId).family;
   if (!PUBLIC_KEY_FAMILIES.has(family)) return AddressSchema.parse(key);
   assertPublicKey(key, currencyId);
   const derive = await loadAddressFromKeyForFamily(family);
@@ -154,7 +153,7 @@ function buildDescriptor(account: LegacyAccountIdentity): AccountDescriptor {
   const network = networkFromCurrencyId(CryptoCurrencyIdSchema.parse(account.currency.id));
   const derivationMode = asDerivationMode(account.derivationMode);
   const scheme = getDerivationScheme({ derivationMode, currency });
-  const family = resolveFamily(currency);
+  const family = currency.family;
 
   if (getAccountDescriptorType(family) === "utxo") {
     if (!account.xpub) {
@@ -190,7 +189,7 @@ export function toLegacyAccount(input: AccountDescriptor): LegacyAccountFields {
   const descriptor = AccountDescriptorSchema.parse(input);
   const currencyId = currencyIdFromNetwork(descriptor.network);
   const currency = getCryptoCurrencyById(currencyId);
-  const family = resolveFamily(currency);
+  const family = currency.family;
   const expectedType = getAccountDescriptorType(family);
   if (descriptor.type !== expectedType) {
     throw new UnsupportedDescriptorPathError(

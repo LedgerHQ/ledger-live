@@ -1,7 +1,6 @@
 import type { Account } from "@ledgerhq/types-live";
 import type { GetAddressOptions } from "@ledgerhq/ledger-wallet-framework/derivation";
 import type { ReceiveVerification } from "@domain/entity-account-receive";
-import { resolveFamily } from "../bridge/zcashRouting";
 import { loadAccountModuleForFamily } from "../coin-modules/registry";
 
 /** The `getAddress` path of a verification: no `m/` prefix, `'` hardened markers. */
@@ -13,7 +12,7 @@ export async function toReceiveVerifyAddressOptions(
   verification: ReceiveVerification,
 ): Promise<GetAddressOptions | undefined> {
   if (verification.type !== "address") return undefined;
-  const accountModule = await loadAccountModuleForFamily(resolveFamily(account.currency));
+  const accountModule = await loadAccountModuleForFamily(account.currency.family);
   return {
     ...accountModule?.injectGetAddressParams?.(account),
     currency: account.currency,
