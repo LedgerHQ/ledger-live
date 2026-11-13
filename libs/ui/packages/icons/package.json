@@ -12,40 +12,20 @@
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
   "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui/packages/icons",
-  "files": [
-    "react",
-    "reactLegacy",
-    "native",
-    "nativeLegacy",
-    "index.js"
-  ],
   "exports": {
-    "./react/*": {
-      "require": "./react/cjs/*.js",
-      "default": "./react/*.js"
-    },
-    "./react": {
-      "require": "./react/cjs/index.js",
-      "default": "./react/index.js"
-    },
-    "./reactLegacy/*": {
-      "require": "./reactLegacy/cjs/*.js",
-      "default": "./reactLegacy/*.js"
-    },
-    "./reactLegacy": {
-      "require": "./reactLegacy/cjs/index.js",
-      "default": "./reactLegacy/index.js"
-    },
-    "./native/*": "./native/*.js",
-    "./native": "./native/index.js",
-    "./nativeLegacy/*": "./nativeLegacy/*.js",
-    "./nativeLegacy": "./nativeLegacy/index.js",
+    "./react/*": "./src/react/*.tsx",
+    "./react": "./src/react/index.ts",
+    "./reactLegacy/*": "./src/reactLegacy/*.tsx",
+    "./reactLegacy": "./src/reactLegacy/index.ts",
+    "./native/*": "./src/native/*.tsx",
+    "./native": "./src/native/index.ts",
+    "./nativeLegacy/*": "./src/nativeLegacy/*.tsx",
+    "./nativeLegacy": "./src/nativeLegacy/index.ts",
     "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "pnpm run clean && node scripts/build && node scripts/buildLegacy && tsc --project tsconfig.build.json --noEmit false && node scripts/transpile",
-    "prepublishOnly": "pnpm run build",
-    "clean": "rimraf react native reactLegacy nativeLegacy src/react src/native src/reactLegacy src/nativeLegacy"
+    "build": "pnpm run clean && node scripts/build && node scripts/buildLegacy",
+    "clean": "rimraf src/react src/native src/reactLegacy src/nativeLegacy"
   },
   "peerDependencies": {
     "@types/react": "*",

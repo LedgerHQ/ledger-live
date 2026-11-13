@@ -1,8 +1,0 @@
-{
-  "name": "@domain/api-market-index-altcoin-season",
-  "targets": {
-    "build": {
-      "executor": "nx:noop"
-    }
-  }
-}

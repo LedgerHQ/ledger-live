@@ -1,6 +1,7 @@
 {
   "extends": ["@support/tsconfig/lib", "@support/tsconfig/lib/esm"],
   "compilerOptions": {
+    "noImplicitAny": false,
     "types": ["node", "jest"]
   }
 }

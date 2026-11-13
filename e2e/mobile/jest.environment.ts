@@ -45,7 +45,6 @@ import {
 import expect from "expect";
 import { Application } from "@e2e/page/index";
 
-// @ts-expect-error detox doesn't provide type declarations for this module
 import DetoxEnvironment from "detox/runners/jest/testEnvironment";
 import { withTimeout } from "@e2e/utils/withTimeout";
 import { armWorkerWatchdog, setWatchdogState, watchdogPhase } from "@e2e/helpers/workerWatchdog";

@@ -414,7 +414,7 @@ export function useDeviceOnboardingViewModel(
     event: entry.event,
   }));
 
-  let deviceLabel = null;
+  let deviceLabel: string | null = null;
   if (device !== null) {
     const transport = device.wired ? DeviceLink.Usb : DeviceLink.Ble;
     deviceLabel = `${device.name} · ${device.modelId} · ${transport} · ${device.sessionId}`;

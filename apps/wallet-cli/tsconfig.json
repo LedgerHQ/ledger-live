@@ -1,6 +1,8 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "jsx": "react-jsx",
+    "noImplicitAny": false,
     "noEmit": true,
     "rootDir": ".",
     "types": ["node", "bun-types", "w3c-web-usb"],

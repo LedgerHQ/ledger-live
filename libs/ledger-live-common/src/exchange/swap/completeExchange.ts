@@ -7,7 +7,7 @@ import {
 } from "../../errors";
 import {
   createExchange,
-  ExchangeTypes,
+  type ExchangeTypes,
   findSwapPayloadSpecViolation,
   getExchangeErrorMessage,
   PayloadSignatureComputedFormat,
@@ -18,6 +18,7 @@ import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { firstValueFrom, Observable, reduce, timeout } from "rxjs";
+import { EXCHANGE_TYPE } from "../intents/exchangeTypes";
 import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { getCurrencyExchangeConfig } from "../";
 import { getAccountCurrency, getMainAccount } from "../../account";
@@ -518,7 +519,7 @@ export function createSwapConfirmSequence(
 
     currentStep = "PROCESS_TRANSACTION";
     const { payload, format }: { payload: Buffer; format: PayloadSignatureComputedFormat } =
-      exchange.transactionType === ExchangeTypes.SwapNg
+      exchange.transactionType === EXCHANGE_TYPE.swapNg
         ? { payload: Buffer.from("." + binaryPayload), format: "jws" }
         : { payload: Buffer.from(binaryPayload, "hex"), format: "raw" };
 
@@ -722,7 +723,7 @@ const completeExchange = (
 };
 
 function convertSignature(signature: string, exchangeType: ExchangeTypes): Buffer {
-  return exchangeType === ExchangeTypes.SwapNg
+  return exchangeType === EXCHANGE_TYPE.swapNg
     ? base64UrlDecode(signature)
     : (() => {
         const sig = secp256k1.Signature.fromBytes(Buffer.from(signature, "hex"), "compact");

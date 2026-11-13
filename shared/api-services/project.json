@@ -1,8 +1,0 @@
-{
-  "name": "@shared/api-services",
-  "targets": {
-    "build": {
-      "executor": "nx:noop"
-    }
-  }
-}

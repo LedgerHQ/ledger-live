@@ -77,7 +77,7 @@ async function transactionsForAddress(
   address: string,
 ): Promise<ReturnType<typeof toApiTransaction>[]> {
   const metas = (await yaciGet<YaciTxMeta[]>(`/addresses/${address}/transactions`)) ?? [];
-  const out = [];
+  const out: ReturnType<typeof toApiTransaction>[] = [];
   for (const meta of metas) {
     const tx = await yaciGet<YaciTx>(`/txs/${meta.tx_hash}`);
     if (!tx) continue;

@@ -11,9 +11,6 @@
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
   "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/live-e2e-shared",
-  "main": "lib/index.js",
-  "module": "lib-es/index.js",
-  "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
     "@domain/entity-contact": "workspace:*",
@@ -60,11 +57,6 @@
     "rimraf": "catalog:"
   },
   "scripts": {
-    "clean": "rimraf lib lib-es",
-    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "prewatch": "pnpm build",
-    "watch": "tsc --watch --project tsconfig.build.json",
-    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "lint": "oxlint . -A no-console",
     "lint:fix": "oxfmt . && pnpm lint --fix",
     "format": "oxfmt .",
@@ -74,20 +66,8 @@
     "e2e-cli": "tsx src/cli/e2e-cli.ts"
   },
   "exports": {
-    ".": {
-      "@ledgerhq/source": "./src/index.ts",
-      "import": "./lib-es/index.js",
-      "require": "./lib/index.js",
-      "default": "./lib/index.js"
-    },
-    "./lib-es/*": "./lib-es/*.js",
-    "./lib/*": "./lib/*.js",
-    "./*": {
-      "@ledgerhq/source": "./src/*.ts",
-      "import": "./lib-es/*.js",
-      "require": "./lib/*.js",
-      "default": "./lib/*.js"
-    },
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts",
     "./package.json": "./package.json"
   }
 }

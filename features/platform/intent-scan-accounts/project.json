@@ -1,8 +1,0 @@
-{
-  "name": "@features/platform-intent-scan-accounts",
-  "targets": {
-    "build": {
-      "executor": "nx:noop"
-    }
-  }
-}

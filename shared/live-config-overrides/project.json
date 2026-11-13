@@ -1,8 +1,0 @@
-{
-  "name": "@shared/live-config-overrides",
-  "targets": {
-    "build": {
-      "executor": "nx:noop"
-    }
-  }
-}

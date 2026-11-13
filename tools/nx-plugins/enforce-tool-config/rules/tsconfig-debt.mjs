@@ -16,20 +16,28 @@ export const RELAXATIONS = {
   exactOptionalPropertyTypes: false,
 };
 
+// A package typechecks the sources of the private libs it imports with its own options, so it
+// cannot be stricter than them. The entries marked "reads live-common" compile live-common's
+// sources, which are not noImplicitAny clean. Exit condition: live-common meets noImplicitAny.
+const READS_LIVE_COMMON = ["noImplicitAny"];
+
 /** @type {Record<string, string[]>} repo-relative config path to the relaxations it may set */
 export const TSCONFIG_DEBT = {
+  "libs/asset-detail/tsconfig.json": READS_LIVE_COMMON,
   "libs/coin-modules/coin-cardano/tsconfig.json": ["exactOptionalPropertyTypes"],
   "libs/coin-modules/coin-icon/tsconfig.json": ["exactOptionalPropertyTypes"],
   "libs/coin-modules/coin-kaspa/tsconfig.json": ["exactOptionalPropertyTypes"],
   "libs/coin-modules/coin-stacks/tsconfig.json": ["exactOptionalPropertyTypes", "noImplicitAny"],
   "libs/coin-modules/coin-ton/tsconfig.json": ["exactOptionalPropertyTypes"],
   "libs/coin-modules/coin-tron/tsconfig.json": ["exactOptionalPropertyTypes"],
+  "libs/coin-modules-monitoring/tsconfig.json": READS_LIVE_COMMON,
   "libs/deeplink-module/tsconfig.json": ["noImplicitAny", "noImplicitThis"],
   "libs/ethereum-provider/tsconfig.json": ["noImplicitAny", "noImplicitThis"],
   "libs/exchange-module/tsconfig.json": ["noImplicitAny", "noImplicitThis"],
   "libs/feature-flag-module/tsconfig.json": ["noImplicitAny", "noImplicitThis"],
   "libs/hw-transport-http/tsconfig.json": ["noImplicitAny", "noImplicitThis", "isolatedModules"],
   "libs/live-e2e-shared/tsconfig.json": ["noImplicitAny", "noImplicitThis"],
+  "libs/live-send/tsconfig.json": READS_LIVE_COMMON,
   "libs/live-signer-aleo/tsconfig.json": ["noImplicitAny", "noImplicitThis"],
   "libs/live-signer-canton/tsconfig.json": ["noImplicitAny", "noImplicitThis"],
   "libs/live-signer-celo/tsconfig.json": ["noImplicitAny", "noImplicitThis"],
