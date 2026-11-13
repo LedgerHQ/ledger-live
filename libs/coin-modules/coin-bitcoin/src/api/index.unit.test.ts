@@ -13,6 +13,7 @@ import { getBalance } from "../logic/getBalance";
 import { getBlock } from "../logic/getBlock";
 import { getBlockInfo } from "../logic/getBlockInfo";
 import { lastBlock } from "../logic/lastBlock";
+import { listHoldings } from "../logic/listHoldings";
 import { listOperations } from "../logic/listOperations";
 import { validateIntent } from "../logic/validateIntent";
 import { testContext } from "../logic/tests/helpers/msw";
@@ -26,10 +27,11 @@ jest.mock("../logic/getBalance");
 jest.mock("../logic/getBlock");
 jest.mock("../logic/getBlockInfo");
 jest.mock("../logic/lastBlock");
+jest.mock("../logic/listHoldings");
 jest.mock("../logic/listOperations");
 jest.mock("../logic/validateIntent");
 
-const SUPPORTED = ["getBlock", "getBlockInfo", "validateIntent"];
+const SUPPORTED = ["getBlock", "getBlockInfo", "listHoldings", "validateIntent"];
 
 const intent: TransactionIntent<MemoNotSupported, BitcoinTxData> = {
   intentType: "transaction",
@@ -88,6 +90,13 @@ describe("createApi", () => {
     const options = { minHeight: 10, order: "asc" as const };
     await createApi("litecoin").listOperations(context, "addr", options);
     expect(listOperations).toHaveBeenCalledWith(context, "litecoin", "addr", options);
+  });
+
+  it("delegates listHoldings with the instance's currency", async () => {
+    jest.mocked(listHoldings).mockImplementation(async () => ({ items: [] }));
+    const options = { asset: { type: "native" as const }, cursor: "2" };
+    await createApi("litecoin").listHoldings(context, "addr", options);
+    expect(listHoldings).toHaveBeenCalledWith(context, "litecoin", "addr", options);
   });
 
   it("delegates craftTransaction with the custom fees", async () => {
