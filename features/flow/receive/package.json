@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@domain/entity-account-descriptor": "workspace:*",
+    "@domain/entity-account-receive": "workspace:*",
     "@domain/entity-currency": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "@shared/analytics": "workspace:*",

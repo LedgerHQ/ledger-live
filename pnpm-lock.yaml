@@ -13090,6 +13090,9 @@ importers:
       '@domain/entity-account-descriptor':
         specifier: workspace:*
         version: link:../../../domain/entity/account-descriptor
+      '@domain/entity-account-receive':
+        specifier: workspace:*
+        version: link:../../../domain/entity/account-receive
       '@domain/entity-currency':
         specifier: workspace:*
         version: link:../../../domain/entity/currency

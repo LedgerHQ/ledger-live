@@ -1,5 +1,6 @@
 import type { DeviceModelId } from "@ledgerhq/device-management-kit";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountReceive } from "@domain/entity-account-receive";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { PartialFeatures } from "@shared/feature-flags";
 
@@ -28,6 +29,8 @@ export type ReceiveFamilyConfigInput<A = unknown> = Readonly<{
   descriptor: AccountDescriptor;
   asset: Pick<CryptoOrTokenCurrency, "id" | "type">;
   featureFlags: PartialFeatures;
+  /** The account's `receive` data, absent until it is read. */
+  receive?: AccountReceive;
   legacyAccount?: A;
 }>;
 

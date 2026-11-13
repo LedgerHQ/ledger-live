@@ -1,27 +1,37 @@
 import { mockUtxoAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
+import { mockAccountReceive } from "@domain/entity-account-receive/schema.mock";
+import type { AccountReceive } from "@domain/entity-account-receive";
 import { mockReceiveFamilyConfigInput } from "@features/flow-receive/types.mock";
-import type { BitcoinAccount } from "@ledgerhq/live-common/families/bitcoin/types";
 import { receiveAddressConfig } from "../receiveAddressConfig";
 
-const zcashAccount = (privateInfo?: object) => ({ privateInfo }) as unknown as BitcoinAccount;
+const TRANSPARENT_ADDRESS = "t1Rv4exT7bqhZqi2j7xz8bUHDMxwosrjADU";
+const SHIELDED_ADDRESS = "u1shieldedaddress";
 
-const zcashInput = ({ shielded, privateInfo }: { shielded: boolean; privateInfo?: object }) =>
-  mockReceiveFamilyConfigInput<BitcoinAccount>({
+const zcashInput = ({ shielded, receive }: { shielded: boolean; receive?: AccountReceive }) =>
+  mockReceiveFamilyConfigInput({
     descriptor: mockUtxoAccountDescriptor({ network: "zcash", path: "m/44h/133h/0h" }),
     asset: { id: "zcash" },
     featureFlags: { zcashShielded: { enabled: shielded } },
-    legacyAccount: zcashAccount(privateInfo),
+    receive,
   });
+
+const transparentReceive = mockAccountReceive({
+  address: TRANSPARENT_ADDRESS,
+  verification: undefined,
+});
+const shieldedReceive = mockAccountReceive({
+  address: TRANSPARENT_ADDRESS,
+  verification: undefined,
+  shielded: { address: SHIELDED_ADDRESS },
+});
 
 describe("bitcoin receiveAddressConfig", () => {
   it("should show the utxo notice on a native segwit account", () => {
-    expect(receiveAddressConfig(mockReceiveFamilyConfigInput<BitcoinAccount>())).toEqual({
-      notices: ["utxo"],
-    });
+    expect(receiveAddressConfig(mockReceiveFamilyConfigInput())).toEqual({ notices: ["utxo"] });
   });
 
   it("should show the taproot notice on a taproot account", () => {
-    const input = mockReceiveFamilyConfigInput<BitcoinAccount>({
+    const input = mockReceiveFamilyConfigInput({
       descriptor: mockUtxoAccountDescriptor({ path: "m/86h/0h/0h" }),
     });
 
@@ -29,7 +39,7 @@ describe("bitcoin receiveAddressConfig", () => {
   });
 
   it("should show the staking notice on a Dash account", () => {
-    const input = mockReceiveFamilyConfigInput<BitcoinAccount>({
+    const input = mockReceiveFamilyConfigInput({
       descriptor: mockUtxoAccountDescriptor({ network: "dash", path: "m/44h/5h/0h" }),
       asset: { id: "dash" },
     });
@@ -37,19 +47,25 @@ describe("bitcoin receiveAddressConfig", () => {
     expect(receiveAddressConfig(input)).toEqual({ notices: ["utxo", "dashStaking"] });
   });
 
-  it("should show the private address notice when Zcash shielded is on and the account has no shielded address", () => {
-    const input = zcashInput({ shielded: true, privateInfo: { ufvk: "uview1test" } });
+  it("should show the private address notice when Zcash shielded is on and the receive data has no shielded address", () => {
+    const input = zcashInput({ shielded: true, receive: transparentReceive });
 
     expect(receiveAddressConfig(input)).toEqual({ notices: ["utxo", "zcashPrivateNotEnabled"] });
   });
 
-  it("should not show the private address notice when the Zcash account has a shielded address", () => {
-    const input = zcashInput({ shielded: true, privateInfo: { shieldedAddress: "u1abc" } });
+  it("should not show the private address notice when the receive data has a shielded address", () => {
+    const input = zcashInput({ shielded: true, receive: shieldedReceive });
 
     expect(receiveAddressConfig(input)).toEqual({ notices: ["utxo"] });
   });
 
+  it("should not show the private address notice before the receive data is read", () => {
+    expect(receiveAddressConfig(zcashInput({ shielded: true }))).toEqual({ notices: ["utxo"] });
+  });
+
   it("should not show the private address notice when Zcash shielded is off", () => {
-    expect(receiveAddressConfig(zcashInput({ shielded: false }))).toEqual({ notices: ["utxo"] });
+    const input = zcashInput({ shielded: false, receive: transparentReceive });
+
+    expect(receiveAddressConfig(input)).toEqual({ notices: ["utxo"] });
   });
 });
