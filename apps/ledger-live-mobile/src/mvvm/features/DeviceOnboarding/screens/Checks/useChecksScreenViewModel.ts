@@ -1,14 +1,12 @@
 import { useCallback, useState } from "react";
 import { Linking, Platform } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import { track } from "@shared/analytics";
 import { getDeviceModel } from "@ledgerhq/devices";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
 import { useLocale, useTranslation } from "~/context/Locale";
-import { NavigatorName, ScreenName } from "~/const";
 import { urls } from "~/utils/urls";
-import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
+import { useInitializerActions } from "LLM/components/DeviceIntentExecutor/ContextInitializer/hooks/useInitializerActions";
 import type {
   ChecksScreenProps,
   ChecksScreenState,
@@ -44,16 +42,6 @@ type UnsupportedUpdateDrawerProps = Readonly<{
 }>;
 
 type RecoverableErrorKind = Exclude<GenuineErrorKind, "notGenuine">;
-
-type ExperimentalSettingsNavigation = {
-  navigate: (
-    navigator: typeof NavigatorName.Base,
-    params: {
-      screen: typeof NavigatorName.Settings;
-      params: { screen: typeof ScreenName.ExperimentalSettings };
-    },
-  ) => void;
-};
 
 type ErrorDrawerProps = Readonly<{
   isOpen: boolean;
@@ -275,8 +263,14 @@ export function useChecksScreenViewModel({
 }: ChecksScreenProps): ChecksViewProps {
   const { t } = useTranslation();
   const { locale } = useLocale();
-  const navigation = useNavigation<ExperimentalSettingsNavigation>();
-  const contactSupportUrl = useLocalizedUrl(urls.contact);
+  const productName = getDeviceModel(device.modelId).productName || device.modelId;
+  const { openSupport, openExperimentalSettings } = useInitializerActions({
+    id: device.deviceId,
+    name: device.deviceName ?? "",
+    modelId: device.modelId,
+    productName,
+    wired: device.wired,
+  });
   const recoverableKind = recoverableKindOf(error);
   const [retainedRecoverableKind, setRetainedRecoverableKind] = useState(recoverableKind);
   if (recoverableKind && recoverableKind !== retainedRecoverableKind) {
@@ -296,19 +290,16 @@ export function useChecksScreenViewModel({
   }, [errorDrawerKind, onQuit]);
   const onContactSupport = useCallback(() => {
     trackRecoverableButton("Contact Ledger Support");
-    openUrl(contactSupportUrl);
-  }, [contactSupportUrl]);
+    openSupport();
+  }, [openSupport]);
   const onContactNotGenuineSupport = useCallback(() => {
     track("button_clicked", { button: "Contacting support about non genuine device" });
     openUrl(contactSupportWebviewUrl(locale));
   }, [locale]);
   const onGoToSettings = useCallback(() => {
     trackRecoverableButton("Go to settings", providerSettingsPage);
-    navigation.navigate(NavigatorName.Base, {
-      screen: NavigatorName.Settings,
-      params: { screen: ScreenName.ExperimentalSettings },
-    });
-  }, [navigation]);
+    openExperimentalSettings();
+  }, [openExperimentalSettings]);
   const layout = checksLayout(state, update !== null);
   const [allowClosed, setAllowClosed] = useState(false);
   if ((state !== "awaitingAllow" || suspendSheets) && allowClosed) setAllowClosed(false);
@@ -321,7 +312,6 @@ export function useChecksScreenViewModel({
   const offerDismissed = dismissedOfferKey === updateKey;
   const isUnsupportedUpdateOpen = unsupportedFor === updateKey && updateKey !== "";
   const offerOpen = offered && !offerDismissed && !isUnsupportedUpdateOpen && !suspendSheets;
-  const productName = getDeviceModel(device.modelId).productName || device.modelId;
 
   const acceptUpdate = () => {
     if (!eligibility) return;

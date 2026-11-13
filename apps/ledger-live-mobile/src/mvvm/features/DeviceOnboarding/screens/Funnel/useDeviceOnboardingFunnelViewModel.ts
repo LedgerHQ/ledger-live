@@ -124,6 +124,7 @@ type ScreenActions = {
   phase: ReturnType<typeof phaseOf>;
   unseeded: boolean;
   confirmsQuit: boolean;
+  suspendSheets: boolean;
   quitConfirmation: QuitConfirmationModel | null;
   copy: ScreenCopy;
   retry: () => void;
@@ -258,7 +259,7 @@ function quitConfirmationWhileUnlocked(
   };
 }
 
-function underUnlockSheet(
+function withUnlockSheet(
   built: DeviceOnboardingFunnelModel,
   holdingLockedScreen: boolean,
   locked: boolean,
@@ -268,29 +269,15 @@ function underUnlockSheet(
   const unlockSheet = locked
     ? { deviceModelId: device.modelId, deviceName: device.deviceName ?? "" }
     : null;
-  if (built.status === "checks") {
-    return { ...built, checks: { ...built.checks, suspendSheets: true }, unlockSheet };
-  }
+  if (built.status === "checks") return { ...built, unlockSheet };
   if (built.status === "unseededIntroKaraoke") {
     return {
       ...built,
-      unseededIntroKaraoke: {
-        ...built.unseededIntroKaraoke,
-        suspendSheets: true,
-        onFinish: () => false,
-      },
+      unseededIntroKaraoke: { ...built.unseededIntroKaraoke, onFinish: () => false },
       unlockSheet,
     };
   }
   return built;
-}
-
-function checksUnderQuitConfirmation(
-  built: DeviceOnboardingFunnelModel,
-  isQuitConfirmationOpen: boolean,
-): DeviceOnboardingFunnelModel {
-  if (!isQuitConfirmationOpen || built.status !== "checks") return built;
-  return { ...built, checks: { ...built.checks, suspendSheets: true } };
 }
 
 function checksScreen(actions: ScreenActions): DeviceOnboardingFunnelModel {
@@ -304,7 +291,7 @@ function checksScreen(actions: ScreenActions): DeviceOnboardingFunnelModel {
       status: "unseededIntroKaraoke",
       unseededIntroKaraoke: {
         deviceModelId: device.modelId,
-        suspendSheets: actions.quitConfirmation?.isOpen === true,
+        suspendSheets: actions.suspendSheets,
         onFinish: () => actions.send({ type: "CONTINUE" }),
         onClose: actions.requestQuit,
       },
@@ -319,6 +306,7 @@ function checksScreen(actions: ScreenActions): DeviceOnboardingFunnelModel {
     unlockSheet: null,
     checks: {
       device,
+      suspendSheets: actions.suspendSheets,
       state: screenState,
       error: toChecksError(actions.state, actions.genuineFailureKind),
       update:
@@ -528,6 +516,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     phase,
     unseeded,
     confirmsQuit,
+    suspendSheets: holdingLockedScreen || quitConfirmation?.isOpen === true,
     quitConfirmation,
     copy: {
       failedTitle: t("deviceOnboarding.connection.failed"),
@@ -557,10 +546,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   );
   if (nextHeld !== heldState) setHeldState(nextHeld);
 
-  return checksUnderQuitConfirmation(
-    underUnlockSheet(built, holdingLockedScreen, locked, device),
-    quitConfirmation?.isOpen === true,
-  );
+  return withUnlockSheet(built, holdingLockedScreen, locked, device);
 }
 
 function readString(value: unknown): string | null {
