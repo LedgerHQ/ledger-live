@@ -3,4 +3,4 @@
 "live-mobile": minor
 ---
 
-Leave room above the chart max so the scrubber overlay covers its whole label
+Leave room around the chart max and min labels so the scrubber overlay covers them whole

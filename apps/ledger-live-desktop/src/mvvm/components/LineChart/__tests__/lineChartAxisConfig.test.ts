@@ -1,3 +1,4 @@
+import { DEFAULT_LINE_CHART_HEIGHT, LINE_CHART_DRAWING_INSET } from "../constants";
 import { getEvenlySpacedTicks } from "../utils/getEvenlySpacedTicks";
 import {
   buildLineChartPaddedYAxisConfig,
@@ -37,28 +38,23 @@ describe("buildLineChartXAxisConfig", () => {
   });
 });
 
-function domainOf(min: number, max: number) {
-  const domainFn = buildLineChartPaddedYAxisConfig({
-    chartBaseHeight: 240,
-    drawingHeight: 210,
-    bottomOffsetPx: 50,
-    topOffsetPx: 24,
-  }).domain;
+const DRAWING_HEIGHT = DEFAULT_LINE_CHART_HEIGHT - LINE_CHART_DRAWING_INSET.top;
+
+function paddingPxOf(min: number, max: number) {
+  const domainFn = buildLineChartPaddedYAxisConfig().domain;
   if (typeof domainFn !== "function") {
     throw new Error("Expected y-axis domain to be a function");
   }
-  return domainFn({ min, max });
+  const domain = domainFn({ min, max });
+  const valuePerPx = (domain.max - domain.min) / DRAWING_HEIGHT;
+  return { top: (domain.max - max) / valuePerPx, bottom: (min - domain.min) / valuePerPx };
 }
 
 describe("buildLineChartPaddedYAxisConfig", () => {
-  it("extends the min domain below the data range", () => {
-    expect(domainOf(100, 200).min).toBeCloseTo(79.16666666666667);
-  });
+  it("leaves 24px above the max and 32px below the min so their labels stay under the scrubber overlay", () => {
+    const padding = paddingPxOf(100, 200);
 
-  it("leaves 24px above the max so its label stays under the scrubber overlay", () => {
-    const domain = domainOf(100, 200);
-    const valuePerPx = (domain.max - domain.min) / 210;
-
-    expect((domain.max - 200) / valuePerPx).toBeCloseTo(24);
+    expect(padding.top).toBeCloseTo(24);
+    expect(padding.bottom).toBeCloseTo(32);
   });
 });

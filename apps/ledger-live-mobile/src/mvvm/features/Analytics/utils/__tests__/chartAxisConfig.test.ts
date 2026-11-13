@@ -14,10 +14,10 @@ describe("buildAnalyticsChartYAxisConfig", () => {
     expect(domain.min).toBeLessThan(0);
   });
 
-  it("should leave 24px above the highest value for its label and room under the lowest", () => {
+  it("should leave 24px above the highest value and 32px under the lowest for their labels", () => {
     const domain = domainOf(100, 200);
     const valuePerPx = (domain.max - domain.min) / DEFAULT_LINE_CHART_HEIGHT;
     expect((domain.max - 200) / valuePerPx).toBeCloseTo(24);
-    expect(domain.min).toBeLessThan(100);
+    expect((100 - domain.min) / valuePerPx).toBeCloseTo(32);
   });
 });

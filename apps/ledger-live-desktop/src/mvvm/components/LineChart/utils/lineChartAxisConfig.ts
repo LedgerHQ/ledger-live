@@ -5,10 +5,9 @@ import { getEvenlySpacedTicks } from "./getEvenlySpacedTicks";
 const MIN_X_AXIS_TICKS = 5;
 const MIN_X_AXIS_TICKS_1D = 8;
 
-export const LINE_CHART_Y_AXIS_BOTTOM_OFFSET_PX = 50;
-
-/** Room above the max so its label stays inside the drawing area, under the scrubber overlay. */
-export const LINE_CHART_Y_AXIS_TOP_OFFSET_PX = 24;
+/** Room around the max and min so their labels stay inside the drawing area, under the scrubber overlay. */
+const Y_AXIS_TOP_OFFSET_PX = 24;
+const Y_AXIS_BOTTOM_OFFSET_PX = 32;
 
 export function buildLineChartXAxisConfig({
   timestamps,
@@ -32,25 +31,15 @@ export function buildLineChartXAxisConfig({
   };
 }
 
-export function buildLineChartPaddedYAxisConfig({
-  chartBaseHeight = DEFAULT_LINE_CHART_HEIGHT,
-  drawingHeight = DEFAULT_LINE_CHART_HEIGHT - LINE_CHART_DRAWING_INSET.top,
-  bottomOffsetPx = LINE_CHART_Y_AXIS_BOTTOM_OFFSET_PX,
-  topOffsetPx = LINE_CHART_Y_AXIS_TOP_OFFSET_PX,
-}: {
-  readonly chartBaseHeight?: number;
-  readonly drawingHeight?: number;
-  readonly bottomOffsetPx?: number;
-  readonly topOffsetPx?: number;
-} = {}): LineChartYAxisConfig {
+export function buildLineChartPaddedYAxisConfig(): LineChartYAxisConfig {
+  const drawingHeight = DEFAULT_LINE_CHART_HEIGHT - LINE_CHART_DRAWING_INSET.top;
   return {
     domain: ({ min, max }) => {
       const range = max - min || Math.abs(max) || 1;
-      const bottomPadding = (bottomOffsetPx * range) / chartBaseHeight;
-      const valuePerDrawnPx = (range + bottomPadding) / (drawingHeight - topOffsetPx);
+      const valuePerPx = range / (drawingHeight - Y_AXIS_TOP_OFFSET_PX - Y_AXIS_BOTTOM_OFFSET_PX);
       return {
-        min: min - bottomPadding,
-        max: max + topOffsetPx * valuePerDrawnPx,
+        min: min - Y_AXIS_BOTTOM_OFFSET_PX * valuePerPx,
+        max: max + Y_AXIS_TOP_OFFSET_PX * valuePerPx,
       };
     },
   };

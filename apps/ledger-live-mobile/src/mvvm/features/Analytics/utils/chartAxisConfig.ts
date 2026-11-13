@@ -4,9 +4,9 @@ import type { AnalyticsChartRange } from "@ledgerhq/wallet-analytics";
 
 const MIN_X_AXIS_TICKS = 5;
 const MIN_X_AXIS_TICKS_1D = 8;
-const Y_AXIS_BOTTOM_OFFSET_PX = 50;
-/** Room above the max so its label stays inside the drawing area, under the scrubber overlay. */
+/** Room around the max and min so their labels stay inside the drawing area, under the scrubber overlay. */
 const Y_AXIS_TOP_OFFSET_PX = 24;
+const Y_AXIS_BOTTOM_OFFSET_PX = 32;
 
 function getEvenlySpacedTicks(length: number, minTicks: number): number[] {
   if (length <= 0) return [];
@@ -44,11 +44,10 @@ export function buildAnalyticsChartYAxisConfig(): LineChartYAxisConfig {
   return {
     domain: ({ min, max }) => {
       const range = max - min || Math.abs(max) || 1;
-      const bottomPadding = (Y_AXIS_BOTTOM_OFFSET_PX * range) / DEFAULT_LINE_CHART_HEIGHT;
       const valuePerPx =
-        (range + bottomPadding) / (DEFAULT_LINE_CHART_HEIGHT - Y_AXIS_TOP_OFFSET_PX);
+        range / (DEFAULT_LINE_CHART_HEIGHT - Y_AXIS_TOP_OFFSET_PX - Y_AXIS_BOTTOM_OFFSET_PX);
       return {
-        min: min - bottomPadding,
+        min: min - Y_AXIS_BOTTOM_OFFSET_PX * valuePerPx,
         max: max + Y_AXIS_TOP_OFFSET_PX * valuePerPx,
       };
     },

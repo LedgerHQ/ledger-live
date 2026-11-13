@@ -19,6 +19,7 @@ import BigNumber from "bignumber.js";
 import type { State } from "~/reducers/types";
 import { marketCurrencyData } from "../../../__fixtures__/marketCurrencyData";
 import type { RangeKey } from "../../../utils/rangeMapping";
+import { ASSET_DETAIL_CHART_HEIGHT } from "../constants";
 
 jest.mock("@ledgerhq/live-common/market/state-manager/marketApi", () => ({
   ...jest.requireActual("@ledgerhq/live-common/market/state-manager/marketApi"),
@@ -550,7 +551,7 @@ describe("useBalanceGraphViewModel", () => {
       expect(typeof domain).toBe("function");
       // @ts-expect-error domain is the function form here.
       const padded = domain({ min: 0, max: 100 });
-      const valuePerPx = (padded.max - padded.min) / 208;
+      const valuePerPx = (padded.max - padded.min) / ASSET_DETAIL_CHART_HEIGHT;
 
       expect((0 - padded.min) / valuePerPx).toBeCloseTo(32);
       expect((padded.max - 100) / valuePerPx).toBeCloseTo(24);
