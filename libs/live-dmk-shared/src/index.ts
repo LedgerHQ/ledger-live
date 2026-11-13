@@ -46,6 +46,7 @@ export type {
   ConnectNewDeviceStateMachineInput,
   ConnectNewDeviceUIState,
   ConnectNewDeviceUIStateType,
+  EmbeddedConnectNewDeviceUIState,
   ListedDevice,
   SelectableDevice,
 } from "./connectNewDevice/types";
