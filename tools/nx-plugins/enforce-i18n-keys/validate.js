@@ -393,9 +393,15 @@ function createProgram(files) {
   };
   const host = ts.createCompilerHost(options);
   const entries = workspaceEntries();
+  // Same suffix order as the package tsconfigs, so a de-suffixed import finds its platform twin.
+  const nativeOptions = { ...options, moduleSuffixes: [".native", ""] };
+  const webOptions = { ...options, moduleSuffixes: [".web", ""] };
   const resolveOne = (name, containingFile) => {
-    if (name.startsWith("."))
-      return ts.resolveModuleName(name, containingFile, options, host).resolvedModule;
+    if (name.startsWith(".")) {
+      const isNative = /\.native\.tsx?$/.test(containingFile);
+      const resolution = isNative ? nativeOptions : webOptions;
+      return ts.resolveModuleName(name, containingFile, resolution, host).resolvedModule;
+    }
     const entry = entries.get(name);
     if (!entry) return undefined;
     return {

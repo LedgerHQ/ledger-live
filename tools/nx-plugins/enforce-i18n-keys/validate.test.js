@@ -228,6 +228,34 @@ describe("extractKeys: type-enumerated dynamic keys", () => {
     );
   });
 
+  it("resolves a de-suffixed import to the .native twin from a .native file", () => {
+    write("suffix/platform.native.ts", `export const platform = "native" as const;`);
+    write("suffix/platform.web.ts", `export const platform = "web" as const;`);
+    const sites = sitesOf(
+      `import { platform } from "./platform"; declare const f: boolean; t(f ? \`p.\${platform}\` : "p.x");`,
+      "suffix/view.native.tsx",
+    );
+    assert.deepStrictEqual(
+      sites.map(s => s.kind),
+      ["enumerated"],
+    );
+    assert.deepStrictEqual(sites[0].keys.map(k => k.key).sort(), ["p.native", "p.x"]);
+  });
+
+  it("resolves a de-suffixed import to the .web twin from any other file", () => {
+    write("suffix/platform.native.ts", `export const platform = "native" as const;`);
+    write("suffix/platform.web.ts", `export const platform = "web" as const;`);
+    const sites = sitesOf(
+      `import { platform } from "./platform"; declare const f: boolean; t(f ? \`p.\${platform}\` : "p.x");`,
+      "suffix/view.web.tsx",
+    );
+    assert.deepStrictEqual(
+      sites.map(s => s.kind),
+      ["enumerated"],
+    );
+    assert.deepStrictEqual(sites[0].keys.map(k => k.key).sort(), ["p.web", "p.x"]);
+  });
+
   it("gives up on combinations above the cap", () => {
     const members = Array.from({ length: 30 }, (_, i) => `"v${i}"`).join(" | ");
     const source = `type V = ${members}; declare const a: V; declare const b: V; t(\`\${a}.\${b}\`);`;
