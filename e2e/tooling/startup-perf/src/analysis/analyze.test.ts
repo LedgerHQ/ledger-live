@@ -7,6 +7,7 @@ import {
   fromJsStart,
   fromProcessStart,
   pairUp,
+  runInfoOf,
   summarise,
   type Row,
 } from "./analyze.ts";
@@ -35,6 +36,17 @@ describe("pairUp", () => {
       pairUp(samples, s => s.appStartupTime),
       [{ platform: "android", scenario: "accounts", phase: 0, A: 1000, B: 1100 }],
     );
+  });
+});
+
+describe("runInfoOf", () => {
+  const options = { preset: "prod-vs-develop", thresholdMs: 100, labelA: "a (1)", labelB: "b (2)" };
+  it("describes the run with its planned pairs", () => {
+    assert.deepEqual(runInfoOf(options, "20"), { ...options, pairs: 20 });
+  });
+  it("has no planned pairs when none or no number was given", () => {
+    assert.equal(runInfoOf(options, undefined).pairs, null);
+    assert.equal(runInfoOf(options, "x").pairs, null);
   });
 });
 
