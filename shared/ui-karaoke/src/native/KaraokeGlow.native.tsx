@@ -3,11 +3,14 @@ import Animated, { css } from "react-native-reanimated";
 import { GLOW_FADE_MS } from "@shared/ui-glow/native";
 import Svg, { Defs, Ellipse, RadialGradient, Stop } from "react-native-svg";
 
+/** GPU glow size: bigger than the playground defaults; the top glow is shorter, behind the phrases. */
+export const KARAOKE_GLOW_SIZE = { reach: 0.3, width: 1, topReach: 0.65 };
+
 /** Measured on the design: an ellipse centered on the screen edge, wider than the screen. */
 const RADIUS_X = 520;
 const RADIUS_Y = 460;
-/** The top glow is shorter, like the GPU one (`topReach`). */
-const TOP_SCALE_Y = 0.65;
+/** The top glow is shorter, like the GPU one. */
+const TOP_SCALE_Y = KARAOKE_GLOW_SIZE.topReach;
 /** Color and opacity by distance from the edge, as a share of RADIUS_Y. The tail gets bluer. */
 const FALLOFF = [
   { offset: 0, color: "#44345F", opacity: 1 },

@@ -23,13 +23,8 @@ import kotlin.math.roundToInt
  */
 class GlowView(context: Context) : GLSurfaceView(context) {
 
-  // Written on the UI thread, read on the render thread.
-  // A still glow (reduce motion) draws only on request, so each change asks for a frame.
+  // Written on the UI thread, read on the render thread. Drawn after applyProps().
   @Volatile var params = GlowParams()
-    set(value) {
-      field = value
-      requestRender()
-    }
   var delayMs = 0.0
   var onShaderError: ((message: String) -> Unit)? = null
 
@@ -67,20 +62,20 @@ class GlowView(context: Context) : GLSurfaceView(context) {
     isBottomShown = show
   }
 
-  /** Called once all props of an update are set. */
+  /** Called once all props of an update are set. A still glow (reduce motion) needs the frame. */
   fun applyProps() {
+    updateRenderMode()
     animateTo(topFade, if (isTopShown) 1f else 0f)
     animateTo(bottomFade, if (isBottomShown) 1f else 0f)
+    requestRender()
   }
 
   /** The first value applies at once; later changes wait `delayMs`, then fade. */
   private fun animateTo(fade: GlowFade, target: Float) {
-    updateRenderMode()
     val isInstant = !fade.hasRequest || isReduceMotion
     if (!isInstant && target == fade.target) return
     val start = System.nanoTime() + (delayMs * 1e6).toLong()
     fade.request(target, if (isInstant) 0L else start)
-    requestRender()
   }
 
   /** A still glow (reduce motion) only draws when something changes. */

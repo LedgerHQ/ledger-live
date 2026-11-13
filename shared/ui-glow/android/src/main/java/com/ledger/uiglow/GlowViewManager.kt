@@ -86,7 +86,6 @@ class GlowViewManager : SimpleViewManager<GlowView>(), GlowViewManagerInterface<
 
   override fun setShowBottom(view: GlowView, value: Boolean) = view.setShowBottom(value)
 
-
   override fun setDelayMs(view: GlowView, value: Double) {
     view.delayMs = value
   }

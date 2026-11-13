@@ -1,9 +1,8 @@
 // RCTGlowView: Fabric view for <GlowView>, drawn with Metal in an MTKView (its own display
 // loop, paused off-window), so no JS runs per frame. The shader is glow.msl, shipped with the app
-// and compiled once per app run.
-// Two glows (top, bottom) fade in
-// or out after `delayMs`; the whole glow fades in once the shader is ready. Reduce motion stops the
-// clock and makes fades instant. Pixel ratio capped at 2.
+// and compiled once per app run. Two glows (top, bottom) fade in or out after `delayMs`; the whole
+// glow fades in once the shader is ready. Reduce motion stops the clock and makes fades instant.
+// Pixel ratio capped at 2.
 
 #import "RCTGlowView.h"
 

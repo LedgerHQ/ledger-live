@@ -4,7 +4,7 @@ import Animated, { Easing, FadeIn, FadeOut, LayoutAnimationConfig } from "react-
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
 import { GLOW_FADE_MS, Glow } from "@shared/ui-glow/native";
-import { KaraokeGlow } from "./KaraokeGlow";
+import { KARAOKE_GLOW_SIZE, KaraokeGlow } from "./KaraokeGlow";
 import { KaraokeLines } from "./KaraokeLines";
 import type { KaraokeFinalProps, KaraokeRootProps } from "../Karaoke.types";
 import { karaokeTestIds } from "../karaokeTestIds";
@@ -21,9 +21,6 @@ const actionFadeIn = FadeIn.delay(GLOW_FADE_MS / 2)
   .easing(Easing.bezier(0.42, 0, 0.58, 1));
 /** On Final, the glow moves down once the title is read. */
 const FINAL_READING_MS = 2000;
-
-// Bigger than the playground defaults; the top glow is shorter, behind the phrases.
-const GLOW_SIZE = { reach: 0.3, width: 1, topReach: 0.65 };
 
 type KaraokeState = Readonly<{
   phrases: readonly string[];
@@ -86,7 +83,7 @@ function Root({ phrases, tapLabel, action, testID, children }: KaraokeRootProps)
             showTop={!isGlowAtBottom}
             showBottom={isGlowAtBottom}
             delayMs={glowDelayMs}
-            params={GLOW_SIZE}
+            params={KARAOKE_GLOW_SIZE}
             fallback={<KaraokeGlow isAtBottom={isGlowAtBottom} delayMs={glowDelayMs} />}
           />
           {children}
