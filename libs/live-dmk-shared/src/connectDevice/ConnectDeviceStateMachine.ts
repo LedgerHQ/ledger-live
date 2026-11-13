@@ -23,6 +23,7 @@ import {
   type DeviceDiscoveryService,
   type UnknownDiscoveryError,
 } from "../deviceConnectivity/types";
+import { getIgnoredTransportIds } from "../deviceConnectivity/discoveryService/getIgnoredTransportIds";
 
 const WAITING_FOR_SELECTED_DEVICE_TIMEOUT = 30000;
 
@@ -150,35 +151,26 @@ const createConnectDeviceStateMachine = <
         selectedKnownDevice: () => null,
         selectedMatchedDevice: () => null,
       }),
-      ignoreDiscoveryError: assign({
-        skipTransportIds: ({ context }) => {
-          const transportId = context.discoveryError!.transportId;
-          if (!transportId || context.skipTransportIds.includes(transportId)) {
-            return context.skipTransportIds;
-          }
-          return [...context.skipTransportIds, transportId];
-        },
-      }),
-      startDiscovery: assign({
-        isDiscovering: ({ context }) => {
-          if (!context.isDiscovering) {
-            context.deviceDiscoveryService.start({
-              ignoreTransportIdentifiers: context.skipTransportIds,
-            });
-          }
-
-          return true;
-        },
-      }),
-      stopDiscovery: assign({
-        isDiscovering: ({ context }) => {
-          if (context.isDiscovering) {
-            context.deviceDiscoveryService.stop();
-          }
-
-          return false;
-        },
-      }),
+      ignoreDiscoveryError: ({ context }) => {
+        context.deviceDiscoveryService.start({
+          ignoreTransportIdentifiers: getIgnoredTransportIds(
+            context.deviceDiscoveryService,
+            context.discoveryError!.transportId,
+          ),
+        });
+      },
+      startDiscovery: ({ context }) => {
+        if (!context.deviceDiscoveryService.isRunning) {
+          context.deviceDiscoveryService.start({
+            ignoreTransportIdentifiers: getIgnoredTransportIds(context.deviceDiscoveryService),
+          });
+        }
+      },
+      stopDiscovery: ({ context }) => {
+        if (context.deviceDiscoveryService.isRunning) {
+          context.deviceDiscoveryService.stop();
+        }
+      },
       emitNoKnownDevice: ({ context }) => {
         context.observer.next({ type: ConnectDeviceUIStateTypes.NoKnownDevice });
       },
@@ -249,10 +241,8 @@ const createConnectDeviceStateMachine = <
       matchedDevices: [],
       selectedKnownDevice: null,
       selectedMatchedDevice: null,
-      isDiscovering: false,
       discoveryError: null,
       connectionError: null,
-      skipTransportIds: [],
     }),
     states: {
       Startup: {
@@ -523,10 +513,7 @@ export class DefaultConnectDeviceStateMachine<
   }
 
   stop(): void {
-    const snapshot = this.actor.getSnapshot();
-
-    // A failure while computing the initial state leaves a snapshot without context.
-    if (snapshot.context?.isDiscovering) {
+    if (this.deviceDiscoveryService.isRunning) {
       this.deviceDiscoveryService.stop();
     }
     this.actor.stop();

@@ -20,9 +20,9 @@ import {
 import {
   BaseConnectionErrorTypes,
   BaseDiscoveryErrorTypes,
-  type DeviceDiscoveryService,
   type UnknownDiscoveryError,
 } from "../deviceConnectivity/types";
+import { createFakeDeviceDiscoveryService } from "../deviceConnectivity/discoveryService/__test-utils__/createFakeDeviceDiscoveryService";
 
 // Test helpers
 const bleTransport = "RN_BLE" as TransportIdentifier;
@@ -48,13 +48,11 @@ const SUCCESS_DELAY = 1_000;
 const setupTest = () => {
   const discoveredDevices = new Subject<Array<DiscoveredDevice>>();
   const errors = new Subject<UnknownDiscoveryError>();
-  const deviceDiscoveryService: DeviceDiscoveryService = {
-    start: jest.fn(),
-    stop: jest.fn(),
+  const deviceDiscoveryService = createFakeDeviceDiscoveryService({
     transportIds: [bleTransport],
     discoveredDevices,
     errors,
-  };
+  });
 
   const input: ConnectNewDeviceUseCaseInput = {
     dmk: {
@@ -240,9 +238,9 @@ describe("connectNewDeviceUseCase", () => {
     // Arrange
     const { deviceDiscoveryService, input, lastState, states } = setupTest();
     const error = new Error("start failed");
-    deviceDiscoveryService.start = () => {
+    deviceDiscoveryService.start.mockImplementation(() => {
       throw error;
-    };
+    });
 
     // Act
     const subscription = connectNewDeviceUseCase(input).subscribe(state => states.push(state));
@@ -262,9 +260,9 @@ describe("connectNewDeviceUseCase", () => {
     input.getDiscoveredDeviceKey = () => {
       throw error;
     };
-    deviceDiscoveryService.stop = () => {
+    deviceDiscoveryService.stop.mockImplementation(() => {
       throw new Error("stop failed");
-    };
+    });
     const subscription = connectNewDeviceUseCase(input).subscribe(state => states.push(state));
 
     // Act

@@ -77,6 +77,137 @@ describe("DefaultDeviceDiscoveryService", () => {
     expect(service.transportIds).toEqual(["transport-a", "transport-b"]);
   });
 
+  it("GIVEN discovery has not started, WHEN reading isRunning, THEN it should be false", () => {
+    // GIVEN
+    const source = createSource("transport-a");
+    const service = new DefaultDeviceDiscoveryService<UnknownDiscoveryError>(
+      new Map([[source.transportId, source]]),
+    );
+
+    // THEN
+    expect(service.isRunning).toBe(false);
+  });
+
+  it("GIVEN discovery has started, WHEN reading isRunning, THEN it should be true", () => {
+    // GIVEN
+    const source = createSource("transport-a");
+    const service = new DefaultDeviceDiscoveryService<UnknownDiscoveryError>(
+      new Map([[source.transportId, source]]),
+    );
+
+    // WHEN
+    service.start();
+
+    // THEN
+    expect(service.isRunning).toBe(true);
+  });
+
+  it("GIVEN discovery has started, WHEN stopping discovery, THEN isRunning should be false", () => {
+    // GIVEN
+    const source = createSource("transport-a");
+    const service = new DefaultDeviceDiscoveryService<UnknownDiscoveryError>(
+      new Map([[source.transportId, source]]),
+    );
+    service.start();
+
+    // WHEN
+    service.stop();
+
+    // THEN
+    expect(service.isRunning).toBe(false);
+  });
+
+  it("GIVEN discovery has not started, WHEN reading the scanning transport ids, THEN it should list every transport", () => {
+    // GIVEN
+    const sourceA = createSource("transport-a");
+    const sourceB = createSource("transport-b");
+    const service = new DefaultDeviceDiscoveryService<UnknownDiscoveryError>(
+      new Map([
+        [sourceA.transportId, sourceA],
+        [sourceB.transportId, sourceB],
+      ]),
+    );
+
+    // THEN
+    expect(service.scanningTransportIds).toEqual(["transport-a", "transport-b"]);
+  });
+
+  it("GIVEN transports are ignored, WHEN discovery starts, THEN the scanning transport ids should not list them", () => {
+    // GIVEN
+    const sourceA = createSource("transport-a");
+    const sourceB = createSource("transport-b");
+    const service = new DefaultDeviceDiscoveryService<UnknownDiscoveryError>(
+      new Map([
+        [sourceA.transportId, sourceA],
+        [sourceB.transportId, sourceB],
+      ]),
+    );
+
+    // WHEN
+    service.start({ ignoreTransportIdentifiers: [sourceB.transportId] });
+
+    // THEN
+    expect(service.scanningTransportIds).toEqual(["transport-a"]);
+  });
+
+  it("GIVEN transports were ignored, WHEN stopping discovery, THEN the scanning transport ids should still not list them", () => {
+    // GIVEN
+    const sourceA = createSource("transport-a");
+    const sourceB = createSource("transport-b");
+    const service = new DefaultDeviceDiscoveryService<UnknownDiscoveryError>(
+      new Map([
+        [sourceA.transportId, sourceA],
+        [sourceB.transportId, sourceB],
+      ]),
+    );
+    service.start({ ignoreTransportIdentifiers: [sourceB.transportId] });
+
+    // WHEN
+    service.stop();
+
+    // THEN
+    expect(service.scanningTransportIds).toEqual(["transport-a"]);
+  });
+
+  it("GIVEN transports were ignored, WHEN discovery starts again with other ignored transports, THEN the scanning transport ids should follow the last start", () => {
+    // GIVEN
+    const sourceA = createSource("transport-a");
+    const sourceB = createSource("transport-b");
+    const service = new DefaultDeviceDiscoveryService<UnknownDiscoveryError>(
+      new Map([
+        [sourceA.transportId, sourceA],
+        [sourceB.transportId, sourceB],
+      ]),
+    );
+    service.start({ ignoreTransportIdentifiers: [sourceB.transportId] });
+    service.stop();
+
+    // WHEN
+    service.start({ ignoreTransportIdentifiers: [sourceA.transportId] });
+
+    // THEN
+    expect(service.scanningTransportIds).toEqual(["transport-b"]);
+  });
+
+  it("GIVEN discovery is already started, WHEN starting again with other ignored transports, THEN the scanning transport ids should not change", () => {
+    // GIVEN
+    const sourceA = createSource("transport-a");
+    const sourceB = createSource("transport-b");
+    const service = new DefaultDeviceDiscoveryService<UnknownDiscoveryError>(
+      new Map([
+        [sourceA.transportId, sourceA],
+        [sourceB.transportId, sourceB],
+      ]),
+    );
+    service.start({ ignoreTransportIdentifiers: [sourceB.transportId] });
+
+    // WHEN
+    service.start({ ignoreTransportIdentifiers: [sourceA.transportId] });
+
+    // THEN
+    expect(service.scanningTransportIds).toEqual(["transport-a"]);
+  });
+
   it("GIVEN all sources are started, WHEN they emit devices, THEN it should aggregate discovered devices", () => {
     // GIVEN
     const sourceA = createSource("transport-a");

@@ -1,4 +1,4 @@
-import type { DiscoveredDevice, TransportIdentifier } from "@ledgerhq/device-management-kit";
+import type { DiscoveredDevice } from "@ledgerhq/device-management-kit";
 
 import {
   ConnectNewDeviceStateMachineEventTypes,
@@ -15,14 +15,6 @@ export const toDevice = (discoveredDevice: DiscoveredDevice): Device => ({
   id: discoveredDevice.id,
   name: discoveredDevice.name,
 });
-
-export const getScanningTransports = (
-  transportIds: Array<TransportIdentifier>,
-  skipTransportIds: Array<TransportIdentifier>,
-): Array<TransportIdentifier> => {
-  const skippedTransportIds = new Set(skipTransportIds);
-  return transportIds.filter(transportId => !skippedTransportIds.has(transportId));
-};
 
 export const buildSelectableDevices = <
   TDiscoveryError extends BaseDiscoveryError = BaseDiscoveryError,

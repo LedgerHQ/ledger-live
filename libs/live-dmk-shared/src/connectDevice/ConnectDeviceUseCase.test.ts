@@ -1,10 +1,10 @@
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { EMPTY } from "rxjs";
 
 import { connectDeviceUseCase, type ConnectDeviceUseCaseInput } from "./connectDeviceUseCase";
 import { ConnectDeviceUIStateTypes, type ConnectDeviceUIState, type KnownDevice } from "./types";
-import { BaseConnectionErrorTypes, type DeviceDiscoveryService } from "../deviceConnectivity/types";
+import { BaseConnectionErrorTypes } from "../deviceConnectivity/types";
+import { createFakeDeviceDiscoveryService } from "../deviceConnectivity/discoveryService/__test-utils__/createFakeDeviceDiscoveryService";
 
 // Test helpers
 const knownDevice: KnownDevice = {
@@ -23,13 +23,7 @@ const setupTest = ({
   acceptedDeviceModelIds,
   knownDevices = [knownDevice],
 }: SetupTestOptions = {}) => {
-  const deviceDiscoveryService: DeviceDiscoveryService = {
-    start: jest.fn(),
-    stop: jest.fn(),
-    transportIds: [],
-    discoveredDevices: EMPTY,
-    errors: EMPTY,
-  };
+  const deviceDiscoveryService = createFakeDeviceDiscoveryService();
 
   const dmk = {
     listConnectedDevices: jest.fn(() => []),
@@ -165,9 +159,9 @@ describe("connectDeviceUseCase", () => {
     // Arrange
     const { deviceDiscoveryService, input } = setupTest();
     const error = new Error("start failed");
-    deviceDiscoveryService.start = () => {
+    deviceDiscoveryService.start.mockImplementation(() => {
       throw error;
-    };
+    });
     const states: Array<ConnectDeviceUIState> = [];
 
     // Act
