@@ -322,7 +322,14 @@ describe("summarise", () => {
 
   it("names the builds whose warm-up wrote no log line", () => {
     const warmup = (side: "A" | "B", readFrom: "log" | "screen-fallback") =>
-      launch({ side, round: -1, warmup: true, readFrom, appStartupTime: 1000 });
+      launch({
+        side,
+        round: -1,
+        warmup: true,
+        readFrom,
+        noLogLines: readFrom === "screen-fallback",
+        appStartupTime: 1000,
+      });
     const samples = comparison({
       deltaMs: 0,
       a: { readFrom: "screen" },
@@ -332,5 +339,49 @@ describe("summarise", () => {
       debugRow(summarise([...warmups, ...samples], GATE)).reads.noLogLine;
     assert.deepEqual(reads(warmup("A", "log"), warmup("B", "screen-fallback")), ["B"]);
     assert.deepEqual(reads(warmup("A", "log"), warmup("B", "log")), []);
+  });
+
+  it("names a build whose warm-up wrote no log line even when its screen read then failed", () => {
+    const failedWarmup = launch({
+      side: "A",
+      round: -1,
+      warmup: true,
+      ok: false,
+      noLogLines: true,
+      appStartupTime: Number.NaN,
+    });
+    const samples = comparison({
+      deltaMs: 0,
+      a: { readFrom: "screen" },
+      b: { readFrom: "screen" },
+    });
+    assert.deepEqual(debugRow(summarise([failedWarmup, ...samples], GATE)).reads.noLogLine, ["A"]);
+  });
+
+  it("names a build read from the log that no launch checked on the screen", () => {
+    const checkedWarmup = (side: "A" | "B") =>
+      launch({
+        side,
+        round: -1,
+        warmup: true,
+        readFrom: "log",
+        screenAppStartupTime: 1000,
+        appStartupTime: 1000,
+      });
+    const failedWarmupA = launch({
+      side: "A",
+      round: -1,
+      warmup: true,
+      ok: false,
+      appStartupTime: Number.NaN,
+    });
+    const samples = comparison({ deltaMs: 0, a: { readFrom: "log" }, b: { readFrom: "log" } });
+    const reads = (...warmups: Sample[]) =>
+      debugRow(summarise([...warmups, ...samples], GATE)).reads;
+
+    const oneChecked = reads(failedWarmupA, checkedWarmup("B"));
+    assert.equal(oneChecked.screenChecks, 1);
+    assert.deepEqual(oneChecked.uncheckedBuilds, ["A"]);
+    assert.deepEqual(reads(checkedWarmup("A"), checkedWarmup("B")).uncheckedBuilds, []);
   });
 });

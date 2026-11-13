@@ -73,6 +73,8 @@ export interface Reads {
   /** Launches, warm-ups included, read from both. */
   screenChecks: number;
   screenMismatches: number;
+  /** Builds read from the device log that no launch could check on the Debug screen. */
+  uncheckedBuilds: Side[];
 }
 
 /** The measured launches of a round, A and B. */
@@ -96,15 +98,21 @@ function readsOf(group: Sample[]): Reads {
   const checked = ok.filter(s => s.screenAppStartupTime !== undefined);
   const fallbacks = (side: Side) =>
     measured.filter(s => s.side === side && s.readFrom === "screen-fallback").length;
-  const warmupFellBack = (side: Side) =>
-    ok.some(s => s.warmup && s.side === side && s.readFrom === "screen-fallback");
+  // Failed warm-ups count: the scenario switched to the screen before their screen read failed.
+  const warmupWroteNoLines = (side: Side) =>
+    group.some(s => s.warmup && s.side === side && s.noLogLines);
+  const readFromLog = (side: Side) => measured.some(s => s.side === side && s.readFrom === "log");
+  const checkedSides = new Set(checked.map(s => s.side));
   return {
     fromLog: measured.filter(s => s.readFrom === "log").length,
-    noLogLine: (["A", "B"] as const).filter(warmupFellBack),
+    noLogLine: (["A", "B"] as const).filter(warmupWroteNoLines),
     fallbacks: { A: fallbacks("A"), B: fallbacks("B") },
     unevenPairs: rounds(group).filter(uneven).length,
     screenChecks: checked.length,
     screenMismatches: checked.filter(s => s.screenAppStartupTime !== s.appStartupTime).length,
+    uncheckedBuilds: (["A", "B"] as const).filter(
+      side => readFromLog(side) && !checkedSides.has(side),
+    ),
   };
 }
 

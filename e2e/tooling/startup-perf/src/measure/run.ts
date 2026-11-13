@@ -139,6 +139,7 @@ async function sample(meta: SampleMeta, { checkScreen = false } = {}): Promise<S
     readStart = Date.now();
     const perf = await readStartup({
       meta,
+      record,
       pid: record.pid,
       checkScreen: checkScreen || READ === "both",
       debugFile: path.join(DEBUG_DIR, `${name}.txt`),
@@ -178,11 +179,14 @@ async function sample(meta: SampleMeta, { checkScreen = false } = {}): Promise<S
  */
 async function readStartup({
   meta,
+  record,
   pid,
   checkScreen,
   debugFile,
 }: {
   meta: SampleMeta;
+  /** The launch's sample: marked when it wrote no startup lines, before the screen read can fail. */
+  record: Sample;
   pid: number;
   checkScreen: boolean;
   debugFile: string;
@@ -202,6 +206,7 @@ async function readStartup({
     log(
       `  no startup lines in the device log ${LOG_READ_TIMEOUT_MS} ms after the settle time: reading the screen`,
     );
+    record.noLogLines = true;
     if (meta.warmup) {
       log(`  build ${meta.side} does not log its startup: both builds are read on the screen`);
       read = "screen";

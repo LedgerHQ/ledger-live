@@ -69,6 +69,11 @@ function readNotes({ platform, scenario, reads }: Row): string[] {
       `**${where}: no warm-up could be read on the Debug screen, so the device log was not checked against it.**`,
     );
   }
+  if (reads.screenChecks && reads.uncheckedBuilds.length) {
+    notes.push(
+      `**${where}: build ${reads.uncheckedBuilds.join(" and ")} could not be read on the Debug screen, so its device log was not checked against it.**`,
+    );
+  }
   return notes;
 }
 
