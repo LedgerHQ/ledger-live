@@ -1,8 +1,8 @@
 import React from "react";
 import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import { QueuedBottomSheet, useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
-import { AddToWalletInstructions } from "../AddToWalletInstructions/AddToWalletInstructions.native";
-import type { AddToWalletBottomSheetViewProps } from "./useAddToWalletBottomSheetViewModel.native";
+import { AddToWalletInstructions } from "../AddToWalletInstructions/AddToWalletInstructions";
+import type { AddToWalletBottomSheetViewProps } from "./useAddToWalletBottomSheetViewModel";
 
 export function AddToWalletBottomSheetView({ isOpen, onClose }: AddToWalletBottomSheetViewProps) {
   return (

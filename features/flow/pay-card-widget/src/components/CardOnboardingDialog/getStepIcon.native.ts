@@ -1,4 +1,4 @@
-import { getWalletPlatform } from "../getWalletPlatform.native";
+import { getWalletPlatform } from "../getWalletPlatform";
 
 export function getStepIcon(stepId: string): string {
   if (stepId !== "apple-google-pay") return stepId;

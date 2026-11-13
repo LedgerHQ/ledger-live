@@ -1,6 +1,6 @@
 import React from "react";
-import { AddToWalletBottomSheetView } from "./AddToWalletBottomSheetView.native";
-import { useAddToWalletBottomSheetViewModel } from "./useAddToWalletBottomSheetViewModel.native";
+import { AddToWalletBottomSheetView } from "./AddToWalletBottomSheetView";
+import { useAddToWalletBottomSheetViewModel } from "./useAddToWalletBottomSheetViewModel";
 
 export type AddToWalletBottomSheetProps = {
   readonly isOpen: boolean;

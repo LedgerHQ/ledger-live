@@ -1,8 +1,8 @@
 import React, { useCallback, useState } from "react";
 import { trackButtonClicked } from "@features/platform-pay-analytics";
-import { AddToWalletBottomSheet } from "../AddToWalletBottomSheet/AddToWalletBottomSheet.native";
-import { AddToWalletCta, type AddToWalletCtaProps } from "../AddToWalletCta/AddToWalletCta.native";
-import { getWalletPlatform } from "../getWalletPlatform.native";
+import { AddToWalletBottomSheet } from "../AddToWalletBottomSheet/AddToWalletBottomSheet";
+import { AddToWalletCta, type AddToWalletCtaProps } from "../AddToWalletCta/AddToWalletCta";
+import { getWalletPlatform } from "../getWalletPlatform";
 
 type Props = Pick<AddToWalletCtaProps, "appearance">;
 

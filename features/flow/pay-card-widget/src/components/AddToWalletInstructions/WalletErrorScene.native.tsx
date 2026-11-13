@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Button, Spot, Text } from "@ledgerhq/lumen-ui-rnative";
 import { WarningFill } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useBottomSheetBackgroundTone } from "@shared/ui-queued-bottom-sheet";
-import type { AddToWalletInstructionsViewProps } from "./useAddToWalletInstructionsViewModel.native";
+import type { AddToWalletInstructionsViewProps } from "./useAddToWalletInstructionsViewModel";
 
 type WalletErrorSceneProps = Extract<AddToWalletInstructionsViewProps, { scene: "error" }>;
 
