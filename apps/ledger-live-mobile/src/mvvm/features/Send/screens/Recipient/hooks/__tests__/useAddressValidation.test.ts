@@ -735,6 +735,35 @@ describe("useAddressValidation", () => {
     );
   });
 
+  it("enables bridge validation by default", () => {
+    renderHook(() =>
+      useAddressValidation({
+        searchValue: "valid_address",
+        currency: mockAccount.currency,
+        account: mockAccount,
+      }),
+    );
+
+    expect(mockedUseBridgeRecipientValidation).toHaveBeenLastCalledWith(
+      expect.objectContaining({ enabled: true }),
+    );
+  });
+
+  it("disables bridge validation when the caller turns it off", () => {
+    renderHook(() =>
+      useAddressValidation({
+        searchValue: "valid_address",
+        currency: mockAccount.currency,
+        account: mockAccount,
+        isBridgeValidationEnabled: false,
+      }),
+    );
+
+    expect(mockedUseBridgeRecipientValidation).toHaveBeenLastCalledWith(
+      expect.objectContaining({ enabled: false }),
+    );
+  });
+
   it("filters currency-specific accounts", () => {
     const btcAccount = createMockAccount({ id: "btc_1" });
     const ethAccount = createMockAccount({

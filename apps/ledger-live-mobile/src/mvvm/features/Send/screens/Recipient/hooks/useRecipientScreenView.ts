@@ -19,6 +19,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Memo } from "@ledgerhq/live-common/flows/send/types";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Keyboard } from "react-native";
+import { useIsFocused } from "@react-navigation/native";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import type { ContactAddressPickerProps } from "@features/flow-pay-contact";
 import { useContactAddressPicker } from "LLM/features/Contacts/hooks/useContactAddressPicker";
@@ -95,6 +96,7 @@ export function useRecipientScreenView({
     config,
   );
   const sendFlowTrackingProperties = useSendFlowTrackingProperties();
+  const isScreenFocused = useIsFocused();
 
   const { result, isLoading } = useAddressValidation({
     searchValue: recipientSearch.value,
@@ -105,6 +107,7 @@ export function useRecipientScreenView({
     currentAccountId: mainAccount.id,
     recipientSupportsDomain,
     canSearchContactsByName: isContactsFeatureEnabled && hasAddressBook,
+    isBridgeValidationEnabled: isScreenFocused,
   });
 
   const contactsOnNetwork = useMemo(

@@ -1,6 +1,7 @@
 import { trackPage, track } from "@shared/analytics";
 import { act, renderHook } from "@tests/test-renderer";
 import { Keyboard } from "react-native";
+import { useIsFocused } from "@react-navigation/native";
 import { useRecipientScreenView } from "../useRecipientScreenView";
 import { useAddressValidation } from "../useAddressValidation";
 import { useClipboardRecipient } from "../useClipboardRecipient";
@@ -23,6 +24,10 @@ import { useContactsFeatureIntroductionViewModel } from "../useContactsFeatureIn
 import { useDoNotAskAgainSkipMemo } from "../../../../hooks/useDoNotAskAgainSkipMemo";
 import { useSendMemoReset } from "../../../../context/SendMemoResetContext";
 
+jest.mock("@react-navigation/native", () => ({
+  ...jest.requireActual("@react-navigation/native"),
+  useIsFocused: jest.fn(() => true),
+}));
 jest.mock("../useAddressValidation");
 jest.mock("../useClipboardRecipient");
 jest.mock("../../../../context/SendFlowContext");
@@ -51,6 +56,7 @@ jest.mock("../../../../context/SendFlowTrackingContext");
 jest.mock("../useContactsFeatureIntroductionViewModel");
 
 const mockedUseAddressValidation = jest.mocked(useAddressValidation);
+const mockedUseIsFocused = jest.mocked(useIsFocused);
 const mockedUseClipboardRecipient = jest.mocked(useClipboardRecipient);
 const mockedUseSendFlowData = jest.mocked(useSendFlowData);
 const mockedGetMainAccount = jest.mocked(getMainAccount);
@@ -114,6 +120,7 @@ describe("useRecipientScreenView", () => {
       return account.type === "Account" ? account : parentAccount || mockAccount;
     });
     mockedUseClipboardRecipient.mockReturnValue({ clipboardAddress: null });
+    mockedUseIsFocused.mockReturnValue(true);
     mockedUseSendFlowData.mockReturnValue({
       recipientSearch: mockRecipientSearch,
       state: mockSendFlowState as never,
@@ -316,6 +323,38 @@ describe("useRecipientScreenView", () => {
     expect(result.current.showEmptyContactsState).toBe(true);
     expect(mockedUseAddressValidation).toHaveBeenCalledWith(
       expect.objectContaining({ canSearchContactsByName: true }),
+    );
+  });
+
+  it("validates the recipient through the bridge while the screen is focused", () => {
+    renderHook(() =>
+      useRecipientScreenView({
+        account: mockAccount,
+        currency: mockAccount.currency,
+        onAddressSelected: jest.fn(),
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    expect(mockedUseAddressValidation).toHaveBeenLastCalledWith(
+      expect.objectContaining({ isBridgeValidationEnabled: true }),
+    );
+  });
+
+  it("stops bridge validation while a later step covers the screen", () => {
+    mockedUseIsFocused.mockReturnValue(false);
+
+    renderHook(() =>
+      useRecipientScreenView({
+        account: mockAccount,
+        currency: mockAccount.currency,
+        onAddressSelected: jest.fn(),
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    expect(mockedUseAddressValidation).toHaveBeenLastCalledWith(
+      expect.objectContaining({ isBridgeValidationEnabled: false }),
     );
   });
 
