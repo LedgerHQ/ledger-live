@@ -158,6 +158,7 @@
         "@react-native/assets-registry",
         "@react-native/community-cli-plugin",
         "@react-native/gradle-plugin",
+        "@shared/ui-glow",
         "buffer",
         "expo-crypto",
         "expo-document-picker",

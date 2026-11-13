@@ -1,0 +1,8 @@
+{
+  "name": "@shared/ui-glow",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

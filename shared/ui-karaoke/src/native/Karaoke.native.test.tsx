@@ -27,10 +27,47 @@ describe("Karaoke", () => {
     expect(screen.queryByText("Last.")).toBeNull();
   });
 
-  it("should accept any set of phrases", () => {
+  it("should move the glow to the bottom once the action replaces the tap hint", async () => {
+    const user = userEvent.setup();
+    render(
+      <Karaoke.Root phrases={["First.", "Last."]} tapLabel="Tap" action={<Text>Done</Text>}>
+        <Karaoke.Sequence />
+      </Karaoke.Root>,
+    );
+    expect(screen.getByTestId(karaokeTestIds.glow).props.showBottom).toBe(false);
+
+    await user.press(screen.getByTestId(karaokeTestIds.advance));
+
+    expect(screen.getByText("Done")).toBeOnTheScreen();
+    const glow = screen.getByTestId(karaokeTestIds.glow);
+    expect(glow.props.showBottom).toBe(true);
+    expect(glow.props.delayMs).toBe(0);
+  });
+
+  it("should move the glow down once the final title is read", async () => {
+    const user = userEvent.setup();
     render(
       <Karaoke.Root phrases={["Only line."]} tapLabel="Tap">
-        <Karaoke.Sequence action={<Text>Done</Text>} />
+        <Karaoke.Sequence />
+        <Karaoke.Final>
+          <Text>Final screen</Text>
+        </Karaoke.Final>
+      </Karaoke.Root>,
+    );
+    expect(screen.getByTestId(karaokeTestIds.glow).props.showBottom).toBe(false);
+
+    await user.press(screen.getByTestId(karaokeTestIds.advance));
+
+    const glow = screen.getByTestId(karaokeTestIds.glow);
+    expect(glow.props.showTop).toBe(false);
+    expect(glow.props.showBottom).toBe(true);
+    expect(glow.props.delayMs).toBe(2000);
+  });
+
+  it("should accept any set of phrases", () => {
+    render(
+      <Karaoke.Root phrases={["Only line."]} tapLabel="Tap" action={<Text>Done</Text>}>
+        <Karaoke.Sequence />
       </Karaoke.Root>,
     );
 
@@ -57,8 +94,8 @@ describe("Karaoke", () => {
   it("should hide the tap area from screen readers once the action shows", async () => {
     const user = userEvent.setup();
     render(
-      <Karaoke.Root phrases={["First.", "Last."]} tapLabel="Tap">
-        <Karaoke.Sequence action={<Text>Done</Text>} />
+      <Karaoke.Root phrases={["First.", "Last."]} tapLabel="Tap" action={<Text>Done</Text>}>
+        <Karaoke.Sequence />
       </Karaoke.Root>,
     );
     expect(screen.getByRole("button", { name: "Tap" })).toBeOnTheScreen();
@@ -75,8 +112,8 @@ describe("Karaoke", () => {
   it("should treat a null action as no action and let the last tap finish", async () => {
     const user = userEvent.setup();
     render(
-      <Karaoke.Root phrases={["First.", "Last."]} tapLabel="Tap">
-        <Karaoke.Sequence action={null} />
+      <Karaoke.Root phrases={["First.", "Last."]} tapLabel="Tap" action={null}>
+        <Karaoke.Sequence />
         <Karaoke.Final>
           <Text>Final screen</Text>
         </Karaoke.Final>

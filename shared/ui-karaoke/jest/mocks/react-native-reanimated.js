@@ -1,6 +1,6 @@
 // Animations are visual only: render plain views, keep the API shape the karaoke calls.
 const chainable = () => {
-  const animation = { duration: () => animation };
+  const animation = { delay: () => animation, duration: () => animation, easing: () => animation };
   return animation;
 };
 
