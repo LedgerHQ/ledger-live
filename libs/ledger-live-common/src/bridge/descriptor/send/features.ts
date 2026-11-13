@@ -46,7 +46,11 @@ const defaultSelfTransferPolicy: SelfTransferPolicy = "impossible";
 const noTrackingAttributes: Record<string, string> = {};
 
 export const sendFeatures = {
-  canSendMax: fromDescriptor(d => d.amount?.canSendMax, true),
+  canSendMax: (currency: CryptoOrTokenCurrency | undefined): boolean => {
+    const canSendMax = getSendDescriptor(currency)?.amount?.canSendMax;
+    if (typeof canSendMax === "function") return currency ? canSendMax(currency) : true;
+    return canSendMax ?? true;
+  },
   hasMemo: fromDescriptor(d => d.inputs.memo != null, false),
   /**
    * Whether to offer a memo input for `recipient`. The recipient is required rather

@@ -1125,15 +1125,10 @@ describe("genericGetAccountShape", () => {
         expect(parent.type).toBe("FEES");
       });
 
-      it("puts an OPT_EDIT on its token account, but not an OPT_IN or OPT_OUT", async () => {
-        const tokenAccountTypes = async (type: string) => {
-          await syncTokenOnlyTx(type, { tokenOptParentRow: true });
-          return buildSubAccountsMock.mock.lastCall?.[0].operations.map((op: any) => op.type);
-        };
+      it.each(["OPT_IN", "OPT_OUT", "OPT_EDIT"])("keeps a %s off its token account", async type => {
+        await syncTokenOnlyTx(type, { tokenOptParentRow: true });
 
-        expect(await tokenAccountTypes("OPT_EDIT")).toEqual(["OPT_EDIT"]);
-        expect(await tokenAccountTypes("OPT_IN")).toEqual([]);
-        expect(await tokenAccountTypes("OPT_OUT")).toEqual([]);
+        expect(buildSubAccountsMock.mock.lastCall?.[0].operations).toEqual([]);
       });
     });
 
