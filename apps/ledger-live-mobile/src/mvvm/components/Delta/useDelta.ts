@@ -1,15 +1,17 @@
 import { Unit } from "@domain/entity-currency-unit";
 import { PortfolioRange, ValueChange } from "@ledgerhq/types-live";
+import { getTrendSign, getTrendTone, type TrendSign, type TrendTone } from "@shared/trend";
 import { useTranslation } from "~/context/Locale";
 
 type ColorType = "success" | "error" | "base";
-type SignType = "+" | "-" | "";
 
-const getColorAndSign = (value: number): readonly [ColorType, SignType] => {
-  if (value > 0) return ["success", "+"] as const;
-  if (value < 0) return ["error", "-"] as const;
-  return ["base", ""] as const;
+const COLOR_BY_TONE: Record<TrendTone, ColorType> = {
+  positive: "success",
+  negative: "error",
+  neutral: "base",
 };
+
+const DELTA_DECIMALS = 2;
 
 type UseDeltaParams = {
   valueChange: ValueChange;
@@ -23,7 +25,7 @@ type UseDeltaParams = {
 
 type UseDeltaResult = {
   color: ColorType;
-  sign: SignType;
+  sign: TrendSign;
   absDelta: number;
   rangeText: string;
   percentSign: string;
@@ -50,8 +52,6 @@ export const useDelta = ({
       ? valueChange.percentage * 100
       : valueChange.value;
 
-  const roundedDelta = Number.parseFloat(delta.toFixed(2));
-
   if (
     percent &&
     ((valueChange.percentage === 0 && !show0Delta) ||
@@ -62,9 +62,12 @@ export const useDelta = ({
   }
 
   if (Number.isNaN(delta)) return null;
-  if (roundedDelta === 0 && !show0Delta) return null;
 
-  const [color, sign] = getColorAndSign(roundedDelta);
+  const tone = getTrendTone(delta, { decimals: DELTA_DECIMALS });
+  if (tone === "neutral" && !show0Delta) return null;
+
+  const color = COLOR_BY_TONE[tone];
+  const sign = getTrendSign(delta, { decimals: DELTA_DECIMALS });
   const absDelta = Math.abs(delta);
 
   const rangeText = range ? ` (${t("time." + range)})` : "";

@@ -267,6 +267,7 @@
     "@shared/native-performance": "workspace:*",
     "@shared/network-status": "workspace:*",
     "@shared/system-bars": "workspace:*",
+    "@shared/trend": "workspace:*",
     "@shared/ui-info-state": "workspace:*",
     "@shared/ui-karaoke": "workspace:*",
     "@shared/ui-queued-bottom-sheet": "workspace:*",

@@ -2599,6 +2599,9 @@ importers:
       '@shared/system-bars':
         specifier: workspace:*
         version: link:../../shared/system-bars
+      '@shared/trend':
+        specifier: workspace:*
+        version: link:../../shared/trend
       '@shared/ui-info-state':
         specifier: workspace:*
         version: link:../../shared/ui-info-state
