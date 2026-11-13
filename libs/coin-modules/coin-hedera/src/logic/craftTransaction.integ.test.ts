@@ -1,14 +1,14 @@
 import * as sdk from "@hiero-ledger/sdk";
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import invariant from "invariant";
+import { hederaDefaults } from "../config";
 import { HEDERA_TRANSACTION_MODES } from "../constants";
 import { rpcClient } from "../network/rpc";
-import { getMockedConfig } from "../test/fixtures/config.fixture";
 import type { HederaMemo, HederaTxData } from "../types";
 import { craftTransaction } from "./craftTransaction";
 
 describe("craftTransaction", () => {
-  const defaultConfig = getMockedConfig();
+  const defaultConfig = hederaDefaults.hedera;
 
   afterAll(async () => {
     await rpcClient._resetInstance();

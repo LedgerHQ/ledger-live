@@ -1,3 +1,4 @@
+import { API_ENDPOINT, DELEGATION_API_ENDPOINT } from "../../test/integEndpoints";
 /**
  * Integration tests — craftTransaction fetches nonce from the real API.
  */
@@ -5,10 +6,6 @@ import { createNetworkApi } from "../../network/api";
 import { craftTransaction } from "./craftTransaction";
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import { CHAIN_ID } from "../../constants";
-
-const API_ENDPOINT = process.env.MULTIVERSX_API_ENDPOINT ?? "https://api.multiversx.com";
-const DELEGATION_API_ENDPOINT =
-  process.env.MULTIVERSX_DELEGATION_API_ENDPOINT ?? "https://delegation-api.multiversx.com";
 
 const SENDER = "erd1spyavw0956vq68xj8y4tenjpq2wd5a9p2c6j8gsz7ztyrnpxrruqzu66jx";
 const RECIPIENT = "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllst77y4l";

@@ -1,8 +1,7 @@
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import aleoConfig from "../config";
-import { getTestnetIntegConfig } from "../__tests__/fixtures/config.fixture";
+import aleoConfig, { aleoDefaults } from "../config";
 import {
   TEST_TOKEN_PROGRAM_ID,
   testnetAddress,
@@ -18,7 +17,7 @@ import { buildSubAccountsFromPrivateRecords, resolveTokenSubAccounts } from "./t
 import type { AleoOperation } from "../types";
 
 const currency = getCryptoCurrencyById("aleo_testnet");
-const config = { ...getTestnetIntegConfig(), enableTokens: true };
+const config = { ...aleoDefaults.aleo_testnet, enableTokens: true };
 const TEST_USAD_TOKEN_ID = "aleo_testnet/arc22/test_usad";
 
 let calTokens: Map<string, TokenCurrency>;
