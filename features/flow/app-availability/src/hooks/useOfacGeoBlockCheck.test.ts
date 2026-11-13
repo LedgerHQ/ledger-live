@@ -58,6 +58,19 @@ describe("useOfacGeoBlockCheck", () => {
     expect(result.current).toEqual({ status: "available" });
   });
 
+  it("should return available while a failed check is fetched again (fail-open)", () => {
+    mockOfacCheckQuery(mockedUseCheckQuery, {
+      data: undefined,
+      isLoading: true,
+      isError: false,
+      error: { status: 500, data: "" },
+    });
+
+    const { result } = renderHook(() => useOfacGeoBlockCheck());
+
+    expect(result.current).toEqual({ status: "available" });
+  });
+
   it("should return available when a refetch errors with cached blocked data (fail-open)", () => {
     mockOfacCheckQuery(mockedUseCheckQuery, {
       data: true,
