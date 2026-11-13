@@ -28,3 +28,13 @@ export function isLedgerApp(app: Pick<App, "authorName">): boolean {
 export function isCommunityApp(app: Pick<App, "authorName">): boolean {
   return getAppDeveloperType(app) === "community";
 }
+
+/** Developer filter of the My Ledger app catalog. */
+export type AppDeveloperFilter = "all" | AppDeveloperType;
+
+export function matchesDeveloperFilter(
+  app: Pick<App, "authorName">,
+  filter: AppDeveloperFilter = "all",
+): boolean {
+  return filter === "all" || getAppDeveloperType(app) === filter;
+}

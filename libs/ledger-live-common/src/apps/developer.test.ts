@@ -1,4 +1,9 @@
-import { getAppDeveloperType, isCommunityApp, isLedgerApp } from "./developer";
+import {
+  getAppDeveloperType,
+  isCommunityApp,
+  isLedgerApp,
+  matchesDeveloperFilter,
+} from "./developer";
 
 describe("getAppDeveloperType", () => {
   it.each([
@@ -29,5 +34,19 @@ describe("isLedgerApp / isCommunityApp", () => {
   it("treats a missing authorName as a community app", () => {
     expect(isLedgerApp({ authorName: undefined })).toBe(false);
     expect(isCommunityApp({ authorName: undefined })).toBe(true);
+  });
+});
+
+describe("matchesDeveloperFilter", () => {
+  it("matches every app with the all filter or no filter", () => {
+    expect(matchesDeveloperFilter({ authorName: "Ledger" }, "all")).toBe(true);
+    expect(matchesDeveloperFilter({ authorName: "Zondax" })).toBe(true);
+  });
+
+  it("matches only the selected developer type", () => {
+    expect(matchesDeveloperFilter({ authorName: "Ledger" }, "ledger")).toBe(true);
+    expect(matchesDeveloperFilter({ authorName: "Ledger" }, "community")).toBe(false);
+    expect(matchesDeveloperFilter({ authorName: "" }, "community")).toBe(true);
+    expect(matchesDeveloperFilter({ authorName: undefined }, "ledger")).toBe(false);
   });
 });

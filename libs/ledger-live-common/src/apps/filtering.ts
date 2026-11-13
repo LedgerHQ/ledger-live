@@ -5,6 +5,7 @@ import { isCurrencySupported } from "../currencies";
 import { useMemo } from "react";
 import type { App } from "@ledgerhq/types-live";
 import type { Feature, FeatureId } from "@shared/feature-flags";
+import { type AppDeveloperFilter, matchesDeveloperFilter } from "./developer";
 
 export type SortOptions = {
   type?: "name" | "marketcap" | "default";
@@ -24,6 +25,8 @@ export type FilterOptions = {
   installQueue?: string[];
   installedApps: InstalledItem[];
   type: AppType[];
+  /** Developer filter (My Ledger catalog); "all" when omitted. */
+  developer?: AppDeveloperFilter;
   isFeature: (key: string) => boolean;
   getFeature: (key: FeatureId) => Feature | null;
 };
@@ -112,7 +115,7 @@ export const sortApps = (apps: App[], _options: SortOptions): App[] => {
   });
 };
 export const filterApps = (apps: App[], _options: FilterOptions): App[] => {
-  const { query, installedApps, installQueue, type = ["all"] } = _options;
+  const { query, installedApps, installQueue, type = ["all"], developer } = _options;
   const updateAwareInstalledApps: UpdateAwareInstalledApps = {};
 
   for (let i = 0; i < installedApps.length; i++) {
@@ -121,6 +124,7 @@ export const filterApps = (apps: App[], _options: FilterOptions): App[] => {
 
   return apps
     .filter(searchFilter(query))
+    .filter(app => matchesDeveloperFilter(app, developer))
     .filter(
       typeFilter(
         type,

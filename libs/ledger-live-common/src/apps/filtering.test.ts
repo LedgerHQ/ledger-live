@@ -378,3 +378,28 @@ describe("isAppAssociatedCurrencySupported", () => {
     });
   });
 });
+
+describe("sortFilterApps developer filter", () => {
+  const { apps: baseApps } = initState(
+    mockListAppsResult("Bitcoin, Ethereum, Cardano ADA, XRP", "", deviceInfo155),
+  );
+  const authors: Record<string, string> = {
+    Bitcoin: "Ledger",
+    Ethereum: "Ledger",
+    "Cardano ADA": "Vacuumlabs",
+    XRP: "",
+  };
+  const apps = baseApps.map(app => ({ ...app, authorName: authors[app.name] }));
+  const sortOptions: SortOptions = { type: "name", order: "asc" };
+  const filterOptions: FilterOptions = { installedApps: [], type: ["all"], ...mockedFeatureFlags };
+
+  it.each<[FilterOptions["developer"], string[]]>([
+    [undefined, ["Bitcoin", "Cardano ADA", "Ethereum", "XRP"]],
+    ["all", ["Bitcoin", "Cardano ADA", "Ethereum", "XRP"]],
+    ["ledger", ["Bitcoin", "Ethereum"]],
+    ["community", ["Cardano ADA", "XRP"]],
+  ])("keeps the apps matching developer %p", (developer, expected) => {
+    const result = sortFilterApps(apps, { ...filterOptions, developer }, sortOptions);
+    expect(result.map(app => app.name)).toEqual(expected);
+  });
+});

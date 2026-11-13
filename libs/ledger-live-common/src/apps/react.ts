@@ -2,6 +2,7 @@ import { useState, useReducer, useEffect, useMemo, useCallback } from "react";
 import type { Exec, State, Action, ListAppsResult } from "./types";
 import type { AppType, FilterOptions, SortOptions } from "./filtering";
 import { useSortedFilteredApps } from "./filtering";
+import type { AppDeveloperFilter } from "./developer";
 import {
   reducer,
   initState,
@@ -74,6 +75,8 @@ type AppsSections = {
 type AppsSectionsOpts = {
   query: string;
   appFilter: AppType;
+  /** Developer filter of the catalog; "all" when omitted. */
+  developer?: AppDeveloperFilter;
   sort: SortOptions;
 };
 
@@ -96,10 +99,11 @@ export function useAppsSections(state: State, opts: AppsSectionsOpts): AppsSecti
       query: opts.query,
       installedApps: installed,
       type: [opts.appFilter],
+      developer: opts.developer,
       getFeature,
       isFeature,
     }),
-    [getFeature, installed, isFeature, opts.appFilter, opts.query],
+    [getFeature, installed, isFeature, opts.appFilter, opts.developer, opts.query],
   );
 
   const catalog = useSortedFilteredApps(apps, filterParam, opts.sort);
