@@ -25,7 +25,7 @@ const DEVICE_STEP_VARIANTS = [
 ] as const;
 
 function ledgerSyncDieFlag(ledgerSyncDie: boolean) {
-  return ledgerSyncDie ? { lwdLedgerSyncDie: { enabled: true } } : {};
+  return { lwdLedgerSyncDie: { enabled: ledgerSyncDie } };
 }
 
 function setupSeed() {
