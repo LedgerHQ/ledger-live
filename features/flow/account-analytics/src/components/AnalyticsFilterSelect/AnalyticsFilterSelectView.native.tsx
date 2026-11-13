@@ -44,17 +44,20 @@ function SearchableSheetContent({
   const bottomInset = useBottomSheetBottomInset();
   return (
     <>
-      <BottomSheetHeader />
-      <Box lx={{ paddingRight: "s8" }}>
-        <SelectListSearch
-          ref={inputRef}
-          testID={`${testId}-search`}
-          placeholder={placeholder}
-          autoCorrect={false}
-          autoCapitalize="none"
-          returnKeyType="search"
-          {...keyboardAwareInputProps}
-        />
+      {/* Same side padding as Lumen's sheet scrollables, which the list below gets on its own. */}
+      <Box lx={{ paddingHorizontal: "s16" }}>
+        <BottomSheetHeader />
+        <Box lx={{ paddingRight: "s8" }}>
+          <SelectListSearch
+            ref={inputRef}
+            testID={`${testId}-search`}
+            placeholder={placeholder}
+            autoCorrect={false}
+            autoCapitalize="none"
+            returnKeyType="search"
+            {...keyboardAwareInputProps}
+          />
+        </Box>
       </Box>
       <BottomSheetScrollView
         keyboardShouldPersistTaps="handled"
@@ -62,7 +65,11 @@ function SearchableSheetContent({
         contentContainerStyle={{ paddingBottom: bottomInset }}
       >
         {children}
-        <SelectListEmptyState testID={`${testId}-no-results`} title={noResultsTitle} />
+        <SelectListEmptyState
+          testID={`${testId}-no-results`}
+          title={noResultsTitle}
+          lx={{ paddingRight: "s8" }}
+        />
       </BottomSheetScrollView>
     </>
   );
