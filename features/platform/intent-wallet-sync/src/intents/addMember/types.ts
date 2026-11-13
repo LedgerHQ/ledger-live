@@ -4,6 +4,7 @@ import type {
   IntentPlatformDefinition,
 } from "@features/platform-device-intent";
 import type {
+  GetOrCreateTrustchainCallbacks,
   MemberCredentials,
   Trustchain,
   TrustchainResult,
@@ -19,6 +20,11 @@ export type AddMemberIntentInput = Readonly<{
   currentTrustchain?: Trustchain;
   /** Builds the SDK on the DIE session of the run. */
   createSessionSdk: CreateSessionSdk;
+  /**
+   * Called with the trustchains of the device seed before anything is created or joined. A throw
+   * ends the run: `NoTrustchainInitialized` maps to `failed` with `no-trustchain`.
+   */
+  onInitialResponse?: GetOrCreateTrustchainCallbacks["onInitialResponse"];
 }>;
 
 /** The states the add member job emits. */
