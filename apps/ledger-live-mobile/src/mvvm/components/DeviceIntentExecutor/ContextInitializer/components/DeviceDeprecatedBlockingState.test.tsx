@@ -60,7 +60,7 @@ describe("DeviceDeprecatedBlockingState", () => {
     ).toBeVisible();
     expect(
       screen.getByText(
-        "Upgrade to a more recent Ledger device today to ensure access to all the latest Ledger Live features.",
+        "Upgrade to a more recent Ledger device today to ensure access to all the latest Ledger Wallet features.",
       ),
     ).toBeVisible();
   });

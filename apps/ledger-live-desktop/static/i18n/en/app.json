@@ -1959,13 +1959,13 @@
       "continue": "Proceed at your own risk"
     },
     "info": {
-      "title": "As of {{date}}, {{coinName}} support on {{device}}™ via Ledger Live™ will end",
-      "subtitle": "Upgrade to a more recent Ledger device today to ensure access to all Ledger Live service providers and optimal customer support",
+      "title": "As of {{date}}, {{coinName}} support on {{device}}™ via Ledger Wallet™ will end",
+      "subtitle": "Upgrade to a more recent Ledger device today to ensure access to all Ledger Wallet service providers and optimal customer support",
       "reminder": "Do not remind me again"
     },
     "error": {
       "title": "{{device}}™ does not support this feature",
-      "subtitle": "Upgrade to a more recent Ledger device today to ensure access to all the latest Ledger Live features."
+      "subtitle": "Upgrade to a more recent Ledger device today to ensure access to all the latest Ledger Wallet features."
     },
     "update": "Discover your Upgrade Program",
     "learnMore": "Learn more",
