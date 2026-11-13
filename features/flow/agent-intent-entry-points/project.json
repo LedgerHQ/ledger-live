@@ -1,0 +1,8 @@
+{
+  "name": "@features/flow-agent-intent-entry-points",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

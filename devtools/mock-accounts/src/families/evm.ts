@@ -20,7 +20,7 @@ export const evm: MockFamily = {
     version: "2",
     type: "address",
     network,
-    address: checksumAddress(randomBytes(random, 20)),
+    key: checksumAddress(randomBytes(random, 20)),
     path: `m/44h/${currency.coinType}h/${index}h/0/0`,
   }),
   address: (_currency, random) => checksumAddress(randomBytes(random, 20)),

@@ -1,6 +1,6 @@
 ---
 name: create-changeset
-description: Create changesets for the ledger-live monorepo using @changesets/cli. Use when the user asks to add a changeset, prepare a release, or document package changes for a PR.
+description: Create changesets for the ledger-live monorepo using @changesets/cli. Read before creating or editing any file in `.changeset/`, when deciding whether a change needs a changeset, or when asked to add a changeset, prepare a release, or document package changes for a PR.
 ---
 
 # Create Changeset

@@ -1,18 +1,12 @@
 import { useMemo } from "react";
+import { formatTrendPercent, getTrendTone, type TrendTone } from "@shared/trend";
 
-export type PercentVariant = "positive" | "negative" | "neutral";
+export type PercentVariant = TrendTone;
 
-export const getPercentVariant = (percent: number): PercentVariant => {
-  if (percent > 0) return "positive";
-  if (percent < 0) return "negative";
-  return "neutral";
-};
+export const getPercentVariant = (percent: number): PercentVariant => getTrendTone(percent);
 
-export const formatPercentText = (percent: number): string => {
-  if (percent > 0) return `+${percent}%`;
-  if (percent < 0) return `-${Math.abs(percent)}%`;
-  return `${percent}%`;
-};
+export const formatPercentText = (percent: number): string =>
+  formatTrendPercent(percent, { decimals: null });
 
 export const useMarketIndicator = (percent: number) => {
   return useMemo(

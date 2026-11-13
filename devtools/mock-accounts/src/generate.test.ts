@@ -21,9 +21,9 @@ describe("mockDescriptors", () => {
     const [main] = mockDescriptors("bitcoin", 1, []);
     const [test] = mockDescriptors("bitcoin_testnet", 1, []);
     expect(main).toMatchObject({ type: "utxo", path: "m/84h/0h/0h" });
-    expect(main.type === "utxo" && main.xpub).toMatch(/^xpub[1-9A-HJ-NP-Za-km-z]{107}$/);
+    expect(main.type === "utxo" && main.key).toMatch(/^xpub[1-9A-HJ-NP-Za-km-z]{107}$/);
     expect(test).toMatchObject({ type: "utxo", path: "m/84h/1h/0h" });
-    expect(test.type === "utxo" && test.xpub).toMatch(/^tpub/);
+    expect(test.type === "utxo" && test.key).toMatch(/^tpub/);
     expect(mockDescriptors("dogecoin", 1, [])[0]).toMatchObject({
       type: "utxo",
       path: "m/44h/3h/0h",
@@ -38,7 +38,7 @@ describe("mockDescriptors", () => {
         : (pow((base * base) % P, exponent >> 1n) * (exponent & 1n ? base : 1n)) % P;
     for (const descriptor of mockDescriptors("bitcoin", 20, [])) {
       if (descriptor.type !== "utxo") throw new Error("expected a utxo descriptor");
-      const payload = [...descriptor.xpub].reduce(
+      const payload = [...descriptor.key].reduce(
         (acc, char) => acc * 58n + BigInt(BASE58.indexOf(char)),
         0n,
       );
@@ -54,7 +54,7 @@ describe("mockDescriptors", () => {
   it("makes checksummed address accounts on evm networks", () => {
     const [account] = mockDescriptors("ethereum", 1, []);
     expect(account).toMatchObject({ type: "address", path: "m/44h/60h/0h/0/0" });
-    expect(account.type === "address" && account.address).toMatch(/^0x[0-9a-fA-F]{40}$/);
+    expect(account.type === "address" && account.key).toMatch(/^0x[0-9a-fA-F]{40}$/);
   });
 
   it("numbers after the highest mock of the same network", () => {

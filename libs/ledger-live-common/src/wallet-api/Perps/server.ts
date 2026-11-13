@@ -1,4 +1,5 @@
 import calService, { convertCertificateToDeviceData } from "@ledgerhq/ledger-cal-service";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { DmkSignerHyperliquid } from "@ledgerhq/live-signer-hyperliquid";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { customWrapper } from "@ledgerhq/wallet-api-server";
@@ -190,7 +191,8 @@ export const handlers = ({
           signFactory: createSignFactory(derivationPath, params),
           onSuccess: resolve,
           onError: reject,
-          onCancel: () => reject(new Error("User cancelled signing")),
+          // A `UserRefused*` name lets the live app tell a cancel from a failure.
+          onCancel: () => reject(new UserRefusedOnDevice()),
         });
       });
     }),

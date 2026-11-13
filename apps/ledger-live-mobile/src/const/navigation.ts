@@ -512,6 +512,7 @@ export enum ScreenName {
   OnboardingInfoModal = "OnboardingInfoModal",
   OnboardingRecoveryPhrase = "OnboardingRecoveryPhrase",
   OnboardingPairNew = "OnboardingPairNew",
+  DeviceOnboardingConnect = "DeviceOnboardingConnect",
   DeviceOnboardingFunnel = "DeviceOnboardingFunnel",
   DeviceOnboardingSyncOffer = "DeviceOnboardingSyncOffer",
   OnboardingSecureYourCrypto = "OnboardingSecureYourCrypto",
@@ -598,6 +599,14 @@ export enum ScreenName {
   HederaAssociateTokenConnectDevice = "HederaAssociateTokenConnectDevice",
   HederaAssociateTokenValidationError = "HederaAssociateTokenValidationError",
   HederaAssociateTokenValidationSuccess = "HederaAssociateTokenValidationSuccess",
+  // xrp
+  XrpAddTokenSelectToken = "XrpAddTokenSelectToken",
+  XrpAddTokenSettings = "XrpAddTokenSettings",
+  XrpAddTokenReview = "XrpAddTokenReview",
+  XrpAddTokenSelectDevice = "XrpAddTokenSelectDevice",
+  XrpAddTokenConnectDevice = "XrpAddTokenConnectDevice",
+  XrpAddTokenValidationError = "XrpAddTokenValidationError",
+  XrpAddTokenValidationSuccess = "XrpAddTokenValidationSuccess",
   HederaDelegationSummary = "HederaDelegationSummary",
   HederaDelegationSelectValidator = "HederaDelegationSelectValidator",
   HederaDelegationSelectDevice = "HederaDelegationSelectDevice",
@@ -754,6 +763,7 @@ export enum NavigatorName {
   ExchangeStack = "ExchangeStack",
   Base = "Base",
   BaseOnboarding = "BaseOnboarding",
+  DeviceOnboarding = "DeviceOnboarding",
   BuyDevice = "BuyDevice",
   EvmDelegationFlow = "EvmDelegationFlow",
   EvmUndelegationFlow = "EvmUndelegationFlow",
@@ -848,6 +858,8 @@ export enum NavigatorName {
   NearUnstakingFlow = "NearUnstakingFlow",
   NearWithdrawingFlow = "NearWithdrawingFlow",
   // Aptos
+  // Xrp
+  XrpAddTokenFlow = "XrpAddTokenFlow",
   // Hedera
   HederaAssociateTokenFlow = "HederaAssociateTokenFlow",
   HederaDelegationFlow = "HederaDelegationFlow",

@@ -23,18 +23,18 @@ export const AccountPurposeSchema = z.enum(["account", "mock"]);
 
 export type AccountPurpose = z.infer<typeof AccountPurposeSchema>;
 
+/** The public value the account is found and read from on its network. */
+const AccountKeySchema = z.string().min(1).regex(/^\S+$/, "key must not contain whitespace");
+
 export const UtxoAccountDescriptorSchema = z.object({
   purpose: AccountPurposeSchema,
   version: z.literal("2"),
   type: z.literal("utxo"),
   network: NetworkIdSchema,
-  xpub: z
-    .string()
-    .min(1)
-    .regex(/^\S+$/, "xpub field must not contain whitespace")
-    .refine(v => !/^[xyztuv]prv/i.test(v), {
-      message: "xpub field must not contain a private extended key (xprv/yprv/zprv/tprv/uprv/vprv)",
-    }),
+  /** The account's xpub, with the network's standard version bytes. */
+  key: AccountKeySchema.refine(v => !/^[xyztuv]prv/i.test(v), {
+    message: "key must not be a private extended key (xprv/yprv/zprv/tprv/uprv/vprv)",
+  }),
   /** Hardened-only BIP32 path, e.g. "m/84h/0h/0h"; "'" and "H" are read as "h". */
   path: z
     .string()
@@ -51,7 +51,8 @@ export const AddressAccountDescriptorSchema = z.object({
   version: z.literal("2"),
   type: z.literal("address"),
   network: NetworkIdSchema,
-  address: z.string().min(1),
+  /** The account key on the network: an address, a public key or a network account id, by family. */
+  key: AccountKeySchema,
   /** Full derivation path, e.g. "m/44h/60h/0h/0/0"; "'" and "H" are read as "h". */
   path: DerivationPathSchema,
 });

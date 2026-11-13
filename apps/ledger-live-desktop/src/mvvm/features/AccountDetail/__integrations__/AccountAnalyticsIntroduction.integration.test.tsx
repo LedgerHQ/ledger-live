@@ -40,12 +40,13 @@ function DestinationProbe() {
 
 type IntroductionSetup = Readonly<{
   hasDismissed?: boolean;
+  isEligible?: boolean | null;
   analyticsBanner?: boolean;
 }>;
 
 function renderIntroduction(
   account = historical,
-  { hasDismissed = false, analyticsBanner = true }: IntroductionSetup = {},
+  { hasDismissed = false, isEligible = true, analyticsBanner = true }: IntroductionSetup = {},
 ) {
   return render(
     <>
@@ -67,7 +68,7 @@ function renderIntroduction(
       initialState: {
         ...withFlagOverrides({ accountDetail: { enabled: true, params: { analyticsBanner } } }),
         accounts: [account, otherAccount],
-        accountAnalyticsIntroduction: { hasDismissed },
+        accountAnalyticsIntroduction: { hasDismissed, isEligible },
       },
     },
   );
@@ -123,6 +124,15 @@ describe("Account Analytics introduction desktop integration", () => {
 
     expect(screen.queryByRole("button", { name: "Go to Analytics" })).toBeNull();
   });
+
+  it.each([false, null])(
+    "should stay hidden when the installation eligibility is %s",
+    isEligible => {
+      renderIntroduction(historical, { isEligible });
+
+      expect(screen.queryByRole("button", { name: "Go to Analytics" })).toBeNull();
+    },
+  );
 
   it("should remain hidden when a prior installation dismissal is restored", () => {
     renderIntroduction(historical, { hasDismissed: true });

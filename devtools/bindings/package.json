@@ -1,6 +1,6 @@
 {
   "name": "@devtools/bindings",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "private": true,
   "description": "App-specific builders that adapt Ledger Live state into @devtools tool props (one builder per tool)",
   "main": "src/index.ts",
@@ -35,6 +35,7 @@
     "@domain/entity-account-operation": "workspace:*",
     "@domain/entity-account-balance-history": "workspace:*",
     "@domain/entity-card-asset-mapping": "workspace:*",
+    "@domain/entity-client-identity": "workspace:*",
     "@domain/entity-currency": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-fiat": "workspace:*",
@@ -47,6 +48,7 @@
     "@features/flow-pay-feature-tour": "workspace:*",
     "@features/flow-pay-request": "workspace:*",
     "@features/flow-predictions": "workspace:*",
+    "@features/platform-account-source-portfolio": "workspace:*",
     "@features/platform-card": "workspace:*",
     "@features/platform-device-intent": "workspace:*",
     "@features/platform-device-onboarding": "workspace:*",

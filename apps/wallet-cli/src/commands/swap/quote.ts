@@ -53,7 +53,7 @@ async function resolveSwapAccountAddress(
 ): Promise<string> {
   const v1 = await resolveAccountDescriptorV1(accountInput);
   if (v1.type === "address") {
-    return v1.address;
+    return v1.key;
   }
 
   const descriptor = await resolveAccountDescriptor(accountInput);

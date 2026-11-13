@@ -8,7 +8,7 @@ import { setFromLedgerSyncOnboarding, setOnboardingType } from "~/actions/settin
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { ScreenName } from "~/const/navigation";
+import { NavigatorName, ScreenName } from "~/const/navigation";
 import { OnboardingType } from "~/reducers/types";
 import { SelectionCards } from "./Cards/SelectionCard";
 import OnboardingView from "./OnboardingView";
@@ -21,8 +21,10 @@ import {
   AnalyticsPage,
 } from "LLM/features/WalletSync/hooks/useLedgerSyncAnalytics";
 
+import type { RootStackParamList } from "~/components/RootNavigator/types/RootNavigator";
+
 type NavigationProps = StackNavigatorProps<
-  OnboardingNavigatorParamList & BaseNavigatorStackParamList,
+  OnboardingNavigatorParamList & BaseNavigatorStackParamList & RootStackParamList,
   ScreenName.OnboardingWelcomeBack
 >;
 
@@ -43,11 +45,16 @@ function AccessExistingWallet() {
   const connect = useCallback(() => {
     dispatch(setOnboardingType(OnboardingType.connect));
 
+    if (connectSeededDevice) {
+      navigation.navigate(NavigatorName.DeviceOnboarding, {
+        screen: ScreenName.DeviceOnboardingConnect,
+      });
+      return;
+    }
     navigation.navigate(ScreenName.OnboardingPairNew, {
       deviceModelId: undefined,
       showSeedWarning: false,
       fromAccessExistingWallet: true,
-      connectSeededDevice,
     });
   }, [connectSeededDevice, dispatch, navigation]);
 

@@ -126,7 +126,7 @@ export const operations: MockReader<"operations"> = (
   { target: { descriptor, cursor }, currency, family, random, balances, operationCount },
   query,
 ) => {
-  const own = descriptor.type === "address" ? descriptor.address : family.address(currency, random);
+  const own = descriptor.type === "address" ? descriptor.key : family.address(currency, random);
   const busy = random() < 0.2;
   const nativeFee = () => randomAmount(random, currency.units[0].magnitude, 0.00001, 0.001);
   const funded = balances().filter(({ balance }) => BigInt(balance) > 0n);

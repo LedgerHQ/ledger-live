@@ -9,7 +9,7 @@ const UTXO: AccountDescriptor = {
   version: "2",
   type: "utxo",
   network: NetworkIdSchema.parse("bitcoin"),
-  xpub: XPUB,
+  key: XPUB,
   path: "m/84h/0h/0h",
 };
 
@@ -18,7 +18,7 @@ const ETH: AccountDescriptor = {
   version: "2",
   type: "address",
   network: NetworkIdSchema.parse("ethereum"),
-  address: ETH_ADDR,
+  key: ETH_ADDR,
   path: "m/44h/60h/0h/0/0",
 };
 
@@ -27,7 +27,7 @@ const SOL: AccountDescriptor = {
   version: "2",
   type: "address",
   network: NetworkIdSchema.parse("solana_devnet"),
-  address: SOL_ADDR,
+  key: SOL_ADDR,
   path: "m/44h/501h/0h/0h",
 };
 

@@ -69,6 +69,7 @@ import type { InternetComputerStakingFlowParamList } from "../../../families/int
 import type { InternetComputerNeuronManageFlowParamList } from "../../../families/internet_computer/NeuronManageFlow/types";
 import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/types";
 import type { HederaAssociateTokenFlowParamList } from "../../../families/hedera/AssociateTokenFlow/types";
+import type { XrpAddTokenFlowParamList } from "../../../families/xrp/AddTokenFlow/types";
 import type { CantonOnboardAccountParamList } from "../../../families/canton/Onboard/types";
 import type { ConcordiumOnboardAccountParamList } from "../../../families/concordium/Onboard/types";
 import type { HederaDelegationFlowParamList } from "../../../families/hedera/DelegationFlow/types";
@@ -347,6 +348,9 @@ export type BaseNavigatorStackParamList = {
 
   // Tron
   [NavigatorName.TronVoteFlow]: NavigatorScreenParams<TronVoteFlowParamList>;
+
+  // Xrp
+  [NavigatorName.XrpAddTokenFlow]: NavigatorScreenParams<XrpAddTokenFlowParamList>;
 
   // Hedera
   [NavigatorName.HederaAssociateTokenFlow]: NavigatorScreenParams<HederaAssociateTokenFlowParamList>;

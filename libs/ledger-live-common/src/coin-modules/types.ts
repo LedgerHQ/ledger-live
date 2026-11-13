@@ -155,6 +155,8 @@ export type CoinModuleLoader<
   loadBridgeExtensions?: () => Promise<AccountBridgeExtensions<T>>;
   loadBridgeApi?: () => Promise<BridgeApi | ((currency: CryptoCurrency) => BridgeApi)>;
   loadAccountRawAssign?: () => Promise<AccountRawAssignHooks>;
+  /** The address of an account from its public key, its descriptor key; for a family whose descriptor is keyed on the public key. */
+  loadAddressFromKey?: () => Promise<(publicKey: string) => string>;
   /** Where an account receives, when not on the `freshAddress` the device shows. */
   loadAccountReceive?: () => Promise<(account: A) => AccountReceive>;
   /**

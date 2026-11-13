@@ -22,9 +22,6 @@ import OnboardingInfoModal from "../OnboardingStepperView/OnboardingInfoModal";
 
 import OnboardingBleDevicePairingFlow from "~/screens/Onboarding/steps/BleDevicePairingFlow";
 import OnboardingPairNew from "~/screens/Onboarding/steps/PairNew";
-import { DeviceOnboardingProvider } from "LLM/features/DeviceOnboarding/hooks/DeviceOnboardingProvider";
-import { DeviceOnboardingFunnel } from "LLM/features/DeviceOnboarding/screens/Funnel";
-import { SyncOfferRoute } from "LLM/features/DeviceOnboarding/screens/SyncOffer/SyncOfferRoute";
 import OnboardingPreQuizModal from "~/screens/Onboarding/steps/setupDevice/drawers/OnboardingPreQuizModal";
 import OnboardingQuiz from "~/screens/Onboarding/OnboardingQuiz";
 import OnboardingQuizFinal from "~/screens/Onboarding/OnboardingQuizFinal";
@@ -44,17 +41,12 @@ import {
 import { StackNavigatorProps } from "./types/helpers";
 import ProtectConnectionInformationModal from "~/screens/Onboarding/steps/setupDevice/drawers/ProtectConnectionInformationModal";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
-import FirmwareUpdateScreen from "~/screens/FirmwareUpdate";
 import AccessExistingWallet from "~/screens/Onboarding/steps/accessExistingWallet";
 import OnboardingSecureYourCrypto from "~/screens/Onboarding/OnboardingSecureYourCrypto";
 import AnalyticsOptInPromptNavigator from "./AnalyticsOptInPromptNavigator";
 import LandingPagesNavigator from "./LandingPagesNavigator";
 import OnboardingFundSuccess from "~/screens/Onboarding/OnboardingFundSuccess";
 import NotificationsOptIn from "LLM/features/NotificationsOptIn";
-
-function FirmwareUpdateHeaderLeft() {
-  return null;
-}
 
 const Stack = createNativeStackNavigator<OnboardingNavigatorParamList>();
 const OnboardingPreQuizModalStack =
@@ -105,162 +97,138 @@ export default function OnboardingNavigator() {
   const theme = useTheme();
 
   return (
-    <DeviceOnboardingProvider>
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
-          headerTitle: "",
-          headerShadowVisible: false,
-          headerStyle: { backgroundColor: theme.colors.background.main },
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+        headerTitle: "",
+        headerShadowVisible: false,
+        headerStyle: { backgroundColor: theme.colors.background.main },
+      }}
+    >
+      <Stack.Screen name={ScreenName.OnboardingWelcome} component={OnboardingWelcome} />
+      <Stack.Screen
+        name={ScreenName.OnboardingPostWelcomeSelection}
+        component={PostWelcomeSelection}
+        options={{
+          headerShown: true,
+          headerLeft: () => <NavigationHeaderBackButton />,
         }}
-      >
-        <Stack.Screen name={ScreenName.OnboardingWelcome} component={OnboardingWelcome} />
-        <Stack.Screen
-          name={ScreenName.OnboardingPostWelcomeSelection}
-          component={PostWelcomeSelection}
-          options={{
-            headerShown: true,
-            headerLeft: () => <NavigationHeaderBackButton />,
-          }}
-        />
-        <Stack.Screen
-          name={ScreenName.OnboardingNotificationsOptIn}
-          component={NotificationsOptIn}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name={ScreenName.OnboardingWelcomeBack}
-          component={AccessExistingWallet}
-          options={{
-            headerShown: true,
-            headerLeft: () => <NavigationHeaderBackButton />,
-          }}
-        />
-        <Stack.Screen
-          name={ScreenName.OnboardingLanguage}
-          component={OnboardingLanguage}
-          options={{
-            ...infoModalOptions({ theme }),
-            headerTitle: t("onboarding.stepLanguage.title"),
-          }}
-        />
-        <Stack.Screen name={ScreenName.OnboardingTermsOfUse} component={OnboardingTerms} />
-        <Stack.Screen
-          name={ScreenName.OnboardingDeviceSelection}
-          component={OnboardingDeviceSelection}
-          options={{
-            headerShown: true,
-            headerLeft: () => <NavigationHeaderBackButton />,
-          }}
-        />
-        <Stack.Screen
-          name={ScreenName.OnboardingBleDevicePairingFlow}
-          component={OnboardingBleDevicePairingFlow}
-          options={{
-            headerShown: true,
-            headerLeft: () => <NavigationHeaderBackButton />,
-          }}
-        />
-        <Stack.Screen
-          name={ScreenName.OnboardingUseCase}
-          component={OnboardingUseCase}
-          options={{
-            headerShown: true,
-            headerLeft: () => <NavigationHeaderBackButton />,
-          }}
-        />
-        <Stack.Screen
-          name={NavigatorName.OnboardingPreQuiz}
-          component={OnboardingPreQuizModalNavigator}
-          options={modalOptions}
-        />
-        <Stack.Screen
-          name={ScreenName.OnboardingModalSetupNewDevice}
-          component={OnboardingNewDeviceInfo}
-        />
-        <Stack.Screen
-          name={ScreenName.OnboardingSetupDeviceInformation}
-          component={OnboardingSetupDeviceInformation}
-          options={infoModalOptions({ theme })}
-        />
-        <Stack.Screen
-          name={ScreenName.OnboardingModalSetupSecureRecovery}
-          component={OnboardingSetupDeviceRecoveryPhrase}
-          options={infoModalOptions({ theme })}
-        />
-        <Stack.Screen
-          name={ScreenName.OnboardingGeneralInformation}
-          component={OnboardingGeneralInformation}
-          options={infoModalOptions({ theme })}
-        />
-        <Stack.Screen
-          name={ScreenName.OnboardingBluetoothInformation}
-          component={OnboardingBluetoothInformation}
-          options={infoModalOptions({ theme })}
-        />
-        <Stack.Screen
-          name={ScreenName.OnboardingProtectionConnectionInformation}
-          component={ProtectConnectionInformationModal}
-          options={infoModalOptions({ theme })}
-        />
-        <Stack.Screen name={ScreenName.OnboardingSetNewDevice} component={OnboardingNewDevice} />
+      />
+      <Stack.Screen
+        name={ScreenName.OnboardingNotificationsOptIn}
+        component={NotificationsOptIn}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name={ScreenName.OnboardingWelcomeBack}
+        component={AccessExistingWallet}
+        options={{
+          headerShown: true,
+          headerLeft: () => <NavigationHeaderBackButton />,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.OnboardingLanguage}
+        component={OnboardingLanguage}
+        options={{
+          ...infoModalOptions({ theme }),
+          headerTitle: t("onboarding.stepLanguage.title"),
+        }}
+      />
+      <Stack.Screen name={ScreenName.OnboardingTermsOfUse} component={OnboardingTerms} />
+      <Stack.Screen
+        name={ScreenName.OnboardingDeviceSelection}
+        component={OnboardingDeviceSelection}
+        options={{
+          headerShown: true,
+          headerLeft: () => <NavigationHeaderBackButton />,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.OnboardingBleDevicePairingFlow}
+        component={OnboardingBleDevicePairingFlow}
+        options={{
+          headerShown: true,
+          headerLeft: () => <NavigationHeaderBackButton />,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.OnboardingUseCase}
+        component={OnboardingUseCase}
+        options={{
+          headerShown: true,
+          headerLeft: () => <NavigationHeaderBackButton />,
+        }}
+      />
+      <Stack.Screen
+        name={NavigatorName.OnboardingPreQuiz}
+        component={OnboardingPreQuizModalNavigator}
+        options={modalOptions}
+      />
+      <Stack.Screen
+        name={ScreenName.OnboardingModalSetupNewDevice}
+        component={OnboardingNewDeviceInfo}
+      />
+      <Stack.Screen
+        name={ScreenName.OnboardingSetupDeviceInformation}
+        component={OnboardingSetupDeviceInformation}
+        options={infoModalOptions({ theme })}
+      />
+      <Stack.Screen
+        name={ScreenName.OnboardingModalSetupSecureRecovery}
+        component={OnboardingSetupDeviceRecoveryPhrase}
+        options={infoModalOptions({ theme })}
+      />
+      <Stack.Screen
+        name={ScreenName.OnboardingGeneralInformation}
+        component={OnboardingGeneralInformation}
+        options={infoModalOptions({ theme })}
+      />
+      <Stack.Screen
+        name={ScreenName.OnboardingBluetoothInformation}
+        component={OnboardingBluetoothInformation}
+        options={infoModalOptions({ theme })}
+      />
+      <Stack.Screen
+        name={ScreenName.OnboardingProtectionConnectionInformation}
+        component={ProtectConnectionInformationModal}
+        options={infoModalOptions({ theme })}
+      />
+      <Stack.Screen name={ScreenName.OnboardingSetNewDevice} component={OnboardingNewDevice} />
 
-        <Stack.Screen
-          name={ScreenName.OnboardingRecoveryPhrase}
-          component={OnboardingRecoveryPhrase}
-        />
+      <Stack.Screen
+        name={ScreenName.OnboardingRecoveryPhrase}
+        component={OnboardingRecoveryPhrase}
+      />
 
-        <Stack.Screen
-          name={ScreenName.OnboardingInfoModal}
-          component={OnboardingInfoModal}
-          options={{ animation: "slide_from_bottom" }}
-        />
+      <Stack.Screen
+        name={ScreenName.OnboardingInfoModal}
+        component={OnboardingInfoModal}
+        options={{ animation: "slide_from_bottom" }}
+      />
 
-        <Stack.Screen name={ScreenName.OnboardingPairNew} component={OnboardingPairNew} />
-        <Stack.Screen
-          name={ScreenName.DeviceOnboardingFunnel}
-          component={DeviceOnboardingFunnel}
-          options={{ headerShown: false, gestureEnabled: false, animation: "fade" }}
-        />
-        <Stack.Screen
-          name={ScreenName.DeviceOnboardingSyncOffer}
-          component={SyncOfferRoute}
-          options={{ headerShown: false, gestureEnabled: false, animation: "fade" }}
-        />
-        <Stack.Screen
-          name={ScreenName.FirmwareUpdate}
-          component={FirmwareUpdateScreen}
-          options={{
-            gestureEnabled: false,
-            headerShown: true,
-            headerTitle: () => null,
-            title: "",
-            headerLeft: FirmwareUpdateHeaderLeft,
-            headerRight: () => null,
-          }}
-        />
+      <Stack.Screen name={ScreenName.OnboardingPairNew} component={OnboardingPairNew} />
 
-        <Stack.Screen name={ScreenName.OnboardingProtectFlow} component={OnboardingProtectFlow} />
+      <Stack.Screen name={ScreenName.OnboardingProtectFlow} component={OnboardingProtectFlow} />
 
-        <Stack.Screen name={NavigatorName.PasswordAddFlow} component={PasswordAddFlowNavigator} />
+      <Stack.Screen name={NavigatorName.PasswordAddFlow} component={PasswordAddFlowNavigator} />
 
-        <Stack.Screen name={ScreenName.OnboardingQuiz} component={OnboardingQuiz} />
+      <Stack.Screen name={ScreenName.OnboardingQuiz} component={OnboardingQuiz} />
 
-        <Stack.Screen name={ScreenName.OnboardingQuizFinal} component={OnboardingQuizFinal} />
-        <Stack.Screen
-          name={ScreenName.OnboardingSecureYourCrypto}
-          component={OnboardingSecureYourCrypto}
-        />
+      <Stack.Screen name={ScreenName.OnboardingQuizFinal} component={OnboardingQuizFinal} />
+      <Stack.Screen
+        name={ScreenName.OnboardingSecureYourCrypto}
+        component={OnboardingSecureYourCrypto}
+      />
 
-        <Stack.Screen name={ScreenName.OnboardingFundSuccess} component={OnboardingFundSuccess} />
+      <Stack.Screen name={ScreenName.OnboardingFundSuccess} component={OnboardingFundSuccess} />
 
-        <Stack.Screen
-          name={NavigatorName.AnalyticsOptInPrompt}
-          options={{ headerShown: false }}
-          component={AnalyticsOptInPromptNavigator}
-        />
-        <Stack.Screen name={NavigatorName.LandingPages} component={LandingPagesNavigator} />
-      </Stack.Navigator>
-    </DeviceOnboardingProvider>
+      <Stack.Screen
+        name={NavigatorName.AnalyticsOptInPrompt}
+        options={{ headerShown: false }}
+        component={AnalyticsOptInPromptNavigator}
+      />
+      <Stack.Screen name={NavigatorName.LandingPages} component={LandingPagesNavigator} />
+    </Stack.Navigator>
   );
 }

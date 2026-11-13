@@ -18,6 +18,8 @@ import { NetworkIdSchema } from "./shared/accountDescriptor";
 import type { SendIntentSummary } from "./agent-intent/send-intent";
 import type { SwapIntentSummary } from "./agent-intent/swap-intent";
 
+const XPUB = "xpub6BosfCnifzxcA";
+
 const spinners = new FakeSpinners();
 beforeAll(() => _setTestSpinner(spinners.create));
 afterAll(resetTestSeams);
@@ -450,7 +452,7 @@ describe("HumanCommandOutput", () => {
       version: "2",
       type: "utxo",
       network: NetworkIdSchema.parse("bitcoin"),
-      xpub: "xpub6BosfCnifzxcA",
+      key: XPUB,
       path: "m/84h/0h/0h",
     } as const;
     try {

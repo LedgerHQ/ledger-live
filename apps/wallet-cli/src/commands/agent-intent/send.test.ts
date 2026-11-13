@@ -150,10 +150,10 @@ beforeAll(() =>
           token => token.ticker === ticker || token.ticker === ticker.toUpperCase(),
         );
       },
-      findAccountTokens: async (account: { address: string }) => {
+      findAccountTokens: async (account: { key: string }) => {
         if (accountTokensError) throw accountTokensError;
         return {
-          tokens: accountTokens[account.address] ?? [],
+          tokens: accountTokens[account.key] ?? [],
           skippedTokenIds: accountSkippedTokenIds,
         };
       },

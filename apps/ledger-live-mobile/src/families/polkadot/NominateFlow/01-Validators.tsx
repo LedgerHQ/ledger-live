@@ -25,6 +25,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import {
   MAX_NOMINATIONS,
   hasMinimumBondBalance,
+  isNominationKeepable,
 } from "@ledgerhq/live-common/families/polkadot/logic";
 import {
   usePolkadotPreloadData,
@@ -77,7 +78,7 @@ function NominateSelectValidator({ navigation, route }: Props) {
     if (!tx) {
       const t = bridge.createTransaction(mainAccount);
       const initialValidators = (mainAccount.polkadotResources?.nominations || [])
-        .filter(nomination => !!nomination.status)
+        .filter(isNominationKeepable)
         .map(nomination => nomination.address);
       return {
         account,
@@ -108,7 +109,7 @@ function NominateSelectValidator({ navigation, route }: Props) {
   const nonValidators = useMemo(
     () =>
       (polkadotResources.nominations || [])
-        .filter(nomination => !nomination.status)
+        .filter(nomination => !isNominationKeepable(nomination))
         .map(nomination => nomination.address),
     [polkadotResources.nominations],
   );

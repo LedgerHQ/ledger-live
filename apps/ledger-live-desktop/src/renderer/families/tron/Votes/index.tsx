@@ -36,6 +36,7 @@ import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { track } from "@shared/analytics";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { getAccountUrl } from "~/renderer/utils";
+import { useTronEarnAction } from "../AccountDetailDelegations/useTronEarnAction";
 
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,
@@ -46,6 +47,7 @@ const Wrapper = styled(Box).attrs(() => ({
 `;
 const Delegation = ({ account }: { account: TronAccount }) => {
   const navigate = useNavigate();
+  const { canEarn, startEarning } = useTronEarnAction(account);
 
   const locale = useSelector(localeSelector);
   const superRepresentatives = useTronSuperRepresentatives();
@@ -211,7 +213,12 @@ const Delegation = ({ account }: { account: TronAccount }) => {
               explorerView={explorerView}
             />
           ))}
-          <Footer total={tronPower} used={totalVotesUsed} onClick={() => undefined} />
+          <Footer
+            total={tronPower}
+            used={totalVotesUsed}
+            disabled={!canEarn}
+            onClick={startEarning}
+          />
         </>
       ) : (
         <Wrapper horizontal>
@@ -240,7 +247,7 @@ const Delegation = ({ account }: { account: TronAccount }) => {
             </Box>
           </Box>
           <Box>
-            <Button primary small disabled={true}>
+            <Button primary small disabled={!canEarn} onClick={startEarning}>
               <Box horizontal flow={1} alignItems="center">
                 <IconChartLine size={12} />
                 <Box>

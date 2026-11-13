@@ -13,13 +13,19 @@ import { dirname, join } from "node:path";
 import { tmpdir } from "node:os";
 import { generateLabel, getSessionPath, Session, withSessionLock } from "./session-store";
 import { NetworkIdSchema, type AccountDescriptorV1 } from "../shared/accountDescriptor";
+import { pointStateHomeAt } from "../testing/state-home";
+
+const XPUB_A = "xpub6BosfCnifzxcA";
+const XPUB_B = "xpub6BosfCnifzxcB";
+const XPUB_C = "xpub6BosfCnifzxcC";
+const ETH_ADDRESS = "0x71C7656EC7ab88b098defB751B7401B5f6d8976F";
 
 const btcNative: AccountDescriptorV1 = {
   purpose: "account",
   version: "2",
   type: "utxo",
   network: NetworkIdSchema.parse("bitcoin"),
-  xpub: "xpub6BosfCnifzxcA",
+  key: XPUB_A,
   path: "m/84h/0h/0h",
 };
 
@@ -28,7 +34,7 @@ const btcNative2: AccountDescriptorV1 = {
   version: "2",
   type: "utxo",
   network: NetworkIdSchema.parse("bitcoin"),
-  xpub: "xpub6BosfCnifzxcB",
+  key: XPUB_B,
   path: "m/84h/0h/1h",
 };
 
@@ -37,7 +43,7 @@ const btcLegacy: AccountDescriptorV1 = {
   version: "2",
   type: "utxo",
   network: NetworkIdSchema.parse("bitcoin"),
-  xpub: "xpub6BosfCnifzxcC",
+  key: XPUB_C,
   path: "m/44h/0h/0h",
 };
 
@@ -46,7 +52,7 @@ const btcSegwit: AccountDescriptorV1 = {
   version: "2",
   type: "utxo",
   network: NetworkIdSchema.parse("bitcoin"),
-  xpub: "xpubSEGWIT",
+  key: "xpubSEGWIT",
   path: "m/49h/0h/0h",
 };
 
@@ -55,7 +61,7 @@ const btcTaproot: AccountDescriptorV1 = {
   version: "2",
   type: "utxo",
   network: NetworkIdSchema.parse("bitcoin"),
-  xpub: "xpubTAPROOT",
+  key: "xpubTAPROOT",
   path: "m/86h/0h/0h",
 };
 
@@ -64,7 +70,7 @@ const btcTestnet: AccountDescriptorV1 = {
   version: "2",
   type: "utxo",
   network: NetworkIdSchema.parse("bitcoin_testnet"),
-  xpub: "tpub1234",
+  key: "tpub1234",
   path: "m/84h/1h/0h",
 };
 
@@ -73,7 +79,7 @@ const ethMain: AccountDescriptorV1 = {
   version: "2",
   type: "address",
   network: NetworkIdSchema.parse("ethereum"),
-  address: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
+  key: ETH_ADDRESS,
   path: "m/44h/60h/0h/0/0",
 };
 
@@ -82,7 +88,7 @@ const ethGoerli: AccountDescriptorV1 = {
   version: "2",
   type: "address",
   network: NetworkIdSchema.parse("ethereum_goerli"),
-  address: "0xabc",
+  key: "0xabc",
   path: "m/44h/60h/0h/0/0",
 };
 
@@ -223,18 +229,17 @@ describe("YAML round-trip", () => {
 
 describe("ring-field resilience", () => {
   let tmpDir: string | undefined;
-  let savedEnv: string | undefined;
+  let restoreStateHome: (() => void) | undefined;
 
   afterEach(() => {
-    if (savedEnv === undefined) delete process.env.XDG_STATE_HOME;
-    else process.env.XDG_STATE_HOME = savedEnv;
+    restoreStateHome?.();
+    restoreStateHome = undefined;
     if (tmpDir) rmSync(tmpDir, { recursive: true, force: true });
   });
 
   function useTmpState(): void {
-    savedEnv = process.env.XDG_STATE_HOME;
     tmpDir = mkdtempSync(join(tmpdir(), "wallet-cli-ring-"));
-    process.env.XDG_STATE_HOME = tmpDir;
+    restoreStateHome = pointStateHomeAt(tmpDir);
     mkdirSync(dirname(getSessionPath()), { recursive: true });
   }
 
@@ -641,20 +646,19 @@ describe("Session.agentIntentProfiles", () => {
   });
 });
 
-describe("Session.write() permissions", () => {
+describe.skipIf(process.platform === "win32")("Session.write() permissions", () => {
   let tmpDir: string | undefined;
-  let savedEnv: string | undefined;
+  let restoreStateHome: (() => void) | undefined;
 
   afterEach(() => {
-    if (savedEnv === undefined) delete process.env.XDG_STATE_HOME;
-    else process.env.XDG_STATE_HOME = savedEnv;
+    restoreStateHome?.();
+    restoreStateHome = undefined;
     if (tmpDir) rmSync(tmpDir, { recursive: true, force: true });
   });
 
   it("creates state dir 0700 and session file 0600", () => {
-    savedEnv = process.env.XDG_STATE_HOME;
     tmpDir = mkdtempSync(join(tmpdir(), "wallet-cli-perm-"));
-    process.env.XDG_STATE_HOME = tmpDir;
+    restoreStateHome = pointStateHomeAt(tmpDir);
 
     Session.from([]).write();
 
@@ -664,9 +668,8 @@ describe("Session.write() permissions", () => {
   });
 
   it("corrects too-permissive existing dir and file to 0700/0600", () => {
-    savedEnv = process.env.XDG_STATE_HOME;
     tmpDir = mkdtempSync(join(tmpdir(), "wallet-cli-perm-"));
-    process.env.XDG_STATE_HOME = tmpDir;
+    restoreStateHome = pointStateHomeAt(tmpDir);
 
     // Pre-create with permissive modes (simulating a prior installation)
     const stateDirectory = dirname(getSessionPath());
@@ -684,25 +687,20 @@ describe("Session.write() permissions", () => {
 
 describe("withSessionLock", () => {
   let tmpDir: string | undefined;
-  let savedEnv: string | undefined;
+  let restoreStateHome: (() => void) | undefined;
 
   afterEach(() => {
-    if (savedEnv === undefined) delete process.env.XDG_STATE_HOME;
-    else process.env.XDG_STATE_HOME = savedEnv;
+    restoreStateHome?.();
+    restoreStateHome = undefined;
     if (tmpDir) rmSync(tmpDir, { recursive: true, force: true });
   });
 
   it("creates the state directory itself on a machine that has never written a session", async () => {
-    savedEnv = process.env.XDG_STATE_HOME;
     // Deliberately NOT pre-created (unlike useTmpState() elsewhere in this file) — this is the
     // "fresh machine" precondition: nothing has ever written here, so the app's own directory
-    // under it doesn't exist yet either. NOTE: on win32, stateDir() resolves via LOCALAPPDATA, not
-    // XDG_STATE_HOME (a known, separately-tracked gap — see session-fixture.ts) — so on that
-    // platform this doesn't actually exercise the fresh-machine path, only the assertions below,
-    // against whatever LOCALAPPDATA already has. The real fresh-machine case is exercised in CI
-    // (Linux), where XDG_STATE_HOME is honored.
+    // under it doesn't exist yet either.
     tmpDir = mkdtempSync(join(tmpdir(), "wallet-cli-fresh-"));
-    process.env.XDG_STATE_HOME = tmpDir;
+    restoreStateHome = pointStateHomeAt(tmpDir);
 
     const result = await withSessionLock(() => "ran");
 
@@ -711,9 +709,8 @@ describe("withSessionLock", () => {
   });
 
   it("serializes two concurrent calls", async () => {
-    savedEnv = process.env.XDG_STATE_HOME;
     tmpDir = mkdtempSync(join(tmpdir(), "wallet-cli-fresh-"));
-    process.env.XDG_STATE_HOME = tmpDir;
+    restoreStateHome = pointStateHomeAt(tmpDir);
 
     const events: string[] = [];
     const first = withSessionLock(async () => {
@@ -727,5 +724,21 @@ describe("withSessionLock", () => {
 
     await Promise.all([first, second]);
     expect(events).toEqual(["first-start", "first-end", "second-start"]);
+  });
+});
+
+describe("getSessionPath", () => {
+  it("keeps session.yaml where existing installs have it", () => {
+    const stateHome = join(tmpdir(), "wallet-cli-layout-test");
+    const restoreStateHome = pointStateHomeAt(stateHome);
+    try {
+      const installedLayout =
+        process.platform === "win32"
+          ? join(stateHome, "ledger-wallet-cli", "State", "session.yaml")
+          : join(stateHome, "ledger-wallet-cli", "session.yaml");
+      expect(getSessionPath()).toBe(installedLayout);
+    } finally {
+      restoreStateHome();
+    }
   });
 });

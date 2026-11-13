@@ -2,7 +2,7 @@ import React from "react";
 import { render } from "@testing-library/react-native";
 import { Text } from "react-native";
 import qrcode from "qrcode";
-import { QrCode } from "./QrCode.native";
+import { QrCode } from "./QrCode";
 
 jest.mock("qrcode", () => ({
   __esModule: true,

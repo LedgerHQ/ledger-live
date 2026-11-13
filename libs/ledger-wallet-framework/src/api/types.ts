@@ -266,6 +266,12 @@ export type BridgeApi = {
    */
   exactAssetMatch?: boolean;
   /**
+   * When true, a transaction with no native operation whose token operation is an `OPT_IN`,
+   * `OPT_OUT` or `OPT_EDIT` gets a parent row of that type, worth the fee the account paid. Left
+   * unset, its parent row is `FEES`, or `NONE` when the account paid no fee.
+   */
+  tokenOptParentRow?: boolean;
+  /**
    * For a family whose legacy bridge keyed account ids on the public key rather than the address.
    * When true, a synced account keeps the `xpubOrAddress` already in its id, and a scanned one is
    * keyed on the device's public key, so moving to the generic bridge never re-keys an account.

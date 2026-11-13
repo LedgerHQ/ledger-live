@@ -12,7 +12,7 @@ import { useTranslation } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
 import { knownDevicesSelector } from "~/reducers/knownDevices";
 import type { ScreenName } from "~/const";
-import type { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
+import type { DeviceOnboardingNavigatorParamList } from "LLM/features/DeviceOnboarding/navigation/types";
 import {
   useDeviceOnboardingHost,
   useDeviceOnboardingSession,
@@ -25,13 +25,10 @@ import { selectPairedKnownDevices } from "LLM/features/DeviceOnboarding/utils/pa
 import { useFirmwareUpdateHandover } from "LLM/features/DeviceOnboarding/hooks/useFirmwareUpdateHandover";
 import { lastSavedStepName } from "../../components/QuitConfirmation/lastSavedStep";
 
-type FunnelRoute = RouteProp<OnboardingNavigatorParamList, ScreenName.DeviceOnboardingFunnel>;
+type FunnelRoute = RouteProp<DeviceOnboardingNavigatorParamList, ScreenName.DeviceOnboardingFunnel>;
 
 const firmwareUpdateDelegatedState = "checks.firmwareUpdateDelegated";
 const awaitingSessionAfterFirmwareUpdateState = "awaitingSessionAfterFirmwareUpdate";
-
-/** Back must not quit here: a quit would skip the update and complete onboarding. */
-const firmwareUpdateOfferState = "checks.firmwareUpdateOffered";
 
 export type QuitConfirmationModel = {
   isOpen: boolean;
@@ -88,7 +85,7 @@ function blockBack(event: BackEvent, actions: LeaveActions) {
   if (actions.status === "running" && actions.state) {
     if (actions.state === firmwareUpdateDelegatedState) actions.closeFirmwareHandover();
     else if (actions.unseeded) actions.requestQuit();
-    else if (actions.state !== firmwareUpdateOfferState) actions.quitMachine();
+    else actions.quitMachine();
     return;
   }
   actions.leave();
@@ -295,7 +292,6 @@ function checksScreen(actions: ScreenActions): DeviceOnboardingFunnelModel {
       onRetry: () => actions.send({ type: "RETRY" }),
       onCloseSheet: () => actions.send({ type: "CLOSE" }),
       onCloseNotGenuine: actions.unseeded ? () => actions.send({ type: "CLOSE" }) : undefined,
-      onCloseFirmwareOffer: actions.unseeded ? () => actions.send({ type: "CLOSE" }) : undefined,
       onAcceptUpdate: () => actions.send({ type: "USER_ACCEPT" }),
       onDeclineUpdate: () => actions.send({ type: "USER_DECLINE" }),
       onContinue:

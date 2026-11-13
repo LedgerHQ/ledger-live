@@ -15,8 +15,11 @@ import { accountsPersistedStateChanged } from "@ledgerhq/live-common/account/ind
 import {
   accountAnalyticsIntroductionSlice,
   dismissAccountAnalyticsIntroduction,
+  overrideAccountAnalyticsIntroductionEligibility,
+  recordAccountAnalyticsIntroductionEligibility,
   resetAccountAnalyticsIntroduction,
   restoreAccountAnalyticsIntroduction,
+  type AccountAnalyticsIntroductionState,
 } from "@features/flow-account-detail-analytics-notice/state";
 
 jest.mock("~/renderer/storage", () => ({
@@ -90,7 +93,7 @@ jest.mock("@ledgerhq/live-common/account/index", () => ({
 const mockedSetKey = jest.mocked(setKey);
 
 type FakeState = {
-  accountAnalyticsIntroduction: { hasDismissed: boolean };
+  accountAnalyticsIntroduction: AccountAnalyticsIntroductionState;
   settings: { loaded: boolean; starredMarketCoins: string[] };
   market: Record<string, unknown>;
   application: { isLocked: boolean };
@@ -128,7 +131,7 @@ type FakeState = {
 };
 
 const baseState = (): FakeState => ({
-  accountAnalyticsIntroduction: { hasDismissed: false },
+  accountAnalyticsIntroduction: { hasDismissed: false, isEligible: null },
   settings: { loaded: true, starredMarketCoins: [] },
   market: { currentPage: 1 },
   application: { isLocked: false },
@@ -474,13 +477,14 @@ describe("DBMiddleware - Analytics introduction", () => {
 
     expect(mockedSetKey).toHaveBeenCalledWith("app", "accountAnalyticsIntroduction", {
       hasDismissed: true,
+      isEligible: null,
     });
   });
 
   it("should avoid rewriting storage when dismissal is already consumed", () => {
     const state: FakeState = {
       ...baseState(),
-      accountAnalyticsIntroduction: { hasDismissed: true },
+      accountAnalyticsIntroduction: { hasDismissed: true, isEligible: null },
     };
 
     runMiddleware([state, state], dismissAccountAnalyticsIntroduction());
@@ -491,7 +495,7 @@ describe("DBMiddleware - Analytics introduction", () => {
   it("should persist the reset so the introduction shows again after a restart", () => {
     const before: FakeState = {
       ...baseState(),
-      accountAnalyticsIntroduction: { hasDismissed: true },
+      accountAnalyticsIntroduction: { hasDismissed: true, isEligible: null },
     };
     const action = resetAccountAnalyticsIntroduction();
     const after: FakeState = {
@@ -506,6 +510,7 @@ describe("DBMiddleware - Analytics introduction", () => {
 
     expect(mockedSetKey).toHaveBeenCalledWith("app", "accountAnalyticsIntroduction", {
       hasDismissed: false,
+      isEligible: null,
     });
   });
 
@@ -513,6 +518,58 @@ describe("DBMiddleware - Analytics introduction", () => {
     const state = baseState();
 
     runMiddleware([state, state], resetAccountAnalyticsIntroduction());
+
+    expect(mockedSetKey).not.toHaveBeenCalled();
+  });
+
+  it("should persist the eligibility snapshot when it is recorded", () => {
+    const before = baseState();
+    const action = recordAccountAnalyticsIntroductionEligibility(true);
+    const after: FakeState = {
+      ...before,
+      accountAnalyticsIntroduction: accountAnalyticsIntroductionSlice.reducer(
+        before.accountAnalyticsIntroduction,
+        action,
+      ),
+    };
+
+    runMiddleware([before, after], action);
+
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "accountAnalyticsIntroduction", {
+      hasDismissed: false,
+      isEligible: true,
+    });
+  });
+
+  it("should persist an eligibility forced from the DevTools", () => {
+    const before: FakeState = {
+      ...baseState(),
+      accountAnalyticsIntroduction: { hasDismissed: false, isEligible: true },
+    };
+    const action = overrideAccountAnalyticsIntroductionEligibility(false);
+    const after: FakeState = {
+      ...before,
+      accountAnalyticsIntroduction: accountAnalyticsIntroductionSlice.reducer(
+        before.accountAnalyticsIntroduction,
+        action,
+      ),
+    };
+
+    runMiddleware([before, after], action);
+
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "accountAnalyticsIntroduction", {
+      hasDismissed: false,
+      isEligible: false,
+    });
+  });
+
+  it("should avoid rewriting storage when the eligibility snapshot already exists", () => {
+    const state: FakeState = {
+      ...baseState(),
+      accountAnalyticsIntroduction: { hasDismissed: false, isEligible: false },
+    };
+
+    runMiddleware([state, state], recordAccountAnalyticsIntroductionEligibility(true));
 
     expect(mockedSetKey).not.toHaveBeenCalled();
   });

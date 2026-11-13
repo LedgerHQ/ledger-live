@@ -544,7 +544,7 @@ test.describe("Earn v2", () => {
       async ({ app }) => {
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(emptyAccount.accountName);
-        await app.account.startStakingFlowFromMainStakeButton();
+        await app.account.startStakingFlowFromMainStakeButton({ asset: emptyAccount.currency });
         await app.earnV2Dashboard.verifyV2DepositFlowVisible();
         await app.earnV2Dashboard.selectAnotherFundingAccount(app, fundingAccount);
         await app.earnV2Dashboard.verifySwapToEarnDescription(
@@ -581,7 +581,7 @@ test.describe("Select a validator", () => {
     async ({ app }) => {
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(account.accountName);
-      await app.account.startStakingFlowFromMainStakeButton();
+      await app.account.startStakingFlowFromMainStakeButton({ asset: account.currency });
       await app.earnV2Dashboard.verifyDepositFlowVisible();
       await app.earnV2Dashboard.selectEthProvider(EarnProvider.LIDO.name);
     },
@@ -608,7 +608,7 @@ test.describe("Select a validator - deposit v2", () => {
     async ({ app }) => {
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(account.accountName);
-      await app.account.startStakingFlowFromMainStakeButton();
+      await app.account.startStakingFlowFromMainStakeButton({ asset: account.currency });
       await app.earnV2Dashboard.verifyV2DepositFlowVisible();
       await app.earnV2Dashboard.enterDepositAmount("0.02");
       await app.earnV2Dashboard.selectEthProviderV2(EarnProvider.LIDO.name);

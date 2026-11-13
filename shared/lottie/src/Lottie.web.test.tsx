@@ -1,7 +1,7 @@
 import React from "react";
 import { act, render } from "@testing-library/react";
 import { DotLottieReact, type DotLottie } from "@lottiefiles/dotlottie-react";
-import { Lottie } from "./Lottie.web";
+import { Lottie } from "./Lottie";
 
 jest.mock("@lottiefiles/dotlottie-react", () => ({
   DotLottieReact: jest.fn(() => <canvas data-testid="dotlottie" />),

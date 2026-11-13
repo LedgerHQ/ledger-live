@@ -342,6 +342,11 @@ export type SendAmountDescriptor = Readonly<{
    * patch applied through the `bridge.updateTransaction`
    */
   effects?: readonly FlowEffect[];
+  /**
+   * Rounds an amount the app computed (from fiat or a share of the balance), in base units, to
+   * one the chain accepts. Left unset, the amount is kept as is.
+   */
+  roundAmount?: (amount: BigNumber, currency: CryptoOrTokenCurrency) => BigNumber;
 }>;
 
 /**

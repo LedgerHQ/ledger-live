@@ -48,7 +48,7 @@ export default defineCommand({
         );
       }
       const network = v1.network;
-      const address = v1.address;
+      const address = v1.key;
       ctx.network = network;
       ctx.account = address;
 

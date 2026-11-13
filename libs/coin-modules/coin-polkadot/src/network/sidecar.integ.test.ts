@@ -78,11 +78,11 @@ describe("sidecar integration test", () => {
     "%s tests",
     (currencyId, { config, testAddress }) => {
       describe("getValidators", () => {
-        // Westend relay-chain staking has migrated to Asset Hub and is no longer supported:
-        // the relay node no longer exposes the staking pallet, so `getValidators` returns an
-        // empty array here. `assethub_westend` (below) is the supported chain and keeps this
-        // assertion.
-        const test = currencyId === "westend" ? it.skip : it;
+        // Westend and Polkadot relay-chain staking has migrated to Asset Hub and is no longer
+        // supported: the relay node no longer registers validators in the staking pallet, so
+        // `getValidators` returns an empty array here. The `assethub_*` chains are the
+        // supported ones and keep this assertion.
+        const test = ["westend", "polkadot"].includes(currencyId) ? it.skip : it;
         test(`returns expected result with ${currencyId}`, async () => {
           const result = await getValidators(config, undefined);
 

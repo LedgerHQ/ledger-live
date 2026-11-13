@@ -6,7 +6,10 @@ import {
   type ContactAddressLabel,
   type ContactId,
 } from "@domain/entity-contact";
-import { EMPTY_ADDRESS_ENTRY_STATE } from "@features/platform-contacts";
+import {
+  EMPTY_ADDRESS_ENTRY_STATE,
+  keepEnsDisclaimerWhileValidating,
+} from "@features/platform-contacts";
 import type {
   AddAddressContact,
   AddAddressCurrencySelection,
@@ -153,7 +156,10 @@ function reduceUpdateAddressEntry(
   ) {
     return state;
   }
-  return { ...state, addressEntry: action.addressEntry };
+  return {
+    ...state,
+    addressEntry: keepEnsDisclaimerWhileValidating(state.addressEntry, action.addressEntry),
+  };
 }
 
 function reduceUpdateAddressLabel(

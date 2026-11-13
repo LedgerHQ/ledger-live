@@ -16,6 +16,9 @@ import {
   type GetQuotesWireArgs,
   type GetTransactionStatusResponse,
   type GetTransactionStatusWireArgs,
+  type IsTronifyEnergyDeliveredParams,
+  type IsTronifyEnergyDeliveredResult,
+  TRONIFY_IS_ENERGY_DELIVERED_METHOD,
 } from "./types";
 
 export * from "./types";
@@ -220,6 +223,20 @@ export class ExchangeModule extends CustomModule {
   ): Promise<GetTransactionStatusResponse> {
     return this.request<GetTransactionStatusWireArgs, GetTransactionStatusResponse>(
       "custom.exchange.getTransactionStatus",
+      params,
+    );
+  }
+
+  /**
+   * Whether the energy rented from Tronify has reached the TRON account. Poll it after
+   * `uploadHash` and before `completeSwap`. See {@link IsTronifyEnergyDeliveredResult} for what
+   * `delivered` does and does not guarantee.
+   */
+  async isTronifyEnergyDelivered(
+    params: IsTronifyEnergyDeliveredParams,
+  ): Promise<IsTronifyEnergyDeliveredResult> {
+    return await this.request<IsTronifyEnergyDeliveredParams, IsTronifyEnergyDeliveredResult>(
+      TRONIFY_IS_ENERGY_DELIVERED_METHOD,
       params,
     );
   }

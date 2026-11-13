@@ -50,6 +50,7 @@ import type {
   Account,
   AccountIdParams,
   AccountReadiness,
+  OperationType,
   StakingDelegation,
   StakingDelegationStatus,
   StakingPositionDetails,
@@ -237,6 +238,8 @@ function parentOpsFromNativeOps(
   return out;
 }
 
+const TOKEN_OPT_TYPES = new Set<OperationType>(["OPT_IN", "OPT_OUT", "OPT_EDIT"]);
+
 /** One synthetic FEES or NONE parent when the tx has no native ops (e.g. token-only). */
 function syntheticParentForTokenOnlyTx(
   referenceOp: OperationCommon,
@@ -244,6 +247,7 @@ function syntheticParentForTokenOnlyTx(
   address: string,
   subOperations: OperationCommon[],
   internalOperations: OperationCommon[],
+  tokenOptParentRow: boolean,
 ): OperationCommon {
   // Parent op is FEES only when the account actually paid a fee; NONE otherwise. A zero fee (e.g. a
   // token send whose energy/bandwidth is fully covered) is not a FEES row — it stays hidden as NONE
@@ -252,7 +256,9 @@ function syntheticParentForTokenOnlyTx(
   const feePayer = getFeePayer(referenceOp);
   const isFeePayer = feePayer !== undefined && isSameAddress(address, feePayer);
   const paysFee = isFeePayer && !referenceOp.fee?.isZero();
-  const parentType = paysFee ? "FEES" : "NONE";
+  const keepsOptType = tokenOptParentRow && TOKEN_OPT_TYPES.has(referenceOp.type);
+  const feeType = paysFee ? "FEES" : "NONE";
+  const parentType = keepsOptType ? referenceOp.type : feeType;
   const parentValue = paysFee ? referenceOp.fee : new BigNumber(0);
   // In the case of smart contract interaction, the contract must be the recipient of the parent operation => this
   // is why we need to extract this information from the operation details.
@@ -287,6 +293,7 @@ function parentOpsForTxWithNonInternalOperations(
   subOperationIndex: SubOperationIndex,
   accountId: string,
   address: string,
+  tokenOptParentRow: boolean,
 ): OperationCommon[] {
   const nativeOps = transactionOps.filter(isNativeLiveOp);
   // subOperationIndex holds types-live Operation[]; we use OperationCommon in this bridge
@@ -300,7 +307,14 @@ function parentOpsForTxWithNonInternalOperations(
   // If transaction has no native ops, create a synthetic parent
   const firstOp = transactionOps[0];
   return [
-    syntheticParentForTokenOnlyTx(firstOp, accountId, address, subOperations, internalOperations),
+    syntheticParentForTokenOnlyTx(
+      firstOp,
+      accountId,
+      address,
+      subOperations,
+      internalOperations,
+      tokenOptParentRow,
+    ),
   ];
 }
 
@@ -359,6 +373,7 @@ function buildParentOperations(
   newInternalOperations: OperationCommon[],
   accountId: string,
   address: string,
+  tokenOptParentRow: boolean,
 ): OperationCommon[] {
   const nonInternalByHash = groupBy(newNonInternalOperations, "hash");
   const internalByHash = groupBy(newInternalOperations, "hash");
@@ -376,6 +391,7 @@ function buildParentOperations(
         subOperationIndex,
         accountId,
         address,
+        tokenOptParentRow,
       ),
     );
   }
@@ -1175,6 +1191,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       newInternalOperations,
       accountId,
       address,
+      bridgeApi.tokenOptParentRow === true,
     );
     // Try to refresh known pending and broadcasted operations (if not already updated)
     // Useful for integrations without explorers. Not on a bounded round: it starts from an empty

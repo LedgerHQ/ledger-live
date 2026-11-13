@@ -12,6 +12,12 @@ describe("AccountOperationSchema", () => {
     }
   });
 
+  it("should accept a token settings edit", () => {
+    expect(
+      AccountOperationSchema.safeParse(mockAccountOperation({ type: "OPT_EDIT" })).success,
+    ).toBe(true);
+  });
+
   it("should reject an unknown operation type", () => {
     expect(() => mockAccountOperation({ type: "SWAP" })).toThrow();
   });

@@ -19,6 +19,8 @@ export const checksTestIds = {
   continue: "device-onboarding-checks-continue",
   quit: "device-onboarding-checks-quit",
   allowSheet: "device-onboarding-checks-allow-sheet",
+  installUpdate: "device-onboarding-checks-install-update",
+  skipUpdate: "device-onboarding-checks-skip-update",
 } as const;
 
 export const syncOfferTestIds = {

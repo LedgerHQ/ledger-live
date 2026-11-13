@@ -12,7 +12,7 @@ export const generic: MockFamily = {
     version: "2",
     type: "address",
     network,
-    address: address(currency, random),
+    key: address(currency, random),
     path: `m/44h/${currency.coinType}h/${index}h/0/0`,
   }),
   address,

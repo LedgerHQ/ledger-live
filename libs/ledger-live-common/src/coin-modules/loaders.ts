@@ -27,6 +27,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     family: "aptos",
     supportedCoins: ["aptos", "aptos_testnet"],
     accountDescriptorType: "address",
+    loadAddressFromKey: () => import("../families/aptos/addressFromKey").then(m => m.default),
     loadSetup: () => import("../families/aptos/setup"),
     loadTransaction: () => import("@ledgerhq/coin-aptos/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
@@ -298,6 +299,8 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     family: "internet_computer",
     supportedCoins: ["internet_computer"],
     accountDescriptorType: "address",
+    loadAddressFromKey: () =>
+      import("../families/internet_computer/addressFromKey").then(m => m.default),
     loadSetup: () => import("../families/internet_computer/setup"),
     loadTransaction: () =>
       import("@ledgerhq/coin-internet_computer/transaction").then(m => m.default),
@@ -386,6 +389,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     family: "stacks",
     supportedCoins: ["stacks"],
     accountDescriptorType: "address",
+    loadAddressFromKey: () => import("../families/stacks/addressFromKey").then(m => m.default),
     loadSetup: () => import("../families/stacks/setup"),
     loadTransaction: () => import("@ledgerhq/coin-stacks/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
@@ -439,6 +443,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     family: "ton",
     supportedCoins: ["ton"],
     accountDescriptorType: "address",
+    loadAddressFromKey: () => import("../families/ton/addressFromKey").then(m => m.default),
     loadSetup: () => import("../families/ton/setup"),
     loadLocalApi: () => import("../families/ton/coinModuleApi").then(m => m.createLocalTonApi),
     loadTransaction: () => import("@ledgerhq/coin-ton/transaction").then(m => m.default),

@@ -70,11 +70,16 @@ export default function SubAccountsList({
   const hasSpecificTokenWording = specific && specific.hasSpecificTokenWording;
 
   const Placeholder = specific && specific.Placeholder;
+  const AddTokenButton = specific && "AddTokenButton" in specific ? specific.AddTokenButton : null;
 
-  const isToken = useMemo(
-    () => (parentAccount.currency.tokenTypes || []).length > 0,
-    [parentAccount],
-  );
+  const getTokenTypes = specific && "getTokenTypes" in specific ? specific.getTokenTypes : null;
+
+  const isToken = useMemo(() => {
+    const { currency } = parentAccount;
+    const tokenTypes = getTokenTypes ? getTokenTypes(currency) : (currency.tokenTypes ?? []);
+
+    return tokenTypes.length > 0;
+  }, [getTokenTypes, parentAccount]);
 
   const navigateToReceiveConnectDevice = useCallback(() => {
     navigation.navigate(NavigatorName.ReceiveFunds, {
@@ -224,6 +229,9 @@ export default function SubAccountsList({
         ListHeaderComponent={renderHeader}
         ListFooterComponent={renderFooter}
       />
+      {isToken && AddTokenButton && subAccounts.length > 0 ? (
+        <AddTokenButton accountId={accountId} />
+      ) : null}
       {account && (
         <TokenContextualModal
           onClose={() => setAccount(undefined)}

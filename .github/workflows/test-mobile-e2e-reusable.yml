@@ -368,7 +368,6 @@ jobs:
         id: setup-caches
         with:
           use-mise: true
-          skip-pnpm-cache: "true"
           skip-pod-cache: "true"
           skip-nx-cache: "true"
 
@@ -724,7 +723,6 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
           skip-pod-cache: "true"
-          skip-pnpm-cache: "true"
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -813,7 +811,6 @@ jobs:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-pod-cache: "true"
-          skip-pnpm-cache: "true"
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
           nx-key: ${{ secrets.NX_KEY }}
@@ -1123,7 +1120,6 @@ jobs:
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
-          skip-pnpm-cache: "true"
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
           nx-key: ${{ secrets.NX_KEY }}
