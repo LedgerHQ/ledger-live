@@ -106,6 +106,7 @@ on:
         options:
           - defaults
           - wallet40-q1
+          - account-detail
         default: defaults
       feature_flags_json:
         description: "JSON to override feature flags"
