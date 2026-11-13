@@ -57,13 +57,15 @@ longer exists).
 
 Every weekday at 03:17 UTC the workflow runs `prod-vs-develop` with the settings of `NIGHTLY` in
 `ci/resolve-refs.mts` (both platforms and scenarios, 20 pairs, 100 ms), as a scheduled run has no
-inputs; the plan job passes the settings on to the other jobs. Its result is posted to
-#live-repo-health, passed or failed: each platform and scenario's Debug screen verdict and B − A
-(the native start's too when its verdict differs), or why it has none (a build that did not finish,
-a measurement that timed out). A verdict whose interval contains the threshold shows as ⚠️
-"Probably within" or "Probably slower by more than" the threshold and turns the bar yellow, unless
-another line is ❌; the run still fails on "Probably slower", as the gate is on the estimate. A
-dispatch posts there too when `slack_notif` is ticked. A run cancelled by hand posts nothing.
+inputs; the plan job passes the settings on to the other jobs.
+
+As for the mobile E2E runs, every run posts its result to their Slack results channel, passed or
+failed, and the nightly or a dispatch with `slack_notif` ticked to #live-repo-health too: each
+platform and scenario's Debug screen verdict and B − A (the native start's too when its verdict
+differs), or why it has none (a build that did not finish, a measurement that timed out). A verdict
+whose interval contains the threshold shows as ⚠️ "Probably within" or "Probably slower by more
+than" the threshold and turns the bar yellow, unless another line is ❌; the run still fails on
+"Probably slower", as the gate is on the estimate. A run cancelled by hand posts nothing.
 
 Refs are branches or tags only: a raw SHA could be a fork's commit, run with the workflow's secrets.
 They start at `live-mobile@4.26.0`: `prepare-build.mts` rejects older ones, which still count the

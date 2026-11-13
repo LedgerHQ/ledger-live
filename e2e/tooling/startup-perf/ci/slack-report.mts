@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // The Slack job: the message of a run, passed or failed, from the jobs' results and the summary.json
-// the measure jobs' analysis wrote. Reads the environment and RESULTS_DIR; writes slack-payload.json.
+// the measure jobs' analysis wrote. Reads the environment and RESULTS_DIR; writes slack-payload.json,
+// and slack-payload-secondary.json when SLACK_SECONDARY_CHANNEL is set.
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
@@ -232,6 +233,16 @@ export function payloadOf(report: RunReport, channel: string): object {
   };
 }
 
+/** Each channel's payload by file name, the same message in both, as in the mobile E2E reports. */
+export function payloadFilesOf(report: RunReport, env: NodeJS.ProcessEnv): Record<string, object> {
+  const payload = payloadOf(report, env.SLACK_CHANNEL ?? "");
+  const secondary = env.SLACK_SECONDARY_CHANNEL;
+  return {
+    "slack-payload.json": payload,
+    ...(secondary ? { "slack-payload-secondary.json": { ...payload, channel: secondary } } : {}),
+  };
+}
+
 /** Every summary.json under `dir`, one folder per downloaded artifact; none when `dir` is absent. */
 export function rowsIn(dir: string): ResultRow[] {
   let files: string[];
@@ -267,9 +278,11 @@ function main(): void {
   const env = process.env;
   if (!env.RESULTS_DIR) throw new StepFailure("RESULTS_DIR is not set");
   const report = reportOf(env, rowsIn(insideWorkingDir(env.RESULTS_DIR)));
-  const payload = payloadOf(report, env.SLACK_CHANNEL ?? "");
-  writeFileSync(insideWorkingDir("slack-payload.json"), JSON.stringify(payload));
-  console.log(JSON.stringify(payload, null, 2));
+  const files = payloadFilesOf(report, env);
+  for (const [file, payload] of Object.entries(files)) {
+    writeFileSync(insideWorkingDir(file), JSON.stringify(payload));
+  }
+  console.log(JSON.stringify(files["slack-payload.json"], null, 2));
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

@@ -52,7 +52,7 @@ on:
         type: string
         default: "100"
       slack_notif:
-        description: "Post the result to #live-repo-health on Slack, passed or failed (the nightly always does)"
+        description: "Post the result to Slack #live-repo-health"
         required: false
         type: boolean
         default: false
@@ -580,9 +580,10 @@ jobs:
   report-on-slack:
     name: "Slack report"
     needs: [plan, build-android, build-ios, measure-android, measure-ios]
-    # Every nightly posts, passed or failed; a dispatch posts when slack_notif is ticked. A run
-    # cancelled by hand posts nothing; a job that times out ends cancelled but still gets posted.
-    if: ${{ !cancelled() && needs.plan.result != 'skipped' && (github.event_name == 'schedule' || inputs.slack_notif) }}
+    # As for the mobile E2E runs: every run posts to their results channel, passed or failed, and
+    # the nightly or a dispatch with slack_notif to #live-repo-health too. A run cancelled by hand
+    # posts nothing; a job that times out ends cancelled but still gets posted.
+    if: ${{ !cancelled() && needs.plan.result != 'skipped' }}
     runs-on: ledger-wallet-1cpu-aws-public-cached
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -604,7 +605,8 @@ jobs:
 
       - name: Write the message
         env:
-          SLACK_CHANNEL: C05FKJ7DFAP
+          SLACK_CHANNEL: CTMQ0S5SB
+          SLACK_SECONDARY_CHANNEL: ${{ (github.event_name == 'schedule' || inputs.slack_notif) && 'C05FKJ7DFAP' || '' }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           PRESET: ${{ needs.plan.outputs.preset }}
           THRESHOLD: ${{ needs.plan.outputs.threshold_ms }}
@@ -618,9 +620,18 @@ jobs:
           IOS_MEASURE: ${{ needs.measure-ios.result }}
         run: node e2e/tooling/startup-perf/ci/slack-report.mts
 
-      - name: Post to the live-repo-health channel
+      # The mobile E2E runs' bot, which posts to both channels.
+      - name: Post to the mobile E2E results channel
         uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
         with:
           method: chat.postMessage
-          token: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
+          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
           payload-file-path: ${{ github.workspace }}/slack-payload.json
+
+      - name: Post to the live-repo-health channel
+        if: ${{ github.event_name == 'schedule' || inputs.slack_notif }}
+        uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          payload-file-path: ${{ github.workspace }}/slack-payload-secondary.json

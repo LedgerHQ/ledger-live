@@ -6,6 +6,7 @@ import { describe, it } from "node:test";
 import {
   messageOf,
   outcomeOf,
+  payloadFilesOf,
   payloadOf,
   reportOf,
   type ResultRow,
@@ -362,6 +363,24 @@ describe("payloadOf", () => {
     const [attachment] = (payloadOf(inconclusive, "C123") as Payload).attachments;
     assert.equal(attachment.color, "#FFCC33");
     assert.match(attachment.fallback, /: inconclusive\n/);
+  });
+});
+
+describe("payloadFilesOf", () => {
+  type Posted = { channel: string; attachments: unknown };
+
+  it("posts to the results channel alone when no second channel is set", () => {
+    const files = payloadFilesOf(GREEN, { SLACK_CHANNEL: "C1", SLACK_SECONDARY_CHANNEL: "" });
+    assert.deepEqual(Object.keys(files), ["slack-payload.json"]);
+    assert.equal((files["slack-payload.json"] as Posted).channel, "C1");
+  });
+
+  it("posts the same message to the second channel", () => {
+    const files = payloadFilesOf(GREEN, { SLACK_CHANNEL: "C1", SLACK_SECONDARY_CHANNEL: "C2" });
+    const first = files["slack-payload.json"] as Posted;
+    const second = files["slack-payload-secondary.json"] as Posted;
+    assert.equal(second.channel, "C2");
+    assert.deepEqual(second.attachments, first.attachments);
   });
 });
 
