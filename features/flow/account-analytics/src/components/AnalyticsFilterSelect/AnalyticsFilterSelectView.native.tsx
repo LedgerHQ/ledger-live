@@ -3,6 +3,7 @@ import CryptoIcon from "@ledgerhq/crypto-icons/native";
 import {
   BottomSheetHeader,
   BottomSheetScrollView,
+  Box,
   MediaButton,
   SelectList,
   SelectListContent,
@@ -59,8 +60,10 @@ export function AnalyticsFilterSelectView({
         maxDynamicContentSize="fullWithOffset"
         onClose={sheet.close}
       >
-        <BottomSheetScrollView>
-          <BottomSheetHeader />
+        <BottomSheetScrollView stickyHeaderIndices={[0]} alwaysBounceVertical={false}>
+          <Box lx={{ backgroundColor: "canvasSheet" }}>
+            <BottomSheetHeader />
+          </Box>
           <SelectList items={items} value={value} onValueChange={sheet.selectOption}>
             <SelectListContent
               lx={{ paddingHorizontal: "s8", paddingBottom: "s24" }}
