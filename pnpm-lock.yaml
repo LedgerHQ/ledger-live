@@ -1322,6 +1322,9 @@ importers:
       '@features/flow-predictions':
         specifier: workspace:^
         version: link:../../features/flow/predictions
+      '@features/flow-receive':
+        specifier: workspace:^
+        version: link:../../features/flow/receive
       '@features/platform-account-analytics':
         specifier: workspace:^
         version: link:../../features/platform/account-analytics
@@ -2275,6 +2278,9 @@ importers:
       '@features/flow-predictions':
         specifier: workspace:^
         version: link:../../features/flow/predictions
+      '@features/flow-receive':
+        specifier: workspace:^
+        version: link:../../features/flow/receive
       '@features/platform-account-analytics':
         specifier: workspace:^
         version: link:../../features/platform/account-analytics
@@ -4438,12 +4444,12 @@ importers:
       '@features/flow-pay-feature-tour':
         specifier: workspace:*
         version: link:../../features/flow/pay-feature-tour
-      '@features/flow-pay-request':
-        specifier: workspace:*
-        version: link:../../features/flow/pay-request
       '@features/flow-predictions':
         specifier: workspace:*
         version: link:../../features/flow/predictions
+      '@features/flow-receive':
+        specifier: workspace:*
+        version: link:../../features/flow/receive
       '@features/platform-account-source-portfolio':
         specifier: workspace:*
         version: link:../../features/platform/account-source-portfolio
@@ -12688,9 +12694,6 @@ importers:
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
         version: 2.0.7(ac2036a65cc0ac7c6e25271c22c4573e)
-      '@reduxjs/toolkit':
-        specifier: 'catalog:'
-        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
@@ -13005,6 +13008,10 @@ importers:
         version: '@typescript/typescript6@6.0.2'
 
   features/flow/receive:
+    dependencies:
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
     devDependencies:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*

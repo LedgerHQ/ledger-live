@@ -1,19 +1,16 @@
 import {
-  payRequestVerifyHintSlice,
-  payRequestVerifyHintInitialState,
+  receiveVerifyHintSlice,
+  receiveVerifyHintInitialState,
   markReceiveVerifyHintSeen,
   resetReceiveVerifyHintSeen,
   restoreReceiveVerifyHint,
-  selectHasSeenReceiveVerifyHint,
-  payRequestVerifyHintPersistedSelector,
 } from "../slice";
 
-const reducer = payRequestVerifyHintSlice.reducer;
-const root = (state = payRequestVerifyHintInitialState) => ({ payRequestVerifyHint: state });
+const reducer = receiveVerifyHintSlice.reducer;
 
-describe("payRequestVerifyHint slice", () => {
+describe("receiveVerifyHint slice", () => {
   it("initializes with the hint unseen", () => {
-    expect(reducer(undefined, { type: "unknown" })).toEqual(payRequestVerifyHintInitialState);
+    expect(reducer(undefined, { type: "unknown" })).toEqual(receiveVerifyHintInitialState);
   });
 
   it("marks the receive verify hint as seen", () => {
@@ -36,7 +33,7 @@ describe("restoreReceiveVerifyHint", () => {
 
   it("is a no-op when dispatched with an undefined payload", () => {
     const state = reducer(undefined, restoreReceiveVerifyHint(undefined));
-    expect(state).toEqual(payRequestVerifyHintInitialState);
+    expect(state).toEqual(receiveVerifyHintInitialState);
   });
 
   it("ignores non-boolean values", () => {
@@ -46,21 +43,5 @@ describe("restoreReceiveVerifyHint", () => {
       restoreReceiveVerifyHint({ hasSeenReceiveVerifyHint: "yes" }),
     );
     expect(state.hasSeenReceiveVerifyHint).toBe(false);
-  });
-});
-
-describe("payRequestVerifyHint selectors", () => {
-  it("selectHasSeenReceiveVerifyHint reflects mark/reset", () => {
-    expect(selectHasSeenReceiveVerifyHint(root())).toBe(false);
-    expect(
-      selectHasSeenReceiveVerifyHint(root(reducer(undefined, markReceiveVerifyHintSeen()))),
-    ).toBe(true);
-  });
-
-  it("payRequestVerifyHintPersistedSelector returns the slice", () => {
-    const state = reducer(undefined, markReceiveVerifyHintSeen());
-    expect(payRequestVerifyHintPersistedSelector(root(state))).toEqual({
-      hasSeenReceiveVerifyHint: true,
-    });
   });
 });

@@ -115,7 +115,7 @@ type FakeState = {
   payCardFeatureTour: {
     hasSeenFeatureTour: boolean;
   };
-  payRequestVerifyHint: {
+  receiveVerifyHint: {
     hasSeenReceiveVerifyHint: boolean;
   };
   payCardLoginIntro: {
@@ -144,7 +144,7 @@ const baseState = (): FakeState => ({
   largeScreenUpsellModal: { retriesModal: 0, lastSeenAt: null },
   payCardBalance: { balanceFilter: "all" },
   payCardFeatureTour: { hasSeenFeatureTour: false },
-  payRequestVerifyHint: { hasSeenReceiveVerifyHint: false },
+  receiveVerifyHint: { hasSeenReceiveVerifyHint: false },
   payCardLoginIntro: { hasSeenLoginIntro: false },
   payCardOnboardingWidget: {
     hasCompletedOnboarding: false,
@@ -300,7 +300,7 @@ describe("DBMiddleware - payCard branch", () => {
   const payCardState: FakeState = {
     ...baseState(),
     payCardFeatureTour: { hasSeenFeatureTour: true },
-    payRequestVerifyHint: { hasSeenReceiveVerifyHint: true },
+    receiveVerifyHint: { hasSeenReceiveVerifyHint: true },
     payCardBalance: { balanceFilter: "ethereum/erc20/usd__coin" },
     payCardLoginIntro: { hasSeenLoginIntro: true },
     payCardOnboardingWidget: {
@@ -324,7 +324,7 @@ describe("DBMiddleware - payCard branch", () => {
 
   it.each([
     "payCardFeatureTour/markPayCardFeatureTourSeen",
-    "payRequestVerifyHint/markReceiveVerifyHintSeen",
+    "receiveVerifyHint/markReceiveVerifyHintSeen",
     "payCardBalance/setPayCardBalanceFilter",
     "payCardLoginIntro/markPayCardLoginIntroSeen",
     "payCardOnboardingWidget/markCardOnboardingCompleted",
