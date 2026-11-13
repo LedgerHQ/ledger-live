@@ -42,6 +42,23 @@ Each glow keeps its height and only drifts side to side. Reduce motion (the OS s
 - Pixel ratio is capped at 2. Rendering stops when the view leaves the window.
 - Never name a native prop like a View or Yoga prop (`position`, `top`, `bottom`, `width`, `opacity`…): Fabric reads them as layout or view props. That is why the params are prefixed with `glow`.
 
+### Read the native code
+
+The same 4 steps on both platforms:
+
+```
+React props ──► 1. store props ──► 2. start fades ──► 3. each frame: clock + fades ──► 4. shader
+```
+
+| Step | iOS (`RCTGlowView.mm`) | Android (`uiglow/*.kt`) |
+| --- | --- | --- |
+| 1. Store props | `updateProps` → `copyDesignParams` | `GlowViewManager` setters → `GlowView.params` |
+| 2. Start fades | `showTop:bottom:afterMs:` | `applyProps` → `fadeTo` |
+| One glow's opacity | `struct GlowFade` | `GlowFade.kt` |
+| Compile the shader once | `GlowLoadPipeline` → `GlowCompilePipeline` | `GlowShader.build` |
+| 3. Each frame | `drawInMTKView` → `moveClock` | `GlowRenderer.onDrawFrame` → `moveClock` |
+| 4. Send values to the shader | `uniformsFor:` (struct `GlowUniforms`) | `setUniforms` (class `GlowUniforms`) |
+
 The native code started from [benchmark-shader-solutions](https://github.com/gre/benchmark-shader-solutions) (`rn-native-compatible-dynamic`).
 
 ## Native setup

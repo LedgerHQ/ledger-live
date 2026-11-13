@@ -11,7 +11,10 @@ import com.facebook.react.uimanager.events.Event
 import com.facebook.react.viewmanagers.GlowViewManagerDelegate
 import com.facebook.react.viewmanagers.GlowViewManagerInterface
 
-/** Fabric view manager of <GlowView>, on the codegen delegate and interface. */
+/**
+ * Fabric view manager of <GlowView>. For each update, React calls one setter per changed prop
+ * (the setters come from the codegen interface), then onAfterUpdateTransaction.
+ */
 @ReactModule(name = GlowViewManager.NAME)
 class GlowViewManager : SimpleViewManager<GlowView>(), GlowViewManagerInterface<GlowView> {
   private val delegate = GlowViewManagerDelegate(this)

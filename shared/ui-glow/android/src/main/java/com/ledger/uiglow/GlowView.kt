@@ -16,43 +16,59 @@ import kotlin.math.min
 import kotlin.math.roundToInt
 
 /**
- * <GlowView> on Android: a GLSurfaceView (OpenGL ES 2.0) that owns the render thread, so no JS
- * runs per frame. The shader is GLSL ES 1.00 for both stages, read from assets/uiglow/glow.glsl.
- * Two glows (top, bottom) fade in or out after `delayMs`; the whole glow fades in once the
- * shader is ready. Reduce motion stops the clock and makes fades instant. Pixel ratio capped at 2.
+ * <GlowView> on Android: draws assets/uiglow/glow.glsl with OpenGL ES 2.0 (a GLSurfaceView).
+ *
+ * Two threads:
+ * - UI thread: GlowViewManager sets the props, then calls applyProps().
+ * - GL thread: GlowRenderer draws each frame from the latest props. No JS runs per frame.
+ *
+ * The top and bottom glows fade in or out after `delayMs` (GlowFade). The whole glow fades in
+ * once the shader is ready. Reduce motion (animations off in the OS) stops the clock and makes
+ * fades instant. Pixel ratio capped at 2.
  */
 class GlowView(context: Context) : GLSurfaceView(context) {
 
-  // Written on the UI thread, read on the render thread. Drawn after applyProps().
+  // Props, set on the UI thread by GlowViewManager.
+
+  /** The design params. The GL thread reads them on each frame. */
   @Volatile var params = GlowParams()
+  /** Wait before a show change starts. */
   var delayMs = 0.0
   var onShaderError: ((message: String) -> Unit)? = null
+  // Only stored: React sets props in no fixed order, so applyProps() uses them once all are set.
+  private var isTopShown = true
+  private var isBottomShown = false
+
+  // Shared with the GL thread.
 
   private val topFade = GlowFade()
   private val bottomFade = GlowFade()
+  /** Animations are off in the OS settings. */
   @Volatile private var isReduceMotion = false
+
   private val mainHandler = Handler(Looper.getMainLooper())
   private val animationScaleUri = Settings.Global.getUriFor(Settings.Global.ANIMATOR_DURATION_SCALE)
+  /** Runs when the user turns animations on or off in the OS settings. */
   private val animationScaleObserver =
       object : ContentObserver(mainHandler) {
         override fun onChange(selfChange: Boolean) {
-          updateRenderMode()
+          checkReduceMotion()
           // Only one frame comes next: finish running fades now so it shows their end state.
-          if (isReduceMotion) listOf(topFade, bottomFade).forEach { it.finish() }
+          if (isReduceMotion) {
+            topFade.finish()
+            bottomFade.finish()
+          }
           requestRender()
         }
       }
 
+  // After all fields: a Kotlin init block runs in file order.
   init {
     setEGLContextClientVersion(2)
     preserveEGLContextOnPause = true
     setRenderer(GlowRenderer())
-    updateRenderMode()
+    checkReduceMotion()
   }
-
-  // Prop setters only store values: setter order is not fixed, so the delays may come after.
-  private var isTopShown = true
-  private var isBottomShown = false
 
   fun setShowTop(show: Boolean) {
     isTopShown = show
@@ -62,24 +78,25 @@ class GlowView(context: Context) : GLSurfaceView(context) {
     isBottomShown = show
   }
 
-  /** Called once all props of an update are set. A still glow (reduce motion) needs the frame. */
+  /** Called by GlowViewManager once all props of an update are set. */
   fun applyProps() {
-    updateRenderMode()
-    animateTo(topFade, if (isTopShown) 1f else 0f)
-    animateTo(bottomFade, if (isBottomShown) 1f else 0f)
-    requestRender()
+    checkReduceMotion()
+    fadeTo(topFade, isTopShown)
+    fadeTo(bottomFade, isBottomShown)
+    requestRender() // a still glow (reduce motion) only draws when asked
   }
 
-  /** The first value applies at once; later changes wait `delayMs`, then fade. */
-  private fun animateTo(fade: GlowFade, target: Float) {
+  /** The first value shows at once. A later change waits `delayMs`, then fades. */
+  private fun fadeTo(fade: GlowFade, isShown: Boolean) {
+    val target = if (isShown) 1f else 0f
     val isInstant = !fade.hasRequest || isReduceMotion
     if (!isInstant && target == fade.target) return
-    val start = System.nanoTime() + (delayMs * 1e6).toLong()
-    fade.request(target, if (isInstant) 0L else start)
+    val start = if (isInstant) 0L else System.nanoTime() + (delayMs * 1e6).toLong()
+    fade.request(target, start)
   }
 
-  /** A still glow (reduce motion) only draws when something changes. */
-  private fun updateRenderMode() {
+  /** Reads the OS setting. A still glow (reduce motion) draws only when asked, not 60 times a second. */
+  private fun checkReduceMotion() {
     isReduceMotion =
         Settings.Global.getFloat(context.contentResolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f) == 0f
     renderMode = if (isReduceMotion) RENDERMODE_WHEN_DIRTY else RENDERMODE_CONTINUOUSLY
@@ -88,7 +105,7 @@ class GlowView(context: Context) : GLSurfaceView(context) {
   override fun onAttachedToWindow() {
     super.onAttachedToWindow()
     context.contentResolver.registerContentObserver(animationScaleUri, false, animationScaleObserver)
-    updateRenderMode()
+    checkReduceMotion()
   }
 
   override fun onDetachedFromWindow() {
@@ -96,171 +113,116 @@ class GlowView(context: Context) : GLSurfaceView(context) {
     super.onDetachedFromWindow()
   }
 
+  /** Draws fewer pixels on dense screens: at most 2 per point. */
   override fun onSizeChanged(width: Int, height: Int, oldWidth: Int, oldHeight: Int) {
     super.onSizeChanged(width, height, oldWidth, oldHeight)
     val scale = min(1f, MAX_PIXEL_RATIO / resources.displayMetrics.density)
     holder.setFixedSize((width * scale).roundToInt().coerceAtLeast(1), (height * scale).roundToInt().coerceAtLeast(1))
   }
 
-  /** Everything in GlowRenderer runs on the GL thread. */
+  /** Draws the frames. Everything in it runs on the GL thread. */
   private inner class GlowRenderer : Renderer {
     private val dpr = min(resources.displayMetrics.density, MAX_PIXEL_RATIO)
     private var width = 1
     private var height = 1
-    private var program = 0
+    private var program = 0 // the GPU program; 0 = not built yet
+    private var uniforms: GlowUniforms? = null
     private var hasFailed = false
-    private var uniforms = IntArray(0)
-    private var elapsed = 0.0
-    private var lastNanos = 0L
-    private var entryStartNanos = 0L
+    private var elapsedSeconds = 0.0 // the shader clock
+    private var lastFrameNanos = 0L // 0 = no frame yet: the next one does not move the clock
+    private var readyNanos = 0L // when the shader was ready, for the entry fade
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
-      program = 0 // a new context: GL objects are gone
-      lastNanos = 0L // hidden time does not move the clock
+      program = 0 // a new GL context: the old program is gone
+      lastFrameNanos = 0L
     }
 
     override fun onSurfaceChanged(gl: GL10?, newWidth: Int, newHeight: Int) {
       width = newWidth
       height = newHeight
-      lastNanos = 0L // a surface back from the background: hidden time does not move the clock
+      lastFrameNanos = 0L // back from the background: hidden time does not move the clock
       GLES20.glViewport(0, 0, width, height)
     }
 
     override fun onDrawFrame(gl: GL10?) {
       val now = System.nanoTime()
-      if (lastNanos != 0L && !isReduceMotion) elapsed += (now - lastNanos) / 1e9
-      lastNanos = if (isReduceMotion) 0L else now // frozen time does not move the clock
+      moveClock(now)
       topFade.step(now)
       bottomFade.step(now)
       if (program == 0 && !hasFailed) buildProgram()
-      if (program == 0) {
-        GLES20.glClearColor(0f, 0f, 0f, 1f)
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
-        return
-      }
-      val entry = if (isReduceMotion) 1f else min(1f, ((now - entryStartNanos) / 1e9 / ENTRY_FADE).toFloat())
-      GLES20.glUniform2f(uniforms[0], width.toFloat(), height.toFloat())
-      GLES20.glUniform1f(uniforms[1], elapsed.toFloat())
-      GLES20.glUniform1f(uniforms[2], dpr)
-      GLES20.glUniform1f(uniforms[3], entry)
-      GLES20.glUniform1f(uniforms[4], topFade.value)
-      GLES20.glUniform1f(uniforms[5], bottomFade.value)
+      val u = uniforms
+      if (program == 0 || u == null) return clearToBlack()
+      setUniforms(u, now)
+      GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 3) // one big triangle covers the view
+    }
+
+    /** Reduce motion stops the clock: the glow stays still. */
+    private fun moveClock(now: Long) {
+      if (lastFrameNanos != 0L && !isReduceMotion) elapsedSeconds += (now - lastFrameNanos) / 1e9
+      lastFrameNanos = if (isReduceMotion) 0L else now
+    }
+
+    private fun clearToBlack() {
+      GLES20.glClearColor(0f, 0f, 0f, 1f)
+      GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
+    }
+
+    /** Sends this frame's values to the shader. */
+    private fun setUniforms(u: GlowUniforms, now: Long) {
+      val entryFade = if (isReduceMotion) 1f else min(1f, ((now - readyNanos) / 1e9 / ENTRY_FADE_SECONDS).toFloat())
+      GLES20.glUniform2f(u.uRes, width.toFloat(), height.toFloat())
+      GLES20.glUniform1f(u.uTime, elapsedSeconds.toFloat())
+      GLES20.glUniform1f(u.uDpr, dpr)
+      GLES20.glUniform1f(u.uFade, entryFade)
+      GLES20.glUniform1f(u.uFadeTop, topFade.value)
+      GLES20.glUniform1f(u.uFadeBottom, bottomFade.value)
       val p = params
-      GLES20.glUniform4f(uniforms[6], p.intensity, p.opacity, p.grain, p.grainSize) // uLook
-      GLES20.glUniform4f(uniforms[7], p.chroma, p.softness, p.width, p.reach) // uShape
-      GLES20.glUniform4f(uniforms[8], p.dark, p.spreadX, p.balance, p.contrast) // uTone
-      GLES20.glUniform1f(uniforms[9], p.topReach) // uTopReach
-      GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 3)
+      GLES20.glUniform4f(u.uLook, p.intensity, p.opacity, p.grain, p.grainSize)
+      GLES20.glUniform4f(u.uShape, p.chroma, p.softness, p.width, p.reach)
+      GLES20.glUniform4f(u.uTone, p.dark, p.spreadX, p.balance, p.contrast)
+      GLES20.glUniform1f(u.uTopReach, p.topReach)
     }
 
     private fun buildProgram() {
-      val source = shaderSource(context) ?: return fail("Shader asset not found: $SHADER_ASSET")
-      // Both stages share uniforms, so the fragment stage needs highp too.
-      val range = IntArray(2)
-      val precision = IntArray(1)
-      GLES20.glGetShaderPrecisionFormat(GLES20.GL_FRAGMENT_SHADER, GLES20.GL_HIGH_FLOAT, range, 0, precision, 0)
-      if (precision[0] == 0) return fail("No highp float in fragment shaders on this GPU")
-      val vertex = compile(GLES20.GL_VERTEX_SHADER, "#define VERTEX\n$source") ?: return
-      val fragment = compile(GLES20.GL_FRAGMENT_SHADER, "#define FRAGMENT\n$source") ?: return
-      val newProgram = GLES20.glCreateProgram()
-      GLES20.glAttachShader(newProgram, vertex)
-      GLES20.glAttachShader(newProgram, fragment)
-      GLES20.glBindAttribLocation(newProgram, 0, "aPos")
-      GLES20.glLinkProgram(newProgram)
-      GLES20.glDeleteShader(vertex)
-      GLES20.glDeleteShader(fragment)
-      val status = IntArray(1)
-      GLES20.glGetProgramiv(newProgram, GLES20.GL_LINK_STATUS, status, 0)
-      if (status[0] == 0) return fail("GLSL link error: ${GLES20.glGetProgramInfoLog(newProgram)}")
-      program = newProgram
-      entryStartNanos = System.nanoTime()
-      uniforms = UNIFORM_NAMES.map { GLES20.glGetUniformLocation(newProgram, it) }.toIntArray()
-      GLES20.glUseProgram(newProgram)
-      GLES20.glEnableVertexAttribArray(0)
-      GLES20.glVertexAttribPointer(0, 2, GLES20.GL_FLOAT, false, 0, TRIANGLE)
-    }
-
-    private fun compile(type: Int, shaderSource: String): Int? {
-      val shader = GLES20.glCreateShader(type)
-      GLES20.glShaderSource(shader, shaderSource)
-      GLES20.glCompileShader(shader)
-      val status = IntArray(1)
-      GLES20.glGetShaderiv(shader, GLES20.GL_COMPILE_STATUS, status, 0)
-      if (status[0] != 0) return shader
-      fail("GLSL compile error: ${GLES20.glGetShaderInfoLog(shader)}")
-      return null
-    }
-
-    private fun fail(message: String) {
-      hasFailed = true
-      Log.e(TAG, message)
-      mainHandler.post { onShaderError?.invoke(message) }
-    }
-  }
-
-  /** The opacity of one glow. The UI thread requests a target; the GL thread steps it. */
-  private class GlowFade {
-    @Volatile var target = 0f
-      private set
-    @Volatile private var startNanos = 0L // 0 = instant
-    @Volatile private var version = 0
-    var hasRequest = false
-      private set
-
-    // GL thread only.
-    var value = 0f
-      private set
-    private var from = 0f
-    private var seenVersion = -1
-    private var isRunning = false
-
-    /** Jump to the current target (UI thread). */
-    fun finish() {
-      if (hasRequest) request(target, 0L)
-    }
-
-    fun request(newTarget: Float, start: Long) {
-      target = newTarget
-      startNanos = start
-      hasRequest = true
-      version++
-    }
-
-    fun step(now: Long) {
-      if (version != seenVersion) {
-        seenVersion = version
-        if (startNanos == 0L) {
-          value = target
-          isRunning = false
-          return
-        }
-        from = value
-        isRunning = true
+      try {
+        program = GlowShader.build(context)
+      } catch (error: GlowShaderError) {
+        hasFailed = true
+        val message = error.message ?: "Unknown shader error"
+        Log.e(TAG, message)
+        mainHandler.post { onShaderError?.invoke(message) }
+        return
       }
-      if (!isRunning || now < startNanos) return
-      val progress = min(1.0, (now - startNanos) / 1e9 / FADE)
-      value = from + (target - from) * progress.toFloat()
-      if (progress >= 1.0) isRunning = false
+      uniforms = GlowUniforms(program)
+      readyNanos = System.nanoTime()
+      GLES20.glUseProgram(program)
+      GLES20.glEnableVertexAttribArray(GlowShader.POSITION_ATTRIBUTE)
+      GLES20.glVertexAttribPointer(GlowShader.POSITION_ATTRIBUTE, 2, GLES20.GL_FLOAT, false, 0, TRIANGLE)
     }
   }
 
-  companion object {
-    private const val SHADER_ASSET = "uiglow/glow.glsl"
-    @Volatile private var cachedSource: String? = null
+  /** Where each uniform of glow.glsl is in the program. Same names as in the shader. */
+  private class GlowUniforms(private val program: Int) {
+    val uRes = find("uRes")
+    val uTime = find("uTime")
+    val uDpr = find("uDpr")
+    val uFade = find("uFade")
+    val uFadeTop = find("uFadeTop")
+    val uFadeBottom = find("uFadeBottom")
+    val uLook = find("uLook")
+    val uShape = find("uShape")
+    val uTone = find("uTone")
+    val uTopReach = find("uTopReach")
 
-    /** The shader text, read once per process. Null if the asset is missing. */
-    private fun shaderSource(context: Context): String? =
-        cachedSource
-            ?: runCatching { context.assets.open(SHADER_ASSET).bufferedReader().use { it.readText() } }
-                .getOrNull()
-                ?.also { cachedSource = it }
+    private fun find(name: String) = GLES20.glGetUniformLocation(program, name)
+  }
 
-    private const val TAG = "GlowView"
-    private const val MAX_PIXEL_RATIO = 2f
-    private const val FADE = 1.0 // seconds, one glow coming or going (GLOW_FADE_MS in JS)
-    private const val ENTRY_FADE = 0.6 // the first display, once the shader is ready
-    private val UNIFORM_NAMES = listOf("uRes", "uTime", "uDpr", "uFade", "uFadeTop", "uFadeBottom", "uLook", "uShape", "uTone", "uTopReach")
-    private val TRIANGLE = ByteBuffer.allocateDirect(6 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer().apply {
+  private companion object {
+    const val TAG = "GlowView"
+    const val MAX_PIXEL_RATIO = 2f
+    const val ENTRY_FADE_SECONDS = 0.6 // the first display, once the shader is ready
+    /** A triangle bigger than the view, so it covers every pixel (cheaper than 2 triangles). */
+    val TRIANGLE = ByteBuffer.allocateDirect(6 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer().apply {
       put(floatArrayOf(-1f, -1f, 3f, -1f, -1f, 3f))
       position(0)
     }

@@ -6,8 +6,10 @@ const packageRoot = join(__dirname, "../..");
 const read = (path: string) => readFileSync(join(packageRoot, path), "utf8");
 const METAL = read("ios/glow.msl");
 const GLSL = read("android/src/main/assets/uiglow/glow.glsl");
-const KOTLIN = read("android/src/main/java/com/ledger/uiglow/GlowView.kt");
-const KOTLIN_MANAGER = read("android/src/main/java/com/ledger/uiglow/GlowViewManager.kt");
+const KOTLIN_DIR = "android/src/main/java/com/ledger/uiglow";
+const KOTLIN = read(`${KOTLIN_DIR}/GlowView.kt`);
+const KOTLIN_FADE = read(`${KOTLIN_DIR}/GlowFade.kt`);
+const KOTLIN_MANAGER = read(`${KOTLIN_DIR}/GlowViewManager.kt`);
 const OBJC = read("ios/RCTGlowView.mm");
 
 const PARAMS = Object.keys(GLOW_DEFAULTS) as (keyof GlowParams)[];
@@ -24,11 +26,9 @@ function defineOf(source: string, param: string): string | undefined {
 
 /** The param that GlowView.kt writes to each GLSL uniform slot: `uLook.y` → `opacity`. */
 function kotlinSlots(): Map<string, string> {
-  const uniformNames = /UNIFORM_NAMES = listOf\(([^)]*)\)/.exec(KOTLIN)?.[1].match(/"\w+"/g) ?? [];
   const slots = new Map<string, string>();
-  const calls = KOTLIN.matchAll(/glUniform(?:4f|1f)\(uniforms\[(\d+)\], ((?:p\.\w+(?:, )?)+)\)/g);
-  for (const [, index, args] of calls) {
-    const uniform = uniformNames[Number(index)].replaceAll('"', "");
+  const calls = KOTLIN.matchAll(/glUniform(?:4f|1f)\(u\.(\w+), ((?:p\.\w+(?:, )?)+)\)/g);
+  for (const [, uniform, args] of calls) {
     const params = args.split(", ").map(arg => arg.replace("p.", ""));
     params.forEach((param, i) => {
       slots.set(params.length === 1 ? uniform : `${uniform}.${COMPONENTS[i]}`, param);
@@ -84,7 +84,7 @@ describe("glow shaders", () => {
   });
 
   it("should fade each glow in GLOW_FADE_MS on both platforms", () => {
-    expect(numberAfter(OBJC, /kFade = ([\d.]+);/) * 1000).toBe(GLOW_FADE_MS);
-    expect(numberAfter(KOTLIN, /const val FADE = ([\d.]+)/) * 1000).toBe(GLOW_FADE_MS);
+    expect(numberAfter(OBJC, /kFadeSeconds = ([\d.]+);/) * 1000).toBe(GLOW_FADE_MS);
+    expect(numberAfter(KOTLIN_FADE, /const val FADE_SECONDS = ([\d.]+)/) * 1000).toBe(GLOW_FADE_MS);
   });
 });
