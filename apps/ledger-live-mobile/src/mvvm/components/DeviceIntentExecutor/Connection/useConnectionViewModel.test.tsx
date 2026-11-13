@@ -365,6 +365,7 @@ describe("useConnectionViewModel", () => {
         name: "Ledger Nano X",
         deviceModelId: DeviceModelId.nanoX,
         transport: "hid",
+        lastUsedAt: expect.any(Number),
       },
     ]);
     expect(store.getState().ble.knownDevices).toEqual([]);
@@ -400,6 +401,7 @@ describe("useConnectionViewModel", () => {
         name: "Ledger Nano X",
         deviceModelId: DeviceModelId.nanoX,
         transport: "ble",
+        lastUsedAt: expect.any(Number),
       },
     ]);
     expect(store.getState().ble.knownDevices).toEqual([

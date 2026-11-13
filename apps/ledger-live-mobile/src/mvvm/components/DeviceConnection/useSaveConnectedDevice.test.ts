@@ -7,6 +7,8 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { useSaveConnectedDevice } from "./useSaveConnectedDevice";
 
+const NOW = 1_700_000_000_000;
+
 function makeConnectedDevice(overrides: Partial<ConnectedDevice> = {}): ConnectedDevice {
   return {
     id: "device-id",
@@ -20,6 +22,14 @@ function makeConnectedDevice(overrides: Partial<ConnectedDevice> = {}): Connecte
 }
 
 describe("useSaveConnectedDevice", () => {
+  beforeEach(() => {
+    jest.spyOn(Date, "now").mockReturnValue(NOW);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   it("should save a wired device as the last connected device and a known device", () => {
     // GIVEN
     const { result, store } = renderHook(() => useSaveConnectedDevice());
@@ -41,6 +51,7 @@ describe("useSaveConnectedDevice", () => {
         name: "Ledger Nano X",
         deviceModelId: DeviceModelId.nanoX,
         transport: "hid",
+        lastUsedAt: NOW,
       },
     ]);
     expect(store.getState().ble.knownDevices).toEqual([]);
@@ -109,6 +120,7 @@ describe("useSaveConnectedDevice", () => {
         name: "Ledger Nano X",
         deviceModelId: DeviceModelId.nanoX,
         transport: "ble",
+        lastUsedAt: NOW,
       },
     ]);
     expect(store.getState().ble.knownDevices).toEqual([
@@ -117,6 +129,34 @@ describe("useSaveConnectedDevice", () => {
         name: "Ledger Nano X",
         modelId: DeviceModelId.nanoX,
       },
+    ]);
+  });
+
+  it("should replace the last use time of a known device with the time of the new connection", () => {
+    // GIVEN
+    const { result, store } = renderHook(() => useSaveConnectedDevice(), {
+      overrideInitialState: (state: State): State => ({
+        ...state,
+        knownDevices: {
+          knownDevices: [
+            {
+              id: "device-id",
+              name: "Ledger Nano X",
+              deviceModelId: DeviceModelId.nanoX,
+              transport: "ble",
+              lastUsedAt: NOW - 1000,
+            },
+          ],
+        },
+      }),
+    });
+
+    // WHEN
+    act(() => result.current(makeConnectedDevice()));
+
+    // THEN
+    expect(store.getState().knownDevices.knownDevices).toEqual([
+      expect.objectContaining({ id: "device-id", lastUsedAt: NOW }),
     ]);
   });
 });

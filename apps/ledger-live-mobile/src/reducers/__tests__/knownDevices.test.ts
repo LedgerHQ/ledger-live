@@ -204,6 +204,28 @@ describe("knownDevices reducer", () => {
       expect(nextState.knownDevices).toEqual([firstStax, renamedSecondStax]);
     });
 
+    it("GIVEN a known device with a last use time WHEN updating it with a later one THEN it saves the later one", () => {
+      // GIVEN
+      const state = { knownDevices: [{ ...nanoX, lastUsedAt: 1000 }] };
+
+      // WHEN
+      const nextState = reducer(state, updateKnownDevice({ ...nanoX, lastUsedAt: 2000 }));
+
+      // THEN
+      expect(nextState.knownDevices).toEqual([{ ...nanoX, lastUsedAt: 2000 }]);
+    });
+
+    it("GIVEN a known device with a last use time WHEN updating it without one THEN it keeps the last use time", () => {
+      // GIVEN
+      const state = { knownDevices: [{ ...nanoX, lastUsedAt: 1000 }] };
+
+      // WHEN
+      const nextState = reducer(state, updateKnownDevice({ ...nanoX, name: "Renamed" }));
+
+      // THEN
+      expect(nextState.knownDevices).toEqual([{ ...nanoX, name: "Renamed", lastUsedAt: 1000 }]);
+    });
+
     it("GIVEN an existing Speculos known device WHEN a connection reports its fixed id THEN it updates that entry instead of adding one", () => {
       const state = { knownDevices: [flex, speculos] };
       const updatedDevice = {
@@ -474,6 +496,20 @@ describe("knownDevices reducer", () => {
       const persistedDevice = mapKnownDeviceToPersistedKnownDevice(device);
 
       expect(persistedDevice).toEqual({ ...device, transport: "mockserver" });
+      expect(persistedDevice && mapPersistedKnownDeviceToKnownDevice(persistedDevice)).toEqual(
+        device,
+      );
+    });
+
+    it("GIVEN a known device with a last use time WHEN persisting and hydrating it THEN it keeps the last use time", () => {
+      // GIVEN
+      const device = { ...nanoX, lastUsedAt: 1000 };
+
+      // WHEN
+      const persistedDevice = mapKnownDeviceToPersistedKnownDevice(device);
+
+      // THEN
+      expect(persistedDevice).toEqual({ ...device, transport: "rnble" });
       expect(persistedDevice && mapPersistedKnownDeviceToKnownDevice(persistedDevice)).toEqual(
         device,
       );
