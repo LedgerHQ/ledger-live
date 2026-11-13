@@ -41,6 +41,9 @@ function getDotEnvFile(): string {
 
 export const DOTENV_FILE = getDotEnvFile();
 
+// Prereleases (--pre) also bundle with .env.production, only their version sets them apart.
+const PRODUCTION = DOTENV_FILE === ".env.production" && !PRERELEASE;
+
 // Nightlies use staging services with the production Firebase project, like mobile nightlies.
 const FIREBASE_OVERRIDE_FILE = process.env.NIGHTLY ? ".env.production" : null;
 
@@ -122,6 +125,7 @@ export function buildMainEnv(
     __DATADOG_ENV__: JSON.stringify(DATADOG_ENV || null),
     // See: https://github.com/node-formidable/formidable/issues/337
     "global.GENTLY": JSON.stringify(false),
+    __PRODUCTION__: JSON.stringify(PRODUCTION),
     __PRERELEASE__: JSON.stringify(PRERELEASE),
     __CHANNEL__: JSON.stringify(CHANNEL),
     __UPDATE_CHECK_PUBKEY__: JSON.stringify(process.env.UPDATE_CHECK_PUBKEY || null),
@@ -167,6 +171,7 @@ export function buildRendererEnv(mode: "development" | "production"): Record<str
     __DATADOG_CLIENT_TOKEN__: JSON.stringify(DATADOG_CLIENT_TOKEN || null),
     __DATADOG_SITE__: JSON.stringify(DATADOG_SITE || null),
     __DATADOG_ENV__: JSON.stringify(DATADOG_ENV || null),
+    __PRODUCTION__: JSON.stringify(PRODUCTION),
     __PRERELEASE__: JSON.stringify(PRERELEASE),
     __CHANNEL__: JSON.stringify(CHANNEL),
     __BUILD_ENVS__: buildEnvsDefine(),

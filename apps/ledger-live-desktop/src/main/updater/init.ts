@@ -16,10 +16,10 @@ export type UpdateStatus =
   | "check-success"
   | "downloading-update"
   | "error";
-const UPDATE_CHECK_IGNORE = Boolean(__PRERELEASE__ && process.env.UPDATE_CHECK_IGNORE);
-const UPDATE_CHECK_FEED = __PRERELEASE__
-  ? process.env.UPDATE_CHECK_FEED || "https://lw-prerelease-sigs.s3.eu-west-1.amazonaws.com"
-  : "https://resources.live.ledger.app/public_resources/signatures";
+const UPDATE_CHECK_IGNORE = Boolean(!__PRODUCTION__ && process.env.UPDATE_CHECK_IGNORE);
+const UPDATE_CHECK_FEED = __PRODUCTION__
+  ? "https://resources.live.ledger.app/public_resources/signatures"
+  : process.env.UPDATE_CHECK_FEED || "https://lw-prerelease-sigs.s3.eu-west-1.amazonaws.com";
 
 const sendStatus = (status: UpdateStatus, payload?: unknown) => {
   const win = getMainWindow();
@@ -62,14 +62,14 @@ export const init = () => {
   });
   autoUpdater.autoInstallOnAppQuit = true;
   autoUpdater.autoDownload = true;
-  if (__PRERELEASE__ && process.env.UPDATE_FEED_URL) {
+  if (!__PRODUCTION__ && process.env.UPDATE_FEED_URL) {
     autoUpdater.setFeedURL({
       provider: "generic",
       url: process.env.UPDATE_FEED_URL,
     });
   }
   autoUpdater.checkForUpdates();
-  if (__PRERELEASE__ && __CHANNEL__ && !__CHANNEL__.includes("sha")) {
+  if (!__PRODUCTION__ && __CHANNEL__ && !__CHANNEL__.includes("sha")) {
     autoUpdater.channel = __CHANNEL__;
   }
 };
