@@ -32,6 +32,8 @@ const { values: opts } = parseArgs({
     warmups: { type: "string", default: "1" },
     "idle-ms": { type: "string", default: "2000" },
     "settle-ms": { type: "string", default: "5000" },
+    // Test only: keeps the app running this long after its read, before the next launch stops it.
+    "hold-ms": { type: "string", default: "0" },
     read: { type: "string", default: "log" },
     maestro: { type: "string", default: "maestro" },
     "bridge-port": { type: "string", default: "8099" },
@@ -52,6 +54,7 @@ const PAIRS = Number(opts.pairs);
 const WARMUPS = Number(opts.warmups);
 const IDLE_MS = Number(opts["idle-ms"]);
 const SETTLE_MS = Number(opts["settle-ms"]);
+const HOLD_MS = Number(opts["hold-ms"]);
 const READ = opts.read;
 const BRIDGE_PORT = Number(opts["bridge-port"]);
 const OUT_DIR = insideWorkingDir(opts["out-dir"]);
@@ -71,6 +74,8 @@ function validateOptions(): void {
   if (!Number.isInteger(PAIRS) || PAIRS < 2 || PAIRS % 2) {
     throw new Error("--pairs must be an even number ≥ 2");
   }
+  if (!Number.isInteger(HOLD_MS) || HOLD_MS < 0)
+    throw new Error("--hold-ms must be a number of ms");
   if (!["log", "screen", "both"].includes(READ)) {
     throw new Error("--read must be log, screen or both");
   }
@@ -161,6 +166,8 @@ async function sample(meta: SampleMeta, { checkScreen = false } = {}): Promise<S
     if (paused) await P.resume(other);
   }
   if (readStart !== null) record.readMs = Date.now() - readStart;
+  // After readMs: the app finishes what follows its startup before the next launch stops it.
+  if (record.ok && HOLD_MS) await sleep(HOLD_MS);
   record.maestroCalls = maestro.calls;
   await appendFile(SAMPLES_FILE, JSON.stringify(record) + "\n");
   const what = record.ok
@@ -248,6 +255,7 @@ function writeMeta(): Promise<void> {
         scenarios: SCENARIOS,
         pairs: PAIRS,
         warmups: WARMUPS,
+        holdMs: HOLD_MS,
         idleMs: IDLE_MS,
         settleMs: SETTLE_MS,
         read: READ,

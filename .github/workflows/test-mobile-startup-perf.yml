@@ -57,6 +57,11 @@ on:
         type: choice
         options: [log, both, screen]
         default: log
+      hold_ms:
+        description: "Test only: ms each launch keeps running after its read (0: stopped at the next launch)"
+        required: false
+        type: string
+        default: "0"
       slack_notif:
         description: "Post the result to Slack #live-repo-health"
         required: false
@@ -454,6 +459,7 @@ jobs:
           SCENARIO: ${{ matrix.scenario }}
           PAIRS: ${{ needs.plan.outputs.pairs }}
           READ: ${{ needs.plan.outputs.read }}
+          HOLD_MS: ${{ inputs.hold_ms || '0' }}
           ACCOUNTS_USERDATA: ${{ needs.plan.outputs.accounts_userdata }}
         run: |
           set -euo pipefail
@@ -465,7 +471,7 @@ jobs:
             --devices emulator-5554,emulator-5556 \
             --app-a "$APP_A" --app-b "$APP_B" --app-id "$APP_ID" \
             --scenarios "$SCENARIO" --pairs "$PAIRS" \
-            --read "$READ" \
+            --read "$READ" --hold-ms "$HOLD_MS" \
             --accounts-userdata "$ACCOUNTS_USERDATA" \
             --out-dir "$RESULTS_DIR/android"
 
@@ -560,6 +566,7 @@ jobs:
           SCENARIOS: ${{ join(fromJSON(needs.plan.outputs.scenarios), ',') }}
           PAIRS: ${{ needs.plan.outputs.pairs }}
           READ: ${{ needs.plan.outputs.read }}
+          HOLD_MS: ${{ inputs.hold_ms || '0' }}
           ACCOUNTS_USERDATA: ${{ needs.plan.outputs.accounts_userdata }}
         run: |
           set -euo pipefail
@@ -571,7 +578,7 @@ jobs:
             --devices "$SIM_1,$SIM_2" \
             --app-a "$APP_A" --app-b "$APP_B" --app-id "$APP_ID" \
             --scenarios "$SCENARIOS" --pairs "$PAIRS" \
-            --read "$READ" \
+            --read "$READ" --hold-ms "$HOLD_MS" \
             --accounts-userdata "$ACCOUNTS_USERDATA" \
             --out-dir "$RESULTS_DIR/ios"
 
