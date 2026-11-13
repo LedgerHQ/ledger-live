@@ -9,7 +9,6 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { createActor, type Actor } from "xstate";
 import {
-  EarlyCheckToggle,
   ToggleEarlyCheckCommandError,
   type ToggleEarlyCheckErrorCode,
 } from "../device/toggleEarlyCheckCommand";
@@ -24,8 +23,6 @@ import {
 import { createOsVersionResponse, type OsVersionResponseOptions } from "../tests/osVersionResponse";
 import {
   OnboardingStep,
-  RecoveryKeyStatus,
-  SeedPath,
   type AvailableFirmwareUpdate,
   type DeviceOnboardingContext,
   type DeviceOnboardingState,
@@ -146,7 +143,7 @@ export async function enterSetup(
   );
 }
 
-export async function follow(actor: OnboardingActor, steps: OnboardingStep[]): Promise<void> {
+export function follow(actor: OnboardingActor, steps: OnboardingStep[]): void {
   for (const step of steps) {
     actor.send(stepChanged(step));
   }
