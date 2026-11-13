@@ -12,6 +12,8 @@
  * `CommandOutput.deviceState` as the user makes progress.
  */
 
+import type { UsbAccessEvidence } from "./usb-access-evidence";
+
 export type DeviceStateCode =
   | "disconnected"
   | "wrong_app"
@@ -28,7 +30,8 @@ export type RejectedContext = "sign" | "verify_address" | "open_app";
 
 /**
  * `speculosUrl` is set when wallet-cli talks to Speculos instead of a USB device, and `detail`
- * carries why connecting to it failed.
+ * carries why connecting to it failed. `usbAccess` is the failed USB open behind a failed
+ * connection.
  */
 export type DeviceState =
   | { code: "disconnected"; speculosUrl?: string; detail?: string }
@@ -39,7 +42,7 @@ export type DeviceState =
   | { code: "locked" }
   | { code: "app_not_installed"; appName: string }
   | { code: "timeout"; speculosUrl?: string }
-  | { code: "unknown"; cause: unknown };
+  | { code: "unknown"; cause: unknown; usbAccess?: UsbAccessEvidence };
 
 export type DeviceStateGlyph = "[✖]" | "[⧖]" | "[ℹ]";
 

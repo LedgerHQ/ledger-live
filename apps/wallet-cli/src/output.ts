@@ -13,6 +13,7 @@ import { z } from "zod";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { CliProcessExitError } from "./cli-process-exit-error";
 import { type DeviceState, isTerminalDeviceState, renderDeviceState } from "./device/device-state";
+import { type UsbAccessEvidence, usbAccessHint } from "./device/usb-access-evidence";
 import { WalletCliDeviceError } from "./device/wallet-cli-device-error";
 import { KeychainUnavailableError } from "./key-ring/keychain-unavailable-error";
 import { HumanFormatter } from "./wallet/formatter/human";
@@ -394,6 +395,12 @@ function redactProfileUrls(profile: AgentIntentProfileMeta): AgentIntentProfileM
 // HumanCommandOutput
 // ---------------------------------------------------------------------------
 
+function describeUsbAccess(evidence: UsbAccessEvidence): string {
+  const hint = usbAccessHint(evidence.kind);
+  const failure = `USB access failed with ${evidence.error}.`;
+  return hint === undefined ? failure : `${failure} ${hint}`;
+}
+
 class HumanCommandOutput implements CommandOutput {
   private _activeSpin: Spinner | null = null;
   // Labels as printed live during the scan, in stream order — kept only to diff against the
@@ -461,6 +468,9 @@ class HumanCommandOutput implements CommandOutput {
       writeStderr(displayText + "\n");
     }
     this._activeSpin = null;
+    if (err.state.code === "unknown" && err.state.usbAccess) {
+      writeStderr(colors.dim(`    ${describeUsbAccess(err.state.usbAccess)}`) + "\n");
+    }
     throw new CliProcessExitError(err.exitCode);
   }
 
@@ -1190,6 +1200,11 @@ function sendIntentSummaryLines(summary: SendIntentSummary): string[] {
 // JsonCommandOutput
 // ---------------------------------------------------------------------------
 
+function usbAccessFields(evidence: UsbAccessEvidence): Record<string, string> {
+  const hint = usbAccessHint(evidence.kind);
+  return { usb_access_error: evidence.error, ...(hint === undefined ? {} : { hint }) };
+}
+
 const BUILT_IN_ERROR_NAMES = new Set([
   "Error",
   "TypeError",
@@ -1226,6 +1241,9 @@ class JsonCommandOutput implements CommandOutput {
           command: this._ctx.command,
           code: e.state.code,
           message,
+          ...(e.state.code === "unknown" && e.state.usbAccess
+            ? usbAccessFields(e.state.usbAccess)
+            : {}),
         },
       };
     }
