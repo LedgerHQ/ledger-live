@@ -650,6 +650,9 @@ catalogs:
     expo-keep-awake:
       specifier: 15.0.8
       version: 15.0.8
+    expo-localization:
+      specifier: 17.0.8
+      version: 17.0.8
     expo-modules-autolinking:
       specifier: 3.0.24
       version: 3.0.24
@@ -2581,6 +2584,9 @@ importers:
       '@shared/cloud-sync':
         specifier: workspace:^
         version: link:../../shared/cloud-sync
+      '@shared/device-locale':
+        specifier: workspace:*
+        version: link:../../shared/device-locale
       '@shared/env':
         specifier: workspace:*
         version: link:../../shared/env
@@ -2692,6 +2698,9 @@ importers:
       expo-keep-awake:
         specifier: 'catalog:'
         version: 15.0.8(expo@54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.1(patch_hash=a146323144a9d19c5db1e0869477abc1386e1e81527e954761d6602330c3478a)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
+      expo-localization:
+        specifier: 'catalog:'
+        version: 17.0.8(expo@54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.1(patch_hash=a146323144a9d19c5db1e0869477abc1386e1e81527e954761d6602330c3478a)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
       expo-modules-autolinking:
         specifier: 'catalog:'
         version: 3.0.24
@@ -2776,9 +2785,6 @@ importers:
       react-native-keychain:
         specifier: 'catalog:'
         version: 10.0.0
-      react-native-localize:
-        specifier: 2.2.6
-        version: 2.2.6(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
       react-native-mmkv:
         specifier: 4.3.2
         version: 4.3.2(react-native-nitro-modules@0.35.9(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
@@ -24718,6 +24724,45 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
+  shared/device-locale:
+    devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
+      '@support/jest':
+        specifier: workspace:*
+        version: link:../../support/jest
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
+      expo-localization:
+        specifier: 'catalog:'
+        version: 17.0.8(expo@54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.1(patch_hash=a146323144a9d19c5db1e0869477abc1386e1e81527e954761d6602330c3478a)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
+      react-native:
+        specifier: 'catalog:'
+        version: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
   shared/env:
     dependencies:
       '@ledgerhq/live-env':
@@ -36764,6 +36809,12 @@ packages:
       expo: '*'
       react: 19.1.4
 
+  expo-localization@17.0.8:
+    resolution: {integrity: sha512-UrdwklZBDJ+t+ZszMMiE0SXZ2eJxcquCuQcl6EvGHM9K+e6YqKVRQ+w8qE+iIB3H75v2RJy6MHAaLK+Mqeo04g==}
+    peerDependencies:
+      expo: '*'
+      react: 19.1.4
+
   expo-modules-autolinking@3.0.24:
     resolution: {integrity: sha512-TP+6HTwhL7orDvsz2VzauyQlXJcAWyU3ANsZ7JGL4DQu8XaZv/A41ZchbtAYLfozNA2Ya1Hzmhx65hXryBMjaQ==}
     hasBin: true
@@ -40766,19 +40817,6 @@ packages:
       react: 19.1.4
       react-native: '>=0.60.0-rc.0 <1.0.x'
 
-  react-native-localize@2.2.6:
-    resolution: {integrity: sha512-EZETlC1ZlW/4g6xfsNCwAkAw5BDL2A6zk/08JjFR/GRGxYuKRD7iP1hHn1+h6DEu+xROjPpoNeXfMER2vkTVIQ==}
-    peerDependencies:
-      react: 19.1.4
-      react-native: '>=0.60.0'
-      react-native-macos: '>=0.64.0'
-      react-native-windows: '>=0.62.0'
-    peerDependenciesMeta:
-      react-native-macos:
-        optional: true
-      react-native-windows:
-        optional: true
-
   react-native-mmkv@4.3.2:
     resolution: {integrity: sha512-49OAyfkg0/TMWiWELZN6VuVQPZPhizwL4DTmp8b7B1md3dB/s3LH3mGfC3T+lp9W0y/rqxZMEnotLFTIbOAenQ==}
     peerDependencies:
@@ -41366,6 +41404,9 @@ packages:
         optional: true
       typescript:
         optional: true
+
+  rtl-detect@1.1.2:
+    resolution: {integrity: sha512-PGMBq03+TTG/p/cRB7HCLKJ1MgDIi07+QU1faSjiYRfmY5UsAttV9Hs08jDAHVwcOwmVLcSJkpwyfXszVjWfIQ==}
 
   run-applescript@7.0.0:
     resolution: {integrity: sha512-9by4Ij99JUr/MCFBUkDKLWK3G9HVXmabKz9U5MlIAIuvuzkiOicRYs8XJLxX+xahD+mLiiCYDqF9dKAgtzKP1A==}
@@ -56809,6 +56850,12 @@ snapshots:
       expo: 54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.1(patch_hash=a146323144a9d19c5db1e0869477abc1386e1e81527e954761d6602330c3478a)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6)
       react: 19.1.4
 
+  expo-localization@17.0.8(expo@54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.1(patch_hash=a146323144a9d19c5db1e0869477abc1386e1e81527e954761d6602330c3478a)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4):
+    dependencies:
+      expo: 54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.1(patch_hash=a146323144a9d19c5db1e0869477abc1386e1e81527e954761d6602330c3478a)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6)
+      react: 19.1.4
+      rtl-detect: 1.1.2
+
   expo-modules-autolinking@3.0.24:
     dependencies:
       '@expo/spawn-async': 1.8.0
@@ -61650,11 +61697,6 @@ snapshots:
       react: 19.1.4
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
 
-  react-native-localize@2.2.6(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4):
-    dependencies:
-      react: 19.1.4
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
-
   react-native-mmkv@4.3.2(react-native-nitro-modules@0.35.9(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4):
     dependencies:
       react: 19.1.4
@@ -62321,6 +62363,8 @@ snapshots:
       '@rsbuild/core': 2.3.1(core-js@3.47.0)
     optionalDependencies:
       typescript: '@typescript/typescript6@6.0.2'
+
+  rtl-detect@1.1.2: {}
 
   run-applescript@7.0.0: {}
 

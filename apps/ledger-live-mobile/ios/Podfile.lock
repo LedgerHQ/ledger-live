@@ -183,6 +183,8 @@ PODS:
     - ExpoModulesCore
   - ExpoKeepAwake (15.0.8):
     - ExpoModulesCore
+  - ExpoLocalization (17.0.8):
+    - ExpoModulesCore
   - ExpoModulesCore (3.0.29):
     - boost
     - DoubleConversion
@@ -3285,8 +3287,6 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - RNLocalize (2.2.6):
-    - React-Core
   - RNReanimated (4.3.4):
     - boost
     - DoubleConversion
@@ -3659,6 +3659,7 @@ DEPENDENCIES:
   - "ExpoImageManipulator (from `../../../node_modules/.pnpm/expo-image-manipulator@14.0.8_expo@54.0.33_@bab_3f23bb900877d3a3c6f22038b220880e/node_modules/expo-image-manipulator/ios`)"
   - "ExpoImagePicker (from `../../../node_modules/.pnpm/expo-image-picker@17.0.11_expo@54.0.33_@babel+c_9fdfa99d7be19df9ba3676cb38414120/node_modules/expo-image-picker/ios`)"
   - "ExpoKeepAwake (from `../../../node_modules/.pnpm/expo-keep-awake@15.0.8_expo@54.0.33_@babel+core_010d1f471ae4d3457f0a5d437d6462a6/node_modules/expo-keep-awake/ios`)"
+  - "ExpoLocalization (from `../../../node_modules/.pnpm/expo-localization@17.0.8_expo@54.0.33_@babel+co_92810f0c2e070b2ebe6108e56e9e712e/node_modules/expo-localization/ios`)"
   - "ExpoModulesCore (from `../../../node_modules/.pnpm/expo-modules-core@3.0.29_react-native@0.81.6_pa_f60a1e9ca617c33bc743de4cc00e5b55/node_modules/expo-modules-core`)"
   - "ExpoNetwork (from `../../../node_modules/.pnpm/expo-network@8.0.8_expo@54.0.33_@babel+core@7.2_ce055c03b4539d184fcc466100e54eaa/node_modules/expo-network/ios`)"
   - "ExpoSplashScreen (from `../../../node_modules/.pnpm/expo-splash-screen@31.0.13_@typescript+typescri_bf5d51cee46ab6cc73a0b8bd6a4c185d/node_modules/expo-splash-screen/ios`)"
@@ -3759,7 +3760,6 @@ DEPENDENCIES:
   - "RNFBRemoteConfig (from `../../../node_modules/.pnpm/@react-native-firebase+remote-config@26.4.1_@re_5f8299eb2defba5f221179c886f03521/node_modules/@react-native-firebase/remote-config`)"
   - "RNGestureHandler (from `../../../node_modules/.pnpm/react-native-gesture-handler@2.28.0_react-nativ_3a775044d093838ec0d4ddaff956f920/node_modules/react-native-gesture-handler`)"
   - "RNKeychain (from `../../../node_modules/.pnpm/react-native-keychain@10.0.0/node_modules/react-native-keychain`)"
-  - "RNLocalize (from `../../../node_modules/.pnpm/react-native-localize@2.2.6_react-native@0.81.6_7dfbc808ef379a0b1049b6516b6b0ca8/node_modules/react-native-localize`)"
   - "RNReanimated (from `../../../node_modules/.pnpm/react-native-reanimated@4.3.4_react-native-work_9b445d3ec96e26e70ef80a5e469b6102/node_modules/react-native-reanimated`)"
   - "RNScreens (from `../../../node_modules/.pnpm/react-native-screens@4.24.0_react-native@0.81.6_75fc90bcfeca222c07ffbdf3de53e203/node_modules/react-native-screens`)"
   - "RNShare (from `../../../node_modules/.pnpm/react-native-share@12.2.0/node_modules/react-native-share`)"
@@ -3854,6 +3854,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/expo-image-picker@17.0.11_expo@54.0.33_@babel+c_9fdfa99d7be19df9ba3676cb38414120/node_modules/expo-image-picker/ios"
   ExpoKeepAwake:
     :path: "../../../node_modules/.pnpm/expo-keep-awake@15.0.8_expo@54.0.33_@babel+core_010d1f471ae4d3457f0a5d437d6462a6/node_modules/expo-keep-awake/ios"
+  ExpoLocalization:
+    :path: "../../../node_modules/.pnpm/expo-localization@17.0.8_expo@54.0.33_@babel+co_92810f0c2e070b2ebe6108e56e9e712e/node_modules/expo-localization/ios"
   ExpoModulesCore:
     :path: "../../../node_modules/.pnpm/expo-modules-core@3.0.29_react-native@0.81.6_pa_f60a1e9ca617c33bc743de4cc00e5b55/node_modules/expo-modules-core"
   ExpoNetwork:
@@ -4053,8 +4055,6 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/react-native-gesture-handler@2.28.0_react-nativ_3a775044d093838ec0d4ddaff956f920/node_modules/react-native-gesture-handler"
   RNKeychain:
     :path: "../../../node_modules/.pnpm/react-native-keychain@10.0.0/node_modules/react-native-keychain"
-  RNLocalize:
-    :path: "../../../node_modules/.pnpm/react-native-localize@2.2.6_react-native@0.81.6_7dfbc808ef379a0b1049b6516b6b0ca8/node_modules/react-native-localize"
   RNReanimated:
     :path: "../../../node_modules/.pnpm/react-native-reanimated@4.3.4_react-native-work_9b445d3ec96e26e70ef80a5e469b6102/node_modules/react-native-reanimated"
   RNScreens:
@@ -4109,6 +4109,7 @@ SPEC CHECKSUMS:
   ExpoImageManipulator: 607a5c8c88085381639458a46cc55fb9d3869148
   ExpoImagePicker: ade85e148f735fc7e6f27dfe3eef28eb3887e90a
   ExpoKeepAwake: 55f75eca6499bb9e4231ebad6f3e9cb8f99c0296
+  ExpoLocalization: d9168d5300a5b03e5e78b986124d11fb6ec3ebbd
   ExpoModulesCore: 91a57f1d109cf53fe58d44fcf6b68a777561549a
   ExpoNetwork: ee1fb67b0de59ab7f36794caf8242955dd8ae046
   ExpoSplashScreen: bc3cffefca2716e5f22350ca109badd7e50ec14d
@@ -4229,7 +4230,6 @@ SPEC CHECKSUMS:
   RNFBRemoteConfig: f0131d05043d271b3b87fa4d97a14440c5e966b6
   RNGestureHandler: b8d2e75c2e88fc2a1f6be3b3beeeed80b88fa37d
   RNKeychain: 76d042fc1dfba47f3945920bc82e0bce9ad1ff55
-  RNLocalize: 8bf466de4c92d4721b254aabe1ff0a1456e7b9f4
   RNReanimated: 0844eb70577ead04238380363a8be8c8fc4e1a87
   RNScreens: e902eba58a27d3ad399a495d578e8aba3ea0f490
   RNShare: 81b8cfb58b1460c4a197d5379934bdf70980c124

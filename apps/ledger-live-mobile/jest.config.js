@@ -193,6 +193,7 @@ module.exports = {
     "^expo-file-system$": "<rootDir>/__mocks__/expo-file-system.ts",
     "^expo-web-browser$": "<rootDir>/__mocks__/expo-web-browser.ts",
     "^expo-clipboard$": "<rootDir>/__mocks__/expo-clipboard.js",
+    "^expo-localization$": "<rootDir>/__mocks__/expo-localization.ts",
     "^expo-image-picker$": "<rootDir>/__mocks__/expo-image-picker.ts",
     "^@shared/network-status$": "<rootDir>/__mocks__/@shared/network-status.ts",
     // react-native-fast-crypto ships ESM and needs a native runtime; one stub for every copy.

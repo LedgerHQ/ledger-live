@@ -1,4 +1,4 @@
-import RNLocalize from "react-native-localize";
+import { findBestAvailableLanguage } from "@shared/device-locale";
 import Config from "react-native-config";
 import { Language } from "@ledgerhq/types-live";
 import type { ResourceLanguage } from "i18next";
@@ -96,7 +96,7 @@ export const DEFAULT_LANGUAGE_LOCALE = "en";
  * if & only if that language is supported.
  */
 export const getDefaultLanguageLocale = (fallbackLocale: string = DEFAULT_LANGUAGE_LOCALE) =>
-  RNLocalize.findBestAvailableLanguage(fullySupportedLocales)?.languageTag || fallbackLocale;
+  findBestAvailableLanguage(fullySupportedLocales) || fallbackLocale;
 const languageLocaleToDefaultLocaleMap: {
   [k: string]: string;
 } = {
