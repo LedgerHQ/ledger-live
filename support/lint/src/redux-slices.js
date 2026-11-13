@@ -240,18 +240,37 @@ function isStateParam(param, body) {
   ) {
     return true;
   }
-  return id?.type === "Identifier" && usesOf(body, id.name).calls.size > 0;
+  return boundNames(id).some(name => usesOf(body, name).calls.size > 0);
+}
+
+/**
+ * @param {any} pattern
+ * @returns {string[]} the names a parameter binds, through nested, defaulted and rest patterns
+ */
+function boundNames(pattern) {
+  switch (pattern?.type) {
+    case "Identifier":
+      return [pattern.name];
+    case "AssignmentPattern":
+      return boundNames(pattern.left);
+    case "RestElement":
+      return boundNames(pattern.argument);
+    case "ArrayPattern":
+      return pattern.elements.flatMap(boundNames);
+    case "ObjectPattern":
+      return pattern.properties.flatMap(p => boundNames(p.type === "Property" ? p.value : p));
+    default:
+      return [];
+  }
 }
 
 /**
  * @param {any} param
  * @param {string} name
- * @returns {boolean} whether the default value of `param` reads `name`
+ * @returns {boolean} whether `param` mentions `name` anywhere, a nested default included
  */
-function defaultReads(param, name) {
-  const id = bound(param);
-  if (id?.type !== "AssignmentPattern") return false;
-  const { keys, calls, other } = usesOf(id.right, name);
+function paramReads(param, name) {
+  const { keys, calls, other } = usesOf(bound(param), name);
   return other || keys.size > 0 || calls.size > 0;
 }
 
@@ -282,7 +301,7 @@ function readsOneSlice(fn) {
     return id.properties.length === 1 && hasStaticKey(id.properties[0]);
   }
   if (id.type !== "Identifier") return false;
-  if (rest.some(param => defaultReads(param, id.name))) return false;
+  if (rest.some(param => paramReads(param, id.name))) return false;
 
   const { keys, calls, other } = usesOf(fn.body, id.name);
   if (other) return false;
