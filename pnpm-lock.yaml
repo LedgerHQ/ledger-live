@@ -309,14 +309,14 @@ catalogs:
       specifier: 6.36.0
       version: 6.36.0
     '@ledgerhq/ledger-key-ring-protocol':
-      specifier: 1.2.0
-      version: 1.2.0
+      specifier: 1.2.1
+      version: 1.2.1
     '@ledgerhq/live-config':
       specifier: 3.10.0
       version: 3.10.0
     '@ledgerhq/live-currency-format':
-      specifier: 0.17.0
-      version: 0.17.0
+      specifier: 0.17.1
+      version: 0.17.1
     '@ledgerhq/live-env':
       specifier: 4.2.0
       version: 4.2.0
@@ -992,7 +992,7 @@ importers:
         version: 3.10.0
       '@ledgerhq/live-currency-format':
         specifier: 'catalog:'
-        version: 0.17.0
+        version: 0.17.1
       '@ledgerhq/live-dmk-speculos':
         specifier: workspace:^
         version: link:../../libs/live-dmk-speculos
@@ -1480,7 +1480,7 @@ importers:
         version: 6.37.0
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: 'catalog:'
-        version: 1.2.0(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 1.2.1(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../libs/ledger-wallet-framework
@@ -1492,7 +1492,7 @@ importers:
         version: 3.10.0
       '@ledgerhq/live-currency-format':
         specifier: 'catalog:'
-        version: 0.17.0
+        version: 0.17.1
       '@ledgerhq/live-dmk-desktop':
         specifier: workspace:^
         version: link:../../libs/live-dmk-desktop
@@ -2436,7 +2436,7 @@ importers:
         version: link:../../libs/ui/packages/icons
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: 'catalog:'
-        version: 1.2.0(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 1.2.1(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../libs/ledger-wallet-framework
@@ -2445,7 +2445,7 @@ importers:
         version: 3.10.0
       '@ledgerhq/live-currency-format':
         specifier: 'catalog:'
-        version: 0.17.0
+        version: 0.17.1
       '@ledgerhq/live-dmk-mobile':
         specifier: workspace:^
         version: link:../../libs/live-dmk-mobile
@@ -3214,7 +3214,7 @@ importers:
         version: 6.37.0
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: 'catalog:'
-        version: 1.2.0(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 1.2.1(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../libs/ledger-wallet-framework
@@ -3445,7 +3445,7 @@ importers:
         version: 1.1.0(@typescript/typescript6@6.0.2)
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: 'catalog:'
-        version: 1.2.0(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 1.2.1(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../libs/ledger-wallet-framework
@@ -4567,7 +4567,7 @@ importers:
         version: 1.11.1(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: 'catalog:'
-        version: 1.2.0(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 1.2.1(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
@@ -8369,7 +8369,7 @@ importers:
         version: 6.37.0
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: 'catalog:'
-        version: 1.2.0(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 1.2.1(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@ledgerhq/live-cli':
         specifier: workspace:^
         version: link:../../apps/cli/dist
@@ -14700,7 +14700,7 @@ importers:
         version: 1.11.1(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: 'catalog:'
-        version: 1.2.0(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 1.2.1(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -20152,7 +20152,7 @@ importers:
         version: 3.10.0
       '@ledgerhq/live-currency-format':
         specifier: 'catalog:'
-        version: 0.17.0
+        version: 0.17.1
       '@ledgerhq/live-dmk-shared':
         specifier: workspace:^
         version: link:../live-dmk-shared
@@ -20656,7 +20656,7 @@ importers:
         version: 3.10.0
       '@ledgerhq/live-currency-format':
         specifier: 'catalog:'
-        version: 0.17.0
+        version: 0.17.1
       '@ledgerhq/live-env':
         specifier: 'catalog:'
         version: 4.2.0
@@ -22472,7 +22472,7 @@ importers:
         version: 6.37.0
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: 'catalog:'
-        version: 1.2.0(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 1.2.1(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../ledger-wallet-framework
@@ -29225,8 +29225,8 @@ packages:
   '@ledgerhq/hw-transport@6.37.0':
     resolution: {integrity: sha512-J5es/iRPEl24dT4XU9w2EQu5Z0fwkoQbLY2a0T7Pm3wq9aLiYkD02ALj1R+yqMUZgI8LQb+77GvPj557n0i0NQ==}
 
-  '@ledgerhq/ledger-key-ring-protocol@1.2.0':
-    resolution: {integrity: sha512-NS7BU/NY+HigLryslZpmw1zMtCJZWAT5uyQiptsbeSkNSphZ1I4ZtQsPILdz5ALuWeJDSaoajJws66HN6mh1Eg==}
+  '@ledgerhq/ledger-key-ring-protocol@1.2.1':
+    resolution: {integrity: sha512-MesQjffj8SP6kabsgzZq8Qwj9T0ypqrv4zbh7I4guLyfkWt/zNfxBxZRla9b2cEKk1+/OLnzYJox93OGkqmVLg==}
 
   '@ledgerhq/live-app-sdk@0.8.2':
     resolution: {integrity: sha512-yD+L02pAwTfjeSyixWkfqlh6Xg3yAGFnFitrcHk2WWUtKg1TVmNpWNHLS22LKYYWJ7Lflj/pLLQ0nKm1OsJB9g==}
@@ -29234,16 +29234,11 @@ packages:
   '@ledgerhq/live-config@3.10.0':
     resolution: {integrity: sha512-W3WJ48yoYbWbCk54ROCyE0Pg/bNSuGOPZv49UgrSiGzhLHpiUYk+YZS5WWVV98yxjj8d4/YNNQDvum95nYDOGA==}
 
-  '@ledgerhq/live-currency-format@0.17.0':
-    resolution: {integrity: sha512-C4HfeeDgl9qgY83q+mUKX/v/YMKH/ttBWhMMhe5u5RIHejWSNTwYCzOgvEDXv9WC45bvDV8zhTpzBNKAKEHvIw==}
+  '@ledgerhq/live-currency-format@0.17.1':
+    resolution: {integrity: sha512-wBZw8zHY798lApQvpQsaHSWt9mbXQxS97jdEwXxdKOIBNQTQ7olg9IEZvvYH7HFV/ar+rHNSv3DROisJQRmR2A==}
 
   '@ledgerhq/live-env@4.2.0':
     resolution: {integrity: sha512-KM3k5A6m1N9DhNZajafpkc9dKUF65gHWrWNDzZQNyylk0p/qwRzEGiFxdugk4wkwjwAVCbnKOHwuCAXv6BUULA==}
-
-  '@ledgerhq/live-network@3.3.0':
-    resolution: {integrity: sha512-fDYl/CIxmQxRL/NLzOTY7y/HYYhT2YTQvXzWndcJI3OfTyJY5Eo4SSkqnBMOOWD2ftz/xdqDgDBHOeeL5gKY1w==}
-    peerDependencies:
-      axios: 1.20.0
 
   '@ledgerhq/live-network@3.4.0':
     resolution: {integrity: sha512-1iqm3g5a2zpOQBjJHhFaVAgn74jH8kCdT8Ug38KzXajxeVM64FO/yE6ZGuOOblm9FEqXMND7JocxI+5ulNdx6g==}
@@ -48091,12 +48086,12 @@ snapshots:
       '@ledgerhq/logs': 6.20.0
       events: 3.3.0
 
-  '@ledgerhq/ledger-key-ring-protocol@1.2.0(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)':
+  '@ledgerhq/ledger-key-ring-protocol@1.2.1(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)':
     dependencies:
       '@ledgerhq/auth': 0.2.0
       '@ledgerhq/hw-ledger-key-ring-protocol': 1.1.0(@typescript/typescript6@6.0.2)
       '@ledgerhq/hw-transport': 6.37.0
-      '@ledgerhq/live-network': 3.3.0(axios@1.20.0(debug@4.4.3))
+      '@ledgerhq/live-network': 3.4.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs': 6.20.0
       base64-js: 1.5.1
       isomorphic-ws: 5.0.0(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))
@@ -48118,18 +48113,11 @@ snapshots:
     dependencies:
       lodash: 4.18.1
 
-  '@ledgerhq/live-currency-format@0.17.0':
+  '@ledgerhq/live-currency-format@0.17.1':
     dependencies:
       bignumber.js: 9.1.2
 
   '@ledgerhq/live-env@4.2.0': {}
-
-  '@ledgerhq/live-network@3.3.0(axios@1.20.0(debug@4.4.3))':
-    dependencies:
-      '@ledgerhq/live-promise': 0.5.0
-      '@ledgerhq/logs': 6.20.0
-      axios: 1.20.0(debug@4.4.3)
-      lru-cache: 7.18.3
 
   '@ledgerhq/live-network@3.4.0(axios@1.20.0(debug@4.4.3))':
     dependencies:
