@@ -32,10 +32,10 @@ export default class SendPage {
   private readonly feeStrategy = (fee: string) => byText(fee);
 
   @Step("Navigate to send screen {{{0}}}")
-  async navigateToSendScreen(accountName: string) {
+  async navigateToSendScreen(accountName: string, currencyId?: string) {
     await app.account.openViaDeeplink();
     await app.account.goToAccountByName(accountName);
-    await app.account.tapSend();
+    await app.account.tapSend(currencyId);
   }
 
   @Step("Open send via deeplink")
