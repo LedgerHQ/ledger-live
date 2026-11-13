@@ -1,4 +1,4 @@
-import { Subscription } from "rxjs";
+import type { Unsubscribable } from "rxjs";
 import { assign, createActor, fromPromise, setup } from "xstate";
 import type { DeviceManagementKit, DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import { log } from "@ledgerhq/logs";
@@ -440,7 +440,12 @@ export class DefaultConnectNewDeviceStateMachine<
     ConnectNewDeviceStateMachineDiscoveryError<TDiscoveryError>
   >;
 
-  private subscriptions: Array<Subscription> = [];
+  private readonly observer: ConnectNewDeviceStateMachineInput<
+    ConnectNewDeviceStateMachineDiscoveryError<TDiscoveryError>,
+    TConnectionError
+  >["observer"];
+
+  private subscriptions: Array<Unsubscribable> = [];
 
   constructor(
     input: ConnectNewDeviceStateMachineInput<
@@ -449,6 +454,7 @@ export class DefaultConnectNewDeviceStateMachine<
     >,
   ) {
     this.dmk = input.dmk;
+    this.observer = input.observer;
     this.deviceDiscoveryService = input.deviceDiscoveryService;
     this.actor = createActor(
       createConnectNewDeviceStateMachine<TDiscoveryError, TConnectionError>(),
@@ -468,23 +474,42 @@ export class DefaultConnectNewDeviceStateMachine<
     const errorsSubscription = this.deviceDiscoveryService.errors.subscribe(error => {
       this.actor.send({ type: ConnectNewDeviceStateMachineEventTypes.DiscoveryError, error });
     });
+    // Without an error observer, XState rethrows the error outside the use case.
+    const actorErrorsSubscription = this.actor.subscribe({
+      error: error => {
+        // A failed actor is no longer active, so stop() would skip this cleanup.
+        this.releaseResources();
+        this.observer.error(error);
+      },
+    });
+    this.subscriptions.push(
+      discoveredDevicesSubscription,
+      errorsSubscription,
+      actorErrorsSubscription,
+    );
     this.actor.start();
-    this.subscriptions.push(discoveredDevicesSubscription, errorsSubscription);
   }
 
   stop(): void {
-    const snapshot = this.actor.getSnapshot();
-    const isRunning = snapshot.status === "active";
+    const isRunning = this.actor.getSnapshot().status === "active";
 
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
     this.subscriptions = [];
-    if (isRunning && snapshot.context.isDiscovering) {
+    this.actor.stop();
+    if (isRunning) {
+      this.releaseResources();
+    }
+  }
+
+  private releaseResources(): void {
+    const snapshot = this.actor.getSnapshot();
+
+    if (snapshot.context.isDiscovering) {
       this.deviceDiscoveryService.stop();
     }
-    this.actor.stop();
 
     const { sessionId } = snapshot.context;
-    const stoppedDuringSuccessDelay = isRunning && snapshot.matches("Connected");
+    const stoppedDuringSuccessDelay = snapshot.matches("Connected");
     if (stoppedDuringSuccessDelay && sessionId !== null) {
       disconnectUnclaimedSession(this.dmk, sessionId);
     }

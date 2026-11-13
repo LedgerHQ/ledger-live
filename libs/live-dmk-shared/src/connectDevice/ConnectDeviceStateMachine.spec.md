@@ -81,3 +81,5 @@ stateDiagram-v2
 - `Connected` emits the success UI state and calls `onConnected` with the DMK
   session, connected device, and legacy compatibility fields used by existing
   device flows.
+- When an action fails, the machine sends the error to `observer.error`. The use
+  case then emits the unknown error.

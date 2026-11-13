@@ -214,4 +214,36 @@ describe("connectNewDeviceUseCase", () => {
 
     subscription.unsubscribe();
   });
+
+  it("should emit a terminal UnknownError UI state and stop discovery when an action of the running state machine throws", () => {
+    // Arrange
+    const { deviceDiscoveryService, discoverDevices, input, states } = setupTest();
+    const thrown = new Error("boom");
+    input.getDiscoveredDeviceKey = () => {
+      throw thrown;
+    };
+    const errorHandler = jest.fn();
+    const completeHandler = jest.fn();
+    const subscription = connectNewDeviceUseCase(input).subscribe({
+      next: state => states.push(state),
+      error: errorHandler,
+      complete: completeHandler,
+    });
+
+    // Act
+    discoverDevices([nanoX]);
+
+    // Assert
+    expect(states.map(state => state.type)).toEqual([
+      ConnectNewDeviceUIStateTypes.Discovering,
+      ConnectNewDeviceUIStateTypes.UnknownError,
+    ]);
+    expect(states[1]).toEqual({ type: ConnectNewDeviceUIStateTypes.UnknownError, error: thrown });
+    expect(errorHandler).not.toHaveBeenCalled();
+    expect(completeHandler).toHaveBeenCalledTimes(1);
+    expect(deviceDiscoveryService.stop).toHaveBeenCalledTimes(1);
+    expect(() => jest.runOnlyPendingTimers()).not.toThrow();
+
+    subscription.unsubscribe();
+  });
 });

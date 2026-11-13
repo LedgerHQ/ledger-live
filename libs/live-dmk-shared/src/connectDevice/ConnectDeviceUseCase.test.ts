@@ -129,6 +129,39 @@ describe("connectDeviceUseCase", () => {
     subscription.unsubscribe();
   });
 
+  it("should emit a terminal UnknownError UI state when an action of the running state machine throws", () => {
+    // Arrange
+    const { input } = setupTest();
+    const thrown = new Error("boom");
+    input.dmk = {
+      listConnectedDevices: jest.fn(() => [{ sessionId: "session-id" }]),
+      getConnectedDevice: jest.fn(() => ({ id: "device-id", name: "Ledger Nano X", type: "BLE" })),
+    } as unknown as DeviceManagementKit;
+    input.onConnected = jest.fn(() => {
+      throw thrown;
+    });
+    const states: Array<ConnectDeviceUIState> = [];
+    const errorHandler = jest.fn();
+    const completeHandler = jest.fn();
+
+    // Act
+    const subscription = connectDeviceUseCase(input).subscribe({
+      next: state => states.push(state),
+      error: errorHandler,
+      complete: completeHandler,
+    });
+
+    // Assert
+    expect(states).toEqual([
+      { type: ConnectDeviceUIStateTypes.Connected },
+      { type: ConnectDeviceUIStateTypes.UnknownError, error: thrown },
+    ]);
+    expect(errorHandler).not.toHaveBeenCalled();
+    expect(completeHandler).toHaveBeenCalledTimes(1);
+
+    subscription.unsubscribe();
+  });
+
   it("should filter known devices by accepted device models", () => {
     // Arrange
     const rejectedKnownDevice: KnownDevice = {
