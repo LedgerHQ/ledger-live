@@ -1,15 +1,37 @@
 import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
-import React, { memo, useCallback, useEffect, useReducer } from "react";
+import React, { memo, useCallback, useEffect, useMemo, useReducer } from "react";
 import { Trans } from "~/context/Locale";
 import { ListRenderItem, SectionList, SectionListData } from "react-native";
 import styled from "styled-components/native";
 import Touchable from "~/components/Touchable";
-import { Unpacked } from "~/types/helpers";
 
 import { BaseButtonProps } from "~/components/Button";
 import ActionModal from "./ActionModal";
 
-const filterSections = [
+type FilterSectionData = {
+  label: string;
+  value: string;
+  isFilter?: boolean;
+  isDeveloper?: boolean;
+};
+
+type FilterSection = {
+  title: string;
+  data: FilterSectionData[];
+  footerSeparator?: boolean;
+};
+
+const developerSection: FilterSection = {
+  title: "AppAction.developerFilter.title",
+  data: [
+    { label: "AppAction.developerFilter.all", value: "all", isDeveloper: true },
+    { label: "AppAction.developerFilter.ledger", value: "ledger", isDeveloper: true },
+    { label: "AppAction.developerFilter.community", value: "community", isDeveloper: true },
+  ],
+  footerSeparator: true,
+};
+
+const filterSections: FilterSection[] = [
   {
     title: "AppAction.filter.title",
     data: [
@@ -59,9 +81,6 @@ const filterSections = [
     ],
   },
 ];
-type FilterSection = Unpacked<typeof filterSections>;
-type FilterSectionData = FilterSection["data"][number];
-
 const FilterLine = styled(Touchable)`
   flex-direction: row;
   align-items: center;
@@ -103,12 +122,14 @@ const Separator = ({
 
 type State = {
   filter: string | null;
+  developer: string | null;
   sort: string | null;
   order: string | null;
 };
 
 const initialFilterState: State = {
   filter: null,
+  developer: null,
   sort: null,
   order: null,
 };
@@ -119,6 +140,8 @@ const filterReducer = (state: State, { type, payload }: Action): State => {
   switch (type) {
     case "setFilter":
       return { ...state, filter: payload as string };
+    case "setDeveloper":
+      return { ...state, developer: payload as string };
     case "setSort":
       return { ...state, sort: payload as string };
     case "setOrder":
@@ -133,6 +156,9 @@ const filterReducer = (state: State, { type, payload }: Action): State => {
 type Props = {
   filter: string | null | undefined;
   setFilter: (_: string | null | undefined) => void;
+  /** Developer filter section, shown only when setDeveloper is given. */
+  developer?: string | null;
+  setDeveloper?: (_: string | null | undefined) => void;
   sort: string | null | undefined;
   setSort: (_: string | null | undefined) => void;
   order: string | null | undefined;
@@ -144,6 +170,8 @@ type Props = {
 const FilterModalComponent = ({
   filter,
   setFilter,
+  developer,
+  setDeveloper,
   sort,
   setSort,
   order,
@@ -158,24 +186,35 @@ const FilterModalComponent = ({
       type: "setState",
       payload: {
         filter,
+        developer: developer ?? null,
         sort,
         order,
       },
     });
-  }, [isOpened, filter, sort, order]);
+  }, [isOpened, filter, developer, sort, order]);
 
   const onFilter = useCallback(() => {
     setFilter(state.filter);
+    setDeveloper?.(state.developer);
     setSort(state.sort);
     setOrder(state.order);
     onClose();
-  }, [state, setFilter, setSort, setOrder, onClose]);
+  }, [state, setFilter, setDeveloper, setSort, setOrder, onClose]);
+
+  const sections = useMemo(
+    () => (setDeveloper ? [developerSection, ...filterSections] : filterSections),
+    [setDeveloper],
+  );
 
   const FilterItem: ListRenderItem<FilterSectionData> = useCallback(
     ({ item }) => {
-      const { label, value } = item;
-      const isFilter = "isFilter" in item ? item.isFilter : undefined;
-      const isSelected = isFilter ? state.filter === value : state.sort === value;
+      const { label, value, isFilter, isDeveloper } = item;
+      const isSelected = isDeveloper
+        ? state.developer === value
+        : isFilter
+          ? state.filter === value
+          : state.sort === value;
+      const isChoice = Boolean(isFilter || isDeveloper);
 
       let orderValue: string;
       if (state.sort === value) {
@@ -185,7 +224,8 @@ const FilterModalComponent = ({
       }
 
       const onPress = () => {
-        if ("isFilter" in item && item.isFilter) dispatch({ type: "setFilter", payload: value });
+        if (isDeveloper) dispatch({ type: "setDeveloper", payload: value });
+        else if (isFilter) dispatch({ type: "setFilter", payload: value });
         else
           dispatch({
             type: "setState",
@@ -199,7 +239,9 @@ const FilterModalComponent = ({
           onPress={onPress}
           event="ManagerAppFilterClick"
           eventProperties={{
-            value: `${value}${isFilter ? "" : `_${orderValue}`}`,
+            value: isDeveloper
+              ? `developer_${value}`
+              : `${value}${isFilter ? "" : `_${orderValue}`}`,
           }}
         >
           <Text
@@ -209,14 +251,14 @@ const FilterModalComponent = ({
           >
             <Trans i18nKey={label} />
           </Text>
-          {Boolean(isSelected) && Boolean(isFilter) && (
+          {isSelected && isChoice && (
             <Flex alignItems="center" justifyContent="center">
               <ArrowIconContainer backgroundColor="primary.c80">
                 <IconsLegacy.CheckAloneMedium color="background.main" size={16} />
               </ArrowIconContainer>
             </Flex>
           )}
-          {Boolean(isSelected) && !isFilter && (
+          {isSelected && !isChoice && (
             <Flex alignItems="center" justifyContent="center" flexDirection="row">
               <ArrowIconContainer
                 backgroundColor={state.order === "desc" ? "primary.c80" : "neutral.c60"}
@@ -250,7 +292,7 @@ const FilterModalComponent = ({
     <ActionModal isOpened={isOpened} onClose={onFilter} actions={onFilterActions}>
       <SectionList
         style={{ width: "100%" }}
-        sections={filterSections}
+        sections={sections}
         keyExtractor={keyExtractor}
         renderItem={FilterItem}
         renderSectionHeader={SectionHeader}

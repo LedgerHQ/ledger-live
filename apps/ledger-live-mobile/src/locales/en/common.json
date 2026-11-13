@@ -6659,6 +6659,12 @@
       },
       "continueUninstall": "Uninstall {{app}} and other apps"
     },
+    "developerFilter": {
+      "title": "Developer",
+      "all": "All",
+      "ledger": "Ledger",
+      "community": "Community app"
+    },
     "filter": {
       "title": "Filter",
       "all": "All",

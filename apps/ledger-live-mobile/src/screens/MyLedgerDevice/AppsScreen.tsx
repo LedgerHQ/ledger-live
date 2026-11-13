@@ -26,6 +26,7 @@ import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import { rnBleTransportIdentifier, rnHidTransportIdentifier } from "@ledgerhq/live-dmk-mobile";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppType, SortOptions } from "@ledgerhq/live-common/apps/filtering";
+import type { AppDeveloperFilter } from "@ledgerhq/live-common/apps/developer";
 import { useLatestFirmware } from "@ledgerhq/live-common/device/hooks/useLatestFirmware";
 import { ManagerTab } from "~/const/manager";
 
@@ -103,6 +104,8 @@ const AppsScreen = ({
   }, [state]);
 
   const [appFilter, setFilter] = useState<AppType | null | undefined>("all");
+  const [developer, setDeveloper] = useState<AppDeveloperFilter>("all");
+  const { enabled: isDeveloperInfoEnabled } = useFeature("myLedgerDisplayAppDeveloperName") ?? {};
   const [sort, setSort] = useState<SortOptions["type"] | null | undefined>("marketcap");
   const [order, setOrder] = useState<SortOptions["order"] | null | undefined>("desc");
 
@@ -124,6 +127,7 @@ const AppsScreen = ({
     query: "",
     // FIXME: apparently the fields can be null but useAppsSections types are not expecting that
     appFilter: appFilter!,
+    developer: isDeveloperInfoEnabled ? developer : "all",
     sort: {
       type: sortOptions.type!,
       order: sortOptions.order!,
@@ -297,6 +301,8 @@ const AppsScreen = ({
         <AppFilter
           filter={appFilter}
           setFilter={setFilter}
+          developer={isDeveloperInfoEnabled ? developer : undefined}
+          setDeveloper={isDeveloperInfoEnabled ? setDeveloper : undefined}
           sort={sort}
           setSort={setSort}
           order={order}
@@ -304,7 +310,7 @@ const AppsScreen = ({
         />
       </Flex>
     ),
-    [appFilter, order, query, scrollToSearchBar, sort, space],
+    [appFilter, developer, isDeveloperInfoEnabled, order, query, scrollToSearchBar, sort, space],
   );
 
   const renderList = useCallback(
