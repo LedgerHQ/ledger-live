@@ -353,7 +353,7 @@ for (const transaction of transactionsAddressInvalid) {
         if (accountToDebit instanceof TokenAccount) {
           await app.account.navigateToTokenInAccount(accountToDebit);
         }
-        await app.account.clickSend(transaction.transaction.accountToDebit.currency);
+        await app.account.clickSend(accountToDebit.currency);
         await app.newSendFlow.waitForDialog();
         for (const { recipient, expectedErrorMessage } of recipients) {
           await app.newSendFlow.clearRecipient();
