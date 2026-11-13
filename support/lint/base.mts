@@ -3,8 +3,7 @@ import { REDUX_SLICES_PLUGIN, SUFFIX_IMPORTS_PLUGIN } from "./plugins.mts";
 import { BIGNUMBER_NAMED_IMPORT } from "./restricted-imports.mts";
 import { sliceSelectorsWaivers } from "./src/redux-slices.js";
 
-// domain/ packages whose single-slice selectors are not nested in their slice yet. The other
-// presets inherit this override, where its globs (entity/..., api/...) match no package.
+// The other presets inherit this override, where its globs (entity/..., api/...) match no package.
 const SLICE_SELECTORS_WAIVERS: string[] = [
   "domain/api/account-data",
   "domain/entity/account-alias",
@@ -109,8 +108,6 @@ export default defineConfig({
     // features-flow, features-platform and shared presets enforce it.
     "suffix-imports/no-platform-suffix": "off",
 
-    // On for domain/, and for shared/ and features/ through their presets. The presets of the
-    // other layers turn it off.
     "redux-slices/selectors-in-slice": "error",
   },
   overrides: [

@@ -2,7 +2,6 @@ import { defineConfig } from "oxlint";
 import base from "./base.mts";
 import { sliceSelectorsWaivers } from "./src/redux-slices.js";
 
-// Packages whose single-slice selectors are not nested in their slice yet.
 const SLICE_SELECTORS_WAIVERS: string[] = [
   "shared/app-config",
   "shared/feature-flags",

@@ -30,8 +30,7 @@ const FATAL_REACT_COMPILER = [
 // require. The rest of the layer had the rule fatal and keeps it.
 const CHILDREN_PROP_IN_TESTS = ["flow-contacts-delete-contact", "flow-contacts-detail"];
 
-// Packages whose single-slice selectors are not nested in their slice yet. Entries are package
-// directories from the repo root, unlike the names above.
+// Package directories from the repo root, unlike the names above.
 const SLICE_SELECTORS_WAIVERS: string[] = [
   "features/flow/account-detail-analytics-notice",
   "features/flow/device-mock-server",
