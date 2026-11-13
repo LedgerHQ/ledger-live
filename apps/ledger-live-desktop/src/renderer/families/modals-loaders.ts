@@ -76,6 +76,8 @@ import type { Data as SolanaDelegationReactivateData } from "./solana/Delegation
 import type { Data as SolanaDelegationWithdrawData } from "./solana/DelegationWithdrawFlowModal/Body";
 import type { Data as StellarAddAssetData } from "./stellar/AddAssetModal/Body";
 import type { Data as XrpAddTokenData } from "./xrp/AddTokenModal/Body";
+import type { Data as XrpManageTokenData } from "./xrp/ManageTokenModal";
+import type { Data as XrpRemoveTokenData } from "./xrp/RemoveTokenModal";
 import type { Data as StacksStakeData } from "./stacks/StakeFlowModal/Body";
 import type { Data as StacksUnstakeData } from "./stacks/UnstakeFlowModal/Body";
 import type { Data as SuiDelegateData } from "./sui/DelegationFlowModal/Body";
@@ -164,6 +166,8 @@ export type CoinModalsData = {
   MODAL_SOLANA_DELEGATION_WITHDRAW: SolanaDelegationWithdrawData;
   MODAL_STELLAR_ADD_ASSET: StellarAddAssetData;
   MODAL_XRP_ADD_TOKEN: XrpAddTokenData;
+  MODAL_XRP_MANAGE_TOKEN: XrpManageTokenData;
+  MODAL_XRP_REMOVE_TOKEN: XrpRemoveTokenData;
   MODAL_STACKS_STAKE: StacksStakeData;
   MODAL_STACKS_UNSTAKE: StacksUnstakeData;
   MODAL_SUI_DELEGATE: SuiDelegateData;
@@ -263,6 +267,8 @@ export const coinModalImports: Record<CoinModalKey, CoinModalImport> = {
   MODAL_SOLANA_DELEGATION_WITHDRAW: () => import("./solana/DelegationWithdrawFlowModal"),
   MODAL_STELLAR_ADD_ASSET: () => import("./stellar/AddAssetModal"),
   MODAL_XRP_ADD_TOKEN: () => import("./xrp/AddTokenModal"),
+  MODAL_XRP_MANAGE_TOKEN: () => import("./xrp/ManageTokenModal"),
+  MODAL_XRP_REMOVE_TOKEN: () => import("./xrp/RemoveTokenModal"),
   MODAL_STACKS_STAKE: () => import("./stacks/StakeFlowModal"),
   MODAL_STACKS_UNSTAKE: () => import("./stacks/UnstakeFlowModal"),
   MODAL_SUI_DELEGATE: () => import("./sui/DelegationFlowModal"),

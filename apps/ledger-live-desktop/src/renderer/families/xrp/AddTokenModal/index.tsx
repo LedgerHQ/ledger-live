@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import Modal from "~/renderer/components/Modal";
-import Body from "./Body";
-import { StepId } from "./types";
-
-const LOCKED_STEPS = new Set<StepId>(["connectDevice", "confirmation"]);
+import Body, { getAction, getSteps } from "./Body";
+import { LOCKED_STEPS, StepId } from "./types";
 
 export default function AddTokenModal() {
   const [stepId, setStepId] = useState<StepId | null>(null);
@@ -16,7 +14,7 @@ export default function AddTokenModal() {
       preventBackdropClick={!!stepId && LOCKED_STEPS.has(stepId)}
       render={({ onClose, data }) => (
         <Body
-          stepId={stepId ?? (data.tokenAccount ? "settings" : "token")}
+          stepId={stepId ?? getSteps(getAction(data), data.tokenAccount?.token)[0].id}
           onClose={onClose}
           onChangeStepId={setStepId}
           params={data}

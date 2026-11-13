@@ -4362,8 +4362,31 @@
         }
       }
     },
+    "manageToken": {
+      "title": "Manage token",
+      "settings": {
+        "title": "Advanced settings",
+        "description": "Change the trust limit or rippling."
+      },
+      "remove": {
+        "description": "Close this trust line and get its XRP reserve back."
+      }
+    },
+    "removeToken": {
+      "title": "Remove token",
+      "steps": {
+        "review": {
+          "info": "{{amount}} will be unlocked and available again. You won't be able to receive this token anymore. You can add it again later, which locks {{amount}} again."
+        },
+        "confirmation": {
+          "success": {
+            "title": "{{token}} token removed",
+            "text": "Your XRP account no longer holds <0>{{token}}</0>, and its reserve is freed."
+          }
+        }
+      }
+    },
     "tokenAccount": {
-      "editSettings": "Edit settings",
       "trustLimit": "Trust limit",
       "trustLimitTooltip": "The most of this token your account accepts to hold."
     },
@@ -8139,6 +8162,25 @@
     "XrpTrustLimitZero": {
       "title": "The limit must be above 0",
       "description": "To stop holding this token, remove it instead."
+    },
+    "XrpOptOutBalanceNotZero": {
+      "title": "This token still has a balance",
+      "description": "Send your whole balance of this token before removing it."
+    },
+    "XrpOptOutTokenInEscrow": {
+      "title": "Some of this token is in escrow",
+      "description": "Wait for the escrow to finish or cancel it before removing this token."
+    },
+    "XrpOptOutTokenFrozen": {
+      "title": "You can't remove this token",
+      "description": "Its issuer froze it."
+    },
+    "XrpOptOutIncomplete": {
+      "title": "This token can't be fully removed",
+      "description": "The XRP Ledger would keep it on your account, so no XRP would be freed."
+    },
+    "XrpReserveRelease": {
+      "title": "{{amount}} will be unlocked and available again."
     },
     "XrpTokenFrozen": {
       "title": "You can't send this token",

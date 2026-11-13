@@ -28,6 +28,7 @@ export type Data = {
   account: Account;
   tokenAccount?: TokenAccount;
   token?: TokenCurrency;
+  remove?: boolean;
 };
 
 type Props = Readonly<{
@@ -52,11 +53,15 @@ const settingsStep: AddTokenStep = {
   footer: StepSettingsFooter,
 };
 
-const reviewStep: AddTokenStep = {
+const reviewStepWithoutBack: AddTokenStep = {
   id: "review",
   label: <Trans i18nKey="xrp.addToken.steps.review.title" />,
   component: StepReview,
   footer: StepReviewFooter,
+};
+
+const reviewStep: AddTokenStep = {
+  ...reviewStepWithoutBack,
   onBack: ({ token, transitionTo }) =>
     transitionTo(token?.tokenType === "mpt" ? "token" : "settings"),
 };
@@ -76,6 +81,10 @@ const confirmationStep: AddTokenStep = {
 };
 
 export function getSteps(action: TokenAction, token: TokenCurrency | undefined): AddTokenStep[] {
+  if (action === "remove") {
+    return [reviewStepWithoutBack, connectDeviceStep, confirmationStep];
+  }
+
   if (action === "edit") {
     return [settingsStep, reviewStep, connectDeviceStep, confirmationStep];
   }
@@ -119,12 +128,18 @@ export function makeChangeTrustTransaction(
   });
 }
 
+export function getAction({ tokenAccount, remove }: Data): TokenAction {
+  if (tokenAccount && remove) return "remove";
+
+  return tokenAccount ? "edit" : "add";
+}
+
 export default function Body({ stepId, onClose, onChangeStepId, params }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const device = useSelector(getCurrentDevice);
   const { tokenAccount } = params;
-  const action: TokenAction = tokenAccount ? "edit" : "add";
+  const action = getAction(params);
 
   const [token, setToken] = useState<TokenCurrency | undefined>(
     tokenAccount?.token ?? params.token,
@@ -183,8 +198,8 @@ export default function Body({ stepId, onClose, onChangeStepId, params }: Props)
   const handleRetry = useCallback(() => {
     setTransactionError(null);
     setSigned(false);
-    onChangeStepId(action === "edit" ? "settings" : "token");
-  }, [action, onChangeStepId]);
+    onChangeStepId(getSteps(action, token)[0].id);
+  }, [action, token, onChangeStepId]);
 
   const handleTransactionError = useCallback((error: Error) => {
     if (error?.name !== "UserRefusedOnDevice") {

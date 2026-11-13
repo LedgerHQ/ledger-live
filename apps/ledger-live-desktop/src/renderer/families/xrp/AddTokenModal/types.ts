@@ -8,11 +8,14 @@ import type { Step } from "~/renderer/components/Stepper";
 
 export type StepId = "token" | "settings" | "review" | "connectDevice" | "confirmation";
 
-export type TokenAction = "add" | "edit";
+export const LOCKED_STEPS = new Set<StepId>(["connectDevice", "confirmation"]);
+
+export type TokenAction = "add" | "edit" | "remove";
 
 export const ACTION_I18N = {
   add: "xrp.addToken",
   edit: "xrp.tokenSettings",
+  remove: "xrp.removeToken",
 } as const satisfies Record<TokenAction, string>;
 
 export type StepProps = Readonly<{
