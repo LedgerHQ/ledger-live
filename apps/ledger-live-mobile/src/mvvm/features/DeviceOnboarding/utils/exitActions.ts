@@ -70,6 +70,7 @@ function firmwareNeedsLegacyFlow(context: DeviceOnboardingContext): boolean {
       requiresLegacyFlow({
         currentVersion: context.firmwareVersion,
         deviceModelId: context.deviceModelId,
+        isOnboarded: true,
       }))
   );
 }

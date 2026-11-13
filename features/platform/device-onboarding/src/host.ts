@@ -82,7 +82,10 @@ export function flattenDeviceOnboardingContext(
     availableFirmwareVersion:
       firmware?.kind === "offered" ? firmware.update.finalFirmware.version : null,
     firmwareChecked: firmwareSettled(firmware),
-    firmwareUpToDate: firmwareSettled(firmware) ? firmware.kind === "upToDate" : null,
+    firmwareUpToDate:
+      firmwareSettled(firmware) && firmware.kind !== "deferred"
+        ? firmware.kind === "upToDate"
+        : null,
     onEarlyCheckScreen: context.onEarlyCheckScreen,
     returningFromFirmwareUpdate: context.returningFromFirmwareUpdate,
     secureConnectionRequested: snapshot.matches({ checks: { genuineCheck: "awaitingApproval" } }),

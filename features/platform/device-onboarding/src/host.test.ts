@@ -55,6 +55,7 @@ function context(overrides: Partial<DeviceOnboardingContext> = {}): DeviceOnboar
     seedPath: null,
     ...overrides,
     recoveryKeyBackupOpen: overrides.recoveryKeyBackupOpen ?? false,
+    updateAfterSetup: overrides.updateAfterSetup ?? false,
   };
 }
 
@@ -123,6 +124,13 @@ describe("flattenDeviceOnboardingContext", () => {
       expect(flattened.availableFirmwareVersion).toBeNull();
     },
   );
+
+  it("should not call a firmware held back until setup up to date or outdated", () => {
+    const flattened = flattenDeviceOnboardingContext(snapshot({ firmware: { kind: "deferred" } }));
+
+    expect(flattened.firmwareChecked).toBe(true);
+    expect(flattened.firmwareUpToDate).toBeNull();
+  });
 });
 
 describe("toolContext", () => {
