@@ -1240,6 +1240,12 @@ describe("the end of the checks", () => {
 
 describe("a nano firmware update held back until setup", () => {
   const readyAndSeeded = stepChanged(OnboardingStep.Ready, { isOnboarded: true });
+  // Read twice: on entry, then by the first setup poll, which must not see the device ready yet.
+  const unseededRead = os({ ...unseeded, seVersion: "2.3.0" });
+
+  function expectWaitingInSetup(actor: OnboardingActor) {
+    expect(actor.getSnapshot().matches({ deviceSetup: "waiting" })).toBe(true);
+  }
 
   async function enterHeldBackSetup(
     script: Partial<OnboardingDmkScript> = {},
@@ -1389,11 +1395,12 @@ describe("a nano firmware update held back until setup", () => {
 
   it("re-attests a session that changed during setup, then offers the held-back update", async () => {
     const { actor, fake } = await enterHeldBackSetup({
-      osVersion: [os({ ...unseeded, seVersion: "2.3.0" }), os({ ...seeded, seVersion: "2.3.0" })],
+      osVersion: [unseededRead, unseededRead, os({ ...seeded, seVersion: "2.3.0" })],
       genuineCheck: [genuine, genuine],
       firmwareCheck: [updateAvailable],
     });
 
+    expectWaitingInSetup(actor);
     actor.send({ type: "SESSION_CHANGED", sessionId: "session-2" });
     await settle();
     actor.send(readyAndSeeded);
@@ -1406,10 +1413,11 @@ describe("a nano firmware update held back until setup", () => {
 
   it("does not offer the update twice once the re-attested session answered it", async () => {
     const { actor } = await enterHeldBackSetup({
-      osVersion: [os({ ...unseeded, seVersion: "2.3.0" }), os({ ...seeded, seVersion: "2.3.0" })],
+      osVersion: [unseededRead, unseededRead, os({ ...seeded, seVersion: "2.3.0" })],
       genuineCheck: [genuine, genuine],
       firmwareCheck: [updateAvailable],
     });
+    expectWaitingInSetup(actor);
     actor.send({ type: "SESSION_CHANGED", sessionId: "session-2" });
     await settle();
     actor.send(readyAndSeeded);
@@ -1426,10 +1434,11 @@ describe("a nano firmware update held back until setup", () => {
 
   it("re-attests the device when the session changes during the post-setup firmware check", async () => {
     const { actor, fake } = await enterHeldBackSetup({
-      osVersion: [os({ ...unseeded, seVersion: "2.3.0" }), os({ ...seeded, seVersion: "2.3.0" })],
+      osVersion: [unseededRead, unseededRead, os({ ...seeded, seVersion: "2.3.0" })],
       genuineCheck: [genuine, genuine],
       firmwareCheck: [updateAvailable, upToDate],
     });
+    expectWaitingInSetup(actor);
     actor.send(readyAndSeeded);
     await settle();
     expect(actor.getSnapshot().matches({ postSetupFirmware: "firmwareUpdateOffered" })).toBe(true);
@@ -1458,13 +1467,11 @@ describe("a nano firmware update held back until setup", () => {
     const leaveOnboarding = jest.fn();
     const { actor } = await enterHeldBackSetup(
       {
-        osVersion: [
-          os({ ...unseeded, seVersion: "2.3.0" }),
-          { throws: new Error("transport failed") },
-        ],
+        osVersion: [unseededRead, unseededRead, { throws: new Error("transport failed") }],
       },
       { leaveOnboarding },
     );
+    expectWaitingInSetup(actor);
     actor.send(readyAndSeeded);
     await settle();
     actor.send({ type: "USER_ACCEPT" });
