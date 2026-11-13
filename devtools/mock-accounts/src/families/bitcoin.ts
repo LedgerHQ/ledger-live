@@ -63,7 +63,7 @@ export const bitcoin: MockFamily = {
     version: "2",
     type: "utxo",
     network,
-    xpub: xpub(currency.isTestnetFor !== undefined, index, random),
+    key: xpub(currency.isTestnetFor !== undefined, index, random),
     path: `m/${SEGWIT.has(currency.id) ? 84 : 44}h/${currency.coinType}h/${index}h`,
   }),
   address: (currency, random) =>

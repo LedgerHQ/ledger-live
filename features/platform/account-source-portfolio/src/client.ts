@@ -21,6 +21,8 @@ export type BalanceHistoryReadParams = {
   range: BalanceRange;
   size: number;
   token?: string;
+  /** The fiat each point's `currency_value` is in, an ISO 4217 code; USD when absent. */
+  currency?: string;
 };
 
 export type UpdatesReadParams = {

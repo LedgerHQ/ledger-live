@@ -30,13 +30,7 @@ const FATAL_REACT_COMPILER = [
 // require. The rest of the layer had the rule fatal and keeps it.
 const CHILDREN_PROP_IN_TESTS = ["flow-contacts-delete-contact", "flow-contacts-detail"];
 
-const PLATFORM_SUFFIX_WAIVERS = [
-  "account-detail-hero",
-  "large-screen-upsell",
-  "pay-card-auth",
-  "pay-card-widget",
-  "pay-request",
-];
+const PLATFORM_SUFFIX_WAIVERS = ["account-detail-hero", "large-screen-upsell", "pay-card-widget"];
 
 const PLATFORM_STYLE = new URL("../../features/platform/style/", import.meta.url);
 

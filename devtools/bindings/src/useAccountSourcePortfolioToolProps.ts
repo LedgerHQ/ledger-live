@@ -56,7 +56,7 @@ function createHandle(portfolio: PortfolioSource): Handle {
 
 const labelOf = (descriptor: AccountDescriptor) =>
   `${descriptor.network} ${
-    descriptor.type === "utxo" ? `${descriptor.xpub.slice(0, 12)}…` : descriptor.address
+    descriptor.type === "utxo" ? `${descriptor.key.slice(0, 12)}…` : descriptor.key
   }`;
 
 /** Errors land in the source's activity log. */

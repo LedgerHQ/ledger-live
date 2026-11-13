@@ -4,6 +4,7 @@ import {
   type AssetBalanceHistory,
 } from "@domain/entity-account-balance-history";
 import { currencyIdFromNetwork, type AccountDescriptor } from "@domain/entity-account-descriptor";
+import { countervaluesOf, type Fiat } from "../fiat";
 
 /** `unmapped`: token points with no CAL id, left out. `unreadable`: assets with a point that could not be read. */
 export type MappedHistory = { series: AssetBalanceHistory[]; unmapped: number; unreadable: number };
@@ -13,10 +14,11 @@ const assetIdOf = (descriptor: AccountDescriptor, point: BalanceHistoryPoint) =>
 
 const timeOf = (point: BalanceHistoryPoint) => new Date(point.time).getTime();
 
-/** One series per asset, native coin first, each oldest point first. */
+/** One series per asset, native coin first, each oldest point first; valued from `currency_value` with `fiat`. */
 export function toAssetHistories(
   descriptor: AccountDescriptor,
   points: readonly BalanceHistoryPoint[],
+  fiat?: Fiat,
 ): MappedHistory {
   const assets = new Map<string, BalanceHistoryPoint[]>();
   let unmapped = 0;
@@ -38,6 +40,7 @@ export function toAssetHistories(
       points: sorted.map(point => ({
         date: Number.isNaN(timeOf(point)) ? point.time : new Date(point.time).toISOString(),
         balance: point.value,
+        ...countervaluesOf(point.currency_value, fiat),
       })),
     });
     if (parsed.success) return [parsed.data];

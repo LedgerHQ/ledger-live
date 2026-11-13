@@ -6,6 +6,8 @@ import {
   historyGroup,
   serverAccountId,
 } from "../fakeService.mock";
+import { FiatCurrencyTickerSchema } from "@domain/entity-currency-fiat";
+import { fiatOf } from "../fiat";
 import { readHistory } from "./read";
 
 describe("readHistory", () => {
@@ -34,5 +36,22 @@ describe("readHistory", () => {
     const read = await readHistory(client, PORTFOLIO_ID(), serverAccountId(ETH), "all");
 
     expect(read).toMatchObject({ truncated: true, calls: 20 });
+  });
+
+  it("asks the service for the fiat's currency", async () => {
+    const { client } = fakeService({ histories: [historyGroup(ETH)] });
+    const fiat = fiatOf({ countervalue: FiatCurrencyTickerSchema.parse("EUR") });
+
+    await readHistory(client, PORTFOLIO_ID(), serverAccountId(ETH), "week", fiat);
+
+    expect(client.getBalanceHistory.mock.calls.map(([, params]) => params)).toEqual([
+      {
+        account: serverAccountId(ETH),
+        range: "week",
+        size: 100,
+        token: undefined,
+        currency: "EUR",
+      },
+    ]);
   });
 });

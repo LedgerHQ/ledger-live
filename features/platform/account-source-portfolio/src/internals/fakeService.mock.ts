@@ -25,7 +25,7 @@ import { createPortfolioContext, type PortfolioDeps } from "./portfolio";
 const addressOf = (index: number) => `0x${index.toString(16).padStart(40, "0")}`;
 
 export const evm = (index: number, network = "ethereum") =>
-  mockAddressAccountDescriptor({ network, address: addressOf(index), path: "m/44h/60h/0h/0/0" });
+  mockAddressAccountDescriptor({ network, key: addressOf(index), path: "m/44h/60h/0h/0/0" });
 
 /** The service's id of an account the source serves. */
 export function serverAccountId(descriptor: AccountDescriptor): string {
@@ -40,7 +40,7 @@ export const BTC = mockUtxoAccountDescriptor();
 /** An account of a network the service does not synchronize. */
 export const DOT = mockAddressAccountDescriptor({
   network: "polkadot",
-  address: `1${"A".repeat(46)}`,
+  key: `1${"A".repeat(46)}`,
   path: "m/44h/354h/0h/0h/0h",
 });
 
@@ -48,15 +48,15 @@ export const DOT = mockAddressAccountDescriptor({
 export const BIP84_XPUB =
   "xpub6CatWdiZiodmUeTDp8LT5or8nmbKNcuyvz7WyksVFkKB4RHwCD3XyuvPEbvqAQY3rAPshWcMLoP2fMFMKHPJ4ZeZXYVUhLv1VMrjPC7PW6V";
 /** A Bitcoin account the service derives; `BTC` keeps a fixture xpub whose checksum is wrong. */
-export const BITCOIN = mockUtxoAccountDescriptor({ xpub: BIP84_XPUB, path: "m/84h/0h/0h" });
+export const BITCOIN = mockUtxoAccountDescriptor({ key: BIP84_XPUB, path: "m/84h/0h/0h" });
 export const ADA = mockUtxoAccountDescriptor({
   network: "cardano",
-  xpub: "ab".repeat(64),
+  key: "ab".repeat(64),
   path: "m/1852h/1815h/0h",
 });
 export const TRX = mockAddressAccountDescriptor({
   network: "tron",
-  address: `T${"A".repeat(33)}`,
+  key: `T${"A".repeat(33)}`,
   path: "m/44h/195h/0h/0/0",
 });
 

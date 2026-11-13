@@ -60,6 +60,7 @@ function SearchableSheetContent({
         </Box>
       </Box>
       <BottomSheetScrollView
+        alwaysBounceVertical={false}
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag"
         contentContainerStyle={{ paddingBottom: bottomInset }}
@@ -155,8 +156,10 @@ export function AnalyticsFilterSelectView({
           maxDynamicContentSize="fullWithOffset"
           onClose={sheet.close}
         >
-          <BottomSheetScrollView>
-            <BottomSheetHeader />
+          <BottomSheetScrollView stickyHeaderIndices={[0]} alwaysBounceVertical={false}>
+            <Box lx={{ backgroundColor: "canvasSheet" }}>
+              <BottomSheetHeader />
+            </Box>
             <SelectList items={items} value={value} onValueChange={sheet.selectOption}>
               {options}
             </SelectList>

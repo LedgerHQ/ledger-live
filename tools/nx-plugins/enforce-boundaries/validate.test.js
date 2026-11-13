@@ -1514,14 +1514,34 @@ test("devtools host apps: a static import of a non-entry DevTools file is forbid
   ]);
 });
 
-test("devtools host apps: import() and lazy(() => import()) of a DevTools file are allowed", t => {
+test("devtools host apps: import() and lazy(() => import()) of a non-entry DevTools file are forbidden", t => {
   const root = hostWorkspace(t, {
+    [`${LLD_DEVTOOLS}/${NON_ENTRY}.ts`]: "export const x = 1;",
+    [`${LLM_DEVTOOLS}/${NON_ENTRY}.ts`]: "export const x = 1;",
     [`${LLD}/src/renderer/Default.tsx`]: [
       'import { lazy } from "react";',
-      `const Screen = lazy(() => import("LLD/features/DevTools/screens/DevToolsScreen"));`,
+      `const Tool = lazy(() => import("LLD/features/DevTools/${NON_ENTRY}"));`,
       `const load = () => import("../mvvm/features/DevTools/${NON_ENTRY}");`,
     ].join("\n"),
     [`${LLM}/src/components/Nav.tsx`]: `const load = () => import("~/mvvm/features/DevTools/${NON_ENTRY}");`,
+  });
+  assert.deepEqual(hostViolations(root), [
+    `${LLD}/src/renderer/Default.tsx:2 LLD/features/DevTools/${NON_ENTRY} DEVTOOLS_HOST_FOLDER_RULE`,
+    `${LLD}/src/renderer/Default.tsx:3 ../mvvm/features/DevTools/${NON_ENTRY} DEVTOOLS_HOST_FOLDER_RULE`,
+    `${LLM}/src/components/Nav.tsx:1 ~/mvvm/features/DevTools/${NON_ENTRY} DEVTOOLS_HOST_FOLDER_RULE`,
+  ]);
+});
+
+test("devtools host apps: lazy(() => import()) of a declared entry is allowed", t => {
+  const root = hostWorkspace(t, {
+    [`${LLD_DEVTOOLS}/screens/DevToolsScreen/index.tsx`]: "export default 1;",
+    [`${LLM_DEVTOOLS}/screens/DevToolsScreen/index.tsx`]: "export default 1;",
+    [`${LLD}/src/renderer/Default.tsx`]: [
+      'import { lazy } from "react";',
+      'const Screen = lazy(() => import("LLD/features/DevTools/screens/DevToolsScreen"));',
+    ].join("\n"),
+    [`${LLM}/src/components/Nav.tsx`]:
+      'const load = () => import("~/mvvm/features/DevTools/screens/DevToolsScreen");',
   });
   assert.deepEqual(hostViolations(root), []);
 });

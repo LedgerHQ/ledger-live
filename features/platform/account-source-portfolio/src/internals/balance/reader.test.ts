@@ -188,7 +188,7 @@ describe("balanceReader", () => {
 
   it("fails each account whose own call failed, keeping the body out of the outcome", async () => {
     const service = fakeService({ portfolio: synced([ETH, evm(2)]) });
-    service.client.getBalance.mockRejectedValue(new Error(`500 for ${ETH.address}`));
+    service.client.getBalance.mockRejectedValue(new Error(`500 for ${ETH.key}`));
     const { read, outcomeOf, deps } = setup(service);
 
     const settled = await read([ETH, evm(2)]);
@@ -198,7 +198,7 @@ describe("balanceReader", () => {
       expect.any(PortfolioReadError),
     ]);
     expect(settled.map(each => String(reasonOf(each)))).not.toContainEqual(
-      expect.stringContaining(ETH.address),
+      expect.stringContaining(ETH.key),
     );
     expect(outcomeOf(evm(2))).toMatchObject({
       status: "failed",

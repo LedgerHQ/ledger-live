@@ -33,7 +33,7 @@ function sessionPortfolioId(): string {
 
 const labelOf = (descriptor: AccountDescriptor) =>
   `${descriptor.network} ${
-    descriptor.type === "utxo" ? `${descriptor.xpub.slice(0, 12)}…` : descriptor.address
+    descriptor.type === "utxo" ? `${descriptor.key.slice(0, 12)}…` : descriptor.key
   }`;
 
 /** `JSON.stringify(new Error())` is `{}`, so errors are turned into plain objects to be shown. */

@@ -20,7 +20,8 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
 
   const incrementNumberOfErrorsDebug = incrementNumberOfErrors.bind(null, state);
 
-  init(state);
+  const ready = runInitializer(init, state);
+
   return {
     getState() {
       return { ...state };
@@ -30,6 +31,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
 
     async keys() {
       try {
+        await ready;
         return state.storageType === STORAGE_TYPE.MMKV
           ? await mmkvStorageWrapper.keys()
           : await asyncStorageWrapper.keys();
@@ -44,6 +46,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
 
     async get<T>(key: string | string[]) {
       try {
+        await ready;
         return state.storageType === STORAGE_TYPE.MMKV
           ? mmkvStorageWrapper.get<T>(key)
           : await asyncStorageWrapper.get<T>(key);
@@ -59,6 +62,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
 
     async getString(key) {
       try {
+        await ready;
         return state.storageType === STORAGE_TYPE.MMKV
           ? mmkvStorageWrapper.getString(key)
           : await asyncStorageWrapper.getString(key);
@@ -74,6 +78,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
 
     async save(key, value) {
       try {
+        await ready;
         return state.storageType === STORAGE_TYPE.MMKV
           ? mmkvStorageWrapper.save(key, value)
           : await asyncStorageWrapper.save(key, value);
@@ -88,6 +93,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
 
     async saveString(key, value) {
       try {
+        await ready;
         return state.storageType === STORAGE_TYPE.MMKV
           ? mmkvStorageWrapper.saveString(key, value)
           : await asyncStorageWrapper.saveString(key, value);
@@ -102,6 +108,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
 
     async update(key, value) {
       try {
+        await ready;
         return state.storageType === STORAGE_TYPE.MMKV
           ? mmkvStorageWrapper.update(key, value)
           : await asyncStorageWrapper.update(key, value);
@@ -116,6 +123,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
 
     async delete(key) {
       try {
+        await ready;
         return state.storageType === STORAGE_TYPE.MMKV
           ? await mmkvStorageWrapper.delete(key)
           : await asyncStorageWrapper.delete(key);
@@ -130,6 +138,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
 
     async deleteAll() {
       try {
+        await ready;
         return state.storageType === STORAGE_TYPE.MMKV
           ? await mmkvStorageWrapper.deleteAll()
           : await asyncStorageWrapper.deleteAll();
@@ -144,6 +153,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
 
     async push(key, value) {
       try {
+        await ready;
         return state.storageType === STORAGE_TYPE.MMKV
           ? mmkvStorageWrapper.push(key, value)
           : await asyncStorageWrapper.push(key, value);
@@ -158,6 +168,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
 
     async stringify() {
       try {
+        await ready;
         return state.storageType === STORAGE_TYPE.MMKV
           ? mmkvStorageWrapper.stringify()
           : await asyncStorageWrapper.stringify();
@@ -172,6 +183,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
 
     async migrate() {
       try {
+        await ready;
         await migrator.migrate(state);
       } catch (e) {
         console.error("Error while migrating storage", {
@@ -184,6 +196,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
 
     async resetMigration() {
       try {
+        await ready;
         await migrator.resetMigration(state);
       } catch (e) {
         console.error("Error while resetting migration", {
@@ -196,6 +209,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
 
     async handleMigration() {
       try {
+        await ready;
         await migrator.handleMigration(state);
       } catch (e) {
         console.error("Error handling migration", {
@@ -214,14 +228,40 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
  * @param state
  * The storage state to initialize.
  */
-export function initStorageState(state: StorageState): void {
-  const isMMKVReady =
-    mmkvStorageWrapper.getString(MIGRATION_STATUS_KEY) === MIGRATION_STATUS.COMPLETED;
+export async function initStorageState(state: StorageState): Promise<void> {
+  const migrationStatus = mmkvStorageWrapper.getString(MIGRATION_STATUS_KEY);
 
-  if (isMMKVReady) {
+  if (migrationStatus === MIGRATION_STATUS.COMPLETED) {
+    state.storageType = STORAGE_TYPE.MMKV;
+    state.migrationStatus = MIGRATION_STATUS.COMPLETED;
+    return;
+  }
+
+  if (migrationStatus !== null) return;
+
+  const nothingInAsyncStorage = (await asyncStorageWrapper.keys()).length === 0;
+  if (nothingInAsyncStorage) {
+    mmkvStorageWrapper.saveString(MIGRATION_STATUS_KEY, MIGRATION_STATUS.COMPLETED);
     state.storageType = STORAGE_TYPE.MMKV;
     state.migrationStatus = MIGRATION_STATUS.COMPLETED;
   }
+}
+
+/**
+ * Runs the initializer synchronously, so a synchronous state change applies at once.
+ * The returned promise never rejects: on error, the storage stays on AsyncStorage.
+ */
+function runInitializer(init: StorageInitializer, state: StorageState): Promise<void> {
+  try {
+    return Promise.resolve(init(state)).catch(logInitError);
+  } catch (e) {
+    logInitError(e);
+    return Promise.resolve();
+  }
+}
+
+function logInitError(error: unknown): void {
+  console.warn("Failed to initialize storage, staying on AsyncStorage", error);
 }
 
 function incrementNumberOfErrors(state: StorageState, error: unknown): void {

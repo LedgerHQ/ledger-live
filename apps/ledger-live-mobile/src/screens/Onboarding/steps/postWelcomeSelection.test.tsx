@@ -3,14 +3,18 @@ import { Text } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { track, trackPage } from "@shared/analytics";
 import { render, screen, withFlagOverrides } from "@tests/test-renderer";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import type {
   OnboardingEntrySource,
   OnboardingNavigatorParamList,
 } from "~/components/RootNavigator/types/OnboardingNavigator";
 import PostWelcomeSelection from "./postWelcomeSelection";
 
-const Stack = createNativeStackNavigator<OnboardingNavigatorParamList>();
+type TestParamList = OnboardingNavigatorParamList & {
+  [NavigatorName.DeviceOnboarding]: undefined;
+};
+
+const Stack = createNativeStackNavigator<TestParamList>();
 
 function renderGetStarted(source?: OnboardingEntrySource, connectUnseededDevice?: boolean) {
   return render(
@@ -23,14 +27,8 @@ function renderGetStarted(source?: OnboardingEntrySource, connectUnseededDevice?
       <Stack.Screen name={ScreenName.OnboardingDeviceSelection}>
         {() => <Text>device selection</Text>}
       </Stack.Screen>
-      <Stack.Screen name={ScreenName.OnboardingPairNew}>
-        {({ route }) => (
-          <Text>
-            {route.params.deviceModelId === undefined && route.params.connectUnseededDevice
-              ? "connect new device"
-              : "pair new"}
-          </Text>
-        )}
+      <Stack.Screen name={NavigatorName.DeviceOnboarding}>
+        {() => <Text>device flow</Text>}
       </Stack.Screen>
       <Stack.Screen name={ScreenName.OnboardingWelcomeBack}>
         {() => <Text>welcome back</Text>}
@@ -90,12 +88,12 @@ describe("PostWelcomeSelection", () => {
     expect(await screen.findByText("device selection")).toBeVisible();
   });
 
-  it("should open connect new device without a model when connectUnseededDevice is on", async () => {
+  it("should open the device flow when connectUnseededDevice is on", async () => {
     const { user } = renderGetStarted(undefined, true);
 
     await user.press(screen.getByTestId("onboarding-setupLedger"));
 
-    expect(await screen.findByText("connect new device")).toBeVisible();
+    expect(await screen.findByText("device flow")).toBeVisible();
     expect(screen.queryByText("device selection")).toBeNull();
   });
 

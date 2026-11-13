@@ -3,7 +3,8 @@ import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { getMinimumSwapAmount } from "@ledgerhq/live-e2e-shared/swap";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { retryUntilTimeout } from "@e2e/utils/retry";
-import { expectWithinTolerance } from "@e2e/utils/amountUtils";
+import { expectFormattedAmount, expectWithinTolerance } from "@e2e/utils/amountUtils";
+import type { NumberSeparators } from "@ledgerhq/live-e2e-shared/data/numberFormat";
 import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
 import { floatNumberRegex } from "@ledgerhq/live-e2e-shared/data/regexes";
 import {
@@ -450,6 +451,28 @@ export default class SwapLiveAppPage {
         )
       )[0] ?? "";
     return { amount, fiatAmount };
+  }
+
+  @Step("Check swap amounts are formatted with the language separators")
+  async checkAmountsFormatting(separators: NumberSeparators) {
+    // The send-amount input always groups with plain whitespace.
+    expectFormattedAmount(
+      await this.getAmountToSend(),
+      { decimal: separators.decimal, thousands: " " },
+      "send amount input",
+    );
+    expectFormattedAmount(
+      await this.getSendCountervalueText(),
+      separators,
+      "send amount countervalue",
+    );
+    expectFormattedAmount(await this.getAmountToReceive(), separators, "receive amount");
+
+    // Provider list is sorted best-first, so the first entry is the best offer.
+    const [bestProvider] = await this.getProviderList();
+    const { amount, fiatAmount } = await this.getQuoteCardRawText(bestProvider);
+    expectFormattedAmount(amount, separators, `best quote (${bestProvider}) amount`);
+    expectFormattedAmount(fiatAmount, separators, `best quote (${bestProvider}) fiat amount`);
   }
 
   @Step("Check currency to swap from is {{{0}}} with amount {{{1}}}")

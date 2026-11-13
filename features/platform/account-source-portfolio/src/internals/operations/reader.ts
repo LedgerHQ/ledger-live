@@ -13,7 +13,8 @@ import {
 } from "../portfolio";
 import { failedRead, readinessOf } from "../readiness";
 import { logActivity } from "../snapshot";
-import { fiatOf, limitOf, readUpdates, serviceAssetOf } from "./read";
+import { fiatOf } from "../fiat";
+import { limitOf, readUpdates, serviceAssetOf } from "./read";
 import { verdictOf, type Verdict } from "./verdict";
 
 async function readOne(

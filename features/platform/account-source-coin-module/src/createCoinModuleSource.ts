@@ -9,12 +9,12 @@ import type { CoinModuleHost } from "./host";
 import { toAccountBalances } from "./internals/toAccountBalances";
 import { readOperationsPage } from "./internals/readOperationsPage";
 
-/** An account-based coin module reads the address, a utxo one the xpub. */
-const subjectOf = (descriptor: AccountDescriptor) =>
-  descriptor.type === "utxo" ? descriptor.xpub : descriptor.address;
-
 /** Serves an account whose currency has a coin module, reading the coin module itself, with no bridge in between. */
 export function createCoinModuleSource(host: CoinModuleHost): AccountDataSource {
+  /** An account-based coin module reads the address, a utxo one the xpub. */
+  const subjectOf = async ({ type, network, key }: AccountDescriptor) =>
+    type === "utxo" || !host.addressOf ? key : host.addressOf(currencyIdFromNetwork(network), key);
+
   const supports = ({ type, network }: AccountDescriptor, kind: AccountDataKind) => {
     try {
       const currencyId = currencyIdFromNetwork(network);
@@ -36,7 +36,7 @@ export function createCoinModuleSource(host: CoinModuleHost): AccountDataSource 
     }
     return toAccountBalances(
       currencyId,
-      await api.getBalance(subjectOf(descriptor)),
+      await api.getBalance(await subjectOf(descriptor)),
       api,
       new Set(host.blacklistedTokenIds?.()),
     );
@@ -50,7 +50,7 @@ export function createCoinModuleSource(host: CoinModuleHost): AccountDataSource 
     }
     return readOperationsPage(api, {
       currencyId,
-      subject: subjectOf(descriptor),
+      subject: await subjectOf(descriptor),
       cursor,
       limit: query?.limit,
       filterAsset: query?.filterAsset,

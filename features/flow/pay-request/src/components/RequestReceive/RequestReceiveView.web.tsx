@@ -1,8 +1,8 @@
 import React from "react";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
-import { RequestReceiveSummary } from "./RequestReceiveSummary.web";
-import { RequestReceiveActions } from "./RequestReceiveActions.web";
-import { useRequestReceiveView } from "./useRequestReceiveView.web";
+import { RequestReceiveSummary } from "./RequestReceiveSummary";
+import { RequestReceiveActions } from "./RequestReceiveActions";
+import { useRequestReceiveView } from "./useRequestReceiveView";
 import type { RequestReceiveViewProps } from "../../types";
 
 export function RequestReceiveView({

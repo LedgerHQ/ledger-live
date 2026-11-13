@@ -5,7 +5,7 @@ const {
   webModuleNameMapper,
 } = require("@support/jest/shared");
 
-// Only Banner needs a package-specific stub (see jest/mocks); it replaces the preset's Lumen mock.
+// Only Banner and Button need package-specific stubs (see jest/mocks); they replace the preset's Lumen mock.
 module.exports = createSharedUiJestConfig({
   webOverrides: {
     moduleNameMapper: {

@@ -28,6 +28,10 @@ When a task includes Jira or Confluence links, use Atlassian MCP to fetch and re
 
 When a task involves GitHub — pull requests, issues, CI checks, or releases — use the `gh` CLI by default.
 
+## Commits and changesets
+
+Before committing, read the [git-conventions](./.agents/skills/git-conventions/SKILL.md) skill. Before creating or editing a file in `.changeset/`, read the [create-changeset](./.agents/skills/create-changeset/SKILL.md) skill: it decides whether a change needs one and which bump to use.
+
 ## Validate Before Finishing
 
 Before completing or pushing code changes, run the [validate-changes](./.agents/skills/validate-changes/SKILL.md) skill.

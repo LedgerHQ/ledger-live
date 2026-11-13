@@ -40,7 +40,7 @@ describe("listPortfolio", () => {
 describe("refresh", () => {
   it("logs a failed listing and rethrows it", async () => {
     const { client } = fakeService();
-    client.getPortfolio.mockRejectedValue(new Error(`500 for ${ETH.address}`));
+    client.getPortfolio.mockRejectedValue(new Error(`500 for ${ETH.key}`));
     const deps = depsOf(client);
 
     await expect(refresh(deps)).rejects.toThrow("500 for");
@@ -89,7 +89,7 @@ describe("registerMissing", () => {
     await registerMissing(depsOf(client), [ETH, POLYGON]);
 
     expect(client.addRegistrations.mock.calls.map(([, registrations]) => registrations)).toEqual([
-      [{ type: "evm", address: ETH.address }],
+      [{ type: "evm", address: ETH.key }],
     ]);
   });
 
@@ -100,8 +100,8 @@ describe("registerMissing", () => {
     await Promise.all([registerMissing(deps, [ETH]), registerMissing(deps, [evm(2), ETH])]);
 
     expect(client.addRegistrations.mock.calls.map(([, registrations]) => registrations)).toEqual([
-      [{ type: "evm", address: ETH.address }],
-      [{ type: "evm", address: evm(2).address }],
+      [{ type: "evm", address: ETH.key }],
+      [{ type: "evm", address: evm(2).key }],
     ]);
   });
 });
@@ -225,7 +225,7 @@ describe("reconcile", () => {
 
     expect(service.client.removeRegistrations).toHaveBeenCalledWith(expect.anything(), ["known-0"]);
     expect(service.state.portfolio?.registrations).toEqual([
-      expect.objectContaining({ type: "evm", address: ETH.address }),
+      expect.objectContaining({ type: "evm", address: ETH.key }),
     ]);
   });
 

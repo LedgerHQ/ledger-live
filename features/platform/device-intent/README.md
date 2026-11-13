@@ -118,6 +118,20 @@ The platform contract uses DMK `DeviceModelId` values exclusively:
 - `DeviceConnectionResult.connectedDevice.modelId` is the connected model ID.
 - `compatDeviceModelId` does not exist.
 
+A flow that cannot run on some models (a coin app missing on Nano S, for
+example) excludes them with `acceptedDeviceModelIdsExcluding`. The executor
+then refuses those models at device selection instead of failing later on the
+device:
+
+```ts
+const deviceConnectionParams: DeviceConnectionParams = {
+  acceptedDeviceModelIds: acceptedDeviceModelIdsExcluding([DeviceModelId.NANO_S]),
+};
+```
+
+With no exclusion it returns `[]` (every model accepted). Excluding every model
+throws `NoAcceptedDeviceModelError`.
+
 Callers must adapt only at legacy boundaries. For example, Desktop and Mobile
 convert accepted DMK IDs before calling the current legacy connection APIs:
 
@@ -270,6 +284,13 @@ sequenceDiagram
 | `IntentListeners<JobState, Result>`                             | Optional lifecycle and result callbacks attachable to an intent instance     |
 | `Intent<JobState, Input, ExtraProps, Result>`                   | Runtime instance passed to the executor                                      |
 | `createIntent(definition, input, listeners?)`                   | Helper to instantiate an `Intent` from a platform definition                 |
+
+### Device model helpers (`src/acceptedDeviceModelIds.ts`, `src/errors.ts`)
+
+| Export                                              | Description                                                               |
+| --------------------------------------------------- | ------------------------------------------------------------------------- |
+| `acceptedDeviceModelIdsExcluding(unsupportedIds?)`  | Builds `acceptedDeviceModelIds` accepting every model but the given ones  |
+| `NoAcceptedDeviceModelError`                        | Thrown by `acceptedDeviceModelIdsExcluding` when every model is excluded  |
 
 ### Executor types (`src/executor.ts`)
 

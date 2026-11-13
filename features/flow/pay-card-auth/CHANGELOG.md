@@ -1,5 +1,35 @@
 # @features/flow-pay-card-auth
 
+## 0.12.0
+
+### Minor Changes
+
+- [#24392](https://github.com/LedgerHQ/ledger-live/pull/24392) [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @reduxjs/toolkit to v2.13.0
+
+  - Updated `@reduxjs/toolkit` to `2.13.0`
+
+### Patch Changes
+
+- Updated dependencies [[`6196234`](https://github.com/LedgerHQ/ledger-live/commit/61962349d0487b0e1f318d2ab36753befc434624), [`49ae0f6`](https://github.com/LedgerHQ/ledger-live/commit/49ae0f60632ad4ad518b8a7420ab02239f3fa144), [`52622fa`](https://github.com/LedgerHQ/ledger-live/commit/52622fa571b8c7b549d185525f4511dc3ebdfa82), [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f)]:
+  - @shared/ui-info-state@0.7.0
+  - @domain/api-card-management@0.9.0
+  - @features/platform-card@0.9.0
+
+## 0.12.0-next.0
+
+### Minor Changes
+
+- [#24392](https://github.com/LedgerHQ/ledger-live/pull/24392) [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @reduxjs/toolkit to v2.13.0
+
+  - Updated `@reduxjs/toolkit` to `2.13.0`
+
+### Patch Changes
+
+- Updated dependencies [[`6196234`](https://github.com/LedgerHQ/ledger-live/commit/61962349d0487b0e1f318d2ab36753befc434624), [`49ae0f6`](https://github.com/LedgerHQ/ledger-live/commit/49ae0f60632ad4ad518b8a7420ab02239f3fa144), [`52622fa`](https://github.com/LedgerHQ/ledger-live/commit/52622fa571b8c7b549d185525f4511dc3ebdfa82), [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f)]:
+  - @shared/ui-info-state@0.7.0-next.0
+  - @domain/api-card-management@0.9.0-next.0
+  - @features/platform-card@0.9.0-next.0
+
 ## 0.11.1
 
 ### Patch Changes
@@ -543,45 +573,5 @@
   - @shared/ui-queued-bottom-sheet@0.3.0-next.0
   - @features/platform-card@0.4.0-next.0
   - @shared/i18n@0.2.0
-
-## 0.5.0
-
-### Minor Changes
-
-- [#21115](https://github.com/LedgerHQ/ledger-live/pull/21115) [`0500726`](https://github.com/LedgerHQ/ledger-live/commit/05007264f5b1726a21c2e545a10c18993fd2fcb5) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Forget the cached Card user when a 401 ends the session, not only on an explicit logout.
-
-  - The logout already dispatched `resetApiState()`; the involuntary path cleared the keychain session
-    and left the RTK cache behind.
-  - That cache holds the holder name, PAN last 4 and verification state, so the next person to sign in
-    on the device could be served the previous holder's data before a refetch landed.
-  - `forgetUser` is now a login port too, called wherever the session is cleared.
-
-- [#21258](https://github.com/LedgerHQ/ledger-live/pull/21258) [`ad1c0ff`](https://github.com/LedgerHQ/ledger-live/commit/ad1c0ff93b94ba9a0b1e7409e5ddbdc2d73bcd30) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add the contacts section to the Pay tab, with a leading Pay tile opening the send flow. Balance, Contacts and Card now share a s24 gap and inherit their horizontal padding from the Pay tab container.
-
-### Patch Changes
-
-- Updated dependencies [[`6918e5b`](https://github.com/LedgerHQ/ledger-live/commit/6918e5b285afe016d54f95090d44db3c1467fcec), [`e8c2316`](https://github.com/LedgerHQ/ledger-live/commit/e8c23168916415e569b27b530c71785e0dd2f29e), [`9f130fb`](https://github.com/LedgerHQ/ledger-live/commit/9f130fb908ad4596ef5697189633a3470935de75)]:
-  - @domain/api-card-management@0.4.0
-  - @features/platform-card@0.3.1
-
-## 0.5.0-next.0
-
-### Minor Changes
-
-- [#21115](https://github.com/LedgerHQ/ledger-live/pull/21115) [`0500726`](https://github.com/LedgerHQ/ledger-live/commit/05007264f5b1726a21c2e545a10c18993fd2fcb5) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Forget the cached Card user when a 401 ends the session, not only on an explicit logout.
-
-  - The logout already dispatched `resetApiState()`; the involuntary path cleared the keychain session
-    and left the RTK cache behind.
-  - That cache holds the holder name, PAN last 4 and verification state, so the next person to sign in
-    on the device could be served the previous holder's data before a refetch landed.
-  - `forgetUser` is now a login port too, called wherever the session is cleared.
-
-- [#21258](https://github.com/LedgerHQ/ledger-live/pull/21258) [`ad1c0ff`](https://github.com/LedgerHQ/ledger-live/commit/ad1c0ff93b94ba9a0b1e7409e5ddbdc2d73bcd30) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add the contacts section to the Pay tab, with a leading Pay tile opening the send flow. Balance, Contacts and Card now share a s24 gap and inherit their horizontal padding from the Pay tab container.
-
-### Patch Changes
-
-- Updated dependencies [[`6918e5b`](https://github.com/LedgerHQ/ledger-live/commit/6918e5b285afe016d54f95090d44db3c1467fcec), [`e8c2316`](https://github.com/LedgerHQ/ledger-live/commit/e8c23168916415e569b27b530c71785e0dd2f29e), [`9f130fb`](https://github.com/LedgerHQ/ledger-live/commit/9f130fb908ad4596ef5697189633a3470935de75)]:
-  - @domain/api-card-management@0.4.0-next.0
-  - @features/platform-card@0.3.1-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

@@ -16,6 +16,7 @@ import { backfillOnboardingDate } from "~/logic/postOnboarding/backfillOnboardin
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import mmkvStorageWrapper from "LLM/storage/mmkvStorageWrapper";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
+import { logFirstCountervaluesLoad } from "LLM/utils/logStartup/logFirstCountervaluesLoad";
 import type { StorageCurrencyData, StoreStorageData } from "LLM/utils/logLastStartupEvents";
 import { STARTUP_EVENTS } from "LLM/utils/resolveStartupEvents";
 import {
@@ -310,11 +311,13 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         hasOnboardedWithDeviceSelector(store.getState()),
       );
 
+      logStartupEvent("Store ready");
       setReady(true);
       onInitFinished();
 
       const currenciesHydrated = hydrateCurrencies().finally(() => setCurrencyInitialized(true)); // Don't block the App rendering for this
       void startCountervaluesWhenReady(store, initialCountervalues, currenciesHydrated);
+      logFirstCountervaluesLoad(store);
       await currenciesHydrated;
     } catch (error) {
       console.error(

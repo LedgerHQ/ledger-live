@@ -1,12 +1,14 @@
 import type { AccountTarget } from "@domain/api-account-data";
 import type { AccountBalanceHistoryQuery } from "@domain/entity-account-balance-history";
 import { computeAccountUUID } from "@domain/entity-account-descriptor";
+import { FiatCurrencyTickerSchema } from "@domain/entity-currency-fiat";
 import {
   ETH,
   depsOf,
   evm,
   fakeService,
   historyGroup,
+  point,
   reasonOf,
   serviceAccount,
   synced,
@@ -46,6 +48,44 @@ describe("balanceHistoryReader", () => {
     });
   });
 
+  it("values each point in the countervalue asked of the service", async () => {
+    const { read, client } = setup(
+      fakeService({
+        portfolio: synced([ETH]),
+        histories: [historyGroup(ETH, [point(ETH, { value: "10", currency_value: 2.5 })])],
+      }),
+    );
+
+    const [settled] = await read([targetOf(ETH)], {
+      range: "week",
+      countervalue: FiatCurrencyTickerSchema.parse("USD"),
+    });
+
+    expect(client.getBalanceHistory).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ currency: "USD" }),
+      undefined,
+    );
+    expect(settled).toMatchObject({
+      status: "fulfilled",
+      value: { series: [{ points: [{ balance: "10", countervalues: { USD: "250" } }] }] },
+    });
+  });
+
+  it("asks the service for no currency without a countervalue", async () => {
+    const { read, client } = setup(
+      fakeService({ portfolio: synced([ETH]), histories: [historyGroup(ETH)] }),
+    );
+
+    await read([targetOf(ETH)], { range: "week" });
+
+    expect(client.getBalanceHistory).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.not.objectContaining({ currency: expect.anything() }),
+      undefined,
+    );
+  });
+
   it("reads the default range when the query names none", async () => {
     const { read } = setup(
       fakeService({ portfolio: synced([ETH]), histories: [historyGroup(ETH)] }),
@@ -79,7 +119,7 @@ describe("balanceHistoryReader", () => {
   it("fails only the account whose call failed, keeping the body out", async () => {
     const service = fakeService({ portfolio: synced([ETH, evm(2)]) });
     service.client.getBalanceHistory.mockImplementation(async (_id, { account }) => {
-      if (account.endsWith(evm(2).address)) throw new Error(`500 for ${evm(2).address}`);
+      if (account.endsWith(evm(2).key)) throw new Error(`500 for ${evm(2).key}`);
       return { items: [historyGroup(ETH)], nextToken: undefined };
     });
     const { read } = setup(service);
@@ -88,7 +128,7 @@ describe("balanceHistoryReader", () => {
 
     expect(eth.status).toBe("fulfilled");
     expect(reasonOf(failed)).toBeInstanceOf(PortfolioReadError);
-    expect(String(reasonOf(failed))).not.toContain(evm(2).address);
+    expect(String(reasonOf(failed))).not.toContain(evm(2).key);
   });
 
   it("cancels the calls of an account whose read is cancelled, and frees the source", async () => {

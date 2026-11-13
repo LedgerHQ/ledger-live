@@ -1,7 +1,7 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { StyleProvider } from "@features/platform-style/web";
-import { CardLoginView } from "../CardLoginView.web";
+import { CardLoginView } from "../CardLoginView";
 import type { CardAuthErrorCopy, CardLoginIntroViewProps } from "../types";
 
 const intro: CardLoginIntroViewProps = {

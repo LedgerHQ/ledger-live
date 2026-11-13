@@ -1,5 +1,39 @@
 # @domain/entity-contact
 
+## 0.13.0
+
+### Minor Changes
+
+- [#24340](https://github.com/LedgerHQ/ledger-live/pull/24340) [`360d6c9`](https://github.com/LedgerHQ/ledger-live/commit/360d6c9c4e4c37284397ee3118224767bc49076b) Thanks [@ysitbon](https://github.com/ysitbon)! - Give `ContactId`, `ContactAddressId` and `ContactAddressValue` distinct brands in `@domain/entity-contact`, so one can no longer be passed for another. Runtime parsing is unchanged.
+
+- [#24370](https://github.com/LedgerHQ/ledger-live/pull/24370) [`cea0076`](https://github.com/LedgerHQ/ledger-live/commit/cea0076fb3fd7c19d0e73b99ac76507278e390a4) Thanks [@ysitbon](https://github.com/ysitbon)! - Add `CryptoOrTokenCurrencyIdSchema` and `CryptoOrTokenCurrencyId` to `@domain/entity-currency`, replacing the duplicated `BalanceAssetIdSchema`, `ContactCurrencyIdSchema` and the send flow's local union. Runtime parsing is unchanged.
+
+- [#24392](https://github.com/LedgerHQ/ledger-live/pull/24392) [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @reduxjs/toolkit to v2.13.0
+
+  - Updated `@reduxjs/toolkit` to `2.13.0`
+
+### Patch Changes
+
+- Updated dependencies [[`cea0076`](https://github.com/LedgerHQ/ledger-live/commit/cea0076fb3fd7c19d0e73b99ac76507278e390a4)]:
+  - @domain/entity-currency@0.5.0
+
+## 0.13.0-next.0
+
+### Minor Changes
+
+- [#24340](https://github.com/LedgerHQ/ledger-live/pull/24340) [`360d6c9`](https://github.com/LedgerHQ/ledger-live/commit/360d6c9c4e4c37284397ee3118224767bc49076b) Thanks [@ysitbon](https://github.com/ysitbon)! - Give `ContactId`, `ContactAddressId` and `ContactAddressValue` distinct brands in `@domain/entity-contact`, so one can no longer be passed for another. Runtime parsing is unchanged.
+
+- [#24370](https://github.com/LedgerHQ/ledger-live/pull/24370) [`cea0076`](https://github.com/LedgerHQ/ledger-live/commit/cea0076fb3fd7c19d0e73b99ac76507278e390a4) Thanks [@ysitbon](https://github.com/ysitbon)! - Add `CryptoOrTokenCurrencyIdSchema` and `CryptoOrTokenCurrencyId` to `@domain/entity-currency`, replacing the duplicated `BalanceAssetIdSchema`, `ContactCurrencyIdSchema` and the send flow's local union. Runtime parsing is unchanged.
+
+- [#24392](https://github.com/LedgerHQ/ledger-live/pull/24392) [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @reduxjs/toolkit to v2.13.0
+
+  - Updated `@reduxjs/toolkit` to `2.13.0`
+
+### Patch Changes
+
+- Updated dependencies [[`cea0076`](https://github.com/LedgerHQ/ledger-live/commit/cea0076fb3fd7c19d0e73b99ac76507278e390a4)]:
+  - @domain/entity-currency@0.5.0-next.0
+
 ## 0.12.3
 
 ### Patch Changes
@@ -225,30 +259,5 @@
 
 - Updated dependencies [[`9e0c703`](https://github.com/LedgerHQ/ledger-live/commit/9e0c703631379409b5a9bee047832e9ac147a249)]:
   - @shared/cloud-sync-module@0.3.0
-
-## 0.8.0-next.0
-
-### Minor Changes
-
-- [#20917](https://github.com/LedgerHQ/ledger-live/pull/20917) [`f427599`](https://github.com/LedgerHQ/ledger-live/commit/f42759916771b6445544255700082ccdaa3466c4) Thanks [@deepyjr](https://github.com/deepyjr)! - Allow numbers in contact names and hide add-contact actions when a Contacts search has no results.
-
-- [#20963](https://github.com/LedgerHQ/ledger-live/pull/20963) [`55b7e6d`](https://github.com/LedgerHQ/ledger-live/commit/55b7e6d50aa1e97da3b1ae3405263e99b5fe5bde) Thanks [@deepyjr](https://github.com/deepyjr)! - Extract the Edit contact journey, share contact-name input primitives through Platform Contacts, and
-  own the contact-name length limit in the Contact entity.
-
-### Patch Changes
-
-- Updated dependencies [[`9e0c703`](https://github.com/LedgerHQ/ledger-live/commit/9e0c703631379409b5a9bee047832e9ac147a249)]:
-  - @shared/cloud-sync-module@0.3.0-next.0
-
-## 0.7.0
-
-### Minor Changes
-
-- [#20570](https://github.com/LedgerHQ/ledger-live/pull/20570) [`8605089`](https://github.com/LedgerHQ/ledger-live/commit/8605089242fd91da0ee4c6a7e8ea2f5a9f58962a) Thanks [@deepyjr](https://github.com/deepyjr)! - Add typed Device Intent data and a Cloud Sync document for Contacts.
-
-### Patch Changes
-
-- Updated dependencies [[`79882e2`](https://github.com/LedgerHQ/ledger-live/commit/79882e26a14f246f1cc969937e011b16e701b8f2)]:
-  - @domain/entity-currency-token@0.5.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

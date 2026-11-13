@@ -1,7 +1,7 @@
 import React from "react";
 import { View } from "react-native";
 import { render, screen } from "@testing-library/react-native";
-import { CardLogin } from "../CardLogin.native";
+import { CardLogin } from "../CardLogin";
 import type { CardLoginProps } from "../CardLogin.types";
 import type { CardLoginViewModel } from "../types";
 
