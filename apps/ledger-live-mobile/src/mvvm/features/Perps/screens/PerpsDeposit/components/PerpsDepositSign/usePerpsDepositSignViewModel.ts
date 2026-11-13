@@ -7,7 +7,7 @@ import {
   type PerpsDepositDeviceStep,
   type PerpsDepositOutcome,
 } from "LLM/features/Perps/hooks/usePerpsDepositExecution";
-import { isUserRefusal } from "LLM/features/Perps/utils/isUserRefusal";
+import { isUserRefusal } from "@ledgerhq/live-common/wallet-api/Perps/isUserRefusal";
 
 const ignoreHeaderOptions = (_request: SetHeaderOptionsRequest) => undefined;
 
