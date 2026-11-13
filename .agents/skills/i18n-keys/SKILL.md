@@ -23,8 +23,7 @@ A key prop coming from `apps/*` is a smell; key props between components of the 
 ## Write keys the check can verify
 
 A key is verified when its type is a finite set of literals. A key typed `string` is
-**unverifiable**: it is counted and the count may never go up (`unverifiable-baseline.json`).
-Prefer, in this order:
+**unverifiable** and fails the check. Prefer, in this order:
 
 1. **Literal at the call site**: `t("payTab.login.title")`. Greppable, needs no types.
 2. **Domain union, key derived in one place**: a new member fails the check until its key exists.
@@ -46,15 +45,16 @@ const rows = [{ key: "a" }, { key: "b" }]; // add as const
 function labelKey(kind: Kind): string { ... } // annotate the literal union
 ```
 
+The check resolves workspace packages only: a type inferred from a third-party package (`z.infer`,
+a `react-native-keychain` enum) is `any` to it. Map such a value through a feature-owned
+`as const satisfies Record<DomainUnion, string>` table, read by a helper whose parameter is the
+table's own keys.
+
 Template spans must be unions or literal consts, not `string` or `number`. Template keys are not
 greppable: the check, not search, protects a "dead" key from deletion.
 
 ## When the check fails
 
 - **missing in an app**: add the key to that app's English catalog.
-- **unverifiable count went up**: narrow the type (above), never raise the baseline.
-- **count went down** (CI fails until the baseline is lowered): run `node tools/nx-plugins/enforce-i18n-keys/validate.js --update-baseline`.
+- **unverifiable site**: narrow the key type (above).
 - **a union member has no key in an app**: add the key, or remove the member if that app never uses it.
-  `allowMissing` in `unverifiable-baseline.json` lists known gaps for the owning product team to fix;
-  do not add to it without a reason in the PR.
-- **stale `allowMissing` entry**: the gap is fixed, remove the entry.
