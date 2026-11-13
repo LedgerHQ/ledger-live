@@ -2,7 +2,9 @@ import {
   DisabledTransactionBroadcastError,
   MissingSwapPayloadParamaters,
 } from "@ledgerhq/live-common/errors";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getIsSwapRetryPending } from "@ledgerhq/live-common/exchange/error";
+import { addSellOperation } from "@ledgerhq/live-common/exchange/sell/sellOperations";
 import { getUpdateAccountWithUpdaterParams } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams";
 import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { Exchange } from "@ledgerhq/live-common/exchange/types";
@@ -258,6 +260,14 @@ const Body = ({
     [dispatch, exchange, transactionParams, provider],
   );
 
+  const recordSellOperation = useCallback(
+    (operation: Operation) => {
+      const mainAccount = getMainAccount(account, parentAccount);
+      dispatch(updateAccountWithUpdater(mainAccount.id, a => addSellOperation(a, operation)));
+    },
+    [dispatch, account, parentAccount],
+  );
+
   const getResultByTransactionType = (isSwapTransaction: boolean, mode: ExchangeMode) => {
     return isSwapTransaction
       ? {
@@ -334,6 +344,7 @@ const Body = ({
       if (isSwapTransaction) {
         handleSwapTransaction(operation, result);
       } else if (isSellTransaction || isFundTransaction) {
+        if (isSellTransaction) recordSellOperation(operation);
         handleTransactionResult(result, operation);
       } else {
         // old platform exchange flow
@@ -351,6 +362,7 @@ const Body = ({
       targetCurrency,
       data.exchangeType,
       updateAccount,
+      recordSellOperation,
       provider,
       onResult,
       onCancel,
