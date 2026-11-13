@@ -43,6 +43,7 @@ import DebugCommandSender from "~/screens/Settings/Debug/Connectivity/CommandSen
 import DebugPayContactSuccess from "~/screens/Settings/Debug/Features/PayContactSuccess";
 import DebugSendSuccess from "~/screens/Settings/Debug/Features/SendSuccess";
 import DebugPlayground from "~/screens/Settings/Debug/Playground";
+import DebugQrAnimationBenchmark from "~/screens/Settings/Debug/Performance/QrAnimationBenchmark";
 import DebugBluetoothAndLocationServices from "~/screens/Settings/Debug/Debugging/BluetoothAndLocationServices";
 import DebugSettings from "~/screens/Settings/Debug";
 import DebugAnalyticsConsentQA from "~/screens/Settings/Debug/AnalyticsConsentQA";
@@ -466,6 +467,16 @@ export default function SettingsNavigator() {
         component={DebugPlayground}
         options={{
           title: "Playground",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugQrAnimationBenchmark}
+        component={DebugQrAnimationBenchmark}
+        options={{
+          title: "QR animation benchmark",
+          // Pressing near the edge of a QR code must not start a swipe back.
+          gestureEnabled: false,
+          fullScreenGestureEnabled: false,
         }}
       />
       <Stack.Screen

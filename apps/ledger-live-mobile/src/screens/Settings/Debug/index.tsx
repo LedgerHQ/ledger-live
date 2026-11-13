@@ -68,6 +68,12 @@ export default function DebugSettings({
         onPress={() => navigate(ScreenName.DebugPerformance)}
       />
       <SettingsRow
+        title="QR animation benchmark"
+        desc="Native vs Reanimated animated QR codes, with UI and JS thread FPS"
+        iconLeft={<IconsLegacy.BarChartMedium size={24} color="black" />}
+        onPress={() => navigate(ScreenName.DebugQrAnimationBenchmark)}
+      />
+      <SettingsRow
         title="Playground"
         desc="Easy to access blank debugging screen"
         iconLeft={<IconsLegacy.EmojiHappyMedium size={24} color="black" />}

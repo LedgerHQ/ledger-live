@@ -212,6 +212,11 @@ const linkingOptions = () => ({
               [ScreenName.DeveloperSettings]: "settings/developer",
               [ScreenName.NotificationsSettings]: "settings/notifications",
               [ScreenName.DebugMockServer]: "mockserver/config",
+              /**
+               * ie: "ledgerlive://settings/debug/qr-animation-benchmark?mode=single&animation=copy&autoPlay=1"
+               * sets up the QR animation benchmark, so it can be driven without tapping
+               */
+              [ScreenName.DebugQrAnimationBenchmark]: "settings/debug/qr-animation-benchmark",
             },
           },
 
@@ -276,6 +281,7 @@ const getOnboardingLinkingOptions = (acceptedTermsOfUse: boolean) => ({
               [NavigatorName.Settings]: {
                 screens: {
                   [ScreenName.DebugMockServer]: "mockserver/config",
+                  [ScreenName.DebugQrAnimationBenchmark]: "settings/debug/qr-animation-benchmark",
                 },
               },
             },

@@ -86,6 +86,16 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugPayContactSuccess]: { recipient?: "me" } | undefined;
   [ScreenName.DebugSendSuccess]: undefined;
   [ScreenName.DebugPlayground]: undefined;
+  [ScreenName.DebugQrAnimationBenchmark]:
+    | {
+        mode?: string;
+        content?: string;
+        implementation?: string;
+        animation?: string;
+        copies?: string;
+        autoPlay?: string;
+      }
+    | undefined;
   [ScreenName.DebugBluetoothAndLocationServices]: undefined;
   [ScreenName.DebugStorageMigration]: undefined;
   [ScreenName.DebugTermsOfUse]: undefined;

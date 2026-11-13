@@ -3623,6 +3623,8 @@ PODS:
     - sovran-react-native
   - SharedNativePerformance (0.0.0):
     - React-Core
+  - SharedUiAnimatedQrCode (0.0.0):
+    - React-Core
   - SocketRocket (0.7.1)
   - sovran-react-native (1.1.4):
     - React-Core
@@ -3767,6 +3769,7 @@ DEPENDENCIES:
   - "RNWorklets (from `../../../node_modules/.pnpm/react-native-worklets@0.8.1_patch_hash=8e8345e8_37d2ad1df67c39bba0bc009c33cc6d1f/node_modules/react-native-worklets`)"
   - "segment-analytics-react-native (from `../../../node_modules/.pnpm/@segment+analytics-react-native@2.24.2_bd1d19cd2883c3dc337815e1feaba81f/node_modules/@segment/analytics-react-native`)"
   - SharedNativePerformance (from `../../../shared/native-performance`)
+  - SharedUiAnimatedQrCode (from `../../../shared/ui-animated-qr-code`)
   - SocketRocket (~> 0.7.1)
   - "sovran-react-native (from `../../../node_modules/.pnpm/@segment+sovran-react-native@1.1.4_8ba131662a4359217af98865be4aa4b3/node_modules/@segment/sovran-react-native`)"
   - "VisionCamera (from `../../../node_modules/.pnpm/react-native-vision-camera@4.7.3_ab37e4eee70b54dccc0d0b2c265a1e0f/node_modules/react-native-vision-camera`)"
@@ -4069,6 +4072,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/@segment+analytics-react-native@2.24.2_bd1d19cd2883c3dc337815e1feaba81f/node_modules/@segment/analytics-react-native"
   SharedNativePerformance:
     :path: "../../../shared/native-performance"
+  SharedUiAnimatedQrCode:
+    :path: "../../../shared/ui-animated-qr-code"
   sovran-react-native:
     :path: "../../../node_modules/.pnpm/@segment+sovran-react-native@1.1.4_8ba131662a4359217af98865be4aa4b3/node_modules/@segment/sovran-react-native"
   VisionCamera:
@@ -4239,6 +4244,7 @@ SPEC CHECKSUMS:
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
   segment-analytics-react-native: 556a3bdd0a28ed4c6110a6c17322cf641d4ef704
   SharedNativePerformance: ca26343c7cd7d0cc316fdcaa45d54b6b1a1484f4
+  SharedUiAnimatedQrCode: f4f77ca03da19bb506d87eb4551130f00e36dd28
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   sovran-react-native: 803ccf23b24c8c5da99f249d4a0e317d62fa35e7
   SwiftyRSA: 8c6dd1ea7db1b8dc4fb517a202f88bb1354bc2c6

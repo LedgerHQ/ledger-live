@@ -100,6 +100,7 @@ export enum ScreenName {
   DebugPayContactSuccess = "DebugPayContactSuccess",
   DebugSendSuccess = "DebugSendSuccess",
   DebugPlayground = "DebugPlayground",
+  DebugQrAnimationBenchmark = "DebugQrAnimationBenchmark",
   DebugBluetoothAndLocationServices = "DebugBluetoothAndLocationServices",
   DebugStorageMigration = "DebugStorageMigration",
   DebugSettings = "DebugSettings",
