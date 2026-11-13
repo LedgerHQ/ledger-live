@@ -468,14 +468,15 @@ describe("lifecycle products", () => {
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
-  it("posts an abandoned attempt to the sink of the product that opened it", () => {
-    let url = "https://first.example.test";
-    sendForProduct(product({ id: "a", baseUrl: () => url }), payload, "app");
-    url = "https://second.example.test";
+  it("posts a superseded attempt to the sink of the product that opened it", () => {
+    sendForProduct(product({ id: "a" }), payload, "app");
     sendForProduct(product({ id: "b" }), { ...payload, currency_family: "solana" }, "app");
 
-    expect(fetchSpy).toHaveBeenCalledTimes(3);
-    expect(fetchSpy.mock.calls[1][0]).toBe("https://second.example.test/v1/tx/lifecycle");
+    expect(fetchSpy.mock.calls.map(call => call[0])).toEqual([
+      "https://a.example.test/v1/tx/lifecycle",
+      "https://a.example.test/v1/tx/lifecycle",
+      "https://b.example.test/v1/tx/lifecycle",
+    ]);
     expect(JSON.parse(fetchSpy.mock.calls[1][1]?.body as string)).toMatchObject({
       failure_class: "abandoned",
       currency_family: "tezos",
