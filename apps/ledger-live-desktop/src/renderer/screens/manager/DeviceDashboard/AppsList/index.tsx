@@ -16,6 +16,7 @@ import TabBar from "~/renderer/components/TabBar";
 import Item from "./Item";
 import Filter from "./Filter";
 import DeveloperFilter from "./DeveloperFilter";
+import AppsDisclaimer from "./AppsDisclaimer";
 import Sort from "./Sort";
 import UninstallAllButton from "./UninstallAllButton";
 import debounce from "lodash/debounce";
@@ -251,6 +252,7 @@ const AppsList = ({
           </>
         )}
       </Card>
+      {isDeveloperInfoEnabled ? <AppsDisclaimer /> : null}
     </>
   );
 };

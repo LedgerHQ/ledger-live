@@ -2383,6 +2383,10 @@
         "progressWarning": "Do not quit My Ledger during update.",
         "progress": "Updating all..."
       },
+      "communityDisclaimer": {
+        "availability": "Ledger does not develop, review, audit, endorse or maintain these applications and makes no representation or warranty as to their security, functionality, compatibility or availability.",
+        "liability": "They are provided 'as is' and 'as available', without warranty of any kind. You install and use them entirely at your own risk; to the maximum extent permitted by law, Ledger accepts no liability for any loss or damage arising from their use. Maintenance, updates and support are the sole responsibility of the respective third-party publisher."
+      },
       "developerFilter": {
         "title": "Developer",
         "all": "All",
