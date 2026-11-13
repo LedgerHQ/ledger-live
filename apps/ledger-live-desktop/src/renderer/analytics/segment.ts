@@ -108,11 +108,13 @@ const getLedgerSyncAttributes = (state: State) => {
   if (!analyticsFeatureFlagMethod) return false;
   const walletSync = analyticsFeatureFlagMethod("lldWalletSync");
   const ledgerSyncOptimisation = analyticsFeatureFlagMethod("lwdLedgerSyncOptimisation");
+  const ledgerSyncDie = analyticsFeatureFlagMethod("lwdLedgerSyncDie");
 
   return {
     hasLedgerSync: !!walletSync?.enabled,
     ledgerSyncActivated: !!state.trustchain.trustchain?.rootId,
     ledger_sync_revamp: !!ledgerSyncOptimisation?.enabled,
+    ledger_sync_die: !!ledgerSyncDie?.enabled,
   };
 };
 
