@@ -30,7 +30,6 @@ export default class SwapLiveAppPage {
   private static readonly PROVIDER_NAME_PREFIX = "lumen-quote-card-provider-name-";
   private static readonly PROVIDER_NAME_CSS = `[data-testid^='${SwapLiveAppPage.PROVIDER_NAME_PREFIX}']`;
 
-  private readonly toAmountInputId = "to-account-amount-input";
   private readonly showDetailsLinkId = "show-details-link";
   private readonly executeSwapButtonId = "execute-button";
   private readonly incompatibilityBannerPartnerId = "incompatibility-banner-partner";
@@ -39,7 +38,7 @@ export default class SwapLiveAppPage {
   private readonly fromSelector = webById("from-account-coin-selector");
   private readonly fromAmountInput = webById("from-account-amount-input");
   private readonly toSelector = webById("to-account-coin-selector");
-  private readonly toAmountInput = webById(this.toAmountInputId);
+  private readonly toAmountInput = webById("to-account-amount-input");
   private readonly getQuotesButton = webById("mobile-get-quotes-button");
   private readonly quotesButtonDisabled = webById("mobile-get-quotes-button-disabled");
   private readonly bestValueInfoIcon = webById("best-value-info-icon");
@@ -386,8 +385,8 @@ export default class SwapLiveAppPage {
   }
 
   @Step("Wait for the receive amount to match {{{0}}}")
-  async waitForAmountToReceive(pattern: RegExp, timeout?: number) {
-    await waitForWebElementToMatchRegex(this.toAmountInputId, pattern, timeout);
+  async waitForAmountToReceive(pattern: RegExp, timeout = TIMEOUT.medium) {
+    await this.toAmountInput.waitTextMatching(pattern, timeout);
   }
 
   @Step("Retrieve send currency amount value")

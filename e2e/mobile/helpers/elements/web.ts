@@ -65,6 +65,26 @@ export class WebHandle implements ElementHandle {
     );
   }
 
+  /** Waits until the element's text matches `pattern`, e.g. an amount that fills in once quotes load. */
+  async waitTextMatching(pattern: RegExp, timeout = TIMEOUT.xxlarge): Promise<void> {
+    await withHardTimeout(
+      retryUntilTimeout(
+        async () => {
+          const text = scriptText(
+            await this.raw.runScript(el => (el.innerText || el.textContent || "").trim()),
+          );
+          if (!new RegExp(pattern).test(text)) {
+            throw new Error(`${this.description} text "${text}" does not match ${pattern}`);
+          }
+        },
+        timeout,
+        INTERVAL.long,
+        { messageOnError: `${this.description} text did not match ${pattern} within ${timeout}ms` },
+      ),
+      waitHardTimeout(timeout),
+    );
+  }
+
   /** Scrolls the webview until the element is in view. */
   async scrollTo(timeout = TIMEOUT.xxlarge): Promise<void> {
     await withHardTimeout(
