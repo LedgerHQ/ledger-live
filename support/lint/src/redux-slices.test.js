@@ -184,6 +184,11 @@ export const selectCombined = (state: Root, { total }: OtherState) => state.item
 export const selectDefaulted = (state: Root, other: OtherState = fallback) =>
   state.items.length + other.total;
 export const selectAt = (state: Root, index = state.settings.index) => state.items[index];
+export const selectNested = (state: Root, { index = state.settings.index } = {}) =>
+  state.items[index];
+declare function selectAccounts(state: unknown): string[];
+export const selectBoth = (state: Root, { accounts }: { accounts: unknown }) =>
+  state.items.length + selectAccounts(accounts).length;
 `),
     [],
   );
