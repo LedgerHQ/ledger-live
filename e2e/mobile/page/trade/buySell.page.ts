@@ -15,6 +15,10 @@ import { retryUntilTimeout } from "@e2e/utils/retry";
 import { byId } from "@e2e/helpers/elements/native";
 import { webByCss, webById, webByXPath } from "@e2e/helpers/elements/web";
 
+// App-side CAL lookup for the Buy screen's currencies (700+ ids) measures 60-90s;
+// 60s flakes on that alone. Latency is tracked separately, not fixed here.
+const CRYPTO_CURRENCY_SELECTOR_TIMEOUT = TIMEOUT.xxxlarge;
+
 export default class BuySellPage {
   private readonly appContainer = webByCss("#app-container");
   private readonly providerTitleCssSelector =
@@ -48,10 +52,6 @@ export default class BuySellPage {
   private readonly paymentMethodOption = (paymentMethod: string) => webById(paymentMethod);
   private readonly provider = (name: string) => webById(`provider_${name.toLowerCase()}`);
 
-  // App-side CAL lookup for the Buy screen's currencies (700+ ids) measures 60-90s;
-  // 60s flakes on that alone. Latency is tracked separately, not fixed here.
-  private readonly cryptoCurrencySelectorTimeout = TIMEOUT.xxxlarge;
-
   @Step("Open page via deeplink {{{0}}}")
   async openViaDeeplink(page: "Buy" | "Sell") {
     // The deeplink into the live app keeps the network busy, so with synchronization on Detox
@@ -72,7 +72,7 @@ export default class BuySellPage {
 
   @Step("Expect Buy screen to be visible")
   async expectBuyScreenToBeVisible() {
-    await this.cryptoCurrencySelector.waitVisible(this.cryptoCurrencySelectorTimeout);
+    await this.cryptoCurrencySelector.waitVisible(CRYPTO_CURRENCY_SELECTOR_TIMEOUT);
     await this.youWillPayText.expectExist();
     await this.amountInputSection.expectExist();
     await this.buyQuickAmountButton("400").expectExist();
@@ -83,7 +83,7 @@ export default class BuySellPage {
 
   @Step("Expect Sell screen to be visible")
   async expectSellScreenToBeVisible() {
-    await this.cryptoCurrencySelector.waitVisible(this.cryptoCurrencySelectorTimeout);
+    await this.cryptoCurrencySelector.waitVisible(CRYPTO_CURRENCY_SELECTOR_TIMEOUT);
     await this.youWillSellText.expectExist();
     await this.amountInputSection.expectExist();
     await this.sellPercentageButton("25%").expectExist();
@@ -181,7 +181,7 @@ export default class BuySellPage {
   @Step("Get available providers")
   async getAvailableProviders(): Promise<string[]> {
     await this.showAllProviders();
-    return this.appContainer.getChildTexts(this.providerTitleCssSelector);
+    return await this.appContainer.getChildTexts(this.providerTitleCssSelector);
   }
 
   @Step("Select rotating provider")

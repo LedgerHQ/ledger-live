@@ -108,6 +108,13 @@ export class WebHandle implements ElementHandle {
     await withHardTimeout(this.raw.tap(), TIMEOUT.medium);
   }
 
+  /** Waits until the element is enabled, scrolls it into view, then taps it, e.g. a Live App button below the fold. */
+  async scrollToAndTap(timeout = TIMEOUT.xxlarge): Promise<void> {
+    await this.waitEnabled(timeout);
+    await this.scrollTo();
+    await this.tap();
+  }
+
   /** Waits for the input, then sets its value and fires an `input` event so the page's React state updates. */
   async replaceText(text: string, timeout = TIMEOUT.xxlarge): Promise<void> {
     await this.waitVisible(timeout);

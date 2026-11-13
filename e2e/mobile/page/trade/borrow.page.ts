@@ -124,7 +124,7 @@ export default class BorrowPage {
 
   @Step("Click Simulate my loan on the intro modal")
   async clickSimulateMyLoan() {
-    await this.revealAndTap(this.simulateMyLoanButton);
+    await this.simulateMyLoanButton.scrollToAndTap();
     await retryUntilTimeout(() => this.introModal.expectNotExist(), MODAL_DISMISS_TIMEOUT_MS);
   }
 
@@ -142,7 +142,7 @@ export default class BorrowPage {
   async typeLoanAmount(amount: string) {
     await this.simulateLoanScreen.waitVisible();
     for (const digit of amount) {
-      await this.revealAndTap(this.keypadDigit(digit));
+      await this.keypadDigit(digit).scrollToAndTap();
     }
     await this.simulateContinueButton.waitEnabled(CONTINUE_READY_TIMEOUT_MS);
   }
@@ -167,7 +167,7 @@ export default class BorrowPage {
 
   @Step("Click Continue on the simulate-loan screen")
   async clickContinue() {
-    await this.revealAndTap(this.simulateContinueButton, CONTINUE_READY_TIMEOUT_MS);
+    await this.simulateContinueButton.scrollToAndTap(CONTINUE_READY_TIMEOUT_MS);
   }
 
   @Step("Expect the loan execution screen")
@@ -217,7 +217,7 @@ export default class BorrowPage {
 
   @Step("Click View my loan")
   async clickViewMyLoan() {
-    await this.revealAndTap(this.viewMyLoanButton);
+    await this.viewMyLoanButton.scrollToAndTap();
   }
 
   @Step("Expect loans dashboard visible")
@@ -248,21 +248,21 @@ export default class BorrowPage {
   /** Anchored on the Repay CTA: `borrow-loan-overview-screen` is web-only in the live app. */
   @Step("Open the loan with debt from the dashboard")
   async openActiveLoan() {
-    await this.revealAndTap(this.loanDashboardRow);
+    await this.loanDashboardRow.scrollToAndTap();
     await waitForWebviewUrl("/loanoverview/");
     await this.repayButton.waitEnabled(SCREEN_READY_TIMEOUT_MS);
   }
 
   @Step("Click Repay on the loan overview")
   async clickRepay() {
-    await this.revealAndTap(this.repayButton);
+    await this.repayButton.scrollToAndTap();
     await this.repayModal.waitVisible();
   }
 
   @Step("Select Repay in full and continue to execution")
   async submitRepayInFull() {
-    await this.revealAndTap(this.repayInFullButton);
-    await this.revealAndTap(this.repayContinueButton);
+    await this.repayInFullButton.scrollToAndTap();
+    await this.repayContinueButton.scrollToAndTap();
     await waitForWebviewUrl("/forms/repay/");
     await this.repayExecutionScreen.waitVisible();
   }
@@ -299,14 +299,14 @@ export default class BorrowPage {
   /** A loan with no debt left routes straight to withdraw instead of the loan overview. */
   @Step("Open the repaid loan from the dashboard")
   async openRepaidLoan() {
-    await this.revealAndTap(this.loanDashboardRow);
+    await this.loanDashboardRow.scrollToAndTap();
     await waitForWebviewUrl("/withdrawoverview/");
     await this.withdrawOverviewScreen.waitVisible();
   }
 
   @Step("Click Withdraw collateral")
   async clickWithdrawCollateral() {
-    await this.revealAndTap(this.withdrawCollateralButton);
+    await this.withdrawCollateralButton.scrollToAndTap();
     await waitForWebviewUrl("/forms/withdraw/");
     await this.withdrawExecutionScreen.waitVisible();
   }
@@ -346,7 +346,7 @@ export default class BorrowPage {
 
   @Step("Click Back to my loans")
   async clickBackToMyLoans() {
-    await this.revealAndTap(this.backToMyLoansButton);
+    await this.backToMyLoansButton.scrollToAndTap();
     await this.loansLandingScreen.waitVisible(SCREEN_READY_TIMEOUT_MS);
   }
 
@@ -360,7 +360,7 @@ export default class BorrowPage {
     const markers = Array.isArray(doneIds) ? doneIds : [doneIds];
     await screen.waitVisible();
     await webById(markers[0]).expectNotExist();
-    await this.revealAndTap(button, EXECUTION_STEP_TIMEOUT_MS);
+    await button.scrollToAndTap(EXECUTION_STEP_TIMEOUT_MS);
     await app.walletApiSignatureDrawer.expectVisible();
     await sign();
     await this.expectStepDone(markers);
@@ -371,12 +371,6 @@ export default class BorrowPage {
     await app.speculos.acceptEnableTransactionCheck();
     await app.speculos.acceptBlindSigningWarning();
     await app.speculos.signEvmContractTransaction();
-  }
-
-  private async revealAndTap(element: WebHandle, timeout?: number) {
-    await element.waitEnabled(timeout);
-    await element.scrollTo();
-    await element.tap();
   }
 
   private async expectStepDone(doneIds: string[]) {

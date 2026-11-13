@@ -108,12 +108,12 @@ export default class SwapLiveAppPage {
 
   @Step("Check if the from currency is already selected")
   async getFromCurrencyTexts() {
-    return this.fromSelector.getText();
+    return await this.fromSelector.getText();
   }
 
   @Step("Check if the to currency is already selected")
   async getToCurrencyTexts() {
-    return this.toSelector.getText();
+    return await this.toSelector.getText();
   }
 
   @Step("Tap from currency")
@@ -391,17 +391,17 @@ export default class SwapLiveAppPage {
 
   @Step("Retrieve send currency amount value")
   async getAmountToSend() {
-    return this.fromAmountInput.getValue();
+    return await this.fromAmountInput.getValue();
   }
 
   @Step("Retrieve receive currency amount value")
   async getAmountToReceive() {
-    return this.toAmountInput.getText();
+    return await this.toAmountInput.getText();
   }
 
   @Step("Retrieve send currency countervalue text")
   async getSendCountervalueText() {
-    return this.fromAccountAmountInactive.getText();
+    return await this.fromAccountAmountInactive.getText();
   }
 
   @Step("Get quote card raw amount texts for {{{0}}}")
