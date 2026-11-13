@@ -1,5 +1,5 @@
 import { firmwareSettled } from "./firmwareCheckState";
-import type { AvailableFirmwareUpdate } from "./types";
+import type { AvailableFirmwareUpdate } from "../types";
 
 describe("firmwareSettled", () => {
   it.each(["upToDate", "declined", "skipped", "deferred"] as const)(

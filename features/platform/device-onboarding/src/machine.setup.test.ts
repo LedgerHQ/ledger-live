@@ -1,5 +1,5 @@
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
-import { settle } from "./tests/actorHarness";
+import { settle } from "./__tests__/actorHarness";
 import { OnboardingStep, RecoveryKeyStatus, SeedPath } from "./types";
 import {
   enterSetup,
@@ -14,7 +14,7 @@ import {
   stateOf,
   stepChanged,
   unseeded,
-} from "./tests/machineHarness";
+} from "./__tests__/machineHarness";
 
 describe("device setup", () => {
   it("waits for the device to leave welcome instead of guessing naming or pin", async () => {

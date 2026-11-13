@@ -1,6 +1,6 @@
 import type { SnapshotFrom } from "xstate";
 import type { deviceOnboardingMachine } from "../machine";
-import { firmwareSettled } from "../firmwareCheckState";
+import { firmwareSettled } from "../internals/firmwareCheckState";
 import type { DeviceOnboardingContext, OnboardingStep, RecoveryKeyStatus } from "../types";
 
 /**

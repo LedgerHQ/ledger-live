@@ -1,7 +1,5 @@
 export * from "./types";
 export * from "./machine";
-export * from "./deviceModel";
-export * from "./firmwareCheckState";
 export * from "./firmwareRules";
 export * from "./retry";
 export * from "./actors/session";

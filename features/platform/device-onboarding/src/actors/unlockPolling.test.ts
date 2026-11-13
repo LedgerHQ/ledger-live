@@ -1,6 +1,6 @@
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { CommandResultFactory } from "@ledgerhq/device-management-kit";
-import { runActor } from "../tests/actorHarness";
+import { runActor } from "../__tests__/actorHarness";
 import { createDeviceManagementKit } from "../tests/createDeviceManagementKit";
 import { createFakeCommandDmk } from "../tests/fakeDmk";
 import { createOsVersionResponse } from "../tests/osVersionResponse";

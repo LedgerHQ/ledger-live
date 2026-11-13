@@ -115,16 +115,16 @@ The session stays open after the exit, so the app can keep using it.
 
 ## Key exports / concepts
 
-- `deviceOnboardingMachine` — the flow. `machine.ts` is the graph, `contextActions.ts` the
-  bookkeeping
+- `deviceOnboardingMachine` — the flow. `machine.ts` is the graph, `internals/contextActions.ts`
+  the bookkeeping
 - `stampSession` — adds the live session id to the session events. The app calls it, not the machine
 - `OnboardingEvent`, `DeviceOnboardingInput`, `DeviceOnboardingContext`, `DeviceOnboardingOutput` —
   the language the machine and the screens speak
 - `firmwareRules.ts` — the pure decisions the transitions ask from model, firmware and seeded state:
   which devices leave for the legacy flow (`requiresLegacyFlow`) and which hold their firmware
   update until they are seeded (`updateWaitsForSeed`)
-- `deviceModel.ts`, `firmwareCheckState.ts` — `isTouchscreen`, and `firmwareSettled` for the
-  firmware check
+- `internals/` — what only the package uses: the machine's actions, `isTouchscreen` and
+  `firmwareSettled`. The barrel never re-exports it
 - `host/` — what the apps and the devtool use around the machine: the session events
   (`stampSession`), the deprecated flat context, the devtool payloads, the event log and the next
   states

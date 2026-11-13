@@ -1,6 +1,6 @@
 import { DeviceModelId, UserInteractionRequired } from "@ledgerhq/device-management-kit";
 import { EarlyCheckToggle } from "./device/toggleEarlyCheckCommand";
-import { settle } from "./tests/actorHarness";
+import { settle } from "./__tests__/actorHarness";
 import {
   deviceRefusal,
   exitOf,
@@ -21,7 +21,7 @@ import {
   unseeded,
   upToDate,
   updateAvailable,
-} from "./tests/machineHarness";
+} from "./__tests__/machineHarness";
 
 describe("routing", () => {
   it("runs the checks of an unseeded touchscreen under the on-device waiting screen", async () => {

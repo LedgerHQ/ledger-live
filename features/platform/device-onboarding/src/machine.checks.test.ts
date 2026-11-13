@@ -1,5 +1,5 @@
 import { EarlyCheckToggle } from "./device/toggleEarlyCheckCommand";
-import { settle } from "./tests/actorHarness";
+import { settle } from "./__tests__/actorHarness";
 import {
   awaitsApproval,
   checkFailure,
@@ -20,7 +20,7 @@ import {
   unseeded,
   upToDate,
   updateAvailable,
-} from "./tests/machineHarness";
+} from "./__tests__/machineHarness";
 
 describe("the on-device waiting screen", () => {
   it("runs the checks anyway when the device has already left the welcome step", async () => {

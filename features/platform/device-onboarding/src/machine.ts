@@ -11,10 +11,10 @@ import {
   exitContract,
   initialContext,
   type ExitOutput,
-} from "./contextActions";
+} from "./internals/contextActions";
 import { EarlyCheckToggle } from "./device/toggleEarlyCheckCommand";
-import { isTouchscreen } from "./deviceModel";
-import { firmwareSettled } from "./firmwareCheckState";
+import { isTouchscreen } from "./internals/deviceModel";
+import { firmwareSettled } from "./internals/firmwareCheckState";
 import { requiresLegacyFlow, updateWaitsForSeed } from "./firmwareRules";
 import {
   isOnRecoveryKeyScreen,
