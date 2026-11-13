@@ -39,11 +39,12 @@ Native and web handles share these methods ([`ElementHandle`](../helpers/element
 | `getText()` | waits, then returns the text |
 | `isVisible(timeout?)` | returns a boolean for an element that may not appear, such as an optional button; a hung app still throws |
 | `expectExist()` | asserts the element exists now; it does not wait |
+| `expectNotExist()` | asserts the element does not exist now; it does not wait |
 | `expectText(text, options?)` | asserts the element's text, see [Assertions](#assertions) |
 
 Native handles also have `waitFullyVisible()` (bottom sheets, see [sheet waits](e2e-mobile-conventions.md#a-sheet-wait-must-use-that-sheets-content-anchor-at-100-visibility)), `clearText()`, `getAttributes()`, `getIdentifier()` (the `testID`, e.g. the full id behind a regex match), `getLabel()` (the accessibility label), `count({ visibleOnly? })` (how many elements match, 0 when none; it does not wait, so wait for the first match before; `visibleOnly` counts the matches visible from the first one on, for a list whose later rows stay mounted off screen), `expectCount(expected)` (asserts that count), `waitExist(timeout?, errorElement?)` (waits until the element is in the view hierarchy, for a list Detox does not measure as visible; `errorElement` fails as soon as that handle is visible), `waitNotExist()` (waits until the element leaves the view hierarchy; for a closing sheet that still blocks taps once hidden), `replaceTextKeepKeyboard()` (types without pressing Enter), `tapExisting()` (waits for the element to exist, not to be visible; only when `waitVisible` never passes for an element on screen, say why at the call site), `scrollTo(container?, { pixels?, direction? })` (scrolls the container handle, or the first scroll view, until the element is visible; `pixels` sets the step, default 300, and `direction` where to start, default `"down"`, e.g. `"up"` back to a list header or `"right"` along a carousel), `revealForTap(container?, { direction? })` (scrolls to the element and on past the viewport edge, so a sticky header or footer cannot take the next tap; use before a tap, keep `scrollTo` for assertions), `swipe(direction)` (waits, then swipes on the element, e.g. down on a bottom sheet) `isVisible(timeout?)` (returns a boolean for an element that may not appear, such as an optional drawer; a hung app still throws) and `isVisibleNow()` (returns whether the element is visible once the app is idle, like `expectVisible` without throwing; to pick the on-screen match among several, where a short `isVisible` timeout would skip a screen still settling).
 
-Web handles also have `waitEnabled()`, `getValue()`, `expectValue(text, options?)` (compares an input's `value` like `expectText`), `scrollTo()` (scrolls the webview until the element is in view) and `getChildTexts(cssSelector)` (the non-empty texts of the descendants matching `cssSelector`, e.g. every provider name in a list). For the webview URL, use `waitForWebviewUrl(fragment)` from the same file, not the `*WebviewUrl*` globals.
+Web handles also have `waitEnabled()`, `getValue()`, `expectValue(text, options?)` (compares an input's `value` like `expectText`), `scrollTo()` (scrolls the webview until the element is in view), `getIdentifier()` (the `data-testid`, e.g. which element a combined selector matched) and `getChildTexts(cssSelector)` (the non-empty texts of the descendants matching `cssSelector`, e.g. every provider name in a list). For the webview URL, use `waitForWebviewUrl(fragment)` from the same file, not the `*WebviewUrl*` globals. To wait until the webview is not blank, use `waitForWebviewContent()`, not `waitForWebviewContentToRender`.
 
 ## Default-wait contract
 
@@ -63,7 +64,7 @@ Web `expectText` always waits for the element, reads its text, then compares. Na
 | `detoxExpect(getElementById(id)).toBeVisible()` | `handle.expectVisible()` |
 | `detoxExpect(getElementById(id)).not.toBeVisible()` | `handle.expectNotVisible()` |
 | `detoxExpect(getElementById(id)).toExist()` | `handle.expectExist()` |
-| `detoxExpect(getElementById(id)).not.toExist()` | `handle.expectNotExist()` (native) |
+| `detoxExpect(getElementById(id)).not.toExist()` | `handle.expectNotExist()` |
 | `jestExpect(await getIdByRegexp(regex)).toBe(id)` | `handle.expectId(id)` (native) |
 | `detoxExpect(getElementById(id)).toHaveText(text)` | `handle.expectText(text)` |
 | `jestExpect(normalizeText(await getTextOfElement(id))).toEqual(normalizeText(text))` | `handle.expectText(text, { normaliseWhitespace: true })` (native) |

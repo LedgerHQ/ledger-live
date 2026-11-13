@@ -233,3 +233,45 @@ export async function waitForWebviewUrl(
     waitHardTimeout(timeout),
   );
 }
+
+type WebviewContent = { height: number; textLength: number; contentElements: number };
+
+/**
+ * Waits until the webview is not blank: its `<body>` has a height and either at least 20 characters
+ * of text or one content element (iframe, input, button, form, image, link).
+ */
+export async function waitForWebviewContent(timeout = TIMEOUT.xxlarge): Promise<WebviewContent> {
+  return withHardTimeout(
+    retryUntilTimeout(
+      async () => {
+        const raw = await web.element(by.web.tag("body")).runScript(() => {
+          const body = document.body;
+          if (!body) return JSON.stringify({ height: 0, textLength: 0, contentElements: 0 });
+          const height = Math.round(body.getBoundingClientRect().height);
+          const textLength = (body.innerText || body.textContent || "").trim().length;
+          const contentElements = document.querySelectorAll(
+            "iframe, input, button, form, img, a[href], [role='button']",
+          ).length;
+          return JSON.stringify({ height, textLength, contentElements });
+        });
+        const json = scriptText(raw);
+        let content: WebviewContent;
+        try {
+          content = JSON.parse(json);
+        } catch {
+          throw new Error(`Unexpected webview content payload (not JSON): ${json}`);
+        }
+        const rendered =
+          content.height > 0 && (content.textLength >= 20 || content.contentElements >= 1);
+        if (!rendered) {
+          throw new Error(`Webview appears blank (no content rendered): ${json}`);
+        }
+        return content;
+      },
+      timeout,
+      INTERVAL.long,
+      { messageOnError: `Webview content did not render within ${timeout}ms` },
+    ),
+    waitHardTimeout(timeout),
+  );
+}

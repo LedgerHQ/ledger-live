@@ -2,6 +2,7 @@ import { Step } from "jest-allure2-reporter/api";
 import { readAccountNonces } from "@ledgerhq/live-e2e-shared/borrow/borrowSetup";
 import { byId } from "@e2e/helpers/elements/native";
 import {
+  waitForWebviewContent,
   waitForWebviewUrl,
   webByCss,
   webById,
@@ -102,7 +103,7 @@ export default class BorrowPage {
   async expectBorrowScreenVisible() {
     await this.borrowScreen.waitVisible();
     await app.common.waitForWalletApiWebview();
-    await waitForWebviewContentToRender();
+    await waitForWebviewContent();
   }
 
   @Step("Open the borrow app from the portfolio entry point")
