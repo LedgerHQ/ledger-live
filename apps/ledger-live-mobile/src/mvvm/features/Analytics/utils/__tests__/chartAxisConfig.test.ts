@@ -1,3 +1,4 @@
+import { DEFAULT_LINE_CHART_HEIGHT } from "LLM/components/LineChart";
 import { buildAnalyticsChartYAxisConfig } from "../chartAxisConfig";
 
 function domainOf(min: number, max: number) {
@@ -13,9 +14,10 @@ describe("buildAnalyticsChartYAxisConfig", () => {
     expect(domain.min).toBeLessThan(0);
   });
 
-  it("should keep the top at the highest value and leave room under the lowest", () => {
+  it("should leave 24px above the highest value and 32px under the lowest for their labels", () => {
     const domain = domainOf(100, 200);
-    expect(domain.max).toBe(200);
-    expect(domain.min).toBeLessThan(100);
+    const valuePerPx = (domain.max - domain.min) / DEFAULT_LINE_CHART_HEIGHT;
+    expect((domain.max - 200) / valuePerPx).toBeCloseTo(24);
+    expect((100 - domain.min) / valuePerPx).toBeCloseTo(32);
   });
 });
