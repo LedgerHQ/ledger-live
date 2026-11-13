@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.base",
   "compilerOptions": {
+    "noImplicitAny": false,
     "module": "ESNext",
     "moduleResolution": "bundler",
     "moduleSuffixes": [".web", ""],
