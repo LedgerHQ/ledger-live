@@ -1,3 +1,4 @@
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import BigNumber from "bignumber.js";
 
 import type { FormattedNumber } from "@ledgerhq/wallet-api-exchange-module";
@@ -77,7 +78,12 @@ function formatCountervalueNumber(
     return null;
   }
 
-  const fiatValue = new BigNumber(cryptoValue).multipliedBy(spotPrice);
+  const amount = parseFiniteBigNumber(cryptoValue);
+  if (!amount) {
+    return null;
+  }
+
+  const fiatValue = amount.multipliedBy(spotPrice);
 
   return toFormattedNumber(fiatValue, {
     locale,

@@ -7,7 +7,7 @@ import {
   type NavigatorScreenParams,
   useNavigation,
 } from "@react-navigation/native";
-import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 import { useCallback } from "react";
 import { Dispatch } from "redux";
 import type { SwapSubScreensNavigatorParamList } from "~/components/RootNavigator/types/SwapSubScreensNavigator";
@@ -36,6 +36,8 @@ export function useSwapCustomHandlers(
 
   const navigateToSwapPendingOperation = useCallback(
     (exchangeParams: CompleteExchangeUiRequest, operationHash: string) => {
+      // Runs after broadcast, so an unreadable amount is dropped rather than thrown.
+      const toAmount = parseFiniteBigNumber(exchangeParams.amountExpectedTo);
       const params = {
         swapOperation: {
           provider: exchangeParams.provider,
@@ -46,7 +48,7 @@ export function useSwapCustomHandlers(
           fromCurrency: (exchangeParams.exchange as ExchangeSwap).fromCurrency,
           operationId: operationHash,
           fromAmount: exchangeParams.transaction.amount,
-          toAmount: BigNumber(exchangeParams.amountExpectedTo!),
+          ...(toAmount && { toAmount }),
         },
         isEmbeddedSwap: exchangeParams.isEmbeddedSwap,
         sponsored: exchangeParams.sponsored,

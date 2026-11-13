@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "@ledgerhq/ledger-wallet-framework/bignumber";
 
 import { getLocaleSeparators } from "./getLocaleSeparators";
 
@@ -42,11 +43,11 @@ export function getFormattedNumber(
     }
     processedValue = value;
   } else {
-    processedValue = new BigNumber(value);
-
-    if (processedValue.isNaN() || !processedValue.isFinite()) {
+    const parsed = parseFiniteBigNumber(value);
+    if (!parsed) {
       return "";
     }
+    processedValue = parsed;
   }
 
   const { decimal, thousands } = getLocaleSeparators(locale);

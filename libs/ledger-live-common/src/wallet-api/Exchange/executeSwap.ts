@@ -38,7 +38,10 @@ import {
 import { postSwapCancelled } from "../../exchange/swap";
 import { retrieveSwapPayload } from "../../exchange/swap/api/v5/actions";
 import { setBroadcastTransaction } from "../../exchange/swap/setBroadcastTransaction";
-import { transactionStrategy } from "../../exchange/swap/transactionStrategies";
+import {
+  transactionStrategy,
+  type SwapCustomFeeValue,
+} from "../../exchange/swap/transactionStrategies";
 import { FeatureFlags } from "../../exchange/swap/types";
 import { getAccountIdFromWalletAccountId } from "../converters";
 import type { GetFeatureFn } from "../FeatureFlags/resolver";
@@ -46,6 +49,12 @@ import { createAccounIdNotFound, createWrongSwapParams, ExchangeError } from "./
 import { handleErrors } from "./handleSwapErrors";
 import { createStepError, StepError, toError } from "./parser";
 import { SwapError } from "./SwapError";
+import {
+  isStructuredFees,
+  parseStructuredFees,
+  parseSwapFeeValue,
+  parseSwapNumericParam,
+} from "./swapParams";
 import { TrackingAPI } from "./tracking";
 import type {
   ExchangeStartParamsUiRequest,
@@ -143,6 +152,10 @@ async function executeSwapAttempt(
     };
 
     tracking.startExchangeRequested(trackingParams);
+
+    const strategyAmount = parseSwapNumericParam("fromAmountAtomic", fromAmountAtomic);
+    parseSwapNumericParam("fromAmount", fromAmount);
+    const strategyCustomFeeConfig = parseCustomFeeConfig(customFeeConfig);
 
     const exchangeStartParams: ExchangeStartParamsUiRequest = (await extractSwapStartParam(
       params,
@@ -261,9 +274,9 @@ async function executeSwapAttempt(
 
     const strategyData = {
       recipient: payinAddress,
-      amount: fromAmountAtomic,
+      amount: strategyAmount,
       currency: fromCurrency as CryptoOrTokenCurrency,
-      customFeeConfig: customFeeConfig ?? {},
+      customFeeConfig: strategyCustomFeeConfig,
       payinExtraId,
       extraTransactionParameters,
       sponsored,
@@ -521,9 +534,9 @@ export async function extractSwapStartParam(
 
 interface StrategyParams {
   recipient: string;
-  amount: BigNumber | number | string;
+  amount: BigNumber;
   currency: CryptoOrTokenCurrency;
-  customFeeConfig?: Record<string, unknown>;
+  customFeeConfig: Record<string, SwapCustomFeeValue>;
   payinExtraId?: string;
   extraTransactionParameters?: string;
   sponsored?: boolean;
@@ -551,31 +564,18 @@ async function getStrategy(
     throw new Error(`TokenCurrency missing parentCurrency family: ${currency.id}`);
   }
 
-  // Remove unsupported utxoStrategy for now
-  if (customFeeConfig?.utxoStrategy) {
-    delete customFeeConfig.utxoStrategy;
-  }
-
   const strategy = transactionStrategy?.[family];
 
   if (!strategy) {
     throw new Error(`No transaction strategy found for family: ${family}`);
   }
 
-  // Convert customFeeConfig values to BigNumber
-  const convertedCustomFeeConfig: { [key: string]: BigNumber } = {};
-  if (customFeeConfig) {
-    for (const [key, value] of Object.entries(customFeeConfig)) {
-      convertedCustomFeeConfig[key] = new BigNumber(value?.toString() || 0);
-    }
-  }
-
   return strategy(
     {
       family,
-      amount: new BigNumber(amount),
+      amount,
       recipient,
-      customFeeConfig: convertedCustomFeeConfig,
+      customFeeConfig,
       payinExtraId,
       extraTransactionParameters,
       customErrorType,
@@ -583,6 +583,21 @@ async function getStrategy(
     },
     getFeature,
   );
+}
+
+function parseCustomFeeConfig(
+  customFeeConfig: Record<string, unknown> | undefined,
+): Record<string, SwapCustomFeeValue> {
+  const converted: Record<string, SwapCustomFeeValue> = {};
+  for (const [key, value] of Object.entries(customFeeConfig ?? {})) {
+    // utxoStrategy is not supported yet
+    if (key === "utxoStrategy") continue;
+    const path = `customFeeConfig.${key}`;
+    converted[key] = isStructuredFees(key, value)
+      ? parseStructuredFees(value, path)
+      : parseSwapFeeValue(path, value);
+  }
+  return converted;
 }
 
 function isDrawerClosedError(error: unknown) {

@@ -4,6 +4,10 @@ import { getMainAccount, getParentAccount } from "@ledgerhq/live-common/account/
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
+import {
+  parseSwapFeeParams,
+  transformToBigNumbers,
+} from "@ledgerhq/live-common/wallet-api/Exchange/swapParams";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
@@ -15,14 +19,9 @@ import { convertToAtomicUnit, convertToNonAtomicUnit, getCustomFeesPerFamily } f
 const CHAINS_WITH_FEE_DRAWER = ["evm"];
 
 // Types
-type TransformableObject = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any;
-};
-
 export interface FeeParams {
   fromAccountId: string;
-  fromAmount: string;
+  fromAmount?: string;
   feeStrategy: Strategy;
   openDrawer: boolean;
   customFeeConfig: Record<string, unknown>;
@@ -40,30 +39,6 @@ export interface FeeData {
   customFeeConfig: Record<string, unknown>;
   hasDrawer: boolean;
   gasLimit: BigNumber | null;
-}
-
-// Helper functions
-export function transformToBigNumbers(obj: TransformableObject): TransformableObject {
-  if (typeof obj !== "object" || obj === null) {
-    return obj;
-  }
-
-  const transformedObj: TransformableObject = Array.isArray(obj) ? [] : {};
-
-  for (const key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      const value = obj[key];
-      if (typeof value === "string" && !isNaN(value as unknown as number)) {
-        transformedObj[key] = new BigNumber(value);
-      } else if (typeof value === "object") {
-        transformedObj[key] = transformToBigNumbers(value);
-      } else {
-        transformedObj[key] = value;
-      }
-    }
-  }
-
-  return transformedObj;
 }
 
 /**
@@ -95,8 +70,13 @@ function createFeeData(
  * Main function to get fee data for a transaction
  */
 export const getFee =
-  (accounts: AccountLike[], navigation: NavigationType) =>
+  (
+    accounts: AccountLike[],
+    navigation: Pick<NavigationType, "navigate" | "canGoBack" | "goBack">,
+  ) =>
   async ({ params }: { params: FeeParams }): Promise<FeeData> => {
+    const { fromAmount, gasLimit: customGasLimit } = parseSwapFeeParams(params);
+
     // Validate and find account
     const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
     if (!realFromAccountId) {
@@ -138,12 +118,12 @@ export const getFee =
       subAccountId,
       recipient: params.recipient || bridge.getEstimationRecipient(mainAccount),
       amount: convertToAtomicUnit({
-        amount: new BigNumber(params.fromAmount),
+        amount: fromAmount,
         account: fromAccount,
       }),
       data: (params.data && Buffer.from(params.data.replace("0x", ""), "hex")) || undefined,
       feesStrategy: params.feeStrategy || "medium",
-      customGasLimit: params.gasLimit ? new BigNumber(params.gasLimit) : null,
+      customGasLimit,
       ...transformToBigNumbers(params.customFeeConfig),
     });
 
@@ -183,7 +163,7 @@ export const getFee =
             },
             account: fromAccount,
             feePayingAccount: mainAccount,
-            fromAmount: new BigNumber(params.fromAmount),
+            fromAmount,
             feesStrategy: params.feeStrategy,
             customFeeConfig: params.customFeeConfig,
             transaction: transaction,
