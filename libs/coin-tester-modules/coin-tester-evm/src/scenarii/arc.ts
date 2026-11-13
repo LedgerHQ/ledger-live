@@ -5,6 +5,7 @@ import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { forbidRemoteRequests } from "@ledgerhq/coin-tester/localOnly";
 import { startSandbox } from "@ledgerhq/coin-tester/sandbox";
 import type { Sandbox } from "@ledgerhq/coin-tester/sandbox";
+import { sandboxVersions } from "@ledgerhq/coin-tester/versions";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { makeAccount } from "../fixtures";
@@ -89,13 +90,7 @@ export const scenarioArc: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Basic Arc Transactions",
   setup: async () => {
     const signer = await buildSigner();
-    sandbox = await startSandbox(
-      { family: "evm", network: "arc" },
-      {
-        node: { implementation: "arc-node", version: "0.8.1" },
-        indexer: { implementation: "blockscout", version: "12.0.3" },
-      },
-    );
+    sandbox = await startSandbox({ family: "evm", network: "arc" }, sandboxVersions("arc"));
     const { node: rpc, indexer: explorer } = sandbox.endpoints;
     if (rpc === undefined || explorer === undefined) {
       throw new Error("the sandbox instance has no node or indexer endpoint");

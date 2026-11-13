@@ -5,6 +5,7 @@ import type { Account } from "@ledgerhq/types-live";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import { startSandbox } from "@ledgerhq/coin-tester/sandbox";
 import type { Sandbox } from "@ledgerhq/coin-tester/sandbox";
+import { sandboxVersions } from "@ledgerhq/coin-tester/versions";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { XRP, RECIPIENT, makeXrpAccount } from "../fixtures";
@@ -96,10 +97,7 @@ export const scenarioXrp: Scenario<GenericTransaction, Account> = {
       getTokensSyncHash: async () => "",
     });
 
-    sandbox = await startSandbox(
-      { family: "xrp", network: "ripple" },
-      { node: { implementation: "xrpld", version: "3.4.1" } },
-    );
+    sandbox = await startSandbox({ family: "xrp", network: "ripple" }, sandboxVersions("ripple"));
     const rpc = sandbox.endpoints.node;
     if (rpc === undefined) throw new Error("the sandbox instance has no node endpoint");
     setXrpRpc(rpc);

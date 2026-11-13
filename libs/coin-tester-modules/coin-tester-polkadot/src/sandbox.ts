@@ -1,19 +1,14 @@
 import { ApiPromise, Keyring } from "@polkadot/api";
 import { startSandbox } from "@ledgerhq/coin-tester/sandbox";
 import type { Sandbox } from "@ledgerhq/coin-tester/sandbox";
+import { sandboxVersions } from "@ledgerhq/coin-tester/versions";
 
 /**
  * One instance serves both scenarios: Asset Hub and the relay chain, with a rest-api and an Atlas for each, laid out as
  * production's is. The sandbox shortens the eras to about a minute (see docker/polkadot/README.md in coin-sandbox).
  */
 export function startPolkadotSandbox(): Promise<Sandbox> {
-  return startSandbox(
-    { family: "polkadot", network: "polkadot" },
-    {
-      node: { implementation: "parity", version: "1.25.0" },
-      indexer: { implementation: "atlas", version: "2.9.5" },
-    },
-  );
+  return startSandbox({ family: "polkadot", network: "polkadot" }, sandboxVersions("polkadot"));
 }
 
 /** The URL the sandbox gave one of the instance's services: `node`, `relay`, `indexer`, `relayIndexer`, `restApi`... */

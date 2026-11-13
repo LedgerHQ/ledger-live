@@ -1,5 +1,6 @@
 import { startSandbox } from "@ledgerhq/coin-tester/sandbox";
 import type { Sandbox } from "@ledgerhq/coin-tester/sandbox";
+import { sandboxVersions } from "@ledgerhq/coin-tester/versions";
 import { getWalletAddress, loadWallet, setBitcoinRpc, WALLET } from "./helpers";
 import { setExplorerUrl } from "./utils";
 
@@ -13,10 +14,7 @@ let sandbox: Sandbox | undefined;
 export async function spawnSandbox(): Promise<{ sandbox: Sandbox; explorerUrl: string }> {
   sandbox = await startSandbox(
     { family: "bitcoin", network: "bitcoin_regtest" },
-    {
-      node: { implementation: "bitcoin-core", version: "31.1" },
-      indexer: { implementation: "atlas", version: "2.38.24" },
-    },
+    sandboxVersions("bitcoin_regtest"),
   );
   const { node, indexer } = sandbox.endpoints;
   if (node === undefined || indexer === undefined) {
