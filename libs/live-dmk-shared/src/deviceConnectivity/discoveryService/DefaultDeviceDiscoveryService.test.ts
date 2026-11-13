@@ -374,7 +374,7 @@ describe("DefaultDeviceDiscoveryService", () => {
     ]);
   });
 
-  it("GIVEN a consumer stops discovery on an emission during start, WHEN start finishes, THEN discovery should stay stopped", () => {
+  it("GIVEN a consumer stops discovery on a device emitted during start, WHEN start returns, THEN discovery should be stopped and the next sources never listened to", () => {
     // GIVEN
     const device = createDiscoveredDevice("a", "transport-a");
     const sourceA = createSource(
