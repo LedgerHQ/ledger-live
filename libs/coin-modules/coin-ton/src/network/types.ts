@@ -14,6 +14,7 @@ import type {
 export type {
   TonAddressBook,
   TonFee,
+  TonJettonTransfer,
   TonJettonWallet,
   TonResponseAccountInfo,
   TonResponseEstimateFee,

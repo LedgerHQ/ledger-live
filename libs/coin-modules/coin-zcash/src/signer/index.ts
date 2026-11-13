@@ -4,7 +4,8 @@
 
 import getAddress from "./getAddress";
 import getFullViewingKey from "./getFullViewingKey";
-import { composeXpub } from "./xpub";
 
-export { getAddress, getFullViewingKey, composeXpub };
+export { composeXpub } from "./xpub";
+export { deriveAccountXpub } from "./accountXpub";
+export { getAddress, getFullViewingKey };
 export default getAddress;

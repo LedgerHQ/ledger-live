@@ -3,13 +3,14 @@ import { TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { CantonContext } from "../config";
 import * as accountBalance from "../logic/getBalance";
+import { filterDisabledTokens } from "../logic/partyState";
 import * as gateway from "../network/gateway";
 import { OperationInfo } from "../network/gateway";
 import resolver from "../signer";
 import { createMockCantonCurrency, createMockCoinConfigValue } from "../test/fixtures";
 import { CantonAccount } from "../types";
 import * as onboard from "./onboard";
-import { makeGetAccountShape, filterDisabledTokenAccounts } from "./sync";
+import { makeGetAccountShape } from "./sync";
 
 jest.mock("../network/gateway", () => ({
   ...jest.requireActual("../network/gateway"),
@@ -659,7 +660,7 @@ describe("makeGetAccountShape", () => {
   });
 });
 
-describe("filterDisabledTokenAccounts", () => {
+describe("filterDisabledTokens", () => {
   const mockConfig = createMockCoinConfigValue();
 
   const createMockTokenAccount = (contractAddress: string, tokenId?: string): TokenAccount => ({
@@ -695,14 +696,14 @@ describe("filterDisabledTokenAccounts", () => {
 
   it("should return empty array when subAccounts is undefined", async () => {
     const calTokens = new Map<string, string>();
-    const result = await filterDisabledTokenAccounts(mockConfig, undefined, calTokens);
+    const result = await filterDisabledTokens(mockConfig, undefined, calTokens);
     expect(result).toEqual([]);
     expect(mockedGetEnabledInstrumentsCached).not.toHaveBeenCalled();
   });
 
   it("should return empty array when subAccounts is empty", async () => {
     const calTokens = new Map<string, string>();
-    const result = await filterDisabledTokenAccounts(mockConfig, [], calTokens);
+    const result = await filterDisabledTokens(mockConfig, [], calTokens);
     expect(result).toEqual([]);
     expect(mockedGetEnabledInstrumentsCached).not.toHaveBeenCalled();
   });
@@ -729,7 +730,7 @@ describe("filterDisabledTokenAccounts", () => {
       new Set([`${enabledInstrumentId}____${enabledAdminId}`]),
     );
 
-    const result = await filterDisabledTokenAccounts(
+    const result = await filterDisabledTokens(
       mockConfig,
       [enabledTokenAccount, disabledTokenAccount],
       calTokens,
@@ -760,7 +761,7 @@ describe("filterDisabledTokenAccounts", () => {
       new Set([`${instrumentId1}____${adminId1}`, `${instrumentId2}____${adminId2}`]),
     );
 
-    const result = await filterDisabledTokenAccounts(
+    const result = await filterDisabledTokens(
       mockConfig,
       [enabledTokenAccount1, enabledTokenAccount2],
       calTokens,
@@ -793,7 +794,7 @@ describe("filterDisabledTokenAccounts", () => {
       new Set([`${enabledInstrumentId}____${enabledAdminId}`, "instrument-noaddr____"]),
     );
 
-    const result = await filterDisabledTokenAccounts(
+    const result = await filterDisabledTokens(
       mockConfig,
       [tokenAccountWithoutAddress, enabledTokenAccount],
       calTokens,
@@ -820,7 +821,7 @@ describe("filterDisabledTokenAccounts", () => {
 
     mockedGetEnabledInstrumentsCached.mockResolvedValue(new Set());
 
-    const result = await filterDisabledTokenAccounts(
+    const result = await filterDisabledTokens(
       mockConfig,
       [tokenAccount1, tokenAccount2],
       calTokens,

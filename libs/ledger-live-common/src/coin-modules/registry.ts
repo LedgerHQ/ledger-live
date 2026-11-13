@@ -80,6 +80,11 @@ export function getAccountDescriptorType(family: string): AccountDescriptor["typ
   return getLoader(family).accountDescriptorType;
 }
 
+/** Whether a sync can start from the descriptor alone, for an account the store does not hold. */
+export function syncsFromDescriptor(family: string): boolean {
+  return getLoader(family).syncsFromDescriptor !== false;
+}
+
 export function isCurrencySupported(currency: CryptoCurrency): boolean {
   return getSupportedIds().has(currency.id);
 }

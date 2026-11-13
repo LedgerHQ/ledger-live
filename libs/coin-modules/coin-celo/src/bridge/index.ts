@@ -19,6 +19,8 @@ import { getTransactionStatus } from "./getTransactionStatus";
 import { getPreloadStrategy, preload, hydrate } from "./preload";
 import { prepareTransaction } from "./prepareTransaction";
 import { buildResilientIterateResult } from "./scanResilience";
+
+export { isUpdateYourAppError } from "./scanResilience";
 import {
   assignFromAccountRaw,
   assignToAccountRaw,

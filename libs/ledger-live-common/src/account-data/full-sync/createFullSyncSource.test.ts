@@ -13,6 +13,11 @@ import { FullSyncAccountNotFoundError } from "./errors";
 const syncLegacyAccount = jest.fn(
   async (_account: Account, _options: unknown, _maxAge?: number) => {},
 );
+const syncDetached = jest.fn(async (..._args: unknown[]): Promise<Account> => account);
+jest.mock("./syncDetached", () => ({
+  syncDetached: (...args: unknown[]) => syncDetached(...args),
+}));
+
 jest.mock("./syncLegacyAccount", () => ({
   syncLegacyAccount: (account: Account, options: unknown, maxAge?: number) =>
     syncLegacyAccount(account, options, maxAge),
@@ -98,9 +103,13 @@ describe("createFullSyncSource", () => {
   it("reads the status of the synced account", async () => {
     const synced = { ...account, used: false, operationsCount: 0, balance: new BigNumber(0) };
     await expect(
-      source(account, { ...synced, subAccounts: [] }).read?.accountStatus?.(target, undefined),
+      source(account, account, { ...synced, subAccounts: [] }).read?.accountStatus?.(
+        target,
+        undefined,
+      ),
     ).resolves.toEqual({ used: false, gate: null });
     expect(syncLegacyAccount).toHaveBeenCalledTimes(1);
+    expect(syncDetached).not.toHaveBeenCalled();
   });
 
   it("answers the native coin of the account without syncing it", async () => {
@@ -133,5 +142,19 @@ describe("createFullSyncSource", () => {
     await expect(source(undefined).read?.balance?.(target, undefined)).rejects.toThrow(
       FullSyncAccountNotFoundError,
     );
+  });
+
+  it("reads the status of an account the store does not hold from a sync kept out of the store", async () => {
+    syncDetached.mockResolvedValueOnce({ ...account, used: true });
+    const signal = new AbortController().signal;
+    await expect(
+      source(undefined).read?.accountStatus?.({ ...target, signal }, undefined),
+    ).resolves.toEqual({ used: true, gate: null });
+    expect(syncDetached).toHaveBeenCalledWith(
+      descriptor,
+      { prepareCurrency, blacklistedTokenIds: ["blacklisted"] },
+      signal,
+    );
+    expect(syncLegacyAccount).not.toHaveBeenCalled();
   });
 });

@@ -26,6 +26,11 @@ import type { Resolver } from "../../hw/getAddress/types";
 import signerSerializer from "./signerSerializer";
 import { getCurrencyConfiguration } from "../../config";
 import { CardanoCoinConfig } from "@ledgerhq/coin-cardano/config";
+import { from, map, switchMap } from "rxjs";
+import { AccountDescriptorSchema } from "@domain/entity-account-descriptor";
+import { asDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
+import type { DeriveAccountDescriptor } from "../../coin-modules/types";
+import { toLegacyPath } from "../../account-data/full-sync/placeholderAccount";
 
 function findNetwork(networkParams: CardanoLikeNetworkParameters) {
   return networkParams.networkId === Networks.Mainnet.networkId
@@ -95,4 +100,31 @@ const bridge: Bridge<Transaction, CardanoAccount, TransactionStatus> = createBri
 
 const resolver: Resolver = createResolver(createSigner, cardanoResolver);
 
-export { bridge, resolver };
+/** The extended public key the legacy sync reads at the account path, after the address its scan derives first. */
+const deriveAccountDescriptor: DeriveAccountDescriptor = (runOnTransport, currency, candidate) =>
+  runOnTransport(transport =>
+    from(
+      resolver(transport, {
+        currency,
+        path: toLegacyPath(candidate.addressPath),
+        derivationMode: asDerivationMode(candidate.derivationMode),
+      }),
+    ).pipe(
+      switchMap(() =>
+        from(createSigner(transport).getPublicKey(toLegacyPath(candidate.accountPath))),
+      ),
+    ),
+  ).pipe(
+    map(({ publicKeyHex, chainCodeHex }) =>
+      AccountDescriptorSchema.parse({
+        purpose: "account",
+        version: "2",
+        type: "utxo",
+        network: candidate.network,
+        key: `${publicKeyHex}${chainCodeHex}`,
+        path: candidate.accountPath,
+      }),
+    ),
+  );
+
+export { bridge, resolver, deriveAccountDescriptor };

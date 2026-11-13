@@ -57,8 +57,7 @@ This list is not complete: more entities are needed before no screen reads `Acco
 | `operations` | [`@domain/entity-account-operation`](../../domain/entity/account-operation) | merged: pages, `filterAsset`, `countervalue` |
 | `balanceHistory` | [`@domain/entity-account-balance-history`](../../domain/entity/account-balance-history) | merged; valued in a fiat in [#24309](https://github.com/LedgerHQ/ledger-live/pull/24309) |
 | `receive` | [`@domain/entity-account-receive`](../../domain/entity/account-receive) | address and device verification in [#24674](https://github.com/LedgerHQ/ledger-live/pull/24674); discovery [LIVE-40837](https://ledgerhq.atlassian.net/browse/LIVE-40837) |
-| `accountStatus`, `assetStatus` | [`@domain/entity-account-status`](../../domain/entity/account-status) | PoC [#24673](https://github.com/LedgerHQ/ledger-live/pull/24673): ever used, the account gate, and per asset its activation gate, blocking receive or send; not addresses, balances, staking nor memos |
-| `existence` | `@domain/entity-account-existence` | discovery [LIVE-40835](https://ledgerhq.atlassian.net/browse/LIVE-40835), closed PoC [#23602](https://github.com/LedgerHQ/ledger-live/pull/23602) |
+| `accountStatus`, `assetStatus` | [`@domain/entity-account-status`](../../domain/entity/account-status) | PoC [#24673](https://github.com/LedgerHQ/ledger-live/pull/24673): ever used, the account gate, and per asset its activation gate, blocking receive or send; not addresses, balances, staking nor memos. Discovery reads `used` of accounts the store does not hold ([LIVE-40835](https://ledgerhq.atlassian.net/browse/LIVE-40835)) |
 | `send` capability, not a kind | none yet | discovery [LIVE-40836](https://ledgerhq.atlassian.net/browse/LIVE-40836) |
 | staking, locked balances, family kinds | none yet | to explore |
 

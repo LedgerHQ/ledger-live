@@ -28,6 +28,7 @@ export const THANKS_REMOVED = 1000;
 export const ALLOWLIST = [
   "libs/ledger-live-common/src/account-data/full-sync/",
   "libs/ledger-live-common/src/account-data/coin-module/",
+  "libs/ledger-live-common/src/account-data/discovery/",
 ];
 
 const SOURCE = /\.tsx?$/;

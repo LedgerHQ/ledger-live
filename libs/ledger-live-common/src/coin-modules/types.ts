@@ -18,10 +18,13 @@ import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import type { AccountReceive } from "@domain/entity-account-receive";
 import type { AccountStatus, AssetStatus } from "@domain/entity-account-status";
 import type { TokenCurrency } from "@domain/entity-currency-token";
+import type { AccountCandidate } from "@domain/entity-derivation";
 import type { Transaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import type { CoinModuleImpl } from "@ledgerhq/coin-module-framework/api/index";
 import type Prando from "prando";
+import type { Observable } from "rxjs";
+import type Transport from "@ledgerhq/hw-transport";
 import type { Resolver } from "../hw/getAddress/types";
 import type { SignMessage } from "../hw/signMessage/types";
 import type {
@@ -123,7 +126,27 @@ export type FamilySetup<
   };
   resolver?: Resolver;
   messageSigner?: MessageSignerModule;
+  /** A derivation error ending the scan of a mode instead of failing it, as the family's legacy scan iterate does (Celo `UpdateYourApp`). */
+  endsScanOn?: (error: unknown) => boolean;
+  /** The descriptor of a discovery candidate, when the family is not known by the address `resolver` gives (UTXO, Hedera). */
+  deriveAccountDescriptor?: DeriveAccountDescriptor;
 };
+
+/** Runs a device job on a transport: a Device Intent session (`deriveOnSession`), or any other. */
+export type RunOnTransport = <T>(job: (transport: Transport) => Observable<T>) => Observable<T>;
+
+/** Unsubscribing stops the derivation; `null` ends the mode, as the legacy scan's iterate (Hedera past the accounts of its key). */
+/** An account looked up from a key (Hedera), as discovery's `LookedUpAccount`: declared here so the registry types pull in no feature package. */
+export type LookedUpDescriptor = {
+  readonly descriptor: AccountDescriptor;
+  readonly keyHasMoreAccounts: boolean;
+};
+
+export type DeriveAccountDescriptor = (
+  runOnTransport: RunOnTransport,
+  currency: CryptoCurrency,
+  candidate: AccountCandidate,
+) => Observable<AccountDescriptor | LookedUpDescriptor | null>;
 
 export type ValidateAddressFn = (
   address: string,
@@ -145,6 +168,8 @@ export type CoinModuleLoader<
   supportedCoins: string[]; // TO BE REPLACED soon by branded id
   /** How an account of this family is identified as an AccountDescriptor. */
   accountDescriptorType: AccountDescriptor["type"];
+  /** `false` when a first sync needs more than the descriptor holds: an onboarding (Canton, Concordium). */
+  syncsFromDescriptor?: false;
   loadSetup: () => Promise<FamilySetup<T, A, U, O, R>>;
   loadTransaction: () => Promise<TransactionModule<T, U, A, TRaw, URaw>>;
   loadDeviceTxConfig?: () => Promise<DeviceTransactionConfigFn<T, any, A>>;
