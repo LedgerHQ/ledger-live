@@ -228,6 +228,54 @@ describe("extractKeys: type-enumerated dynamic keys", () => {
     );
   });
 
+  describe("platform-suffixed relative imports", () => {
+    function platformPackage() {
+      write("suffix/package.json", "{}");
+      for (const platform of ["native", "web"]) {
+        write(
+          `suffix/tsconfig.${platform}.json`,
+          JSON.stringify({
+            compilerOptions: { moduleResolution: "bundler", moduleSuffixes: [`.${platform}`, ""] },
+          }),
+        );
+        write(`suffix/platform.${platform}.ts`, `export const platform = "${platform}" as const;`);
+      }
+    }
+
+    function platformSites(name) {
+      platformPackage();
+      return sitesOf(
+        `import { platform } from "./platform"; declare const f: boolean; t(f ? \`p.\${platform}\` : "p.x");`,
+        name,
+      );
+    }
+
+    it("resolves the .native twin from a .native file with the package's native tsconfig", () => {
+      const sites = platformSites("suffix/view.native.tsx");
+      assert.deepStrictEqual(
+        sites.map(s => s.kind),
+        ["enumerated"],
+      );
+      assert.deepStrictEqual(sites[0].keys.map(k => k.key).sort(), ["p.native", "p.x"]);
+    });
+
+    it("resolves the .web twin from a .web file with the package's web tsconfig", () => {
+      const sites = platformSites("suffix/view.web.tsx");
+      assert.deepStrictEqual(
+        sites.map(s => s.kind),
+        ["enumerated"],
+      );
+      assert.deepStrictEqual(sites[0].keys.map(k => k.key).sort(), ["p.web", "p.x"]);
+    });
+
+    it("leaves a shared file's twin import unverifiable", () => {
+      assert.deepStrictEqual(
+        platformSites("suffix/view.tsx").map(s => s.kind),
+        ["unverifiable"],
+      );
+    });
+  });
+
   it("gives up on combinations above the cap", () => {
     const members = Array.from({ length: 30 }, (_, i) => `"v${i}"`).join(" | ");
     const source = `type V = ${members}; declare const a: V; declare const b: V; t(\`\${a}.\${b}\`);`;
