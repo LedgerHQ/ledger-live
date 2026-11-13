@@ -61,7 +61,8 @@ const createTransaction = (): Transaction => ({
   recipient: "",
   fees: null,
   gas: null,
-  memo: null,
+  memoType: null,
+  memoValue: null,
   networkInfo: null,
   useAllAmount: false,
 });

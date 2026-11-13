@@ -21,6 +21,8 @@ function extractMemo(intent: TransactionIntent): string {
 // The memo the legacy bridge put on every staking transaction the user gave no memo to.
 export const STAKING_DEFAULT_MEMO = "Ledger Live";
 
+export const COSMOS_MEMO_TYPE = "text";
+
 // Cosmos has no plain "withdraw" (rewards are claimed via claimReward), so it maps to undefined.
 const STAKING_MODE: Record<StakingOperation, CosmosOperationMode | undefined> = {
   delegate: "delegate",

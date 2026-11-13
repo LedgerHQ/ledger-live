@@ -429,6 +429,11 @@ export type LLDCoinFamily<
   sendRecipientCanNext?: (status: TS) => boolean;
 
   /**
+   * Read the memo value of a transaction for display and memo-presence checks
+   */
+  getMemoValue?: (transaction: T) => string | undefined;
+
+  /**
    * Rendered for its side effects only, once a transaction has been broadcast.
    * Lets a family react to a completed send (e.g. Zcash triggers a shielded
    * resync after a private transfer so the account page converges without a

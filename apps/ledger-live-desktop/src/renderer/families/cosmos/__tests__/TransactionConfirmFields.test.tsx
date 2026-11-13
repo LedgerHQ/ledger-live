@@ -1,7 +1,9 @@
 import React from "react";
 import type { Transaction } from "@ledgerhq/live-common/families/cosmos/types";
 import { render, screen } from "tests/testSetup";
-import { Title, Warning } from "../TransactionConfirmFields";
+import TransactionConfirmFields, { Title, Warning } from "../TransactionConfirmFields";
+
+const MemoField = TransactionConfirmFields.fieldComponents["cosmos.memo"];
 
 const makeTransaction = (mode: Transaction["mode"]) => ({ family: "cosmos", mode }) as Transaction;
 
@@ -40,6 +42,36 @@ describe("cosmos TransactionConfirmFields", () => {
       expect(
         screen.getByText("Please confirm on your device to finalize the operation"),
       ).toBeVisible();
+    });
+  });
+
+  describe("memo field", () => {
+    const renderMemoField = (transaction: Transaction) =>
+      render(
+        <MemoField
+          account={{} as never}
+          parentAccount={undefined}
+          transaction={transaction}
+          status={{} as never}
+          field={{ type: "cosmos.memo", label: "Memo" } as never}
+        />,
+      );
+
+    it("shows the memoValue of the transaction", () => {
+      renderMemoField({ family: "cosmos", mode: "send", memoValue: "invoice 42" } as Transaction);
+
+      expect(screen.getByText("Memo")).toBeVisible();
+      expect(screen.getByText("invoice 42")).toBeVisible();
+    });
+
+    it("renders nothing when memoValue is empty", () => {
+      const { container } = renderMemoField({
+        family: "cosmos",
+        mode: "send",
+        memoValue: null,
+      } as Transaction);
+
+      expect(container).toBeEmptyDOMElement();
     });
   });
 });

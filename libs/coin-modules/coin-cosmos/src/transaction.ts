@@ -15,10 +15,11 @@ import {
   resolveSourceValidator,
   resolveTransactionValidators,
 } from "./buildTransaction";
+import { COSMOS_MEMO_TYPE } from "./logic/transaction/intentAdapter";
 import type { Transaction, TransactionRaw } from "./types";
 
 export const formatTransaction = (transaction: Transaction, account: Account): string => {
-  const { mode, amount, fees, recipient, memo, useAllAmount } = transaction;
+  const { mode, amount, fees, recipient, memoValue, useAllAmount } = transaction;
   const validators = resolveTransactionValidators(transaction);
   const sourceValidator = resolveSourceValidator(transaction);
   return `
@@ -46,7 +47,7 @@ ${validators
   )
   .join("\n")}${!sourceValidator ? "" : "\n  source validator=" + sourceValidator}
 with fees=${fees ? formatCurrencyUnit(getAccountCurrency(account).units[0], fees) : "?"}${
-    !memo ? "" : `\n  memo=${memo}`
+    !memoValue ? "" : `\n  memo=${memoValue}`
   }`;
 };
 
@@ -113,7 +114,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     memoValue !== undefined &&
     memoValue !== null
   ) {
-    memoType = "text";
+    memoType = COSMOS_MEMO_TYPE;
   }
 
   return {
@@ -125,7 +126,6 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     },
     fees: tr.fees ? new BigNumber(tr.fees) : null,
     gas: gasFromRaw(tr.gas),
-    memo: tr.memo,
     ...(memoType !== undefined ? { memoType } : {}),
     ...(memoValue !== undefined ? { memoValue } : {}),
     mode: tr.mode,
@@ -146,7 +146,6 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     },
     fees: t.fees ? t.fees.toString() : null,
     gas: gasToRaw(t.gas),
-    memo: t.memo,
     ...(t.memoType !== undefined ? { memoType: t.memoType } : {}),
     ...(t.memoValue !== undefined ? { memoValue: t.memoValue } : {}),
     ...(t.mode !== "send" ? { valAddress: getValAddress(t) } : {}),

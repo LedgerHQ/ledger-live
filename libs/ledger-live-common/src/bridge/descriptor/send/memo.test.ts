@@ -41,9 +41,8 @@ describe("applyMemoToTransaction", () => {
       });
     });
 
-    it("cosmos: empty string clears memo/memoType/memoValue", () => {
+    it("cosmos: empty string clears memoType/memoValue", () => {
       expect(applyMemoToTransaction("cosmos", "")).toEqual({
-        memo: undefined,
         memoType: null,
         memoValue: undefined,
       });
@@ -88,9 +87,8 @@ describe("applyMemoToTransaction", () => {
       });
     });
 
-    it("cosmos: sets memo/memoType/memoValue, ignoring any incoming type (no type selector exists)", () => {
+    it("cosmos: sets memoType/memoValue, ignoring any incoming type (no type selector exists)", () => {
       expect(applyMemoToTransaction("cosmos", "hello")).toEqual({
-        memo: "hello",
         memoType: "text",
         memoValue: "hello",
       });

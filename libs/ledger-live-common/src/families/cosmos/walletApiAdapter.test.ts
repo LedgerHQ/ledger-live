@@ -21,7 +21,8 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
         gas: null,
         useAllAmount: false,
         networkInfo: null,
-        memo: null,
+        memoType: null,
+        memoValue: null,
       };
 
       const { canEditFees, hasFeesProvided, liveTx } = cosmos.getWalletAPITransactionSignFlowInfos({
@@ -50,7 +51,8 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
         gas: null,
         useAllAmount: false,
         networkInfo: null,
-        memo: null,
+        memoType: null,
+        memoValue: null,
       };
 
       const { canEditFees, hasFeesProvided, liveTx } = cosmos.getWalletAPITransactionSignFlowInfos({
@@ -79,7 +81,6 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
         account: {} as Account,
       });
 
-      expect(liveTx.memo).toBe("pay invoice 42");
       expect(liveTx.memoType).toBe("text");
       expect(liveTx.memoValue).toBe("pay invoice 42");
     });

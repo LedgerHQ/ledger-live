@@ -1,13 +1,18 @@
 import React from "react";
-import { render, screen } from "tests/testSetup";
+import { render, screen, withFlagOverrides } from "tests/testSetup";
 import { TFunction } from "i18next";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { SolanaAccount, SolanaTokenAccount } from "@ledgerhq/live-common/families/solana/types";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { Account } from "@ledgerhq/types-live";
 import { useLLDCoinFamily } from "~/renderer/families";
-import StepRecipient from "./StepRecipient";
+import type { StepProps } from "../types";
+import StepRecipient, { StepRecipientFooter } from "./StepRecipient";
 
 jest.mock("~/renderer/families");
+
+const getMemoValue = (transaction: { memoValue?: string }) => transaction.memoValue;
 const mockUseAccountBridgeOrNull = jest.fn(() => ({
   getStuckAccountAndOperation: () => undefined,
 }));
@@ -137,5 +142,51 @@ describe("StepRecipient", () => {
     render(<StepRecipient {...baseParams} />);
 
     expect(screen.queryByText("send.steps.details.selectAccountDebit")).toBeInTheDocument();
+  });
+});
+
+describe("StepRecipientFooter memo check", () => {
+  const cosmosAccount = genAccount("step-recipient-cosmos", {
+    currency: getCryptoCurrencyById("cosmos"),
+  });
+
+  const renderFooter = (memoValue: string | undefined, transitionTo: jest.Mock) =>
+    render(
+      <StepRecipientFooter
+        {...({
+          t: mockTFunction,
+          account: cosmosAccount,
+          parentAccount: null,
+          status: { errors: {}, warnings: {} },
+          bridgePending: false,
+          transitionTo,
+          transaction: { family: "cosmos", recipient: "recipient", memoValue },
+        } as unknown as StepProps)}
+      />,
+      { initialState: withFlagOverrides({ lldMemoTag: { enabled: true } }) },
+    );
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockUseLLDCoinFamily.mockReturnValue({ getMemoValue } as never);
+  });
+
+  it("goes to the amount step when the family slot returns a memo", async () => {
+    const transitionTo = jest.fn();
+    const { user } = renderFooter("Cosmos memo", transitionTo);
+
+    await user.click(screen.getByText("common.continue"));
+
+    expect(transitionTo).toHaveBeenCalledWith("amount");
+  });
+
+  it("shows the memo tag info box when the family slot returns no memo", async () => {
+    const transitionTo = jest.fn();
+    const { user } = renderFooter(undefined, transitionTo);
+
+    await user.click(screen.getByText("common.continue"));
+
+    expect(transitionTo).not.toHaveBeenCalled();
+    expect(screen.getByText("send.info.needMemoTag.cta.addTag")).toBeVisible();
   });
 });

@@ -197,10 +197,10 @@ export const CosmosSourceValidatorField = ({
 };
 const CosmosMemoField = ({ transaction, field }: CosmosFieldComponentProps) => {
   invariant(transaction.family === "cosmos", "cosmos transaction");
-  const { memo } = transaction;
-  return memo ? (
+  const { memoValue } = transaction;
+  return memoValue ? (
     <TransactionConfirmField label={field.label}>
-      <FieldText>{memo}</FieldText>
+      <FieldText>{memoValue}</FieldText>
     </TransactionConfirmField>
   ) : null;
 };
