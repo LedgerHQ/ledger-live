@@ -95,6 +95,22 @@ describe("createFullSyncSource", () => {
     expect(syncLegacyAccount).toHaveBeenCalledTimes(1);
   });
 
+  it("reads the status of the synced account", async () => {
+    const synced = { ...account, used: false, operationsCount: 0, balance: new BigNumber(0) };
+    await expect(
+      source(account, { ...synced, subAccounts: [] }).read?.accountStatus?.(target, undefined),
+    ).resolves.toEqual({ used: false, gate: null });
+    expect(syncLegacyAccount).toHaveBeenCalledTimes(1);
+  });
+
+  it("answers the native coin of the account without syncing it", async () => {
+    const assetId = CryptoOrTokenCurrencyIdSchema.parse("ethereum");
+    await expect(
+      source(account, account).read?.assetStatus?.(target, { assetId }),
+    ).resolves.toEqual({ assetId, status: { gate: null } });
+    expect(syncLegacyAccount).not.toHaveBeenCalled();
+  });
+
   it("applies the asset filter of the query to the operations", async () => {
     const synced = { ...account, pendingOperations: [], subAccounts: [] };
     const filterAsset = CryptoOrTokenCurrencyIdSchema.parse("ethereum/erc20/usd_tether__erc20_");

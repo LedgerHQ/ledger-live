@@ -19956,6 +19956,9 @@ importers:
       '@domain/entity-account-receive':
         specifier: workspace:^
         version: link:../../domain/entity/account-receive
+      '@domain/entity-account-status':
+        specifier: workspace:^
+        version: link:../../domain/entity/account-status
       '@domain/entity-client-identity':
         specifier: workspace:^
         version: link:../../domain/entity/client-identity

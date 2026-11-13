@@ -17,6 +17,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     supportedCoins: ["algorand"],
     accountDescriptorType: "address",
     loadSetup: () => import("../families/algorand/setup"),
+    loadAssetStatus: () => import("../families/algorand/assetStatus").then(m => m.default),
     loadTransaction: () => import("@ledgerhq/coin-algorand/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-algorand/deviceTransactionConfig").then(m => m.default),
@@ -69,6 +70,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     accountDescriptorType: "address",
     loadSetup: () => import("../families/canton/setup"),
     loadAccountReceive: () => import("../families/canton/accountReceive").then(m => m.default),
+    loadAccountStatus: () => import("../families/canton/accountStatus").then(m => m.default),
     loadLocalApi: () =>
       import("../families/canton/coinModuleApi").then(m => m.createLocalCantonApi),
     loadTransaction: () => import("@ledgerhq/coin-canton/transaction").then(m => m.default),
@@ -122,6 +124,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     accountDescriptorType: "address",
     loadSetup: () => import("../families/concordium/setup"),
     loadAccountReceive: () => import("../families/concordium/accountReceive").then(m => m.default),
+    loadAccountStatus: () => import("../families/concordium/accountStatus").then(m => m.default),
     loadTransaction: () => import("@ledgerhq/coin-concordium/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-concordium/deviceTransactionConfig").then(m => m.default),
@@ -255,6 +258,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     accountDescriptorType: "address",
     loadSetup: () => import("../families/hedera/setup"),
     loadAccountReceive: () => import("../families/hedera/accountReceive").then(m => m.default),
+    loadAssetStatus: () => import("../families/hedera/assetStatus").then(m => m.default),
     loadTransaction: () =>
       isGenericCoinFrameworkFamily("hedera")
         ? import("../families/hedera/transaction").then(m => m.default)
@@ -312,6 +316,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     supportedCoins: ["kaspa"],
     accountDescriptorType: "utxo",
     loadSetup: () => import("../families/kaspa/setup"),
+    loadAccountStatus: () => import("../families/kaspa/accountStatus").then(m => m.default),
     loadTransaction: () => import("@ledgerhq/coin-kaspa/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-kaspa/deviceTransactionConfig").then(m => m.default),
@@ -406,6 +411,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     supportedCoins: ["stellar"],
     accountDescriptorType: "address",
     loadSetup: () => import("../families/stellar/setup"),
+    loadAssetStatus: () => import("../families/stellar/assetStatus").then(m => m.default),
     loadLocalApi: () =>
       import("../families/stellar/coinModuleApi").then(m => m.createLocalStellarApi),
     loadTransaction: () => import("../families/stellar/transaction").then(m => m.default),
@@ -479,6 +485,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadAccount: () => import("@ledgerhq/coin-vechain/account").then(m => m.default),
     loadMockAccount: () => import("@ledgerhq/coin-vechain/mock").then(m => m.default),
     loadBridgeExtensions: () => import("../families/vechain/bridgeExtensions").then(m => m.default),
+    loadAccountStatus: () => import("../families/vechain/accountStatus").then(m => m.default),
     loadLocalApi: () =>
       import("../families/vechain/coinModuleApi").then(m => m.createLocalVechainApi),
     loadBridgeApi: () => import("../families/vechain/bridge/api").then(m => m.default),
@@ -488,6 +495,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     supportedCoins: ["ripple", "ripple_testnet", "ripple_devnet"],
     accountDescriptorType: "address",
     loadSetup: () => import("../families/xrp/setup"),
+    loadAssetStatus: () => import("../families/xrp/assetStatus").then(m => m.default),
     loadLocalApi: () => import("../families/xrp/coinModuleApi").then(m => m.createLocalXrpApi),
     loadTransaction: () => import("../families/xrp/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
