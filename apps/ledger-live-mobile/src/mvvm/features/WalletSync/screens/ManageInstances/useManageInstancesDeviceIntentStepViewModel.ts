@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { createIntent } from "@features/platform-device-intent";
 import type {
@@ -32,6 +33,8 @@ export function useManageInstancesDeviceIntentStepViewModel({ input, onClose }: 
   const memberCredentials = useSelector(memberCredentialsSelector);
   const createSessionSdk = useCreateSessionSdk();
 
+  const removedMemberRef = useRef<TrustchainMember | null>(null);
+
   const step = useLedgerSyncIntentStep<RemoveMemberIntent, RemoveInstanceStepInput>({
     input,
     onClose,
@@ -49,11 +52,17 @@ export function useManageInstancesDeviceIntentStepViewModel({ input, onClose }: 
         onResult: newTrustchain => onResult(newTrustchain, member),
       });
     },
+    onCompleted,
   });
 
   function onResult(newTrustchain: Trustchain, member: TrustchainMember) {
     dispatch(setTrustchain(newTrustchain));
-    if (!step.isMounted()) return;
+    removedMemberRef.current = member;
+  }
+
+  function onCompleted() {
+    const member = removedMemberRef.current;
+    if (!member) return;
     step.finish();
     navigation.navigate(NavigatorName.WalletSync, {
       screen: ScreenName.WalletSyncManageInstancesSuccess,

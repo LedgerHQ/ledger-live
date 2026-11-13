@@ -131,13 +131,21 @@ describe("deliverLateResult", () => {
     expect(onResult).toHaveBeenCalledWith("late result");
   });
 
-  it("should not throw when onResult throws", () => {
+  it("should log a throw from onResult instead of throwing", () => {
+    const consoleError = jest.spyOn(console, "error").mockImplementation(() => {});
+    const hostError = new Error("host failed");
     const onResult = jest.fn(() => {
-      throw new Error("host failed");
+      throw hostError;
     });
 
-    expect(() => deliverLateResult(onResult, "late result")).not.toThrow();
-    expect(onResult).toHaveBeenCalledTimes(1);
+    try {
+      expect(() => deliverLateResult(onResult, "late result")).not.toThrow();
+      expect(onResult).toHaveBeenCalledTimes(1);
+      expect(consoleError).toHaveBeenCalledTimes(1);
+      expect(consoleError).toHaveBeenCalledWith(expect.any(String), hostError);
+    } finally {
+      consoleError.mockRestore();
+    }
   });
 });
 
@@ -375,6 +383,7 @@ describe("createLedgerSyncJob", () => {
     });
 
     it("should not report a throw from onResult through the closed subscriber", async () => {
+      const consoleError = jest.spyOn(console, "error").mockImplementation(() => {});
       const device = createDeferred<string>();
       const onResult = jest.fn(() => {
         throw new Error("host failed");
@@ -388,6 +397,8 @@ describe("createLedgerSyncJob", () => {
       expect(onResult).toHaveBeenCalledTimes(1);
       expect(job.states).toEqual([PENDING]);
       expect(onStoppedNotification).not.toHaveBeenCalled();
+      expect(consoleError).toHaveBeenCalledTimes(1);
+      consoleError.mockRestore();
     });
 
     it("should ignore the late result of a disconnected job once the job that replaced it delivered", async () => {

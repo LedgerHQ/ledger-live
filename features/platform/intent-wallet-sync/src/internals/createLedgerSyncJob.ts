@@ -60,8 +60,9 @@ export function deliverLateResult<Result>(
 ): void {
   try {
     onResult(result);
-  } catch {
-    // The subscriber is closed: there is nobody left to report the throw to.
+  } catch (error) {
+    // The subscriber is closed, so the throw cannot end the job: only the log reports it.
+    console.error("Ledger Sync: storing a late result failed", error);
   }
 }
 

@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { track } from "@shared/analytics";
 import { createIntent, type DeviceConnectionResult } from "@features/platform-device-intent";
@@ -79,6 +79,10 @@ export function useActivationDeviceIntentStepViewModel({ input, onClose, onActiv
     });
   }, []);
 
+  const activatedRef = useRef<{ trustchainResult: TrustchainResult; seededOffer: boolean } | null>(
+    null,
+  );
+
   const step = useLedgerSyncIntentStep<AddMemberIntent, ActivationStepInput>({
     input,
     onClose,
@@ -96,12 +100,19 @@ export function useActivationDeviceIntentStepViewModel({ input, onClose, onActiv
       });
     },
     onDeviceRejected,
+    onCompleted,
   });
 
   function onResult(trustchainResult: TrustchainResult, seededOffer: boolean) {
     dispatch(setTrustchain(trustchainResult.trustchain));
     track(AnalyticsEvents.LedgerSyncActivated, { flow: trackingFlow });
-    if (!step.isMounted()) return;
+    activatedRef.current = { trustchainResult, seededOffer };
+  }
+
+  function onCompleted() {
+    const activated = activatedRef.current;
+    if (!activated) return;
+    const { trustchainResult, seededOffer } = activated;
     onActivated();
     step.finish();
     if (seededOffer) return;
