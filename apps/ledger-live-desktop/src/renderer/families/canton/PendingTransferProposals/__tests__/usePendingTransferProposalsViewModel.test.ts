@@ -16,7 +16,6 @@ jest.mock("@ledgerhq/live-common/bridge/react/index");
 jest.mock("../../hooks/topologyChangeError", () => ({
   __esModule: true,
   handleTopologyChangeError: jest.fn(),
-  TopologyChangeError: jest.requireActual("@ledgerhq/coin-canton").TopologyChangeError,
 }));
 
 const mockUseCantonAcceptOrRejectOffer = jest.mocked(useCantonAcceptOrRejectOffer);

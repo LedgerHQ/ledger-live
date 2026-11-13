@@ -1,12 +1,9 @@
 import type { ChangeEvent } from "react";
-import type {
-  FeeSelectorOptionKind,
-  FeeSelectorOption,
-} from "@ledgerhq/live-common/flows/send/utils/feeSelectorOptions";
+import type { FeeSelectorOption } from "@ledgerhq/live-common/flows/send/utils/feeSelectorOptions";
 import type { FeeAmountDisplay } from "LLD/features/Send/types";
 import type { SponsoredFeeNudgeProps } from "./components/Fees/SponsoredFeeNudge";
 
-export type { FeeSelectorOptionKind, FeeSelectorOption };
+export type { FeeSelectorOption };
 
 export type SponsoredFeeDisplay = FeeAmountDisplay &
   Readonly<{
@@ -30,19 +27,6 @@ export type AmountScreenQuickAction = Readonly<{
   onClick: () => void;
   active: boolean;
   disabled: boolean;
-}>;
-
-export type AmountScreenFeeSummary = Readonly<{
-  fiatLabel: string;
-  fiatValue: string;
-  cryptoLabel: string;
-  cryptoValue: string;
-  description: string;
-}>;
-
-export type AmountScreenBanner = Readonly<{
-  title: string;
-  description: string;
 }>;
 
 type AmountInputProps = Readonly<{
