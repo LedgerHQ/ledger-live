@@ -12769,6 +12769,12 @@ importers:
 
   features/flow/pay-request:
     dependencies:
+      '@features/platform-device-intent-session':
+        specifier: workspace:^
+        version: link:../../platform/device-intent-session
+      '@features/platform-intent-verify-address':
+        specifier: workspace:^
+        version: link:../../platform/intent-verify-address
       '@features/platform-pay-analytics':
         specifier: workspace:^
         version: link:../../platform/pay-analytics
