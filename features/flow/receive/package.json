@@ -12,6 +12,7 @@
       "default": "./src/index.ts"
     },
     "./state": "./src/state/index.ts",
+    "./types.mock": "./src/types.mock.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -24,12 +25,17 @@
     "coverage": "jest --coverage"
   },
   "dependencies": {
+    "@domain/entity-account-descriptor": "workspace:*",
+    "@domain/entity-account-receive": "workspace:*",
+    "@domain/entity-currency": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "@shared/analytics": "workspace:*",
+    "@shared/feature-flags": "workspace:*",
     "@shared/i18n": "workspace:*",
     "@shared/ui-info-state": "workspace:*"
   },
   "devDependencies": {
+    "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
@@ -56,6 +62,7 @@
     "typescript": "catalog:"
   },
   "peerDependencies": {
+    "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "react": "catalog:",
