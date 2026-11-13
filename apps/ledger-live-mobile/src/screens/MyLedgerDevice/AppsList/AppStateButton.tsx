@@ -67,7 +67,6 @@ const AppStateButton = ({
         return (
           <AppInstallButton
             state={state}
-            dispatch={dispatch}
             app={app}
             notEnoughMemoryToInstall={notEnoughMemoryToInstall}
             storageWarning={storageWarning}

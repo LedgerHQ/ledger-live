@@ -13,6 +13,9 @@ import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
 import QuitManagerModal from "./Modals/QuitManagerModal";
 import StorageWarningModal from "./Modals/StorageWarningModal";
 import InstallAppDependenciesModal from "./Modals/InstallAppDependenciesModal";
+import CommunityAppInstallDrawer from "./Modals/CommunityAppInstallDrawer";
+import { isCommunityApp } from "@ledgerhq/live-common/apps/developer";
+import type { App } from "@ledgerhq/types-live";
 import UninstallAppDependenciesModal from "./Modals/UninstallAppDependenciesModal";
 import { useLockNavigation } from "~/components/RootNavigator/CustomBlockRouterNavigator";
 import { setHasInstalledAnyApp, setLastSeenDeviceInfo } from "~/actions/settings";
@@ -65,6 +68,7 @@ const MyLedgerDevice = ({ navigation, route }: NavigationProps) => {
   }, [device.wired, lastConnectedDevice, navigation]);
 
   const isOsUpdatesEnabled = useFeature("ldmkOsUpdates")?.enabled ?? false;
+  const { enabled: isDeveloperInfoEnabled } = useFeature("myLedgerDisplayAppDeveloperName") ?? {};
   const hasOsUpdates = useSelector(hasOsUpdatesSelector);
   // Landing here with `firmwareUpdate` (e.g. from the portfolio banner) opens the OS update "What's new".
   useEffect(() => {
@@ -108,6 +112,8 @@ const MyLedgerDevice = ({ navigation, route }: NavigationProps) => {
   /** install app with dependencies modal state */
   const [appWithDependenciesToInstall, setAppWithDependenciesToInstall] =
     useState<AppWithDependencies | null>(null);
+  /** community app waiting for the user to accept the disclaimer before installing */
+  const [communityAppToInstall, setCommunityAppToInstall] = useState<App | null>(null);
   /** uninstall app with dependents modal state */
   const [appWithDependentsToUninstall, setAppWithDependentsToUninstall] =
     useState<AppWithDependents | null>(null);
@@ -177,12 +183,37 @@ const MyLedgerDevice = ({ navigation, route }: NavigationProps) => {
     [device, baseNavigation],
   );
 
+  const startInstall = useCallback(
+    (app: App) => {
+      reduxDispatch(setHasInstalledAnyApp(true));
+      dispatch({ type: "install", name: app.name });
+    },
+    [reduxDispatch, dispatch],
+  );
+
+  /** Installs an app; a community app first shows the disclaimer, which is always the last step. */
+  const installApp = useCallback(
+    (app: App) => {
+      if (isDeveloperInfoEnabled && isCommunityApp(app)) setCommunityAppToInstall(app);
+      else startInstall(app);
+    },
+    [isDeveloperInfoEnabled, startInstall],
+  );
+
+  const onCloseCommunityAppInstallDrawer = useCallback(() => setCommunityAppToInstall(null), []);
+
+  const installCommunityApp = useCallback(() => {
+    if (communityAppToInstall) startInstall(communityAppToInstall);
+    onCloseCommunityAppInstallDrawer();
+  }, [communityAppToInstall, onCloseCommunityAppInstallDrawer, startInstall]);
+
   const appsInstallUninstallWithDependenciesContextValue = useMemo(
     () => ({
       setAppWithDependenciesToInstall,
       setAppWithDependentsToUninstall,
+      installApp,
     }),
-    [],
+    [installApp],
   );
 
   const onCloseInstallAppDependenciesModal = useCallback(() => {
@@ -190,12 +221,9 @@ const MyLedgerDevice = ({ navigation, route }: NavigationProps) => {
   }, []);
 
   const installAppWithDependencies = useCallback(() => {
-    if (appWithDependenciesToInstall) {
-      reduxDispatch(setHasInstalledAnyApp(true));
-      dispatch({ type: "install", name: appWithDependenciesToInstall?.app.name });
-    }
     onCloseInstallAppDependenciesModal();
-  }, [appWithDependenciesToInstall, onCloseInstallAppDependenciesModal, reduxDispatch, dispatch]);
+    if (appWithDependenciesToInstall) installApp(appWithDependenciesToInstall.app);
+  }, [appWithDependenciesToInstall, onCloseInstallAppDependenciesModal, installApp]);
 
   const onCloseUninstallAppDependenciesModal = useCallback(() => {
     setAppWithDependentsToUninstall(null);
@@ -252,6 +280,11 @@ const MyLedgerDevice = ({ navigation, route }: NavigationProps) => {
         appWithDependenciesToInstall={appWithDependenciesToInstall}
         onClose={onCloseInstallAppDependenciesModal}
         installAppWithDependencies={installAppWithDependencies}
+      />
+      <CommunityAppInstallDrawer
+        app={communityAppToInstall}
+        onInstall={installCommunityApp}
+        onClose={onCloseCommunityAppInstallDrawer}
       />
       <UninstallAppDependenciesModal
         appWithDependentsToUninstall={appWithDependentsToUninstall}

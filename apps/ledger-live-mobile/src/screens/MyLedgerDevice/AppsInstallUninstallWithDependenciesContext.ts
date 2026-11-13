@@ -24,6 +24,8 @@ export type AppWithDependents = {
 type AppsInstallUninstallWithDependenciesValue = {
   setAppWithDependenciesToInstall: (appWithDependencies: AppWithDependencies | null) => void;
   setAppWithDependentsToUninstall: (appWithDependents: AppWithDependents | null) => void;
+  /** Installs an app without dependencies to confirm, through the community app disclaimer when needed. */
+  installApp: (app: App) => void;
 };
 
 /**
