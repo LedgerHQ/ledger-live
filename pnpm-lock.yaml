@@ -17985,7 +17985,7 @@ importers:
         version: 1.0.4
       '@stricahq/cbors':
         specifier: ^1.0.2
-        version: 1.0.2
+        version: 1.0.4
       '@stricahq/typhonjs':
         specifier: ^3.0.0
         version: 3.0.0
@@ -32997,6 +32997,9 @@ packages:
 
   '@stricahq/cbors@1.0.2':
     resolution: {integrity: sha512-6ePsEiq7EGHA5IiPn9poA7sF5iXPqt30kKw3pjR/BhP7S+XHZNu/OPumESWnVl4AM+IEYC2x9eL+4qRPsTPVww==}
+
+  '@stricahq/cbors@1.0.4':
+    resolution: {integrity: sha512-0VmdpoYIi3lxgF10gOYvY0+BxD+u7/M6H6afmPWuc8Klg6Zpj9mRQnsw5zv6nYeflfIDvD0NjSQDkANe3psBxg==}
 
   '@stricahq/typhonjs@3.0.0':
     resolution: {integrity: sha512-sccJ0hqlvlCPzG8dm89Jb6QgxCXR0BSjFxmDwGT7cYvYBNRtTq+ctipdQfnR7Zq1lNs907V/AQSDU1YcUsqnkw==}
@@ -52463,6 +52466,11 @@ snapshots:
       pbkdf2: 3.1.2
 
   '@stricahq/cbors@1.0.2':
+    dependencies:
+      bignumber.js: 9.1.2
+      buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
+
+  '@stricahq/cbors@1.0.4':
     dependencies:
       bignumber.js: 9.1.2
       buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
