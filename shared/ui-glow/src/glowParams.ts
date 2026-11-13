@@ -38,24 +38,3 @@ export const GLOW_DEFAULTS: GlowParams = {
   balance: 0.72,
   contrast: 0.35,
 };
-
-/** Order of the `uP` uniform: the `#define P_*` lines of the shaders. */
-export const GLOW_PARAM_ORDER = [
-  "intensity",
-  "opacity",
-  "grain",
-  "grainSize",
-  "chroma",
-  "softness",
-  "width",
-  "reach",
-  "dark",
-  "spreadX",
-  "balance",
-  "contrast",
-  "topReach",
-] as const satisfies readonly (keyof GlowParams)[];
-
-export function toUniformArray(params: GlowParams): number[] {
-  return GLOW_PARAM_ORDER.map(key => params[key]);
-}

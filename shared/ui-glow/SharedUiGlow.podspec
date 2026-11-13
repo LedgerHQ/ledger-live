@@ -15,6 +15,8 @@ Pod::Spec.new do |s|
   s.platforms    = { :ios => "16.4" }
   s.source_files = "ios/**/*.{h,m,mm}"
   s.frameworks   = "Metal", "MetalKit"
+  # The Metal source, compiled at runtime (see ios/glow.msl for why it is not `.metal`).
+  s.resource_bundles = { "SharedUiGlow" => ["ios/glow.msl"] }
 
   # Fabric component: codegen headers, React-Core and the C++ renderer.
   install_modules_dependencies(s)

@@ -1,12 +1,12 @@
-/**
- * The glow shader in Metal Shading Language: a port of shaders/glow.glsl.ts.
- * Keep the two in sync: same constants, same math, same order of operations.
- *
- * Differences with the GLSL: [[position]] is top-left (no y flip), the uniforms
- * are one struct (buffer 0) shared by both stages, and the lobe centers are
- * [[flat]]. Entry points: glow_vertex (3 vertices, no vertex buffer) and glow_fragment.
- */
-export const GLOW_METAL = /* metal */ `
+// The glow shader in Metal Shading Language: a port of android/src/main/assets/uiglow/glow.glsl.
+// Keep the two in sync: same constants, same math, same order of operations. Shipped as a resource
+// (SharedUiGlow.bundle) and compiled at runtime by RCTGlowView.mm: `.msl`, not `.metal`, so Xcode
+// does not compile it at build time (that needs the Metal Toolchain download).
+//
+// Differences with the GLSL: [[position]] is top-left (no y flip), the uniforms are one struct
+// (buffer 0) shared by both stages, and the lobe centers are [[flat]]. Entry points: glow_vertex
+// (3 vertices, no vertex buffer) and glow_fragment.
+
 #include <metal_stdlib>
 using namespace metal;
 
@@ -19,22 +19,36 @@ struct Uniforms {
   float fadeTop;
   float fadeBottom;
   float pad;
-  float p[16];
+  // The design params (GlowParams), filled by name from the typed props.
+  float intensity;
+  float opacity;
+  float grain;
+  float grainSize;
+  float chroma;
+  float softness;
+  float width;
+  float reach;
+  float dark;
+  float spreadX;
+  float balance;
+  float contrast;
+  float topReach;
+  float pad2[3];
 };
 
-#define P_INTENSITY   u.p[0]
-#define P_OPACITY     u.p[1]
-#define P_GRAIN       u.p[2]
-#define P_GRAIN_SIZE  u.p[3]
-#define P_CHROMA      u.p[4]
-#define P_SOFTNESS    u.p[5]
-#define P_WIDTH       u.p[6]
-#define P_REACH       u.p[7]
-#define P_DARK        u.p[8]
-#define P_SPREAD_X    u.p[9]
-#define P_BALANCE     u.p[10]
-#define P_CONTRAST    u.p[11]
-#define P_TOP_REACH   u.p[12] // reach multiplier of the top glow
+#define P_INTENSITY   u.intensity
+#define P_OPACITY     u.opacity
+#define P_GRAIN       u.grain
+#define P_GRAIN_SIZE  u.grainSize
+#define P_CHROMA      u.chroma
+#define P_SOFTNESS    u.softness
+#define P_WIDTH       u.width
+#define P_REACH       u.reach
+#define P_DARK        u.dark
+#define P_SPREAD_X    u.spreadX
+#define P_BALANCE     u.balance
+#define P_CONTRAST    u.contrast
+#define P_TOP_REACH   u.topReach
 
 struct VertexOut {
   float4 position [[position]];
@@ -187,4 +201,3 @@ fragment float4 glow_fragment(VertexOut in [[stage_in]], constant Uniforms &u [[
   col *= u.fade;
   return float4(clamp(col, float3(0.0), float3(1.0)), 1.0);
 }
-`;

@@ -17,7 +17,7 @@ import kotlin.math.roundToInt
 
 /**
  * <GlowView> on Android: a GLSurfaceView (OpenGL ES 2.0) that owns the render thread, so no JS
- * runs per frame. The `source` prop is GLSL ES 1.00 for both stages (src/shaders/glow.glsl.ts).
+ * runs per frame. The shader is GLSL ES 1.00 for both stages, read from assets/uiglow/glow.glsl.
  * Two glows (top, bottom) fade in or out after `delayMs`; the whole glow fades in once the
  * shader is ready. Reduce motion stops the clock and makes fades instant. Pixel ratio capped at 2.
  */
@@ -25,12 +25,7 @@ class GlowView(context: Context) : GLSurfaceView(context) {
 
   // Written on the UI thread, read on the render thread.
   // A still glow (reduce motion) draws only on request, so each change asks for a frame.
-  @Volatile var source = ""
-    set(value) {
-      field = value
-      requestRender()
-    }
-  @Volatile var params = FloatArray(PARAM_COUNT)
+  @Volatile var params = GlowParams()
     set(value) {
       field = value
       requestRender()
@@ -118,7 +113,6 @@ class GlowView(context: Context) : GLSurfaceView(context) {
     private var width = 1
     private var height = 1
     private var program = 0
-    private var programSource: String? = null
     private var hasFailed = false
     private var uniforms = IntArray(0)
     private var elapsed = 0.0
@@ -127,13 +121,13 @@ class GlowView(context: Context) : GLSurfaceView(context) {
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
       program = 0 // a new context: GL objects are gone
-      programSource = null
       lastNanos = 0L // hidden time does not move the clock
     }
 
     override fun onSurfaceChanged(gl: GL10?, newWidth: Int, newHeight: Int) {
       width = newWidth
       height = newHeight
+      lastNanos = 0L // a surface back from the background: hidden time does not move the clock
       GLES20.glViewport(0, 0, width, height)
     }
 
@@ -143,8 +137,7 @@ class GlowView(context: Context) : GLSurfaceView(context) {
       lastNanos = if (isReduceMotion) 0L else now // frozen time does not move the clock
       topFade.step(now)
       bottomFade.step(now)
-      val currentSource = source
-      if (currentSource != programSource) buildProgram(currentSource)
+      if (program == 0 && !hasFailed) buildProgram()
       if (program == 0) {
         GLES20.glClearColor(0f, 0f, 0f, 1f)
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
@@ -157,22 +150,23 @@ class GlowView(context: Context) : GLSurfaceView(context) {
       GLES20.glUniform1f(uniforms[3], entry)
       GLES20.glUniform1f(uniforms[4], topFade.value)
       GLES20.glUniform1f(uniforms[5], bottomFade.value)
-      GLES20.glUniform4fv(uniforms[6], PARAM_COUNT / 4, params, 0) // uniform vec4 uP[4]
+      val p = params
+      GLES20.glUniform4f(uniforms[6], p.intensity, p.opacity, p.grain, p.grainSize) // uLook
+      GLES20.glUniform4f(uniforms[7], p.chroma, p.softness, p.width, p.reach) // uShape
+      GLES20.glUniform4f(uniforms[8], p.dark, p.spreadX, p.balance, p.contrast) // uTone
+      GLES20.glUniform1f(uniforms[9], p.topReach) // uTopReach
       GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 3)
     }
 
-    private fun buildProgram(newSource: String) {
-      if (program != 0) GLES20.glDeleteProgram(program)
-      program = 0
-      programSource = newSource
-      if (newSource.isEmpty() || hasFailed) return
+    private fun buildProgram() {
+      val source = shaderSource(context) ?: return fail("Shader asset not found: $SHADER_ASSET")
       // Both stages share uniforms, so the fragment stage needs highp too.
       val range = IntArray(2)
       val precision = IntArray(1)
       GLES20.glGetShaderPrecisionFormat(GLES20.GL_FRAGMENT_SHADER, GLES20.GL_HIGH_FLOAT, range, 0, precision, 0)
       if (precision[0] == 0) return fail("No highp float in fragment shaders on this GPU")
-      val vertex = compile(GLES20.GL_VERTEX_SHADER, "#define VERTEX\n$newSource") ?: return
-      val fragment = compile(GLES20.GL_FRAGMENT_SHADER, "#define FRAGMENT\n$newSource") ?: return
+      val vertex = compile(GLES20.GL_VERTEX_SHADER, "#define VERTEX\n$source") ?: return
+      val fragment = compile(GLES20.GL_FRAGMENT_SHADER, "#define FRAGMENT\n$source") ?: return
       val newProgram = GLES20.glCreateProgram()
       GLES20.glAttachShader(newProgram, vertex)
       GLES20.glAttachShader(newProgram, fragment)
@@ -256,12 +250,21 @@ class GlowView(context: Context) : GLSurfaceView(context) {
   }
 
   companion object {
+    private const val SHADER_ASSET = "uiglow/glow.glsl"
+    @Volatile private var cachedSource: String? = null
+
+    /** The shader text, read once per process. Null if the asset is missing. */
+    private fun shaderSource(context: Context): String? =
+        cachedSource
+            ?: runCatching { context.assets.open(SHADER_ASSET).bufferedReader().use { it.readText() } }
+                .getOrNull()
+                ?.also { cachedSource = it }
+
     private const val TAG = "GlowView"
     private const val MAX_PIXEL_RATIO = 2f
-    const val PARAM_COUNT = 16 // room to grow: unused slots are 0
     private const val FADE = 1.0 // seconds, one glow coming or going (GLOW_FADE_MS in JS)
     private const val ENTRY_FADE = 0.6 // the first display, once the shader is ready
-    private val UNIFORM_NAMES = listOf("uRes", "uTime", "uDpr", "uFade", "uFadeTop", "uFadeBottom", "uP")
+    private val UNIFORM_NAMES = listOf("uRes", "uTime", "uDpr", "uFade", "uFadeTop", "uFadeBottom", "uLook", "uShape", "uTone", "uTopReach")
     private val TRIANGLE = ByteBuffer.allocateDirect(6 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer().apply {
       put(floatArrayOf(-1f, -1f, 3f, -1f, -1f, 3f))
       position(0)

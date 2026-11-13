@@ -1,12 +1,8 @@
-import React, { useMemo, useState } from "react";
-import { Platform, StyleSheet, View } from "react-native";
+import React, { useState } from "react";
+import { StyleSheet, View } from "react-native";
 import type { GlowProps } from "../Glow.types";
-import { GLOW_DEFAULTS, toUniformArray } from "../glowParams";
-import { GLOW_GLSL } from "../shaders/glow.glsl";
-import { GLOW_METAL } from "../shaders/glow.metal";
+import { GLOW_DEFAULTS } from "../glowParams";
 import GlowView from "./specs/GlowViewNativeComponent";
-
-const SOURCE = Platform.OS === "ios" ? GLOW_METAL : GLOW_GLSL;
 
 /**
  * Animated GPU glows, top and bottom. The native view runs the clock, the fades and reduce motion.
@@ -21,7 +17,7 @@ export function Glow({
   testID,
 }: GlowProps) {
   const [hasFailed, setHasFailed] = useState(false);
-  const uniforms = useMemo(() => toUniformArray({ ...GLOW_DEFAULTS, ...params }), [params]);
+  const p = { ...GLOW_DEFAULTS, ...params };
 
   if (hasFailed) {
     return (
@@ -36,8 +32,19 @@ export function Glow({
       pointerEvents="none"
       style={StyleSheet.absoluteFill}
       testID={testID}
-      source={SOURCE}
-      params={uniforms}
+      glowIntensity={p.intensity}
+      glowOpacity={p.opacity}
+      glowGrain={p.grain}
+      glowGrainSize={p.grainSize}
+      glowChroma={p.chroma}
+      glowSoftness={p.softness}
+      glowWidth={p.width}
+      glowReach={p.reach}
+      glowTopReach={p.topReach}
+      glowDark={p.dark}
+      glowSpreadX={p.spreadX}
+      glowBalance={p.balance}
+      glowContrast={p.contrast}
       showTop={showTop}
       showBottom={showBottom}
       delayMs={delayMs}

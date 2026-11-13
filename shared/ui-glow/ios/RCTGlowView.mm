@@ -1,6 +1,7 @@
 // RCTGlowView: Fabric view for <GlowView>, drawn with Metal in an MTKView (its own display
-// loop, paused off-window), so no JS runs per frame. The `source` prop is Metal Shading Language
-// (src/shaders/glow.metal.ts), compiled at runtime once per source. Two glows (top, bottom) fade in
+// loop, paused off-window), so no JS runs per frame. The shader is glow.msl, shipped with the app
+// and compiled once per app run.
+// Two glows (top, bottom) fade in
 // or out after `delayMs`; the whole glow fades in once the shader is ready. Reduce motion stops the
 // clock and makes fades instant. Pixel ratio capped at 2.
 
@@ -18,11 +19,10 @@
 using namespace facebook::react;
 
 static const CGFloat kMaxPixelRatio = 2.0;
-static const int kParamCount = 16; // room to grow: unused slots are 0
 static const double kFade = 1.0; // seconds, one glow coming or going (GLOW_FADE_MS in JS)
 static const double kEntryFade = 0.6; // the first display, once the shader is ready
 
-// Same layout as `Uniforms` in glow.metal.ts (96 bytes).
+// Same layout as `Uniforms` in glow.msl (96 bytes).
 typedef struct {
   float res[2];
   float time;
@@ -31,8 +31,23 @@ typedef struct {
   float fadeTop;
   float fadeBottom;
   float pad;
-  float p[kParamCount];
+  // The design params (GlowParams), filled by name from the typed props.
+  float intensity;
+  float opacity;
+  float grain;
+  float grainSize;
+  float chroma;
+  float softness;
+  float width;
+  float reach;
+  float dark;
+  float spreadX;
+  float balance;
+  float contrast;
+  float topReach;
+  float pad2[3];
 } GlowUniforms;
+static_assert(sizeof(GlowUniforms) == 96, "must match `Uniforms` in glow.msl");
 
 static id<MTLDevice> GlowDevice(void)
 {
@@ -44,37 +59,53 @@ static id<MTLDevice> GlowDevice(void)
 
 typedef void (^GlowPipelineHandler)(id<MTLRenderPipelineState> _Nullable pipeline, NSString *_Nullable error);
 
-// Main thread only. Compiles each source once per process, off the main thread.
-static void GlowPipelineFor(NSString *source, GlowPipelineHandler handler)
+// The Metal source in the pod's resource bundle. Not `.metal`: Xcode 26 would compile it at build
+// time, which needs the separate Metal Toolchain download on every machine and CI runner.
+static NSString *GlowShaderSource(void)
 {
-  static NSMutableDictionary<NSString *, id> *done; // source -> pipeline | error string
-  static NSMutableDictionary<NSString *, NSMutableArray<GlowPipelineHandler> *> *pending;
-  static dispatch_once_t once;
-  dispatch_once(&once, ^{
-    done = [NSMutableDictionary new];
-    pending = [NSMutableDictionary new];
-  });
-  id cached = done[source];
-  if (cached) {
-    BOOL isError = [cached isKindOfClass:[NSString class]];
-    // Async, like a fresh compile: during the first updateProps the event emitter is not set yet.
+  NSBundle *podBundle = [NSBundle bundleForClass:[RCTGlowView class]];
+  NSURL *bundleURL = [podBundle URLForResource:@"SharedUiGlow" withExtension:@"bundle"];
+  NSURL *url = bundleURL ? [[NSBundle bundleWithURL:bundleURL] URLForResource:@"glow" withExtension:@"msl"] : nil;
+  return url ? [NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:nil] : nil;
+}
+
+// Main thread only. Compiles the shader once per process, off the main thread. Results always
+// arrive async: during the first updateProps the event emitter is not set yet.
+static void GlowPipeline(GlowPipelineHandler handler)
+{
+  static id done; // pipeline | error string
+  static NSMutableArray<GlowPipelineHandler> *pending;
+  if (done) {
+    BOOL isError = [done isKindOfClass:[NSString class]];
+    id result = done;
     dispatch_async(dispatch_get_main_queue(), ^{
-      handler(isError ? nil : cached, isError ? cached : nil);
+      handler(isError ? nil : result, isError ? result : nil);
     });
     return;
   }
-  if (pending[source]) {
-    [pending[source] addObject:[handler copy]];
+  if (pending) {
+    [pending addObject:[handler copy]];
     return;
   }
+  pending = [NSMutableArray arrayWithObject:[handler copy]];
+  void (^finish)(id<MTLRenderPipelineState>, NSString *) = ^(id<MTLRenderPipelineState> pipeline, NSString *error) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+      done = pipeline ?: error;
+      for (GlowPipelineHandler h in pending) {
+        h(pipeline, error);
+      }
+      pending = nil;
+    });
+  };
   if (!GlowDevice()) {
-    // No Metal: report it, so JS shows the fallback. Async, like a compile.
-    dispatch_async(dispatch_get_main_queue(), ^{
-      handler(nil, @"Metal is not available on this device");
-    });
+    finish(nil, @"Metal is not available on this device");
     return;
   }
-  pending[source] = [NSMutableArray arrayWithObject:[handler copy]];
+  NSString *source = GlowShaderSource();
+  if (!source) {
+    finish(nil, @"Shader not found: SharedUiGlow.bundle/glow.msl");
+    return;
+  }
   [GlowDevice() newLibraryWithSource:source
                              options:[MTLCompileOptions new]
                    completionHandler:^(id<MTLLibrary> library, NSError *compileError) {
@@ -87,17 +118,10 @@ static void GlowPipelineFor(NSString *source, GlowPipelineHandler handler)
                        desc.colorAttachments[0].pixelFormat = MTLPixelFormatBGRA8Unorm;
                        pipeline = [GlowDevice() newRenderPipelineStateWithDescriptor:desc error:&pipelineError];
                      }
-                     NSString *error = pipeline
-                         ? nil
-                         : [NSString stringWithFormat:@"Metal error: %@",
-                                                      (compileError ?: pipelineError).localizedDescription];
-                     dispatch_async(dispatch_get_main_queue(), ^{
-                       done[source] = pipeline ?: error;
-                       for (GlowPipelineHandler h in pending[source]) {
-                         h(pipeline, error);
-                       }
-                       [pending removeObjectForKey:source];
-                     });
+                     finish(pipeline,
+                            pipeline ? nil
+                                     : [NSString stringWithFormat:@"Metal error: %@",
+                                                                  (compileError ?: pipelineError).localizedDescription]);
                    }];
 }
 
@@ -148,9 +172,9 @@ struct GlowFade {
 @implementation RCTGlowView {
   MTKView *_mtkView;
   id<MTLCommandQueue> _queue;
-  NSString *_source;
-  id<MTLRenderPipelineState> _pipeline; // nil while compiling or after an error
-  float _params[kParamCount];
+  id<MTLRenderPipelineState> _pipeline; // nil while loading or after an error
+  BOOL _hasPipelineRequest;
+  GlowUniforms _params; // only the design params are used
   double _elapsed; // seconds, double precision
   CFTimeInterval _lastFrame; // 0 = no frame yet
   BOOL _hasShown; // false until the first props: the first visibility shows at once
@@ -187,9 +211,9 @@ struct GlowFade {
 
 - (void)resetState
 {
-  _source = @"";
   _pipeline = nil;
-  std::fill(_params, _params + kParamCount, 0.0f);
+  _hasPipelineRequest = NO;
+  _params = {};
   _elapsed = 0;
   _lastFrame = 0;
   _hasShown = NO;
@@ -218,9 +242,19 @@ struct GlowFade {
 - (void)updateProps:(Props::Shared const &)props oldProps:(Props::Shared const &)oldProps
 {
   const auto &newProps = *std::static_pointer_cast<GlowViewProps const>(props);
-  for (int i = 0; i < kParamCount; i++) {
-    _params[i] = i < (int)newProps.params.size() ? newProps.params[i] : 0.0f;
-  }
+  _params.intensity = newProps.glowIntensity;
+  _params.opacity = newProps.glowOpacity;
+  _params.grain = newProps.glowGrain;
+  _params.grainSize = newProps.glowGrainSize;
+  _params.chroma = newProps.glowChroma;
+  _params.softness = newProps.glowSoftness;
+  _params.width = newProps.glowWidth;
+  _params.reach = newProps.glowReach;
+  _params.dark = newProps.glowDark;
+  _params.spreadX = newProps.glowSpreadX;
+  _params.balance = newProps.glowBalance;
+  _params.contrast = newProps.glowContrast;
+  _params.topReach = newProps.glowTopReach;
   BOOL isInstant = !_hasShown || UIAccessibilityIsReduceMotionEnabled();
   _hasShown = YES;
   CFTimeInterval start = CACurrentMediaTime() + newProps.delayMs / 1000.0;
@@ -228,17 +262,14 @@ struct GlowFade {
   _bottom.setTarget(newProps.showBottom ? 1 : 0, start, isInstant);
   _mtkView.paused = NO;
   [super updateProps:props oldProps:oldProps];
-
-  NSString *source = [NSString stringWithUTF8String:newProps.source.c_str()];
-  if ([source isEqualToString:_source]) {
+  if (_hasPipelineRequest) {
     return;
   }
-  _source = source;
-  _pipeline = nil;
+  _hasPipelineRequest = YES;
   __weak RCTGlowView *weakSelf = self;
-  GlowPipelineFor(source, ^(id<MTLRenderPipelineState> pipeline, NSString *error) {
+  GlowPipeline(^(id<MTLRenderPipelineState> pipeline, NSString *error) {
     RCTGlowView *strongSelf = weakSelf;
-    if (!strongSelf || ![strongSelf->_source isEqualToString:source]) {
+    if (!strongSelf || !strongSelf->_hasPipelineRequest) {
       return;
     }
     strongSelf->_pipeline = pipeline;
@@ -287,7 +318,7 @@ struct GlowFade {
   id<MTLRenderCommandEncoder> enc = [cmd renderCommandEncoderWithDescriptor:pass]; // clears to black
   if (_pipeline) {
     CGSize size = view.drawableSize;
-    GlowUniforms u = {};
+    GlowUniforms u = _params;
     u.res[0] = (float)size.width;
     u.res[1] = (float)size.height;
     u.time = (float)_elapsed;
@@ -295,7 +326,6 @@ struct GlowFade {
     u.fade = isReduceMotion ? 1 : (float)std::min(1.0, (now - _entryStart) / kEntryFade);
     u.fadeTop = _top.value;
     u.fadeBottom = _bottom.value;
-    std::copy(_params, _params + kParamCount, u.p);
     [enc setRenderPipelineState:_pipeline];
     [enc setVertexBytes:&u length:sizeof(u) atIndex:0];
     [enc setFragmentBytes:&u length:sizeof(u) atIndex:0];

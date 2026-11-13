@@ -1,21 +1,15 @@
-/**
- * The glow shader in GLSL ES 1.00 (WebGL 1, OpenGL ES 2.0). Source of truth:
- * shaders/glow.metal.ts is a port of it.
- *
- * Based on the designer's "Final Glow Sequence" playground, trimmed to the
- * design rules: dark background, a glow keeps its height and only moves
- * side to side (no travel, no up/down drift, no breathing). Two glows, one at
- * the top and one at the bottom, each with its own fade.
- *
- * One string for both stages: the renderer prepends `#define VERTEX` or
- * `#define FRAGMENT`. The 4 lobe centers are the same for every pixel, so the
- * vertex stage computes them.
- *
- * Uniforms: uRes (drawable px), uTime (seconds),
- * uDpr (pixels per point, capped at 2), uFade (0..1, entry fade),
- * uFadeTop / uFadeBottom (0..1, each glow; 0 skips it), uP (GLOW_PARAM_ORDER; 16 slots, room to grow).
- */
-export const GLOW_GLSL = /* glsl */ `
+// The glow shader in GLSL ES 1.00 (OpenGL ES 2.0). Source of truth: ios/glow.msl is a port.
+//
+// Based on the designer's "Final Glow Sequence" playground, trimmed to the design rules: dark
+// background, a glow keeps its height and only moves side to side. Two glows, one at the top and
+// one at the bottom, each with its own fade.
+//
+// One file for both stages: GlowView prepends "#define VERTEX" or "#define FRAGMENT". The 4 lobe
+// centers are the same for every pixel, so the vertex stage computes them.
+//
+// Uniforms: uRes (drawable px), uTime (seconds), uDpr (pixels per point, capped at 2), uFade (0..1,
+// entry fade), uFadeTop / uFadeBottom (0..1, each glow; 0 skips it), and the design params.
+
 precision highp float;
 
 uniform vec2  uRes;
@@ -24,22 +18,26 @@ uniform float uDpr;
 uniform float uFade;
 uniform float uFadeTop;
 uniform float uFadeBottom;
-// 16 params packed in 4 vec4: GLES2 only guarantees 16 uniform vectors per fragment shader.
-uniform vec4  uP[4];
+// The design params (GlowParams), packed by 4: GLES2 only guarantees 16 uniform vectors per
+// fragment shader. GlowView.kt sets each group by name.
+uniform vec4  uLook;     // intensity, opacity, grain, grainSize
+uniform vec4  uShape;    // chroma, softness, width, reach
+uniform vec4  uTone;     // dark, spreadX, balance, contrast
+uniform float uTopReach; // reach multiplier of the top glow
 
-#define P_INTENSITY   uP[0].x
-#define P_OPACITY     uP[0].y
-#define P_GRAIN       uP[0].z
-#define P_GRAIN_SIZE  uP[0].w
-#define P_CHROMA      uP[1].x
-#define P_SOFTNESS    uP[1].y
-#define P_WIDTH       uP[1].z
-#define P_REACH       uP[1].w
-#define P_DARK        uP[2].x
-#define P_SPREAD_X    uP[2].y
-#define P_BALANCE     uP[2].z
-#define P_CONTRAST    uP[2].w
-#define P_TOP_REACH   uP[3].x // reach multiplier of the top glow
+#define P_INTENSITY   uLook.x
+#define P_OPACITY     uLook.y
+#define P_GRAIN       uLook.z
+#define P_GRAIN_SIZE  uLook.w
+#define P_CHROMA      uShape.x
+#define P_SOFTNESS    uShape.y
+#define P_WIDTH       uShape.z
+#define P_REACH       uShape.w
+#define P_DARK        uTone.x
+#define P_SPREAD_X    uTone.y
+#define P_BALANCE     uTone.z
+#define P_CONTRAST    uTone.w
+#define P_TOP_REACH   uTopReach
 
 varying vec2 vCenterA;
 varying vec2 vCenterB;
@@ -196,4 +194,3 @@ void main() {
 }
 
 #endif
-`;

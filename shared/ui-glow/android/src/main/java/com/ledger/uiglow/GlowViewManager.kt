@@ -1,7 +1,6 @@
 package com.ledger.uiglow
 
 import com.facebook.react.bridge.Arguments
-import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.SimpleViewManager
@@ -31,15 +30,56 @@ class GlowViewManager : SimpleViewManager<GlowView>(), GlowViewManagerInterface<
     return view
   }
 
-  override fun setSource(view: GlowView, value: String?) {
-    view.source = value ?: ""
+  override fun setGlowIntensity(view: GlowView, value: Float) {
+    view.params = view.params.copy(intensity = value)
   }
 
-  override fun setParams(view: GlowView, value: ReadableArray?) {
-    val values = FloatArray(GlowView.PARAM_COUNT)
-    val count = minOf(value?.size() ?: 0, GlowView.PARAM_COUNT)
-    for (i in 0 until count) values[i] = value!!.getDouble(i).toFloat()
-    view.params = values
+  override fun setGlowOpacity(view: GlowView, value: Float) {
+    view.params = view.params.copy(opacity = value)
+  }
+
+  override fun setGlowGrain(view: GlowView, value: Float) {
+    view.params = view.params.copy(grain = value)
+  }
+
+  override fun setGlowGrainSize(view: GlowView, value: Float) {
+    view.params = view.params.copy(grainSize = value)
+  }
+
+  override fun setGlowChroma(view: GlowView, value: Float) {
+    view.params = view.params.copy(chroma = value)
+  }
+
+  override fun setGlowSoftness(view: GlowView, value: Float) {
+    view.params = view.params.copy(softness = value)
+  }
+
+  override fun setGlowWidth(view: GlowView, value: Float) {
+    view.params = view.params.copy(width = value)
+  }
+
+  override fun setGlowReach(view: GlowView, value: Float) {
+    view.params = view.params.copy(reach = value)
+  }
+
+  override fun setGlowTopReach(view: GlowView, value: Float) {
+    view.params = view.params.copy(topReach = value)
+  }
+
+  override fun setGlowDark(view: GlowView, value: Float) {
+    view.params = view.params.copy(dark = value)
+  }
+
+  override fun setGlowSpreadX(view: GlowView, value: Float) {
+    view.params = view.params.copy(spreadX = value)
+  }
+
+  override fun setGlowBalance(view: GlowView, value: Float) {
+    view.params = view.params.copy(balance = value)
+  }
+
+  override fun setGlowContrast(view: GlowView, value: Float) {
+    view.params = view.params.copy(contrast = value)
   }
 
   override fun setShowTop(view: GlowView, value: Boolean) = view.setShowTop(value)

@@ -25364,6 +25364,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14

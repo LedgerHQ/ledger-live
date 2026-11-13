@@ -1,16 +1,18 @@
 import React from "react";
 import { Text } from "react-native";
 import { fireEvent, render, screen } from "@testing-library/react-native";
-import { GLOW_DEFAULTS, GLOW_PARAM_ORDER, Glow } from "./index";
+import { GLOW_DEFAULTS, Glow } from "./index";
 
 describe("Glow", () => {
-  it("should pass every param to the shader, in the uniform order", () => {
+  it("should pass each param by name, with the defaults for the rest", () => {
     render(<Glow testID="glow" params={{ grain: 0.9 }} />);
 
-    const params = screen.getByTestId("glow").props.params;
-    expect(params).toHaveLength(GLOW_PARAM_ORDER.length);
-    expect(params[GLOW_PARAM_ORDER.indexOf("grain")]).toBe(0.9);
-    expect(params[GLOW_PARAM_ORDER.indexOf("intensity")]).toBe(GLOW_DEFAULTS.intensity);
+    const view = screen.getByTestId("glow");
+    expect(view.props.glowGrain).toBe(0.9);
+    expect(view.props.glowIntensity).toBe(GLOW_DEFAULTS.intensity);
+    // `opacity` and `width` would be read as View and Yoga props.
+    expect(view.props.opacity).toBeUndefined();
+    expect(view.props.width).toBeUndefined();
   });
 
   it("should pass the glows to show, never as layout props (`position`, `top`, `bottom`)", () => {

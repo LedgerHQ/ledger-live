@@ -30,16 +30,17 @@ Each glow keeps its height and only drifts side to side. Reduce motion (the OS s
 
 | Part | File |
 | --- | --- |
-| Shader, source of truth (GLSL ES 1.00) | `src/shaders/glow.glsl.ts` |
-| Metal port (keep in sync) | `src/shaders/glow.metal.ts` |
+| Shader, source of truth (GLSL ES 1.00) | `android/src/main/assets/uiglow/glow.glsl` |
+| Metal port (keep in sync) | `ios/glow.msl` |
 | Codegen spec | `src/native/specs/GlowViewNativeComponent.ts` |
 | iOS view (`MTKView`) | `ios/RCTGlowView.mm` |
 | Android view (`GLSurfaceView`) | `android/src/main/java/com/ledger/uiglow/` |
 
-- The shader is a JS string compiled at runtime: a shader change needs no native rebuild. The first compile happens on the first display (then it is cached), so the glow fades in once it is ready.
+- The shaders ship with the app, not with JS: a shader change needs a native rebuild. Both compile on the first display, once per app run: iOS reads `glow.msl` from `SharedUiGlow.bundle`, Android reads `glow.glsl` from its assets. iOS could precompile it, but since Xcode 26 that needs the Metal Toolchain download on every machine and CI runner. The glow fades in once it is ready.
+- Each param is its own typed native prop (`glowIntensity`, `glowWidth`, …), set by name: a named field on iOS, a named `vec4` group on Android (`uLook`, `uShape`, `uTone`). `shaders.native.test.ts` checks that both shaders read each param from the field that the native code fills.
 - Both glows are drawn in one GPU pass; a hidden glow is skipped.
 - Pixel ratio is capped at 2. Rendering stops when the view leaves the window.
-- Never name a native prop `position`, `top` or `bottom`: Fabric reads them as Yoga layout props.
+- Never name a native prop like a View or Yoga prop (`position`, `top`, `bottom`, `width`, `opacity`…): Fabric reads them as layout or view props. That is why the params are prefixed with `glow`.
 
 The native code started from [benchmark-shader-solutions](https://github.com/gre/benchmark-shader-solutions) (`rn-native-compatible-dynamic`).
 
