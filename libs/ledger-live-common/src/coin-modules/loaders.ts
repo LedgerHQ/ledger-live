@@ -122,6 +122,8 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     accountDescriptorType: "address",
     loadSetup: () => import("../families/concordium/setup"),
     loadAccountReceive: () => import("../families/concordium/accountReceive").then(m => m.default),
+    loadLocalApi: () =>
+      import("../families/concordium/coinModuleApi").then(m => m.createLocalConcordiumApi),
     loadTransaction: () => import("@ledgerhq/coin-concordium/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-concordium/deviceTransactionConfig").then(m => m.default),

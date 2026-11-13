@@ -77,7 +77,7 @@ describe("getCoinModuleApi", () => {
         case "stellar":
           return { family: "stellar" };
         case "canton":
-          return { family: "canton" };
+          return { family: "canton", id: "canton_network" };
         case "tron":
           return { family: "tron" };
         case "ethereum":
@@ -103,11 +103,16 @@ describe("getCoinModuleApi", () => {
   });
 
   // Config-first (framework v6): the local adapter calls createApi() with no config; families that
-  // need the currency id (cardano) forward it, the rest take no arguments.
+  // need the currency id (cardano, canton) forward it, the rest take no arguments.
   const testCases = [
     { network: "xrp", module: xrpModule, label: "XRP", params: [] as unknown[] },
     { network: "tron", module: tronModule, label: "Tron", params: [] as unknown[] },
-    { network: "canton", module: cantonModule, label: "Canton", params: [] as unknown[] },
+    {
+      network: "canton",
+      module: cantonModule,
+      label: "Canton",
+      params: ["canton_network"] as unknown[],
+    },
     { network: "ethereum", module: evmModule, label: "Ethereum", params: [] as unknown[] },
     { network: "sonic", module: evmModule, label: "Sonic", params: [] as unknown[] },
     {

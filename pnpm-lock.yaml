@@ -13357,6 +13357,9 @@ importers:
       '@domain/entity-account-operation':
         specifier: workspace:*
         version: link:../../../domain/entity/account-operation
+      '@domain/entity-account-status':
+        specifier: workspace:*
+        version: link:../../../domain/entity/account-status
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 11.0.1

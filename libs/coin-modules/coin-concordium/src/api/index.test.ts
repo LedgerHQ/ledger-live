@@ -56,6 +56,7 @@ describe("api/index", () => {
       craftRawTransaction: expect.any(Function),
       craftTransaction: expect.any(Function),
       estimateFees: expect.any(Function),
+      getAccountStatus: expect.any(Function),
       getBalance: expect.any(Function),
       getBlock: expect.any(Function),
       getBlockInfo: expect.any(Function),
