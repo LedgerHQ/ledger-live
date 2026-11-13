@@ -345,7 +345,12 @@ for (const { titleSuffix, ledgerSyncDie } of DEVICE_STEP_VARIANTS) {
         await app.drawer.closeDrawer();
         await app.settings.openManageLedgerSync();
         await app.ledgerSync.expectLedgerSyncManagementVisible();
+
+        // The device step created this trustchain, so the CLI cleanup does not know it.
+        await app.ledgerSync.destroyTrustchain();
+        await app.ledgerSync.expectBackupDeletion();
         await app.drawer.closeDrawer();
+        await app.settings.expectLedgerSyncSettingsEntryPoint();
       },
     );
   });
