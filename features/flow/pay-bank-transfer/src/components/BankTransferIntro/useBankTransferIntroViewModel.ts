@@ -13,11 +13,11 @@ export const BANK_TRANSFER_INTRO_PAGE = featureIntroPageName(BANK_TRANSFER_INTRO
 
 const KEY_PREFIX = "payTab.bankTransferIntro";
 
-const ROWS: readonly { icon: BankTransferIntroRowIcon; key: string }[] = [
+const ROWS = [
   { icon: "Bank", key: "bank" },
   { icon: "Coins", key: "fees" },
   { icon: "Chart5", key: "earn" },
-];
+] as const satisfies readonly { icon: BankTransferIntroRowIcon; key: string }[];
 
 const TRACK_BUTTON = {
   createAccount: "create an account",

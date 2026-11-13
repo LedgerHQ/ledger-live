@@ -16,7 +16,7 @@ export type CardOnboardingStepWithCopy = {
  * list mobile asks for; it is listed unconditionally because every id needs an answer, not because
  * desktop renders it.
  */
-const STEP_COPY: Record<CardOnboardingStepId, { titleKey: string; descriptionKey: string }> = {
+const STEP_COPY = {
   "create-account": {
     titleKey: "payTab.cardOnboarding.steps.createAccount.title",
     descriptionKey: "payTab.cardOnboarding.steps.createAccount.description",
@@ -37,7 +37,7 @@ const STEP_COPY: Record<CardOnboardingStepId, { titleKey: string; descriptionKey
     titleKey: "payTab.cardOnboarding.steps.firstPurchase.title",
     descriptionKey: "payTab.cardOnboarding.steps.firstPurchase.description",
   },
-};
+} as const satisfies Record<CardOnboardingStepId, { titleKey: string; descriptionKey: string }>;
 
 export function useOnboardingSteps(
   steps: readonly CardOnboardingStep[],
