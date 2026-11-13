@@ -1,5 +1,5 @@
 import type { DiscoveredDevice, TransportIdentifier } from "@ledgerhq/device-management-kit";
-import { Subject, type Observable } from "rxjs";
+import { BehaviorSubject, filter, Subject, take, type Observable } from "rxjs";
 import { BaseDiscoveryErrorTypes, type UnknownDiscoveryError } from "../types";
 import { DefaultDeviceDiscoveryService } from "./DefaultDeviceDiscoveryService";
 import type {
@@ -343,6 +343,71 @@ describe("DefaultDeviceDiscoveryService", () => {
 
     // THEN
     expect(discoveredDevices[discoveredDevices.length - 1]).toEqual([]);
+  });
+
+  it("GIVEN a source emits devices as soon as it is listened to, WHEN a consumer reads isRunning on that emission, THEN it should be true", () => {
+    // GIVEN
+    const device = createDiscoveredDevice("a", "transport-a");
+    const source = createSource(
+      "transport-a",
+      new BehaviorSubject<DeviceDiscoverySourceEvent<UnknownDiscoveryError>>({
+        type: "devices",
+        devices: [device],
+      }),
+    );
+    const service = new DefaultDeviceDiscoveryService<UnknownDiscoveryError>(
+      new Map([[source.transportId, source]]),
+    );
+    const emissions: Array<{ devices: DiscoveredDevice[]; isRunning: boolean }> = [];
+    service.discoveredDevices.subscribe(devices =>
+      emissions.push({ devices, isRunning: service.isRunning }),
+    );
+
+    // WHEN
+    service.start();
+
+    // THEN
+    expect(emissions).toEqual([
+      { devices: [], isRunning: false },
+      { devices: [device], isRunning: true },
+      { devices: [device], isRunning: true },
+    ]);
+  });
+
+  it("GIVEN a consumer stops discovery on an emission during start, WHEN start finishes, THEN discovery should stay stopped", () => {
+    // GIVEN
+    const device = createDiscoveredDevice("a", "transport-a");
+    const sourceA = createSource(
+      "transport-a",
+      new BehaviorSubject<DeviceDiscoverySourceEvent<UnknownDiscoveryError>>({
+        type: "devices",
+        devices: [device],
+      }),
+    );
+    const sourceB = createSource("transport-b");
+    const service = new DefaultDeviceDiscoveryService<UnknownDiscoveryError>(
+      new Map([
+        [sourceA.transportId, sourceA],
+        [sourceB.transportId, sourceB],
+      ]),
+    );
+    const discoveredDevices: DiscoveredDevice[][] = [];
+    service.discoveredDevices.subscribe(devices => discoveredDevices.push(devices));
+    service.discoveredDevices
+      .pipe(
+        filter(devices => devices.length > 0),
+        take(1),
+      )
+      .subscribe(() => service.stop());
+
+    // WHEN
+    service.start();
+
+    // THEN
+    expect(service.isRunning).toBe(false);
+    expect(sourceA.subject.observed).toBe(false);
+    expect(sourceB.listen).not.toHaveBeenCalled();
+    expect(discoveredDevices).toEqual([[], [device], []]);
   });
 
   it("GIVEN discovery is already started, WHEN starting again before stop, THEN it should not subscribe twice", () => {

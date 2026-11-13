@@ -61,9 +61,11 @@ export class DefaultDeviceDiscoveryService<
     this.ignoredTransportIdSet = new Set(ignoreTransportIdentifiers);
     const devicesByTransport = new Map<TransportIdentifier, DiscoveredDevice[]>();
     const subscription = new Subscription();
+    this.subscription = subscription;
 
     this.discoverySources.forEach(source => {
-      if (this.ignoredTransportIdSet.has(source.transportId)) {
+      const stoppedDuringStart = subscription.closed;
+      if (stoppedDuringStart || this.ignoredTransportIdSet.has(source.transportId)) {
         return;
       }
 
@@ -97,8 +99,9 @@ export class DefaultDeviceDiscoveryService<
       );
     });
 
-    this.subscription = subscription;
-    this.emitDiscoveredDevices(devicesByTransport);
+    if (!subscription.closed) {
+      this.emitDiscoveredDevices(devicesByTransport);
+    }
   }
 
   stop(): void {
