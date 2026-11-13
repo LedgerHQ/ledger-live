@@ -10,9 +10,11 @@ import type { LineChartPointMarker, LineChartValueFormatter } from "./types";
 type LineChartPointsProps = Readonly<{
   points: LineChartPointMarker[];
   formatValue: LineChartValueFormatter;
+  /** Index of the last data point of the primary series. */
+  lastIndex: number;
 }>;
 
-export function LineChartPoints({ points, formatValue }: LineChartPointsProps) {
+export function LineChartPoints({ points, formatValue, lastIndex }: LineChartPointsProps) {
   const { theme } = useTheme();
   const { scrubberPosition } = useScrubberContext();
 
@@ -28,7 +30,7 @@ export function LineChartPoints({ points, formatValue }: LineChartPointsProps) {
             marker.hidePoint ? "h" : "v"
           }-${marker.color ?? ""}`}
           opacity={
-            isMarkerOutsideScrubberOverlay(marker, scrubberPosition)
+            isMarkerOutsideScrubberOverlay(marker, scrubberPosition, lastIndex)
               ? LINE_CHART_SCRUBBER_DIMMED_OPACITY
               : undefined
           }

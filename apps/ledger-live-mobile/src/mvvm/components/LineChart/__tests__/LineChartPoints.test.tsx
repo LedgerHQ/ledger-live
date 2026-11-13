@@ -18,7 +18,7 @@ jest.mock("@ledgerhq/lumen-ui-rnative/visualization", () => ({
 const renderPoints = (markers: LineChartPointMarker[], scrubbedIndex?: number) => {
   points = [];
   scrubberPosition = scrubbedIndex;
-  return render(<LineChartPoints points={markers} formatValue={v => `$${v}`} />);
+  return render(<LineChartPoints points={markers} formatValue={v => `$${v}`} lastIndex={10} />);
 };
 
 describe("LineChartPoints", () => {
@@ -71,5 +71,11 @@ describe("LineChartPoints", () => {
       undefined,
       undefined,
     ]);
+  });
+
+  it("dims the max label when the scrubber is on its index", () => {
+    const { UNSAFE_getAllByType } = renderPoints([{ index: 0, value: 9 }], 0);
+
+    expect(UNSAFE_getAllByType(G)[0].props.opacity).toBe(0.2);
   });
 });
