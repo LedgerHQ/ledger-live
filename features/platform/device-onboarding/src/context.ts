@@ -30,6 +30,7 @@ export function initialContext(input: DeviceOnboardingInput): DeviceOnboardingCo
     checksPaused: false,
     successAcknowledgedOnSession: null,
     firmware: null,
+    updateAfterSetup: false,
     currentSetupStep: null,
     seedPath: null,
     recoveryKeyBackupOpen: false,
@@ -129,6 +130,9 @@ export const contextActions = {
   rememberFirmwareUpToDate: update({ firmware: { kind: "upToDate" } }),
   rememberFirmwareDeclined: update({ firmware: { kind: "declined" } }),
   rememberFirmwareSkipped: update({ firmware: { kind: "skipped" } }),
+  deferUpdate: update({ firmware: { kind: "deferred" }, updateAfterSetup: true }),
+  // Cleared as the update starts: the device comes back seeded and must not be offered it again.
+  forgetUpdateAfterSetup: update({ updateAfterSetup: false }),
   rememberAvailableUpdate: update(({ event }) => {
     if (event.type !== "FIRMWARE_UPDATE_AVAILABLE") {
       return {};

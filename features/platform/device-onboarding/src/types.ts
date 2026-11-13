@@ -166,6 +166,8 @@ export type FirmwareCheck =
   | { kind: "upToDate" }
   | { kind: "declined" }
   | { kind: "skipped" }
+  /** Held back until the device is seeded: its firmware cannot update before. */
+  | { kind: "deferred" }
   | { kind: "offered"; update: AvailableFirmwareUpdate };
 
 export type DeviceOnboardingContext = Omit<DeviceOnboardingInput, "hostsSeedSetup"> & {
@@ -182,6 +184,8 @@ export type DeviceOnboardingContext = Omit<DeviceOnboardingInput, "hostsSeedSetu
   /** Session whose success screen the user already left. A new session asks again. */
   successAcknowledgedOnSession: DeviceSessionId | null;
   firmware: FirmwareCheck | null;
+  /** Survives a new session, unlike `firmware`: the update still runs once the device is set up. */
+  updateAfterSetup: boolean;
   currentSetupStep: OnboardingStep | null;
   seedPath: SeedPath | null;
   recoveryKeyBackupOpen: boolean;

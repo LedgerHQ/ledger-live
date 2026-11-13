@@ -14,6 +14,7 @@ Design and rationale live in the [technical plan](https://ledgerhq.atlassian.net
 - Reads the device and routes it: the legacy flow, the pre-seed checks, or an interrupted update
 - Waits for the user once, on entry, before it touches a device it can drive
 - Runs the mandatory genuine check and the firmware check, and offers an available update
+- Holds an unseeded Nano's firmware update until it is seeded, when its firmware cannot update before
 - Shows the on-device waiting screen to an unseeded touchscreen while the checks run
 - Hands the OS update over to the app's own update flow, then re-reads the device
 - Follows naming, PIN, seed creation and restore by reading the onboarding step — it never sets them

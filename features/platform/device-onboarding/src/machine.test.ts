@@ -101,27 +101,40 @@ describe("routing", () => {
     await expectChecksPassed(actor);
   });
 
-  it.each([
-    ["unseeded", unseeded, "waiting"],
-    ["seeded long ago", seeded, "done"],
-  ])("drives a nano x %s on an old firmware", async (_case, state, expected) => {
+  it("drives a nano x seeded long ago on an old firmware", async () => {
     const { actor, fake } = await start(
-      { osVersion: [os({ ...state, seVersion: "0.9.0" })], ...passingChecks },
+      { osVersion: [os({ ...seeded, seVersion: "0.9.0" })], ...passingChecks },
       { deviceModelId: DeviceModelId.NANO_X },
     );
 
     expect(fake.genuineCheckRuns()).toBe(1);
-    expect(stateOf(actor)).toBe(expected);
+    expect(stateOf(actor)).toBe("done");
   });
 
-  it("drives a nano s whatever firmware it runs", async () => {
-    const { actor, fake } = await start(
-      { osVersion: [os({ ...unseeded, seVersion: "1.6.1" })], ...passingChecks },
+  it.each([
+    ["an unseeded nano x below 2.2.0", DeviceModelId.NANO_X, "2.1.9"],
+    ["an unseeded nano s plus below 1.1.0", DeviceModelId.NANO_SP, "1.0.9"],
+  ])("sends %s to legacy before any check", async (_case, deviceModelId, seVersion) => {
+    const { actor, fake } = await launch(
+      { osVersion: [os({ ...unseeded, seVersion })], ...passingChecks },
+      { deviceModelId },
+    );
+
+    expect(exitOf(actor)).toMatchObject({ reason: "legacyFallback" });
+    expect(fake.genuineCheckRuns()).toBe(0);
+  });
+
+  it.each([
+    ["unseeded", unseeded],
+    ["seeded", seeded],
+  ])("sends a %s nano s to legacy whatever firmware it runs", async (_case, state) => {
+    const { actor, fake } = await launch(
+      { osVersion: [os({ ...state, seVersion: "1.6.1" })], ...passingChecks },
       { deviceModelId: DeviceModelId.NANO_S },
     );
 
-    await expectChecksPassed(actor);
-    expect(fake.genuineCheckRuns()).toBe(1);
+    expect(exitOf(actor)).toMatchObject({ reason: "legacyFallback" });
+    expect(fake.genuineCheckRuns()).toBe(0);
   });
 
   it("drives a touchscreen whatever firmware it runs", async () => {
@@ -964,9 +977,9 @@ describe("entering the flow", () => {
     actor.stop();
   });
 
-  it("waits for the user to start an old nano x", async () => {
+  it("waits for the user to start the oldest unseeded nano x it drives", async () => {
     const { actor } = await launch(
-      { osVersion: [os({ ...unseeded, seVersion: "0.9.0" })], ...passingChecks },
+      { osVersion: [os({ ...unseeded, seVersion: "2.2.0" })], ...passingChecks },
       { deviceModelId: DeviceModelId.NANO_X },
     );
 
@@ -1077,6 +1090,184 @@ describe("the end of the checks", () => {
 
     expect(stateOf(actor)).toBe("waiting");
     actor.stop();
+  });
+});
+
+describe("a nano firmware update held back until setup", () => {
+  const readyAndSeeded = stepChanged(OnboardingStep.Ready, { isOnboarded: true });
+
+  async function enterHeldBackSetup(
+    script: Partial<OnboardingDmkScript> = {},
+    { deviceModelId = DeviceModelId.NANO_X, seVersion = "2.3.0" } = {},
+  ) {
+    return start(
+      {
+        osVersion: [os({ ...unseeded, seVersion })],
+        genuineCheck: [genuine],
+        firmwareCheck: [updateAvailable],
+        ...script,
+      },
+      { deviceModelId },
+    );
+  }
+
+  it.each([
+    [DeviceModelId.NANO_X, "2.2.0"],
+    [DeviceModelId.NANO_X, "2.3.0"],
+    [DeviceModelId.NANO_X, "2.7.0"],
+    [DeviceModelId.NANO_SP, "1.1.0"],
+    [DeviceModelId.NANO_SP, "1.6.0"],
+  ])(
+    "runs the genuine check of an unseeded %s on %s, then sets it up without a firmware offer",
+    async (deviceModelId, seVersion) => {
+      const { actor, fake } = await enterHeldBackSetup({}, { deviceModelId, seVersion });
+
+      expect(fake.genuineCheckRuns()).toBe(1);
+      expect(fake.firmwareCheckRuns()).toBe(0);
+      expect(stateOf(actor)).toBe("waiting");
+      expect(actor.getSnapshot().context).toMatchObject({
+        firmware: { kind: "deferred" },
+        updateAfterSetup: true,
+      });
+    },
+  );
+
+  it.each([
+    [DeviceModelId.NANO_X, "2.7.1"],
+    [DeviceModelId.NANO_SP, "1.6.1"],
+  ])(
+    "offers the update of an unseeded %s on %s before setting it up",
+    async (deviceModelId, seVersion) => {
+      const { actor } = await launch(
+        {
+          osVersion: [os({ ...unseeded, seVersion })],
+          genuineCheck: [genuine],
+          firmwareCheck: [updateAvailable],
+        },
+        { deviceModelId },
+      );
+      actor.send({ type: "CONTINUE" });
+      await settle();
+
+      expect(stateOf(actor)).toBe("firmwareUpdateOffered");
+      expect(actor.getSnapshot().context.updateAfterSetup).toBe(false);
+    },
+  );
+
+  it.each([
+    [DeviceModelId.NANO_X, "2.3.0"],
+    [DeviceModelId.NANO_X, "2.4.0"],
+    [DeviceModelId.NANO_SP, "1.6.0"],
+  ])("offers the update of a seeded %s on %s as today", async (deviceModelId, seVersion) => {
+    const { actor } = await launch(
+      {
+        osVersion: [os({ ...seeded, seVersion })],
+        genuineCheck: [genuine],
+        firmwareCheck: [updateAvailable],
+      },
+      { deviceModelId },
+    );
+    actor.send({ type: "CONTINUE" });
+    await settle();
+
+    expect(stateOf(actor)).toBe("firmwareUpdateOffered");
+  });
+
+  it("checks the firmware once the device is seeded, and offers the update", async () => {
+    const { actor, fake } = await enterHeldBackSetup();
+
+    actor.send(readyAndSeeded);
+    await settle();
+
+    expect(fake.firmwareCheckRuns()).toBe(1);
+    expect(actor.getSnapshot().matches({ postSetupFirmware: "firmwareUpdateOffered" })).toBe(true);
+    expect(actor.getSnapshot().status).not.toBe("done");
+  });
+
+  it("ends the setup when the seeded device is already up to date", async () => {
+    const { actor } = await enterHeldBackSetup({ firmwareCheck: [upToDate] });
+
+    actor.send(readyAndSeeded);
+    await settle();
+
+    expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+    expect(actor.getSnapshot().context.updateAfterSetup).toBe(false);
+  });
+
+  it("ends the setup when the user declines the update", async () => {
+    const { actor } = await enterHeldBackSetup();
+    actor.send(readyAndSeeded);
+    await settle();
+
+    actor.send({ type: "USER_DECLINE" });
+    await settle();
+
+    expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+  });
+
+  it.each(["SKIP", "CLOSE"] as const)(
+    "ends the setup on %s when the firmware check fails",
+    async type => {
+      const { actor } = await enterHeldBackSetup({ firmwareCheck: [checkFailure] });
+      actor.send(readyAndSeeded);
+      await settle();
+      expect(actor.getSnapshot().matches({ postSetupFirmware: "firmwareCheckFailed" })).toBe(true);
+
+      actor.send({ type });
+      await settle();
+
+      expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+    },
+  );
+
+  it("runs the firmware check again on a retry", async () => {
+    const { actor, fake } = await enterHeldBackSetup({
+      firmwareCheck: [checkFailure, updateAvailable],
+    });
+    actor.send(readyAndSeeded);
+    await settle();
+
+    actor.send({ type: "RETRY" });
+    await settle();
+
+    expect(fake.firmwareCheckRuns()).toBe(2);
+    expect(actor.getSnapshot().matches({ postSetupFirmware: "firmwareUpdateOffered" })).toBe(true);
+  });
+
+  it("keeps the held-back update across a session change during setup", async () => {
+    const { actor } = await enterHeldBackSetup();
+
+    actor.send({ type: "SESSION_CHANGED", sessionId: "session-2" });
+    await settle();
+    expect(actor.getSnapshot().context.firmware).toBeNull();
+
+    actor.send(readyAndSeeded);
+    await settle();
+
+    expect(actor.getSnapshot().matches({ postSetupFirmware: "firmwareUpdateOffered" })).toBe(true);
+  });
+
+  it("re-attests the device after the update, then ends the setup without offering it again", async () => {
+    const { actor, fake } = await enterHeldBackSetup({
+      osVersion: [os({ ...unseeded, seVersion: "2.3.0" }), os({ ...seeded, seVersion: "2.8.0" })],
+      genuineCheck: [genuine, genuine],
+      firmwareCheck: [updateAvailable, upToDate],
+    });
+    actor.send(readyAndSeeded);
+    await settle();
+
+    actor.send({ type: "USER_ACCEPT" });
+    await settle();
+    expect(actor.getSnapshot().context.updateAfterSetup).toBe(false);
+
+    actor.send({ type: "FIRMWARE_UPDATE_FLOW_CLOSED", sessionId: "session-after-update" });
+    await settle();
+    await leaveSuccessScreen(actor);
+    actor.send(readyAndSeeded);
+    await settle();
+
+    expect(fake.genuineCheckRuns()).toBe(2);
+    expect(exitOf(actor)).toMatchObject({ reason: "completed" });
   });
 });
 
@@ -1650,7 +1841,7 @@ async function enterSetup(
     overrides.deviceModelId === DeviceModelId.NANO_SP;
   return start(
     {
-      osVersion: [os(needsNanoFirmware ? { ...unseeded, seVersion: "2.4.0" } : unseeded)],
+      osVersion: [os(needsNanoFirmware ? { ...unseeded, seVersion: "2.7.1" } : unseeded)],
       ...passingChecks,
     },
     overrides,
