@@ -1,20 +1,10 @@
-import { setCoinConfig } from "./config";
+import { nearDefaults, setCoinConfig } from "./config";
 import { hydrate, preload } from "./preload";
 import { getCurrentNearPreloadData, setNearPreloadData } from "./preload-data";
 
 describe("preload (integration)", () => {
   beforeAll(() => {
-    setCoinConfig(() => ({
-      status: { type: "active" },
-      name: "NEAR",
-      unit: { name: "NEAR", code: "NEAR", magnitude: 24 },
-      infra: {
-        API_NEAR_PRIVATE_NODE: "https://near.coin.ledger.com/node",
-        API_NEAR_PUBLIC_NODE: "https://rpc.mainnet.near.org",
-        API_NEAR_INDEXER: "https://near.coin.ledger.com/indexer",
-        API_NEARBLOCKS_INDEXER: "https://near-indexer.coin.ledger.com",
-      },
-    }));
+    setCoinConfig(() => nearDefaults.near);
   });
 
   it("resolves the gas price and the protocol costs", async () => {

@@ -1,13 +1,17 @@
 import { Transaction, Secp256k1, Hex } from "@vechain/sdk-core";
 import broadcast from "./broadcast";
 import { getBlockRef } from "../network";
-import { getCoinConfig } from "../config";
+import { getCoinConfig, setCoinConfig, vechainDefaults } from "../config";
 
 describe("Broadcast", () => {
+  beforeAll(() => {
+    setCoinConfig(() => vechainDefaults.vechain);
+  });
+
   it("throws on insufficient funds", async () => {
     const privateKey = await Secp256k1.generatePrivateKey();
     const body = {
-      chainTag: 74,
+      chainTag: vechainDefaults.vechain.chainTag,
       blockRef: await getBlockRef(getCoinConfig()),
       expiration: 18,
       clauses: [
