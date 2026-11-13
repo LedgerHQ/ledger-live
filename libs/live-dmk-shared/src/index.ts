@@ -57,6 +57,7 @@ export {
   connectNewDeviceUseCase,
   type ConnectNewDeviceUseCaseInput,
 } from "./connectNewDevice/connectNewDeviceUseCase";
+export { toDevice } from "./connectNewDevice/utils";
 export { activeDeviceSessionSubject } from "./config/activeDeviceSession";
 export { dmkToLedgerDeviceIdMap, ledgerToDmkDeviceIdMap } from "./config/dmkToLedgerDeviceIdMap";
 export {

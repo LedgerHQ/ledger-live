@@ -41,5 +41,6 @@ export { connectNewDevice, type ConnectNewDeviceInput } from "./connectNewDevice
 export * from "./errors";
 export * from "./hooks";
 export * from "./utils/matchDevicesByNameOrId";
+export { findMatchingDevice } from "./utils/findMatchingDevice";
 export { type DmkError } from "@ledgerhq/device-management-kit";
 export { getActiveConnectedDevice } from "./utils/getActiveConnectedDevice";
