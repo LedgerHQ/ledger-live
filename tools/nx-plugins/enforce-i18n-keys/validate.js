@@ -378,6 +378,53 @@ function workspaceEntries() {
   return entries;
 }
 
+function packageDirOf(file, cache) {
+  const dir = path.dirname(file);
+  if (cache.has(dir)) return cache.get(dir);
+  const parent = path.dirname(dir);
+  let found = null;
+  if (fs.existsSync(path.join(dir, "package.json"))) found = dir;
+  else if (parent !== dir) found = packageDirOf(dir, cache);
+  cache.set(dir, found);
+  return found;
+}
+
+function readTsconfigOptions(tsconfig) {
+  const { config, error } = ts.readConfigFile(tsconfig, ts.sys.readFile);
+  const { options, errors } = ts.parseJsonConfigFileContent(
+    config,
+    { ...ts.sys, readDirectory: () => [] },
+    path.dirname(tsconfig),
+    undefined,
+    tsconfig,
+  );
+  const NO_INPUTS = 18003;
+  const fatal = [error, ...errors].filter(d => d !== undefined && d.code !== NO_INPUTS);
+  if (fatal.length > 0) {
+    throw new Error(
+      `${tsconfig}: ${fatal.map(d => ts.flattenDiagnosticMessageText(d.messageText, "\n")).join("\n")}`,
+    );
+  }
+  return options;
+}
+
+// A `.native` or `.web` file resolves with its package's platform tsconfig, so a de-suffixed import
+// finds its platform twin. Shared files keep `fallback`: their twin imports stay unverifiable.
+function platformOptionsResolver(fallback) {
+  const packageDirs = new Map();
+  const byTsconfig = new Map();
+  return containingFile => {
+    const platform = /\.(native|web)\.[cm]?[jt]sx?$/.exec(containingFile)?.[1];
+    const pkg = platform && packageDirOf(containingFile, packageDirs);
+    if (!pkg) return fallback;
+    const tsconfig = path.join(pkg, `tsconfig.${platform}.json`);
+    if (!byTsconfig.has(tsconfig)) {
+      byTsconfig.set(tsconfig, fs.existsSync(tsconfig) ? readTsconfigOptions(tsconfig) : fallback);
+    }
+    return byTsconfig.get(tsconfig);
+  };
+}
+
 // Only relative imports and workspace packages are followed: deterministic, no built libs needed.
 function createProgram(files) {
   const options = {
@@ -393,15 +440,11 @@ function createProgram(files) {
   };
   const host = ts.createCompilerHost(options);
   const entries = workspaceEntries();
-  // Same suffix order as the package tsconfigs, so a de-suffixed import finds its platform twin.
-  const nativeOptions = { ...options, moduleSuffixes: [".native", ""] };
-  const webOptions = { ...options, moduleSuffixes: [".web", ""] };
+  const platformOptions = platformOptionsResolver(options);
   const resolveOne = (name, containingFile) => {
-    if (name.startsWith(".")) {
-      const isNative = /\.native\.tsx?$/.test(containingFile);
-      const resolution = isNative ? nativeOptions : webOptions;
-      return ts.resolveModuleName(name, containingFile, resolution, host).resolvedModule;
-    }
+    if (name.startsWith("."))
+      return ts.resolveModuleName(name, containingFile, platformOptions(containingFile), host)
+        .resolvedModule;
     const entry = entries.get(name);
     if (!entry) return undefined;
     return {
