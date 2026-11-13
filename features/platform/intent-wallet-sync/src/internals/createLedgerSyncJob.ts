@@ -53,6 +53,35 @@ export function completeJob<Result>(
   subscriber.complete();
 }
 
+// The device part is done, so the app must still store the result once nobody watches the job.
+export function deliverLateResult<Result>(
+  onResult: (result: Result) => void,
+  result: Result,
+): void {
+  try {
+    onResult(result);
+  } catch {
+    // The subscriber is closed: there is nobody left to report the throw to.
+  }
+}
+
+// Orders results across job invocations: after a disconnect, the executor's Retry starts a new
+// invocation, and the disconnected one can still answer late. Its result must not overwrite one that
+// a newer run already delivered, but is kept when no newer run delivered.
+export function createResultOrder() {
+  let issued = 0;
+  let delivered = 0;
+  return {
+    take: () => ++issued,
+    isStale: (ticket: number) => ticket < delivered,
+    markDelivered: (ticket: number) => {
+      delivered = Math.max(delivered, ticket);
+    },
+  };
+}
+
+const ledgerSyncResultOrder = createResultOrder();
+
 export function tryCreateSessionSdk(
   createSessionSdk: CreateSessionSdk,
   connection: DeviceConnectionResult,
@@ -121,7 +150,9 @@ export function createLedgerSyncJob<Input extends { createSessionSdk: CreateSess
 
       const run = () => {
         const token = ++runToken;
-        const isCurrentRun = () => !subscriber.closed && token === runToken;
+        const ticket = ledgerSyncResultOrder.take();
+        const isLatestRun = () => token === runToken;
+        const isCurrentRun = () => !subscriber.closed && isLatestRun();
         const retry = () => {
           if (isCurrentRun()) run();
         };
@@ -131,7 +162,15 @@ export function createLedgerSyncJob<Input extends { createSessionSdk: CreateSess
         (async () =>
           call({ sdk, deviceId: deviceConnectionResult.compatDeviceId, input, callbacks }))().then(
           result => {
-            if (isCurrentRun()) completeJob(subscriber, onResult, result);
+            if (!isLatestRun()) return;
+            if (subscriber.closed) {
+              if (ledgerSyncResultOrder.isStale(ticket)) return;
+              ledgerSyncResultOrder.markDelivered(ticket);
+              deliverLateResult(onResult, result);
+              return;
+            }
+            ledgerSyncResultOrder.markDelivered(ticket);
+            completeJob(subscriber, onResult, result);
           },
           (error: unknown) => {
             if (isCurrentRun()) handleCallError(subscriber, error, retry);
@@ -140,9 +179,5 @@ export function createLedgerSyncJob<Input extends { createSessionSdk: CreateSess
       };
 
       run();
-
-      return () => {
-        runToken += 1;
-      };
     });
 }

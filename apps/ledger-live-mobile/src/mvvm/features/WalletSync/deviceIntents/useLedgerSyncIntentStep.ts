@@ -31,6 +31,8 @@ export type LedgerSyncIntentStep<RunIntent> = Readonly<{
   errorDrawerProps: DrawerProps;
   /** Closes the step after a success, before the entry navigates with the result. */
   finish: () => void;
+  /** False once the step unmounted: a result that arrives later must not close nor navigate. */
+  isMounted: () => boolean;
   /** Closes the error drawer, only on a dismissal: not on Retry nor on an unmount. */
   onErrorDrawerClose: () => void;
   onUserCancel: () => void;
@@ -105,6 +107,14 @@ export function useLedgerSyncIntentStep<RunIntent, StartInput>({
     onCloseRef.current = onClose;
   });
   const connectionResultRef = useRef<DeviceConnectionResult | undefined>(undefined);
+  const isMountedRef = useRef(true);
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+  const isMounted = useCallback(() => isMountedRef.current, []);
 
   const runIdRef = useRef(0);
   const [phase, setPhase] = useState<StepPhase<RunIntent>>(() =>
@@ -213,6 +223,7 @@ export function useLedgerSyncIntentStep<RunIntent, StartInput>({
     phase,
     errorDrawerProps,
     finish,
+    isMounted,
     onErrorDrawerClose,
     onUserCancel,
     onExecutorStateChanged,

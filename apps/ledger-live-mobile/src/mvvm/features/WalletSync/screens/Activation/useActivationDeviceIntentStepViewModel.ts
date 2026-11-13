@@ -101,6 +101,7 @@ export function useActivationDeviceIntentStepViewModel({ input, onClose, onActiv
   function onResult(trustchainResult: TrustchainResult, seededOffer: boolean) {
     dispatch(setTrustchain(trustchainResult.trustchain));
     track(AnalyticsEvents.LedgerSyncActivated, { flow: trackingFlow });
+    if (!step.isMounted()) return;
     onActivated();
     step.finish();
     if (seededOffer) return;
