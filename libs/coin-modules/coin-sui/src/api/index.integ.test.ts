@@ -132,6 +132,9 @@ describe("Sui Api", () => {
       // The address stays far below one page of operations (10 on 2026-11-12), so this is the last page.
       expect(operations.length).toBeLessThan(TRANSACTIONS_LIMIT);
       expect(operations.length).toBeGreaterThan(0);
+      // The page holds every operation once: no duplicates in place of the bounded count.
+      const ids = operations.map(op => op.id);
+      expect(new Set(ids).size).toBe(ids.length);
 
       expect(cursor).toBeUndefined();
     });
