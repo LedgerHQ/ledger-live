@@ -86,7 +86,7 @@ export default class AccountDetailPage {
     if (currencyId && (await this.sendAssetPicker.isVisible(TIMEOUT.small))) {
       await this.sendAssetPicker.waitFullyVisible();
       // The rows are sorted by value: the asset can sit below the visible ones.
-      await this.sendAssetPickerRow(currencyId).revealForTap(this.sendAssetPicker);
+      await this.sendAssetPickerRow(currencyId).scrollTo(this.sendAssetPicker);
       await this.sendAssetPickerRow(currencyId).tap();
     }
   }
