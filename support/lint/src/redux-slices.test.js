@@ -6,7 +6,7 @@ import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 
-import plugin, { sliceSelectorsWaivers } from "./redux-slices.js";
+import plugin, { SELECTORS_IN_SLICE_RULE, sliceSelectorsWaivers } from "./redux-slices.js";
 
 const OXLINT = fileURLToPath(new URL("../node_modules/.bin/oxlint", import.meta.url));
 const RULE = "redux-slices/selectors-in-slice";
@@ -47,7 +47,10 @@ function lint(files, config = {}) {
   return stdout
     .split("\n")
     .filter(line => line.includes("redux-slices(selectors-in-slice)"))
-    .map(line => line.split(":").slice(0, 2).join(":"))
+    .map(line => {
+      assert.ok(line.includes(SELECTORS_IN_SLICE_RULE), line);
+      return line.split(":").slice(0, 2).join(":");
+    })
     .sort();
 }
 

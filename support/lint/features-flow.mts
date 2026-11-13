@@ -33,8 +33,7 @@ const CHILDREN_PROP_IN_TESTS = ["flow-contacts-delete-contact", "flow-contacts-d
 
 const PLATFORM_SUFFIX_WAIVERS = ["account-detail-hero", "large-screen-upsell", "pay-card-widget"];
 
-// Packages whose single-slice selectors are not nested in their slice yet. Entries are package
-// directories from the repo root, unlike the names above.
+// Package directories from the repo root, unlike the names above.
 const SLICE_SELECTORS_WAIVERS: string[] = [
   "features/flow/account-detail-analytics-notice",
   "features/flow/device-mock-server",

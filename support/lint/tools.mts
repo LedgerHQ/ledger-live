@@ -11,7 +11,6 @@ export default defineConfig({
   rules: {
     // These are build and release scripts. The console is their output, not a slip.
     "eslint/no-console": "off",
-    // The slice-selectors convention covers domain/, shared/ and features/ only.
     "redux-slices/selectors-in-slice": "off",
   },
 });

@@ -124,15 +124,15 @@ Each preset waives its layer's remaining violators through `platformSuffixWaiver
 
 ### `redux-slices/selectors-in-slice`
 
-A selector that reads one Redux slice lives in that slice's `createSlice({ selectors })` field and
-is exported from `slice.selectors`. RTK binds it to the root state, so the package needs no
-hand-written root type and no `selectors.ts` for it, and another mount point rebinds the same set
-with `getSelectors`. The [`slice-selectors`](../../.agents/skills/slice-selectors/SKILL.md) skill
-states the convention; the rule keeps it from regressing and its message names the skill.
+The rule reports [`SELECTORS_IN_SLICE_RULE`](src/redux-slices.js). RTK binds a nested selector to the
+root state, so the package needs no hand-written root type and no `selectors.ts` for it, and
+another mount point rebinds the same set with `getSelectors`. The
+[`slice-selectors`](../../.agents/skills/slice-selectors/SKILL.md) skill states the convention;
+the rule keeps it from regressing. Its scope across the presets is stated next to it in
+`src/redux-slices.js`.
 
-`base` turns it on for `domain/`, and `shared`, `features-flow` and `features-platform` keep
-it on. The other presets turn it off. It reports a function, a declaration or a `const` arrow or
-function expression, when all of these hold:
+It reports a function, a declaration or a `const` arrow or function expression, when all of these
+hold:
 
 - its name is `select*` or `*Selector`;
 - it is not in a test file (`*.test.*`, `*.spec.*`, `__tests__/`);
@@ -163,10 +163,7 @@ such as `selectAccountNameByUUID(names, accounts, uuid)`), selectors already nes
 that declare no slice, and test files. The rule has no autofix. An exception goes on its line with
 `// oxlint-disable-next-line redux-slices/selectors-in-slice` and a reason.
 
-Each of the four presets lists the packages that still violate it in `SLICE_SELECTORS_WAIVERS`,
-one package directory from the repo root per entry (`"domain/entity/contact"`), which
-`sliceSelectorsWaivers` in `src/redux-slices.js` turns into an `overrides` entry. The list only
-shrinks: an entry goes in the change that nests its package's selectors, and a new package never
-joins it.
+Each preset waives its remaining violators through `sliceSelectorsWaivers` in
+`src/redux-slices.js`, which states the waiver policy.
 
 Run the rules' tests with `nx run @support/lint:test`.

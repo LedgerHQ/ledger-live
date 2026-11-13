@@ -5,7 +5,6 @@ import { platformSuffixWaivers } from "./src/suffix-imports.js";
 
 const PLATFORM_SUFFIX_WAIVERS: string[] = [];
 
-// Packages whose single-slice selectors are not nested in their slice yet.
 const SLICE_SELECTORS_WAIVERS: string[] = [
   "shared/app-config",
   "shared/feature-flags",

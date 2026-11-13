@@ -3,7 +3,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
-const MESSAGE =
+const SELECTORS_IN_SLICE_RULE =
   "A selector that reads one slice belongs in its createSlice `selectors` field, exported from `slice.selectors`. Cross-slice and generic selectors stay standalone. See the slice-selectors skill (.agents/skills/slice-selectors/SKILL.md)";
 
 const SELECTOR_NAME = /^select[A-Z0-9_$]|Selector$/;
@@ -265,7 +265,14 @@ function sliceSelectors(node) {
   return property?.value ?? null;
 }
 
+/**
+ * The slice-selectors convention covers domain/, shared/ and features/: `base` turns the rule on,
+ * the shared and features presets keep it on, and the presets of the other layers turn it off.
+ */
 const selectorsInSlice = {
+  /**
+   * @param {{ filename?: string, report: (diagnostic: { message: string, node: any }) => void }} context
+   */
   createOnce(context) {
     /** @type {[number, number][]} */
     let nested = [];
@@ -287,20 +294,23 @@ const selectorsInSlice = {
       if (isNested(fn)) return;
       if (!readsOneSlice(fn)) return;
       if (!packageOwnsSlice(context.filename)) return;
-      context.report({ message: MESSAGE, node: id });
+      context.report({ message: SELECTORS_IN_SLICE_RULE, node: id });
     }
 
     return {
       before() {
         nested = [];
       },
+      /** @param {any} node a CallExpression */
       CallExpression(node) {
         const selectors = sliceSelectors(node);
         if (selectors) nested.push(selectors.range ?? [selectors.start, selectors.end]);
       },
+      /** @param {any} node a FunctionDeclaration */
       FunctionDeclaration(node) {
         check(node.id, node);
       },
+      /** @param {any} node a VariableDeclarator */
       VariableDeclarator(node) {
         const init = node.init;
         if (init?.type === "ArrowFunctionExpression" || init?.type === "FunctionExpression") {
@@ -314,7 +324,7 @@ const selectorsInSlice = {
 /**
  * The override that waives the rule for `packages`, each a package directory relative to the repo
  * root, whose single-slice selectors are not nested yet. An entry goes in the change that nests
- * them, so the list only shrinks.
+ * them, so the list only shrinks: a new package never joins it.
  *
  * oxlint matches `overrides[].files` against the path below the layer config that re-exports the
  * preset, so each glob drops the layer root: `domain/entity/contact` waives `entity/contact/src/**`.
@@ -333,7 +343,7 @@ function sliceSelectorsWaivers(packages) {
   };
 }
 
-export { readsOneSlice, sliceSelectorsWaivers };
+export { readsOneSlice, SELECTORS_IN_SLICE_RULE, sliceSelectorsWaivers };
 
 export default {
   meta: {
