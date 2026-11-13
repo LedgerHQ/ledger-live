@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import { render, screen } from "tests/testSetup";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { NotEnoughSpendableBalance } from "@ledgerhq/ledger-wallet-framework/errors";
-import { MAX_TRUST_LIMIT_VALUE } from "@ledgerhq/live-common/families/xrp/logicPublic";
+import { MAX_TRUST_LIMIT } from "@ledgerhq/live-common/families/xrp/logicPublic";
 import {
   XrpAccountNotActivated,
   XrpTrustLimitTooHigh,
@@ -78,9 +78,7 @@ describe("StepSettings", () => {
 
   it("shows Maximum in a disabled input when the limit is the protocol maximum", () => {
     render(
-      <StepSettings
-        {...makeStepProps({ transaction: { ...optIn, amount: MAX_TRUST_LIMIT_VALUE } })}
-      />,
+      <StepSettings {...makeStepProps({ transaction: { ...optIn, amount: MAX_TRUST_LIMIT } })} />,
     );
 
     expect(screen.getByDisplayValue("Maximum")).toBeDisabled();
@@ -88,7 +86,7 @@ describe("StepSettings", () => {
   });
 
   it("resets the limit to 0 when the user turns Max off", async () => {
-    const transaction = { ...optIn, amount: MAX_TRUST_LIMIT_VALUE };
+    const transaction = { ...optIn, amount: MAX_TRUST_LIMIT };
     const props = makeStepProps({ transaction });
     const { user } = render(<StepSettings {...props} />);
 
@@ -109,13 +107,13 @@ describe("StepSettings", () => {
     const amount = applyLastUpdate(props, optIn).amount;
 
     expect(props.onUpdateTransaction).toHaveBeenCalledTimes(1);
-    expect(amount).toEqual(MAX_TRUST_LIMIT_VALUE);
+    expect(amount).toEqual(MAX_TRUST_LIMIT);
   });
 
   it("shows an amount error while Max is on", () => {
     const error = new NotEnoughSpendableBalance("", { minimumAmount: "1.2 XRP" });
     const props = makeStepProps({
-      transaction: { ...optIn, amount: MAX_TRUST_LIMIT_VALUE },
+      transaction: { ...optIn, amount: MAX_TRUST_LIMIT },
       status: makeStatus({ amount: error }),
     });
 
@@ -189,6 +187,16 @@ describe("StepSettings", () => {
     await user.tab();
 
     expect(screen.getByText(/The limit must be above 0/)).toBeVisible();
+  });
+
+  it("hides the zero limit error when the user leaves the limit without typing", async () => {
+    const props = makeStepProps({ status: makeStatus({ amount: new XrpTrustLimitZero() }) });
+    const { user } = render(<StepSettings {...props} />);
+
+    await user.click(screen.getByRole("textbox"));
+    await user.tab();
+
+    expect(screen.queryByText(/The limit must be above 0/)).not.toBeInTheDocument();
   });
 
   it("shows a limit above the maximum as an error", () => {

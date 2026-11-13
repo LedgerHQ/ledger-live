@@ -4,7 +4,7 @@ import { IconButton, Tooltip, TooltipContent, TooltipTrigger } from "@ledgerhq/l
 import { Information, PenEdit } from "@ledgerhq/lumen-ui-react/symbols";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getParentAccount } from "@ledgerhq/live-common/account/helpers";
-import { isMaxTrustLimitValue } from "@ledgerhq/live-common/families/xrp/logicPublic";
+import { isMaxTrustLimit } from "@ledgerhq/live-common/families/xrp/logicPublic";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
@@ -35,7 +35,7 @@ const AccountBalanceSummaryFooter = ({ account }: { account: Account | TokenAcco
 
   const editLabel = t("xrp.tokenAccount.editSettings");
 
-  const formattedLimit = isMaxTrustLimitValue(limit)
+  const formattedLimit = isMaxTrustLimit(limit)
     ? t("xrp.addToken.steps.settings.maximum")
     : (formatLongTrustLimit(limit, unit, locale) ??
       formatCurrencyUnit(unit, limit, { discreet, locale, showCode: true }));

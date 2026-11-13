@@ -263,7 +263,7 @@ describe("buildIntentData", () => {
     expect(intentData).toEqual({ type: "changeTrust", noRipple: true });
   });
 
-  it.each([undefined, "send", "optOut"])("carries no data for the mode %s", mode => {
+  it.each([undefined, "send"])("carries no data for the mode %s", mode => {
     expect(buildIntentData({ mode, noRipple: false })).toEqual({ type: "none" });
   });
 });

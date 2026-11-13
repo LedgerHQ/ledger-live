@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import getDeviceTransactionConfig, { toDeviceCurrency } from "./deviceTransactionConfig";
-import { MAX_TRUST_LIMIT_VALUE } from "./logicPublic";
+import { MAX_TRUST_LIMIT } from "./logicPublic";
 import type { Transaction, TransactionStatus } from "./types";
 
 const ISSUER = "rQhWct2fv4Vc4KRjRgMrxa8xPN9Zx9iLKV";
@@ -221,7 +221,7 @@ describe("getDeviceTransactionConfig for an opt-in or an edit", () => {
 
   it("shows the maximum limit as 96 digits, without grouping", async () => {
     const fields = await getDeviceTransactionConfig(
-      makeChangeTrustInput(RLUSD_CODE, MAX_TRUST_LIMIT_VALUE),
+      makeChangeTrustInput(RLUSD_CODE, MAX_TRUST_LIMIT),
     );
 
     expect(fields[1]).toMatchObject({

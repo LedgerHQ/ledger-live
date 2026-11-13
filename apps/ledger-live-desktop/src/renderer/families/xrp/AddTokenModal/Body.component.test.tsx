@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Operation } from "@ledgerhq/types-live";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
-import { MAX_TRUST_LIMIT_VALUE } from "@ledgerhq/live-common/families/xrp/logicPublic";
+import { MAX_TRUST_LIMIT } from "@ledgerhq/live-common/families/xrp/logicPublic";
 import { act, render, screen } from "tests/testSetup";
 import logger from "~/renderer/logger";
 import Body, { type Data } from "./Body";
@@ -91,7 +91,7 @@ describe("xrp AddTokenModal Body", () => {
     expect(stepper().transaction).toMatchObject({
       assetReference: rlusd.tokenIdentifier,
       assetOwner: rlusd.contractAddress,
-      amount: MAX_TRUST_LIMIT_VALUE,
+      amount: MAX_TRUST_LIMIT,
     });
   });
 

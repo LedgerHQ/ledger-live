@@ -5,7 +5,7 @@ import type { Unit } from "@domain/entity-currency-unit";
 import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { MAX_TRUST_LIMIT_VALUE } from "@ledgerhq/live-common/families/xrp/logicPublic";
+import { MAX_TRUST_LIMIT } from "@ledgerhq/live-common/families/xrp/logicPublic";
 import type { Transaction } from "@ledgerhq/live-common/families/xrp/types";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -32,13 +32,11 @@ export function useSettingsViewModel({ navigation, route }: Props) {
   const { transaction, updateTransaction, status, bridgePending } =
     useBridgeTransaction<Transaction>(bridge, () => ({
       account,
-      transaction: makeChangeTrustTransaction(bridge, account, token, new BigNumber(0)),
+      transaction: makeChangeTrustTransaction(bridge, account, token, new BigNumber(0), true),
     }));
 
-  const maxLimit = MAX_TRUST_LIMIT_VALUE;
   const [isMaximum, setIsMaximum] = useState(false);
   const [limitText, setLimitText] = useState("");
-  const [isRippling, setIsRippling] = useState(false);
   const [isMaxLimitInfoOpen, setIsMaxLimitInfoOpen] = useState(false);
 
   const updateLimit = useCallback(
@@ -52,13 +50,22 @@ export function useSettingsViewModel({ navigation, route }: Props) {
     (useMax: boolean) => {
       setIsMaximum(useMax);
       if (useMax) {
-        updateLimit(maxLimit);
+        updateLimit(MAX_TRUST_LIMIT);
         return;
       }
 
       updateLimit(parseLimit(unit, limitText));
     },
-    [limitText, maxLimit, unit, updateLimit],
+    [limitText, unit, updateLimit],
+  );
+
+  const isRippling = transaction?.noRipple === false;
+
+  const onChangeRippling = useCallback(
+    (isChecked: boolean) => {
+      updateTransaction(tx => bridge.updateTransaction(tx, { noRipple: !isChecked }));
+    },
+    [bridge, updateTransaction],
   );
 
   const onChangeLimitText = useCallback(
@@ -83,14 +90,14 @@ export function useSettingsViewModel({ navigation, route }: Props) {
 
   return {
     token,
-    maxLimit,
+    maxLimit: MAX_TRUST_LIMIT,
     isMaximum,
-    limitText: isMaximum ? maxLimit.shiftedBy(-unit.magnitude).toFixed() : limitText,
+    limitText: isMaximum ? MAX_TRUST_LIMIT.shiftedBy(-unit.magnitude).toFixed() : limitText,
     isRippling,
     onChangeUseMax,
     onChangeLimitText,
     onContinue,
-    onChangeRippling: setIsRippling,
+    onChangeRippling,
     isMaxLimitInfoOpen,
     onOpenMaxLimitInfo: () => setIsMaxLimitInfoOpen(true),
     onCloseMaxLimitInfo: () => setIsMaxLimitInfoOpen(false),

@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { getIssuerFee } from "@ledgerhq/coin-xrp/logic-public";
-import { MAX_TRUST_LIMIT_VALUE, getIssuerFeeForToken, isMaxTrustLimitValue } from "./logicPublic";
+import { MAX_TRUST_LIMIT, getIssuerFeeForToken, isMaxTrustLimit } from "./logicPublic";
 
 jest.mock("@ledgerhq/coin-xrp/logic-public", () => {
   return {
@@ -16,21 +16,21 @@ jest.mock("../../bridge/generic-coin-framework/api/context", () => {
 const getIssuerFeeMock = jest.mocked(getIssuerFee);
 const PROTOCOL_MAX = new BigNumber("9999999999999999e80").shiftedBy(38);
 
-describe("MAX_TRUST_LIMIT_VALUE", () => {
+describe("MAX_TRUST_LIMIT", () => {
   it("is the protocol maximum in base units", () => {
-    expect(MAX_TRUST_LIMIT_VALUE).toEqual(PROTOCOL_MAX);
+    expect(MAX_TRUST_LIMIT).toEqual(PROTOCOL_MAX);
   });
 });
 
-describe("isMaxTrustLimitValue", () => {
+describe("isMaxTrustLimit", () => {
   it("is true for the protocol maximum in base units", () => {
-    expect(isMaxTrustLimitValue(PROTOCOL_MAX)).toBe(true);
+    expect(isMaxTrustLimit(PROTOCOL_MAX)).toBe(true);
   });
 
   it.each([PROTOCOL_MAX.minus(1), new BigNumber(1e9).shiftedBy(38), new BigNumber(0.5)])(
     "is false for %s",
     limit => {
-      expect(isMaxTrustLimitValue(limit)).toBe(false);
+      expect(isMaxTrustLimit(limit)).toBe(false);
     },
   );
 });

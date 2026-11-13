@@ -128,7 +128,6 @@ export function describeOptimisticOperation(
   return { type: isHeld ? "OPT_EDIT" : "OPT_IN", value: new BigNumber(0) };
 }
 
-// A TrustSet blocks rippling unless the transaction asks for it: a missing choice keeps it blocked
 export function buildIntentData(transaction: Record<string, unknown>): XrpTxData {
   if (transaction.mode !== "changeTrust") return { type: "none" };
 

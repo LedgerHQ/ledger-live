@@ -4,10 +4,7 @@ import React, { useCallback, useState } from "react";
 import { Trans } from "react-i18next";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import {
-  MAX_TRUST_LIMIT_VALUE,
-  isMaxTrustLimitValue,
-} from "@ledgerhq/live-common/families/xrp/logicPublic";
+import { MAX_TRUST_LIMIT, isMaxTrustLimit } from "@ledgerhq/live-common/families/xrp/logicPublic";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/xrp/types";
 import { TrackScreen } from "@shared/analytics-react";
 import { useSelector } from "LLD/hooks/redux";
@@ -61,7 +58,7 @@ export default function StepSettings({
   const formattedBalance =
     balance && formatCurrencyUnit(unit, balance, { discreet, locale, showCode: true });
 
-  const isMaxLimit = isMaxTrustLimitValue(transaction.amount);
+  const isMaxLimit = isMaxTrustLimit(transaction.amount);
   const limitError = getLimitError(status);
   // A custom limit starts at 0: its error shows once the user types
   const isUntypedZeroLimit = limitError?.name === "XrpTrustLimitZero" && !isLimitTyped;
@@ -74,23 +71,10 @@ export default function StepSettings({
     [bridge, onUpdateTransaction],
   );
 
-  const onTypeLimit = useCallback(
-    (limit: BigNumber) => {
-      setIsLimitTyped(true);
-      onChangeLimit(limit);
-    },
-    [onChangeLimit],
-  );
-
-  const onChangeLimitFocus = useCallback((isFocused: boolean) => {
-    if (isFocused) return;
-    setIsLimitTyped(true);
-  }, []);
-
   const onChangeMax = useCallback(
     (isChecked: boolean) => {
       setIsLimitTyped(false);
-      onChangeLimit(isChecked ? MAX_TRUST_LIMIT_VALUE : new BigNumber(0));
+      onChangeLimit(isChecked ? MAX_TRUST_LIMIT : new BigNumber(0));
     },
     [onChangeLimit],
   );
@@ -137,8 +121,9 @@ export default function StepSettings({
         <InputCurrency
           defaultUnit={unit}
           value={transaction.amount}
-          onChange={onTypeLimit}
-          onChangeFocus={onChangeLimitFocus}
+          onChange={onChangeLimit}
+          // Not onChange: InputCurrency skips it for a 0 typed over a limit of 0
+          onInput={() => setIsLimitTyped(true)}
           error={isLimitErrorHidden ? undefined : limitError}
           allowZero
           id="xrp-trust-limit-input"

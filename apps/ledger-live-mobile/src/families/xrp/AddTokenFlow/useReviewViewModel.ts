@@ -36,19 +36,16 @@ export function useReviewViewModel({ navigation, route }: Props) {
     account: bridgeAccount,
     updateAccount,
     updateTransaction,
-  } = useBridgeTransaction<Transaction>(bridge, () => {
-    const optIn = makeChangeTrustTransaction(
+  } = useBridgeTransaction<Transaction>(bridge, () => ({
+    account,
+    transaction: makeChangeTrustTransaction(
       bridge,
       account,
       token,
       settings?.limit ?? new BigNumber(0),
-    );
-
-    return {
-      account,
-      transaction: bridge.updateTransaction(optIn, { noRipple: !settings?.isRippling }),
-    };
-  });
+      !settings?.isRippling,
+    ),
+  }));
 
   useEffect(() => {
     if (bridgeAccount === account) return;

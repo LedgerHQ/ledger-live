@@ -6,7 +6,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@ledgerhq/lumen-ui-reac
 import { Information } from "@ledgerhq/lumen-ui-react/symbols";
 import type { Account } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { isMaxTrustLimitValue } from "@ledgerhq/live-common/families/xrp/logicPublic";
+import { isMaxTrustLimit } from "@ledgerhq/live-common/families/xrp/logicPublic";
 import { useGetIssuerFeeQuery } from "@ledgerhq/live-common/families/xrp/state-manager/api";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { setTrackingSource } from "@shared/analytics";
@@ -130,7 +130,7 @@ export default function StepReview({
   const locale = useSelector(localeSelector);
   const issuerFee = useGetIssuerFeeQuery(token);
   const unit = token.units[0];
-  const limitText = isMaxTrustLimitValue(transaction.amount)
+  const limitText = isMaxTrustLimit(transaction.amount)
     ? t("xrp.addToken.steps.settings.maximum")
     : formatLongTrustLimit(transaction.amount, unit, locale);
 

@@ -1,4 +1,5 @@
 import type { Account, AccountLike } from "@ledgerhq/types-live";
+import { getSeparators } from "@ledgerhq/live-currency-format";
 import { getXrpEnabledTokenStandards } from "@ledgerhq/live-common/families/xrp/config";
 import { IOU_DIGITS } from "@ledgerhq/live-common/families/xrp/logicPublic";
 import type { XrpTokenAccount, XrpTokenResources } from "@ledgerhq/live-common/families/xrp/types";
@@ -17,14 +18,12 @@ export const getXrpResources = (
   return (account as XrpTokenAccount).xrpResources;
 };
 
-// "9.999999999999998e95": every significant digit of the value
+// Not Intl.NumberFormat: it reads the value as a float, which drops significant digits
 function toScientificNotation(value: BigNumber, locale: string): string {
   const [mantissa, exponent] = value.toExponential().split("e");
+  const { decimal } = getSeparators(locale);
 
-  const numberParts = new Intl.NumberFormat(locale).formatToParts(1.1);
-  const decimalSeparator = numberParts.find(part => part.type === "decimal")?.value ?? ".";
-
-  return `${mantissa.replace(".", decimalSeparator)}e${exponent.replace("+", "")}`;
+  return `${mantissa.replace(".", decimal ?? ".")}e${exponent.replace("+", "")}`;
 }
 
 /**

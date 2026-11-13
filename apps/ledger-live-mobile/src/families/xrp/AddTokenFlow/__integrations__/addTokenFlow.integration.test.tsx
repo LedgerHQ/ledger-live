@@ -5,7 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { SignOperationEvent } from "@ledgerhq/types-live";
 import { getXrpEnabledTokenStandards } from "@ledgerhq/live-common/families/xrp/config";
-import { MAX_TRUST_LIMIT_VALUE } from "@ledgerhq/live-common/families/xrp/logicPublic";
+import { MAX_TRUST_LIMIT } from "@ledgerhq/live-common/families/xrp/logicPublic";
 import { act, render, screen, waitFor } from "@tests/test-renderer";
 import { updateAccount } from "~/actions/accounts";
 import { NavigatorName, ScreenName } from "~/const";
@@ -169,7 +169,7 @@ describe("XRP AddTokenFlow (integration)", () => {
     ).toBeVisible();
     expect(getSignedTransaction()).toMatchObject({
       mode: "changeTrust",
-      amount: MAX_TRUST_LIMIT_VALUE,
+      amount: MAX_TRUST_LIMIT,
       noRipple: true,
       assetReference: xrpIouToken.tokenIdentifier,
       assetOwner: xrpIouToken.contractAddress,

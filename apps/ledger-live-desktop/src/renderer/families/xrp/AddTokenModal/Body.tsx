@@ -8,7 +8,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { getAssetFromToken } from "@ledgerhq/live-common/families/xrp/bridge/api";
-import { MAX_TRUST_LIMIT_VALUE } from "@ledgerhq/live-common/families/xrp/logicPublic";
+import { MAX_TRUST_LIMIT } from "@ledgerhq/live-common/families/xrp/logicPublic";
 import type { Transaction } from "@ledgerhq/live-common/families/xrp/types";
 import { Track } from "@shared/analytics-react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
@@ -158,7 +158,7 @@ export default function Body({ stepId, onClose, onChangeStepId, params }: Props)
           assetReference: undefined,
           assetOwner: undefined,
           ...toAssetFields(picked),
-          amount: picked.tokenType === "iou" ? MAX_TRUST_LIMIT_VALUE : new BigNumber(0),
+          amount: picked.tokenType === "iou" ? MAX_TRUST_LIMIT : new BigNumber(0),
         });
       });
     },
