@@ -1,8 +1,0 @@
-{
-  "name": "@domain/entity-account-balance-history",
-  "targets": {
-    "build": {
-      "executor": "nx:noop"
-    }
-  }
-}
