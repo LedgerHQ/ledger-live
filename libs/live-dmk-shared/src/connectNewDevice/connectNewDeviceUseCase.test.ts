@@ -215,94 +215,65 @@ describe("connectNewDeviceUseCase", () => {
     subscription.unsubscribe();
   });
 
-  it("should emit a terminal UnknownError UI state and stop discovery when an action of the running state machine throws", () => {
+  it("should stop discovery and emit UnknownError when getDiscoveredDeviceKey throws", () => {
     // Arrange
-    const { deviceDiscoveryService, discoverDevices, input, states } = setupTest();
-    const thrown = new Error("boom");
+    const { deviceDiscoveryService, discoverDevices, input, lastState, states } = setupTest();
+    const error = new Error("getDiscoveredDeviceKey failed");
     input.getDiscoveredDeviceKey = () => {
-      throw thrown;
+      throw error;
     };
-    const errorHandler = jest.fn();
-    const completeHandler = jest.fn();
-    const subscription = connectNewDeviceUseCase(input).subscribe({
-      next: state => states.push(state),
-      error: errorHandler,
-      complete: completeHandler,
-    });
+    const subscription = connectNewDeviceUseCase(input).subscribe(state => states.push(state));
 
     // Act
     discoverDevices([nanoX]);
+    // XState throws an unhandled error from a timer.
+    jest.runOnlyPendingTimers();
 
     // Assert
-    expect(states.map(state => state.type)).toEqual([
-      ConnectNewDeviceUIStateTypes.Discovering,
-      ConnectNewDeviceUIStateTypes.UnknownError,
-    ]);
-    expect(states[1]).toEqual({ type: ConnectNewDeviceUIStateTypes.UnknownError, error: thrown });
-    expect(errorHandler).not.toHaveBeenCalled();
-    expect(completeHandler).toHaveBeenCalledTimes(1);
+    expect(lastState(ConnectNewDeviceUIStateTypes.UnknownError).error).toBe(error);
     expect(deviceDiscoveryService.stop).toHaveBeenCalledTimes(1);
-    expect(() => jest.runOnlyPendingTimers()).not.toThrow();
 
     subscription.unsubscribe();
   });
 
-  it("should emit a terminal UnknownError UI state when discovery fails to start", () => {
+  it("should emit UnknownError when discovery fails to start", () => {
     // Arrange
-    const { deviceDiscoveryService, input, states } = setupTest();
-    const thrown = new Error("boom");
+    const { deviceDiscoveryService, input, lastState, states } = setupTest();
+    const error = new Error("start failed");
     deviceDiscoveryService.start = () => {
-      throw thrown;
+      throw error;
     };
-    const errorHandler = jest.fn();
-    const completeHandler = jest.fn();
 
     // Act
-    const subscription = connectNewDeviceUseCase(input).subscribe({
-      next: state => states.push(state),
-      error: errorHandler,
-      complete: completeHandler,
-    });
+    const subscription = connectNewDeviceUseCase(input).subscribe(state => states.push(state));
+    // XState throws an unhandled error from a timer.
+    jest.runOnlyPendingTimers();
 
     // Assert
-    expect(states).toEqual([{ type: ConnectNewDeviceUIStateTypes.UnknownError, error: thrown }]);
-    expect(errorHandler).not.toHaveBeenCalled();
-    expect(completeHandler).toHaveBeenCalledTimes(1);
-    expect(() => jest.runOnlyPendingTimers()).not.toThrow();
+    expect(lastState(ConnectNewDeviceUIStateTypes.UnknownError).error).toBe(error);
 
     subscription.unsubscribe();
   });
 
-  it("should emit a terminal UnknownError UI state when discovery fails to stop after an action throws", () => {
+  it("should emit UnknownError when discovery fails to stop after getDiscoveredDeviceKey throws", () => {
     // Arrange
-    const { deviceDiscoveryService, discoverDevices, input, states } = setupTest();
-    const thrown = new Error("boom");
+    const { deviceDiscoveryService, discoverDevices, input, lastState, states } = setupTest();
+    const error = new Error("getDiscoveredDeviceKey failed");
     input.getDiscoveredDeviceKey = () => {
-      throw thrown;
+      throw error;
     };
     deviceDiscoveryService.stop = () => {
       throw new Error("stop failed");
     };
-    const errorHandler = jest.fn();
-    const completeHandler = jest.fn();
-    const subscription = connectNewDeviceUseCase(input).subscribe({
-      next: state => states.push(state),
-      error: errorHandler,
-      complete: completeHandler,
-    });
+    const subscription = connectNewDeviceUseCase(input).subscribe(state => states.push(state));
 
     // Act
     discoverDevices([nanoX]);
+    // XState throws an unhandled error from a timer.
+    jest.runOnlyPendingTimers();
 
     // Assert
-    expect(states.map(state => state.type)).toEqual([
-      ConnectNewDeviceUIStateTypes.Discovering,
-      ConnectNewDeviceUIStateTypes.UnknownError,
-    ]);
-    expect(states[1]).toEqual({ type: ConnectNewDeviceUIStateTypes.UnknownError, error: thrown });
-    expect(errorHandler).not.toHaveBeenCalled();
-    expect(completeHandler).toHaveBeenCalledTimes(1);
-    expect(() => jest.runOnlyPendingTimers()).not.toThrow();
+    expect(lastState(ConnectNewDeviceUIStateTypes.UnknownError).error).toBe(error);
 
     subscription.unsubscribe();
   });

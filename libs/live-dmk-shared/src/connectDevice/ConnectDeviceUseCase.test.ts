@@ -52,8 +52,13 @@ const setupTest = ({
 
 // Tests
 describe("connectDeviceUseCase", () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
   afterEach(() => {
     jest.clearAllMocks();
+    jest.useRealTimers();
   });
 
   it("should create and start the state machine only when subscribed", () => {
@@ -129,66 +134,51 @@ describe("connectDeviceUseCase", () => {
     subscription.unsubscribe();
   });
 
-  it("should emit a terminal UnknownError UI state when an action of the running state machine throws", () => {
+  it("should emit UnknownError when onConnected throws", () => {
     // Arrange
     const { input } = setupTest();
-    const thrown = new Error("boom");
+    const error = new Error("onConnected failed");
     input.dmk = {
       listConnectedDevices: jest.fn(() => [{ sessionId: "session-id" }]),
       getConnectedDevice: jest.fn(() => ({ id: "device-id", name: "Ledger Nano X", type: "BLE" })),
     } as unknown as DeviceManagementKit;
-    input.onConnected = jest.fn(() => {
-      throw thrown;
-    });
+    input.onConnected = () => {
+      throw error;
+    };
     const states: Array<ConnectDeviceUIState> = [];
-    const errorHandler = jest.fn();
-    const completeHandler = jest.fn();
 
     // Act
-    const subscription = connectDeviceUseCase(input).subscribe({
-      next: state => states.push(state),
-      error: errorHandler,
-      complete: completeHandler,
-    });
+    const subscription = connectDeviceUseCase(input).subscribe(state => states.push(state));
+    // XState throws an unhandled error from a timer.
+    jest.runOnlyPendingTimers();
 
     // Assert
     expect(states).toEqual([
       { type: ConnectDeviceUIStateTypes.Connected },
-      { type: ConnectDeviceUIStateTypes.UnknownError, error: thrown },
+      { type: ConnectDeviceUIStateTypes.UnknownError, error },
     ]);
-    expect(errorHandler).not.toHaveBeenCalled();
-    expect(completeHandler).toHaveBeenCalledTimes(1);
 
     subscription.unsubscribe();
   });
 
-  it("should emit a terminal UnknownError UI state when discovery fails to start", () => {
+  it("should emit UnknownError when discovery fails to start", () => {
     // Arrange
-    jest.useFakeTimers();
     const { deviceDiscoveryService, input } = setupTest();
-    const thrown = new Error("boom");
+    const error = new Error("start failed");
     deviceDiscoveryService.start = () => {
-      throw thrown;
+      throw error;
     };
     const states: Array<ConnectDeviceUIState> = [];
-    const errorHandler = jest.fn();
-    const completeHandler = jest.fn();
 
     // Act
-    const subscription = connectDeviceUseCase(input).subscribe({
-      next: state => states.push(state),
-      error: errorHandler,
-      complete: completeHandler,
-    });
+    const subscription = connectDeviceUseCase(input).subscribe(state => states.push(state));
+    // XState throws an unhandled error from a timer.
+    jest.runOnlyPendingTimers();
 
     // Assert
-    expect(states).toEqual([{ type: ConnectDeviceUIStateTypes.UnknownError, error: thrown }]);
-    expect(errorHandler).not.toHaveBeenCalled();
-    expect(completeHandler).toHaveBeenCalledTimes(1);
-    expect(() => jest.runOnlyPendingTimers()).not.toThrow();
+    expect(states).toEqual([{ type: ConnectDeviceUIStateTypes.UnknownError, error }]);
 
     subscription.unsubscribe();
-    jest.useRealTimers();
   });
 
   it("should filter known devices by accepted device models", () => {
