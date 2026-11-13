@@ -26,6 +26,8 @@
     "coverage": "jest --coverage"
   },
   "dependencies": {
+    "@features/platform-device-intent-session": "workspace:^",
+    "@features/platform-intent-verify-address": "workspace:^",
     "@features/platform-pay-analytics": "workspace:^",
     "@features/platform-style": "workspace:*",
     "@ledgerhq/crypto-icons": "catalog:",

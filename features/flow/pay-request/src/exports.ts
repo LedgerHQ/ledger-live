@@ -4,3 +4,4 @@ export * from "./components/RequestReceive/RequestReceive";
 export * from "./components/RequestReceive/useRequestReceiveViewModel";
 export * from "./utils/splitAddress";
 export * from "./types";
+export * from "./verifyAddressOutcomes";

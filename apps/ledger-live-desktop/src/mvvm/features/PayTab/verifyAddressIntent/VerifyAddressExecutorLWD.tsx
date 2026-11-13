@@ -1,11 +1,11 @@
 import React, { useCallback, useMemo } from "react";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { FlowName } from "@ledgerhq/live-common/device-action/utils";
+import { payVerifyAddressOutcomes } from "@features/flow-pay-request";
 import { createIntent } from "@features/platform-device-intent";
 import {
   useDeviceIntentSession,
   type DeviceIntentSessionEvent,
-  type DeviceIntentSessionOutcomes,
 } from "@features/platform-device-intent-session";
 import type {
   VerifyAddressIntentInput,
@@ -32,25 +32,6 @@ type Props = Readonly<{
   onReady: () => void;
   onExit: (outcome: PayVerifyOutcome) => void;
 }>;
-
-function outcomeFromLastState(state: VerifyAddressIntentJobState | undefined): PayVerifyOutcome {
-  switch (state?.type) {
-    case "mismatch":
-      return "mismatch";
-    case "unsupported":
-      return "unsupported";
-    case "cancelled":
-      return "cancelled";
-    default:
-      return "dismissed";
-  }
-}
-
-const OUTCOMES: DeviceIntentSessionOutcomes<VerifyAddressIntentJobState, PayVerifyOutcome> = {
-  fromJobState: jobState => (jobState.type === "verified" ? "verified" : undefined),
-  fromUserCancel: outcomeFromLastState,
-  setupFailed: "initFailed",
-};
 
 export function VerifyAddressExecutorLWD({
   selection,
@@ -104,7 +85,7 @@ export function VerifyAddressExecutorLWD({
     buildSetupInput,
     intent,
     intentComponentExtraProps: undefined,
-    outcomes: OUTCOMES,
+    outcomes: payVerifyAddressOutcomes,
     onTrack,
     onReady,
     onExit,

@@ -1,6 +1,12 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { VerifyAddressPhase, VerifyAddressProps } from "@features/flow-pay-request";
+import type {
+  PayVerifyOutcome,
+  VerifyAddressPhase,
+  VerifyAddressProps,
+} from "@features/flow-pay-request";
+
+export type { PayVerifyOutcome };
 
 const VERIFY_PAGE = "Request Address Verification";
 
@@ -9,19 +15,6 @@ export type PayVerifySelection = Readonly<{
   account: AccountLike;
   parentAccount?: Account;
 }>;
-
-/**
- * How the device flow ended. Everything but `mismatch` brings the receive
- * summary back; `mismatch` closes the whole flow because the reported address
- * must not be shared.
- */
-export type PayVerifyOutcome =
-  | "verified"
-  | "cancelled"
-  | "unsupported"
-  | "mismatch"
-  | "dismissed"
-  | "initFailed";
 
 /** Controls the app-side Device Intent Executor host for the verify flow. */
 export type PayVerifyDeviceIntent = Readonly<{

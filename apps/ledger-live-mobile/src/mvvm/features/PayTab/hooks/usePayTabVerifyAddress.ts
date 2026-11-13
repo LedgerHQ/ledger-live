@@ -1,17 +1,11 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import type { Account } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import type { VerifyAddressProps } from "@features/flow-pay-request";
+import type { PayVerifyOutcome, VerifyAddressProps } from "@features/flow-pay-request";
+
+export type { PayVerifyOutcome };
 
 export const PAY_REQUEST_VERIFY_PAGE = "Request Address Verification";
-
-export type PayVerifyOutcome =
-  | "verified"
-  | "cancelled"
-  | "unsupported"
-  | "mismatch"
-  | "dismissed"
-  | "initFailed";
 
 /** Account held from the moment verification starts, so a later sync cannot rebuild the device intent. */
 export type PayVerifySelection = Readonly<{
