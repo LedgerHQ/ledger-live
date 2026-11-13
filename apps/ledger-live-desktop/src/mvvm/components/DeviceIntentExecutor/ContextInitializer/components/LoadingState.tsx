@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { OverrideDeviceIntentExecutorHeader } from "@ledgerhq/live-dmk-shared";
+import { OverrideDeviceIntentExecutorHeader } from "@ledgerhq/live-dmk-shared/react";
 import { TrackDIEScreen } from "../../components/TrackDIEScreen";
 import { PAGE_CONNECT_APP } from "../../utils/trackDeviceIntent";
 import type { InitializerDevice } from "../types";

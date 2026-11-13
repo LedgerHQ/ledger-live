@@ -7,12 +7,12 @@ import { DeviceId } from "@domain/entity-client-identity";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { DeviceInfo } from "@ledgerhq/types-live";
 import {
-  DeviceIntentTrackingProvider,
   DeviceInteractionRequiredType,
   FinalStateType,
   LoadingStateType,
   type EnsureAppReadyState,
 } from "@ledgerhq/live-dmk-shared";
+import { DeviceIntentTrackingProvider } from "@ledgerhq/live-dmk-shared/react";
 import { ensureAppReadyUseCase } from "@ledgerhq/live-common/device/use-cases/ensureAppReady/ensureAppReadyUseCase";
 import type { State } from "~/renderer/reducers";
 import { INITIAL_STATE as INITIAL_SETTINGS_STATE } from "~/renderer/reducers/settings";

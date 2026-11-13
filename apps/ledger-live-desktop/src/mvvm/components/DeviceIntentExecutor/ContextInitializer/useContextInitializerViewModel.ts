@@ -14,8 +14,8 @@ import {
   getEnsureAppReadyFailure,
   LoadingStateType,
   type EnsureAppReadyState,
-  useDeviceIntentTracking,
 } from "@ledgerhq/live-dmk-shared";
+import { useDeviceIntentTracking } from "@ledgerhq/live-dmk-shared/react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { addNewDeviceModel, setLastSeenDeviceInfo } from "~/renderer/actions/settings";
 import { settingsStoreSelector } from "~/renderer/reducers/settings";

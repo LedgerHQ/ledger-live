@@ -472,7 +472,7 @@ active header:
 
 ```tsx
 import { BottomSheetHeader } from "@ledgerhq/lumen-ui-rnative";
-import { OverrideDeviceIntentExecutorHeader } from "@ledgerhq/live-dmk-shared";
+import { OverrideDeviceIntentExecutorHeader } from "@ledgerhq/live-dmk-shared/react";
 
 function MyIntentComponent({ jobState }: Props) {
   return (
