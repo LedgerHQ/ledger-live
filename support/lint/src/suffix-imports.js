@@ -201,22 +201,7 @@ const noPlatformSuffixImports = {
   },
 };
 
-/**
- * The override that waives the rule for `packages`, the packages of a layer that still import with
- * a platform suffix. An entry goes in the change that cleans its package up, so the list only
- * shrinks. Package names are globs relative to the layer config that re-exports the preset.
- *
- * @param {string[]} packages
- * @returns {{ files: string[], rules: Record<string, "off"> }}
- */
-function platformSuffixWaivers(packages) {
-  return {
-    files: packages.map(pkg => `${pkg}/**`),
-    rules: { "suffix-imports/no-platform-suffix": "off" },
-  };
-}
-
-export { findPlatformSuffix, platformSuffixWaivers };
+export { findPlatformSuffix };
 
 export default {
   meta: {
