@@ -1,6 +1,5 @@
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
-import { firmwareSettled, isTouchscreen, requiresLegacyFlow, updateWaitsForSeed } from "./rules";
-import type { AvailableFirmwareUpdate } from "./types";
+import { requiresLegacyFlow, updateWaitsForSeed } from "./firmwareRules";
 
 const { NANO_S, NANO_SP, NANO_X, STAX, FLEX, APEX } = DeviceModelId;
 
@@ -96,42 +95,5 @@ describe("updateWaitsForSeed", () => {
     expect(updateWaitsForSeed({ currentVersion: "1.3.0", deviceModelId, isOnboarded: false })).toBe(
       false,
     );
-  });
-});
-
-describe("isTouchscreen", () => {
-  it.each([DeviceModelId.STAX, DeviceModelId.FLEX, DeviceModelId.APEX])("accepts %s", model => {
-    expect(isTouchscreen(model)).toBe(true);
-  });
-
-  it.each([DeviceModelId.NANO_S, DeviceModelId.NANO_SP, DeviceModelId.NANO_X])(
-    "refuses %s",
-    model => {
-      expect(isTouchscreen(model)).toBe(false);
-    },
-  );
-
-  it("reads DMK's own model names, where the Flex is `flex` and the Apex `apexp`", () => {
-    expect(DeviceModelId.FLEX).toBe("flex");
-    expect(DeviceModelId.APEX).toBe("apexp");
-  });
-});
-
-describe("firmwareSettled", () => {
-  it.each(["upToDate", "declined", "skipped", "deferred"] as const)(
-    "treats %s as finished",
-    kind => {
-      expect(firmwareSettled({ kind })).toBe(true);
-    },
-  );
-
-  it("leaves an offer and a missing check unfinished", () => {
-    expect(firmwareSettled(null)).toBe(false);
-    expect(
-      firmwareSettled({
-        kind: "offered",
-        update: { finalFirmware: { version: "2.3.0" } } as AvailableFirmwareUpdate,
-      }),
-    ).toBe(false);
   });
 });

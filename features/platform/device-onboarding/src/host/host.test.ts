@@ -9,14 +9,14 @@ import {
   toolContext,
   toolEvent,
   type HostToolEvent,
-} from "./host";
+} from ".";
 import type {
   AvailableFirmwareUpdate,
   DeviceOnboardingContext,
   DeviceOnboardingState,
   OnboardingEvent,
-} from "./types";
-import { OnboardingStep, RecoveryKeyStatus } from "./types";
+} from "../types";
+import { OnboardingStep, RecoveryKeyStatus } from "../types";
 
 function deviceState(step: OnboardingStep): DeviceOnboardingState {
   return {
