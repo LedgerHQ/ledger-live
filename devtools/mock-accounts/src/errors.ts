@@ -2,3 +2,8 @@
 export class MockCursorError extends Error {
   override name = "MockCursorError";
 }
+
+/** An `assetStatus` read without the asset it asks about. */
+export class MockAssetStatusQueryError extends Error {
+  override name = "MockAssetStatusQueryError";
+}
