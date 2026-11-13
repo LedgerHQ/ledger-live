@@ -50,6 +50,7 @@ export function useLeaveOnboarding({
         requiresLegacyFlow({
           currentVersion: context.firmwareVersion,
           deviceModelId: context.deviceModelId,
+          isOnboarded: seeded,
         }));
     exitActions[reason]({
       navigation,

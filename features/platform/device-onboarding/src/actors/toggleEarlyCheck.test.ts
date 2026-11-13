@@ -10,7 +10,7 @@ import {
   ToggleEarlyCheckCommand,
   type ToggleEarlyCheckErrorCode,
 } from "../device/toggleEarlyCheckCommand";
-import { runActor, settle } from "../tests/actorHarness";
+import { runActor, settle } from "../__tests__/actorHarness";
 import { createFakeCommandDmk } from "../tests/fakeDmk";
 import { toggleEarlyCheck, type ToggleEarlyCheckEvent } from "./toggleEarlyCheck";
 

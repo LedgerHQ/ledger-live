@@ -14,6 +14,7 @@ Design and rationale live in the [technical plan](https://ledgerhq.atlassian.net
 - Reads the device and routes it: the legacy flow, the pre-seed checks, or an interrupted update
 - Waits for the user once, on entry, before it touches a device it can drive
 - Runs the mandatory genuine check and the firmware check, and offers an available update
+- Holds an unseeded Nano's firmware update until it is seeded, when its firmware cannot update before
 - Shows the on-device waiting screen to an unseeded touchscreen while the checks run
 - Hands the OS update over to the app's own update flow, then re-reads the device
 - Follows naming, PIN, seed creation and restore by reading the onboarding step — it never sets them
@@ -114,12 +115,19 @@ The session stays open after the exit, so the app can keep using it.
 
 ## Key exports / concepts
 
-- `deviceOnboardingMachine` — the flow. `machine.ts` is the graph, `context.ts` the bookkeeping
+- `deviceOnboardingMachine` — the flow. `machine.ts` is the graph, `internals/contextActions.ts`
+  the bookkeeping
 - `stampSession` — adds the live session id to the session events. The app calls it, not the machine
 - `OnboardingEvent`, `DeviceOnboardingInput`, `DeviceOnboardingContext`, `DeviceOnboardingOutput` —
   the language the machine and the screens speak
-- `rules.ts` — the pure decisions the transitions ask. Every model takes the flow on any firmware
-  version that can be read
+- `firmwareRules.ts` — the pure decisions the transitions ask from model, firmware and seeded state:
+  which devices leave for the legacy flow (`requiresLegacyFlow`) and which hold their firmware
+  update until they are seeded (`updateWaitsForSeed`)
+- `internals/` — what only the package uses: the machine's actions, `isTouchscreen` and
+  `firmwareSettled`. The barrel never re-exports it
+- `host/` — what the apps and the devtool use around the machine: the session events
+  (`stampSession`), the deprecated flat context, the devtool payloads, the event log and the next
+  states
 - `actors/` — the only code that talks to the device: `readDeviceState`, `genuineCheck`,
   `firmwareCheck`, `toggleEarlyCheck`, `seedPolling`, `unlockPolling`. Each gets the session id as
   input and reports through events only

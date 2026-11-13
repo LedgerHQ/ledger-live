@@ -127,29 +127,36 @@ function resetToMyLedger(navigation: NavigationProp<ParamListBase>, device: Devi
   });
 }
 
+/** The old checks of a seeded device: the sync companion on a touchscreen, the pairing step on a Nano. */
 function resetToLegacySeededChecks(navigation: NavigationProp<ParamListBase>, device: Device) {
+  const onboardingRoutes = isSyncOnboardingSupported(device.modelId)
+    ? [
+        { name: NavigatorName.Onboarding },
+        {
+          name: NavigatorName.SyncOnboarding,
+          state: { routes: [{ name: ScreenName.SyncOnboardingCompanion, params: { device } }] },
+        },
+      ]
+    : [
+        {
+          name: NavigatorName.Onboarding,
+          state: {
+            routes: [
+              {
+                name: ScreenName.OnboardingPairNew,
+                params: { deviceModelId: device.modelId, fromAccessExistingWallet: true },
+              },
+            ],
+          },
+        },
+      ];
+
   getRootNavigation(navigation).reset({
     index: 0,
     routes: [
       {
         name: NavigatorName.BaseOnboarding,
-        state: {
-          index: 1,
-          routes: [
-            { name: NavigatorName.Onboarding },
-            {
-              name: NavigatorName.SyncOnboarding,
-              state: {
-                routes: [
-                  {
-                    name: ScreenName.SyncOnboardingCompanion,
-                    params: { device },
-                  },
-                ],
-              },
-            },
-          ],
-        },
+        state: { index: onboardingRoutes.length - 1, routes: onboardingRoutes },
       },
     ],
   });

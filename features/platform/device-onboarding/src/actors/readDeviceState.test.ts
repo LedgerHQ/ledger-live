@@ -7,7 +7,7 @@ import {
   type GetOsVersionResponse,
 } from "@ledgerhq/device-management-kit";
 import { createRetryPolicy } from "../retry";
-import { runActor, settle } from "../tests/actorHarness";
+import { runActor, settle } from "../__tests__/actorHarness";
 import { createDeviceManagementKit } from "../tests/createDeviceManagementKit";
 import { createFakeCommandDmk, type ScriptedCommand } from "../tests/fakeDmk";
 import {

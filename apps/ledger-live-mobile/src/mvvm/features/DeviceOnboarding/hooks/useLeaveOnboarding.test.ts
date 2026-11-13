@@ -112,6 +112,31 @@ describe("useLeaveOnboarding", () => {
     expect(mockReset).not.toHaveBeenCalled();
   });
 
+  it("should open the old seeded checks when a seeded nano s leaves through the legacy path", () => {
+    const { result } = renderHook(() =>
+      useLeaveOnboarding({
+        device,
+        navigateOnExit: true,
+        wasReadOnlyAtEntry: false,
+      }),
+    );
+
+    act(() =>
+      result.current(
+        "legacyFallback",
+        machineContext({
+          seeded: true,
+          genuine: null,
+          firmwareVersion: "2.1.0",
+          deviceModelId: DmkDeviceModelId.NANO_S,
+        }),
+      ),
+    );
+
+    expect(mockGoBack).not.toHaveBeenCalled();
+    expect(mockReset).toHaveBeenCalledTimes(1);
+  });
+
   it("should ask for the notifications prompt when a genuine seeded device leaves through the legacy path", () => {
     const { result } = renderHook(() =>
       useLeaveOnboarding({
