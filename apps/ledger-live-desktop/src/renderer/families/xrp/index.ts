@@ -1,5 +1,6 @@
 import { getXrpEnabledTokenStandards } from "@ledgerhq/live-common/families/xrp/config";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
+import accountHeaderManageActions from "./AccountHeaderManageActions";
 import StepReceiveAccountCustomAlert from "./StepReceiveAccountCustomAlert";
 import addAssetAction from "./addAssetAction";
 import sendAmountFields from "./SendAmountFields";
@@ -17,6 +18,7 @@ const family: XrpFamily = {
   addAssetAction,
   getTokenTypes: currency => getXrpEnabledTokenStandards(currency.id),
   AccountBalanceSummaryFooter,
+  accountHeaderManageActions,
   StepReceiveAccountCustomAlert,
   modalsToPreload: ["MODAL_XRP_ADD_TOKEN"],
 };

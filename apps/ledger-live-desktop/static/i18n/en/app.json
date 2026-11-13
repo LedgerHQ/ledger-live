@@ -4369,8 +4369,31 @@
         }
       }
     },
+    "manageToken": {
+      "title": "Manage token",
+      "settings": {
+        "title": "Advanced settings",
+        "description": "Change the trust limit or rippling."
+      },
+      "remove": {
+        "description": "Close this trust line and get its XRP reserve back."
+      }
+    },
+    "removeToken": {
+      "title": "Remove token",
+      "steps": {
+        "review": {
+          "info": "{{amount}} will be unlocked and available again. You won't be able to receive this token anymore. You can add it again later, which locks {{amount}} again."
+        },
+        "confirmation": {
+          "success": {
+            "title": "{{token}} token removed",
+            "text": "Your XRP account no longer holds <0>{{token}}</0>, and its reserve is freed."
+          }
+        }
+      }
+    },
     "tokenAccount": {
-      "editSettings": "Edit settings",
       "trustLimit": "Trust limit",
       "trustLimitTooltip": "The most of this token your account accepts to hold."
     },
