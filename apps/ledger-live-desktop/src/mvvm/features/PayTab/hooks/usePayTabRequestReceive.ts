@@ -6,7 +6,7 @@ import { trackButtonClicked, trackEvent } from "@features/platform-pay-analytics
 import {
   markReceiveVerifyHintSeen,
   selectHasSeenReceiveVerifyHint,
-} from "@features/flow-pay-request/state";
+} from "@features/flow-receive/state";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDialog";
 import { useCopyToClipboard } from "../../../hooks/useCopyToClipboard";

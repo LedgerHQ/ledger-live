@@ -12,7 +12,7 @@ callbacks.
 
 ## Layout
 
-The package is scaffolded; the screens land in follow-up tickets. Target layout, per the
+The verify hint state is in place; the screens land in follow-up tickets. Target layout, per the
 [flow-package skill](../../../.agents/skills/flow-package/SKILL.md):
 
 ```text
@@ -22,7 +22,7 @@ src/
 │   └── AddressDisplayed/   # "Address securely displayed", while the address is on the device
 ├── copy/                   # i18n keys to labels, under the receiveAddress namespace
 ├── logic/                  # pure functions, no React
-├── state/                  # verify hint slice (LIVE-40941)
+├── state/                  # verify hint slice, registered and persisted by the apps
 ├── types.ts                # public contract
 ├── index.ts                # web barrel
 └── index.native.ts         # native barrel
@@ -32,6 +32,12 @@ Each screen follows MVVM: `useXViewModel.ts` plus `XView.web.tsx` and `XView.nat
 
 ## Public API
 
-One entry, `@features/flow-receive`, resolved per platform through the `react-native` condition.
+- `@features/flow-receive`: the main entry, resolved per platform through the `react-native`
+  condition.
+- `@features/flow-receive/state`: the `receiveVerifyHint` slice, whether the user has already
+  seen the hint pointing at **Verify**. The apps register its reducer under `receiveVerifyHint`
+  and persist `hasSeenReceiveVerifyHint` in the `payCard` storage blob, restored with
+  `restoreReceiveVerifyHint`.
+
 The barrels hold `export *` lines only, per the
 [package-public-api skill](../../../.agents/skills/package-public-api/SKILL.md).

@@ -160,6 +160,7 @@
     "@features/flow-pay-request": "workspace:^",
     "@features/flow-portfolio-services-entry-points": "workspace:^",
     "@features/flow-predictions": "workspace:^",
+    "@features/flow-receive": "workspace:^",
     "@features/platform-account-analytics": "workspace:^",
     "@features/platform-account-source-coin-module": "workspace:^",
     "@features/platform-aggregated-assets": "workspace:*",

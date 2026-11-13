@@ -52,7 +52,7 @@ import type { PostOnboardingHubDrawerState } from "./postOnboardingHubDrawer";
 import type { SendFlowState } from "./sendFlow";
 import type { PayCardBalanceState } from "@features/flow-pay-balance/state";
 import type { PayCardFeatureTourState } from "@features/flow-pay-feature-tour/state";
-import type { PayRequestVerifyHintState } from "@features/flow-pay-request/state";
+import type { ReceiveVerifyHintState } from "@features/flow-receive/state";
 import type { PayCardAuthState, PayCardLoginIntroState } from "@features/flow-pay-card-auth/state";
 import type { PayCardOnboardingWidgetState } from "@features/flow-pay-card-widget/state";
 import type { AccountAnalyticsIntroductionState } from "@features/flow-account-detail-analytics-notice/state";
@@ -506,7 +506,7 @@ export type State = LLMRTKApiState & {
   sendFlow: SendFlowState;
   payCardBalance: PayCardBalanceState;
   payCardFeatureTour: PayCardFeatureTourState;
-  payRequestVerifyHint: PayRequestVerifyHintState;
+  receiveVerifyHint: ReceiveVerifyHintState;
   payCardOnboardingWidget: PayCardOnboardingWidgetState;
   mockServerOverlay: MockServerOverlayState;
   payCardAuth: PayCardAuthState;
