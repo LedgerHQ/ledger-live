@@ -43,10 +43,6 @@ inputs:
     description: "iOS & Android, iOS Only or Android Only"
     required: false
     default: "iOS & Android"
-  check_pod_lockfile:
-    description: "Look up whether the pod lockfile was already validated"
-    required: false
-    default: "false"
   production_firebase:
     description: "Production Firebase builds, which use their own native cache keys"
     required: false
@@ -256,9 +252,11 @@ runs:
         use-fallback: false
         lookup-only: true
 
+    # The iOS native build runs `pod install --deployment`, which fails on an out-of-date Podfile.lock. Only
+    # a cached native build skips that, so only then does the e2e workflow check the lockfile on its own.
     - name: Check if pod lockfile has been validated
       id: check-lockfile-status
-      if: ${{ inputs.check_pod_lockfile == 'true' }}
+      if: ${{ inputs.tests_type != 'Android Only' && steps.check-ios-native.outputs.cache-hit == 'true' }}
       uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
       with:
         key: ${{ steps.cache-keys.outputs.pod_check_key }}
