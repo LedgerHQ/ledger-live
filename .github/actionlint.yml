@@ -18,6 +18,8 @@ self-hosted-runner:
     - performance-pool
     - general-pool
     - qaa
+    - "test=true"
+    - xcode-26.4.1
     - public-ledgerhq-shared-small
   paths:
     .github/workflows/*.yml: ~
