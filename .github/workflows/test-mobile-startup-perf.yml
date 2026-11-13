@@ -466,6 +466,7 @@ jobs:
           THRESHOLD: ${{ needs.plan.outputs.threshold_ms }}
           LABEL_A: ${{ needs.plan.outputs.label_a }}
           LABEL_B: ${{ needs.plan.outputs.label_b }}
+          PAIRS: ${{ needs.plan.outputs.pairs }}
           SCENARIOS: ${{ matrix.scenario }}
           MEASURE_OUTCOME: ${{ steps.measure.outcome }}
         run: |
@@ -475,8 +476,9 @@ jobs:
           node e2e/tooling/startup-perf/src/analysis/analyze.ts \
             --samples "$RESULTS_DIR/android/samples.jsonl" \
             --preset "$PRESET" --threshold-ms "$THRESHOLD" \
-            --label-a "$LABEL_A" --label-b "$LABEL_B" \
-            --json "$RESULTS_DIR/android/summary.json"
+            --label-a "$LABEL_A" --label-b "$LABEL_B" --pairs "$PAIRS" \
+            --json "$RESULTS_DIR/android/summary.json" \
+            --run-json "$RESULTS_DIR/android/run.json"
 
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: ${{ always() }}
@@ -570,6 +572,7 @@ jobs:
           THRESHOLD: ${{ needs.plan.outputs.threshold_ms }}
           LABEL_A: ${{ needs.plan.outputs.label_a }}
           LABEL_B: ${{ needs.plan.outputs.label_b }}
+          PAIRS: ${{ needs.plan.outputs.pairs }}
           SCENARIOS: ${{ join(fromJSON(needs.plan.outputs.scenarios), ',') }}
           MEASURE_OUTCOME: ${{ steps.measure.outcome }}
         run: |
@@ -579,8 +582,9 @@ jobs:
           node e2e/tooling/startup-perf/src/analysis/analyze.ts \
             --samples "$RESULTS_DIR/ios/samples.jsonl" \
             --preset "$PRESET" --threshold-ms "$THRESHOLD" \
-            --label-a "$LABEL_A" --label-b "$LABEL_B" \
-            --json "$RESULTS_DIR/ios/summary.json"
+            --label-a "$LABEL_A" --label-b "$LABEL_B" --pairs "$PAIRS" \
+            --json "$RESULTS_DIR/ios/summary.json" \
+            --run-json "$RESULTS_DIR/ios/run.json"
 
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: ${{ always() }}
