@@ -202,36 +202,45 @@ describe("buildSignRawOperation", () => {
       expect(gasData.payment).toEqual([SPONSOR_GAS_COIN]);
     });
 
-    it("signs the Hashi withdrawal request that ran on mainnet, unchanged, with the hBTC descriptor", async () => {
-      const bytes = fromBase64(HASHI_WITHDRAWAL.transactionBcs);
-      const withdrawer = {
-        ...account,
-        id: `js:2:sui:${HASHI_WITHDRAWAL.sender}:sui`,
-        freshAddress: HASHI_WITHDRAWAL.sender,
-      } as SuiAccount;
-      // Already built: as the real build does, keep it as is and report the hBTC it withdraws.
-      mockBuildRawTransaction.mockImplementationOnce(async (_config, tx) => ({
-        serialized: await tx.build(),
-        bcsObjects: [],
-        coinTypes: [HBTC_COIN_TYPE],
-      }));
-      findTokenByAddressInCurrency.mockResolvedValue(HBTC_TOKEN);
+    it.each([
+      ["base64 BCS", async () => HASHI_WITHDRAWAL.transactionBcs],
+      [
+        "JSON, as the WalletConnect adapter sends it",
+        () => SuiTransaction.from(fromBase64(HASHI_WITHDRAWAL.transactionBcs)).toJSON(),
+      ],
+    ])(
+      "signs the Hashi withdrawal request that ran on mainnet, sent as %s, unchanged, with the hBTC descriptor",
+      async (_form, input) => {
+        const bytes = fromBase64(HASHI_WITHDRAWAL.transactionBcs);
+        const withdrawer = {
+          ...account,
+          id: `js:2:sui:${HASHI_WITHDRAWAL.sender}:sui`,
+          freshAddress: HASHI_WITHDRAWAL.sender,
+        } as SuiAccount;
+        // Already built: as the real build does, keep it as is and report the hBTC it withdraws.
+        mockBuildRawTransaction.mockImplementationOnce(async (_config, tx) => ({
+          serialized: await tx.build(),
+          bcsObjects: [],
+          coinTypes: [HBTC_COIN_TYPE],
+        }));
+        findTokenByAddressInCurrency.mockResolvedValue(HBTC_TOKEN);
 
-      const events = await run(HASHI_WITHDRAWAL.transactionBcs, { account: withdrawer });
+        const events = await run(await input(), { account: withdrawer });
 
-      expect(Array.from(bytesSentToDevice())).toEqual(Array.from(bytes));
-      const { gasData, commands } = SuiTransaction.from(bytesSentToDevice()).getData();
-      expect(gasData.owner).toBe(HASHI_WITHDRAWAL.sponsor);
-      expect(commands.map(c => c.MoveCall?.function)).toEqual([
-        "redeem_funds",
-        "request_withdrawal",
-      ]);
-      expect(mockSignTransaction.mock.calls[0][2]).toMatchObject({
-        tokenId: HBTC_TOKEN.id,
-        tokenAddress: HBTC_COIN_TYPE,
-      });
-      expect(events.at(-1)?.type).toBe("signed");
-    });
+        expect(Array.from(bytesSentToDevice())).toEqual(Array.from(bytes));
+        const { gasData, commands } = SuiTransaction.from(bytesSentToDevice()).getData();
+        expect(gasData.owner).toBe(HASHI_WITHDRAWAL.sponsor);
+        expect(commands.map(c => c.MoveCall?.function)).toEqual([
+          "redeem_funds",
+          "request_withdrawal",
+        ]);
+        expect(mockSignTransaction.mock.calls[0][2]).toMatchObject({
+          tokenId: HBTC_TOKEN.id,
+          tokenAddress: HBTC_COIN_TYPE,
+        });
+        expect(events.at(-1)?.type).toBe("signed");
+      },
+    );
 
     it.each([
       ["JSON that does not parse", "{ not json"],
