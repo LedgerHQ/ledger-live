@@ -31,6 +31,7 @@ import { sleepingListener } from "./sleepingListener";
 import { createMobileFeatureFlagsMiddleware } from "./middleware/feature-flags";
 import { createMobileCountervaluesMiddleware } from "./middleware/countervalues";
 import { createMobileAuthMiddleware } from "./middleware/auth";
+import { logStartupActions } from "LLM/utils/logStartup/logStartupActions";
 
 export const store = configureStore({
   reducer: reducers,
@@ -53,7 +54,7 @@ export const store = configureStore({
             ...apiServices.createExtra({ ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION") }),
           },
         },
-      }),
+      }).prepend(logStartupActions),
     )
       .concat(createMobileAuthMiddleware(appConfig))
       .concat(rebootMiddleware)
