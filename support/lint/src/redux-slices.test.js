@@ -43,11 +43,19 @@ function lint(files, config = {}) {
     fs.writeFileSync(full, content);
   }
 
-  const { stdout } = spawnSync(OXLINT, ["--format", "unix", "."], { cwd: root, encoding: "utf8" });
-  return stdout
-    .split("\n")
-    .filter(line => line.includes("redux-slices(selectors-in-slice)"))
+  const { status, stdout, stderr } = spawnSync(OXLINT, ["--format", "unix", "."], {
+    cwd: root,
+    encoding: "utf8",
+  });
+  // 0 is a clean run and 1 a run with reports; anything else means the lint itself failed.
+  assert.ok(status === 0 || status === 1, `oxlint exited ${status}: ${stderr}${stdout}`);
+  const diagnostics = stdout.split("\n").filter(line => /^[^:\s][^:]*:\d+:\d+:/.test(line));
+  return diagnostics
     .map(line => {
+      assert.ok(
+        line.includes("redux-slices(selectors-in-slice)"),
+        `unexpected diagnostic: ${line}`,
+      );
       assert.ok(line.includes(SELECTORS_IN_SLICE_RULE), line);
       return line.split(":").slice(0, 2).join(":");
     })
@@ -138,6 +146,19 @@ export const selectMixed = (state: Root) => selectItems(state).length + state.fi
   );
 });
 
+test("does not report a selector that calls same-named selectors of two slices", () => {
+  assert.deepEqual(
+    reportedLines(`type Root = { contacts: string[]; accounts: string[] };
+declare const contactsSlice: { selectors: { selectById(state: Root): string } };
+declare const accountsSlice: { selectors: { selectById(state: Root): string } };
+export const selectPair = (state: Root) =>
+  contactsSlice.selectors.selectById(state) + accountsSlice.selectors.selectById(state);
+export const selectContact = (state: Root) => contactsSlice.selectors.selectById(state);
+`),
+    ["6"],
+  );
+});
+
 test("does not report a selector that takes two state parameters", () => {
   assert.deepEqual(
     reportedLines(`type NamesState = Map<string, string>;
@@ -191,6 +212,18 @@ test("does not report in a package that declares no slice", () => {
   assert.deepEqual(
     lint({
       "pkg/src/slice.ts": "export const notASlice = 1;\n",
+      "pkg/src/selectors.ts":
+        "export const selectItems = (state: { items: string[] }) => state.items;\n",
+    }),
+    [],
+  );
+});
+
+test("does not count a createSlice call written in a comment", () => {
+  assert.deepEqual(
+    lint({
+      "pkg/src/slice.ts":
+        '// Consider createSlice(...) later\n/* or createSlice<State>() */\nexport const url = "https://x"; // createSlice(\n',
       "pkg/src/selectors.ts":
         "export const selectItems = (state: { items: string[] }) => state.items;\n",
     }),

@@ -10,6 +10,8 @@ const SELECTOR_NAME = /^select[A-Z0-9_$]|Selector$/;
 const TEST_FILE = /\.(?:test|spec)\.[cm]?[jt]sx?$|[/\\]__tests__[/\\]/;
 const SOURCE_FILE = /\.[cm]?[jt]sx?$/;
 const CREATE_SLICE = /\bcreateSlice\s*[(<]/;
+// Block comments, and line comments not preceded by `:` so a URL in a string survives.
+const COMMENT = /\/\*[\s\S]*?\*\/|(?<![:\\])\/\/.*$/gm;
 
 // The directories holding a layer config of a preset that turns the rule on.
 const LAYER_ROOT = /^(?:domain|shared|features\/flow|features\/platform)\//;
@@ -104,7 +106,7 @@ function packageOwnsSlice(filename) {
 
   const owns = walkFiles(path.join(root, "src"), file => {
     try {
-      return CREATE_SLICE.test(fs.readFileSync(file, "utf8"));
+      return CREATE_SLICE.test(fs.readFileSync(file, "utf8").replace(COMMENT, ""));
     } catch {
       return false;
     }
@@ -121,6 +123,20 @@ function calleeName(node) {
   if (node?.type === "Identifier") return node.name;
   if (node?.type === "MemberExpression" && !node.computed && node.property?.type === "Identifier") {
     return node.property.name;
+  }
+  return null;
+}
+
+/**
+ * @param {any} node
+ * @returns {string | null} the full path a callee is called by, `a.b.selectX` for `a.b.selectX()`,
+ *   or null when a receiver is not a plain name
+ */
+function calleePath(node) {
+  if (node?.type === "Identifier") return node.name;
+  if (node?.type === "MemberExpression" && !node.computed && node.property?.type === "Identifier") {
+    const receiver = calleePath(node.object);
+    return receiver && `${receiver}.${node.property.name}`;
   }
   return null;
 }
@@ -189,8 +205,8 @@ function usesOf(body, name) {
         keys.add(parent.property.value);
       else other = true;
     } else if (parent?.type === "CallExpression" && parent.arguments?.[0] === value) {
-      const callee = calleeName(parent.callee);
-      if (callee && isSelectorName(callee)) calls.add(callee);
+      const callee = calleePath(parent.callee);
+      if (callee && isSelectorName(calleeName(parent.callee) ?? "")) calls.add(callee);
       else other = true;
     } else {
       other = true;
