@@ -1,6 +1,11 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { createStartupLogReader, parseStartupLog, STARTUP_LOG_MARKER } from "./startup-log.ts";
+import {
+  createStartupLineWriters,
+  createStartupLogReader,
+  parseStartupLog,
+  STARTUP_LOG_MARKER,
+} from "./startup-log.ts";
 import type { Platform } from "./types.ts";
 
 const LINES = [
@@ -99,5 +104,27 @@ describe("readStartupLog", () => {
       },
     } as unknown as Platform;
     assert.deepEqual(await createStartupLogReader(slowPlatform)("emulator-5554", 4242, 10), READ);
+  });
+});
+
+describe("createStartupLineWriters", () => {
+  it("switches to the screen when a build's first read has no lines", () => {
+    assert.equal(createStartupLineWriters().switchesToScreen("A", null), true);
+  });
+
+  it("only falls back once the build wrote lines, readable or not", () => {
+    for (const first of [READ, "2 startup event lines before ..."]) {
+      const writers = createStartupLineWriters();
+      assert.equal(writers.switchesToScreen("B", first), false);
+      assert.equal(writers.switchesToScreen("B", null), false);
+    }
+  });
+
+  it("keeps each build apart and forgets them all at the next scenario", () => {
+    const writers = createStartupLineWriters();
+    writers.switchesToScreen("A", READ);
+    assert.equal(writers.switchesToScreen("B", null), true);
+    writers.clear();
+    assert.equal(writers.switchesToScreen("A", null), true);
   });
 });

@@ -122,11 +122,13 @@ straight from Maven Central, the shared runner IP can get a 429 (run 42829119387
   42356679784: the first launch of round 0 by 261–301 ms, the second not): the launch after the
   check is the next injection. A check that cannot read the screen keeps its log value, and the
   report names the build left unchecked. A launch whose lines have not come 20 s after the settle
-  time is read on the screen, and the report counts those per build; one whose lines give a time of
-  0 or less fails, as the Debug screen would show the same. When a build not yet read from the log
-  in a scenario writes no lines (built before #24576), warm-up or not, both builds are read on the
-  screen for the rest of the scenario, so pairs stay even, and the report says so, even when that
-  launch's screen read fails; a build already read from the log falls back on that launch only.
+  time, or came unreadable (their event lines do not add up to the count the last line gives), is
+  read on the screen, and the report counts those of measured launches per build and cause; one
+  whose lines give a time of 0 or less fails, as the Debug screen would show the same. When a build
+  not known to write lines in a scenario writes none (built before #24576), warm-up or not, both
+  builds are read on the screen for the rest of the scenario, so pairs stay even, and the report
+  says so, even when that launch's screen read fails; a build that has written lines in the
+  scenario, readable or not, falls back on that launch only.
   Until a release with #24576 is in production, `prod-vs-release` and `prod-vs-develop` (the
   nightly) are read on the screen this way. `--read both` (the workflow's `read` input) reads every
   launch both ways, `--read screen` the screen only. Screen reads of measured launches use

@@ -43,11 +43,13 @@ export interface Sample extends SampleMeta {
   events?: Record<string, StartupEvent>;
   /**
    * Where appStartupTime and events come from: the device log line, the Debug screen (--read screen),
-   * or the screen because the line never came.
+   * or the screen because the lines never came or could not be read.
    */
   readFrom?: "log" | "screen" | "screen-fallback";
   /** The launch wrote no startup lines to the device log. */
   noLogLines?: boolean;
+  /** Why the launch's startup lines could not be read: it was read on the Debug screen instead. */
+  unreadableLogLines?: string;
   /**
    * The launch wrote no startup lines before its build had been read from the device log in the
    * scenario: from then on, both builds were read on the Debug screen. Set before the screen read

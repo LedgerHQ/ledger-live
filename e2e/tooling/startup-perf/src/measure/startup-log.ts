@@ -2,6 +2,7 @@
 // line per startup event, then the App startup time (writeStartupToDeviceLog.ts, from #24576 on):
 //   [startup] App started (x2): 1650 ms
 //   [startup] App startup time: 1650 ms, 13 events
+import type { Side } from "../types.ts";
 import { sleep } from "./exec.ts";
 import type { PerformanceRead } from "./performance-screen.ts";
 import type { Platform } from "./types.ts";
@@ -51,5 +52,21 @@ export function createStartupLogReader(P: Platform) {
       if (read || left <= 0) return read;
       await sleep(Math.min(POLL_MS, left));
     }
+  };
+}
+
+/**
+ * The builds known to write startup lines in a scenario, readable or not. A read with no lines
+ * switches the scenario to the Debug screen only when its build is not one of them (before #24576).
+ */
+export function createStartupLineWriters() {
+  const writers = new Set<Side>();
+  return {
+    clear: () => writers.clear(),
+    /** Records a read: the lines (null when none came, an error when unreadable). */
+    switchesToScreen(side: Side, fromLog: PerformanceRead | string | null): boolean {
+      if (fromLog !== null) writers.add(side);
+      return !writers.has(side);
+    },
   };
 }

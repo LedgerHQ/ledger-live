@@ -66,8 +66,10 @@ export interface Reads {
   fromLog: number;
   /** Builds whose missing log lines switched both builds to the screen (run.ts). */
   noLogLine: Side[];
-  /** Launches read on the screen because their log line never came. */
+  /** Measured launches read on the screen as their log lines never came or could not be read. */
   fallbacks: Record<Side, number>;
+  /** Those of the fallbacks whose log lines came but could not be read. */
+  unreadable: Record<Side, number>;
   /** Pairs left out as only one of their launches followed a read of the screen. */
   unevenPairs: number;
   /** Launches read both ways, warm-ups and checks included. */
@@ -99,9 +101,13 @@ function readsOf(group: Sample[]): Reads {
   const measured = ok.filter(isMeasured);
   const checked = ok.filter(s => s.screenAppStartupTime !== undefined);
   // A launch that switched the scenario is reported as such, not as a fallback.
-  const fallbacks = (side: Side) =>
-    measured.filter(s => s.side === side && s.readFrom === "screen-fallback" && !s.switchedToScreen)
-      .length;
+  const fellBack = (side: Side) =>
+    measured.filter(
+      s => s.side === side && s.readFrom === "screen-fallback" && !s.switchedToScreen,
+    );
+  const fallbacks = (side: Side) => fellBack(side).length;
+  const unreadable = (side: Side) =>
+    fellBack(side).filter(s => s.unreadableLogLines !== undefined).length;
   // Failed launches count: the scenario switched to the screen before their screen read failed.
   const switchedToScreen = (side: Side) => group.some(s => s.side === side && s.switchedToScreen);
   const readFromLog = (side: Side) => measured.some(s => s.side === side && s.readFrom === "log");
@@ -110,6 +116,7 @@ function readsOf(group: Sample[]): Reads {
     fromLog: measured.filter(s => s.readFrom === "log").length,
     noLogLine: (["A", "B"] as const).filter(switchedToScreen),
     fallbacks: { A: fallbacks("A"), B: fallbacks("B") },
+    unreadable: { A: unreadable("A"), B: unreadable("B") },
     unevenPairs: rounds(group).filter(uneven).length,
     screenChecks: checked.length,
     screenMismatches: checked.filter(s => s.screenAppStartupTime !== s.appStartupTime).length,

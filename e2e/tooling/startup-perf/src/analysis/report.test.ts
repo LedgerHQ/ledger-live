@@ -74,6 +74,24 @@ describe("toMarkdown", () => {
     );
   });
 
+  it("tells device log lines that never came from lines that could not be read", () => {
+    const samples = comparison({ deltaMs: 0, a: { readFrom: "log" }, b: { readFrom: "log" } });
+    const [missing, unreadable] = samples.filter(s => s.side === "B");
+    if (!missing || !unreadable) throw new Error("no B launches");
+    missing.readFrom = "screen-fallback";
+    unreadable.readFrom = "screen-fallback";
+    unreadable.unreadableLogLines = "2 startup event lines before ...";
+    assert.match(
+      toMarkdown(summarise(samples, options), options),
+      /2 of the 12 launches read from the Debug screen, their device log lines missing \(A: 0, B: 1\) or unreadable \(A: 0, B: 1\)\.\*\*/,
+    );
+    missing.unreadableLogLines = "2 startup event lines before ...";
+    assert.match(
+      toMarkdown(summarise(samples, options), options),
+      /their device log lines unreadable \(A: 0, B: 2\)\.\*\*/,
+    );
+  });
+
   it("says which launches were read from the screen, and whether the screen matched the log", () => {
     const samples = comparison({
       deltaMs: 0,
