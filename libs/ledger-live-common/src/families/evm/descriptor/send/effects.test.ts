@@ -79,4 +79,35 @@ describe("syncGasOptionsEffect", () => {
     const ctx = buildContext({ gasOptions: "not-an-object" });
     expect(await syncGasOptionsEffect.run(ctx)).toBeNull();
   });
+
+  it("does not prepare the transaction again once it holds distinct gasOptions", async () => {
+    const gasOptions = {
+      slow: { maxFeePerGas: new BigNumber(20) },
+      medium: { maxFeePerGas: new BigNumber(24) },
+      fast: { maxFeePerGas: new BigNumber(30) },
+    };
+    const ctx = buildContext({ gasOptions });
+    const synced = { ...ctx, transaction: { ...ctx.transaction, gasOptions } };
+
+    expect(await syncGasOptionsEffect.run(synced)).toBeNull();
+    expect(ctx.prepareTransaction).not.toHaveBeenCalled();
+  });
+
+  it("prepares the transaction again while its gasOptions are not distinct", async () => {
+    const flat = {
+      slow: { maxFeePerGas: new BigNumber(20) },
+      medium: { maxFeePerGas: new BigNumber(20) },
+      fast: { maxFeePerGas: new BigNumber(20) },
+    };
+    const fresh = {
+      slow: { maxFeePerGas: new BigNumber(20) },
+      medium: { maxFeePerGas: new BigNumber(24) },
+      fast: { maxFeePerGas: new BigNumber(30) },
+    };
+    const ctx = buildContext({ gasOptions: fresh });
+    const flatTransaction = { ...ctx, transaction: { ...ctx.transaction, gasOptions: flat } };
+
+    expect(await syncGasOptionsEffect.run(flatTransaction)).toEqual({ gasOptions: fresh });
+    expect(ctx.prepareTransaction).toHaveBeenCalledTimes(1);
+  });
 });
