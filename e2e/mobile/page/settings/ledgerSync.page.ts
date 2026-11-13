@@ -27,6 +27,8 @@ export default class LedgerSyncPage {
   private readonly activationDescription = byId("walletsync-activation-description");
   private readonly activationButton = byId("walletsync-activation-button");
   private readonly activationSuccessCloseButton = byId("walletsync-activation-success-close");
+  private readonly addMemberDeviceStep = byId("wallet-sync-add-member-continue-on-device");
+  private readonly removeMemberDeviceStep = byId("wallet-sync-remove-member-continue-on-device");
 
   /** Instance rows are keyed by the member public key, which is what the CLI holds. */
   private readonly instanceRow = (memberPubKey: string) =>
@@ -43,6 +45,18 @@ export default class LedgerSyncPage {
   @Step("Remove a member from Ledger Sync on Speculos")
   async removeMemberFromLedgerSyncOnSpeculos() {
     await removeMemberLedgerSync();
+  }
+
+  /** The Device Intent Executor sheet waiting for the activation to be approved on the device. */
+  @Step("Expect the activation device step on DIE")
+  async expectActivationDeviceStep() {
+    await this.addMemberDeviceStep.waitVisible();
+  }
+
+  /** The Device Intent Executor sheet waiting for the removal to be approved on the device. */
+  @Step("Expect the instance removal device step on DIE")
+  async expectRemoveInstanceDeviceStep() {
+    await this.removeMemberDeviceStep.waitVisible();
   }
 
   /**
