@@ -1,10 +1,7 @@
 import React from "react";
 import { getDeviceModel } from "@ledgerhq/devices";
-import {
-  BlockingStateType,
-  type EnsureAppReadyState,
-  useDeviceIntentTracking,
-} from "@ledgerhq/live-dmk-shared";
+import { BlockingStateType, type EnsureAppReadyState } from "@ledgerhq/live-dmk-shared";
+import { useDeviceIntentTracking } from "@ledgerhq/live-dmk-shared/react";
 import {
   DeviceDeprecationScreen,
   DeviceDeprecationScreens,

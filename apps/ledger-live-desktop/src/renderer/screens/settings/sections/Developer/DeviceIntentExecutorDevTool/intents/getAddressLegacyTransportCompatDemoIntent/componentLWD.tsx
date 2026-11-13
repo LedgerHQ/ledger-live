@@ -1,5 +1,5 @@
 import React from "react";
-import { OverrideDeviceIntentExecutorHeader } from "@ledgerhq/live-dmk-shared";
+import { OverrideDeviceIntentExecutorHeader } from "@ledgerhq/live-dmk-shared/react";
 import { DialogHeader } from "@ledgerhq/lumen-ui-react";
 import type {
   GetAddressLegacyTransportCompatDemoIntentExtraProps,

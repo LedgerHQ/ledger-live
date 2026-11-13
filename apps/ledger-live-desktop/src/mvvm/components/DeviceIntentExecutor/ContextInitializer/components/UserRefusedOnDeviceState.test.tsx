@@ -1,5 +1,6 @@
 import React from "react";
-import { DeviceIntentTrackingProvider, RetryableStateType } from "@ledgerhq/live-dmk-shared";
+import { RetryableStateType } from "@ledgerhq/live-dmk-shared";
+import { DeviceIntentTrackingProvider } from "@ledgerhq/live-dmk-shared/react";
 import { screen } from "@testing-library/react";
 import { render } from "tests/testSetup";
 import { CONNECT_APP_BUTTON, trackConnectAppButtonClicked } from "../../utils/trackDeviceIntent";

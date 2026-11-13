@@ -9,7 +9,7 @@ import {
   Tag,
 } from "@ledgerhq/lumen-ui-react";
 import type { DisplayedDevice } from "@ledgerhq/live-dmk-desktop";
-import { useDeviceIntentTracking } from "@ledgerhq/live-dmk-shared";
+import { useDeviceIntentTracking } from "@ledgerhq/live-dmk-shared/react";
 import { getProductName } from "@ledgerhq/devices";
 import { getDeviceIcon } from "LLD/utils/getDeviceIcon";
 import { useTranslation } from "react-i18next";

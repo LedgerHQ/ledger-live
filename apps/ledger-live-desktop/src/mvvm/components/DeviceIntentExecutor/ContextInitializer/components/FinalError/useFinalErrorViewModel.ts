@@ -1,10 +1,7 @@
 import { useCallback } from "react";
 import { isDmkError, type DmkError } from "@ledgerhq/live-dmk-desktop";
-import {
-  useDeviceIntentTracking,
-  type EnsureAppReadyState,
-  type FinalStateType,
-} from "@ledgerhq/live-dmk-shared";
+import type { EnsureAppReadyState, FinalStateType } from "@ledgerhq/live-dmk-shared";
+import { useDeviceIntentTracking } from "@ledgerhq/live-dmk-shared/react";
 import { CONNECT_APP_BUTTON, trackConnectAppButtonClicked } from "../../../utils/trackDeviceIntent";
 import { useInitializerActions } from "../../hooks/useInitializerActions";
 import type { InitializerDevice } from "../../types";

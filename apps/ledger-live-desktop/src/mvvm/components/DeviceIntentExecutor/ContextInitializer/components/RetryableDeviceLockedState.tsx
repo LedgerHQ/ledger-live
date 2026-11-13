@@ -1,9 +1,6 @@
 import React from "react";
-import {
-  RetryableStateType,
-  type EnsureAppReadyState,
-  useDeviceIntentTracking,
-} from "@ledgerhq/live-dmk-shared";
+import { RetryableStateType, type EnsureAppReadyState } from "@ledgerhq/live-dmk-shared";
+import { useDeviceIntentTracking } from "@ledgerhq/live-dmk-shared/react";
 import { TrackDIEScreen } from "../../components/TrackDIEScreen";
 import {
   CONNECT_APP_BUTTON,

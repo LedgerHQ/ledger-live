@@ -82,6 +82,11 @@
       "require": "./lib-es/index.js",
       "default": "./lib-es/index.js"
     },
+    "./react": {
+      "@ledgerhq/source": "./src/react.ts",
+      "require": "./lib-es/react.js",
+      "default": "./lib-es/react.js"
+    },
     "./lib-es/*": "./lib-es/*.js",
     "./*": {
       "@ledgerhq/source": "./src/*.ts",
