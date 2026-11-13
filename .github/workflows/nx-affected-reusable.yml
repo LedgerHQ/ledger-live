@@ -11,6 +11,48 @@ on:
         description: "Head branch"
         type: string
         required: true
+      mobile_e2e_plan:
+        description: "When ledger-live-mobile is affected, also plan the mobile e2e builds and shards (mobile-e2e-plan action), so test-mobile-e2e-reusable.yml can skip its determine-builds job. The settings below must match the ones the caller passes to that workflow."
+        type: boolean
+        required: false
+        default: false
+      mobile_e2e_speculos_device:
+        description: "speculos_device passed to test-mobile-e2e-reusable.yml"
+        type: string
+        required: false
+        default: "nanoX"
+      mobile_e2e_smoke_tests:
+        description: "smoke_tests passed to test-mobile-e2e-reusable.yml"
+        type: boolean
+        required: false
+        default: false
+      mobile_e2e_max_shards:
+        description: "max_shards passed to test-mobile-e2e-reusable.yml"
+        type: number
+        required: false
+        default: 0
+      mobile_e2e_check_pod_lockfile:
+        description: "check_pod_lockfile passed to test-mobile-e2e-reusable.yml"
+        type: boolean
+        required: false
+        default: false
+    secrets:
+      AWS_ACCOUNT_ID_PROD:
+        required: false
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH:
+        required: false
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP:
+        required: false
+      AWS_CACHE_REGION:
+        required: false
+      AWS_CACHE_ROLE_NAME:
+        required: false
+      R2_ACCESS_KEY_ID:
+        required: false
+      R2_SECRET_ACCESS_KEY:
+        required: false
+      R2_ENDPOINT:
+        required: false
     outputs:
       packages:
         description: "Newline-separated list of affected packages"
@@ -30,6 +72,9 @@ on:
       mobile_native_fingerprint_android:
         description: "Expo fingerprint of the live-mobile Android native project, set when ledger-live-mobile is affected"
         value: ${{ jobs.nx-affected.outputs.mobile_native_fingerprint_android }}
+      mobile_e2e_plan:
+        description: "Plan for test-mobile-e2e-reusable.yml (its build_plan input), set when mobile_e2e_plan is on and ledger-live-mobile is affected"
+        value: ${{ jobs.nx-affected.outputs.mobile_e2e_plan }}
 
 permissions:
   contents: read
@@ -48,6 +93,7 @@ jobs:
       mobile_js_hash_android: ${{ steps.mobile-js-hash.outputs.android }}
       mobile_native_fingerprint_ios: ${{ steps.mobile-native-fingerprint.outputs.ios }}
       mobile_native_fingerprint_android: ${{ steps.mobile-native-fingerprint.outputs.android }}
+      mobile_e2e_plan: ${{ steps.mobile-e2e-plan.outputs.plan }}
     steps:
       - name: Checkout head branch
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -123,3 +169,52 @@ jobs:
       - name: Warn when the mobile native fingerprints are missing
         if: ${{ steps.mobile-native-fingerprint.outcome == 'failure' }}
         run: echo "::warning::Mobile native fingerprint failed, the e2e native builds fall back to the hashFiles key"
+
+      # The mobile e2e plan is what test-mobile-e2e-reusable.yml's determine-builds job would compute, done here
+      # so the mobile builds start as soon as this job ends instead of after one more job. Without a plan the
+      # e2e workflow runs determine-builds itself, so a failure here must not fail the affected job.
+      - name: Resolve the cache profile for the mobile e2e plan
+        id: mobile-e2e-cache-profile
+        if: ${{ inputs.mobile_e2e_plan && contains(steps.nx-affected.outputs.paths, 'ledger-live-mobile') }}
+        continue-on-error: true
+        uses: LedgerHQ/ledger-live/tools/actions/composites/configure-nx-remote-cache-profile@develop
+        with:
+          develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          legacy-account-id: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          legacy-role-name: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+
+      - name: Configure AWS credentials for the mobile e2e plan
+        id: mobile-e2e-aws
+        if: ${{ steps.mobile-e2e-cache-profile.outcome == 'success' }}
+        continue-on-error: true
+        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6
+        with:
+          role-to-assume: ${{ steps.mobile-e2e-cache-profile.outputs.role-arn }}
+          aws-region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: Plan the mobile e2e builds and shards
+        id: mobile-e2e-plan
+        if: ${{ steps.mobile-e2e-aws.outcome == 'success' }}
+        continue-on-error: true
+        uses: LedgerHQ/ledger-live/tools/actions/composites/mobile-e2e-plan@develop
+        with:
+          ref: ${{ github.ref_name }}
+          event_name: workflow_call
+          speculos_device: ${{ inputs.mobile_e2e_speculos_device }}
+          smoke_tests: ${{ inputs.mobile_e2e_smoke_tests }}
+          max_shards: ${{ inputs.mobile_e2e_max_shards }}
+          check_pod_lockfile: ${{ inputs.mobile_e2e_check_pod_lockfile }}
+          js_bundle_hash_ios: ${{ steps.mobile-js-hash.outputs.ios }}
+          js_bundle_hash_android: ${{ steps.mobile-js-hash.outputs.android }}
+          native_fingerprint_ios: ${{ steps.mobile-native-fingerprint.outputs.ios }}
+          native_fingerprint_android: ${{ steps.mobile-native-fingerprint.outputs.android }}
+          cache_bucket: ll-nx-cache
+          aws_region: ${{ secrets.AWS_CACHE_REGION }}
+          r2_access_key: ${{ secrets.R2_ACCESS_KEY_ID }}
+          r2_secret_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          r2_endpoint: ${{ secrets.R2_ENDPOINT }}
+
+      - name: Warn when the mobile e2e plan is missing
+        if: ${{ steps.mobile-e2e-cache-profile.outcome == 'failure' || steps.mobile-e2e-aws.outcome == 'failure' || steps.mobile-e2e-plan.outcome == 'failure' }}
+        run: echo "::warning::Mobile e2e plan failed, the e2e workflow runs its own determine-builds job"

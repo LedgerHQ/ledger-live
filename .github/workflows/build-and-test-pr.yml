@@ -33,6 +33,21 @@ jobs:
     with:
       head_branch: ${{ github.event.pull_request.head.ref }}
       base_branch: ${{ github.event.pull_request.base.ref }}
+      # Plans the mobile e2e builds for build-test-mobile below: keep these in sync with its inputs.
+      mobile_e2e_plan: true
+      mobile_e2e_speculos_device: nanoX
+      mobile_e2e_smoke_tests: true
+      mobile_e2e_max_shards: 1
+      mobile_e2e_check_pod_lockfile: true
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
 
   # LLD
   build-desktop:
@@ -154,6 +169,7 @@ jobs:
       js_bundle_hash_android: ${{ needs.determine-affected.outputs.mobile_js_hash_android }}
       native_fingerprint_ios: ${{ needs.determine-affected.outputs.mobile_native_fingerprint_ios }}
       native_fingerprint_android: ${{ needs.determine-affected.outputs.mobile_native_fingerprint_android }}
+      build_plan: ${{ needs.determine-affected.outputs.mobile_e2e_plan }}
 
   # Tests
   test-libraries:
