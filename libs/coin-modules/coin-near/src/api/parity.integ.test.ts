@@ -162,7 +162,6 @@ describe("CoinModuleApi vs account bridge (integration)", () => {
       receiptCreationExecution: new BigNumber(0),
       minGasPurchasePrice: new BigNumber(0),
       accountCreationCharge: new BigNumber(0),
-      validators: [],
     });
 
     const fromApi = await api.estimateFees(context, sendIntent(NAMED_RECIPIENT));

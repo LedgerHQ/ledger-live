@@ -45,7 +45,6 @@ export type NearPreloadedData = {
   receiptCreationExecution: BigNumber;
   minGasPurchasePrice: BigNumber;
   accountCreationCharge: BigNumber;
-  validators: NearValidatorItem[];
 };
 
 export type NearResources = {
