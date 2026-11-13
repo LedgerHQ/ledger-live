@@ -525,7 +525,8 @@ export class DefaultConnectDeviceStateMachine<
   stop(): void {
     const snapshot = this.actor.getSnapshot();
 
-    if (snapshot.context.isDiscovering) {
+    // A failure while computing the initial state leaves a snapshot without context.
+    if (snapshot.context?.isDiscovering) {
       this.deviceDiscoveryService.stop();
     }
     this.actor.stop();

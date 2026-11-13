@@ -82,4 +82,5 @@ stateDiagram-v2
   session, connected device, and legacy compatibility fields used by existing
   device flows.
 - When an action fails, the machine sends the error to `observer.error`. The use
-  case then emits the unknown error.
+  case then emits the unknown error. This also applies when discovery fails to
+  start in the initial state.

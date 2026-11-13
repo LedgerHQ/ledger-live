@@ -162,6 +162,35 @@ describe("connectDeviceUseCase", () => {
     subscription.unsubscribe();
   });
 
+  it("should emit a terminal UnknownError UI state when discovery fails to start", () => {
+    // Arrange
+    jest.useFakeTimers();
+    const { deviceDiscoveryService, input } = setupTest();
+    const thrown = new Error("boom");
+    deviceDiscoveryService.start = () => {
+      throw thrown;
+    };
+    const states: Array<ConnectDeviceUIState> = [];
+    const errorHandler = jest.fn();
+    const completeHandler = jest.fn();
+
+    // Act
+    const subscription = connectDeviceUseCase(input).subscribe({
+      next: state => states.push(state),
+      error: errorHandler,
+      complete: completeHandler,
+    });
+
+    // Assert
+    expect(states).toEqual([{ type: ConnectDeviceUIStateTypes.UnknownError, error: thrown }]);
+    expect(errorHandler).not.toHaveBeenCalled();
+    expect(completeHandler).toHaveBeenCalledTimes(1);
+    expect(() => jest.runOnlyPendingTimers()).not.toThrow();
+
+    subscription.unsubscribe();
+    jest.useRealTimers();
+  });
+
   it("should filter known devices by accepted device models", () => {
     // Arrange
     const rejectedKnownDevice: KnownDevice = {
