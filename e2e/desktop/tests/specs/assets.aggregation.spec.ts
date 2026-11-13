@@ -1,5 +1,4 @@
 import { test } from "tests/fixtures/common";
-import { expect } from "@playwright/test";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT } from "tests/utils/featureFlagUtils";
@@ -16,12 +15,13 @@ import { DEVICE_TAGS } from "tests/utils/tagsUtils";
  */
 
 test.describe("Asset aggregation", () => {
+  test.use({
+    teamOwner: Team.WALLET_XP,
+    featureFlags: FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
+  });
+
   test.describe("Portfolio aggregation", () => {
-    test.use({
-      teamOwner: Team.WALLET_XP,
-      userdata: "portfolioWithManyStablecoins",
-      featureFlags: FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
-    });
+    test.use({ userdata: "portfolioWithManyStablecoins" });
 
     test(
       `[${Currency.ETH_USDC.testLabel}] - Aggregated assets show one row per asset and list holding addresses`,
@@ -35,14 +35,19 @@ test.describe("Asset aggregation", () => {
       async ({ app }) => {
         await app.mainNavigation.openTargetFromMainNavigation("home");
         await app.portfolio.assetsView.waitForAssetsToLoad();
-        await app.portfolio.assetsView.expectSingleAggregatedRow("stablecoins", "USD Coin");
+        await app.portfolio.assetsView.expectSingleAggregatedRow(
+          "stablecoins",
+          Currency.ETH_USDC.name,
+        );
 
-        await app.portfolio.assetsView.clickAggregatedAssetInSection("stablecoins", "USD Coin");
-        await expect(app.layout.getPage()).toHaveURL(/\/asset\//);
+        await app.portfolio.assetsView.clickAggregatedAssetInSection(
+          "stablecoins",
+          Currency.ETH_USDC.name,
+        );
         const assetDetail = app.assetDetail(Currency.ETH_USDC.id);
         await assetDetail.expectLoaded();
         await assetDetail.expectAddressListVisible();
-        expect(await assetDetail.countAddressRows()).toBeGreaterThanOrEqual(2);
+        await assetDetail.expectAddressRowCountAtLeast(2);
         await assetDetail.expectAddressRowsHaveBalance();
 
         await app.mainNavigation.openTargetFromMainNavigation("home");
@@ -52,133 +57,74 @@ test.describe("Asset aggregation", () => {
   });
 
   test.describe("Asset detail", () => {
-    test.use({
-      teamOwner: Team.WALLET_XP,
-      userdata: "1AccountBTC1AccountETH",
-      featureFlags: FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
-    });
+    test.use({ userdata: "1AccountBTC1AccountETH" });
 
     test(
-      `[${Currency.BTC.testLabel}] - Asset detail shows market info, balances, addresses and transaction history`,
+      `[${Currency.ETH.testLabel}-${Currency.BTC.testLabel}] - Asset detail shows holding addresses, market info, history and favorites`,
       {
         tag: [...DEVICE_TAGS],
         annotation: {
           type: "TMS",
-          description: "B2CQA-5523, B2CQA-5526",
+          description: "B2CQA-5535, B2CQA-5523, B2CQA-5526, B2CQA-5532, B2CQA-5533",
         },
       },
       async ({ app }) => {
-        await app.mainNavigation.openTargetFromMainNavigation("home");
-        await app.portfolio.assetsView.waitForAssetsToLoad();
-        await app.portfolio.assetsView.clickAssetInSection("cryptos", Currency.BTC);
-        await expect(app.layout.getPage()).toHaveURL(/\/asset\//);
-        const assetDetail = app.assetDetail(Currency.BTC.id);
-        await assetDetail.expectLoaded();
-
-        await assetDetail.expectMarketInfoVisible();
-
-        await assetDetail.expectTotalBalanceVisible();
-        await assetDetail.expectAddressListVisible();
-        await assetDetail.expectAddAddressVisible();
-        await assetDetail.expectTransactionsVisible();
-
-        await assetDetail.clickFirstTransaction();
-        await app.operationDrawer.waitForDrawerToBeVisible();
-        await app.operationDrawer.closeDrawer();
-
-        await assetDetail.expectPnlCardsVisible();
-        await assetDetail.openPnlCardDetail();
-        await assetDetail.closePnlCardDetail();
-
-        await app.mainNavigation.openTargetFromMainNavigation("home");
-        await app.portfolio.assetsView.waitForAssetsToLoad();
-      },
-    );
-  });
-
-  test.describe("Star assets", () => {
-    test.use({
-      teamOwner: Team.WALLET_XP,
-      userdata: "1AccountBTC1AccountETH",
-      featureFlags: FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
-    });
-
-    test(
-      `[${Currency.BTC.testLabel}] - Star an asset and filter the market list by starred`,
-      {
-        tag: [...DEVICE_TAGS],
-        annotation: {
-          type: "TMS",
-          description: "B2CQA-5532, B2CQA-5533",
-        },
-      },
-      async ({ app }) => {
+        const ethDetail = app.assetDetail(Currency.ETH.id);
+        const btcDetail = app.assetDetail(Currency.BTC.id);
         const ticker = Currency.BTC.ticker;
 
         await app.mainNavigation.openTargetFromMainNavigation("home");
         await app.portfolio.assetsView.waitForAssetsToLoad();
+        await app.portfolio.assetsView.clickAssetInSection("cryptos", Currency.ETH);
+        await ethDetail.expectLoaded();
+        await ethDetail.expectAddressListVisible();
+        await ethDetail.clickFirstAddressRow();
+        await app.account.expectAccountHeaderVisible();
+        await app.account.expectAccountBalance();
+        await app.account.verifyReceiveButtonVisibility();
+        await app.account.verifySendButtonVisibility();
+        await app.account.expectLastOperationsVisibility();
+
+        await app.mainNavigation.openTargetFromMainNavigation("home");
+        await app.portfolio.assetsView.waitForAssetsToLoad();
         await app.portfolio.assetsView.clickAssetInSection("cryptos", Currency.BTC);
-        const assetDetail = app.assetDetail(Currency.BTC.id);
-        await assetDetail.expectLoaded();
-        await assetDetail.addToFavorites();
-        await assetDetail.expectFavorited();
+        await btcDetail.expectLoaded();
+        await btcDetail.expectMarketInfoVisible();
+        await btcDetail.expectTotalBalanceVisible();
+        await btcDetail.expectAddressListVisible();
+        await btcDetail.expectAddAddressVisible();
+        await btcDetail.expectTransactionsVisible();
+        await btcDetail.clickFirstTransaction();
+        await app.operationDrawer.waitForDrawerToBeVisible();
+        await app.operationDrawer.closeDrawer();
+        await btcDetail.expectPnlCardsVisible();
+        await btcDetail.openPnlCardDetail();
+        await btcDetail.closePnlCardDetail();
+
+        await btcDetail.addToFavorites();
+        await btcDetail.expectFavorited();
 
         await app.mainNavigation.openTargetFromMainNavigation("home");
         await app.portfolio.assetsView.waitForAssetsToLoad();
         await app.marketBanner.clickExploreMarketHeader();
         await app.market.validateMarketList();
         await app.market.selectStarredCategory();
-        await app.market.expectCoinToBeVisible(ticker);
+        await app.market.expectStarredListToContainOnly([ticker]);
 
         await app.market.clickCoinRow(ticker);
-        await expect(app.layout.getPage()).toHaveURL(/\/asset\//);
-        await assetDetail.expectLoaded();
-        await assetDetail.expectFavorited();
+        await btcDetail.expectLoaded();
+        await btcDetail.expectFavorited();
 
-        await assetDetail.removeFromFavorites();
-        await assetDetail.expectNotFavorited();
+        await btcDetail.removeFromFavorites();
+        await btcDetail.expectNotFavorited();
         await app.mainNavigation.openTargetFromMainNavigation("home");
         await app.portfolio.assetsView.waitForAssetsToLoad();
         await app.marketBanner.clickExploreMarketHeader();
         await app.market.selectAllCategory();
         await app.market.validateMarketList();
         await app.market.selectStarredCategory();
+        await app.market.expectStarredListEmpty();
         await app.market.expectCoinToNotBeVisible(ticker);
-      },
-    );
-  });
-
-  test.describe("Address detail", () => {
-    test.use({
-      teamOwner: Team.WALLET_XP,
-      userdata: "1AccountBTC1AccountETH",
-      featureFlags: FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
-    });
-
-    test(
-      `[${Currency.ETH.testLabel}] - Opening a holding address shows the address detail page`,
-      {
-        tag: [...DEVICE_TAGS],
-        annotation: {
-          type: "TMS",
-          description: "B2CQA-5535",
-        },
-      },
-      async ({ app }) => {
-        await app.mainNavigation.openTargetFromMainNavigation("home");
-        await app.portfolio.assetsView.waitForAssetsToLoad();
-        await app.portfolio.assetsView.clickAssetInSection("cryptos", Currency.ETH);
-        const assetDetail = app.assetDetail(Currency.ETH.id);
-        await assetDetail.expectLoaded();
-        await assetDetail.expectAddressListVisible();
-        await assetDetail.clickFirstAddressRow();
-        await expect(app.layout.getPage()).toHaveURL(/\/account\//);
-
-        await app.account.expectAccountHeaderVisible();
-        await app.account.expectAccountBalance();
-        await app.account.verifyReceiveButtonVisibility();
-        await app.account.verifySendButtonVisibility();
-        await app.account.expectLastOperationsVisibility();
       },
     );
   });

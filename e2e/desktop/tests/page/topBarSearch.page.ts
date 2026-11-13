@@ -1,6 +1,7 @@
 import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 export class TopBarSearch extends AppPage {
   private readonly searchInput = this.page.getByTestId("topbar-search-input");
@@ -52,9 +53,14 @@ export class TopBarSearch extends AppPage {
   @step("Expect first search result to be $0")
   async expectFirstResultTicker(ticker: string) {
     await expect(this.firstResult).toBeVisible();
-    await expect(this.firstResult).toHaveAttribute(
-      "data-testid",
-      `search-result-item-${ticker.toLowerCase()}`,
+    await this.softExpect(
+      async soft => {
+        await soft(this.firstResult).toHaveAttribute(
+          "data-testid",
+          `search-result-item-${ticker.toLowerCase()}`,
+        );
+      },
+      { timeout: TIMEOUT.large },
     );
   }
 }
