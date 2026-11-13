@@ -1,6 +1,24 @@
 import { defineConfig } from "oxlint";
-import { SUFFIX_IMPORTS_PLUGIN } from "./plugins.mts";
+import { REDUX_SLICES_PLUGIN, SUFFIX_IMPORTS_PLUGIN } from "./plugins.mts";
 import { BIGNUMBER_NAMED_IMPORT } from "./restricted-imports.mts";
+import { sliceSelectorsWaivers } from "./src/redux-slices.js";
+
+// domain/ packages whose single-slice selectors are not nested in their slice yet. The other
+// presets inherit this override, where its globs (entity/..., api/...) match no package.
+const SLICE_SELECTORS_WAIVERS: string[] = [
+  "domain/api/account-data",
+  "domain/entity/account-alias",
+  "domain/entity/account-balance",
+  "domain/entity/account-balance-history",
+  "domain/entity/account-name",
+  "domain/entity/account-operation",
+  "domain/entity/account-receive",
+  "domain/entity/client-identity",
+  "domain/entity/contact",
+  "domain/entity/currency-fiat",
+  "domain/entity/device-os-update",
+  "domain/entity/starred-account",
+];
 
 // The root of the lint preset chain. Every other preset in this package extends it, so the baseline
 // is written once and a layer preset only records where it differs. A layer that does not differ
@@ -16,7 +34,7 @@ import { BIGNUMBER_NAMED_IMPORT } from "./restricted-imports.mts";
 export default defineConfig({
   env: { browser: true, es6: true, node: true },
   plugins: ["eslint", "import", "oxc", "unicorn", "typescript", "react", "jest", "jsx-a11y"],
-  jsPlugins: [SUFFIX_IMPORTS_PLUGIN],
+  jsPlugins: [SUFFIX_IMPORTS_PLUGIN, REDUX_SLICES_PLUGIN],
   categories: { correctness: "error", suspicious: "warn", pedantic: "off" },
   rules: {
     // Named by four or more layers today, at the value the majority chose. `no-explicit-any` is
@@ -90,8 +108,13 @@ export default defineConfig({
     // Declared so any layer can flip it on without naming a plugin path. The devtools,
     // features-flow, features-platform and shared presets enforce it.
     "suffix-imports/no-platform-suffix": "off",
+
+    // On for domain/, and for shared/ and features/ through their presets. The presets of the
+    // other layers turn it off.
+    "redux-slices/selectors-in-slice": "error",
   },
   overrides: [
+    sliceSelectorsWaivers(SLICE_SELECTORS_WAIVERS),
     {
       files: ["**/*.test.{ts,tsx}", "**/__tests__/**"],
       env: { jest: true },

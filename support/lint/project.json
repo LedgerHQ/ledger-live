@@ -14,7 +14,7 @@
       ],
       "options": {
         "cwd": "{workspaceRoot}",
-        "command": "node --test support/lint/src/suffix-imports.test.js support/lint/src/restricted-imports-fragments.test.js"
+        "command": "node --test support/lint/src/suffix-imports.test.js support/lint/src/redux-slices.test.js support/lint/src/restricted-imports-fragments.test.js"
       }
     }
   }

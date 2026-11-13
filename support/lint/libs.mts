@@ -18,6 +18,8 @@ export default defineConfig({
     "typescript/no-namespace": ["error", { allowDeclarations: true }],
     "jsx-a11y/prefer-tag-over-role": "off",
     "jsx-a11y/anchor-is-valid": ["error", { components: [] }],
+    // The slice-selectors convention covers domain/, shared/ and features/ only.
+    "redux-slices/selectors-in-slice": "off",
   },
   overrides: [
     {
