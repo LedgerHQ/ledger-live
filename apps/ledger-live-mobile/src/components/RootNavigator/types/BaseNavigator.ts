@@ -27,6 +27,7 @@ import type { MarketListRouteParams } from "LLM/features/Market/types";
 import type { AnalyticsNavigatorParamsList } from "LLM/features/Analytics/types";
 import type { OperationsHistoryNavigatorParamsList } from "LLM/features/OperationsHistory/types";
 import type { Web3HubStackParamList, Web3HubTabStackParamList } from "LLM/features/Web3Hub/types";
+import type { AgentIntentNavigatorParamList } from "LLM/features/AgentIntent";
 import type { DiscoverNavigatorStackParamList } from "./DiscoverNavigator";
 import type { MyLedgerNavigatorStackParamList } from "./MyLedgerNavigator";
 import { NavigatorName, ScreenName } from "~/const";
@@ -430,6 +431,7 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.OperationsHistory]?: NavigatorScreenParams<OperationsHistoryNavigatorParamsList>;
   [NavigatorName.SwapSubScreens]?: NavigatorScreenParams<SwapSubScreensNavigatorParamList>;
   [NavigatorName.MyWallet]?: NavigatorScreenParams<MyWalletNavigatorStackParamList>;
+  [NavigatorName.AgentIntent]?: NavigatorScreenParams<AgentIntentNavigatorParamList>;
   [NavigatorName.BackupHub]?: NavigatorScreenParams<BackupHubNavigatorParamList>;
   [ScreenName.LedgerSyncDeepLinkHandler]: undefined;
   [ScreenName.LiveAppModal]: undefined;

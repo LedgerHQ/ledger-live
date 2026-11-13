@@ -11458,7 +11458,15 @@
     "earn": "Earn",
     "yield": "Yield",
     "card": "Card",
-    "paytab": "Pay"
+    "paytab": "Pay",
+    "agents": "Agents"
+  },
+  "agentIntent": {
+    "title": "Agents",
+    "manageAgents": {
+      "title": "Manage your agents",
+      "description": "Let AI agents manage your assets."
+    }
   },
   "payTab": {
     "disclaimer": "Provided by Monavate Onchain",

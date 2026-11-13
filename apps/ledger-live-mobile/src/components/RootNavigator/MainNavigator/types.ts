@@ -14,6 +14,7 @@ export type TabNavigatorProps = CommonTabNavigatorProps & {
 
 export type Wallet40TabNavigatorProps = CommonTabNavigatorProps & {
   isPayTabEnabled: boolean;
+  isAgentIntentTabEnabled: boolean;
 };
 
 export type LegacyTabNavigatorProps = TabNavigatorProps & {

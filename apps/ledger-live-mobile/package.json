@@ -124,6 +124,7 @@
     "@features/flow-account-detail-hero": "workspace:^",
     "@features/flow-account-detail-notices": "workspace:^",
     "@features/flow-account-detail-settings": "workspace:^",
+    "@features/flow-agent-intent-entry-points": "workspace:^",
     "@features/flow-analytics-consent": "workspace:*",
     "@features/flow-app-availability": "workspace:*",
     "@features/flow-app-longer-password": "workspace:*",

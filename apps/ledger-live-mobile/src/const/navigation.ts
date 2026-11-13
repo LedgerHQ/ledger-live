@@ -154,6 +154,7 @@ export enum ScreenName {
   MyWalletContactDetail = "MyWalletContactDetail",
   MyWalletHelp = "MyWalletHelp",
   MyWalletContacts = "MyWalletContacts",
+  AgentIntent = "AgentIntent",
   BackupHub = "BackupHub",
   NotificationsSettings = "NotificationsSettings",
   OperationDetails = "OperationDetails",
@@ -886,6 +887,8 @@ export enum NavigatorName {
   Main = "Main",
   CardTab = "CardTab",
   PayTab = "PayTabNavigator",
+  AgentIntent = "AgentIntentNavigator",
+  AgentIntentTab = "AgentIntentTabNavigator",
   // Root
   RootNavigator = "RootNavigator",
   Discover = "Discover",
