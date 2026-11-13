@@ -104,4 +104,33 @@ describe("useClipboardRecipient", () => {
     });
     expect(mockedReadClipboard).not.toHaveBeenCalled();
   });
+
+  it("validates the clipboard content through the bridge by default", () => {
+    mockedReadClipboard.mockResolvedValue("0x1234567890abcdef");
+
+    renderClipboardRecipient();
+
+    expect(mockedUseAddressValidation).toHaveBeenLastCalledWith(
+      expect.objectContaining({ isBridgeValidationEnabled: true }),
+    );
+  });
+
+  it("forwards a paused bridge validation to the address validation", () => {
+    mockedReadClipboard.mockResolvedValue("0x1234567890abcdef");
+
+    renderHook(() =>
+      useClipboardRecipient({
+        enabled: true,
+        currency,
+        account,
+        currentAccountId: "account_1",
+        recipientSupportsDomain: true,
+        isBridgeValidationEnabled: false,
+      }),
+    );
+
+    expect(mockedUseAddressValidation).toHaveBeenLastCalledWith(
+      expect.objectContaining({ isBridgeValidationEnabled: false }),
+    );
+  });
 });

@@ -107,7 +107,6 @@ export function useRecipientScreenView({
     currentAccountId: mainAccount.id,
     recipientSupportsDomain,
     canSearchContactsByName: isContactsFeatureEnabled && hasAddressBook,
-    isBridgeValidationEnabled: isScreenFocused,
   });
 
   const contactsOnNetwork = useMemo(
@@ -159,6 +158,7 @@ export function useRecipientScreenView({
     transaction,
     currentAccountId: mainAccount.id,
     recipientSupportsDomain,
+    isBridgeValidationEnabled: isScreenFocused,
   });
 
   const recipientResolution = useMemo(
