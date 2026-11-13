@@ -10,8 +10,12 @@ import { ConnectedView } from "./components/ConnectedView";
 import { ConnectingView } from "./components/ConnectingView";
 import { DiscoveringView } from "./components/DiscoveringView";
 import { ErrorBottomSheet } from "./components/ErrorBottomSheet";
-import type { ConnectNewDeviceErrorUIState, ConnectNewDeviceNonErrorUIState } from "./types";
-import { isErrorState, type ConnectNewDeviceViewModel } from "./useConnectNewDeviceViewModel";
+import type {
+  ConnectNewDeviceErrorUIState,
+  ConnectNewDeviceNonErrorUIState,
+  ConnectNewDeviceViewProps,
+} from "./types";
+import { isErrorState } from "./utils/isErrorState";
 
 function assertNever(value: never): never {
   throw new Error(`Unhandled connect new device state: ${JSON.stringify(value)}`);
@@ -44,7 +48,7 @@ function ErrorStateView({
   platform,
 }: Readonly<{
   state: ConnectNewDeviceErrorUIState;
-  platform: ConnectNewDeviceViewModel["platform"];
+  platform: ConnectNewDeviceViewProps["platform"];
 }>): React.ReactNode {
   switch (state.type) {
     case ConnectNewDeviceUIStateTypes.DiscoveryError:
@@ -64,7 +68,7 @@ export function ConnectNewDeviceView({
   platform,
   onDeviceNotFound,
   onCloseErrorSheet,
-}: Readonly<ConnectNewDeviceViewModel>) {
+}: Readonly<ConnectNewDeviceViewProps>) {
   // An error shows in the sheet, over the last view before it.
   const nonErrorState = isErrorState(state) ? lastNonErrorState : state;
   const errorState = isErrorState(state) ? state : null;
